@@ -95,6 +95,9 @@ $upload-entry-gap: 2rem;
     // If hierarchical areas don't have a border then they look better if
     // they're tightened up.
     @if $data-list-border-color == none {
+
+        // @see ModelHelper#render_pair
+        // noinspection CssUnusedSymbol
         .value.hierarchy {
 
             margin-bottom: 0;
@@ -128,10 +131,12 @@ $upload-entry-gap: 2rem;
 
     @include grid-row-gap($upload-entry-gap);
 
+    // noinspection CssUnusedSymbol
     .pagination-top {
 
         margin-bottom: $upload-entry-gap / 2;
 
+        // noinspection CssUnusedSymbol
         .upload-page-filter-panel {
 
             flex: 1 1 auto;
@@ -173,6 +178,7 @@ $upload-entry-gap: 2rem;
     }
 }
 
+// noinspection CssUnusedSymbol
 .check-status-popup {
 
     @extend .popup-container;
@@ -385,6 +391,8 @@ form.select-entry {
     }
 
     // Container for a checkbox and label pair.
+    //
+    // noinspection CssUnusedSymbol
     .checkbox.single {
 
         label {
@@ -506,7 +514,7 @@ form.select-entry {
 
         }
 
-        // noinspection CssReplaceWithShorthandSafely
+        // noinspection CssReplaceWithShorthandSafely, CssUnusedSymbol
         .status-marker {
 
             @include user-select(none);
@@ -528,6 +536,8 @@ form.select-entry {
 
         // Skip the status icon for disabled items.
         &:not(.disabled) {
+
+            // noinspection CssUnusedSymbol
             .status-marker {
 
                 &.optional {
@@ -649,6 +659,7 @@ $upload-admin-column-space: 0.75rem;
     margin-top: $upload-admin-section-gap;
 }
 
+// noinspection CssUnusedSymbol
 .aws-bucket-hdg {
     display:         flex;
     margin-top:      $upload-admin-section-gap;
@@ -729,6 +740,7 @@ $upload-admin-column-space: 0.75rem;
     }
 }
 
+// noinspection CssUnusedSymbol
 .column-headings {
     padding-top:    $aws-bucket-padding;
     padding-bottom: 0.25rem;
@@ -743,6 +755,7 @@ $upload-admin-column-space: 0.75rem;
     margin-top: $upload-admin-column-space;
 }
 
+// noinspection CssUnusedSymbol
 .aws-link {
     @include link-button(lightgray);
     @extend %control-button;

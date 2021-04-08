@@ -296,7 +296,7 @@ module AccountHelper
         tray << account_cancel_button(action: action, url: cancel)
         tray = html_div(class: 'button-tray') { tray }
 
-        # Control elements which are always visible at the top of the input form.
+        # Control elements always visible at the top of the input form.
         controls = html_div(class: 'controls') { tray }
 
         # Form fields.
@@ -425,6 +425,9 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
   def account_delete_submit(*items, **opt)
     min = User.minimum(:id).to_i
     max = User.maximum(:id).to_i

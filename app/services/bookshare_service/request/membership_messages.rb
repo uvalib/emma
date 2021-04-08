@@ -30,7 +30,8 @@ module BookshareService::Request::MembershipMessages
   # == GET /v2/messages
   #
   # == 2.4.1. Get a list of messages
-  # As a membership assistant, get a list of messages based on the inputs given.
+  # As a membership assistant, get a list of messages based on the inputs
+  # given.
   #
   # @param [Hash] opt                 Passed to #api.
   #

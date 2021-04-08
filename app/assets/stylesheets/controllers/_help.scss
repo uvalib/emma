@@ -400,6 +400,8 @@ body.help {
 .help-section {
 
     // An inline rendering of the panel "More/Less" toggle button.
+    //
+    // noinspection CssUnusedSymbol
     .advanced-search-toggle {
         display:          inline;
         font-size:        inherit;
@@ -465,6 +467,8 @@ body.help {
     }
 
     // A form action button.
+    //
+    // noinspection CssUnusedSymbol
     .uppy-FileInput-btn {
         display:          inline;
         padding:          4px 6px;

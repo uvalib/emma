@@ -4299,7 +4299,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link isUpdateForm}.
      *
-     * @returns {ActionProperties}
+     * @returns {RouteActionProperties}
      */
     function assetObject(form) {
         let $form    = formElement(form);

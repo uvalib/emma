@@ -145,10 +145,12 @@ $sticky-top-narrow:     3.125rem;
             }
         }
 
+        // noinspection CssUnusedSymbol
         &.field-Description {
             font-size: large;
         }
 
+        // noinspection CssUnusedSymbol
         &.textbox {
             box-shadow: 0 0 0 0.25rem white, 0 0 0 0.375rem lightgray;
         }
@@ -341,6 +343,8 @@ $sticky-top-narrow:     3.125rem;
         }
 
         // Field labels with help icons:
+        //
+        // noinspection CssUnusedSymbol
         &.field-RetrievalLink {
             display:        flex;
             flex-direction: row;
@@ -472,6 +476,7 @@ $sticky-top-narrow:     3.125rem;
             //
             // @see "SearchHelper#prev_next_controls"
             //
+            // noinspection CssUnusedSymbol
             .prev-next {
 
                 display:        flex;
@@ -558,11 +563,13 @@ $sticky-top-narrow:     3.125rem;
             font-weight: bold;
         }
 
+        // noinspection CssUnusedSymbol
         &.field-Description {
             max-height: 20vh;
             overflow-y: auto;
         }
 
+        // noinspection CssUnusedSymbol
         &.field-RetrievalLink {
             @media #{$narrow-screen} {
                 margin-top:    0.5rem;
@@ -614,6 +621,7 @@ $sticky-top-narrow:     3.125rem;
     $item-number-bg:     lighter($uva-accent-blue, 97.5%);
     $item-number-border: $uva-accent-blue;
 
+    // noinspection CssUnusedSymbol
     .pagination-top {
         // TODO: ???
     }
@@ -694,6 +702,7 @@ $sticky-top-narrow:     3.125rem;
                 }
             }
 
+            // noinspection CssUnusedSymbol
             .icon-tray {
 
 

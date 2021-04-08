@@ -28,6 +28,7 @@ $footer-margin-top: 1rem;
 
     @extend %banner;
 
+    // noinspection CssUnusedSymbol
     .footer-table {
 
         display: grid;
@@ -59,6 +60,7 @@ $footer-margin-top: 1rem;
                     justify-content: flex-start;
                 }
 
+                // noinspection CssUnusedSymbol
                 &.col-last:not(.col-first) {
                     justify-content: flex-end;
                 }

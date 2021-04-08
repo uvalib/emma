@@ -47,14 +47,17 @@
 // CSS "icons"
 // ============================================================================
 
+// noinspection CssUnusedSymbol
 .left-triangle-icon {
     @include triangle-icon(left);
 }
 
+// noinspection CssUnusedSymbol
 .right-triangle-icon {
     @include triangle-icon(right);
 }
 
+// noinspection CssUnusedSymbol
 .square-icon {
     @include square-icon;
 }

@@ -39,6 +39,9 @@ module ParamsHelper
   #
   # @type [String]
   #
+  #--
+  # noinspection RubyQuotedStringsInspection
+  #++
   COMPRESSION_MARKER = "\u0007"
 
   # ===========================================================================

@@ -369,6 +369,9 @@ module OmniAuth
       #
       # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
+      #--
+      # noinspection RubyStringKeysInHashInspection
+      #++
       def call_redirect(location, **log_extra)
         __ext_debug do
           {

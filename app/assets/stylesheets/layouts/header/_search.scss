@@ -81,6 +81,7 @@ $search-button-width:    6rem;
     //=========================================================================
 
     // @see LayoutHelper#menu_spacer
+    // noinspection CssUnusedSymbol
     .menu-spacer {
         @extend %invisible-height;
     }
@@ -164,6 +165,7 @@ $search-button-width:    6rem;
     }
 
     // @see LayoutHelper#search_bar
+    // noinspection CssUnusedSymbol
     .search-bar {
         @extend %header-control-interior;
     }
@@ -194,6 +196,7 @@ $search-button-width:    6rem;
     }
 
     // @see LayoutHelper#advanced_search_button
+    // noinspection CssUnusedSymbol
     .advanced-search-toggle {
 
         @extend %control-button;
@@ -338,6 +341,7 @@ $search-button-width:    6rem;
     // Sections
     //=========================================================================
 
+    // noinspection CssUnusedSymbol
     .search-bar-row {
 
         @extend %header-section;
@@ -385,6 +389,7 @@ $search-button-width:    6rem;
             }
         }
 
+        // noinspection CssUnusedSymbol
         .search-bar {
 
             display:      flex;
@@ -405,6 +410,7 @@ $search-button-width:    6rem;
     }
 
     // @see LayoutHelper#search_bar_container
+    // noinspection CssUnusedSymbol
     .search-bar-container {
 
         $sb-row-vertical-gap:        $gap-y;
@@ -420,6 +426,7 @@ $search-button-width:    6rem;
 
         @extend %header-control-interior;
 
+        // noinspection CssUnusedSymbol
         .search-bar {
             .search-clear {
 
@@ -450,6 +457,7 @@ $search-button-width:    6rem;
             }
         }
 
+        // noinspection CssUnusedSymbol
         .search-bar-group {
 
             @extend %header-section;
@@ -463,6 +471,7 @@ $search-button-width:    6rem;
                 justify-content: space-between;
             }
 
+            // noinspection CssUnusedSymbol
             .search-bar-row {
 
                 margin: 0;
@@ -483,6 +492,7 @@ $search-button-width:    6rem;
 
         row-gap: 0;
 
+        // noinspection CssUnusedSymbol
         @media #{$not-narrow-screen} {
             .advanced-search-toggle:not(.visible) { display: none; }
             .menu-button.reset:not(.visible)      { display: none; }
@@ -553,6 +563,7 @@ $search-button-width:    6rem;
     //=========================================================================
 
     // @see LayoutHelper#search_filter_container
+    // noinspection CssUnusedSymbol
     .search-filter-container {
 
         @extend %header-search-section;
@@ -620,6 +631,8 @@ $search-button-width:    6rem;
         // This takes up space to the left of .menu-button so that a pair of
         // .menu-spacer/.menu-button can be treated by the grid the same way as
         // a pair of .menu-label/.menu-control.
+        //
+        // noinspection CssUnusedSymbol
         .menu-spacer {
 
             @extend %grid-cell;
@@ -735,7 +748,7 @@ $search-button-width:    6rem;
 
     &.shadow {
 
-        // noinspection CssReplaceWithShorthandSafely
+        // noinspection CssReplaceWithShorthandSafely, CssUnusedSymbol
         .search-filter-container {
             padding:       1rem;
             padding-left:  1.25rem;

@@ -106,7 +106,7 @@ module OAuth2
       # This method overrides:
       # @see OAuth2::AccessToken#initialize
       #
-      def initialize(client, token, opts = {}) # rubocop:disable Metrics/AbcSize
+      def initialize(client, token, opts = {})
         super
         __ext_debug(binding) do
           { '@expires_in': @expires_in, '@options': @options }

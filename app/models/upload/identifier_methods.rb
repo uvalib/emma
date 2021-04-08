@@ -169,6 +169,7 @@ module Upload::IdentifierMethods
   # @return [Integer]                 If 0 then the table is empty.
   #
   def minimum_id
+    # noinspection RailsParamDefResolve
     Upload.minimum(:id).to_i
   end
 
@@ -177,6 +178,7 @@ module Upload::IdentifierMethods
   # @return [Integer]                 If 0 then the table is empty.
   #
   def maximum_id
+    # noinspection RailsParamDefResolve
     Upload.maximum(:id).to_i
   end
 

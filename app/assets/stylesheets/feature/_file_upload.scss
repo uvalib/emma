@@ -15,6 +15,7 @@
 // This is hidden until a file has been uploaded and displayUploadedFilename()
 // adds the 'complete' class.
 //
+// noinspection CssUnusedSymbol
 .uploaded-filename {
 
     display:        flex;
@@ -104,11 +105,15 @@
 }
 
 // Control for filtering which upload form fields are displayed.
+//
+// noinspection CssUnusedSymbol
 .upload-field-group {
     @extend %upload-radio-group;
 }
 
 // Controls for selecting the workflow state group.
+//
+// noinspection CssUnusedSymbol
 .upload-select-group-panel {
 
     display:         flex;
@@ -154,6 +159,7 @@
         }
     }
 
+    // noinspection CssUnusedSymbol
     .upload-select-group {
 
         display: grid;
@@ -237,6 +243,8 @@
 
 // Controls for filtering which records are displayed on the current page of
 // the index listing.
+//
+// noinspection CssUnusedSymbol
 .upload-page-filter-panel {
 
     max-width: inherit;
@@ -246,6 +254,7 @@
         margin-bottom: 0.5rem;
     }
 
+    // noinspection CssUnusedSymbol
     .upload-filter-group {
 
         @extend %upload-radio-group;
@@ -275,6 +284,8 @@
 }
 
 // Debug-only control for enabling state groups.
+//
+// noinspection CssUnusedSymbol
 .upload-filter-options-panel {
 
     @extend %upload-radio-group;
@@ -299,6 +310,8 @@
 
 // Control for identifying the source EMMA entry for new submissions which are
 // derived from member repository content.
+//
+// noinspection CssUnusedSymbol
 .parent-entry-select {
 
     display:         flex;
@@ -423,12 +436,16 @@ $form-gap-narrow: $form-gap / 3;
     input[type="file"][name="upload[file]"]#upload_file { }
 
     // Appended to .file-upload-form and moved into place via file-upload.js.
+    //
+    // noinspection CssUnusedSymbol
     .uppy-FileInput-container {
         @extend %upload-grid-control;
     }
 
     // Display for the selected filename moved into place by setupUpload()
     // in app/assets/javascripts/feature/file-upload.js.
+    //
+    // noinspection CssUnusedSymbol
     .uploaded-filename {
 
         @include grid-row(1);
@@ -493,12 +510,16 @@ $form-gap-narrow: $form-gap / 3;
         }
 
         // Appended to .button-tray and moved into place via file-upload.js.
+        //
+        // noinspection CssUnusedSymbol
         .uppy-FileInput-container {
             @extend %upload-tray-control;
         }
 
         // Display for the selected filename moved into place by setupUpload()
         // in app/assets/javascripts/feature/file-upload.js.
+        //
+        // noinspection CssUnusedSymbol
         .uploaded-filename {
 
             @extend %upload-tray-control;
@@ -527,6 +548,8 @@ $form-gap-narrow: $form-gap / 3;
     //=========================================================================
 
     // Control for filtering which upload form fields are displayed.
+    //
+    // noinspection CssUnusedSymbol
     .upload-field-group {
 
         @include grid-column-span;
@@ -545,6 +568,7 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
+    // noinspection CssUnusedSymbol
     .parent-entry-select {
 
         @include grid-column-span;
@@ -597,6 +621,8 @@ $form-gap-narrow: $form-gap / 3;
     //=========================================================================
 
     // Add to a button to accent it as the next best action to perform.
+    //
+    // noinspection CssUnusedSymbol
     .best-choice:not(:hover) {
 
         box-shadow: 0 0 0.5rem 0.25rem $button-accent;
@@ -649,6 +675,7 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
+    // noinspection CssUnusedSymbol
     .uppy-FileInput-container {
 
         // In modern browsers, clicking on the <label> associated with
@@ -709,6 +736,8 @@ $form-gap-narrow: $form-gap / 3;
     }
 
     // Inserted by Uppy via file-upload.js if FEATURES.status_bar is true.
+    //
+    // noinspection CssUnusedSymbol
     .uppy-ProgressBar,
     .uppy-StatusBar {
 
