@@ -6,9 +6,10 @@
   target   ||= search_input_target
   search_bar = target && search_bar_container(id: form_id, target: target)
   return unless search_bar.present?
+  classes    = 'layout-section search bar'
 -%>
 
-<div class="layout-section search bar" role="search" data-target="<%= target -%>">
+<div class="<%= classes -%>" data-target="<%= target -%>" role="search">
   <div class="enclosure shadow <%= position -%>">
     <%= search_bar %>
     <%= search_controls(form: form_id) %>

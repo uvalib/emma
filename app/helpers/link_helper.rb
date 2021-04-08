@@ -181,7 +181,15 @@ module LinkHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def page_items_menu(controller: nil, action: nil, model:, user: nil, prompt: nil, table: nil, **opt)
+  def page_items_menu(
+    controller: nil,
+    action:     nil,
+    model:,
+    user:       nil,
+    prompt:     nil,
+    table:      nil,
+    **opt
+  )
     css_selector = '.select-entry'
     controller ||= params[:controller]
     action     ||= params[:action]

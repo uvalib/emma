@@ -137,7 +137,8 @@ module UploadWorkflow::Single::Edit::Actions
     else
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)
-      self.succeeded << "Change request #{sid} submitted to #{repo}" # TODO: I18n
+      msg  = "Change request #{sid} submitted to #{repo}" # TODO: I18n
+      self.succeeded << msg
     end
   end
 

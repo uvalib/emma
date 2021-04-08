@@ -366,17 +366,17 @@ module OAuth2
 
       # Initializes an AccessToken by making a request to the token endpoint.
       #
-      # @param [Hash]  params               For the token endpoint.
-      # @param [Hash]  access_token_opts    Passed to the AccessToken object.
-      # @param [Class] access_token_class   Class of access token for easier
-      #                                     subclassing of OAuth2::AccessToken.
+      # @param [Hash]  params         For the token endpoint.
+      # @param [Hash]  token_opts     Passed to the AccessToken object.
+      # @param [Class] token_class    Class of access token for easier
+      #                                 subclassing of OAuth2::AccessToken.
       #
-      # @return [AccessToken]               The initialized AccessToken.
+      # @return [AccessToken]         The initialized AccessToken.
       #
       # This method overrides:
       # @see OAuth2::Client#get_token
       #
-      def get_token(params, access_token_opts = {}, access_token_class = AccessToken)
+      def get_token(params, token_opts = {}, token_class = AccessToken)
         __ext_debug(binding)
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }

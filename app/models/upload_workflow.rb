@@ -840,7 +840,7 @@ module UploadWorkflow::External
 
   # Bulk removal.
   #
-  # @param [Array<String,Integer,Hash,Upload>] id_specs
+  # @param [Array<String,Integer,Hash,Upload>] ids
   # @param [Boolean] index            If *false*, do not update index.
   # @param [Boolean] atomic           If *false*, do not stop on failure.
   # @param [Boolean] force            Default: `#force_delete`.
@@ -851,12 +851,12 @@ module UploadWorkflow::External
   #
   # @see UploadWorkflow::External#upload_remove
   #
-  def batch_upload_remove(id_specs, index: true, atomic: true, force: nil, **opt)
+  def batch_upload_remove(ids, index: true, atomic: true, force: nil, **opt)
     __debug_items("UPLOAD #{__method__}", binding)
-    id_specs = Array.wrap(id_specs)
+    ids = Array.wrap(ids)
 
     # Translate entries into Upload record instances if possible.
-    items, failed = collect_records(*id_specs, force: force)
+    items, failed = collect_records(*ids, force: force)
     return [], failed if atomic && failed.present? || items.blank?
 
     # Batching occurs unconditionally in order to ensure that the requested
@@ -867,7 +867,7 @@ module UploadWorkflow::External
 
     # After all batch operations have completed, truncate the database table
     # (i.e., so that the next entry starts with id == 1) if appropriate.
-    if truncate_delete && (id_specs == %w(*))
+    if truncate_delete && (ids == %w(*))
       if failed.present?
         Log.warn('database not truncated due to the presence of errors')
       else

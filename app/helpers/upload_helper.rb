@@ -1044,9 +1044,9 @@ module UploadHelper
     # Directions.
     t_id   = opt[:'aria-labelledby'] = "#{id}-title"
     title  =
-      "Please indicate the EMMA entry for the original repository item. " \
-      "If possible, enter the standard identifier (ISBN, ISSN, OCLC, etc.) " \
-      "or the full title of the original work." # TODO: I18n
+      'Please indicate the EMMA entry for the original repository item. ' \
+      'If possible, enter the standard identifier (ISBN, ISSN, OCLC, etc.) ' \
+      'or the full title of the original work.' # TODO: I18n
     title  = html_div(title, id: t_id, class: 'search-title')
 
     # Text input.

@@ -134,10 +134,13 @@ module LayoutHelper::SearchBar
     # Accumulate search term values limited to the selected set of fields.
     # The initial determination of the order and initial input type selections
     # will be determined by the data supplied.
-    values = (values || url_parameters).except(*SearchTermsHelper::NON_SEARCH_KEYS)
+    values ||= url_parameters
+    values = values.except(*SearchTermsHelper::NON_SEARCH_KEYS)
     values.transform_keys! { |k| prm_map[k.to_sym] }
     values.slice!(*fields)
-    values.transform_values! { |v| (v == SearchTermsHelper::NULL_SEARCH) ? '' : v }
+    values.transform_values! do |v|
+      (v == SearchTermsHelper::NULL_SEARCH) ? '' : v
+    end
 
     # This is a major section of the page so it should be present in the
     # skip menu.
@@ -475,7 +478,7 @@ module LayoutHelper::SearchBar
 
   SEARCH_READY_TOOLTIP = ''
   SEARCH_NOT_READY_TOOLTIP = # TODO: I18n
-    "To perform a new search, add/modify search terms or filter selections."
+    'To perform a new search, add/modify search terms or filter selections.'
 
   # Generate a form submit control.
   #

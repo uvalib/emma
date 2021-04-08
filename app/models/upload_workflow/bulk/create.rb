@@ -159,7 +159,7 @@ module UploadWorkflow::Bulk::Create::States
       wf_start_submission(*event_args)
     end
 
-    __debug_sim("USER must `cancel!` or `submit!` to advance...")
+    __debug_sim('USER must `cancel!` or `submit!` to advance...')
 
     self
   end
