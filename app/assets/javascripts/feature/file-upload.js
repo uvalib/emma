@@ -346,7 +346,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    const UPLOAD_TIMEOUT = 90 * SECONDS;
+    const UPLOAD_TIMEOUT = 3 * MINUTES;
 
     /**
      * How long to display transient messages.
@@ -354,7 +354,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    const MESSAGE_DURATION = 2 * UPLOAD_TIMEOUT;
+    const MESSAGE_DURATION = MINUTE;
 
     /**
      * How long to wait after the user enters characters into a field before
@@ -537,6 +537,7 @@ $(document).on('turbolinks:load', function() {
         if (!isUppyInitialized($form)) {
 
             initializeUppy($form);
+            initializeUppyProgressBar($form);
 
             // noinspection JSDeprecatedSymbols
             switch (performance.navigation.type) {
@@ -1553,6 +1554,7 @@ $(document).on('turbolinks:load', function() {
                 const new_url = makeUrl(url, { id: db_id });
                 // noinspection JSCheckFunctionSignatures
                 upload.setOptions({ endpoint: new_url });
+                showUppyProgressBar($form);
             }
         }
 
@@ -1842,6 +1844,10 @@ $(document).on('turbolinks:load', function() {
 */
     }
 
+    // ========================================================================
+    // Functions - Uppy informer
+    // ========================================================================
+
     /**
      * Invoke `uppy.info` with an error message.
      *
@@ -1849,7 +1855,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string} text
      */
     function uppyError(uppy, text) {
-        uppyInfo(uppy, text, (2 * MESSAGE_DURATION), 'error');
+        uppyInfo(uppy, text, 'error');
     }
 
     /**
@@ -1859,7 +1865,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string} text
      */
     function uppyWarn(uppy, text) {
-        uppyInfo(uppy, text, (2 * MESSAGE_DURATION), 'warning');
+        uppyInfo(uppy, text, 'warning');
     }
 
     /**
@@ -1867,10 +1873,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Uppy}                     uppy
      * @param {string}                   text
-     * @param {number}                   [time]
      * @param {'info'|'warning'|'error'} [message_level]
+     * @param {number}                   [time]
      */
-    function uppyInfo(uppy, text, time, message_level) {
+    function uppyInfo(uppy, text, message_level, time) {
         const level    = message_level || 'info';
         const duration = time || MESSAGE_DURATION;
         uppy.info(text, level, duration);
@@ -1882,21 +1888,57 @@ $(document).on('turbolinks:load', function() {
      * @param {Uppy}   uppy
      */
     function uppyInfoClear(uppy) {
-        uppyInfo(uppy, '', 1);
+        uppyInfo(uppy, '', 'info', 1);
+    }
+
+    // ========================================================================
+    // Functions - Uppy progress bar
+    // ========================================================================
+
+    /**
+     * The element starts with 'aria-hidden="true"' (so that attribute alone
+     * alone isn't sufficient for conditional styling), however the element
+     * (and its children) are not invisible.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @see file:app/assets/stylesheets/vendor/_uppy.scss .uppy-ProgressBar
+     */
+    function initializeUppyProgressBar(form) {
+        hideUppyProgressBar(form);
+    }
+
+    /**
+     * Start displaying the Uppy progress bar.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function showUppyProgressBar(form) {
+        toggleUppyProgressBar(form, true);
     }
 
     /**
      * Stop displaying the Uppy progress bar.
      *
-     * This function shouldn't be necessary, but the 'hideAfterFinish' option
-     * for ProgressBar *only* sets 'aria-hidden' -- it doesn't actually hide
-     * the control itself.
+     * Note that the 'hideAfterFinish' option for ProgressBar *only* sets
+     * 'aria-hidden' -- it doesn't actually hide the control itself.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function hideUppyProgressBar(form) {
+        toggleUppyProgressBar(form, false);
+    }
+
+    /**
+     * Hide/show the .uppy-ProgressBar element by adding/removing the CSS
+     * "invisible" class.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {boolean}  [visible]
+     */
+    function toggleUppyProgressBar(form, visible) {
         let $control = formContainer(form).find('.uppy-ProgressBar');
-        toggleVisibility($control, false);
+        toggleVisibility($control, visible);
     }
 
     // ========================================================================

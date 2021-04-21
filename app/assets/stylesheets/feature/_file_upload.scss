@@ -744,6 +744,8 @@ $form-gap-narrow: $form-gap / 3;
         @include grid-row(1);
         @include grid-column-span;
 
+        z-index: $z-uppy-progress;
+
         @if $status-bar-is-white-space {
 
             min-height: 3rem;
@@ -779,8 +781,9 @@ $form-gap-narrow: $form-gap / 3;
         z-index:         $z-uppy-informer;
 
         p {
-            word-break: break-word;
-            box-shadow: 0 0 0.5rem 0.625rem white;
+            font-weight: bold;
+            word-break:  break-word;
+            box-shadow:  0 0 0.5rem 0.25rem white;
         }
     }
 }

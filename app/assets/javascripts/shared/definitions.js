@@ -32,6 +32,23 @@ const SECOND = 1000;
  */
 const SECONDS = SECOND;
 
+// noinspection MagicNumberJS
+/**
+ * Milliseconds per minute.
+ *
+ * @constant
+ * @type {number}
+ */
+const MINUTE = 60 * SECONDS;
+
+/**
+ * Alias for MINUTE.
+ *
+ * @constant
+ * @type {number}
+ */
+const MINUTES = MINUTE;
+
 /**
  * Kilobyte multiplier.
  *

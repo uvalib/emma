@@ -2,6 +2,7 @@
 
 @use 'shared/variables' as *;
 @use 'shared/common'    as *;
+@use 'shared/functions' as *;
 
 // @import '../../../node_modules/uppy/dist/uppy.css';
 
@@ -108,6 +109,8 @@
 // The container for the upload progress bar (a minimalistic alternative to
 // .uppy-StatusBar.
 //
+// @see file:app/assets/javascripts/feature/file-upload.js *hideUppyProgressBar()*
+//
 // noinspection CssUnusedSymbol
 .uppy-ProgressBar {
 
@@ -116,33 +119,56 @@
     // The bar itself which extends as the upload progresses.
     .uppy-ProgressBar-inner {
         display:          block;
-        height:           10%;
-        margin-top:       2.5%;
-        background-color: $uva-accent-orange;
+        height:           100%;
+        margin-top:       0;
+        background-color: lighter($uva-accent-orange, 40%);;
+        border-radius:    0.25rem;
     }
 
     // The percentage counter, which has been moved to the center of the space
     // occupied by the progress bar.
+    //
+    // @see file:app/assets/javascripts/feature/file-upload.js *initializeUppyProgressBar()*
+    //
     .uppy-ProgressBar-percentage {
-        display:          inline-block;
-        position:         relative;
-        top:              -50%;
-        padding:          0.25rem;
-        font-weight:      bold;
-        color:            black;
-        background-color: white;
-        border-radius:    0.75rem;
-    }
 
-    &[aria-hidden="false"] {
-        .uppy-ProgressBar-percentage {
-            visibility: visible;
+        display:       inline-block;
+        position:      relative;
+        top:           -50%;
+        left:          95%;
+        padding:       0.25rem;
+        font-weight:   bold;
+        color:         black;
+        background:    white;
+        border-radius: 0.75rem;
+        visibility:    inherit;
+
+        &:after {
+            content: "%";
         }
     }
 
-    &:not([aria-hidden="false"]) {
+    // After the file has been received, Uppy will make the progress bar
+    // aria-hidden, but file-upload.js will not mark the element with
+    // ".invisible" until the server response is received.  Rather than leaving
+    // the progress at "100%", indicate that the server is processing the file.
+    &[aria-hidden="true"]:not(.invisible) {
         .uppy-ProgressBar-percentage {
-            visibility: hidden;
+
+            max-height: 0;
+            max-width:  0;
+            color:      transparent;
+            transform:  none;
+
+            &:after {
+                content:       "saving...";
+                display:       inline-block;
+                padding:       0.25rem;
+                color:         black;
+                background:    white;
+                border-radius: 0.75rem;
+                transform:     translate(-75%, -135%);
+            }
         }
     }
 
