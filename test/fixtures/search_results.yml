@@ -1,0 +1,1019 @@
+# test/fixtures/search_results.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+Mansfield_Park_1:     &FIRST
+  title:              'A reading of Mansfield Park : an essay in critical synthesis'
+  description:        'x, 109 p. ; 23 cm. -- Bibliography: p. 99-103 Includes index'
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:080181149X'
+  repository:         internetArchive
+  repositoryRecordId: 'readingofmansfie0000flei'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_2:
+  title:              'A reading of Mansfield Park : an essay in critical synthesis'
+  description:        'x, 109 p. ; 23 cm. -- Bibliography: p. 99-103 Includes index'
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:080181149X'
+  repository:         internetArchive
+  repositoryRecordId: 'readingofmansfie0000flei'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_3:
+  title:              'A reading of Mansfield Park : an essay in critical synthesis'
+  description:        'x, 109 p. ; 23 cm. -- Bibliography: p. 99-103 Includes index'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'isbn:080181149X'
+  repository:         internetArchive
+  repositoryRecordId: 'readingofmansfie0000flei'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_4:
+  title:              'A reading of Mansfield Park; an essay in critical synthesis.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:355867', 'lccn:67012671']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39015001418980'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_5:
+  title:              'A reading of Mansfield Park; an essay in critical synthesis.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:355867', 'lccn:67012671']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39015057934906'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_6:
+  title:              'A study guide to Mansfield Park / prepared for the Course Team by Cicely Havely.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:17352284', 'isbn:9780335110513', 'isbn:0335110517']
+  repository:         hathiTrust
+  repositoryRecordId: 'uc1.32106007888636'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_7:
+  title:              "Jane Austen's Mansfield Park / edited and with an introduction by Harold Bloom."
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['isbn:0877549443', 'lccn:86012990', 'isbn:9780877549444', 'oclc:65723980']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39015011875948'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_8:
+  title:              "Jane Austen's Mansfield Park / edited and with an introduction by Harold Bloom."
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['isbn:0877549443', 'isbn:9780877549444', 'oclc:13670813', 'lccn:86012990']
+  repository:         hathiTrust
+  repositoryRecordId: 'uc1.32106007565150'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_9:
+  title:              'Jane Austen, Mansfield Park / Isobel Armstrong.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['isbn:9780140771626', 'oclc:24750764', 'isbn:014077162X']
+  repository:         hathiTrust
+  repositoryRecordId: 'uc1.32106009307676'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_10:
+  title:              'MANSFIELD PARK'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ~
+  repository:         hathiTrust
+  repositoryRecordId: 'uiuc.2176099'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_11:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         'isbn:9781625585776'
+  repository:         bookshare
+  repositoryRecordId: '1305558'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_12:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:9781625585776'
+  repository:         bookshare
+  repositoryRecordId: '1305558'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_13:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         'isbn:9781625585776'
+  repository:         bookshare
+  repositoryRecordId: '1305558'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_14:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:9781625585776'
+  repository:         bookshare
+  repositoryRecordId: '1305558'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_15:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         'isbn:9781625585776'
+  repository:         bookshare
+  repositoryRecordId: '1305558'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_16:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '1568'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_17:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '1568'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_18:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '1568'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_19:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '1568'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_20:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '1568'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_21:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         'isbn:9781772751123'
+  repository:         bookshare
+  repositoryRecordId: '1602027'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_22:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:9781772751123'
+  repository:         bookshare
+  repositoryRecordId: '1602027'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_23:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         'isbn:9781772751123'
+  repository:         bookshare
+  repositoryRecordId: '1602027'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_24:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:9781772751123'
+  repository:         bookshare
+  repositoryRecordId: '1602027'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_25:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         'isbn:9781772751123'
+  repository:         bookshare
+  repositoryRecordId: '1602027'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_26:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         'isbn:9781772753769'
+  repository:         bookshare
+  repositoryRecordId: '1602110'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_27:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:9781772753769'
+  repository:         bookshare
+  repositoryRecordId: '1602110'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_28:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         'isbn:9781772753769'
+  repository:         bookshare
+  repositoryRecordId: '1602110'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_29:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:9781772753769'
+  repository:         bookshare
+  repositoryRecordId: '1602110'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_30:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         'isbn:9781772753769'
+  repository:         bookshare
+  repositoryRecordId: '1602110'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_31:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         'isbn:9781927002612'
+  repository:         bookshare
+  repositoryRecordId: '1602253'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_32:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:9781927002612'
+  repository:         bookshare
+  repositoryRecordId: '1602253'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_33:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         'isbn:9781927002612'
+  repository:         bookshare
+  repositoryRecordId: '1602253'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_34:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:9781927002612'
+  repository:         bookshare
+  repositoryRecordId: '1602253'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_35:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         'isbn:9781927002612'
+  repository:         bookshare
+  repositoryRecordId: '1602253'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_36:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         'isbn:9788491059974'
+  repository:         bookshare
+  repositoryRecordId: '1744968'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_37:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:9788491059974'
+  repository:         bookshare
+  repositoryRecordId: '1744968'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_38:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         'isbn:9788491059974'
+  repository:         bookshare
+  repositoryRecordId: '1744968'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_39:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:9788491059974'
+  repository:         bookshare
+  repositoryRecordId: '1744968'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_40:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         'isbn:9788491059974'
+  repository:         bookshare
+  repositoryRecordId: '1744968'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_41:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         'isbn:9780141439808'
+  repository:         bookshare
+  repositoryRecordId: '1826230'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_42:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:9780141439808'
+  repository:         bookshare
+  repositoryRecordId: '1826230'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_43:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         'isbn:9780141439808'
+  repository:         bookshare
+  repositoryRecordId: '1826230'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_44:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:9780141439808'
+  repository:         bookshare
+  repositoryRecordId: '1826230'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_45:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         'isbn:9780141439808'
+  repository:         bookshare
+  repositoryRecordId: '1826230'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_46:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         'isbn:9780553904550'
+  repository:         bookshare
+  repositoryRecordId: '200709'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_47:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         'isbn:9780553904550'
+  repository:         bookshare
+  repositoryRecordId: '200709'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_48:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         'isbn:9780553904550'
+  repository:         bookshare
+  repositoryRecordId: '200709'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_49:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         'isbn:9780553904550'
+  repository:         bookshare
+  repositoryRecordId: '200709'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_50:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         'isbn:9780553904550'
+  repository:         bookshare
+  repositoryRecordId: '200709'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_51:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '27630'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_52:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '27630'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_53:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '27630'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_54:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '27630'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_55:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  identifier:         ~
+  repository:         bookshare
+  repositoryRecordId: '27630'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_56:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         '9780679641094'
+  repository:         bookshare
+  repositoryRecordId: '391271'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_57:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         '9780679641094'
+  repository:         bookshare
+  repositoryRecordId: '391271'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_58:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         '9780679641094'
+  repository:         bookshare
+  repositoryRecordId: '391271'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_59:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         '9780679641094'
+  repository:         bookshare
+  repositoryRecordId: '391271'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_60:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         '9780679641094'
+  repository:         bookshare
+  repositoryRecordId: '391271'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_61:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         '9788401337888'
+  repository:         bookshare
+  repositoryRecordId: '611923'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_62:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         '9788401337888'
+  repository:         bookshare
+  repositoryRecordId: '611923'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_63:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         '9788401337888'
+  repository:         bookshare
+  repositoryRecordId: '611923'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_64:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         '9788401337888'
+  repository:         bookshare
+  repositoryRecordId: '611923'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_65:
+  title:              'Mansfield Park'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         '9788401337888'
+  repository:         bookshare
+  repositoryRecordId: '611923'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_66:
+  title:              'Mansfield Park (200th Anniversary Edition)'
+  description:        ~
+  format:             brf
+  formatVersion:      ~
+  identifier:         '9780698167834'
+  repository:         bookshare
+  repositoryRecordId: '790363'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_67:
+  title:              'Mansfield Park (200th Anniversary Edition)'
+  description:        ~
+  format:             daisy
+  formatVersion:      ~
+  identifier:         '9780698167834'
+  repository:         bookshare
+  repositoryRecordId: '790363'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_68:
+  title:              'Mansfield Park (200th Anniversary Edition)'
+  description:        ~
+  format:             daisyAudio
+  formatVersion:      '1'
+  identifier:         '9780698167834'
+  repository:         bookshare
+  repositoryRecordId: '790363'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_69:
+  title:              'Mansfield Park (200th Anniversary Edition)'
+  description:        ~
+  format:             epub
+  formatVersion:      '3.0'
+  identifier:         '9780698167834'
+  repository:         bookshare
+  repositoryRecordId: '790363'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_70:
+  title:              'Mansfield Park (200th Anniversary Edition)'
+  description:        ~
+  format:             word
+  formatVersion:      ~
+  identifier:         '9780698167834'
+  repository:         bookshare
+  repositoryRecordId: '790363'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_71:
+  title:              'Mansfield Park (Jane Austen) [by] R. A. Cox.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['lccn:73512048', 'oclc:103020', 'isbn:0631979107', 'isbn:9780631979104']
+  repository:         hathiTrust
+  repositoryRecordId: 'inu.32000003490978'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_72:
+  title:              'Mansfield Park / Jane Austen ; edited by James Kinsley and John Lucas'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['isbn:0192815261', 'oclc:6376249', 'isbn:9780192815262', 'lccn:80040259']
+  repository:         hathiTrust
+  repositoryRecordId: 'uc1.32106009948735'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_73:
+  title:              'Mansfield Park / Jane Austen ; edited with an introd. by Mary.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:2966281', 'isbn:0460000233', 'isbn:9780460000239']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39076000696851'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_74:
+  title:              'Mansfield Park / Jane Austen ; edited, with an introd. by Tony Tanner.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:1369238'
+  repository:         hathiTrust
+  repositoryRecordId: 'inu.39000003567521'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_75:
+  title:              'Mansfield Park / Jane Austen ; with a new introduction by David Gilson.'
+  description:        'v.3'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:31851041', 'isbn:0415125383', 'isbn:9780415125383']
+  repository:         hathiTrust
+  repositoryRecordId: 'inu.30000042689137'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_76:
+  title:              'Mansfield Park / Jane Austen ; with a new introduction by David Gilson.'
+  description:        'v.2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:31851041', 'isbn:0415125383', 'isbn:9780415125383']
+  repository:         hathiTrust
+  repositoryRecordId: 'inu.30000042689251'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_77:
+  title:              'Mansfield Park / Jane Austen ; with a new introduction by David Gilson.'
+  description:        'v.1'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:31851041', 'isbn:0415125383', 'isbn:9780415125383']
+  repository:         hathiTrust
+  repositoryRecordId: 'inu.30000042689376'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_78:
+  title:              'Mansfield Park / Jane Austen with an introduction by H.M. Daleski.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['isbn:9781592640447', 'isbn:1592640443', 'oclc:54074577']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39015058233050'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_79:
+  title:              'Mansfield Park / Jane Austen.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['isbn:0899662447', 'isbn:9780899662442', 'oclc:15022959']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39015043210536'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_80:
+  title:              'Mansfield Park / Jane Austen.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['lccn:97024777', 'isbn:0385487266', 'oclc:37044016', 'isbn:9780385487269']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39015054066751'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_81:
+  title:              'Mansfield Park / Jane Austen.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['isbn:9780786885244', 'oclc:43975659']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.49015003174134'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_82:
+  title:              'Mansfield Park / [Mary Evans ... et al.] ; edited by Nigel Wood.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['lccn:92032423', 'isbn:9780335096282', 'oclc:26719476', 'isbn:033509628X']
+  repository:         hathiTrust
+  repositoryRecordId: 'mdp.39015028908617'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_83:
+  title:              'Mansfield Park / by Jane Austen ; with twenty-four coloured illustrations by C.E. Brock.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:12627245', 'lccn:90138627']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044011473246'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_84:
+  title:              'Mansfield Park / by Jane Austen ; with twenty-four coloured illustrations by C.E. Brock.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:12627245', 'lccn:90138627']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044018838904'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_85:
+  title:              'Mansfield Park / by Jane Austen ; with twenty-four coloured illustrations by C.E. Brock.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:12627245', 'lccn:90138627']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044018842930'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_86:
+  title:              'Mansfield Park / by Jane Austen ; with twenty-four coloured illustrations by C.E. Brock.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['lccn:90138627', 'oclc:12627245']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044086796380'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_87:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        '1'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:3353214'
+  repository:         hathiTrust
+  repositoryRecordId: 'gri.ark:/13960/t3cz6694d'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_88:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        '2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:3353214'
+  repository:         hathiTrust
+  repositoryRecordId: 'gri.ark:/13960/t82j9dn9c'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_89:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.1'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['lccn:06003865', 'oclc:3501749']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044050792100'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_90:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:7909389'
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044086796372'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_91:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:3501749', 'lccn:06003865']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044089606578'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_92:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.1'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:3501749', 'lccn:06003865']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044089606651'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_93:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:3501749', 'lccn:06003865']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.32044089606669'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_94:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        ~
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:10068727'
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.hw20ch'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_95:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.1'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:3353214'
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.hwiwg7'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_96:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:3353214'
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.hwiwg8'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_97:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.1'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:3353214'
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.hwiwgb'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_98:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:3353214'
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.hwiwgc'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_99:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         ['oclc:3501749', 'lccn:06003865']
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.hwiwgm'
+  search_calls:       Mansfield_Park
+
+Mansfield_Park_100:
+  title:              'Mansfield Park / by Jane Austen.'
+  description:        'v.2'
+  format:             pdf
+  formatVersion:      ~
+  identifier:         'oclc:3353214'
+  repository:         hathiTrust
+  repositoryRecordId: 'hvd.hwiwhr'
+  search_calls:       Mansfield_Park
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<: *FIRST
+
+template:
+  title:              'First result title'
+  description:        'First result description'
+  format:             brf             # Single filter.format value
+  formatVersion:      ~
+  identifier:         []              # Zero or more standard identifiers
+  repository:         emma            # Single filter.repository value
+  repositoryRecordId: 'First id'
+  search_calls:       Mansfield_Park  # Related item from search_calls.yml

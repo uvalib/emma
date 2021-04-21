@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Handle "/help" pages.
 #
-# @see file:app/views/help
+# @see file:app/views/help/**
 #
 class HelpController < ApplicationController
 

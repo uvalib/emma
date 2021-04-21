@@ -161,6 +161,7 @@ module Emma::Extension
 
     end
 
+    # @private
     def self.included(base)
       base.send(:include, Methods)
       base.send(:extend,  Methods)
@@ -182,6 +183,7 @@ module Emma::Extension
 
     end
 
+    # @private
     def self.included(base)
       base.send(:include, Methods)
       base.send(:extend,  Methods)

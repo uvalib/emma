@@ -1,0 +1,11 @@
+<%# app/views/search_call/_details.html.erb -%>
+<%-
+  # A single search call record.
+
+  item    ||= @item
+  add     ||= nil
+  columns ||= nil
+
+-%>
+
+<%= search_call_details(item, pairs: add, columns: columns) %>

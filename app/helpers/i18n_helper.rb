@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module I18nHelper
 
+  # @private
   def self.included(base)
 
     __included(base, '[I18nHelper]')

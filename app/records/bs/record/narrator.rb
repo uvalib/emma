@@ -7,18 +7,18 @@ __loading_begin(__FILE__)
 
 # Bs::Record::Narrator
 #
-# @attr [Gender]       gender
-# @attr [String]       name
-# @attr [NarratorType] type
+# @attr [BsGender]       gender
+# @attr [String]         name
+# @attr [BsNarratorType] type
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_narrator
 #
 class Bs::Record::Narrator < Bs::Api::Record
 
   schema do
-    has_one   :gender, Gender
+    has_one   :gender, BsGender
     has_one   :name
-    has_one   :type,   NarratorType
+    has_one   :type,   BsNarratorType
   end
 
   # ===========================================================================

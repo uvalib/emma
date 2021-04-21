@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::Scroll
 
   include Emma::Unicode
+  include HtmlHelper
   include LayoutHelper::Common
 
   # ===========================================================================
@@ -33,7 +34,7 @@ module LayoutHelper::Scroll
   SCROLL_TOP = {
     type:    'button',
     class:   'scroll-to-top',
-    label:   TRIANGLE, # TODO: I18n
+    label:   UP_TRIANGLE, # TODO: I18n
     tooltip: 'Go back to the top of the page', # TODO: I18n
   }.freeze
 
@@ -51,7 +52,7 @@ module LayoutHelper::Scroll
   # @return [Hash]                    The modified *opt*.
   #
   def scroll_to_top_target!(opt)
-    append_css_classes!(opt, SCROLL_TARGET[:class])
+    append_classes!(opt, SCROLL_TARGET[:class])
   end
 
   # Floating scroll-to-top button which starts hidden.
@@ -62,7 +63,7 @@ module LayoutHelper::Scroll
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/scroll.js scrollToTop()
+  # @see file:app/assets/javascripts/feature/scroll.js *scrollToTop()*
   #
   def scroll_to_top_button(**opt)
     opt   = merge_html_options(SCROLL_TOP, opt, { class: 'hidden' })

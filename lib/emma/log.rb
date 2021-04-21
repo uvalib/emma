@@ -296,12 +296,12 @@ module Emma::Log
 
   # Delegate any other method to @logger.
   #
-  # @param [Symbol] method
+  # @param [Symbol] meth
   # @param [Array]  args
   # @param [Proc]   block
   #
-  def self.method_missing(method, *args, &block)
-    logger.send(method, *args, &block)
+  def self.method_missing(meth, *args, &block)
+    logger.send(meth, *args, &block)
   end
 
   # ===========================================================================

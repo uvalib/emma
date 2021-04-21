@@ -47,30 +47,30 @@ class BookshareTest < ApplicationSystemTestCase
       session.find_all(API_REQUEST_ELEMENTS).each do |element|
 
         # Derive the specified method from the HTML element ID.
-        id     = element[:id].to_s
-        method = api_request_method(id)
-        unless method.present?
+        id   = element[:id].to_s
+        meth = api_request_method(id)
+        unless meth.present?
           show("*** INVALID ID #{id.inspect} for #{element.text.inspect}")
           next
         end
 
         # Note whether the specified method is unimplemented.
-        unless bs_api.respond_to?(method)
-          missing[method] = id
+        unless bs_api.respond_to?(meth)
+          missing[meth] = id
           next
         end
 
         # Get the specified request parameters.
         parent_element   = element.first(:xpath, './parent::*', minimum: 0)
         specified_params = api_request_parameters(parent_element)
-        show_request_params(specified_params, method)
+        show_request_params(specified_params, meth)
 
         # Get the parameters defined for the implemented method.
-        specification      = bs_api.api_methods(method) || {}
+        specification      = bs_api.api_methods(meth) || {}
         required_keys      = specification[:required]&.keys&.map(&:to_s) || []
         alias_params       = specification[:alias]&.stringify_keys || {}
-        implemented_params = method_params(method)
-        show_method_params(implemented_params, method)
+        implemented_params = method_params(meth)
+        show_method_params(implemented_params, meth)
 
         # Verify that the method implementation has all of the required
         # parameters.
@@ -112,7 +112,7 @@ class BookshareTest < ApplicationSystemTestCase
         # Note any problem parameters associated with the implementation of
         # this request method.
         if problem_params.present?
-          problems[method] = problem_params
+          problems[meth] = problem_params
           show_problems(problem_params)
         end
 

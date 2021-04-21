@@ -63,9 +63,7 @@ class EditionController < ApplicationController
     __debug_route
     opt   = pagination_setup
     @list = bs_api.get_periodical_editions(seriesId: @series_id, **opt)
-    self.page_items  = @list.periodicalEditions || []
-    self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    pagination_finalize(@list, :periodicalEditions, **opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

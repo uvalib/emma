@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module HeadHelper::PageTitle
 
   include HeadHelper::Common
+  include HtmlHelper
 
   # ===========================================================================
   # :section:

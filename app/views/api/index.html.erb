@@ -20,20 +20,20 @@
 <%= page_description_section %>
 
 <div id="methods" class="methods">
-  <%- methods.each do |method| -%>
-    <%- if (css = @api_results.dig(method, :status)).present? -%>
-      <%- href = '#__' + method.to_s -%>
-      <%= make_link(method, href, class: css, 'data-turbolinks': false) -%>
+  <%- methods.each do |meth| -%>
+    <%- if (css = @api_results.dig(meth, :status)).present? -%>
+      <%- href = '#__' + meth.to_s -%>
+      <%= make_link(meth, href, class: css, 'data-turbolinks': false) -%>
     <%- else -%>
-      <div><%= method -%></div>
+      <div><%= meth -%></div>
     <%- end -%>
   <%- end -%>
 </div>
 
 <div id="trials" class="trials">
-  <%- @api_results.each_pair do |method, result| -%>
-    <h2 id="__<%= method -%>" class="label">
-      <span class="method"><%= method -%></span>
+  <%- @api_results.each_pair do |meth, result| -%>
+    <h2 id="__<%= meth -%>" class="label">
+      <span class="method"><%= meth -%></span>
       <span class="args"><%= result[:parameters] -%></span>
       <span class="endpoint"><%= result[:endpoint] -%></span>
     </h2>

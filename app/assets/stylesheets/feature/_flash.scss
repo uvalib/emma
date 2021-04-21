@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_flash.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Flash message display.
@@ -8,7 +9,6 @@
 
 .flash-messages {
 
-    // noinspection SassScssResolvedByNameOnly
     > * {
 
         @extend %block-shadow;
@@ -20,12 +20,10 @@
         border-radius: 8px;
     }
 
-    // noinspection SassScssResolvedByNameOnly
     .notice {
         background-color: $notice-bg;
     }
 
-    // noinspection SassScssResolvedByNameOnly
     .alert {
         background-color: $alert-bg;
     }

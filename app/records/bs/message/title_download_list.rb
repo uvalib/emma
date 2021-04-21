@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::TitleDownloadList
 #
-# @attr [Array<AllowsType>]                allows
+# @attr [Array<BsAllowsType>]              allows
 # @attr [Array<Bs::Record::Link>]          links
 # @attr [String]                           next
 # @attr [Array<Bs::Record::TitleDownload>] titleDownloads
@@ -20,7 +20,7 @@ class Bs::Message::TitleDownloadList < Bs::Api::Message
   include Bs::Shared::LinkMethods
 
   schema do
-    has_many  :allows,         AllowsType
+    has_many  :allows,         BsAllowsType
     has_many  :links,          Bs::Record::Link
     has_one   :next
     has_many  :titleDownloads, Bs::Record::TitleDownload

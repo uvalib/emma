@@ -239,14 +239,14 @@ module FileFormat
   # @return [Array<String>]
   #
   def apply_field_transform(type, key, value)
-    method =
+    meth =
       field_transforms[type]&.find do |k, v|
         break v if k.is_a?(Regexp) ? (key.to_s =~ k) : (key == k)
       end
     # noinspection RubyYardReturnMatch
-    case method
-      when Symbol then transform(method, value)
-      when Proc   then method.call(value)
+    case meth
+      when Symbol then transform(meth, value)
+      when Proc   then meth.call(value)
       else             value
     end
   end
@@ -350,28 +350,28 @@ module FileFormat
   # Used within #field_transforms to apply a method to each element of a
   # value whether it is a scalar or an array.
   #
-  # @param [Symbol] method
+  # @param [Symbol]                meth
   # @param [Array<String>, String] value
   #
   # @return [Array<String>, String]
   #
   # == Variations
   #
-  # @overload transform(method, value)
-  #   @param [Symbol]        method
+  # @overload transform(meth, value)
+  #   @param [Symbol]        meth
   #   @param [Array<String>] value
   #   @return [Array<String>]
   #
-  # @overload transform(method, value)
-  #   @param [Symbol] method
+  # @overload transform(meth, value)
+  #   @param [Symbol] meth
   #   @param [String] value
   #   @return [String]
   #
-  def transform(method, value)
+  def transform(meth, value)
     if value.is_a?(Array)
-      value.map { |v| send(method, v) }
+      value.map { |v| send(meth, v) }
     else
-      send(method, value)
+      send(meth, value)
     end
   end
 

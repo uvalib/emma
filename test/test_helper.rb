@@ -5,19 +5,26 @@
 
 ENV['RAILS_ENV'] ||= 'test'
 
+require_relative '../config/boot'
 require_relative '../config/environment'
+
 require 'rails/test_help'
 require 'webdrivers'
 
 # =============================================================================
-# Test control values (@see file:lib/tasks/test_application.rb
+# Test control values
 # =============================================================================
 
 public
 
 # The output format(s) to test.
 #
+# The current test task may have already set this constant; if not the default
+# value set here will be used.
+#
 # @type [Array<Symbol>]
+#
+# @see file:lib/tasks/test_application.rake
 #
 TEST_FORMATS ||= %i[html]
 
@@ -27,7 +34,15 @@ TESTING_XML  = TEST_FORMATS.include?(:xml)
 
 # Bookshare API aspects to test.
 #
+# The current test task may have already set this constant; if not the default
+# value set here will be used.
+#
 # @type [Array<Symbol>]
+#
+# @see file:lib/tasks/test_application.rake
+#
+# == Usage Notes
+# No Bookshare-specific tests are run unless specified by the test task.
 #
 TEST_BOOKSHARE ||= []
 
@@ -69,6 +84,8 @@ module TestHelper
   #
   # @param [Module] base
   #
+  # @private
+  #
   def self.included(base)
     include_submodules(base, __FILE__) do |name|
       next if name == :SystemTests
@@ -92,6 +109,8 @@ class ActiveSupport::TestCase
 
   # Create model instances for all fixtures in defined in test/fixtures/*.yml.
   fixtures :all
+
+  set_fixture_class searches: SearchCall
 
 end
 

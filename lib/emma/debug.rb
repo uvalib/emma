@@ -13,6 +13,7 @@ module Emma::Debug
   #
   module FormatMethods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -476,6 +477,8 @@ module Emma::Debug
     # not emit output and their blocks will not be evaluated.
     #
     # @param [Module] base
+    #
+    # @private
     #
     def self.included(base)
       OutputMethods.instance_methods(false).each do |m|

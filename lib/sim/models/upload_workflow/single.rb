@@ -339,13 +339,13 @@ module UploadWorkflow::Single::Simulation
   # Override workflow methods defined in terms of the Upload :record to check
   # the simulated submission.
   #
-  # @param [Module] class_or_module
+  # @param [Module] base
   #
   # @see #OVERRIDE_WORKFLOW_METHODS
   #
-  def self.included(class_or_module)
-    return unless class_or_module < Workflow::Base
-    class_or_module.class_eval do
+  def self.included(base)
+    return unless base < Workflow::Base
+    base.class_eval do
       OVERRIDE_WORKFLOW_METHODS.each do |m|
         # noinspection RubyArgCount
         define_method(m) do

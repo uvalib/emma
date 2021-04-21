@@ -329,8 +329,8 @@ module Api::Shared::TitleMethods
   # noinspection RubyYardReturnMatch
   #++
   def get_values(*fields)
-    fields.find { |method|
-      values = (send(method) if respond_to?(method))
+    fields.find { |meth|
+      values = (send(meth) if respond_to?(meth))
       values &&= Array.wrap(values).map { |v| v.to_s if v.present? }.compact
       break values if values.present?
     } || []

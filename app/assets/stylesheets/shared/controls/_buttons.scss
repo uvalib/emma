@@ -1,6 +1,7 @@
 // app/assets/stylesheets/shared/controls/_buttons.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 // ============================================================================
 // Controls
@@ -12,7 +13,6 @@
 /// @param {Color}  $dark             The color of the bottom/right borders.
 /// @param {String} $width            Width of the border.
 ///
-// noinspection SassScssResolvedByNameOnly
 @mixin link-button($light: white, $dark: darkgray, $width: 2px) {
 
     @extend %button-hover;
@@ -37,7 +37,6 @@
 
 /// A circular "X" button for removal of an input value.
 ///
-// noinspection SassScssResolvedByNameOnly
 @mixin clear-selection-button {
 
     @extend %button-hover;

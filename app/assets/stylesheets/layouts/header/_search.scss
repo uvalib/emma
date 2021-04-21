@@ -1,0 +1,753 @@
+// app/assets/stylesheets/layouts/header/_search.scss
+
+@use 'shared/variables'        as *;
+@use 'shared/common'           as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as *;
+@use 'shared/controls/grids'   as *;
+@use 'layouts/header/common'   as *;
+
+//=============================================================================
+// Constants
+//=============================================================================
+
+// Preferred button dimensions.
+$advanced-toggle-width:  5rem;
+$search-button-width:    6rem;
+
+//=============================================================================
+// Sections - generic
+//=============================================================================
+
+// Header sections whose content is a single .enclosure child element.
+.layout-section:not(.enclosure) {
+
+    @extend %banner;
+
+    display:    block;
+    margin:     0;
+    overflow-y: hidden;
+
+    @media #{$wide-screen} {
+        padding: 0 $enclosure-indent-wide;
+    }
+
+    @media #{$medium-width} {
+        padding: 0 $enclosure-indent-medium;
+    }
+
+    @media #{$narrow-screen} {
+        padding: 0 $enclosure-indent-narrow;
+    }
+}
+
+// Header section enclosures (including layout sections which are standalone
+// enclosures).
+.layout-section.enclosure,
+.layout-section > .enclosure {
+
+    @extend %banner;
+    @extend %enclosure;
+
+    justify-content: flex-start;
+    align-items:     flex-start;
+
+    > * {
+        background: inherit;
+    }
+}
+
+//=============================================================================
+// Sections - search
+//=============================================================================
+
+// Header row for search (input bar or filters) with contents inside an
+// .enclosure child element.
+.layout-section.search.bar:not(.enclosure) {
+    // TODO: definition common between search inputs and search filters?
+}
+
+// Search input bar or search filters (sort, per-page, language).
+.layout-section.search.enclosure,
+.layout-section.search > .enclosure {
+
+    // There seem to be some display widths where grids may not work right.
+    // Rather than deforming the display, make the problematic section scroll
+    // so that at least its controls are fully accessible.
+    overflow-x: auto;
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    // @see LayoutHelper#menu_spacer
+    .menu-spacer {
+        @extend %invisible-height;
+    }
+
+    // @see LayoutHelper#reset_button
+    .menu-button {
+        @extend %header-button;
+    }
+
+    // @see LayoutHelper#menu_label
+    .menu-label,
+    .date-label {
+
+        font-size: large;
+
+        @media #{$not-narrow-screen} {
+            text-align: right;
+        }
+    }
+
+    // @see LayoutHelper#menu_control
+    .menu-control,
+    .date-control {
+
+        @extend %header-control-interior;
+
+        /**
+         * After Select2 initializes, multi-select <select> elements will be
+         * visually hidden in favor of the replacement that Select2 manages.
+         * Since there is a noticeable span of time between the initial page
+         * load and the completion of the Select2 initialization, these styles
+         * are applied to the <select> element to keep it from flashing into
+         * existence in a jarring way.
+         *
+         * If there is only one row of buttons in the control then this will
+         * have the effect of the selections disappearing briefly.
+         *
+         * Unfortunately, if there is more than one row of buttons, then the
+         * control will obviously shrink in size until Select2 can create the
+         * replacement control.
+         */
+        select[multiple]:not(.select2-hidden-accessible) {
+
+            margin:         auto 0;
+            height:         34px;
+            max-height:     34px;
+            overflow:       hidden;
+            border:         1px solid white;
+            border-radius:  4px;
+            pointer-events: none;
+
+            /**
+             * On Chrome with 500 search results, it takes quite a while to get
+             * to the point where Select2 creates its replacements for the
+             * native <select> elements.  This is required so that the original
+             * is obscured until that point.
+             */
+            // noinspection CssOverwrittenProperties
+            option:before {
+                display:        block;
+                color:          $uva-text-gray;
+                background:     white;
+                border:         6px solid white;
+                content:        "...";
+                content:        "\22EF"; // MIDLINE HORIZONTAL ELLIPSIS
+                outline:        3px solid white;
+                outline-offset: -2px;
+            }
+        }
+    }
+
+    .search-input-label {
+        @extend %sr-only;
+    }
+
+    // @see LayoutHelper#search_input
+    .search-input {
+        max-width: 100%;
+        // Prevent Chrome from showing its own ghost cancel button.
+        &::-webkit-search-cancel-button { -webkit-appearance: unset; }
+    }
+
+    // @see LayoutHelper#search_bar
+    .search-bar {
+        @extend %header-control-interior;
+    }
+
+    // @see LayoutHelper#search_button
+    .search-button {
+
+        @extend %header-button;
+
+        &:focus {
+            @extend %focus;
+        }
+
+        &:not(.ready):hover{
+            box-shadow: none;
+        }
+
+        &.ready:not(:hover) {
+
+            @include link-button(lightgray, gray);
+
+            box-shadow: 0 0 0.75rem 0.5rem $button-accent;
+
+            &:focus {
+                @include link-button(gray, gray);
+            }
+        }
+    }
+
+    // @see LayoutHelper#advanced_search_button
+    .advanced-search-toggle {
+
+        @extend %control-button;
+
+        width:            $advanced-toggle-width;
+        margin:           0;
+        color:            inherit;
+        background-color: $panel-accent;
+        border:           2px outset;
+
+        &:hover {
+            background-color: $panel-accent;
+        }
+    }
+
+    // A container for search buttons, including the submit button.
+    .search-controls {
+
+        display:       grid;
+        margin:        0;
+        grid-template: 'search' 'toggle' 'reset' / 1fr;
+        row-gap:       1rem;
+
+        .search-button          { grid-area: search; }
+        .advanced-search-toggle { grid-area: toggle; }
+        .menu-button.reset      { grid-area: reset; }
+    }
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    &.shadow {
+
+        &.top      { @extend %top-shadow-enclosure; }
+        &.bottom   { @extend %bottom-shadow-enclosure; }
+        &.complete { @extend %complete-shadow-enclosure; }
+
+        &.top,
+        &.complete {
+
+            margin-top: 2rem; // Keep shadow from being clipped.
+
+            @media #{$wide-screen} {
+                padding-top: calc(#{$enclosure-padding-wide} + 0.5rem);
+            }
+
+            @media #{$medium-width} {
+                padding-top: calc(#{$enclosure-padding-medium} + 0.5rem);
+            }
+
+            @media #{$narrow-screen} {
+                padding-top: calc(#{$enclosure-padding-narrow} + 0.5rem);
+                margin-top:  4.5vh;
+            }
+        }
+
+        &.bottom,
+        &.complete {
+
+            @media #{$wide-screen} {
+                margin-bottom: 4vh;
+            }
+
+            @media #{$medium-width} {
+                //margin-bottom: 1vh;
+                margin-bottom: 2.5vh;
+            }
+
+            @media #{$narrow-screen} {
+                margin-bottom: 4vh;
+            }
+        }
+
+        &.bottom {
+            //margin-top: -0.5vh; // Meet up with .top.shadow.enclosure.
+            margin-top: 0; // Meet up with .top.shadow.enclosure.
+        }
+    }
+}
+
+//=============================================================================
+// Sections - search input
+//=============================================================================
+
+// Header row for search input bar(s) with contents inside an .enclosure child
+// element.
+.layout-section.search.bar:not(.enclosure) {
+
+    //padding-top: 2vh; // For .top.shadow.enclosure child.
+
+    @media #{$narrow-screen} {
+        //padding-top: 4vh; // For .top.shadow.enclosure child.
+    }
+}
+
+// Header row element containing the search input bar(s).
+.layout-section.search.bar.enclosure,
+.layout-section.search.bar > .enclosure {
+
+    display:               grid;
+    grid-template-columns: [container] 1fr [controls] auto;
+    column-gap:            1rem;
+
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+    }
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    .search-input {
+        margin: auto 0;
+        flex:   1 1 auto;
+    }
+
+    // @see LayoutHelper#search_clear_button
+    // @see file:app/assets/javascripts/feature/advanced-search.js *clearSearchTerms()*
+    .search-clear {
+
+        @include clear-selection-button;
+
+        position:          relative;
+        margin:            auto 0;
+        padding:           0 0.25rem;
+        color:             $uva-text-gray;
+        background-color:  white;
+        border-color:      transparent;
+
+        &:focus {
+            outline-offset: -4px;
+        }
+
+        * {
+            display: block;
+            color:   inherit;
+        }
+    }
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    .search-bar-row {
+
+        @extend %header-section;
+
+        flex-wrap:       nowrap;
+        justify-content: flex-start;
+
+        @media #{$not-wide-screen} {
+            flex-wrap:       wrap;
+            justify-content: space-between;
+        }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        // @see LayoutHelper#search_input_select
+        .search-input-select {
+
+            height:       1.75rem;
+            margin-right: 0.5rem;
+            margin-left:  calc(#{$gap-x} / 2);
+            font-size:    large;
+            color:        black;
+
+            // noinspection CssReplaceWithShorthandSafely
+            @media #{$narrow-screen} {
+                flex:         1 1 auto;
+                height:       2rem;
+                max-width:    80vw;
+                margin:       0;
+                margin-right: 0.5rem;
+                font-weight:  bold;
+                color:        #555;
+            }
+
+            option {
+                color: inherit; // Needed everywhere except Firefox.
+
+                // This is needed for the Firefox Accessibility panel because
+                // the default color (transparent) is #0000 (black with an
+                // opacity of 0), which does not play well with color contrast
+                // evaluation.
+                background-color: inherit;
+            }
+        }
+
+        .search-bar {
+
+            display:      flex;
+            flex-wrap:    nowrap;
+            margin-right: calc(2 * #{$gap-x});
+            flex:         1 1 auto;
+
+            @media #{$medium-width} {
+                margin-right: calc(4 * #{$gap-x});
+            }
+
+            // noinspection CssReplaceWithShorthandSafely
+            @media #{$narrow-screen} {
+                max-width: 80vw;
+                margin:    calc(2 * #{$gap-y}) 0;
+            }
+        }
+    }
+
+    // @see LayoutHelper#search_bar_container
+    .search-bar-container {
+
+        $sb-row-vertical-gap:        $gap-y;
+        $sb-row-narrow-vertical-gap: calc(3 * #{$gap-y});
+        $sb-clear-inset:             -1.75rem;
+
+        display:               grid;
+        grid-template-columns: [group] 1fr [add] auto [submit] auto;
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        @extend %header-control-interior;
+
+        .search-bar {
+            .search-clear {
+
+                left:         $sb-clear-inset;
+                margin-right: $sb-clear-inset;
+
+                * {
+                    font-size: 80%;
+                }
+            }
+        }
+
+        // Controls for adding/removing search input rows.
+        .search-row-control {
+
+            user-select:  none;
+
+            &:focus {
+                @extend %focus;
+            }
+
+            // This is a technique for rendering the icon in a color since the
+            // HTML entity itself can't be given a color (for some reason...).
+            * {
+                color:        transparent;
+                text-shadow:  0 0 0 white;
+                cursor:       pointer;
+            }
+        }
+
+        .search-bar-group {
+
+            @extend %header-section;
+
+            flex-direction:  column;
+            flex-wrap:       nowrap;
+            justify-content: flex-start;
+
+            @media #{$not-wide-screen} {
+                flex-wrap:       wrap;
+                justify-content: space-between;
+            }
+
+            .search-bar-row {
+
+                margin: 0;
+
+                &:not(.first) {
+
+                    margin-top: $sb-row-vertical-gap;
+
+                    @media #{$narrow-screen} {
+                        margin-top: $sb-row-narrow-vertical-gap;
+                    }
+                }
+            }
+        }
+    }
+
+    .search-controls {
+
+        row-gap: 0;
+
+        @media #{$not-narrow-screen} {
+            .advanced-search-toggle:not(.visible) { display: none; }
+            .menu-button.reset:not(.visible)      { display: none; }
+        }
+
+        // noinspection CssReplaceWithShorthandSafely
+        @media #{$narrow-screen} {
+            grid-template:   'search reset toggle' / 1fr 1fr 1fr;
+            column-gap:      1rem;
+            justify-content: space-between;
+            justify-items:   center;
+            width:           100%;
+            margin:          0;
+            margin-top:      calc(3 * #{$page-padding-y});
+            margin-bottom:   calc(2 * #{$page-padding-y});
+        }
+    }
+}
+
+//=============================================================================
+// Sections - search filters
+//=============================================================================
+
+// Header row( for search filters (sort, per-page, format, etc.) with contents
+// inside an .enclosure child element.
+.layout-section.search.filters:not(.enclosure) {
+
+    //padding-top: 0.5vh; // For .bottom.shadow.enclosure child.
+
+    @media #{$wide-screen} {
+        //padding-bottom: 2vh;
+    }
+
+    @media #{$medium-width} {
+        //padding-bottom: 1.5vh;
+    }
+
+    @media #{$narrow-screen} {
+        //padding-bottom: 1vh;
+    }
+}
+
+// Header row element containing search filters.
+.layout-section.search.filters.enclosure,
+.layout-section.search.filters > .enclosure {
+
+    display:         grid;
+    padding-bottom:  3vh;
+    justify-content: space-between;
+
+    @media #{$wide-screen} {
+        grid-template-columns: [container] 1fr [controls] auto;
+        column-gap:            1rem;
+    }
+
+    @media #{$medium-width} {
+        grid-template-columns: [container] 0.9375fr [controls] auto;
+        padding-bottom:        2vh;
+    }
+
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+        overflow-y:            hidden;
+    }
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    // @see LayoutHelper#search_filter_container
+    .search-filter-container {
+
+        @extend %header-search-section;
+        @extend %header-control-panel;
+
+        //=====================================================================
+        // Grid layout
+        //=====================================================================
+
+        display:    grid;
+        max-width:  unset;
+        overflow-y: hidden;
+        box-sizing: border-box;
+        gap:        0 $gap-x; // @see %grid-cell
+
+        // Maximum number of physical columns per width breakpoint.
+
+        $max-columns: 6;
+        $columns-map: (
+            'wide':   ('columns': $max-columns),
+            'medium': ('columns': 2),
+            'narrow': ('columns': 1)
+        );
+
+        // Layout of each logical column.
+
+        @media #{$narrow-screen} {
+            $column: minmax(25vw, 1fr);
+            @include grid-column-classes($max-columns, $column, $columns-map);
+        }
+
+        @media #{$not-narrow-screen} {
+            $column: [label] max-content [menu] minmax(10vw, 1fr);
+            @include grid-column-classes($max-columns, $column, $columns-map);
+        }
+
+        //=====================================================================
+        // Grid cell placeholder classes
+        //=====================================================================
+
+        // In order for %hidden-grid-cell to work, vertical grid gap must be
+        // managed "manually" here rather than via grid-gap.
+        %grid-cell {
+            display: block;
+            margin:  0 0 $gap-y;
+        }
+
+        // When the advanced search grid is closed, each affected grid cell is
+        // flattened to an invisible element which continues to contribute to
+        // the layout of grid columns but takes up no vertical space.
+        @mixin hidden-grid-cell {
+            &, & * {
+                height:        0;
+                margin-top:    0;
+                margin-bottom: 0;
+                line-height:   2; // NOTE: I *really* don't know why this works
+                visibility:    hidden;
+            }
+        }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        // This takes up space to the left of .menu-button so that a pair of
+        // .menu-spacer/.menu-button can be treated by the grid the same way as
+        // a pair of .menu-label/.menu-control.
+        .menu-spacer {
+
+            @extend %grid-cell;
+
+            @media #{$not-wide-screen} {
+                display: none;
+            }
+        }
+
+        // A button embedded within the grid (paired with a .menu-spacer to the
+        // left).
+        .menu-button {
+
+            @extend %grid-cell;
+
+            @media #{$not-wide-screen} {
+                display: none;
+            }
+
+            $padding-x:    20px;
+
+            margin-bottom: auto;
+            margin-left:   2 * $padding-x; // Needed to keep grid from growing.
+            padding:       2px $padding-x;
+            line-height:   1;
+            justify-self:  flex-end;
+        }
+
+        // The label to the left of a .menu-control.
+        .menu-label,
+        .date-label {
+
+            @extend %grid-cell;
+
+            margin-top:   calc(3 * #{$gap-y} / 2);
+            margin-right: $gap-x;
+            user-select:  none;
+
+            &.col-first {
+                @media #{$wide-screen} {
+                    @include grid-column(1);
+                }
+            }
+        }
+
+        // A dropdown menu (paired with a .menu-label to the left).
+        .menu-control,
+        .date-control {
+
+            @extend %grid-cell;
+
+            margin-top:   calc(#{$gap-y} / 2);
+            margin-right: calc(3 * #{$gap-x});
+
+            > * {
+                min-height:  2.25rem;
+            }
+
+            select {
+                height: 2rem;
+                width:  100%;
+            }
+
+            input[type="date"] {
+                height:      1.75rem;
+                width:       97.5%;
+                font-family: inherit;
+            }
+        }
+
+        //=====================================================================
+        // Conditions
+        //=====================================================================
+
+        // In the "opened" state, the advanced search control grid element
+        // includes the '.open' class.  In the "not-opened" state, the grid is
+        // limited to the top row of controls (without a visible "reset"
+        // button).
+        &:not(.open) {
+            > * {
+
+                &.reset,
+                &:not(.row-first) {
+                    @include hidden-grid-cell;
+                }
+
+                @media #{$narrow-screen} {
+                    &:not(.col-first) {
+                        @include hidden-grid-cell;
+                    }
+                }
+            }
+        }
+    }
+
+    .search-controls {
+
+        @media #{$narrow-screen} {
+            display: none;
+        }
+
+        @media #{$not-narrow-screen} {
+
+            row-gap: 0.9rem;
+
+            .search-button:not(.visible) { display: none; }
+        }
+    }
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    &.shadow {
+
+        // noinspection CssReplaceWithShorthandSafely
+        .search-filter-container {
+            padding:       1rem;
+            padding-left:  1.25rem;
+            padding-right: 0.25rem;
+            border:        none;
+            box-shadow:    inset 0 0 8px 1px $uva-accent-teal;
+        }
+
+        .search-controls {
+            @media #{$not-narrow-screen} {
+                row-gap: 1.25rem;
+            }
+        }
+    }
+}

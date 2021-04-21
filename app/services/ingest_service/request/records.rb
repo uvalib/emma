@@ -19,10 +19,10 @@ module IngestService::Request::Records
 
   # == PUT /records
   #
-  # EMMA Federated Ingestion.
+  # Inserts or updates metadata records in the search index.
   #
-  # Inserts or updates one or more metadataRecords in the search index. For
-  # the "upsert" operation, if no such record exists for the emma_repository,
+  # Inserts or updates one or more metadataRecords in the search index. For the
+  # "upsert" operation, if no such record exists for the emma_repository,
   # emma_repositoryRecordId, dc_format, and (optionally) emma_formatVersion, a
   # record is created. Otherwise the existing record is updated.
   #
@@ -33,8 +33,8 @@ module IngestService::Request::Records
   #
   # @return [Ingest::Message::Response]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//records
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/ingestion/upsertRecords   HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths/records             JSON API specification
   #
   # == Variations
   #
@@ -60,13 +60,13 @@ module IngestService::Request::Records
   end
     .tap do |method|
       add_api method => {
-        # TODO: ?
+        # No parameters.
       }
     end
 
   # == POST /recordDeletes
   #
-  # Deletes one or more metadataRecords in the search index. Records are
+  # Deletes one or more metadataRecords from the search index. Records are
   # uniquely identified by the emma_repository, emma_repositoryRecordId,
   # dc_format, and (optionally) emma_formatVersion.
   #
@@ -77,8 +77,8 @@ module IngestService::Request::Records
   #
   # @return [Ingest::Message::Response]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordDeletes
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/ingestion/deleteRecords   HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths/recordDeletes       JSON API specification
   #
   # == Variations
   #
@@ -108,13 +108,13 @@ module IngestService::Request::Records
   end
     .tap do |method|
       add_api method => {
-        # TODO: ?
+        # No parameters.
       }
     end
 
   # == POST /recordGets
   #
-  # Retrieves one or more metadataRecords in the search index. Records are
+  # Retrieves one or more metadataRecords from the search index. Records are
   # uniquely identified by the emma_repository, emma_repositoryRecordId,
   # dc_format, and (optionally) emma_formatVersion.
   #
@@ -125,8 +125,8 @@ module IngestService::Request::Records
   #
   # @return [Search::Message::SearchRecordList]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordGets
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/ingestion/getRecords  HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths/recordGets      JSON API specification
   #
   # == Variations
   #
@@ -155,7 +155,7 @@ module IngestService::Request::Records
   end
     .tap do |method|
       add_api method => {
-        # TODO: ?
+        # No parameters.
       }
     end
 

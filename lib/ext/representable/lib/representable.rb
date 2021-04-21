@@ -48,8 +48,9 @@ module Representable
   #
   module RepresentableDebug
 
-    def self.included(mod)
-      mod.send(:extend, self)
+    # @private
+    def self.included(base)
+      base.send(:extend, self)
     end
 
     private
@@ -226,12 +227,12 @@ module Representable
           label = nil
         end
         label &&= "#{label}."
-        methods.flatten.each do |method|
+        methods.flatten.each do |meth|
           module_eval do
-            alias_method :"original_#{method}", method
-            define_method(method) do |*args|
-              __debug_show(mode, "#{label}#{method}", *args)
-              send("original_#{method}", *args)
+            alias_method :"original_#{meth}", meth
+            define_method(meth) do |*args|
+              __debug_show(mode, "#{label}#{meth}", *args)
+              send("original_#{meth}", *args)
             end
           end
         end

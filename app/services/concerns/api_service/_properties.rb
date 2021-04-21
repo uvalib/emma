@@ -12,6 +12,7 @@ require 'faraday'
 #
 module ApiService::Properties
 
+  # @private
   def self.included(base)
     base.send(:extend, self)
   end
@@ -59,7 +60,7 @@ module ApiService::Properties
   # @type [Array<Symbol>]
   #
   # == Usage Notes
-  # Compare with AllowsType#values.
+  # Compare with BsAllowsType#values.
   #
   HTTP_METHODS =
     %w(GET PUT POST DELETE)

@@ -7,15 +7,15 @@ __loading_begin(__FILE__)
 
 # Bs::Record::UserPod
 #
-# @attr [DisabilityType] disabilityType
-# @attr [String]         proofSource
+# @attr [BsDisabilityType] disabilityType
+# @attr [String]           proofSource
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_user_pod
 #
 class Bs::Record::UserPod < Bs::Api::Record
 
   schema do
-    has_one   :disabilityType, DisabilityType
+    has_one   :disabilityType, BsDisabilityType
     has_one   :proofSource
   end
 

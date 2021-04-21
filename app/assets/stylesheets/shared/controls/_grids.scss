@@ -1,6 +1,7 @@
 // app/assets/stylesheets/shared/controls/_grids.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Grid definitions.
@@ -59,7 +60,6 @@
 /// @param {String}  $template
 /// @param {Numeric} $columns
 ///
-// noinspection SassScssResolvedByNameOnly
 @mixin grid-columns($template, $columns: 1) {
     @if $template {
         @if $columns <= 1 {
@@ -106,7 +106,6 @@
 /// @param {String}  $template
 /// @param {Map}     $template-map
 ///
-// noinspection SassScssResolvedByNameOnly, CssInvalidFunction
 @mixin grid-column-classes($max-cols, $template: false, $template-map: false) {
 
     @if type-of($template-map) != 'map' {

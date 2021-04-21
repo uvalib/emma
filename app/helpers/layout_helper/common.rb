@@ -13,7 +13,6 @@ module LayoutHelper::Common
   include Emma::Constants
   include HtmlHelper
   include ParamsHelper
-  include SearchTermsHelper
 
   # ===========================================================================
   # :section:
@@ -78,7 +77,9 @@ module LayoutHelper::Common
   # @see file:app/assets/javascripts/feature/panel.js
   #
   def toggle_button(id:, label: nil, selector: nil, **opt)
-    prepend_css_classes!(opt, 'toggle')
+    css_selector  = '.toggle'
+    opt[:type]  ||= 'button'
+    opt[:title] ||= PANEL_OPENER_TIP
     opt[:'aria-controls'] = id       if id.present?
     opt[:'data-selector'] = selector if selector.present?
     raise 'no target id given' if opt[:'aria-controls'].blank?
@@ -86,9 +87,7 @@ module LayoutHelper::Common
       opt[:data] = opt[:data].except(:selector)
     end
     label = label ? non_breaking(label) : PANEL_OPENER_LABEL
-    opt[:type]  ||= 'button'
-    opt[:title] ||= PANEL_OPENER_TIP
-    button_tag(label, opt)
+    button_tag(label, prepend_classes!(opt, css_selector))
   end
 
   # ===========================================================================
@@ -97,56 +96,108 @@ module LayoutHelper::Common
 
   protected
 
+  # If the client is responsible for managing hidden inputs on forms then they
+  # should not be generated via #search_form.
+  #
+  # @type [Boolean]
+  #
+  CLIENT_MANAGES_HIDDEN_INPUTS = true
+
+  def search_form(target, id = nil, hidden: nil, **opt, &block)
+    search_form_with_hidden(target, id, hidden: hidden, **opt, &block)
+  end unless CLIENT_MANAGES_HIDDEN_INPUTS
+
   # A form used to create/modify a search.
   #
-  # If currently searching for the indicated *type*, then the current URL
-  # parameters are included as hidden fields so that the current search is
-  # repeated but augmented with the added parameter.  Otherwise a new search is
-  # assumed.
+  # @param [Symbol, String, nil] target
+  # @param [Symbol, String, nil] id       @note [1]
+  # @param [Hash, nil]           hidden   note [1]
+  # @param [Hash]                opt      Passed to #html_form.
   #
-  # Hidden fields are sorted by name with those before *id* included before the
-  # content provided via the block, and with those whose names sort later than
-  # *id* included after the content provided by the block.  This ensures that
-  # the resulting search URL will be generated with parameters in a consistent
-  # order.
-  #
-  # @param [Symbol, String] id
-  # @param [Symbol, String] type
-  # @param [Hash]           opt       Passed to #form_tag.
-  #
-  # @return [ActiveSupport::SafeBuffer] An HTML form element.
-  # @return [nil]                       If search is not available for *type*.
+  # @return [ActiveSupport::SafeBuffer]   An HTML form element.
+  # @return [nil]                         Search is not available for *target*.
   #
   # @yield To supply additional field(s) for the <form>.
   # @yieldreturn [String, Array<String>]
   #
-  def search_form(id, type, **opt)
-    return if (path = search_target_path(type)).blank?
+  # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
+  #
+  #++
+  # noinspection RubyUnusedLocalVariable
+  #--
+  def search_form(target, id = nil, hidden: nil, **opt, &block)
+    return if (path = search_target_path(target)).blank?
     opt[:method] ||= :get
-    before, after =
-      if path == request.path
-        hidden_fields = url_parameters.except(id, :offset, :start).sort
-        hidden_fields.partition { |k, _| k.to_s <= id.to_s }.each do |hidden|
-          hidden.map! { |k, v| hidden_url_parameter(id, k, v) }
-        end
-      end
-    form_tag(path, opt) do
-      [*before, *yield, *after].join("\n").html_safe
-    end
+    html_form(path, opt, &block)
+  end if CLIENT_MANAGES_HIDDEN_INPUTS
+
+  # A form used to create/modify a search.
+  #
+  # When searching via the indicated *target*, and *id* is supplied then the
+  # current URL parameters are included as hidden fields so that the current
+  # search is repeated but augmented with the added parameter.
+  #
+  # Otherwise a new search is assumed.
+  #
+  # @param [Symbol, String, nil] target
+  # @param [Symbol, String, nil] id       Passed to #hidden_parameter_for.
+  # @param [Hash, nil]           hidden   Passed to #hidden_parameter_for.
+  # @param [Hash]                opt      Passed to #html_form.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML form element.
+  # @return [nil]                         Search is not available for *target*.
+  #
+  # @yield To supply additional field(s) for the <form>.
+  # @yieldreturn [String, Array<String>]
+  #
+  # @note Used only if #CLIENT_MANAGES_HIDDEN_INPUTS is false.
+  #
+  def search_form_with_hidden(target, id = nil, hidden: nil, **opt)
+    return if (path = search_target_path(target)).blank?
+    include_hidden = hidden.present? || (id.present? && (path == request.path))
+    before, after = (hidden_parameters_for(id, hidden) if include_hidden)
+    elements = [*before, *yield, *after]
+    opt[:method] ||= :get
+    html_form(path, *elements, opt)
+  end
+
+  # Create sets of hidden fields to accompany the *id* field.
+  #
+  # The field names are sorted so that the method returns zero or more
+  # '<input type="hidden">' elements which should be inserted before the *id*
+  # field and zero or more elements that should be inserted after.
+  #
+  # This ensures that the resulting search URL will be generated with
+  # parameters in a consistent order.
+  #
+  # @param [Symbol, String, nil] id
+  # @param [Hash, nil]           fields   Default: based on #url_parameters
+  #
+  # @return [Array<(Array,Array)>]
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def hidden_parameters_for(id, fields = nil)
+    id     = id.presence&.to_sym
+    fields = fields&.symbolize_keys || url_parameters
+    fields = fields.except!(id, *NON_SEARCH_KEYS).sort
+    before_after = id ? fields.partition { |k, _| k <= id } : [fields, []]
+    before_after.each { |a| a.map! { |k, v| hidden_input(k, v, id: id) } }
   end
 
   # Generate a hidden <input> which indicates a parameter for the new search
   # URL that will result from the associated facet value being removed from the
   # current search.
   #
-  # @param [Symbol, String, nil] id
   # @param [Symbol, String]      k
   # @param [String, Array]       v
+  # @param [Symbol, String, nil] id
   # @param [String]              separator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def hidden_url_parameter(id, k, v, separator: "\n")
+  def hidden_input(k, v, id: nil, separator: "\n")
     id = [id, k].reject(&:blank?).join('-')
     if v.is_a?(Array)
       i = 0
@@ -159,17 +210,18 @@ module LayoutHelper::Common
 
   # The target path for searches from the search bar.
   #
-  # @param [Symbol, String] type
-  # @param [Hash]           opt       Passed to #url_for.
+  # @param [Symbol, String, nil] target   Default: #DEFAULT_SEARCH_CONTROLLER
+  # @param [Hash]                opt      Passed to #url_for.
   #
   # @return [String]
   #
-  def search_target_path(type, **opt)
-    controller = "/#{type}"
-    action     = SEARCH_CONTROLLERS[type&.to_sym]
+  def search_target_path(target = nil, **opt)
+    target   ||= DEFAULT_SEARCH_CONTROLLER
+    controller = "/#{target}"
+    action     = SearchTermsHelper::SEARCH_CONTROLLERS[target&.to_sym]
     url_for(opt.merge(controller: controller, action: action, only_path: true))
   rescue ActionController::UrlGenerationError
-    search_target_path(DEFAULT_SEARCH_CONTROLLER, **opt)
+    search_target_path(**opt)
   end
 
 end

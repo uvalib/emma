@@ -40,15 +40,15 @@ module BookshareService::Request::CollectionTitles
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]           :country
-  # @option opt [String]           :isbn
-  # @option opt [TitleStatus]      :titleStatus
-  # @option opt [IsoDate]          :startUpdatedDate
-  # @option opt [IsoDate]          :endUpdatedDate
-  # @option opt [String]           :start
-  # @option opt [Integer]          :limit        Default: 10
-  # @option opt [CatalogSortOrder] :sortOrder    Default: 'title'
-  # @option opt [Direction]        :direction    Default: 'asc'
+  # @option opt [String]             :country
+  # @option opt [String]             :isbn
+  # @option opt [BsTitleStatus]      :titleStatus
+  # @option opt [IsoDate]            :startUpdatedDate
+  # @option opt [IsoDate]            :endUpdatedDate
+  # @option opt [String]             :start
+  # @option opt [Integer]            :limit        Default: 10
+  # @option opt [BsCatalogSortOrder] :sortOrder    Default: 'title'
+  # @option opt [BsSortDirection]    :direction    Default: 'asc'
   #
   # @return [Bs::Message::TitleMetadataCompleteList]
   #
@@ -64,12 +64,13 @@ module BookshareService::Request::CollectionTitles
         optional: {
           country:          String,
           isbn:             String,
+          titleStatus:      BsTitleStatus,
           startUpdatedDate: IsoDate,
           endUpdatedDate:   IsoDate,
           start:            String,
           limit:            Integer,
-          sortOrder:        CatalogSortOrder,
-          direction:        Direction,
+          sortOrder:        BsCatalogSortOrder,
+          direction:        BsSortDirection,
         },
         reference_page:     'catalog',
         reference_id:       '_catalog-search'
@@ -118,15 +119,15 @@ module BookshareService::Request::CollectionTitles
   # @option opt [Boolean]                   :allowRecommend
   # @option opt [Integer]                   :numPages
   # @option opt [String]                    :publisher
-  # @option opt [Array<CategoryType>]       :categories             *REQUIRED*
+  # @option opt [Array<BsCategoryType>]     :categories             *REQUIRED*
   # @option opt [String, Array<String>]     :countries              *REQUIRED*
   # @option opt [String, Array<String>]     :languages              *REQUIRED*
   # @option opt [String, Array<String>]     :grades
-  # @option opt [Array<ContentWarning>]     :contentWarnings
+  # @option opt [Array<BsContentWarning>]   :contentWarnings
   # @option opt [String, Array<String>]     :relatedIsbns
   # @option opt [BsRightsType]              :usageRestriction       *REQUIRED*
   # @option opt [String]                    :externalCategoryCode
-  # @option opt [MusicScoreType]            :musicScoreType
+  # @option opt [BsMusicScoreType]          :musicScoreType
   # @option opt [Boolean]                   :hasChordSymbols
   # @option opt [String]                    :instruments
   # @option opt [String]                    :key
@@ -140,15 +141,15 @@ module BookshareService::Request::CollectionTitles
   # @option opt [Boolean]                   :availableToDemo
   # @option opt [Boolean]                   :availableWorldwide
   # @option opt [String, Array<String>]     :states
-  # @option opt [TitleContentType]          :contentType
+  # @option opt [BsTitleContentType]        :contentType
   # @option opt [String]                    :comments
   # @option opt [Boolean]                   :hasEmbeddedImageDescriptions
-  # @option opt [ScanQuality]               :quality
+  # @option opt [BsScanQuality]             :quality
   # @option opt [String]                    :originCountry
   # @option opt [String]                    :productIdentifier
   # @option opt [String]                    :seriesId
-  # @option opt [ExternalFormatType]        :externalFormat         *REQUIRED*
-  # @option opt [LexileCode]                :lexileCode
+  # @option opt [BsExternalFormatType]      :externalFormat         *REQUIRED*
+  # @option opt [BsLexileCode]              :lexileCode
   # @option opt [String]                    :lexileNumber
   #
   # @return [Bs::Message::StatusModel]
@@ -167,12 +168,12 @@ module BookshareService::Request::CollectionTitles
           isbn13:                       String,
           authors:                      String,
           synopsis:                     String,
-          categories:                   CategoryType,
+          categories:                   BsCategoryType,
           countries:                    String,
           languages:                    String,
           usageRestriction:             BsRightsType,
-          contentType:                  TitleContentType,
-          externalFormat:               ExternalFormatType,
+          contentType:                  BsTitleContentType,
+          externalFormat:               BsExternalFormatType,
         },
         optional: {
           subtitle:                     String,
@@ -201,10 +202,10 @@ module BookshareService::Request::CollectionTitles
           numPages:                     Integer,
           publisher:                    String,
           grades:                       String,
-          contentWarnings:              ContentWarning,
+          contentWarnings:              BsContentWarning,
           relatedIsbns:                 String,
           externalCategoryCode:         String,
-          musicScoreType:               MusicScoreType,
+          musicScoreType:               BsMusicScoreType,
           hasChordSymbols:              Boolean,
           instruments:                  String,
           key:                          String,
@@ -220,11 +221,11 @@ module BookshareService::Request::CollectionTitles
           states:                       String,
           comments:                     String,
           hasEmbeddedImageDescriptions: Boolean,
-          quality:                      ScanQuality,
+          quality:                      BsScanQuality,
           originCountry:                String,
           productIdentifier:            String,
           seriesId:                     String,
-          lexileCode:                   LexileCode,
+          lexileCode:                   BsLexileCode,
           lexileNumber:                 String,
         },
         multi: %i[
@@ -295,16 +296,16 @@ module BookshareService::Request::CollectionTitles
   # @option opt [Boolean]                   :allowRecommend
   # @option opt [Integer]                   :numPages
   # @option opt [String]                    :publisher
-  # @option opt [Array<CategoryType>]       :categories
+  # @option opt [Array<BsCategoryType>]     :categories
   # @option opt [String, Array<String>]     :bisacCategories
   # @option opt [String, Array<String>]     :countries
   # @option opt [String, Array<String>]     :languages
   # @option opt [String, Array<String>]     :grades
-  # @option opt [Array<ContentWarning>]     :contentWarnings
+  # @option opt [Array<BsContentWarning>]   :contentWarnings
   # @option opt [String, Array<String>]     :relatedIsbns
   # @option opt [BsRightsType]              :usageRestriction
   # @option opt [String]                    :externalCategoryCode
-  # @option opt [MusicScoreType]            :musicScoreType
+  # @option opt [BsMusicScoreType]          :musicScoreType
   # @option opt [Boolean]                   :hasChordSymbols
   # @option opt [String]                    :instruments
   # @option opt [String]                    :key
@@ -320,11 +321,11 @@ module BookshareService::Request::CollectionTitles
   # @option opt [String, Array<String>]     :states
   # @option opt [String]                    :comments
   # @option opt [Boolean]                   :hasEmbeddedImageDescriptions
-  # @option opt [ScanQuality]               :quality
+  # @option opt [BsScanQuality]             :quality
   # @option opt [String]                    :originCountry
   # @option opt [String]                    :productIdentifier
   # @option opt [String]                    :seriesId
-  # @option opt [LexileCode]                :lexileCode
+  # @option opt [BsLexileCode]              :lexileCode
   # @option opt [String]                    :lexileNumber
   # @option opt [Boolean]                   :nimacRestricted
   #
@@ -372,16 +373,16 @@ module BookshareService::Request::CollectionTitles
           allowRecommend:               Boolean,
           numPages:                     Integer,
           publisher:                    String,
-          categories:                   CategoryType,
+          categories:                   BsCategoryType,
           bisacCategories:              String,
           countries:                    String,
           languages:                    String,
           grades:                       String,
-          contentWarnings:              ContentWarning,
+          contentWarnings:              BsContentWarning,
           relatedIsbns:                 String,
           usageRestriction:             BsRightsType,
           externalCategoryCode:         String,
-          musicScoreType:               MusicScoreType,
+          musicScoreType:               BsMusicScoreType,
           hasChordSymbols:              Boolean,
           instruments:                  String,
           key:                          String,
@@ -397,11 +398,11 @@ module BookshareService::Request::CollectionTitles
           states:                       String,
           comments:                     String,
           hasEmbeddedImageDescriptions: Boolean,
-          quality:                      ScanQuality,
+          quality:                      BsScanQuality,
           originCountry:                String,
           productIdentifier:            String,
           seriesId:                     String,
-          lexileCode:                   LexileCode,
+          lexileCode:                   BsLexileCode,
           lexileNumber:                 String,
           nimacRestricted:              Boolean,
         },

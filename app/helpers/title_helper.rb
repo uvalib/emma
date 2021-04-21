@@ -72,8 +72,9 @@ module TitleHelper
   #
   def thumbnail(item, link: false, **opt)
     return unless item
+    css_selector  = '.thumbnail'
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
-    prepend_css_classes!(html_opt, 'thumbnail')
+    prepend_classes!(html_opt, css_selector)
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image
     if url.present?
       id   = item.identifier
@@ -105,8 +106,9 @@ module TitleHelper
   # element.
   #
   def cover_image(item, link: false, **opt)
+    css_selector  = '.cover-image'
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
-    prepend_css_classes!(html_opt, 'cover-image')
+    prepend_classes!(html_opt, css_selector)
     html_opt[:'data-group'] = opt[:group] if opt[:group].present?
     url = item.respond_to?(:cover_image) && item.cover_image
     if url.present?

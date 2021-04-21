@@ -89,9 +89,10 @@ module HeadHelper::Stylesheets
     @page_stylesheets.flatten!
     @page_stylesheets.reject!(&:blank?)
     @page_stylesheets.uniq!
-    sources = @page_stylesheets.dup
-    sources << meta_options(**opt)
-    stylesheet_link_tag(*sources)
+    @page_stylesheets.map! do |src|
+      stylesheet_link_tag(src, meta_options(src, **opt))
+    end
+    safe_join(@page_stylesheets, "\n")
   end
 
 end

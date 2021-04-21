@@ -96,6 +96,7 @@ class User < ApplicationRecord
 
   has_many :members
   has_many :reading_lists
+  has_many :search_calls
 
   # ===========================================================================
   # :section: Authentication

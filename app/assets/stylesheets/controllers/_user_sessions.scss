@@ -1,6 +1,7 @@
 // app/assets/stylesheets/controllers/_user_sessions.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Page header
@@ -20,7 +21,6 @@ body.user_sessions {
 // Login page
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .sign-in-token {
 
     display:     inline-flex;

@@ -14,8 +14,8 @@ module OmniAuth
 
   module Strategies
 
-    # An extension of OmniAuth::Strategies::OAuth2 which sets up some defaults
-    # that would otherwise have to be specified in initializers/devise.rb.
+    # An extension of the +OAuth2+ strategy which sets up some defaults that
+    # would otherwise have to be specified in initializers/devise.rb.
     #
     # @see https://github.com/omniauth/omniauth-oauth2
     #
@@ -23,7 +23,7 @@ module OmniAuth
     # The base implementation of #uid, #info, #credentials, and #extra and
     # their use of associated blocks within the class definition seem to be
     # problematic used in conjunction with retrieving account information from
-    # Bookshare.  Thus, these methods are overridden explicitly in order to
+    # +Bookshare+.  Thus, these methods are overridden explicitly in order to
     # ensure consistency.
     #
     #--
@@ -196,7 +196,7 @@ module OmniAuth
         @account_info ||= get_account_info
       end
 
-      # Acquire information about the user account from Bookshare.
+      # Acquire information about the user account from +Bookshare+.
       #
       # @param [Hash, nil] opt        Passed to ::OAuth2::AccessToken#get
       #
@@ -241,7 +241,7 @@ module OmniAuth
 
       public
 
-      # The OAuth2 client instance.
+      # The +OAuth2+ client instance.
       #
       # @return [::OAuth2::Client]
       #
@@ -382,11 +382,11 @@ module OmniAuth
       end
 
       # Trigger an exception if the signed-in user doesn't have a valid
-      # Bookshare OAuth2 token.
+      # +Bookshare+ +OAuth2+ token.
       #
       # @return [void]
       #
-      # @raise [StandardError]  If Bookshare account info was unavailable.
+      # @raise [StandardError]  If +Bookshare+ account info was unavailable.
       #
       def check_user_validity
         get_account_info(raise_errors: true)
@@ -398,7 +398,7 @@ module OmniAuth
 
       protected
 
-      # Acquire the OAuth token from the remote service.
+      # Acquire the +OAuth2+ token from the remote service.
       #
       # @return [::OAuth2::AccessToken]
       #
@@ -792,27 +792,6 @@ module OmniAuth
           super
             .tap { |result| __ext_debug("--> #{result.inspect}") }
         end
-
-=begin
-        # =====================================================================
-        # :section:
-        # =====================================================================
-
-        protected
-
-        # Terminate the session with the OAuth2 provider telling it to revoke
-        # the access token.
-        #
-        # @param [OAuth2::AccessToken, String, nil] token  Def: `#access_token`
-        #
-        # @return [OAuth2::Response]
-        # @return [nil]               If no token was given or present.
-        #
-        def revoke_access_token(token = nil)
-          __ext_debug(*token)
-          super
-        end
-=end
 
       end
 

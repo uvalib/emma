@@ -20,14 +20,16 @@ module TestHelper::Samples
   # noinspection NonAsciiCharacters
   #++
   SAMPLE_FIXTURE = {
-    artifact:     :example,
-    edition:      :New_Yorker_1,
-    member:       :organization,
-    periodical:   :New_Yorker,
-    reading_list: :A_Member_List,
-    role:         :example,
-    title:        :Investigación,
-    user:         :example,
+    artifact:       :example,
+    edition:        :New_Yorker_1,
+    member:         :organization,
+    periodical:     :New_Yorker,
+    reading_list:   :A_Member_List,
+    role:           :example,
+    search_call:    :Mansfield_Park,
+    search_result:  :Mansfield_Park_1,
+    title:          :Investigación,
+    user:           :example,
   }.freeze
 
   # ===========================================================================
@@ -45,6 +47,8 @@ module TestHelper::Samples
   # @!method sample_periodical
   # @!method sample_reading_list
   # @!method sample_role
+  # @!method sample_search_call
+  # @!method sample_search_result
   # @!method sample_title
   # @!method sample_user
   #
@@ -82,6 +86,14 @@ module TestHelper::Samples
     # Generate a sample instance from text/fixtures/roles.yml.
     # @return [Role]
     def sample_role; end
+
+    # Generate a sample instance from text/fixtures/search_calls.yml.
+    # @return [SearchCall]
+    def sample_search_call; end
+
+    # Generate a sample instance from text/fixtures/search_results.yml.
+    # @return [SearchResult]
+    def sample_search_result; end
 
     # Generate a sample instance from text/fixtures/titles.yml.
     # @return [Title]

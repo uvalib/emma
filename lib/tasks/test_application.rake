@@ -16,9 +16,21 @@ desc 'Run all tests, all serialization tests, and all system tests'
 task 'test:all+system' => %w(test:all test:system)
 
 desc 'Run all tests including rendering to JSON and XML'
+Rake::Task['test:all'].clear
 task 'test:all' => 'test:prepare' do
+=begin # TODO: restore - testing
   TEST_FORMATS = %i[html json xml]
   run_tests
+=end
+  run_tests('test/controllers/search_controller_test.rb') # TODO: remove - testing
+end
+
+desc 'Run system tests only' # not including Bookshare API tests
+Rake::Task['test:system'].clear
+task 'test:system' => 'test:prepare' do
+  dir   = 'test/system'
+  files = Dir.glob("#{dir}/**/*_test.rb") - %W(#{dir}/bookshare_test.rb)
+  run_tests(*files)
 end
 
 # =============================================================================
@@ -99,11 +111,14 @@ end
 # Support methods
 # =============================================================================
 
+# Run the specified tests.
+#
+# @param [Array] test_files           Default: "test/**/*_test.rb"
+#
+# @return [void]
+#
 def run_tests(*test_files)
-  $: << 'test'
-  if test_files.blank?
-    Rails::TestUnit::Runner.rake_run
-  else
-    Rails::TestUnit::Runner.rake_run(test_files.flatten)
-  end
+  $LOAD_PATH << 'test'
+  test_files = test_files.flatten.presence || %w(test/**/*_test.rb)
+  Rails::TestUnit::Runner.rake_run(test_files)
 end

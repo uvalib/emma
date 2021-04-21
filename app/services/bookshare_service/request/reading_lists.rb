@@ -38,10 +38,10 @@ module BookshareService::Request::ReadingLists
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]                 :start
-  # @option opt [Integer]                :limit       Default: 10
-  # @option opt [MyReadingListSortOrder] :sortOrder   Default: 'name'
-  # @option opt [Direction]              :direction   Default: 'asc'
+  # @option opt [String]                   :start
+  # @option opt [Integer]                  :limit       Default: 10
+  # @option opt [BsMyReadingListSortOrder] :sortOrder   Default: 'name'
+  # @option opt [BsSortDirection]          :direction   Default: 'asc'
   #
   # @return [Bs::Message::ReadingListList]
   #
@@ -55,10 +55,10 @@ module BookshareService::Request::ReadingLists
     .tap do |method|
       add_api method => {
         optional: {
-          start:      String,
-          limit:      Integer,
-          sortOrder:  MyReadingListSortOrder,
-          direction:  Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsMyReadingListSortOrder,
+          direction: BsSortDirection,
         },
         reference_id: '_get-my-readinglists-list'
       }
@@ -69,9 +69,9 @@ module BookshareService::Request::ReadingLists
   # == 2.3.2. Create a reading list
   # Create an empty reading list owned by the current user.
   #
-  # @param [String] name
-  # @param [Access] access
-  # @param [Hash] opt                 Passed to #api.
+  # @param [String]   name
+  # @param [BsAccess] access
+  # @param [Hash]     opt             Passed to #api.
   #
   # @option opt [String] :description
   #
@@ -89,7 +89,7 @@ module BookshareService::Request::ReadingLists
       add_api method => {
         required: {
           name:        String,
-          access:      Access,
+          access:      BsAccess,
         },
         optional: {
           description: String,
@@ -168,10 +168,10 @@ module BookshareService::Request::ReadingLists
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]                 :start
-  # @option opt [Integer]                :limit       Default: 10
-  # @option opt [MyReadingListSortOrder] :sortOrder   Default: 'name'
-  # @option opt [Direction]              :direction   Default: 'asc'
+  # @option opt [String]                   :start
+  # @option opt [Integer]                  :limit       Default: 10
+  # @option opt [BsMyReadingListSortOrder] :sortOrder   Default: 'name'
+  # @option opt [BsSortDirection]          :direction   Default: 'asc'
   #
   # @return [Bs::Message::ReadingListList]
   #
@@ -185,10 +185,10 @@ module BookshareService::Request::ReadingLists
     .tap do |method|
       add_api method => {
         optional: {
-          start:      String,
-          limit:      Integer,
-          sortOrder:  MyReadingListSortOrder,
-          direction:  Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsMyReadingListSortOrder,
+          direction: BsSortDirection,
         },
         reference_id: '_get-all-reading-lists', # TODO: ???
       }
@@ -228,9 +228,9 @@ module BookshareService::Request::ReadingLists
   # @param [String] readingListId
   # @param [Hash]   opt               Passed to #api.
   #
-  # @option opt [String] :name
-  # @option opt [String] :description
-  # @option opt [Access] :access
+  # @option opt [String]   :name
+  # @option opt [String]   :description
+  # @option opt [BsAccess] :access
   #
   # @return [Bs::Message::ReadingList]
   #
@@ -249,7 +249,7 @@ module BookshareService::Request::ReadingLists
         optional: {
           name:          String,
           description:   String,
-          access:        Access,
+          access:        BsAccess,
         },
         reference_id:    '_put-readinglist-edit-metadata'
       }
@@ -263,10 +263,10 @@ module BookshareService::Request::ReadingLists
   # @param [String] readingListId
   # @param [Hash]   opt               Passed to #api.
   #
-  # @option opt [String]               :start
-  # @option opt [Integer]              :limit       Default: 10
-  # @option opt [ReadingListSortOrder] :sortOrder   Default: 'title'
-  # @option opt [Direction]            :direction   Default: 'asc'
+  # @option opt [String]                 :start
+  # @option opt [Integer]                :limit       Default: 10
+  # @option opt [BsReadingListSortOrder] :sortOrder   Default: 'title'
+  # @option opt [BsSortDirection]        :direction   Default: 'asc'
   #
   # @return [Bs::Message::ReadingListTitlesList]
   #
@@ -283,10 +283,10 @@ module BookshareService::Request::ReadingLists
           readingListId: String,
         },
         optional: {
-          start:         String,
-          limit:         Integer,
-          sortOrder:     ReadingListSortOrder,
-          direction:     Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsReadingListSortOrder,
+          direction: BsSortDirection,
         },
         reference_id:    '_get-readinglist-titles'
       }

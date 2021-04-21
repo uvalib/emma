@@ -1,12 +1,12 @@
 // app/assets/stylesheets/feature/_scroll.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Scroll-to-top button
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .scroll-to-top {
 
     @extend %button-hover;
@@ -21,7 +21,7 @@
     background:      $uva-accent-orange;
     border:          1px solid $uva-accent-orange;
     border-radius:   50%;
-    z-index:         $z-popup - 1;
+    z-index:         $z-scroll-to-top;
 
     &.icon {
         font-size:       x-large;

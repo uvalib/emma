@@ -5,11 +5,12 @@
 
 __loading_begin(__FILE__)
 
-# Ingest::Message::IdentifierRecordList
+# List of identifier records.
 #
 # @attr [Array<Ingest::Record::IdentifierRecord>] identifiers
 #
-# @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/components/schemas/IdentifierRecordList
+# @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/IdentifierRecordList                    Ingest API documentation
+# @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/components/schemas/IdentifierRecordList JSON schema specification
 #
 class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
 

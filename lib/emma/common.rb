@@ -11,6 +11,7 @@ require 'sanitize'
 #
 module Emma::Common
 
+  # @private
   def self.included(base)
     base.send(:extend, self)
   end
@@ -158,7 +159,7 @@ module Emma::Common
   # @see #build_query_options
   #
   def url_query(*args)
-    opt = { decorate: true }.merge!(args.extract_options!)
+    opt = { decorate: true, unescape: false }.merge!(args.extract_options!)
     build_query_options(*args, opt).flat_map { |k, v|
       v.is_a?(Array) ? v.map { |e| "#{k}=#{e}" } : "#{k}=#{v}"
     }.compact.join('&')
@@ -180,17 +181,22 @@ module Emma::Common
   #                                           then values are accumulated as
   #                                           arrays (default: *false*).
   #
+  # @option args.last [Boolean] :unescape   If *false*, do not unescape values.
+  #
   # @return [Hash{String=>String}]
   #
   def build_query_options(*args)
     opt = {
       minimize: true,
       decorate: false,
-      replace:  false
+      replace:  false,
+      unescape: true
     }.merge!(args.extract_options!)
     minimize = opt.delete(:minimize)
     decorate = opt.delete(:decorate)
     replace  = opt.delete(:replace)
+    unescape = opt.delete(:unescape)
+    opt      = reject_blanks(opt)
     args << opt if opt.present?
     result = {}
     args.each do |arg|
@@ -202,8 +208,10 @@ module Emma::Common
       arg.each do |pair|
         k, v = pair.is_a?(Array) ? pair : pair.to_s.split('=', 2)
         k = CGI.unescape(k.to_s).delete_suffix('[]')
-        v = Array.wrap(v).reject(&:blank?).map { |s| CGI.unescape(s.to_s) }
+        v = Array.wrap(v).reject(&:blank?)
         next if k.blank? || v.blank?
+        v.map!(&:to_s)
+        v.map! { |s| CGI.unescape(s) } if unescape
         if replace || !res[k]
           res[k] = v
         else
@@ -251,16 +259,19 @@ module Emma::Common
     return opt, rem
   end
 
-  # Recursive remove blank items from a hash.
+  # Recursively remove blank items from a hash.
   #
-  # @param [Hash, nil] item
+  # @param [Hash, nil]    item
+  # @param [Boolean, nil] reduce      If *true* transform arrays with a single
+  #                                     element into scalars.
   #
   # @return [Hash]
   #
   # @see #_remove_blanks
   #
-  def reject_blanks(item)
-    _remove_blanks(item) || {}
+  def reject_blanks(item, reduce = false)
+    # noinspection RubyYardReturnMatch
+    item.is_a?(Hash) && _remove_blanks(item, reduce) || {}
   end
 
   # ===========================================================================
@@ -272,37 +283,41 @@ module Emma::Common
   # Recursively remove blank items from an object.
   #
   # @param [Hash, Array, *] item
+  # @param [Boolean, nil]   reduce    If *true* transform arrays with a single
+  #                                     element into scalars.
   #
   # @return [Hash, Array, *, nil]
   #
   # == Variations
   #
-  # @overload remove_blanks(hash)
-  #   @param [Hash] hash
+  # @overload _remove_blanks(hash)
+  #   @param [Hash]         hash
+  #   @param [Boolean, nil] reduce
   #   @return [Hash, nil]
   #
-  # @overload remove_blanks(array)
-  #   @param [Array] array
+  # @overload _remove_blanks(array)
+  #   @param [Array]        array
+  #   @param [Boolean, nil] reduce
   #   @return [Array, nil]
   #
-  # @overload remove_blanks(item)
-  #   @param [*] item
+  # @overload _remove_blanks(item)
+  #   @param [*]            item
+  #   @param [Boolean, nil] reduce
   #   @return [*, nil]
   #
   # == Usage Notes
   # Empty strings and nils are considered blank, however an item or element
   # with the explicit value of *false* is not considered blank.
   #
-  def _remove_blanks(item)
-    case item
-      when TrueClass, FalseClass
-        item
-      when Hash
-        item.map { |k, v| [k, send(__method__, v)] }.to_h.compact.presence
-      when Array
-        item.map { |v| send(__method__, v) }.compact.presence
-      else
-        item.presence
+  def _remove_blanks(item, reduce = false)
+    if item.is_a?(Hash)
+      item.transform_values { |v| _remove_blanks(v, reduce) }.compact.presence
+    elsif item.is_a?(Array)
+      result = item.map { |v| _remove_blanks(v, reduce) }.compact.presence
+      (reduce && (result&.size == 1)) ? result.first : result
+    else
+      # noinspection RubyYardReturnMatch
+      item.is_a?(FalseClass) ? item : item.presence
     end
   end
 
@@ -473,7 +488,7 @@ module Emma::Common
 
   # Strip HTML from value strings.
   #
-  # @param [String] string
+  # @param [String, Symbol] string
   #
   # @return [String]
   #
@@ -521,11 +536,14 @@ module Emma::Common
   #                                           (default: *true*).
   # @option opt [Boolean] :quote            Quote string values
   #                                           (default: *false*)
+  # @option opt [Boolean] :inspect          Replace "v" with "v.inspect"
+  #                                           (default: *false*)
   #
   # @return [Array<String>]
   #
   def normalized_list(values, **opt)
     opt[:sanitize] = true unless opt.key?(:sanitize)
+    sanitize = opt[:sanitize]
     Array.wrap(values).flat_map { |value|
       case value
         when Hash
@@ -540,12 +558,37 @@ module Emma::Common
         when Array
           array_string(value, **opt)
         else
-          value = value.to_s
-          value = sanitized_string(value) if opt[:sanitize]
-          value = quote(value)            if opt[:quote]
-          value
+          value = sanitized_string(value) if sanitize && value.is_a?(String)
+          if opt[:inspect]
+            value.inspect
+          elsif opt[:quote]
+            quote(value)
+          else
+            value.to_s
+          end
       end
     }.reject(&:blank?)
+  end
+
+  # Transform a hash into a struct recursively.  (Any hash value which is
+  # itself a hash will be converted to a struct).
+  #
+  # @param [Hash]         hash
+  # @param [Boolean, nil] arrays      If *true*, convert hashes within arrays.
+  #
+  # @return [Struct]
+  #
+  def struct(hash, arrays = false)
+    keys   = hash.keys.map(&:to_sym)
+    values = hash.values_at(*keys)
+    values.map! do |v|
+      case v
+        when Array then arrays ? v.map { |elem| struct(elem, arrays) } : v
+        when Hash  then struct(v, arrays)
+        else            v
+      end
+    end
+    Struct.new(*keys).new(*values)
   end
 
   # ===========================================================================
@@ -631,22 +674,52 @@ module Emma::Common
     ERB::Util.h(result)
   end
 
-  # Transform a string into a value safe for use as an HTML ID (or class name).
+  # ASCII characters.
   #
-  # @param [String, Symbol] text
-  # @param [Boolean]        camelize    If *false* leave as underscored.
+  # @type [String]
+  #
+  ASCII = (1..255).map(&:chr).join.freeze
+
+  # Work break characters (for use with #tr or #delete). Sequences of any of
+  # these in #html_id will be replaced by a single separator character.
+  #
+  # @type [String]
+  #
+  HTML_ID_WORD_BREAK = (ASCII.remove(/[[:graph:]]/) << '._\-').freeze
+
+  # Characters (for use with #tr or #delete) that are ignored by #html_id.
+  #
+  # @type [String]
+  #
+  HTML_ID_IGNORED = ASCII.remove(/[^[:punct:]]/)
+
+  # Combine parts into a value safe for use as an HTML ID (or class name).
+  #
+  # A 'Z' is prepended if the result would not have started with a letter.
+  #
+  # @param [Array]   parts
+  # @param [String]  separator        Separator between parts.
+  # @param [Boolean] underscore
+  # @param [Boolean] camelize         Replace underscores with caps.
   #
   # @return [String]
   #
-  def html_id(text, camelize: true)
-    # noinspection RubyYardParamTypeMatch
-    text = sanitized_string(text) if text.is_a?(ActiveSupport::SafeBuffer)
-    text = text.to_s.gsub(/[^[:graph:]]/, '_')
-    text = text.tr('_', ' ').remove(/[[:punct:]]/).squish.tr(' ', '_')
-    text = text.underscore
-    text = text.camelize if camelize
-    # noinspection RubyYardReturnMatch
-    text
+  def html_id(*parts, separator: '-', underscore: true, camelize: false, **)
+    separator ||= ''
+    word_break  = HTML_ID_WORD_BREAK + separator
+    ignored     = HTML_ID_IGNORED.delete(separator)
+    parts.map { |part|
+      part = sanitized_string(part) if part.is_a?(ActiveSupport::SafeBuffer)
+      part = part.to_s
+      part = part.tr_s(word_break, ' ').strip.tr(' ', separator)
+      part = part.delete(ignored)
+      part = part.underscore if underscore || camelize
+      part = part.camelize   if camelize
+      part.presence
+    }.compact.join(separator).tap { |result|
+      # noinspection RubyResolve
+      result.prepend('Z') if result.start_with?(/[^a-z]/i)
+    }
   end
 
   # ===========================================================================

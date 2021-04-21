@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     /** @const {string}   */ const POPUP_CLASS    = 'popup-container';
@@ -111,7 +110,6 @@ $(document).on('turbolinks:load', function() {
     // Functions
     // ========================================================================
 
-    // noinspection FunctionTooLongJS
     /**
      * Toggle visibility of a button and its popup element.
      *
@@ -215,7 +213,6 @@ $(document).on('turbolinks:load', function() {
         return $all_popups.not(HIDDEN);
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS
     /**
      * Fetch deferred content as indicated by the placeholder element, which
      * may be either an <iframe> or an <img>.
@@ -317,7 +314,7 @@ $(document).on('turbolinks:load', function() {
             }
         }
 
-        // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
+        // noinspection FunctionWithInconsistentReturnsJS
         /**
          * Allow "Escape" key from within the <iframe> to close the popup.
          *
@@ -422,7 +419,6 @@ $(document).on('turbolinks:load', function() {
     // Functions - z-order
     // ========================================================================
 
-    // noinspection FunctionWithMultipleReturnPointsJS
     /**
      * Cheat working out the proper stacking context hierarchy by causing all
      * elements with a non-zero z-index to be neutralized.
@@ -476,7 +472,7 @@ $(document).on('turbolinks:load', function() {
     // Functions - event handlers
     // ========================================================================
 
-    // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
+    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Allow "Escape" key to close an open popup.
      *
@@ -505,7 +501,7 @@ $(document).on('turbolinks:load', function() {
         }
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
+    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Close all popups that are not hidden.
      *

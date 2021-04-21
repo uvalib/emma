@@ -33,12 +33,6 @@ class Upload < ApplicationRecord
   FIELD_VALIDATION = false
 
   # ===========================================================================
-  # :section: Authentication
-  # ===========================================================================
-
-  # TODO: ???
-
-  # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
@@ -299,7 +293,6 @@ class Upload < ApplicationRecord
       # of :emma_data if it was supplied.
       if (ed = attr.delete(:emma_data))
         __debug_items { { "#{__method__} emma_data": ed.inspect } }
-        # noinspection RubyYardParamTypeMatch
         added_data = reject_blanks(json_parse(ed))
         data.reverse_merge!(added_data) if added_data.present?
       end

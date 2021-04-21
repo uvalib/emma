@@ -38,10 +38,10 @@ module BookshareService::Request::ActiveTitles
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]              :start
-  # @option opt [Integer]             :limit      Default: 10
-  # @option opt [ActiveBookSortOrder] :sortOrder  Default: 'dateAdded'
-  # @option opt [Direction]           :direction  Default: 'asc'
+  # @option opt [String]                :start
+  # @option opt [Integer]               :limit      Default: 10
+  # @option opt [BsActiveBookSortOrder] :sortOrder  Default: 'dateAdded'
+  # @option opt [BsSortDirection]       :direction  Default: 'asc'
   #
   # @return [Bs::Message::ActiveBookList]
   #
@@ -55,10 +55,10 @@ module BookshareService::Request::ActiveTitles
     .tap do |method|
       add_api method => {
         optional: {
-          start:      String,
-          limit:      Integer,
-          sortOrder:  ActiveBookSortOrder,
-          direction:  Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsActiveBookSortOrder,
+          direction: BsSortDirection,
         },
         reference_id: '_my-active-books'
       }
@@ -132,10 +132,10 @@ module BookshareService::Request::ActiveTitles
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]              :start
-  # @option opt [Integer]             :limit      Default: 10
-  # @option opt [ActiveBookSortOrder] :sortOrder  Default: 'dateAdded'
-  # @option opt [Direction]           :direction  Default: 'asc'
+  # @option opt [String]                :start
+  # @option opt [Integer]               :limit      Default: 10
+  # @option opt [BsActiveBookSortOrder] :sortOrder  Default: 'dateAdded'
+  # @option opt [BsSortDirection]       :direction  Default: 'asc'
   #
   # @return [Bs::Message::ActivePeriodicalList]
   #
@@ -149,10 +149,10 @@ module BookshareService::Request::ActiveTitles
     .tap do |method|
       add_api method => {
         optional: {
-          start:      String,
-          limit:      Integer,
-          sortOrder:  ActiveBookSortOrder,
-          direction:  Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsActiveBookSortOrder,
+          direction: BsSortDirection,
         },
         reference_id: '_my-active-periodicals'
       }

@@ -1,0 +1,201 @@
+// app/assets/stylesheets/layouts/header/_banner.scss
+
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'layouts/header/common' as *;
+
+//=============================================================================
+// Header banner
+//=============================================================================
+
+// The content at the top of every page.
+.layout-banner {
+
+    @extend %banner;
+
+    font-size: x-large;
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    > * {
+        display:        flex;
+        flex-direction: row;
+        flex:           0 1 auto;
+    }
+
+    // The logo (home link) and tagline on the left-hand side of the header.
+    .logo-area {
+
+        justify-content: flex-start;
+        margin-top:      0;
+        flex:            0 1 auto;
+
+        @media #{$narrow-screen} {
+            flex-direction: column;
+        }
+
+        > * {
+
+            margin: auto $flex-gap-x auto 0;
+
+            @media #{$narrow-screen} {
+                margin: $flex-gap-y 0 0;
+            }
+        }
+    }
+
+    // Action controls on the right-hand side of the header, particularly the
+    // "Sign in"/"Sign out" button, which appears in the upper-right corner of
+    // the display regardless of the width of the display.
+    .control-area {
+
+        flex-wrap:       wrap-reverse;
+        justify-content: flex-end;
+        max-width:       50%;
+        margin-top:      auto;
+        margin-left:     $page-padding-x;
+        flex:            1 1 auto;
+
+        @media #{$narrow-screen} {
+            margin-top:    0;
+            margin-bottom: $flex-gap-y;
+        }
+
+        > * {
+
+            margin: auto 0 auto $flex-gap-x;
+
+            @media #{$narrow-screen} {
+                margin: $flex-gap-y 0 0;
+            }
+        }
+
+        .help-popup {
+
+            @media #{$narrow-screen} {
+                margin-top: calc(2 * #{$flex-gap-y});
+            }
+
+            .popup-panel {
+                @media #{$wide-screen} {
+                    top:   2.25rem;
+                    left:  unset;
+                    right: 0;
+                }
+            }
+        }
+    }
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    // The fixed-size EMMA logo element.
+    //
+    // @see LayoutHelper#logo_element
+    //
+    .logo {
+
+        margin-top: 0;
+        min-height: 3rem;
+        max-height: 4rem;
+        font-size:  xx-large;
+        flex:       0 0 auto;
+
+        @media #{$narrow-screen} {
+            max-height: 5rem;
+        }
+
+        &:hover {
+            box-shadow: 0 0 1rem 0.25rem $uva-accent-orange;
+        }
+
+        * {
+            display:    block;
+            max-height: inherit;
+            max-width:  100%;
+        }
+
+        a:focus {
+            outline-offset: 3px;
+        }
+    }
+
+    // The EMMA tagline next to the logo.
+    //
+    // This is reformatted to fit within the available display width, and is
+    // not shown at all on small (narrow) displays due to insufficient screen
+    // real estate.
+    //
+    .tagline {
+
+        font-size:    smaller;
+        font-variant: small-caps;
+        flex:         0 1 auto;
+
+        @media #{$medium-width} {
+            font-size: small;
+        }
+
+        @media #{$narrow-screen} {
+            display: none;
+        }
+    }
+
+    // The name of the signed-in user.
+    //
+    // This is truncated with ellipses in cases where the display width is not
+    // sufficient to show the whole name.
+    //
+    .user {
+        max-width:     100%;
+        font-size:     smaller;
+        overflow:      hidden;
+        text-overflow: ellipsis;
+        flex:          0 1 auto;
+    }
+
+    // The "Sign in"/"Sign out" button.
+    //
+    // This always appears in the upper-right corner of the display due to the
+    // .content-area settings.
+    //
+    // Note that .session-link doesn't underline on hover because .session is
+    // set up to do that.  The font size adjustments keep the underline from
+    // being overly thick.
+    //
+    // @see SessionsHelper#sign_in_link
+    // @see SessionsHelper#sign_out_link
+    //
+    .session {
+
+        @extend %button-hover;
+
+        min-width:     max-content;
+        max-width:     max-content;
+        padding:       0.25rem 0.375rem;
+        font-size:     smaller;
+        border:        1.5px solid;
+        border-radius: 0.5rem;
+        flex:          0 0 auto;
+
+        @media #{$narrow-screen} {
+            margin-top:    $flex-gap-y;
+            margin-bottom: auto;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .session-link {
+
+            font-size: larger;
+
+            &:focus { outline-offset:  0.575rem; }
+            &:hover { text-decoration: none; }
+        }
+    }
+}

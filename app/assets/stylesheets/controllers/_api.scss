@@ -1,12 +1,13 @@
 // app/assets/stylesheets/controllers/_api.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // API test page
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 body.api-index,
 body.api-v2 {
 

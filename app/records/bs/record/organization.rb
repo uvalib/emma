@@ -15,7 +15,7 @@ __loading_begin(__FILE__)
 # @attr [String]                  organizationType
 # @attr [String]                  phoneNumber
 # @attr [Bs::Record::Sponsor]     primaryContact
-# @attr [SiteType]                site
+# @attr [BsSiteType]              site
 # @attr [String]                  subscriptionType
 # @attr [String]                  webSite
 #
@@ -36,7 +36,7 @@ class Bs::Record::Organization < Bs::Api::Record
     has_one   :organizationType
     has_one   :phoneNumber
     has_one   :primaryContact,   Bs::Record::Sponsor
-    has_one   :site,             SiteType
+    has_one   :site,             BsSiteType
     has_one   :subscriptionType
     has_one   :webSite
   end

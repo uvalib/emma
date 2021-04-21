@@ -37,8 +37,9 @@ en:
         enabled:        [index]
         label:          'Account Filter'
 
-      search_controls:
-        enabled:        [index]
+      search_filters:
+        #enabled:        [index]
+        enabled:        false
 
         layout:
           - [sort, size, ~, ~]

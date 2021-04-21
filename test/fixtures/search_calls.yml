@@ -1,0 +1,152 @@
+# test/fixtures/search_calls.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+Mansfield_Park:           &FIRST
+  query:
+    title:                'Mansfield Park'
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<: *FIRST
+
+template:
+
+  query:
+    identifier:
+      - 'Standard identifier 1'
+      - 'Standard identifier 2'
+      - '...'
+    title:
+      - 'Title search term 1'
+      - 'Title search term 2'
+      - '...'
+    creator:
+      - 'Author search term 1'
+      - 'Author search term 2'
+      - '...'
+    publisher:
+      - 'Publisher search term 1'
+      - 'Publisher search term 2'
+      - '...'
+    q:
+      - 'Keyword search term 1'
+      - 'Keyword search term 2'
+      - '...'
+
+  filter:
+    format:
+      multiple: true
+      values:
+        - brf
+        - daisy
+        - daisyAudio
+        - epub
+        - braille
+        - pdf
+        - grayscalePdf
+        - word
+        - tactile
+        - kurzweil
+        - rtf
+    feature:
+      multiple: true
+      values:
+        - tts
+        - human
+        - grade1
+        - grade2
+        - nemeth
+        - technical
+        - ueb
+        - ebae
+        - literary
+        - music
+    repository:
+      multiple: false
+      values:
+        - emma
+        - bookshare
+        - hathiTrust
+        - internetArchive
+    accessibility:
+      multiple: true
+      values:
+        - alternativeText
+        - annotations
+        - audioDescription
+        - bookmarks
+        - braille
+        - captions
+        - ChemML
+        - describedMath
+        - displayTransformability
+        - displayTransformability/background-color
+        - displayTransformability/color
+        - displayTransformability/font-height
+        - displayTransformability/font-size
+        - displayTransformability/line-height
+        - displayTransformability/word-spacing
+        - highContrastAudio
+        - highContrastDisplay
+        - index
+        - largePrint
+        - latex
+        - longDescription
+        - MathML
+        - physicalObject
+        - printPageNumbers
+        - readingOrder
+        - rubyAnnotations
+        - signLanguage
+        - sound
+        - stillImage
+        - structuralNavigation
+        - synchronizedAudioText
+        - tableOfContents
+        - tactileGraphic
+        - tactileObject
+        - taggedPDF
+        - timingControl
+        - transcript
+        - ttsMarkup
+        - unlocked
+
+  sort:
+    order:
+      values:           [title, sortDate, lastRemediationDate]
+      nillable:         true
+      default:          title
+    direction:
+      values:           [asc, desc]
+      nillable:         true
+      default:          asc
+
+  page:
+    limit:
+      type:             integer
+      nillable:         true
+      default:          100
+    number:
+      type:             integer
+      nillable:         true
+      default:          1
+    start:
+      type:             integer
+      nillable:         true
+      default:          0
+    offset:
+      type:             integer
+      nillable:         true
+      default:          0
+
+  result:
+    total:
+      type:             integer
+      nillable:         true
+    count:
+      type:             integer
+      nillable:         true

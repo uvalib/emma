@@ -1,6 +1,8 @@
 // app/assets/stylesheets/vendor/_uppy.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+
 // @import '../../../node_modules/uppy/dist/uppy.css';
 
 //=============================================================================
@@ -17,7 +19,6 @@
 // Upload action button.
 .uppy-FileInput-btn {
 
-    // noinspection SassScssResolvedByNameOnly
     @extend %control-button;
 
     // Restore some items that %control-button has overridden:
@@ -26,7 +27,6 @@
     line-height: 1;
     font-size:   0.85em;
 
-    // noinspection SassScssResolvedByNameOnly
     &:not(.disabled):not(.forbidden):hover {
         background-color: $uva-accent-orange;
         border-color:     $uppy-file-input-accent;
@@ -63,7 +63,6 @@
     flex: 0 0 0;
 
     // The actual message popup.
-    // noinspection SassScssResolvedByNameOnly
     p[role="alert"] {
         background-color: $uva-accent-orange;
     }
@@ -103,7 +102,6 @@
     flex: 1 0 auto;
 
     // The bar itself which extends as the upload progresses.
-    // noinspection SassScssResolvedByNameOnly
     .uppy-ProgressBar-inner {
         display:          block;
         height:           10%;

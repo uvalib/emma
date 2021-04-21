@@ -15,6 +15,7 @@ class AccountController < ApplicationController
   include UserConcern
   include ParamsConcern
   include SessionConcern
+  include PaginationConcern
   include AccountConcern
 
   # ===========================================================================
@@ -48,8 +49,11 @@ class AccountController < ApplicationController
   #
   def index
     __debug_route
-    search = request_parameters[:like].presence
-    @list  = search ? match_accounts(search) : User.all
+    opt    = pagination_setup
+    search = opt.delete(:like)
+    opt.except!(:limit, *PAGINATION_KEYS) # TODO: paginate account listings
+    # noinspection RubyYardParamTypeMatch
+    @list  = get_accounts(search, **opt)
   end
 
   # == GET /account/show/:id

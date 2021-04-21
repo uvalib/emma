@@ -1,0 +1,65 @@
+// app/assets/stylesheets/layouts/header/_banner.scss
+
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'layouts/header/common' as *;
+
+// Navigation bar (<nav>) at the top of every page just below the top banner.
+.layout-navbar {
+
+    @extend %banner;
+
+    &:last-child {
+        padding-bottom: calc(2 * #{$page-padding-y});
+    }
+
+    @media #{$narrow-screen} {
+        flex-direction: column;
+        padding-bottom: 0; // For .top.shadow.enclosure.
+    }
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    .links {
+
+        @extend %header-section;
+
+        flex-wrap:   wrap;
+        font-size:   x-large;
+        user-select: none;
+
+        > * {
+
+            width:        max-content;
+            margin-right: 0.5rem;
+
+            @media #{$narrow-screen} {
+                margin-top:    0;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        // Highlight the main page for the current controller.
+        .active:not(.separator) {
+
+            margin-top: -3px;
+            border-top: 3px solid $uva-accent-orange;
+
+            &:not(.disabled):hover {
+                text-decoration: underline;
+            }
+        }
+
+        .secondary {
+
+            color: gray;
+
+            // For now, Bookshare-related controller are hidden.
+            &:not(.active) {
+                display: none;
+            }
+        }
+    }
+}

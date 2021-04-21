@@ -35,13 +35,13 @@ module BookshareService::Request::Periodicals
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]              :title
-  # @option opt [String]              :issn
-  # @option opt [IsoLanguage]         :language
-  # @option opt [String]              :start
-  # @option opt [Integer]             :limit        Default: 10
-  # @option opt [PeriodicalSortOrder] :sortOrder    Default: 'title'
-  # @option opt [Direction]           :direction    Default: 'asc'
+  # @option opt [String]                :title
+  # @option opt [String]                :issn
+  # @option opt [IsoLanguage]           :language
+  # @option opt [String]                :start
+  # @option opt [Integer]               :limit        Default: 10
+  # @option opt [BsPeriodicalSortOrder] :sortOrder    Default: 'title'
+  # @option opt [BsSortDirection]       :direction    Default: 'asc'
   #
   # @return [Bs::Message::PeriodicalSeriesMetadataSummaryList]
   #
@@ -61,13 +61,13 @@ module BookshareService::Request::Periodicals
     .tap do |method|
       add_api method => {
         optional: {
-          title:      String,
-          issn:       String,
-          language:   IsoLanguage,
-          start:      String,
-          limit:      Integer,
-          sortOrder:  PeriodicalSortOrder,
-          direction:  Direction,
+          title:     String,
+          issn:      String,
+          language:  IsoLanguage,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsPeriodicalSortOrder,
+          direction: BsSortDirection,
         },
         role:         :anonymous, # Should succeed for any user.
         reference_id: '_periodical-search'
@@ -115,9 +115,9 @@ module BookshareService::Request::Periodicals
   # @param [String] seriesId
   # @param [Hash]   opt               Passed to #api.
   #
-  # @option opt [Integer]          :limit       Default: 10
-  # @option opt [EditionSortOrder] :sortOrder   Default: 'editionName'
-  # @option opt [Direction]        :direction   Default: 'asc'
+  # @option opt [Integer]            :limit       Default: 10
+  # @option opt [BsEditionSortOrder] :sortOrder   Default: 'editionName'
+  # @option opt [BsSortDirection]    :direction   Default: 'asc'
   #
   # @return [Bs::Message::PeriodicalEditionList]
   #
@@ -134,9 +134,9 @@ module BookshareService::Request::Periodicals
           seriesId:   String,
         },
         optional: {
-          limit:      Integer,
-          sortOrder:  EditionSortOrder,
-          direction:  Direction,
+          limit:     Integer,
+          sortOrder: BsEditionSortOrder,
+          direction: BsSortDirection,
         },
         role:         :anonymous, # Should succeed for any user.
         reference_id: '_periodical-editions'
@@ -178,10 +178,10 @@ module BookshareService::Request::Periodicals
   # == 2.2.4. Download a periodical edition
   # Download an artifact of the specified edition of a Bookshare periodical.
   #
-  # @param [String]     seriesId
-  # @param [String]     editionId
-  # @param [FormatType] format
-  # @param [Hash]       opt           Passed to #api.
+  # @param [String]       seriesId
+  # @param [String]       editionId
+  # @param [BsFormatType] format
+  # @param [Hash]         opt         Passed to #api.
   #
   # @option opt [String] :forUser     For restricted items, this is *not*
   #                                     optional -- it must be the
@@ -201,7 +201,7 @@ module BookshareService::Request::Periodicals
         required: {
           seriesId:   String,
           editionId:  String,
-          format:     FormatType,
+          format:     BsFormatType,
         },
         optional: {
           forUser:    String,
@@ -220,10 +220,10 @@ module BookshareService::Request::Periodicals
   #
   # == 2.2.5. Get a list of title file resources for a periodical
   #
-  # @param [String]     seriesId
-  # @param [String]     editionId
-  # @param [FormatType] format
-  # @param [Hash]       opt           Passed to #api.
+  # @param [String]       seriesId
+  # @param [String]       editionId
+  # @param [BsFormatType] format
+  # @param [Hash]         opt         Passed to #api.
   #
   # @return [Bs::Message::TitleFileResourceList]
   #
@@ -240,7 +240,7 @@ module BookshareService::Request::Periodicals
         required: {
           seriesId:   String,
           editionId:  String,
-          format:     FormatType,
+          format:     BsFormatType,
         },
         optional: {
           start:      String,
@@ -253,11 +253,11 @@ module BookshareService::Request::Periodicals
   #
   # == 2.2.6. Download a title file resource for a periodical
   #
-  # @param [String]     seriesId
-  # @param [String]     editionId
-  # @param [FormatType] format
-  # @param [String]     resourceId
-  # @param [Hash]       opt           Passed to #api.
+  # @param [String]       seriesId
+  # @param [String]       editionId
+  # @param [BsFormatType] format
+  # @param [String]       resourceId
+  # @param [Hash]         opt         Passed to #api.
   #
   # @option opt [String] :size        *REQUIRED*
   #
@@ -278,7 +278,7 @@ module BookshareService::Request::Periodicals
         required: {
           seriesId:    String,
           editionId:   String,
-          format:      FormatType,
+          format:      BsFormatType,
           resourceId:  String,
           size:        String,
         },
@@ -319,9 +319,9 @@ module BookshareService::Request::Periodicals
   # == 2.2.8. Subscribe to a periodical series
   # Create a periodical subscription for the authenticated user.
   #
-  # @param [String]               seriesId
-  # @param [PeriodicalFormatType] format
-  # @param [Hash]                 opt       Passed to #api.
+  # @param [String]             seriesId
+  # @param [BsPeriodicalFormat] format
+  # @param [Hash]               opt       Passed to #api.
   #
   # @return [Bs::Message::PeriodicalSubscriptionList]
   #
@@ -337,7 +337,7 @@ module BookshareService::Request::Periodicals
       add_api method => {
         required: {
           seriesId:   String,
-          format:     PeriodicalFormatType,
+          format:     BsPeriodicalFormat,
         },
         reference_id: '_subscribe-myperiodicals'
       }

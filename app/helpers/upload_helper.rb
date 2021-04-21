@@ -199,6 +199,7 @@ module UploadHelper
   #++
   def render_json_data(item, value, **opt)
     return unless item
+    opt[:no_format] ||= :dc_description
     pairs = json_parse(value)
     pairs &&=
       pairs.transform_values! do |v|
@@ -269,7 +270,7 @@ module UploadHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/controllers/upload.en.yml
+  # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
   #
   #--
   # noinspection RailsI18nInspection
@@ -325,16 +326,17 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #UPLOAD_STATE_GROUP
-  # @see file:app/assets/javascripts/feature/records.js filterPageDisplay()
+  # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
   #
   def upload_state_group_select(counts: nil, **opt)
+    css_selector = UPLOAD_GROUP_PANEL_CLASS
     curr_path  = opt.delete(:curr_path)  || request.fullpath
     curr_group = opt.delete(:curr_group) || request_parameters[:group] || :all
     curr_group = curr_group.to_sym if curr_group.is_a?(String)
-    counts ||= @group_counts || {}
+    counts   ||= @group_counts || {}
 
     # A label preceding the group of buttons (screen-reader only).
     p_id   = "label-#{UPLOAD_GROUP_CLASS}"
@@ -361,15 +363,15 @@ module UploadHelper
           'aria-label': properties[:tooltip],
           'data-group': group
         }
-        prepend_css_classes!(link_opt, 'uppy-FileInput-btn')
-        append_css_classes!(link_opt, 'current')  if group == curr_group
-        append_css_classes!(link_opt, 'disabled') if url   == curr_path
-        append_css_classes!(link_opt, 'hidden')   unless enabled
+        prepend_classes!(link_opt, 'uppy-FileInput-btn')
+        append_classes!(link_opt, 'current')  if group == curr_group
+        append_classes!(link_opt, 'disabled') if url   == curr_path
+        append_classes!(link_opt, 'hidden')   unless enabled
         make_link(label, url, link_opt)
       end
 
     # Wrap the controls in a group.
-    prepend_css_classes!(opt, UPLOAD_GROUP_CLASS)
+    prepend_classes!(opt, UPLOAD_GROUP_CLASS)
     opt[:role]              = 'navigation'
     opt[:'aria-labelledby'] = p_id
     group = html_div(*buttons, opt)
@@ -380,8 +382,7 @@ module UploadHelper
     note = html_div(note, class: 'note-tray', 'aria-hidden': true)
 
     # Include the group and note area in a panel.
-    outer_opt = { class: UPLOAD_GROUP_PANEL_CLASS }
-    html_div(outer_opt) do
+    html_div(class: css_classes(css_selector)) do
       prefix << group << note
     end
   end
@@ -428,13 +429,14 @@ module UploadHelper
   # @return [nil]                       If #UPLOAD_PAGE_FILTERING is *false*.
   #
   # @see #UPLOAD_STATE_GROUP
-  # @see file:app/assets/javascripts/feature/records.js filterPageDisplay()
+  # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
   #
   def upload_page_filter(*list, counts: nil, **opt)
     return unless UPLOAD_PAGE_FILTERING
+    css_selector = UPLOAD_PAGE_FILTER_CLASS
     name     = __method__.to_s
     counts ||= @group_counts || {}
     list     = page_items if list.blank?
@@ -469,7 +471,7 @@ module UploadHelper
           title:        tooltip,
           'data-group': group
         }
-        append_css_classes!(html_opt, 'hidden') unless enabled
+        append_classes!(html_opt, 'hidden') unless enabled
         html_div(html_opt) { input << label }
       end
 
@@ -479,7 +481,7 @@ module UploadHelper
     controls.unshift(prefix)
 
     # Wrap the controls in a group.
-    prepend_css_classes!(opt, UPLOAD_FILTER_GROUP_CLASS)
+    prepend_classes!(opt, UPLOAD_FILTER_GROUP_CLASS)
     opt[:role] = 'radiogroup'
     group = html_div(controls, opt)
 
@@ -488,8 +490,8 @@ module UploadHelper
     legend = html_tag(:legend, legend, class: 'sr-only')
 
     # Include the group in a panel with accompanying label.
-    outer_opt = { class: UPLOAD_PAGE_FILTER_CLASS }
-    append_css_classes!(outer_opt, 'hidden') if controls.size <= 1
+    outer_opt = { class: css_classes(css_selector) }
+    append_classes!(outer_opt, 'hidden') if controls.size <= 1
     # noinspection RubyYardReturnMatch
     field_set_tag(nil, outer_opt) do
       legend << group
@@ -518,9 +520,10 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see filterOptionToggle() in javascripts/feature/records.js
+  # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
   def upload_page_filter_options(*list, **opt)
+    css_selector = UPLOAD_FILTER_OPTIONS_CLASS
     name     = __method__.to_s
     counts ||= @group_counts || {}
     list     = page_items if list.blank? && counts.blank?
@@ -546,7 +549,7 @@ module UploadHelper
         render_check_box(cb_name, cb_value, **cb_opt)
       end
 
-    prepend_css_classes!(opt, UPLOAD_FILTER_OPTIONS_CLASS)
+    prepend_classes!(opt, css_selector)
     html_tag(:fieldset, legend, *checkboxes, opt)
   end
 
@@ -622,7 +625,8 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_no_records_row(**opt)
-    prepend_css_classes!(opt, 'no-records')
+    css_selector = '.no-records'
+    prepend_classes!(opt, css_selector)
     # noinspection RubyYardReturnMatch
     html_div('', opt) << html_div(UPLOAD_NO_RECORDS, opt)
   end
@@ -669,6 +673,7 @@ module UploadHelper
   # @see #UPLOAD_ICONS
   #
   def upload_entry_icons(item, **opt)
+    css_selector = '.icon-tray'
     icons =
       # @type [Symbol] operation
       # @type [Hash]   properties
@@ -678,7 +683,7 @@ module UploadHelper
         action_opt[:item] ||= (item if item.is_a?(Model))
         upload_action_icon(operation, **action_opt)
       }.compact
-    html_span(icons, class: 'icon-tray') if icons.present?
+    html_span(icons, class: css_classes(css_selector)) if icons.present?
   end
 
   # ===========================================================================
@@ -702,10 +707,13 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
+  #--
   # noinspection RubyNilAnalysis
+  #++
   def upload_action_icon(op, **opt)
-    item = opt.delete(:item)
-    id   = opt.delete(:id) || (item.id if item.respond_to?(:id))
+    css_selector = '.icon'
+    item         = opt.delete(:item)
+    id           = opt.delete(:id) || (item.id if item.respond_to?(:id))
     case (enabled = opt.delete(:enabled))
       when nil         then # Enabled if not specified otherwise.
       when true, false then return unless enabled
@@ -726,8 +734,7 @@ module UploadHelper
       opt[:icon] ||= icon
       check_status_popup(item, path, **opt)
     else
-      prepend_css_classes!(opt, 'icon', op)
-      make_link(icon, path, **opt)
+      make_link(icon, path, **prepend_classes!(opt, css_selector, op))
     end
   end
 
@@ -741,13 +748,13 @@ module UploadHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
+  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
   #--
   # noinspection RubyResolve
   #++
   def check_status_popup(item, path, **opt)
-    append_css_classes!(opt, 'check-status-popup')
+    css_selector = '.check-status-popup'
     icon   = opt.delete(:icon)
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
@@ -759,11 +766,11 @@ module UploadHelper
     opt[:title]   ||= 'Check the status of this submission' # TODO: I18n
     opt[:control] ||= {}
     opt[:control][:icon] ||= icon
-    opt[:panel]  = append_css_classes(opt[:panel], 'refetch z-order-capture')
+    opt[:panel]  = append_classes(opt[:panel], 'refetch z-order-capture')
     opt[:resize] = false unless opt.key?(:resize)
 
-    popup_container(**opt) do
-      ph_opt = prepend_css_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
+    popup_container(**prepend_classes!(opt, css_selector)) do
+      ph_opt = prepend_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_txt = ph_opt.delete(:text) || 'Checking...' # TODO: I18n
       ph_opt[:'data-path'] = path
       ph_opt[:'data-attr'] = attr.to_json
@@ -840,6 +847,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_form(item, label: nil, action: nil, **opt)
+    css_selector = '.file-upload-form'
     action ||= params[:action]
     cancel   = opt.delete(:cancel)
 
@@ -854,7 +862,7 @@ module UploadHelper
     opt[:multipart]    = true
     opt[:autocomplete] = 'off'
 
-    prepend_css_classes!(opt, 'file-upload-form', action)
+    prepend_classes!(opt, css_selector, action)
     scroll_to_top_target!(opt)
 
     html_div(class: "file-upload-container #{action}") do
@@ -912,7 +920,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see submitButton() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js *submitButton()*
   #
   def upload_submit_button(**opt)
     opt[:config] ||= UPLOAD_ACTION_VALUES
@@ -930,7 +938,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js cancelButton()
+  # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
   #
   def upload_cancel_button(**opt)
     url = opt.delete(:url)
@@ -955,9 +963,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_filename_display(leader: nil, **opt)
-    prepend_css_classes!(opt, 'uploaded-filename')
+    css_selector = '.uploaded-filename'
     leader ||= 'Selected file:' # TODO: I18n
-    html_div(opt) do
+    html_div(prepend_classes!(opt, css_selector)) do
       html_span(leader, class: 'leader') << html_span('', class: 'filename')
     end
   end
@@ -985,16 +993,17 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #UPLOAD_FIELD_GROUP
-  # @see fieldDisplayFilterSelect() in javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js *fieldDisplayFilterSelect()*
   #
   def upload_field_group(**opt)
-    name = UPLOAD_FIELD_GROUP_NAME
+    css_selector = '.upload-field-group'
 
     # A label for the group (screen-reader only).
     legend = 'Filter input fields by state:' # TODO: I18n
     legend = html_tag(:legend, legend, class: 'sr-only')
 
     # Radio button controls.
+    name = UPLOAD_FIELD_GROUP_NAME
     controls =
       UPLOAD_FIELD_GROUP.map do |group, properties|
         enabled = properties[:enabled].to_s
@@ -1012,7 +1021,7 @@ module UploadHelper
         html_div(class: 'radio', title: tooltip) { input << label }
       end
 
-    prepend_css_classes!(opt, 'upload-field-group')
+    prepend_classes!(opt, css_selector)
     opt[:role] = 'radiogroup'
     html_tag(:fieldset, legend, *controls, opt)
   end
@@ -1024,12 +1033,12 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/file-upload.js monitorSourceRepository()
+  # @see file:app/assets/javascripts/feature/file-upload.js *monitorSourceRepository()*
   #
   def upload_parent_entry_select(**opt)
-    prepend_css_classes!(opt, 'parent-entry-select', 'hidden')
+    css_selector = '.parent-entry-select'
     id     = 'parent-entry-search'
-    type   = :search
+    target = :search
     b_opt  = { role: 'button', tabindex: 0 }
 
     # Directions.
@@ -1041,17 +1050,19 @@ module UploadHelper
     title  = html_div(title, id: t_id, class: 'search-title')
 
     # Text input.
-    input  = search_input(id, type)
+    input  = search_input(id, target)
 
     # Submit button.
-    submit = search_button_label(type)
+    submit = search_button_label(target)
     submit = html_div(submit, b_opt.merge(class: 'search-button'))
 
     # Cancel button.
     cancel = 'Cancel' # TODO: I18n
     cancel = html_div(cancel, b_opt.merge(class: 'search-cancel'))
 
-    html_div(opt) { title << input << submit << cancel }
+    html_div(prepend_classes!(opt, css_selector, 'hidden')) do
+      title << input << submit << cancel
+    end
   end
 
   # Form fields are wrapped in an element for easier grid manipulation.
@@ -1062,8 +1073,8 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_field_container(item, **opt)
-    prepend_css_classes!(opt, 'upload-fields')
-    html_div(opt) do
+    css_selector = '.upload-fields'
+    html_div(prepend_classes!(opt, css_selector)) do
       upload_form_fields(item) << upload_no_fields_row
     end
   end
@@ -1099,7 +1110,7 @@ module UploadHelper
   # @param [Symbol, String] action    Default: `params[:action]`
   # @param [User, String]   user      Default: `@user`
   # @param [String]         prompt
-  # @param [Hash]           opt       Passed to #form_tag.
+  # @param [Hash]           opt       Passed to #page_items_menu.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1124,7 +1135,18 @@ module UploadHelper
 
   public
 
-  UPLOAD_DELETE_OPTIONS        = %i[force truncate emergency].freeze
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  UPLOAD_DELETE_LABEL = {
+    emergency:  'Attempt to remove index entries for bogus non-EMMA items?',
+    force:      'Try to remove index entries of items not in the database?',
+    truncate:   'Reset "uploads" id field to 1?' \
+                ' (Applies only when all records are being removed.)',
+  }.freeze
+
+  UPLOAD_DELETE_OPTIONS        = UPLOAD_DELETE_LABEL.keys.freeze
   UPLOAD_DELETE_FORM_OPTIONS   = [:cancel, *UPLOAD_DELETE_OPTIONS].freeze
   UPLOAD_DELETE_SUBMIT_OPTIONS = UPLOAD_DELETE_OPTIONS
 
@@ -1144,12 +1166,14 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_delete_form(*items, label: nil, **opt)
+    css_selector  = '.file-upload-delete'
     opt, html_opt = partition_options(opt, *UPLOAD_DELETE_FORM_OPTIONS)
     cancel = upload_delete_cancel(url: opt.delete(:cancel))
     submit = upload_delete_submit(*items, **opt.merge!(label: label))
     html_div(class: 'file-upload-container delete') do
-      prepend_css_classes!(html_opt, 'file-upload-delete')
-      html_div(html_opt) { submit << cancel }
+      html_div(prepend_classes!(html_opt, css_selector)) do
+        submit << cancel
+      end
     end
   end
 
@@ -1190,7 +1214,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelAction() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js *cancelAction()*
   #
   def upload_delete_cancel(**opt)
     opt[:action]  ||= :delete
@@ -1212,8 +1236,63 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def bulk_upload_results(**opt)
-    prepend_css_classes!(opt, 'file-upload-results', 'hidden')
-    html_div(opt)
+    css_selector = '.file-upload-results'
+
+    l_sel = "#{css_selector}-label"
+    l_id  = unique_id(l_sel)
+    label = 'Previous upload results:' # TODO: I18n
+    label = html_div(label, id: l_id, class: css_classes(l_sel, 'hidden'))
+
+    prepend_classes!(opt, css_selector)
+    append_classes!(opt, 'hidden')
+    opt[:'aria-labelledby'] = l_id
+    panel = html_div(opt)
+
+    # noinspection RubyYardReturnMatch
+    label << panel
+  end
+
+  # ===========================================================================
+  # :section: Bulk new/edit/delete pages
+  # ===========================================================================
+
+  protected
+
+  # An option checkbox for a bulk action form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param
+  # @param [*, nil]                           value
+  # @param [Hash{Symbol=>String}]             labels
+  # @param [Boolean]                          debug_only
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_option(f, param, value = nil, labels:, debug_only: false, **)
+    if debug_only && !session_debug?
+      hidden_input(param, value)
+    else
+      label = f.label(param, labels[param])
+      check = f.check_box(param, checked: value)
+      html_div(class: 'line') { check << label }
+    end
+  end
+
+  # An input element for a bulk action form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param
+  # @param [*, nil]                           value
+  # @param [Symbol]                           meth
+  # @param [Hash{Symbol=>String}]             labels
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_input(f, param, value = nil, meth: :text_field, labels:, **opt)
+    label = f.label(param, labels[param])
+    input = f.send(meth, param, value: value, **opt)
+    html_div(class: 'line') { label << input }
   end
 
   # ===========================================================================
@@ -1222,14 +1301,17 @@ module UploadHelper
 
   public
 
-  # Labels for check boxes associated with transmitted parameters. # TODO: I18n
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n
   #
   # @type [Hash{Symbol=>String}]
   #
-  BULK_UPLOAD_OPTION_LABEL = {
+  BULK_UPLOAD_LABEL = {
     prefix: 'Title prefix:',
     batch:  'Batch size:'
   }.freeze
+
+  BULK_UPLOAD_OPTIONS      = BULK_UPLOAD_LABEL.keys.freeze
+  BULK_UPLOAD_FORM_OPTIONS = [:cancel, *BULK_UPLOAD_OPTIONS].freeze
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -1245,8 +1327,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def bulk_upload_form(label: nil, action: nil, **opt)
+    css_selector = '.file-upload-bulk'
     action = (action || params[:action])&.to_sym
-    opt, form_opt = partition_options(opt, :prefix, :batch, :cancel)
+    opt, form_opt = partition_options(opt, *BULK_UPLOAD_FORM_OPTIONS)
     opt[:prefix] ||= title_prefix
     opt[:batch]  ||= batch_size
 
@@ -1264,29 +1347,23 @@ module UploadHelper
 
     html_div(class: "file-upload-container bulk #{action}") do
       # @type [ActionView::Helpers::FormBuilder] f
-      prepend_css_classes!(form_opt, "file-upload-bulk #{action}")
-      form_with(**form_opt) do |f|
+      form_with(**prepend_classes!(form_opt, css_selector, action)) do |f|
         lines = []
 
         # === Batch title prefix input
         url_param = :prefix
-        lines <<
-          if session_debug?
-            html_div(class: 'line') do
-              f.label(url_param, BULK_UPLOAD_OPTION_LABEL[url_param]) <<
-                f.text_field(url_param, value: opt[url_param].presence)
-            end
-          elsif opt[url_param].present?
-            hidden_url_parameter(nil, url_param, opt[url_param])
-          end
+        initial   = opt[url_param].presence
+        if session_debug?
+          lines << bulk_upload_input(f, url_param, initial)
+        elsif initial
+          lines << hidden_input(url_param, initial)
+        end
 
         # === Batch size control
         url_param = :batch
-        lines <<
-          html_div(class: 'line') do
-            f.label(url_param, BULK_UPLOAD_OPTION_LABEL[url_param]) <<
-              f.number_field(url_param, min: 0, value: opt[url_param].presence)
-          end
+        initial   = opt[url_param].presence
+        field_opt = { meth: :number_field, min: 0 }
+        lines << bulk_upload_input(f, url_param, initial, **field_opt)
 
         # === Form control panel
         lines <<
@@ -1297,7 +1374,7 @@ module UploadHelper
             cancel  = upload_cancel_button(url:   opt[:cancel], **button_opt)
             input   = bulk_upload_file_select(f, :source, **controls_opt)
             display = upload_filename_display(**controls_opt)
-            prepend_css_classes!(controls_opt, 'button-tray')
+            prepend_classes!(controls_opt, 'button-tray')
             html_div(controls_opt) { submit << cancel << input << display }
           end
 
@@ -1312,10 +1389,38 @@ module UploadHelper
 
   protected
 
+  # An option checkbox for a bulk new/edit form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param   Passed to #bulk_option
+  # @param [*, nil]                           value   Passed to #bulk_option
+  # @param [Hash]                             opt     Passed to #bulk_option
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_upload_option(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_UPLOAD_LABEL
+    bulk_option(f, param, value, **opt)
+  end
+
+  # An input element for a bulk new/edit form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param   Passed to #bulk_input
+  # @param [*, nil]                           value   Passed to #bulk_input
+  # @param [Hash]                             opt     Passed to #bulk_input
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_upload_input(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_UPLOAD_LABEL
+    bulk_input(f, param, value, **opt)
+  end
+
   # bulk_upload_file_select
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Symbol]                           method
+  # @param [Symbol]                           meth
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1323,14 +1428,14 @@ module UploadHelper
   # @see ActionView::Helpers::FormBuilder#label
   # @see ActionView::Helpers::FormBuilder#file_field
   #
-  def bulk_upload_file_select(f, method, **opt)
+  def bulk_upload_file_select(f, meth, **opt)
     l_opt = { class: 'file-select', role: 'button', tabindex: 0 }
     l_opt = merge_html_options(opt, l_opt)
-    label = f.label(method, 'Select', l_opt) # TODO: I18n
+    label = f.label(meth, 'Select', l_opt) # TODO: I18n
 
     i_opt = { class: 'uppy-FileInput-btn', tabindex: -1 }
     i_opt = merge_html_options(opt, i_opt)
-    input = f.file_field(method, i_opt)
+    input = f.file_field(meth, i_opt)
 
     html_div(class: 'uppy-FileInput-container bulk') do
       label << input
@@ -1342,6 +1447,12 @@ module UploadHelper
   # ===========================================================================
 
   public
+
+  BULK_DELETE_LABEL =
+    UPLOAD_DELETE_LABEL.merge(selected: 'Items to delete:').freeze
+
+  BULK_DELETE_OPTIONS      = UPLOAD_DELETE_OPTIONS
+  BULK_DELETE_FORM_OPTIONS = UPLOAD_DELETE_FORM_OPTIONS
 
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.
@@ -1358,15 +1469,15 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def bulk_delete_form(label: nil, ids: nil, **opt)
-    action = :bulk_delete
-    ids    = Array.wrap(ids).compact.presence
-    opt, form_opt = partition_options(opt, *UPLOAD_DELETE_FORM_OPTIONS)
+    css_selector  = '.file-upload-bulk.delete'
+    action        = :bulk_delete
+    ids           = Array.wrap(ids).compact.presence
+    opt, form_opt = partition_options(opt, *BULK_DELETE_FORM_OPTIONS)
 
     opt[:force]     = force_delete     unless opt.key?(:force)
     opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
     opt[:emergency] = emergency_delete unless opt.key?(:emergency)
 
-    prepend_css_classes!(form_opt, 'file-upload-bulk', 'delete')
     form_opt[:url]          = delete_select_upload_path
     form_opt[:method]     ||= :get
     form_opt[:autocomplete] = 'off'
@@ -1374,16 +1485,17 @@ module UploadHelper
 
     html_div(class: 'file-upload-container bulk delete') do
       # @type [ActionView::Helpers::FormBuilder] f
-      form_with(**form_opt) do |f|
+      form_with(**prepend_classes!(form_opt, css_selector)) do |f|
         lines = []
 
         # === Options
-        lines << bulk_delete_option(f, opt.slice(:force))
-        lines << bulk_delete_option(f, opt.slice(:truncate),  debug_only: true)
-        lines << bulk_delete_option(f, opt.slice(:emergency), debug_only: true)
+        dbg = { debug_only: true }
+        { force: {}, truncate: dbg, emergency: dbg }.each_pair do |prm, opts|
+          lines << bulk_delete_option(f, prm, opt[prm], **opts)
+        end
 
         # === Item selection input
-        lines << bulk_delete_input(f, selected: ids)
+        lines << bulk_delete_input(f, :selected, ids)
 
         # === Form control panel
         lines <<
@@ -1434,59 +1546,32 @@ module UploadHelper
 
   protected
 
-  # Labels for check boxes associated with transmitted parameters. # TODO: I18n
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  BULK_DELETE_OPTION_LABEL = {
-    force:
-      'Attempt to remove index entries of items not in the database?',
-    truncate:
-      'Reset "uploads" id field to 1?' \
-      ' (Applies only when all records are being removed.)',
-    emergency:
-      'Attempt to remove index entries for bogus non-EMMA items?',
-  }.freeze
-
-  # bulk_delete_option
+  # An option checkbox for a bulk delete form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Hash]                             param_and_value
-  # @param [Boolean]                          debug_only
+  # @param [Symbol]                           param   Passed to #bulk_option
+  # @param [*, nil]                           value   Passed to #bulk_option
+  # @param [Hash]                             opt     Passed to #bulk_option
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_option(f, param_and_value, debug_only: false)
-    url_param, value = param_and_value.first
-    if debug_only && !session_debug?
-      hidden_url_parameter(nil, url_param, value)
-    else
-      label = f.label(url_param, BULK_DELETE_OPTION_LABEL[url_param])
-      check = f.check_box(url_param, checked: value)
-      html_div(class: 'line') { check << label }
-    end
+  def bulk_delete_option(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_DELETE_LABEL
+    bulk_option(f, param, value, **opt)
   end
 
-  # Labels for text fields associated with transmitted parameters. # TODO: I18n
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  BULK_DELETE_INPUT_LABEL = {
-    selected: 'Items to delete:'
-  }.freeze
-
-  # bulk_delete_input
+  # An input element for a bulk delete form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Hash]                             param_and_value
+  # @param [Symbol]                           param   Passed to #bulk_input
+  # @param [*, nil]                           value   Passed to #bulk_input
+  # @param [Hash]                             opt     Passed to #bulk_input
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_input(f, param_and_value)
-    url_param, value = param_and_value.first
-    label = f.label(url_param, BULK_DELETE_INPUT_LABEL[url_param])
-    input = f.text_field(url_param, value: value)
-    html_div(class: 'line') { label << input }
+  def bulk_delete_input(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_DELETE_LABEL
+    bulk_input(f, param, value, **opt)
   end
 
 end

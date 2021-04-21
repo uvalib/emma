@@ -1,6 +1,7 @@
 // app/assets/stylesheets/layouts/_common.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // General layout.
@@ -13,7 +14,6 @@ html.modal {
     overscroll-behavior: none;
 }
 
-// noinspection SassScssResolvedByNameOnly
 body {
 
     display:        flex;
@@ -22,6 +22,11 @@ body {
     margin:         0;
     padding:        0;
     font-family:    $font-normal;
+
+    // Establish the default foreground/background colors for the sake of
+    // accessibility checkers.
+    color:          black;
+    background:     white;
 
     @media #{$narrow-screen} {
         font-size: large;
@@ -34,8 +39,6 @@ body {
     }
 
     // The <main> content area of the page.
-    //
-    // noinspection SassScssResolvedByNameOnly
     .layout-content {
         flex: 1 1 auto;
     }

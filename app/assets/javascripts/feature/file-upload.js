@@ -7,7 +7,7 @@
 
 // import Uppy from 'uppy'; // NOTE: This is not acceptable to Uglifier
 
-// noinspection FunctionWithMultipleReturnPointsJS,JSUnresolvedVariable
+// noinspection JSUnresolvedVariable
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -133,7 +133,7 @@ $(document).on('turbolinks:load', function() {
      *      }
      * }} FileData
      *
-     * @see 'en.emma.upload.record.file_data'
+     * @see "en.emma.upload.record.file_data"
      */
 
     /**
@@ -186,8 +186,8 @@ $(document).on('turbolinks:load', function() {
      *      rem_status:                         string,
      * }} EmmaData
      *
-     * @see 'en.emma.upload.record.emma_data'
-     * @see 'AwsS3::Record::SubmissionPackage'
+     * @see "en.emma.upload.record.emma_data"
+     * @see "AwsS3::Record::SubmissionPackage"
      */
 
     /**
@@ -217,7 +217,7 @@ $(document).on('turbolinks:load', function() {
      *      reviewed_at:    string
      * }} UploadRecord
      *
-     * @see 'en.emma.upload.record'
+     * @see "en.emma.upload.record"
      */
 
     /**
@@ -273,7 +273,7 @@ $(document).on('turbolinks:load', function() {
      *      s_accessModeSufficient:             string[]?
      * }} SearchResultEntry
      *
-     * @see 'en.emma.search.record'
+     * @see "en.emma.search.record"
      */
 
     /**
@@ -474,6 +474,32 @@ $(document).on('turbolinks:load', function() {
      */
     const BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
 
+    /**
+     * Item name for sessionStorage of a trace of bulk upload activity.
+     *
+     * @constant
+     * @type {string}
+     */
+    const BULK_UPLOAD_STORAGE_KEY = 'bulk-upload';
+
+    /**
+     * CSS class indicating that the bulk upload results panel contains the
+     * results of the previous run (from sessionStorage), not the current run.
+     *
+     * @constant
+     * @type {string}
+     */
+    const OLD_DATA_MARKER = 'previous';
+
+    /**
+     * CSS selector indicating that the bulk upload results panel contains the
+     * results of the previous run (from sessionStorage), not the current run.
+     *
+     * @constant
+     * @type {string}
+     */
+    const OLD_DATA = '.' + OLD_DATA_MARKER;
+
     // noinspection PointlessArithmeticExpressionJS
     /**
      * Interval for checking the contents of the "upload" table.
@@ -556,6 +582,14 @@ $(document).on('turbolinks:load', function() {
         // Start with submit disabled until a bulk control file is supplied.
         disableSubmit($form);
 
+        // Show the results of the most recent bulk upload run (if available).
+        let $results = bulkUploadResults().empty().addClass(OLD_DATA_MARKER);
+        let previous = getBulkUploadTrace();
+        if (previous && showBulkUploadResults($results, previous)) {
+            $results.removeClass('hidden');
+            bulkUploadResultsLabel($results).removeClass('hidden');
+        }
+
         // When the bulk control file is submitted, begin a running tally of
         // the items that have been added/changed.
         handleEvent($form, 'submit', monitorBulkUpload);
@@ -611,6 +645,21 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * The element displayed above upload results.
+     *
+     * @param {Selector} [results]
+     *
+     * @returns {jQuery}
+     *
+     * @see file:app/assets/stylesheets/feature/_file_upload.scss .file-upload-results-label
+     */
+    function bulkUploadResultsLabel(results) {
+        let $results = bulkUploadResults(results);
+        const lbl_id = $results.attr('aria-labelledby');
+        return lbl_id ? $('#' + lbl_id) : $();
+    }
+
+    /**
      * The first database ID to monitor for results, defaulting to "1".
      *
      * If *record* is given, the first database ID is set to be the one which
@@ -661,11 +710,23 @@ $(document).on('turbolinks:load', function() {
 
     /**
      * Setup the element which shows intermediate results during a bulk upload.
+     *
+     * @param {jQuery.Event} [event]
      */
-    function monitorBulkUpload() {
+    function monitorBulkUpload(event) {
+        const target = event && (event.currentTarget || event.target);
+        let $form    = target ? $(target) : $bulk_operation_form;
+        disableSubmit($form);
+        disableFileSelectButton($form);
 
-        let $results = bulkUploadResults().removeClass('hidden');
-        addBulkUploadResult($results, TMP_LINE_CLASS, TMP_LINE);
+        let $results = bulkUploadResults();
+        let $label   = bulkUploadResultsLabel($results);
+        $results.removeClass(OLD_DATA_MARKER).empty();
+        addBulkUploadResult($results, TMP_LINE, TMP_LINE_CLASS);
+        $label.text('Upload results:').removeClass('hidden'); // TODO: I18n
+        $results.removeClass('hidden');
+
+        clearBulkUploadTrace();
         fetchUploadEntries('$', null, startMonitoring);
 
         /**
@@ -697,7 +758,7 @@ $(document).on('turbolinks:load', function() {
         if (isPresent(timer)) {
             clearTimeout(timer);
         }
-        if ($results.is(':visible')) {
+        if ($results.not(OLD_DATA).is(':visible')) {
             const new_timer = setTimeout(checkBulkUploadResults, period);
             $results.data(name, new_timer);
         }
@@ -707,14 +768,16 @@ $(document).on('turbolinks:load', function() {
      * Display new entries that have appeared since the last check.
      */
     function checkBulkUploadResults() {
-
-        let $results   = bulkUploadResults();
+        let $results = bulkUploadResults();
+        if ($results.is(OLD_DATA)) {
+            return;
+        }
         const start_id = bulkUploadResultsNextId($results);
         fetchUploadEntries(start_id, '$', addNewLines);
 
         /**
-         * Add lines for any entries that appeared since the last round then
-         * schedule a new round.
+         * Add lines for any entries that have appeared since the last round
+         * then schedule a new round.
          *
          * @param {UploadRecord[]} list
          */
@@ -729,10 +792,14 @@ $(document).on('turbolinks:load', function() {
                 // Add a line for each record.
                 let last_id = 0;
                 let row     = $lines.length;
+                let entries = [];
                 list.forEach(function(record) {
-                    addBulkUploadResult($results, row++, record);
+                    // noinspection IncrementDecrementResultUsedJS
+                    const entry = addBulkUploadResult($results, record, row++);
                     last_id = Math.max(record.id, last_id);
+                    entries.push(entry);
                 });
+                addBulkUploadTrace(entries);
 
                 // Update the next ID to fetch.
                 if (last_id) {
@@ -747,57 +814,102 @@ $(document).on('turbolinks:load', function() {
      * Add a line to bulk upload results.
      *
      * @param {Selector}                   results
-     * @param {number|string}              index
      * @param {UploadRecord|object|string} entry
+     * @param {number|string}              [index]
      * @param {Date|number}                [time]
      *
-     * @returns {jQuery}              The element appended to results.
+     * @returns {string}              The added result entry.
+     *
+     * @see file:app/assets/stylesheets/feature/_file_upload.scss .file-upload-results
      */
-    function addBulkUploadResult(results, index, entry, time) {
+    function addBulkUploadResult(results, entry, index, time) {
         let $results = bulkUploadResults(results);
-        let $line    = $('<div>');
+        let data;
+        if (typeof entry !== 'object') {
+            data = entry.toString();
+        } else if (isMissing(entry.submission_id)) {
+            // A generic object.
+            data = asString(entry, (K / 2));
+        } else {
+            // An object which is a de-serialized Upload record.
+            const start = bulkUploadResultsStartTime($results);
+            const date  = time            || new Date();
+            const fd    = entry.file_data || {};
+            const md    = fd.metadata     || {};
+            const file  = md.filename;
+            data = {
+                date: asDateTime(date),
+                time: secondsSince(start, date).toFixed(1),
+                id:   (entry.id            || '(missing)'),
+                sid:  (entry.submission_id || '(missing)'),
+                size: (asSize(md.size)     || '(missing)'),
+                file: (file && `"${file}"` || '(missing)')
+            };
+        }
+        let $line = makeBulkUploadResult(data, index);
+        $line.appendTo($results);
+        scrollIntoView($line);
+        return (typeof data === 'string') ? data : asString(data);
+    }
 
-        // CSS classes for the added line.
+    /**
+     * Generate a line for inclusion in the bulk upload results element.
+     *
+     * @param {object|string} entry
+     * @param {number|string} [index]
+     *
+     * @returns {jQuery}
+     */
+    function makeBulkUploadResult(entry, index) {
+        const func = 'makeBulkUploadResult';
+        let $line  = $('<div>');
+
+        // CSS classes for the new line.
         let row = (typeof index === 'number') ? `row-${index}` : (index || '');
         if (!row.includes('line')) {
             row = `line ${row}`.trim();
         }
         $line.addClass(row);
 
-        // Text content for the added line.
-        let text = '';
-        let html = '';
-        if (typeof entry !== 'object') {
-            text = entry.toString();
-        } else if (isMissing(entry.submission_id)) {
-            // A generic object.
-            text = asString(entry, 512);
-        } else {
-            // An object which is a de-serialized Upload record.
-            const start = bulkUploadResultsStartTime($results);
-            const fd    = entry.file_data     || {};
-            const file  = fd.metadata && fd.metadata.filename;
-            const pair  = {
-                time: secondsSince(start, time).toFixed(1),
-                id:   (entry.id            || '(missing id)'),
-                sid:  (entry.submission_id || '(missing submission_id)'),
-                file: (file && `"${file}"` || '(missing filename)')
-            };
-            $.each(pair, function(k, v) {
-                html += `<span class="label">${k}</span>`;
-                html += `<span class="value">${v}</span>`;
+        // Content for the new line.
+        let text, html = '';
+        if (typeof entry === 'object') {
+            $.each(entry, function(k, v) {
+                html += `<span class="label ${k}">${k}</span> `;
+                html += `<span class="value ${k}">${v}</span>\n`;
             });
+        } else if (typeof entry === 'string') {
+            text = entry;
+        } else {
+            console.error(`${func}: ${typeof entry} invalid`);
         }
         if (html) {
             $line.html(html);
-        } else {
+        } else if (text) {
             $line.text(text);
         }
-
-        // Append the line and scroll it into view.
-        $line.appendTo($results);
-        scrollIntoView($line);
         return $line;
+    }
+
+    /**
+     * Display previous bulk upload results.
+     *
+     * @param {Selector} results
+     * @param {string}   [data]       Default: {@link getBulkUploadTrace}.
+     *
+     * @returns {number}              Number of entries to be shown.
+     */
+    function showBulkUploadResults(results, data) {
+        let $results = bulkUploadResults(results);
+        let entries  = data || getBulkUploadTrace();
+        if (entries && !entries.startsWith('[')) {
+            entries  = `[${entries}]`;
+        }
+        const list = entries && fromJSON(entries) || [];
+        $.each(list, function(row, record) {
+            makeBulkUploadResult(record, (row + 1)).appendTo($results);
+        });
+        return list.length;
     }
 
     /**
@@ -808,9 +920,8 @@ $(document).on('turbolinks:load', function() {
      * @param {function(UploadRecord[])} callback
      */
     function fetchUploadEntries(min, max, callback) {
-        const func  = 'fetchUploadEntries:';
-        const start = Date.now();
 
+        const func = 'fetchUploadEntries';
         let range;
         if (min && max) { range = `${min}-${max}`; }
         else if (max)   { range = `1-${max}`; }
@@ -818,11 +929,12 @@ $(document).on('turbolinks:load', function() {
         else            { range = '*'; }
         const url = makeUrl('/upload.json', { selected: range });
 
-        debug(func, 'VIA', url);
+        debug(`${func}: VIA`, url);
 
         /** @type {UploadRecord[]} records */
-        let records = undefined;
-        let error   = '';
+        let records;
+        let warning, error;
+        const start = Date.now();
 
         $.ajax({
             url:      url,
@@ -841,8 +953,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
-            // noinspection AssignmentResultUsedJS
+            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -865,7 +976,12 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            error = `${status}: ${xhr.status} ${message}`;
+            const failure = `${status}: ${xhr.status} ${message}`;
+            if (transientError(xhr.status)) {
+                warning = failure;
+            } else {
+                error   = failure;
+            }
         }
 
         /**
@@ -876,15 +992,80 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            debug(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
-            } else if (error) {
-                consoleWarn(func, `${url}:`, error);
+            } else if (warning) {
+                consoleWarn(`${func}: ${url}: ${warning}`);
+                callback([]);
             } else {
-                consoleError(func, `${url}:`, 'unknown failure');
+                const failure = error || 'unknown failure';
+                consoleError(`${func}: ${url}: ${failure} - aborting`);
             }
         }
+    }
+
+    // ========================================================================
+    // Functions - Bulk session storage
+    // ========================================================================
+
+    /**
+     * Get stored value.
+     *
+     * @param {string} [name]         Default: {@link BULK_UPLOAD_STORAGE_KEY}.
+     *
+     * @returns {string}
+     */
+    function getBulkUploadTrace(name) {
+        const key = name || BULK_UPLOAD_STORAGE_KEY;
+        return sessionStorage.getItem(key) || '';
+    }
+
+    /**
+     * Clear stored value.
+     *
+     * @param {string} [name]         Passed to {@link setBulkUploadTrace}.
+     *
+     * @returns {string}              New stored value.
+     */
+    function clearBulkUploadTrace(name) {
+        return setBulkUploadTrace('', name, false);
+    }
+
+    /**
+     * Add to stored value.
+     *
+     * @param {string|string[]|object} value
+     * @param {string}                 [name]   To {@link setBulkUploadTrace}.
+     *
+     * @returns {string}                        New stored value.
+     */
+    function addBulkUploadTrace(value, name) {
+        return setBulkUploadTrace(value, name, true);
+    }
+
+    /**
+     * Set stored value.
+     *
+     * @param {string|object|string[]|object[]} value
+     * @param {string}  [name]        Def: {@link BULK_UPLOAD_STORAGE_KEY}.
+     * @param {boolean} [append]      If *true* append to current
+     *
+     * @returns {string}              New stored value.
+     */
+    function setBulkUploadTrace(value, name, append) {
+        const key = name || BULK_UPLOAD_STORAGE_KEY;
+        let entry = append && getBulkUploadTrace(key) || '';
+        if (isPresent(value)) {
+            let trace = (v) => (typeof v === 'string') ? v : asString(v);
+            let parts = arrayWrap(value).map(v => trace(v));
+            if (entry) {
+                parts.unshift(entry);
+            }
+            entry = parts.join(', ');
+        }
+        sessionStorage.setItem(key, entry);
+        return entry;
     }
 
     // ========================================================================
@@ -920,7 +1101,7 @@ $(document).on('turbolinks:load', function() {
 
         /** @type {UploadRecord} record */
         let record  = undefined;
-        let error   = '';
+        let warning, error;
         const start = Date.now();
 
         $.ajax({
@@ -942,8 +1123,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
-            // noinspection AssignmentResultUsedJS
+            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -963,7 +1143,12 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            error = `${status}: ${xhr.status} ${message}`;
+            const failure = `${status}: ${xhr.status} ${message}`;
+            if (transientError(xhr.status)) {
+                warning = failure;
+            } else {
+                error   = failure;
+            }
         }
 
         /**
@@ -977,13 +1162,13 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            debug(`${func}: complete`, secondsSince(start), 'sec.');
             if (record) {
-                debug(func, 'data from server:', record);
-            } else if (error) {
-                consoleWarn(func, `${url}:`, error);
+                debug(`${func}: data from server:`, record);
+            } else if (warning) {
+                consoleWarn(`${func}: ${url}:`, warning);
             } else {
-                consoleError(func, `${url}:`, 'unknown failure');
+                consoleError(`${func}: ${url}:`, (error || 'unknown failure'));
             }
             initializeUploadForm($form, record);
         }
@@ -1066,7 +1251,8 @@ $(document).on('turbolinks:load', function() {
 
         // This hidden element is inappropriately part of the tab order.
         let $uppy_file_input = $element.find('.uppy-FileInput-input');
-        $uppy_file_input.attr('tabindex', -1);
+        $uppy_file_input.attr('tabindex',        -1);
+        $uppy_file_input.attr('aria-hidden',     true);
         $uppy_file_input.attr('aria-labelledby', 'fi_label');
 
         // Set the tooltip for the file select button.
@@ -1148,7 +1334,7 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeFormFields(form, start_data) {
 
-        const func = 'initializeFormFields:';
+        const func = 'initializeFormFields';
         let $form  = formElement(form);
 
         let data = {};
@@ -1358,6 +1544,7 @@ $(document).on('turbolinks:load', function() {
             debug('Uppy:', 'upload', data);
             clearFlash();
             const upload = uppy.getPlugin('XHRUpload');
+            // noinspection JSUnresolvedFunction
             const url    = upload.getOptions({}).endpoint;
             const db_id  = dbId($form);
             if (isMissing(url)) {
@@ -1709,8 +1896,7 @@ $(document).on('turbolinks:load', function() {
      */
     function hideUppyProgressBar(form) {
         let $control = formContainer(form).find('.uppy-ProgressBar');
-        $control.attr('aria-hidden', true);
-        $control.css('visibility', 'hidden');
+        toggleVisibility($control, false);
     }
 
     // ========================================================================
@@ -1771,7 +1957,6 @@ $(document).on('turbolinks:load', function() {
     function updateInputField(field, new_value, trim, init) {
         let $field = $(field);
 
-        // noinspection IfStatementWithTooManyBranchesJS
         if ($field.is('fieldset.input.multi')) {
             updateFieldsetInputs($field, new_value, trim, init);
 
@@ -1833,7 +2018,7 @@ $(document).on('turbolinks:load', function() {
                     value = value.trim();
                 }
                 let index = -1;
-                // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS
+                // noinspection FunctionWithInconsistentReturnsJS
                 $inputs.each(function(i) {
                     const old_value = this.value || '';
                     if (old_value === value) {
@@ -1921,7 +2106,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}        [init]       If *true*, in initialization phase.
      */
     function updateCheckboxInputField(target, setting, init) {
-        const func     = 'updateCheckboxInputField:';
+        const func     = 'updateCheckboxInputField';
         let $input     = $(target);
         let $fieldset  = $input.parents('[data-field]').first();
         const checkbox = $input[0];
@@ -1941,7 +2126,7 @@ $(document).on('turbolinks:load', function() {
         if (isDefined(checked)) {
             setChecked($input, checked, init);
         } else {
-            consoleWarn(func, 'unexpected:', setting);
+            consoleWarn(`${func}: unexpected:`, setting);
         }
 
         // Update the enclosing fieldset.
@@ -2046,7 +2231,6 @@ $(document).on('turbolinks:load', function() {
         });
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS, FunctionTooLongJS, OverlyComplexFunctionJS
     /**
      * Use {@link FIELD_RELATIONSHIP} to determine whether the state of the
      * indicated field should change the state of other field(s) with which it
@@ -2058,9 +2242,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {undefined | { name: string, modified: boolean|undefined }}
      */
     function updateRelatedField(name, other_name) {
-        const func = 'updateRelatedField:';
+        const func = 'updateRelatedField';
         if (isMissing(name)) {
-            consoleError(func, 'missing primary argument');
+            consoleError(`${func}: missing primary argument`);
             return;
         }
 
@@ -2097,10 +2281,10 @@ $(document).on('turbolinks:load', function() {
             }
         }
         if (error) {
-            consoleError(func, error);
+            consoleError(`${func}:`, error);
             return;
         } else if (warn) {
-            // consoleWarn(func, warn);
+            // consoleWarn(`${func}:`, warn);
             return;
         }
 
@@ -2368,7 +2552,6 @@ $(document).on('turbolinks:load', function() {
     // Functions - source repository
     // ========================================================================
 
-    // noinspection FunctionWithMultipleReturnPointsJS
     /**
      * Monitor attempts to change to the "Source Repository" menu selection.
      *
@@ -2376,7 +2559,7 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorSourceRepository(form) {
 
-        const func = 'monitorSourceRepository:';
+        const func = 'monitorSourceRepository';
         let $form  = formElement(form);
         let $menu  = sourceRepositoryMenu($form);
 
@@ -2432,7 +2615,6 @@ $(document).on('turbolinks:load', function() {
             searchFailure();
         });
 
-        // noinspection FunctionWithMultipleReturnPointsJS
         /**
          * Extract the title information from the search results.
          *
@@ -2451,10 +2633,10 @@ $(document).on('turbolinks:load', function() {
             if (isEmpty(list)) {
                 const query = parentEntrySearchTerms($form);
                 error = `${new_repo}: no match for "${query}"`;
-                console.warn(func, error);
+                console.warn(`${func}:`, error);
             } else if (!Array.isArray(list)) {
                 error = `${new_repo}: search error`;
-                console.error(func, `${new_repo}: arg is not an array`);
+                console.error(`${func}: ${new_repo}: arg is not an array`);
             }
             if (error) {
                 return searchFailure(error);
@@ -2469,7 +2651,7 @@ $(document).on('turbolinks:load', function() {
                 error = 'PROBLEM: ';
                 error += `new_repo == "${new_repo}" but parent `;
                 error += `emma_repository == "${parent.emma_repository}"`;
-                console.warn(func, error);
+                console.warn(`${func}:`, error);
             }
             if (isPresent(list)) {
                 const title_id = parent.emma_titleId;
@@ -2477,7 +2659,7 @@ $(document).on('turbolinks:load', function() {
                     if (entry.emma_titleId !== title_id) {
                         error = `ambiguous: Title ID ${entry.emma_titleId}`;
                         flashMessage(error);
-                        console.warn(func, `ambiguous: ${asString(entry)}`);
+                        console.warn(`${func}: ambiguous: ${asString(entry)}`);
                     }
                 });
             }
@@ -2612,12 +2794,11 @@ $(document).on('turbolinks:load', function() {
                 repository:      (new_repo || EMPTY_VALUE),
                 emma_repository: (new_repo || null)
             };
-            console.log(func, (new_repo || 'cleared'));
+            console.log(`${func}:`, (new_repo || 'cleared'));
             populateFormFields(set_repo, $form);
         }
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS
     /**
      * Get EMMA index entries via search.
      *
@@ -2626,20 +2807,19 @@ $(document).on('turbolinks:load', function() {
      * @param {function}                      [error_callback]
      */
     function fetchIndexEntries(search, callback, error_callback) {
-        const func = 'fetchIndexEntries:';
+        const func = 'fetchIndexEntries';
         let search_terms = {};
 
         // Create a search URL from the given search term(s).
-        // noinspection IfStatementWithTooManyBranchesJS
         if (isEmpty(search)) {
-            console.error(func, 'empty search terms');
+            console.error(`${func}: empty search terms`);
             return;
         } else if (Array.isArray(search)) {
             let terms = [];
             search.forEach(function(term) {
                 const type = typeof(term);
                 if (type !== 'string') {
-                    console.warn(func, `cannot process ${type} search term`);
+                    console.warn(`${func}: can't process ${type} search term`);
                 } else if (!term) {
                     // Skip empty term.
                 } else if (term.match(/\s/)) {
@@ -2652,7 +2832,7 @@ $(document).on('turbolinks:load', function() {
         } else if (typeof search === 'object') {
             $.extend(search_terms, search);
         } else if (typeof search !== 'string') {
-            console.error(func, `cannot process ${typeof search} search`);
+            console.error(`${func}: can't process ${typeof search} search`);
             return;
         } else if (search.match(/\s/)) {
             search_terms['q'] = `"${search}"`;
@@ -2661,11 +2841,11 @@ $(document).on('turbolinks:load', function() {
         }
         const url = makeUrl('/search', search_terms);
 
-        debug(func, 'VIA', url);
+        debug(`${func}: VIA`, url);
 
         /** @type {SearchResultEntry[]} records */
         let records = undefined;
-        let error   = '';
+        let warning, error;
         const start = Date.now();
 
         $.ajax({
@@ -2685,8 +2865,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
-            // noinspection AssignmentResultUsedJS
+            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -2709,10 +2888,14 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            error = `${status}: ${xhr.status} ${message}`;
+            const failure = `${status}: ${xhr.status} ${message}`;
+            if (transientError(xhr.status)) {
+                warning = failure;
+            } else {
+                error   = failure;
+            }
         }
 
-        // noinspection FunctionWithMultipleReturnPointsJS
         /**
          * Actions after the request is completed.  If there was no error, the
          * search result list is passed to the callback function.
@@ -2721,19 +2904,20 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
-            let message;
+            debug(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
-            } else if (error) {
-                message = `${url}: ${error}`;
-                consoleWarn(func, message);
             } else {
-                message = `${url}: unknown failure`;
-                consoleError(func, message);
-            }
-            if (message && error_callback) {
-                error_callback(message);
+                const failure = error || warning || 'unknown failure'
+                const message = `${url}: ${failure}`;
+                if (warning) {
+                    consoleWarn(`${func}:`, message);
+                } else {
+                    consoleError(`${func}:`, message);
+                }
+                if (error_callback) {
+                    error_callback(message);
+                }
             }
         }
     }
@@ -3170,14 +3354,14 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onCreateSuccess(data, status, xhr) {
-            const func  = 'onCreateSuccess:';
+            const func  = 'onCreateSuccess';
             const flash = compact(extractFlashMessage(xhr));
             const entry = (flash.length > 1) ? 'entries' : 'entry';
             let message = `EMMA ${entry} ${termActionOccurred()}`; // TODO: I18n
             if (isPresent(flash)) {
                 message += ' for: ' + flash.join(', ');
             }
-            debug(func, message);
+            debug(`${func}:`, message);
             showFlashMessage(message);
             setFormSubmitted($form);
         }
@@ -3193,7 +3377,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         error
          */
         function onCreateError(xhr, status, error) {
-            const func      = 'onCreateError:';
+            const func      = 'onCreateError';
             const flash     = compact(extractFlashMessage(xhr));
             const processed = termActionOccurred($form);
             let message     = `EMMA entry not ${processed}:`; // TODO: I18n
@@ -3204,7 +3388,7 @@ $(document).on('turbolinks:load', function() {
             } else {
                 message += ` ${status}: ${error}`;
             }
-            consoleWarn(func, message);
+            consoleWarn(`${func}:`, message);
             showFlashError(message);
         }
 
@@ -3303,28 +3487,31 @@ $(document).on('turbolinks:load', function() {
     /**
      * Update field display filtering.
      *
-     * @overload filterFieldDisplay(form_sel)
-     *  @param {Selector} [form_sel]
+     * @param {string|null} [new_mode]
+     * @param {Selector}    [form_sel]
      *
      * @overload filterFieldDisplay(new_mode, form_sel)
-     *  @param {string|null} [new_mode]
+     *  @param {string|null} new_mode
      *  @param {Selector}    [form_sel]
+     *
+     * @overload filterFieldDisplay(form_sel)
+     *  @param {Selector}    form_sel
      *
      * @see "UploadHelper#upload_field_group"
      */
     function filterFieldDisplay(new_mode, form_sel) {
-        const func = 'filterFieldDisplay:';
+        const func = 'filterFieldDisplay';
         const obj  = (typeof new_mode === 'object');
         const form = obj ? new_mode  : form_sel;
         let $form  = formElement(form);
         const mode =
             (obj ? undefined : new_mode) || fieldDisplayFilterCurrent($form);
         switch (mode) {
-            case 'available': fieldDisplayAvailable($form);              break;
-            case 'invalid':   fieldDisplayInvalid($form);                break;
-            case 'filled':    fieldDisplayFilled($form);                 break;
-            case 'all':       fieldDisplayAll($form);                    break;
-            default:          consoleError(func, 'invalid mode:', mode); break;
+            case 'available': fieldDisplayAvailable($form); break;
+            case 'invalid':   fieldDisplayInvalid($form);   break;
+            case 'filled':    fieldDisplayFilled($form);    break;
+            case 'all':       fieldDisplayAll($form);       break;
+            default:          consoleError(`${func}: invalid mode:`, mode);
         }
         // Scroll so that the first visible field is at the top of the display
         // beneath the field display controls.
@@ -4092,7 +4279,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {ElementProperties|null}
      */
     function buttonProperties(form, values, op_name, can_perform) {
-        const func  = 'buttonProperties:';
+        const func  = 'buttonProperties';
         let $form   = formElement(form);
         let perform = can_perform;
         if (notDefined(perform)) {
@@ -4100,7 +4287,7 @@ $(document).on('turbolinks:load', function() {
                 case 'submit': perform = canSubmit($form); break;
                 case 'cancel': perform = canCancel($form); break;
                 case 'select': perform = canSelect($form); break;
-                default:       consoleError(func, `Invalid: "${op_name}"`);
+                default:       consoleError(`${func}: invalid: "${op_name}"`);
             }
         }
         const op = isPresent(values) ? values : assetObject($form)[op_name];
@@ -4155,6 +4342,24 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Functions - other
     // ========================================================================
+
+    /**
+     * Indicate whether the HTTP status code should be treated as a temporary
+     * condition.
+     *
+     * @param {number} code
+     *
+     * @returns {boolean}
+     */
+    function transientError(code) {
+        switch (code) {
+            case HTTP.service_unavailable:
+            case HTTP.gateway_timeout:
+                return true;
+            default:
+                return false;
+        }
+    }
 
     /**
      * Emit a console message if debugging.

@@ -1,6 +1,6 @@
 // app/assets/stylesheets/shared/_variables.scss
 
-// @use 'shared/functions'; // TODO: SASS 4.0
+@use 'shared/functions' as *;
 
 //=============================================================================
 // Colors.
@@ -133,12 +133,15 @@ $hcm-color:         transparent;
 // Z-order planes.
 //=============================================================================
 
-$z-hidden: -1;
-$z-visible: 0;
-$z-raised:  1;
-$z-top:     100;
-$z-popup:   1000;
-$z-overlay: 10000;
+$z-hidden:         -1;
+$z-visible:         0;
+$z-raised:          1;
+$z-controls:        100;
+$z-tooltip:         200;
+$z-scroll-to-top:   300;
+$z-popup:           400;
+$z-uppy-informer:   500;
+$z-overlay:         10000;
 
 //=============================================================================
 // Screen dimension definitions.

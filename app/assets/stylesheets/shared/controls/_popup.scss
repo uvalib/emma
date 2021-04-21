@@ -1,13 +1,13 @@
 // app/assets/stylesheets/shared/controls/_popup.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 .popup-container {
 
     display:        inline-block;
     vertical-align: middle;
 
-    // noinspection SassScssResolvedByNameOnly
     @media #{$not-narrow-screen} {
         position: relative;
     }
@@ -21,14 +21,12 @@
         text-decoration: underline;
         cursor:          pointer;
 
-        // noinspection SassScssResolvedByNameOnly
         &:focus {
             @extend %focus;
         }
     }
 
     // Activation area in the form of an icon/button.
-    // noinspection SassScssResolvedByNameOnly
     .control.icon {
 
         @extend %button-hover;
@@ -63,7 +61,6 @@
     }
 
     // The panel displaying content which is hidden until activated.
-    // noinspection SassScssResolvedByNameOnly
     .popup-panel {
 
         @extend %popup-shadow;
@@ -190,7 +187,6 @@
         // Components
         //=====================================================================
 
-        // noinspection SassScssResolvedByNameOnly
         button {
 
             @extend %control-button;

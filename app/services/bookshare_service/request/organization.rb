@@ -35,10 +35,10 @@ module BookshareService::Request::Organization
   #
   # @param [Hash]   opt               Passed to #api.
   #
-  # @option opt [String]          :start
-  # @option opt [Integer]         :limit      Default: 10
-  # @option opt [MemberSortOrder] :sortOrder  Default: 'lastName'
-  # @option opt [Direction]       :direction  Default: 'asc'
+  # @option opt [String]            :start
+  # @option opt [Integer]           :limit      Default: 10
+  # @option opt [BsMemberSortOrder] :sortOrder  Default: 'lastName'
+  # @option opt [BsSortDirection]   :direction  Default: 'asc'
   #
   # @return [Bs::Message::UserAccountList]
   #
@@ -52,10 +52,10 @@ module BookshareService::Request::Organization
     .tap do |method|
       add_api method => {
         optional: {
-          start:      String,
-          limit:      Integer,
-          sortOrder:  MemberSortOrder,
-          direction:  Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsMemberSortOrder,
+          direction: BsSortDirection,
         },
         reference_id: '_get-myorganization-members'
       }
@@ -111,15 +111,15 @@ module BookshareService::Request::Organization
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]                  :firstName                *REQUIRED*
-  # @option opt [String]                  :lastName                 *REQUIRED*
-  # @option opt [String]                  :dateOfBirth              *REQUIRED*
-  # @option opt [String]                  :grade                    *REQUIRED*
-  # @option opt [String]                  :username
-  # @option opt [String]                  :password
-  # @option opt [DisabilityType]          :disabilityType           *REQUIRED*
-  # @option opt [ProofOfDisabilitySource] :proofSource              *REQUIRED*
-  # @option opt [Array<DisabilityPlan>]   :disabilityPlan
+  # @option opt [String]                    :firstName              *REQUIRED*
+  # @option opt [String]                    :lastName               *REQUIRED*
+  # @option opt [String]                    :dateOfBirth            *REQUIRED*
+  # @option opt [String]                    :grade                  *REQUIRED*
+  # @option opt [String]                    :username
+  # @option opt [String]                    :password
+  # @option opt [BsDisabilityType]          :disabilityType         *REQUIRED*
+  # @option opt [BsProofOfDisabilitySource] :proofSource            *REQUIRED*
+  # @option opt [Array<BsDisabilityPlan>]   :disabilityPlan
   #
   # @return [Bs::Message::UserAccount]
   #
@@ -137,13 +137,13 @@ module BookshareService::Request::Organization
           lastName:       String,
           dateOfBirth:    String,
           grade:          String,
-          disabilityType: DisabilityType,
-          proofSource:    ProofOfDisabilitySource,
+          disabilityType: BsDisabilityType,
+          proofSource:    BsProofOfDisabilitySource,
         },
         optional: {
           username:       String,
           password:       String,
-          disabilityPlan: DisabilityPlan,
+          disabilityPlan: BsDisabilityPlan,
         },
         multi:            %i[disabilityPlan],
         reference_id:     '_create-my-organizationmember'

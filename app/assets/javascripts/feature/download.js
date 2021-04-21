@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
@@ -184,7 +183,7 @@ $(document).on('turbolinks:load', function() {
         name:    'member-select',
         panel: {
             tag:     'form',
-            class:   cssClasses('member-select', Emma.Popup.panel.class),
+            class:   cssClass('member-select', Emma.Popup.panel.class),
             tooltip: ''
         },
         title: {
@@ -350,6 +349,7 @@ $(document).on('turbolinks:load', function() {
         function onSubmit(event) {
             event.preventDefault();
             let members = [];
+            // noinspection JSCheckFunctionSignatures
             $panel.find(':checked').each(function() {
                 members.push(this.value);
                 this.checked = false; // Reset for later iteration.
@@ -418,7 +418,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            if (xhr.status === 401) {
+            if (xhr.status === HTTP.unauthorized) {
                 error = Emma.Download.failure.sign_in;
             } else {
                 error = `${status}: ${xhr.status} ${message}`;
@@ -494,9 +494,10 @@ $(document).on('turbolinks:load', function() {
         let $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
         let row     = 0;
         $.each(member_table, function(account_id, full_name) {
+            // noinspection IncrementDecrementResultUsedJS
+            let row_id = `${id}-row${row++}`;
             let $input = $radio.clone().attr('value', account_id);
             let $label = create(MEMBER_POPUP.fields.row_label).text(full_name);
-            let row_id = `${id}-row${row++}`;
             $input.attr('id',  row_id).appendTo($fields);
             $label.attr('for', row_id).appendTo($fields);
         });
@@ -613,7 +614,6 @@ $(document).on('turbolinks:load', function() {
          */
         function onSuccess(data, status, xhr) {
             // debug(func, 'received data: |', data, '|');
-            // noinspection AssignmentResultUsedJS
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {

@@ -13,6 +13,8 @@ module HeadHelper
   #
   # @param [Module] base
   #
+  # @private
+  #
   def self.included(base)
 
     __included(base, '[HeadHelper]')

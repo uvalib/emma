@@ -212,6 +212,7 @@ class Api::Error < RuntimeError
 
   module Methods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -266,7 +267,7 @@ class Api::Error < RuntimeError
     # @return [nil]                   If *allow_nil* is set to *true* and no
     #                                   default message is defined.
     #
-    # @see file:config/locales/error.en.yml en.emma.error.api
+    # @see file:config/locales/error.en.yml *en.emma.error.api*
     #
     def default_message(source: nil, type: nil, allow_nil: false)
       source ||= service

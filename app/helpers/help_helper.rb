@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module HelpHelper
 
+  # @private
   def self.included(base)
 
     __included(base, '[HelpHelper]')
@@ -111,20 +112,20 @@ module HelpHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
+  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
   def help_popup(topic, sub_topic = nil, **opt)
-    append_css_classes!(opt, 'help-popup')
+    css_selector = '.help-popup'
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
 
     opt[:'data-iframe'] = attr[:id] = id
-    opt[:title]   ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
-    opt[:control] ||= { icon: QUESTION }
+    opt[:title]       ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
+    opt[:control]     ||= { icon: QUESTION }
 
-    popup_container(**opt) do
-      ph_opt = prepend_css_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
+    popup_container(**prepend_classes!(opt, css_selector)) do
+      ph_opt = prepend_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
       ph_opt[:'data-path']  = help_path(id: topic, modal: true)
       ph_opt[:'data-attr']  = attr.to_json
@@ -207,7 +208,7 @@ module HelpHelper
   # A table of contents element with a link for each help topic.
   #
   # @param [Array<Symbol,Array>] topics   Passed to #help_links.
-  # @param [Hash]                opt      Passed to outer #html_div except:
+  # @param [Hash]                opt      Passed to outer #html_div except for:
   #
   # @option opt [Symbol]        :type     Passed to #help_links.
   # @option opt [Symbol,String] :tag      Default: :ul.
@@ -285,8 +286,8 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_span(label, **opt)
-    append_css_classes!(opt, 'for-help')
-    html_span(label, opt)
+    css_selector = '.for-help'
+    html_span(label, append_classes!(opt, css_selector))
   end
 
   # Render a help link within help text.
@@ -318,7 +319,8 @@ module HelpHelper
   # @return [nil]                         No content and *wrap* is *false*.
   #
   def help_section(item: nil, wrap: true, **opt)
-    append_css_classes!(opt, 'help-section')
+    css_selector = '.help-section'
+    prepend_classes!(opt, css_selector)
     help_container(item: item, wrap: wrap, **opt)
   end
 
@@ -347,17 +349,17 @@ module HelpHelper
   # @see config/locales/controllers/help.en.yml
   #
   def help_container(item: nil, wrap: true, **opt)
-    topic   = (item || request_parameters[:id]).to_sym
-    partial = "help/topic/#{topic}"
-    content = HELP_ENTRY.dig(topic, :content)
+    css_selector  = '.help-container'
+    topic     = (item || request_parameters[:id]).to_sym
+    partial   = "help/topic/#{topic}"
+    content   = HELP_ENTRY.dig(topic, :content)
     content ||= (render(partial) if partial_exists?(partial))
     return content unless wrap
-    row = opt.delete(:row)
-    row &&= "row-#{row}"
-    modal = ('modal' if modal?)
+    row   = opt.delete(:row)
+    row   = ("row-#{row}" if row)
+    modal = ('modal'      if modal?)
     opt[:role] = 'article' if opt.delete(:level) == 1
-    prepend_css_classes!(opt, 'help-container', row, modal)
-    html_div(content, opt)
+    html_div(content, prepend_classes!(opt, css_selector, row, modal))
   end
 
 end

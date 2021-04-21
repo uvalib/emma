@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -62,8 +61,7 @@ $(document).on('turbolinks:load', function() {
     $placeholders.each(function() {
         let $image = $(this);
         let src;
-        // noinspection JSAssignmentUsedAsCondition, AssignmentResultUsedJS
-        if (src = $image.data('path')) {
+        if ((src = $image.data('path'))) {
             debug('FETCHING IMAGE data-path ==', src);
             loadImage($image, src);
         } else if ((src = $image.attr('src')) && src.match(/^http/)) {

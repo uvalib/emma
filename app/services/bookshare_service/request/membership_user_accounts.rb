@@ -66,24 +66,24 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [String]      :firstName
-  # @option opt [String]      :lastName
-  # @option opt [String]      :phoneNumber
-  # @option opt [String]      :emailAddress
-  # @option opt [String]      :address1
-  # @option opt [String]      :address2
-  # @option opt [String]      :city
-  # @option opt [String]      :state
-  # @option opt [String]      :country
-  # @option opt [String]      :postalCode
-  # @option opt [String]      :guardianFirstName
-  # @option opt [String]      :guardianLastName
-  # @option opt [String]      :dateOfBirth
-  # @option opt [IsoLanguage] :language
-  # @option opt [Boolean]     :allowAdultContent
-  # @option opt [SiteType]    :site
-  # @option opt [RoleType]    :role
-  # @option opt [String]      :password
+  # @option opt [String]        :firstName
+  # @option opt [String]        :lastName
+  # @option opt [String]        :phoneNumber
+  # @option opt [String]        :emailAddress
+  # @option opt [String]        :address1
+  # @option opt [String]        :address2
+  # @option opt [String]        :city
+  # @option opt [String]        :state
+  # @option opt [String]        :country
+  # @option opt [String]        :postalCode
+  # @option opt [String]        :guardianFirstName
+  # @option opt [String]        :guardianLastName
+  # @option opt [String]        :dateOfBirth
+  # @option opt [IsoLanguage]   :language
+  # @option opt [Boolean]       :allowAdultContent
+  # @option opt [BsSiteType]    :site
+  # @option opt [BsRoleType]    :role
+  # @option opt [String]        :password
   #
   # @return [Bs::Message::UserAccount]
   #
@@ -119,8 +119,8 @@ module BookshareService::Request::MembershipUserAccounts
           dateOfBirth:        String,
           language:           IsoLanguage,
           allowAdultContent:  Boolean,
-          site:               SiteType,
-          role:               RoleType,
+          site:               BsSiteType,
+          role:               BsRoleType,
           password:           String,
         },
         reference_page:       'membership',
@@ -135,24 +135,24 @@ module BookshareService::Request::MembershipUserAccounts
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]      :firstName                            *REQUIRED*
-  # @option opt [String]      :lastName                             *REQUIRED*
-  # @option opt [String]      :phoneNumber
-  # @option opt [String]      :emailAddress                         *REQUIRED*
-  # @option opt [String]      :address1                             *REQUIRED*
-  # @option opt [String]      :address2
-  # @option opt [String]      :city                                 *REQUIRED*
-  # @option opt [String]      :state
-  # @option opt [String]      :country                              *REQUIRED*
-  # @option opt [String]      :postalCode                           *REQUIRED*
-  # @option opt [String]      :guardianFirstName
-  # @option opt [String]      :guardianLastName
-  # @option opt [String]      :dateOfBirth
-  # @option opt [IsoLanguage] :language
-  # @option opt [Boolean]     :allowAdultContent
-  # @option opt [SiteType]    :site
-  # @option opt [RoleType]    :role
-  # @option opt [String]      :password
+  # @option opt [String]        :firstName                          *REQUIRED*
+  # @option opt [String]        :lastName                           *REQUIRED*
+  # @option opt [String]        :phoneNumber
+  # @option opt [String]        :emailAddress                       *REQUIRED*
+  # @option opt [String]        :address1                           *REQUIRED*
+  # @option opt [String]        :address2
+  # @option opt [String]        :city                               *REQUIRED*
+  # @option opt [String]        :state
+  # @option opt [String]        :country                            *REQUIRED*
+  # @option opt [String]        :postalCode                         *REQUIRED*
+  # @option opt [String]        :guardianFirstName
+  # @option opt [String]        :guardianLastName
+  # @option opt [String]        :dateOfBirth
+  # @option opt [IsoLanguage]   :language
+  # @option opt [Boolean]       :allowAdultContent
+  # @option opt [BsSiteType]    :site
+  # @option opt [BsRoleType]    :role
+  # @option opt [String]        :password
   #
   # @return [Bs::Message::UserAccount]
   #
@@ -183,8 +183,8 @@ module BookshareService::Request::MembershipUserAccounts
           dateOfBirth:        String,
           language:           IsoLanguage,
           allowAdultContent:  Boolean,
-          site:               SiteType,
-          role:               RoleType,
+          site:               BsSiteType,
+          role:               BsRoleType,
           password:           String,
         },
         reference_page:       'membership',
@@ -271,12 +271,12 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [IsoDay]    :startDate                              *REQUIRED*
-  # @option opt [IsoDay]    :endDate
-  # @option opt [String]    :userSubscriptionType                   *REQUIRED*
-  # @option opt [Integer]   :numBooksAllowed
-  # @option opt [Timeframe] :downloadTimeframe
-  # @option opt [String]    :notes
+  # @option opt [IsoDay]      :startDate                            *REQUIRED*
+  # @option opt [IsoDay]      :endDate
+  # @option opt [String]      :userSubscriptionType                 *REQUIRED*
+  # @option opt [Integer]     :numBooksAllowed
+  # @option opt [BsTimeframe] :downloadTimeframe
+  # @option opt [String]      :notes
   #
   # @return [Bs::Message::UserSubscription]
   #
@@ -301,7 +301,7 @@ module BookshareService::Request::MembershipUserAccounts
         optional: {
           endDate:              IsoDay,
           numBooksAllowed:      Integer,
-          downloadTimeframe:    Timeframe,
+          downloadTimeframe:    BsTimeframe,
           notes:                String,
         },
         reference_page:         'membership',
@@ -351,12 +351,12 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [String]            subscriptionId
   # @param [Hash]              opt              Passed to #api.
   #
-  # @option opt [IsoDay]    :startDate                              *REQUIRED*
-  # @option opt [IsoDay]    :endDate
-  # @option opt [String]    :userSubscriptionType                   *REQUIRED*
-  # @option opt [Integer]   :numBooksAllowed
-  # @option opt [Timeframe] :downloadTimeframe
-  # @option opt [String]    :notes
+  # @option opt [IsoDay]      :startDate                            *REQUIRED*
+  # @option opt [IsoDay]      :endDate
+  # @option opt [String]      :userSubscriptionType                 *REQUIRED*
+  # @option opt [Integer]     :numBooksAllowed
+  # @option opt [BsTimeframe] :downloadTimeframe
+  # @option opt [String]      :notes
   #
   # @return [Bs::Message::UserSubscription]
   #
@@ -382,7 +382,7 @@ module BookshareService::Request::MembershipUserAccounts
         optional: {
           endDate:              IsoDay,
           numBooksAllowed:      Integer,
-          downloadTimeframe:    Timeframe,
+          downloadTimeframe:    BsTimeframe,
           notes:                String,
         },
         reference_page:         'membership',
@@ -456,10 +456,10 @@ module BookshareService::Request::MembershipUserAccounts
   # == 2.1.10. Create a proof of disability
   # Create a new record of a disability for an existing user.
   #
-  # @param [User, String, nil]       user             Default: `@user`.
-  # @param [DisabilityType]          disabilityType
-  # @param [ProofOfDisabilitySource] proofSource
-  # @param [Hash]                    opt              Passed to #api.
+  # @param [User, String, nil]         user             Default: `@user`.
+  # @param [BsDisabilityType]          disabilityType
+  # @param [BsProofOfDisabilitySource] proofSource
+  # @param [Hash]                      opt              Passed to #api.
   #
   # @return [Bs::Message::UserPodList]
   #
@@ -479,8 +479,8 @@ module BookshareService::Request::MembershipUserAccounts
         },
         required: {
           userIdentifier: String,
-          disabilityType: DisabilityType,
-          proofSource:    ProofOfDisabilitySource,
+          disabilityType: BsDisabilityType,
+          proofSource:    BsProofOfDisabilitySource,
         },
         reference_page:   'membership',
         reference_id:     '_create-membership-pod'
@@ -493,7 +493,7 @@ module BookshareService::Request::MembershipUserAccounts
   # Update the proof source for a disability for an existing user.
   #
   # @param [User, String, nil]       user             Default: `@user`.
-  # @param [DisabilityType]          disabilityType
+  # @param [BsDisabilityType]        disabilityType
   # @param [ProofOfDisabilitySource] proofSource
   # @param [Hash]                    opt              Passed to #api.
   #
@@ -515,8 +515,8 @@ module BookshareService::Request::MembershipUserAccounts
         },
         required: {
           userIdentifier: String,
-          disabilityType: DisabilityType,
-          proofSource:    ProofOfDisabilitySource,
+          disabilityType: BsDisabilityType,
+          proofSource:    BsProofOfDisabilitySource,
         },
         reference_page:   'membership',
         reference_id:     '_update-membership-pod'
@@ -529,7 +529,7 @@ module BookshareService::Request::MembershipUserAccounts
   # Remove a proof of disability for an existing user.
   #
   # @param [User, String, nil] user             Default: `@user`.
-  # @param [DisabilityType]    disabilityType
+  # @param [BsDisabilityType]  disabilityType
   # @param [Hash]              opt              Passed to #api.
   #
   # @return [Bs::Message::UserPodList]
@@ -549,7 +549,7 @@ module BookshareService::Request::MembershipUserAccounts
         },
         required: {
           userIdentifier: String,
-          disabilityType: DisabilityType,
+          disabilityType: BsDisabilityType,
         },
         reference_page:   'membership',
         reference_id:     '_delete-membership-pod'
@@ -601,10 +601,10 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [AgreementType] :agreementType                      *REQUIRED*
-  # @option opt [String]        :dateSigned                         *REQUIRED*
-  # @option opt [String]        :printName                          *REQUIRED*
-  # @option opt [String]        :signedByLegalGuardian
+  # @option opt [BsAgreementType] :agreementType                     *REQUIRED*
+  # @option opt [String]          :dateSigned                        *REQUIRED*
+  # @option opt [String]          :printName                         *REQUIRED*
+  # @option opt [String]          :signedByLegalGuardian
   #
   # @return [Bs::Message::UserSignedAgreement]
   #
@@ -623,7 +623,7 @@ module BookshareService::Request::MembershipUserAccounts
         },
         required: {
           userIdentifier:         String,
-          agreementType:          AgreementType,
+          agreementType:          BsAgreementType,
           dateSigned:             String,
           printName:              String,
         },
@@ -714,16 +714,16 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [Boolean]      :includeGlobalCollection   Default: *false*
-  # @option opt [NarratorType] :narratorType
-  # @option opt [Gender]       :narratorGender
-  # @option opt [Integer]      :readingAge
-  # @option opt [ContentWarning,Array<ContentWarning>] :excludedContentWarnings
-  # @option opt [ContentWarning,Array<ContentWarning>] :includedContentWarnings
-  # @option opt [String, Array<String>]                :excludedCategories
-  # @option opt [String, Array<String>]                :includedCategories
-  # @option opt [String, Array<String>]                :excludedAuthors
-  # @option opt [String, Array<String>]                :includedAuthors
+  # @option opt [Boolean]                                  :includeGlobalCollection   Default: *false*
+  # @option opt [BsNarratorType]                           :narratorType
+  # @option opt [BsGender]                                 :narratorGender
+  # @option opt [Integer]                                  :readingAge
+  # @option opt [BsContentWarning,Array<BsContentWarning>] :excludedContentWarnings
+  # @option opt [BsContentWarning,Array<BsContentWarning>] :includedContentWarnings
+  # @option opt [String, Array<String>]                    :excludedCategories
+  # @option opt [String, Array<String>]                    :includedCategories
+  # @option opt [String, Array<String>]                    :excludedAuthors
+  # @option opt [String, Array<String>]                    :includedAuthors
   #
   # @return [Bs::Message::RecommendationProfile]
   #
@@ -745,11 +745,11 @@ module BookshareService::Request::MembershipUserAccounts
         },
         optional: {
           includeGlobalCollection: Boolean,
-          narratorType:            NarratorType,
-          narratorGender:          Gender,
+          narratorType:            BsNarratorType,
+          narratorGender:          BsGender,
           readingAge:              Integer,
-          excludedContentWarnings: ContentWarning,
-          includedContentWarnings: ContentWarning,
+          excludedContentWarnings: BsContentWarning,
+          includedContentWarnings: BsContentWarning,
           excludedCategories:      String,
           includedCategories:      String,
           excludedAuthors:         String,
@@ -810,14 +810,14 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [Boolean]       :allowAdultContent
-  # @option opt [Boolean]       :showAllBooks           Default: *false*
-  # @option opt [IsoLanguage]   :language
-  # @option opt [FormatType]    :format
-  # @option opt [BrailleGrade]  :brailleGrade
-  # @option opt [BrailleFmt]    :brailleFormat
-  # @option opt [Integer]       :brailleCellLineWidth
-  # @option opt [Boolean]       :useUeb                 Default: *false*
+  # @option opt [Boolean]        :allowAdultContent
+  # @option opt [Boolean]        :showAllBooks          Default: *false*
+  # @option opt [IsoLanguage]    :language
+  # @option opt [BsFormatType]   :format
+  # @option opt [BsBrailleGrade] :brailleGrade
+  # @option opt [BsBrailleFmt]   :brailleFormat
+  # @option opt [Integer]        :brailleCellLineWidth
+  # @option opt [Boolean]        :useUeb                Default: *false*
   #
   # @return [Bs::Message::MyAccountPreferences]
   #
@@ -842,9 +842,9 @@ module BookshareService::Request::MembershipUserAccounts
           allowAdultContent:    Boolean,
           showAllBooks:         Boolean,
           language:             IsoLanguage,
-          format:               FormatType,
-          brailleGrade:         BrailleGrade,
-          brailleFormat:        BrailleFmt,
+          format:               BsFormatType,
+          brailleGrade:         BsBrailleGrade,
+          brailleFormat:        BsBrailleFmt,
           brailleCellLineWidth: Integer,
           useUeb:               Boolean,
         },
@@ -898,8 +898,8 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [String]               :seriesId                    *REQUIRED*
-  # @option opt [PeriodicalFormatType] :format                      *REQUIRED*
+  # @option opt [String]             :seriesId                      *REQUIRED*
+  # @option opt [BsPeriodicalFormat] :format                        *REQUIRED*
   #
   # @return [Bs::Message::PeriodicalSubscriptionList]
   #
@@ -919,7 +919,7 @@ module BookshareService::Request::MembershipUserAccounts
         required: {
           userIdentifier: String,
           seriesId:       String,
-          format:         PeriodicalFormatType,
+          format:         BsPeriodicalFormat,
         },
         reference_page:   'membership',
         reference_id:     '_subscribe-periodical-series'
@@ -973,10 +973,10 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [String]                 :start
-  # @option opt [Integer]                :limit       Default: 10
-  # @option opt [MyReadingListSortOrder] :sortOrder   Default: 'name'
-  # @option opt [Direction]              :direction   Default: 'asc'
+  # @option opt [String]                   :start
+  # @option opt [Integer]                  :limit       Default: 10
+  # @option opt [BsMyReadingListSortOrder] :sortOrder   Default: 'name'
+  # @option opt [BsSortDirection]          :direction   Default: 'asc'
   #
   # @return [Bs::Message::ReadingListList]
   #
@@ -997,10 +997,10 @@ module BookshareService::Request::MembershipUserAccounts
           userIdentifier: String,
         },
         optional: {
-          start:          String,
-          limit:          Integer,
-          sortOrder:      MyReadingListSortOrder,
-          direction:      Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsMyReadingListSortOrder,
+          direction: BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_get-member-readinglists-list'
@@ -1016,9 +1016,9 @@ module BookshareService::Request::MembershipUserAccounts
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [String] :name                                      *REQUIRED*
-  # @option opt [Access] :access                                    *REQUIRED*
-  # @option opt [String] :description
+  # @option opt [String]   :name                                     *REQUIRED*
+  # @option opt [BsAccess] :access                                   *REQUIRED*
+  # @option opt [String]   :description
   #
   # @return [Bs::Message::ReadingList]
   #
@@ -1038,7 +1038,7 @@ module BookshareService::Request::MembershipUserAccounts
         required: {
           userIdentifier: String,
           name:           String,
-          access:         Access,
+          access:         BsAccess,
         },
         optional: {
           description:    String,

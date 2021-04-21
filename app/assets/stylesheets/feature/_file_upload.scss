@@ -1,6 +1,9 @@
 // app/assets/stylesheets/feature/_file_upload.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/mixins'         as *;
+@use 'shared/controls/grids' as *;
 // @use 'vendor/uppy';   // TODO: SASS 4.0
 
 //=============================================================================
@@ -37,7 +40,6 @@
 }
 
 // Template for a panel of radio buttons.
-// noinspection SassScssResolvedByNameOnly
 %upload-radio-group {
 
     display:         flex;
@@ -107,7 +109,6 @@
 }
 
 // Controls for selecting the workflow state group.
-// noinspection SassScssResolvedByNameOnly
 .upload-select-group-panel {
 
     display:         flex;
@@ -216,7 +217,7 @@
                 }
 
                 .count {
-                    // TODO: ???
+                    // TODO: ??? ... .upload-select-group .control
                 }
             }
 
@@ -245,7 +246,6 @@
         margin-bottom: 0.5rem;
     }
 
-    // noinspection SassScssResolvedByNameOnly
     .upload-filter-group {
 
         @extend %upload-radio-group;
@@ -269,13 +269,12 @@
         }
 
         .control {
-            // TODO: ???
+            // TODO: ??? ... .upload-filter-group .control
         }
     }
 }
 
 // Debug-only control for enabling state groups.
-// noinspection SassScssResolvedByNameOnly
 .upload-filter-options-panel {
 
     @extend %upload-radio-group;
@@ -300,8 +299,6 @@
 
 // Control for identifying the source EMMA entry for new submissions which are
 // derived from member repository content.
-//
-// noinspection SassScssResolvedByNameOnly
 .parent-entry-select {
 
     display:         flex;
@@ -359,8 +356,6 @@ $form-gap:        1.5rem;
 $form-gap-narrow: $form-gap / 3;
 
 // Form containing and metadata field inputs and file upload controls.
-//
-// noinspection SassScssResolvedByNameOnly
 .file-upload-form,
 .file-upload-delete,
 .file-upload-bulk {
@@ -473,9 +468,20 @@ $form-gap-narrow: $form-gap / 3;
         // Components
         //=====================================================================
 
+        // noinspection CssReplaceWithShorthandSafely
         %upload-tray-control {
-            flex:   0 1 auto;
-            margin: 0 0.5rem 1rem 0;
+
+            flex:         0 1 auto;
+            margin:       0;
+            margin-right: 0.5rem;
+
+            @media #{$not-narrow-screen} {
+                margin-bottom: 1rem;
+            }
+
+            @media #{$narrow-screen} {
+                margin-bottom: 0.5rem;
+            }
         }
 
         .submit-button {
@@ -521,7 +527,6 @@ $form-gap-narrow: $form-gap / 3;
     //=========================================================================
 
     // Control for filtering which upload form fields are displayed.
-    // noinspection CssReplaceWithShorthandSafely
     .upload-field-group {
 
         @include grid-column-span;
@@ -532,6 +537,7 @@ $form-gap-narrow: $form-gap / 3;
         top:        1rem;
         background: white;
 
+        // noinspection CssReplaceWithShorthandSafely
         @media #{$narrow-screen} {
             padding:       0.25rem;
             padding-right: 0.5rem;
@@ -543,7 +549,7 @@ $form-gap-narrow: $form-gap / 3;
 
         @include grid-column-span;
 
-        // TODO: ???
+        // TODO: ??? ... .file-upload-bulk .parent-entry-select
     }
 
     //=========================================================================
@@ -562,7 +568,7 @@ $form-gap-narrow: $form-gap / 3;
         background:    white;
         box-shadow:    0 -0.5rem 0      1.0rem white,
                        0  0.5rem 0.5rem 0.5rem white;
-        z-index:       $z-top;
+        z-index:       $z-controls;
 
         grid-template-columns: 1fr;
         gap:                   $form-gap;
@@ -601,7 +607,6 @@ $form-gap-narrow: $form-gap / 3;
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 .file-upload-bulk {
 
     gap: $form-gap;
@@ -666,8 +671,6 @@ $form-gap-narrow: $form-gap / 3;
 }
 
 // The element which contains .file-upload-form.
-//
-// noinspection SassScssResolvedByNameOnly
 .file-upload-container {
 
     // If true then the area where the status bar will appear during upload is
@@ -744,7 +747,7 @@ $form-gap-narrow: $form-gap / 3;
         justify-content: center;
         align-items:     center;
         position:        unset;
-        z-index:         10000;
+        z-index:         $z-uppy-informer;
 
         p {
             word-break: break-word;
@@ -754,7 +757,9 @@ $form-gap-narrow: $form-gap / 3;
 }
 
 // Area filled by the client with on-going results from bulk upload.
-// noinspection SassScssResolvedByNameOnly
+//
+// @see file:app/assets/javascripts/feature/file-upload.js *addBulkUploadResult()*
+//
 .file-upload-results {
 
     @extend %panel;
@@ -772,10 +777,12 @@ $form-gap-narrow: $form-gap / 3;
         $lbl-col: minmax(auto, 0.05fr);
 
         grid-template-columns:
-                [time_lbl] $lbl-col [time_val] minmax(auto, 0.15fr)
-                [id_lbl]   $lbl-col [id_val]   minmax(auto, 0.10fr)
-                [rid_lbl]  $lbl-col [rid_val]  minmax(auto, 0.25fr)
-                [file_lbl] $lbl-col [file_val] 1fr;
+            [date_lbl] 0        [date_val] minmax(max-content, 0.25fr)
+            [time_lbl] $lbl-col [time_val] minmax(max-content, 0.10fr)
+            [  id_lbl] $lbl-col [  id_val] minmax(max-content, 0.10fr)
+            [ sid_lbl] $lbl-col [ sid_val] minmax(max-content, 0.20fr)
+            [size_lbl] $lbl-col [size_val] minmax(max-content, 0.15fr)
+            [file_lbl] $lbl-col [file_val] 1fr;
 
         > * {
 
@@ -787,13 +794,30 @@ $form-gap-narrow: $form-gap / 3;
         }
 
         .label {
+
             font-weight: bold;
+
+            &.date {
+                @extend %sr-only;
+                position: unset !important;
+            }
         }
 
         .value {
-            word-break: break-all;
+            &.file {
+                word-wrap: anywhere;
+            }
         }
     }
+}
+
+// Label visible to note that old bulk upload results are being displayed.
+//
+// @see file:app/assets/javascripts/feature/file-upload.js *bulkUploadResultsLabel()*
+//
+.file-upload-results-label {
+    font-size:     x-large;
+    margin-bottom: 0.5rem;
 }
 
 // The element which contains bulk operation forms.
@@ -806,14 +830,13 @@ $form-gap-narrow: $form-gap / 3;
 
         margin-top: 2rem;
 
-        // noinspection SassScssResolvedByNameOnly
         @media #{$wide-screen} {
             margin-bottom: -$bulk-vertical-adjust;
         }
     }
 
+    & + .file-upload-results-label,
     & + .file-upload-results {
-        width:      47.75vw;
         margin-top: 2 * $bulk-vertical-adjust;
     }
 }

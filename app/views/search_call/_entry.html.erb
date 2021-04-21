@@ -1,0 +1,23 @@
+<%# app/views/search_call/_entry.html.erb -%>
+<%-
+  # A single search call record entry.
+
+  item   ||= @item
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+  add    ||= nil
+  level  ||= 2
+  row    ||= 1
+  skip   ||= nil
+
+  # skip = Array.wrap(skip)
+  skip = [*skip, :thumbnail].uniq
+  opt  = { index: index, row: row, offset: offset, level: level, skip: skip }
+
+-%>
+
+<%= list_entry_number(item, **opt)     unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true) unless skip.include?(:thumbnail) %>
+<%= search_call_list_entry(item, pairs: add, index: index, row: row) %>

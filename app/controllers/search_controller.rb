@@ -53,16 +53,18 @@ class SearchController < ApplicationController
   #
   def index
     __debug_route
-    opt      = pagination_setup
-    s_params = opt.except(*NON_SEARCH_KEYS)
-    q_params, s_params = partition_options(s_params, *QUERY_PARAMETERS)
+    opt = pagination_setup
+    set_immediate_search(opt.delete(:immediate_search))
+    playback = opt.delete(:search_call)
+    search   = playback || opt
+    s_params = search.except(*NON_SEARCH_KEYS)
+    q_params, s_params = partition_options(s_params, *search_query_keys)
     q_params.reject! { |_, v| v.blank? }
     if q_params.present?
-      opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+      opt   = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
       @list = search_api.get_records(**opt)
-      self.page_items  = @list.records
-      self.total_items = @list.totalResults
-      self.next_page   = next_page_path(@list, opt) # TODO: ???
+      pagination_finalize(@list, :records, **opt)
+      save_search(**opt) unless playback
       respond_to do |format|
         format.html
         format.json { render_json index_values }
@@ -104,10 +106,9 @@ class SearchController < ApplicationController
   #
   def direct
     __debug_route
-    opt = pagination_setup.reverse_merge(q: NULL_SEARCH)
+    opt   = pagination_setup.reverse_merge(q: NULL_SEARCH)
     @list = search_api.get_records(**opt)
-    self.page_items  = @list.records
-    self.total_items = @list.totalResults
+    pagination_finalize(@list, :records, **opt)
     respond_to do |format|
       format.html { render 'search/index' }
       format.json { render_json index_values }
@@ -138,7 +139,7 @@ class SearchController < ApplicationController
   # @return [Hash{Symbol=>Hash}]
   #
   def show_values(item = @item, **)
-    normalize_keys(item)
+    sanitize_keys(item)
   end
 
 end

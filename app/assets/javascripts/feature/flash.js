@@ -74,7 +74,6 @@ function flashContainer(selector) {
  * @returns {void}
  */
 function suppressFlash(all) {
-    // noinspection AssignmentResultUsedJS, NestedAssignmentJS
     switch (all) {
         case false: enableFlash(true);                                  break;
         case true:  show_flash.messages = show_flash.errors = false;    break;
@@ -90,7 +89,6 @@ function suppressFlash(all) {
  * @returns {void}
  */
 function enableFlash(all) {
-    // noinspection AssignmentResultUsedJS, NestedAssignmentJS
     switch (all) {
         case false: suppressFlash(true);                                break;
         case true:  show_flash.messages = show_flash.errors = true;     break;
@@ -149,7 +147,9 @@ function flashError(text, type, role, fc) {
  */
 function showFlash(fc) {
     let $fc = flashContainer(fc);
-    $fc.removeClass('hidden').removeClass('invisible');
+    $fc.removeClass('hidden');
+    $fc.removeClass('invisible');
+    $fc.removeAttr('aria-hidden');
     return scrollIntoView($fc);
 }
 
@@ -224,7 +224,7 @@ function flashDisplayed(fc) {
 function addFlashMessage(text, type, role, fc) {
     const css_class = type || 'notice';
     const aria_role = role || 'alert';
-    const msg       = text ? text.replace("\n", '<br/>') : '???';
+    const msg       = text ? text.replace(/\n/g, '<br/>') : '???';
     let $msg = $('<p>').addClass(css_class).attr('role', aria_role).html(msg);
     return showFlash(fc).append($msg);
 }

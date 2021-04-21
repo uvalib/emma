@@ -15,49 +15,49 @@ en:
 
       type:
 
-        Access:
+        BsAccess:
           private:                  'Private'
           shared:                   'Shared'
           org:                      'Organization'
           _default:                 shared
 
-        AgreementType:
+        BsAgreementType:
           individual:               'Individual'
           volunteer:                'Volunteer'
           sponsor:                  'Sponsor'
           _default:                 individual
 
-        AllowsType: # NOTE: Compare with ApiService#HTTP_METHODS.
+        BsAllowsType: # NOTE: Compare with ApiService#HTTP_METHODS.
           PUT:                      'PUT'
           POST:                     'POST'
           DELETE:                   'DELETE'
 
-        BrailleFmt:
+        BsBrailleFmt:
           refreshable:              'Refreshable'
           embossable:               'Embossable'
           _default:                 embossable
 
-        BrailleGrade:
+        BsBrailleGrade:
           contracted:               'Contracted'
           uncontracted:             'Uncontracted'
           _default:                 uncontracted
 
-        BrailleMusicScoreLayout:
+        BsBrailleMusicScoreLayout:
           barOverBar:               'Bar Over Bar'
           barByBar:                 'Bar By Bar'
           _default:                 barOverBar
 
-        BrailleType:
+        BsBrailleType:
           automated:                'Automated'
           transcribed:              'Transcribed'
           _default:                 automated
 
-        CategoryType:
+        BsCategoryType:
           Bookshare:                'Bookshare'
           BISAC:                    'BISAC'
           _default:                 Bookshare
 
-        ContentWarning: # @see https://apidocs.bookshare.org/reference/index.html#_content_warning_values
+        BsContentWarning: # @see https://apidocs.bookshare.org/reference/index.html#_content_warning_values
           contentWarning:           'Content Warning'
           sex:                      'Sex'
           violence:                 'Violence'
@@ -68,7 +68,7 @@ en:
           unrated:                  'Unrated'
           _default:                 unrated
 
-        ContributorType:
+        BsContributorType:
           author:                   'Author'
           coWriter:                 'Co-writer'
           epilogueBy:               'Epilogue By'
@@ -84,29 +84,29 @@ en:
           adapter:                  'Adapter'
           _default:                 author
 
-        Direction:                  &DIRECTION
+        BsSortDirection:            &DIRECTION
           asc:                      'asc'
           desc:                     'desc'
           _default:                 asc
 
-        Direction2:
+        BsSortDirectionRev:
           <<:                       *DIRECTION
           _default:                 desc
 
-        DisabilityType:
+        BsDisabilityType:
           visual:                   'Visual'
           learning:                 'Learning'
           physical:                 'Physical'
           nonspecific:              'Non-specific'
           _default:                 nonspecific
 
-        ExternalFormatType:
+        BsExternalFormatType:
           MUSIC_BRAILLE:            'Music Braille'
           HARDCOPY_BRAILLE:         'Hardcopy Braille'
           PRINT_BRAILLE:            'Print Braille'
           FEELIX_KIT:               'Feelix Kit'
 
-        FormatType:
+        BsFormatType:
           DAISY:                    'DAISY with Images'
           DAISY_AUDIO:              'DAISY Audio'
           DAISY_SEGMENTED:          'DAISY Multiple DTBooks'
@@ -117,19 +117,19 @@ en:
           HTML:                     'HTML' # NOTE: observed but undocumented
           TEXT:                     'Text' # NOTE: observed but undocumented
 
-        PeriodicalFormatType:
+        BsPeriodicalFormat:
           DAISY:                    'DAISY with Images'
           DAISY_AUDIO:              'DAISY Audio'
           DAISY_2_AUDIO:            'DAISY 2 Audio'
           BRF:                      'BRF'
 
-        Gender:
+        BsGender:
           male:                     'Male'
           female:                   'Female'
           otherNonBinary:           'Other/Non-binary'
           _default:                 otherNonBinary
 
-        LexileCode:
+        BsLexileCode:
           AD:                       'Adult Directed'
           NC:                       'Non-Conforming'
           HL:                       'High-Low'
@@ -138,31 +138,31 @@ en:
           BR:                       'Beginning Reader'
           NP:                       'Non-Prose'
 
-        MessagePriority:
+        BsMessagePriority:
           high:                     'High'
           medium:                   'Medium'
           low:                      'Low'
 
-        MessageType:
+        BsMessageType:
           information:              'Information'
           system:                   'System'
 
-        MetricType:
+        BsMetricType:
           page:                     'Page'
           chapter:                  'Chapter'
           paragraph:                'Paragraph'
 
-        MusicScoreType:
+        BsMusicScoreType:
           fullScore:                'Full Score'
           openScore:                'Open Score'
           singleLine:               'Single LIne'
 
-        NarratorType:
+        BsNarratorType:
           tts:                      'TTS'
           human:                    'Human'
           _default:                 tts
 
-        ProofOfDisabilitySource:
+        BsProofOfDisabilitySource:
           schoolVerified:           'School-verified'
           faxed:                    'Faxed'
           nls:                      'NLS'
@@ -170,7 +170,7 @@ en:
           partner:                  'Partner'
           hadley:                   'Hadley'
 
-        ProofOfDisabilityStatus:
+        BsProofOfDisabilityStatus:
           active:                   'Active'
           missing:                  'Missing'
           _default:                 active
@@ -180,7 +180,7 @@ en:
           creativeCommons:          'Creative Commons'
           copyright:                'Copyright'
 
-        RoleType: # NOTE: Compare with Roles#BOOKSHARE_ROLES
+        BsRoleType: # NOTE: Compare with Roles#BOOKSHARE_ROLES
           individual:               'Individual'
           volunteer:                'Volunteer'
           trustedVolunteer:         'Trusted Volunteer'
@@ -193,36 +193,36 @@ en:
           journal:                  'Journal'
           _default:                 journal
 
-        ScanQuality:
+        BsScanQuality:
           publisher:                'Publisher'
           excellent:                'Excellent'
           good:                     'Good'
           fair:                     'Fair'
 
-        SiteType:
+        BsSiteType:
           bookshare:                'Bookshare'
           cela:                     'CELA'
           rnib:                     'RNIB'
           emma:                     'EMMA'
           _default:                 bookshare
 
-        SubscriptionStatus:
+        BsSubscriptionStatus:
           active:                   'Active'
           expired:                  'Expired'
           missing:                  'Missing'
           _default:                 active
 
-        Timeframe:
+        BsTimeframe:
           monthly:                  'Monthly'
           entireSubscription:       'Entire Subscription'
           _default:                 monthly
 
-        TitleContentType:
+        BsTitleContentType:
           text:                     'Text'
           musicScore:               'Music Score'
           _default:                 text
 
-        TitleSortOrder:
+        BsTitleSortOrder:
           relevance:                'Relevance'
           title:                    'Title'
           author:                   'Author'
@@ -230,7 +230,7 @@ en:
           copyrightDate:            'Copyright Date'
           _default:                 title
 
-        TitleStatus:
+        BsTitleStatus:
           withdrawn:                'Withdrawn'
           available:                'Available'
 
@@ -238,7 +238,7 @@ en:
         # Account
         # =====================================================================
 
-        HistorySortOrder:
+        BsHistorySortOrder:
           title:                    'Title'
           author:                   'Author'
           dateDownloaded:           'Date Downloaded'
@@ -248,7 +248,7 @@ en:
         # Members
         # =====================================================================
 
-        MemberSortOrder:
+        BsMemberSortOrder:
           dateAdded:                'Date Added'
           lastName:                 'Last Name'
           firstName:                'First Name'
@@ -265,12 +265,12 @@ en:
         # Assigned Titles
         # =====================================================================
 
-        MyAssignedSortOrder:
+        BsMyAssignedSortOrder:
           title:                    'Title'
           author:                   'Author'
           _default:                 title
 
-        AssignedSortOrder:
+        BsAssignedSortOrder:
           title:                    'Title'
           author:                   'Author'
           assignedBy:               'Assigned By'
@@ -282,7 +282,7 @@ en:
         # Active Books / Active Periodicals
         # =====================================================================
 
-        ActiveBookSortOrder:
+        BsActiveBookSortOrder:
           title:                    'Title'
           dateAdded:                'Date Assigned'
           assigner:                 'Assigned By'
@@ -292,7 +292,7 @@ en:
         # Periodicals
         # =====================================================================
 
-        PeriodicalSortOrder:
+        BsPeriodicalSortOrder:
           title:                    'Title'
           _default:                 title
 
@@ -300,7 +300,7 @@ en:
         # Periodical Editions
         # =====================================================================
 
-        EditionSortOrder:
+        BsEditionSortOrder:
           editionName:              'Edition Name'
           _default:                 editionName
 
@@ -308,13 +308,13 @@ en:
         # Reading Lists
         # =====================================================================
 
-        MyReadingListSortOrder:
+        BsMyReadingListSortOrder:
           name:                     'Name'
           owner:                    'Owner'
           dateUpdated:              'Date Updated'
           _default:                 name
 
-        ReadingListSortOrder:
+        BsReadingListSortOrder:
           title:                    'Title'
           author:                   'Author'
           dateAddedToReadingList:   'Date Added'
@@ -324,7 +324,7 @@ en:
         # Catalog
         # =====================================================================
 
-        CatalogSortOrder:
+        BsCatalogSortOrder:
           relevance:                'Relevance'
           title:                    'Title'
           author:                   'Author'
@@ -336,7 +336,7 @@ en:
         # Messages
         # =====================================================================
 
-        MessageSortOrder:
+        BsMessageSortOrder:
           dateCreated:              'Date'
           _default:                 dateCreated
 
@@ -344,7 +344,7 @@ en:
         # From catalog.bookshare.org (not in the API)
         # =====================================================================
 
-        BrailleCode:
+        BsBrailleCode:
           ebae:                     'English Braille American Edition'
           ueb:                      'Unified English Braille'
           french:                   'French Braille Code'
@@ -353,7 +353,7 @@ en:
           standard_english_braille: 'Standard English Braille'
           music_braille_code:       'Music Braille Code'
 
-        BrailleGrade2:
+        BsBrailleGrade2:
           grade_2:                  'Grade 2 (contracted)'
           grade_1:                  'Grade 1 (uncontracted)'
 
@@ -361,16 +361,16 @@ en:
         # Authorization
         # =====================================================================
 
-        AuthType:
+        BsAuthType:
           code:                     'Code'
           token:                    'Token'
 
-        GrantType:
+        BsGrantType:
           authorization_code:       'Authorization Code'
           refresh_token:            'Refresh Token'
           password:                 'Password'
 
-        TokenErrorType:
+        BsTokenErrorType:
           invalid_request:            'Invalid request'
           unauthorized:               'Unauthorized'
           access_denied:              'Access Denied'

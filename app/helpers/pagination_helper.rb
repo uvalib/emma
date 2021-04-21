@@ -96,14 +96,14 @@ module PaginationHelper
   # @return [Integer]
   #
   def get_page_size(**opt)
-    opt  = request_parameters.slice(:controller, :action) if opt.blank?
-    controller = opt[:controller].presence
-    action     = controller && opt[:action].presence
+    opt    = request_parameters.slice(:controller, :action) if opt.blank?
+    ctrlr  = opt[:controller].presence
+    action = ctrlr && opt[:action].presence
     keys = []
-    keys << :"emma.#{controller}.#{action}.pagination.page_size" if action
-    keys << :"emma.#{controller}.#{action}.page_size"            if action
-    keys << :"emma.#{controller}.pagination.page_size"           if controller
-    keys << :"emma.#{controller}.page_size"                      if controller
+    keys << :"emma.#{ctrlr}.#{action}.pagination.page_size" if action
+    keys << :"emma.#{ctrlr}.#{action}.page_size"            if action
+    keys << :"emma.#{ctrlr}.pagination.page_size"           if ctrlr
+    keys << :"emma.#{ctrlr}.page_size"                      if ctrlr
     keys << :'emma.generic.pagination.page_size'
     keys << :'emma.generic.page_size'
     keys << :'emma.pagination.page_size'
@@ -308,54 +308,58 @@ module PaginationHelper
   # @return [nil]                         If *count* is negative.
   #
   def page_number(page, opt = nil)
-    page     = page.to_i and return if page.negative?
-    pages    = get_page_number_label(count: page)&.upcase_first
-    html_opt = prepend_css_classes(opt, 'page-count')
-    html_div("#{pages} #{page}", html_opt)
+    css_selector = '.page-count'
+    page         = page.to_i and return if page.negative?
+    pages        = get_page_number_label(count: page)&.upcase_first
+    html_div("#{pages} #{page}", prepend_classes(opt, css_selector))
   end
 
   # Page count display element.
   #
-  # @param [Integer]   count
-  # @param [Hash, nil] opt            Options to .search-count wrapper element.
+  # @param [Integer, nil] count
+  # @param [Integer, nil] total
+  # @param [Hash]         opt         Options to .search-count wrapper element.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If *count* is negative.
   #
-  def pagination_count(count, opt = nil)
-    count    = count.to_i and return if count.negative?
-    html_opt = prepend_css_classes(opt, 'search-count')
-    found    = get_page_count_label(count: count)
-    count    = number_with_delimiter(count)
-    html_div("#{count} #{found}", html_opt)
+  def pagination_count(count, total = nil, **opt)
+    css_selector = '.search-count'
+    count = positive(count).to_i
+    total = positive(total).to_i
+    total = nil unless total > count
+    html_div(prepend_classes!(opt, css_selector)) do
+      number = number_with_delimiter(count)
+      if total
+        number << ' of ' << number_with_delimiter(total)
+        found = get_page_count_label(count: total)
+        "#{number} #{found}"
+      else
+        found = get_page_count_label(count: count)
+        "(#{number} #{found})"
+      end
+    end
   end
 
   # Placeholder for an item that would have been a link if it had a path.
   #
-  # @param [String, nil] fp           Default: `#first_page`.
-  # @param [String, nil] pp           Default: `#prev_page`.
-  # @param [String, nil] np           Default: `#next_page`.
-  # @param [String, nil] sep          Default: `#PAGINATION_SEPARATOR`.
-  # @param [Hash]        opt          Options to .pagination wrapper element.
+  # @param [String, Hash, nil] fp     Passed to #pagination_first.
+  # @param [String, Hash, nil] pp     Passed to #pagination_prev.
+  # @param [String, Hash, nil] np     Passed to #pagination_next.
+  # @param [String, nil]       sep    Passed to #pagination_separator.
+  # @param [Hash]              opt    For .pagination-controls container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_controls(
-    fp:  first_page,
-    pp:  prev_page,
-    np:  next_page,
-    sep: PAGINATION_SEPARATOR,
-    **opt
-  )
-    prepend_css_classes!(opt, 'pagination')
-    html_tag(:nav, opt) do
+  def pagination_controls(fp: nil, pp: nil, np: nil, sep: nil, **opt)
+    css_selector = '.pagination-controls'
+    html_tag(:nav, prepend_classes!(opt, css_selector)) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
-        pagination_control(FIRST_PAGE, fp, **link_opt),
-        pagination_control(PREV_PAGE,  pp, **link_opt.merge(rel: 'prev')),
-        pagination_control(NEXT_PAGE,  np, **link_opt.merge(rel: 'next'))
+        pagination_first(fp, **link_opt),
+        pagination_prev(pp, **link_opt),
+        pagination_next(np, **link_opt)
       ]
-      safe_join(controls, sep)
+      safe_join(controls, pagination_separator(sep))
     end
   end
 
@@ -393,12 +397,93 @@ module PaginationHelper
     config_lookup('pagination.count', controller: controller, **opt)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # pagination_separator
+  #
+  # @param [String, nil] content      Default: `#PAGINATION_SEPARATOR`.
+  # @param [Hash]        opt
+  #
+  # @see #html_span
+  #
+  def pagination_separator(content = nil, **opt)
+    css_selector = '.separator'
+    html_span(prepend_classes!(opt, css_selector)) do
+      content || PAGINATION_SEPARATOR
+    end
+  end
+
+  # pagination_first
+  #
+  # @param [String, Hash, nil] path   Default: `#first_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_first(path = nil, **opt)
+    css_selector   = '.first'
+    path         ||= first_page
+    opt[:prefix] ||= pagination_first_icon
+    pagination_control(FIRST_PAGE, path, **append_classes!(opt, css_selector))
+  end
+
+  # pagination_prev
+  #
+  # @param [String, Hash, nil] path   Default: `#prev_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_prev(path = nil, **opt)
+    css_selector   = '.prev'
+    path         ||= prev_page
+    opt[:prefix] ||= pagination_prev_icon
+    opt[:rel]    ||= 'prev'
+    pagination_control(PREV_PAGE, path, **append_classes!(opt, css_selector))
+  end
+
+  # pagination_next
+  #
+  # @param [String, Hash, nil] path   Default: `#next_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_next(path = nil, **opt)
+    css_selector   = '.next'
+    path         ||= next_page
+    opt[:suffix] ||= pagination_next_icon
+    opt[:rel]    ||= 'next'
+    pagination_control(NEXT_PAGE, path, **append_classes!(opt, css_selector))
+  end
+
+  # pagination_last
+  #
+  # @param [String, Hash, nil] path   Default: `#last_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_last(path = nil, **opt)
+    css_selector   = '.last'
+    path         ||= last_page
+    opt[:suffix] ||= pagination_last_icon
+    pagination_control(LAST_PAGE, path, **append_classes!(opt, css_selector))
+  end
+
   # A pagination control link or a non-actionable placeholder if *path* is not
   # valid.
   #
-  # @param [Hash, String] label
-  # @param [String, nil]  path
-  # @param [Hash]         opt         Passed to #link_to or <span> element.
+  # @param [String, Hash]      label
+  # @param [String, Hash, nil] path
+  # @param [Hash]              opt    Passed to #link_to or <span> except for:
+  #
+  # @option [String] :prefix
+  # @option [String] :suffix
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -410,11 +495,67 @@ module PaginationHelper
       tip   = link ? prop[:tooltip] : prop.dig(:no_link, :tooltip)
       opt[:title] = tip if tip.present?
     end
+    label  = html_span(label, class: 'label')
+    prefix = opt.delete(:prefix)
+    suffix = opt.delete(:suffix)
+    label  = safe_join([prefix, label, suffix].compact)
     if link
       link_to(label, path, opt)
     else
-      html_span(label, append_css_classes!(opt, 'disabled'))
+      html_span(label, append_classes!(opt, 'disabled'))
     end
+  end
+
+  # pagination_first_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_first_icon(**opt)
+    pagination_icon(**prepend_classes!(opt, 'square-icon'))
+  end
+
+  # pagination_prev_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_prev_icon(**opt)
+    pagination_icon(**prepend_classes!(opt, 'left-triangle-icon'))
+  end
+
+  # pagination_next_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_next_icon(**opt)
+    pagination_icon(**prepend_classes!(opt, 'right-triangle-icon'))
+  end
+
+  # pagination_last_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_last_icon(**opt)
+    pagination_icon(**prepend_classes!(opt, 'square-icon'))
+  end
+
+  # A decorative visual representation of a control action.
+  #
+  # @param [String, nil] content
+  # @param [Hash]        opt
+  #
+  # @see #html_span
+  #
+  def pagination_icon(content = nil, **opt)
+    opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
+    html_span((content || ''), prepend_classes!(opt, 'icon'))
   end
 
 end

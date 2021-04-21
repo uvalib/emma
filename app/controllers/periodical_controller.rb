@@ -56,9 +56,7 @@ class PeriodicalController < ApplicationController
     __debug_route
     opt   = pagination_setup
     @list = bs_api.get_periodicals(**opt)
-    self.page_items  = @list.periodicals
-    self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    pagination_finalize(@list, :periodicals, **opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -72,10 +70,10 @@ class PeriodicalController < ApplicationController
   #
   def show
     __debug_route
+    opt   = pagination_setup
     @item = bs_api.get_periodical(seriesId: @series_id)
     @list = bs_api.get_periodical_editions(seriesId: @series_id)
-    self.page_items  = @list.periodicalEditions || []
-    self.total_items = @list.totalResults
+    pagination_finalize(@list, :periodicalEditions, **opt)
     respond_to do |format|
       format.html
       format.json { render_json show_values }

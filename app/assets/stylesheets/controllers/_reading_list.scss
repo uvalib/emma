@@ -1,6 +1,8 @@
 // app/assets/stylesheets/controllers/_reading_list.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'feature/model'    as *;
 
 //=============================================================================
 // Reading List index page
@@ -63,8 +65,6 @@
     .reading_list-details {}
 
     // Listing of catalog titles associated with the Reading List.
-    //
-    // noinspection SassScssResolvedByNameOnly
     .title-list {
 
         // NOTE: If ReadingListHelper#READING_LIST_THUMBNAIL is *false*

@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -50,6 +49,22 @@ $(document).on('turbolinks:load', function() {
     const SCROLL_TARGET_SELECTORS =
         deepFreeze([SCROLL_TARGET_SELECTOR, '#main', 'body']);
 
+    /**
+     * Selector(s) for previous-list-item controls.
+     *
+     * @constant
+     * @type {string}
+     */
+    const PREV_SELECTOR = '.prev-next .prev';
+
+    /**
+     * Selector(s) for next-list-item controls.
+     *
+     * @constant
+     * @type {string}
+     */
+    const NEXT_SELECTOR = '.prev-next .next';
+
     // ========================================================================
     // Variables
     // ========================================================================
@@ -64,6 +79,8 @@ $(document).on('turbolinks:load', function() {
         $scroll_target = $(selector);
         return isMissing($scroll_target);
     });
+    let $prev_buttons = $(PREV_SELECTOR);
+    let $next_buttons = $(NEXT_SELECTOR);
 
     // ========================================================================
     // Event handlers
@@ -71,6 +88,8 @@ $(document).on('turbolinks:load', function() {
 
     handleEvent($(window), 'scroll', toggleScrollButton);
     handleClickAndKeypress($scroll_button, scrollToTop);
+    handleClickAndKeypress($prev_buttons,  scrollToPrev);
+    handleClickAndKeypress($next_buttons,  scrollToNext);
 
     // ========================================================================
     // Actions
@@ -110,6 +129,84 @@ $(document).on('turbolinks:load', function() {
         debug('scrollToTop');
         $scroll_target[0].scrollIntoView();
         //focusableIn($scroll_target).first().focus();
+    }
+
+    /**
+     * Scroll so that the previous list entry is fully displayed at the top of
+     * the screen.
+     *
+     * @param {jQuery.Event} event
+     *
+     * @returns {boolean}             Always *false* to end event propagation.
+     *
+     * @see "SearchHelper#prev_next_controls"
+     */
+    function scrollToPrev(event) {
+        debug('scrollToPrev');
+        return scrollToRecord(event, PREV_SELECTOR);
+    }
+
+    /**
+     * Scroll so that the next list entry is fully displayed at the top of the
+     * screen.
+     *
+     * @param {jQuery.Event} event
+     *
+     * @returns {boolean}             Always *false* to end event propagation.
+     *
+     * @see "SearchHelper#prev_next_controls"
+     */
+    function scrollToNext(event) {
+        debug('scrollToNext');
+        return scrollToRecord(event, NEXT_SELECTOR);
+    }
+
+    /**
+     * Scroll so that the indicated list entry is fully displayed at the top of
+     * the screen.
+     *
+     * @param {jQuery.Event} event
+     * @param {Selector}     button_selector
+     *
+     * @returns {boolean}             Always *false* to end event propagation.
+     *
+     * @see "SearchHelper#prev_next_controls"
+     */
+    function scrollToRecord(event, button_selector) {
+        let $button = $(event.currentTarget || event.target);
+        if (!$button.hasClass('disabled') && !$button.hasClass('forbidden')) {
+            const record_id = $button.attr('href');
+
+            let $title      = $(record_id);
+            let $format     = $title.siblings(':not(.field-Title)').first();
+            const t_height  = $title[0].scrollHeight;
+            const t_pos     = $title[0].offsetTop;
+            const f_height  = $format[0].scrollHeight;
+            const f_pos     = $format[0].offsetTop;
+            let y_delta     = t_height + f_height + (t_pos - f_pos);
+
+            // Scroll to the indicated entry then scroll up more so that the
+            // first metadata label is visible below the title.
+            $title[0].scrollIntoView(true);
+            window.scrollBy(0, -y_delta);
+
+            // The item number is at the same Y position as the entry for
+            // desktop and mobile ($wide-screen and $medium-width), but it is
+            // above the entry for the hand-held ($narrow-screen) form-factor.
+            // (For Firefox n_pos < e_pos, but for Chrome n_pos > e_pos.)
+            // This requires an additional adjustment.
+            let $entry  = $title.parent();
+            let $number = $entry.prev('.number');
+            const e_pos = $entry[0].offsetTop;
+            const n_pos = $number[0].offsetTop;
+            if (n_pos !== e_pos) {
+                window.scrollBy(0, -$number[0].scrollHeight);
+            }
+
+            // Set focus to the button which matches the original action.
+            $title.find(button_selector).focus();
+        }
+        return false;
     }
 
     // ========================================================================

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   root 'home#main'
 
+  # noinspection RailsParamDefResolve
   resource :home, controller: 'home', as: '', only: [] do
     get :main, as: 'home'
     get :welcome
@@ -78,6 +79,10 @@ Rails.application.routes.draw do
   get    '/upload/show/:id',      to: 'upload#show',          as: 'show_upload'
   get    '/upload',               to: 'upload#index',         as: 'upload_index'
 
+  # === Temporary
+
+  get '/upload/bulk_reindex',     to: 'upload#bulk_reindex',  as: 'bulk_reindex'
+
   # ===========================================================================
   # File download operations
   # ===========================================================================
@@ -137,6 +142,7 @@ Rails.application.routes.draw do
   # Health check
   # ===========================================================================
 
+  # noinspection RailsParamDefResolve
   resource :health, controller: 'health', only: [] do
     get :version
     get :check
@@ -200,6 +206,12 @@ Rails.application.routes.draw do
 
   get    '/account/show/:id',      to: 'account#show',       as: 'show_account'
   get    '/account',               to: 'account#index',      as: 'account_index'
+
+  # ===========================================================================
+  # Search call viewer
+  # ===========================================================================
+
+  resources :search_call, only: %i[index show]
 
 end
 

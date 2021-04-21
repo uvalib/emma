@@ -99,7 +99,7 @@ module BookshareConcern
   #
   def set_format
     # noinspection RubyYardReturnMatch
-    @format = params[:fmt] || FormatType.default
+    @format = params[:fmt] || BsFormatType.default
   end
 
   # Extract the URL parameter which specifies a reading list.

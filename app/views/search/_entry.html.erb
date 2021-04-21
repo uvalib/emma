@@ -6,6 +6,7 @@
   index  ||= nil
   return unless item || index
 
+  count  ||= nil
   offset ||= page_offset
   add    ||= nil
   level  ||= 2
@@ -15,9 +16,10 @@
   # skip = Array.wrap(skip)
   skip = [*skip, :thumbnail].uniq
   opt  = { index: index, row: row, offset: offset, level: level, skip: skip }
+  opt[:max_index] = count - 1 if count
 
 -%>
 
 <%= search_list_entry_number(item, **opt) unless skip.include?(:number) %>
 <%= thumbnail(item, **opt, link: true)    unless skip.include?(:thumbnail) %>
-<%= search_list_entry(item, pairs: add, index: index, row: row) %>
+<%= search_list_entry(item, pairs: add, **opt) %>

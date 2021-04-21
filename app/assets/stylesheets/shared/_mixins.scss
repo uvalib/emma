@@ -1,5 +1,8 @@
 // app/assets/stylesheets/shared/_mixins.scss
 
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+
 // ============================================================================
 // Generic - Widths
 // ============================================================================
@@ -150,4 +153,9 @@
     // Satisfy accessibility checks for contrast.
     color:      black !important;
     background: white !important;
+
+    * {
+        color:      inherit !important;
+        background: inherit !important;
+    }
 }

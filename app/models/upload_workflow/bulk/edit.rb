@@ -48,13 +48,29 @@ module UploadWorkflow::Bulk::Edit::Actions
   include UploadWorkflow::Bulk::Actions
   include UploadWorkflow::Bulk::Edit::Data
 
+  # This should be *false* in order to get the full benefit of batch operation.
+  #
+  # If this is *true* then it essentially defeats batching by segregating
+  # editing activities (download, upload, database) into one phase, and
+  # indexing into the following phase.  Batching occurs in each phase, but the
+  # entire set of entries must pass through one phase before entering the next.
+  #
+  # @type [Boolean]
+  #
+  DEFER_INDEXING = false
+
   # ===========================================================================
   # :section: UploadWorkflow::Actions overrides
   # ===========================================================================
 
   public
 
-  # wf_validate_submission
+  # This action basically runs the bulk edit to completion.
+  #
+  # Since there are no review workflow steps, and indexing has to be done for
+  # each batch in order to support the notion of batching, then the bulk-edit
+  # workflow is "validated" by completing it and reporting on the
+  # successes/failures of the overall process.
   #
   # @param [Array] event_args
   #
@@ -65,8 +81,8 @@ module UploadWorkflow::Bulk::Edit::Actions
   def wf_validate_submission(*event_args)
     __debug_items(binding)
     opt = event_args.extract_options!&.dup || {}
-    opt[:index]        = false unless opt.key?(:index)
-    opt[:user]       ||= current_user #@user
+    opt[:index]        = false if DEFER_INDEXING && !opt.key?(:index)
+    opt[:user]       ||= current_user
     opt[:base_url]   ||= nil #request.base_url
     opt[:importer]   ||= :ia_bulk
     s, f = bulk_upload_edit(event_args, **opt)
@@ -74,19 +90,18 @@ module UploadWorkflow::Bulk::Edit::Actions
     self.failures += f
   end
 
-  # wf_index_update
+  # For bulk-edit, this action is a "no-op" because indexing will have been
+  # done per-batch in #wf_validate_submission.
   #
   # @param [Array] _event_args        Ignored.
   #
   # @return [void]
   #
-  # @see UploadWorkflow::Bulk::External#bulk_update_in_index
-  #
   def wf_index_update(*_event_args)
     __debug_items(binding)
     if succeeded.blank?
       self.failures << "#{__method__}: NO ENTRIES - INTERNAL WORKFLOW ERROR"
-    else
+    elsif DEFER_INDEXING
       s, f, _ = bulk_update_in_index(*succeeded)
       self.succeeded = s
       self.failures += f
