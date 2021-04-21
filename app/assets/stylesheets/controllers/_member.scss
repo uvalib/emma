@@ -9,9 +9,9 @@
 //=============================================================================
 
 // Member metadata label/value pairs for index listings.
-.member-list-entry {
+.member-list-item {
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
 
     //=========================================================================
     // Components
@@ -24,9 +24,9 @@
     }
 }
 
-// Zero or more .member-list-entry elements.
+// Zero or more .member-list-item elements.
 .member-list {
-    @extend .item-list;
+    @extend .model-list;
 }
 
 //=============================================================================
@@ -35,12 +35,12 @@
 
 // Member metadata values.
 .member-details {
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Member preference settings.
 .member-preferences {
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Member download history.
@@ -53,9 +53,9 @@
         @extend .toggle-panel;
     }
 
-    .history-entry {
+    .history-item {
 
-        @extend .item-details;
+        @extend .model-details;
 
         padding-top: 1rem;
         border-top:  1px solid gray;
@@ -71,7 +71,7 @@
 // format for wide screens.
 .member-container {
 
-    @extend .item-container;
+    @extend .model-container;
 
     //=========================================================================
     // Sections

@@ -26,10 +26,10 @@
 <%= heading %>
 
 <%- if list.blank? -%>
-  <%= render 'category/entry', opt.merge!(index: -1, row: row) %>
+  <%= render 'category/list_item', opt.merge!(index: -1, row: row) %>
 <%- else -%>
   <%- list.each_with_index do |item, idx| -%>
     <%- opt.merge!(index: idx, row: (row + idx), item: item) -%>
-    <%= render 'category/entry', opt %>
+    <%= render 'category/list_item', opt %>
   <%- end -%>
 <%- end -%>

@@ -329,9 +329,9 @@
 //=============================================================================
 
 // Help metadata label/value pairs for index listings.
-.help-list-entry {
+.help-list-item {
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
     @extend %help-styles;
 
     margin-left: $results-entry-gap-x;
@@ -343,10 +343,10 @@
     grid-template-columns: 1fr;
 }
 
-// Zero or more .help-list-entry elements.
+// Zero or more .help-list-item elements.
 .help-list {
 
-    @extend .item-list;
+    @extend .model-list;
     @extend %help-layout;
     @extend %help-styles;
     @extend %help-elements;
@@ -368,13 +368,13 @@
 
 // Help metadata values.
 .help-details {
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Container for a .help-details.
 .help-container {
 
-    @extend .item-container;
+    @extend .model-container;
     @extend %help-layout;
     @extend %help-styles;
 

@@ -9,19 +9,19 @@
 //=============================================================================
 
 // Local EMMA user search_call metadata label/value pairs for index listings.
-.search_call-list-entry {
-    @extend .item-list-entry-panel;
+.search_call-list-item {
+    @extend .model-list-item-panel;
 }
 
-// Zero or more .search_call-list-entry elements.
+// Zero or more .search_call-list-item elements.
 .search_call-list {
-    @extend .item-list;
+    @extend .model-list;
 }
 
 // Grid table of search calls.
 .search_call-table {
 
-    @extend .item-table;
+    @extend .model-table;
 
     &.extended {
 
@@ -145,10 +145,10 @@
 
 // Search call metadata values.
 .search_call-details {
-    @extend .search_call-list-entry; // INSTEAD OF @extend .item-details;
+    @extend .search_call-list-item; // INSTEAD OF @extend .model-details;
 }
 
 // Container for an .search_call-details.
 .search_call-container {
-    @extend .item-container;
+    @extend .model-container;
 }

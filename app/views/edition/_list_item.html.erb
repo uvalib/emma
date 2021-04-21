@@ -1,6 +1,6 @@
-<%# app/views/member/_entry.html.erb -%>
+<%# app/views/edition/_list_item.html.erb -%>
 <%-
-  # A single Member list entry.
+  # A single periodical Edition list entry.
 
   item   ||= @item
   index  ||= nil
@@ -17,6 +17,6 @@
 
 -%>
 
-<%= list_entry_number(item, **opt)     unless skip.include?(:number) %>
+<%= list_item_number(item, **opt)      unless skip.include?(:number) %>
 <%= thumbnail(item, **opt, link: true) unless skip.include?(:thumbnail) %>
-<%= member_list_entry(item, pairs: add, index: index, row: row) %>
+<%= edition_list_item(item, pairs: add, index: index, row: row) %>

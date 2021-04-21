@@ -23,7 +23,7 @@ $icon-pad: 0.25rem;
 // Padding for control icon holder (.number .container .icon-tray).
 $tray-pad: 1.5 * $icon-pad;
 
-// For .item-list-entry-panel and derivatives.
+// For .model-list-item-panel and derivatives.
 $data-list-border-color: none;
 
 //=============================================================================
@@ -111,7 +111,7 @@ $data-list-border-color: none;
 //=============================================================================
 
 // Metadata label/value pairs on index pages.
-.item-list-entry {
+.model-list-item {
 
     @extend .label-value-pairs;
 
@@ -133,8 +133,8 @@ $data-list-border-color: none;
     }
 }
 
-// Zero or more .item-list-entry elements.
-.item-list {
+// Zero or more .model-list-item elements.
+.model-list {
 
     @extend .list-2-column;
 
@@ -231,13 +231,13 @@ $data-list-border-color: none;
 // Model entry fields for index listings.
 //
 // noinspection CssReplaceWithShorthandSafely
-.item-list-entry-panel {
+.model-list-item-panel {
 
     $item-padding:     0.5rem;
     $value-separation: 2px;
     $max-columns:      20;
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
 
     padding:        $item-padding;
     padding-bottom: 2 * $item-padding;
@@ -365,7 +365,7 @@ $data-list-border-color: none;
     // Hierarchical display for data items containing JSON.
     .data-list {
 
-        @extend .item-list;
+        @extend .model-list;
 
         $wide-margin:   2rem;
         $medium-margin: 1rem;
@@ -411,7 +411,7 @@ $data-list-border-color: none;
 }
 
 // Metadata in tabular form.
-.item-table {
+.model-table {
     @extend .grid-table;
 }
 
@@ -420,7 +420,7 @@ $data-list-border-color: none;
 //=============================================================================
 
 // Metadata label/value pairs on show pages.
-.item-details {
+.model-details {
 
     @extend .label-value-pairs;
 
@@ -437,7 +437,7 @@ $data-list-border-color: none;
 
 // Wrapper for item details which supports a second column of information to
 // the right of the details listing.
-.item-container {
+.model-container {
 
     display:        flex;
     flex-direction: column;

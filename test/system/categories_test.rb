@@ -23,7 +23,7 @@ class CategoriesTest < ApplicationSystemTestCase
       assert_first_page
 
       # Visit catalog titles page for first category.
-      link  = find('.category-list-entry', match: :first).find('a')
+      link  = find('.category-list-item', match: :first).find('a')
       terms = { category: link.text }
       link.click
       show_url

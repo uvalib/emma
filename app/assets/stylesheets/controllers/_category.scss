@@ -9,9 +9,9 @@
 //=============================================================================
 
 // Category metadata label/value pairs for index listings.
-.category-list-entry {
+.category-list-item {
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
 
     display:        flex;
     flex-direction: row;
@@ -40,10 +40,10 @@
     }
 }
 
-// Zero or more .category-list-entry elements.
+// Zero or more .category-list-item elements.
 .category-list {
 
-    @extend .item-list;
+    @extend .model-list;
 
     //=========================================================================
     // Sections
@@ -61,10 +61,10 @@
 
 // Category metadata values.
 .category-details { // TODO: delete?
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Container for a .category-details.
 .category-container { // TODO: delete?
-    @extend .item-container;
+    @extend .model-container;
 }

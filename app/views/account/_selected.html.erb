@@ -28,7 +28,7 @@
 
   <%- if toggle -%>
     <div id="<%= panel_id -%>" class="<%= panel_css -%>">
-      <%= render 'account/entry', item: item, skip: :number %>
+      <%= render 'account/list_item', item: item, skip: :number %>
     </div>
   <%- end -%>
 

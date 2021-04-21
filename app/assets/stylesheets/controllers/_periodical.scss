@@ -10,9 +10,9 @@
 //=============================================================================
 
 // Periodical metadata label/value pairs for index listings.
-.periodical-list-entry {
+.periodical-list-item {
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
 
     //=========================================================================
     // Components
@@ -42,9 +42,9 @@
     }
 }
 
-// Zero or more .periodical-list-entry elements.
+// Zero or more .periodical-list-item elements.
 .periodical-list {
-    @extend .item-list;
+    @extend .model-list;
 }
 
 //=============================================================================
@@ -53,14 +53,14 @@
 
 // Periodical metadata values.
 .periodical-details {
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Container for a .periodical-details and .edition-list in a two-column format
 // for wide screens.
 .periodical-container {
 
-    @extend .item-container;
+    @extend .model-container;
 
     //=========================================================================
     // Sections
@@ -76,7 +76,7 @@
             margin-top: -0.75rem;
         }
 
-        .edition-list-entry {
+        .edition-list-item {
 
             // noinspection CssUnusedSymbol
             .value.field-Formats {

@@ -1,0 +1,11 @@
+<%# app/views/help/_list_item.html.erb -%>
+<%-
+  # A single help list entry.
+
+  item  ||= nil or return
+  level ||= 1
+  row   ||= level
+
+-%>
+
+<%= help_list_item(item: item, level: level, row: row) %>

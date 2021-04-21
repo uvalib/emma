@@ -46,14 +46,14 @@ module PeriodicalHelper
   # Create a link to the details show page for the given item.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #item_link.
+  # @param [Hash]            opt      Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def periodical_link(item, **opt)
     opt[:path]    = periodical_path(id: item.identifier)
     opt[:tooltip] = PERIODICAL_SHOW_TOOLTIP
-    item_link(item, **opt)
+    model_link(item, **opt)
   end
 
   # Item categories as search links.
@@ -208,16 +208,16 @@ module PeriodicalHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing of a periodical.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Hash]            opt      Passed to #model_details.
   #
   def periodical_details(item, pairs: nil, **opt)
     opt[:model] = :periodical
     opt[:pairs] = PERIODICAL_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -230,12 +230,12 @@ module PeriodicalHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Hash]            opt      Passed to #model_list_item.
   #
-  def periodical_list_entry(item, pairs: nil, **opt)
+  def periodical_list_item(item, pairs: nil, **opt)
     opt[:model] = :periodical
     opt[:pairs] = PERIODICAL_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
 end

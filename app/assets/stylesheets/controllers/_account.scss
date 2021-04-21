@@ -8,19 +8,19 @@
 //=============================================================================
 
 // Local EMMA user account metadata label/value pairs for index listings.
-.account-list-entry {
-    @extend .item-list-entry-panel;
+.account-list-item {
+    @extend .model-list-item-panel;
 }
 
-// Zero or more .account-list-entry elements.
+// Zero or more .account-list-item elements.
 .account-list {
-    @extend .item-list;
+    @extend .model-list;
 }
 
 // Grid table of local EMMA user accounts.
 .account-table {
 
-    @extend .item-table;
+    @extend .model-table;
 
     td {
         min-width: max-content;
@@ -39,12 +39,12 @@
 
 // Account metadata values.
 .account-details {
-    @extend .account-list-entry; // INSTEAD OF @extend .item-details;
+    @extend .account-list-item; // INSTEAD OF @extend .model-details;
 }
 
 // Container for an .account-details.
 .account-container {
-    @extend .item-container;
+    @extend .model-container;
 }
 
 //=============================================================================

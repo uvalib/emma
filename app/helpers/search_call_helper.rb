@@ -46,14 +46,14 @@ module SearchCallHelper
   # Create a link to the details show page for the given item.
   #
   # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #item_link.
+  # @param [Hash]                opt    Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_call_link(item, **opt)
     opt[:path]    = search_call_path(id: item.identifier)
     opt[:tooltip] = SEARCH_CALL_SHOW_TOOLTIP
-    item_link(item, **opt)
+    model_link(item, **opt)
   end
 
   # ===========================================================================
@@ -67,14 +67,14 @@ module SearchCallHelper
   # @param [SearchCall] item
   # @param [String, Symbol, nil, Array<String,Symbol,nil>] columns
   # @param [Hash, nil]  pairs         Additional field mappings.
-  # @param [Hash]       opt           Passed to #item_details.
+  # @param [Hash]       opt           Passed to #model_details.
   #
   def search_call_details(item, columns: nil, pairs: nil, **opt)
     pairs = search_call_field_values(item, columns: columns).merge(pairs || {})
     # noinspection RubyNilAnalysis
     count = pairs.size
     append_classes!(opt, "columns-#{count}") if count.positive?
-    item_details(item, model: :search_call, pairs: pairs, **opt)
+    model_details(item, model: :search_call, pairs: pairs, **opt)
   end
 
   # ===========================================================================
@@ -87,12 +87,12 @@ module SearchCallHelper
   #
   # @param [SearchCall] item
   # @param [Hash, nil]  pairs         Additional field mappings.
-  # @param [Hash]       opt           Passed to #item_list_entry.
+  # @param [Hash]       opt           Passed to #model_list_item.
   #
-  def search_call_list_entry(item, pairs: nil, **opt)
+  def search_call_list_item(item, pairs: nil, **opt)
     opt[:model] = :search_call
     opt[:pairs] = SEARCH_CALL_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
   # ===========================================================================
@@ -104,7 +104,7 @@ module SearchCallHelper
   # Render search calls as a table.
   #
   # @param [SearchCall, Array<SearchCall>] list
-  # @param [Hash]                          opt    Passed to #item_table except:
+  # @param [Hash]                          opt    Passed to #model_table except:
   #
   # @option [Boolean] :extended       Indicate that this is the "extended"
   #                                     version of the table which replaces
@@ -115,7 +115,7 @@ module SearchCallHelper
     opt[:model] ||= :search_call
     prepend_classes!(opt, 'extended') if opt.delete(:extended)
     # noinspection RubyYardParamTypeMatch
-    item_table(list, **opt) do |parts, b_list, **b_opt|
+    model_table(list, **opt) do |parts, b_list, **b_opt|
       parts[:thead] ||= search_call_table_headings(b_list, **b_opt)
       parts[:tbody] ||= search_call_table_entries(b_list, **b_opt)
     end
@@ -124,11 +124,11 @@ module SearchCallHelper
   # Render one or more entries for use within a <tbody>.
   #
   # @param [SearchCall, Array<SearchCall>] list
-  # @param [Hash]                          opt    Passed to #item_table_entries
+  # @param [Hash]                          opt    Passed to #model_table_entries
   #
   def search_call_table_entries(list, **opt)
     # noinspection RubyYardParamTypeMatch
-    item_table_entries(list, **opt) do |item, **row_opt|
+    model_table_entries(list, **opt) do |item, **row_opt|
       search_call_table_entry(item, **row_opt)
     end
   end
@@ -136,11 +136,11 @@ module SearchCallHelper
   # Render a single entry for use within a table of items.
   #
   # @param [SearchCall] item
-  # @param [Hash]       opt           Passed to #item_table_entry
+  # @param [Hash]       opt           Passed to #model_table_entry
   #
   def search_call_table_entry(item, **opt)
     # noinspection RubyYardParamTypeMatch
-    item_table_entry(item, **opt) do |b_item, **b_opt|
+    model_table_entry(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end
   end
@@ -148,11 +148,11 @@ module SearchCallHelper
   # Render column headings for a search call table.
   #
   # @param [SearchCall, Array<SearchCall>] item
-  # @param [Hash]                          opt  Passed to #item_table_headings
+  # @param [Hash]                          opt  Passed to #model_table_headings
   #
   def search_call_table_headings(item, **opt)
     # noinspection RubyYardParamTypeMatch
-    item_table_headings(item, **opt) do |b_item, **b_opt|
+    model_table_headings(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end
   end
@@ -166,12 +166,12 @@ module SearchCallHelper
   # Specified field selections from the given User instance.
   #
   # @param [SearchCall, Hash, nil] item
-  # @param [Hash]                  opt      Passed to #item_field_values
+  # @param [Hash]                  opt    Passed to #model_field_values
   #
   def search_call_field_values(item, **opt)
     return {} unless item.is_a?(SearchCall) || item.is_a?(Hash)
     v_opt = nil
-    item_field_values(item, **opt).transform_values! do |attr_value|
+    model_field_values(item, **opt).transform_values! do |attr_value|
       if attr_value.blank? && !attr_value.is_a?(FalseClass)
         EM_DASH
 

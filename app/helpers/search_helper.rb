@@ -51,14 +51,14 @@ module SearchHelper
   # Create a link to the details show page for the given item.
   #
   # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #item_link.
+  # @param [Hash]                opt    Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_item_link(item, **opt)
     opt[:path]    = search_path(id: item.identifier)
     opt[:tooltip] = SEARCH_SHOW_TOOLTIP
-    item_link(item, **opt)
+    model_link(item, **opt)
   end
 
   # ===========================================================================
@@ -300,16 +300,16 @@ module SearchHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing for a search result item.
   #
   # @param [Search::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Hash]            opt      Passed to #model_details.
   #
   def search_item_details(item, pairs: nil, **opt)
     opt[:model] = :search
     opt[:pairs] = SEARCH_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # Create a container with the repository ID displayed as a link but acting as
@@ -356,23 +356,23 @@ module SearchHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Hash]            opt      Passed to #model_list_item.
   #
-  def search_list_entry(item, pairs: nil, **opt)
+  def search_list_item(item, pairs: nil, **opt)
     opt[:model] = :search
     opt[:pairs] = SEARCH_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
   # Include edit and delete controls below the entry number.
   #
   # @param [Model] item
-  # @param [Hash]  opt                Passed to #list_entry_number.
+  # @param [Hash]  opt                Passed to #list_item_number.
   #
   # @see UploadHelper#upload_edit_icon
   # @see UploadHelper#upload_delete_icon
   #
-  def search_list_entry_number(item, **opt)
+  def search_list_item_number(item, **opt)
     db_id =
       if can?(:edit, Upload)
         Upload.id_for(item) ||
@@ -380,7 +380,7 @@ module SearchHelper
             Upload.where(submission_id: sid).first&.id
           end
       end
-    list_entry_number(item, **opt) do
+    list_item_number(item, **opt) do
       # noinspection RubyYardParamTypeMatch
       upload_entry_icons(item, id: db_id) if db_id.present?
     end

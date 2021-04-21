@@ -12,9 +12,9 @@
 //=============================================================================
 
 // Catalog title metadata label/value pairs for index listings.
-.title-list-entry {
+.title-list-item {
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
 
     grid-auto-rows: min-content;
 
@@ -77,10 +77,10 @@
     }
 }
 
-// Zero or more .title-list-entry elements.
+// Zero or more .title-list-item elements.
 .title-list {
 
-    @extend .item-list;
+    @extend .model-list;
     @extend .list-3-column;
 
     justify-items: stretch;
@@ -132,7 +132,7 @@
 // Catalog Title metadata values.
 .title-details {
 
-    @extend .item-details;
+    @extend .model-details;
 
     //=========================================================================
     // Components
@@ -249,7 +249,7 @@
 // right on large screens.
 .title-container {
 
-    @extend .item-container;
+    @extend .model-container;
 
     //=========================================================================
     // Sections

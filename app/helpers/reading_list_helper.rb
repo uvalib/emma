@@ -89,7 +89,7 @@ module ReadingListHelper
   # Create a link to the details show page for the given item.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #item_link except for:
+  # @param [Hash]            opt      Passed to #model_link except for:
   #
   # @option opt [String] :readingListId
   #
@@ -100,7 +100,7 @@ module ReadingListHelper
     id = local[:readingListId] || item.identifier
     opt[:path]    = reading_list_path(id: id)
     opt[:tooltip] = READING_LIST_SHOW_TOOLTIP
-    item_link(item, **opt)
+    model_link(item, **opt)
   end
 
   # ===========================================================================
@@ -155,16 +155,16 @@ module ReadingListHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing of a reading list.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Hash]            opt      Passed to #model_details.
   #
   def reading_list_details(item, pairs: nil, **opt)
     opt[:model] = :reading_list
     opt[:pairs] = READING_LIST_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -177,12 +177,12 @@ module ReadingListHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Hash]            opt      Passed to #model_list_item.
   #
-  def reading_list_list_entry(item, pairs: nil, **opt)
+  def reading_list_list_item(item, pairs: nil, **opt)
     opt[:model] = :reading_list
     opt[:pairs] = READING_LIST_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
 end

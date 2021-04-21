@@ -33,13 +33,13 @@
 <%= heading %>
 
 <%- if list.blank? -%>
-  <%= render 'help/entry', opt.merge!(index: -1, row: row) %>
+  <%= render 'help/list_item', opt.merge!(index: -1, row: row) %>
 <%- else -%>
   <%- list.each_with_index do |item, idx| -%>
     <%= sub_heading[idx] %>
-    <div class="help-list-entry <%= "row-#{idx}"-%>">
+    <div class="help-list-item <%= "row-#{idx}"-%>">
       <%- opt.merge!(index: idx, row: (row + idx), item: item) -%>
-      <%= render 'help/entry', opt %>
+      <%= render 'help/list_item', opt %>
     </div>
   <%- end -%>
 <%- end -%>

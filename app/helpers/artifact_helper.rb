@@ -118,7 +118,7 @@ module ArtifactHelper
   # @param [Api::Record]                     item
   # @param [String, Bs::Record::Format, nil] format
   # @param [String, nil]                     url      Def: derived from *item*.
-  # @param [Hash]                            opt      Passed to #item_link.
+  # @param [Hash]                            opt      Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]   The HTML link element.
   # @return [nil]                         No link URL was provided or found.
@@ -181,7 +181,7 @@ module ArtifactHelper
 
     # Emit the link and control elements.
     html_div(class: 'artifact popup-container') do
-      item_link(item, **opt) << safe_join(hidden)
+      model_link(item, **opt) << safe_join(hidden)
     end
   end
 
@@ -298,16 +298,16 @@ module ArtifactHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing of an artifact.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Hash]            opt      Passed to #model_details.
   #
   def artifact_details(item, pairs: nil, **opt)
     opt[:model] = :artifact
     opt[:pairs] = ARTIFACT_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -320,12 +320,12 @@ module ArtifactHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Hash]            opt      Passed to #model_list_item.
   #
-  def artifact_list_entry(item, pairs: nil, **opt)
+  def artifact_list_item(item, pairs: nil, **opt)
     opt[:model] = :artifact
     opt[:pairs] = ARTIFACT_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
 end

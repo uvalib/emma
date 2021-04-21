@@ -18,7 +18,7 @@ module TestHelper::SystemTests::Common
         heading:        I18n.t('emma.category.index.title'),
         count:          'categories found',
         body_class:     '.category-index',
-        entry_class:    '.category-list-entry',
+        entry_class:    '.category-list-item',
       }
     },
     title: {
@@ -27,7 +27,7 @@ module TestHelper::SystemTests::Common
         heading:        I18n.t('emma.title.index.title'),
         count:          'titles found',
         body_class:     '.title-index',
-        entry_class:    '.title-list-entry',
+        entry_class:    '.title-list-item',
       },
       show: {
         body_class:     '.title-show',
@@ -40,7 +40,7 @@ module TestHelper::SystemTests::Common
         heading:        I18n.t('emma.periodical.index.title'),
         count:          'periodicals found',
         body_class:     '.periodical-index',
-        entry_class:    '.periodical-list-entry',
+        entry_class:    '.periodical-list-item',
       },
       show: {
         body_class:     '.periodical-show',
@@ -53,7 +53,7 @@ module TestHelper::SystemTests::Common
         heading:        I18n.t('emma.member.index.title'),
         count:          'members found',
         body_class:     '.member-index',
-        entry_class:    '.member-list-entry',
+        entry_class:    '.member-list-item',
       },
       show: {
         body_class:     '.member-show',
@@ -66,7 +66,7 @@ module TestHelper::SystemTests::Common
         heading:        I18n.t('emma.reading_list.index.title'),
         count:          'lists found',
         body_class:     '.reading_list-index',
-        entry_class:    '.reading_list-list-entry',
+        entry_class:    '.reading_list-list-item',
       },
       show: {
         body_class:     '.reading_list-show',

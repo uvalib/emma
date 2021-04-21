@@ -45,7 +45,7 @@ module EditionHelper
   # Create a link to the details show page for the given item.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #item_link except for:
+  # @param [Hash]            opt      Passed to #model_link except for:
   #
   # @option opt [String] :editionId
   # @option opt [String] :edition       Alias for :editionId
@@ -60,7 +60,7 @@ module EditionHelper
       opt[:no_link] = true
     end
     opt[:tooltip] = EDITION_SHOW_TOOLTIP
-    item_link(item, **opt)
+    model_link(item, **opt)
   end
 
   # ===========================================================================
@@ -69,16 +69,16 @@ module EditionHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing of an edition.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Hash]            opt      Passed to #model_details.
   #
   def edition_details(item, pairs: nil, **opt)
     opt[:model] = :edition
     opt[:pairs] = EDITION_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -91,12 +91,12 @@ module EditionHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Hash]            opt      Passed to #model_list_item.
   #
-  def edition_list_entry(item, pairs: nil, **opt)
+  def edition_list_item(item, pairs: nil, **opt)
     opt[:model] = :edition
     opt[:pairs] = EDITION_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
 end

@@ -45,7 +45,7 @@ module CategoryHelper
   # Create a link to the catalog title search for the given category.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #item_link.
+  # @param [Hash]            opt      Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -58,7 +58,7 @@ module CategoryHelper
     unless opt.key?(:no_link) || !item.respond_to?(:bookshare_category)
       opt[:no_link] = true if item.bookshare_category.blank?
     end
-    item_link(item, **opt) { |term| title_index_path(categories: term) }
+    model_link(item, **opt) { |term| title_index_path(categories: term) }
   end
 
   # ===========================================================================
@@ -67,16 +67,16 @@ module CategoryHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing of a category.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Hash]            opt      Passed to #model_details.
   #
   def category_details(item, pairs: nil, **opt)
     opt[:model] = :category
     opt[:pairs] = CATEGORY_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -89,14 +89,14 @@ module CategoryHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Hash]            opt      Passed to #model_list_item.
   #
-  def category_list_entry(item, pairs: nil, **opt)
+  def category_list_item(item, pairs: nil, **opt)
     opt[:model] = :category
     opt[:pairs] = item ? { category_link(item) => "(#{item.titleCount})" } : {}
     opt[:pairs].merge!(CATEGORY_INDEX_FIELDS)
     opt[:pairs].merge!(pairs) if pairs.present?
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
 end

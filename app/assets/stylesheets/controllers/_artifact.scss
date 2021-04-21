@@ -9,13 +9,13 @@
 //=============================================================================
 
 // Artifact metadata label/value pairs for index listings.
-.artifact-list-entry {
-    @extend .item-list-entry;
+.artifact-list-item {
+    @extend .model-list-item;
 }
 
-// Zero or more .artifact-list-entry elements.
+// Zero or more .artifact-list-item elements.
 .artifact-list {
-    @extend .item-list;
+    @extend .model-list;
 }
 
 //=============================================================================
@@ -24,10 +24,10 @@
 
 // Artifact metadata values.
 .artifact-details {
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Container for an .artifact-details.
 .artifact-container {
-    @extend .item-container;
+    @extend .model-container;
 }

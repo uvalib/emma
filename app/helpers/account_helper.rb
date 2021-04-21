@@ -41,7 +41,7 @@ module AccountHelper
   # Create a link to the details show page for the given item.
   #
   # @param [User] item
-  # @param [Hash] opt                 Passed to #item_link
+  # @param [Hash] opt                 Passed to #model_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -50,13 +50,13 @@ module AccountHelper
     opt[:role]  ||= 'button'
     opt[:label] ||= 'Show' # TODO: ?
     opt[:path]  ||= show_account_path(item)
-    item_link(item, **prepend_classes!(opt, css_selector))
+    model_link(item, **prepend_classes!(opt, css_selector))
   end
 
   # Create a link to the edit page for the given item.
   #
   # @param [User] item
-  # @param [Hash] opt                 Passed to #item_link
+  # @param [Hash] opt                 Passed to #model_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -66,13 +66,13 @@ module AccountHelper
     opt[:label]        ||= UploadHelper::UPLOAD_ICONS.dig(:edit, :icon) # TODO: ?
     opt[:'aria-label'] ||= 'Edit'
     opt[:path]         ||= edit_account_path(item)
-    item_link(item, **prepend_classes!(opt, css_selector))
+    model_link(item, **prepend_classes!(opt, css_selector))
   end
 
   # Create a link to remove the given item.
   #
   # @param [User] item
-  # @param [Hash] opt                 Passed to #item_link
+  # @param [Hash] opt                 Passed to #model_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -82,7 +82,7 @@ module AccountHelper
     opt[:label]        ||= UploadHelper::UPLOAD_ICONS.dig(:delete, :icon) # TODO: ?
     opt[:'aria-label'] ||= 'Delete'
     opt[:path]         ||= delete_select_account_path(selected: item)
-    item_link(item, **prepend_classes!(opt, css_selector))
+    model_link(item, **prepend_classes!(opt, css_selector))
   end
 
   # ===========================================================================
@@ -91,19 +91,19 @@ module AccountHelper
 
   public
 
-  # Render an account metadata listing.
+  # Render a metadata listing of an account.
   #
   # @param [User]      item
   # @param [String, Symbol, Array<String,Symbol,nil>, nil] columns
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #item_details.
+  # @param [Hash]      opt            Passed to #model_details.
   #
   def account_details(item, columns: nil, pairs: nil, **opt)
     pairs = account_field_values(item, columns: columns).merge(pairs || {})
     # noinspection RubyNilAnalysis
     count = pairs.size
     append_classes!(opt, "columns-#{count}") if count.positive?
-    item_details(item, model: :account, pairs: pairs, **opt)
+    model_details(item, model: :account, pairs: pairs, **opt)
   end
 
   # ===========================================================================
@@ -116,12 +116,12 @@ module AccountHelper
   #
   # @param [User]      item
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #item_list_entry.
+  # @param [Hash]      opt            Passed to #model_list_item.
   #
-  def account_list_entry(item, pairs: nil, **opt)
+  def account_list_item(item, pairs: nil, **opt)
     opt[:model] = :account
     opt[:pairs] = ACCOUNT_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
   # ===========================================================================
@@ -133,12 +133,12 @@ module AccountHelper
   # Render accounts as a table.
   #
   # @param [User, Array<User>] list
-  # @param [Hash]              opt    Passed to #item_table
+  # @param [Hash]              opt    Passed to #model_table
   #
   def account_table(list, **opt)
     opt[:model] ||= :account
     # noinspection RubyYardParamTypeMatch
-    item_table(list, **opt) do |parts, b_list, **b_opt|
+    model_table(list, **opt) do |parts, b_list, **b_opt|
       parts[:thead] ||= account_table_headings(b_list, **b_opt)
       parts[:tbody] ||= account_table_entries(b_list, **b_opt)
     end
@@ -147,11 +147,11 @@ module AccountHelper
   # Render one or more entries for use within a <tbody>.
   #
   # @param [User, Array<User>] list
-  # @param [Hash]              opt    Passed to #item_table_entries
+  # @param [Hash]              opt    Passed to #model_table_entries
   #
   def account_table_entries(list, **opt)
     # noinspection RubyYardParamTypeMatch
-    item_table_entries(list, **opt) do |item, **row_opt|
+    model_table_entries(list, **opt) do |item, **row_opt|
       account_table_entry(item, **row_opt)
     end
   end
@@ -159,11 +159,11 @@ module AccountHelper
   # Render a single entry for use within a table of items.
   #
   # @param [User] item
-  # @param [Hash] opt                 Passed to #item_table_entry
+  # @param [Hash] opt                 Passed to #model_table_entry
   #
   def account_table_entry(item, **opt)
     # noinspection RubyYardParamTypeMatch
-    item_table_entry(item, **opt) do |b_item, **b_opt|
+    model_table_entry(item, **opt) do |b_item, **b_opt|
       account_columns(b_item, **b_opt)
     end
   end
@@ -171,11 +171,11 @@ module AccountHelper
   # Render column headings for an account table.
   #
   # @param [User, Array<User>] item
-  # @param [Hash]              opt    Passed to #item_table_headings
+  # @param [Hash]              opt    Passed to #model_table_headings
   #
   def account_table_headings(item, **opt)
     # noinspection RubyYardParamTypeMatch
-    item_table_headings(item, **opt) do |b_item, **b_opt|
+    model_table_headings(item, **opt) do |b_item, **b_opt|
       account_columns(b_item, **b_opt)
     end
   end
@@ -192,12 +192,12 @@ module AccountHelper
   # Specified field selections from the given User instance.
   #
   # @param [User, nil] item
-  # @param [Hash]      opt            Passed to #item_field_values
+  # @param [Hash]      opt            Passed to #model_field_values
   #
   def account_field_values(item, **opt)
     return {} unless item.is_a?(User)
     opt[:filter] ||= ACCOUNT_FIELD_FILTERS
-    item_field_values(item, **opt)
+    model_field_values(item, **opt)
   end
 
   # account_columns

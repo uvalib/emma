@@ -333,7 +333,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]   Help contents list element.
   # @return [nil]                         No content and *wrap* is *false*.
   #
-  def help_list_entry(item: nil, wrap: false, **opt)
+  def help_list_item(item: nil, wrap: false, **opt)
     help_container(item: item, wrap: wrap, **opt)
   end
 

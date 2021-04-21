@@ -59,10 +59,10 @@ module ModelHelper
   public
 
   # @type [Array<Symbol>]
-  ITEM_LINK_OPTIONS =
+  MODEL_LINK_OPTIONS =
     %i[label no_link path path_method tooltip scope controller].freeze
 
-  # Create a link to the details show page for the given item.
+  # Create a link to the details show page for the given model instance.
   #
   # @param [Model] item
   # @param [Hash]  opt                Passed to #make_link except for:
@@ -81,8 +81,8 @@ module ModelHelper
   # @yieldparam  [String] terms
   # @yieldreturn [String]
   #
-  def item_link(item, **opt)
-    opt, html_opt = partition_options(opt, *ITEM_LINK_OPTIONS)
+  def model_link(item, **opt)
+    opt, html_opt = partition_options(opt, *MODEL_LINK_OPTIONS)
     label = opt[:label] || :label
     label = item.send(label) if label.is_a?(Symbol)
     if opt[:no_link]
@@ -855,7 +855,7 @@ module ModelHelper
   # @yieldparam  [Integer] offset     The effective page offset.
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def list_entry_number(
+  def list_item_number(
     item,
     index:,
     offset: nil,
@@ -907,8 +907,8 @@ module ModelHelper
   #--
   # noinspection RubyNilAnalysis
   #++
-  def item_list_entry(item, model:, pairs: nil, **opt, &block)
-    css_selector = ".#{model}-list-entry"
+  def model_list_item(item, model:, pairs: nil, **opt, &block)
+    css_selector = ".#{model}-list-item"
     html_opt     = { class: css_classes(css_selector) }
     row          = positive(opt[:row])
     append_classes!(html_opt, "row-#{row}") if row
@@ -956,12 +956,12 @@ module ModelHelper
   #
   # @type [Array<Symbol>]
   #
-  ITEM_TABLE_OPTIONS = [
-    ITEM_TABLE_FIELD_OPT = %i[columns],
-    ITEM_TABLE_HEAD_OPT  = %i[sticky dark],
-    ITEM_TABLE_ENTRY_OPT = %i[inner_tag outer_tag],
-    ITEM_TABLE_ROW_OPT   = %i[row col],
-    ITEM_TABLE_TABLE_OPT = %i[model thead tbody tfoot],
+  MODEL_TABLE_OPTIONS = [
+    MODEL_TABLE_FIELD_OPT = %i[columns],
+    MODEL_TABLE_HEAD_OPT  = %i[sticky dark],
+    MODEL_TABLE_ENTRY_OPT = %i[inner_tag outer_tag],
+    MODEL_TABLE_ROW_OPT   = %i[row col],
+    MODEL_TABLE_TABLE_OPT = %i[model thead tbody tfoot],
   ].flatten.freeze
 
   # Render model items as a table.
@@ -973,7 +973,7 @@ module ModelHelper
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated <thead>.
   # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated <tbody>.
   # @option opt [ActiveSupport::SafeBuffer] :tfoot  Pre-generated <tfoot>.
-  # @option opt [*] #ITEM_TABLE_OPTIONS             Passed to render methods.
+  # @option opt [*] #MODEL_TABLE_OPTIONS            Passed to render methods.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -986,16 +986,16 @@ module ModelHelper
   # @see #STICKY_HEAD
   # @see #DARK_HEAD
   #
-  def item_table(list, **opt)
-    opt, html_opt = partition_options(opt, *ITEM_TABLE_OPTIONS)
+  def model_table(list, **opt)
+    opt, html_opt = partition_options(opt, *MODEL_TABLE_OPTIONS)
     opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
-    model        = opt.delete(:model)&.to_s || 'item'
+    model        = opt.delete(:model)&.to_s || 'model'
     css_selector = ".#{model}-table"
 
     parts = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h
     yield(parts, list, **opt) if block_given?
-    parts[:thead] ||= item_table_headings(list, **opt)
-    parts[:tbody] ||= item_table_entries(list, **opt)
+    parts[:thead] ||= model_table_headings(list, **opt)
+    parts[:tbody] ||= model_table_entries(list, **opt)
     count = parts[:thead].scan(/<th[>\s]/).size
 
     prepend_classes!(html_opt, css_selector)
@@ -1012,7 +1012,7 @@ module ModelHelper
   # @param [Model, Array<Model>] list
   # @param [String, nil]         separator
   # @param [Integer, nil]        row        Current row (prior to first entry).
-  # @param [Hash]                opt        Passed to #item_table_entry
+  # @param [Hash]                opt        Passed to #model_table_entry
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
@@ -1022,7 +1022,7 @@ module ModelHelper
   # @yieldparam  [Hash]  opt          Row-specific options.
   # @yieldreturn [ActiveSupport::SafeBuffer]
   #
-  def item_table_entries(list, separator: "\n", row: 1, **opt)
+  def model_table_entries(list, separator: "\n", row: 1, **opt)
     rows      = Array.wrap(list).dup
     first_row = row + 1
     last_row  = row + rows.size
@@ -1034,7 +1034,7 @@ module ModelHelper
       if block_given?
         yield(item, **row_opt)
       else
-        item_table_entry(item, **row_opt)
+        model_table_entry(item, **row_opt)
       end
     end
     rows.compact!
@@ -1058,9 +1058,9 @@ module ModelHelper
   # @yield [item, **opt] Allows the caller to generate the item columns.
   # @yieldparam  [Model] item         Single item instance.
   # @yieldparam  [Hash]  opt          Field generation options.
-  # @yieldreturn [Hash{Symbol=>*}] Same as #item_field_values return type.
+  # @yieldreturn [Hash{Symbol=>*}]    Same as #model_field_values return type.
   #
-  def item_table_entry(
+  def model_table_entry(
     item,
     row:        1,
     col:        1,
@@ -1069,12 +1069,12 @@ module ModelHelper
     columns:    nil,
     **opt
   )
-    opt.except!(*ITEM_TABLE_OPTIONS)
+    opt.except!(*MODEL_TABLE_OPTIONS)
     pairs =
       if block_given?
         yield(item, columns: columns)
       else
-        item_field_values(item, columns: columns)
+        model_field_values(item, columns: columns)
       end
     fields =
       if inner_tag
@@ -1082,7 +1082,7 @@ module ModelHelper
         last_col  = pairs.size + col - 1
         pairs.map do |field, value|
           # noinspection RubyYardParamTypeMatch
-          row_opt = item_rc_options(field, row, col, opt)
+          row_opt = model_rc_options(field, row, col, opt)
           append_classes!(row_opt, 'col-first') if col == first_col
           append_classes!(row_opt, 'col-last')  if col == last_col
           col += 1
@@ -1117,7 +1117,7 @@ module ModelHelper
   #
   # @see #DARK_HEAD
   #
-  def item_table_headings(
+  def model_table_headings(
     item,
     row:        1,
     col:        1,
@@ -1127,14 +1127,14 @@ module ModelHelper
     columns:    nil,
     **opt
   )
-    opt.except!(*ITEM_TABLE_OPTIONS)
+    opt.except!(*MODEL_TABLE_OPTIONS)
 
     first  = Array.wrap(item).first
     fields =
       if block_given?
         yield(first, columns: columns)
       else
-        item_field_values(first, columns: columns)
+        model_field_values(first, columns: columns)
       end
     fields = fields.dup  if fields.is_a?(Array)
     fields = fields.keys if fields.is_a?(Hash)
@@ -1144,7 +1144,7 @@ module ModelHelper
       first_col = col
       last_col  = fields.size + col - 1
       fields.map! do |field|
-        row_opt = item_rc_options(field, row, col, opt)
+        row_opt = model_rc_options(field, row, col, opt)
         append_classes!(row_opt, 'col-first') if col == first_col
         append_classes!(row_opt, 'col-last')  if col == last_col
         col += 1
@@ -1181,7 +1181,7 @@ module ModelHelper
   #--
   # noinspection RubyNilAnalysis
   #++
-  def item_field_values(item, columns: nil, default: nil, filter: nil, **)
+  def model_field_values(item, columns: nil, default: nil, filter: nil, **)
     pairs   = item.respond_to?(:attributes) ? item.attributes : item
     return {} unless pairs.is_a?(Hash)
     pairs   = pairs.dup
@@ -1204,7 +1204,7 @@ module ModelHelper
   #
   # @return [Hash]
   #
-  def item_rc_options(field, row = nil, col = nil, opt = nil)
+  def model_rc_options(field, row = nil, col = nil, opt = nil)
     field = html_id(field)
     prepend_classes(opt, field).tap do |html_opt|
       append_classes!(html_opt, "row-#{row}") if row
@@ -1219,7 +1219,7 @@ module ModelHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing of a model instance.
   #
   # @param [Model]          item
   # @param [String, Symbol] model
@@ -1232,7 +1232,7 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
-  def item_details(item, model:, pairs: nil, **opt, &block)
+  def model_details(item, model:, pairs: nil, **opt, &block)
     return if item.blank?
     css_selector = ".#{model}-details"
     classes      = css_classes(css_selector, opt.delete(:class))

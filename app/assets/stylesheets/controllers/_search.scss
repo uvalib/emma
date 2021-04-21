@@ -64,7 +64,7 @@ $sticky-top-narrow:     3.125rem;
     }
 }
 
-// Label/value pairs appropriate for either .search-list-entry or .file-info.
+// Label/value pairs appropriate for either .search-list-item or .file-info.
 .search-label-value-pairs {
 
     @extend .label-value-pairs;
@@ -218,7 +218,7 @@ $sticky-top-narrow:     3.125rem;
 // File format information section.
 .file-info {
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
     @extend .search-label-value-pairs;
 
     display:    grid;
@@ -300,9 +300,9 @@ $sticky-top-narrow:     3.125rem;
 //=============================================================================
 
 // Metadata record label/value pairs for index listings.
-.search-list-entry {
+.search-list-item {
 
-    @extend .item-list-entry;
+    @extend .model-list-item;
     @extend .search-label-value-pairs;
 
     // If this item is *false* then the label for the title field is displayed
@@ -605,10 +605,10 @@ $sticky-top-narrow:     3.125rem;
     }
 }
 
-// Zero or more .search-list-entry elements.
+// Zero or more .search-list-item elements.
 .search-list {
 
-    @extend .item-list;
+    @extend .model-list;
 
     @media #{$narrow-screen} {
         grid-template-columns: 1fr;
@@ -744,7 +744,7 @@ $sticky-top-narrow:     3.125rem;
      * the grid of each record aligns only to the widest label that it
      * happens to be displaying.
      */
-    .search-list-entry {
+    .search-list-item {
 
         @media #{$not-narrow-screen} {
             margin-bottom:         calc(2 * #{$results-entry-gap-y});
@@ -772,13 +772,13 @@ $sticky-top-narrow:     3.125rem;
 
 // Metadata record values.
 .search-details {
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Container for a .search-details.
 .search-container {
 
-    @extend .item-container;
+    @extend .model-container;
 
     //=========================================================================
     // Sections

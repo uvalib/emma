@@ -9,13 +9,13 @@
 //=============================================================================
 
 // Reading List metadata label/value pairs for index listings.
-.reading_list-list-entry {
-    @extend .item-list-entry;
+.reading_list-list-item {
+    @extend .model-list-item;
 }
 
-// Zero or more .reading_list-list-entry elements.
+// Zero or more .reading_list-list-item elements.
 .reading_list-list {
-    @extend .item-list;
+    @extend .model-list;
 }
 
 //=============================================================================
@@ -24,7 +24,7 @@
 
 // Reading List metadata values.
 .reading_list-details {
-    @extend .item-details;
+    @extend .model-details;
 }
 
 // Listing of catalog titles associated with the Reading List.
@@ -56,7 +56,7 @@
 // for wide screens.
 .reading_list-container {
 
-    @extend .item-container;
+    @extend .model-container;
 
     //=========================================================================
     // Sections

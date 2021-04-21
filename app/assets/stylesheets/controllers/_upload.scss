@@ -17,9 +17,9 @@ $upload-entry-gap: 2rem;
 
 // Upload entry fields for index listings.
 // noinspection CssReplaceWithShorthandSafely
-.upload-list-entry {
+.upload-list-item {
 
-    @extend .item-list-entry-panel;
+    @extend .model-list-item-panel;
 
     // List data items in horizontal columns when there is enough room,
     // followed by a hierarchical rendering of :file_data, followed by a
@@ -124,10 +124,10 @@ $upload-entry-gap: 2rem;
     }
 }
 
-// Zero or more .upload-list-entry elements.
+// Zero or more .upload-list-item elements.
 .upload-list {
 
-    @extend .item-list;
+    @extend .model-list;
 
     @include grid-row-gap($upload-entry-gap);
 
@@ -243,13 +243,13 @@ body.upload-check.modal {
 
 // Upload entry fields.
 .upload-details {
-    @extend .upload-list-entry; // INSTEAD OF @extend .item-details;
+    @extend .upload-list-item; // INSTEAD OF @extend .model-details;
 }
 
 // Container for an .upload-details.
 .upload-container {
 
-    @extend .item-container;
+    @extend .model-container;
 
     > .cover-image {
         display: none;

@@ -49,14 +49,14 @@ module MemberHelper
   # NOTE: Over-encoded to allow ID's with '.' to be passed to Rails.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #item_link.
+  # @param [Hash]            opt      Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_link(item, **opt)
     opt[:path]    = member_path(id: url_escape(item.identifier))
     opt[:tooltip] = MEMBER_SHOW_TOOLTIP
-    item_link(item, **opt)
+    model_link(item, **opt)
   end
 
   # ===========================================================================
@@ -65,16 +65,16 @@ module MemberHelper
 
   public
 
-  # Render an item metadata listing.
+  # Render a metadata listing of a member account.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Hash]            opt      Passed to #model_details.
   #
   def member_details(item, pairs: nil, **opt)
     opt[:model] = :member
     opt[:pairs] = MEMBER_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # Render a listing of member preferences.
@@ -139,7 +139,7 @@ module MemberHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_history(item, id:, pairs: nil, **opt)
-    css_selector  = '.history-entry'
+    css_selector  = '.history-item'
     item          = item.titleDownloads if item.respond_to?(:titleDownloads)
     opt[:model]   = :member
     opt[:pairs]   = MEMBER_HISTORY_FIELDS.merge(pairs || {})
@@ -164,12 +164,12 @@ module MemberHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Hash]            opt      Passed to #model_list_item.
   #
-  def member_list_entry(item, pairs: nil, **opt)
+  def member_list_item(item, pairs: nil, **opt)
     opt[:model] = :member
     opt[:pairs] = MEMBER_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
 end

@@ -1,4 +1,4 @@
-<%# app/views/upload/_entry.html.erb -%>
+<%# app/views/upload/_list_item.html.erb -%>
 <%-
   # Display an uploaded entry.
 
@@ -20,6 +20,6 @@
 
 -%>
 
-<%= upload_list_entry_number(item, **opt) unless skip.include?(:number) %>
-<%= thumbnail(item, **opt, link: true)    unless skip.include?(:thumbnail) %>
-<%= upload_list_entry(item, pairs: add, index: index, row: row, group: group)%>
+<%= upload_list_item_number(item, **opt) unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true)   unless skip.include?(:thumbnail) %>
+<%= upload_list_item(item, pairs: add, index: index, row: row, group: group)%>

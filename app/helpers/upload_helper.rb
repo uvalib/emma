@@ -132,14 +132,14 @@ module UploadHelper
   # Create a link to the details show page for the given item.
   #
   # @param [Upload] item
-  # @param [Hash]   opt               Passed to #item_link.
+  # @param [Hash]   opt               Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_link(item, **opt)
     opt[:path]    = show_upload_path(id: item.id)
     opt[:tooltip] = UPLOAD_SHOW_TOOLTIP
-    item_link(item, **opt)
+    model_link(item, **opt)
   end
 
   # ===========================================================================
@@ -250,14 +250,14 @@ module UploadHelper
 
   # Render upload attributes.
   #
-  # @param [Upload] item
-  # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [Upload]    item
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #model_details.
   #
   def upload_details(item, pairs: nil, **opt)
     opt[:model] = :upload
     opt[:pairs] = UPLOAD_SHOW_FIELDS.merge(pairs || {})
-    item_details(item, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -315,10 +315,10 @@ module UploadHelper
 
   # Select Upload records based on workflow state group.
   #
-  # @param [Hash]          counts     A table of group names associated with
+  # @param [Hash] counts              A table of group names associated with
   #                                     their overall totals (default:
   #                                     @group_counts).
-  # @param [Hash]          opt        Passed to inner #html_div except for:
+  # @param [Hash] opt                 Passed to inner #html_div except for:
   #
   # @option opt [String]        :curr_path    Default: `request.fullpath`
   # @option opt [String,Symbol] :curr_group   Default from `request_parameters`
@@ -591,23 +591,23 @@ module UploadHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_list_entry.
+  # @param [Upload]    item
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #model_list_item.
   #
-  def upload_list_entry(item, pairs: nil, **opt)
+  def upload_list_item(item, pairs: nil, **opt)
     opt[:model] = :upload
     opt[:pairs] = UPLOAD_INDEX_FIELDS.merge(pairs || {})
-    item_list_entry(item, **opt)
+    model_list_item(item, **opt)
   end
 
   # Include control icons below the entry number.
   #
   # @param [Upload] item
-  # @param [Hash]   opt               Passed to #list_entry_number.
+  # @param [Hash]   opt               Passed to #list_item_number.
   #
-  def upload_list_entry_number(item, **opt)
-    list_entry_number(item, **opt) do
+  def upload_list_item_number(item, **opt)
+    list_item_number(item, **opt) do
       upload_entry_icons(item)
     end
   end
@@ -1458,8 +1458,8 @@ module UploadHelper
   # to the "/upload/delete" page.
   #
   # @param [String,Array<String>,nil] ids
-  # @param [String]         label         Label for the submit button.
-  # @param [Hash]           opt           Passed to #form_with except for:
+  # @param [String] label                 Label for the submit button.
+  # @param [Hash]   opt                   Passed to #form_with except for:
   #
   # @option opt [Boolean] :force          Force index delete option
   # @option opt [Boolean] :truncate       Reset database ID option

@@ -1,8 +1,7 @@
-<%# app/views/account/_entry.html.erb -%>
+<%# app/views/member/_list_item.html.erb -%>
 <%-
-  # Display a local EMMA user account entry.
+  # A single Member list entry.
 
-  # @type [User, nil] item
   item   ||= @item
   index  ||= nil
   return unless item || index
@@ -18,6 +17,6 @@
 
 -%>
 
-<%= list_entry_number(item, **opt)     unless skip.include?(:number) %>
+<%= list_item_number(item, **opt)      unless skip.include?(:number) %>
 <%= thumbnail(item, **opt, link: true) unless skip.include?(:thumbnail) %>
-<%= account_list_entry(item, pairs: add, index: index, row: row) %>
+<%= member_list_item(item, pairs: add, index: index, row: row) %>
