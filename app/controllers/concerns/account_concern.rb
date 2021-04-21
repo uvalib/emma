@@ -68,7 +68,7 @@ module AccountConcern
   # @param [Array, nil]               columns      Default: #UA_MATCH_COLUMNS
   # @param [Hash]                     hash_terms
   #
-  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Relation<User>]
   #
   def get_accounts(*terms, columns: nil, **hash_terms)
     terms.flatten!

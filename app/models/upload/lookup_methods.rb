@@ -188,7 +188,7 @@ module Upload::LookupMethods
   #
   # @return [ActiveRecord::Relation]
   #
-  # @see Upload#exapand_ids
+  # @see Upload#expand_ids
   # @see ActiveRecord::Relation#where
   #
   def get_relation(*identifiers, **opt)

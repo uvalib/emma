@@ -65,7 +65,7 @@ module SearchCallConcern
   # @param [Array, nil]               columns      Default: #SC_MATCH_COLUMNS
   # @param [Hash]                     hash_terms
   #
-  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Relation<SearchCall>]
   #
   def get_search_calls(*terms, columns: nil, **hash_terms)
     terms.flatten!

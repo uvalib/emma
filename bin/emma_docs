@@ -3,7 +3,8 @@
 # Deploy YARD documentation changes.
 #
 # In order to support GitHub Pages, documentation is stored in the "/docs"
-# subdirectory which is only present on the "docs" Git branch.
+# subdirectory which is only present on the "docs" Git branch.  When this
+# branch is updated the result is displayed at https://uvalib.github.io/emma
 #
 # NOTE:
 #

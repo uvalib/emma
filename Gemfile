@@ -75,7 +75,7 @@ gem 'faraday'
 gem 'multi_json'
 gem 'nokogiri'
 gem 'oj'
-gem 'representable', '~> 3.0'
+gem 'representable', '~> 3.0', '< 3.1'
 gem 'virtus', '~> 1.0'
 
 # == Metrics
@@ -96,7 +96,7 @@ gem 'workflow'
 # NOTE: The current version of Devise cannot handle OmniAuth 2.0.0.
 gem 'omniauth', '~> 1.9'
 # NOTE: Apparently version 0.1.1 was removed.
-gem 'declarative-option', '~> 0.1.0'
+gem 'declarative-option', '~> 0.1.0' # TODO: remove with representable >= 3.1
 
 # =============================================================================
 # Production
