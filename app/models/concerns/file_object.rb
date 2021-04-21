@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 #
 class FileObject
 
+  include Emma::Debug
   include FileNaming
 
   # ===========================================================================
@@ -87,6 +88,7 @@ class FileObject
 
   module ClassMethods
 
+    include Emma::Debug
     include FileNaming
 
     # =========================================================================

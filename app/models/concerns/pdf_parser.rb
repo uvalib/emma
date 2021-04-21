@@ -66,6 +66,11 @@ class PdfParser < FileParser
     else
       __debug_items(binding) { "#{name} [FAILED - no pdf_reader]" }
     end
+  rescue => e
+    Log.error do
+      "PdfParser: in method_missing: #{e.class} #{e.message} - stack:\n" +
+        caller.pretty_inspect
+    end
   end
 
 end
