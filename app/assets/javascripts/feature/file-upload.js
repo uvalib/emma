@@ -1496,7 +1496,7 @@ $(document).on('turbolinks:load', function() {
         uppy.use(Uppy.XHRUpload, {
             endpoint:   Emma.Upload.Path.endpoint,
             fieldName: 'file',
-            timeout:   UPLOAD_TIMEOUT,
+            timeout:   0, // UPLOAD_TIMEOUT, // NOTE: no Uppy timeout for now
             // limit:  1,
             headers:   { 'X-CSRF-Token': Rails.csrfToken() }
         });
