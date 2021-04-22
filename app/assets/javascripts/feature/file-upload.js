@@ -346,7 +346,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    const UPLOAD_TIMEOUT = 3 * MINUTES;
+    const UPLOAD_TIMEOUT = 5 * MINUTES;
 
     /**
      * How long to display transient messages.
