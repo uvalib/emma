@@ -25,14 +25,14 @@ module Puma
 
       public
 
-      def run(background=true)
-        __ext_log
+      def run(background = true)
+        __ext_log { { background: background } }
         super
       end
 
       def add(client)
         super
-          .tap { |result| __ext_log { "-> #{result.inspect}" } }
+          .tap { |result| __ext_log(result) }
       end
 
       def shutdown

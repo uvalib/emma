@@ -25,6 +25,25 @@ module Puma
 
       public
 
+      def initialize(app, events = Events.stdio, options = {})
+        __ext_log { { options: options } }
+        super
+      end
+
+=begin
+      def run(background = true, thread_name: 'server')
+        __ext_log { { background: background, thread_name: thread_name } }
+        super
+      end
+=end
+
+=begin
+      def inherit_binder(bind)
+        __ext_log
+        super
+      end
+=end
+
 =begin
       def reactor_wakeup(client)
         __ext_log { stats }
@@ -56,6 +75,11 @@ module Puma
 
       def client_error(e, client)
         __ext_log(e)
+        super
+      end
+
+      def graceful_shutdown
+        __ext_log { stats }
         super
       end
 

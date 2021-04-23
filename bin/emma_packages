@@ -1,0 +1,194 @@
+#! /usr/bin/ruby
+#
+# emma_packages
+#
+# Generate replacement YAML lines for "en.emma.head" in config/locales/en.yml.
+#
+# * To ensure that the packages are up-to-date, "yaml install" should be run
+# prior to running this script.
+#
+# * For now, the script just emits the replacement YAML to stdout so that they
+# can be manually copy-and-pasted into config/locales/en.yml.
+#
+# frozen_string_literal: true
+# warn_indent:           true
+
+require 'fileutils'
+require 'json'
+require 'net/http'
+require 'pp'
+
+#==============================================================================
+# Constants
+#==============================================================================
+
+PROJECT_DIR = '/home/rwl/Work/emma'
+SRC_FILE    = 'package.json'
+URL = {
+  'jquery'  => 'code.jquery.com/jquery-%{version}.min.js',
+  'select2' => 'cdnjs.cloudflare.com/ajax/libs/select2/%{version}/%{type}/select2.min.%{type}',
+  'uppy'    => 'releases.transloadit.com/uppy/v%{version}/uppy.min.%{type}'
+}.freeze
+
+#==============================================================================
+# From command line
+#==============================================================================
+
+OPTIONS = $*.select { |arg| arg.start_with?('-') }.freeze
+VERBOSE = OPTIONS.include?('--verbose')
+FILES   = ($* - OPTIONS).freeze
+
+#==============================================================================
+# Methods
+#==============================================================================
+
+def output(*lines)
+  lines += [yield].flatten if block_given?
+  lines.each { |line| $stdout.puts(line) } and nil
+end
+
+def alert(*args)
+  opt = args.last.is_a?(Hash) ? args.pop : {}
+  pre = opt[:prefix]
+  pre &&= "#{pre} "
+  args += [yield].flatten if block_given?
+  args.each { |line| $stderr.puts "#{pre}#{line}" } and nil
+end
+
+def warn(*args)
+  opt = args.last.is_a?(Hash) && args.pop || {}
+  opt[:prefix] = 'WARNING:' unless opt.key?(:prefix)
+  alert(*args, **opt)
+end
+
+def fail(*args)
+  opt = args.last.is_a?(Hash) && args.pop || {}
+  opt[:prefix] = 'FATAL ERROR:' unless opt.key?(:prefix)
+  alert(*args, **opt)
+  exit(1)
+end
+
+def debug(*args, &block)
+  # noinspection RubyResolve
+  return unless VERBOSE
+  opt = args.last.is_a?(Hash) && args.pop || {}
+  opt[:prefix] = 'DEBUG:' unless opt.key?(:prefix)
+  alert(*args, **opt, &block)
+end
+
+# Extract the packages listed in the package.json file.
+#
+# @param [String, nil] file           Default: #SRC_FILE
+#
+# @return [Array, nil]
+#
+def get_packages(file)
+  # noinspection RubyResolve
+  file ||= SRC_FILE
+  text = File.read(file);                 # debug("text == #{text.inspect}")
+  json = JSON.parse(text);                # debug("json == #{json.inspect}")
+  pkgs = json&.dig('dependencies')&.keys;   debug("pkgs == #{pkgs.inspect}")
+  pkgs if pkgs&.size&.positive?
+end
+
+# Invoke "yarn list" to get the installed packages and their versions.
+#
+# @param [Array<String>] packages
+#
+# @return [Hash, nil]
+#
+def get_package_versions(packages)
+  return warn("#{__method__}: no packages") if packages.empty?
+  list    = `yarn list --json --depth=0 2>/dev/null`
+  hash    = JSON.parse(list, symbolize_names: true)
+  entries = hash&.dig(:data, :trees)
+  result  =
+    entries&.map { |entry|
+      package, version = entry[:name].split('@')
+      [package, version] if packages.include?(package)
+    }&.compact&.to_h
+  debug("versions == #{result.pretty_inspect}")
+  found = result&.keys || []
+  (packages - found).each { |pkg| warn("No entry for #{pkg.inspect}") }
+  result if result&.size&.positive?
+end
+
+# Generate a line in a YAML array.
+#
+# @param [String] entry
+#
+# @return [void]
+#
+def output_list_line(entry)
+  output("  - '#{entry}'")
+end
+
+# Generate a YAML array entry with the URL for the indicated package version.
+#
+# @param [String]         package
+# @param [String]         version
+# @param [String, Symbol] type
+#
+# @return [void]
+#
+#--
+# noinspection RubyResolve
+#++
+def output_list_entry(package, version, type)
+  entry = URL[package] or return warn("Package #{package.inspect} unexpected")
+  entry = "https://#{entry}" % { version: version, type: type }
+  size  = (Net::HTTP.get(URI(entry)) rescue '').size
+  return warn("Invalid URL #{entry.inspect}") if size.zero?
+  debug("#{size} bytes from URL #{entry.inspect}")
+  output_list_line(entry)
+end
+
+# Generate a YAML section as an array.
+#
+# @param [String, Symbol] type
+# @param [Hash]           versions
+#
+# @return [void]
+#
+#--
+# noinspection RubyResolve
+#++
+def output_section(type, versions)
+  case type
+    when :css, 'css', /^style/ then type = :css; section = 'stylesheets'
+    when :js,  'js',  /^java/  then type = :js;  section = 'javascripts'
+    else                            fail("#{__method__}: #{type} invalid")
+  end
+  $stdout.puts "\n#{section}:"
+  versions.each_pair do |package, version|
+    skip = (type == :css) && (package == 'jquery')
+    output_list_entry(package, version, type) unless skip
+  end
+  output_list_line('application')
+end
+
+#==============================================================================
+# Main
+#==============================================================================
+
+# noinspection RubyResolve
+if %w(-? --? -help --help).any? { |flag| OPTIONS.include?(flag) }
+
+  alert(
+    "Usage: #{$0} [--verbose] [package.json]",
+    "  --verbose     Show debug info on stderr.",
+    "  package.json  An alternate file (path relative to #{PROJECT_DIR})."
+  )
+
+else
+
+  dir  = PROJECT_DIR
+  file = FILES.first || SRC_FILE
+
+  FileUtils.cd(dir)                 or fail("Could not cd to #{dir.inspect}")
+  pkgs = get_packages(file)         or fail("No packages in #{file.inspect}")
+  vers = get_package_versions(pkgs) or fail('Could not get versions')
+  output_section(:css, vers)
+  output_section(:js,  vers)
+
+end

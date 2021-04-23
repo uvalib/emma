@@ -30,25 +30,51 @@ module Puma
         super
       end
 
+=begin
+      def io_ok?
+        super
+          .tap { |result| __ext_log(result) }
+      end
+=end
+
+=begin
+      def call
+        __ext_log
+        super
+      end
+=end
+
+=begin
+      def in_data_phase
+        super
+          .tap { |result| __ext_log(result) }
+      end
+=end
+
       def set_timeout(val)
         super
-          .tap { __ext_log { { '@timeout_at': @timeout_at } } }
+          .tap { __ext_log { { val: val, '@timeout_at': @timeout_at } } }
       end
 
 =begin
       def timeout
         super
-          .tap { __ext_log { { '@timeout_at': @timeout_at } } }
+          .tap { |res| __ext_log { { '@timeout_at': @timeout_at, res: res } } }
       end
 =end
 
       def reset(fast_check = true)
-        __ext_log { { fast_check: fast_check } }
+        __ext_log { { fast_check: fast_check, '@buffer': @buffer&.size } }
         super
       end
 
       def close
-        __ext_log
+        __ext_log { {
+          timeout_in:      timeout,
+          '@buffer':       @buffer&.size,
+          '@body_remain':  @body_remain,
+          '@parsed_bytes': @parsed_bytes
+        } }
         super
       end
 
@@ -59,8 +85,13 @@ module Puma
       end
 =end
 
+      def eagerly_finish
+        __ext_log { { '@ready': @ready } }
+        super
+      end
+
       def finish(timeout)
-        __ext_log { { timeout: timeout } }
+        __ext_log { { timeout: timeout, '@ready': @ready } }
         super
       end
 
@@ -68,6 +99,25 @@ module Puma
         __ext_log { { in_data_phase: in_data_phase } }
         super
       end
+
+      def write_error(status_code)
+        __ext_log { { status_code: status_code } }
+        super
+      end
+
+=begin
+      def peerip
+        super
+          .tap { |result| __ext_log(result) }
+      end
+=end
+
+=begin
+      def can_close?
+        super
+          .tap { |result| __ext_log(result) }
+      end
+=end
 
       # =======================================================================
       # :section: Puma::Client overrides
@@ -112,9 +162,9 @@ module Puma
       def set_ready
         super
           .tap do
-            __ext_log(@partial_part_left) do
-              { request_body_wait: @env['puma.request_body_wait'] }
-            end
+            __ext_log(@partial_part_left) { {
+              request_body_wait: @env['puma.request_body_wait']
+            } }
           end
       end
 

@@ -26,10 +26,16 @@ module Puma
       public
 
       def handle_request(client, lines)
-        start = timestamp
+        __ext_log
         super
-          .tap { __ext_log(start) }
       end
+
+=begin
+      def default_server_port(env)
+        super
+          .tap { |result| __ext_log(result) }
+      end
+=end
 
 =begin
       def fast_write(io, str)
@@ -38,6 +44,32 @@ module Puma
           .tap { __ext_log(start) }
       end
 =end
+
+=begin
+      def fetch_status_code(status)
+        super
+          .tap { |result| __ext_log(result) }
+      end
+=end
+
+=begin
+      def normalize_env(env, client)
+        __ext_log
+        super
+      end
+=end
+
+=begin
+      def req_env_post_parse(env)
+        __ext_log
+        super
+      end
+=end
+
+      def str_headers(env, status, headers, res_info, lines)
+        super
+          .tap { __ext_log { { status: status, res_info: res_info } } }
+      end
 
     end
 
