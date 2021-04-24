@@ -355,7 +355,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    const MESSAGE_DURATION = 15 * SECONDS;
+    const MESSAGE_DURATION = 30 * SECONDS;
 
     /**
      * How long to wait after the user enters characters into a field before
@@ -1652,10 +1652,10 @@ $(document).on('turbolinks:load', function() {
         function onFileUploadError(file, error, response) {
             consoleWarn('Uppy:', 'upload-error', file, error, response);
             showFlashError(error && error.message || error);
-            // In case the user wants to press "Select file" again:
             uppy.getFiles().forEach(function(file) {
                 uppy.removeFile(file.id);
             });
+            requireFormCancellation($form);
         }
 
         /**
@@ -1902,7 +1902,7 @@ $(document).on('turbolinks:load', function() {
      */
     function uppyInfo(uppy, text, duration, info_level) {
         const level = info_level || 'info';
-        const time  = duration   || 0;
+        const time  = duration   || 1000 * MINUTES;
         uppy.info(text, level, time);
     }
 
@@ -3460,17 +3460,7 @@ $(document).on('turbolinks:load', function() {
             }
             consoleWarn(`${func}:`, message);
             showFlashError(message);
-
-            // Prevent re-attempt to submit since the submission record has
-            // probably already been removed.
-            const must_cancel  = 'Cancel this upload before retrying'; // TODO: I18n
-            const override_tip = { 'title': must_cancel };
-            disableSubmit($form).attr(override_tip);
-            fieldContainer($form).attr(override_tip);
-            inputFields($form).attr(override_tip).each(function() {
-                this.disabled = true;
-            });
-            cancelButton($form).addClass('best-choice');
+            requireFormCancellation($form);
         }
 
         /**
@@ -3680,12 +3670,14 @@ $(document).on('turbolinks:load', function() {
      * Disable the file select button.
      *
      * @param {Selector} [form]       Passed to {@link formElement}.
+     *
+     * @returns {jQuery}              The file select button.
      */
     function disableFileSelectButton(form) {
         let $form   = formElement(form);
         const label = fileSelectDisabledLabel($form);
         const tip   = fileSelectDisabledTooltip($form);
-        fileSelectButton($form)
+        return fileSelectButton($form)
             .removeClass('best-choice')
             .addClass('forbidden')
             .attr('title', tip)
@@ -4122,6 +4114,27 @@ $(document).on('turbolinks:load', function() {
     function setFormCanceled(form, canceled) {
         const value = (canceled === false) ? undefined : FORM_STATE.CANCELED;
         setFormState(form, value);
+    }
+
+    /**
+     * If the submission can't proceed, this method will force the submission
+     * to be cleaned-up rather than continuing with the submission record
+     * possibly invalid or deleted.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function requireFormCancellation(form) {
+        let $form     = formElement(form);
+        const message = 'Cancel this upload before retrying'; // TODO: I18n
+        const tooltip = { 'title': message };
+        hideUppyProgressBar($form);
+        disableSubmit($form).attr(tooltip);
+        disableFileSelectButton($form).attr(tooltip);
+        fieldContainer($form).attr(tooltip);
+        inputFields($form).attr(tooltip).each(function() {
+            this.disabled = true;
+        });
+        cancelButton($form).addClass('best-choice');
     }
 
     /**
