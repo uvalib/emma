@@ -440,6 +440,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     state :modifying do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :reject,    transitions_to: :editing
+      event :cancel,    transitions_to: :canceled
       event :advance,   transitions_to: :modified
     end
 
@@ -500,6 +501,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     # =========================================================================
 
     state :staging do
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :index,     transitions_to: :indexing
       event :advance,   transitions_to: :unretrieved
     end
@@ -519,6 +521,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     # =========================================================================
 
     state :indexing do
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :fail,      transitions_to: :failed
       event :timeout,   transitions_to: :indexing
       event :advance,   transitions_to: :indexed

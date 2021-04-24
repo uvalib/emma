@@ -24,13 +24,14 @@
  */
 const SECOND = 1000;
 
+// noinspection PointlessArithmeticExpressionJS, UnnecessaryLocalVariableJS
 /**
  * Alias for SECOND.
  *
  * @constant
  * @type {number}
  */
-const SECONDS = SECOND;
+const SECONDS = 1 * SECOND;
 
 // noinspection MagicNumberJS
 /**
@@ -41,13 +42,14 @@ const SECONDS = SECOND;
  */
 const MINUTE = 60 * SECONDS;
 
+// noinspection PointlessArithmeticExpressionJS, UnnecessaryLocalVariableJS
 /**
  * Alias for MINUTE.
  *
  * @constant
  * @type {number}
  */
-const MINUTES = MINUTE;
+const MINUTES = 1 * MINUTE;
 
 /**
  * Kilobyte multiplier.

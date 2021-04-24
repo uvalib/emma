@@ -273,6 +273,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     # =========================================================================
 
     state :staging do
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :index,     transitions_to: :indexing
       event :advance,   transitions_to: :unretrieved
     end
@@ -292,6 +293,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     # =========================================================================
 
     state :indexing do
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :fail,      transitions_to: :failed
       event :timeout,   transitions_to: :indexing
       event :advance,   transitions_to: :indexed

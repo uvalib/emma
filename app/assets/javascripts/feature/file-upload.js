@@ -348,13 +348,14 @@ $(document).on('turbolinks:load', function() {
      */
     const UPLOAD_TIMEOUT = 5 * MINUTES;
 
+    // noinspection MagicNumberJS
     /**
-     * How long to display transient messages.
+     * How long to display transient Uppy popup messages.
      *
      * @constant
      * @type {number}
      */
-    const MESSAGE_DURATION = MINUTE;
+    const MESSAGE_DURATION = 15 * SECONDS;
 
     /**
      * How long to wait after the user enters characters into a field before
@@ -1678,9 +1679,10 @@ $(document).on('turbolinks:load', function() {
      */
     function setupMessages(uppy, features) {
 
-        const info  = (text) => uppyInfo(uppy, text);
-        const warn  = (text) => uppyWarn(uppy, text);
         const error = (text) => uppyError(uppy, text);
+        const warn  = (text) => uppyWarn(uppy, text);
+        const popup = (text) => uppyPopup(uppy, text);
+        const info  = (text) => uppyInfo(uppy, text);
 
         uppy.on('upload-started', function(file) {
             consoleWarn('Uppy:', 'upload-started', file);
@@ -1689,7 +1691,11 @@ $(document).on('turbolinks:load', function() {
 
         uppy.on('upload-pause', function(file_id, is_paused) {
             debug('Uppy:', 'upload-pause', file_id, is_paused);
-            info(is_paused ? 'PAUSED' : 'RESUMED'); // TODO: I18n
+            if (is_paused) {
+                info('PAUSED');   // TODO: I18n
+            } else {
+                popup('RESUMED'); // TODO: I18n
+            }
         });
 
         uppy.on('upload-retry', function(file_id) {
@@ -1853,9 +1859,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Uppy}   uppy
      * @param {string} text
+     * @param {number} [duration]
      */
-    function uppyError(uppy, text) {
-        uppyInfo(uppy, text, 'error');
+    function uppyError(uppy, text, duration) {
+        uppyPopup(uppy, text, duration, 'error');
     }
 
     /**
@@ -1863,32 +1870,49 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Uppy}   uppy
      * @param {string} text
+     * @param {number} [duration]
      */
-    function uppyWarn(uppy, text) {
-        uppyInfo(uppy, text, 'warning');
+    function uppyWarn(uppy, text, duration) {
+        uppyPopup(uppy, text, duration, 'warning');
+    }
+
+    /**
+     * Invoke `uppy.info` with a temporary message.
+     *
+     * @param {Uppy}                     uppy
+     * @param {string}                   text
+     * @param {number}                   [duration]
+     * @param {'info'|'warning'|'error'} [info_level]
+     */
+    function uppyPopup(uppy, text, duration, info_level) {
+        const time = duration || MESSAGE_DURATION;
+        uppyInfo(uppy, text, time, info_level);
     }
 
     /**
      * Invoke `uppy.info`.
      *
+     * If no duration is given the information bubble will remain until
+     * intentionally cleared.
+     *
      * @param {Uppy}                     uppy
      * @param {string}                   text
-     * @param {'info'|'warning'|'error'} [message_level]
-     * @param {number}                   [time]
+     * @param {number}                   [duration]
+     * @param {'info'|'warning'|'error'} [info_level]
      */
-    function uppyInfo(uppy, text, message_level, time) {
-        const level    = message_level || 'info';
-        const duration = time || MESSAGE_DURATION;
-        uppy.info(text, level, duration);
+    function uppyInfo(uppy, text, duration, info_level) {
+        const level = info_level || 'info';
+        const time  = duration   || 0;
+        uppy.info(text, level, time);
     }
 
     /**
      * Invoke `uppy.info` with an empty string and very short duration.
      *
-     * @param {Uppy}   uppy
+     * @param {Uppy} uppy
      */
     function uppyInfoClear(uppy) {
-        uppyInfo(uppy, '', 'info', 1);
+        uppyInfo(uppy, '', 1);
     }
 
     // ========================================================================
@@ -3137,11 +3161,13 @@ $(document).on('turbolinks:load', function() {
      * Enable form submission.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {jQuery}              The submit button.
      */
     function enableSubmit(form) {
         let $form = formElement(form);
         const tip = submitReadyTooltip($form);
-        submitButton($form)
+        return submitButton($form)
             .addClass('best-choice')
             .removeClass('disabled forbidden')
             .removeAttr('disabled')
@@ -3153,11 +3179,13 @@ $(document).on('turbolinks:load', function() {
      * Disable form submission.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {jQuery}              The submit button.
      */
     function disableSubmit(form) {
         let $form = formElement(form);
         const tip = submitNotReadyTooltip($form);
-        submitButton($form)
+        return submitButton($form)
             .removeClass('best-choice')
             .addClass('forbidden')
             .attr('disabled', true)
@@ -3398,8 +3426,8 @@ $(document).on('turbolinks:load', function() {
         function onCreateSuccess(data, status, xhr) {
             const func  = 'onCreateSuccess';
             const flash = compact(extractFlashMessage(xhr));
-            const entry = (flash.length > 1) ? 'entries' : 'entry';
-            let message = `EMMA ${entry} ${termActionOccurred()}`; // TODO: I18n
+            const entry = (flash.length > 1) ? 'entries' : 'entry'; // TODO: I18n
+            let message = `EMMA ${entry} ${termActionOccurred()}`;  // TODO: I18n
             if (isPresent(flash)) {
                 message += ' for: ' + flash.join(', ');
             }
@@ -3419,10 +3447,10 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         error
          */
         function onCreateError(xhr, status, error) {
-            const func      = 'onCreateError';
-            const flash     = compact(extractFlashMessage(xhr));
-            const processed = termActionOccurred($form);
-            let message     = `EMMA entry not ${processed}:`; // TODO: I18n
+            const func   = 'onCreateError';
+            const flash  = compact(extractFlashMessage(xhr));
+            const action = termAction($form).toUpperCase();
+            let message  = `${action} ERROR:`; // TODO: I18n
             if (flash.length > 1) {
                 message += "\n" + flash.join("\n");
             } else if (flash.length === 1) {
@@ -3432,6 +3460,17 @@ $(document).on('turbolinks:load', function() {
             }
             consoleWarn(`${func}:`, message);
             showFlashError(message);
+
+            // Prevent re-attempt to submit since the submission record has
+            // probably already been removed.
+            const must_cancel  = 'Cancel this upload before retrying'; // TODO: I18n
+            const override_tip = { 'title': must_cancel };
+            disableSubmit($form).attr(override_tip);
+            fieldContainer($form).attr(override_tip);
+            inputFields($form).attr(override_tip).each(function() {
+                this.disabled = true;
+            });
+            cancelButton($form).addClass('best-choice');
         }
 
         /**
