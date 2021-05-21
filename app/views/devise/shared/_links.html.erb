@@ -30,7 +30,7 @@
       resource_class.omniauth_providers.map { |provider|
         label = get_sessions_label(:new, provider)
         path  = omniauth_authorize_path(resource_name, provider)
-        [label, path]
+        [label, path, method: :post]
       }
   end
 
@@ -46,8 +46,8 @@
 
 -%>
 
-<%- links.each do |label, path| -%>
+<%- links.each do |label, path, opt| -%>
   <p>
-    <%= link_to(label, path, 'data-turbolinks': false) %>
+    <%= link_to(label, path, 'data-turbolinks': false, **(opt || {})) %>
   </p>
 <%- end -%>
