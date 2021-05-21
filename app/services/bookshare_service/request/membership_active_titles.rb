@@ -192,7 +192,7 @@ module BookshareService::Request::MembershipActiveTitles
   # Add a periodical to a specific user’s active periodicals list.
   #
   # @param [User, String, nil] user         Default: `@user`.
-  # @param [String]            bookshareId
+  # @param [String]            editionId
   # @param [String]            format
   # @param [Hash]              opt          Passed to #api.
   #
@@ -200,8 +200,8 @@ module BookshareService::Request::MembershipActiveTitles
   #
   # @see https://apidocs.bookshare.org/membership/index.html#_user-active-periodicals-add
   #
-  def create_active_periodical(user: nil, bookshareId:, format:, **opt)
-    opt.merge!(bookshareId: bookshareId, format: format)
+  def create_active_periodical(user: nil, editionId:, format:, **opt)
+    opt.merge!(editionId: editionId, format: format)
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'activePeriodicals', **opt)
@@ -214,7 +214,7 @@ module BookshareService::Request::MembershipActiveTitles
         },
         required: {
           userIdentifier: String,
-          bookshareId:    String,
+          editionId:      String,
           format:         String,
         },
         reference_page:   'membership',

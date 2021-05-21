@@ -21,6 +21,11 @@ en:
           org:                      'Organization'
           _default:                 shared
 
+        BsListAccess:
+          private:                  'Private'
+          public:                   'Public'
+          _default:                 private
+
         BsAgreementType:
           individual:               'Individual'
           volunteer:                'Volunteer'

@@ -163,7 +163,7 @@ module BookshareService::Request::ActiveTitles
   # == 2.5.5. Add active periodical
   # Add a periodical to my active periodicals list.
   #
-  # @param [String] bookshareId
+  # @param [String] editionId
   # @param [String] format
   # @param [Hash]   opt               Passed to #api.
   #
@@ -171,8 +171,8 @@ module BookshareService::Request::ActiveTitles
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-add
   #
-  def add_my_active_periodical(bookshareId:, format:, **opt)
-    opt.merge!(bookshareId: bookshareId, format: format)
+  def add_my_active_periodical(editionId:, format:, **opt)
+    opt.merge!(editionId: editionId, format: format)
     opt = get_parameters(__method__, **opt)
     api(:post, 'myActivePeriodicals', **opt)
     Bs::Message::ActivePeriodicalList.new(response, error: exception)
@@ -180,10 +180,10 @@ module BookshareService::Request::ActiveTitles
     .tap do |method|
       add_api method => {
         required: {
-          bookshareId: String,
-          format:      String,
+          editionId:  String,
+          format:     String,
         },
-        reference_id:  '_my-active-periodicals-add'
+        reference_id: '_my-active-periodicals-add'
       }
     end
 

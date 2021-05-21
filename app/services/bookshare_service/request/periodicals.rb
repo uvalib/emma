@@ -31,7 +31,10 @@ module BookshareService::Request::Periodicals
   # == GET /v2/periodicals
   #
   # == 2.2.1. Search for periodicals
-  # Search for Bookshare periodicals.
+  # To discover periodicals in the collection, you can ask for the collection
+  # of periodical series resources, filtered by a title string or ISSN. The
+  # result will be a collection of periodical series metadata resources, with a
+  # paging token if the results are more than the paging limit.
   #
   # @param [Hash] opt                 Passed to #api.
   #
@@ -110,7 +113,9 @@ module BookshareService::Request::Periodicals
   # == GET /v2/periodicals/(seriesId)/editions
   #
   # == 2.2.2. Get periodical editions
-  # Get a list of editions for the specified Bookshare periodical.
+  # Get a list editions for a periodical. The result will be a collection of
+  # periodical edition resources, with a paging token if the results are more
+  # than the paging limit.
   #
   # @param [String] seriesId
   # @param [Hash]   opt               Passed to #api.
@@ -176,7 +181,13 @@ module BookshareService::Request::Periodicals
   # == GET /v2/periodicals/(seriesId)/editions/(editionId)/(format)
   #
   # == 2.2.4. Download a periodical edition
-  # Download an artifact of the specified edition of a Bookshare periodical.
+  # Ask for a periodical edition file of a given format. This will request a
+  # package of a periodical edition artifact, which will be fingerprinted and
+  # watermarked to indicate it’s delivery to either the current user, or the
+  # 'forUser' if that is specified. If the package is not available
+  # immediately, requests to this endpoint will simply return a status to
+  # acknowledge receipt. Subsequent requests will eventually return a reference
+  # to the delivery file for the given format (ZIP, EPUB, PDF, etc).
   #
   # @param [String]       seriesId
   # @param [String]       editionId
@@ -252,6 +263,9 @@ module BookshareService::Request::Periodicals
   # == GET /v2/periodicals/(seriesId)/editions/(editionId)/(format)/resources/(resourceId)
   #
   # == 2.2.6. Download a title file resource for a periodical
+  # Download a single title file resource that is part of a periodical
+  # artifact. Note: this URL will be constructed by the system, and appear in
+  # the periodical file resources response.
   #
   # @param [String]       seriesId
   # @param [String]       editionId

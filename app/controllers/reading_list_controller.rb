@@ -56,7 +56,7 @@ class ReadingListController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = bs_api.get_all_reading_lists(**opt)
+    @list = bs_api.get_reading_lists_list(**opt)
     pagination_finalize(@list, :lists, **opt)
     respond_to do |format|
       format.html

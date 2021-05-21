@@ -10,12 +10,12 @@ __loading_begin(__FILE__)
 # == Usage Notes
 #
 # === From API section 2.3 (Reading Lists):
-# Reading lists can be created and deleted by individual members and sponsors,
-# and titles can be added and removed from them. For sponsors, these lists can
-# also be shared with student members to serve as a type of class syllabus.
-# To do so, a sponsor can add a member from their organization to the reading
-# list, and that member will be able to use that list but will not be able to
-# modify it.
+# Reading lists are a way for members to organize titles. Reading lists can be
+# created and deleted by individual members and sponsors, and titles can be
+# added and removed from them. For sponsors, these lists can also be shared
+# with student members to serve as a type of class syllabus. To do so, a
+# sponsor can add a member from their organization to the reading list, and
+# that member will be able to use that list but will not be able to modify it.
 #
 #--
 # noinspection RubyParameterNamingConvention
@@ -67,7 +67,8 @@ module BookshareService::Request::ReadingLists
   # == POST /v2/mylists
   #
   # == 2.3.2. Create a reading list
-  # Create an empty reading list owned by the current user.
+  # Create an empty reading list that will be owned by the current user, with
+  # the properties provided.
   #
   # @param [String]   name
   # @param [BsAccess] access
@@ -100,7 +101,7 @@ module BookshareService::Request::ReadingLists
 
   # == PUT /v2/mylists/(readingListId)/subscription
   #
-  # == 2.3.7. Subscribe to or unsubscribe from a reading list
+  # == 2.3.8. Subscribe to or unsubscribe from a reading list
   # Subscribe to a reading list (that the user does not own).
   #
   # @param [String] readingListId
@@ -130,7 +131,7 @@ module BookshareService::Request::ReadingLists
 
   # == PUT /v2/mylists/(readingListId)/subscription
   #
-  # == 2.3.7. Subscribe to or unsubscribe from a reading list
+  # == 2.3.8. Subscribe to or unsubscribe from a reading list
   # Unsubscribe from a reading list (that the user does not own).
   #
   # @param [String] readingListId
@@ -160,7 +161,8 @@ module BookshareService::Request::ReadingLists
 
   # == GET /v2/lists
   #
-  # Get all reading lists.
+  # == 2.3.3. Search for reading lists
+  # Search for reading lists by keyword.
   #
   # Whereas "/v2/mylists" only works for "emmadso@bookshare.org", this call
   # works for "emmacollection@bookshare.org" (and for "emmadso" it yields the
@@ -168,6 +170,8 @@ module BookshareService::Request::ReadingLists
   #
   # @param [Hash] opt                 Passed to #api.
   #
+  # @option opt [String]                   :keyword
+  # @option opt [BsListAccess]             :access
   # @option opt [String]                   :start
   # @option opt [Integer]                  :limit       Default: 10
   # @option opt [BsMyReadingListSortOrder] :sortOrder   Default: 'name'
@@ -175,9 +179,9 @@ module BookshareService::Request::ReadingLists
   #
   # @return [Bs::Message::ReadingListList]
   #
-  # @note This is an undocumented Bookshare API call.
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-readinglists-list
   #
-  def get_all_reading_lists(**opt)
+  def get_reading_lists_list(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'lists', **opt)
     Bs::Message::ReadingListList.new(response, error: exception)
@@ -185,12 +189,14 @@ module BookshareService::Request::ReadingLists
     .tap do |method|
       add_api method => {
         optional: {
+          keyword:   String,
+          access:    BsListAccess,
           start:     String,
           limit:     Integer,
           sortOrder: BsMyReadingListSortOrder,
           direction: BsSortDirection,
         },
-        reference_id: '_get-all-reading-lists', # TODO: ???
+        reference_id: '_get-readinglists-list'
       }
     end
 
@@ -206,7 +212,7 @@ module BookshareService::Request::ReadingLists
   # @note This is not a real Bookshare API call.
   #
   def get_reading_list(readingListId:, **opt)
-    all = get_all_reading_lists(limit: :max, **opt)
+    all = get_reading_lists_list(limit: :max, **opt)
     rl  = all.lists.find { |list| list.identifier == readingListId }
     # noinspection RubyYardParamTypeMatch
     Bs::Message::ReadingListUserView.new(rl)
@@ -222,7 +228,7 @@ module BookshareService::Request::ReadingLists
 
   # == PUT /v2/lists/(readingListId)
   #
-  # == 2.3.3. Edit reading list metadata
+  # == 2.3.4. Edit reading list metadata
   # Edit the metadata of an existing reading list.
   #
   # @param [String] readingListId
@@ -257,7 +263,7 @@ module BookshareService::Request::ReadingLists
 
   # == GET /v2/lists/(readingListId)/titles
   #
-  # == 2.3.4. Get reading list titles
+  # == 2.3.5. Get reading list titles
   # Get a listing of the Bookshare titles in the specified reading list.
   #
   # @param [String] readingListId
@@ -294,8 +300,10 @@ module BookshareService::Request::ReadingLists
 
   # == POST /v2/lists/(readingListId)/titles
   #
-  # == 2.3.5. Add a title to a reading list
-  # Add a Bookshare title to the specified reading list.
+  # == 2.3.6. Add a title to a reading list
+  # Add a title to the specified reading list. The reading list must be one
+  # that the user created, or that they have rights to as an organization
+  # sponsor or membership assistant.
   #
   # @param [String] readingListId
   # @param [String] bookshareId
@@ -323,8 +331,10 @@ module BookshareService::Request::ReadingLists
 
   # == DELETE /v2/lists/(readingListId)/titles/(bookshareId)
   #
-  # == 2.3.6. Remove a title from a reading list
-  # Remove a title from the specified reading list.
+  # == 2.3.7. Remove a title from a reading list
+  # Remove a title from the specified reading list. The reading list must be
+  # one that the user created, or that they have rights to as an organization
+  # sponsor or membership assistant.
   #
   # @param [String] readingListId
   # @param [String] bookshareId

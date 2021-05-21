@@ -423,7 +423,7 @@ module BookshareService::Request::MembershipUserAccounts
   # == GET /v2/accounts/(userIdentifier)/pod
   #
   # == 2.1.9. Get proof of disability
-  # Get the list of disabilities for an existing user.
+  # Get the list of disabilities for an existing user, with their proof source.
   #
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
@@ -454,7 +454,8 @@ module BookshareService::Request::MembershipUserAccounts
   # == POST /v2/accounts/(userIdentifier)/pod
   #
   # == 2.1.10. Create a proof of disability
-  # Create a new record of a disability for an existing user.
+  # Create a new record of a disability for an existing user, with its proof
+  # source.
   #
   # @param [User, String, nil]         user             Default: `@user`.
   # @param [BsDisabilityType]          disabilityType
@@ -968,7 +969,9 @@ module BookshareService::Request::MembershipUserAccounts
   # == GET /v2/accounts/(userIdentifier)/lists
   #
   # == 2.1.24. Get reading lists for a given user
-  # Get the list of periodical subscriptions for an existing user.
+  # Request the list of reading lists that a given user is able to see. These
+  # could be private lists, shared lists, or organization lists that the user
+  # is subscribed to.
   #
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.

@@ -38,6 +38,10 @@ module BookshareService::Request::CollectionTitles
   # since been removed. This allows administrators to manage the wider
   # collection of titles.
   #
+  # Like with the general title search, the result will be a collection of
+  # title metadata resources, with a paging token if the results are more than
+  # the paging limit.
+  #
   # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]             :country
@@ -438,6 +442,9 @@ module BookshareService::Request::CollectionTitles
   # == GET /v2/titles/(bookshareId)/history
   #
   # == 2.1.3. Get a list of title history events
+  # Get a list of events that mark transitions or updates to the given title
+  # and its artifacts. For example, these events might tell when a particular
+  # metadata value changed, or when an audio artifact was created.
   #
   # @param [String] bookshareId
   # @param [Hash]   opt               Passed to #api.

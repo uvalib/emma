@@ -36,7 +36,10 @@ module BookshareService::Request::Titles
   # == GET /v2/titles/count
   #
   # == 2.1.6. Live title count
-  # Get the current count of Bookshare titles.
+  # Get a count of the live titles available in the collection which the user
+  # has access to. The boundaries of that can be adjusted to include titles
+  # shared from other partners or not, or to view the collection from a country
+  # other than that of the current user.
   #
   # @param [Hash] opt                 Passed to #api.
   #
@@ -95,7 +98,13 @@ module BookshareService::Request::Titles
   # == GET /v2/titles/(bookshareId)/(format)
   #
   # == 2.1.3. Download a title
-  # Request download of Bookshare artifact (a title in a specific format).
+  # Ask to download a title in a specific format. This will request a package
+  # of a title artifact, which will be fingerprinted and watermarked to
+  # indicate it’s delivery to either the current user, or the 'forUser' if that
+  # is specified. If the package is not available immediately, requests to this
+  # endpoint will simply return a status to acknowledge receipt. Subsequent
+  # requests will eventually return a reference to the delivery file for the
+  # given format (ZIP, EPUB, PDF, etc).
   #
   # @param [String]       bookshareId
   # @param [BsFormatType] format
@@ -130,7 +139,14 @@ module BookshareService::Request::Titles
   # == GET /v2/titles
   #
   # == 2.1.1. Search for titles
-  # Search for Bookshare titles.
+  # To discover titles in the collection, you can ask for the collection of
+  # title resources, filtered by a number of criteria such as title, author,
+  # ISBN, keyword or country availability. A search on keyword will search the
+  # title, author, and ISBN fields for that keyword. Keyword searches may be
+  # further filtered by an author filter parameter, but any other parameters
+  # will be ignored. The result will be a collection of title metadata
+  # resources, with a paging token if the results are more than the paging
+  # limit.
   #
   # @param [Hash] opt                 Passed to #api.
   #
@@ -276,6 +292,9 @@ module BookshareService::Request::Titles
   # == GET /v2/titles/(bookshareId)/(format)/resources/(resourceId)
   #
   # == 2.1.5. Download a title file resource
+  # Download a single title file resource that is part of a title artifact.
+  # Note: this URL will be constructed by the system, and appear in the title
+  # file resources response.
   #
   # @param [String]       bookshareId
   # @param [BsFormatType] format
@@ -314,7 +333,10 @@ module BookshareService::Request::Titles
   # == GET /v2/categories
   #
   # == 2.1.7. Category listing
-  # Search for Bookshare categories.
+  # Get a list of categories defined on the collection, with a count of titles
+  # associated with each category. The count reflects the number of titles that
+  # the current user would have access to. The categories include only those
+  # with at least one title association.
   #
   # @param [Hash] opt                 Passed to #api.
   #

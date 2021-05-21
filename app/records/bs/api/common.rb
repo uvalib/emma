@@ -78,6 +78,7 @@ end
 # =============================================================================
 
 class BsAccess                  < EnumType; end
+class BsListAccess              < EnumType; end
 class BsAgreementType           < EnumType; end
 class BsAllowsType              < EnumType; end
 class BsBrailleFmt              < EnumType; end

@@ -29,7 +29,7 @@ module BookshareService::Request::AssignedTitles
   # == GET /v2/myAssignedTitles
   #
   # == 2.4.1. Get my assigned titles
-  # Get the titles assigned to the current user (organization member).
+  # As an organization member, get titles that have been assigned to me.
   #
   # @param [Hash] opt                 Passed to #api.
   #
@@ -62,7 +62,8 @@ module BookshareService::Request::AssignedTitles
   # == GET /v2/assignedTitles/(userIdentifier)
   #
   # == 2.4.2. Get titles assigned to an organization member
-  # Get a list of titles assigned to the specified organization member.
+  # As a sponsor or Membership Assistant, get a list of titles that have been
+  # assigned to a particular organization member.
   #
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
