@@ -11,7 +11,7 @@ module RepositoryHelper
 
   # @private
   def self.included(base)
-    __included(base, '[RepositoryHelper]')
+    __included(base, 'RepositoryHelper')
   end
 
   include HtmlHelper

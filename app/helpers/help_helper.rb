@@ -12,7 +12,7 @@ module HelpHelper
   # @private
   def self.included(base)
 
-    __included(base, '[HelpHelper]')
+    __included(base, 'HelpHelper')
 
     include Emma::Unicode
 

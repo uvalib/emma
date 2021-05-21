@@ -11,7 +11,7 @@ module IsbnHelper
 
   # @private
   def self.included(base)
-    __included(base, '[IsbnHelper]')
+    __included(base, 'IsbnHelper')
   end
 
   # ===========================================================================

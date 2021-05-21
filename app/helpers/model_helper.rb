@@ -12,7 +12,7 @@ module ModelHelper
 
   # @private
   def self.included(base)
-    __included(base, '[ModelHelper]')
+    __included(base, 'ModelHelper')
   end
 
   include Emma::Common

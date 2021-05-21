@@ -12,7 +12,7 @@ module ConfigurationHelper
   # @private
   def self.included(base)
 
-    __included(base, '[ConfigurationHelper]')
+    __included(base, 'ConfigurationHelper')
 
     base.send(:extend, self)
 

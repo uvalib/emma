@@ -11,7 +11,7 @@ module SessionDebugHelper
 
   # @private
   def self.included(base)
-    __included(base, '[SessionDebugHelper]')
+    __included(base, 'SessionDebugHelper')
   end
 
   include ParamsHelper

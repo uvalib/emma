@@ -11,7 +11,7 @@ module PopupHelper
 
   # @private
   def self.included(base)
-    __included(base, '[PopupHelper]')
+    __included(base, 'PopupHelper')
   end
 
   include Emma::Unicode

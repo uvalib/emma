@@ -11,7 +11,7 @@ module ArtifactHelper
 
   # @private
   def self.included(base)
-    __included(base, '[ArtifactHelper]')
+    __included(base, 'ArtifactHelper')
   end
 
   include ModelHelper

@@ -11,7 +11,7 @@ module FlashHelper
 
   # @private
   def self.included(base)
-    __included(base, '[FlashHelper]')
+    __included(base, 'FlashHelper')
   end
 
   include Emma::Common

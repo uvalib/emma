@@ -11,7 +11,7 @@ module TitleHelper
 
   # @private
   def self.included(base)
-    __included(base, '[TitleHelper]')
+    __included(base, 'TitleHelper')
   end
 
   include ImageHelper

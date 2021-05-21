@@ -239,7 +239,7 @@ module UploadWorkflow::Errors
   # @raise [StandardError]
   #
   def failure(problem, value = nil)
-    __debug_items("UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
 
     # If any failure is actually an internal error, re-raise it now so that it
     # will result in a stack trace when it is caught and processed.
@@ -696,7 +696,7 @@ module UploadWorkflow::External
   # @see UploadWorkflow::Bulk::External#bulk_upload_create
   #
   def upload_create(index: nil, atomic: true, **data)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
 
     # Save the Upload record to the database.
     item = db_insert(data)
@@ -726,7 +726,7 @@ module UploadWorkflow::External
   # @see UploadWorkflow::Bulk::External#bulk_upload_edit
   #
   def upload_edit(index: nil, atomic: true, **data)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     if (id = data[:id]).blank?
       if (id = data[:submission_id]).blank?
         return nil, ['No identifier provided'] # TODO: I18n
@@ -766,7 +766,7 @@ module UploadWorkflow::External
   # removed from the index.
   #
   def upload_remove(*items, index: nil, atomic: true, force: nil, **opt)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
 
     # Translate entries into Upload record instances.
     items, failed = collect_records(*items, force: force)
@@ -852,7 +852,7 @@ module UploadWorkflow::External
   # @see UploadWorkflow::External#upload_remove
   #
   def batch_upload_remove(ids, index: true, atomic: true, force: nil, **opt)
-    __debug_items("UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     ids = Array.wrap(ids)
 
     # Translate entries into Upload record instances if possible.
@@ -907,7 +907,7 @@ module UploadWorkflow::External
   # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   def batch_upload_operation(op, entries, size: nil, **opt)
-    __debug_items((dbg = "UPLOAD #{op}"), binding)
+    __debug_items((dbg = "UPLOAD WF #{op}"), binding)
     opt[:bulk] ||= { total: entries.size }
 
     # Set batch size for this iteration.
@@ -1029,7 +1029,7 @@ module UploadWorkflow::External
   # noinspection RubyNilAnalysis
   #++
   def new_record(data = nil)
-    __debug_items("UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     Upload.new(data).tap { |record| add_title_prefix(record) if title_prefix }
   end
 
@@ -1136,7 +1136,7 @@ module UploadWorkflow::External
   # @return [nil]                     If the record was not created or updated.
   #
   def db_insert(data)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     record = data.is_a?(Upload) ? data : new_record(data)
     record.save if record&.new_record?
     # noinspection RubyYardReturnMatch
@@ -1152,7 +1152,7 @@ module UploadWorkflow::External
   # @return [nil]                     If the record was not found or updated.
   #
   def db_update(record, data = nil)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     record, data = [nil, record] if record.is_a?(Hash)
     unless record.is_a?(Upload)
       if data.is_a?(Hash)
@@ -1184,7 +1184,7 @@ module UploadWorkflow::External
   # @return [nil]                     If the record was not found or removed.
   #
   def db_delete(data)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     record = data.is_a?(Upload) ? data : get_record(data)
     record&.destroy
   end
@@ -1213,7 +1213,7 @@ module UploadWorkflow::External
   #                                     and records to roll back.
   #
   def add_to_index(*items, atomic: true, **)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     succeeded, failed, rollback = update_in_index(*items, atomic: atomic)
     if rollback.present?
       # Any submissions that could not be added to the index will be removed
@@ -1243,7 +1243,7 @@ module UploadWorkflow::External
   #                                     and records to roll back.
   #
   def update_in_index(*items, atomic: true, **)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     items = normalize_index_items(*items, meth: __method__)
     return [], [], [] if items.blank?
 
@@ -1266,7 +1266,7 @@ module UploadWorkflow::External
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   def remove_from_index(*items, atomic: true, **)
-    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD WF #{__method__}", binding)
     items = normalize_index_items(*items, meth: __method__)
     return [], [] if items.blank?
 

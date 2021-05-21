@@ -13,7 +13,7 @@ module OclcHelper
 
   # @private
   def self.included(base)
-    __included(base, '[OclcHelper]')
+    __included(base, 'OclcHelper')
   end
 
   # ===========================================================================

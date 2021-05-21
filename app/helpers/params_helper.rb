@@ -11,7 +11,7 @@ module ParamsHelper
 
   # @private
   def self.included(base)
-    __included(base, '[ParamsHelper]')
+    __included(base, 'ParamsHelper')
   end
 
   # ===========================================================================

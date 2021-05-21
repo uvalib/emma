@@ -11,7 +11,7 @@ module BookshareHelper
 
   # @private
   def self.included(base)
-    __included(base, '[BookshareHelper]')
+    __included(base, 'BookshareHelper')
   end
 
   include Emma::Common

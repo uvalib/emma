@@ -12,7 +12,7 @@ module SearchHelper
 
   # @private
   def self.included(base)
-    __included(base, '[SearchHelper]')
+    __included(base, 'SearchHelper')
   end
 
   include LogoHelper

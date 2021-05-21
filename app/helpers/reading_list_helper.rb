@@ -11,7 +11,7 @@ module ReadingListHelper
 
   # @private
   def self.included(base)
-    __included(base, '[ReadingListHelper]')
+    __included(base, 'ReadingListHelper')
   end
 
   include ModelHelper

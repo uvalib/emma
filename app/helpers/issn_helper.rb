@@ -11,7 +11,7 @@ module IssnHelper
 
   # @private
   def self.included(base)
-    __included(base, '[IssnHelper]')
+    __included(base, 'IssnHelper')
   end
 
   # ===========================================================================

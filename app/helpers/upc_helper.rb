@@ -11,7 +11,7 @@ module UpcHelper
 
   # @private
   def self.included(base)
-    __included(base, '[UpcHelper]')
+    __included(base, 'UpcHelper')
   end
 
   # ===========================================================================

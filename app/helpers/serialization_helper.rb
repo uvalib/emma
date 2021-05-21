@@ -11,7 +11,7 @@ module SerializationHelper
 
   # @private
   def self.included(base)
-    __included(base, '[SerializationHelper]')
+    __included(base, 'SerializationHelper')
   end
 
   include ParamsHelper

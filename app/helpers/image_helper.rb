@@ -11,7 +11,7 @@ module ImageHelper
 
   # @private
   def self.included(base)
-    __included(base, '[ImageHelper]')
+    __included(base, 'ImageHelper')
   end
 
   include Emma::Common

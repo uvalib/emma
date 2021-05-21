@@ -12,7 +12,7 @@ module I18nHelper
   # @private
   def self.included(base)
 
-    __included(base, '[I18nHelper]')
+    __included(base, 'I18nHelper')
 
     base.send(:extend, self)
 

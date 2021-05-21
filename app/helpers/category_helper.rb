@@ -11,7 +11,7 @@ module CategoryHelper
 
   # @private
   def self.included(base)
-    __included(base, '[CategoryHelper]')
+    __included(base, 'CategoryHelper')
   end
 
   include ModelHelper

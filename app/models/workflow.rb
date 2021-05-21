@@ -607,7 +607,7 @@ module Workflow::Base::Events
     # @param [Array]          args
     #
     def __debug_event(event, *args)
-      line = 'WORKFLOW ***** EVENT ' + event_label(event)
+      line = 'UPLOAD WF ***** EVENT ' + event_label(event)
       __debug_line(line, *args, leader: "\n")
     end
 
@@ -947,7 +947,7 @@ module Workflow::Base::States
               }.join(',')
           }.join('; ')
         state = state_label(state)
-        "WORKFLOW >>>>> ENTER #{state} => [#{trans}]"
+        "UPLOAD WF >>>>> ENTER #{state} => [#{trans}]"
       end
     end
 
@@ -959,7 +959,7 @@ module Workflow::Base::States
     #
     def __debug_exit(state, _event = nil, *_event_args)
       __debug_line do
-        'WORKFLOW <<<<< LEAVE ' + state_label(state)
+        'UPLOAD WF <<<<< LEAVE ' + state_label(state)
       end
     end
 
@@ -1059,7 +1059,7 @@ class Workflow::Base
   # @return [void]
   #
   def initialize_state(data, **opt)
-    __debug("WORKFLOW initialize_state | curr_state = #{curr_state.inspect} | init_state = #{init_state.inspect} | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect}")
+    __debug("UPLOAD WF #{__method__} | curr_state = #{curr_state.inspect} | init_state = #{init_state.inspect} | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect}")
     state = opt[:start_state].presence&.to_sym
     state = nil if state == init_state
     event = opt[:init_event].presence&.to_sym
@@ -1068,13 +1068,13 @@ class Workflow::Base
 
     # Set initial state if specified.
     if state
-      __debug("WORKFLOW initial state: #{state.inspect}")
+      __debug("UPLOAD WF initial state: #{state.inspect}")
       persist_workflow_state(state)
     end
 
     # Apply initial event if specified.
     if event
-      __debug("WORKFLOW initial event: #{event.inspect}")
+      __debug("UPLOAD WF initial event: #{event.inspect}")
       event = "#{event}!" unless event.end_with?('!')
       send(event, *Array.wrap(data.presence))
     end

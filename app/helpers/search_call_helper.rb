@@ -11,7 +11,7 @@ module SearchCallHelper
 
   # @private
   def self.included(base)
-    __included(base, '[SearchCallHelper]')
+    __included(base, 'SearchCallHelper')
   end
 
   include ModelHelper

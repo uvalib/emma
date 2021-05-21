@@ -17,7 +17,7 @@ module LayoutHelper
   #
   def self.included(base)
 
-    __included(base, '[LayoutHelper]')
+    __included(base, 'LayoutHelper')
 
     include_submodules(base)
 

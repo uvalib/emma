@@ -12,7 +12,7 @@ module HtmlHelper
   # @private
   def self.included(base)
 
-    __included(base, '[HtmlHelper]')
+    __included(base, 'HtmlHelper')
 
     base.send(:include, ActionView::Helpers::TagHelper)
     base.send(:extend,  ActionView::Helpers::TagHelper)

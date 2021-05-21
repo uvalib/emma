@@ -11,7 +11,7 @@ module LinkHelper
 
   # @private
   def self.included(base)
-    __included(base, '[LinkHelper]')
+    __included(base, 'LinkHelper')
   end
 
   include Emma::Common

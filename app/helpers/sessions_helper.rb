@@ -11,7 +11,7 @@ module SessionsHelper
 
   # @private
   def self.included(base)
-    __included(base, '[SessionsHelper]')
+    __included(base, 'SessionsHelper')
   end
 
   # ===========================================================================

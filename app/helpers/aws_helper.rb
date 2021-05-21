@@ -11,7 +11,7 @@ module AwsHelper
 
   # @private
   def self.included(base)
-    __included(base, '[AwsHelper]')
+    __included(base, 'AwsHelper')
   end
 
   include HtmlHelper

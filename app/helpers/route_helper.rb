@@ -12,7 +12,7 @@ module RouteHelper
   # @private
   def self.included(base)
 
-    __included(base, '[RouteHelper]')
+    __included(base, 'RouteHelper')
 
     base.send(:extend, self)
 

@@ -11,7 +11,7 @@ module EditionHelper
 
   # @private
   def self.included(base)
-    __included(base, '[EditionHelper]')
+    __included(base, 'EditionHelper')
   end
 
   include ModelHelper

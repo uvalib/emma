@@ -11,7 +11,7 @@ module PaginationHelper
 
   # @private
   def self.included(base)
-    __included(base, '[PaginationHelper]')
+    __included(base, 'PaginationHelper')
   end
 
   include HtmlHelper

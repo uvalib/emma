@@ -11,7 +11,7 @@ module HttpHelper
 
   # @private
   def self.included(base)
-    __included(base, '[HttpHelper]')
+    __included(base, 'HttpHelper')
   end
 
   # ===========================================================================

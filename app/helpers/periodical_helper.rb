@@ -11,7 +11,7 @@ module PeriodicalHelper
 
   # @private
   def self.included(base)
-    __included(base, '[PeriodicalHelper]')
+    __included(base, 'PeriodicalHelper')
   end
 
   include ModelHelper

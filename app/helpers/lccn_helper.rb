@@ -13,7 +13,7 @@ module LccnHelper
 
   # @private
   def self.included(base)
-    __included(base, '[LccnHelper]')
+    __included(base, 'LccnHelper')
   end
 
   # ===========================================================================

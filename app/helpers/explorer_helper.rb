@@ -11,7 +11,7 @@ module ExplorerHelper
 
   # @private
   def self.included(base)
-    __included(base, '[ExplorerHelper]')
+    __included(base, 'ExplorerHelper')
   end
 
   include Emma::Common

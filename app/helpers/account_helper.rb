@@ -11,7 +11,7 @@ module AccountHelper
 
   # @private
   def self.included(base)
-    __included(base, '[AccountHelper]')
+    __included(base, 'AccountHelper')
   end
 
   include ModelHelper

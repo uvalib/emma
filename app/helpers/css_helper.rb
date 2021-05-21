@@ -12,7 +12,7 @@ module CssHelper
   # @private
   def self.included(base)
 
-    __included(base, '[CssHelper]')
+    __included(base, 'CssHelper')
 
     base.send(:extend,  self)
 

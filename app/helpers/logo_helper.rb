@@ -11,7 +11,7 @@ module LogoHelper
 
   # @private
   def self.included(base)
-    __included(base, '[LogoHelper]')
+    __included(base, 'LogoHelper')
   end
 
   include HtmlHelper

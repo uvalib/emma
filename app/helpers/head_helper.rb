@@ -17,7 +17,7 @@ module HeadHelper
   #
   def self.included(base)
 
-    __included(base, '[HeadHelper]')
+    __included(base, 'HeadHelper')
 
     include_submodules(base)
 

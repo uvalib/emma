@@ -11,7 +11,7 @@ module SearchTermsHelper
 
   # @private
   def self.included(base)
-    __included(base, '[SearchTermsHelper]')
+    __included(base, 'SearchTermsHelper')
   end
 
   include Emma::Common

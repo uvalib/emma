@@ -11,7 +11,7 @@ module ApplicationHelper
 
   # @private
   def self.included(base)
-    __included(base, '[ApplicationHelper]')
+    __included(base, 'ApplicationHelper')
   end
 
   include Emma::Constants

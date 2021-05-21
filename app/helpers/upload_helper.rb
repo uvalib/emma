@@ -12,7 +12,7 @@ module UploadHelper
 
   # @private
   def self.included(base)
-    __included(base, '[UploadHelper]')
+    __included(base, 'UploadHelper')
   end
 
   include Emma::Json
