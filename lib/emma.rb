@@ -18,7 +18,7 @@ __loading_begin(__FILE__)
 ONLY_FOR_DOCUMENTATION = true
 
 # =============================================================================
-# Loader methods
+# Loader methods - require
 # =============================================================================
 
 public
@@ -79,6 +79,25 @@ def require_submodules(filename)
   modules   = "#{directory}/*.rb"
   require_files(filename, modules)
 end
+
+# Require subclasses of the class defined by the current file which are in the
+# same namespace (and stored in the subdirectory with the same base name).
+#
+# @param [String] filename            Normally supplied as __FILE__
+#
+# @return [void]
+#
+# @see #require_submodules
+#
+def require_subclasses(filename)
+  require_submodules(filename)
+end
+
+# =============================================================================
+# Loader methods - include
+# =============================================================================
+
+public
 
 # Include submodules.
 #

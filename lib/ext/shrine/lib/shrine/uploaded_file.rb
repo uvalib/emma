@@ -13,7 +13,7 @@ class Shrine
 
   module UploadedFileExt
 
-    include FileNaming
+    include Emma::Mime
 
     # Non-functional hints for RubyMine type checking.
     # :nocov:
@@ -47,10 +47,11 @@ class Shrine
     # noinspection RubyUnusedLocalVariable
     #++
     def extract_file_metadata
-      mime = fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = nil
-      ext  = extension
-      mime = ext_to_mime(ext)  || mime_type
-      fmt  = mime_to_fmt(mime) || ext_to_fmt(ext)
+      mime  = fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = nil
+      ext   = extension
+      mime  = ext_to_mime(ext) || mime_type
+      fmt   = (FileNaming.mime_to_fmt[mime]&.first if mime)
+      fmt ||= (FileNaming.ext_to_fmt[ext]&.first   if ext)
       if fmt
         # Any failure will be addressed in the 'rescue' section.
         # noinspection RubyNilAnalysis

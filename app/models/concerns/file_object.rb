@@ -182,4 +182,10 @@ class FileObject
 
 end
 
+# =============================================================================
+# Pre-load format-specific classes for easier TRACE_LOADING.
+# =============================================================================
+
+require_subclasses(__FILE__)
+
 __loading_end(__FILE__)

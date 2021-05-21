@@ -475,4 +475,10 @@ module FileFormat
 
 end
 
+# =============================================================================
+# Pre-load format-specific modules for easier TRACE_LOADING.
+# =============================================================================
+
+require_submodules(__FILE__)
+
 __loading_end(__FILE__)

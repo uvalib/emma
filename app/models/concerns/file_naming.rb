@@ -25,7 +25,7 @@ module FileNaming
 
   class << self
 
-    include ZipArchive
+    include FileFormat::Zip
 
     # Create an instance of the appropriate FileObject subclass based on the
     # indicated type and, if provided, the file contents
@@ -57,7 +57,7 @@ module FileNaming
     #
     def format_class(type)
       fmt = type.to_s.upcase_first
-      "#{fmt}File".safe_constantize
+      "FileObject::#{fmt}".safe_constantize
     end
 
     # format_classes
