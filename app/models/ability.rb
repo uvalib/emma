@@ -112,26 +112,15 @@ class Ability
     end
     user ||= User.new # Guest user (not logged in).
     roles  = user.roles.map { |r| r&.name&.to_sym }.compact
-    if roles.include?(:administrator)
-      act_as_administrator
-=begin # TODO: These are not (yet?) supported by Bookshare
-    elsif roles.include?(:membership_manager)
-      act_as_dso_primary
-    elsif roles.include?(:membership_viewer)
-      act_as_dso_staff
-=end
-    elsif roles.include?(:catalog_curator)
-      act_as_library_staff
-    elsif roles.include?(:membership_manager)
-      act_as_dso_sponsor
-    elsif roles.include?(:artifact_submitter)
-      act_as_dso_delegate
-    elsif user.linked_account?
-      act_as_individual_member
-    elsif roles.include?(:artifact_downloader)
-      act_as_organization_member
-    else
-      act_as_guest
+    case
+      when roles.include?(:administrator)       then act_as_administrator
+      when roles.include?(:membership_manager)  then act_as_dso_primary
+      when roles.include?(:membership_viewer)   then act_as_dso_staff
+      when roles.include?(:artifact_submitter)  then act_as_dso_delegate
+      when user.linked_account?                 then act_as_individual_member
+      when roles.include?(:artifact_downloader) then act_as_organization_member
+      when roles.include?(:catalog_curator)     then act_as_library_staff
+      else                                           act_as_guest
     end
   end
 
@@ -174,7 +163,6 @@ class Ability
   # @return [void]
   #
   def act_as_dso_staff
-    act_as_library_staff
     act_as_dso_sponsor
   end
 
@@ -221,9 +209,8 @@ class Ability
   #
   def act_as_library_staff
     act_as_guest
-    can :manage, Title
-    can :manage, Periodical
-    can :manage, Edition
+    can :update, Upload
+    can :delete, Upload
   end
 
   # Indicate that the user can act as a student with a personal Bookshare

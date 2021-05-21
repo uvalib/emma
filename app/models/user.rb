@@ -141,7 +141,6 @@ class User < ApplicationRecord
   #
   def initialize(attributes = nil) # TODO: keep?
     super
-    assign_default_role # TODO: remove after tmp test users have been updated
   end
 
   # ===========================================================================
@@ -232,8 +231,7 @@ class User < ApplicationRecord
   # user's Bookshare role in order to map it onto EMMA "prototype user".
   #
   def assign_default_role
-    return if self.roles.present?
-    prototype_user = id.to_i.zero? ? :anonymous : TEST_USERS[uid]
+    prototype_user = uid.blank? ? :anonymous : TEST_USERS[uid]
     add_roles(prototype_user)
   end
 
