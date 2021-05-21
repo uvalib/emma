@@ -29,14 +29,14 @@ class Shrine
 
         # initialize
         #
-        # @param [*]    bucket
-        # @param [*]    client
-        # @param [*]    prefix
-        # @param [Hash] upload_options
-        # @param [Hash] multipart_threshold
-        # @param [*]    signer
-        # @param [*]    public
-        # @param [Hash] s3_options
+        # @param [String]               bucket
+        # @param [Aws::S3::Client, nil] client
+        # @param [String, nil]          prefix
+        # @param [Hash]                 upload_options
+        # @param [Hash]                 multipart_threshold
+        # @param [*]                    signer
+        # @param [*]                    public
+        # @param [Hash]                 s3_options
         #
         # This method overrides:
         # @see Shrine::Storage::S3#initialize

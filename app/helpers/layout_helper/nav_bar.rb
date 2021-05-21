@@ -101,7 +101,6 @@ module LayoutHelper::NavBar
   # @return [ActiveSupport::SafeBuffer]
   #
   def nav_bar_links
-    # @type [Hash] curr_params
     curr_params = url_parameters.except(:limit)
     curr_path   = request.path
     base_path   = curr_path.sub(%r{^(/[^/]*)/.*$}, '\1')

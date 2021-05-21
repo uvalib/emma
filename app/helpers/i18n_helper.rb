@@ -98,7 +98,7 @@ module I18nHelper
   # @option opt [Boolean]                 :one
   # @option opt [Boolean]                 :many
   #
-  # @return [*]                               The specified value.
+  # @return [Any]                             The specified value.
   # @return [nil]                             No non-empty value was found.
   #
   def i18n_lookup(controller, partial_path, *defaults, **opt)

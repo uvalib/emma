@@ -261,7 +261,7 @@ module Upload::WorkflowMethods
   #
   # @param [Symbol, String] column    Database field name.
   #
-  # @return [*, nil]
+  # @return [*]
   #
   def dynamic_get_field(column)
     if new_record?

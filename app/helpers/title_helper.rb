@@ -304,11 +304,11 @@ module TitleHelper
   # Transform a field value for HTML rendering.
   #
   # @param [Bs::Api::Record] item
-  # @param [Object]          value
+  # @param [*]               value
   # @param [Hash]            opt        Passed to render method.
   #
-  # @return [Object]  HTML or scalar value.
-  # @return [nil]     If *value* was *nil* or *item* resolved to *nil*.
+  # @return [Any]   HTML or scalar value.
+  # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
   # @see ModelHelper#render_value
   #

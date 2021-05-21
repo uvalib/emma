@@ -153,7 +153,7 @@ module Api::Record::Associations
     # Module#attr_accessor.
     #
     # @param [Symbol, String] name
-    # @param [Object, nil]    default
+    # @param [*]              default
     #
     # @return [void]
     #
@@ -171,8 +171,8 @@ module Api::Record::Associations
     #
     # @raise [NameError]                        If *type* is invalid.
     #
-    # @return [Object]  A literal value.
-    # @return [Proc]    An anonymous method that generates the default value.
+    # @return [Proc]  An anonymous method that generates the default value.
+    # @return [Any]   A literal value.
     #
     # Compare with:
     # @see Api::Serializer::Associations#get_type_class
@@ -219,7 +219,7 @@ module Api::Record::Associations
     # Hash values may be literal instances of scalar types, or they may be
     # classes or procs.
     #
-    # @type [Hash{Symbol=>BasicObject}]
+    # @type [Hash{Symbol=>Any}]
     #
     # @see Api::Record#default_data
     #
@@ -235,10 +235,10 @@ module Api::Record::Associations
 
     # Set the default value for a property.
     #
-    # @param [Symbol, String]   name
-    # @param [BasicObject, nil] value
+    # @param [Symbol, String] name
+    # @param [*]              value
     #
-    # @return [Hash{Symbol=>BasicObject}]
+    # @return [Hash{Symbol=>*}]
     #
     def add_property_default(name, value)
       property_defaults[name.to_s.to_sym] = value.freeze

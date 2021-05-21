@@ -83,7 +83,7 @@ class HelpController < ApplicationController
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [*, nil] list
+  # @param [Array] list
   #
   # @return [Hash{Symbol=>Array,Hash}]
   #

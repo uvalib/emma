@@ -129,8 +129,7 @@ class UploadController < ApplicationController
   #
   # On the initial visit to the page, @db_id should be *nil*.  On subsequent
   # visits (due to "Cancel" returning to this same page), @db_id will be
-  # included in order to reuse the the Upload record that was created at that
-  # time.
+  # included in order to reuse the Upload record that was created at that time.
   #
   # @see UploadController#create
   # @see UploadWorkflow::Single::Create::States#on_creating_entry
@@ -283,8 +282,8 @@ class UploadController < ApplicationController
 
   # == GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
-  # Display a form prompting for a bulk upload file in either CSV or JSON
-  # format containing an entry for each entry to submit.
+  # Display a form prompting for a bulk operation manifest (either CSV or JSON)
+  # containing an row/element for each entry to submit.
   #
   # @see UploadController#bulk_create
   # @see UploadWorkflow::Bulk::Create::States#on_creating_entry
@@ -298,7 +297,7 @@ class UploadController < ApplicationController
 
   # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
-  # Create the specified Upload entries, download and store the associated
+  # Create the specified Upload records, download and store the associated
   # files, and post the new entries to the Federated Ingest API.
   #
   # @raise [Net::HTTPConflict]
@@ -319,8 +318,8 @@ class UploadController < ApplicationController
 
   # == GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
-  # Display a form prompting for a bulk upload file in either CSV or JSON
-  # format containing an entry for each entry to change.
+  # Display a form prompting for a bulk operation manifest (either CSV or JSON)
+  # containing an row/element for each entry to change.
   #
   # @see UploadController#bulk_update
   # @see UploadWorkflow::Bulk::Edit::States#on_editing_entry
@@ -335,7 +334,7 @@ class UploadController < ApplicationController
   # == PUT   /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   # == PATCH /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
-  # Modify or create the specified Upload entries, download and store the
+  # Modify or create the specified Upload records, download and store the
   # associated files (if changed), and post the new/modified entries to the
   # Federated Ingest API.
   #

@@ -103,7 +103,7 @@ module SessionConcern
 
   # after_sign_in_path_for
   #
-  # @param [Object] resource_or_scope
+  # @param [*] resource_or_scope
   #
   # @return [String]
   #
@@ -363,7 +363,6 @@ module SessionConcern
     return Log.warn { "#{__method__}: no token present" } if token.blank?
     Log.info { "#{__method__}: #{token.inspect}" }
 
-    # @type [OmniAuth::Strategy::Options] opt
     opt     = OmniAuth::Strategies::Bookshare.default_options
     id      = opt.client_id
     secret  = opt.client_secret

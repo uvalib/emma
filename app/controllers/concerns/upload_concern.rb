@@ -92,7 +92,7 @@ module UploadConcern
 
   # URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def upload_params
     @upload_params ||= get_upload_params
@@ -102,7 +102,7 @@ module UploadConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def get_upload_params(p = nil)
     prm = url_parameters(p)
@@ -116,7 +116,7 @@ module UploadConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   # == Implementation Notes
   # The value `params[:upload][:emma_data]` is ignored because it reports the
@@ -126,7 +126,7 @@ module UploadConcern
   # submission where metadata is being changed but the uploaded file is not
   # being replaced.
   #
-  def upload_post_parameters(p = nil)
+  def upload_post_params(p = nil)
     prm  = p ? get_upload_params(p) : upload_params
     data = safe_json_parse(prm.delete(:upload), default: {})
     file = data[:file]
@@ -138,8 +138,8 @@ module UploadConcern
 
   # Extract POST parameters and data for bulk operations.
   #
-  # @param [ActionController::Parameters, Hash] p   Default: `#url_parameters`.
-  # @param [ActionDispatch::Request]            req Default: `#request`.
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  # @param [ActionDispatch::Request, nil]            req Def: `#request`.
   #
   # @return [Array<Hash>]
   #
@@ -157,7 +157,7 @@ module UploadConcern
   def workflow_parameters
     result = { id: @db_id, user_id: @user&.id }
     result.compact!
-    result.merge!(upload_post_parameters)
+    result.merge!(upload_post_params)
     result.except!(:selected)
   end
 

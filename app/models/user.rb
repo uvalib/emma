@@ -267,7 +267,7 @@ class User < ApplicationRecord
 
   # Return the ID indicated by *user*.
   #
-  # @param [User, String, Integer] user
+  # @param [User, String, Integer, *] user
   #
   # @return [Integer]                 The ID extracted or expressed by *user*.
   # @return [nil]                     If ID could not be determined.
@@ -281,7 +281,7 @@ class User < ApplicationRecord
 
   # Return the account ID of *user*.
   #
-  # @param [User, String, Integer] user
+  # @param [User, String, Integer, *] user
   #
   # @return [String]                  The :uid extracted or expressed by *user*
   # @return [nil]                     If :uid could not be determined.

@@ -36,7 +36,7 @@ class ScalarType
 
   # Initialize a new instance.
   #
-  # @param [*, nil] v                 Optional initial value.
+  # @param [*] v                      Optional initial value.
   #
   def initialize(v = nil, *)
     set(v)
@@ -54,7 +54,7 @@ class ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   # @return [String]
   #
@@ -70,7 +70,7 @@ class ScalarType
   # Indicate whether the instance is valid, or indicate whether *v* would be a
   # valid value.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def valid?(v = nil)
     self.class.valid?(v || @value)
@@ -132,7 +132,7 @@ class ScalarType
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     !v.nil?
@@ -174,7 +174,7 @@ class IsoDuration < ScalarType
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     normalize(v).match?(PATTERN)
@@ -205,7 +205,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a year value, or indicate whether
   # *v* represents a year value.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def year?(v = nil)
     self.class.year?(v || @value)
@@ -214,7 +214,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a day value, or indicate whether
   # *v* represents a day value.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def day?(v = nil)
     self.class.day?(v || @value)
@@ -223,7 +223,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a full ISO 8601 date value, or
   # indicate whether *v* represents a full ISO 8601 date value.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def exact?(v = nil)
     self.class.exact?(v || @value)
@@ -237,7 +237,7 @@ class IsoDate < ScalarType
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     v = normalize(v)
@@ -252,7 +252,7 @@ class IsoDate < ScalarType
 
   # Indicate whether *v* represents a year value.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.year?(v)
     normalize(v).match?(PATTERN[:year])
@@ -260,7 +260,7 @@ class IsoDate < ScalarType
 
   # Indicate whether *v* represents a day value.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.day?(v)
     normalize(v).match?(PATTERN[:day])
@@ -268,7 +268,7 @@ class IsoDate < ScalarType
 
   # Indicate whether *v* represents a full ISO 8601 date value.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.exact?(v)
     normalize(v).match?(PATTERN[:exact])
@@ -288,7 +288,7 @@ class IsoYear < IsoDate
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     year?(v)
@@ -308,7 +308,7 @@ class IsoDay < IsoDate
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     day?(v)
@@ -328,7 +328,7 @@ class IsoLanguage < ScalarType
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     v = normalize(v)
@@ -389,7 +389,7 @@ class EnumType < ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   # @return [String]
   #
@@ -410,7 +410,7 @@ class EnumType < ScalarType
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     v = normalize(v)

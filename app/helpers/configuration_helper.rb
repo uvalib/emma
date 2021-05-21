@@ -68,12 +68,10 @@ module ConfigurationHelper
   # Find the best match from config/locales for the given partial path, first
   # looking under "en.emma.(controller)", then under 'en.emma.generic'.
   #
-  # @param [String, Array]       path         Partial I18n path.
-  # @param [*, nil]              default      Returned on failure.
-  # @param [Boolean, *]          fatal        If *true* an exception is raised
-  #                                             instead
-  # @param [Hash]                opt          Passed to #config_interpolations
-  #                                             except for:
+  # @param [String, Array] path       Partial I18n path.
+  # @param [*]             default    Returned on failure.
+  # @param [Boolean, *]    fatal      If *true* an exception is raised instead.
+  # @param [Hash]          opt        Passed to #config_interpolations except:
   #
   # @option opt [String, Symbol]          :controller
   # @option opt [String, Symbol]          :action

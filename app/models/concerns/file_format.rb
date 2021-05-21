@@ -81,9 +81,6 @@ module FileFormat
   #
   # @see #field_value_array
   #
-  # Compare with:
-  # @see Upload#FIELD_ALWAYS_ARRAY
-  #
   FIELD_ALWAYS_ARRAY = %i[
     AccessibilityControl
     AccessibilityFeature
@@ -165,8 +162,6 @@ module FileFormat
   #
   def format_metadata(info)
     return {} if info.blank?
-    # @type [Symbol]      field
-    # @type [Symbol,Proc] accessor
     format_fields.map { |field, accessor|
       value = apply_field_accessor(info, accessor)
       next if value.blank?
@@ -190,8 +185,6 @@ module FileFormat
   #
   def mapped_metadata(info)
     return {} if info.blank?
-    # @type [Symbol] format_field
-    # @type [Symbol] mapped_field
     mapped_metadata_fields.map { |format_field, mapped_field|
       value = apply_field_accessor(info, format_field)
       next if value.blank?

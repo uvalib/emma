@@ -30,7 +30,7 @@ module Emma::Common
 
   # Indicate whether the item represents a true or false value.
   #
-  # @param [Object] value
+  # @param [*] value
   #
   def boolean?(value)
     return true  if value.is_a?(TrueClass) || value.is_a?(FalseClass)
@@ -290,7 +290,7 @@ module Emma::Common
   # @param [Boolean, nil]   reduce    If *true* transform arrays with a single
   #                                     element into scalars.
   #
-  # @return [Hash, Array, *, nil]
+  # @return [Hash, Array, *]
   #
   # == Variations
   #
@@ -307,7 +307,7 @@ module Emma::Common
   # @overload _remove_blanks(item)
   #   @param [*]            item
   #   @param [Boolean, nil] reduce
-  #   @return [*, nil]
+  #   @return [*]
   #
   # == Usage Notes
   # Empty strings and nils are considered blank, however an item or element

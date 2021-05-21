@@ -496,7 +496,7 @@ module Field
 
     # The raw value for this field instance.
     #
-    # @return [*, nil]
+    # @return [*]
     #
     def value
       @value

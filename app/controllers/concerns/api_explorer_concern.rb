@@ -48,11 +48,11 @@ module ApiExplorerConcern
 
   # Attempt to interpret *arg* as an exception or a record with an exception.
   #
-  # @param [Bs::Api::Record, Exception, Object] arg
+  # @param [Bs::Api::Record, Exception, *] arg
   # @param [*] default                On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
   #
-  # @return [Hash, String, Object]
+  # @return [Hash, String, *]
   #
   def safe_exception_parse(arg, default: :original)
     case (ex = arg.respond_to?(:exception) && arg.exception)

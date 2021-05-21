@@ -601,7 +601,7 @@ class Upload < ApplicationRecord
   #
   # @param [Upload, Hash, #repository, #emma_repository] item
   # @param [Symbol, String]                              key
-  # @param [*, nil]                                      default
+  # @param [*]                                           default
   #
   # @return [*]
   #

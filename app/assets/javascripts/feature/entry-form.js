@@ -11,7 +11,7 @@
 $(document).on('turbolinks:load', function() {
 
     /**
-     * CSS class for eligible form elements.
+     * CSS class for single-entry form elements.
      *
      * @constant
      * @type {string}
@@ -19,7 +19,7 @@ $(document).on('turbolinks:load', function() {
     const UPLOAD_FORM_CLASS = 'file-upload-form';
 
     /**
-     * CSS class for eligible form elements.
+     * CSS class for single-entry form elements.
      *
      * @constant
      * @type {String}
@@ -27,7 +27,7 @@ $(document).on('turbolinks:load', function() {
     const UPLOAD_FORM_SELECTOR = selector(UPLOAD_FORM_CLASS);
 
     /**
-     * File upload forms on the page.
+     * Single-entry operation forms on the page.
      *
      * NOTE: There is no current scenario where there should be more than one
      * of these on a given page, despite the fact that the logic (mostly)
@@ -40,7 +40,7 @@ $(document).on('turbolinks:load', function() {
     let $file_upload_form = $(UPLOAD_FORM_SELECTOR);
 
     /**
-     * CSS classes for bulk operations.
+     * CSS classes for bulk operation form elements.
      *
      * @constant
      * @type {string}
@@ -48,7 +48,7 @@ $(document).on('turbolinks:load', function() {
     const BULK_FORM_CLASS = 'file-upload-bulk';
 
     /**
-     * CSS classes for bulk operations.
+     * CSS classes for bulk operation form elements.
      *
      * @constant
      * @type {string}
@@ -188,6 +188,29 @@ $(document).on('turbolinks:load', function() {
      *
      * @see "en.emma.upload.record.emma_data"
      * @see "AwsS3::Record::SubmissionPackage"
+     */
+
+    /**
+     * Shrine upload response message.
+     *
+     * @typedef { EmmaData | {error: string} } EmmaDataOrError
+     *
+     * @typedef {{
+     *      emma_data:      EmmaDataOrError?
+     *      id:             string,
+     *      storage:        string,
+     *      metadata: {
+     *          filename:   string,
+     *          size:       number,
+     *          mime_type:  string,
+     *      }
+     * }} ShrineResponseBody
+     *
+     * @typedef {{
+     *      status:     number,
+     *      body:       ShrineResponseBody,
+     *      uploadURL:  string
+     * }} ShrineResponseMessage
      */
 
     /**
@@ -1564,8 +1587,8 @@ $(document).on('turbolinks:load', function() {
          * received with success status (200).  At this point, the file has
          * been uploaded by Shrine, but has not yet been validated.
          *
-         * @param {Uppy.UppyFile}                                     file
-         * @param {{status: number, body: string, uploadURL: string}} response
+         * @param {Uppy.UppyFile}         file
+         * @param {ShrineResponseMessage} response
          *
          * @see "Shrine::UploadEndpointExt#make_response"
          *

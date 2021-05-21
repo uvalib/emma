@@ -200,7 +200,7 @@ class Api::Record
 
   # Default data used to initialize an instance.
   #
-  # @return [Hash{Symbol=>BasicObject}]
+  # @return [Hash{Symbol=>Any}]
   #
   # @see Api::Record::Associations#property_defaults
   #

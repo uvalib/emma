@@ -24,6 +24,8 @@ require 'pp'
 
 PROJECT_DIR = '/home/rwl/Work/emma'
 SRC_FILE    = 'package.json'
+
+# noinspection SpellCheckingInspection, LongLine
 URL = {
   'jquery'  => 'code.jquery.com/jquery-%{version}.min.js',
   'select2' => 'cdnjs.cloudflare.com/ajax/libs/select2/%{version}/%{type}/select2.min.%{type}',
@@ -145,8 +147,8 @@ end
 
 # Generate a YAML section as an array.
 #
-# @param [String, Symbol] type
-# @param [Hash]           versions
+# @param [String, Symbol]       type
+# @param [Hash{String=>String}] versions
 #
 # @return [void]
 #

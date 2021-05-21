@@ -84,7 +84,7 @@ module Representable
       # @yield To supply additional items to show.
       # @yieldreturn [Array]
       #
-      # @see #__output
+      # @see #__output_impl
       #
       # == Variations
       #

@@ -80,8 +80,8 @@ module SerializationHelper
 
   # Serialize an item to JSON format.
   #
-  # @param [Object] item
-  # @param [Hash]   opt               Passed to #to_json.
+  # @param [*]    item
+  # @param [Hash] opt                 Passed to #to_json.
   #
   # @return [String]
   #

@@ -32,7 +32,7 @@ module Api::Schema
   # A table of schema property scalar types mapped to literals which are their
   # default values.
   #
-  # @type [Hash{Symbol=>Object}]
+  # @type [Hash{Symbol=>Any}]
   #
   SCALAR_DEFAULTS = {
     '':          '',
@@ -152,7 +152,7 @@ module Api::Schema
   #
   # @param [Symbol] type
   #
-  # @return [*]
+  # @return [Any]
   #
   def enumeration_default(type)
     enumeration_defaults[type]
@@ -181,7 +181,7 @@ module Api::Schema
   # A table of schema property scalar types mapped to literals which are their
   # default values.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [Hash{Symbol=>Any}]
   #
   def scalar_defaults
     SCALAR_DEFAULTS
@@ -252,8 +252,7 @@ module Api::Schema
   #
   # @param [Class, String, Symbol, nil] type
   #
-  # @return [Object]
-  # @return [nil]
+  # @return [*]
   #
   def scalar_default(type)
     # noinspection RubyNilAnalysis
@@ -275,8 +274,7 @@ module Api::Schema
   #
   # @param [Hash, nil] opt
   #
-  # @return [Object]
-  # @return [nil]
+  # @return [*]
   #
   def extract_type_option(opt)
     type_options(opt).values.first
@@ -286,8 +284,7 @@ module Api::Schema
   #
   # @param [Hash] opt                 Will have #TYPE_OPTION_KEYS removed.
   #
-  # @return [Object]
-  # @return [nil]
+  # @return [*]
   #
   def extract_type_option!(opt)
     return unless opt.is_a?(Hash)

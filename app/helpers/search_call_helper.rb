@@ -104,7 +104,7 @@ module SearchCallHelper
   # Render search calls as a table.
   #
   # @param [SearchCall, Array<SearchCall>] list
-  # @param [Hash]                          opt    Passed to #model_table except:
+  # @param [Hash]                          opt   Passed to #model_table except:
   #
   # @option [Boolean] :extended       Indicate that this is the "extended"
   #                                     version of the table which replaces
@@ -124,7 +124,7 @@ module SearchCallHelper
   # Render one or more entries for use within a <tbody>.
   #
   # @param [SearchCall, Array<SearchCall>] list
-  # @param [Hash]                          opt    Passed to #model_table_entries
+  # @param [Hash]                          opt   Passed to #model_table_entries
   #
   def search_call_table_entries(list, **opt)
     # noinspection RubyYardParamTypeMatch

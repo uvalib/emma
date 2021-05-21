@@ -28,8 +28,8 @@ module SerializationConcern
 
   # Render an item in JSON format.
   #
-  # @param [Object] item
-  # @param [Hash]   opt               Passed to #render.
+  # @param [*]    item
+  # @param [Hash] opt                 Passed to #render.
   #
   def render_json(item, **opt)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
@@ -40,8 +40,8 @@ module SerializationConcern
 
   # Render an item in XML format.
   #
-  # @param [Object] item
-  # @param [Hash]   opt               Passed to #render except for:
+  # @param [*]    item
+  # @param [Hash] opt                 Passed to #render except for:
   #
   # @option opt [String] :separator   Passed to #make_xml.
   # @option opt [String] :name        Passed to #make_xml.
@@ -62,7 +62,7 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [*, nil] list
+  # @param [*] list
   #
   # @return [Hash{Symbol=>Array,Hash}]
   #
@@ -88,8 +88,8 @@ module SerializationConcern
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [Hash, nil, *] items
-  # @param [Symbol, nil]  as          Either :hash or :array if given.
+  # @param [Hash, *]     items
+  # @param [Symbol, nil] as           Either :hash or :array if given.
   #
   # @return [Hash{Symbol=>Hash,Array}]
   #

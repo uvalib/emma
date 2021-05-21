@@ -788,7 +788,7 @@ $form-gap-narrow: $form-gap / 3;
     }
 }
 
-// Area filled by the client with on-going results from bulk upload.
+// Area filled by the client with on-going bulk operation results.
 //
 // @see file:app/assets/javascripts/feature/file-upload.js *addBulkUploadResult()*
 //
@@ -843,7 +843,7 @@ $form-gap-narrow: $form-gap / 3;
     }
 }
 
-// Label visible to note that old bulk upload results are being displayed.
+// Label visible to note that old bulk operation results are being displayed.
 //
 // @see file:app/assets/javascripts/feature/file-upload.js *bulkUploadResultsLabel()*
 //

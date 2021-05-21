@@ -91,10 +91,10 @@ module AccountHelper
 
   public
 
-  # Render a metadata listing of an account.
+  # Render details of an account.
   #
   # @param [User]      item
-  # @param [String, Symbol, Array<String,Symbol,nil>, nil] columns
+  # @param [String, Symbol, nil, Array<String,Symbol,nil>] columns
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #model_details.
   #
@@ -396,13 +396,12 @@ module AccountHelper
 
   # Generate a form with controls for deleting a local EMMA user account.
   #
-  # @param [Array<String,Upload>] items
-  # @param [String]               label   Label for the submit button.
-  # @param [Hash]                 opt     Passed to 'account-delete-form'
-  #                                         except for:
+  # @param [Array<String,User>] items
+  # @param [String]             label   Label for the submit button.
+  # @param [Hash]               opt     Passed to 'account-delete-form' except:
   #
-  # @option opt [String]  :cancel         Cancel button redirect URL passed to
-  #                                         #account_delete_cancel.
+  # @option opt [String] :cancel        Cancel button redirect URL passed to
+  #                                       #account_delete_cancel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

@@ -173,7 +173,7 @@ module AwsS3Service::Request::Submissions
   # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash, String>] items
   # @param [Hash]   options           Passed to *op*.
   #
-  # @return [*]                       Depends on *op*
+  # @return [Any]                     Depends on *op*
   #
   # == Variations
   #

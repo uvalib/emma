@@ -386,7 +386,7 @@ module ModelHelper
   # Render a single label/value pair.
   #
   # @param [String, Symbol, nil] label
-  # @param [Object, nil]         value
+  # @param [*]                   value
   # @param [Symbol, nil]         field
   # @param [Symbol, nil]         model      Default: `params[:controller]`
   # @param [Integer, nil]        index      Offset to make unique element IDs.
@@ -510,13 +510,13 @@ module ModelHelper
   # Transform a field value for HTML rendering.
   #
   # @param [Model]               item
-  # @param [Object, nil]         value
+  # @param [*]                   value
   # @param [String, Symbol, nil] model  If provided, a model-specific method
   #                                       will be invoked instead.
   # @param [Hash]                opt    Passed to render method.
   #
-  # @return [Object]  HTML or scalar value.
-  # @return [nil]     If *value* was *nil* or *item* resolved to *nil*.
+  # @return [Any]   HTML or scalar value.
+  # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
   def render_value(item, value, model: nil, **opt)
     # noinspection RubyAssignmentExpressionInConditionalInspection
@@ -736,7 +736,7 @@ module ModelHelper
   # @param [String, Symbol, *] m
   # @param [Hash]              opt    Options (used only if appropriate).
   #
-  # @return [Object]                  HTML or scalar value.
+  # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If executed method returned *nil*.
   #
   def execute(item, m, **opt)
@@ -1347,7 +1347,7 @@ module ModelHelper
   # Render a single label/value pair.
   #
   # @param [String, Symbol] label
-  # @param [Object, nil]    value
+  # @param [*]              value
   # @param [Symbol]         field       For 'data-field' attribute.
   # @param [Symbol, String] model       Default: `params[:controller]`
   # @param [Integer]        index       Offset for making unique element IDs.

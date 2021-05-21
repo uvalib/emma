@@ -1,4 +1,4 @@
-# app/models/artifact.rb
+# app/models/application_record.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true

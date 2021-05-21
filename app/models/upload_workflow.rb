@@ -231,7 +231,7 @@ module UploadWorkflow::Errors
   # Otherwise, error message(s) are extracted from *problem*.
   #
   # @param [Symbol,String,Array<String>,Exception,ActiveModel::Errors] problem
-  # @param [*, nil]                                                    value
+  # @param [*]                                                         value
   #
   # @raise [SubmitError]
   # @raise [Api::Error]
@@ -664,7 +664,7 @@ module UploadWorkflow::External
   #
   # @param [Upload, String, #emma_repository, #emma_recordId, *] item
   #
-  # @see Upload#valid_rid?
+  # @see Upload#valid_sid?
   # @see Upload#emma_native?
   #
   def emma_item?(item)
@@ -1180,7 +1180,7 @@ module UploadWorkflow::External
   #
   # @param [Upload, Hash, String] data
   #
-  # @return [*]
+  # @return [Any]
   # @return [nil]                     If the record was not found or removed.
   #
   def db_delete(data)

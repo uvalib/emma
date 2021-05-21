@@ -1262,7 +1262,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*, nil]                           value
+  # @param [*]                                value
   # @param [Hash{Symbol=>String}]             labels
   # @param [Boolean]                          debug_only
   #
@@ -1282,7 +1282,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*, nil]                           value
+  # @param [*]                                value
   # @param [Symbol]                           meth
   # @param [Hash{Symbol=>String}]             labels
   # @param [Hash]                             opt
@@ -1393,7 +1393,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param   Passed to #bulk_option
-  # @param [*, nil]                           value   Passed to #bulk_option
+  # @param [*]                                value   Passed to #bulk_option
   # @param [Hash]                             opt     Passed to #bulk_option
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1407,7 +1407,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param   Passed to #bulk_input
-  # @param [*, nil]                           value   Passed to #bulk_input
+  # @param [*]                                value   Passed to #bulk_input
   # @param [Hash]                             opt     Passed to #bulk_input
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1550,7 +1550,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param   Passed to #bulk_option
-  # @param [*, nil]                           value   Passed to #bulk_option
+  # @param [*]                                value   Passed to #bulk_option
   # @param [Hash]                             opt     Passed to #bulk_option
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1564,7 +1564,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param   Passed to #bulk_input
-  # @param [*, nil]                           value   Passed to #bulk_input
+  # @param [*]                                value   Passed to #bulk_input
   # @param [Hash]                             opt     Passed to #bulk_input
   #
   # @return [ActiveSupport::SafeBuffer]

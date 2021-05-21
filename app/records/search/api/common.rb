@@ -204,7 +204,7 @@ class PublicationIdentifier < ScalarType
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     normalize(v).match?(PATTERN)
@@ -264,7 +264,7 @@ class Isbn < PublicationIdentifier
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     isbn?(v)
@@ -338,7 +338,7 @@ class Issn < PublicationIdentifier
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     issn?(v)
@@ -412,7 +412,7 @@ class Oclc < PublicationIdentifier
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     oclc?(v)
@@ -486,7 +486,7 @@ class Lccn < PublicationIdentifier
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     lccn?(v)
@@ -560,7 +560,7 @@ class Upc < PublicationIdentifier
 
   # Indicate whether *v* would be a valid value for an item of this type.
   #
-  # @param [*, nil] v
+  # @param [*] v
   #
   def self.valid?(v)
     upc?(v)

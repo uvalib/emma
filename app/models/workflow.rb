@@ -292,9 +292,9 @@ module Workflow::Base::Data
 
   # set_data
   #
-  # @param [*, nil] data
+  # @param [*] data
   #
-  # @return [*, nil]
+  # @return [*]
   #
   def set_data(data)
     reset_status
@@ -841,7 +841,7 @@ module Workflow::Base::States
 
     # Respond to entering into the specific state.
     #
-    # @param [*] _state
+    # @param [Any]    _state
     # @param [Symbol] event
     # @param [Array]  event_args
     #
@@ -854,7 +854,7 @@ module Workflow::Base::States
 
     # Respond to leaving the specific state.
     #
-    # @param [*] _state
+    # @param [Any]    _state
     # @param [Symbol] event
     # @param [Array]  event_args
     #

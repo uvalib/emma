@@ -12,7 +12,7 @@ class Module
   # @param [Symbol, String] name
   # @param [Boolean]        inherit
   #
-  # @return [*]                       If the constant is defined.
+  # @return [Any]                     If the constant is defined.
   # @return [nil]                     If the constant is not defined.
   #
   def safe_const_get(name, inherit = true)
