@@ -316,8 +316,7 @@ class Api::Record
   # @return [Hash, String]            Same type as *data*.
   #
   def wrap_outer(data:, fmt: nil, name: nil, template: nil)
-    # noinspection RubyNilAnalysis
-    name ||= self.class.name.demodulize.camelcase(:lower)
+    name ||= self.class.name.demodulize.to_s.camelcase(:lower)
     return { name => data } if data.is_a?(Hash)
     template = nil unless template.is_a?(String)
     case (fmt || serializer_type)

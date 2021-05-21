@@ -37,8 +37,7 @@ module Emma::Mime
   #
   def ext_to_mime(ext)
     result = Marcel::MimeType.for(extension: ext)
-    result = nil if result == Marcel::MimeType::BINARY
-    result
+    result unless result == Marcel::MimeType::BINARY
   end
 
 end

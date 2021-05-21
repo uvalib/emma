@@ -276,7 +276,7 @@ class User < ApplicationRecord
     user = user.to_i            if user.is_a?(String) && digits_only?(user)
     user = find_by(email: user) if user.is_a?(String)
     user = user.id              if user.is_a?(User)
-    user
+    user                        if user.is_a?(Integer)
   end
 
   # Return the account ID of *user*.
@@ -289,7 +289,7 @@ class User < ApplicationRecord
   def self.find_uid(user)
     user = User.find(user) if user.is_a?(Integer)
     user = user.uid        if user.is_a?(User)
-    user
+    user                   if user.is_a?(String)
   end
 
   # Get (or create) a database entry for the indicated user and update the

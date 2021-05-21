@@ -37,51 +37,51 @@ Rails.application.routes.draw do
   # NOTE: Avoid "resources :upload" because :action can get turned into :id.
   # ===========================================================================
 
-  get    '/upload/admin',         to: 'upload#admin',         as: 'admin_upload'
+  get    '/upload',               to: 'upload#index',           as: 'upload_index'
+  get    '/upload/show/:id',      to: 'upload#show',            as: 'show_upload'
 
   # === UploadWorkflow::Single
 
-  get    '/upload/new_select',    redirect('/upload/new'),    as: 'new_select_upload'     # Only for consistency
-  get    '/upload/new',           to: 'upload#new',           as: 'new_upload'
-  match  '/upload/create',        to: 'upload#create',        as: 'create_upload',        via: %i[post put patch]
+  get    '/upload/new_select',    to: redirect('/upload/new'),  as: 'new_select_upload'     # Only for consistency
+  get    '/upload/new',           to: 'upload#new',             as: 'new_upload'
+  match  '/upload/create',        to: 'upload#create',          as: 'create_upload',        via: %i[post put patch]
 
-  get    '/upload/edit_select',   to: 'upload#edit',          as: 'edit_select_upload',   defaults: { id: 'SELECT' }
-  get    '/upload/edit/:id',      to: 'upload#edit',          as: 'edit_upload'
-  match  '/upload/update/:id',    to: 'upload#update',        as: 'update_upload',        via: %i[put patch]
+  get    '/upload/edit_select',   to: 'upload#edit',            as: 'edit_select_upload',   defaults: { id: 'SELECT' }
+  get    '/upload/edit/:id',      to: 'upload#edit',            as: 'edit_upload'
+  match  '/upload/update/:id',    to: 'upload#update',          as: 'update_upload',        via: %i[put patch]
 
-  get    '/upload/delete_select', to: 'upload#delete',        as: 'delete_select_upload', defaults: { id: 'SELECT' }
-  get    '/upload/delete/:id',    to: 'upload#delete',        as: 'delete_upload'
-  delete '/upload/destroy/:id',   to: 'upload#destroy',       as: 'destroy_upload'
+  get    '/upload/delete_select', to: 'upload#delete',          as: 'delete_select_upload', defaults: { id: 'SELECT' }
+  get    '/upload/delete/:id',    to: 'upload#delete',          as: 'delete_upload'
+  delete '/upload/destroy/:id',   to: 'upload#destroy',         as: 'destroy_upload'
 
   # === UploadWorkflow::Bulk
 
-  get    '/upload/bulk_new',      to: 'upload#bulk_new',      as: 'bulk_new_upload'
-  post   '/upload/bulk',          to: 'upload#bulk_create',   as: 'bulk_create_upload'
+  get    '/upload/bulk_new',      to: 'upload#bulk_new',        as: 'bulk_new_upload'
+  post   '/upload/bulk',          to: 'upload#bulk_create',     as: 'bulk_create_upload'
 
-  get    '/upload/bulk_edit',     to: 'upload#bulk_edit',     as: 'bulk_edit_upload'
-  match  '/upload/bulk',          to: 'upload#bulk_update',   as: 'bulk_update_upload',   via: %i[put patch]
+  get    '/upload/bulk_edit',     to: 'upload#bulk_edit',       as: 'bulk_edit_upload'
+  match  '/upload/bulk',          to: 'upload#bulk_update',     as: 'bulk_update_upload',   via: %i[put patch]
 
-  get    '/upload/bulk_delete',   to: 'upload#bulk_delete',   as: 'bulk_delete_upload'
-  delete '/upload/bulk',          to: 'upload#bulk_destroy',  as: 'bulk_destroy_upload'
+  get    '/upload/bulk_delete',   to: 'upload#bulk_delete',     as: 'bulk_delete_upload'
+  delete '/upload/bulk',          to: 'upload#bulk_destroy',    as: 'bulk_destroy_upload'
 
-  get    '/upload/bulk',          to: 'upload#bulk_index',    as: 'bulk_upload_index'
+  get    '/upload/bulk',          to: 'upload#bulk_index',      as: 'bulk_upload_index'
 
   # === UploadWorkflow
 
-  post   '/upload/renew',         to: 'upload#renew',         as: 'renew_upload'
-  post   '/upload/reedit',        to: 'upload#reedit',        as: 'reedit_upload'
-  match  '/upload/cancel',        to: 'upload#cancel',        as: 'cancel_upload',        via: %i[get post]
-  get    '/upload/check/:id',     to: 'upload#check',         as: 'check_upload'
-  post   '/upload/endpoint',      to: 'upload#endpoint',      as: 'uploads'               # Invoked from file-upload.js
+  post   '/upload/renew',         to: 'upload#renew',           as: 'renew_upload'
+  post   '/upload/reedit',        to: 'upload#reedit',          as: 'reedit_upload'
+  match  '/upload/cancel',        to: 'upload#cancel',          as: 'cancel_upload',        via: %i[get post]
+  get    '/upload/check/:id',     to: 'upload#check',           as: 'check_upload'
+  post   '/upload/endpoint',      to: 'upload#endpoint',        as: 'uploads'               # Invoked from file-upload.js
 
-  # === Display
+  # === Administration
 
-  get    '/upload/show/:id',      to: 'upload#show',          as: 'show_upload'
-  get    '/upload',               to: 'upload#index',         as: 'upload_index'
+  get    '/upload/admin',         to: 'upload#admin',           as: 'admin_upload'
 
   # === Temporary
 
-  get '/upload/bulk_reindex',     to: 'upload#bulk_reindex',  as: 'bulk_reindex'
+  get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',    as: 'bulk_reindex'
 
   # ===========================================================================
   # File download operations
@@ -192,20 +192,20 @@ Rails.application.routes.draw do
   # Local account operations
   # ===========================================================================
 
-  get    '/account/new_select',    redirect('/account/new'), as: 'new_select_account'     # Only for consistency
-  get    '/account/new',           to: 'account#new',        as: 'new_account'
-  match  '/account/create',        to: 'account#create',     as: 'create_account',        via: %i[post put patch]
+  get    '/account/new_select',     to: redirect('/account/new'), as: 'new_select_account'      # Only for consistency
+  get    '/account/new',            to: 'account#new',            as: 'new_account'
+  match  '/account/create',         to: 'account#create',         as: 'create_account',         via: %i[post put patch]
 
-  get    '/account/edit_select',   to: 'account#edit',       as: 'edit_select_account',   defaults: { id: 'SELECT' }
-  get    '/account/edit/:id',      to: 'account#edit',       as: 'edit_account'
-  match  '/account/update/:id',    to: 'account#update',     as: 'update_account',        via: %i[put patch]
+  get    '/account/edit_select',    to: 'account#edit',           as: 'edit_select_account',    defaults: { id: 'SELECT' }
+  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account'
+  match  '/account/update/:id',     to: 'account#update',         as: 'update_account',         via: %i[put patch]
 
-  get    '/account/delete_select', to: 'account#delete',     as: 'delete_select_account', defaults: { id: 'SELECT' }
-  get    '/account/delete/:id',    to: 'account#delete',     as: 'delete_account'
-  delete '/account/destroy/:id',   to: 'account#destroy',    as: 'destroy_account'
+  get    '/account/delete_select',  to: 'account#delete',         as: 'delete_select_account',  defaults: { id: 'SELECT' }
+  get    '/account/delete/:id',     to: 'account#delete',         as: 'delete_account'
+  delete '/account/destroy/:id',    to: 'account#destroy',        as: 'destroy_account'
 
-  get    '/account/show/:id',      to: 'account#show',       as: 'show_account'
-  get    '/account',               to: 'account#index',      as: 'account_index'
+  get    '/account/show/:id',       to: 'account#show',           as: 'show_account'
+  get    '/account',                to: 'account#index',          as: 'account_index'
 
   # ===========================================================================
   # Search call viewer

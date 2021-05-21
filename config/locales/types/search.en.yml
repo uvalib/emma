@@ -177,5 +177,5 @@ en:
         # =====================================================================
 
         TrueFalse:
-          false:                    'False'
-          true:                     'True'
+          'false':                  'False'
+          'true':                   'True'

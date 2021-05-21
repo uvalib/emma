@@ -93,8 +93,6 @@ gem 'sanitize'
 gem 'workflow'
 
 # == Temporary
-# NOTE: The current version of Devise cannot handle OmniAuth 2.0.0.
-gem 'omniauth', '~> 1.9'
 # NOTE: Apparently version 0.1.1 was removed.
 gem 'declarative-option', '~> 0.1.0' # TODO: remove with representable >= 3.1
 

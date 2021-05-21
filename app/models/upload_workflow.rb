@@ -1895,8 +1895,7 @@ class UploadWorkflow < Workflow::Base
           # @see Workflow::Base#variant_type
           #
           def self.variant_type
-            # noinspection RubyNilAnalysis
-            @variant_type ||= name.demodulize.underscore.to_sym
+            @variant_type ||= name.demodulize.to_s.underscore.to_sym
           end
 
         end

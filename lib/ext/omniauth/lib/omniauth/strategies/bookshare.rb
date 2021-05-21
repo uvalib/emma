@@ -40,7 +40,7 @@ module OmniAuth
 
       args %i[client_id client_secret]
 
-      option :name,          name.split('::').last.to_s.underscore
+      option :name,          name.demodulize.to_s.underscore
       option :client_id,     BOOKSHARE_API_KEY
       option :client_secret, ''
       option :client_options, {

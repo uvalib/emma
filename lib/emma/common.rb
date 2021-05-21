@@ -96,10 +96,14 @@ module Emma::Common
   # @param [*] value
   #
   def digits_only?(value)
-    return true  if value.is_a?(Integer)
-    return false if [String, Symbol, Numeric].none? { |t| value.is_a?(t) }
-    # noinspection RubyNilAnalysis
-    (value = value.to_s).present? && value.delete('0-9').blank?
+    case value
+      when Integer, ActiveModel::Type::Integer
+        true
+      when String, Symbol, Numeric, ActiveModel::Type::Float
+        (value = value.to_s).present? && value.delete('0-9').blank?
+      else
+        false
+    end
   end
 
   # ===========================================================================
