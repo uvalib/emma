@@ -72,3 +72,5 @@ end
 # =============================================================================
 
 override Aws::S3::Client => Aws::S3::ClientDebug if DEBUG_AWS
+
+__loading_end(__FILE__)

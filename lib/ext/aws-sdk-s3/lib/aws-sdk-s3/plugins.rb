@@ -58,3 +58,5 @@ if DEBUG_AWS
     override plugin_handler => Aws::PluginHandlerDebug
   end
 end
+
+__loading_end(__FILE__)

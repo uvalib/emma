@@ -8,6 +8,22 @@
 require 'io/console'
 
 # =============================================================================
+# Debugging - metaprogramming
+# =============================================================================
+
+public
+
+# Used to neutralize method(s) if they are not supposed to be enabled.
+#
+# @param [Array<Symbol>] methods
+#
+def neutralize(*methods)
+  methods.each do |meth|
+    define_method(meth) { |*| }
+  end
+end
+
+# =============================================================================
 # Debugging - console output
 # =============================================================================
 
@@ -35,7 +51,7 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # @yield To supply additional items to output.
 # @yieldreturn [Array<String>]
 #
-# == Notes
+# == Usage Notes
 # [1] When deployed, this option will create a log entry rather than produce
 # $stderr output.  If not deployed, the log entry is created in addition to
 # $stderr output.
@@ -96,11 +112,19 @@ def __output_impl(*args)
   nil
 end
 
-if not CONSOLE_OUTPUT
-  def __output(*); end
-else
-  def __output(*args, &block); __output_impl(*args, &block); end
+# Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
+#
+# @param [Array<Hash,Array,String,*>] args    Passed to #__output_impl.
+# @param [Proc]                       block   Passed to #__output_impl.
+#
+# == Usage Notes
+# The method is only functional if #CONSOLE_OUTPUT is true.
+#
+def __output(*args, &block)
+  __output_impl(*args, &block)
 end
+
+neutralize(:__output) unless CONSOLE_OUTPUT
 
 # =============================================================================
 # Debugging - console debugging
@@ -122,8 +146,8 @@ DEBUG_MAX = 2048
 
 # Write indented debug line(s) to $stderr.
 #
-# @param [Array] args                 Passed to #__output.
-# @param [Proc]  block                Passed to #__output.
+# @param [Array] args                 Passed to #__output_impl.
+# @param [Proc]  block                Passed to #__output_impl.
 #
 # @return [nil]
 #
@@ -136,126 +160,118 @@ def __debug_impl(*args, &block)
   __output_impl(*args, opt, &block)
 end
 
-if not CONSOLE_DEBUGGING
-  def __debug(*); end
-else
-  def __debug(*args, &block); __debug_impl(*args, &block); end
+# Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
+#
+# @param [Array] args                 Passed to #__debug_impl.
+# @param [Proc]  block                Passed to #__debug_impl.
+#
+def __debug(*args, &block)
+  __debug_impl(*args, &block)
 end
+
+neutralize(:__debug) unless CONSOLE_DEBUGGING
 
 # =============================================================================
 # Debugging - file load/require
 # =============================================================================
 
-if not TRACE_LOADING
+__output_impl { "TRACE_LOADING = #{TRACE_LOADING.inspect}" } if TRACE_LOADING
 
-  def __loading(*);       end
-  def __loading_begin(*); end
-  def __loading_end(*);   end
+# Indentation for #__loading_level.
+@load_level = 0
 
-else
+# For checking that each module is entered and exited exactly once.
+@load_table = {}
 
-  __output_impl { "TRACE_LOADING = #{TRACE_LOADING.inspect}" }
-
-  # Indentation for #__loading_level.
-  @load_level = 0
-
-  # For checking that each module is entered and exited exactly once.
-  @load_table = {}
-
-  # Loading level and indentation.
-  #
-  # @param [Integer, nil] level       Default: `@load_level`.
-  #
-  # @return [String]
-  #
-  def __loading_level(level = @load_level)
-    result = +''
-    result << ' ' if level < 10
-    result << level.to_s
-    result << (' ' * ((2 * level) + 1))
-  end
-
-  # Display console output to indicate that a file is being loaded.
-  #
-  # @param [String] file              Actual parameter should be __FILE__.
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # Place as the first non-comment line of a Ruby source file.
-  #
-  def __loading(file)
-    __output_impl { "====== #{__loading_level}#{file}" }
-  end
-
-  # Display console output to indicate that a file is being loaded.
-  #
-  # @param [String] file              Actual parameter should be __FILE__.
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # Place as the first non-comment line of a Ruby source file.
-  #
-  def __loading_begin(file)
-    level, still_open = @load_table[file]
-    warning = [nil]
-    warning << "REPEATED - last at level #{level}" if level
-    warning << 'UNCLOSED' if still_open
-    warning = warning.join(' <<<<<<<<<< ')
-    @load_level += 1
-    @load_table[file] = [@load_level, true]
-    __output_impl { "====-> #{__loading_level}#{file}#{warning}" }
-  end
-
-  # Display console output to indicate the end of a file that is being loaded.
-  #
-  # @param [String] file              Actual parameter should be __FILE__.
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # Place as the last non-comment line of a Ruby source file.
-  #
-  def __loading_end(file)
-    expected, still_open = @load_table[file]
-    unbalanced = (@load_level != expected)
-    warning = [nil]
-    warning << "UNBALANCED - expected level #{expected}" if unbalanced
-    warning << 'ALREADY CLOSED' unless still_open
-    warning = warning.join(' <<<<<<<<<< ')
-    __output_impl { "<-==== #{__loading_level}#{file}#{warning}" }
-    @load_table[file] = [@load_level, !still_open]
-    @load_level -= 1
-    @load_table.clear if @load_level.zero?
-  end
-
+# Loading level and indentation.
+#
+# @param [Integer, nil] level
+#
+# @return [String]
+#
+def __loading_level(level = @load_level)
+  result = +''
+  result << ' ' if level < 10
+  result << level.to_s
+  result << (' ' * ((2 * level) + 1))
 end
+
+# Display console output to indicate that a file is being loaded.
+#
+# @param [String] file                Actual parameter should be __FILE__.
+#
+# @return [void]
+#
+# == Usage Notes
+# Place as the first non-comment line of a Ruby source file.
+#
+def __loading(file)
+  __output_impl { "====== #{__loading_level}#{file}" }
+end
+
+# Display console output to indicate that a file is being loaded.
+#
+# @param [String] file                Actual parameter should be __FILE__.
+#
+# @return [void]
+#
+# == Usage Notes
+# Place as the first non-comment line of a Ruby source file.
+#
+def __loading_begin(file)
+  level, still_open = @load_table[file]
+  warning = [nil]
+  warning << "REPEATED - last at level #{level}" if level
+  warning << 'UNCLOSED' if still_open
+  warning = warning.join(' <<<<<<<<<< ')
+  @load_level += 1
+  @load_table[file] = [@load_level, true]
+  __output_impl { "====-> #{__loading_level}#{file}#{warning}" }
+end
+
+# Display console output to indicate the end of a file that is being loaded.
+#
+# @param [String] file                Actual parameter should be __FILE__.
+#
+# @return [void]
+#
+# == Usage Notes
+# Place as the last non-comment line of a Ruby source file.
+#
+def __loading_end(file)
+  expected, still_open = @load_table[file]
+  unbalanced = (@load_level != expected)
+  warning = [nil]
+  warning << "UNBALANCED - expected level #{expected}" if unbalanced
+  warning << 'ALREADY CLOSED' unless still_open
+  warning = warning.join(' <<<<<<<<<< ')
+  __output_impl { "<-==== #{__loading_level}#{file}#{warning}" }
+  @load_table[file] = [@load_level, !still_open]
+  @load_level -= 1
+  @load_table.clear if @load_level.zero?
+  nil
+end
+
+neutralize(:__loading, :__loading_begin, :__loading_end) unless TRACE_LOADING
 
 # =============================================================================
 # Debugging - Concerns
 # =============================================================================
 
-if not TRACE_CONCERNS
+__output_impl("TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}") if TRACE_CONCERNS
 
-  def __included(*); end
-
-else
-
-  __output_impl { "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}" }
-
-  # Indicate invocation of a Concern's "included" block.
-  #
-  # @param [Module] base
-  # @param [String] concern
-  #
-  # @return [void]
-  #
-  def __included(base, concern)
-    __output_impl { "... including #{concern} in #{base}" }
-  end
-
+# Indicate invocation of a Concern's "included" block.
+#
+# @param [Module] base
+# @param [String] concern
+#
+# @return [nil]
+#
+def __included(base, concern)
+  __output_impl { "... including #{concern} in #{base}" }
 end
+
+neutralize(:__included) unless TRACE_CONCERNS
 
 # =============================================================================
 # Debugging - Rails notifications

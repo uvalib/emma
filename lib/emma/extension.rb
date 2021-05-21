@@ -177,9 +177,7 @@ module Emma::Extension
 
       include Debugging::Methods
 
-      public_instance_methods(false).each do |m|
-        define_method(m) { |*| }
-      end
+      neutralize(*public_instance_methods(false))
 
     end
 

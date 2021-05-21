@@ -481,9 +481,7 @@ module Emma::Debug
     # @private
     #
     def self.included(base)
-      OutputMethods.instance_methods(false).each do |m|
-        base.send(:define_method, m) { |*| }
-      end
+      OutputMethods.instance_methods(false).each { |m| base.neutralize(m) }
     end
 
   end

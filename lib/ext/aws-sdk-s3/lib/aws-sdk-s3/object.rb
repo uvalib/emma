@@ -74,3 +74,5 @@ end
 # =============================================================================
 
 override Aws::S3::Object => Aws::S3::ObjectDebug if DEBUG_AWS
+
+__loading_end(__FILE__)
