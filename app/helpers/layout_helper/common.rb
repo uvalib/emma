@@ -198,7 +198,7 @@ module LayoutHelper::Common
   # @return [ActiveSupport::SafeBuffer]
   #
   def hidden_input(k, v, id: nil, separator: "\n")
-    id = [id, k].reject(&:blank?).join('-')
+    id = [id, k].compact_blank.join('-')
     if v.is_a?(Array)
       i = 0
       v = v.map { |e| hidden_field_tag("#{k}[]", e, id: "#{id}-#{i += 1}") }

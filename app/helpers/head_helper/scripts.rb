@@ -87,7 +87,7 @@ module HeadHelper::Scripts
   def emit_page_javascripts(**opt)
     @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
     @page_javascript.flatten!
-    @page_javascript.reject!(&:blank?)
+    @page_javascript.compact_blank!
     @page_javascript.uniq!
     sources = @page_javascript.dup
     sources << meta_options(**opt)

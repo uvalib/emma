@@ -79,7 +79,7 @@ class Api::Error < RuntimeError
       else
         Log.warn { "Api::Error#initialize: @cause #{@cause.class} unexpected" }
     end
-    @messages.reject!(&:blank?)
+    @messages.compact_blank!
     @messages.uniq!
     @messages << (default || default_message) if @messages.empty?
     super(@messages.first)
@@ -200,7 +200,7 @@ class Api::Error < RuntimeError
   #
   def messages_from(value)
     value.values_at(*MESSAGE_KEYS).flat_map do |m|
-      Array.wrap(m).reject(&:blank?).compact.map(&:to_s).presence if m
+      Array.wrap(m).compact_blank.map(&:to_s).presence if m
     end
   end
 

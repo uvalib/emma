@@ -120,7 +120,7 @@ module AwsConcern
   # @return [Array<String>]
   #
   def param_values(opt, *keys)
-    opt.values_at(*keys).reject(&:blank?).first.to_s.downcase.split(/\s*,\s*/)
+    opt.values_at(*keys).compact_blank.first.to_s.downcase.split(/\s*,\s*/)
   end
 
   # aws_params

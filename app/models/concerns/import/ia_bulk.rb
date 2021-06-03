@@ -296,7 +296,7 @@ module Import::IaBulk
 
     # Assuming that the first :dc_identifier given actually identifies the
     # associated work, move the rest into :dc_relation.
-    ids = Array.wrap(fields[:dc_identifier]).reject(&:blank?).uniq
+    ids = Array.wrap(fields[:dc_identifier]).compact_blank.uniq
     if ids.size <= 1
       fields[:dc_identifier] = ids
     else
@@ -326,7 +326,7 @@ module Import::IaBulk
         [ids.shift, dois.shift, issns.shift, lead_isbn, alt_isbn].compact
 
       if (ids += dois + issns + isbns).present?
-        rel_old = Array.wrap(fields[:dc_relation]).reject(&:blank?)
+        rel_old = Array.wrap(fields[:dc_relation]).compact_blank
         fields[:dc_relation] = (rel_old + ids).uniq
         Log.debug do
           ids_new = fields[:dc_identifier].inspect

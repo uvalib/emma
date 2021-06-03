@@ -209,8 +209,7 @@ module ConfigurationHelper
   #
   def config_flatten_order(*path, depth: 0)
     result = []
-    path.map! { |p| p.is_a?(Array) ? p.reject(&:blank?).presence : p.presence }
-    path.compact!
+    path.map! { |p| p.is_a?(Array) ? p.compact_blank : p }.compact_blank!
     while path.present? && !path.first.is_a?(Array)
       part = path.shift
       unless part.is_a?(Symbol) || (part.is_a?(String) && part.include?('.'))
@@ -234,7 +233,7 @@ module ConfigurationHelper
       result.map! do |entry|
         entry.flat_map do |item|
           if item.is_a?(String)
-            item.split('.').reject(&:blank?).map(&:to_sym)
+            item.split('.').compact_blank.map(&:to_sym)
           else
             item
           end

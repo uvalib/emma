@@ -61,7 +61,7 @@ module ApiExplorerConcern
           message:   ex.message,
           response:  ex.response,
           exception: ex.wrapped_exception
-        }.reject { |_, v| v.blank? }
+        }.compact_blank!
       when Exception
         ex.message
       else

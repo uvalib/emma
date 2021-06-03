@@ -220,7 +220,7 @@ module FileFormat
         else
           info.send(accessor)
       end
-    Array.wrap(result).reject(&:blank?)
+    Array.wrap(result).compact_blank
   end
 
   # apply_field_transform

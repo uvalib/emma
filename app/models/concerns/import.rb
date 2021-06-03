@@ -133,7 +133,7 @@ module Import
   #
   def values(v)
     v = v.split(/\s*;\s*/) if v.is_a?(String) && v.include?(';')
-    v = v.reject(&:blank?) if v.is_a?(Array)
+    v = v.compact_blank    if v.is_a?(Array)
     v = v.first            if v.is_a?(Array)  && (v.size <= 1)
     v.presence
   end
@@ -149,7 +149,7 @@ module Import
   # @yieldreturn [String] The replacement element.
   #
   def array_value(v, &block)
-    array = Array.wrap(values(v)).reject(&:blank?)
+    array = Array.wrap(values(v)).compact_blank
     array.map!(&block).compact! if block
     array
   end
@@ -167,7 +167,7 @@ module Import
   #
   def string_value(v, join: ';', first: false)
     if v.is_a?(Array)
-      v = v.reject(&:blank?)
+      v = v.compact_blank
       v = (first || !join) ? v.first : v.join(join)
     end
     v.presence

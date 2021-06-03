@@ -306,7 +306,7 @@ module UploadConcern
     # Limit by workflow status group.
     group = opt.delete(:group)
     group = group.split(/\s*,\s*/) if group.is_a?(String)
-    group = Array.wrap(group).reject(&:blank?)
+    group = Array.wrap(group).compact_blank
     if group.present?
       group.map!(&:downcase).map!(&:to_sym)
       if group.include?(:all)

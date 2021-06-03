@@ -131,7 +131,7 @@ module Emma::Common
     opt = args.extract_options!
     url = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '')
     url, query = url.split('?', 2)
-    parts = query.to_s.split('&').reject(&:blank?)
+    parts = query.to_s.split('&').compact_blank
     first = (parts.shift unless parts.blank? || parts.first.include?('='))
     query = url_query(parts, opt).presence
     url << '?'   if first || query
@@ -212,7 +212,7 @@ module Emma::Common
       arg.each do |pair|
         k, v = pair.is_a?(Array) ? pair : pair.to_s.split('=', 2)
         k = CGI.unescape(k.to_s).delete_suffix('[]')
-        v = Array.wrap(v).reject(&:blank?)
+        v = Array.wrap(v).compact_blank
         next if k.blank? || v.blank?
         v.map!(&:to_s)
         v.map! { |s| CGI.unescape(s) } if unescape
@@ -465,7 +465,7 @@ module Emma::Common
     if format_string.present?
       format_string.scan(/%<([^<>]+)>/) { |name| keys += name } # "%<name>s"
       format_string.scan(/%{([^{}]+)}/) { |name| keys += name } # "%{name}"
-      keys.reject!(&:blank?)
+      keys.compact_blank!
       keys.uniq!
       keys.map!(&:to_sym)
     end
@@ -571,7 +571,7 @@ module Emma::Common
             value.to_s
           end
       end
-    }.reject(&:blank?)
+    }.compact_blank!
   end
 
   # Transform a hash into a struct recursively.  (Any hash value which is

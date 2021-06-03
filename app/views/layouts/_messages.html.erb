@@ -4,7 +4,7 @@
 
   messages =
     %i[alert notice].flat_map { |type|
-      [flash.now[type], flash[type]].flatten.reject(&:blank?).uniq.map { |msg|
+      [flash.now[type], flash[type]].flatten.compact_blank.uniq.map { |msg|
         html_div(msg.html_safe, class: type.to_s, role: 'alert')
       }
     }.presence

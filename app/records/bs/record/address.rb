@@ -62,9 +62,9 @@ class Bs::Record::Address < Bs::Api::Record
   # @return [String]
   #
   def full_address(separator: ' ')
-    addr  = [address1, address2].reject(&:blank?).join(', ')
-    place = [city, state].reject(&:blank?).join(', ')
-    [addr, place, country, postalCode].reject(&:blank?).join(separator).squish
+    addr  = [address1, address2].compact_blank.join(', ')
+    place = [city, state].compact_blank.join(', ')
+    [addr, place, country, postalCode].compact_blank.join(separator).squish
   end
 
 end

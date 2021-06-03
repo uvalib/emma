@@ -78,8 +78,8 @@ module Field
           # Sub-field under :file_data or :emma_data.
           value = send(__method__, item, value) if value.is_a?(Hash)
       end
-      value = value.reject(&:blank?) if value.is_a?(Array)
-      value = value.strip if value.is_a?(String) && !value.html_safe?
+      value = value.compact_blank if value.is_a?(Array)
+      value = value.strip         if value.is_a?(String) && !value.html_safe?
       [item, value]
     }.to_h.tap { |h|
       set = SYNTHETIC_PROPERTIES
@@ -228,7 +228,7 @@ module Field
       end
       case value
         when Hash   then value = normalize(value, item) unless item == :cond
-        when Array  then value = value.reject(&:blank?)
+        when Array  then value = value.compact_blank
         when String then value = value.strip unless value.html_safe?
       end
       [item, value]

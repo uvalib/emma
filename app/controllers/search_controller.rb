@@ -59,7 +59,7 @@ class SearchController < ApplicationController
     search   = playback || opt
     s_params = search.except(*NON_SEARCH_KEYS)
     q_params, s_params = partition_options(s_params, *search_query_keys)
-    q_params.reject! { |_, v| v.blank? }
+    q_params.compact_blank!
     if q_params.present?
       opt   = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
       @list = search_api.get_records(**opt)

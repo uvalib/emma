@@ -1402,7 +1402,7 @@ module ModelHelper
     end
     render_method ||= :render_form_input
     placeholder   ||= prop[:placeholder]
-    value    = Array.wrap(value).reject(&:blank?)
+    value    = Array.wrap(value).compact_blank
     disabled = prop[:readonly] if disabled.nil?
     required = prop[:required] if required.nil?
 
@@ -1694,7 +1694,7 @@ module ModelHelper
     opt, html_opt = partition_options(opt, :base, :name, :model)
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
-    value = Array.wrap(value).reject(&:blank?)
+    value = Array.wrap(value).compact_blank
     model = opt[:model] || params[:controller]
     type  = Field.configuration_for(field, model)[:type]
     type  = type.to_sym if type.is_a?(String)

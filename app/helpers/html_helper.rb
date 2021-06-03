@@ -92,7 +92,7 @@ module HtmlHelper
     separator = options.delete(:separator) || "\n"
     content   = args.flatten
     content  += Array.wrap(yield) if block_given?
-    content.reject!(&:blank?)
+    content   = content.compact_blank
     content_tag(tag, safe_join(content, separator), html_options!(options))
   end
 
@@ -111,7 +111,7 @@ module HtmlHelper
     separator = options.delete(:separator) || "\n"
     content   = args.flatten
     content  += Array.wrap(yield) if block_given?
-    content.reject!(&:blank?)
+    content   = content.compact_blank
     # noinspection RubyYardReturnMatch
     form_tag(url_or_path, options) do
       safe_join(content, separator)

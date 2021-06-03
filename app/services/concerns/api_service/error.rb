@@ -187,7 +187,7 @@ class ApiService::Error < Api::Error
             next unless msg.delete_prefix!("#{ERROR_TAG}=")
           end
           msg.remove(/\\"/)
-        }.reject(&:blank?).presence
+        }.compact_blank.presence
       desc ||= json['message'].presence
       desc ||= json.values.flat_map { |v| v if v.is_a?(Array) }.compact
       Array.wrap(desc.presence || body)

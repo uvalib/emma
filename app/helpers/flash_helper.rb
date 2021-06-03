@@ -692,7 +692,7 @@ module FlashHelper
     i18n_path = flash_i18n_path(scope, meth, topic)
     if msg.is_a?(Array)
       separator ||= html ? "\n" : ', '
-      msg = msg.reject(&:blank?).join(separator)
+      msg = msg.compact_blank.join(separator)
     end
     i18n_key = (topic == :success) ? :file : :error
     opt[i18n_key] = msg
@@ -720,7 +720,7 @@ module FlashHelper
   # @return [Symbol]
   #
   def flash_i18n_path(*parts)
-    result = parts.flatten.reject(&:blank?).join('.')
+    result = parts.flatten.compact_blank.join('.')
     result = "emma.#{result}" unless result.start_with?('emma.')
     result.to_sym
   end

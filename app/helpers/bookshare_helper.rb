@@ -220,7 +220,7 @@ module BookshareHelper
     # noinspection RubyYardParamTypeMatch
     if (ref_keys = named_format_references(path)).present?
       ref_opt, path_opt = partition_options(path_opt, *ref_keys)
-      ref_opt.reject! { |_, v| v.blank? }
+      ref_opt.compact_blank!
       ref_opt.transform_values! { |v| v.is_a?(String) ? url_escape(v) : v }
       ref_opt[:ids] ||= ref_opt[:id]
       ref_opt[:ids] = Array.wrap(ref_opt[:ids]).join(',')

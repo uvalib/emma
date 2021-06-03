@@ -275,7 +275,7 @@ module Upload::EmmaDataMethods
         join = lines ? "\n"    : ';'
         sep  = lines ? /[|\n]/ : ';'
         v = v.join(join).split(sep) if array
-        v = v.map(&:to_s).map(&:strip).reject(&:blank?)
+        v = v.map(&:to_s).map(&:strip).compact_blank
         v = v.join(join) unless array
       elsif !array
         v = v.first

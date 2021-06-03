@@ -78,8 +78,9 @@ module LayoutHelper::PageClasses
   def emit_page_classes
     @page_classes ||= default_page_classes
     @page_classes.flatten!
-    @page_classes.reject!(&:blank?)
+    @page_classes.compact_blank!
     @page_classes.map! { |c| c.to_s.gsub(/[^a-z_0-9-]/i, '_') }
+    @page_classes.uniq!
     @page_classes.join(' ')
   end
 

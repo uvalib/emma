@@ -206,7 +206,7 @@ module Bs::Shared::TitleMethods
   # @return [Array<String>]
   #
   def related_isbns
-    Array.wrap(relatedIsbns).reject(&:blank?).uniq - Array.wrap(isbn)
+    Array.wrap(relatedIsbns).compact_blank.uniq - Array.wrap(isbn)
   end
 
   # ===========================================================================

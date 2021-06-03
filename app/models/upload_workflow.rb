@@ -1555,7 +1555,7 @@ module UploadWorkflow::External
     result = {}
     case items
       when Array
-        items  = items.flatten.reject(&:blank?)
+        items  = items.flatten.compact_blank
         result = items.group_by { |item| Upload.repository_of(item) }
       when Hash
         result = items.transform_values { |repo_items| Array.wrap(repo_items) }

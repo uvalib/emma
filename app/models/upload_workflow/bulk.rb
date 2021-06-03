@@ -184,7 +184,7 @@ module UploadWorkflow::Bulk::External
 
     # Honor :limit if given.
     limit   = limit.presence.to_i
-    entries = Array.wrap(entries).reject(&:blank?)
+    entries = Array.wrap(entries).compact_blank
     entries = entries.take(limit) if limit.positive?
 
     # Determine data properties for reporting purposes.

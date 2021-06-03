@@ -87,7 +87,7 @@ module HeadHelper::Stylesheets
   def emit_page_stylesheets(**opt)
     @page_stylesheets ||= DEFAULT_PAGE_STYLESHEETS.dup
     @page_stylesheets.flatten!
-    @page_stylesheets.reject!(&:blank?)
+    @page_stylesheets.compact_blank!
     @page_stylesheets.uniq!
     @page_stylesheets.map! do |src|
       stylesheet_link_tag(src, meta_options(src, **opt))

@@ -320,7 +320,7 @@ module Upload::IdentifierMethods
     result ||= (id.submission_id                          if id.is_a?(Upload))
     result ||= (id[:submission_id] || id['submission_id'] if id.is_a?(Hash))
     result ||= id
-    Array.wrap(result).reject(&:blank?).map(&:to_s)
+    Array.wrap(result).compact_blank.map(&:to_s)
   end
 
 end
