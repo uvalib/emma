@@ -9,6 +9,85 @@ require_relative 'boot'
 require 'tmpdir'
 
 # =============================================================================
+# Development Docker properties
+# =============================================================================
+
+if in_local_docker? && rails_application?
+
+  # To simplify port mapping, have Rails serve up assets rather than Puma.
+
+  ENV['RAILS_SERVE_STATIC_FILES'] = 'true'
+
+  # Acquire desktop configuration values.
+  #
+  # From the RubyMine Docker configuration this requires a "Bind Mount" with
+  # "/home/rwl/Work/emma/.idea:/mnt:ro"; i.e., the "docker run" option
+  # "--mount type=bind,src=/home/rwl/Work/.idea,dst=/mnt,readonly".
+
+  require '/mnt/environment.rb'
+
+end
+
+# =============================================================================
+# Database properties
+# =============================================================================
+
+db_needed = rails_application? || $*.any? { |a| a.split(':').include?('db')  }
+db_needed &&= $*.none? { |a| %w(-h --help).include?(a) }
+
+unless (ENV['DBHOST'] && ENV['DBPORT']) || !db_needed
+
+  # DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in
+  # terraform-infrastructure/emma.lib.virginia.edu/ecs-tasks/*/environment.vars
+  #
+  # DBHOST and/or DBPORT *may* be defined there; if not, DATABASE must be
+  # defined in order to derive the missing value(s).
+  #
+  # NOTE: This is skipped in the very specific case of "rake assets:precompile"
+  # to allow Dockerfile to work.
+
+  databases = %w(mysql postgres)
+  case (v = ENV['DATABASE']&.downcase)
+    when /^mysql/ then
+      database, db_type = %w(mysql standard)
+    when /^post/ then
+      database, db_type = %w(postgres postgres)
+    when nil then
+      raise %q(ENV['DATABASE'] missing)
+    else
+      raise "#{v.inspect} not one of #{databases.inspect}"
+  end
+
+  if database == 'postgres'
+    ENV['DBPASSWD'] ||= ENV['PGPASSWORD']
+    ENV['DBUSER']   ||= ENV['PGUSER']
+    ENV['DBHOST']   ||= ENV['PGHOST']
+    ENV['DBPORT']   ||= ENV['PGPORT'] || '5432'
+  else
+    ENV['DBPORT'] ||= '3306' # MySQL
+  end
+
+  unless ENV['DBHOST']
+    deployments = %w(production staging local)
+    case (v = ENV['DEPLOYMENT']&.downcase)
+      when /^stag/ then
+        deployment = 'staging'
+      when /^prod/ then
+        deployment = 'production'
+      when /^local/ then
+        deployment = 'local'
+      when nil then
+        raise %q(ENV['DEPLOYMENT'] missing)
+      else
+        raise "#{v.inspect} not one of #{deployments.inspect}"
+    end
+    ENV['DBHOST'] ||= 'localhost' if deployment == 'local'
+    ENV['DBHOST'] ||= "rds-#{db_type}-#{deployment}.internal.lib.virginia.edu"
+  end
+
+end
+
+# =============================================================================
 # Operational properties
 # =============================================================================
 

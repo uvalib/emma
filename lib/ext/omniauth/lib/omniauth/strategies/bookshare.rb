@@ -639,13 +639,10 @@ module OmniAuth
       # #stored_auth_update and/or #stored_auth_update_user will change both
       # the value returned by this method and the associated User table entry.
       #
-      #--
-      # noinspection RubyClassVariableUsageInspection
-      #++
       def self.stored_auth(refresh = false)
-        @@stored_auth = nil if refresh
-        @@stored_auth ||=
-          User.where.not(access_token: nil).map { |u|
+        @stored_auth = nil if refresh
+        @stored_auth ||=
+          User.where.not(access_token: nil).order(:id).map { |u|
             [u.email, stored_auth_entry_value(u.access_token)]
           }.to_h
       end

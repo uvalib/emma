@@ -96,6 +96,9 @@ gem 'workflow'
 # NOTE: Apparently version 0.1.1 was removed.
 gem 'declarative-option', '~> 0.1.0' # TODO: remove with representable >= 3.1
 
+# Use PostgreSQL as the database for Active Record.
+gem 'pg'
+
 # =============================================================================
 # Production
 # =============================================================================

@@ -200,12 +200,14 @@ module LinkHelper
     path   = send(route_helper(controller, action))
 
     items = nil
-    if !model.ancestors.include?(ApplicationRecord)
+    if !model.is_a?(Class)
+      raise "model: expected Class; got #{model.class}"
+    elsif !(model < ApplicationRecord)
       raise "invalid model #{model.inspect}"
-    elsif !model.ancestors.include?(User)
+    elsif !(model <= User)
       # noinspection RubyNilAnalysis
       user  = user.id if user.is_a?(User)
-      items = model.where(user_id: user) if user
+      items = model.where(user_id: user).order(:id) if user
     end
     items ||= model.all
     menu    = items.map { |item| [page_menu_label(item), item.id] }

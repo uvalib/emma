@@ -5,13 +5,13 @@
 # =============================================================================
 
 _db_mysql:                                                            &DB_MYSQL
-  adapter:     mysql2
-  encoding:    utf8
-  host:        <%= ENV['DBHOST'] %>
-  port:        <%= ENV['DBPORT'] %>
-  database:    <%= ENV['DBNAME'] %>
-  username:    <%= ENV['DBUSER'] %>
-  password:    <%= ENV['DBPASSWD'] %>
+  adapter:  mysql2
+  encoding: utf8
+  host:     <%= ENV['DBHOST'] %>
+  port:     <%= ENV['DBPORT'] %>
+  database: <%= ENV['DBNAME'] %>
+  username: <%= ENV['DBUSER'] %>
+  password: <%= ENV['DBPASSWD'] %>
 
 _db_mysql_prod:                                                  &DB_MYSQL_PROD
   <<: *DB_MYSQL
@@ -23,17 +23,52 @@ _db_mysql_test:                                                  &DB_MYSQL_TEST
   <<: *DB_MYSQL
 
 # =============================================================================
+# PostgreSQL adapter settings - https://www.postgresql.org/docs/11/index.html
+# =============================================================================
+
+_db_postgres:                                                      &DB_POSTGRES
+  adapter:  postgresql
+  encoding: unicode
+  host:     <%= ENV['DBHOST'] %>
+  port:     <%= ENV['DBPORT'] %>
+  database: <%= ENV['DBNAME'] %>
+  username: <%= ENV['DBUSER'] %>
+  password: <%= ENV['DBPASSWD'] %>
+
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool:     <%= ENV['RAILS_MAX_THREADS'] || 5 %>
+
+  # Schema search path. The server defaults to $user,public
+  #schema_search_path: myapp,sharedapp,public
+
+  # Minimum log levels, in increasing order:
+  #   debug5, debug4, debug3, debug2, debug1,
+  #   log, notice, warning, error, fatal, and panic
+  # Defaults to warning.
+  #min_messages: notice
+
+_db_postgres_prod:                                            &DB_POSTGRES_PROD
+  <<: *DB_POSTGRES
+
+_db_postgres_dev:                                              &DB_POSTGRES_DEV
+  <<: *DB_POSTGRES
+
+_db_postgres_test:                                            &DB_POSTGRES_TEST
+  <<: *DB_POSTGRES
+
+# =============================================================================
 # Rails environments
 # =============================================================================
 
 production:
-  <<: *DB_MYSQL_PROD
+  <<: <%= "*DB_#{ENV['DATABASE'] || 'mysql'}_PROD".upcase %>
 
 development:
-  <<: *DB_MYSQL_DEV
+  <<: <%= "*DB_#{ENV['DATABASE'] || 'mysql'}_DEV".upcase %>
 
 test:
-  <<: *DB_MYSQL_TEST
+  <<: <%= "*DB_#{ENV['DATABASE'] || 'mysql'}_TEST".upcase %>
 
 # WARNING: The test database will be erased every time "rake test" is run.
 # NOTE: Do not set use the same database for either development or production.

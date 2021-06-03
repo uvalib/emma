@@ -19,6 +19,8 @@ RUN apk upgrade && \
     libxslt-dev \
     mariadb-dev \
     nodejs \
+    postgresql-client \
+    postgresql-dev \
     tzdata \
     yarn
 

@@ -1,38 +1,15 @@
 #!/usr/bin/env bash
 #
-# run any necessary migrations
+# Run any necessary migrations.
 #
-
-if [ -z "$DBHOST" ]; then
-   echo "ERROR: DBHOST is not defined"
-   exit 1
-fi
-
-if [ -z "$DBPORT" ]; then
-   echo "ERROR: DBPORT is not defined"
-   exit 1
-fi
-
-if [ -z "$DBUSER" ]; then
-   echo "ERROR: DBUSER is not defined"
-   exit 1
-fi
-
-if [ -z "$DBPASSWD" ]; then
-   echo "ERROR: DBPASSWD is not defined"
-   exit 1
-fi
-
-if [ -z "$DBNAME" ]; then
-   echo "ERROR: DBNAME is not defined"
-   exit 1
-fi
+# DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in
+# terraform-infrastructure/emma.lib.virginia.edu/ecs-tasks/*/environment.vars
+#
+# DBHOST and/or DBPORT *may* be defined there; if not, DATABASE must be defined
+# there so that EMMA config/env_vars.rb can derive the missing value(s).
 
 export SECRET_KEY_BASE=x
-bundle exec rails db:migrate
-
-# return the status
-exit $?
+bundle exec rails db:prepare
 
 #
 # end of file

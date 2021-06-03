@@ -117,6 +117,13 @@ def in_debugger?
   !!ENV['DEBUGGER_STORED_RUBYLIB']
 end
 
+# Indicate whether this instance is being run from a Docker container on a
+# development machine.
+#
+def in_local_docker?
+  (ENV['USER'] == 'docker') && !application_deployed?
+end
+
 # For use within initialization code to branch between code that is intended
 # for the Rails application versus code that is run in other contexts (e.g.,
 # rake).

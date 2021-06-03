@@ -71,8 +71,7 @@ Rails.application.configure do
   # ActiveRecord
   # ===========================================================================
 
-  # Do not dump schema after migrations in the deployed application.
-  config.active_record.dump_schema_after_migration = !application_deployed?
+  # See config/application.rb
 
   # ===========================================================================
   # ActiveJob

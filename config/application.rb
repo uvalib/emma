@@ -104,6 +104,9 @@ module Emma
     # config.active_record.database_resolver_context =
     #   ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
+    # Do not dump schema after migrations in the deployed application.
+    config.active_record.dump_schema_after_migration = !application_deployed?
+
     # =========================================================================
     # ActionCable
     # =========================================================================
