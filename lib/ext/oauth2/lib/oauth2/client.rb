@@ -289,49 +289,53 @@ module OAuth2
       #
       # @param [String] client_id
       # @param [String] client_secret
-      # @param [Hash]   options
+      # @param [Hash]   opts
       # @param [Proc]   block           @see OAuth2::Client#initialize
       #
-      # @option options [String]  :site             The OAuth2 provider site
+      # @option opts [String]  :site             The OAuth2 provider site
       #                                             host.
       #
-      # @option options [String]  :redirect_uri     The absolute URI to the
+      # @option opts [String]  :redirect_uri        The absolute URI to the
       #                                             Redirection Endpoint for
       #                                             use in authorization grants
       #                                             and token exchange.
       #
-      # @option options [String]  :authorize_url    Absolute or relative URL
+      # @option opts [String]  :authorize_url       Absolute or relative URL
       #                                             path to the Authorization
       #                                             endpoint.
       #                                             Default: '/oauth/authorize'
       #
-      # @option options [String]  :token_url        Absolute or relative URL
+      # @option opts [String]  :token_url           Absolute or relative URL
       #                                             path to the Token endpoint.
       #                                             Default: '/oauth/token'
       #
-      # @option options [Symbol]  :token_method     HTTP method to use to
+      # @option opts [Symbol]  :token_method        HTTP method to use to
       #                                             request the token.
       #                                             Default: :post
       #
-      # @option options [Symbol]  :auth_scheme      Method to use to authorize
+      # @option opts [Symbol]  :auth_scheme         Method to use to authorize
       #                                             request: :basic_auth or
       #                                             :request_body (default).
       #
-      # @option options [Hash]    :connection_opts  Hash of connection options
+      # @option opts [Hash]    :connection_opts     Hash of connection options
       #                                             to pass to initialize
       #                                             Faraday.
       #
-      # @option options [FixNum]  :max_redirects    Maximum number of redirects
+      # @option opts [FixNum]  :max_redirects       Maximum number of redirects
       #                                             to follow. Default: 5.
       #
-      # @option options [Boolean] :raise_errors     If *false*, 400+ response
+      # @option opts [Boolean] :raise_errors        If *false*, 400+ response
       #                                             statuses do not raise
       #                                             OAuth2::Error.
+      #
+      # @option opts [Proc] :extract_access_token   Proc that extracts the
+      #                                             access token from the
+      #                                             response.
       #
       # This method overrides:
       # @see OAuth2::Client#initialize
       #
-      def initialize(client_id, client_secret, options = {}, &block)
+      def initialize(client_id, client_secret, opts = {}, &block)
         __ext_debug(binding)
         super
       end
@@ -366,17 +370,21 @@ module OAuth2
 
       # Initializes an AccessToken by making a request to the token endpoint.
       #
-      # @param [Hash]  params         For the token endpoint.
-      # @param [Hash]  token_opts     Passed to the AccessToken object.
-      # @param [Class] token_class    Class of access token for easier
-      #                                 subclassing of OAuth2::AccessToken.
+      # @param [Hash]  params                 For the token endpoint.
+      # @param [Hash]  access_token_opts      Passed to the AccessToken object.
+      # @param [Class] extract_access_token   Class of access token for easier
+      #                                         OAuth2::AccessToken subclassing
       #
       # @return [AccessToken]         The initialized AccessToken.
       #
       # This method overrides:
       # @see OAuth2::Client#get_token
       #
-      def get_token(params, token_opts = {}, token_class = AccessToken)
+      def get_token(
+        params,
+        access_token_opts    = {},
+        extract_access_token = options[:extract_access_token]
+      )
         __ext_debug(binding)
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }

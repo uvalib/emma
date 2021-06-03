@@ -25,7 +25,7 @@ module Puma
 
       public
 
-      def handle_request(client, lines)
+      def handle_request(client, lines, requests)
         __ext_log
         super
       end
@@ -66,7 +66,7 @@ module Puma
       end
 =end
 
-      def str_headers(env, status, headers, res_info, lines)
+      def str_headers(env, status, headers, res_info, lines, requests, client)
         super
           .tap { __ext_log { { status: status, res_info: res_info } } }
       end
