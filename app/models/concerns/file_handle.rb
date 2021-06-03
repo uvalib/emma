@@ -49,7 +49,7 @@ class FileHandle
   #
   # @param [FileHandle, String, IO, StringIO, Tempfile, Down::ChunkedIO] file
   #
-  # @raise [StandardError]            If *file* is invalid.
+  # @raise [RuntimeError]             If *file* is invalid.
   #
   # == Variations
   #

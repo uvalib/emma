@@ -353,6 +353,7 @@ module OmniAuth
 
       ensure
         fail!(e_type, error) if e_type || error
+        re_raise_if_internal_exception(error)
         return result
       end
 
@@ -389,7 +390,7 @@ module OmniAuth
       #
       # @return [void]
       #
-      # @raise [StandardError]  If +Bookshare+ account info was unavailable.
+      # @raise [RuntimeError]   If +Bookshare+ account info was unavailable.
       #
       def check_user_validity
         get_account_info(raise_errors: true)

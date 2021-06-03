@@ -66,6 +66,7 @@ public
 #
 module UploadWorkflow::Errors
 
+  include Emma::Common
   include Emma::Debug
 
   # ===========================================================================
@@ -199,30 +200,6 @@ module UploadWorkflow::Errors
 
   public
 
-  # Exceptions which are more likely to indicate unexpected exceptions (i.e.,
-  # programming problems) and not operational exceptions due to external API
-  # failures.
-  #
-  # @type [Array<Class>] Sub-classes of Exception.
-  #
-  INTERNAL_EXCEPTION = [
-    NoMemoryError,
-    ScriptError,
-    SignalException,
-    ArgumentError,
-    IndexError,
-    LocalJumpError,
-    NameError,
-    RangeError,
-    RegexpError,
-    SecurityError,
-    SystemCallError,
-    SystemStackError,
-    ThreadError,
-    TypeError,
-    ZeroDivisionError
-  ].freeze
-
   # Raise an exception.
   #
   # If *problem* is a symbol, it is used as a key to #UPLOAD_ERROR with *value*
@@ -236,18 +213,15 @@ module UploadWorkflow::Errors
   # @raise [SubmitError]
   # @raise [Api::Error]
   # @raise [Net::ProtocolError]
-  # @raise [StandardError]
+  # @raise [RuntimeError]
   #
   def failure(problem, value = nil)
     __debug_items("UPLOAD WF #{__method__}", binding)
 
     # If any failure is actually an internal error, re-raise it now so that it
     # will result in a stack trace when it is caught and processed.
-    value = Array.wrap(value)
-    INTERNAL_EXCEPTION.each do |e|
-      raise problem if problem.is_a?(e)
-      value.each { |v| raise v if v.is_a?(e) }
-    end
+    raise problem if internal_exception?(problem)
+    value = Array.wrap(value).each { |v| raise v if internal_exception?(v) }
     value = value.first if value.size <= 1
 
     err = nil
@@ -985,7 +959,7 @@ module UploadWorkflow::External
   # @param [Boolean]        no_raise  If *true*, do not raise exceptions.
   # @param [Symbol]         meth      Calling method (for logging).
   #
-  # @raise [StandardError]            If *item* not found and !*no_raise*.
+  # @raise [RuntimeError]             If *item* not found and !*no_raise*.
   #
   # @return [Upload]                  The item; from the database if necessary.
   # @return [nil]                     If *item* not found and *no_raise*.
@@ -1207,7 +1181,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] items
   # @param [Boolean]       atomic
   #
-  # @raise [StandardError] @see IngestService::Request::Records#put_records
+  # @raise [Api::Error] @see IngestService::Request::Records#put_records
   #
   # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
   #                                     and records to roll back.
@@ -1237,7 +1211,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] items
   # @param [Boolean]       atomic
   #
-  # @raise [StandardError] @see IngestService::Request::Records#put_records
+  # @raise [Api::Error] @see IngestService::Request::Records#put_records
   #
   # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
   #                                     and records to roll back.
@@ -1261,7 +1235,7 @@ module UploadWorkflow::External
   # @param [Array<Upload, String>] items
   # @param [Boolean]               atomic
   #
-  # @raise [StandardError] @see IngestService::Request::Records#delete_records
+  # @raise [Api::Error] @see IngestService::Request::Records#delete_records
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #

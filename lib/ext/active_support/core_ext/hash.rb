@@ -61,7 +61,7 @@ class Hash
   # @param [Hash]    other
   # @param [Boolean] raise_error      If *true*, raise exceptions.
   #
-  # @raise [StandardError]            If *other* is not a Hash.
+  # @raise [RuntimeError]             If *other* is not a Hash.
   #
   # @return [self]
   #

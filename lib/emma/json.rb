@@ -30,7 +30,7 @@ module Emma::Json
   # @param [Boolean] no_raise      If *false*, re-raise exceptions.
   # @param [Hash]    opt           Passed to MultiJson#load.
   #
-  # @raise [StandardError]         If *arg* is not parseable.
+  # @raise [RuntimeError]          If *arg* is not parseable.
   # @raise [MultiJson::ParseError] If *arg* failed to parse and !*no_raise*.
   #
   # @return [nil]                  If *arg* failed to parse and *no_raise*.
@@ -76,6 +76,7 @@ module Emma::Json
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" }
     raise error unless no_raise
+    re_raise_if_internal_exception(error)
   end
 
   # Attempt to interpret *arg* as JSON if it is a string.
@@ -100,7 +101,7 @@ module Emma::Json
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
   #
   # @raise [MultiJson::ParseError]    If *arg* failed to parse.
-  # @raise [StandardError]            If *value* is not a String or Hash.
+  # @raise [RuntimeError]             If *value* is not a String or Hash.
   #
   # @return [String]
   #
@@ -134,6 +135,7 @@ module Emma::Json
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
     raise error unless no_raise
+    re_raise_if_internal_exception(error)
     value.pretty_inspect
   end
 

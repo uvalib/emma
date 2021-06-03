@@ -21,8 +21,20 @@ module ConfigurationHelper
   include Emma::Common
   include ParamsHelper
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   CONFIG_ITEM_KEYS  = %i[label tooltip].freeze
   CONFIG_STATE_KEYS = %i[enabled disabled].freeze
+
+  # Fall-back fatal configuration message. # TODO: I18n
+  #
+  # @type [String]
+  #
+  CONFIG_FAIL = 'Fatal configuration error'
 
   # ===========================================================================
   # :section:
@@ -78,6 +90,8 @@ module ConfigurationHelper
   # @option opt [String, Symbol, Boolean] :mode
   # @option opt [Boolean]                 :one
   # @option opt [Boolean]                 :many
+  #
+  # @raise [RuntimeError]             If *fatal* and configuration not found.
   #
   # @return [*]                       The specified value or *default*.
   #
@@ -139,7 +153,7 @@ module ConfigurationHelper
       entry = entry[mode] if mode && entry.is_a?(Hash) && entry.key?(mode)
       return apply_config_interpolations(entry, **i_opt)
     end
-    fatal ? config_failure(fatal) : default
+    fatal ? raise(CONFIG_FAIL) : default
   end
 
   # Generate a hash of the most relevant button information with the form:
@@ -340,31 +354,6 @@ module ConfigurationHelper
     }
     # noinspection RubyYardReturnMatch
     result.compact
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  private
-
-  # Fall-back fatal configuration message. # TODO: I18n
-  #
-  # @type [String]
-  #
-  CONFIG_FAIL = 'Fatal configuration error'
-
-  # Raise an exception for a fatal configuration error.
-  #
-  # @param [Class, String, *] fail
-  #
-  # @raise [Exception]
-  #
-  def config_failure(fail = nil)
-    return if fail.is_a?(FalseClass)
-    message = fail.is_a?(String) ? fail : CONFIG_FAIL
-    error   = fail.is_a?(Class)  ? fail : StandardError
-    raise error, message
   end
 
 end

@@ -187,7 +187,7 @@ module IsbnHelper
   #                                     exception is raised if the check digit
   #                                     is erroneous.
   #
-  # @raise [StandardError]            If *isbn* contains a check digit but it
+  # @raise [RuntimeError]             If *isbn* contains a check digit but it
   #                                     is not valid.
   #
   # @return [Integer]                 Result of #isbn_13_checksum.

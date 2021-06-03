@@ -97,7 +97,7 @@ module Emma::Common
   #
   def digits_only?(value)
     case value
-      when Integer, ActiveModel::Type::Integer
+      when Integer, ActiveModel::Type::Integer, ActiveSupport::Duration
         true
       when String, Symbol, Numeric, ActiveModel::Type::Float
         (value = value.to_s).present? && value.delete('0-9').blank?
@@ -827,6 +827,68 @@ module Emma::Common
       quote ? term.delete_prefix(quote).delete_suffix(quote) : term
     end
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Exceptions which are more likely to indicate unexpected exceptions (i.e.,
+  # programming problems) and not operational exceptions due to external API
+  # failures.
+  #
+  # @type [Array<Class>] Sub-classes of Exception.
+  #
+  INTERNAL_EXCEPTION = [
+    NoMemoryError,
+    ScriptError,
+    SignalException,
+    ArgumentError,
+    IndexError,
+    LocalJumpError,
+    NameError,
+    RangeError,
+    RegexpError,
+    SecurityError,
+    SystemCallError,
+    SystemStackError,
+    ThreadError,
+    TypeError,
+    ZeroDivisionError
+  ].freeze
+
+  # Indicate whether *error* is an exception which matches or is derived from
+  # one of the exceptions listed in #INTERNAL_EXCEPTION.
+  #
+  # @param [Exception, *] error
+  #
+  def internal_exception?(error)
+    ancestors = (error.is_a?(Class) ? error : error.class).ancestors
+    ancestors.size > (ancestors - INTERNAL_EXCEPTION).size
+  end
+
+  # Indicate whether *error* is an exception which is not (derived from) one of
+  # the exceptions listed in #INTERNAL_EXCEPTION.
+  #
+  # @param [Exception, *] error
+  #
+  def operational_exception?(error)
+    a = (error.is_a?(Class) ? error : error.class).ancestors
+    a.include?(Exception) && (a.size == (a - INTERNAL_EXCEPTION).size)
+  end
+
+  # Re-raise an exception which indicates a likely programming error.
+  #
+  # @param [Exception, *] error
+  #
+  # == Usage Notes
+  # The re-raise will happen only when running on the desktop.
+  #
+  def re_raise_if_internal_exception(error)
+    raise error if internal_exception?(error)
+  end
+    .tap { |meth| neutralize(meth) if application_deployed? }
 
 end
 

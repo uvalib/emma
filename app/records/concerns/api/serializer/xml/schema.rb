@@ -186,7 +186,7 @@ module Api::Serializer::Xml::Schema
   # @param [String, Symbol, Class] name
   # @param [Symbol, nil]           mode
   #
-  # @raise [StandardError]                If *mode* is invalid.
+  # @raise [RuntimeError]                If *mode* is invalid.
   #
   # @return [String]
   #

@@ -138,6 +138,7 @@ module AwsS3Service::Common
   rescue StandardError => e
     @exception = e
     Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
+    re_raise_if_internal_exception(e)
   end
 
   # Download a single file from an AWS S3 bucket.
@@ -168,6 +169,7 @@ module AwsS3Service::Common
   rescue StandardError => e
     @exception = e
     Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
+    re_raise_if_internal_exception(e)
   end
 
   # Remove a single file from an AWS S3 bucket.
@@ -198,6 +200,7 @@ module AwsS3Service::Common
   rescue StandardError => e
     @exception = e
     Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
+    re_raise_if_internal_exception(e)
   end
 
   # List files (object keys) in an AWS S3 bucket.
@@ -237,7 +240,7 @@ module AwsS3Service::Common
   rescue StandardError => e
     @exception = e
     Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
-    []
+    re_raise_if_internal_exception(e) or []
   end
 
   # Lookup matching AWS S3 object keys if "filter" appears to be a pattern and

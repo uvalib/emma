@@ -189,7 +189,7 @@ module ApiService::Common
   #
   # @param [User, nil] u
   #
-  # @raise [StandardError]            If *u* is invalid.
+  # @raise [RuntimeError]             If *u* is invalid.
   #
   # @return [void]
   #
@@ -322,6 +322,7 @@ module ApiService::Common
         error:  error,
       }.transform_values { |v| v.inspect.truncate(256) }
     end
+    re_raise_if_internal_exception(error)
     @response  = nil if error
     @exception = nil if no_exception
     raise @exception unless no_raise || @exception.nil?

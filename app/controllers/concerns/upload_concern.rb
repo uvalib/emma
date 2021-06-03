@@ -174,7 +174,7 @@ module UploadConcern
   # @option opt [String]       :src   URI or path to file containing the data.
   # @option opt [String, Hash] :data  Literal data.
   #
-  # @raise [StandardError]            If both *src* and *data* are present.
+  # @raise [RuntimeError]             If both *src* and *data* are present.
   #
   # @return [nil]                     If both *src* and *data* are missing.
   # @return [Hash]
@@ -337,7 +337,7 @@ module UploadConcern
   #
   # @param [String, Hash, Upload] id
   #
-  # @raise [StandardError]            If *item* not found.
+  # @raise [RuntimeError]             If *item* not found.
   #
   # @return [Upload, nil]
   #

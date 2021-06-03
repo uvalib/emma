@@ -85,6 +85,7 @@ class Api::Error < RuntimeError
     super(@messages.first)
   rescue => e
     Log.error { "Api::Error#initialize: #{e.class}: #{e.message}" }
+    re_raise_if_internal_exception(e)
     super('ERROR')
   end
 

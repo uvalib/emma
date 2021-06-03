@@ -91,6 +91,7 @@ class UploadController < ApplicationController
     show_search_failure(error, upload_index_path)
   rescue => error
     show_search_failure(error, root_path)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/show/(:id|SID)
@@ -140,6 +141,7 @@ class UploadController < ApplicationController
     @item = wf_single(rec: (@db_id || :unset), event: :create)
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == POST  /upload/create
@@ -163,6 +165,7 @@ class UploadController < ApplicationController
     post_response(:conflict, error)
   rescue => error
     post_response(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/edit/:id
@@ -182,6 +185,7 @@ class UploadController < ApplicationController
     @item = (wf_single(event: :edit) unless show_menu?(@identifier))
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == PUT   /upload/update/:id
@@ -204,6 +208,7 @@ class UploadController < ApplicationController
     post_response(:conflict, error)
   rescue => error
     post_response(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
@@ -233,6 +238,7 @@ class UploadController < ApplicationController
     end
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == DELETE /upload/destroy/:id[?force=true&truncate=true&emergency=true]
@@ -262,6 +268,7 @@ class UploadController < ApplicationController
     post_response(:conflict, error, redirect: back)
   rescue => error
     post_response(:not_found, error, redirect: back)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -278,6 +285,7 @@ class UploadController < ApplicationController
     __debug_route
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -293,6 +301,7 @@ class UploadController < ApplicationController
     wf_bulk(rec: :unset, data: :unset, event: :create)
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -314,6 +323,7 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -329,6 +339,7 @@ class UploadController < ApplicationController
     wf_bulk(rec: :unset, data: :unset, event: :edit)
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == PUT   /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -352,6 +363,7 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/bulk_delete[?force=false]
@@ -368,6 +380,7 @@ class UploadController < ApplicationController
     @list = wf_bulk(event: :remove)
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == DELETE /upload/bulk[?force=true]
@@ -387,6 +400,7 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -409,6 +423,7 @@ class UploadController < ApplicationController
     end
   rescue => error
     post_response(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == POST /upload/reedit?id=:id
@@ -425,6 +440,7 @@ class UploadController < ApplicationController
     end
   rescue => error
     post_response(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET  /upload/cancel?id=:id[&redirect=URL][&reset=bool][&fields=...]
@@ -456,6 +472,7 @@ class UploadController < ApplicationController
     else
       post_response(error)
     end
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/check/:id
@@ -476,6 +493,7 @@ class UploadController < ApplicationController
     end
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -506,6 +524,7 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: true)
   rescue => error
     post_response(error, xhr: true)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -569,6 +588,7 @@ class UploadController < ApplicationController
     @object_table = get_object_table(@repo, @deploy, **opt)
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -591,6 +611,7 @@ class UploadController < ApplicationController
     failure(:file_id, failed.uniq) if failed.present?
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================

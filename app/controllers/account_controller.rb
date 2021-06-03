@@ -142,6 +142,7 @@ class AccountController < ApplicationController
     @list = @list && User.find(@list) || []
   rescue => error
     flash_now_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == DELETE /account/destroy/:id

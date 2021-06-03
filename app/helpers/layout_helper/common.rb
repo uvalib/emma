@@ -70,7 +70,7 @@ module LayoutHelper::Common
   #                                     RESTORE_PANEL_STATE is *true*).
   # @param [Hash] opt                 Passed to #button_tag.
   #
-  # @raise [StandardError]            The controlled element was not specified.
+  # @raise [RuntimeError]             The controlled element was not specified.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

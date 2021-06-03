@@ -31,7 +31,7 @@ module Search::Shared::LinkMethods
   # If :emma_webPageLink is provided, that value is used.  Otherwise, a URL is
   # manufactured from 'en.emma.repository.*.title_path'.
   #
-  # @raise [StandardError]            If #REPOSITORY entry is invalid.
+  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
   #
   # @return [String]
   # @return [nil]
@@ -55,7 +55,7 @@ module Search::Shared::LinkMethods
 
   # Original repository artifact download URL.
   #
-  # @raise [StandardError]            If #REPOSITORY entry is invalid.
+  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
   #
   # @return [String]
   # @return [nil]

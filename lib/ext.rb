@@ -37,7 +37,7 @@ end
 # @param [Module, nil]         mod2   Module to prepend to *mod*.
 # @param [Proc]                block  Passed to Module#new.
 #
-# @raise [StandardError]              Only for a non-deployed instance.
+# @raise [RuntimeError]               Only for a non-deployed instance.
 #
 # @return [void]
 #

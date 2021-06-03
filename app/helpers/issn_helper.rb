@@ -91,7 +91,7 @@ module IssnHelper
   # @param [Boolean] validate         If *true*, raise an exception if the
   #                                     checksum provided in *s* is invalid.
   #
-  # @raise [StandardError]            If *issn* contains a check digit but it
+  # @raise [RuntimeError]             If *issn* contains a check digit but it
   #                                     is not valid.
   #
   # @return [String]                  An ISSN value.

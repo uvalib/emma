@@ -81,7 +81,7 @@ module CachingMiddleware
     # @option opt [String]                              :http_header
     # @option opt [Array<String>]                       :cacheable_paths
     #
-    # @raise [StandardError]          If opt[:namespace] is missing.
+    # @raise [RuntimeError]           If opt[:namespace] is missing.
     #
     def initialize(app, opt = nil)
       @app = app
@@ -306,7 +306,7 @@ module CachingMiddleware
 
     # Run from #initialize to set up the logger.
     #
-    # @raise [StandardError]          If @logger is invalid.
+    # @raise [RuntimeError]           If @logger is invalid.
     #
     # @return [void]
     #
@@ -326,7 +326,7 @@ module CachingMiddleware
 
     # Run from #initialize to set up the cache store.
     #
-    # @raise [StandardError]          If @store is invalid.
+    # @raise [RuntimeError]           If @store is invalid.
     #
     # @return [void]
     #

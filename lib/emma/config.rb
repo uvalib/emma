@@ -37,6 +37,7 @@ module Emma::Config
   rescue => error # Probable file read error.
     # noinspection RubyYardParamTypeMatch
     Log.error(error, path)
+    re_raise_if_internal_exception(error)
   end
 
 end

@@ -578,6 +578,7 @@ module Workflow::Base::Events
           rescue => error
             self.failures << error unless failures?
             Log.warn { "#{event}!: #{error.class} #{error.message}" }
+            re_raise_if_internal_exception(error)
           end
 
         end
@@ -652,6 +653,7 @@ module Workflow::Base::Events
             rescue => error
               self.failures << error unless failures?
               Log.warn { "#{event}!: #{error.class} #{error.message}" }
+              re_raise_if_internal_exception(error)
             end
 
             # The method which is called when the event is triggered.

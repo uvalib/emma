@@ -1471,7 +1471,7 @@ module ModelHelper
   # @option opt [String] :name        Overrides *name*
   # @option opt [String] :base        Name and id for <select>; default: *name*
   #
-  # @raise [StandardError]            If *range* is not an EnumType.
+  # @raise [RuntimeError]             If *range* is not an EnumType.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1512,7 +1512,7 @@ module ModelHelper
   # @option opt [String] :name        Overrides *name*
   # @option opt [String] :base        Name and id for <select>; default: *name*
   #
-  # @raise [StandardError]            If *range* is not an EnumType.
+  # @raise [RuntimeError]             If *range* is not an EnumType.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1806,6 +1806,8 @@ module ModelHelper
   #
   # @param [*]       range
   # @param [Boolean] exception        If *true*, raise an exception if *false*.
+  #
+  # @raise [RuntimeError]             If not valid and *exception* is *true*.
   #
   def valid_range?(range, exception: false)
     valid = range.is_a?(Class) && (range < EnumType)

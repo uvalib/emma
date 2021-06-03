@@ -40,6 +40,7 @@ module FileFormat::Zip
     nil
   rescue => error
     Log.warn { "#{__method__}(#{zip_path}): #{error.message}" }
+    re_raise_if_internal_exception(error)
   end
 
   # Locate the indicated file in the given archive.
@@ -63,6 +64,7 @@ module FileFormat::Zip
     nil
   rescue => error
     Log.warn { "#{__method__}(#{file}): #{error.message}" }
+    re_raise_if_internal_exception(error)
   end
 
 end

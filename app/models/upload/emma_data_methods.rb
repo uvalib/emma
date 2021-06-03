@@ -288,7 +288,7 @@ module Upload::EmmaDataMethods
       msg << "for #{data.inspect}" if Log.debug?
       msg.join(': ')
     end
-    {}
+    re_raise_if_internal_exception(error) or {}
   end
 
 end

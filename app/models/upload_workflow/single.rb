@@ -552,7 +552,7 @@ module UploadWorkflow::Single::Actions
 
   # Asset presence of an Upload record.
   #
-  # @raise [StandardError]
+  # @raise [RuntimeError]
   #
   # @return [true]
   #
@@ -562,7 +562,7 @@ module UploadWorkflow::Single::Actions
 
   # Asset that the Upload record is EMMA-native.
   #
-  # @raise [StandardError]
+  # @raise [RuntimeError]
   #
   # @return [true]
   #

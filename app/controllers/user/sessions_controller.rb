@@ -74,6 +74,7 @@ class User::SessionsController < Devise::SessionsController
     end
   rescue => error
     auth_failure_redirect(message: error)
+    re_raise_if_internal_exception(error)
   end
 
   # == DELETE /users/sign_out[?revoke=(true|false)]
@@ -97,6 +98,7 @@ class User::SessionsController < Devise::SessionsController
     end
   rescue => error
     auth_failure_redirect(message: error)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -134,6 +136,7 @@ class User::SessionsController < Devise::SessionsController
     auth_success_redirect
   rescue => error
     auth_failure_redirect(message: error)
+    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -190,7 +193,7 @@ class User::SessionsController < Devise::SessionsController
   #
   # @return [void]
   #
-  # @raise [StandardError]  If Bookshare account info was unavailable.
+  # @raise [RuntimeError]   If Bookshare account info was unavailable.
   #
   def check_user_validity
     bs_api.get_user_identity
