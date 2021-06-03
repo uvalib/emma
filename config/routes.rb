@@ -146,11 +146,14 @@ Rails.application.routes.draw do
   resource :health, controller: 'health', only: [] do
     get :version
     get :check
-    get 'check/:subsystem', to: 'health#check', as: 'check_subsystem'
+    get 'check/:subsystem',   to: 'health#check',         as: 'check_subsystem'
+    get :run_state,           to: 'health#run_state',     as: 'run_state'
+    put :run_state,           to: 'health#set_run_state', as: 'set_run_state'
   end
 
-  get '/version',     to: 'health#version'
-  get '/healthcheck', to: 'health#check'
+  get '/version',             to: 'health#version'
+  get '/healthcheck',         to: 'health#check'
+  get '/system_unavailable',  to: 'health#run_state'
 
   # ===========================================================================
   # Metrics
@@ -259,12 +262,18 @@ unless ONLY_FOR_DOCUMENTATION
   def registration_url(*);                        end
   def root_path(*);                               end
   def root_url(*);                                end
+  def run_state_health_path(*);                   end
+  def run_state_health_url(*);                    end
   def search_index_path(*);                       end
   def search_index_url(*);                        end
   def session_path(*);                            end
   def session_url(*);                             end
+  def set_state_health_path(*);                   end
+  def set_state_health_url(*);                    end
   def sign_in_as_path(*);                         end
   def sign_in_as_url(*);                          end
+  def system_unavailable_path(*);                 end
+  def system_unavailable_url(*);                  end
   def title_index_path(*);                        end
   def title_index_url(*);                         end
   def unlock_path(*);                             end

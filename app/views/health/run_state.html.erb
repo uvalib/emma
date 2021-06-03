@@ -1,0 +1,25 @@
+<%# app/views/health/run_state.html.erb -%>
+<%-
+  # Page displayed when the system is unavailable.
+
+  state ||= @state || RunState.current
+  title ||= t("emma.health.run_state.state.#{state}.title", default: nil)
+  title ||= t('emma.health.run_state.title', default: nil)
+  title ||= state.available? ? 'AVAILABLE' : 'UNAVAILABLE'
+  help  ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+
+<p><%= state.html -%></p>
+
+<%= page_notes_section %>

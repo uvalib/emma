@@ -288,9 +288,12 @@ module Emma::Log
     if silenced?
       block.call
     else
-      self.silenced = true
-      tmp_level = log_level(tmp_level)
-      logger.silence(tmp_level, &block).tap { self.silenced = false }
+      begin
+        self.silenced = true
+        logger.silence(log_level(tmp_level), &block)
+      ensure
+        self.silenced = false
+      end
     end
   end
 

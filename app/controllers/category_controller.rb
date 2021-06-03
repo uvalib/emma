@@ -17,6 +17,7 @@ class CategoryController < ApplicationController
   include UserConcern
   include ParamsConcern
   include SessionConcern
+  include RunStateConcern
   include PaginationConcern
   include SerializationConcern
   include BookshareConcern

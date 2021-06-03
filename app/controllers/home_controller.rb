@@ -19,6 +19,7 @@ class HomeController < ApplicationController
   include UserConcern
   include ParamsConcern
   include SessionConcern
+  include RunStateConcern
   include SerializationConcern
 
   # Non-functional hints for RubyMine type checking.

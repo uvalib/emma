@@ -15,6 +15,19 @@
         padding-top: 0;
     }
 
+    // Special control shown if RunState.unavailable? unless RunState::STATIC.
+    .restore-availability {
+
+        @extend %control-button;
+
+        width:         min-content;
+        padding:       0.375rem 0.75rem;
+        margin-bottom: 1rem;
+        font-size:     medium;
+        font-weight:   bold;
+        background:    white;
+    }
+
     // noinspection CssReplaceWithShorthandSafely
     .session-debug-table {
 

@@ -15,6 +15,7 @@ class ApiController < ApplicationController
   include UserConcern
   include ParamsConcern
   include SessionConcern
+  include RunStateConcern
   include SerializationConcern
   include ApiExplorerConcern
 

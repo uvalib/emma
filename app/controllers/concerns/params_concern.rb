@@ -82,6 +82,12 @@ module ParamsConcern
 
   protected
 
+  # Called to ensure that a fresh copy is requested each time.
+  #
+  def no_cache
+    expires_now
+  end
+
   # Called from non-SearchController pages to ensure that the search defined in
   # the page header performs the intended operation on the SearchController and
   # not the current controller.

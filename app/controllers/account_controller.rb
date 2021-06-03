@@ -15,6 +15,7 @@ class AccountController < ApplicationController
   include UserConcern
   include ParamsConcern
   include SessionConcern
+  include RunStateConcern
   include PaginationConcern
   include AccountConcern
 

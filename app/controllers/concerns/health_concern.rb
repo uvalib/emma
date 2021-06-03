@@ -16,6 +16,7 @@ module HealthConcern
   end
 
   include Emma::Time
+  include Emma::Debug
 
   # ===========================================================================
   # :section:
@@ -32,14 +33,13 @@ module HealthConcern
   #--
   # noinspection RailsI18nInspection
   #++
-  HEALTH_18N_ENTRIES =
-    I18n.t('emma.health').select { |_, v| v.is_a?(Hash) }.deep_freeze
+  HEALTH_SUBSYSTEMS = I18n.t('emma.health.subsystem').deep_freeze
 
   # Default health check subsystem failure message.
   #
   # @type [String]
   #
-  DEFAULT_HEALTH_FAILED_MESSAGE = HEALTH_18N_ENTRIES.dig(:default, :failed)
+  DEFAULT_HEALTH_FAILED_MESSAGE = HEALTH_SUBSYSTEMS.dig(:default, :failed)
 
   # ===========================================================================
   # :section:
@@ -161,7 +161,7 @@ module HealthConcern
   # @type [Hash{Symbol=>HealthEntry}]
   #
   HEALTH_CHECK =
-    HEALTH_18N_ENTRIES.map { |subsystem, items|
+    HEALTH_SUBSYSTEMS.map { |subsystem, items|
       next if %i[default invalid].include?(subsystem)
       entry = HealthEntry.new(**items)
       entry[:method] = "#{subsystem}_status".to_sym if entry[:method].nil?
@@ -173,13 +173,37 @@ module HealthConcern
   #
   # @type [HealthEntry]
   #
-  INVALID_HEALTH_CHECK = HealthEntry.new(**HEALTH_18N_ENTRIES[:invalid]).freeze
+  INVALID_HEALTH_CHECK = HealthEntry.new(**HEALTH_SUBSYSTEMS[:invalid]).freeze
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # The value of `params[:subsystem]`, which may be one or more comma-separated
+  # subsystem names.
+  #
+  # @return [Array<String>]
+  #
+  def subsystems
+    @subsystems ||= params[:subsystem].to_s.remove(/\s/).split(',')
+  end
+
+  # Acquire build version and render as JSON.
+  #
+  def render_version
+    render json: { version: BUILD_VERSION }, status: 200
+  end
+
+  # Acquire health status and render as JSON.
+  #
+  def render_check
+    values   = get_health_status(*subsystems)
+    response = HealthResponse.new(values)
+    status   = response.failed? ? 500 : 200
+    render json: response, status: status
+  end
 
   # Get the health status of one or more subsystems.
   #
@@ -217,22 +241,24 @@ module HealthConcern
   #++
   def status_report(subsystem, entry = nil)
     entry ||= HEALTH_CHECK[subsystem] || INVALID_HEALTH_CHECK
-    meth    = entry[:method]
+    lockout = RunState.unavailable?
+    meth    = (entry[:method] unless lockout)
     start   = timestamp
     healthy, message =
       case meth
         when Proc       then meth.call
         when Symbol     then send(meth)
         when FalseClass then false
-        else                 true
+        else                 !lockout
       end
   rescue => error
     healthy = false
     message = "#{error.class}: #{error.message}"
     Log.warn { "#{subsystem}: #{message}" }
   ensure
-    warn_only = !entry[:restart]
+    warn_only = !entry[:restart] || lockout
     degraded  = !healthy && warn_only
+    message ||= lockout  && 'EMMA system unavailable' # TODO: I18n
     message ||= degraded && entry[:degraded]
     message ||= healthy ? entry[:healthy] : entry[:failed]
     message ||= time_span(start)
@@ -246,13 +272,13 @@ module HealthConcern
 
   protected
 
-  # Health status of the MySQL service.
+  # Health status of the database service.
   #
   # @return [(Boolean,String)]
   #
-  def mysql_status(*)
+  def database_status(*)
     healthy = ActiveRecord::Base.connection_pool.with_connection(&:active?)
-    message = nil # TODO: MySQL status message?
+    message = nil # TODO: Database status message?
     return healthy, message
   end
 
@@ -298,6 +324,59 @@ module HealthConcern
   #
   def ingest_status(*)
     IngestService.active_status
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get the current RunState and setup the HTTP response accordingly.
+  #
+  # @return [RunState]
+  #
+  def show_run_state
+    RunState.current.tap do |state|
+      after = state.retry_value and response.set_header('Retry-After', after)
+    end
+  end
+
+  # Restore system availability.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
+  #
+  def clear_run_state
+    if RunState::STATIC
+      Log.warn { "#{__method__}: skipped (RunState::STATIC)" }
+    else
+      RunState.clear_current
+    end
+  end
+
+  # Set the current RunState
+  #
+  # @param [Hash, String, *] source   Ignored unless RunState::DYNAMIC.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
+  #
+  def update_run_state(source = nil)
+    if RunState::DYNAMIC
+      RunState.set_current(source || url_parameters)
+      warning = nil
+    elsif RunState::CLEARABLE
+      RunState.clear_current
+      warning = source && 'parameters ignored (RunState::CLEARABLE)'
+    else
+      warning = 'skipped (RunState::STATIC)'
+    end
+    Log.warn { "#{__method__}: #{warning}" } if warning
   end
 
 end

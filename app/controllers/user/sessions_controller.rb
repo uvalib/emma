@@ -12,8 +12,9 @@ __loading_begin(__FILE__)
 #
 class User::SessionsController < Devise::SessionsController
 
-  include SessionConcern
   include FlashConcern
+  include SessionConcern
+  include RunStateConcern
   include BookshareConcern
 
   # Non-functional hints for RubyMine type checking.

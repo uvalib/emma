@@ -9,46 +9,76 @@ en:
     health:
 
       # =======================================================================
-      # Endpoints
+      # Subsystems
       # =======================================================================
 
-      default:          &HEALTH_DEFAULT
-        restart:        false
-        failed:         'Unknown error'
+      subsystem:
 
-      invalid:
-        <<:             *HEALTH_DEFAULT
-        method:         false
-        failed:         'NOT A VALID SUBSYSTEM'
+        default:        &HEALTH_DEFAULT
+          restart:      false
+          failed:       'Unknown error'
 
-      mysql:
-        <<:             *HEALTH_DEFAULT
-        restart:        true
-        failed:         'Database connection error'
+        invalid:
+          <<:           *HEALTH_DEFAULT
+          method:       false
+          failed:       'NOT A VALID SUBSYSTEM'
 
-      redis:
-        <<:             *HEALTH_DEFAULT
-        restart:        true
-        healthy:        'NOT IMPLEMENTED' # TODO: future
-        failed:         'Redis unresponsive'
+        database:
+          <<:           *HEALTH_DEFAULT
+          restart:      true
+          failed:       'Database connection error'
 
-      storage:
-        <<:             *HEALTH_DEFAULT
-        healthy:        'NOT IMPLEMENTED' # TODO: future
-        degraded:       'AWS storage degraded'
-        failed:         'AWS storage failing'
+        redis:
+          <<:           *HEALTH_DEFAULT
+          restart:      true
+          healthy:      'NOT IMPLEMENTED' # TODO: future
+          failed:       'Redis unresponsive'
 
-      search:
-        <<:             *HEALTH_DEFAULT
-        degraded:       'Unified Search degraded'
-        failed:         'Unified Search unresponsive'
+        storage:
+          <<:           *HEALTH_DEFAULT
+          healthy:      'NOT IMPLEMENTED' # TODO: future
+          degraded:     'AWS storage degraded'
+          failed:       'AWS storage failing'
 
-      bookshare:
-        <<:             *HEALTH_DEFAULT
-        degraded:       'Bookshare API degraded'
-        failed:         'Bookshare API unresponsive'
+        search:
+          <<:           *HEALTH_DEFAULT
+          degraded:     'Unified Search degraded'
+          failed:       'Unified Search unresponsive'
 
-      ingest:
-        <<:             *HEALTH_DEFAULT
-        degraded:       'Federated Ingest service degraded'
-        failed:         'Federated Ingest service failing'
+        bookshare:
+          <<:           *HEALTH_DEFAULT
+          degraded:     'Bookshare API degraded'
+          failed:       'Bookshare API unresponsive'
+
+        ingest:
+          <<:           *HEALTH_DEFAULT
+          degraded:     'Federated Ingest service degraded'
+          failed:       'Federated Ingest service failing'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      run_state:
+        title:            'System Run State'
+        state:
+          available:
+            title:        'System Available'
+            property:
+              code:       200
+              text:       'EMMA is available'
+          unavailable:
+            title:        'SYSTEM UNAVAILABLE'
+            property:
+              code:       503
+              text:       'EMMA is temporarily unavailable for maintenance'
+        exempt:
+          - health
+          - help
+          - metrics
+          - home:
+              - main
+              - welcome
+          - user/sessions:
+              - sign_in_as
+              - destroy

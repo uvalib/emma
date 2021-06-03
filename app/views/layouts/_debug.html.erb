@@ -2,8 +2,16 @@
 <%-
   # Session debugging information.
   return unless session_debug?
+
+  restore_system_availability =
+    unless RunState::STATIC || RunState.available?
+      label = 'Restore system availability' # TODO: I18n
+      path  = set_run_state_health_path(state: :available)
+      link_to(label, path, method: :put, class: 'restore-availability')
+    end
 -%>
 
 <div class="footer-section session-debug">
+  <%= restore_system_availability %>
   <%= session_debug %>
 </div>

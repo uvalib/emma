@@ -2,6 +2,11 @@
 <%-
   # Flash messages.
 
+  # Inject an alert if the system is currently unavailable.
+  unless modal? || flash.present? || flash.now.flash.present?
+    flash_now_alert(RunState.text) if RunState.unavailable?
+  end
+
   messages =
     %i[alert notice].flat_map { |type|
       [flash.now[type], flash[type]].flatten.compact_blank.uniq.map { |msg|

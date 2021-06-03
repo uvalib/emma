@@ -11,6 +11,7 @@ class SearchController < ApplicationController
 
   include ParamsConcern
   include SessionConcern
+  include RunStateConcern
   include PaginationConcern
   include SerializationConcern
   include SearchConcern

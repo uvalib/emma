@@ -13,8 +13,11 @@ __loading_begin(__FILE__)
 #
 class HealthController < ApplicationController
 
-  include HealthConcern
+  include UserConcern
+  include ParamsConcern
+  include RunStateConcern
   include LogConcern
+  include HealthConcern
 
   # ===========================================================================
   # :section: Authentication
@@ -32,6 +35,8 @@ class HealthController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
+  after_action :no_cache, if: :request_get?
+
 =begin # TODO: This approach is not currently thread-safe.
   before_action :suppress_logger,   only: :check
   after_action  :unsuppress_logger, only: :check
@@ -47,7 +52,7 @@ class HealthController < ApplicationController
   # == GET /health/version
   #
   def version
-    render json: { version: BUILD_VERSION }, status: 200
+    render_version
   end
 
   # == GET /healthcheck[?logging=true]
@@ -56,41 +61,29 @@ class HealthController < ApplicationController
   #
   def check
     logging = params[:logging]
-    logging =
-      if subsystems.blank?
-        true?(logging)
-      else
-        logging.blank? || !false?(logging)
-      end
+    logging = subsystems.blank? ? true?(logging) : !false?(logging)
     if logging
-      check_action
+      render_check
     else
-      Log.silence { check_action }
+      Log.silence { render_check }
     end
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # The value of `params[:subsystem]`, which may be one or more comma-separated
-  # subsystem names.
+  # == GET /health/run_state
   #
-  # @return [Array<String>]
-  #
-  def subsystems
-    @subsystems ||= params[:subsystem].to_s.remove(/\s/).split(',')
+  def run_state
+    @state = show_run_state
   end
 
-  # Acquire health status and render.
+  # == PUT /health/run_state
   #
-  def check_action
-    values   = get_health_status(*subsystems)
-    response = HealthResponse.new(values)
-    status   = response.failed? ? 500 : 200
-    render json: response, status: status
+  # == Usage Notes
+  # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
+  #
+  def set_run_state
+    __debug_route
+    update_run_state
+    redirect_to action: :run_state
   end
 
   # ===========================================================================
@@ -108,12 +101,7 @@ class HealthController < ApplicationController
   #
   def suppress_logger
     logging = params[:logging]
-    logging =
-      if subsystems.blank?
-        true?(logging)
-      else
-        logging.blank? || !false?(logging)
-      end
+    logging = subsystems.blank? ? true?(logging) : !false?(logging)
     super(logging)
   end
 

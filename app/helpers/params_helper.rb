@@ -50,6 +50,12 @@ module ParamsHelper
 
   public
 
+  # Indicate whether the current request is an HTTP GET.
+  #
+  def request_get?
+    request.get?
+  end
+
   # Indicate whether the current request is from client-side scripting.
   #
   def request_xhr?
@@ -181,6 +187,97 @@ module ParamsHelper
     section ||= (p || params)[:controller]&.to_s || 'all'
     session[section] = {} unless session[section].is_a?(Hash)
     session[section]
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Translate an item into the URL parameter for the controller with which it
+  # is associated.
+  #
+  # @param [Symbol, String, Hash, Module, *] v  Def: `params[:controller]`.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def controller_to_name(v = nil)
+    v ||= request_parameters
+    v = v[:controller] || v['controller'] if v.is_a?(Hash)
+    # noinspection RubyYardReturnMatch, RubyCaseWithoutElseBlockInspection
+    case v
+      when String, Symbol
+        v.to_s.strip.underscore.delete_suffix('_controller')
+      when ApplicationController
+        v.controller_name
+      when Class
+        v.controller_name if v.respond_to?(:controller_name)
+    end
+  end
+
+  # Translate an item into the URL parameter for the controller with which it
+  # is associated.
+  #
+  # @param [Symbol, String, Hash, *] v  Def: `params[:controller]`.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def action_to_name(v = nil)
+    v ||= request_parameters
+    v = v[:action] || v['action'] if v.is_a?(Hash)
+    # noinspection RubyYardReturnMatch, RubyCaseWithoutElseBlockInspection
+    case v
+      when String, Symbol        then v.to_s.strip.underscore
+      when ApplicationController then v.action_name
+    end
+  end
+
+  # Translate into the URL parameters for the associated controller and action.
+  #
+  # @param [Symbol, String, Hash, Module, *] ctrlr   Def: `params[:controller]`
+  # @param [Symbol, String, nil]             action  Def: `params[:action]`
+  #
+  # @return [(*,*)]
+  #
+  # == Variations
+  #
+  # @overload ctrlr_action_to_names
+  #   Get :controller and :action from `#params`.
+  #   @return [(String,String)]
+  #
+  # @overload ctrlr_action_to_names(hash)
+  #   Extract :controller and/or :action from *hash*.
+  #   @param [Hash] hash
+  #   @return [(String,String)]
+  #   @return [(String,nil)]
+  #   @return [(nil,String)]
+  #   @return [(nil,nil)]
+  #
+  # @overload ctrlr_action_to_names(ctrlr)
+  #   @param [Symbol, String, Module] ctrlr
+  #   @return [(String,nil)]
+  #
+  # @overload ctrlr_action_to_names(ctrlr, action)
+  #   @param [Symbol, String, Hash, Module, *] ctrlr
+  #   @param [Symbol, String]                  action
+  #   @return [(String,String)]
+  #
+  def ctrlr_action_to_names(ctrlr = nil, action = nil)
+    ctrlr  = request_parameters unless ctrlr || action
+    result = []
+    if action
+      result << controller_to_name(ctrlr)
+      result << action_to_name(action)
+    elsif ctrlr.is_a?(Hash)
+      result << controller_to_name(ctrlr)
+      result << action_to_name(ctrlr)
+    else
+      result << controller_to_name(ctrlr)
+      result << nil
+    end
   end
 
 end
