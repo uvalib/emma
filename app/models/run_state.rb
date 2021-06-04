@@ -34,7 +34,7 @@ class RunState < Hash
   #
   # @type [Boolean]
   #
-  DYNAMIC = true
+  DYNAMIC = false
 
   # If *true*, then RunState is set at system startup and cannot be changed.
   #
