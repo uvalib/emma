@@ -131,7 +131,7 @@ end
 def rails_application?
   if !defined?(@in_rails) || @in_rails.nil?
     @in_rails = !!defined?(APP_PATH)
-    @in_rails &&= $*.none? { |arg| %w(-h --help).include?(arg) }
+    @in_rails &&= $*.none? { |arg| %w(-h -H --help).include?(arg) }
     @in_rails &&= (
       !!ENV['IN_PASSENGER'] ||
       $0.to_s.start_with?('spring app') ||
@@ -139,6 +139,22 @@ def rails_application?
     )
   end
   @in_rails
+end
+
+# Indicate whether this instance is being run as "rake" or "rails" with a Rake
+# task argument.
+#
+def rake_task?
+  if !defined?(@in_rake_task) || @in_rake_task.nil?
+    @in_rake_task = $0.to_s.end_with?('rake')
+    @in_rake_task ||=
+      if $0.to_s.end_with?('rails') && !rails_application?
+        tasks = $*.reject { |a| a.start_with?('-') } - %w(generate console new)
+        tasks.size > 0
+      end
+    @in_rake_task &&= $*.none? { |arg| %w(-h -H --help).include?(arg) }
+  end
+  @in_rake_task
 end
 
 # =============================================================================

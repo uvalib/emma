@@ -9,80 +9,66 @@ require_relative 'boot'
 require 'tmpdir'
 
 # =============================================================================
-# Development Docker properties
-# =============================================================================
-
-if in_local_docker? && rails_application?
-
-  # To simplify port mapping, have Rails serve up assets rather than Puma.
-
-  ENV['RAILS_SERVE_STATIC_FILES'] = 'true'
-
-  # Acquire desktop configuration values.
-  #
-  # From the RubyMine Docker configuration this requires a "Bind Mount" with
-  # "/home/rwl/Work/emma/.idea:/mnt:ro"; i.e., the "docker run" option
-  # "--mount type=bind,src=/home/rwl/Work/.idea,dst=/mnt,readonly".
-
-  require '/mnt/environment.rb'
-
-end
-
-# =============================================================================
 # Database properties
 # =============================================================================
 
-db_needed = rails_application? || $*.any? { |a| a.split(':').include?('db')  }
-db_needed &&= $*.none? { |a| %w(-h --help).include?(a) }
+db_needed   = rails_application?
+db_needed ||= rake_task? && $*.any? { |arg| arg.split(':').include?('db') }
 
-unless (ENV['DBHOST'] && ENV['DBPORT']) || !db_needed
+# DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in
+# terraform-infrastructure/emma.lib.virginia.edu/ecs-tasks/*/environment.vars
+# (or the local "environment.rb" if running on the desktop).
+#
+# DBHOST and/or DBPORT *may* be defined there; if not, DATABASE must be defined
+# in order to derive the missing value(s).
 
-  # DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in
-  # terraform-infrastructure/emma.lib.virginia.edu/ecs-tasks/*/environment.vars
-  #
-  # DBHOST and/or DBPORT *may* be defined there; if not, DATABASE must be
-  # defined in order to derive the missing value(s).
-  #
-  # NOTE: This is skipped in the very specific case of "rake assets:precompile"
-  # to allow Dockerfile to work.
+if db_needed
 
-  databases = %w(mysql postgres)
-  case (v = ENV['DATABASE']&.downcase)
-    when /^mysql/ then
-      database, db_type = %w(mysql standard)
-    when /^post/ then
-      database, db_type = %w(postgres postgres)
-    when nil then
-      raise %q(ENV['DATABASE'] missing)
-    else
-      raise "#{v.inspect} not one of #{databases.inspect}"
-  end
+  if in_local_docker?
 
-  if database == 'postgres'
-    ENV['DBPASSWD'] ||= ENV['PGPASSWORD']
-    ENV['DBUSER']   ||= ENV['PGUSER']
-    ENV['DBHOST']   ||= ENV['PGHOST']
-    ENV['DBPORT']   ||= ENV['PGPORT'] || '5432'
+    # To acquire desktop environment values, the RubyMine Docker configuration
+    # needs a "Bind Mount" with "/home/rwl/Work/emma/.idea:/mnt:ro"; i.e.:
+    # "docker run --mount type=bind,src=/home/rwl/Work/.idea,dst=/mnt,readonly"
+
+    require '/mnt/environment.rb'
+
   else
-    ENV['DBPORT'] ||= '3306' # MySQL
-  end
 
-  unless ENV['DBHOST']
-    deployments = %w(production staging local)
-    case (v = ENV['DEPLOYMENT']&.downcase)
-      when /^stag/ then
-        deployment = 'staging'
-      when /^prod/ then
-        deployment = 'production'
-      when /^local/ then
-        deployment = 'local'
-      when nil then
-        raise %q(ENV['DEPLOYMENT'] missing)
-      else
-        raise "#{v.inspect} not one of #{deployments.inspect}"
+    host_port_missing = !(ENV['DBHOST'] && ENV['DBPORT'])
+
+    databases = %w(postgres mysql)
+    database = type = nil
+    case (v = ENV['DATABASE']&.downcase)
+      when /^post/  then database, type = %w(postgres postgres)
+      when /^mysql/ then database, type = %w(mysql standard)
+      when nil      then raise 'missing ENV[DATABASE]' if host_port_missing
+      else               raise "#{v.inspect} not in #{databases.inspect}"
     end
-    ENV['DBHOST'] ||= 'localhost' if deployment == 'local'
-    ENV['DBHOST'] ||= "rds-#{db_type}-#{deployment}.internal.lib.virginia.edu"
+
+    # noinspection RubyCaseWithoutElseBlockInspection
+    case database
+      when 'mysql'
+        ENV['DBPORT']   ||= '3306'
+      when 'postgres'
+        ENV['DBPORT']   ||= ENV['PGPORT'] || '5432'
+        ENV['DBHOST']   ||= ENV['PGHOST']
+        ENV['DBUSER']   ||= ENV['PGUSER']
+        ENV['DBPASSWD'] ||= ENV['PGPASSWORD']
+    end
+
+    unless ENV['DBHOST']
+      deployments = %w(production staging local)
+      case (v = ENV['DEPLOYMENT']&.downcase)
+        when /^prod/  then deployment = 'production'
+        when /^stag/  then deployment = 'staging'
+        when /^local/ then deployment = 'local'
+        when nil      then raise 'missing ENV[DEPLOYMENT]'
+        else               raise "#{v.inspect} not in #{deployments.inspect}"
+      end
+      ENV['DBHOST'] ||= 'localhost' if deployment == 'local'
+      ENV['DBHOST'] ||= "rds-#{type}-#{deployment}.internal.lib.virginia.edu"
+    end
+
   end
 
 end
@@ -324,32 +310,42 @@ CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
 #
 CONSOLE_OUTPUT = rails_application? || CONSOLE_DEBUGGING
 
+# Control TRACE_* activation.
+#
+# By default, the TRACE_* constants only active for when the code is being run
+# as a Rails application (i.e., not for "rake", "rails console", etc.).
+#
+TRACE_OUTPUT = rails_application? || true?(ENV['TRACE_RAKE'])
+
 # Control tracking of file load order.
 #
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
+# @see #TRACE_OUTPUT
 # @see #__loading
 #
-TRACE_LOADING = true?(ENV['TRACE_LOADING'])
+TRACE_LOADING = TRACE_OUTPUT && true?(ENV['TRACE_LOADING'])
 
 # Control tracking of invocation of Concern "included" blocks.
 #
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
+# @see #TRACE_OUTPUT
 # @see #__included
 #
-TRACE_CONCERNS = true?(ENV['TRACE_CONCERNS'])
+TRACE_CONCERNS = TRACE_OUTPUT && true?(ENV['TRACE_CONCERNS'])
 
 # Control tracking of Rails notifications.
 #
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
+# @see #TRACE_OUTPUT
 # @see #NOTIFICATIONS
 #
-TRACE_NOTIFICATIONS = true?(ENV['TRACE_NOTIFICATIONS'])
+TRACE_NOTIFICATIONS = TRACE_OUTPUT && true?(ENV['TRACE_NOTIFICATIONS'])
 
 # =============================================================================
 # Debugging
