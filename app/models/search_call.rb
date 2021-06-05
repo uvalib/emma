@@ -317,6 +317,7 @@ class SearchCall < ApplicationRecord
   def assign_attributes(opt)
     __debug_items(binding)
     opt = opt.is_a?(SearchCall) ? opt.attributes : map_parameters(opt)
+    opt.delete(:id)
     __debug_items(__method__, opt)
     super(opt)
   rescue => error # TODO: remove - testing

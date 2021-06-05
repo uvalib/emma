@@ -36,6 +36,7 @@ module SearchConcern
   end
 
   include ApiConcern
+  include SearchCallConcern
   include SearchHelper
 
   # Non-functional hints for RubyMine type checking.
@@ -89,7 +90,7 @@ module SearchConcern
   # @param [User, nil]    user        Default: `#current_user`.
   # @param [Array, #to_a] result      Default: @list.
   # @param [Boolean]      force       Save even if #save_search? is *false*.
-  # @param [Hash]         parameters  Default: `#url_parameters`.
+  # @param [Hash]         parameters  Default: `#search_call_params`.
   #
   # @return [SearchCall]              New record.
   # @return [nil]                     If saving was not possible.
@@ -97,7 +98,7 @@ module SearchConcern
   def save_search(user: nil, result: nil, force: false, **parameters)
     user ||= current_user
     return unless force || save_search?(user)
-    attr = url_parameters(parameters)
+    attr = search_call_params(parameters)
     attr[:controller] ||= :search
     attr[:action]     ||= :index
     attr[:user]       ||= user
