@@ -13,6 +13,7 @@
 
     @extend %banner;
 
+    flex-wrap: wrap;
     font-size: x-large;
 
     //=========================================================================
@@ -43,6 +44,55 @@
             @media #{$narrow-screen} {
                 margin: $flex-gap-y 0 0;
             }
+        }
+    }
+
+    // Special system notice in the center of the header.
+    .notice-area {
+
+        flex-wrap: wrap;
+        flex:      1 1 auto;
+
+        &.center {
+
+            max-width: 50%;
+
+            @media #{$not-wide-screen} {
+                display: none;
+            }
+        }
+
+        &.bottom {
+
+            min-width: 100%;
+
+            @media #{$wide-screen} {
+                display: none;
+            }
+            @media #{$medium-width} {
+                margin-top: 0.5rem;
+            }
+            @media #{$narrow-screen} {
+                margin-top: 1.5rem;
+            }
+        }
+
+        > * {
+            width:       100%;
+            text-align:  center;
+            color:       $uva-accent-yellow;
+        }
+
+        a {
+            text-decoration: underline;
+        }
+
+        .title {
+            text-transform: uppercase;
+        }
+
+        .text {
+            font-size: large;
         }
     }
 

@@ -5,6 +5,16 @@
   # noinspection RubyUnusedLocalVariable
   skip ||= false and return
 
+  notice =
+    unless production_deployment?
+      title = "#{application_deployment} system".capitalize
+      text  = 'This system is for development and deployment staging.'
+      link  = link_to('production EMMA system', PRODUCTION_BASE_URL)
+      html_div(title, class: 'title') <<
+      html_div(text,  class: 'text')  <<
+      html_div(class: 'text') { h('Switch to the ') << link }
+    end
+
   username     = current_user.to_s
   username_tip = t('emma.user.tooltip', user: username)
   session_link = current_user ? sign_out_link : sign_in_link
@@ -16,9 +26,15 @@
     <%= logo_element %>
     <div class="tagline"><%= logo_tagline -%></div>
   </div>
+  <%- if notice -%>
+    <div class="notice-area center"><%= notice %></div>
+  <%- end -%>
   <div class="control-area">
     <div class="user" title="<%= username_tip -%>"><%= username -%></div>
     <%= help_popup(:sign_in, left_grab: true) unless signed_in? %>
     <div class="session"><%= session_link -%></div>
   </div>
+  <%- if notice -%>
+    <div class="notice-area bottom"><%= notice %></div>
+  <%- end -%>
 </div>
