@@ -144,10 +144,11 @@ en:
           visual:                   'Visual'
 
         SearchSort:
+          relevance:                'Relevance'
           title:                    'Title'
           sortDate:                 'Date'
           lastRemediationDate:      'Last Remediation Date'
-          _default:                 title
+          _default:                 relevance
 
         # =====================================================================
         # From "FRAME Metadata Worksheet" (rev 4.0) but not in the index

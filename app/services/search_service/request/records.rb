@@ -211,6 +211,7 @@ module SearchService::Request::Records
       if result.key?(:publisher) && result.except(*NON_PUBLISHER_SEARCH).blank?
         result[encode_parameter(:format)] = DublinCoreFormat.values
       end
+      result.delete(:sort) if result[:sort] == SearchSort.default
     end
   end
 

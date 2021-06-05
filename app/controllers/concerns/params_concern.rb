@@ -194,38 +194,27 @@ module ParamsConcern
   # @see LayoutHelper#sort_menu
   #
   def resolve_sort
+    return if %w(search upload).include?(params[:controller].to_s.downcase)
+
     changed = false
 
-    if params[:controller].to_s.casecmp?('search')
-
-      # Relevance is the default sort but the Unified Search API doesn't
-      # actually accept it as a sort type.
-      if params[:sort].to_s.casecmp?('relevance')
-        params.delete(:sort)
-        changed = true
+    # Remember current search parameters.
+    ss   = session_section
+    keys = SEARCH_KEYS
+    keys += SEARCH_SORT_KEYS if params[:sort].blank?
+    keys.each do |key|
+      ss_key = key.to_s
+      if params[key].present?
+        ss[ss_key] = params[key]
+      else
+        ss.delete(ss_key)
       end
+    end
 
-    else
-
-      # Remember current search parameters.
-      ss   = session_section
-      keys = SEARCH_KEYS
-      keys += SEARCH_SORT_KEYS if params[:sort].blank?
-      keys.each do |key|
-        ss_key = key.to_s
-        if params[key].present?
-          ss[ss_key] = params[key]
-        else
-          ss.delete(ss_key)
-        end
-      end
-
-      # Process the menu-generated :sort parameter.
-      if (sort = params.delete(:sort))
-        set_sort_params(sort)
-        changed = true
-      end
-
+    # Process the menu-generated :sort parameter.
+    if (sort = params.delete(:sort))
+      set_sort_params(sort)
+      changed = true
     end
 
     will_redirect if changed
@@ -236,7 +225,7 @@ module ParamsConcern
   # @return [void]
   #
   def initialize_menus
-    return if params[:controller].to_s.casecmp?('upload')
+    return if %w(search upload).include?(params[:controller].to_s.downcase)
     ss = session_section
     SEARCH_KEYS.each do |key|
       ss_value = ss[key.to_s]

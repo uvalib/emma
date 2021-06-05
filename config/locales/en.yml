@@ -259,7 +259,7 @@ en:
         tooltip:        'Specify the order in which results are presented'
         placeholder:    ~
         values:         !ruby/symbol SearchSort # NOTE: Override per-controller
-        default:        title
+        default:        relevance
         multiple:       false
         reverse:
           enabled:      false

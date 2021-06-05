@@ -157,9 +157,9 @@ module SearchConcern
         else                           last.dc_title                 # NOTE [3]
       end
     )
-    # NOTE [1] :relevance isn't a real option
+    # NOTE [1] documentation doesn't actually cover the "default" sort case
     # NOTE [2] not per documentation, but why not?
-    # NOTE [3] assuming :title is the default sort.
+    # NOTE [3] assuming :relevance is the default sort
 
     # Internal-use parameters.
     opt[:immediate_search] = immediate_search?.presence
