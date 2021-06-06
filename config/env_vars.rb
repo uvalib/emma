@@ -9,11 +9,23 @@ require_relative 'boot'
 require 'tmpdir'
 
 # =============================================================================
+# Remove blank environment variables
+# =============================================================================
+
+ENV.keys.each do |k|
+  next unless ENV[k].is_a?(String)
+  ENV[k] = ENV[k].strip
+  ENV.delete(k) if ENV[k].empty?
+end
+
+# =============================================================================
 # Database properties
 # =============================================================================
 
 db_needed   = rails_application?
 db_needed ||= rake_task? && $*.any? { |arg| arg.split(':').include?('db') }
+
+$stderr.puts "*** ENV = #{ENV.inspect}" if db_needed && rake_task? # TODO: remove eventually
 
 # DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in
 # terraform-infrastructure/emma.lib.virginia.edu/ecs-tasks/*/environment.vars
@@ -23,12 +35,6 @@ db_needed ||= rake_task? && $*.any? { |arg| arg.split(':').include?('db') }
 # in order to derive the missing value(s).
 
 if db_needed
-
-  %w(DBHOST DBPORT DBNAME DBUSER DBPASSWD).each do |var|
-    next unless ENV.key?(var)
-    ENV[var] = ENV[var].to_s.strip
-    ENV.delete(var) if ENV[var].empty?
-  end
 
   if in_local_docker? && File.exist?('/mnt/environment.rb')
 
@@ -43,6 +49,8 @@ if db_needed
     # This condition won't hold from the deployed application using Terraform
     # environment.vars, but it will for the specific case of the database
     # migration run within the uva-emma-production-deploy-codepipeline.
+
+    ENV['DEPLOYMENT'] ||= 'production'
 
   else
 
