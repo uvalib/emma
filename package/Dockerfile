@@ -17,7 +17,6 @@ RUN apk upgrade && \
     gcompat \
     git \
     libxslt-dev \
-    mariadb-dev \
     nodejs \
     postgresql-client \
     postgresql-dev \
