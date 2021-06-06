@@ -25,8 +25,6 @@ end
 db_needed   = rails_application?
 db_needed ||= rake_task? && $*.any? { |arg| arg.split(':').include?('db') }
 
-$stderr.puts "*** ENV = #{ENV.inspect}" if db_needed && rake_task? # TODO: remove eventually
-
 # DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in
 # terraform-infrastructure/emma.lib.virginia.edu/ecs-tasks/*/environment.vars
 # (or the local "environment.rb" if running on the desktop).

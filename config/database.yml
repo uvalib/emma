@@ -1,28 +1,6 @@
 # config/database.yml
 
 # =============================================================================
-# MySQL adapter settings
-# =============================================================================
-
-_db_mysql:                                                            &DB_MYSQL
-  adapter:  mysql2
-  encoding: utf8
-  host:     <%= ENV['DBHOST'] %>
-  port:     <%= ENV['DBPORT'] %>
-  database: <%= ENV['DBNAME'] %>
-  username: <%= ENV['DBUSER'] %>
-  password: <%= ENV['DBPASSWD'] %>
-
-_db_mysql_prod:                                                  &DB_MYSQL_PROD
-  <<: *DB_MYSQL
-
-_db_mysql_dev:                                                    &DB_MYSQL_DEV
-  <<: *DB_MYSQL
-
-_db_mysql_test:                                                  &DB_MYSQL_TEST
-  <<: *DB_MYSQL
-
-# =============================================================================
 # PostgreSQL adapter settings - https://www.postgresql.org/docs/11/index.html
 # =============================================================================
 
@@ -62,13 +40,13 @@ _db_postgres_test:                                            &DB_POSTGRES_TEST
 # =============================================================================
 
 production:
-  <<: <%= "*DB_#{ENV['DATABASE'] || 'mysql'}_PROD".upcase %>
+  <<: *DB_POSTGRES_PROD
 
 development:
-  <<: <%= "*DB_#{ENV['DATABASE'] || 'mysql'}_DEV".upcase %>
+  <<: *DB_POSTGRES_DEV
 
 test:
-  <<: <%= "*DB_#{ENV['DATABASE'] || 'mysql'}_TEST".upcase %>
+  <<: *DB_POSTGRES_TEST
 
 # WARNING: The test database will be erased every time "rake test" is run.
 # NOTE: Do not set use the same database for either development or production.
