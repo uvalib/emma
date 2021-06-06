@@ -24,7 +24,7 @@ db_needed ||= rake_task? && $*.any? { |arg| arg.split(':').include?('db') }
 
 if db_needed
 
-  if in_local_docker?
+  if in_local_docker? && File.exist?('/mnt/environment.rb')
 
     # To acquire desktop environment values, the RubyMine Docker configuration
     # needs a "Bind Mount" with "/home/rwl/Work/emma/.idea:/mnt:ro"; i.e.:
