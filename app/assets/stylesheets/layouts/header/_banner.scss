@@ -51,11 +51,12 @@
     .notice-area {
 
         flex-wrap: wrap;
-        flex:      1 1 auto;
+        flex:      0 1 auto;
 
         &.center {
 
-            max-width: 50%;
+            max-width:  33%;
+            margin-top: -0.5rem;
 
             @media #{$not-wide-screen} {
                 display: none;
@@ -106,7 +107,7 @@
         max-width:       50%;
         margin-top:      auto;
         margin-left:     $page-padding-x;
-        flex:            1 1 auto;
+        flex:            0 1 auto;
 
         @media #{$narrow-screen} {
             margin-top:    0;

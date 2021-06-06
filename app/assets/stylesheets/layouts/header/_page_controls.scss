@@ -54,13 +54,19 @@
         $page-control-gap-y: calc(#{$gap-y} / 2);
 
         width:           max-content;
+        max-width:       100%;
         margin-bottom:   2vh;
         flex-wrap:       wrap;
         justify-content: flex-start;
         align-items:     baseline;
 
+        @media #{$medium-width} {
+            max-width:     98%;
+            margin-bottom: 1vh;
+        }
+
         @media #{$narrow-screen} {
-            max-width: 95%;
+            max-width:     95%;
         }
 
         //=====================================================================
@@ -69,8 +75,10 @@
 
         // noinspection CssReplaceWithShorthandSafely
         .label {
-            margin:      $page-control-gap-y $page-control-gap-x;
-            margin-left: 0;
+            margin-top:    $page-control-gap-y;
+            margin-bottom: $gap-y;
+            margin-left:   0;
+            margin-right:  $page-control-gap-x;
         }
 
         .controls {
