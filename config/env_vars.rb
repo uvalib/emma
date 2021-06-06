@@ -24,6 +24,12 @@ db_needed ||= rake_task? && $*.any? { |arg| arg.split(':').include?('db') }
 
 if db_needed
 
+  %w(DBHOST DBPORT DBNAME DBUSER DBPASSWD).each do |var|
+    next unless ENV.key?(var)
+    ENV[var] = ENV[var].to_s.strip
+    ENV.delete(var) if ENV[var].empty?
+  end
+
   if in_local_docker? && File.exist?('/mnt/environment.rb')
 
     # To acquire desktop environment values, the RubyMine Docker configuration
@@ -31,6 +37,12 @@ if db_needed
     # "docker run --mount type=bind,src=/home/rwl/Work/.idea,dst=/mnt,readonly"
 
     require '/mnt/environment.rb'
+
+  elsif ENV['DBHOST'] && ENV['DBPORT'] && ENV['DBUSER'] && ENV['DBPASSWD']
+
+    # This condition won't hold from the deployed application using Terraform
+    # environment.vars, but it will for the specific case of the database
+    # migration run within the uva-emma-production-deploy-codepipeline.
 
   else
 
