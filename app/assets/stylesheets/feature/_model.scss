@@ -148,6 +148,7 @@ $data-list-border-color: none;
     .number {
 
         font-family: $font-condensed;
+        cursor:      text;
 
         // Sticky container which keeps the item number and icon tray in view
         // as the item is scrolled off the top of the screen.

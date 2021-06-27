@@ -195,6 +195,7 @@ $sticky-top-narrow:     3.125rem;
                 border-right-color:  black;
                 border-bottom-color: black;
                 border-radius:       $element-x-padding / 2;
+                cursor:              text;
 
                 // noinspection CssReplaceWithShorthandSafely
                 @media #{$not-narrow-screen} {
