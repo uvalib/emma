@@ -46,41 +46,36 @@ module Emma::Common
 
   # Interpret *value* as a positive integer.
   #
-  # @param [String, Symbol, Numeric, nil] value
+  # @param [String, Symbol, Numeric, *] value
   #
   # @return [Integer]
   # @return [nil]                     If *value* <= 0 or not a number.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def positive(value)
     result =
       case value
-        when Integer then value
-        when Numeric then value.round
-        else              value.to_s.to_i
+        when Integer        then value
+        when Numeric        then value.round
+        when String, Symbol then value.to_s.to_i
+        else                     0
       end
     result if result.positive?
   end
 
   # Interpret *value* as zero or a positive integer.
   #
-  # @param [String, Symbol, Numeric, nil] value
+  # @param [String, Symbol, Numeric, *] value
   #
   # @return [Integer]
   # @return [nil]                     If *value* < 0 or not a number.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def non_negative(value)
-    return if value.blank?
     result =
       case value
-        when Integer then value
-        when Numeric then value.round
-        else              value.to_s.to_i
+        when Integer        then value
+        when Numeric        then value.round
+        when String, Symbol then value.to_s.to_i
+        else                     0
       end
     result unless result.negative?
   end
@@ -601,6 +596,26 @@ module Emma::Common
 
   public
 
+  # Translate a item into a class.
+  #
+  # @param [Symbol, String, Class, nil] name
+  #
+  # @return [Class]
+  # @return [nil]
+  #
+  def to_class(name)
+    # noinspection RubyYardReturnMatch
+    return name if name.nil? || name.is_a?(Class)
+    c = name.to_s.underscore.delete_suffix('_controller').classify
+    c.safe_constantize or Log.warn { "#{__method__}: #{name.inspect} invalid" }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   INFLECT_SINGULAR = %i[single singular singularize].freeze
   INFLECT_PLURAL   = %i[plural pluralize].freeze
 
@@ -886,7 +901,9 @@ module Emma::Common
   # The re-raise will happen only when running on the desktop.
   #
   def re_raise_if_internal_exception(error)
-    raise error if internal_exception?(error)
+    return unless internal_exception?(error)
+    Log.warn { "RE-RAISING INTERNAL EXCEPTION #{error}" }
+    raise error
   end
     .tap { |meth| neutralize(meth) if application_deployed? }
 
