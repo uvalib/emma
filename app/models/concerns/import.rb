@@ -170,7 +170,7 @@ module Import
       v = v.compact_blank
       v = (first || !join) ? v.first : v.join(join)
     end
-    v.presence
+    v.to_s.strip.presence
   end
 
   # Transform a data item into a counting number (1 or greater).
@@ -180,8 +180,8 @@ module Import
   # @return [Integer, nil]
   #
   def ordinal_value(v)
-    v = string_value(v).to_i
-    v if v.positive?
+    v = string_value(v)
+    positive(v)
   end
 
   # Transform a date data item into a four-digit year.
@@ -191,9 +191,10 @@ module Import
   # @return [String, nil]
   #
   def year_value(v)
-    v = string_value(v)
-    v = Date.parse(v) rescue nil
-    '%04d' % v.year if v.respond_to?(:year)
+    year = string_value(v)
+    return year if year.nil? || year.match?(/^\d{4}$/)
+    date = Date.parse(year) rescue return
+    '%04d' % date.year
   end
 
   # Transform a data item into one or more three-character ISO 639 values.
