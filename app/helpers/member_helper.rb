@@ -113,7 +113,7 @@ module MemberHelper
   #
   def member_history_title(label, opt = nil)
     css_selector  = '.list-heading'
-    opt, html_opt = partition_options(opt, :level)
+    opt, html_opt = partition_hash(opt, :level)
     label ||= t('emma.member.history.title')
     html_tag(opt[:level], h(label), prepend_classes!(html_opt, css_selector))
   end

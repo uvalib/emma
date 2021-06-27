@@ -10,7 +10,7 @@
   help  ||= help_popup(:search)
 
   page_opt = SearchTermsHelper::NON_SEARCH_KEYS
-  page_terms, search = partition_options(terms, *page_opt)
+  page_terms, search = partition_hash(terms, *page_opt)
   page   = page_terms[:page]&.values&.first&.to_i || 1
   search = search.presence
 

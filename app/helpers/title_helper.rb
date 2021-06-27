@@ -73,7 +73,7 @@ module TitleHelper
   def thumbnail(item, link: false, **opt)
     return unless item
     css_selector  = '.thumbnail'
-    opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
+    opt, html_opt = partition_hash(opt, :alt, *ITEM_ENTRY_OPT)
     prepend_classes!(html_opt, css_selector)
     # noinspection RailsParamDefResolve
     if (url = item.try(:thumbnail_image)).present?
@@ -107,7 +107,7 @@ module TitleHelper
   #
   def cover_image(item, link: false, **opt)
     css_selector  = '.cover-image'
-    opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
+    opt, html_opt = partition_hash(opt, :alt, *ITEM_ENTRY_OPT)
     prepend_classes!(html_opt, css_selector)
     html_opt[:'data-group'] = opt[:group] if opt[:group].present?
     # noinspection RailsParamDefResolve

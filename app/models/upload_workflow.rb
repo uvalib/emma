@@ -1131,8 +1131,8 @@ module UploadWorkflow::External
     record, data = [nil, record] if record.is_a?(Hash)
     unless record.is_a?(Upload)
       if data.is_a?(Hash)
-        opt, data = partition_options(data, :no_raise, :meth)
-        ids, data = partition_options(data, :id, :submission_id)
+        opt, data = partition_hash(data, :no_raise, :meth)
+        ids, data = partition_hash(data, :id, :submission_id)
         id   = record || ids.values.first
       else
         opt  = {}

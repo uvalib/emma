@@ -509,7 +509,7 @@ module FlashHelper
   def flash_format(*args, topic: nil, **opt)
     meth = (args.shift if args.first.is_a?(Symbol))
     excp = (args.shift if args.first.is_a?(Exception))
-    local, opt = partition_options(opt, :inspect, :status, :log, :trace, :meth)
+    local, opt = partition_hash(opt, :inspect, :status, :log, :trace, :meth)
 
     meth ||= local[:meth]
     status = local[:status]

@@ -82,7 +82,7 @@ module ModelHelper
   # @yieldreturn [String]
   #
   def model_link(item, **opt)
-    opt, html_opt = partition_options(opt, *MODEL_LINK_OPTIONS)
+    opt, html_opt = partition_hash(opt, *MODEL_LINK_OPTIONS)
     label = opt[:label] || :label
     label = item.send(label) if label.is_a?(Symbol)
     if opt[:no_link]
@@ -130,7 +130,7 @@ module ModelHelper
   #
   def search_links(item, **opt)
 
-    opt, html_opt = partition_options(opt, *SEARCH_LINKS_OPTIONS)
+    opt, html_opt = partition_hash(opt, *SEARCH_LINKS_OPTIONS)
     meth  = opt[:method]
     field = (opt[:field] || :title).to_s
     case field
@@ -199,7 +199,7 @@ module ModelHelper
   #
   def search_link(terms, **opt)
     terms = terms.to_s.strip.presence or return
-    opt, html_opt = partition_options(opt, *SEARCH_LINK_OPTIONS)
+    opt, html_opt = partition_hash(opt, *SEARCH_LINK_OPTIONS)
     field = opt[:field] || :title
 
     # Generate the link label.
@@ -258,7 +258,7 @@ module ModelHelper
   #
   def record_links(links, **opt)
     css_selector  = '.external-link'
-    opt, html_opt = partition_options(opt, :no_link, :separator)
+    opt, html_opt = partition_hash(opt, :no_link, :separator)
     prepend_classes!(html_opt, css_selector)
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     no_link   = opt[:no_link]
@@ -983,7 +983,7 @@ module ModelHelper
   # @see #DARK_HEAD
   #
   def model_table(list, **opt)
-    opt, html_opt = partition_options(opt, *MODEL_TABLE_OPTIONS)
+    opt, html_opt = partition_hash(opt, *MODEL_TABLE_OPTIONS)
     opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
     model        = opt.delete(:model)&.to_s || 'model'
     css_selector = ".#{model}-table"
@@ -1482,7 +1482,7 @@ module ModelHelper
     css_selector = '.menu.single'
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
-    opt, html_opt = partition_options(opt, :readonly, :base, :name)
+    opt, html_opt = partition_hash(opt, :readonly, :base, :name)
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
     prepend_classes!(html_opt, css_selector)
@@ -1523,7 +1523,7 @@ module ModelHelper
     css_selector = '.menu.multi'
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
-    opt, html_opt = partition_options(opt, :id, :readonly, :base, :name)
+    opt, html_opt = partition_hash(opt, :id, :readonly, :base, :name)
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
     prepend_classes!(html_opt, css_selector)
@@ -1692,7 +1692,7 @@ module ModelHelper
   #
   def render_field_item(name, value, **opt)
     normalize_attributes!(opt)
-    opt, html_opt = partition_options(opt, :base, :name, :model)
+    opt, html_opt = partition_hash(opt, :base, :name, :model)
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
     value = Array.wrap(value).compact_blank
@@ -1740,7 +1740,7 @@ module ModelHelper
   #
   def render_check_box(name, value, **opt)
     css_selector  = '.checkbox.single'
-    opt, html_opt = partition_options(opt, *CHECK_OPTIONS)
+    opt, html_opt = partition_hash(opt, *CHECK_OPTIONS)
     normalize_attributes!(opt)
 
     # Checkbox control.

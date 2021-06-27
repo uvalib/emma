@@ -51,7 +51,7 @@ module I18nHelper
   # @return [String]
   #
   def unit_of(controller, **opt)
-    opt, i18n_opt = partition_options(opt, :plural, :capitalize)
+    opt, i18n_opt = partition_hash(opt, :plural, :capitalize)
     plural  = opt.key?(:plural) ? opt[:plural] : (i18n_opt[:count].to_i > 1)
     capital = opt[:capitalize]
     result  = units_of(controller, **i18n_opt)
@@ -102,7 +102,7 @@ module I18nHelper
   # @return [nil]                             No non-empty value was found.
   #
   def i18n_lookup(controller, partial_path, *defaults, **opt)
-    opt, i18n_opt = partition_options(opt, :mode, :one, :many, :default)
+    opt, i18n_opt = partition_hash(opt, :mode, :one, :many, :default)
     partial_path = partial_path.join('.') if partial_path.is_a?(Array)
     keys =
       [partial_path, *defaults, *opt.delete(:default)].flat_map { |key|
@@ -215,7 +215,7 @@ module I18nHelper
   # noinspection RubyNilAnalysis
   #++
   def i18n_interpolations(controller: nil, action: nil, **opt)
-    opt, i18n_opt = partition_options(opt, :long, :brief, :count, :plural)
+    opt, i18n_opt = partition_hash(opt, :long, :brief, :count, :plural)
     i18n_opt[:default] = single = plural = no_single = no_plural = nil
     if opt.key?(:plural)
       no_plural = !opt[:plural]
@@ -262,6 +262,8 @@ module I18nHelper
   #
   # @param [String] path
   # @param [Hash]   opt               Passed to I18n#translate.
+  #
+  # @return [*]
   #
   def i18n_erb(path, **opt)
     result = I18n.t(path, **opt)

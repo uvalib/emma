@@ -258,7 +258,7 @@ module Import::IaBulk
     # If :download was not provided but :identifier and :contributed_file were
     # then construct the download link.
     unless fields[:file_path]
-      path, fields = partition_options(fields, :identifier, :contributed_file)
+      path, fields = partition_hash(fields, :identifier, :contributed_file)
       if path[:identifier] && path[:contributed_file]
         fields[:file_path] = [IA_DOWNLOAD_BASE_URL, *path.values].join('/')
       else

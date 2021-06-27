@@ -129,7 +129,7 @@ module HeadHelper::MetaTags
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_meta_tags(opt = nil)
-    opt, html_opt = partition_options(opt, :tag_separator)
+    opt, html_opt = partition_hash(opt, :tag_separator)
     tag_separator = opt[:tag_separator] || META_TAG_SEPARATOR
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
     @page_meta_tags.map { |key, value|
@@ -182,7 +182,7 @@ module HeadHelper::MetaTags
   # @return [nil]                             If the tag would be a "no-op".
   #
   def emit_meta_tag(key, value, opt = nil)
-    opt, html_opt = partition_options(opt, *EMIT_META_TAG_OPTIONS)
+    opt, html_opt = partition_hash(opt, *EMIT_META_TAG_OPTIONS)
     list_separator =
       opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR
 

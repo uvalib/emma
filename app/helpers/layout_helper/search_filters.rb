@@ -730,7 +730,7 @@ module LayoutHelper::SearchFilters
   #++
   def menu_control(menu_name, target: nil, selected: nil, label_id: nil, **opt)
     css_selector  = '.menu-control'
-    opt, html_opt = partition_options(opt, :config, :default, *MENU_OPTS)
+    opt, html_opt = partition_hash(opt, :config, :default, *MENU_OPTS)
     target    = search_target(target) or return
     config    = opt[:config]  || current_menu_config(menu_name, target: target)
     pairs     = config[:menu] || []
@@ -902,7 +902,7 @@ module LayoutHelper::SearchFilters
   # @see HtmlHelper#grid_cell_classes
   #
   def date_control(menu_name, target: nil, selected: nil, label_id: nil, **opt)
-    opt, html_opt = partition_options(opt, :config, :default, *MENU_OPTS)
+    opt, html_opt = partition_hash(opt, :config, :default, *MENU_OPTS)
     css_selector  = '.date-control'
     target    = search_target(target) or return
     config    = opt[:config] || current_menu_config(menu_name, target: target)
@@ -984,7 +984,7 @@ module LayoutHelper::SearchFilters
   #
   def reset_button(**opt)
     css_selector  = '.menu-button.reset.preserve-width'
-    opt, html_opt = partition_options(opt, :url, :class, :label, *MENU_OPTS)
+    opt, html_opt = partition_hash(opt, :url, :class, :label, *MENU_OPTS)
     label = opt[:label] || SEARCH_RESET_CONTROL[:label]
     label = non_breaking(label)
     url   = opt[:url] || reset_parameters
@@ -1027,7 +1027,7 @@ module LayoutHelper::SearchFilters
   #
   def menu_spacer(**opt)
     css_selector  = '.menu-spacer'
-    opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
+    opt, html_opt = partition_hash(opt, :class, *MENU_OPTS)
     html_opt[:'aria-hidden'] = true
     opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
 
@@ -1052,7 +1052,7 @@ module LayoutHelper::SearchFilters
   #
   def control_label(name, target: nil, label: nil, **opt)
     css_selector  = '.menu-label'
-    opt, html_opt = partition_options(opt, :config, *MENU_OPTS)
+    opt, html_opt = partition_hash(opt, :config, *MENU_OPTS)
     config  = opt[:config] || current_menu_config(name, target: target)
     label ||= config[:label]
     return ''.html_safe if label.blank?

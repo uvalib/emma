@@ -242,7 +242,7 @@ module SearchHelper
   # @see #bs_link?
   #
   def source_retrieval_link(item, **opt)
-    opt, html_opt = partition_options(opt, :label, :url)
+    opt, html_opt = partition_hash(opt, :label, :url)
     url = opt[:url] || item.record_download_url
     url = CGI.unescape(url.to_s)
     return if url.blank?

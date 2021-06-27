@@ -96,7 +96,7 @@ module ReadingListHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def reading_list_link(item, **opt)
-    local, opt = partition_options(opt, :readingListId)
+    local, opt = partition_hash(opt, :readingListId)
     id = local[:readingListId] || item.identifier
     opt[:path]    = reading_list_path(id: id)
     opt[:tooltip] = READING_LIST_SHOW_TOOLTIP

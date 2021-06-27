@@ -10,7 +10,7 @@
   help  ||= nil # help_popup(:search_call) # TODO: ???
 
   page_opt = SearchCall::SEARCH_RECORDS_OPTIONS.dup << :group
-  page_terms, search = partition_options(terms, *page_opt)
+  page_terms, search = partition_hash(terms, *page_opt)
   page   = page_terms[:page]&.values&.first&.to_i || 1
   search = search.presence
 

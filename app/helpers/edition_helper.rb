@@ -53,7 +53,7 @@ module EditionHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def edition_link(item, **opt)
-    local, opt = partition_options(opt, :editionId, :edition)
+    local, opt = partition_hash(opt, :editionId, :edition)
     if (eid = local.values.first).present?
       opt[:path]    = "#edition-#{eid}" # TODO: edition show page?
     else

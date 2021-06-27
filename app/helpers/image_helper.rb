@@ -88,7 +88,7 @@ module ImageHelper
     row = positive(row)
     append_classes!(opt, "row-#{row}") if row
     if link.present?
-      opt, link_opt = partition_options(opt, :class, :style)
+      opt, link_opt = partition_hash(opt, :class, :style)
       opt[:'aria-hidden'] ||= true
       link_opt[:tabindex] ||= -1
       # noinspection RubyYardParamTypeMatch

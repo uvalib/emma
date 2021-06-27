@@ -339,7 +339,7 @@ module Emma::Debug
       if args[0..1].any? { |arg| arg.is_a?(Binding) }
 
         # Extract the method and/or binding from *args*.
-        gp_opt, opt = partition_options(opt, :only, :except)
+        gp_opt, opt = partition_hash(opt, :only, :except)
         meth = (args.shift unless args.first.is_a?(Binding))
         bind = (args.shift if args.first.is_a?(Binding))
         meth ||= (bind.eval('__method__') if bind.is_a?(Binding))

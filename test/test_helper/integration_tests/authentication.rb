@@ -142,7 +142,7 @@ module TestHelper::IntegrationTests::Authentication
   # @yieldreturn [void]
   #
   def send_as(verb, user, url, **opt)
-    as_user_opt, assert_opt = partition_options(opt, *RUN_TEST_OPT)
+    as_user_opt, assert_opt = partition_hash(opt, *RUN_TEST_OPT)
     expect = assert_opt.delete(:expect)
     format = assert_opt[:format]
     if html?(format)

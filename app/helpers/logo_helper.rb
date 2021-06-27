@@ -35,7 +35,7 @@ module LogoHelper
   #
   def repository_source_logo(item = nil, opt = nil)
     css_selector  = '.repository.logo'
-    opt, html_opt = partition_options(opt, :source, :name, :logo)
+    opt, html_opt = partition_hash(opt, :source, :name, :logo)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)
     logo = repository_logo(repo)
@@ -61,7 +61,7 @@ module LogoHelper
   #
   def repository_source(item, opt = nil)
     css_selector  = '.repository.name'
-    opt, html_opt = partition_options(opt, :source, :name)
+    opt, html_opt = partition_hash(opt, :source, :name)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)
     if name.present?

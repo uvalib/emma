@@ -195,7 +195,7 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_links(item, **opt)
-    opt, html_opt = partition_options(opt, :fmt, :separator)
+    opt, html_opt = partition_hash(opt, :fmt, :separator)
     format_id = opt[:fmt].presence
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     permitted = can?(:download, Artifact)

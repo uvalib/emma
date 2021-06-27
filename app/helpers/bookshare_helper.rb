@@ -219,7 +219,7 @@ module BookshareHelper
     # they should be satisfied by the options passed in to the method.
     # noinspection RubyYardParamTypeMatch
     if (ref_keys = named_format_references(path)).present?
-      ref_opt, path_opt = partition_options(path_opt, *ref_keys)
+      ref_opt, path_opt = partition_hash(path_opt, *ref_keys)
       ref_opt.compact_blank!
       ref_opt.transform_values! { |v| v.is_a?(String) ? url_escape(v) : v }
       ref_opt[:ids] ||= ref_opt[:id]

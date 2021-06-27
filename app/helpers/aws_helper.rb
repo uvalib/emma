@@ -87,7 +87,7 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_options(opt, :erb, *AWS_RENDER_OPT)
+    opt, render_opt = partition_hash(opt, :erb, *AWS_RENDER_OPT)
     opt.except!(:erb, :html)
     render_opt = s3_bucket_params if render_opt.blank?
     render_opt.merge!(opt)
@@ -109,7 +109,7 @@ module AwsHelper
   # @return [String]                      Otherwise.
   #
   def json_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_options(opt, :erb, *AWS_RENDER_OPT)
+    opt, render_opt = partition_hash(opt, :erb, *AWS_RENDER_OPT)
     for_erb    = opt.delete(:erb)
     render_opt = s3_bucket_params if render_opt.blank?
     render_opt.merge!(opt).merge!(html: false)
@@ -133,7 +133,7 @@ module AwsHelper
   # @return [String]                      Otherwise.
   #
   def xml_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_options(opt, :erb, *AWS_RENDER_OPT)
+    opt, render_opt = partition_hash(opt, :erb, *AWS_RENDER_OPT)
     for_erb    = opt.delete(:erb)
     render_opt = s3_bucket_params if render_opt.blank?
     render_opt.merge!(opt).merge!(html: false)
@@ -195,7 +195,7 @@ module AwsHelper
   #
   def render_s3_bucket(bucket, objects, **opt)
     css_selector  = '.aws-bucket'
-    opt, html_opt = partition_options(opt, *AWS_BUCKET_OPT)
+    opt, html_opt = partition_hash(opt, *AWS_BUCKET_OPT)
     after   = opt[:after]&.to_datetime
     before  = opt[:before]&.to_datetime
     prefix  = opt[:prefix]&.to_s

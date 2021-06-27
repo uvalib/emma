@@ -473,8 +473,8 @@ module AccountHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def account_delete_form(*items, label: nil, **opt)
-    css_selector  = '.account-form-delete'
-    opt, html_opt = partition_options(opt, :cancel)
+    css_selector  = '.account-delete-form'
+    opt, html_opt = partition_hash(opt, :cancel)
     cancel = account_delete_cancel(url: opt[:cancel])
     submit = account_delete_submit(*items, label: label)
     html_div(class: 'account-form-container delete') do

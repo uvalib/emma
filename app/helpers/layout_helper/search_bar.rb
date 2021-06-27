@@ -190,7 +190,7 @@ module LayoutHelper::SearchBar
   #
   def search_bar_row(field, value = nil, first: nil, last: nil, **opt)
     css_selector = '.search-bar-row'
-    id_opt, opt  = partition_options(opt, :target, :unique, :index)
+    id_opt, opt  = partition_hash(opt, :target, :unique, :index)
 
     # Row elements.
     input  = search_bar(field, value, **id_opt)
@@ -251,7 +251,7 @@ module LayoutHelper::SearchBar
     option_tags = options_for_select(pairs, selected)
 
     opt.except!(:field, *MENU_OPTS)
-    id_opt, opt = partition_options(opt, :unique, :index)
+    id_opt, opt = partition_hash(opt, :unique, :index)
 
     prepend_classes!(opt, css_selector)
     opt[:id]           ||= unique_id(css_selector, **id_opt) if id_opt.present?
@@ -277,7 +277,7 @@ module LayoutHelper::SearchBar
   #
   def search_bar(field, value = nil, **opt)
     css_selector = '.search-bar'
-    id_opt, opt  = partition_options(opt, :target, :unique, :index)
+    id_opt, opt  = partition_hash(opt, :target, :unique, :index)
     target = id_opt[:target] ||= search_input_target
     return unless target && show_search_bar?(target)
     prepend_classes!(opt, css_selector)
@@ -321,7 +321,7 @@ module LayoutHelper::SearchBar
   def search_row_control(operation, **opt)
     css_selector = ".search-row-control.#{operation}"
     opt.except!(:field, :target)
-    id_opt, opt = partition_options(opt, :unique, :index)
+    id_opt, opt = partition_hash(opt, :unique, :index)
     opt[:id] ||= unique_id(css_selector, **id_opt)
     prepend_classes!(opt, css_selector)
     icon_button(**opt)
@@ -443,7 +443,7 @@ module LayoutHelper::SearchBar
     field ||= search_input_field(target)
     field   = field&.to_sym
 
-    id_opt, opt = partition_options(opt, :unique, :index)
+    id_opt, opt = partition_hash(opt, :unique, :index)
     if id_opt.present?
       label_id = unique_id(css_selector, 'label', **id_opt)
       input_id = unique_id(css_selector, **id_opt)
@@ -526,7 +526,7 @@ module LayoutHelper::SearchBar
   #
   def search_clear_button(**opt)
     css_selector = '.search-clear'
-    id_opt, opt  = partition_options(opt, :unique, :index)
+    id_opt, opt  = partition_hash(opt, :unique, :index)
     opt.except!(:field, *MENU_OPTS)
     prepend_classes!(opt, css_selector)
     opt[:title] ||= 'Clear search terms' # TODO: I18n
@@ -552,7 +552,7 @@ module LayoutHelper::SearchBar
   #
   def search_controls(ctrlr = nil, target: nil, form: nil, **opt)
     css_selector  = '.search-controls'
-    opt, html_opt = partition_options(opt, :only, :except)
+    opt, html_opt = partition_hash(opt, :only, :except)
     target  = search_input_target(ctrlr, target: target)
     buttons = filter(SEARCH_CONTROLS, **opt)
     prepend_classes!(html_opt, css_selector)

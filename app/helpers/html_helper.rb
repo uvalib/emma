@@ -338,7 +338,7 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_table(pairs, **opt)
-    opt, html_opt = partition_options(opt, :wrap, *GRID_OPTS)
+    opt, html_opt = partition_hash(opt, :wrap, *GRID_OPTS)
     wrap = opt.delete(:wrap)
     opt[:row]     ||= 0
     opt[:col]     ||= 0

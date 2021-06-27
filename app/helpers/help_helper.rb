@@ -217,7 +217,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_toc(*topics, **opt)
-    opt, outer_opt = partition_options(opt, :type, :tag, :inner)
+    opt, outer_opt = partition_hash(opt, :type, :tag, :inner)
     link_type = opt[:type]
     outer_tag = opt[:tag] || :ul
     inner_opt = opt[:inner]&.dup || {}

@@ -123,7 +123,7 @@ module TestHelper::Debugging
   # @return [String]
   #
   def show_model(item, **opt)
-    opt, show_opt = partition_options(opt, *SHOW_MODEL_OPT)
+    opt, show_opt = partition_hash(opt, *SHOW_MODEL_OPT)
     details = opt[:reflections] || !opt.key?(:reflections)
     indent  = opt[:indent]|| TEST_DEBUG_INDENT
     not_indented = (indent == TEST_DEBUG_INDENT)
@@ -152,7 +152,7 @@ module TestHelper::Debugging
   # @return [String]
   #
   def show_reflections(item, **opt)
-    opt, show_opt = partition_options(opt, :indent)
+    opt, show_opt = partition_hash(opt, :indent)
     indent = opt[:indent] || TEST_DEBUG_INDENT
     show(**show_opt) do
       item._reflections.map do |key, entry|
@@ -203,7 +203,7 @@ module TestHelper::Debugging
   # @yieldreturn [Array, String, *]
   #
   def show(*items, **opt)
-    model_opt, opt = partition_options(opt, *SHOW_MODEL_OPT)
+    model_opt, opt = partition_hash(opt, *SHOW_MODEL_OPT)
     model_opt[:output] = false
     items += Array.wrap(yield) if block_given?
     items.flatten.map { |item|
@@ -245,7 +245,7 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   def show_pre_send(verb, url, **opt)
-    opt, show_opt = partition_options(opt, *SHOW_PRE_SEND_OPT)
+    opt, show_opt = partition_hash(opt, *SHOW_PRE_SEND_OPT)
     user = opt[:user] || current_user
     verb = opt[:verb] || verb
     url  = opt[:url]  || url
@@ -270,7 +270,7 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   def show_post_send(**opt)
-    opt, show_opt = partition_options(opt, *SHOW_POST_SEND_OPT)
+    opt, show_opt = partition_hash(opt, *SHOW_POST_SEND_OPT)
     resp   = opt[:response] || response
     redir  = resp&.redirection? && resp.redirect_url
     status = opt[:status] || resp&.response_code
@@ -298,7 +298,7 @@ module TestHelper::Debugging
   # @yieldreturn [Hash]
   #
   def show_trace(**opt)
-    opt, show_opt = partition_options(opt, *SHOW_TRACE_OPT)
+    opt, show_opt = partition_hash(opt, *SHOW_TRACE_OPT)
     pairs  = block_given? && yield || {}
     indent = opt[:indent] || ''
     indent = ' ' * indent if indent.is_a?(Integer)
@@ -343,7 +343,7 @@ module TestHelper::Debugging
               # options are passed to the underlying HTTP method call.
               pre_opt = post_opt = {}
               if args.last.is_a?(Hash)
-                trace_opt, opt = partition_options(args.last, *TRACE_OPTIONS)
+                trace_opt, opt = partition_hash(args.last, *TRACE_OPTIONS)
                 if trace_opt.present?
                   pre_opt  = trace_opt.slice(*PRE_OPTIONS)
                   post_opt = trace_opt.slice(*POST_OPTIONS)

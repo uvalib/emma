@@ -109,7 +109,7 @@ module Upload::LookupMethods
   # @see ActiveRecord::Relation#where
   #
   def search_records(*identifiers, **opt)
-    local_opt, opt = partition_options(opt, *SEARCH_RECORDS_OPTIONS)
+    local_opt, opt = partition_hash(opt, *SEARCH_RECORDS_OPTIONS)
     result = SEARCH_RECORDS_TEMPLATE.dup
 
     # Handle the case where a range has been specified which resolves to an

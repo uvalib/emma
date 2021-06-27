@@ -227,7 +227,7 @@ module SearchTermsHelper
         st_opt[:query] = qcfg[prm].present? if st_opt[:config]
         [prm, SearchTerm.new(prm, values, **st_opt)]
       }.to_h
-    queries, filters = partition_options(term_list, *qcfg.keys)
+    queries, filters = partition_hash(term_list, *qcfg.keys)
     queries.merge!(filters)
   end
 

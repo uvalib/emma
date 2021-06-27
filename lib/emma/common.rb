@@ -249,13 +249,32 @@ module Emma::Common
   #--
   # noinspection RubyNilAnalysis
   #++
-  def partition_options(hash, *keys)
+  def partition_hash(hash, *keys)
     hash ||= {}
     hash = request_parameters(hash) if hash.is_a?(ActionController::Parameters)
-    keys = keys.flatten.compact.map(&:to_sym).uniq
-    opt  = hash.slice(*keys)
-    rem  = hash.except(*opt.keys)
-    return opt, rem
+    keys += Array.wrap(yield) if block_given?
+    keys = keys.flatten
+    keys.compact_blank!.map!(&:to_sym).uniq!
+    matches     = hash.slice(*keys)
+    non_matches = hash.except(*matches.keys)
+    return matches, non_matches
+  end
+
+  # Extract the elements identified by *keys* from *hash*.
+  #
+  # @param [ActionController::Parameters, Hash, nil] hash
+  # @param [Array<Symbol>]                           keys
+  #
+  # @return [Hash]                    The elements removed from *hash*.
+  #
+  def partition_hash!(hash, *keys)
+    hash ||= {}
+    hash = request_parameters(hash) if hash.is_a?(ActionController::Parameters)
+    keys += Array.wrap(yield) if block_given?
+    keys = keys.flatten
+    keys.compact_blank!.map!(&:to_sym).uniq!
+    # noinspection RubyNilAnalysis, RubyYardReturnMatch
+    hash.slice(*keys).tap { |matches| hash.except!(*matches.keys) }
   end
 
   # Recursively remove blank items from a hash.

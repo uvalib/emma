@@ -73,7 +73,7 @@ module Upload::BulkMethods
     return fields if fields.blank? || importer.blank?
 
     known_names = field_names + INDEX_FIELDS + LOCAL_FIELDS
-    known_fields, added_fields = partition_options(fields, *known_names)
+    known_fields, added_fields = partition_hash(fields, *known_names)
       .tap { |k, a| __debug_items { { known_fields: k, added_fields: a } } } # TODO: remove - debugging
     importer.translate_fields(added_fields).merge!(known_fields)
       .tap { |f| __debug_items { { fields: f } } } # TODO: remove - debugging

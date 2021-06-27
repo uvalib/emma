@@ -185,7 +185,7 @@ class Upload < ApplicationRecord
   def assign_attributes(opt)
     __debug_items(binding)
     opt = opt.attributes if opt.is_a?(Upload)
-    control, fields = partition_options(opt, *ASSIGN_CONTROL_OPTIONS)
+    control, fields = partition_hash(opt, *ASSIGN_CONTROL_OPTIONS)
     mode = ASSIGN_MODES.find { |m| control[m].present? }
 
     # Handle the :reset case separately.  If any of the fields to reset are
@@ -220,7 +220,7 @@ class Upload < ApplicationRecord
     fields   = import_transform(fields, control[:importer]) if importer
 
     # Database fields go into *attr*; the remainder is file and EMMA data.
-    attr, data = partition_options(fields, *field_names)
+    attr, data = partition_hash(fields, *field_names)
 
     # For consistency, make sure that only the appropriate fields are being
     # updated depending on the workflow state of the item.
@@ -238,7 +238,7 @@ class Upload < ApplicationRecord
       allowed << :created_at
       allowed << :id if self[:id].nil?
     end
-    attr, rejected = partition_options(attr, *allowed)
+    attr, rejected = partition_hash(attr, *allowed)
     log_ignored('rejected attributes', rejected) if rejected.present?
 
     # For :user_id, normalize to a 'user' table reference.  If editing,

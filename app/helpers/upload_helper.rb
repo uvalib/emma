@@ -1175,7 +1175,7 @@ module UploadHelper
   #
   def upload_delete_form(*items, label: nil, **opt)
     css_selector  = '.file-upload-delete'
-    opt, html_opt = partition_options(opt, *UPLOAD_DELETE_FORM_OPTIONS)
+    opt, html_opt = partition_hash(opt, *UPLOAD_DELETE_FORM_OPTIONS)
     cancel = upload_delete_cancel(url: opt.delete(:cancel))
     submit = upload_delete_submit(*items, **opt.merge!(label: label))
     html_div(class: 'file-upload-container delete') do
@@ -1203,7 +1203,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_delete_submit(*items, **opt)
-    p_opt, opt = partition_options(opt, *UPLOAD_DELETE_SUBMIT_OPTIONS)
+    p_opt, opt = partition_hash(opt, *UPLOAD_DELETE_SUBMIT_OPTIONS)
     ids = Upload.compact_ids(*items).join(',')
     url =
       if ids.present?
@@ -1337,7 +1337,7 @@ module UploadHelper
   def bulk_upload_form(label: nil, action: nil, **opt)
     css_selector = '.file-upload-bulk'
     action = (action || params[:action])&.to_sym
-    opt, form_opt = partition_options(opt, *BULK_UPLOAD_FORM_OPTIONS)
+    opt, form_opt = partition_hash(opt, *BULK_UPLOAD_FORM_OPTIONS)
     opt[:prefix] ||= title_prefix
     opt[:batch]  ||= batch_size
 
@@ -1480,7 +1480,7 @@ module UploadHelper
     css_selector  = '.file-upload-bulk.delete'
     action        = :bulk_delete
     ids           = Array.wrap(ids).compact.presence
-    opt, form_opt = partition_options(opt, *BULK_DELETE_FORM_OPTIONS)
+    opt, form_opt = partition_hash(opt, *BULK_DELETE_FORM_OPTIONS)
 
     opt[:force]     = force_delete     unless opt.key?(:force)
     opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)

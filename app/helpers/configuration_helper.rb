@@ -124,7 +124,7 @@ module ConfigurationHelper
     fatal:      false,
     **opt
   )
-    opt, i_opt = partition_options(opt, :mode, :one, :many)
+    opt, i_opt = partition_hash(opt, :mode, :one, :many)
     vals = %i[many one]
     mode = opt[:mode]
     if false?(mode) #|| vals.include?(item)

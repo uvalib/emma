@@ -246,7 +246,7 @@ module ApiService::Common
     @verb   = verb.to_s.downcase.to_sym
 
     # Set internal options from parameters or service options.
-    opt, @params = partition_options(opt, :meth, *SERVICE_OPTIONS)
+    opt, @params = partition_hash(opt, :meth, *SERVICE_OPTIONS)
     no_exception = opt[:no_exception] || options[:no_exception]
     no_raise     = opt[:no_raise]     || options[:no_raise] || no_exception
     meth         = opt[:meth]         || calling_method
