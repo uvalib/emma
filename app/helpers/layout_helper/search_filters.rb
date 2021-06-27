@@ -598,8 +598,9 @@ module LayoutHelper::SearchFilters
   # @see PaginationHelper#page_size
   #
   def size_menu(menu_name, **opt)
-    opt[:config]     = current_menu_config(menu_name, **opt)
+    opt[:config]     = config = current_menu_config(menu_name, **opt)
     opt[:default]  ||= opt.dig(:config, :default) || page_size
+    opt[:selected] ||= request_parameters[config[:url_parameter]]
     opt[:selected] ||= opt[:default]
     opt[:selected]   = opt[:selected].first if opt[:selected].is_a?(Array)
     opt[:selected]   = opt[:selected].to_i
@@ -644,7 +645,7 @@ module LayoutHelper::SearchFilters
   # @return [nil]                       Menu is not available in this context.
   #
   def deployment_menu(menu_name, **opt)
-    opt[:config]     = current_menu_config(menu_name, **opt)
+    opt[:config]     = config = current_menu_config(menu_name, **opt)
     opt[:selected] ||= request_parameters[config[:url_parameter]]
     opt[:selected] ||= application_deployment
     opt[:selected]   = opt[:selected].first if opt[:selected].is_a?(Array)
