@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# AwsS3::Message::SubmissionPackage
+# The data and metadata to submit a new remediated variant to a member
+# repository via an AWS bucket pickup location.
 #
 # @attr [String]                        submission_id
 #
@@ -225,6 +226,34 @@ class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
       else
         item.presence
     end
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Create a new SubmissionPackage unless *src* already is one.
+  #
+  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash] record
+  #
+  # @return [AwsS3::Message::SubmissionPackage]
+  #
+  def self.[](record)
+    record.is_a?(self) ? record : new(record)
+  end
+
+  # Normalize to an array of submission records.
+  #
+  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash, Array] records
+  #
+  # @return [Array<AwsS3::Message::SubmissionPackage>]
+  #
+  def self.to_a(records)
+    Array.wrap(records).flatten.map { |record|
+      self[record] if record.present?
+    }.compact
   end
 
 end

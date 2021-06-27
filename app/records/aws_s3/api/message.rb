@@ -20,7 +20,7 @@ class AwsS3::Api::Message < AwsS3::Api::Record
   # Initialize a new instance.
   #
   # @param [Api::Record, Hash, nil] src
-  # @param [Hash]                           opt
+  # @param [Hash]                   opt
   #
   def initialize(src, **opt)
     # noinspection RubyScope

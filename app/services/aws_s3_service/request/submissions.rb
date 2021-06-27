@@ -20,16 +20,16 @@ module AwsS3Service::Request::Submissions
   # Uploads one or more submissions into AWS S3 for the creation of new entries
   # in the member repository.
   #
-  # @param [Array<Upload, Hash>] records
+  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
   #
-  # @return [Array<String>]           Succeeded submissions.
+  # @return [AwsS3::Message::Response]
   #
   def creation_request(*records, **opt)
     opt[:meth] ||= __method__
-    records = records.flatten
-    records.map! { |record| AwsS3::Message::SubmissionPackage.new(record) }
-    put_records(*records, **opt)
+    records   = AwsS3::Message::SubmissionPackage.to_a(records)
+    succeeded = put_records(*records, **opt)
+    AwsS3::Message::Response.new(records, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -40,16 +40,16 @@ module AwsS3Service::Request::Submissions
   # Uploads one or more requests into AWS S3 for the modification of existing
   # member repository entries.
   #
-  # @param [Array<Upload, Hash>] records
+  # @param [Array<AwsS3::Message::ModificationRequest, Upload, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
   #
-  # @return [Array<String>]           Succeeded submissions.
+  # @return [AwsS3::Message::Response]
   #
   def modification_request(*records, **opt)
     opt[:meth] ||= __method__
-    records = records.flatten
-    records.map! { |record| AwsS3::Message::SubmissionPackage.new(record) } # TODO: Make modification requests
-    put_records(*records, **opt)
+    records   = AwsS3::Message::ModificationRequest.to_a(records)
+    succeeded = put_records(*records, **opt)
+    AwsS3::Message::Response.new(records, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -60,16 +60,16 @@ module AwsS3Service::Request::Submissions
   # Uploads one or more requests into AWS S3 for the modification of existing
   # member repository entries.
   #
-  # @param [Array<Upload, Hash>] records
+  # @param [Array<AwsS3::Message::RemovalRequest, Upload, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
   #
-  # @return [Array<String>]           Succeeded submissions.
+  # @return [AwsS3::Message::Response]
   #
   def removal_request(*records, **opt)
     opt[:meth] ||= __method__
-    records = records.flatten
-    records.map! { |record| AwsS3::Message::SubmissionPackage.new(record) } # TODO: Make removal requests
-    put_records(*records, **opt)
+    records   = AwsS3::Message::RemovalRequest.to_a(records)
+    succeeded = put_records(*records, **opt)
+    AwsS3::Message::Response.new(records, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -86,16 +86,16 @@ module AwsS3Service::Request::Submissions
   # Uploads one or more submissions into AWS S3.
   #
   # @param [Array<AwsS3::Message::SubmissionPackage>] items
-  # @param [Hash] opt                 Passed to #api_create.
+  # @param [Hash] opt                                   Passed to #api_create.
   #
-  # @return [Array<String>]           Succeeded submissions.
+  # @return [Array<AwsS3::Message::SubmissionPackage>]  Submitted records.
   #
   def put_records(*items, **opt)
     items = items.flatten
     repo  = opt.delete(:repo)
     opt[:bucket] ||= bucket_for(repo || items.first)
     opt[:meth]   ||= __method__
-    api_create(*items, **opt).map(&:submission_id)
+    api_create(*items, **opt)
   end
     .tap do |method|
       add_api method => {

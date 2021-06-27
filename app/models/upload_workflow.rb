@@ -1372,7 +1372,7 @@ module UploadWorkflow::External
     no_remove:  'Repository removal requests are disabled',
   }.deep_freeze
 
-  # Submit a new item to member repository
+  # Submit a new item to member repository.
   #
   # @param [String]        repo
   # @param [Array<Upload>] data
@@ -1396,13 +1396,15 @@ module UploadWorkflow::External
     return succeeded, failed
   end
 
-  # TODO: request update of an existing member repository entry
+  # Request a change to a prior submission to a member repository.
   #
   # @param [String]        repo
   # @param [Array<Upload>] data
   # @param [Hash]          opt
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
+  #
+  # @note Not currently supported by any member repository.
   #
   def repository_edit(repo, *data, **opt)
     succeeded = []
@@ -1420,13 +1422,15 @@ module UploadWorkflow::External
     return succeeded, failed
   end
 
-  # TODO: request removal of an existing member repository entry
+  # Request deletion of a prior submission to a member repository.
   #
   # @param [String]               repo
   # @param [Array<String,Upload>] data
   # @param [Hash]                 opt
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
+  #
+  # @note Not currently supported by any member repository.
   #
   def repository_remove(repo, *data, **opt)
     succeeded = []

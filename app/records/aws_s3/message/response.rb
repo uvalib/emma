@@ -15,6 +15,9 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   include Emma::Json
 
   schema do
+    has_many :submissions, AwsS3::Message::SubmissionPackage
+    has_many :succeeded
+    has_many :failed
     has_many :messages
   end
 
@@ -26,16 +29,38 @@ class AwsS3::Message::Response < AwsS3::Api::Message
 
   # Initialize a new instance.
   #
-  # @param [Api::Record, Hash, nil] src
-  # @param [Hash]                   opt
+  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash>, nil]  src
+  # @param [Array<AwsS3::Message::SubmissionPackage,String>, nil]         sent
+  # @param [Hash]                                                         opt
   #
-  def initialize(src, **opt)
-    # noinspection RubyScope
+  def initialize(src, sent = nil, **opt)
+    # noinspection RubyScope, RubyYardParamTypeMatch
     create_message_wrapper(opt) do |opt|
-      super(src, **opt)
-      # noinspection RubyYardParamTypeMatch
+      super(nil, **opt)
+      self.submissions = AwsS3::Message::SubmissionPackage.to_a(src)
+      self.succeeded   = sids_for(sent || submissions)
+      self.failed      = sids_for(submissions) - succeeded
+      self.messages   += failed.map { |sid| "#{sid} failed" }
       initialize_error_table(messages, exception)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Translate one or more objects or strings into submission ID's.
+  #
+  # @param [AwsS3::Message::SubmissionPackage, String, Symbol, Array, nil] src
+  #
+  # @return [Array<String>]
+  #
+  def sids_for(src)
+    Array.wrap(src).map { |v|
+      v.try(:submission_id) || v.to_s if v.present?
+    }.compact
   end
 
   # ===========================================================================
