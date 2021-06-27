@@ -70,9 +70,9 @@ module ParamsConcern
   #
   def will_redirect(url = nil)
     if url.present?
-      session['redirect'] = url
+      session['app.redirect'] = url
     else
-      session['redirect'] ||= true
+      session['app.redirect'] ||= true
     end
   end
 
@@ -110,12 +110,12 @@ module ParamsConcern
 
   # The current path stored in the session cookie.
   #
-  # @return [String]                  Value of `session['current_path']`.
-  # @return [nil]                     No 'current_path' found.
+  # @return [String]                  Value of `session['app.current_path']`.
+  # @return [nil]                     No 'app.current_path' found.
   #
   def get_current_path
-    decompress_value(session['current_path']).tap do |path|
-      session.delete('current_path') if path.blank?
+    decompress_value(session['app.current_path']).tap do |path|
+      session.delete('app.current_path') if path.blank?
     end
   end
 
@@ -133,12 +133,12 @@ module ParamsConcern
       when %r{^user/}   then return
     end
     if request.path == root_path
-      session.delete('current_path')
+      session.delete('app.current_path')
     else
       prms = url_parameters.except(:id)
       path = make_path(request.path, prms)
       comp = compress_value(path)
-      session['current_path'] = (path.size <= comp.size) ? path : comp
+      session['app.current_path'] = (path.size <= comp.size) ? path : comp
     end
   end
 
@@ -152,19 +152,19 @@ module ParamsConcern
 
     if true?(debug)
       Log.info("#{__method__}: debug=#{debug.inspect} -> ON")
-      session['debug'] = true
+      session['app.debug'] = true
 
     elsif false?(debug)
       Log.info("#{__method__}: debug=#{debug.inspect} -> OFF")
       if application_deployed?
-        session.delete('debug')
+        session.delete('app.debug')
       else
-        session['debug'] = false
+        session['app.debug'] = false
       end
 
     elsif debug.to_s.casecmp?('reset')
       Log.info("#{__method__}: debug=#{debug.inspect} -> RESET")
-      session.delete('debug')
+      session.delete('app.debug')
 
     else
       Log.warn("#{__method__}: debug=#{debug.inspect} -> UNEXPECTED")
@@ -183,7 +183,7 @@ module ParamsConcern
   def set_origin
     return unless route_request? && (params[:action] == 'index')
     origin = (params[:controller].presence unless request.path == root_path)
-    session['origin'] = origin || 'root'
+    session['app.origin'] = origin || 'root'
   end
 
   # Resolve the menu-generated :sort selection into the appropriate pair of
@@ -273,7 +273,7 @@ module ParamsConcern
   #
   def conditional_redirect
     return unless request.get?
-    path = session.delete('redirect')
+    path = session.delete('app.redirect')
     path = request_parameters if path.is_a?(TrueClass)
     redirect_to(path) if path.present?
   end

@@ -26,13 +26,13 @@ module Devise
 
     public
 
-    # Replace "user_return_to" with "current_path".
+    # Replace "user_return_to" with "app.current_path".
     #
     # @param [*] resource_or_scope
     #
     def stored_location_key_for(resource_or_scope)
       scope = Devise::Mapping.find_scope!(resource_or_scope)
-      (scope == :user) ? 'current_path' : "#{scope}_return_to"
+      (scope == :user) ? 'app.current_path' : "#{scope}_return_to"
     end
 
   end

@@ -112,9 +112,9 @@ module SessionConcern
   # == Implementation Notes
   # This does not use Devise::Controllers::StoreLocation#store_location_for
   # to avoid the potential of overwhelming session store by copying
-  # session['current_path'] into session['user_return_to']. This seems to be
-  # safe because the overridden function seems to be the only place where that
-  # session entry is used.
+  # session['app.current_path'] into session['user_return_to']. This seems to
+  # be safe because the overridden function seems to be the only place where
+  # that session entry is used.
   #
   def after_sign_in_path_for(resource_or_scope)
     path = get_current_path
@@ -225,7 +225,7 @@ module SessionConcern
   # @return [Hash]
   #
   def last_operation
-    session_section('last_op')
+    session_section('app.last_op')
   end
 
   # Time of the last operation performed in this session.
@@ -293,7 +293,7 @@ module SessionConcern
   #
   def debug_user?(user = nil)
     # noinspection RubyYardParamTypeMatch
-    session.key?('debug') &&
+    session.key?('app.debug') &&
       OmniAuth::Strategies::Bookshare.debug_user?(user || current_user)
   end
 =end

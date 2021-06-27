@@ -36,7 +36,7 @@ module SessionDebugHelper
 =begin
   def session_debug?
     on_by_default   = !application_deployed?
-    current_setting = session['debug']
+    current_setting = session['app.debug']
     on_by_default ? !false?(current_setting) : true?(current_setting)
   end
 =end

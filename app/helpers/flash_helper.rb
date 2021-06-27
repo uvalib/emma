@@ -458,6 +458,9 @@ module FlashHelper
   #
   # @return [Integer]
   #
+  # @see ActionDispatch::Flash::RequestMethods#commit_flash
+  # @see ActionDispatch::Flash::FlashHash#to_session_value
+  #
   def flash_space_available
     flashes = session['flash']   || {}
     flashes = flashes['flashes'] || {}
