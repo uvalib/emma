@@ -558,7 +558,8 @@ module UploadWorkflow::Properties
   # @return [Hash, nil]
   #
   def parameters
-    respond_to?(:upload_params) && upload_params || super || {}
+    # noinspection RailsParamDefResolve
+    try(:upload_params) || super || {}
   end
 
   # ===========================================================================

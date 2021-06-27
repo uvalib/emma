@@ -126,8 +126,8 @@ module LayoutHelper::SearchFilters
           when Symbol
             EnumType.pairs_for(values)&.invert
           else
-            val   = (values.pairs.presence  if values.respond_to?(:pairs))
-            val ||= (values.values.presence if values.respond_to?(:values))
+            val   = values.try(:pairs).presence
+            val ||= values.try(:values).presence
             val ||= values
             val.is_a?(Hash) ? val.invert : val
         end

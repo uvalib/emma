@@ -646,7 +646,7 @@ module UploadHelper
       icon:    BANG,
       tip:     'Check for an update to the status of this submission', # TODO: I18n
       path:    :check_upload_path,
-      enabled: ->(item) { item.in_process? if item.respond_to?(:in_process?) },
+      enabled: ->(item) { item.try(:in_process?) },
     },
     edit: {
       icon:    DELTA,
@@ -713,7 +713,7 @@ module UploadHelper
   def upload_action_icon(op, **opt)
     css_selector = '.icon'
     item         = opt.delete(:item)
-    id           = opt.delete(:id) || (item.id if item.respond_to?(:id))
+    id           = opt.delete(:id) || item.try(:id)
     case (enabled = opt.delete(:enabled))
       when nil         then # Enabled if not specified otherwise.
       when true, false then return unless enabled
@@ -750,9 +750,6 @@ module UploadHelper
   #
   # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
-  #--
-  # noinspection RubyResolve
-  #++
   def check_status_popup(item, path, **opt)
     css_selector = '.check-status-popup'
     icon   = opt.delete(:icon)

@@ -77,11 +77,9 @@ module ApiService::Properties
   # @return [String]
   #
   def service_name
+    # noinspection RailsParamDefResolve
     @service_name ||=
-      begin
-        module_name = respond_to?(:name) ? name : self.class.name
-        module_name.underscore.delete_suffix('_service')
-      end
+      (try(:name) || self.class.name).underscore.delete_suffix('_service')
   end
 
   # ===========================================================================

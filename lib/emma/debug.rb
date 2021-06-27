@@ -119,14 +119,13 @@ module Emma::Debug
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
     #--
-    # noinspection RubyNilAnalysis
+    # noinspection RailsParamDefResolve, RubyYardReturnMatch
     #++
     def __debug_session_hash(value = nil)
-      value ||= request       if respond_to?(:request)
+      value ||= try(:request)
       value   = value.session if value.respond_to?(:session)
-      value ||= session       if respond_to?(:session)
+      value ||= try(:session)
       if value.respond_to?(:to_hash)
-        # noinspection RubyYardReturnMatch
         value.to_hash
       elsif value.respond_to?(:each)
         Hash.new.tap { |result| value.each { |k, v| result[k] = v } }
@@ -141,10 +140,10 @@ module Emma::Debug
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
     #--
-    # noinspection RubyNilAnalysis
+    # noinspection RailsParamDefResolve
     #++
     def __debug_env_hash(value = nil)
-      value ||= request if respond_to?(:request)
+      value ||= try(:request)
       value = value.env if value.respond_to?(:env)
       value&.to_hash&.sort&.to_h
     end
@@ -157,13 +156,12 @@ module Emma::Debug
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
     #--
-    # noinspection RubyNilAnalysis
+    # noinspection RailsParamDefResolve, RubyYardReturnMatch
     #++
     def __debug_header_hash(value = nil)
-      value ||= request     if respond_to?(:request)
+      value ||= try(:request)
       value = value.headers if value.respond_to?(:headers)
       if value.respond_to?(:to_hash)
-        # noinspection RubyYardReturnMatch
         value.to_hash
       elsif value.respond_to?(:each)
         Hash.new.tap do |result|
@@ -253,11 +251,11 @@ module Emma::Debug
       output ||=
         case value
           when ActionDispatch::RemoteIp::GetIp then value.to_s
-          when Exception then value.full_message
-          when StringIO  then value.string
-          when STDERR    then :'<STDERR>'
-          when STDOUT    then :'<STDOUT>'
-          else                value.path if value.respond_to?(:path)
+          when Exception                       then value.full_message
+          when StringIO                        then value.string
+          when STDERR                          then :'<STDERR>'
+          when STDOUT                          then :'<STDOUT>'
+          else                                      value.try(:path)
         end
       if output.nil? || output.is_a?(Symbol)
         output = output.to_s
@@ -406,10 +404,13 @@ module Emma::Debug
     #
     # @return [nil]
     #
+    #--
+    # noinspection RailsParamDefResolve
+    #++
     def __debug_route(controller: nil, action: nil, **opt, &block)
       action ||= calling_method
-      leader = __debug_route_label(controller: controller, action: action)
-      prms   = respond_to?(:params) ? params.inspect : 'n/a'
+      leader   = __debug_route_label(controller: controller, action: action)
+      prms     = try(:params)&.inspect || 'n/a'
       __debug_line(leader, "params = #{prms}", opt)
       __debug_items(opt, &block) if block
     end

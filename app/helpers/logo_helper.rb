@@ -87,7 +87,7 @@ module LogoHelper
   # @return [nil]                     If *src* did not indicate a repository.
   #
   #--
-  # noinspection RubyResolve, RubyNilAnalysis
+  # noinspection RubyNilAnalysis
   #++
   def normalize_repository(src)
     return EmmaRepository.default if src.blank?

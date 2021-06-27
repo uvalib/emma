@@ -376,10 +376,9 @@ module TestHelper::SystemTests::Bookshare
   # @return [Array<Hash>]
   #
   def model_fields(type)
-    name  = model_class(type)
-    model = name&.new('{}')
-    fields = {}
-    fields = model.field_definitions if model.respond_to?(:field_definitions)
+    name   = model_class(type)
+    model  = name&.new('{}')
+    fields = model.try(:field_definitions) || {}
     fields.map do |field|
       type = model_field_type(field[:type])
       field.merge(type: type)

@@ -120,7 +120,8 @@ module ReadingListHelper
   # @return [nil]
   #
   def reading_list_subscriptions(item, **opt)
-    subscription = item.respond_to?(:subscription) && item.subscription
+    # noinspection RailsParamDefResolve
+    subscription = item.try(:subscription)
     record_links(subscription.links, opt) if subscription&.enabled
   end
 

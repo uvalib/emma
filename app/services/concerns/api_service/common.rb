@@ -302,9 +302,9 @@ module ApiService::Common
 
   ensure
     log_exception(error, meth: meth) if error
+    # noinspection RailsParamDefResolve
     __debug_line(leader: '<<<') do
-      # noinspection RubyNilAnalysis
-      resp = error.respond_to?(:response) && error.response || @response
+      resp = error.try(:response) || @response
       stat = data = nil
       if resp
         stat ||= resp.http_status if resp.respond_to?(:http_status)
@@ -312,8 +312,7 @@ module ApiService::Common
         data ||= resp.body        if resp.respond_to?(:body)
       end
       if resp.respond_to?(:dig)
-        stat ||= resp[:http_status]
-        stat ||= resp[:status]
+        stat ||= resp[:http_status] || resp[:status]
         data ||= resp[:body]
       end
       [service_name] << @action.inspect << {
@@ -828,10 +827,11 @@ module ApiService::Common
     __debug_line(leader: '!!!') do
       [service_name] << action.inspect << message << error.class
     end
+    # noinspection RailsParamDefResolve
     Log.log(error.is_a?(Api::Error) ? Log::WARN : Log::ERROR) do
       meth ||= 'request'
-      status = %i[http_status status].find { |m| error.respond_to?(m) }
-      status = status && error.send(status)&.inspect || '???'
+      status = error.try(:http_status) || error.try(:status)
+      status = status&.inspect || '???'
       body   = response&.body
       log = ["#{service_name.upcase} #{meth}: #{message}"]
       log << "status #{status}"

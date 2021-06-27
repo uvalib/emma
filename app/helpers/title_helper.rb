@@ -75,8 +75,8 @@ module TitleHelper
     css_selector  = '.thumbnail'
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
     prepend_classes!(html_opt, css_selector)
-    url = item.respond_to?(:thumbnail_image) && item.thumbnail_image
-    if url.present?
+    # noinspection RailsParamDefResolve
+    if (url = item.try(:thumbnail_image)).present?
       id   = item.identifier
       link = title_path(id: id) if link.is_a?(TrueClass)
       link = nil                if link.is_a?(FalseClass)
@@ -110,8 +110,8 @@ module TitleHelper
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
     prepend_classes!(html_opt, css_selector)
     html_opt[:'data-group'] = opt[:group] if opt[:group].present?
-    url = item.respond_to?(:cover_image) && item.cover_image
-    if url.present?
+    # noinspection RailsParamDefResolve
+    if (url = item.try(:cover_image)).present?
       id   = item.identifier
       link = title_path(id: id) if link.is_a?(TrueClass)
       link = nil                if link.is_a?(FalseClass)

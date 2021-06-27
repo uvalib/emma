@@ -237,11 +237,12 @@ module LinkHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def page_menu_label(item, label: nil)
-    label ||= (item.menu_label if item.respond_to?(:menu_label))
+    # noinspection RailsParamDefResolve
+    label ||= item.try(:menu_label)
     label &&= ERB::Util.h(label.to_s)
-    index = ERB::Util.h(item.id.to_s.presence || '?')
-    align = ('&thinsp;&nbsp;' if index.size == 1)
-    index = "Entry #{align}#{index}" # TODO: I18n
+    index   = ERB::Util.h(item.id.to_s.presence || '?')
+    align   = ('&thinsp;&nbsp;' if index.size == 1)
+    index   = "Entry #{align}#{index}" # TODO: I18n
     [index, label].compact.join(' - ').html_safe
   end
 

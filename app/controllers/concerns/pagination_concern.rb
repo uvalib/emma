@@ -130,11 +130,15 @@ module PaginationConcern
   #
   # @see UploadConcern#pagination_finalize
   #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
   def pagination_finalize(list, meth = nil, **search)
-    items = (meth && list.respond_to?(meth)) ? list.send(meth)   : list
-    count = list.respond_to?(:totalResults)  ? list.totalResults : list.size
-    self.page_items  = items || []
-    self.total_items = count || 0
+    items = list
+    items = list.send(meth) if meth && list.respond_to?(meth)
+    items = Array.wrap(items)
+    self.page_items  = items
+    self.total_items = list.try(:totalResults) || items.size
     self.next_page   = next_page_path(**search)
   end
 
@@ -151,7 +155,8 @@ module PaginationConcern
   #
   def next_page_path(list: nil, **url_params)
     list ||= @list || self.page_items
-    if list.respond_to?(:next) && list.next.present?
+    # noinspection RailsParamDefResolve
+    if list.try(:next).present?
 
       # General pagination parameters.
       opt    = url_parameters(url_params).except!(:start)
@@ -176,8 +181,8 @@ module PaginationConcern
 
       make_path(request.path, opt)
 
-    elsif list.respond_to?(:get_link)
-      list.get_link(:next)
+    else
+      list.try(:get_link, :next)
     end
   end
 

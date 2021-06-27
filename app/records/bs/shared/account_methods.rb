@@ -47,10 +47,7 @@ module Bs::Shared::AccountMethods
   # @return [String]
   #
   def identifier
-    result   = (username     if respond_to?(:username))
-    result ||= (emailAddress if respond_to?(:emailAddress))
-    result ||= name
-    result.to_s
+    (try(:username) || try(:emailAddress) || name).to_s
   end
 
 end

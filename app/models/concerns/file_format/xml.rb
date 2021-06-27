@@ -143,7 +143,8 @@ module FileFormat::Xml
   # @return [nil]
   #
   def parse_meta(elem)
-    return unless elem.respond_to?(:name) && (elem.name == 'meta')
+    # noinspection RailsParamDefResolve
+    return unless elem.try(:name) == 'meta'
     attrs = get_attributes(elem)
     key   = make_key(attrs[:property] || attrs[:name])
     value = attrs[:content]  || attrs[:value] || elem.content
@@ -158,9 +159,12 @@ module FileFormat::Xml
   # @return [(Symbol,String)]
   # @return [(Symbol,nil)]
   #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
   def get_properties(elem)
-    name  = elem.respond_to?(:name) ? elem.name : elem.class.name
-    value = (elem.content.to_s.strip if elem.respond_to?(:content))
+    name  = elem.try(:name) || elem.class.name
+    value = elem.try(:content)&.to_s&.strip
     return name, value.presence
   end
 
@@ -174,7 +178,7 @@ module FileFormat::Xml
     return {} unless elem.respond_to?(:attribute_nodes)
     elem.attribute_nodes.map { |node|
       k = node.node_name.to_sym
-      v = (node.value.to_s.strip if node.respond_to?(:value))
+      v = node.try(:value)&.to_s&.strip
       [k, v] if v.present?
     }.compact.to_h
   end
@@ -300,17 +304,12 @@ module FileFormat::Xml
       __debug_line(*args, opt) do
         parts = [meth, filename]
         if element
-          name =
-            if element.respond_to?(:name)
-              element.name.inspect
-            else
-              element.class.name.demodulize
-            end
+          name = element.try(:name)&.inspect || element.class.name.demodulize
           parts << "element #{name}"
         end
         if inner
           attrs = get_attributes(inner)
-          if inner.respond_to?(:name) && (inner.name == 'meta')
+          if inner.try(:name) == 'meta'
             name  = attrs[:property] || attrs[:name]
             value = attrs[:content]  || attrs[:value] || inner.content
           else

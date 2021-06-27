@@ -11,6 +11,8 @@ require 'sanitize'
 #
 module Api::Shared::TitleMethods
 
+  include Emma::Common
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================
@@ -325,14 +327,11 @@ module Api::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
   def get_values(*fields)
+    # noinspection RubyYardReturnMatch
     fields.find { |meth|
-      values = (send(meth) if respond_to?(meth))
-      values &&= Array.wrap(values).map { |v| v.to_s if v.present? }.compact
-      break values if values.present?
+      values = meth && Array.wrap(try(meth)).compact_blank
+      break values.map(&:to_s) if values.present?
     } || []
   end
 

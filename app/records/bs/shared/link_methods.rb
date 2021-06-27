@@ -25,11 +25,10 @@ module Bs::Shared::LinkMethods
   # @return [nil]                     If *rel_name* is not valid or present.
   #
   def get_link(rel_name)
-    return if !respond_to?(:links) || (array = Array.wrap(links)).blank?
-    keys = Array.wrap(rel_name).map(&:to_s).uniq
-    array.find do |link|
-      break link.href.presence if keys.include?(link.rel)
-    end
+    # noinspection RailsParamDefResolve
+    array = Array.wrap(try(:links)).compact.presence or return
+    keys  = Array.wrap(rel_name).map(&:to_s).uniq
+    array.find { |link| break link.href.presence if keys.include?(link.rel) }
   end
 
   # Return the links present in the record.
@@ -45,14 +44,14 @@ module Bs::Shared::LinkMethods
   # @return [nil]                     If links are not valid or present.
   #
   def record_links(**opt)
-    return if !respond_to?(:links) || (array = Array.wrap(links)).blank?
-    keys = Array.wrap(opt[:only]).map(&:to_s).uniq.presence
-    except =
-      Array.wrap(opt[:except]).map(&:to_s).tap { |a|
-        a << 'self' unless opt[:self]
-      }.uniq.presence
+    # noinspection RailsParamDefResolve
+    array  = Array.wrap(try(:links)).compact.presence or return
+    only   = Array.wrap(opt[:only]).compact.map(&:to_s).uniq.presence
+    except = Array.wrap(opt[:except]).compact.map(&:to_s)
+    except << 'self' unless opt[:self]
+    except = except.uniq.presence
     array.map { |link|
-      next if keys && !keys.include?(link.rel)
+      next if only && !only.include?(link.rel)
       next if except&.include?(link.rel)
       link.href.presence
     }.compact

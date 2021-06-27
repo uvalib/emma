@@ -75,16 +75,10 @@ module BookshareService::Request::Organization
   def get_my_organization_member(user:, **opt)
     opt = get_parameters(__method__, **opt)
     opt[:limit] ||= :max
-    username = name_of(user)
-    # noinspection RubyResolve, RubyNilAnalysis
-    acct_id =
-      if user.respond_to?(:userAccountId)
-        user.userAccountId
-      elsif user.is_a?(String)
-        user
-      end
+    username  = name_of(user)
+    # noinspection RailsParamDefResolve
+    acct_id   = user.is_a?(String) ? user : user.try(:userAccountId)
     acct_id &&= CGI.unescape(acct_id)
-    # noinspection RubyResolve
     member =
       get_my_organization_members(**opt).userAccounts.find do |acct|
         (acct.userAccountId.to_s == acct_id) || (acct.identifier == username)

@@ -787,9 +787,6 @@ module ModelHelper
   #
   # @return [(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
   def index_controls(
     list:   nil,
     count:  nil,
@@ -831,9 +828,7 @@ module ModelHelper
   #
   def page_filter(**opt)
     model = opt.delete(:model) || params[:controller]
-    meth  = "#{model}_#{__method__}"
-    # noinspection RubyYardReturnMatch
-    respond_to?(meth) && send(meth, **opt) || ''.html_safe
+    try("#{model}_#{__method__}", **opt) || ''.html_safe
   end
 
   # Render an element containing the ordinal position of an entry within a list
@@ -1178,19 +1173,18 @@ module ModelHelper
   #
   # @return [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def model_field_values(item, columns: nil, default: nil, filter: nil, **)
-    pairs   = item.respond_to?(:attributes) ? item.attributes : item
-    return {} unless pairs.is_a?(Hash)
-    pairs   = pairs.dup
-    columns = Array.wrap(columns || default).compact.map(&:to_s)
-    columns = nil if columns == %w(all)
-    pairs.keep_if { |field, _| columns.include?(field) } if columns.present?
+    # noinspection RailsParamDefResolve
+    pairs = item.try(:attributes) || item.try(:stringify_keys)
+    return {} if pairs.blank?
+    columns = Array.wrap(columns || default).compact_blank.map(&:to_s)
+    pairs.slice!(*columns) unless columns.blank? || (columns == %w(all))
     Array.wrap(filter).each do |pattern|
-      has = pattern.is_a?(Regexp) ? :match? : :include?
-      pairs.delete_if { |field, _| field.to_s.send(has, pattern) }
+      if pattern.is_a?(Regexp)
+        pairs.reject! { |field, _| field.match?(pattern) }
+      else
+        pairs.reject! { |field, _| field.downcase.include?(pattern) }
+      end
     end
     pairs.transform_keys!(&:to_sym)
   end

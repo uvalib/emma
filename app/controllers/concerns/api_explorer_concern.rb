@@ -55,7 +55,7 @@ module ApiExplorerConcern
   # @return [Hash, String, *]
   #
   def safe_exception_parse(arg, default: :original)
-    case (ex = arg.respond_to?(:exception) && arg.exception)
+    case (ex = arg.try(:exception))
       when Faraday::Error
         {
           message:   ex.message,
@@ -65,6 +65,7 @@ module ApiExplorerConcern
       when Exception
         ex.message
       else
+        # noinspection RubyYardReturnMatch
         (default == :original) ? arg : default
     end
   end
@@ -200,8 +201,8 @@ module ApiExplorerConcern
         error =
           if value.nil?
             "missing method - #{meth.inspect}"
-          elsif value.respond_to?(:exception)
-            value.exception
+          else
+            value.try(:exception)
           end
         trial = {
           endpoint:   service.latest_endpoint,

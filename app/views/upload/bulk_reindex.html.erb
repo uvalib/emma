@@ -6,11 +6,9 @@
   list  ||= @list || []
   list  &&=
     html_tag(:ul) {
-      list.map { |item|
+      list.map { |v|
         html_tag(:li) {
-          (item[:submission_id] if item.respond_to?(:[])) ||
-          (item.submission_id   if item.respond_to?(:submission_id)) ||
-          item.inspect
+          v.try(:[], :submission_id) || v.try(:submission_id) || v.inspect
         }
       }
     }

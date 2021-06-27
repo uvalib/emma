@@ -44,7 +44,8 @@ module Bs::Shared::ReadingListMethods
   # @return [String]
   #
   def label
-    respond_to?(:name) ? name.to_s : identifier
+    # noinspection RailsParamDefResolve
+    try(:name)&.to_s || identifier
   end
 
   # Return the unique identifier for the represented item.

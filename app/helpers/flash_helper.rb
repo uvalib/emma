@@ -503,6 +503,9 @@ module FlashHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [String]                      For :xhr.
   #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
   def flash_format(*args, topic: nil, **opt)
     meth = (args.shift if args.first.is_a?(Symbol))
     excp = (args.shift if args.first.is_a?(Exception))
@@ -514,13 +517,12 @@ module FlashHelper
 
     # Lead with the message derived from an Exception.
     msg = []
-    msg += excp.respond_to?(:messages) ? excp.messages : [excp.message] if excp
+    msg += excp.try(:messages) || [excp.message] if excp
 
     # Log exceptions or messages.
     unless false?(local[:log])
       if excp
-        status ||= (excp.code             if excp.respond_to?(:code))
-        status ||= (excp.response&.status if excp.respond_to?(:response))
+        status ||= excp.try(:code) || excp.try(:response).try(:status)
         trace    = true?(local[:trace])
         trace  ||=
           !excp.is_a?(UploadWorkflow::SubmitError) &&

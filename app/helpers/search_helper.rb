@@ -212,9 +212,6 @@ module SearchHelper
   #
   # @see #bs_link?
   #
-  #--
-  # noinspection RubyResolve
-  #++
   def source_record_link(item, **opt)
     url  = item.record_title_url
     repo = url_repository(url) || item.emma_repository.presence
@@ -244,9 +241,6 @@ module SearchHelper
   #
   # @see #bs_link?
   #
-  #--
-  # noinspection RubyResolve
-  #++
   def source_retrieval_link(item, **opt)
     opt, html_opt = partition_options(opt, :label, :url)
     url = opt[:url] || item.record_download_url
@@ -323,9 +317,6 @@ module SearchHelper
   #
   # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
-  #--
-  # noinspection RubyResolve
-  #++
   def record_popup(item, **opt)
     css_selector = '.record-popup'
     ph_opt = opt.delete(:placeholder)

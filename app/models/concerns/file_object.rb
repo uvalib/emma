@@ -43,7 +43,7 @@ class FileObject
     @fmt         = fmt || self.class.fmt
     @ext         = ext || self.class.file_extension
     @file_handle = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
-    @filename    = (@file_handle.path if @file_handle.respond_to?(:path))
+    @filename    = @file_handle.try(:path)
   end
 
   # ===========================================================================
@@ -69,7 +69,7 @@ class FileObject
   # @return [String, nil]
   #
   def filename
-    @filename ||= (@file_handle.path if @file_handle.respond_to?(:path))
+    @filename ||= @file_handle.try(:path)
   end
 
   # file_handle

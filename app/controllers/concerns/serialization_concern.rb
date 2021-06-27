@@ -66,22 +66,19 @@ module SerializationConcern
   #
   # @return [Hash{Symbol=>Array,Hash}]
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
-  #++
   def index_values(list = nil)
+    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
     limit =
-      if list.is_a?(Api::Record) && list.respond_to?(:limit)
-        list.limit
-      elsif list.is_a?(Array)
-        list.size
+      case list
+        when Api::Record then list.try(:limit)
+        when Array       then list.size
       end
     {
       list: page_items.map { |item| show_values(item, as: nil) },
       properties: {
         total: total_items,
         limit: limit,
-        links: (list.links if list.respond_to?(:links)),
+        links: list.try(:links)
       }
     }
   end

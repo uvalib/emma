@@ -100,7 +100,7 @@ module ParamsHelper
   # @return [Integer]
   #
   def request_parameter_count(p = nil)
-    p ||= respond_to?(:params) ? params : {}
+    p ||= try(:params) || {}
     p.keys.size
   end
 
@@ -111,12 +111,11 @@ module ParamsHelper
   # @return [Hash{Symbol=>String}]
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyYardReturnMatch
   #++
   def request_parameters(p = nil)
-    p ||= respond_to?(:params) ? params : {}
+    p ||= try(:params) || {}
     p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
-    # noinspection RubyYardReturnMatch
     p.symbolize_keys
   end
 
@@ -206,21 +205,18 @@ module ParamsHelper
   def controller_to_name(v = nil)
     v ||= request_parameters
     v = v[:controller] || v['controller'] if v.is_a?(Hash)
-    # noinspection RubyYardReturnMatch, RubyCaseWithoutElseBlockInspection
-    case v
-      when String, Symbol
-        v.to_s.strip.underscore.delete_suffix('_controller')
-      when ApplicationController
-        v.controller_name
-      when Class
-        v.controller_name if v.respond_to?(:controller_name)
+    if v.is_a?(String) || v.is_a?(Symbol)
+      v.to_s.strip.underscore.delete_suffix('_controller')
+    else
+      # noinspection RailsParamDefResolve
+      v.try(:controller_name)
     end
   end
 
   # Translate an item into the URL parameter for the controller with which it
   # is associated.
   #
-  # @param [Symbol, String, Hash, *] v  Def: `params[:controller]`.
+  # @param [Symbol, String, Hash, *] v  Def: `params[:action]`.
   #
   # @return [String]
   # @return [nil]
@@ -228,10 +224,11 @@ module ParamsHelper
   def action_to_name(v = nil)
     v ||= request_parameters
     v = v[:action] || v['action'] if v.is_a?(Hash)
-    # noinspection RubyYardReturnMatch, RubyCaseWithoutElseBlockInspection
-    case v
-      when String, Symbol        then v.to_s.strip.underscore
-      when ApplicationController then v.action_name
+    if v.is_a?(String) || v.is_a?(Symbol)
+      v.to_s.strip.underscore
+    else
+      # noinspection RailsParamDefResolve
+      v.try(:action_name)
     end
   end
 

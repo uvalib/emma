@@ -47,13 +47,7 @@ module Api::Shared::ErrorTable
   def initialize_error_table(*entries)
     entries =
       entries.flatten.flat_map { |item|
-        if item.respond_to?(:messages)
-          item.messages
-        elsif item.respond_to?(:message)
-          item.message
-        else
-          item
-        end
+        item.try(:messages) || item.try(:message) || item
       }.map { |item| item.to_s.strip.presence }.compact.uniq
     @errors = make_error_table(*entries)
   end

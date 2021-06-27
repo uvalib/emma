@@ -389,8 +389,8 @@ class SearchCall < ApplicationRecord
       when Array           then count = total = src.size
       when String, Numeric then count = total = positive(src)
       else
-        count = (src.records&.size if src.respond_to?(:records))
-        total = (src.totalResults  if src.respond_to?(:totalResults))
+        count = src.try(:records)&.size
+        total = src.try(:totalResults)
     end
     total ||= count
     count = nil if count == total

@@ -48,7 +48,6 @@ module SerializationHelper
   def rendering_json?(p = nil)
     p ||= params
     fmt = p[:format].to_s.downcase
-    # noinspection RubyResolve
     (fmt == 'json') || (respond_to?(:request) && request.format.json?)
   end
 

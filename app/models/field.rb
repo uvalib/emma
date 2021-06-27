@@ -467,7 +467,7 @@ module Field
             elsif src.respond_to?(:emma_record)
               src = src.emma_record
             end
-            src.send(@field) if src.respond_to?(@field)
+            src.try(@field)
           end
       end
       @range = Array.wrap(@range).map { |v| v.to_s.strip.presence }.compact

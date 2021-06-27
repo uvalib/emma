@@ -224,7 +224,7 @@ module BookshareHelper
       ref_opt.transform_values! { |v| v.is_a?(String) ? url_escape(v) : v }
       ref_opt[:ids] ||= ref_opt[:id]
       ref_opt[:ids] = Array.wrap(ref_opt[:ids]).join(',')
-      path = format(path, ref_opt)
+      path = format(path, ref_opt) rescue return
     end
 
     # Before using the (remaining) options as URL parameters, apply parameter

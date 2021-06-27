@@ -235,7 +235,7 @@ class Api::Record
   # @return [self]
   #
   def update(hash)
-    (hash || {}).each_pair { |k, v| send("#{k}=", v) if respond_to?("#{k}=") }
+    hash.each_pair { |k, v| try("#{k}=", v) } if hash.present?
     self
   end
 

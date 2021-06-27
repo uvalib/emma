@@ -526,9 +526,9 @@ module UploadConcern
     __debug_items("UPLOAD #{meth} #{__method__}", binding)
     status, item = [nil, status] if status.is_a?(Exception)
 
+    # noinspection RailsParamDefResolve
     if item.is_a?(Exception)
-      status ||= (item.code            if item.respond_to?(:code))
-      status ||= (item.response.status if item.respond_to?(:response))
+      status ||= item.try(:code) || item.try(:response).try(:status)
       message = Array.wrap(item)
     else
       message = Array.wrap(item).map { |v| ErrorEntry[v] }

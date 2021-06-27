@@ -20,7 +20,8 @@ module Bs::Shared::ArtifactMethods
   # @return [String]
   #
   def fmt
-    format.to_s if respond_to?(:format)
+    # noinspection RailsParamDefResolve
+    try(:format).to_s
   end
 
   # A method name for use where there may be confusion with `params[:format]`.
@@ -28,7 +29,8 @@ module Bs::Shared::ArtifactMethods
   # @return [Array<String>]
   #
   def fmts
-    respond_to?(:formats) ? formats.map(&:to_s) : Array.wrap(fmt)
+    # noinspection RailsParamDefResolve
+    try(:formats)&.map(&:to_s) || [fmt]
   end
 
 end

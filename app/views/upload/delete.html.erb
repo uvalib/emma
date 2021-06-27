@@ -20,7 +20,6 @@
   if force
     rids    = list.select { |e| e.is_a?(String) && e.match?(/^[^\d]/) }
     recs, _ = find_in_index(*rids)
-    # noinspection RubyResolve
     lookup  = recs.map { |r| [r.emma_repositoryRecordId,r.emma_recordId] }.to_h
     list    = list.map { |item| lookup[item] || item }
     records = list.select { |item| item.is_a?(Upload) || item.include?('-') }

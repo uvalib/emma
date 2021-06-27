@@ -164,7 +164,8 @@ module Bs::Shared::TitleMethods
   # @return [Array<String>]
   #
   def contributor_list(*types, **opt)
-    result = respond_to?(:contributors) && contributors || []
+    # noinspection RailsParamDefResolve
+    result = try(:contributors) || []
     result = result.select { |c| types.include?(c.type) } if types.present?
     # noinspection RubyNilAnalysis
     result.map { |c| c.label(opt[:role]) }
@@ -198,7 +199,7 @@ module Bs::Shared::TitleMethods
   # @return [nil]                     If the value cannot be determined.
   #
   def isbn
-    isbn13 if respond_to?(:isbn13)
+    try(:isbn13)
   end
 
   # Related ISBNs omitting the main ISBN if part of the data array.
@@ -250,9 +251,9 @@ module Bs::Shared::TitleMethods
   # property.
   #
   def artifact_list(*types)
-    result = respond_to?(:artifacts) && artifacts || []
+    # noinspection RailsParamDefResolve
+    result = try(:artifacts) || []
     result = result.select { |a| types.include?(a.fmt) } if types.present?
-    # noinspection RubyYardReturnMatch
     result
   end
 
@@ -262,8 +263,8 @@ module Bs::Shared::TitleMethods
   # @return [nil]                     If the value cannot be determined.
   #
   def page_count
-    count = respond_to?(:numPages) ? numPages.to_i : 0
-    count if count.positive?
+    count = try(:numPages)
+    positive(count)
   end
 
   # The number of images.
@@ -272,8 +273,8 @@ module Bs::Shared::TitleMethods
   # @return [nil]                     If the value cannot be determined.
   #
   def image_count
-    count = respond_to?(:numImages) ? numImages.to_i : 0
-    count if count.positive?
+    count = try(:numImages)
+    positive(count)
   end
 
   # ===========================================================================
