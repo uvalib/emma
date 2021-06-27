@@ -129,7 +129,7 @@ en:
           label:        'All fields'
           tooltip:      'Reveal all data fields.'
         invalid:
-          label:        'Invalid fields'
+          label:        'Incomplete fields'
           tooltip:      'Show fields that require attention.'
         filled:
           label:        'Completed fields'
