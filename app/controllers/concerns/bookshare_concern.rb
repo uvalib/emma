@@ -44,11 +44,11 @@ module BookshareConcern
   # @param [String]       _name       Member name (future).
   #
   # @return [String]
+  # @return [nil]
   #
   def get_member(for_user = nil, _name = nil)
-    for_user ||= current_user
-    for_user = User.find_by(email: for_user) if for_user.is_a?(String)
-    case for_user&.uid
+    for_user = User.find_record(for_user || current_user)
+    case for_user&.bookshare_uid
       when BookshareService::BOOKSHARE_TEST_ACCOUNT
         BookshareService::BOOKSHARE_TEST_MEMBER
       else

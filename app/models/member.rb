@@ -54,7 +54,7 @@ class Member < ApplicationRecord
   # ===========================================================================
 
   validate on: :create do
-    if linked_account? && User.find_by(email: emailAddress).nil?
+    if linked_account? && User.find_record(emailAddress).nil?
       errors.add(:base, 'An institutional member must also be a User')
     end
   end

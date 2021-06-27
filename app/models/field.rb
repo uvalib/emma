@@ -53,6 +53,7 @@ module Field
   # @option entry [String]         :placeholder   Input area placeholder text.
   # @option entry [Symbol, String] :type          See Usage Notes [1]
   # @option entry [String]         :origin
+  # @option entry [String]         :role
   #
   # @return [Hash]
   #
@@ -73,6 +74,7 @@ module Field
         when :min, :max then value = value&.to_i
         when :help      then value = Array.wrap(value).map(&:to_sym)
         when :type      then value = enum_type(value) || value.to_s
+        when :role      then value = value&.to_sym
         when /_html$/   then value = value.to_s.strip.html_safe
         else
           # Sub-field under :file_data or :emma_data.
@@ -200,6 +202,7 @@ module Field
   # @option entry [String]         :placeholder   Input area placeholder text.
   # @option entry [Symbol, String] :type          See Usage Notes [1]
   # @option entry [String]         :origin
+  # @option entry [String]         :role
   #
   # @return [Hash]
   #
@@ -223,6 +226,7 @@ module Field
         when :min, :max then value = value&.to_i
         when :help      then value = Array.wrap(value).map(&:to_sym)
         when :type      then value = enum_type(value) || value.to_s
+        when :role      then value = value&.to_sym
         when /_html$/   then value = value.to_s.strip.html_safe
         when :cond      then value = normalize_conditions(value)
       end

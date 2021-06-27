@@ -1,6 +1,19 @@
 # config/locales/records/account.en.yml
 #
 # User account fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/account.en.yml
+#
+# MIN MAX INTERPRETATION
+# --- --- ---------------------------------------------------------------------
+# 0   0   Unprocessed field.
+# 0   1   Optional single-valued field.
+# 0   ~   Optional multi-valued field.
+# 1   0   UNUSED
+# 1   1   Required single-valued field.
+# 1   ~   Required multi-valued field.
+# N   M   Multivalued field requiring between N and M values, inclusive.
 
 en:
 
@@ -23,7 +36,7 @@ en:
         email:
           min:          1
           max:          1
-          label:        'User ID'
+          label:        'Local UID'
           tooltip:      |
             This is the "user name" of the user account.  For normal EMMA user
             accounts, which are authenticated via Bookshare, this must match
@@ -49,6 +62,66 @@ en:
             account.  For automatically generated accounts, this is supplied
             when the initial sign-on sequence via Bookshare is intercepted.
           type:         text
+
+        effective_id:
+          min:          0
+          max:          1
+          label:        'Effective UID'
+          tooltip:      |
+            A reference to the record of the user whose authorization
+            information is used when connecting to Bookshare.
+          type:         number
+          origin:       system
+          role:         administrator
+
+        # =====================================================================
+        # Devise fields
+        # =====================================================================
+
+        current_sign_in_at:
+          min:          0
+          max:          1
+          label:        'Sign-in Time'
+          tooltip:      |
+            The starting time of this user's current session.
+          type:         datetime
+          origin:       system
+
+        current_sign_in_ip:
+          min:          0
+          max:          1
+          label:        'IP Address'
+          tooltip:      |
+            The IP address of this user's current session.
+          type:         text
+          origin:       system
+
+        last_sign_in_at:
+          min:          0
+          max:          1
+          label:        'Last Sign-in'
+          tooltip:      |
+            The starting time of this user's most recent previous session.
+          type:         datetime
+          origin:       system
+
+        last_sign_in_ip:
+          min:          0
+          max:          1
+          label:        'Last IP Addr'
+          tooltip:      |
+            The IP address of this user's most recent previous session.
+          type:         text
+          origin:       system
+
+        sign_in_count:
+          min:          1
+          max:          1
+          label:        'Sign-in Count'
+          tooltip:      |
+            The number of times this user has signed in.
+          type:         number
+          origin:       system
 
         # =====================================================================
         # Database fields
@@ -81,16 +154,20 @@ en:
           max:          1
           label:        'Access Token'
           tooltip:      |
-            The system-managed time at which this database record last changed.
+            The user's most recent Bookshare OAuth2 token.
           type:         text
           origin:       system
+          role:         developer
 
         refresh_token:
           min:          0
           max:          1
           label:        'Refresh Token'
+          tooltip:      |
+            The user's most recent Bookshare OAuth2 refresh token.
           type:         text
           origin:       system
+          role:         developer
 
         # =====================================================================
         # Devise fields
@@ -101,33 +178,37 @@ en:
           max:          1
           label:        'Encrypted Password'
           tooltip:      |
-            FOR FUTURE DEVELOPMENT; NOT CURRENTLY USED.
+            For local (non-Bookshare) accounts only.
           type:         text
           origin:       system
-
-        reset_password_token:
-          min:          0
-          max:          1
-          label:        'Reset Password Token'
-          tooltip:      |
-            FOR FUTURE DEVELOPMENT; NOT CURRENTLY USED.
-          type:         text
-          origin:       system
-
-        reset_password_sent_at:
-          min:          0
-          max:          1
-          label:        'Reset Password Date'
-          tooltip:      |
-            FOR FUTURE DEVELOPMENT; NOT CURRENTLY USED.
-          type:         text
-          origin:       system
+          role:         developer
 
         remember_created_at:
           min:          0
           max:          1
           label:        'Remember Date'
           tooltip:      |
-            FOR FUTURE DEVELOPMENT; NOT CURRENTLY USED.
+            For local (non-Bookshare) accounts only.
           type:         text
           origin:       system
+          role:         developer
+
+        reset_password_token:
+          min:          0
+          max:          1
+          label:        'Reset Password Token'
+          tooltip:      |
+            For local (non-Bookshare) accounts only.
+          type:         text
+          origin:       system
+          role:         developer
+
+        reset_password_sent_at:
+          min:          0
+          max:          1
+          label:        'Reset Password Date'
+          tooltip:      |
+            For local (non-Bookshare) accounts only.
+          type:         text
+          origin:       system
+          role:         developer

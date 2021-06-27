@@ -178,13 +178,14 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Find records with columns containing matches on the given search terms.
   #
-  # @param [Array<Hash,String>]  terms
-  # @param [Hash]                opt    Passed to #sql_match.
+  # @param [Array<Hash,String>]          terms
+  # @param [Symbol, String, Hash, Array] sort   Default: :id.
+  # @param [Hash]                        opt    Passed to #sql_match.
   #
   # @return [ActiveRecord::Relation]
   #
-  def self.matching(*terms, **opt)
-    where(sql_match(*terms, **opt))
+  def self.matching(*terms, sort: nil, **opt)
+    where(sql_match(*terms, **opt)).order(sort || :id)
   end
 
   # Translate hash keys/values into SQL LIKE statements.

@@ -1,0 +1,19 @@
+# config/locales/records/user.en.yml
+#
+# User account fields.
+#
+# NOTE: There isn't a :user controller, which is why the 'user' fields are not
+# listed here.
+#
+# The :account controller is concerned with the formatted display of 'users'
+# table records (unlike any of the Devise-related User::* controllers).
+
+en:
+
+  emma:
+
+    user:
+
+      record:
+
+        # @see file:config/locales/records/account.en.yml

@@ -3,6 +3,7 @@
 # Periodical model fields.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/periodical.en.yml
 
 en:
 

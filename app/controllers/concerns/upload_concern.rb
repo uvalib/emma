@@ -292,32 +292,23 @@ module UploadConcern
 
     # Select records for the current user unless a different user has been
     # specified (or all records if specified as '*', 'all', or 'false').
-    u = opt.delete(:user)
-    u = opt.delete(:user_id) || u || @user
-    if u.is_a?(String) || u.is_a?(Symbol)
-      u = u.to_s.strip.downcase
-      u = 0      if %w(* 0 all false).include?(u)
-      u = u.to_i if digits_only?(u)
-    end
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case u
-      when 0       then u = nil
-      when Integer then u = User.find(u)
-      when String  then u = User.find_by(email: u)
-    end
-    if u.is_a?(User)
-      opt[:user_id]   = u.id  if u.id.present?
-      opt[:edit_user] = u.uid if u.uid.present?
+    user = opt.delete(:user)
+    user = opt.delete(:user_id) || user || @user
+    user = user.to_s.strip.downcase if user.is_a?(String) || user.is_a?(Symbol)
+    user = User.find_record(user)   unless %w(* 0 all false).include?(user)
+    if user.is_a?(User)
+      opt[:user_id]   = user.id  if user.id.present?
+      opt[:edit_user] = user.uid if user.uid.present?
     end
 
     # Limit records to those in the given state (or records with an empty state
     # field if specified as 'nil', 'empty', or 'missing').
-    if (s = opt.delete(:state).to_s.strip.downcase).present?
-      if %w(empty false missing nil none null).include?(s)
+    if (state = opt.delete(:state).to_s.strip.downcase).present?
+      if %w(empty false missing nil none null).include?(state)
         opt[:state] = nil
       else
-        opt[:state] = s
-        opt[:edit_state] ||= s
+        opt[:state] = state
+        opt[:edit_state] ||= state
       end
     end
 

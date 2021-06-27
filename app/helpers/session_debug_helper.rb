@@ -33,13 +33,6 @@ module SessionDebugHelper
     setting       = (session['app.debug'] if local || dev)
     on_by_default ? !false?(setting) : true?(setting)
   end
-=begin
-  def session_debug?
-    on_by_default   = !application_deployed?
-    current_setting = session['app.debug']
-    on_by_default ? !false?(current_setting) : true?(current_setting)
-  end
-=end
 
   # ===========================================================================
   # :section:

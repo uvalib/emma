@@ -157,7 +157,7 @@ module Workflow::Base::Roles
     # noinspection RubyYardReturnMatch
     return user if user.nil? || user.is_a?(Symbol)
     # noinspection RubyNilAnalysis
-    user = user.uid if user.is_a?(User)
+    user = user.bookshare_uid if user.is_a?(User)
     # TODO: role mapping
     (user == BookshareService::BOOKSHARE_TEST_ACCOUNT) ? :developer : :user
   end

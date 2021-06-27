@@ -7,6 +7,7 @@
 # relationship, so the two sets of fields are distinct.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/search.en.yml
 
 en:
 

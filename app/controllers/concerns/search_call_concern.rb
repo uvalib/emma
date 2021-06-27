@@ -61,22 +61,25 @@ module SearchCallConcern
 
   # Get matching SearchCall records or all records if no terms are given.
   #
-  # @param [Array<String,Hash,Array>] terms
-  # @param [Array, nil]               columns      Default: #SC_MATCH_COLUMNS
-  # @param [Hash]                     hash_terms
+  # @param [Array<String,Hash,Array>]    terms
+  # @param [Array, nil]                  columns      Def.: #SC_MATCH_COLUMNS
+  # @param [Symbol, String, Hash, Array] sort         Def.: :created_at
+  # @param [Hash]                        hash_terms   Added to *terms*.
+  #
+  # @option opt [Symbol, String, Hash, (Symbol, Hash)] :sort  Default: :id
   #
   # @return [ActiveRecord::Relation<SearchCall>]
   #
-  def get_search_calls(*terms, columns: nil, **hash_terms)
+  def get_search_calls(*terms, columns: nil, sort: :created_at, **hash_terms)
     terms.flatten!
     terms.map! { |t| t.is_a?(Hash) ? t.deep_symbolize_keys : t if t.present? }
     terms.compact!
     terms << hash_terms if hash_terms.present?
     if terms.blank?
-      SearchCall.all
+      SearchCall.all.order(sort)
     else
       columns ||= SC_MATCH_COLUMNS
-      SearchCall.matching(*terms, columns: columns, type: :json)
+      SearchCall.matching(*terms, columns: columns, type: :json, sort: sort)
     end
   end
 

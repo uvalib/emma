@@ -363,18 +363,13 @@ class SearchCall < ApplicationRecord
 
   # Extract a 'users' table index from the given item.
   #
-  # @param [User, Numeric, String] src
+  # @param [User, String, Numeric] src
   #
   # @return [Integer]
   # @return [nil]
   #
   def get_user_id(src)
-    # noinspection RubyYardParamTypeMatch
-    case src
-      when User   then src.id
-      when String then positive(src) || User.find_by(email: src)&.id
-      else             positive(src)
-    end
+    User.find_id(src)
   end
 
   # Generate a :record attribute value from the given item.

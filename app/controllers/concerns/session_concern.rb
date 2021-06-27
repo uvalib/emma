@@ -96,41 +96,6 @@ module SessionConcern
     /_return_to$/,
   ].freeze
 
-=begin
-  # ===========================================================================
-  # :section: Devise::Controllers::Helpers overrides
-  # ===========================================================================
-
-  protected
-
-  # after_sign_in_path_for
-  #
-  # @param [*] resource_or_scope
-  #
-  # @return [String]
-  #
-  # == Implementation Notes
-  # This does not use Devise::Controllers::StoreLocation#store_location_for
-  # to avoid the potential of overwhelming session store by copying
-  # session['app.current_path'] into session['user_return_to']. This seems to
-  # be safe because the overridden function seems to be the only place where
-  # that session entry is used.
-  #
-  def after_sign_in_path_for(resource_or_scope)
-    path = get_current_path
-    path = dashboard_path if path.nil? || (path == welcome_path)
-    path
-  end
-
-  # after_sign_out_path_for
-  #
-  # @return [String]
-  #
-  def after_sign_out_path_for(*)
-    welcome_path
-  end
-=end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -278,25 +243,6 @@ module SessionConcern
   def session_updatable?
     !devise_controller? && !request_xhr?
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-=begin
-  # Indicate whether the user is one is capable of short-circuiting the
-  # authorization process.
-  #
-  # @param [User, String, nil] user   Default: `#current_user`
-  #
-  def debug_user?(user = nil)
-    # noinspection RubyYardParamTypeMatch
-    session.key?('app.debug') &&
-      OmniAuth::Strategies::Bookshare.debug_user?(user || current_user)
-  end
-=end
 
   # ===========================================================================
   # :section: Exception handlers

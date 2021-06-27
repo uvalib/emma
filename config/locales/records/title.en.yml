@@ -3,6 +3,7 @@
 # Title model fields.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/title.en.yml
 
 en:
 

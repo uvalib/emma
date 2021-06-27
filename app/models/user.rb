@@ -103,9 +103,9 @@ class User < ApplicationRecord
   # ===========================================================================
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable
-  devise :database_authenticatable, :rememberable, :omniauthable,
-         omniauth_providers: OAUTH2_PROVIDERS
+  # :confirmable, :lockable, :timeoutable, :recoverable, :validatable
+  devise :database_authenticatable, :rememberable, :trackable, :registerable,
+         :omniauthable, omniauth_providers: OAUTH2_PROVIDERS
 
   # ===========================================================================
   # :section: Authorization
@@ -170,6 +170,51 @@ class User < ApplicationRecord
   #
   def uid
     email
+  end
+
+  # Indicate whether this User is represented by a different Bookshare user.
+  #
+  # The Bookshare ID associated with this account if different from *self*.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def effective_uid
+    effective_user&.uid
+  end
+
+  # The User who interacts with Bookshare on behalf of this account if
+  # different from *self*.
+  #
+  # @return [User]
+  # @return [nil]
+  #
+  def effective_user
+    User.find(effective_id) if effective_id.present?
+  end
+
+  # Indicate whether this account directly maps on to a Bookshare account.
+  #
+  def is_bookshare_user?
+    effective_id.blank?
+  end
+
+  # The Bookshare ID associated with this account.
+  #
+  # @return [String]
+  #
+  def bookshare_uid
+    bookshare_user.uid
+  end
+
+  # The User who interacts with Bookshare on behalf of this account.
+  #
+  # This is *self* unless :effective_id is non-null.
+  #
+  # @return [User]
+  #
+  def bookshare_user
+    @bookshare_user ||= effective_user || self
   end
 
   # Indicate whether the user is both an Organizational Member and an
@@ -300,7 +345,7 @@ class User < ApplicationRecord
   # @return [nil]                     If ID could not be determined.
   #
   def self.find_id(user)
-    user = user.to_i            if user.is_a?(String) && digits_only?(user)
+    user = positive(user)       if digits_only?(user)
     user = find_by(email: user) if user.is_a?(String)
     user = user.id              if user.is_a?(User)
     user                        if user.is_a?(Integer)
@@ -314,9 +359,24 @@ class User < ApplicationRecord
   # @return [nil]                     If :uid could not be determined.
   #
   def self.find_uid(user)
-    user = User.find(user) if user.is_a?(Integer)
-    user = user.uid        if user.is_a?(User)
-    user                   if user.is_a?(String)
+    user = positive(user) if digits_only?(user)
+    user = find(user)     if user.is_a?(Integer)
+    user = user.uid       if user.is_a?(User)
+    user                  if user.is_a?(String)
+  end
+
+  # Find the identified User record.
+  #
+  # @param [User, String, Integer, *] user
+  #
+  # @return [User]
+  # @return [nil]
+  #
+  def self.find_record(user)
+    user = positive(user)       if digits_only?(user)
+    user = find(user)           if user.is_a?(Integer)
+    user = find_by(email: user) if user.is_a?(String)
+    user                        if user.is_a?(User)
   end
 
   # Get (or create) a database entry for the indicated user and update the

@@ -42,6 +42,25 @@ module BookshareService::Common
   end
 
   # ===========================================================================
+  # :section: Authentication
+  # ===========================================================================
+
+  protected
+
+  # Set the user for the current session.
+  #
+  # @param [User, nil] u
+  #
+  # @raise [RuntimeError]             If *u* is invalid.
+  #
+  # @return [void]
+  #
+  def set_user(u)
+    super
+    @user = @user&.bookshare_user
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 

@@ -1,6 +1,19 @@
 # config/locales/records/search_call.en.yml
 #
 # Search call model fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/search_call.en.yml
+#
+# MIN MAX INTERPRETATION
+# --- --- ---------------------------------------------------------------------
+# 0   0   Unprocessed field.
+# 0   1   Optional single-valued field.
+# 0   ~   Optional multi-valued field.
+# 1   0   UNUSED
+# 1   1   Required single-valued field.
+# 1   ~   Required multi-valued field.
+# N   M   Multivalued field requiring between N and M values, inclusive.
 
 en:
 
