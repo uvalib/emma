@@ -71,7 +71,7 @@ class Api::Error < RuntimeError
         @cause         = @cause.cause
       when Faraday::Error
         @http_status ||= @cause.response&.dig(:status)
-        @messages     += faraday_error(*@cause.message)
+        @messages      = faraday_error(*@cause.message) + @messages
         @cause         = @cause.wrapped_exception
       when Exception
         @http_status ||= @response&.status
@@ -168,14 +168,15 @@ class Api::Error < RuntimeError
   # then @http_status will be set here.
   #
   def faraday_error(*messages)
-    messages.map do |m|
-      m.to_s.sub(/status (\d+)/) do |s|
-        code = $1.to_i
-        @http_status ||= (code if code.positive?)
-        description = Net::HTTP::STATUS_CODES[code]
-        description ? "#{s} (#{description})" : s
+    messages.map { |m|
+      next if (m = m.to_s.strip).blank?
+      m.sub(/status (\d+)/) do |status|
+        code = positive($1)
+        @http_status ||= code if code
+        description = code && Net::HTTP::STATUS_CODES[code]
+        description ? "#{status} (#{description})" : status
       end
-    end
+    }.compact
   end
 
   # ===========================================================================

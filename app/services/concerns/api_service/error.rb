@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'nokogiri'
+
 # Base exception for external API service problems.
 #
 class ApiService::Error < Api::Error
@@ -42,7 +44,9 @@ class ApiService::Error < Api::Error
   #
   def faraday_error(*messages)
     super.map do |m|
-      m.sub(/the server/, "The #{service_name}")
+      m.sub(/^(.*)\s*(the server)\s*(.*)$/) do
+        "The #{service_name} #{$3}:\n#{$1}"
+      end
     end
   end
 
@@ -160,9 +164,12 @@ class ApiService::Error < Api::Error
 
     public
 
-    # Prefix seen in Bookshare error messages.
+    # Prefix seen in Bookshare error messages and also in the header of OAuth2
+    # responses.
     #
     # @type [String]
+    #
+    # @see https://datatracker.ietf.org/doc/html/rfc6750
     #
     ERROR_TAG = 'error_description'
 
@@ -173,24 +180,63 @@ class ApiService::Error < Api::Error
     # @return [Array<String>]
     #
     def extract_message(error)
+      # First check for an error description embedded in the response headers.
+      # If not present then look at the response body.
+      desc = oauth2_error_header(error)
       body = error.response[:body]
-      return [] if body.blank?
-      json = json_parse(body, symbolize_keys: false).presence || {}
-      json = json.first       if json.is_a?(Array) && (json.size <= 1)
-      return json.compact     if json.is_a?(Array)
-      return Array.wrap(body) unless json.is_a?(Hash)
-      desc = json[ERROR_TAG].presence
+      desc ||= [] if body.blank?
+
+      # Check for an HTML message, which may indicate that a web server is
+      # responding with a 5xx error (rather than the application server).
       desc ||=
-        Array.wrap(json['messages']).map { |msg|
-          msg = msg.to_s.strip
-          if msg =~ /^[a-z0-9_]+=/i
-            next unless msg.delete_prefix!("#{ERROR_TAG}=")
+        if body.start_with?('<')
+          # @type [Nokogiri::HTML::Document, Nokogiri::XML::Document]
+          html = Nokogiri.parse(body)
+          html = nil if html.errors.present?
+          html&.search('title', 'h1', 'body')&.first&.inner_text || ''
+        end
+
+      # Check for a JSON message from the application server.
+      desc ||=
+        if (json = json_parse(body, symbolize_keys: false)).present?
+          json = json.compact
+          json = json.first if json.is_a?(Array) && (json.size <= 1)
+          if json.is_a?(Array)
+            json
+          elsif json.is_a?(Hash)
+            json[ERROR_TAG].presence ||
+              Array.wrap(json['messages']).map { |msg|
+                msg = msg.to_s.strip
+                if msg =~ /^[a-z0-9_]+=/i
+                  next unless msg.delete_prefix!("#{ERROR_TAG}=")
+                end
+                msg.remove(/\\"/)
+              }.compact_blank.presence ||
+              json['message'].presence ||
+              json.values.flat_map { |v| v if v.is_a?(Array) }.compact.presence
           end
-          msg.remove(/\\"/)
-        }.compact_blank.presence
-      desc ||= json['message'].presence
-      desc ||= json.values.flat_map { |v| v if v.is_a?(Array) }.compact
+        end
+
       Array.wrap(desc.presence || body)
+    end
+
+    # Extract the OAuth2 error description from the response headers.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] response
+    #
+    # @return [String, nil]
+    #
+    def oauth2_error_header(response)
+      response = response.response if response.respond_to?(:response)
+      headers  = response.try(:headers) || response[:headers] || response
+      return unless headers.is_a?(Hash)
+      headers = headers.transform_keys { |k| k.to_s.downcase }
+      return unless (www_authenticate = headers['www-authenticate']).present?
+      www_authenticate.split(/\s*,\s*/).find do |part|
+        k, v = part.split('=')
+        next unless k == ERROR_TAG
+        break v.to_s.sub(/^\s*(['"])\s*(.*)\s*\1\s*$/, '\2').presence
+      end
     end
 
   end

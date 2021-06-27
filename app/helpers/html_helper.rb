@@ -417,10 +417,13 @@ module HtmlHelper
   # with HTML entities, it is wrapped in a "<div>" to make sure that the
   # Nokogiri parser is dealing with valid XML.
   #
+  # @note The result has UTF-8 encoding (even if no truncation was performed).
+  #
   def self.html_truncate(str, length = nil, **opt)
     length ||= HTML_TRUNCATE_MAX_LENGTH
-    str = str&.to_s || ''
+    str = to_utf8(str)
     return str if str.size <= length
+    opt[:omission]  &&= to_utf8(opt[:omission])
     opt[:omission]  ||= HTML_TRUNCATE_OMISSION
     opt[:separator] ||= HTML_TRUNCATE_SEPARATOR
     if str.html_safe?
@@ -557,6 +560,22 @@ module HtmlHelper
       end
       node if node.children.present?
     end
+  end
+
+  # Convert a string to UTF-8 encoding.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, nil] str
+  #
+  # @return [ActiveSupport::SafeBuffer]   If *str* was HTML-safe.
+  # @return [String]                      Otherwise.
+  #
+  def self.to_utf8(str)
+    res  = str&.to_s || ''
+    enc  = res.encoding
+    return res if enc == Encoding::UTF_8
+    html = res.html_safe?
+    res  = Encoding::Converter.new(enc, 'utf-8').convert(res)
+    html ? res.html_safe : res
   end
 
   # ===========================================================================

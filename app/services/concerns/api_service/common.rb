@@ -307,9 +307,8 @@ module ApiService::Common
       resp = error.try(:response) || @response
       stat = data = nil
       if resp
-        stat ||= resp.http_status if resp.respond_to?(:http_status)
-        stat ||= resp.status      if resp.respond_to?(:status)
-        data ||= resp.body        if resp.respond_to?(:body)
+        stat ||= resp.try(:http_status) || resp.try(:status)
+        data ||= ApiService::Error.oauth2_error_header(resp) || resp.try(:body)
       end
       if resp.respond_to?(:dig)
         stat ||= resp[:http_status] || resp[:status]
