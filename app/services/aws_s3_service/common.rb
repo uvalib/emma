@@ -32,14 +32,14 @@ module AwsS3Service::Common
   # The AWS S3 bucket associated with the item.
   #
   # @param [AwsS3::Message::SubmissionPackage, Upload, Hash, String, Symbol, nil] item
-  # @param [Symbol, String, nil] deployment     Def: `#application_deployment`.
+  # @param [Symbol, String, nil] deployment     Def: `#aws_deployment`.
   #
   # @return [String]
   # @return [nil]
   #
   def bucket_for(item, deployment = nil)
     repository = Upload.repository_of(item)&.to_sym
-    deployment = deployment&.to_sym || application_deployment
+    deployment = deployment&.to_sym || aws_deployment
     S3_BUCKET.dig(repository, deployment) if EmmaRepository.valid?(repository)
   end
 

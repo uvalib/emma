@@ -585,7 +585,7 @@ class UploadController < ApplicationController
     __debug_route
     opt           = url_parameters
     @repo         = repositories(**opt)
-    @deploy       = deployments(default: application_deployment, **opt)
+    @deploy       = deployments(default: aws_deployment, **opt)
     @object_table = get_object_table(@repo, @deploy, **opt)
   rescue => error
     flash_now_failure(error)

@@ -647,7 +647,7 @@ module LayoutHelper::SearchFilters
   def deployment_menu(menu_name, **opt)
     opt[:config]     = config = current_menu_config(menu_name, **opt)
     opt[:selected] ||= request_parameters[config[:url_parameter]]
-    opt[:selected] ||= application_deployment
+    opt[:selected] ||= aws_deployment
     opt[:selected]   = opt[:selected].first if opt[:selected].is_a?(Array)
     opt.delete(:selected) if opt[:selected].blank?
     menu_container(menu_name, **opt)

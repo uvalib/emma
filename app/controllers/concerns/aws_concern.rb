@@ -144,7 +144,7 @@ module AwsConcern
   # repo_bucket
   #
   # @param [Symbol, String]      repository
-  # @param [Symbol, String, nil] deployment   Def: `#application_deployment`.
+  # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
   # @param [AwsS3Service, nil]   service      Def: `AwsS3Service.instance`.
   #
   # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`
@@ -159,7 +159,7 @@ module AwsConcern
   # get_repo_bucket
   #
   # @param [Symbol, String]      repository
-  # @param [Symbol, String, nil] deployment   Def: `#application_deployment`.
+  # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
   # @param [Hash]   opt                       Passed to #get_s3_bucket
   #
   # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`
@@ -175,7 +175,7 @@ module AwsConcern
   # get_repo_objects
   #
   # @param [Symbol, String]      repository
-  # @param [Symbol, String, nil] deployment   Def: `#application_deployment`.
+  # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
   # @param [Hash]   opt                       Passed to #get_s3_objects
   #
   # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`

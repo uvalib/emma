@@ -84,6 +84,14 @@ def application_deployed?
   # !!ENV['AWS_REGION']
 end
 
+# The true deployment type.
+#
+# @return [Symbol]
+#
+def aws_deployment
+  application_deployed? ? :production : :staging
+end
+
 # The deployment type.  Desktop development should use 'staging' resources.
 #
 # @return [Symbol]
@@ -92,8 +100,7 @@ end
 # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/staging/environment.vars
 #
 def application_deployment
-  ENV['DEPLOYMENT']&.downcase&.to_sym ||
-    (application_deployed? ? :production : :staging)
+  ENV['DEPLOYMENT']&.downcase&.to_sym || aws_deployment
 end
 
 # Indicate whether this is the production service instance.

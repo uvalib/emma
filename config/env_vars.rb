@@ -292,7 +292,7 @@ AWS_REGION = ENV.fetch('AWS_REGION', 'us-east-1').freeze
 # @type [String]
 #
 AWS_BUCKET =
-  ENV.fetch('AWS_BUCKET') { "emma-storage-#{application_deployment}" }.freeze
+  ENV.fetch('AWS_BUCKET') { "emma-storage-#{aws_deployment}" }.freeze
 
 # Amazon identity access key.
 #
