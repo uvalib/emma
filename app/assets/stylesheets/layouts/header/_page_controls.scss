@@ -33,7 +33,7 @@
     // @see LayoutHelper#page_controls
     .control {
 
-        @extend %control-button;
+        @extend %control-button-base;
 
         font-size: larger;
         color:     inherit;

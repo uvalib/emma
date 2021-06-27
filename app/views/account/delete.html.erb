@@ -16,12 +16,12 @@
 -%>
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
+
 <%= page_description_section %>
 
 <%- if list.blank? -%>
 
   <%= account_items_menu %>
-  <%= page_notes_section %>
 
 <%- else -%>
 
@@ -34,4 +34,5 @@
 
 <%- end -%>
 
+<%= page_notes_section %>
 <%= page_action_list unless modal? %>

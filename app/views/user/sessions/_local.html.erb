@@ -2,38 +2,54 @@
 <%-
   # Local accounts (not backed directly by Bookshare accounts).
 
-  return if true # NOTE: not currently used
+  user ||= resource || resource_class.new
 
-  form_opt = {
+  form_label = t('emma.user.sessions.sign_in.label')
+  form_opt   = {
     as:  resource_name,
-    url: session_path(resource_name)
+    url: session_path(resource_name),
+    html: { class: 'sign-in-form inline obscured' }
   }
 
-  submit_label = t('emma.user.sessions.new.submit')
+  label_opt       = { class: 'label' }
+  value_opt       = { class: 'value' }
+
+  email_label_opt = label_opt
+  email_value_opt = value_opt.merge(autocomplete: 'email')
+
+  pwd_label_opt   = label_opt
+  pwd_value_opt   = value_opt.merge(autocomplete: 'current-password')
+
+  submit_label    = t('emma.user.sessions.sign_in.submit')
+  submit_opt      = { class: 'submit-button' }
 
 -%>
 
-<%= form_for(resource, form_opt) do |f| -%>
+<%= form_for(user, form_opt) do |f| -%>
+
+  <label class="form-label">
+    <%= form_label %>
+  </label>
 
   <div class="field">
-    <%= f.label          :email %><br/>
-    <%= f.email_field    :email, autofocus: true, autocomplete: 'email' %>
+    <%= f.label          :email,    email_label_opt %>
+    <%= f.email_field    :email,    email_value_opt %>
   </div>
 
   <div class="field">
-    <%= f.label          :password %><br/>
-    <%= f.password_field :password, autocomplete: 'current-password' %>
+    <%= f.label          :password, pwd_label_opt %>
+    <%= f.password_field :password, pwd_value_opt %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit submit_label, submit_opt %>
   </div>
 
   <%- if devise_mapping.rememberable? -%>
-    <div class="field">
-      <%= f.check_box    :remember_me %>
-      <%= f.label        :remember_me %>
+    <div class="options">
+      <%= f.check_box :remember_me %>
+      <%= f.label     :remember_me %>
     </div>
   <%- end -%>
-
-  <div class="actions">
-    <%= f.submit submit_label %>
-  </div>
 
 <%- end -%>

@@ -6,26 +6,29 @@
 # Current EMMA roles
 # =============================================================================
 
-catalog_searcher:
-  name: 'catalog_searcher'
+catalog_search:
+  name: 'catalog_search'
 
-catalog_curator:
-  name: 'catalog_curator'
+catalog_submit:
+  name: 'catalog_submit'
 
-artifact_downloader:
-  name: 'artifact_downloader'
+artifact_download:
+  name: 'artifact_download'
 
-artifact_submitter:
-  name: 'artifact_submitter'
+artifact_submit:
+  name: 'artifact_submit'
 
-membership_viewer:
-  name: 'membership_viewer'
+membership_view:
+  name: 'membership_view'
 
-membership_manager:
-  name: 'membership_manager'
+membership_modify:
+  name: 'membership_modify'
 
 administrator:
   name: 'administrator'
+
+developer:
+  name: 'developer'
 
 # =============================================================================
 # Examples

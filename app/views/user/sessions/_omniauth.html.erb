@@ -1,0 +1,20 @@
+<%# app/views/user/sessions/_omniauth.html.erb -%>
+<%-
+  # Accounts backed by Bookshare accounts.
+
+  return unless devise_mapping.omniauthable?
+
+  links =
+    resource_class.omniauth_providers.map { |provider|
+      label = get_sessions_label(:new, provider)
+      path  = omniauth_authorize_path(resource_name, provider)
+      [label, path]
+    }
+
+  link_opt = { method: :post, 'data-turbolinks': false, class: 'sign-in-link' }
+
+-%>
+
+<%- links.each do |label, path| -%>
+  <%= link_to(label, path, link_opt) %>
+<%- end -%>

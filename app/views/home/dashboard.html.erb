@@ -22,8 +22,11 @@
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= page_description_section %>
+<%= render 'home/debug_properties' %>
 
+<%= page_directions_section %>
+<%= render 'account/local' %>
 <%= render 'member/details', item: item, pref: pref, hist: hist %>
 
 <%= page_notes_section %>
-<%= render 'home/ability' if session_debug? %>
+<%= render 'account/ability' if session_debug? %>

@@ -14,7 +14,7 @@
     set_page_robots(:noindex)
   end
 
-  add = { EmmaRoles: current_user.roles.map(&:to_s).join(', ') }
+  add = { EmmaRoles: current_user.role_list.join(', ') }
 
   template_opt = { item: item, pref: pref, hist: hist, add: add }
 
@@ -24,6 +24,7 @@
 
 <%= page_description_section %>
 
+<%= page_directions_section %>
 <%= render 'member/details', template_opt %>
 
 <%= page_notes_section %>

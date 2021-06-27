@@ -60,6 +60,16 @@ $page-section-gap-small: $page-section-gap / 2;
             margin: $page-section-gap-small 0;
         }
     }
+
+    // Special text.
+    &.alert {
+
+        @extend .description;
+
+        font-size:    larger;
+        font-weight:  bold;
+        border-color: $alert-fg;
+    }
 }
 
 // List of upload actions (new, edit, delete).

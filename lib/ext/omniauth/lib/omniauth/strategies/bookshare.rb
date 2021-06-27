@@ -144,7 +144,7 @@ module OmniAuth
           first_name: account_info.dig(:name, :firstName),
           last_name:  account_info.dig(:name, :lastName),
           email:      account_info[:username]
-        }.compact
+        }.compact_blank!
       end
 
       # Credential information for the authenticated user from #access_token.
@@ -157,7 +157,7 @@ module OmniAuth
           expires:       (expires = access_token.expires?),
           expires_at:    (access_token.expires_at    if expires),
           refresh_token: (access_token.refresh_token if expires)
-        }.compact
+        }.compact_blank!
       end
 
       # Extra information.
@@ -178,7 +178,7 @@ module OmniAuth
           info:        (info unless skip_info?),
           credentials: credentials,
           extra:       extra
-        }.compact
+        }.compact_blank!
         OmniAuth::AuthHash.new(data)
       end
 
@@ -315,14 +315,14 @@ module OmniAuth
             # the special endpoint for direct token sign-in.
             self.access_token        = synthetic_access_token(original_params)
             session['omniauth.auth'] = synthetic_auth_hash(original_params)
-            call_redirect('/users/sign_in_as', params: original_params)
+            call_redirect('/user/sign_in_as', params: original_params)
 
           elsif (username = current_user&.uid)
             # Special case for a fixed user causes a redirect to the special
             # endpoint for direct sign-in.
             self.access_token        = synthetic_access_token(username)
             session['omniauth.auth'] = synthetic_auth_hash(username)
-            call_redirect("/users/sign_in_as?id=#{username}")
+            call_redirect("/user/sign_in_as?id=#{username}")
 
           else
             # Normal case results in a call to the remote service.
@@ -437,8 +437,14 @@ module OmniAuth
       #
       # @return [Hash{Symbol=>*}]
       #
+      #--
+      # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+      #++
       def url_parameters(params = nil)
-        self.class.url_parameters(params || request)
+        params ||= request
+        params   = params.params      if params.respond_to?(:params)
+        params   = params.to_unsafe_h if params.respond_to?(:to_unsafe_h)
+        params.is_a?(Hash) ? reject_blanks(params.deep_symbolize_keys) : {}
       end
 
       # Generate an access token based on fixed information.
@@ -539,34 +545,34 @@ module OmniAuth
 
       public
 
-      # Indicate whether the user is one that is capable of short-circuiting
-      # the authorization process by using a stored token.
+      # Create an AuthHash from the given source.
       #
-      # @param [User, String] user
+      # @param [Hash, User] src
       #
-      def self.debug_user?(user)
-        user = user.uid if user.is_a?(User)
-        stored_auth.key?(user)
-      end
+      # @return [OmniAuth::AuthHash]
+      #
+      def self.auth_hash(src)
+        # noinspection RailsParamDefResolve
+        src  = src.try(:attributes)
+        src  = src.try(:symbolize_keys) || {}
+        cred = src.slice(:token, :expires, :expires_at, :refresh_token)
+        info = src.slice(:email, :first_name, :last_name)
+        data = src.slice(:provider, :uid, :info, :credentials)
 
-      # Normalize URL parameters.
-      #
-      # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
-      #
-      # @return [Hash{Symbol=>*}]
-      #
-      #--
-      # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
-      #++
-      def self.url_parameters(params)
-        params = params.params      if params.respond_to?(:params)
-        params = params.to_unsafe_h if params.respond_to?(:to_unsafe_h)
-        params.is_a?(Hash) ? reject_blanks(params.deep_symbolize_keys) : {}
+        data[:credentials]           = (data[:credentials] || {}).merge(cred)
+        data[:credentials][:token] ||= src[:access_token]
+        data[:info]                  = (data[:info] || {}).merge(info)
+        data[:info][:email]        ||= data[:uid]
+        data[:uid]                 ||= data[:info][:email]
+        data[:provider]            ||= default_options[:name]
+
+        # noinspection RubyYardParamTypeMatch
+        OmniAuth::AuthHash.new(reject_blanks(data))
       end
 
       # Generate an auth hash based on fixed information.
       #
-      # @param [ActionController::Parameters, OmniAuth::AuthHash, Hash, String] src
+      # @param [ActionController::Parameters, Hash, String, User] src
       # @param [String, nil] token
       #
       # @return [OmniAuth::AuthHash, nil]
@@ -574,8 +580,8 @@ module OmniAuth
       # == Variations
       #
       # @overload synthetic_auth_hash(uid, token = nil)
-      #   @param [String] uid         Bookshare user identity (email address).
-      #   @param [String] token       Default from #stored_auth.
+      #   @param [String, User] uid     Bookshare user identity (email address).
+      #   @param [String]       token   Default from #stored_auth.
       #
       # @overload synthetic_auth_hash(auth_hash)
       #   @param [OmniAuth::AuthHash] auth_hash
@@ -592,29 +598,20 @@ module OmniAuth
       # noinspection RubyYardParamTypeMatch
       #++
       def self.synthetic_auth_hash(src, token = nil)
-        if token.present?
-          user = src
-        elsif src.is_a?(OmniAuth::AuthHash)
-          return src
-        elsif src.is_a?(String)
-          user = src
-        elsif (p = url_parameters(src))[:auth].is_a?(OmniAuth::AuthHash)
-          return p[:auth]
-        else
-          user  = p[:uid] || p[:id]
-          token = p[:access_token] || p[:token] || p.dig(:credentials, :token)
+        return src if src.is_a?(OmniAuth::AuthHash)
+        # noinspection RailsParamDefResolve
+        user = src.is_a?(String) ? src : src.try(:uid)
+        if user.nil? && (src = url_parameters(src).presence).is_a?(Hash)
+          return src[:auth] if src[:auth].is_a?(OmniAuth::AuthHash)
+          user    = src[:uid] || src[:id]
+          token ||= src[:access_token] || src[:token]
+          token ||= src.dig(:credentials, :token)
         end
-        if user && !user.is_a?(String)
-          Log.warn("#{__method__}: invalid user: #{user.inspect}")
+        if !user.is_a?(String)
+          Log.warn("#{__method__}: invalid user: #{user.inspect}") if user
+        elsif (token ||= stored_auth.dig(user, :access_token)).is_a?(String)
+          auth_hash(uid: user, token: token, expires: false)
         end
-        token ||= stored_auth.dig(user, :access_token)
-        return unless user.is_a?(String) && token.is_a?(String)
-        OmniAuth::AuthHash.new(
-          provider:    default_options[:name],
-          uid:         user,
-          info:        { email: user },
-          credentials: { token: token, expires: false }
-        )
       end
 
       # =======================================================================
@@ -629,7 +626,7 @@ module OmniAuth
       # value.  If BOOKSHARE_TEST_USERS is supplied, it is used to prime (or
       # update) database table.
       #
-      # @param [Boolean] refresh      If *true*, re-read the database.
+      # @param [Hash, nil] values
       #
       # @return [Hash{String=>Hash}]
       #
@@ -639,81 +636,12 @@ module OmniAuth
       # #stored_auth_update and/or #stored_auth_update_user will change both
       # the value returned by this method and the associated User table entry.
       #
-      def self.stored_auth(refresh = false)
-        @stored_auth = nil if refresh
-        @stored_auth ||=
-          User.where.not(access_token: nil).order(:id).map { |u|
-            [u.email, stored_auth_entry_value(u.access_token)]
-          }.to_h
-      end
-
-      # Add or update one or more user name/token entries.
-      #
-      # @params [Hash{String=>String}, nil] pairs
-      #
-      # @return [Hash{String=>Hash}]
-      #
-      def self.stored_auth_update(entries)
-        reject_blanks(entries).each_pair do |user, token|
-          token = { access_token: token } unless token.is_a?(Hash)
-          User.update(user, token.slice(:access_token))
-        end
-      end
-
-      # Add or update a user name/token entry.
-      #
-      # If input parameters were invalid then no change will be made.
-      #
-      # @param [OmniAuth::AuthHash, String]         user
-      # @param [String, ::OAuth2::AccessToken, nil] token
-      #
-      # @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
-      #
-      # == Variations
-      #
-      # @overload stored_auth_update_user(auth)
-      #   @param [OmniAuth::AuthHash]            auth   User/token to add
-      #
-      # @overload stored_auth_update_user(auth)
-      #   @param [String]                        user   User to add.
-      #   @param [String, ::OAuth2::AccessToken] token  Associated token.
-      #
-      def self.stored_auth_update_user(user, token = nil)
-        if user.is_a?(OmniAuth::AuthHash)
-          user, token = [user.uid, user.credentials.token]
-        elsif (atoken = token).is_a?(::OAuth2::AccessToken)
-          # noinspection RubyNilAnalysis
-          token = atoken.token
-        end
-
-        if user.blank? || token.blank?
-          Log.warn do
-            msg = %W(#{__method__}: missing)
-            msg << 'user'  if user.blank?
-            msg << 'and'   if user.blank? && token.blank?
-            msg << 'token' if token.blank?
-            msg.join(' ')
-          end
-          return
-        end
-
-        # Create or update the dynamic table entry.
-        if stored_auth[user].blank?
-          # noinspection RubyYardParamTypeMatch
-          stored_auth[user] = stored_auth_entry_value(token)
-        elsif stored_auth[user][:access_token] != token
-          stored_auth[user][:access_token] = token
+      def self.stored_auth(values = nil)
+        if values.is_a?(Hash)
+          @stored_auth = values.deep_dup
         else
-          token = nil
+          @stored_auth ||= {}
         end
-
-        # Update the database table if there was a change.
-        if token
-          User.find_or_create_by(email: user) { |u| u.access_token = token }
-        end
-
-        # Return with the relevant entry.
-        stored_auth.slice(user)
       end
 
       # Produce a stored_auth table entry value.
@@ -724,20 +652,6 @@ module OmniAuth
       #
       def self.stored_auth_entry_value(token)
         { access_token: token, token_type: 'bearer', scope: 'basic' }
-      end
-
-      if rails_application?
-
-        # A table of pre-authorized user/token pairs for development purposes.
-        # (Not generated for non-Rails-application executions.)
-        #
-        # @type [Hash{String=>String}, nil]
-        #
-        CONFIGURED_AUTH ||=
-          safe_json_parse(BOOKSHARE_TEST_USERS, default: {}).tap { |entries|
-            stored_auth_update(entries)
-          }.deep_freeze
-
       end
 
     end

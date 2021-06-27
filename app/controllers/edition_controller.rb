@@ -135,6 +135,12 @@ class EditionController < ApplicationController
     __debug_route
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # == GET /edition/:id/:fmt?seriesId=:seriesId&member=BS_ACCOUNT_ID
   # == GET /edition/:editionId/:fmt?seriesId=:seriesId&member=BS_ACCOUNT_ID
   #

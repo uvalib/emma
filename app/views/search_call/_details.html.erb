@@ -5,7 +5,8 @@
   item    ||= @item
   add     ||= nil
   columns ||= nil
+  filter  ||= nil
 
 -%>
 
-<%= search_call_details(item, pairs: add, columns: columns) %>
+<%= search_call_details(item, pairs: add, columns: columns, filter: filter) %>

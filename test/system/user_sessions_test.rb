@@ -20,7 +20,7 @@ class UserSessionsTest < ApplicationSystemTestCase
       visit root_url
       click_on class: 'bookshare-login'
 
-      # On sign-in page '/users/sign_in' (#new_user_session_path).
+      # On sign-in page '/user/sign_in' (#new_user_session_path).
       show_url
       assert_title 'Sign in'
       assert_selector 'h1', text: 'Sign in'

@@ -21,7 +21,7 @@ class MemberControllerTest < ActionDispatch::IntegrationTest
   test 'member index - list all organization members' do
     options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
-      able  = can?(user, :list, Member)
+      able  = can?(user, :index, Member)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -41,7 +41,7 @@ class MemberControllerTest < ActionDispatch::IntegrationTest
     member  = members(:organization).user_id
     options = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
-      able  = can?(user, :read, Member)
+      able  = can?(user, :show, Member)
       u_opt =
         if able
           options.merge(expect: :success)

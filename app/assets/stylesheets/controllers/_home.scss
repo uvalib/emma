@@ -45,4 +45,8 @@ body.home-dashboard {
             margin-top: calc(2 * #{$page-padding});
         }
     }
+
+    .heading + .page-text-section {
+        margin-top: 3rem;
+    }
 }

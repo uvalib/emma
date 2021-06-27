@@ -5,49 +5,38 @@
   c = controller_name
   m = devise_mapping
 
+  links    = []
+  link_opt = { 'data-turbolinks': false, class: 'sign-in-link' }
+
+  unless c == 'sessions'
+    label  = t('emma.user.sessions.sign_in.label')
+    path   = sign_in_local_path
+    links << link_to(label, path, link_opt)
+  end
+
   registerable = m.registerable? && (c != 'registrations')
   recoverable  = m.recoverable?  && !%w(passwords registrations).include?(c)
   confirmable  = m.confirmable?  && (c != 'confirmations')
   lockable     = m.lockable?     && (c != 'unlocks')
   lockable   &&= resource_class.unlock_strategy_enabled?(:email)
 
-  mods = []
-  mods << :sessions      unless c == 'sessions'
-  mods << :registrations if registerable
-  mods << :passwords     if recoverable
-  mods << :confirmations if confirmable
-  mods << :unlocks       if lockable
+  devise_modules = []
+  devise_modules << 'registration' if registerable
+  devise_modules << 'password'     if recoverable
+  devise_modules << 'confirmation' if confirmable
+  devise_modules << 'unlock'       if lockable
 
-  links =
-    mods.map { |devise_module|
-      label = t("emma.user.#{devise_module}.new.label")
-      path  = send("new_#{devise_module}_path", resource_name)
-      [label, path]
+  links +=
+    devise_modules.map { |devise_module|
+      ctrlr = devise_module.pluralize
+      label = t("emma.user.#{ctrlr}.new.label")
+      path  = send("new_user_#{devise_module}_path")
+      link_to(label, path, link_opt)
     }
-
-  if devise_mapping.omniauthable?
-    links +=
-      resource_class.omniauth_providers.map { |provider|
-        label = get_sessions_label(:new, provider)
-        path  = omniauth_authorize_path(resource_name, provider)
-        [label, path, method: :post]
-      }
-  end
-
-  if session_debug?
-    links +=
-      OmniAuth::Strategies::Bookshare.stored_auth(true).keys.map { |id|
-        user  = html_tag(:strong, id)
-        label = get_sessions_label(:sign_in_as, user: user).html_safe
-        path  = sign_in_as_path(id: id)
-        [label, path]
-      }.compact
-  end
 
 -%>
 
-<%- links.each do |label, path, opt| -%>
-  <p>
-    <%= link_to(label, path, 'data-turbolinks': false, **(opt || {})) %>
-  </p>
-<%- end -%>
+<div class="sign-in-links">
+  <%= render 'user/sessions/omniauth' %>
+  <%= safe_join(links, "\n") %>
+</div>

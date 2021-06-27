@@ -180,8 +180,7 @@
 
         .control {
 
-            @extend .uppy-FileInput-btn;
-            @extend %button-hover;
+            @extend %control-button;
 
             @include user-select(none);
 
@@ -354,8 +353,7 @@
     .search-button,
     .search-cancel {
 
-        @extend .uppy-FileInput-btn;
-        @extend %button-hover;
+        @extend %control-button;
 
         flex: 0 0 auto;
 
@@ -424,11 +422,13 @@ $form-gap-narrow: $form-gap / 3;
     // ERB-provided submit to '/upload/create' or '/upload/update'.
     .submit-button { // input[type="submit"].uppy-FileInput-btn
         @extend %upload-grid-control;
+        @extend %control-button;
     }
 
     // ERB-provided cancel (back to '/upload/new' or '/upload/edit').
     .cancel-button { // button[type="cancel"].uppy-FileInput-btn
         @extend %upload-grid-control;
+        @extend %control-button;
     }
 
     // ERB-provided file chooser.
@@ -503,10 +503,12 @@ $form-gap-narrow: $form-gap / 3;
 
         .submit-button {
             @extend %upload-tray-control;
+            @extend %control-button;
         }
 
         .cancel-button {
             @extend %upload-tray-control;
+            @extend %control-button;
         }
 
         // Appended to .button-tray and moved into place via file-upload.js.
@@ -683,14 +685,14 @@ $form-gap-narrow: $form-gap / 3;
         // input itself.
         label {
 
-            @extend .uppy-FileInput-btn;
-            @extend %button-hover;
+            @extend %control-button;
 
             height: max-content;
         }
 
         // Remove the input from view (can't do "display: none" or that
         // would remove the item from the form).
+        input[type="file"].control-button,
         input[type="file"].uppy-FileInput-btn {
             @extend %sr-only;
         }

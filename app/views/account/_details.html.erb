@@ -5,7 +5,8 @@
   user    ||= @item
   add     ||= nil
   columns ||= nil
+  filter  ||= nil
 
 -%>
 
-<%= account_details(user, pairs: add, columns: columns) %>
+<%= account_details(user, pairs: add, columns: columns, filter: filter) %>

@@ -365,7 +365,7 @@ module SearchHelper
   #
   def search_list_item_number(item, **opt)
     db_id =
-      if can?(:edit, Upload)
+      if can?(:modify, item)
         Upload.id_for(item) ||
           if (sid = Upload.sid_for(item))
             Upload.where(submission_id: sid).first&.id

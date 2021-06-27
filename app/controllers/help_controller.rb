@@ -27,7 +27,7 @@ class HelpController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  before_action :update_user
+  # Not applicable.
 
   # ===========================================================================
   # :section: Authorization

@@ -363,7 +363,7 @@ module UploadHelper
           'aria-label': properties[:tooltip],
           'data-group': group
         }
-        prepend_classes!(link_opt, 'uppy-FileInput-btn')
+        prepend_classes!(link_opt, 'control-button')
         append_classes!(link_opt, 'current')  if group == curr_group
         append_classes!(link_opt, 'disabled') if url   == curr_path
         append_classes!(link_opt, 'hidden')   unless enabled
@@ -941,7 +941,6 @@ module UploadHelper
     url = opt.delete(:url)
     opt[:'data-path'] ||= url || params[:cancel]
     opt[:'data-path'] ||= (request.referer if local_request? && !same_request?)
-    opt[:model]       ||= :upload
     opt[:config]      ||= UPLOAD_ACTION_VALUES
     form_cancel_button(**opt)
   end
@@ -1430,7 +1429,7 @@ module UploadHelper
     l_opt = merge_html_options(opt, l_opt)
     label = f.label(meth, 'Select', l_opt) # TODO: I18n
 
-    i_opt = { class: 'uppy-FileInput-btn', tabindex: -1 }
+    i_opt = { class: 'control-button', tabindex: -1 }
     i_opt = merge_html_options(opt, i_opt)
     input = f.file_field(meth, i_opt)
 

@@ -1,0 +1,24 @@
+<%# app/views/user/sessions/sign_in_local.html.erb -%>
+<%-
+  # Sign in with a local EMMA account.
+
+  title ||= t('emma.user.sessions.sign_in.title', default: nil)
+  title ||= t('emma.user.sessions.sign_in.label', default: 'Sign in')
+  help  ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= render 'user/sessions/local_form' %>
+
+<%= page_notes_section %>

@@ -17,7 +17,7 @@
   end
 
   click_to =
-    if can?(:edit, Title)
+    if can?(:modify, Title)
       'Click %s to' % link_to_action('here', id: id)
     else
       'User %s cannot' % current_user.to_s.inspect
@@ -29,6 +29,7 @@
 
 <%= page_description_section %>
 
+<%= page_directions_section %>
 <p><%= click_to -%> modify catalog title metadata.</p>
 
 <%= page_notes_section %>

@@ -1,4 +1,4 @@
-// app/assets/stylesheets/layouts/header/_banner.scss
+// app/assets/stylesheets/layouts/header/_nav_bar.scss
 
 @use 'shared/variables'      as *;
 @use 'shared/common'         as *;
@@ -22,6 +22,7 @@
     // Sections
     //=========================================================================
 
+    // @see LayoutHelper#nav_bar_links
     .links {
 
         @extend %header-section;
@@ -60,6 +61,86 @@
             // For now, Bookshare-related controller are hidden.
             &:not(.active) {
                 display: none;
+            }
+        }
+    }
+
+    // @see LayoutHelper#render_dev_controls
+    .dev-controls {
+
+        @extend %header-section;
+        @extend %header-control-panel;
+
+        $page-control-gap-x: $gap-x;
+        $page-control-gap-y: calc(#{$gap-y} / 2);
+
+        width:           max-content;
+        max-width:       100%;
+        flex-wrap:       nowrap;
+        justify-content: flex-start;
+        align-items:     baseline;
+        border-color:    $debug-fg;
+        border-style:    dashed;
+
+        @media #{$medium-width} {
+            max-width:   98%;
+        }
+
+        @media #{$narrow-screen} {
+            max-width:   95%;
+        }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        // From .layout-section.page.label and
+        // .layout-section.page.controls.page-controls.label
+        //
+        // noinspection CssReplaceWithShorthandSafely
+        .label {
+            display:       block;
+            width:         max-content;
+            margin-top:    $page-control-gap-y;
+            margin-bottom: $gap-y;
+            margin-left:   0;
+            margin-right:  $page-control-gap-x;
+            font-size:     larger;
+            flex:          1 0 auto;
+        }
+
+        // From .layout-section.page.controls and
+        // .layout-section.page.controls.page-controls.controls
+        //
+        // noinspection CssReplaceWithShorthandSafely
+        .controls {
+            display:        flex;
+            flex-direction: row;
+            flex-wrap:      wrap;
+            margin:         0;
+            flex:           1 1 max-content;
+
+            @media #{$not-narrow-screen} {
+                margin-bottom: $page-control-gap-y;
+            }
+
+            // From .layout-section.page.control and
+            // .layout-section.page.controls.page-controls.controls.control
+            .control {
+
+                @extend %control-button-base;
+
+                margin:       0;
+                margin-right: $page-control-gap-x;
+                font-size:    larger;
+                color:        inherit;
+                border-color: $debug-fg;
+                border-width: 2px;
+
+                @media #{$narrow-screen} {
+                    margin-top:    $page-control-gap-y;
+                    margin-bottom: $page-control-gap-y;
+                }
             }
         }
     }

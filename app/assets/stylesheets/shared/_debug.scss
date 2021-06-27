@@ -18,7 +18,7 @@
     // Special control shown if RunState.unavailable? unless RunState::STATIC.
     .restore-availability {
 
-        @extend %control-button;
+        @extend %control-button-base;
 
         width:         min-content;
         padding:       0.375rem 0.75rem;
@@ -83,8 +83,7 @@
 
 .ability-debug {
 
-    width:         50%;
-    margin-bottom: $page-padding;
+    width: 50%;
 
     @media #{$not-wide-screen} {
         width:      100%;

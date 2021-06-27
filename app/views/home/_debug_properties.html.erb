@@ -1,0 +1,39 @@
+<%# app/views/home/_debug_properties.html.erb -%>
+<%# noinspection RubyDeadCode -%>
+<%-
+  # Account-related request/session properties.
+  #
+  # NOTE: Not currently enabled by default.
+
+  show_properties ||= false
+  show_properties &&= !current_user&.administrator?
+
+  return unless show_properties
+
+  i = 0
+  property_values = {
+    'current uid'             => current_user&.uid,
+    'effective uid'           => current_user&.effective_uid,
+    'bookshare uid'           => current_user&.bookshare_uid,
+    (i += 1)                  => nil,
+    'current user'            => current_user,
+    'effective user'          => current_user&.effective_user,
+    'bookshare user'          => current_user&.bookshare_user,
+    (i += 1)                  => nil,
+    'app.local.auth'          => session['app.local.auth'],
+    'omniauth.auth'           => session['omniauth.auth'],
+    'omniauth.params'         => session['omniauth.params'],
+    'omniauth.state'          => session['omniauth.state'],
+    (i += 1)                  => nil,
+    "env['warden']"           => request.env['warden'],
+    "env['omniauth.auth']"    => request.env['omniauth.auth'],
+    "env['omniauth.origin']"  => request.env['omniauth.origin'],
+    "env['omniauth.error']"   => request.env['omniauth.error'],
+    'warden user'             => (request.env['warden']&.user rescue 'n/a'),
+  }
+
+-%>
+
+<%- property_values.each_pair do |name, value| -%>
+  <%= "#{name} = #{value.inspect}" unless name.is_a?(Integer) -%><br/>
+<%- end -%>

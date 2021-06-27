@@ -2,7 +2,8 @@
 <%-
   # Login page.
 
-  title ||= t('emma.user.sessions.new.label')
+  title ||= t('emma.user.sessions.new.title', default: nil)
+  title ||= t('emma.user.sessions.new.label', default: 'Sign in')
   help  ||= help_popup(:sign_in)
 
   unless modal?
@@ -17,8 +18,12 @@
 
 <%= page_description_section %>
 
-<%= render 'user/sessions/local' %>
-<%= render 'devise/shared/links' %>
-<%= render 'user/sessions/synthetic' %>
+<%= page_directions_section %>
+<div class="sign-in-links">
+  <%= render 'user/sessions/omniauth' %>
+  <%= render 'user/sessions/local' %>
+  <%= render 'user/sessions/synthetic' %>
+  <%= render 'user/sessions/token' %>
+</div>
 
 <%= page_notes_section %>

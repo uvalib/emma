@@ -18,9 +18,10 @@
 
 <%= page_description_section(controller: :home, action: :welcome) %>
 
+<%= page_directions_section %>
 <div class="sign-in">
   <%= t('emma.home.welcome.notice_html', sign_in: sign_in) %>
 </div>
 
 <%= page_notes_section(controller: :home, action: :welcome) %>
-<%= render 'home/ability' if session_debug? %>
+<%= render 'account/ability' if session_debug? %>

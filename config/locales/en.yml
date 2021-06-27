@@ -284,6 +284,9 @@ en:
     page_controls:      &PAGE_CONTROLS
       label:            'Actions'
 
+    dev_controls:       &DEV_CONTROLS
+      label:            'Dev Actions'
+
     # =========================================================================
     # Controls
     # =========================================================================
@@ -438,6 +441,9 @@ en:
         label:
           one:          'Manage this %{item}:'
           many:         '%{Item} Actions:'
+
+      dev_controls:
+        <<:             *DEV_CONTROLS
 
       # =======================================================================
       # Controls

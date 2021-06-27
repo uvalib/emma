@@ -65,12 +65,13 @@ module SearchCallHelper
   # Render details of a search call.
   #
   # @param [SearchCall] item
-  # @param [String, Symbol, nil, Array<String,Symbol,nil>] columns
   # @param [Hash, nil]  pairs         Additional field mappings.
-  # @param [Hash]       opt           Passed to #model_details.
+  # @param [Hash]       opt           Passed to #search_call_field_values and
+  #                                     #model_details.
   #
-  def search_call_details(item, columns: nil, pairs: nil, **opt)
-    pairs = search_call_field_values(item, columns: columns).merge(pairs || {})
+  def search_call_details(item, pairs: nil, **opt)
+    fv_opt, opt = partition_hash(opt, :columns, :filter)
+    pairs = search_call_field_values(item, **fv_opt).merge(pairs || {})
     # noinspection RubyNilAnalysis
     count = pairs.size
     append_classes!(opt, "columns-#{count}") if count.positive?
@@ -112,13 +113,11 @@ module SearchCallHelper
   #                                     holding each JSON sub-field.
   #
   def search_call_table(list, **opt)
-    opt[:model] ||= :search_call
     prepend_classes!(opt, 'extended') if opt.delete(:extended)
-    # noinspection RubyYardParamTypeMatch
-    model_table(list, **opt) do |parts, b_list, **b_opt|
-      parts[:thead] ||= search_call_table_headings(b_list, **b_opt)
-      parts[:tbody] ||= search_call_table_entries(b_list, **b_opt)
-    end
+    opt[:model] ||= :search_call
+    opt[:thead] ||= search_call_table_headings(list, **opt)
+    opt[:tbody] ||= search_call_table_entries(list, **opt)
+    model_table(list, **opt)
   end
 
   # Render one or more entries for use within a <tbody>.

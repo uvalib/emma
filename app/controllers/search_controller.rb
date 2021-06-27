@@ -92,6 +92,12 @@ class SearchController < ApplicationController
     end
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # == GET /search/advanced
   #
   # Present the advanced search form.

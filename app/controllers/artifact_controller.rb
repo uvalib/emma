@@ -137,6 +137,12 @@ class ArtifactController < ApplicationController
     __debug_route
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # == GET /artifact/:bookshareId/:fmt?member=BS_ACCOUNT_ID
   # == GET /artifact/:bookshareId/:fmt?forUser=BS_ACCOUNT_ID
   #

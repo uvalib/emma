@@ -117,7 +117,7 @@ $data-list-border-color: none;
 
     &.empty {
         margin-bottom:         0;
-        grid-template-columns: 0 max-content;
+        grid-template-columns: max-content;
     }
 
     //=========================================================================
@@ -242,6 +242,7 @@ $data-list-border-color: none;
 
     padding:        $item-padding;
     padding-bottom: 2 * $item-padding;
+    overflow-x:     auto;
     border:         2px solid black;
     border-radius:  0.5rem;
     background:     lighter($uva-accent-yellow, 95%);

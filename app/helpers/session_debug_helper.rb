@@ -16,6 +16,7 @@ module SessionDebugHelper
 
   include ParamsHelper
   include HtmlHelper
+  include RoleHelper
 
   # ===========================================================================
   # :section:
@@ -26,10 +27,19 @@ module SessionDebugHelper
   # Indicate whether on-screen debugging is applicable.
   #
   def session_debug?
+    dev           = developer?
+    local         = !application_deployed?
+    on_by_default = local && dev
+    setting       = (session['app.debug'] if local || dev)
+    on_by_default ? !false?(setting) : true?(setting)
+  end
+=begin
+  def session_debug?
     on_by_default   = !application_deployed?
     current_setting = session['debug']
     on_by_default ? !false?(current_setting) : true?(current_setting)
   end
+=end
 
   # ===========================================================================
   # :section:
@@ -58,6 +68,7 @@ module SessionDebugHelper
           v = decompress_value(v)
           h(v.inspect) << html_span('[compressed]', class: 'note')
         else
+          v = v.to_hash if v.respond_to?(:to_hash)
           v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
         end
       end

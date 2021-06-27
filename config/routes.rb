@@ -181,14 +181,21 @@ Rails.application.routes.draw do
   # Authentication
   # ===========================================================================
 
-  devise_for :users, controllers: {
+  get '/user', to: 'account#index'
+
+  devise_for :users, path: 'user', controllers: {
     sessions:           'user/sessions',
     omniauth_callbacks: 'user/omniauth_callbacks',
   }
 
+  # Local login.
+  devise_scope :user do
+    get '/user/sign_in_local', to: 'user/sessions#sign_in_local',    as: 'sign_in_local'
+  end
+
   # Synthetic login endpoint.
   devise_scope :user do
-    get '/users/sign_in_as', to: 'user/sessions#sign_in_as', as: 'sign_in_as'
+    get '/user/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'
   end
 
   # ===========================================================================
@@ -270,8 +277,10 @@ unless ONLY_FOR_DOCUMENTATION
   def session_url(*);                             end
   def set_state_health_path(*);                   end
   def set_state_health_url(*);                    end
-  def sign_in_as_path(*);                         end
+  def sign_in_as_path(*);                         end # /user/sign_in_as
   def sign_in_as_url(*);                          end
+  def sign_in_local_path(*);                      end # /user/sign_in_local
+  def sign_in_local_url(*);                       end
   def system_unavailable_path(*);                 end
   def system_unavailable_url(*);                  end
   def title_index_path(*);                        end

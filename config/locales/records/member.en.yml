@@ -64,7 +64,7 @@ en:
           label:                  'Site'
 
         roles:
-          label:                  'Roles'
+          label:                  'Bookshare Roles'
 
         links:
           label:                  'Links'

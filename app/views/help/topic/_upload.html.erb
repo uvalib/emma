@@ -15,25 +15,25 @@
 
   create_config     = UploadHelper::UPLOAD_ACTION_VALUES[:new]
   create_select     = create_config.dig(:select, :enabled, :label)
-  create_select     = help_span(create_select, class: 'uppy-FileInput-btn')
+  create_select     = help_span(create_select, class: 'control-button')
   create_submit     = create_config.dig(:submit, :enabled, :label)
-  create_submit     = help_span(create_submit, class: 'uppy-FileInput-btn')
+  create_submit     = help_span(create_submit, class: 'control-button')
   create_cancel     = create_config.dig(:cancel, :enabled, :label)
-  create_cancel     = help_span(create_cancel, class: 'uppy-FileInput-btn')
+  create_cancel     = help_span(create_cancel, class: 'control-button')
 
   edit_config       = UploadHelper::UPLOAD_ACTION_VALUES[:edit]
   edit_select       = edit_config.dig(:select, :enabled, :label)
-  edit_select       = help_span(edit_select, class: 'uppy-FileInput-btn')
+  edit_select       = help_span(edit_select, class: 'control-button')
   edit_submit       = edit_config.dig(:submit, :enabled, :label)
-  edit_submit       = help_span(edit_submit, class: 'uppy-FileInput-btn')
+  edit_submit       = help_span(edit_submit, class: 'control-button')
   edit_cancel       = edit_config.dig(:cancel, :enabled, :label)
-  edit_cancel       = help_span(edit_cancel, class: 'uppy-FileInput-btn')
+  edit_cancel       = help_span(edit_cancel, class: 'control-button')
 
   delete_config     = UploadHelper::UPLOAD_ACTION_VALUES[:delete]
   delete_submit     = delete_config.dig(:submit, :enabled, :label)
-  delete_submit     = help_span(delete_submit, class: 'uppy-FileInput-btn')
+  delete_submit     = help_span(delete_submit, class: 'control-button')
   delete_cancel     = delete_config.dig(:cancel, :enabled, :label)
-  delete_cancel     = help_span(delete_cancel, class: 'uppy-FileInput-btn')
+  delete_cancel     = help_span(delete_cancel, class: 'control-button')
 
   upload_step       = 0
   source_menu       = help_image(:source_menu,            class: 'wide')

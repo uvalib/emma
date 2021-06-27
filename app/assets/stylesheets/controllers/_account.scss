@@ -1,7 +1,8 @@
 // app/assets/stylesheets/controllers/_account.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/controls/grids' as *;
 
 //=============================================================================
 // Account index page
@@ -9,7 +10,70 @@
 
 // Local EMMA user account metadata label/value pairs for index listings.
 .account-list-item {
+
     @extend .model-list-item-panel;
+
+    // Maximum number of physical columns per width breakpoint.
+
+    $max-columns: 20;
+    $columns-map: (
+        'wide':   ('columns': $max-columns),
+        'medium': ('columns': 1, 'template': minmax(max-content, 0.33fr) 1fr),
+        'narrow': ('columns': 1, 'template': 1fr)
+    );
+
+    @include grid-column-classes($max-columns, max-content, $columns-map);
+
+    @media #{$wide-screen} {
+        // NOTE: This is a kludge because ".column-#{count}" is not being added
+        grid-template-columns: auto;
+    }
+
+    @media #{$medium-width} {
+        padding: 1rem 1rem 0.5rem;
+    }
+
+    @media #{$narrow-screen} {
+        padding-bottom: 0;
+    }
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    %effective-user {
+        font-weight: bold;
+        color:       $uva-emergency-red;
+    }
+
+    .label {
+        &.field-EffectiveId,
+        &.field-EffectiveUid {
+            @extend %effective-user;
+        }
+    }
+
+    .value {
+
+        &.field-EffectiveId,
+        &.field-EffectiveUid {
+            @extend %effective-user;
+        }
+
+        &.field-EmmaRoles {
+
+            margin: 0;
+
+            > * {
+                margin:  0;
+                padding: 0;
+            }
+
+            > ul {
+                padding-left: 1rem;
+            }
+        }
+    }
 }
 
 // Zero or more .account-list-item elements.
@@ -36,6 +100,11 @@
 //=============================================================================
 // Account show page
 //=============================================================================
+
+.account.local-heading {
+    margin-top:    4rem;
+    margin-bottom: 2rem;
+}
 
 // Account metadata values.
 .account-details {
@@ -81,6 +150,6 @@
     }
 
     .account-delete-form {
-        margin-top: 0;
+        width: max-content;
     }
 }

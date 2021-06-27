@@ -188,6 +188,34 @@ class User < ApplicationRecord
 
   public
 
+  # Indicate whether the user has the developer role.
+  #
+  def developer?
+    @developer = has_role?(:developer) if @developer.nil?
+    @developer
+  end
+
+  # Indicate whether the user has the administrator role.
+  #
+  def administrator?
+    @administrator = has_role?(:administrator) if @administrator.nil?
+    @administrator
+  end
+
+  # The user's EMMA roles.
+  #
+  # @return [Array<Symbol>]
+  #
+  def role_list
+    roles.order(:id).map(&:name).map(&:to_sym)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # menu_label
   #
   # @param [User, nil] item           Default: self.
@@ -210,14 +238,15 @@ class User < ApplicationRecord
 
   protected
 
-  # Current EMMA test Bookshare accounts.
+  # Current EMMA test Bookshare accounts and their role prototypes.
   #
   # @type [Hash{String=>Symbol}]
   #
+  # @see Roles#PROTOTYPE
+  #
   TEST_USERS = {
-    #'emmadso@bookshare.org'        => :dso, # TODO: restore
-    'emmadso@bookshare.org'        => :admin, # TODO: remove after admin accounts are available
-    'emmacollection@bookshare.org' => :collection,
+    'emmadso@bookshare.org'        => :dso,
+    'emmacollection@bookshare.org' => :librarian,
     'emmamembership@bookshare.org' => :membership
   }.freeze
 
@@ -294,6 +323,7 @@ class User < ApplicationRecord
   # associated User object with additional information from the provider.
   #
   # @param [OmniAuth::AuthHash, Hash, nil] data
+  # @param [Boolean, nil]                  update   Default: *true*.
   #
   # @return [User]                    Updated record of the indicated user.
   # @return [nil]                     If *data* is not valid.
@@ -303,16 +333,20 @@ class User < ApplicationRecord
   #--
   # noinspection RubyNilAnalysis
   #++
-  def self.from_omniauth(data)
+  def self.from_omniauth(data, update = nil)
     return unless data.is_a?(Hash)
+    keep = false?(update)
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
-    find_or_create_by(email: data.uid.downcase).tap do |user|
-      # user.email       = auth.info.email
-      user.first_name    = data.info.first_name
-      user.last_name     = data.info.last_name
-      user.access_token  = data.credentials.token
-      user.refresh_token = data.credentials.refresh_token
-    end
+    attr = {
+      email:         data.uid.downcase,
+      first_name:    data.info&.first_name,
+      last_name:     data.info&.last_name,
+      access_token:  data.credentials&.token,
+      refresh_token: data.credentials&.refresh_token
+    }.compact_blank!
+    user = find_by(email: attr[:email]) or return create(attr)
+    return user if keep || attr.delete_if { |k, v| user[k] == v }.blank?
+    return user if user.update(attr)
   end
 
 end

@@ -1,11 +1,10 @@
-<%# app/views/home/_ability.html.erb -%>
+<%# app/views/account/_ability.html.erb -%>
 <%-
   # Displays the individual abilities of the current user account.
 
   user      = current_user&.to_s&.presence || 'guest'
-  actions   = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]
-  models    = [User, Upload, Artifact]
-  models   += [Title, Periodical, Edition, Member, ReadingList]
+  actions   = Ability::ACTIONS + %i[create update delete]
+  models    = Ability.models
   panel_css = 'ability-list'
   panel_id  = css_randomize(panel_css)
   toggle    = toggle_button(id: panel_id)
@@ -29,7 +28,6 @@
       <tbody>
         <%- models.each do |model| -%>
           <%- actions.each do |action| -%>
-            <%- next if (action == :download) && (model != Artifact) -%>
             <%- status = can?(action, model) -%>
             <%- can    = status ? 'can' : 'cannot' -%>
             <tr class="<%= can -%> <%= action %>-<%= model -%>">

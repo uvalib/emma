@@ -21,4 +21,5 @@
 //
 //= require_tree ./shared
 //= require_tree ./feature
+//= require_tree ./controllers
 //= require_tree .

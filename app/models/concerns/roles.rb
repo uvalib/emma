@@ -9,10 +9,17 @@ __loading_begin(__FILE__)
 #
 module Roles
 
+  extend self
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Bookshare user types as documented in API section 1.9 (User Types).
   #
   # NOTE: This is only for documentation at this time.
-  # TODO: Harmonize with EMMA_ROLES.
   #
   # @type [Hash{Symbol=>String}]
   #
@@ -150,7 +157,6 @@ module Roles
   # included as :BsRoleType in Bs::ENUMERATIONS.
   #
   # NOTE: This is only for documentation at this time.
-  # TODO: Harmonize with EMMA_ROLES.
   #
   # @type [Hash{Symbol=>String}]
   #
@@ -189,25 +195,33 @@ module Roles
   # @type [Array<Symbol>]
   #
   EMMA_ROLES = %i[
-    catalog_searcher
-    catalog_curator
-    artifact_downloader
-    artifact_submitter
-    membership_viewer
-    membership_manager
+    catalog_search
+    catalog_submit
+    artifact_download
+    artifact_submit
+    membership_view
+    membership_modify
     administrator
+    developer
   ].freeze
 
   # EMMA role(s) for prototypical users.
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
+  # == Usage Notes
+  # End-users are not a part of EMMA at this time, so PROTOTYPE[:member] is
+  # only for future use.
+  #
   PROTOTYPE = {
-    admin:      EMMA_ROLES,
-    dso:        (EMMA_ROLES - %i[administrator]),
-    membership: %i[catalog_searcher membership_viewer membership_manager],
-    collection: %i[catalog_searcher catalog_curator],
-    anonymous:  %i[catalog_searcher],
+    developer:     EMMA_ROLES,
+    administrator: (EMMA_ROLES - %i[developer]),
+    dso:           (EMMA_ROLES - %i[developer administrator]),
+    librarian:     %i[catalog_search catalog_submit artifact_submit],
+    membership:    %i[catalog_search membership_view membership_modify],
+    member:        %i[catalog_search artifact_download],
+    guest:         %i[catalog_search],
+    anonymous:     %i[catalog_search],
   }.deep_freeze
 
   # The name of the default set of roles for a new user.
@@ -217,6 +231,44 @@ module Roles
   # @see Roles#PROTOTYPE
   #
   DEFAULT_PROTOTYPE = :dso
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return the best match from #PROTOTYPE
+  #
+  # @param [User, nil]             user
+  # @param [Symbol, Array<Symbol>] roles
+  #
+  # @return [Symbol]                  Matching #PROTOTYPE key.
+  #
+  def role_prototype_for(user = nil, *roles)
+    # noinspection RubyNilAnalysis
+    if user.is_a?(User)
+      roles = user.role_list
+    else
+      roles.prepend(user) if user.is_a?(Symbol)
+      roles = roles.flatten.compact_blank.uniq
+    end
+    if roles.empty?
+      :anonymous
+    elsif roles.include?(:developer)
+      :developer
+    elsif roles.include?(:administrator)
+      :administrator
+    elsif roles.include?(:artifact_download)
+      roles.include?(:membership_modify) ? :dso : :member
+    elsif roles.include?(:artifact_submit)
+      :librarian
+    elsif roles.include?(:membership_modify)
+      :membership
+    else
+      :guest
+    end
+  end
 
 end
 

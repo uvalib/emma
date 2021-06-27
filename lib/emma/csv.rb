@@ -52,8 +52,7 @@ module Emma::Csv
     src = src.body   if src.respond_to?(:body)
     src = src.string if src.respond_to?(:string)
     if src.is_a?(String)
-      # noinspection RubyYardReturnMatch
-      CSV.foreach(src, **opt).to_a.map(&:to_h)
+      CSV.foreach(src, **opt).to_a.map(&:to_h) if src.present?
     else
       src = src.to_io if src.respond_to?(:to_io)
       CSV.parse(src, **opt).each.map do |row|

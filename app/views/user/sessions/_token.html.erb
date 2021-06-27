@@ -1,0 +1,53 @@
+<%# app/views/user/sessions/_token.html.erb -%>
+<%-
+  # Developer-only affordance to short-circuit login by providing an auth token
+  # (copied from an independent browser tab which is logged-in to a deployed
+  # instance of the service).
+
+  return unless session_debug?
+
+  form_label = t('emma.user.sessions.sign_in_as.update.label')
+  form_opt   = {
+    method: :get,
+    class:  'sign-in-form inline obscured'
+  }
+
+  label_opt       = { class: 'label' }
+  value_opt       = { class: 'value' }
+
+  uid_label       = 'ID' # TODO: I18n
+  uid_label       = (('&nbsp;' * 4) << uid_label).html_safe
+  uid_label_opt   = label_opt
+  uid_value_opt   = value_opt
+
+  token_label     = 'Token' # TODO: I18n
+  token_label     = (('&nbsp;' * 6) << token_label).html_safe
+  token_label_opt = label_opt
+  token_value_opt = value_opt
+
+  submit_label = t('emma.user.sessions.sign_in_as.update.submit')
+  submit_opt   = { class: 'submit-button' }
+
+-%>
+
+<%= form_tag(sign_in_as_path, form_opt) do -%>
+
+  <label class="form-label">
+    <%= form_label %>
+  </label>
+
+  <div class="field">
+    <%= label_tag      :uid,   uid_label,   uid_label_opt %>
+    <%= text_field_tag :uid,   nil,         uid_value_opt %>
+  </div>
+
+  <div class="field">
+    <%= label_tag      :token, token_label, token_label_opt %>
+    <%= text_field_tag :token, nil,         token_value_opt %>
+  </div>
+
+  <div class="actions">
+    <%= submit_tag submit_label, submit_opt %>
+  </div>
+
+<%- end -%>

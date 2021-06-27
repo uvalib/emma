@@ -266,7 +266,7 @@ module Upload::IdentifierMethods
     opt[:min_id] ||= minimum_id
     opt[:max_id] ||= maximum_id
     ids.flatten.flat_map { |id|
-      id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
+      id.is_a?(String) ? id.strip.tr(',', ' ').split(/\s+/) : id
     }.flat_map { |id|
       expand_id_range(id, **opt) if id.present?
     }.compact.uniq

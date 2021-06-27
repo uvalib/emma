@@ -37,28 +37,28 @@ module SessionConcern
     # :section: Exceptions
     # =========================================================================
 
-    rescue_from CanCan::AccessDenied do |exception|
-      __debug_exception('RESCUE_FROM', exception)
-      redirect_to dashboard_path, alert: exception.message
-    end
+    rescue_from CanCan::AccessDenied,       with: :access_denied_handler
+    rescue_from Api::Error, Faraday::Error, with: :connection_error_handler
+    rescue_from StandardError,              with: :fallback_error_handler
 
-    rescue_from Api::Error, Faraday::Error do |exception|
-      __debug_exception('RESCUE_FROM', exception)
-      if rendering_html?
-        flash_now_alert(exception) if flash.now[:alert].blank?
-        render
-      end
-    end
+    # =========================================================================
+    # :section: DeviseController overrides
+    # =========================================================================
 
-    rescue_from StandardError do |exception|
-      __debug_exception('RESCUE_FROM', exception, trace: true)
-      if rendering_html?
-        flash_now_alert(exception) if flash.now[:alert].blank?
-        render
-      elsif posting_html?
-        flash_alert(exception)
-        redirect_back(fallback_location: root_path)
+    if ancestors.include?(DeviseController)
+
+      # This overrides the DeviseController message to allow the standard
+      # 'already_authenticated' flash message to be overridden by
+      # `session['app.devise.failure.message']`.
+      #
+      # @see UserConcern#role_failure
+      #
+      def require_no_authentication
+        super
+        flash_message = session.delete('app.devise.failure.message')
+        flash_alert(flash_message) if flash_message
       end
+
     end
 
   end
@@ -67,6 +67,7 @@ module SessionConcern
   include ParamsConcern
   include FlashConcern
   include ApiConcern
+  include AuthConcern
 
   # Non-functional hints for RubyMine type checking.
   # :nocov:
@@ -95,6 +96,7 @@ module SessionConcern
     /_return_to$/,
   ].freeze
 
+=begin
   # ===========================================================================
   # :section: Devise::Controllers::Helpers overrides
   # ===========================================================================
@@ -127,6 +129,7 @@ module SessionConcern
   def after_sign_out_path_for(*)
     welcome_path
   end
+=end
 
   # ===========================================================================
   # :section:
@@ -136,21 +139,21 @@ module SessionConcern
 
   # Redirect after a successful authorization operation.
   #
-  # @param [String, nil]       path     Default: `#after_sign_in_path_for`.
-  # @param [String, User, nil] user     Default: `#resource`.
-  # @param [*]                 message  Optionally passed to #flash_notice.
+  # @param [String, nil] path         Default: `#after_sign_in_path_for`.
+  # @param [User, nil]   user         Default: `#resource`.
+  # @param [*]           message      Optionally passed to #flash_notice.
   #
   def auth_success_redirect(path = nil, user: nil, message: nil)
     set_flash_notice(message) if message.present?
-    path ||= params[:redirect] || after_sign_in_path_for(user || resource)
+    path ||= after_sign_in_path_for(user || resource)
     redirect_to path
   end
 
   # Redirect after a failed authorization operation.
   #
-  # @param [String, nil]       path     Default: `#after_sign_out_path_for`.
-  # @param [String, User, nil] user     Default: `#resource`.
-  # @param [*]                 message  Optionally passed to #flash_alert.
+  # @param [String, nil] path         Default: `#after_sign_out_path_for`.
+  # @param [User, nil]   user         Default: `#resource`.
+  # @param [*]           message      Optionally passed to #flash_alert.
   #
   def auth_failure_redirect(path = nil, user: nil, message: nil)
     local_sign_out # Make sure no remnants of the local session are left.
@@ -205,8 +208,8 @@ module SessionConcern
   def status_message(status:, action: nil, user: nil)
     action ||= params[:action]
     user   ||= resource
-    user     = user['uid'] if user.is_a?(Hash)
-    user     = user.uid    if user.respond_to?(:uid)
+    user     = user[:uid] || user['uid'] if user.is_a?(Hash)
+    user     = user.uid                  if user.respond_to?(:uid)
     user     = user.to_s.presence || 'unknown user' # TODO: I18n
     I18n.t("emma.user.sessions.#{action}.#{status}", user: user)
   end
@@ -282,59 +285,7 @@ module SessionConcern
 
   public
 
-  # Sign out of the local (EMMA) session *without* revoking the OAuth2 token
-  # (which signs out of the OAuth2 session).
-  #
-  # @see Devise::Controllers::SignInOut#sign_out
-  # @see #delete_token
-  #
-  def local_sign_out
-    token = session.delete('omniauth.auth')
-    __debug { "#{__method__}: omniauth.auth was: #{token.inspect}" } if token
-    sign_out
-  end
-
-  # Sign out of the local session and the OAuth2 session.
-  #
-  # (This is the normal sign-out but named as a convenience for places in the
-  # where the distinction with #local_sign_out needs to be stressed.)
-  #
-  def global_sign_out
-    token = session['omniauth.auth']
-    __debug { "#{__method__}: omniauth.auth is: #{token.inspect}" } if token
-    sign_out
-  end
-
-  # Terminate the local login session ('omniauth.auth') and the session with
-  # the OAuth2 provider (if appropriate)
-  #
-  # @param [Boolean] revoke           If set to *false*, do not revoke the
-  #                                     token with the OAuth2 provider.
-  #
-  # @return [void]
-  #
-  # @see #revoke_access_token
-  #
-  def delete_token(revoke: true)
-    token = session.delete('omniauth.auth')
-    return unless revoke
-    no_revoke_reason =
-      if !application_deployed?
-        'localhost'
-      elsif debug_user?
-        "USER #{current_user.uid} DEBUGGING"
-      elsif false?(params[:revoke])
-        'revoke=false'
-      elsif token.blank?
-        'NO TOKEN'
-      end
-    if no_revoke_reason
-      __debug { "#{__method__}: NOT REVOKING TOKEN - #{no_revoke_reason}" }
-    else
-      revoke_access_token(token)
-    end
-  end
-
+=begin
   # Indicate whether the user is one is capable of short-circuiting the
   # authorization process.
   #
@@ -345,31 +296,57 @@ module SessionConcern
     session.key?('debug') &&
       OmniAuth::Strategies::Bookshare.debug_user?(user || current_user)
   end
+=end
 
-  # revoke_access_token
-  #
-  # @param [Hash, nil] token          Default: `session['omniauth.auth']`.
-  #
-  # @return [OAuth2::Response]
-  # @return [nil]                     If no token was provided or found.
-  #
-  #--
-  # noinspection RubyNilAnalysis, RubyResolve
-  #++
-  def revoke_access_token(token = nil)
-    token ||= session['omniauth.auth']
-    token   = OmniAuth::AuthHash.new(token) if token.is_a?(Hash)
-    token   = token.credentials.token       if token.is_a?(OmniAuth::AuthHash)
-    return Log.warn { "#{__method__}: no token present" } if token.blank?
-    Log.info { "#{__method__}: #{token.inspect}" }
+  # ===========================================================================
+  # :section: Exception handlers
+  # ===========================================================================
 
-    opt     = OmniAuth::Strategies::Bookshare.default_options
-    id      = opt.client_id
-    secret  = opt.client_secret
-    options = opt.client_options.deep_symbolize_keys
-    __debug_line(__method__) { { id: id, secret: secret, options: options } }
+  public
 
-    OAuth2::Client.new(id, secret, options).auth_code.revoke_token(token)
+  # Respond to the situation in which an authenticated user attempted to access
+  # a route that is not allowed by the user's role.
+  #
+  # @param [CanCan::AccessDenied] exception
+  #
+  # @return [Any]
+  #
+  def access_denied_handler(exception)
+    __debug_exception('RESCUE_FROM', exception)
+    redirect_back(fallback_location: root_path, alert: exception.message)
+  end
+
+  # Respond to page failures due to a failure to communicate with a remote
+  # service.
+  #
+  # @param [Api::Error, Faraday::Error] exception
+  #
+  # @return [nil]                     If not handled.
+  # @return [Any]                     Otherwise.
+  #
+  def connection_error_handler(exception)
+    __debug_exception('RESCUE_FROM', exception)
+    if rendering_html?
+      flash_now_alert(exception) if flash.now[:alert].blank?
+      render
+    end
+  end
+
+  # Respond to general page failures.
+  #
+  # @param [Exception] exception
+  #
+  # @return [nil]                     If not handled.
+  # @return [Any]                     Otherwise.
+  #
+  def fallback_error_handler(exception)
+    __debug_exception('RESCUE_FROM', exception, trace: true)
+    if rendering_html?
+      flash_now_alert(exception) if flash.now[:alert].blank?
+      render
+    elsif posting_html?
+      redirect_back(fallback_location: root_path, alert: exception.message)
+    end
   end
 
   # ===========================================================================
@@ -434,9 +411,18 @@ module SessionConcern
   def session_update
     error = nil
     yield
+
+  rescue CanCan::AccessDenied => error
+    # Dealing with this condition here directly allows the intended redirect to
+    # happen.  Otherwise (either by invoking rescue_with_handler here or by
+    # re-raising to defer to rescue_from) the unauthorized page will get built
+    # and displayed instead of redirecting.
+    error = nil if access_denied_handler(error)
+
   rescue => error
     __debug_exception('UNHANDLED EXCEPTION', error, trace: true)
     flash_now_alert(*api_error_message) if api_error?
+
   ensure
     last_operation_update
     raise error if error

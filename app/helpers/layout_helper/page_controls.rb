@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::PageControls
 
   include LayoutHelper::Common
+  include ConfigurationHelper
   include LinkHelper
 
   # ===========================================================================
@@ -150,7 +151,7 @@ module LayoutHelper::PageControls
         opt[:many] = true
       end
     end
-    config_lookup('page_controls.label', **opt)
+    config_lookup('page_controls.label', **opt) || 'Controls'
   end
 
 end

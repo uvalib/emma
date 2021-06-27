@@ -1,10 +1,14 @@
 <%# app/views/layouts/_nav_bar.html.erb -%>
 <%-
   # Navigation bar.
-  controls = (nav_bar_links if show_nav_bar?)
-  return unless controls.present?
+
+  controls     = (nav_bar_links       if show_nav_bar?)
+  dev_controls = (render_dev_controls if show_dev_controls?)
+
+  return unless controls || dev_controls
 -%>
 
 <nav class="layout-navbar">
   <%= controls %>
+  <%= dev_controls %>
 </nav>

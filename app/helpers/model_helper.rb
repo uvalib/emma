@@ -289,7 +289,7 @@ module ModelHelper
   # @param [Model, Api::Record, nil] item
   # @param [Hash, nil]               pairs
   #
-  # @return [Hash{Symbol=>String}]
+  # @return [Hash]
   #
   # @yield [item] To supply additional field/value pairs based on *item*.
   # @yieldparam  [Model] item         The supplied *item* parameter.
@@ -358,25 +358,26 @@ module ModelHelper
     value_opt = opt.slice(:model, :index, :min_index, :max_index, :no_format)
 
     # noinspection RubyNilAnalysis
-    pairs.map { |label, value|
-      field = lbl = val = nil
-      if value.is_a?(Symbol)
-        field = value
-      elsif label.is_a?(Symbol) && value.is_a?(Hash)
-        field = label
-        lbl   = value[:label]
-        val   = field
-      elsif label.is_a?(Symbol)
-        field = label
-        lbl   = Field.configuration_for(field, model, action)[:label]
+    pairs.map { |k, v|
+      config = field = label = value = nil
+      if v.is_a?(Symbol)
+        field = v
+      elsif k.is_a?(Symbol)
+        if v.is_a?(Hash)
+          config = v
+          value  = k
+        end
       elsif model
-        field = Field.configuration_for_label(label, model, action)[:field]
+        config = Field.configuration_for_label(k, model, action)
+        field  = config[:field]
       end
-      # @type [String] label
-      label       = lbl || label || labelize(field)
-      value       = val || value
-      opt[:row]  += 1
-      opt[:field] = field
+      field  ||= k
+      config ||= Field.configuration_for_label(field, model, action)
+      label  ||= config[:label] || k || labelize(field)
+      value  ||= v
+      opt[:row]    += 1
+      opt[:field]   = field
+      opt[:title] ||= config[:tooltip] if config.key?(:tooltip)
       # noinspection RubyYardParamTypeMatch
       value = render_value(item, value, **value_opt)
       render_pair(label, value, **opt) if value
@@ -1062,14 +1063,16 @@ module ModelHelper
     outer_tag:  :tr,
     inner_tag:  :td,
     columns:    nil,
+    filter:     nil,
     **opt
   )
     opt.except!(*MODEL_TABLE_OPTIONS)
-    pairs =
+    fv_opt = { columns: columns, filter: filter }
+    pairs  =
       if block_given?
-        yield(item, columns: columns)
+        yield(item, **fv_opt)
       else
-        model_field_values(item, columns: columns)
+        model_field_values(item, **fv_opt)
       end
     fields =
       if inner_tag
@@ -1120,16 +1123,18 @@ module ModelHelper
     inner_tag:  :th,
     dark:       DARK_HEAD,
     columns:    nil,
+    filter:     nil,
     **opt
   )
     opt.except!(*MODEL_TABLE_OPTIONS)
 
     first  = Array.wrap(item).first
+    fv_opt = { columns: columns, filter: filter }
     fields =
       if block_given?
-        yield(first, columns: columns)
+        yield(first, **fv_opt)
       else
-        model_field_values(first, columns: columns)
+        model_field_values(first, **fv_opt)
       end
     fields = fields.dup  if fields.is_a?(Array)
     fields = fields.keys if fields.is_a?(Hash)
@@ -1155,6 +1160,7 @@ module ModelHelper
       fields = html_tag(outer_tag, fields)
       fields = html_tag(outer_tag, '', class: 'spanner') << fields if dark
     end
+
     fields
   end
 
@@ -1302,7 +1308,7 @@ module ModelHelper
     &block
   )
     return ''.html_safe unless item
-    pairs = field_values(item, pairs, &block)
+    pairs  = field_values(item, pairs, &block)
     model  = (model  || params[:controller])&.to_sym
     action = (action || params[:action])&.to_sym
 
@@ -1377,6 +1383,7 @@ module ModelHelper
     model ||= params[:controller]
     prop = Field.configuration_for(field, model)
     return if prop[:ignored]
+    return if prop[:role] && !has_role?(prop[:role])
 
     # Pre-process value.
     render_method = placeholder = range = nil
@@ -1599,7 +1606,7 @@ module ModelHelper
     config   = config.dig(action&.to_sym, :submit) || {}
     label  ||= config[:label]
 
-    prepend_classes!(opt, css_selector, 'uppy-FileInput-btn')
+    prepend_classes!(opt, css_selector)
     opt[:title] ||= config.dig(:disabled, :tooltip)
     # noinspection RubyYardReturnMatch
     submit_tag(label, opt)
@@ -1621,7 +1628,7 @@ module ModelHelper
     config   = config.dig(action&.to_sym, :cancel) || {}
     label  ||= config[:label]
 
-    prepend_classes!(opt, css_selector, 'uppy-FileInput-btn')
+    prepend_classes!(opt, css_selector)
     opt[:title] ||= config[:tooltip]
     opt[:type]  ||= 'reset'
 
@@ -1859,7 +1866,7 @@ module ModelHelper
     opt[:title]  ||= config.dig(:disabled, :tooltip)
     opt[:role]   ||= 'button'
     opt[:method] ||= :delete
-    prepend_classes!(opt, css_selector, 'uppy-FileInput-btn')
+    prepend_classes!(opt, css_selector)
     append_classes!(opt, (url ? 'best-choice' : 'forbidden'))
     button_to(label, url, opt)
   end

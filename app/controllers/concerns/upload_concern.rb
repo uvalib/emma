@@ -244,6 +244,27 @@ module UploadConcern
 
   public
 
+  # Parameters used by Upload#search_records.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RECORDS_PARAMS = Upload::SEARCH_RECORDS_OPTIONS
+
+  # Upload#search_records parameters that specify a distinct search query.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_ONLY_PARAMS = (SEARCH_RECORDS_PARAMS - %i[offset limit]).freeze
+
+  # Parameters used by #find_by_match_records or passed on to
+  # Upload#search_records.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIND_OR_MATCH_PARAMS = (
+    SEARCH_RECORDS_PARAMS + %i[group state edit_state user user_id edit_user]
+  ).freeze
+
   # Locate and filter records.
   #
   # @param [Array<String,Array>] items  Default: `@identifier`.
@@ -261,16 +282,13 @@ module UploadConcern
 
     # If neither items nor field queries were given, use request parameters.
     if items.blank? && (opt[:groups] != :only)
-      option_keys = Upload::SEARCH_RECORDS_OPTIONS - %i[offset limit]
-      opt = upload_params.merge(opt) if opt.except(*option_keys).blank?
+      opt = upload_params.merge(opt) if opt.except(*SEARCH_ONLY_PARAMS).blank?
     end
     opt[:limit] ||= 20 # TODO: Default page size for Upload index.
     opt[:page]  ||= 0  # Start at the first page by default.
 
     # Disallow experimental database WHERE predicates unless privileged.
-    admin = true # TODO: delete
-    #admin = can?(:manage, Upload) # TODO: restore
-    opt.slice!(:user, :user_id, :state) unless admin
+    opt.slice!(*FIND_OR_MATCH_PARAMS) unless current_user&.administrator?
 
     # Select records for the current user unless a different user has been
     # specified (or all records if specified as '*', 'all', or 'false').

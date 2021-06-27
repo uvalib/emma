@@ -23,24 +23,7 @@
 //
 // noinspection CssUnusedSymbol
 .uppy-FileInput-btn {
-
     @extend %control-button;
-
-    // Restore some items that %control-button has overridden:
-    margin:      0;
-    padding:     10px 15px;
-    line-height: 1;
-    font-size:   0.85em;
-
-    &:not(.disabled):not(.forbidden):hover {
-        background-color: $uva-accent-orange;
-        border-color:     $uppy-file-input-accent;
-        color:            white;
-    }
-
-    &.disabled:hover, &.forbidden:hover {
-        color: unset;
-    }
 }
 
 // The container for the file select button which is displayed instead of the

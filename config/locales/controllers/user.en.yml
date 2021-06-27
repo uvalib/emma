@@ -28,6 +28,7 @@ en:
           title:        'Sign in with your Bookshare account'
           tooltip:      'Authentication is required for full access.'
           submit:       'Sign in'
+          cancel:       'Cancel'
 
         create:
           success:      'Signed in as %{user}.'
@@ -36,14 +37,21 @@ en:
         destroy:
           label:        'Sign out'
           tooltip:      'End your session.'
-          success:      'Signed out (%{user}).'
+          success:      'User %{user} signed out.'
           failure:      'An unexpected error occurred.'
+
+        sign_in:
+          label:        'EMMA administrator sign-in'
+          title:        'Sign in with a local EMMA account'
+          submit:       'Sign in'
+          cancel:       'Cancel'
 
         sign_in_as:
           label:        'Sign in as %{user}'
           update:
             label:      'Sign in with copied auth token'
-            submit:     'Go'
+            submit:     'Sign in'
+            cancel:     'Cancel'
 
       # =======================================================================
 

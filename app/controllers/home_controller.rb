@@ -62,12 +62,10 @@ class HomeController < ApplicationController
   #
   def main
     __debug_route
-    if !current_user
-      redirect_to welcome_path
-    elsif can?(:manage, User)
-      redirect_to account_index_path
-    else
+    if current_user
       redirect_to dashboard_path
+    else
+      redirect_to welcome_path
     end
   end
 

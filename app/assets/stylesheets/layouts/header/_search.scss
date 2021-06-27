@@ -199,7 +199,7 @@ $search-button-width:    6rem;
     // noinspection CssUnusedSymbol
     .advanced-search-toggle {
 
-        @extend %control-button;
+        @extend %control-button-base;
 
         width:            $advanced-toggle-width;
         margin:           0;

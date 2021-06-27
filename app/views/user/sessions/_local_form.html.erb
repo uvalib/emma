@@ -1,0 +1,47 @@
+<%# app/views/user/sessions/_local_form.html.erb -%>
+<%-
+  # Sign in with a local EMMA account.
+
+  user ||= resource || resource_class.new
+
+  form_opt = {
+    as:   resource_name,
+    url:  session_path(resource_name),
+    html: { class: 'sign-in-form' }
+  }
+
+  label_opt    = { class: 'label' }
+  value_opt    = { class: 'value' }
+
+  email_opt    = value_opt.merge(autocomplete: 'email')
+  pwd_opt      = value_opt.merge(autocomplete: 'current-password')
+
+  submit_label = t('emma.user.sessions.new.submit')
+  submit_opt   = { class: 'submit-button best-choice' }
+
+  cancel_label = t('emma.user.sessions.new.cancel')
+  cancel_opt   = { class: 'cancel-button' }
+
+-%>
+
+<%= form_for(user, form_opt) do |f| -%>
+
+  <div class="account-fields">
+
+    <%= f.label          :email, label_opt %>
+    <%= f.email_field    :email, email_opt %>
+
+    <%= f.label          :password, label_opt %>
+    <%= f.password_field :password, pwd_opt %>
+
+    <%- if devise_mapping.rememberable? -%>
+      <%= f.check_box :remember_me %>
+      <%= f.label     :remember_me %>
+    <%- end -%>
+
+    <%= f.submit    submit_label, submit_opt %>
+    <%= html_button cancel_label, cancel_opt %>
+
+  </div>
+
+<%- end -%>

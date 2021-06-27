@@ -51,4 +51,23 @@ class Role < ApplicationRecord
 
 end
 
+# NOTE: Temporary until all databases have been automatically modified
+Role.all.order(:id).map { |record|
+  # noinspection RubyCaseWithoutElseBlockInspection
+  new_name =
+    case (old_name = record.name)
+      when 'catalog_searcher'    then 'catalog_search'
+      when 'catalog_submitter'   then 'catalog_submit'
+      when 'artifact_downloader' then 'artifact_download'
+      when 'artifact_submitter'  then 'artifact_submit'
+      when 'membership_viewer'   then 'membership_view'
+      when 'membership_manager'  then 'membership_modify'
+    end
+  next unless new_name
+  Log.warn { "******** UPDATE ROLE TABLE #{old_name} => #{new_name} ********" }
+  record.update(name: new_name)
+}.compact.tap { |a|
+  Log.warn { '******** ROLE TABLE ALREADY UPDATED *************' } if a.empty?
+}
+
 __loading_end(__FILE__)

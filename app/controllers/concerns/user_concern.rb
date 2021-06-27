@@ -127,8 +127,45 @@ module UserConcern
   # @return [void]
   #
   def update_user
-    data  = session['omniauth.auth']
-    @user = data && warden.set_user(User.from_omniauth(data))
+    @user = warden.set_user(user_from_session)
+  end
+
+  # Authenticate then ensure that the user has the :administrator role.
+  #
+  def authenticate_admin!
+    user = authenticate_user!
+    role_failure('Administrator-only feature') unless user.administrator? # TODO: I18n
+  end
+
+  # Authenticate then ensure that the user has the :developer role.
+  #
+  def authenticate_developer!
+    user = authenticate_user!
+    role_failure('Developer-only feature') unless user.developer? # TODO: I18n
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  private
+
+  ROLE_FAILURE = 'Insufficient privilege for this operation'.freeze
+
+  # Cause an insufficient role for an authenticated session to generate an
+  # authentication failure the way Devise does.
+  #
+  # @param [String, nil] message    Default: 'devise.failure.unauthenticated'
+  #
+  # == Implementation Notes
+  # This method sets `session['app.devise.redirect']` in order to prevent
+  # SessionConcern#after_sign_in_path_for from specifying the current (failed)
+  # page as the redirect from DeviseController#require_no_authentication.
+  #
+  def role_failure(message = nil)
+    session['app.devise.failure.message'] = message ||= ROLE_FAILURE
+    session['app.devise.redirect'] = dashboard_path
+    throw(:warden, message: message)
   end
 
 end

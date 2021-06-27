@@ -16,7 +16,7 @@
   end
 
   click_to =
-    if can?(:new, Periodical)
+    if can?(:create, Periodical)
       'Click %s to' % link_to_action('here')
     else
       'User %s cannot' % current_user.to_s.inspect
@@ -28,6 +28,7 @@
 
 <%= page_description_section %>
 
+<%= page_directions_section %>
 <p><%= click_to -%> add a periodical.</p>
 
 <%= page_notes_section %>

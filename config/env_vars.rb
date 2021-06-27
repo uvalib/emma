@@ -162,7 +162,7 @@ BOOKSHARE_AUTH_URL =
 #
 # @type [String, nil]
 #
-# @see OmniAuth::Strategies::Bookshare#stored_auth
+# @see AuthConcern#CONFIGURED_AUTH
 #
 BOOKSHARE_TEST_USERS = ENV.fetch('BOOKSHARE_TEST_USERS', nil).freeze
 

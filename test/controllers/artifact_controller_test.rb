@@ -45,7 +45,7 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
     url_opt = { id: title, fmt: format }
     options = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
-      able  = can?(user, :read, Artifact)
+      able  = can?(user, :show, Artifact)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -86,7 +86,7 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
       url     = artifact_index_url
       options = OPTIONS.merge(test: __method__, action: 'create')
       TEST_WRITERS.each do |user|
-        able = can?(user, :create, Artifact)
+        able = can?(user, :new, Artifact)
         opt =
           if able
             options.merge(expect: :no_content, media_type: nil)
@@ -118,7 +118,7 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
       url     = artifact_url(id: title)
       options = OPTIONS.merge(test: __method__, action: 'update')
       TEST_WRITERS.each do |user|
-        able = can?(user, :update, Artifact)
+        able = can?(user, :edit, Artifact)
         opt =
           if able
             options.merge(expect: :no_content, media_type: nil)

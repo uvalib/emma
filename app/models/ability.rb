@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 # Definitions for role-based authorization through CanCan.
 #
-# NOTE: This gem is very model/controller oriented and may not be helpful...
-#
 # A method call like `can :read, :artifact` basically assumes a few things:
 # - There's an ArtifactController with typical CRUD endpoints.
 # - The :read argument implies permission for the :index and :show endpoints.
@@ -16,7 +14,15 @@ __loading_begin(__FILE__)
 #
 class Ability
 
+  include Emma::Common
   include CanCan::Ability
+  include Roles
+
+  # The standard CRUD actions controller presumed by CanCan.
+  #
+  # @type [Array<Symbol>]
+  #
+  ACTIONS = %i[index show new edit destroy].freeze
 
   # Existing pre-defined action aliases.
   #
@@ -28,7 +34,7 @@ class Ability
   # @see CanCan::Ability::Actions#default_alias_actions
   # @see CanCan::Rule#matches_action?
   #
-  PREDEFINED_ACTION_ALIAS = {
+  PREDEFINED_ALIAS = {
     read:   %i[index show],
     create: %i[new],
     update: %i[edit],
@@ -36,31 +42,78 @@ class Ability
 
   # Locally-defined aliases.
   #
+  # Keys with empty values essentially document abilities that are used within
+  # the code and are not actually used as CanCan aliases.
+  #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   LOCAL_ACTION_ALIAS = {
-    admin:       %i[manage],          # NOTE: only used for upload/admin
-    list:        %i[index],
-    delete:      %i[destroy],
-    history:     %i[manage],          # NOTE: only used for Title and Member
-    bulk_new:    %i[new],
-    bulk_edit:   %i[edit],
-    bulk_delete: %i[destroy],
+
+    # == Any controller
+
+    delete:         %i[destroy],
+
+    # == UploadController
+
+    admin:          %i[manage],
+    cancel:         [],
+    check:          [],
+    reedit:         [],
+    renew:          [],
+    endpoint:       [],
+    upload:         %i[endpoint],
+    bulk_new:       %i[new create],
+    bulk_edit:      %i[edit update],
+    bulk_delete:    %i[destroy delete],
+    bulk_create:    %i[bulk_new],
+    bulk_update:    %i[bulk_edit],
+    bulk_destroy:   %i[bulk_delete],
+
+    # == UploadController, ArtifactController, EditionController
+
+    download:       [],
+    retrieval:      [],
+
+    # == MemberController, TitleController
+
+    history:        %i[manage],
+    show_history:   %i[history],
+
+    # == AccountController, User::*Controller
+
+    #edit_select:    %i[edit],
+    #delete_select:  %i[destroy],
+
+    # == Any controller
+
+    list:           %i[index],
+    view:           %i[show retrieval],
+    #modify:         %i[edit edit_select update],
+    #remove:         %i[delete delete_select destroy],
+    modify:         %i[edit update],
+    remove:         %i[delete destroy],
+    retrieve:       %i[download retrieval],
+
   }.deep_freeze
 
   # Both existing and new action aliases.
   #
-  # This does not include the standard CRUD controller actions:
-  #
-  # :index    (included in alias :read)
-  # :show     (included in alias :read)
-  # :new      (alias :create)
-  # :edit     (alias :update)
-  # :destroy  (alias :delete)
-  #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  ACTION_ALIAS = LOCAL_ACTION_ALIAS.merge(PREDEFINED_ACTION_ALIAS).freeze
+  ACTION_ALIAS = PREDEFINED_ALIAS.merge(LOCAL_ACTION_ALIAS).freeze
+
+  # Models which are managed by CanCan (that is the model names implied by all
+  # of the controllers which have "authorize_resource").
+  #
+  # For consistency, each of these should have an entry in
+  # "en.unauthorized.manage" (config/locales/cancan.en.yml).
+  #
+  # @type [Array<Symbol>]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  MODEL_NAMES = I18n.t('unauthorized.manage').except(:all).keys.freeze
 
   # ===========================================================================
   # :section:
@@ -70,10 +123,11 @@ class Ability
 
   # Create a new instance.
   #
-  # @param [::User, nil] user
+  # @param [User, nil] user
   #
   # @see User#
   # @see Member#
+  # @see Roles#role_prototype_for
   #
   # == Usage Notes
   # Define abilities for the passed-in user here. For example:
@@ -107,20 +161,18 @@ class Ability
   # noinspection RubyNilAnalysis
   #++
   def initialize(user)
-    ACTION_ALIAS.each_pair do |actions, action_alias|
-      alias_action actions, to: action_alias
+    LOCAL_ACTION_ALIAS.each_pair do |name, actions|
+      alias_action(*actions, to: name) unless actions.blank?
     end
-    user ||= User.new # Guest user (not logged in).
-    roles  = user.roles.map { |r| r&.name&.to_sym }.compact
-    case
-      when roles.include?(:administrator)       then act_as_administrator
-      when roles.include?(:membership_manager)  then act_as_dso_primary
-      when roles.include?(:membership_viewer)   then act_as_dso_staff
-      when roles.include?(:artifact_submitter)  then act_as_dso_delegate
-      when user.linked_account?                 then act_as_individual_member
-      when roles.include?(:artifact_downloader) then act_as_organization_member
-      when roles.include?(:catalog_curator)     then act_as_library_staff
-      else                                           act_as_guest
+    # noinspection RubyYardParamTypeMatch
+    case role_prototype_for(user)
+      when :developer     then act_as_developer(user)
+      when :administrator then act_as_administrator(user)
+      when :dso           then act_as_dso(user)
+      when :librarian     then act_as_librarian(user)
+      when :member        then act_as_member(user)
+      when :guest         then act_as_guest(user)
+      else                     act_as_anonymous
     end
   end
 
@@ -130,19 +182,58 @@ class Ability
 
   protected
 
-  # Indicate that the user can perform as a system administrator.
+  # Assign the ability to perform as a system developer.
   #
-  # NOTE: This does not appear to relate to any current Bookshare "role".
+  # @param [User] user
   #
   # @return [void]
   #
-  def act_as_administrator
+  # @see RoleHelper#developer?
+  #
+  # == Usage Notes
+  # This is functionally equivalent to :administrator in terms of the Ability
+  # class. Wherever the distinction needs to be made, the user's role must be
+  # explicitly checked.
+  #
+  def act_as_developer(user)
+    act_as_administrator(user)
+  end
+
+  # Assign the ability to perform as a system administrator.
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # This is not related to any Bookshare "role" -- it is exclusively for
+  # authorization to access local EMMA resources.
+  #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
+  def act_as_administrator(user)
     can :manage, :all
   end
 
-  # Indicate that the user can perform as a DSO Primary.
+  # Assign the ability to perform as a Disability Service Officer.
   #
-  # TODO: It's unclear whether this is really distinct from DSO Staff.
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  def act_as_dso(user)
+    dso_type = nil # TODO: Distinguish between DSO types?
+    case dso_type&.to_sym
+      when :primary then act_as_dso_primary(user)
+      when :staff   then act_as_dso_staff(user)
+      else               act_as_dso_sponsor(user)
+    end
+  end
+
+  # Assign the ability to perform as a DSO Primary.
+  #
+  # @param [User] user
   #
   # @return [void]
   #
@@ -152,21 +243,28 @@ class Ability
   # other than that "sponsor" cannot be removed.  (Another "sponsor" would need
   # to be designated as the primary contact first.)
   #
-  def act_as_dso_primary
-    act_as_dso_staff
+  def act_as_dso_primary(user)
+    act_as_dso_staff(user)
   end
 
-  # Indicate that the user can perform as a DSO Staff member.
+  # Assign the ability to perform as a DSO Staff member.
   #
-  # TODO: Maybe this should be merged with DSO Primary and/or DSO "sponsor"?
+  # @param [User] user
   #
   # @return [void]
   #
-  def act_as_dso_staff
-    act_as_dso_sponsor
+  # == Usage Notes
+  # There is currently no distinction between "DSO Staff" and "DSO Sponsor"
+  # (which is Bookshare's term for "DSO Staff").
+  #
+  def act_as_dso_staff(user)
+    act_as_dso_sponsor(user)
+    can_manage_group_account(user)
   end
 
-  # Indicate that the user can perform as an assistant to a DSO Sponsor.
+  # Assign the ability to perform as an assistant to a DSO Sponsor.
+  #
+  # @param [User] user
   #
   # @return [void]
   #
@@ -176,45 +274,63 @@ class Ability
   # organization.  Sponsors cannot be parents (unless employed by your
   # organization) or volunteers.
   #
-  def act_as_dso_sponsor
-    act_as_individual_member
+  def act_as_dso_sponsor(user)
+    act_as_individual_member(user)
+    can_manage_own_entries(user)
     can :manage, Artifact
     can :manage, Member
     can :manage, ReadingList
-    can :manage, Upload
   end
 
-  # Indicate that the user can perform as an assistant to a DSO Staff member.
+  # Assign the ability to perform as an assistant to a DSO Staff member.
   #
-  # NOTE: This does not appear to relate to any current Bookshare "role".
-  #
-  # TODO: Is this really a valid user prototype concept?
+  # @param [User] user
   #
   # @return [void]
   #
-  def act_as_dso_delegate
-    act_as_guest
+  # == Usage Notes
+  # Currently, "DSO Delegate" is basically a synonym for "Librarian".
+  #
+  def act_as_dso_delegate(user)
+    act_as_librarian(user)
+  end
+
+  # Assign the ability to perform as a librarian.
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # The current idea is that library staff might perform all of the entry
+  # creation and maintenance functions that a DSO would (minus the ability to
+  # download artifacts).
+  #
+  def act_as_librarian(user)
+    act_as_authenticated(user)
+    can_manage_group_entries(user)
     can :create, Artifact
-    can :update, Artifact
-    can :create, Upload
-    can :update, Upload
-    can :delete, Upload
+    can :modify, Artifact
   end
 
-  # Indicate that the user can perform as a library member.
+  # Assign the ability to perform as a student with a Bookshare account.
   #
-  # NOTE: This does not appear to relate to any current Bookshare "role".
+  # @param [User] user
   #
   # @return [void]
   #
-  def act_as_library_staff
-    act_as_guest
-    can :update, Upload
-    can :delete, Upload
+  def act_as_member(user)
+    if user.linked_account?
+      act_as_individual_member(user)
+    else
+      act_as_organization_member(user)
+    end
   end
 
-  # Indicate that the user can act as a student with a personal Bookshare
+  # Assign the ability to perform as a student with a personal Bookshare
   # account (i.e., an Individual Member).
+  #
+  # @param [User] user
   #
   # @return [void]
   #
@@ -233,13 +349,16 @@ class Ability
   #
   # @see https://www.bookshare.org/cms/help-center/access-nimac-books
   #
-  def act_as_individual_member
-    act_as_guest
-    can :download, Artifact
+  def act_as_individual_member(user)
+    act_as_authenticated(user)
+    can :retrieve, Artifact
+    can :retrieve, Upload
   end
 
-  # Indicate that the user can act as a student with a membership account
+  # Assign the ability to perform as a student with a membership account
   # through the organization (i.e., an Organizational Member).
+  #
+  # @param [User] user
   #
   # Organizational members do not have direct access to Bookshare; instead,
   # artifacts must be acquired on their behalf by a "sponsor" (e.g. DSO staff).
@@ -267,23 +386,217 @@ class Ability
   #
   # @see https://www.bookshare.org/cms/help-center/access-nimac-books
   #
-  def act_as_organization_member
-    act_as_guest
-    can :download, Artifact do |artifact|
-      ReadingList.any? { |list| list.include?(artifact) }
+  def act_as_organization_member(user)
+    act_as_authenticated(user)
+    can :retrieve, Artifact do |artifact|
+      ReadingList.any? { |list| list.has_artifact?(artifact) }
+    end
+    can :retrieve, Upload do |upload|
+      title = upload.emma_data&.dig(:dc_title)
+      title.present? && ReadingList.any? { |list| list.has_title?(title) }
     end
   end
 
-  # Indicate that the user can perform as a guest user.
+  # Assign the ability to perform as a signed-in user.
+  #
+  # @param [User] user
   #
   # @return [void]
   #
-  def act_as_guest
+  def act_as_authenticated(user)
+    act_as_guest(user)
+    can_manage_own_account(user)
+  end
+
+  # Assign the ability to perform as a guest user.
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Currently, "Guest" is basically a synonym for "Anonymous".
+  #
+  def act_as_guest(user)
+    act_as_anonymous(user)
+  end
+
+  # Assign the ability to perform as an anonymous (unauthenticated) user.
+  #
+  # @return [void]
+  #
+  def act_as_anonymous(*)
     can :list, Artifact
     can :read, Title
     can :read, Periodical
     can :read, Edition
-    can :read, Upload # TODO: probably temporary
+    can :view, Upload
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Allow full control over EMMA submissions which are associated with the
+  # user's ID.
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  def can_manage_own_account(user)
+    can_manage_account(id: user.id)
+  end
+
+  # Allow full control over EMMA submissions which are associated with the
+  # user's group ID.
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  # @note This is not yet supported by any data model.
+  #
+  def can_manage_group_account(user)
+    # can_manage_account(group_id: user.group_id) # TODO: institutional groups
+    can_manage_own_account(user) # TODO: remove after institutional groups
+  end
+
+  # Define a set of capabilities on EMMA submissions which allows full control
+  # over instances which meet the given constraints.
+  #
+  # @param [Class] model
+  # @param [Hash]  with_constraints
+  #
+  # @return [void]
+  #
+  def can_manage_account(model = User, **with_constraints)
+    can_manage(model, **with_constraints)
+    can :edit_select,   model, **with_constraints
+    can :delete_select, model, **with_constraints
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Allow full control over EMMA submissions which are associated with the
+  # user's ID.
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  def can_manage_own_entries(user)
+    can_manage_entries(id: user.id)
+  end
+
+  # Allow full control over EMMA submissions which are associated with the
+  # user's group ID.
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  # @note This is not yet supported by any data model.
+  #
+  def can_manage_group_entries(user)
+    # can_manage_entries(group_id: user.group_id) # TODO: institutional groups
+    can_manage_own_entries(user) # TODO: remove after institutional groups
+  end
+
+  # Define a set of capabilities on EMMA submissions which allows full control
+  # over instances which meet the given constraints.
+  #
+  # @param [Class] model
+  # @param [Hash]  with_constraints
+  #
+  # @return [void]
+  #
+  def can_manage_entries(model = Upload, **with_constraints)
+    can_manage(model, **with_constraints)
+    can :new,           model
+    can :create,        model
+    can :check,         model
+    can :renew,         model
+    can :reedit,        model
+    can :upload,        model
+    can :retrieve,      model
+    can :edit_select,   model, **with_constraints
+    can :delete_select, model, **with_constraints
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Allow full control over model instances which are associated with the
+  # user's ID.
+  #
+  # @param [Class] model
+  # @param [User]  user
+  #
+  # @return [void]
+  #
+  def can_manage_own(model, user)
+    can_manage(model, id: user.id)
+  end
+
+  # Allow full control over model instances which are associated with the
+  # user's group ID.
+  #
+  # @param [Class] model
+  # @param [User]  user
+  #
+  # @return [void]
+  #
+  # @note This is not yet supported by any data model.
+  #
+  def can_manage_group(model, user)
+    # can_manage(model, group_id: user.group_id) # TODO: institutional groups
+    can_manage_own(model, user) # TODO: remove after institutional groups
+  end
+
+  # Define a set of capabilities on a given model type which allows full
+  # control over instances which meet the given constraints.
+  #
+  # @param [Class] model
+  # @param [Hash]  with_constraints
+  #
+  # @return [void]
+  #
+  def can_manage(model, **with_constraints)
+    can :index,   model, **with_constraints
+    can :list,    model, **with_constraints
+    can :show,    model
+    can :view,    model
+    can :edit,    model, **with_constraints
+    can :modify,  model, **with_constraints
+    can :destroy, model, **with_constraints
+    can :remove,  model, **with_constraints
+    can :cancel,  model
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Models which are managed by CanCan
+  #
+  # @type [Array<Class>]
+  #
+  # @see #MODEL_NAMES
+  #
+  def self.models
+    MODEL_NAMES.map { |model| to_class(model) }.compact
   end
 
 end

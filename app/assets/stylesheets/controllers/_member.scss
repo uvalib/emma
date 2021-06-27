@@ -88,13 +88,17 @@
     }
 }
 
+.member-container + .member-history {
+    margin-top: 1rem;
+}
+
 // Special arrangement for "app/views/member/_details.html.erb" to give the
 // "details column" a header that matches the "preferences column".
 .account.list-heading {
 
     $member-details-gap: 3rem;
 
-    margin-top:    $member-details-gap;
+    margin-top:    4rem;
     margin-bottom: -$member-details-gap;
 
     & + .member-container .member-details {

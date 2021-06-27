@@ -1,7 +1,8 @@
 // app/assets/stylesheets/controllers/_user_sessions.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/controls/grids' as *;
 
 //=============================================================================
 // Page header
@@ -21,50 +22,122 @@ body.user_sessions {
 // Login page
 //=============================================================================
 
-// noinspection CssUnusedSymbol
-.sign-in-token {
+.sign-in-links {
 
-    display:     inline-flex;
-    flex-wrap:   wrap;
+    display:     grid;
     align-items: center;
 
-    .field,
-    .actions {
+    @media #{$wide-screen} {
+        gap: 1rem 3rem;
+        grid-template-columns:
+            [label] auto [uid] 1fr [pwd] 1fr [actions] 1fr [options] 1fr;
+    }
 
-        display:     inline-flex;
-        flex-wrap:   nowrap;
-        align-items: center;
-        margin-left: $page-padding-x;
+    @media #{$medium-width} {
+        gap: 1rem;
+        grid-template-columns:
+            [label] auto [uid] 1fr [pwd] 1fr [actions] auto [options] auto;
+    }
+
+    @media #{$narrow-screen} {
+        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+
+    .sign-in-link {
+
+        @extend %control-button;
+
+        padding:           0.75rem;
+        font-size:         large;
+        white-space:       unset;
+        grid-column-start: 1;
+    }
+
+    .sign-in-form.inline {
+
+        display:     contents;
+        line-height: 1.5;
 
         @media #{$narrow-screen} {
-            margin-top:  0.25rem;
-            margin-left: 0;
+            display: inline-grid;
+        }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        .form-label {
+            @extend .sign-in-link;
+        }
+
+        .field,
+        .actions,
+        .options {
+
+            display:     inline-flex;
+            flex-wrap:   nowrap;
+            align-items: center;
+
+            @media #{$narrow-screen} {
+                margin-top:  0.25rem;
+                margin-left: 0;
+            }
+        }
+
+        .field {
+
+            .label {
+                font-weight:  bold;
+                margin-right: $flex-gap-x;
+            }
+
+            .value {
+                width: 100%;
+            }
+        }
+
+        .actions {
+
+            @media #{$narrow-screen} {
+                margin-right: 100%; // Push to next line.
+            }
+
+            input[type='submit'] {
+
+                @extend %control-button-base;
+
+                line-height: 1;
+            }
+        }
+
+        .options {
+
+            label {
+                font-weight: normal;
+            }
+
+            input[type='checkbox'] {
+                margin-right: calc(#{$flex-gap-x} / 2);
+            }
+        }
+
+        //=====================================================================
+        // Variations
+        //=====================================================================
+
+        // @see file:app/assets/javascripts/controllers/user_sessions.js
+        &.obscured {
+            .field,
+            .actions,
+            .options {
+                display: none;
+            }
         }
     }
+}
 
-    .field {
-
-        label {
-            font-weight:  bold;
-            margin-right: $flex-gap-x;
-        }
-
-        input {
-            min-width: 15vw;
-        }
-    }
-
-    .actions {
-
-        @media #{$narrow-screen} {
-            margin-right: 100%; // Push to next line.
-        }
-
-        input[type='submit'] {
-
-            @extend %control-button;
-
-            line-height: 1;
-        }
-    }
+form + .sign-in-links {
+    margin-top: 2rem;
+    gap:        0.5rem;
 }

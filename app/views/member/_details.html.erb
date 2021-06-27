@@ -17,7 +17,7 @@
 
   heading =
     if (level == 1) && !skip.include?(:title)
-      title ||= 'Account Details' # TODO: I18n
+      title ||= 'Bookshare Account Details' # TODO: I18n
       html_tag((level + 1), title, class: 'account list-heading')
     end
 
@@ -27,7 +27,7 @@
 
 <div <%= role -%> class="member-container">
   <%= member_details(item, pairs: add) %>
-  <%= render('member/preferences', opt.merge(pref: pref)) if pref %>
+  <%= render 'member/preferences', opt.merge(pref: pref) if pref %>
 </div>
 
-<%= render('member/history', opt.merge(hist: hist)) if hist %>
+<%= render 'member/history', opt.merge(hist: hist) if hist %>

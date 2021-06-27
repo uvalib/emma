@@ -1,32 +1,21 @@
 <%# app/views/user/sessions/_synthetic.html.erb -%>
 <%-
-  # Convenience for the desktop only: Short circuit login by providing an
-  # auth token (copied from an independent browser tab which is logged-in to
-  # the production service).
+  # Developer-only short-cuts to sign in as a test user.
 
   return unless session_debug?
 
-  form_label   = t('emma.user.sessions.sign_in_as.update.label')
-  submit_label = t('emma.user.sessions.sign_in_as.update.submit')
+  links =
+    stored_auth(true).keys.map { |id|
+      user  = html_tag(:strong, id)
+      label = get_sessions_label(:sign_in_as, user: user).html_safe
+      path  = sign_in_as_path(id: id)
+      [label, path]
+    }
+
+  link_opt = { 'data-turbolinks': false, class: 'sign-in-link' }
 
 -%>
 
-<%= form_tag(sign_in_as_path, class: 'sign-in-token', method: :get) do -%>
-
-  <label><%= form_label -%></label>
-
-  <div class="field">
-    <%= label_tag      :uid, 'ID:' %>
-    <%= text_field_tag :uid %>
-  </div>
-
-  <div class="field">
-    <%= label_tag      :token, 'Token:' %>
-    <%= text_field_tag :token %>
-  </div>
-
-  <div class="actions">
-    <%= submit_tag submit_label %>
-  </div>
-
+<%- links.each do |label, path| -%>
+  <%= link_to(label, path, link_opt) %>
 <%- end -%>

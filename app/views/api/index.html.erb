@@ -19,6 +19,8 @@
 
 <%= page_description_section %>
 
+<%= page_directions_section %>
+
 <div id="methods" class="methods">
   <%- methods.each do |meth| -%>
     <%- if (css = @api_results.dig(meth, :status)).present? -%>

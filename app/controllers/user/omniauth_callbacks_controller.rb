@@ -31,8 +31,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   public
 
-  # == GET  /users/auth/bookshare
-  # == POST /users/auth/bookshare
+  # == GET  /user/auth/bookshare
+  # == POST /user/auth/bookshare
   #
   # Initiate authentication with the remote service.
   #
@@ -42,25 +42,17 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     super
   end
 
-  # == GET  /users/auth/bookshare/callback
-  # == POST /users/auth/bookshare/callback
+  # == GET  /user/auth/bookshare/callback
+  # == POST /user/auth/bookshare/callback
   #
   # Callback from the Bookshare auth service to finalize authentication.
   #
+  # @see AuthConcern#set_auth_data
+  #
   def bookshare
-    auth_data = request.env['omniauth.auth']
-    auth_data &&= OmniAuth::AuthHash.new(auth_data)
-    __debug_route { { "env['omniauth.auth']" => auth_data } }
+    __debug_route
     __debug_request
-    if auth_data.blank?
-      raise 'No authentication information received' # TODO: I18n
-    elsif (user = User.from_omniauth(auth_data)).blank?
-      raise 'Could not locate user account' # TODO: I18n
-    elsif !user&.persisted?
-      raise 'Could not create user account' # TODO: I18n
-    end
-    __debug_line { [__debug_route_label, 'user persisted'] }
-    session['omniauth.auth'] = auth_data
+    set_auth_data(request)
     last_operation_update
     set_flash_message(:notice, :success, kind: 'Bookshare')
     sign_in_and_redirect(user)
@@ -69,7 +61,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     re_raise_if_internal_exception(error)
   end
 
-  # == GET /users/auth/bookshare/failure
+  # == GET /user/auth/bookshare/failure
   #
   # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
@@ -84,22 +76,6 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     __debug_request
     set_flash_alert # TODO: remove? - testing
     super
-  end
-
-  # ===========================================================================
-  # :section: Devise::OmniauthCallbacksController overrides
-  # ===========================================================================
-
-  protected
-
-  # The path used when OmniAuth fails.
-  #
-  # @param [?] scope
-  #
-  # @return [String]
-  #
-  def after_omniauth_failure_path_for(scope) # TODO: ???
-    super(scope)
   end
 
   # ===========================================================================

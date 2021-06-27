@@ -13,27 +13,27 @@ emmadso:
   email:        emmadso@bookshare.org
   access_token: <%= ENV['EMMADSO_TOKEN'] %>
   roles:
-    - catalog_searcher
-    - artifact_downloader
-    - artifact_submitter
-    - membership_viewer
-    - membership_manager
-    - administrator
+    - catalog_search
+    - catalog_submit
+    - artifact_download
+    - artifact_submit
+    - membership_view
+    - membership_modify
 
 emmacollection:
   email:        emmacollection@bookshare.org
   access_token: <%= ENV['EMMACOLLECTION_TOKEN'] %>
   roles:
-    - catalog_searcher
-    - catalog_curator
+    - catalog_search
+    - catalog_submit
 
 emmamembership:
   email:        emmamembership@bookshare.org
   access_token: <%= ENV['EMMAMEMBERSHIP_TOKEN'] %>
   roles:
-    - catalog_searcher
-    - membership_viewer
-    - membership_manager
+    - catalog_search
+    - membership_view
+    - membership_modify
 
 # =============================================================================
 # Examples
@@ -43,4 +43,4 @@ example:
   email:      rwl@virginia.edu
   first_name: Ray
   last_name:  Lubinsky
-  roles:      administrator
+  roles:      developer

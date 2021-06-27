@@ -758,7 +758,7 @@ $upload-admin-column-space: 0.75rem;
 // noinspection CssUnusedSymbol
 .aws-link {
     @include link-button(lightgray);
-    @extend %control-button;
+    @extend %control-button-base;
 }
 
 body.upload-admin {

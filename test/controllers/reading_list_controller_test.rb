@@ -21,7 +21,7 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
   test 'reading_list index - list all reading lists' do
     options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
-      able  = can?(user, :list, ReadingList)
+      able  = can?(user, :index, ReadingList)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -41,7 +41,7 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
     reading_list = sample_reading_list.readingListId
     options      = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
-      able  = can?(user, :read, ReadingList)
+      able  = can?(user, :show, ReadingList)
       u_opt =
         if able
           options.merge(expect: :success)

@@ -17,6 +17,7 @@ module AccountHelper
   include ModelHelper
   include ConfigurationHelper
   include I18nHelper
+  include RoleHelper
 
   # ===========================================================================
   # :section:
@@ -86,6 +87,60 @@ module AccountHelper
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [User] item
+  # @param [*]    value
+  # @param [Hash] opt                 Passed to render method.
+  #
+  # @return [Any]   HTML or scalar value.
+  # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
+  #
+  # @see ModelHelper#render_value
+  #
+  def account_render_value(item, value, **opt)
+    case field_category(value)
+      when :roles then account_roles(item, **opt)
+      else             render_value(item, value, **opt)
+    end
+  end
+
+  # Create a list of User roles.
+  #
+  # @param [User] item
+  # @param [Hash] opt                 Passed to #html_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def account_roles(item, **opt)
+    html_tag(:ul, **opt) do
+      item.role_list.map do |role|
+        html_tag(:li, role)
+      end
+    end
+  end
+
+  # Create a single term which describes the role level of *item*.
+  #
+  # @param [User] item
+  # @param [Hash] opt                 Passed to #html_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def account_role_prototype(item, **opt)
+    role_prototype = Roles.role_prototype_for(item)
+    prepend_classes!(opt, 'role-prototype')
+    html_div(opt) do
+      (role_prototype == :dso) ? 'DSO' : role_prototype.to_s.titleize
+    end
+  end
+
+  # ===========================================================================
   # :section: Item details (show page) support
   # ===========================================================================
 
@@ -94,12 +149,13 @@ module AccountHelper
   # Render details of an account.
   #
   # @param [User]      item
-  # @param [String, Symbol, nil, Array<String,Symbol,nil>] columns
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #model_details.
+  # @param [Hash]      opt            Passed to #account_field_values and
+  #                                     #model_details.
   #
-  def account_details(item, columns: nil, pairs: nil, **opt)
-    pairs = account_field_values(item, columns: columns).merge(pairs || {})
+  def account_details(item, pairs: nil, **opt)
+    fv_opt, opt = partition_hash(opt, :columns, :filter)
+    pairs = account_field_values(item, **fv_opt).merge(pairs || {})
     # noinspection RubyNilAnalysis
     count = pairs.size
     append_classes!(opt, "columns-#{count}") if count.positive?
@@ -137,11 +193,9 @@ module AccountHelper
   #
   def account_table(list, **opt)
     opt[:model] ||= :account
-    # noinspection RubyYardParamTypeMatch
-    model_table(list, **opt) do |parts, b_list, **b_opt|
-      parts[:thead] ||= account_table_headings(b_list, **b_opt)
-      parts[:tbody] ||= account_table_entries(b_list, **b_opt)
-    end
+    opt[:thead] ||= account_table_headings(list, **opt)
+    opt[:tbody] ||= account_table_entries(list, **opt)
+    model_table(list, **opt)
   end
 
   # Render one or more entries for use within a <tbody>.
@@ -186,18 +240,32 @@ module AccountHelper
 
   protected
 
+  # Patterns for User record columns which are not included for non-developers.
+  #
   # @type [Array<String,Regexp>]
-  ACCOUNT_FIELD_FILTERS = %w(password remember).freeze
+  #
+  ACCOUNT_FIELD_FILTERS = %w(token password remember).freeze
 
   # Specified field selections from the given User instance.
   #
-  # @param [User, nil] item
-  # @param [Hash]      opt            Passed to #model_field_values
+  # @param [User, *] item
+  # @param [Hash]    opt              Passed to #model_field_values
   #
   def account_field_values(item, **opt)
-    return {} unless item.is_a?(User)
-    opt[:filter] ||= ACCOUNT_FIELD_FILTERS
-    model_field_values(item, **opt)
+    model = User
+    return {} unless item.is_a?(model)
+    opt[:filter] ||= ACCOUNT_FIELD_FILTERS unless developer?
+    pairs = model_field_values(item, **opt)
+    # noinspection RubyNilAnalysis
+    ACCOUNT_SHOW_FIELDS.map { |field, config|
+      next if config[:ignored]
+      next if config[:role] && !has_role?(config[:role])
+      k = config[:label] || field
+      v = pairs[field]
+      v = model.find_record(v)&.uid || pairs[:email] if field == :effective_id
+      v = EMPTY_VALUE if v.nil?
+      [k, v]
+    }.compact.to_h.merge('Role Prototype': account_role_prototype(item))
   end
 
   # account_columns
@@ -338,7 +406,6 @@ module AccountHelper
   # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
   #
   def account_cancel_button(**opt)
-    opt[:model]  ||= :account
     opt[:config] ||= ACCOUNT_ACTION_VALUES
     form_cancel_button(**opt)
   end

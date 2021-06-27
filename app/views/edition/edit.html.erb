@@ -18,7 +18,7 @@
   end
 
   click_to =
-    if can?(:edit, Edition)
+    if can?(:modify, Edition)
       'Click %s to' % link_to_action('here', id: id, seriesId: series)
     else
       'User %s cannot' % current_user.to_s.inspect
@@ -30,6 +30,7 @@
 
 <%= page_description_section %>
 
+<%= page_directions_section %>
 <p><%= click_to -%> modify edition metadata.</p>
 
 <%= page_notes_section %>

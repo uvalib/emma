@@ -143,6 +143,12 @@ class TitleController < ApplicationController
     __debug_route
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # == GET /title/:id/history
   #
   # Show processing history for this catalog title.

@@ -2,12 +2,13 @@
 <%-
   # A list of local EMMA user accounts.
 
-  title ||= t('emma.account.index.title')
+  title  ||= t('emma.account.index.title')
   # @type [Array<User>] list
-  list  ||= @list
-  count ||= total_items
-  terms ||= search_terms
-  help  ||= nil # help_popup(:account) # TODO: ???
+  list   ||= @list
+  count  ||= positive(total_items) || list&.size
+  terms  ||= search_terms
+  help   ||= nil # help_popup(:account) # TODO: ???
+  filter ||= nil
 
   page_opt = Upload::SEARCH_RECORDS_OPTIONS.dup << :group
   page_terms, search = partition_options(terms, *page_opt)
@@ -28,9 +29,11 @@
 -%>
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
+
 <%= page_description_section %>
 
-<%= account_table(list) %>
+<%= page_directions_section %>
+<%= account_table(list, filter: filter) %>
 
 <%= page_notes_section %>
 <%= page_action_list unless modal? %>

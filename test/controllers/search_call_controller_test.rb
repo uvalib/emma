@@ -23,7 +23,7 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
   test 'search call index - no search' do
     options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
-      able  = can?(user, :list, SearchCall)
+      able  = can?(user, :index, SearchCall)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -43,7 +43,7 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
     search  = sample_search_call
     options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
-      able  = can?(user, :list, SearchCall)
+      able  = can?(user, :index, SearchCall)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -63,7 +63,7 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
     item    = sample_search_result.repositoryRecordId
     options = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
-      able  = can?(user, :read, SearchCall)
+      able  = can?(user, :show, SearchCall)
       u_opt =
         if able
           options.merge(expect: :success)
