@@ -230,6 +230,14 @@ Rails.application.routes.draw do
 
   resources :search_call, only: %i[index show]
 
+  # ===========================================================================
+  # Database viewer
+  # ===========================================================================
+
+  get '/data/submissions', to: 'data#submissions'
+
+  resources :data, only: %i[index show]
+
 end
 
 # Non-functional hints for RubyMine type checking.

@@ -1,0 +1,35 @@
+<%# app/views/data/index.html.erb -%>
+<%-
+  # EMMA database tables.
+
+  list  ||= @list || {}
+  title ||= 'Database Records' # TODO: I18n
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  suffix = hex_rand
+  list   = list.stringify_keys
+  anchor = list.keys.map { |k| [k, url_escape("#{k}_#{suffix}")] }.to_h
+
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<ul>
+  <%- anchor.each_pair do |name, id| -%>
+    <li><%= link_to(name, "##{id}") -%></li>
+  <%- end -%>
+</ul>
+
+<div class="database-tables">
+  <%- list.each_pair do |name, records| -%>
+    <h2 id="<%= anchor[name] %>" class="database-table-name">
+      <%= "#{name.titleize} (#{name})" %>
+    </h2>
+    <%= render 'data/details', name: name, records: records %>
+  <%- end -%>
+</div>

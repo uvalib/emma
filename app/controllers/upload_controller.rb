@@ -53,12 +53,12 @@ class UploadController < ApplicationController
   before_action :set_member,      only: %i[retrieval]
   before_action :resolve_sort,    only: %i[admin]
 
-  respond_to :html
-  respond_to :json, :xml, except: %i[edit]
-
   # ===========================================================================
   # :section:
   # ===========================================================================
+
+  respond_to :html
+  respond_to :json, :xml, except: %i[edit]
 
   public
 

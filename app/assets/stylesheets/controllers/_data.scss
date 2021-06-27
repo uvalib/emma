@@ -1,0 +1,57 @@
+// app/assets/stylesheets/controllers/_data.scss
+
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'feature/model'    as *;
+
+//=============================================================================
+// DataController index page
+//=============================================================================
+
+.database-table-name {
+    margin-top: 4rem;
+    background: ghostwhite;
+}
+
+//=============================================================================
+// DataController index or show page
+//=============================================================================
+
+/**
+ * NOTE: This is crude, mostly because the normal intended output is JSON.
+ * Some minimal styling is supplied just to help confirm results from the
+ * controller by being able to view them as a web page.
+ */
+.database-table {
+
+    display:               grid;
+    grid-template-columns: repeat(30, minmax(max-content, auto));
+    gap:                   1rem;
+
+    .database-record {
+
+        display: contents;
+
+        .database-column {
+
+            &.hierarchy {
+                max-height:  25vh;
+                max-width:   30vw;
+                white-space: pre;
+                overflow:    auto;
+                background:  ghostwhite;
+            }
+
+            &.col-first {
+                grid-column-start: 1;
+            }
+        }
+
+        &.row-first {
+            .database-column {
+                font-weight:    bold;
+                text-transform: uppercase;
+            }
+        }
+    }
+}

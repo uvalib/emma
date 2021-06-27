@@ -1,0 +1,21 @@
+<%# app/views/data/show.html.erb -%>
+<%-
+  # The contents of a database table.
+
+  item  ||= @item || []
+  name  ||= @name
+  title ||= name ? "#{name} Records".titleize : 'No Records' # TODO: I18n
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  title = "#{title} (#{name})" if name.present?
+
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<%= render 'data/details', records: item, name: name %>

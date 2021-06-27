@@ -1,0 +1,19 @@
+<%# app/views/data/submissions.html.erb -%>
+<%-
+  # Artificial database records representing EMMA submissions.
+
+  item  ||= @item || []
+  name  ||= nil # Not directly from a specific table.
+  title ||= 'EMMA Submission Records' # TODO: I18n
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<%= render 'data/details', records: item, name: name %>
