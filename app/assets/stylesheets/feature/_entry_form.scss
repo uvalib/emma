@@ -619,6 +619,28 @@ $form-gap-narrow: $form-gap / 3;
     }
 
     //=========================================================================
+    // Elements - final grid row
+    //=========================================================================
+
+    // Convenience duplicates of submit and cancel buttons below the set of
+    // fields.
+    .upload-fields + .controls {
+
+        position:      unset;
+        margin-top:    $form-gap;
+        margin-bottom: 0;
+        grid-row:      unset;
+
+        > *:not(.button-tray) {
+            display: none;
+        }
+
+        .button-tray > * {
+            margin-bottom: 0;
+        }
+    }
+
+    //=========================================================================
     // Properties
     //=========================================================================
 
@@ -781,6 +803,10 @@ $form-gap-narrow: $form-gap / 3;
         align-items:     center;
         position:        unset;
         z-index:         $z-uppy-informer;
+
+        &[aria-hidden="true"] {
+            z-index: $z-hidden;
+        }
 
         p {
             font-weight: bold;

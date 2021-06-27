@@ -868,9 +868,9 @@ module UploadHelper
         data_opt = { class: 'upload-hidden' }
 
         # Extra information to support reverting the record when canceled.
-        revert_data = item&.get_revert_data&.to_json
-        revert_data = data_opt.merge!(id: 'revert_data', value: revert_data)
-        revert_data = f.hidden_field(:revert_data, revert_data)
+        rev_data  = item&.get_revert_data&.to_json
+        rev_data  = data_opt.merge!(id: 'revert_data', value: rev_data)
+        rev_data  = f.hidden_field(:revert_data, rev_data)
 
         # Communicate :file_data through the form as a hidden field.
         file_data = item&.active_file_data || item&.file_data
@@ -882,30 +882,42 @@ module UploadHelper
         emma_data = data_opt.merge!(id: 'upload_emma_data', value: emma_data)
         emma_data = f.hidden_field(:emma_data, emma_data)
 
-        # Button tray.
-        tray = []
-        tray << upload_submit_button(action: action, label: label)
-        tray << upload_cancel_button(action: action, url: cancel)
-        tray << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
-        tray << f.file_field(:file)
-        tray << upload_filename_display
-        tray = html_div(class: 'button-tray') { tray }
-
-        # Field display selections.
-        tabs = upload_field_group
-
-        # Parent entry input control.
-        parent_input = upload_parent_entry_select
-
         # Control elements which are always visible at the top of the input
         # form.
-        controls = html_div(class: 'controls') { tray << tabs << parent_input }
+        controls =
+          html_div(class: 'controls') do
+            # Button tray.
+            tray = []
+            tray << upload_submit_button(action: action, label: label)
+            tray << upload_cancel_button(action: action, url: cancel)
+            tray << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
+            tray << f.file_field(:file)
+            tray << upload_filename_display
+            tray = html_div(class: 'button-tray') { tray }
+
+            # Field display selections.
+            tabs = upload_field_group
+
+            # Parent entry input control.
+            parent_input = upload_parent_entry_select
+
+            tray << tabs << parent_input
+          end
 
         # Form fields.
         fields = upload_field_container(item)
 
+        # Convenience submit and cancel buttons below the fields.
+        bottom =
+          html_div(class: 'controls') do
+            tray = []
+            tray << upload_submit_button(action: action, label: label)
+            tray << upload_cancel_button(action: action, url: cancel)
+            html_div(class: 'button-tray') { tray }
+          end
+
         # All form sections.
-        sections = [emma_data, file_data, revert_data, controls, fields]
+        sections = [emma_data, file_data, rev_data, controls, fields, bottom]
         safe_join(sections, "\n")
       end
     end
