@@ -46,6 +46,10 @@ en:
         label:
           one:          'Manage this member:'
           many:         'Member Actions:'
+        actions:
+          - new
+          - edit
+          - delete
 
       # =======================================================================
       # Controls
@@ -73,9 +77,6 @@ en:
         title:          'Bookshare Members'
         tooltip:        'Show Bookshare organization members.'
 
-        page_controls:
-          - new
-
         display_fields: # @see 'en.emma.member.record'
           - member_link
           - roles
@@ -86,10 +87,6 @@ en:
         label:          'Member'
         title:          'Bookshare Member'
         tooltip:        'See details about this Bookshare member.'
-
-        page_controls:
-          - edit
-          - delete
 
         display_fields: # @see 'en.emma.member.record'
           - name
@@ -123,27 +120,17 @@ en:
         title:          'Modify Bookshare Member'
         tooltip:        'Make changes to this Bookshare organization member.'
 
-        page_controls:
-          - delete
-
       # =======================================================================
 
       delete:
         title:          'Remove Bookshare Member'
         tooltip:        'Remove this Bookshare member from the organization.'
 
-        page_controls:
-          - edit
-
       # =======================================================================
 
       history:
         title:          'Bookshare Member History'
         tooltip:        'View modifications for this Bookshare organization member.'
-
-        page_controls:
-          - edit
-          - delete
 
         display_fields: # @see 'en.emma.member.record'
           - dateDownloaded
@@ -161,10 +148,6 @@ en:
         label:          'Preferences'
         title:          'Bookshare Member Preferences'
         tooltip:        'View preference settings for this Bookshare member.'
-
-        page_controls:
-          - edit
-          - delete
 
         display_fields: # @see 'en.emma.member.record'
           - allowAdultContent

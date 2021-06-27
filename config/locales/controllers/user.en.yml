@@ -17,6 +17,14 @@ en:
       password:
         length:         '%{min} characters minimum'
 
+      page_controls:
+        label:          'EMMA Account Actions:'
+        actions:
+          - index
+          - new
+          - edit_select
+          - delete_select
+
       # =======================================================================
       # Devise controllers
       # =======================================================================
@@ -32,6 +40,11 @@ en:
 
         create:
           success:      'Signed in as %{user}.'
+          failure:      'An unexpected error occurred.'
+
+        update:
+          title:        'Local EMMA account updated'
+          success:      'Updated'
           failure:      'An unexpected error occurred.'
 
         destroy:
@@ -60,31 +73,50 @@ en:
         new:
           label:        'Forgot your password?'
           submit:       'Send password reset instructions'
+          cancel:       'Cancel'
 
         edit:
           label:        'Change your password'
           password:     'New password'
           confirm:      'Confirm new password'
           submit:       'Change my password'
+          cancel:       'Cancel'
 
       # =======================================================================
 
       registrations:
 
         new:
-          label:        'Sign up'
-          submit:       'Sign up'
+          label:        'Request a new local EMMA account'
+          title:        'Create a Local EMMA User Account'
+          submit:       'Create'
+          cancel:       'Cancel'
+
+        create:
+          title:        'Local EMMA account created'
+          success:      'Local EMMA account %{user} created.'
 
         edit:
-          label:        'Edit User'
+          label:        'Modify a local EMMA account'
+          title:        'Modify your local EMMA account'
           awaiting:     'Currently awaiting confirmation for: %{email}'
           password:     "leave blank if you don't want to change it"
           current:      'we need your current password to confirm your changes'
           submit:       'Update'
+          cancel:       'Cancel'
+
+        update:
+          title:        'Local EMMA account updated'
+          success:      'Local EMMA account %{user} updated.'
+
+        delete:
+          label:        'Cancel my account'
+          link:         'Unhappy? %{button}'
 
         destroy:
           label:        'Cancel my account'
           link:         'Unhappy? %{button}'
+          success:      'Local EMMA account %{user} deleted.'
 
       # =======================================================================
 

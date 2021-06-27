@@ -95,6 +95,13 @@
                     margin-top:    $page-control-gap-y;
                     margin-bottom: $page-control-gap-y;
                 }
+
+                &.disabled {
+                    text-decoration-color: transparent;
+                    background-color:      $panel-accent;
+                    border-color:          white;
+                    pointer-events:        none;
+                }
             }
         }
     }

@@ -17,6 +17,7 @@ module ApplicationHelper
   include Emma::Constants
   include Emma::Common
   include HtmlHelper
+  include ConfigurationHelper
 
   # ===========================================================================
   # :section:
@@ -115,9 +116,10 @@ module ApplicationHelper
   # @return [nil]
   #
   def page_text(controller: nil, action: nil, type: nil)
-    controller = (controller || params[:controller])&.to_sym
-    action     = (action     || params[:action])&.to_sym
-    entry = CONTROLLER_CONFIGURATION.dig(controller, action) || {}
+    controller ||= params[:controller]
+    action     ||= params[:action]
+    path  = config_path(controller, action)
+    entry = CONTROLLER_CONFIGURATION.dig(*path) || {}
     types = Array.wrap(type).compact.map(&:to_sym)
     types = %i[description text] if types.blank? || types == %i[description]
     # noinspection RubyYardReturnMatch

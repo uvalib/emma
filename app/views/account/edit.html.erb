@@ -25,7 +25,9 @@
 <%- else -%>
 
   <%= page_directions_section %>
-  <%= account_form(item, action: :edit) %>
+  <div class="account-form-container edit">
+    <%= render 'account/form_edit', user: item %>
+  </div>
 
 <%- end -%>
 

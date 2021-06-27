@@ -1,0 +1,29 @@
+<%# app/views/user/_fallback.html.erb -%>
+<%-
+  # Fall-back error page for a failed user operation.
+
+  ctrlr  ||= params[:controller]&.to_s&.split('/')&.last
+  action ||= params[:action]
+  title  ||= t("emma.user.#{ctrlr}.#{action}.title",   default: nil)
+  title  ||= t("emma.user.#{ctrlr}.#{action}.label",   default: 'Problem')
+  error  ||= t("emma.user.#{ctrlr}.#{action}.failure", default: 'UNKNOWN')
+  help   ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<p><%= error -%></p>
+
+<%= page_notes_section %>
+
+<p>[ctrlr <%= ctrlr.to_s -%> / action <%= action.to_s -%>]</p>

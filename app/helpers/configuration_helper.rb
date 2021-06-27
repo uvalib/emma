@@ -42,6 +42,22 @@ module ConfigurationHelper
 
   public
 
+  # Determine the path through the configuration hierarchy for the given
+  # controller/action pair.
+  #
+  # For ctrlr == 'user/registrations' and action == 'edit' this yields
+  # %i[user registrations edit].
+  #
+  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] action
+  #
+  # @return [Array<Symbol>]
+  #
+  def config_path(controller = nil, action = nil)
+    result = controller.to_s.underscore.split('/') << action
+    result.compact_blank.map(&:to_sym)
+  end
+
   # controller_configuration
   #
   # @param [String, Symbol, nil] controller
@@ -55,7 +71,7 @@ module ConfigurationHelper
   def controller_configuration(controller = nil, action = nil)
     result = ApplicationHelper::CONTROLLER_CONFIGURATION
     return result unless controller
-    path = [controller, action].compact.map(&:to_sym)
+    path = config_path(controller, action)
     result.dig(*path) || {}
   end
 
@@ -67,13 +83,16 @@ module ConfigurationHelper
   # @return [Array<Array<Symbol>>]
   #
   def config_lookup_order(controller = nil, action = nil)
-    controller = controller&.to_sym
-    action     = action&.to_sym
+    ctr, sub, act = path = config_path(controller, action)
+    sub, act = [nil, sub] if action && (path.size == 2)
     result = []
-    result << [controller, action]   if controller && action
-    result << [controller, :generic] if controller
-    result << [controller]           if controller
-    result << [:generic, action]     if action
+    result << [ctr, sub, act]      if ctr && sub && act
+    result << [ctr, sub, :generic] if ctr && sub
+    result << [ctr, sub]           if ctr && sub
+    result << [ctr, act]           if ctr && act
+    result << [ctr, :generic]      if ctr
+    result << [ctr]                if ctr
+    result << [:generic, act]      if act
     result << [:generic]
   end
 
@@ -144,7 +163,7 @@ module ConfigurationHelper
     i_opt[:controller] ||= controller
 
     lookup_order = config_lookup_order(controller, action)
-    lookup_order.map! { |pairs| pairs.join('.') }
+    lookup_order.map! { |path_parts| path_parts.join('.') }
     config_flatten_order(lookup_order, *path).find do |full_path|
       item  = full_path.pop
       entry = controller_configuration.dig(*full_path)

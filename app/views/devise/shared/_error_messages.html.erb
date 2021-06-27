@@ -2,8 +2,12 @@
 <%-
   # Devise-controller-related errors.
 
-  errors = resource&.errors
+  resource ||= current_user
+  errors   ||= resource&.errors
+
   return unless errors.present?
+
+  errors = Array.wrap(errors)
 
   heading ||= t(
     'errors.messages.not_saved',

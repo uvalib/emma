@@ -130,20 +130,26 @@
 
     @extend .file-upload-form;
 
+    grid-template-columns: 1fr;
+
     @media #{$not-wide-screen} {
         margin-top: 1.5rem;
+    }
+
+    .account-fields {
+        min-height:    unset;
+        margin-bottom: 2rem;
+    }
+
+    .button-tray {
+        @include grid-row(unset);
     }
 }
 
 // noinspection CssUnusedSymbol
 .account-form-container {
 
-    display:       grid;
-    margin-top:    $page-padding;
-
-    @media #{$wide-screen} {
-        width: 50vw;
-    }
+    @extend .file-upload-container;
 
     .account-form {
         margin-top: $page-padding;

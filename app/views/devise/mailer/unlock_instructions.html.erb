@@ -1,10 +1,17 @@
 <%# app/views/devise/mailer/unlock_instructions.html.erb -%>
 <%-
-  url = unlock_path(@resource, unlock_token: @token)
+  user  ||= current_user
+  name  ||= @email || user.email
+  token ||= @token
+
+  link_label = 'Unlock my account'
+  link_url   = unlock_path(user, unlock_token: token)
+
   set_page_robots(:noindex, :nofollow) unless modal?
+
 -%>
 
-<p>Hello <%= @resource.email -%>!</p>
+<p>Hello <%= name -%>!</p>
 
 <p>
   Your account has been locked due to an excessive number of unsuccessful
@@ -13,8 +20,6 @@
 
 <p>Click the link below to unlock your account:</p>
 
-<p><%= link_to 'Unlock my account', url -%></p>
+<p><%= link_to link_label, link_url -%></p>
 
-<%-
-  abort 'devise/mailer/unlock_instructions - This is not expected to be used'
--%>
+<%- abort 'devise/mailer/unlock_instructions - NOT EXPECTED TO BE USED' -%>

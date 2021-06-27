@@ -32,15 +32,17 @@ module RouteHelper
   # @return [Symbol]
   #
   def route_helper(controller, action = nil)
-    controller = controller&.to_sym
-    action     = action&.to_sym
-    # noinspection RubyYardReturnMatch
-    [action, controller].find { |path| path&.end_with?('_path', '_url') } ||
-      case action
-        when :index, nil then "#{controller}_index_path".to_sym
-        when :show       then "#{controller}_path".to_sym
-        else                  "#{action}_#{controller}_path".to_sym
-      end
+    ctr  = controller.to_s.underscore
+    url  = (ctr.delete_suffix!('_url')  unless action)
+    path = (ctr.delete_suffix!('_path') unless action || url)
+    ctr  = ctr.split('/').map(&:singularize).join('_') if ctr.include?('/')
+    return :"#{ctr}_url"  if url
+    return :"#{ctr}_path" if path
+    case action&.to_sym
+      when nil, :index then :"#{ctr}_index_path"
+      when :show       then :"#{ctr}_path"
+      else                  :"#{action}_#{ctr}_path"
+    end
   end
 
   # get_path_for

@@ -199,18 +199,17 @@ module LinkHelper
     # noinspection RubyYardParamTypeMatch
     path   = send(route_helper(controller, action))
 
-    items = nil
-    if !model.is_a?(Class)
-      raise "model: expected Class; got #{model.class}"
-    elsif !(model < ApplicationRecord)
-      raise "invalid model #{model.inspect}"
-    elsif !(model <= User)
-      # noinspection RubyNilAnalysis
-      user  = user.id if user.is_a?(User)
-      items = model.where(user_id: user).order(:id) if user
-    end
-    items ||= model.all
-    menu    = items.map { |item| [page_menu_label(item), item.id] }
+    raise "model: expected Class; got #{model.class}" unless model.is_a?(Class)
+    raise "invalid model #{model.inspect}" unless model < ApplicationRecord
+
+    items =
+      if user.blank? && current_user&.administrator?
+        model.all.order(:id).to_a
+      elsif (user = (user || current_user)&.id)
+        column = (model <= User) ? :id : :user_id
+        model.where(column => user).order(:id).to_a
+      end
+    menu = items&.map { |item| [page_menu_label(item), item.id] } || []
 
     ujs = opt.delete(:ujs) || 'this.form.submit();'
     ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }

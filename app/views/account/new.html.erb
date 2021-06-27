@@ -2,7 +2,7 @@
 <%-
   # Create a new local EMMA user account.
 
-  item  ||= @item
+  item  ||= @item || User.new
   title ||= t('emma.account.new.title')
   help  ||= nil # help_popup(:account, :new) # TODO: ???
 
@@ -19,7 +19,9 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= account_form(item, action: :new) %>
+<div class="account-form-container new">
+  <%= render 'account/form_new', user: item %>
+</div>
 
 <%= page_notes_section %>
 <%= page_action_list unless modal? %>

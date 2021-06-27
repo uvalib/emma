@@ -1,0 +1,75 @@
+<%# app/views/user/passwords/edit.html.erb -%>
+<%-
+  # Modify password form.
+  #
+  # NOTE: This template replaces 'devise/passwords/edit'.
+
+  user  ||= resource
+  title ||= t('emma.user.passwords.edit.label')
+  help  ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  form_opt = {
+    as:   resource_name,
+    url:  password_path(resource_name),
+    html: { class: 'sign-in-form field-pairs', method: :put }
+  }
+
+  label_opt     = { class: 'label' }
+  value_opt     = { class: 'value' }
+
+  pwd_label     = t('emma.user.passwords.edit.password')
+  pwd_label_opt = label_opt
+  pwd_value_opt = value_opt.merge(autocomplete: 'new-password')
+
+  min_length    = @minimum_password_length
+  min_length  &&= t('emma.user.password.length', min: min_length)
+  min_length  &&= '<br/>'.html_safe << html_tag(:em, "(#{min_length})")
+
+  conf_label     = t('emma.user.passwords.edit.confirm')
+  conf_label_opt = label_opt
+  conf_value_opt = value_opt.merge(autocomplete: 'off')
+
+  submit_label   = t('emma.user.passwords.edit.submit')
+  submit_opt     = { class: 'submit-button best-choice' }
+
+  cancel_label   = t('emma.user.passwords.edit.cancel')
+  cancel_opt     = { class: 'cancel-button' }
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+<%= render 'devise/shared/error_messages', resource: user %>
+
+<%= page_directions_section %>
+<%= form_for(user, form_opt) do |f| %>
+
+  <%= f.hidden_field :reset_password_token %>
+
+  <div class="field">
+    <%= f.label          :password, pwd_label, pwd_label_opt %>
+    <%= f.password_field :password,            pwd_value_opt %>
+    <%= min_length %>
+  </div>
+
+  <div class="field">
+    <%= f.label          :password_confirmation, conf_label, conf_label_opt %>
+    <%= f.password_field :password_confirmation,             conf_value_opt %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit    submit_label, submit_opt %>
+    <%= html_button cancel_label, cancel_opt %>
+  </div>
+
+<%- end -%>
+
+<%= page_notes_section %>
+<%= render 'devise/shared/links' unless modal? %>

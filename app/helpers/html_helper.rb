@@ -51,6 +51,17 @@ module HtmlHelper
     html_tag(:span, *args, &block)
   end
 
+  # Short-cut for generating an HTML "<button>" element.
+  #
+  # @param [Array] args               Passed to #html_tag.
+  # @param [Proc]  block              Passed to #html_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_button(*args, &block)
+    html_tag(:button, *args, &block)
+  end
+
   # Short-cut for generating an HTML element which normalizes element contents
   # provided via the parameter list and/or the block.
   #

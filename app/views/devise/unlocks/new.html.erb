@@ -2,6 +2,7 @@
 <%-
   # Unlock instructions page.
 
+  user  ||= current_user
   title ||= t('emma.user.unlocks.new.title')
 
   unless modal?
@@ -13,32 +14,37 @@
   form_opt = {
     as:   resource_name,
     url:  unlock_path(resource_name),
-    html: { method: :post }
+    html: { class: 'sign-in-form field-pairs', method: :post }
   }
 
-  submit_label = t('emma.user.unlocks.new.submit')
+  label_opt       = { class: 'label' }
+  value_opt       = { class: 'value' }
+
+  email_label_opt = label_opt
+  email_value_opt = value_opt.merge(autocomplete: 'email')
+
+  submit_label    = t('emma.user.unlocks.new.submit')
+  submit_opt      = { class: 'submit-button best-choice' }
 
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= form_for(resource, form_opt) do |f| -%>
+<%= form_for(user, form_opt) do |f| -%>
 
-  <%= render 'devise/shared/error_messages', resource: resource %>
+  <%= render 'devise/shared/error_messages', resource: user %>
 
   <div class="field">
-    <%= f.label       :email %><br/>
-    <%= f.email_field :email, autofocus: true, autocomplete: 'email' %>
+    <%= f.label       :email, email_label_opt %><br/>
+    <%= f.email_field :email, email_value_opt %>
   </div>
 
   <div class="actions">
-    <%= f.submit submit_label %>
+    <%= f.submit submit_label, submit_opt %>
   </div>
 
 <%- end -%>
 
-<%= render 'devise/shared/links' %>
+<%= render 'devise/shared/links' unless modal? %>
 
-<%-
-  abort 'devise/unlocks/new - This is not expected to be used'
--%>
+<%- abort 'devise/unlocks/new - NOT EXPECTED TO BE USED' -%>

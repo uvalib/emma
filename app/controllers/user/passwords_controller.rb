@@ -6,25 +6,50 @@
 __loading_begin(__FILE__)
 
 class User::PasswordsController < Devise::PasswordsController
-  # GET /resource/password/new
-  # def new
-  #   super
-  # end
 
-  # POST /resource/password
-  # def create
-  #   super
-  # end
+  include FlashConcern
+  include SessionConcern
+  include RunStateConcern
 
-  # GET /resource/password/edit?reset_password_token=abcdef
-  # def edit
-  #   super
-  # end
+  # ===========================================================================
+  # :section: Devise::PasswordsController overrides
+  # ===========================================================================
 
-  # PUT /resource/password
-  # def update
-  #   super
-  # end
+  public
+
+  # == GET /user/password/new
+  #
+  def new
+    __debug_route
+    super
+  end
+
+  # == POST /user/password
+  #
+  def create
+    __debug_route
+    __debug_request
+    super
+  end
+
+  # == GET /user/password/edit[?reset_password_token=TOKEN]
+  #
+  def edit
+    __debug_route
+    super
+  end
+
+  # == PUT /user/password
+  #
+  def update
+    __debug_route
+    __debug_request
+    super
+  end
+
+  # ===========================================================================
+  # :section: Devise::PasswordsController overrides
+  # ===========================================================================
 
   # protected
 
@@ -36,6 +61,7 @@ class User::PasswordsController < Devise::PasswordsController
   # def after_sending_reset_password_instructions_path_for(resource_name)
   #   super(resource_name)
   # end
+
 end
 
 __loading_end(__FILE__)

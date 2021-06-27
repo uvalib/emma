@@ -77,7 +77,10 @@ en:
           page.
 
         page_controls:
-          - [account, new]
-          - [account, edit_select]
-          - [account, delete_select]
-          - [account, index]
+          label:        'EMMA Account Actions:'
+          actions:
+            - [user/registrations, edit]
+            - [account, index]
+            - [account, new]
+            - [account, edit_select]
+            - [account, delete_select]

@@ -1,0 +1,43 @@
+// app/assets/stylesheets/controllers/_user_registrations.scss
+
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/controls/grids' as *;
+
+//=============================================================================
+// New user page
+//=============================================================================
+
+.sign-in-fields {
+    @extend .account-fields;
+}
+
+.sign-in-form:not(.inline) {
+
+    @extend .account-form;
+
+    @media #{$wide-screen} {
+        width: 75%;
+    }
+
+    .actions {
+
+        display: inline-flex;
+        margin:  1rem 0;
+
+        * + * {
+            margin-left: 1rem;
+        }
+    }
+
+    &.field-pairs {
+
+        .field {
+
+            @extend .account-fields;
+
+            min-height:            unset;
+            grid-template-columns: [label] auto [value] 1fr [note] auto;
+        }
+    }
+}

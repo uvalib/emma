@@ -1,17 +1,19 @@
 <%# app/views/devise/mailer/email_changed.html.erb -%>
 <%-
+  user ||= current_user
+  name ||= @email || user.email
+
+  unconfirmed_email = user.try(:unconfirmed_email) || user.email
+
   set_page_robots(:noindex, :nofollow) unless modal?
 
-  unconfirmed = @resource.try(:unconfirmed_email) || @resource.email
 -%>
 
-<p>Hello <%= @email -%>!</p>
+<p>Hello <%= name -%>!</p>
 
 <p>
   We're contacting you to notify you that your email is being changed to
-  <%= unconfirmed -%>.
+  <%= unconfirmed_email -%>.
 </p>
 
-<%-
-  abort 'devise/mailer/email_changed - This is not expected to be used'
--%>
+<%- abort 'devise/mailer/email_changed - NOT EXPECTED TO BE USED' -%>

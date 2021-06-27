@@ -1,0 +1,54 @@
+<%# app/views/user/registrations/edit.html.erb -%>
+<%-
+  # Edit User page.
+  #
+  # NOTE: This template replaces 'devise/registrations/edit'.
+
+  user  ||= @item || current_user
+  title ||= t('emma.user.registrations.edit.title', default: nil)
+  title ||= t('emma.user.registrations.edit.label', default: 'Sign up')
+  help  ||= nil # help_popup(:account, :edit) # TODO: ???
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  awaiting   = (user.try(:unconfirmed_email) if devise_mapping.confirmable?)
+  awaiting &&= t('emma.user.registrations.edit.awaiting', email: awaiting)
+  awaiting &&= html_div(awaiting)
+
+  form_opt = {
+    as:   resource_name,
+    url:  registration_path(resource_name),
+    html: { class: 'sign-in-form field-pairs', method: :put }
+  }
+
+  link_opt     = { class: 'sign-in-link' }
+
+  edit_other   = false && current_user&.administrator?
+  edit_other &&= user_edit_select_path
+  edit_other &&= link_to('Edit a different user', edit_other, link_opt)
+
+  back_link    = false && !modal?
+  back_link  &&= t('emma.action_links.back.label')
+  back_link  &&= link_to(back_link, :back, link_opt)
+
+  links = [edit_other, back_link].compact_blank.presence
+  links &&= html_div(links, class: 'sign-in-links')
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+<%= render 'devise/shared/error_messages', resource: user %>
+<%= awaiting -%>
+
+<%= page_directions_section %>
+<%= render 'account/form_edit', user: user, form_opt: form_opt %>
+<%= render 'user/registrations/resignation' %>
+
+<%= page_notes_section %>
+<%= links -%>

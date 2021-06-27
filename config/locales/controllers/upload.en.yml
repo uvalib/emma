@@ -92,6 +92,15 @@ en:
 
       page_controls:
         label:          'Upload Actions'
+        actions:
+          - index
+          - new
+          - edit_select
+          - delete_select
+          - bulk_new
+          - bulk_edit
+          - bulk_delete
+          - admin
 
       # =======================================================================
       # Controls
@@ -357,7 +366,7 @@ en:
       # =======================================================================
 
       index:
-        label:          'Uploads'
+        label:          'List All'
         title:          'Your EMMA Uploads'
         tooltip:        'Review uploads of remediated content to EMMA.'
         description_html: |
@@ -372,15 +381,6 @@ en:
             controls below to select which kind to view.
           </p>
 
-        page_controls:
-          - new
-          - edit_select
-          - delete_select
-          - bulk_new
-          - bulk_edit
-          - bulk_delete
-          - admin
-
         display_fields: # @see 'en.emma.upload.record'
           - !ruby/symbol all
 
@@ -390,11 +390,6 @@ en:
         label:          'Upload'
         title:          'Uploaded file "%{name}"'
         tooltip:        'See details about this upload.'
-
-        page_controls:
-          - edit
-          - delete
-          - admin
 
         display_fields: # @see 'en.emma.upload.record'
           - !ruby/symbol all
@@ -417,9 +412,6 @@ en:
         directions:     |
           Choose a file to upload and provide any information about the entry
           that could not be determined from the contents of the file:
-
-        page_controls:
-          - admin
 
         submit:
           <<:           *GENERIC_SUBMIT
@@ -454,10 +446,6 @@ en:
         directions:     |
           Provide an update version of your file, or modify fields that need to
           be corrected:
-
-        page_controls:
-          - delete
-          - admin
 
         submit:
           <<:           *GENERIC_SUBMIT
@@ -498,10 +486,6 @@ en:
           is a compelling reason to omit an item from the EMMA search index,
           please contact an EMMA administrator.
 
-        page_controls:
-          - edit
-          - admin
-
         submit:
           <<:           *GENERIC_SUBMIT
           label:        'Delete'
@@ -525,18 +509,10 @@ en:
       edit_select:
         <<: *UPLOAD_EDIT
 
-        page_controls:
-          - delete_select
-          - admin
-
       # =======================================================================
 
       delete_select:
         <<: *UPLOAD_DELETE
-
-        page_controls:
-          - edit_select
-          - admin
 
       # =======================================================================
 
@@ -545,15 +521,6 @@ en:
         title:          'Bulk Upload Information'
         tooltip:        'Bulk upload status information'
         description:    'TODO: ???'
-
-        page_controls:
-          - new
-          - edit_select
-          - delete_select
-          - bulk_new
-          - bulk_edit
-          - bulk_delete
-          - admin
 
       # =======================================================================
 
@@ -567,15 +534,6 @@ en:
           be used to create new EMMA entries.
         directions:     ~
         notes:          'Some bulk upload notes...'
-
-        page_controls:
-          - new
-          - edit_select
-          - delete_select
-          - bulk_new
-          - bulk_edit
-          - bulk_delete
-          - admin
 
         submit:         &BULK_SUBMIT
           <<: *GENERIC_SUBMIT
@@ -607,15 +565,6 @@ en:
           to be used to update existing EMMA entries.
         directions:     ~
         notes:          'Some bulk upload notes...'
-
-        page_controls:
-          - new
-          - edit_select
-          - delete_select
-          - bulk_new
-          - bulk_edit
-          - bulk_delete
-          - admin
 
         submit:
           <<: *BULK_SUBMIT
@@ -649,15 +598,6 @@ en:
           the checkbox above is checked, then submission IDs which are not
           found in EMMA can still be removed from the index.
 
-        page_controls:
-          - new
-          - edit_select
-          - delete_select
-          - bulk_new
-          - bulk_edit
-          - bulk_delete
-          - admin
-
         submit:
           <<: *BULK_SUBMIT
           label:        'Continue'
@@ -676,9 +616,6 @@ en:
         label:          'Cancel'
         title:          'Cancel Submission'
 
-        page_controls:
-          - admin
-
       # =======================================================================
 
       renew:
@@ -690,9 +627,6 @@ en:
           If you are seeing this page, this indicates a failure of the system
           to refresh the form for creating a new Upload record.  Please inform
           an administrator that you encountered this page.
-
-        page_controls:
-          - admin
 
         failure:        'Could not renew Upload record %{id}'
 
@@ -706,9 +640,6 @@ en:
           to refresh the form for updating a new Upload record.  Please inform
           an administrator that you encountered this page.
 
-        page_controls:
-          - admin
-
         failure:        'Could not reedit Upload record %{id}'
 
       # =======================================================================
@@ -717,19 +648,8 @@ en:
         label:          'Check Status'
         title:          'Checking for an update to submission status...'
 
-        page_controls:
-          - admin
-
       # =======================================================================
 
       admin:
         label:          'Admin'
         title:          'Upload Submission Administration'
-
-        page_controls:
-          - new
-          - edit_select
-          - delete_select
-          - bulk_new
-          - bulk_edit
-          - bulk_delete

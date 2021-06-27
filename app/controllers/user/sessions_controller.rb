@@ -7,9 +7,6 @@ __loading_begin(__FILE__)
 
 # User session controller.
 #
-# @!attribute [r] devise_mapping
-#   @return [Devise::Mapping]
-#
 class User::SessionsController < Devise::SessionsController
 
   include AuthConcern
@@ -20,17 +17,7 @@ class User::SessionsController < Devise::SessionsController
 
   # Non-functional hints for RubyMine type checking.
   # :nocov:
-  unless ONLY_FOR_DOCUMENTATION
-
-    include AbstractController::Callbacks
-
-    protected
-
-    # @return [Devise::Mapping]
-    # @private
-    def devise_mapping; end
-
-  end
+  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
 
   # ===========================================================================

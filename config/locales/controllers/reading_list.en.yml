@@ -46,6 +46,10 @@ en:
         label:
           one:          'Manage this list:'
           many:         'Reading List Actions:'
+        actions:
+          - new
+          - edit
+          - delete
 
       # =======================================================================
       # Controls
@@ -73,9 +77,6 @@ en:
         title:          'Bookshare Reading Lists'
         tooltip:        'Bookshare reading lists to which you have access.'
 
-        page_controls:
-          - new
-
         display_fields: # @see 'en.emma.reading_list.record'
           - name
           - description
@@ -87,10 +88,6 @@ en:
         label:          'List'
         title:          'Bookshare Reading List'
         tooltip:        'See details about this Bookshare reading list.'
-
-        page_controls:
-          - edit
-          - delete
 
         display_fields: # @see 'en.emma.reading_list.record'
           - !ruby/symbol all
@@ -107,9 +104,6 @@ en:
         title:          'Modify Reading List'
         tooltip:        'Make changes to this Bookshare reading list.'
 
-        page_controls:
-          - delete
-
       # =======================================================================
 
       delete:
@@ -117,15 +111,8 @@ en:
         title:          'Delete Reading List'
         tooltip:        'Delete this Bookshare reading list.'
 
-        page_controls:
-          - edit
-
       # =======================================================================
 
       history:
         title:          'Reading List History'
         tooltip:        'View modifications for this Bookshare reading list.'
-
-        page_controls:
-          - edit
-          - delete

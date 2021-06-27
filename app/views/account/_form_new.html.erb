@@ -1,0 +1,80 @@
+<%# app/views/account/_form_new.html.erb -%>
+<%-
+  # Form for creating a new local user account.
+
+  user     ||= User.new
+  form_opt ||= nil
+
+  # If form_opt was supplied, that indicates the template is being included
+  # within 'user/registrations/new'.
+
+  bookshare_user_menu = current_user&.administrator?
+
+  form_opt ||= {
+    url:  create_account_path,
+    html: { class: 'account-form new' }
+  }
+
+  label_opt = { class: 'label' }
+  value_opt = { class: 'value' }
+  input_opt = { class: 'input single' }
+  menu_opt  = { class: 'menu single' }
+
+  input_label_opt   = label_opt
+  input_value_opt   = prepend_classes(input_opt, value_opt[:class])
+
+  email_label_opt   = input_label_opt
+  email_value_opt   = input_value_opt.merge(autocomplete: 'email')
+
+  menu_label_opt    = label_opt
+  menu_value_opt    = prepend_classes(menu_opt, value_opt[:class])
+  menu_label        = 'Equivalent Bookshare user' # TODO: I18n
+  menu_choices      = bookshare_user_menu && User.test_user_menu
+  menu_choices  &&= [['Not applicable', '']] + menu_choices
+
+  pwd_label_opt     = input_label_opt
+  pwd_value_opt     = input_value_opt.merge(autocomplete: 'new-password')
+
+  min_length        = @minimum_password_length
+  min_length      &&= t('emma.user.password.length', min: min_length)
+  min_length      &&= html_tag(:em, "(#{min_length})")
+
+  confirm_label_opt = input_label_opt
+  confirm_value_opt = pwd_value_opt
+
+-%>
+
+<%= form_for(user, form_opt) do |f| %>
+
+  <div class="account-fields">
+
+    <%= f.label          :email,        email_label_opt %>
+    <%= f.email_field    :email,        email_value_opt %>
+
+    <%= f.label          :first_name,   input_label_opt %>
+    <%= f.text_field     :first_name,   input_value_opt %>
+
+    <%= f.label          :last_name,    input_label_opt %>
+    <%= f.text_field     :last_name,    input_value_opt %>
+
+
+    <%= f.label          :password,     pwd_label_opt %>
+    <%= f.password_field :password,     pwd_value_opt %>
+    <%#= min_length # TODO: ??? %>
+
+    <%= f.label          :password_confirmation, confirm_label_opt %>
+    <%= f.password_field :password_confirmation, confirm_value_opt %>
+
+    <%- if bookshare_user_menu -%>
+      <%= f.label        :effective_id, menu_label,       menu_label_opt %>
+      <%= f.select       :effective_id, menu_choices, {}, menu_value_opt %>
+    <%- end -%>
+
+  </div>
+
+  <div class="button-tray">
+    <%= account_submit_button(class: 'best-choice') %>
+    <%= account_cancel_button %>
+  </div>
+
+<%- end -%>

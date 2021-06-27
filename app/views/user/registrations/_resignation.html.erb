@@ -1,0 +1,21 @@
+<%# app/views/user/registrations/_resignation.html.erb -%>
+<%-
+  # Section including a link to delete your account.
+  #
+  # NOTE: Not currently enabled by default.
+
+  show_resign ||= false
+  show_resign &&= !current_user&.administrator?
+
+  return unless show_resign
+
+  label   = t('emma.user.registrations.destroy.label')
+  confirm = t('emma.messages.confirmation', default: nil)
+  opt     = reject_blanks(method: :delete, data: { confirm: confirm })
+  button  = button_to(label, registration_path(resource_name), opt)
+  link    = t('emma.user.registrations.destroy.link', button: button).html_safe
+
+-%>
+
+<h3><%= label -%></h3>
+<p><%= link -%></p>

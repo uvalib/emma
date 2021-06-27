@@ -337,6 +337,23 @@ class User < ApplicationRecord
 
   public
 
+  # Current EMMA test Bookshare accounts.
+  #
+  # @type [Hash{String=>Symbol}]
+  #
+  def self.test_users
+    TEST_USERS
+  end
+
+  # Pairs of current EMMA test Bookshare accounts with their "users" table
+  # record IDs.
+  #
+  # @type [Array<(String,Integer)>]
+  #
+  def self.test_user_menu
+    where(email: test_users.keys).pluck(:email, :id)
+  end
+
   # Return the ID indicated by *user*.
   #
   # @param [User, String, Integer, *] user

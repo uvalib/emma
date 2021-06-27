@@ -1,0 +1,24 @@
+<%# app/views/user/registrations/edit_select.html.erb -%>
+<%-
+  # Select a user to edit.
+
+  title ||= 'Select a local EMMA account' # TODO: I18n
+  help  ||= nil # help_popup(:account, :edit_select) # TODO: ???
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= account_items_menu(controller: 'user/registrations', action: :edit) %>
+
+<%= page_notes_section %>
+<%= render 'devise/shared/links' unless modal? %>

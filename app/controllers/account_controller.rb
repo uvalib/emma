@@ -81,9 +81,16 @@ class AccountController < ApplicationController
   #
   # Create a new user account.
   #
+  # == Usage Notes
+  # In order to allow the database to auto-generate the record ID, the :id
+  # parameter will be rejected unless "force_id=true" is included in the URL
+  # parameters.
+  #
   def create
     __debug_route
-    @item   = User.new(user_params)
+    attr = account_params
+    attr.except!(:id) unless true?(attr.delete(:force_id))
+    @item   = User.new(attr)
     success = @item.save
     respond_to do |format|
       if success
@@ -116,8 +123,10 @@ class AccountController < ApplicationController
   def update
     __debug_route
     __debug_request
-    @item   = User.find(params[:id])
-    success = @item.update(user_params)
+    attr    = account_params
+    user_id = attr.delete(:id)
+    @item   = User.find_record(user_id)
+    success = @item.update(attr)
     respond_to do |format|
       if success
         format.html { redirect_success(__method__) }
