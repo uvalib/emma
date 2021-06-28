@@ -327,11 +327,10 @@ module SessionConcern
   # This must be invoked as a :before_action.
   #
   def session_check
-    return if (t_boot = BOOT_TIME.to_i) < (t_last = last_operation_time)
-    if t_last.nonzero?
-      __debug  { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
-      Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
-    end
+    return if (t_last = last_operation_time).zero?
+    return if (t_boot = BOOT_TIME.to_i) < t_last
+    __debug  { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
+    Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
     forget_dev
     local_sign_out
     @reset_browser_cache = true
