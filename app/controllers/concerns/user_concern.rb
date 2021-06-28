@@ -127,7 +127,8 @@ module UserConcern
   # @return [void]
   #
   def update_user
-    @user = warden.set_user(user_from_session)
+    @user =
+      warden.user || warden.set_user(user_from_session, run_callbacks: false)
   end
 
   # Authenticate then ensure that the user has the :administrator role.
