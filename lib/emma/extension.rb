@@ -32,29 +32,29 @@ module Emma::Extension
 
       # Debug method for the including class.
       #
-      # @param [Array]         args
-      # @param [Proc]          block  Result appended to *args*.
+      # @param [Array] args
       #
       # @option args[-1] [String, nil] :leader     Def: `#__ext_log_leader`.
       # @option args[-1] [String, nil] :tag        Def: `#__ext_log_tag`.
       # @option args[-1] [String]      :separator  Def: `#EXT_LOG_SEPARATOR`.
+      #
+      # @yield Generate additional parts.
+      # @yieldreturn [Array] Appended to *args*.
       #
       # @return [nil]
       #
       # == Variations
       #
       # @overload __ext_log(meth, *args, tag:, &block)
-      #   @param [Symbol]      meth   Calling method
-      #   @param [Array]       args
-      #   @param [Proc]        block  Result appended to *args*.
+      #   @param [Symbol] meth        Calling method
+      #   @param [Array]  args
       #   @return [nil]
       #
       # @overload __ext_log(*args, tag:, &block)
-      #   @param [Array]       args
-      #   @param [Proc]        block  Result appended to *args*.
+      #   @param [Array]  args
       #   @return [nil]
       #
-      def __ext_log(*args, &block)
+      def __ext_log(*args)
         meth = args.first.is_a?(Symbol) ? args.shift : calling_method
         meth = 'NEW' if meth == :initialize
         opt  = args.last.is_a?(Hash) ? args.pop.dup : {}
@@ -63,7 +63,7 @@ module Emma::Extension
         sep  = (opt.delete(:separator) || EXT_LOG_SEPARATOR)
 
         args << opt if opt.present?
-        args += Array.wrap(block.call) if block
+        args += Array.wrap(yield) if block_given?
 
         part  = []
         part << [ldr, tag].compact.join(' ')

@@ -55,7 +55,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     set_auth_data(request)
     last_operation_update
     set_flash_message(:notice, :success, kind: 'Bookshare')
-    sign_in_and_redirect(user)
+    sign_in_and_redirect(resource)
   rescue => error
     auth_failure_redirect(message: error)
     re_raise_if_internal_exception(error)
@@ -67,11 +67,11 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
   #
   def failure
-    __debug { "failure endpoint: request_format          = #{request_format.inspect}"}  # TODO: remove - testing
-    __debug { "failure endpoint: is_navigational_format? = #{is_navigational_format?}"} # TODO: remove - testing
-    __debug { "failure endpoint: is_flashing_format?     = #{is_flashing_format?}"}     # TODO: remove - testing
-    __debug { "failure endpoint: failed_strategy         = #{failed_strategy.inspect}"} # TODO: remove?
-    __debug { "failure endpoint: failure_message         = #{failure_message.inspect}"} # TODO: remove?
+    __debug { "failure endpoint: request_format          = #{request_format.inspect}"  } # TODO: remove - testing
+    __debug { "failure endpoint: is_navigational_format? = #{is_navigational_format?}" } # TODO: remove - testing
+    __debug { "failure endpoint: is_flashing_format?     = #{is_flashing_format?}"     } # TODO: remove - testing
+    __debug { "failure endpoint: failed_strategy         = #{failed_strategy.inspect}" } # TODO: remove?
+    __debug { "failure endpoint: failure_message         = #{failure_message.inspect}" } # TODO: remove?
     __debug_route
     __debug_request
     set_flash_alert # TODO: remove? - testing
