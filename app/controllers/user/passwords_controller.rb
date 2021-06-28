@@ -17,14 +17,14 @@ class User::PasswordsController < Devise::PasswordsController
 
   public
 
-  # == GET /user/password/new
+  # == GET /users/password/new
   #
   def new
     __debug_route
     super
   end
 
-  # == POST /user/password
+  # == POST /users/password
   #
   def create
     __debug_route
@@ -32,14 +32,14 @@ class User::PasswordsController < Devise::PasswordsController
     super
   end
 
-  # == GET /user/password/edit[?reset_password_token=TOKEN]
+  # == GET /users/password/edit[?reset_password_token=TOKEN]
   #
   def edit
     __debug_route
     super
   end
 
-  # == PUT /user/password
+  # == PUT /users/password
   #
   def update
     __debug_route

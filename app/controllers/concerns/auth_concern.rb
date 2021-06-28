@@ -101,16 +101,21 @@ module AuthConcern
 
   # Indicate whether the given resource/scope specifies the User resource.
   #
+  # Returns *true* if *obj* cannot be interpreted as a scope or resource since
+  # user scope is the assumed default.
+  #
   # @param [User, Symbol, *] obj
   #
   # @see Devise::Mapping#find_scope!
   #
   def user_scope?(obj)
-    if obj.is_a?(String) || obj.is_a?(Symbol)
-      obj.to_sym == :user
-    else
+    if obj.is_a?(Class)
       mapping = Devise.mappings[:user]
       mapping.is_a?(Devise::Mapping) && obj.is_a?(mapping.to)
+    elsif obj.is_a?(String) || obj.is_a?(Symbol)
+      obj.to_sym == :user
+    else
+      true
     end
   end
 
@@ -329,7 +334,7 @@ module AuthConcern
   def revoke_access_token(token = nil)
     token ||= session['omniauth.auth']
     token   = OmniAuth::AuthHash.new(token) if token.is_a?(Hash)
-    token   = token.credentials.token       if token.is_a?(OmniAuth::AuthHash)
+    token   = token&.credentials&.token     if token.is_a?(OmniAuth::AuthHash)
     return Log.warn { "#{__method__}: no token present" } if token.blank?
     Log.info { "#{__method__}: #{token.inspect}" }
 

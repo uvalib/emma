@@ -31,8 +31,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   public
 
-  # == GET  /user/auth/bookshare
-  # == POST /user/auth/bookshare
+  # == GET  /users/auth/bookshare
+  # == POST /users/auth/bookshare
   #
   # Initiate authentication with the remote service.
   #
@@ -42,8 +42,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     super
   end
 
-  # == GET  /user/auth/bookshare/callback
-  # == POST /user/auth/bookshare/callback
+  # == GET  /users/auth/bookshare/callback
+  # == POST /users/auth/bookshare/callback
   #
   # Callback from the Bookshare auth service to finalize authentication.
   #
@@ -61,7 +61,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     re_raise_if_internal_exception(error)
   end
 
-  # == GET /user/auth/bookshare/failure
+  # == GET /users/auth/bookshare/failure
   #
   # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.

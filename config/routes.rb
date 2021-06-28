@@ -181,9 +181,9 @@ Rails.application.routes.draw do
   # Authentication
   # ===========================================================================
 
-  get '/user', to: 'account#index'
+  get '/users', to: 'account#index'
 
-  devise_for :users, path: 'user', controllers: {
+  devise_for :users, controllers: {
     sessions:           'user/sessions',
     passwords:          'user/passwords',
     registrations:      'user/registrations',
@@ -192,17 +192,17 @@ Rails.application.routes.draw do
 
   # Local login.
   devise_scope :user do
-    get '/user/sign_in_local', to: 'user/sessions#sign_in_local',    as: 'sign_in_local'
+    get '/users/sign_in_local', to: 'user/sessions#sign_in_local',    as: 'sign_in_local'
   end
 
   # Synthetic login endpoint.
   devise_scope :user do
-    get '/user/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'
+    get '/users/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'
   end
 
   devise_scope :user do
-    get '/user/new',           to: 'user/registrations#new',         as: 'user_new'
-    get '/user/edit_select',   to: 'user/registrations#edit_select', as: 'user_edit_select'
+    get '/users/new',           to: 'user/registrations#new',         as: 'user_new'
+    get '/users/edit_select',   to: 'user/registrations#edit_select', as: 'user_edit_select'
   end
 
   # ===========================================================================
@@ -264,7 +264,7 @@ unless ONLY_FOR_DOCUMENTATION
   def destroy_user_session_url(*);                end
   def edit_password_path(*);                      end
   def edit_password_url(*);                       end
-  def edit_user_registration_path(*);             end # /user/edit
+  def edit_user_registration_path(*);             end # /users/edit
   def edit_user_registration_url(*);              end
   def edition_index_path(*);                      end
   def edition_index_url(*);                       end
@@ -274,7 +274,7 @@ unless ONLY_FOR_DOCUMENTATION
   def member_index_url(*);                        end
   def metrics_test_path(*);                       end
   def metrics_test_url(*);                        end
-  def new_user_registration_path(*);              end # /user/new
+  def new_user_registration_path(*);              end # /users/new
   def new_user_registration_url(*);               end
   def new_user_session_path(*);                   end
   def new_user_session_url(*);                    end
@@ -296,9 +296,9 @@ unless ONLY_FOR_DOCUMENTATION
   def session_url(*);                             end
   def set_state_health_path(*);                   end
   def set_state_health_url(*);                    end
-  def sign_in_as_path(*);                         end # /user/sign_in_as
+  def sign_in_as_path(*);                         end # /users/sign_in_as
   def sign_in_as_url(*);                          end
-  def sign_in_local_path(*);                      end # /user/sign_in_local
+  def sign_in_local_path(*);                      end # /users/sign_in_local
   def sign_in_local_url(*);                       end
   def system_unavailable_path(*);                 end
   def system_unavailable_url(*);                  end
@@ -310,7 +310,7 @@ unless ONLY_FOR_DOCUMENTATION
   def upload_index_url(*);                        end
   def user_bookshare_omniauth_authorize_path(*);  end
   def user_bookshare_omniauth_authorize_url(*);   end
-  def user_edit_select_path(*);                   end # /user/edit_select
+  def user_edit_select_path(*);                   end # /users/edit_select
   def user_edit_select_url(*);                    end
   def version_health_path(*);                     end
   def version_health_url(*);                      end

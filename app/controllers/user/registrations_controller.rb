@@ -31,7 +31,7 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   public
 
-  # == GET /user/sign_up
+  # == GET /users/sign_up
   #
   def new
     __debug_route
@@ -42,7 +42,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     super
   end
 
-  # == POST /user
+  # == POST /users
   #
   def create
     __debug_route
@@ -54,7 +54,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     re_raise_if_internal_exception(error)
   end
 
-  # == GET /user/edit
+  # == GET /users/edit
   #
   def edit
     __debug_route
@@ -68,7 +68,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     super
   end
 
-  # == PUT /user
+  # == PUT /users
   #
   def update
     __debug_route
@@ -81,13 +81,13 @@ class User::RegistrationsController < Devise::RegistrationsController
     re_raise_if_internal_exception(error)
   end
 
-  # == GET /user/resign
+  # == GET /users/resign
   #
   def delete
     __debug_route
   end
 
-  # == DELETE /user
+  # == DELETE /users
   #
   def destroy
     __debug_route
@@ -100,7 +100,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     re_raise_if_internal_exception(error)
   end
 
-  # == GET /user/cancel
+  # == GET /users/cancel
   #
   # Forces the session data which is usually expired after sign in to be
   # expired now. This is useful if the user wants to cancel oauth signing in/up
@@ -121,7 +121,7 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   public
 
-  # == GET /user/edit_select
+  # == GET /users/edit_select
   #
   def edit_select
     __debug_route

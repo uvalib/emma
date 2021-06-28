@@ -315,14 +315,14 @@ module OmniAuth
             # the special endpoint for direct token sign-in.
             self.access_token        = synthetic_access_token(original_params)
             session['omniauth.auth'] = synthetic_auth_hash(original_params)
-            call_redirect('/user/sign_in_as', params: original_params)
+            call_redirect('/users/sign_in_as', params: original_params)
 
           elsif (username = current_user&.uid)
             # Special case for a fixed user causes a redirect to the special
             # endpoint for direct sign-in.
             self.access_token        = synthetic_access_token(username)
             session['omniauth.auth'] = synthetic_auth_hash(username)
-            call_redirect("/user/sign_in_as?id=#{username}")
+            call_redirect("/users/sign_in_as?id=#{username}")
 
           else
             # Normal case results in a call to the remote service.

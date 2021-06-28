@@ -41,7 +41,7 @@ class User::SessionsController < Devise::SessionsController
 
   public
 
-  # == GET /user/sign_in
+  # == GET /users/sign_in
   #
   # Prompt the user for login credentials.
   #
@@ -56,7 +56,7 @@ class User::SessionsController < Devise::SessionsController
     end
   end
 
-  # == POST /user/sign_in
+  # == POST /users/sign_in
   #
   # Begin login session.
   #
@@ -68,6 +68,7 @@ class User::SessionsController < Devise::SessionsController
     update_auth_data
     self.resource = warden.authenticate!(auth_options)
     api_update(user: resource.bookshare_user)
+    check_dev
     set_flash_notice
     sign_in_and_redirect(resource)
   rescue => error
@@ -75,7 +76,7 @@ class User::SessionsController < Devise::SessionsController
     re_raise_if_internal_exception(error)
   end
 
-  # == DELETE /user/sign_out[?revoke=(true|false)]
+  # == DELETE /users/sign_out[?revoke=(true|false)]
   #
   # End login session.
   #
@@ -88,6 +89,7 @@ class User::SessionsController < Devise::SessionsController
   def destroy
     __debug_route
     __debug_request
+    remember_dev
     user = current_user&.uid&.dup
     delete_auth_data
     super
@@ -104,7 +106,7 @@ class User::SessionsController < Devise::SessionsController
 
   public
 
-  # == GET /user/sign_in_local
+  # == GET /users/sign_in_local
   #
   # Sign in with a local EMMA username/password.
   #
@@ -112,8 +114,8 @@ class User::SessionsController < Devise::SessionsController
     __debug_route
   end
 
-  # == GET /user/sign_in_as?uid=NAME&token=AUTH_TOKEN
-  # == GET /user/sign_in_as?auth=(OmniAuth::AuthHash)
+  # == GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
+  # == GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
   #
   # Sign in using information supplied outside of the OAuth2 flow.
   #

@@ -4,7 +4,7 @@
   # (copied from an independent browser tab which is logged-in to a deployed
   # instance of the service).
 
-  return unless session_debug?
+  return unless session_debug? || dev_client?
 
   form_label = t('emma.user.sessions.sign_in_as.update.label')
   form_opt   = {

@@ -332,6 +332,7 @@ module SessionConcern
       __debug  { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
       Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
     end
+    forget_dev
     local_sign_out
     @reset_browser_cache = true
   end

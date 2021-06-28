@@ -2,7 +2,7 @@
 <%-
   # Developer-only short-cuts to sign in as a test user.
 
-  return unless session_debug?
+  return unless session_debug? || dev_client?
 
   links =
     stored_auth(true).keys.map { |id|

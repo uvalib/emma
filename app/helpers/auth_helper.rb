@@ -168,6 +168,49 @@ module AuthHelper
     stored_auth.slice(user)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  DEV_COOKIE = 'app.user.dev'
+
+  # Note whether the user is a developer.
+  #
+  # @param [User, nil] user
+  #
+  # @return [true, nil]
+  #
+  def check_dev(user = nil)
+    session[DEV_COOKIE] = true if (user || resource)&.developer?
+  end
+
+  # Set a cookie indicating a developer client.
+  #
+  # @return [void]
+  #
+  def remember_dev
+    return unless true?(session[DEV_COOKIE])
+    response.set_cookie(DEV_COOKIE, { value: true })
+  end
+
+  # Remove the cookie indicating a developer client.
+  #
+  # @return [void]
+  #
+  def forget_dev
+    session.delete(DEV_COOKIE)
+    cookies.delete(DEV_COOKIE)
+    response.delete_cookie(DEV_COOKIE)
+  end
+
+  # Indicate whether this is a developer client.
+  #
+  def dev_client?
+    true?(cookies[DEV_COOKIE])
+  end
+
 end
 
 __loading_end(__FILE__)
