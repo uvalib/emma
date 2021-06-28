@@ -176,14 +176,15 @@ module AuthConcern
 
   public
 
-  # Set `session['omniauth.auth']` from `request.env['omniauth.auth']`
+  # Set `session['omniauth.auth']` from `request.env['omniauth.auth']` and
+  # return with the new or returning user.
   #
   # @param [ActionDispatch::Request, OmniAuth::AuthHash, Hash] src
   #
   # @raise [RuntimeError]             If *src* does not have auth data.
   # @raise [RuntimeError]             If a User could not be found or created.
   #
-  # @return [OmniAuth::AuthHash]
+  # @return [User]
   #
   def set_auth_data(src)
     src = src.env                                  if src.respond_to?(:env)
@@ -195,6 +196,7 @@ module AuthConcern
     raise 'Could not create user account'          unless user.persisted? # TODO: I18n
     __debug_line { [__debug_route_label, 'user persisted'] }
     session['omniauth.auth'] = auth
+    user
   end
 
   # Generate the authentication data to be associated with the given user.

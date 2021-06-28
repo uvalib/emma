@@ -52,7 +52,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def bookshare
     __debug_route
     __debug_request
-    set_auth_data(request)
+    self.resource = set_auth_data(request)
     last_operation_update
     set_flash_message(:notice, :success, kind: 'Bookshare')
     sign_in_and_redirect(resource)

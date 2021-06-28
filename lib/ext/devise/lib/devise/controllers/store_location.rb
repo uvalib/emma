@@ -31,8 +31,9 @@ module Devise
     # @param [*] resource_or_scope
     #
     def stored_location_key_for(resource_or_scope)
-      scope = Devise::Mapping.find_scope!(resource_or_scope)
-      (scope == :user) ? 'app.current_path' : "#{scope}_return_to"
+      scope = resource_or_scope.presence
+      scope &&= Devise::Mapping.find_scope!(scope)
+      (!scope || (scope == :user)) ? 'app.current_path' : "#{scope}_return_to"
     end
 
   end
