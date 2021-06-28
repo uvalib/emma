@@ -158,6 +158,25 @@ class User < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section: ActiveRecord overrides
+  # ===========================================================================
+
+  public
+
+  # Update database fields.
+  #
+  # @param [Hash, User] opt
+  #
+  # @return [void]
+  #
+  def assign_attributes(opt)
+    old_eid = self[:effective_id]
+    super
+    new_eid = self[:effective_id]
+    add_role(:administrator) if new_eid && (new_eid != old_eid)
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -418,7 +437,6 @@ class User < ApplicationRecord
   #++
   def self.from_omniauth(data, update = nil)
     return unless data.is_a?(Hash)
-    keep = false?(update)
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
     attr = {
       email:         data.uid.downcase,
@@ -428,8 +446,14 @@ class User < ApplicationRecord
       refresh_token: data.credentials&.refresh_token
     }.compact_blank!
     user = find_by(email: attr[:email]) or return create(attr)
-    return user if keep || attr.delete_if { |k, v| user[k] == v }.blank?
-    return user if user.update(attr)
+    keep = false?(update)
+    unless keep
+      attr.delete(:email)
+      attr.delete(:first_name) if user.first_name.present?
+      attr.delete(:last_name)  if user.last_name.present?
+      keep = attr.delete_if { |k, v| user[k] == v }.blank?
+    end
+    user if keep || user.update(attr)
   end
 
 end

@@ -9,8 +9,9 @@
   # within 'user/registrations/edit', which means that the form is being used
   # to change the user's own information.
 
-  bookshare_user_menu  = current_user.administrator?
-  get_current_password = form_opt.present?
+  get_password         = user.administrator?
+  bookshare_user_menu  = user.administrator?
+  get_current_password = get_password && form_opt.present?
 
   form_opt ||= {
     url:  update_account_path,
@@ -36,21 +37,25 @@
   menu_label_opt  = label_opt
   menu_value_opt  = prepend_classes(menu_opt, value_opt[:class])
   menu_label      = 'Equivalent Bookshare user' # TODO: I18n
-  menu_choices    = bookshare_user_menu && User.test_user_menu
+  menu_choices    = bookshare_user_menu
+  menu_choices  &&= User.test_user_menu
   menu_choices  &&= [['Not applicable', '']] + menu_choices
 
   pwd_label_opt   = input_label_opt
   pwd_value_opt   = input_value_opt.merge(autocomplete: 'new-password')
-  pwd_note        = t('emma.user.registrations.edit.password')
+  pwd_note        = get_password
+  pwd_note      &&= t('emma.user.registrations.edit.password')
   pwd_note      &&= html_tag(:i, "(#{pwd_note})")
 
-  min_length      = @minimum_password_length
+  min_length      = get_password
+  min_length    &&= @minimum_password_length
   min_length    &&= t('emma.user.password.length', min: min_length)
   min_length    &&= '<br/>'.html_safe << html_tag(:em, "(#{min_length})")
 
   confirm_label_opt = input_label_opt
   confirm_value_opt = input_value_opt.merge(autocomplete: 'current-password')
-  confirm_note      = t('emma.user.registrations.edit.current')
+  confirm_note      = get_current_password
+  confirm_note    &&= t('emma.user.registrations.edit.current')
   confirm_note    &&= html_tag(:i, "(#{confirm_note})")
 
 -%>
@@ -61,32 +66,36 @@
 
   <div class="account-fields">
 
-    <%= f.label          :email,        email_label_opt %>
-    <%= f.email_field    :email,        email_value_opt %>
+    <%= f.label       :email,       email_label_opt %>
+    <%= f.email_field :email,       email_value_opt %>
 
-    <%= f.label          :first_name,   input_label_opt %>
-    <%= f.text_field     :first_name,   input_value_opt %>
+    <%= f.label       :first_name,  input_label_opt %>
+    <%= f.text_field  :first_name,  input_value_opt %>
 
-    <%= f.label          :last_name,    input_label_opt %>
-    <%= f.text_field     :last_name,    input_value_opt %>
+    <%= f.label       :last_name,   input_label_opt %>
+    <%= f.text_field  :last_name,   input_value_opt %>
 
-    <%= f.label          :password,     pwd_label_opt %>
-    <%= f.password_field :password,     pwd_value_opt %>
-    <%#= pwd_note # TODO: ??? %>
-    <%#= min_length # TODO: ??? %>
+    <%- if get_password -%>
 
-    <%= f.label          :password_confirmation, confirm_label_opt %>
-    <%= f.password_field :password_confirmation, confirm_value_opt %>
+      <%= f.label          :password,              pwd_label_opt %>
+      <%= f.password_field :password,              pwd_value_opt %>
+      <%#= pwd_note # TODO: ??? %>
+      <%#= min_length # TODO: ??? %>
+
+      <%= f.label          :password_confirmation, confirm_label_opt %>
+      <%= f.password_field :password_confirmation, confirm_value_opt %>
+
+    <%- end -%>
 
     <%- if get_current_password -%>
-      <%= f.label          :current_password,    confirm_label_opt %>
-      <%= f.password_field :current_password,    confirm_value_opt %>
+      <%= f.label          :current_password,      confirm_label_opt %>
+      <%= f.password_field :current_password,      confirm_value_opt %>
       <%#= confirm_note # TODO: ??? %>
     <%- end -%>
 
     <%- if bookshare_user_menu -%>
-      <%= f.label        :effective_id, menu_label,       menu_label_opt %>
-      <%= f.select       :effective_id, menu_choices, {}, menu_value_opt %>
+      <%= f.label  :effective_id, menu_label,       menu_label_opt %>
+      <%= f.select :effective_id, menu_choices, {}, menu_value_opt %>
     <%- end -%>
 
   </div>

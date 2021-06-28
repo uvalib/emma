@@ -6,7 +6,7 @@
 
   user  ||= @item || current_user
   title ||= t('emma.user.registrations.edit.title', default: nil)
-  title ||= t('emma.user.registrations.edit.label', default: 'Sign up')
+  title ||= t('emma.user.registrations.edit.label', default: 'Edit')
   help  ||= nil # help_popup(:account, :edit) # TODO: ???
 
   unless modal?
@@ -15,6 +15,7 @@
     set_page_robots(:noindex, :nofollow)
   end
 
+  # noinspection RailsParamDefResolve
   awaiting   = (user.try(:unconfirmed_email) if devise_mapping.confirmable?)
   awaiting &&= t('emma.user.registrations.edit.awaiting', email: awaiting)
   awaiting &&= html_div(awaiting)
