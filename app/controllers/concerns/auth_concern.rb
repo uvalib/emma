@@ -231,10 +231,10 @@ module AuthConcern
     # noinspection RubyCaseWithoutElseBlockInspection
     no_revoke_reason =
       case
-        when !application_deployed?  then 'localhost'
-        when auth_debug_user?        then "USER #{current_user.uid} DEBUGGING"
         when false?(params[:revoke]) then 'revoke=false'
+        when auth_debug_user?        then "USER #{current_user.uid} DEBUGGING"
         when token.blank?            then 'NO TOKEN'
+        when !application_deployed?  then 'localhost'
       end
     if no_revoke_reason
       __debug { "#{__method__}: NOT REVOKING TOKEN - #{no_revoke_reason}" }

@@ -89,8 +89,12 @@ module SessionsHelper
   def sign_out_link(label: nil, provider: nil, path: nil, **opt)
     label    ||= get_sessions_label(:destroy, provider)
     provider ||= :bookshare
-    unless path.is_a?(String)
-      path = path.is_a?(FalseClass) ? '#' : destroy_user_session_path
+    if path.is_a?(FalseClass)
+      path = '#'
+    elsif !path.is_a?(String)
+      path_opt = {}
+      path_opt[:revoke] = false if current_user&.administrator?
+      path = destroy_user_session_path(**path_opt)
     end
     html_opt = {
       class:             "session-link #{provider}-logout",
