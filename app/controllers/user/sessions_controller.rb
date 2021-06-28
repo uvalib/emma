@@ -80,9 +80,9 @@ class User::SessionsController < Devise::SessionsController
   #
   # End login session.
   #
-  # If the "revoke" parameter is missing or "true" then the local session is
-  # ended _and_ its associated OAuth2 token is revoked.  If "revoke" is "false"
-  # then only the local session is ended.
+  # If the "no_revoke" parameter is missing or "false" then the local session
+  # is  ended _and_ its associated OAuth2 token is revoked.  If "no_revoke" is
+  # "true" then only the local session is ended.
   #
   # @see AuthConcern#delete_auth_data
   #
@@ -91,7 +91,7 @@ class User::SessionsController < Devise::SessionsController
     __debug_request
     remember_dev
     user = current_user&.uid&.dup
-    delete_auth_data
+    delete_auth_data(no_revoke: true?(params[:no_revoke]))
     super
     api_clear
     set_flash_notice(user: user)

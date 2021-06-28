@@ -92,8 +92,9 @@ module SessionsHelper
     if path.is_a?(FalseClass)
       path = '#'
     elsif !path.is_a?(String)
-      path_opt = {}
-      path_opt[:revoke] = false if current_user&.administrator?
+      path_opt = {
+        no_revoke: current_user&.administrator? || current_user&.test_user?
+      }.compact_blank!
       path = destroy_user_session_path(**path_opt)
     end
     html_opt = {

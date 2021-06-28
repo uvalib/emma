@@ -218,23 +218,22 @@ module AuthConcern
   # Terminate the local login session ('omniauth.auth') and the session with
   # the OAuth2 provider (if appropriate)
   #
-  # @param [Boolean] revoke           If set to *false*, do not revoke the
-  #                                     token with the OAuth2 provider.
+  # @param [Boolean] no_revoke        If *true*, do not revoke the token with
+  #                                     the OAuth2 provider.
   #
   # @return [void]
   #
   # @see #revoke_access_token
   #
-  def delete_auth_data(revoke: true)
+  def delete_auth_data(no_revoke: false)
     token = session.delete('omniauth.auth')
-    return unless revoke
     # noinspection RubyCaseWithoutElseBlockInspection
     no_revoke_reason =
       case
-        when false?(params[:revoke]) then 'revoke=false'
-        when auth_debug_user?        then "USER #{current_user.uid} DEBUGGING"
-        when token.blank?            then 'NO TOKEN'
-        when !application_deployed?  then 'localhost'
+        when token.blank?           then 'NO TOKEN'
+        when no_revoke              then 'no_revoke=true'
+        when auth_debug_user?       then "USER #{current_user.uid} DEBUGGING"
+        when !application_deployed? then 'localhost'
       end
     if no_revoke_reason
       __debug { "#{__method__}: NOT REVOKING TOKEN - #{no_revoke_reason}" }

@@ -233,6 +233,24 @@ class User < ApplicationRecord
 
   public
 
+  # Current EMMA test Bookshare accounts and their role prototypes.
+  #
+  # @type [Hash{String=>Symbol}]
+  #
+  # @see Roles#PROTOTYPE
+  #
+  TEST_USERS = {
+    'emmadso@bookshare.org'        => :dso,
+    'emmacollection@bookshare.org' => :librarian,
+    'emmamembership@bookshare.org' => :membership
+  }.freeze
+
+  # Indicate whether the user is one of the known "fake" test user accounts.
+  #
+  def test_user?
+    TEST_USERS.include?(uid)
+  end
+
   # Indicate whether the user has the developer role.
   #
   def developer?
@@ -282,18 +300,6 @@ class User < ApplicationRecord
   # ===========================================================================
 
   protected
-
-  # Current EMMA test Bookshare accounts and their role prototypes.
-  #
-  # @type [Hash{String=>Symbol}]
-  #
-  # @see Roles#PROTOTYPE
-  #
-  TEST_USERS = {
-    'emmadso@bookshare.org'        => :dso,
-    'emmacollection@bookshare.org' => :librarian,
-    'emmamembership@bookshare.org' => :membership
-  }.freeze
 
   # assign_default_role
   #
