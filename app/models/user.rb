@@ -107,6 +107,17 @@ class User < ApplicationRecord
   devise :database_authenticatable, :rememberable, :trackable, :registerable,
          :omniauthable, omniauth_providers: OAUTH2_PROVIDERS
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    include Devise::Models::DatabaseAuthenticatable
+    include Devise::Models::Rememberable
+    include Devise::Models::Trackable
+    include Devise::Models::Registerable
+    include Devise::Models::Omniauthable
+  end
+  # :nocov:
+
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================

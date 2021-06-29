@@ -92,7 +92,9 @@ module AccountConcern
   #
   # @type [Array<Symbol>]
   #
-  ACCT_PARAMETERS = User.field_names.freeze
+  ACCT_PARAMETERS = (
+    User.field_names + %i[password password_confirmation current_password]
+  ).freeze
 
   # Columns searched for generic (:like) matches.
   #
