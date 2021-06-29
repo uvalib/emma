@@ -6,12 +6,12 @@ version: 0.2
 
 env:
   variables:
-    terraform_version: 0.15.0
+    terraform_version: 1.0.0
 
 phases:
   install:
     runtime-versions:
-      golang: 1.13
+      golang: 1.15
     commands:
       - wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
       - unzip terraform_${terraform_version}_linux_amd64.zip
