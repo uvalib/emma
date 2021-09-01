@@ -92,35 +92,35 @@ en:
     search_type:        &SEARCH_TYPE
 
       identifier:
-        url_parameter:  'identifier'
+        url_param:      identifier
         name:           'ISBN / ISSN / etc.'
         label:          'Standard identifier:'
         tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, ISSN, OCLC, UPC, etc.)'
         placeholder:    'Enter an identifier or title...'
 
       title:
-        url_parameter:  'title'
+        url_param:      title
         name:           'Title'
         label:          'Title terms:'
         tooltip:        'Search for one or more terms matching the title of a work'
         placeholder:    'Enter title terms...'
 
       creator:
-        url_parameter:  'creator'
+        url_param:      creator
         name:           'Creator'
         label:          'Creator terms:'
         tooltip:        'Search for one or more terms matching the author or creator of a work'
         placeholder:    'Enter author/creator terms...'
 
       publisher:
-        url_parameter:  'publisher'
+        url_param:      publisher
         name:           'Publisher'
         label:          'Publisher terms:'
         tooltip:        'Search for one or more terms matching the publisher of a work'
         placeholder:    'Enter publisher terms...'
 
       q:
-        url_parameter:  'q'
+        url_param:      q
         name:           'Keyword'
         label:          'Search terms:'
         tooltip:        'Search for one or more keywords matching anywhere in the description of entries'
@@ -148,7 +148,7 @@ en:
 
       _default:
         service:        search      # The applicable API service.
-        url_parameter:  ~           # URL parameter for the control value.
+        url_param:      ~           # URL parameter for the control value.
         label:          ~           # Displayed before the control.
         label_visible:  true        # If *false* label is 'sr-only'.
         tooltip:        ~           # Displayed hovering over control or label.
@@ -165,7 +165,7 @@ en:
 
       a11y_feature:
         service:        search
-        url_parameter:  'accessibilityFeature'
+        url_param:      accessibilityFeature
         label:          'Accessibility'
         tooltip:        'Limit by accessibility feature'
         values:         !ruby/symbol A11yFeature
@@ -173,35 +173,35 @@ en:
 
       braille:
         service:        bookshare
-        url_parameter:  'brailleType'
+        url_param:      brailleType
         label:          'Braille'
         tooltip:        'Limit by Braille type'
         values:         !ruby/symbol BsBrailleType
 
       category:
         service:        bookshare
-        url_parameter:  'categories'
+        url_param:      categories
         label:          'Category'
         tooltip:        'Limit by Bookshare category'
         values:         !ruby/symbol CategoriesType
 
       content_type:
         service:        bookshare
-        url_parameter:  'titleContentType'
+        url_param:      titleContentType
         label:          'Content Type'
         tooltip:        'Limit by type of source material'
         values:         !ruby/symbol BsTitleContentType
 
       country:
         service:        bookshare
-        url_parameter:  'country'
+        url_param:      country
         label:          'Country'
         tooltip:        'Limit by regional permissions'
         menu_format:    'upcase'
 
       format:
         service:        search
-        url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
+        url_param:      'fmt' # NOTE: not 'format' due to Rails constraints.
         label:          'Format'
         tooltip:        'Limit by remediated content type'
         values:         !ruby/symbol DublinCoreFormat
@@ -209,7 +209,7 @@ en:
 
       format_feature:
         service:        search
-        url_parameter:  'formatFeature'
+        url_param:      formatFeature
         label:          'Feature'
         tooltip:        'Limit by format feature'
         values:         !ruby/symbol FormatFeature
@@ -217,34 +217,34 @@ en:
 
       language:
         service:        bookshare
-        url_parameter:  'language'
+        url_param:      language
         label:          'Language'
         tooltip:        'Limit by language of source material'
         values:         !ruby/symbol LanguageType
 
       narrator:
         service:        bookshare
-        url_parameter:  'narratorType'
+        url_param:      narratorType
         label:          'Narrator'
         tooltip:        'Limit by audio narrator type'
         values:         !ruby/symbol BsNarratorType
 
       periodical_format:
         service:        bookshare
-        url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
+        url_param:      'fmt' # NOTE: not 'format' due to Rails constraints.
         label:          'Format'
         tooltip:        'Limit by remediated content type'
         values:         !ruby/symbol BsPeriodicalFormat
 
       repository:
         service:        search
-        url_parameter:  'repository'
+        url_param:      repository
         label:          'Repository'
         tooltip:        'Limit by record originator'
         values:         !ruby/symbol EmmaRepository
 
       size:
-        url_parameter:  'limit'
+        url_param:      limit
         label:          'Page Size'
         tooltip:        'Specify the number of search results per page.'
         placeholder:    ~
@@ -254,7 +254,7 @@ en:
         menu_format:    'none'
 
       sort:
-        url_parameter:  'sort'
+        url_param:      sort
         label:          'Sort By'
         tooltip:        'Specify the order in which results are presented'
         placeholder:    ~
@@ -269,14 +269,14 @@ en:
 
       warnings_exc:
         service:        bookshare
-        url_parameter:  'excludedContentWarnings'
+        url_param:      excludedContentWarnings
         label:          'Without'
         tooltip:        'Limit by excluded content warnings'
         values:         !ruby/symbol BsContentWarning
 
       warnings_inc:
         service:        bookshare
-        url_parameter:  'includedContentWarnings'
+        url_param:      includedContentWarnings
         label:          'Warnings'
         tooltip:        'Limit by included content warnings'
         values:         !ruby/symbol BsContentWarning

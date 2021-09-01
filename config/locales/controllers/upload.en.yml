@@ -57,12 +57,8 @@ en:
         deployment:
           label:        'Deployment'
           tooltip:      'Limit by EMMA deployment'
-          placeholder:  ~
-          default:      all
-          menu:
-            (all):      all
-            Production: production
-            Staging:    staging
+          placeholder:  '(all)'
+          values:       !ruby/symbol Deployment
 
         prefix_limit:
           label:        'Limit'

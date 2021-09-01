@@ -101,7 +101,7 @@ class SearchCall < ApplicationRecord
         key = f_params[key] || key
         next if reserved_keys.include?(key) || key.match?(/periodical/)
         f_keys[key] = { type: (config[:multiple] ? :array : :string) }
-        config[:url_parameter]&.then { |param| f_params[param.to_sym] = key }
+        config[:url_param]&.then { |param| f_params[param.to_sym] = key }
       end
 
       # For convenience, each of the :params elements is back-filled so that
@@ -214,7 +214,7 @@ class SearchCall < ApplicationRecord
       json_field = field.to_s.underscore.to_sym
       next if JSON_COLUMNS.include?(json_field)
       next if json_field.match?(/periodical/)
-      [field, config[:url_parameter]].map do |f|
+      [field, config[:url_param]].map do |f|
         next if (f = f&.to_sym).blank?
         [f, [:filter, json_field]] unless NON_FILTER_PARAMETERS.include?(f)
       end

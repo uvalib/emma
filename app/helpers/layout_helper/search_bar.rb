@@ -121,7 +121,7 @@ module LayoutHelper::SearchBar
     types    = search_input_types(target)
     prm_map  =
       types.map { |type, cfg|
-        prm = cfg[:url_parameter]&.to_sym || type
+        prm = cfg[:url_param]&.to_sym || type
         [prm, type]
       }.to_h
 

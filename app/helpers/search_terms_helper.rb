@@ -42,8 +42,8 @@ module SearchTermsHelper
       opt   = { controller: controller, mode: false }
       entry = config_lookup('search_type', **opt) || {}
       entry.each_pair do |type, config|
-        config[:url_parameter] = config[:url_parameter]&.to_sym || type
-        config[:name] ||= type.to_s.camelize
+        config[:url_param] = config[:url_param]&.to_sym || type
+        config[:name]    ||= type.to_s.camelize
       end
       [controller, entry]
     }.to_h.deep_freeze
@@ -54,7 +54,7 @@ module SearchTermsHelper
   #
   QUERY_PARAMETERS =
     SEARCH_TYPE.transform_values { |types|
-      types.map { |type, cfg| cfg[:url_parameter]&.to_sym || type }
+      types.map { |type, cfg| cfg[:url_param]&.to_sym || type }
     }.freeze
 
   # URL parameters that are search-related but "out-of-band".

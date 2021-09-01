@@ -39,7 +39,7 @@ module LayoutHelper::SearchFilters
         cfg[:label_visible] = !false?(cfg[:label_visible])
         cfg[:label]         = non_breaking(cfg[:label]) if cfg[:label_visible]
         cfg[:menu_format]   = cfg[:menu_format]&.to_sym
-        cfg[:url_parameter] = (cfg[:url_parameter] || menu_name)&.to_sym
+        cfg[:url_param]     = (cfg[:url_param] || menu_name)&.to_sym
         if (reverse = cfg[:reverse])
           reverse[:suffix] &&= reverse[:suffix].sub(/^([^_])/, '_\1')
           reverse[:except] &&= Array.wrap(reverse[:except])
@@ -310,7 +310,7 @@ module LayoutHelper::SearchFilters
   # @type [Array<Symbol>]
   #
   SEARCH_PARAMETERS =
-    SEARCH_MENU_BASE.values.map { |config| config[:url_parameter] }.uniq.freeze
+    SEARCH_MENU_BASE.values.map { |config| config[:url_param] }.uniq.freeze
 
   # If a :sort parameter value ends with this, it indicates that the sort
   # should be performed in reverse order.
@@ -354,7 +354,7 @@ module LayoutHelper::SearchFilters
     }.deep_freeze
 
   # Per-controller tables of the menu configurations associated with each
-  # :url_parameter value.
+  # :url_param value.
   #
   # @type [Hash{Symbol=>Hash}]
   #
@@ -369,7 +369,7 @@ module LayoutHelper::SearchFilters
             when :format            then next if periodicals
             when :periodical_format then next unless periodicals
           end
-          url_param = menu_config[:url_parameter]&.to_sym
+          url_param = menu_config[:url_param]&.to_sym
           [url_param, menu_config] if url_param.present?
         }.compact.to_h
       [controller, search_param_menu_configs]
@@ -605,7 +605,8 @@ module LayoutHelper::SearchFilters
   def size_menu(menu_name, **opt)
     opt[:config]     = config = current_menu_config(menu_name, **opt)
     opt[:default]  ||= opt.dig(:config, :default) || page_size
-    opt[:selected] ||= request_parameters[config[:url_parameter]]
+    url_param        = (config[:url_param] || menu_name).to_sym
+    opt[:selected] ||= request_parameters[url_param]
     opt[:selected] ||= opt[:default]
     opt[:selected]   = opt[:selected].first if opt[:selected].is_a?(Array)
     opt[:selected]   = opt[:selected].to_i
@@ -651,8 +652,9 @@ module LayoutHelper::SearchFilters
   #
   def deployment_menu(menu_name, **opt)
     opt[:config]     = config = current_menu_config(menu_name, **opt)
-    opt[:selected] ||= request_parameters[config[:url_parameter]]
-    opt[:selected] ||= aws_deployment
+    opt[:default]    = nil
+    url_param        = (config[:url_param] || menu_name).to_sym
+    opt[:selected] ||= request_parameters[url_param]
     opt[:selected]   = opt[:selected].first if opt[:selected].is_a?(Array)
     opt.delete(:selected) if opt[:selected].blank?
     menu_container(menu_name, **opt)
@@ -705,7 +707,7 @@ module LayoutHelper::SearchFilters
 
   # A dropdown menu element.
   #
-  # If *selected* is not specified `#SEARCH_MENU[menu_name][:url_parameter]` is
+  # If *selected* is not specified `#SEARCH_MENU[menu_name][:url_param]` is
   # used to extract a value from `#request_parameters`.
   #
   # If no option is currently selected, an initial "null" selection is
@@ -740,7 +742,7 @@ module LayoutHelper::SearchFilters
     config    = opt[:config]  || current_menu_config(menu_name, target: target)
     pairs     = config[:menu] || []
     default   = opt.key?(:default) ? opt[:default] : config[:default]
-    url_param = config[:url_parameter]
+    url_param = (config[:url_param] || menu_name).to_sym
     multiple  = config[:multiple]
     mode      = multiple ? 'multiple' : 'single'
     any_label = config[:placeholder] || '(select)' # TODO: I18n
@@ -884,8 +886,8 @@ module LayoutHelper::SearchFilters
 
   # A date selection element.
   #
-  # If *selected* is not specified `#SEARCH_MENU[name][:url_parameter]` is
-  # used to extract a value from `#request_parameters`.
+  # If *selected* is not specified `#SEARCH_MENU[name][:url_param]` is used to
+  # extract a value from `#request_parameters`.
   #
   # If no option is currently selected, an initial "null" selection is
   # prepended.
@@ -911,7 +913,7 @@ module LayoutHelper::SearchFilters
     target    = search_target(target) or return
     config    = opt[:config] || current_menu_config(menu_name, target: target)
     default   = opt.key?(:default) ? opt[:default] : config[:default]
-    url_param = config[:url_parameter]
+    url_param = (config[:url_param] || menu_name).to_sym
 
     # Get the initial value for the field.
     value = selected || request_parameters[url_param] || default
@@ -1071,7 +1073,8 @@ module LayoutHelper::SearchFilters
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(html_opt, css_selector, **opt)
-    label_tag(config[:url_parameter], label, html_opt)
+    url_param = (config[:url_param] || name).to_sym
+    label_tag(url_param, label, html_opt)
   end
 
   # ===========================================================================
