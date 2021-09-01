@@ -1,4 +1,4 @@
-// app/assets/stylesheets/feature/_file_upload.scss
+// app/assets/stylesheets/feature/_entry_form.scss
 
 @use 'shared/variables'      as *;
 @use 'shared/common'         as *;
@@ -40,7 +40,7 @@
 }
 
 // Template for a panel of radio buttons.
-%upload-radio-group {
+%entry-radio-group {
 
     display:         flex;
     flex-direction:  row;
@@ -103,17 +103,15 @@
     }
 }
 
-// Control for filtering which upload form fields are displayed.
-//
-// noinspection CssUnusedSymbol
-.upload-field-group {
-    @extend %upload-radio-group;
+// Control for filtering which entry form fields are displayed.
+.upload-field-group, // TODO: remove after upload -> entry
+.entry-field-group {
+    @extend %entry-radio-group;
 }
 
 // Controls for selecting the workflow state group.
-//
-// noinspection CssUnusedSymbol
-.upload-select-group-panel {
+.upload-select-group-panel, // TODO: remove after upload -> entry
+.entry-select-group-panel {
 
     display:         flex;
     flex-direction:  column;
@@ -158,8 +156,8 @@
         }
     }
 
-    // noinspection CssUnusedSymbol
-    .upload-select-group {
+    .upload-select-group, // TODO: remove after upload -> entry
+    .entry-select-group {
 
         display: grid;
         gap:     0.5rem;
@@ -221,7 +219,7 @@
                 }
 
                 .count {
-                    // TODO: ??? ... .upload-select-group .control
+                    // TODO: ??? ... .entry-select-group .control
                 }
             }
 
@@ -241,9 +239,8 @@
 
 // Controls for filtering which records are displayed on the current page of
 // the index listing.
-//
-// noinspection CssUnusedSymbol
-.upload-page-filter-panel {
+.upload-page-filter-panel, // TODO: remove after upload -> entry
+.entry-page-filter-panel {
 
     max-width: inherit;
 
@@ -252,10 +249,10 @@
         margin-bottom: 0.5rem;
     }
 
-    // noinspection CssUnusedSymbol
-    .upload-filter-group {
+    .upload-filter-group, // TODO: remove after upload -> entry
+    .entry-filter-group {
 
-        @extend %upload-radio-group;
+        @extend %entry-radio-group;
 
         width:     max-content;
         max-width: inherit;
@@ -276,17 +273,16 @@
         }
 
         .control {
-            // TODO: ??? ... .upload-filter-group .control
+            // TODO: ??? ... .entry-filter-group .control
         }
     }
 }
 
 // Debug-only control for enabling state groups.
-//
-// noinspection CssUnusedSymbol
-.upload-filter-options-panel {
+.upload-filter-options-panel, // TODO: remove after upload -> entry
+.entry-filter-options-panel {
 
-    @extend %upload-radio-group;
+    @extend %entry-radio-group;
 
     margin:     $page-padding 0;
     padding:    0.25rem;
@@ -364,9 +360,9 @@ $form-gap:        1.5rem;
 $form-gap-narrow: $form-gap / 3;
 
 // Form containing and metadata field inputs and file upload controls.
-.file-upload-form,
-.file-upload-delete,
-.file-upload-bulk {
+.entry-form,
+.entry-delete-form,
+.bulk-entry-form {
 
     display: grid;
 
@@ -396,53 +392,52 @@ $form-gap-narrow: $form-gap / 3;
     input[type="hidden"][name="authenticity_token"] { }
 
     // Invisible data elements.
-    .upload-hidden {
+    .upload-hidden, // TODO: remove after upload -> entry
+    .hidden-field {
 
         @extend %hidden;
 
         // Invisible file data holder.
-        &[name="upload[file]"]#upload_file_data { }
+        &[name="upload[file]"]#upload_file_data { }         // TODO: remove after upload -> entry
+        &[name="entry[file]"]#entry_file_data { }
 
         // Invisible EMMA data holder.
-        &[name="upload[emma_data]"]#upload_emma_data { }
+        &[name="upload[emma_data]"]#upload_emma_data { }    // TODO: remove after upload -> entry
+        &[name="entry[emma_data]"]#entry_emma_data { }
     }
 
     //=========================================================================
     // Elements - first grid row (if not using button tray)
     //=========================================================================
 
-    %upload-grid-control {
+    %entry-grid-control {
         @include grid-row(1);
         max-height: 2.25rem;
     }
 
     // ERB-provided submit to '/upload/create' or '/upload/update'.
     .submit-button { // input[type="submit"].uppy-FileInput-btn
-        @extend %upload-grid-control;
+        @extend %entry-grid-control;
         @extend %control-button;
     }
 
     // ERB-provided cancel (back to '/upload/new' or '/upload/edit').
     .cancel-button { // button[type="cancel"].uppy-FileInput-btn
-        @extend %upload-grid-control;
+        @extend %entry-grid-control;
         @extend %control-button;
     }
 
     // ERB-provided file chooser.
     // JavaScript will hide this in favor of the Uppy-supplied button.
-    input[type="file"][name="upload[file]"]#upload_file { }
+    input[type="file"][name="upload[file]"]#upload_file { } // TODO: remove after upload -> entry
+    input[type="file"][name="entry[file]"]#entry_file { }
 
-    // Appended to .file-upload-form and moved into place via file-upload.js.
-    //
-    // noinspection CssUnusedSymbol
+    // Appended to .entry-upload-form and moved into place via entry-form.js.
     .uppy-FileInput-container {
-        @extend %upload-grid-control;
+        @extend %entry-grid-control;
     }
 
-    // Display for the selected filename moved into place by setupUpload()
-    // in app/assets/javascripts/feature/file-upload.js.
-    //
-    // noinspection CssUnusedSymbol
+    // Display for the selected filename moved into place via entry-form.js.
     .uploaded-filename {
 
         @include grid-row(1);
@@ -455,7 +450,7 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
-    // Only for .file-upload-delete - the form that wraps the "Delete" button.
+    // Only for .entry-delete-form (which wraps the "Delete" button).
     .button_to {
         @include grid-row(1);
     }
@@ -483,7 +478,7 @@ $form-gap-narrow: $form-gap / 3;
         //=====================================================================
 
         // noinspection CssReplaceWithShorthandSafely
-        %upload-tray-control {
+        %entry-tray-control {
 
             flex:         0 1 auto;
             margin:       0;
@@ -499,29 +494,25 @@ $form-gap-narrow: $form-gap / 3;
         }
 
         .submit-button {
-            @extend %upload-tray-control;
+            @extend %entry-tray-control;
             @extend %control-button;
         }
 
         .cancel-button {
-            @extend %upload-tray-control;
+            @extend %entry-tray-control;
             @extend %control-button;
         }
 
-        // Appended to .button-tray and moved into place via file-upload.js.
-        //
-        // noinspection CssUnusedSymbol
+        // Appended to .button-tray and moved into place via entry-form.js.
         .uppy-FileInput-container {
-            @extend %upload-tray-control;
+            @extend %entry-tray-control;
         }
 
-        // Display for the selected filename moved into place by setupUpload()
-        // in app/assets/javascripts/feature/file-upload.js.
-        //
-        // noinspection CssUnusedSymbol
+        // Display for the selected filename moved into place via
+        // entry-form.js.
         .uploaded-filename {
 
-            @extend %upload-tray-control;
+            @extend %entry-tray-control;
 
             margin-right: 0;
             line-height:  2.15;
@@ -546,10 +537,9 @@ $form-gap-narrow: $form-gap / 3;
     // Elements - second grid row (if not using .controls container)
     //=========================================================================
 
-    // Control for filtering which upload form fields are displayed.
-    //
-    // noinspection CssUnusedSymbol
-    .upload-field-group {
+    // Control for filtering which entry form fields are displayed.
+    .upload-field-group, // TODO: remove after upload -> entry
+    .entry-field-group {
 
         @include grid-column-span;
 
@@ -571,7 +561,7 @@ $form-gap-narrow: $form-gap / 3;
 
         @include grid-column-span;
 
-        // TODO: ??? ... .file-upload-bulk .parent-entry-select
+        // TODO: ??? ... .bulk-entry-form .parent-entry-select
     }
 
     //=========================================================================
@@ -607,7 +597,8 @@ $form-gap-narrow: $form-gap / 3;
     //=========================================================================
 
     // Container for metadata field inputs.
-    .upload-fields {
+    .upload-fields, // TODO: remove after upload -> entry
+    .entry-fields {
 
         @include grid-column-span;
 
@@ -620,7 +611,8 @@ $form-gap-narrow: $form-gap / 3;
 
     // Convenience duplicates of submit and cancel buttons below the set of
     // fields.
-    .upload-fields + .controls {
+    .upload-fields + .controls, // TODO: remove after upload -> entry
+    .entry-fields + .controls {
 
         position:      unset;
         margin-top:    $form-gap;
@@ -651,7 +643,7 @@ $form-gap-narrow: $form-gap / 3;
     }
 }
 
-.file-upload-bulk {
+.bulk-entry-form {
 
     gap: $form-gap;
 
@@ -714,8 +706,8 @@ $form-gap-narrow: $form-gap / 3;
     }
 }
 
-// The element which contains .file-upload-form.
-.file-upload-container {
+// The element which contains .entry-form.
+.entry-form-container {
 
     // If true then the area where the status bar will appear during upload is
     // always present, effectively vertical white space except when visible.
@@ -744,17 +736,15 @@ $form-gap-narrow: $form-gap / 3;
     //=========================================================================
 
     // Form containing and metadata field inputs and file upload controls.
-    .file-upload-form,
-    .file-upload-bulk {
+    .entry-form,
+    .bulk-entry-form {
         width:      inherit;
         max-width:  95vw;
         margin-top: 0;
         z-index:    $z-visible;
     }
 
-    // Inserted by Uppy via file-upload.js if FEATURES.status_bar is true.
-    //
-    // noinspection CssUnusedSymbol
+    // Inserted by Uppy via entry-form.js if FEATURES.status_bar is true.
     .uppy-ProgressBar,
     .uppy-StatusBar {
 
@@ -785,7 +775,7 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
-    // Inserted by Uppy via file-upload.js.
+    // Inserted by Uppy via entry-form.js.
     .uppy-Informer {
 
         @include grid-row(1);
@@ -811,9 +801,9 @@ $form-gap-narrow: $form-gap / 3;
 
 // Area filled by the client with on-going bulk operation results.
 //
-// @see file:app/assets/javascripts/feature/file-upload.js *addBulkUploadResult()*
+// @see file:app/assets/javascripts/feature/entry-form.js *addBulkOpResult*
 //
-.file-upload-results {
+.bulk-op-results {
 
     @extend %panel;
     @extend %block-shadow;
@@ -866,20 +856,20 @@ $form-gap-narrow: $form-gap / 3;
 
 // Label visible to note that old bulk operation results are being displayed.
 //
-// @see file:app/assets/javascripts/feature/file-upload.js *bulkUploadResultsLabel()*
+// @see file:app/assets/javascripts/feature/entry-form.js *bulkOpResultsLabel*
 //
-.file-upload-results-label {
+.bulk-op-results-label {
     font-size:     x-large;
     margin-bottom: 0.5rem;
 }
 
 // The element which contains bulk operation forms.
-.file-upload-container.bulk {
+.entry-form-container.bulk {
 
     $bulk-vertical-adjust: 1.5rem;
 
     // No status bar for bulk upload so extra white space is needed above.
-    .file-upload-bulk {
+    .bulk-entry-form {
 
         margin-top: 2rem;
 
@@ -888,8 +878,8 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
-    & + .file-upload-results-label,
-    & + .file-upload-results {
+    & + .bulk-op-results-label,
+    & + .bulk-op-results {
         margin-top: 2 * $bulk-vertical-adjust;
     }
 }

@@ -1,0 +1,52 @@
+<%# app/views/entry/index.html.erb -%>
+<%-
+  # A list of submissions by the current user.
+
+  title ||= t('emma.entry.index.title')
+  list  ||= page_items
+  total ||= total_items
+  terms ||= search_terms
+  row   ||= 1
+  help  ||= help_popup(:entry)
+
+  page_opt = Entry::SEARCH_RECORDS_OPTIONS.dup << :group
+  page_terms, search = partition_hash(terms, *page_opt)
+  page   = page_terms[:page]&.values&.first&.to_i || 1
+  search = search.presence
+
+  unless modal?
+    label = t('emma.entry.index.label', default: title)
+    group = page_terms[:group]&.values&.first
+    group = Entry.state_group_label(group) if group # TODO: upload -> entry
+    terms = search
+    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
+    set_page_title(label)
+    append_page_title('-', group)                    if group
+    append_page_title('-', list_search_terms(terms)) if terms
+    set_page_description(title)
+    set_page_robots(:nofollow)
+  end
+
+  opt = { list: list, total: total, page: page, row: row }
+  top_controls, bottom_controls = index_controls(**opt)
+  opt[:row] += 1 if top_controls
+
+  template_opt = opt.merge!(skip: :title)
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= entry_page_filter_options if session_debug? %>
+<%= page_description_section %>
+<%= entry_state_group_select %>
+
+<%= page_directions_section %>
+<div class="<%= EntryHelper::ENTRY_LIST_CLASS -%>">
+  <%= top_controls %>
+  <%= render 'entry/list', template_opt %>
+  <%= bottom_controls if list.present? %>
+</div>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

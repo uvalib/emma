@@ -1,19 +1,19 @@
-# config/locales/controllers/upload.en.yml
+# config/locales/controllers/entry.en.yml
 #
-# UploadController pages
+# EntryController pages
 
 en:
 
   emma:
 
-    upload:
+    entry:
 
       # NOTE: Some of these definitions require parameters to be supplied:
       #
       # %{terms}        Current list of search terms.
 
       unit:
-        brief:          'upload'
+        brief:          'entry'
         long:           'uploaded file entry'
       label:            'Uploads'
       title:            'Your Uploads'
@@ -105,8 +105,8 @@ en:
       pagination:
         page:           'page'
         count:
-          one:          'submission'
-          many:         'submissions'
+          one:          'record'
+          many:         'records'
 
       action_links:
 
@@ -170,10 +170,11 @@ en:
           # === emma_data JSON keys - Repository information ===
 
           emma_repository:
-            help:       [upload, repository]
+            help:       [entry, repository]
 
         # === Database record fields supporting submission workflow ===
-        # (Upload table fields not yet displayed via 'index' or 'show'.)
+        # (Entry table fields not yet displayed via 'index' or 'show'.)
+        # TODO: must change
 
         phase:
           cond:
@@ -232,8 +233,8 @@ en:
           show:         'nonzero'
           enabled:      true
           states:
-            - creating
-            - validating
+            - uploading
+            - storing
             - submitting
             - submitted
 
@@ -243,7 +244,7 @@ en:
           show:         'nonzero'
           enabled:      true
           states:
-            - editing
+            - uploading
             - replacing
             - modifying
             - modified
@@ -254,6 +255,9 @@ en:
           show:         'nonzero'
           enabled:      true
           states:
+            - deindexing
+            - dequeuing
+            - unstoring
             - removing
             - removed
 
@@ -264,8 +268,6 @@ en:
           enabled:      false # TODO: reviews
           states:
             - scheduling
-            - assigning
-            - holding
             - assigned
             - reviewing
             - rejected
@@ -336,14 +338,12 @@ en:
             tooltip:    'Proceed with this action'
           disabled:
             tooltip:    'Conditions have not yet been met to proceed'
-
         cancel:         &GENERIC_CANCEL
           label:        'CANCEL'
           enabled:
             tooltip:    'Do nothing and return to the previous screen.'
           disabled:
             tooltip:    'Not able to cancel at this point'
-
         select:         &GENERIC_SELECT
           label:        'Select file'
           enabled:
@@ -365,7 +365,7 @@ en:
 
       index:
         label:          'List All'
-        title:          'Your EMMA Uploads'
+        title:          'Your EMMA Submissions'
         tooltip:        'Review uploads of remediated content to EMMA.'
         description_html: |
           <p>
@@ -379,7 +379,7 @@ en:
             controls below to select which kind to view.
           </p>
 
-        display_fields: # @see 'en.emma.upload.record'
+        display_fields: # @see 'en.emma.entry.record'
           - !ruby/symbol all
 
       # =======================================================================
@@ -389,7 +389,7 @@ en:
         title:          'Uploaded file "%{name}"'
         tooltip:        'See details about this upload.'
 
-        display_fields: # @see 'en.emma.upload.record'
+        display_fields: # @see 'en.emma.entry.record'
           - !ruby/symbol all
           - fmt:        'Fmt'
           - ext:        'Ext'
@@ -575,7 +575,7 @@ en:
       # =======================================================================
 
       bulk_edit:
-        <<: *BULK_NEW_ACTION
+        <<:             *BULK_NEW_ACTION
         label:          'Bulk Edit'
         title:          'Bulk modification of EMMA entries'
         tooltip:        |
@@ -588,8 +588,10 @@ en:
 
         submit:
           <<: *BULK_SUBMIT
+
         cancel:
           <<: *BULK_CANCEL
+
         select:
           <<: *BULK_SELECT
 
@@ -646,10 +648,10 @@ en:
         title:          'Renew Record'
         description:    |
           If you are seeing this page, this indicates a failure of the system
-          to refresh the form for creating a new Upload record.  Please inform
+          to refresh the form for creating a new Entry record.  Please inform
           an administrator that you encountered this page.
 
-        failure:        'Could not renew Upload record %{id}'
+        failure:        'Could not renew Entry record %{id}'
 
       # =======================================================================
 
@@ -658,10 +660,10 @@ en:
         title:          'Re-edit Record'
         description:    |
           If you are seeing this page, this indicates a failure of the system
-          to refresh the form for updating a new Upload record.  Please inform
+          to refresh the form for updating a new Entry record.  Please inform
           an administrator that you encountered this page.
 
-        failure:        'Could not reedit Upload record %{id}'
+        failure:        'Could not reedit Entry record %{id}'
 
       # =======================================================================
 
@@ -673,4 +675,16 @@ en:
 
       admin:
         label:          'Admin'
-        title:          'Upload Submission Administration'
+        title:          'Entry Submission Administration'
+
+      # =======================================================================
+
+      actions:
+        label:          'Actions'
+        title:          'Action Records'
+
+      # =======================================================================
+
+      phases:
+        label:          'Phases'
+        title:          'Phase Records'

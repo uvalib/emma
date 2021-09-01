@@ -1,0 +1,24 @@
+<%# app/views/entry/cancel.html.erb -%>
+<%-
+  # Fall-back page for a failed Entry cancel action.
+
+  title ||= t('emma.entry.cancel.title')
+  error ||= 'Invalid identifier' # TODO: I18n
+  help  ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<p><%= error -%></p>
+
+<%= page_notes_section %>

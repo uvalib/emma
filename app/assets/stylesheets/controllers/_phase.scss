@@ -1,0 +1,33 @@
+// app/assets/stylesheets/controllers/_phase.scss
+//
+// NOTE: this may go away...
+
+@use 'controllers/entry' as *;
+
+//=============================================================================
+// Phase index page
+//=============================================================================
+
+// Phase metadata label/value pairs for index listings.
+.phase-list-item {
+    @extend .entry-list-item;
+}
+
+// Zero or more .phase-list-item elements.
+.phase-list {
+    @extend .entry-list;
+}
+
+//=============================================================================
+// Phase show page
+//=============================================================================
+
+// Phase metadata values.
+.phase-details {
+    @extend .entry-details;
+}
+
+// Container for an .phase-details.
+.phase-container {
+    @extend .entry-container;
+}

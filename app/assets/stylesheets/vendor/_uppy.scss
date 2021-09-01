@@ -82,7 +82,7 @@
 // The container for the upload progress bar (a minimalistic alternative to
 // .uppy-StatusBar.
 //
-// @see file:app/assets/javascripts/feature/file-upload.js *hideUppyProgressBar()*
+// @see file:app/assets/javascripts/feature/entry-form.js *hideUppyProgressBar*
 //
 .uppy-ProgressBar {
 
@@ -100,7 +100,7 @@
     // The percentage counter, which has been moved to the center of the space
     // occupied by the progress bar.
     //
-    // @see file:app/assets/javascripts/feature/file-upload.js *initializeUppyProgressBar()*
+    // @see file:app/assets/javascripts/feature/entry-form.js *initializeUppyProgressBar()*
     //
     .uppy-ProgressBar-percentage {
 
@@ -121,7 +121,7 @@
     }
 
     // After the file has been received, Uppy will make the progress bar
-    // aria-hidden, but file-upload.js will not mark the element with
+    // aria-hidden, but entry-form.js will not mark the element with
     // ".invisible" until the server response is received.  Rather than leaving
     // the progress at "100%", indicate that the server is processing the file.
     &[aria-hidden="true"]:not(.invisible) {

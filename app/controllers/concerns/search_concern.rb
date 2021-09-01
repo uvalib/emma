@@ -87,7 +87,7 @@ module SearchConcern
   end
 
   # ===========================================================================
-  # :section:
+  # :section: PaginationConcern overrides
   # ===========================================================================
 
   public
@@ -143,6 +143,12 @@ module SearchConcern
 
     make_path(request.path, opt)
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.

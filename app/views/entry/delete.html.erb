@@ -1,0 +1,53 @@
+<%# app/views/entry/delete.html.erb -%>
+<%-
+  # Prompt to remove an existing EMMA entry.
+
+  title  ||= t('emma.entry.delete.title')
+  list   ||= @list
+  list     = Array.wrap(list)
+  records  = list.select { |e| e.is_a?(Entry) }
+  repo   ||= records.first&.repository
+  logo   ||= repository_source_logo(repo)
+  force  ||= force_delete
+  help   ||= help_popup(:entry, :delete)
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  if force
+    rids    = list.select { |e| e.is_a?(String) && e.match?(/^[^\d]/) }
+    recs, _ = find_in_index(*rids)
+    lookup  = recs.map { |r| [r.emma_repositoryRecordId,r.emma_recordId] }.to_h
+    list    = list.map { |item| lookup[item] || item }
+    records = list.select { |item| item.is_a?(Model) || item.include?('-') }
+  end
+
+-%>
+
+<div class="heading container">
+  <h1 class="heading"><%= title -%><%= help -%></h1>
+  <%= logo %>
+</div>
+<%= page_description_section %>
+
+<%- if list.blank? -%>
+
+  <%= entries_menu %>
+
+<%- else -%>
+
+  <%- list.each_with_index do |item, idx| -%>
+    <%= render 'entry/selected', item: item, row: idx, force: force %>
+  <%- end -%>
+
+  <%= page_directions_section %>
+  <%= entry_delete_form(*records, force: force) %>
+  <%= entry_preview %>
+
+<%- end -%>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

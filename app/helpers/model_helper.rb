@@ -13,7 +13,11 @@ module ModelHelper
   include Emma::Common
   include Emma::Json
   include Emma::Unicode
+
+  include Model::Configuration
+
   include PaginationHelper
+  include HelpHelper
   include SearchTermsHelper
 
   # ===========================================================================
@@ -299,16 +303,9 @@ module ModelHelper
     elsif pairs.present?
       pairs
     elsif item.is_a?(ApplicationRecord)
-      pairs = item.attributes
-      pairs.symbolize_keys!
-      pairs.transform_values! { |v| v.nil? ? EMPTY_VALUE : v }
       # Convert :file_data and :emma_data into hashes and move to the end.
-      if item.is_a?(Upload)
-        data = pairs.extract!(:file_data, :emma_data)
-        pairs[:file_data] = json_parse(data[:file_data])
-        pairs[:emma_data] = json_parse(data[:emma_data])
-      end
-      pairs
+      data, pairs = partition_hash(item.fields, :file_data, :emma_data)
+      data.each_pair { |k, v| pairs[k] = json_parse(v) }
     elsif item.is_a?(Api::Record)
       item.field_names.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
     else
@@ -344,7 +341,7 @@ module ModelHelper
   )
     return ''.html_safe unless item
     pairs  = field_values(item, pairs, &block)
-    model  = (model  || params[:controller])&.to_sym
+    model  = (model  || model_for(item) || params[:controller])&.to_sym
     action = (action || params[:action])&.to_sym
 
     opt[:row]   = row_offset || 0
@@ -896,27 +893,28 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def model_list_item(item, model:, pairs: nil, **opt, &block)
+    opt[:model]  = model ||= model_for(item)
     css_selector = ".#{model}-list-item"
     html_opt     = { class: css_classes(css_selector) }
     row          = positive(opt[:row])
     append_classes!(html_opt, "row-#{row}") if row
     if item.nil?
       append_classes!(html_opt, 'empty')
-    elsif item.is_a?(Upload)
-      html_opt[:'data-group'] = opt[:group] = item.state_group
-      html_opt[:id]           = "#{model}-#{item.submission_id}"
-    elsif item.respond_to?(:identifier)
-      html_opt[:id]           = "#{model}-#{item.identifier}"
+    else
+      if item.respond_to?(:state_group)
+        # noinspection RubyNilAnalysis
+        html_opt[:'data-group'] = opt[:group] = item.state_group
+      end
+      # noinspection RailsParamDefResolve
+      id = item.try(:submission_id) || item.try(:identifier) || hex_rand
+      html_opt[:id] = "#{model}-#{id}"
     end
     # noinspection RailsParamDefResolve
     html_opt[:'data-title_id'] = item.try(:emma_titleId)
     html_div(html_opt) do
       if item
-        render_field_values(item, model: model, pairs: pairs, **opt, &block)
+        render_field_values(item, pairs: pairs, **opt, &block)
       else
         render_empty_value
       end
@@ -983,7 +981,8 @@ module ModelHelper
   def model_table(list, **opt)
     opt, html_opt = partition_hash(opt, *MODEL_TABLE_OPTIONS)
     opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
-    model        = opt.delete(:model)&.to_s || 'model'
+    list  = Array.wrap(list)
+    model = (opt.delete(:model) || model_for(list.first))&.to_s || 'model'
     css_selector = ".#{model}-table"
 
     parts = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h
@@ -1473,7 +1472,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/file-upload.js *updateMenu()*
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateMenu()*
   #
   def render_form_menu_single(name, value, range:, **opt)
     css_selector = '.menu.single'
@@ -1514,7 +1513,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/file-upload.js *updateFieldsetCheckboxes()*
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateFieldsetCheckboxes()*
   #
   def render_form_menu_multi(name, value, range:, **opt)
     css_selector = '.menu.multi'
@@ -1560,7 +1559,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/file-upload.js *updateFieldsetInputs()*
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateFieldsetInputs()*
   #
   def render_form_input_multi(name, value, **opt)
     css_selector = '.input.multi'
@@ -1575,7 +1574,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/file-upload.js *updateTextInputField()*
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateTextInputField()*
   #
   def render_form_input(name, value, **opt)
     css_selector = '.input.single'

@@ -13,6 +13,7 @@ module UploadConcern
 
   extend ActiveSupport::Concern
 
+  include Emma::Common
   include Emma::Csv
   include Emma::Json
 
@@ -34,36 +35,36 @@ module UploadConcern
 
   public
 
-  MIME_REGISTRATION =
+  MIME_REGISTRATION =                                                           # NOTE: to EntryConcern
     FileNaming.format_classes.values.each(&:register_mime_types)
 
   # ===========================================================================
-  # :section: Parameters
+  # :section:
   # ===========================================================================
 
   public
 
-  # URL parameters involved in pagination.
+  # URL parameters involved in pagination.                                      # NOTE: to EntryConcern::ENTRY_PAGE_PARAMS
   #
   # @type [Array<Symbol>]
   #
-  PAGE_PARAMS = %i[page start offset limit].freeze
+  UPLOAD_PAGE_PARAMS = %i[page start offset limit].freeze
 
-  # URL parameters involved in form submission.
+  # URL parameters involved in form submission.                                 # NOTE: to EntryConcern::ENTRY_FORM_PARAMS
   #
   # @type [Array<Symbol>]
   #
-  FORM_PARAMS = %i[selected field-group cancel].freeze
+  UPLOAD_FORM_PARAMS = %i[selected field-group cancel].freeze
 
-  # POST/PUT/PATCH parameters from the upload form that are not relevant to the
+  # POST/PUT/PATCH parameters from the entry form that are not relevant to the  # NOTE: to EntryConcern::IGNORED_ENTRY_FORM_PARAMS
   # create/update of an Upload instance.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_UPLOAD_FORM_PARAMS = (PAGE_PARAMS + FORM_PARAMS).freeze
+  IGNORED_UPLOAD_FORM_PARAMS = (UPLOAD_PAGE_PARAMS + UPLOAD_FORM_PARAMS).freeze
 
   # ===========================================================================
-  # :section: Parameters
+  # :section:
   # ===========================================================================
 
   public
@@ -72,7 +73,7 @@ module UploadConcern
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def upload_params
+  def upload_params                                                             # NOTE: to EntryConcern#entry_params
     @upload_params ||= get_upload_params
   end
 
@@ -82,7 +83,7 @@ module UploadConcern
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_upload_params(p = nil)
+  def get_upload_params(p = nil)                                                # NOTE: to EntryConcern#get_entry_params
     prm = url_parameters(p)
     prm.except!(*IGNORED_UPLOAD_FORM_PARAMS)
     prm.deep_symbolize_keys!
@@ -104,7 +105,7 @@ module UploadConcern
   # submission where metadata is being changed but the uploaded file is not
   # being replaced.
   #
-  def upload_post_params(p = nil)
+  def upload_post_params(p = nil)                                               # NOTE: to EntryConcern#entry_post_params
     prm  = p ? get_upload_params(p) : upload_params
     data = safe_json_parse(prm.delete(:upload), default: {})
     file = data[:file]
@@ -123,7 +124,7 @@ module UploadConcern
   #
   # @return [Array<Hash>]
   #
-  def upload_bulk_post_parameters(p = nil, req = nil)
+  def upload_bulk_post_params(p = nil, req = nil)                               # NOTE: to EntryConcern#entry_bulk_post_params
     prm = p ? get_upload_params(p) : upload_params
     src = prm[:src] || prm[:source]
     opt = src ? { src: src } : { data: (req || request) }
@@ -134,7 +135,7 @@ module UploadConcern
   #
   # @return [Hash]
   #
-  def workflow_parameters
+  def workflow_parameters                                                       # NOTE: to EntryConcern#entry_request_params (sorta)
     result = { id: @db_id, user_id: @user&.id }
     result.compact!
     result.merge!(upload_post_params)
@@ -142,7 +143,7 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section: Parameters
+  # :section:
   # ===========================================================================
 
   protected
@@ -160,7 +161,7 @@ module UploadConcern
   # @return [Hash]
   # @return [Array<Hash>]
   #
-  def fetch_data(**opt)
+  def fetch_data(**opt)                                                         # NOTE: to EntryConcern
     __debug_items("UPLOAD #{__method__}", binding)
     src  = opt[:src].presence
     data = opt[:data].presence
@@ -189,12 +190,12 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section: Identifiers
+  # :section:
   # ===========================================================================
 
   public
 
-  # URL parameters associated with item/entry identification.
+  # URL parameters associated with item/entry identification.                   # NOTE: to EntryConcern
   #
   # @type [Array<Symbol>]
   #
@@ -210,7 +211,7 @@ module UploadConcern
   # @return [String]                  Value of @identifier.
   # @return [nil]                     No param from #IDENTIFIER_PARAMS found.
   #
-  def set_identifiers(p = nil)
+  def set_identifiers(p = nil)                                                  # NOTE: to EntryConcern
     prm = url_parameters(p)
     id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
     @db_id = (sel.to_i if digits_only?(sel)) || (id.to_i if digits_only?(id))
@@ -218,24 +219,24 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section: Records
+  # :section:
   # ===========================================================================
 
   public
 
-  # Parameters used by Upload#search_records.
+  # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
   #
   # @type [Array<Symbol>]
   #
   SEARCH_RECORDS_PARAMS = Upload::SEARCH_RECORDS_OPTIONS
 
-  # Upload#search_records parameters that specify a distinct search query.
+  # Upload#search_records parameters that specify a distinct search query.      # NOTE: to EntryConcern
   #
   # @type [Array<Symbol>]
   #
   SEARCH_ONLY_PARAMS = (SEARCH_RECORDS_PARAMS - %i[offset limit]).freeze
 
-  # Parameters used by #find_by_match_records or passed on to
+  # Parameters used by #find_by_match_records or passed on to                   # NOTE: to EntryConcern
   # Upload#search_records.
   #
   # @type [Array<Symbol>]
@@ -244,18 +245,18 @@ module UploadConcern
     SEARCH_RECORDS_PARAMS + %i[group state edit_state user user_id edit_user]
   ).freeze
 
-  # Locate and filter records.
+  # Locate and filter Upload records.
   #
   # @param [Array<String,Array>] items  Default: `@identifier`.
   # @param [Hash]                opt    Passed to Upload#search_records;
   #                                       default: `#upload_params` if no
   #                                       *items* are given.
   #
+  # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
+  #
   # @return [Hash]
   #
-  # @see Upload#search_records
-  #
-  def find_or_match_records(*items, **opt)
+  def find_or_match_records(*items, **opt)                                      # NOTE: to EntryConcern#find_or_match_entries
     items = items.flatten.compact
     items << @identifier if items.blank? && @identifier.present?
 
@@ -321,7 +322,7 @@ module UploadConcern
 
   end
 
-  # Return with the specified record or *nil* if one could not be found.
+  # Return with the specified Upload record or *nil* if one could not be found.
   #
   # @param [String, Hash, Upload] id
   #
@@ -331,7 +332,7 @@ module UploadConcern
   #
   # @see Upload#get_record
   #
-  def get_record(id)
+  def get_record(id)                                                            # NOTE: to EntryConcern#get_entry
     if (result = Upload.get_record(id))
       result
     elsif Upload.id_term(id).values.first.blank?
@@ -350,7 +351,7 @@ module UploadConcern
   # @return [Upload]                  Object created from received data.
   # @return [nil]                     Bad data and/or no object created.
   #
-  def proxy_get_record(sid, host)
+  def proxy_get_record(sid, host)                                               # NOTE: to EntryConcern#proxy_get_entry
     data = sid && Faraday.get("#{host}/upload/show/#{sid}.json").body
     data = json_parse(data) || {}
     data = data[:response]  || data
@@ -358,7 +359,7 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section: Workflow
+  # :section: Workflow - Single
   # ===========================================================================
 
   public
@@ -414,6 +415,13 @@ module UploadConcern
     @workflow.results
   end
 
+  # ===========================================================================
+  # :section: Workflow - Bulk
+  # ===========================================================================
+
+  public
+
+
   # Gather information to create a bulk upload workflow instance.
   #
   # @param [Array, :unset, nil] rec
@@ -435,7 +443,7 @@ module UploadConcern
     rec   = (rec == :unset) ? [] : (rec || []) # TODO: transaction record?
     data  = [] if data == :unset
     unless data
-      data = upload_bulk_post_parameters or failure(from)
+      data = upload_bulk_post_params or failure(from)
       data << { base_url: request.base_url }
       opt[:control] ||= params[:src] || params[:source]
     end
@@ -461,7 +469,7 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section:
+  # :section: PaginationConcern overrides
   # ===========================================================================
 
   public
@@ -476,17 +484,23 @@ module UploadConcern
   #
   # @see PaginationConcern#pagination_finalize
   #
-  def pagination_finalize(result, **opt)
+  def pagination_finalize(result, **opt)                                        # NOTE: to EntryConcern
     self.page_items   = result[:list]
     self.page_size    = result[:limit]
     self.page_offset  = result[:offset]
     self.total_items  = result[:total]
     first, last, page = result.values_at(:first, :last, :page)
-    self.next_page    = (url_for(opt.merge(page: (page + 1))) unless last)
-    self.prev_page    = (url_for(opt.merge(page: (page - 1))) unless first)
-    self.first_page   = (url_for(opt.except(*PAGE_PARAMS))    unless first)
+    self.next_page    = (url_for(opt.merge(page: (page + 1)))     unless last)
+    self.prev_page    = (url_for(opt.merge(page: (page - 1)))     unless first)
+    self.first_page   = (url_for(opt.except(*UPLOAD_PAGE_PARAMS)) unless first)
     self.prev_page    = first_page if page == 2
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Generate a response to a POST.
   #
@@ -520,7 +534,7 @@ module UploadConcern
   #   @param [Boolean]                xhr
   #   @param [Symbol]                 meth
   #
-  def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)
+  def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)     # NOTE: to EntryConcern
     meth ||= calling_method
     __debug_items("UPLOAD #{meth} #{__method__}", binding)
     unless status.is_a?(Symbol) || status.is_a?(Integer)

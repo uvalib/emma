@@ -1,0 +1,117 @@
+// app/assets/stylesheets/feature/_aws.scss
+
+@use 'shared/variables'        as *;
+@use 'shared/common'           as *;
+@use 'shared/controls/buttons' as *;
+
+//=============================================================================
+// AWS admin page
+//=============================================================================
+
+$aws-bucket-color:       $uva-blue;
+$aws-bucket-padding:     0.5rem;
+$aws-admin-section-gap:  calc(2 * #{$page-padding});
+$aws-admin-column-space: 0.75rem;
+
+.admin-section {
+    margin-top: $aws-admin-section-gap;
+}
+
+.aws-bucket-hdg {
+    display:         flex;
+    margin-top:      $aws-admin-section-gap;
+    justify-content: space-between;
+}
+
+.aws-bucket {
+    display:       grid;
+    padding:       0 0 $aws-bucket-padding;
+    text-indent:   0.5rem;
+    font-size:     12pt;
+    font-family:   Courier, monospace;
+    border:        2px solid $aws-bucket-color;
+    border-radius: 0.25rem;
+}
+
+.aws-object {
+
+    display:    grid;
+    padding:    0 $aws-bucket-padding;
+    column-gap: $aws-admin-column-space;
+    grid-template-columns:
+        [prefix] 0.5fr
+        [key]    1fr
+        [size]   0.5fr
+        [date]   1fr;
+
+    @media #{$medium-width} {
+        grid-template-columns:
+            [prefix] 0.6fr
+            [key]    1fr
+            [size]   0.4fr
+            [date]   1fr;
+    }
+
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+        margin-bottom:         1rem;
+        padding-bottom:        $aws-admin-column-space;
+        border-bottom:         1px solid darkgray;
+    }
+
+    > * {
+        overflow:      hidden;
+        text-overflow: ellipsis;
+    }
+
+    .placeholder {
+        grid-column: 1/-1;
+    }
+
+    &.row {
+        .last_modified {
+            @media #{$medium-width} {
+                word-spacing: -6px;
+            }
+        }
+    }
+}
+
+.aws-bucket {
+    @media #{$narrow-screen} {
+
+        line-height: 1.375;
+
+        .prefix, .key {
+            font-weight: bold;
+        }
+
+        .placeholder {
+            padding-top: $aws-admin-column-space;
+        }
+
+        :last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+    }
+}
+
+.column-headings {
+    padding-top:    $aws-bucket-padding;
+    padding-bottom: 0.25rem;
+    margin-bottom:  $aws-admin-column-space;
+    font-weight:    bold;
+    color:          white;
+    background:     $aws-bucket-color;
+    border-bottom:  2px solid $aws-bucket-color;
+}
+
+.first-prefix {
+    margin-top: $aws-admin-column-space;
+}
+
+.aws-link {
+    @include link-button(lightgray);
+    @extend %control-button;
+}

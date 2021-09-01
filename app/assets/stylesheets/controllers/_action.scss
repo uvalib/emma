@@ -1,0 +1,33 @@
+// app/assets/stylesheets/controllers/_action.scss
+//
+// NOTE: this may go away...
+
+@use 'controllers/entry' as *;
+
+//=============================================================================
+// Action index page
+//=============================================================================
+
+// Action metadata label/value pairs for index listings.
+.action-list-item {
+    @extend .entry-list-item;
+}
+
+// Zero or more .action-list-item elements.
+.action-list {
+    @extend .entry-list;
+}
+
+//=============================================================================
+// Action show page
+//=============================================================================
+
+// Action metadata values.
+.action-details {
+    @extend .entry-details;
+}
+
+// Container for an .action-details.
+.action-container {
+    @extend .entry-container;
+}

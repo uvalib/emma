@@ -121,13 +121,13 @@
 //=============================================================================
 
 .account-fields {
-    @extend .upload-fields;
+    @extend .entry-fields;
 }
 
 .account-form,
 .account-delete-form {
 
-    @extend .file-upload-form;
+    @extend .entry-form;
 
     grid-template-columns: 1fr;
 
@@ -147,7 +147,7 @@
 
 .account-form-container {
 
-    @extend .file-upload-container;
+    @extend .entry-form-container;
 
     .account-form {
         margin-top: $page-padding;

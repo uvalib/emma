@@ -1,0 +1,31 @@
+<%# app/views/entry/show.html.erb -%>
+<%-
+  # Show details of an Entry.
+
+  item  ||= @item
+  title ||= t('emma.entry.show.title', name: item&.filename)
+  host  ||= @host
+  image ||= nil
+  help  ||= nil # help_popup(:entry, :show) # TODO: ???
+
+  title = "#{host} - #{title}" if host.present?
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  template_opt = { item: item, image: image }
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= render 'entry/details', template_opt %>
+<%= entry_preview %>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? || cannot?(:edit, Entry) %>

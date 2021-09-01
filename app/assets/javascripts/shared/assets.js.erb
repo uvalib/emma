@@ -96,6 +96,7 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  * @property {object}   Panel
  * @property {object}   Popup
  * @property {object}   Upload
+ * @property {object}   Entry
  * @property {object}   Scroll
  */
 var Emma = (function() {
@@ -455,6 +456,87 @@ var Emma = (function() {
             Style:  o$('<%= UploadHelper::UPLOAD_STYLE.to_json %>'),
             Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>'),
             Filter: o$('<%= UploadHelper::UPLOAD_FIELD_GROUP.to_json %>'),
+            Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
+            Mime:   { to_fmt:  o$('<%= FileNaming.mime_to_fmt.to_json %>') },
+            Field:  { empty:   '<%= ModelHelper::EMPTY_VALUE %>' },
+            Repo:   {
+                name:    o$('<%= EmmaRepository.pairs.to_json %>'),
+                default: '<%= EmmaRepository.default %>'
+            }
+        },
+
+        /**
+         * ====================================================================
+         *
+         * feature/entry-form.js
+         *
+         * - Path.index         The endpoint for listing submissions.
+         * - Path.new           The new entry creation form.
+         * - Path.edit          The existing entry modification form.
+         * - Path.create        The POST endpoint for creating a database entry for the uploaded file.
+         * - Path.renew         The POST endpoint for generating a fresh database entry.
+         * - Path.reedit        The POST endpoint for re-starting an edit workflow on an existing database entry.
+         * - Path.cancel        The endpoint for canceling a submission.
+         * - Path.endpoint      Shrine's upload endpoint (the server route to which uploads are directed).
+         * - Style.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
+         * - Style.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
+         * - Action             Form action label/tooltips for controller actions.
+         * - Filter             Form action label/tooltips for form field filter selections.
+         * - Status             Status marker label/tooltips.
+         * - Mime.to_fmt        A table mapping MIME type to file format.
+         * - Field.empty        Blank field value indicator.
+         * - Repo.default       The name of the default repository.
+         *
+         * ====================================================================
+         *
+         * @type {{
+         *    Path: {
+         *        index:        string,
+         *        new:          string,
+         *        edit:         string,
+         *        create:       string,
+         *        renew:        string,
+         *        reedit:       string,
+         *        cancel:       string,
+         *        endpoint:     string,
+         *    },
+         *    Style: {
+         *        drag_target:  string,
+         *        preview:      string,
+         *    },
+         *    Action: {
+         *        new:          RouteActionProperties,
+         *        edit:         RouteActionProperties,
+         *        delete:       RouteActionProperties,
+         *        bulk_new:     RouteActionProperties,
+         *        bulk_edit:    RouteActionProperties,
+         *        bulk_delete:  RouteActionProperties
+         *    },
+         *    Filter: {
+         *        available:    FieldGroupProperties,
+         *        filled:       FieldGroupProperties,
+         *        invalid:      FieldGroupProperties,
+         *        all:          FieldGroupProperties
+         *    },
+         *    Status: {
+         *        required:     ElementProperties,
+         *        invalid:      ElementProperties,
+         *        valid:        ElementProperties,
+         *        disabled:     ElementProperties
+         *    },
+         *    Mime: {
+         *        to_fmt:       object,
+         *    },
+         *    Field: {
+         *        empty:        string,
+         *    }
+         * }}
+         */
+        Entry: {
+            Path:   o$('<%= EntryHelper::ENTRY_PATH.to_json %>'),
+            Style:  o$('<%= EntryHelper::ENTRY_STYLE.to_json %>'),
+            Action: o$('<%= EntryHelper::ENTRY_ACTION_VALUES.to_json %>'),
+            Filter: o$('<%= EntryHelper::ENTRY_FIELD_GROUP.to_json %>'),
             Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
             Mime:   { to_fmt:  o$('<%= FileNaming.mime_to_fmt.to_json %>') },
             Field:  { empty:   '<%= ModelHelper::EMPTY_VALUE %>' },

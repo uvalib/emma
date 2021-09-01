@@ -20,7 +20,12 @@ module Model
   # @return [Array<Symbol>]
   #
   def field_names
-    instance_variables.map { |v| v.to_s.delete_prefix('@').to_sym }.sort
+    @field_names ||=
+      if is_a?(ApplicationRecord)
+        attribute_names.map(&:to_sym).sort
+      else
+        instance_variables.map { |v| v.to_s.delete_prefix('@').to_sym }.sort
+      end
   end
 
   # The fields and values for this model instance.
@@ -28,9 +33,11 @@ module Model
   # @return [Hash{Symbol=>*}]
   #
   def fields
-    field_names.map { |field|
-      [field, send(field)] rescue nil
-    }.compact.to_h
+    if is_a?(ApplicationRecord)
+      attributes.symbolize_keys
+    else
+      field_names.map { |field| [field, send(field)] rescue nil }.compact.to_h
+    end
   end
 
   # A unique identifier for this model instance.

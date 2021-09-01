@@ -1,14 +1,14 @@
-# app/helpers/upload_helper.rb
+# app/helpers/entry_helper.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# View helper methods supporting the display and creation of Upload records,
+# View helper methods supporting the display and creation of Entry records,
 # including support for file upload via Uppy.
 #
-module UploadHelper
+module EntryHelper
 
   include Emma::Json
   include Emma::Unicode
@@ -19,7 +19,7 @@ module UploadHelper
   include ModelHelper
   include PopupHelper
 
-  include UploadWorkflow::Properties
+  include Record::Properties
 
   # ===========================================================================
   # :section:
@@ -27,35 +27,35 @@ module UploadHelper
 
   public
 
-  # Paths used by entry-form.js.                                                # NOTE: to EntryHelper::ENTRY_PATH
+  # Paths used by entry-form.js.                                                # NOTE: from UploadHelper::UPLOAD_PATH
   #
   # @type [Hash]
   #
-  UPLOAD_PATH = {
-    index:    (UPLOAD_URL = '/upload'), # GET /upload                           # NOTE: to EntryHelper::ENTRY_URL
-    new:      "#{UPLOAD_URL}/new",      # GET /upload/new
-    edit:     "#{UPLOAD_URL}/edit",     # GET /upload/edit
-    create:   UPLOAD_URL,               # POST /upload
-    renew:    "#{UPLOAD_URL}/renew",    # POST /upload/renew
-    reedit:   "#{UPLOAD_URL}/reedit",   # POST /upload/reedit
-    cancel:   "#{UPLOAD_URL}/cancel",   # POST /upload/cancel
-    endpoint: "#{UPLOAD_URL}/endpoint"  # POST /upload/endpoint
+  ENTRY_PATH = {
+    index:    (ENTRY_URL = '/entry'), # GET /entry                              # NOTE from UploadHelper::UPLOAD_URL
+    new:      "#{ENTRY_URL}/new",     # GET /entry/new
+    edit:     "#{ENTRY_URL}/edit",    # GET /entry/edit
+    create:   ENTRY_URL,              # POST /entry
+    renew:    "#{ENTRY_URL}/renew",   # POST /entry/renew
+    reedit:   "#{ENTRY_URL}/reedit",  # POST /entry/reedit
+    cancel:   "#{ENTRY_URL}/cancel",  # POST /entry/cancel
+    endpoint: "#{ENTRY_URL}/endpoint" # POST /entry/endpoint
   }.deep_freeze
 
-  # CSS styles.                                                                 # NOTE: to EntryHelper::ENTRY_STYLE
+  # CSS styles.                                                                 # NOTE: from UploadHelper::UPLOAD_STYLE
   #
   # @type [Hash]
   #
-  UPLOAD_STYLE = {
-    drag_target: 'upload-drag_and_drop',
-    preview:     'upload-preview',
+  ENTRY_STYLE = {
+    drag_target: 'entry-drag_and_drop',
+    preview:     'entry-preview',
   }.deep_freeze
 
-  # Display preview of Shrine uploads.  NOTE: Not currently enabled.            # NOTE: to EntryHelper::ENTRY_PREVIEW_ENABLED
+  # Display preview of Shrine uploads.  NOTE: Not currently enabled.            # NOTE: from UploadHelper::UPLOAD_PREVIEW_ENABLED
   #
   # @type [Boolean]
   #
-  UPLOAD_PREVIEW_ENABLED = false
+  ENTRY_PREVIEW_ENABLED = false
 
   # ===========================================================================
   # :section:
@@ -68,8 +68,8 @@ module UploadHelper
   # == Usage Notes
   # Uppy preview is only for image files.
   #
-  def preview_enabled?                                                          # NOTE: to EntryHelper
-    UPLOAD_PREVIEW_ENABLED
+  def preview_enabled?                                                          # NOTE: from UploadHelper
+    ENTRY_PREVIEW_ENABLED
   end
 
   # Supply an element to contain a preview thumbnail of an image file.
@@ -79,9 +79,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If preview is not enabled.
   #
-  def upload_preview(force = false)                                             # NOTE: to EntryHelper#entry_preview
+  def entry_preview(force = false)                                              # NOTE: from UploadHelper#upload_preview
     return unless force || preview_enabled?
-    html_div('', class: UPLOAD_STYLE[:preview])
+    html_div('', class: ENTRY_STYLE[:preview])
   end
 
   # ===========================================================================
@@ -90,22 +90,22 @@ module UploadHelper
 
   public
 
-  # Default link tooltip.                                                       # NOTE: to EntryHelper::ENTRY_SHOW_TOOLTIP
+  # Default link tooltip.                                                       # NOTE: from UploadHelper::UPLOAD_SHOW_TOOLTIP
   #
   # @type [String]
   #
-  UPLOAD_SHOW_TOOLTIP = I18n.t('emma.upload.show.tooltip').freeze
+  ENTRY_SHOW_TOOLTIP = I18n.t('emma.entry.show.tooltip').freeze
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt               Passed to #model_link.
+  # @param [Entry] item
+  # @param [Hash]  opt                Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_link(item, **opt)                                                  # NOTE: to EntryHelper
-    opt[:path]    = show_upload_path(id: item.id)
-    opt[:tooltip] = UPLOAD_SHOW_TOOLTIP
+  def upload_link(item, **opt)                                                  # NOTE: from UploadHelper
+    opt[:path]    = show_entry_path(id: item.id)
+    opt[:tooltip] = ENTRY_SHOW_TOOLTIP
     model_link(item, **opt)
   end
 
@@ -125,7 +125,7 @@ module UploadHelper
   #
   # @see #render_json_data
   #
-  def render_file_data(item, **opt)                                             # NOTE: to EntryHelper
+  def render_file_data(item, **opt)                                             # NOTE: from UploadHelper
     return unless item.respond_to?(:file_data)
     render_json_data(item, item.file_data, **opt)
   end
@@ -140,7 +140,7 @@ module UploadHelper
   #
   # @see #render_json_data
   #
-  def render_emma_data(item, **opt)                                             # NOTE: to EntryHelper
+  def render_emma_data(item, **opt)                                             # NOTE: from UploadHelper
     return unless item.respond_to?(:emma_data)
     pairs = json_parse(item.emma_data)
     pairs&.transform_keys! { |k| Model::SEARCH_RECORD_LABELS[k] || k }
@@ -156,16 +156,18 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *value* was not valid JSON.
   #
-  def render_json_data(item, value, **opt)                                      # NOTE: to EntryHelper
+  def render_json_data(item, value, **opt)                                      # NOTE: from UploadHelper
     return unless item
-    opt[:model]     ||= item && model_for(item) || :upload
+    opt[:model]     ||= model_for(item)
     opt[:no_format] ||= :dc_description
+
     pairs = json_parse(value).presence
     pairs&.transform_values! do |v|
       v.is_a?(Hash) ? render_json_data(item, v, **opt) : v
     end
     pairs &&= render_field_values(item, pairs: pairs, **opt)
     pairs ||= render_empty_value(EMPTY_VALUE)
+
     # noinspection RubyMismatchedParameterType
     html_div(pairs, class: 'data-list')
   end
@@ -178,9 +180,9 @@ module UploadHelper
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Upload] item
-  # @param [*]      value
-  # @param [Hash]   opt               Passed to the render method.
+  # @param [Model] item
+  # @param [Any]   value
+  # @param [Hash]  opt                Passed to the render method.
   #
   # @return [Field::Type]
   # @return [String]
@@ -188,10 +190,10 @@ module UploadHelper
   #
   # @see ModelHelper#render_value
   #
-  def upload_render_value(item, value, **opt)                                   # NOTE: to EntryHelper#entry_render_value
+  def entry_render_value(item, value, **opt)                                    # NOTE: from UploadHelper#upload_render_value
     if !value.is_a?(Symbol)
       render_value(item, value, **opt)
-    elsif item.is_a?(Upload) && item.field_names.include?(value)
+    elsif item.is_a?(Record::EmmaData) && item.field_names.include?(value)
       case value
         when :file_data then render_file_data(item, **opt)
         when :emma_data then render_emma_data(item, **opt)
@@ -202,20 +204,23 @@ module UploadHelper
     end
   end
 
+  alias_method :phase_render_value,  :entry_render_value # TODO: if item.is_a?(Phase) is required...
+  alias_method :action_render_value, :entry_render_value # TODO: if item.is_a?(Action) is required...
+
   # ===========================================================================
   # :section: Item details (show page) support
   # ===========================================================================
 
   public
 
-  # Render upload attributes.                                                   # NOTE: to EntryHelper#entry_details
+  # Render entry attributes.                                                    # NOTE: from UploadHelper#upload_details
   #
-  # @param [Upload]    item
+  # @param [Entry]     item
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #model_details.
   #
-  def upload_details(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :upload
+  def entry_details(item, pairs: nil, **opt)
+    opt[:model] = model = item && model_for(item) || :entry
     opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
@@ -226,14 +231,14 @@ module UploadHelper
 
   public
 
-  # Groupings of states related by theme.                                       # NOTE: to EntryHelper::ENTRY_STATE_GROUP
+  # Groupings of states related by theme.                                       # NOTE: from UploadHelper::UPLOAD_STATE_GROUP
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
+  # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
   #
-  UPLOAD_STATE_GROUP =
-    Upload::WorkflowMethods::STATE_GROUP.transform_values do |entry|
+  ENTRY_STATE_GROUP =
+    Record::Steppable::STATE_GROUP.transform_values do |entry|
       entry.map { |key, value|
         if %i[enabled show].include?(key)
           if value.nil? || true?(value)
@@ -243,8 +248,10 @@ module UploadHelper
           elsif value == 'nonzero'
             value =
               ->(list, group = nil) {
+=begin # TODO: Entry.phases have state - Entry doesn't
                 list &&= list.select { |r| r.state_group == group } if group
                 list.present?
+=end
               }
           end
         end
@@ -252,25 +259,25 @@ module UploadHelper
       }.to_h
     end
 
-  # CSS class for the upload state selection panel.                             # NOTE: to EntryHelper::ENTRY_GROUP_PANEL_CLASS
+  # CSS class for the entry state selection panel.                              # NOTE: from UploadHelper::UPLOAD_GROUP_PANEL_CLASS
   #
   # @type [String]
   #
-  UPLOAD_GROUP_PANEL_CLASS = 'upload-select-group-panel'
+  ENTRY_GROUP_PANEL_CLASS = 'entry-select-group-panel'
 
-  # CSS class for the state group controls container.                           # NOTE: to EntryHelper::ENTRY_GROUP_CLASS
+  # CSS class for the state group controls container.                           # NOTE: from UploadHelper::UPLOAD_GROUP_CLASS
   #
   # @type [String]
   #
-  UPLOAD_GROUP_CLASS = 'upload-select-group'
+  ENTRY_GROUP_CLASS = 'entry-select-group'
 
-  # CSS class for a control within the upload state selection panel.            # NOTE: to EntryHelper::ENTRY_GROUP_CONTROL_CLASS
+  # CSS class for a control within the entry state selection panel.             # NOTE: from UploadHelper::UPLOAD_GROUP_CONTROL_CLASS
   #
   # @type [String]
   #
-  UPLOAD_GROUP_CONTROL_CLASS = 'control'
+  ENTRY_GROUP_CONTROL_CLASS = 'control'
 
-  # Select Upload records based on workflow state group.
+  # Select Entry records based on workflow state group.
   #
   # @param [Hash] counts              A table of group names associated with
   #                                     their overall totals (default:
@@ -282,27 +289,27 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #UPLOAD_STATE_GROUP
+  # @see #ENTRY_STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
   #
-  def upload_state_group_select(counts: nil, **opt)                             # NOTE: to EntryHelper#entry_state_group_select
-    css_selector = UPLOAD_GROUP_PANEL_CLASS
+  def entry_state_group_select(counts: nil, **opt)                              # NOTE: from UploadHelper#upload_state_group_select
+    css_selector = ENTRY_GROUP_PANEL_CLASS
     curr_path  = opt.delete(:curr_path)  || request.fullpath
     curr_group = opt.delete(:curr_group) || request_parameters[:group] || :all
     curr_group = curr_group.to_sym if curr_group.is_a?(String)
     counts   ||= @group_counts || {}
 
     # A label preceding the group of buttons (screen-reader only).
-    p_id   = "label-#{UPLOAD_GROUP_CLASS}"
+    p_id   = "label-#{ENTRY_GROUP_CLASS}"
     prefix = 'Select records based on their submission state:' # TODO: I18n
     prefix = html_div(prefix, id: p_id, class: 'sr-only')
 
     # Create buttons for each state group that has entries.
     buttons =
-      UPLOAD_STATE_GROUP.map do |group, properties|
+      ENTRY_STATE_GROUP.map do |group, properties|
         all     = (group == :all)
         count   = counts[group] || 0
         enabled = all || count.positive?
@@ -312,11 +319,11 @@ module UploadHelper
         label = html_span(label, class: 'label')
         label << html_span("(#{count})", class: 'count')
 
-        base  = upload_index_path
-        url   = all ? base : upload_index_path(group: group)
+        base  = entry_index_path
+        url   = all ? base : entry_index_path(group: group)
 
         link_opt = {
-          class:        UPLOAD_GROUP_CONTROL_CLASS,
+          class:        ENTRY_GROUP_CONTROL_CLASS,
           'aria-label': properties[:tooltip],
           'data-group': group
         }
@@ -328,7 +335,7 @@ module UploadHelper
       end
 
     # Wrap the controls in a group.
-    prepend_classes!(opt, UPLOAD_GROUP_CLASS)
+    prepend_classes!(opt, ENTRY_GROUP_CLASS)
     opt[:role]              = 'navigation'
     opt[:'aria-labelledby'] = p_id
     group = html_div(*buttons, opt)
@@ -350,50 +357,50 @@ module UploadHelper
 
   public
 
-  # Control whether in-page filtering is allowed.                               # NOTE: to EntryHelper::ENTRY_PAGE_FILTERING
+  # Control whether in-page filtering is allowed.                               # NOTE: from UploadHelper::UPLOAD_PAGE_FILTERING
   #
   # @type [Boolean]
   #
-  UPLOAD_PAGE_FILTERING = false
+  ENTRY_PAGE_FILTERING = false
 
-  # CSS class for the state group page filter panel.                            # NOTE: to EntryHelper::ENTRY_PAGE_FILTER_CLASS
+  # CSS class for the state group page filter panel.                            # NOTE: from UploadHelper::UPLOAD_PAGE_FILTER_CLASS
   #
   # @type [String]
   #
-  UPLOAD_PAGE_FILTER_CLASS = 'upload-page-filter-panel'
+  ENTRY_PAGE_FILTER_CLASS = 'entry-page-filter-panel'
 
-  # CSS class for the state group controls container.                           # NOTE: to EntryHelper::ENTRY_FILTER_GROUP_CLASS
+  # CSS class for the state group controls container.                           # NOTE: from UploadHelper::UPLOAD_FILTER_GROUP_CLASS
   #
   # @type [String]
   #
-  UPLOAD_FILTER_GROUP_CLASS = 'upload-filter-group'
+  ENTRY_FILTER_GROUP_CLASS = 'entry-filter-group'
 
-  # CSS class for a control within the state group controls container.          # NOTE: to EntryHelper::ENTRY_FILTER_CONTROL_CLASS
+  # CSS class for a control within the state group controls container.          # NOTE: from UploadHelper::UPLOAD_FILTER_CONTROL_CLASS
   #
   # @type [String]
   #
-  UPLOAD_FILTER_CONTROL_CLASS = 'control'
+  ENTRY_FILTER_CONTROL_CLASS = 'control'
 
   # Control for filtering which records are displayed.
   #
-  # @param [Array<Upload>] list       Default: `#page_items`.
-  # @param [Hash]          counts     A table of group names associated with
+  # @param [Array<Entry>] list        Default: `#page_items`.
+  # @param [Hash]         counts      A table of group names associated with
   #                                     their overall totals (default:
   #                                     @group_counts).
-  # @param [Hash]          opt        Passed to inner #html_div.
+  # @param [Hash]         opt         Passed to inner #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                       If #UPLOAD_PAGE_FILTERING is *false*.
+  # @return [nil]                       If #ENTRY_PAGE_FILTERING is *false*.
   #
-  # @see #UPLOAD_STATE_GROUP
+  # @see #ENTRY_STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
   #
-  def upload_page_filter(*list, counts: nil, **opt)                             # NOTE: to EntryHelper#entry_page_filter
-    return unless UPLOAD_PAGE_FILTERING
-    css_selector = UPLOAD_PAGE_FILTER_CLASS
+  def entry_page_filter(*list, counts: nil, **opt)                              # NOTE: from UploadHelper#upload_page_filter
+    return unless ENTRY_PAGE_FILTERING
+    css_selector = ENTRY_PAGE_FILTER_CLASS
     name     = __method__.to_s
     counts ||= @group_counts || {}
     list     = page_items if list.blank?
@@ -401,7 +408,7 @@ module UploadHelper
 
     # Create radio button controls for each state group that has entries.
     controls =
-      UPLOAD_STATE_GROUP.map do |group, properties|
+      ENTRY_STATE_GROUP.map do |group, properties|
         items   = table[group]  || []
         all     = (group == :all)
         count   = counts[group] || (all ? list.size : items.size)
@@ -424,7 +431,7 @@ module UploadHelper
         label = label_tag(input_id, label, l_opt)
 
         html_opt = {
-          class:        UPLOAD_FILTER_CONTROL_CLASS,
+          class:        ENTRY_FILTER_CONTROL_CLASS,
           title:        tooltip,
           'data-group': group
         }
@@ -438,12 +445,12 @@ module UploadHelper
     controls.unshift(prefix)
 
     # Wrap the controls in a group.
-    prepend_classes!(opt, UPLOAD_FILTER_GROUP_CLASS)
+    prepend_classes!(opt, ENTRY_FILTER_GROUP_CLASS)
     opt[:role] = 'radiogroup'
     group = html_div(controls, opt)
 
     # A label for the group (screen-reader only).
-    legend = 'Choose the upload submission state to display:' # TODO: I18n
+    legend = 'Choose the entry submission state to display:' # TODO: I18n
     legend = html_tag(:legend, legend, class: 'sr-only')
 
     # Include the group in a panel with accompanying label.
@@ -454,23 +461,26 @@ module UploadHelper
     end
   end
 
+  alias_method :phase_page_filter,  :entry_page_filter # TODO: ...
+  alias_method :action_page_filter, :entry_page_filter # TODO: ...
+
   # ===========================================================================
   # :section: Item list (index page) support
   # ===========================================================================
 
   public
 
-  # CSS class for the debug-only panel of checkboxes to control filter          # NOTE: to EntryHelper::ENTRY_FILTER_OPTIONS_CLASS
+  # CSS class for the debug-only panel of checkboxes to control filter          # NOTE: from UploadHelper::UPLOAD_FILTER_OPTIONS_CLASS
   # visibility.
   #
   # @type [String]
   #
-  UPLOAD_FILTER_OPTIONS_CLASS = 'upload-filter-options-panel'
+  ENTRY_FILTER_OPTIONS_CLASS = 'entry-filter-options-panel'
 
-  # Control the selection of filters displayed by #upload_page_filter.
+  # Control the selection of filters displayed by #entry_page_filter.
   #
-  # @param [Array<Upload>] list       Default: `#page_items`.
-  # @param [Hash]          opt        Passed to #html_div for outer <div>.
+  # @param [Array<Entry>] list        Default: `#page_items`.
+  # @param [Hash]         opt         Passed to #html_div for outer <div>.
   #
   # @option opt [Array] :records      List of upload records for display.
   #
@@ -478,8 +488,8 @@ module UploadHelper
   #
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
-  def upload_page_filter_options(*list, **opt)                                  # NOTE: to EntryHelper#entry_page_filter_options
-    css_selector = UPLOAD_FILTER_OPTIONS_CLASS
+  def entry_page_filter_options(*list, **opt)                                   # NOTE: from UploadHelper#upload_page_filter_options
+    css_selector = ENTRY_FILTER_OPTIONS_CLASS
     name     = __method__.to_s
     counts ||= @group_counts || {}
     list     = page_items if list.blank? && counts.blank?
@@ -489,9 +499,9 @@ module UploadHelper
     legend = html_tag(:legend, legend, class: 'sr-only')
 
     # Checkboxes.
-    cb_opt = { class: UPLOAD_FILTER_CONTROL_CLASS }
+    cb_opt = { class: ENTRY_FILTER_CONTROL_CLASS }
     groups = { ALL_FILTERS: { label: 'Show all filters', checked: false } }
-    groups.merge!(UPLOAD_STATE_GROUP)
+    groups.merge!(ENTRY_STATE_GROUP)
     checkboxes =
       groups.map do |group, properties|
         cb_name  = "[#{name}][]"
@@ -518,11 +528,11 @@ module UploadHelper
   # Indicate whether the state group described by *properties* should be an
   # active state group selection.
   #
-  # @param [Symbol, nil]        group
-  # @param [Hash, nil]          properties
-  # @param [Array<Upload>, nil] list
+  # @param [Symbol, nil]       group
+  # @param [Hash, nil]         properties
+  # @param [Array<Entry>, nil] list
   #
-  def active_state_group?(group, properties, list)                              # NOTE: to EntryHelper
+  def active_state_group?(group, properties, list)                              # NOTE: from UploadHelper
     return true if properties.blank?
     %i[enabled show].all? do |k|
       case (v = properties[k])
@@ -539,40 +549,40 @@ module UploadHelper
 
   public
 
-  # CSS class for the containing of a listing of Upload records.                # NOTE: to EntryHelper::ENTRY_LIST_CLASS
+  # CSS class for the containing of a listing of Entry records.                 # NOTE: from UploadHelper::UPLOAD_LIST_CLASS
   #
   # @type [String]
   #
-  UPLOAD_LIST_CLASS = 'upload-list'
+  ENTRY_LIST_CLASS = 'entry-list'
 
-  # Render a single entry for use within a list of items.                       # NOTE: to EntryHelper#entry_list_item
+  # Render a single entry for use within a list of items.                       # NOTE: from UploadHelper#upload_list_item
   #
-  # @param [Upload]    item
+  # @param [Entry]     item
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #model_list_item.
   #
-  def upload_list_item(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :upload
+  def entry_list_item(item, pairs: nil, **opt)
+    opt[:model] = model = item && model_for(item) || :entry
     opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
   # Include control icons below the entry number.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt               Passed to #list_item_number.
+  # @param [Entry] item
+  # @param [Hash]  opt                Passed to #list_item_number.
   #
-  def upload_list_item_number(item, **opt)                                      # NOTE: to EntryHelper#entry_list_item_number
+  def entry_list_item_number(item, **opt)                                       # NOTE: from UploadHelper#upload_list_item_number
     list_item_number(item, **opt) do
-      upload_entry_icons(item)
+      entry_control_icons(item)
     end
   end
 
-  # Text for #upload_no_records_row. # TODO: I18n                               # NOTE: to EntryHelper::ENTRY_NO_RECORDS
+  # Text for #entry_no_records_row. # TODO: I18n                                # NOTE: from UploadHelper::UPLOAD_NO_RECORDS
   #
   # @type [String]
   #
-  UPLOAD_NO_RECORDS = 'NO RECORDS'
+  ENTRY_NO_RECORDS = 'NO RECORDS'
 
   # Hidden row that is shown only when no field rows are being displayed.
   #
@@ -580,11 +590,11 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_no_records_row(**opt)                                              # NOTE: to EntryHelper#entry_no_records_row
+  def entry_no_records_row(**opt)                                               # NOTE: from UploadHelper#upload_no_records_row
     css_selector = '.no-records'
     prepend_classes!(opt, css_selector)
     # noinspection RubyMismatchedReturnType
-    html_div('', opt) << html_div(UPLOAD_NO_RECORDS, opt)
+    html_div('', opt) << html_div(ENTRY_NO_RECORDS, opt)
   end
 
   # ===========================================================================
@@ -593,15 +603,15 @@ module UploadHelper
 
   public
 
-  # Upload action icon definitions.                                             # NOTE: to EntryHelper::ENTRY_CONTROL_ICONS
+  # Entry operation icon definitions.                                           # NOTE: from UploadHelper::UPLOAD_ICONS
   #
   # @type [Hash{Symbol=>Hash{Symbol=>*}}]
   #
-  UPLOAD_ICONS = {
+  ENTRY_CONTROL_ICONS = {
     check: {
       icon:    BANG,
       tip:     'Check for an update to the status of this submission', # TODO: I18n
-      path:    :check_upload_path,
+      path:    :check_entry_path,
       enabled: ->(item) { item.try(:in_process?) },
     },
     edit: {
@@ -617,26 +627,26 @@ module UploadHelper
   }.deep_freeze
 
   # Generate an element with icon controls for the operation(s) the user is
-  # authorized to perform on the item.
+  # authorized to perform on the entry.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt                 Passed to #upload_action_icon
+  # @param [Entry] item
+  # @param [Hash]  opt                  Passed to #entry_control_icon
   #
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no operations are authorized.
   #
-  # @see #UPLOAD_ICONS
+  # @see #ENTRY_CONTROL_ICONS
   #
-  def upload_entry_icons(item, **opt)                                           # NOTE: to EntryHelper#entry_control_icons
+  def entry_control_icons(item, **opt)                                          # NOTE: from UploadHelper#upload_entry_icons
     css_selector = '.icon-tray'
     icons =
       # @type [Symbol] operation
       # @type [Hash]   properties
-      UPLOAD_ICONS.map { |operation, properties|
+      ENTRY_CONTROL_ICONS.map { |operation, properties|
         next unless can?(operation, item)
         action_opt = properties.merge(opt)
-        action_opt[:item] ||= (item if item.is_a?(Model))
-        upload_action_icon(operation, **action_opt)
+        action_opt[:item] ||= (item if item.is_a?(Model)) # TODO: should this just be Entry?
+        entry_control_icon(operation, **action_opt)
       }.compact
     html_span(icons, class: css_classes(css_selector)) if icons.present?
   end
@@ -647,12 +657,12 @@ module UploadHelper
 
   protected
 
-  # Produce an upload action icon based on either :path or :id.
+  # Produce an Entry action icon based on either :path or :id.
   #
-  # @param [Symbol] op                    One of #UPLOAD_ICONS.keys.
+  # @param [Symbol] op                    One of #ENTRY_CONTROL_ICONS.keys.
   # @param [Hash]   opt                   Passed to #make_link except for:
   #
-  # @option opt [Upload]        :item
+  # @option opt [Entry]         :item
   # @option opt [String]        :id
   # @option opt [String, Proc]  :path
   # @option opt [String]        :icon
@@ -665,11 +675,11 @@ module UploadHelper
   #--
   # noinspection RubyNilAnalysis
   #++
-  def upload_action_icon(op, **opt)                                             # NOTE: to EntryHelper#entry_control_icon
+  def entry_control_icon(op, **opt)                                             # NOTE: from UploadHelper#upload_action_icon
     css_selector = '.icon'
     item         = opt.delete(:item)
-    model        = :upload
-    id           = opt.delete(:id) || item.try(:id)
+    model        = opt.delete(:model) || model_for(item)
+    id           = opt.delete(:id)    || item.try(:id)
     case (enabled = opt.delete(:enabled))
       when nil         then # Enabled if not specified otherwise.
       when true, false then return unless enabled
@@ -697,7 +707,7 @@ module UploadHelper
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.
   #
-  # @param [Upload]         item
+  # @param [Entry]          item
   # @param [String, Symbol] path
   # @param [Hash]           opt         Passed to #popup_container except for:
   #
@@ -706,7 +716,7 @@ module UploadHelper
   #
   # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
-  def check_status_popup(item, path, **opt)                                     # NOTE: to EntryHelper
+  def check_status_popup(item, path, **opt)                                     # NOTE: from UploadHelper
     css_selector = '.check-status-popup'
     icon   = opt.delete(:icon)
     ph_opt = opt.delete(:placeholder)
@@ -737,14 +747,14 @@ module UploadHelper
 
   public
 
-  # Render pre-populated form fields.                                           # NOTE: to EntryHelper#entry_form_fields
+  # Render pre-populated form fields.                                           # NOTE: from UploadHelper#upload_form_fields
   #
-  # @param [Upload]    item
+  # @param [Entry]     item
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #render_form_fields.
   #
-  def upload_form_fields(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :upload
+  def entry_form_fields(item, pairs: nil, **opt)
+    opt[:model] = model = item && model_for(item) || :entry
     opt[:pairs] = form_fields(model).merge(pairs || {})
     render_form_fields(item, **opt)
   end
@@ -755,16 +765,16 @@ module UploadHelper
 
   public
 
-  # Button information for upload actions.                                      # NOTE: to EntryHelper::ENTRY_ACTION_VALUES
+  # Button information for entry actions.                                       # NOTE: from UploadHelper::UPLOAD_ACTION_VALUES
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  UPLOAD_ACTION_VALUES =
+  ENTRY_ACTION_VALUES =
     %i[new edit delete bulk_new bulk_edit bulk_delete].map { |action|
-      [action, config_button_values(:upload, action)]
+      [action, config_button_values(:entry, action)]
     }.to_h.deep_freeze
 
-  # Screen-reader-only label for file input.  (This is to satisfy accessibility # NOTE: to EntryHelper
+  # Screen-reader-only label for file input.  (This is to satisfy accessibility # NOTE: from UploadHelper
   # checkers which don't ignore the file input which is made invisible in favor
   # of the Uppy file input control).
   #
@@ -773,12 +783,12 @@ module UploadHelper
   #--
   # noinspection RailsI18nInspection
   #++
-  FILE_LABEL = I18n.t('emma.upload.new.select.label').freeze
+  FILE_LABEL = I18n.t('emma.entry.new.select.label').freeze
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
   #
-  # @param [Upload]         item
+  # @param [Entry]          item
   # @param [String]         label     Label for the submit button.
   # @param [String, Symbol] action    Either :new or :edit.
   # @param [Hash]           opt       Passed to #form_with except for:
@@ -788,7 +798,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_form(item, label: nil, action: nil, **opt)                         # NOTE: to EntryHelper#entry_form
+  def entry_form(item, label: nil, action: nil, **opt)                          # NOTE: from UploadHelper#upload_form
     css_selector = '.entry-form'
     action ||= params[:action]
     cancel   = opt.delete(:cancel)
@@ -796,9 +806,9 @@ module UploadHelper
     # noinspection RubyCaseWithoutElseBlockInspection
     case action
       when :new
-        opt[:url]      = create_upload_path
+        opt[:url]      = create_entry_path
       when :edit
-        opt[:url]      = update_upload_path
+        opt[:url]      = update_entry_path
         opt[:method] ||= :put
     end
     opt[:multipart]    = true
@@ -810,21 +820,22 @@ module UploadHelper
     html_div(class: "entry-form-container #{action}") do
       # @type [ActionView::Helpers::FormBuilder] f
       form_with(model: item, **opt) do |f|
-        data_opt = { class: 'upload-hidden' }
+        data_opt = { class: 'hidden-field' }
 
         # Extra information to support reverting the record when canceled.
-        rev_data  = item&.get_revert_data&.to_json
+        #rev_data = item&.get_revert_data&.to_json # TODO: is this still needed?
+        rev_data  = '' # TODO: ??? (The only relevant Upload field would be :updated_at)
         rev_data  = data_opt.merge!(id: 'revert_data', value: rev_data)
         rev_data  = f.hidden_field(:revert_data, rev_data)
 
         # Communicate :file_data through the form as a hidden field.
-        file_data = item&.active_file_data || item&.file_data
-        file_data = data_opt.merge!(id: 'upload_file_data', value: file_data)
+        file_data = item&.file_data
+        file_data = data_opt.merge!(id: 'entry_file_data', value: file_data)
         file_data = f.hidden_field(:file, file_data)
 
         # Hidden data fields.
-        emma_data = item&.active_emma_data || item&.emma_data
-        emma_data = data_opt.merge!(id: 'upload_emma_data', value: emma_data)
+        emma_data = item&.emma_data
+        emma_data = data_opt.merge!(id: 'entry_emma_data', value: emma_data)
         emma_data = f.hidden_field(:emma_data, emma_data)
 
         # Control elements which are always visible at the top of the input
@@ -833,31 +844,31 @@ module UploadHelper
           html_div(class: 'controls') do
             # Button tray.
             tray = []
-            tray << upload_submit_button(action: action, label: label)
-            tray << upload_cancel_button(action: action, url: cancel)
+            tray << entry_submit_button(action: action, label: label)
+            tray << entry_cancel_button(action: action, url: cancel)
             tray << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
             tray << f.file_field(:file)
             tray << uploaded_filename_display
             tray = html_div(class: 'button-tray') { tray }
 
             # Field display selections.
-            tabs = upload_field_group
+            tabs = entry_field_group
 
             # Parent entry input control.
-            parent_input = upload_parent_entry_select
+            parent_input = parent_entry_select
 
             tray << tabs << parent_input
           end
 
         # Form fields.
-        fields = upload_field_container(item)
+        fields = entry_field_container(item)
 
         # Convenience submit and cancel buttons below the fields.
         bottom =
           html_div(class: 'controls') do
             tray = []
-            tray << upload_submit_button(action: action, label: label)
-            tray << upload_cancel_button(action: action, url: cancel)
+            tray << entry_submit_button(action: action, label: label)
+            tray << entry_cancel_button(action: action, url: cancel)
             html_div(class: 'button-tray') { tray }
           end
 
@@ -868,7 +879,7 @@ module UploadHelper
     end
   end
 
-  # Upload submit button.
+  # Entry submit button.
   #
   # @param [Hash] opt                 Passed to #form_submit_button.
   #
@@ -876,12 +887,12 @@ module UploadHelper
   #
   # @see file:app/assets/javascripts/feature/download.js *submitButton()*
   #
-  def upload_submit_button(**opt)                                               # NOTE: to EntryHelper#entry_submit_button
-    opt[:config] ||= UPLOAD_ACTION_VALUES
+  def entry_submit_button(**opt)                                                # NOTE: from UploadHelper#upload_submit_button
+    opt[:config] ||= ENTRY_ACTION_VALUES
     form_submit_button(**opt)
   end
 
-  # Upload cancel button.
+  # Entry cancel button.
   #
   # @param [Hash] opt                 Passed to #button_tag except for:
   #
@@ -894,12 +905,12 @@ module UploadHelper
   #
   # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
   #
-  def upload_cancel_button(**opt)                                               # NOTE: to EntryHelper#entry_cancel_button
+  def entry_cancel_button(**opt)                                                # NOTE: from UploadHelper#upload_cancel_button
     url = opt.delete(:url)
     opt[:'data-path'] ||= url || params[:cancel]
     opt[:'data-path'] ||= (request.referer if local_request? && !same_request?)
-    opt[:model]       ||= :upload
-    opt[:config]      ||= UPLOAD_ACTION_VALUES
+    opt[:model]       ||= :entry
+    opt[:config]      ||= ENTRY_ACTION_VALUES
     form_cancel_button(**opt)
   end
 
@@ -916,7 +927,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def uploaded_filename_display(leader: nil, **opt)                             # NOTE: to EntryHelper
+  def uploaded_filename_display(leader: nil, **opt)                             # NOTE: from UploadHelper
     css_selector = '.uploaded-filename'
     leader ||= 'Selected file:' # TODO: I18n
     html_div(prepend_classes!(opt, css_selector)) do
@@ -924,21 +935,21 @@ module UploadHelper
     end
   end
 
-  # Element name for field group radio buttons.                                 # NOTE: to EntryHelper::ENTRY_FIELD_GROUP_NAME
+  # Element name for field group radio buttons.                                 # NOTE: from UploadHelper::UPLOAD_FIELD_GROUP_NAME
   #
   # @type [String]
   #
-  UPLOAD_FIELD_GROUP_NAME = 'field-group'
+  ENTRY_FIELD_GROUP_NAME = 'field-group'
 
-  # Field group radio buttons and their labels and tooltips.                    # NOTE: to EntryHelper::ENTRY_FIELD_GROUP
+  # Field group radio buttons and their labels and tooltips.                    # NOTE: from UploadHelper::UPLOAD_FIELD_GROUP
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  UPLOAD_FIELD_GROUP =
-    I18n.t('emma.upload.field_group').deep_symbolize_keys.deep_freeze
+  ENTRY_FIELD_GROUP =
+    I18n.t('emma.entry.field_group').deep_symbolize_keys.deep_freeze
 
   # Control for filtering which fields are displayed.
   #
@@ -946,20 +957,20 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #UPLOAD_FIELD_GROUP
+  # @see #ENTRY_FIELD_GROUP
   # @see file:app/assets/javascripts/feature/entry-form.js *fieldDisplayFilterSelect()*
   #
-  def upload_field_group(**opt)                                                 # NOTE: to EntryHelper#entry_field_group
-    css_selector = '.upload-field-group'
+  def entry_field_group(**opt)                                                  # NOTE: from UploadHelper#upload_field_group
+    css_selector = '.entry-field-group'
 
     # A label for the group (screen-reader only).
     legend = 'Filter input fields by state:' # TODO: I18n
     legend = html_tag(:legend, legend, class: 'sr-only')
 
     # Radio button controls.
-    name = UPLOAD_FIELD_GROUP_NAME
+    name = ENTRY_FIELD_GROUP_NAME
     controls =
-      UPLOAD_FIELD_GROUP.map do |group, properties|
+      ENTRY_FIELD_GROUP.map do |group, properties|
         enabled = properties[:enabled].to_s
         next if false?(enabled)
         next if (enabled == 'debug') && !session_debug?
@@ -989,7 +1000,7 @@ module UploadHelper
   #
   # @see file:app/assets/javascripts/feature/entry-form.js *monitorSourceRepository()*
   #
-  def upload_parent_entry_select(**opt)                                         # NOTE: to EntryHelper#parent_entry_select
+  def parent_entry_select(**opt)                                                # NOTE: from UploadHelper#upload_parent_entry_select
     css_selector = '.parent-entry-select'
     id     = 'parent-entry-search'
     target = :search
@@ -1021,15 +1032,15 @@ module UploadHelper
 
   # Form fields are wrapped in an element for easier grid manipulation.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt               Passed to #html_div.
+  # @param [Entry] item
+  # @param [Hash]  opt                Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_field_container(item, **opt)                                       # NOTE: to EntryHelper#entry_field_container
-    css_selector = '.upload-fields'
+  def entry_field_container(item, **opt)                                        # NOTE: from UploadHelper#upload_field_container
+    css_selector = '.entry-fields'
     html_div(prepend_classes!(opt, css_selector)) do
-      upload_form_fields(item) << upload_no_fields_row
+      entry_form_fields(item) << entry_no_fields_row
     end
   end
 
@@ -1039,18 +1050,18 @@ module UploadHelper
 
   protected
 
-  # Text for #upload_no_fields_row. # TODO: I18n                                # NOTE: to EntryHelper::ENTRY_NO_FIELDS
+  # Text for #entry_no_fields_row. # TODO: I18n                                 # NOTE: from UploadHelper::UPLOAD_NO_FIELDS
   #
   # @type [String]
   #
-  UPLOAD_NO_FIELDS = 'NO FIELDS'
+  ENTRY_NO_FIELDS = 'NO FIELDS'
 
   # Hidden row that is shown only when no field rows are being displayed.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_no_fields_row                                                      # NOTE: to EntryHelper#entry_no_fields_row
-    html_div(UPLOAD_NO_FIELDS, class: 'no-fields')
+  def entry_no_fields_row                                                       # NOTE: from UploadHelper#upload_no_fields_row
+    html_div(ENTRY_NO_FIELDS, class: 'no-fields')
   end
 
   # ===========================================================================
@@ -1059,7 +1070,7 @@ module UploadHelper
 
   public
 
-  # Generate a menu of existing EMMA entries (uploaded items).
+  # Generate a menu of existing EMMA entries.
   #
   # @param [Symbol, String] action    Default: `params[:action]`
   # @param [User, String]   user      Default: `@user`
@@ -1068,12 +1079,12 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_items_menu(action: nil, user: nil, prompt: nil, **opt)             # NOTE: to EntryHelper#entries_menu
+  def entries_menu(action: nil, user: nil, prompt: nil, **opt)                  # NOTE: from UploadHelper#upload_items_menu
     opt[:action] = action if action
     opt[:user]   = user || @user
     opt[:prompt] = prompt if prompt
-    opt[:model]  = Upload
-    opt[:controller] ||= :upload
+    opt[:model]  = Entry
+    opt[:controller] ||= :entry
     opt[:prompt] ||=
       if user
         'Select an EMMA entry you created' # TODO: I18n
@@ -1089,41 +1100,41 @@ module UploadHelper
 
   public
 
-  # Labels for inputs associated with transmitted parameters. # TODO: I18n      # NOTE: to EntryHelper::ENTRY_DELETE_LABEL
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n      # NOTE: from UploadHelper::UPLOAD_DELETE_LABEL
   #
   # @type [Hash{Symbol=>String}]
   #
-  UPLOAD_DELETE_LABEL = {
+  ENTRY_DELETE_LABEL = {
     emergency:  'Attempt to remove index entries for bogus non-EMMA items?',
     force:      'Try to remove index entries of items not in the database?',
-    truncate:   'Reset "uploads" id field to 1?' \
+    truncate:   'Reset "entries" id field to 1?' \
                 ' (Applies only when all records are being removed.)',
   }.freeze
 
-  UPLOAD_DELETE_OPTIONS        = UPLOAD_DELETE_LABEL.keys.freeze                # NOTE: to EntryHelper::ENTRY_DELETE_OPTIONS
-  UPLOAD_DELETE_FORM_OPTIONS   = [:cancel, *UPLOAD_DELETE_OPTIONS].freeze       # NOTE: to EntryHelper::ENTRY_DELETE_FORM_OPTIONS
-  UPLOAD_DELETE_SUBMIT_OPTIONS = UPLOAD_DELETE_OPTIONS                          # NOTE: to EntryHelper::ENTRY_DELETE_SUBMIT_OPTIONS
+  ENTRY_DELETE_OPTIONS        = ENTRY_DELETE_LABEL.keys.freeze                  # NOTE: from UploadHelper::UPLOAD_DELETE_OPTIONS
+  ENTRY_DELETE_FORM_OPTIONS   = [:cancel, *ENTRY_DELETE_OPTIONS].freeze         # NOTE: from UploadHelper::UPLOAD_DELETE_FORM_OPTIONS
+  ENTRY_DELETE_SUBMIT_OPTIONS = ENTRY_DELETE_OPTIONS                            # NOTE: from UploadHelper::UPLOAD_DELETE_SUBMIT_OPTIONS
 
   # Generate a form with controls for deleting a file and its entry.
   #
-  # @param [Array<String,Upload>] items
-  # @param [String]               label   Label for the submit button.
-  # @param [Hash]                 opt     Passed to 'entry-delete-form' except
+  # @param [Array<String,Entry>] items
+  # @param [String]              label    Label for the submit button.
+  # @param [Hash]                opt      Passed to 'entry-delete-form' except
   #                                         for:
   #
   # @option opt [String]  :cancel         Cancel button redirect URL passed to
-  #                                         #upload_delete_cancel.
-  # @option opt [Boolean] :force          Passed to #upload_delete_submit
-  # @option opt [Boolean] :truncate       Passed to #upload_delete_submit
-  # @option opt [Boolean] :emergency      Passed to #upload_delete_submit
+  #                                         #entry_delete_cancel.
+  # @option opt [Boolean] :force          Passed to #entry_delete_submit
+  # @option opt [Boolean] :truncate       Passed to #entry_delete_submit
+  # @option opt [Boolean] :emergency      Passed to #entry_delete_submit
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_delete_form(*items, label: nil, **opt)                             # NOTE: to EntryHelper#entry_delete_form
+  def entry_delete_form(*items, label: nil, **opt)                              # NOTE: from UploadHelper#upload_delete_form
     css_selector  = '.entry-delete-form'
-    opt, html_opt = partition_hash(opt, *UPLOAD_DELETE_FORM_OPTIONS)
-    cancel = upload_delete_cancel(url: opt.delete(:cancel))
-    submit = upload_delete_submit(*items, **opt.merge!(label: label))
+    opt, html_opt = partition_hash(opt, *ENTRY_DELETE_FORM_OPTIONS)
+    cancel = entry_delete_cancel(url: opt.delete(:cancel))
+    submit = entry_delete_submit(*items, **opt.merge!(label: label))
     html_div(class: 'entry-form-container delete') do
       html_div(prepend_classes!(html_opt, css_selector)) do
         submit << cancel
@@ -1131,10 +1142,10 @@ module UploadHelper
     end
   end
 
-  # Submit button for the delete upload form.
+  # Submit button for the delete entry form.
   #
-  # @param [Array<String,Upload>] items
-  # @param [Hash]                 opt     Passed to #delete_submit_button
+  # @param [Array<String,Entry>] items
+  # @param [Hash]                opt      Passed to #delete_submit_button
   #                                         except for:
   #
   # @option opt [String, Symbol] :action      Default: `params[:action]`.
@@ -1148,32 +1159,32 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_delete_submit(*items, **opt)                                       # NOTE: to EntryHelper#entry_delete_submit
-    p_opt, opt = partition_hash(opt, *UPLOAD_DELETE_SUBMIT_OPTIONS)
-    ids = Upload.compact_ids(*items).join(',')
+  def entry_delete_submit(*items, **opt)                                        # NOTE: from UploadHelper#upload_delete_submit
+    p_opt, opt = partition_hash(opt, *ENTRY_DELETE_SUBMIT_OPTIONS)
+    ids = Entry.compact_ids(*items).join(',')
     url =
       if ids.present?
         p_opt[:id]        = ids
         p_opt[:force]     = force_delete     unless p_opt.key?(:force)
         p_opt[:truncate]  = truncate_delete  unless p_opt.key?(:truncate)
         p_opt[:emergency] = emergency_delete unless p_opt.key?(:emergency)
-        destroy_upload_path(**p_opt)
+        destroy_entry_path(**p_opt)
       end
-    delete_submit_button(config: UPLOAD_ACTION_VALUES, url: url, **opt)
+    delete_submit_button(config: ENTRY_ACTION_VALUES, url: url, **opt)
   end
 
-  # Cancel button for the delete upload form.
+  # Cancel button for the delete entry form.
   #
-  # @param [Hash] opt                 Passed to #upload_cancel_button
+  # @param [Hash] opt                 Passed to #entry_cancel_button
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/download.js *cancelAction()*
   #
-  def upload_delete_cancel(**opt)                                               # NOTE: to EntryHelper#entry_delete_cancel
+  def entry_delete_cancel(**opt)                                                # NOTE: from UploadHelper#upload_delete_cancel
     opt[:action]  ||= :delete
     opt[:onclick] ||= 'cancelAction();'
-    upload_cancel_button(**opt)
+    entry_cancel_button(**opt)
   end
 
   # ===========================================================================
@@ -1189,7 +1200,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_upload_results(**opt)                                                # NOTE: to EntryHelper#bulk_entry_results
+  def bulk_entry_results(**opt)                                                 # NOTE: from UploadHelper#bulk_upload_results
     css_selector = '.bulk-op-results'
 
     l_sel = "#{css_selector}-label"
@@ -1222,7 +1233,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_option(f, param, value = nil, labels:, debug_only: false, **)        # NOTE: to EntryHelper
+  def bulk_option(f, param, value = nil, labels:, debug_only: false, **)        # NOTE: from UploadHelper
     if debug_only && !session_debug?
       hidden_input(param, value)
     else
@@ -1243,7 +1254,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_input(f, param, value = nil, meth: :text_field, labels:, **opt)      # NOTE: to EntryHelper
+  def bulk_input(f, param, value = nil, meth: :text_field, labels:, **opt)      # NOTE: from UploadHelper
     label = f.label(param, labels[param])
     input = f.send(meth, param, value: value, **opt)
     html_div(class: 'line') { label << input }
@@ -1255,17 +1266,17 @@ module UploadHelper
 
   public
 
-  # Labels for inputs associated with transmitted parameters. # TODO: I18n      # NOTE: to EntryHelper::BULK_ENTRY_LABEL
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n      # NOTE: from UploadHelper::BULK_UPLOAD_LABEL
   #
   # @type [Hash{Symbol=>String}]
   #
-  BULK_UPLOAD_LABEL = {
+  BULK_ENTRY_LABEL = {
     prefix: 'Title prefix:',
     batch:  'Batch size:'
   }.freeze
 
-  BULK_UPLOAD_OPTIONS      = BULK_UPLOAD_LABEL.keys.freeze                      # NOTE: to EntryHelper::BULK_ENTRY_OPTIONS
-  BULK_UPLOAD_FORM_OPTIONS = [:cancel, *BULK_UPLOAD_OPTIONS].freeze             # NOTE: to EntryHelper::BULK_ENTRY_FORM_OPTIONS
+  BULK_ENTRY_OPTIONS      = BULK_ENTRY_LABEL.keys.freeze                        # NOTE: from UploadHelper::BULK_UPLOAD_OPTIONS
+  BULK_ENTRY_FORM_OPTIONS = [:cancel, *BULK_ENTRY_OPTIONS].freeze               # NOTE: from UploadHelper::BULK_UPLOAD_FORM_OPTIONS
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -1280,20 +1291,20 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_upload_form(label: nil, action: nil, **opt)                          # NOTE: to EntryHelper#bulk_entry_form
+  def bulk_entry_form(label: nil, action: nil, **opt)                           # NOTE: from UploadHelper#bulk_upload_form
     css_selector = '.bulk-entry-form'
     action = (action || params[:action])&.to_sym
-    opt, form_opt = partition_hash(opt, *BULK_UPLOAD_FORM_OPTIONS)
+    opt, form_opt = partition_hash(opt, *BULK_ENTRY_FORM_OPTIONS)
     opt[:prefix] ||= title_prefix
     opt[:batch]  ||= batch_size
 
     # noinspection RubyCaseWithoutElseBlockInspection
     case action
       when :new
-        form_opt[:url]      = bulk_create_upload_path
+        form_opt[:url]      = bulk_create_entry_path
         form_opt[:method] ||= :post
       when :edit
-        form_opt[:url]      = bulk_update_upload_path
+        form_opt[:url]      = bulk_update_entry_path
         form_opt[:method] ||= :put
     end
     form_opt[:multipart]    = true
@@ -1308,7 +1319,7 @@ module UploadHelper
         url_param = :prefix
         initial   = opt[url_param].presence
         if session_debug?
-          lines << bulk_upload_input(f, url_param, initial)
+          lines << bulk_entry_input(f, url_param, initial)
         elsif initial
           lines << hidden_input(url_param, initial)
         end
@@ -1317,16 +1328,16 @@ module UploadHelper
         url_param = :batch
         initial   = opt[url_param].presence
         field_opt = { meth: :number_field, min: 0 }
-        lines << bulk_upload_input(f, url_param, initial, **field_opt)
+        lines << bulk_entry_input(f, url_param, initial, **field_opt)
 
         # === Form control panel
         lines <<
           html_div(class: 'form-controls') do
             controls_opt = { class: 'bulk' }
             button_opt   = controls_opt.merge(action: action)
-            submit  = upload_submit_button(label: label,        **button_opt)
-            cancel  = upload_cancel_button(url:   opt[:cancel], **button_opt)
-            input   = bulk_upload_file_select(f, :source, **controls_opt)
+            submit  = entry_submit_button(label: label,        **button_opt)
+            cancel  = entry_cancel_button(url:   opt[:cancel], **button_opt)
+            input   = bulk_entry_file_select(f, :source, **controls_opt)
             display = uploaded_filename_display(**controls_opt)
             prepend_classes!(controls_opt, 'button-tray')
             html_div(controls_opt) { submit << cancel << input << display }
@@ -1354,8 +1365,8 @@ module UploadHelper
   #
   # @see #bulk_option
   #
-  def bulk_upload_option(f, param, value = nil, **opt)                          # NOTE: to EntryHelper#bulk_entry_option
-    opt[:labels] ||= BULK_UPLOAD_LABEL
+  def bulk_entry_option(f, param, value = nil, **opt)                           # NOTE: from UploadHelper#bulk_upload_option
+    opt[:labels] ||= BULK_ENTRY_LABEL
     bulk_option(f, param, value, **opt)
   end
 
@@ -1370,12 +1381,12 @@ module UploadHelper
   #
   # @see #bulk_input
   #
-  def bulk_upload_input(f, param, value = nil, **opt)                           # NOTE: to EntryHelper#bulk_entry_input
-    opt[:labels] ||= BULK_UPLOAD_LABEL
+  def bulk_entry_input(f, param, value = nil, **opt)                            # NOTE: from UploadHelper#bulk_upload_input
+    opt[:labels] ||= BULK_ENTRY_LABEL
     bulk_input(f, param, value, **opt)
   end
 
-  # bulk_upload_file_select
+  # bulk_entry_file_select
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           meth
@@ -1386,7 +1397,7 @@ module UploadHelper
   # @see ActionView::Helpers::FormBuilder#label
   # @see ActionView::Helpers::FormBuilder#file_field
   #
-  def bulk_upload_file_select(f, meth, **opt)                                   # NOTE: to EntryHelper#bulk_entry_file_select
+  def bulk_entry_file_select(f, meth, **opt)                                    # NOTE: from UploadHelper#bulk_upload_file_select
     l_opt = { class: 'file-select', role: 'button', tabindex: 0 }
     l_opt = merge_html_options(opt, l_opt)
     label = f.label(meth, 'Select', l_opt) # TODO: I18n
@@ -1406,14 +1417,14 @@ module UploadHelper
 
   public
 
-  BULK_DELETE_LABEL =                                                           # NOTE: to EntryHelper::BULK_ENTRY_DELETE_LABEL
-    UPLOAD_DELETE_LABEL.merge(selected: 'Items to delete:').freeze
+  BULK_ENTRY_DELETE_LABEL =                                                     # NOTE: from UploadHelper::BULK_DELETE_LABEL
+    ENTRY_DELETE_LABEL.merge(selected: 'Items to delete:').freeze
 
-  BULK_DELETE_OPTIONS      = UPLOAD_DELETE_OPTIONS                              # NOTE: to EntryHelper::BULK_ENTRY_DELETE_OPTIONS
-  BULK_DELETE_FORM_OPTIONS = UPLOAD_DELETE_FORM_OPTIONS                         # NOTE: to EntryHelper::BULK_ENTRY_DELETE_FORM_OPTIONS
+  BULK_ENTRY_DELETE_OPTIONS      = ENTRY_DELETE_OPTIONS                         # NOTE: from UploadHelper::BULK_DELETE_OPTIONS
+  BULK_ENTRY_DELETE_FORM_OPTIONS = ENTRY_DELETE_FORM_OPTIONS                    # NOTE: from UploadHelper::BULK_DELETE_FORM_OPTIONS
 
   # Generate a form with controls for getting a list of identifiers to pass on
-  # to the "/upload/delete" page.
+  # to the "/entry/delete" page.
   #
   # @param [String,Array<String>,nil] ids
   # @param [String] label                 Label for the submit button.
@@ -1426,17 +1437,17 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form(label: nil, ids: nil, **opt)                             # NOTE: to EntryHelper#bulk_entry_delete_form
+  def bulk_entry_delete_form(label: nil, ids: nil, **opt)                       # NOTE: from UploadHelper#bulk_delete_form
     css_selector  = '.bulk-entry-form.delete'
     action        = :bulk_delete
     ids           = Array.wrap(ids).compact.presence
-    opt, form_opt = partition_hash(opt, *BULK_DELETE_FORM_OPTIONS)
+    opt, form_opt = partition_hash(opt, *BULK_ENTRY_DELETE_FORM_OPTIONS)
 
     opt[:force]     = force_delete     unless opt.key?(:force)
     opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
     opt[:emergency] = emergency_delete unless opt.key?(:emergency)
 
-    form_opt[:url]          = delete_select_upload_path
+    form_opt[:url]          = delete_select_entry_path
     form_opt[:method]     ||= :get
     form_opt[:autocomplete] = 'off'
     form_opt[:local]        = true # Turns off "data-remote='true'".
@@ -1449,19 +1460,19 @@ module UploadHelper
         # === Options
         dbg = { debug_only: true }
         { force: {}, truncate: dbg, emergency: dbg }.each_pair do |prm, opts|
-          lines << bulk_delete_option(f, prm, opt[prm], **opts)
+          lines << bulk_entry_delete_option(f, prm, opt[prm], **opts)
         end
 
         # === Item selection input
-        lines << bulk_delete_input(f, :selected, ids)
+        lines << bulk_entry_delete_input(f, :selected, ids)
 
         # === Form control panel
         lines <<
           html_div(class: 'form-controls') do
             html_div(class: 'button-tray') do
               tray = []
-              tray << upload_submit_button(action: action, label: label)
-              tray << upload_cancel_button(action: action, url: opt[:cancel])
+              tray << entry_submit_button(action: action, label: label)
+              tray << entry_cancel_button(action: action, url: opt[:cancel])
               safe_join(tray)
             end
           end
@@ -1473,29 +1484,18 @@ module UploadHelper
 
   # find_in_index
   #
-  # @param [Array<Upload, String>] items
+  # @param [Array<String,Entry>] items
   #
   # @return [Array<(Array<Search::Record::MetadataRecord>,Array)>]
   #
-  def find_in_index(*items, **)                                                 # NOTE: to EntryHelper
+  def find_in_index(*items, **)                                                 # NOTE: from UploadHelper
     found = failed = []
     items = items.flatten.compact
     if items.present?
       result = IngestService.instance.get_records(*items)
       found  = result.records
       sids   = found.map(&:emma_repositoryRecordId)
-      failed =
-        items.reject do |item|
-          sid =
-            if item.respond_to?(:submission_id)
-              item.submission_id
-            elsif item.is_a?(Hash)
-              item[:submission_id] || item['submission_id']
-            else
-              item
-            end
-          sids.include?(sid)
-        end
+      failed = items.reject { |item| sids.include?(Entry.sid_value(item)) }
     end
     return found, failed
   end
@@ -1517,8 +1517,8 @@ module UploadHelper
   #
   # @see #bulk_option
   #
-  def bulk_delete_option(f, param, value = nil, **opt)                          # NOTE: to EntryHelper#bulk_entry_delete_option
-    opt[:labels] ||= BULK_DELETE_LABEL
+  def bulk_entry_delete_option(f, param, value = nil, **opt)                    # NOTE: from UploadHelper#bulk_delete_option
+    opt[:labels] ||= BULK_ENTRY_DELETE_LABEL
     bulk_option(f, param, value, **opt)
   end
 
@@ -1533,8 +1533,8 @@ module UploadHelper
   #
   # @see #bulk_input
   #
-  def bulk_delete_input(f, param, value = nil, **opt)                           # NOTE: to EntryHelper#bulk_entry_delete_input
-    opt[:labels] ||= BULK_DELETE_LABEL
+  def bulk_entry_delete_input(f, param, value = nil, **opt)                     # NOTE: from UploadHelper#bulk_delete_input
+    opt[:labels] ||= BULK_ENTRY_DELETE_LABEL
     bulk_input(f, param, value, **opt)
   end
 

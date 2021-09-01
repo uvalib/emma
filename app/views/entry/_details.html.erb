@@ -1,0 +1,19 @@
+<%# app/views/entry/_details.html.erb -%>
+<%-
+  # A listing of an Entry record details.
+
+  item  ||= nil or return
+  image ||= nil
+  add   ||= nil
+  level ||= 1
+  skip  ||= nil
+
+  skip = Array.wrap(skip)
+  role = ('role="article"'.html_safe if level == 1)
+
+-%>
+
+<div <%= role -%> class="entry-container">
+  <%= entry_details(item, pairs: add) %>
+  <%= image || cover_image(item) unless skip.include?(:cover_image) %>
+</div>

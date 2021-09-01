@@ -453,13 +453,13 @@ module Field
       if field.is_a?(Symbol)
         @field = field
         @base  = Field.configuration_for(@field, model)[:type]
-        @range ||=
+        @range ||=                                                              # TODO: remove after upload -> entry
           if src.respond_to?(:active_emma_metadata)
             src.active_emma_metadata[@field]
           elsif src.respond_to?(:emma_metadata)
             src.emma_metadata[@field]
           end
-        @range ||=
+        @range ||=                                                              # TODO: remove after upload -> entry
           begin
             if src.respond_to?(:active_emma_record)
               src = src.active_emma_record
@@ -468,6 +468,15 @@ module Field
             end
             src.try(@field)
           end
+=begin                                                                          # TODO: use after upload -> entry
+        @range ||=
+          (src.emma_metadata[@field] if src.respond_to?(:emma_metadata))
+        @range ||=
+          begin
+            src = src.emma_record if src.respond_to?(:emma_record)
+            src.send(@field)      if src.respond_to?(@field)
+          end
+=end
       end
       @range = Array.wrap(@range).map { |v| v.to_s.strip.presence }.compact
       @base  = @base.to_s.safe_constantize if @base.is_a?(Symbol)

@@ -69,13 +69,16 @@ en:
           tooltip:      'Help with downloading files from EMMA.'
           content:      ~ # @see file:app/views/help/topic/_download.html.erb
 
-        upload:
+        upload:         &SUBMISSION_TOPIC
           <<:           *TOPIC_TEMPLATE
           topic:        'upload'
           Topic:        'Upload'
           title:        'Uploading to EMMA'
           tooltip:      'Help with uploading files to EMMA.'
           content:      ~ # @see file:app/views/help/topic/_upload.html.erb
+
+        entry:
+          <<: *SUBMISSION_TOPIC
 
       # =======================================================================
       # Illustrations

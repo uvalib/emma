@@ -1,0 +1,31 @@
+<%# app/views/entry/new.html.erb -%>
+<%-
+  # Prompt to upload a file and create a new EMMA entry.
+
+  title ||= t('emma.entry.new.title')
+  item  ||= @item
+  repo  ||= item&.repository
+  logo  ||= repository_source_logo(repo)
+  help  ||= help_popup(:entry, :new)
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<div class="heading container">
+  <h1 class="heading"><%= title -%><%= help -%></h1>
+  <%= logo %>
+</div>
+
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= entry_form(item, action: :new) %>
+<%= entry_preview %>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

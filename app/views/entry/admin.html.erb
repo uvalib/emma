@@ -1,0 +1,24 @@
+<%# app/views/entry/admin.html.erb -%>
+<%-
+  # Entry submission administration.
+
+  title ||= t('emma.entry.admin.title')
+  help  ||= nil # help_popup(:entry, :admin) # TODO: ???
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<h2 class="admin-section">AWS S3 buckets</h2>
+<%= html_s3_bucket_table(@object_table) %>
+
+<%= page_notes_section %>

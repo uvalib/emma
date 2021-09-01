@@ -356,7 +356,8 @@ class Ability
   def act_as_individual_member(user)
     act_as_authenticated(user)
     can :retrieve, Artifact
-    can :retrieve, Upload
+    can :retrieve, Upload # TODO: remove after upload -> entry
+    can :retrieve, Entry
   end
 
   # Assign the ability to perform as a student with a membership account
@@ -395,8 +396,12 @@ class Ability
     can :retrieve, Artifact do |artifact|
       ReadingList.any? { |list| list.has_artifact?(artifact) }
     end
-    can :retrieve, Upload do |upload|
+    can :retrieve, Upload do |upload| # TODO: remove after upload -> entry
       title = upload.emma_data&.dig(:dc_title)
+      title.present? && ReadingList.any? { |list| list.has_title?(title) }
+    end
+    can :retrieve, Entry do |entry|
+      title = entry.emma_data&.dig(:dc_title)
       title.present? && ReadingList.any? { |list| list.has_title?(title) }
     end
   end
@@ -434,7 +439,8 @@ class Ability
     can :read, Title
     can :read, Periodical
     can :read, Edition
-    can :view, Upload
+    can :view, Upload # TODO: remove after upload -> entry
+    can :view, Entry
   end
 
   # ===========================================================================
@@ -496,6 +502,7 @@ class Ability
   # @return [void]
   #
   def can_manage_own_entries(user)
+    can_manage_entries(Upload, id: user.id) # TODO: remove after upload -> entry
     can_manage_entries(id: user.id)
   end
 
@@ -521,7 +528,7 @@ class Ability
   #
   # @return [void]
   #
-  def can_manage_entries(model = Upload, **with_constraints)
+  def can_manage_entries(model = Entry, **with_constraints)
     can_manage(model, **with_constraints)
     can :new,           model
     can :create,        model

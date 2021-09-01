@@ -1,4 +1,4 @@
-// app/assets/javascripts/feature/file-upload.js
+// app/assets/javascripts/feature/entry-form.js
 
 //= require shared/assets
 //= require shared/definitions
@@ -15,7 +15,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const UPLOAD_FORM_CLASS = 'file-upload-form';
+    const ENTRY_FORM_CLASS = 'entry-form';
 
     /**
      * CSS class for single-entry form elements.
@@ -23,7 +23,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {String}
      */
-    const UPLOAD_FORM_SELECTOR = selector(UPLOAD_FORM_CLASS);
+    const ENTRY_FORM_SELECTOR = selector(ENTRY_FORM_CLASS);
 
     /**
      * Single-entry operation forms on the page.
@@ -36,7 +36,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {jQuery}
      */
-    let $file_upload_form = $(UPLOAD_FORM_SELECTOR);
+    let $entry_form = $(ENTRY_FORM_SELECTOR);
 
     /**
      * CSS classes for bulk operation form elements.
@@ -44,7 +44,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const BULK_FORM_CLASS = 'file-upload-bulk';
+    const BULK_FORM_CLASS = 'bulk-entry-form';
 
     /**
      * CSS classes for bulk operation form elements.
@@ -63,7 +63,7 @@ $(document).on('turbolinks:load', function() {
     let $bulk_operation_form = $(BULK_FORM_SELECTOR).not('.delete');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($file_upload_form) && isMissing($bulk_operation_form)) {
+    if (isMissing($entry_form) && isMissing($bulk_operation_form)) {
         return;
     }
 
@@ -191,8 +191,8 @@ $(document).on('turbolinks:load', function() {
      *      rem_status:                         string,
      * }} EmmaData
      *
-     * @see "en.emma.upload.record.emma_data"
-     * @see "AwsS3::Record::SubmissionPackage"
+     * @see "en.emma.entry.record.emma_data"
+     * @see "AwsS3::Record::SubmissionRequest"
      */
 
     /**
@@ -413,7 +413,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const FORM_SELECTOR = UPLOAD_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
+    const FORM_SELECTOR = ENTRY_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
 
     /**
      * Selector for Uppy drag-and-drop target.
@@ -421,7 +421,8 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const DRAG_AND_DROP_SELECTOR = selector(Emma.Upload.Style.drag_target);
+    const DRAG_AND_DROP_SELECTOR = selector([Emma.Upload.Style.drag_target, Emma.Entry.Style.drag_target]); // TODO: remove after upload -> entry
+    //const DRAG_AND_DROP_SELECTOR = selector(Emma.Entry.Style.drag_target);  // TODO: use after upload -> entry
 
     /**
      * Selector for thumbnail display of the selected file.
@@ -429,7 +430,8 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const PREVIEW_SELECTOR = selector(Emma.Upload.Style.preview);
+    const PREVIEW_SELECTOR = selector([Emma.Upload.Style.preview, Emma.Entry.Style.preview]); // TODO: remove after upload -> entry
+    //const PREVIEW_SELECTOR = selector(Emma.Entry.Style.preview);  // TODO: use after upload -> entry
 
     /**
      * Selectors for input fields.
@@ -507,23 +509,23 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Selector for the dynamic bulk upload results panel.
+     * Selector for the dynamic bulk operation results panel.
      *
      * @constant
      * @type {string}
      */
-    const BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
+    const BULK_OP_RESULTS_SELECTOR = '.bulk-op-results';
 
     /**
-     * Item name for sessionStorage of a trace of bulk upload activity.
+     * Item name for sessionStorage of a trace of bulk operation activity.
      *
      * @constant
      * @type {string}
      */
-    const BULK_UPLOAD_STORAGE_KEY = 'bulk-upload';
+    const BULK_OP_STORAGE_KEY = 'bulk-operation';
 
     /**
-     * CSS class indicating that the bulk upload results panel contains the
+     * CSS class indicating that the bulk operation results panel contains the
      * results of the previous run (from sessionStorage), not the current run.
      *
      * @constant
@@ -532,8 +534,9 @@ $(document).on('turbolinks:load', function() {
     const OLD_DATA_MARKER = 'previous';
 
     /**
-     * CSS selector indicating that the bulk upload results panel contains the
-     * results of the previous run (from sessionStorage), not the current run.
+     * CSS selector indicating that the bulk operation results panel contains
+     * the results of the previous run (from sessionStorage), not the current
+     * run.
      *
      * @constant
      * @type {string}
@@ -571,7 +574,7 @@ $(document).on('turbolinks:load', function() {
 
     // Setup Uppy for any <input type="file"> elements (unless this page is
     // being reached via browser history).
-    $file_upload_form.each(function() {
+    $entry_form.each(function() {
         let $form = $(this);
         if (!isUppyInitialized($form)) {
 
@@ -590,7 +593,7 @@ $(document).on('turbolinks:load', function() {
                     refreshRecord($form);
                     break;
                 default:
-                    initializeUploadForm($form);
+                    initializeEntryForm($form);
                     break;
             }
         }
@@ -622,17 +625,17 @@ $(document).on('turbolinks:load', function() {
         // Start with submit disabled until a bulk control file is supplied.
         disableSubmit($form);
 
-        // Show the results of the most recent bulk upload run (if available).
-        let $results = bulkUploadResults().empty().addClass(OLD_DATA_MARKER);
-        let previous = getBulkUploadTrace();
-        if (previous && showBulkUploadResults($results, previous)) {
+        // Show the results of the most recent bulk operation (if available).
+        let $results = bulkOpResults().empty().addClass(OLD_DATA_MARKER);
+        let previous = getBulkOpTrace();
+        if (previous && showBulkOpResults($results, previous)) {
             $results.removeClass('hidden');
-            bulkUploadResultsLabel($results).removeClass('hidden');
+            bulkOpResultsLabel($results).removeClass('hidden');
         }
 
-        // When the bulk control file is submitted, begin a running tally of
+        // When the bulk manifest is submitted, begin a running tally of
         // the items that have been added/changed.
-        handleEvent($form, 'submit', monitorBulkUpload);
+        handleEvent($form, 'submit', monitorBulkOperation);
 
         // When a file has been selected, display its name and enable submit.
         let $input = fileSelectContainer($form).children('input[type="file"]');
@@ -669,32 +672,32 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * The element containing the upload results.
+     * The element containing the bulk operation results.
      *
-     * Currently there can only be one bulk upload results element per page.
+     * Currently there can only be one bulk operation results element per page.
      * TODO: Associate results element with a specific bulk-action form.
      *
      * @param {Selector} [results]
      *
      * @returns {jQuery}
      */
-    function bulkUploadResults(results) {
-        const selector = BULK_UPLOAD_RESULTS_SELECTOR;
+    function bulkOpResults(results) {
+        const selector = BULK_OP_RESULTS_SELECTOR;
         let $results   = $(results);
         return $results.is(selector) ? $results : $(selector);
     }
 
     /**
-     * The element displayed above upload results.
+     * The element displayed above bulk operation results.
      *
      * @param {Selector} [results]
      *
      * @returns {jQuery}
      *
-     * @see file:app/assets/stylesheets/feature/_file_upload.scss .file-upload-results-label
+     * @see file:app/assets/stylesheets/feature/_entry_form.scss .bulk-op-results-label
      */
-    function bulkUploadResultsLabel(results) {
-        let $results = bulkUploadResults(results);
+    function bulkOpResultsLabel(results) {
+        let $results = bulkOpResults(results);
         const lbl_id = $results.attr('aria-labelledby');
         return lbl_id ? $('#' + lbl_id) : $();
     }
@@ -710,9 +713,9 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {string}
      */
-    function bulkUploadResultsNextId(results, record) {
+    function bulkOpResultsNextId(results, record) {
         const name    = 'next-id';
-        let $results  = bulkUploadResults(results);
+        let $results  = bulkOpResults(results);
         let value     = $results.data(name);
         const initial = isMissing(value);
         if (initial || isDefined(record)) {
@@ -737,9 +740,9 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {number}
      */
-    function bulkUploadResultsStartTime(results, start_time) {
+    function bulkOpResultsStartTime(results, start_time) {
         const name   = 'start-time';
-        let $results = bulkUploadResults(results);
+        let $results = bulkOpResults(results);
         let value    = $results.data(name);
         if (isPresent(start_time) || isMissing(value)) {
             value = timeOf(start_time);
@@ -753,21 +756,21 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {jQuery.Event} [event]
      */
-    function monitorBulkUpload(event) {
+    function monitorBulkOperation(event) {
         const target = event && (event.currentTarget || event.target);
         let $form    = target ? $(target) : $bulk_operation_form;
         disableSubmit($form);
         disableFileSelectButton($form);
 
-        let $results = bulkUploadResults();
-        let $label   = bulkUploadResultsLabel($results);
+        let $results = bulkOpResults();
+        let $label   = bulkOpResultsLabel($results);
         $results.removeClass(OLD_DATA_MARKER).empty();
-        addBulkUploadResult($results, TMP_LINE, TMP_LINE_CLASS);
+        addBulkOpResult($results, TMP_LINE, TMP_LINE_CLASS);
         $label.text('Upload results:').removeClass('hidden'); // TODO: I18n
         $results.removeClass('hidden');
 
-        clearBulkUploadTrace();
-        fetchUploadEntries('$', null, startMonitoring);
+        clearBulkOpTrace();
+        fetchEntryList('$', null, startMonitoring);
 
         /**
          * Establish the lower-bound of database ID's to search (starting with
@@ -777,9 +780,9 @@ $(document).on('turbolinks:load', function() {
          */
         function startMonitoring(list) {
             const record = list.slice(-1)[0] || {};
-            bulkUploadResultsNextId($results, record);
-            bulkUploadResultsStartTime($results);
-            scheduleCheckBulkUploadResults($results);
+            bulkOpResultsNextId($results, record);
+            bulkOpResultsStartTime($results);
+            scheduleCheckBulkOpResults($results);
         }
     }
 
@@ -790,8 +793,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} results
      * @param {number}   [milliseconds]
      */
-    function scheduleCheckBulkUploadResults(results, milliseconds) {
-        let $results = bulkUploadResults(results);
+    function scheduleCheckBulkOpResults(results, milliseconds) {
+        let $results = bulkOpResults(results);
         const period = milliseconds || BULK_CHECK_PERIOD;
         const name   = 'check-period';
         const timer  = $results.data(name);
@@ -799,7 +802,7 @@ $(document).on('turbolinks:load', function() {
             clearTimeout(timer);
         }
         if ($results.not(OLD_DATA).is(':visible')) {
-            const new_timer = setTimeout(checkBulkUploadResults, period);
+            const new_timer = setTimeout(checkBulkOpResults, period);
             $results.data(name, new_timer);
         }
     }
@@ -807,13 +810,13 @@ $(document).on('turbolinks:load', function() {
     /**
      * Display new entries that have appeared since the last check.
      */
-    function checkBulkUploadResults() {
-        let $results = bulkUploadResults();
+    function checkBulkOpResults() {
+        let $results = bulkOpResults();
         if ($results.is(OLD_DATA)) {
             return;
         }
-        const start_id = bulkUploadResultsNextId($results);
-        fetchUploadEntries(start_id, '$', addNewLines);
+        const start_id = bulkOpResultsNextId($results);
+        fetchEntryList(start_id, '$', addNewLines);
 
         /**
          * Add lines for any entries that have appeared since the last round
@@ -823,10 +826,10 @@ $(document).on('turbolinks:load', function() {
          */
         function addNewLines(list) {
             if (isPresent(list)) {
+                /** @type {jQuery} $lines */
                 let $lines = $results.children();
 
                 // Remove initialization line(s) if present.
-                // noinspection JSCheckFunctionSignatures
                 $lines.filter('.' + TMP_LINE_CLASS).remove();
 
                 // Add a line for each record.
@@ -835,23 +838,23 @@ $(document).on('turbolinks:load', function() {
                 let entries = [];
                 list.forEach(function(record) {
                     // noinspection IncrementDecrementResultUsedJS
-                    const entry = addBulkUploadResult($results, record, row++);
+                    const entry = addBulkOpResult($results, record, row++);
                     last_id = Math.max(record.id, last_id);
                     entries.push(entry);
                 });
-                addBulkUploadTrace(entries);
+                addBulkOpTrace(entries);
 
                 // Update the next ID to fetch.
                 if (last_id) {
-                    bulkUploadResultsNextId($results, last_id);
+                    bulkOpResultsNextId($results, last_id);
                 }
             }
-            scheduleCheckBulkUploadResults($results);
+            scheduleCheckBulkOpResults($results);
         }
     }
 
     /**
-     * Add a line to bulk upload results.
+     * Add a line to bulk operation results.
      *
      * @param {Selector}                   results
      * @param {UploadRecord|object|string} entry
@@ -860,10 +863,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {string}              The added result entry.
      *
-     * @see file:app/assets/stylesheets/feature/_file_upload.scss .file-upload-results
+     * @see file:app/assets/stylesheets/feature/_entry_form.scss .bulk-op-results
      */
-    function addBulkUploadResult(results, entry, index, time) {
-        let $results = bulkUploadResults(results);
+    function addBulkOpResult(results, entry, index, time) {
+        let $results = bulkOpResults(results);
         let data;
         if (typeof entry !== 'object') {
             data = entry.toString();
@@ -871,8 +874,8 @@ $(document).on('turbolinks:load', function() {
             // A generic object.
             data = asString(entry, (K / 2));
         } else {
-            // An object which is a de-serialized Upload record.
-            const start = bulkUploadResultsStartTime($results);
+            // An object which is a de-serialized Entry record.
+            const start = bulkOpResultsStartTime($results);
             const date  = time            || new Date();
             const fd    = entry.file_data || {};
             const md    = fd.metadata     || {};
@@ -886,22 +889,22 @@ $(document).on('turbolinks:load', function() {
                 file: (file && `"${file}"` || '(missing)')
             };
         }
-        let $line = makeBulkUploadResult(data, index);
+        let $line = makeBulkOpResult(data, index);
         $line.appendTo($results);
         scrollIntoView($line);
         return (typeof data === 'string') ? data : asString(data);
     }
 
     /**
-     * Generate a line for inclusion in the bulk upload results element.
+     * Generate a line for inclusion in the bulk operation results element.
      *
      * @param {object|string} entry
      * @param {number|string} [index]
      *
      * @returns {jQuery}
      */
-    function makeBulkUploadResult(entry, index) {
-        const func = 'makeBulkUploadResult';
+    function makeBulkOpResult(entry, index) {
+        const func = 'makeBulkOpResult';
         let $line  = $('<div>');
 
         // CSS classes for the new line.
@@ -932,36 +935,36 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Display previous bulk upload results.
+     * Display previous bulk operation results.
      *
      * @param {Selector} results
-     * @param {string}   [data]       Default: {@link getBulkUploadTrace}.
+     * @param {string}   [data]       Default: {@link getBulkOpTrace}.
      *
      * @returns {number}              Number of entries to be shown.
      */
-    function showBulkUploadResults(results, data) {
-        let $results = bulkUploadResults(results);
-        let entries  = data || getBulkUploadTrace();
+    function showBulkOpResults(results, data) {
+        let $results = bulkOpResults(results);
+        let entries  = data || getBulkOpTrace();
         if (entries && !entries.startsWith('[')) {
             entries  = `[${entries}]`;
         }
         const list = entries && fromJSON(entries) || [];
         $.each(list, function(row, record) {
-            makeBulkUploadResult(record, (row + 1)).appendTo($results);
+            makeBulkOpResult(record, (row + 1)).appendTo($results);
         });
         return list.length;
     }
 
     /**
-     * Get upload entries.
+     * Get a sequence of EMMA entries.
      *
      * @param {string|number|null}       min
      * @param {string|number|null}       max
      * @param {function(UploadRecord[])} callback
      */
-    function fetchUploadEntries(min, max, callback) {
+    function fetchEntryList(min, max, callback) {
 
-        const func = 'fetchUploadEntries';
+        const func = 'fetchEntryList';
         let range;
         if (min && max) { range = `${min}-${max}`; }
         else if (max)   { range = `1-${max}`; }
@@ -986,7 +989,7 @@ $(document).on('turbolinks:load', function() {
         });
 
         /**
-         * Extract the list of Upload entries returned as JSON.
+         * Extract the list of EMMA entries returned as JSON.
          *
          * @param {object}         data
          * @param {string}         status
@@ -1051,50 +1054,50 @@ $(document).on('turbolinks:load', function() {
     /**
      * Get stored value.
      *
-     * @param {string} [name]         Default: {@link BULK_UPLOAD_STORAGE_KEY}.
+     * @param {string} [name]         Default: {@link BULK_OP_STORAGE_KEY}.
      *
      * @returns {string}
      */
-    function getBulkUploadTrace(name) {
-        const key = name || BULK_UPLOAD_STORAGE_KEY;
+    function getBulkOpTrace(name) {
+        const key = name || BULK_OP_STORAGE_KEY;
         return sessionStorage.getItem(key) || '';
     }
 
     /**
      * Clear stored value.
      *
-     * @param {string} [name]         Passed to {@link setBulkUploadTrace}.
+     * @param {string} [name]         Passed to {@link setBulkOpTrace}.
      *
      * @returns {string}              New stored value.
      */
-    function clearBulkUploadTrace(name) {
-        return setBulkUploadTrace('', name, false);
+    function clearBulkOpTrace(name) {
+        return setBulkOpTrace('', name, false);
     }
 
     /**
      * Add to stored value.
      *
      * @param {string|string[]|object} value
-     * @param {string}                 [name]   To {@link setBulkUploadTrace}.
+     * @param {string}                 [name]   To {@link setBulkOpTrace}.
      *
      * @returns {string}                        New stored value.
      */
-    function addBulkUploadTrace(value, name) {
-        return setBulkUploadTrace(value, name, true);
+    function addBulkOpTrace(value, name) {
+        return setBulkOpTrace(value, name, true);
     }
 
     /**
      * Set stored value.
      *
      * @param {string|object|string[]|object[]} value
-     * @param {string}  [name]        Def: {@link BULK_UPLOAD_STORAGE_KEY}.
+     * @param {string}  [name]        Def: {@link BULK_OP_STORAGE_KEY}.
      * @param {boolean} [append]      If *true* append to current
      *
      * @returns {string}              New stored value.
      */
-    function setBulkUploadTrace(value, name, append) {
-        const key = name || BULK_UPLOAD_STORAGE_KEY;
-        let entry = append && getBulkUploadTrace(key) || '';
+    function setBulkOpTrace(value, name, append) {
+        const key = name || BULK_OP_STORAGE_KEY;
+        let entry = append && getBulkOpTrace(key) || '';
         if (isPresent(value)) {
             let trace = (v) => (typeof v === 'string') ? v : asString(v);
             let parts = arrayWrap(value).map(v => trace(v));
@@ -1112,8 +1115,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Call the server endpoint to acquire replacement Upload field values for
-     * the form.
+     * Call the server endpoint to acquire replacement form field values.
      *
      * If this is a create form, then a new Upload record is generated to make
      * up for the fact that previously clicking away from the page resulted in
@@ -1122,7 +1124,7 @@ $(document).on('turbolinks:load', function() {
      * If this is an update form, then the appropriate field values are
      * generated to put the Upload record in the initial workflow edit state.
      *
-     * In either case, {@link initializeUploadForm} is called with the new
+     * In either case, {@link initializeEntryForm} is called with the new
      * fields to complete page initialization.
      *
      * @param {Selector} [form]       Passed to {@link formElement}.
@@ -1208,7 +1210,7 @@ $(document).on('turbolinks:load', function() {
             } else {
                 consoleError(`${func}: ${url}:`, (error || 'unknown failure'));
             }
-            initializeUploadForm($form, record);
+            initializeEntryForm($form, record);
         }
     }
 
@@ -1218,7 +1220,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector}      form
      * @param {string|object} [start_data]  Replacement data.
      */
-    function initializeUploadForm(form, start_data) {
+    function initializeEntryForm(form, start_data) {
 
         let $form = $(form);
 
@@ -1281,7 +1283,8 @@ $(document).on('turbolinks:load', function() {
 
         // Uppy will replace <input type="file"> with its own mechanisms so
         // the original should not be displayed.
-        $form.find('input#upload_file').css('display', 'none');
+        $form.find('input#upload_file, input#entry_file').css('display', 'none'); // TODO: remove after upload -> entry
+        //$form.find('input#entry_file').css('display', 'none');                  // TODO: use after upload -> entry
 
         // Reposition it so that it comes before the display of the uploaded
         // filename.
@@ -3884,8 +3887,8 @@ $(document).on('turbolinks:load', function() {
             $form = $form.parents(FORM_SELECTOR);
         }
         if (isMissing($form)) {
-            const bulk = isMissing($file_upload_form);
-            $form = bulk ? $bulk_operation_form : $file_upload_form;
+            const bulk = isMissing($entry_form);
+            $form = bulk ? $bulk_operation_form : $entry_form;
         }
         return $form.first();
     }
@@ -3921,7 +3924,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fileDataElement(form) {
-        return formElement(form).find('#upload_file_data');
+        return formElement(form).find('#upload_file_data, #entry_file_data'); // TODO: remove after upload -> entry
+        //return formElement(form).find('#entry_file_data');                  // TODO: use after upload -> entry
     }
 
     /**
@@ -4021,7 +4025,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldDisplayFilterContainer(form) {
-        return formElement(form).find('.upload-field-group');
+        return formElement(form).find('.upload-field-group, .entry-field-group');   // TODO: remove after upload -> entry
+        //return formElement(form).find('.entry-field-group');                      // TODO: use after upload -> entry
     }
 
     /**
@@ -4065,7 +4070,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldContainer(form) {
-        return formElement(form).find('.upload-fields');
+        return formElement(form).find('.upload-fields, .entry-fields'); // TODO: remove after upload -> entry
+        //return formElement(form).find('.entry-fields');               // TODO: use after upload -> entry
     }
 
     /**

@@ -125,7 +125,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $record_lines = $record_list.children('.number, .upload-list-item');
+    let $record_lines = $record_list.children('.number, .upload-list-item, .entry-list-item');  // TODO: remove after upload -> entry
+    //let $record_lines = $record_list.children('.number, .entry-list-item');                   // TODO: use after upload -> entry
 
     /**
      * The record list elements that are shown when there are no records.

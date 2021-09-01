@@ -1,0 +1,63 @@
+<%# app/views/entry/phases.html.erb -%>
+<%-
+  # Display a list of Phase records.
+
+  list   ||= @list || []
+  count  ||= list.size
+  offset ||= page_offset
+  level  ||= 1
+  row    ||= level
+  skip   ||= nil
+
+  title  ||= t('emma.entry.phases.title')
+  total  ||= count
+  terms  ||= search_terms
+  help   ||= nil
+
+  page_opt = Entry::SEARCH_RECORDS_OPTIONS.dup << :group
+  page_terms, search = partition_hash(terms, *page_opt)
+  page   = page_terms[:page]&.values&.first&.to_i || 1
+  search = search.presence
+
+  unless modal?
+    label = t('emma.entry.actions.label', default: title)
+    group = page_terms[:group]&.values&.first
+    group = Entry.state_group_label(group) if group # TODO: upload -> entry
+    terms = search
+    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
+    set_page_title(label)
+    append_page_title('-', group)                    if group
+    append_page_title('-', list_search_terms(terms)) if terms
+    set_page_description(title)
+    set_page_robots(:nofollow)
+  end
+
+  skip = Array.wrap(skip)
+  opt  = { offset: offset, level: (level + 1), skip: skip }
+  opt.merge!(list: list, total: total, page: page, row: row)
+
+  top_controls, bottom_controls = index_controls(**opt)
+  opt[:row] += 1 if top_controls
+
+  # template_opt = opt.merge!(skip: :title)
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%#= entry_page_filter_options if session_debug? %>
+<%#= page_description_section %>
+<%#= entry_state_group_select %>
+
+<div class="<%= EntryHelper::ENTRY_LIST_CLASS -%>">
+  <%= top_controls %>
+  <%- if list.blank? -%>
+    <%= render 'entry/list_item', opt.merge!(index: -1, row: row) %>
+  <%- else -%>
+    <%- list.each_with_index do |item, idx| -%>
+      <%- opt.merge!(index: idx, row: (row + idx), item: item) -%>
+      <%= render 'entry/list_item', opt %>
+    <%- end -%>
+  <%- end -%>
+  <%= bottom_controls if list.present? %>
+</div>

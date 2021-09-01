@@ -84,6 +84,60 @@ Rails.application.routes.draw do
   get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',    as: 'bulk_reindex'
 
   # ===========================================================================
+  # EMMA entry operations
+  #
+  # NOTE: Avoid "resources :entry" because :action can get turned into :id.
+  # ===========================================================================
+
+  get    '/entry',                to: 'entry#index',          as: 'entry_index'
+  get    '/entry/show/:id',       to: 'entry#show',           as: 'show_entry'
+
+  # === Single-entry workflows
+
+  get    '/entry/new_select',     to: redirect('/entry/new'), as: 'new_select_entry'     # Only for consistency
+  get    '/entry/new',            to: 'entry#new',            as: 'new_entry'
+  match  '/entry/create',         to: 'entry#create',         as: 'create_entry',        via: %i[post put patch]
+
+  get    '/entry/edit_select',    to: 'entry#edit',           as: 'edit_select_entry',   defaults: { id: 'SELECT' }
+  get    '/entry/edit/:id',       to: 'entry#edit',           as: 'edit_entry'
+  match  '/entry/update/:id',     to: 'entry#update',         as: 'update_entry',        via: %i[put patch]
+
+  get    '/entry/delete_select',  to: 'entry#delete',         as: 'delete_select_entry', defaults: { id: 'SELECT' }
+  get    '/entry/delete/:id',     to: 'entry#delete',         as: 'delete_entry'
+  delete '/entry/destroy/:id',    to: 'entry#destroy',        as: 'destroy_entry'
+
+  # === Bulk operation workflows
+
+  get    '/entry/bulk_new',       to: 'entry#bulk_new',       as: 'bulk_new_entry'
+  post   '/entry/bulk',           to: 'entry#bulk_create',    as: 'bulk_create_entry'
+
+  get    '/entry/bulk_edit',      to: 'entry#bulk_edit',      as: 'bulk_edit_entry'
+  match  '/entry/bulk',           to: 'entry#bulk_update',    as: 'bulk_update_entry',   via: %i[put patch]
+
+  get    '/entry/bulk_delete',    to: 'entry#bulk_delete',    as: 'bulk_delete_entry'
+  delete '/entry/bulk',           to: 'entry#bulk_destroy',   as: 'bulk_destroy_entry'
+
+  get    '/entry/bulk',           to: 'entry#bulk_index',     as: 'bulk_entry_index'
+
+  # === Upload support
+
+  post   '/entry/renew',          to: 'entry#renew',          as: 'renew_entry'
+  post   '/entry/reedit',         to: 'entry#reedit',         as: 'reedit_entry'
+  match  '/entry/cancel',         to: 'entry#cancel',         as: 'cancel_entry',        via: %i[get post]
+  get    '/entry/check/:id',      to: 'entry#check',          as: 'check_entry'
+  post   '/entry/endpoint',       to: 'entry#endpoint',       as: 'entries'              # Invoked from entry.form.js
+
+  # === Administration
+
+  get    '/entry/admin',          to: 'entry#admin',          as: 'admin_entry'
+  get    '/entry/phases',         to: 'entry#phases',         as: 'phases'
+  get    '/entry/actions',        to: 'entry#actions',        as: 'actions'
+
+  # === Display
+
+  get    '/entry/:id',            to: redirect('/entry/show/%{id}')
+
+  # ===========================================================================
   # File download operations
   # ===========================================================================
 
@@ -250,6 +304,12 @@ unless ONLY_FOR_DOCUMENTATION
   def api_index_url(*);                           end
   def artifact_index_path(*);                     end
   def artifact_index_url(*);                      end
+  def bulk_create_entry_path(*);                  end
+  def bulk_create_entry_url(*);                   end
+  def bulk_destroy_entry_path(*);                 end
+  def bulk_destroy_entry_url(*);                  end
+  def bulk_update_entry_path(*);                  end
+  def bulk_update_entry_url(*);                   end
   def category_index_path(*);                     end
   def category_index_url(*);                      end
   def check_health_path(*);                       end
@@ -268,6 +328,8 @@ unless ONLY_FOR_DOCUMENTATION
   def edit_user_registration_url(*);              end
   def edition_index_path(*);                      end
   def edition_index_url(*);                       end
+  def entry_index_path(*);                        end
+  def entry_index_url(*);                         end
   def home_path(*);                               end
   def home_url(*);                                end
   def member_index_path(*);                       end

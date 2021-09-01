@@ -1,0 +1,7 @@
+<%# app/views/entry/admin.json.erb -%>
+<%-
+  # Entry submission administration values in JSON.
+-%>
+{
+  "buckets": { <%= json_s3_bucket_table(@object_table, erb: true) %> }
+}
