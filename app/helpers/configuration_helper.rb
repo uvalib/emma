@@ -288,10 +288,7 @@ module ConfigurationHelper
     elsif item.is_a?(Array)
       item.map { |v| send(__method__, v, **opt) }
     elsif item.is_a?(String) && item.include?('%{')
-      item.gsub(/%{([^}]+)}/) do |s|
-        name = $1&.to_sym
-        name && opt[:units][name] || s
-      end
+      item.gsub(SPRINTF_NAMED_REFERENCE) { |s| opt[:units][$1&.to_sym] || s }
     else
       item
     end

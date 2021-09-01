@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module ApiService::Status
 
+  include Emma::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -21,7 +23,7 @@ module ApiService::Status
   # @return [(FalseClass,String)]
   #
   def active_status(*)
-    raise 'To be overridden'
+    not_implemented 'to be overridden'
   end
 
   # ===========================================================================

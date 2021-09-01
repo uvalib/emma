@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'csv'
+
 # CSV utilities.
 #
 module Emma::Csv

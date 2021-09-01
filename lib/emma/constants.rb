@@ -33,18 +33,6 @@ module Emma::Constants
   #
   CONTACT_EMAIL = 'emmahelp@virginia.edu'
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # String to cause text to continue on the next line within an HTML element.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  HTML_NEW_LINE = "<br/>\n".html_safe.freeze
-
 end
 
 __loading_end(__FILE__)

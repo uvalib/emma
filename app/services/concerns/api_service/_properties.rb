@@ -88,7 +88,7 @@ module ApiService::Properties
   # @return [String]
   #
   def base_url
-    @base_url ||= raise "#{__method__} must be defined by the subclass"
+    @base_url ||= not_implemented 'must be defined by the subclass'
   end
 
   # The URL for the API connection as a URI.
@@ -104,7 +104,7 @@ module ApiService::Properties
   # @return [String, nil]
   #
   def api_key
-    raise "#{__method__} must be defined by the subclass"
+    not_implemented 'must be defined by the subclass'
   end
 
   # API version (if applicable).
@@ -112,7 +112,7 @@ module ApiService::Properties
   # @return [String, nil]
   #
   def api_version
-    raise "#{__method__} must be defined by the subclass"
+    not_implemented 'must be defined by the subclass'
   end
 
   # ===========================================================================

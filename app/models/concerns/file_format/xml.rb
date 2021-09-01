@@ -11,6 +11,8 @@ require 'nokogiri'
 #
 module FileFormat::Xml
 
+  include Emma::Common
+
   # ===========================================================================
   # :section: FileParser overrides
   # ===========================================================================
@@ -43,7 +45,7 @@ module FileFormat::Xml
   # @return [Hash{Symbol=>Array<String>}]
   #
   def retrieve_metadata
-    raise "#{self.class}: #{__method__} not defined"
+    not_implemented 'to be overridden by the subclass'
   end
 
   # ===========================================================================

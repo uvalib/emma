@@ -46,7 +46,7 @@ module Api::Shared::TitleMethods
   # @return [String]
   #
   def identifier
-    raise 'To be overridden'
+    not_implemented 'to be overridden'
   end
 
   # ===========================================================================

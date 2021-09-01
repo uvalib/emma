@@ -31,6 +31,7 @@ module OmniAuth
     #++
     class Bookshare < OmniAuth::Strategies::OAuth2
 
+      include Emma::Common
       include Emma::Json
 
       include OmniAuth::ExtensionDebugging

@@ -16,6 +16,7 @@ __loading_begin(__FILE__)
 #
 module FileFormat
 
+  include Emma::Common
   include Emma::Unicode
 
   # ===========================================================================
@@ -106,7 +107,7 @@ module FileFormat
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
   def configuration
-    raise "#{self.class}: #{__method__} not defined"
+    not_implemented 'to be overridden by the subclass'
   end
 
   # parser
@@ -114,7 +115,7 @@ module FileFormat
   # @return [FileParser]
   #
   def parser
-    raise "#{self.class}: #{__method__} not defined"
+    not_implemented 'to be overridden by the subclass'
   end
 
   # parser_metadata
@@ -336,7 +337,7 @@ module FileFormat
   # @return [String]
   #
   def format_image(_value)
-    raise "#{self.class}: #{__method__} not defined"
+    not_implemented 'to be overridden by the subclass'
   end
 
   # Used within #field_transforms to apply a method to each element of a

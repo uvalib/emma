@@ -73,7 +73,7 @@ module Import
   # @return [Hash]
   #
   def schema
-    raise "#{__method__}: must be defined by subclass"
+    not_implemented 'to be overridden by the subclass'
   end
 
   # String prepended to an imported data key which turns it into a key that can

@@ -81,7 +81,7 @@ module AwsS3Service::Properties
   # @return [String]
   #
   def base_url
-    raise 'Unused for AwsS3'
+    not_implemented 'unused for Aws::S3'
   end
 
   # The URL for the API connection as a URI.
@@ -89,7 +89,7 @@ module AwsS3Service::Properties
   # @return [URI::Generic]
   #
   def base_uri
-    raise 'Unused for AwsS3'
+    not_implemented 'unused for Aws::S3'
   end
 
   # Federated AwsS3 API key.
@@ -97,7 +97,7 @@ module AwsS3Service::Properties
   # @return [String]
   #
   def api_key
-    raise 'Unused for AwsS3'
+    not_implemented 'unused for Aws::S3'
   end
 
   # API version is not a part of request URLs.
@@ -105,7 +105,7 @@ module AwsS3Service::Properties
   # @return [nil]
   #
   def api_version
-    raise 'Unused for AwsS3'
+    not_implemented 'unused for Aws::S3'
   end
 
   # ===========================================================================

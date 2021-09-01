@@ -13,6 +13,7 @@ class Shrine
 
   module UploadedFileExt
 
+    include Emma::Common
     include Emma::Mime
 
     # Non-functional hints for RubyMine type checking.

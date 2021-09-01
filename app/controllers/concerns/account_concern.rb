@@ -124,7 +124,7 @@ module AccountConcern
       error   = error.full_messages if error.respond_to?(:full_messages)
       message = message&.remove(/[[:punct:]]$/)&.concat(':') || 'ERRORS:'
       message = [message, *Array.wrap(error)]
-      message = safe_join(message, "<br/>\n".html_safe)
+      message = safe_join(message, HTML_BREAK)
     end
     # noinspection RubyCaseWithoutElseBlockInspection
     redirect ||=

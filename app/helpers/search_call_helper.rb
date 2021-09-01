@@ -189,7 +189,7 @@ module SearchCallHelper
 =begin
         v_opt ||= { separator: search_call_connector }
 =end
-        v_opt ||= { separator: '<br/>'.html_safe }
+        v_opt ||= { separator: HTML_BREAK }
         search_call_value(v, **v_opt)
 
       elsif attr_value.is_a?(String)

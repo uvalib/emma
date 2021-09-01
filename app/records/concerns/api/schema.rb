@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Api::Schema
 
+  include Emma::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -133,7 +135,7 @@ module Api::Schema
   # @return [String]
   #
   def service_name
-    raise "#{__method__} should be overridden"
+    not_implemented 'to be overridden'
   end
 
   # A table of schema property enumeration types mapped to literals which are
@@ -142,7 +144,7 @@ module Api::Schema
   # @return [Hash{Symbol=>String}]
   #
   def enumeration_defaults
-    raise "#{__method__} should be overridden"
+    not_implemented 'to be overridden'
   end
 
   # The enumeration types that may be given as the second argument to
@@ -151,7 +153,7 @@ module Api::Schema
   # @return [Array<Symbol>]
   #
   def enumeration_types
-    raise "#{__method__} should be overridden"
+    not_implemented 'to be overridden'
   end
 
   # enumeration_default

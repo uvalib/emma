@@ -10,6 +10,8 @@ __loading_begin(__FILE__)
 #
 class FileParser < FileObject
 
+  include Emma::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -21,7 +23,7 @@ class FileParser < FileObject
   # @return [OpenStruct]
   #
   def metadata
-    raise "#{self.class}: #{__method__} not defined"
+    not_implemented 'to be overridden by the subclass'
   end
 
   # Extracted metadata mapped to common metadata fields.
@@ -29,7 +31,7 @@ class FileParser < FileObject
   # @return [Hash]
   #
   def common_metadata
-    raise "#{self.class}: #{__method__} not defined"
+    not_implemented 'to be overridden by the subclass'
   end
 
 end

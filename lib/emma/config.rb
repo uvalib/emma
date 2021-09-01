@@ -5,9 +5,13 @@
 
 __loading_begin(__FILE__)
 
+require 'yaml'
+
 # Emma::Config
 #
 module Emma::Config
+
+  include Emma::Common
 
   # ===========================================================================
   # :section:

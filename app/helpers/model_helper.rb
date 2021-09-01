@@ -449,7 +449,7 @@ module ModelHelper
       value = value.map { |v| html_div(v, class: "item-#{v_idx += 1}") }
       value = safe_join(value, separator)
     elsif value.is_a?(Array)
-      separator ||= "<br/>\n".html_safe
+      separator ||= HTML_BREAK
       value = safe_join(value, separator)
     end
 
