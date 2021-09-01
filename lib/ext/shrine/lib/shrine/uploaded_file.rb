@@ -16,9 +16,11 @@ class Shrine
     include Emma::Mime
 
     # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    include Shrine::UploadedFile::InstanceMethods unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include Shrine::UploadedFile::InstanceMethods
+      # :nocov:
+    end
 
     # =========================================================================
     # :section:
@@ -96,9 +98,11 @@ class Shrine
       include Shrine::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
-      # :nocov:
-      include Shrine::UploadedFileExt unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
+      unless ONLY_FOR_DOCUMENTATION
+        # :nocov:
+        include Shrine::UploadedFileExt
+        # :nocov:
+      end
 
       # =======================================================================
       # :section: Shrine::UploadedFile overrides

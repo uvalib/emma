@@ -275,9 +275,11 @@ module OAuth2
       include OAuth2::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
-      # :nocov:
-      include OAuth2::ClientExt unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
+      unless ONLY_FOR_DOCUMENTATION
+        # :nocov:
+        include OAuth2::ClientExt
+        # :nocov:
+      end
 
       # =======================================================================
       # :section: OAuth2::Client overrides

@@ -301,8 +301,8 @@ class ApiService::Error < Api::Error
 end
 
 # Non-functional hints for RubyMine type checking.
-# :nocov:
 unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   # ===========================================================================
   # :section: Transmission errors
@@ -455,7 +455,7 @@ unless ONLY_FOR_DOCUMENTATION
     include ApiService::Error::Methods
   end
 
+  # :nocov:
 end
-# :nocov:
 
 __loading_end(__FILE__)

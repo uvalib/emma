@@ -242,8 +242,8 @@ end
 
 # Non-functional hints for RubyMine type checking.
 # noinspection RubyInstanceMethodNamingConvention
-# :nocov:
 unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
   def account_index_path(*);                      end
   def account_index_url(*);                       end
   def api_index_path(*);                          end
@@ -316,5 +316,5 @@ unless ONLY_FOR_DOCUMENTATION
   def version_health_url(*);                      end
   def welcome_path(*);                            end
   def welcome_url(*);                             end
+  # :nocov:
 end
-# :nocov:

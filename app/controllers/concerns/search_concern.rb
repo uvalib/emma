@@ -41,9 +41,11 @@ module SearchConcern
   include SearchHelper
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
-  include PaginationConcern unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include PaginationConcern
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section:

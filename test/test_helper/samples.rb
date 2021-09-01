@@ -60,8 +60,8 @@ module TestHelper::Samples
   end
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # Generate a sample instance from text/fixtures/artifacts.yml.
     # @return [Artifact]
@@ -103,7 +103,7 @@ module TestHelper::Samples
     # @return [User]
     def sample_user; end
 
+    # :nocov:
   end
-  # :nocov:
 
 end

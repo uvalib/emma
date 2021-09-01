@@ -23,13 +23,13 @@ class Shrine
       include Shrine::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
-      # :nocov:
       unless ONLY_FOR_DOCUMENTATION
+        # :nocov:
         include Shrine::Attacher::InstanceMethods
         include Shrine::Plugins::Activerecord::AttacherMethods
         include Shrine::Plugins::Entity::AttacherMethods
+        # :nocov:
       end
-      # :nocov:
 
       # =======================================================================
       # :section: Shrine::Attacher::InstanceMethods overrides

@@ -16,9 +16,11 @@ module Devise
   module Controllers::StoreLocationExt
 
     # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    include Devise::Controllers::StoreLocation unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include Devise::Controllers::StoreLocation
+      # :nocov:
+    end
 
     # =========================================================================
     # :section: Devise::Controllers::StoreLocation overrides

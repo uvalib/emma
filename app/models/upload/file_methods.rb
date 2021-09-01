@@ -30,8 +30,8 @@ module Upload::FileMethods
   include FileNaming
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # Represents a file that was uploaded to a storage.
     #
@@ -72,8 +72,8 @@ module Upload::FileMethods
     #
     attr_reader :edit_file_attacher
 
+    # :nocov:
   end
-  # :nocov:
 
   # ===========================================================================
   # :section:

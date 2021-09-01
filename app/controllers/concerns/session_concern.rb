@@ -71,9 +71,11 @@ module SessionConcern
   include AuthConcern
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
-  include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Devise::Controllers::Helpers
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section:

@@ -22,16 +22,18 @@ class BookshareService < ApiService
   include_submodules(self)
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+
     # @!method instance
     #   @return [BookshareService]
     # @!method update
     #   @return [BookshareService]
     class << self
     end
+
+    # :nocov:
   end
-  # :nocov:
 
 end
 

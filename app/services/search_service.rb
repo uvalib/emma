@@ -15,16 +15,18 @@ class SearchService < ApiService
   include_submodules(self)
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+
     # @!method instance
     #   @return [SearchService]
     # @!method update
     #   @return [SearchService]
     class << self
     end
+
+    # :nocov:
   end
-  # :nocov:
 
 end
 

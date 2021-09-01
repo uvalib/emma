@@ -15,16 +15,18 @@ class AwsS3Service < ApiService
   include_submodules(self)
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+
     # @!method instance
     #   @return [AwsS3Service]
     # @!method update
     #   @return [AwsS3Service]
     class << self
     end
+
+    # :nocov:
   end
-  # :nocov:
 
 end
 

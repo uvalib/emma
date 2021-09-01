@@ -16,8 +16,8 @@ module UserConcern
   end
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # Defined by Devise.
     #
@@ -39,8 +39,8 @@ module UserConcern
     #
     def current_user; end
 
+    # :nocov:
   end
-  # :nocov:
 
   include FlashConcern
   include BookshareConcern

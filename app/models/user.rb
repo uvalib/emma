@@ -109,15 +109,16 @@ class User < ApplicationRecord
          :omniauthable, omniauth_providers: OAUTH2_PROVIDERS
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
     include Devise::Models::DatabaseAuthenticatable
     include Devise::Models::Rememberable
     include Devise::Models::Trackable
     include Devise::Models::Registerable
     include Devise::Models::Omniauthable
+    extend  ActiveRecord::Validations
+    # :nocov:
   end
-  # :nocov:
 
   # ===========================================================================
   # :section: Authorization

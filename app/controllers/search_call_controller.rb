@@ -21,9 +21,11 @@ class SearchCallController < ApplicationController
   include SearchCallConcern
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
-  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include AbstractController::Callbacks
+    # :nocov:
+  end
 
   # Initially extend table with a column for each JSON sub-field.
   #

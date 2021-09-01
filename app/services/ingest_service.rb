@@ -15,16 +15,18 @@ class IngestService < ApiService
   include_submodules(self)
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+
     # @!method instance
     #   @return [IngestService]
     # @!method update
     #   @return [IngestService]
     class << self
     end
+
+    # :nocov:
   end
-  # :nocov:
 
 end
 

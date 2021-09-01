@@ -23,9 +23,13 @@ class UploadController < ApplicationController
   include IaDownloadConcern
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
-  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include AbstractController::Callbacks
+    include ActionController::RespondWith
+    extend  CanCan::ControllerAdditions::ClassMethods
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section: Authentication

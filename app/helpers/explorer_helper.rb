@@ -20,9 +20,11 @@ module ExplorerHelper
   include HtmlHelper
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
-  include BookshareConcern unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include BookshareConcern
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section:

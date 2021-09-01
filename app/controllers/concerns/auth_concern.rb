@@ -20,9 +20,11 @@ module AuthConcern
   include AuthHelper
 
   # Non-functional hints for RubyMine type checking.
-  # :nocov:
-  include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Devise::Controllers::Helpers
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section:
@@ -351,8 +353,8 @@ module AuthConcern
 
 end
 
-# :nocov:
 unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   # @private
   #
@@ -374,7 +376,7 @@ unless ONLY_FOR_DOCUMENTATION
     def validatable?              ; end # @see Devise::Mapping#add_module
   end
 
+  # :nocov:
 end
-# :nocov:
 
 __loading_end(__FILE__)

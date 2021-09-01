@@ -51,9 +51,11 @@ class Shrine
       include Shrine::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
-      # :nocov:
-      include Shrine::UploadEndpointExt unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
+      unless ONLY_FOR_DOCUMENTATION
+        # :nocov:
+        include Shrine::UploadEndpointExt
+        # :nocov:
+      end
 
       # =======================================================================
       # :section: Shrine::UploadEndpoint overrides
