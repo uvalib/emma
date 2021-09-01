@@ -461,7 +461,7 @@ module ModelHelper
         topic   = url_repository(url, default: !application_deployed?)
         replace = help.is_a?(Array) && (help.size > 1)
       end
-      help = replace ? (help[0...-1] << topic) : [*help, topic] if topic
+      help = replace ? (help[0..-2] << topic) : [*help, topic] if topic
       help = help_popup(*help)
     end
 

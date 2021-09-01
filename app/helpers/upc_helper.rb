@@ -94,7 +94,7 @@ module UpcHelper
       last   = UPC_DIGITS - 1 # Position of the check digit.
       digits = upc[0..(last-1)]
       check  = upc[last].to_i
-      added  = upc[(last+1)..-1] if upc.size > UPC_DIGITS
+      added  = upc[(last+1)..] if upc.size > UPC_DIGITS
     elsif log
       Log.info { "#{__method__}: #{s.inspect} is not a valid UPC" }
     end

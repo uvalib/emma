@@ -159,7 +159,7 @@ module ParamsHelper
   # @return [String, nil]
   #
   def decompress_value(v)
-    v = Zlib.inflate(Base64.strict_decode64(v[1..-1])) if compressed_value?(v)
+    v = Zlib.inflate(Base64.strict_decode64(v[1..])) if compressed_value?(v)
     v.presence
   end
 

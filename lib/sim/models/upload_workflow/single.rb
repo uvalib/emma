@@ -347,10 +347,9 @@ module UploadWorkflow::Single::Simulation
     return unless base < Workflow::Base
     base.class_eval do
       OVERRIDE_WORKFLOW_METHODS.each do |m|
-        # noinspection RubyArgCount
         define_method(m) do
-          super() ||
-            (simulating && submission.respond_to?(m) && submission.send(m))
+          # noinspection RubyArgCount
+          super() || (submission.try(m) if simulating)
         end
       end
     end
@@ -396,9 +395,8 @@ module UploadWorkflow::Single::Events
   # The system is resetting the workflow state.
   def reset(*)
     super.tap do
-      if simulating && respond_to?(:initialize_state)
-        initialize_state(submission.params, **{})
-      end
+      # noinspection RailsParamDefResolve
+      try(:initialize_state, submission.params, **{}) if simulating
     end
   end
 

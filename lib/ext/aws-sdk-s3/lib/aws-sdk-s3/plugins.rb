@@ -28,8 +28,7 @@ module Aws
       public
 
       def call(context)
-        from_file    = context.http_request.body.respond_to?(:size)
-        chunk_size   = from_file ? context.http_request.body.size : MISSING
+        chunk_size   = context.http_request.body.try(:size)     || MISSING
         body_payload = context.operation.input[:payload_member] || MISSING
         start_time   = timestamp
         super
