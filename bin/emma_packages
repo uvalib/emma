@@ -4,11 +4,13 @@
 #
 # Generate replacement YAML lines for "en.emma.head" in config/locales/en.yml.
 #
-# * To ensure that the packages are up-to-date, "yaml install" should be run
-# prior to running this script.
+# * Prior to running this script, to ensure that the packages are up-to-date:
+#   - Run "yarn outdated" to check for changes.
+#   - Edit ./package.json to specify updated package(s) as needed.
+#   - Run "yarn install" to update package(s).
 #
 # * For now, the script just emits the replacement YAML to stdout so that they
-# can be manually copy-and-pasted into config/locales/en.yml.
+# can be manually copied and pasted into config/locales/en.yml.
 #
 # frozen_string_literal: true
 # warn_indent:           true

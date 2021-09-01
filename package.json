@@ -5,6 +5,6 @@
   "dependencies": {
     "jquery":  "^3.6",
     "select2": "~4.0",
-    "uppy":    "^1.27"
+    "uppy":    "^1.30"
   }
 }

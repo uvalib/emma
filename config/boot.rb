@@ -137,13 +137,13 @@ end
 #
 def rails_application?
   if !defined?(@in_rails) || @in_rails.nil?
-    @in_rails = !!defined?(APP_PATH)
-    @in_rails &&= $*.none? { |arg| %w(-h -H --help).include?(arg) }
-    @in_rails &&= (
-      !!ENV['IN_PASSENGER'] ||
-      $0.to_s.start_with?('spring app') ||
-      ($0.to_s.end_with?('rails', 'spring') && $*.include?('server'))
-    )
+    @in_rails   = !!ENV['IN_PASSENGER']
+    @in_rails ||= $0.to_s.start_with?('spring app')
+    @in_rails ||= $0.to_s.end_with?('rails', 'spring') &&
+                  $*.any? { |arg| %w(-b -p server runner).include?(arg) }
+    @in_rails &&= !!defined?(APP_PATH)
+    @in_rails &&=
+      (($* - %w(-h -H --help -D --describe -T --tasks -n --dry-run)) == $*)
   end
   @in_rails
 end
@@ -152,16 +152,14 @@ end
 # task argument.
 #
 def rake_task?
-  if !defined?(@in_rake_task) || @in_rake_task.nil?
-    @in_rake_task = $0.to_s.end_with?('rake')
-    @in_rake_task ||=
-      if $0.to_s.end_with?('rails') && !rails_application?
-        tasks = $*.reject { |a| a.start_with?('-') } - %w(generate console new)
-        tasks.size > 0
-      end
-    @in_rake_task &&= $*.none? { |arg| %w(-h -H --help).include?(arg) }
+  if !defined?(@in_rake) || @in_rake.nil?
+    @in_rake   = $0.to_s.end_with?('rake')
+    @in_rake ||= $0.to_s.end_with?('rails') && !rails_application? &&
+      !$*.reject { |a| a.match(/^(-.*|new|console|generate)$/) }.empty?
+    @in_rake &&=
+      (($* - %w(-h -H --help -D --describe -T --tasks -n --dry-run)) == $*)
   end
-  @in_rake_task
+  @in_rake
 end
 
 # =============================================================================
@@ -177,8 +175,12 @@ require_relative 'env_vars'
 if rails_application?
 
   # Initial console/log message before the normal application boot sequence.
-  STDERR.puts "boot @ #{BOOT_TIME}"
-  STDERR.puts "BUILD #{BUILD_VERSION.inspect}"
+    STDERR.puts "boot @ #{BOOT_TIME}"
+  if File.exist?((desktop_file = '../emma-production-deploy/tags/emma.tag'))
+    STDERR.puts 'BUILD %s (latest)' % File.read(desktop_file).strip.inspect
+  else
+    STDERR.puts "BUILD #{BUILD_VERSION.inspect}"
+  end
   if application_deployed? # TODO: debugging - remove section eventually
     STDERR.puts "$0       = #{$0.inspect}"
     STDERR.puts "$*       = #{$*.inspect}"

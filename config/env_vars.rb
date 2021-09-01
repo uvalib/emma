@@ -19,38 +19,51 @@ ENV.keys.each do |k|
 end
 
 # =============================================================================
+# Configuration values for desktop-only deployments
+# =============================================================================
+
+config =
+  unless ENV['DEPLOYMENT']
+    # If running from the desktop, load a project-specific script to provide
+    # the environment variables that would have been set up from Terraform.
+
+    './.idea/environment.rb'.then { |f| f if File.exist?(f) } ||
+
+    # To acquire desktop environment values, the RubyMine Docker configuration
+    # needs a "Bind Mount" with "/home/rwl/Work/emma/.idea:/mnt:ro"; i.e.:
+    # "docker run --mount type=bind,src=/home/rwl/Work/.idea,dst=/mnt,readonly"
+
+    '/mnt/environment.rb'.then { |f| f if File.exist?(f) && in_local_docker? }
+  end
+
+config && require(config) &&
+  rails_application? && $stderr.puts("DESKTOP ENVIRONMENT #{config.inspect}")
+
+# =============================================================================
 # Database properties
 # =============================================================================
 
 db_needed   = rails_application?
 db_needed ||= rake_task? && $*.any? { |arg| arg.split(':').include?('db') }
 
-# DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in
-# terraform-infrastructure/emma.lib.virginia.edu/ecs-tasks/*/environment.vars
-# (or the local "environment.rb" if running on the desktop).
-#
-# DBHOST and/or DBPORT *may* be defined there; if not, DATABASE must be defined
-# in order to derive the missing value(s).
-
 if db_needed
 
-  if in_local_docker? && File.exist?('/mnt/environment.rb')
-
-    # To acquire desktop environment values, the RubyMine Docker configuration
-    # needs a "Bind Mount" with "/home/rwl/Work/emma/.idea:/mnt:ro"; i.e.:
-    # "docker run --mount type=bind,src=/home/rwl/Work/.idea,dst=/mnt,readonly"
-
-    require '/mnt/environment.rb'
-
-  elsif ENV['DBHOST'] && ENV['DBPORT'] && ENV['DBUSER'] && ENV['DBPASSWD']
+  if ENV['DBHOST'] && ENV['DBPORT'] && ENV['DBUSER'] && ENV['DBPASSWD']
 
     # This condition won't hold from the deployed application using Terraform
-    # environment.vars, but it will for the specific case of the database
+    # "environment.vars", but it will for the specific case of the database
     # migration run within the uva-emma-production-deploy-codepipeline.
 
     ENV['DEPLOYMENT'] ||= 'production'
 
   else
+
+    # DEPLOYMENT, DBNAME, DBUSER, and DBPASSWD must be defined in the Terraform
+    # project within "emma.lib.virginia.edu/ecs-tasks/*/environment.vars" (or
+    # in the "environment.rb" configuration script if running on the desktop).
+    #
+    # DBHOST and/or DBPORT *may* be defined there; if not, DATABASE *must* be
+    # defined in order to derive the missing value(s).
 
     host_port_missing = !(ENV['DBHOST'] && ENV['DBPORT'])
 
