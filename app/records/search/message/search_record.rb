@@ -45,10 +45,6 @@ __loading_begin(__FILE__)
 # @attr [Array<A11yAccessMode>]         s_accessMode
 # @attr [Array<A11ySufficient>]         s_accessModeSufficient
 #
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/MetadataRecord                               Search API documentation
-# @see https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3#/components/schemas/MetadataRecord  HTML schema documentation
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3                                     JSON schema specification
-#
 # @see file:config/locales/records/upload.en.yml *en.emma.upload.record.emma_data*
 #
 # @see Search::Record::MetadataCommonRecord (schema subset)

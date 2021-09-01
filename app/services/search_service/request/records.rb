@@ -37,6 +37,9 @@ module SearchService::Request::Records
   # The :publisher search is unique in that it can't be used by itself -- only
   # in conjunction with another search type and/or a filter selection.
   #
+  # @note According the documentation for API 0.0.4, :publisher searches do not
+  #   work when combined with :q searches.
+  #
   # === Control Parameters
   # The single-select :sort parameter controls the order in which items of the
   # result set are delivered.
@@ -67,6 +70,21 @@ module SearchService::Request::Records
   # items identified as belonging to at least one of the specified named
   # collections (logical-OR).
   #
+  # === Pagination
+  # One of two methods, depending on whether the results are not sorted (i.e.
+  # sorted by relevance) due to a limitation with the way Elasticsearch is
+  # being used.
+  #
+  # * Paging with :from
+  #   Returns the next page of results starting from the given result number.
+  #   Limited to 10,000 total results.
+  #
+  # * Paging with :searchAfterId and :searchAfterValue
+  #   Returns the next page of sorted results which come after the EMMA Record
+  #   Identifier (:emma_recordId) specified in :searchAfterId and URL-encoded
+  #   title or date (:dc_title or :emma_lastRemediationDate) specified in
+  #   :searchAfterValue.
+  #
   # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                                  :q
@@ -86,11 +104,12 @@ module SearchService::Request::Records
   # @option opt [String]                                  :searchAfterId
   # @option opt [String]                                  :searchAfterValue
   # @option opt [Integer]                                 :size
+  # @option opt [Integer]                                 :from
   #
   # @return [Search::Message::SearchRecordList]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/search/searchMetadata  HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/paths/search           JSON API specification
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/search/searchMetadata  HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/paths/search           JSON API specification
   #
   # == HTTP response codes
   #
@@ -110,6 +129,7 @@ module SearchService::Request::Records
           fmt:                  :format,
           keyword:              :q,
           limit:                :size,
+          offset:               :from,
           prev_id:              :searchAfterId,
           prev_value:           :searchAfterValue,
           query:                :q,
@@ -132,6 +152,7 @@ module SearchService::Request::Records
           searchAfterId:        String,
           searchAfterValue:     String,
           size:                 Integer,
+          from:                 Integer,
         },
         multi: %i[
           format
@@ -181,52 +202,6 @@ module SearchService::Request::Records
         role:  :anonymous,
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  NON_PUBLISHER_SEARCH = (%i[
-    collection
-    formatVersion
-    lastRemediationDate
-    publisher
-    repository
-    searchAfterId
-    searchAfterValue
-    size
-    sort
-    sortDate
-  ] + SERVICE_OPTIONS).freeze
-
-  # This override silently works around a limitation of the Unified Search
-  # index's handling of publisher searches.  The index treats this as a kind of
-  # hybrid between a search query and a search filter -- it does not accept a
-  # search which is only comprised of publisher search terms(s) alone.
-  #
-  # Its error message indicates that a publisher search can only be performed
-  # in conjunction with another search type ("identifier", "title", "creator",
-  # or "q" [keyword]) or with a filter selection from "format" ("Format" menu),
-  # "formatFeature" ("Feature" menu), or "accessibilityFeature"
-  # ("Accessibility" menu).
-  #
-  # If *opt* contains only :publisher then it adds filter selections for all of
-  # the known format types.  Unless there are records without at least one
-  # format type, this should make the :publisher term(s) search across all of
-  # the records.
-  #
-  # @see ApiService::Common#get_parameters
-  #
-  def get_parameters(meth, check_req: true, check_opt: false, **opt)
-    super.tap do |result|
-      if result.key?(:publisher) && result.except(*NON_PUBLISHER_SEARCH).blank?
-        result[encode_parameter(:format)] = DublinCoreFormat.values
-      end
-      result.delete(:sort) if result[:sort] == SearchSort.default
-    end
-  end
 
 end
 

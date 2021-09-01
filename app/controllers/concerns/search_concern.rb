@@ -126,19 +126,17 @@ module SearchConcern
     opt[:limit]  = limit         if limit && (limit != default_page_size)
 
     # Parameters specific to the Unified Search API.
-    opt[:prev_id]    = url_escape(last.emma_recordId)
-    opt[:prev_value] = url_escape(
-      case opt[:sort]&.to_sym
-        when :relevance           then last.dc_title                 # NOTE [1]
-        when :title               then last.dc_title
-        when :sortDate            then last.emma_sortDate            # NOTE [2]
-        when :lastRemediationDate then last.emma_lastRemediationDate
-        else                           last.dc_title                 # NOTE [3]
-      end
-    )
-    # NOTE [1] documentation doesn't actually cover the "default" sort case
-    # NOTE [2] not per documentation, but why not?
-    # NOTE [3] assuming :relevance is the default sort
+    title = date = nil
+    case opt[:sort]&.to_sym
+      when :title               then title = last.dc_title
+      when :sortDate            then date  = last.emma_sortDate
+      when :lastRemediationDate then date  = last.emma_lastRemediationDate
+      else                           opt.except!(:prev_id, :prev_value)
+    end
+    if title || date
+      opt[:prev_id]    = url_escape(last.emma_recordId)
+      opt[:prev_value] = url_escape(title || IsoDay.cast(date))
+    end
 
     # Internal-use parameters.
     opt[:immediate_search] = immediate_search?.presence

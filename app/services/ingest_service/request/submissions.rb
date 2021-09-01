@@ -34,8 +34,8 @@ module IngestService::Request::Submissions
   #
   # @return [Ingest::Message::Response]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/ingestion/upsertRecords   HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths/records             JSON API specification
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/upsertRecords   HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/records             JSON API specification
   #
   # == Variations
   #
@@ -78,8 +78,8 @@ module IngestService::Request::Submissions
   #
   # @return [Ingest::Message::Response]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/ingestion/deleteRecords   HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths/recordDeletes       JSON API specification
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/deleteRecords   HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/recordDeletes       JSON API specification
   #
   # == Variations
   #
@@ -122,8 +122,8 @@ module IngestService::Request::Submissions
   #
   # @return [Search::Message::SearchRecordList]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/ingestion/getRecords  HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths/recordGets      JSON API specification
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/getRecords  HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/recordGets      JSON API specification
   #
   # == Variations
   #
