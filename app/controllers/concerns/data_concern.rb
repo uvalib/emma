@@ -123,18 +123,16 @@ module DataConcern
   # When generating HTML, each record entry is an Array of field values;
   # otherwise each record entry is a Hash.
   #
-  # @param [String, Symbol, nil] name   Default: #SUBMISSION_TABLE.
-  # @param [Hash]                opt    Passed to DataHelper#table_records.
+  # @param [Hash] opt                 Passed to #submission_records
   #
   # @return [(String,Array)]
   #
-  def get_submission_records(name = nil, **opt)
-    name ||= SUBMISSION_TABLE
-    opt    = data_params.merge(**opt)
+  def get_submission_records(**opt)
 
     # If columns have been specified, they are applied after the records have
     # been acquired and filtered based on the expected set of columns.
-    columns = Array.wrap(opt.delete(:columns)).presence&.dup
+    opt     = data_params.merge(**opt)
+    columns = Array.wrap(opt.delete(:columns)).presence
 
     submission_records(**opt).tap do |_name, records|
       if records.first.is_a?(Hash)
@@ -155,12 +153,14 @@ module DataConcern
 
   # Generate results for submission pseudo records.
   #
-  # @param [Hash] opt                 Passed to #get_table_records.
+  # @param [String, Symbol, nil] table_name   Default: #SUBMISSION_TABLE.
+  # @param [Hash]                opt          Passed to #get_table_records.
   #
   # @return [(String,Array)]
   #
-  def submission_records(**opt)
-    get_table_records(SUBMISSION_TABLE, **opt)
+  def submission_records(table_name: nil, **opt)
+    table_name ||= SUBMISSION_TABLE
+    get_table_records(table_name, **opt)
   end
 
   # Filter out invalid submissions for values intended for JSON or XML output,

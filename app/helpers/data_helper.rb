@@ -127,31 +127,27 @@ module DataHelper
     end
 
     # Generate the first (schema) row if appropriate.
-    result  = []
-    columns = table_column_names(name, *cols)
-    if headings
-      if html
-        result << columns
-      else
-        result << { schema: table_column_types(name, *cols) }
+    columns  = table_column_names(name, *cols)
+    head_row = headings.presence
+    head_row &&= html ? columns : { schema: table_column_types(name, *cols) }
+
+    # Fetch the database table contents.
+    data_rows =
+      db_connection do |db|
+        db_select(db, name, cols, sort: :id) rescue db_select(db, name, cols)
+      end
+    unless html
+      columns.map!(&:to_sym)
+      data_rows.map! do |row|
+        columns.zip(row).to_h.map { |column, value|
+          value = json_parse(value) if column.end_with?('_data')
+          [column, value]
+        }.to_h
       end
     end
 
-    # Fetch the database table contents.
-    result +=
-      db_connection { |db|
-        db_select(db, name, cols, sort: :id) rescue db_select(db, name, cols)
-      }.tap do |rows|
-        unless html
-          columns.map!(&:to_sym)
-          rows.map! do |row|
-            columns.zip(row).to_h.map { |column, value|
-              value = json_parse(value) if column.end_with?('_data')
-              [column, value]
-            }.to_h
-          end
-        end
-      end
+    # Return with heading and data rows.
+    [head_row, *data_rows].compact
   end
 
   # ===========================================================================
