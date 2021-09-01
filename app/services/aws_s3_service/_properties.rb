@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module AwsS3Service::Properties
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Properties
 
   # ===========================================================================
@@ -111,6 +106,16 @@ module AwsS3Service::Properties
   #
   def api_version
     raise 'Unused for AwsS3'
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

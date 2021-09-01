@@ -13,10 +13,6 @@ module AwsConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'AwsConcern')
-  end
-
   include ApiConcern
 
   # ===========================================================================
@@ -270,6 +266,18 @@ module AwsConcern
     opt    = aws_params(opt)
     aws_s3 = opt.delete(:service)
     aws_s3.api_list_objects(bucket, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

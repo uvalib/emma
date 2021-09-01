@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module SerializationHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'SerializationHelper')
-  end
-
   include ParamsHelper
   include PaginationHelper
 
@@ -127,6 +122,16 @@ module SerializationHelper
     elsif !item.nil?
       CGI.escape_html(item.to_s)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

@@ -10,11 +10,6 @@ __loading_begin(__FILE__)
 #
 module UploadHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'UploadHelper')
-  end
-
   include Emma::Json
   include Emma::Unicode
 
@@ -1586,6 +1581,16 @@ module UploadHelper
   def bulk_delete_input(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_DELETE_LABEL
     bulk_input(f, param, value, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

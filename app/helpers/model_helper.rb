@@ -10,11 +10,6 @@ __loading_begin(__FILE__)
 #
 module ModelHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'ModelHelper')
-  end
-
   include Emma::Common
   include Emma::Json
   include Emma::Unicode
@@ -1866,6 +1861,16 @@ module ModelHelper
     prepend_classes!(opt, css_selector)
     append_classes!(opt, (url ? 'best-choice' : 'forbidden'))
     button_to(label, url, opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

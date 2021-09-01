@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module ImageHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'ImageHelper')
-  end
-
   include Emma::Common
 
   include HtmlHelper
@@ -116,6 +111,16 @@ module ImageHelper
     opt[:alt]    = PLACEHOLDER_IMAGE_ALT
     # noinspection RubyMismatchedReturnType
     image_tag(image, prepend_classes!(opt, css_selector))
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

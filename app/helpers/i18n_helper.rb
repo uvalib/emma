@@ -9,15 +9,6 @@ __loading_begin(__FILE__)
 #
 module I18nHelper
 
-  # @private
-  def self.included(base)
-
-    __included(base, 'I18nHelper')
-
-    base.send(:extend, self)
-
-  end
-
   include Emma::Common
 
   include ParamsHelper
@@ -310,6 +301,17 @@ module I18nHelper
       erb.lineno   = loc.lineno
     end
     erb.result
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:extend, self)
   end
 
 end

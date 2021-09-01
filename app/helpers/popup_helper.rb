@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module PopupHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'PopupHelper')
-  end
-
   include Emma::Unicode
 
   include HtmlHelper
@@ -109,6 +104,16 @@ module PopupHelper
     html_span(prepend_classes!(opt, css_selector)) do
       popup_control << popup_panel
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

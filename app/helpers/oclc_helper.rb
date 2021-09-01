@@ -11,11 +11,6 @@ __loading_begin(__FILE__)
 #
 module OclcHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'OclcHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -132,6 +127,16 @@ module OclcHelper
   #
   def remove_oclc_prefix(s)
     s.to_s.strip.sub(OCLC_PREFIX, '')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

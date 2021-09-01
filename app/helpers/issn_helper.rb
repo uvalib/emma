@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module IssnHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'IssnHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -157,6 +152,16 @@ module IssnHelper
   #
   def remove_issn_prefix(s)
     s.to_s.strip.sub(ISSN_PREFIX, '')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

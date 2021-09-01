@@ -12,11 +12,6 @@ require 'faraday'
 #
 module ApiService::Properties
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include I18nHelper
 
   # ===========================================================================
@@ -132,6 +127,16 @@ module ApiService::Properties
   #
   def max_redirects
     MAX_REDIRECTS
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module PeriodicalHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'PeriodicalHelper')
-  end
-
   include ModelHelper
   include EditionHelper
 
@@ -236,6 +231,16 @@ module PeriodicalHelper
     opt[:model] = :periodical
     opt[:pairs] = PERIODICAL_INDEX_FIELDS.merge(pairs || {})
     model_list_item(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

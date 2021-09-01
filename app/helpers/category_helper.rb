@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module CategoryHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'CategoryHelper')
-  end
-
   include ModelHelper
 
   # ===========================================================================
@@ -97,6 +92,16 @@ module CategoryHelper
     opt[:pairs].merge!(CATEGORY_INDEX_FIELDS)
     opt[:pairs].merge!(pairs) if pairs.present?
     model_list_item(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

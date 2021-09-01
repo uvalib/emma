@@ -9,15 +9,6 @@ __loading_begin(__FILE__)
 #
 module ConfigurationHelper
 
-  # @private
-  def self.included(base)
-
-    __included(base, 'ConfigurationHelper')
-
-    base.send(:extend, self)
-
-  end
-
   include Emma::Common
 
   include ParamsHelper
@@ -367,6 +358,17 @@ module ConfigurationHelper
       items: (plural ||= single.pluralize   unless no_plural),
       Items: (plural.capitalize             unless no_plural),
     }.compact
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:extend, self)
   end
 
 end

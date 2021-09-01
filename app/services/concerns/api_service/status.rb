@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module ApiService::Status
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -27,6 +22,16 @@ module ApiService::Status
   #
   def active_status(*)
     raise 'To be overridden'
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

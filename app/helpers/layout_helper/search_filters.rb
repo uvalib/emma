@@ -19,11 +19,6 @@ module LayoutHelper::SearchFilters
 
   module ClassMethods
 
-    # @private
-    def self.included(base)
-      base.send(:extend, self)
-    end
-
     include Emma::Common
 
     # =========================================================================
@@ -251,6 +246,16 @@ module LayoutHelper::SearchFilters
       return if (value = value.to_s).blank?
       suffix ||= REVERSE_SORT_SUFFIX
       value.end_with?(suffix) ? value : "#{value}#{suffix}"
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
     end
 
   end

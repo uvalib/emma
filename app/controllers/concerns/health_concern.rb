@@ -11,10 +11,6 @@ module HealthConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'HealthConcern')
-  end
-
   include Emma::Time
   include Emma::Debug
 
@@ -376,6 +372,18 @@ module HealthConcern
       warning = 'skipped (RunState::STATIC)'
     end
     Log.warn { "#{__method__}: #{warning}" } if warning
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

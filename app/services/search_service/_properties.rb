@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module SearchService::Properties
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Properties
 
   # ===========================================================================
@@ -58,6 +53,16 @@ module SearchService::Properties
   #
   def api_version
     # SEARCH_API_VERSION
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

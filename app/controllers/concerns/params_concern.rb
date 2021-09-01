@@ -13,37 +13,6 @@ module ParamsConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-
-    __included(base, 'ParamsConcern')
-
-    # Needed for #set_sort_params.
-    include LayoutHelper::SearchFilters
-
-    # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    unless ONLY_FOR_DOCUMENTATION
-      include AbstractController::Callbacks::ClassMethods
-      include ParamsConcern
-    end
-    # :nocov:
-
-    # =========================================================================
-    # :section: Callbacks
-    # =========================================================================
-
-    before_action :search_redirect
-    before_action :set_current_path,     if:     :route_request?
-    before_action :set_debug,            if:     :route_request?
-    before_action :set_origin,           only:   %i[index]
-    before_action :resolve_sort,         only:   %i[index]
-    before_action :initialize_menus,     except: %i[index] # TODO: keep?
-    before_action :cleanup_parameters
-
-    append_before_action :conditional_redirect
-
-  end
-
   include Emma::Common
 
   include ParamsHelper
@@ -299,6 +268,45 @@ module ParamsConcern
       params[:direction] = is_reverse?(sort_value) ? 'desc' : 'asc'
     end
     params[:sortOrder] = ascending_sort(sort_value)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    # Needed for #set_sort_params.
+    include LayoutHelper::SearchFilters
+
+    # Non-functional hints for RubyMine type checking.
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include AbstractController::Callbacks::ClassMethods
+      include ParamsConcern
+      # :nocov:
+    end
+
+    # =========================================================================
+    # :section: Callbacks
+    # =========================================================================
+
+    before_action :search_redirect
+    before_action :set_current_path,     if:     :route_request?
+    before_action :set_debug,            if:     :route_request?
+    before_action :set_origin,           only:   %i[index]
+    before_action :resolve_sort,         only:   %i[index]
+    before_action :initialize_menus,     except: %i[index] # TODO: keep?
+    before_action :cleanup_parameters
+
+    append_before_action :conditional_redirect
+
   end
 
 end

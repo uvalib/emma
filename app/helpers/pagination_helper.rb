@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module PaginationHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'PaginationHelper')
-  end
-
   include HtmlHelper
   include ParamsHelper
   include ConfigurationHelper
@@ -556,6 +551,16 @@ module PaginationHelper
   def pagination_icon(content = nil, **opt)
     opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
     html_span((content || ''), prepend_classes!(opt, 'icon'))
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

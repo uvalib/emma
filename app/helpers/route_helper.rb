@@ -9,15 +9,6 @@ __loading_begin(__FILE__)
 #
 module RouteHelper
 
-  # @private
-  def self.included(base)
-
-    __included(base, 'RouteHelper')
-
-    base.send(:extend, self)
-
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -59,6 +50,17 @@ module RouteHelper
     else
       Log.warn { "#{__method__}: invalid route helper #{meth.inspect}" }
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:extend, self)
   end
 
 end

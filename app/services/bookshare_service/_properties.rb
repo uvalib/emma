@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module BookshareService::Properties
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Properties
 
   # ===========================================================================
@@ -90,6 +85,16 @@ module BookshareService::Properties
   #
   def api_version
     BOOKSHARE_API_VERSION
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

@@ -10,11 +10,6 @@ __loading_begin(__FILE__)
 #
 module ApiService::Definition
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -112,6 +107,16 @@ module ApiService::Definition
     method(meth).parameters.map { |type, name|
       alias_keys[name] || name if %i[key keyreq].include?(type)
     }.compact
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

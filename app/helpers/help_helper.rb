@@ -9,15 +9,6 @@ __loading_begin(__FILE__)
 #
 module HelpHelper
 
-  # @private
-  def self.included(base)
-
-    __included(base, 'HelpHelper')
-
-    include Emma::Unicode
-
-  end
-
   include Emma::Common
   include Emma::Constants
 
@@ -361,6 +352,17 @@ module HelpHelper
     modal = ('modal'      if modal?)
     opt[:role] = 'article' if opt.delete(:level) == 1
     html_div(content, prepend_classes!(opt, css_selector, row, modal))
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:include, Emma::Unicode)
   end
 
 end

@@ -11,30 +11,6 @@ module SearchConcern
 
   extend ActiveSupport::Concern
 
-  # Because #next_page_path is intended to override the PaginationConcern
-  # method, that module must have already been included in the including
-  # class.
-  #
-  # @type [Array<Class>]
-  #
-  SEARCH_CONCERN_PREREQUISITES = [PaginationConcern]
-
-  included do |base|
-
-    __included(base, 'SearchConcern')
-
-    (SEARCH_CONCERN_PREREQUISITES - base.ancestors).each do |mod|
-      message = "#{self.class} must be included after #{mod}"
-      if application_deployed?
-        Log.warn(message)
-        base.include(mod)
-      else
-        raise message
-      end
-    end
-
-  end
-
   include ApiConcern
   include SearchCallConcern
 
@@ -266,6 +242,23 @@ module SearchConcern
       opt[:identifier] = identifier.to_s
       redirect_to opt.except!(q_param)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    # In order to override #next_page_path this must be...
+    included_after(base, PaginationConcern, this: THIS_MODULE)
+
   end
 
 end

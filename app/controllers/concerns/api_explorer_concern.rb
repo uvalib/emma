@@ -11,10 +11,6 @@ module ApiExplorerConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'ApiExplorerConcern')
-  end
-
   include Emma::Json
 
   include ExplorerHelper
@@ -213,6 +209,18 @@ module ApiExplorerConcern
       }.to_h
     end
 
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

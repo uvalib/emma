@@ -9,12 +9,17 @@ __loading_begin(__FILE__)
 #
 module IaDownloadService::Status
 
-  # @private
+  include ApiService::Status
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
   def self.included(base)
     base.send(:extend, self)
   end
-
-  include ApiService::Status
 
 end
 

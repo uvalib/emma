@@ -9,21 +9,9 @@ __loading_begin(__FILE__)
 #
 module IaDownloadService::Common
 
-  # Include the shared data structure which holds the definition of the API
-  # requests and parameters.
-  #
-  # @param [Module] base
-  #
-  # @private
-  #
-  def self.included(base)
-    base.send(:include, IaDownloadService::Definition)
-  end
-
   include ApiService::Common
 
   include IaDownloadService::Properties
-
 
   # ===========================================================================
   # :section: ApiService::Common overrides
@@ -156,6 +144,21 @@ module IaDownloadService::Common
       response = transmit(:get, action, params, headers, **opt)
     end
     response
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included(base)
+    base.send(:include, IaDownloadService::Definition)
   end
 
 end

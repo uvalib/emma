@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module ExplorerHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'ExplorerHelper')
-  end
-
   include Emma::Common
   include Emma::Json
 
@@ -225,6 +220,16 @@ module ExplorerHelper
       url = make_link(url, href, **opt) if href.present?
       "&quot;#{url}&quot;"
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

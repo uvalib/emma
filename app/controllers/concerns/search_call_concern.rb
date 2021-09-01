@@ -11,10 +11,6 @@ module SearchCallConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'SearchCallConcern')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -81,6 +77,18 @@ module SearchCallConcern
       columns ||= SC_MATCH_COLUMNS
       SearchCall.matching(*terms, columns: columns, type: :json, sort: sort)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

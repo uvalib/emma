@@ -11,11 +11,6 @@ __loading_begin(__FILE__)
 #
 module LccnHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'LccnHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -117,6 +112,16 @@ module LccnHelper
   #
   def remove_lccn_prefix(s)
     s.to_s.strip.sub(LCCN_PREFIX, '')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

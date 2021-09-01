@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module ArtifactHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'ArtifactHelper')
-  end
-
   include ModelHelper
 
   # ===========================================================================
@@ -319,6 +314,16 @@ module ArtifactHelper
     opt[:model] = :artifact
     opt[:pairs] = ARTIFACT_INDEX_FIELDS.merge(pairs || {})
     model_list_item(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

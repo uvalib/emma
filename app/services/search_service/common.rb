@@ -9,17 +9,6 @@ __loading_begin(__FILE__)
 #
 module SearchService::Common
 
-  # Include the shared data structure which holds the definition of the API
-  # requests and parameters.
-  #
-  # @param [Module] base
-  #
-  # @private
-  #
-  def self.included(base)
-    base.send(:include, SearchService::Definition)
-  end
-
   include ApiService::Common
 
   include SearchService::Properties
@@ -43,6 +32,21 @@ module SearchService::Common
     super.tap do |prms, _hdrs, _body|
       prms.replace(build_query_options(prms)) unless update_request?
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included(base)
+    base.send(:include, SearchService::Definition)
   end
 
 end

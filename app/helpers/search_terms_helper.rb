@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module SearchTermsHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'SearchTermsHelper')
-  end
-
   include Emma::Common
   include Emma::Json
   include Emma::Unicode
@@ -252,6 +247,16 @@ module SearchTermsHelper
         "#{term.label}: " + array_string(term.values, inspect: true)
       end
     }.compact.join(separator)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

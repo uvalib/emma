@@ -9,18 +9,6 @@ __loading_begin(__FILE__)
 #
 module HtmlHelper
 
-  # @private
-  def self.included(base)
-
-    __included(base, 'HtmlHelper')
-
-    base.send(:include, ActionView::Helpers::TagHelper)
-    base.send(:extend,  ActionView::Helpers::TagHelper)
-    base.send(:extend,  ActionView::Helpers::UrlHelper)
-    base.send(:extend,  self)
-
-  end
-
   include CssHelper
 
   # ===========================================================================
@@ -604,6 +592,20 @@ module HtmlHelper
     result = node.dup
     result.children.remove
     result
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:include, ActionView::Helpers::TagHelper)
+    base.send(:extend,  ActionView::Helpers::TagHelper)
+    base.send(:extend,  ActionView::Helpers::UrlHelper)
+    base.send(:extend,  self)
   end
 
 end

@@ -11,77 +11,6 @@ module AccountConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-
-    __included(base, 'AccountConcern')
-
-    module DeviseMethods
-
-      def self.included(base)
-        base.try(:helper, self)
-      end
-
-      # devise_mapping
-      #
-      # @return [Devise::Mapping]
-      #
-      # @see DeviseController#devise_mapping
-      #
-      def devise_mapping
-        @devise_mapping ||=
-          request.env['devise.mapping'] ||= Devise.mappings[:user]
-      end
-
-      # resource_class
-      #
-      # @return [Class]
-      #
-      # @see DeviseController#resource_class
-      # @see Devise::Mapping#to
-      #
-      def resource_class
-        devise_mapping.to
-      end
-
-      # resource_name
-      #
-      # @return [String]
-      #
-      # @see DeviseController#resource_name
-      # @see Devise::Mapping#name
-      #
-      def resource_name
-        devise_mapping.name
-      end
-      alias :scope_name :resource_name
-
-      # resource
-      #
-      # @return [User, nil]
-      #
-      # @see DeviseController#resource
-      #
-      def resource
-        instance_variable_get(:"@#{resource_name}")
-      end
-
-      # resource=
-      #
-      # @param [User, nil] new_resource
-      #
-      # @return [User, nil]
-      #
-      # @see DeviseController#resource=
-      #
-      def resource=(new_resource)
-        instance_variable_set(:"@#{resource_name}", new_resource)
-      end
-
-    end
-
-    include DeviseMethods
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -243,6 +172,98 @@ module AccountConcern
       (suffix = terms[:action].end_with?('e') ? 'd' : 'ed') &&
         (terms[:action] + suffix)
     terms
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  module DeviseMethods
+
+    # devise_mapping
+    #
+    # @return [Devise::Mapping]
+    #
+    # @see DeviseController#devise_mapping
+    #
+    def devise_mapping
+      @devise_mapping ||=
+        request.env['devise.mapping'] ||= Devise.mappings[:user]
+    end
+
+    # resource_class
+    #
+    # @return [Class]
+    #
+    # @see DeviseController#resource_class
+    # @see Devise::Mapping#to
+    #
+    def resource_class
+      devise_mapping.to
+    end
+
+    # resource_name
+    #
+    # @return [String]
+    #
+    # @see DeviseController#resource_name
+    # @see Devise::Mapping#name
+    #
+    def resource_name
+      devise_mapping.name
+    end
+    alias :scope_name :resource_name
+
+    # resource
+    #
+    # @return [User, nil]
+    #
+    # @see DeviseController#resource
+    #
+    def resource
+      instance_variable_get(:"@#{resource_name}")
+    end
+
+    # resource=
+    #
+    # @param [User, nil] new_resource
+    #
+    # @return [User, nil]
+    #
+    # @see DeviseController#resource=
+    #
+    def resource=(new_resource)
+      instance_variable_set(:"@#{resource_name}", new_resource)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.try(:helper, self)
+    end
+
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    include DeviseMethods
+
   end
 
 end

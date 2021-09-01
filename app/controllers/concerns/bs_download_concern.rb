@@ -11,10 +11,6 @@ module BsDownloadConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'BsDownloadConcern')
-  end
-
   include BookshareConcern
 
   include SerializationHelper
@@ -65,6 +61,18 @@ module BsDownloadConcern
     { url: url, state: state }.tap do |result|
       result[:error] = error if error.present?
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

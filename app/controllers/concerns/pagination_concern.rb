@@ -11,26 +11,6 @@ module PaginationConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-
-    __included(base, 'PaginationConcern')
-
-    # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    unless ONLY_FOR_DOCUMENTATION
-      include AbstractController::Callbacks::ClassMethods
-      include PaginationConcern
-    end
-    # :nocov:
-
-    # =========================================================================
-    # :section: Callbacks
-    # =========================================================================
-
-    before_action :cleanup_pagination, only: %i[index]
-
-  end
-
   include Emma::Common
 
   include ParamsHelper
@@ -206,6 +186,34 @@ module PaginationConcern
 
     # If parameters were removed, redirect to the corrected URL.
     will_redirect unless request_parameter_count == original_count
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    # Non-functional hints for RubyMine type checking.
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include AbstractController::Callbacks::ClassMethods
+      include PaginationConcern
+      # :nocov:
+    end
+
+    # =========================================================================
+    # :section: Callbacks
+    # =========================================================================
+
+    before_action :cleanup_pagination, only: %i[index]
+
   end
 
 end

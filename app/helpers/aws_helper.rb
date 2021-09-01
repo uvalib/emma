@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module AwsHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'AwsHelper')
-  end
-
   include HtmlHelper
   include LayoutHelper
 
@@ -517,6 +512,16 @@ module AwsHelper
         [name.to_sym, ascending]
       }.to_h
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

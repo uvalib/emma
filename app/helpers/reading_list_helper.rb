@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module ReadingListHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'ReadingListHelper')
-  end
-
   include ModelHelper
   include TitleHelper
 
@@ -184,6 +179,16 @@ module ReadingListHelper
     opt[:model] = :reading_list
     opt[:pairs] = READING_LIST_INDEX_FIELDS.merge(pairs || {})
     model_list_item(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

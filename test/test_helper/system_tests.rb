@@ -18,11 +18,15 @@ module TestHelper::SystemTests
     # :nocov:
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
   # Include the submodules defined in test/test_helper/system_tests/*.
   #
   # @param [Module] base
-  #
-  # @private
   #
   def self.included(base)
     include_submodules(base, __FILE__) do |name|

@@ -11,10 +11,6 @@ module UserConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'UserConcern')
-  end
-
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -167,6 +163,18 @@ module UserConcern
     session['app.devise.failure.message'] = message ||= ROLE_FAILURE
     session['app.devise.redirect'] = dashboard_path
     throw(:warden, message: message)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

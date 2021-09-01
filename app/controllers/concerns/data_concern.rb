@@ -11,10 +11,6 @@ module DataConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'DataConcern')
-  end
-
   include ParamsHelper
   include DataHelper
 
@@ -244,6 +240,18 @@ module DataConcern
     (emma_data = json_parse(emma_data)).blank? || (emma_data == '{}') ||
       (title = emma_data[:dc_title].to_s).blank? ||
       %w(RWL IA_BULK).any? { |prefix| title.start_with?(prefix) }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

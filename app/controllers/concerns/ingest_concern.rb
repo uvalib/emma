@@ -13,10 +13,6 @@ module IngestConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'IngestConcern')
-  end
-
   include ApiConcern
 
   # ===========================================================================
@@ -32,6 +28,18 @@ module IngestConcern
   def ingest_api
     # noinspection RubyMismatchedReturnType
     api_service(IngestService)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

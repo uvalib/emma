@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module SessionsHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'SessionsHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -131,6 +126,16 @@ module SessionsHelper
     end
     opt[:default] = default
     t(key, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module IsbnHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'IsbnHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -285,6 +280,16 @@ module IsbnHelper
   #
   def remove_isbn_prefix(s)
     s.to_s.strip.sub(ISBN_PREFIX, '')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

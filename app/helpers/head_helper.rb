@@ -9,18 +9,19 @@ __loading_begin(__FILE__)
 #
 module HeadHelper
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
   # Include the submodules defined in "app/helpers/head_helper/*.rb".
   #
   # @param [Module] base
   #
-  # @private
-  #
   def self.included(base)
-
-    __included(base, 'HeadHelper')
-
+    __included(base, self)
     include_submodules(base)
-
   end
 
 end

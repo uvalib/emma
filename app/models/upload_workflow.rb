@@ -106,11 +106,6 @@ module UploadWorkflow::Errors
 
   module RenderMethods
 
-    # @private
-    def self.included(base)
-      base.send(:extend, self)
-    end
-
     # =========================================================================
     # :section:
     # =========================================================================
@@ -136,6 +131,16 @@ module UploadWorkflow::Errors
       ident = "Item #{ident}"      if digits_only?(ident) # TODO: I18n
       ident = "#{ident} (#{file})" if file.present?
       ident
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
     end
 
   end

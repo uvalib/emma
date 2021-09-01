@@ -13,11 +13,6 @@ module Emma::Debug
   #
   module FormatMethods
 
-    # @private
-    def self.included(base)
-      base.send(:extend, self)
-    end
-
     include Emma::Common
 
     # =========================================================================
@@ -270,6 +265,16 @@ module Emma::Debug
       return [type, output].compact.join(' ')
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
   # Methods for emitting debug output.
@@ -473,13 +478,17 @@ module Emma::Debug
 
     include FormatMethods
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
     # If CONSOLE_DEBUGGING is *false*, all of the debug output methods are
     # neutralized so that debug statements are syntactically correct but will
     # not emit output and their blocks will not be evaluated.
     #
     # @param [Module] base
-    #
-    # @private
     #
     def self.included(base)
       OutputMethods.instance_methods(false).each { |m| base.neutralize(m) }

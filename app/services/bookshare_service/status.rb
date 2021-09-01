@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module BookshareService::Status
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Status
 
   # ===========================================================================
@@ -37,6 +32,16 @@ module BookshareService::Status
       message = nil
     end
     return active, message
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

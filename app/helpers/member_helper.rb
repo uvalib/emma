@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module MemberHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'MemberHelper')
-  end
-
   include ModelHelper
 
   # ===========================================================================
@@ -170,6 +165,16 @@ module MemberHelper
     opt[:model] = :member
     opt[:pairs] = MEMBER_INDEX_FIELDS.merge(pairs || {})
     model_list_item(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

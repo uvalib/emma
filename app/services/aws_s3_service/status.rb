@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module AwsS3Service::Status
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Status
 
   # ===========================================================================
@@ -60,6 +55,16 @@ module AwsS3Service::Status
     return active, message
   end
 =end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
+  end
 
 end
 

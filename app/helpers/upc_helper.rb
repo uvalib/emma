@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module UpcHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'UpcHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -150,6 +145,16 @@ module UpcHelper
   #
   def remove_upc_prefix(s)
     s.to_s.sub(UPC_PREFIX, '')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

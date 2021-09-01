@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module LinkHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'LinkHelper')
-  end
-
   include Emma::Common
 
   include HtmlHelper
@@ -318,6 +313,16 @@ module LinkHelper
     append_classes!(opt, *type) unless type == :text
     # noinspection RubyMismatchedParameterType
     html_div(text, opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

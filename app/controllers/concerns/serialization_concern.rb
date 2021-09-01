@@ -11,10 +11,6 @@ module SerializationConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'SerializationConcern')
-  end
-
   include ParamsHelper
   include PaginationHelper
   include SerializationHelper
@@ -94,6 +90,18 @@ module SerializationConcern
   def show_values(items, as: nil)
     as ||= :hash
     (as == :array) ? items.values : items
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

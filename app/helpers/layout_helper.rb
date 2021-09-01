@@ -9,18 +9,19 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
   # Include the submodules defined in "app/helpers/layout_helper/*.rb".
   #
   # @param [Module] base
   #
-  # @private
-  #
   def self.included(base)
-
-    __included(base, 'LayoutHelper')
-
+    __included(base, self)
     include_submodules(base)
-
   end
 
 end

@@ -11,14 +11,6 @@ module IaDownloadConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-
-    __included(base, 'IaDownloadConcern')
-
-    include RepositoryHelper
-
-  end
-
   include ActionController::DataStreaming
 
   include ApiConcern
@@ -56,6 +48,22 @@ module IaDownloadConcern
   def ia_download_response(url, **opt)
     name, type, data = ia_download_api.download(url, **opt)
     send_data(data, type: type, filename: name) if data.present?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    include RepositoryHelper
+
   end
 
 end

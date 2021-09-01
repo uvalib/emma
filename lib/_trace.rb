@@ -260,15 +260,16 @@ neutralize(:__loading, :__loading_begin, :__loading_end) unless TRACE_LOADING
 
 __output_impl("TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}") if TRACE_CONCERNS
 
-# Indicate invocation of a Concern's "included" block.
+# Indicate invocation of a module's "included" block.
 #
-# @param [Module] base
-# @param [String] concern
+# @param [Module]         base
+# @param [Module, String] mod
+# @param [String, nil]    tag
 #
 # @return [nil]
 #
-def __included(base, concern)
-  __output_impl { "... including #{concern} in #{base}" }
+def __included(base, mod, tag = nil)
+  __output_impl { "... including #{tag || mod.try(:name) || mod} in #{base}" }
 end
 
 neutralize(:__included) unless TRACE_CONCERNS

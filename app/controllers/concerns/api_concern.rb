@@ -11,10 +11,6 @@ module ApiConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'ApiConcern')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -117,6 +113,18 @@ module ApiConcern
     ApiService.table.compact.tap do |result|
       result.keep_if { |service, _| only.include?(service) } if only.present?
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

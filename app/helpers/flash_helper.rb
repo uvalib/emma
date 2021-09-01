@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module FlashHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'FlashHelper')
-  end
-
   include Emma::Common
 
   include HtmlHelper
@@ -738,6 +733,17 @@ module FlashHelper
     result = parts.flatten.compact_blank.join('.')
     result = "emma.#{result}" unless result.start_with?('emma.')
     result.to_sym
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:extend, self)
   end
 
 end

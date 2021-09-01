@@ -9,15 +9,6 @@ __loading_begin(__FILE__)
 #
 module AuthHelper
 
-  # @private
-  def self.included(base)
-
-    __included(base, 'AuthHelper')
-
-    base.send(:extend, self)
-
-  end
-
   include Emma::Common
 
   extend self
@@ -210,6 +201,17 @@ module AuthHelper
   #
   def dev_client?
     true?(cookies[DEV_COOKIE])
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:extend, self)
   end
 
 end

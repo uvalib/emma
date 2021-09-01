@@ -133,6 +133,35 @@ def include_submodules(base, filename = nil)
   }.compact
 end
 
+# Ensure that the given modules are included before the current one (to be run
+# from within an "included" block).
+#
+# @param [Class, Module] base           The class or module into which the
+#                                         current module will be included.
+# @param [Array<Module>] prerequisites  One or more modules that should already
+#                                         have been included in the current
+#                                         context.
+# @param [Module, nil]   this           The module being included
+#                                         (default: *self*).
+#
+# @raise [RuntimeError]   Only when run from the desktop.
+#
+# @return [void]
+#
+def included_after(base, *prerequisites, this: nil)
+  this ||= self
+  prerequisites.flatten!
+  prerequisites.compact!
+  prerequisites.map! { |mod| mod.is_a?(Module) ? mod : mod.to_s.constantize }
+  return if (prerequisites -= base.ancestors).empty?
+  if application_deployed?
+    Log.warn { "#{this}: including %s first" % prerequisites.join(', ') }
+    base.include(*prerequisites)
+  else
+    raise "#{this} must be included after %s" % prerequisites.join(', ')
+  end
+end
+
 # =============================================================================
 # Modules specific to the application namespace.
 # =============================================================================

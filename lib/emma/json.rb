@@ -11,11 +11,6 @@ require 'multi_json'
 #
 module Emma::Json
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include Emma::Common
 
   # ===========================================================================
@@ -143,6 +138,16 @@ module Emma::Json
     raise error unless no_raise
     re_raise_if_internal_exception(error)
     value.pretty_inspect
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

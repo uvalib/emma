@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module SessionDebugHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'SessionDebugHelper')
-  end
-
   include ParamsHelper
   include HtmlHelper
   include RoleHelper
@@ -68,6 +63,16 @@ module SessionDebugHelper
     table.merge!(pairs)
     prepend_classes!(opt, css_selector)
     grid_table(table, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

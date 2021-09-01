@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module EditionHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'EditionHelper')
-  end
-
   include ModelHelper
 
   # ===========================================================================
@@ -97,6 +92,16 @@ module EditionHelper
     opt[:model] = :edition
     opt[:pairs] = EDITION_INDEX_FIELDS.merge(pairs || {})
     model_list_item(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module HttpHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'HttpHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -110,6 +105,16 @@ module HttpHelper
   #
   def server_error?(code)
     HTTP_SERVER_ERROR.include?(code)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

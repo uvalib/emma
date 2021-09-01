@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module LogoHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'LogoHelper')
-  end
-
   include HtmlHelper
 
   # ===========================================================================
@@ -139,6 +134,16 @@ module LogoHelper
       name ||= 'an external repository' # TODO: I18n
       "From #{name}" # TODO: I18n
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

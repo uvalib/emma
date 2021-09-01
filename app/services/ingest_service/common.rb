@@ -9,17 +9,6 @@ __loading_begin(__FILE__)
 #
 module IngestService::Common
 
-  # Include the shared data structure which holds the definition of the API
-  # requests and parameters.
-  #
-  # @param [Module] base
-  #
-  # @private
-  #
-  def self.included(base)
-    base.send(:include, IngestService::Definition)
-  end
-
   include ApiService::Common
 
   include IngestService::Properties
@@ -99,6 +88,21 @@ module IngestService::Common
         end
       end
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included(base)
+    base.send(:include, IngestService::Definition)
   end
 
 end

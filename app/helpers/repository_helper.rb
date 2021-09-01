@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module RepositoryHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'RepositoryHelper')
-  end
-
   include HtmlHelper
   include ArtifactHelper
 
@@ -177,6 +172,16 @@ module RepositoryHelper
     direct = IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
     url    = retrieval_path(url: url) unless direct
     download_link(label, url, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

@@ -74,17 +74,15 @@ module TestHelper
   DEBUG_TESTS = true
 
   # ===========================================================================
-  # :section: Module methods
+  # :section:
   # ===========================================================================
 
-  public
+  private
 
   # Include the submodules defined in test/test_helper/*, except for
   # TestHelper::SystemTests, which must be included separately.
   #
   # @param [Module] base
-  #
-  # @private
   #
   def self.included(base)
     include_submodules(base, __FILE__) do |name|

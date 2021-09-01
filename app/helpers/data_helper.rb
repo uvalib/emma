@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module DataHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'DataHelper')
-  end
-
   include CssHelper
 
   # ===========================================================================
@@ -348,6 +343,16 @@ module DataHelper
     classes << 'col-last'   if col && (col == last)
     prepend_classes!(opt, css_selector, type, classes)
     html_div(field, opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

@@ -55,45 +55,6 @@ module RunStateConcern
   # :section:
   # ===========================================================================
 
-  included do |base|
-
-    __included(base, 'RunStateConcern')
-
-    extend ParamsHelper
-
-    # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    unless ONLY_FOR_DOCUMENTATION
-      include AbstractController::Callbacks::ClassMethods
-      include RunStateConcern
-    end
-    # :nocov:
-
-    # =========================================================================
-    # :section: Callbacks
-    # =========================================================================
-
-    if (this_controller = controller_to_name(base)).nil?
-      # === Including class is not a controller ===
-
-    elsif RUN_STATE_EXEMPT_CONTROLLER.include?(this_controller)
-      # === Including class is an exempt controller ===
-
-    elsif RunState::STATIC
-      # === Only add callback if the system is unavailable at startup ===
-      prepend_before_action :system_unavailable, if: :system_unavailable?
-
-    else
-      # === Check for system availability for every endpoint ===
-      prepend_before_action :check_system_availability
-    end
-
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
   protected
 
   # Indicate whether the system is currently configured as unavailable.
@@ -130,6 +91,49 @@ module RunStateConcern
   #
   def check_system_availability
     system_unavailable if system_unavailable? && run_state_redirect?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    extend ParamsHelper
+
+    # Non-functional hints for RubyMine type checking.
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include AbstractController::Callbacks::ClassMethods
+      include RunStateConcern
+      # :nocov:
+    end
+
+    # =========================================================================
+    # :section: Callbacks
+    # =========================================================================
+
+    if (this_controller = controller_to_name(base)).nil?
+      # === Including class is not a controller ===
+
+    elsif RUN_STATE_EXEMPT_CONTROLLER.include?(this_controller)
+      # === Including class is an exempt controller ===
+
+    elsif RunState::STATIC
+      # === Only add callback if the system is unavailable at startup ===
+      prepend_before_action :system_unavailable, if: :system_unavailable?
+
+    else
+      # === Check for system availability for every endpoint ===
+      prepend_before_action :check_system_availability
+    end
+
   end
 
 end

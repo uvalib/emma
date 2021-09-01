@@ -11,58 +11,6 @@ module SessionConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-
-    __included(base, 'SessionConcern')
-
-    include SerializationHelper
-
-    # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    unless ONLY_FOR_DOCUMENTATION
-      include AbstractController::Callbacks::ClassMethods
-      include SessionConcern
-    end
-    # :nocov:
-
-    # =========================================================================
-    # :section: Session management
-    # =========================================================================
-
-    prepend_before_action :session_check,  unless: :devise_controller?
-    before_action         :cleanup_session
-    append_around_action  :session_update, if: :session_updatable?
-
-    # =========================================================================
-    # :section: Exceptions
-    # =========================================================================
-
-    rescue_from CanCan::AccessDenied,       with: :access_denied_handler
-    rescue_from Api::Error, Faraday::Error, with: :connection_error_handler
-    rescue_from StandardError,              with: :fallback_error_handler
-
-    # =========================================================================
-    # :section: DeviseController overrides
-    # =========================================================================
-
-    if ancestors.include?(DeviseController)
-
-      # This overrides the DeviseController message to allow the standard
-      # 'already_authenticated' flash message to be overridden by
-      # `session['app.devise.failure.message']`.
-      #
-      # @see UserConcern#role_failure
-      #
-      def require_no_authentication
-        super
-        flash_message = session.delete('app.devise.failure.message')
-        flash_alert(flash_message) if flash_message
-      end
-
-    end
-
-  end
-
   include Emma::Debug
 
   include ParamsConcern
@@ -372,6 +320,69 @@ module SessionConcern
   ensure
     last_operation_update
     raise error if error
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    include SerializationHelper
+
+    # Non-functional hints for RubyMine type checking.
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include AbstractController::Callbacks::ClassMethods
+      include SessionConcern
+      # :nocov:
+    end
+
+    # =========================================================================
+    # :section: Session management
+    # =========================================================================
+
+    prepend_before_action :session_check,  unless: :devise_controller?
+    before_action         :cleanup_session
+    append_around_action  :session_update, if: :session_updatable?
+
+    # =========================================================================
+    # :section: Exceptions
+    # =========================================================================
+
+    rescue_from CanCan::AccessDenied, with: :access_denied_handler
+    rescue_from ExecError,            with: :connection_error_handler
+    rescue_from Faraday::Error,       with: :connection_error_handler
+    rescue_from Net::ProtocolError,   with: :connection_error_handler
+    rescue_from Timeout::Error,       with: :connection_error_handler
+    rescue_from StandardError,        with: :fallback_error_handler
+
+    # =========================================================================
+    # :section: DeviseController overrides
+    # =========================================================================
+
+    if ancestors.include?(DeviseController)
+
+      # This overrides the DeviseController message to allow the standard
+      # 'already_authenticated' flash message to be overridden by
+      # `session['app.devise.failure.message']`.
+      #
+      # @see UserConcern#role_failure
+      #
+      def require_no_authentication
+        super
+        flash_message = session.delete('app.devise.failure.message')
+        flash_alert(flash_message) if flash_message
+      end
+
+    end
+
   end
 
 end

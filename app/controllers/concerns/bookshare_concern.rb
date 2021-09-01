@@ -11,10 +11,6 @@ module BookshareConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'BookshareConcern')
-  end
-
   include ApiConcern
 
   # ===========================================================================
@@ -123,6 +119,18 @@ module BookshareConcern
   #
   def set_url
     @url = params[:url]
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

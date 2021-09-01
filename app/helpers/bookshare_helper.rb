@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module BookshareHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'BookshareHelper')
-  end
-
   include Emma::Common
 
   include HtmlHelper
@@ -307,6 +302,16 @@ module BookshareHelper
     name = name.to_s.downcase
     # noinspection RubyMismatchedReturnType
     (name.present? && !name.include?('@')) ? (BOOKSHARE_USER % name) : name
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

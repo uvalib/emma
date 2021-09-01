@@ -13,33 +13,6 @@ module UploadConcern
 
   extend ActiveSupport::Concern
 
-  # Because #pagination_finalize is intended to override the PaginationConcern
-  # method, that module must have already been included in the including
-  # class.
-  #
-  # @type [Array<Class>]
-  #
-  UPLOAD_CONCERN_PREREQUISITES = [PaginationConcern]
-
-  included do |base|
-
-    __included(base, 'UploadConcern')
-
-    # Methods that are exposed for use in views.
-    helper_method *UploadWorkflow::Properties.public_instance_methods(false)
-
-    (UPLOAD_CONCERN_PREREQUISITES - base.ancestors).each do |mod|
-      message = "#{self.class} must be included after #{mod}"
-      if application_deployed?
-        Log.warn(message)
-        base.include(mod)
-      else
-        raise message
-      end
-    end
-
-  end
-
   include Emma::Csv
   include Emma::Json
   include ParamsHelper
@@ -565,6 +538,29 @@ module UploadConcern
         else             redirect_back(fallback_location: upload_index_path)
       end
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+
+    __included(base, THIS_MODULE)
+
+    # In order to override #pagination_finalize this must be...
+    included_after(base, PaginationConcern, this: THIS_MODULE)
+
+    # =========================================================================
+    # :section: Helpers - methods exposed for use in views
+    # =========================================================================
+
+    helper_method *UploadWorkflow::Properties.public_instance_methods(false)
+
   end
 
 end

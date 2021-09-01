@@ -12,11 +12,6 @@ __loading_begin(__FILE__)
 #++
 module Emma::Unicode
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   extend self
 
   # ===========================================================================
@@ -73,6 +68,16 @@ module Emma::Unicode
   BANG          = "\u2755" # WHITE EXCLAMATION MARK ORNAMENT
   HEAVY_PLUS    = "\u2795" # HEAVY PLUS SIGN
   HEAVY_MINUS   = "\u2796" # HEAVY MINUS SIGN
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
+  end
 
 end
 

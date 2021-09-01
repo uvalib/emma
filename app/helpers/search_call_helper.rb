@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module SearchCallHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'SearchCallHelper')
-  end
-
   include ModelHelper
   include PaginationHelper
 
@@ -289,6 +284,16 @@ module SearchCallHelper
   #
   def search_call_columns(item = nil, **opt)
     search_call_field_values(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

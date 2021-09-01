@@ -220,11 +220,6 @@ class Api::Error < RuntimeError
 
   module Methods
 
-    # @private
-    def self.included(base)
-      base.send(:extend, self)
-    end
-
     # =========================================================================
     # :section:
     # =========================================================================
@@ -289,6 +284,16 @@ class Api::Error < RuntimeError
       keys << :'emma.error.api.default'
       keys << "#{type&.capitalize || 'API'} error"  unless allow_nil
       I18n.t(keys.shift, default: keys, **opt)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
     end
 
   end

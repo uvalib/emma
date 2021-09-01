@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module IngestService::Properties
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Properties
 
   # ===========================================================================
@@ -60,6 +55,16 @@ module IngestService::Properties
   #
   def api_version
     # INGEST_API_VERSION
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

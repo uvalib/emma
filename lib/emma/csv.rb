@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module Emma::Csv
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include Emma::Common
 
   # ===========================================================================
@@ -84,6 +79,16 @@ module Emma::Csv
       when Array  then item.map { |v| force_utf8(v) }
       else             item
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

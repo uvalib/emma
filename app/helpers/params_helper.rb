@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module ParamsHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'ParamsHelper')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -275,6 +270,16 @@ module ParamsHelper
       result << controller_to_name(ctrlr)
       result << nil
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

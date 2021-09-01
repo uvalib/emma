@@ -11,10 +11,6 @@ module HelpConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'HelpConcern')
-  end
-
   include HelpHelper
 
   # ===========================================================================
@@ -52,6 +48,18 @@ module HelpConcern
   #
   def set_help_topic
     @topic = (params[:topic] || params[:id])&.to_sym
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end

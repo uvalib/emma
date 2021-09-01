@@ -11,12 +11,19 @@ module FlashConcern
 
   extend ActiveSupport::Concern
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
   included do |base|
 
-    __included(base, 'FlashConcern')
+    __included(base, THIS_MODULE)
 
     include FlashHelper
-    extend  FlashHelper
 
   end
 

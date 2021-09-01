@@ -7,11 +7,15 @@
 #
 module TestHelper::IntegrationTests
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
   # Include the submodules defined in test/test_helper/integration_tests/*.
   #
   # @param [Module] base
-  #
-  # @private
   #
   def self.included(base)
     include_submodules(base, __FILE__)

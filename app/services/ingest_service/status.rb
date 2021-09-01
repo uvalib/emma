@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module IngestService::Status
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Status
 
   # ===========================================================================
@@ -55,6 +50,16 @@ module IngestService::Status
     active   = result.respond_to?(:records) && expect.(result)
     message  = result&.error_message
     return active, message
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

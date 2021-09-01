@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module AccountHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'AccountHelper')
-  end
-
   include ModelHelper
   include ConfigurationHelper
   include I18nHelper
@@ -513,6 +508,16 @@ module AccountHelper
   def account_delete_cancel(**opt)
     opt[:action] ||= :delete
     account_cancel_button(**opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

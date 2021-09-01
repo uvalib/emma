@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module ApplicationHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'ApplicationHelper')
-  end
-
   include Emma::Constants
   include Emma::Common
 
@@ -144,6 +139,16 @@ module ApplicationHelper
   #
   def contact_email
     mail_to(CONTACT_EMAIL)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

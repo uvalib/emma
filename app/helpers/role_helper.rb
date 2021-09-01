@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module RoleHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'RoleHelper')
-  end
-
   include Emma::Common
 
   include Roles
@@ -56,6 +51,16 @@ module RoleHelper
       when :administrator then user.administrator?
       else                     user.has_role?(role)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

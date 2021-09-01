@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module IaDownloadService::Properties
 
-  # @private
-  def self.included(base)
-    base.send(:extend, self)
-  end
-
   include ApiService::Properties
 
   # ===========================================================================
@@ -112,6 +107,16 @@ module IaDownloadService::Properties
   #
   def max_redirects
     IA_MAX_REDIRECTS
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.send(:extend, self)
   end
 
 end

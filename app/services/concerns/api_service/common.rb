@@ -12,17 +12,6 @@ require 'faraday'
 #
 module ApiService::Common
 
-  # Include the shared data structure which holds the definition of the API
-  # requests and parameters.
-  #
-  # @param [Module] base
-  #
-  # @private
-  #
-  def self.included(base)
-    base.send(:include, ApiService::Definition)
-  end
-
   include Emma::Common
   include Emma::Debug
 
@@ -871,6 +860,21 @@ module ApiService::Common
   rescue => error
     Log.error("#{__method__}: #{error.class}: #{error.message}")
     return ApiService::Error.error_subclass
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included(base)
+    base.send(:include, ApiService::Definition)
   end
 
 end

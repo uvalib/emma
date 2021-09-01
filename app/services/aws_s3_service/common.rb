@@ -9,17 +9,6 @@ __loading_begin(__FILE__)
 #
 module AwsS3Service::Common
 
-  # Include the shared data structure which holds the definition of the API
-  # requests and parameters.
-  #
-  # @param [Module] base
-  #
-  # @private
-  #
-  def self.included(base)
-    base.send(:include, AwsS3Service::Definition)
-  end
-
   include ApiService::Common
 
   include AwsS3Service::Properties
@@ -269,6 +258,20 @@ module AwsS3Service::Common
     api_list_objects(bucket, filter, **opt).map(&:key)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included(base)
+    base.send(:include, AwsS3Service::Definition)
+  end
 
 end
 

@@ -10,11 +10,6 @@ __loading_begin(__FILE__)
 #
 module SearchHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'SearchHelper')
-  end
-
   include LogoHelper
   include ModelHelper
   include PaginationHelper
@@ -372,6 +367,16 @@ module SearchHelper
       # noinspection RubyMismatchedParameterType
       upload_entry_icons(item, id: db_id) if db_id.present?
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

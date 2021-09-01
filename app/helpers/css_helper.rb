@@ -9,15 +9,6 @@ __loading_begin(__FILE__)
 #
 module CssHelper
 
-  # @private
-  def self.included(base)
-
-    __included(base, 'CssHelper')
-
-    base.send(:extend,  self)
-
-  end
-
   include Emma::Common
   include Emma::Unicode
 
@@ -372,6 +363,17 @@ module CssHelper
   #
   def css_randomize(base)
     "#{base}-#{hex_rand}"
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
+    base.send(:extend, self)
   end
 
 end

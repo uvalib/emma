@@ -13,10 +13,6 @@ module MetricsConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'MetricsConcern')
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -110,6 +106,18 @@ module MetricsConcern
     test_summary: 'A summary example', # TODO: testing - remove
     # TODO: summary metrics...
   })
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
+  end
 
 end
 

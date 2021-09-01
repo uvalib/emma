@@ -9,17 +9,6 @@ __loading_begin(__FILE__)
 #
 module BookshareService::Common
 
-  # Include the shared data structure which holds the definition of the API
-  # requests and parameters.
-  #
-  # @param [Module] base
-  #
-  # @private
-  #
-  def self.included(base)
-    base.send(:include, BookshareService::Definition)
-  end
-
   include ApiService::Common
 
   include BookshareService::Properties
@@ -77,6 +66,21 @@ module BookshareService::Common
     super.tap do |result|
       result[:limit] = MAX_LIMIT if result[:limit].to_s == 'max'
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included(base)
+    base.send(:include, BookshareService::Definition)
   end
 
 end

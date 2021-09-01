@@ -9,11 +9,6 @@ __loading_begin(__FILE__)
 #
 module TitleHelper
 
-  # @private
-  def self.included(base)
-    __included(base, 'TitleHelper')
-  end
-
   include ImageHelper
   include ModelHelper
 
@@ -353,6 +348,16 @@ module TitleHelper
     opt[:model] = :title
     opt[:pairs] = TITLE_INDEX_FIELDS.merge(pairs || {})
     model_list_item(item, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    __included(base, self)
   end
 
 end

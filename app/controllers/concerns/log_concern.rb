@@ -11,10 +11,6 @@ module LogConcern
 
   extend ActiveSupport::Concern
 
-  included do |base|
-    __included(base, 'LogConcern')
-  end
-
   include Emma::Common
 
   # ===========================================================================
@@ -49,6 +45,18 @@ module LogConcern
   def unsuppress_logger
     Log.silent(false)
     @logger_suppressed = nil
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
+    __included(base, THIS_MODULE)
   end
 
 end
