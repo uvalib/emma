@@ -2877,7 +2877,13 @@ $(document).on('turbolinks:load', function() {
 
             $.each(source_field, function(field, value) {
                 if (value === FROM_PARENT) {
-                    formField(field, $form).toggleClass('sealed', true);
+                    let $input = formField(field, $form);
+                    let input  = $input[0];
+                    if (input.value === EMPTY_VALUE) {
+                        input.placeholder = input.value;
+                        input.value       = '';
+                    }
+                    $input.toggleClass('sealed');
                 }
             });
         }
@@ -3080,7 +3086,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function showParentEntrySelect(form) {
-        return parentEntrySelect(form).toggleClass('hidden', false);
+        let $form = parentEntrySelect(form);
+        $form.find('#parent-entry-search').prop('disabled', false);
+        return $form.toggleClass('hidden', false);
     }
 
     /**
@@ -3091,7 +3099,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function hideParentEntrySelect(form) {
-        return parentEntrySelect(form).toggleClass('hidden', true);
+        let $form = parentEntrySelect(form);
+        $form.find('#parent-entry-search').prop('disabled', true);
+        return $form.toggleClass('hidden', true);
     }
 
     // ========================================================================
@@ -3401,8 +3411,8 @@ $(document).on('turbolinks:load', function() {
 
             // Disable empty database fields so they are not transmitted back
             // as form data.
-            databaseInputFields($form).each(function() {
-                if (this.placeholder || (this.value === EMPTY_VALUE)) {
+            inputFields($form).each(function() {
+                if (isEmpty(this.value) || (this.value === EMPTY_VALUE)) {
                     this.disabled = true;
                 }
             });
