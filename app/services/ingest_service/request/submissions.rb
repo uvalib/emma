@@ -174,6 +174,8 @@ module IngestService::Request::Records
   #
   # @option opt [Symbol] :meth        Calling method for logging.
   #
+  # @return [void]
+  #
   def api_send(verb, endpoint, body, **opt)
     body = Array.wrap(body).compact.uniq
     if body.present?
@@ -241,7 +243,7 @@ module IngestService::Request::Records
   #   @param [String] id
   #
   def identifier_list(item)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     result =
       case item
         when Ingest::Message::IdentifierRecordList

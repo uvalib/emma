@@ -16,6 +16,7 @@ module AuthConcern
   end
 
   include Emma::Json
+
   include AuthHelper
 
   # Non-functional hints for RubyMine type checking.
@@ -262,7 +263,7 @@ module AuthConcern
     auth  = auth_hash(user)
     token = auth&.dig(:credentials, :token)
     if token.blank?
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       auth  = synthetic_auth_hash(uid)
       token = auth&.dig(:credentials, :token)
       user.update(access_token: token) if token.present?
@@ -330,7 +331,7 @@ module AuthConcern
   # @return [nil]                     If no token was provided or found.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyResolve
+  # noinspection RubyResolve
   #++
   def revoke_access_token(token = nil)
     token ||= session['omniauth.auth']

@@ -32,6 +32,7 @@ module OmniAuth
     class Bookshare < OmniAuth::Strategies::OAuth2
 
       include Emma::Json
+
       include OmniAuth::ExtensionDebugging
 
       # =======================================================================
@@ -284,7 +285,7 @@ module OmniAuth
       # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       #--
-      # noinspection RubyScope, RubyStringKeysInHashInspection
+      # noinspection RubyScope
       #++
       def callback_phase
         __ext_debug
@@ -438,7 +439,7 @@ module OmniAuth
       # @return [Hash{Symbol=>*}]
       #
       #--
-      # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+      # noinspection RubyNilAnalysis
       #++
       def url_parameters(params = nil)
         params ||= request
@@ -469,7 +470,7 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       #--
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       #++
       def synthetic_access_token(src)
         entry = token = nil
@@ -508,7 +509,7 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       #--
-      # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
+      # noinspection RubyMismatchedParameterType, RubyMismatchedReturnType
       #++
       def synthetic_auth_hash(src)
         if src.is_a?(OmniAuth::AuthHash)
@@ -566,7 +567,6 @@ module OmniAuth
         data[:uid]                 ||= data[:info][:email]
         data[:provider]            ||= default_options[:name]
 
-        # noinspection RubyYardParamTypeMatch
         OmniAuth::AuthHash.new(reject_blanks(data))
       end
 
@@ -594,10 +594,8 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      #--
-      # noinspection RubyYardParamTypeMatch
-      #++
       def self.synthetic_auth_hash(src, token = nil)
+        # noinspection RubyMismatchedReturnType
         return src if src.is_a?(OmniAuth::AuthHash)
         # noinspection RailsParamDefResolve
         user = src.is_a?(String) ? src : src.try(:uid)
@@ -637,6 +635,7 @@ module OmniAuth
       # the value returned by this method and the associated User table entry.
       #
       def self.stored_auth(values = nil)
+        # noinspection RubyMismatchedReturnType
         if values.is_a?(Hash)
           @stored_auth = values.deep_dup
         else

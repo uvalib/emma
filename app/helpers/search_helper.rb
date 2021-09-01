@@ -78,9 +78,6 @@ module SearchHelper
   #
   # @see ModelHelper#render_value
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
   def search_render_value(item, value, **opt)
     case value
       when :dc_title                then title_and_source_logo(item, **opt)
@@ -108,7 +105,7 @@ module SearchHelper
     title  = html_div(title, opt)
     logo   = repository_source_logo(source)
     ctrl   = prev_next_controls(**opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     title << logo << ctrl
   end
 
@@ -130,7 +127,7 @@ module SearchHelper
     name   = source&.titleize || 'LOGO'
     logo   = repository_source(item, source: source, name: name)
     ctrl   = prev_next_controls(**opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     title << logo << ctrl
   end
 
@@ -372,7 +369,7 @@ module SearchHelper
           end
       end
     list_item_number(item, **opt) do
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       upload_entry_icons(item, id: db_id) if db_id.present?
     end
   end

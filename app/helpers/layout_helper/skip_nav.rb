@@ -95,7 +95,6 @@ module LayoutHelper::SkipNav
     html_tag(:ul, prepend_classes(opt, css_selector)) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
-          # noinspection RubyYardParamTypeMatch
           entry.map { |label, link| render_skip_nav_link(label, link) }
         else
           entry.presence

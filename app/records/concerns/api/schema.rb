@@ -9,6 +9,12 @@ __loading_begin(__FILE__)
 #
 module Api::Schema
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # The implemented serializer types.
   #
   # @type [Array<Symbol>]
@@ -225,11 +231,11 @@ module Api::Schema
   #
   # @raise [SyntaxError]              If *type* is invalid.
   #
-  # @return [void]
+  # @return [TrueClass]
   #
   def assert_serializer_type(type)
-    return if SERIALIZER_TYPES.include?(type)
-    raise SyntaxError, "#{type.inspect}: not in #{SERIALIZER_TYPES.inspect}"
+    return true if SERIALIZER_TYPES.include?(type)
+    raise RangeError, "#{type.inspect}: not in #{SERIALIZER_TYPES.inspect}"
   end
 
   # Indicate whether the type is a scalar (not a representer) class.
@@ -255,7 +261,6 @@ module Api::Schema
   # @return [*]
   #
   def scalar_default(type)
-    # noinspection RubyNilAnalysis
     type &&= type.to_s.demodulize.to_sym
     scalar_defaults[type] || enumeration_defaults[type]
   end

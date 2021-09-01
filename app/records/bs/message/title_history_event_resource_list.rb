@@ -15,6 +15,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::TitleHistoryEventResourceList < Bs::Api::Message
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :events, Bs::Record::TitleHistoryEvent
   end

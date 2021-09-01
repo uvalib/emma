@@ -21,6 +21,7 @@ module BookshareService::Common
   end
 
   include ApiService::Common
+
   include BookshareService::Properties
 
 

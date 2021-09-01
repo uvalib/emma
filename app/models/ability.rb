@@ -15,8 +15,15 @@ __loading_begin(__FILE__)
 class Ability
 
   include Emma::Common
+
   include CanCan::Ability
   include Roles
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # The standard CRUD actions controller presumed by CanCan.
   #
@@ -157,14 +164,11 @@ class Ability
   # See the wiki for details:
   # @see https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def initialize(user)
     LOCAL_ACTION_ALIAS.each_pair do |name, actions|
       alias_action(*actions, to: name) unless actions.blank?
     end
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     case role_prototype_for(user)
       when :developer     then act_as_developer(user)
       when :administrator then act_as_administrator(user)

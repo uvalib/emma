@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 module Bs::Api::Serializer::Hash::Schema
 
   include Bs::Api::Serializer::Schema
-  include ::Api::Serializer::Hash::Schema
+  include Api::Serializer::Hash::Schema
 
 end
 

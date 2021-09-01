@@ -215,7 +215,7 @@ module AwsHelper
       title ||= name
       parts <<
         html_tag(:h3, class: 'aws-bucket-hdg', id: "##{name}") do
-          # noinspection RubyYardParamTypeMatch
+          # noinspection RubyMismatchedParameterType
           html_span(title) << s3_bucket_link(name)
         end
       skip_nav_append(title => name)
@@ -232,7 +232,7 @@ module AwsHelper
     objects.compact!
 
     # Transform the object instances into a sorted array of value hashes.
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     if opt[:sortOrder] || opt[:direction]
       sort_order = opt[:sortOrder] || opt[:sort]
       direction  = opt[:direction] || is_reverse?(sort_order)
@@ -285,7 +285,7 @@ module AwsHelper
     end
 
     # Return the hashes themselves if not rendering HTML.
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     return objects unless html
 
     # Prepend column headings.
@@ -345,7 +345,6 @@ module AwsHelper
     values  = obj.is_a?(Hash) ? obj.dup : s3_object_values(obj)
 
     # If not rendering HTML then just return with the column values.
-    # noinspection RubyYardReturnMatch
     return values unless html
 
     # Render each column value.
@@ -355,7 +354,6 @@ module AwsHelper
       values.map do |k, v|
         value_opt = prepend_classes(col_opt, k)
         value_opt.merge!('data-value': v) unless k == :placeholder
-        # noinspection RubyYardParamTypeMatch
         value = (k == :key) ? key : value_format(v, k)
         unless value == v
           tooltip = value_format(v)
@@ -376,9 +374,9 @@ module AwsHelper
 
   # Show an S3 object placeholder indicating an empty S3 bucket.
   #
-  # @param [String, ActiveSupport::SafeBuffer, nil] label
-  # @param [Boolean]                                html    Default: *true*
-  # @param [Hash]                                   opt     For *label*.
+  # @param [String, nil] label
+  # @param [Boolean]     html         Default: *true*
+  # @param [Hash]        opt          For *label*.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                        If *html* is *false*.
@@ -429,7 +427,6 @@ module AwsHelper
       prefix = item ? prefix_of(key) : 'Prefix' # TODO: I18n
       result = { prefix: prefix }.merge!(result)
     end
-    # noinspection RubyYardReturnMatch
     result
   end
 

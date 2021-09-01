@@ -20,6 +20,10 @@ class Bs::Record::Name < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :firstName
     has_one   :lastName

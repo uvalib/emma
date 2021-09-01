@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 class SearchCall < ApplicationRecord
 
   include Emma::Debug
+
   include Model
 
   has_and_belongs_to_many :search_results
@@ -261,11 +262,14 @@ class SearchCall < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, nil] attributes
+  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
+  # @param [Proc, nil] block
   #
-  def initialize(attributes = nil)
+  # @note - for dev traceability
+  #
+  def initialize(attr = nil, &block)
     __debug_items(binding)
-    super # TODO: ???
+    super(attr, &block)
   end
 
   # Produce a value that can be used for SearchController URL parameters.
@@ -308,11 +312,10 @@ class SearchCall < ApplicationRecord
   #
   # @return [void]
   #
-  # This method overrides:
-  # @see ActiveModel::AttributeAssignment#assign_attributes
+  # @note - for dev traceability
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
   #++
   def assign_attributes(opt)
     __debug_items(binding)

@@ -45,9 +45,10 @@ class Bs::Message::TitleMetadataSummary < Bs::Api::Message
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
-  #--
-  # noinspection DuplicatedCode
-  #++
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :arrangers,         Bs::Record::Name          # NOTE: deprecated
     has_many  :authors,           Bs::Record::Name          # NOTE: deprecated

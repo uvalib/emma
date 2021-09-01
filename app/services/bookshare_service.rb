@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'bs'
-
 # Send/receive messages through the Bookshare API.
 #
 # == Authentication and authorization

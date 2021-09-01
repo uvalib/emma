@@ -19,12 +19,13 @@ __loading_begin(__FILE__)
 #
 # @see Bs::Message::TitleMetadataSummaryList (similar schema)
 #
-#--
-# noinspection RubyClassModuleNamingConvention
-#++
 class Bs::Message::AssignedTitleMetadataSummaryList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
   schema do
     has_many  :allows,       BsAllowsType

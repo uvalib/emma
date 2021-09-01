@@ -45,6 +45,7 @@ module ParamsConcern
   end
 
   include Emma::Common
+
   include ParamsHelper
   include SearchTermsHelper
 
@@ -59,10 +60,10 @@ module ParamsConcern
   #
   # @param [String, Hash] url
   #
-  # @return [true]                    Default setting which will cause the
+  # @return [TrueClass]               Default setting which will cause the
   #                                     final state of `params` to be used by
   #                                     #conditional_redirect.
-  # @return [false]                   Setting by an intermediate filter
+  # @return [FalseClass]              Setting by an intermediate filter
   # @return [String]                  Redirection URL.
   # @return [Hash]                    Redirection path components.
   #

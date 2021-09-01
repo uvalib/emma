@@ -17,6 +17,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::OauthToken < Bs::Api::Message
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :access_token
     has_one   :expires_in

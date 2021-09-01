@@ -10,7 +10,14 @@ __loading_begin(__FILE__)
 module LayoutHelper::Footer
 
   include LayoutHelper::Common
+
   include HtmlHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Content for the footer. # TODO: I18n
   #

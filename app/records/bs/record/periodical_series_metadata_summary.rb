@@ -30,6 +30,10 @@ class Bs::Record::PeriodicalSeriesMetadataSummary < Bs::Api::Record
   include Bs::Shared::LinkMethods
   include Bs::Shared::PeriodicalMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :categories,           Bs::Record::Category
     has_many  :countries

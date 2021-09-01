@@ -30,8 +30,8 @@ module LogConcern
   #
   # @return [void]
   #
-  # Paired with after_action:
-  # @see #unsuppress_logger
+  # == Usage Notes
+  # Paired with after_action #unsuppress_logger.
   #
   def suppress_logger(logging = nil)
     logging = params[:logging] if logging.nil?
@@ -43,8 +43,8 @@ module LogConcern
   #
   # @return [void]
   #
-  # Paired with before_action:
-  # @see #suppress_logger
+  # == Usage Notes
+  # Paired with before_action #suppress_logger.
   #
   def unsuppress_logger
     Log.silent(false)

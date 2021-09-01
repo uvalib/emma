@@ -95,7 +95,7 @@ module Emma::Json
   # @return [Hash, *]
   #
   def safe_json_parse(arg, default: :original, **opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     json_parse(arg, **opt) || ((default == :original) ? arg : default)
   end
 

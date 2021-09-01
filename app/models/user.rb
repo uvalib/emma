@@ -92,6 +92,7 @@ __loading_begin(__FILE__)
 class User < ApplicationRecord
 
   include Emma::Common
+
   include Model
 
   has_many :members
@@ -148,9 +149,11 @@ class User < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, nil] attributes
+  # @param [Hash, nil] attr
   #
-  def initialize(attributes = nil) # TODO: keep?
+  # @note - for dev traceability
+  #
+  def initialize(attr = nil)
     super
   end
 
@@ -317,9 +320,6 @@ class User < ApplicationRecord
   #
   # @see LinkHelper#page_menu_label
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def menu_label(item = nil)
     item ||= self
     item.uid.presence
@@ -443,12 +443,10 @@ class User < ApplicationRecord
   #
   # @see https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def self.from_omniauth(data, update = nil)
     return unless data.is_a?(Hash)
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
+    # noinspection RubyNilAnalysis
     attr = {
       email:         data.uid.downcase,
       first_name:    data.info&.first_name,
@@ -456,6 +454,7 @@ class User < ApplicationRecord
       access_token:  data.credentials&.token,
       refresh_token: data.credentials&.refresh_token
     }.compact_blank!
+    # noinspection RubyMismatchedReturnType
     user = find_by(email: attr[:email]) or return create(attr)
     keep = false?(update)
     unless keep

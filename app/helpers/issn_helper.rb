@@ -80,7 +80,7 @@ module IssnHelper
     else
       digits = digits[0..-2]
     end
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     (length == ISSN_DIGITS) && (issn_checksum(digits) == check)
   end
 

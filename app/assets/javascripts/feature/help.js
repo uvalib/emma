@@ -45,7 +45,6 @@ $(document).on('turbolinks:load', function() {
 
     // Ensure that elements intended for the purpose of illustration do not
     // act like live controls.
-    // noinspection JSUnresolvedFunction
     $illustrations.each(function() {
         let $this = $(this);
         $this.attr('tabindex',       -1);

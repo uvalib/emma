@@ -23,6 +23,10 @@ class Bs::Message::ActivePeriodicalList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :activeTitles, Bs::Record::ActivePeriodical
     has_many  :allows,       BsAllowsType

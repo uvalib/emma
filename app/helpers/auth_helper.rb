@@ -19,6 +19,7 @@ module AuthHelper
   end
 
   include Emma::Common
+
   extend self
 
   # ===========================================================================
@@ -154,7 +155,7 @@ module AuthHelper
 
     # Create or update the dynamic table entry.
     if stored_auth[user].blank?
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       stored_auth[user] = stored_auth_entry_value(token)
     elsif stored_auth[user][:access_token] != token
       stored_auth[user][:access_token] = token

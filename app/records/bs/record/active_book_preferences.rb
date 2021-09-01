@@ -18,6 +18,10 @@ class Bs::Record::ActiveBookPreferences < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :allows,   BsAllowsType
     has_one   :format,   Bs::Record::Format

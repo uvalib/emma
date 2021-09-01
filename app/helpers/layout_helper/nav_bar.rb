@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::NavBar
 
   include LayoutHelper::Common
+
   include LinkHelper
 
   # ===========================================================================

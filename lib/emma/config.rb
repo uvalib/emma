@@ -31,11 +31,11 @@ module Emma::Config
     text = ERB.new(text).result if erb
     result = YAML.load(text, original_path)
     result.deep_symbolize_keys! if result.is_a?(Hash)
+    # noinspection RubyMismatchedReturnType
     result
   rescue YAML::SyntaxError => error
     Log.error(error)
   rescue => error # Probable file read error.
-    # noinspection RubyYardParamTypeMatch
     Log.error(error, path)
     re_raise_if_internal_exception(error)
   end

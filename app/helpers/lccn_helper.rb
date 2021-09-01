@@ -63,9 +63,6 @@ module LccnHelper
   #
   # @param [String] s
   #
-  # Compare with:
-  # @see #oclc?
-  #
   # == Usage Notes
   # If *text* matches #LCCN_PREFIX then the method returns *true* even if the
   # actual number is invalid; the caller is expected to differentiate between
@@ -80,9 +77,6 @@ module LccnHelper
   # Indicate whether the string is a valid LCCN.
   #
   # @param [String] s
-  #
-  # Compare with:
-  # @see #contains_oclc?
   #
   def lccn?(s)
     to_lccn(s, log: false).present?

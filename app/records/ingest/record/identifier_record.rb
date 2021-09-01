@@ -26,6 +26,10 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
 
   include Emma::Common
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :emma_recordId
     has_one   :emma_repository,           EmmaRepository
@@ -89,7 +93,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   # @return [String, nil]
   #
   def identifier(no_version: false)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     return emma_recordId if emma_recordId.present?
     parts = [emma_repository, emma_repositoryRecordId, dc_format]
     parts << emma_formatVersion unless no_version

@@ -24,6 +24,10 @@ class Bs::Message::MyAccountPreferences < Bs::Api::Message
   include Bs::Shared::ArtifactMethods
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :allowAdultContent,    Boolean
     has_one   :brailleCellLineWidth, Integer

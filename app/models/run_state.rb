@@ -155,6 +155,7 @@ class RunState < Hash
       default = AVAILABLE_DEFAULTS.merge(text: "invalid: #{source.inspect}")
       source  = safe_json_parse(source, default: default)
     end
+    # noinspection RubyMismatchedParameterType
     merge!(source)
     @status ||= UNAVAILABLE_STATUS
     @code   ||= STATE.dig(@status, :code)
@@ -452,7 +453,7 @@ class RunState < Hash
           f.flock(File::LOCK_EX)
           f.write(state)
         end
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         state
       rescue => error
         warn(error)

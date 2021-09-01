@@ -45,7 +45,6 @@
 
     thead {
 
-        // noinspection CssUnusedSymbol
         tr.spanner {
             display: none;
             z-index: $z-hidden;
@@ -69,7 +68,6 @@
 
     // Give the heading row a background.
     // @see ModelHelper::DARK_HEAD
-    // noinspection CssUnusedSymbol
     &.dark-head {
 
         /**
@@ -79,7 +77,6 @@
          */
         thead {
 
-            // noinspection CssUnusedSymbol
             tr.spanner {
                 display:    block;
                 position:   absolute;
@@ -99,7 +96,6 @@
             margin-left: 0.5rem;
         }
 
-        // noinspection CssUnusedSymbol
         .col-last {
             margin-right: 0.5rem;
         }
@@ -107,7 +103,6 @@
 
     // Make the heading row stick to the top of the table when scrolling.
     // @see ModelHelper::STICKY_HEAD
-    // noinspection CssUnusedSymbol
     &.sticky-head {
 
         position:   sticky;
@@ -136,13 +131,11 @@
             }
         }
 
-        // noinspection CssUnusedSymbol
         .col-last {
             margin-right: 0.5rem;
         }
     }
 
-    // noinspection CssUnusedSymbol
     &.sticky-head.dark-head {
 
         padding-bottom: 0;
@@ -155,7 +148,6 @@
 
         thead {
 
-            // noinspection CssUnusedSymbol
             tr.spanner {
 
                 @include grid-row(1);

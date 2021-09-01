@@ -21,6 +21,7 @@ module SearchService::Common
   end
 
   include ApiService::Common
+
   include SearchService::Properties
 
   # ===========================================================================

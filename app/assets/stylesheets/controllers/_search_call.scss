@@ -29,7 +29,6 @@
             min-height: 3rem;
         }
 
-        // noinspection CssUnusedSymbol
         &.dark-head {
             thead {
                 tr.spanner {
@@ -38,7 +37,6 @@
             }
         }
 
-        // noinspection CssUnusedSymbol
         &.sticky-head.dark-head {
             thead {
                 th {
@@ -54,7 +52,6 @@
         }
     }
 
-    // noinspection CssUnusedSymbol
     .col-last {
         margin-right: 1rem;
     }
@@ -85,7 +82,6 @@
                 margin-left: 0.25rem;
             }
 
-            // noinspection CssUnusedSymbol
             &.star {
                 vertical-align: top;
                 font-size:      smaller;

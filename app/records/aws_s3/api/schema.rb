@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 #
 module AwsS3::Api::Schema
 
-  include ::Api::Schema
+  include Api::Schema
 
   # ===========================================================================
   # :section: Api::Schema overrides

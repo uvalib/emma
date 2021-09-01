@@ -16,6 +16,7 @@ module ApiExplorerConcern
   end
 
   include Emma::Json
+
   include ExplorerHelper
 
   # ===========================================================================
@@ -65,7 +66,7 @@ module ApiExplorerConcern
       when Exception
         ex.message
       else
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         (default == :original) ? arg : default
     end
   end
@@ -127,9 +128,6 @@ module ApiExplorerConcern
     #
     # @type [Array<Symbol>]
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     METHODS =
       BookshareService.api_methods
         .select  { |method, _| method.to_s.start_with?('get_', 'download_') }

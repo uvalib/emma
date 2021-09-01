@@ -15,6 +15,7 @@ module LinkHelper
   end
 
   include Emma::Common
+
   include HtmlHelper
   include I18nHelper
   include RouteHelper
@@ -63,7 +64,7 @@ module LinkHelper
     html_opt  = prepend_classes(link_opt, css_selector)
     html_opt[:method] ||= :delete if action == :destroy
     html_opt[:title]  ||= config_lookup("#{action}.tooltip", **look_opt)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     if path.match?(/^https?:/)
       external_link(label, path, **html_opt)
     else
@@ -122,7 +123,7 @@ module LinkHelper
     label  ||= labelize(action)
     path   ||= { controller: opt[:controller], action: action }.compact
     html_tag(:li, class: 'page-action') do
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       link_to_action(label, path: path)
     end
   end
@@ -196,7 +197,7 @@ module LinkHelper
     table      ||= page_action_links(controller: controller)
 
     action = table.dig(action&.to_sym, :action) || action
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     path   = send(route_helper(controller, action))
 
     raise "model: expected Class; got #{model.class}" unless model.is_a?(Class)
@@ -315,7 +316,7 @@ module LinkHelper
     text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
     prepend_classes!(opt, css_selector)
     append_classes!(opt, *type) unless type == :text
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     html_div(text, opt)
   end
 

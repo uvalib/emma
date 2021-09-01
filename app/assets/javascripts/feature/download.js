@@ -31,9 +31,9 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      firstName:  string,
      *      lastName:   string,
-     *      middle:     [string],
-     *      prefix:     [string],
-     *      suffix:     [string]
+     *      middle:     ?string,
+     *      prefix:     ?string,
+     *      suffix:     ?string
      * }} MemberName
      */
 
@@ -45,7 +45,7 @@ $(document).on('turbolinks:load', function() {
      *      canDownload:                boolean,
      *      dateOfBirth:                string,
      *      deleted:                    boolean,
-     *      emailAddress:               [string],
+     *      emailAddress:               ?string,
      *      hasAgreement:               boolean,
      *      language:                   string,
      *      links:                      Linkage[],
@@ -56,7 +56,7 @@ $(document).on('turbolinks:load', function() {
      *      roles:                      string[],
      *      site:                       string,
      *      subscriptionStatus:         string,
-     *      userAccountId               string,
+     *      userAccountId:              string
      * }} Member
      */
 
@@ -368,7 +368,7 @@ $(document).on('turbolinks:load', function() {
      * Fetch the Bookshare members associated with the current user and pass
      * them to the callback function.
      *
-     * @param {function(object, string?)} callback
+     * @param {function(object, string=)} callback
      */
     function getMembers(callback) {
         const func  = 'getMembers: ';
@@ -730,7 +730,6 @@ $(document).on('turbolinks:load', function() {
             if (!$element.hasClass(state)) {
                 $element = $link.parents(selector);
             }
-            // noinspection JSUnresolvedFunction
             $link = $element.first();
         }
         endRequesting($link, Emma.Download.failure.canceled);

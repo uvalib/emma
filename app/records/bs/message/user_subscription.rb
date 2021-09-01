@@ -25,6 +25,10 @@ class Bs::Message::UserSubscription < Bs::Api::Message
   include Bs::Shared::LinkMethods
   include Bs::Shared::SubscriptionMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :downloadTimeframe,    Bs::Record::DownloadTimeframe
     has_one   :endDate,              IsoDate

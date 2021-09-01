@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Handle Bookshare-only "/member" pages.
 #
 # @see MemberHelper
+# @see file:app/views/member/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
 #
 class MemberController < ApplicationController
 
@@ -57,6 +60,8 @@ class MemberController < ApplicationController
   #
   # List all organization members.
   #
+  # @see BookshareService::Request::Organization#get_my_organization_members
+  #
   def index
     __debug_route
     opt   = pagination_setup
@@ -72,6 +77,8 @@ class MemberController < ApplicationController
   # == GET /member/:id
   #
   # Display details of an existing organization member.
+  #
+  # @see UserConcern#get_account_details
   #
   def show
     __debug_route

@@ -14,12 +14,12 @@ module Bs::Api::Serializer::Associations
 
   extend ActiveSupport::Concern
 
-  include ::Api::Serializer::Associations
+  include Api::Serializer::Associations
 
   module ClassMethods
 
     include Bs::Api::Serializer::Schema
-    include ::Api::Serializer::Associations::ClassMethods
+    include Api::Serializer::Associations::ClassMethods
 
   end
 

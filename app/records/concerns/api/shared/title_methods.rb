@@ -328,7 +328,7 @@ module Api::Shared::TitleMethods
   # @return [Array<String>]
   #
   def get_values(*fields)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     fields.find { |meth|
       values = meth && Array.wrap(try(meth)).compact_blank
       break values.map(&:to_s) if values.present?

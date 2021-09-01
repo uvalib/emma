@@ -14,12 +14,12 @@ module Bs::Api::Record::Associations
 
   extend ActiveSupport::Concern
 
-  include ::Api::Record::Associations
+  include Api::Record::Associations
 
   module ClassMethods
 
     include Bs::Api::Schema
-    include ::Api::Record::Associations::ClassMethods
+    include Api::Record::Associations::ClassMethods
 
   end
 

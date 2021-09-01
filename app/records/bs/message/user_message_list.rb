@@ -16,6 +16,10 @@ class Bs::Message::UserMessageList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :links,    Bs::Record::Link
     has_many :messages, Bs::Record::UserMessage

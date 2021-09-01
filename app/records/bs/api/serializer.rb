@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # The base class for serialization/de-serialization of objects derived from
 # Bs::Api::Record.
 #
-class Bs::Api::Serializer < ::Api::Serializer
+class Bs::Api::Serializer < Api::Serializer
 
   include Bs::Api::Serializer::Schema
   include Bs::Api::Serializer::Associations

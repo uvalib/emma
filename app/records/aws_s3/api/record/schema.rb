@@ -14,12 +14,12 @@ module AwsS3::Api::Record::Schema
 
   extend ActiveSupport::Concern
 
-  include ::Api::Record::Schema
+  include Api::Record::Schema
 
   module ClassMethods
 
     include AwsS3::Api::Schema
-    include ::Api::Record::Schema::ClassMethods
+    include Api::Record::Schema::ClassMethods
 
   end
 

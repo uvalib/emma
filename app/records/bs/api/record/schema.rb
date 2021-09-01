@@ -14,12 +14,12 @@ module Bs::Api::Record::Schema
 
   extend ActiveSupport::Concern
 
-  include ::Api::Record::Schema
+  include Api::Record::Schema
 
   module ClassMethods
 
     include Bs::Api::Schema
-    include ::Api::Record::Schema::ClassMethods
+    include Api::Record::Schema::ClassMethods
 
   end
 

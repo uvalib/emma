@@ -88,8 +88,8 @@ module Emma::Log
 
   # Add a DEBUG-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
-  # @param [Proc]                           block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -99,8 +99,8 @@ module Emma::Log
 
   # Add an INFO-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
-  # @param [Proc]                           block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -110,8 +110,8 @@ module Emma::Log
 
   # Add a WARN-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
-  # @param [Proc]                           block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -121,8 +121,8 @@ module Emma::Log
 
   # Add an ERROR-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
-  # @param [Proc]                           block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -132,8 +132,8 @@ module Emma::Log
 
   # Add a FATAL-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
-  # @param [Proc]                           block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -155,6 +155,7 @@ module Emma::Log
   # @return [Integer]
   #
   def self.log_level(value, default = :unknown)
+    # noinspection RubyMismatchedReturnType
     return value if value.is_a?(Integer)
     value = value.to_s.downcase.to_sym unless value.is_a?(Symbol)
     LOG_LEVEL[value] || LOG_LEVEL[default]
@@ -165,7 +166,7 @@ module Emma::Log
   # @return [Concurrent::Map]
   #
   # Compare with:
-  # @see ActiveSupport::LoggerThreadSafeLevel#local_levels
+  # ActiveSupport::LoggerThreadSafeLevel#local_levels
   #
   def self.local_levels
     # noinspection RubyResolve
@@ -177,7 +178,7 @@ module Emma::Log
   # @return [Integer]
   #
   # Compare with:
-  # @see ActiveSupport::LoggerThreadSafeLevel#local_log_id
+  # ActiveSupport::LoggerThreadSafeLevel#local_log_id
   #
   def self.local_log_id
     Thread.current.__id__
@@ -188,7 +189,7 @@ module Emma::Log
   # @return [Integer]
   #
   # Compare with:
-  # @see ActiveSupport::LoggerThreadSafeLevel#local_level
+  # ActiveSupport::LoggerThreadSafeLevel#local_level
   #
   def self.local_level
     local_levels[local_log_id]
@@ -202,7 +203,7 @@ module Emma::Log
   # @return [nil]                   If *value* is *nil*.
   #
   # Compare with:
-  # @see ActiveSupport::LoggerThreadSafeLevel#local_level=
+  # ActiveSupport::LoggerThreadSafeLevel#local_level=
   #
   def self.local_level=(value)
     if value
@@ -217,7 +218,7 @@ module Emma::Log
   # @return [Integer]
   #
   # Compare with:
-  # @see ActiveSupport::LoggerThreadSafeLevel#level
+  # ActiveSupport::LoggerThreadSafeLevel#level
   #
   def self.level
     local_level || logger.level

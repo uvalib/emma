@@ -10,7 +10,6 @@
 // Search controls
 //=============================================================================
 
-// noinspection CssUnusedSymbol
 .pagination-top,
 .pagination-bottom {
 
@@ -20,7 +19,6 @@
     margin:    0;
 }
 
-// noinspection CssUnusedSymbol
 .pagination-top {
 
     margin-top:    $results-entry-gap-y;
@@ -31,7 +29,6 @@
     }
 }
 
-// noinspection CssUnusedSymbol
 .pagination-bottom {
 
     margin-top:    calc(#{$results-entry-gap-y} / 2);

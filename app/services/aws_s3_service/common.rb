@@ -21,6 +21,7 @@ module AwsS3Service::Common
   end
 
   include ApiService::Common
+
   include AwsS3Service::Properties
 
   # ===========================================================================
@@ -50,7 +51,7 @@ module AwsS3Service::Common
   # @return [String, nil]
   #
   def submission_id(item)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     case item
       when Upload, AwsS3::Message::SubmissionPackage
         item.submission_id
@@ -133,7 +134,7 @@ module AwsS3Service::Common
         params[:body] = content.is_a?(String) ? StringIO.new(content) : content
         client.put_object(params, opt)
       end
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} "}
+    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} " }
     key
   rescue StandardError => e
     @exception = e
@@ -164,7 +165,7 @@ module AwsS3Service::Common
     params   = { bucket: bucket, key: key }
     # @type [Aws::S3::Types::GetObjectOutput] response
     response = client.get_object(params, opt)
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} "}
+    Log.debug { "#{meth}: AWS S3 response: #{response.inspect}" }
     response.body.read
   rescue StandardError => e
     @exception = e
@@ -195,7 +196,7 @@ module AwsS3Service::Common
     params   = { bucket: bucket, key: key }
     # @type [Aws::S3::Types::DeleteObjectOutput] response
     response = client.delete_object(params, opt)
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} "}
+    Log.debug { "#{meth}: AWS S3 response: #{response.inspect}" }
     key
   rescue StandardError => e
     @exception = e
@@ -213,9 +214,10 @@ module AwsS3Service::Common
   # @option opt [Aws::S3::Client] :client
   #
   # @return [Array<Aws::S3::Object>]
+  # @return [nil]                     If the operation failed.
   #
   #--
-  # noinspection RubyScope, RubyNilAnalysis
+  # noinspection RubyNilAnalysis
   #++
   def api_list_objects(bucket, filter = nil, **opt)
     __debug_items(binding)

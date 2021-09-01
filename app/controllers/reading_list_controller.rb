@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Handle Bookshare-only "/reading_list" pages.
 #
 # @see ReadingListHelper
+# @see file:app/views/reading_list/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
 #
 class ReadingListController < ApplicationController
 
@@ -54,6 +57,8 @@ class ReadingListController < ApplicationController
   # List all reading lists available to the user (private lists, shared lists,
   # or organization list to which the user is subscribed).
   #
+  # @see BookshareService::Request::ReadingLists#get_reading_lists_list
+  #
   def index
     __debug_route
     opt   = pagination_setup
@@ -69,6 +74,9 @@ class ReadingListController < ApplicationController
   # == GET /reading_list/:id
   #
   # Display details of a reading list.
+  #
+  # @see BookshareService::Request::ReadingLists#get_reading_list
+  # @see BookshareService::Request::ReadingLists#get_reading_list_titles
   #
   def show
     __debug_route

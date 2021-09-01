@@ -12,9 +12,13 @@ __loading_begin(__FILE__)
 # @attr [Array<String>] links
 #
 # Compare with:
-# @see Bs::Record::StatusModel
+# Bs::Record::StatusModel
 #
 class Search::Message::RetrievalResult < Search::Api::Message
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
   schema do
     has_one   :key

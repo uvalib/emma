@@ -40,9 +40,10 @@ end
 #
 module UploadWorkflow::Single::Data
 
+  include Emma::Json
+
   include UploadWorkflow::Data
   include UploadWorkflow::Single::External
-  include Emma::Json
 
   # ===========================================================================
   # :section:
@@ -81,7 +82,7 @@ module UploadWorkflow::Single::Data
   # @return [Upload, nil]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch, RubyYardReturnMatch
+  # noinspection RubyMismatchedParameterType
   #++
   def set_data(data)
     data = super
@@ -182,7 +183,6 @@ module UploadWorkflow::Single::Data
   #
   def record_data(data)
     data = data.attributes if data.is_a?(Upload)
-    # noinspection RubyYardReturnMatch
     data.symbolize_keys.except!(*IGNORED_UPLOAD_FIELDS)
   end
 
@@ -198,12 +198,9 @@ module UploadWorkflow::Single::Data
   #
   # @return [Upload, nil]
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
-  #++
   def reset_record(data = nil)
     id = sid = nil
-    # noinspection RubyCaseWithoutElseBlockInspection
+    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
     case data
       when Upload
         (id = data.id) or (sid = data.submission_id)
@@ -285,9 +282,10 @@ end
 #
 module UploadWorkflow::Single::Actions
 
+  include Emma::Json
+
   include UploadWorkflow::Actions
   include UploadWorkflow::Single::Data
-  include Emma::Json
 
   # ===========================================================================
   # :section: UploadWorkflow::Actions overrides
@@ -554,7 +552,7 @@ module UploadWorkflow::Single::Actions
   #
   # @raise [RuntimeError]
   #
-  # @return [true]
+  # @return [TrueClass]
   #
   def assert_record_present
     record.present? or raise 'NO RECORD - INTERNAL WORKFLOW ERROR'
@@ -564,7 +562,7 @@ module UploadWorkflow::Single::Actions
   #
   # @raise [RuntimeError]
   #
-  # @return [true]
+  # @return [TrueClass]
   #
   def assert_emma_record
     assert_record_present
@@ -1479,7 +1477,6 @@ class UploadWorkflow::Single < UploadWorkflow
   # @return [UploadWorkflow::Single]
   #
   def self.generate(data, **opt)
-    # noinspection RubyYardParamTypeMatch
     data &&= data.is_a?(Upload) ? data : Upload.get_record(data)
     opt[:variant] ||= data&.phase
     opt[:variant] ||=
@@ -1490,6 +1487,7 @@ class UploadWorkflow::Single < UploadWorkflow
       else
         :create
       end
+    # noinspection RubyMismatchedReturnType
     super(data, **opt)
   end
 

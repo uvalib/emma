@@ -19,6 +19,10 @@ class Bs::Record::PeriodicalSubscription < Bs::Api::Record
   include Bs::Shared::ArtifactMethods
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :dateSubscribed, IsoDate
     has_one   :format,         BsPeriodicalFormat

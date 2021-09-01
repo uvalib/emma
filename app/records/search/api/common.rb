@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 #
 module Search::Api::Common
 
-  include ::Api::Common
+  include Api::Common
 
   # ===========================================================================
   # :section:

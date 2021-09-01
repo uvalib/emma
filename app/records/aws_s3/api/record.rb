@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # The base class for objects that are deposited into AWS S3.
 #
-class AwsS3::Api::Record < ::Api::Record
+class AwsS3::Api::Record < Api::Record
 
   include AwsS3::Api::Common
   include AwsS3::Api::Schema

@@ -14,6 +14,10 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   include Api::Shared::ErrorTable
   include Emma::Json
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :submissions, AwsS3::Message::SubmissionPackage
     has_many :succeeded
@@ -34,7 +38,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   # @param [Hash]                                                         opt
   #
   def initialize(src, sent = nil, **opt)
-    # noinspection RubyScope, RubyYardParamTypeMatch
+    # noinspection RubyScope, RubyMismatchedParameterType
     create_message_wrapper(opt) do |opt|
       super(nil, **opt)
       self.submissions = AwsS3::Message::SubmissionPackage.to_a(src)

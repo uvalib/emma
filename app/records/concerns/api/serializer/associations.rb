@@ -14,7 +14,7 @@ module Api::Serializer::Associations
 
   module ClassMethods
 
-    include ::Api::Serializer::Schema
+    include Api::Serializer::Schema
 
     # =========================================================================
     # :section: Record field schema DSL
@@ -184,10 +184,10 @@ module Api::Serializer::Associations
     # @return [Class]
     #
     # Compare with:
-    # @see Api::Record::Associations#make_default
+    # Api::Record::Associations#make_default
     #
     #--
-    # noinspection RubyNilAnalysis, RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     #++
     def get_type_class(type, **opt)
       type   = extract_type_option!(opt) || type || String

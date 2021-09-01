@@ -23,6 +23,10 @@ class Bs::Message::TitleMetadataSummaryList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :allows,       BsAllowsType
     has_one   :limit,        Integer

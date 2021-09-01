@@ -18,8 +18,9 @@ public
 
 module Workflow::Base::Simulation
 
-  include Workflow::Base::Data
   include Emma::Debug::OutputMethods
+
+  include Workflow::Base::Data
 
   # ===========================================================================
   # :section: Classes
@@ -123,7 +124,7 @@ module Workflow::Base::Simulation
   # @return [Boolean]
   #
   #--
-  # noinspection RubyYardReturnMatch
+  # noinspection RubyMismatchedReturnType
   #++
   def simulating(status = nil)
     @simulating = status unless status.nil?

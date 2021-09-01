@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module Api::Serializer::Hash::Schema
 
-  include ::Api::Serializer::Schema
+  include Api::Serializer::Schema
 
   # ===========================================================================
   # :section:

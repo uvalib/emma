@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Handle Bookshare-only "/category" pages.
 #
 # @see CategoryHelper
+# @see file:app/views/category/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
 #
 # == Usage Notes
 # Categories can be seen by anyone, including anonymous users.
@@ -54,6 +57,8 @@ class CategoryController < ApplicationController
   # == GET /category
   #
   # List all categories.
+  #
+  # @see BookshareService::Request::Titles#get_categories
   #
   def index
     __debug_route

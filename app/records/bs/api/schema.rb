@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 module Bs::Api::Schema
 
   include Bs::Api::Common
-  include ::Api::Schema
+  include Api::Schema
 
   # ===========================================================================
   # :section:

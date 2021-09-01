@@ -58,6 +58,10 @@ class Search::Message::SearchRecord < Search::Api::Message
 
   include Search::Shared::TitleMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :emma_recordId
     has_one   :emma_titleId

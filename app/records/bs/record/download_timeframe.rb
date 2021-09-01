@@ -13,6 +13,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::DownloadTimeframe < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one :name, BsTimeframe
   end

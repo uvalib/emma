@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Base class for object-specific serializers that process XML data.
 #
-class Bs::Api::Serializer::Xml < ::Api::Serializer::Xml
+class Bs::Api::Serializer::Xml < Api::Serializer::Xml
 
   include Bs::Api::Serializer::Xml::Schema
   include Bs::Api::Serializer::Xml::Associations

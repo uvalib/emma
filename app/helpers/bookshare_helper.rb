@@ -15,6 +15,7 @@ module BookshareHelper
   end
 
   include Emma::Common
+
   include HtmlHelper
   include I18nHelper
 
@@ -237,7 +238,6 @@ module BookshareHelper
         [k, v] unless k.blank? || v.blank?
       }.compact.to_h
 
-    # noinspection RubyYardParamTypeMatch
     make_path(path, path_opt)
   end
 
@@ -305,7 +305,7 @@ module BookshareHelper
   def bookshare_user(name)
     return name.map { |v| send(__method__, v) } if name.is_a?(Array)
     name = name.to_s.downcase
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     (name.present? && !name.include?('@')) ? (BOOKSHARE_USER % name) : name
   end
 

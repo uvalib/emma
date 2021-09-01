@@ -17,6 +17,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::TitleHistoryEvent < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :action
     has_one   :comment

@@ -17,7 +17,7 @@ public
 # value here or override dynamically with the environment variable.
 #
 # NOTE: setting to *false* should be for experimentation only since it will
-# result in untested execution paths.
+#   result in untested execution paths.
 #
 IMPLEMENT_OVERRIDES = !false?(ENV['IMPLEMENT_OVERRIDES'])
 
@@ -101,7 +101,6 @@ def override(mod, mod2 = nil, &block)
     end
   end
   overrides.each_pair do |target, new_definitions|
-    # noinspection RailsParamDefResolve
     target.send(:prepend, new_definitions)
   end
 end

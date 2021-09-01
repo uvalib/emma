@@ -123,7 +123,6 @@ module HtmlHelper
     content   = args.flatten
     content  += Array.wrap(yield) if block_given?
     content   = content.compact_blank
-    # noinspection RubyYardReturnMatch
     form_tag(url_or_path, options) do
       safe_join(content, separator)
     end
@@ -165,7 +164,7 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   #--
-  # noinspection RubyYardParamTypeMatch
+  # noinspection RubyMismatchedParameterType
   #++
   def icon_button(icon: nil, text: nil, url: nil, **opt)
     icon           ||= STAR

@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 module Search::Api::Schema
 
   include Search::Api::Common
-  include ::Api::Schema
+  include Api::Schema
 
   # ===========================================================================
   # :section:

@@ -16,6 +16,10 @@ class Bs::Message::OrganizationTypeList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :links,             Bs::Record::Link
     has_many :organizationTypes, Bs::Record::OrganizationType

@@ -9,9 +9,9 @@ __loading_begin(__FILE__)
 #
 module Api::Serializer::Schema
 
-  include ::Api::Schema
-
   include Emma::Common
+
+  include Api::Schema
 
   # ===========================================================================
   # :section:
@@ -172,13 +172,11 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyYardReturnMatch
-  #++
   def element_name(name, mode = nil)
     name = name.to_s       if name.is_a?(Symbol) || name.is_a?(Class)
     name = name.class.to_s unless name.is_a?(String)
     name = name.demodulize
+    # noinspection RubyMismatchedReturnType, RubyResolve
     case mode
       when :default, nil          then name
       when :underscore            then name.underscore

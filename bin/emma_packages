@@ -73,7 +73,6 @@ def fail(*args)
 end
 
 def debug(*args, &block)
-  # noinspection RubyResolve
   return unless VERBOSE
   opt = args.last.is_a?(Hash) && args.pop || {}
   opt[:prefix] = 'DEBUG:' unless opt.key?(:prefix)
@@ -87,7 +86,6 @@ end
 # @return [Array, nil]
 #
 def get_packages(file)
-  # noinspection RubyResolve
   file ||= SRC_FILE
   text = File.read(file);                 # debug("text == #{text.inspect}")
   json = JSON.parse(text);                # debug("json == #{json.inspect}")
@@ -135,9 +133,6 @@ end
 #
 # @return [void]
 #
-#--
-# noinspection RubyResolve
-#++
 def output_list_entry(package, version, type)
   entry = URL[package] or return warn("Package #{package.inspect} unexpected")
   entry = "https://#{entry}" % { version: version, type: type }
@@ -154,9 +149,6 @@ end
 #
 # @return [void]
 #
-#--
-# noinspection RubyResolve
-#++
 def output_section(type, versions)
   case type
     when :css, 'css', /^style/ then type = :css; section = 'stylesheets'
@@ -175,7 +167,6 @@ end
 # Main
 #==============================================================================
 
-# noinspection RubyResolve
 if %w(-? --? -help --help).any? { |flag| OPTIONS.include?(flag) }
 
   alert(

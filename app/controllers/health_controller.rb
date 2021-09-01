@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle health-check requests.
 #
+# @see file:app/views/health/**
+#
 # == Usage Notes
 # The endpoints implemented by this controller render only JSON and do not
 # require authentication of the requester.
@@ -59,6 +61,8 @@ class HealthController < ApplicationController
   # == GET /health/check[?logging=true]
   # == GET /health/check/:subsystem[?logging=true]
   #
+  # @see HealthConcern#render_check
+  #
   def check
     logging = params[:logging]
     logging = subsystems.blank? ? true?(logging) : !false?(logging)
@@ -71,11 +75,15 @@ class HealthController < ApplicationController
 
   # == GET /health/run_state
   #
+  # @see HealthConcern#show_run_state
+  #
   def run_state
     @state = show_run_state
   end
 
   # == PUT /health/run_state
+  #
+  # @see HealthConcern#update_run_state
   #
   # == Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.

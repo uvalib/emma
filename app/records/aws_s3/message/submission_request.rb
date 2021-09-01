@@ -1,15 +1,16 @@
-# app/records/aws_s3/record/submission_package.rb
+# app/records/aws_s3/message/submission_package.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# AwsS3::Record::SubmissionPackage
+# The data and metadata to submit a new remediated variant to a member
+# repository via an AWS bucket pickup location.
 #
 # @attr [String]                        submission_id
 #
-# == Fields from Search::Message::SearchRecord
+# == Fields from Search::Record::MetadataRecord
 #
 # @attr [String]                        emma_recordId
 # @attr [String]                        emma_titleId
@@ -63,15 +64,19 @@ __loading_begin(__FILE__)
 # @see file:config/locales/records/search.en.yml          *en.emma.search.record*
 # @see file:app/assets/javascripts/feature/file-upload.js *EmmaData*
 #
-class AwsS3::Record::SubmissionPackage < AwsS3::Api::Record
+class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
 
   include Emma::Common
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
   schema do
 
     attribute :submission_id
 
-    # == Fields from Search::Message::SearchRecord
+    # == Fields from Search::Record::MetadataRecord
 
     has_one   :emma_recordId
     has_one   :emma_titleId
@@ -155,18 +160,15 @@ class AwsS3::Record::SubmissionPackage < AwsS3::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [AwsS3::Record::SubmissionPackage, Upload, Hash] src
-  # @param [Hash]                                           opt
+  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash] src
+  # @param [Hash]                                            opt
   #
   # @option opt [Aws::S3::Object] :file   Override file for submission.
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
   def initialize(src, **opt)
     @file = @file_key = nil
     case src
-      when AwsS3::Record::SubmissionPackage
+      when AwsS3::Message::SubmissionPackage, AwsS3::Record::SubmissionPackage
         data  = src
         sid   = src.submission_id
         @file = src.file
@@ -192,7 +194,7 @@ class AwsS3::Record::SubmissionPackage < AwsS3::Api::Record
     end
 
     case src
-      when AwsS3::Record::SubmissionPackage
+      when AwsS3::Message::SubmissionPackage, AwsS3::Record::SubmissionPackage
         @file_key ||= src.file_key
       else
         @file_key ||= sid + File.extname(@file.key)
@@ -225,6 +227,35 @@ class AwsS3::Record::SubmissionPackage < AwsS3::Api::Record
       else
         item.presence
     end
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Create a new SubmissionPackage unless *src* already is one.
+  #
+  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash] record
+  #
+  # @return [AwsS3::Message::SubmissionPackage]
+  #
+  def self.[](record)
+    # noinspection RubyMismatchedReturnType
+    record.is_a?(self) ? record : new(record)
+  end
+
+  # Normalize to an array of submission records.
+  #
+  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash, Array] records
+  #
+  # @return [Array<AwsS3::Message::SubmissionPackage>]
+  #
+  def self.to_a(records)
+    Array.wrap(records).flatten.map { |record|
+      self[record] if record.present?
+    }.compact
   end
 
 end

@@ -73,7 +73,7 @@ module UpcHelper
     last   = UPC_DIGITS - 1 # The check digit.
     check  = digits[last]
     digits = digits[0..(last-1)]
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     (length >= UPC_DIGITS) && (upc_checksum(digits) == check)
   end
 

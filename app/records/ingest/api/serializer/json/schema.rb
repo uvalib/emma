@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 module Ingest::Api::Serializer::Json::Schema
 
   include Ingest::Api::Serializer::Schema
-  include ::Api::Serializer::Json::Schema
+  include Api::Serializer::Json::Schema
 
 end
 

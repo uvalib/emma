@@ -141,6 +141,8 @@ module UploadConcern
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
   # @param [ActionDispatch::Request, nil]            req Def: `#request`.
   #
+  # @raise [RuntimeError]             If both :src and :data are present.
+  #
   # @return [Array<Hash>]
   #
   def upload_bulk_post_parameters(p = nil, req = nil)
@@ -201,7 +203,6 @@ module UploadConcern
     else
       return Log.warn { "#{__method__}: neither :data nor :src given" }
     end
-    # noinspection RubyYardReturnMatch
     case name.to_s.downcase.split('.').last
       when 'json' then json_parse(data)
       when 'csv'  then csv_parse(data)
@@ -430,9 +431,8 @@ module UploadConcern
     opt[:params] ||= workflow_parameters
     opt[:no_sim]   = true if UploadWorkflow::Single::SIMULATION # TODO: remove
     opt[:html]     = params[:format].blank? || (params[:format] == 'html')
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     @workflow = UploadWorkflow::Single.check_status(rec, **opt)
-    # noinspection RubyYardReturnMatch
     @workflow.results
   end
 
@@ -468,7 +468,6 @@ module UploadConcern
     @workflow = UploadWorkflow::Bulk.generate(rec, **opt)
     @workflow.send("#{event}!", *data)
     failure(from, @workflow.failures) if @workflow.failures?
-    # noinspection RubyYardReturnMatch
     @workflow.results
   end
 

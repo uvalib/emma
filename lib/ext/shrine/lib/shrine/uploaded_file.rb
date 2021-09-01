@@ -43,9 +43,6 @@ class Shrine
     #
     # @return [Hash{Symbol=>*}]
     #
-    #--
-    # noinspection RubyUnusedLocalVariable
-    #++
     def extract_file_metadata
       mime  = fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = nil
       ext   = extension
@@ -63,8 +60,8 @@ class Shrine
           fmt_metadata[:dc_format] = FileFormat.metadata_fmt(fmt_instance.fmt)
         end
       elsif FileNaming::STRICT_FORMATS
-        fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = ''
-        raise
+        fmt = fmt_class = fmt_instance = fmt_parser = ''
+        raise "#{__method__}: unknown mime #{mime.inspect}, ext #{ext.inspect}"
       else
         {}
       end
@@ -127,7 +124,7 @@ class Shrine
       #
       def open(**options)
         __ext_debug { options }
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         super
       end
 
@@ -154,7 +151,7 @@ class Shrine
         __ext_debug do
           { destination: destination, options: options, '@io' => @io }
         end
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         super
       end
 

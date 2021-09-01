@@ -116,7 +116,7 @@ module CssHelper
   # @return [Hash]                        The modified *html_opt* hash.
   #
   # Compare with:
-  # @see #prepend_classes!
+  # #prepend_classes!
   #
   def append_classes!(html_opt, *classes, &block)
     result = css_class_array(html_opt[:class], *classes, &block).join(' ')
@@ -166,7 +166,7 @@ module CssHelper
   # @return [Hash]                        The modified *html_opt* hash.
   #
   # Compare with:
-  # @see #append_classes!
+  # #append_classes!
   #
   def prepend_classes!(html_opt, *classes, &block)
     result = css_class_array(*classes, html_opt[:class], &block).join(' ')

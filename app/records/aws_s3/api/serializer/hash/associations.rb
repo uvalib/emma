@@ -13,12 +13,12 @@ module AwsS3::Api::Serializer::Hash::Associations
 
   extend ActiveSupport::Concern
 
-  include ::Api::Serializer::Hash::Associations
+  include Api::Serializer::Hash::Associations
 
   module ClassMethods
 
     include AwsS3::Api::Serializer::Hash::Schema
-    include ::Api::Serializer::Hash::Associations::ClassMethods
+    include Api::Serializer::Hash::Associations::ClassMethods
 
   end
 

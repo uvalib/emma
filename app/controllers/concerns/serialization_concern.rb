@@ -18,6 +18,7 @@ module SerializationConcern
   include ParamsHelper
   include PaginationHelper
   include SerializationHelper
+
   include ApiConcern
 
   # ===========================================================================

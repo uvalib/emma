@@ -13,7 +13,7 @@ module Api::Serializer::Xml::Associations
 
   module ClassMethods
 
-    include ::Api::Serializer::Xml::Schema
+    include Api::Serializer::Xml::Schema
 
     # =========================================================================
     # :section: Record field schema DSL

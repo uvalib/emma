@@ -5,9 +5,8 @@
 //= require shared/logging
 //= require feature/flash
 
-// import Uppy from 'uppy'; // NOTE: This is not acceptable to Uglifier
+//import Uppy from 'uppy'; // TODO: Use webpacker for ES6.
 
-// noinspection JSUnresolvedVariable
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -30,9 +29,9 @@ $(document).on('turbolinks:load', function() {
      * Single-entry operation forms on the page.
      *
      * NOTE: There is no current scenario where there should be more than one
-     * of these on a given page, despite the fact that the logic (mostly)
-     * supports the concept that there could be an arbitrary number of them.
-     * (That scenario has not been tested.)
+     *  of these on a given page, despite the fact that the logic (mostly)
+     *  supports the concept that there could be an arbitrary number of them.
+     *  (That scenario has not been tested.)
      *
      * @constant
      * @type {jQuery}
@@ -124,13 +123,19 @@ $(document).on('turbolinks:load', function() {
      * Shrine upload information for the submission.
      *
      * @typedef {{
-     *      id:             string,
-     *      storage:        string,
-     *      metadata: {
-     *          filename:   string,
-     *          size:       number,
-     *          mime_type:  string,
-     *      }
+     *      filename:   string,
+     *      size:       number,
+     *      mime_type:  string,
+     * }} FileDataMetadata
+     */
+
+    /**
+     * Shrine upload information for the submission.
+     *
+     * @typedef {{
+     *      id:         string,
+     *      storage:    string,
+     *      metadata:   FileDataMetadata
      * }} FileData
      *
      * @see "en.emma.upload.record.file_data"
@@ -194,17 +199,21 @@ $(document).on('turbolinks:load', function() {
      * Shrine upload response message.
      *
      * @typedef { EmmaData | {error: string} } EmmaDataOrError
+     */
+
+    /**
+     * Shrine upload response message.
      *
      * @typedef {{
-     *      emma_data:      EmmaDataOrError?
-     *      id:             string,
-     *      storage:        string,
-     *      metadata: {
-     *          filename:   string,
-     *          size:       number,
-     *          mime_type:  string,
-     *      }
+     *      emma_data:  ?EmmaDataOrError,
+     *      id:         string,
+     *      storage:    string,
+     *      metadata:   FileDataMetadata
      * }} ShrineResponseBody
+     */
+
+    /**
+     * Shrine upload response message.
      *
      * @typedef {{
      *      status:     number,
@@ -269,15 +278,15 @@ $(document).on('turbolinks:load', function() {
      *      emma_repositoryRecordId:            string,
      *      emma_retrievalLink:                 string,
      *      emma_webPageLink:                   string,
-     *      emma_lastRemediationDate:           string?,
-     *      emma_repositoryMetadataUpdateDate:  string?,
+     *      emma_lastRemediationDate:           ?string,
+     *      emma_repositoryMetadataUpdateDate:  ?string,
      *      emma_lastRemediationNote:           string,
      *      emma_formatVersion:                 string,
-     *      emma_formatFeature:                 string[]?,
+     *      emma_formatFeature:                 ?string[],
      *      dc_title:                           string,
-     *      dc_creator:                         string[]?,
-     *      dc_identifier:                      string[]?,
-     *      dc_relation:                        string[]?,
+     *      dc_creator:                         ?string[],
+     *      dc_identifier:                      ?string[],
+     *      dc_relation:                        ?string[],
      *      dc_publisher:                       string,
      *      dc_language:                        string[],
      *      dc_rights:                          string,
@@ -285,15 +294,15 @@ $(document).on('turbolinks:load', function() {
      *      dc_description:                     string,
      *      dc_format:                          string,
      *      dc_type:                            string,
-     *      dc_subject:                         string[]?,
-     *      dcterms_dateAccepted:               string?,
+     *      dc_subject:                         ?string[],
+     *      dcterms_dateAccepted:               ?string,
      *      dcterms_dateCopyright:              string,
-     *      s_accessibilityFeature:             string[]?,
-     *      s_accessibilityControl:             string[]?,
-     *      s_accessibilityHazard:              string[]?,
-     *      s_accessibilitySummary:             string?,
-     *      s_accessMode:                       string[]?,
-     *      s_accessModeSufficient:             string[]?
+     *      s_accessibilityFeature:             ?string[],
+     *      s_accessibilityControl:             ?string[],
+     *      s_accessibilityHazard:              ?string[],
+     *      s_accessibilitySummary:             ?string,
+     *      s_accessMode:                       ?string[],
+     *      s_accessModeSufficient:             ?string[]
      * }} SearchResultEntry
      *
      * @see "en.emma.search.record"
@@ -319,10 +328,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @typedef {{
      *      name:           string,
-     *      required:       (boolean|function)?,
-     *      unrequired:     (boolean|function)?,
-     *      required_val:   string?,
-     *      unrequired_val: string?
+     *      required:       ?(boolean|function),
+     *      unrequired:     ?(boolean|function),
+     *      required_val:   ?string,
+     *      unrequired_val: ?string
      * }} Relationship
      */
 
@@ -358,7 +367,6 @@ $(document).on('turbolinks:load', function() {
         debugging:      DEBUGGING
     });
 
-    // noinspection MagicNumberJS
     /**
      * How long to wait for the server to confirm the upload.
      *
@@ -447,7 +455,6 @@ $(document).on('turbolinks:load', function() {
      */
     const FORM_FIELD_SELECTOR = FORM_FIELD_TYPES.join(', ');
 
-    // noinspection JSValidateTypes
     /**
      * Interrelated elements.  For example:
      *
@@ -524,7 +531,6 @@ $(document).on('turbolinks:load', function() {
      */
     const OLD_DATA = '.' + OLD_DATA_MARKER;
 
-    // noinspection PointlessArithmeticExpressionJS
     /**
      * Interval for checking the contents of the "upload" table.
      *
@@ -985,7 +991,6 @@ $(document).on('turbolinks:load', function() {
                 error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
-                // noinspection JSValidateTypes
                 /** @type {UploadRecordMessage} message */
                 const message = data.response   || data;
                 const entries = message.entries || {};
@@ -1155,7 +1160,6 @@ $(document).on('turbolinks:load', function() {
                 error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
-                // noinspection ReuseOfLocalVariableJS
                 record = data.response || data;
             }
         }
@@ -1458,7 +1462,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector}            form
      * @param {UppyFeatureSettings} features
      *
-     * @returns {Uppy}
+     * @returns {Uppy.Uppy}
      */
     function buildUppy(form, features) {
         let $form     = $(form);
@@ -1509,7 +1513,7 @@ $(document).on('turbolinks:load', function() {
             uppy.use(Uppy.ThumbnailGenerator, { thumbnailWidth: 400 });
         }
         if (features.upload_to_aws) {
-            // noinspection JSUnresolvedVariable, JSUnresolvedFunction
+            // noinspection JSUnresolvedVariable
             uppy.use(Uppy.AwsS3, {
                 // limit:     2,
                 timeout:      UPLOAD_TIMEOUT,
@@ -1531,7 +1535,7 @@ $(document).on('turbolinks:load', function() {
      * Setup handlers for Uppy events that drive the workflow of uploading
      * a file and creating a database entry from it.
      *
-     * @param {Uppy}                uppy
+     * @param {Uppy.Uppy}           uppy
      * @param {Selector}            form
      * @param {UppyFeatureSettings} features
      */
@@ -1539,15 +1543,11 @@ $(document).on('turbolinks:load', function() {
 
         let $form = $(form);
 
-        // noinspection JSCheckFunctionSignatures
         uppy.on('upload',         onFileUploadStarting);
-        // noinspection JSCheckFunctionSignatures
         uppy.on('upload-success', onFileUploadSuccess);
-        // noinspection JSCheckFunctionSignatures
         uppy.on('upload-error',   onFileUploadError);
 
         if (features.image_preview) {
-            // noinspection JSCheckFunctionSignatures
             uppy.on('thumbnail:generated', onThumbnailGenerated);
         }
 
@@ -1697,7 +1697,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Setup handlers for Uppy events that should trigger popup messages.
      *
-     * @param {Uppy}                uppy
+     * @param {Uppy.Uppy}           uppy
      * @param {UppyFeatureSettings} features
      */
     function setupMessages(uppy, features) {
@@ -1763,7 +1763,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Set up console debugging messages for other Uppy events.
      *
-     * @param {Uppy}                uppy
+     * @param {Uppy.Uppy}           uppy
      * @param {UppyFeatureSettings} features
      */
     function setupDebugging(uppy, features) {
@@ -1880,9 +1880,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Invoke `uppy.info` with an error message.
      *
-     * @param {Uppy}   uppy
-     * @param {string} text
-     * @param {number} [duration]
+     * @param {Uppy.Uppy} uppy
+     * @param {string}    text
+     * @param {number}    [duration]
      */
     function uppyError(uppy, text, duration) {
         uppyPopup(uppy, text, duration, 'error');
@@ -1891,9 +1891,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Invoke `uppy.info` with a warning message.
      *
-     * @param {Uppy}   uppy
-     * @param {string} text
-     * @param {number} [duration]
+     * @param {Uppy.Uppy} uppy
+     * @param {string}    text
+     * @param {number}    [duration]
      */
     function uppyWarn(uppy, text, duration) {
         uppyPopup(uppy, text, duration, 'warning');
@@ -1902,7 +1902,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Invoke `uppy.info` with a temporary message.
      *
-     * @param {Uppy}                     uppy
+     * @param {Uppy.Uppy}                uppy
      * @param {string}                   text
      * @param {number}                   [duration]
      * @param {'info'|'warning'|'error'} [info_level]
@@ -1918,7 +1918,7 @@ $(document).on('turbolinks:load', function() {
      * If no duration is given the information bubble will remain until
      * intentionally cleared.
      *
-     * @param {Uppy}                     uppy
+     * @param {Uppy.Uppy}                uppy
      * @param {string}                   text
      * @param {number}                   [duration]
      * @param {'info'|'warning'|'error'} [info_level]
@@ -1932,7 +1932,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Invoke `uppy.info` with an empty string and very short duration.
      *
-     * @param {Uppy} uppy
+     * @param {Uppy.Uppy} uppy
      */
     function uppyInfoClear(uppy) {
         uppyInfo(uppy, '', 1);
@@ -2735,6 +2735,7 @@ $(document).on('turbolinks:load', function() {
             // matched the search terms.  If there are multiple results,
             // ideally they are all just variations on the same title.
 
+            /** @type {SearchResultEntry} */
             let parent = list.shift();
             if (new_repo !== parent.emma_repository) {
                 error = 'PROBLEM: ';
@@ -2961,7 +2962,6 @@ $(document).on('turbolinks:load', function() {
                 error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
-                // noinspection JSValidateTypes
                 /** @type {SearchResultMessage} message */
                 const message = data.response   || data;
                 const entries = message.records || {};

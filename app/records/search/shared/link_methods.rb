@@ -18,6 +18,7 @@ __loading_begin(__FILE__)
 module Search::Shared::LinkMethods
 
   include Emma::Common
+
   include Search
 
   # ===========================================================================

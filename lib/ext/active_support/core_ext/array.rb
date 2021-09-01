@@ -38,7 +38,6 @@ class Array
   # #rdup with customized behaviors.
   #
   def rdup
-    # noinspection RubyYardReturnMatch
     map(&:rdup)
   end
 

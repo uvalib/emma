@@ -13,12 +13,12 @@ module AwsS3::Api::Serializer::Json::Associations
 
   extend ActiveSupport::Concern
 
-  include ::Api::Serializer::Json::Associations
+  include Api::Serializer::Json::Associations
 
   module ClassMethods
 
     include AwsS3::Api::Serializer::Json::Schema
-    include ::Api::Serializer::Json::Associations::ClassMethods
+    include Api::Serializer::Json::Associations::ClassMethods
 
   end
 

@@ -29,6 +29,10 @@ class Bs::Message::ReadingListUserView < Bs::Api::Message
   include Bs::Shared::LinkMethods
   include Bs::Shared::ReadingListMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :access,        BsAccess
     has_many  :allows,        BsAllowsType

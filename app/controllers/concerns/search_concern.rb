@@ -37,6 +37,7 @@ module SearchConcern
 
   include ApiConcern
   include SearchCallConcern
+
   include SearchHelper
 
   # Non-functional hints for RubyMine type checking.
@@ -67,7 +68,7 @@ module SearchConcern
   # @return [SearchService]
   #
   def search_api
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     api_service(SearchService)
   end
 
@@ -103,7 +104,7 @@ module SearchConcern
     attr[:action]     ||= :index
     attr[:user]       ||= user
     attr[:result]     ||= result || @list
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     SearchCall.create(attr)
   end
 

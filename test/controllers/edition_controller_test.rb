@@ -39,8 +39,8 @@ class EditionControllerTest < ActionDispatch::IntegrationTest
     url_opt    = { id: periodical, editionId: edition }
     options    = OPTIONS.merge(test: __method__, action: 'show')
     options[:expect] = :success
-    # NOTE: No periodicals are currently in the EMMA collection.
-    # Until that changes this test will not succeed if logged in.
+    # NOTE: No periodicals are currently in the EMMA collection; until that
+    #   changes this test will not succeed if logged in.
     # TEST_READERS.each do |user|
     [ANONYMOUS].each do |user|
       TEST_FORMATS.each do |fmt|

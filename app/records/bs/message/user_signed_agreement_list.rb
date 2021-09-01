@@ -17,6 +17,10 @@ class Bs::Message::UserSignedAgreementList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :allows,           BsAllowsType
     has_many :links,            Bs::Record::Link

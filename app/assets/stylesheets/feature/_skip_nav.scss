@@ -30,7 +30,6 @@
     &         { z-index: $z-hidden }
     &.visible { z-index: $z-popup; }
 
-    // noinspection CssUnusedSymbol
     .skip-nav-heading {
 
         @extend %clear-default-styling;
@@ -41,7 +40,6 @@
         text-underline-position: under;
     }
 
-    // noinspection CssUnusedSymbol
     .skip-nav-menu {
 
         @extend %clear-default-styling;

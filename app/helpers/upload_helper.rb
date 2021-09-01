@@ -17,11 +17,13 @@ module UploadHelper
 
   include Emma::Json
   include Emma::Unicode
+
   include ConfigurationHelper
   include I18nHelper
   include LinkHelper
   include ModelHelper
   include PopupHelper
+
   include UploadWorkflow::Properties
 
   # ===========================================================================
@@ -207,6 +209,7 @@ module UploadHelper
       end
     pairs &&= render_field_values(item, model: :upload, pairs: pairs, **opt)
     pairs ||= render_empty_value(EMPTY_VALUE)
+    # noinspection RubyMismatchedParameterType
     html_div(pairs, class: 'data-list')
   end
 
@@ -272,9 +275,6 @@ module UploadHelper
   #
   # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   UPLOAD_STATE_GROUP =
     Upload::WorkflowMethods::STATE_GROUP.transform_values do |entry|
       entry.map { |key, value|
@@ -449,7 +449,7 @@ module UploadHelper
         all     = (group == :all)
         count   = counts[group] || (all ? list.size : items.size)
         enabled = all || count.positive?
-        # noinspection RubyYardParamTypeMatch
+        # noinspection RubyMismatchedParameterType
         enabled ||= active_state_group?(nil, properties, items)
         next unless enabled || session_debug?
 
@@ -492,7 +492,6 @@ module UploadHelper
     # Include the group in a panel with accompanying label.
     outer_opt = { class: css_classes(css_selector) }
     append_classes!(outer_opt, 'hidden') if controls.size <= 1
-    # noinspection RubyYardReturnMatch
     field_set_tag(nil, outer_opt) do
       legend << group
     end
@@ -627,7 +626,7 @@ module UploadHelper
   def upload_no_records_row(**opt)
     css_selector = '.no-records'
     prepend_classes!(opt, css_selector)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     html_div('', opt) << html_div(UPLOAD_NO_RECORDS, opt)
   end
 
@@ -639,7 +638,7 @@ module UploadHelper
 
   # Upload action icon definitions.
   #
-  # @type [Hash{Symbol=>Hash}]
+  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
   #
   UPLOAD_ICONS = {
     check: {
@@ -664,12 +663,11 @@ module UploadHelper
   # authorized to perform on the item.
   #
   # @param [Upload] item
-  # @param [Hash]   opt
+  # @param [Hash]   opt                 Passed to #upload_action_icon
   #
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no operations are authorized.
   #
-  # @see #upload_action_icon
   # @see #UPLOAD_ICONS
   #
   def upload_entry_icons(item, **opt)
@@ -729,7 +727,7 @@ module UploadHelper
     icon = opt.delete(:icon) || STAR
     tip  = opt.delete(:tip)
     opt[:title] ||= tip
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     if op == :check
       opt[:icon] ||= icon
       check_status_popup(item, path, **opt)
@@ -1256,7 +1254,7 @@ module UploadHelper
     opt[:'aria-labelledby'] = l_id
     panel = html_div(opt)
 
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     label << panel
   end
 
@@ -1400,11 +1398,13 @@ module UploadHelper
   # An option checkbox for a bulk new/edit form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Symbol]                           param   Passed to #bulk_option
-  # @param [*]                                value   Passed to #bulk_option
-  # @param [Hash]                             opt     Passed to #bulk_option
+  # @param [Symbol]                           param
+  # @param [*]                                value
+  # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #bulk_option
   #
   def bulk_upload_option(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_UPLOAD_LABEL
@@ -1414,11 +1414,13 @@ module UploadHelper
   # An input element for a bulk new/edit form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Symbol]                           param   Passed to #bulk_input
-  # @param [*]                                value   Passed to #bulk_input
-  # @param [Hash]                             opt     Passed to #bulk_input
+  # @param [Symbol]                           param
+  # @param [*]                                value
+  # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #bulk_input
   #
   def bulk_upload_input(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_UPLOAD_LABEL
@@ -1557,11 +1559,13 @@ module UploadHelper
   # An option checkbox for a bulk delete form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Symbol]                           param   Passed to #bulk_option
-  # @param [*]                                value   Passed to #bulk_option
-  # @param [Hash]                             opt     Passed to #bulk_option
+  # @param [Symbol]                           param
+  # @param [*]                                value
+  # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #bulk_option
   #
   def bulk_delete_option(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_DELETE_LABEL
@@ -1571,11 +1575,13 @@ module UploadHelper
   # An input element for a bulk delete form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Symbol]                           param   Passed to #bulk_input
-  # @param [*]                                value   Passed to #bulk_input
-  # @param [Hash]                             opt     Passed to #bulk_input
+  # @param [Symbol]                           param
+  # @param [*]                                value
+  # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #bulk_input
   #
   def bulk_delete_input(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_DELETE_LABEL

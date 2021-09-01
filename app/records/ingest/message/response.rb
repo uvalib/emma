@@ -14,6 +14,10 @@ class Ingest::Message::Response < Ingest::Api::Message
   include Api::Shared::ErrorTable
   include Emma::Json
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :messages, String
   end

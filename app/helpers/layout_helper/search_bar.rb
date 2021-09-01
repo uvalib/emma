@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::SearchBar
 
   include LayoutHelper::SearchFilters
+
   include ConfigurationHelper
   include I18nHelper
 
@@ -128,7 +129,7 @@ module LayoutHelper::SearchBar
     fields ||= types
     fields   = fields.dup  if fields.is_a?(Array)
     fields   = fields.keys if fields.is_a?(Hash)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     fields   = filter(fields, only: only, except: except)
 
     # Accumulate search term values limited to the selected set of fields.
@@ -342,7 +343,7 @@ module LayoutHelper::SearchBar
   # @return [nil]                       No non-empty value was found.
   #
   def search_input_field(ctrlr = nil, **opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     opt[:field]&.to_sym || search_input_type(ctrlr, **opt)[:field]
   end
 
@@ -355,7 +356,7 @@ module LayoutHelper::SearchBar
   # @return [nil]                       No non-empty value was found.
   #
   def search_input_label(ctrlr = nil, **opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     search_input_type(ctrlr, **opt)[:label]
   end
 
@@ -368,7 +369,7 @@ module LayoutHelper::SearchBar
   # @return [nil]                       No non-empty value was found.
   #
   def search_input_placeholder(ctrlr = nil, **opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     search_input_type(ctrlr, **opt)[:placeholder]
   end
 
@@ -414,7 +415,7 @@ module LayoutHelper::SearchBar
   #
   def search_input_target(ctrlr = nil, target: nil, **)
     ctrlr = search_target(ctrlr || target)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     ctrlr if SEARCH_BAR.dig(ctrlr, :enabled)
   end
 
@@ -472,7 +473,7 @@ module LayoutHelper::SearchBar
     clear = search_clear_button(**id_opt)
 
     # Result.
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     label << input << clear
   end
 

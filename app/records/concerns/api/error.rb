@@ -39,6 +39,12 @@ class Api::Error < RuntimeError
   #
   attr_reader :messages
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Initialize a new instance.
   #
   # @param [Array<Faraday::Response, Exception, Integer, String, true, nil>] args

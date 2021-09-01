@@ -13,7 +13,7 @@ require 'aws-sdk-s3'
 #
 module AwsS3::Api::Common
 
-  include ::Api::Common
+  include Api::Common
 
 end
 

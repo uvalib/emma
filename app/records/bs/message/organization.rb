@@ -27,6 +27,10 @@ class Bs::Message::Organization < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :address,          Bs::Record::Address
     has_one   :hasOrgAgreement,  Boolean

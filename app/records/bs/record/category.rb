@@ -20,6 +20,10 @@ class Bs::Record::Category < Bs::Api::Record
   include Bs::Shared::CategoryMethods
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :categoryType, BsCategoryType
     has_one   :code
@@ -40,7 +44,6 @@ class Bs::Record::Category < Bs::Api::Record
   # @return [nil]                     If not translatable.
   #
   def bookshare_category
-    # noinspection RubyNilAnalysis
     name.to_s if categoryType.to_s.casecmp?('Bookshare')
   end
 

@@ -96,7 +96,7 @@ module ModelHelper
         scope &&= "emma.#{scope}.show.tooltip"
         html_opt[:title] = I18n.t(scope, default: '')
       end
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       make_link(label, path, **html_opt)
     end
   end
@@ -241,7 +241,7 @@ module ModelHelper
     search[:only_path]  = true
     path = url_for(search)
 
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     make_link(label, path, **html_opt)
   end
 
@@ -286,8 +286,8 @@ module ModelHelper
   # `item#field_names` is used.  If no block is provided and *pairs* is present
   # then this function simply returns *pairs* as-is.
   #
-  # @param [Model, Api::Record, nil] item
-  # @param [Hash, nil]               pairs
+  # @param [Model, Api::Record, *] item
+  # @param [Hash, nil]             pairs
   #
   # @return [Hash]
   #
@@ -296,7 +296,7 @@ module ModelHelper
   # @yieldreturn [Hash]               Result will be merged into *pairs*.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
   #++
   def field_values(item, pairs = nil)
     if block_given?
@@ -378,7 +378,7 @@ module ModelHelper
       opt[:row]    += 1
       opt[:field]   = field
       opt[:title] ||= config[:tooltip] if config.key?(:tooltip)
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       value = render_value(item, value, **value_opt)
       render_pair(label, value, **opt) if value
     }.compact.unshift(nil).join(separator).html_safe
@@ -405,7 +405,7 @@ module ModelHelper
   # and ".value" elements.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+  # noinspection RubyMismatchedParameterType
   #++
   def render_pair(
     label,
@@ -493,7 +493,7 @@ module ModelHelper
     v_opt[:'aria-labelledby'] = l_id
     value = html_div(value, v_opt)
 
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     label << value
   end
 
@@ -504,7 +504,7 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_empty_value(message = NO_RESULTS)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     render_pair(nil, message)
   end
 
@@ -520,8 +520,7 @@ module ModelHelper
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
   def render_value(item, value, model: nil, **opt)
-    # noinspection RubyAssignmentExpressionInConditionalInspection
-    if model && respond_to?(model_method = "#{model}_render_value")
+    if model && respond_to?((model_method = "#{model}_render_value"))
       send(model_method, item, value, **opt)
     elsif value.is_a?(Symbol)
       case field_category(value)
@@ -1079,7 +1078,6 @@ module ModelHelper
         first_col = col
         last_col  = pairs.size + col - 1
         pairs.map do |field, value|
-          # noinspection RubyYardParamTypeMatch
           row_opt = model_rc_options(field, row, col, opt)
           append_classes!(row_opt, 'col-first') if col == first_col
           append_classes!(row_opt, 'col-last')  if col == last_col
@@ -1295,8 +1293,11 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # Compare with:
-  # @see #render_field_values
+  # #render_field_values
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  #++
   def render_form_fields(
     item,
     model:      nil,
@@ -1315,7 +1316,6 @@ module ModelHelper
     opt[:row]   = row_offset || 0
     opt[:model] = model
 
-    # noinspection RubyNilAnalysis
     pairs.map { |label, value|
       field = lbl = val = nil
       if value.is_a?(Symbol)
@@ -1360,11 +1360,8 @@ module ModelHelper
   # @return [nil]                       If *value* is blank.
   #
   # Compare with:
-  # @see #render_pair
+  # #render_pair
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
-  #++
   def render_form_pair(
     label,
     value,
@@ -1456,7 +1453,7 @@ module ModelHelper
     v_opt[:legend]            = legend      if legend
     value = send(render_method, name, value, **v_opt)
 
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     label << value
   end
 
@@ -1608,7 +1605,7 @@ module ModelHelper
 
     prepend_classes!(opt, css_selector)
     opt[:title] ||= config.dig(:disabled, :tooltip)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     submit_tag(label, opt)
   end
 
@@ -1637,7 +1634,7 @@ module ModelHelper
     else
       url ||= (request.referer if local_request? && !same_request?)
       url ||= 'javascript:history.back();'
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       make_link(label, url, **opt)
     end
   end
@@ -1711,7 +1708,7 @@ module ModelHelper
         when :textarea then value.join("\n").split(/[ \t]*\n[ \t]*/).join("\n")
         else value.map { |v| v.to_s.strip.presence }.compact.join(' | ')
       end
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     case type
       when :check    then render_check_box(name, value, **html_opt)
       when :number   then number_field_tag(name, value, html_opt.merge(min: 0))

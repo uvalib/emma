@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # The base class for serialization/de-serialization of objects derived from
 # AwsS3::Api::Record.
 #
-class AwsS3::Api::Serializer < ::Api::Serializer
+class AwsS3::Api::Serializer < Api::Serializer
 
   include AwsS3::Api::Serializer::Schema
   include AwsS3::Api::Serializer::Associations

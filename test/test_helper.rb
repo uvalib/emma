@@ -105,6 +105,7 @@ public
 class ActiveSupport::TestCase
 
   include Emma::Common
+
   include TestHelper
 
   # Create model instances for all fixtures in defined in test/fixtures/*.yml.

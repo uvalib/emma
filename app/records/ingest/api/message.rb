@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 class Ingest::Api::Message < Ingest::Api::Record
 
-  include ::Api::Message
+  include Api::Message
 
   # ===========================================================================
   # :section:

@@ -120,7 +120,6 @@
 // Account new/edit/delete pages
 //=============================================================================
 
-// noinspection CssUnusedSymbol
 .account-fields {
     @extend .upload-fields;
 }
@@ -146,7 +145,6 @@
     }
 }
 
-// noinspection CssUnusedSymbol
 .account-form-container {
 
     @extend .file-upload-container;

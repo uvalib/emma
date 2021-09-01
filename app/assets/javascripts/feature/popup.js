@@ -501,7 +501,6 @@ $(document).on('turbolinks:load', function() {
         }
     }
 
-    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Close all popups that are not hidden.
      *

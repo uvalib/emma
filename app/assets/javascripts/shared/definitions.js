@@ -24,7 +24,7 @@
  */
 const SECOND = 1000;
 
-// noinspection PointlessArithmeticExpressionJS, UnnecessaryLocalVariableJS
+// noinspection PointlessArithmeticExpressionJS
 /**
  * Alias for SECOND.
  *
@@ -42,7 +42,7 @@ const SECONDS = 1 * SECOND;
  */
 const MINUTE = 60 * SECONDS;
 
-// noinspection PointlessArithmeticExpressionJS, UnnecessaryLocalVariableJS
+// noinspection PointlessArithmeticExpressionJS
 /**
  * Alias for MINUTE.
  *
@@ -102,7 +102,6 @@ const HTTP = Object.freeze({
  * @returns {number}
  */
 function percent(part, total) {
-    // noinspection MagicNumberJS
     return total ? ((part / total) * 100) : 0;
 }
 
@@ -434,7 +433,6 @@ function isEmpty(item) {
     return false;
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Indicate whether the item contains a value.
  *
@@ -899,7 +897,6 @@ function makeUrl(...parts) {
     return url;
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Provide an action for a cancel button, redirecting to the value of the
  * 'data-path' attribute if present or redirecting back otherwise.

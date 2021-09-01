@@ -13,7 +13,7 @@ module Api::Serializer::Hash::Associations
 
   module ClassMethods
 
-    include ::Api::Serializer::Hash::Schema
+    include Api::Serializer::Hash::Schema
 
     # =========================================================================
     # :section: Record field schema DSL

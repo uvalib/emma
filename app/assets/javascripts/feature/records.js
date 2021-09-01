@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection JSUnresolvedVariable
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -262,7 +261,6 @@ $(document).on('turbolinks:load', function() {
             group = defaultStateGroup(groups);
         }
         group = group || 'done';
-        // noinspection JSCheckFunctionSignatures
         $buttons.filter(`[value="${group}"]`).prop('checked', true).change();
     }
 
@@ -333,9 +331,7 @@ $(document).on('turbolinks:load', function() {
             }
         });
         if (all) {
-            // noinspection JSUnusedAssignment
             all.checked       = !!(checked && !unchecked);
-            // noinspection JSUnusedAssignment
             all.indeterminate = !!(checked && unchecked);
         }
         return !!checked;

@@ -21,6 +21,7 @@ module IaDownloadService::Common
   end
 
   include ApiService::Common
+
   include IaDownloadService::Properties
 
 

@@ -32,6 +32,7 @@ module PaginationConcern
   end
 
   include Emma::Common
+
   include ParamsHelper
   include SearchTermsHelper
   include PaginationHelper
@@ -59,7 +60,6 @@ module PaginationConcern
 
     # Remove pagination parameters and return if the current controller does
     # not support pagination.
-    # noinspection RubyYardReturnMatch
     return opt.except!(:limit, *PAGINATION_KEYS) if page_size.zero?
 
     # Get pagination values.
@@ -114,7 +114,7 @@ module PaginationConcern
     end
     opt[:limit] = limit
 
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     opt
 
   end

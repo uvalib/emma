@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 module Ingest::Api::Serializer::Schema
 
   include Ingest::Api::Schema
-  include ::Api::Serializer::Schema
+  include Api::Serializer::Schema
 
 end
 

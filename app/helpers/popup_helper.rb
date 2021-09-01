@@ -15,6 +15,7 @@ module PopupHelper
   end
 
   include Emma::Unicode
+
   include HtmlHelper
 
   # ===========================================================================

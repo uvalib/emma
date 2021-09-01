@@ -57,7 +57,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     // Download all deferred images.
-    // noinspection JSUnresolvedFunction
     $placeholders.each(function() {
         let $image = $(this);
         let src;

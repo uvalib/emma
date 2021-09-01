@@ -35,6 +35,10 @@ class Bs::Record::UserAccount < Bs::Api::Record
   include Bs::Shared::AccountMethods
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :address,                 Bs::Record::Address
     has_one   :allowAdultContent,       Boolean

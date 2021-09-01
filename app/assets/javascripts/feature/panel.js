@@ -161,7 +161,6 @@ $(document).on('turbolinks:load', function() {
      * Set the current state of panel(s) on the page.
      */
     function initializeState() {
-        // noinspection JSUnresolvedFunction
         $toggle_buttons.each(function() {
             let $button = $(this);
             let $panel  = getPanel($button);

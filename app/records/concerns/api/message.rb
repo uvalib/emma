@@ -55,7 +55,7 @@ module Api::Message
   ensure
     elapsed_time = time_span(start_time)
     __debug  { "<<< #{self.class} processed in #{elapsed_time}" }
-    Log.info { "#{self.class} processed in #{elapsed_time}"}
+    Log.info { "#{self.class} processed in #{elapsed_time}" }
   end
 
 end

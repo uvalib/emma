@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::Format < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :formatId
     has_one   :name

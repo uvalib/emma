@@ -16,6 +16,10 @@ class Bs::Record::PeriodicalEditionSummary < Bs::Api::Record
 
   include Bs::Shared::EditionMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :editionId
     has_one   :editionName

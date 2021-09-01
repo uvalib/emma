@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 # initialized through de-serialized data received from the API or to be
 # serialized into data to be sent to the API.
 #
-class Ingest::Api::Record < ::Api::Record
+class Ingest::Api::Record < Api::Record
 
   include Ingest::Api::Common
   include Ingest::Api::Schema

@@ -20,6 +20,7 @@ module HelpHelper
 
   include Emma::Common
   include Emma::Constants
+
   include HtmlHelper
   include PopupHelper
 
@@ -274,7 +275,7 @@ module HelpHelper
     asset, alt = entry.is_a?(Hash) ? [entry[:asset], entry[:alt]] : entry
     asset     ||= "help/#{name}.png"
     opt[:alt] ||= alt || name.to_s.tr('_', ' ').capitalize << ' illustration'
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     image_tag(asset_path(asset), **opt)
   end
 

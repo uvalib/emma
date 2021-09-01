@@ -15,6 +15,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::Narrator < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :gender, BsGender
     has_one   :name

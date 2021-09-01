@@ -5,6 +5,10 @@
 
 __loading_begin(__FILE__)
 
+# Individual EMMA account password maintenance.
+#
+# @see file:app/views/user/passwords/**
+#
 class User::PasswordsController < Devise::PasswordsController
 
   include FlashConcern

@@ -16,6 +16,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::StatusModel < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :key
     has_many  :messages

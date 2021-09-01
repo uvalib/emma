@@ -14,7 +14,7 @@ module Api::Record::Schema
 
   module ClassMethods
 
-    include ::Api::Schema
+    include Api::Schema
 
     # The serializers for the including class.
     #
@@ -27,7 +27,7 @@ module Api::Record::Schema
     # @return [Api::Serializer::Json]
     #
     def json_serializer
-      # noinspection RubyYardReturnMatch
+      # noinspection RubyMismatchedReturnType
       serializers[:json]
     end
 
@@ -36,7 +36,7 @@ module Api::Record::Schema
     # @return [Api::Serializer::Xml]
     #
     def xml_serializer
-      # noinspection RubyYardReturnMatch
+      # noinspection RubyMismatchedReturnType
       serializers[:xml]
     end
 
@@ -45,7 +45,7 @@ module Api::Record::Schema
     # @return [Api::Serializer::Hash]
     #
     def hash_serializer
-      # noinspection RubyYardReturnMatch
+      # noinspection RubyMismatchedReturnType
       serializers[:hash]
     end
 

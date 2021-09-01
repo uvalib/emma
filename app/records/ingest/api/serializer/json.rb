@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Base class for object-specific serializers that process JSON data.
 #
-class Ingest::Api::Serializer::Json < ::Api::Serializer::Json
+class Ingest::Api::Serializer::Json < Api::Serializer::Json
 
   include Ingest::Api::Serializer::Json::Schema
   include Ingest::Api::Serializer::Json::Associations

@@ -87,9 +87,10 @@ class Bs::Record::TitleMetadataComplete < Bs::Api::Record
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
-  #--
-  # noinspection DuplicatedCode
-  #++
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :adultContent,          Boolean
     has_one   :allowRecommend,        Boolean

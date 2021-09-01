@@ -128,7 +128,6 @@ module Model
           page_fields.transform_values! { |entry| Field.finalize!(entry) }
           [action, page_fields]
         }.compact.to_h
-      controller_configs
 
       # Finalize the generic entries.
       all_fields.transform_values! do |entry|

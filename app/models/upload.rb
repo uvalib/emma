@@ -12,7 +12,9 @@ require 'down'
 class Upload < ApplicationRecord
 
   include ActiveModel::Validations
+
   include Emma::Common
+
   include Model
 
   # Include modules from "app/models/upload/**.rb".
@@ -87,17 +89,17 @@ class Upload < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, Upload] opt         Passed to #assign_attributes via super.
+  # @param [Hash, Upload] attr        Passed to #assign_attributes via super.
   # @param [Proc]         block       Passed to super.
   #
   # This method overrides:
   # @see ActiveRecord::Core#initialize
   #
-  def initialize(opt = nil, &block)
+  def initialize(attr = nil, &block)
     __debug_items(binding)
-    opt = opt.attributes if opt.is_a?(Upload)
-    opt = opt.merge(initializing: true).except!(:reset) if opt.is_a?(Hash)
-    super(opt, &block)
+    attr = attr.attributes if attr.is_a?(Upload)
+    attr = attr.merge(initializing: true).except!(:reset) if attr.is_a?(Hash)
+    super(attr, &block)
     __debug_items(leader: 'new UPLOAD') { self }
   end
 
@@ -366,7 +368,7 @@ class Upload < ApplicationRecord
     fetch_and_upload_file(@file_path) if fetch_file
 
   rescue => error # TODO: remove - testing
-    Log.warn { "#{__method__}: #{error.class}: #{error.message}"}
+    Log.warn { "#{__method__}: #{error.class}: #{error.message}" }
     raise error
   end
 
@@ -665,7 +667,7 @@ class Upload < ApplicationRecord
 
   # Configured requirements for Upload fields.
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
   def upload_fields
     Model.configured_fields(:upload)[:all]

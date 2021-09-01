@@ -38,10 +38,13 @@ module TestHelper::Utility
   # @return [User]
   # @return [nil]                     If *user* could not be converted.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def find_user(user)
     user = user.sub(/@.*$/, '').to_sym if user.is_a?(String)
-    user = users(user) if user.is_a?(Symbol)
-    user if user.is_a?(User)
+    user = users(user)                 if user.is_a?(Symbol)
+    user                               if user.is_a?(User)
   end
 
 end

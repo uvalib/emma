@@ -322,13 +322,10 @@ fieldset {
 
 // Include to hide the contents of an element while maintaining the space it
 // occupies on the display.
-//
-// noinspection CssUnusedSymbol
 .invisible {
 
     @extend %invisible;
 
-    // noinspection CssUnusedSymbol
     &.preserve-width {
         @extend %invisible-height;
     }

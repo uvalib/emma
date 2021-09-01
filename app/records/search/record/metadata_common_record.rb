@@ -46,12 +46,13 @@ __loading_begin(__FILE__)
 #
 # @see Search::Record::MetadataRecord (schema superset)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Search::Record::MetadataCommonRecord < Search::Api::Record
 
   include Search::Shared::TitleMethods
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
   schema do
     has_one   :emma_repository,                   EmmaRepository

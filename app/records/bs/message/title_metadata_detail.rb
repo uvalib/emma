@@ -80,9 +80,10 @@ class Bs::Message::TitleMetadataDetail < Bs::Api::Message
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
-  #--
-  # noinspection DuplicatedCode
-  #++
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :adultContent,          Boolean
     has_one   :allowRecommend,        Boolean

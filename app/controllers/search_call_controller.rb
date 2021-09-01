@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Access search call instances.
 #
+# @see SearchCallHelper
+# @see file:app/views/search_call/**
+#
 class SearchCallController < ApplicationController
 
   include UserConcern
@@ -51,6 +54,9 @@ class SearchCallController < ApplicationController
   #
   # List searches.
   #
+  # @see SearchCallConcern#get_search_calls
+  # @see SearchCall#extended_table
+  #
   def index
     __debug_route
     prm       = request_parameters
@@ -76,6 +82,8 @@ class SearchCallController < ApplicationController
   # == GET /search_call/:id
   #
   # Display details of a search.
+  #
+  # @see SearchCall#find
   #
   def show
     __debug_route

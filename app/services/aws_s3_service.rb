@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'aws_s3'
-
 # Deposit and retrieve records via AWS S3.
 #
 class AwsS3Service < ApiService

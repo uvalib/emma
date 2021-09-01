@@ -181,8 +181,6 @@ $data-list-border-color: none;
             }
 
             // Vertical tray of action button icons.
-            //
-            // noinspection CssUnusedSymbol
             .icon-tray {
 
                 display:        flex;
@@ -318,8 +316,6 @@ $data-list-border-color: none;
 
     // Display multi-line fields inside a box.
     // @see ModelHelper#render_pair
-    //
-    // noinspection CssUnusedSymbol
     .value.textbox {
 
         @include width-fit-content;

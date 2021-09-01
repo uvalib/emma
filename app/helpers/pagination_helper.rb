@@ -278,7 +278,7 @@ module PaginationHelper
   # @return [nil]                     If *value* is invalid.
   #
   def page_path(value, page = nil)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     value.is_a?(Symbol) ? page_history(value, page) : value.to_s
   end
 

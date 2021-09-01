@@ -15,6 +15,7 @@ require 'middleware'
 class ApiService
 
   include Emma::Common
+
   include Api
 
   include_submodules(self)

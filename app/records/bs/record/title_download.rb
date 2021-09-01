@@ -27,6 +27,10 @@ class Bs::Record::TitleDownload < Bs::Api::Record
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :authors,         Bs::Record::Name        # NOTE: deprecated
     has_one   :dateDownloaded,  IsoDate

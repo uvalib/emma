@@ -19,6 +19,10 @@ class Bs::Record::TitleFileResource < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     attribute :lastModifiedDate, IsoDate
     has_many  :links,            Bs::Record::Link

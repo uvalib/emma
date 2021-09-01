@@ -18,6 +18,10 @@ class Bs::Record::Grade < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :gradeCode
     has_one   :gradeId                                      # NOTE: deprecated

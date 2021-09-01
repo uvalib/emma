@@ -214,7 +214,7 @@ module BookshareService::Request::ReadingLists
   def get_reading_list(readingListId:, **opt)
     all = get_reading_lists_list(limit: :max, **opt)
     rl  = all.lists.find { |list| list.identifier == readingListId }
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     Bs::Message::ReadingListUserView.new(rl)
   end
     .tap do |method|

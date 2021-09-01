@@ -11,8 +11,6 @@
 //=============================================================================
 
 // Associated with the first element appended by Uppy within a given element.
-//
-// noinspection CssUnusedSymbol
 .uppy-Root {}
 
 // Associated with subsequently-appended elements related to Uppy plugins
@@ -20,16 +18,12 @@
 .uppy {}
 
 // Upload action button.
-//
-// noinspection CssUnusedSymbol
 .uppy-FileInput-btn {
     @extend %control-button;
 }
 
 // The container for the file select button which is displayed instead of the
 // original input[type="file"].
-//
-// noinspection CssUnusedSymbol
 .uppy-FileInput-container {
 
     display:         flex;
@@ -38,11 +32,9 @@
     margin:          0;
 
     // Imperceptible element.
-    // noinspection CssUnusedSymbol
     .uppy-FileInput-input {}
 
     // The file select button.
-    // noinspection CssUnusedSymbol
     .uppy-FileInput-btn {
         flex: 0 1 auto;
     }
@@ -62,8 +54,6 @@
 
 // The container for the upload status bar (a heavy-weight alternative to
 // .uppy-ProgressBar).
-//
-// noinspection CssUnusedSymbol
 .uppy-StatusBar {
 
     grid-column: 2 / -1;
@@ -94,7 +84,6 @@
 //
 // @see file:app/assets/javascripts/feature/file-upload.js *hideUppyProgressBar()*
 //
-// noinspection CssUnusedSymbol
 .uppy-ProgressBar {
 
     flex: 1 0 auto;

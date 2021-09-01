@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 #
 module Bs::Api::Common
 
-  include ::Api::Common
+  include Api::Common
 
   # ===========================================================================
   # :section:
@@ -36,9 +36,6 @@ module Bs::Api::Common
   #
   # @see #CONFIGURATION
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   ENUMERATIONS =
     CONFIGURATION
       .transform_values { |cfg| cfg.except(:_default).keys.map(&:to_s) }

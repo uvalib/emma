@@ -64,9 +64,6 @@ module OclcHelper
   #
   # @param [String] s
   #
-  # Compare with:
-  # @see #oclc?
-  #
   # == Usage Notes
   # If *text* matches #OCLC_PREFIX then the method returns *true* even if the
   # actual number is invalid; the caller is expected to differentiate between
@@ -85,9 +82,6 @@ module OclcHelper
   # Indicate whether the string is a valid OCN.
   #
   # @param [String] s
-  #
-  # Compare with:
-  # @see #contains_oclc?
   #
   def oclc?(s)
     to_oclc(s, log: false).present?

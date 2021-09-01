@@ -21,6 +21,7 @@ module IngestService::Common
   end
 
   include ApiService::Common
+
   include IngestService::Properties
 
   # ===========================================================================

@@ -29,6 +29,10 @@ class Bs::Record::ArtifactMetadata < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :brailleCode
     has_one   :brailleGrade,            BsBrailleGrade

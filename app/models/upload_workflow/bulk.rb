@@ -59,7 +59,7 @@ module UploadWorkflow::Bulk::External
   # @see UploadWorkflow::External#add_to_index
   #
   # Compare with:
-  # @see UploadWorkflow::External#upload_create
+  # UploadWorkflow::External#upload_create
   #
   #--
   # noinspection DuplicatedCode
@@ -103,7 +103,7 @@ module UploadWorkflow::Bulk::External
   # @see #update_in_index
   #
   # Compare with:
-  # @see UploadWorkflow::External#upload_edit
+  # UploadWorkflow::External#upload_edit
   #
   #--
   # noinspection DuplicatedCode
@@ -436,7 +436,7 @@ module UploadWorkflow::Bulk::External
   # @return [Array<ErrorEntry>]
   #
   def db_failed_format!(items, message, position = 0)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     items.map! do |item|
       db_failed_format(item, message, (position += 1))
     end

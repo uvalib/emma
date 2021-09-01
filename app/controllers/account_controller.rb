@@ -10,6 +10,9 @@ __loading_begin(__FILE__)
 # Note that these are not directly related to Bookshare accounts -- only to the
 # "reflections" of those accounts maintained in the local database.
 #
+# @see AccountHelper
+# @see file:app/views/account/**
+#
 class AccountController < ApplicationController
 
   include UserConcern
@@ -53,8 +56,7 @@ class AccountController < ApplicationController
     opt    = pagination_setup
     search = opt.delete(:like)
     opt.except!(:limit, *PAGINATION_KEYS) # TODO: paginate account listings
-    # noinspection RubyYardParamTypeMatch
-    @list  = get_accounts(search, **opt)
+    @list  = get_accounts(*search, **opt).to_a
   end
 
   # == GET /account/show/:id

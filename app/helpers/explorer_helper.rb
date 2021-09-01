@@ -16,6 +16,7 @@ module ExplorerHelper
 
   include Emma::Common
   include Emma::Json
+
   include HtmlHelper
 
   # Non-functional hints for RubyMine type checking.

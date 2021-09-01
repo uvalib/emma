@@ -91,7 +91,7 @@ module IsbnHelper
     digits = isbn.delete('^0-9')
     length = digits.size
     digits = digits[0..-2]
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     (length == ISBN_13_DIGITS) && (isbn_13_checksum(digits) == check)
   end
 
@@ -109,7 +109,7 @@ module IsbnHelper
     else
       digits = digits[0..-2]
     end
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     (length == ISBN_10_DIGITS) && (isbn_10_checksum(digits) == check)
   end
 
@@ -166,7 +166,7 @@ module IsbnHelper
       Log.info { "#{__method__}: cannot convert #{s.inspect}" } if log
     else
       digits = isbn[0..-2]
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       check  = isbn_10_checksum(digits)
       "#{digits}#{check}"
     end
@@ -197,11 +197,11 @@ module IsbnHelper
   def isbn_checksum(isbn, validate: true)
     check  = isbn.last
     digits = isbn.delete('^0-9')
+    # noinspection RubyMismatchedParameterType
     case digits.size
 
       when ISBN_13_DIGITS
         # Full ISBN-13.
-        # noinspection RubyYardParamTypeMatch
         result = isbn_13_checksum(digits[0..-2])
         check  = check.to_i
 
@@ -212,7 +212,6 @@ module IsbnHelper
 
       when ISBN_10_DIGITS
         # Full ISBN-10.
-        # noinspection RubyYardParamTypeMatch
         result = isbn_10_checksum(digits[0..-2])
         check  = check.to_s
 

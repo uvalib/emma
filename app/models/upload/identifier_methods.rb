@@ -46,7 +46,7 @@ module Upload::IdentifierMethods
 
   # Extract the database ID from the given item.
   #
-  # @param [Upload, Hash, String] item
+  # @param [Upload, Hash, String, *] item
   #
   # @return [String]                  Record ID (:id).
   # @return [nil]                     No valid :id specified.
@@ -61,13 +61,12 @@ module Upload::IdentifierMethods
 
   # Extract the submission ID from the given item.
   #
-  # @param [Api::Record, Upload, Hash, String] item
+  # @param [Api::Record, Upload, Hash, String, *] item
   #
   # @return [String]                  The submission ID.
   # @return [nil]                     No submission ID could be determined.
   #
   def sid_for(item)
-    # noinspection RubyYardReturnMatch
     return item               if valid_sid?(item)
     return item.submission_id if item.is_a?(Upload)
     _, rid, _ = Upload.record_id(item)&.split('-')

@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'search'
-
 # Namespace for classes that manage the representation of data fields involved
 # in search, ingest or upload.
 #
@@ -64,9 +62,6 @@ module Field
   # of checkboxes to create within a <fieldset> element.  Any other value
   # indicates <textarea> or the <input> type attribute to use.
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyCaseWithoutElseBlockInspection
-  #++
   def self.field_configuration(field, entry)
     return unless entry.is_a?(Hash)
     entry.map { |item, value|
@@ -214,7 +209,7 @@ module Field
   # indicates <textarea> or the <input> type attribute to use.
   #
   #--
-  # noinspection RubyCaseWithoutElseBlockInspection, RubyYardParamTypeMatch
+  # noinspection RubyCaseWithoutElseBlockInspection
   #++
   def self.normalize(entry, field = nil)
     entry = field                                  if entry.nil?

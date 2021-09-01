@@ -17,6 +17,10 @@ class Bs::Message::TitleFileResourceList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :links,              Bs::Record::Link
     has_one   :next

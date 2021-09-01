@@ -28,7 +28,7 @@ module BookshareConcern
   # @return [BookshareService]
   #
   def bs_api
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     api_service(BookshareService)
   end
 
@@ -68,7 +68,6 @@ module BookshareConcern
   # @return [nil]                     No :id, :bookshareId found.
   #
   def set_bookshare_id
-    # noinspection RubyYardReturnMatch
     @bookshare_id = params[:bookshareId] || params[:id]
   end
 
@@ -78,7 +77,6 @@ module BookshareConcern
   # @return [nil]                     No :series, :seriesId found.
   #
   def set_series_id
-    # noinspection RubyYardReturnMatch
     @series_id = params[:seriesId] || params[:series] || params[:id]
   end
 
@@ -88,7 +86,6 @@ module BookshareConcern
   # @return [nil]                     No :id, :edition, :editionId found.
   #
   def set_edition_id
-    # noinspection RubyYardReturnMatch
     @edition_id = params[:editionId] || params[:edition] || params[:id]
   end
 
@@ -98,7 +95,6 @@ module BookshareConcern
   # @return [nil]                     No :fmt found.
   #
   def set_format
-    # noinspection RubyYardReturnMatch
     @format = params[:fmt] || BsFormatType.default
   end
 
@@ -108,7 +104,6 @@ module BookshareConcern
   # @return [nil]                     No :id, :readingListId found.
   #
   def set_reading_list_id
-    # noinspection RubyYardReturnMatch
     @id = params[:readingListId] || params[:id]
   end
 
@@ -127,7 +122,6 @@ module BookshareConcern
   # @return [nil]                     No :url found.
   #
   def set_url
-    # noinspection RubyYardReturnMatch
     @url = params[:url]
   end
 

@@ -161,7 +161,7 @@ module Roles
   # @type [Hash{Symbol=>String}]
   #
   # Compare with:
-  # @see BsRoleType#values
+  # BsRoleType#values
   #
   # == Implementation Notes
   # With no role (due to lack of user information) an unauthenticated user
@@ -246,8 +246,8 @@ module Roles
   # @return [Symbol]                  Matching #PROTOTYPE key.
   #
   def role_prototype_for(user = nil, *roles)
-    # noinspection RubyNilAnalysis
     if user.is_a?(User)
+      # noinspection RubyNilAnalysis
       roles = user.role_list
     else
       roles.prepend(user) if user.is_a?(Symbol)

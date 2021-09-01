@@ -44,7 +44,6 @@ module LogoHelper
       prepend_classes!(html_opt, css_selector, repo)
       html_span(html_opt) { image_tag(asset_path(logo), alt: "#{name} logo") }
     else
-      # noinspection RubyYardParamTypeMatch
       repository_source(repo, html_opt.merge!(source: repo, name: name))
     end
   end
@@ -96,7 +95,6 @@ module LogoHelper
     repo = Upload.repository_of(src)
     return repo if repo && EmmaRepository.valid?(repo) || !src.is_a?(String)
     # Attempt a reverse lookup by repository name.
-    # noinspection RubyYardReturnMatch
     EmmaRepository.pairs.first { |_repo, name| src.casecmp?(name) }&.first
   end
 

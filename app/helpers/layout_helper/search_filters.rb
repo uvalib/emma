@@ -560,7 +560,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   #
   def blank_menu(*, **opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     menu_spacer(**opt) << menu_spacer(**opt)
   end
 
@@ -694,7 +694,7 @@ module LayoutHelper::SearchFilters
     l_id  = "#{menu_name}_label"
     menu  = menu_control(menu_name, label_id: l_id, **opt) or return
     label = menu_label(menu_name, label: label, id: l_id, **opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     label << menu
   end
 
@@ -752,7 +752,6 @@ module LayoutHelper::SearchFilters
       added  = selected.reject { |sel| values.include?(sel) }
       if added.present?
         sorted = entries_sorted?(pairs)
-        # noinspection RubyYardParamTypeMatch
         pairs += added.map { |sel| [make_menu_label(menu_name, sel), sel] }
         sort_entries!(pairs) if sorted
       end
@@ -874,7 +873,7 @@ module LayoutHelper::SearchFilters
     l_id  = "#{menu_name}_label"
     ctrl  = date_control(menu_name, label_id: l_id, **opt) or return
     label = date_label(menu_name, label: label, id: l_id, **opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     label << ctrl
   end
 
@@ -964,7 +963,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   #
   def reset_menu(**opt)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     menu_spacer(**opt) << reset_button(**opt)
   end
 

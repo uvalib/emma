@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Handle Bookshare-only "/periodical" pages.
 #
 # @see PeriodicalHelper
+# @see file:app/views/periodical/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
 #
 class PeriodicalController < ApplicationController
 
@@ -53,6 +56,8 @@ class PeriodicalController < ApplicationController
   #
   # List all periodicals.
   #
+  # @see BookshareService::Request::Periodicals#get_periodicals
+  #
   def index
     __debug_route
     opt   = pagination_setup
@@ -68,6 +73,9 @@ class PeriodicalController < ApplicationController
   # == GET /periodical/:id
   #
   # Display details of an existing periodical.
+  #
+  # @see BookshareService::Request::Periodicals#get_periodical
+  # @see BookshareService::Request::Periodicals#get_periodical_editions
   #
   def show
     __debug_route

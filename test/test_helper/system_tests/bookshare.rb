@@ -53,9 +53,6 @@ module TestHelper::SystemTests::Bookshare
   #
   # @type [Hash{String=>String}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   API_REQUEST_METHODS =
     BookshareService.api_methods.map { |method, properties|
       element_id = properties[:reference_id]
@@ -144,7 +141,7 @@ module TestHelper::SystemTests::Bookshare
   #
   def api_request_method(element_id)
     id = element_id.to_s
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     API_REQUEST_METHODS[id] || id.delete_prefix('_').underscore if id.present?
   end
 
@@ -164,7 +161,6 @@ module TestHelper::SystemTests::Bookshare
       }
     # noinspection RubyArgCount
     rows = (table&.find_all('tbody tr') rescue nil) || []
-    # noinspection RubyYardReturnMatch
     rows.map { |row|
       parts = row.find_all('p') rescue []
       kind, name, desc, type, default =
@@ -310,7 +306,6 @@ module TestHelper::SystemTests::Bookshare
   #
   def record_fields(node)
     rows = node.find_all('tbody tr') rescue []
-    # noinspection RubyYardReturnMatch
     rows.map { |row|
       # noinspection RubyArgCount
       parts = row.find_all('p') rescue []
@@ -355,7 +350,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [String]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  # noinspection RubyNilAnalysis
   #++
   def model_field_type(type)
     type = type.call rescue '?' if type.is_a?(Proc)

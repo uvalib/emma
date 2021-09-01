@@ -157,7 +157,7 @@ module TestHelper::SystemTests::Index
     else
       show_url
     end
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     assert_valid_index_page(model, **opt)
   end
 

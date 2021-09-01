@@ -151,13 +151,10 @@ module HeadHelper::MetaTags
   #
   def merge_meta_tags!(src)
     @page_meta_tags.tap do |dst|
-      if src.present?
-        # noinspection RubyNilAnalysis
-        src.each_pair do |k, v|
-          k = k.to_sym
-          v = Array.wrap(dst[k]) + Array.wrap(v) if dst[k].present?
-          dst[k] = v
-        end
+      src.presence&.each_pair do |k, v|
+        k = k.to_sym
+        v = Array.wrap(dst[k]) + Array.wrap(v) if dst[k].present?
+        dst[k] = v
       end
     end
   end
@@ -230,7 +227,6 @@ module HeadHelper::MetaTags
   #
   def set_page_description(*values)
     opt = { sanitize: false } # Sanitization occurs in #emit_meta_tag.
-    # noinspection RubyYardParamTypeMatch
     replace_page_meta_tags(description: normalized_list(values, **opt))
   end
 
@@ -242,7 +238,6 @@ module HeadHelper::MetaTags
   #
   def append_page_description(*values)
     opt = { sanitize: false } # Sanitization occurs in #emit_meta_tag.
-    # noinspection RubyYardParamTypeMatch
     append_page_meta_tags(description: normalized_list(values, **opt))
   end
 
@@ -259,7 +254,6 @@ module HeadHelper::MetaTags
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
   def set_page_robots(*values)
-    # noinspection RubyYardParamTypeMatch
     replace_page_meta_tags(robots: values.map(&:to_sym))
   end
 
@@ -270,7 +264,6 @@ module HeadHelper::MetaTags
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
   def append_page_robots(*values)
-    # noinspection RubyYardParamTypeMatch
     append_page_meta_tags(robots: values.map(&:to_sym))
   end
 

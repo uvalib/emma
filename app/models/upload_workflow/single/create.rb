@@ -60,8 +60,7 @@ module UploadWorkflow::Single::Create::Actions
   #
   # @return [void]
   #
-  # @see Upload#finish_editing
-  # @see UploadWorkflow::External#repository_edit
+  # @see UploadWorkflow::External#repository_create
   #
   def wf_finalize_submission(*event_args)
     __debug_items(binding)

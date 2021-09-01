@@ -18,6 +18,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::Address < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :address1
     has_one   :address2

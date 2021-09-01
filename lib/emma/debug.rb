@@ -119,7 +119,7 @@ module Emma::Debug
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
     #--
-    # noinspection RailsParamDefResolve, RubyYardReturnMatch
+    # noinspection RailsParamDefResolve
     #++
     def __debug_session_hash(value = nil)
       value ||= try(:request)
@@ -156,7 +156,7 @@ module Emma::Debug
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
     #--
-    # noinspection RailsParamDefResolve, RubyYardReturnMatch
+    # noinspection RailsParamDefResolve
     #++
     def __debug_header_hash(value = nil)
       value ||= try(:request)

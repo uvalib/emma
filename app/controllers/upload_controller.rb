@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Handle "/upload" requests.
 #
+# @see UploadHelper
+# @see file:app/views/upload/**
+#
 class UploadController < ApplicationController
 
   include UserConcern
@@ -60,6 +63,10 @@ class UploadController < ApplicationController
   respond_to :html
   respond_to :json, :xml, except: %i[edit]
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /upload[?id=(:id|SID|RANGE_LIST)]
@@ -98,9 +105,6 @@ class UploadController < ApplicationController
   # == GET /upload/show/(:id|SID)
   #
   # Display a single upload.
-  #
-  # @raise [Net::HTTPBadRequest]
-  # @raise [Net::HTTPNotFound]
   #
   # @see UploadConcern#get_record
   #
@@ -152,9 +156,7 @@ class UploadController < ApplicationController
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
   #
-  # @raise [Net::HTTPConflict]
-  # @raise [UploadWorkflow::SubmitError]
-  #
+  # @see UploadController#new
   # @see UploadWorkflow::Single::Create::States#on_submitting_entry
   # @see file:app/assets/javascripts/feature/file-upload.js
   #
@@ -194,10 +196,7 @@ class UploadController < ApplicationController
   #
   # Finalize modification of an existing EMMA entry.
   #
-  # @raise [Net::HTTPBadRequest]
-  # @raise [Net::HTTPNotFound]
-  # @raise [UploadWorkflow::SubmitError]
-  #
+  # @see UploadController#edit
   # @see UploadWorkflow::Single::Edit::States#on_modifying_entry
   #
   def update
@@ -225,9 +224,6 @@ class UploadController < ApplicationController
   # Use :force to attempt to remove an item from the EMMA Unified Search index
   # even if a database record was not found.
   #
-  # @raise [Net::HTTPBadRequest]
-  # @raise [Net::HTTPNotFound]
-  #
   # @see UploadController#destroy
   # @see UploadWorkflow::Single::Remove::States#on_removing_entry
   #
@@ -248,9 +244,7 @@ class UploadController < ApplicationController
   #
   # Finalize removal of an existing EMMA entry.
   #
-  # @raise [Net::HTTPBadRequest]
-  # @raise [Net::HTTPNotFound]
-  #
+  # @see UploadController#delete
   # @see UploadWorkflow::Single::Remove::States#on_removed_entry
   #
   #--
@@ -310,8 +304,7 @@ class UploadController < ApplicationController
   # Create the specified Upload records, download and store the associated
   # files, and post the new entries to the Federated Ingest API.
   #
-  # @raise [Net::HTTPConflict]
-  #
+  # @see UploadController#bulk_new
   # @see UploadWorkflow::Bulk::Create::States#on_submitting_entry
   #
   def bulk_create
@@ -350,8 +343,7 @@ class UploadController < ApplicationController
   # associated files (if changed), and post the new/modified entries to the
   # Federated Ingest API.
   #
-  # @raise [Net::HTTPConflict]
-  #
+  # @see UploadController#bulk_edit
   # @see UploadWorkflow::Bulk::Edit::States#on_modifying_entry
   #
   def bulk_update
@@ -371,8 +363,6 @@ class UploadController < ApplicationController
   #
   # Specify entries to delete by :id, SID, or RANGE_LIST.
   #
-  # @raise [Net::HTTPConflict]
-  #
   # @see UploadController#bulk_destroy
   # @see UploadWorkflow::Bulk::Remove::States#on_removing_entry
   #
@@ -386,8 +376,7 @@ class UploadController < ApplicationController
 
   # == DELETE /upload/bulk[?force=true]
   #
-  # @raise [Net::HTTPConflict]
-  #
+  # @see UploadController#bulk_delete
   # @see UploadWorkflow::Bulk::Remove::States#on_removed_entry
   #
   def bulk_destroy
@@ -538,9 +527,6 @@ class UploadController < ApplicationController
   #
   # Download the file associated with an EMMA submission.
   #
-  # @raise [Net::HTTPBadRequest]
-  # @raise [Net::HTTPNotFound]
-  #
   # @see UploadConcern#get_record
   # @see Upload#download_url
   #
@@ -580,6 +566,8 @@ class UploadController < ApplicationController
   # == GET /upload/admin[?(repo|repository)=('emma'|'ia')]
   #
   # Upload submission administration.
+  #
+  # @see AwsConcern#get_object_table
   #
   def admin
     __debug_route
@@ -734,7 +722,7 @@ class UploadController < ApplicationController
     item = item.is_a?(Upload) ? item.attributes.symbolize_keys : item.dup
     data = item.extract!(:file_data).first&.last
     item[:file_data] = safe_json_parse(data)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     item
   end
 

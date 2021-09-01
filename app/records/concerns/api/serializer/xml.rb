@@ -10,13 +10,19 @@ __loading_begin(__FILE__)
 # @see Representable::XML
 # @see Api::Record::Schema::ClassMethods#schema
 #
-class Api::Serializer::Xml < ::Api::Serializer
+class Api::Serializer::Xml < Api::Serializer
 
-  include ::Representable::XML
-  include ::Representable::Coercion
+  include Representable::XML
+  include Representable::Coercion
 
-  include ::Api::Serializer::Xml::Schema
-  include ::Api::Serializer::Xml::Associations
+  include Api::Serializer::Xml::Schema
+  include Api::Serializer::Xml::Associations
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   SERIALIZER_TYPE = :xml
 
@@ -102,7 +108,6 @@ class Api::Serializer::Xml < ::Api::Serializer
   # @return [nil]                 If *data* is neither a String nor a Hash.
   #
   def set_source_data(data)
-    # noinspection RubyYardReturnMatch
     @source_data ||=
       if data.is_a?(String)
         data.dup

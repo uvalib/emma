@@ -30,7 +30,7 @@ module IngestConcern
   # @return [IngestService]
   #
   def ingest_api
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     api_service(IngestService)
   end
 

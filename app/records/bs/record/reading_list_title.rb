@@ -41,6 +41,10 @@ class Bs::Record::ReadingListTitle < Bs::Api::Record
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :allows,           BsAllowsType
     has_many  :authors,          Bs::Record::Name           # NOTE: deprecated

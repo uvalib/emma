@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #
 class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :identifiers, Ingest::Record::IdentifierRecord
   end

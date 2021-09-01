@@ -46,13 +46,14 @@ __loading_begin(__FILE__)
 #
 # @see Search::Record::MetadataCommonRecord (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   include Emma::Common
   include Ingest::Shared::TitleMethods
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
   schema do
     has_one   :emma_repository,                   EmmaRepository

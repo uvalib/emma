@@ -126,7 +126,7 @@ module SearchCallHelper
   # @param [Hash]                          opt   Passed to #model_table_entries
   #
   def search_call_table_entries(list, **opt)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     model_table_entries(list, **opt) do |item, **row_opt|
       search_call_table_entry(item, **row_opt)
     end
@@ -138,7 +138,7 @@ module SearchCallHelper
   # @param [Hash]       opt           Passed to #model_table_entry
   #
   def search_call_table_entry(item, **opt)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     model_table_entry(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end
@@ -150,7 +150,7 @@ module SearchCallHelper
   # @param [Hash]                          opt  Passed to #model_table_headings
   #
   def search_call_table_headings(item, **opt)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     model_table_headings(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end
@@ -177,7 +177,6 @@ module SearchCallHelper
       elsif attr_value.is_a?(Hash)
         html_div(class: 'key-value-pair') do
           v_opt ||= { separator: search_call_connector }
-          # noinspection RubyYardParamTypeMatch
           attr_value.map do |field, value|
             search_call_field(field) << search_call_value(value, **v_opt)
           end

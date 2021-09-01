@@ -9,9 +9,11 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::Scroll
 
-  include Emma::Unicode
-  include HtmlHelper
   include LayoutHelper::Common
+
+  include Emma::Unicode
+
+  include HtmlHelper
 
   # ===========================================================================
   # :section:

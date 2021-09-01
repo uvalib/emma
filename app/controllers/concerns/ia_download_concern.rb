@@ -22,6 +22,7 @@ module IaDownloadConcern
   include ActionController::DataStreaming
 
   include ApiConcern
+
   include SerializationHelper
 
   # ===========================================================================
@@ -35,7 +36,7 @@ module IaDownloadConcern
   # @return [IaDownloadService]
   #
   def ia_download_api
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     api_service(IaDownloadService)
   end
 

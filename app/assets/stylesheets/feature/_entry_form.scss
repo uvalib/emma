@@ -15,7 +15,6 @@
 // This is hidden until a file has been uploaded and displayUploadedFilename()
 // adds the 'complete' class.
 //
-// noinspection CssUnusedSymbol
 .uploaded-filename {
 
     display:        flex;
@@ -309,8 +308,6 @@
 
 // Control for identifying the source EMMA entry for new submissions which are
 // derived from member repository content.
-//
-// noinspection CssUnusedSymbol
 .parent-entry-select {
 
     display:         flex;
@@ -570,7 +567,6 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
-    // noinspection CssUnusedSymbol
     .parent-entry-select {
 
         @include grid-column-span;
@@ -645,8 +641,6 @@ $form-gap-narrow: $form-gap / 3;
     //=========================================================================
 
     // Add to a button to accent it as the next best action to perform.
-    //
-    // noinspection CssUnusedSymbol
     .best-choice:not(:hover) {
 
         box-shadow: 0 0 0.5rem 0.25rem $button-accent;
@@ -699,7 +693,6 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
-    // noinspection CssUnusedSymbol
     .uppy-FileInput-container {
 
         // In modern browsers, clicking on the <label> associated with

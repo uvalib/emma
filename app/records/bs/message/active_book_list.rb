@@ -23,6 +23,10 @@ class Bs::Message::ActiveBookList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :activeTitles, Bs::Record::ActiveBook
     has_many  :allows,       BsAllowsType

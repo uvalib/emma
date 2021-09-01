@@ -125,8 +125,8 @@ module UploadWorkflow::Errors
 
     # Show the submission ID if it can be determined for the given item(s).
     #
-    # @param [Api::Record, Upload, Hash, String] item
-    # @param [String]                            default
+    # @param [Api::Record, Upload, Hash, String, *] item
+    # @param [String]                               default
     #
     # @return [String]
     #
@@ -531,7 +531,7 @@ module UploadWorkflow::Properties
   #
   def batch_size
     value = parameters[:batch]
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     if value.blank?
       BATCH_SIZE
     elsif false?(value)
@@ -668,7 +668,7 @@ module UploadWorkflow::External
   # @see #add_to_index
   #
   # Compare with:
-  # @see UploadWorkflow::Bulk::External#bulk_upload_create
+  # UploadWorkflow::Bulk::External#bulk_upload_create
   #
   def upload_create(index: nil, atomic: true, **data)
     __debug_items("UPLOAD WF #{__method__}", binding)
@@ -698,7 +698,7 @@ module UploadWorkflow::External
   # @see #update_in_index
   #
   # Compare with:
-  # @see UploadWorkflow::Bulk::External#bulk_upload_edit
+  # UploadWorkflow::Bulk::External#bulk_upload_edit
   #
   def upload_edit(index: nil, atomic: true, **data)
     __debug_items("UPLOAD WF #{__method__}", binding)
@@ -776,7 +776,7 @@ module UploadWorkflow::External
     counter   = 0
     items =
       items.map { |item|
-        # noinspection RubyYardParamTypeMatch
+        # noinspection RubyMismatchedParameterType
         if !item.is_a?(Upload)
           item                        # Only seen if *force* is *true*.
         elsif db_delete(item)
@@ -960,7 +960,7 @@ module UploadWorkflow::External
   # @param [Boolean]        no_raise  If *true*, do not raise exceptions.
   # @param [Symbol]         meth      Calling method (for logging).
   #
-  # @raise [RuntimeError]             If *item* not found and !*no_raise*.
+  # @raise [UploadWorkflow::SubmitError]  If *item* not found and !*no_raise*.
   #
   # @return [Upload]                  The item; from the database if necessary.
   # @return [nil]                     If *item* not found and *no_raise*.
@@ -1107,14 +1107,12 @@ module UploadWorkflow::External
   #
   # @param [Upload, Hash] data        @see Upload#assign_attributes.
   #
-  # @return [Upload]                  The provided or created record.
-  # @return [nil]                     If the record was not created or updated.
+  # @return [Upload]
   #
   def db_insert(data)
     __debug_items("UPLOAD WF #{__method__}", binding)
     record = data.is_a?(Upload) ? data : new_record(data)
-    record.save if record&.new_record?
-    # noinspection RubyYardReturnMatch
+    record.save if record.new_record?
     record
   end
 
@@ -1147,7 +1145,7 @@ module UploadWorkflow::External
     elsif record.new_record?
       record.save
     end
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     record
   end
 
@@ -1541,7 +1539,6 @@ module UploadWorkflow::External
       else
         Log.error { "#{__method__}: expected 'items' type: #{items.class}" }
     end
-    # noinspection RubyYardReturnMatch
     empty_key ? result : result.delete_if { |repo, _| repo.blank? }
   end
 

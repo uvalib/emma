@@ -6,8 +6,8 @@
 __loading_begin(__FILE__)
 
 # NOTE: These are required in order to induce loading to occur in such a way
-# that all subclasses of EnumType have been loaded from configuration so that
-# their values can be used within the creation of constants in the helpers.
+#   that all subclasses of EnumType have been loaded from configuration so that
+#   their values can be used within the creation of constants in the helpers.
 
 require 'bookshare_service'
 require 'search_service'

@@ -56,7 +56,6 @@ module OAuth2
     #
     def revoke_params(params = nil)
       result = { grant_type: 'authorization_code' }
-      # noinspection RubyYardReturnMatch
       params&.symbolize_keys&.merge!(result) || result
     end
 

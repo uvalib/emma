@@ -42,7 +42,7 @@ module FileNaming
           when :daisy, :daisyAudio
             # This heuristic assumes that only distinction between "Daisy" and
             # "Daisy Audio" is the presence of sound files.
-            # noinspection RubyYardParamTypeMatch
+            # noinspection RubyMismatchedParameterType
             type = get_archive_entry('.mp3', handle) ? :daisyAudio : :daisy
         end
       end
@@ -77,7 +77,7 @@ module FileNaming
     # @return [Hash{Symbol=>Array<String>}]
     #
     def mime_types
-      # noinspection RubyYardReturnMatch
+      # noinspection RubyMismatchedReturnType
       @mime_types ||= format_classes.transform_values(&:mime_types)
     end
 
@@ -86,7 +86,7 @@ module FileNaming
     # @return [Hash{Symbol=>Array<String>}]
     #
     def file_extensions
-      # noinspection RubyYardReturnMatch
+      # noinspection RubyMismatchedReturnType
       @file_extensions ||= format_classes.transform_values(&:file_extensions)
     end
 

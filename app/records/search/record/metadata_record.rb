@@ -45,11 +45,15 @@ __loading_begin(__FILE__)
 # @attr [Array<A11yAccessMode>]         s_accessMode
 # @attr [Array<A11ySufficient>]         s_accessModeSufficient
 #
-# @see Search::Record::SearchRecord (duplicate schema)
+# @see Search::Message::SearchRecord (duplicate schema)
 #
 class Search::Record::MetadataRecord < Search::Api::Record
 
   include Search::Shared::TitleMethods
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
   schema do
     has_one   :emma_recordId

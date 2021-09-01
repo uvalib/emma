@@ -5,6 +5,10 @@
 
 __loading_begin(__FILE__)
 
+# Individual EMMA account maintenance.
+#
+# @see file:app/views/user/registrations/**
+#
 class User::RegistrationsController < Devise::RegistrationsController
 
   include FlashConcern

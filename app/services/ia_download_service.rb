@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'search'
-
 # Acquire files from Internet Archive
 #
 class IaDownloadService < ApiService

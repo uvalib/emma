@@ -9,8 +9,9 @@ __loading_begin(__FILE__)
 #
 module Upload::EmmaDataMethods
 
-  include Upload::WorkflowMethods
   include Emma::Json
+
+  include Upload::WorkflowMethods
 
   # ===========================================================================
   # :section:
@@ -162,7 +163,8 @@ module Upload::EmmaDataMethods
 
   # Selectively modify the :edit_emma_data field value.
   #
-  # @param [Hash] data
+  # @param [Hash]    data
+  # @param [Boolean] allow_blank
   #
   # @return [String]
   #

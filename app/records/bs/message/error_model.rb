@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::ErrorModel < Bs::Api::Message
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :key
     has_many  :messages

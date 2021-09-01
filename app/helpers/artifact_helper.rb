@@ -229,16 +229,11 @@ module ArtifactHelper
   #
   # @return [String]
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
   def format_label(fmt, quote: '"')
-    fmt ||= THIS_FORMAT
-    fmt = fmt.to_s
-    case fmt
-      when /^".*"$/, /^'.*'$/ then fmt
-      when /\S\s\S/           then "#{quote}#{fmt}#{quote}"
-      else                         fmt
+    case (name = fmt&.to_s || THIS_FORMAT)
+      when /^".*"$/, /^'.*'$/ then name
+      when /\S\s\S/           then "#{quote}#{name}#{quote}"
+      else                         name
     end
   end
 
@@ -255,7 +250,7 @@ module ArtifactHelper
     opt[:title] ||= DOWNLOAD_PROGRESS_TIP
     opt[:alt]   ||= DOWNLOAD_PROGRESS_ALT_TEXT
     opt[:role]  ||= 'button'
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     image_tag(image, prepend_classes!(opt, css_selector))
   end
 
@@ -286,7 +281,7 @@ module ArtifactHelper
     fmt           = format_label(fmt)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     make_link(label, '#', **prepend_classes!(opt, css_selector))
   end
 

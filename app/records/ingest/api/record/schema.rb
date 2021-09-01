@@ -14,12 +14,12 @@ module Ingest::Api::Record::Schema
 
   extend ActiveSupport::Concern
 
-  include ::Api::Record::Schema
+  include Api::Record::Schema
 
   module ClassMethods
 
     include Ingest::Api::Schema
-    include ::Api::Record::Schema::ClassMethods
+    include Api::Record::Schema::ClassMethods
 
   end
 

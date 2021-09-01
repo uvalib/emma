@@ -126,10 +126,10 @@ module AccountConcern
 
   # Get matching User account records or all records if no terms are given.
   #
-  # @param [Array<String,Hash,Array>]    terms
-  # @param [Array, nil]                  columns      Def.: #ACCT_MATCH_COLUMNS
-  # @param [Symbol, String, Hash, Array] sort         Def.: :id
-  # @param [Hash]                        hash_terms   Added to *terms*.
+  # @param [Array<String,Hash,Array,nil>] terms
+  # @param [Array, nil]                   columns     Def.: #ACCT_MATCH_COLUMNS
+  # @param [Symbol, String, Hash, Array]  sort        Def.: :id
+  # @param [Hash]                         hash_terms  Added to *terms*.
   #
   # @return [ActiveRecord::Relation<User>]
   #
@@ -165,9 +165,6 @@ module AccountConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyCaseWithoutElseBlockInspection
-  #++
   def redirect_success(action, message = nil, redirect: nil, **opt)
     message ||= message_for(action, :success)
     message &&= message % interpolation_terms(action)
@@ -190,9 +187,6 @@ module AccountConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyCaseWithoutElseBlockInspection
-  #++
   def redirect_failure(action, message = nil, error: nil, redirect: nil, **opt)
     message ||= message_for(action, :failure)
     message &&= message % interpolation_terms(action)
@@ -203,6 +197,7 @@ module AccountConcern
       message = [message, *Array.wrap(error)]
       message = safe_join(message, "<br/>\n".html_safe)
     end
+    # noinspection RubyCaseWithoutElseBlockInspection
     redirect ||=
       case action
         when :new,    :create  then { action: :new }

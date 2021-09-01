@@ -11,6 +11,7 @@ module LayoutHelper::Common
 
   include Emma::Common
   include Emma::Constants
+
   include HtmlHelper
   include ParamsHelper
 

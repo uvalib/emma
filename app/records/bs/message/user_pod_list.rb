@@ -17,6 +17,10 @@ class Bs::Message::UserPodList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :allows,       BsAllowsType
     has_many :disabilities, Bs::Record::UserPod

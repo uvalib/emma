@@ -27,6 +27,10 @@ class Bs::Record::ActiveBook < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :activeTitleId
     has_many  :allows,              BsAllowsType

@@ -134,6 +134,7 @@ class FileUploader < Shrine
     #
     def self.uploaded_file(object)
       __ext_debug { { object: object } }
+      # noinspection RubyMismatchedReturnType
       super
     end
 

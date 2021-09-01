@@ -17,6 +17,10 @@ class Bs::Record::Contributor < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :links, Bs::Record::Link
     has_one   :name,  Bs::Record::ContributorName

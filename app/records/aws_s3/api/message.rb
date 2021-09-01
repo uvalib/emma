@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 class AwsS3::Api::Message < AwsS3::Api::Record
 
-  include ::Api::Message
+  include Api::Message
 
   # ===========================================================================
   # :section:

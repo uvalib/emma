@@ -16,6 +16,7 @@ class Module
   # @return [nil]                     If the constant is not defined.
   #
   def safe_const_get(name, inherit = true)
+    return unless name.is_a?(Symbol) || name.is_a?(String)
     const_get(name, inherit) if const_defined?(name, inherit)
   end
 

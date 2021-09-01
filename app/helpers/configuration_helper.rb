@@ -19,6 +19,7 @@ module ConfigurationHelper
   end
 
   include Emma::Common
+
   include ParamsHelper
 
   # ===========================================================================
@@ -65,9 +66,6 @@ module ConfigurationHelper
   #
   # @return [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def controller_configuration(controller = nil, action = nil)
     result = ApplicationHelper::CONTROLLER_CONFIGURATION
     return result unless controller
@@ -327,9 +325,6 @@ module ConfigurationHelper
   # some form of 'emma.generic.unit' will be found if there is no definition
   # for the given controller.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def config_interpolations(
     controller: nil,
     action:     nil,
@@ -365,14 +360,13 @@ module ConfigurationHelper
     end
 
     # Return with all interpolation values unless limitations were indicated.
-    result = {
+    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    {
       item:  (single ||= plural.singularize unless no_single),
       Item:  (single.capitalize             unless no_single),
       items: (plural ||= single.pluralize   unless no_plural),
       Items: (plural.capitalize             unless no_plural),
-    }
-    # noinspection RubyYardReturnMatch
-    result.compact
+    }.compact
   end
 
 end

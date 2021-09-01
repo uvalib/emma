@@ -25,6 +25,10 @@ class Bs::Record::UserMessage < Bs::Api::Record
   include Bs::Shared::LinkMethods
   include Bs::Shared::MessageMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :allows,      BsAllowsType
     has_one   :createdDate, IsoDate

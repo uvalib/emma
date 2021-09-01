@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Base class for object-specific serializers that process JSON data.
 #
-class AwsS3::Api::Serializer::Json < ::Api::Serializer::Json
+class AwsS3::Api::Serializer::Json < Api::Serializer::Json
 
   include AwsS3::Api::Serializer::Json::Schema
   include AwsS3::Api::Serializer::Json::Associations

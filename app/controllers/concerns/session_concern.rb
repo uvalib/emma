@@ -64,6 +64,7 @@ module SessionConcern
   end
 
   include Emma::Debug
+
   include ParamsConcern
   include FlashConcern
   include ApiConcern
@@ -136,11 +137,9 @@ module SessionConcern
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
   def set_flash_notice(message = nil, action: nil, user: nil)
     message ||= status_message(status: :success, action: action, user: user)
+    # noinspection RubyMismatchedParameterType
     flash_notice(message)
   end
 
@@ -152,11 +151,9 @@ module SessionConcern
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
   def set_flash_alert(message = nil, action: nil, user: nil)
     message ||= status_message(status: :failure, action: action, user: user)
+    # noinspection RubyMismatchedParameterType
     flash_alert(message)
   end
 
@@ -353,7 +350,7 @@ module SessionConcern
   # created in BookshareService::Common#api.
   #
   #--
-  # noinspection RubyYardParamTypeMatch
+  # noinspection RubyMismatchedParameterType
   #++
   def session_update
     error = nil

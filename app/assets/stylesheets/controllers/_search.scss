@@ -145,12 +145,10 @@ $sticky-top-narrow:     3.125rem;
             }
         }
 
-        // noinspection CssUnusedSymbol
         &.field-Description {
             font-size: large;
         }
 
-        // noinspection CssUnusedSymbol
         &.textbox {
             box-shadow: 0 0 0 0.25rem white, 0 0 0 0.375rem lightgray;
         }
@@ -344,8 +342,6 @@ $sticky-top-narrow:     3.125rem;
         }
 
         // Field labels with help icons:
-        //
-        // noinspection CssUnusedSymbol
         &.field-RetrievalLink {
             display:        flex;
             flex-direction: row;
@@ -421,11 +417,12 @@ $sticky-top-narrow:     3.125rem;
 
                 /**
                  * NOTE: Height is limited to avoid edge-case titles taking up
-                 * a large portion of the screen -- using "em" units in order
-                 * to relate to the element's own font.  Most titles can be
-                 * shown in 3 lines or less; a little extra height is given so
-                 * that if the title needs to be scrolled, the fourth line is
-                 * partially displayed but clipped.
+                 *  a large portion of the screen -- using "em" units in order
+                 *  to relate to the element's own font.
+                 *
+                 * Most titles can be shown in 3 lines or less; a little extra
+                 * height is given so that if the title needs to be scrolled,
+                 * the fourth line is partially displayed but clipped.
                  */
                 @media #{$narrow-screen} {
                     max-height:     4em;
@@ -474,10 +471,7 @@ $sticky-top-narrow:     3.125rem;
             }
 
             // Controls for moving up and down through the list.
-            //
             // @see "SearchHelper#prev_next_controls"
-            //
-            // noinspection CssUnusedSymbol
             .prev-next {
 
                 display:        flex;
@@ -564,13 +558,11 @@ $sticky-top-narrow:     3.125rem;
             font-weight: bold;
         }
 
-        // noinspection CssUnusedSymbol
         &.field-Description {
             max-height: 20vh;
             overflow-y: auto;
         }
 
-        // noinspection CssUnusedSymbol
         &.field-RetrievalLink {
             @media #{$narrow-screen} {
                 margin-top:    0.5rem;
@@ -622,7 +614,6 @@ $sticky-top-narrow:     3.125rem;
     $item-number-bg:     lighter($uva-accent-blue, 97.5%);
     $item-number-border: $uva-accent-blue;
 
-    // noinspection CssUnusedSymbol
     .pagination-top {
         // TODO: ???
     }
@@ -703,7 +694,6 @@ $sticky-top-narrow:     3.125rem;
                 }
             }
 
-            // noinspection CssUnusedSymbol
             .icon-tray {
 
 
@@ -740,10 +730,10 @@ $sticky-top-narrow:     3.125rem;
     }
 
     /**
-     * NOTE: This is tuned to account for the varying types of fields
-     * across the records displayed in search.  Without some adjustment,
-     * the grid of each record aligns only to the widest label that it
-     * happens to be displaying.
+     * NOTE: This is tuned to account for the varying types of fields across
+     *  the records displayed in search.  Without some adjustment, the grid of
+     *  each record aligns only to the widest label that it happens to be
+     *  displaying.
      */
     .search-list-item {
 

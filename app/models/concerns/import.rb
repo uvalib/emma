@@ -282,7 +282,6 @@ module Import
     val = string_value(v, first: true)
     return if val.blank?
     key = hash_key(val).to_s
-    # noinspection RubyYardReturnMatch
     type.pairs.find do |name, label|
       return name if name.casecmp?(key) || label.casecmp?(val)
     end
@@ -386,6 +385,7 @@ module Import
       mod = "Import::#{mod.camelize}" unless mod.start_with?('Import::')
       mod = mod.safe_constantize
     end
+    # noinspection RubyMismatchedReturnType
     return mod if mod.is_a?(Module)
     Log.error(__method__) { "#{arg}: invalid importer" }
   end

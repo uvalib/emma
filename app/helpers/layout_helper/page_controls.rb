@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::PageControls
 
   include LayoutHelper::Common
+
   include ConfigurationHelper
   include LinkHelper
 
@@ -152,7 +153,6 @@ module LayoutHelper::PageControls
         opt[:link_opt] = append_classes(link_opt, 'disabled') if current
         path = [p_ctrlr, :new] if p_action.to_s == 'new_select'
       end
-      # noinspection RubyYardParamTypeMatch
       link_to_action(nil, path: path, **opt)
     }.compact.join("\n").html_safe
   end

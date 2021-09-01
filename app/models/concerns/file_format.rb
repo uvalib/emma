@@ -236,7 +236,6 @@ module FileFormat
       field_transforms[type]&.find do |k, v|
         break v if k.is_a?(Regexp) ? (key.to_s =~ k) : (key == k)
       end
-    # noinspection RubyYardReturnMatch
     case meth
       when Symbol then transform(meth, value)
       when Proc   then meth.call(value)
@@ -393,7 +392,7 @@ module FileFormat
   #
   def self.normalize_language(value)
     return value.map { |v| send(__method__, v) }.uniq if value.is_a?(Array)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     IsoLanguage.find(value)&.alpha3 || value
   end
 
@@ -421,7 +420,7 @@ module FileFormat
       configuration_table[type.to_sym] ||=
         {}.tap do |hash|
           sections.each do |section|
-            # noinspection RubyYardParamTypeMatch
+            # noinspection RubyMismatchedParameterType
             section = configuration_section(section) unless section.is_a?(Hash)
             hash.deep_merge!(section) if section.present?
           end

@@ -15,6 +15,7 @@ module FlashHelper
   end
 
   include Emma::Common
+
   include HtmlHelper
 
   # ===========================================================================
@@ -251,6 +252,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #flash_notice
+  # @see #flash_format
   #
   def flash_success(*args, **opt)
     prepend_flash_source!(args)
@@ -265,6 +267,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #flash_alert
+  # @see #flash_format
   #
   def flash_failure(*args, **opt)
     prepend_flash_source!(args)
@@ -280,6 +283,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #set_flash
+  # @see #flash_format
   #
   def flash_notice(*args, topic: nil, **opt)
     prepend_flash_source!(args)
@@ -295,6 +299,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #set_flash
+  # @see #flash_format
   #
   def flash_alert(*args, topic: nil, **opt)
     prepend_flash_source!(args)
@@ -333,6 +338,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #flash_now_notice
+  # @see #flash_format
   #
   def flash_now_success(*args, **opt)
     prepend_flash_source!(args)
@@ -347,6 +353,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #flash_now_alert
+  # @see #flash_format
   #
   def flash_now_failure(*args, **opt)
     prepend_flash_source!(args)
@@ -362,6 +369,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #set_flash_now
+  # @see #flash_format
   #
   def flash_now_notice(*args, topic: nil, **opt)
     prepend_flash_source!(args)
@@ -377,6 +385,7 @@ module FlashHelper
   # @return [void]
   #
   # @see #set_flash_now
+  # @see #flash_format
   #
   def flash_now_alert(*args, topic: nil, **opt)
     prepend_flash_source!(args)
@@ -450,7 +459,7 @@ module FlashHelper
   #
   def flash_target(type)
     type = type&.to_sym
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     FLASH_TARGETS.include?(type) ? type : FLASH_TARGETS.first
   end
 
@@ -479,6 +488,7 @@ module FlashHelper
   def flash_omission(count = nil, html: false, **)
     text = count ? "#{count} total" : 'more' # TODO: I18n
     text = "[#{text}]"
+    # noinspection RubyMismatchedReturnType
     html ? %Q(<div class="line">#{text}</div>).html_safe : "\n#{text}"
   end
 
@@ -607,7 +617,7 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
   #--
-  # noinspection RubyYardReturnMatch
+  # noinspection RubyMismatchedReturnType
   #++
   def flash_item(item, **opt)
     if item.is_a?(Array)
@@ -636,7 +646,7 @@ module FlashHelper
     else
       opt[:max] ||= FLASH_MAX_ITEM_SIZE
       opt[:max]   = [opt[:max], flash_space_available].min
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       flash_item_render(item, **opt)
     end
   end
@@ -693,7 +703,7 @@ module FlashHelper
   def flash_template(msg, topic:, meth: nil, html: nil, separator: nil, **opt)
     scope = flash_i18n_scope
     topic = topic.to_sym
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     i18n_path = flash_i18n_path(scope, meth, topic)
     if msg.is_a?(Array)
       separator ||= html ? "\n" : ', '

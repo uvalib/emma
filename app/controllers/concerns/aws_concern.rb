@@ -46,7 +46,7 @@ module AwsConcern
   # @return [AwsS3Service]
   #
   def aws_api
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     api_service(AwsS3Service)
   end
 

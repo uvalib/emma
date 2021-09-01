@@ -138,15 +138,12 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyAssignmentExpressionInConditionalInspection
-  #++
   def creator_list(*types, **opt)
     types = types.compact.presence || CREATOR_TYPES
     list =
       %i[authors composers lyricists arrangers].flat_map do |field|
         next unless respond_to?(field)
-        next unless types.include?(type = field.to_s.singularize)
+        next unless types.include?((type = field.to_s.singularize))
         values = send(field) || []
         opt[:role] ? values.map { |v| "#{v} (#{type})" } : values
       end
@@ -167,7 +164,6 @@ module Bs::Shared::TitleMethods
     # noinspection RailsParamDefResolve
     result = try(:contributors) || []
     result = result.select { |c| types.include?(c.type) } if types.present?
-    # noinspection RubyNilAnalysis
     result.map { |c| c.label(opt[:role]) }
   end
 

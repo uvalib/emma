@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::UsageRestriction < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :name
     has_one   :usageRestrictionId

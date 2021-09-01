@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Handle Bookshare download requests.
 #
 # @see ArtifactHelper
+# @see file:app/views/artifact/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
 #
 # == Usage Notes
 # The abilities to retrieve or modify artifacts (instances of remediated
@@ -79,6 +82,8 @@ class ArtifactController < ApplicationController
   #
   # Get metadata for an existing artifact.
   #
+  # @see BookshareService::Request::Titles#get_artifact_metadata
+  #
   def show
     __debug_route
     opt   = { bookshareId: @bookshare_id, format: @format }
@@ -148,6 +153,8 @@ class ArtifactController < ApplicationController
   #
   # Download an artifact of the indicated Bookshare format type.
   #
+  # @see BookshareService::Request::Titles#download_title
+  #
   def download
     __debug_route
     opt = { bookshareId: @bookshare_id, format: @format, forUser: @member }
@@ -159,6 +166,8 @@ class ArtifactController < ApplicationController
   #
   # Retrieve a Bookshare artifact from an absolute URL (as found in EMMA
   # Unified Search results).
+  #
+  # @see BookshareService::Request::Titles#get_retrieval
   #
   def retrieval
     __debug_route

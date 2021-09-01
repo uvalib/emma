@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::StudentStatus < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :grade,            Bs::Record::Grade
     has_one   :organizationName

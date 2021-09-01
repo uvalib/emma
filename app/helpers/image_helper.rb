@@ -15,6 +15,7 @@ module ImageHelper
   end
 
   include Emma::Common
+
   include HtmlHelper
 
   # ===========================================================================
@@ -91,7 +92,7 @@ module ImageHelper
       opt, link_opt = partition_hash(opt, :class, :style)
       opt[:'aria-hidden'] ||= true
       link_opt[:tabindex] ||= -1
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       image = make_link(image, link, **link_opt)
     end
     html_div(image, opt)
@@ -113,7 +114,7 @@ module ImageHelper
     data         = opt.slice(:alt).merge!(path: url, 'turbolinks-track': false)
     opt[:data]   = opt[:data]&.merge(data) || data
     opt[:alt]    = PLACEHOLDER_IMAGE_ALT
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     image_tag(image, prepend_classes!(opt, css_selector))
   end
 

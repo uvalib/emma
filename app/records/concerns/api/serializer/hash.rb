@@ -11,13 +11,19 @@ __loading_begin(__FILE__)
 # @see Representable::Hash
 # @see Api::Record::Schema::ClassMethods#schema
 #
-class Api::Serializer::Hash < ::Api::Serializer
+class Api::Serializer::Hash < Api::Serializer
 
-  include ::Representable::Hash
-  include ::Representable::Coercion
+  include Representable::Hash
+  include Representable::Coercion
 
-  include ::Api::Serializer::Hash::Schema
-  include ::Api::Serializer::Hash::Associations
+  include Api::Serializer::Hash::Schema
+  include Api::Serializer::Hash::Associations
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   SERIALIZER_TYPE = :hash
 

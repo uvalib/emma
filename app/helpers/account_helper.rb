@@ -204,7 +204,7 @@ module AccountHelper
   # @param [Hash]              opt    Passed to #model_table_entries
   #
   def account_table_entries(list, **opt)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     model_table_entries(list, **opt) do |item, **row_opt|
       account_table_entry(item, **row_opt)
     end
@@ -216,7 +216,7 @@ module AccountHelper
   # @param [Hash] opt                 Passed to #model_table_entry
   #
   def account_table_entry(item, **opt)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     model_table_entry(item, **opt) do |b_item, **b_opt|
       account_columns(b_item, **b_opt)
     end
@@ -228,7 +228,7 @@ module AccountHelper
   # @param [Hash]              opt    Passed to #model_table_headings
   #
   def account_table_headings(item, **opt)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     model_table_headings(item, **opt) do |b_item, **b_opt|
       account_columns(b_item, **b_opt)
     end
@@ -277,7 +277,7 @@ module AccountHelper
   #
   def account_columns(item = nil, **opt)
     actions = []
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     if item
       actions << account_link(item)
       actions << edit_account_link(item)

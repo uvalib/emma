@@ -27,6 +27,10 @@ class Bs::Record::Sponsor < Bs::Api::Record
   include Bs::Shared::AccountMethods
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :allowAdultContent, Boolean
     has_one   :canDownload,       Boolean

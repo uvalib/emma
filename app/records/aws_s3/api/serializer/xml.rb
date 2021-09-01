@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Base class for object-specific serializers that process XML data.
 #
-class AwsS3::Api::Serializer::Xml < ::Api::Serializer::Xml
+class AwsS3::Api::Serializer::Xml < Api::Serializer::Xml
 
   include AwsS3::Api::Serializer::Xml::Schema
   include AwsS3::Api::Serializer::Xml::Associations

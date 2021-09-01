@@ -19,6 +19,10 @@ class Bs::Record::CategorySummary < Bs::Api::Record
   include Bs::Shared::CategoryMethods
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :description
     has_many  :links,       Bs::Record::Link

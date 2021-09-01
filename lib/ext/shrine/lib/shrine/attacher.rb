@@ -74,7 +74,7 @@ class Shrine
       # @return [Shrine::UploadedFile]
       #
       def attach_cached(value, **options)
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         super
           .tap do |result|
             __ext_debug("--> #{result.inspect}") do
@@ -122,7 +122,7 @@ class Shrine
       #
       def promote_cached(**options)
         __ext_debug { options }
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         super
       end
 
@@ -135,7 +135,7 @@ class Shrine
       #
       def promote(storage: store_key, **options)
         __ext_debug { { storage: storage, options: options } }
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         super
       end
 
@@ -226,7 +226,6 @@ class Shrine
       #
       def load_data(data)
         __ext_debug { data.is_a?(Hash) ? data : { data: data } }
-        # noinspection RubyYardReturnMatch
         super
       end
 
@@ -369,7 +368,7 @@ class Shrine
       #
       def reload
         __ext_debug
-        # noinspection RubyYardReturnMatch
+        # noinspection RubyMismatchedReturnType
         super
       end
 

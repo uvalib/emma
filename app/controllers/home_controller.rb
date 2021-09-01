@@ -81,6 +81,8 @@ class HomeController < ApplicationController
   #
   # The main application page for authenticated users.
   #
+  # @see UserConcern#get_account_details
+  #
   def dashboard
     __debug_route
     @item, @preferences, @history = get_account_details

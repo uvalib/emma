@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 module AwsS3::Api::Serializer::Hash::Schema
 
   include AwsS3::Api::Serializer::Schema
-  include ::Api::Serializer::Hash::Schema
+  include Api::Serializer::Hash::Schema
 
 end
 

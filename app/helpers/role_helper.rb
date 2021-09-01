@@ -15,6 +15,7 @@ module RoleHelper
   end
 
   include Emma::Common
+
   include Roles
 
   # ===========================================================================
@@ -39,9 +40,6 @@ module RoleHelper
   # @param [Symbol, String, nil] role
   # @param [User, nil]           user   Default: `current_user`.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def has_role?(role, user = nil)
     return true if role.blank?
     if user.nil?
@@ -52,6 +50,7 @@ module RoleHelper
     end
     return false unless user.is_a?(User)
     role = role.to_s.strip.to_sym if role.is_a?(String)
+    # noinspection RubyNilAnalysis
     case role
       when :developer     then user.developer?
       when :administrator then user.administrator?

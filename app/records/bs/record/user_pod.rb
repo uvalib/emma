@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::UserPod < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :disabilityType, BsDisabilityType
     has_one   :proofSource

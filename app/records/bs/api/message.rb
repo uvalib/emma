@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #
 class Bs::Api::Message < Bs::Api::Record
 
-  include ::Api::Message
+  include Api::Message
 
   # ===========================================================================
   # :section:

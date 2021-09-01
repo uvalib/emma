@@ -17,6 +17,7 @@ module SearchTermsHelper
   include Emma::Common
   include Emma::Json
   include Emma::Unicode
+
   include ConfigurationHelper
 
   # ===========================================================================
@@ -104,9 +105,6 @@ module SearchTermsHelper
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   SEARCH_CONTROLLERS =
     ApplicationHelper::CONTROLLER_CONFIGURATION.transform_values { |config|
       config.dig(:search, :action).presence
@@ -133,9 +131,6 @@ module SearchTermsHelper
   # @return [Symbol]                  The controller used for searching.
   # @return [nil]                     If searching should not be enabled.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def search_target(target = nil, **opt)
     opt = request_parameters if target.blank? && opt.blank?
     # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
@@ -189,7 +184,7 @@ module SearchTermsHelper
   def search_parameters(prm = nil, **opt)
     keys  = search_query_keys(**opt)
     prm ||= url_parameters
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     prm.slice(*keys).transform_values { |v| Array.wrap(v) }
   end
 

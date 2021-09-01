@@ -38,7 +38,7 @@ class ReadingList < ApplicationRecord
   # @param [String, Title, Artifact] item
   #
   def include?(item)
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     has_title?(item) || has_artifact?(item)
   end
 

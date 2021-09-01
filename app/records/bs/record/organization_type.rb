@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #
 class Bs::Record::OrganizationType < Bs::Api::Record
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :description
     has_one   :name

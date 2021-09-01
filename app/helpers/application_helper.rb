@@ -16,6 +16,7 @@ module ApplicationHelper
 
   include Emma::Constants
   include Emma::Common
+
   include HtmlHelper
   include ConfigurationHelper
 
@@ -122,7 +123,7 @@ module ApplicationHelper
     entry = CONTROLLER_CONFIGURATION.dig(*path) || {}
     types = Array.wrap(type).compact.map(&:to_sym)
     types = %i[description text] if types.blank? || types == %i[description]
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     types.find do |t|
       html  = "#{t}_html".to_sym
       plain = t.to_sym

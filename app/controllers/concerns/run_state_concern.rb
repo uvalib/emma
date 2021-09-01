@@ -17,6 +17,12 @@ module RunStateConcern
 
   extend ActiveSupport::Concern
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Controllers whose endpoints are exempt from redirection due to unavailable
   # run state.
   #

@@ -27,11 +27,14 @@ class SearchResult < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, nil] attributes
+  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
+  # @param [Proc, nil] block
   #
-  def initialize(attributes = nil)
+  # @note - for dev traceability
+  #
+  def initialize(attr = nil, &block)
     __debug_items(binding)
-    super # TODO: ???
+    super(attr, &block)
   end
 
   # ===========================================================================

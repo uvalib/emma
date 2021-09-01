@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # The base class for serialization/de-serialization of objects derived from
 # Search::Api::Record.
 #
-class Search::Api::Serializer < ::Api::Serializer
+class Search::Api::Serializer < Api::Serializer
 
   include Search::Api::Serializer::Schema
   include Search::Api::Serializer::Associations

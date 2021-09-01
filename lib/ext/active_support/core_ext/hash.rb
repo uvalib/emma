@@ -34,10 +34,8 @@ class Hash
   # #rdup with customized behaviors.
   #
   # == Implementation Notes
-  # Although active_support defines `deep_dup` for Rails 3, that's not quite
-  # adequate; while it does handle recursive duplication of Hash-valued
-  # elements, it doesn't do anything with other enumerables (particularly
-  # Array).
+  # Unlike ActiveSupport #deep_dup, this also ensures that other enumerables
+  # like Array are also duplicated, not just copied by reference.
   #
   def rdup
     self.class[map { |k, v| [k, v.rdup] }]
@@ -65,15 +63,14 @@ class Hash
   #
   # @return [self]
   #
-  def rmerge!(other, raise_error = nil)
+  def rmerge!(other, raise_error = false)
     if other.is_a?(Hash)
       other.each_pair do |k, v|
         key = (k if key?(k)) || (k.to_sym if key?(k.to_sym))
         if key && self[key].is_a?(Enumerable)
           self[key].rmerge!(v)
         else
-          key ||= k
-          self[key] = v.rdup
+          self[key || k] = v.rdup
         end
       end
     elsif raise_error

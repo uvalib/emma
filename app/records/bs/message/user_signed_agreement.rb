@@ -24,6 +24,10 @@ class Bs::Message::UserSignedAgreement < Bs::Api::Message
 
   include Bs::Shared::AgreementMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :agreementId
     has_one   :agreementType,         BsAgreementType

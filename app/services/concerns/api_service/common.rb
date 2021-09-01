@@ -25,6 +25,7 @@ module ApiService::Common
 
   include Emma::Common
   include Emma::Debug
+
   include ApiService::Properties
 
   # ===========================================================================
@@ -56,6 +57,12 @@ module ApiService::Common
   # @return [Faraday::Response, nil]
   #
   attr_reader :response
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # The HTTP method of the latest API request.
   #
@@ -111,7 +118,7 @@ module ApiService::Common
   #   @param [Boolean] complete       If *true* return :api_key parameter.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+  # noinspection RubyNilAnalysis
   #++
   def latest_endpoint(opt = nil)
     opt = (opt || @params).dup
@@ -380,13 +387,14 @@ module ApiService::Common
   # If overridden, this should be called first via 'super'.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch, RubyYardReturnMatch
+  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
   #++
   def api_options(params = nil)
     params ||= @params
     params = params.reject { |k, _| IGNORED_PARAMETERS.include?(k) }
     decode_parameters!(params)
     params[:api_key] = api_key if api_key
+    # noinspection RubyMismatchedReturnType
     params
   end
 
@@ -413,7 +421,6 @@ module ApiService::Common
       body    = params
       params  = {}
     end
-    # noinspection RubyNilAnalysis
     if body
       body = body.is_a?(Array) ? body.map { |v| api_body(v) } : api_body(body)
       body = body.to_json

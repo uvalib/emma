@@ -58,10 +58,10 @@ module TitleHelper
 
   # Thumbnail element for the given catalog title.
   #
-  # @param [Bs::Api::Record, Model] item
-  # @param [Boolean, String]        link  If *true* make the image a link to
+  # @param [Model]           item
+  # @param [Boolean, String] link         If *true* make the image a link to
   #                                         the show page for the item.
-  # @param [Hash]                   opt   Passed to #image_element.
+  # @param [Hash]            opt          Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder element.
   # @return [nil]                         If *item* is *nil*.
@@ -85,7 +85,7 @@ module TitleHelper
       html_opt[:id] = "container-img-#{id}"
       html_opt[:'data-group'] = opt[:group] if opt[:group].present?
       html_opt[:'data-turbolinks-permanent'] = true
-      # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
+      # noinspection RubyMismatchedParameterType
       image_element(url, link: link, alt: alt, row: row, **html_opt)
     else
       placeholder_element(comment: 'no thumbnail', **html_opt)
@@ -116,7 +116,7 @@ module TitleHelper
       link = title_path(id: id) if link.is_a?(TrueClass)
       link = nil                if link.is_a?(FalseClass)
       alt  = opt[:alt] || config_lookup('cover.image.alt', item: id)
-      # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
+      # noinspection RubyMismatchedParameterType, RubyMismatchedReturnType
       image_element(url, link: link, alt: alt, **html_opt)
     else
       placeholder_element(comment: 'no cover image', **html_opt)

@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Handle "/search" requests.
 #
+# @see SearchHelper
+# @see file:app/views/search/**
+#
 class SearchController < ApplicationController
 
   include ParamsConcern
@@ -52,6 +55,8 @@ class SearchController < ApplicationController
   #
   # Perform a search through the EMMA Unified Search API.
   #
+  # @see SearchService::Request::Records#get_records
+  #
   def index
     __debug_route
     opt = pagination_setup
@@ -82,6 +87,11 @@ class SearchController < ApplicationController
   #
   # Display details of an existing catalog title.
   #
+  # @see SearchService::Request::Records#get_record
+  #
+  # @note This endpoint is not actually functional because it depends on a
+  #   Unified Search API endpoint which does not exist.
+  #
   def show
     __debug_route
     @item = search_api.get_record(titleId: @title_id)
@@ -110,6 +120,8 @@ class SearchController < ApplicationController
   # == GET /search/direct?...
   #
   # Perform a search directly through the EMMA Unified Search API.
+  #
+  # @see SearchService::Request::Records#get_records
   #
   def direct
     __debug_route
@@ -146,6 +158,7 @@ class SearchController < ApplicationController
   # @return [Hash{Symbol=>Hash}]
   #
   def show_values(item = @item, **)
+    # noinspection RubyMismatchedReturnType
     sanitize_keys(item)
   end
 

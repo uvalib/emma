@@ -28,6 +28,10 @@ class Bs::Record::RecommendationProfile < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :allows,                  BsAllowsType
     has_many  :excludedAuthors

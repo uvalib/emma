@@ -28,6 +28,7 @@ module OAuth2
   module ClientExt
 
     include Emma::Common
+
     include OAuth2::ExtensionDebugging
 
     # =========================================================================
@@ -259,7 +260,7 @@ module OAuth2
       opts[:headers] = headers
       opts[:raise_errors] = false unless opts.key?(:raise_errors)
 
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyMismatchedParameterType
       request(meth, options[:revoke_url], opts)
     end
 

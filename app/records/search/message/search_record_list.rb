@@ -9,6 +9,10 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchRecordList < Search::Api::Message
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many :records, Search::Record::MetadataRecord
   end
@@ -45,7 +49,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # @return [Integer]
   #
   #--
-  # noinspection RubyInstanceMethodNamingConvention, RubyYardReturnMatch
+  # noinspection RubyInstanceMethodNamingConvention
   #++
   def totalResults
     records&.size || 0

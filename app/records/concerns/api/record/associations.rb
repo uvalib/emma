@@ -14,7 +14,7 @@ module Api::Record::Associations
 
   module ClassMethods
 
-    include ::Api::Schema
+    include Api::Schema
 
     # =========================================================================
     # :section: Record field schema DSL
@@ -175,7 +175,7 @@ module Api::Record::Associations
     # @return [Any]   A literal value.
     #
     # Compare with:
-    # @see Api::Serializer::Associations#get_type_class
+    # Api::Serializer::Associations#get_type_class
     #
     #--
     # noinspection RubyNilAnalysis

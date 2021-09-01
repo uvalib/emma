@@ -27,6 +27,10 @@ class Bs::Message::UserMessageDetail < Bs::Api::Message
   include Bs::Shared::LinkMethods
   include Bs::Shared::MessageMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :allows,          BsAllowsType
     has_one   :createdBy

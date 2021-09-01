@@ -16,6 +16,7 @@ module BsDownloadConcern
   end
 
   include BookshareConcern
+
   include SerializationHelper
 
   # ===========================================================================

@@ -49,6 +49,10 @@ class Bs::Record::AssignedTitleMetadataSummary < Bs::Api::Record
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :assignedBy
     has_many  :authors,          Bs::Record::Name           # NOTE: deprecated

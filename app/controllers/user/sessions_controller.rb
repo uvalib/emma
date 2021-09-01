@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # User session controller.
 #
+# @see file:app/views/user/sessions/**
+#
 class User::SessionsController < Devise::SessionsController
 
   include AuthConcern
@@ -127,9 +129,6 @@ class User::SessionsController < Devise::SessionsController
   # performed from OmniAuth::Strategies::Bookshare#callback_phase which
   # provides the value for 'omniauth.auth'.
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
   def sign_in_as
     __debug_route
     __debug_request
@@ -152,9 +151,9 @@ class User::SessionsController < Devise::SessionsController
   # Trigger an exception if the signed-in user doesn't have a valid Bookshare
   # OAuth2 token.
   #
-  # @return [void]
-  #
   # @raise [RuntimeError]   If Bookshare account info was unavailable.
+  #
+  # @return [void]
   #
   def check_user_validity
     bs_api.get_user_identity

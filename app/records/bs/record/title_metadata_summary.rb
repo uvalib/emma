@@ -63,9 +63,10 @@ class Bs::Record::TitleMetadataSummary < Bs::Api::Record
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
-  #--
-  # noinspection DuplicatedCode
-  #++
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :allows,            BsAllowsType
     has_many  :arrangers,         Bs::Record::Name          # NOTE: deprecated

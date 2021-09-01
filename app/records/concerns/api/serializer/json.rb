@@ -10,13 +10,19 @@ __loading_begin(__FILE__)
 # @see Representable::JSON
 # @see Api::Record::Schema::ClassMethods#schema
 #
-class Api::Serializer::Json < ::Api::Serializer
+class Api::Serializer::Json < Api::Serializer
 
-  include ::Representable::JSON
-  include ::Representable::Coercion
+  include Representable::JSON
+  include Representable::Coercion
 
-  include ::Api::Serializer::Json::Schema
-  include ::Api::Serializer::Json::Associations
+  include Api::Serializer::Json::Schema
+  include Api::Serializer::Json::Associations
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   SERIALIZER_TYPE = :json
 
@@ -75,7 +81,6 @@ class Api::Serializer::Json < ::Api::Serializer
   # @return [nil]                 If *data* is neither a String nor a Hash.
   #
   def set_source_data(data)
-    # noinspection RubyYardReturnMatch
     @source_data ||=
       if data.is_a?(String)
         data.dup

@@ -10,11 +10,11 @@ __loading_begin(__FILE__)
 #
 class Api::Serializer < ::Representable::Decorator
 
-  include ::Api::Serializer::Schema
-  include ::Api::Serializer::Associations
-
   include Emma::Time
   include Emma::Debug
+
+  include Api::Serializer::Schema
+  include Api::Serializer::Associations
 
   # ===========================================================================
   # :section:
@@ -81,7 +81,7 @@ class Api::Serializer < ::Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if log_timing
@@ -123,7 +123,7 @@ class Api::Serializer < ::Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    # noinspection RubyYardParamTypeMatch
+    # noinspection RubyMismatchedParameterType
     __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if log_timing
@@ -155,7 +155,6 @@ class Api::Serializer < ::Representable::Decorator
   # instance where #error? is *true*.
   #
   def set_source_data(data)
-    # noinspection RubyYardReturnMatch
     @source_data ||= (data.dup if data.is_a?(String) || data.is_a?(Hash))
   end
 

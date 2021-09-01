@@ -12,10 +12,11 @@ __loading_begin(__FILE__)
 class Api::Record
 
   include Model
-  include ::Api::Common
-  include ::Api::Schema
-  include ::Api::Record::Schema
-  include ::Api::Record::Associations
+
+  include Api::Common
+  include Api::Schema
+  include Api::Record::Schema
+  include Api::Record::Associations
 
   # ===========================================================================
   # :section:
@@ -51,7 +52,7 @@ class Api::Record
   #     defaults and *data* is ignored.
   #
   #--
-  # noinspection RubyYardParamTypeMatch
+  # noinspection RubyMismatchedParameterType
   #++
   def initialize(src, format: nil, wrap: nil, error: nil, **)
     @serializer_type = format
@@ -280,6 +281,8 @@ class Api::Record
   # Directly assign schema attributes.
   #
   # @param [Api::Record, Hash, nil] data  Default: #default_data
+  #
+  # @raise [RuntimeError]               If *data* is not a Model or a Hash.
   #
   # @return [void]
   #

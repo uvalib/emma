@@ -7,6 +7,7 @@ __loading_begin(__FILE__)
 
 # Handle "/help" pages.
 #
+# @see HelpHelper
 # @see file:app/views/help/**
 #
 class HelpController < ApplicationController
@@ -50,6 +51,8 @@ class HelpController < ApplicationController
   # == GET /help
   #
   # The main help page.
+  #
+  # @see HelpHelper#help_topics
   #
   def index
     return redirect_to help_path(id: @topic) if @topic.present?

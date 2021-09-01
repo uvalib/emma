@@ -19,6 +19,10 @@ class Bs::Message::CategoriesList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_many  :categories,   Bs::Record::CategorySummary
     has_one   :limit,        Integer

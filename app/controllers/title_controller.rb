@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Handle Bookshare-only "/title" pages.
 #
 # @see TitleHelper
+# @see file:app/views/title/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
 #
 class TitleController < ApplicationController
 
@@ -53,6 +56,8 @@ class TitleController < ApplicationController
   #
   # List all catalog titles.
   #
+  # @see BookshareService::Request::Titles#get_titles
+  #
   def index
     __debug_route
     opt = request_parameters
@@ -91,6 +96,8 @@ class TitleController < ApplicationController
   # == GET /title/:id
   #
   # Display details of an existing catalog title.
+  #
+  # @see BookshareService::Request::Titles#get_title
   #
   def show
     __debug_route

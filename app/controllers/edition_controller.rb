@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Handle Bookshare-only "/edition" pages.
 #
 # @see EditionHelper
+# @see file:app/views/edition/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
 #
 # == Usage Notes
 # The abilities to retrieve or modify editions (instances of remediated
@@ -60,6 +63,8 @@ class EditionController < ApplicationController
   #
   # List all editions for a periodical.
   #
+  # @see BookshareService::Request::Periodicals#get_periodical_editions
+  #
   def index
     __debug_route
     opt   = pagination_setup
@@ -76,6 +81,8 @@ class EditionController < ApplicationController
   # == GET /edition/:editionId?seriesId=:seriesId
   #
   # Display details of an existing edition.
+  #
+  # @see BookshareService::Request::Periodicals#get_periodical_edition
   #
   def show
     __debug_route
@@ -145,6 +152,8 @@ class EditionController < ApplicationController
   # == GET /edition/:editionId/:fmt?seriesId=:seriesId&member=BS_ACCOUNT_ID
   #
   # Download a periodical edition.
+  #
+  # @see BookshareService::Request::Periodicals#download_periodical_edition
   #
   def download
     __debug_route

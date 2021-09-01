@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 class Search::Api::Message < Search::Api::Record
 
-  include ::Api::Message
+  include Api::Message
 
   # ===========================================================================
   # :section:

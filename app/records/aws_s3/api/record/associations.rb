@@ -14,12 +14,12 @@ module AwsS3::Api::Record::Associations
 
   extend ActiveSupport::Concern
 
-  include ::Api::Record::Associations
+  include Api::Record::Associations
 
   module ClassMethods
 
     include AwsS3::Api::Schema
-    include ::Api::Record::Associations::ClassMethods
+    include Api::Record::Associations::ClassMethods
 
   end
 

@@ -713,9 +713,6 @@ module Api::Common
   # @see #PRIMARY_LANGUAGES
   # @see #LANGUAGE
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   LANGUAGE_MAP =
     PRIMARY_LANGUAGES
       .map { |k| [k, LANGUAGE[k]] }.to_h

@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 module Search::Api::Serializer::Schema
 
   include Search::Api::Schema
-  include ::Api::Serializer::Schema
+  include Api::Serializer::Schema
 
 end
 

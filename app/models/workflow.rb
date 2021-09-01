@@ -112,7 +112,7 @@ module Workflow::Base::Roles
   # @return [User,String]
   #
   def current_user
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     @current_user ||= set_current_user
   end
 
@@ -133,7 +133,7 @@ module Workflow::Base::Roles
   def set_current_user(user = nil)
     set_current_role(user)
     user = @current_role.to_s if user.nil? || user.is_a?(Symbol)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     @current_user = user
   end
 
@@ -154,7 +154,7 @@ module Workflow::Base::Roles
   # @return [Symbol, nil]
   #
   def get_role(user)
-    # noinspection RubyYardReturnMatch
+    # noinspection RubyMismatchedReturnType
     return user if user.nil? || user.is_a?(Symbol)
     # noinspection RubyNilAnalysis
     user = user.bookshare_uid if user.is_a?(User)
@@ -530,7 +530,7 @@ module Workflow::Base::Events
   # @return [Integer]             On error, -1 is returned.
   #
   def event_number(event)
-    # noinspection RubyNilAnalysis, RubyYardReturnMatch
+    # noinspection RubyNilAnalysis
     event && EVENTS.index(event.to_sym) || -1
   end
 
@@ -593,8 +593,9 @@ module Workflow::Base::Events
 
   if DEBUG_WORKFLOW
 
-    include Workflow::Base::Roles
     include Emma::Debug::OutputMethods
+
+    include Workflow::Base::Roles
 
     # =========================================================================
     # :section:
@@ -883,7 +884,7 @@ module Workflow::Base::States
   # @return [Workflow::State]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
   #++
   def state_object(state = nil)
     state = state.to_sym       if state.is_a?(String)
@@ -898,8 +899,8 @@ module Workflow::Base::States
   # @return [Integer]             On error, -1 is returned.
   #
   def state_number(state)
-    # noinspection RubyNilAnalysis, RubyYardReturnMatch
-    state && STATES.index(state.to_sym)
+    # noinspection RubyNilAnalysis
+    STATES.index(state.to_sym) if state
   end
 
   # state_label
@@ -942,7 +943,7 @@ module Workflow::Base::States
         state = state_object(state)
         trans =
           state.events.map { |evt, entry|
-            # noinspection RubyYardParamTypeMatch
+            # noinspection RubyMismatchedParameterType
             event_label(evt, number: false) << '->' <<
               entry.map { |e|
                 state_label(e.transitions_to, number: false)
@@ -1292,8 +1293,6 @@ class Workflow::Base
   # Indicate whether the value denotes a workflow variant.
   #
   # @param [Symbol, String, nil] value
-  #
-  # @return [Array<Symbol>]
   #
   def self.variant?(value)
     variant_types.include?(value&.to_sym)

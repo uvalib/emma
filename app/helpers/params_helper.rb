@@ -111,7 +111,7 @@ module ParamsHelper
   # @return [Hash{Symbol=>String}]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  # noinspection RubyNilAnalysis
   #++
   def request_parameters(p = nil)
     p ||= try(:params) || {}

@@ -38,6 +38,7 @@ module HeadHelper::Favicon
   # @yieldreturn [String]
   #
   def page_favicon
+    # noinspection RubyMismatchedReturnType
     if block_given?
       set_page_favicon(yield)
     else
@@ -55,7 +56,6 @@ module HeadHelper::Favicon
   # @yieldreturn [String]
   #
   def set_page_favicon(src)
-    # noinspection RubyYardReturnMatch
     @page_favicon = block_given? && yield || src
   end
 

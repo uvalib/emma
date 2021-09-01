@@ -13,12 +13,12 @@ module Ingest::Api::Serializer::Xml::Associations
 
   extend ActiveSupport::Concern
 
-  include ::Api::Serializer::Xml::Associations
+  include Api::Serializer::Xml::Associations
 
   module ClassMethods
 
     include Ingest::Api::Serializer::Xml::Schema
-    include ::Api::Serializer::Xml::Associations::ClassMethods
+    include Api::Serializer::Xml::Associations::ClassMethods
 
   end
 

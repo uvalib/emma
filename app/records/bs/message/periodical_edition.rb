@@ -24,6 +24,10 @@ class Bs::Message::PeriodicalEdition < Bs::Api::Message
   include Bs::Shared::EditionMethods
   include Bs::Shared::LinkMethods
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   schema do
     has_one   :editionId
     has_one   :editionName

@@ -1069,7 +1069,6 @@ $(document).on('turbolinks:load', function() {
         const func  = caller || 'allSearchTerms';
         let $rows   = target ? getSearchRow(target, func) : $search_bar_rows;
         let queries = {}
-        // noinspection FunctionWithInconsistentReturnsJS
         $rows.each(function() {
             let $row     = $(this);
             let $input   = getSearchInput($row);
@@ -1590,7 +1589,6 @@ $(document).on('turbolinks:load', function() {
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
      */
     function setSearchFormHiddenInputs(dst, src) {
-        // noinspection JSUnusedLocalSymbols
         let $menu = getSearchFilterMenu(src);
         updateHiddenInputs(dst, $menu);
     }
