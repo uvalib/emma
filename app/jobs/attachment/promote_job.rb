@@ -11,7 +11,15 @@ __loading_begin(__FILE__)
 #
 class Attachment::PromoteJob < ApplicationJob
 
-  include Emma::Debug
+  include ApplicationJob::Logging
+
+  queue_as :background
+
+  # ===========================================================================
+  # :section: ActiveJob::Execution overrides
+  # ===========================================================================
+
+  public
 
   # perform
   #
@@ -22,18 +30,27 @@ class Attachment::PromoteJob < ApplicationJob
   # @note Currently unused
   #
   def perform(record, name, data)
-    __debug_items(binding)
+    __debug_job('START') do
+      { name: name, data: data, record: record }
+        .transform_values { |v| item_inspect(v) }
+    end
     attacher =
       FileUploader::Attacher.retrieve(model: record, name: name, file: data)
-    __debug_line("JOB #{__method__}") { { attacher: attacher } }
     # attacher.create_derivatives if record.is_a?(Album)
-    attacher.atomic_promote
-  rescue Shrine::AttachmentChanged => e
-    Log.info { "JOB #{__method__}: skipped: #{e.message} [AttachmentChanged]" }
-  rescue ActiveRecord::RecordNotFound => err
-    Log.warn { "JOB #{__method__}: skipped: #{err.message} [RecordNotFound]" }
-  rescue => err
-    Log.error { "JOB #{__method__}: error: #{err.message} [#{err.class}]" }
+    result = attacher.atomic_promote
+    __debug_job('END') do
+      { attacher: attacher, result: result }
+        .transform_values { |v| item_inspect(v) }
+    end
+
+  rescue Shrine::AttachmentChanged => error
+    Log.info { "#{job_name}: skipped: #{error.message} [AttachmentChanged]" }
+
+  rescue ActiveRecord::RecordNotFound => error
+    Log.warn { "#{job_name}: skipped: #{error.message} [RecordNotFound]" }
+
+  rescue => error
+    Log.error { "#{job_name}: error: #{error.message} [#{error.class}]" }
   end
 
 end

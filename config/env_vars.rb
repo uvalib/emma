@@ -401,6 +401,13 @@ DEBUG_IMPORT = true?(ENV['DEBUG_IMPORT'])
 #
 DEBUG_IO = true?(ENV['DEBUG_IO'])
 
+# When *true* ActiveJob debugging callbacks are invoked.
+#
+# @type [Boolean]
+#
+DEBUG_JOB = true?(ENV['DEBUG_JOB'] || true) # TODO: remove - testing
+#DEBUG_JOB = true?(ENV['DEBUG_JOB'])
+
 # Set to show registration of unique MIME types during startup.
 #
 # @type [Boolean]

@@ -11,7 +11,15 @@ __loading_begin(__FILE__)
 #
 class Attachment::DestroyJob < ApplicationJob
 
-  include Emma::Debug
+  include ApplicationJob::Logging
+
+  queue_as :background
+
+  # ===========================================================================
+  # :section: ActiveJob::Execution overrides
+  # ===========================================================================
+
+  public
 
   # perform
   #
@@ -20,14 +28,19 @@ class Attachment::DestroyJob < ApplicationJob
   # @note Currently unused
   #
   def perform(data)
-    __debug_items(binding)
+    __debug_job('START') { { data: item_inspect(data) } }
     attacher = FileUploader::Attacher.from_data(data)
-    __debug_line("JOB #{__method__}") { { attacher: attacher } }
-    attacher.destroy
-  rescue ActiveRecord::RecordNotFound => err
-    Log.warn { "JOB #{__method__}: skipped: #{err.message} [RecordNotFound]" }
-  rescue => err
-    Log.error { "JOB #{__method__}: error: #{err.message} [#{err.class}]" }
+    result   = attacher.destroy
+    __debug_job('END') do
+      { attacher: attacher, result: result }
+        .transform_values { |v| item_inspect(v) }
+    end
+
+  rescue ActiveRecord::RecordNotFound => error
+    Log.warn { "#{job_name}: skipped: #{error.message} [RecordNotFound]" }
+
+  rescue => error
+    Log.error { "#{job_name}: error: #{error.message} [#{error.class}]" }
   end
 
 end
