@@ -494,12 +494,35 @@ function attributeSelector(attributes) {
 // ============================================================================
 
 /**
- * Multiplier for Math.random().
+ * Hexadecimal numbering system base.
  *
  * @constant
  * @type {number}
  */
-const SIX_DIGITS = 1000000;
+const HEX_BASE = 16;
+
+/**
+ * Default digits for {@link hexRand}.
+ *
+ * @constant
+ * @type {number}
+ */
+const DEFAULT_HEX_DIGITS = 6;
+
+/**
+ * Generate a string of random hexadecimal digits, left-filled with zeros if
+ * necessary.
+ *
+ * @param length
+ * @returns {string}
+ */
+function hexRand(length = DEFAULT_HEX_DIGITS) {
+    const random = Math.floor(Math.random() * (HEX_BASE ** length));
+    let digits   = random.toString(HEX_BASE);
+    let zeros    = '';
+    for (let i = digits.length; i < length; i++) { zeros += '0'; }
+    return zeros + digits;
+}
 
 /**
  * Create a unique CSS class name by appending a random hex number.
@@ -509,8 +532,7 @@ const SIX_DIGITS = 1000000;
  * @returns {string}
  */
 function randomizeClass(css_class) {
-    const random = Math.floor(Math.random() * SIX_DIGITS);
-    return css_class + '-' + random.toString(16);
+    return css_class + '-' + hexRand();
 }
 
 /**

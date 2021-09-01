@@ -305,6 +305,7 @@ class Api::Record
       value = value.call(error: exception) if value.is_a?(Proc)
       value = value.new                    if value.is_a?(Class)
       value = value.value                  if value.is_a?(ScalarType)
+      value = value.deep_dup               if value.frozen?
       send(:"#{attr}=", value)
     end
   end

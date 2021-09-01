@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # Attributes supplied by the including module:
 #
-# @attr [String] emma_titleId
+# @attr [String] emma_recordId
 #
 module Search::Shared::TitleMethods
 
@@ -24,12 +24,12 @@ module Search::Shared::TitleMethods
 
   public
 
-  # A unique identifier for this catalog title.
+  # A unique identifier for this index entry.
   #
   # @return [String]
   #
   def identifier
-    emma_titleId.to_s
+    emma_recordId.to_s
   end
 
   # ===========================================================================

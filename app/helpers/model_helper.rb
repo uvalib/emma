@@ -881,6 +881,8 @@ module ModelHelper
     outer_opt = { class: css_classes(css_selector) }
     append_classes!(outer_opt, "row-#{row}") if row
     outer_opt[:'data-group'] = group         if group
+    # noinspection RailsParamDefResolve
+    outer_opt[:'data-title_id'] = item.try(:emma_titleId)
     html_div(container, outer_opt)
   end
 
@@ -910,6 +912,8 @@ module ModelHelper
     elsif item.respond_to?(:identifier)
       html_opt[:id]           = "#{model}-#{item.identifier}"
     end
+    # noinspection RailsParamDefResolve
+    html_opt[:'data-title_id'] = item.try(:emma_titleId)
     html_div(html_opt) do
       if item
         render_field_values(item, model: model, pairs: pairs, **opt, &block)
