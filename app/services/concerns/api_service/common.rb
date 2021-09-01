@@ -16,6 +16,8 @@ module ApiService::Common
   include Emma::Debug
 
   include ApiService::Properties
+  include ApiService::Exceptions
+  include ApiService::Identity
 
   # ===========================================================================
   # :section:
@@ -117,102 +119,6 @@ module ApiService::Common
   end
 
   # ===========================================================================
-  # :section: Exceptions
-  # ===========================================================================
-
-  public
-
-  # The exception raised by the last #api access.
-  #
-  # @return [Exception, nil]
-  #
-  attr_reader :exception
-
-  # Indicate whether the latest API request generated an exception.
-  #
-  def error?
-    @exception.present?
-  end
-
-  # The message associated with the latest API exception.
-  #
-  # @return [String]
-  # @return [nil]                     If there is no exception.
-  #
-  def error_message
-    @exception&.message
-  end
-
-  # Cause an exception to be ignored to avoid generation of a flash message.
-  #
-  # @return [void]
-  #
-  # @see SessionConcern#session_update
-  #
-  def discard_exception
-    @exception = nil
-  end
-
-  # ===========================================================================
-  # :section: Authentication
-  # ===========================================================================
-
-  public
-
-  # The user that invoked #api.
-  #
-  # @return [User, nil]
-  #
-  attr_reader :user
-
-  # Extract the user name to be used for API parameters.
-  #
-  # @param [User, String] user
-  #
-  # @return [String]
-  #
-  def name_of(user)
-    user.to_s
-  end
-
-  # ===========================================================================
-  # :section: Authentication
-  # ===========================================================================
-
-  protected
-
-  # Set the user for the current session.
-  #
-  # @param [User, nil] u
-  #
-  # @raise [RuntimeError]             If *u* is invalid.
-  #
-  # @return [void]
-  #
-  def set_user(u)
-    raise "argument must be a User not a #{u.class}" if u && !u.is_a?(User)
-    @user = u
-  end
-
-  # The current OAuth2 access bearer token.
-  #
-  # @return [String]
-  # @return [nil]                     If there is no '@user'.
-  #
-  def access_token
-    @user&.access_token
-  end
-
-  # The current OAuth2 refresher token.
-  #
-  # @return [String]
-  # @return [nil]                     If there is no '@user'.
-  #
-  def refresh_token
-    @user&.refresh_token
-  end
-
-  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -232,13 +138,17 @@ module ApiService::Common
   #
   # @raise [ApiService::Error]
   #
-  # @return [Faraday::Response]
+  # @return [Faraday::Response, nil]
+  #
+  # == Usage Notes
+  # Clears and/or sets @exception as a side-effect.
   #
   #--
   # noinspection RubyScope
   #++
   def api(verb, *args, **opt)
-    @action = @response = @exception = error = nil
+    clear_error
+    @action = @response = error = nil
     @verb   = verb.to_s.downcase.to_sym
 
     # Set internal options from parameters or service options.
@@ -253,74 +163,35 @@ module ApiService::Common
     @action = api_path(*args)
     @params = api_options(@params)
     options, headers, body = api_headers(@params)
-    __debug_line(leader: '>>>') do
-      [service_name] << @action.inspect << {}.tap do |details|
-        details[:options] = options.inspect if options.present?
-        details[:headers] = headers.inspect if headers.present?
-        details[:body]    = body.inspect    if body.present?
-      end
-    end
+      .tap { |parts| __debug_api_headers(*parts) }
     if body.present?
       @action = make_path(@action, options) if options.present?
       options = body
     end
-    @response = transmit(@verb, @action, options, headers, **opt)
-
-  rescue Api::Error => error
-    @exception = error
-
-  rescue Faraday::ConnectionFailed, Net::OpenTimeout => error
-    @exception = connect_error(error)
-
-  rescue Down::ConnectionError => error
-    @exception = connect_error(error)
-
-  rescue Faraday::TimeoutError, Net::ReadTimeout, Net::WriteTimeout => error
-    @exception = timeout_error(error)
-
-  rescue Down::TimeoutError => error
-    @exception = timeout_error(error)
-
-  rescue Faraday::ServerError => error
-    @exception = response_error(error)
-
-  rescue Faraday::UnauthorizedError, Faraday::ProxyAuthError => error
-    @exception = auth_error(error)
-
-  rescue Faraday::ParsingError => error
-    @exception = parse_error(error)
-
-  rescue Faraday::ClientError => error
-    @exception = request_error(error)
+    transmit(@verb, @action, options, headers, **opt)
 
   rescue => error
-    @exception = response_error(error)
+    set_error(error)
 
   ensure
+    __debug_api_response(error: error)
     log_exception(error, meth: meth) if error
-    # noinspection RailsParamDefResolve
-    __debug_line(leader: '<<<') do
-      resp = error.try(:response) || @response
-      stat = data = nil
-      if resp
-        stat ||= resp.try(:http_status) || resp.try(:status)
-        data ||= ApiService::Error.oauth2_error_header(resp) || resp.try(:body)
-      end
-      if resp.respond_to?(:dig)
-        stat ||= resp[:http_status] || resp[:status]
-        data ||= resp[:body]
-      end
-      [service_name] << @action.inspect << {
-        status: stat || '?',
-        data:   data || '?',
-        error:  error,
-      }.transform_values { |v| v.inspect.truncate(256) }
-    end
-    re_raise_if_internal_exception(error)
-    @response  = nil if error
-    @exception = nil if no_exception
-    raise @exception unless no_raise || @exception.nil?
-    return @response
+    clear_error                      if no_exception
+    raise exception                  if exception && !no_raise
+    return (@response unless error)
+  end
+
+  # Construct a message to be returned from the method that executed :api.
+  # This provides a uniform call for initializing the object with information
+  # needed to build the object to return, including error information.
+  #
+  # @param [Class<Api::Record>] type
+  # @param [Array] args   Additional values for the *type* initializer.
+  # @param [Hash]  opt    Additional values for the *type* initializer.
+  #
+  def api_return(type, *args, **opt)
+    opt[:error] = exception if exception
+    type.new(response, *args, **opt)
   end
 
   # ===========================================================================
@@ -394,8 +265,8 @@ module ApiService::Common
   # @param [Hash, nil]         headers  Default: {}.
   # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
   #
-  # @return [(String,Hash)]           Message body plus headers for GET.
-  # @return [(Hash,Hash)]             Query plus headers for PUT, POST, PATCH.
+  # @return [(Hash,Hash,String)]      Message body plus headers for GET.
+  # @return [(Hash,Hash,Hash)]        Query plus headers for PUT, POST, PATCH.
   #
   #--
   # noinspection RubyNilAnalysis
@@ -422,7 +293,7 @@ module ApiService::Common
   #
   # @param [String, Hash, *] obj
   #
-  # @return [Hash{String=>*}]
+  # @return [String, Hash, *]
   #
   def api_body(obj)
     obj = obj.as_json unless obj.is_a?(String)
@@ -479,7 +350,6 @@ module ApiService::Common
       bld.authorization :Bearer, access_token   if access_token.present?
       bld.request       :retry,  retry_opt
       bld.response      :logger, Log.logger
-      bld.response      :raise_error
       bld.adapter       options[:adapter] || Faraday.default_adapter
     end
   end
@@ -503,6 +373,10 @@ module ApiService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
+  # == Usage Notes
+  # Sets @response as a side-effect.
+  #
+  # == Implementation Notes
   # === Bookshare API status codes
   # 301 Moved Permanently
   # 302 Found (typically, redirect to download location)
@@ -522,36 +396,37 @@ module ApiService::Common
   # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
   #
   def transmit(verb, action, params, headers, **opt)
-    response = connection.send(verb, action, params, headers)
-    raise empty_response_error(response) if response.nil?
-    case response.status
+    @response = connection.send(verb, action, params, headers)
+    raise empty_result_error if @response.nil?
+
+    case @response.status
       when 202, 204
         # No response body expected.
         action = nil
       when 200..299
-        result = response.body
-        raise empty_response_error(response) if result.blank?
-        raise html_response_error(response)  if result =~ /\A\s*</
+        result = @response.body
+        raise empty_result_error(@response) if result.blank?
+        raise html_result_error(@response)  if result =~ /\A\s*</
         action = nil
-      when 301, 303, 308
-        action = response.headers['Location']
-        raise redirect_error(response) if action.blank?
-      when 302, 307
-        action = response.headers['Location']
-        raise redirect_error(response) if action.blank?
+      when 301, 303, 308, 302, 307
+        action = @response['Location'] || :missing
       else
-        raise response_error(response)
+        raise response_error(@response)
     end
-    unless action.nil? || opt[:no_redirect] || options[:no_redirect]
-      redirection = opt[:redirection].to_i
-      raise redirect_limit_error if redirection >= max_redirects
-      opt[:redirection] = (redirection += 1)
+
+    if action.nil? || opt[:no_redirect] || options[:no_redirect]
+      @response
+    elsif action == :missing
+      raise redirect_error(@response)
+    elsif (pass = opt[:redirection].to_i) >= max_redirects
+      raise redirect_limit_error
+    else
+      opt[:redirection] = (pass += 1)
       __debug_line(leader: '!!!') do
-        [service_name] << "REDIRECT #{redirection} TO #{action.inspect}"
+        [service_name] << "REDIRECT #{pass} TO #{action.inspect}"
       end
-      response = transmit(:get, action, params, headers, **opt)
+      transmit(:get, action, params, headers, **opt)
     end
-    response
   end
 
   # ===========================================================================
@@ -691,175 +566,74 @@ module ApiService::Common
   end
 
   # ===========================================================================
-  # :section: Exceptions
+  # :section: Debugging
   # ===========================================================================
 
   protected
 
-  # A table of all error types and error subclass for the current service.
+  # __debug_api_headers
   #
-  # @return [Hash{Symbol=>Class}]
-  #
-  # @see ApiService::Error::Method#error_subclass
-  #
-  def error_subclass
-    @error_subclass ||= get_error_subclass
-  end
-
-  # Wrap an exception or response in a service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  #
-  # @return [ApiService::Error]
-  #
-  def request_error(args = nil)
-    error_subclass[:request].new(*args)
-  end
-
-  # Generate a authorization service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::ConnectError]
-  #
-  def auth_error(args = nil)
-    error_subclass[:auth].new(*args)
-  end
-
-  # Generate a bad data service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::ConnectError]
-  #
-  def parse_error(args = nil)
-    error_subclass[:parse].new(*args)
-  end
-
-  # Generate a connect service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::ConnectError]
-  #
-  def connect_error(args = nil)
-    error_subclass[:connect].new(*args)
-  end
-
-  # Generate a timeout service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::TimeoutError]
-  #
-  def timeout_error(args = nil)
-    error_subclass[:timeout].new(*args)
-  end
-
-  # Wrap an exception or response in a service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  #
-  # @return [ApiService::Error]
-  #
-  def response_error(args = nil)
-    error_subclass[:response].new(*args)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::EmptyResultError]
-  #
-  def empty_response_error(args = nil)
-    error_subclass[:empty_response].new(*args)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::HtmlResultError]
-  #
-  def html_response_error(args = nil)
-    error_subclass[:html_response].new(*args)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::RedirectionError]
-  #
-  def redirect_error(args = nil)
-    error_subclass[:redirection].new(*args)
-  end
-
-  # Generate a redirect limit service error.
-  #
-  # @param [Faraday::Response, Exception, String, Array, nil] args
-  #
-  # @return [ApiService::RedirectLimitError]
-  #
-  def redirect_limit_error(args = nil)
-    error_subclass[:redirect_limit].new(*args)
-  end
-
-  # log_exception
-  #
-  # @param [Exception]              error
-  # @param [Symbol, nil]            action
-  # @param [Faraday::Response, nil] response
-  # @param [Symbol, String, nil]    meth
+  # @param [Hash, nil]         options
+  # @param [Hash, nil]         headers
+  # @param [Hash, String, nil] body
+  # @param [Symbol, nil]       action
+  # @param [Boolean]           full     If *true*, show complete body.
   #
   # @return [void]
   #
-  def log_exception(error, action: @action, response: @response, meth: nil)
-    message = error.message.inspect
-    __debug_line(leader: '!!!') do
-      [service_name] << action.inspect << message << error.class
-    end
-    # noinspection RailsParamDefResolve
-    Log.log(error.is_a?(Api::Error) ? Log::WARN : Log::ERROR) do
-      meth ||= 'request'
-      status = error.try(:http_status) || error.try(:status)
-      status = status&.inspect || '???'
-      body   = response&.body
-      log = ["#{service_name.upcase} #{meth}: #{message}"]
-      log << "status #{status}"
-      log << "body #{body}" if body.present?
-      log.join('; ')
+  # @see #api_headers
+  #
+  def __debug_api_headers(
+    options,
+    headers,
+    body,
+    action: @action,
+    full:   DEBUG_TRANSMISSION
+  )
+    opts_hdrs = { options: options, headers: headers }
+    opts_hdrs.transform_values! { |v| v&.inspect || '(none)' }
+    body = "BODY:\n#{body.presence&.pretty_inspect}"
+    opt  = full ? { max: nil } : {}
+    __debug_impl(leader: '>>>', separator: DEBUG_SEPARATOR, **opt) do
+      [service_name] << action.inspect << opts_hdrs << body
     end
   end
 
-  # ===========================================================================
-  # :section: Exceptions
-  # ===========================================================================
+  # __debug_api_response
+  #
+  # @param [Exception, nil] error
+  # @param [Symbol, nil]    action
+  # @param [Boolean]        full      If *true*, show complete body.
+  #
+  # @return [void]
+  #
+  def __debug_api_response(
+    response: @response,
+    error:    @exception,
+    action:   @action,
+    full:     DEBUG_TRANSMISSION
+  )
+    # noinspection RailsParamDefResolve
+    response ||= error.try(:http_response) || error.try(:response)
+    status     = ExecReport.http_status(error)
+    status   ||= ExecReport.http_status(response)
+    data       = ApiService::Error.oauth2_error_header(response)
+    data     ||= response.try(:body) || response.try(:dig, :body)
 
-  private
+    stat_error = { status: status, error: error }
+    stat_error[:'@exception'] = @exception unless error == @exception
+    stat_error.transform_values! { |v| v&.inspect || '(none)' }
+    stat_error.transform_values! { |v| v.truncate(256) } unless full
 
-  # A table of all error types and error subclass for the given service.
-  #
-  # @param [ApiService, Class, String, nil] service   Default: `self.class`.
-  #
-  # @return [Hash{Symbol=>Class}]
-  #
-  # @see ApiService::Error::Method#error_subclass
-  #
-  #++
-  # noinspection RubyNilAnalysis
-  #--
-  def get_error_subclass(service = nil)
-    service ||= self.class
-    service = service.class if service.is_a?(ApiService)
-    service = service.name  if service.is_a?(Class)
-    eval("::#{service}::Error.error_subclass")
-  rescue => error
-    Log.error("#{__method__}: #{error.class}: #{error.message}")
-    return ApiService::Error.error_subclass
+    __debug_impl(leader: '<<<', separator: DEBUG_SEPARATOR, max: nil) do
+      parts = [service_name] << action.inspect << stat_error
+      parts << "DATA:\n#{data.pretty_inspect}" if data.present?
+      parts
+    end
+  end
+
+  unless CONSOLE_DEBUGGING || DEBUG_TRANSMISSION
+    neutralize(:__debug_api_headers, :__debug_api_response)
   end
 
   # ===========================================================================

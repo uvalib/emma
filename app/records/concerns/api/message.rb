@@ -58,6 +58,28 @@ module Api::Message
     Log.info { "#{self.class} processed in #{elapsed_time}" }
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Update *opt[:wrap]* according to the supplied formats.
+  #
+  # @param [Hash] opt                 May be modified.
+  # @param [Hash] formats             Supplied by including class.
+  #
+  # @return [void]
+  #
+  def apply_wrap!(opt, formats = nil)
+    return if formats.blank?
+    if opt[:wrap].nil?
+      opt[:wrap] = formats
+    elsif opt[:wrap].is_a?(Hash)
+      opt[:wrap] = formats.merge(opt[:wrap])
+    end
+  end
+
 end
 
 __loading_end(__FILE__)

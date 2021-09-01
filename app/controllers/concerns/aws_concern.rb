@@ -265,7 +265,7 @@ module AwsConcern
   def get_s3_objects(bucket, **opt)
     opt    = aws_params(opt)
     aws_s3 = opt.delete(:service)
-    aws_s3.api_list_objects(bucket, **opt)
+    aws_s3.aws_list_objects(bucket, **opt) || []
   end
 
   # ===========================================================================

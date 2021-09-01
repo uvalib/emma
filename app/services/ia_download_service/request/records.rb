@@ -25,6 +25,8 @@ module IaDownloadService::Request::Records
   # @param [String] url
   # @param [Hash]   opt
   #
+  # @raise [ExecError]                If the download failed.
+  #
   # @return [(String,String,String)]
   # @return [(String,String,nil)]
   #

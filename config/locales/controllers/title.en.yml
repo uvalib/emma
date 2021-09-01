@@ -107,22 +107,37 @@ en:
 
       # =======================================================================
 
-      new:
+      new:              &NEW_ACTION
         label:          'Add'
         title:          'Add Catalog Title'
         tooltip:        'Create an entry for a new Bookshare catalog title.'
 
       # =======================================================================
 
-      edit:
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
         title:          'Modify Catalog Title'
         tooltip:        'Make changes to this Bookshare catalog title.'
 
       # =======================================================================
 
-      delete:
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
         title:          'Remove Catalog Title'
         tooltip:        'Remove this title from the Bookshare catalog.'
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
 
       # =======================================================================
 

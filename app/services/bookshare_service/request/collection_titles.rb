@@ -23,6 +23,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::CollectionTitles
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -61,7 +62,7 @@ module BookshareService::Request::CollectionTitles
   def get_catalog(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog', **opt)
-    Bs::Message::TitleMetadataCompleteList.new(response, error: exception)
+    api_return(Bs::Message::TitleMetadataCompleteList)
   end
     .tap do |method|
       add_api method => {
@@ -163,7 +164,7 @@ module BookshareService::Request::CollectionTitles
   def submit_catalog_title(**opt)
     opt = get_parameters(__method__, **opt)
     api(:post, 'titles', **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {
@@ -340,7 +341,7 @@ module BookshareService::Request::CollectionTitles
   def update_catalog_title(bookshareId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'titles', bookshareId, **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {
@@ -458,7 +459,7 @@ module BookshareService::Request::CollectionTitles
   def get_title_history(bookshareId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, 'history', **opt)
-    Bs::Message::TitleHistoryEventResourceList.new(response, error: exception)
+    api_return(Bs::Message::TitleHistoryEventResourceList)
   end
     .tap do |method|
       add_api method => {

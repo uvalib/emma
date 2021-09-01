@@ -30,7 +30,7 @@ module SerializationConcern
   #
   def render_json(item, **opt)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
-    item = item.merge(error: api_error_message) if api_error?
+    item = item.merge(error: api_exec_report) if api_error?
     text = make_json(item)
     render json: text, **opt
   end
@@ -46,7 +46,7 @@ module SerializationConcern
   def render_xml(item, **opt)
     opt, render_opt = partition_hash(opt, :separator, :name)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
-    item = item.merge(error: api_error_message) if api_error?
+    item = item.merge(error: api_exec_report) if api_error?
     text = make_xml(item, **opt) || ''
     render xml: text, **render_opt
   end

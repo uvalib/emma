@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 class SearchService < ApiService
 
+  DESTRUCTIVE_TESTING = false
+
   include Search
 
   # Include send/receive modules from "app/services/search_service/**.rb".

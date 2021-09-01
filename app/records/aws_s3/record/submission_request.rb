@@ -164,10 +164,8 @@ class AwsS3::Record::SubmissionPackage < AwsS3::Api::Record
   #
   # @option opt [Aws::S3::Object] :file   Override file for submission.
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
-  def initialize(src, **opt)
+  def initialize(src, opt = nil)
+    opt ||= {}
     @file = @file_key = nil
     case src
       when AwsS3::Record::SubmissionPackage

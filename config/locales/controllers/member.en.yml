@@ -110,21 +110,38 @@ en:
 
       # =======================================================================
 
-      new:
+      new:              &NEW_ACTION
         title:          'Add Bookshare Member'
         tooltip:        'Create an entry for a new Bookshare organization member.'
 
       # =======================================================================
 
-      edit:
+
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
         title:          'Modify Bookshare Member'
         tooltip:        'Make changes to this Bookshare organization member.'
 
       # =======================================================================
 
-      delete:
+
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
         title:          'Remove Bookshare Member'
         tooltip:        'Remove this Bookshare member from the organization.'
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
 
       # =======================================================================
 

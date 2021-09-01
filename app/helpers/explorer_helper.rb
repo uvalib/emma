@@ -14,6 +14,8 @@ module ExplorerHelper
 
   include HtmlHelper
 
+  extend self
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -49,15 +51,14 @@ module ExplorerHelper
   #
   # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
   # @param [String] path
-  # @param [Hash]   opt               Passed to #api_get, etc.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [Hash{Symbol=>*}]
   #
   def api_explorer(meth, path, **opt)
-    meth   = meth&.downcase&.to_sym || :get
-    path   = url_escape(path)
-    data   = bs_api.api(meth, path, **opt.merge(no_raise: true))
-    data &&= data.body.presence
+    meth = meth&.downcase&.to_sym || :get
+    path = url_escape(path)
+    data = bs_api.api(meth, path, **opt.merge(no_raise: true))&.body&.presence
     {
       method:    meth.to_s.upcase,
       path:      path,

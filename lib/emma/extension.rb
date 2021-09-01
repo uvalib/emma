@@ -55,7 +55,7 @@ module Emma::Extension
       #   @return [nil]
       #
       def __ext_log(*args)
-        meth = args.first.is_a?(Symbol) ? args.shift : calling_method
+        meth = args.first.is_a?(Symbol) ? args.shift : calling_method&.to_sym
         meth = 'NEW' if meth == :initialize
         opt  = args.last.is_a?(Hash) ? args.pop.dup : {}
         ldr  = opt.key?(:leader) ? opt.delete(:leader) : __ext_log_leader
@@ -111,7 +111,7 @@ module Emma::Extension
       #   @return [nil]
       #
       def __ext_debug(*args, **opt, &block)
-        meth = args.first.is_a?(Symbol) ? args.shift : calling_method
+        meth = args.first.is_a?(Symbol) ? args.shift : calling_method&.to_sym
         meth = 'NEW' if meth == :initialize
         ldr  = (opt.delete(:leader) || __ext_log_leader)&.strip
         tag  = (opt.delete(:tag)    || __ext_log_tag)&.strip

@@ -260,12 +260,13 @@ function addFlashError(text, type, role, fc) {
  * @see "UploadController#post_response"
  */
 function extractFlashMessage(xhr) {
-    const func = 'extractFlashMessage:';
-    const data = xhr && xhr.getResponseHeader('X-Flash-Message');
+    const func = 'extractFlashMessage';
     let lines  = [];
-    if (data) {
+    let text   = xhr && xhr.getResponseHeader('X-Flash-Message') || '';
+    text = text.startsWith('http') ? fetchFlashMessage(text) : xhrDecode(text);
+    if (text.startsWith('{') || text.startsWith('[')) {
         try {
-            const messages = JSON.parse(data);
+            const messages = JSON.parse(text);
             if (Array.isArray(messages)) {
                 messages.forEach(function(msg) {
                     lines.push(msg.toString());
@@ -277,11 +278,67 @@ function extractFlashMessage(xhr) {
             } else {
                 lines.push(messages.toString());
             }
+            text = undefined; // Indicate that *lines* is valid.
         }
         catch (err) {
-            consoleWarn(func, err);
-            lines.push(data.toString());
+            console.warn(`${func}:`, err);
         }
     }
-    return lines;
+    return isDefined(text) ? text.split("\n") : lines;
+}
+
+/**
+ * Decode a string used in HTTP message headers to transmit flash messages.
+ *
+ * @param {*} data
+ *
+ * @returns {string}
+ *
+ * @see "HtmlHelper#xhr_encode"
+ */
+function xhrDecode(data) {
+    if (isEmpty(data)) { return ''; }
+    let string    = data.toString();
+    const encoded = !!string.match(/%[0-9A-F][0-9A-F]/i);
+    return (encoded ? decodeURIComponent(string) : string).trim();
+}
+
+/**
+ * Synchronously fetch message content specified from a URL (specified via
+ * 'X-Flash-Message').
+ *
+ * @param {string} url
+ *
+ * @returns {string}
+ */
+function fetchFlashMessage(url) {
+    const func = 'fetchFlash';
+    let error  = 'could not fetch message'; // TODO: I18n
+    let content;
+
+    function onSuccess(data) {
+        if (isMissing(data)) {
+            error = 'no data for message'; // TODO: I18n
+        } else if (typeof(data) !== 'string') {
+            error = `unexpected data type ${typeof data}`; // TODO: I18n
+        } else {
+            content = data;
+        }
+    }
+
+    function onError(xhr, status, message) {
+        error = `${status}: ${xhr.status} ${message}`;
+        console.warn(`${func}:`, error);
+    }
+
+    $.ajax({
+        url:      url,
+        type:     'GET',
+        dataType: 'text',
+        async:    false,
+        timeout:  3 * SECONDS,
+        success:  onSuccess,
+        error:    onError
+    });
+    return content || `[[ ${error} ]]`;
 }

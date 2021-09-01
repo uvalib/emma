@@ -20,6 +20,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::MembershipMessages
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -48,7 +49,7 @@ module BookshareService::Request::MembershipMessages
   def get_messages(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'messages', **opt)
-    Bs::Message::UserMessageDetailList.new(response, error: exception)
+    api_return(Bs::Message::UserMessageDetailList)
   end
     .tap do |method|
       add_api method => {
@@ -88,7 +89,7 @@ module BookshareService::Request::MembershipMessages
   def create_message(**opt)
     opt = get_parameters(__method__, **opt)
     api(:post, 'messages', **opt)
-    Bs::Message::UserMessageDetail.new(response, error: exception)
+    api_return(Bs::Message::UserMessageDetail)
   end
     .tap do |method|
       add_api method => {
@@ -126,7 +127,7 @@ module BookshareService::Request::MembershipMessages
   def update_message(messageId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'messages', messageId, **opt)
-    Bs::Message::UserMessageDetail.new(response, error: exception)
+    api_return(Bs::Message::UserMessageDetail)
   end
     .tap do |method|
       add_api method => {

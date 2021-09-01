@@ -14,44 +14,44 @@ en:
 
       subsystem:
 
-        default:        &HEALTH_DEFAULT
+        default:        &DEFAULT
           restart:      false
           failed:       'Unknown error'
 
         invalid:
-          <<:           *HEALTH_DEFAULT
+          <<:           *DEFAULT
           method:       false
           failed:       'NOT A VALID SUBSYSTEM'
 
         database:
-          <<:           *HEALTH_DEFAULT
+          <<:           *DEFAULT
           restart:      true
           failed:       'Database connection error'
 
         redis:
-          <<:           *HEALTH_DEFAULT
+          <<:           *DEFAULT
           restart:      true
           healthy:      'NOT IMPLEMENTED' # TODO: future
           failed:       'Redis unresponsive'
 
         storage:
-          <<:           *HEALTH_DEFAULT
+          <<:           *DEFAULT
           healthy:      'NOT IMPLEMENTED' # TODO: future
           degraded:     'AWS storage degraded'
           failed:       'AWS storage failing'
 
         search:
-          <<:           *HEALTH_DEFAULT
+          <<:           *DEFAULT
           degraded:     'Unified Search degraded'
           failed:       'Unified Search unresponsive'
 
         bookshare:
-          <<:           *HEALTH_DEFAULT
+          <<:           *DEFAULT
           degraded:     'Bookshare API degraded'
           failed:       'Bookshare API unresponsive'
 
         ingest:
-          <<:           *HEALTH_DEFAULT
+          <<:           *DEFAULT
           degraded:     'Federated Ingest service degraded'
           failed:       'Federated Ingest service failing'
 

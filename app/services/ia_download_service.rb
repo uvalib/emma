@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 class IaDownloadService < ApiService
 
+  DESTRUCTIVE_TESTING = false
+
   # Include send/receive modules from "app/services/ia_download_service/**.rb".
   include_submodules(self)
 

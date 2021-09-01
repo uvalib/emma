@@ -24,6 +24,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::ActiveTitles
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -50,7 +51,7 @@ module BookshareService::Request::ActiveTitles
   def get_my_active_books(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myActiveBooks', **opt)
-    Bs::Message::ActiveBookList.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookList)
   end
     .tap do |method|
       add_api method => {
@@ -81,7 +82,7 @@ module BookshareService::Request::ActiveTitles
     opt.merge!(bookshareId: bookshareId, format: format)
     opt = get_parameters(__method__, **opt)
     api(:post, 'myActiveBooks', **opt)
-    Bs::Message::ActiveBookList.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookList)
   end
     .tap do |method|
       add_api method => {
@@ -108,7 +109,7 @@ module BookshareService::Request::ActiveTitles
   def remove_my_active_book(activeTitleId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:delete, 'myActiveBooks', activeTitleId, **opt)
-    Bs::Message::ActiveBookList.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookList)
   end
     .tap do |method|
       add_api method => {
@@ -144,7 +145,7 @@ module BookshareService::Request::ActiveTitles
   def get_my_active_periodicals(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myActivePeriodicals', **opt)
-    Bs::Message::ActivePeriodicalList.new(response, error: exception)
+    api_return(Bs::Message::ActivePeriodicalList)
   end
     .tap do |method|
       add_api method => {
@@ -175,7 +176,7 @@ module BookshareService::Request::ActiveTitles
     opt.merge!(editionId: editionId, format: format)
     opt = get_parameters(__method__, **opt)
     api(:post, 'myActivePeriodicals', **opt)
-    Bs::Message::ActivePeriodicalList.new(response, error: exception)
+    api_return(Bs::Message::ActivePeriodicalList)
   end
     .tap do |method|
       add_api method => {
@@ -202,7 +203,7 @@ module BookshareService::Request::ActiveTitles
   def remove_my_active_periodical(activeTitleId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:delete, 'myActivePeriodicals', activeTitleId, **opt)
-    Bs::Message::ActivePeriodicalList.new(response, error: exception)
+    api_return(Bs::Message::ActivePeriodicalList)
   end
     .tap do |method|
       add_api method => {
@@ -234,7 +235,7 @@ module BookshareService::Request::ActiveTitles
   def get_my_active_books_profile(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myActiveBooksProfile', **opt)
-    Bs::Message::ActiveBookProfile.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookProfile)
   end
     .tap do |method|
       add_api method => {
@@ -261,7 +262,7 @@ module BookshareService::Request::ActiveTitles
   def update_my_active_books_profile(**opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'myActiveBooksProfile', **opt)
-    Bs::Message::ActiveBookProfile.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookProfile)
   end
     .tap do |method|
       add_api method => {

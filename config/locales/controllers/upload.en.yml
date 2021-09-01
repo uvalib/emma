@@ -340,12 +340,14 @@ en:
             tooltip:    'Proceed with this action'
           disabled:
             tooltip:    'Conditions have not yet been met to proceed'
+
         cancel:         &GENERIC_CANCEL
           label:        'CANCEL'
           enabled:
             tooltip:    'Do nothing and return to the previous screen.'
           disabled:
             tooltip:    'Not able to cancel at this point'
+
         select:         &GENERIC_SELECT
           label:        'Select file'
           enabled:
@@ -398,7 +400,7 @@ en:
 
       # =======================================================================
 
-      new:              &UPLOAD_NEW
+      new:              &NEW_ACTION
         label:          'Create'
         title:          'Upload Remediated Content'
         tooltip:        'Upload a file to create a new EMMA entry.'
@@ -420,10 +422,12 @@ en:
             tooltip:    'Create the new EMMA entry'
           disabled:
             tooltip:    'Required information is still needed'
+
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
             tooltip:    'Do not create this entry (or start over)'
+
         select:
           <<:           *GENERIC_SELECT
           enabled:
@@ -434,7 +438,12 @@ en:
 
       # =======================================================================
 
-      edit:             &UPLOAD_EDIT
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
         label:          'Change'
         title:          'Modify Your EMMA Submission'
         tooltip:        'Upload a replacement file for an existing EMMA entry.'
@@ -454,10 +463,12 @@ en:
             tooltip:    'Modify this EMMA entry'
           disabled:
             tooltip:    'No valid changes have been made yet'
+
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
             tooltip:    'Discard these changes.'
+
         select:
           <<:           *GENERIC_SELECT
           label:        'Replacement file'
@@ -469,7 +480,12 @@ en:
 
       # =======================================================================
 
-      delete:           &UPLOAD_DELETE
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
         label:          'Remove'
         title:          'Remove Your EMMA Submission'
         tooltip:        'Delete an EMMA entry by removing a remediated file.'
@@ -491,6 +507,7 @@ en:
           label:        'Delete'
           enabled:
             tooltip:    'Remove this entry from EMMA.'
+
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
@@ -501,18 +518,23 @@ en:
 
       # =======================================================================
 
+      destroy:
+        <<: *DELETE_ACTION
+
+      # =======================================================================
+
       new_select:
-        <<: *UPLOAD_NEW
+        <<: *NEW_ACTION
 
       # =======================================================================
 
       edit_select:
-        <<: *UPLOAD_EDIT
+        <<: *EDIT_ACTION
 
       # =======================================================================
 
       delete_select:
-        <<: *UPLOAD_DELETE
+        <<: *DELETE_ACTION
 
       # =======================================================================
 

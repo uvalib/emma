@@ -493,6 +493,15 @@ $(document).on('turbolinks:load', function() {
         CANCELED:  'canceled'
     });
 
+    /**
+     * Base message displayed if Uppy encounters an error when uploading the
+     * file.
+     *
+     * @constant
+     * @type {string}
+     */
+    const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
+
     // ========================================================================
     // Constants - Bulk operations
     // ========================================================================
@@ -1520,13 +1529,31 @@ $(document).on('turbolinks:load', function() {
                 companionUrl: 'https://companion.myapp.com/' // TODO: ???
             });
         }
-        // noinspection JSUnresolvedVariable
+        // noinspection JSUnresolvedVariable, JSUnusedGlobalSymbols
         uppy.use(Uppy.XHRUpload, {
             endpoint:   Emma.Upload.Path.endpoint,
             fieldName: 'file',
             timeout:   0, // UPLOAD_TIMEOUT, // NOTE: no Uppy timeout for now
             // limit:  1,
-            headers:   { 'X-CSRF-Token': Rails.csrfToken() }
+            headers:   { 'X-CSRF-Token': Rails.csrfToken() },
+            getResponseError: function(body, xhr) {
+                let message, flash, result;
+                result  = fromJSON(body) || {};
+                message = result.message || body;
+                message = message ? message.trim() : UPLOAD_ERROR_MESSAGE;
+                flash   = compact(extractFlashMessage(xhr));
+                if (isPresent(flash)) {
+                    message = message.replace(/([^:])$/, '$1:');
+                    if (flash.length > 1) {
+                        message += "\n" + flash.join("\n");
+                    } else {
+                        message += ' ' + flash[0];
+                    }
+                } else {
+                    message = message.replace(/:$/, '');
+                }
+                return new Error(message);
+            }
         });
         return uppy;
     }

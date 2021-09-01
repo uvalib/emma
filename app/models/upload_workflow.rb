@@ -8,7 +8,11 @@ __loading_begin(__FILE__)
 require_relative 'workflow'
 
 class UploadWorkflow < Workflow::Base
+
   # Initial declaration to establish the namespace.
+
+  DESTRUCTIVE_TESTING = false
+
 end
 
 # =============================================================================
@@ -75,12 +79,6 @@ module UploadWorkflow::Errors
 
   public
 
-  # Placeholder error message.
-  #
-  # @type [String]
-  #
-  DEFAULT_ERROR_MESSAGE = I18n.t('emma.error.default', default: 'ERROR').freeze
-
   # Error types and messages.
   #
   # @type [Hash{Symbol=>(String,Class)}]
@@ -90,13 +88,14 @@ module UploadWorkflow::Errors
   #++
   UPLOAD_ERROR =
     I18n.t('emma.error.upload').transform_values { |properties|
+      next unless properties.is_a?(Hash)
       text = properties[:message]
       err  = properties[:error]
       err  = "Net::#{err}" if err.is_a?(String) && !err.start_with?('Net::')
       err  = err&.safe_constantize unless err.is_a?(Module)
       err  = err.exception_type if err.respond_to?(:exception_type)
       [text, err]
-    }.symbolize_keys.deep_freeze
+    }.compact.symbolize_keys.deep_freeze
 
   # ===========================================================================
   # :section: Modules
@@ -155,48 +154,33 @@ module UploadWorkflow::Errors
 
   # Each instance translates to a distinct line in the flash message.
   #
-  class ErrorEntry < FlashHelper::Entry
+  class FlashPart < FlashHelper::FlashPart
 
     include UploadWorkflow::Errors::RenderMethods
 
     # =========================================================================
-    # :section: FlashHelper::Entry overrides
+    # :section: FlashHelper::FlashPart overrides
     # =========================================================================
 
     protected
 
-    # Process a single object to make it a part.
+    # A hook for treating the first part of a entry as special.
     #
-    # @param [*] part
+    # @param [*]    src
+    # @param [Hash] opt
     #
-    # @return [String]
+    # @return [String, ActiveSupport::Buffer, nil]
     #
-    def transform(part)
-      make_label(part, default: '').presence || super(part)
+    def render_topic(src, **opt)                                                # NOTE: to Record::Exceptions::FlashPart
+      src = make_label(src, default: '').presence || src
+      super(src, **opt)
     end
 
   end
 
   # Exception raised when a submission is incomplete or invalid.
   #
-  class SubmitError < StandardError
-
-    # Individual error messages (if the originator supplied multiple messages).
-    #
-    # @return [Array<String>]
-    #
-    attr_reader :messages
-
-    # Initialize a new instance.
-    #
-    # @param [Array<String>, String, nil] msg
-    #
-    def initialize(msg = nil)
-      msg ||= UploadWorkflow::Errors::DEFAULT_ERROR_MESSAGE
-      @messages = Array.wrap(msg)
-      super(@messages.first)
-    end
-
+  class SubmitError < ExecError
   end
 
   # ===========================================================================
@@ -212,51 +196,34 @@ module UploadWorkflow::Errors
   #
   # Otherwise, error message(s) are extracted from *problem*.
   #
-  # @param [Symbol,String,Array<String>,Exception,ActiveModel::Errors] problem
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [*]                                                         value
   #
-  # @raise [SubmitError]
-  # @raise [Api::Error]
-  # @raise [Net::ProtocolError]
-  # @raise [RuntimeError]
+  # @raise [UploadWorkflow::SubmitError]
+  # @raise [ExecError]
   #
   def failure(problem, value = nil)
     __debug_items("UPLOAD WF #{__method__}", binding)
 
     # If any failure is actually an internal error, re-raise it now so that it
     # will result in a stack trace when it is caught and processed.
-    raise problem if internal_exception?(problem)
-    value = Array.wrap(value).each { |v| raise v if internal_exception?(v) }
-    value = value.first if value.size <= 1
+    [problem, *value].each { |v| re_raise_if_internal_exception(v) }
 
-    err = nil
-    case problem
-      when Symbol              then msg, err = UPLOAD_ERROR[problem]
-      when ActiveModel::Errors then msg = problem.full_messages
-      when Api::Error          then msg = problem.messages
-      when Exception           then msg = problem.message
-      else                          msg = problem
+    report = nil
+    msg, error = problem.is_a?(Symbol) ? UPLOAD_ERROR[problem] : [problem, nil]
+    if msg.is_a?(String)
+      if msg.include?('%') # Message expects value interpolation.
+        msg %= value.is_a?(Array) ? value.size : value.to_s
+      elsif value.is_a?(Array) && value.many?
+        msg += " (#{value.size})"
+      end
+    elsif msg.is_a?(ExecReport)
+      report = msg if value.blank?
     end
-    err ||= SubmitError
+    report ||= ExecReport.new(msg, *value)
+    error  ||= report.exception || UploadWorkflow::SubmitError
 
-    msg ||= DEFAULT_ERROR_MESSAGE
-    msg   = msg.join('; ') if msg.is_a?(Array)
-    intp  = msg.is_a?(String) && msg.include?('%') # Should interpolate value?
-    case value
-      when String
-        msg = ERB::Util.h(msg) if (html = value.html_safe?)
-        msg = intp ? (msg % value) : "#{msg}: #{value}"
-        msg = html ? msg.html_safe : ERB::Util.h(msg)
-      when Array
-        # noinspection RubyNilAnalysis
-        cnt = "(#{value.size})"
-        msg = intp ? (msg % cnt) : "#{msg}: #{cnt}"
-        msg = ["#{msg}:", *value.map { |v| ErrorEntry[v] }]
-      else
-        msg = ["#{msg}:", ErrorEntry[value]]
-    end
-
-    raise err, msg
+    raise error, report.render
   end
 
 end
@@ -615,6 +582,8 @@ module UploadWorkflow::External
   include UploadWorkflow::Properties
   include UploadWorkflow::Events
 
+  include ExecReport::Constants
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -803,7 +772,7 @@ module UploadWorkflow::External
         msg << retained.map { |item| make_label(item) }.join(', ')
         msg.join(': ')
       end
-      retained.map! { |item| ErrorEntry.new(item, 'not removed') } # TODO: I18n
+      retained.map! { |item| FlashPart.new(item, 'not removed') } # TODO: I18n
     end
 
     # Remove the associated entries from the index.
@@ -1090,7 +1059,7 @@ module UploadWorkflow::External
 
   # Upload file via Shrine.
   #
-  # @param [ActionDispatch::Request, Hash] opt
+  # @param [Hash] opt
   #
   # @option opt [Rack::Request::Env] :env
   #
@@ -1099,6 +1068,7 @@ module UploadWorkflow::External
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #
   def upload_file(**opt)
+    fault!(opt) # @see UploadWorkflow::Testing
     FileUploader.upload_response(:cache, opt[:env])
   end
 
@@ -1116,6 +1086,7 @@ module UploadWorkflow::External
   #
   def db_insert(data)
     __debug_items("UPLOAD WF #{__method__}", binding)
+    fault!(data) # @see UploadWorkflow::Testing
     record = data.is_a?(Upload) ? data : new_record(data)
     record.save if record.new_record?
     record
@@ -1275,13 +1246,6 @@ module UploadWorkflow::External
 
   protected
 
-  # Error key prefix which indicates a general (non-item-specific) error
-  # message entry.
-  #
-  # @type [String]
-  #
-  GENERAL_ERROR_TAG = Api::Shared::ErrorTable::GENERAL_ERROR_TAG
-
   # Interpret error message(s) generated by Federated Ingest to determine which
   # item(s) failed.
   #
@@ -1291,7 +1255,7 @@ module UploadWorkflow::External
   # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
   #                                     and records to roll back.
   #
-  # @see Api::Shared::ErrorTable#make_error_table
+  # @see ExecReport#error_table
   #
   # == Implementation Notes
   # It's not clear whether there would ever be situations where there was a mix
@@ -1299,8 +1263,9 @@ module UploadWorkflow::External
   # this method was written to be able to cope with the possibility.
   #
   def process_ingest_errors(result, *items)
+
     # If there were no errors then indicate that all items succeeded.
-    errors = result.is_a?(Ingest::Message::Response) ? result.errors : result
+    errors = ExecReport[result].error_table.dup
     return items, [], [] if errors.blank?
 
     # Otherwise, all items will be assumed to have failed.
@@ -1312,24 +1277,24 @@ module UploadWorkflow::External
     # Errors associated with the position of the item in the request.
     by_index = errors.select { |k| k.is_a?(Integer) }
     if by_index.present?
+      errors.except!(*by_index.keys)
       by_index.transform_keys! { |idx| Upload.sid_for(items[idx-1]) }
       sids   += by_index.keys
-      failed += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
-      errors.except!(*by_index.keys)
+      failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
     end
 
     # Errors associated with item submission ID.
     by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
     if by_sid.present?
-      sids   += by_sid.keys
-      failed += by_sid.map { |sid, msg| ErrorEntry.new(sid, msg) }
       errors.except!(*by_sid.keys)
+      sids   += by_sid.keys
+      failed += by_sid.map { |sid, msg| FlashPart.new(sid, msg) }
     end
 
     # Remaining (general) errors indicate that there was a problem with the
     # request and that all items have failed.
     if errors.present?
-      failed += errors.values.map { |msg| ErrorEntry.new(msg) }
+      failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
     elsif sids.present?
       sids = sids.map { |v| Upload.sid_for(v) }.uniq
       rollback, succeeded =
@@ -1464,18 +1429,18 @@ module UploadWorkflow::External
   # Interpret error message(s) generated by AWS S3.
   #
   # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
-  # @param [Array<String, Upload>]                                  data
+  # @param [Array<String, Upload>]                                  items
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
-  # @see Api::Shared::ErrorTable#make_error_table
+  # @see ExecReport#error_table
   #
-  def process_aws_errors(result, *data)
-    errors = result.is_a?(AwsS3::Message::Response) ? result.errors : result
+  def process_aws_errors(result, *items)
+    errors = ExecReport[result].error_table
     if errors.blank?
-      return data, []
+      return items, []
     else
-      return [], errors.values.map { |msg| ErrorEntry.new(msg) }
+      return [], errors.values.map { |msg| FlashPart.new(msg) }
     end
   end
 
@@ -1712,6 +1677,7 @@ class UploadWorkflow < Workflow::Base
   include UploadWorkflow::Events
   include UploadWorkflow::States
   include UploadWorkflow::Transitions
+  include UploadWorkflow::Testing
 
   # ===========================================================================
   # :section:

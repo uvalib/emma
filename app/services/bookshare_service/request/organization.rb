@@ -21,6 +21,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::Organization
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -47,7 +48,7 @@ module BookshareService::Request::Organization
   def get_my_organization_members(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myOrganization', 'members', **opt)
-    Bs::Message::UserAccountList.new(response, error: exception)
+    api_return(Bs::Message::UserAccountList)
   end
     .tap do |method|
       add_api method => {
@@ -122,7 +123,7 @@ module BookshareService::Request::Organization
   def add_my_organization_member(**opt)
     opt = get_parameters(__method__, **opt)
     api(:post, 'myOrganization', 'members', **opt)
-    Bs::Message::UserAccount.new(response, error: exception)
+    api_return(Bs::Message::UserAccount)
   end
     .tap do |method|
       add_api method => {

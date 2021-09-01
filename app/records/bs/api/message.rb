@@ -15,11 +15,33 @@ class Bs::Api::Message < Bs::Api::Record
 
   include Api::Message
 
+  include Bs::Shared::ResponseMethods
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
+  # @param [Hash]                                              opt
+  #
+  def initialize(src, opt = nil)
+    # noinspection RubyScope, RubyMismatchedParameterType
+    create_message_wrapper(opt) do |opt|
+      apply_wrap!(opt)
+      super(src, **opt)
+      initialize_exec_report(exception)
+    end
+  end
+
+  # ===========================================================================
+  # :section: Api::Message overrides
+  # ===========================================================================
+
+  protected
 
   # Strategy for pre-wrapping message data before de-serialization.
   #
@@ -27,19 +49,14 @@ class Bs::Api::Message < Bs::Api::Record
   #
   WRAP_FORMATS = { xml: true }.freeze
 
-  # Initialize a new instance.
+  # Update *opt[:wrap]* according to the supplied formats.
   #
-  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
-  # @param [Hash]                                              opt
+  # @param [Hash] opt                 May be modified.
   #
-  def initialize(src, **opt)
-    # noinspection RubyScope
-    create_message_wrapper(opt) do |opt|
-      if opt[:wrap].nil? || opt[:wrap].is_a?(Hash)
-        opt[:wrap] = WRAP_FORMATS.merge(opt[:wrap] || {})
-      end
-      super(src, **opt)
-    end
+  # @return [void]
+  #
+  def apply_wrap!(opt)
+    super(opt, WRAP_FORMATS)
   end
 
 end

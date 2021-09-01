@@ -38,6 +38,8 @@ en:
         display_fields: # @see 'en.emma.edition.record'
           - !ruby/symbol all
 
+      # =======================================================================
+
       show:
         label:          'Edition'
         title:          'Periodical Edition'
@@ -46,21 +48,46 @@ en:
         display_fields: # @see 'en.emma.edition.record'
           - !ruby/symbol all
 
-      new:
+      # =======================================================================
+
+      new:              &NEW_ACTION
         title:          'Add Periodical Edition'
         tooltip:        'Create an entry for a new Bookshare periodical edition.'
 
-      edit:
+      # =======================================================================
+
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
         title:          'Modify Periodical Edition'
         tooltip:        'Make changes to this Bookshare periodical edition.'
 
-      delete:
+      # =======================================================================
+
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
         title:          'Remove Periodical Edition'
         tooltip:        'Remove this edition from the Bookshare periodical.'
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
+
+      # =======================================================================
 
       history:
         title:          'Periodical Edition History'
         tooltip:        'View modifications for this Bookshare periodical edition.'
+
+      # =======================================================================
 
       download:
         label:          'Download'

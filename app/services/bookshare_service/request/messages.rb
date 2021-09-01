@@ -20,6 +20,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::Messages
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -44,7 +45,7 @@ module BookshareService::Request::Messages
   def get_my_messages(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myMessages', **opt)
-    Bs::Message::UserMessageList.new(response, error: exception)
+    api_return(Bs::Message::UserMessageList)
   end
     .tap do |method|
       add_api method => {
@@ -71,7 +72,7 @@ module BookshareService::Request::Messages
   def get_my_message(messageId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myMessages', messageId, **opt)
-    Bs::Message::UserMessage.new(response, error: exception)
+    api_return(Bs::Message::UserMessage)
   end
     .tap do |method|
     add_api method => {
@@ -99,7 +100,7 @@ module BookshareService::Request::Messages
   def update_my_message(messageId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'myMessages', messageId, **opt)
-    Bs::Message::UserMessage.new(response, error: exception)
+    api_return(Bs::Message::UserMessage)
   end
     .tap do |method|
     add_api method => {

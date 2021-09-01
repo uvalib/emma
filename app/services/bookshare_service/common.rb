@@ -12,46 +12,10 @@ module BookshareService::Common
   include ApiService::Common
 
   include BookshareService::Properties
-
-
-  # ===========================================================================
-  # :section: Authentication
-  # ===========================================================================
-
-  public
-
-  # Extract the user name to be used for API parameters.
-  #
-  # @param [User, String, nil] user
-  #
-  # @return [String]
-  #
-  def name_of(user)
-    name = user.is_a?(Hash) ? user['uid'] : user
-    name.to_s.presence || DEFAULT_USER
-  end
+  include BookshareService::Identity
 
   # ===========================================================================
-  # :section: Authentication
-  # ===========================================================================
-
-  protected
-
-  # Set the user for the current session.
-  #
-  # @param [User, nil] u
-  #
-  # @raise [RuntimeError]             If *u* is invalid.
-  #
-  # @return [void]
-  #
-  def set_user(u)
-    super
-    @user = @user&.bookshare_user
-  end
-
-  # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   protected

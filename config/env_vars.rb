@@ -427,6 +427,12 @@ DEBUG_PUMA = true?(ENV['DEBUG_PUMA'])
 #
 DEBUG_SHRINE = true?(ENV['DEBUG_SHRINE'])
 
+# Set to show headers and data being sent to external APIs.
+#
+# @type [Boolean]
+#
+DEBUG_TRANSMISSION = true?(ENV['DEBUG_TRANSMISSION'])
+
 # Debug workflow steps.
 #
 # @type [Boolean]

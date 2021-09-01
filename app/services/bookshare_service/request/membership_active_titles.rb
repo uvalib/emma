@@ -19,6 +19,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::MembershipActiveTitles
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -47,7 +48,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'activeBooks', **opt)
-    Bs::Message::ActiveBookList.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookList)
   end
     .tap do |method|
       add_api method => {
@@ -87,7 +88,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'activeBooks', **opt)
-    Bs::Message::ActiveBookList.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookList)
   end
     .tap do |method|
       add_api method => {
@@ -121,7 +122,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'activeBooks', activeTitleId, **opt)
-    Bs::Message::ActiveBookList.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookList)
   end
     .tap do |method|
       add_api method => {
@@ -165,7 +166,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'activePeriodicals', **opt)
-    Bs::Message::ActivePeriodicalList.new(response, error: exception)
+    api_return(Bs::Message::ActivePeriodicalList)
   end
     .tap do |method|
       add_api method => {
@@ -205,7 +206,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'activePeriodicals', **opt)
-    Bs::Message::ActivePeriodicalList.new(response, error: exception)
+    api_return(Bs::Message::ActivePeriodicalList)
   end
     .tap do |method|
       add_api method => {
@@ -240,7 +241,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'activePeriodicals', activeTitleId, **opt)
-    Bs::Message::ActivePeriodicalList.new(response, error: exception)
+    api_return(Bs::Message::ActivePeriodicalList)
   end
     .tap do |method|
       add_api method => {
@@ -279,7 +280,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'activeBooksProfile', **opt)
-    Bs::Message::ActiveBookProfile.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookProfile)
   end
     .tap do |method|
       add_api method => {
@@ -316,7 +317,7 @@ module BookshareService::Request::MembershipActiveTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'activeBooksProfile', **opt)
-    Bs::Message::ActiveBookProfile.new(response, error: exception)
+    api_return(Bs::Message::ActiveBookProfile)
   end
     .tap do |method|
       add_api method => {

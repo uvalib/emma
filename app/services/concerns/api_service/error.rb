@@ -12,29 +12,29 @@ require 'nokogiri'
 class ApiService::Error < Api::Error
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Initialize a new instance.
-  #
-  # @param [Array<Faraday::Response, Exception, Integer, String, true, nil>] args
-  # @param [String, nil] default      Default message.
-  #
-  def initialize(*args, default: nil)
-    if args.none? { |a| a.is_a?(String) }
-      error = args.find { |arg| arg.is_a?(Faraday::Error) }
-      args += extract_message(error) if error.present?
-    end
-    super(*args, default: default)
-  end
-
-  # ===========================================================================
   # :section: Api::Error overrides
   # ===========================================================================
 
   public
+
+  # Extract Faraday::Response messages.
+  #
+  # @param [Faraday::Response] arg
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # As a side-effect, if @http_response is nil it will be set here.
+  #
+  def faraday_response(arg)
+    label  = "#{service_name} error"
+    result = super.presence || default_message
+    if result.many?
+      ["#{label.pluralize}:", *result]
+    else
+      ["#{label}: #{result.first}"]
+    end
+  end
 
   # Enhance Faraday::Error messages.
   #
@@ -56,19 +56,13 @@ class ApiService::Error < Api::Error
 
   public
 
-  # Methods to be included in related subclasses.
+  # Methods included in related error classes.
   #
-  module Methods
+  module ClassType
 
-    # @private
-    def self.included(base)
-      base.send(:extend, self)
-    end
+    include Emma::Json
 
-    # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    include Api::Error::Methods unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
+    include Api::Error::Methods
 
     # =========================================================================
     # :section: Api::Error::Methods overrides
@@ -76,93 +70,27 @@ class ApiService::Error < Api::Error
 
     public
 
-    # Name of the service and key into config/locales/error.en.yml.
+    # The descriptive name of the current instance service.
     #
-    # If the class (or the class of the instance) defines 'SERVICE_NAME', that
-    # is returned; otherwise the name is derived from the class name.
+    # @return [String]
     #
-    # @return [Symbol]
-    #
-    # == Examples
-    #
-    # @example BookshareService::EmptyResultError
-    #   => :bookshare
-    #
-    # @example SearchSearch::TimeoutError
-    #   => :timeout
-    #
-    def service
-      @service ||=
-        if (c = is_a?(Class) ? self : self.class)
-          name = c.safe_const_get(:SERVICE_NAME)
-          name ||= c.module_parent_name.underscore.remove(/_service$/)
-          name&.to_sym || super
-        end
+    def service_name(*)
+      @service_name ||= super
     end
 
-    # Name of the error and subkey into config/locales/error.en.yml.
-    #
-    # If the class (or the class of the instance) defines 'ERROR_TYPE', that
-    # is returned; otherwise the type is derived from the class name.
-    #
-    # @return [Symbol, nil]
-    #
-    # == Examples
-    #
-    # @example BookshareService::EmptyResultError
-    #   => :empty_result
-    #
-    # @example SearchSearch::TimeoutError
-    #   => :timeout
-    #
-    def error_type
-      @error_type ||=
-        if (c = is_a?(Class) ? self : self.class)
-          type = c.safe_const_get(:ERROR_TYPE)
-          type ||= c.name.demodulize.to_s.underscore.remove(/_error$/)
-          type&.to_sym || super
-        end
-    end
+    # =========================================================================
+    # :section: ExecError::Methods overrides
+    # =========================================================================
+
+    public
 
     # Default error message for the current instance.
     #
-    # @return [String, nil]
+    # @return [String]
     #
     def default_message
-      @default_message ||= super
+      @default_message ||= super || ''
     end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Error types extracted from "config/locales/error.en.yml".
-    #
-    # @return [Hash{Symbol=>String}]
-    #
-    def error_config
-      @error_config ||=
-        [:api, service].uniq.reduce({}) { |result, config_section|
-          i18n_path = "emma.error.#{config_section}"
-          result.merge!(I18n.t(i18n_path, default: {}))
-        }.except!(:_name, :default)
-    end
-
-    # Error types extracted from "config/locales/error.en.yml".
-    #
-    # @return [Array<Symbol>]
-    #
-    def error_types
-      error_config.keys
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
 
     # Prefix seen in Bookshare error messages and also in the header of OAuth2
     # responses.
@@ -175,60 +103,60 @@ class ApiService::Error < Api::Error
 
     # Get the message from within the response body of a Faraday exception.
     #
-    # @param [Faraday::Error] error
+    # @param [Faraday::Response, Faraday::Error, Hash] src
     #
     # @return [Array<String>]
     #
-    def extract_message(error)
+    #--
+    # noinspection RailsParamDefResolve
+    #++
+    def extract_message(src)
       # First check for an error description embedded in the response headers.
       # If not present then look at the response body.
-      desc = oauth2_error_header(error)
-      body = error.response[:body]
-      desc ||= [] if body.blank?
+      error_description = oauth2_error_header(src)
+
+      # If there is no response body then prevent further analysis.
+      body   = src.try(:response_body) || src.try(:body)
+      body ||= src.try(:response).try(:dig, :body)
+      body ||= src.try(:dig, :body)
+      body   = to_utf8(body).to_s.strip
+      error_description ||= ([] unless body.present?)
 
       # Check for an HTML message, which may indicate that a web server is
       # responding with a 5xx error (rather than the application server).
-      desc ||=
+      error_description ||=
         if body.start_with?('<')
-          # @type [Nokogiri::HTML::Document, Nokogiri::XML::Document]
-          html = Nokogiri.parse(body)
-          html = nil if html.errors.present?
-          html&.search('title', 'h1', 'body')&.first&.inner_text || ''
+          doc = Nokogiri.parse(body)
+          doc = nil if doc.errors.present?
+          extract_html(doc).presence || ''
         end
 
       # Check for a JSON message from the application server.
-      desc ||=
-        if (json = json_parse(body, symbolize_keys: false)).present?
-          json = json.compact
-          json = json.first if json.is_a?(Array) && (json.size <= 1)
-          if json.is_a?(Array)
-            json
-          elsif json.is_a?(Hash)
-            json[ERROR_TAG].presence ||
-              Array.wrap(json['messages']).map { |msg|
-                msg = msg.to_s.strip
-                if msg =~ /^[a-z0-9_]+=/i
-                  next unless msg.delete_prefix!("#{ERROR_TAG}=")
-                end
-                msg.remove(/\\"/)
-              }.compact_blank.presence ||
-              json['message'].presence ||
-              json.values.flat_map { |v| v if v.is_a?(Array) }.compact.presence
-          end
+      error_description ||=
+        if (data = json_parse(body, symbolize_keys: false, log: false))
+          data = data.compact
+          data = data.first if data.is_a?(Array) && (data.size <= 1)
+          extract_json(data).presence
         end
 
-      Array.wrap(desc.presence || body)
+      Array.wrap(error_description || body)
     end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
 
     # Extract the OAuth2 error description from the response headers.
     #
-    # @param [Faraday::Response, Faraday::Error, Hash] response
+    # @param [Faraday::Response, Faraday::Error, Hash] src
     #
     # @return [String, nil]
     #
-    def oauth2_error_header(response)
-      response = response.response if response.respond_to?(:response)
-      headers  = response.try(:headers) || response[:headers] || response
+    def oauth2_error_header(src)
+      # noinspection RailsParamDefResolve
+      headers = src.try(:response_headers) || src.try(:headers) || src
       return unless headers.is_a?(Hash)
       headers = headers.transform_keys { |k| k.to_s.downcase }
       return unless (www_authenticate = headers['www-authenticate']).present?
@@ -239,9 +167,61 @@ class ApiService::Error < Api::Error
       end
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Extract message(s) from a response body that has been determined to be
+    # XML/HTML.
+    #
+    # @param [Nokogiri::HTML::Document, Nokogiri::XML::Document, nil] doc
+    #
+    # @return [Array<String>]
+    #
+    def extract_html(doc)
+      Array.wrap(doc&.search('title', 'h1', 'body')&.first&.inner_text)
+    end
+
+    # Extract message(s) from a response body that has been determined to be
+    # JSON.
+    #
+    # @param [Hash, *] src
+    #
+    # @return [Array<String>]         If *src* was a Hash.
+    # @return [Array<*>]              Otherwise.
+    #
+    def extract_json(src)
+      result   = ([] if src.blank?)
+      result ||= (src unless src.is_a?(Hash))
+      result ||= src[ERROR_TAG].presence
+      result ||=
+        Array.wrap(src['messages']).map { |msg|
+          msg = msg.to_s.strip
+          if msg =~ /^[a-z0-9_]+=/i
+            next unless msg.delete_prefix!("#{ERROR_TAG}=")
+          end
+          msg.remove(/\\"/)
+        }.compact_blank.presence
+      result ||= src['message'].presence
+      result ||= src.values.flat_map { |v| v if v.is_a?(Array) }
+      Array.wrap(result || src).compact
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
-  include ApiService::Error::Methods
+  include ClassType
 
   # ===========================================================================
   # :section:
@@ -256,47 +236,44 @@ class ApiService::Error < Api::Error
   # this method will define
   #
   #   class SearchService::EmptyResultError < ApiService::EmptyResultError
-  #     include SearchService::Error::Methods
+  #     include SearchService::Error::ClassType
   #   end
   #
-  # @return [Hash{Symbol=>Class}]     The value of @error_subclass.
+  # @return [Hash{Symbol=>Class}]     The value of @error_classes.
   #
-  def self.generate_error_subclasses
-    error_class   = self
-    is_base_class = (error_class == ApiService::Error)
-    service_class = error_class.module_parent
-    @error_subclass =
+  def self.generate_error_classes
+    family_class      = self
+    service_namespace = family_class.module_parent
+    @error_classes =
       error_types.map { |type|
-        sub_class  = "#{type}_error".camelize
-        base_class =
-          if !is_base_class && ApiService.const_defined?(sub_class, false)
-            "ApiService::#{sub_class}"
-          end
-        base_class ||= error_class
-        service_class.class_eval <<~HERE_DOC
-          class #{sub_class} < #{base_class}
-            include #{error_class}::Methods
+        error_class = "#{type}_error".camelize
+        api_base    = ApiService.const_defined?(error_class, false)
+        base_class  = api_base ? "ApiService::#{error_class}" : family_class
+        service_namespace.module_eval <<~HERE_DOC
+          class #{error_class} < #{base_class}
+            include #{family_class}::ClassType
           end
         HERE_DOC
-        [type, service_class.const_get(sub_class)]
+        [type, service_namespace.const_get(error_class)]
       }.to_h
   end
 
-  # A table of error types mapped on to error subclasses.
+  # A table of error types mapped on to error classes in the namespace of the
+  # related service.
   #
   # @return [Hash{Symbol=>Class}]
   #
-  # @see ApiService::Error#generate_error_subclasses
+  # @see ApiService::Error#generate_error_classes
   #
-  def self.error_subclass
-    @error_subclass ||= generate_error_subclasses
+  def self.error_classes
+    @error_classes ||= generate_error_classes
   end
 
   # ===========================================================================
-  # :section: Error subclasses
+  # :section: Error classes in this namespace
   # ===========================================================================
 
-  generate_error_subclasses
+  generate_error_classes
 
 end
 
@@ -316,7 +293,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.auth*
   #
   class ApiService::AuthError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that there was a (transient) network error
@@ -325,7 +302,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.comm*
   #
   class ApiService::CommError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that there was a session error in
@@ -334,7 +311,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.session*
   #
   class ApiService::SessionError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that there was a problem establishing a
@@ -343,7 +320,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.connect*
   #
   class ApiService::ConnectError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that the connection to the remote service
@@ -352,7 +329,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.timeout*
   #
   class ApiService::TimeoutError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that there was network error while sending to
@@ -361,7 +338,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.xmit*
   #
   class ApiService::XmitError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that there was network error while receiving
@@ -370,16 +347,16 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.recv*
   #
   class ApiService::RecvError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that the remote service returned malformed
-  # data.
+  # network package data.
   #
   # @see file:config/locales/error.en.yml *en.emma.error.api.parse*
   #
   class ApiService::ParseError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # ===========================================================================
@@ -394,7 +371,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.request*
   #
   class ApiService::RequestError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that no (valid) inputs were provided so no
@@ -403,7 +380,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.no_input*
   #
   class ApiService::NoInputError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # ===========================================================================
@@ -418,7 +395,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.response*
   #
   class ApiService::ResponseError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that a valid message was received but it had
@@ -427,7 +404,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.empty_result*
   #
   class ApiService::EmptyResultError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that a message with an HTML body was received
@@ -436,7 +413,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.html_result*
   #
   class ApiService::HtmlResultError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate a invalid redirect destination.
@@ -444,7 +421,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.redirection*
   #
   class ApiService::RedirectionError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # Exception raised to indicate that there were too many redirects.
@@ -452,7 +429,7 @@ unless ONLY_FOR_DOCUMENTATION
   # @see file:config/locales/error.en.yml *en.emma.error.api.redirect_limit*
   #
   class ApiService::RedirectLimitError < ApiService::Error
-    include ApiService::Error::Methods
+    include ApiService::Error::ClassType
   end
 
   # :nocov:

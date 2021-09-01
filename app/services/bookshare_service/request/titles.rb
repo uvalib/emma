@@ -26,6 +26,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::Titles
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -83,7 +84,7 @@ module BookshareService::Request::Titles
   def get_title(bookshareId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, **opt)
-    Bs::Message::TitleMetadataDetail.new(response, error: exception)
+    api_return(Bs::Message::TitleMetadataDetail)
   end
     .tap do |method|
       add_api method => {
@@ -121,7 +122,7 @@ module BookshareService::Request::Titles
   def download_title(bookshareId:, format:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {
@@ -183,7 +184,7 @@ module BookshareService::Request::Titles
   def get_titles(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', **opt)
-    Bs::Message::TitleMetadataSummaryList.new(response, error: exception)
+    api_return(Bs::Message::TitleMetadataSummaryList)
   end
     .tap do |method|
       add_api method => {
@@ -274,7 +275,7 @@ module BookshareService::Request::Titles
   def get_title_resource_files(bookshareId:, format:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, 'resources', **opt)
-    Bs::Message::TitleFileResourceList.new(response, error: exception)
+    api_return(Bs::Message::TitleFileResourceList)
   end
     .tap do |method|
       add_api method => {
@@ -310,7 +311,7 @@ module BookshareService::Request::Titles
   def get_title_resource_file(bookshareId:, format:, resourceId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, 'resources', resourceId, **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {
@@ -353,7 +354,7 @@ module BookshareService::Request::Titles
   def get_categories(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'categories', **opt)
-    Bs::Message::CategoriesList.new(response, error: exception)
+    api_return(Bs::Message::CategoriesList)
   end
     .tap do |method|
       add_api method => {
@@ -386,7 +387,7 @@ module BookshareService::Request::Titles
   def get_retrieval(url:, **opt)
     url = url.sub(%r{//api\.qa\.}, '//api.') # TODO: temporary until Benetech fixes unified search
     api(:get, url, **opt)
-    Search::Message::RetrievalResult.new(response, error: exception)
+    api_return(Search::Message::RetrievalResult)
   end
 
 end

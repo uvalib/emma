@@ -47,6 +47,70 @@ module AccountConcern
     prm.to_h.symbolize_keys
   end
 
+  # Get the User identifier(s) specified by parameters.
+  #
+  # @return [Array<String,Integer>]
+  #
+  def id_params
+    ids = params[:selected] || params[:id] || params[:email]
+    identifier_list(*ids)
+  end
+
+  # Normalize a list of User identifiers (:id or :email).
+  #
+  # @param [Array<String, Integer, nil>] ids
+  # @param [Regexp]                      separator
+  #
+  # @return [Array<String,Integer>]
+  #
+  def identifier_list(*ids, separator: /\s*,\s*/)
+    ids.flat_map { |part|
+      part = part.strip.split(separator) if part.is_a?(String)
+      Array.wrap(part).map { |v| positive(v) || v.presence }
+    }.compact
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get the indicated User account records.
+  #
+  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
+  #
+  # @raise [ActiveRecord::RecordNotFound]   If *ids* is blank.
+  #
+  # @return [Array<User>]
+  #
+  def find_accounts(ids = nil)
+    ids ||= id_params
+    ids, uids = Array.wrap(ids).partition { |v| v.is_a?(Integer) }
+    if ids.present? && uids.present?
+      User.matching(id: ids, email: uids, join: :or).to_a
+    elsif ids.present?
+      # noinspection RubyMismatchedReturnType
+      User.find(ids)
+    elsif uids.present?
+      User.where(email: uids).to_a
+    else
+      raise ActiveRecord::RecordNotFound, 'no identifier(s) given'
+    end
+  end
+
+  # Get the indicated User account record.
+  #
+  # @param [String, Integer, nil] id    Default: `params[:id]`.
+  #
+  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
+  #
+  # @return [User, nil]
+  #
+  def find_account(id = nil)
+    User.find_record(id || params[:id])
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -79,6 +143,79 @@ module AccountConcern
     end
   end
 
+  # Get the indicated User account record.
+  #
+  # @param [String, Integer, nil] id    Default: `params[:id]`.
+  #
+  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
+  #
+  # @return [User, nil]
+  #
+  def get_account(id = nil)
+    find_account(id)
+  end
+
+  # Create a new User account record.
+  #
+  # @param [Hash,nil] attr            Initial User attributes.
+  #
+  # @return [User]
+  #
+  def new_account(attr = nil)
+    User.new(attr)
+  end
+
+  # Create a new persisted User account.
+  #
+  # @param [Boolean]        no_raise  If *true*, use #save instead of #save!.
+  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
+  # @param [Hash]           attr      Initial User attributes.
+  #
+  # @raise [ActiveRecord::RecordNotSaved]   If #save! failed.
+  #
+  # @return [User]
+  #
+  def create_account(no_raise: false, force_id: false, **attr)
+    attr = account_params if attr.blank?
+    attr.delete(:id) unless true?(force_id)
+    new_account(attr).tap do |record|
+      no_raise ? record.save : record.save!
+    end
+  end
+
+  # Modify an existing (persisted) User account.
+  #
+  # @param [Boolean] no_raise  If *true*, use #update instead of #update!.
+  # @param [Hash]    attr      New attributes (default: `#account_params`).
+  #
+  # @raise [ActiveRecord::RecordNotSaved]   If #update! failed.
+  #
+  # @return [User, nil]
+  #
+  def update_account(no_raise: false, **attr)
+    attr = account_params if attr.blank?
+    id   = attr.delete(:id) || attr[:email]
+    get_account(id).tap do |record|
+      no_raise ? record.update(attr) : record.update!(attr) if record
+    end
+  end
+
+  # Remove an existing (persisted) User account.
+  #
+  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
+  # @param [Boolean] no_raise   If *true*, use #destroy instead of #destroy!.
+  #
+  # @raise [ActiveRecord::RecordNotFound]       If *ids* is blank.
+  # @raise [ActiveRecord::RecordNotDestroyed]   If #destroy! failed.
+  #
+  # @return [Array<User>]
+  #
+  def destroy_accounts(*ids, no_raise: false, **)
+    find_accounts(ids.presence).tap do |record|
+      no_raise ? record.destroy : record.destroy!
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -108,11 +245,11 @@ module AccountConcern
 
   # redirect_failure
   #
-  # @param [Symbol]            action
-  # @param [String, nil]       message
-  # @param [String, Array]     error
-  # @param [User, String, nil] redirect
-  # @param [Hash]              opt        Passed to redirect.
+  # @param [Symbol]                             action
+  # @param [String, nil]                        message
+  # @param [String, Array, ActiveModel::Errors] error
+  # @param [User, String, nil]                  redirect
+  # @param [Hash]                               opt       Passed to redirect.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -121,7 +258,7 @@ module AccountConcern
     message &&= message % interpolation_terms(action)
     message ||= 'FAILED' # TODO: I18n
     if error
-      error   = error.full_messages if error.respond_to?(:full_messages)
+      error   = error.full_messages if error.is_a?(ActiveModel::Errors)
       message = message&.remove(/[[:punct:]]$/)&.concat(':') || 'ERRORS:'
       message = [message, *Array.wrap(error)]
       message = safe_join(message, HTML_BREAK)

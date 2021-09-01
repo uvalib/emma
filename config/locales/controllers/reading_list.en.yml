@@ -94,22 +94,37 @@ en:
 
       # =======================================================================
 
-      new:
+      new:              &NEW_ACTION
         title:          'Add Reading List'
         tooltip:        'Create a new Bookshare reading list.'
 
       # =======================================================================
 
-      edit:
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
         title:          'Modify Reading List'
         tooltip:        'Make changes to this Bookshare reading list.'
 
       # =======================================================================
 
-      delete:
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
         label:          'Delete'
         title:          'Delete Reading List'
         tooltip:        'Delete this Bookshare reading list.'
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
 
       # =======================================================================
 

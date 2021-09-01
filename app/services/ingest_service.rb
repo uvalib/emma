@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 class IngestService < ApiService
 
+  DESTRUCTIVE_TESTING = false
+
   include Ingest
 
   # Include send/receive modules from "app/services/ingest_service/**.rb".

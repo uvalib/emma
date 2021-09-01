@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module AwsS3Service::Request::Submissions
 
   include AwsS3Service::Common
+  include AwsS3Service::Testing
 
   # ===========================================================================
   # :section: Member repository requests
@@ -29,7 +30,7 @@ module AwsS3Service::Request::Submissions
     opt[:meth] ||= __method__
     records   = AwsS3::Message::SubmissionPackage.to_a(records)
     succeeded = put_records(*records, **opt)
-    AwsS3::Message::Response.new(records, succeeded)
+    api_return(records, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -49,7 +50,7 @@ module AwsS3Service::Request::Submissions
     opt[:meth] ||= __method__
     records   = AwsS3::Message::ModificationRequest.to_a(records)
     succeeded = put_records(*records, **opt)
-    AwsS3::Message::Response.new(records, succeeded)
+    api_return(records, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -69,7 +70,7 @@ module AwsS3Service::Request::Submissions
     opt[:meth] ||= __method__
     records   = AwsS3::Message::RemovalRequest.to_a(records)
     succeeded = put_records(*records, **opt)
-    AwsS3::Message::Response.new(records, succeeded)
+    api_return(records, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -91,11 +92,8 @@ module AwsS3Service::Request::Submissions
   # @return [Array<AwsS3::Message::SubmissionPackage>]  Submitted records.
   #
   def put_records(*items, **opt)
-    items = items.flatten
-    repo  = opt.delete(:repo)
-    opt[:bucket] ||= bucket_for(repo || items.first)
-    opt[:meth]   ||= __method__
-    api_create(*items, **opt)
+    opt[:meth] ||= __method__
+    api(:aws_create, *items, **opt)
   end
     .tap do |method|
       add_api method => {
@@ -114,7 +112,7 @@ module AwsS3Service::Request::Submissions
   #
   def get_records(*items, **opt)
     opt[:meth] ||= __method__
-    api_operation(:api_get, *items, **opt)
+    api(:aws_get, *items, **opt)
   end
     .tap do |method|
       add_api method => {
@@ -133,7 +131,7 @@ module AwsS3Service::Request::Submissions
   #
   def delete_records(*items, **opt)
     opt[:meth] ||= __method__
-    api_operation(:api_delete, *items, **opt)
+    api(:aws_delete, *items, **opt)
   end
     .tap do |method|
       add_api method => {
@@ -153,50 +151,13 @@ module AwsS3Service::Request::Submissions
   def list_records(*items, **opt)
     __debug_items(binding)
     opt[:meth] ||= __method__
-    api_operation(:api_list, *items, **opt)
+    api(:aws_list, *items, **opt)
   end
     .tap do |method|
       add_api method => {
         # TODO: ?
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # api_operation
-  #
-  # @param [Symbol] op                API method
-  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash, String>] items
-  # @param [Hash]   options           Passed to *op*.
-  #
-  # @return [Any]                     Depends on *op*
-  #
-  # == Variations
-  #
-  # @overload api_operation(op, *items, **options)
-  #   @param [Symbol]                                                 op
-  #   @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash>] items
-  #   @param [Hash]                                                   options
-  #   @option options [String] :bucket  Override bucket implied by *items*
-  #
-  # @overload api_operation(op, *sids, **options)
-  #   @param [Symbol]        op
-  #   @param [Array<String>] sids
-  #   @param [Hash]          options
-  #   @option options [String,Symbol] :repo     Used to determine S3 bucket.
-  #   @option options [String]        :bucket   To specify S3 bucket.
-  #
-  def api_operation(op, *items, **options)
-    items = items.flatten
-    sids  = items.map { |key| submission_id(key) }.compact
-    repo  = options.delete(:repo)
-    options[:bucket] ||= bucket_for(repo || items.first)
-    send(op, *sids, **options)
-  end
 
   # ===========================================================================
   # :section:
@@ -221,22 +182,28 @@ module AwsS3Service::Request::Submissions
   # OR USE THE API:
   # @see https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
   #
-  def api_create(*records, bucket: nil, atomic: true, **opt)
-    raise 'no records' if records.blank?
+  def aws_create(*records, bucket: nil, atomic: true, **opt)
     opt[:meth]   ||= calling_method
     opt[:client] ||= s3_client(**opt.except(:meth))
-    records.map { |record|
-      # @type [AwsS3::Message::SubmissionPackage] record
+    result = []
+    records.map do |record|
       bkt = bucket || bucket_for(record)
-      pkg = api_put_file(bkt, record.key, record.to_xml, **opt)
-      obj = api_put_file(bkt, record.file_key, record.file, **opt)
-      if pkg && obj
-        record
-      elsif atomic
-        # TODO: clean up
-        return []
+      pkg = aws_put_file(bkt, record.key, record.to_xml, **opt)
+      if pkg && aws_put_file(bkt, record.file_key, record.file, **opt)
+        result << record
+      else
+        aws_delete_file(bkt, record.key, **opt) if pkg
+        if atomic
+          result.each do |res|
+            sid = submission_id(res)
+            bkt = bucket || bucket_for(res)
+            aws_delete(*sid, bucket: bkt, atomic: false, **opt)
+          end
+          return []
+        end
       end
-    }.compact
+    end
+    result
   end
 
   # Get the files associated with each submission ID.
@@ -251,16 +218,14 @@ module AwsS3Service::Request::Submissions
   #
   # @return [Hash{String=>String}]    Mapping of object key to related content.
   #
-  # @see #api_get_file
+  # @see #aws_get_file
   #
-  def api_get(*sids, bucket:, atomic: true, **opt)
-    raise 'no AWS S3 bucket'  if bucket.blank?
-    raise 'no submission IDs' if sids.blank?
+  def aws_get(*sids, bucket:, atomic: true, **opt)
     opt[:meth]   ||= calling_method
     opt[:client] ||= s3_client(**opt.except(:meth))
     sids.flat_map { |sid|
-      api_list_object_keys(bucket, sid, **opt).map do |key|
-        content = api_get_file(bucket, key, **opt)
+      aws_list_object_keys(bucket, sid, **opt).map do |key|
+        content = aws_get_file(bucket, key, **opt)
         return [] if atomic && content.blank?
         [key, content]
       end
@@ -281,14 +246,12 @@ module AwsS3Service::Request::Submissions
   #
   # @see Aws::S3::Client#delete_objects
   #
-  def api_delete(*sids, bucket:, atomic: true, **opt)
-    raise 'no AWS S3 bucket'  if bucket.blank?
-    raise 'no submission IDs' if sids.blank?
+  def aws_delete(*sids, bucket:, atomic: true, **opt)
     opt[:meth]   ||= calling_method
     opt[:client] ||= s3_client(**opt.except(:meth))
     sids.flat_map { |sid|
-      api_list_object_keys(bucket, sid, **opt).map do |key|
-        api_delete_file(bucket, key, **opt).tap do |result|
+      aws_list_object_keys(bucket, sid, **opt).map do |key|
+        aws_delete_file(bucket, key, **opt).tap do |result|
           return [] if atomic && result.blank?
         end
       end
@@ -306,17 +269,16 @@ module AwsS3Service::Request::Submissions
   #
   # @return [Hash{String=>Array}]     Mapping of IDs and related object keys.
   #
-  # @see #api_get_file
+  # @see #aws_get_file
   #
-  def api_list(*sids, bucket:, **opt)
+  def aws_list(*sids, bucket:, **opt)
     __debug_items(binding)
-    raise 'no AWS S3 bucket'  if bucket.blank?
-    raise 'no submission IDs' if sids.blank?
     opt.delete(:atomic) # Not used in this method.
     opt[:meth]   ||= calling_method
     opt[:client] ||= s3_client(**opt.except(:meth))
     sids.map { |sid|
-      [sid, api_list_objects(bucket, sid, **opt).map(&:key)]
+      objects = aws_list_objects(bucket, sid, **opt)&.map(&:key) || []
+      [sid, objects]
     }.to_h
   end
 

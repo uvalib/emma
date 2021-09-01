@@ -507,6 +507,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     end
 
     state :unretrieved do
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :fail,      transitions_to: :failed
       event :timeout,   transitions_to: :unretrieved
       event :advance,   transitions_to: :retrieved

@@ -9,10 +9,7 @@ require 'net/http/status'
 
 # Base exception for API errors.
 #
-class Api::Error < RuntimeError
-
-  include Emma::Json
-  include ExplorerHelper
+class Api::Error < ExecError
 
   # ===========================================================================
   # :section:
@@ -24,7 +21,7 @@ class Api::Error < RuntimeError
   #
   # @return [Faraday::Response, nil]
   #
-  attr_reader :response
+  attr_reader :http_response
 
   # If applicable, the HTTP status for the received message that resulted in
   # the original exception.
@@ -32,12 +29,6 @@ class Api::Error < RuntimeError
   # @return [Integer, nil]
   #
   attr_reader :http_status
-
-  # Individual error messages (if the originator supplied multiple messages).
-  #
-  # @return [Array<String>]
-  #
-  attr_reader :messages
 
   # ===========================================================================
   # :section:
@@ -47,48 +38,41 @@ class Api::Error < RuntimeError
 
   # Initialize a new instance.
   #
-  # @param [Array<Faraday::Response, Exception, Integer, String, true, nil>] args
-  # @param [String, nil] default      Default message.
+  # @param [Array<Faraday::Response,Exception,Hash,String,Integer,nil>] args
   #
-  def initialize(*args, default: nil)
-    @response = @http_status = @cause = nil
-    @messages = []
-    args.each do |arg|
+  # == Implementation Notes
+  # Each element of @messages is duplicated in order to ensure that there are
+  # no unexpected entanglements with the original message source(s).
+  #
+  def initialize(*args)
+    @http_response = @http_status = @cause = nil
+    args.map! do |arg|
       case arg
-        when Faraday::Response then @response    = arg
-        when Exception         then @cause       = arg
-        when Integer           then @http_status = arg
-        when String            then @messages << arg
-        when Array             then @messages += arg
-        when Hash              then # @messages += messages_from(arg)
-        when true              then # Use default error message.
-        when nil               then # Ignore silently.
-        else Log.warn { "Api::Error#initialize: #{arg.inspect} ignored" }
+        when Integer           then (@http_status = arg) and next
+        when Exception         then @cause = arg
+        when Faraday::Response then faraday_response(arg)
+        else                        arg
       end
     end
-    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
+    args.flatten!
+    args.compact!
     case @cause
       when nil
         # Ignore
       when Api::Error
-        @http_status ||= @cause.http_status
-        @response    ||= @cause.response
-        @messages     += @cause.messages
-        @cause         = @cause.cause
+        @http_response ||= @cause.http_response
+        @http_status   ||= @cause.http_status
       when Faraday::Error
-        @http_status ||= @cause.response&.dig(:status)
-        @messages      = faraday_error(*@cause.message) + @messages
-        @cause         = @cause.wrapped_exception
+        @http_status   ||= @cause.response&.dig(:status)
+        args             = faraday_error(*@cause.message) + args
+        @cause           = @cause.wrapped_exception || @cause
       when Exception
-        @http_status ||= @response&.status
-        @messages     += Array.wrap(@cause.message)
+        @http_status   ||= @cause.try(:code)
       else
         Log.warn { "Api::Error#initialize: @cause #{@cause.class} unexpected" }
     end
-    @messages.compact_blank!
-    @messages.uniq!
-    @messages << (default || default_message) if @messages.empty?
-    super(@messages.first)
+    @http_status ||= @http_response&.status
+    super(*args)
   rescue => e
     Log.error { "Api::Error#initialize: #{e.class}: #{e.message}" }
     re_raise_if_internal_exception(e)
@@ -101,60 +85,17 @@ class Api::Error < RuntimeError
 
   public
 
-  # To satisfy Kernel#raise this returns the instance itself.
-  #
-  # @return [Exception]
-  #
-  def exception(*)
-    self
-  end
-
-  # A fall-back for returning #messages as a single string.
-  #
-  # @param [String] connector         Connector between multiple messages.
-  #
-  # @return [String]
-  #
-  def to_s(connector: ', ')
-    @messages.join(connector)
-  end
-
-  # A fall-back for returning #messages as a single string.
-  #
-  # @return [String]
-  #
-  def message
-    to_s
-  end
-
   # inspect
   #
   # @return [String]
   #
   def inspect
     items = {
-      http_status: @http_status.inspect,
-      response:    @response.inspect,
-      cause:       api_format_result(@cause, html: false, indent: 2),
+      http_status:   @http_status.inspect,
+      http_response: @http_response.inspect,
+      cause:         ExplorerHelper.api_format_result(@cause, html: false),
     }.map { |k, v| "@#{k}=#{v}" }.join(', ')
     '#<%s: %s %s>' % [self.class, message, items]
-  end
-
-  # Execution stack associated with the original exception.
-  #
-  # @return [Array<String>, nil]
-  #
-  def backtrace
-    cause&.backtrace || super
-  end
-
-  # If applicable, the original exception that was rescued which resulted in
-  # raising an Api::Error exception.
-  #
-  # @return [Exception, nil]
-  #
-  def cause
-    @cause
   end
 
   # ===========================================================================
@@ -162,6 +103,20 @@ class Api::Error < RuntimeError
   # ===========================================================================
 
   public
+
+  # Extract Faraday::Response messages.
+  #
+  # @param [Faraday::Response] arg
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # As a side-effect, if @http_response is nil it will be set here.
+  #
+  def faraday_response(arg)
+    @http_response ||= arg
+    extract_message(arg)
+  end
 
   # Enhance Faraday::Error messages.
   #
@@ -189,36 +144,13 @@ class Api::Error < RuntimeError
   # :section:
   # ===========================================================================
 
-  protected
-
-  # Error message-related keys within a Hash.
-  #
-  # @type [Array<Symbol,String>]
-  #
-  MESSAGE_KEYS = %i[message messages].flat_map { |k| [k, k.to_s] }.freeze
-
-  # Extract error messages.
-  #
-  # @param [Hash] value
-  #
-  # @return [Array<String>]
-  #
-  # == Usage Notes
-  # The result may contain nils, blanks and/or duplicates.
-  #
-  def messages_from(value)
-    value.values_at(*MESSAGE_KEYS).flat_map do |m|
-      Array.wrap(m).compact_blank.map(&:to_s).presence if m
-    end
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
   public
 
+  # Methods to be included in related subclasses.
+  #
   module Methods
+
+    include ExecError::Methods
 
     # =========================================================================
     # :section:
@@ -230,19 +162,54 @@ class Api::Error < RuntimeError
     #
     # @return [Symbol, nil]
     #
-    # NOTE: To be overridden by the subclass of Api::Error
-    #
     def service
+      @service ||=
+        if (c = is_a?(Class) ? self : self.class)
+          name = c.safe_const_get(:SERVICE_NAME)
+          name ||= c.module_parent_name.underscore.remove(/_service$/)
+          name&.to_sym || super
+        end
     end
 
     # Name of the error and subkey into config/locales/error.en.yml.
     #
     # @return [Symbol, nil]
     #
-    # NOTE: To be overridden by the subclass of Api::Error
-    #
     def error_type
+      @error_type ||=
+        if (c = is_a?(Class) ? self : self.class)
+          type = c.safe_const_get(:ERROR_TYPE)
+          type ||= c.name.demodulize.to_s.underscore.remove(/_error$/)
+          type&.to_sym
+        end
     end
+
+    # Error configuration extracted from "config/locales/error.en.yml".
+    #
+    # @return [Hash{Symbol=>String}]
+    #
+    def error_config
+      @error_config ||=
+        [:api, service].compact.reduce({}) do |result, config_section|
+          result.merge!(I18n.t("emma.error.#{config_section}", default: {}))
+        end
+    end
+
+    # Error types extracted from "config/locales/error.en.yml".
+    #
+    # (Entries whose names start with '_' are excluded).
+    #
+    # @return [Array<Symbol>]
+    #
+    def error_types
+      @error_types ||= error_config.keys.reject { |k| k.start_with?('_') }
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
 
     # The descriptive name of the service for use in display and messages.
     #
@@ -258,6 +225,12 @@ class Api::Error < RuntimeError
       keys << 'remote service'
       I18n.t(keys.shift, default: keys)
     end
+
+    # =========================================================================
+    # :section: ExecError::Methods overrides
+    # =========================================================================
+
+    public
 
     # Default error message for the current instance based on the name of its
     # class.
@@ -280,8 +253,8 @@ class Api::Error < RuntimeError
       keys = []
       keys << :"emma.error.#{source}.#{type}"       if source && type
       keys << :"emma.error.api.#{type}"             if type
-      keys << :"emma.error.#{source}.default"       if source
-      keys << :'emma.error.api.default'
+      keys << :"emma.error.#{source}._default"      if source
+      keys << :'emma.error.api._default'
       keys << "#{type&.capitalize || 'API'} error"  unless allow_nil
       I18n.t(keys.shift, default: keys, **opt)
     end

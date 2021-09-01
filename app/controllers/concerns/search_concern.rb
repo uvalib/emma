@@ -191,14 +191,13 @@ module SearchConcern
 
   protected
 
-  # Extract the URL parameter which specifies a title.
+  # Extract the URL parameter which specifies an index record.
   #
   # @return [String]                  Value of `params[:id]`.
-  # @return [nil]                     No :id, :titleId found.
+  # @return [nil]                     No :id, :recordId found.
   #
-  def set_title_id
-    # noinspection RubyYardReturnMatch
-    @title_id = params[:titleId] || params[:id]
+  def set_record_id
+    @record_id = params[:record_id] || params[:recordId] || params[:id]
   end
 
   # Re-cast URL parameters which are aliases for :identifier and redirect to

@@ -30,6 +30,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::UserAccount
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -51,7 +52,7 @@ module BookshareService::Request::UserAccount
   def get_user_identity(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'me', **opt)
-    Bs::Message::UserIdentity.new(response, error: exception)
+    api_return(Bs::Message::UserIdentity)
   end
     .tap do |method|
       add_api method => {
@@ -73,7 +74,7 @@ module BookshareService::Request::UserAccount
   def get_my_account(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', **opt)
-    Bs::Message::MyAccountSummary.new(response, error: exception)
+    api_return(Bs::Message::MyAccountSummary)
   end
     .tap do |method|
       add_api method => {
@@ -99,7 +100,7 @@ module BookshareService::Request::UserAccount
   def get_my_download_history(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'history', **opt)
-    Bs::Message::TitleDownloadList.new(response, error: exception)
+    api_return(Bs::Message::TitleDownloadList)
   end
     .tap do |method|
       add_api method => {
@@ -132,7 +133,7 @@ module BookshareService::Request::UserAccount
   def get_my_preferences(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'preferences', **opt)
-    Bs::Message::MyAccountPreferences.new(response, error: exception)
+    api_return(Bs::Message::MyAccountPreferences)
   end
     .tap do |method|
       add_api method => {
@@ -163,7 +164,7 @@ module BookshareService::Request::UserAccount
   def update_my_preferences(**opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'myaccount', 'preferences', **opt)
-    Bs::Message::MyAccountPreferences.new(response, error: exception)
+    api_return(Bs::Message::MyAccountPreferences)
   end
     .tap do |method|
       add_api method => {
@@ -204,7 +205,7 @@ module BookshareService::Request::UserAccount
   def get_my_recommendation_profile(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'recommendationProfile', **opt)
-    Bs::Message::RecommendationProfile.new(response, error: exception)
+    api_return(Bs::Message::RecommendationProfile)
   end
     .tap do |method|
       add_api method => {
@@ -238,7 +239,7 @@ module BookshareService::Request::UserAccount
   def update_my_recommendation_profile(**opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'myaccount', 'recommendationProfile', **opt)
-    Bs::Message::RecommendationProfile.new(response, error: exception)
+    api_return(Bs::Message::RecommendationProfile)
   end
     .tap do |method|
       add_api method => {

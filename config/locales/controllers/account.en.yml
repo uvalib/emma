@@ -152,7 +152,7 @@ en:
 
       # =======================================================================
 
-      new:              &ACCOUNT_NEW
+      new:              &NEW_ACTION
         label:          'Create'
         title:          'Create a Local EMMA User Account'
         tooltip:        'Create a new user account in the EMMA database.'
@@ -192,11 +192,11 @@ en:
       # =======================================================================
 
       create:
-        <<: *ACCOUNT_NEW
+        <<: *NEW_ACTION
 
       # =======================================================================
 
-      edit:             &ACCOUNT_EDIT
+      edit:             &EDIT_ACTION
         label:          'Change'
         title:          'Modify a Local EMMA User Account'
         tooltip:        'Modify an existing user account in the local database.'
@@ -232,11 +232,11 @@ en:
       # =======================================================================
 
       update:
-        <<: *ACCOUNT_EDIT
+        <<: *EDIT_ACTION
 
       # =======================================================================
 
-      delete:           &ACCOUNT_DELETE
+      delete:           &DELETE_ACTION
         label:          'Remove'
         title:          'Remove a Local EMMA User Account'
         tooltip:        'Delete an existing user account from the local database.'
@@ -272,21 +272,21 @@ en:
       # =======================================================================
 
       destroy:
-        <<: *ACCOUNT_DELETE
+        <<: *DELETE_ACTION
 
       # =======================================================================
 
       new_select:
-        <<: *ACCOUNT_NEW
+        <<: *NEW_ACTION
 
       # =======================================================================
 
       edit_select:
-        <<: *ACCOUNT_EDIT
+        <<: *EDIT_ACTION
 
       # =======================================================================
 
       delete_select:
-        <<: *ACCOUNT_DELETE
+        <<: *DELETE_ACTION
 
       # =======================================================================

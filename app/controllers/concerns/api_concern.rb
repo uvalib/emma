@@ -77,15 +77,15 @@ module ApiConcern
 
   # Get the current API exception message(s).
   #
-  # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Array<Class>] only          If given, limit to those service(s).
   #
-  # @return [Hash{Class=>String}]     Multiple services with error messages.
-  # @return [String]                  Current service error message.
-  # @return [nil]                     No service error or service not active.
+  # @return [Hash{Class=>ExecReport}]   Multiple services with error messages.
+  # @return [ExecReport]                Current service error message.
+  # @return [nil]                       No service error or service not active.
   #
-  def api_error_message(*only)
-    table = api_active_table(*only).transform_values(&:error_message).compact
-    # noinspection RubyYardReturnMatch
+  def api_exec_report(*only)
+    table = api_active_table(*only).transform_values(&:exec_report).compact
+    # noinspection RubyMismatchedReturnType
     (table.size == 1) ? table.values.first : table.presence
   end
 

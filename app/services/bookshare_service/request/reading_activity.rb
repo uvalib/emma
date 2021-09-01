@@ -17,6 +17,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::ReadingActivity
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -46,7 +47,7 @@ module BookshareService::Request::ReadingActivity
   def create_reading_event(**opt)
     opt = get_parameters(__method__, **opt)
     api(:post, 'readingEvents', **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {

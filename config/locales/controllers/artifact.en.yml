@@ -41,6 +41,8 @@ en:
           - fmt
           - dateAdded
 
+      # =======================================================================
+
       show:
         label:          'Artifact'
         title:          'Artifact Metadata'
@@ -49,28 +51,55 @@ en:
         display_fields: # @see 'en.emma.artifact.record'
           - !ruby/symbol all
 
-      new:
+      # =======================================================================
+
+      new:              &NEW_ACTION
         label:          'Upload'
         title:          'Add Artifact'
         tooltip:        'Upload a new Bookshare artifact.'
 
-      edit:
+      # =======================================================================
+
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
         label:          'Replace'
         title:          'Modify Artifact'
         tooltip:        'Make changes to this Bookshare artifact entry.'
 
-      delete:
+      # =======================================================================
+
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
         label:          'Delete'
         title:          'Delete Artifact'
         tooltip:        'Delete an artifact.'
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
+
+      # =======================================================================
 
       history:
         title:          'Artifact History'
         tooltip:        'View modifications for this Bookshare artifact entry.'
 
+      # =======================================================================
+
       download:
         label:          'Download'
         title:          'Artifact Download'
+
+      # =======================================================================
 
       retrieval:
         label:          'Download'

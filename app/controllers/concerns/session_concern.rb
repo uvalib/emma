@@ -213,7 +213,7 @@ module SessionConcern
   # Respond to page failures due to a failure to communicate with a remote
   # service.
   #
-  # @param [Api::Error, Faraday::Error] exception
+  # @param [ExecError, Faraday::Error] exception
   #
   # @return [nil]                     If not handled.
   # @return [Any]                     Otherwise.
@@ -221,7 +221,7 @@ module SessionConcern
   def connection_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
     if rendering_html?
-      flash_now_alert(exception) if flash.now[:alert].blank?
+      flash_now_alert(exception)
       render
     end
   end
@@ -236,7 +236,7 @@ module SessionConcern
   def fallback_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception, trace: true)
     if rendering_html?
-      flash_now_alert(exception) if flash.now[:alert].blank?
+      flash_now_alert(exception)
       render
     elsif posting_html?
       redirect_back(fallback_location: root_path, alert: exception.message)
@@ -315,7 +315,7 @@ module SessionConcern
 
   rescue => error
     __debug_exception('UNHANDLED EXCEPTION', error, trace: true)
-    flash_now_alert(*api_error_message) if api_error?
+    flash_now_alert(api_exec_report, html: true) if api_error?
 
   ensure
     last_operation_update

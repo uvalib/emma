@@ -36,15 +36,10 @@
     }
 
     // A new line within a flash message.
-    // @see FlashHelper::Entry#render
+    // @see FlashHelper::FlashPart#render
     .line {
 
-        display:    block;
-        margin-top: 0.5rem;
-
-        &.first {
-            margin-top: 0;
-        }
+        display: block;
 
         .part {
             display: inline-block;
@@ -57,5 +52,9 @@
         .first:not(.last) {
             font-weight: bold;
         }
+    }
+
+    .line + .line {
+        margin-top: 0.5rem;
     }
 }

@@ -7,12 +7,10 @@ __loading_begin(__FILE__)
 
 # SearchService::Request::Records
 #
-#--
-# noinspection RubyParameterNamingConvention
-#++
 module SearchService::Request::Records
 
   include SearchService::Common
+  include SearchService::Testing
 
   # ===========================================================================
   # :section:
@@ -103,7 +101,7 @@ module SearchService::Request::Records
     opt.slice(:prev_id, :prev_value).each { |k, v| opt[k] = CGI.unescape(v) }
     opt = get_parameters(__method__, **opt)
     api(:get, 'search', **opt)
-    Search::Message::SearchRecordList.new(response, error: exception)
+    api_return(Search::Message::SearchRecordList)
   end
     .tap do |method|
       add_api method => {
@@ -146,26 +144,41 @@ module SearchService::Request::Records
     end
 
   # == GET /record/:id
-  # == GET /record/:title_id
+  # == GET /record/:record_id
   #
-  # @param [String] titleId           Query.
+  # @param [String] record_id         Query.
   # @param [Hash]   opt               Passed to #api.
   #
   # @return [Search::Message::SearchRecord]
   #
-  # NOTE: This is theoretical -- the endpoint is not yet defined
+  # @note This method is not actually functional because it depends on a
+  #   Unified Search endpoint which does not exist.
   #
-  def get_record(titleId:, **opt)
-    opt.merge!(titleId: titleId)
-    opt = get_parameters(__method__, **opt)
+  def get_record(record_id:, **opt)
+    # NOTE: In order to try out this method for test purposes, additional
+    #   search terms are required in order for the API to perform a search.
+    opt.merge!(q: 'RWL', fmt: DublinCoreFormat.values) if opt.blank?
+    opt = get_parameters(__method__, record_id: record_id, **opt)
     api(:get, 'search', **opt)
-    Search::Message::SearchRecord.new(response, error: exception)
+    api_return(Search::Message::SearchRecord, recordId: record_id)
   end
     .tap do |method|
       add_api method => {
+        alias: {
+          fmt:        :format,          # NOTE: only for experimentation
+          keyword:    :q,               # NOTE: only for experimentation
+          query:      :q,               # NOTE: only for experimentation
+          record_id:  :recordId,
+        },
         required: {
-          titleId:              String,
-        }
+          recordId:   String,
+        },
+        optional: {
+          format:     DublinCoreFormat, # NOTE: only for experimentation
+          q:          String,
+        },
+        multi: %i[format],              # NOTE: only for experimentation
+        role:  :anonymous,
       }
     end
 

@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'emma/common'
+
 # Debugging support methods.
 #
 module Emma::Debug
@@ -255,7 +257,7 @@ module Emma::Debug
       if output.nil? || output.is_a?(Symbol)
         output = output.to_s
       else
-        output = output.inspect
+        output = to_utf8(output).inspect
       end
     rescue => error
       Log.debug { "#{__method__}: #{value.class}: #{error}" }
@@ -263,6 +265,54 @@ module Emma::Debug
       type   = ("{#{type}}" unless common)
       output = output&.truncate(max, omission: omission) || 'ERROR'
       return [type, output].compact.join(' ')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Generate lines to produce boxed-line text.
+    #
+    # @param [String]  text
+    # @param [Integer] line_length
+    # @param [Integer] gap_width
+    # @param [String]  char
+    #
+    # @return [Array<String>]
+    #
+    def __debug_box(text, line_length: 80, gap_width: 2, char: '#', **)
+      bar   = char * line_length
+      side  = char * 4
+      space = ' '
+      max   = line_length - (2 * (side.size + gap_width))
+      label = text.strip
+      if label.size > max
+        middle = space * max
+        left   = space * gap_width
+        right  = space * gap_width
+        spacer = [side, left, middle, right, side].join
+        label  = [side, left, label].join
+      else
+        middle = space * label.size
+        free   = max - middle.size + (2 * gap_width)
+        left   = free / 2
+        right  = left + (free - (2 * left))
+        left   = space * left
+        right  = space * right
+        spacer = [side, left, middle, right, side].join
+        label  = [side, left, label,  right, side].join
+      end
+      [
+        bar,
+        bar,
+        spacer,
+        label,
+        spacer,
+        bar,
+        bar
+      ]
     end
 
     # =========================================================================
@@ -391,7 +441,7 @@ module Emma::Debug
         args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
         args +=
           ApiService.table.map { |service, instance|
-            error = instance.error_message
+            error = instance.exec_report
             "#{service} ERROR: #{error.inspect}" if error.present?
           }.compact
       end
@@ -461,6 +511,19 @@ module Emma::Debug
         __debug_impl(item, *lines, opt)
       end
       __debug_items(*args, opt, &block) if block || args.present?
+    end
+
+    # Output a box which highlights the given text.
+    #
+    # @param [String] text
+    # @param [Hash]   opt             Passed to #__debug_box.
+    #
+    # @return [nil]
+    #
+    def __debug_banner(text, **opt)
+      __debug_impl("\n")
+      __debug_impl(__debug_box(text, **opt))
+      __debug_impl("\n")
     end
 
   end

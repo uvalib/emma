@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module IngestService::Request::Records
 
   include IngestService::Common
+  include IngestService::Testing
 
   # ===========================================================================
   # :section:
@@ -56,7 +57,7 @@ module IngestService::Request::Records
     opt[:meth] ||= __method__
     records = records.flat_map { |record| record_list(record) }
     api_send(:put, 'records', records, **opt)
-    Ingest::Message::Response.new(response, error: exception)
+    api_return(Ingest::Message::Response)
   end
     .tap do |method|
       add_api method => {
@@ -104,7 +105,7 @@ module IngestService::Request::Records
     opt[:meth] ||= __method__
     id_list = ids.flat_map { |id| identifier_list(id) }
     api_send(:post, 'recordDeletes', id_list, **opt)
-    Ingest::Message::Response.new(response, error: exception)
+    api_return(Ingest::Message::Response)
   end
     .tap do |method|
       add_api method => {
@@ -151,7 +152,7 @@ module IngestService::Request::Records
     opt[:meth] ||= __method__
     id_list = ids.flat_map { |id| identifier_list(id) }
     api_send(:post, 'recordGets', id_list, **opt)
-    Search::Message::SearchRecordList.new(response, error: exception)
+    api_return(Search::Message::SearchRecordList)
   end
     .tap do |method|
       add_api method => {
@@ -176,6 +177,9 @@ module IngestService::Request::Records
   #
   # @return [void]
   #
+  # == Usage Notes
+  # Clears and/or sets @exception as a side-effect.
+  #
   def api_send(verb, endpoint, body, **opt)
     body = Array.wrap(body).compact.uniq
     if body.present?
@@ -185,8 +189,8 @@ module IngestService::Request::Records
     else
       meth = opt[:meth] || __method__
       Log.info { "#{meth}: no records" }
-      @response  = nil
-      @exception = IngestService::NoInputError.new
+      @response = nil
+      set_error(no_input_error)
     end
   end
 

@@ -59,7 +59,7 @@ class Api::Record
     assert_serializer_type(@serializer_type) if @serializer_type
     @exception = error
     @exception = Api::Error.new(error) if error && !error.is_a?(Exception)
-    if @exception
+    if @exception && src.blank?
       @serializer_type = :hash
       initialize_attributes
     elsif src.is_a?(Api::Record)

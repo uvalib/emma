@@ -152,24 +152,6 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   protected
 
-  # Produce standard identifiers of the form "(prefix):(value)".
-  #
-  # @param [ActiveRecord::Associations::CollectionAssociation, Array<String,PublicationIdentifier>] ids
-  #
-  # @return [Array<String>]
-  #
-  # == Variations
-  #
-  # @overload normalize_identifiers(ids)
-  #   @param [ActiveRecord::Associations::CollectionAssociation] ids
-  #
-  # @overload normalize_identifiers(ids)
-  #   @param [Array<String,PublicationIdentifier>] ids
-  #
-  def normalize_identifiers(ids)
-    Array.wrap(ids).map { |id| PublicationIdentifier.cast(id)&.to_s }.compact
-  end
-
   # Produce a retrieval link for an item.
   #
   # @param [String] rid               An EMMA repository record ID.

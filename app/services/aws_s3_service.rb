@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 class AwsS3Service < ApiService
 
+  DESTRUCTIVE_TESTING = false
+
   include AwsS3
 
   # Include send/receive modules from "app/services/aws_s3_service/**.rb".

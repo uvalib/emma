@@ -20,6 +20,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::CollectionPeriodicals
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -55,7 +56,7 @@ module BookshareService::Request::CollectionPeriodicals
   def update_periodical(seriesId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'periodicals', seriesId, **opt)
-    Bs::Message::PeriodicalSeriesMetadataSummary.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSeriesMetadataSummary)
   end
     .tap do |method|
       add_api method => {
@@ -99,7 +100,7 @@ module BookshareService::Request::CollectionPeriodicals
   def update_periodical_edition(seriesId:, editionId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'periodicals', seriesId, 'editions', editionId, **opt)
-    Bs::Message::PeriodicalEdition.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalEdition)
   end
     .tap do |method|
       add_api method => {
@@ -137,7 +138,7 @@ module BookshareService::Request::CollectionPeriodicals
   def remove_periodical_edition(seriesId:, editionId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:delete, 'periodicals', seriesId, 'editions', editionId, **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {

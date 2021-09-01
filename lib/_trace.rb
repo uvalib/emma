@@ -23,6 +23,18 @@ def neutralize(*methods)
   end
 end
 
+# Convert a string to UTF-8 encoding.
+#
+# @param [String, *] v
+#
+# @return [String, *]
+#
+def to_utf8(v)
+  return v unless v.is_a?(String)
+  return v if (enc = v.encoding) == (utf = Encoding::UTF_8)
+  Encoding::Converter.new(enc, utf).convert(v) rescue v.dup.force_encoding(utf)
+end
+
 # =============================================================================
 # Debugging - console output
 # =============================================================================
@@ -82,6 +94,7 @@ def __output_impl(*args)
           else             arg.inspect
         end
       }.map { |arg|
+        arg = to_utf8(arg)
         if max
           next unless max.positive?
           size = arg.size + sep.size
@@ -152,11 +165,12 @@ DEBUG_MAX = 2048
 # @return [nil]
 #
 def __debug_impl(*args, &block)
-  # noinspection RubyNilAnalysis
-  opt = args.extract_options!.merge(debug: true)
-  opt[:leader]   ||= DEBUG_LEADER
-  opt[:max]      ||= DEBUG_MAX
-  opt[:omission] ||= '...'
+  opt = {
+    debug:    true,
+    leader:   DEBUG_LEADER,
+    max:      DEBUG_MAX,
+    omission: '...'
+  }.merge!(args.extract_options!)
   __output_impl(*args, opt, &block)
 end
 

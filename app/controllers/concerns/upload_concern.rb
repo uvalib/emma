@@ -15,8 +15,11 @@ module UploadConcern
 
   include Emma::Csv
   include Emma::Json
-  include ParamsHelper
+
   include UploadWorkflow::Properties
+
+  include ParamsHelper
+  include FlashHelper
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -310,11 +313,11 @@ module UploadConcern
 
     Upload.search_records(*items, **opt)
 
-  rescue RangeError => e
+  rescue RangeError => error
 
-    # Re-cast as a SubmitError so that UploadController#index redirects to
-    # the main index page instead of the root page.
-    raise UploadWorkflow::SubmitError, e.message
+    # Re-cast as a SubmitError so that UploadController#index redirects to the
+    # main index page instead of the root page.
+    raise UploadWorkflow::SubmitError.new(error)
 
   end
 
@@ -322,7 +325,7 @@ module UploadConcern
   #
   # @param [String, Hash, Upload] id
   #
-  # @raise [RuntimeError]             If *item* not found.
+  # @raise [UploadWorkflow::SubmitError]  If *item* not found.
   #
   # @return [Upload, nil]
   #
@@ -376,8 +379,8 @@ module UploadConcern
   def wf_single(rec: nil, data: nil, **opt)
     from  = (opt.delete(:from) || calling_method)&.to_sym
     event = opt.delete(:event)&.to_s&.delete_suffix('!')&.to_sym
-    raise "#{__method__}: missing :from" unless from
-    raise "#{from}: missing :event"      unless event
+    raise "#{__method__}: missing :from"           unless from
+    raise "#{__method__}: #{from}: missing :event" unless event
     rec  = (rec  || @db_id || @identifier unless rec  == :unset)
     data = (data || workflow_parameters unless data == :unset)
     opt[:variant] ||= event if UploadWorkflow::Single.variant?(event)
@@ -427,8 +430,8 @@ module UploadConcern
   def wf_bulk(rec: nil, data: nil, **opt)
     from  = (opt.delete(:from) || calling_method)&.to_sym
     event = opt.delete(:event)&.to_s&.delete_suffix('!')
-    raise "#{__method__}: missing :from" unless from
-    raise "#{from}: missing :event"      unless event
+    raise "#{__method__}: missing :from"           unless from
+    raise "#{__method__}: #{from}: missing :event" unless event
     rec   = (rec == :unset) ? [] : (rec || []) # TODO: transaction record?
     data  = [] if data == :unset
     unless data
@@ -487,46 +490,53 @@ module UploadConcern
 
   # Generate a response to a POST.
   #
-  # @param [Symbol, Integer, Exception] status
-  # @param [Exception, String, Array]   item
-  # @param [String, FalseClass]         redirect
-  # @param [Boolean]                    xhr       Override `request.xhr?`.
-  # @param [Symbol]                     meth      Calling method.
+  # @param [Symbol, Integer, Exception]                            status
+  # @param [Exception, String, FlashPart, Array<String,FlashPart>] item
+  # @param [String, FalseClass]       redirect
+  # @param [Boolean]                  xhr       Override `request.xhr?`.
+  # @param [Symbol]                   meth      Calling method.
   #
-  # @return [*]
+  # @return [void]
   #
   # == Variations
   #
-  # @overload post_response(status, item, **)
-  #   @param [Symbol, Integer]          status
-  #   @param [Exception, String, Array] item
+  # @overload post_response(status, items, redirect: nil, xhr: nil, meth: nil)
+  #   @param [Symbol, Integer]                            status
+  #   @param [String, FlashPart, Array<String,FlashPart>] items
+  #   @param [String, FalseClass]                         redirect
+  #   @param [Boolean]                                    xhr
+  #   @param [Symbol]                                     meth
   #
-  # @overload post_response(except, **)
-  #   @param [Exception] except
+  # @overload post_response(status, error, redirect: nil, xhr: nil, meth: nil)
+  #   @param [Symbol, Integer]        status
+  #   @param [Exception]              error
+  #   @param [String, FalseClass]     redirect
+  #   @param [Boolean]                xhr
+  #   @param [Symbol]                 meth
+  #
+  # @overload post_response(error, redirect: nil, xhr: nil, meth: nil)
+  #   @param [Exception]              error
+  #   @param [String, FalseClass]     redirect
+  #   @param [Boolean]                xhr
+  #   @param [Symbol]                 meth
   #
   def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)
     meth ||= calling_method
     __debug_items("UPLOAD #{meth} #{__method__}", binding)
-    status, item = [nil, status] if status.is_a?(Exception)
-
-    # noinspection RailsParamDefResolve
-    if item.is_a?(Exception)
-      status ||= item.try(:code) || item.try(:response).try(:status)
-      message = Array.wrap(item)
-    else
-      message = Array.wrap(item).map { |v| ErrorEntry[v] }
+    unless status.is_a?(Symbol) || status.is_a?(Integer)
+      status, item = [nil, status]
     end
-    status ||= :bad_request
+
+    xhr       = request_xhr? if xhr.nil?
+    html      = !xhr || redirect.present?
+    report    = item.presence && ExecReport[item]
+    status  ||= report&.http_status || :bad_request
+    message   = report&.render(html: html)&.presence
+    message ||= UploadWorkflow::Errors.make_label(item, default: '')
 
     opt = { meth: meth, status: status }
-    xhr = request_xhr? if xhr.nil?
-    if xhr && !redirect
-      if message.present?
-        head status, 'X-Flash-Message': flash_xhr(*message, **opt)
-      else
-        head status
-      end
-    else
+
+    if html
       if %i[ok found].include?(status) || (200..399).include?(status)
         flash_success(*message, **opt)
       else
@@ -537,6 +547,10 @@ module UploadConcern
         when String then redirect_to(redirect)
         else             redirect_back(fallback_location: upload_index_path)
       end
+    elsif message.present?
+      head status, 'X-Flash-Message': flash_xhr(*message, **opt)
+    else
+      head status
     end
   end
 

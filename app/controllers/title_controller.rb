@@ -87,6 +87,7 @@ class TitleController < ApplicationController
       opt   = pagination_setup(opt)
       @list = bs_api.get_titles(**opt)
       pagination_finalize(@list, :titles, **opt)
+      flash_now_alert(@list.exec_report) if @list.error?
     end
     respond_to do |format|
       format.html
@@ -104,6 +105,7 @@ class TitleController < ApplicationController
   def show
     __debug_route
     @item = bs_api.get_title(bookshareId: @bookshare_id)
+    flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }

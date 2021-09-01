@@ -25,8 +25,8 @@ module IaDownloadService::Common
   # @param [Hash]         headers     Default: {}.
   # @param [String, Hash] body        Default: *nil* unless `#update_request?`.
   #
-  # @return [(String,Hash)]           Message body plus headers for GET.
-  # @return [(Hash,Hash)]             Query plus headers for PUT, POST, PATCH.
+  # @return [(Hash,Hash,String)]      Message body plus headers for GET.
+  # @return [(Hash,Hash,Hash)]        Query plus headers for PUT, POST, PATCH.
   #
   def api_headers(params = nil, headers = nil, body = nil)
     super.tap do |_prms, hdrs, _body|
@@ -62,6 +62,9 @@ module IaDownloadService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
+  # == Usage Notes
+  # Sets @response as a side-effect.
+  #
   # == Implementation Notes
   # This will take several iterations, depending on the nature of the IA file.
   #
@@ -89,24 +92,25 @@ module IaDownloadService::Common
     dbg  = +"... #{__method__} | #{pass}"
     __debug_line(dbg) { { action: action, params: params, headers: headers } }
 
-    response = connection.send(verb, action, params, headers)
-    raise empty_response_error(response) if response.nil?
-    case response.status
+    @response = connection.send(verb, action, params, headers)
+    raise empty_result_error if @response.nil?
+
+    case @response.status
 
       when 200, 201, 203..299
         # If the requested file is directly available from S3 then we arrive
         # here in pass 1.  In later passes, the requested file will have been
         # generated on-the-fly by the IA server.
-        __debug_line(dbg, 'GOOD') { "#{response.body&.size || 0} bytes" }
-        raise empty_response_error(response) if response.body.blank?
-        raise html_response_error(response)  if response.body =~ /\A\s*</
+        result = @response.body
+        __debug_line(dbg, 'GOOD') { "#{result&.size || 0} bytes" }
+        raise empty_result_error(@response) if result.blank?
+        raise html_result_error(@response)  if result =~ /\A\s*</
         action = nil
 
       when 301, 302, 303, 307, 308
         # If the requested file was not directly available, the redirect
         # should indicate the protected file if it exists.
-        action    = response['Location']
-        raise redirect_error(response) if action.blank?
+        action    = @response['Location'] || :missing
         encrypted = action.match?(/_encrypted[_.]/)
         action    = action.remove('_encrypted') if encrypted
         __debug_line(dbg, 'REDIRECT') do
@@ -132,18 +136,23 @@ module IaDownloadService::Common
 
         else
           __debug_line(dbg, 'FAIL', 'encrypted fallback failed')
-          raise response_error(response)
+          raise response_error(@response)
         end
     end
-    unless action.nil? || opt[:no_redirect] || options[:no_redirect]
-      raise redirect_limit_error if pass >= max_redirects
+
+    if action.nil? || opt[:no_redirect] || options[:no_redirect]
+      @response
+    elsif action == :missing
+      raise redirect_error(@response)
+    elsif pass >= max_redirects
+      raise redirect_limit_error
+    else
       opt[:redirection] = (pass += 1)
       __debug_line(leader: '!!!') do
         [service_name] << "REDIRECT #{pass} TO #{action.inspect}"
       end
-      response = transmit(:get, action, params, headers, **opt)
+      transmit(:get, action, params, headers, **opt)
     end
-    response
   end
 
   # ===========================================================================

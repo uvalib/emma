@@ -8,16 +8,16 @@ en:
 
     error:
 
-      default:          'unknown error'
+      _default:         'unknown error'
       failure:          'PROBLEM: %{error}'
       success:          'SUCCESS: %{file}'
 
       api:
 
-        # @see ApiService::Error.error_subclass
+        # @see ApiService::Error.error_classes
 
         _name:          'remote service API'
-        default:        'Unknown %{service} error'
+        _default:       'Unknown %{service} error'
 
         # == Transmission errors
 
@@ -45,13 +45,13 @@ en:
 
       aws_s3:
 
-        # @see AwsS3Service::Error.error_subclass
+        # @see AwsS3Service::Error.error_classes
 
         _name:          'AWS S3 interface'
 
       bookshare:
 
-        # @see BookshareService::Error.error_subclass
+        # @see BookshareService::Error.error_classes
 
         _name:          'Bookshare service'
 
@@ -66,19 +66,19 @@ en:
 
       ia_download:
 
-        # @see IaDownloadService::Error.error_subclass
+        # @see IaDownloadService::Error.error_classes
 
         _name:          'Internet Archive download service'
 
       ingest:
 
-        # @see IngestService::Error.error_subclass
+        # @see IngestService::Error.error_classes
 
         _name:          'Bookshare Federated Ingest service'
 
       search:
 
-        # @see SearchService::Error.error_subclass
+        # @see SearchService::Error.error_classes
 
         _name:          'EMMA Unified Search service'
 

@@ -23,6 +23,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::ReadingLists
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -50,7 +51,7 @@ module BookshareService::Request::ReadingLists
   def get_my_reading_lists(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'mylists', **opt)
-    Bs::Message::ReadingListList.new(response, error: exception)
+    api_return(Bs::Message::ReadingListList)
   end
     .tap do |method|
       add_api method => {
@@ -84,7 +85,7 @@ module BookshareService::Request::ReadingLists
     opt.merge!(name: name, access: access)
     opt = get_parameters(__method__, **opt)
     api(:post, 'mylists', **opt)
-    Bs::Message::ReadingList.new(response, error: exception)
+    api_return(Bs::Message::ReadingList)
   end
     .tap do |method|
       add_api method => {
@@ -117,7 +118,7 @@ module BookshareService::Request::ReadingLists
     opt.reverse_merge!(enabled: true)
     opt = get_parameters(__method__, **opt)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
-    Bs::Message::ReadingListUserView.new(response, error: exception)
+    api_return(Bs::Message::ReadingListUserView)
   end
     .tap do |method|
       add_api method => {
@@ -147,7 +148,7 @@ module BookshareService::Request::ReadingLists
     opt.reverse_merge!(enabled: false)
     opt = get_parameters(__method__, **opt)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
-    Bs::Message::ReadingListUserView.new(response, error: exception)
+    api_return(Bs::Message::ReadingListUserView)
   end
     .tap do |method|
       add_api method => {
@@ -184,7 +185,7 @@ module BookshareService::Request::ReadingLists
   def get_reading_lists_list(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'lists', **opt)
-    Bs::Message::ReadingListList.new(response, error: exception)
+    api_return(Bs::Message::ReadingListList)
   end
     .tap do |method|
       add_api method => {
@@ -245,7 +246,7 @@ module BookshareService::Request::ReadingLists
   def update_reading_list(readingListId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'lists', readingListId, **opt)
-    Bs::Message::ReadingList.new(response, error: exception)
+    api_return(Bs::Message::ReadingList)
   end
     .tap do |method|
       add_api method => {
@@ -281,7 +282,7 @@ module BookshareService::Request::ReadingLists
   def get_reading_list_titles(readingListId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'lists', readingListId, 'titles', **opt)
-    Bs::Message::ReadingListTitlesList.new(response, error: exception)
+    api_return(Bs::Message::ReadingListTitlesList)
   end
     .tap do |method|
       add_api method => {
@@ -317,7 +318,7 @@ module BookshareService::Request::ReadingLists
     opt.merge!(bookshareId: bookshareId)
     opt = get_parameters(__method__, **opt)
     api(:post, 'lists', readingListId, 'titles', **opt)
-    Bs::Message::ReadingListTitlesList.new(response, error: exception)
+    api_return(Bs::Message::ReadingListTitlesList)
   end
     .tap do |method|
       add_api method => {
@@ -347,7 +348,7 @@ module BookshareService::Request::ReadingLists
   def remove_reading_list_title(readingListId:, bookshareId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:delete, 'lists', readingListId, 'titles', bookshareId, **opt)
-    Bs::Message::ReadingListTitlesList.new(response, error: exception)
+    api_return(Bs::Message::ReadingListTitlesList)
   end
     .tap do |method|
       add_api method => {

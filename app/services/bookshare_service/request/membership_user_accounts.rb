@@ -19,6 +19,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::MembershipUserAccounts
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -43,7 +44,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, **opt)
-    Bs::Message::UserAccount.new(response, error: exception)
+    api_return(Bs::Message::UserAccount)
   end
     .tap do |method|
       add_api method => {
@@ -93,7 +94,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, **opt)
-    Bs::Message::UserAccount.new(response, error: exception)
+    api_return(Bs::Message::UserAccount)
   end
     .tap do |method|
       add_api method => {
@@ -161,7 +162,7 @@ module BookshareService::Request::MembershipUserAccounts
   def create_account(**opt)
     opt = get_parameters(__method__, **opt)
     api(:post, 'accounts', **opt)
-    Bs::Message::UserAccount.new(response, error: exception)
+    api_return(Bs::Message::UserAccount)
   end
     .tap do |method|
       add_api method => {
@@ -210,7 +211,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'password', **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {
@@ -248,7 +249,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'subscriptions', **opt)
-    Bs::Message::UserSubscriptionList.new(response, error: exception)
+    api_return(Bs::Message::UserSubscriptionList)
   end
     .tap do |method|
       add_api method => {
@@ -286,7 +287,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'subscriptions', **opt)
-    Bs::Message::UserSubscription.new(response, error: exception)
+    api_return(Bs::Message::UserSubscription)
   end
     .tap do |method|
       add_api method => {
@@ -326,7 +327,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'subscriptions', subscriptionId, **opt)
-    Bs::Message::UserSubscription.new(response, error: exception)
+    api_return(Bs::Message::UserSubscription)
   end
     .tap do |method|
       add_api method => {
@@ -366,7 +367,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'subscriptions', subscriptionId, **opt)
-    Bs::Message::UserSubscription.new(response, error: exception)
+    api_return(Bs::Message::UserSubscription)
   end
     .tap do |method|
       add_api method => {
@@ -405,7 +406,7 @@ module BookshareService::Request::MembershipUserAccounts
   def get_subscription_types(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'subscriptiontypes', **opt)
-    Bs::Message::UserSubscriptionTypeList.new(response, error: exception)
+    api_return(Bs::Message::UserSubscriptionTypeList)
   end
     .tap do |method|
       add_api method => {
@@ -436,7 +437,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'pod', **opt)
-    Bs::Message::UserPodList.new(response, error: exception)
+    api_return(Bs::Message::UserPodList)
   end
     .tap do |method|
       add_api method => {
@@ -471,7 +472,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'pod', **opt)
-    Bs::Message::UserPodList.new(response, error: exception)
+    api_return(Bs::Message::UserPodList)
   end
     .tap do |method|
       add_api method => {
@@ -507,7 +508,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'pod', disabilityType, **opt)
-    Bs::Message::UserPodList.new(response, error: exception)
+    api_return(Bs::Message::UserPodList)
   end
     .tap do |method|
       add_api method => {
@@ -541,7 +542,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'pod', disabilityType, **opt)
-    Bs::Message::UserPodList.new(response, error: exception)
+    api_return(Bs::Message::UserPodList)
   end
     .tap do |method|
       add_api method => {
@@ -579,7 +580,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'agreements', **opt)
-    Bs::Message::UserSignedAgreementList.new(response, error: exception)
+    api_return(Bs::Message::UserSignedAgreementList)
   end
     .tap do |method|
       add_api method => {
@@ -615,7 +616,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'agreements', **opt)
-    Bs::Message::UserSignedAgreement.new(response, error: exception)
+    api_return(Bs::Message::UserSignedAgreement)
   end
     .tap do |method|
       add_api method => {
@@ -653,7 +654,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'agreements', id, 'expired', **opt)
-    Bs::Message::UserSignedAgreement.new(response, error: exception)
+    api_return(Bs::Message::UserSignedAgreement)
   end
     .tap do |method|
       add_api method => {
@@ -691,7 +692,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'recommendationProfile', **opt)
-    Bs::Message::RecommendationProfile.new(response, error: exception)
+    api_return(Bs::Message::RecommendationProfile)
   end
     .tap do |method|
       add_api method => {
@@ -734,7 +735,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'recommendationProfile', **opt)
-    Bs::Message::RecommendationProfile.new(response, error: exception)
+    api_return(Bs::Message::RecommendationProfile)
   end
     .tap do |method|
       add_api method => {
@@ -788,7 +789,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'preferences', **opt)
-    Bs::Message::MyAccountPreferences.new(response, error: exception)
+    api_return(Bs::Message::MyAccountPreferences)
   end
     .tap do |method|
       add_api method => {
@@ -828,7 +829,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'preferences', **opt)
-    Bs::Message::MyAccountPreferences.new(response, error: exception)
+    api_return(Bs::Message::MyAccountPreferences)
   end
     .tap do |method|
       add_api method => {
@@ -876,7 +877,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'periodicals', **opt)
-    Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSubscriptionList)
   end
     .tap do |method|
       add_api method => {
@@ -910,7 +911,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'periodicals', **opt)
-    Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSubscriptionList)
   end
     .tap do |method|
       add_api method => {
@@ -944,7 +945,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'periodicals', seriesId, **opt)
-    Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSubscriptionList)
   end
     .tap do |method|
       add_api method => {
@@ -989,7 +990,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'lists', **opt)
-    Bs::Message::ReadingListList.new(response, error: exception)
+    api_return(Bs::Message::ReadingListList)
   end
     .tap do |method|
       add_api method => {
@@ -1031,7 +1032,7 @@ module BookshareService::Request::MembershipUserAccounts
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'lists', **opt)
-    Bs::Message::ReadingList.new(response, error: exception)
+    api_return(Bs::Message::ReadingList)
   end
     .tap do |method|
       add_api method => {

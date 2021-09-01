@@ -491,7 +491,7 @@ module Upload::FileMethods
   # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
   # @param [Boolean] keep_cached      If *true*, don't delete the original.
   #
-  # @return [void]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def promote_cached_file(no_raise: false, keep_cached: false)
     __debug_items(binding)
@@ -499,8 +499,7 @@ module Upload::FileMethods
     old_file   = !keep_cached
     old_file &&= active_file&.data
     old_file &&= FileUploader::UploadedFile.new(old_file)
-    active_file_attacher.promote
-    old_file&.delete
+    active_file_attacher.promote.tap { old_file&.delete }
   rescue => error
     log_exception(error, __method__)
     raise error unless no_raise
@@ -511,13 +510,14 @@ module Upload::FileMethods
   #
   # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
   #
-  # @return [void]
+  # @return [TrueClass, nil]
   #
   def delete_cached_file(no_raise: false)
     __debug_items(binding)
     return unless active_attach_cached
     active_file_attacher.destroy
     active_file_attacher.set(nil)
+    true
   rescue => error
     log_exception(error, __method__)
     raise error unless no_raise

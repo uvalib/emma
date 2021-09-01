@@ -16,6 +16,8 @@ __loading_begin(__FILE__)
 #
 class BookshareService < ApiService
 
+  DESTRUCTIVE_TESTING = false
+
   include Bs
 
   # Include send/receive modules from "app/services/bookshare_service/**.rb".

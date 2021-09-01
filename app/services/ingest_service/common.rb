@@ -35,8 +35,8 @@ module IngestService::Common
   # @param [Hash, nil]         headers  Default: {}.
   # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
   #
-  # @return [(String,Hash)]           Message body plus headers for GET.
-  # @return [(Hash,Hash)]             Query plus headers for PUT, POST, PATCH.
+  # @return [(Hash,Hash,String)]      Message body plus headers for GET.
+  # @return [(Hash,Hash,Hash)]        Query plus headers for PUT, POST, PATCH.
   #
   def api_headers(params = nil, headers = nil, body = nil)
     params, headers, body = super
@@ -70,21 +70,24 @@ module IngestService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
+  # == Usage Notes
+  # Sets @response as a side-effect.
+  #
   def transmit(verb, action, params, headers, **opt)
-    super.tap do |response|
-      if response.is_a?(Faraday::Response)
+    super.tap do |resp|
+      if resp.is_a?(Faraday::Response)
         # noinspection RubyCaseWithoutElseBlockInspection
-        case response.status
+        case resp.status
           when 202
             # NOTE: *May* erroneously be the status for some bad conditions.
-            if response.body.present?
-              __debug { "INGEST: HTTP 202 with body #{response.body.inspect}" }
-              raise response_error(response)
+            if resp.body.present?
+              __debug { "INGEST: HTTP 202 with body #{resp.body.inspect}" }
+              raise response_error(resp)
             end
           when 207
             # Partial success implies partial failure:
-            __debug { "INGEST: HTTP 207 with body #{response.body.inspect}" }
-            raise response_error(response)
+            __debug { "INGEST: HTTP 207 with body #{resp.body.inspect}" }
+            raise response_error(resp)
         end
       end
     end

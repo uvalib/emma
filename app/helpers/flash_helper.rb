@@ -19,12 +19,6 @@ module FlashHelper
 
   public
 
-  # Fall-back error message.
-  #
-  # @type [String]
-  #
-  DEFAULT_ERROR = I18n.t('emma.error.default', default: 'unknown').freeze
-
   # Maximum length of any one flash message.
   #
   # @type [Integer]
@@ -53,166 +47,78 @@ module FlashHelper
 
   # Each instance translates to a distinct line in the flash message.
   #
-  class Entry
+  class FlashPart < ExecReport::FlashPart
 
     include HtmlHelper
 
-    # Distinct portions of the entry.
-    #
-    # @type [Array<Upload, Hash, String, Integer>]
-    #
-    attr_reader :parts
-
-    alias_method :to_a, :parts
-
     # =========================================================================
-    # :section:
+    # :section: ExecReport::FlashPart overrides
     # =========================================================================
 
     public
 
     # Create a new instance.
     #
-    # @param [Array<Entry, Hash, String, Array, *>] parts
-    #
-    # == Variations
-    #
-    # @overload initialize(other)
-    #   @param [Entry] other
-    #
-    # @overload initialize(first, *parts)
-    #   @param [String, Array]               first
-    #   @param [Array<String, Entry, Array>] parts
-    #
-    def initialize(*parts)
-      @parts = parts.flat_map { |part| make_parts(part) }.compact
+    def initialize(topic, details = nil)
+      super
+      @render_html = true
     end
 
     # =========================================================================
-    # :section:
-    # =========================================================================
-
-    protected
-
-    # Process an object to extract parts.
-    #
-    # @param [Entry, Hash, String, Array, *] part
-    #
-    def make_parts(part)
-      case part
-        when nil    then part
-        when Entry  then part.parts
-        when Array  then part.map { |v| send(__method__, v) }
-        when Hash   then part.to_a.flatten(1).map { |v| send(__method__, v) }
-        else             transform(part)
-      end
-    end
-
-    # Process a single object to make it a part.
-    #
-    # @param [*] part
-    #
-    # @return [String]
-    #
-    def transform(part)
-      part.to_s
-    end
-
-    # =========================================================================
-    # :section:
+    # :section: ExecReport::FlashPart overrides
     # =========================================================================
 
     public
 
-    # Generate a string representation of the parts of the entry.
-    #
-    # @return [String]
-    #
-    #--
-    # noinspection RubyYardParamTypeMatch
-    #++
-    def to_s
-      count  = @parts&.size || 0
-      result = +''
-      result << first_part(@parts.first)          if count > 0
-      result << ': '                              if count > 1
-      result << @parts[1..-2].join(', ') << ', '  if count > 2
-      result << last_part(@parts.last)            if count > 1
-      result
-    end
-
     # Generate HTML elements for the parts of the entry.
     #
-    # @param [Hash] opt               Passed to outer #html_div.
+    # @param [Integer, nil] first     Index of first column (def: 1).
+    # @param [Integer, nil] last      Index of last column (def: `parts.size`).
+    # @param [Hash]         part      Options passed to inner #html_div.
+    # @param [Hash]         opt       Passed to outer #html_div
+    #
+    # @option opt [String, nil]  :separator   Default: #HTML_BREAK.
+    # @option opt [Boolean, nil] :html
     #
     # @return [ActiveSupport::SafeBuffer]
     #
     # @see #render_part
     #
-    def render(**opt)
-      prepend_classes!(opt, 'line').merge!(separator: ' ')
+    def render(first: nil, last: nil, part: nil, **opt)
+      prepend_classes!(opt, 'line')
+      opt[:separator] ||= HTML_BREAK
       html_div(opt) do
-        if @parts.size > 1
-          n = 0
-          @parts.map { |part| render_part(part, (n += 1), last: @parts.size) }
-        else
-          @parts.map { |part| first_part(part, html: true) }
-        end
+        part = opt.slice(:html, :separator).reverse_merge(part || {})
+        super(first: first, last: last, **part)
       end
     end
 
-    # render_part
+    # =========================================================================
+    # :section: ExecReport::FlashPart::BaseMethods overrides
+    # =========================================================================
+
+    protected
+
+    # Generate an HTML element for a single part of the entry.
     #
-    # @param [String]       part
-    # @param [Integer, nil] position  Position of part (starting from 1).
-    # @param [Hash]         opt       Passed to #html_div except for:
-    #
-    # @option [Integer] :first        Index of the first column (default: 1).
-    # @option [Integer] :last         Index of the last column.
+    # @param [String, nil]  part
+    # @param [Integer, nil] pos       Position of part (starting from 1).
+    # @param [Integer, nil] first     Index of the first column.
+    # @param [Integer, nil] last      Index of the last column.
+    # @param [Hash]         opt       Passed to #html_div.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    # @see #first_part
-    # @see #last_part
-    #
-    def render_part(part, position = nil, **opt)
-      first   = opt.delete(:first) || 1
-      last    = opt.delete(:last) || -1
-      classes = %w(part)
-      classes << "col-#{position}" if position
-      classes << 'first'           if position == first
-      classes << 'last'            if position == last
-      if position == first
-        part = first_part(part, html: true)
-      elsif position == last
-        part = last_part(part, html: true)
+    def render_part(part, pos: nil, first: 1, last: -1, **opt)
+      html_opt = opt.except(:xhr, :html, :separator, :separators)
+      classes  = %w(part)
+      classes << "col-#{pos}" if pos
+      classes << 'first'      if pos == first
+      classes << 'last'       if pos == last
+      prepend_classes!(html_opt, *classes)
+      html_div(html_opt) do
+        super(part, **opt)
       end
-      prepend_classes!(opt, *classes)
-      html_div(part, opt)
-    end
-
-    # A hook for treating the first part of a entry as special.
-    #
-    # @param [String]  text
-    # @param [Boolean] html           If *true*, allow for HTML formatting.
-    #
-    # @return [String]                    If *html* is *false*.
-    # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
-    #
-    def first_part(text, html: false)
-      html ? ERB::Util.h(text) : text
-    end
-
-    # A hook for treating the first part of a entry as special.
-    #
-    # @param [String]  text
-    # @param [Boolean] html           If *true*, allow for HTML formatting.
-    #
-    # @return [String]                    If *html* is *false*.
-    # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
-    #
-    def last_part(text, html: false)
-      html ? ERB::Util.h(text) : text
     end
 
     # =========================================================================
@@ -221,11 +127,11 @@ module FlashHelper
 
     public
 
-    # A short-cut for creating an Entry only if required.
+    # A short-cut for creating a FlashHelper::FlashPart only if required.
     #
-    # @param [Entry, *] other
+    # @param [FlashPart, *] other
     #
-    # @return [Entry]
+    # @return [FlashPart]
     #
     def self.[](other)
       other.is_a?(self) ? other : new(other)
@@ -241,8 +147,8 @@ module FlashHelper
 
   # Success flash notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -250,14 +156,14 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_success(*args, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     flash_notice(*args, topic: :success, **opt)
   end
 
   # Failure flash notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -265,15 +171,15 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_failure(*args, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     flash_alert(*args, topic: :failure, **opt)
   end
 
   # Flash notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Symbol, nil]                          topic
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Symbol, nil]                                         topic
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -281,15 +187,15 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_notice(*args, topic: nil, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     set_flash(*args, topic: topic, type: :notice, **opt)
   end
 
   # Flash alert.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Symbol, nil]                          topic
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Symbol, nil]                                         topic
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -297,26 +203,26 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_alert(*args, topic: nil, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     set_flash(*args, topic: topic, type: :alert, **opt)
   end
 
   # Flash notification, which appears on the next page to be rendered.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Symbol]                               type  :alert or :notice
-  # @param [Symbol, nil]                          topic
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Symbol]      type         :alert or :notice
+  # @param [Symbol, nil] topic
+  # @param [Hash]        opt
   #
   # @return [void]
   #
   # @see #flash_format
   #
   def set_flash(*args, type:, topic: nil, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     target  = flash_target(type)
     message = flash_format(*args, topic: topic, **opt)
-    flash[target] = message
+    flash[target] = [*flash[target], *message]
   end
 
   # ===========================================================================
@@ -327,8 +233,8 @@ module FlashHelper
 
   # Success flash now.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -336,14 +242,14 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_now_success(*args, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     flash_now_notice(*args, topic: :success, **opt)
   end
 
   # Failure flash now.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -351,15 +257,15 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_now_failure(*args, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     flash_now_alert(*args, topic: :failure, **opt)
   end
 
   # Flash now notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Symbol, nil]                          topic
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Symbol, nil]                                         topic
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -367,15 +273,15 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_now_notice(*args, topic: nil, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     set_flash_now(*args, topic: topic, type: :notice, **opt)
   end
 
   # Flash now alert.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Symbol, nil]                          topic
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Symbol, nil]                                         topic
+  # @param [Hash]                                                opt
   #
   # @return [void]
   #
@@ -383,27 +289,27 @@ module FlashHelper
   # @see #flash_format
   #
   def flash_now_alert(*args, topic: nil, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     set_flash_now(*args, topic: topic, type: :alert, **opt)
   end
 
   # Flash now notification, which appears on the current page when it is
   # rendered.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Symbol]                               type  :alert or :notice
-  # @param [Symbol, nil]                          topic
-  # @param [Hash]                                 opt
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Symbol]      type         :alert or :notice
+  # @param [Symbol, nil] topic
+  # @param [Hash]        opt
   #
   # @return [void]
   #
   # @see #flash_format
   #
   def set_flash_now(*args, type:, topic: nil, **opt)
-    prepend_flash_source!(args)
+    prepend_flash_source!(args, **opt)
     target  = flash_target(type)
     message = flash_format(*args, topic: topic, **opt)
-    flash.now[target] = message
+    flash.now[target] = [*flash.now[target], *message]
   end
 
   # ===========================================================================
@@ -415,12 +321,14 @@ module FlashHelper
   # Create items(s) to be included in the 'X-Flash-Message' header to support
   # the ability of the client to update the flash display.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Hash]                                                opt
   #
   # @see #flash_format
   #
   def flash_xhr(*args, **opt)
     opt[:xhr] = true
+    prepend_flash_source!(args, **opt)
     flash_format(*args, topic: nil, **opt)
   end
 
@@ -436,13 +344,16 @@ module FlashHelper
   # Prepend the method invoking flash if there is not already one at the start
   # of *args*.
   #
-  # @param [Array] args
+  # @param [Array]          args
+  # @param [Symbol, String] meth      Calling method (if not at args[0]).
   #
   # @return [Array]                   The original *args*, possibly modified.
   #
-  def prepend_flash_source!(args)
-    caller_name = (calling_method(3)&.to_sym unless args.first.is_a?(Symbol))
-    args.unshift(caller_name) if caller_name
+  def prepend_flash_source!(args, meth: nil, **)
+    unless args.first.is_a?(Symbol)
+      meth ||= calling_method(3)
+      args.unshift(meth.to_sym) if meth
+    end
     args
   end
 
@@ -468,7 +379,7 @@ module FlashHelper
   def flash_space_available
     flashes = session['flash']   || {}
     flashes = flashes['flashes'] || {}
-    in_use  = flashes.values.sum(&:size)
+    in_use  = flashes.values.flatten.sum(&:bytesize)
     FLASH_MAX_TOTAL_SIZE - in_use
   end
 
@@ -493,91 +404,129 @@ module FlashHelper
   # exception and its stack trace (to avoid "eating" the exception when this
   # method is called from an exception handler block).
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args
-  # @param [Symbol, nil]                          topic
+  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Symbol, nil] topic
+  # @param [Hash]        opt          To #flash_template except for:
   #
-  # args[0] [Symbol]            method  Calling method
-  # args[1] [Exception, String] error   Error (message) if :alert
-  # args[..-2]                          Message part(s).
-  # args[-1] [Hash]                     Passed to #flash_template except for:
-  #
-  # @option args[-1] [Boolean] :inspect   If *true* apply #inspect to messages.
-  # @option args[-1] [*]       :status    Override reported exception status.
-  # @option args[-1] [Boolean] :log       If *false* do not log exceptions.
-  # @option args[-1] [Boolean] :trace     If *true* always log exception trace.
-  # @option args[-1] [Symbol]  :meth      Calling method.
-  # @option args[-1] [Boolean] :xhr       Format for 'X-Flash-Message'.
+  # @option opt [Boolean] :inspect    If *true* apply #inspect to messages.
+  # @option opt [*]       :status     Override reported exception status.
+  # @option opt [Boolean] :log        If *false* do not log exceptions.
+  # @option opt [Boolean] :trace      If *true* always log exception trace.
+  # @option opt [Symbol]  :meth       Calling method.
+  # @option opt [Boolean] :xhr        Format for 'X-Flash-Message'.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [String]                      For :xhr.
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
+  # == Variations
+  #
+  # @overload flash_format(meth, error, *args, topic: nil, **opt)
+  #   @param [Symbol]                  meth   Calling method.
+  #   @param [ExecReport, Exception]   error  Error (message) if :alert.
+  #   @param [Array<String,FlashPart>] args   Additional message part(s).
+  #   @param [Symbol, nil]             topic
+  #   @param [Hash]                    opt
+  #
+  # @overload flash_format(error, *args, topic: nil, **opt)
+  #   @param [ExecReport, Exception]   error  Error (message) if :alert.
+  #   @param [Array<String,FlashPart>] args   Additional message part(s).
+  #   @param [Symbol, nil]             topic
+  #   @param [Hash]                    opt
+  #
+  # @overload flash_format(meth, *args, topic: nil, **opt)
+  #   @param [Symbol]                  meth   Calling method.
+  #   @param [Array<String,FlashPart>] args   Additional message part(s).
+  #   @param [Symbol, nil]             topic
+  #   @param [Hash]                    opt
+  #
+  # @overload flash_format(*args, topic: nil, **opt)
+  #   @param [Array<String,FlashPart>] args   Additional message part(s).
+  #   @param [Symbol, nil]             topic
+  #   @param [Hash]                    opt
+  #
   def flash_format(*args, topic: nil, **opt)
-    meth = (args.shift if args.first.is_a?(Symbol))
-    excp = (args.shift if args.first.is_a?(Exception))
-    local, opt = partition_hash(opt, :inspect, :status, :log, :trace, :meth)
+    local, opt = partition_hash(opt, :meth, :status, :inspect, :log, :trace)
+    meth = args.first.is_a?(Symbol) && args.shift || local[:meth] || __method__
+    item = args.shift
+    rpt  = ExecReport[item]
+    args = args.flat_map { |arg| arg.is_a?(ExecReport) ? arg.parts : arg }
+    args.map! { |arg| ExecReport::Part[arg] }
 
-    meth ||= local[:meth]
-    status = local[:status]
-    opt[:html] = false if opt[:xhr]
+    if (xhr = opt[:xhr])
+      opt[:html] = false
+    elsif opt[:html].nil?
+      opt[:html] = respond_to?(:params) || [rpt, *args].any?(&:html_safe?)
+    end
+    html    = opt[:html]
+    msg_sep = ' '
+    arg_sep = ', '
 
     # Lead with the message derived from an Exception.
-    msg = []
-    msg += excp.try(:messages) || [excp.message] if excp
+    # noinspection RubyNilAnalysis
+    msg = rpt.render(html: html)
 
     # Log exceptions or messages.
     unless false?(local[:log])
-      if excp
-        status ||= excp.try(:code) || excp.try(:response).try(:status)
+      status = local[:status] || rpt.http_status || '???'
+      if (excp = rpt.exception)
         trace    = true?(local[:trace])
         trace  ||=
           !excp.is_a?(UploadWorkflow::SubmitError) &&
           !excp.is_a?(Net::ProtocolError)
-        Log.warn do
-          err_msg = +"#{meth}: "
-          err_msg << "#{status}: " if status.present?
-          err_msg << "#{excp.class}: "
-          if trace
-            err_msg << "\n" << excp.full_message(order: :top)
-          else
-            err_msg << ' '  << msg.join(', ')
-          end
-        end
+        trace &&= excp.full_message(order: :top).prepend("\n")
+        trace ||= msg.join(msg_sep)
+        Log.warn { "#{meth}: #{status}: #{excp.class}: #{trace}" }
       else
-        Log.info { [meth, status, args.join(', ')].join(': ') }
+        topics  = msg.join(msg_sep).presence
+        details = args.join(arg_sep).presence
+        Log.info { [meth, status, topics, details].compact.join(': ') }
       end
     end
 
-    unless opt.key?(:html)
-      opt[:html] = (msg + args).any? { |m| m.html_safe? || m.is_a?(Entry) }
+    msg_sep = arg_sep = "\n" if xhr || html
+    brackets = nil
+
+    # Assemble the message.
+    if msg.present? || args.present?
+      inspect = local[:inspect]
+      fi_opt  = { xhr: xhr, html: html }
+      max     = flash_space_available
+
+      # Adjustments for 'X-Flash-Message'.
+      if xhr && msg.many?
+        inspect  = true
+        brackets = %w( [ ] )
+        max -= brackets.sum(&:bytesize)
+      end
+
+      if msg.present?
+        max -= (msg.size + 1) * flash_item_size(msg_sep, **fi_opt)
+        msg  = flash_item(msg, max: max, **fi_opt)
+      end
+
+      if args.present?
+        max -= msg.sum(&:bytesize)
+        max -= (args.size + 1) * flash_item_size(arg_sep, **fi_opt)
+        args.each { |arg| arg.render_html = true } if html
+        args = flash_item(args, max: max, inspect: inspect, **fi_opt)
+        msg << nil if (xhr || html) && msg.present?
+        msg << (html ? html_join(args, arg_sep) : args.join(arg_sep))
+      end
     end
-    f_opt = opt.slice(:html)
 
-    msg_sep = opt[:html] ? "\n" : ' '
-    sep_siz = flash_item_size(msg_sep, **f_opt)
-    max     = flash_space_available - (sep_siz * (msg.size + 1))
-    msg     = flash_item(msg,  max: max, **f_opt)
-
-    arg_sep = opt[:html] ? "\n" : ', '
-    sep_siz = flash_item_size(arg_sep, **f_opt)
-    max    -= flash_item_size(msg, **f_opt) + (sep_siz * (args.size + 1))
-    args    = flash_item(args, max: max, inspect: local[:inspect], **f_opt)
-
-    msg << nil unless opt[:html] || msg.blank?
-    msg << args.join(arg_sep)
-
+    # Complete the message and adjust the return type as needed.
     result =
       if topic
-        # noinspection RubyYardParamTypeMatch
         flash_template(msg, meth: meth, topic: topic, **opt)
-      else
+      elsif msg.present?
         msg.join(msg_sep)
       end
-    if opt[:xhr]
+    result &&= [brackets.first, result, brackets.last].join if brackets
+    result ||= ''
+    # noinspection RubyMismatchedReturnType
+    if xhr
       result
-    elsif opt[:html]
+    elsif html
       result.html_safe
     else
       ERB::Util.h(result)
@@ -586,8 +535,8 @@ module FlashHelper
 
   # Create item(s) to be included in the flash display.
   #
-  # @param [String, Entry, Array] item
-  # @param [Hash]                 opt
+  # @param [String, Array, FlashPart] item
+  # @param [Hash]                     opt
   #
   # @option opt [Boolean] :inspect  If *true* show inspection of *item*.
   # @option opt [Boolean] :html     If *true* force ActiveSupport::SafeBuffer.
@@ -617,26 +566,23 @@ module FlashHelper
   def flash_item(item, **opt)
     if item.is_a?(Array)
       return [] if item.blank?
-      opt[:max]   ||= FLASH_MAX_TOTAL_SIZE
-      opt[:max]     = [opt[:max], flash_space_available].min
-      item_count    = item.size
-      omission      = flash_omission(item_count, **opt)
-      omission_size = flash_item_size(omission, **opt)
-      count  = 0
-      result = []
-      item.each do |str|
-        count += 1
-        break unless opt[:max] > omission_size
+      opt[:max] ||= FLASH_MAX_TOTAL_SIZE
+      opt[:max]   = [opt[:max], flash_space_available].min
+      total       = item.size
+      omitted     = flash_omission(total, **opt)
+      omitted_len = flash_item_size(omitted, **opt)
+      result      = []
+      item.each_with_index do |str, index|
+        break unless opt[:max] > omitted_len
         str_max  = opt[:max]
-        str_max -= omission_size if count < item_count
-        # noinspection RubyYardParamTypeMatch
+        str_max -= omitted_len unless (index + 1) < total
         str = flash_item_render(str, **opt.merge(max: str_max))
         next if str.blank?
         opt[:max] -= flash_item_size(str, **opt)
         result << str unless opt[:max].negative?
         break if str == HTML_TRUNCATE_OMISSION
       end
-      result << omission if opt[:max].positive? && (count < item_count)
+      result << omitted if (result.size < total) && (opt[:max] >= omitted_len)
       result
     else
       opt[:max] ||= FLASH_MAX_ITEM_SIZE
@@ -648,8 +594,8 @@ module FlashHelper
 
   # An item's actual impact toward the total flash size.
   #
-  # @param [String, Entry, Array<String,Entry>] item
-  # @param [Hash]                               opt   To #flash_item_render.
+  # @param [String, Array<String>] item
+  # @param [Boolean]               html
   #
   # @return [Integer]
   #
@@ -657,30 +603,31 @@ module FlashHelper
   # This does not account for any separators that would be added when
   # displaying multiple items.
   #
-  def flash_item_size(item, **opt)
-    opt[:max] = nil
-    items   = Array.wrap(item).map { |v| flash_item_render(v, **opt) }
-    result  = items.sum(&:size)
-    result += items.sum { |v| v.count("\n") + v.count('"') } if opt[:html]
+  def flash_item_size(item, html: false, **)
+    items   = Array.wrap(item)
+    result  = items.sum(&:bytesize)
+    result += items.sum { |v| v.count("\n") + v.count('"') } if html
     result
   end
 
   # Render an item in the intended form for addition to the flash.
   #
-  # @param [String, Entry] item
-  # @param [Boolean, nil]  html     If *true* force ActiveSupport::SafeBuffer.
-  # @param [Boolean, nil]  inspect  If *true* show inspection of *item*.
-  # @param [Integer, nil]  max      Max length of result.
+  # @param [String, FlashPart] item
+  # @param [Boolean, nil]      html     Force ActiveSupport::SafeBuffer.
+  # @param [Boolean, nil]      xhr
+  # @param [Boolean, nil]      inspect  Show inspection of *item*.
+  # @param [Integer, nil]      max      Max length of result.
   #
   # @return [String]                    If *html* is *false*.
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   #
-  def flash_item_render(item, html: false, inspect: false, max: nil, **)
-    res = (item.is_a?(Entry) && html) ? item.render : item.to_s
-    res = res.inspect if inspect && !res.html_safe? && !res.start_with?('"')
-    res = safe_truncate(res, max) if max
-    res = ERB::Util.h(res)        if html && !res.html_safe?
-    res
+  def flash_item_render(item, html: nil, xhr: nil, inspect: nil, max: nil, **)
+    item = FlashPart[item] if html
+    # noinspection RailsParamDefResolve
+    res  = item.try(:render) || item.to_s
+    res  = res.inspect if inspect && !res.html_safe? && !res.start_with?('"')
+    res  = max ? safe_truncate(res, max, xhr: xhr) : to_utf(res, xhr: xhr)
+    html ? ERB::Util.h(res) : res
   end
 
   # If a :topic was specified, it is used as part of a set of I18n paths used
@@ -708,8 +655,9 @@ module FlashHelper
     opt[i18n_key] = msg
     opt[:default] = Array.wrap(opt[:default]&.dup)
     opt[:default] << flash_i18n_path(scope, 'error', topic)
+    opt[:default] << flash_i18n_path(scope, topic)
     opt[:default] << flash_i18n_path('error', topic)
-    opt[:default] << DEFAULT_ERROR
+    opt[:default] << ExecError::DEFAULT_ERROR
     I18n.t(i18n_path, **opt)
   end
 

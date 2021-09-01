@@ -72,6 +72,7 @@ class EditionController < ApplicationController
     opt   = pagination_setup
     @list = bs_api.get_periodical_editions(seriesId: @series_id, **opt)
     pagination_finalize(@list, :periodicalEditions, **opt)
+    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -90,6 +91,7 @@ class EditionController < ApplicationController
     __debug_route
     opt   = { seriesId: @series_id, editionId: @edition_id }
     @item = bs_api.get_periodical_edition(**opt)
+    flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }

@@ -19,8 +19,9 @@ class UploadController < ApplicationController
   include PaginationConcern
   include SerializationConcern
   include AwsConcern
-  include UploadConcern
+  include IngestConcern
   include IaDownloadConcern
+  include UploadConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -66,6 +67,24 @@ class UploadController < ApplicationController
 
   respond_to :html
   respond_to :json, :xml, except: %i[edit]
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Results for :index.
+  #
+  # @return [Array<Upload>]
+  #
+  attr_reader :list
+
+  # API results for :show.
+  #
+  # @return [Upload]
+  #
+  attr_reader :item
 
   # ===========================================================================
   # :section:
@@ -128,9 +147,10 @@ class UploadController < ApplicationController
       @host = base_url
       @item = proxy_get_record(@identifier, @host)
     end
-    show_search_failure(error, upload_index_path) if @item.blank?
+    show_search_failure(error) if @item.blank?
   rescue => error
-    show_search_failure(error, upload_index_path)
+    show_search_failure(error)
+    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/new
@@ -549,6 +569,8 @@ class UploadController < ApplicationController
   #
   # Retrieve a file from a member repository.
   #
+  # @raise [ExecError] @see IaDownloadConcern#ia_download_response
+  #
   def retrieval
     __debug_route
     if ia_link?(@url)
@@ -601,7 +623,7 @@ class UploadController < ApplicationController
     Log.info { "#{__method__}: #{@list.size} records" } # TODO: remove
     size   = [1, params[:size].to_i].max
     failed = @list.each_slice(size).flat_map { |items| reindex_record(items) }
-    failure(:file_id, failed.uniq) if failed.present?
+    failure(:invalid, failed.uniq) if failed.present?
   rescue => error
     flash_now_failure(error)
     re_raise_if_internal_exception(error)
@@ -622,26 +644,26 @@ class UploadController < ApplicationController
   # @note: This is very hacky and is meant to be temporary.
   #
   def reindex_record(list)
-    meth    = :bulk_reindex
-    sids    = []
-    entries = []
-    list    = Array.wrap(list)
-    result  = api_service(IngestService).put_records(*list)
-    errors  = result.errors
+    meth   = :bulk_reindex
+    sids   = []
+    failed = []
+    list   = Array.wrap(list)
+    result = ingest_api.put_records(*list)
+    errors = result.exec_report.error_table
     Log.debug { "#{meth}: put_records result: #{result.inspect}" }
     Log.debug { "#{meth}: result.errors: #{errors.inspect}" }
     if errors.present?
       by_index = errors.select { |k| k.is_a?(Integer) }
       if by_index.present?
         by_index.transform_keys! { |idx| Upload.sid_for(list[idx-1]) }
-        sids    += by_index.keys
-        entries += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
-        errors.except!(*by_index.keys)
+        sids   += by_index.keys
+        failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+        errors  = errors.except(*by_index.keys)
       end
-      entries << errors if errors.present?
+      failed << errors if errors.present?
     end
     Log.debug { "#{meth}: failed_sids: #{sids.inspect}" }
-    Log.debug { "#{meth}: failed_entries: #{entries.inspect}" }
+    Log.debug { "#{meth}: failed_entries: #{failed.inspect}" }
     list.each do |item|
       sid = item.submission_id
       if sids.include?(sid)
@@ -651,7 +673,7 @@ class UploadController < ApplicationController
         item.set_state(:created)
       end
     end
-    entries
+    failed
   end
 
   # ===========================================================================
@@ -673,14 +695,16 @@ class UploadController < ApplicationController
   # redirect otherwise.
   #
   # @param [Exception] error
-  # @param [String]    fallback_location    Redirect fallback if not modal.
+  # @param [String]    fallback   Redirect fallback (def.: #upload_index_path).
+  # @param [Symbol]    meth       Calling method.
   #
-  def show_search_failure(error, fallback_location)
+  def show_search_failure(error, fallback = nil, meth: nil)
+    meth ||= calling_method
     if modal?
-      flash_now_failure(error)
+      flash_now_failure(error, meth: meth)
     else
-      flash_failure(error)
-      redirect_back(fallback_location: fallback_location)
+      flash_failure(error, meth: meth)
+      redirect_back(fallback_location: (fallback || upload_index_path))
     end
   end
 

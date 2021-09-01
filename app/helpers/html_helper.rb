@@ -400,15 +400,16 @@ module HtmlHelper
   # processed by #xml_truncate.  Otherwise, String#truncate is used.
   #
   # @param [ActiveSupport::SafeBuffer, String] str
-  # @param [Integer, nil] length          Def: `#HTML_TRUNCATE_MAX_LENGTH`
+  # @param [Integer, nil] length            Def: `#HTML_TRUNCATE_MAX_LENGTH`
   # @param [Hash]         opt
   #
-  # @option opt [Boolean]     :content    If *true*, base on content size.
-  # @option opt [String, nil] :omission   Def: `#HTML_TRUNCATE_OMISSION`
-  # @option opt [String, nil] :separator  Def: `#HTML_TRUNCATE_SEPARATOR`
+  # @option opt [Boolean]      :content     If *true*, base on content size.
+  # @option opt [String, nil]  :omission    Def: `#HTML_TRUNCATE_OMISSION`
+  # @option opt [String, nil]  :separator   Def: `#HTML_TRUNCATE_SEPARATOR`
+  # @option opt [Boolean, nil] :xhr         Encode for message headers.
   #
-  # @return [ActiveSupport::SafeBuffer]   If *str* was html_safe.
-  # @return [String]                      If *str* was not HTML.
+  # @return [ActiveSupport::SafeBuffer]     If *str* was html_safe.
+  # @return [String]                        If *str* was not HTML.
   #
   # == Usage Notes
   # Since *str* may be a sequence of HTML elements or even just a text string
@@ -419,12 +420,12 @@ module HtmlHelper
   #
   def self.html_truncate(str, length = nil, **opt)
     length ||= HTML_TRUNCATE_MAX_LENGTH
-    str = to_utf8(str)
-    return str if str.size <= length
-    opt[:omission]  &&= to_utf8(opt[:omission])
-    opt[:omission]  ||= HTML_TRUNCATE_OMISSION
-    opt[:separator] ||= HTML_TRUNCATE_SEPARATOR
+    str = to_utf(str, **opt)
+    return str if str.bytesize <= length
+    opt[:omission] ||= HTML_TRUNCATE_OMISSION
+    opt[:omission] = to_utf(opt[:omission], **opt)
     if str.html_safe?
+      opt[:separator] ||= HTML_TRUNCATE_SEPARATOR
       xs  = '<div>'
       xe  = xs.sub('<', '</')
       xml = "#{xs}#{str.strip}#{xe}"
@@ -436,6 +437,8 @@ module HtmlHelper
       xml.squeeze!(opt[:omission])
       xml.html_safe
     else
+      # Correct String#truncate handling of Unicode :omission size.
+      length -= opt[:omission].bytesize - opt[:omission].length
       str.truncate(length, opt.except(:content))
     end
   end
@@ -466,16 +469,17 @@ module HtmlHelper
   def self.xml_truncate(xml, len = nil, **opt)
     opt[:omission] = HTML_TRUNCATE_OMISSION unless opt.key?(:omission)
     omission   = opt[:omission] ||= ''
+    omit_len   = omission.bytesize
     separator  = opt[:separator].presence
     max_length = len || HTML_TRUNCATE_MAX_LENGTH
-    length     = (opt[:content] ? xml.content : xml.to_s).size
+    child_len  = (opt[:content] ? xml.content : xml.to_s).bytesize
     doc        = xml.document
 
-    if max_length >= length
+    if max_length >= child_len
       xml.dup
 
     elsif xml.is_a?(Nokogiri::XML::Text)
-      last = max_length - omission.size
+      last = max_length - omit_len
       unless last.negative?
         text = xml.content
         text =
@@ -492,18 +496,19 @@ module HtmlHelper
             html.split(/&([^;]+);/) do |str|
               code = $1.to_s
               next if str == code # NOTE: Why?
-              if str.size > last
-                # noinspection Rails3Deprecated
+              str_len = str.bytesize
+              if str_len > last
                 part << str.first(last)
                 break
-              elsif str.size.positive?
+              elsif str_len.positive?
                 part << str
-                last -= str.size
+                last -= str_len
               end
-              entity = "&#{code};"
-              next if code.blank? || (entity.size > last)
-              last  -= entity.size
-              code   = lookup[code] unless code.delete_prefix!('#')
+              entity     = "&#{code};"
+              entity_len = entity.bytesize
+              next if code.blank? || (entity_len > last)
+              last -= entity_len
+              code  = lookup[code] unless code.delete_prefix!('#')
               part << code.to_i.chr
             end
             part_index = separator  && part.rindex(separator)
@@ -516,21 +521,21 @@ module HtmlHelper
       end
 
     elsif xml.children[0].is_a?(Nokogiri::XML::Text) && xml.children[1].nil?
-      node       = blank_copy(xml)
-      node_chars = node.to_s.size
-      remaining  = max_length - node_chars
+      node      = blank_copy(xml)
+      node_len  = node.to_s.bytesize
+      remaining = max_length - node_len
       if remaining.positive?
         text = xml_truncate(xml.children.first, remaining, **opt)
-        size = text ? (opt[:content] ? text.content : text.to_s).size : 0
-        if size >= omission.size
+        size = text ? (opt[:content] ? text.content : text.to_s).bytesize : 0
+        if size >= omit_len
           node << text
-        elsif max_length >= (node_chars + omission.size)
+        elsif max_length >= (node_len + omit_len)
           node << Nokogiri::XML::Text.new(omission, doc)
         end
       end
       if node.children.present?
         node
-      elsif max_length >= omission.size
+      elsif max_length >= omit_len
         Nokogiri::XML::Text.new(omission, doc)
       end
 
@@ -540,40 +545,24 @@ module HtmlHelper
       has_omission = false
       xml.children.each do |child|
         # noinspection RubyNilAnalysis
-        if remaining < omission.size
+        if remaining < omit_len
           break
-        elsif remaining == omission.size
+        elsif remaining == omit_len
           node << Nokogiri::XML::Text.new(omission, doc) unless has_omission
           break
         elsif (child = xml_truncate(child, remaining, **opt)).nil?
           return
         else
           # noinspection RubyNilAnalysis
-          length = (opt[:content] ? child.content : child.to_s).size
-          break if (length > remaining) && node.children.present?
-          remaining   -= length
+          child_len = (opt[:content] ? child.content : child.to_s).bytesize
+          break if (child_len > remaining) && node.children.present?
+          remaining   -= child_len
           has_omission = child.content.end_with?(omission)
           node << child
         end
       end
       node if node.children.present?
     end
-  end
-
-  # Convert a string to UTF-8 encoding.
-  #
-  # @param [ActiveSupport::SafeBuffer, String, nil] str
-  #
-  # @return [ActiveSupport::SafeBuffer]   If *str* was HTML-safe.
-  # @return [String]                      Otherwise.
-  #
-  def self.to_utf8(str)
-    res  = str&.to_s || ''
-    enc  = res.encoding
-    return res if enc == Encoding::UTF_8
-    html = res.html_safe?
-    res  = Encoding::Converter.new(enc, 'utf-8').convert(res)
-    html ? res.html_safe : res
   end
 
   # ===========================================================================
@@ -592,6 +581,68 @@ module HtmlHelper
     result = node.dup
     result.children.remove
     result
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  public
+
+  # Convert a string to UTF-8.
+  #
+  # If *xhr* is *true*, the result is encoded for use in HTTP message headers
+  # passed back to the client as flash messages.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, nil] value
+  # @param [Boolean, nil]                           xhr
+  #
+  # @return [ActiveSupport::SafeBuffer]   If *value* was HTML-safe.
+  # @return [String]                      Otherwise.
+  #
+  # @see #to_utf8
+  # @see #xhr_encode
+  #
+  def self.to_utf(value, xhr: nil, **)
+    xhr ? xhr_encode(value) : to_utf8(value.to_s)
+  end
+
+  # Encode a string for use in HTTP message headers passed back to the client
+  # as flash messages.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, *] value
+  #
+  # @return [ActiveSupport::SafeBuffer, String]
+  #
+  # @see file:app/assets/javascripts/feature/flash.js *xhrDecode()*
+  #
+  # == Implementation Notes
+  # JavaScript uses UTF-16 strings, so the most straightforward way to prepare
+  # a string to be passed back to the client would be to encode as 'UTF-16BE',
+  # however that would halve the number of characters that could be transmitted
+  # via 'X-Flash-Message'.
+  #
+  # Another strategy would be to use ERB::Util#url_encode to produce only
+  # ASCII-equivalent characters, then use "decodeURIComponent()" on the client
+  # side to restore the string.  However, that method encodes *many* characters
+  # that don't need to be encoded for this purpose (e.g. ' ' becomes '%20').
+  #
+  # This method takes a similar approach, but only encodes non-ASCII-equivalent
+  # characters. Assuming that these will be infrequent for flash messages, this
+  # should minimize the impact of encoding on the size of the transmitted
+  # string.  (The '%' character is also encoded to avoid ambiguity.)
+  #
+  def self.xhr_encode(value)
+    str = value.to_s
+    return to_utf8(str) if str.match?(/%[0-9A-F][0-9A-F]/i)
+    str = str.dup       if str.frozen? || (str.object_id == value.object_id)
+    str.force_encoding('US-ASCII').bytes.map { |b|
+      case b
+        when 128.. then sprintf('%%%02X', b)  # Encode beyond US-ASCII range.
+        when 37    then '%25'                 # Encode '%' to avoid ambiguity.
+        else            b.chr                 # General US-ASCII character.
+      end
+    }.join.force_encoding('UTF-8')
   end
 
   # ===========================================================================

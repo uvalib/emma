@@ -25,8 +25,8 @@ module SearchService::Common
   # @param [Hash]         headers     Default: {}.
   # @param [String, Hash] body        Default: *nil* unless `#update_request?`.
   #
-  # @return [(String,Hash)]           Message body plus headers for GET.
-  # @return [(Hash,Hash)]             Query plus headers for PUT, POST, PATCH.
+  # @return [(Hash,Hash,String)]      Message body plus headers for GET.
+  # @return [(Hash,Hash,Hash)]        Query plus headers for PUT, POST, PATCH.
   #
   def api_headers(params = nil, headers = nil, body = nil)
     super.tap do |prms, _hdrs, _body|

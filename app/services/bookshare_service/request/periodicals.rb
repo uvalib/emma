@@ -21,6 +21,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::Periodicals
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -59,7 +60,7 @@ module BookshareService::Request::Periodicals
   def get_periodicals(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', **opt)
-    Bs::Message::PeriodicalSeriesMetadataSummaryList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSeriesMetadataSummaryList)
   end
     .tap do |method|
       add_api method => {
@@ -98,7 +99,7 @@ module BookshareService::Request::Periodicals
   def get_periodical(seriesId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, **opt)
-    Bs::Message::PeriodicalSeriesMetadataSummary.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSeriesMetadataSummary)
   end
     .tap do |method|
       add_api method => {
@@ -131,7 +132,7 @@ module BookshareService::Request::Periodicals
   def get_periodical_editions(seriesId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, 'editions', **opt)
-    Bs::Message::PeriodicalEditionList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalEditionList)
   end
     .tap do |method|
       add_api method => {
@@ -205,7 +206,7 @@ module BookshareService::Request::Periodicals
   def download_periodical_edition(seriesId:, editionId:, format:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, 'editions', editionId, format, **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {
@@ -244,7 +245,7 @@ module BookshareService::Request::Periodicals
     opt  = get_parameters(__method__, **opt)
     path = [seriesId, 'editions', editionId, format, 'resources']
     api(:get, 'periodicals', *path, **opt)
-    Bs::Message::TitleFileResourceList.new(response, error: exception)
+    api_return(Bs::Message::TitleFileResourceList)
   end
     .tap do |method|
       add_api method => {
@@ -285,7 +286,7 @@ module BookshareService::Request::Periodicals
     opt  = get_parameters(__method__, **opt)
     path = [seriesId, 'editions', editionId, format, 'resources', resourceId]
     api(:get, 'periodicals', *path, **opt)
-    Bs::Message::StatusModel.new(response, error: exception)
+    api_return(Bs::Message::StatusModel)
   end
     .tap do |method|
       add_api method => {
@@ -320,7 +321,7 @@ module BookshareService::Request::Periodicals
   def get_my_periodicals(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myPeriodicals', **opt)
-    Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSubscriptionList)
   end
     .tap do |method|
       add_api method => {
@@ -345,7 +346,7 @@ module BookshareService::Request::Periodicals
     opt.merge!(seriesId: seriesId, format: format)
     opt = get_parameters(__method__, **opt)
     api(:post, 'myPeriodicals', **opt)
-    Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSubscriptionList)
   end
     .tap do |method|
       add_api method => {
@@ -372,7 +373,7 @@ module BookshareService::Request::Periodicals
   def unsubscribe_my_periodical(seriesId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:delete, 'myPeriodicals', seriesId, **opt)
-    Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
+    api_return(Bs::Message::PeriodicalSubscriptionList)
   end
     .tap do |method|
       add_api method => {

@@ -11,8 +11,7 @@ __loading_begin(__FILE__)
 #
 class AwsS3::Message::Response < AwsS3::Api::Message
 
-  include Api::Shared::ErrorTable
-  include Emma::Json
+  include AwsS3::Shared::ResponseMethods
 
   # ===========================================================================
   # :section:
@@ -45,7 +44,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
       self.succeeded   = sids_for(sent || submissions)
       self.failed      = sids_for(submissions) - succeeded
       self.messages   += failed.map { |sid| "#{sid} failed" }
-      initialize_error_table(messages, exception)
+      initialize_exec_report(messages, exception)
     end
   end
 
@@ -68,7 +67,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   end
 
   # ===========================================================================
-  # :section: AwsS3::Api::Message overrides
+  # :section: Api::Message overrides
   # ===========================================================================
 
   protected

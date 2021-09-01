@@ -19,6 +19,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::AssignedTitles
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -45,7 +46,7 @@ module BookshareService::Request::AssignedTitles
   def get_my_assigned_titles(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'myAssignedTitles', **opt)
-    Bs::Message::TitleMetadataSummaryList.new(response, error: exception)
+    api_return(Bs::Message::TitleMetadataSummaryList)
   end
     .tap do |method|
       add_api method => {
@@ -84,7 +85,7 @@ module BookshareService::Request::AssignedTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'assignedTitles', userId, **opt)
-    Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
+    api_return(Bs::Message::AssignedTitleMetadataSummaryList)
   end
     .tap do |method|
       add_api method => {
@@ -126,7 +127,7 @@ module BookshareService::Request::AssignedTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'assignedTitles', userId, **opt)
-    Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
+    api_return(Bs::Message::AssignedTitleMetadataSummaryList)
   end
     .tap do |method|
       add_api method => {
@@ -162,7 +163,7 @@ module BookshareService::Request::AssignedTitles
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'assignedTitles', userId, bookshareId, **opt)
-    Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
+    api_return(Bs::Message::AssignedTitleMetadataSummaryList)
   end
     .tap do |method|
       add_api method => {

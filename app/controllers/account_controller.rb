@@ -45,11 +45,31 @@ class AccountController < ApplicationController
   # :section:
   # ===========================================================================
 
+  protected
+
+  # Database results for :index.
+  #
+  # @return [Array<User>]
+  #
+  attr_reader :list
+
+  # Database results for :show.
+  #
+  # @return [User]
+  #
+  attr_reader :item
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /account
   #
   # List all user accounts.
+  #
+  # @see AccountConcern#get_accounts
   #
   def index
     __debug_route
@@ -63,18 +83,22 @@ class AccountController < ApplicationController
   #
   # Display details of an existing user account.
   #
+  # @see AccountConcern#get_account
+  #
   def show
     __debug_route
-    @item = User.find(params[:id])
+    @item = get_account
   end
 
   # == GET /account/new
   #
   # Display a form for creation of a new user account.
   #
+  # @see AccountConcern#new_account
+  #
   def new
     __debug_route
-    @item = User.new
+    @item = new_account
   end
 
   # == POST  /account/create
@@ -88,19 +112,21 @@ class AccountController < ApplicationController
   # parameter will be rejected unless "force_id=true" is included in the URL
   # parameters.
   #
+  # @see AccountConcern#create_account
+  #
   def create
     __debug_route
-    attr = account_params
-    attr.except!(:id) unless true?(attr.delete(:force_id))
-    @item   = User.new(attr)
-    success = @item.save
+    @item   = create_account(no_raise: true)
+    success = @item.errors.blank?
     respond_to do |format|
       if success
         format.html { redirect_success(__method__) }
         format.json { render :show, location: @item, status: :created }
       else
-        format.html { redirect_failure(__method__, error: @item.errors) }
-        format.json { render json: @item.errors, status: :unprocessable_entity }
+        # @type [ActiveModel::Errors]
+        errors = @item.errors
+        format.html { redirect_failure(__method__, error: errors) }
+        format.json { render json: errors, status: :unprocessable_entity }
       end
     end
   end
@@ -111,10 +137,19 @@ class AccountController < ApplicationController
   #
   # Display a form for modification of an existing user account.
   #
+  # @see #show_menu?
+  # @see AccountConcern#get_account
+  #
   def edit
     __debug_route
-    selected = (id_list.first unless show_menu?)
-    @item = (User.find(selected) if selected.present?)
+    @item = nil
+    unless show_menu?((ids = id_params))
+      @item  = get_account((selected = ids.shift))
+      errors = []
+      errors << "Record #{quote(selected)} not found" if @item.blank? # TODO: I18n
+      errors << "Ignored extra id(s): #{quote(ids)}"  if ids.present? # TODO: I18n
+      flash_now_alert(*errors) if errors.present?
+    end
   end
 
   # == PUT   /account/update/:id
@@ -122,20 +157,22 @@ class AccountController < ApplicationController
   #
   # Update an existing user account.
   #
+  # @see AccountConcern#update_account
+  #
   def update
     __debug_route
     __debug_request
-    attr    = account_params
-    user_id = attr.delete(:id)
-    @item   = User.find_record(user_id)
-    success = @item.update(attr)
+    @item   = update_account(no_raise: true)
+    success = @item && @item.errors.blank?
     respond_to do |format|
       if success
         format.html { redirect_success(__method__) }
         format.json { render :show, location: @item, status: :ok }
       else
-        format.html { redirect_failure(__method__, error: @item.errors) }
-        format.json { render json: @item.errors, status: :unprocessable_entity }
+        # @type [ActiveModel::Errors, String]
+        errors = @item&.errors || "#{params[:id]} not found" # TODO: I18n
+        format.html { redirect_failure(__method__, error: errors) }
+        format.json { render json: errors, status: :unprocessable_entity }
       end
     end
   end
@@ -144,27 +181,31 @@ class AccountController < ApplicationController
   # == GET /account/delete/SELECT
   # == GET /account/delete_select
   #
-  # Remove an existing user account.
+  # Select existing user account(s) to remove.
   #
   # If :id is "SELECT" then a menu of deletable items is presented.
   #
+  # @see #show_menu?
+  # @see AccountConcern#find_accounts
+  #
   def delete
     __debug_route
-    @list = (id_list.presence unless show_menu?)
-    @list = @list && User.find(@list) || []
-  rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    @list = nil
+    unless show_menu?((ids = id_params))
+      @list = find_accounts(ids)
+      flash_now_alert("No records match #{quote(ids)}") if @list.blank? # TODO: I18n
+    end
   end
 
   # == DELETE /account/destroy/:id
   #
-  # Remove an existing user account.
+  # Remove existing user account(s).
+  #
+  # @see AccountConcern#destroy_accounts
   #
   def destroy
     __debug_route
-    @item = User.find(params[:id])
-    @item.destroy
+    @list = destroy_accounts
     respond_to do |format|
       format.html { redirect_success(__method__) }
       format.json { head :no_content }
@@ -180,29 +221,11 @@ class AccountController < ApplicationController
   # Indicate whether URL parameters indicate that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
-  # @param [String, Array<String>, nil] id_params  Default: `params[:id]`.
+  # @param [Array<String,Integer>] ids  Default: `#id_params`.
   #
-  def show_menu?(id_params = nil)
-    id_params ||= params[:selected] || params[:id]
-    Array.wrap(id_params).include?('SELECT')
-  end
-
-  # Interpret the identifier parameter as one or more comma-delimited spans of
-  # database IDs.
-  #
-  # @param [String, Array<String>, nil] id_params  Default: `params[:id]`.
-  #
-  # @return [Array<Integer>]
-  #
-  def id_list(id_params = nil)
-    id_params ||= params[:selected] || params[:id]
-    Array.wrap(id_params).flat_map { |part|
-      if part.is_a?(String)
-        part = part.strip
-        part = part.split(/\s*,\s*/) if part.include?(',')
-      end
-      part
-    }.map { |part| part.to_i if digits_only?(part) }.compact
+  def show_menu?(ids = nil)
+    ids ||= id_params
+    ids.blank? || ids.include?('SELECT')
   end
 
 end

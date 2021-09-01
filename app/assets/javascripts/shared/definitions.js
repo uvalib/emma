@@ -243,7 +243,7 @@ function fromJSON(item, caller) {
     let result = undefined;
     if (typeof item == 'object') {
         result = item;
-    } else if (typeof item === 'string') {
+    } else if (item && (typeof item === 'string')) {
         try {
             result = JSON.parse(item);
         }

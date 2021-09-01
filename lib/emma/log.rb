@@ -78,7 +78,9 @@ module Emma::Log
         note = (" - #{args.shift}" if args.present?)
         args.prepend("#{error.class}: #{error.message}#{note}")
       elsif error
-        args.append("#{error.message} [#{error.class}]")
+        note = (error.messages[1..].presence if error.respond_to?(:messages))
+        note &&= ' - %s' % note.join('; ')
+        args << "#{error.message} [#{error.class}]#{note}"
       end
       message += args if args.present?
       logger.add(severity, message.join(': '))

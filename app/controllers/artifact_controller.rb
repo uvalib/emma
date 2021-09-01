@@ -71,6 +71,7 @@ class ArtifactController < ApplicationController
     opt   = pagination_setup
     @list = bs_api.get_artifact_list(**opt)
     pagination_finalize(@list, :artifacts, **opt)
+    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -90,6 +91,7 @@ class ArtifactController < ApplicationController
     __debug_route
     opt   = { bookshareId: @bookshare_id, format: @format }
     @item = bs_api.get_artifact_metadata(**opt)
+    flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }

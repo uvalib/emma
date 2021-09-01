@@ -16,6 +16,7 @@ __loading_begin(__FILE__)
 module BookshareService::Request::MembershipOrganizations
 
   include BookshareService::Common
+  include BookshareService::Testing
 
   # ===========================================================================
   # :section:
@@ -38,7 +39,7 @@ module BookshareService::Request::MembershipOrganizations
   def get_organization(organization:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'organizations', organization, **opt)
-    Bs::Message::Organization.new(response, error: exception)
+    api_return(Bs::Message::Organization)
   end
     .tap do |method|
       add_api method => {
@@ -85,7 +86,7 @@ module BookshareService::Request::MembershipOrganizations
   def create_organization(**opt)
     opt = get_parameters(__method__, **opt)
     api(:post, 'organizations', **opt)
-    Bs::Message::Organization.new(response, error: exception)
+    api_return(Bs::Message::Organization)
   end
     .tap do |method|
       add_api method => {
@@ -135,7 +136,7 @@ module BookshareService::Request::MembershipOrganizations
   def get_organization_members(organization:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'organizations', organization, 'members', **opt)
-    Bs::Message::UserAccountList.new(response, error: exception)
+    api_return(Bs::Message::UserAccountList)
   end
     .tap do |method|
       add_api method => {
@@ -181,7 +182,7 @@ module BookshareService::Request::MembershipOrganizations
   def add_organization_member(organization:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:post, 'organizations', organization, 'members', **opt)
-    Bs::Message::UserAccount.new(response, error: exception)
+    api_return(Bs::Message::UserAccount)
   end
     .tap do |method|
       add_api method => {
@@ -228,7 +229,7 @@ module BookshareService::Request::MembershipOrganizations
   def get_organization_types(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'organizationTypes', **opt)
-    Bs::Message::OrganizationTypeList.new(response, error: exception)
+    api_return(Bs::Message::OrganizationTypeList)
   end
     .tap do |method|
       add_api method => {

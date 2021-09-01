@@ -22,28 +22,8 @@ class Ingest::Message::IngestionRecordList < Ingest::Api::Message
     has_many :records, Ingest::Record::IngestionRecord
   end
 
-=begin
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Initialize a new instance.
-  #
-  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
-  # @param [Hash]                                              opt
-  #
-  def initialize(src, **opt)
-    # noinspection RubyScope
-    create_message_wrapper(opt) do |opt|
-      super(src, **opt)
-    end
-  end
-=end
-
-  # ===========================================================================
-  # :section: Ingest::Api::Message overrides
+  # :section: Api::Message overrides
   # ===========================================================================
 
   protected

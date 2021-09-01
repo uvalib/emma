@@ -67,6 +67,7 @@ class CategoryController < ApplicationController
     opt   = pagination_setup
     @list = bs_api.get_categories(**opt)
     pagination_finalize(@list, :categories, **opt)
+    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }

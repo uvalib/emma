@@ -43,6 +43,8 @@ module IaDownloadConcern
   # @param [String] url
   # @param [Hash]   opt               Request headers,
   #
+  # @raise [ExecError] @see IaDownloadService#download
+  #
   # @return [void]
   #
   def ia_download_response(url, **opt)

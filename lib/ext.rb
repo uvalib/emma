@@ -93,12 +93,8 @@ def override(mod, mod2 = nil, &block)
 
     end
   if errors.present?
-    message = errors.join('; ')
-    if application_deployed?
-      Rails.logger.error(message)
-    else
-      raise message
-    end
+    Rails.logger.error((error = errors.join('; ')))
+    raise error unless application_deployed?
   end
   overrides.each_pair do |target, new_definitions|
     target.send(:prepend, new_definitions)

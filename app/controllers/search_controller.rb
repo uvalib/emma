@@ -45,7 +45,25 @@ class SearchController < ApplicationController
   before_action :identifier_alias_redirect,   only: %i[index]
   before_action :invalid_identifier_redirect, only: %i[index]
   before_action :identifier_keyword_redirect, only: %i[index]
-  before_action :set_title_id,                only: %i[show]
+  before_action :set_record_id,               only: %i[show]
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # API results for :index.
+  #
+  # @return [Search::Message::SearchRecordList]
+  #
+  attr_reader :list
+
+  # API results for :show.
+  #
+  # @return [Search::Message::SearchRecord]
+  #
+  attr_reader :item
 
   # ===========================================================================
   # :section:
@@ -72,7 +90,8 @@ class SearchController < ApplicationController
       opt   = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
       @list = search_api.get_records(**opt)
       pagination_finalize(@list, :records, **opt)
-      save_search(**opt) unless playback
+      save_search(**opt)                 unless playback
+      flash_now_alert(@list.exec_report) if @list.error?
       respond_to do |format|
         format.html
         format.json { render_json index_values }
@@ -96,7 +115,8 @@ class SearchController < ApplicationController
   #
   def show
     __debug_route
-    @item = search_api.get_record(titleId: @title_id)
+    @item = search_api.get_record(record_id: @record_id)
+    flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -130,6 +150,7 @@ class SearchController < ApplicationController
     opt   = pagination_setup.reverse_merge(q: NULL_SEARCH)
     @list = search_api.get_records(**opt)
     pagination_finalize(@list, :records, **opt)
+    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html { render 'search/index' }
       format.json { render_json index_values }

@@ -88,6 +88,8 @@ en:
           - categories
           - languages
 
+      # =======================================================================
+
       show:
         label:          'Periodical'
         title:          'Bookshare Periodical'
@@ -96,17 +98,40 @@ en:
         display_fields: # @see 'en.emma.periodical.record'
           - !ruby/symbol all
 
-      new:
+      # =======================================================================
+
+      new:              &NEW_ACTION
         title:          'Add Periodical'
         tooltip:        'Create an entry for a new Bookshare periodical.'
 
-      edit:
+      # =======================================================================
+
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
         title:          'Modify Periodical'
         tooltip:        'Make changes to this Bookshare periodical.'
 
-      delete:
+      # =======================================================================
+
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
         title:          'Remove Periodical'
         tooltip:        'Remove this Bookshare periodical.'
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
+
+      # =======================================================================
 
       history:
         title:          'Periodical History'

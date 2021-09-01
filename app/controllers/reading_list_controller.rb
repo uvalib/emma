@@ -66,6 +66,7 @@ class ReadingListController < ApplicationController
     opt   = pagination_setup
     @list = bs_api.get_reading_lists_list(**opt)
     pagination_finalize(@list, :lists, **opt)
+    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -86,6 +87,7 @@ class ReadingListController < ApplicationController
     @item = bs_api.get_reading_list(readingListId: @id)
     @list = bs_api.get_reading_list_titles(readingListId: @id, no_raise: true)
     pagination_finalize(@list, :titles, **opt)
+    flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }

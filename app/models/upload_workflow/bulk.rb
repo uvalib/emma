@@ -207,8 +207,10 @@ module UploadWorkflow::Bulk::External
           entry.promote_file
           entry
         rescue => error
-          failed << db_failed_format(entry, error.message, counter)
-          Log.error { "#{__method__}: #{error.class}: #{error.message}" }
+          # noinspection RailsParamDefResolve
+          msg = error.try(:messages) || [error.message]
+          failed << db_failed_format(entry, msg, counter)
+          Log.error { "#{__method__}: #{error.class}: %s" % msg.join('; ') }
           re_raise_if_internal_exception(error)
         end
       }.compact
@@ -433,7 +435,7 @@ module UploadWorkflow::Bulk::External
   # @param [String]                    message
   # @param [Integer]                   position
   #
-  # @return [Array<ErrorEntry>]
+  # @return [Array<FlashPart>]
   #
   def db_failed_format!(items, message, position = 0)
     # noinspection RubyMismatchedReturnType
@@ -444,15 +446,15 @@ module UploadWorkflow::Bulk::External
 
   # Create an error entry for a single failed database item.
   #
-  # @param [Upload, Hash, String] item
-  # @param [String]               message
-  # @param [Integer]              position
+  # @param [Upload, Hash, String]  item
+  # @param [String, Array<String>] message
+  # @param [Integer]               position
   #
-  # @return [ErrorEntry]
+  # @return [FlashPart]
   #
   def db_failed_format(item, message, position)
     label = make_label(item, default: "Item #{position}") # TODO: I18n
-    ErrorEntry.new(label, message)
+    FlashPart.new(label, message)
   end
 
   # ===========================================================================

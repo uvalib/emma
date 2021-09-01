@@ -11,8 +11,7 @@ __loading_begin(__FILE__)
 #
 class Ingest::Message::Response < Ingest::Api::Message
 
-  include Api::Shared::ErrorTable
-  include Emma::Json
+  include Ingest::Shared::ResponseMethods
 
   # ===========================================================================
   # :section:
@@ -33,17 +32,17 @@ class Ingest::Message::Response < Ingest::Api::Message
   # @param [Faraday::Response, Api::Record, Hash, String, nil] src
   # @param [Hash]                                              opt
   #
-  def initialize(src, **opt)
+  def initialize(src, opt = nil)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
-      super(src, **opt)
-      # noinspection RubyYardParamTypeMatch
-      initialize_error_table(messages, exception)
+      super(nil, opt)
+      initialize_exec_report(exception)
+      self.messages += exec_report.error_messages
     end
   end
 
   # ===========================================================================
-  # :section: Ingest::Api::Message overrides
+  # :section: Api::Message overrides
   # ===========================================================================
 
   protected

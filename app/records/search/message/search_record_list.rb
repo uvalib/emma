@@ -23,24 +23,16 @@ class Search::Message::SearchRecordList < Search::Api::Message
 
   public
 
-  # Strategy for pre-wrapping message data before de-serialization.
-  #
-  # @type [Hash{Symbol=>String,Boolean}]
-  #
-  WRAP_FORMATS = { xml: true, json: %q({"records":%{data}}) }.freeze
-
   # Initialize a new instance.
   #
   # @param [Faraday::Response, Api::Record, Hash, String, nil] src
   # @param [Hash]                                              opt
   #
-  def initialize(src, **opt)
-    # noinspection RubyScope
+  def initialize(src, opt = nil)
+    # noinspection RubyScope, RubyMismatchedParameterType
     create_message_wrapper(opt) do |opt|
-      if opt[:wrap].nil? || opt[:wrap].is_a?(Hash)
-        opt[:wrap] = WRAP_FORMATS.merge(opt[:wrap] || {})
-      end
-      super(src, **opt)
+      apply_wrap!(opt)
+      super(src, opt)
     end
   end
 
@@ -53,6 +45,28 @@ class Search::Message::SearchRecordList < Search::Api::Message
   #++
   def totalResults
     records&.size || 0
+  end
+
+  # ===========================================================================
+  # :section: Api::Message overrides
+  # ===========================================================================
+
+  protected
+
+  # Strategy for pre-wrapping message data before de-serialization.
+  #
+  # @type [Hash{Symbol=>String,Boolean}]
+  #
+  WRAP_FORMATS = { xml: true, json: %q({"records":%{data}}) }.freeze
+
+  # Update *opt[:wrap]* according to the supplied formats.
+  #
+  # @param [Hash] opt                 May be modified.
+  #
+  # @return [void]
+  #
+  def apply_wrap!(opt)
+    super(opt, WRAP_FORMATS)
   end
 
 end

@@ -55,7 +55,8 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   #
   # @raise [UploadWorkflow::SubmitError]  If metadata was malformed.
   #
-  def initialize(src, **opt)
+  def initialize(src, opt = nil)
+    opt ||= {}
     @serializer_type ||= DEFAULT_SERIALIZER_TYPE
     if src.blank?
       initialize_attributes

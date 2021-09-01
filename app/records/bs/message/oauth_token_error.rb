@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @attr [BsTokenErrorType] error
 # @attr [String]           error_description
 #
-# @see ApiService::Error::Methods#oauth2_error_header
+# @see ApiService::Error#oauth2_error_header
 # @see https://apidocs.bookshare.org/auth/index.html#_token_error
 #
 class Bs::Message::OauthTokenError < Bs::Api::Message
