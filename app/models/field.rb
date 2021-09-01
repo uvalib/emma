@@ -10,6 +10,13 @@ __loading_begin(__FILE__)
 #
 module Field
 
+  # ===========================================================================
+  # :section: Configuration
+  # ===========================================================================
+
+  public
+
+  DEFAULT_MODEL        = :upload # TODO: remove after upload -> entry
   SYNTHETIC_KEYS       = %i[field ignored required readonly array type].freeze
   SYNTHETIC_PROPERTIES = SYNTHETIC_KEYS.map { |k| [k, true] }.to_h.freeze
 
@@ -99,7 +106,6 @@ module Field
   # @param [Symbol, String, nil]       field
   # @param [Symbol, String, Hash, nil] model
   # @param [Symbol, String, nil]       action
-  # @param [Symbol, String]            def_model
   # @param [Array<nil,Symbol>]         sub_sections
   #
   # @return [Hash]
@@ -108,17 +114,15 @@ module Field
     field,
     model         = nil,
     action        = nil,
-    def_model:    :upload,
     sub_sections: nil
   )
     return {} if (field = field&.to_sym).blank?
-    # noinspection RubyYardParamTypeMatch
-    model_cfg =
-      model.is_a?(Hash) ? model : Model.configured_fields(model || def_model)
+    config = model || DEFAULT_MODEL
+    config = Model.config_for(config) unless config.is_a?(Hash)
     sub_sections ||= [nil, :emma_data, :file_data, [:file_data, :metadata]]
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
-      next unless (section_cfg = model_cfg[section]).is_a?(Hash)
+      next unless (section_cfg = config[section]).is_a?(Hash)
       sub_sections.find do |sub_sec|
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
@@ -134,7 +138,6 @@ module Field
   # @param [String, Symbol]            label
   # @param [Symbol, String, Hash, nil] model
   # @param [Symbol, String, nil]       action
-  # @param [Symbol, String]            def_model
   # @param [Array<nil,Symbol>]         sub_sections
   #
   # @return [Hash]
@@ -143,18 +146,15 @@ module Field
     label,
     model         = nil,
     action        = nil,
-    def_model:    :upload,
     sub_sections: nil
   )
     return {} if (label = label.to_s).blank?
-    # noinspection RubyYardParamTypeMatch
-    model_cfg =
-      model.is_a?(Hash) ? model : Model.configured_fields(model || def_model)
+    config = model || DEFAULT_MODEL
+    config = Model.config_for(config) unless config.is_a?(Hash)
     sub_sections ||= [nil, :emma_data, :file_data, [:file_data, :metadata]]
-    # noinspection RubyYardReturnMatch
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
-      next unless (section_cfg = model_cfg[section]).is_a?(Hash)
+      next unless (section_cfg = config[section]).is_a?(Hash)
       sub_sections.find do |sub_sec|
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
@@ -362,7 +362,7 @@ module Field
 
   # Generate an appropriate field subclass instance if possible.
   #
-  # @param [Upload]              item
+  # @param [Model]               item
   # @param [Symbol]              field
   # @param [Symbol, String, nil] model
   #
@@ -442,7 +442,7 @@ module Field
 
     # Initialize a new instance.
     #
-    # @param [Symbol, Object]      src
+    # @param [Symbol, Model]       src
     # @param [Symbol, nil]         field
     # @param [Symbol, String, nil] model
     # @param [*]                   value

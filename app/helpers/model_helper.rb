@@ -1219,22 +1219,23 @@ module ModelHelper
   # Render a metadata listing of a model instance.
   #
   # @param [Model]          item
-  # @param [String, Symbol] model
   # @param [Hash, nil]      pairs         Label/value pairs.
   # @param [Hash]           opt           Passed to #render_field_values.
   # @param [Proc]           block         Passed to #render_field_values.
   #
+  # @option opt [Symbol] :model           Default: `#model_for(item)`.
   # @option opt [String] :class           Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
-  def model_details(item, model:, pairs: nil, **opt, &block)
+  def model_details(item, pairs: nil, **opt, &block)
     return if item.blank?
+    model        = opt[:model] ||= model_for(item)
     css_selector = ".#{model}-details"
     classes      = css_classes(css_selector, opt.delete(:class))
     html_div(class: classes) do
-      render_field_values(item, model: model, pairs: pairs, **opt, &block)
+      render_field_values(item, pairs: pairs, **opt, &block)
     end
   end
 

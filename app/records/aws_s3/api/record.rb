@@ -14,6 +14,35 @@ class AwsS3::Api::Record < Api::Record
   include AwsS3::Api::Record::Schema
   include AwsS3::Api::Record::Associations
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Recursively remove empty values from the object.  Unlike #compact_blank:
+  #
+  # - Preserves instance of explicit *false* values.
+  # - Converts to *nil* instances of ModelHelper#EMPTY_VALUE.
+  # - Returns *nil* if the entire object was empty.
+  #
+  # @param [*] item
+  #
+  def remove_empty_values(item)
+    case item
+      when ModelHelper::EMPTY_VALUE
+        nil
+      when TrueClass, FalseClass
+        item
+      when Hash
+        item.map { |k, v| [k, send(__method__, v)] }.to_h.compact.presence
+      when Array
+        item.map { |v| send(__method__, v) }.compact.presence
+      else
+        item.presence
+    end
+  end
+
 end
 
 __loading_end(__FILE__)

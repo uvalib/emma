@@ -9,22 +9,8 @@ __loading_begin(__FILE__)
 #
 module TitleHelper
 
-  include ImageHelper
   include ModelHelper
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  TITLE_FIELDS       = Model.configured_fields(:title).deep_freeze
-  TITLE_INDEX_FIELDS = TITLE_FIELDS[:index] || {}
-  TITLE_SHOW_FIELDS  = TITLE_FIELDS[:show]  || {}
+  include ImageHelper
 
   # ===========================================================================
   # :section:
@@ -327,8 +313,8 @@ module TitleHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def title_details(item, pairs: nil, **opt)
-    opt[:model] = :title
-    opt[:pairs] = TITLE_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :title
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -345,8 +331,8 @@ module TitleHelper
   # @param [Hash]            opt      Passed to #model_list_item.
   #
   def title_list_item(item, pairs: nil, **opt)
-    opt[:model] = :title
-    opt[:pairs] = TITLE_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :title
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

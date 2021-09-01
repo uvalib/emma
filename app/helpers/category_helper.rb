@@ -17,20 +17,6 @@ module CategoryHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  CATEGORY_FIELDS       = Model.configured_fields(:category).deep_freeze
-  CATEGORY_INDEX_FIELDS = CATEGORY_FIELDS[:index] || {}
-  CATEGORY_SHOW_FIELDS  = CATEGORY_FIELDS[:show]  || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]
@@ -69,8 +55,8 @@ module CategoryHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def category_details(item, pairs: nil, **opt)
-    opt[:model] = :category
-    opt[:pairs] = CATEGORY_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :category
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -87,9 +73,9 @@ module CategoryHelper
   # @param [Hash]            opt      Passed to #model_list_item.
   #
   def category_list_item(item, pairs: nil, **opt)
-    opt[:model] = :category
+    opt[:model] = model = :category
     opt[:pairs] = item ? { category_link(item) => "(#{item.titleCount})" } : {}
-    opt[:pairs].merge!(CATEGORY_INDEX_FIELDS)
+    opt[:pairs].merge!(index_fields(model))
     opt[:pairs].merge!(pairs) if pairs.present?
     model_list_item(item, **opt)
   end

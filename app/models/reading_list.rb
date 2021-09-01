@@ -9,6 +9,15 @@ __loading_begin(__FILE__)
 #
 class ReadingList < ApplicationRecord
 
+  include Model
+
+  include Record
+  include Record::Authorizable
+
+  # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
   belongs_to :user, optional: true
 
   has_and_belongs_to_many :members
@@ -20,12 +29,6 @@ class ReadingList < ApplicationRecord
 
   # noinspection RailsParamDefResolve
   has_many :artifacts, through: :titles
-
-  # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  resourcify
 
   # ===========================================================================
   # :section:

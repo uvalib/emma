@@ -118,8 +118,8 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
-  rescue SubmitError => error
-    show_search_failure(error, upload_index_path)
+  rescue SubmitError, Record::SubmitError => error
+    show_search_failure(error)
   rescue => error
     show_search_failure(error, root_path)
     re_raise_if_internal_exception(error)
@@ -139,7 +139,7 @@ class UploadController < ApplicationController
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
-  rescue SubmitError => error
+  rescue SubmitError, Record::NotFound, ActiveRecord::RecordNotFound => error
     # As a convenience, if an index item is actually on another instance, fetch
     # it from there to avoid a potentially confusing result.
     [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
@@ -188,7 +188,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
-  rescue SubmitError => error
+  rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
     post_response(error)
@@ -228,7 +228,7 @@ class UploadController < ApplicationController
     __debug_request
     @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
-  rescue SubmitError => error
+  rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
     post_response(error)
@@ -283,7 +283,7 @@ class UploadController < ApplicationController
     @list = wf_single(rec: rec, data: dat, **opt)
     failure(:file_id) unless @list.present?
     post_response(:found, @list, redirect: back)
-  rescue SubmitError => error
+  rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
     post_response(:not_found, error, redirect: back)
@@ -337,7 +337,7 @@ class UploadController < ApplicationController
     @list = wf_bulk(start_state: :creating, event: :submit, variant: :create)
     wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
-  rescue SubmitError => error
+  rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
@@ -376,7 +376,7 @@ class UploadController < ApplicationController
     @list = wf_bulk(start_state: :editing, event: :submit, variant: :edit)
     wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
-  rescue SubmitError => error
+  rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
@@ -410,7 +410,7 @@ class UploadController < ApplicationController
     failure(:file_id) unless @list.present?
     wf_check_partial_failure
     post_response(:found, @list)
-  rescue SubmitError => error
+  rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
@@ -534,7 +534,7 @@ class UploadController < ApplicationController
     self.status = stat        if stat.present?
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?
-  rescue SubmitError => error
+  rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: true)
   rescue => error
     post_response(error, xhr: true)

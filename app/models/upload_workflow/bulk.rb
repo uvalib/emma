@@ -179,7 +179,7 @@ module UploadWorkflow::Bulk::External
   #
   def bulk_upload_file(entries, base_url: nil, user: nil, limit: nil, **opt)
     opt[:base_url]   = base_url || Upload::BULK_BASE_URL
-    opt[:user_id]    = User.find_id(user || Upload::BULK_USER)
+    opt[:user_id]    = User.id_value(user || Upload::BULK_USER)
     opt[:importer] ||= Import::IaBulk # TODO: ?
 
     # Honor :limit if given.

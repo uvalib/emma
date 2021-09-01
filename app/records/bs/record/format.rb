@@ -51,6 +51,12 @@ class Bs::Record::Format < Bs::Api::Record
     name.to_s
   end
 
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
+
   # Return the unique identifier for the represented item.
   #
   # @return [String]

@@ -25,8 +25,8 @@ class Bs::Api::Message < Bs::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
-  # @param [Hash]                                              opt
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
   #
   def initialize(src, opt = nil)
     # noinspection RubyScope, RubyMismatchedParameterType

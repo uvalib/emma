@@ -19,13 +19,13 @@ class AwsS3::Api::Message < AwsS3::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Api::Record, Hash, nil] src
-  # @param [Hash]                   opt
+  # @param [Model, Hash, nil] src
+  # @param [Hash, nil]        opt
   #
   def initialize(src, opt = nil)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
-      initialize_attributes(src) unless src.is_a?(Api::Record)
+      initialize_attributes(src) unless src.is_a?(Model)
       super(src, **opt)
     end
   end

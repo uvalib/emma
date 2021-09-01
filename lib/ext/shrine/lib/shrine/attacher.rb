@@ -336,7 +336,7 @@ class Shrine
 
       # load_entity
       #
-      # @param [Upload]         record
+      # @param [Model]          record
       # @param [Symbol, String] name
       #
       # @return [FileUploader]
@@ -348,7 +348,7 @@ class Shrine
 
       # set_entity
       #
-      # @param [Upload]         record
+      # @param [Model]          record
       # @param [Symbol, String] name
       #
       # @return [FileUploader]

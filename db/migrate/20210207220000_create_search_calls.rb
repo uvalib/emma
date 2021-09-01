@@ -13,7 +13,7 @@ class CreateSearchCalls < ActiveRecord::Migration[6.0]
       t.json       :sort
       t.json       :page
       t.json       :result
-      t.belongs_to :user #, foreign_key: true
+      t.belongs_to :user
       t.datetime   :created_at
     end
 

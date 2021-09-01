@@ -444,7 +444,14 @@ DEBUG_TRANSMISSION = true?(ENV['DEBUG_TRANSMISSION'])
 #
 # @type [Boolean]
 #
-DEBUG_WORKFLOW = true?(ENV['DEBUG_WORKFLOW'])
+DEBUG_WORKFLOW = true?(ENV['DEBUG_WORKFLOW']) # TODO: remove after upload -> entry
+
+# Debug workflow steps.
+#
+# @type [Boolean]
+#
+DEBUG_RECORD = true?(ENV['DEBUG_RECORD'] || ENV['DEBUG_WORKFLOW'] || true) # TODO: remove - testing
+#DEBUG_RECORD = true?(ENV['DEBUG_RECORD'])
 
 # Set to show low-level XML parse logging.
 #

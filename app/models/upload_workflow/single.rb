@@ -397,7 +397,7 @@ module UploadWorkflow::Single::Actions
   #
   # @see UploadWorkflow::Single::External#upload_file
   #
-  def wf_upload_file(*event_args)
+  def wf_upload_file(*event_args)                                               # NOTE: to Action::Store#upload!
     __debug_items(binding)
     opt = event_args.extract_options!.presence || event_args.first || {}
     opt[:meth] ||= calling_method
@@ -431,7 +431,7 @@ module UploadWorkflow::Single::Actions
   #
   # @return [void]
   #
-  def wf_check_status(*event_args)
+  def wf_check_status(*event_args)                                              # NOTE: to EntryConcern#check_entry
     opt  = event_args.extract_options!
     html = !false?(opt[:html])
     user = record.active_user
@@ -499,7 +499,7 @@ module UploadWorkflow::Single::Actions
   #
   # @return [String]
   #
-  def wf_check_retrieved
+  def wf_check_retrieved                                                        # NOTE: to Action::Queue#check_retrieved
     sid  = record.submission_id
     data = aws_api.list_records(record).values_at(sid).flatten
 
@@ -523,7 +523,7 @@ module UploadWorkflow::Single::Actions
   #
   # @return [String]
   #
-  def wf_check_indexed
+  def wf_check_indexed                                                          # NOTE: to Action::Index#check_indexed
     sid  = record.submission_id
     rid  = record.emma_metadata[:emma_recordId]
     data = ingest_api.get_records(rid)
@@ -1333,9 +1333,9 @@ class UploadWorkflow::Single < UploadWorkflow
   # @param [Hash]                     opt   Passed to #initialize_state
   #
   def initialize(data, **opt)
-    __debug("WORKFLOW initialize UploadWorkflow::Single | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect} | data = #{data.class}")
-    opt[:user] ||= (User.find_id(data[:user_id]) if data.is_a?(Hash))
-    data.set_revert_data                         if data.is_a?(Upload)
+    __debug("UPLOAD WF initialize UploadWorkflow::Single | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect} | data = #{data.class}")
+    opt[:user] ||= (User.id_value(data[:user_id]) if data.is_a?(Hash))
+    data.set_revert_data                          if data.is_a?(Upload)
     if (data &&= set_record(data))
       opt[:start_state] ||= get_workflow_state.presence&.to_sym || :starting
       data = nil

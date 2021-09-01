@@ -27,36 +27,6 @@ module UploadHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  UPLOAD_FIELDS       = Model.configured_fields(:upload).deep_freeze
-  UPLOAD_INDEX_FIELDS = UPLOAD_FIELDS[:index] || {}
-  UPLOAD_SHOW_FIELDS  = UPLOAD_FIELDS[:show]  || {}
-
-  # Mapping of label keys to fields from `Upload#attributes`.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  UPLOAD_DATABASE_FIELDS = UPLOAD_FIELDS[:all]
-
-  # Mapping of label keys to fields from Search::Record::MetadataRecord.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  SEARCH_RECORD_FIELDS =
-    UPLOAD_DATABASE_FIELDS[:emma_data]
-      .select { |k, v| v.is_a?(Hash) unless k == :cond }
-      .deep_freeze
-
-  # Reverse mapping of EMMA search record field to the label configured for it.
-  #
-  # @type [Hash{String=>Symbol}]
-  #
-  SEARCH_RECORD_LABELS =
-    SEARCH_RECORD_FIELDS.transform_values { |v| v[:label] }.invert.deep_freeze
-
   # Paths used by file-upload.js.
   #
   # @type [Hash]
@@ -196,13 +166,13 @@ module UploadHelper
   #++
   def render_json_data(item, value, **opt)
     return unless item
+    opt[:model]     ||= item && model_for(item) || :upload
     opt[:no_format] ||= :dc_description
-    pairs = json_parse(value)
-    pairs &&=
-      pairs.transform_values! do |v|
-        v.is_a?(Hash) ? render_json_data(item, v, **opt) : v
-      end
-    pairs &&= render_field_values(item, model: :upload, pairs: pairs, **opt)
+    pairs = json_parse(value).presence
+    pairs&.transform_values! do |v|
+      v.is_a?(Hash) ? render_json_data(item, v, **opt) : v
+    end
+    pairs &&= render_field_values(item, pairs: pairs, **opt)
     pairs ||= render_empty_value(EMPTY_VALUE)
     # noinspection RubyMismatchedParameterType
     html_div(pairs, class: 'data-list')
@@ -253,8 +223,8 @@ module UploadHelper
   # @param [Hash]      opt            Passed to #model_details.
   #
   def upload_details(item, pairs: nil, **opt)
-    opt[:model] = :upload
-    opt[:pairs] = UPLOAD_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = item && model_for(item) || :upload
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -590,8 +560,8 @@ module UploadHelper
   # @param [Hash]      opt            Passed to #model_list_item.
   #
   def upload_list_item(item, pairs: nil, **opt)
-    opt[:model] = :upload
-    opt[:pairs] = UPLOAD_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = item && model_for(item) || :upload
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
@@ -774,26 +744,15 @@ module UploadHelper
 
   public
 
-  # Mapping of label keys to database fields and fields from
-  # Search::Record::MetadataRecord.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  UPLOAD_FORM_FIELDS =
-    UPLOAD_DATABASE_FIELDS
-      .except(:file_data, :emma_data)
-      .merge(SEARCH_RECORD_FIELDS)
-      .deep_freeze
-
-  # Render pre-populated form fields.
+  # Render pre-populated form fields.                                           # NOTE: to EntryHelper#entry_form_fields
   #
   # @param [Upload]    item
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #render_form_fields.
   #
   def upload_form_fields(item, pairs: nil, **opt)
-    opt[:model] = :upload
-    opt[:pairs] = UPLOAD_FORM_FIELDS.merge(pairs || {})
+    opt[:model] = model = item && model_for(item) || :upload
+    opt[:pairs] = form_fields(model).merge(pairs || {})
     render_form_fields(item, **opt)
   end
 
@@ -946,6 +905,7 @@ module UploadHelper
     url = opt.delete(:url)
     opt[:'data-path'] ||= url || params[:cancel]
     opt[:'data-path'] ||= (request.referer if local_request? && !same_request?)
+    opt[:model]       ||= :upload
     opt[:config]      ||= UPLOAD_ACTION_VALUES
     form_cancel_button(**opt)
   end

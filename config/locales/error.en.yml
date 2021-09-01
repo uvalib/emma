@@ -82,9 +82,11 @@ en:
 
         _name:          'EMMA Unified Search service'
 
-      upload:
+      entry:            &ENTRY
 
-        # @see UploadConcern
+        # @see EntryConcern
+
+        _name:          'EMMA submission'
 
         invalid:
           message:      'Issues to resolve: %s'
@@ -94,9 +96,11 @@ en:
 
         file_id:
           message:      'No entry identifier provided'
+          error:        Record::StatementInvalid
 
         find:
           message:      'Entry %s not found'
+          error:        Record::NotFound
 
         create:
           message:      'Failed to create entry'
@@ -115,3 +119,9 @@ en:
 
         bulk_delete:
           message:      'Failed to delete entries'
+
+      upload: # TODO: remove after upload -> entry
+
+        # @see UploadConcern
+
+        <<: *ENTRY

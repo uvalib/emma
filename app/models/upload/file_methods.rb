@@ -33,7 +33,9 @@ module Upload::FileMethods
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
 
-    # Represents a file that was uploaded to a storage.
+    include ActiveRecord::Validations
+
+    # Represents a file that was uploaded to a storage.                         # NOTE: to Record::Uploadable
     #
     # @return [FileUploader::UploadedFile]
     #
@@ -41,7 +43,7 @@ module Upload::FileMethods
     #
     attr_reader :file
 
-    # Saves information about the uploaded file as an attachment to a record
+    # Saves information about the uploaded file as an attachment to a record    # NOTE: to Record::Uploadable
     # (saving the file data to the :file_data database column).
     #
     # The attaching process requires a temporary and a permanent storage to be
@@ -81,7 +83,7 @@ module Upload::FileMethods
 
   public
 
-  # The maximum age (in seconds) allowed for download links which are meant to
+  # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: to Record::Uploadable
   # be valid only for a single time.
   #
   # This should be generous to allow for network delays.
@@ -90,7 +92,7 @@ module Upload::FileMethods
   #
   ONE_TIME_USE_EXPIRATION = 10
 
-  # The maximum age (in seconds) allowed for download links.
+  # The maximum age (in seconds) allowed for download links.                    # NOTE: to Record::Uploadable
   #
   # This allows the link to be reused for a while, but not long enough to allow
   # sharing of content URLs for distribution.
@@ -108,13 +110,13 @@ module Upload::FileMethods
   # Shrine attachment for :file_data.
   #
   # noinspection RubyResolve
-  include FileUploader::Attachment(:file)
+  include FileUploader::Attachment(:file)                                       # NOTE: to Record::Uploadable
 
   # Shrine attachment for :edit_file_data, which is applicable only when
   # `#phase` is "edit".
   #
   # noinspection RubyResolve
-  include FileUploader::Attachment(:edit_file)
+  include FileUploader::Attachment(:edit_file)                                  # NOTE: not relevant to Entry/Phase/Action.
 
   # ===========================================================================
   # :section:
@@ -127,7 +129,7 @@ module Upload::FileMethods
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
-  def filename
+  def filename                                                                  # NOTE: to Record::Uploadable
     @filename ||= attached_file&.original_filename&.dup
   end
 
@@ -136,7 +138,7 @@ module Upload::FileMethods
   # @return [FileUploader::UploadedFile]
   # @return [nil]                     If :file_data is blank.
   #
-  def attached_file
+  def attached_file                                                             # NOTE: to Record::Uploadable#attached_file and #file_attacher_load
     file || (file_attacher.load_data(file_data) if file_data.present?)
   end
 
@@ -145,7 +147,7 @@ module Upload::FileMethods
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
-  def edit_filename
+  def edit_filename                                                             # NOTE: not relevant to Entry/Phase/Action.
     edit_attached_file&.original_filename&.dup
   end
 
@@ -154,7 +156,7 @@ module Upload::FileMethods
   # @return [FileUploader::UploadedFile]
   # @return [nil]                     If :file_data is blank.
   #
-  def edit_attached_file
+  def edit_attached_file                                                        # NOTE: not relevant to Entry/Phase/Action.
     edit_file ||
       (edit_file_attacher.load_data(edit_file_data) if edit_file_data.present?)
   end
@@ -164,8 +166,7 @@ module Upload::FileMethods
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
-  def active_filename
-    # noinspection RubyYardReturnMatch
+  def active_filename                                                           # NOTE: not relevant to Entry/Phase/Action.
     edit_phase && edit_filename || filename
   end
 
@@ -174,7 +175,7 @@ module Upload::FileMethods
   # @return [FileUploader::UploadedFile]
   # @return [nil]                     If :file_data is blank.
   #
-  def active_attached_file
+  def active_attached_file                                                      # NOTE: not relevant to Entry/Phase/Action.
     edit_phase && edit_attached_file || attached_file
   end
 
@@ -189,7 +190,7 @@ module Upload::FileMethods
   # @return [FileUploader::UploadedFile]
   # @return [nil]
   #
-  def attach_cached
+  def attach_cached                                                             # NOTE: to Record::Uploadable
     return file_attacher.file if file_attacher.cached?
     return if file_attacher.stored? || file_data.blank?
     file_attacher.load_data(file_data)
@@ -202,7 +203,7 @@ module Upload::FileMethods
   # @return [FileUploader::UploadedFile]
   # @return [nil]
   #
-  def edit_attach_cached
+  def edit_attach_cached                                                        # NOTE: not relevant to Entry/Phase/Action.
     return edit_file_attacher.file if edit_file_attacher.cached?
     return if edit_file_attacher.stored? || edit_file_data.blank?
     edit_file_attacher.load_data(edit_file_data)
@@ -215,7 +216,7 @@ module Upload::FileMethods
   # @return [FileUploader::UploadedFile]
   # @return [nil]
   #
-  def active_attach_cached
+  def active_attach_cached                                                      # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? edit_attach_cached : attach_cached
   end
 
@@ -234,7 +235,7 @@ module Upload::FileMethods
   #
   # @return [void]
   #
-  def promote_file(no_raise: true)
+  def promote_file(no_raise: true)                                              # NOTE: to Record::Uploadable
     __debug_items(binding)
     promote_cached_file(no_raise: no_raise)
   end
@@ -248,7 +249,7 @@ module Upload::FileMethods
   #
   # @return [void]
   #
-  def delete_file(no_raise: true, field: nil)
+  def delete_file(no_raise: true, field: nil)                                   # NOTE: to Record::Uploadable
     __debug_items(binding)
     return if destroyed?
     if field.nil? && active_attached_file
@@ -281,7 +282,7 @@ module Upload::FileMethods
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
-  def download_url(**opt)
+  def download_url(**opt)                                                       # NOTE: to Record::Uploadable
     opt[:expires_in] ||= ONE_TIME_USE_EXPIRATION
     attached_file&.url(**opt)
   end
@@ -290,7 +291,7 @@ module Upload::FileMethods
   #
   # @return [Aws::S3::Object, nil]
   #
-  def s3_object
+  def s3_object                                                                 # NOTE: to Record::Uploadable
     attached_file&.storage&.object(file.id)
   end
 
@@ -317,7 +318,7 @@ module Upload::FileMethods
   # Upload instance (without needing to execute #save in order to engage Shrine
   # event handlers to copy the file to storage).
   #
-  def fetch_and_upload_file(file_path, **opt)
+  def fetch_and_upload_file(file_path, **opt)                                   # NOTE: to Record::Uploadable
     meth   = opt.delete(:meth) || __method__
     result =
       if file_path =~ /^https?:/
@@ -340,7 +341,7 @@ module Upload::FileMethods
 
   protected
 
-  # Options for Down#open.
+  # Options for Down#open.                                                      # NOTE: to Record::Uploadable
   #
   # @type [Hash]
   #
@@ -350,7 +351,7 @@ module Upload::FileMethods
   #
   DOWN_OPEN_OPTIONS = { read_timeout: 60 }.deep_freeze
 
-  # Acquire a remote file and copy it to storage.
+  # Acquire a remote file and copy it to storage.                               # NOTE: to Record::Uploadable#upload_remote
   #
   # @param [String] url
   # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:
@@ -380,7 +381,7 @@ module Upload::FileMethods
   #
   # @return [FileUploader::UploadedFile]
   #
-  def upload_local_file(path, **opt)
+  def upload_local_file(path, **opt)                                            # NOTE: to Record::Uploadable#upload_local
     File.open(path) do |io|
       file_attacher.attach(io, **opt)
     end
@@ -400,7 +401,7 @@ module Upload::FileMethods
   #
   # @return [Symbol]
   #
-  def file_data_column
+  def file_data_column                                                          # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? :edit_file_data : :file_data
   end
 
@@ -414,7 +415,7 @@ module Upload::FileMethods
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def active_file
+  def active_file                                                               # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? edit_file : file
   end
 
@@ -422,7 +423,7 @@ module Upload::FileMethods
   #
   # @return [FileUploader::Attacher]
   #
-  def active_file_attacher
+  def active_file_attacher                                                      # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? edit_file_attacher : file_attacher
   end
 
@@ -430,19 +431,19 @@ module Upload::FileMethods
   #
   # @return [String, nil]
   #
-  def active_file_data
+  def active_file_data                                                          # NOTE: not relevant to Entry/Phase/Action.
     self[file_data_column]
   end
 
   # ===========================================================================
-  # :section: Validations
+  # :section: ActiveRecord validations
   # ===========================================================================
 
   protected
 
   # Indicate whether the attached file is valid.
   #
-  def attached_file_valid?
+  def attached_file_valid?                                                      # NOTE: to Record::Uploadable
     return unless active_file
     active_file_attacher.validate
     active_file_attacher.errors.each { |e|
@@ -451,7 +452,7 @@ module Upload::FileMethods
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: ActiveRecord callbacks
   # ===========================================================================
 
   protected
@@ -482,7 +483,7 @@ module Upload::FileMethods
   #   Shrine::Attacher::InstanceMethods#destroy_attached
   #     Shrine::Attacher::InstanceMethods#destroy
   #
-  def note_cb(type)
+  def note_cb(type)                                                             # NOTE: to Record::Uploadable
     __debug_line("*** UPLOAD CALLBACK #{type} ***")
   end
 
@@ -493,7 +494,7 @@ module Upload::FileMethods
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_cached_file(no_raise: false, keep_cached: false)
+  def promote_cached_file(no_raise: false, keep_cached: false)                  # NOTE: to Record::Uploadable
     __debug_items(binding)
     return unless active_attach_cached
     old_file   = !keep_cached
@@ -512,7 +513,7 @@ module Upload::FileMethods
   #
   # @return [TrueClass, nil]
   #
-  def delete_cached_file(no_raise: false)
+  def delete_cached_file(no_raise: false)                                       # NOTE: to Record::Uploadable
     __debug_items(binding)
     return unless active_attach_cached
     active_file_attacher.destroy
@@ -525,7 +526,7 @@ module Upload::FileMethods
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: ActiveRecord callbacks
   # ===========================================================================
 
   private
@@ -537,7 +538,7 @@ module Upload::FileMethods
   #
   # @return [nil]
   #
-  def log_exception(excp, meth = nil)
+  def log_exception(excp, meth = nil)                                           # NOTE: to Record::Uploadable
     error = warning = nil
     case excp
       when Shrine::FileNotFound      then warning = 'FILE_NOT_FOUND'

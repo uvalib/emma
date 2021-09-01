@@ -10,7 +10,7 @@ class CreateMembers < ActiveRecord::Migration[6.0]
       t.string  :emailAddress
       t.boolean :institutional
       t.timestamps
-      t.belongs_to :user #, foreign_key: true
+      t.belongs_to :user
     end
   end
 

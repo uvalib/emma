@@ -23,20 +23,6 @@ module SearchHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  SEARCH_FIELDS       = Model.configured_fields(:search).deep_freeze
-  SEARCH_INDEX_FIELDS = SEARCH_FIELDS[:index] || {}
-  SEARCH_SHOW_FIELDS  = SEARCH_FIELDS[:show]  || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]
@@ -293,8 +279,8 @@ module SearchHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def search_item_details(item, pairs: nil, **opt)
-    opt[:model] = :search
-    opt[:pairs] = SEARCH_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :search
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -337,13 +323,13 @@ module SearchHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #model_list_item.
+  # @param [Model]     item
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]     opt             Passed to #model_list_item.
   #
   def search_list_item(item, pairs: nil, **opt)
-    opt[:model] = :search
-    opt[:pairs] = SEARCH_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :search
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

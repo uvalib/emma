@@ -46,14 +46,14 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Api::Record, Upload, Hash, String, nil] src
-  # @param [Hash]                                                      opt
+  # @param [Model, Hash, String nil] src
+  # @param [Hash, nil]               opt
   #
   # @option opt [String] :value       If *src* is *nil*, a unique record ID may
   #                                     be provided here as the value for the
   #                                     instance.
   #
-  # @raise [UploadWorkflow::SubmitError]  If metadata was malformed.
+  # @raise [Record::SubmitError]      If metadata was malformed.
   #
   def initialize(src, opt = nil)
     opt ||= {}
@@ -61,17 +61,18 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
     if src.blank?
       initialize_attributes
       self.emma_recordId = opt[:value].to_s
-    elsif src.is_a?(Upload)
-      # noinspection RubyNilAnalysis
+    elsif src.is_a?(String)
+      initialize_attributes(emma_recordId: src)
+    elsif src.is_a?(Hash)
+      initialize_attributes(src)
+    elsif src.respond_to?(:emma_metadata)
       attr = reject_blanks(src.emma_metadata.slice(*field_names))
       attr[:emma_repository]         ||= src[:repository]
       attr[:emma_repositoryRecordId] ||= src[:submission_id]
       attr[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
       initialize_attributes(attr)
-    elsif src.is_a?(Hash)
-      initialize_attributes(src)
     else
-      initialize_attributes unless src.is_a?(Api::Record)
+      initialize_attributes unless src.is_a?(Model)
       super(src, **opt)
     end
     if self.emma_recordId.present? || identifier.nil?

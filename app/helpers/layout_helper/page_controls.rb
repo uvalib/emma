@@ -87,14 +87,14 @@ module LayoutHelper::PageControls
     cfg_opt = { controller: controller, action: action, mode: false }
     actions = config_lookup('page_controls.actions', **cfg_opt)
     return if actions.blank?
-    model   = model_for(controller)
+    model   = model_class(controller)
     user    = (@user || current_user)
     subject = (user if model == User)
     actions.map { |entry|
       next if entry.blank?
       if entry.is_a?(Array)
         ctrlr, action = entry.map(&:to_sym)
-        subj   = subject || model_for(ctrlr)
+        subj   = subject || model_class(ctrlr)
       else
         ctrlr  = controller
         action = entry.to_sym
@@ -183,19 +183,27 @@ module LayoutHelper::PageControls
 
   protected
 
-  # model_for
+  # model_class
   #
-  # @param [Symbol, String] ctrlr
+  # @param [Symbol, String, ApplicationController, *] ctrlr
   #
   # @return [Class]
   # @return [nil]
   #
-  def model_for(ctrlr)
-    ctrlr = ctrlr.to_sym
-    return Upload if %i[upload].include?(ctrlr)
-    return User   if %i[home account].include?(ctrlr)
-    return User   if ctrlr.to_s.start_with?('user/')
-    to_class(ctrlr)
+  def model_class(ctrlr)
+    if ctrlr.is_a?(String) || ctrlr.is_a?(Symbol)
+      case ctrlr.to_sym
+        when :upload         then return Upload
+        when :account, :home then return User
+        else                      return User if ctrlr.start_with?('user/')
+      end
+    end
+    result = to_class(ctrlr)
+    if result.is_a?(Class) && result.ancestors.include?(Model)
+      result
+    else
+      Log.warn { "#{__method__}: unexpected: #{ctrlr.inspect}" }
+    end
   end
 
 end

@@ -79,7 +79,7 @@ module UploadWorkflow::Errors
 
   public
 
-  # Error types and messages.
+  # Error types and messages.                                                   # NOTE: to Record::Exceptions::ENTRY_ERROR
   #
   # @type [Hash{Symbol=>(String,Class)}]
   #
@@ -111,7 +111,7 @@ module UploadWorkflow::Errors
 
     public
 
-    # Default label. TODO: I18n
+    # Default label. TODO: I18n                                                 # NOTE: to Record::Rendering
     #
     # @type [String]
     #
@@ -124,7 +124,7 @@ module UploadWorkflow::Errors
     #
     # @return [String]
     #
-    def make_label(item, default: DEFAULT_LABEL)
+    def make_label(item, default: DEFAULT_LABEL)                                # NOTE: to Record::Rendering
       file  = (item.filename if item.is_a?(Upload))
       ident = Upload.sid_for(item) || Upload.id_for(item) || default
       ident = "Item #{ident}"      if digits_only?(ident) # TODO: I18n
@@ -202,7 +202,7 @@ module UploadWorkflow::Errors
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
-  def failure(problem, value = nil)
+  def failure(problem, value = nil)                                             # NOTE: to Record::Exceptions
     __debug_items("UPLOAD WF #{__method__}", binding)
 
     # If any failure is actually an internal error, re-raise it now so that it
@@ -230,10 +230,7 @@ end
 
 # Workflow properties that can be set via URL parameters.
 #
-#--
-# noinspection RubyClassVariableUsageInspection
-#++
-module UploadWorkflow::Properties
+module UploadWorkflow::Properties                                               # NOTE: to Record::Properties (all)
 
   include Workflow::Base::Properties
   include UploadWorkflow::Errors
@@ -527,7 +524,7 @@ module UploadWorkflow::Properties
   # UploadConcern) or in the context of the workflow instance (through the
   # parameters saved from the :params initializer option).
   #
-  # @return [Hash, nil]
+  # @return [Hash{Symbol=>*}]
   #
   def parameters
     # noinspection RailsParamDefResolve
@@ -594,8 +591,7 @@ module UploadWorkflow::External
   #
   # @return [AwsS3Service]
   #
-  def aws_api
-    # noinspection RubyYardReturnMatch
+  def aws_api                                                                   # NOTE: to Record::Submittable::MemberRepositoryMethods
     AwsS3Service.instance
   end
 
@@ -603,8 +599,7 @@ module UploadWorkflow::External
   #
   # @return [IngestService]
   #
-  def ingest_api
-    # noinspection RubyYardReturnMatch
+  def ingest_api                                                                # NOTE: to Record::Submittable::IndexIngestMethods
     IngestService.instance
   end
 
@@ -616,10 +611,17 @@ module UploadWorkflow::External
   # @see Upload#valid_sid?
   # @see Upload#emma_native?
   #
-  def emma_item?(item)
+  def emma_item?(item)                                                          # NOTE: to Record::Submittable::RecordMethods
     return true if item.is_a?(Upload) && item.repository.nil?
-    # noinspection RubyYardParamTypeMatch
     digits_only?(item) || Upload.valid_sid?(item) || Upload.emma_native?(item)
+  end
+
+  # Indicate whether the item does not represent an existing EMMA entry.
+  #
+  # @param [Model, String, *] item
+  #
+  def incomplete?(item)                                                         # NOTE: to Record::Submittable::RecordMethods
+    item.is_a?(Upload) && !item.existing_entry?
   end
 
   # ===========================================================================
@@ -635,8 +637,8 @@ module UploadWorkflow::External
   # @param [Boolean] atomic           Passed to #add_to_index.
   # @param [Hash]    data             @see Upload#assign_attributes.
   #
-  # @return [(Upload,Array>]          Record and error messages.
-  # @return [(nil,Array)]             No record; error message.
+  # @return [(Upload,Array>]          Record instance; zero or more messages.
+  # @return [(nil,Array)]             No record; one or more error messages.
   #
   # @see #db_insert
   # @see #add_to_index
@@ -644,7 +646,7 @@ module UploadWorkflow::External
   # Compare with:
   # UploadWorkflow::Bulk::External#bulk_upload_create
   #
-  def upload_create(index: nil, atomic: true, **data)
+  def upload_create(index: nil, atomic: true, **data)                           # NOTE: to Record::Submittable::SubmissionMethods#entry_create
     __debug_items("UPLOAD WF #{__method__}", binding)
 
     # Save the Upload record to the database.
@@ -665,8 +667,8 @@ module UploadWorkflow::External
   # @param [Boolean] atomic           Passed to #update_in_index.
   # @param [Hash]    data             @see Upload#assign_attributes
   #
-  # @return [(Upload,Array>]          Record and error messages.
-  # @return [(nil,Array)]             No record; error message.
+  # @return [(Upload,Array>]          Record instance; zero or more messages.
+  # @return [(nil,Array)]             No record; one or more error messages.
   #
   # @see #db_update
   # @see #update_in_index
@@ -674,7 +676,7 @@ module UploadWorkflow::External
   # Compare with:
   # UploadWorkflow::Bulk::External#bulk_upload_edit
   #
-  def upload_edit(index: nil, atomic: true, **data)
+  def upload_edit(index: nil, atomic: true, **data)                             # NOTE: to Record::Submittable::SubmissionMethods#entry_edit
     __debug_items("UPLOAD WF #{__method__}", binding)
     if (id = data[:id]).blank?
       if (id = data[:submission_id]).blank?
@@ -714,10 +716,10 @@ module UploadWorkflow::External
   # If a later item fails, the successfully-destroyed items will still be
   # removed from the index.
   #
-  def upload_remove(*items, index: nil, atomic: true, force: nil, **opt)
+  def upload_remove(*items, index: nil, atomic: true, force: nil, **opt)        # NOTE: to Record::Submittable::SubmissionMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
 
-    # Translate entries into Upload record instances.
+    # Translate items into Upload record instances.
     items, failed = collect_records(*items, force: force)
     requested = []
     if force
@@ -726,7 +728,8 @@ module UploadWorkflow::External
       # for removal of member repository items.
       items, failed =
         items.partition do |item|
-          emma_item?(item) || (Upload.sid_for(item) if emergency)
+          emma_item?(item) || incomplete?(item) ||
+            (Upload.sid_for(item) if emergency)
         end
       if repo_remove
         deferred = opt.key?(:requests)
@@ -737,12 +740,16 @@ module UploadWorkflow::External
           requests[repo] << item
           requested << item
         end
-        batch_repository_remove(requests, **opt) unless deferred
+        repository_removals(requests, **opt) unless deferred
       end
     end
     if atomic && failed.present? || items.blank?
       return (items + requested), failed
     end
+
+    # Dequeue member repository creation requests.
+    requests = items.select { |item| incomplete?(item) && !emma_item?(item) }
+    repository_dequeues(requests, **opt) if requests.present?
 
     # Remove the records from the database.
     destroyed = []
@@ -800,11 +807,11 @@ module UploadWorkflow::External
   #
   # @see UploadWorkflow::External#upload_remove
   #
-  def batch_upload_remove(ids, index: true, atomic: true, force: nil, **opt)
+  def batch_upload_remove(ids, index: true, atomic: true, force: nil, **opt)    # NOTE: to Record::Submittable::BatchMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     ids = Array.wrap(ids)
 
-    # Translate entries into Upload record instances if possible.
+    # Translate items into record instances if possible.
     items, failed = collect_records(*ids, force: force)
     return [], failed if atomic && failed.present? || items.blank?
 
@@ -819,8 +826,8 @@ module UploadWorkflow::External
     if truncate_delete && (ids == %w(*))
       if failed.present?
         Log.warn('database not truncated due to the presence of errors')
-      else
-        Upload.connection.truncate(Upload.table_name)
+      elsif !Upload.connection.truncate(Upload.table_name)
+        Log.warn("cannot truncate '#{Upload.table_name}'")
       end
     end
 
@@ -831,7 +838,7 @@ module UploadWorkflow::External
         Log.warn('failure(s) prevented generation of repo removal requests')
       else
         requests = opt.delete(:requests)
-        s, f = batch_repository_remove(requests, **opt)
+        s, f = repository_removals(requests, **opt)
         succeeded += s
         failed    += f
       end
@@ -849,29 +856,29 @@ module UploadWorkflow::External
   # batches of the default #BATCH_SIZE.
   #
   # @param [Symbol]                            op
-  # @param [Array<String,Integer,Hash,Upload>] entries
+  # @param [Array<String,Integer,Hash,Upload>] items
   # @param [Integer, Boolean]                  size     Default: #BATCH_SIZE.
   # @param [Hash]                              opt
   #
   # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
-  def batch_upload_operation(op, entries, size: nil, **opt)
+  def batch_upload_operation(op, items, size: nil, **opt)                       # NOTE: to Record::Submittable::BatchMethods
     __debug_items((dbg = "UPLOAD WF #{op}"), binding)
-    opt[:bulk] ||= { total: entries.size }
+    opt[:bulk] ||= { total: items.size }
 
     # Set batch size for this iteration.
     size = batch_size     if size.nil?
     size = -1             if size.is_a?(FalseClass)
     size =  0             if size.is_a?(TrueClass)
     size = size.to_i
-    size = entries.size   if size.negative?
+    size = items.size     if size.negative?
     size = BATCH_SIZE     if size.zero?
     size = MAX_BATCH_SIZE if size > MAX_BATCH_SIZE
 
     succeeded = []
     failed    = []
     counter   = 0
-    entries.each_slice(size) do |batch|
+    items.each_slice(size) do |batch|
       throttle(counter)
       min = size * counter
       max = (size * (counter += 1)) - 1
@@ -893,7 +900,7 @@ module UploadWorkflow::External
   #
   # @return [void]
   #
-  def throttle(counter, frequency: 1, pause: true)
+  def throttle(counter, frequency: 1, pause: true)                              # NOTE: to Record::Submittable::BatchMethods
     pause = THROTTLE_PAUSE if pause.is_a?(TrueClass)
     return if pause.blank?
     return if counter.zero?
@@ -939,10 +946,7 @@ module UploadWorkflow::External
   # @return [Upload]                  The item; from the database if necessary.
   # @return [nil]                     If *item* not found and *no_raise*.
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
-  def get_record(id, no_raise: false, meth: nil)
+  def get_record(id, no_raise: false, meth: nil)                                # NOTE: to Record::Identification#find_record
     if (result = Upload.get_record(id))
       result
     elsif Upload.id_term(id).values.first.blank?
@@ -962,7 +966,7 @@ module UploadWorkflow::External
   #
   # @return [Array<Upload>]
   #
-  def find_records(*items, **opt)
+  def find_records(*items, **opt)                                               # NOTE: to Record::Identification
     collect_records(*items, **opt).first || []
   end
 
@@ -974,12 +978,11 @@ module UploadWorkflow::External
   #
   # @see #add_title_prefix
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def new_record(data = nil)
+  def new_record(data = nil)                                                    # NOTE: to Record::Submittable::RecordMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
-    Upload.new(data).tap { |record| add_title_prefix(record) if title_prefix }
+    Upload.new(data).tap do |record|
+      add_title_prefix(record) if title_prefix
+    end
   end
 
   # ===========================================================================
@@ -1006,7 +1009,7 @@ module UploadWorkflow::External
   # the returned list of items may contain a mixture of Upload and String
   # elements.
   #
-  def collect_records(*items, all: false, force: false, **opt)
+  def collect_records(*items, all: false, force: false, **opt)                  # NOTE: to Record::Identification
     raise 'If :all is true then no items are allowed'  if all && items.present?
     opt = items.pop if items.last.is_a?(Hash) && opt.blank?
     Log.warn { "#{__method__}: no criteria supplied" } if all && opt.blank?
@@ -1042,9 +1045,10 @@ module UploadWorkflow::External
   #
   # @return [void]
   #
-  def add_title_prefix(record, prefix: title_prefix)
-    return if prefix.blank?
-    return if (title = record&.active_emma_metadata[:dc_title]).nil?
+  def add_title_prefix(record, prefix: title_prefix)                            # NOTE: to Record::Submittable::RecordMethods
+    return unless prefix.present?
+    return unless record.respond_to?(:active_emma_metadata)
+    return unless (title = record.active_emma_metadata[:dc_title])
     prefix = "#{prefix} - " unless prefix.match?(/[[:punct:]]\s*$/)
     prefix = "#{prefix} "   unless prefix.end_with?(' ')
     return if title.start_with?(prefix)
@@ -1057,7 +1061,7 @@ module UploadWorkflow::External
 
   protected
 
-  # Upload file via Shrine.
+  # Upload file via Shrine.                                                     # NOTE: to Record::Uploadable#upload_file
   #
   # @param [Hash] opt
   #
@@ -1084,7 +1088,7 @@ module UploadWorkflow::External
   #
   # @return [Upload]
   #
-  def db_insert(data)
+  def db_insert(data)                                                           # NOTE: to Record::Submittable::DatabaseMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     fault!(data) # @see UploadWorkflow::Testing
     record = data.is_a?(Upload) ? data : new_record(data)
@@ -1100,7 +1104,7 @@ module UploadWorkflow::External
   # @return [Upload]                  The provided or located record.
   # @return [nil]                     If the record was not found or updated.
   #
-  def db_update(record, data = nil)
+  def db_update(record, data = nil)                                             # NOTE: to Record::Submittable::DatabaseMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     record, data = [nil, record] if record.is_a?(Hash)
     unless record.is_a?(Upload)
@@ -1132,7 +1136,7 @@ module UploadWorkflow::External
   # @return [Any]
   # @return [nil]                     If the record was not found or removed.
   #
-  def db_delete(data)
+  def db_delete(data)                                                           # NOTE: to Record::Submittable::DatabaseMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     record = data.is_a?(Upload) ? data : get_record(data)
     record&.destroy
@@ -1144,7 +1148,7 @@ module UploadWorkflow::External
 
   public
 
-  # As a convenience for testing, sending to the Federated Search Ingest API
+  # As a convenience for testing, sending to the Federated Search Ingest API    # NOTE: to Record::Submittable::IndexIngestMethods
   # can be short-circuited here.  The value should be *false* normally.
   #
   # @type [Boolean]
@@ -1161,7 +1165,7 @@ module UploadWorkflow::External
   # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
   #                                     and records to roll back.
   #
-  def add_to_index(*items, atomic: true, **)
+  def add_to_index(*items, atomic: true, **)                                    # NOTE: to Record::Submittable::IndexIngestMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     succeeded, failed, rollback = update_in_index(*items, atomic: atomic)
     if rollback.present?
@@ -1191,7 +1195,7 @@ module UploadWorkflow::External
   # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
   #                                     and records to roll back.
   #
-  def update_in_index(*items, atomic: true, **)
+  def update_in_index(*items, atomic: true, **)                                 # NOTE: to Record::Submittable::IndexIngestMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     items = normalize_index_items(*items, meth: __method__)
     return [], [], [] if items.blank?
@@ -1214,7 +1218,7 @@ module UploadWorkflow::External
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
-  def remove_from_index(*items, atomic: true, **)
+  def remove_from_index(*items, atomic: true, **)                               # NOTE: to Record::Submittable::IndexIngestMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     items = normalize_index_items(*items, meth: __method__)
     return [], [] if items.blank?
@@ -1233,7 +1237,7 @@ module UploadWorkflow::External
       send(:define_method, m) { |*items, **| skip_index_ingest(m, *items) }
     end
 
-    def skip_index_ingest(meth, *items)
+    def skip_index_ingest(meth, *items)                                         # NOTE: to Record::Submittable::IndexIngestMethods
       __debug { "** SKIPPING ** UPLOAD #{meth} | items = #{items.inspect}" }
       return items, []
     end
@@ -1246,7 +1250,7 @@ module UploadWorkflow::External
 
   protected
 
-  # Interpret error message(s) generated by Federated Ingest to determine which
+  # Interpret error message(s) generated by Federated Ingest to determine which # NOTE: to Record::Submittable::IndexIngestMethods
   # item(s) failed.
   #
   # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
@@ -1308,16 +1312,16 @@ module UploadWorkflow::External
   #
   # @param [Array<Upload, String, Array>] items
   # @param [Symbol, nil]                  meth    The calling method.
+  # @param [Integer]                      max     Maximum number to ingest.
   #
   # @raise [SubmitError] If the number of items is too large to be ingested.
   #
   # @return [Array]
   #
-  def normalize_index_items(*items, meth: nil)
+  def normalize_index_items(*items, meth: nil, max: INGEST_MAX_SIZE)            # NOTE: to Record::Submittable::IndexIngestMethods
     items = items.flatten.compact
-    return items unless items.size > INGEST_MAX_SIZE
-    error = [meth, 'item count', "#{item.size} > #{INGEST_MAX_SIZE}"]
-    error = error.compact.join(': ')
+    return items unless items.size > max
+    error = "#{meth || __method__}: item count: #{item.size} > #{max}"
     Log.error(error)
     failure(error)
   end
@@ -1328,7 +1332,7 @@ module UploadWorkflow::External
 
   public
 
-  # Failure messages for member repository requests. # TODO: I18n
+  # Failure messages for member repository requests. # TODO: I18n               # NOTE: to Record::Submittable::MemberRepositoryMethods
   #
   # @type [Hash{Symbol=>String}]
   #
@@ -1340,82 +1344,101 @@ module UploadWorkflow::External
     no_remove:  'Repository removal requests are disabled',
   }.deep_freeze
 
-  # Submit a new item to member repository.
+  # Submit a new item to a member repository.
   #
-  # @param [String]        repo
-  # @param [Array<Upload>] data
+  # @param [Array<Upload>] items
   # @param [Hash]          opt
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
-  def repository_create(repo, *data, **opt)
+  def repository_create(*items, **opt)                                          # NOTE: to Record::Submittable::MemberRepositoryMethods
     succeeded = []
     failed    = []
-    if repo.blank?
-      failed << REPO_FAILURE[:no_repo]
-    elsif data.blank?
+    if items.blank?
       failed << REPO_FAILURE[:no_items]
     elsif !repo_create
       failed << REPO_FAILURE[:no_create]
     else
-      result = aws_api.creation_request(*data, **opt)
-      succeeded, failed = process_aws_errors(result, *data)
+      result = aws_api.creation_request(*items, **opt)
+      succeeded, failed = process_aws_errors(result, *items)
     end
     return succeeded, failed
   end
 
-  # Request a change to a prior submission to a member repository.
+  # Submit a request to a member repository to modify the metadata and/or
+  # file of a previously-submitted item.
   #
-  # @param [String]        repo
-  # @param [Array<Upload>] data
+  # @param [Array<Upload>] items
   # @param [Hash]          opt
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
-  # @note Not currently supported by any member repository.
+  # @note This capability is not yet supported by any member repository.
   #
-  def repository_edit(repo, *data, **opt)
+  def repository_modify(*items, **opt)                                          # NOTE: to Record::Submittable::MemberRepositoryMethods
     succeeded = []
     failed    = []
-    if repo.blank?
-      failed << REPO_FAILURE[:no_repo]
-    elsif data.blank?
+    if items.blank?
       failed << REPO_FAILURE[:no_items]
     elsif !repo_edit
       failed << REPO_FAILURE[:no_edit]
     else
-      result = aws_api.modification_request(*data, **opt)
-      succeeded, failed = process_aws_errors(result, *data)
+      result = aws_api.modification_request(*items, **opt)
+      succeeded, failed = process_aws_errors(result, *items)
     end
     return succeeded, failed
   end
 
   # Request deletion of a prior submission to a member repository.
   #
-  # @param [String]               repo
-  # @param [Array<String,Upload>] data
+  # @param [Array<String,Upload>] items
   # @param [Hash]                 opt
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
-  # @note Not currently supported by any member repository.
+  # @note This capability is not yet supported by any member repository.
   #
-  def repository_remove(repo, *data, **opt)
+  def repository_remove(*items, **opt)                                          # NOTE: to Record::Submittable::MemberRepositoryMethods
     succeeded = []
     failed    = []
-    if repo.blank?
-      failed << REPO_FAILURE[:no_repo]
-    elsif data.blank?
+    if items.blank?
       failed << REPO_FAILURE[:no_items]
     elsif opt[:emergency]
       # Emergency override for deleting bogus entries creating during
       # testing/development.
-      succeeded, failed = remove_from_index(*data)
+      succeeded, failed = remove_from_index(*items)
     elsif !repo_remove
       failed << REPO_FAILURE[:no_remove]
     else
-      result = aws_api.removal_request(*data, **opt)
-      succeeded, failed = process_aws_errors(result, *data)
+      result = aws_api.removal_request(*items, **opt)
+      succeeded, failed = process_aws_errors(result, *items)
+    end
+    return succeeded, failed
+  end
+
+  # ===========================================================================
+  # :section: Member repository requests
+  # ===========================================================================
+
+  public
+
+  # Remove request(s) from a member repository queue.
+  #
+  # @param [Array<String,Model>] items
+  # @param [Hash]                opt
+  #
+  # @option opt [String] :repo      Required for String items.
+  #
+  # @return [(Array,Array)]         Succeeded items and failed item messages.
+  #
+  def repository_dequeue(*items, **opt)                                         # NOTE: to Record::Submittable::MemberRepositoryMethods
+    succeeded = []
+    failed    = []
+    if items.blank?
+      failed << REPO_FAILURE[:no_items]
+    else
+      result = aws_api.dequeue(*items, **opt)
+      succeeded, failed = process_aws_errors(result, *items)
     end
     return succeeded, failed
   end
@@ -1426,7 +1449,7 @@ module UploadWorkflow::External
 
   protected
 
-  # Interpret error message(s) generated by AWS S3.
+  # Interpret error message(s) generated by AWS S3.                            # NOTE: to Record::Submittable::MemberRepositoryMethods
   #
   # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
   # @param [Array<String, Upload>]                                  items
@@ -1450,7 +1473,7 @@ module UploadWorkflow::External
 
   public
 
-  # batch_repository_remove
+  # Send removal request(s) to member repositories.
   #
   # @param [Hash, Array] items
   # @param [Hash]        opt          Passed to #repository_remove.
@@ -1459,54 +1482,92 @@ module UploadWorkflow::External
   #
   # == Variations
   #
-  # @overload batch_repository_remove(requests, **opt)
+  # @overload repository_removals(requests, **opt)
   #   @param [Hash{Symbol=>Array}]            requests
   #   @param [Hash]                           opt
   #   @return [(Array,Array)]
   #
-  # @overload batch_repository_remove(items, **opt)
+  # @overload repository_removals(items, **opt)
   #   @param [Array<String,#emma_recordId,*>] items
   #   @param [Hash]                           opt
   #   @return [(Array,Array)]
   #
-  def batch_repository_remove(items, **opt)
+  def repository_removals(items, **opt)                                         # NOTE: to Record::Submittable::MemberRepositoryMethods
     succeeded = []
     failed    = []
-    batch_repository_request(items).each_pair do |repo, repo_items|
+    repository_requests(items).each_pair do |_repo, repo_items|
       repo_items.map! { |item| Upload.record_id(item) }
-      s, f = repository_remove(repo, *repo_items, **opt)
+      s, f = repository_remove(*repo_items, **opt)
       succeeded += s
       failed    += f
     end
     return succeeded, failed
   end
 
-  # batch_repository_request
+  # Remove request(s) from member repository queue(s).
   #
   # @param [Hash, Array] items
-  # @param [Boolean]     empty_key    If *true*, allow invalid items.
+  # @param [Hash]        opt        Passed to #repository_remove.
   #
-  # @return [Hash{String=>Array}]
+  # @return [(Array,Array)]         Succeeded items and failed item messages.
   #
   # == Variations
   #
-  # @overload batch_repository_request(requests)
-  #   @param [Hash{String=>Array}] requests
-  #   @return [Hash{String=>Array}]
+  # @overload repository_dequeues(requests, **opt)
+  #   @param [Hash{Symbol=>Array}]            requests
+  #   @param [Hash]                           opt
+  #   @return [(Array,Array)]
   #
-  # @overload batch_repository_request(items)
+  # @overload repository_dequeues(items, **opt)
   #   @param [Array<String,#emma_recordId,*>] items
-  #   @return [Hash{String=>Array}]
+  #   @param [Hash]                           opt
+  #   @return [(Array,Array)]
   #
-  def batch_repository_request(items, empty_key: false)
-    result = {}
+  def repository_dequeues(items, **opt)                                         # NOTE: to Record::Submittable::MemberRepositoryMethods
+    succeeded = []
+    failed    = []
+    repository_requests(items).each_pair do |_repo, repo_items|
+      repo_items.map! { |item| Upload.record_id(item) }
+      s, f = repository_dequeue(*repo_items, **opt)
+      succeeded += s
+      failed    += f
+    end
+    return succeeded, failed
+  end
+
+  # Transform items into arrays of requests per repository.
+  #
+  # @param [Hash, Array, Upload] items
+  # @param [Boolean]             empty_key  If *true*, allow invalid items.
+  #
+  # @return [Hash{String=>Array<Upload>}]   One or more requests per repo.
+  #
+  # == Variations
+  #
+  # @overload repository_requests(hash, empty_key: false)
+  #   @param [Hash{String=>Upload,Array<Upload>}] hash
+  #   @param [Boolean]                            empty_key
+  #   @return [Hash{String=>Array<Upload>}]
+  #
+  # @overload repository_requests(requests, empty_key: false)
+  #   @param [Array<String,Upload,*>] requests
+  #   @param [Boolean]                empty_key
+  #   @return [Hash{String=>Array<Upload>}]
+  #
+  # @overload repository_requests(request, empty_key: false)
+  #   @param [Upload]  request
+  #   @param [Boolean] empty_key
+  #   @return [Hash{String=>Array<Upload>}]
+  #
+  def repository_requests(items, empty_key: false)                              # NOTE: to Record::Submittable::MemberRepositoryMethods
     case items
-      when Array
-        items  = items.flatten.compact_blank
-        result = items.group_by { |item| Upload.repository_of(item) }
+      when Array, Upload
+        items  = (items.is_a?(Array) ? items.flatten : [items]).compact_blank
+        result = items.group_by { |request| Upload.repository_of(request) }
       when Hash
-        result = items.transform_values { |repo_items| Array.wrap(repo_items) }
+        result = items.transform_values { |requests| Array.wrap(requests) }
       else
+        result = {}
         Log.error { "#{__method__}: expected 'items' type: #{items.class}" }
     end
     empty_key ? result : result.delete_if { |repo, _| repo.blank? }

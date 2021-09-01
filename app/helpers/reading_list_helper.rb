@@ -18,21 +18,6 @@ module ReadingListHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  READING_LIST_FIELDS =
-    Model.configured_fields(:reading_list).deep_freeze
-  READING_LIST_INDEX_FIELDS = READING_LIST_FIELDS[:index] || {}
-  READING_LIST_SHOW_FIELDS  = READING_LIST_FIELDS[:show]  || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Control whether thumbnails are shown for reading list entries.
   #
   # @type [Boolean]
@@ -158,8 +143,8 @@ module ReadingListHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def reading_list_details(item, pairs: nil, **opt)
-    opt[:model] = :reading_list
-    opt[:pairs] = READING_LIST_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :reading_list
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -176,8 +161,8 @@ module ReadingListHelper
   # @param [Hash]            opt      Passed to #model_list_item.
   #
   def reading_list_list_item(item, pairs: nil, **opt)
-    opt[:model] = :reading_list
-    opt[:pairs] = READING_LIST_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :reading_list
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

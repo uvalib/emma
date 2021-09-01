@@ -17,20 +17,6 @@ module EditionHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  EDITION_FIELDS       = Model.configured_fields(:edition).deep_freeze
-  EDITION_INDEX_FIELDS = EDITION_FIELDS[:index] || {}
-  EDITION_SHOW_FIELDS  = EDITION_FIELDS[:show]  || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]
@@ -71,8 +57,8 @@ module EditionHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def edition_details(item, pairs: nil, **opt)
-    opt[:model] = :edition
-    opt[:pairs] = EDITION_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :edition
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -89,8 +75,8 @@ module EditionHelper
   # @param [Hash]            opt      Passed to #model_list_item.
   #
   def edition_list_item(item, pairs: nil, **opt)
-    opt[:model] = :edition
-    opt[:pairs] = EDITION_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :edition
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

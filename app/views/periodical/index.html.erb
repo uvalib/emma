@@ -9,7 +9,7 @@
   row   ||= 1
   help  ||= nil
 
-  page_opt = Upload::SEARCH_RECORDS_OPTIONS
+  page_opt = SearchCall::SEARCH_RECORDS_OPTIONS
   page_terms, search = partition_hash(terms, *page_opt)
   page   = page_terms[:page]&.values&.first&.to_i || 1
   search = search.presence

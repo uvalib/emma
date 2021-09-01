@@ -76,9 +76,9 @@ module UploadWorkflow::Single::Edit::Actions
   # @return [void]
   #
   # @see Upload#finish_editing
-  # @see UploadWorkflow::External#repository_edit
+  # @see UploadWorkflow::External#repository_modify
   #
-  def wf_finalize_submission(*event_args)
+  def wf_finalize_submission(*event_args)                                       # NOTE: to Action#member_repository_action via Action::Queue#submit! (sorta)
     __debug_items(binding)
     assert_record_present
     record.finish_editing
@@ -86,7 +86,7 @@ module UploadWorkflow::Single::Edit::Actions
       self.succeeded = [record]
     else
       opt = event_args.last.is_a?(Hash) ? event_args.last : {}
-      s, f = repository_edit(record.repository, *record, **opt)
+      s, f = repository_modify(*record, **opt)
       self.succeeded = s
       self.failures += f
     end

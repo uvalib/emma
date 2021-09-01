@@ -79,6 +79,12 @@ class Bs::Record::ArtifactMetadata < Bs::Api::Record
     fmt
   end
 
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
+
   # A relative identifier for the represented artifact.
   #
   # @return [String]

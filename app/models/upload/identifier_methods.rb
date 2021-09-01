@@ -23,19 +23,19 @@ module Upload::IdentifierMethods
 
   public
 
-  # @type [String]
+  # @type [String]                                                              # NOTE: to Record::EmmaIdentification
   SID_PREFIX = 'u'
 
-  # @type [(Integer,Integer)]
+  # @type [(Integer,Integer)]                                                   # NOTE: to Record::EmmaIdentification
   SID_LETTERS = ('g'..'z').minmax.map(&:ord).deep_freeze
 
-  # @type [Integer]
+  # @type [Integer]                                                             # NOTE: to Record::EmmaIdentification
   SID_LETTER_SPAN = SID_LETTERS.then { |pr| pr.last - pr.first + 1 }
 
-  # @type [String]
+  # @type [String]                                                              # NOTE: to Record::EmmaIdentification
   SID_LETTER_MATCH = ('[%c-%c]' % SID_LETTERS).freeze
 
-  # @type [Regexp]
+  # @type [Regexp]                                                              # NOTE: to Record::EmmaIdentification
   SID_PATTERN = /^#{SID_PREFIX}\h{8,}#{SID_LETTER_MATCH}\d\d$/
 
   # ===========================================================================
@@ -51,7 +51,7 @@ module Upload::IdentifierMethods
   # @return [String]                  Record ID (:id).
   # @return [nil]                     No valid :id specified.
   #
-  def id_for(item)
+  def id_for(item)                                                              # NOTE: to Record::Identification#id_value
     result   = (item                    if digits_only?(item))
     result ||= (item.id                 if item.is_a?(Upload))
     result ||= (item[:id] || item['id'] if item.is_a?(Hash))
@@ -59,7 +59,7 @@ module Upload::IdentifierMethods
     result.to_s unless result.zero?
   end
 
-  # Extract the submission ID from the given item.
+  # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
   #
   # @param [Api::Record, Upload, Hash, String, *] item
   #
@@ -77,7 +77,7 @@ module Upload::IdentifierMethods
   #
   # @param [String, *] value
   #
-  def valid_sid?(value)
+  def valid_sid?(value)                                                         # NOTE: to Record::EmmaIdentification
     value.is_a?(String) && value.match?(SID_PATTERN)
   end
 
@@ -112,8 +112,8 @@ module Upload::IdentifierMethods
   #--
   # noinspection RubyNilAnalysis
   #++
-  def generate_submission_id(time = nil, prefix: true)
-    prefix = SID_PREFIX if prefix.is_a?(TrueClass)
+  def generate_submission_id(time = nil, prefix: true)                          # NOTE: to Record::EmmaIdentification
+    prefix  = SID_PREFIX if prefix.is_a?(TrueClass)
     time    = time.is_a?(DateTime) ? time.to_time : (time || Time.now)
     base_id = time.tv_sec
     letter  = SID_LETTERS.first + rand(SID_LETTER_SPAN)
@@ -134,7 +134,7 @@ module Upload::IdentifierMethods
   #
   # @return [Integer]
   #
-  def sid_counter
+  def sid_counter                                                               # NOTE: to Record::EmmaIdentification and Entry#sid_counter
     @sid_counter &&= (@sid_counter + 1) % 100
     @sid_counter ||= rand(100) % 100
   end
@@ -152,7 +152,7 @@ module Upload::IdentifierMethods
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
-  def id_term(v)
+  def id_term(v)                                                                # NOTE: to Record::EmmaIdentification
     id, sid =
       case v
         when Integer then [v, nil]
@@ -167,8 +167,7 @@ module Upload::IdentifierMethods
   #
   # @return [Integer]                 If 0 then the table is empty.
   #
-  def minimum_id
-    # noinspection RailsParamDefResolve
+  def minimum_id                                                                # NOTE: to Record::Identification
     Upload.minimum(:id).to_i
   end
 
@@ -176,8 +175,7 @@ module Upload::IdentifierMethods
   #
   # @return [Integer]                 If 0 then the table is empty.
   #
-  def maximum_id
-    # noinspection RailsParamDefResolve
+  def maximum_id                                                                # NOTE: to Record::Identification
     Upload.maximum(:id).to_i
   end
 
@@ -192,7 +190,7 @@ module Upload::IdentifierMethods
   #
   # @return [Array<String>]
   #
-  def compact_ids(*items, **opt)
+  def compact_ids(*items, **opt)                                                # NOTE: to Record::Identification
     opt[:min_id] ||= minimum_id
     opt[:max_id] ||= maximum_id
     ids, non_ids = expand_ids(*items, **opt).partition { |v| digits_only?(v) }
@@ -261,7 +259,7 @@ module Upload::IdentifierMethods
   #   expand_ids('$')   -> %w(6)
   #   expand_ids('$-$') -> %w(6)
   #
-  def expand_ids(*ids, **opt)
+  def expand_ids(*ids, **opt)                                                   # NOTE: to Record::Identification
     opt[:min_id] ||= minimum_id
     opt[:max_id] ||= maximum_id
     ids.flatten.flat_map { |id|
@@ -277,7 +275,7 @@ module Upload::IdentifierMethods
 
   protected
 
-  # A valid ID range term for interpolation into a Regexp.
+  # A valid ID range term for interpolation into a Regexp.                      # NOTE: to Record::Identification::RNG_TERM
   #
   # @type [String]
   #
@@ -299,7 +297,7 @@ module Upload::IdentifierMethods
   #
   # @see #expand_ids
   #
-  def expand_id_range(id, **opt)
+  def expand_id_range(id, **opt)                                                # NOTE: to Record::EmmaIdentification and Record::Identification
     min = max = nil
     # noinspection RubyCaseWithoutElseBlockInspection
     case id

@@ -114,17 +114,18 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, ::Api::Record, Upload, Hash, String, nil] src
-  # @param [Hash]                                                        opt
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
   #
   # @option opt [String] :value       If *src* is *nil*, a unique record ID may
   #                                     be provided here as the value for the
   #                                     instance.
   #
-  # @raise [UploadWorkflow::SubmitError]  If metadata was malformed.
+  # @raise [Record::SubmitError]      If metadata was malformed.
   #
-  def initialize(src, **opt)
-    if src.is_a?(Upload)
+  def initialize(src, opt = nil)
+    opt ||= {}
+    if src.respond_to?(:emma_metadata)
       # noinspection RubyNilAnalysis
       data = reject_blanks(src.emma_metadata)
 

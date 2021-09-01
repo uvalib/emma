@@ -47,27 +47,66 @@ module Model
 
   public
 
+  # Configured record fields for each model/controller.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # @see Model::Configuration#configuration_fields
+  #
+  def self.fields_table
+    @fields_table ||= {}
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Common storage for configured properties for each model/controller.
   #
-  class << self
+  module Configuration
 
-    # Get configured record fields for a model and controller.
-    #
-    # @param [Symbol, String] type    Model/controller type.
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    def configured_fields(type)
-      type = type.delete_prefix('emma.').to_sym if type.is_a?(String)
-      configured_fields_table[type] ||= configured_fields_for(type)
-    end
+    extend self
 
-    # Configured record fields for each model/controller.
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Frozen Hash returned as a fall-back for failed configuration lookups.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @type [Hash]
     #
-    def configured_fields_table
-      @configured_fields_table ||= {}
+    EMPTY_CONFIG = {}.freeze
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Get configured record fields for a model/controller.
+    #
+    # @param [Symbol, String, Class, Model, *] type       Model/controller type
+    # @param [Boolean]                         no_raise   If *true* return {}
+    #
+    # @raise [RuntimeError]           If *type* does not map on to a model.
+    #
+    # @return [Hash{Symbol=>Hash}]    Frozen result.
+    #
+    # @see Model#fields_table
+    #
+    def configuration_fields(type, no_raise: false)
+      arg  = type
+      type = model_for(type) unless type.is_a?(Symbol)
+      if type.blank?
+        Log.warn((error = "#{__method__}: #{arg}: invalid"))
+        raise error unless no_raise
+        return EMPTY_CONFIG
+      end
+      Model.fields_table[type] ||= configured_fields_for(type).deep_freeze
     end
 
     # =========================================================================
@@ -78,11 +117,12 @@ module Model
 
     # Combine configuration settings for a given model/controller.
     #
-    # @param [Symbol, String] controller
+    # @param [Symbol, *] controller
     #
     # @return [Hash{Symbol=>Hash}]
     #
     def configured_fields_for(controller)
+      return {} unless controller.is_a?(Symbol)
       model_config = I18n.t("emma.#{controller}", default: {}).deep_dup
 
       # Start with definitions from config/locales/records/*.yml and apply
@@ -140,7 +180,157 @@ module Model
       { all: all_fields }.merge!(controller_configs)
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    CONFIG_PREFIX = /^\s*(en\.)?emma\./
+
+    # Return the model class associated with *item*.
+    #
+    # @param [Symbol, String, Class, Model, *] item
+    #
+    # @return [Symbol, nil]
+    #
+    #--
+    # noinspection RubyMismatchedReturnType
+    #++
+    def class_for(item)
+      item = item.to_s              if item.is_a?(Symbol)
+      item = item.camelize          if item.is_a?(String)
+      item = User                   if item == 'Account'
+      item = item.safe_constantize  if item.is_a?(String)
+      item = item.class             if item.is_a?(Model)
+      item = item.base_class        if item.respond_to?(:base_class)
+      item                          if item.is_a?(Class)
+    end
+
+    # Return the name of the model associated with *item*.
+    #
+    # @param [Symbol, String, Class, Model, *] item
+    #
+    # @return [Symbol, nil]
+    #
+    #--
+    # noinspection RubyMismatchedReturnType
+    #++
+    def model_for(item)
+      item = class_for(item) || item           if camelized?(item)
+      item = item.class                        if item.is_a?(Model)
+      item = item.base_class                   if item.respond_to?(:base_class)
+      item = item.name.underscore.to_sym       if item.is_a?(Class)
+      item = item.remove(CONFIG_PREFIX).to_sym if item.is_a?(String)
+      item = :account                          if item == :user
+      item                                     if item.is_a?(Symbol)
+    end
+
+    # Get configured record fields for a model/controller.
+    #
+    # @param [Symbol, String, Class, Model, *] item
+    #
+    # @return [Hash{Symbol=>Hash}]    Frozen result.
+    #
+    def config_for(item)
+      configuration_fields(item, no_raise: true)
+    end
+
+    # Get configured record fields relevant to an :index action for a given
+    # model.
+    #
+    # @param [Symbol, String, Class, Model, *] item
+    #
+    # @return [Hash{Symbol=>Hash}]    Frozen result.
+    #
+    def index_fields(item)
+      config_for(item)[:index] || EMPTY_CONFIG
+    end
+
+    # Get configured record fields relevant to a :show action for a given
+    # model.
+    #
+    # @param [Symbol, String, Class, Model, *] item
+    #
+    # @return [Hash{Symbol=>Hash}]    Frozen result.
+    #
+    def show_fields(item)
+      config_for(item)[:show] || EMPTY_CONFIG
+    end
+
+    # Get all configured record fields for a given model.
+    #
+    # @param [Symbol, String, Class, Model, *] item
+    #
+    # @return [Hash{Symbol=>Hash}]    Frozen result.
+    #
+    def database_fields(item)
+      config_for(item)[:all] || EMPTY_CONFIG
+    end
+
+    # Get all configured record fields for a given model.
+    #
+    # @param [Symbol, String, Class, Model, *] item
+    #
+    # @return [Hash{Symbol=>Hash}]    Frozen result.
+    #
+    def form_fields(item)
+      database_fields(item)
+        .except(:file_data, :emma_data)
+        .merge!(Model::SEARCH_RECORD_FIELDS)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def camelized?(v)
+      (v.is_a?(Symbol) || v.is_a?(String)) && (v.to_s == v.to_s.camelize)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    extend self
+
+    # Mapping of label keys to fields from Search::Record::MetadataRecord.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    SEARCH_RECORD_FIELDS =
+      database_fields(:entry)[:emma_data]
+        .select { |k, v| v.is_a?(Hash) unless k == :cond }
+        .deep_freeze
+
+    # Reverse mapping of EMMA search record field to the label configured for
+    # it.
+    #
+    # @type [Hash{String=>Symbol}]
+    #
+    SEARCH_RECORD_LABELS =
+      SEARCH_RECORD_FIELDS
+        .transform_values { |v| v[:label] }
+        .invert
+        .deep_freeze
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
+
+  include Configuration
 
 end
 

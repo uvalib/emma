@@ -26,7 +26,7 @@ module Upload::RenderMethods
   #--
   # noinspection RubyNilAnalysis
   #++
-  def menu_label(item = nil)
+  def menu_label(item = nil)                                                    # NOTE: to Record::Rendering
     item ||= self
     name   = item.submission_id.presence
     file   = item.filename.presence

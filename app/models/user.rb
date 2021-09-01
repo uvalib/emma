@@ -95,9 +95,20 @@ class User < ApplicationRecord
 
   include Model
 
+  include Record
+  include Record::Identification
+
+  # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
   has_many :members
   has_many :reading_lists
   has_many :search_calls
+  has_many :uploads # TODO: remove after upload -> entry
+  has_many :entries
+  has_many :phases
+  has_many :actions
 
   # ===========================================================================
   # :section: Authentication
@@ -127,7 +138,7 @@ class User < ApplicationRecord
   rolify
 
   # ===========================================================================
-  # :section: Validations
+  # :section: ActiveRecord validations
   # ===========================================================================
 
   validate on: :create do
@@ -137,7 +148,7 @@ class User < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: ActiveRecord callbacks
   # ===========================================================================
 
   after_create :assign_default_role
@@ -180,15 +191,127 @@ class User < ApplicationRecord
 
   # Update database fields.
   #
-  # @param [Hash, User] opt
+  # @param [Hash, User] attr
   #
   # @return [void]
   #
-  def assign_attributes(opt)
+  def assign_attributes(attr, *)
     old_eid = self[:effective_id]
     super
     new_eid = self[:effective_id]
     add_role(:administrator) if new_eid && (new_eid != old_eid)
+  end
+
+  # ===========================================================================
+  # :section: Record::Identification overrides
+  # ===========================================================================
+
+  public
+
+  # Value of :id for the indicated record.
+  #
+  # @param [User, String, Integer, *] user  Default: self
+  # @param [Hash]                     opt
+  #
+  # @return [String]
+  # @return [nil]                     If no matching record was found.
+  #
+  def id_value(user = nil, **opt)
+    return id&.to_s if user.nil? && opt.blank?
+    self.class.send(__method__, (user || self), **opt)
+  end
+
+  # Value of :id for the indicated record.
+  #
+  # @param [User, String, Integer, *] user
+  # @param [Hash]                     opt
+  #
+  # @return [String]
+  # @return [nil]                     If no matching record was found.
+  #
+  def self.id_value(user, **opt)
+    user = find_record(user) if user.is_a?(String) && !digits_only?(user)
+    super(user, **opt)
+  end
+
+  # ===========================================================================
+  # :section: Record::Identification overrides
+  # ===========================================================================
+
+  public
+
+  def user_column
+    :id
+  end
+
+  def self.user_column
+    :id
+  end
+
+  # ===========================================================================
+  # :section: Record::Identification overrides
+  # ===========================================================================
+
+  public
+
+  # Return with the specified User record or *nil* if one could not be found.
+  #
+  # @param [String, Hash, Model, *] item
+  # @param [Hash]                   opt
+  #
+  # @return [User, nil]
+  #
+  def find_record(item, **opt)
+    self.class.send(__method__, item, **opt)
+  end
+
+  # Return with the specified User record or *nil* if one could not be found.
+  #
+  # @param [String, Hash, Model, *] item
+  # @param [Hash]                   opt
+  #
+  # @option opt [Boolean] :no_raise   True by default.
+  #
+  # @return [User, nil]
+  #
+  def self.find_record(item, **opt)
+    # noinspection RubyMismatchedReturnType
+    if item.is_a?(String) && !digits_only?(item)
+      find_by(email: item)
+    else
+      opt[:no_raise] = true unless opt.key?(:no_raise)
+      super
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return the account ID of *user*.
+  #
+  # @param [User, String, Integer, *] user  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def uid_value(user = nil)
+    return uid.presence if user.nil?
+    self.class.send(__method__, user)
+  end
+
+  # Return the account ID of *user*.
+  #
+  # @param [User, String, Integer, *] user
+  #
+  # @return [String, nil]
+  #
+  def self.uid_value(user)
+    user = user.to_i  if digits_only?(user)
+    user = find(user) if user.is_a?(Integer) && user.positive?
+    user = user.uid   if user.is_a?(User)
+    user.presence     if user.is_a?(String)
   end
 
   # ===========================================================================
@@ -322,12 +445,11 @@ class User < ApplicationRecord
   # @see LinkHelper#page_menu_label
   #
   def menu_label(item = nil)
-    item ||= self
-    item.uid.presence
+    (item || self).uid.presence
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: ActiveRecord callbacks
   # ===========================================================================
 
   protected
@@ -347,7 +469,7 @@ class User < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: ActiveRecord callbacks
   # ===========================================================================
 
   private
@@ -389,48 +511,6 @@ class User < ApplicationRecord
   #
   def self.test_user_menu
     where(email: test_users.keys).pluck(:email, :id)
-  end
-
-  # Return the ID indicated by *user*.
-  #
-  # @param [User, String, Integer, *] user
-  #
-  # @return [Integer]                 The ID extracted or expressed by *user*.
-  # @return [nil]                     If ID could not be determined.
-  #
-  def self.find_id(user)
-    user = positive(user)       if digits_only?(user)
-    user = find_by(email: user) if user.is_a?(String)
-    user = user.id              if user.is_a?(User)
-    user                        if user.is_a?(Integer)
-  end
-
-  # Return the account ID of *user*.
-  #
-  # @param [User, String, Integer, *] user
-  #
-  # @return [String]                  The :uid extracted or expressed by *user*
-  # @return [nil]                     If :uid could not be determined.
-  #
-  def self.find_uid(user)
-    user = positive(user) if digits_only?(user)
-    user = find(user)     if user.is_a?(Integer)
-    user = user.uid       if user.is_a?(User)
-    user                  if user.is_a?(String)
-  end
-
-  # Find the identified User record.
-  #
-  # @param [User, String, Integer, *] user
-  #
-  # @return [User]
-  # @return [nil]
-  #
-  def self.find_record(user)
-    user = positive(user)       if digits_only?(user)
-    user = find(user)           if user.is_a?(Integer)
-    user = find_by(email: user) if user.is_a?(String)
-    user                        if user.is_a?(User)
   end
 
   # Get (or create) a database entry for the indicated user and update the

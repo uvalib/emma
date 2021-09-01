@@ -14,6 +14,13 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::AccountMethods
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Model
+    # :nocov:
+  end
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================
@@ -41,6 +48,12 @@ module Bs::Shared::AccountMethods
   def label
     name.to_s
   end
+
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
 
   # Return the unique identifier for the represented person.
   #

@@ -9,14 +9,17 @@ __loading_begin(__FILE__)
 #
 class Title < ApplicationRecord
 
+  include Model
+
+  include Record
+  include Record::Authorizable
+
+  # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
   has_and_belongs_to_many :artifacts
   has_and_belongs_to_many :reading_lists
-
-  # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  resourcify
 
   # ===========================================================================
   # :section:

@@ -280,6 +280,14 @@ module AccountConcern
 
   protected
 
+  # Configured account record fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def account_fields(*)
+    Model.configuration_fields(:account)[:all] || {}
+  end
+
   # Get the appropriate message to display.
   #
   # @param [Symbol] action
@@ -288,8 +296,8 @@ module AccountConcern
   #
   # @return [String, nil]
   #
-  def message_for(action, outcome, config = AccountHelper::ACCOUNT_FIELDS)
-    # noinspection RubyYardReturnMatch
+  def message_for(action, outcome, config = account_fields)
+    # noinspection RubyMismatchedReturnType
     [action, :generic, :messages].find do |k|
       (v = config.dig(k, outcome)) and break v
     end
@@ -302,13 +310,11 @@ module AccountConcern
   #
   # @return [Hash]
   #
-  def interpolation_terms(action, config = AccountHelper::ACCOUNT_FIELDS)
-    terms = config.dig(action, :terms) || config.dig(action, :term) || {}
-    terms[:action]   ||= action.to_s
-    terms[:actioned] ||=
-      (suffix = terms[:action].end_with?('e') ? 'd' : 'ed') &&
-        (terms[:action] + suffix)
-    terms
+  def interpolation_terms(action, config = account_fields)
+    result = config.dig(action, :terms) || config.dig(action, :term) || {}
+    action = result[:action] ||= action.to_s
+    result[:actioned] ||= (action + (action.end_with?('e') ? 'd' : 'ed'))
+    result
   end
 
   # ===========================================================================

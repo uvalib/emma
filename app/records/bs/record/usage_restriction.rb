@@ -51,6 +51,12 @@ class Bs::Record::UsageRestriction < Bs::Api::Record
     name.to_s
   end
 
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
+
   # Return the unique identifier for this item.
   #
   # @return [String]

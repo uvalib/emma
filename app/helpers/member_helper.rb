@@ -17,22 +17,6 @@ module MemberHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  MEMBER_FIELDS             = Model.configured_fields(:member).deep_freeze
-  MEMBER_INDEX_FIELDS       = MEMBER_FIELDS[:index]       || {}
-  MEMBER_SHOW_FIELDS        = MEMBER_FIELDS[:show]        || {}
-  MEMBER_HISTORY_FIELDS     = MEMBER_FIELDS[:history]     || {}
-  MEMBER_PREFERENCES_FIELDS = MEMBER_FIELDS[:preferences] || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]
@@ -55,6 +39,28 @@ module MemberHelper
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configured member history record fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def member_history_fields(*)
+    Model.configuration_fields(:member)[:history] || {}
+  end
+
+  # Configured member preference record fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def member_preference_fields(*)
+    Model.configuration_fields(:member)[:preferences] || {}
+  end
+
+  # ===========================================================================
   # :section: Item details (show page) support
   # ===========================================================================
 
@@ -67,8 +73,8 @@ module MemberHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def member_details(item, pairs: nil, **opt)
-    opt[:model] = :member
-    opt[:pairs] = MEMBER_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :member
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -79,8 +85,8 @@ module MemberHelper
   # @param [Hash]            opt      Passed to #render_field_values.
   #
   def member_preferences_values(item, pairs: nil, **opt)
-    opt[:model]      = :member
-    opt[:pairs]      = MEMBER_PREFERENCES_FIELDS.merge(pairs || {})
+    opt[:model]      = model = :member
+    opt[:pairs]      = member_preference_fields(model).merge(pairs || {})
     opt[:row_offset] = opt.delete(:row) || opt[:row_offset]
     render_field_values(item, **opt)
   end
@@ -136,8 +142,8 @@ module MemberHelper
   def member_history(item, id:, pairs: nil, **opt)
     css_selector  = '.history-item'
     item          = item.titleDownloads if item.respond_to?(:titleDownloads)
-    opt[:model]   = :member
-    opt[:pairs]   = MEMBER_HISTORY_FIELDS.merge(pairs || {})
+    opt[:model]   = model = :member
+    opt[:pairs]   = member_history_fields(model).merge(pairs || {})
     opt[:index] ||= 0
     html_div(id: id, class: MEMBER_HISTORY_CSS_CLASS) do
       Array.wrap(item).map do |entry|
@@ -162,8 +168,8 @@ module MemberHelper
   # @param [Hash]            opt      Passed to #model_list_item.
   #
   def member_list_item(item, pairs: nil, **opt)
-    opt[:model] = :member
-    opt[:pairs] = MEMBER_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :member
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

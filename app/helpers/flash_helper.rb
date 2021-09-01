@@ -471,7 +471,9 @@ module FlashHelper
       if (excp = rpt.exception)
         trace    = true?(local[:trace])
         trace  ||=
-          !excp.is_a?(UploadWorkflow::SubmitError) &&
+          !excp.is_a?(UploadWorkflow::SubmitError) && # TODO: remove after upload -> entry
+          !excp.is_a?(Record::Error) &&
+          !excp.is_a?(Timeout::Error) &&
           !excp.is_a?(Net::ProtocolError)
         trace &&= excp.full_message(order: :top).prepend("\n")
         trace ||= msg.join(msg_sep)

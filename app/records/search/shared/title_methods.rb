@@ -19,7 +19,7 @@ module Search::Shared::TitleMethods
   include Search::Shared::LinkMethods
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Model overrides
   # ===========================================================================
 
   public
@@ -33,7 +33,7 @@ module Search::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Api::Shared::TitleMethods overrides
   # ===========================================================================
 
   public
@@ -59,7 +59,7 @@ module Search::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Api::Shared::TitleMethods overrides
   # ===========================================================================
 
   public
@@ -107,7 +107,7 @@ module Search::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Api::Shared::TitleMethods overrides
   # ===========================================================================
 
   public

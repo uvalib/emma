@@ -1,0 +1,699 @@
+# config/locales/state_table.en.yml
+#
+# Workflow state tables.
+#
+# @see Record::Stepable::STATE_TABLES
+
+en:
+
+  emma:
+
+    state_table:
+
+      # =======================================================================
+      # Phase states
+      # =======================================================================
+
+      phase:
+
+        create:         &PHASE_CREATE
+
+          # == Phase::Create
+
+          started:
+            next:       [uploading, submitting, canceling, canceled, aborted]
+
+          uploading:
+            meth:       'upload!'
+            next:       [storing, submitting, canceling, canceled, aborted]
+
+          storing:
+            meth:       'promote!'
+            next:       [indexing, submitting, canceling, canceled, aborted]
+
+          indexing:
+            meth:       'index!'
+            next:       [indexed, canceling, canceled, aborted]
+
+          indexed:
+            meth:       ~
+            next:       false
+
+          submitting:
+            meth:       'submit!'
+            next:       [submitted, canceling, canceled, aborted]
+
+          submitted:
+            meth:       ~
+            next:       false
+
+          canceling:
+            meth:       ~
+            next:       [canceled]
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        edit:           &PHASE_EDIT
+
+          # == Phase::Edit
+
+          started:
+            next:       [uploading, submitting, canceling, canceled, aborted]
+
+          uploading:
+            meth:       'upload!'
+            next:       [replacing, canceling, canceled, aborted]
+
+          replacing:
+            meth:       'promote!'
+            next:       [indexing, submitting, canceling, canceled, aborted]
+
+          indexing:
+            meth:       'index!'
+            next:       [indexed, canceling, canceled, aborted]
+
+          indexed:
+            meth:       ~
+            next:       false
+
+          submitting:
+            meth:       'submit!'
+            next:       [submitted, canceling, canceled, aborted]
+
+          submitted:
+            meth:       ~
+            next:       false
+
+          canceling:
+            meth:       ~
+            next:       [canceled]
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        remove:         &PHASE_REMOVE
+
+          # == Phase::Remove
+
+          started:
+            next:       [deindexing, canceling, canceled, aborted]
+
+          deindexing:
+            meth:       'deindex!'
+            next:       [dequeuing, canceling, canceled, aborted]
+
+          dequeuing:
+            meth:       'unsubmit!'
+            next:       [unstoring, canceling, canceled, aborted]
+
+          unstoring:
+            meth:       'unstore!'
+            next:       [removing, canceling, canceled, aborted]
+
+          removing:
+            meth:       'remove!'
+            next:       [removed, canceling, canceled, aborted]
+
+          removed:
+            meth:       ~
+            next:       false
+
+          canceling:
+            meth:       ~
+            next:       [canceled]
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        review:         &PHASE_REVIEW
+
+          # == Phase::Review
+
+          started:
+            next:       [scheduling, assigned, canceling, canceled, aborted]
+
+          scheduling:
+            meth:       'schedule!'
+            next:       [assigned, canceling, canceled, aborted]
+
+          assigned:
+            next:       [reviewing, canceling, canceled, aborted]
+
+          reviewing:
+            meth:       'review!'
+            next:       [rejected, approved, canceling, canceled, aborted]
+
+          rejected:
+            meth:       ~
+            next:       false
+
+          approved:
+            meth:       ~
+            next:       false
+
+          canceling:
+            meth:       'cancel!'
+            next:       [canceled]
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        bulk_operation: &PHASE_BULK_OPERATION
+
+          # == Phase::BulkOperation
+
+          started:
+            next:       [running, canceling, canceled, aborted]
+
+          running:
+            meth:       'run!'
+            next:       [completed, pausing, canceling, canceled, aborted]
+
+          pausing:
+            meth:       'pause!'
+            next:       [resuming, canceling, canceled, aborted]
+
+          resuming:
+            meth:       'resume!'
+            next:       [completed, pausing, canceling, canceled, aborted]
+
+          restarting:
+            meth:       'restart!'
+            next:       [running, canceling, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceling:
+            meth:       ~
+            next:       [canceled]
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        bulk_create:
+
+          # == Phase::BulkCreate
+
+          <<:           *PHASE_BULK_OPERATION
+
+
+        bulk_edit:
+
+          # == Phase::BulkEdit
+
+          <<:           *PHASE_BULK_OPERATION
+
+
+        bulk_remove:
+
+          # == Phase::BulkRemove
+
+          <<:           *PHASE_BULK_OPERATION
+
+      # =======================================================================
+      # Action states
+      # =======================================================================
+
+      action:
+
+        store:          &ACTION_STORE
+
+          # == Action::Store
+
+          started:
+            next:       [uploading, canceled, aborted]
+
+          uploading:
+            meth:       'upload!'
+            note:       'file upload in progress'
+            next:       [uploaded, canceled, aborted]
+
+          uploaded:
+            meth:       'promote!'
+            note:       'file upload done'
+            next:       [promoting, canceled, aborted]
+
+          promoting:
+            meth:       ~
+            note:       'finalizing file storage'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        index:          &ACTION_INDEX
+
+          # == Action::Index
+
+          started:
+            next:       [indexing, canceled, aborted]
+
+          indexing:
+            meth:       'index!'
+            note_proc:  |
+              ->(action, **opt) do
+              $stderr.puts "***** action = #{action.inspect}"
+              $stderr.puts "***** opt    = #{opt.inspect}"
+              $stderr.puts "***** action.emma_native? = #{action.emma_native?}"
+                if action.emma_native?
+                  'indexing in progress'
+                else
+                  action.check_indexed(**opt)
+                end
+              end
+            next:       [indexed, canceled, aborted]
+
+          indexed:
+            meth:       ~
+            note:       'added to the index'
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        queue:          &ACTION_QUEUE
+
+          # == Action::Queue
+
+          started:
+            next:       [submitting, canceled, aborted]
+
+          submitting:
+            meth:       'submit!'
+            note:       'submitting to %{repo}'
+            next:       [unretrieved, canceled, aborted]
+
+          unretrieved:
+            meth:       ~
+            note_proc:  |
+              ->(action, **opt) do
+                action.check_retrieved(**opt)
+              end
+            next:       [retrieved, canceled, aborted]
+
+          retrieved:
+            meth:       ~
+            note:       'submitted to %{repo}'
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        schedule:       &ACTION_SCHEDULE
+
+          # == Action::Schedule
+
+          started:
+            next:       [scheduling, assigning, assigned, canceled, aborted]
+
+          scheduling:
+            meth:       'schedule!'
+            next:       [assigning, canceled, aborted]
+
+          assigning:
+            meth:       'assign!'
+            note:       'assigning for review'
+            next:       [holding, canceled, aborted]
+
+          holding:
+            meth:       ~
+            note:       'reviewer assignment on hold'
+            next:       [assigned, canceled, aborted]
+
+          assigned:
+            meth:       ~
+            note:       'reviewer assignment on hold'
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        review:         &ACTION_REVIEW
+
+          # == Action::Review
+
+          started:
+            next:       [reviewing, approved, rejected, canceled, aborted]
+
+          reviewing:
+            meth:       'review!'
+            note:       'review in progress'
+            next:       [holding, approved, rejected, canceled, aborted]
+
+          holding:
+            meth:       'hold!'
+            note:       'review on hold'
+            next:       [reviewing, canceled, aborted]
+
+          approved:
+            meth:       'approve!'
+            next:       false
+
+          rejected:
+            meth:       'reject!'
+            next:       false
+
+          canceled:
+            meth:       'cancel!'
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        un_store:       &ACTION_UN_STORE
+
+          # == Action::UnStore
+
+          started:
+            next:       [unstoring, canceled, aborted]
+
+          unstoring:
+            meth:       'unstore!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        un_index:       &ACTION_UN_INDEX
+
+          # == Action::UnIndex
+
+          started:
+            next:       [deindexing, canceled, aborted]
+
+          deindexing:
+            meth:       'deindex!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        un_queue:       &ACTION_UN_QUEUE
+
+          # == Action::UnQueue
+
+          started:
+            next:       [dequeuing, canceled, aborted]
+
+          dequeuing:
+            meth:       'unsubmit!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        un_record:       &ACTION_UN_RECORD
+
+          # == Action::UnRecord
+
+          started:
+            next:       [removing, canceled, aborted]
+
+          removing:
+            meth:       'remove!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        batch_store:    &ACTION_BATCH_STORE
+
+          # == Action::BatchStore
+
+          started:
+            next:       [storing, canceled, aborted]
+
+          storing:
+            meth:       'store!'
+            note:       'file transfer in progress for %{targets}'
+            next:       [stored, canceled, aborted]
+
+          stored:
+            meth:       ~
+            next:       false
+            note:       'file transfer done for %{targets}'
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        batch_index:    &ACTION_BATCH_INDEX
+
+          # == Action::BatchIndex
+
+          started:
+            next:       [indexing, canceled, aborted]
+
+          indexing:
+            meth:       'index!'
+            note:       'indexing in progress for %{targets}'
+            next:       [indexed, canceled, aborted]
+
+          indexed:
+            meth:       ~
+            note:       'added to the index: %{targets}'
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        batch_queue:    &ACTION_BATCH_QUEUE
+
+          # == Action::BatchQueue
+
+          started:
+            next:       [submitting, canceled, aborted]
+
+          submitting:
+            meth:       'submit!'
+            note:       'submitting to %{repo}: %{targets}'
+            next:       [unretrieved, canceled, aborted]
+
+          unretrieved:
+            meth:       ~
+            #note_proc:  |
+            #  ->(action, **opt) { action.check_retrieved(**opt) }
+            next:       [retrieved, canceled, aborted]
+
+          retrieved:
+            meth:       ~
+            note:       'submitted to %{repo}: %{targets}'
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        batch_un_store: &ACTION_BATCH_UN_STORE
+
+          # == Action::BatchUnStore
+
+          started:
+            next:       [unstoring, canceled, aborted]
+
+          unstoring:
+            meth:       'unstore!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        batch_un_index: &ACTION_BATCH_UN_INDEX
+
+          # == Action::BatchUnIndex
+
+          started:
+            next:       [deindexing, canceled, aborted]
+
+          deindexing:
+            meth:       'deindex!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        batch_un_queue: &ACTION_BATCH_UN_QUEUE
+
+          # == Action::BatchUnQueue
+
+          started:
+            next:       [dequeuing, canceled, aborted]
+
+          dequeuing:
+            meth:       'unsubmit!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false
+
+
+        batch_un_record: &ACTION_BATCH_UN_RECORD
+
+          # == Action::BatchUnRecord
+
+          started:
+            next:       [removing, canceled, aborted]
+
+          removing:
+            meth:       'remove!'
+            next:       [completed, canceled, aborted]
+
+          completed:
+            meth:       ~
+            next:       false
+
+          canceled:
+            meth:       ~
+            next:       false
+
+          aborted:
+            meth:       ~
+            next:       false

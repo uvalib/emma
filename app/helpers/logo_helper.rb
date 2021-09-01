@@ -19,7 +19,7 @@ module LogoHelper
 
   # Make a logo for a repository source.
   #
-  # @param [Search::Api::Record, String, Symbol, nil] item
+  # @param [Model, Hash, String, Symbol, nil] item
   # @param [Hash] opt                 Passed to #html_span wrapper except for:
   #
   # @option opt [String] :source      Overrides derived value if present.
@@ -45,7 +45,7 @@ module LogoHelper
 
   # Make a textual logo for a repository source.
   #
-  # @param [Search::Api::Record, String, Symbol] item
+  # @param [Model, Hash, String, Symbol, nil] item
   # @param [Hash] opt                 Passed to #html_div except for:
   #
   # @option opt [String] :source      Overrides derived value if present.
@@ -75,7 +75,7 @@ module LogoHelper
 
   # normalize_repository
   #
-  # @param [Search::Api::Record, Upload, String, Symbol, nil] src
+  # @param [Model, Hash, String, Symbol, nil] src
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -95,7 +95,7 @@ module LogoHelper
 
   # repository_name
   #
-  # @param [Search::Api::Record, Upload, String, Symbol, nil] src
+  # @param [Model, Hash, String, Symbol, nil] src
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -107,7 +107,7 @@ module LogoHelper
 
   # repository_logo
   #
-  # @param [Search::Api::Record, Upload, String, Symbol, nil] src
+  # @param [Model, Hash, String, Symbol, nil] src
   #
   # @return [String]                  The logo of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -119,8 +119,8 @@ module LogoHelper
 
   # repository_tooltip
   #
-  # @param [Search::Api::Record, Upload, String, Symbol, nil] item
-  # @param [String]                                   name
+  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [String]                           name
   #
   # @return [String]
   #

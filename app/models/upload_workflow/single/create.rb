@@ -62,14 +62,14 @@ module UploadWorkflow::Single::Create::Actions
   #
   # @see UploadWorkflow::External#repository_create
   #
-  def wf_finalize_submission(*event_args)
+  def wf_finalize_submission(*event_args)                                       # NOTE: to Action#member_repository_action via Action::Queue#submit! (sorta)
     __debug_items(binding)
     assert_record_present
     if record.emma_native?
       self.succeeded = [record]
     else
       opt = event_args.last.is_a?(Hash) ? event_args.last : {}
-      s, f = repository_create(record.repository, *record, **opt)
+      s, f = repository_create(*record, **opt)
       self.succeeded = s
       self.failures += f
     end

@@ -10,7 +10,7 @@
   help   ||= nil # help_popup(:account) # TODO: ???
   filter ||= nil
 
-  page_opt = Upload::SEARCH_RECORDS_OPTIONS.dup << :group
+  page_opt = SearchCall::SEARCH_RECORDS_OPTIONS.dup << :group
   page_terms, search = partition_hash(terms, *page_opt)
   page   = page_terms[:page]&.values&.first&.to_i || 1
   search = search.presence

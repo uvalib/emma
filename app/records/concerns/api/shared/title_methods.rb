@@ -13,6 +13,13 @@ module Api::Shared::TitleMethods
 
   include Emma::Common
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Model
+    # :nocov:
+  end
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================
@@ -40,6 +47,12 @@ module Api::Shared::TitleMethods
   def label
     full_title
   end
+
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
 
   # A unique identifier for this catalog title.
   #

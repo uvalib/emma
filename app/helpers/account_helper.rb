@@ -20,20 +20,6 @@ module AccountHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  ACCOUNT_FIELDS       = Model.configured_fields(:account).deep_freeze
-  ACCOUNT_INDEX_FIELDS = ACCOUNT_FIELDS[:index] || {}
-  ACCOUNT_SHOW_FIELDS  = ACCOUNT_FIELDS[:show]  || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Create a link to the details show page for the given item.
   #
   # @param [User] item
@@ -149,12 +135,13 @@ module AccountHelper
   #                                     #model_details.
   #
   def account_details(item, pairs: nil, **opt)
+    opt[:model] = :account
     fv_opt, opt = partition_hash(opt, :columns, :filter)
-    pairs = account_field_values(item, **fv_opt).merge(pairs || {})
-    # noinspection RubyNilAnalysis
-    count = pairs.size
+    opt[:pairs] = account_field_values(item, **fv_opt)
+    opt[:pairs].merge!(pairs) if pairs.present?
+    count = opt[:pairs].size
     append_classes!(opt, "columns-#{count}") if count.positive?
-    model_details(item, model: :account, pairs: pairs, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -170,8 +157,8 @@ module AccountHelper
   # @param [Hash]      opt            Passed to #model_list_item.
   #
   def account_list_item(item, pairs: nil, **opt)
-    opt[:model] = :account
-    opt[:pairs] = ACCOUNT_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :account
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
@@ -251,8 +238,7 @@ module AccountHelper
     return {} unless item.is_a?(model)
     opt[:filter] ||= ACCOUNT_FIELD_FILTERS unless developer?
     pairs = model_field_values(item, **opt)
-    # noinspection RubyNilAnalysis
-    ACCOUNT_SHOW_FIELDS.map { |field, config|
+    show_fields(model).map { |field, config|
       next if config[:ignored]
       next if config[:role] && !has_role?(config[:role])
       k = config[:label] || field
@@ -289,12 +275,6 @@ module AccountHelper
 
   public
 
-  # Fields for new/edit user account forms.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  ACCOUNT_FORM_FIELDS = ACCOUNT_FIELDS[:all]
-
   # Render pre-populated form fields.
   #
   # @param [User]      item
@@ -302,8 +282,8 @@ module AccountHelper
   # @param [Hash]      opt            Passed to #render_form_fields.
   #
   def account_form_fields(item, pairs: nil, **opt)
-    opt[:model] = :account
-    opt[:pairs] = ACCOUNT_FORM_FIELDS.merge(pairs || {})
+    opt[:model] = model = :account
+    opt[:pairs] = database_fields(model).merge(pairs || {})
     render_form_fields(item, **opt)
   end
 
@@ -401,6 +381,7 @@ module AccountHelper
   # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
   #
   def account_cancel_button(**opt)
+    opt[:model]  ||= :account
     opt[:config] ||= ACCOUNT_ACTION_VALUES
     form_cancel_button(**opt)
   end
@@ -486,13 +467,8 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def account_delete_submit(*items, **opt)
-    min = User.minimum(:id).to_i
-    max = User.maximum(:id).to_i
-    ids = Upload.compact_ids(*items, min_id: min, max_id: max).join(',')
+    ids = User.compact_ids(*items).join(',')
     url = (destroy_account_path(id: ids) if ids.present?)
     delete_submit_button(config: ACCOUNT_ACTION_VALUES, url: url, **opt)
   end

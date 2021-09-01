@@ -13,6 +13,19 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::ReadingListMethods
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Model
+    # :nocov:
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Listings of reading lists expect a non-blank description string.
   #
   # @type [String]
@@ -47,6 +60,12 @@ module Bs::Shared::ReadingListMethods
     # noinspection RailsParamDefResolve
     try(:name)&.to_s || identifier
   end
+
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
 
   # Return the unique identifier for the represented item.
   #

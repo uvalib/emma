@@ -11,13 +11,17 @@ class SearchResult < ApplicationRecord
 
   include Emma::Debug
 
+  include Model
+
+  include Record
+  include Record::Assignable
+  include Record::Authorizable
+
+  # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
   has_and_belongs_to_many :search_calls
-
-  # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  resourcify
 
   # ===========================================================================
   # :section:
@@ -38,26 +42,21 @@ class SearchResult < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: ActiveRecord overrides
+  # :section: Record::Assignable overrides
   # ===========================================================================
 
   public
 
   # Update database fields...
   #
-  # @param [Hash, *] opt
+  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
+  # @param [Hash, nil]                                             opt
   #
   # @return [void]
   #
-  # This method overrides:
-  # @see ActiveModel::AttributeAssignment#assign_attributes
-  #
-  def assign_attributes(opt)
+  def assign_attributes(attr, opt = nil)
     __debug_items(binding)
-    super # TODO: ???
-  rescue => error # TODO: remove - testing
-    Log.warn { "#{__method__}: #{error.class}: #{error.message}"}
-    raise error
+    super
   end
 
 end

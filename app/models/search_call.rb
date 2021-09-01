@@ -13,15 +13,24 @@ class SearchCall < ApplicationRecord
 
   include Model
 
+  include Record
+  include Record::Assignable
+  include Record::Authorizable
+
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    extend SqlMethods::ClassMethods
+    # :nocov:
+  end
+
+  # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
   has_and_belongs_to_many :search_results
 
   belongs_to :user, optional: true
-
-  # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  resourcify
 
   # ===========================================================================
   # :section:
@@ -301,14 +310,15 @@ class SearchCall < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: ActiveRecord overrides
+  # :section: Record::Assignable overrides
   # ===========================================================================
 
   public
 
-  # Update database fields...
+  # Update database fields, including the structured contents of JSON fields.
   #
-  # @param [SearchCall, ActionController::Parameters, Hash, nil] opt
+  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
+  # @param [Hash, nil]                                           opt
   #
   # @return [void]
   #
@@ -317,15 +327,31 @@ class SearchCall < ApplicationRecord
   #--
   # noinspection RubyNilAnalysis, RubyMismatchedParameterType
   #++
-  def assign_attributes(opt)
+  def assign_attributes(attr, opt = nil)
     __debug_items(binding)
-    opt = opt.is_a?(SearchCall) ? opt.attributes : map_parameters(opt)
-    opt.delete(:id)
-    __debug_items(__method__, opt)
-    super(opt)
+    attr = attr.is_a?(SearchCall) ? attr.attributes : map_parameters(attr)
+    attr.delete(:id)
+    __debug_items(__method__, attr)
+    super(attr, opt)
   rescue => error # TODO: remove - testing
-    Log.warn { "#{__method__}: #{error.class}: #{error.message}"}
+    Log.warn { "#{__method__}: #{error.class}: #{error.message}" }
     raise error
+  end
+
+  # Called to prepare values to be used for assignment to record attributes.
+  #
+  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
+  # @param [Hash, nil]                                           opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @see #map_parameters
+  # @see Record::Assignable#attribute_options
+  #
+  def attribute_options(attr, opt = nil)
+    return {}    if attr.blank?
+    return super if attr.is_a?(ApplicationRecord)
+    map_parameters(super(attr, only: false))
   end
 
   # ===========================================================================
@@ -349,8 +375,10 @@ class SearchCall < ApplicationRecord
     params = params.to_unsafe_h if params.respond_to?(:to_unsafe_h)
     params&.each_pair do |k, v|
       case k
-        when :user,   :user_id then result[:user_id] = get_user_id(v)
-        when :result, :results then result[:result]  = get_counts(v)
+        when :user, :user_id
+          result[:user_id] = get_user_id(v)
+        when :result, :results
+          result[:result]  = get_counts(v)
         else
           if (column, json_field = PARAMETER_MAP[k])
             result[column][json_field] = [*result[column][json_field], *v]
@@ -368,11 +396,11 @@ class SearchCall < ApplicationRecord
   #
   # @param [User, String, Numeric] src
   #
-  # @return [Integer]
+  # @return [String]
   # @return [nil]
   #
   def get_user_id(src)
-    User.find_id(src)
+    User.id_value(src)
   end
 
   # Generate a :record attribute value from the given item.
@@ -413,33 +441,31 @@ class SearchCall < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: ApplicationRecord overrides
+  # :section: SqlMethods overrides
   # ===========================================================================
 
   public
 
-  # Generate the SQL statement for dynamically creating a derived table with
-  # JSON fields expanded into columns.
+  # @see SqlMethods#sql_extended_table
   #
-  # @param [String, Hash, nil] extra
-  # @param [Hash]              opt
-  #
-  # @return [String]
-  #
-  # @see ApplicationRecord#sql_extended_table
+  def sql_extended_table(extra = nil, **opt)
+    self.class.send(__method__, extra, **opt)
+  end
+
+  # @see SqlMethods#sql_extended_table
   #
   def self.sql_extended_table(extra = nil, **opt)
     opt[:field_map] ||= JSON_COLUMN_FIELDS
     super(extra, **opt)
   end
 
-  # Generate condition(s) for a WHERE clause.
+  # @see SqlMethods#sql_where_clause
   #
-  # @param [Hash] opt                 Field assertions.
-  #
-  # @return [String]
-  #
-  # @see ApplicationRecord#sql_where_clause
+  def sql_where_clause(**opt)
+    self.class.send(__method__, **opt)
+  end
+
+  # @see SqlMethods#sql_where_clause
   #
   def self.sql_where_clause(**opt)
     opt[:field_map] ||= JSON_COLUMN_FIELDS

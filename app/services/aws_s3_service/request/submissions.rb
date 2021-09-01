@@ -41,7 +41,7 @@ module AwsS3Service::Request::Submissions
   # Uploads one or more requests into AWS S3 for the modification of existing
   # member repository entries.
   #
-  # @param [Array<AwsS3::Message::ModificationRequest, Upload, Hash>] records
+  # @param [Array<AwsS3::Message::ModificationRequest, Model, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
   #
   # @return [AwsS3::Message::Response]
@@ -58,10 +58,10 @@ module AwsS3Service::Request::Submissions
       }
     end
 
-  # Uploads one or more requests into AWS S3 for the modification of existing
-  # member repository entries.
+  # Uploads one or more requests into AWS S3 for the removal of existing member
+  # repository entries.
   #
-  # @param [Array<AwsS3::Message::RemovalRequest, Upload, Hash>] records
+  # @param [Array<AwsS3::Message::RemovalRequest, Model, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
   #
   # @return [AwsS3::Message::Response]
@@ -70,6 +70,30 @@ module AwsS3Service::Request::Submissions
     opt[:meth] ||= __method__
     records   = AwsS3::Message::RemovalRequest.array(records)
     succeeded = put_records(*records, **opt)
+    api_return(records, succeeded)
+  end
+    .tap do |method|
+      add_api method => {
+        # TODO: ?
+      }
+    end
+
+  # ===========================================================================
+  # :section: Queue maintenance
+  # ===========================================================================
+
+  public
+
+  # Remove request(s) from a member repository queue.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest, Model, String>] records
+  # @param [Hash] opt                 Passed to #delete_records.
+  #
+  # @return [AwsS3::Message::Response]
+  #
+  def dequeue(*records, **opt)
+    opt[:meth] ||= __method__
+    succeeded = delete_records(*records, **opt)
     api_return(records, succeeded)
   end
     .tap do |method|

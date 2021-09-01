@@ -9,22 +9,17 @@ __loading_begin(__FILE__)
 #
 class Artifact < ApplicationRecord
 
+  include Model
+
+  include Record
+  include Record::Authorizable
+
+  # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
   # noinspection RailsParamDefResolve
   belongs_to :entry, polymorphic: true, optional: true
-
-  # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  resourcify
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # TODO: ???
 
 end
 

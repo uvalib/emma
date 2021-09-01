@@ -19,7 +19,7 @@ module Upload::EmmaDataMethods
 
   public
 
-  # Core table columns.
+  # Core table columns.                                                         # NOTE: not relevant to Entry/Phase/Action.
   #
   # @type [Array<Symbol>]
   #
@@ -36,7 +36,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Symbol]
   #
-  def emma_data_column
+  def emma_data_column                                                          # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? :edit_emma_data : :emma_data
   end
 
@@ -50,7 +50,7 @@ module Upload::EmmaDataMethods
   #
   # @return [String, nil]
   #
-  def active_emma_data
+  def active_emma_data                                                          # NOTE: not relevant to Entry/Phase/Action.
     self[emma_data_column]
   end
 
@@ -64,7 +64,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def emma_record
+  def emma_record                                                               # NOTE: to Record::EmmaData::InstanceMethods
     @emma_record ||= make_emma_record(emma_metadata)
   end
 
@@ -72,8 +72,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Hash]
   #
-  def emma_metadata
-    # noinspection RubyYardReturnMatch
+  def emma_metadata                                                             # NOTE: to Record::EmmaData::InstanceMethods
     @emma_metadata ||= parse_emma_data(emma_data, true)
   end
 
@@ -85,10 +84,7 @@ module Upload::EmmaDataMethods
   # @return [String]
   # @return [nil]                     If *data* is *nil*.
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
-  def set_emma_data(data, allow_blank = false)
+  def set_emma_data(data, allow_blank = false)                                  # NOTE: to Record::EmmaData::InstanceMethods
     @emma_record     = nil # Force regeneration.
     @emma_metadata   = parse_emma_data(data, allow_blank)
     self[:emma_data] = @emma_metadata.presence&.to_json
@@ -101,7 +97,7 @@ module Upload::EmmaDataMethods
   #
   # @return [String]
   #
-  def modify_emma_data(data, allow_blank = false)
+  def modify_emma_data(data, allow_blank = false)                               # NOTE: to Record::EmmaData::InstanceMethods
     new_metadata = parse_emma_data(data, allow_blank)
     if new_metadata.present?
       @emma_record     = nil # Force regeneration.
@@ -121,7 +117,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def edit_emma_record
+  def edit_emma_record                                                          # NOTE: not relevant to Entry/Phase/Action.
     @edit_emma_record ||= make_emma_record(edit_emma_metadata)
   end
 
@@ -129,8 +125,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Hash]
   #
-  def edit_emma_metadata
-    # noinspection RubyYardReturnMatch
+  def edit_emma_metadata                                                        # NOTE: not relevant to Entry/Phase/Action.
     @edit_emma_metadata ||= parse_emma_data(edit_emma_data, true)
   end
 
@@ -142,10 +137,7 @@ module Upload::EmmaDataMethods
   # @return [String]
   # @return [nil]                     If *data* is *nil*.
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
-  def set_edit_emma_data(data, allow_blank = false)
+  def set_edit_emma_data(data, allow_blank = false)                             # NOTE: not relevant to Entry/Phase/Action.
     @edit_emma_record     = nil # Force regeneration.
     @edit_emma_metadata   = parse_emma_data(data, allow_blank)
     self[:edit_emma_data] = @edit_emma_metadata.presence&.to_json
@@ -158,7 +150,7 @@ module Upload::EmmaDataMethods
   #
   # @return [String]
   #
-  def modify_edit_emma_data(data, allow_blank = false)
+  def modify_edit_emma_data(data, allow_blank = false)                          # NOTE: not relevant to Entry/Phase/Action.
     new_metadata = parse_emma_data(data, allow_blank)
     if new_metadata.present?
       @edit_emma_record     = nil # Force regeneration.
@@ -179,7 +171,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def active_emma_record
+  def active_emma_record                                                        # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? edit_emma_record : emma_record
   end
 
@@ -187,7 +179,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Hash]
   #
-  def active_emma_metadata
+  def active_emma_metadata                                                      # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? edit_emma_metadata : emma_metadata
   end
 
@@ -199,10 +191,7 @@ module Upload::EmmaDataMethods
   # @return [String]
   # @return [nil]                     If *data* is *nil*.
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
-  def set_active_emma_data(data, allow_blank = false)
+  def set_active_emma_data(data, allow_blank = false)                           # NOTE: not relevant to Entry/Phase/Action.
     if edit_phase
       set_edit_emma_data(data, allow_blank)
     else
@@ -217,7 +206,7 @@ module Upload::EmmaDataMethods
   #
   # @return [String]
   #
-  def modify_active_emma_data(data, allow_blank = false)
+  def modify_active_emma_data(data, allow_blank = false)                        # NOTE: not relevant to Entry/Phase/Action.
     if edit_phase
       modify_edit_emma_data(data, allow_blank)
     else
@@ -237,7 +226,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def make_emma_record(data)
+  def make_emma_record(data)                                                    # NOTE: to Record::EmmaData
     Search::Record::MetadataRecord.new(data)
   end
 
@@ -248,10 +237,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
-  def parse_emma_data(data, allow_blank = false)
+  def parse_emma_data(data, allow_blank = false)                                # NOTE: to Record::EmmaData
     return {} if data.blank?
     result = data
     result = result.as_json if result.is_a?(Search::Record::MetadataRecord)

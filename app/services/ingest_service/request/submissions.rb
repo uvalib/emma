@@ -188,7 +188,7 @@ module IngestService::Request::Submissions
 
   # Generate an array of ingest records.
   #
-  # @param [Ingest::Message::IngestionRecordList, Ingest::Record::IngestionRecord, ::Api::Record, Upload, Hash] record
+  # @param [Ingest::Message::IngestionRecordList, Ingest::Record::IngestionRecord, Model, Hash] record
   #
   # @return [Array<Ingest::Record::IngestionRecord>]
   #
@@ -201,7 +201,7 @@ module IngestService::Request::Submissions
   #   @param [Ingest::Record::IngestionRecord] record
   #
   # @overload record_list(item)
-  #   @param [::Api::Record, Upload, Hash] item
+  #   @param [Model, Hash] item
   #
   def record_list(record)
     result =
@@ -210,7 +210,7 @@ module IngestService::Request::Submissions
           record.records
         when Ingest::Record::IngestionRecord
           record
-        when ::Api::Record, Upload, Hash
+        when Model, Hash
           Ingest::Record::IngestionRecord.new(record)
         else
           Log.warn { "#{__method__}: unexpected: #{record.inspect}" }
@@ -220,7 +220,7 @@ module IngestService::Request::Submissions
 
   # Generate an array of ingest identifiers.
   #
-  # @param [Ingest::Message::IdentifierRecordList, Ingest::Record::IdentifierRecord, ::Api::Record, Upload, Hash, String] item
+  # @param [Ingest::Message::IdentifierRecordList, Ingest::Record::IdentifierRecord, Model, Hash, String] item
   #
   # @return [Array<Ingest::Record::IdentifierRecord>]
   #
@@ -233,7 +233,7 @@ module IngestService::Request::Submissions
   #   @param [Ingest::Record::IdentifierRecord] record
   #
   # @overload identifier_list(item)
-  #   @param [::Api::Record, Upload, Hash] item
+  #   @param [Model, Hash] item
   #
   # @overload identifier_list(id)
   #   @param [String] id
@@ -246,7 +246,7 @@ module IngestService::Request::Submissions
           item.identifiers
         when Ingest::Record::IdentifierRecord
           item
-        when ::Api::Record, Upload
+        when Model
           Ingest::Record::IdentifierRecord.new(item)
         when Hash, String
           identifier_records(item)

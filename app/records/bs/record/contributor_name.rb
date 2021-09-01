@@ -55,6 +55,12 @@ class Bs::Record::ContributorName < Bs::Api::Record
     displayName&.to_s || indexName.to_s
   end
 
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
+
   # Return the unique identifier for the represented item.
   #
   # @return [String]

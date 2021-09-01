@@ -18,20 +18,6 @@ module PeriodicalHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  PERIODICAL_FIELDS       = Model.configured_fields(:periodical).deep_freeze
-  PERIODICAL_INDEX_FIELDS = PERIODICAL_FIELDS[:index] || {}
-  PERIODICAL_SHOW_FIELDS  = PERIODICAL_FIELDS[:show]  || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]
@@ -210,8 +196,8 @@ module PeriodicalHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def periodical_details(item, pairs: nil, **opt)
-    opt[:model] = :periodical
-    opt[:pairs] = PERIODICAL_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :periodical
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -228,8 +214,8 @@ module PeriodicalHelper
   # @param [Hash]            opt      Passed to #model_list_item.
   #
   def periodical_list_item(item, pairs: nil, **opt)
-    opt[:model] = :periodical
-    opt[:pairs] = PERIODICAL_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :periodical
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

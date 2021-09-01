@@ -94,14 +94,6 @@ module ArtifactHelper
   #
   SIGN_IN = 'SIGN-IN REQUIRED'
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  ARTIFACT_FIELDS       = Model.configured_fields(:artifact).deep_freeze
-  ARTIFACT_INDEX_FIELDS = ARTIFACT_FIELDS[:index] || {}
-  ARTIFACT_SHOW_FIELDS  = ARTIFACT_FIELDS[:show]  || {}
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -293,8 +285,8 @@ module ArtifactHelper
   # @param [Hash]            opt      Passed to #model_details.
   #
   def artifact_details(item, pairs: nil, **opt)
-    opt[:model] = :artifact
-    opt[:pairs] = ARTIFACT_SHOW_FIELDS.merge(pairs || {})
+    opt[:model] = model = :artifact
+    opt[:pairs] = show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -311,8 +303,8 @@ module ArtifactHelper
   # @param [Hash]            opt      Passed to #model_list_item.
   #
   def artifact_list_item(item, pairs: nil, **opt)
-    opt[:model] = :artifact
-    opt[:pairs] = ARTIFACT_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = :artifact
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

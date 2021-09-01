@@ -35,30 +35,24 @@ class Upload < ApplicationRecord
   FIELD_VALIDATION = false
 
   # ===========================================================================
-  # :section: Authorization
+  # :section: ActiveRecord validations
   # ===========================================================================
 
-  # rolify # TODO: ???
-
-  # ===========================================================================
-  # :section: Validations
-  # ===========================================================================
-
-  validate on: %i[create] do
+  validate on: %i[create] do                                                    # NOTE: to Record::Uploadable
     attached_file_valid?
     required_fields_valid? if FIELD_VALIDATION
   end
 
-  validate on: %i[update] do
+  validate on: %i[update] do                                                    # NOTE: to Record::Uploadable
     attached_file_valid?
     required_fields_valid? if FIELD_VALIDATION
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: ActiveRecord callbacks
   # ===========================================================================
 
-  if DEBUG_SHRINE
+  if DEBUG_SHRINE                                                               # NOTE: to Record::Uploadable
     before_validation { note_cb(:before_validation) }
     after_validation  { note_cb(:after_validation) }
     before_save       { note_cb(:before_save) }
@@ -75,9 +69,9 @@ class Upload < ApplicationRecord
   end
 
   before_save    :promote_cached_file
-  after_rollback :delete_cached_file, on: %i[create]
+  after_rollback :delete_cached_file, on: %i[create]                            # NOTE: to Record::Uploadable
 
-  after_destroy do
+  after_destroy do                                                              # NOTE: to Record::Uploadable
     delete_file
   end
 
@@ -184,7 +178,7 @@ class Upload < ApplicationRecord
   # This method overrides:
   # @see ActiveModel::AttributeAssignment#assign_attributes
   #
-  def assign_attributes(opt)
+  def assign_attributes(opt, *)                                                 # NOTE: to Record::EmmaData#generate_emma_data (sorta)
     __debug_items(binding)
     opt = opt.attributes if opt.is_a?(Upload)
     control, fields = partition_hash(opt, *ASSIGN_CONTROL_OPTIONS)
@@ -248,13 +242,13 @@ class Upload < ApplicationRecord
     # submitter.
     if under_review?
       u = attr[:review_user] || attr[:user_id]
-      attr[:review_user] = User.find_uid(u)
+      attr[:review_user] = User.uid_value(u)
     elsif edit_phase
       u = attr[:edit_user] || attr[:user_id] || self[:user_id]
-      attr[:edit_user] = User.find_uid(u)
+      attr[:edit_user] = User.uid_value(u)
     else
       u = attr[:user_id] || self[:user_id]
-      attr[:user_id] = User.find_id(u)
+      attr[:user_id] = User.id_value(u)
     end
 
     # Update the appropriate timestamp.
@@ -497,7 +491,7 @@ class Upload < ApplicationRecord
   #
   # @param [Upload, nil] item         Default: `self`.
   #
-  def emma_native?(item = nil)
+  def emma_native?(item = nil)                                                  # NOTE: to Record::EmmaIdentification::InstanceMethods
     self.class.emma_native?(item || self)
   end
 
@@ -511,7 +505,7 @@ class Upload < ApplicationRecord
   #
   # @param [Upload, Hash, String, #repository, #emma_repository] item
   #
-  def self.emma_native?(item)
+  def self.emma_native?(item)                                                   # NOTE: to Record::EmmaIdentification
     repository_of(item) == EmmaRepository.default
   end
 
@@ -526,7 +520,7 @@ class Upload < ApplicationRecord
   # Depending on the context, the caller may need to validate the result with
   # EmmaRepository#valid?.
   #
-  def self.repository_of(item)
+  def self.repository_of(item)                                                  # NOTE: to Record::EmmaIdentification#repository_value
     item = item.to_s if item.is_a?(Symbol)
     if item && !item.is_a?(String)
       %i[repository emma_repository].find do |key|
@@ -544,7 +538,7 @@ class Upload < ApplicationRecord
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  def self.repository_name(item)
+  def self.repository_name(item)                                                # NOTE: to Record::EmmaIdentification
     repo = repository_of(item)
     EmmaRepository.pairs[repo]
   end
@@ -560,7 +554,7 @@ class Upload < ApplicationRecord
   # If *item* is a String, it is assumed to be good.  Depending on the context,
   # the caller may need to validate the result with #valid_record_id?.
   #
-  def self.record_id(item)
+  def self.record_id(item)                                                      # NOTE: to Record::EmmaIdentification
     result   = (item.to_s if item.nil?)
     result ||= (item.to_s.strip if item.is_a?(String) || item.is_a?(Symbol))
     result ||= get_value(item, :emma_recordId)
@@ -583,7 +577,7 @@ class Upload < ApplicationRecord
   # @param [String, Array<String>]                       add_repo
   # @param [String, Array<String>]                       add_fmt
   #
-  def self.valid_record_id?(item, add_repo: nil, add_fmt: nil)
+  def self.valid_record_id?(item, add_repo: nil, add_fmt: nil)                  # NOTE: to Record::EmmaIdentification
     repo, rid, fmt, _version, remainder = record_id(item).to_s.split('-')
     rid.present? && remainder.nil? &&
       (Array.wrap(add_repo).include?(repo) || EmmaRepository.valid?(repo)) &&
@@ -607,7 +601,7 @@ class Upload < ApplicationRecord
   #
   # @return [*]
   #
-  def self.get_value(item, key, default: nil)
+  def self.get_value(item, key, default: nil)                                   # NOTE: to Record::Identification
     key = key.to_sym
     if item.respond_to?(key)
       item.send(key).presence
@@ -636,7 +630,7 @@ class Upload < ApplicationRecord
   # @return [String]
   # @return [nil]                     If no repository ID was given.
   #
-  def make_retrieval_link(rid, base_url = nil)
+  def make_retrieval_link(rid, base_url = nil)                                  # NOTE: to Record::EmmaData
     self.class.make_retrieval_link(rid, base_url)
   end
 
@@ -654,13 +648,13 @@ class Upload < ApplicationRecord
   # @return [String]
   # @return [nil]                     If no repository ID was given.
   #
-  def self.make_retrieval_link(rid, base_url = nil)
+  def self.make_retrieval_link(rid, base_url = nil)                             # NOTE: to Record::EmmaData
     base_url ||= BULK_BASE_URL
     File.join(base_url, 'download', rid).to_s if rid.present?
   end
 
   # ===========================================================================
-  # :section: Validations
+  # :section: ActiveRecord validations
   # ===========================================================================
 
   protected
@@ -670,7 +664,7 @@ class Upload < ApplicationRecord
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
   def upload_fields
-    Model.configured_fields(:upload)[:all]
+    Model.configuration_fields(:upload)[:all]
   end
 
   # Indicate whether all required fields have valid values.
@@ -692,7 +686,7 @@ class Upload < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: Validations
+  # :section: ActiveRecord validations
   # ===========================================================================
 
   private

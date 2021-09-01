@@ -9,16 +9,19 @@ __loading_begin(__FILE__)
 #
 class Periodical < ApplicationRecord
 
+  include Model
+
+  include Record
+  include Record::Authorizable
+
+  # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
   has_and_belongs_to_many :editions
 
   # noinspection RailsParamDefResolve
   has_many :artifacts, through: :editions
-
-  # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  resourcify
 
   # ===========================================================================
   # :section:

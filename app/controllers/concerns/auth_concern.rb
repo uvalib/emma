@@ -317,7 +317,7 @@ module AuthConcern
   # @param [User, String, nil] user   Default: `#current_user`
   #
   def auth_debug_user?(user = nil)
-    uid = User.find_uid(user || current_user)
+    uid = User.uid_value(user || current_user)
     session.key?('app.debug') && stored_auth.key?(uid)
   end
 

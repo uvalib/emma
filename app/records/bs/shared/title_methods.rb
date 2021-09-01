@@ -20,7 +20,7 @@ module Bs::Shared::TitleMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Model overrides
   # ===========================================================================
 
   public
@@ -34,7 +34,7 @@ module Bs::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Api::Shared::TitleMethods overrides
   # ===========================================================================
 
   public
@@ -184,7 +184,7 @@ module Bs::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Api::Shared::TitleMethods overrides
   # ===========================================================================
 
   public
@@ -207,7 +207,7 @@ module Bs::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Api::Shared::TitleMethods overrides
   # ===========================================================================
 
   public
@@ -274,7 +274,7 @@ module Bs::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: ::TitleMethods overrides
+  # :section: Api::Shared::TitleMethods overrides
   # ===========================================================================
 
   public

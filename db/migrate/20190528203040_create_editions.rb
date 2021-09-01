@@ -10,7 +10,7 @@ class CreateEditions < ActiveRecord::Migration[6.0]
     create_table(:editions) do |t|
       t.string :editionId
       t.timestamps
-      t.belongs_to :periodical #, foreign_key: :seriesId
+      t.belongs_to :periodical
     end
 
     create_join_table(:artifacts, :editions) do |t|

@@ -10,7 +10,7 @@ class CreateReadingLists < ActiveRecord::Migration[6.0]
     create_table(:reading_lists) do |t|
       t.string :readingListId
       t.timestamps
-      t.belongs_to :user #, foreign_key: true
+      t.belongs_to :user
     end
 
     create_join_table(:members, :reading_lists) do |t|

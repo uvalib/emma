@@ -23,7 +23,7 @@ class Attachment::PromoteJob < ApplicationJob
 
   # perform
   #
-  # @param [Upload] record
+  # @param [Model]  record
   # @param [Symbol] name              Should be :file.
   # @param [*]      data              :file_data
   #

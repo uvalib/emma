@@ -18,20 +18,6 @@ module SearchCallHelper
 
   public
 
-  # Configuration values for this model.
-  #
-  # @type {Hash{Symbol=>Hash}}
-  #
-  SEARCH_CALL_FIELDS       = Model.configured_fields(:search_call).deep_freeze
-  SEARCH_CALL_INDEX_FIELDS = SEARCH_CALL_FIELDS[:index] || {}
-  SEARCH_CALL_SHOW_FIELDS  = SEARCH_CALL_FIELDS[:show]  || {}
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]
@@ -65,12 +51,13 @@ module SearchCallHelper
   #                                     #model_details.
   #
   def search_call_details(item, pairs: nil, **opt)
+    opt[:model] = model_for(item)
     fv_opt, opt = partition_hash(opt, :columns, :filter)
-    pairs = search_call_field_values(item, **fv_opt).merge(pairs || {})
-    # noinspection RubyNilAnalysis
-    count = pairs.size
+    opt[:pairs] = search_call_field_values(item, **fv_opt)
+    opt[:pairs].merge!(pairs) if pairs.present?
+    count = opt[:pairs].size
     append_classes!(opt, "columns-#{count}") if count.positive?
-    model_details(item, model: :search_call, pairs: pairs, **opt)
+    model_details(item, **opt)
   end
 
   # ===========================================================================
@@ -86,8 +73,8 @@ module SearchCallHelper
   # @param [Hash]       opt           Passed to #model_list_item.
   #
   def search_call_list_item(item, pairs: nil, **opt)
-    opt[:model] = :search_call
-    opt[:pairs] = SEARCH_CALL_INDEX_FIELDS.merge(pairs || {})
+    opt[:model] = model = item && model_for(item) || :search_call
+    opt[:pairs] = index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

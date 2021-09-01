@@ -32,10 +32,11 @@ class Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
-  # @param [Symbol]                                            format  Note [1]
-  # @param [TrueClass, Hash{Symbol=>String,true}]              wrap    Note [2]
-  # @param [Exception, String, TrueClass]                      error   Note [3]
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Symbol]                                      format   Note [1]
+  # @param [TrueClass, Hash{Symbol=>String,true}]        wrap     Note [2]
+  # @param [Exception, String, TrueClass]                error    Note [3]
+  # @param [Hash]                                        data     Note [4]
   #
   # == Notes
   #
@@ -51,10 +52,14 @@ class Api::Record
   # [3] If an error indication is present, the instance is initialized to
   #     defaults and *data* is ignored.
   #
+  # [4] An alternative mechanism for specifying the source data (only used if
+  #     *src* is *nil* [which may be the case if a Hash value was used and it
+  #     gets interpreted as named parameters]).
+  #
   #--
   # noinspection RubyMismatchedParameterType
   #++
-  def initialize(src, format: nil, wrap: nil, error: nil, **)
+  def initialize(src = nil, format: nil, wrap: nil, error: nil, **data)
     @serializer_type = format
     assert_serializer_type(@serializer_type) if @serializer_type
     @exception = error
@@ -62,9 +67,9 @@ class Api::Record
     if @exception && src.blank?
       @serializer_type = :hash
       initialize_attributes
-    elsif src.is_a?(Api::Record)
-      initialize_attributes(src)
-    elsif (data = src.is_a?(Faraday::Response) ? src&.body : src).present?
+    elsif (data = src || data).is_a?(Model) || data.is_a?(Hash)
+      initialize_attributes(data)
+    elsif (data = data.is_a?(Faraday::Response) ? data.body : data).present?
       @serializer_type ||= self.format_of(data) || DEFAULT_SERIALIZER_TYPE
       wrap = wrap[@serializer_type] if wrap.is_a?(Hash)
       data = wrap_outer(data: data, template: wrap) if wrap
@@ -280,7 +285,8 @@ class Api::Record
 
   # Directly assign schema attributes.
   #
-  # @param [Api::Record, Hash, nil] data  Default: #default_data
+  # @param [Model, Hash, nil] data      Default: *defaults*.
+  # @param [Hash, nil]        default   Default: #default_data.
   #
   # @raise [RuntimeError]               If *data* is not a Model or a Hash.
   #
@@ -298,10 +304,14 @@ class Api::Record
   #--
   # noinspection RubyNilAnalysis
   #++
-  def initialize_attributes(data = nil)
-    data = data.fields if data.is_a?(Api::Record)
-    data = data.symbolize_keys.slice(*default_data.keys) if data.is_a?(Hash)
-    (data || default_data).each_pair do |attr, value|
+  def initialize_attributes(data = nil, default = default_data)
+    case data
+      when nil   then data = default
+      when Model then data = data.fields.slice(*default.keys)
+      when Hash  then data = data.symbolize_keys.slice(*default.keys)
+      else            raise "#{data.class}: unexpected"
+    end
+    data.each_pair do |attr, value|
       value = value.call(error: exception) if value.is_a?(Proc)
       value = value.new                    if value.is_a?(Class)
       value = value.value                  if value.is_a?(ScalarType)

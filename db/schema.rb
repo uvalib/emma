@@ -10,11 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_07_000010) do
+ActiveRecord::Schema.define(version: 2021_06_29_010020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "actions", force: :cascade do |t|
+    t.bigint "phase_id"
+    t.bigint "user_id"
+    t.string "command"
+    t.string "type"
+    t.string "state"
+    t.string "condition"
+    t.string "action"
+    t.text "report"
+    t.integer "retries", default: 0
+    t.json "emma_data"
+    t.json "file_data"
+    t.string "file_source"
+    t.integer "checksum"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["phase_id"], name: "index_actions_on_phase_id"
+    t.index ["user_id"], name: "index_actions_on_user_id"
+  end
 
   create_table "artifacts", force: :cascade do |t|
     t.string "format"
@@ -57,6 +77,19 @@ ActiveRecord::Schema.define(version: 2021_06_07_000010) do
     t.index ["edition_id", "reading_list_id"], name: "index_editions_reading_lists_on_edition_id_and_reading_list_id"
   end
 
+  create_table "entries", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "submission_id"
+    t.string "repository"
+    t.string "fmt"
+    t.string "ext"
+    t.json "emma_data"
+    t.json "file_data"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_entries_on_user_id"
+  end
+
   create_table "members", force: :cascade do |t|
     t.string "emailAddress"
     t.boolean "institutional"
@@ -76,6 +109,28 @@ ActiveRecord::Schema.define(version: 2021_06_07_000010) do
     t.string "seriesId"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "phases", force: :cascade do |t|
+    t.bigint "entry_id"
+    t.bigint "user_id"
+    t.bigint "bulk_id"
+    t.string "command"
+    t.string "type"
+    t.string "state"
+    t.text "remarks"
+    t.string "submission_id"
+    t.string "repository"
+    t.string "fmt"
+    t.string "ext"
+    t.json "emma_data"
+    t.json "file_data"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bulk_id"], name: "index_phases_on_bulk_id"
+    t.index ["entry_id", "type"], name: "index_phases_on_entry_id_and_type"
+    t.index ["entry_id"], name: "index_phases_on_entry_id"
+    t.index ["user_id"], name: "index_phases_on_user_id"
   end
 
   create_table "reading_lists", force: :cascade do |t|
@@ -191,4 +246,5 @@ ActiveRecord::Schema.define(version: 2021_06_07_000010) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "phases", "phases", column: "bulk_id"
 end
