@@ -14,6 +14,8 @@ __loading_begin(__FILE__)
 module Search::Shared::TitleMethods
 
   include Api::Shared::TitleMethods
+
+  include Search::Shared::IdentifierMethods
   include Search::Shared::LinkMethods
 
   # ===========================================================================
@@ -84,7 +86,7 @@ module Search::Shared::TitleMethods
   # @return [Array<String>]
   #
   def all_isbns
-    @all_isbns ||= extract_isbns(:dc_identifier, :dc_relation)
+    @all_isbns ||= extract_isbns(*identifier_fields)
   end
 
   # ===========================================================================

@@ -671,7 +671,7 @@ module UploadHelper
       # @type [Symbol] operation
       # @type [Hash]   properties
       UPLOAD_ICONS.map { |operation, properties|
-        next unless can?(operation, Upload)
+        next unless can?(operation, item)
         action_opt = properties.merge(opt)
         action_opt[:item] ||= (item if item.is_a?(Model))
         upload_action_icon(operation, **action_opt)

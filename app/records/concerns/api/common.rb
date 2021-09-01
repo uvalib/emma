@@ -314,6 +314,48 @@ class IsoDay < IsoDate
     day?(v)
   end
 
+  # Transform *v* into a valid form.
+  #
+  # @param [String, Date, Time, IsoDate, *] v
+  #
+  # @return [String]
+  #
+  def self.normalize(v)
+    v.try(:to_date)&.to_s || Date.parse(v).to_s rescue super(v)
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Type-cast an object to an IsoDay.
+  #
+  # @param [String, Date, Time, IsoDate, *] obj   Value to use or transform.
+  #
+  # @return [IsoDay]
+  # @return [nil]                     If *obj* is not a valid identifier.
+  #
+  def self.cast(obj)
+    obj.is_a?(self) ? obj : create(obj) if obj.present?
+  end
+
+  # Create a new instance.
+  #
+  # @param [String, Date, Time, IsoDate, *] v   Optional initial value.
+  #
+  # @return [IsoDay]
+  # @return [nil]                     If *v* is not a valid identifier.
+  #
+  def self.create(v, *)
+    if v.is_a?(self)
+      v.dup
+    elsif (v = normalize(v)).match?(PATTERN[:day])
+      new(v)
+    end
+  end
+
 end
 
 # ISO 639-2 alpha-3 language code.

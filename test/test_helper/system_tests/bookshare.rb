@@ -95,6 +95,7 @@ module TestHelper::SystemTests::Bookshare
     BsPeriodicalFormat: 'String',
     BsSiteType:         'String',
     BsSeriesType:       'enum (newspaper, magazine, journal)',
+    IsoDay:             'string (date)',
     IsoDate:            'string (date-time)',
   }.map { |k, v| [k.to_s, v.to_s] }.to_h.freeze
 
@@ -272,10 +273,11 @@ module TestHelper::SystemTests::Bookshare
       when /(^string)/
         parts = type.sub($1, '').tr('(),', ' ').squish
         case parts
-          when ''     then 'String'
-          when 'date' then 'IsoDate'
-          when 'year' then 'IsoYear'
-          else             type
+          when ''          then 'String'
+          when 'date'      then 'IsoDay'
+          when 'date-time' then 'IsoDate'
+          when 'year'      then 'IsoYear'
+          else                  type
         end
 
       when /(^enum)/

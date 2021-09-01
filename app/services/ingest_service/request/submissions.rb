@@ -1,13 +1,13 @@
-# app/services/ingest_service/request/records.rb
+# app/services/ingest_service/request/submissions.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# IngestService::Request::Records
+# IngestService::Request::Submissions
 #
-module IngestService::Request::Records
+module IngestService::Request::Submissions
 
   include IngestService::Common
   include IngestService::Testing
@@ -29,7 +29,7 @@ module IngestService::Request::Records
   #
   # The number of records to be updated at once is capped at 1000.
   #
-  # @param [Array<Ingest::Message::IngestionRecordList, ::Api::Record>] records
+  # @param [Array<Ingest::Message::IngestionRecordList, Ingest::Record::IngestionRecord, Model, Hash>] records
   # @param [Hash] opt                 Passed to #api.
   #
   # @return [Ingest::Message::Response]
@@ -41,11 +41,11 @@ module IngestService::Request::Records
   #
   # @overload put_records(list, **opt)
   #   @param [Ingest::Message::IngestionRecordList] list
-  #   @param [Hash]                                 opt
+  #   @param [Hash] opt
   #
   # @overload put_records(*records, **opt)
-  #   @param [Array<::Api::Record>]                 records
-  #   @param [Hash]                                 opt
+  #   @param [Array<Ingest::Record::IngestionRecord, Model, Hash>] records
+  #   @param [Hash] opt
   #
   # == HTTP response codes
   #
@@ -73,7 +73,7 @@ module IngestService::Request::Records
   #
   # The number of records to be deleted at once is capped at 1000.
   #
-  # @param [Ingest::Message::IngestionRecordList, Array<::Api::Record>, Array<String>] ids
+  # @param [Array<Ingest::Message::IngestionRecordList, Ingest::Record::IdentifierRecord, Model, Hash, String>] items
   # @param [Hash] opt                 Passed to #api.
   #
   # @return [Ingest::Message::Response]
@@ -85,15 +85,11 @@ module IngestService::Request::Records
   #
   # @overload delete_records(list, **opt)
   #   @param [Ingest::Message::IdentifierRecordList] list
-  #   @param [Hash]                                  opt
+  #   @param [Hash] opt
   #
-  # @overload delete_records(*records, **opt)
-  #   @param [Array<::Api::Record>] records
-  #   @param [Hash]                 opt
-  #
-  # @overload delete_records(*ids, **opt)
-  #   @param [Array<String>] ids
-  #   @param [Hash]          opt
+  # @overload delete_records(*records_or_ids, **opt)
+  #   @param [Array<Ingest::Record::IdentifierRecord, Model, Hash, String>] records_or_ids
+  #   @param [Hash] opt
   #
   # === HTTP response codes
   #
@@ -101,9 +97,9 @@ module IngestService::Request::Records
   # 207 Multi-Status    Some items deleted.
   # 400 Bad Request     Invalid input.
   #
-  def delete_records(*ids, **opt)
+  def delete_records(*items, **opt)
     opt[:meth] ||= __method__
-    id_list = ids.flat_map { |id| identifier_list(id) }
+    id_list = items.flat_map { |item| identifier_list(item) }
     api_send(:post, 'recordDeletes', id_list, **opt)
     api_return(Ingest::Message::Response)
   end
@@ -121,7 +117,7 @@ module IngestService::Request::Records
   #
   # The number of records to be retrieved at once is capped at 1000.
   #
-  # @param [Ingest::Message::IngestionRecordList, Array<Api::Record>, Array<String>] ids
+  # @param [Array<Ingest::Message::IngestionRecordList, Ingest::Record::IdentifierRecord, Model, Hash, String>] items
   # @param [Hash] opt                 Passed to #api.
   #
   # @return [Search::Message::SearchRecordList]
@@ -133,24 +129,20 @@ module IngestService::Request::Records
   #
   # @overload get_records(list, **opt)
   #   @param [Ingest::Message::IdentifierRecordList] list
-  #   @param [Hash]                                  opt
+  #   @param [Hash] opt
   #
-  # @overload get_records(*records, **opt)
-  #   @param [Array<::Api::Record>] records
-  #   @param [Hash]                 opt
-  #
-  # @overload get_records(*ids, **opt)
-  #   @param [Array<String>] ids
-  #   @param [Hash]          opt
+  # @overload get_records(*records_or_ids, **opt)
+  #   @param [Array<Ingest::Record::IdentifierRecord, Model, Hash, String>] records_or_ids
+  #   @param [Hash] opt
   #
   # === HTTP response codes
   #
   # 200 OK              Items retrieved.
   # 400 Bad Request     Invalid input.
   #
-  def get_records(*ids, **opt)
+  def get_records(*items, **opt)
     opt[:meth] ||= __method__
-    id_list = ids.flat_map { |id| identifier_list(id) }
+    id_list = items.flat_map { |item| identifier_list(item) }
     api_send(:post, 'recordGets', id_list, **opt)
     api_return(Search::Message::SearchRecordList)
   end
@@ -223,7 +215,7 @@ module IngestService::Request::Records
         else
           Log.warn { "#{__method__}: unexpected: #{record.inspect}" }
       end
-    Array.wrap(result)
+    Array.wrap(result).compact
   end
 
   # Generate an array of ingest identifiers.
@@ -261,7 +253,7 @@ module IngestService::Request::Records
         else
           Log.warn { "#{__method__}: unexpected: #{item.inspect}" }
       end
-    Array.wrap(result)
+    Array.wrap(result).compact
   end
 
   # ===========================================================================

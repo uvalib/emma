@@ -18,7 +18,6 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   # ===========================================================================
 
   schema do
-    has_many :submissions, AwsS3::Message::SubmissionPackage
     has_many :succeeded
     has_many :failed
     has_many :messages
@@ -32,17 +31,16 @@ class AwsS3::Message::Response < AwsS3::Api::Message
 
   # Initialize a new instance.
   #
-  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash>, nil]  src
-  # @param [Array<AwsS3::Message::SubmissionPackage,String>, nil]         sent
-  # @param [Hash]                                                         opt
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,String>, nil] src
+  # @param [Array<AwsS3::Message::SubmissionRequest,String>, nil]       sent
+  # @param [Hash]                                                       opt
   #
   def initialize(src, sent = nil, **opt)
     # noinspection RubyScope, RubyMismatchedParameterType
     create_message_wrapper(opt) do |opt|
-      super(nil, **opt)
-      self.submissions = AwsS3::Message::SubmissionPackage.to_a(src)
-      self.succeeded   = sids_for(sent || submissions)
-      self.failed      = sids_for(submissions) - succeeded
+      super(nil, opt)
+      self.succeeded   = sids_for(sent)
+      self.failed      = sids_for(src) - succeeded
       self.messages   += failed.map { |sid| "#{sid} failed" }
       initialize_exec_report(messages, exception)
     end
@@ -56,7 +54,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
 
   # Translate one or more objects or strings into submission ID's.
   #
-  # @param [AwsS3::Message::SubmissionPackage, String, Symbol, Array, nil] src
+  # @param [AwsS3::Message::SubmissionRequest, String, Symbol, Array, nil] src
   #
   # @return [Array<String>]
   #

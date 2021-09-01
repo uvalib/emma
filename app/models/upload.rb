@@ -295,7 +295,7 @@ class Upload < ApplicationRecord
       # of :emma_data if it was supplied.
       if (ed = attr.delete(:emma_data))
         __debug_items { { "#{__method__} emma_data": ed.inspect } }
-        added_data = reject_blanks(json_parse(ed))
+        added_data = parse_emma_data(ed)
         data.reverse_merge!(added_data) if added_data.present?
       end
 

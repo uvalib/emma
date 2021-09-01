@@ -117,7 +117,7 @@ module AwsS3Service::Common
 
   # The AWS S3 bucket associated with the item.
   #
-  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash, String, Symbol, nil] item
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash, String, Symbol, nil] item
   # @param [Symbol, String, nil] deployment     Def: `#aws_deployment`.
   #
   # @return [String]
@@ -131,14 +131,14 @@ module AwsS3Service::Common
 
   # Generate an array of submission package identifiers (AWS S3 object keys).
   #
-  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash, String] item
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash, String] item
   #
   # @return [String, nil]
   #
   def submission_id(item)
     # noinspection RubyMismatchedReturnType
     case item
-      when Upload, AwsS3::Message::SubmissionPackage
+      when Upload, AwsS3::Message::SubmissionRequest
         item.submission_id
       when Hash
         item[:submission_id] || item['submission_id']

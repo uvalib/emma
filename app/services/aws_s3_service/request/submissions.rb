@@ -21,14 +21,14 @@ module AwsS3Service::Request::Submissions
   # Uploads one or more submissions into AWS S3 for the creation of new entries
   # in the member repository.
   #
-  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash>] records
+  # @param [Array<AwsS3::Message::SubmissionRequest, Model, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
   #
   # @return [AwsS3::Message::Response]
   #
   def creation_request(*records, **opt)
     opt[:meth] ||= __method__
-    records   = AwsS3::Message::SubmissionPackage.to_a(records)
+    records = AwsS3::Message::SubmissionRequest.array(records)
     succeeded = put_records(*records, **opt)
     api_return(records, succeeded)
   end
@@ -48,7 +48,7 @@ module AwsS3Service::Request::Submissions
   #
   def modification_request(*records, **opt)
     opt[:meth] ||= __method__
-    records   = AwsS3::Message::ModificationRequest.to_a(records)
+    records   = AwsS3::Message::ModificationRequest.array(records)
     succeeded = put_records(*records, **opt)
     api_return(records, succeeded)
   end
@@ -68,7 +68,7 @@ module AwsS3Service::Request::Submissions
   #
   def removal_request(*records, **opt)
     opt[:meth] ||= __method__
-    records   = AwsS3::Message::RemovalRequest.to_a(records)
+    records   = AwsS3::Message::RemovalRequest.array(records)
     succeeded = put_records(*records, **opt)
     api_return(records, succeeded)
   end
@@ -86,10 +86,10 @@ module AwsS3Service::Request::Submissions
 
   # Uploads one or more submissions into AWS S3.
   #
-  # @param [Array<AwsS3::Message::SubmissionPackage>] items
-  # @param [Hash] opt                                   Passed to #api_create.
+  # @param [Array<AwsS3::Message::SubmissionRequest>] items
+  # @param [Hash] opt                 Passed to #aws_create.
   #
-  # @return [Array<AwsS3::Message::SubmissionPackage>]  Submitted records.
+  # @return [Array<AwsS3::Message::SubmissionRequest>]  Submitted records.
   #
   def put_records(*items, **opt)
     opt[:meth] ||= __method__
@@ -103,8 +103,8 @@ module AwsS3Service::Request::Submissions
 
   # Retrieves one or more submissions from AWS S3.
   #
-  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash, String>] items
-  # @param [Hash] opt                 Passed to #api_get via #api_operation.
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
+  # @param [Hash] opt                 Passed to #aws_get.
   #
   # @return [Hash{String=>String}]    File contents.
   #
@@ -122,8 +122,8 @@ module AwsS3Service::Request::Submissions
 
   # Removes one or more submissions from AWS S3.
   #
-  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash, String>] items
-  # @param [Hash] opt                 Passed to #api_delete via #api_operation.
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
+  # @param [Hash] opt                 Passed to #aws_delete.
   #
   # @return [Array<String>]           Succeeded deletions.
   #
@@ -141,8 +141,8 @@ module AwsS3Service::Request::Submissions
 
   # Lists the files present in AWS S3 associated with one or more submissions.
   #
-  # @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash, String>] items
-  # @param [Hash] opt                 Passed to #api_list via #api_operation.
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
+  # @param [Hash] opt                 Passed to #aws_list.
   #
   # @return [Hash{String=>Array}]     The objects for each submission key.
   #
@@ -167,7 +167,7 @@ module AwsS3Service::Request::Submissions
 
   # Upload the submission file and content file related to each submission ID.
   #
-  # @param [Array<AwsS3::Message::SubmissionPackage>] records
+  # @param [Array<AwsS3::Message::SubmissionRequest>] records
   # @param [String]  bucket
   # @param [Boolean] atomic
   # @param [Hash]    opt              Passed to Aws::S3::Client#initialize or:
@@ -175,7 +175,7 @@ module AwsS3Service::Request::Submissions
   # @option opt [Aws::S3::Client] :client
   # @option opt [Symbol]          :meth     Calling method for logging
   #
-  # @return [Array<AwsS3::Message::SubmissionPackage>]  Submitted records.
+  # @return [Array<AwsS3::Message::SubmissionRequest>]  Submitted records.
   #
   # @see Aws::S3::Object#put
   #

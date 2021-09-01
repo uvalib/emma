@@ -80,8 +80,8 @@ module SearchService::Request::Records
   # @option opt [A11yFeature, Array<A11yFeature>]         :accessibilityFeature
   # @option opt [EmmaRepository]                          :repository
   # @option opt [String, Array<String>]                   :collection
-  # @option opt [IsoDate]                                 :lastRemediationDate
-  # @option opt [IsoDate]                                 :sortDate
+  # @option opt [IsoDay]                                  :lastRemediationDate
+  # @option opt [IsoDay]                                  :sortDate
   # @option opt [SearchSort]                              :sort
   # @option opt [String]                                  :searchAfterId
   # @option opt [String]                                  :searchAfterValue
@@ -126,8 +126,8 @@ module SearchService::Request::Records
           accessibilityFeature: A11yFeature,
           repository:           EmmaRepository,
           collection:           String,
-          lastRemediationDate:  IsoDate,
-          sortDate:             IsoDate,
+          lastRemediationDate:  IsoDay,
+          sortDate:             IsoDay,
           sort:                 SearchSort,
           searchAfterId:        String,
           searchAfterValue:     String,

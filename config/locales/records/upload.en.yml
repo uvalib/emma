@@ -435,8 +435,8 @@ en:
           emma_lastRemediationDate:
             # FMM5: "Remediation Status Date", Required, Repeatable
             # IA:   *missing*
-            # SR:   IsoDate
-            # IR:   IsoDate
+            # SR:   IsoDay
+            # IR:   IsoDay
             # NOTE: Not actually repeatable.
             min:          1
             max:          1
@@ -451,8 +451,8 @@ en:
           emma_repositoryMetadataUpdateDate:
             # FMM5: N/A
             # IA:   N/A
-            # SR:   IsoDate
-            # IR:   IsoDate
+            # SR:   IsoDay
+            # IR:   IsoDay
             min:          0
             max:          1
             label:        'Entry Update'
@@ -707,8 +707,8 @@ en:
           dcterms_dateAccepted:
             # FMM5: *missing*
             # IA:   *missing*
-            # SR:   IsoDate
-            # IR:   IsoDate
+            # SR:   IsoDay
+            # IR:   IsoDay
             min:          0
             max:          1
             label:        'Date Accepted'

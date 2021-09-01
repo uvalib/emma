@@ -1640,34 +1640,45 @@ module ModelHelper
 
   protected
 
+  # Field type indicators mapped on to related class(es).
+  #
+  # @type [Hash{Symbol=>Array<Class>}]
+  #
+  RENDER_FIELD_TYPE_TABLE = {
+    check:  [Boolean, TrueClass, FalseClass],
+    date:   [IsoDate, IsoDay, Date, DateTime],
+    number: [Integer, BigDecimal],
+    time:   [Time, ActiveSupport::TimeWithZone],
+    year:   [IsoYear],
+  }.transform_values! { |types|
+    types.flat_map { |type|
+      [type].tap do |related|
+        name = (type == BigDecimal) ? 'Decimal' : type
+        related << safe_const_get("Axiom::Types::#{name}")
+        related << safe_const_get("ActiveModel::Type::#{name}")
+      end
+    }.compact
+  }.deep_freeze
+
   # Mapping of actual type to the appropriate field type indicator.
   #
   # @type [Hash{Class=>Symbol}]
   #
-  RENDER_FIELD_TYPE = {
-    Boolean                     => :check,
-    FalseClass                  => :check,
-    TrueClass                   => :check,
-    Integer                     => :number,
-    IsoYear                     => :year,
-    ActiveModel::Type::Date     => :date,
-    ActiveModel::Type::DateTime => :date,
-    Date                        => :date,
-    DateTime                    => :date,
-    IsoDate                     => :date,
-    ActiveModel::Type::Time     => :time,
-    ActiveSupport::TimeWithZone => :time,
-    Time                        => :time,
-  }.freeze
+  RENDER_FIELD_TYPE =
+    RENDER_FIELD_TYPE_TABLE.flat_map { |field, types|
+      types.map { |type| [type, field] }
+    }.sort_by { |pair| pair.first.to_s }.to_h.freeze
 
   # Convert certain field types.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
   REPLACE_FIELD_TYPE = {
+=begin
     year: :text, # Currently treating :year as plain text.
     date: :text, # Currently treating :date as plain text.
     time: :text, # Currently treating :time as plain text.
+=end
   }.freeze
 
   # render_field_item
@@ -1690,7 +1701,7 @@ module ModelHelper
     value = Array.wrap(value).compact_blank
     model = opt[:model] || params[:controller]
     type  = Field.configuration_for(field, model)[:type]
-    type  = type.to_sym if type.is_a?(String)
+    type  = type.to_sym                          if type.is_a?(String)
     type  = RENDER_FIELD_TYPE[value.first.class] unless type.is_a?(Symbol)
     type  = REPLACE_FIELD_TYPE[type] || type || :text
     value =

@@ -91,12 +91,7 @@ module Upload::EmmaDataMethods
   def set_emma_data(data, allow_blank = false)
     @emma_record     = nil # Force regeneration.
     @emma_metadata   = parse_emma_data(data, allow_blank)
-    self[:emma_data] =
-      case data
-        when nil    then data
-        when String then data.dup
-        else             @emma_metadata.to_json
-      end
+    self[:emma_data] = @emma_metadata.presence&.to_json
   end
 
   # Selectively modify the :emma_data field value.
@@ -153,12 +148,7 @@ module Upload::EmmaDataMethods
   def set_edit_emma_data(data, allow_blank = false)
     @edit_emma_record     = nil # Force regeneration.
     @edit_emma_metadata   = parse_emma_data(data, allow_blank)
-    self[:edit_emma_data] =
-      case data
-        when nil    then data
-        when String then data.dup
-        else             @edit_emma_metadata.to_json
-      end
+    self[:edit_emma_data] = @edit_emma_metadata.presence&.to_json
   end
 
   # Selectively modify the :edit_emma_data field value.
@@ -272,15 +262,21 @@ module Upload::EmmaDataMethods
       v     = Array.wrap(v)
       prop  = Field.configuration_for(k, :upload)
       array = prop[:array]
-      lines = (prop[:type] == 'textarea')
-      if lines || (prop[:type] == 'text') || prop[:type].blank?
-        join = lines ? "\n"    : ';'
-        sep  = lines ? /[|\n]/ : ';'
-        v = v.join(join).split(sep) if array
-        v = v.map(&:to_s).map(&:strip).compact_blank
+      type  = prop[:type]
+      lines = (type == 'textarea')
+      text  = lines || type.blank? || (type == 'text')
+      ids   = %i[dc_identifier dc_relation].include?(k)
+      if text && !ids
+        join = lines ? "\n"     : ';'
+        sep  = lines ? /[|\n]+/ : ';'
+        v = array ? v.join(join).split(sep) : v.map(&:to_s)
+        v = v.map!(&:strip).compact_blank!
         v = v.join(join) unless array
-      elsif !array
-        v = v.first
+      else
+        join = "\n"
+        sep  = ids ? /[,;|\s]+/ : /[|\n]+/
+        v = v.join(join).split(sep).map!(&:strip).compact_blank!
+        v = v.first unless array
       end
       [k, v] if allow_blank || v.present? || v.is_a?(FalseClass)
     }.compact.sort.to_h

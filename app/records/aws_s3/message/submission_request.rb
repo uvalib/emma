@@ -1,4 +1,4 @@
-# app/records/aws_s3/message/submission_package.rb
+# app/records/aws_s3/message/submission_request.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -19,8 +19,8 @@ __loading_begin(__FILE__)
 # @attr [String]                        emma_repositoryRecordId
 # @attr [String]                        emma_retrievalLink
 # @attr [String]                        emma_webPageLink
-# @attr [IsoDate]                       emma_lastRemediationDate
-# @attr [IsoDate]                       emma_repositoryMetadataUpdateDate
+# @attr [IsoDay]                        emma_lastRemediationDate
+# @attr [IsoDay]                        emma_repositoryMetadataUpdateDate
 # @attr [String]                        emma_lastRemediationNote
 # @attr [String]                        emma_formatVersion
 # @attr [Array<FormatFeature>]          emma_formatFeature
@@ -36,7 +36,7 @@ __loading_begin(__FILE__)
 # @attr [DublinCoreFormat]              dc_format
 # @attr [DcmiType]                      dc_type
 # @attr [Array<String>]                 dc_subject
-# @attr [IsoDate]                       dcterms_dateAccepted
+# @attr [IsoDay]                        dcterms_dateAccepted
 # @attr [IsoYear]                       dcterms_dateCopyright
 # @attr [Array<A11yFeature>]            s_accessibilityFeature
 # @attr [Array<A11yControl>]            s_accessibilityControl
@@ -64,9 +64,11 @@ __loading_begin(__FILE__)
 # @see file:config/locales/records/search.en.yml          *en.emma.search.record*
 # @see file:app/assets/javascripts/feature/file-upload.js *EmmaData*
 #
-class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
+class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
 
-  include Emma::Common
+  include AwsS3::Shared::DateMethods
+  include AwsS3::Shared::IdentifierMethods
+  include AwsS3::Shared::TitleMethods
 
   # ===========================================================================
   # :section:
@@ -85,8 +87,8 @@ class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
     has_one   :emma_repositoryRecordId
     has_one   :emma_retrievalLink
     has_one   :emma_webPageLink
-    has_one   :emma_lastRemediationDate,          IsoDate
-    has_one   :emma_repositoryMetadataUpdateDate, IsoDate
+    has_one   :emma_lastRemediationDate,          IsoDay
+    has_one   :emma_repositoryMetadataUpdateDate, IsoDay
     has_one   :emma_lastRemediationNote
     has_one   :emma_formatVersion
     has_many  :emma_formatFeature,                FormatFeature
@@ -102,7 +104,7 @@ class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
     has_one   :dc_format,                         DublinCoreFormat
     has_one   :dc_type,                           DcmiType
     has_many  :dc_subject
-    has_one   :dcterms_dateAccepted,              IsoDate
+    has_one   :dcterms_dateAccepted,              IsoDay
     has_one   :dcterms_dateCopyright,             IsoYear
     has_many  :s_accessibilityFeature,            A11yFeature
     has_many  :s_accessibilityControl,            A11yControl
@@ -160,15 +162,15 @@ class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
 
   # Initialize a new instance.
   #
-  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash] src
-  # @param [Hash]                                            opt
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash] src
+  # @param [Hash]                                           opt
   #
   # @option opt [Aws::S3::Object] :file   Override file for submission.
   #
   def initialize(src, **opt)
     @file = @file_key = nil
     case src
-      when AwsS3::Message::SubmissionPackage, AwsS3::Record::SubmissionPackage
+      when AwsS3::Message::SubmissionRequest, AwsS3::Record::SubmissionRequest
         data  = src
         sid   = src.submission_id
         @file = src.file
@@ -194,7 +196,7 @@ class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
     end
 
     case src
-      when AwsS3::Message::SubmissionPackage, AwsS3::Record::SubmissionPackage
+      when AwsS3::Message::SubmissionRequest, AwsS3::Record::SubmissionRequest
         @file_key ||= src.file_key
       else
         @file_key ||= sid + File.extname(@file.key)
@@ -209,37 +211,16 @@ class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  def remove_empty_values(item)
-    case item
-      when TrueClass, FalseClass
-        item
-      when Hash
-        item.map { |k, v| [k, send(__method__, v)] }.to_h.compact.presence
-      when Array
-        item.map { |v| send(__method__, v) }.compact.presence
-      when ModelHelper::EMPTY_VALUE
-        nil
-      else
-        item.presence
-    end
-  end
-
-  # ===========================================================================
   # :section: Class methods
   # ===========================================================================
 
   public
 
-  # Create a new SubmissionPackage unless *src* already is one.
+  # Create a new SubmissionRequest unless *src* already is one.
   #
-  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash] record
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash] record
   #
-  # @return [AwsS3::Message::SubmissionPackage]
+  # @return [AwsS3::Message::SubmissionRequest]
   #
   def self.[](record)
     # noinspection RubyMismatchedReturnType
@@ -248,11 +229,11 @@ class AwsS3::Message::SubmissionPackage < AwsS3::Api::Message
 
   # Normalize to an array of submission records.
   #
-  # @param [AwsS3::Message::SubmissionPackage, Upload, Hash, Array] records
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash, Array] records
   #
-  # @return [Array<AwsS3::Message::SubmissionPackage>]
+  # @return [Array<AwsS3::Message::SubmissionRequest>]
   #
-  def self.to_a(records)
+  def self.array(records)
     Array.wrap(records).flatten.map { |record|
       self[record] if record.present?
     }.compact
