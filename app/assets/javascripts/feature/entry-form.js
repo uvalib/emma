@@ -837,7 +837,6 @@ $(document).on('turbolinks:load', function() {
                 let row     = $lines.length;
                 let entries = [];
                 list.forEach(function(record) {
-                    // noinspection IncrementDecrementResultUsedJS
                     const entry = addBulkOpResult($results, record, row++);
                     last_id = Math.max(record.id, last_id);
                     entries.push(entry);
@@ -1259,17 +1258,8 @@ $(document).on('turbolinks:load', function() {
         monitorRequestResponse($form);
 
         // Cancel the current submission if the the user leaves the page before
-        // submitting...
-        handleEvent($(document), 'turbolinks:click ', function() {
-            // ... via a link.
-            debugSection('turbolinks:click EVENT');
-            abortSubmission($form);
-        });
-        handleEvent($(window), 'beforeunload', function() {
-            // ... via history.back() or history.forward().
-            debugSection('window beforeunload EVENT');
-            abortSubmission($form);
-        });
+        // submitting.
+        onPageExit(function() { abortSubmission($form) }, DEBUGGING);
     }
 
     /**
@@ -3652,7 +3642,6 @@ $(document).on('turbolinks:load', function() {
         if (filter_initialized) {
             $form[0].scrollIntoView();
         } else {
-            // noinspection ReuseOfLocalVariableJS
             filter_initialized = true;
         }
     }
@@ -3800,7 +3789,6 @@ $(document).on('turbolinks:load', function() {
         let $element = $(element);
         let old_tip  = $element.attr('data-title');
         if (isMissing(old_tip)) {
-            // noinspection ReuseOfLocalVariableJS
             old_tip = $element.attr('title');
             if (isPresent(old_tip)) {
                 $element.attr('data-title', old_tip);
@@ -3838,7 +3826,6 @@ $(document).on('turbolinks:load', function() {
         let $element = $(element);
         let old_icon = $element.attr('data-icon');
         if (isMissing(old_icon)) {
-            // noinspection ReuseOfLocalVariableJS
             old_icon = $element.text();
             if (isPresent(old_icon)) {
                 $element.attr('data-icon', old_icon);

@@ -119,7 +119,7 @@ function asSize(value, full) {
         return '';
     }
     let i = 0;
-    // noinspection OverlyComplexBooleanExpressionJS, IncrementDecrementResultUsedJS
+    // noinspection OverlyComplexBooleanExpressionJS
     let magnitude =
         ((n < Math.pow(K, ++i)) && i) || // B
         ((n < Math.pow(K, ++i)) && i) || // KB
@@ -477,18 +477,6 @@ function isEvent(item) {
     return (item instanceof Event) || (item instanceof jQuery.Event);
 }
 
-/**
- * Make a selector out of an array of attributes.
- *
- * @param {string[]} attributes
- *
- * @returns {string}
- */
-function attributeSelector(attributes) {
-    const list = attributes.join('], [');
-    return `[${list}]`;
-}
-
 // ============================================================================
 // Functions - CSS
 // ============================================================================
@@ -558,7 +546,7 @@ function cssClasses(...args) {
     args.forEach(function(arg) {
         let values = undefined;
         if (typeof arg === 'string') {
-            values = arg.trim().replace(/\s+/g, ' ').split(' ');
+            values = arg.trim().replace(/[.\s]+/g, ' ').split(' ');
         } else if (Array.isArray(arg)) {
             values = cssClasses(...arg);
         } else if (typeof arg === 'object') {
@@ -618,6 +606,10 @@ function selector(...args) {
             entry = entry.map(v => v.startsWith('.') ? v : `.${v}`);
             entry = entry.join(', ');
 
+        } else if (arg.includes(' ')) {
+            entry = arg.trim().replace(/\./g, ' ').split(/\s+/);
+            entry = '.' + entry.join('.');
+
         } else if (arg[0] === '#') {    // ID selector
             result.unshift(arg);
 
@@ -657,6 +649,18 @@ function elementSelector(element) {
 // ============================================================================
 // Functions - HTML
 // ============================================================================
+
+/**
+ * Make a selector out of an array of attributes.
+ *
+ * @param {string[]} attributes
+ *
+ * @returns {string}
+ */
+function attributeSelector(attributes) {
+    const list = attributes.join('], [');
+    return `[${list}]`;
+}
 
 /**
  * Safely transform HTML-encoded text.
@@ -706,7 +710,7 @@ function create(element, properties) {
 
     // noinspection HtmlUnknownTag
     let $element = (tag[0] === '<') ? $(tag) : $(`<${tag}>`);
-    prop.class   && $element.addClass(prop.class);
+    prop.class   && $element.addClass(cssClass(prop.class));
     prop.type    && $element.attr('type',  prop.type);
     prop.tooltip && $element.attr('title', prop.tooltip);
 
@@ -1027,6 +1031,30 @@ function handleHoverAndFocus($element, funcEnter, funcLeave) {
     if (funcLeave) {
         handleEvent($element, 'mouseleave', funcLeave);
         handleEvent($element, 'blur',       funcLeave);
+    }
+}
+
+/**
+ * Invoke a callback when leaving the page.
+ *
+ * @param {function} callback
+ * @param {boolean}  [debug]        If *true* show console warnings on events.
+ */
+function onPageExit(callback, debug) {
+    if (debug) {
+        handleEvent($(document), 'turbolinks:click', function() {
+            // Leaving the page due to clicking on a link.
+            consoleWarn('>>>>> turbolinks:click EVENT <<<<<');
+            callback();
+        });
+        handleEvent($(window), 'beforeunload', function() {
+            // Leaving the page via history.back() or history.forward().
+            consoleWarn('>>>>> window beforeunload EVENT <<<<<');
+            callback();
+        });
+    } else {
+        handleEvent($(document), 'turbolinks:click', callback);
+        handleEvent($(window),   'beforeunload',     callback);
     }
 }
 

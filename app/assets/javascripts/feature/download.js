@@ -494,7 +494,6 @@ $(document).on('turbolinks:load', function() {
         let $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
         let row     = 0;
         $.each(member_table, function(account_id, full_name) {
-            // noinspection IncrementDecrementResultUsedJS
             let row_id = `${id}-row${row++}`;
             let $input = $radio.clone().attr('value', account_id);
             let $label = create(MEMBER_POPUP.fields.row_label).text(full_name);

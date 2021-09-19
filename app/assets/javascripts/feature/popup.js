@@ -50,7 +50,7 @@ $(document).on('turbolinks:load', function() {
      * by neutralizing the z-index for elements outside its stacking context.
      * This property holds the set of elements which have been affected.
      *
-     * @const
+     * @constant
      * @type {string}
      */
     const Z_CAPTURES_PROP = 'z-captured-elements';
@@ -59,7 +59,7 @@ $(document).on('turbolinks:load', function() {
      * The property assigned to an element whose z-index has been neutralized
      * which holds the original z-index value to be restored.
      *
-     * @const
+     * @constant
      * @type {string}
      */
     const Z_RESTORE_PROP = 'current-z-index';

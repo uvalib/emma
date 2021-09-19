@@ -282,7 +282,7 @@ $(document).on('turbolinks:load', function() {
      * Indicate whether search filters take immediate effect (causing a new
      * search using the selected value).
      *
-     * @const
+     * @constant
      * @type {boolean}
      */
     const IMMEDIATE_SEARCH =
@@ -550,7 +550,7 @@ $(document).on('turbolinks:load', function() {
         // Check hidden input fields (if any).
         $hidden.each(function() {
             let $input      = $(this);
-            const ignore_if = (value)=>(value === '*');
+            const ignore_if = (value) => (value === '*');
             checkInput($input, ignore_if);
         });
 
@@ -586,7 +586,7 @@ $(document).on('turbolinks:load', function() {
                 $input.attr('name', '');
                 debug(`${func}: ignoring ${type} ("${text}")`);
             } else {
-                count[type] += 1;
+                count[type]++;
             }
         }
 

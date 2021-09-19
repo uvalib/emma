@@ -677,11 +677,11 @@ colors cyan
 
 <!--========================================================================-->
 
-[basic_cached]:     https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/app/controllers/concerns/workflow_concern.md&idx=0
-[basic_uncached]:   https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/app/controllers/concerns/workflow_concern.md&idx=0&cache=no
+[basic_cached]:     https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/lib/doc/workflow.md&idx=0
+[basic_uncached]:   https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/lib/doc/workflow.md&idx=0&cache=no
 
-[grouped_cached]:   https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/app/controllers/concerns/workflow_concern.md&idx=1
-[grouped_uncached]: https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/app/controllers/concerns/workflow_concern.md&idx=1&cache=no
+[grouped_cached]:   https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/lib/doc/workflow.md&idx=1
+[grouped_uncached]: https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/uvalib/emma/master/lib/doc/workflow.md&idx=1&cache=no
 
 [plantuml_server]:  https://www.plantuml.com/plantuml
 [example_cached]:   https://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/plantuml/plantuml-server/master/src/main/webapp/resource/test2diagrams.txt

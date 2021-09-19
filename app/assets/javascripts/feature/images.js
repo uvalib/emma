@@ -193,7 +193,7 @@ $(document).on('turbolinks:load', function() {
      */
     function imageId(url) {
         const file_name = url.replace(/^.*\//, '');
-        return 'img-' + escape(file_name);
+        return 'img-' + encodeURIComponent(file_name);
     }
 
     /**
