@@ -94,6 +94,73 @@ module HeadHelper::Scripts
     javascript_include_tag(*sources)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Dynamic overrides for JavaScript settings that are otherwise supplied at
+  # the time of asset compilation.  Setting values here makes it possible to
+  # change values that were in effect at that time -- particularly useful for
+  # settings that are based on environment variable settings.
+  #
+  # @see #page_script_settings
+  #
+  SCRIPT_SETTINGS_OVERRIDES = {
+    RAILS_ENV: Rails.env.to_s,
+    DEPLOYED:  application_deployed?,
+  }.deep_freeze
+
+  # The set of overrides to JavaScript client settings.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @see #SCRIPT_SETTINGS_OVERRIDES
+  #
+  def script_settings
+    # noinspection RubyMismatchedReturnType
+    @script_settings ||= SCRIPT_SETTINGS_OVERRIDES.deep_dup
+  end
+
+  # Add override(s) to JavaScript client settings.
+  #
+  # @param [Hash] opt                 Settings override values.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @see #script_settings
+  #
+  def script_setting(**opt)
+    script_settings.merge!(opt)
+  end
+
+  # Produce inline JavaScript to setup dynamic constant values on the client.
+  #
+  # The values set here override the values "baked in" to the JavaScript when
+  # assets were compiled -- this allows the values of environment variables
+  # for the running server to be used in place of the values of those
+  # variables when the assets were compiled.
+  #
+  # Also, this provides a way to override any number of settings in the
+  # JavaScript (e.g., enabling or disabling features).
+  #
+  # @param [Hash] opt                 Optional additional settings overrides.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see #script_settings
+  # @see file:app/assets/javascripts/shared/assets.js.erb
+  #
+  def page_script_settings(**opt)
+    override_settings = script_settings.merge(opt).presence or return
+    <<~HEREDOC.squish.html_safe
+      <script type="text/javascript">
+        var OverrideScriptSettings = #{override_settings.to_json};
+      </script>
+    HEREDOC
+  end
+
 end
 
 __loading_end(__FILE__)

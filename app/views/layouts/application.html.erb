@@ -3,6 +3,8 @@
   # Application page layout.
 
   main_id = 'main' # TODO: I18n for 'Main Content'
+  session_id = session.id
+  script_setting(SESSION_ID: (session_id.try(:public_id) || session_id))
 
 -%>
 <!DOCTYPE html>
@@ -17,6 +19,7 @@
     <%= page_meta_tags %>
     <%= page_favicon %>
     <%= page_stylesheets %>
+    <%= page_script_settings %>
     <%= page_javascripts %>
   </head>
 

@@ -14,7 +14,7 @@
  *
  * @type {Emma}
  *
- * @see "UVA::Helper::Layout#override_script_settings"
+ * @see "HeadHelper::Scripts#page_script_settings"
  */
 var OverrideScriptSettings = OverrideScriptSettings || {};
 
@@ -78,7 +78,7 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  * Values "imported" from the Rails project via the asset pipeline.
  *
  * Note that a change to any of the values from Rails will require either
- * recompiling the assets or a dynamic override via #override_script_settings.
+ * recompiling the assets or a dynamic override via #page_script_settings.
  *
  * @type {object}
  *
@@ -89,6 +89,7 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  *
  * @property {string}   RAILS_ENV
  * @property {boolean}  DEPLOYED
+ * @property {string}   SESSION_ID
  *
  * @property {object}   Image
  * @property {object}   Download
@@ -206,6 +207,7 @@ var Emma = (function() {
 
         RAILS_ENV:  "<%= Rails.env.to_s %>",
         DEPLOYED:   b$("<%= application_deployed? %>"),
+        SESSION_ID: '',
 
         // ====================================================================
         // Feature settings
@@ -616,10 +618,11 @@ var Emma = (function() {
 
     // Update with any live data values injected from the server.
     $.each(OverrideScriptSettings, function(key, value) {
-        if (settings[key]) {
-            $.extend(settings[key], value);
-        } else {
+        const current = settings[key];
+        if (Array.isArray(current) || (typeof current !== 'object')) {
             settings[key] = value;
+        } else {
+            $.extend(settings[key], value);
         }
     });
 
