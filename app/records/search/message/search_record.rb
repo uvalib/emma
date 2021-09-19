@@ -127,6 +127,7 @@ class Search::Message::SearchRecord < Search::Api::Message
     end
     src = src.first if src.is_a?(Array)
     super(src, opt)
+    clean_dc_relation!
   end
 
 end

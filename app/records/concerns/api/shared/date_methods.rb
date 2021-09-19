@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Api::Shared::DateMethods
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -65,36 +67,35 @@ module Api::Shared::DateMethods
 
   # Produce day values of the form "YYYY-MM-DD".
   #
-  # @param [Hash]   data
-  # @param [Symbol] mode              Default: `#date_array_mode`.
-  # @param [Regexp] sep               Default: `#date_separator`.
+  # @param [Hash, nil] data           Default: *self*
+  # @param [Symbol]    mode           Default: `#date_array_mode`.
+  # @param [Regexp]    sep            Default: `#date_separator`.
   #
-  # @return [Hash]
+  # @return [void]
   #
-  def normalize_day_fields!(data, mode = nil, sep = nil)
-    data ||= {}
+  def normalize_day_fields!(data = nil, mode = nil, sep = nil)
     mode ||= date_array_mode
     sep  ||= date_separator
     day_fields.each do |field|
-      next unless data.key?(field)
-      value = data[field]
+      value = data ? data[field] : try(field)
       array = value.is_a?(Array)
       value = value.split(sep).map(&:strip) if value.is_a?(String)
       value = normalize_dates(value)
-      result =
-        case mode
-          when :required  then value
-          when :forbidden then value.first
-          else                 (array || value.many?) ? value : value.first
-        end
-      if result.blank?
-        Log.debug { "#{__method__}: removing #{field.inspect} field" }
+      case mode
+        when :required  then # Keep value as array.
+        when :forbidden then value = value.first
+        else                 value = value.first unless array || value.many?
+      end
+      value = value.presence
+      # noinspection RubyNilAnalysis
+      if data.nil?
+        try("#{field}=", value) if value || try(field)
+      elsif value
+        data[field] = value
+      elsif data.key?(field)
         data.delete(field)
-      else
-        data[field] = result
       end
     end
-    data
   end
 
   # Produce dates of the form "YYYY-MM-DD".

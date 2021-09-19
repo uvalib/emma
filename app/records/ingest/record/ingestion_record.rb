@@ -124,18 +124,12 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   # @raise [Record::SubmitError]      If metadata was malformed.
   #
   def initialize(src, opt = nil)
-    opt ||= {}
-    if src.respond_to?(:emma_metadata)
-      # noinspection RubyNilAnalysis
-      data = reject_blanks(src.emma_metadata)
-
-      # === Standard Identifiers ===
-      normalize_identifier_fields!(data)
+    # noinspection RailsParamDefResolve
+    if (data = src.try(:emma_metadata) || src.try(:dig, :emma_metadata))
 
       # === Dates ===
       data[:emma_lastRemediationDate]          ||= src[:updated_at]
       data[:emma_repositoryMetadataUpdateDate] ||= src[:updated_at]
-      normalize_day_fields!(data)
 
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]
@@ -143,12 +137,21 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
       data[:dc_title]                ||= MISSING_TITLE
       data[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
 
-      initialize_attributes(reject_blanks(data))
-    else
-      super(src, **opt)
     end
+
+    opt ||= {}
+    super((data || src), **opt)
+
+    # === Standard Identifiers ===
+    normalize_identifier_fields!
+    clean_dc_relation!
+
+    # === Dates ===
+    normalize_day_fields!
+
+    # === Required fields ===
+    self.dc_title           ||= MISSING_TITLE
     self.emma_retrievalLink ||= make_retrieval_link
-    @serializer_type ||= DEFAULT_SERIALIZER_TYPE # TODO: remove
   end
 
   # ===========================================================================

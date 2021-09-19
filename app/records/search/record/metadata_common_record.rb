@@ -89,6 +89,23 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
     has_many  :s_accessModeSufficient,            A11ySufficient
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
+  #
+  def initialize(src, opt = nil)
+    opt ||= {}
+    super(src, **opt)
+    clean_dc_relation!
+  end
+
 end
 
 __loading_end(__FILE__)

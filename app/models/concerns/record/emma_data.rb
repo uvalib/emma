@@ -136,7 +136,9 @@ module Record::EmmaData
         end
       end
       [k, v] if allow_blank || v.present? || v.is_a?(FalseClass)
-    }.compact.sort.to_h
+    }.compact.sort.to_h.tap { |hash|
+      Api::Shared::IdentifierMethods.clean_dc_relation!(hash)
+    }
   rescue => error
     Log.warn do
       msg = [__method__, error.message]
