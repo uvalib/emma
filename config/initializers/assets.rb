@@ -23,10 +23,4 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 
 # Compress JavaScripts and CSS.
 Rails.application.config.assets.css_compressor = :scss
-Rails.application.config.assets.js_compressor =
-  Uglifier.new(
-    harmony:  true,                     # To allow ES6.
-    ie8:      false,
-    output:   { comments: :none },
-    compress: { collapse_vars: false }  # Found to be needed for ES6.
-  )
+Rails.application.config.assets.js_compressor  = :terser

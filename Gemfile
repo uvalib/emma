@@ -43,8 +43,8 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 # Use SCSS for stylesheets.
 gem 'sassc-rails'
 
-# Use Uglifier as compressor for JavaScript assets.
-gem 'uglifier'
+# Use Terser as compressor for JavaScript (ES6) assets.
+gem 'terser'
 
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'mini_racer', platforms: :ruby

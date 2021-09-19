@@ -283,6 +283,8 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    terser (1.1.6)
+      execjs (>= 0.3.0, < 3)
     thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
@@ -293,8 +295,6 @@ GEM
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -352,9 +352,9 @@ DEPENDENCIES
   selenium-webdriver
   shrine (~> 3.0)
   simplecov
+  terser
   turbolinks (~> 5)
   tzinfo-data
-  uglifier
   virtus (~> 1.0)
   web-console (>= 3.3.0)
   webdrivers (~> 4.0)
