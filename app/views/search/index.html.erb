@@ -23,6 +23,11 @@
     set_page_description(title)
   end
 
+  unless default_style?
+    append_page_classes('new-style', "#{search_style}-style")
+    append_page_classes('dev-style') if session_debug?
+  end
+
   opt = { list: list, total: total, page: page, row: row }
   top_controls, bottom_controls = index_controls(**opt)
   opt[:row] += 1 if top_controls

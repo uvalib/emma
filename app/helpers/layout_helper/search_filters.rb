@@ -390,6 +390,18 @@ module LayoutHelper::SearchFilters
   #
   IMMEDIATE_SEARCH = false
 
+  # New search styles.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_STYLES = %i[compact grid aggregate].freeze
+
+  # The default search results style.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_STYLE = :normal
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -527,7 +539,9 @@ module LayoutHelper::SearchFilters
   # statistics.
   #
   def immediate_search?
-    (@immediate_search ||= (IMMEDIATE_SEARCH ?  :true : :false)) == :true
+    @immediate_search ||= session['app.search_immediate']&.to_sym
+    @immediate_search ||= IMMEDIATE_SEARCH.to_s.to_sym
+    @immediate_search == :true
   end
 
   # A hidden HTML elements which indicates that the page has been constructed
@@ -541,6 +555,44 @@ module LayoutHelper::SearchFilters
     if immediate_search?
       html_div('immediate', class: css_classes(css_selector, 'hidden'))
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get the display style for search results.
+  #
+  # @return [Symbol]
+  #
+  def search_style
+    @search_style ||= session['app.search_style']&.to_sym || DEFAULT_STYLE
+  end
+
+  # Indicate whether search results are displayed in the original manner.
+  #
+  def default_style?
+    search_style == DEFAULT_STYLE
+  end
+
+  # Indicate whether search results are displayed as a grid.
+  #
+  def grid_style?
+    search_style == :grid
+  end
+
+  # Indicate whether search results are displayed compactly.
+  #
+  def compact_style?
+    search_style == :compact
+  end
+
+  # Indicate whether search results are aggregated into title-level units.
+  #
+  def aggregate_style?
+    search_style == :aggregate
   end
 
   # ===========================================================================

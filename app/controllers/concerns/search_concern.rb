@@ -138,9 +138,6 @@ module SearchConcern
       opt[:prev_value] = url_escape(title || IsoDay.cast(date))
     end
 
-    # Internal-use parameters.
-    opt[:immediate_search] = immediate_search?.presence
-
     make_path(request.path, opt)
   end
 
@@ -171,22 +168,6 @@ module SearchConcern
     else
       value
     end
-  end
-
-  # Indicate whether search menu selections should take immediate effect.
-  #
-  # @param [*] value
-  #
-  # @return [Symbol]                  New setting value.
-  # @return [nil]                     If the setting was not changed.
-  #
-  # @see LayoutHelper#immediate_search?
-  #
-  def set_immediate_search(value)
-    # TODO: accept only for authenticated user
-    @immediate_search   = (value  if %i[true false].include?(value))
-    @immediate_search ||= (:true  if true?(value))
-    @immediate_search ||= (:false if false?(value))
   end
 
   # ===========================================================================
@@ -245,6 +226,34 @@ module SearchConcern
       opt[:identifier] = identifier.to_s
       redirect_to opt.except!(q_param)
     end
+  end
+
+  # Process the URL parameter for setting the immediate searches.
+  #
+  def set_immediate_search
+    opt = request_parameters
+    return unless opt.key?(:immediate_search)
+    value = opt.delete(:immediate_search)
+    if true?(value)
+      session['app.search_immediate'] = value.to_s
+    else
+      session.delete('app.search_immediate')
+    end
+    redirect_to opt
+  end
+
+  # Process the URL parameter for setting the search style.
+  #
+  def set_search_style
+    opt = request_parameters
+    return unless opt.key?(:style)
+    value = opt.delete(:style)
+    if LayoutHelper::SearchFilters::SEARCH_STYLES.include?(value&.to_sym)
+      session['app.search_style'] = value.to_s
+    else
+      session.delete('app.search_style')
+    end
+    redirect_to opt
   end
 
   # ===========================================================================

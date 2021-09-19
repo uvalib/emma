@@ -498,18 +498,36 @@ const HEX_BASE = 16;
 const DEFAULT_HEX_DIGITS = 6;
 
 /**
+ * Render a number as a string of hex digits.  If *length* is given, left-fill
+ * with zeros if needed.
+ *
+ * @param {number|string} value
+ * @param {number}        [length]
+ *
+ * @returns {string}
+ */
+function hexString(value, length) {
+    let result;
+    if (typeof value === 'number') {
+        result = value.toString(HEX_BASE);
+    } else {
+        result = value.replace(/\P{Hex}/ug, '').toLowerCase();
+    }
+    const fill = length ? (length - result.length) : 0;
+    return (fill > 0) ? ('0'.repeat(fill) + result) : result;
+}
+
+/**
  * Generate a string of random hexadecimal digits, left-filled with zeros if
  * necessary.
  *
- * @param length
+ * @param {number} [length]
+ *
  * @returns {string}
  */
 function hexRand(length = DEFAULT_HEX_DIGITS) {
     const random = Math.floor(Math.random() * (HEX_BASE ** length));
-    let digits   = random.toString(HEX_BASE);
-    let zeros    = '';
-    for (let i = digits.length; i < length; i++) { zeros += '0'; }
-    return zeros + digits;
+    return hexString(random, length);
 }
 
 /**
@@ -644,6 +662,49 @@ function elementSelector(element) {
     } else {
         return e.localName;
     }
+}
+
+// ============================================================================
+// Functions - Colors
+// ============================================================================
+
+/**
+ * Return a value as an RGB hex color.
+ *
+ * @param {string|number} value
+ *
+ * @returns {string}
+ */
+function rgbColor(value) {
+    const digits = hexString(value, DEFAULT_HEX_DIGITS);
+    return '#' + digits;
+}
+
+/**
+ * Given a RGB hex color, return the inverse color.
+ *
+ * @param {string|number} value
+ *
+ * @returns {string}
+ */
+function rgbColorInverse(value) {
+    const digits = hexString(value, DEFAULT_HEX_DIGITS);
+    return '#' + rotateHexDigits(digits);
+}
+
+/**
+ * Add an increment to each hex digit in the string (module base 16).
+ *
+ * @param {string} value
+ * @param {number} [shift]
+ *
+ * @returns {string}
+ */
+function rotateHexDigits(value, shift = HEX_BASE/2) {
+    const digits = hexString(value);
+    return Array.from(digits)
+        .map(digit => hexString((Number(`0x${digit}`) + shift) % HEX_BASE))
+        .join('');
 }
 
 // ============================================================================

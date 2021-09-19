@@ -45,6 +45,8 @@ class SearchController < ApplicationController
   before_action :identifier_alias_redirect,   only: %i[index]
   before_action :invalid_identifier_redirect, only: %i[index]
   before_action :identifier_keyword_redirect, only: %i[index]
+  before_action :set_immediate_search,        only: %i[index]
+  before_action :set_search_style,            only: %i[index]
   before_action :set_record_id,               only: %i[show]
 
   # ===========================================================================
@@ -79,8 +81,7 @@ class SearchController < ApplicationController
   #
   def index
     __debug_route
-    opt = pagination_setup
-    set_immediate_search(opt.delete(:immediate_search))
+    opt      = pagination_setup
     playback = opt.delete(:search_call)
     search   = playback || opt
     s_params = search.except(*NON_SEARCH_KEYS)
@@ -88,10 +89,11 @@ class SearchController < ApplicationController
     q_params.compact_blank!
     if q_params.present?
       opt   = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
-      @list = search_api.get_records(**opt)
+      @list = result = search_api.get_records(**opt)
+      @list = Search::Message::SearchTitleList.new(result) if aggregate_style?
       pagination_finalize(@list, :records, **opt)
-      save_search(**opt)                 unless playback
-      flash_now_alert(@list.exec_report) if @list.error?
+      save_search(**opt)                  unless playback
+      flash_now_alert(result.exec_report) if result.error?
       respond_to do |format|
         format.html
         format.json { render_json index_values }

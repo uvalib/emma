@@ -56,6 +56,7 @@ $sticky-top-narrow:     3.125rem;
         height:     3rem;
         max-height: 3rem;
         max-width:  100%;
+        background: white;
 
         @media #{$wide-screen} {
             height:     4.5rem;
@@ -401,7 +402,7 @@ $sticky-top-narrow:     3.125rem;
             .title {
 
                 margin: 0;
-                flex:   1 1 auto;
+                flex:   1 1 100%;
 
                 @media #{$wide-screen} {
                     height:         100%;
@@ -429,7 +430,6 @@ $sticky-top-narrow:     3.125rem;
                     margin-top:     0.5rem;
                     padding-right:  $scroll-easement;
                     overflow-y:     auto;
-                    flex-basis:     100%;
                 }
             }
 
@@ -440,9 +440,8 @@ $sticky-top-narrow:     3.125rem;
                 justify-content: flex-end;
 
                 @media #{$wide-screen} {
-                    margin-left:     $value-right-margin;
-                    padding-bottom:  1rem;
-                    flex-basis:      15%;
+                    padding-bottom: 1rem;
+                    flex-basis:     15%;
                 }
 
                 @media #{$medium-width} {
@@ -639,7 +638,7 @@ $sticky-top-narrow:     3.125rem;
 
         @media #{$medium-width} {
             margin-top:     calc(2 * #{$results-entry-gap-y});
-            padding-bottom: 1.5rem;
+            padding-bottom: calc(2 * #{$results-entry-gap-y});
         }
 
         @media #{$narrow-screen} {
@@ -776,4 +775,634 @@ $sticky-top-narrow:     3.125rem;
     //=========================================================================
 
     .search-details {}
+}
+
+//=============================================================================
+// New styles
+//=============================================================================
+
+// Additional class along with "search-index", "search", and "index".
+body.new-style,
+body.dev-style,
+body.grid-style,
+body.compact-style,
+body.aggregate-style {
+
+    $narrow-left-pad:          0.25rem;
+    $narrow-logo-height:       2rem;
+    $narrow-item-separation:   1.5rem;
+
+    $wide-title-open-pad:      1rem;
+    $medium-title-open-pad:    0.5rem;
+
+    // Variant values for Firefox:
+    $ff-wide-title-open-pad:   0.75rem;
+    $ff-medium-title-open-pad: 0.25rem;
+
+    /**
+     * In order to have the page title, pagination controls, and data analysis
+     * controls together, h1.heading and div.pagination-top are moved inside of
+     * this element which is created dynamically in search.js.
+     */
+    .heading-bar {
+
+        display: grid;
+        grid-template-columns: auto 1fr;
+
+        @media #{$medium-width} {
+            margin-bottom: calc(2 * #{$results-entry-gap-y});
+        }
+
+        @media #{$narrow-screen} {
+            grid-template-columns: 1fr;
+        }
+
+        // Moved from top of .search-list
+        .pagination-top {
+
+            margin-bottom:  0;
+            flex-direction: row-reverse;
+            column-gap:     1rem;
+            row-gap:        0.5rem;
+            grid-column:    unset;
+
+            @media #{$narrow-screen} {
+                row-gap:         0.25rem;
+                justify-content: center;
+            }
+
+            .counts {
+
+                flex-direction: row-reverse;
+                column-gap:     1rem;
+
+                @media #{$medium-width} {
+                    flex-basis: 100%;
+                }
+
+                @media #{$narrow-screen} {
+                    margin:          0.5rem 0;
+                    flex-direction:  row;
+                    column-gap:      0.5rem;
+                    justify-content: center;
+                    align-items:     baseline;
+                    flex:            1 1 auto;
+                }
+            }
+        }
+    }
+
+    .search-list {
+
+        @media #{$narrow-screen} {
+            margin: calc(2 * #{$results-entry-gap-y}) 0;
+        }
+
+        .number {
+
+            position:   relative;
+            margin:     auto 0;
+            padding:    0;
+            border:     none;
+            box-shadow: none;
+            background: none;
+
+            @media #{$medium-width} {
+                padding-bottom: 0.5rem;
+            }
+
+            @media #{$narrow-screen} {
+                margin-top:      0;
+                grid-column-end: 1;
+                z-index:         $z-controls;
+            }
+
+            //=================================================================
+            // Special handling for the item toggle.
+            //=================================================================
+
+            .container {
+
+                @media #{$not-narrow-screen} {
+                    display: none;
+                }
+
+                .value {
+                    @include screen-reader-only;
+                }
+
+                .control {
+                    margin-top: 1rem;
+                }
+            }
+
+            > .control {
+                @media #{$narrow-screen} {
+                    display: none;
+                }
+            }
+
+            //=================================================================
+            // When the associated list item is open.
+            //=================================================================
+
+            &.open {
+
+                @media #{$wide-screen} {
+                    $excess:    3.5rem;
+                    height:     calc(100% - #{$excess});
+                    margin-top: 1.75rem;
+                }
+
+                @media #{$medium-width} {
+                    $excess:    2.5rem;
+                    height:     calc(100% - #{$excess});
+                    margin-top: 1.25rem;
+                }
+
+                @media #{$narrow-screen} {
+                    $excess:    $narrow-logo-height + $narrow-item-separation;
+                    height:     calc(100% - #{$excess});
+                }
+
+                .control {
+                    @media #{$wide-screen} {
+                        position: sticky;
+                        top:      5vh;
+                    }
+                    @media #{$medium-width} {
+                        position: sticky;
+                        top:      2vh;
+                    }
+                }
+            }
+        }
+
+        // Item "closed" by default; click to toggle "open".
+        .search-list-item {
+
+            min-width: 100%;
+            margin:    0;
+
+            @media #{$narrow-screen} {
+                width:             92.5vw;
+                margin-left:       -(2rem + $narrow-left-pad);
+                margin-right:      (2rem + $narrow-left-pad);
+                margin-bottom:     $narrow-item-separation;
+                grid-column-start: 2;
+            }
+
+            > .value.field-Title {
+
+                max-width:  100%;
+                box-shadow: none;
+                align-self: baseline;
+
+                @media #{$not-narrow-screen} {
+                    border: none;
+                }
+
+                > * {
+                    margin:     0;
+                    padding:    0;
+                    align-self: center;
+                }
+
+                .title {
+
+                    letter-spacing: -0.125px; // NOTE: needed for Firefox
+                    cursor:         default;
+
+                    @media #{$not-narrow-screen} {
+                        flex-basis:  100%;
+                    }
+
+                    @media #{$narrow-screen} {
+                        padding-top: 0.5rem;
+                    }
+                }
+
+                .repository {
+
+                    @media #{$wide-screen} {
+                        flex-basis:      12.5vw;
+                    }
+
+                    @media #{$medium-width} {
+                        flex-basis:      17.5vw;
+                    }
+
+                    @media #{$narrow-screen} {
+                        flex-basis:      100%;
+                        justify-content: flex-end;
+                    }
+
+                    img {
+                        @media #{$not-narrow-screen} {
+                            max-width:  80%;
+                        }
+                        @media #{$narrow-screen} {
+                            max-height: $narrow-logo-height;
+                        }
+                    }
+
+                    &.internetArchive img {
+                        margin: 0.375rem 0;
+                    }
+                }
+
+                .prev-next {
+                    display: none;
+                }
+            }
+
+            //=================================================================
+            // When the list item is open.
+            //=================================================================
+
+            &.open {
+                > .value.field-Title {
+
+                    top: 1vh;
+                    box-shadow:
+                        0.5rem  -0.25rem  0       0.5rem white,
+                        0       0         0.25rem 0.5rem white;
+
+                    > * {
+                        @media #{$not-narrow-screen} {
+                            align-self: flex-start;
+                        }
+                    }
+
+                    .title {
+                        @media #{$not-narrow-screen} {
+                            // NOTE: Increase clickable area
+                            border-bottom: 0.5rem solid transparent;
+                        }
+
+                        @media #{$wide-screen} {
+                            padding-top: $wide-title-open-pad;
+                        }
+                        @media #{$medium-width} {
+                            padding-top: $medium-title-open-pad;
+                        }
+
+                        @include Firefox-only {
+                            @media #{$wide-screen} {
+                                padding-top: $ff-wide-title-open-pad;
+                            }
+                            @media #{$medium-width} {
+                                padding-top: $ff-medium-title-open-pad;
+                            }
+                        }
+                    }
+
+                    .repository {
+
+                        @media #{$narrow-screen} {
+                            position: sticky;
+                            top:      0;
+                        }
+
+                        &.internetArchive img {
+                            margin: 0.5rem 0;
+                        }
+                    }
+                }
+            }
+
+            //=================================================================
+            // When then list item is closed.
+            //=================================================================
+
+            &:not(.open) {
+
+                @media #{$not-narrow-screen} {
+                    max-height:     4rem;
+                    padding-bottom: 1rem;
+                }
+
+                > .value.field-Title {
+                    .title {
+
+                        overflow:      hidden;
+                        white-space:   nowrap;
+                        text-overflow: ellipsis;
+
+                        // NOTE: Increase clickable area:
+                        @media #{$not-narrow-screen} {
+                            border-top:    0.5rem solid transparent;
+                            border-bottom: 0.5rem solid transparent;
+                        }
+                    }
+                }
+
+                > :not(.row-1) {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    //=========================================================================
+    // NOTE: Temporary(?) title colorization
+    //=========================================================================
+
+    .restore-button,
+    .colorize-button {
+
+        @extend %control-button-base;
+
+        &.active {
+            background-color: $input-disabled-bg;
+            border-color:     $input-disabled-fg;
+        }
+    }
+
+    .search-list {
+
+        .search-list-item {
+
+            &.colorized {
+                > .value.field-Title {
+
+                    border: none;
+
+                    @media #{$narrow-screen} {
+                        margin-top: -1rem;
+                    }
+
+                    .title {
+                        @media #{$narrow-screen} {
+                            margin-top:  0.5rem;
+                            margin-left: $narrow-left-pad;
+                        }
+                    }
+
+                    .identity-number {
+
+                        word-break: keep-all;
+                        flex:       1 0 auto;
+
+                        @media #{$wide-screen} {
+                            font-size: larger;
+                        }
+
+                        @media #{$narrow-screen} {
+                            margin-left: $narrow-left-pad;
+                        }
+
+                        // Highlight out-of-sequence title index numbers.
+                        &.error,
+                        &.exile {
+
+                            $fg-color:     red;
+                            $bg-color:     white;
+                            $v-shift:      0.25rem;
+                            $h-shift:      0.125rem;
+
+                            margin-top:    $v-shift;
+                            margin-right:  -$h-shift;
+                            color:         $fg-color;
+                            background:    $bg-color;
+                            border-bottom: $v-shift solid $bg-color;
+                            border-left:   $h-shift solid $bg-color;
+                            border-right:  $h-shift solid $bg-color;
+                            border-radius: 0.375rem;
+                            box-shadow:    0 0 0 0.25rem $fg-color;
+                        }
+                        &.exile:not(.error) {
+                            color: $uva-text-gray;
+                        }
+                        &:not(.error) {
+                            cursor: default;
+                        }
+                    }
+
+                    .repository {
+
+                        @media #{$wide-screen} {
+                            padding-bottom: 0;
+                        }
+
+                        @media #{$narrow-screen} {
+                            margin-top: 0;
+                        }
+
+                        img {
+                            @media #{$narrow-screen} {
+                                box-shadow: none;
+                            }
+                        }
+
+                        &.hathiTrust img {
+
+                            $border: -2.75rem  0    0    0  white;
+                            $shadow:  2px      2px  6px  0  lightgray;
+
+                            @media #{$wide-screen} {
+                                box-shadow: #{$border}, #{$shadow};
+                            }
+
+                            @media #{$medium-width} {
+                                box-shadow: #{$shadow};
+                            }
+                        }
+
+                        &.internetArchive img {
+
+                            $border: 0.5rem  0       0   0.5rem white;
+                            $shadow: 0.25rem 0.75rem 6px 0      lightgray;
+
+                            border:     none;
+                            box-shadow: #{$border}, #{$shadow};
+
+                            @media #{$narrow-screen} {
+                                max-width:  50%;
+                                box-shadow: #{$border};
+                            }
+                        }
+                    }
+                }
+
+                > .value.identity-highlight {
+                    font-weight: bold;
+                    background:  whitesmoke;
+                }
+            }
+
+            &.colorized.open {
+                > .value.field-Title {
+
+                    .identity-number {
+
+                        @media #{$wide-screen} {
+                            margin-top: $wide-title-open-pad;
+                        }
+                        @media #{$medium-width} {
+                            margin-top: $medium-title-open-pad;
+                        }
+
+                        @include Firefox-only {
+                            @media #{$wide-screen} {
+                                margin-top: $ff-wide-title-open-pad;
+                            }
+                            @media #{$medium-width} {
+                                margin-top: $ff-medium-title-open-pad;
+                            }
+                        }
+                    }
+
+                    .repository {
+
+                        &.bookshare  img,
+                        &.hathiTrust img {
+                            box-shadow: none;
+                        }
+
+                        &.internetArchive img {
+
+                            $border: 0.5rem  0  0  0.5rem   white;
+                            $shadow: 0.5rem  0  0  0.55rem  lightgray;
+
+                            @media #{$not-narrow-screen} {
+                                box-shadow: #{$border}, #{$shadow};
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+body.grid-style {
+
+    $column-count: 0;
+    $next-column:  1;
+
+    @function show-($columns: 1) {
+        $start-column: $next-column;
+        $end-column:   $start-column;
+        $columns:      if((not $columns or ($columns == 0)), 1, $columns);
+        @if $columns > 1 {
+            $end-column: $end-column + $columns;
+        }
+        $next-column:  $next-column  + $columns;
+        $column-count: $column-count + $columns;
+        @return #{$start-column}/#{$end-column};
+    }
+
+    @function -hide() {
+        @return false;
+    }
+
+    // Each column is either hidden or given a distinct column slot so that
+    // there is a consistent display of columns regardless of whether the item
+    // has that given type of metadata or not.
+    $field-columns: (
+        Format:                 show-(),
+        Creator:                show-(),
+        Language:               show-(),
+        Description:            -hide(),
+        Publisher:              show-(),
+        Subject:                -hide(),
+        Rights:                 -hide(),
+        CopyrightDate:          show-(),
+        Identifier:             show-(2),
+        Related:                -hide(),
+        //CopyrightDate:        show-(), // moved before Identifier
+        EntryCreated:           -hide(),
+        EntryUpdated:           -hide(),
+        EmmaRecordId:           show-(),
+        EmmaTitleId:            show-(),
+        Repository:             -hide(),
+        Collection:             -hide(),
+        FormatVersion:          -hide(),
+        FormatFeature:          -hide(),
+        AccessibilityFeature:   -hide(),
+        AccessibilityControl:   -hide(),
+        AccessibilityHazard:    -hide(),
+        AccessMode:             -hide(),
+        SufficientMode:         -hide(),
+        AccessibilitySummary:   -hide(),
+        RepositoryRecordId:     show-(),
+        RetrievalLink:          show-(),
+    );
+
+    @mixin clean() {
+        font-weight: revert;
+        background:  revert;
+        border:      revert;
+        box-shadow:  revert;
+    }
+
+    .search-list {
+
+        grid-template-columns: 1fr;
+
+        .number {
+            display: none !important;
+        }
+
+        .search-list-item {
+
+            max-height:            unset !important;
+            grid-template-columns: repeat($column-count, minmax(5vw,1fr));
+            column-gap:            0.5rem;
+
+            > .label {
+                display: none !important;
+            }
+
+            > .value:not(.row-1) {
+                display: revert !important;
+            }
+
+            > .value {
+
+                &.field-Title {
+
+                    position:       unset;
+                    margin-top:     2rem;
+                    background:     #eeeeee;
+                    grid-column:    1/-1;
+                    grid-row:       1/1;
+                    pointer-events: none;
+
+                    .repository {
+                        &.internetArchive img {
+                            border:     none;
+                            box-shadow:
+                                0.25rem  0    0    0.25rem  white,
+                                2px      2px  6px  0        lightgray;
+                        }
+                    }
+                }
+
+                &.textbox {
+                    @include clean;
+                }
+
+                &.array {
+                    grid-template-columns: 1fr;
+                    > * {
+                        @include clean;
+                    }
+                }
+            }
+
+            @each $type in map-keys($field-columns) {
+                > .value.field-#{$type} {
+                    $columns: map-get($field-columns, $type);
+                    @if $columns {
+                        grid-column: $columns;
+                        grid-row:    2/2;
+                    } @else {
+                        display: none !important;
+                    }
+                }
+            }
+        }
+    }
 }
