@@ -43,8 +43,8 @@ module AuthHelper
   # Table of user names/tokens acquired for use in non-production deploys.
   #
   # Token are taken from the User table entries that have an :access_token
-  # value.  If BOOKSHARE_TEST_USERS is supplied, it is used to prime (or
-  # update) database table.
+  # value.  If BOOKSHARE_TEST_AUTH is supplied, it is used to prime (or update)
+  # the database table.
   #
   # @param [Boolean, nil] refresh     If *true*, re-read the database.
   #
@@ -87,12 +87,16 @@ module AuthHelper
 
   # Get user names/tokens from the database.
   #
+  # @param [String, Array<String>] accounts   Default: #BOOKSHARE_TEST_USERS
+  #
   # @return [Hash{String=>Hash}]
   #
-  def stored_auth_fetch
-    User.where.not(access_token: nil).order(:id).map { |u|
-      [u.uid, stored_auth_entry_value(u.access_token)]
-    }.to_h
+  def stored_auth_fetch(accounts: nil)
+    accounts = Array.wrap(accounts || BookshareService::BOOKSHARE_TEST_USERS)
+    User.where(email: accounts).order(:id).map { |u|
+      token = u.access_token
+      [u.uid, stored_auth_entry_value(token)] if token.present?
+    }.compact.to_h
   end
 
   # Add or update one or more user name/token entries.
@@ -184,7 +188,7 @@ module AuthHelper
   #
   def remember_dev
     return unless true?(session[DEV_COOKIE])
-    response.set_cookie(DEV_COOKIE, { value: true })
+    response.set_cookie(DEV_COOKIE, { value: true, same_site: :strict })
   end
 
   # Remove the cookie indicating a developer client.

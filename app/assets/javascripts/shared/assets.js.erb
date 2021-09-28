@@ -619,12 +619,20 @@ var Emma = (function() {
     };
 
     // Update with any live data values injected from the server.
+    const tag = 'OverrideScriptSettings';
     $.each(OverrideScriptSettings, function(key, value) {
         const current = settings[key];
-        if (Array.isArray(current) || (typeof current !== 'object')) {
+        const type    = typeof value;
+        if (type === 'undefined') {
+            console.log(`${tag}: ${key}: skipping "${type}" value`);
+        } else if (type === 'function') {
+            console.warn(`${tag}: ${key}: invalid "${type}" value`);
+        } else if (Array.isArray(current) || (typeof current !== 'object')) {
             settings[key] = value;
-        } else {
+        } else if (type === 'object') {
             $.extend(settings[key], value);
+        } else {
+            console.warn(`${tag}: ${key}: cannot merge "${type}" value`);
         }
     });
 
