@@ -32,14 +32,14 @@ module AuthConcern
   # (Not generated for non-Rails-application executions.)
   #
   # Tokens are taken from the User table entries that have an :access_token
-  # value.  If ENV['BOOKSHARE_TEST_USERS'] is supplied, it is used to prime (or
+  # value.  If ENV['BOOKSHARE_TEST_AUTH'] is supplied, it is used to prime (or
   # update) database table.
   #
   # @type [Hash{String=>String}, nil]
   #
   CONFIGURED_AUTH ||=
     if rails_application?
-      updates = safe_json_parse(BOOKSHARE_TEST_USERS, default: nil)
+      updates = safe_json_parse(BOOKSHARE_TEST_AUTH, default: nil)
       stored_auth_update(updates) if updates.present?
       stored_auth_fetch.deep_freeze
     end

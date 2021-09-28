@@ -177,7 +177,7 @@ BOOKSHARE_AUTH_URL =
 #
 # @see AuthConcern#CONFIGURED_AUTH
 #
-BOOKSHARE_TEST_USERS = ENV.fetch('BOOKSHARE_TEST_USERS', nil).freeze
+BOOKSHARE_TEST_AUTH = ENV.fetch('BOOKSHARE_TEST_AUTH', nil).freeze
 
 # =============================================================================
 # EMMA Unified Search API properties

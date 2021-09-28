@@ -17,6 +17,10 @@ en:
         default_user:   'anonymous'
         test_account:   'emmadso@bookshare.org'
         test_member:    'AP5xvS_OBOox69jMyt_sdVqCgX-OhnuC8oAFynfN3lJIyM56O86KRMdaYcP5MvZD1DmTtFOSGOj7'
+        test_users:
+          - 'emmadso@bookshare.org'
+          - 'emmacollection@bookshare.org'
+          - 'emmamembership@bookshare.org'
 
       ia_download:
         name:           'Internet Archive download service'

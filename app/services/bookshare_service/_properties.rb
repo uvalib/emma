@@ -38,7 +38,7 @@ module BookshareService::Properties
   #
   DEFAULT_USER = BOOKSHARE_CONFIG[:default_user]
 
-  # The account used for testing.
+  # The primary Bookshare account used for testing.
   #
   # @type [String]
   #
@@ -50,6 +50,12 @@ module BookshareService::Properties
   # @type [String]
   #
   BOOKSHARE_TEST_MEMBER = BOOKSHARE_CONFIG[:test_member]
+
+  # Bookshare accounts used for testing.
+  #
+  # @type [Array<String>]
+  #
+  BOOKSHARE_TEST_USERS = Array.wrap(BOOKSHARE_CONFIG[:test_users]).freeze
 
   # ===========================================================================
   # :section: ApiService::Properties overrides

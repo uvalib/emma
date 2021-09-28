@@ -622,8 +622,8 @@ module OmniAuth
       # Table of user names/tokens acquired for use in non-production deploys.
       #
       # Token are taken from the User table entries that have an :access_token
-      # value.  If BOOKSHARE_TEST_USERS is supplied, it is used to prime (or
-      # update) database table.
+      # value.  If BOOKSHARE_TEST_AUTH is supplied, it is used to prime (or
+      # update) the database table.
       #
       # @param [Hash, nil] values
       #
