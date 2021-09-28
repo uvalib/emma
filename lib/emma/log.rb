@@ -277,7 +277,7 @@ module Emma::Log
       self.silenced = false
     elsif !silenced?
       saved_log_level[local_log_id] = logger.local_level
-      logger.local_level = ERROR
+      logger.local_level = FATAL
       self.silenced = true
     end
   end
@@ -287,7 +287,7 @@ module Emma::Log
   # @param [Integer, Symbol, String] tmp_level Passed to LoggerSilence#silence.
   # @param [Proc]                    block     Passed to LoggerSilence#silence.
   #
-  def self.silence(tmp_level = ERROR, &block)
+  def self.silence(tmp_level = FATAL, &block)
     if silenced?
       block.call
     else

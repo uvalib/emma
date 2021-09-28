@@ -275,7 +275,7 @@ module Emma::Common::FormatMethods
     return {} unless text&.include?('%')
     result = named_references(text).map { |name| [name, default_fmt] }.to_h
     text.scan(SPRINTF_FORMAT).each do |fmt_parts|
-      name = fmt_parts&.shift&.tr('<>', '')&.presence
+      name = fmt_parts&.shift&.delete('<>')&.presence
       result[name.to_sym] = '%' + fmt_parts.join if name && fmt_parts.present?
     end
     result
