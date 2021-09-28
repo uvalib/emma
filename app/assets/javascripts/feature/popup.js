@@ -163,8 +163,8 @@ $(document).on('turbolinks:load', function() {
             // next time it is opened.
             const refetch       = $popup.hasClass('refetch');
             const expected_page = $popup.data('page');
-            const content       = $iframe[0] && $iframe[0].contentDocument;
-            const current_page  = content    && content.location.pathname;
+            const content       = $iframe[0]?.contentDocument;
+            const current_page  = content?.location?.pathname;
             if (!refetch && (expected_page === current_page)) {
                 debug(func, 'CLOSING', current_page);
             } else {
@@ -324,7 +324,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event|KeyboardEvent} event
          */
         function onIframeKeyUp(event) {
-            const key = event && event.key;
+            const key = event?.key;
             if (key === 'Escape') {
                 debug('ESC pressed in popup', $popup.data('id'));
                 hidePopup($popup);
@@ -344,9 +344,9 @@ $(document).on('turbolinks:load', function() {
         let $iframe = $(iframe);
         const id    = $iframe.attr('id') || '???';
         const func  = `scrollFrameDocument: popup ${id}:`;
-        let doc     = $iframe[0] && $iframe[0].contentDocument;
-        let anchor  = topic  && topic.replace(/^#/, '');
-        let section = anchor && doc && doc.getElementById(anchor);
+        let doc     = $iframe[0]?.contentDocument;
+        let anchor  = topic?.replace(/^#/, '');
+        let section = anchor && doc?.getElementById(anchor);
         let error   = undefined;
         let warn    = undefined;
         if (isEmpty($iframe)) {
@@ -483,7 +483,7 @@ $(document).on('turbolinks:load', function() {
      */
     function onKeyUp(event) {
         // debugEvent('onKeyUp', event);
-        const key = event && event.key;
+        const key = event?.key;
         if (key === 'Escape') {
             // debug('> ESC pressed outside of popup controls or panels');
             let $target = $(event.target || this);

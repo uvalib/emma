@@ -733,7 +733,7 @@ function attributeSelector(attributes) {
 function htmlDecode(text) {
     let str = text.toString().trim();
     let doc = str && new DOMParser().parseFromString(str, 'text/html');
-    return doc && doc.documentElement.textContent;
+    return doc?.documentElement?.textContent;
 }
 
 /**
@@ -1255,9 +1255,9 @@ function handleKeypressAsClick(selector, direct, match, except) {
      * @returns {boolean}
      */
     function handleKeypress(event) {
-        const key = event && event.key;
+        const key = event?.key;
         if (key === 'Enter') {
-            let $target = $(event.target || this);
+            let $target = $(event?.target || this);
             const href  = $target.attr('href');
             if (!href || (href === '#')) {
                 $target.click().focusin();

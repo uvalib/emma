@@ -757,7 +757,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event} [event]
      */
     function monitorBulkOperation(event) {
-        const target = event && (event.currentTarget || event.target);
+        const target = event?.currentTarget || event?.target;
         let $form    = target ? $(target) : $bulk_operation_form;
         disableSubmit($form);
         disableFileSelectButton($form);
@@ -1648,7 +1648,7 @@ $(document).on('turbolinks:load', function() {
                 }
                 if (!emma_data.dc_format) {
                     const meta = file_data.metadata;
-                    const mime = meta && meta.mime_type;
+                    const mime = meta?.mime_type;
                     const fmt  = Emma.Upload.Mime.to_fmt[mime] || [];
                     if (fmt[0]) { emma_data.dc_format = fmt[0]; }
                 }
@@ -1694,7 +1694,7 @@ $(document).on('turbolinks:load', function() {
          */
         function onFileUploadError(file, error, response) {
             consoleWarn('Uppy:', 'upload-error', file, error, response);
-            showFlashError(error && error.message || error);
+            showFlashError(error?.message || error);
             uppy.getFiles().forEach(function(file) {
                 uppy.removeFile(file.id);
             });
@@ -3751,8 +3751,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function displayUploadedFilename(file_data, form) {
-        const metadata = file_data && file_data.metadata;
-        const filename = metadata  && metadata.filename;
+        const metadata = file_data?.metadata;
+        const filename = metadata?.filename;
         displayFilename(filename, form);
     }
 
@@ -4292,7 +4292,7 @@ $(document).on('turbolinks:load', function() {
         let $form   = formElement(form);
         const op    = assetObject($form).submit || {};
         const state = buttonProperties($form, op, 'submit', can_submit);
-        return state && state.label || op.label;
+        return state?.label || op.label;
     }
 
     /**
@@ -4307,7 +4307,7 @@ $(document).on('turbolinks:load', function() {
         let $form   = formElement(form);
         const op    = assetObject($form).submit || {};
         const state = buttonProperties($form, op, 'submit', can_submit);
-        return state && state.tooltip || op.tooltip;
+        return state?.tooltip || op?.tooltip;
     }
 
     /**
@@ -4344,7 +4344,7 @@ $(document).on('turbolinks:load', function() {
         let $form   = formElement(form);
         const op    = assetObject($form).cancel || {};
         const state = buttonProperties($form, op, 'cancel', can_cancel);
-        return state && state.label || op.label;
+        return state?.label || op?.label;
     }
 
     /**
@@ -4359,7 +4359,7 @@ $(document).on('turbolinks:load', function() {
         let $form   = formElement(form);
         const op    = assetObject($form).cancel || {};
         const state = buttonProperties($form, op, 'cancel', can_cancel);
-        return state && state.tooltip || op.tooltip;
+        return state?.tooltip || op?.tooltip;
     }
 
     /**
@@ -4374,7 +4374,7 @@ $(document).on('turbolinks:load', function() {
         let $form   = formElement(form);
         const op    = assetObject($form).select || {};
         const state = buttonProperties($form, op, 'select', can_select);
-        return state && state.label || op.label;
+        return state?.label || op?.label;
     }
 
     /**
@@ -4389,7 +4389,7 @@ $(document).on('turbolinks:load', function() {
         let $form   = formElement(form);
         const op    = assetObject($form).select || {};
         const state = buttonProperties($form, op, 'select', can_select);
-        return state && state.tooltip || op.tooltip;
+        return state?.tooltip || op?.tooltip;
     }
 
     /**

@@ -452,7 +452,7 @@ $(document).on('turbolinks:load', function() {
         function extractMemberData(data) {
             let result    = {};
             const info    = data || message;
-            const members = info.members && info.members.list || [];
+            const members = info?.members?.list || [];
             members.forEach(function(entry) {
                 const member      = entry.member;
                 const name        = member.name || {};

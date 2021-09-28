@@ -643,9 +643,9 @@ $(document).on('turbolinks:load', function() {
         let ready = state;
         if (notDefined(ready)) {
             let $rows = $search_bar_rows;
-            ready = ready || isPresent(newSearchTerms($rows));
-            ready = ready || isPresent(newSearchFilters());
-            ready = ready && isPresent(compact(allSearchTerms($rows)));
+            ready ||= isPresent(newSearchTerms($rows));
+            ready ||= isPresent(newSearchFilters());
+            ready &&= isPresent(compact(allSearchTerms($rows)));
         }
         const tooltip = ready ? 'data-ready' : 'data-not-ready';
         const title   = $search_button.attr(tooltip);
@@ -962,7 +962,7 @@ $(document).on('turbolinks:load', function() {
         let $input = getSearchInput($row);
         let terms  = new_terms &&
             arrayWrap(new_terms)
-                .map(term => term && term.trim())
+                .map(term => term?.trim())
                 .filter(term => term)
                 .map(term => decodeURIComponent(term.replace(/\+/g, ' ')))
                 .join(' ');
@@ -1683,7 +1683,7 @@ $(document).on('turbolinks:load', function() {
     function updateHiddenInputs(dst, menu, new_type, new_value) {
         const func = 'updateHiddenInputs';
         let $menu  = menu && $(menu);
-        const base = $menu && $menu.attr('name').replace('[]', '') || 'input';
+        const base = $menu?.attr('name')?.replace('[]', '') || 'input';
         let values;
         if (typeof new_type === 'object') {
             values = new_type;
