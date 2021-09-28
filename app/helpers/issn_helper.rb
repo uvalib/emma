@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module IssnHelper
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -54,11 +56,11 @@ module IssnHelper
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.
   #
-  def contains_issn?(s)
-    s  = s.to_s.strip
-    id = remove_issn_prefix(s)
-    (s != id) || # Explicit "issn:" prefix
-      ((id =~ ISSN_IDENTIFIER) && (id.delete('^0-9X').size >= ISSN_MIN_DIGITS))
+  def issn_candidate?(s)
+    text   = s.to_s.strip
+    number = remove_issn_prefix(text)
+    return true unless number == text # Explicit "issn:" prefix
+    number.match?(ISSN_IDENTIFIER) && (number.count('0-9X') >= ISSN_MIN_DIGITS)
   end
 
   # Indicate whether the string is a valid ISSN.

@@ -63,7 +63,7 @@ class TitleController < ApplicationController
   def index
     __debug_route
     opt = request_parameters
-    if helpers.contains_isbn?(opt[:keyword])
+    if helpers.isbn_candidate?(opt[:keyword])
       # The search looks like an ISBN so interpret this as an ISBN search.
       isbn = opt.delete(:keyword)
       opt[:isbn] = to_isbn(isbn) || isbn

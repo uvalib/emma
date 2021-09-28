@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module UpcHelper
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -27,7 +29,7 @@ module UpcHelper
   #
   # @type [Regexp]
   #
-  UPC_PREFIX = /^\s*UPC[:\s]*/i
+  UPC_PREFIX = /^UPC[:\s]*/i
 
   # A pattern matching the form of an UPC identifier.
   #
@@ -50,11 +52,11 @@ module UpcHelper
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.
   #
-  def contains_upc?(s)
-    s  = s.to_s.strip
-    id = remove_upc_prefix(s)
-    (s != id) ||
-      ((id =~ UPC_IDENTIFIER) && (id.delete('^0-9').size >= UPC_DIGITS))
+  def upc_candidate?(s)
+    text   = s.to_s.strip
+    number = remove_upc_prefix(text)
+    return true unless number == text # Explicit "upc:" prefix
+    number.match?(UPC_IDENTIFIER) && (number.count('0-9') >= UPC_DIGITS)
   end
 
   # Indicate whether the string is a valid UPC.
@@ -144,7 +146,7 @@ module UpcHelper
   # @return [String]
   #
   def remove_upc_prefix(s)
-    s.to_s.sub(UPC_PREFIX, '')
+    s.to_s.strip.sub(UPC_PREFIX, '')
   end
 
   # ===========================================================================

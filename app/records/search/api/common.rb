@@ -84,26 +84,17 @@ public
 #
 class PublicationIdentifier < ScalarType
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # The standard identifier types.
   #
   # @type [Array<Symbol>]
   #
   TYPES = %i[isbn issn oclc lccn upc].freeze
-
-  # Include type-specific logic.
-  TYPES.each do |type|
-    type = type.to_s.capitalize
-    mod  = "#{type}Helper".safe_constantize
-    next unless mod.present?
-    send(:include, mod)
-    send(:extend,  mod)
-  end
-
-  # Valid values for this type match this pattern.
-  #
-  # @type [Regexp]
-  #
-  PATTERN = /^(#{TYPES.join('|')}):[0-9X]{8,14}$/i
 
   # ===========================================================================
   # :section:
@@ -111,65 +102,165 @@ class PublicationIdentifier < ScalarType
 
   public
 
-  # The name of the represented identifier type.
-  #
-  # @return [Symbol]
-  #
-  def type
-    prefix.to_sym
+  module Methods
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # class_type
+    #
+    # @return [Symbol]
+    #
+    def class_type
+      safe_const_get(:TYPE) || self.class.safe_const_get(:TYPE)
+    end
+
+    # class_prefix
+    #
+    # @return [String]
+    #
+    def class_prefix
+      safe_const_get(:PREFIX) || self.class.safe_const_get(:PREFIX)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # The name of the represented identifier type.
+    #
+    # @param [String, nil] v
+    #
+    # @return [Symbol]
+    #
+    def type(v = nil)
+      v ? prefix(v).to_sym : class_type
+    end
+
+    # The identifier type portion of the value.
+    #
+    # @param [String, nil] v
+    #
+    # @return [String]
+    #
+    def prefix(v = nil)
+      v ? parts(v).first : class_prefix
+    end
+
+    # The identifier number portion of the value.
+    #
+    # @param [String, nil] v
+    #
+    # @return [String]
+    #
+    def number(v)
+      parts(v).last
+    end
+
+    # Split a value into a type prefix and a number.
+    #
+    # @param [String, nil] v
+    #
+    # @return [(String, String)]
+    #
+    def parts(v)
+      pre, num = v.to_s.split(':', 2).map(&:strip).presence || ['', '']
+      return pre, num if num.present?
+      return pre, ''  if pre.match?(/^[a-z]+$/i)
+      return '',  pre
+    end
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix(v)
+      v.to_s.remove(/^\s*#{prefix}\s*:\s*/i)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Type-cast an object to a PublicationIdentifier.
+    #
+    # @param [*] obj                  Value to use or transform.
+    #
+    # @return [PublicationIdentifier]
+    # @return [nil]                   If *obj* is not a valid identifier.
+    #
+    def cast(obj)
+      obj.is_a?(PublicationIdentifier) ? obj : create(obj) if obj.present?
+    end
+
+    # Create a new instance.
+    #
+    # @param [String] v               Identifier number.
+    #
+    # @return [PublicationIdentifier]
+    # @return [nil]                   If *v* is not a valid identifier.
+    #
+    def create(v, *)
+      prefix, number = parts(v)
+      return if number.blank?
+      if prefix.present?
+        types = [prefix.classify.safe_constantize].compact
+      else
+        types = [Isbn, Issn, Lccn, Oclc, Upc]
+      end
+      types.find do |type|
+        result = Log.silence { type.new(number) }
+        return result if result.valid?
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
-  # The identifier type portion of the value.
-  #
-  # @return [String]
-  #
-  def prefix
-    value.sub(/^([^:]+):.*$/, '\1')
-  end
-
-  # The identifier number portion of the value.
-  #
-  # @return [String]
-  #
-  def number
-    value.sub(/^[^:]+:(.*)$/, '\1')
-  end
+  include Methods
 
   # ===========================================================================
-  # :section: Class methods
+  # :section: PublicationIdentifier::Methods overrides
   # ===========================================================================
 
   public
 
-  # Type-cast an object to a PublicationIdentifier.
+  # The identifier number portion of the value.
   #
-  # @param [*] obj                    Value to use or transform.
+  # @param [String, nil] v            Default: #value.
   #
-  # @return [PublicationIdentifier]
-  # @return [nil]                     If *obj* is not a valid identifier.
+  # @return [String, nil]
   #
-  def self.cast(obj)
-    obj.is_a?(PublicationIdentifier) ? obj : create(obj) if obj.present?
+  def number(v = nil)
+    v ? super : value
   end
 
-  # Create a new instance.
+  # Split a value into a type prefix and a number.
   #
-  # @param [*] v                      Optional initial value.
+  # @param [String, nil] v            Default: #value.
   #
-  # @return [PublicationIdentifier]
-  # @return [nil]                     If *v* is not a valid identifier.
+  # @return [(String, String)]
   #
-  def self.create(v, *)
-    return if v.blank?
-    return v.dup if v.is_a?(PublicationIdentifier)
-    type = v.to_s.strip.sub(/^\s*([^:]+)\s*:.*$/, '\1').downcase
-    type = type.presence&.safe_constantize
-    return type.new(v) if type
-    Isbn.new(v).tap { |r| return r if r.valid? } if contains_isbn?(v)
-    Issn.new(v).tap { |r| return r if r.valid? } if contains_issn?(v)
-    Upc.new(v).tap  { |r| return r if r.valid? } if contains_upc?(v)
-    Lccn.new(v).tap { |r| return r if r.valid? } if contains_lccn?(v)
-    Oclc.new(v).tap { |r| return r if r.valid? } if contains_oclc?(v)
+  def parts(v = nil)
+    v ? super : [prefix, number]
   end
 
   # ===========================================================================
@@ -183,7 +274,7 @@ class PublicationIdentifier < ScalarType
   # @return [String]
   #
   def to_s
-    "#{prefix}:#{number}"
+    parts.join(':')
   end
 
   # ===========================================================================
@@ -199,7 +290,7 @@ class PublicationIdentifier < ScalarType
   # @return [String]
   #
   def self.normalize(v)
-    v.to_s.strip.downcase.sub(/^([^:]+)[:\s]+/, '\1:')
+    parts(v.to_s.downcase).join(':')
   end
 
   # Indicate whether *v* would be a valid value for an item of this type.
@@ -207,7 +298,9 @@ class PublicationIdentifier < ScalarType
   # @param [*] v
   #
   def self.valid?(v)
-    normalize(v).match?(PATTERN)
+    [Isbn, Issn, Lccn, Oclc, Upc].find do |type|
+      break true if type.valid?(v)
+    end || false
   end
 
 end
@@ -217,6 +310,15 @@ end
 class Isbn < PublicationIdentifier
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
+  # ===========================================================================
   # :section: PublicationIdentifier overrides
   # ===========================================================================
 
@@ -224,26 +326,22 @@ class Isbn < PublicationIdentifier
 
   # The name of the represented identifier type.
   #
+  # @param [String, nil] v            Default: #value.
+  #
   # @return [Symbol]
   #
-  def type
-    self.class.type
+  def type(v = nil)
+    v ? super : TYPE
   end
 
   # The identifier type portion of the value.
   #
-  # @return [String]
-  #
-  def prefix
-    type.to_s
-  end
-
-  # The identifier number portion of the value.
+  # @param [String, nil] v            Default: #value.
   #
   # @return [String]
   #
-  def number
-    value
+  def prefix(v = nil)
+    v ? super : PREFIX
   end
 
   # ===========================================================================
@@ -259,7 +357,7 @@ class Isbn < PublicationIdentifier
   # @return [String]
   #
   def self.normalize(v)
-    remove_isbn_prefix(v)
+    remove_prefix(v).delete('^0-9xX')
   end
 
   # Indicate whether *v* would be a valid value for an item of this type.
@@ -267,21 +365,7 @@ class Isbn < PublicationIdentifier
   # @param [*] v
   #
   def self.valid?(v)
-    isbn?(v)
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # The name of the represented identifier type.
-  #
-  # @return [Symbol]
-  #
-  def self.type
-    @type ||= self.to_s.downcase.to_sym
+    IsbnHelper.isbn?(v)
   end
 
 end
@@ -291,6 +375,15 @@ end
 class Issn < PublicationIdentifier
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
+  # ===========================================================================
   # :section: PublicationIdentifier overrides
   # ===========================================================================
 
@@ -298,26 +391,22 @@ class Issn < PublicationIdentifier
 
   # The name of the represented identifier type.
   #
+  # @param [String, nil] v            Default: #value.
+  #
   # @return [Symbol]
   #
-  def type
-    self.class.type
+  def type(v = nil)
+    v ? super : TYPE
   end
 
   # The identifier type portion of the value.
   #
-  # @return [String]
-  #
-  def prefix
-    type.to_s
-  end
-
-  # The identifier number portion of the value.
+  # @param [String, nil] v            Default: #value.
   #
   # @return [String]
   #
-  def number
-    value
+  def prefix(v = nil)
+    v ? super : PREFIX
   end
 
   # ===========================================================================
@@ -333,7 +422,7 @@ class Issn < PublicationIdentifier
   # @return [String]
   #
   def self.normalize(v)
-    remove_issn_prefix(v)
+    remove_prefix(v).delete('^0-9xX')
   end
 
   # Indicate whether *v* would be a valid value for an item of this type.
@@ -341,21 +430,7 @@ class Issn < PublicationIdentifier
   # @param [*] v
   #
   def self.valid?(v)
-    issn?(v)
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # The name of the represented identifier type.
-  #
-  # @return [Symbol]
-  #
-  def self.type
-    @type ||= self.to_s.downcase.to_sym
+    IssnHelper.issn?(v)
   end
 
 end
@@ -365,6 +440,15 @@ end
 class Oclc < PublicationIdentifier
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
+  # ===========================================================================
   # :section: PublicationIdentifier overrides
   # ===========================================================================
 
@@ -372,26 +456,22 @@ class Oclc < PublicationIdentifier
 
   # The name of the represented identifier type.
   #
+  # @param [String, nil] v            Default: #value.
+  #
   # @return [Symbol]
   #
-  def type
-    self.class.type
+  def type(v = nil)
+    v ? super : TYPE
   end
 
   # The identifier type portion of the value.
   #
-  # @return [String]
-  #
-  def prefix
-    type.to_s
-  end
-
-  # The identifier number portion of the value.
+  # @param [String, nil] v            Default: #value.
   #
   # @return [String]
   #
-  def number
-    value
+  def prefix(v = nil)
+    v ? super : PREFIX
   end
 
   # ===========================================================================
@@ -407,7 +487,7 @@ class Oclc < PublicationIdentifier
   # @return [String]
   #
   def self.normalize(v)
-    remove_oclc_prefix(v)
+    OclcHelper.to_oclc(v, log: false) || ''
   end
 
   # Indicate whether *v* would be a valid value for an item of this type.
@@ -415,21 +495,7 @@ class Oclc < PublicationIdentifier
   # @param [*] v
   #
   def self.valid?(v)
-    oclc?(v)
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # The name of the represented identifier type.
-  #
-  # @return [Symbol]
-  #
-  def self.type
-    @type ||= self.to_s.downcase.to_sym
+    OclcHelper.oclc?(v)
   end
 
 end
@@ -439,6 +505,15 @@ end
 class Lccn < PublicationIdentifier
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
+  # ===========================================================================
   # :section: PublicationIdentifier overrides
   # ===========================================================================
 
@@ -446,26 +521,22 @@ class Lccn < PublicationIdentifier
 
   # The name of the represented identifier type.
   #
+  # @param [String, nil] v            Default: #value.
+  #
   # @return [Symbol]
   #
-  def type
-    self.class.type
+  def type(v = nil)
+    v ? super : TYPE
   end
 
   # The identifier type portion of the value.
   #
-  # @return [String]
-  #
-  def prefix
-    type.to_s
-  end
-
-  # The identifier number portion of the value.
+  # @param [String, nil] v            Default: #value.
   #
   # @return [String]
   #
-  def number
-    value
+  def prefix(v = nil)
+    v ? super : PREFIX
   end
 
   # ===========================================================================
@@ -481,7 +552,7 @@ class Lccn < PublicationIdentifier
   # @return [String]
   #
   def self.normalize(v)
-    remove_lccn_prefix(v)
+    LccnHelper.to_lccn(v, log: false) || ''
   end
 
   # Indicate whether *v* would be a valid value for an item of this type.
@@ -489,21 +560,7 @@ class Lccn < PublicationIdentifier
   # @param [*] v
   #
   def self.valid?(v)
-    lccn?(v)
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # The name of the represented identifier type.
-  #
-  # @return [Symbol]
-  #
-  def self.type
-    @type ||= self.to_s.downcase.to_sym
+    LccnHelper.lccn?(v)
   end
 
 end
@@ -513,6 +570,15 @@ end
 class Upc < PublicationIdentifier
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
+  # ===========================================================================
   # :section: PublicationIdentifier overrides
   # ===========================================================================
 
@@ -520,26 +586,22 @@ class Upc < PublicationIdentifier
 
   # The name of the represented identifier type.
   #
+  # @param [String, nil] v            Default: #value.
+  #
   # @return [Symbol]
   #
-  def type
-    self.class.type
+  def type(v = nil)
+    v ? super : TYPE
   end
 
   # The identifier type portion of the value.
   #
-  # @return [String]
-  #
-  def prefix
-    type.to_s
-  end
-
-  # The identifier number portion of the value.
+  # @param [String, nil] v            Default: #value.
   #
   # @return [String]
   #
-  def number
-    value
+  def prefix(v = nil)
+    v ? super : PREFIX
   end
 
   # ===========================================================================
@@ -555,7 +617,7 @@ class Upc < PublicationIdentifier
   # @return [String]
   #
   def self.normalize(v)
-    super # TODO: UPC normalize
+    remove_prefix(v).delete('^0-9')
   end
 
   # Indicate whether *v* would be a valid value for an item of this type.
@@ -563,22 +625,7 @@ class Upc < PublicationIdentifier
   # @param [*] v
   #
   def self.valid?(v)
-    upc?(v)
-    v.to_s.remove(/[^\d]/).size >= 12 # TODO: UPC validity
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # The name of the represented identifier type.
-  #
-  # @return [Symbol]
-  #
-  def self.type
-    @type ||= self.to_s.downcase.to_sym
+    UpcHelper.upc?(v)
   end
 
 end

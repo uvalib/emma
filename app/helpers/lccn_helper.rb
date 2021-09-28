@@ -11,6 +11,8 @@ __loading_begin(__FILE__)
 #
 module LccnHelper
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -63,10 +65,11 @@ module LccnHelper
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.
   #
-  def contains_lccn?(s)
-    s  = s.to_s.strip
-    id = remove_lccn_prefix(s)
-    (s != id) || id.match?(LCCN_IDENTIFIER)
+  def lccn_candidate?(s)
+    text   = s.to_s.strip
+    number = remove_lccn_prefix(text)
+    return true unless number == text # Explicit "lccn:" prefix
+    number.match?(LCCN_IDENTIFIER)
   end
 
   # Indicate whether the string is a valid LCCN.

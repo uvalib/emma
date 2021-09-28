@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module IsbnHelper
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -60,11 +62,11 @@ module IsbnHelper
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.
   #
-  def contains_isbn?(s)
-    s  = s.to_s.strip
-    id = remove_isbn_prefix(s)
-    (s != id) || # Explicit "isbn:" prefix
-      ((id =~ ISBN_IDENTIFIER) && (id.delete('^0-9X').size >= ISBN_MIN_DIGITS))
+  def isbn_candidate?(s)
+    text   = s.to_s.strip
+    number = remove_isbn_prefix(text)
+    return true unless number == text # Explicit "isbn:" prefix
+    number.match?(ISBN_IDENTIFIER) && (number.count('0-9X') >= ISBN_MIN_DIGITS)
   end
 
   # Indicate whether the string is a valid ISBN.

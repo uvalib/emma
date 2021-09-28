@@ -11,6 +11,8 @@ __loading_begin(__FILE__)
 #
 module OclcHelper
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -41,7 +43,7 @@ module OclcHelper
   #
   # @type [Regexp]
   #
-  OCLC_PREFIX = /^\s*(#{OCLC_FORMAT.keys.join('|')})[:\s]*/i
+  OCLC_PREFIX = /^(#{OCLC_FORMAT.keys.join('|')})[:\s]*/i
 
   # A pattern matching the form of an OCN identifier.
   #
@@ -60,19 +62,20 @@ module OclcHelper
   # @param [String] s
   #
   # == Usage Notes
-  # If *text* matches #OCLC_PREFIX then the method returns *true* even if the
+  # If *s* matches #OCLC_PREFIX then the method returns *true* even if the
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.  The one exception
-  # is if the prefix is "on" -- here a the remainder must be a valid OCLC
-  # number (otherwise words like "one" are interpreted as "oclc:e").
+  # is if the prefix is "on" -- here the remainder must be a valid OCLC number
+  # (otherwise words like "one" are interpreted as "oclc:e").
   #
-  def contains_oclc?(s)
-    s  = s.to_s.strip
-    id = remove_oclc_prefix(s)
-    !s.downcase.start_with?('on') && (s != id) || id.match?(OCLC_IDENTIFIER)
+  def oclc_candidate?(s)
+    text   = s.to_s.strip
+    number = remove_oclc_prefix(text)
+    return true unless (number == text) || text.downcase.start_with?('on')
+    number.match?(OCLC_IDENTIFIER)
   end
 
-  alias_method :contains_ocn?, :contains_oclc?
+  alias_method :ocn_candidate?, :oclc_candidate?
 
   # Indicate whether the string is a valid OCN.
   #
