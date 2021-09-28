@@ -28,6 +28,7 @@ __loading_begin(__FILE__)
 class Bs::Record::ActivePeriodical < Bs::Api::Record
 
   include Bs::Shared::LinkMethods
+  include Bs::Shared::PeriodicalMethods
 
   # ===========================================================================
   # :section:

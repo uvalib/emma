@@ -7,10 +7,6 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to messages.
 #
-# Attributes supplied by the including module:
-#
-# @attr [String] messageId
-#
 module Bs::Shared::MessageMethods
 
   # Non-functional hints for RubyMine type checking.

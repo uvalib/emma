@@ -7,10 +7,6 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to agreements.
 #
-# Attributes supplied by the including module:
-#
-# @attr [String] agreementId
-#
 module Bs::Shared::AgreementMethods
 
   # Non-functional hints for RubyMine type checking.

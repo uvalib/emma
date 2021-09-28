@@ -48,6 +48,11 @@ __loading_begin(__FILE__)
 #
 class Search::Record::MetadataCommonRecord < Search::Api::Record
 
+  include Search::Shared::CreatorMethods
+  include Search::Shared::DateMethods
+  include Search::Shared::IdentifierMethods
+  include Search::Shared::LinkMethods
+  include Search::Shared::ScoreMethods
   include Search::Shared::TitleMethods
 
   # ===========================================================================

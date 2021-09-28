@@ -7,10 +7,6 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to subscriptions.
 #
-# Attributes supplied by the including module:
-#
-# @attr [String] subscriptionId
-#
 module Bs::Shared::SubscriptionMethods
 
   # Non-functional hints for RubyMine type checking.

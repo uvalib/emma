@@ -24,6 +24,7 @@ __loading_begin(__FILE__)
 class Bs::Record::TitleDownload < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods
+  include Bs::Shared::CreatorMethods
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 

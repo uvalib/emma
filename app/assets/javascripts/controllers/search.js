@@ -5,10 +5,14 @@
 //= require shared/logging
 //= require feature/database
 
+// noinspection FunctionTooLongJS
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    let $item_list = $('body.new-style').find('.search-list');
+    let $body = $('body');
+
+    /** @type {jQuery} */
+    let $item_list = $body.filter('.new-style').find('.search-list');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($item_list)) {
@@ -20,7 +24,8 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     const TIMESTAMP        = new Date();
-    const DEV_CONTROLS     = $('body').hasClass('dev-style');
+    const DEV_CONTROLS     = $body.hasClass('dev-style');
+    const AGGREGATE_STYLE  = $body.hasClass('aggregate-style');
 
     const FIRST_PAGE       = 1;
     const DEFAULT_LIMIT    = 100; // Items per page.
@@ -31,30 +36,13 @@ $(document).on('turbolinks:load', function() {
     const CONTROL_CLASS    = 'control';
     const CONTROL_SELECTOR = selector(CONTROL_CLASS);
 
-    // ========================================================================
-    // Variables
-    // ========================================================================
-
-    /**
-     * Elements of .search-list.
-     *
-     * @type {jQuery}
-     */
-    let $list_parts = $item_list.children();
-
-    /**
-     * Search list results entries.
-     *
-     * @type {jQuery}
-     */
-    let $result_items = $list_parts.filter(ITEM_SELECTOR);
-
     /**
      * Current URL parameters.
      *
+     * @constant
      * @type {object}
      */
-    let params = urlParameters();
+    const params = urlParameters();
 
     /**
      * Current search page.
@@ -79,6 +67,24 @@ $(document).on('turbolinks:load', function() {
      * @type {number}
      */
     const PAGE_OFFSET = 1 + (PAGE_SIZE * (PAGE_NUMBER - FIRST_PAGE));
+
+    // ========================================================================
+    // Variables
+    // ========================================================================
+
+    /**
+     * Elements of .search-list.
+     *
+     * @type {jQuery}
+     */
+    let $list_parts = $item_list.children();
+
+    /**
+     * Search list results entries.
+     *
+     * @type {jQuery}
+     */
+    let $result_items = $list_parts.filter(ITEM_SELECTOR);
 
     // ========================================================================
     // Functions
@@ -110,26 +116,29 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function titleId(item) {
-        return $(item).attr('data-title_id');
+        let $item   = $(item);
+        const value = $item.attr('data-title_id');
+        return value || $item.find('.field-EmmaTitleId.value').text();
     }
 
     /**
      * Return the normalized title of the given search result item.
      *
-     * Normalization includes conversion to lowercase, removal of leading and
-     * trailing spaces/punctuation, and reduction of runs of spaces/punctuation
-     * to a single space.
-     *
      * @param {Selector} item
      *
      * @returns {string}
      */
-    function titleText(item) {
-        let title = $(item).find('.field-Title.value .title').text();
-        title = title.replace(/^(\p{punct}|\p{space})+/u, '');
-        title = title.replace(/(\p{punct}|\p{space})+$/u, '');
-        title = title.replace(/(\p{punct}|\p{space})+/ug, ' ');
-        return title.toLowerCase();
+    function normalizedTitle(item) {
+        let $item = $(item);
+        let value = $item.attr('data-normalized_title');
+        if (!value) {
+            value = $item.find('.field-Title.value .title').text();
+            value = value.replace(/^(\p{punct}|\p{space})+/u, '');
+            value = value.replace(/(\p{punct}|\p{space})+$/u, '');
+            value = value.replace(/(\p{punct}|\p{space})+/ug, ' ');
+            value = value.toLowerCase();
+        }
+        return value;
     }
 
     /**
@@ -140,7 +149,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function recordId(item) {
-        return $(item).find('.field-EmmaRecordId.value').text();
+        let $item   = $(item);
+        const value = $item.attr('data-record_id');
+        return value || $item.find('.field-EmmaRecordId.value').text();
     }
 
     /**
@@ -151,7 +162,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function repositoryRecordId(item) {
-        return $(item).find('.field-RepositoryRecordId.value').text();
+        let $item   = $(item);
+        const value = $item.attr('data-repo_id');
+        return value || $item.find('.field-RepositoryRecordId.value').text();
     }
 
     /**
@@ -262,14 +275,14 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Create a new open/close control.
+     * Create a new open/close toggle control.
      *
      * @param {number}  row
      * @param {boolean} [closer]      By default, control created as an opener.
      *
      * @returns {jQuery}
      */
-    function createControl(row, closer) {
+    function createToggleControl(row, closer) {
         let $control = $(`<button class="${CONTROL_CLASS} ${row}">`);
         $control.attr('data-row', `.${row}`);
         if (closer) {
@@ -278,6 +291,35 @@ $(document).on('turbolinks:load', function() {
             openerControl($control);
         }
         return $control;
+    }
+
+    /**
+     * Create and assign event handlers for a pair of open/close controls
+     * (one for 'wide' and 'medium' screens; the other for 'narrow' screens).
+     *
+     * NOTE: probably the controls should be in the generated HTML, along with
+     *  the setting of 'data-row' so that this code only has to attach the
+     *  event handlers.
+     *
+     * @param {Selector} parent
+     */
+    function setupToggleControl(parent) {
+        const func    = 'setupControl';
+        let $number   = $(parent);
+        const classes = $number[0].classList;
+        const row     = $.map(classes, cls => cls.match(/^row-\d+$/)).pop();
+        if (isEmpty(row)) {
+            console.warn(`${func}: could not determine row for ${classes}`);
+        } else {
+            // The toggle control visible for wide and medium-width screens:
+            let $control = createToggleControl(row).appendTo($number);
+            handleClickAndKeypress($control, toggleItem);
+
+            // The toggle control visible for narrow screens:
+            let $container      = $number.children('.container');
+            let $narrow_control = $control.clone().appendTo($container);
+            handleClickAndKeypress($narrow_control, toggleItem);
+        }
     }
 
     // ========================================================================
@@ -299,27 +341,9 @@ $(document).on('turbolinks:load', function() {
     $list_parts.filter('.pagination-bottom').detach().insertAfter($item_list);
 
     // Create and setup item display toggle controls.
-    //
-    // NOTE: probably the controls should be in the generated HTML, along with
-    //  the setting of 'data-row' so that this code only has to attach the
-    //  event handlers.
 
     $list_parts.filter('.number').each(function() {
-        let $number   = $(this);
-        const classes = $number[0].classList;
-        const row     = $.map(classes, cls => cls.match(/^row-\d+$/)).pop();
-        if (isEmpty(row)) {
-            console.warn(`Could not determine row for ${classes}`);
-        } else {
-            // The toggle control visible for wide and medium-width screens:
-            let $control = createControl(row).appendTo($number);
-            handleClickAndKeypress($control, toggleItem);
-
-            // The toggle control visible for narrow screens:
-            let $container      = $number.children('.container');
-            let $narrow_control = $control.clone().appendTo($container);
-            handleClickAndKeypress($narrow_control, toggleItem);
-        }
+        setupToggleControl(this);
     });
 
     // Make clicking on the title toggle the display of that item.
@@ -337,10 +361,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {string}
      */
-    const DB_STORE_NAME = 'search_data';
+    const DB_STORE_NAME = AGGREGATE_STYLE ? 'search_aggregate' : 'search_data';
 
     /**
-     * Properties for the 'search_data' object store.
+     * Properties for the DB_STORE_NAME object store.
      *
      * @constant
      * @type {StoreTemplate}
@@ -349,7 +373,7 @@ $(document).on('turbolinks:load', function() {
         options: { autoIncrement: true },
         record: {
             page:         { default: 0,  func: pageNumber },
-            title_text:   { default: '', func: titleText },
+            title_text:   { default: '', func: normalizedTitle },
             title_id:     { default: '', func: titleId },
             record_id:    { default: '', func: recordId },
             repo_id:      { default: '', func: repositoryRecordId },
@@ -484,6 +508,9 @@ $(document).on('turbolinks:load', function() {
     // Actions - page data
     // ========================================================================
 
+    // Set the database and version.
+    DB.setDatabase('emma', 2);
+
     // Register the object store.
     DB.addStoreTemplate(DB_STORE_NAME, DB_STORE_TEMPLATE);
 
@@ -497,6 +524,106 @@ $(document).on('turbolinks:load', function() {
             DB.deleteItems('page', pageNumber(), storeItems);
         }
     });
+
+    // ========================================================================
+    // Constants - relevancy score
+    // ========================================================================
+
+    /**
+     * Current search results sort order.
+     *
+     * @constant
+     * @type {string}
+     */
+    const SORT_ORDER = params['sort'] || 'relevancy';
+
+    /**
+     * @const
+     * @type {{string: string}}
+     */
+    const SORTED = {
+        title:               'dc_title for sort=title',
+        sortDate:            'sort_date for sort=sortDate',
+        lastRemediationDate: 'remediation_date for sort=lastRemediationDate',
+    };
+
+    /**
+     * Indication of a blank value.
+     *
+     * @constant
+     * @type {string}
+     */
+    const BLANK = Emma.Upload.Field.empty;
+
+    // ========================================================================
+    // Functions - relevancy score
+    // ========================================================================
+
+    /**
+     * Mark suspicious relevancy scores.
+     *
+     * @param {Selector} [items]      Default: {@link $result_items}.
+     */
+    function validateRelevancyScores(items) {
+        let $items   = items ? $(items) : $result_items;
+        if (Object.keys(SORTED).includes(SORT_ORDER)) {
+            $items.each(function() { markDisabledRelevancy(this) });
+        } else {
+            let error_score, next_score = 0;
+            $items.get().reverse().forEach(function(item) {
+                let $item   = $(item);
+                const score = Number($item.attr('data-item_score'));
+                if (score < next_score) {
+                    error_score = score;
+                } else if (score > next_score) {
+                    error_score = undefined;
+                }
+                if (error_score) {
+                    markSuspiciousRelevancy($item);
+                }
+                next_score = score;
+            });
+        }
+    }
+
+    /**
+     * Mark the score for the item as irrelevant to the current sort order.
+     *
+     * @param {Selector} item
+     *
+     * @returns {jQuery}              The score element.
+     */
+    function markDisabledRelevancy(item) {
+        let $score = $(item).find('.item-score');
+        const desc = SORTED[SORT_ORDER] || 'specific metadata field(s)';
+        const tip  = `Relevancy based on ${desc}`;
+        return $score.addClass('disabled').attr('title', tip).text(BLANK);
+    }
+
+    /**
+     * Mark the score for the item as problematic.
+     *
+     * @param {Selector} item
+     *
+     * @returns {jQuery}              The score element.
+     */
+    function markSuspiciousRelevancy(item) {
+        let $score = $(item).find('.item-score');
+        let tip    = $score.attr('title');
+        tip += "\n\nNOTE:";
+        tip += "The placement of this item seems to be anomalous, ";
+        tip += "however that may just be due to a bad guess about how the ";
+        tip += "actual relevancy is determined by the index."
+        return $score.addClass('error').attr('title', tip);
+    }
+
+    // ========================================================================
+    // Actions - relevancy score
+    // ========================================================================
+
+    if (AGGREGATE_STYLE) {
+        validateRelevancyScores();
+    }
 
     // ========================================================================
     // Constants - colorize
@@ -634,15 +761,6 @@ $(document).on('turbolinks:load', function() {
     const EARLY_EXILE_TOOLTIP =
         'A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE';
 
-    /**
-     * Tooltip text for an erroneous item. // TODO: I18n
-     *
-     * @constant
-     * @type {string}
-     */
-    const EXILE_JUMP_TOOLTIP =
-        'Jump to the page with the first occurrence of this identity';
-
     // noinspection SpellCheckingInspection
     /**
      * Narrow no-break space.
@@ -667,6 +785,17 @@ $(document).on('turbolinks:load', function() {
      * @type {number}
      */
     const COLOR_OFFSET_LIMIT = 0x0f0000;
+
+    // ========================================================================
+    // Variables - colorize
+    // ========================================================================
+
+    /**
+     * Location of colorize controls.
+     *
+     * @type {jQuery}
+     */
+    let $button_tray = $heading_bar.find('.pagination-top');
 
     // ========================================================================
     // Functions - colorize
@@ -933,22 +1062,35 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
+    // Functions - colorize
+    // ========================================================================
+
+    /**
+     * Assign event handlers to the colorize button, creating it if necessary.
+     *
+     * @param {string}            topic     {@link BUTTON} key.
+     * @param {ElementProperties} [config]  {@link BUTTON} value.
+     */
+    function setupColorizeButton(topic, config) {
+        const button = config || BUTTON[topic];
+        let $button  = $(selector(button.class));
+        if (isMissing($button)) {
+            $button = create(button).appendTo($button_tray);
+        }
+        handleClickAndKeypress($button, function() {
+            $button_tray.children().removeClass('active');
+            $(this).addClass('active');
+            button.func ? button.func() : colorize(topic);
+        });
+    }
+
+    // ========================================================================
     // Actions - colorize
     // ========================================================================
 
-    let $button_tray = $heading_bar.find('.pagination-top');
-
     $.each(BUTTON, function(topic, button) {
         if (button.active) {
-            let $button = $('.' + cssClasses(button.class).join('.'));
-            if (isMissing($button)) {
-                $button = create(button).appendTo($button_tray);
-            }
-            handleClickAndKeypress($button, function() {
-                $button_tray.children().removeClass('active');
-                $(this).addClass('active');
-                button.func ? button.func() : colorize(topic);
-            });
+            setupColorizeButton(topic, button);
         }
     });
 

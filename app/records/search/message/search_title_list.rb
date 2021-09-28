@@ -78,11 +78,70 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   def aggregate(src)
     # noinspection RubyNilAnalysis
-    src = src.records if src.is_a?(Search::Message::SearchRecordList)
-    @records = Array.wrap(src).compact_blank.deep_dup
-    @records
-      .group_by { |rec| RECORD_CLASS.match_fields(rec).values }
-      .map { |_, recs| RECORD_CLASS.new(recs) } || []
+    src   = src.records if src.is_a?(Search::Message::SearchRecordList)
+    recs0 = Array.wrap(src).compact_blank
+    recs0.group_by { |r| group_fields(r, 0) }.flat_map do |_key1, recs1|
+      $stderr.puts ''                                                                     # TODO: remove
+      $stderr.puts "--- GROUP_BY #{_key1.inspect} --- (#{recs1.size} records)"            # TODO: remove
+                                                                                          # TODO: remove
+      recs1.group_by { |r| group_fields(r, 1) }.flat_map do |_key2, recs2|
+        $stderr.puts "------ GROUP_BY #{_key2.inspect} --- (#{recs2.size} records)"       # TODO: remove
+                                                                                          # TODO: remove
+        recs2.group_by { |r| group_fields(r, 2) }.flat_map do |_key3, recs3|
+          $stderr.puts "--------- GROUP_BY #{_key3.inspect} --- (#{recs3.size} records)"  # TODO: remove
+          RECORD_CLASS.new(recs3)
+        end
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  GROUPING_LEVELS = [
+    %i[emma_titleId],     # primary grouping
+    %i[normalized_title], # secondary grouping
+    %i[emma_repository],  # tertiary grouping
+  ].deep_freeze
+
+  # group_fields
+  #
+  # @param [Array<Search::Record::MetadataRecord>] records
+  # @param [Integer,Symbol,Array<Symbol>]          group
+  #
+  # @return [Array]
+  #
+  def group_fields(records, group)
+    fields = group.is_a?(Integer) ? GROUPING_LEVELS[group] : Array.wrap(group)
+    RECORD_CLASS.extract_fields(records, *fields).values
+  end
+
+  # Recursive group records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] records
+  # @param [Integer]                               level
+  #
+  # @return [Array<Search::Record::TitleRecord>]
+  #
+  # @note Probably works but isn't being used because the nested approach
+  #   generates more useful console debug output.  This method can be used as:
+  #   ...
+  #   def aggregate(src)
+  #     src = src.records if src.is_a?(Search::Message::SearchRecordList)
+  #     recursive_grouping(Array.wrap(src).compact_blank)
+  #   end
+  #
+  def recursive_grouping(records, level = 0)
+    # noinspection RubyMismatchedParameterType
+    groups = records.group_by { |rec| group_fields(rec, level) }.values
+    if level.next < GROUPING_LEVELS.size
+      groups.flat_map { |recs| recursive_grouping(recs, level.next) }
+    else
+      groups.map! { |recs| RECORD_CLASS.new(recs) }
+    end
   end
 
 end

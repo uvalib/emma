@@ -33,7 +33,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
     create_message_wrapper(opt) do |opt|
       apply_wrap!(opt)
       super(src, opt)
-      records&.each(&:clean_dc_relation!)
+      records.each(&:clean_dc_relation!)
     end
   end
 
@@ -46,6 +46,19 @@ class Search::Message::SearchRecordList < Search::Api::Message
   #++
   def totalResults
     records&.size || 0
+  end
+
+  # Update records by calculating "relevance scores".
+  #
+  # @param [String, Array<String>] terms  Given to all score methods if present
+  # @param [Hash]                  opt    Search parameters.
+  #
+  # @return [void]
+
+  def calculate_scores!(terms = nil, **opt)
+    records.each do |rec|
+      rec.calculate_scores!(terms, **opt)
+    end
   end
 
   # ===========================================================================

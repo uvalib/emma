@@ -51,6 +51,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   include Emma::Common
 
+  include Ingest::Shared::CreatorMethods
   include Ingest::Shared::DateMethods
   include Ingest::Shared::IdentifierMethods
   include Ingest::Shared::TitleMethods

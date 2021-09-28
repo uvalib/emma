@@ -42,6 +42,8 @@ __loading_begin(__FILE__)
 class Bs::Message::TitleMetadataSummary < Bs::Api::Message
 
   include Bs::Shared::ArtifactMethods
+  include Bs::Shared::CreatorMethods
+  include Bs::Shared::IdentifierMethods
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 

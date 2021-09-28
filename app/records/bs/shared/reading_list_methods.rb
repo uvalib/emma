@@ -7,10 +7,6 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to reading lists.
 #
-# Attributes supplied by the including module:
-#
-# @attr [String] readingListId
-#
 module Bs::Shared::ReadingListMethods
 
   # Non-functional hints for RubyMine type checking.

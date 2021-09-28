@@ -49,7 +49,7 @@ module ModelHelper
   # @type [Array<Symbol>]
   #
   CREATOR_FIELDS =
-    Bs::Shared::TitleMethods::CREATOR_TYPES.map(&:to_sym).freeze
+    Bs::Shared::CreatorMethods::CREATOR_TYPES.map(&:to_sym).freeze
 
   # ===========================================================================
   # :section:
@@ -842,6 +842,9 @@ module ModelHelper
   # @yieldparam  [Integer] offset     The effective page offset.
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
   def list_item_number(
     item,
     index:,
@@ -877,8 +880,7 @@ module ModelHelper
     # Wrap the container in the actual number grid element.
     outer_opt = { class: css_classes(css_selector) }
     append_classes!(outer_opt, "row-#{row}") if row
-    outer_opt[:'data-group'] = group         if group
-    # noinspection RailsParamDefResolve
+    outer_opt[:'data-group']    = group      if group
     outer_opt[:'data-title_id'] = item.try(:emma_titleId)
     html_div(container, outer_opt)
   end
@@ -893,6 +895,9 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
   def model_list_item(item, model:, pairs: nil, **opt, &block)
     opt[:model]  = model ||= model_for(item)
     css_selector = ".#{model}-list-item"
@@ -910,8 +915,11 @@ module ModelHelper
       id = item.try(:submission_id) || item.try(:identifier) || hex_rand
       html_opt[:id] = "#{model}-#{id}"
     end
-    # noinspection RailsParamDefResolve
-    html_opt[:'data-title_id'] = item.try(:emma_titleId)
+    html_opt[:'data-title_id']         = item.try(:emma_titleId)
+    html_opt[:'data-normalized_title'] = item.try(:normalized_title)
+    html_opt[:'data-sort_date']        = item.try(:emma_sortDate)
+    html_opt[:'data-remediation_date'] = item.try(:emma_lastRemediationDate)
+    html_opt[:'data-item_score']       = item.try(:total_score, precision: 2)
     html_div(html_opt) do
       if item
         render_field_values(item, pairs: pairs, **opt, &block)

@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Api::Shared::IdentifierMethods
 
+  include Api::Shared::CommonMethods
+
   extend self
 
   # ===========================================================================
@@ -150,6 +152,36 @@ module Api::Shared::IdentifierMethods
     elsif data.key?(:dc_relation)
       data.delete(:dc_relation)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The ISBN.
+  #
+  # @return [String]
+  # @return [nil]                     If the value cannot be determined.
+  #
+  def isbn
+  end
+
+  # Related ISBNs omitting the main ISBN if part of the data array.
+  #
+  # @return [Array<String>]
+  #
+  def related_isbns
+    []
+  end
+
+  # The main and related ISBNs.
+  #
+  # @return [Array<String>]
+  #
+  def all_isbns
+    [isbn, *related_isbns]
   end
 
 end

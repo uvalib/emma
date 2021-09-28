@@ -11,7 +11,7 @@ require 'sanitize'
 #
 module Api::Shared::TitleMethods
 
-  include Emma::Common
+  include Api::Shared::CommonMethods
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -68,95 +68,19 @@ module Api::Shared::TitleMethods
 
   public
 
-  # The author(s) of this catalog title.
-  #
-  # @param [Hash] opt                 Passed to #creator_list.
-  #
-  # @return [Array<String>]
-  #
-  def author_list(**opt)
-    creator_list(**opt)
-  end
-
-  # The editor(s) of this catalog title.
-  #
-  # @return [Array<String>]
-  #
-  def editor_list(**)
-    []
-  end
-
-  # The composer(s) of this catalog title.
-  #
-  # @return [Array<String>]
-  #
-  def composer_list(**)
-    []
-  end
-
-  # The lyricist(s) of this catalog title.
-  #
-  # @return [Array<String>]
-  #
-  def lyricist_list(**)
-    []
-  end
-
-  # The arranger(s) of this catalog title.
-  #
-  # @return [Array<String>]
-  #
-  def arranger_list(**)
-    []
-  end
-
-  # The translator(s) of this catalog title.
-  #
-  # @return [Array<String>]
-  #
-  def translator_list(**)
-    []
-  end
-
-  # The creator(s) of this catalog title.
-  #
-  # @param [Hash] opt                 Passed to #creator_list.
-  #
-  # @return [Array<String>]
-  #
-  def creators(**opt)
-    creator_list(**opt)
-  end
-
-  # The author(s)/creator(s) of this catalog title.
-  #
-  # @param [Hash] opt                 Passed to #contributor_list.
-  #
-  # @return [Array<String>]
-  #
-  def creator_list(**opt)
-    contributor_list(**opt)
-  end
-
-  # All contributor(s) to this catalog title.
-  #
-  # @return [Array<String>]
-  #
-  def contributor_list(**)
-    []
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Sanitizer for catalog title contents.
   #
   # @type [Sanitize]
   #
   CONTENT_SANITIZE = Sanitize.new(elements: %w(br b i em strong))
+
+  # The full title in a form that it can be used for comparisons.
+  #
+  # @return [String]
+  #
+  def normalized_title
+    normalized(full_title)
+  end
 
   # The title and subtitle of this catalog title.
   #
@@ -174,30 +98,6 @@ module Api::Shared::TitleMethods
       ti = "#{ti}: #{st}" unless significant(ti).include?(significant(st))
     end
     ti || st || '???'
-  end
-
-  # The ISBN.
-  #
-  # @return [String]
-  # @return [nil]                     If the value cannot be determined.
-  #
-  def isbn
-  end
-
-  # Related ISBNs omitting the main ISBN if part of the data array.
-  #
-  # @return [Array<String>]
-  #
-  def related_isbns
-    []
-  end
-
-  # The main and related ISBNs.
-  #
-  # @return [Array<String>]
-  #
-  def all_isbns
-    [isbn, *related_isbns]
   end
 
   # The year of publication (:dcterms_dateCopyright or
@@ -262,6 +162,23 @@ module Api::Shared::TitleMethods
   # :section:
   # ===========================================================================
 
+  protected
+
+  # Reduce a string for comparison with another by eliminating characters to
+  # ignore for comparison.
+  #
+  # @param [String] value
+  #
+  # @return [String]
+  #
+  def significant(value)
+    normalized(value).remove!(' ')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # A link to a title's thumbnail image.
@@ -316,47 +233,6 @@ module Api::Shared::TitleMethods
   #
   def contents_fields
     []
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Get the first non-blank value given a list of fields.
-  #
-  # @param [Array<Symbol>] fields
-  #
-  # @return [String, nil]
-  #
-  def get_value(*fields)
-    get_values(*fields).first
-  end
-
-  # Get the first non-empty value given a list of fields.
-  #
-  # @param [Array<Symbol>] fields
-  #
-  # @return [Array<String>]
-  #
-  def get_values(*fields)
-    # noinspection RubyMismatchedReturnType
-    fields.find { |meth|
-      values = meth && Array.wrap(try(meth)).compact_blank
-      break values.map(&:to_s) if values.present?
-    } || []
-  end
-
-  # Reduce a string for comparison with another by eliminating characters to
-  # ignore for comparison.
-  #
-  # @param [String] value
-  #
-  # @return [String]
-  #
-  def significant(value)
-    value.to_s.remove(/[[:space:][:punct:]]/).downcase
   end
 
 end

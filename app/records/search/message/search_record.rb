@@ -52,6 +52,10 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchRecord < Search::Api::Message
 
+  include Search::Shared::CreatorMethods
+  include Search::Shared::DateMethods
+  include Search::Shared::IdentifierMethods
+  include Search::Shared::LinkMethods
   include Search::Shared::TitleMethods
 
   # ===========================================================================

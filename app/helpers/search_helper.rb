@@ -83,9 +83,31 @@ module SearchHelper
     source = item.emma_repository
     source = '' unless EmmaRepository.values.include?(source)
     prepend_classes!(opt, css_selector, source)
-    title  = html_div(title, opt)
-    logo   = repository_source_logo(source)
-    ctrl   = prev_next_controls(**opt)
+
+    # noinspection RubyMismatchedParameterType
+    if aggregate_style?
+      date   = Search::Record::TitleRecord.item_date(item)
+      number = Search::Record::TitleRecord.item_number(item)
+      title  = ERB::Util.h(title)                      if date || number
+      title << html_span(date,   class: 'item-date')   if date
+      title << html_span(number, class: 'item-number') if number
+    end
+
+    title = html_div(title, opt)
+    logo  = repository_source_logo(source)
+    ctrl  = prev_next_controls(**opt)
+
+    # noinspection RailsParamDefResolve, RubyScope
+    if aggregate_style? && (scores = item.try(:get_scores) || {}).present?
+      types = scores.keys.map { |type| type.to_s.delete_suffix('_score') }
+      types = [types[0...-1].join(', '), types[-1]].compact_blank.join(' and ')
+      tip   = +'This is a guess at the relevancy "score" for this item'
+      tip  << " based on its #{types} metadata" if types.present?
+      tip  << '.'
+      score = scores.values.sum.round
+      ctrl << html_span(score, class: 'item-score', title: tip)
+    end
+
     # noinspection RubyMismatchedReturnType
     title << logo << ctrl
   end
@@ -330,6 +352,14 @@ module SearchHelper
   def search_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :search
     opt[:pairs] = index_fields(model).merge(pairs || {})
+    # noinspection RailsParamDefResolve
+    if aggregate_style?
+      added = item.try(:get_scores, precision: 2, all: true) || {}
+      added[:sort_date]        = item.try(:emma_sortDate).presence
+      added[:remediation_date] = item.try(:emma_lastRemediationDate).presence
+      added.transform_values! { |score| score || EMPTY_VALUE }
+      opt[:pairs].merge!(added)
+    end
     model_list_item(item, **opt)
   end
 

@@ -788,16 +788,15 @@ body.grid-style,
 body.compact-style,
 body.aggregate-style {
 
-    $narrow-left-pad:          0.25rem;
-    $narrow-logo-height:       2rem;
-    $narrow-item-separation:   1.5rem;
+    $narrow-left-pad:        0.25rem;
+    $narrow-logo-height:     2rem;
+    $narrow-item-separation: 1.5rem;
 
-    $wide-title-open-pad:      1rem;
-    $medium-title-open-pad:    0.5rem;
+    $wide-title-open-pad:    1rem;
+    $medium-title-open-pad:  0.75rem;
 
-    // Variant values for Firefox:
-    $ff-wide-title-open-pad:   0.75rem;
-    $ff-medium-title-open-pad: 0.25rem;
+    $v-shift:                0.25rem;
+    $h-shift:                0.125rem;
 
     /**
      * In order to have the page title, pagination controls, and data analysis
@@ -820,7 +819,7 @@ body.aggregate-style {
         // Moved from top of .search-list
         .pagination-top {
 
-            margin-bottom:  0;
+            margin:         auto 0;
             flex-direction: row-reverse;
             column-gap:     1rem;
             row-gap:        0.5rem;
@@ -868,6 +867,7 @@ body.aggregate-style {
             background: none;
 
             @media #{$medium-width} {
+                padding-top:    0.25rem;
                 padding-bottom: 0.5rem;
             }
 
@@ -928,7 +928,7 @@ body.aggregate-style {
                 .control {
                     @media #{$wide-screen} {
                         position: sticky;
-                        top:      5vh;
+                        top:      3vh;
                     }
                     @media #{$medium-width} {
                         position: sticky;
@@ -962,8 +962,12 @@ body.aggregate-style {
                     border: none;
                 }
 
+                @media #{$narrow-screen} {
+                    justify-content: flex-end;
+                }
+
                 > * {
-                    margin:     0;
+                    margin:     auto 0;
                     padding:    0;
                     align-self: center;
                 }
@@ -973,8 +977,16 @@ body.aggregate-style {
                     letter-spacing: -0.125px; // NOTE: needed for Firefox
                     cursor:         default;
 
-                    @media #{$not-narrow-screen} {
-                        flex-basis:  100%;
+                    @media #{$wide-screen} {
+                        flex-basis:    100%;
+                        border-top:    1rem solid transparent;
+                        border-bottom: 1rem solid transparent;
+                    }
+
+                    @media #{$medium-width} {
+                        flex-basis:    100%;
+                        border-top:    0.75rem solid transparent;
+                        border-bottom: 0.75rem solid transparent;
                     }
 
                     @media #{$narrow-screen} {
@@ -1034,34 +1046,15 @@ body.aggregate-style {
                         }
                     }
 
-                    .title {
-                        @media #{$not-narrow-screen} {
-                            // NOTE: Increase clickable area
-                            border-bottom: 0.5rem solid transparent;
-                        }
-
-                        @media #{$wide-screen} {
-                            padding-top: $wide-title-open-pad;
-                        }
-                        @media #{$medium-width} {
-                            padding-top: $medium-title-open-pad;
-                        }
-
-                        @include Firefox-only {
-                            @media #{$wide-screen} {
-                                padding-top: $ff-wide-title-open-pad;
-                            }
-                            @media #{$medium-width} {
-                                padding-top: $ff-medium-title-open-pad;
-                            }
-                        }
-                    }
-
                     .repository {
 
+                        @media #{$not-narrow-screen} {
+                            margin-top: 0;
+                        }
+
                         @media #{$narrow-screen} {
-                            position: sticky;
-                            top:      0;
+                            position:   sticky;
+                            top:        0;
                         }
 
                         &.internetArchive img {
@@ -1083,17 +1076,11 @@ body.aggregate-style {
                 }
 
                 > .value.field-Title {
-                    .title {
 
+                    .title {
                         overflow:      hidden;
                         white-space:   nowrap;
                         text-overflow: ellipsis;
-
-                        // NOTE: Increase clickable area:
-                        @media #{$not-narrow-screen} {
-                            border-top:    0.5rem solid transparent;
-                            border-bottom: 0.5rem solid transparent;
-                        }
                     }
                 }
 
@@ -1158,10 +1145,7 @@ body.aggregate-style {
 
                             $fg-color:     red;
                             $bg-color:     white;
-                            $v-shift:      0.25rem;
-                            $h-shift:      0.125rem;
 
-                            margin-top:    $v-shift;
                             margin-right:  -$h-shift;
                             color:         $fg-color;
                             background:    $bg-color;
@@ -1243,12 +1227,15 @@ body.aggregate-style {
                             margin-top: $medium-title-open-pad;
                         }
 
-                        @include Firefox-only {
+                        &.error,
+                        &.exile {
                             @media #{$wide-screen} {
-                                margin-top: $ff-wide-title-open-pad;
+                                margin-top:
+                                    $wide-title-open-pad - ($v-shift / 2);
                             }
                             @media #{$medium-width} {
-                                margin-top: $ff-medium-title-open-pad;
+                                margin-top:
+                                    $medium-title-open-pad - ($v-shift / 2);
                             }
                         }
                     }
@@ -1269,6 +1256,163 @@ body.aggregate-style {
                                 box-shadow: #{$border}, #{$shadow};
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    //=========================================================================
+    // NOTE: Temporary(?) search scores
+    //=========================================================================
+
+    .search-list {
+
+        $score-fields-bg: lightgray;
+
+        @mixin score-fields {
+            &.field-CreatorScore,
+            &.field-IdentifierScore,
+            &.field-KeywordScore,
+            &.field-PublisherScore,
+            &.field-RemediationDate,
+            &.field-SortDate,
+            &.field-TitleScore {
+                font-weight: bold;
+                background:  $score-fields-bg;
+                @content;
+            }
+        }
+
+        .search-list-item {
+
+            .field-RetrievalLink {
+                margin-bottom: 0.25rem;
+            }
+
+            > .label {
+                @include score-fields {
+                    box-shadow: 0.375rem 0 0 0.625rem $score-fields-bg;
+                }
+                @media #{$narrow-screen} {
+                    @include score-fields {
+                        box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
+                    }
+                }
+            }
+
+            > .value {
+                @include score-fields {
+                    box-shadow: -0.625rem 0 0 0.625rem $score-fields-bg;
+                }
+                @media #{$narrow-screen} {
+                    @include score-fields {
+                        box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
+                    }
+                }
+            }
+
+            > .value.field-Title {
+
+                .repository {
+                    @media #{$narrow-screen} {
+                        flex-basis: 75vw;
+                    }
+                }
+
+                .item-score {
+
+                    min-width:     1.75rem;
+                    margin:        auto 0;
+                    padding:       0.25rem;
+                    font-family:   monospace;
+                    font-size:     smaller;
+                    text-align:    center;
+                    word-break:    keep-all;
+                    color:         green;
+                    background:    white;
+                    border:        2px solid green;
+                    border-radius: 0.25rem;
+
+                    @media #{$wide-screen} {
+                        margin-left: 1rem;
+                    }
+
+                    @media #{$medium-width} {
+                        margin-left: 0.5rem;
+                    }
+
+                    @media #{$narrow-screen} {
+                        margin-left: 1rem;
+                    }
+
+                    &.error {
+                        color:        red;
+                        border-color: red;
+                    }
+
+                    &.disabled {
+                        color:        darkgray;
+                        border-color: darkgray;
+                    }
+                }
+            }
+        }
+
+        .search-list-item.open {
+
+            > .value.field-Title {
+
+                .item-score {
+
+                    @media #{$wide-screen} {
+                        margin-top:    $wide-title-open-pad   + ($v-shift / 2);
+                    }
+                    @media #{$medium-width} {
+                        margin-top:    $medium-title-open-pad + ($v-shift / 2);
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+
+        .search-list-item.colorized {
+
+            > .value.field-Title {
+
+                .identity-number {
+
+                    @media #{$narrow-screen} {
+                        margin-right: 2rem;
+                        flex:         0 1 auto;
+                    }
+
+                    &.error,
+                    &.exile {
+                        @media #{$narrow-screen} {
+                            margin-right: 2rem - ($v-shift / 2);
+                        }
+                    }
+                }
+
+                .repository {
+                    @media #{$narrow-screen} {
+                        flex-basis: 25vw;
+                    }
+                }
+
+                .item-score {
+
+                    border-radius: 0;
+
+                    @media #{$wide-screen} {
+                        box-shadow: -1rem     0 0 1.125rem white;
+                    }
+                    @media #{$medium-width} {
+                        box-shadow: -0.5rem   0 0 0.75rem  white;
+                    }
+                    @media #{$narrow-screen} {
+                        box-shadow: -0.625rem 0 0 0.625rem white;
                     }
                 }
             }
@@ -1401,6 +1545,49 @@ body.grid-style {
                     } @else {
                         display: none !important;
                     }
+                }
+            }
+        }
+    }
+}
+
+body.aggregate-style {
+
+    .search-list {
+
+        .search-list-item {
+
+            > .value.field-Title {
+
+                .item-date,
+                .item-number {
+
+                    display:     inline-block;
+                    margin-left: 0.5rem;
+                    padding:     0 0.5rem;
+                    color:       black;
+                    background:  whitesmoke;
+                    box-shadow:  inset 0 0 0 1px gray;
+
+                    @media #{$not-wide-screen} {
+                        padding: 0 0.375rem;
+                    }
+                }
+
+                .item-date {
+                    margin-left: 0.75rem;
+                    font-weight: normal;
+                }
+            }
+        }
+
+        .search-list-item.colorized {
+
+            > .value.field-Title {
+
+                .item-date,
+                .item-number {
+                    background:  white;
                 }
             }
         }

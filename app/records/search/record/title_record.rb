@@ -13,6 +13,10 @@ __loading_begin(__FILE__)
 #
 class Search::Record::TitleRecord < Search::Api::Record
 
+  include Search::Shared::CreatorMethods
+  include Search::Shared::DateMethods
+  include Search::Shared::IdentifierMethods
+  include Search::Shared::LinkMethods
   include Search::Shared::TitleMethods
 
   # ===========================================================================
@@ -24,6 +28,8 @@ class Search::Record::TitleRecord < Search::Api::Record
   schema do
     has_many :records, RECORD_CLASS
   end
+
+  delegate_missing_to :exemplar
 
   # ===========================================================================
   # :section:
@@ -46,19 +52,37 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     DEFAULT_LEVEL_NAME = 'v.'
 
-    MATCH_FIELDS = %i[emma_titleId emma_repository dc_title].freeze
+    MATCH_FIELDS = %i[emma_titleId normalized_title emma_repository].freeze
 
-    SORT_FIELDS = %i[title repository version format].freeze
+    SORT_FIELDS = %i[title repository item_number format item_date].freeze
 
-    # Patterns where, if matching a substring, $1 is the version level name.
+    # A pattern matching a complete level name and value, where:
     #
-    # @type [Array<Regexp>]
+    #   $1 is the level name
+    #   $2 is a number, or a sequence of numbers/ranges
     #
-    NAME_PATTERNS = [
-      /^([[:alpha:]]+)\.\s*(?=\d)/,   # E.g. oclc:5245282
-      /^([[:alpha:].]+)(?=\d)/,       # E.g. oclc:37933152
-      /^(volumes?|vols?\.?|v\.?)\s*/i
-    ].deep_freeze
+    # @type [Regexp]
+    #
+    NUMBER_PATTERN =
+      /([[:alpha:].]+)\s*(\d[\d\s&,#{EN_DASH}#{EM_DASH}-]*)\s*/.freeze
+
+    # A pattern matching a likely item number.
+    #
+    # @type [Regexp]
+    #
+    LEADING_ITEM_NUMBER = Regexp.new('^' + NUMBER_PATTERN.source).freeze
+
+    # A pattern matching a likely year number.
+    #
+    # @type [Regexp]
+    #
+    YEAR_PATTERN = /(?<=^|\W)(\d{4})(?=\W|$)/.freeze
+
+    # A pattern seen for years appended to item numbers.
+    #
+    # @type [Regexp]
+    #
+    TRAILING_YEAR = /(?<=^|[^\d])(\d{4})[)\s]*$/.freeze
 
     # =========================================================================
     # :section:
@@ -66,22 +90,52 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     public
 
-    # Reduce a hierarchy of versioning numbers to a single value.
+    # Normalize a level numbering name.
+    #
+    # @param [String]
+    #
+    # @return [String]
+    #
+    def number_name(name)
+      name = name.to_s.strip.delete_suffix('.').presence&.singularize
+      name << '.' if (1..2).cover?(name&.size)
+      name&.downcase || DEFAULT_LEVEL_NAME
+    end
+
+    # Reduce a hierarchy of numbering levels to a single value.
     #
     # @param [Hash] levels
     #
-    # @return [Float, Integer]
+    # @return [Float]
     #
     #--
     # noinspection RubyUnusedLocalVariable
     #++
-    def number(levels)
+    def number_value(levels)
       factor = nil
-      levels.reduce(0) do |result, type_entry|
+      levels.reduce(0.0) do |result, type_entry|
         _type, entry = type_entry
-        factor = factor ? (factor * 10) : 1
+        factor = factor ? (factor * 10.0) : 1.0
         (value = entry&.dig(:min)) ? (result += value / factor) : result
       end
+    end
+
+    # Reduce a hierarchy of numbering levels to a pair of single values.
+    #
+    # @param [Hash] levels
+    #
+    # @return [(Float,Float)]         Min and max level numbers.
+    #
+    def number_range(levels)
+      r_min = r_max = 0.0
+      factor = nil
+      levels.values.each do |entry|
+        factor = factor ? (factor * 10.0) : 1.0
+        v_min, v_max = entry&.values_at(:min, :max)
+        r_min += v_min / factor if v_min
+        r_max += v_max / factor if (v_max ||= v_min)
+      end
+      return r_min, r_max
     end
 
     # =========================================================================
@@ -120,6 +174,16 @@ class Search::Record::TitleRecord < Search::Api::Record
       rec&.emma_repository&.strip&.presence
     end
 
+    # Item repository record ID.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def repo_id(rec)
+      rec&.emma_repositoryRecordId&.strip&.presence
+    end
+
     # Item format.
     #
     # @param [Search::Record::MetadataRecord, nil] rec
@@ -140,7 +204,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       rec&.dc_description&.strip&.presence
     end
 
-    # Item version extracted from #description for HathiTrust items, or from
+    # Item numbering extracted from #description for HathiTrust items, or from
     # the repository record ID for selected Internet Archive items.
     #
     # The result allows for a hierarchy of parts, e.g. "vol. 2 pt. 7-12" would
@@ -148,29 +212,48 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Search::Record::MetadataRecord, nil] rec
     #
-    # @return [Search::Record::TitleRecord::Version, nil]
+    # @return [Search::Record::TitleRecord::Number, nil]
     #
     # == Implementation Notes
     # * Only HathiTrust items consistently use the description field to hold
-    #   the version/chapter/number of the item.
+    #   the volume/chapter/number of the item.
     #
     # * The heuristic for Internet Archive items is pretty much guesswork.  The
     #   digits in the identifier following the leading term appear to be "0000"
     #   for standalone items; in items where the number appears to represent a
     #   volume, it always starts with a zero, e.g.: "0001", "0018", etc.
     #
-    def version(rec)
-      case rec&.emma_repository&.to_sym
-        when :internetArchive
-          v = rec&.emma_repositoryRecordId&.presence
-          v = v&.sub(/^[a-z].*?[a-z_.](0\d\d\d).*$/i, '\1')
-          v = positive(v)
-        when :hathiTrust
-          v = description(rec)
-        else
-          v = description(rec)
+    def item_number(rec)
+      # noinspection RubyCaseWithoutElseBlockInspection
+      value =
+        case repository(rec)&.to_sym
+          when :internetArchive
+            positive(repo_id(rec)&.sub(/^[a-z].*?[a-z_.]0(\d\d\d).*$/i, '\1'))
+          when :hathiTrust
+            description(rec)
+        end
+      value &&= Search::Record::TitleRecord::Number.new(value)
+      value if (1...1000).cover?(value&.number_value)
+    end
+
+    # Item date extracted from description, title or :dcterms_copyrightDate.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def item_date(rec)
+      date = description(rec)
+      date = nil unless date&.match?(YEAR_PATTERN)
+      date = nil if date&.match?(LEADING_ITEM_NUMBER)
+      date &&= (Date.parse(date) rescue nil)
+      if date
+        $stderr.puts "--------------- Date   | date = #{date.inspect}"
+        date.to_s.delete_suffix('-01').delete_suffix('-01')
+      else
+        $stderr.puts "--------------- Date   | copyright = #{rec&.dcterms_dateCopyright.inspect}"
+        rec&.dcterms_dateCopyright&.match(YEAR_PATTERN) && $1
       end
-      Search::Record::TitleRecord::Version.new(v) if v.present?
     end
 
     # =========================================================================
@@ -186,14 +269,8 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>*}]
     #
     def match_fields(rec)
-      extract_fields(MATCH_FIELDS, rec)
+      extract_fields(rec, *MATCH_FIELDS)
     end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
 
     # sort_fields
     #
@@ -202,27 +279,38 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>*}]
     #
     def sort_fields(rec)
-      extract_fields(SORT_FIELDS, rec)
+      extract_fields(rec, *SORT_FIELDS)
     end
 
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    protected
+    # sort_keys
+    #
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    #
+    # @return [Array]
+    #
+    def sort_keys(rec)
+      # noinspection RubyMismatchedReturnType
+      sort_fields(rec).values.flat_map do |v|
+        v.try(:number_range) || v || 0
+      end
+    end
 
     # extract_fields
     #
-    # @param [Array<Symbol>]                           fields
     # @param [Search::Record::MetadataRecord, Hash, *] rec
+    # @param [Array<Symbol,Array<Symbol>>]             fields
     #
     # @return [Hash{Symbol=>*}]
     #
-    def extract_fields(fields, rec)
+    def extract_fields(rec, *fields)
+      fields = fields.flatten
+      fields.compact!
+      fields.map!(&:to_sym)
       case rec
-        when Hash then fields.map { |f| [f, (rec[f] || rec[f.to_s])] }.to_h
-        else           fields.map { |f| [f, (rec.try(f) || try(f, rec))] }.to_h
+        when Hash then fields.map! { |f| [f, (rec[f] || rec[f.to_s])] }
+        else           fields.map! { |f| [f, (rec.try(f) || try(f, rec))] }
       end
+      fields.to_h
     end
 
     # =========================================================================
@@ -239,7 +327,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   include Methods
 
-  # Item version extracted from #description.
+  # Item numbering extracted from #description.
   #
   # The result allows for a hierarchy of parts, e.g. "vol. 2 pt. 6-18" would
   # result in:
@@ -247,14 +335,12 @@ class Search::Record::TitleRecord < Search::Api::Record
   #   { 'v' => { name: 'vol.', min: 2, max: 2 },
   #     'p' => { name: 'pt.',  min: 6, max: 18 } }
   #
-  # @see Search::Record::TitleRecord#sort!
-  #
-  class Version
+  class Number
 
     include Emma::Common
     include Emma::Unicode
 
-    include Methods
+    include Search::Record::TitleRecord::Methods
 
     # =========================================================================
     # :section:
@@ -262,9 +348,11 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     public
 
-    # A single version level entry.
+    # A single numbering level entry.
     #
     class Level < Hash
+
+      include Search::Record::TitleRecord::Methods
 
       # =======================================================================
       # :section:
@@ -274,31 +362,49 @@ class Search::Record::TitleRecord < Search::Api::Record
 
       # Initialize a new level entry.
       #
-      # @param [String, nil]  name
-      # @param [Integer, nil] min_val
-      # @param [Integer, nil] max_val
+      # @param [Hash] opt             Passed to #update!
       #
-      def initialize(name = nil, min_val = nil, max_val = nil)
-        max_val ||= min_val
-        self[:name] = name&.dup
-        self[:min]  = min_val
-        self[:max]  = max_val
+      def initialize(**opt)
+        update!(**opt)
       end
 
       # Update :min/:max values if appropriate; set :name if missing.
       #
-      # @param [String, nil]  name
-      # @param [Integer, nil] min_val
-      # @param [Integer, nil] max_val
+      # @param [String]  name
+      # @param [Integer] min_val
+      # @param [Integer] max_val
+      # @param [String]  range
       #
       # @return [self]
       #
-      def update!(name = nil, min_val = nil, max_val = nil)
-        max_val ||= min_val
-        self[:name] = name&.dup if self[:name].nil? && name
-        self[:min]  = min_val   if self[:min].nil?  || (min_val < self[:min])
-        self[:max]  = max_val   if self[:max].nil?  || (max_val > self[:max])
+      def update!(name: nil, min_val: nil, max_val: nil, range: nil)
+        # Clean leading zeros from distinct digit sequences.
+        range = range&.gsub(/(?<=^|\W)0+(\d+)(?=\W|$)/, '\1')
+        range = nil if range == self[:range]
+        name  = number_name(name)
+        name  = nil if name == self[:name]
+
+        min, max = values_at(:min, :max)
+        rng_min, rng_max = range&.split(/[^\d]+/)&.map(&:to_i)&.minmax
+        min_val ||= rng_min || min || 0
+        max_val ||= rng_max || max || min_val
+
+        self[:name]  = name    if name
+        self[:min]   = min_val if (new_min = min.nil? || (min_val < min))
+        self[:max]   = max_val if (new_max = max.nil? || (max_val > max))
+        self[:range] = nil     if new_min || new_max || range
+        self[:range] ||= range || [min_val, max_val].uniq.join('-')
         self
+      end
+
+      # =======================================================================
+      # :section: Object overrides
+      # =======================================================================
+
+      public
+
+      def to_s
+        values_at(:name, :range).join(' ')
       end
 
     end
@@ -309,7 +415,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     public
 
-    # Levels of version numbering extracted from the item.
+    # Levels of numbering extracted from the item.
     #
     # @return [Hash{String=>Level}]
     #
@@ -321,7 +427,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     public
 
-    # Item version extracted from #description or a direct version number.
+    # Item numbering extracted from #description or a direct level number.
     #
     # The result allows for a hierarchy of parts, e.g. "vol. 2 pt. 7-12" would
     # result in { 'v' => 2..2, 'p' => 7..12 }
@@ -333,20 +439,17 @@ class Search::Record::TitleRecord < Search::Api::Record
       # noinspection RubyMismatchedParameterType
       if term.is_a?(Integer)
         name, type   = name_type
-        @level[type] = Level.new(name, term)
-      else
-        term.strip.split(/\s*[#{EN_DASH}#{EM_DASH},-]+\s*/).each do |range|
-          name, type = name_type
-          range.split(/(?<=\d)\s+/).each do |part|
-            next if part.blank?
-            original = part.dup # TODO: remove
-            NAME_PATTERNS.any? { |pattern| part.sub!(pattern, '') }
-            name, type = name_type($1) if $1
-            next unless (value = positive(part))
-            @level[type]&.update!(name, value)
-            @level[type] ||= Level.new(name, value)
-            $stderr.puts "------ Version | part(before) = #{original.inspect} | part(after) = #{part.inspect} | $1 = #{$1.inspect} | name = #{name.inspect} | type = #{type.inspect} | value = #{value.inspect} | @level = #{@level.inspect} | number = #{number.inspect}"
-          end
+        @level[type] = Level.new(name: name, min_val: term)
+      elsif !(term = term.strip).match?(YEAR_PATTERN)
+        leader = '---' # TODO: remove
+        term.scan(NUMBER_PATTERN) do |match|
+          name, range = match
+          name, type  = name_type(name)
+          next if range.remove!(/[^\d]+$/).blank?
+          @level[type]&.update!(name: name, range: range)
+          @level[type] ||= Level.new(name: name, range: range)
+          $stderr.puts "------------#{leader} Number | text = #{match.join(' ').inspect} | name = #{name.inspect} | type = #{type.inspect} | range = #{range.inspect} | @level = #{@level.inspect} | number_value = #{number_value.inspect} | number_range = #{number_range.inspect}"
+          leader = '   ' # TODO: remove
         end
       end
     end
@@ -359,14 +462,12 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Make the level name and type.
     #
-    # @param [String, nil] value      Default: `#DEFAULT_LEVEL_NAME`.
+    # @param [String, nil] value      @see #number_name
     #
     # @return [(String,String)]       Normalized name and entry type.
     #
     def name_type(value = nil)
-      name    = value.presence&.singularize
-      name[0] = name[0].downcase if name
-      name  ||= DEFAULT_LEVEL_NAME
+      name = number_name(value)
       return name, name[0]
     end
 
@@ -376,14 +477,34 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     public
 
-    # Reduce a hierarchy of versioning numbers to a single value.
+    # Reduce a hierarchy of numbering levels to a single value.
     #
     # @param [Hash, nil] levels       Default: `#level`.
     #
     # @return [Float, Integer]
     #
-    def number(levels = nil)
+    def number_value(levels = nil)
       super(levels || @level)
+    end
+
+    # Reduce a hierarchy of numbering levels to a pair of single values.
+    #
+    # @param [Hash, nil] levels       Default: `#level`.
+    #
+    # @return [(Float,Float)]         Min and max level numbers.
+    #
+    def number_range(levels = nil)
+      super(levels || @level)
+    end
+
+    # =========================================================================
+    # :section: Object overrides
+    # =========================================================================
+
+    public
+
+    def to_s
+      @level.values.join(', ')
     end
 
   end
@@ -403,6 +524,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     opt ||= {}
     super(nil, **opt)
     initialize_attributes
+    $stderr.puts '------------ TitleRecord ------------' # TODO: remove
     Array.wrap(src).each { |rec| add(rec, false) }.presence and sort!
   end
 
@@ -424,9 +546,9 @@ class Search::Record::TitleRecord < Search::Api::Record
     if (mismatches = problems(rec)).present?
       Log.warn { "#{self.class}##{__method__}: %s" % mismatches.join('; ') }
     else
+      $stderr.puts "                #{rec.emma_titleId} | #{rec.emma_recordId} | #{rec.dc_title.inspect} | #{rec.normalized_title.inspect}" # TODO: remove
       self.records << rec.deep_dup
-      # noinspection RubyMismatchedReturnType
-      false?(sort) ? records : sort!
+      sort ? sort! : records
     end
   end
 
@@ -470,14 +592,8 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Search::Record::MetadataRecord>]
   #
-  # @see #version_number
-  #
   def sort!
-    records.sort_by! do |rec|
-      sort_fields(rec).values.map do |v|
-        v.try(:number) || v || 0
-      end
-    end
+    records.sort_by! { |rec| sort_keys(rec) }
   end
 
   # The record element used as the source of bibliographic metadata.
@@ -506,6 +622,10 @@ class Search::Record::TitleRecord < Search::Api::Record
     super(rec || exemplar)
   end
 
+  def repo_id(rec = nil)
+    super(rec || exemplar)
+  end
+
   def format(rec = nil)
     super(rec || exemplar)
   end
@@ -514,7 +634,11 @@ class Search::Record::TitleRecord < Search::Api::Record
     super(rec || exemplar)
   end
 
-  def version(rec = nil)
+  def item_number(rec = nil)
+    super(rec || exemplar)
+  end
+
+  def item_date(rec = nil)
     super(rec || exemplar)
   end
 
@@ -530,6 +654,10 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   def sort_fields(rec = nil)
     rec and super(rec) or @sort_fields ||= super(exemplar)
+  end
+
+  def sort_keys(rec = nil)
+    super(rec || exemplar)
   end
 
 end

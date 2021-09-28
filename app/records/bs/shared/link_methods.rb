@@ -25,8 +25,7 @@ module Bs::Shared::LinkMethods
   # @return [nil]                     If *rel_name* is not valid or present.
   #
   def get_link(rel_name)
-    # noinspection RailsParamDefResolve
-    array = Array.wrap(try(:links)).compact.presence or return
+    array = Array.wrap(links).compact.presence or return
     keys  = Array.wrap(rel_name).map(&:to_s).uniq
     array.find { |link| break link.href.presence if keys.include?(link.rel) }
   end
@@ -44,8 +43,7 @@ module Bs::Shared::LinkMethods
   # @return [nil]                     If links are not valid or present.
   #
   def record_links(**opt)
-    # noinspection RailsParamDefResolve
-    array  = Array.wrap(try(:links)).compact.presence or return
+    array  = Array.wrap(links).compact.presence or return
     only   = Array.wrap(opt[:only]).compact.map(&:to_s).uniq.presence
     except = Array.wrap(opt[:except]).compact.map(&:to_s)
     except << 'self' unless opt[:self]

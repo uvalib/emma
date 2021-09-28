@@ -66,6 +66,7 @@ __loading_begin(__FILE__)
 #
 class AwsS3::Record::SubmissionRequest < AwsS3::Api::Record
 
+  include AwsS3::Shared::CreatorMethods
   include AwsS3::Shared::DateMethods
   include AwsS3::Shared::IdentifierMethods
   include AwsS3::Shared::TitleMethods

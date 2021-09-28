@@ -7,11 +7,6 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to user identities.
 #
-# Attributes supplied by the including module:
-#
-# @attr [String] emailAddress
-# @attr [String] username
-#
 module Bs::Shared::AccountMethods
 
   # Non-functional hints for RubyMine type checking.
@@ -60,6 +55,7 @@ module Bs::Shared::AccountMethods
   # @return [String]
   #
   def identifier
+    # noinspection RailsParamDefResolve
     (try(:username) || try(:emailAddress) || name).to_s
   end
 

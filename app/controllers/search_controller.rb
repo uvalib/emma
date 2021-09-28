@@ -88,8 +88,10 @@ class SearchController < ApplicationController
     q_params, s_params = partition_hash(s_params, *search_query_keys)
     q_params.compact_blank!
     if q_params.present?
-      opt   = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
-      @list = result = search_api.get_records(**opt)
+      opt    = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+      result = search_api.get_records(**opt)
+      result.calculate_scores!(**opt) unless default_style?
+      @list = result
       @list = Search::Message::SearchTitleList.new(result) if aggregate_style?
       pagination_finalize(@list, :records, **opt)
       save_search(**opt)                  unless playback

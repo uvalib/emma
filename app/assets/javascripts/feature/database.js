@@ -8,10 +8,10 @@
  * An interface to the browser object store.
  *
  * @type {object}
+ * @property {function(string,?number)}                             setDatabase
  * @property {function(?string):string}                             defaultStore
  * @property {function(?string):StoreTemplate}                      getStoreTemplate
  * @property {function(string,StoreTemplate):Object<StoreTemplate>} addStoreTemplate
- * @property {function:IDBDatabase}                                 database
  * @property {function(string,?function)}                           openObjectStore
  * @property {function(string,?function)}                           clearObjectStore
  * @property {function(object|object[])}                            storeItems
@@ -20,6 +20,8 @@
  * @property {function(string,any,?function(number))}               countItems
  * @property {function(string,any,?function(IDBValidKey[]))}        lookupStoreKeys
  * @property {function(string,any)}                                 deleteItems
+ * @property {function:IDBDatabase}                                 database
+ * @property {function}                                             closeDatabase
  */
 let DB = (function() {
 
@@ -71,7 +73,7 @@ let DB = (function() {
      * @constant
      * @type {string}
      */
-    const DB_NAME = 'emma';
+    const DEFAULT_DB_NAME = 'emma';
 
     /**
      * Current version of the client database schemas.
@@ -79,7 +81,7 @@ let DB = (function() {
      * @constant
      * @type {number}
      */
-    const DB_VERSION = 1;
+    const DEFAULT_DB_VERSION = 1;
 
     /**
      * Transaction modes.
@@ -107,6 +109,20 @@ let DB = (function() {
      * @type {IDBDatabase}
      */
     let db_handle;
+
+    /**
+     * The name of the current database.
+     *
+     * @type {string}
+     */
+    let db_name;
+
+    /**
+     * The version of the current database.
+     *
+     * @type {number}
+     */
+    let db_version;
 
     /**
      * Default object store name.
@@ -220,6 +236,30 @@ let DB = (function() {
     // ========================================================================
 
     /**
+     * Get/set the name of the current database.
+     *
+     * @param {string} [new_name]
+     *
+     * @returns {string}
+     */
+    function dbName(new_name) {
+        db_name = new_name || db_name || DEFAULT_DB_NAME;
+        return db_name;
+    }
+
+    /**
+     * Get/set the version of the current database.
+     *
+     * @param {number} [new_version]
+     *
+     * @returns {number}
+     */
+    function dbVersion(new_version) {
+        db_version = new_version || db_version || DEFAULT_DB_VERSION;
+        return db_version;
+    }
+
+    /**
      * Return *db_handle* or assign a new *db_handle* and set up generic event
      * handlers for it.
      *
@@ -230,15 +270,25 @@ let DB = (function() {
     function dbDatabase(new_db) {
         if (new_db && (db_handle !== new_db)) {
             const func = 'dbDatabase';
+
+            if (db_handle) {
+                dbCloseDatabase(func);
+            }
+
             db_handle = new_db;
             db_handle.onversionchange = event => dbSetupDatabase(event, func);
-            db_handle.onclose         = event => dbCloseDatabase(event, func);
+            db_handle.onclose         = event => onClose(event);
             db_handle.onabort         = event => onGenericAbort(event);
             db_handle.onerror         = event => onGenericError(event);
 
             // ================================================================
             // Event handlers
             // ================================================================
+
+            function onClose(event) {
+                dbLog(func, 'DATABASE CLOSING');
+                console.log(event);
+            }
 
             function onGenericAbort(event) {
                 dbWarn(func, 'OPERATION ABORTED');
@@ -287,39 +337,33 @@ let DB = (function() {
      */
     function dbSetupDatabase(arg, func, store_name = defaultStore()) {
         /** @type {IDBDatabase} */
-        const tgt_db = (arg instanceof IDBDatabase) ? arg : arg.target.result;
-        dbDatabase(tgt_db);
-        dbCreateObjectStore(store_name);
-        dbDebug(func, `"${store_name}" created for database "${tgt_db.name}"`);
-    }
-
-    /**
-     * Assign a new database to *db_handle*.
-     *
-     * @param {Event|IDBDatabase} arg
-     * @param {string}            func
-     */
-    function dbOpenDatabase(arg, func) {
-        /** @type {IDBDatabase} */
-        const tgt_db = (arg instanceof IDBDatabase) ? arg : arg.target.result;
-        dbDatabase(tgt_db);
-        dbDebug(func, `database "${tgt_db.name}" opened`);
+        const db      = (arg instanceof IDBDatabase) ? arg : arg.target.result;
+        const db_name = `"${db.name}"`;
+        try {
+            dbDatabase(db);
+            dbCreateObjectStore(store_name);
+            dbDebug(func, `"${store_name}" created for database ${db_name}`);
+        }
+        catch (error) {
+            dbError(func, `"${store_name}" failed for database ${db_name}`);
+            dbError(func, 'error', error);
+        }
     }
 
     /**
      * Close the current database.
      *
-     * @param {Event|IDBDatabase} arg
-     * @param {string}            func
+     * @param {string}      caller
+     * @param {IDBDatabase} [db]
      */
-    function dbCloseDatabase(arg, func) {
-        if (arg instanceof IDBDatabase) {
-            dbDebug(func, 'invoking IDBDatabase.close()...');
-            arg.close();
-        } else {
-            const db_name = arg.target.result.name;
-            dbDebug(func, `database "${db_name}" closed`);
-            db_handle = undefined;
+    function dbCloseDatabase(caller, db) {
+        let tgt_db = db || db_handle;
+        if (tgt_db) {
+            const clear = (tgt_db === db_handle);
+            const func  = caller || 'dbCloseDatabase';
+            dbLog(func, 'closing database', tgt_db.name);
+            tgt_db.close();
+            if (clear) { db_handle = undefined; }
         }
     }
 
@@ -412,6 +456,17 @@ let DB = (function() {
     // ========================================================================
 
     /**
+     * Specify the database name and version.
+     *
+     * @param {string} db_name
+     * @param {number} [db_version]
+     */
+    function setDatabase(db_name, db_version) {
+        dbName(db_name);
+        dbVersion(db_version);
+    }
+
+    /**
      * The default object store name.
      *
      * @param {string} [new_name]       Set the default if provided.
@@ -461,30 +516,19 @@ let DB = (function() {
     // ========================================================================
 
     /**
-     * Return a handle to the database.
-     *
-     * @note This is mostly here for console testing.
-     *
-     * @returns {IDBDatabase|undefined}
-     */
-    function database() {
-        return dbDatabase();
-    }
-
-    /**
      * openObjectStore
      *
      * @param {string}                [store_name]
      * @param {function(IDBDatabase)} [callback]
      */
     function openObjectStore(store_name = defaultStore(), callback) {
-        const func       = 'DB.openObjectStore';
-        const db_name    = DB_NAME;
-        const db_version = DB_VERSION;
-        const database   = `${db_name} (v${db_version})`;
+        const func     = 'DB.openObjectStore';
+        const name     = dbName();
+        const version  = dbVersion();
+        const database = `${name} (v${version})`;
         defaultStore(store_name);
 
-        let request = window.indexedDB.open(db_name, db_version);
+        let request = window.indexedDB.open(name, version);
         request.onupgradeneeded = event => dbSetupDatabase(event, func);
         request.onblocked       = event => onOpenBlocked(event);
         request.onerror         = event => onOpenError(event);
@@ -504,7 +548,7 @@ let DB = (function() {
         }
 
         function onOpenSuccess(event) {
-            dbOpenDatabase(event, func);
+            dbDatabase(event.target.result);
             callback && callback(dbDatabase());
         }
     }
@@ -575,7 +619,8 @@ let DB = (function() {
         const query = dbMakeIndexQueryArgs(index_key, index_value);
         const key   = query.name;
         const value = query.value;
-        let request = dbObjectStore(func, ...args).index(key).getAll(value);
+        let store   = dbObjectStore(func, ...args);
+        let request = store.index(key).getAll(value);
         dbRequest(func, request, function(event) {
             const items = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${items.length} items`);
@@ -596,7 +641,8 @@ let DB = (function() {
         const query = dbMakeIndexQueryArgs(index_key, index_value);
         const key   = query.name;
         const value = query.value;
-        let request = dbObjectStore(func, ...args).index(key).count(value);
+        let store   = dbObjectStore(func, ...args);
+        let request = store.index(key).count(value);
         dbRequest(func, request, function(event) {
             const number = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${number} items found`);
@@ -617,11 +663,12 @@ let DB = (function() {
         const func  = 'DB.lookupStoreKeys';
         const query = dbMakeIndexQueryArgs(index_key, index_value);
         const key   = query.name;
-        const val   = query.value;
-        let request = dbObjectStore(func, ...args).index(key).getAllKeys(val);
+        const value = query.value;
+        let store   = dbObjectStore(func, ...args);
+        let request = store.index(key).getAllKeys(value);
         dbRequest(func, request, function(event) {
             const keys = event.target.result;
-            dbDebug(func, `${key}="${val}"`, `${keys.length} keys`);
+            dbDebug(func, `${key}="${value}"`, `${keys.length} keys`);
             callback && callback(keys);
         });
     }
@@ -656,14 +703,45 @@ let DB = (function() {
     }
 
     // ========================================================================
+    // Functions
+    // ========================================================================
+
+    /**
+     * Return a handle to the database.
+     *
+     * @note For console testing.
+     *
+     * @returns {IDBDatabase|undefined}
+     */
+    function database() {
+        return dbDatabase();
+    }
+
+    /**
+     * Close the database.
+     *
+     * @note For console testing.
+     *
+     * @returns {IDBDatabase|undefined}
+     */
+    function closeDatabase() {
+        const func = 'closeDatabase';
+        if (db_handle) {
+            dbCloseDatabase(func);
+        } else {
+            dbLog(func, `database "${dbName()}" not open`);
+        }
+    }
+
+    // ========================================================================
     // Exposed definitions
     // ========================================================================
 
     return {
+        setDatabase:        setDatabase,
         defaultStore:       defaultStore,
         getStoreTemplate:   getStoreTemplate,
         addStoreTemplate:   addStoreTemplate,
-        database:           database,
         openObjectStore:    openObjectStore,
         clearObjectStore:   clearObjectStore,
         storeItems:         storeItems,
@@ -672,6 +750,8 @@ let DB = (function() {
         countItems:         countItems,
         lookupStoreKeys:    lookupStoreKeys,
         deleteItems:        deleteItems,
+        database:           database,
+        closeDatabase:      closeDatabase,
     };
 
 })();

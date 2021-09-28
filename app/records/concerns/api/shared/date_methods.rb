@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Api::Shared::DateMethods
 
+  include Api::Shared::CommonMethods
+
   extend self
 
   # ===========================================================================
