@@ -163,7 +163,7 @@
 /// Include a block of content that should only be activated when on Firefox.
 ///
 @mixin Firefox-only {
-    @supports (-moz-appearance:none) {
+    @supports (-moz-appearance: none) {
         @content;
     }
 }

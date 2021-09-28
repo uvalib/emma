@@ -59,7 +59,7 @@ module Record::Rendering
   #
   # @return [String, nil]
   #
-  # == Implementation Note
+  # == Implementation Notes
   # This exists solely to avoid a 'require' cycle by not making the module
   # dependent on Record::EmmaIdentification.
   #

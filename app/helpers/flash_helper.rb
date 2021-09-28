@@ -601,7 +601,7 @@ module FlashHelper
   #
   # @return [Integer]
   #
-  # == Usage Note
+  # == Usage Notes
   # This does not account for any separators that would be added when
   # displaying multiple items.
   #

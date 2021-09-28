@@ -441,7 +441,7 @@ let DB = (function() {
     /**
      * addStoreTemplate
      *
-     * @param {string}              store_name
+     * @param {string}        store_name
      * @param {StoreTemplate} properties
      *
      * @returns {Object<StoreTemplate>}
