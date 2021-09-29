@@ -361,7 +361,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {string}
      */
-    const DB_STORE_NAME = AGGREGATE_STYLE ? 'search_aggregate' : 'search_data';
+    const DB_STORE_NAME = 'search_data';
 
     /**
      * Properties for the DB_STORE_NAME object store.

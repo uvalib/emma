@@ -322,7 +322,7 @@ let DB = (function() {
                 index_options = { unique: false };
             }
             if (index_options) {
-                dbDebug(func, store_name, `creating index for "${key}"`);
+                dbLog(func, store_name, `creating index for "${key}"`);
                 store.createIndex(key, key, index_options);
             }
         });
@@ -337,15 +337,16 @@ let DB = (function() {
      */
     function dbSetupDatabase(arg, func, store_name = defaultStore()) {
         /** @type {IDBDatabase} */
-        const db      = (arg instanceof IDBDatabase) ? arg : arg.target.result;
-        const db_name = `"${db.name}"`;
+        const db   = (arg instanceof IDBDatabase) ? arg : arg.target.result;
+        const name = `"${db.name}"`;
+        dbLog(`dbSetupDatabase: store_name = "${store_name}"; db = ${name}`);
         try {
             dbDatabase(db);
             dbCreateObjectStore(store_name);
-            dbDebug(func, `"${store_name}" created for database ${db_name}`);
+            dbLog(func, `"${store_name}" created for database ${name}`);
         }
         catch (error) {
-            dbError(func, `"${store_name}" failed for database ${db_name}`);
+            dbError(func, `"${store_name}" failed for database ${name}`);
             dbError(func, 'error', error);
         }
     }
@@ -458,12 +459,12 @@ let DB = (function() {
     /**
      * Specify the database name and version.
      *
-     * @param {string} db_name
-     * @param {number} [db_version]
+     * @param {string} name
+     * @param {number} [version]
      */
-    function setDatabase(db_name, db_version) {
-        dbName(db_name);
-        dbVersion(db_version);
+    function setDatabase(name, version) {
+        dbName(name);
+        dbVersion(version);
     }
 
     /**
@@ -527,6 +528,7 @@ let DB = (function() {
         const version  = dbVersion();
         const database = `${name} (v${version})`;
         defaultStore(store_name);
+        dbLog(`${func}: store_name: ${default_store}; database: ${database}`);
 
         let request = window.indexedDB.open(name, version);
         request.onupgradeneeded = event => dbSetupDatabase(event, func);
@@ -565,7 +567,7 @@ let DB = (function() {
         const func  = 'DB.clearObjectStore';
         let request = dbObjectStore(func, store_name).clear();
         dbRequest(func, request, function(event) {
-            dbDebug(func, `"${store_name}" cleared`);
+            dbLog(func, `"${store_name}" cleared`);
             callback && callback(request.transaction.db);
         });
     }
