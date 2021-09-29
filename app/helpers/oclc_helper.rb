@@ -49,7 +49,7 @@ module OclcHelper
   #
   # @type [Regexp]
   #
-  OCLC_IDENTIFIER = /^\d{#{OCLC_MIN_DIGITS},}$/
+  OCLC_IDENTIFIER = /^(\d+[^\d]?)+\d$/
 
   # ===========================================================================
   # :section:
@@ -71,11 +71,9 @@ module OclcHelper
   def oclc_candidate?(s)
     text   = s.to_s.strip
     number = remove_oclc_prefix(text)
-    return true unless (number == text) || text.downcase.start_with?('on')
-    number.match?(OCLC_IDENTIFIER)
+    return true unless (number == text) || !text.match?(/^[^:]+\s*:/)
+    number.match?(OCLC_IDENTIFIER) && (number.count('0-9') >= OCLC_MIN_DIGITS)
   end
-
-  alias_method :ocn_candidate?, :oclc_candidate?
 
   # Indicate whether the string is a valid OCN.
   #
@@ -84,8 +82,6 @@ module OclcHelper
   def oclc?(s)
     to_oclc(s, log: false).present?
   end
-
-  alias_method :ocn?, :oclc?
 
   # If the value is an OCN return it in a normalized form or *nil* otherwise.
   #
@@ -113,8 +109,6 @@ module OclcHelper
       Log.info { "#{__method__}: #{s.inspect} is not a valid OCN" }
     end
   end
-
-  alias_method :to_ocn, :to_oclc
 
   # ===========================================================================
   # :section:

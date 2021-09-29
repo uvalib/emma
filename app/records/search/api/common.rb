@@ -191,15 +191,15 @@ class PublicationIdentifier < ScalarType
 
     public
 
-    # Type-cast an object to a PublicationIdentifier.
+    # Type-cast a value to a PublicationIdentifier.
     #
-    # @param [*] obj                  Value to use or transform.
+    # @param [*] v                    Value to use or transform.
     #
     # @return [PublicationIdentifier]
     # @return [nil]                   If *obj* is not a valid identifier.
     #
-    def cast(obj)
-      obj.is_a?(PublicationIdentifier) ? obj : create(obj) if obj.present?
+    def cast(v)
+      v.is_a?(PublicationIdentifier) ? v : create(v) if v.present?
     end
 
     # Create a new instance.
@@ -218,6 +218,7 @@ class PublicationIdentifier < ScalarType
         types = [Isbn, Issn, Lccn, Oclc, Upc]
       end
       types.find do |type|
+        next unless type.candidate?(number)
         result = Log.silence { type.new(number) }
         return result if result.valid?
       end
@@ -261,6 +262,20 @@ class PublicationIdentifier < ScalarType
   #
   def parts(v = nil)
     v ? super : [prefix, number]
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether a value could be used as a PublicationIdentifier.
+  #
+  # @param [String] v                 Value to check.
+  #
+  def self.candidate?(v)
+    prefix(v) == prefix
   end
 
   # ===========================================================================
@@ -344,6 +359,20 @@ class Isbn < PublicationIdentifier
     v ? super : PREFIX
   end
 
+  # =========================================================================
+  # :section: PublicationIdentifier overrides
+  # =========================================================================
+
+  public
+
+  # Indicate whether a value could be used as a PublicationIdentifier.
+  #
+  # @param [String] v               Value to check.
+  #
+  def self.candidate?(v)
+    IsbnHelper.isbn_candidate?(v)
+  end
+
   # ===========================================================================
   # :section: ScalarType overrides
   # ===========================================================================
@@ -407,6 +436,20 @@ class Issn < PublicationIdentifier
   #
   def prefix(v = nil)
     v ? super : PREFIX
+  end
+
+  # =========================================================================
+  # :section: PublicationIdentifier overrides
+  # =========================================================================
+
+  public
+
+  # Indicate whether a value could be used as a PublicationIdentifier.
+  #
+  # @param [String] v               Value to check.
+  #
+  def self.candidate?(v)
+    IssnHelper.issn_candidate?(v)
   end
 
   # ===========================================================================
@@ -474,6 +517,20 @@ class Oclc < PublicationIdentifier
     v ? super : PREFIX
   end
 
+  # =========================================================================
+  # :section: PublicationIdentifier overrides
+  # =========================================================================
+
+  public
+
+  # Indicate whether a value could be used as a PublicationIdentifier.
+  #
+  # @param [String] v               Value to check.
+  #
+  def self.candidate?(v)
+    OclcHelper.oclc_candidate?(v)
+  end
+
   # ===========================================================================
   # :section: ScalarType overrides
   # ===========================================================================
@@ -539,6 +596,20 @@ class Lccn < PublicationIdentifier
     v ? super : PREFIX
   end
 
+  # =========================================================================
+  # :section: PublicationIdentifier overrides
+  # =========================================================================
+
+  public
+
+  # Indicate whether a value could be used as a PublicationIdentifier.
+  #
+  # @param [String] v               Value to check.
+  #
+  def self.candidate?(v)
+    LccnHelper.lccn_candidate?(v)
+  end
+
   # ===========================================================================
   # :section: ScalarType overrides
   # ===========================================================================
@@ -602,6 +673,20 @@ class Upc < PublicationIdentifier
   #
   def prefix(v = nil)
     v ? super : PREFIX
+  end
+
+  # =========================================================================
+  # :section: PublicationIdentifier overrides
+  # =========================================================================
+
+  public
+
+  # Indicate whether a value could be used as a PublicationIdentifier.
+  #
+  # @param [String] v               Value to check.
+  #
+  def self.candidate?(v)
+    UpcHelper.upc_candidate?(v)
   end
 
   # ===========================================================================

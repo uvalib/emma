@@ -39,7 +39,7 @@ module IssnHelper
   #
   # @type [Regexp]
   #
-  ISSN_IDENTIFIER = /^(\d+[^\d]?)+(\d|X)$/i
+  ISSN_IDENTIFIER = /^(\d+[^\d]?)+(\d|X)$/
 
   # ===========================================================================
   # :section:

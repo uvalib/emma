@@ -35,7 +35,7 @@ module UpcHelper
   #
   # @type [Regexp]
   #
-  UPC_IDENTIFIER = /^\d{#{UPC_DIGITS},}$/
+  UPC_IDENTIFIER = /^(\d+[^\d]?)+\d$/
 
   # ===========================================================================
   # :section:

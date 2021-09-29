@@ -45,7 +45,7 @@ module IsbnHelper
   #
   # @type [Regexp]
   #
-  ISBN_IDENTIFIER = /^(\d+[^\d]?)+(\d|X)$/i
+  ISBN_IDENTIFIER = /^(\d+[^\d]?)+(\d|X)$/
 
   # ===========================================================================
   # :section:
