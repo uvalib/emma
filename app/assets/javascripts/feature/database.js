@@ -5,44 +5,98 @@
 //= require shared/logging
 
 /**
+ * RecordProperties
+ *
+ * @note The optional "default" entry is only used by the database client.
+ *
+ * @typedef {{
+ *     default: ?*,
+ *     index:   ?(boolean|IDBIndexParameters),
+ *     func:    ?function:IDBValidKey,
+ * }} RecordProperties
+ */
+
+/**
+ * StoreTemplate
+ *
+ * @typedef {{
+ *     options: IDBObjectStoreParameters,
+ *     record:  Object<RecordProperties>,
+ * }} StoreTemplate
+ */
+
+/**
+ * DatabaseProperties
+ *
+ * @typedef {{
+ *      name:     string,
+ *      version:  number,
+ *      store:    string,
+ *      template: Object<StoreTemplate>,
+ * }} DatabaseProperties
+ */
+
+/**
+ * @typedef {Object<StoreTemplate>} StoreTemplates
+ */
+
+/**
+ * @typedef {
+ *      function(StoreTemplates|string,?StoreTemplate):StoreTemplates
+ * } FunctionStoreTemplate
+ */
+
+/**
+ * @typedef {
+ *      function(StoreTemplates|string,?StoreTemplate):StoreTemplates
+ * } FunctionObjectStore
+ */
+
+/**
+ * @typedef {
+ *      function(?function(IDBCursorWithValue|null,?number))
+ * } FunctionWithCursorCallback
+ */
+
+/**
+ * @typedef {
+ *      function(string,any,?function(object[]))
+ * } FunctionWithObjectsCallback
+ */
+
+/**
+ * @typedef {
+ *      function(string,any,?function(number))
+ * } FunctionWithNumberCallback
+ */
+
+/**
+ * @typedef {
+ *      function(string,any,?function(IDBValidKey[]))
+ * } FunctionWithKeysCallback
+ */
+
+/**
  * An interface to the browser object store.
  *
  * @type {object}
- * @property {function(string,?number)}                             setDatabase
- * @property {function(?string):string}                             defaultStore
- * @property {function(?string):StoreTemplate}                      getStoreTemplate
- * @property {function(string,StoreTemplate):Object<StoreTemplate>} addStoreTemplate
- * @property {function(string,?function)}                           openObjectStore
- * @property {function(string,?function)}                           clearObjectStore
- * @property {function(object|object[])}                            storeItems
- * @property {function(?function(IDBCursorWithValue|null,?number))} fetchItems
- * @property {function(string,any,?function(object[]))}             lookupItems
- * @property {function(string,any,?function(number))}               countItems
- * @property {function(string,any,?function(IDBValidKey[]))}        lookupStoreKeys
- * @property {function(string,any)}                                 deleteItems
- * @property {function:IDBDatabase}                                 database
- * @property {function}                                             closeDatabase
+ * @property {function:DatabaseProperties}          getProperties
+ * @property {function(string,?number)}             setDatabase
+ * @property {function(?string):string}             defaultStore
+ * @property {function(?string):StoreTemplate}      getStoreTemplate
+ * @property {FunctionStoreTemplate}                addStoreTemplates
+ * @property {FunctionObjectStore}                  openObjectStore
+ * @property {FunctionObjectStore}                  clearObjectStore
+ * @property {function(object|object[], ?function)} storeItems
+ * @property {FunctionWithCursorCallback}           fetchItems
+ * @property {FunctionWithObjectsCallback}          lookupItems
+ * @property {FunctionWithNumberCallback}           countItems
+ * @property {FunctionWithKeysCallback}             lookupStoreKeys
+ * @property {function(string,any)}                 deleteItems
+ * @property {function:IDBDatabase}                 database
+ * @property {function}                             closeDatabase
  */
 let DB = (function() {
-
-    /**
-     * RecordProperties
-     *
-     * @typedef {{
-     *     default: ?*,
-     *     index:   ?(boolean|IDBIndexParameters),
-     *     func:    ?function:IDBValidKey,
-     * }} RecordProperties
-     */
-
-    /**
-     * StoreTemplate
-     *
-     * @typedef {{
-     *     options: IDBObjectStoreParameters,
-     *     record:  Object<RecordProperties>,
-     * }} StoreTemplate
-     */
 
     /**
      * IndexQueryValue
@@ -312,6 +366,7 @@ let DB = (function() {
     function dbCreateObjectStore(store_name = defaultStore()) {
         const func     = 'dbCreateObjectStore';
         const db       = dbDatabase();
+        dbLog(func, `creating "${store_name}" for database ${db.name}`);
         const template = getStoreTemplate(store_name);
         let store      = db.createObjectStore(store_name, template.options);
         $.each(template.record, function(key, properties) {
@@ -333,20 +388,19 @@ let DB = (function() {
      *
      * @param {Event|IDBDatabase} arg
      * @param {string}            func
-     * @param {string}            [store_name]
      */
-    function dbSetupDatabase(arg, func, store_name = defaultStore()) {
+    function dbSetupDatabase(arg, func) {
         /** @type {IDBDatabase} */
-        const db   = (arg instanceof IDBDatabase) ? arg : arg.target.result;
-        const name = `"${db.name}"`;
-        dbLog(`dbSetupDatabase: store_name = "${store_name}"; db = ${name}`);
+        const db     = (arg instanceof IDBDatabase) ? arg : arg.target.result;
+        const name   = `"${db.name}"`;
+        const stores = Object.keys(store_template);
         try {
+            dbLog(`dbSetupDatabase: db = ${name}; object stores = ${stores}`);
             dbDatabase(db);
-            dbCreateObjectStore(store_name);
-            dbLog(func, `"${store_name}" created for database ${name}`);
+            stores.forEach(store => dbCreateObjectStore(store));
         }
         catch (error) {
-            dbError(func, `"${store_name}" failed for database ${name}`);
+            dbError(func, `failed for database ${name}`);
             dbError(func, 'error', error);
         }
     }
@@ -445,8 +499,9 @@ let DB = (function() {
      * @returns {*}
      */
     function dbRequest(func, request, on_success, on_error) {
+        let log_err = () => dbError(func, 'request failed', request.error);
         request.onerror =
-            on_error || (() => dbError(func, 'request failed', request.error));
+            on_error ? (ev => log_err() || on_error(ev)) : (() => log_err());
         request.onsuccess =
             on_success || (() => dbDebug(func, 'request successful'));
         return request;
@@ -455,6 +510,20 @@ let DB = (function() {
     // ========================================================================
     // Functions
     // ========================================================================
+
+    /**
+     * The currently-set DB properties.
+     *
+     * @returns {DatabaseProperties}
+     */
+    function getProperties() {
+        return {
+            name:     db_name,
+            version:  db_version,
+            store:    default_store,
+            template: store_template,
+        };
+    }
 
     /**
      * Specify the database name and version.
@@ -475,7 +544,9 @@ let DB = (function() {
      * @returns {string|undefined}
      */
     function defaultStore(new_name) {
-        if (new_name) {
+        if (new_name && !store_template.hasOwnProperty(new_name)) {
+            dbError('defaultStore', `invalid store name "${new_name}"`);
+        } else if (new_name) {
             default_store = new_name;
         } else if (!default_store) {
             default_store = Object.keys(store_template)[0];
@@ -495,20 +566,28 @@ let DB = (function() {
     }
 
     /**
-     * addStoreTemplate
+     * addStoreTemplates
      *
-     * @param {string}        store_name
-     * @param {StoreTemplate} properties
+     * @param {Object<StoreTemplate>|string} store_name
+     * @param {StoreTemplate}                [template]
      *
      * @returns {Object<StoreTemplate>}
      */
-    function addStoreTemplate(store_name, properties) {
-        const func = 'addStoreTemplate';
-        if (store_template[store_name]) {
-            dbLog(func, `"${store_name}": already added`);
+    function addStoreTemplates(store_name, template) {
+        const func = 'addStoreTemplates';
+        let templates;
+        if (typeof store_name === 'object') {
+            templates = store_name;
         } else {
-            store_template[store_name] = { ...properties };
+            templates = Object.fromEntries([[store_name, template]]);
         }
+        $.each(templates, function(name, properties) {
+            if (store_template[name]) {
+                dbLog(func, `"${name}": already added`);
+            } else {
+                store_template[name] = { ...properties };
+            }
+        });
         return store_template;
     }
 
@@ -565,23 +644,37 @@ let DB = (function() {
      */
     function clearObjectStore(store_name = defaultStore(), callback) {
         const func  = 'DB.clearObjectStore';
-        let request = dbObjectStore(func, store_name).clear();
-        dbRequest(func, request, function(event) {
+        let store   = dbObjectStore(func, store_name)
+        let request = store.clear();
+        let if_err  = callback && (() => callback());
+        let if_ok   = function(event) {
             dbLog(func, `"${store_name}" cleared`);
             callback && callback(request.transaction.db);
-        });
+        }
+        dbRequest(func, request, if_ok, if_err);
     }
 
     /**
      * Persist one or more items to the database store.
      *
-     * @param {object|object[]}                           items
+     * @param {object|object[]} item
+     * @param {function}        [callback]  Called upon completion.
      * @param {...(IDBObjectStore|IDBTransaction|string)} [args]
      */
-    function storeItems(items, ...args) {
+    function storeItems(item, callback, ...args) {
         const func = 'DB.storeItems';
+        let items  = arrayWrap(item);
+        let count  = items.length;
+        if (!count) {
+            callback && callback();
+            return;
+        }
         let store  = dbObjectStore(func, ...args);
-        arrayWrap(items).forEach(item => dbRequest(func, store.add(item)));
+        let if_ok  = callback && (() => --count || callback());
+        let if_err = callback;
+        items.forEach(function(item) {
+            dbRequest(func, store.add(item), if_ok, if_err);
+        });
     }
 
     /**
@@ -594,8 +687,10 @@ let DB = (function() {
     function fetchItems(item_cb, ...args) {
         const func  = 'DB.fetchItems';
         let number  = 0;
-        let request = dbObjectStore(func, ...args).openCursor();
-        dbRequest(func, request, function(event) {
+        let store   = dbObjectStore(func, ...args);
+        let request = store.openCursor();
+        let if_err  = item_cb && (() => item_cb(null, -1));
+        let if_ok   = function(event) {
             /** @type {IDBCursorWithValue|null} */
             let cursor = event.target.result;
             item_cb && item_cb(cursor, number);
@@ -605,7 +700,8 @@ let DB = (function() {
             } else {
                 dbDebug(func, 'all DB items processed');
             }
-        });
+        }
+        dbRequest(func, request, if_ok, if_err);
     }
 
     /**
@@ -623,11 +719,13 @@ let DB = (function() {
         const value = query.value;
         let store   = dbObjectStore(func, ...args);
         let request = store.index(key).getAll(value);
-        dbRequest(func, request, function(event) {
+        let if_err  = callback && (() => callback([]));
+        let if_ok   = function(event) {
             const items = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${items.length} items`);
             callback && callback(items);
-        });
+        }
+        dbRequest(func, request, if_ok, if_err);
     }
 
     /**
@@ -645,11 +743,13 @@ let DB = (function() {
         const value = query.value;
         let store   = dbObjectStore(func, ...args);
         let request = store.index(key).count(value);
-        dbRequest(func, request, function(event) {
+        let if_err  = callback && (() => callback(-1));
+        let if_ok   = function(event) {
             const number = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${number} items found`);
             callback && callback(number);
-        });
+        }
+        dbRequest(func, request, if_ok, if_err);
     }
 
     /**
@@ -668,11 +768,13 @@ let DB = (function() {
         const value = query.value;
         let store   = dbObjectStore(func, ...args);
         let request = store.index(key).getAllKeys(value);
-        dbRequest(func, request, function(event) {
+        let if_err  = callback && (() => callback([]));
+        let if_ok   = function(event) {
             const keys = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${keys.length} keys`);
             callback && callback(keys);
-        });
+        }
+        dbRequest(func, request, if_ok, if_err);
     }
 
     /**
@@ -695,10 +797,8 @@ let DB = (function() {
             } else {
                 const final_range = callback && (ranges.length - 1);
                 ranges.forEach(function(range, idx) {
-                    let request = dbRequest(func, store.delete(range));
-                    if (idx === final_range) {
-                        request.onsuccess = callback;
-                    }
+                    let cb = (idx === final_range) ? callback : undefined;
+                    dbRequest(func, store.delete(range), cb, cb);
                 });
             }
         }
@@ -740,10 +840,11 @@ let DB = (function() {
     // ========================================================================
 
     return {
+        getProperties:      getProperties,
         setDatabase:        setDatabase,
         defaultStore:       defaultStore,
         getStoreTemplate:   getStoreTemplate,
-        addStoreTemplate:   addStoreTemplate,
+        addStoreTemplates:  addStoreTemplates,
         openObjectStore:    openObjectStore,
         clearObjectStore:   clearObjectStore,
         storeItems:         storeItems,

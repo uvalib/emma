@@ -8,14 +8,21 @@
 // noinspection FunctionTooLongJS
 $(document).on('turbolinks:load', function() {
 
-    /** @type {jQuery} */
-    let $body = $('body');
-
-    /** @type {jQuery} */
-    let $item_list = $body.filter('.new-style').find('.search-list');
+    /**
+     * Search page <body>.
+     *
+     * @type {jQuery}
+     */
+    let $body = $('body.search-index');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($item_list)) {
+    if (isMissing($body)) {
+        return;
+    }
+
+    // Reset remembered colorization on original-style search pages.
+    if (!$body.hasClass('new-style')) {
+        sessionStorage.removeItem('search-colorize');
         return;
     }
 
@@ -23,9 +30,20 @@ $(document).on('turbolinks:load', function() {
     // Constants
     // ========================================================================
 
+    /**
+     * Active search style(s).
+     *
+     * @type {Object<boolean>}
+     */
+    const SEARCH_STYLE = {
+        aggregate:  $body.hasClass('aggregate-style'),
+        grid:       $body.hasClass('grid-style'),
+        compact:    $body.hasClass('compact-style'),
+        normal:     !$body.hasClass('new-style'),
+    };
+
     const TIMESTAMP        = new Date();
     const DEV_CONTROLS     = $body.hasClass('dev-style');
-    const AGGREGATE_STYLE  = $body.hasClass('aggregate-style');
 
     const FIRST_PAGE       = 1;
     const DEFAULT_LIMIT    = 100; // Items per page.
@@ -73,6 +91,13 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Search list container.
+     *
+     * @type {jQuery}
+     */
+    let $item_list = $body.find('.search-list');
+
+    /**
      * Elements of .search-list.
      *
      * @type {jQuery}
@@ -91,6 +116,23 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Current search page style.
+     *
+     * @note Can't rely on `params` because `params['style']` will have already
+     *  been removed via the server redirect.
+     *
+     * @returns {string}
+     */
+    function pageStyle() {
+        let result;
+        $.each(SEARCH_STYLE, function(style, active) {
+            result = style;
+            return !active; // continue if not active
+        });
+        return result || 'normal';
+    }
+
+    /**
      * Current search page.
      *
      * @returns {number}
@@ -107,6 +149,22 @@ $(document).on('turbolinks:load', function() {
     function newSearch() {
         return pageNumber() === FIRST_PAGE;
     }
+
+    /**
+     * The current search terms (ignoring page/offset).
+     *
+     * @returns {object}
+     */
+    function currentSearch() {
+        let result = { ...params };
+        delete result.page;
+        delete result.offset;
+        return result;
+    }
+
+    // ========================================================================
+    // Functions
+    // ========================================================================
 
     /**
      * Return the *emma_titleId* value of the given search result item.
@@ -359,12 +417,24 @@ $(document).on('turbolinks:load', function() {
     /**
      * The database holding search result item data across pages.
      *
+     * @constant
      * @type {string}
      */
-    const DB_STORE_NAME = 'search_data';
+    const DB_NAME = 'emma_search';
 
     /**
-     * Properties for the DB_STORE_NAME object store.
+     * The current version of the database.
+     *
+     * @note This must be incremented every time DB_STORE_TEMPLATE or DB_STORES
+     *  are changed in any way.
+     *
+     * @constant
+     * @type {number}
+     */
+    const DB_VERSION = 1;
+
+    /**
+     * Properties for each object store.
      *
      * @constant
      * @type {StoreTemplate}
@@ -381,6 +451,27 @@ $(document).on('turbolinks:load', function() {
             db_timestamp: { default: TIMESTAMP, index: false, },
         }
     };
+
+    /**
+     * Individual object stores within the search data database.
+     *
+     * @constant
+     * @type {Object<StoreTemplate>}
+     */
+    const DB_STORES =
+        Object.fromEntries(
+            Object.keys(SEARCH_STYLE).map(
+                s => [`style_${s}`, DB_STORE_TEMPLATE]
+            )
+        );
+
+    /**
+     * The current object store.
+     *
+     * @constant
+     * @type {string}
+     */
+    const DB_STORE_NAME = `style_${pageStyle()}`;
 
     // ========================================================================
     // Variables - page data
@@ -424,7 +515,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {Object<Object<SearchDataRecord[]>>}
      */
-    let store_items;
+    let store_items = {};
 
     // ========================================================================
     // Functions - page data
@@ -436,41 +527,34 @@ $(document).on('turbolinks:load', function() {
      * @returns {PageItem[]}
      */
     function pageItems() {
-        return page_items || storeItems();
+        if (!page_items) {
+            page_items = [];
+            $result_items.each(function() {
+                let $item    = $(this);
+                const record = extractItemData($item);
+                localStoreItem(record);
+                page_items.push({ element: $item, data: record });
+            });
+        }
+        return page_items;
     }
 
     /**
-     * Persist data for all result items to the database object store.
-     *
-     * @returns {PageItem[]}
+     * Persist data for all result items to the database object store after
+     * completing store_items with items seen on other pages.
      */
     function storeItems() {
-        page_items  = [];
-        store_items = {}
-
-        // Build page_items from items on the current page, and initialize
-        // store_items with records from the current page.
-        let item_data = [];
-        $result_items.each(function() {
-            let $item    = $(this);
-            const record = extractItemData($item);
-            localStoreItem(record);
-            item_data.push(record);
-            page_items.push({ element: $item, data: record });
-        });
-
-        // Complete store_items with items seen on other pages.  After the last
-        // item has been retrieved, update the object store with items from the
-        // current page.
-        DB.fetchItems(function(cursor) {
+        DB.fetchItems(function(cursor, number) {
             if (cursor) {
                 localStoreItem({ ...cursor.value });
+            } else if (number < 0) {
+                // TODO: should store_cb_queue be cleared here first?
+                setStoreItemsComplete();
             } else {
-                DB.storeItems(item_data);
+                let item_data = pageItems().map(item => item.data);
+                DB.storeItems(item_data, setStoreItemsComplete);
             }
         });
-
-        return page_items;
     }
 
     /**
@@ -505,25 +589,150 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Actions - page data
+    // Variables - page data - callbacks
     // ========================================================================
 
-    // Set the database and version.
-    DB.setDatabase('emma', 2);
+    /**
+     * Callbacks which are deferred until store_items_complete is true.
+     *
+     * @type {CallbackQueue}
+     */
+    let store_cb_queue = new CallbackQueue();
 
-    // Register the object store.
-    DB.addStoreTemplate(DB_STORE_NAME, DB_STORE_TEMPLATE);
+    /**
+     * Set to true when update of the database has finished.
+     *
+     * @type {boolean|undefined}
+     */
+    let store_items_complete;
 
-    // Open the database and fill the object store with items from the current
-    // page of search results.
-    DB.openObjectStore(DB_STORE_NAME, function() {
-        console.warn('============= OPENING OBJECT STORE ===========');
-        if (newSearch()) {
-            DB.clearObjectStore(DB_STORE_NAME, storeItems);
+    // ========================================================================
+    // Functions - page data - callbacks
+    // ========================================================================
+
+    /**
+     * Whether update of the database has finished.
+     *
+     * @return {boolean}
+     */
+    function getStoreItemsComplete() {
+        return !!store_items_complete;
+    }
+
+    /**
+     * Process all queued callbacks and set store_items_complete.
+     *
+     * @return {boolean}
+     */
+    function setStoreItemsComplete() {
+        return store_items_complete = store_cb_queue.process();
+    }
+
+    /**
+     * Execute a set of function callbacks directly if store_items_complete is
+     * true or queue them for execution.
+     *
+     * @param {function|function[]} callbacks
+     */
+    function whenStoreItemsComplete(...callbacks) {
+        if (store_items_complete) {
+            callbacks.forEach(fn => fn());
         } else {
-            DB.deleteItems('page', pageNumber(), storeItems);
+            store_cb_queue.push(...callbacks);
         }
-    });
+    }
+
+    // ========================================================================
+    // Functions - page data - database
+    // ========================================================================
+
+    /**
+     * Initialize the DB closure for use by this page by informing it of the
+     * database, version and object stores.
+     *
+     * No actual IDBDatabase changes occur until `DB.openObjectStore` is run.
+     *
+     * @param {string} [name]
+     * @param {number} [version]
+     */
+    function setupDatabase(name = DB_NAME, version = DB_VERSION) {
+        const db = DB.getProperties();
+        if ((db.name !== name) || (db.version < version)) {
+            console.warn(`===== SETUP DATABASE "${name}" v.${version} =====`);
+            if (db.name && (db.name !== name)) {
+                DB.closeDatabase();
+            }
+            DB.setDatabase(name, version);
+            DB.addStoreTemplates(DB_STORES);
+            DB.defaultStore(DB_STORE_NAME);
+        }
+    }
+
+    /**
+     * Open the database and the designated object store.
+     *
+     * This will trigger IDBDatabase changes if required.
+     *
+     * @param {string}   store        Object store name.
+     * @param {function} [callback]
+     */
+    function openDatabase(store, callback) {
+        const func = 'openDatabase';
+        const name = DB_NAME;
+        const db   = DB.getProperties();
+
+        if (!DB_STORES.hasOwnProperty(store)) {
+            console.error(`${func}: invalid store name "${store}"`);
+
+        } else if (db.name !== name) {
+            console.error(`${func}: must run setupDatabase() first`);
+
+        } else if (!(db.template || {}).hasOwnProperty(store)) {
+            console.error(`${func}: "${store}" not in database "${name}"`);
+
+        } else {
+            DB.openObjectStore(store, callback);
+        }
+    }
+
+    /**
+     * Open the database and fill the object store with items from the current
+     * page of search results.
+     *
+     * @param {string} [store]
+     */
+    function updateDatabase(store = DB_STORE_NAME) {
+        openDatabase(store, function() {
+            console.warn(`======== OPENING OBJECT STORE "${store}" ========`);
+            if (newSearch()) {
+                DB.clearObjectStore(store, storeItems);
+            } else {
+                DB.deleteItems('page', pageNumber(), storeItems);
+            }
+        });
+    }
+
+    /**
+     * This is a temporary transitional function. // TODO: remove eventually
+     */
+    function deleteOldDatabase() {
+        const func    = 'deleteOldDatabase';
+        const db_name = 'emma';
+        console.warn(`======== CLEANING UP OLD "${db_name}" ========`);
+        let request = window.indexedDB.deleteDatabase(db_name);
+        request.onupgradeneeded = evt => console.log(`${func}: upgrade:`, evt);
+        request.onblocked       = event => console.warn(`${func}: in use`);
+        request.onerror         = event => console.error(`${func}:`, event);
+        request.onsuccess       = event => console.log(`${func}: success`);
+    }
+
+    // ========================================================================
+    // Actions - page data - database
+    // ========================================================================
+
+    deleteOldDatabase(); // TODO: remove eventually
+    setupDatabase();
+    updateDatabase();
 
     // ========================================================================
     // Constants - relevancy score
@@ -621,7 +830,7 @@ $(document).on('turbolinks:load', function() {
     // Actions - relevancy score
     // ========================================================================
 
-    if (AGGREGATE_STYLE) {
+    if (SEARCH_STYLE['aggregate']) {
         validateRelevancyScores();
     }
 
@@ -786,6 +995,14 @@ $(document).on('turbolinks:load', function() {
      */
     const COLOR_OFFSET_LIMIT = 0x0f0000;
 
+    /**
+     * Session storage key for remembering the colorization selection.
+     *
+     * @const
+     * @type {string}
+     */
+    const COLORIZE_STATE_KEY = 'search-colorize';
+
     // ========================================================================
     // Variables - colorize
     // ========================================================================
@@ -805,8 +1022,8 @@ $(document).on('turbolinks:load', function() {
      * Revert the current search results page to the normal display style.
      */
     function revertStyle() {
-        params['style'] = 'normal';
-        window.location.href = makeUrl(params);
+        const new_params = { ...params, style: 'normal' };
+        window.location.href = makeUrl(new_params);
     }
 
     /**
@@ -850,7 +1067,6 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   by_topic
      */
     function validateLists(item_lists, by_topic) {
-        const current_page = pageNumber();
         item_lists.forEach(function(item_list) {
             let prev;
             item_list.forEach(function(item) {
@@ -865,10 +1081,7 @@ $(document).on('turbolinks:load', function() {
                 }
 
                 // Mark items which were encountered on other pages.
-                const store_key = $item.attr('data-title_id');
-                $.each(store_items[store_key], function(page, _records) {
-                    return !markItemAsExile($item, page, current_page);
-                });
+                whenStoreItemsComplete(() => markItemAsExile($item));
             });
         });
     }
@@ -906,6 +1119,21 @@ $(document).on('turbolinks:load', function() {
                 markIdentityField($item, by_topic);
             });
             color = semiRandomColorOffset(color);
+        });
+    }
+
+    /**
+     * Restore colorized items.
+     */
+    function unColorize() {
+        removeIdentityNumber($result_items);
+        unmarkIdentityFields($result_items);
+        const item_classes = ['colorized', ...TOPICS];
+        $result_items.each(function() {
+            let $item  = $(this);
+            let $title = $item.children('.field-Title.value');
+            $title.css({ color: '', background: '' });
+            $item.removeClass(item_classes);
         });
     }
 
@@ -951,21 +1179,33 @@ $(document).on('turbolinks:load', function() {
      * Mark the item as being separated from other item(s) with the same
      * identity on an earlier or later page.
      *
+     * @note Must be run only after store_items is complete.
+     *
      * @param {Selector} item
-     * @param {number}   original_page
-     * @param {number}   current_page
      *
      * @returns {boolean}
      */
-    function markItemAsExile(item, original_page, current_page) {
-        const diff = (Number(original_page) - Number(current_page)) || 0;
-        if (diff) {
-            let $item = $(item);
-            $item.addClass(EXILE_MARKER);
-            const tip = (diff < 0) ? LATE_EXILE_TOOLTIP : EARLY_EXILE_TOOLTIP;
+    function markItemAsExile(item) {
+        let $item          = $(item);
+        const store_key    = $item.attr('data-title_id');
+        const current_page = pageNumber();
+        let found;
+        $.each(store_items[store_key], function(page, records) {
+            found = isPresent(records) && (Number(page) - current_page);
+            return !found; // continue unless a related item was found
+        });
+        if (found) {
+            // Update the item's identity number tag.
+            let $title = $item.children('.field-Title.value');
+            let $tag   = $title.children('.identity-number');
+            $tag.addClass(EXILE_MARKER);
+
+            // Update the item itself.
+            const tip = (found < 0) ? LATE_EXILE_TOOLTIP : EARLY_EXILE_TOOLTIP;
             itemStateTip($item, tip);
+            $item.addClass(EXILE_MARKER);
         }
-        return (diff !== 0);
+        return true;
     }
 
     /**
@@ -1066,32 +1306,100 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * ColorizeState
+     *
+     * @typedef {{
+     *     topic:  ?(string|null|undefined),
+     *     search: ?(string|null|undefined)
+     * }} ColorizeState
+     */
+
+    /**
+     * Get the state of colorization.
+     *
+     * @returns {ColorizeState}
+     */
+    function getColorizeState() {
+        const entry = sessionStorage.getItem(COLORIZE_STATE_KEY);
+        return fromJSON(entry) || {};
+    }
+
+    /**
+     * Remember the current colorization selection in the session.
+     *
+     * @param {string} topic
+     * @param {string} [criteria]
+     */
+    function setColorizeState(topic, criteria) {
+        const search = criteria || currentSearch();
+        const values = { topic: topic, search: search };
+        const entry  = JSON.stringify(values) || '';
+        sessionStorage.setItem(COLORIZE_STATE_KEY, entry);
+    }
+
+    /**
+     * Clear the state of colorization.
+     */
+    function clearColorizeState() {
+        sessionStorage.removeItem(COLORIZE_STATE_KEY);
+    }
+
+    /**
      * Assign event handlers to the colorize button, creating it if necessary.
      *
      * @param {string}            topic     {@link BUTTON} key.
      * @param {ElementProperties} [config]  {@link BUTTON} value.
+     *
+     * @returns {jQuery}
      */
     function setupColorizeButton(topic, config) {
+        const func   = 'setupColorizeButton';
         const button = config || BUTTON[topic];
         let $button  = $(selector(button.class));
         if (isMissing($button)) {
             $button = create(button).appendTo($button_tray);
+        } else {
+            $button.removeClass('active');
         }
-        handleClickAndKeypress($button, function() {
-            $button_tray.children().removeClass('active');
-            $(this).addClass('active');
-            button.func ? button.func() : colorize(topic);
-        });
+        let action = button.func;
+        if (button.class.includes('colorize')) {
+            action ||= colorize;
+            handleClickAndKeypress($button, function() {
+                if ($button.hasClass('active')) {
+                    $button.removeClass('active');
+                    clearColorizeState();
+                    unColorize(topic);
+                } else {
+                    $button.addClass('active');
+                    setColorizeState(topic);
+                    action();
+                }
+            });
+        } else {
+            action ||= () => console.error(`${func}: no action for ${topic}`);
+            handleClickAndKeypress($button, action);
+        }
+        return $button;
     }
 
     // ========================================================================
     // Actions - colorize
     // ========================================================================
 
+    const INITIAL_STATE = getColorizeState();
+    const ACTIVE_TOPIC  = INITIAL_STATE.topic;
+    const ACTIVE_SEARCH = INITIAL_STATE.search;
+    const RE_COLORIZE   = equivalent(ACTIVE_SEARCH, currentSearch());
+
+    let $active_button;
     $.each(BUTTON, function(topic, button) {
         if (button.active) {
-            setupColorizeButton(topic, button);
+            let $button = setupColorizeButton(topic, button);
+            if (RE_COLORIZE && (topic === ACTIVE_TOPIC)) {
+                $active_button ||= $button;
+            }
         }
     });
+    $active_button?.click();
 
 });

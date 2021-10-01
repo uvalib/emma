@@ -318,6 +318,42 @@ function deepFreeze(item) {
     return Object.freeze(new_item);
 }
 
+/**
+ * Indicate whether two objects are effective the same.
+ *
+ * @param {array|object|any} item1
+ * @param {array|object|any} item2
+ *
+ * @returns {boolean}
+ */
+function equivalent(item1, item2) {
+    const a1 = Array.isArray(item1);
+    const a2 = Array.isArray(item2);
+    const o1 = !a1 && (typeof item1 === 'object');
+    const o2 = !a2 && (typeof item2 === 'object');
+    let result;
+    if (o1 && o2) {
+        const keys1 = Object.keys(item1);
+        const keys2 = Object.keys(item2);
+        if ((result = equivalent(keys1, keys2))) {
+            $.each(item1, function(key, value1) { // continue while equivalent
+                return !(result &&= equivalent(value1, item2[key]));
+            });
+        }
+    } else if (a1 && a2) {
+        if ((result = (item1.length === item2.length))) {
+            const array1 = [...item1].sort();
+            const array2 = [...item2].sort();
+            $.each(array1, function(idx, value1) { // continue while equivalent
+                return !(result &&= equivalent(value1, array2[idx]));
+            });
+        }
+    } else {
+        result = (item1 === item2);
+    }
+    return result;
+}
+
 // ============================================================================
 // Functions - Time and date
 // ============================================================================
@@ -821,7 +857,7 @@ function asParams(item) {
     let result = {};
     if (typeof item === 'string') {
         item.trim().replace(/^[?&]+/, '').split('&').forEach(function(pair) {
-            let kv = decodeURIComponent(pair).split('=');
+            let kv = decodeURIComponent(pair.replace('+', ' ')).split('=');
             let k  = kv.shift();
             let v  = kv.join('=');
             if (k && v) {
