@@ -46,22 +46,11 @@ en:
           </p>
           <p>
             Support for this work comes from the Andrew W. Mellon Foundation.
-            The university partners on this project are
-              George Mason University,
-              Northern Arizona University,
-              Vanderbilt University,
-              Texas A&M University,
-              the University of Illinois,
-              the University of Virginia,
-              and the University of Wisconsin.
-            The repository partners are
-              Bookshare,
-              HathiTrust,
-              and the Internet Archive.
+            The university partners on this project are %{academic_partners}.
+            The repository partners are %{commercial_partners}.
             If you would like to be notified when EMMA is ready for broader
             participation, please email
-            <a href="mailto:emma4accessibility@virginia.edu">emma4accessibility@virginia.edu</a>
-            .
+            <a href="mailto:%{project_email}">%{project_email}</a>.
           </p>
 
       # =======================================================================

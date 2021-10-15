@@ -1,0 +1,83 @@
+# config/locales/grant.en.yml
+#
+# EMMA project grant information
+
+en:
+
+  emma:
+
+    grant:
+
+      partner:
+
+        # =====================================================================
+        # Academic partners
+        # =====================================================================
+
+        academic:
+
+          gmu:
+            name:
+              short:    'George Mason'
+              long:     'George Mason University'
+            tag:        'GMU'
+
+          nau:
+            name:
+              short:    'Northern Arizona'
+              long:     'Northern Arizona University'
+            tag:        'NAU'
+
+          osu:
+            name:
+              short:    'Ohio State'
+              long:     'the Ohio State University'
+            tag:        'OSU'
+
+          ui:
+            name:
+              short:    'Illinois'
+              long:     'the University of Illinois'
+            tag:        'UIUC'
+
+          uva:
+            name:
+              short:    'Virginia'
+              long:     'the University of Virginia'
+            tag:        'UVA'
+
+          uw:
+            name:
+              short:    'Wisconsin'
+              long:     'the University of Wisconsin'
+            tag:        'UW'
+
+          vu:
+            name:
+              short:    'Vanderbilt'
+              long:     'Vanderbilt University'
+            tag:        'VU'
+
+        # =====================================================================
+        # Non-academic partners
+        # =====================================================================
+
+        commercial:
+
+          bookshare:    # @see "en.emma.repository.bookshare"
+            name:
+              short:    'Bookshare'
+              long:     'Bookshare'
+            tag:        'BS'
+
+          hathiTrust:    # @see "en.emma.repository.hathiTrust"
+            name:
+              short:    'Hathi'
+              long:     'HathiTrust'
+            tag:        'HT'
+
+          internetArchive: # @see "en.emma.repository.internetArchive"
+            name:
+              short:    'Internet Archive'
+              long:     'the Internet Archive'
+            tag:        'IA'

@@ -12,16 +12,22 @@
   sign_in = t('emma.user.sessions.new.label')
   sign_in = link_to(sign_in, new_user_session_path)
 
+  template_opt = { controller: :home, action: :welcome }
+
+  template_opt[:project_email]       = Emma::Constants::PROJECT_EMAIL
+  template_opt[:academic_partners]   = emma_partner_list(:academic)
+  template_opt[:commercial_partners] = emma_partner_list(:commercial)
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= page_description_section(controller: :home, action: :welcome) %>
+<%= page_description_section(**template_opt) %>
 
 <%= page_directions_section %>
 <div class="sign-in">
   <%= t('emma.home.welcome.notice_html', sign_in: sign_in) %>
 </div>
 
-<%= page_notes_section(controller: :home, action: :welcome) %>
+<%= page_notes_section(**template_opt) %>
 <%= render 'account/ability' if session_debug? %>

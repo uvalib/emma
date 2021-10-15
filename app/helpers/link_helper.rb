@@ -308,6 +308,10 @@ module LinkHelper
     type   = type&.to_s&.delete_suffix('_html')&.to_sym || :text
     text ||= page_text(controller: controller, action: action, type: type)
     return if text.blank?
+    if (interpolation_keys = named_references(text)).present?
+      interpolation_values, opt = partition_hash(opt, *interpolation_keys)
+      text %= interpolation_values
+    end
     text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
     prepend_classes!(opt, css_selector)
     append_classes!(opt, *type) unless type == :text

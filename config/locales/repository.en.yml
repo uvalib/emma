@@ -37,7 +37,7 @@ en:
         download_path:  ~ # Use `request.base_url`.
         download_url:   '%{download_path}/upload/download/%{id}'
 
-      bookshare:
+      bookshare:        # @see "en.emma.grant.partner.commercial.bookshare"
         <<:             *REPOSITORY_TEMPLATE
         name:           'Bookshare'
         symbol:         'bs'
@@ -58,7 +58,7 @@ en:
           '???':        'HTML'                # NOTE: not in schema
         download_url:   '%{download_path}?titleInstanceId=%{id}&downloadFormat=%{fmt}&tag=%{tag}'
 
-      hathiTrust:
+      hathiTrust:       # @see "en.emma.grant.partner.commercial.hathiTrust"
         <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats
         name:           'HathiTrust'
         symbol:         'ht'
@@ -67,7 +67,7 @@ en:
         download_path:  'https://babel.hathitrust.org/cgi/imgsrv/download'
         download_url:   '%{download_path}/%{fmt}?id=%{id};orient=0;size=100'
 
-      internetArchive:
+      internetArchive:  # @see "en.emma.grant.partner.commercial.internetArchive"
         <<:             *REPOSITORY_TEMPLATE  # TODO: IA download formats
         name:           'Internet Archive'
         symbol:         'ia'
