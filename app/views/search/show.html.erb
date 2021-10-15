@@ -5,7 +5,7 @@
   item  ||= @item
   image ||= nil
   title ||= item&.label || t('emma.search.show.title')
-  logo  ||= repository_source_logo(item)
+  logo  ||= repository_source_logo(item, type: :wide)
   help  ||= nil # help_popup(:search, :show) # TODO: ???
 
   unless modal?

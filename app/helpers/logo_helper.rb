@@ -17,6 +17,21 @@ module LogoHelper
 
   public
 
+  # Logo image variants for different purposes.
+  #
+  # @type [Array<Symbol>]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  LOGO_TYPE = I18n.t('emma.repository._template.logo').keys.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Make a logo for a repository source.
   #
   # @param [Model, Hash, String, Symbol, nil] item
@@ -25,15 +40,17 @@ module LogoHelper
   # @option opt [String] :source      Overrides derived value if present.
   # @option opt [String] :name        To be displayed instead of the source.
   # @option opt [String] :logo        Logo asset name.
+  # @option opt [Symbol] :type        One of #LOGO_TYPE.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source_logo(item = nil, opt = nil)
     css_selector  = '.repository.logo'
-    opt, html_opt = partition_hash(opt, :source, :name, :logo)
+    item, opt     = [nil, item] if item.is_a?(Hash) && opt.nil?
+    opt, html_opt = partition_hash(opt, :source, :name, :logo, :type)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)
-    logo = repository_logo(repo)
+    logo = opt[:logo] || repository_logo(repo, opt[:type])
     if logo.present?
       html_opt[:title] ||= repository_tooltip(item, name)
       prepend_classes!(html_opt, css_selector, repo)
@@ -108,13 +125,17 @@ module LogoHelper
   # repository_logo
   #
   # @param [Model, Hash, String, Symbol, nil] src
+  # @param [Symbol, nil]                      type  One of #LOGO_TYPE.
   #
   # @return [String]                  The logo of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  def repository_logo(src)
+  def repository_logo(src, type = nil)
     repo = normalize_repository(src)
-    Api::Common::REPOSITORY.dig(repo.to_sym, :logo) if repo
+    logo = repo && Api::Common::REPOSITORY.dig(repo.to_sym, :logo)
+    logo = logo[type&.to_sym] || logo[LOGO_TYPE.first] if logo.is_a?(Hash)
+    # noinspection RubyMismatchedReturnType
+    logo
   end
 
   # repository_tooltip

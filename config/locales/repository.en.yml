@@ -11,7 +11,13 @@ en:
       _default: emma
 
       _template:         &REPOSITORY_TEMPLATE
-        logo:           '' # Asset file name.
+        name:           ~
+        symbol:         ~  # @see AwsS3Service::Properties::S3_BUCKET
+        logo:           # Logo image (@see LogoHelper::LOGO_TYPES)
+          default:      ~  # ... for generic usage.
+          wide:         ~  # ... transformed for wide fixed width.
+          thumb:        ~  # ... image transformed for narrow fixed width.
+          base:         ~  # ... unmodified original.
         title_path:     '' # Base URL to source pages for title-level entries.
         download_path:  '' # Base URL for artifact downloads.
         download_url:   '' # URL template for artifact downloads.
@@ -32,7 +38,11 @@ en:
         <<:             *REPOSITORY_TEMPLATE
         name:           'EMMA'
         symbol:         ~
-        logo:           'EMMA-logo-UVAbg.png'
+        logo:
+          default:      'EMMA-159x100.png'
+          wide:         'EMMA-300x100-left.png'
+          thumb:        'EMMA-159x100.png'
+          base:         'EMMA-logo-UVAbg.png'
         title_path:     '/upload'
         download_path:  ~ # Use `request.base_url`.
         download_url:   '%{download_path}/upload/download/%{id}'
@@ -41,7 +51,11 @@ en:
         <<:             *REPOSITORY_TEMPLATE
         name:           'Bookshare'
         symbol:         'bs'
-        logo:           'wide-Bookshare_logo.png'
+        logo:
+          default:      'Bookshare-300x100.png'
+          wide:         'Bookshare-300x100.png'
+          thumb:        'thumb-Bookshare_logo.png'
+          base:         'thumb-Bookshare_logo.png'
         title_path:     'https://www.bookshare.org/browse/book'
         download_path:  'https://www.bookshare.org/bookHistory/download/book'
         download_fmt:
@@ -62,7 +76,11 @@ en:
         <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats
         name:           'HathiTrust'
         symbol:         'ht'
-        logo:           'wide-HathiTrust_logo.png'
+        logo:
+          default:      'HathiTrust-300x100.png'
+          wide:         'HathiTrust-300x100.png'
+          thumb:        'thumb-HathiTrust_logo.png'
+          base:         'thumb-HathiTrust_logo.png'
         title_path:     'https://catalog.hathitrust.org/Record'
         download_path:  'https://babel.hathitrust.org/cgi/imgsrv/download'
         download_url:   '%{download_path}/%{fmt}?id=%{id};orient=0;size=100'
@@ -71,7 +89,11 @@ en:
         <<:             *REPOSITORY_TEMPLATE  # TODO: IA download formats
         name:           'Internet Archive'
         symbol:         'ia'
-        logo:           'wide-Internet_Archive_logo.png'
+        logo:
+          default:      'Internet_Archive-300x100.png'
+          wide:         'Internet_Archive-300x100.png'
+          thumb:        'thumb-Internet_Archive_logo.png'
+          base:         'thumb-Internet_Archive_logo.png'
         title_path:     'https://archive.org/details'
         download_path:  'https://archive.org/download'
         download_url:

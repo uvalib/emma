@@ -133,6 +133,15 @@
 // Special
 // ============================================================================
 
+/// Control hyphenation.
+///
+/// @note: Safari still requires the -webkit prefix.
+///
+@mixin hyphenation($mode: auto) {
+    -webkit-hyphens: $mode;
+    hyphens:         $mode;
+}
+
 /// Make an element only visible to screen readers.
 ///
 /// This was made a mixin so that the effect could be applied within @media
@@ -159,6 +168,10 @@
         background: inherit !important;
     }
 }
+
+// ============================================================================
+// Platform-specific
+// ============================================================================
 
 /// Include a block of content that should only be activated when on Firefox.
 ///
