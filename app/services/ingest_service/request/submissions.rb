@@ -34,9 +34,6 @@ module IngestService::Request::Submissions
   #
   # @return [Ingest::Message::Response]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/upsertRecords   HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/records             JSON API specification
-  #
   #--
   # == Variations
   #++
@@ -54,6 +51,9 @@ module IngestService::Request::Submissions
   # 202 Accepted        Items accepted for update.
   # 207 Multi-Status    Some items inserted or updated.
   # 400 Bad Request     Invalid input.
+  #
+  # @see https://app.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/ingestion/upsertRecords   HTML API documentation
+  # @see https://api.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/paths/records             JSON API specification
   #
   def put_records(*records, **opt)
     opt[:meth] ||= __method__
@@ -80,9 +80,6 @@ module IngestService::Request::Submissions
   #
   # @return [Ingest::Message::Response]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/deleteRecords   HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/recordDeletes       JSON API specification
-  #
   #--
   # == Variations
   #++
@@ -100,6 +97,9 @@ module IngestService::Request::Submissions
   # 202 Accepted        Items accepted for deletion.
   # 207 Multi-Status    Some items deleted.
   # 400 Bad Request     Invalid input.
+  #
+  # @see https://app.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/ingestion/deleteRecords   HTML API documentation
+  # @see https://api.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/paths/recordDeletes       JSON API specification
   #
   def delete_records(*items, **opt)
     opt[:meth] ||= __method__
@@ -126,9 +126,6 @@ module IngestService::Request::Submissions
   #
   # @return [Search::Message::SearchRecordList]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/getRecords  HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/recordGets      JSON API specification
-  #
   #--
   # == Variations
   #++
@@ -145,6 +142,9 @@ module IngestService::Request::Submissions
   #
   # 200 OK              Items retrieved.
   # 400 Bad Request     Invalid input.
+  #
+  # @see https://app.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/ingestion/getRecords  HTML API documentation
+  # @see https://api.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/paths/recordGets      JSON API specification
   #
   def get_records(*items, **opt)
     opt[:meth] ||= __method__

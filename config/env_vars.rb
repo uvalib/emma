@@ -189,7 +189,7 @@ BOOKSHARE_TEST_AUTH = ENV.fetch('BOOKSHARE_TEST_AUTH', nil).freeze
 #
 # @type [String]
 #
-SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', '0.0.2').freeze
+SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', '0.0.5').freeze
 
 # Base EMMA Unified Search API request path.
 #
@@ -220,7 +220,7 @@ INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
 #
 # @type [String]
 #
-INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.3').freeze
+INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.5').freeze
 
 # Base EMMA Federated Ingest API request path.
 #

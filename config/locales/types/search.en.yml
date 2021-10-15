@@ -15,17 +15,35 @@ en:
 
       type:
 
+        # =====================================================================
+        # API schema - EmmaCommonFields
+        # =====================================================================
+
+        WorkType:
+          book:                     'Book'
+          movie:                    'Movie'
+          journalArticle:           'Journal Article'
+          magazineArticle:          'Magazine Article'
+          podcastEpisode:           'Podcast Episode'
+          seriesEpisode:            'Series Episode'
+
         FormatFeature:
           tts:                      'TTS'
           human:                    'Human'
           grade1:                   'Grade 1 (uncontracted)'
           grade2:                   'Grade 2 (contracted)'
           nemeth:                   'Nemeth'
-          technical:                'Technical'
           ueb:                      'UEB'
           ebae:                     'EBAE'
-          literary:                 'Literary'
           music:                    'Music'
+          imagePdf:                 'Scanned Image PDF'
+          digitalTextPdf:           'Digital Text PDF'
+          literary:                 'Literary'
+          technical:                'Technical'
+
+        # =====================================================================
+        # API schema - DublinCoreFields
+        # =====================================================================
 
         Rights:
           publicDomain:             'Public Domain'
@@ -62,6 +80,10 @@ en:
           physicalObject:           'Physical Object'
           stillImage:               'Still Image'
           movingImage:              'Moving Image'
+
+        # =====================================================================
+        # API schema - SchemaOrgFields
+        # =====================================================================
 
         A11yFeature:
           alternativeText:          'Alternative Text'
@@ -143,21 +165,39 @@ en:
           textual:                  'Textual'
           visual:                   'Visual'
 
-        SearchSort:
-          relevance:                'Relevance'
-          title:                    'Title'
-          sortDate:                 'Date'
-          lastRemediationDate:      'Last Remediation Date'
-          _default:                 relevance
+        # =====================================================================
+        # API schema - RemediationFields
+        # =====================================================================
+
+        RemediationType:
+          scannedAndOcrd:           'Scanned and OCRed'
+          proofreadCorrectedOcr:    'Proofread Corrected OCR'
+          addedBookmarks:           'Added Bookmarks'
+          taggedPdf:                'Tagged PDF'
+          addedImageDescriptions:   'Added Image Descriptions'
+          structuredHeadings:       'Structured Headings'
+          linkedToc:                'Linked TOC'
+          fixedTables:              'Fixed Tables'
+          addedMathMl:              'Added MathML'
+          foreignLanguageMarkup:    'Foreign Language Markup'
+          transcribersNotes:        'Transcribers Notes'
+          annotations:              'Annotations'
+
+        TextQuality:
+          rawOcr:                   'Raw OCR'
+          cleanedOcr:               'Cleaned OCR'
+          rekeyed:                  'Rekeyed'
+          proofread:                'Proofread'
+          published:                'Published'
+
+        RemediationStatus:
+          notRemediated:            'Not Remediated'
+          remediated:               'Remediated'
+          bornAccessible:           'Born Accessible'
 
         # =====================================================================
         # From "FRAME Metadata Worksheet" (rev 4.0) but not in the index
         # =====================================================================
-
-        RemediationStatus:
-          unremediated:             'Not Remediated'
-          remediated:               'Remediated'
-          born_accessible:          'Born Accessible'
 
         SeriesType:
           book:                     'Book'
@@ -165,13 +205,20 @@ en:
           magazine:                 'Magazine'
           newspaper:                'Newspaper'
 
-        TextQuality:
-          # TODO: Are these definitely mutually exclusive?
-          raw_ocr:                  'Raw OCR'
-          cleaned_ocr:              'Cleaned OCR'
-          rekeyed:                  'Rekeyed'
-          proofread:                'Proofread'
-          published:                'Published'
+        # =====================================================================
+        # Search API
+        # =====================================================================
+
+        SearchSort:
+          relevance:                'Relevance'
+          title:                    'Title'
+          sortDate:                 'Date'
+          lastRemediationDate:      'Last Remediation Date'
+          _default:                 relevance
+
+        SearchGroup:
+          emma_titleId:             'By Title ID'
+          emma_repositoryRecordId:  'By Repo ID'
 
         # =====================================================================
         # Other

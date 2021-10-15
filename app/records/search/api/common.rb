@@ -74,13 +74,13 @@ public
 
 # PublicationIdentifier
 #
-# ISBN-10   10 digits
-# ISBN-13   13 digits
-# ISSN      8  digits
-# OCLC      8+ digits
-# UPC       12 digits
+# == API description
+# The lowercase scheme and identifier for a publication.  For example,
+# isbn:97800110001. Only alphanumeric characters are accepted. No spaces or
+# other symbols are accepted. Dashes will be stripped from the stored
+# identifier. Accepted schemes are ISBN, ISSN, LCCN, UPC, OCLC, and DOI.
 #
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/PublicationIdentifier  Search API documentation
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/PublicationIdentifier                   JSON schema specification
 #
 class PublicationIdentifier < ScalarType
 
@@ -725,19 +725,32 @@ end
 
 public
 
+# "Describes the type of work"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.WorkType*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaCommonFields/emma_workType            JSON schema specification
+#
+class WorkType < EnumType
+end
+
 # "Feature of the format used by this instance of this work"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.FormatFeature*
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/formatFeature                                                          HTML schema documentation
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/emma_formatFeature   JSON schema specification
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaCommonFields/emma_formatFeature       JSON schema specification
 #
 class FormatFeature < EnumType
 end
 
+# =============================================================================
+# API schema - DublinCoreFields
+# =============================================================================
+
+public
+
 # "Ownership-based usage rights"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.Rights*
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/dc_rights  JSON schema specification
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_rights                JSON schema specification
 #
 class Rights < EnumType
 end
@@ -745,7 +758,7 @@ end
 # "Source of this instance of the work"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.Provenance*
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/dc_provenance  JSON schema specification
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_provenance            JSON schema specification
 #
 class Provenance < EnumType
 end
@@ -753,9 +766,8 @@ end
 # "Format of this instance of the work"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.DublinCoreFormat*
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/format                                         HTML schema documentation
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/DublinCoreFormat  JSON schema specification
-# @see https://www.dublincore.org/specifications/dublin-core/dcmi-terms/terms/format                                        DCMI Metadata Terms Format
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFormat                          JSON schema specification
+# @see https://www.dublincore.org/specifications/dublin-core/dcmi-terms/terms/format                                                                DCMI Metadata Terms Format
 #
 class DublinCoreFormat < EnumType
 end
@@ -763,18 +775,23 @@ end
 # "Type of this instance of the work"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.DcmiType*
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/dc_type  JSON schema specification
-# @see https://www.dublincore.org/specifications/dublin-core/dcmi-terms/terms/type                                                      DCMI Metadata Terms Type
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_type                  JSON schema specification
+# @see https://www.dublincore.org/specifications/dublin-core/dcmi-terms/terms/type                                                                  DCMI Metadata Terms Type
 #
 class DcmiType < EnumType
 end
 
+# =============================================================================
+# API schema - SchemaOrgFields
+# =============================================================================
+
+public
+
 # "Accessibility features of this instance derived from schema.org"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yFeature*
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/accessibilityFeature                                                       HTML schema documentation
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/s_accessibilityFeature   JSON schema specification
-# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                           W3C WebSchemas Accessibility Terms
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityFeature    JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
 #
 class A11yFeature < EnumType
 end
@@ -782,8 +799,8 @@ end
 # "Accessibility controls of this instance derived from schema.org"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yControl*
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/s_accessibilityControl   JSON schema specification
-# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                           W3C WebSchemas Accessibility Terms
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityControl    JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
 #
 class A11yControl < EnumType
 end
@@ -791,8 +808,8 @@ end
 # "Accessibility hazards of this instance derived from schema.org"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yHazard*
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/s_accessibilityControl   JSON schema specification
-# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                           W3C WebSchemas Accessibility Terms
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityHazard     JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
 #
 class A11yHazard < EnumType
 end
@@ -800,8 +817,8 @@ end
 # "Accessibility APIs of this instance derived from schema.org"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yAPI*
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/s_accessibilityAPI       JSON schema specification
-# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                           W3C WebSchemas Accessibility Terms
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityAPI        JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
 #
 # == Usage Notes
 # Because only ever has the value of "ARIA", it is generally ignored.
@@ -812,8 +829,8 @@ end
 # "How the user can perceive this instance of the work"
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yAccessMode*
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/s_accessMode             JSON schema specification
-# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                           W3C WebSchemas Accessibility Terms
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessMode              JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
 #
 class A11yAccessMode < EnumType
 end
@@ -822,25 +839,76 @@ end
 # "all the intellectual content of a resource"
 #
 # @see "en.emma.search.type.A11ySufficient"
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/MetadataCommonRecord/s_accessModeSufficient   JSON schema specification
-# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                           W3C WebSchemas Accessibility Terms
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessModeSufficient    JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
 #
 class A11ySufficient < EnumType
 end
 
-# SearchSort
+# =============================================================================
+# API schema - RemediationFields
+# =============================================================================
+
+public
+
+# RemediationType
 #
-# @see file:config/locales/types/search.en.yml *en.emma.search.type.SearchSort*
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.RemediationType*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_remediatedAspects   JSON schema specification
 #
-class SearchSort < EnumType
+class RemediationType < EnumType
+end
+
+# TextQuality
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.TextQuality*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_quality             JSON schema specification
+#
+class TextQuality < EnumType
 end
 
 # RemediationStatus
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.RemediationStatus*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_status              JSON schema specification
 #
 class RemediationStatus < EnumType
 end
+
+# =============================================================================
+# Search API
+# =============================================================================
+
+public
+
+# SearchSort
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.SearchSort*
+# @see https://api.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/paths/search/get/parameters[name=sort]                                 JSON API specification
+#
+class SearchSort < EnumType
+end
+
+# SearchGroup
+#
+# == API description
+# (EXPERIMENTAL) Search results will be grouped by the given field.  Result
+# page size will automatically be limited to 10 maximum.  Each result will have
+# a number of grouped records provided as children, so the number of records
+# returned will be more than 10.  Cannot be combined with sorting by title or
+# date.
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.SearchGroup*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/Group                                     JSON schema specification
+#
+class SearchGroup < EnumType
+end
+
+# =============================================================================
+# FRAME metadata
+# =============================================================================
+
+public
 
 # SeriesType
 #
@@ -849,12 +917,11 @@ end
 class SeriesType < EnumType
 end
 
-# TextQuality
-#
-# @see file:config/locales/types/search.en.yml *en.emma.search.type.TextQuality*
-#
-class TextQuality < EnumType
-end
+# =============================================================================
+# Other
+# =============================================================================
+
+public
 
 # TrueFalse
 #

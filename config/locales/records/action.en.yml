@@ -286,7 +286,7 @@ en:
           origin:       system
 
           # ===================================================================
-          # emma_data JSON keys - Unified index information
+          # emma_data JSON keys - Unified Index information
           # ===================================================================
 
           emma_recordId:
@@ -432,6 +432,21 @@ en:
             type:         date
             origin:       system
 
+          emma_sortDate:
+            # FMM5: N/A
+            # IA:   N/A
+            # SR:   IsoDay
+            # IR:   IsoDay
+            min:          0
+            max:          1
+            label:        'Sort Date'
+            tooltip:      |
+              Date used for "date" sort order.
+            notes_html:   |
+              <em>TODO</em>
+            type:         date
+            origin:       system
+
           emma_repositoryMetadataUpdateDate:
             # FMM5: N/A
             # IA:   N/A
@@ -443,6 +458,23 @@ en:
             tooltip:      |
               Date of the most recent change to the source repository entry for
               the item.
+            notes_html:   |
+              <em>TODO</em>
+            type:         date
+            origin:       system
+
+          emma_publicationDate:
+            # FMM5: "Publication Date", Required, Non-repeatable
+            # IA:   "date"
+            # SR:   IsoDay
+            # IR:   IsoDay
+            # TODO: interrelate with dcterms_dateCopyright
+            min:          0
+            max:          1
+            label:        'Publication Date'
+            tooltip:      |
+              Copyright or publication date of the creative work represented
+              by the remediated content file.
             notes_html:   |
               <em>TODO</em>
             type:         date
@@ -463,6 +495,37 @@ en:
               <em>TODO</em>
             placeholder:  'Enter description'
             type:         textarea
+
+          emma_version: # NOTE: proposed with API 0.0.5 versus bib_version
+            # FMM5: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
+            # IA:   "version"
+            # SR:   String
+            # IR:   String
+            min:          0
+            max:          0 # NOTE: would be 1
+            label:        'Version (proposed)'
+            tooltip:      |
+              For book content, the edition or version of the book
+              (if applicable).
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Enter edition, version, etc.'
+
+          emma_workType: # NOTE: proposed with API 0.0.5 versus bib_seriesType
+            # FMM5: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
+            # IA:   "series_type"
+            # SR:   WorkType
+            # IR:   WorkType
+            # NOTE: It might be better to make this required but add an
+            # NOTE:   enumeration selection for "Other".
+            min:          0
+            max:          0 # NOTE: would be 1
+            label:        'Work Type (proposed)'
+            tooltip:      |
+              The type of publication from which the content was extracted.
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol WorkType
 
           emma_formatVersion:
             # FMM5: *missing*
@@ -711,7 +774,7 @@ en:
             # IR:   IsoYear
             # NOTE: Effective type is "String" in order to allow for values
             # NOTE:   like "[c1884]"
-            # TODO: Should be 'min: 1' if actually required.
+            # TODO: interrelate with emma_publicationDate
             min:          0
             max:          1
             label:        'Copyright Date'
@@ -723,7 +786,7 @@ en:
             placeholder:  'Enter date of the creative work'
 
           # ===================================================================
-          # emma_data JSON keys - Remediation information
+          # emma_data JSON keys - Accessibility information
           # ===================================================================
 
           s_accessibilityFeature:
@@ -826,10 +889,199 @@ en:
             origin:       system
 
           # ===================================================================
+          # emma_data JSON keys - Periodical bibliographic information
+          # ===================================================================
+
+          periodical_title: # NOTE: proposed with API 0.0.5 versus bib_series
+            # FMM5: "Series Name", Optional, Non-repeatable
+            # IA:   *missing*
+            # SR:   *missing*
+            # IR:   *missing*
+            min:          0
+            max:          0 # NOTE: would be 1
+            label:        'Series (proposed)'
+            tooltip:      |
+              For an article or paper, the name of the journal or periodical
+              in which it published; for book content, the name of the series
+              to which the book belongs (if applicable).
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Journal name or publication series (if applicable)'
+
+          periodical_identifier: # NOTE: proposed with API 0.0.5
+            # TODO: how is this supposed to interact with dc_identifier?
+            min:          0
+            max:          0 # NOTE: would be 1
+            label:        'Periodical Identifier (proposed)'
+
+          periodical_series_position: # NOTE: proposed with API 0.0.5 versus bib_seriesPosition
+            # FMM5: "Series Position", Optional, Non-repeatable
+            # IA:   "volume"
+            # SR:   *missing*
+            # IR:   *missing*
+            min:          0
+            max:          0 # NOTE: would be 1
+            label:        'Series Position (proposed)'
+            tooltip:      |
+              For an article, the volume/issue/number of the journal or
+              periodical; for book content, the volume number or other
+              description of position within a series of books (if applicable).
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Journal volume/issue/number'
+
+          # ===================================================================
+          # emma_data JSON keys - Remediation information
+          # ===================================================================
+
+          rem_source:
+            # FMM5: "Provider of source", Required, Non-repeatable
+            # IA:   "contributor"
+            # SR:   String
+            # IR:   String
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          1
+            label:        'Source of File'
+            tooltip:      |
+              The origin of the content on which the remediated file was based.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Enter source of original content'
+
+          rem_metadataSource:
+            # FMM5: "Metadata Source", Required, Repeatable
+            # IA:   "metadata_source"
+            # SR:   Array<String>
+            # IR:   Array<String>
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          ~
+            label:        'Source of Metadata'
+            tooltip:      |
+              The origin of the metadata for the original creative work on
+              which the remediated file was based.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Enter source of metadata'
+
+          rem_remediatedBy:
+            # FMM5: "Remediated By", Required, Repeatable
+            # IA:   "remediated_by"
+            # SR:   Array<String>
+            # IR:   Array<String>
+            # NOTE: Not sure if this really should be repeatable.
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          ~
+            label:        'Remediated By'
+            tooltip:      |
+              The origin of the remediated file.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Enter source of remediated file'
+
+          rem_complete:
+            # FMM5: "Portion?", Required, Non-repeatable, "Yes or No"
+            # IA:   "portion"
+            # SR:   Boolean
+            # IR:   Boolean
+            min:          1
+            max:          1
+            label:        'Entire Document Remediated?'
+            tooltip:      |
+              True if the submission is a presentation of the entire original
+              work; false if the submission only covers certain sections or
+              chapters, or contains gaps or omissions.
+            notes_html:   |
+              <em>TODO</em>
+            type:         boolean
+
+          rem_coverage:
+            # FMM5: "Portion Description", Required, Repeatable
+            # IA:   "portion_description"
+            # SR:   String
+            # IR:   String
+            # NOTE: Becomes unrequired if rem_complete is *true*.
+            min:          1
+            max:          1
+            label:        'Part(s) Remediated'
+            tooltip:      |
+              For a submission which does not present the entire original
+              work, describe the part(s) which are covered by the submission.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Describe the part(s) that have been remediated'
+            type:         textarea
+
+          rem_remediation:
+            # FMM5: "Remediated Aspects", Required, Repeatable
+            # IA:   "remediated_aspects"
+            # SR:   *missing*
+            # IR:   *missing*
+            # TODO: This field should be cross-walked to rem_remediatedAspects
+            min:          0
+            max:          ~
+            label:        'Remediated Aspects'
+            tooltip:      |
+              A description of the remediations that are provided in this
+              submission.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Describe remediation(s)'
+            type:         textarea
+
+          rem_remediatedAspects:
+            # FMM5: "Remediated Aspects", Required, Repeatable
+            # IA:   "remediated_aspects"
+            # SR:   Array<RemediationType>
+            # IR:   Array<RemediationType>
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          0 # TODO: ~
+            label:        'Remediated Aspects (NEW)'
+            tooltip:      |
+              One or more selections which characterize the remediations that
+              are provided in this submission.
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol RemediationType
+
+          rem_quality:
+            # FMM5: "Text Quality", Required, Non-repeatable
+            # IA:   "text_quality"
+            # SR:   TextQuality
+            # IR:   TextQuality
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          1
+            label:        'Text Quality'
+            tooltip:      |
+              One or more indicators of the quality of the original scan on
+              which the submission was based.
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol TextQuality
+
+          rem_status:
+            # FMM5: "Remediation Status", Required, Non-repeatable, "Not Remediated, Remediated, Born Accessible"
+            # IA:   "remediation_status"
+            # SR:   RemediationStatus
+            # IR:   RemediationStatus
+            min:          1
+            max:          1
+            label:        'Remediation Status'
+            tooltip:      |
+              The remediation status of submitted file.
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol RemediationStatus
+
+          # ===================================================================
           # emma_data JSON keys - new bibliographic fields
           # ===================================================================
 
-          bib_series:
+          bib_series: # NOTE: versus periodical_title
             # FMM5: "Series Name", Optional, Non-repeatable
             # IA:   *missing*
             # SR:   *missing*
@@ -845,7 +1097,7 @@ en:
               <em>TODO</em>
             placeholder:  'Journal name or publication series (if applicable)'
 
-          bib_seriesType:
+          bib_seriesType: # NOTE: versus emma_workType
             # FMM5: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
             # IA:   "series_type"
             # SR:   *missing*
@@ -861,7 +1113,7 @@ en:
               <em>TODO</em>
             type:         !ruby/symbol SeriesType
 
-          bib_seriesPosition:
+          bib_seriesPosition: # NOTE: versus periodical_series_position
             # FMM5: "Series Position", Optional, Non-repeatable
             # IA:   "volume"
             # SR:   *missing*
@@ -877,7 +1129,7 @@ en:
               <em>TODO</em>
             placeholder:  'Journal volume/issue/number'
 
-          bib_version:
+          bib_version: # NOTE: versus emma_version
             # FMM5: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
             # IA:   "version"
             # SR:   *missing*
@@ -896,134 +1148,8 @@ en:
             placeholder:  'Enter edition, version, etc.'
 
           # ===================================================================
-          # emma_data JSON keys - new remediation fields
+          # emma_data JSON keys - other fields
           # ===================================================================
-
-          rem_source:
-            # FMM5: "Provider of source", Required, Non-repeatable
-            # IA:   "contributor"
-            # SR:   *missing*
-            # IR:   *missing*
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          1
-            label:        'Source of File'
-            tooltip:      |
-              The origin of the content on which the remediated file was based.
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Enter source of original content'
-
-          rem_metadataSource:
-            # FMM5: "Metadata Source", Required, Repeatable
-            # IA:   "metadata_source"
-            # SR:   *missing*
-            # IR:   *missing*
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Source of Metadata'
-            tooltip:      |
-              The origin of the metadata for the original creative work on
-              which the remediated file was based.
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Enter source of metadata'
-
-          rem_remediatedBy:
-            # FMM5: "Remediated By", Required, Repeatable
-            # IA:   "remediated_by"
-            # SR:   *missing*
-            # IR:   *missing*
-            # NOTE: Not sure if this really should be repeatable.
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Remediated By'
-            tooltip:      |
-              The origin of the remediated file.
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Enter source of remediated file'
-
-          rem_complete:
-            # FMM5: "Portion?", Required, Non-repeatable, "Yes or No"
-            # IA:   "portion"
-            # SR:   *missing*
-            # IR:   *missing*
-            min:          1
-            max:          1
-            label:        'Entire Document Remediated?'
-            tooltip:      |
-              True if the submission is a presentation of the entire original
-              work; false if the submission only covers certain sections or
-              chapters, or contains gaps or omissions.
-            notes_html:   |
-              <em>TODO</em>
-            type:         boolean
-
-          rem_coverage:
-            # FMM5: "Portion Description", Required, Repeatable
-            # IA:   "portion_description"
-            # SR:   *missing*
-            # IR:   *missing*
-            # NOTE: Becomes unrequired if rem_complete is *true*.
-            min:          1
-            max:          ~
-            label:        'Part(s) Remediated'
-            tooltip:      |
-              For a submission which does not present the entire original
-              work, describe the part(s) which are covered by the submission.
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Describe the part(s) that have been remediated'
-
-          rem_remediation:
-            # FMM5: "Remediated Aspects", Required, Repeatable
-            # IA:   "remediated_aspects"
-            # SR:   *missing*
-            # IR:   *missing*
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Remediated Aspects'
-            tooltip:      |
-              A description of the remediations that are provided in this
-              submission.
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Describe remediation(s)'
-            type:         textarea
-
-          rem_quality:
-            # FMM5: "Text Quality", Required, Non-repeatable
-            # IA:   "text_quality"
-            # SR:   *missing*
-            # IR:   *missing*
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Text Quality'
-            tooltip:      |
-              One or more indicators of the quality of the original scan on
-              which the submission was based.
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol TextQuality
-
-          rem_status:
-            # FMM5: "Remediation Status", Required, Non-repeatable, "Not Remediated, Remediated, Born Accessible"
-            # IA:   "remediation_status"
-            # SR:   *missing*
-            # IR:   *missing*
-            min:          1
-            max:          1
-            label:        'Remediation Status'
-            tooltip:      |
-              The remediation status of submitted file.
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol RemediationStatus
 
           rem_image_count:
             # FMM5: N/A

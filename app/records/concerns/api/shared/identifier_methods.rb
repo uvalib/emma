@@ -23,7 +23,8 @@ module Api::Shared::IdentifierMethods
   #
   # @type [Array<Symbol>]
   #
-  IDENTIFIER_FIELDS = %i[dc_identifier dc_relation].freeze
+  IDENTIFIER_FIELDS =
+    %i[dc_identifier dc_relation periodical_identifier].freeze
 
   # Normalization array handling.
   #

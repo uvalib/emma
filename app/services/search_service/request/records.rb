@@ -85,6 +85,13 @@ module SearchService::Request::Records
   #   title or date (:dc_title or :emma_lastRemediationDate) specified in
   #   :searchAfterValue.
   #
+  # === Group
+  # (EXPERIMENTAL) Search results will be grouped by the given field.  Result
+  # page size will automatically be limited to 10 maximum.  Each result will
+  # have a number of grouped records provided as children, so the number of
+  # records returned will be more than 10.  Cannot be combined with sorting by
+  # title or date.
+  #
   # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                                  :q
@@ -105,16 +112,17 @@ module SearchService::Request::Records
   # @option opt [String]                                  :searchAfterValue
   # @option opt [Integer]                                 :size
   # @option opt [Integer]                                 :from
+  # @option opt [SearchGroup, Array<SearchGroup>]         :group
   #
   # @return [Search::Message::SearchRecordList]
-  #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/search/searchMetadata  HTML API documentation
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/paths/search           JSON API specification
   #
   # == HTTP response codes
   #
   # 200 Accepted        Metadata records matching the search criteria.
   # 400 Bad Request     Bad query parameter.
+  #
+  # @see https://app.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/search/searchMetadata  HTML API documentation
+  # @see https://api.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/paths/search           JSON API specification
   #
   def get_records(**opt)
     opt.slice(:prev_id, :prev_value).each { |k, v| opt[k] = CGI.unescape(v) }
@@ -153,12 +161,14 @@ module SearchService::Request::Records
           searchAfterValue:     String,
           size:                 Integer,
           from:                 Integer,
+          group:                SearchGroup,
         },
         multi: %i[
           format
           formatFeature
           accessibilityFeature
           collection
+          group
         ],
         role:  :anonymous, # Should succeed for any user.
       }

@@ -7,10 +7,10 @@ __loading_begin(__FILE__)
 
 # Namespace for objects de-serialized from the EMMA Unified Search API.
 #
-# @see https://api.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4             JSON API specification
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4             HTML API documentation
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4   JSON schema specification
-# @see https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4   HTML schema documentation
+# @see https://app.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5             HTML API documentation
+# @see https://api.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5             JSON API specification
+# @see https://app.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5   HTML schema documentation
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5   JSON schema specification
 #
 module Search
   module Api;     end

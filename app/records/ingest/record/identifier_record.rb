@@ -18,9 +18,7 @@ __loading_begin(__FILE__)
 # @attr [String]            emma_formatVersion        (optional)
 # @attr [DublinCoreFormat]  dc_format
 #
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/IdentifierRecord                            Ingest API documentation
-# @see https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/IdentifierRecord  HTML schema documentation
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.4#/components/schemas/IdentifierRecord  JSON schema specification
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/IdentifierRecord  JSON schema specification
 #
 class Ingest::Record::IdentifierRecord < Ingest::Api::Record
 

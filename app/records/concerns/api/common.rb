@@ -675,7 +675,7 @@ module Api::Common
   # @type [Hash{Symbol=>Hash}]
   #
   # @see file:config/locales/repository.en.yml *en.emma.repository*
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.4#/EmmaRepository  Search API documentation
+  # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaRepository  JSON schema specification
   #
   REPOSITORY =
     REPOSITORY_CONFIG.reject { |k, _| k.start_with?('_') }.deep_freeze

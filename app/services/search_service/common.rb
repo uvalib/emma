@@ -44,6 +44,7 @@ module SearchService::Common
     collection
     formatVersion
     from
+    group
     lastRemediationDate
     publisher
     repository

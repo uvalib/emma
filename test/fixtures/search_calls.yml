@@ -40,7 +40,7 @@ template:
   filter:
     format:
       multiple: true
-      values:
+      values:   # @see "en.emma.search.type.DublinCoreFormat"
         - brf
         - daisy
         - daisyAudio
@@ -54,7 +54,7 @@ template:
         - rtf
     feature:
       multiple: true
-      values:
+      values:   # @see "en.emma.search.type.FormatFeature"
         - tts
         - human
         - grade1
@@ -74,7 +74,7 @@ template:
         - internetArchive
     accessibility:
       multiple: true
-      values:
+      values:   # @see "en.emma.search.type.A11yFeature"
         - alternativeText
         - annotations
         - audioDescription

@@ -153,7 +153,9 @@ $(document).on('turbolinks:load', function() {
      *      emma_retrievalLink:                 string,
      *      emma_webPageLink:                   string,
      *      emma_lastRemediationDate:           string,
+     *      emma_sortDate:                      string,
      *      emma_repositoryMetadataUpdateDate:  string,
+     *      emma_publicationDate:               string,
      *      emma_lastRemediationNote:           string,
      *      emma_formatVersion:                 string,
      *      emma_formatFeature:                 string|string[],
@@ -177,18 +179,19 @@ $(document).on('turbolinks:load', function() {
      *      s_accessMode:                       string[],
      *      s_accessModeSufficient:             string[],
      *      s_accessibilitySummary:             string,
-     *      bib_series:                         string,
-     *      bib_seriesType:                     string,
-     *      bib_seriesPosition:                 string,
-     *      bib_version:                        string,
      *      rem_source:                         string,
      *      rem_metadataSource:                 string|string[],
      *      rem_remediatedBy:                   string|string[],
      *      rem_complete:                       boolean,
-     *      rem_coverage:                       string|string[],
+     *      rem_coverage:                       string,
      *      rem_remediation:                    string|string[],
-     *      rem_quality:                        string|string[],
+     *      rem_remediatedAspects:              string|string[],
+     *      rem_quality:                        string,
      *      rem_status:                         string,
+     *      bib_series:                         string,
+     *      bib_seriesType:                     string,
+     *      bib_seriesPosition:                 string,
+     *      bib_version:                        string,
      * }} EmmaData
      *
      * @see "en.emma.entry.record.emma_data"
@@ -279,8 +282,12 @@ $(document).on('turbolinks:load', function() {
      *      emma_retrievalLink:                 string,
      *      emma_webPageLink:                   string,
      *      emma_lastRemediationDate:           ?string,
+     *      emma_sortDate:                      ?string,
      *      emma_repositoryMetadataUpdateDate:  ?string,
+     *      emma_publicationDate:               ?string,
      *      emma_lastRemediationNote:           string,
+     *      emma_version:                       ?string,
+     *      emma_workType:                      ?string,
      *      emma_formatVersion:                 string,
      *      emma_formatFeature:                 ?string[],
      *      dc_title:                           string,
@@ -302,10 +309,21 @@ $(document).on('turbolinks:load', function() {
      *      s_accessibilityHazard:              ?string[],
      *      s_accessibilitySummary:             ?string,
      *      s_accessMode:                       ?string[],
-     *      s_accessModeSufficient:             ?string[]
+     *      s_accessModeSufficient:             ?string[],
+     *      periodical_title:                   ?string,
+     *      periodical_identifier:              ?string[],
+     *      periodical_series_position:         ?string,
+     *      rem_source:                         ?string,
+     *      rem_metadataSource:                 ?string[],
+     *      rem_remediatedBy:                   ?string[],
+     *      rem_complete:                       ?boolean,
+     *      rem_coverage:                       ?string,
+     *      rem_remediatedAspects:              ?string[],
+     *      rem_quality:                        ?string,
+     *      rem_status:                         ?string,
      * }} SearchResultEntry
      *
-     * @see "en.emma.search.record"
+     * @see file:config/locales/records/search.en.yml "en.emma.search.record"
      */
 
     /**
@@ -2436,15 +2454,15 @@ $(document).on('turbolinks:load', function() {
             return is_true ? result : !result;
         }
 
-        function modifyOther(new_required, new_value) {
+        function modifyOther(new_req, new_val) {
             let changed        = false;
-            const old_required = $other_input.attr('data-required').toString();
-            if (old_required !== new_required.toString()) {
-                $other_input.attr('data-required', new_required);
+            const old_req = $other_input.attr('data-required')?.toString();
+            if (old_req !== new_req?.toString()) {
+                $other_input.attr('data-required', new_req);
                 changed = true;
             }
-            if (isDefined(new_value) && ($other_input.val() !== new_value)) {
-                $other_input.val(new_value);
+            if (isDefined(new_val) && ($other_input.val() !== new_val)) {
+                $other_input.val(new_val);
                 changed = true;
             }
             return changed;
@@ -2805,8 +2823,12 @@ $(document).on('turbolinks:load', function() {
                 emma_retrievalLink:                 CLEARED,
                 emma_webPageLink:                   CLEARED,
                 emma_lastRemediationDate:           AS_IS,
+                emma_sortDate:                      FROM_PARENT,
                 emma_repositoryMetadataUpdateDate:  AS_IS,
+                emma_publicationDate:               FROM_PARENT,
                 emma_lastRemediationNote:           AS_IS,
+                emma_version:                       FROM_PARENT,
+                emma_workType:                      FROM_PARENT,
                 emma_formatVersion:                 AS_IS,
                 emma_formatFeature:                 AS_IS,
                 dc_title:                           FROM_PARENT,
@@ -2829,18 +2851,22 @@ $(document).on('turbolinks:load', function() {
                 s_accessibilityMode:                AS_IS,
                 s_accessibilityModeSufficient:      AS_IS,
                 s_accessibilitySummary:             AS_IS,
-                bib_series:                         FROM_PARENT,
-                bib_seriesType:                     FROM_PARENT,
-                bib_seriesPosition:                 FROM_PARENT,
-                bib_version:                        FROM_PARENT,
+                periodical_title:                   FROM_PARENT,
+                periodical_identifier:              FROM_PARENT,
+                periodical_series_position:         FROM_PARENT,
                 rem_source:                         repo_name,
                 rem_metadataSource:                 [repo_name],
                 rem_remediatedBy:                   AS_IS,
                 rem_complete:                       AS_IS,
                 rem_coverage:                       AS_IS,
                 rem_remediation:                    AS_IS,
+                rem_remediatedAspects:              AS_IS,
                 rem_quality:                        AS_IS,
-                rem_status:                         AS_IS
+                rem_status:                         AS_IS,
+                bib_series:                         FROM_PARENT,
+                bib_seriesType:                     FROM_PARENT,
+                bib_seriesPosition:                 FROM_PARENT,
+                bib_version:                        FROM_PARENT,
             };
 
             let update = {};

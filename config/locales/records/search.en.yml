@@ -17,8 +17,52 @@ en:
 
       record:
 
+        # =====================================================================
+        # Title-level bibliographic information
+        # =====================================================================
+
         dc_title:
           label:                            'Title'
+          max:                              1
+
+        bib_seriesType:
+          # NOTE: not yet in the index
+          label:                            'Series Type'
+          max:                              1
+
+        emma_workType:
+          # NOTE: proposed with API 0.0.5
+          label:                            'Work Type'
+          max:                              1
+
+        bib_version:
+          # NOTE: not yet in the index
+          label:                            'Version'
+          max:                              1
+
+        emma_version:
+          # NOTE: proposed with API 0.0.5
+          label:                            'Version'
+          max:                              1
+
+        bib_series:
+          # NOTE: not yet in the index
+          label:                            'Series'
+          max:                              1
+
+        periodical_title:
+          # NOTE: proposed with API 0.0.5
+          label:                            'Periodical Title'
+          max:                              1
+
+        bib_seriesPosition:
+          # NOTE: not yet in the index
+          label:                            'Series Position'
+          max:                              1
+
+        periodical_series_position:
+          # NOTE: proposed with API 0.0.5
+          label:                            'Series Position'
           max:                              1
 
         dc_type:
@@ -61,6 +105,11 @@ en:
           label:                            'Identifier'
           max:                              ~
 
+        periodical_identifier:
+          # NOTE: proposed with API 0.0.5
+          label:                            'Periodical Identifier'
+          max:                              1
+
         dc_relation:
           label:                            'Related'
           max:                              ~
@@ -72,6 +121,10 @@ en:
         dcterms_dateAccepted:
           label:                            'Entry Created'
           max:                              1
+
+        # =====================================================================
+        # Indexing information
+        # =====================================================================
 
         emma_repositoryMetadataUpdateDate:
           label:                            'Entry Updated'
@@ -93,6 +146,10 @@ en:
           label:                            'Collection'
           max:                              ~
 
+        # =====================================================================
+        # File-level technical information
+        # =====================================================================
+
         emma_lastRemediationDate:
           label:                            'Last Update'
           max:                              1
@@ -108,6 +165,50 @@ en:
         emma_formatFeature:
           label:                            'Format Feature'
           max:                              ~
+
+        # =====================================================================
+        # File-level remediation information
+        # =====================================================================
+
+        rem_source:
+          label:                            'Source of File'
+          max:                              1
+
+        rem_metadataSource:
+          label:                            'Source of Metadata'
+          max:                              ~
+
+        rem_remediatedBy:
+          label:                            'Remediated By'
+          max:                              ~
+
+        rem_complete:
+          label:                            'Entire Document Remediated?'
+          max:                              1
+
+        rem_coverage:
+          label:                            'Part(s) Remediated'
+          max:                              1
+
+        rem_remediation:
+          label:                            'Remediated Aspects (OLD)'
+          max:                              ~
+
+        rem_remediatedAspects:
+          label:                            'Remediated Aspects'
+          max:                              ~
+
+        rem_quality:
+          label:                            'Text Quality'
+          max:                              1
+
+        rem_status:
+          label:                            'Remediation Status'
+          max:                              1
+
+        # =====================================================================
+        # File-level accessibility information
+        # =====================================================================
 
         s_accessibilityFeature:
           label:                            'Accessibility Feature'
@@ -137,6 +238,10 @@ en:
           label:                            'Accessibility Summary'
           max:                              1
 
+        # =====================================================================
+        # File-level member repository information
+        # =====================================================================
+
         emma_webPageLink:
           label:                            'Details Link'
           max:                              1
@@ -147,60 +252,4 @@ en:
 
         emma_retrievalLink:
           label:                            'Retrieval Link'
-          max:                              1
-
-        # =====================================================================
-        # New bibliographic fields not in the index
-        # =====================================================================
-
-        bib_version:
-          label:                            'Version'
-          max:                              1
-
-        bib_series:
-          label:                            'Series'
-          max:                              1
-
-        bib_seriesType:
-          label:                            'Series Type'
-          max:                              1
-
-        bib_seriesPosition:
-          label:                            'Series Position'
-          max:                              1
-
-        # =====================================================================
-        # New remediation fields not in the index
-        # =====================================================================
-
-        rem_source:
-          label:                            'Source of File'
-          max:                              1
-
-        rem_metadataSource:
-          label:                            'Source of Metadata'
-          max:                              ~
-
-        rem_remediatedBy:
-          label:                            'Remediated By'
-          max:                              ~
-
-        rem_complete:
-          label:                            'Entire Document Remediated?'
-          max:                              1
-
-        rem_coverage:
-          label:                            'Part(s) Remediated'
-          max:                              ~
-
-        rem_remediation:
-          label:                            'Remediated Aspects'
-          max:                              ~
-
-        rem_quality:
-          label:                            'Text Quality'
-          max:                              ~
-
-        rem_status:
-          label:                            'Remediation Status'
           max:                              1

@@ -9,8 +9,8 @@ __loading_begin(__FILE__)
 #
 # @attr [Array<Ingest::Record::IdentifierRecord>] identifiers
 #
-# @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/IdentifierRecordList                    Ingest API documentation
-# @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/components/schemas/IdentifierRecordList JSON schema specification
+# @see https://app.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/IdentifierRecordList                    Ingest API documentation
+# @see https://api.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/components/schemas/IdentifierRecordList JSON schema specification
 #
 class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
 
