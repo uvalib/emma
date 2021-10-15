@@ -236,7 +236,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       value if (1...1000).cover?(value&.number_value)
     end
 
-    # Item date extracted from description, title or :dcterms_copyrightDate.
+    # Item date extracted from description, title or :dcterms_dateCopyright.
     #
     # @param [Search::Record::MetadataRecord, nil] rec
     #
@@ -246,14 +246,8 @@ class Search::Record::TitleRecord < Search::Api::Record
       date = description(rec)
       date = nil unless date&.match?(YEAR_PATTERN)
       date = nil if date&.match?(LEADING_ITEM_NUMBER)
-      date &&= (Date.parse(date) rescue nil)
-      if date
-        $stderr.puts "--------------- Date   | date = #{date.inspect}"
-        date.to_s.delete_suffix('-01').delete_suffix('-01')
-      else
-        $stderr.puts "--------------- Date   | copyright = #{rec&.dcterms_dateCopyright.inspect}"
-        rec&.dcterms_dateCopyright&.match(YEAR_PATTERN) && $1
-      end
+      IsoYear.cast(date)&.to_s ||
+        (rec&.dcterms_dateCopyright&.match(YEAR_PATTERN) && $1)
     end
 
     # =========================================================================
@@ -269,7 +263,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>*}]
     #
     def match_fields(rec)
-      extract_fields(rec, *MATCH_FIELDS)
+      extract_fields(rec, MATCH_FIELDS)
     end
 
     # sort_fields
@@ -279,7 +273,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>*}]
     #
     def sort_fields(rec)
-      extract_fields(rec, *SORT_FIELDS)
+      extract_fields(rec, SORT_FIELDS)
     end
 
     # sort_keys
@@ -298,11 +292,11 @@ class Search::Record::TitleRecord < Search::Api::Record
     # extract_fields
     #
     # @param [Search::Record::MetadataRecord, Hash, *] rec
-    # @param [Array<Symbol,Array<Symbol>>]             fields
+    # @param [Array<Symbol>]                           fields
     #
     # @return [Hash{Symbol=>*}]
     #
-    def extract_fields(rec, *fields)
+    def extract_fields(rec, fields)
       fields = fields.flatten
       fields.compact!
       fields.map!(&:to_sym)

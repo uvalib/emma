@@ -81,7 +81,7 @@ module Api::Shared::DateMethods
     day_fields.each do |field|
       value = data ? data[field] : try(field)
       array = value.is_a?(Array)
-      value = value.split(sep).map(&:strip) if value.is_a?(String)
+      value = value.is_a?(String) ? value.split(sep) : Array.wrap(value)
       value = normalize_dates(value)
       case mode
         when :required  then # Keep value as array.
@@ -91,7 +91,7 @@ module Api::Shared::DateMethods
       value = value.presence
       # noinspection RubyNilAnalysis
       if data.nil?
-        try("#{field}=", value) if value || try(field)
+        try("#{field}=", value) if value
       elsif value
         data[field] = value
       elsif data.key?(field)
@@ -118,7 +118,7 @@ module Api::Shared::DateMethods
   # @return [nil]                     If *value* is not a valid date.
   #
   def normalize_date(value)
-    IsoDay.cast(value)&.to_s
+    IsoDay.cast(value)&.to_s if value.present?
   end
 
 end

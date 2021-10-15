@@ -108,9 +108,7 @@ module Api::Shared::TitleMethods
   #
   def year
     date_fields.map { |date|
-      next unless respond_to?(date)
-      value = send(date).to_s.sub(/^(\d{4}).*/, '\1').to_i
-      value unless value.zero?
+      (year = IsoYear.cast(try(date))) and positive(year.to_s)
     }.compact.sort.first
   end
 

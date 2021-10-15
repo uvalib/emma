@@ -63,10 +63,10 @@ class TitleController < ApplicationController
   def index
     __debug_route
     opt = request_parameters
-    if helpers.isbn_candidate?(opt[:keyword])
+    if Isbn.candidate?((isbn = opt[:keyword]))
       # The search looks like an ISBN so interpret this as an ISBN search.
-      isbn = opt.delete(:keyword)
-      opt[:isbn] = to_isbn(isbn) || isbn
+      opt[:isbn] = Isbn.to_isbn(isbn) || isbn
+      opt.delete(:keyword)
       return redirect_to opt
 
     elsif (isbn = opt[:isbn]) && opt[:keyword]
@@ -76,7 +76,7 @@ class TitleController < ApplicationController
       opt.delete(:isbn)
       return redirect_to opt
 
-    elsif isbn && !helpers.isbn?(isbn)
+    elsif isbn && !Isbn.valid?(isbn)
       # The supplied ISBN is not valid.
       flash_now_notice("#{isbn.inspect} is not a valid ISBN") # TODO: I18n
       opt.delete(:isbn)

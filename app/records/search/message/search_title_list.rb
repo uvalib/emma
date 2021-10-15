@@ -116,7 +116,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   def group_fields(records, group)
     fields = group.is_a?(Integer) ? GROUPING_LEVELS[group] : Array.wrap(group)
-    RECORD_CLASS.extract_fields(records, *fields).values
+    RECORD_CLASS.extract_fields(records, fields).values
   end
 
   # Recursive group records.

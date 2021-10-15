@@ -11,7 +11,6 @@ __loading_begin(__FILE__)
 module Import::IaBulk
 
   include Import
-  include IsbnHelper
 
   extend self
 
@@ -310,12 +309,12 @@ module Import::IaBulk
       lead_isbn = isbns.shift
       alt_isbn  =
         if lead_isbn && isbns.present?
-          lead_value = remove_isbn_prefix(lead_isbn)
+          lead_value = Isbn.remove_prefix(lead_isbn)
           alt_index =
-            if isbn13?(lead_value)
-              isbns.index { |id| lead_value == to_isbn13(id, log: false) }
+            if Isbn.isbn13?(lead_value)
+              isbns.index { |id| lead_value == Isbn.to_isbn13(id, log: false) }
             else
-              isbns.index { |id| lead_value == to_isbn10(id, log: false) }
+              isbns.index { |id| lead_value == Isbn.to_isbn10(id, log: false) }
             end
           isbns.delete_at(alt_index) if alt_index
         end

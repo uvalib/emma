@@ -72,7 +72,7 @@ end
 
 public
 
-# PublicationIdentifier
+# Publication Identifier
 #
 # == API description
 # The lowercase scheme and identifier for a publication.  For example,
@@ -90,19 +90,9 @@ class PublicationIdentifier < ScalarType
 
   public
 
-  # The standard identifier types.
-  #
-  # @type [Array<Symbol>]
-  #
-  TYPES = %i[isbn issn oclc lccn upc].freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   module Methods
+
+    include ScalarType::Methods
 
     # =========================================================================
     # :section:
@@ -110,12 +100,21 @@ class PublicationIdentifier < ScalarType
 
     public
 
+    # The subclass of PublicationIdentifier.
+    #
+    # @return [Class<PublicationIdentifier>]
+    #
+    def identifier_subclass
+      # noinspection RubyMismatchedReturnType
+      self.is_a?(Class) ? self : self.class
+    end
+
     # class_type
     #
     # @return [Symbol]
     #
     def class_type
-      safe_const_get(:TYPE) || self.class.safe_const_get(:TYPE)
+      identifier_subclass.safe_const_get(:TYPE) || :unknown
     end
 
     # class_prefix
@@ -123,7 +122,7 @@ class PublicationIdentifier < ScalarType
     # @return [String]
     #
     def class_prefix
-      safe_const_get(:PREFIX) || self.class.safe_const_get(:PREFIX)
+      identifier_subclass.safe_const_get(:PREFIX) || '???'
     end
 
     # =========================================================================
@@ -134,55 +133,113 @@ class PublicationIdentifier < ScalarType
 
     # The name of the represented identifier type.
     #
-    # @param [String, nil] v
+    # @param [*] v
     #
     # @return [Symbol]
     #
     def type(v = nil)
-      v ? prefix(v).to_sym : class_type
+      # noinspection RailsParamDefResolve
+      v.nil? && class_type || v.try(:class_type) || prefix(v).to_sym
     end
 
     # The identifier type portion of the value.
     #
-    # @param [String, nil] v
+    # @param [*] v
     #
     # @return [String]
     #
     def prefix(v = nil)
-      v ? parts(v).first : class_prefix
+      # noinspection RailsParamDefResolve
+      v.nil? && class_prefix || v.try(:class_prefix) || parts(v).first
     end
 
     # The identifier number portion of the value.
     #
-    # @param [String, nil] v
+    # @param [String, *] v
     #
     # @return [String]
     #
     def number(v)
-      parts(v).last
+      normalize(v)
     end
 
     # Split a value into a type prefix and a number.
     #
-    # @param [String, nil] v
+    # @param [String, *] v
     #
     # @return [(String, String)]
     #
     def parts(v)
-      pre, num = v.to_s.split(':', 2).map(&:strip).presence || ['', '']
-      return pre, num if num.present?
-      return pre, ''  if pre.match?(/^[a-z]+$/i)
-      return '',  pre
+      v = v.to_s.strip
+      n = remove_prefix(v)
+      p = (n.blank? || (n == v)) ? '' : v.delete_suffix(n).sub(/:?\s*$/, '')
+      return p, n
+    end
+
+    # =========================================================================
+    # :section: ScalarType overrides
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      remove_prefix(v).rstrip
+    end
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      normalize(v).present?
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether a value could be used as a PublicationIdentifier.
+    #
+    # @param [String, *] v
+    #
+    def candidate?(v)
+      identifier(v).present?
+    end
+
+    # Extract the base identifier of a possible PublicationIdentifier.
+    #
+    # @param [String, *] v
+    #
+    # @return [String, nil]
+    #
+    def identifier(v)
+      remove_prefix(v).rstrip.presence
     end
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, nil] v
+    # @param [String, *] v
     #
     # @return [String]
     #
     def remove_prefix(v)
-      v.to_s.remove(/^\s*#{prefix}\s*:\s*/i)
+      v.to_s.sub(/^\s*[a-z]+(:\s*|\s+)/i, '')
+    end
+
+    # Indicate whether the given value has the characteristic prefix.
+    #
+    # @param [String, *] v
+    #
+    def prefix?(v)
+      v != remove_prefix(v)
     end
 
     # =========================================================================
@@ -199,7 +256,7 @@ class PublicationIdentifier < ScalarType
     # @return [nil]                   If *obj* is not a valid identifier.
     #
     def cast(v)
-      v.is_a?(PublicationIdentifier) ? v : create(v) if v.present?
+      v.is_a?(identifier_subclass) ? v : create(v) if v.present?
     end
 
     # Create a new instance.
@@ -210,16 +267,12 @@ class PublicationIdentifier < ScalarType
     # @return [nil]                   If *v* is not a valid identifier.
     #
     def create(v, *)
-      prefix, number = parts(v)
-      return if number.blank?
-      if prefix.present?
-        types = [prefix.classify.safe_constantize].compact
-      else
-        types = [Isbn, Issn, Lccn, Oclc, Upc]
-      end
+      prefix, identifier = parts(v).map(&:presence)
+      return unless identifier
+      types = prefix ? Array.wrap(subclass(prefix)) : identifier_classes
       types.find do |type|
-        next unless type.candidate?(number)
-        result = Log.silence { type.new(number) }
+        next unless type.candidate?(identifier)
+        result = Log.silence { type.new(identifier) }
         return result if result.valid?
       end
     end
@@ -265,20 +318,6 @@ class PublicationIdentifier < ScalarType
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Indicate whether a value could be used as a PublicationIdentifier.
-  #
-  # @param [String] v                 Value to check.
-  #
-  def self.candidate?(v)
-    prefix(v) == prefix
-  end
-
-  # ===========================================================================
   # :section: ScalarType overrides
   # ===========================================================================
 
@@ -293,29 +332,51 @@ class PublicationIdentifier < ScalarType
   end
 
   # ===========================================================================
-  # :section: ScalarType overrides
+  # :section: Class methods
   # ===========================================================================
 
   public
 
-  # Transform *v* into a valid form.
+  # Identifier subclasses.
   #
-  # @param [*] v
+  # @return [Array<Class<PublicationIdentifier>>]
   #
-  # @return [String]
-  #
-  def self.normalize(v)
-    parts(v.to_s.downcase).join(':')
+  def self.identifier_classes
+    # noinspection RubyClassVariableUsageInspection
+    @@identifier_classes ||= PublicationIdentifier.subclasses.reverse
   end
 
-  # Indicate whether *v* would be a valid value for an item of this type.
+  # Identifier type names.
   #
-  # @param [*] v
+  # @return [Array<Symbol>]
   #
-  def self.valid?(v)
-    [Isbn, Issn, Lccn, Oclc, Upc].find do |type|
-      break true if type.valid?(v)
-    end || false
+  def self.identifier_types
+    # noinspection RubyClassVariableUsageInspection
+    @@identifier_types ||= identifier_classes.map(&:type)
+  end
+
+  # Table of identifier subclasses.
+  #
+  # @return [Hash{Symbol=>Class<PublicationIdentifier>}]
+  #
+  def self.subclass_map
+    # noinspection RubyClassVariableUsageInspection
+    @@subclass_map ||= identifier_classes.map { |c| [c.type, c] }.to_h
+  end
+
+  # Retrieve the matching identifier subclass.
+  #
+  # @param [Symbol, String, Class<PublicationIdentifier>] type
+  #
+  # @return [Class<PublicationIdentifier>, nil]
+  #
+  def self.subclass(type = nil)
+    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # noinspection RubyCaseWithoutElseBlockInspection
+    case type
+      when Symbol, String then subclass_map[type.to_sym]
+      when Class          then type if type < PublicationIdentifier
+    end
   end
 
 end
@@ -324,78 +385,334 @@ end
 #
 class Isbn < PublicationIdentifier
 
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
 
-  PREFIX = name.underscore
-  TYPE   = PREFIX.to_sym
+  module Methods
 
-  # ===========================================================================
-  # :section: PublicationIdentifier overrides
-  # ===========================================================================
+    include PublicationIdentifier::Methods
 
-  public
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
-  # The name of the represented identifier type.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [Symbol]
-  #
-  def type(v = nil)
-    v ? super : TYPE
+    public
+
+    # Number of digits in an ISBN-10.
+    #
+    # @type [Integer]
+    #
+    ISBN_10_DIGITS = 10
+
+    # Number of digits in an ISBN-13.
+    #
+    # @type [Integer]
+    #
+    ISBN_13_DIGITS = 13
+
+    # A valid ISBN has at least this many digits.
+    #
+    # @type [Integer]
+    #
+    ISBN_MIN_DIGITS = ISBN_10_DIGITS
+
+    # A pattern matching any of the expected ISBN prefixes.
+    #
+    # @type [Regexp]
+    #
+    ISBN_PREFIX = /^\s*ISBN(:\s*|\s+)/i.freeze
+
+    # A pattern matching the form of an ISBN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISBN_IDENTIFIER = /^(\d+[\s[:punct:]]?)+[\dxX]$/.freeze
+
+    # =========================================================================
+    # :section: ScalarType overrides
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      remove_prefix(v).delete('^0-9xX')
+    end
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      isbn?(v)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the given value appears to include an ISBN.
+    #
+    # @param [String, *] v
+    #
+    # == Usage Notes
+    # If *v* matches #ISBN_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.
+    #
+    def candidate?(v)
+      (v = v.to_s.strip).sub!(ISBN_PREFIX, '').present? ||
+        (v.match?(ISBN_IDENTIFIER) && (v.count('0-9xX') >= ISBN_MIN_DIGITS))
+    end
+
+    # Extract the base identifier of a possible ISBN.
+    #
+    # @param [String, *] v
+    #
+    # @return [String, nil]
+    #
+    def identifier(v)
+      v = remove_prefix(v).rstrip
+      v if v.match?(ISBN_IDENTIFIER)
+    end
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def remove_prefix(v)
+      v.to_s.sub(ISBN_PREFIX, '')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the value is a valid ISBN.
+    #
+    # @param [String] v
+    #
+    def isbn?(v)
+      isbn = identifier(v) or return false
+      checksum(isbn) == isbn.last
+    end
+
+    # Indicate whether the string is a valid ISBN-13.
+    #
+    # @param [String] v
+    #
+    def isbn13?(v)
+      isbn   = identifier(v) or return false
+      check  = isbn.last
+      digits = isbn.delete('^0-9')
+      length = digits.size
+      digits = digits[0...-1]
+      # noinspection RubyMismatchedParameterType
+      (length == ISBN_13_DIGITS) && (isbn13_checksum(digits) == check)
+    end
+
+    # Indicate whether the value is a valid ISBN-10.
+    #
+    # @param [String] v
+    #
+    def isbn10?(v)
+      isbn   = identifier(v) or return false
+      check  = isbn.last.upcase
+      digits = isbn.delete('^0-9')
+      length = digits.size
+      if check == 'X'
+        length += 1
+      else
+        digits = digits[0...-1]
+      end
+      # noinspection RubyMismatchedParameterType
+      (length == ISBN_10_DIGITS) && (isbn10_checksum(digits) == check)
+    end
+
+    # If the value is an ISBN return it in a normalized form.
+    #
+    # @param [String]  v
+    # @param [Hash]    opt              Passed to #to_isbn13.
+    #
+    # @return [String, nil]
+    #
+    def to_isbn(v, **opt)
+      to_isbn13(v, **opt)
+    end
+
+    # If the value is an ISBN-13; if it is an ISBN-10, convert it to the
+    # equivalent ISBN-13; otherwise return *nil*.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_isbn13(v, log: true, **)
+      digits = identifier(v)&.delete('^0-9xX')
+      isbn10 = (digits&.size == ISBN_10_DIGITS)
+      check  = digits&.last&.upcase
+      digits = digits&.slice(0...-1)
+      valid  = digits && (check == checksum(digits))
+      if isbn10 && valid
+        # noinspection RubyMismatchedParameterType
+        return +'978' << digits << isbn13_checksum(digits)
+      elsif isbn10
+        log &&= "#{v.inspect} is not a valid ISBN-10"
+      elsif valid
+        return digits << check
+      else
+        log &&= "#{v.inspect} is not a valid ISBN-13"
+      end
+      Log.info { "#{__method__}: #{log}" } if log
+    end
+
+    # If the value is an ISBN-10 return it; if it is an ISBN-13 that starts
+    # with "978", convert it to the equivalent ISBN-10; otherwise return *nil*.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_isbn10(v, log: true, **)
+      digits = identifier(v)&.delete('^0-9xX')
+      isbn13 = (digits&.size == ISBN_13_DIGITS)
+      check  = digits&.last&.upcase
+      digits = digits&.slice(0...-1)
+      valid  = digits && (check == checksum(digits))
+      if isbn13 && valid && digits&.delete_prefix!('978')
+        # noinspection RubyMismatchedParameterType
+        return digits << isbn10_checksum(digits)
+      elsif isbn13 && valid
+        log &&= "cannot convert #{v.inspect}"
+      elsif isbn13
+        log &&= "#{v.inspect} is not a valid ISBN-13"
+      elsif valid
+        return digits << check
+      else
+        log &&= "#{v.inspect} is not a valid ISBN-10"
+      end
+      Log.info { "#{__method__}: #{log}" } if log
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Generic ISBN checksum.
+    #
+    # @param [String]  isbn
+    # @param [Boolean] validate         If *true* an exception is raised if the
+    #                                     check digit is erroneous.
+    #
+    # @raise [RuntimeError]             If *isbn* contains a check digit but it
+    #                                     is not valid.
+    #
+    # @return [String, nil]
+    #
+    def checksum(isbn, validate: false, **)
+      final  = isbn.last.upcase
+      digits = isbn.delete('^0-9xX')
+      # noinspection RubyMismatchedParameterType
+      case digits.size
+        when ISBN_13_DIGITS                 # Full ISBN-13.
+          digits = digits[0...-1]
+          check  = isbn13_checksum(digits)
+          fail   = (check != final)
+        when ISBN_13_DIGITS - 1             # ISBN-13 without check digit.
+          check  = isbn13_checksum(digits)
+          fail   = false
+        when ISBN_10_DIGITS                 # Full ISBN-10.
+          digits = digits[0...-1]
+          check  = isbn10_checksum(digits)
+          fail   = (check != final)
+        when ISBN_10_DIGITS - 1             # ISBN-10 without check digit.
+          check  = isbn10_checksum(digits)
+          fail   = false
+        else
+          check  = nil
+          fail   = true
+      end
+      if validate
+        raise "#{isbn.inspect}: Invalid ISBN-10 or ISBN-13"     if check.nil?
+        raise "#{isbn.inspect}: check digit should be #{check}" if fail
+      end
+      check
+    end
+
+    # Calculate the ISBN-13 checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit.
+    #
+    # @see https://www.isbn-international.org/content/isbn-users-manual
+    #
+    def isbn13_checksum(digits)
+      digits = digits.split('') if digits.is_a?(String)
+      last   = ISBN_13_DIGITS - 2 # Last digit before check digit.
+      total  =
+        (0..last).sum do |index|
+          weight = (index % 2).zero? ? 1 : 3
+          digits[index].to_i * weight
+        end
+      remainder = total % 10
+      ((10 - remainder) % 10).to_s
+    end
+
+    # Calculate the ISBN-10 checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit or 'X'.
+    #
+    # @see https://en.wikipedia.org/wiki/Check_digit#ISBN_10
+    #
+    def isbn10_checksum(digits)
+      digits = digits.split('') if digits.is_a?(String)
+      last   = ISBN_10_DIGITS - 2 # Last digit before check digit.
+      total  =
+        (0..last).sum do |index|
+          weight = index + 1
+          digits[index].to_i * weight
+        end
+      remainder = total % 11
+      (remainder == 10) ? 'X' : remainder.to_s
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
-  # The identifier type portion of the value.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [String]
-  #
-  def prefix(v = nil)
-    v ? super : PREFIX
-  end
-
-  # =========================================================================
-  # :section: PublicationIdentifier overrides
-  # =========================================================================
-
-  public
-
-  # Indicate whether a value could be used as a PublicationIdentifier.
-  #
-  # @param [String] v               Value to check.
-  #
-  def self.candidate?(v)
-    IsbnHelper.isbn_candidate?(v)
-  end
-
-  # ===========================================================================
-  # :section: ScalarType overrides
-  # ===========================================================================
-
-  public
-
-  # Transform *v* into a valid form.
-  #
-  # @param [*] v
-  #
-  # @return [String]
-  #
-  def self.normalize(v)
-    remove_prefix(v).delete('^0-9xX')
-  end
-
-  # Indicate whether *v* would be a valid value for an item of this type.
-  #
-  # @param [*] v
-  #
-  def self.valid?(v)
-    IsbnHelper.isbn?(v)
-  end
+  include Methods
 
 end
 
@@ -403,163 +720,384 @@ end
 #
 class Issn < PublicationIdentifier
 
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
 
-  PREFIX = name.underscore
-  TYPE   = PREFIX.to_sym
+  module Methods
 
-  # ===========================================================================
-  # :section: PublicationIdentifier overrides
-  # ===========================================================================
+    include PublicationIdentifier::Methods
 
-  public
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
-  # The name of the represented identifier type.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [Symbol]
-  #
-  def type(v = nil)
-    v ? super : TYPE
+    public
+
+    # A valid ISSN has at least this many digits.
+    #
+    # @type [Integer]
+    #
+    ISSN_MIN_DIGITS = 8
+
+    # A valid ISSN has this number of digits ([0-9X]).
+    #
+    # @type [Integer]
+    #
+    ISSN_DIGITS = ISSN_MIN_DIGITS
+
+    # A pattern matching any of the expected ISSN prefixes.
+    #
+    # @type [Regexp]
+    #
+    ISSN_PREFIX = /^\s*ISSN(:\s*|\s+)/i.freeze
+
+    # A pattern matching the form of an ISSN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISSN_IDENTIFIER = /^(\d+[\s[:punct:]]?)+[\dxX]$/.freeze
+
+    # =========================================================================
+    # :section: ScalarType overrides
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      remove_prefix(v).delete('^0-9xX')
+    end
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      issn?(v)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the given value appears to include an ISSN.
+    #
+    # @param [String, *] v
+    #
+    def candidate?(v)
+      (v = v.to_s.strip).sub!(ISSN_PREFIX, '').present? ||
+        (v.match?(ISSN_IDENTIFIER) && (v.count('0-9xX') >= ISSN_MIN_DIGITS))
+    end
+
+    # Extract the base identifier of a possible ISSN.
+    #
+    # @param [String, *] v
+    #
+    # @return [String, nil]
+    #
+    def identifier(v)
+      v = remove_prefix(v).rstrip
+      v if v.match?(ISSN_IDENTIFIER)
+    end
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def remove_prefix(v)
+      v.to_s.sub(ISSN_PREFIX, '')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the value is a valid ISSN.
+    #
+    # @param [String] v
+    #
+    def issn?(v)
+      to_issn(v, log: false).present?
+    end
+
+    # If the value is an ISSN return it in a normalized form or *nil* otherwise
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    # @param [Boolean] validate         If *true*, raise an exception if the
+    #                                     checksum provided in *v* is invalid.
+    #
+    # @raise [RuntimeError]             If *v* contains a check digit but it
+    #                                     is not valid.
+    #
+    # @return [String, nil]
+    #
+    def to_issn(v, log: true, validate: false, **)
+      digits = identifier(v)&.delete('^0-9xX')
+      if digits&.size == ISSN_DIGITS
+        final  = digits.last.upcase
+        digits = digits[0...-1]
+        # noinspection RubyMismatchedParameterType
+        check  = checksum(digits)
+        if validate && (check != final)
+          raise "#{v.inspect}: check digit should be #{check}"
+        end
+        digits << check
+      elsif log
+        Log.info { "#{__method__}: #{v.inspect} is not a valid ISSN" }
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Calculate the ISSN checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit or 'X'.
+    #
+    # @see https://www.issn.org/understanding-the-issn/assignment-rules/issn-manual/#2-1-construction-of-issn
+    #
+    def checksum(digits)
+      digits = digits.split('') if digits.is_a?(String)
+      last   = ISSN_DIGITS - 2 # Last digit before check digit.
+      total  =
+        (0..last).sum do |index|
+          weight = ISSN_DIGITS - index
+          digits[index].to_i * weight
+        end
+      remainder = 11 - (total % 11)
+      (remainder == 10) ? 'X' : remainder.to_s
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
-  # The identifier type portion of the value.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [String]
-  #
-  def prefix(v = nil)
-    v ? super : PREFIX
-  end
-
-  # =========================================================================
-  # :section: PublicationIdentifier overrides
-  # =========================================================================
-
-  public
-
-  # Indicate whether a value could be used as a PublicationIdentifier.
-  #
-  # @param [String] v               Value to check.
-  #
-  def self.candidate?(v)
-    IssnHelper.issn_candidate?(v)
-  end
-
-  # ===========================================================================
-  # :section: ScalarType overrides
-  # ===========================================================================
-
-  public
-
-  # Transform *v* into a valid form.
-  #
-  # @param [*] v
-  #
-  # @return [String]
-  #
-  def self.normalize(v)
-    remove_prefix(v).delete('^0-9xX')
-  end
-
-  # Indicate whether *v* would be a valid value for an item of this type.
-  #
-  # @param [*] v
-  #
-  def self.valid?(v)
-    IssnHelper.issn?(v)
-  end
+  include Methods
 
 end
 
-# OCLC identifier.
+# OCN (OCLC Control Number) identifier.
+#
+# @see https://www.oclc.org/developer/news/2012/oclc-control-number-expansion-in-2013.en.html
 #
 class Oclc < PublicationIdentifier
 
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
 
-  PREFIX = name.underscore
-  TYPE   = PREFIX.to_sym
+  module Methods
 
-  # ===========================================================================
-  # :section: PublicationIdentifier overrides
-  # ===========================================================================
+    include PublicationIdentifier::Methods
 
-  public
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
-  # The name of the represented identifier type.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [Symbol]
-  #
-  def type(v = nil)
-    v ? super : TYPE
+    public
+
+    # The minimum/maximum number of digits associated with each expected OCN
+    # prefix.
+    #
+    # @type [Hash{Symbol=>Array<Integer,nil>}]
+    #
+    OCLC_FORMAT = {
+      ocn:        [8,  8],    # E.g. "ocn12345678"
+      ocm:        [9,  9],    # E.g. "ocm123456789"
+      on:         [10, nil],  # E.g. "on1234567890"
+      OCLC:       [8,  nil],  # E.g. "OCLC:12345678"
+      OCoLC:      [8,  nil],  # E.g. "OCoLC:12345678"
+      '(OCoLC)':  [8,  nil],  # E.g. "(OCoLC)12345678"
+    }.deep_freeze
+
+    # A valid OCN has a number of digits in this range.
+    #
+    # @type [Range]
+    #
+    OCLC_DIGITS =
+      OCLC_FORMAT.values.flatten.compact.then { |a| (a.min..a.max) }.deep_freeze
+
+    # A pattern matching any of the expected OCN prefixes.
+    #
+    # @type [Regexp]
+    #
+    OCLC_PREFIX = /^\s*(#{OCLC_FORMAT.keys.join('|')}):?\s*/i.freeze
+
+    # A pattern matching the form of an OCN identifier.
+    #
+    # @type [Regexp]
+    #
+    OCLC_IDENTIFIER = /^\d{#{OCLC_DIGITS.minmax.join(',')}}$/.freeze
+
+    # =========================================================================
+    # :section: ScalarType overrides
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a valid form.
+    #
+    # @param [*] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      to_oclc(v, log: false) || ''
+    end
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [*] v
+    #
+    def valid?(v)
+      oclc?(v)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the given value appears to include an OCN.
+    #
+    # @param [String, *] v
+    #
+    # == Usage Notes
+    # If *v* matches #OCLC_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.  The one exception
+    # is if the prefix is "on" -- here the remainder must be a valid OCLC
+    # number (otherwise words like "one" are interpreted as "oclc:e").
+    #
+    def candidate?(v)
+      v = v.to_s.strip
+      v.match?(/^[^:]+:/) && v.match?(OCLC_PREFIX) || identifier(v).present?
+    end
+
+    # Extract the base identifier of a possible OCN.
+    #
+    # @param [String, *] v
+    #
+    # @return [String, nil]
+    #
+    def identifier(v)
+      v = remove_prefix(v).rstrip
+      v if v.match?(OCLC_IDENTIFIER)
+    end
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def remove_prefix(v)
+      v.to_s.sub(OCLC_PREFIX, '')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the value is a valid OCN.
+    #
+    # @param [String] v
+    #
+    def oclc?(v)
+      to_oclc(v, log: false).present?
+    end
+
+    # If the value is an OCN return it in a normalized form or *nil* otherwise.
+    #
+    # If the string has a prefix then the number of included digits must match
+    # the number specified by the prefix.  If the string is only digits then it
+    # will be zero-filled on the left to make a valid OCN.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_oclc(v, log: true, **)
+      v        = v.to_s.strip
+      prefix   = v.match(OCLC_PREFIX) && $1
+      min, max = [OCLC_DIGITS.min]
+      OCLC_FORMAT.find do |p, minmax|
+        min, max = minmax if p.to_s.casecmp?(prefix)
+      end
+      digits    = identifier(v)&.delete('^0-9')
+      zero_fill = digits && positive(min.to_i - digits.size)
+      digits.prepend('0' * zero_fill) if zero_fill
+      if digits&.match?(/^\d{#{min},#{max}}$/)
+        digits
+      elsif log
+        Log.info { "#{__method__}: #{v.inspect} is not a valid OCN" }
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
-  # The identifier type portion of the value.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [String]
-  #
-  def prefix(v = nil)
-    v ? super : PREFIX
-  end
-
-  # =========================================================================
-  # :section: PublicationIdentifier overrides
-  # =========================================================================
-
-  public
-
-  # Indicate whether a value could be used as a PublicationIdentifier.
-  #
-  # @param [String] v               Value to check.
-  #
-  def self.candidate?(v)
-    OclcHelper.oclc_candidate?(v)
-  end
-
-  # ===========================================================================
-  # :section: ScalarType overrides
-  # ===========================================================================
-
-  public
-
-  # Transform *v* into a valid form.
-  #
-  # @param [*] v
-  #
-  # @return [String]
-  #
-  def self.normalize(v)
-    OclcHelper.to_oclc(v, log: false) || ''
-  end
-
-  # Indicate whether *v* would be a valid value for an item of this type.
-  #
-  # @param [*] v
-  #
-  def self.valid?(v)
-    OclcHelper.oclc?(v)
-  end
+  include Methods
 
 end
 
-# LCCN identifier.
+# LCCN (LoC Control Number) identifier.
+#
+# @see http://www.loc.gov/marc/lccn_structure.html
 #
 class Lccn < PublicationIdentifier
+
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
 
   # ===========================================================================
   # :section:
@@ -567,72 +1105,150 @@ class Lccn < PublicationIdentifier
 
   public
 
-  PREFIX = name.underscore
-  TYPE   = PREFIX.to_sym
+  module Methods
 
-  # ===========================================================================
-  # :section: PublicationIdentifier overrides
-  # ===========================================================================
+    include PublicationIdentifier::Methods
 
-  public
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
-  # The name of the represented identifier type.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [Symbol]
-  #
-  def type(v = nil)
-    v ? super : TYPE
+    public
+
+    # Pre-2001 LCCNs have at least 13 characters; after that, 12 characters.
+    #
+    # The first characters (three prior to 2001, otherwise two) are alphabetic,
+    # but they may also be given as spaces.  It's not unlikely that they would
+    # be omitted from non-MARC metadata renderings.
+    #
+    # Pre-2001, the final character (supplement number) may also be given as a
+    # space.
+    #
+    # @type [Range]
+    #
+    LCCN_DIGITS = (8..10).freeze
+
+    # A pattern matching any of the expected LCCN prefixes.
+    #
+    # @type [Regexp]
+    #
+    LCCN_PREFIX = /^\s*LCCN(:\s*|\s+)/i.freeze
+
+    # A pattern matching the form of an LCCN identifier.
+    #
+    # @type [Regexp]
+    #
+    LCCN_IDENTIFIER = /^
+      (
+        ([ _#a-z]{3})?\d{8}[ _#]? |
+        ([ _#a-z]{3})?\d{9}       |
+        ([ _#a-z]{2})?\d{10}
+      )(\/.*)?$
+    /ix.freeze
+
+    # =========================================================================
+    # :section: ScalarType overrides
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a valid form.
+    #
+    # @param [*] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      to_lccn(v, log: false) || ''
+    end
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [*] v
+    #
+    def valid?(v)
+      lccn?(v)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the given value appears to include an LCCN.
+    #
+    # @param [String, *] v
+    #
+    def candidate?(v)
+      (v = v.to_s.strip).match?(LCCN_PREFIX) || v.match?(LCCN_IDENTIFIER)
+    end
+
+    # Extract the base identifier of a possible LCCN.
+    #
+    # @param [String, *] v
+    #
+    # @return [String, nil]
+    #
+    def identifier(v)
+      v = remove_prefix(v).rstrip
+      v if v.match?(LCCN_IDENTIFIER)
+    end
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def remove_prefix(v)
+      v.to_s.sub(LCCN_PREFIX, '')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the value is a valid LCCN.
+    #
+    # @param [String] v
+    #
+    def lccn?(v)
+      to_lccn(v, log: false).present?
+    end
+
+    # If the value is a LCCN return it in a normalized form or *nil* otherwise.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_lccn(v, log: true, **)
+      lccn   = identifier(v)
+      digits = lccn&.sub(%r{/.*$}, '')&.delete('^0-9')
+      if LCCN_DIGITS.include?(digits&.size)
+        lccn
+      elsif log
+        Log.info { "#{__method__}: #{v.inspect} is not a valid LCCN" }
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
-  # The identifier type portion of the value.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [String]
-  #
-  def prefix(v = nil)
-    v ? super : PREFIX
-  end
-
-  # =========================================================================
-  # :section: PublicationIdentifier overrides
-  # =========================================================================
-
-  public
-
-  # Indicate whether a value could be used as a PublicationIdentifier.
-  #
-  # @param [String] v               Value to check.
-  #
-  def self.candidate?(v)
-    LccnHelper.lccn_candidate?(v)
-  end
-
-  # ===========================================================================
-  # :section: ScalarType overrides
-  # ===========================================================================
-
-  public
-
-  # Transform *v* into a valid form.
-  #
-  # @param [*] v
-  #
-  # @return [String]
-  #
-  def self.normalize(v)
-    LccnHelper.to_lccn(v, log: false) || ''
-  end
-
-  # Indicate whether *v* would be a valid value for an item of this type.
-  #
-  # @param [*] v
-  #
-  def self.valid?(v)
-    LccnHelper.lccn?(v)
-  end
+  include Methods
 
 end
 
@@ -640,78 +1256,343 @@ end
 #
 class Upc < PublicationIdentifier
 
+  PREFIX = name.underscore
+  TYPE   = PREFIX.to_sym
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
 
+  module Methods
+
+    include PublicationIdentifier::Methods
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # A valid UPC has at least this many digits.
+    #
+    # Some forms have supplemental digits in addition to the base UPC number.
+    #
+    # @type [Integer]
+    #
+    UPC_DIGITS = 12
+
+    # A pattern matching any of the expected UPC prefixes.
+    #
+    # @type [Regexp]
+    #
+    UPC_PREFIX = /^\s*UPC(:\s*|\s+)/i.freeze
+
+    # A pattern matching the form of a UPC identifier.
+    #
+    # @type [Regexp]
+    #
+    UPC_IDENTIFIER = /^(\d+[\s[:punct:]]?)+\d$/.freeze
+
+    # =========================================================================
+    # :section: ScalarType overrides
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      remove_prefix(v).delete('^0-9')
+    end
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      upc?(v)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the given value appears to include a UPC.
+    #
+    # @param [String, *] v
+    #
+    def candidate?(v)
+      (v = v.to_s.strip).sub!(UPC_PREFIX, '').present? ||
+        (v.match?(UPC_IDENTIFIER) && (v.count('0-9') >= UPC_DIGITS))
+    end
+
+    # Extract the base identifier of a possible UPC.
+    #
+    # @param [String, *] v
+    #
+    # @return [String, nil]
+    #
+    def identifier(v)
+      v = remove_prefix(v).rstrip
+      v if v.match?(UPC_IDENTIFIER)
+    end
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def remove_prefix(v)
+      v.to_s.sub(UPC_PREFIX, '')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the value is a valid UPC.
+    #
+    # @param [String] v
+    #
+    def upc?(v)
+      digits = normalize(v)
+      length = digits.size
+      last   = UPC_DIGITS - 1 # The check digit.
+      check  = digits[last]
+      digits = digits[0..(last-1)]
+      # noinspection RubyMismatchedParameterType
+      (length >= UPC_DIGITS) && (checksum(digits) == check)
+    end
+
+    # If the value is a UPC return it in a normalized form or *nil* otherwise.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    # @param [Boolean] validate         If *true*, raise an exception if the
+    #                                     checksum provided in *v* is invalid.
+    #
+    # @raise [RuntimeError]             If *v* contains a check digit but it is
+    #                                     not valid.
+    #
+    # @return [String, nil]
+    #
+    def to_upc(v, log: true, validate: false, **)
+      upc = identifier(v)&.delete('^0-9') || ''
+      if upc.size >= UPC_DIGITS
+        last   = UPC_DIGITS - 1 # Position of the check digit.
+        digits = upc[0..(last-1)]
+        final  = upc[last]
+        added  = upc[(last+1)..]
+        # noinspection RubyMismatchedParameterType
+        check  = checksum(digits)
+        if validate && (check != final)
+          raise "#{v.inspect}: check digit should be #{check}"
+        end
+        "#{digits}#{check}#{added}"
+      elsif log
+        Log.info { "#{__method__}: #{v.inspect} is not a valid UPC" }
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Calculate the UPC checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit.
+    #
+    def checksum(digits)
+      digits = digits.split('') if digits.is_a?(String)
+      check  = UPC_DIGITS - 1 # Position of the check digit.
+      total  =
+        (0..(check-1)).sum do |index|
+          weight = (index % 2).zero? ? 3 : 1
+          digits[index].to_i * weight
+        end
+      remainder = total % 10
+      ((10 - remainder) % 10).to_s
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
+  end
+
+  include Methods
+
+end
+
+# DOI identifier.
+#
+# - UTF-8 Unicode characters
+# - Case-insensitive for ASCII Unicode characters
+# - Case-sensitive for non-ASCII Unicode characters
+#
+# @see https://www.doi.org/doi_handbook/2_Numbering.html
+#
+class Doi < PublicationIdentifier
+
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
   # ===========================================================================
-  # :section: PublicationIdentifier overrides
+  # :section:
   # ===========================================================================
 
   public
 
-  # The name of the represented identifier type.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [Symbol]
-  #
-  def type(v = nil)
-    v ? super : TYPE
+  module Methods
+
+    include PublicationIdentifier::Methods
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # A pattern matching any of the expected DOI prefixes.
+    #
+    # @type [Regexp]
+    #
+    DOI_PREFIX = %r{^\s*(
+      doi(:\s*|\s+) |
+      https?://doi\.org/ |
+      https?://dx\.doi\.org/
+    )}ix.freeze
+
+    # A pattern matching the form of an DOI identifier.
+    #
+    # @type [Regexp]
+    #
+    DOI_IDENTIFIER = /^10\.\d{4,}(\.d+)*\/.*$/.freeze
+
+    # =========================================================================
+    # :section: ScalarType overrides
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a valid form.
+    #
+    # @param [*] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      to_doi(v, log: false) || ''
+    end
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [*] v
+    #
+    def valid?(v)
+      doi?(v)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the given value appears to include a DOI.
+    #
+    # @param [String, *] v
+    #
+    # == Usage Notes
+    # If *v* matches #DOI_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.
+    #
+    def candidate?(v)
+      (v = v.to_s.strip).match?(DOI_PREFIX) || v.match?(DOI_IDENTIFIER)
+    end
+
+    # Extract the base identifier of a possible DOI.
+    #
+    # @param [String, *] v
+    #
+    # @return [String, nil]
+    #
+    def identifier(v)
+      v = remove_prefix(v).rstrip
+      v if v.match?(DOI_IDENTIFIER)
+    end
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, *] v
+    #
+    # @return [String]
+    #
+    def remove_prefix(v)
+      v.to_s.sub(DOI_PREFIX, '')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the value is a valid DOI.
+    #
+    # @param [String] v
+    #
+    def doi?(v)
+      to_doi(v, log: false).present?
+    end
+
+    # If the value is a DOI return it in a normalized form or *nil* otherwise.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_doi(v, log: true, **)
+      doi = identifier(v) and return doi
+      Log.info { "#{__method__}: #{v.inspect} is not a valid DOI" } if log
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
   end
 
-  # The identifier type portion of the value.
-  #
-  # @param [String, nil] v            Default: #value.
-  #
-  # @return [String]
-  #
-  def prefix(v = nil)
-    v ? super : PREFIX
-  end
-
-  # =========================================================================
-  # :section: PublicationIdentifier overrides
-  # =========================================================================
-
-  public
-
-  # Indicate whether a value could be used as a PublicationIdentifier.
-  #
-  # @param [String] v               Value to check.
-  #
-  def self.candidate?(v)
-    UpcHelper.upc_candidate?(v)
-  end
-
-  # ===========================================================================
-  # :section: ScalarType overrides
-  # ===========================================================================
-
-  public
-
-  # Transform *v* into a valid form.
-  #
-  # @param [*] v
-  #
-  # @return [String]
-  #
-  def self.normalize(v)
-    remove_prefix(v).delete('^0-9')
-  end
-
-  # Indicate whether *v* would be a valid value for an item of this type.
-  #
-  # @param [*] v
-  #
-  def self.valid?(v)
-    UpcHelper.upc?(v)
-  end
+  include Methods
 
 end
 

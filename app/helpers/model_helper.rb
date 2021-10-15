@@ -432,7 +432,7 @@ module ModelHelper
               prop  = prop.merge(type: 'textarea')
             end
           end
-        when :dc_identifier
+        when :dc_identifier, :dc_relation
           value = mark_invalid_identifiers(value)
         when :dc_language
           value = mark_invalid_languages(value)
@@ -458,7 +458,7 @@ module ModelHelper
         topic   = url_repository(url, default: !application_deployed?)
         replace = help.is_a?(Array) && (help.size > 1)
       end
-      help = replace ? (help[0..-2] << topic) : [*help, topic] if topic
+      help = replace ? (help[0...-1] << topic) : [*help, topic] if topic
       help = help_popup(*help)
     end
 
@@ -695,23 +695,26 @@ module ModelHelper
   def mark_invalid_identifiers(value)
     return value.map { |v| send(__method__, v) } if value.is_a?(Array)
     type, id = value.split(':', 2)
-    return value if id.nil? || valid_identifier?(type.to_s, id)
+    return value if id.nil? || valid_identifier?(value, type)
     tip = "This is not a valid #{type.upcase} identifier." # TODO: I18n
-    ERB::Util.h("#{type}:") << html_span(id, class: 'invalid', title: tip)
+    html_span(value, class: 'invalid', title: tip)
   end
 
   # Indicate whether the given identifier is valid.
   #
-  # @param [String] type
-  # @param [String] value
+  # @param [String]            value
+  # @param [Symbol, String, *] type   Determined from *value* if missing.
   #
-  def valid_identifier?(type, value)
-    case type
-      when 'isbn' then isbn?(value)
-      when 'issn' then issn?(value)
-      when 'oclc' then oclc?(value)
-      when 'lccn' then lccn?(value)
-      else             value.present?
+  def valid_identifier?(value, type = nil)
+    if type
+      prefix  = type.to_sym
+      id_type = PublicationIdentifier.subclass_map[prefix]
+      id_type.present? && id_type.valid?(value)
+    else
+      PublicationIdentifier.subclasses.any? do |id_type|
+        prefix, identifier = id_type.parts(value)
+        prefix.present? && id_type.valid?(identifier)
+      end
     end
   end
 

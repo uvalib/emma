@@ -192,7 +192,7 @@ module SearchConcern
   #
   def identifier_alias_redirect
     opt     = request_parameters
-    aliases = opt.extract!(*PublicationIdentifier::TYPES)
+    aliases = opt.extract!(*PublicationIdentifier::identifier_types)
     return if aliases.blank?
     opt[:identifier] = aliases.map { |type, term| "#{type}:#{term}" }.join(' ')
     redirect_to opt

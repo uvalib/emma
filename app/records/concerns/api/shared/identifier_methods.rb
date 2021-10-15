@@ -88,7 +88,7 @@ module Api::Shared::IdentifierMethods
     identifier_fields.each do |field|
       value = data ? data[field] : try(field)
       array = value.is_a?(Array)
-      value = value.split(sep).map(&:strip) if value.is_a?(String)
+      value = value.is_a?(String) ? value.split(sep) : Array.wrap(value)
       value = normalize_identifiers(value)
       case mode
         when :required  then # Keep value as array.
@@ -98,7 +98,7 @@ module Api::Shared::IdentifierMethods
       value = value.presence
       # noinspection RubyNilAnalysis
       if data.nil?
-        try("#{field}=", value) if value || try(field)
+        try("#{field}=", value) if value
       elsif value
         data[field] = value
       elsif data.key?(field)
@@ -125,7 +125,7 @@ module Api::Shared::IdentifierMethods
   # @return [nil]                     If *value* is not a valid identifier.
   #
   def normalize_identifier(value)
-    PublicationIdentifier.cast(value)&.to_s
+    PublicationIdentifier.cast(value)&.to_s if value.present?
   end
 
   # ===========================================================================
@@ -134,6 +134,9 @@ module Api::Shared::IdentifierMethods
 
   public
 
+  # @private
+  RELATION_FIELDS = %i[dc_relation dc_identifier].freeze
+
   # Ensure that "related identifiers" doesn't include values which are already
   # included in the reported identifiers for the item.
   #
@@ -141,13 +144,16 @@ module Api::Shared::IdentifierMethods
   #
   # @return [void]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def clean_dc_relation!(data = nil)
-    related = (data ? data[:dc_relation]   : dc_relation).presence   or return
-    std_ids = (data ? data[:dc_identifier] : dc_identifier).presence or return
+    related, std_ids = get_field_values(data, RELATION_FIELDS)
+    return if related.blank? || std_ids.blank?
     related = (Array.wrap(related) - Array.wrap(std_ids)).presence
-    # noinspection RubyNilAnalysis
     if data.nil?
-      self.dc_relation = related
+      # noinspection RailsParamDefResolve
+      try('dc_relation=', related)
     elsif related
       data[:dc_relation] = related
     elsif data.key?(:dc_relation)

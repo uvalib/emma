@@ -65,6 +65,38 @@ module Api::Shared::CommonMethods
     } || []
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Get the indicated field values from the indicated target.
+  #
+  # @param [Hash, nil]     data       Default: *self*.
+  # @param [Array<Symbol>] fields
+  #
+  # @return [Array]
+  #
+  def get_field_values(data = nil, fields)
+    data = nil if data == self
+    values = data&.values_at(*fields) || fields.map { |field| try(field) }
+    values.map(&:presence)
+  end
+
+  # Update the indicated target with the given values.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  # @param [Hash]      values
+  #
+  # @return [void]
+  #
+  def set_field_values!(data = nil, values)
+    data = nil if data == self
+    values = values.compact
+    data&.merge!(values) || values.each_pair { |k, v| try("#{k}=", v) }
+  end
+
 end
 
 __loading_end(__FILE__)
