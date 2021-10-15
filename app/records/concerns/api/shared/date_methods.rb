@@ -67,6 +67,31 @@ module Api::Shared::DateMethods
 
   public
 
+  # @private
+  TITLE_DATE_FIELDS = %i[dcterms_dateCopyright emma_publicationDate].freeze
+
+  # Back-fill publication date / copyright date.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  #
+  # @return [void]
+  #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
+  def normalize_title_dates!(data = nil)
+    cpr, pub = get_field_values(data, TITLE_DATE_FIELDS)
+    if cpr && pub
+      cpr, pub = []
+    elsif cpr
+      cpr, pub = [nil, IsoDay.cast(cpr)&.to_s]
+    elsif pub
+      cpr, pub = [IsoYear.cast(pub)&.to_s, nil]
+    end
+    values = { dcterms_dateCopyright: cpr, emma_publicationDate: pub }.compact
+    set_field_values!(data, values) if values.present?
+  end
+
   # Produce day values of the form "YYYY-MM-DD".
   #
   # @param [Hash, nil] data           Default: *self*

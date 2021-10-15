@@ -130,6 +130,7 @@ module SearchConcern
     case opt[:sort]&.to_sym
       when :title               then title = last.dc_title
       when :sortDate            then date  = last.emma_sortDate
+      when :publicationDate     then date  = last.emma_publicationDate
       when :lastRemediationDate then date  = last.emma_lastRemediationDate
       else                           opt.except!(:prev_id, :prev_value)
     end

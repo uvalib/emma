@@ -106,6 +106,7 @@ module SearchService::Request::Records
   # @option opt [EmmaRepository]                          :repository
   # @option opt [String, Array<String>]                   :collection
   # @option opt [IsoDay]                                  :lastRemediationDate
+  # @option opt [IsoDay]                                  :publicationDate
   # @option opt [IsoDay]                                  :sortDate
   # @option opt [SearchSort]                              :sort
   # @option opt [String]                                  :searchAfterId
@@ -155,6 +156,7 @@ module SearchService::Request::Records
           repository:           EmmaRepository,
           collection:           String,
           lastRemediationDate:  IsoDay,
+          publicationDate:      IsoDay,
           sortDate:             IsoDay,
           sort:                 SearchSort,
           searchAfterId:        String,

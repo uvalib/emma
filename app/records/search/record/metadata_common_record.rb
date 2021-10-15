@@ -87,6 +87,7 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
   include Search::Shared::LinkMethods
   include Search::Shared::ScoreMethods
   include Search::Shared::TitleMethods
+  include Search::Shared::TransformMethods
 
   # ===========================================================================
   # :section:
@@ -161,7 +162,7 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
   def initialize(src, opt = nil)
     opt ||= {}
     super(src, **opt)
-    clean_dc_relation!
+    normalize_data_fields!
   end
 
 end

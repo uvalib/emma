@@ -44,7 +44,12 @@ module Search::Shared::TitleMethods
   # @return [Array<Symbol>]
   #
   def date_fields
-    %i[dcterms_dateCopyright emma_lastRemediationDate]
+    %i[
+      emma_publicationDate
+      dcterms_dateCopyright
+      emma_sortDate
+      emma_lastRemediationDate
+    ]
   end
 
   # Field(s) that may hold content information about the title.

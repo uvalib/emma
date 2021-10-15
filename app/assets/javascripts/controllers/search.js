@@ -737,6 +737,7 @@ $(document).on('turbolinks:load', function() {
     const SORTED = {
         title:               'dc_title for sort=title',
         sortDate:            'sort_date for sort=sortDate',
+        publicationDate:     'publication_date for sort=publicationDate',
         lastRemediationDate: 'remediation_date for sort=lastRemediationDate',
     };
 

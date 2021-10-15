@@ -83,6 +83,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   include Ingest::Shared::DateMethods
   include Ingest::Shared::IdentifierMethods
   include Ingest::Shared::TitleMethods
+  include Ingest::Shared::TransformMethods
 
   # ===========================================================================
   # :section:
@@ -144,19 +145,6 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Because :dc_title is a required field for ingest into Unified Search, this
-  # value is supplied if the metadata does not include a title.
-  #
-  # @type [String, nil] # TODO: MISSING_TITLE: I18n - keep?
-  #
-  MISSING_TITLE = '[TITLE MISSING]'
-
-  # ===========================================================================
   # :section: Api::Record overrides
   # ===========================================================================
 
@@ -176,50 +164,18 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   def initialize(src, opt = nil)
     # noinspection RailsParamDefResolve
     if (data = src.try(:emma_metadata) || src.try(:dig, :emma_metadata))
-
       # === Dates ===
       data[:emma_lastRemediationDate]          ||= src[:updated_at]
       data[:emma_repositoryMetadataUpdateDate] ||= src[:updated_at]
-
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]
       data[:emma_repositoryRecordId] ||= src[:submission_id]
       data[:dc_title]                ||= MISSING_TITLE
       data[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
-
     end
-
     opt ||= {}
     super((data || src), **opt)
-
-    # === Standard Identifiers ===
-    normalize_identifier_fields!
-    clean_dc_relation!
-
-    # === Dates ===
-    normalize_day_fields!
-
-    # === Required fields ===
-    self.dc_title           ||= MISSING_TITLE
-    self.emma_retrievalLink ||= make_retrieval_link
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Produce a retrieval link for an item.
-  #
-  # @param [String] rid               An EMMA repository record ID.
-  #
-  # @return [String]
-  # @return [nil]                     If no repository ID was given or found.
-  #
-  def make_retrieval_link(rid = nil)
-    rid ||= (emma_repositoryRecordId rescue nil)
-    Upload.make_retrieval_link(rid)
+    normalize_data_fields!
   end
 
 end

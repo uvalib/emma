@@ -329,6 +329,9 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def render_field_values(
     item,
     model:      nil,
@@ -349,7 +352,16 @@ module ModelHelper
 
     value_opt = opt.slice(:model, :index, :min_index, :max_index, :no_format)
 
-    # noinspection RubyNilAnalysis
+    # Don't bother showing publication date if it's just derived from
+    # copyright date.
+    # noinspection RailsParamDefResolve
+    if (pub = item.try(:emma_publicationDate))
+      cpr = item.try(:dcterms_dateCopyright)
+      if cpr && (IsoDate.cast(pub).to_s == IsoDate.cast(cpr).to_s)
+        pairs.delete(:emma_publicationDate)
+      end
+    end
+
     pairs.map { |k, v|
       config = field = label = value = nil
       if v.is_a?(Symbol)
@@ -931,13 +943,13 @@ module ModelHelper
         # noinspection RubyNilAnalysis
         html_opt[:'data-group'] = opt[:group] = item.state_group
       end
-      # noinspection RailsParamDefResolve
       id = item.try(:submission_id) || item.try(:identifier) || hex_rand
       html_opt[:id] = "#{model}-#{id}"
     end
     html_opt[:'data-title_id']         = item.try(:emma_titleId)
     html_opt[:'data-normalized_title'] = item.try(:normalized_title)
     html_opt[:'data-sort_date']        = item.try(:emma_sortDate)
+    html_opt[:'data-publication_date'] = item.try(:emma_publicationDate)
     html_opt[:'data-remediation_date'] = item.try(:emma_lastRemediationDate)
     html_opt[:'data-item_score']       = item.try(:total_score, precision: 2)
     html_div(html_opt) do
@@ -1362,8 +1374,8 @@ module ModelHelper
       # @type [String] label
       label       = lbl || label || labelize(field)
       value       = val || value
-      opt[:field] = field
-      opt[:row]  += 1
+      opt[:row]     += 1
+      opt[:field]    = field
       opt[:disabled] = readonly_form_field?(field, model) if field
       opt[:required] = required_form_field?(field, model) if field
       value = render_value(item, value, model: model, index: opt[:index])
@@ -1381,7 +1393,7 @@ module ModelHelper
   # @param [Integer]        row         Display row.
   # @param [Boolean]        disabled
   # @param [Boolean]        required    For 'data-required' attribute.
-  # @param [Hash]                opt
+  # @param [Hash]           opt
   #
   # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
   # @return [nil]                       If *value* is blank.

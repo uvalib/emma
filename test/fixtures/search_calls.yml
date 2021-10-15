@@ -117,7 +117,12 @@ template:
 
   sort:
     order:
-      values:           [title, sortDate, lastRemediationDate]
+      values:
+        - relevance
+        - title
+        - publicationDate
+        - sortDate
+        - lastRemediationDate
       nillable:         true
       default:          title
     direction:

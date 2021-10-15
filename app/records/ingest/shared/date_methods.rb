@@ -22,9 +22,11 @@ module Ingest::Shared::DateMethods
   # @type [Array<Symbol>]
   #
   DAY_FIELDS = %i[
-    emma_lastRemediationDate
-    emma_repositoryMetadataUpdateDate
     dcterms_dateAccepted
+    emma_lastRemediationDate
+    emma_publicationDate
+    emma_repositoryMetadataUpdateDate
+    emma_sortDate
   ].freeze
 
   # ===========================================================================

@@ -46,6 +46,7 @@ module SearchService::Common
     from
     group
     lastRemediationDate
+    publicationDate
     publisher
     repository
     searchAfterId

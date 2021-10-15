@@ -33,7 +33,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
     create_message_wrapper(opt) do |opt|
       apply_wrap!(opt)
       super(src, opt)
-      records.each(&:clean_dc_relation!)
+      records.each(&:normalize_data_fields!)
     end
   end
 

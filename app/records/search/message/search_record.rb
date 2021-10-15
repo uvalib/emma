@@ -86,6 +86,7 @@ class Search::Message::SearchRecord < Search::Api::Message
   include Search::Shared::IdentifierMethods
   include Search::Shared::LinkMethods
   include Search::Shared::TitleMethods
+  include Search::Shared::TransformMethods
 
   # ===========================================================================
   # :section:
@@ -181,7 +182,7 @@ class Search::Message::SearchRecord < Search::Api::Message
     end
     src = src.first if src.is_a?(Array)
     super(src, opt)
-    clean_dc_relation!
+    normalize_data_fields!
   end
 
 end

@@ -212,7 +212,8 @@ en:
         SearchSort:
           relevance:                'Relevance'
           title:                    'Title'
-          sortDate:                 'Date'
+          publicationDate:          'Publication Date'
+          sortDate:                 'Upload Date'
           lastRemediationDate:      'Last Remediation Date'
           _default:                 relevance
 

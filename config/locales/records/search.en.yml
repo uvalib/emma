@@ -114,6 +114,10 @@ en:
           label:                            'Related'
           max:                              ~
 
+        emma_publicationDate:
+          label:                            'Publication Date'
+          max:                              1
+
         dcterms_dateCopyright:
           label:                            'Copyright Date'
           max:                              1
