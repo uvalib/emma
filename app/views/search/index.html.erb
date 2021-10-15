@@ -23,20 +23,30 @@
     set_page_description(title)
   end
 
-  unless default_style?
+  title        = safe_join([title, help]) if help
+  list_heading = html_tag(:h1, title, class: 'heading')
+  list_bottom  = nil
+
+  opt = { list: list, total: total, page: page, row: (row if default_style?) }
+  top_controls, bottom_controls = index_controls(**opt)
+  bottom_controls = nil if list.blank?
+
+  if default_style?
+    opt[:row] += 1 if top_controls
+  else
     append_page_classes('new-style', "#{search_style}-style")
     append_page_classes('dev-style') if session_debug?
+    list_heading = [list_heading, top_controls, search_page_styles]
+    list_heading = html_div(list_heading, class: 'heading-bar')
+    list_bottom  = bottom_controls
+    top_controls = bottom_controls = nil
   end
-
-  opt = { list: list, total: total, page: page, row: row }
-  top_controls, bottom_controls = index_controls(**opt)
-  opt[:row] += 1 if top_controls
 
   template_opt = opt.merge!(skip: :title)
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= list_heading %>
 
 <%= page_description_section %>
 
@@ -44,7 +54,8 @@
 <div class="search-list">
   <%= top_controls %>
   <%= render 'search/list', template_opt %>
-  <%= bottom_controls if list.present? %>
+  <%= bottom_controls %>
 </div>
+<%= list_bottom %>
 
 <%= page_notes_section %>

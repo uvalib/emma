@@ -774,7 +774,7 @@ module ModelHelper
   # @param [Integer, #to_i, nil] total  Default: count.
   # @param [Integer, #to_i, nil] page
   # @param [Integer, #to_i, nil] size   Default: #page_size.
-  # @param [Integer, #to_i, nil] row    Default: 2.
+  # @param [Integer, #to_i, nil] row    Default: 1.
   # @param [Hash]    opt                Passed to #page_filter.
   #
   # @return [(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
@@ -785,7 +785,7 @@ module ModelHelper
     total:  nil,
     page:   nil,
     size:   nil,
-    row:    nil,
+    row:    1,
     **opt
   )
     opt.except!(*VIEW_TEMPLATE_OPT)
@@ -794,7 +794,7 @@ module ModelHelper
     total   = positive(total) || count
     page    = positive(page)  || 1
     size    = positive(size)  || page_size
-    row     = 1 + (row&.to_i  || 1)
+    row   &&= 1 + (positive(row) || 1)
     paging  = (page > 1)
     more    = (count < total) || (count == size)
     links   = pagination_controls
@@ -802,10 +802,27 @@ module ModelHelper
     counts << page_number(page) if paging || more
     counts << pagination_count(count, total)
     counts  = html_div(*counts, class: 'counts')
+    styles  = page_styles(**opt)
     filter  = page_filter(**opt)
-    top = html_div(links, counts, filter, class: "pagination-top row-#{row}")
-    bot = html_div(links, class: 'pagination-bottom')
-    return top, bot
+    top_css = css_classes('pagination-top', (row && "row-#{row}"))
+    top     = html_div(links, counts, styles, filter, class: top_css)
+    bottom  = html_div(links, class: 'pagination-bottom')
+    return top, bottom
+  end
+
+  # Optional page style controls in line with the top pagination control.
+  #
+  # @param [Hash] opt                 Passed to model-specific method except:
+  #
+  # @option opt [String, Symbol] :model   Default: `params[:controller]`
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see SearchHelper#search_page_styles
+  #
+  def page_styles(**opt)
+    model = opt.delete(:model) || params[:controller]
+    try("#{model}_#{__method__}", **opt)
   end
 
   # An optional page filter control in line with the top pagination control.
@@ -814,13 +831,13 @@ module ModelHelper
   #
   # @option opt [String, Symbol] :model   Default: `params[:controller]`
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # @see UploadHelper#upload_page_filter
   #
   def page_filter(**opt)
     model = opt.delete(:model) || params[:controller]
-    try("#{model}_#{__method__}", **opt) || ''.html_safe
+    try("#{model}_#{__method__}", **opt)
   end
 
   # Render an element containing the ordinal position of an entry within a list

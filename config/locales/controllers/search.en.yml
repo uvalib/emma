@@ -44,6 +44,49 @@ en:
       # Controls
       # =======================================================================
 
+      styles:
+
+        _colorize:      &COLORIZE_BUTTON
+          label:        'Mark'
+          class:        'colorize-button'
+          ident:        'metadata field'
+          tooltip:      'Mark entries with the same %{ident} in the same color'
+          field:        '' # Indicates topic has no matching metadata field.
+          active:       !ruby/symbol dev_only
+
+        # NOTE: The order here is the reverse of the order of display.
+
+        restore:
+          label:        'Normal'
+          class:        'restore-button'
+          tooltip:      'Restore the normal search results display'
+          field:        ~ # Indicates that this is not a topic button.
+          active:       true
+
+        by_repo_id:
+          <<:           *COLORIZE_BUTTON
+          label:        'Repo ID'
+          ident:        '"repository record ID"'
+          field:        'field-RepositoryRecordId'
+
+        by_identifier:
+          <<:           *COLORIZE_BUTTON
+          label:        'ISBN'
+          ident:        'standard identifier'
+          field:        'field-Identifier'
+
+        by_title_text:
+          <<:           *COLORIZE_BUTTON
+          label:        'Title'
+          ident:        'title text'
+
+        by_title_id:
+          <<:           *COLORIZE_BUTTON
+          label:        'Title ID'
+          ident:        '"title ID"'
+          field:        'field-EmmaTitleId'
+          active:       true
+
       pagination:
         count:
           one:          '%{item}'

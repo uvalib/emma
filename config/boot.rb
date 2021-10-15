@@ -72,6 +72,19 @@ def false?(value)
   FALSE_VALUES.include?(value.to_s.strip.downcase)
 end
 
+# Produce JSON for use with "assets.js.erb".
+#
+# @param [String, Hash, Array, *] arg
+#
+# @return [String]
+#
+# @see file:app/assets/javascripts/shared/assets.js.erb *js$()*
+#
+def js(arg)
+  result = arg.is_a?(String) ? arg : arg.to_json
+  result.gsub(/\\"/, '%5C%22')
+end
+
 # =============================================================================
 # Global properties
 # =============================================================================

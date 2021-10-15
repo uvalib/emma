@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 #
 module SearchHelper
 
+  include CssHelper
   include LogoHelper
   include ModelHelper
   include PaginationHelper
@@ -334,6 +335,89 @@ module SearchHelper
       ph_opt[:'data-path'] = show_upload_path(id: rid, modal: true)
       ph_opt[:'data-attr'] = attr.to_json
       html_div(ph_txt, ph_opt)
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # CSS class for the colorization button tray.
+  #
+  # @type [String]
+  #
+  SEARCH_STYLE_CONTAINER = 'button-tray'
+
+  # Colorization button configuration template.
+  #
+  # @type [Hash{Symbol=>String,Symbol}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  SEARCH_STYLE_BUTTON_TEMPLATE =
+    I18n.t('emma.search.styles._colorize').deep_freeze
+
+  # Colorization buttons.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  SEARCH_STYLE_BUTTONS =
+    I18n.t('emma.search.styles').map { |style, prop|
+      next if style.start_with?('_')
+      prop = prop.dup
+      prop[:label] ||= style.to_s
+
+      css = prop[:class].presence || SEARCH_STYLE_BUTTON_TEMPLATE[:class]
+      css = css_class_array(css)
+      css << style if css.include?(SEARCH_STYLE_BUTTON_TEMPLATE[:class])
+      prop[:class] = css_classes(css)
+
+      ident   = prop.delete(:ident).presence
+      tooltip = prop.delete(:title).presence || prop[:tooltip].presence
+      tooltip %= { ident: ident } if tooltip && ident
+      prop.delete(:tooltip) if (prop[:tooltip] = tooltip).blank?
+
+      field = prop[:field]
+      field = SEARCH_STYLE_BUTTON_TEMPLATE[:field] if false?(field)
+      prop.delete(:field) if (prop[:field] = field).nil?
+
+      active = prop[:active] || false
+      prop[:active] = true?(active) || (false?(active) ? false : active.to_sym)
+
+      [style, prop]
+    }.compact.to_h.deep_freeze
+
+  # Control for filtering which records are displayed.
+  #
+  # @param [Boolean,nil] dev_only     If *true*, activate developer controls.
+  # @param [Hash]        opt          Passed to outer #html_div except:
+  #
+  # @option opt [Boolean] :dev_only   If *true*, activate developer controls.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  # @see #SEARCH_STYLE_BUTTONS
+  # @see file:app/assets/javascripts/controllers/search.js *setupColorizeButtons()*
+  #
+  # == Usage Notes
+  # This is invoked from ModelHelper#page_filter.
+  #
+  def search_page_styles(dev_only: nil, **opt)
+    return if default_style?
+    dev_only = session_debug? if dev_only.nil?
+    prepend_classes!(opt, SEARCH_STYLE_CONTAINER)
+    html_div(**opt) do
+      SEARCH_STYLE_BUTTONS.values.map do |prop|
+        next unless prop[:active].is_a?(Symbol) ? dev_only : prop[:active]
+        html_button(prop[:label], class: prop[:class], title: prop[:tooltip])
+      end
     end
   end
 

@@ -26,15 +26,15 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  * ElementProperties
  *
  * @typedef {{
- *  active:   ?(boolean|null|undefined),
- *  tag:      ?(string|null|undefined),
- *  type:     ?(string|null|undefined),
- *  class:    ?(string|null|undefined),
- *  tooltip:  ?(string|null|undefined),
- *  label:    ?(string|null|undefined),
- *  text:     ?(string|null|undefined),
- *  html:     ?(string|null|undefined),
- *  func:     ?(function|null|undefined)
+ *     active:    ?(boolean|null|undefined),
+ *     tag:       ?(string|null|undefined),
+ *     type:      ?(string|null|undefined),
+ *     class:     ?(string|null|undefined),
+ *     tooltip:   ?(string|null|undefined),
+ *     label:     ?(string|null|undefined),
+ *     text:      ?(string|null|undefined),
+ *     html:      ?(string|null|undefined),
+ *     func:      ?(function|null|undefined)
  * }} ElementProperties
  */
 
@@ -42,15 +42,15 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  * Action Properties
  *
  * @typedef {{
- *  tag:      ?(string|null|undefined),
- *  type:     ?(string|null|undefined),
- *  class:    ?(string|null|undefined),
- *  tooltip:  ?(string|null|undefined),
- *  label:    ?(string|null|undefined),
- *  text:     ?(string|null|undefined),
- *  html:     ?(string|null|undefined),
- *  enabled:  ?(ElementProperties|null|undefined),
- *  disabled: ?(ElementProperties|null|undefined)
+ *     tag:       ?(string|null|undefined),
+ *     type:      ?(string|null|undefined),
+ *     class:     ?(string|null|undefined),
+ *     tooltip:   ?(string|null|undefined),
+ *     label:     ?(string|null|undefined),
+ *     text:      ?(string|null|undefined),
+ *     html:      ?(string|null|undefined),
+ *     enabled:   ?(ElementProperties|null|undefined),
+ *     disabled:  ?(ElementProperties|null|undefined)
  * }} ActionProperties
  */
 
@@ -58,9 +58,9 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  * RouteActionProperties
  *
  * @typedef {{
- *  submit:  ActionProperties,
- *  cancel:  ActionProperties,
- *  select:  ?(ActionProperties|null|undefined)
+ *     submit:    ActionProperties,
+ *     cancel:    ActionProperties,
+ *     select:    ?(ActionProperties|null|undefined)
  * }} RouteActionProperties
  */
 
@@ -68,11 +68,26 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  * FieldGroupProperties
  *
  * @typedef {{
- *  label:    ?(string|null),
- *  tooltip:  ?(string|null),
- *  enabled:  ?(boolean|string|null),
- *  default:  ?(boolean|string|null)
+ *     label:     ?(string|null),
+ *     tooltip:   ?(string|null),
+ *     enabled:   ?(boolean|string|null),
+ *     default:   ?(boolean|string|null)
  * }} FieldGroupProperties
+ */
+
+/**
+ * StyleControlProperties
+ *
+ * @see "en.emma.search.styles"
+ *
+ * @typedef {{
+ *     label:     ?(string|null|undefined),
+ *     class:     ?(string|null|undefined),
+ *     tooltip:   ?(string|null|undefined),
+ *     field:     ?(string|null|undefined),
+ *     active:    ?(boolean|string|null|undefined),
+ *     func:      ?(function|null|undefined)
+ * }} StyleControlProperties
  */
 
 // noinspection ES6ConvertVarToLetConst, LongLine
@@ -154,7 +169,7 @@ var Emma = (function() {
      * @returns {Array}
      */
     function a$(arg, separator) {
-      let result = [];
+      let result;
       if (Array.isArray(arg)) {
           result = arg;
       } else if (typeof arg === 'object') {
@@ -162,13 +177,13 @@ var Emma = (function() {
       } else if (typeof arg === 'string') {
           let string = arg.trim();
           if (string.startsWith('[')) {
-              result = JSON.parse(string);
+              result = js$(arg);
           } else {
               let array = string.split(separator || ',');
               result = array.map(function(element) { return element.trim(); });
           }
       }
-      return result;
+      return result || [];
     }
 
     // noinspection FunctionNamingConventionJS
@@ -180,11 +195,28 @@ var Emma = (function() {
      * @returns {object}
      */
     function o$(arg) {
-        switch (typeof arg) {
-            case 'object': return arg;
-            case 'string': return JSON.parse(arg.replace(/\n/g, '\\n'));
-            default:       return {};
+        let result;
+        if (typeof arg === 'object') {
+            result = arg;
+        } else if (typeof arg === 'string') {
+            result = js$(arg);
         }
+        return result || {};
+    }
+
+    // noinspection FunctionNamingConventionJS
+    /**
+     * Convert a string prepared with "#js" to an array or object.
+     *
+     * @param {string} arg
+     *
+     * @returns {Array|Object|undefined}
+     *
+     * @see file:config/boot.rb "#js"
+     */
+    function js$(arg) {
+        const str = arg.includes('%5C') ? decodeURIComponent(arg) : arg;
+        return fromJSON(str.replace(/\n/g, '\\n'));
     }
 
     // ========================================================================
@@ -288,6 +320,35 @@ var Emma = (function() {
         /**
          * ====================================================================
          *
+         * controllers/search.js
+         *
+         * - container          Properties for the style button tray.
+         * - control.template   Default colorize button properties.
+         * - control.buttons    Properties for each colorize button.
+         *
+         * ====================================================================
+         *
+         * @type {{
+         *    container: ElementProperties,
+         *    control: {
+         *        template: StyleControlProperties,
+         *        buttons:  Object<StyleControlProperties>
+         *    }
+         * }}
+         */
+        SearchStyle: {
+            container: {
+                class: "<%= SearchHelper::SEARCH_STYLE_CONTAINER %>"
+            },
+            control: {
+                template: o$('<%= js SearchHelper::SEARCH_STYLE_BUTTON_TEMPLATE %>'),
+                buttons:  o$('<%= js SearchHelper::SEARCH_STYLE_BUTTONS %>')
+            }
+        },
+
+        /**
+         * ====================================================================
+         *
          * feature/advanced-search.js
          *
          * - opener.text      Label for button to open advanced search controls.
@@ -313,7 +374,7 @@ var Emma = (function() {
                 label:   "<%= LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_LABEL %>",
                 tooltip: "<%= LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_TIP %>"
             },
-            search_type: o$('<%= SearchTermsHelper::SEARCH_TYPE.to_json %>')
+            search_type: o$('<%= js SearchTermsHelper::SEARCH_TYPE %>')
         },
 
         /**
@@ -456,15 +517,19 @@ var Emma = (function() {
          * }}
          */
         Upload: {
-            Path:   o$('<%= UploadHelper::UPLOAD_PATH.to_json %>'),
-            Style:  o$('<%= UploadHelper::UPLOAD_STYLE.to_json %>'),
-            Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>'),
-            Filter: o$('<%= UploadHelper::UPLOAD_FIELD_GROUP.to_json %>'),
-            Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
-            Mime:   { to_fmt:  o$('<%= FileNaming.mime_to_fmt.to_json %>') },
-            Field:  { empty:   '<%= ModelHelper::EMPTY_VALUE %>' },
+            Path:   o$('<%= js UploadHelper::UPLOAD_PATH %>'),
+            Style:  o$('<%= js UploadHelper::UPLOAD_STYLE %>'),
+            Action: o$('<%= js UploadHelper::UPLOAD_ACTION_VALUES %>'),
+            Filter: o$('<%= js UploadHelper::UPLOAD_FIELD_GROUP %>'),
+            Status: o$('<%= js ModelHelper::STATUS_MARKER %>'),
+            Mime: {
+                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>')
+            },
+            Field: {
+                empty:   '<%= ModelHelper::EMPTY_VALUE %>'
+            },
             Repo:   {
-                name:    o$('<%= EmmaRepository.pairs.to_json %>'),
+                name:    o$('<%= js EmmaRepository.pairs %>'),
                 default: '<%= EmmaRepository.default %>'
             }
         },
@@ -537,15 +602,19 @@ var Emma = (function() {
          * }}
          */
         Entry: {
-            Path:   o$('<%= EntryHelper::ENTRY_PATH.to_json %>'),
-            Style:  o$('<%= EntryHelper::ENTRY_STYLE.to_json %>'),
-            Action: o$('<%= EntryHelper::ENTRY_ACTION_VALUES.to_json %>'),
-            Filter: o$('<%= EntryHelper::ENTRY_FIELD_GROUP.to_json %>'),
-            Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
-            Mime:   { to_fmt:  o$('<%= FileNaming.mime_to_fmt.to_json %>') },
-            Field:  { empty:   '<%= ModelHelper::EMPTY_VALUE %>' },
+            Path:   o$('<%= js EntryHelper::ENTRY_PATH %>'),
+            Style:  o$('<%= js EntryHelper::ENTRY_STYLE %>'),
+            Action: o$('<%= js EntryHelper::ENTRY_ACTION_VALUES %>'),
+            Filter: o$('<%= js EntryHelper::ENTRY_FIELD_GROUP %>'),
+            Status: o$('<%= js ModelHelper::STATUS_MARKER %>'),
+            Mime: {
+                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>')
+            },
+            Field: {
+                empty:   '<%= ModelHelper::EMPTY_VALUE %>'
+            },
             Repo:   {
-                name:    o$('<%= EmmaRepository.pairs.to_json %>'),
+                name:    o$('<%= js EmmaRepository.pairs %>'),
                 default: '<%= EmmaRepository.default %>'
             }
         },
@@ -593,7 +662,7 @@ var Emma = (function() {
             List: {
                 class: '<%= UploadHelper::UPLOAD_LIST_CLASS %>',
             },
-            StateGroup: a$('<%= UploadHelper::UPLOAD_STATE_GROUP.keys.to_json %>'),
+            StateGroup: a$('<%= js UploadHelper::UPLOAD_STATE_GROUP.keys %>'),
         },
 
         /**
@@ -612,8 +681,8 @@ var Emma = (function() {
          * }}
          */
         Scroll: {
-            target: o$('<%= LayoutHelper::Scroll::SCROLL_TARGET.to_json %>'),
-            button: o$('<%= LayoutHelper::Scroll::SCROLL_TOP.to_json %>')
+            target: o$('<%= js LayoutHelper::Scroll::SCROLL_TARGET %>'),
+            button: o$('<%= js LayoutHelper::Scroll::SCROLL_TOP %>')
         }
 
     };

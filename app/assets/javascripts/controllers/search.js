@@ -384,28 +384,12 @@ $(document).on('turbolinks:load', function() {
     // Actions - collapsible items
     // ========================================================================
 
-    // Create the "heading-bar" to contain the page heading and the top
-    // pagination bar.  Move the bottom pagination bar below the item list.
-    //
-    // NOTE: Probably an interim solution until the HTML-generating code is
-    //  changed to accommodate the new style.
-
-    let $heading     = $('.layout-content > h1.heading');
-    let $heading_bar = $('<div>').addClass('heading-bar');
-
-    $heading_bar.insertBefore($heading);
-    $heading.detach().appendTo($heading_bar);
-    $list_parts.filter('.pagination-top').detach().appendTo($heading_bar);
-    $list_parts.filter('.pagination-bottom').detach().insertAfter($item_list);
-
     // Create and setup item display toggle controls.
-
     $list_parts.filter('.number').each(function() {
         setupToggleControl(this);
     });
 
     // Make clicking on the title toggle the display of that item.
-
     $result_items.find('.field-Title.value .title').each(function() {
         handleClickAndKeypress($(this), toggleItem);
     });
@@ -721,9 +705,9 @@ $(document).on('turbolinks:load', function() {
         console.warn(`======== CLEANING UP OLD "${db_name}" ========`);
         let request = window.indexedDB.deleteDatabase(db_name);
         request.onupgradeneeded = evt => console.log(`${func}: upgrade:`, evt);
-        request.onblocked       = event => console.warn(`${func}: in use`);
-        request.onerror         = event => console.error(`${func}:`, event);
-        request.onsuccess       = event => console.log(`${func}: success`);
+        request.onblocked       = evt => console.warn(`${func}: in use`);
+        request.onerror         = evt => console.error(`${func}:`, evt);
+        request.onsuccess       = evt => console.log(`${func}: success`);
     }
 
     // ========================================================================
@@ -839,85 +823,32 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Advanced experimental controls.
-     *
-     * NOTE: The order here is the reverse of the order of display.
+     * CSS class for the style control buttons.
      *
      * @constant
-     * @type {{
-     *     restore:       ElementProperties,
-     *     by_repo_id:    ElementProperties,
-     *     by_identifier: ElementProperties,
-     *     by_title_text: ElementProperties,
-     *     by_title_id:   ElementProperties,
-     * }}
+     * @type {string}
      */
-    const BUTTON = {
-        restore: {
-            active:  true,
-            tag:     'button',
-            class:   'restore-button',
-            text:    'Normal',
-            tooltip: 'Restore the normal search results display',
-            func:    revertStyle,
-        },
-        by_repo_id: {
-            active:  DEV_CONTROLS,
-            tag:     'button',
-            class:   'colorize-button by_repo_id',
-            text:    'Repo ID',
-            tooltip: 'Mark entries with the same "repository record ID" ' +
-                         'in the same color',
-            func:    () => colorize('by_repo_id'),
-        },
-        by_identifier: {
-            active:  DEV_CONTROLS,
-            tag:     'button',
-            class:   'colorize-button by_identifier',
-            text:    'ISBN',
-            tooltip: 'Mark entries with the same standard identifier ' +
-                         'in the same color',
-            func:    () => colorize('by_identifier'),
-        },
-        by_title_text: {
-            active:  DEV_CONTROLS,
-            tag:     'button',
-            class:   'colorize-button by_title_text',
-            text:    'Title',
-            tooltip: 'Mark entries with matching title text ' +
-                         'in the same color',
-            func:    () => colorize('by_title_text', 'T'),
-        },
-        by_title_id: {
-            active:  true,
-            tag:     'button',
-            class:   'colorize-button by_title_id',
-            text:    'Title ID',
-            tooltip: 'Mark entries with the same "title ID" ' +
-                         'in the same color',
-            func:    () => colorize('by_title_id'),
-        },
-    };
+    const BUTTON_TRAY_CLASS = Emma.SearchStyle.container.class;
 
     /**
-     * Map identity type to relevant metadata field class name.
+     * Advanced experimental controls.
      *
      * @constant
-     * @type {{string: string|null}}
+     * @type {Object<StyleControlProperties>}
      */
-    const IDENTITY_FIELD = {
-        by_repo_id:    'field-RepositoryRecordId',
-        by_identifier: 'field-Identifier',
-        by_title_text: null,
-        by_title_id:   'field-EmmaTitleId'
-    };
+    const BUTTON_CONFIG =
+        $.extend(true, {}, Emma.SearchStyle.control.buttons, {
+            restore: { func: revertStyle }
+        });
 
     /**
      * Identity topics.
      *
      * @type {string[]}
      */
-    const TOPICS = Object.keys(IDENTITY_FIELD);
+    const TOPICS = $.map(BUTTON_CONFIG,
+        (prop, topic) => isDefined(prop.field) ? topic : undefined
+    );
 
     /**
      * CSS marker class indicating an erroneous item.
@@ -1010,9 +941,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Location of colorize controls.
      *
+     * (This will actually be two elements, only one of which will be visible
+     * for the current form factor (wide, medium, or narrow).
+     *
      * @type {jQuery}
      */
-    let $button_tray = $heading_bar.find('.pagination-top');
+    let $button_tray = $(`.heading-bar .${BUTTON_TRAY_CLASS}`);
 
     // ========================================================================
     // Functions - colorize
@@ -1102,7 +1036,7 @@ $(document).on('turbolinks:load', function() {
         removeIdentityNumber($result_items, other_topics);
         unmarkIdentityFields($result_items);
 
-        const tag = data_tag || by_topic.replace(/^by_/, '')[0];
+        const tag = data_tag || tagChar(by_topic);
         let color = Math.floor(Math.random() * COLOR_RANGE);
         item_lists.forEach(function(item_list, index) {
             const number   = `${tag}-${index+1}`;
@@ -1265,7 +1199,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   by_topic
      */
     function markIdentityField(item, by_topic) {
-        const field = IDENTITY_FIELD[by_topic];
+        const config = BUTTON_CONFIG[by_topic];
+        const field  = config?.field;
         if (field) {
             let $items = item ? $(item) : $result_items;
             $items.find(`.value.${field}`).addClass('identity-highlight');
@@ -1301,6 +1236,18 @@ $(document).on('turbolinks:load', function() {
         return result % COLOR_RANGE;
     }
 
+    /**
+     * Generate a tag character used to mark the given topic in the title line.
+     *
+     * @param {string} by_topic
+     *
+     * @returns {string}
+     */
+    function tagChar(by_topic) {
+        const special = { by_title_text: 'T' };
+        return special[by_topic] || by_topic.replace(/^by_/, '')[0];
+    }
+
     // ========================================================================
     // Functions - colorize
     // ========================================================================
@@ -1321,6 +1268,7 @@ $(document).on('turbolinks:load', function() {
      */
     function getColorizeState() {
         const entry = sessionStorage.getItem(COLORIZE_STATE_KEY);
+        // console.log('GET COLORIZE STATE', entry);
         return fromJSON(entry) || {};
     }
 
@@ -1334,6 +1282,7 @@ $(document).on('turbolinks:load', function() {
         const search = criteria || currentSearch();
         const values = { topic: topic, search: search };
         const entry  = JSON.stringify(values) || '';
+        // console.log('SET COLORIZE STATE', entry);
         sessionStorage.setItem(COLORIZE_STATE_KEY, entry);
     }
 
@@ -1341,65 +1290,91 @@ $(document).on('turbolinks:load', function() {
      * Clear the state of colorization.
      */
     function clearColorizeState() {
+        // console.log('REMOVE COLORIZE STATE');
         sessionStorage.removeItem(COLORIZE_STATE_KEY);
     }
 
+    // ========================================================================
+    // Functions - colorize
+    // ========================================================================
+
     /**
-     * Assign event handlers to the colorize button, creating it if necessary.
+     * Assign event handlers to the colorize button.
      *
-     * @param {string}            topic     {@link BUTTON} key.
-     * @param {ElementProperties} [config]  {@link BUTTON} value.
+     * @param {string}                 topic    {@link BUTTON_CONFIG} key.
+     * @param {StyleControlProperties} [config] {@link BUTTON_CONFIG} value.
      *
-     * @returns {jQuery}
+     * @returns {jQuery|undefined}
      */
     function setupColorizeButton(topic, config) {
         const func   = 'setupColorizeButton';
-        const button = config || BUTTON[topic];
-        let $button  = $(selector(button.class));
-        if (isMissing($button)) {
-            $button = create(button).appendTo($button_tray);
+        const button = config || BUTTON_CONFIG[topic];
+        let $button  = $button_tray.find(selector(button?.class));
+        if (isMissing(button)) {
+            console.error(`${func}: ${topic}: invalid topic`);
+        } else if (!button.active) {
+            // console.log(`${func}: ${topic}: inactive topic`);
+        } else if (isMissing($button)) {
+            if (button.active === 'dev_only') {
+                // console.log(`${func}: ${topic}: inactive topic`);
+            } else {
+                console.warn(`${func}: ${topic}: no buttons`);
+            }
         } else {
-            $button.removeClass('active');
+            // console.log(`${func}: ${topic}`);
+            let action = button.func;
+            if (button.class.includes('colorize')) {
+                action ||= () => colorize(topic);
+                handleClickAndKeypress($button, function() {
+                    let $this = $(this);
+                    if ($this.hasClass('active')) {
+                        $this.removeClass('active');
+                        clearColorizeState();
+                        unColorize(topic);
+                    } else {
+                        $this.addClass('active');
+                        setColorizeState(topic);
+                        action();
+                    }
+                });
+            } else {
+                action ||= () => console.error(`${func}: ${topic}: no action`);
+                handleClickAndKeypress($button, action);
+            }
+            return $button.removeClass('active');
         }
-        let action = button.func;
-        if (button.class.includes('colorize')) {
-            action ||= colorize;
-            handleClickAndKeypress($button, function() {
-                if ($button.hasClass('active')) {
-                    $button.removeClass('active');
-                    clearColorizeState();
-                    unColorize(topic);
-                } else {
-                    $button.addClass('active');
-                    setColorizeState(topic);
-                    action();
-                }
-            });
-        } else {
-            action ||= () => console.error(`${func}: no action for ${topic}`);
-            handleClickAndKeypress($button, action);
-        }
-        return $button;
+    }
+
+    /**
+     * Set up the container for colorization controls.
+     *
+     * @param {Object<StyleControlProperties>} [button_config]
+     *
+     * @returns {jQuery|undefined}    The active button.
+     */
+    function setupColorizeButtons(button_config = BUTTON_CONFIG) {
+        const previous    = getColorizeState();
+        const re_colorize = equivalent(previous.search, currentSearch());
+        // const func        = 'setupColorizeButtons';
+        // console.log(`${func}: PREV TOPIC=`, previous.topic);
+        // console.log(`${func}: PREV SEARCH`, previous.search);
+        // console.log(`${func}: CURR SEARCH`, currentSearch());
+        // console.log(`${func}: RE_COLORIZE`, re_colorize);
+        let $active_button;
+        $.each(button_config, function(topic, config) {
+            let $button = setupColorizeButton(topic, config);
+            if ($button && re_colorize && (topic === previous.topic)) {
+                $active_button ||= $button.first();
+            }
+        });
+        $active_button?.click();
+        return $active_button;
     }
 
     // ========================================================================
     // Actions - colorize
     // ========================================================================
 
-    const INITIAL_STATE = getColorizeState();
-    const ACTIVE_TOPIC  = INITIAL_STATE.topic;
-    const ACTIVE_SEARCH = INITIAL_STATE.search;
-    const RE_COLORIZE   = equivalent(ACTIVE_SEARCH, currentSearch());
-
-    let $active_button;
-    $.each(BUTTON, function(topic, button) {
-        if (button.active) {
-            let $button = setupColorizeButton(topic, button);
-            if (RE_COLORIZE && (topic === ACTIVE_TOPIC)) {
-                $active_button ||= $button;
-            }
-        }
-    });
-    $active_button?.click();
+    setupColorizeButtons();
 
 });
