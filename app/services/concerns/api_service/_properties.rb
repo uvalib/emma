@@ -61,6 +61,13 @@ module ApiService::Properties
     %w(GET PUT POST DELETE)
       .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze
 
+  # Engine key values which indicate that the engine should be returned to
+  # normal.
+  #
+  # @type [Array<Symbol>]
+  #
+  RESET_KEYS = %i[normal default reset].freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -113,6 +120,66 @@ module ApiService::Properties
   #
   def api_version
     not_implemented 'must be defined by the subclass'
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Valid service endpoint URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  def engines
+    not_implemented 'To be overridden by the service subclass'
+  end
+
+  # Default service endpoint for this deployment.
+  #
+  # @return [String]
+  #
+  def default_engine_url
+    not_implemented 'To be overridden by the service subclass'
+  end
+
+  # The default service engine key.
+  #
+  # @return [Symbol, nil]
+  #
+  def default_engine_key
+    engines.find { |_, url| url == default_engine_url }&.first
+  end
+
+  # engine_url
+  #
+  # @param [Symbol, String] value   Engine name or URL.
+  #
+  # @return [String, nil]
+  #
+  def engine_url(value)
+    if value.is_a?(String) && value.include?('/')
+      value if engines.any? { |_, url| value.start_with?(url) }
+    elsif RESET_KEYS.include?((key = value.to_s.downcase.to_sym))
+      default_engine_url
+    else
+      engines[key]
+    end
+  end
+
+  # engine_key
+  #
+  # @param [Symbol, String] value   Engine name or URL.
+  #
+  # @return [Symbol, nil]
+  #
+  def engine_key(value)
+    if value.is_a?(String) && value.include?('/')
+      engines.find { |key, url| break key if value == url }
+    elsif engines.include?((key = value.to_s.downcase.to_sym))
+      key
+    end
   end
 
   # ===========================================================================

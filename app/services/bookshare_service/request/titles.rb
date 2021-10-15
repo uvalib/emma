@@ -385,7 +385,6 @@ module BookshareService::Request::Titles
   # @return [Search::Message::RetrievalResult]
   #
   def get_retrieval(url:, **opt)
-    url = url.sub(%r{//api\.qa\.}, '//api.') # TODO: temporary until Benetech fixes unified search
     api(:get, url, **opt)
     api_return(Search::Message::RetrievalResult)
   end

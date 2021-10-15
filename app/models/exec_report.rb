@@ -432,7 +432,7 @@ class ExecReport
         when ExecReport::Part
           result = { TOPIC_KEY => src.topic, DETAILS_KEY => src.details }
           result = result.merge!(src.info).deep_dup
-          result[HTML_KEY] = src.render_html unless result.key?(HTML_KEY)
+          result[HTML_KEY] = src.html_safe? unless result.key?(HTML_KEY)
 
         when Exception
           # noinspection RubyMismatchedParameterType
@@ -613,7 +613,7 @@ class ExecReport
     #
     def error_table(*entries)
       html = (entries.pop if [true, false, nil].any? { |v| entries.last == v })
-      html = entries.any? { |v| v.try(:render_html) } if html.nil?
+      html = entries.any? { |v| v.try(:html_safe?) } if html.nil?
       error_table_hash(entries).transform_values! { |v|
         message_line(nil, *v, html: html)
       }.compact_blank!
@@ -627,8 +627,8 @@ class ExecReport
     # @return [Array<String>]
     #
     def error_messages(src, html = nil)
-      src  = src.exec_report       if src.respond_to?(:exec_report)
-      html = src.try(:render_html) if html.nil?
+      src  = src.exec_report      if src.respond_to?(:exec_report)
+      html = src.try(:html_safe?) if html.nil?
       error_table_hash(src).map { |k, v|
         next if v.blank?
         k = k.to_s
@@ -1092,7 +1092,7 @@ class ExecReport::Part
     # @return [String, ActiveSupport::Buffer, nil]
     #
     def render(src, **opt)
-      opt[:html] = src.try(:render_html) if opt[:html].nil?
+      opt[:html] = src.try(:html_safe?) if opt[:html].nil?
       render_line(src, **opt)
     end
 
@@ -1378,7 +1378,7 @@ class ExecReport::FlashPart < ExecReport::Part
     # @return [String, ActiveSupport::Buffer, nil]
     #
     def render(src, **opt)
-      opt[:html] = src.try(:render_html) if opt[:html].nil?
+      opt[:html] = src.try(:html_safe?) if opt[:html].nil?
       src = [extract_topic(src), *extract_details(src)] unless src.is_a?(Array)
       opt[:first] ||= 1
       opt[:last]  ||= opt[:first] + (positive(src.compact.size) || 1) - 1

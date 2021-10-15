@@ -23,6 +23,13 @@ module SearchService::Properties
   #
   SEARCH_CONFIG = i18n_erb('emma.service.search').deep_freeze
 
+  # Default engine selection.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_ENGINE = (application_deployment == :staging) ? :staging : :staging     # TODO: remove
+  #DEFAULT_ENGINE = (application_deployment == :staging) ? :staging : :production  # TODO: uncomment
+
   # ===========================================================================
   # :section: ApiService::Properties overrides
   # ===========================================================================
@@ -33,10 +40,10 @@ module SearchService::Properties
   #
   # @return [String]
   #
-  # @see #SEARCH_BASE_URL
+  # @see #default_engine_url
   #
   def base_url
-    @base_url ||= SEARCH_BASE_URL
+    @base_url ||= default_engine_url
   end
 
   # An API key is not a part of search URLs.
@@ -53,6 +60,28 @@ module SearchService::Properties
   #
   def api_version
     # SEARCH_API_VERSION
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Valid search engine URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  def engines
+    SEARCH_CONFIG[:endpoint]
+  end
+
+  # Default search engine for this deployment.
+  #
+  # @return [String]
+  #
+  def default_engine_url
+    SEARCH_BASE_URL || engines[DEFAULT_ENGINE]
   end
 
   # ===========================================================================

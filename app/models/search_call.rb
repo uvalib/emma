@@ -277,7 +277,7 @@ class SearchCall < ApplicationRecord
   # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
-    __debug_items(binding)
+    #__debug_items(binding)
     super(attr, &block)
   end
 
@@ -328,10 +328,10 @@ class SearchCall < ApplicationRecord
   # noinspection RubyNilAnalysis, RubyMismatchedParameterType
   #++
   def assign_attributes(attr, opt = nil)
-    __debug_items(binding)
+    #__debug_items(binding)
     attr = attr.is_a?(SearchCall) ? attr.attributes : map_parameters(attr)
     attr.delete(:id)
-    __debug_items(__method__, attr)
+    #__debug_items(__method__, attr)
     super(attr, opt)
   rescue => error # TODO: remove - testing
     Log.warn { "#{__method__}: #{error.class}: #{error.message}" }

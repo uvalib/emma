@@ -23,6 +23,19 @@ module IngestService::Properties
   #
   INGEST_CONFIG = i18n_erb('emma.service.ingest').deep_freeze
 
+  # Valid ingest endpoint URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  INGEST_ENGINES = INGEST_CONFIG[:endpoint]
+
+  # Default engine selection.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_ENGINE = (application_deployment == :staging) ? :staging : :staging     # TODO: remove
+  #DEFAULT_ENGINE = (application_deployment == :staging) ? :staging : :production  # TODO: uncomment
+
   # ===========================================================================
   # :section: ApiService::Properties overrides
   # ===========================================================================
@@ -33,10 +46,10 @@ module IngestService::Properties
   #
   # @return [String]
   #
-  # @see #INGEST_BASE_URL
+  # @see #default_engine_url
   #
   def base_url
-    @base_url ||= INGEST_BASE_URL
+    @base_url ||= default_engine_url
   end
 
   # Federated Ingest API key.
@@ -55,6 +68,28 @@ module IngestService::Properties
   #
   def api_version
     # INGEST_API_VERSION
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Valid search engine URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  def engines
+    INGEST_CONFIG[:endpoint]
+  end
+
+  # Default search engine for this deployment.
+  #
+  # @return [String]
+  #
+  def default_engine_url
+    INGEST_BASE_URL || engines[DEFAULT_ENGINE]
   end
 
   # ===========================================================================

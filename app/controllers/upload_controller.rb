@@ -49,17 +49,19 @@ class UploadController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_identifiers, only: %i[index    show
-                                           create
-                                           edit     update
-                                           delete   destroy
-                                           cancel   check
-                                           endpoint download
-                                           bulk_reindex]
-  before_action :index_redirect,  only: %i[show]
-  before_action :set_url,         only: %i[retrieval]
-  before_action :set_member,      only: %i[retrieval]
-  before_action :resolve_sort,    only: %i[admin]
+  before_action :set_identifiers, only: %i[
+    index         show
+    create        edit          update        delete        destroy
+    cancel        check         endpoint      download      bulk_reindex
+  ]
+  before_action :set_ingest_engine, only: %i[
+    index         new           edit          delete
+    bulk_index    bulk_new      bulk_edit     bulk_delete
+  ]
+  before_action :index_redirect, only: %i[show]
+  before_action :set_url,        only: %i[retrieval]
+  before_action :set_member,     only: %i[retrieval]
+  before_action :resolve_sort,   only: %i[admin]
 
   # ===========================================================================
   # :section:

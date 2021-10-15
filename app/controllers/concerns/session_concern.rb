@@ -262,7 +262,7 @@ module SessionConcern
     end
     session_keys.each do |key|
       value = session[key]
-      session.delete(key) if value.is_a?(Hash) ? value.empty? : value.nil?
+      session.delete(key) if value.try(:empty?) || value.nil?
     end
   end
 

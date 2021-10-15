@@ -28,6 +28,14 @@ en:
 
       ingest:
         name:           'Bookshare Federated Ingest service'
+        endpoint:       # @see IngestConcern::INGEST_ENGINES
+          production:   'https://ingest.bookshareunifiedsearch.org'
+          staging:      'https://ingest.staging.bookshareunifiedsearch.org'
+          qa:           'https://ingest.qa.bookshareunifiedsearch.org'
 
       search:
         name:           'EMMA Unified Search service'
+        endpoint:       # @see SearchConcern::SEARCH_ENGINES
+          production:   'https://api.bookshareunifiedsearch.org'
+          staging:      'https://api.staging.bookshareunifiedsearch.org'
+          qa:           'https://api.qa.bookshareunifiedsearch.org'

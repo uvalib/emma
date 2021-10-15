@@ -47,6 +47,7 @@ class SearchController < ApplicationController
   before_action :identifier_keyword_redirect, only: %i[index]
   before_action :set_immediate_search,        only: %i[index]
   before_action :set_search_style,            only: %i[index]
+  before_action :set_search_engine,           only: %i[index]
   before_action :set_record_id,               only: %i[show]
 
   # ===========================================================================

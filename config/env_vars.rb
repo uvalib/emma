@@ -191,16 +191,20 @@ BOOKSHARE_TEST_AUTH = ENV.fetch('BOOKSHARE_TEST_AUTH', nil).freeze
 #
 SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', '0.0.5').freeze
 
-# Base EMMA Unified Search API request path.
+# An override of the default EMMA Unified Search API request path.  If not
+# provided then SearchService#default_engine_url will be used.
 #
-# @type [String]
+# @type [String, nil]
 #
 SEARCH_BASE_URL =
-  ENV.fetch('SEARCH_BASE_URL','https://api.staging.bookshareunifiedsearch.org')
-    .strip
-    .sub(%r{^(http:)?//}, 'https://')
-    .sub(%r{/+$}, '')
-    .freeze
+  ENV['SEARCH_BASE_URL'].then { |url|
+    url = url&.strip
+    url = nil if url&.empty?
+    if url&.include?('/')
+      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
+    end
+    url
+  }.freeze
 
 # =============================================================================
 # EMMA Federated Ingest API properties
@@ -222,16 +226,20 @@ INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
 #
 INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.5').freeze
 
-# Base EMMA Federated Ingest API request path.
+# An override of the default EMMA Federated Ingest API request path.  If not
+# provided then IngestService#default_engine_url will be used.
 #
-# @type [String]
+# @type [String, nil]
 #
 INGEST_BASE_URL =
-  ENV.fetch('INGEST_BASE_URL', 'https://ingest.staging.bookshareunifiedsearch.org')
-    .strip
-    .sub(%r{^(http:)?//}, 'https://')
-    .sub(%r{/+$}, '')
-    .freeze
+  ENV['INGEST_BASE_URL'].then { |url|
+    url = url&.strip
+    url = nil if url&.empty?
+    if url&.include?('/')
+      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
+    end
+    url
+  }.freeze
 
 # =============================================================================
 # Internet Archive access

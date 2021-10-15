@@ -539,7 +539,7 @@ module LayoutHelper::SearchFilters
   # statistics.
   #
   def immediate_search?
-    @immediate_search ||= session['app.search_immediate']&.to_sym
+    @immediate_search ||= session['app.search.immediate']&.to_sym
     @immediate_search ||= IMMEDIATE_SEARCH.to_s.to_sym
     @immediate_search == :true
   end
@@ -568,7 +568,7 @@ module LayoutHelper::SearchFilters
   # @return [Symbol]
   #
   def search_style
-    @search_style ||= session['app.search_style']&.to_sym || DEFAULT_STYLE
+    @search_style ||= session['app.search.style']&.to_sym || DEFAULT_STYLE
   end
 
   # Indicate whether search results are displayed in the original manner.

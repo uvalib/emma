@@ -20,11 +20,7 @@ if rails_application?
     :BOOKSHARE_API_VERSION,
     :BOOKSHARE_BASE_URL,
 
-    # === EMMA Unified Index API
-    :SEARCH_BASE_URL,
-
     # === EMMA Federated Ingest API
-    :INGEST_BASE_URL,
     :INGEST_API_KEY,
 
     # === Internet Archive downloads

@@ -182,10 +182,10 @@ module ApiService::Common
     set_error(error)
 
   ensure
-    __debug_api_response(error: error)
-    log_exception(error, meth: meth) if error
-    clear_error                      if no_exception
-    raise exception                  if exception && !no_raise
+    __debug_api_response(error: error) unless is_a?(SearchService)
+    log_exception(error, meth: meth)   if error
+    clear_error                        if no_exception
+    raise exception                    if exception && !no_raise
     return (@response unless error)
   end
 
