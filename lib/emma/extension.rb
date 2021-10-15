@@ -43,7 +43,9 @@ module Emma::Extension
       #
       # @return [nil]
       #
+      #--
       # == Variations
+      #++
       #
       # @overload __ext_log(meth, *args, tag:, &block)
       #   @param [Symbol] meth        Calling method
@@ -95,7 +97,9 @@ module Emma::Extension
       #
       # @return [nil]
       #
+      #--
       # == Variations
+      #++
       #
       # @overload __ext_debug(meth, *args, tag:, **opt, &block)
       #   @param [Symbol]      meth   Calling method

@@ -37,7 +37,9 @@ module IngestService::Request::Submissions
   # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/upsertRecords   HTML API documentation
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/records             JSON API specification
   #
+  #--
   # == Variations
+  #++
   #
   # @overload put_records(list, **opt)
   #   @param [Ingest::Message::IngestionRecordList] list
@@ -81,7 +83,9 @@ module IngestService::Request::Submissions
   # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/deleteRecords   HTML API documentation
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/recordDeletes       JSON API specification
   #
+  #--
   # == Variations
+  #++
   #
   # @overload delete_records(list, **opt)
   #   @param [Ingest::Message::IdentifierRecordList] list
@@ -125,7 +129,9 @@ module IngestService::Request::Submissions
   # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/ingestion/getRecords  HTML API documentation
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.4#/paths/recordGets      JSON API specification
   #
+  #--
   # == Variations
+  #++
   #
   # @overload get_records(list, **opt)
   #   @param [Ingest::Message::IdentifierRecordList] list
@@ -192,7 +198,9 @@ module IngestService::Request::Submissions
   #
   # @return [Array<Ingest::Record::IngestionRecord>]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload record_list(list)
   #   @param [Ingest::Message::IngestionRecordList] list
@@ -224,7 +232,9 @@ module IngestService::Request::Submissions
   #
   # @return [Array<Ingest::Record::IdentifierRecord>]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload identifier_list(list)
   #   @param [Ingest::Message::IdentifierRecordList] list

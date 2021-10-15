@@ -579,7 +579,9 @@ module Record::Submittable
     #
     # @return [(Array,Array)]         Succeeded items and failed item messages.
     #
+    #--
     # == Variations
+    #++
     #
     # @overload repository_removals(requests, **opt)
     #   @param [Hash{Symbol=>Array}]            requests
@@ -610,7 +612,9 @@ module Record::Submittable
     #
     # @return [(Array,Array)]         Succeeded items and failed item messages.
     #
+    #--
     # == Variations
+    #++
     #
     # @overload repository_dequeues(requests, **opt)
     #   @param [Hash{Symbol=>Array}]            requests
@@ -641,7 +645,9 @@ module Record::Submittable
     #
     # @return [Hash{String=>Array<Model>}]  One or more requests per repo.
     #
+    #--
     # == Variations
+    #++
     #
     # @overload repository_requests(hash, empty_key: false)
     #   @param [Hash{String=>Model,Array<Model>}] hash

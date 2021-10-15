@@ -1480,7 +1480,9 @@ module UploadWorkflow::External
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload repository_removals(requests, **opt)
   #   @param [Hash{Symbol=>Array}]            requests
@@ -1511,7 +1513,9 @@ module UploadWorkflow::External
   #
   # @return [(Array,Array)]         Succeeded items and failed item messages.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload repository_dequeues(requests, **opt)
   #   @param [Hash{Symbol=>Array}]            requests
@@ -1542,7 +1546,9 @@ module UploadWorkflow::External
   #
   # @return [Hash{String=>Array<Upload>}]   One or more requests per repo.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload repository_requests(hash, empty_key: false)
   #   @param [Hash{String=>Upload,Array<Upload>}] hash

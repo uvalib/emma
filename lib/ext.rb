@@ -41,7 +41,9 @@ end
 #
 # @return [void]
 #
+#--
 # == Variations
+#++
 #
 # @overload override mod => mod2
 #   Used outside of the definition of *mod2* to override *mod* definitions.

@@ -234,7 +234,9 @@ module ParamsHelper
   #
   # @return [(*,*)]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload ctrlr_action_to_names
   #   Get :controller and :action from `#params`.

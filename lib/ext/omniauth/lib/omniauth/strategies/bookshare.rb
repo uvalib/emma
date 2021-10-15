@@ -455,7 +455,9 @@ module OmniAuth
       #
       # @return [::OAuth2::AccessToken, nil]
       #
+      #--
       # == Variations
+      #++
       #
       # @overload synthetic_access_token(atoken)
       #   @param [::OAuth2::AccessToken] atoken
@@ -493,7 +495,9 @@ module OmniAuth
       #
       # @return [OmniAuth::AuthHash, nil]
       #
+      #--
       # == Variations
+      #++
       #
       # @overload synthetic_auth_hash(uid)
       #   @param [String] uid         Bookshare user identity (email address).
@@ -578,7 +582,9 @@ module OmniAuth
       #
       # @return [OmniAuth::AuthHash, nil]
       #
+      #--
       # == Variations
+      #++
       #
       # @overload synthetic_auth_hash(uid, token = nil)
       #   @param [String, User] uid     Bookshare user identity (email address).

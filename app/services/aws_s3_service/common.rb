@@ -27,7 +27,9 @@ module AwsS3Service::Common
   #
   # @return [Any]                     Depends on *operation*.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload api(operation, *items, **opt)
   #   @param [Symbol]        operation
@@ -87,7 +89,9 @@ module AwsS3Service::Common
   # @param [Array] args
   # @param [Hash]  opt
   #
+  #--
   # == Variations
+  #++
   #
   # @overload initialize(records, succeeded, **opt)
   #   Defaulting *type* to AwsS3::Message::Response.

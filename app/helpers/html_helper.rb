@@ -19,8 +19,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML "<div>" element.
   #
-  # @param [Array] args               Passed to #html_tag.
-  # @param [Proc]  block              Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -30,8 +30,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML "<span>" element.
   #
-  # @param [Array] args               Passed to #html_tag.
-  # @param [Proc]  block              Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -41,8 +41,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML "<button>" element.
   #
-  # @param [Array] args               Passed to #html_tag.
-  # @param [Proc]  block              Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -57,7 +57,7 @@ module HtmlHelper
   # then it defaults to 'div'.
   #
   # @param [Symbol, String, Integer, nil] tag
-  # @param [Array]                        args
+  # @param [Array<*>]                     args
   #
   # @option args.last [String] :separator
   #
@@ -68,7 +68,9 @@ module HtmlHelper
   #
   # @see ActionView::Helpers::TagHelper#content_tag
   #
+  #--
   # == Variations
+  #++
   #
   # @overload html_tag(tag, content, options = nil, escape = true)
   #   @param [Symbol, String, Integer, nil]           tag
@@ -98,8 +100,8 @@ module HtmlHelper
   # Invoke #form_tag after normalizing element contents provided via the
   # parameter list and/or the block.
   #
-  # @param [String] url_or_path
-  # @param [Array]  args              Passed to #form_tag except for:
+  # @param [String]   url_or_path
+  # @param [Array<*>] args            Passed to #form_tag except for:
   #
   # @option args.last [String] :separator   Default: "\n"
   #

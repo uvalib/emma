@@ -61,7 +61,9 @@ module ApiService::Common
   #
   # @return [String]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload request_type()
   #   @return [String]                      Type derived from @verb.
@@ -78,7 +80,9 @@ module ApiService::Common
   #
   # @param [Symbol, String, nil] http_method
   #
+  #--
   # == Variations
+  #++
   #
   # @overload update_request?()
   #   Return whether @verb is an update.
@@ -98,6 +102,10 @@ module ApiService::Common
   # @param [Hash, nil] opt
   #
   # @return [String]
+  #
+  #--
+  # == Variations
+  #++
   #
   # @overload latest_endpoint(complete: false)
   #   Get the URL derived from @params.

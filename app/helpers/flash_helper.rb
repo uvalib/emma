@@ -418,7 +418,9 @@ module FlashHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [String]                      For :xhr.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload flash_format(meth, error, *args, topic: nil, **opt)
   #   @param [Symbol]                  meth   Calling method.
@@ -548,7 +550,9 @@ module FlashHelper
   # @return [String]                      If *item* is not HTML.
   # @return [Array]                       If *item* is an array.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload flash_item(string, max: FLASH_MAX_ITEM_SIZE, **opt)
   #   Create a single flash item which conforms to the maximum per-item size.

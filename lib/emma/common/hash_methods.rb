@@ -82,7 +82,9 @@ module Emma::Common::HashMethods
   #
   # @return [Hash, Array, *]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload _remove_blanks(hash)
   #   @param [Hash]         hash

@@ -369,7 +369,9 @@ module FileFormat
   #
   # @return [Array<String>, String]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload transform(meth, value)
   #   @param [Symbol]        meth

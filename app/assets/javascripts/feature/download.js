@@ -135,7 +135,7 @@ $(document).on('turbolinks:load', function() {
      * READY:      A direct link to the generated artifact is available.
      *
      * @constant
-     * @type {{FAILED: string, REQUESTING: string, READY: string}}
+     * @type {Object<string>}
      */
     const STATE = deepFreeze({
         FAILED:     'failed',

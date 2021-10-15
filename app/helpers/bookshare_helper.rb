@@ -177,7 +177,9 @@ module BookshareHelper
   # @return [String]                      A full URL.
   # @return [nil]                         If the URL could not be determined.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload bookshare_url(url, **path_opt)
   #   @param [String, nil] url        Full or partial URL.
@@ -250,7 +252,9 @@ module BookshareHelper
   # @return [ActiveSupport::SafeBuffer]         HTML link element.
   # @return [nil]                               If no *path* was found.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload bookshare_link(item)
   #   @param [Bs::Api::Record] item
@@ -286,7 +290,9 @@ module BookshareHelper
   # @return [String]
   # @return [Array<String>]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload bookshare_user(name)
   #   @param [String, Symbol] name

@@ -121,7 +121,9 @@ module AuthHelper
   #
   # @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload stored_auth_update_user(auth)
   #   @param [OmniAuth::AuthHash]            auth   User/token to add

@@ -31,10 +31,9 @@ module Api::Record::Associations
     #
     # @return [void]
     #
-    # @see Api::Serializer::Associations::ClassMethods#attribute
-    # @see Api::Record::Schema::ClassMethods#schema
-    #
+    #--
     # == Variations
+    #++
     #
     # @overload has_one(name, **opt)
     #   @param [Symbol]                name
@@ -45,6 +44,9 @@ module Api::Record::Associations
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
+    #
+    # @see Api::Serializer::Associations::ClassMethods#attribute
+    # @see Api::Record::Schema::ClassMethods#schema
     #
     def attribute(name, *args, **opt)
       add_single_property(name, *args, **opt)
@@ -59,10 +61,9 @@ module Api::Record::Associations
     #
     # @return [void]
     #
-    # @see Api::Serializer::Associations::ClassMethods#has_one
-    # @see Api::Record::Schema::ClassMethods#schema
-    #
+    #--
     # == Variations
+    #++
     #
     # @overload has_one(name, **opt)
     #   @param [Symbol]                name
@@ -73,6 +74,9 @@ module Api::Record::Associations
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
+    #
+    # @see Api::Serializer::Associations::ClassMethods#has_one
+    # @see Api::Record::Schema::ClassMethods#schema
     #
     def has_one(name, *args, **opt)
       add_single_property(name, *args, **opt)
@@ -87,10 +91,9 @@ module Api::Record::Associations
     #
     # @return [void]
     #
-    # @see Api::Serializer::Associations::ClassMethods#has_one
-    # @see Api::Record::Schema::ClassMethods#schema
-    #
+    #--
     # == Variations
+    #++
     #
     # @overload has_many(name, **opt)
     #   @param [Symbol]                name
@@ -101,6 +104,9 @@ module Api::Record::Associations
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
+    #
+    # @see Api::Serializer::Associations::ClassMethods#has_one
+    # @see Api::Record::Schema::ClassMethods#schema
     #
     def has_many(name, *args, **opt)
       add_collection_property(name, *args, **opt)
@@ -120,7 +126,9 @@ module Api::Record::Associations
     #
     # @return [void]
     #
+    #--
     # == Variations
+    #++
     #
     # @overload add_single_property(name, **opt)
     #   @param [Symbol]                name

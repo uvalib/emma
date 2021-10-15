@@ -833,7 +833,9 @@ module EntryConcern
   #
   # @return [void]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload post_response(status, items, redirect: nil, xhr: nil, meth: nil)
   #   @param [Symbol, Integer]                            status

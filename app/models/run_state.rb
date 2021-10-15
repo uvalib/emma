@@ -153,7 +153,7 @@ class RunState < Hash
       source  = UNAVAILABLE_DEFAULTS
     else
       default = AVAILABLE_DEFAULTS.merge(text: "invalid: #{source.inspect}")
-      source  = safe_json_parse(source, default: default)
+      source  = safe_json_parse(source, log: false, default: default)
     end
     # noinspection RubyMismatchedParameterType
     merge!(source)

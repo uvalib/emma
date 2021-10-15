@@ -40,7 +40,9 @@ module Record::Updatable
     #
     # @return [void]
     #
+    #--
     # == Variations
+    #++
     #
     # @overload enum_methods(columns_and_values)
     #   @param [Hash] columns_and_values

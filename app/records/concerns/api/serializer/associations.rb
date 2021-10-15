@@ -31,10 +31,9 @@ module Api::Serializer::Associations
     #
     # @return [void]
     #
-    # @see Declarative::Schema::DSL#property
-    # @see Api::Record::Schema::ClassMethods#schema
-    #
+    #--
     # == Variations
+    #++
     #
     # @overload has_one(name, **opt, &block)
     #   @param [Symbol]                name
@@ -56,6 +55,9 @@ module Api::Serializer::Associations
     #   class XXX < Api::Record; schema { attribute :elem }; end  -->
     #     <XXX elem="value"></XXX>
     #
+    # @see Declarative::Schema::DSL#property
+    # @see Api::Record::Schema::ClassMethods#schema
+    #
     def attribute(name, *args, **opt)
       type = get_type_class(args.shift, **opt)
       opt[:type]      = type
@@ -74,10 +76,9 @@ module Api::Serializer::Associations
     #
     # @return [void]
     #
-    # @see Declarative::Schema::DSL#property
-    # @see Api::Record::Schema::ClassMethods#schema
-    #
+    #--
     # == Variations
+    #++
     #
     # @overload has_one(name, **opt, &block)
     #   @param [Symbol]                name
@@ -100,6 +101,9 @@ module Api::Serializer::Associations
     # @example XML:
     #   class XXX < Api::Record; schema { has_one :elem }; end  -->
     #     <XXX><elem>value</elem></XXX>
+    #
+    # @see Declarative::Schema::DSL#property
+    # @see Api::Record::Schema::ClassMethods#schema
     #
     def has_one(name, *args, **opt, &block)
       type = get_type_class(args.shift, **opt)
@@ -125,10 +129,9 @@ module Api::Serializer::Associations
     #
     # @return [void]
     #
-    # @see Declarative::Schema::DSL#property
-    # @see Api::Record::Schema::ClassMethods#schema
-    #
+    #--
     # == Variations
+    #++
     #
     # @overload has_many(name, **opt, &block)
     #   @param [Symbol]                name
@@ -155,6 +158,9 @@ module Api::Serializer::Associations
     # @example XML (WRAP_COLLECTIONS = false)
     #   class XXX < Api::Record; schema { has_many :elem }; end  -->
     #     <XXX><elem>...</elem>...<elem>...</elem></XXX>
+    #
+    # @see Declarative::Schema::DSL#property
+    # @see Api::Record::Schema::ClassMethods#schema
     #
     def has_many(name, *args, **opt, &block)
       type = get_type_class(args.shift, **opt)

@@ -363,7 +363,9 @@ module Emma::Debug
     #
     # @return [nil]
     #
+    #--
     # == Variations
+    #++
     #
     # @overload __debug_items(meth, bind, *parts, **opt)
     #   Injects the parameters of the calling method as indicated by *bind*.

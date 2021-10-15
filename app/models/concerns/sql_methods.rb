@@ -103,7 +103,9 @@ module SqlMethods
   #
   # @return [String]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload sql_clause(k, v)
   #   @param [String, Symbol] k

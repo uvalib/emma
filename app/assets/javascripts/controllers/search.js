@@ -748,7 +748,7 @@ $(document).on('turbolinks:load', function() {
 
     /**
      * @const
-     * @type {{string: string}}
+     * @type {Object<string>}
      */
     const SORTED = {
         title:               'dc_title for sort=title',

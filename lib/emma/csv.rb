@@ -28,7 +28,9 @@ module Emma::Csv
   # @return [Array<Hash>]
   # @return [nil]                     Only if *no_raise* is *true*.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload csv_parse(path, no_raise:, **opt)
   #   @param [String]                 path      Local file path.

@@ -198,7 +198,9 @@ class ApiService
       #
       # @return [Hash, nil]
       #
+      #--
       # == Variations
+      #++
       #
       # @overload api_methods(arg)
       #   @param [Hash, nil] arg

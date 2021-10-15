@@ -19,7 +19,9 @@ module Emma::Common::MethodMethods
   #
   # @return [String, nil]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload calling_method()
   #   Using *call_stack* defaulting to `#caller(2)`.

@@ -73,7 +73,9 @@ module CssHelper
   #
   # @return [Hash]                        A new hash with :class set.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload append_classes(html_opt, *classes, &block)
   #   @param [Hash, String]       html_opt
@@ -123,7 +125,9 @@ module CssHelper
   #
   # @return [Hash]                        A new hash with :class set.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload prepend_classes(html_opt, *classes, &block)
   #   @param [Hash, String]               html_opt

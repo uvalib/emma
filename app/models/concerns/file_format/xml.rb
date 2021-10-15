@@ -280,7 +280,9 @@ module FileFormat::Xml
     # @see #get_attributes
     # @see #get_properties
     #
+    #--
     # == Variations
+    #++
     #
     # @overload __debug_parse(element)
     #   @param [Nokogiri::XML::Element] element

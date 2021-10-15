@@ -28,7 +28,9 @@ class FileObject
   # @param [Symbol, String, nil] fmt  Override `self.class.fmt`.
   # @param [String, nil]         ext  Override `self.class.file_extension`.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload initialize(path, fmt: nil, ext: nil)
   #   @param [String]              path

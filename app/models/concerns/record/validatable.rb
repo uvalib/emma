@@ -73,7 +73,9 @@ module Record::Validatable
   #
   # @return [void]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload check_required
   #   Check that all configured fields are present in the current record.

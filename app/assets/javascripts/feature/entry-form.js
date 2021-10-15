@@ -465,7 +465,7 @@ $(document).on('turbolinks:load', function() {
      * implies that "rem_complete" is "false".
      *
      * @constant
-     * @type {{rem_complete: Relationship, rem_coverage: Relationship}}
+     * @type {Object<Relationship>}
      */
     const FIELD_RELATIONSHIP = deepFreeze({
         rem_complete: {
@@ -488,7 +488,7 @@ $(document).on('turbolinks:load', function() {
      * CANCELED:  The cancel button has been activated.
      *
      * @constant
-     * @type {{SUBMITTED: string, CANCELED: string}}
+     * @type {Object<string>}
      */
     const FORM_STATE = deepFreeze({
         SUBMITTED: 'submitted',

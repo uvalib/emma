@@ -50,7 +50,9 @@ class ExecReport
   #
   # @param [Array] src
   #
+  #--
   # == Variations
+  #++
   #
   # @overload initialize(base, *src)
   #   @param [ApplicationRecord] base
@@ -1323,7 +1325,9 @@ class ExecReport::FlashPart < ExecReport::Part
   # @param [ExecReport::Part, Hash, String, Integer, Array] topic
   # @param [ExecReport::Part, Hash, String, Array, nil]     details
   #
+  #--
   # == Variations
+  #++
   #
   # @overload initialize(topic)
   #   @param [ExecReport::Part, Hash, String, Integer] topic

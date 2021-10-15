@@ -42,7 +42,9 @@ class Model::WorkflowJob < ApplicationJob
   #
   # @return [void]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload perform(model, meth, callback, **opt)
   #   @param [Model]            model

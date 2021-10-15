@@ -51,7 +51,9 @@ class FileHandle
   #
   # @raise [RuntimeError]             If *file* is invalid.
   #
+  #--
   # == Variations
+  #++
   #
   # @overload initialize(other)
   #   @param [FileHandle] other

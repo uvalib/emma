@@ -42,7 +42,9 @@ class ApplicationJob::AsyncCallback
   # @param [AsyncCallback, nil]                          callback
   # @param [Hash]                                        opt
   #
+  #--
   # == Variations
+  #++
   #
   # @overload initialize(src)
   #   @param [AsyncCallback] src

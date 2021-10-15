@@ -33,7 +33,9 @@ module Emma::Json
   # @return [Array<Hash>]
   # @return [Hash]
   #
+  #--
   # == Variations
+  #++
   #
   # @overload json_parse(hash = nil, log: true, no_raise: true, **)
   #   If *arg* is already a Hash, a copy of it is returned.
