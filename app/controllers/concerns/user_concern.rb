@@ -23,7 +23,7 @@ module UserConcern
     #
     # @private
     #
-    def authenticate_user!; end
+    def authenticate_user!(opts = {}); end
 
     # Defined by Devise.
     #
@@ -132,16 +132,20 @@ module UserConcern
 
   # Authenticate then ensure that the user has the :administrator role.
   #
-  def authenticate_admin!
-    user = authenticate_user!
-    role_failure('Administrator-only feature') unless user.administrator? # TODO: I18n
+  # @param [Hash] opt                 Passed to #authenticate_user!
+  #
+  def authenticate_admin!(**opt)
+    authenticate_user!(**opt)
+    role_failure(:administrator) unless current_user&.administrator?
   end
 
   # Authenticate then ensure that the user has the :developer role.
   #
-  def authenticate_developer!
-    user = authenticate_user!
-    role_failure('Developer-only feature') unless user.developer? # TODO: I18n
+  # @param [Hash] opt                 Passed to #authenticate_user!
+  #
+  def authenticate_dev!(**opt)
+    authenticate_user!(**opt)
+    role_failure(:developer) unless current_user&.developer?
   end
 
   # ===========================================================================
@@ -155,17 +159,23 @@ module UserConcern
   # Cause an insufficient role for an authenticated session to generate an
   # authentication failure the way Devise does.
   #
-  # @param [String, nil] message    Default: 'devise.failure.unauthenticated'
+  # @param [String, Symbol, nil] msg  Default: 'devise.failure.unauthenticated'
   #
   # == Implementation Notes
   # This method sets `session['app.devise.redirect']` in order to prevent
   # SessionConcern#after_sign_in_path_for from specifying the current (failed)
   # page as the redirect from DeviseController#require_no_authentication.
   #
-  def role_failure(message = nil)
-    session['app.devise.failure.message'] = message ||= ROLE_FAILURE
+  def role_failure(msg = nil)
+    if msg.is_a?(Symbol)
+      role = msg.to_s.capitalize
+      msg  = +''
+      msg << params[:action].to_s << ': ' if params[:action]
+      msg << "#{role}-only feature" # TODO: I18n
+    end
+    session['app.devise.failure.message'] = msg ||= ROLE_FAILURE
     session['app.devise.redirect'] = dashboard_path
-    throw(:warden, message: message)
+    throw(:warden, message: msg)
   end
 
   # ===========================================================================

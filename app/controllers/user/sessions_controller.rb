@@ -98,7 +98,7 @@ class User::SessionsController < Devise::SessionsController
     delete_auth_data(no_revoke: true?(params[:no_revoke]))
     super
     api_clear
-    set_flash_notice(user: user)
+    set_flash_notice(user: user, clear: true)
   rescue => error
     auth_failure_redirect(message: error)
     re_raise_if_internal_exception(error)

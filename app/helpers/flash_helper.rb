@@ -212,17 +212,19 @@ module FlashHelper
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Symbol]      type         :alert or :notice
   # @param [Symbol, nil] topic
-  # @param [Hash]        opt
+  # @param [Boolean]     clear        If *true* clear flash first.
+  # @param [Hash]        opt          Passed to #flash_format.
   #
   # @return [void]
   #
   # @see #flash_format
   #
-  def set_flash(*args, type:, topic: nil, **opt)
+  def set_flash(*args, type:, topic: nil, clear: nil, **opt)
     prepend_flash_source!(args, **opt)
-    target  = flash_target(type)
     message = flash_format(*args, topic: topic, **opt)
-    flash[target] = [*flash[target], *message]
+    target  = flash_target(type)
+    clear ||= flash[target].blank?
+    flash[target] = clear ? message : [*flash[target], *message]
   end
 
   # ===========================================================================
