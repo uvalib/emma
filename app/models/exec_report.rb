@@ -102,7 +102,7 @@ class ExecReport
     @parts +=
       src.flatten.compact_blank.flat_map { |item|
         item.is_a?(ExecReport) ? item.parts : ExecReport::Part[item]
-      }.compact.tap { |added| @render_html ||= added.any?(&:render_html) }
+      }.compact.tap { |added| @render_html ||= added.any?(&:html_safe?) }
     self
   end
 
@@ -450,9 +450,12 @@ class ExecReport
           matches, result    = partition_hash(result, *HTML_KEYS)
           result[HTML_KEY]   = matches.values.first
 
+        when ActiveSupport::SafeBuffer
+          result = { TOPIC_KEY => src, HTML_KEY => true }
+
         when String
-          result = { TOPIC_KEY => src.strip.presence }.compact
-          result[HTML_KEY] = src.html_safe? if result.present?
+          src = src.strip.presence
+          result = src ? { TOPIC_KEY => src, HTML_KEY => false } : {}
 
         else
           Log.info(err = "#{meth || __method__}: #{src.class} unexpected")
