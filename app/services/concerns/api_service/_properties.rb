@@ -80,8 +80,23 @@ module ApiService::Properties
   #
   def service_name(*)
     # noinspection RailsParamDefResolve
-    @service_name ||=
-      (try(:name) || self.class.name).underscore.delete_suffix('_service')
+    @service_name ||= ApiService.name_for(try(:name) || self.class.try(:name))
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # The service identified by the given value.
+  #
+  # @param [*] target
+  #
+  # @return [String]
+  #
+  def name_for(target)
+    target.to_s.underscore.delete_suffix('_service')
   end
 
   # ===========================================================================

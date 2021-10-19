@@ -12,6 +12,7 @@ module SearchConcern
   extend ActiveSupport::Concern
 
   include ApiConcern
+  include EngineConcern
   include SearchCallConcern
 
   include SearchHelper
@@ -34,58 +35,8 @@ module SearchConcern
   # @return [SearchService]
   #
   def search_api
-    if (engine = requested_search_engine)
-      SearchService.new(base_url: engine)
-    else
-      # noinspection RubyMismatchedReturnType
-      api_service(SearchService)
-    end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The URL of the user-selected search engine.
-  #
-  # @return [String, nil]             If different than the default engine.
-  #
-  def requested_search_engine
-    url = SearchService.engine_url(get_session_search_engine)
-    url unless url == SearchService.default_engine_url
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The name of the `session` entry for overriding the default search engine.
-  #
-  # @type [String]
-  #
-  SEARCH_ENGINE_SESSION_KEY = 'app.search.engine'
-
-  # @type [String, nil]
-  def get_session_search_engine
-    session[SEARCH_ENGINE_SESSION_KEY].presence
-  end
-
-  # @type [String, nil]
-  def set_session_search_engine(new_value)
-    if new_value.present?
-      session[SEARCH_ENGINE_SESSION_KEY] = new_value.to_s
-    else
-      clear_session_search_engine && nil
-    end
-  end
-
-  # @type [String, nil]
-  def clear_session_search_engine
-    session.delete(SEARCH_ENGINE_SESSION_KEY)
+    engine = requested_engine(SearchService)
+    engine ? SearchService.new(base_url: engine) : api_service(SearchService)
   end
 
   # ===========================================================================
@@ -288,48 +239,8 @@ module SearchConcern
 
   # Process the URL parameter for setting the search engine URL.
   #
-  # The engine may be specified by deployment, e.g. "&engine=staging", or by
-  # URL (if that URL matches or derives from a SearchService.engines value).
-  # If this resolves to the default search engine then
-  # session['app.search.engine'] is deleted; otherwise it will be set to a key
-  # of SearchService.engines or to an explicit URL if necessary.
-  #
-  # If no (valid) :engine parameter was supplied, this method evaluates the
-  # current value of session['app.search.engine'], and will delete it if
-  # appropriate (but without redirecting).
-  #
   def set_search_engine
-    opt = request_parameters
-    val = url = nil
-    if (in_params = opt.key?(:engine)) && (val = opt.delete(:engine).presence)
-      if ApiService::RESET_KEYS.include?(val.strip.downcase.to_sym)
-        val = nil
-      elsif (key = SearchService.engine_key(val))
-        val = key
-      elsif (url = SearchService.engine_url(val))
-        val = nil
-      else
-        val = nil
-        Log.warn("#{__method__}: invalid engine #{val.inspect}")
-      end
-    elsif !in_params && (current = get_session_search_engine)
-      if current.include?('/')
-        url = current
-      else
-        val = current
-      end
-    end
-    val = nil if val && (val == SearchService.default_engine_key)
-    url = nil if url && (url == SearchService.default_engine_url)
-    if set_session_search_engine(val || url)
-      url   ||= SearchService.engine_url(val)
-      restore = make_path(request.fullpath, engine: 'reset')
-      restore = %Q(<a href="#{restore}">[RESTORE DEFAULT]</a>).html_safe
-      notice  = ERB::Util.h("SEARCH ENGINE #{url.inspect}  ") << restore
-      #flash_now_notice(notice, html: true) # TODO: ExecReport html_safe
-      flash.now[:notice] = [*flash.now[:notice], notice]
-    end
-    redirect_to opt if in_params
+    set_engine_callback(SearchService)
   end
 
   # Process the URL parameter for setting the search style.

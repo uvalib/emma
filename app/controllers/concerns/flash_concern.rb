@@ -11,6 +11,34 @@ module FlashConcern
 
   extend ActiveSupport::Concern
 
+  include FlashHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # flash_link
+  #
+  # @param [String]       label
+  # @param [String, Hash] path
+  # @param [Hash]         opt
+  #
+  # @option opt [String] :tooltip   Alias for :title.
+  # @option opt [String] :tip       Alias for :title.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def flash_link(label, path, **opt)
+    ti_opt, opt = partition_hash(opt, :tooltip, :tip, :title)
+    opt[:title] = ERB::Util.h(ti_opt.values.first) if ti_opt.compact.present?
+    full = path.is_a?(String) && path.start_with?('http')
+    path = make_path(request.fullpath, path) unless full
+    attr = { href: path }.merge!(opt).map { |k, v| %Q(#{k}="#{v}") }.join(' ')
+    "<a #{attr}>#{label}</a>".html_safe
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -20,11 +48,7 @@ module FlashConcern
   THIS_MODULE = self
 
   included do |base|
-
     __included(base, THIS_MODULE)
-
-    include FlashHelper
-
   end
 
 end
