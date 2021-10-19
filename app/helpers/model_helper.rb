@@ -706,27 +706,14 @@ module ModelHelper
   #
   def mark_invalid_identifiers(value)
     return value.map { |v| send(__method__, v) } if value.is_a?(Array)
-    type, id = value.split(':', 2)
-    return value if id.nil? || valid_identifier?(value, type)
-    tip = "This is not a valid #{type.upcase} identifier." # TODO: I18n
-    html_span(value, class: 'invalid', title: tip)
-  end
-
-  # Indicate whether the given identifier is valid.
-  #
-  # @param [String]            value
-  # @param [Symbol, String, *] type   Determined from *value* if missing.
-  #
-  def valid_identifier?(value, type = nil)
-    if type
-      prefix  = type.to_sym
-      id_type = PublicationIdentifier.subclass_map[prefix]
-      id_type.present? && id_type.valid?(value)
+    type, id_part = value.split(':', 2)
+    if id_part.nil? # No type prefix.
+      value
+    elsif (identifier = PublicationIdentifier.create(id_part, type))
+      identifier.to_s
     else
-      PublicationIdentifier.subclasses.any? do |id_type|
-        prefix, identifier = id_type.parts(value)
-        prefix.present? && id_type.valid?(identifier)
-      end
+      tip = "This is not a valid #{type.upcase} identifier." # TODO: I18n
+      html_span(value, class: 'invalid', title: tip)
     end
   end
 

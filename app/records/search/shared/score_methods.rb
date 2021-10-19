@@ -12,6 +12,7 @@ module Search::Shared::ScoreMethods
   include Emma::Common
 
   include Api::Shared::CommonMethods
+  include Search::Shared::IdentifierMethods
 
   # ===========================================================================
   # :section:
@@ -169,8 +170,8 @@ module Search::Shared::ScoreMethods
   def calculate_identifier_score(terms = nil, **opt)
     terms = opt.delete(:identifier) || terms
     terms = Array.wrap(terms).flat_map { |term| term.squish.split(/\s/) }
-    terms.map! { |term| PublicationIdentifier.cast(term).to_s }
-    terms.compact_blank!
+    terms.map! { |term| normalize_identifier(term) }
+    terms.compact!
     field_score(:dc_identifier, terms, **opt).zero? ? 0.0 : 100.0
   end
 

@@ -218,7 +218,7 @@ module SearchConcern
     opt = request_parameters
     search_query_keys(**opt).find do |q_param|
       next if (q_param == :identifier) || (query = opt[q_param]).blank?
-      next if (identifier = PublicationIdentifier.cast(query)).blank?
+      next unless (identifier = PublicationIdentifier.cast(query))&.valid?
       opt[:identifier] = identifier.to_s
       redirect_to opt.except!(q_param)
     end

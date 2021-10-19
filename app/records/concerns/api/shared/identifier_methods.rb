@@ -98,7 +98,7 @@ module Api::Shared::IdentifierMethods
       value = value.presence
       # noinspection RubyNilAnalysis
       if data.nil?
-        try("#{field}=", value) if value
+        try("#{field}=", value)
       elsif value
         data[field] = value
       elsif data.key?(field)

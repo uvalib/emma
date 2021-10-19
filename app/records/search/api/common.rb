@@ -262,18 +262,18 @@ class PublicationIdentifier < ScalarType
     # Create a new instance.
     #
     # @param [String] v               Identifier number.
+    # @param [Symbol, String] type    Determined from *v* if missing.
     #
     # @return [PublicationIdentifier]
     # @return [nil]                   If *v* is not a valid identifier.
     #
-    def create(v, *)
-      prefix, identifier = parts(v).map(&:presence)
-      return unless identifier
+    def create(v, type = nil, *)
+      prefix, value = type ? [type, v.presence] : parts(v).map(&:presence)
+      return unless value
       types = prefix ? Array.wrap(subclass(prefix)) : identifier_classes
-      types.find do |type|
-        next unless type.candidate?(identifier)
-        result = Log.silence { type.new(identifier) }
-        return result if result.valid?
+      types.find do |id_class|
+        id = id_class.new(value)
+        return id if id.valid?
       end
     end
 
@@ -315,6 +315,14 @@ class PublicationIdentifier < ScalarType
   #
   def parts(v = nil)
     v ? super : [prefix, number]
+  end
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
   end
 
   # ===========================================================================
@@ -714,6 +722,20 @@ class Isbn < PublicationIdentifier
 
   include Methods
 
+  # ===========================================================================
+  # :section: PublicationIdentifier::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
+
 end
 
 # ISSN identifier.
@@ -905,6 +927,20 @@ class Issn < PublicationIdentifier
 
   include Methods
 
+  # ===========================================================================
+  # :section: PublicationIdentifier::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
+
 end
 
 # OCN (OCLC Control Number) identifier.
@@ -963,7 +999,10 @@ class Oclc < PublicationIdentifier
     #
     # @type [Regexp]
     #
-    OCLC_IDENTIFIER = /^\d{#{OCLC_DIGITS.minmax.join(',')}}$/.freeze
+    OCLC_IDENTIFIER = /^(
+      [1-9]\d{,#{OCLC_DIGITS.min - 1}} |
+      \d{#{OCLC_DIGITS.minmax.join(',')}}
+    )$/x.freeze
 
     # =========================================================================
     # :section: ScalarType overrides
@@ -1087,6 +1126,20 @@ class Oclc < PublicationIdentifier
   end
 
   include Methods
+
+  # ===========================================================================
+  # :section: PublicationIdentifier::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
 
 end
 
@@ -1249,6 +1302,20 @@ class Lccn < PublicationIdentifier
   end
 
   include Methods
+
+  # ===========================================================================
+  # :section: PublicationIdentifier::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
 
 end
 
@@ -1443,6 +1510,20 @@ class Upc < PublicationIdentifier
 
   include Methods
 
+  # ===========================================================================
+  # :section: PublicationIdentifier::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
+
 end
 
 # DOI identifier.
@@ -1593,6 +1674,20 @@ class Doi < PublicationIdentifier
   end
 
   include Methods
+
+  # ===========================================================================
+  # :section: PublicationIdentifier::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
 
 end
 
