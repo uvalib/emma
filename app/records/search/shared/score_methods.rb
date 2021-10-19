@@ -124,8 +124,8 @@ module Search::Shared::ScoreMethods
   # behavior cannot be easily inferred from the search results.
   #
   def calculate_title_score(terms = nil, **opt)
-    opt[:stop_words] ||= %w(and of the) # %w(a and by of the)
-    opt[:keep_words] ||= %w(And Of) # %w(A And By Of The)
+    #opt[:stop_words] ||= %w(of) # %w(a and by of the)
+    #opt[:keep_words] ||= %w(Of) # %w(A And By Of The)
     terms = opt.delete(:title) || terms
     field_score(:dc_title, terms, **opt)
   end
@@ -262,7 +262,7 @@ module Search::Shared::ScoreMethods
     words.map! { |w| normalized(w.tr(substitute, original)) }     if no_break
     words.compact_blank!
   end
-  ''.delete
+
   # Break a word on spaces or punctuation into one or more normalized words.
   #
   # @param [String]  word
