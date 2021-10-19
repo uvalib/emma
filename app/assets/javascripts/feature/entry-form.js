@@ -2495,28 +2495,38 @@ $(document).on('turbolinks:load', function() {
 
             const required = ($input.attr('data-required') === 'true');
             const missing  = isEmpty(values);
-            const invalid  = required && missing; // TODO: per-field validation
-            const valid    = !invalid && !missing;
+            let invalid    = required && missing;
 
-            // Update the status icon and tooltip.
-            if (valid) {
-                setIcon($status,    Emma.Upload.Status.valid.label);
-                setTooltip($status, Emma.Upload.Status.valid.tooltip);
-            } else if (invalid && !missing) {
-                setIcon($status,    Emma.Upload.Status.invalid.label);
-                setTooltip($status, Emma.Upload.Status.invalid.tooltip);
-            } else if (required) {
-                setIcon($status,    Emma.Upload.Status.required.label);
-                restoreTooltip($status);
+            if (missing) {
+                update(false);
             } else {
-                restoreIcon($status);
-                restoreTooltip($status);
+                validate($input, values, update);
             }
 
-            // Update CSS status classes on all parts of the field.
-            toggleClass(parts, 'required', required);
-            toggleClass(parts, 'invalid',  invalid);
-            toggleClass(parts, 'valid',    valid);
+            function update(valid) {
+                if (required || !missing) {
+                    invalid ||= !valid;
+                }
+                // Update the status icon and tooltip.
+                if (valid) {
+                    setIcon($status,    Emma.Upload.Status.valid.label);
+                    setTooltip($status, Emma.Upload.Status.valid.tooltip);
+                } else if (invalid && !missing) {
+                    setIcon($status,    Emma.Upload.Status.invalid.label);
+                    setTooltip($status, Emma.Upload.Status.invalid.tooltip);
+                } else if (required) {
+                    setIcon($status,    Emma.Upload.Status.required.label);
+                    restoreTooltip($status);
+                } else {
+                    restoreIcon($status);
+                    restoreTooltip($status);
+                }
+
+                // Update CSS status classes on all parts of the field.
+                toggleClass(parts, 'required', required);
+                toggleClass(parts, 'invalid',  invalid);
+                toggleClass(parts, 'valid',    valid);
+            }
         }
     }
 
@@ -2673,6 +2683,164 @@ $(document).on('turbolinks:load', function() {
             default:        value = '';                       break;
         }
         return value;
+    }
+
+    // ========================================================================
+    // Functions - field validation
+    // ========================================================================
+
+    /**
+     * Value separator.
+     *
+     * @const
+     * @type {RegExp}
+     *
+     * @see "Api::Shared::IdentifierMethods#id_separator"
+     */
+    const ID_SEPARATOR = /[,;|\s]+/;
+
+    /**
+     * Remote identifier validation.
+     *
+     * @const
+     * @type {string}
+     */
+    const ID_VALIDATE_URL_BASE = '/search/validate?identifier=';
+
+    /**
+     * Validation methods table.
+     *
+     * @constant
+     * @type {Object<boolean|string|function(string|string[]):boolean>}
+     */
+    const FIELD_VALIDATION = deepFreeze({
+        dc_identifier: ID_VALIDATE_URL_BASE,
+        dc_relation:   ID_VALIDATE_URL_BASE,
+    });
+
+    /**
+     * Validate the value(s) for a field.
+     *
+     * @param {Selector} target
+     * @param {*}        new_value    Current *target* value if not given.
+     * @param {function} [callback]   Required for remote validation.
+     *
+     * @returns {boolean|undefined}
+     */
+    function validate(target, new_value, callback) {
+        let $input  = $(target);
+        const field = $input.attr('data-field');
+        const entry = FIELD_VALIDATION[field];
+        let valid;
+        if (typeof entry === 'string') {
+            const value = isDefined(new_value) ? new_value : $input.val();
+            remoteValidate($input, value, callback);
+        } else if (typeof entry === 'function') {
+            const value = isDefined(new_value) ? new_value : $input.val();
+            valid = entry(value);
+            callback && callback(valid);
+        } else {
+            valid = (typeof entry !== 'boolean') || entry;
+            callback && callback(valid);
+        }
+        return valid;
+    }
+
+    /**
+     * Validate the value(s) for a field.
+     *
+     * @param {string}   field
+     * @param {*}        new_value        Current *target* value if not given.
+     * @param {function} callback
+     */
+    function remoteValidate(field, new_value, callback) {
+        const func = 'remoteValidate';
+        let url    = FIELD_VALIDATION[field];
+        if (!callback) {
+            consoleError(func, `${url}:`, error);
+        }
+
+        // Prepare value for inclusion in the URL.
+        let value = new_value;
+        if (typeof value === 'string') {
+            value = value.split(ID_SEPARATOR);
+        }
+        if (Array.isArray(value)) {
+            value = value.join(',');
+        } else {
+            consoleWarn(func, `${url}:`, 'no values given');
+            callback(false);
+            return;
+        }
+
+        // If the URL is expecting to be completed, append the value string.
+        // Otherwise provide it as a generic "value" URL parameter.
+        if (url.endsWith('=')) {
+            url += value;
+        } else if (url.includes('?')) {
+            url = makeUrl(url, { value: value });
+        }
+
+        let error, reply;
+        const start = Date.now();
+
+        $.ajax({
+            url:      url,
+            type:     'GET',
+            success:  onSuccess,
+            error:    onError,
+            complete: onComplete
+        });
+
+        /**
+         * Parse the validation reply.
+         *
+         * @param {object}         data
+         * @param {string}         status
+         * @param {XMLHttpRequest} xhr
+         */
+        function onSuccess(data, status, xhr) {
+            // debug(func, 'received data: |', data, '|');
+            if (isMissing(data)) {
+                error = 'no data';
+            } else if (typeof(data) !== 'object') {
+                error = `unexpected data type ${typeof data}`;
+            } else {
+                // The actual data may be inside '{ "response" : { ... } }'.
+                reply = data.response || data;
+            }
+        }
+
+        /**
+         * Accumulate the status failure message.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         * @param {string}         message
+         */
+        function onError(xhr, status, message) {
+            if (xhr.status === HTTP.unauthorized) {
+                error = 'Could not contact server for validation'; // TODO: I18n
+            } else {
+                error = `${status}: ${xhr.status} ${message}`;
+            }
+        }
+
+        /**
+         * Invoke the callback with the reply.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         */
+        function onComplete(xhr, status) {
+            debug(func, 'complete', secondsSince(start), 'sec.');
+            if (error) {
+                consoleWarn(func, `${url}:`, error);
+                callback(undefined);
+            } else {
+                callback(reply.valid);
+            }
+        }
     }
 
     // ========================================================================

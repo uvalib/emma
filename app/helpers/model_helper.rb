@@ -1811,12 +1811,10 @@ module ModelHelper
   #
   def status_marker(status: nil, label: nil, **opt)
     css_selector  = '.status-marker'
-    status    = Array.wrap(status).compact
-    icon, tip =
-      %i[required disabled invalid valid].find { |state|
-        next unless status.include?(state) && (entry = STATUS_MARKER[state])
-        break entry.values
-      } || STATUS_MARKER.values.last.values
+    status = Array.wrap(status).compact
+    entry  = STATUS_MARKER.values_at(*status).first
+    icon, tip = entry&.values_at(:label, :tooltip)
+    opt[:'data-icon'] = icon if icon
     if tip
       if tip.include?('%')
         label &&= label.to_s.sub(/[[:punct:]]+$/, '')
@@ -1827,7 +1825,6 @@ module ModelHelper
     else
       opt[:'aria-hidden'] = true
     end
-    opt[:'data-icon'] = icon if icon
     html_span(icon, prepend_classes!(opt, css_selector, *status))
   end
 

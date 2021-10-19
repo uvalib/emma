@@ -163,6 +163,21 @@ class SearchController < ApplicationController
     end
   end
 
+  # == GET /search/validate?identifier=idval1[,idval2[,...]]
+  #
+  # Indicate whether the supplied value is a valid field value.
+  #
+  # @see file:app/assets/javascripts/feature/entry-form.js *remoteValidate()*
+  # @see file:app/assets/javascripts/feature/entry-form.js *ID_VALIDATE_URL_BASE*
+  #
+  def validate
+    __debug_route
+    opt = request_parameters
+    if (ids = opt[:identifier])
+      render json: { valid: valid_identifiers?(ids) }
+    end
+  end
+
   # ===========================================================================
   # :section: SerializationConcern overrides
   # ===========================================================================

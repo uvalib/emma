@@ -26,6 +26,12 @@ module Api::Shared::IdentifierMethods
   IDENTIFIER_FIELDS =
     %i[dc_identifier dc_relation periodical_identifier].freeze
 
+  # The pattern which separates multiple identifiers within a String.
+  #
+  # @type [Regexp]
+  #
+  ID_SEPARATOR = /[,;|\s]+/.freeze
+
   # Normalization array handling.
   #
   # :required   Results always given as arrays.
@@ -65,7 +71,7 @@ module Api::Shared::IdentifierMethods
   # @return [Regexp]
   #
   def id_separator
-    /[,;|\s]+/
+    ID_SEPARATOR
   end
 
   # ===========================================================================

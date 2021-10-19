@@ -167,6 +167,25 @@ module SearchConcern
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # @private
+  ID_SEPARATOR = Api::Shared::IdentifierMethods::ID_SEPARATOR
+
+  # Indicate whether the argument contains only valid identifiers.
+  #
+  # @param [String, Array<String>] ids
+  #
+  def valid_identifiers?(ids)
+    ids = ids.split(ID_SEPARATOR) if ids.is_a?(String)
+    ids = Array.wrap(ids)         unless ids.is_a?(Array)
+    ids.map { |id| PublicationIdentifier.cast(id) }.compact.present?
+  end
+
+  # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
