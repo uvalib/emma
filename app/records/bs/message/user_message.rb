@@ -7,18 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::UserMessage
 #
-# @attr [Array<BsAllowsType>]     allows
-# @attr [IsoDate]                 createdDate
-# @attr [Array<Bs::Record::Link>] links
-# @attr [String]                  messageId
-# @attr [BsMessageType]           messageType
-# @attr [BsMessagePriority]       priority
-# @attr [Boolean]                 read
-# @attr [String]                  text
-#
-# @see https://apidocs.bookshare.org/reference/index.html#_user_message
-#
-# @see Bs::Record::UserMessage (duplicate schema)
+# @see Bs::Record::UserMessage
 #
 class Bs::Message::UserMessage < Bs::Api::Message
 
@@ -29,16 +18,7 @@ class Bs::Message::UserMessage < Bs::Api::Message
   # :section:
   # ===========================================================================
 
-  schema do
-    has_many  :allows,      BsAllowsType
-    has_one   :createdDate, IsoDate
-    has_many  :links,       Bs::Record::Link
-    has_one   :messageId
-    has_one   :messageType, BsMessageType
-    has_one   :priority,    BsMessagePriority
-    has_one   :read,        Boolean
-    has_one   :text
-  end
+  schema_from Bs::Record::UserMessage
 
 end
 

@@ -18,8 +18,6 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_user_subscription
 #
-# @see Bs::Message::UserSubscription (duplicate schema)
-#
 class Bs::Record::UserSubscription < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

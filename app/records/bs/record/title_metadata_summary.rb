@@ -39,8 +39,6 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_summary
 #
-# @see Bs::Message::TitleMetadataSummary (duplicate schema)
-#
 # == Implementation Notes
 # Similar to Bs::Record::AssignedTitleMetadataSummary, but without fields:
 #   :assignedBy

@@ -21,8 +21,6 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_organization
 #
-# @see Bs::Message::Organization (duplicate schema)
-#
 class Bs::Record::Organization < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

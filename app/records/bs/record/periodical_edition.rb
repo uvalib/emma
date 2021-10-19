@@ -16,8 +16,6 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition
 #
-# @see Bs::Message::PeriodicalEdition (duplicate schema)
-#
 class Bs::Record::PeriodicalEdition < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods

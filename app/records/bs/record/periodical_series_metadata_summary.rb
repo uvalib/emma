@@ -23,8 +23,6 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_series_metadata_summary
 #
-# @see Bs::Message::PeriodicalSeriesMetadataSummary (duplicate schema)
-#
 class Bs::Record::PeriodicalSeriesMetadataSummary < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

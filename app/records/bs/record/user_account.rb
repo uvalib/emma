@@ -28,7 +28,14 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_account
 #
-# @see Bs::Message::UserAccount (duplicate schema)
+# == Implementation Notes
+# Similar to Bs::Message::MyAccountSummary, but adds the following fields:
+#   :deleted
+#   :emailAddress
+#   :language
+#   :locked
+#   :roles
+#   :site
 #
 class Bs::Record::UserAccount < Bs::Api::Record
 

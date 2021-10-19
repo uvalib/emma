@@ -7,12 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::StatusModel
 #
-# @attr [String]        key
-# @attr [Array<String>] messages
-#
-# @see https://apidocs.bookshare.org/reference/index.html#_status_model
-#
-# @see Bs::Record::StatusModel (duplicate schema)
+# @see Bs::Record::StatusModel
 #
 class Bs::Message::StatusModel < Bs::Api::Message
 
@@ -20,10 +15,7 @@ class Bs::Message::StatusModel < Bs::Api::Message
   # :section:
   # ===========================================================================
 
-  schema do
-    has_one   :key
-    has_many  :messages
-  end
+  schema_from Bs::Record::StatusModel
 
   # ===========================================================================
   # :section: Object overrides

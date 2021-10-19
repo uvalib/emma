@@ -7,21 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::Organization
 #
-# @attr [Bs::Record::Address]     address
-# @attr [Boolean]                 hasOrgAgreement
-# @attr [Array<Bs::Record::Link>] links
-# @attr [String]                  organizationId
-# @attr [String]                  organizationName
-# @attr [String]                  organizationType
-# @attr [String]                  phoneNumber
-# @attr [Bs::Record::Sponsor]     primaryContact
-# @attr [BsSiteType]              site
-# @attr [String]                  subscriptionType
-# @attr [String]                  webSite
-#
-# @see https://apidocs.bookshare.org/membership/index.html#_organization
-#
-# @see Bs::Record::Organization (duplicate schema)
+# @see Bs::Record::Organization
 #
 class Bs::Message::Organization < Bs::Api::Message
 
@@ -31,19 +17,7 @@ class Bs::Message::Organization < Bs::Api::Message
   # :section:
   # ===========================================================================
 
-  schema do
-    has_one   :address,          Bs::Record::Address
-    has_one   :hasOrgAgreement,  Boolean
-    has_many  :links,            Bs::Record::Link
-    has_one   :organizationId
-    has_one   :organizationName
-    has_one   :organizationType
-    has_one   :phoneNumber
-    has_one   :primaryContact,   Bs::Record::Sponsor
-    has_one   :site,             BsSiteType
-    has_one   :subscriptionType
-    has_one   :webSite
-  end
+  schema_from Bs::Record::Organization
 
 end
 

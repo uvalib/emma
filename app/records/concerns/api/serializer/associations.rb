@@ -174,6 +174,20 @@ module Api::Serializer::Associations
       property(name, opt, &block)
     end
 
+    # Incorporate all record fields from another class.
+    #
+    # @param [Class<Api::Record>]    other
+    # @param [Symbol, Array<Symbol>] except
+    #
+    def all_from(other, except: nil, **)
+      except &&= Array.wrap(except).compact.map(&:to_sym)
+      other.serializers[:hash].definitions.each_pair do |name, definition|
+        next if except&.include?(name.to_sym)
+        opt = definition.instance_variable_get(:@runtime_options)
+        property(name, opt)
+      end
+    end
+
     # =========================================================================
     # :section: Record field schema DSL
     # =========================================================================

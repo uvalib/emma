@@ -112,6 +112,19 @@ module Api::Record::Associations
       add_collection_property(name, *args, **opt)
     end
 
+    # Incorporate all record fields from another class.
+    #
+    # @param [Class<Api::Record>]    other
+    # @param [Symbol, Array<Symbol>] except
+    #
+    def all_from(other, except: nil, **)
+      except &&= Array.wrap(except).compact.map(&:to_sym)
+      other.property_defaults.each_pair do |name, default|
+        next if except&.include?(name.to_sym)
+        add_property(name, default)
+      end
+    end
+
     # =========================================================================
     # :section: Record field schema DSL
     # =========================================================================

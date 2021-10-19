@@ -12,8 +12,6 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_status_model
 #
-# @see Bs::Message::StatusModel (duplicate schema)
-#
 class Bs::Record::StatusModel < Bs::Api::Record
 
   # ===========================================================================

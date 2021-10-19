@@ -61,7 +61,7 @@ module Api::Record::Schema
     # @param [Array<Symbol>] serializer_types
     # @param [Proc]          block
     #
-    # @return [Hash{Symbol=>Api::Serializer}]
+    # @return [void]
     #
     # @see Api::Schema#SERIALIZER_TYPES
     # @see Api::Serializer::Associations::ClassMethods#attribute
@@ -82,6 +82,19 @@ module Api::Record::Schema
           remove_const(const) if const_defined?(const)
           [key, const_set(const, serializer)]
         }.to_h
+    end
+
+    # Duplicate the schema from another class.
+    #
+    # @param [Class<Api::Record>] other
+    # @param [Hash]               opt     Passed to #all_from.
+    #
+    # @return [void]
+    #
+    def schema_from(other, **opt)
+      schema do
+        all_from other, **opt
+      end
     end
 
   end

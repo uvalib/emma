@@ -22,8 +22,6 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_recommendation_profile
 #
-# @see Bs::Message::RecommendationProfile (duplicate schema)
-#
 class Bs::Record::RecommendationProfile < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

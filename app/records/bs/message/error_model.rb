@@ -7,9 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::ErrorModel
 #
-# @attr [String]        key
-# @attr [Array<String>] messages
-#
+# @see Bs::Record::StatusModel
 # @see https://apidocs.bookshare.org/reference/index.html#_error_model
 #
 class Bs::Message::ErrorModel < Bs::Api::Message
@@ -18,10 +16,7 @@ class Bs::Message::ErrorModel < Bs::Api::Message
   # :section:
   # ===========================================================================
 
-  schema do
-    has_one   :key
-    has_many  :messages
-  end
+  schema_from Bs::Record::StatusModel
 
   # ===========================================================================
   # :section: Object overrides

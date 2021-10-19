@@ -7,22 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::RecommendationProfile
 #
-# @attr [Array<BsAllowsType>]         allows
-# @attr [Array<String>]               excludedAuthors
-# @attr [Array<Bs::Record::Category>] excludedCategories
-# @attr [Array<BsContentWarning>]     excludedContentWarnings
-# @attr [Boolean]                     includeGlobalCollection
-# @attr [Array<String>]               includedAuthors
-# @attr [Array<Bs::Record::Category>] includedCategories
-# @attr [Array<BsContentWarning>]     includedContentWarnings
-# @attr [Array<Bs::Record::Link>]     links
-# @attr [BsGender]                    narratorGender
-# @attr [BsNarratorType]              narratorType
-# @attr [Integer]                     readingAge
-#
-# @see https://apidocs.bookshare.org/reference/index.html#_recommendation_profile
-#
-# @see Bs::Record::RecommendationProfile (duplicate schema)
+# @see Bs::Record::RecommendationProfile
 #
 class Bs::Message::RecommendationProfile < Bs::Api::Message
 
@@ -32,20 +17,7 @@ class Bs::Message::RecommendationProfile < Bs::Api::Message
   # :section:
   # ===========================================================================
 
-  schema do
-    has_many  :allows,                  BsAllowsType
-    has_many  :excludedAuthors
-    has_many  :excludedCategories,      Bs::Record::Category
-    has_many  :excludedContentWarnings, BsContentWarning
-    has_one   :includeGlobalCollection, Boolean
-    has_many  :includedAuthors
-    has_many  :includedCategories,      Bs::Record::Category
-    has_many  :includedContentWarnings, BsContentWarning
-    has_many  :links,                   Bs::Record::Link
-    has_one   :narratorGender,          BsGender
-    has_one   :narratorType,            BsNarratorType
-    has_one   :readingAge,              Integer
-  end
+  schema_from Bs::Record::RecommendationProfile
 
 end
 
