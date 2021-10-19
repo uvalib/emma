@@ -1827,6 +1827,14 @@ end
 
 public
 
+# SourceType
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.SourceType*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_source              JSON schema specification
+#
+class SourceType < EnumType
+end
+
 # RemediationType
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.RemediationType*

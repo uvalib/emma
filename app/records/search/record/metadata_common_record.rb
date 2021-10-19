@@ -63,7 +63,7 @@ __loading_begin(__FILE__)
 #--
 # === Remediation Fields
 #++
-# @attr [String]                        rem_source
+# @attr [SourceType]                    rem_source
 # @attr [Array<String>]                 rem_metadataSource
 # @attr [Array<String>]                 rem_remediatedBy
 # @attr [Boolean]                       rem_complete
@@ -137,7 +137,7 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
     has_many  :periodical_identifier,             PublicationIdentifier
     has_one   :periodical_series_position
 
-    has_one   :rem_source
+    has_one   :rem_source,                        SourceType
     has_many  :rem_metadataSource
     has_many  :rem_remediatedBy
     has_one   :rem_complete,                      Boolean

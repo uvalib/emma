@@ -169,6 +169,20 @@ en:
         # API schema - RemediationFields
         # =====================================================================
 
+        SourceType:
+          bookshare:                'Bookshare'
+          hathiTrust:               'HathiTrust'
+          internetArchive:          'Internet Archive'
+          emma:                     'EMMA'
+          accessTextNetwork:        'ATN (Access Text Network)'
+          publisher:                'Publisher'
+          purchased:                'Purchased'
+          faculty:                  'Faculty'
+          student:                  'Student'
+          library:                  'Library'
+          otherDso:                 'Another DSO'
+          other:                    'Other'
+
         RemediationType:
           scannedAndOcrd:           'Scanned and OCRed'
           proofreadCorrectedOcr:    'Proofread Corrected OCR'

@@ -655,7 +655,6 @@ en:
               content file.
             notes_html:   |
               <em>TODO</em>
-            placeholder:  'Language of the work'
             type:         !ruby/symbol LanguageType
 
           dc_rights:
@@ -868,9 +867,9 @@ en:
             max:          1
             label:        'Accessibility Summary'
             tooltip:      'Accessibility summary for the remediated content.'
-            placeholder:  'Enter accessibility details'
             notes_html:   |
               <em>TODO</em>
+            placeholder:  'Enter accessibility details'
             type:         textarea
 
           s_accessibilityAPI:
@@ -937,8 +936,8 @@ en:
           rem_source:
             # FMM5: "Provider of source", Required, Non-repeatable
             # IA:   "contributor"
-            # SR:   String
-            # IR:   String
+            # SR:   SourceType
+            # IR:   SourceType
             # TODO: Should be 'min: 1' if actually required.
             min:          0
             max:          1
@@ -947,7 +946,7 @@ en:
               The origin of the content on which the remediated file was based.
             notes_html:   |
               <em>TODO</em>
-            placeholder:  'Enter source of original content'
+            type:         !ruby/symbol SourceType
 
           rem_metadataSource:
             # FMM5: "Metadata Source", Required, Repeatable
