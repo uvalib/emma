@@ -39,8 +39,8 @@ en:
         name:           'EMMA'
         symbol:         ~
         logo:
-          default:      'EMMA-159x100.png'
-          wide:         'EMMA-300x100-left.png'
+          default:      'EMMA-300x100-center.png'
+          wide:         'EMMA-300x100-center.png'
           thumb:        'EMMA-159x100.png'
           base:         'EMMA-logo-UVAbg.png'
         title_path:     '/upload'
