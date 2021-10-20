@@ -1,10 +1,10 @@
-<%# app/views/data/submissions.html.erb -%>
+<%# app/views/data/counts.html.erb -%>
 <%-
-  # Artificial database records representing EMMA submissions.
+  # A table of EMMA submission fields with a count of each unique value.
 
   list  ||= @list
   name  ||= nil # Not directly from a specific table.
-  title ||= 'EMMA Submission Records' # TODO: I18n
+  title ||= 'EMMA Submission Field Value Counts' # TODO: I18n
 
   unless modal?
     set_page_title(title)
@@ -16,4 +16,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'data/details', records: list, name: name %>
+<%= render 'data/fields', fields: list %>

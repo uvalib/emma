@@ -18,7 +18,7 @@ class DataController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  before_action :authenticate_admin!, except: %i[submissions]
+  before_action :authenticate_admin!, except: %i[submissions counts]
 
   # ===========================================================================
   # :section: Authorization
@@ -64,7 +64,17 @@ class DataController < ApplicationController
   def submissions
     __debug_route
     default_format(:json)
-    @name, @item = get_submission_records
+    @name, @list = get_submission_records
+    respond_to(request.format)
+  end
+
+  # == GET /data/counts
+  #
+  # Get a listing of EMMA submission field values.
+  #
+  def counts
+    __debug_route
+    @list = get_submission_field_counts
     respond_to(request.format)
   end
 

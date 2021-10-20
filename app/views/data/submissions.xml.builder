@@ -6,7 +6,7 @@
 # Artificial database records representing EMMA submissions as XML.
 
 name    ||= nil
-records ||= @item || []
+records ||= @list
 
 name = name&.underscore || 'emma_submissions'
 

@@ -245,25 +245,26 @@ module DataHelper
 
   # Generate HTML to display a database table.
   #
-  # @param [Array]          records
-  # @param [String, Symbol] name      Database table name.
-  # @param [Hash]           opt       Passed to #html_db_record.
+  # @param [Array<Hash>]    records
+  # @param [String, Symbol] name        Database table name.
+  # @param [Integer]        start_row
+  # @param [Hash]           opt         Passed to #html_db_record.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_table(records, name: nil, **opt)
+  def html_db_table(records, name: nil, start_row: 1, **opt)
     css_selector = '.database-table'
     records ||= []
     empty     = (:empty if records.blank?)
     html_opt  = { id: name.presence }.compact
     prepend_classes!(html_opt, css_selector, empty)
     html_div(**html_opt) do
-      opt[:first] ||= 1
-      opt[:last]  ||= opt[:first] + records.size
+      opt[:first] ||= start_row
+      opt[:last]  ||= opt[:first] + [(records.size - 1), 0].max
       if empty
-        html_db_record([], row: 1, **opt)
+        html_db_record([], row: start_row, **opt)
       else
-        records.map.with_index(1) do |record, row|
+        records.map.with_index(start_row) do |record, row|
           html_db_record(record, row: row, **opt)
         end
       end
@@ -272,53 +273,53 @@ module DataHelper
 
   # Generate HTML to display a database record.
   #
-  # @param [Array]          fields
-  # @param [Integer, nil]   row
-  # @param [Hash]           opt       Passed to #html_db_column.
+  # @param [Hash, Array]  fields
+  # @param [Integer, nil] row
+  # @param [Integer]      start_col
+  # @param [Hash]         opt         Passed to #html_db_column except:
   #
   # @option opt [Integer] :first      Index value of the first record.
   # @option opt [Integer] :last       Index value of the last record.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_record(fields, row: nil, **opt)
+  def html_db_record(fields, row: nil, start_col: 1, **opt)
     css_selector = '.database-record'
     type =
       case fields
-        when Array  then :array
-        when Hash   then :hierarchy
-        else             fields = :empty if fields.blank?
+        when Array then :array
+        when Hash  then :hierarchy
+        else            fields = :empty if fields.blank?
       end
+    first  = opt.delete(:first) || start_col
+    last   = opt.delete(:last)
+    last ||= first + [(fields.size - 1 if type == :array).to_i, 0].max
     classes = []
-    if row
-      opt[:first] ||= 1
-      opt[:last]  ||= opt[:first] + fields.size
-      classes << "row-#{row}"
-      classes << 'row-first' if row == opt[:first]
-      classes << 'row-last'  if row == opt[:last]
-    end
+    classes << "row-#{row}" if row
+    classes << 'row-first'  if row && (row == first)
+    classes << 'row-last'   if row && (row == last)
     rec_opt = prepend_classes(opt, css_selector, type, classes)
     html_div(rec_opt) do
       if type == :array
-        opt[:first] = 1
-        opt[:last]  = opt[:first] + fields.size
-        fields.map.with_index(1) do |field, col|
+        opt[:first] = first
+        opt[:last]  = last
+        fields.map.with_index(start_col) do |field, col|
           html_db_column(field, row: row, col: col, **opt)
         end
       else
-        html_db_column(fields, row: row, **opt.except(:first, :last))
+        html_db_column(fields, row: row, **opt)
       end
     end
   end
 
   # Generate HTML to display a database record.
   #
-  # @param [*]              field
-  # @param [Integer, nil]   row
-  # @param [Integer, nil]   col
-  # @param [Integer, nil]   first     Index value of the first column.
-  # @param [Integer, nil]   last      Index value of the last column.
-  # @param [Hash]           opt       Passed to #html_db_column.
+  # @param [*]            field
+  # @param [Integer, nil] row
+  # @param [Integer, nil] col
+  # @param [Integer, nil] first       Index value of the first column.
+  # @param [Integer, nil] last        Index value of the last column.
+  # @param [Hash]         opt         Passed to #html_db_column.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -331,14 +332,100 @@ module DataHelper
         when Hash   then :hierarchy
         when String then :hierarchy if field.start_with?('{')
       end
-    field = pretty_json(field) if type == :hierarchy
     classes = []
     classes << "row-#{row}" if row
     classes << "col-#{col}" if col
     classes << 'col-first'  if col && (col == first)
     classes << 'col-last'   if col && (col == last)
     prepend_classes!(opt, css_selector, type, classes)
-    html_div(field, opt)
+    html_div(opt) do
+      (type == :hierarchy) ? pretty_json(field) : field
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Generate HTML to display table of EMMA submission field values.
+  #
+  # @param [Hash]           fields
+  # @param [String, Symbol] name      Database table name.
+  # @param [Integer]        start_row
+  # @param [Hash]           opt       Passed to #html_db_field.
+  #
+  # @option opt [Integer] :row        Start row (default: 1).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_field_table(fields, name: nil, start_row: 1, **opt)
+    css_selector = '.database-counts-table'
+    html_opt = { id: name.presence }.compact
+    prepend_classes!(html_opt, css_selector)
+    html_div(**html_opt) do
+      opt[:first] ||= start_row
+      opt[:last]  ||= opt[:first] + fields.size - 1
+      fields.map.with_index(start_row) do |field_counts, row|
+        html_db_field(*field_counts, row: row, **opt)
+      end
+    end
+  end
+
+  # Generate HTML to display a summary of all values for a given EMMA field.
+  #
+  # @param [Symbol]         field
+  # @param [Hash]           values
+  # @param [Integer, nil]   row
+  # @param [Hash]           opt       Passed to #html_db_column.
+  #
+  # @option opt [Integer] :first      Index value of the first record.
+  # @option opt [Integer] :last       Index value of the last record.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_field(field, values, row: nil, **opt)
+    css_selector = '.database-field-counts'
+    anchor  = opt.delete(:id)    || field.to_s
+    first   = opt.delete(:first) || row
+    last    = opt.delete(:last)  || first
+    classes = []
+    classes << "row-#{row}" if row
+    classes << 'row-first'  if row && (row == first)
+    classes << 'row-last'   if row && (row == last)
+    prepend_classes!(opt, css_selector, classes)
+    html_div(opt) do
+      field  = html_div(field, class: 'field-name')
+      values = html_db_field_values(values, id: anchor)
+      field << values
+    end
+  end
+
+  # Generate HTML to display a list of values and counts.
+  #
+  # @param [Array<Array<*,Integer>>] values
+  # @param [Hash]                    opt      Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_field_values(values, **opt)
+    css_selector = '.field-values'
+    prepend_classes!(opt, css_selector)
+    html_div(opt) do
+      total  = values.values.sum
+      values = values.map { |value, count| [count, Array.wrap(value)] }
+      values.sort_by! { |count, value| [-count, value.join("\n")] }
+      values.prepend([total, 'TOTAL']) # TODO: I18n
+      values.map.with_index do |count_item, index|
+        count, item = count_item
+        classes = %w(value-count value-item)
+        classes.map! { |c| "#{c} total" } if index.zero?
+        count = html_div(count, class: classes.first)
+        item  = html_div(item,  class: classes.last)
+        count << item
+      end
+    end
   end
 
   # ===========================================================================

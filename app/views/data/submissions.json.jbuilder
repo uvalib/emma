@@ -6,8 +6,7 @@
 # Artificial database records representing EMMA submissions as JSON.
 
 name    ||= nil
-records ||= @item || []
+records ||= @list
 
 json.timestamp DateTime.now
-
 json.partial! 'data/details', records: records, name: name

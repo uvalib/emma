@@ -1,0 +1,9 @@
+<%# app/views/data/_fields.html.erb -%>
+<%-
+  # A table of EMMA submission fields with a count of each unique value.
+
+  fields ||= {}
+
+-%>
+
+<%= html_db_field_table(fields) %>

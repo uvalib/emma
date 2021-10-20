@@ -147,6 +147,45 @@ module DataConcern
   # :section:
   # ===========================================================================
 
+  public
+
+  # Generate a list of counts for each EMMA data field found across all
+  # submissions.
+  #
+  # @param [Hash] opt                 Passed to #get_submission_records
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def get_submission_field_counts(**opt)
+    fields  = {}
+    records = get_submission_records(**opt).last || []
+    records.each do |record|
+      next unless (emma_data = safe_json_parse(record[:emma_data])).is_a?(Hash)
+      emma_data.each_pair do |field, data|
+        entry = fields[field] ||= {}
+        Array.wrap(data).flatten.each do |item|
+          item = item.to_s.squish
+          next if item.blank? || (item == ModelHelper::EMPTY_VALUE)
+          if entry.include?(item)
+            entry[item] += 1
+          else
+            entry[item] = 1
+          end
+        end
+      end
+    end
+    # Sort field value entries in descending order by count.
+    fields.compact_blank!.transform_values! { |counts|
+      counts.sort_by { |value, count| [-count, value] }.to_h
+    }
+    # Sort resulting hash alphabetically by field name.
+    fields.sort.to_h
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   private
 
   BOGUS_TITLE_PREFIXES = %w(RWL IA_BULK)

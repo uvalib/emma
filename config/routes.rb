@@ -290,6 +290,7 @@ Rails.application.routes.draw do
   # ===========================================================================
 
   get '/data/submissions', to: 'data#submissions'
+  get '/data/counts',      to: 'data#counts'
 
   resources :data, only: %i[index show]
 
