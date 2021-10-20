@@ -302,6 +302,12 @@ module AwsS3Service::Common
     Log.warn { "#{meth}: AWS S3 failure: #{error.class}: #{error.message}" }
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # List files (object keys) in an AWS S3 bucket.
   #
   # @param [String, Aws::S3::Bucket] bucket
