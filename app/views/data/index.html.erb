@@ -2,11 +2,13 @@
 <%-
   # EMMA database tables.
 
+  title ||= t('emma.data.index.title')
   list  ||= @list || {}
-  title ||= 'Database Records' # TODO: I18n
+  help  ||= nil # help_popup(:data) # TODO: ???
 
   unless modal?
-    set_page_title(title)
+    label = t('emma.data.index.label', default: title)
+    set_page_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -17,19 +19,21 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
-<ul>
+<%= page_description_section %>
+<ul class="database-table-links">
   <%- anchor.each_pair do |name, id| -%>
     <li><%= link_to(name, "##{id}") -%></li>
   <%- end -%>
 </ul>
 
+<%= page_directions_section %>
 <div class="database-tables">
   <%- list.each_pair do |name, records| -%>
-    <h2 id="<%= anchor[name] %>" class="database-table-name">
-      <%= "#{name.titleize} (#{name})" %>
-    </h2>
-    <%= render 'data/details', name: name, records: records %>
+    <%= render 'data/heading', records: records, name: name, id: anchor[name]%>
+    <%= render 'data/details', records: records %>
   <%- end -%>
 </div>
+
+<%= page_notes_section %>

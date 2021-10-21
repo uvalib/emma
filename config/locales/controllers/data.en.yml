@@ -1,0 +1,80 @@
+# config/locales/controllers/data.en.yml
+
+en:
+
+  emma:
+
+    data:
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:        false
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Database'
+        title:          'EMMA Database Records'
+        tooltip:        'View all database records for this deployment.'
+
+      # =======================================================================
+
+      show:
+        label:          'Record'
+        title:          '%{table} Records'
+        tooltip:        'View records for this database table.'
+
+      # =======================================================================
+
+      submissions:
+        label:          'Submissions'
+        title:          'EMMA Submission Records'
+        tooltip:        'View information for all EMMA submissions.'
+        text_html:      |
+          <p>
+            This page is constructed from selected parts of the EMMA
+            submissions table for entries which are complete or (in the case of
+            submissions back to member repositories) are in the process of
+            being finalized.
+          </p>
+          <p>
+            This information can also be rendered in either
+            <a href="/data/submissions.json">JSON</a> or
+            <a href="/data/submissions.xml">XML</a>.
+          </p>
+
+      # =======================================================================
+
+      counts:
+        label:          'Field Counts'
+        title:          'EMMA Submission Field Value Counts'
+        tooltip:        'View field values for all EMMA submissions.'
+        text_html:      |
+          <p>
+            This page is constructed from selected parts of the EMMA
+            submissions table for entries which are complete or (in the case of
+            submissions back to member repositories) are in the process of
+            being finalized.
+          </p>
+          <p>
+            This information can also be rendered in either
+            <a href="/data/counts.json">JSON</a> or
+            <a href="/data/counts.xml">XML</a>.
+          </p>
+        notes_html:     |
+          <p>
+            This page only reports on data fields which are actually used in
+            submissions.
+            To discover invalid (ignored) data fields that may have crept into
+            the submission data, use the URL parameter "all=true".
+          </p>
+          <p>
+            To create a link which goes directly to the values of a particular
+            field, use the field name as a URL fragment, e.g.:
+            <a href="/data/counts#dc_title">/data/counts#dc_title</a>.
+          </p>

@@ -74,7 +74,7 @@ class DataController < ApplicationController
   #
   def counts
     __debug_route
-    @list = get_submission_field_counts
+    @list = get_submission_field_counts(all: true?(params[:all]))
     respond_to(request.format)
   end
 

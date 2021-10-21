@@ -2,18 +2,25 @@
 <%-
   # A table of EMMA submission fields with a count of each unique value.
 
+  title ||= t('emma.data.counts.title')
   list  ||= @list
   name  ||= nil # Not directly from a specific table.
-  title ||= 'EMMA Submission Field Value Counts' # TODO: I18n
+  help  ||= nil # help_popup(:data, :submissions) # TODO: ???
 
   unless modal?
-    set_page_title(title)
+    label = t('emma.data.counts.label', default: title)
+    set_page_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
+<%= page_description_section %>
+
+<%= page_directions_section %>
 <%= render 'data/fields', fields: list %>
+
+<%= page_notes_section %>

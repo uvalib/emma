@@ -2,18 +2,25 @@
 <%-
   # Artificial database records representing EMMA submissions.
 
+  title ||= t('emma.data.submissions.title')
   list  ||= @list
   name  ||= nil # Not directly from a specific table.
-  title ||= 'EMMA Submission Records' # TODO: I18n
+  help  ||= nil # help_popup(:data, :submissions) # TODO: ???
 
   unless modal?
-    set_page_title(title)
+    label = t('emma.data.submissions.label', default: title)
+    set_page_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
+<%= page_description_section %>
+
+<%= page_directions_section %>
 <%= render 'data/details', records: list, name: name %>
+
+<%= page_notes_section %>

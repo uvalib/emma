@@ -1,0 +1,18 @@
+<%# app/views/data/_heading.html.erb -%>
+<%-
+  # A database table heading.
+
+  name    ||= nil or return
+  records ||= []
+  id      ||= nil
+  tag     ||= :h2
+
+  count = positive(records.size - 1) || 0
+  css   = ['database-table-name', ('empty' if count.zero?)]
+  opt   = { id: id, class: css_classes(css) }.compact
+  count = "#{count} #{'record'.pluralize(count)}"
+  title = html_span("#{name.titleize} (#{name} - #{count})")
+
+-%>
+
+<%= html_tag(tag, title, opt) %>

@@ -17,6 +17,24 @@ module DataHelper
 
   public
 
+  # All known EMMA record fields (including those not currently in use).
+  #
+  # @type [Array<Symbol>]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  EMMA_DATA_FIELDS =
+    I18n.t('emma.upload.record.emma_data').map { |k, v|
+      k if v.is_a?(Hash)
+    }.compact.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # table_names
   #
   # @return [Array<String>]
@@ -255,18 +273,16 @@ module DataHelper
   def html_db_table(records, name: nil, start_row: 1, **opt)
     css_selector = '.database-table'
     records ||= []
-    empty     = (:empty if records.blank?)
-    html_opt  = { id: name.presence }.compact
-    prepend_classes!(html_opt, css_selector, empty)
+    count     = positive(records.size - 1) || 0
+    classes   = [css_selector]
+    classes << 'empty' if count.zero?
+    html_opt = prepend_classes(classes)
+    html_opt[:id] = name if name.present?
     html_div(**html_opt) do
       opt[:first] ||= start_row
-      opt[:last]  ||= opt[:first] + [(records.size - 1), 0].max
-      if empty
-        html_db_record([], row: start_row, **opt)
-      else
-        records.map.with_index(start_row) do |record, row|
-          html_db_record(record, row: row, **opt)
-        end
+      opt[:last]  ||= opt[:first] + [(count - 1), 0].max
+      records.map.with_index(start_row) do |record, row|
+        html_db_record(record, row: row, **opt)
       end
     end
   end
@@ -285,11 +301,13 @@ module DataHelper
   #
   def html_db_record(fields, row: nil, start_col: 1, **opt)
     css_selector = '.database-record'
+    fields = :empty if fields.blank?
+    # noinspection RubyCaseWithoutElseBlockInspection
     type =
       case fields
-        when Array then :array
-        when Hash  then :hierarchy
-        else            fields = :empty if fields.blank?
+        when Array  then :array
+        when Hash   then :hierarchy
+        when Symbol then fields
       end
     first  = opt.delete(:first) || start_col
     last   = opt.delete(:last)
@@ -306,7 +324,7 @@ module DataHelper
         fields.map.with_index(start_col) do |field, col|
           html_db_column(field, row: row, col: col, **opt)
         end
-      else
+      elsif type != :empty
         html_db_column(fields, row: row, **opt)
       end
     end
@@ -396,7 +414,12 @@ module DataHelper
     classes << 'row-last'   if row && (row == last)
     prepend_classes!(opt, css_selector, classes)
     html_div(opt) do
-      field  = html_div(field, class: 'field-name')
+      field_opt = { class: 'field-name' }
+      unless EMMA_DATA_FIELDS.include?(field)
+        append_classes!(field_opt, 'invalid')
+        field_opt[:title] = 'This is not a valid EMMA data field' # TODO: I18n
+      end
+      field  = html_div(field, field_opt)
       values = html_db_field_values(values, id: anchor)
       field << values
     end

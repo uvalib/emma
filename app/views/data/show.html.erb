@@ -4,18 +4,28 @@
 
   item  ||= @item || []
   name  ||= @name
-  title ||= name ? "#{name} Records".titleize : 'No Records' # TODO: I18n
+  title ||= t('emma.data.show.title', table: (name&.titleize || '???'))
+  help  ||= nil # help_popup(:data, :show) # TODO: ???
 
   unless modal?
+    label = t('emma.data.show.label', default: title)
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
-  title = "#{title} (#{name})" if name.present?
+  count = positive(item.size - 1) || 0
+  count = "#{count} #{'record'.pluralize(count)}"
+  name  = [name, count].join(' - ')
+  title = "#{title} (#{name})"
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
-<%= render 'data/details', records: item, name: name %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= render 'data/details', records: item %>
+
+<%= page_notes_section %>

@@ -89,6 +89,12 @@ module DataConcern
 
   public
 
+  # Tables to be displayed after all others.
+  #
+  # @type [Array<String>]
+  #
+  LATER_TABLES = %w(schema_migrations ar_internal_metadata).freeze
+
   # Generate a hash of results for each table name.
   #
   # @param [Array<String,Symbol>] names   Default: `DataHelper#table_names`.
@@ -99,8 +105,11 @@ module DataConcern
   def get_tables(*names, **opt)
     opt   = data_params.merge(**opt)
     cols  = Array.wrap(opt.delete(:columns))
-    names = Array.wrap(opt.delete(:tables) || names).presence || table_names
-    names.map { |name| [name, table_records(name, *cols, **opt)] }.to_h
+    tbls  = Array.wrap(opt.delete(:tables)).presence
+    names = tbls&.dup || names.presence || table_names.dup
+    names.sort_by! { |n| (i = LATER_TABLES.index(n)) ? ('~%03d' % i) : n }
+    names.map! { |name| [name, table_records(name, *cols, **opt)] }
+    names.to_h
   end
 
   # Generate results for the indicated table.
@@ -152,16 +161,19 @@ module DataConcern
   # Generate a list of counts for each EMMA data field found across all
   # submissions.
   #
-  # @param [Hash] opt                 Passed to #get_submission_records
+  # @param [Boolean] all              If *true* also show values for fields
+  #                                     which are not valid.
+  # @param [Hash]    opt              Passed to #get_submission_records
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def get_submission_field_counts(**opt)
+  def get_submission_field_counts(all: false, **opt)
     fields  = {}
     records = get_submission_records(**opt).last || []
     records.each do |record|
       next unless (emma_data = safe_json_parse(record[:emma_data])).is_a?(Hash)
       emma_data.each_pair do |field, data|
+        next unless all || EMMA_DATA_FIELDS.include?(field)
         entry = fields[field] ||= {}
         Array.wrap(data).flatten.each do |item|
           item = item.to_s.squish
@@ -186,9 +198,7 @@ module DataConcern
   # :section:
   # ===========================================================================
 
-  private
-
-  BOGUS_TITLE_PREFIXES = %w(RWL IA_BULK)
+  protected
 
   # Generate results for submission pseudo records.
   #
@@ -257,28 +267,88 @@ module DataConcern
   # :section:
   # ===========================================================================
 
-  private
+  protected
 
+  # Enumerate the database columns which are relevant to data analysis output.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
   def submission_result_columns(columns = nil)
     columns = Array.wrap(columns).presence&.map(:to_sym) || SUBMISSION_COLUMNS
     columns - %i[state]
   end
 
+  # Enumerate the record array indicies which are relevant to data analysis.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
   def submission_result_indices(columns = nil)
     columns = submission_result_columns(columns)
     SUBMISSION_COLUMNS.map.with_index { |col, idx|
+      # noinspection RubyNilAnalysis
       idx if columns.include?(col)
     }.compact
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # States which indicate that the submission is either complete or that it is
+  # on track to becoming complete (in the case of submissions back to member
+  # repositories).
+  #
+  # @type [Array<Symbol>]
+  #
+  COMPLETION_STATES = %i[
+    completed
+    indexed
+    indexing
+    retrieved
+    unretrieved
+    staging
+  ].freeze
+
+  # Indicate whether the submission is not completed (or in the process of
+  # being completed).
+  #
+  # @param [String, Symbol] state
+  #
   def submission_incomplete?(state)
-    state.present? && (state != 'completed')
+    state.present? && !COMPLETION_STATES.include?(state.to_sym)
   end
 
+  # Title prefixes used in development/testing to denote submissions which are
+  # not meant to be presented in search results.
+  #
+  # @type [Array<String>]
+  #
+  BOGUS_TITLE_PREFIXES = %w(RWL IA_BULK)
+
+  # Words used in :emma_lastRemediationNote during development/testing to
+  # denote submissions which are not meant to be presented in search results.
+  #
+  # @type [Array<String>]
+  #
+  BOGUS_NOTE_WORDS = %w(FAKE)
+
+  # Indicate whether this submission appears to be non-canonical.
+  #
+  # @param [String, Hash] emma_data
+  #
   def submission_bogus?(emma_data)
-    (emma_data = json_parse(emma_data)).blank? || (emma_data == '{}') ||
-      (title = emma_data[:dc_title].to_s).blank? ||
-      %w(RWL IA_BULK).any? { |prefix| title.start_with?(prefix) }
+    data  = json_parse(emma_data) || {}
+    title = data[:dc_title].to_s
+    note  = data[:emma_lastRemediationNote].to_s
+    title.blank? ||
+      BOGUS_TITLE_PREFIXES.any? { |s| title.start_with?(s) } ||
+      BOGUS_NOTE_WORDS.any? { |s| note.include?(s) }
   end
 
   # ===========================================================================

@@ -8,14 +8,32 @@
 // DataController index page
 //=============================================================================
 
+$side-scroll-shadow: -1.5rem 0  0  0.5rem  white;
+$vert-scroll-shadow:  0      0  0  0.5rem  white;
+
+.database-table-links {
+    line-height: 1.375;
+}
+
 .database-table-name {
+
     margin-top: 4rem;
     background: ghostwhite;
+
+    &:not(.empty) {
+        span {
+            position:   sticky;
+            left:       2rem;
+            box-shadow: $side-scroll-shadow;
+        }
+    }
 }
 
 //=============================================================================
 // DataController index or show page
 //=============================================================================
+
+$database-table-max-columns: 25;
 
 /**
  * NOTE: This is crude, mostly because the normal intended output is JSON.
@@ -24,8 +42,16 @@
  */
 .database-table {
 
+    // First (id) column is narrower.
+    $columns: minmax(5vw, auto);
+
+    // Subsequent columns
+    @for $n from 2 through $database-table-max-columns {
+        $columns: #{$columns} minmax(15vw, max-content);
+    }
+
     display:               grid;
-    grid-template-columns: repeat(30, minmax(max-content, auto));
+    grid-template-columns: $columns;
     gap:                   1rem;
 
     .database-record {
@@ -33,6 +59,8 @@
         display: contents;
 
         .database-column {
+
+            background: white;
 
             &.hierarchy {
                 max-height:  25vh;
@@ -43,15 +71,44 @@
             }
 
             &.col-first {
+                position:          sticky;
+                left:              2rem;
+                box-shadow:        $side-scroll-shadow, $vert-scroll-shadow;
                 grid-column-start: 1;
             }
         }
 
         &.row-first {
+
             .database-column {
+
+                position:       sticky;
+                top:            0.5rem;
+                padding:        0 1px;
                 font-weight:    bold;
                 text-transform: uppercase;
+                border-bottom:  2px solid black;
+
+                &.col-first {
+                    z-index:    1;
+                }
+
+                &:not(.col-first) {
+                    box-shadow: $vert-scroll-shadow;
+                }
             }
+        }
+    }
+}
+
+.database-table.empty {
+
+    // No data is driving the grid layout so make the column headers the same.
+    grid-template-columns: repeat(#{$database-table-max-columns}, 1fr);
+
+    .database-record {
+        .database-column {
+            position: unset;
         }
     }
 }
@@ -78,8 +135,14 @@
         }
 
         .field-name {
+
             font-weight:       bold;
             grid-column-start: 1;
+
+            &.invalid {
+                color:         $error-fg;
+                cursor:        default;
+            }
         }
 
         .field-values {
