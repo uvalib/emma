@@ -143,12 +143,14 @@ class UploadController < ApplicationController
       format.xml  { render_xml  show_values }
     end
   rescue SubmitError, Record::NotFound, ActiveRecord::RecordNotFound => error
-    # As a convenience, if an index item is actually on another instance, fetch
-    # it from there to avoid a potentially confusing result.
-    [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
-      next if base_url.start_with?(request.base_url)
-      @host = base_url
-      @item = proxy_get_record(@identifier, @host)
+    # As a convenience (for HTML only), if an index item is actually on another
+    # instance, fetch it from there to avoid a potentially confusing result.
+    if request.format.html?
+      [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
+        next if base_url.start_with?(request.base_url)
+        @host = base_url
+        @item = proxy_get_record(@identifier, @host)
+      end
     end
     show_search_failure(error) if @item.blank?
   rescue => error
