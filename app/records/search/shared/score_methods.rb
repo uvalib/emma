@@ -51,7 +51,7 @@ module Search::Shared::ScoreMethods
   # == Usage Notes
   #
   def total_score(precision: nil, **opt)
-    result = get_scores(**opt).values.sum
+    result = get_scores(**opt).values.compact.sum
     precision ? result.round(precision) : result
   end
 
@@ -74,10 +74,9 @@ module Search::Shared::ScoreMethods
       value = value.round(precision) if value && precision
       [:"#{type}_score", value]
     }.to_h.tap { |result|
-      unless all
-        result.select! { |_, score| score&.nonzero? }
-        result.slice!(:keyword_score) if result.include?(:keyword_score)
-      end
+      all ||= result.values.compact.all?(&:zero?)
+      all ||= !result[:keyword_score]&.nonzero?
+      result.slice!(:keyword_score) unless all
     }
   end
 
@@ -253,14 +252,17 @@ module Search::Shared::ScoreMethods
     substitute = no_break&.map&.with_index(2) { |_, i| i.chr }&.join
 
     value = send(value) if value.is_a?(Symbol)
-    words = Array.wrap(value)
-    words = words.map { |w| w.tr(original, substitute) }          if no_break
-    words = words.flat_map { |w| break_words(w, !keep_words) }
+    words = Array.wrap(value).map(&:to_s)
+    words.map! { |w| w.gsub(/'s(\W|$)/i, '\1') }                  # NOTE: [1]
+    words.map! { |w| w.tr(original, substitute) }                 if no_break
+    words.map! { |w| break_words(w, !keep_words) }.flatten!
     words.map! { |w| keep_words.include?(w) ? "#{KEEP}#{w}" : w } if keep_words
     words -= stop_words                                           if stop_words
     words.map! { |w| w.delete(KEEP).downcase }                    if keep_words
     words.map! { |w| normalized(w.tr(substitute, original)) }     if no_break
     words.compact_blank!
+
+    # NOTE: [1] Eliminate possessives before *no_break* makes them invisible.
   end
 
   # Break a word on spaces or punctuation into one or more normalized words.
@@ -270,7 +272,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Array<String>]
   #
-  def break_words(word, lowercase)
+  def break_words(word, lowercase = false)
     normalized(word, lowercase: lowercase).split(/\s+/)
   end
 

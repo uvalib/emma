@@ -99,7 +99,8 @@ module SearchHelper
     ctrl  = prev_next_controls(**opt)
 
     # noinspection RailsParamDefResolve, RubyScope
-    if aggregate_style? && (scores = item.try(:get_scores) || {}).present?
+    if aggregate_style? && (scores = item.try(:get_scores)).present?
+      scores.compact!
       types = scores.keys.map { |type| type.to_s.delete_suffix('_score') }
       types = [types[0...-1].join(', '), types[-1]].compact_blank.join(' and ')
       tip   = +'This is a guess at the relevancy "score" for this item'
