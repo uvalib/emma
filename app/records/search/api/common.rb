@@ -182,6 +182,14 @@ class PublicationIdentifier < ScalarType
 
     public
 
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      normalize(v).present?
+    end
+
     # Transform *v* into a valid form.
     #
     # @param [String, *] v
@@ -190,14 +198,6 @@ class PublicationIdentifier < ScalarType
     #
     def normalize(v)
       remove_prefix(v).rstrip
-    end
-
-    # Indicate whether *v* would be a valid value for an item of this type.
-    #
-    # @param [String, *] v
-    #
-    def valid?(v)
-      normalize(v).present?
     end
 
     # =========================================================================
@@ -448,6 +448,14 @@ class Isbn < PublicationIdentifier
 
     public
 
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      isbn?(v)
+    end
+
     # Transform *v* into a valid form.
     #
     # @param [String, *] v
@@ -456,14 +464,6 @@ class Isbn < PublicationIdentifier
     #
     def normalize(v)
       remove_prefix(v).delete('^0-9xX')
-    end
-
-    # Indicate whether *v* would be a valid value for an item of this type.
-    #
-    # @param [String, *] v
-    #
-    def valid?(v)
-      isbn?(v)
     end
 
     # =========================================================================
@@ -791,6 +791,14 @@ class Issn < PublicationIdentifier
 
     public
 
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      issn?(v)
+    end
+
     # Transform *v* into a valid form.
     #
     # @param [String, *] v
@@ -799,14 +807,6 @@ class Issn < PublicationIdentifier
     #
     def normalize(v)
       remove_prefix(v).delete('^0-9xX')
-    end
-
-    # Indicate whether *v* would be a valid value for an item of this type.
-    #
-    # @param [String, *] v
-    #
-    def valid?(v)
-      issn?(v)
     end
 
     # =========================================================================
@@ -1010,6 +1010,14 @@ class Oclc < PublicationIdentifier
 
     public
 
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [*] v
+    #
+    def valid?(v)
+      oclc?(v)
+    end
+
     # Transform *v* into a valid form.
     #
     # @param [*] v
@@ -1018,14 +1026,6 @@ class Oclc < PublicationIdentifier
     #
     def normalize(v)
       to_oclc(v, log: false) || ''
-    end
-
-    # Indicate whether *v* would be a valid value for an item of this type.
-    #
-    # @param [*] v
-    #
-    def valid?(v)
-      oclc?(v)
     end
 
     # =========================================================================
@@ -1205,6 +1205,14 @@ class Lccn < PublicationIdentifier
 
     public
 
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [*] v
+    #
+    def valid?(v)
+      lccn?(v)
+    end
+
     # Transform *v* into a valid form.
     #
     # @param [*] v
@@ -1213,14 +1221,6 @@ class Lccn < PublicationIdentifier
     #
     def normalize(v)
       to_lccn(v, log: false) || ''
-    end
-
-    # Indicate whether *v* would be a valid value for an item of this type.
-    #
-    # @param [*] v
-    #
-    def valid?(v)
-      lccn?(v)
     end
 
     # =========================================================================
@@ -1368,6 +1368,14 @@ class Upc < PublicationIdentifier
 
     public
 
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, *] v
+    #
+    def valid?(v)
+      upc?(v)
+    end
+
     # Transform *v* into a valid form.
     #
     # @param [String, *] v
@@ -1376,14 +1384,6 @@ class Upc < PublicationIdentifier
     #
     def normalize(v)
       remove_prefix(v).delete('^0-9')
-    end
-
-    # Indicate whether *v* would be a valid value for an item of this type.
-    #
-    # @param [String, *] v
-    #
-    def valid?(v)
-      upc?(v)
     end
 
     # =========================================================================
@@ -1577,6 +1577,14 @@ class Doi < PublicationIdentifier
 
     public
 
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [*] v
+    #
+    def valid?(v)
+      doi?(v)
+    end
+
     # Transform *v* into a valid form.
     #
     # @param [*] v
@@ -1585,14 +1593,6 @@ class Doi < PublicationIdentifier
     #
     def normalize(v)
       to_doi(v, log: false) || ''
-    end
-
-    # Indicate whether *v* would be a valid value for an item of this type.
-    #
-    # @param [*] v
-    #
-    def valid?(v)
-      doi?(v)
     end
 
     # =========================================================================
@@ -1611,7 +1611,7 @@ class Doi < PublicationIdentifier
     # valid and invalid cases and handle each appropriately.
     #
     def candidate?(v)
-      (v = v.to_s.strip).match?(DOI_PREFIX) || v.match?(DOI_IDENTIFIER)
+      (v = v.to_s.strip).match?(DOI_PREFIX) || identifier(v).present?
     end
 
     # Extract the base identifier of a possible DOI.
@@ -1631,8 +1631,12 @@ class Doi < PublicationIdentifier
     #
     # @return [String]
     #
+    # == Implementation Notes
+    # Accounts for not-quite-valid forms like "doi:https://doi.org/..." by
+    # repeating prefix removal.
+    #
     def remove_prefix(v)
-      v.to_s.sub(DOI_PREFIX, '')
+      v.to_s.sub(DOI_PREFIX, '').sub(DOI_PREFIX, '')
     end
 
     # =========================================================================

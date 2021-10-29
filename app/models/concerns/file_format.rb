@@ -311,8 +311,8 @@ module FileFormat
   #
   def format_date(value)
     # noinspection RubyMismatchedParameterType
-    value = date_parse(value) if value.is_a?(String)
-    value = value.to_date     if value.is_a?(DateTime)
+    value = IsoDate.day_convert(value) || value if value.is_a?(String)
+    value = value.to_date                       if value.is_a?(DateTime)
     value.to_s
   end
 
@@ -324,31 +324,9 @@ module FileFormat
   #
   def format_date_time(value)
     # noinspection RubyMismatchedParameterType
-    value = date_parse(value)       if value.is_a?(String)
-    value = value.strftime('%F %R') if value.is_a?(Date)
+    value = IsoDate.datetime_convert(value) || value if value.is_a?(String)
+    value = value.strftime('%F %R')                  if value.is_a?(Date)
     value.to_s.delete_suffix(' 00:00')
-  end
-
-  # Transform a date string into Date object.
-  #
-  # Because DateTime#parse doesn't seem to be able to deal with American date
-  # formats, dates of the form "M/D/Y" are converted to "Y-M-D".
-  #
-  # @param [String] value
-  #
-  # @return [String]                  The original value if the parse failed.
-  # @return [Date]                    If the parse succeeded.
-  #
-  def date_parse(value)
-    value = value.to_s.strip
-    value.sub!(%r{^(\d{1,2})/(\d{1,2})/(\d{4}|\d{2})}) do
-      month = $1
-      day   = $2
-      year  = $3
-      year  = '%02d%02d' % [(DateTime.now.year / 100), year] if year.size == 2
-      '%04d-%02d-%02d' % [year, month, day]
-    end
-    Date.parse(value) rescue value
   end
 
   # format_image

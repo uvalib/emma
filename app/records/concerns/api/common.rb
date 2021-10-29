@@ -52,12 +52,6 @@ class ScalarType
       !v.nil?
     end
 
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    protected
-
     # Transform *v* into a valid form.
     #
     # @param [*] v
@@ -149,11 +143,21 @@ class ScalarType
     super(v || @value)
   end
 
+  # Transform value into a valid form.
+  #
+  # @param [*] v
+  #
+  # @return [String]
+  #
+  def normalize(v = nil)
+    super(v || @value)
+  end
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================
 
-  protected
+  public
 
   # Return the string representation of the instance value.
   #
@@ -235,12 +239,6 @@ class IsoDuration < ScalarType
       normalize(v).present?
     end
 
-    # =========================================================================
-    # :section: ScalarType overrides
-    # =========================================================================
-
-    protected
-
     # Transform *v* into a valid form.
     #
     # @param [String, Date, Time, IsoDate, *] v
@@ -305,6 +303,7 @@ class IsoDuration < ScalarType
 
     protected
 
+    # @private
     EPSILON = 0.001
 
     # fractional
@@ -340,6 +339,20 @@ class IsoDuration < ScalarType
 
   include Methods
 
+  # ===========================================================================
+  # :section: IsoDuration::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
+
 end
 
 # ISO 8601 general date.
@@ -364,14 +377,29 @@ class IsoDate < ScalarType
 
     public
 
+    YEAR     = '\d{4}'
+    MONTH    = '\d\d'
+    DAY      = '\d\d'
+    DATE     = "(#{YEAR})-(#{MONTH})-(#{DAY})"
+
+    HOUR     = '\d\d'
+    MINUTE   = '\d\d'
+    SECOND   = '\d\d'
+    TIME     = "(#{HOUR}):(#{MINUTE})(:(#{SECOND}))?"
+
+    ZULU     = 'Z'
+    H_OFFSET = '\d\d?'
+    M_OFFSET = '\d\d'
+    ZONE     = "#{ZULU}|([+-])(#{H_OFFSET})(:(#{M_OFFSET}))?"
+
     # Valid values for this type start with one of these patterns.
     #
     # @type [Hash{Symbol=>Regexp}]
     #
     START_PATTERN = {
-      complete: /^(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(Z|[+-]\d\d?(:\d\d)?)?)/,
-      day:      /^(\d{4}-\d\d-\d\d)/,
-      year:     /^(\d{4})/,
+      complete: /^\s*(#{DATE}[T|\s+]#{TIME}\s*(#{ZONE})?)/,
+      day:      /^\s*(#{DATE})\s*/,
+      year:     /^\s*(#{YEAR})\s*/,
     }.deep_freeze
 
     # Valid values for this type match one of these patterns.
@@ -397,12 +425,6 @@ class IsoDate < ScalarType
       normalize(v).present?
     end
 
-    # =========================================================================
-    # :section: ScalarType overrides
-    # =========================================================================
-
-    protected
-
     # Transform *v* into a valid form.
     #
     # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
@@ -410,17 +432,216 @@ class IsoDate < ScalarType
     # @return [String]
     #
     def normalize(v)
+      (datetime_convert(v) || v).to_s
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Transform *v* into a ISO 8601 form.
+    #
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    #
+    # @return [String, nil]
+    #
+    def datetime_convert(v)
       case v
-        when Float                    then "#{v.to_i}-01-01"
-        when Integer                  then "#{v}-01-01"
-        when IsoYear                  then "#{v}-01-01"
-        when IsoDay                   then v.to_s
+        when nil, 0                   then nil
+        when Numeric                  then day_convert(v)
+        when IsoYear                  then day_convert(v)
+        when IsoDay                   then day_convert(v)
         when IsoDate                  then v.to_s
         when START_PATTERN[:complete] then $1
         when START_PATTERN[:day]      then $1
-        when START_PATTERN[:year]     then "#{$1}-01-01"
-        else                               v.to_datetime.strftime rescue ''
+        when START_PATTERN[:year]     then day_convert(v)
+        else                               datetime_parse(v)
       end
+    end
+
+    # Transform *v* into "YYYY-MM-DD" form.
+    #
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    #
+    # @return [String, nil]
+    #
+    def day_convert(v)
+      case v
+        when nil, 0                   then nil
+        when Numeric                  then day_convert(year_convert(v))
+        when IsoYear                  then day_convert(v.to_s)
+        when IsoDay                   then v.to_s
+        when IsoDate                  then day_convert(v.to_s)
+        when START_PATTERN[:complete] then "#{$2}-#{$3}-#{$4}"
+        when START_PATTERN[:day]      then $1
+        when START_PATTERN[:year]     then "#{$1}-01-01"
+        else                               day_convert(date_parse(v))
+      end
+    end
+
+    # Transform *v* into a 4-digit year.
+    #
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    #
+    # @return [String, nil]
+    #
+    def year_convert(v)
+      case v
+        when nil, 0                   then nil
+        when Numeric                  then v.to_i.to_s
+        when IsoYear                  then v.to_s
+        when IsoDay                   then year_convert(v.to_s)
+        when IsoDate                  then year_convert(v.to_s)
+        when START_PATTERN[:complete] then $2
+        when START_PATTERN[:day]      then $2
+        when START_PATTERN[:year]     then $1
+        else                               year_convert(date_parse(v))
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Transform a value into ISO 8601 form.
+    #
+    # @param [String, Date, Time, IsoDate, *] value
+    #
+    # @return [String, nil]
+    #
+    def datetime_parse(value)
+      translate(value).to_datetime.strftime.sub(/[+-]00(:00)?$/, ZULU)
+    rescue
+      nil
+    end
+
+    # Transform a value into "YYYY-MM-DD" form.
+    #
+    # @param [String, Date, Time, IsoDate, *] value
+    #
+    # @return [String, nil]
+    #
+    def date_parse(value)
+      translate(value).to_date.strftime
+    rescue
+      nil
+    end
+
+    # Transform a date string into a usable form.
+    #
+    # Because DateTime#parse doesn't cope with American date formats, dates of
+    # the form "M/D/Y" are converted to "YYYY-MM-DD", however forms like
+    # "YYYY/MM/..." are preserved (since DateTime#parse can deal with those).
+    #
+    # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
+    # interpreted as month and "MM" will be interpreted as day.
+    #
+    # @param [String, Date, Time, IsoDate, *] value
+    #
+    # @return [String, Date, Time, IsoDate, *]
+    #
+    def translate(value)
+      return value unless value.is_a?(String)
+      result = pdf_date_translate(value)
+      result = american_date_translate(value) if result == value
+      result
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    MM = '\d{1,2}'
+    DD = '\d{1,2}'
+    YY = '\d{4}|\d{2}'
+
+    AMERICAN_DATE = %r{^\s*(#{MM})([/.-])(#{DD})\2(#{YY})}.freeze
+
+    # Transform an American-style date string into a usable form.
+    #
+    # Because DateTime#parse doesn't cope with American date formats, dates of
+    # the form "M/D/Y" are converted to "YYYY-MM-DD", however forms like
+    # "YYYY/MM/..." are preserved (since DateTime#parse can deal with those).
+    #
+    # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
+    # interpreted as month and "MM" will be interpreted as day.
+    #
+    # @param [String] value
+    #
+    # @return [String]
+    #
+    def american_date_translate(value)
+      value.to_s.strip.sub(AMERICAN_DATE) do
+        mm = $1
+        dd = $3
+        yy = $4
+        yy = '%02d%02d' % [DateTime.now.year.div(100), yy] if yy.size == 2
+        '%04d-%02d-%02d' % [yy, mm, dd]
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    OPTIONAL_SECONDS = "(#{SECOND})?"
+    OPTIONAL_MINUTES = "((#{MINUTE})#{OPTIONAL_SECONDS})?"
+    OPTIONAL_TIME    = "((#{HOUR})#{OPTIONAL_MINUTES})?"
+    OPTIONAL_DAY     = "((#{DAY})#{OPTIONAL_TIME})?"
+    OPTIONAL_MONTH   = "((#{MONTH})#{OPTIONAL_DAY})?"
+
+    ASN_1_DATETIME =
+      /(#{YEAR})#{OPTIONAL_MONTH}/.freeze
+
+    ASN_1_TIMEZONE =
+      /#{ZULU}$|([+-])(#{H_OFFSET})[':]?((#{M_OFFSET})[':]?)?$/i.freeze
+
+    # Transform an ISO/IEC 8824 (ASN.1) date string into a usable form.
+    #
+    # @param [String, *] value
+    #
+    # @return [String]
+    #
+    # @see http://www.verypdf.com/pdfinfoeditor/pdf-date-format.htm
+    #
+    def pdf_date_translate(value)
+      # Strip optional date tag.  If the remainder is just four digits, pass it
+      # back as a year value in a form that Date#parse will accept.  If the
+      # remainder doesn't have have at least five digits then assume this is
+      # not an ASN.1 style date and that, hopefully, Date#parse can handle it.
+      value = value.to_s.strip.upcase.delete_prefix('D:')
+      return "#{$1}/01" if value.match(/^(#{YEAR})$/)
+      return value      unless value.match(/^\d{5}/)
+
+      # Strip the optional timezone from the end so that *tz* is either *nil*,
+      # 'Z', "-hh:mm" or "+hh:mm".  (The single quotes are supposed to be
+      # required, but this will attempt to handle variations that aren't too
+      # off-the-wall.)
+      tz = nil
+      value.sub!(ASN_1_TIMEZONE) do |match|
+        tz = (match == ZULU) ? match : $1 + [$2, $4].compact_blank.join(':')
+        nil # Remove the matched substring from *value*.
+      end
+
+      # Get optional date and time parts.  Because Date#parse won't accept
+      # something like "2021-12" but will correctly interpret "2021/12" as
+      # "December 2021", '/' is used as the date separator.
+      result = []
+      # noinspection RubyResolve
+      value.sub!(ASN_1_DATETIME) do
+        result << [$1, $3, $5 ].compact_blank.join('/') # Date parts
+        result << [$7, $9, $10].compact_blank.join(':') # Time parts
+        result << tz                                    # Time zone
+      end
+      result.compact_blank!.join(' ')
     end
 
     # =========================================================================
@@ -507,6 +728,14 @@ class IsoDate < ScalarType
 
   public
 
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
+
   # Indicate whether the instance represents a year value, or indicate whether
   # *v* represents a year value.
   #
@@ -564,12 +793,6 @@ class IsoYear < IsoDate
       year?(v)
     end
 
-    # =========================================================================
-    # :section: ScalarType overrides
-    # =========================================================================
-
-    protected
-
     # Transform *v* into a valid form.
     #
     # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
@@ -577,18 +800,7 @@ class IsoYear < IsoDate
     # @return [String]
     #
     def normalize(v)
-      case v
-        when Float                    then return v.to_i.to_s
-        when Integer                  then return v.to_s
-        when IsoYear                  then return v.to_s
-        when IsoDay                   then v = v.to_s
-        when IsoDate                  then v = v.to_s
-        when START_PATTERN[:complete] then # continue
-        when START_PATTERN[:day]      then # continue
-        when START_PATTERN[:year]     then # continue
-        else                               v = v.to_date.strftime rescue ''
-      end
-      v.match(START_PATTERN[:year]) && $1 || ''
+      (year_convert(v) || v).to_s
     end
 
     # =========================================================================
@@ -604,6 +816,20 @@ class IsoYear < IsoDate
   end
 
   include Methods
+
+  # ===========================================================================
+  # :section: IsoYear::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
 
 end
 
@@ -635,12 +861,6 @@ class IsoDay < IsoDate
       day?(v)
     end
 
-    # =========================================================================
-    # :section: ScalarType overrides
-    # =========================================================================
-
-    protected
-
     # Transform *v* into a valid form.
     #
     # @param [String, Date, Time, IsoDate, *] v
@@ -648,18 +868,7 @@ class IsoDay < IsoDate
     # @return [String]
     #
     def normalize(v)
-      case v
-        when Float                    then return "#{v.to_i}-01-01"
-        when Integer                  then return "#{v}-01-01"
-        when IsoYear                  then return "#{v}-01-01"
-        when IsoDay                   then return v.to_s
-        when IsoDate                  then v = v.to_s
-        when START_PATTERN[:complete] then # continue
-        when START_PATTERN[:day]      then return $1
-        when START_PATTERN[:year]     then return "#{$1}-01-01"
-        else                               v = v.to_date.strftime rescue ''
-      end
-      v.match(START_PATTERN[:day]) && $1 || ''
+      (day_convert(v) || v).to_s
     end
 
     # =========================================================================
@@ -675,6 +884,20 @@ class IsoDay < IsoDate
   end
 
   include Methods
+
+  # ===========================================================================
+  # :section: IsoDay::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
 
 end
 
@@ -706,12 +929,6 @@ class IsoLanguage < ScalarType
       v = normalize(v)
       ISO_639.find_by_code(v).present?
     end
-
-    # =========================================================================
-    # :section: ScalarType overrides
-    # =========================================================================
-
-    protected
 
     # Transform *v* into a valid form.
     #
@@ -760,6 +977,20 @@ class IsoLanguage < ScalarType
   end
 
   include Methods
+
+  # ===========================================================================
+  # :section: IsoLanguage::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
 
 end
 
@@ -945,6 +1176,20 @@ class EnumType < ScalarType
       Log.warn { "#{type}: #{v.inspect}: not in #{values}" } if @value.nil?
     end
     @value ||= default
+  end
+
+  # ===========================================================================
+  # :section: EnumType::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
   end
 
 end
