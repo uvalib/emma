@@ -1,23 +1,23 @@
-# app/controllers/api_controller.rb
+# app/controllers/bs_api_controller.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# Handle "Bookshare API Explorer" ("/api" page) requests.
+# Handle "Bookshare API Explorer" ("/bs_api" page) requests.
 #
-# @see ApiExplorerConcern
-# @see file:app/views/api/**
+# @see BsApiConcern
+# @see file:app/views/bs_api/**
 #
-class ApiController < ApplicationController
+class BsApiController < ApplicationController
 
   include UserConcern
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
   include SerializationConcern
-  include ApiExplorerConcern
+  include BsApiConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -50,7 +50,7 @@ class ApiController < ApplicationController
 
   public
 
-  # == GET /api
+  # == GET /bs_api
   #
   # The main API test page.
   #
@@ -64,8 +64,8 @@ class ApiController < ApplicationController
     end
   end
 
-  # == GET /api/v2/API_PATH[?API_OPTIONS]
-  # == GET /api/v2/API_PATH[?user=API_USER]
+  # == GET /bs_api/v2/API_PATH[?API_OPTIONS]
+  # == GET /bs_api/v2/API_PATH[?user=API_USER]
   #
   # Direct access to the API guarded by authentication.  If the session is
   # authenticated the endpoint will be (implicitly) contacted as that user.
@@ -84,7 +84,7 @@ class ApiController < ApplicationController
       path << '?' << url_query(opt) if opt.present?
       redirect_to sign_in_as_path(id: bookshare_user(user), redirect: path)
     else
-      @api_result = api_explorer(request.method, path, opt)
+      @api_result = bs_api_explorer(request.method, path, opt)
       respond_to do |format|
         format.html
         format.json { render_json show_values }
@@ -93,7 +93,7 @@ class ApiController < ApplicationController
     end
   end
 
-  # == GET /api/image[?url=...]
+  # == GET /bs_api/image[?url=...]
   #
   # Get an image.
   #

@@ -1,8 +1,8 @@
-<%# app/views/api/v2.html.erb -%>
+<%# app/views/bs_api/v2.html.erb -%>
 <%-
   # Display of results from an individual API call.
 
-  title ||= t('emma.api.v2.title')
+  title ||= t('emma.bs_api.v2.title')
   help  ||= nil
 
   unless modal?
@@ -30,6 +30,6 @@
 
 <div class="trials">
   <div class="value">
-    <%= api_format_result(@api_result[:exception] || @api_result[:result]) %>
+    <%= format_api_result(@api_result[:exception] || @api_result[:result]) %>
   </div>
 </div>

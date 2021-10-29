@@ -1,13 +1,13 @@
-# app/helpers/explorer_helper.rb
+# app/helpers/api_helper.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# View helper methods for the "Bookshare API Explorer" ("/api" pages).
+# View helper methods for rendering API responses.
 #
-module ExplorerHelper
+module ApiHelper
 
   include Emma::Common
   include Emma::Json
@@ -16,58 +16,11 @@ module ExplorerHelper
 
   extend self
 
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include BookshareConcern
-    # :nocov:
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
-
-  # Generate a URL to an external (Bookshare-related) site, but refactor API
-  # URL's so that they are passed through the application's "API explorer".
-  #
-  # @param [String] path
-  # @param [Hash]   opt               Passed to #make_path.
-  #
-  # @return [String]
-  #
-  def api_explorer_url(path, **opt)
-    api_version = "/#{BOOKSHARE_API_VERSION}/"
-    make_path(path, opt).tap do |result|
-      result.delete_prefix!(BOOKSHARE_BASE_URL)
-      unless result.start_with?('http', api_version)
-        result.prepend(api_version).squeeze!('/')
-      end
-    end
-  end
-
-  # Invoke an API method.
-  #
-  # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
-  # @param [String] path
-  # @param [Hash]   opt               Passed to #api.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def api_explorer(meth, path, **opt)
-    meth = meth&.downcase&.to_sym || :get
-    path = url_escape(path)
-    data = bs_api.api(meth, path, **opt.merge(no_raise: true))&.body&.presence
-    {
-      method:    meth.to_s.upcase,
-      path:      path,
-      opt:       opt.presence || '',
-      url:       api_explorer_url(path, **opt),
-      result:    data&.force_encoding('UTF-8'),
-      exception: api_exception,
-    }.compact
-  end
 
   # Generate HTML from the result of an API method invocation.
   #
@@ -84,7 +37,7 @@ module ExplorerHelper
   #--
   # noinspection RubyNilAnalysis
   #++
-  def api_format_result(value, indent: nil, separator: "\n", html: true)
+  def format_api_result(value, indent: nil, separator: "\n", html: true)
     record = value.is_a?(Api::Record)
     value  = value.body if value.is_a?(Faraday::Response)
     space  = html ? '&nbsp;' : ' '
@@ -127,6 +80,54 @@ module ExplorerHelper
 
       end
     html ? safe_join(lines, separator) : lines.join(separator)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Abbreviate all but the first instance of the rendering of an exception.
+  #
+  # @param [String, nil] html         An HTML-ready string.
+  #
+  # @return [String]                  The modified string.
+  #
+  def mask_later_exceptions(html)
+    mask = false
+    html.to_s.gsub(/(@exception=#<[A-Z0-9_:]+Error)(.*?)(>,)/i) do |substring|
+      if mask
+        "#{$1} ... #{$3}"
+      else
+        mask = true
+        substring
+      end
+    end
+  end
+
+  # Transform URLs into links by translating Bookshare API hrefs into local
+  # paths.
+  #
+  # @param [String, nil] html         An HTML-ready string.
+  # @param [Hash]   opt               Passed to #make_link.
+  #
+  # @return [String]                  The modified string.
+  #
+  def make_links(html, **opt)
+    opt[:rel]    ||= 'noreferrer'
+    opt[:target] ||= '_blank' unless params[:action] == 'v2'
+    html.to_s.gsub(%r{&quot;https?://.+&quot;}) do |s|
+      url = href = s.split('&quot;')[1].html_safe
+      if url.start_with?(BOOKSHARE_BASE_URL)
+        uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
+        path  = uri && File.join(bs_api_index_path, uri.path)
+        query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
+        href  = [path, query].compact.join('?')
+      end
+      url = make_link(url, href, **opt) if href.present?
+      "&quot;#{url}&quot;"
+    end
   end
 
   # ===========================================================================
@@ -180,46 +181,29 @@ module ExplorerHelper
   # :section:
   # ===========================================================================
 
-  private
+  public
 
-  # Abbreviate all but the first instance of the rendering of an exception.
+  # Attempt to interpret *arg* as an exception or a record with an exception.
   #
-  # @param [String, nil] html         An HTML-ready string.
+  # @param [Bs::Api::Record, Exception, *] arg
+  # @param [*] default                On parse failure, return this if provided
+  #                                     (or return *arg* otherwise).
   #
-  # @return [String]                  The modified string.
+  # @return [Hash, String, *]
   #
-  def mask_later_exceptions(html)
-    mask = false
-    html.to_s.gsub(/(@exception=#<[A-Z0-9_:]+Error)(.*?)(>,)/i) do |substring|
-      if mask
-        "#{$1} ... #{$3}"
+  def safe_exception_parse(arg, default: :original)
+    case (ex = arg.try(:exception))
+      when Faraday::Error
+        {
+          message:   ex.message,
+          response:  ex.response,
+          exception: ex.wrapped_exception
+        }.compact_blank!
+      when Exception
+        ex.message
       else
-        mask = true
-        substring
-      end
-    end
-  end
-
-  # Transform URLs into links by translating Bookshare API hrefs into local
-  # paths.
-  #
-  # @param [String, nil] html         An HTML-ready string.
-  # @param [Hash]   opt               Passed to #make_link.
-  #
-  # @return [String]                  The modified string.
-  #
-  def make_links(html, **opt)
-    opt[:rel]    ||= 'noreferrer'
-    opt[:target] ||= '_blank' unless params[:action] == 'v2'
-    html.to_s.gsub(%r{&quot;https?://.+&quot;}) do |s|
-      url = href = s.split('&quot;')[1].html_safe
-      if href.start_with?(BOOKSHARE_BASE_URL)
-        uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
-        query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
-        href  = uri && ERB::Util.h([uri.path, query].compact.join('?'))
-      end
-      url = make_link(url, href, **opt) if href.present?
-      "&quot;#{url}&quot;"
+        # noinspection RubyMismatchedReturnType
+        (default == :original) ? arg : default
     end
   end
 

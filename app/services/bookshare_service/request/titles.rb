@@ -69,7 +69,7 @@ module BookshareService::Request::Titles
   # == 2.1.2. Get title metadata
   # Get metadata for the specified Bookshare title.
   #
-  # NOTE: The API currently returns :artifacts as *nil*.
+  # NOTE: The Bookshare API currently returns :artifacts as *nil*.
   #
   # @param [String] bookshareId
   # @param [Hash]   opt               Passed to #api.

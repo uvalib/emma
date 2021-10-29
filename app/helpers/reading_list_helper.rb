@@ -91,7 +91,7 @@ module ReadingListHelper
 
   # Show reading list subscriptions.
   #
-  # TODO: The API doesn't yet seem to provide useful information here.
+  # TODO: The Bookshare API doesn't seem to provide useful information here.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Passed to #record_links.

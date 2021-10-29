@@ -1,15 +1,15 @@
-// app/assets/stylesheets/controllers/_api.scss
+// app/assets/stylesheets/controllers/_bs_api.scss
 
 @use 'shared/variables' as *;
 @use 'shared/common'    as *;
 @use 'shared/mixins'    as *;
 
 //=============================================================================
-// API test page
+// Bookshare API test page
 //=============================================================================
 
-body.api-index,
-body.api-v2 {
+body.bs_api-index,
+body.bs_api-v2 {
 
     $api-background-color: snow;
 
@@ -154,7 +154,7 @@ body.api-v2 {
     }
 }
 
-body.api-v2 {
+body.bs_api-v2 {
     .session-debug {
         margin: 2rem auto;
     }

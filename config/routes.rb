@@ -222,15 +222,10 @@ Rails.application.routes.draw do
   # API test routes
   # ===========================================================================
 
-  resources :api, only: %i[index] do
-    collection do
-      match 'v2/*api_path', to: 'api#v2', via: ALL_METHODS
-      get   :image,         to: 'api#image'
-    end
-  end
+  resources :bs_api, only: %i[index]
 
-  match '/v2/*api_path', to: 'api#v2',    as: 'v2_api',    via: ALL_METHODS
-  get   '/api/image',    to: 'api#image', as: 'image_api'
+  match '/bs_api/v2/*api_path', to: 'bs_api#v2',    as: 'bs_api_v2',    via: ALL_METHODS
+  get   '/bs_api/image',        to: 'bs_api#image', as: 'bs_api_image'
 
   # ===========================================================================
   # Authentication
@@ -302,10 +297,10 @@ unless ONLY_FOR_DOCUMENTATION
   # :nocov:
   def account_index_path(*);                      end
   def account_index_url(*);                       end
-  def api_index_path(*);                          end
-  def api_index_url(*);                           end
   def artifact_index_path(*);                     end
   def artifact_index_url(*);                      end
+  def bs_api_index_path(*);                       end
+  def bs_api_index_url(*);                        end
   def bulk_create_entry_path(*);                  end
   def bulk_create_entry_url(*);                   end
   def bulk_destroy_entry_path(*);                 end

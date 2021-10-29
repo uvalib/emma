@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# The base class for objects that interact with the Bookshare API, either to be
-# initialized through de-serialized data received from the API or to be
+# The base class for objects that interact with the Unified Search API, either
+# to be initialized through de-serialized data received from the API or to be
 # serialized into data to be sent to the API.
 #
 class Search::Api::Record < Api::Record

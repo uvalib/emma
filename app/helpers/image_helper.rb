@@ -21,7 +21,7 @@ module ImageHelper
 
   # If this value is true, a placeholder image will be displayed initially and
   # client-side JavaScript will be responsible for replacing fetching the image
-  # asynchronously via "/api/image".
+  # asynchronously via "/bs_api/image".
   #
   # @type [Boolean]
   #

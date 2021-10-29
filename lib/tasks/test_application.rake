@@ -82,26 +82,26 @@ namespace 'test:bookshare:api' do
   desc 'Check implementation of Bookshare API requests and records'
   task all: 'test:prepare' do
     TEST_BOOKSHARE = %i[requests records]
-    run_api_tests
+    run_bs_api_tests
   end
 
   desc 'Check implementation of Bookshare API requests'
   task requests: 'test:prepare' do
     TEST_BOOKSHARE = %i[requests]
-    run_api_tests
+    run_bs_api_tests
   end
 
   desc 'Check implementation of Bookshare API records'
   task records: 'test:prepare' do
     TEST_BOOKSHARE = %i[records]
-    run_api_tests
+    run_bs_api_tests
   end
 
   # ===========================================================================
   # Support methods
   # ===========================================================================
 
-  def run_api_tests
+  def run_bs_api_tests
     run_tests('test/system/bookshare_test.rb')
   end
 

@@ -93,7 +93,7 @@ class Api::Error < ExecError
     items = {
       http_status:   @http_status.inspect,
       http_response: @http_response.inspect,
-      cause:         ExplorerHelper.api_format_result(@cause, html: false),
+      cause:         ApiHelper.format_api_result(@cause, html: false),
     }.map { |k, v| "@#{k}=#{v}" }.join(', ')
     '#<%s: %s %s>' % [self.class, message, items]
   end

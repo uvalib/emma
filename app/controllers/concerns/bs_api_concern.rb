@@ -1,19 +1,19 @@
-# app/controllers/concerns/api_explorer_concern.rb
+# app/controllers/concerns/bs_api_concern.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# Support methods for the "/api" controller.
+# Support methods for the "/bs_api" controller.
 #
-module ApiExplorerConcern
+module BsApiConcern
 
   extend ActiveSupport::Concern
 
   include Emma::Json
 
-  include ExplorerHelper
+  include BsApiHelper
 
   # ===========================================================================
   # :section: Initialization
@@ -34,36 +34,6 @@ module ApiExplorerConcern
       uri      = url.request_uri
       duration = time_span(starts.to_f, ends.to_f)
       Log.info { '[%s] %s %s (%s)' % [host, method, uri, duration] }
-    end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Attempt to interpret *arg* as an exception or a record with an exception.
-  #
-  # @param [Bs::Api::Record, Exception, *] arg
-  # @param [*] default                On parse failure, return this if provided
-  #                                     (or return *arg* otherwise).
-  #
-  # @return [Hash, String, *]
-  #
-  def safe_exception_parse(arg, default: :original)
-    case (ex = arg.try(:exception))
-      when Faraday::Error
-        {
-          message:   ex.message,
-          response:  ex.response,
-          exception: ex.wrapped_exception
-        }.compact_blank!
-      when Exception
-        ex.message
-      else
-        # noinspection RubyMismatchedReturnType
-        (default == :original) ? arg : default
     end
   end
 

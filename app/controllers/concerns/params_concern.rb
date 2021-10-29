@@ -97,8 +97,8 @@ module ParamsConcern
     return unless route_request?
     # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller].to_s.downcase
-      when 'api'        then return if params[:action] == 'image'
       when 'artifact'   then return if params[:action] == 'show'
+      when 'bs_api'     then return if params[:action] == 'image'
       when %r{^devise/} then return
       when %r{^user/}   then return
     end

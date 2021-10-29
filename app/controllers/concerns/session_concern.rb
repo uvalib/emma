@@ -165,7 +165,7 @@ module SessionConcern
     req_params ||= params
     # noinspection RubyCaseWithoutElseBlockInspection
     case req_params[:controller]
-      when 'api' then return if req_params[:action] == 'image'
+      when 'bs_api' then return if req_params[:action] == 'image'
     end
     last_operation.merge!(
       'time'   => (time || Time.now).to_i,
@@ -261,8 +261,8 @@ module SessionConcern
     return unless request.get?
     # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller]
-      when 'api'      then return if params[:action] == 'image'
       when 'artifact' then return if params[:action] == 'show'
+      when 'bs_api'   then return if params[:action] == 'image'
     end
     session_keys.each do |key|
       value = session[key]

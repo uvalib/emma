@@ -181,7 +181,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function urlProxyPath(url) {
-        return '/api/image?url=' + encodeURIComponent(url);
+        return '/bs_api/image?url=' + encodeURIComponent(url);
     }
 
     /**

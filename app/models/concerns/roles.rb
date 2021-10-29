@@ -126,7 +126,8 @@ module Roles
   #         fewer rights than "Collection Assistants".
   # [1.9] They can submit and proofread scanned titles, but are not approved
   #         members so @note cannot download other titles.
-  # [1.9] NOTE: The API does not yet have resources supporting Volunteer users.
+  # [1.9] NOTE: The Bookshare API does not yet have resources supporting
+  #         Volunteer users.
   #
   # === Guest
   # [1.9] These are unauthenticated users, meaning that requests are made

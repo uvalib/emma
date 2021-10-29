@@ -264,7 +264,7 @@ module ModelHelper
     links = links.record_links if links.respond_to?(:record_links)
     Array.wrap(links).map { |link|
       next if link.blank?
-      path = (api_explorer_url(link) unless no_link)
+      path = (bs_api_explorer_url(link) unless no_link)
       if path.present? && !path.match?(/[{}]/)
         make_link(link, path, **html_opt)
       else
