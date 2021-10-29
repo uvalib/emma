@@ -49,14 +49,15 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   def initialize(src, opt = nil)
     # noinspection RailsParamDefResolve
     if (data = src.try(:emma_metadata) || src.try(:dig, :emma_metadata))
-      # === Dates ===
-      data[:emma_lastRemediationDate]          ||= src[:updated_at]
-      data[:emma_repositoryMetadataUpdateDate] ||= src[:updated_at]
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]
       data[:emma_repositoryRecordId] ||= src[:submission_id]
       data[:dc_title]                ||= MISSING_TITLE
       data[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
+      # === Dates ===
+      Record::EmmaData::DEFAULT_TIME_NOW_FIELDS.each do |field|
+        data[field] ||= src[:updated_at]
+      end
     end
     opt ||= {}
     super((data || src), **opt)

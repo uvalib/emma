@@ -60,6 +60,16 @@ module Record::EmmaData
   #
   EMMA_DATA_KEYS = EMMA_DATA_CONFIG.keys.freeze
 
+  # EMMA data fields that default to the current time.
+  #
+  # @type [Array<Symbol>]
+  #
+  DEFAULT_TIME_NOW_FIELDS = %i[
+    rem_remediationDate
+    emma_lastRemediationDate
+    emma_repositoryMetadataUpdateDate
+  ].freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -168,11 +178,7 @@ module Record::EmmaData
 
     # Augment supplied attribute values with supplied EMMA metadata.
     data[:emma_repository] ||= repository_value(attr)
-    fields = %i[emma_lastRemediationDate emma_repositoryMetadataUpdateDate]
-    fields.each { |field| data[field] ||= utime if data.key?(field) }
-    %i[emma_lastRemediationDate emma_repositoryMetadataUpdateDate].each do |f|
-      data[f] ||= utime if data.key?(f)
-    end
+    DEFAULT_TIME_NOW_FIELDS.each { |f| data[f] ||= utime if data.key?(f) }
 
     # EMMA metadata defaults that are only appropriate for EMMA-native items.
     if emma_native?(attr)

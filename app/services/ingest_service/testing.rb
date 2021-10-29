@@ -79,39 +79,38 @@ module IngestService::Testing
 
     FIELD_TYPE = {
       date: %i[
-        emma_lastRemediationDate
-        emma_repositoryMetadataUpdateDate
         dcterms_dateAccepted
         dcterms_dateCopyright
+        emma_repositoryMetadataUpdateDate
+        rem_remediationDate
       ],
       string: %i[
+        dc_description
+        dc_format
+        dc_publisher
+        dc_rights
+        dc_title
+        dc_type
+        emma_formatVersion
         emma_repository
         emma_repositoryRecordId
         emma_retrievalLink
         emma_webPageLink
-        emma_lastRemediationNote
-        emma_formatVersion
-        dc_title
-        dc_publisher
-        dc_rights
-        dc_provenance
-        dc_description
-        dc_format
-        dc_type
+        rem_remediationComments
         s_accessibilitySummary
       ],
       array: %i[
-        emma_collection
-        emma_formatFeature
         dc_creator
         dc_identifier
-        dc_relation
         dc_language
+        dc_relation
         dc_subject
-        s_accessibilityFeature
-        s_accessibilityControl
-        s_accessibilityHazard
+        emma_collection
+        emma_formatFeature
         s_accessibilityAPI
+        s_accessibilityControl
+        s_accessibilityFeature
+        s_accessibilityHazard
         s_accessMode
         s_accessModeSufficient
       ]
@@ -169,8 +168,8 @@ module IngestService::Testing
       # == Bad data for fields expecting single values.
       if SINGLETON_FIELDS_BAD & faults
         tests += 1
-        item.emma_lastRemediationNote = %w(rem_note_1 rem_note_2 rem_note_3)
-        item.emma_repositoryRecordId  = '.bad,record_id;with/punct'
+        item.rem_remediationComments = %w(rem_note_1 rem_note_2 rem_note_3)
+        item.emma_repositoryRecordId = '.bad,record_id;with/punct'
       end
 
       # == Bad data for fields expecting single string values.
@@ -195,7 +194,7 @@ module IngestService::Testing
       # == Bad data for date fields.
       if DATE_FIELDS_BAD & faults
         tests += 1
-        item.emma_lastRemediationDate          = 'bad date'
+        item.rem_remediationDate               = 'bad date'
         item.emma_repositoryMetadataUpdateDate = '.bad,date;with/punct'
         item.dcterms_dateAccepted              = %w(2021-04-18 2021-04-19)
       end
@@ -203,7 +202,7 @@ module IngestService::Testing
       # == PDF-style dates.
       if PDF_DATES & faults
         tests += 1
-        item.emma_lastRemediationDate = "D:20210327195230+05'00'"
+        item.rem_remediationDate = "D:20210327195230+05'00'"
       end
 
       # == Give each field a bogus value.

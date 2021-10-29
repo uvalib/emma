@@ -100,11 +100,12 @@ module Api::Shared::TitleMethods
     ti || st || '???'
   end
 
-  # The year of publication (:dcterms_dateCopyright or
-  # :emma_lastRemediationDate, whichever is earlier).
+  # The year of publication.
   #
   # @return [Integer]
   # @return [nil]                     If the value cannot be determined.
+  #
+  # @see Search::Shared::TitleMethods#date_fields
   #
   def year
     date_fields.map { |date|

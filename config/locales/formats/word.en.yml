@@ -82,7 +82,6 @@ en:
         ModifiedDate:     'modified'
         LastModifiedBy:   'last_modified_by'      # coreProperties
         RightsHolder:     'rights_holder'
-        Provenance:       'provenance'
 
         # Core properties (coreProperties)
 
@@ -140,10 +139,9 @@ en:
         date_accepted:          'dcterms_dateAccepted'
         date_copyrighted:       'dcterms_dateCopyright'
         # date_submitted:       'date_submitted'
-        modified:               'emma_lastRemediationDate'
+        modified:               'rem_remediationDate'
         # last_modified_by:     'last_modified_by'
         # rights_holder:        'rights_holder'
-        provenance:             'provenance'
 
         # Core properties (coreProperties)
 

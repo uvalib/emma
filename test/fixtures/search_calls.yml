@@ -47,7 +47,7 @@ template:
         - epub
         - braille
         - pdf
-        - grayscalePdf
+        #- grayscalePdf   # NOTE: deprecated with API 0.0.5
         - word
         - tactile
         - kurzweil
@@ -60,11 +60,13 @@ template:
         - grade1
         - grade2
         - nemeth
-        - technical
+        #- technical      # NOTE: deprecated with API 0.0.5
         - ueb
         - ebae
-        - literary
+        #- literary       # NOTE: deprecated with API 0.0.5
         - music
+        - imagePdf
+        - digitalTextPdf
     repository:
       multiple: false
       values:

@@ -439,9 +439,9 @@ module SearchHelper
     # noinspection RailsParamDefResolve
     if aggregate_style?
       added = item.try(:get_scores, precision: 2, all: true) || {}
-      added[:sort_date]        = item.try(:emma_sortDate).presence
-      added[:publication_date] = item.try(:emma_publicationDate).presence
-      added[:remediation_date] = item.try(:emma_lastRemediationDate).presence
+      added[:sort_date] = item.try(:emma_sortDate).presence
+      added[:pub_date]  = item.try(:emma_publicationDate).presence
+      added[:rem_date]  = item.try(:rem_remediationDate).presence
       added.transform_values! { |score| score || EMPTY_VALUE }
       opt[:pairs].merge!(added)
     end

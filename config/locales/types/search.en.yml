@@ -21,34 +21,41 @@ en:
 
         WorkType:
           book:                     'Book'
-          movie:                    'Movie'
-          journalArticle:           'Journal Article'
-          magazineArticle:          'Magazine Article'
-          podcastEpisode:           'Podcast Episode'
-          seriesEpisode:            'Series Episode'
+          video:                    'Video'
+          article:                  'Article'
+          podcast:                  'Podcast'
 
         FormatFeature:
-          tts:                      'TTS'
-          human:                    'Human'
-          grade1:                   'Grade 1 (uncontracted)'
-          grade2:                   'Grade 2 (contracted)'
-          nemeth:                   'Nemeth'
-          ueb:                      'UEB'
-          ebae:                     'EBAE'
-          music:                    'Music'
-          imagePdf:                 'Scanned Image PDF'
-          digitalTextPdf:           'Digital Text PDF'
-          literary:                 'Literary'
-          technical:                'Technical'
+          tts:                      'Speech  - TTS'
+          human:                    'Speech  - Human'
+          grade1:                   'Braille - Grade 1 (uncontracted)'
+          grade2:                   'Braille - Grade 2 (contracted)'
+          nemeth:                   'Braille - Nemeth'
+          #technical:                'Braille - Technical' # NOTE: deprecated with API 0.0.5
+          ueb:                      'Braille - UEB'
+          ebae:                     'Braille - EBAE'
+          #literary:                 'Braille - Literary'  # NOTE: deprecated with API 0.0.5
+          music:                    'Braille - Music'
+          imagePdf:                 'PDF     - Scanned Image'
+          digitalTextPdf:           'PDF     - Digital Text'
 
         # =====================================================================
         # API schema - DublinCoreFields
         # =====================================================================
 
         Rights:
-          publicDomain:             'Public Domain'
-          creativeCommons:          'Creative Commons'
           copyright:                'Copyright'
+          #creativeCommons:         'Creative Commons' # NOTE: deprecated with API 0.0.5
+          cc0:                      'CC0         (Creative Commons Public Domain)'
+          ccBy:                     'CC BY       (Creative Commons Attribution)'
+          ccBySa:                   'CC BY-SA    (Creative Commons Attribution, Share-alike)'
+          ccByNc:                   'CC BY-NC    (Creative Commons Attribution, Non-commercial)'
+          ccByNcSa:                 'CC BY-NC-SA (Creative Commons Attribution, Non-commercial, Share-alike)'
+          ccByNd:                   'CC BY-ND    (Creative Commons Attribution, No-derivative-works)'
+          ccByNcNd:                 'CC BY-NC-ND (Creative Commons Attribution, Non-commercial, No-derivative-works)'
+          license:                  'License'
+          embargo:                  'Embargo'
+          publicDomain:             'Public Domain'
           other:                    'Other'
 
         Provenance:
@@ -62,7 +69,7 @@ en:
           epub:                     'EPUB'
           braille:                  'Braille'
           pdf:                      'PDF'
-          grayscalePdf:             'Grayscale PDF'
+          #grayscalePdf:             'Grayscale PDF' # NOTE: deprecated with API 0.0.5
           word:                     'Microsoft Word'
           tactile:                  'Tactile'
           kurzweil:                 'Kurzweil'
@@ -228,7 +235,7 @@ en:
           title:                    'Title'
           publicationDate:          'Publication Date'
           sortDate:                 'Upload Date'
-          lastRemediationDate:      'Last Remediation Date'
+          lastRemediationDate:      'Remediation Date'
           _default:                 relevance
 
         SearchGroup:

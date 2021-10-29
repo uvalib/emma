@@ -135,11 +135,11 @@ en:
         source_date:            'dc_date'
         source_publisher:       'dc_publisher'
         # producer:             'producer'
-        produced_date:          'emma_lastRemediationDate'
+        produced_date:          'rem_remediationDate'
         # revision:             'revision'
-        revision_date:          'emma_lastRemediationDate'
-        revision_description:   'emma_lastRemediationNote'
-        modified:               'emma_lastRemediationDate'
+        revision_date:          'rem_remediationDate'
+        revision_description:   'rem_remediationComments'
+        modified:               'rem_remediationDate'
 
         # From *.ncx file
 

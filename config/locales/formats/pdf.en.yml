@@ -45,7 +45,7 @@ en:
         # Keywords:     'Keywords'
         Creator:        'dc_creator'
         CreationDate:   'dc_date'
-        ModDate:        'emma_lastRemediationDate'
+        ModDate:        'rem_remediationDate'
         Subject:        'dc_subject'
         # Producer:     'Producer'
         # pdf_version:  'pdf_version'

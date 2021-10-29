@@ -78,7 +78,7 @@ module Api::Shared::CommonMethods
   #
   # @return [Array]
   #
-  def get_field_values(data = nil, fields)
+  def get_field_values(data = nil, *fields)
     data = nil if data == self
     values = data&.values_at(*fields) || fields.map { |field| try(field) }
     values.map(&:presence)

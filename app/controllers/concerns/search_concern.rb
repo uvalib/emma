@@ -126,7 +126,7 @@ module SearchConcern
       when :title               then title = last.dc_title
       when :sortDate            then date  = last.emma_sortDate
       when :publicationDate     then date  = last.emma_publicationDate
-      when :lastRemediationDate then date  = last.emma_lastRemediationDate
+      when :lastRemediationDate then date  = last.rem_remediationDate
       else                           opt.except!(:prev_id, :prev_value)
     end
     if title || date

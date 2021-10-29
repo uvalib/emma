@@ -936,8 +936,8 @@ module ModelHelper
     html_opt[:'data-title_id']         = item.try(:emma_titleId)
     html_opt[:'data-normalized_title'] = item.try(:normalized_title)
     html_opt[:'data-sort_date']        = item.try(:emma_sortDate)
-    html_opt[:'data-publication_date'] = item.try(:emma_publicationDate)
-    html_opt[:'data-remediation_date'] = item.try(:emma_lastRemediationDate)
+    html_opt[:'data-pub_date']         = item.try(:emma_publicationDate)
+    html_opt[:'data-rem_date']         = item.try(:rem_remediationDate)
     html_opt[:'data-item_score']       = item.try(:total_score, precision: 2)
     html_div(html_opt) do
       if item

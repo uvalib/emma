@@ -433,13 +433,9 @@ en:
             origin:       system
 
           emma_lastRemediationDate:
-            # FMM5: "Remediation Status Date", Required, Repeatable
-            # IA:   *missing*
-            # SR:   IsoDay
-            # IR:   IsoDay
-            # NOTE: Not actually repeatable.
-            min:          1
-            max:          1
+            # NOTE: superseded by rem_remediationDate
+            min:          0
+            max:          0
             label:        'Remediation Date'
             tooltip:      |
               Date of the most recent change to the remediated content file.
@@ -497,14 +493,9 @@ en:
             origin:       system
 
           emma_lastRemediationNote:
-            # FMM5: "Remediation Comments", Optional, Repeatable
-            # IA:   "remediation_comments"
-            # SR:   String
-            # IR:   String
-            # NOTE: Not actually repeatable due to Federated Ingest API.
-            # NOTE: Supporting newline-delimited lines can make it "repeatable"
-            min:          1
-            max:          1
+            # NOTE: superseded by rem_remediationComments
+            min:          0
+            max:          0
             label:        'Remediation Note'
             tooltip:      'Description of remediation(s) for this file.'
             notes_html:   |
@@ -691,14 +682,9 @@ en:
             type:         !ruby/symbol Rights
 
           dc_provenance:
-            # FMM5: *missing*
-            # IA:   *missing*
-            # SR:   Provenance
-            # IR:   Provenance
-            # NOTE: This is actually a Bookshare-specific field.
-            # TODO: Should this really be a part of the EMMA metadata?
+            # NOTE: deprecated with API 0.0.5
             min:          0
-            max:          1
+            max:          0
             label:        'Provenance'
             tooltip:      'Originator of the remediated content file.'
             notes_html:   |
@@ -907,6 +893,21 @@ en:
           # emma_data JSON keys - Periodical bibliographic information
           # ===================================================================
 
+          periodical: # NOTE: proposed with API 0.0.5 versus bib_series
+            # FMM5: N/A
+            # IA:   N/A
+            # SR:   Boolean
+            # IR:   Boolean
+            min:          0
+            max:          0 # NOTE: would be 1
+            label:        'Periodical (proposed)'
+            tooltip:      |
+              True if the work is an article, issue, or episode of a
+              periodical.
+            notes_html:   |
+              <em>TODO</em>
+            type:         boolean
+
           periodical_title: # NOTE: proposed with API 0.0.5 versus bib_series
             # FMM5: "Series Name", Optional, Non-repeatable
             # IA:   *missing*
@@ -1091,6 +1092,38 @@ en:
             notes_html:   |
               <em>TODO</em>
             type:         !ruby/symbol RemediationStatus
+
+          rem_remediationDate: # NOTE: supersedes emma_lastRemediationDate
+            # FMM5: "Remediation Status Date", Required, Repeatable
+            # IA:   *missing*
+            # SR:   IsoDay
+            # IR:   IsoDay
+            # NOTE: Not actually repeatable.
+            min:          1
+            max:          1
+            label:        'Remediation Date'
+            tooltip:      |
+              Date of the most recent change to the remediated content file.
+            notes_html:   |
+              <em>TODO</em>
+            type:         date
+            origin:       system
+
+          rem_remediationComments: # NOTE: supersedes emma_lastRemediationNote
+            # FMM5: "Remediation Comments", Optional, Repeatable
+            # IA:   "remediation_comments"
+            # SR:   String
+            # IR:   String
+            # NOTE: Not actually repeatable due to Federated Ingest API.
+            # NOTE: Supporting newline-delimited lines can make it "repeatable"
+            min:          1
+            max:          1
+            label:        'Remediation Comments'
+            tooltip:      'Description of remediation(s) for this file.'
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Enter description'
+            type:         textarea
 
           # ===================================================================
           # emma_data JSON keys - new bibliographic fields

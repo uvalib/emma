@@ -464,7 +464,8 @@ form.select-entry {
             #field-AccessibilityHazards:  10.5rem,
             #field-AccessMode:            18.75rem,
             #field-AccessModeSufficient:  6.75rem,
-            #field-RemQuality:            8.5rem
+            #field-RemQuality:            8.5rem,
+            #field-RemTextQuality:        8.5rem
         );
 
         @each $element, $max-height in $max-heights {
@@ -604,6 +605,10 @@ form.select-entry {
             &.valid.sealed {
                 background: $ro-focus-accent;
             }
+        }
+
+        &.field-Rights {
+            width: auto;
         }
 
         // De-emphasize this field to indicate that it is no longer required

@@ -1850,7 +1850,7 @@ end
 # TextQuality
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.TextQuality*
-# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_quality             JSON schema specification
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_textQquality        JSON schema specification
 #
 class TextQuality < EnumType
 end

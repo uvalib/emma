@@ -320,8 +320,9 @@ class Upload < ApplicationRecord
       unless attr.key?(:fmt) || data[:dc_format].blank?
         attr[:fmt] = data[:dc_format]
       end
-      fields = %i[emma_lastRemediationDate emma_repositoryMetadataUpdateDate]
-      fields.each { |field| data[field] ||= utime if data.key?(field) }
+      Record::EmmaData::DEFAULT_TIME_NOW_FIELDS.each do |field|
+        data[field] ||= utime if data.key?(field)
+      end
 
       # EMMA metadata defaults that are only appropriate for EMMA-native items.
       if attr[:repository] == EmmaRepository.default

@@ -166,7 +166,6 @@ $(document).on('turbolinks:load', function() {
      *      dc_relation:                        string|string[],
      *      dc_language:                        string|string[],
      *      dc_rights:                          string,
-     *      dc_provenance:                      string,
      *      dc_description:                     string,
      *      dc_format:                          string,
      *      dc_type:                            string,
@@ -188,6 +187,9 @@ $(document).on('turbolinks:load', function() {
      *      rem_remediatedAspects:              string|string[],
      *      rem_quality:                        string,
      *      rem_status:                         string,
+     *      rem_remediationDate:                string,
+     *      rem_remediationComments:            string,
+     *      rem_textQuality:                    string,
      *      bib_series:                         string,
      *      bib_seriesType:                     string,
      *      bib_seriesPosition:                 string,
@@ -285,7 +287,7 @@ $(document).on('turbolinks:load', function() {
      *      emma_sortDate:                      ?string,
      *      emma_repositoryMetadataUpdateDate:  ?string,
      *      emma_publicationDate:               ?string,
-     *      emma_lastRemediationNote:           string,
+     *      emma_lastRemediationNote:           ?string,
      *      emma_version:                       ?string,
      *      emma_workType:                      ?string,
      *      emma_formatVersion:                 string,
@@ -294,22 +296,22 @@ $(document).on('turbolinks:load', function() {
      *      dc_creator:                         ?string[],
      *      dc_identifier:                      ?string[],
      *      dc_relation:                        ?string[],
-     *      dc_publisher:                       string,
-     *      dc_language:                        string[],
-     *      dc_rights:                          string,
-     *      dc_provenance:                      string,
-     *      dc_description:                     string,
-     *      dc_format:                          string,
-     *      dc_type:                            string,
+     *      dc_publisher:                       ?string,
+     *      dc_language:                        ?string[],
+     *      dc_rights:                          ?string,
+     *      dc_description:                     ?string,
+     *      dc_format:                          ?string,
+     *      dc_type:                            ?string,
      *      dc_subject:                         ?string[],
      *      dcterms_dateAccepted:               ?string,
-     *      dcterms_dateCopyright:              string,
+     *      dcterms_dateCopyright:              ?string,
      *      s_accessibilityFeature:             ?string[],
      *      s_accessibilityControl:             ?string[],
      *      s_accessibilityHazard:              ?string[],
      *      s_accessibilitySummary:             ?string,
      *      s_accessMode:                       ?string[],
      *      s_accessModeSufficient:             ?string[],
+     *      periodical:                         ?boolean,
      *      periodical_title:                   ?string,
      *      periodical_identifier:              ?string[],
      *      periodical_series_position:         ?string,
@@ -321,6 +323,9 @@ $(document).on('turbolinks:load', function() {
      *      rem_remediatedAspects:              ?string[],
      *      rem_quality:                        ?string,
      *      rem_status:                         ?string,
+     *      rem_remediationDate:                ?string,
+     *      rem_remediationComments:            ?string,
+     *      rem_textQuality:                    ?string,
      * }} SearchResultEntry
      *
      * @see file:config/locales/records/search.en.yml "en.emma.search.record"
@@ -2734,7 +2739,7 @@ $(document).on('turbolinks:load', function() {
         let valid;
         if (typeof entry === 'string') {
             const value = isDefined(new_value) ? new_value : $input.val();
-            remoteValidate($input, value, callback);
+            remoteValidate(field, value, callback);
         } else if (typeof entry === 'function') {
             const value = isDefined(new_value) ? new_value : $input.val();
             valid = entry(value);
@@ -2756,8 +2761,14 @@ $(document).on('turbolinks:load', function() {
     function remoteValidate(field, new_value, callback) {
         const func = 'remoteValidate';
         let url    = FIELD_VALIDATION[field];
-        if (!callback) {
-            consoleError(func, `${url}:`, error);
+
+        if (isMissing(callback)) {
+            consoleError(func, `${field}: no callback given`);
+        }
+        if (isMissing(url)) {
+            consoleError(func, `${field}: no URL given`);
+            callback(false);
+            return;
         }
 
         // Prepare value for inclusion in the URL.
@@ -2768,7 +2779,7 @@ $(document).on('turbolinks:load', function() {
         if (Array.isArray(value)) {
             value = value.join(',');
         } else {
-            consoleWarn(func, `${url}:`, 'no values given');
+            consoleWarn(func, `${url}: no values given`);
             callback(false);
             return;
         }
@@ -3006,7 +3017,6 @@ $(document).on('turbolinks:load', function() {
                 dc_publisher:                       FROM_PARENT,
                 dc_language:                        FROM_PARENT,
                 dc_rights:                          FROM_PARENT,
-                dc_provenance:                      FROM_PARENT,
                 dc_description:                     FROM_PARENT,
                 dc_format:                          AS_IS,
                 dc_type:                            AS_IS,
@@ -3019,6 +3029,7 @@ $(document).on('turbolinks:load', function() {
                 s_accessibilityMode:                AS_IS,
                 s_accessibilityModeSufficient:      AS_IS,
                 s_accessibilitySummary:             AS_IS,
+                periodical:                         FROM_PARENT,
                 periodical_title:                   FROM_PARENT,
                 periodical_identifier:              FROM_PARENT,
                 periodical_series_position:         FROM_PARENT,
@@ -3031,6 +3042,9 @@ $(document).on('turbolinks:load', function() {
                 rem_remediatedAspects:              AS_IS,
                 rem_quality:                        AS_IS,
                 rem_status:                         AS_IS,
+                rem_remediationDate:                AS_IS,
+                rem_remediationComments:            AS_IS,
+                rem_textQuality:                    AS_IS,
                 bib_series:                         FROM_PARENT,
                 bib_seriesType:                     FROM_PARENT,
                 bib_seriesPosition:                 FROM_PARENT,

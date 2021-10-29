@@ -287,6 +287,17 @@ module Import
     end
   end
 
+  # Transform a data item into an array of EnumType values.
+  #
+  # @param [*]     v
+  # @param [Class] type               A subclass of EnumType.
+  #
+  # @return [Array<String>]
+  #
+  def enum_values(v, type)
+    array_value(v) { |item| enum_value(item, type) }
+  end
+
   # ===========================================================================
   # :section: Field/value transforms
   # ===========================================================================

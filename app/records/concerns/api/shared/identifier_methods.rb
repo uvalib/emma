@@ -154,7 +154,7 @@ module Api::Shared::IdentifierMethods
   # noinspection RubyNilAnalysis
   #++
   def clean_dc_relation!(data = nil)
-    related, std_ids = get_field_values(data, RELATION_FIELDS)
+    related, std_ids = get_field_values(data, *RELATION_FIELDS)
     return if related.blank? || std_ids.blank?
     related = (Array.wrap(related) - Array.wrap(std_ids)).presence
     if data.nil?

@@ -39,18 +39,10 @@ module Ingest::Shared::TransformMethods
   # @return [void]
   #
   def normalize_data_fields!(data = nil)
-
-    # === Standard Identifiers ===
     normalize_identifier_fields!(data)
-    clean_dc_relation!(data)
-
-    # === Dates ===
     normalize_day_fields!(data)
-    normalize_title_dates!(data)
-
-    # === Required fields ===
     make_retrieval_link!(data)
-
+    super(data)
   end
 
   # ===========================================================================
@@ -72,7 +64,7 @@ module Ingest::Shared::TransformMethods
   # noinspection RailsParamDefResolve
   #++
   def make_retrieval_link!(data = nil)
-    link, rid = get_field_values(data, RETRIEVAL_FIELDS)
+    link, rid = get_field_values(data, *RETRIEVAL_FIELDS)
     return if link.present? || rid.blank?
     link = Upload.make_retrieval_link(rid)
     if data

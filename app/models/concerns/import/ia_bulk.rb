@@ -78,14 +78,14 @@ module Import::IaBulk
     portion_description:  [:rem_coverage,             :values],
     publicdate:           :skip,                      # NOTE: [4]
     publisher:            [:dc_publisher,             :string_value],
-    remediated_aspects:   [:rem_remediation,          :values],
+    remediated_aspects:   [:rem_remediatedAspects,    :rem_aspect_values],
     remediated_by:        [:rem_remediatedBy,         :values],
-    remediation_comments: [:emma_lastRemediationNote, :string_value],
+    remediation_comments: [:rem_remediationComments,  :string_value],
     remediation_status:   [:rem_status,               :rem_status_value],
     scanner:              :skip,                      # NOTE: [3]
     series_type:          [:bib_seriesType,           :series_type_value],
     subject:              [:dc_subject,               :array_value],
-    text_quality:         [:rem_quality,              :text_quality_value],
+    text_quality:         [:rem_textQuality,          :text_quality_value],
     title:                [:dc_title,                 :string_value],
     uploader:             :skip,                      # NOTE: [4]
     version:              [:bib_version,              :string_value],
@@ -209,6 +209,16 @@ module Import::IaBulk
     ('true' if false?(v)) || ('false' if true?(v)) if v.present?
   end
 
+  # Transform a "remediated_aspects" value into a :rem_remediatedAspects value.
+  #
+  # @param [*] v
+  #
+  # @return [Array<String>]
+  #
+  def rem_aspect_values(v)
+    enum_values(v, RemediationType)
+  end
+
   # Transform a "remediation_status" value into a :rem_status value.
   #
   # @param [*] v
@@ -229,7 +239,7 @@ module Import::IaBulk
     enum_value(v, SeriesType)
   end
 
-  # Transform a "text_quality" value into a :rem_quality value.
+  # Transform a "text_quality" value into a :rem_textQuality value.
   #
   # @param [*] v
   #

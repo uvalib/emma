@@ -130,6 +130,14 @@ en:
         # Indexing information
         # =====================================================================
 
+        emma_repository:
+          label:                            'Repository'
+          max:                              1
+
+        emma_collection:
+          label:                            'Collection'
+          max:                              ~
+
         emma_repositoryMetadataUpdateDate:
           label:                            'Entry Updated'
           max:                              1
@@ -142,25 +150,9 @@ en:
           label:                            'EMMA Title ID'
           max:                              1
 
-        emma_repository:
-          label:                            'Repository'
-          max:                              1
-
-        emma_collection:
-          label:                            'Collection'
-          max:                              ~
-
         # =====================================================================
         # File-level technical information
         # =====================================================================
-
-        emma_lastRemediationDate:
-          label:                            'Last Update'
-          max:                              1
-
-        emma_lastRemediationNote:
-          label:                            'Update Note'
-          max:                              1
 
         emma_formatVersion:
           label:                            'Format Version'
@@ -173,6 +165,22 @@ en:
         # =====================================================================
         # File-level remediation information
         # =====================================================================
+
+        emma_lastRemediationDate:
+          label:                            'Last Update'
+          max:                              1
+
+        rem_remediationDate:
+          label:                            'Date Remediated'
+          max:                              1
+
+        emma_lastRemediationNote:
+          label:                            'Update Note'
+          max:                              1
+
+        rem_remediationComments:
+          label:                            'Remediation Comments'
+          max:                              1
 
         rem_source:
           label:                            'Source of File'
@@ -203,6 +211,10 @@ en:
           max:                              ~
 
         rem_quality:
+          label:                            'Text Quality'
+          max:                              1
+
+        rem_textQuality:
           label:                            'Text Quality'
           max:                              1
 

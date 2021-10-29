@@ -11,6 +11,8 @@ module Search::Shared::TitleMethods
 
   include Api::Shared::TitleMethods
 
+  extend self
+
   # ===========================================================================
   # :section: Model overrides
   # ===========================================================================
@@ -31,7 +33,7 @@ module Search::Shared::TitleMethods
 
   public
 
-  # Field(s) that may hold date information about the title.
+  # Field(s) that may hold the title string.
   #
   # @return [Array<Symbol>]
   #
@@ -45,10 +47,11 @@ module Search::Shared::TitleMethods
   #
   def date_fields
     %i[
-      emma_publicationDate
       dcterms_dateCopyright
-      emma_sortDate
       emma_lastRemediationDate
+      emma_publicationDate
+      emma_sortDate
+      rem_remediationDate
     ]
   end
 
