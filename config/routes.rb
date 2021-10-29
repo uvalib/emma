@@ -82,6 +82,7 @@ Rails.application.routes.draw do
 
   # === Temporary
 
+  get    '/upload/api_migrate',   to: 'upload#api_migrate',     as: 'api_migrate'
   get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',    as: 'bulk_reindex'
 
   # ===========================================================================

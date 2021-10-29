@@ -1,0 +1,170 @@
+# config/locales/api_migrate.en.yml
+#
+# EMMA data field/value migrations
+#
+# Current values can be checked via the "/data/counts" endpoint.
+#
+# 0.0.5 data migrations were tuned according to the results from that endpoint
+# as of 2021-10-20 at 20:20 EST.
+#
+# noinspection SpellCheckingInspection
+
+en:
+
+  emma:
+
+    api_migrate:
+
+      # =======================================================================
+      # Each entry has the following form:
+      # =======================================================================
+
+      _template:
+
+        existing_field:
+
+          # Remove the named field.  This is ignored if new_values is given.
+          delete_field: Boolean
+
+          # Modify field value(s) *before* new_values translation.
+          prepare:
+            - method_1                    # - apply ApiMigrate#method_1
+            - method_2                    # - then apply ApiMigrate#method_2
+
+          # Translate to new field values based on old field value pattern(s).
+          new_values:
+            new_1: ~                      # Skipped (no equivalent old value)
+            new_2: 'old_value'            # Transform old value to new_2
+            new_3: !ruby/regexp /pat/i    # Matching old values to new_3
+            new_4: [Array<String,Regexp>] # Old values matching any to new_4
+            new_5: !ruby/regexp /.*/      # All old values to new_5
+            new_6: ''                     # All old values to new_6
+
+          # Modify field value(s) *after* new_values translation.
+          normalize:
+            - method_1                    # - apply ApiMigrate#method_1
+            - method_2                    # - then apply ApiMigrate#method_2
+
+          # Modify field cardinality by giving the new limits for the number of
+          # items in the field value.
+          new_min_max:  [min, max]
+
+          # As a final step, move the named field to a new name.
+          new_name:     'field_name'      # String or Symbol
+
+      # =======================================================================
+      # Generic transformations for data quality
+      # =======================================================================
+
+      generic: &GENERIC_TRANSFORMS
+
+        dc_creator:
+          normalize:                normalize_creator
+
+        dc_identifier:
+          normalize:                normalize_identifier
+
+        dc_provenance:
+          delete_field:             true
+
+        dc_relation:
+          normalize:                normalize_identifier
+
+        dcterms_dateAccepted:
+          normalize:                normalize_day
+
+        emma_lastRemediationDate:
+          normalize:                normalize_datetime
+
+        emma_repositoryMetadataUpdateDate:
+          normalize:                normalize_datetime
+
+        parent-entry-search:
+          delete_field:             true
+
+        rem_image_count:
+          delete_field:             true
+
+      # =======================================================================
+      # Changes to emma_data fields for Search/Ingest API version 0.0.5
+      # =======================================================================
+
+      '0_0_5':
+
+        <<: *GENERIC_TRANSFORMS
+
+        emma_lastRemediationDate:
+          new_name:                 'rem_remediationDate'
+          normalize:                normalize_datetime
+
+        emma_lastRemediationNote:
+          new_name:                 'rem_remediationComments'
+
+        rem_quality:
+          new_name:                 'rem_textQuality'
+          normalize:                summarize_quality
+          new_min_max:              [0,1]
+          new_values:
+            ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
+            rawOcr:                 'raw_ocr'
+            cleanedOcr:             'cleaned_ocr'
+            rekeyed:                ~ # 'rekeyed'
+            proofread:              'proofread'
+            published:              'published'
+
+        rem_remediation:
+          new_name:                 'rem_remediatedAspects'
+          new_values:
+            ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
+            scannnedAndOcrd:        "Scanned and OCR'd"
+            proofreadCorrectedOcr:  'Proofread and Corrected OCR'
+            addedBookmarks:         'Added Bookmarks'
+            taggedPdf:              !ruby/regexp /^Tagged/
+            addedImageDescriptions: 'Added Image Descriptions'
+            structuredHeadings:     'Structured Headings'
+            linkedTOC:              'Linked TOC'
+            fixedTables:            'Fixed Tables'
+            addedMathMl:            ~ # !ruby/regexp /MathML/i
+            foreignLanguageMarkup:  ~ # !ruby/regexp /language/i
+            transcribersNotes:      ~ # !ruby/regexp /transcriber/i
+            annotations:            'Annotations'
+
+        rem_source:
+          new_values:
+            ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
+            bookshare:              ~ # !ruby/regexp /Bookshare/i
+            hathiTrust:             'HathiTrust'
+            internetArchive:        ~ # !ruby/regexp /IA|Internet\s+Archive/i
+            emma:                   ~ # !ruby/regexp /EMMA/i
+            accessTextNetwork:      ~ # !ruby/regexp /ATN|Access\s+Text/i
+            publisher:              !ruby/regexp /publisher/i
+            purchased:              ~ # !ruby/regexp /purchase/i
+            faculty:                ~ # !ruby/regexp /faculty/i
+            student:                ~ # !ruby/regexp /student/i
+            library:                !ruby/regexp /library/i
+            otherDso:               ~ # !ruby/regexp /dso/i
+            other:                  '' # NOTE: fallback matching any string
+
+        rem_status:
+          new_values:
+            ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
+            notRemediated:          'unremediated'
+            remediated:             ~ # 'remediated'
+            bornAccessible:         'born_accessible'
+
+       #bib_series:
+       #  new_name:                 'periodical_title'
+
+       #bib_seriesPosition:
+       #  new_name:                 'periodical_series_position'
+
+       #bib_seriesType:
+       #  new_values:
+       #    ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
+       #    book:                   ~ # 'book'
+       #    video:                  ~ # NOTE: new value
+       #    article:                ['journal', 'magazine', 'newspaper']
+       #    podcast:                ~ # NOTE: new value
+
+       #bib_version:
+       #  new_name:                 'emma_version'

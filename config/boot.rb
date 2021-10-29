@@ -194,7 +194,9 @@ if rails_application?
   else
     STDERR.puts "BUILD #{BUILD_VERSION.inspect}"
   end
-  if application_deployed? # TODO: debugging - remove section eventually
+
+  # Log initial conditions.
+  if application_deployed?
     STDERR.puts "$0       = #{$0.inspect}"
     STDERR.puts "$*       = #{$*.inspect}"
     STDERR.puts "$ARGV    = #{$ARGV.inspect}"
@@ -207,6 +209,11 @@ if rails_application?
         .sort
         .join(%Q(",\n))
         .gsub(/"([^"]+)"=>/, '... \1 = ')
+  end
+
+  # API versions are usually in sync.
+  unless (vs = SEARCH_API_VERSION) == (vi = INGEST_API_VERSION)
+    STDERR.puts "** NOTE ** Search API v#{vs} != Ingest API v#{vi}"
   end
 
 elsif !$0.to_s.end_with?('rails', 'rake')

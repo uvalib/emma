@@ -37,7 +37,8 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  before_action :authenticate_user!, except: %i[show]
+  before_action :authenticate_dev!,  only:   %i[api_migrate]
+  before_action :authenticate_user!, except: %i[api_migrate show]
 
   # ===========================================================================
   # :section: Authorization
@@ -626,6 +627,25 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   public
+
+  # == GET /upload/api_migrate?v[ersion]=[0.0.]5
+  # Modify :emma_data fields and content.
+  #
+  # @see "en.emma.api_migrate"
+  #
+  def api_migrate
+    __debug_route
+    opt = request_parameters
+    if (api_version = opt[:v] || opt[:version])
+      ApiMigrate.new(api_version).run!(update: false, report: true)
+      render plain: 'Results sent to $stderr'
+    else
+      render plain: 'No version'
+    end
+  rescue => error
+    render plain: "ERROR: #{error}"
+    re_raise_if_internal_exception(error)
+  end
 
   # == GET /upload/bulk_reindex?id=(:id|SID|RANGE_LIST)
   # Cause all of the listed items to be re-indexed.
