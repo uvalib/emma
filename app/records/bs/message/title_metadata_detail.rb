@@ -124,6 +124,7 @@ class Bs::Message::TitleMetadataDetail < Bs::Api::Message
     has_one   :notes
     has_one   :numPages,              Integer
     has_one   :opus
+    has_one   :originCountry
     has_one   :publishDate,           IsoDate
     has_one   :publisher
     has_one   :readingAgeMaximum,     Integer

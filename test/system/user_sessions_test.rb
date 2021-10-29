@@ -46,7 +46,7 @@ class UserSessionsTest < ApplicationSystemTestCase
       # Go to a new page.
       visit_index :title
       click_on class: 'bookshare-logout'
-      assert_flash notice: 'Signed out'
+      assert_flash notice: 'signed out'
 
     end
   end

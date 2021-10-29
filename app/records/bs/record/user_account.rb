@@ -53,6 +53,7 @@ class Bs::Record::UserAccount < Bs::Api::Record
     has_one   :dateOfBirth
     has_one   :deleted,                 Boolean
     has_one   :emailAddress
+    has_one   :grade
     has_one   :guardian,                Bs::Record::Name
     has_one   :hasAgreement,            Boolean
     has_one   :language
