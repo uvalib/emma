@@ -17,6 +17,18 @@
 # 1   1   Required single-valued field.
 # 1   ~   Required multi-valued field.
 # N   M   Multivalued field requiring between N and M values, inclusive.
+#
+# The type indicates how the field is handled on the entry form:
+#
+# MIN MAX TYPE        PRESENTATION
+# --- --- ---------------------------------------------------------------------
+# 0   0   -           Not present on the entry form
+# *   1   (text)      <input type="text"> returning string
+# *   1   textarea    <textarea> returning string with newlines preserved
+# *   1   ENUM        Single-value <select> returning string
+# *   ~   (text)      <input type="text"> with delimited values returning array
+# *   ~   textarea    <textarea> returning array of newline-delimited values
+# *   ~   ENUM        Multi-value <select> returning array
 
 en:
 
@@ -392,13 +404,13 @@ en:
             # NOTE: Supplied by Unified Search service for non-EMMA items.
             min:          0
             max:          1
-            type:         url
             label:        'Download Link'
             tooltip:      |
               Source repository URL to retrieve a copy of the remediated
               content file.
             notes_html:   |
               <em>TODO</em>
+            type:         url
             origin:       system
 
           emma_webPageLink:
@@ -423,7 +435,7 @@ en:
             # NOTE: superseded by rem_remediationDate
             min:          0
             max:          0
-            label:        'Remediation Date'
+            label:        'Remediation Date.'
             tooltip:      |
               Date of the most recent change to the remediated content file.
             notes_html:   |
@@ -446,7 +458,7 @@ en:
             type:         date
             origin:       system
 
-          emma_repositoryMetadataUpdateDate:
+          emma_repositoryUpdateDate:
             # FMM5: N/A
             # IA:   N/A
             # SR:   IsoDay
@@ -454,6 +466,19 @@ en:
             min:          0
             max:          1
             label:        'Entry Update'
+            tooltip:      |
+              Date of the most recent change to the source repository entry for
+              the item.
+            notes_html:   |
+              <em>TODO</em>
+            type:         date
+            origin:       system
+
+          emma_repositoryMetadataUpdateDate:
+            # NOTE: being renamed emma_repositoryUpdateDate
+            min:          0
+            max:          0
+            label:        'Entry Update.'
             tooltip:      |
               Date of the most recent change to the source repository entry for
               the item.
@@ -480,46 +505,30 @@ en:
             origin:       system
 
           emma_lastRemediationNote:
-            # NOTE: superseded by rem_remediationComments
+            # NOTE: superseded by rem_comments
             min:          0
             max:          0
-            label:        'Remediation Note'
+            label:        'Remediation Comments.'
             tooltip:      'Description of remediation(s) for this file.'
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter description'
             type:         textarea
 
-          emma_version: # NOTE: proposed with API 0.0.5 versus bib_version
+          emma_version:
             # FMM5: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
             # IA:   "version"
             # SR:   String
             # IR:   String
             min:          0
-            max:          0 # NOTE: would be 1
-            label:        'Version (proposed)'
+            max:          1
+            label:        'Version'
             tooltip:      |
               For book content, the edition or version of the book
               (if applicable).
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter edition, version, etc.'
-
-          emma_workType: # NOTE: proposed with API 0.0.5 versus bib_seriesType
-            # FMM5: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
-            # IA:   "series_type"
-            # SR:   WorkType
-            # IR:   WorkType
-            # NOTE: It might be better to make this required but add an
-            # NOTE:   enumeration selection for "Other".
-            min:          0
-            max:          0 # NOTE: would be 1
-            label:        'Work Type (proposed)'
-            tooltip:      |
-              The type of publication from which the content was extracted.
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol WorkType
 
           emma_formatVersion:
             # FMM5: *missing*
@@ -590,7 +599,8 @@ en:
             # IA:   Combined from "doi", "issn", "isbn" fields.
             # SR:   Array<PublicationIdentifier>
             # IR:   Array<PublicationIdentifier>
-            min:          1
+            # NOTE: At least one is preferred, but some works may not have any.
+            min:          0
             max:          ~
             label:        'Identifier'
             tooltip:      |
@@ -877,63 +887,6 @@ en:
             origin:       system
 
           # ===================================================================
-          # emma_data JSON keys - Periodical bibliographic information
-          # ===================================================================
-
-          periodical: # NOTE: proposed with API 0.0.5 versus bib_series
-            # FMM5: N/A
-            # IA:   N/A
-            # SR:   Boolean
-            # IR:   Boolean
-            min:          0
-            max:          0 # NOTE: would be 1
-            label:        'Periodical (proposed)'
-            tooltip:      |
-              True if the work is an article, issue, or episode of a
-              periodical.
-            notes_html:   |
-              <em>TODO</em>
-            type:         boolean
-
-          periodical_title: # NOTE: proposed with API 0.0.5 versus bib_series
-            # FMM5: "Series Name", Optional, Non-repeatable
-            # IA:   *missing*
-            # SR:   String
-            # IR:   String
-            min:          0
-            max:          0 # NOTE: would be 1
-            label:        'Series (proposed)'
-            tooltip:      |
-              For an article or paper, the name of the journal or periodical
-              in which it published; for book content, the name of the series
-              to which the book belongs (if applicable).
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Journal name or publication series (if applicable)'
-
-          periodical_identifier: # NOTE: proposed with API 0.0.5
-            # TODO: how is this supposed to interact with dc_identifier?
-            min:          0
-            max:          0 # NOTE: would be 1
-            label:        'Periodical Identifier (proposed)'
-
-          periodical_series_position: # NOTE: proposed with API 0.0.5 versus bib_seriesPosition
-            # FMM5: "Series Position", Optional, Non-repeatable
-            # IA:   "volume"
-            # SR:   *missing*
-            # IR:   *missing*
-            min:          0
-            max:          0 # NOTE: would be 1
-            label:        'Series Position (proposed)'
-            tooltip:      |
-              For an article, the volume/issue/number of the journal or
-              periodical; for book content, the volume number or other
-              description of position within a series of books (if applicable).
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Journal volume/issue/number'
-
-          # ===================================================================
           # emma_data JSON keys - Remediation information
           # ===================================================================
 
@@ -945,7 +898,7 @@ en:
             # TODO: Should be 'min: 1' if actually required.
             min:          0
             max:          1
-            label:        'Source of File'
+            label:        'Source of Content'
             tooltip:      |
               The origin of the content on which the remediated file was based.
             notes_html:   |
@@ -1018,14 +971,10 @@ en:
             type:         textarea
 
           rem_remediation:
-            # FMM5: "Remediated Aspects", Required, Repeatable
-            # IA:   "remediated_aspects"
-            # SR:   *missing*
-            # IR:   *missing*
-            # TODO: This field should be cross-walked to rem_remediatedAspects
+            # NOTE: superseded by rem_remediatedAspects
             min:          0
-            max:          ~
-            label:        'Remediated Aspects'
+            max:          0
+            label:        'Remediated Aspects.'
             tooltip:      |
               A description of the remediations that are provided in this
               submission.
@@ -1037,20 +986,32 @@ en:
           rem_remediatedAspects:
             # FMM5: "Remediated Aspects", Required, Repeatable
             # IA:   "remediated_aspects"
-            # SR:   Array<RemediationType>
-            # IR:   Array<RemediationType>
+            # SR:   Array<RemediatedAspects>
+            # IR:   Array<RemediatedAspects>
             # TODO: Should be 'min: 1' if actually required.
             min:          0
-            max:          0 # TODO: ~
-            label:        'Remediated Aspects (NEW)'
+            max:          ~
+            label:        'Remediated Aspects'
             tooltip:      |
               One or more selections which characterize the remediations that
               are provided in this submission.
             notes_html:   |
               <em>TODO</em>
-            type:         !ruby/symbol RemediationType
+            type:         !ruby/symbol RemediatedAspects
 
           rem_quality:
+            # NOTE: superseded by rem_textQuality
+            min:          0
+            max:          0
+            label:        'Text Quality.'
+            tooltip:      |
+              One or more indicators of the quality of the original scan on
+              which the submission was based.
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol TextQuality
+
+          rem_textQuality:
             # FMM5: "Text Quality", Required, Non-repeatable
             # IA:   "text_quality"
             # SR:   TextQuality
@@ -1080,7 +1041,7 @@ en:
               <em>TODO</em>
             type:         !ruby/symbol RemediationStatus
 
-          rem_remediationDate: # NOTE: supersedes emma_lastRemediationDate
+          rem_remediationDate:
             # FMM5: "Remediation Status Date", Required, Repeatable
             # IA:   *missing*
             # SR:   IsoDay
@@ -1096,7 +1057,7 @@ en:
             type:         date
             origin:       system
 
-          rem_remediationComments: # NOTE: supersedes emma_lastRemediationNote
+          rem_comments:
             # FMM5: "Remediation Comments", Optional, Repeatable
             # IA:   "remediation_comments"
             # SR:   String
@@ -1112,11 +1073,22 @@ en:
             placeholder:  'Enter description'
             type:         textarea
 
+          rem_remediationComments:
+            # NOTE: to be renamed rem_comments
+            min:          0
+            max:          0
+            label:        'Remediation Comments.'
+            tooltip:      'Description of remediation(s) for this file.'
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Enter description'
+            type:         textarea
+
           # ===================================================================
           # emma_data JSON keys - new bibliographic fields
           # ===================================================================
 
-          bib_series: # NOTE: versus periodical_title
+          bib_series:
             # FMM5: "Series Name", Optional, Non-repeatable
             # IA:   *missing*
             # SR:   *missing*
@@ -1132,7 +1104,7 @@ en:
               <em>TODO</em>
             placeholder:  'Journal name or publication series (if applicable)'
 
-          bib_seriesType: # NOTE: versus emma_workType
+          bib_seriesType:
             # FMM5: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
             # IA:   "series_type"
             # SR:   *missing*
@@ -1148,7 +1120,7 @@ en:
               <em>TODO</em>
             type:         !ruby/symbol SeriesType
 
-          bib_seriesPosition: # NOTE: versus periodical_series_position
+          bib_seriesPosition:
             # FMM5: "Series Position", Optional, Non-repeatable
             # IA:   "volume"
             # SR:   *missing*
@@ -1164,17 +1136,11 @@ en:
               <em>TODO</em>
             placeholder:  'Journal volume/issue/number'
 
-          bib_version: # NOTE: versus emma_version
-            # FMM5: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
-            # IA:   "version"
-            # SR:   *missing*
-            # IR:   *missing*
-            # NOTE: IA uploads actually have strings like "Edition5" -- better
-            # NOTE:   if were something more familiar like "ed. 5" or "5th ed."
-            # NOTE:
+          bib_version:
+            # NOTE: superseded by emma_version
             min:          0
-            max:          1
-            label:        'Version'
+            max:          0
+            label:        'Version.'
             tooltip:      |
               For book content, the edition or version of the book
               (if applicable).

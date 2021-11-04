@@ -16,7 +16,7 @@ $row-separation-narrow: 1rem;
 $value-right-margin:    calc(2 * #{$flex-gap-x});
 
 // The "top" values for sticky positioning -- the "narrow" version is much
-// larger because it is actually applied only to the the .field-Title element,
+// larger because it is actually applied only to the .field-Title element,
 // which needs to stick lower in order to keep from scrolling over the already-
 // stuck item number.  Also, this isn't using "vh" units because this seemed to
 // be inconsistent between emulations of, e.g., iPhone 5 and Galaxy Note 9.
@@ -1489,10 +1489,12 @@ body.grid-style {
         Publisher:              show-(),
         Subject:                -hide(),
         Rights:                 -hide(),
-        CopyrightDate:          show-(),
+        PublicationDate:        show-(),
+        CopyrightDate:          -hide(),
         Identifier:             show-(2),
         Related:                -hide(),
-        //CopyrightDate:        show-(), // moved before Identifier
+        //PublicationDate:      show-(), // moved before Identifier
+        //CopyrightDate:        -hide(), // moved before Identifier
         EntryCreated:           -hide(),
         EntryUpdated:           -hide(),
         EmmaRecordId:           show-(),

@@ -138,7 +138,7 @@ en:
         produced_date:          'rem_remediationDate'
         # revision:             'revision'
         revision_date:          'rem_remediationDate'
-        revision_description:   'rem_remediationComments'
+        revision_description:   'rem_comments'
         modified:               'rem_remediationDate'
 
         # From *.ncx file

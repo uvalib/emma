@@ -65,9 +65,10 @@ module Record::EmmaData
   # @type [Array<Symbol>]
   #
   DEFAULT_TIME_NOW_FIELDS = %i[
-    rem_remediationDate
     emma_lastRemediationDate
     emma_repositoryMetadataUpdateDate
+    emma_repositoryUpdateDate
+    rem_remediationDate
   ].freeze
 
   # ===========================================================================

@@ -18,7 +18,6 @@ __loading_begin(__FILE__)
 # @attr [String]                        bib_series
 # @attr [SeriesType]                    bib_seriesType
 # @attr [String]                        bib_seriesPosition
-# @attr [String]                        bib_version
 #
 # @see file:config/locales/records/upload.en.yml          *en.emma.upload.record.emma_data*
 # @see file:config/locales/records/search.en.yml          *en.emma.search.record*
@@ -47,7 +46,6 @@ class AwsS3::Record::SubmissionRequest < AwsS3::Api::Record
     has_one   :bib_series
     has_one   :bib_seriesType,                    SeriesType
     has_one   :bib_seriesPosition
-    has_one   :bib_version
 
   end
 

@@ -53,7 +53,7 @@ module Import::IaBulk
     collection:           :skip,                      # NOTE: [1]
     contributed_file:     [:contributed_file, :string_value], # NOTE: [2]
     contributed_format:   :translate_formats,
-    contributor:          [:rem_source,               :string_value],
+    contributor:          [:rem_source,               :rem_source_value],
     creator:              [:dc_creator,               :values],
     date:                 [:dcterms_dateCopyright,    :year_value],
     description:          [:dc_description,           :string_value],
@@ -80,7 +80,7 @@ module Import::IaBulk
     publisher:            [:dc_publisher,             :string_value],
     remediated_aspects:   [:rem_remediatedAspects,    :rem_aspect_values],
     remediated_by:        [:rem_remediatedBy,         :values],
-    remediation_comments: [:rem_remediationComments,  :string_value],
+    remediation_comments: [:rem_comments,             :string_value],
     remediation_status:   [:rem_status,               :rem_status_value],
     scanner:              :skip,                      # NOTE: [3]
     series_type:          [:bib_seriesType,           :series_type_value],
@@ -88,7 +88,7 @@ module Import::IaBulk
     text_quality:         [:rem_textQuality,          :text_quality_value],
     title:                [:dc_title,                 :string_value],
     uploader:             :skip,                      # NOTE: [4]
-    version:              [:bib_version,              :string_value],
+    version:              [:emma_version,             :string_value],
     volume:               [:bib_seriesPosition,       :string_value],
   }.freeze
 
@@ -185,6 +185,18 @@ module Import::IaBulk
     return field.keys, field.values
   end
 
+  # Transform a "contributor" value into a :rem_source value.
+  #
+  # @note This is probably no longer an appropriate mapping.
+  #
+  # @param [*] v
+  #
+  # @return [String, nil]
+  #
+  def rem_source_value(v)
+    enum_value(v, SourceType)
+  end
+
   # Transform a "mediatype" into a :dc_format.
   #
   # @param [*] v
@@ -216,7 +228,7 @@ module Import::IaBulk
   # @return [Array<String>]
   #
   def rem_aspect_values(v)
-    enum_values(v, RemediationType)
+    enum_values(v, RemediatedAspects)
   end
 
   # Transform a "remediation_status" value into a :rem_status value.

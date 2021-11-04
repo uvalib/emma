@@ -45,16 +45,16 @@ en:
 
         Rights:
           copyright:                'Copyright'
-          #creativeCommons:         'Creative Commons' # NOTE: deprecated with API 0.0.5
-          cc0:                      'CC0         (Creative Commons Public Domain)'
-          ccBy:                     'CC BY       (Creative Commons Attribution)'
-          ccBySa:                   'CC BY-SA    (Creative Commons Attribution, Share-alike)'
-          ccByNc:                   'CC BY-NC    (Creative Commons Attribution, Non-commercial)'
-          ccByNcSa:                 'CC BY-NC-SA (Creative Commons Attribution, Non-commercial, Share-alike)'
-          ccByNd:                   'CC BY-ND    (Creative Commons Attribution, No-derivative-works)'
-          ccByNcNd:                 'CC BY-NC-ND (Creative Commons Attribution, Non-commercial, No-derivative-works)'
-          license:                  'License'
-          embargo:                  'Embargo'
+          creativeCommons:          'Creative Commons' # NOTE: to be removed with API 0.0.5
+          #cc0:                      'CC0         (Creative Commons Public Domain)'                                     # NOTE: proposed with API 0.0.5
+          #ccBy:                     'CC BY       (Creative Commons Attribution)'                                       # NOTE: proposed with API 0.0.5
+          #ccBySa:                   'CC BY-SA    (Creative Commons Attribution, Share-alike)'                          # NOTE: proposed with API 0.0.5
+          #ccByNc:                   'CC BY-NC    (Creative Commons Attribution, Non-commercial)'                       # NOTE: proposed with API 0.0.5
+          #ccByNcSa:                 'CC BY-NC-SA (Creative Commons Attribution, Non-commercial, Share-alike)'          # NOTE: proposed with API 0.0.5
+          #ccByNd:                   'CC BY-ND    (Creative Commons Attribution, No-derivative-works)'                  # NOTE: proposed with API 0.0.5
+          #ccByNcNd:                 'CC BY-NC-ND (Creative Commons Attribution, Non-commercial, No-derivative-works)'  # NOTE: proposed with API 0.0.5
+          #license:                  'License'                                                                          # NOTE: proposed with API 0.0.5
+          #embargo:                  'Embargo'                                                                          # NOTE: proposed with API 0.0.5
           publicDomain:             'Public Domain'
           other:                    'Other'
 
@@ -190,7 +190,7 @@ en:
           otherDso:                 'Another DSO'
           other:                    'Other'
 
-        RemediationType:
+        RemediatedAspects:
           scannedAndOcrd:           'Scanned and OCRed'
           proofreadCorrectedOcr:    'Proofread Corrected OCR'
           addedBookmarks:           'Added Bookmarks'

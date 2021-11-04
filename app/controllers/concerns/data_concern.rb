@@ -331,7 +331,7 @@ module DataConcern
   #
   BOGUS_TITLE_PREFIXES = %w(RWL IA_BULK)
 
-  # Words used in :rem_remediationComments during development/testing to denote
+  # Words used in :rem_comments during development/testing to denote
   # submissions which are not meant to be presented in search results.
   #
   # @type [Array<String>]
@@ -345,7 +345,7 @@ module DataConcern
   def submission_bogus?(emma_data)
     data  = json_parse(emma_data) || {}
     title = data[:dc_title].to_s
-    note  = data[:rem_remediationComments].to_s
+    note  = data[:rem_comments].to_s
     title.blank? ||
       BOGUS_TITLE_PREFIXES.any? { |s| title.start_with?(s) } ||
       BOGUS_NOTE_WORDS.any? { |s| note.include?(s) }

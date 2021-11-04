@@ -1707,6 +1707,8 @@ public
 
 # "Describes the type of work"
 #
+# @note Rejected for API 0.0.5
+#
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.WorkType*
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaCommonFields/emma_workType            JSON schema specification
 #
@@ -1736,6 +1738,8 @@ class Rights < EnumType
 end
 
 # "Source of this instance of the work"
+#
+# @note Deprecated with API 0.0.5
 #
 # @see file:config/locales/types/search.en.yml *en.emma.search.type.Provenance*
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_provenance            JSON schema specification
@@ -1839,12 +1843,12 @@ public
 class SourceType < EnumType
 end
 
-# RemediationType
+# RemediatedAspects
 #
-# @see file:config/locales/types/search.en.yml *en.emma.search.type.RemediationType*
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.RemediatedAspects*
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_remediatedAspects   JSON schema specification
 #
-class RemediationType < EnumType
+class RemediatedAspects < EnumType
 end
 
 # TextQuality

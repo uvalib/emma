@@ -26,6 +26,7 @@ module Ingest::Shared::DateMethods
     emma_lastRemediationDate
     emma_publicationDate
     emma_repositoryMetadataUpdateDate
+    emma_repositoryUpdateDate
     emma_sortDate
     rem_remediationDate
   ].freeze

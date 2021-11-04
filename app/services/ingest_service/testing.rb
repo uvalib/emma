@@ -81,7 +81,7 @@ module IngestService::Testing
       date: %i[
         dcterms_dateAccepted
         dcterms_dateCopyright
-        emma_repositoryMetadataUpdateDate
+        emma_repositoryUpdateDate
         rem_remediationDate
       ],
       string: %i[
@@ -96,7 +96,7 @@ module IngestService::Testing
         emma_repositoryRecordId
         emma_retrievalLink
         emma_webPageLink
-        rem_remediationComments
+        rem_comments
         s_accessibilitySummary
       ],
       array: %i[
@@ -168,7 +168,7 @@ module IngestService::Testing
       # == Bad data for fields expecting single values.
       if SINGLETON_FIELDS_BAD & faults
         tests += 1
-        item.rem_remediationComments = %w(rem_note_1 rem_note_2 rem_note_3)
+        item.rem_comments            = %w(rem_note_1 rem_note_2 rem_note_3)
         item.emma_repositoryRecordId = '.bad,record_id;with/punct'
       end
 
@@ -194,9 +194,9 @@ module IngestService::Testing
       # == Bad data for date fields.
       if DATE_FIELDS_BAD & faults
         tests += 1
-        item.rem_remediationDate               = 'bad date'
-        item.emma_repositoryMetadataUpdateDate = '.bad,date;with/punct'
-        item.dcterms_dateAccepted              = %w(2021-04-18 2021-04-19)
+        item.rem_remediationDate       = 'bad date'
+        item.emma_repositoryUpdateDate = '.bad,date;with/punct'
+        item.dcterms_dateAccepted      = %w(2021-04-18 2021-04-19)
       end
 
       # == PDF-style dates.

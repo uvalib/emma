@@ -30,11 +30,6 @@ en:
           label:                            'Series Type'
           max:                              1
 
-        emma_workType:
-          # NOTE: proposed with API 0.0.5
-          label:                            'Work Type'
-          max:                              1
-
         bib_version:
           # NOTE: not yet in the index
           label:                            'Version'
@@ -50,18 +45,8 @@ en:
           label:                            'Series'
           max:                              1
 
-        periodical_title:
-          # NOTE: proposed with API 0.0.5
-          label:                            'Periodical Title'
-          max:                              1
-
         bib_seriesPosition:
           # NOTE: not yet in the index
-          label:                            'Series Position'
-          max:                              1
-
-        periodical_series_position:
-          # NOTE: proposed with API 0.0.5
           label:                            'Series Position'
           max:                              1
 
@@ -98,17 +83,13 @@ en:
           max:                              1
 
         dc_provenance:
+          # NOTE: deprecated with API 0.0.5
           label:                            'Provenance'
-          max:                              1
+          max:                              0
 
         dc_identifier:
           label:                            'Identifier'
           max:                              ~
-
-        periodical_identifier:
-          # NOTE: proposed with API 0.0.5
-          label:                            'Periodical Identifier'
-          max:                              1
 
         dc_relation:
           label:                            'Related'
@@ -183,7 +164,7 @@ en:
           max:                              1
 
         rem_source:
-          label:                            'Source of File'
+          label:                            'Source of Content'
           max:                              1
 
         rem_metadataSource:
