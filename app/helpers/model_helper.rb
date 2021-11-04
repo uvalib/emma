@@ -423,11 +423,13 @@ module ModelHelper
   )
     return if value.blank?
     model ||= params[:controller]
-    prop = Field.configuration_for(field, model)
-    rng  = html_id((label || 'None'), camelize: true)
-    type = "field-#{rng}"
+    prop    = Field.configuration_for(field, model)
+
+    # Pre-process label to derive names and identifiers.
+    base = model_html_id(field || label)
+    type = "field-#{base}"
     v_id = type.dup
-    l_id = +"label-#{rng}"
+    l_id = +"label-#{base}"
     [v_id, l_id].each { |id| id << "-#{index}" } if index
 
     # Extract range values.
@@ -563,6 +565,36 @@ module ModelHelper
   #
   def field_category(name)
     name.to_s.delete_suffix('_list').singularize.to_sym
+  end
+
+  # EMMA data field prefixes with trailing underscore for #model_html_id.
+  #
+  # @type [Array<String>]
+  #
+  FIELD_PREFIX =
+    DataHelper::EMMA_DATA_FIELDS.map { |field|
+      field.to_s.sub(/_.*$/, '_')
+    }.uniq.deep_freeze
+
+  # Suffixes indicating field names to be preserved in #model_html_id.
+  #
+  # @type [Array<String>]
+  #
+  RESERVED_SUFFIX = %w(_data _date).freeze
+
+  # Create a base for .field-* and .value-* classes.
+  #
+  # @param [Symbol, String, nil] base   Default: 'None'.
+  #
+  # @return [String]
+  #
+  def model_html_id(base)
+    name = base.to_s.strip
+    unless name.end_with?(*RESERVED_SUFFIX)
+      FIELD_PREFIX.find { |prefix| name.delete_prefix!(prefix) }
+    end
+    name = 'None' if name.blank?
+    html_id(name, camelize: true)
   end
 
   # ===========================================================================
@@ -1399,14 +1431,18 @@ module ModelHelper
     required: nil,
     **opt
   )
-    # Pre-process label to derive names and identifiers.
-    base = html_id((label || 'None'), camelize: true)
-    type = "field-#{base}"
-    name = field&.to_s || base
     model ||= params[:controller]
-    prop = Field.configuration_for(field, model)
+    prop    = Field.configuration_for(field, model)
     return if prop[:ignored]
     return if prop[:role] && !has_role?(prop[:role])
+
+    # Pre-process label to derive names and identifiers.
+    base = model_html_id(field || label)
+    name = field&.to_s || base
+    type = "field-#{base}"
+    v_id = type.dup
+    l_id = +"label-#{base}"
+    [v_id, l_id].each { |id| id << "-#{index}" } if index
 
     # Pre-process value.
     render_method = placeholder = range = nil
@@ -1429,6 +1465,7 @@ module ModelHelper
     value    = Array.wrap(value).compact_blank
     disabled = prop[:readonly] if disabled.nil?
     required = prop[:required] if required.nil?
+    fieldset = false # (render_method == :render_form_menu_multi)
 
     # Create a help icon control if applicable.  (The associated popup panel
     # require some special handling to get it to appear above other elements
@@ -1446,9 +1483,6 @@ module ModelHelper
 
     # Option settings for both label and value.
     prepend_classes!(opt, "row-#{row}", type, *status)
-    l_id = "label-#{base}"
-    v_id = index ? "#{type}-#{index}" : type
-    fieldset = false # (render_method == :render_form_menu_multi)
 
     # Label for input element.
     l_opt = append_classes(opt, 'label')

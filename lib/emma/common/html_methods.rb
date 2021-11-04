@@ -59,9 +59,9 @@ module Emma::Common::HtmlMethods
   # @return [String]
   #
   def html_id(*parts, separator: '-', underscore: true, camelize: false, **)
-    separator ||= ''
-    word_break  = HTML_ID_WORD_BREAK + separator
-    ignored     = HTML_ID_IGNORED.delete(separator)
+    separator  = '' if separator.blank?
+    word_break = HTML_ID_WORD_BREAK + separator
+    ignored    = HTML_ID_IGNORED.delete(separator)
     parts.map { |part|
       part = sanitized_string(part) if part.is_a?(ActiveSupport::SafeBuffer)
       part = part.to_s
@@ -72,7 +72,7 @@ module Emma::Common::HtmlMethods
       part.presence
     }.compact.join(separator).tap { |result|
       # noinspection RubyResolve
-      result.prepend('Z') if result.start_with?(/[^a-z]/i)
+      result.prepend('Z') unless result.start_with?(/[a-z]/i)
     }
   end
 

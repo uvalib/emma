@@ -176,7 +176,7 @@ $(document).on('turbolinks:load', function() {
     function titleId(item) {
         let $item   = $(item);
         const value = $item.attr('data-title_id');
-        return value || $item.find('.field-EmmaTitleId.value').text();
+        return value || $item.find('.field-TitleId.value').text();
     }
 
     /**
@@ -209,7 +209,7 @@ $(document).on('turbolinks:load', function() {
     function recordId(item) {
         let $item   = $(item);
         const value = $item.attr('data-record_id');
-        return value || $item.find('.field-EmmaRecordId.value').text();
+        return value || $item.find('.field-RecordId.value').text();
     }
 
     /**

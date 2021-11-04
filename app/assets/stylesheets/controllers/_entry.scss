@@ -613,7 +613,7 @@ form.select-entry {
 
         // De-emphasize this field to indicate that it is no longer required
         // after "rem_complete" (Entire Document Remediated?) is set to "true".
-        &.field-PartsRemediated[data-required="false"] {
+        &.field-Coverage[data-required="false"] {
             background: $input-sealed-bg;
         }
     }
