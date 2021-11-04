@@ -8,6 +8,12 @@
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
 # in config/locales/controllers/search.en.yml
+#
+# NOTE: Fields with the same metadata are in descending order of priority.
+# This allows the prioritize() mixin in .search-list-item to "turn off"
+# extraneous label/value pairs during transitional times where the index may
+# present the same metadata value with both its new field name and its old
+# field name(s).
 
 en:
 
@@ -30,14 +36,13 @@ en:
           label:                            'Series Type'
           max:                              1
 
-        bib_version:
-          # NOTE: not yet in the index
+        emma_version:
           label:                            'Version'
           max:                              1
 
-        emma_version:
-          # NOTE: proposed with API 0.0.5
-          label:                            'Version'
+        bib_version:
+          # NOTE: superseded by emma_version
+          label:                            'Version.'
           max:                              1
 
         bib_series:
@@ -95,12 +100,13 @@ en:
           label:                            'Related'
           max:                              ~
 
-        emma_publicationDate:
-          label:                            'Publication Date'
-          max:                              1
-
         dcterms_dateCopyright:
           label:                            'Copyright Date'
+          max:                              1
+
+        emma_publicationDate:
+          # NOTE: if dateCopyright is present this will be a derived value.
+          label:                            'Publication Date'
           max:                              1
 
         dcterms_dateAccepted:
@@ -119,8 +125,13 @@ en:
           label:                            'Collection'
           max:                              ~
 
-        emma_repositoryMetadataUpdateDate:
+        emma_repositoryUpdateDate:
           label:                            'Entry Updated'
+          max:                              1
+
+        emma_repositoryMetadataUpdateDate:
+          # NOTE: renamed emma_repositoryUpdateDate
+          label:                            'Entry Updated.'
           max:                              1
 
         emma_recordId:
@@ -147,20 +158,27 @@ en:
         # File-level remediation information
         # =====================================================================
 
-        emma_lastRemediationDate:
-          label:                            'Last Update'
-          max:                              1
-
         rem_remediationDate:
           label:                            'Date Remediated'
           max:                              1
 
-        emma_lastRemediationNote:
-          label:                            'Update Note'
+        emma_lastRemediationDate:
+          # NOTE: renamed rem_remediationDate
+          label:                            'Date Remediated.'
+          max:                              1
+
+        rem_comments:
+          label:                            'Remediation Comments'
           max:                              1
 
         rem_remediationComments:
-          label:                            'Remediation Comments'
+          # NOTE: to be renamed rem_comments
+          label:                            'Remediation Comments.'
+          max:                              1
+
+        emma_lastRemediationNote:
+          # NOTE: to be renamed rem_comments
+          label:                            'Remediation Comments.'
           max:                              1
 
         rem_source:
@@ -183,20 +201,22 @@ en:
           label:                            'Part(s) Remediated'
           max:                              1
 
-        rem_remediation:
-          label:                            'Remediated Aspects (OLD)'
-          max:                              ~
-
         rem_remediatedAspects:
           label:                            'Remediated Aspects'
           max:                              ~
 
-        rem_quality:
-          label:                            'Text Quality'
-          max:                              1
+        rem_remediation:
+          # NOTE: superseded by rem_remediatedAspects
+          label:                            'Remediated Aspects.'
+          max:                              ~
 
         rem_textQuality:
           label:                            'Text Quality'
+          max:                              1
+
+        rem_quality:
+          # NOTE: superseded by rem_textQuality
+          label:                            'Text Quality.'
           max:                              1
 
         rem_status:

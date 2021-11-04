@@ -594,6 +594,40 @@ $sticky-top-narrow:     3.125rem;
         border-radius: 1rem;
         box-shadow:    inset 0 0 0.75rem -0.25rem gray;
     }
+
+    //=========================================================================
+    // Hide neighboring field pairs with the same meaning.
+    //=========================================================================
+
+    /**
+     * During transitional times, the index may be supplying the same metadata
+     * field via two (or more) field names, this mixin supports "turning off"
+     * label/value pairs of an older field if a label/value pair of the newer
+     * field is present.
+     *
+     * For the mixin to operate, ordering of pairs in "en.emma.search.record"
+     * must be maintained so that older name(s) for a given field follow the
+     * newest name for the field.
+     */
+    @mixin prioritize($new-name, $old-name) {
+        .value.field-#{$new-name} + .label.field-#{$old-name} {
+            &, & + * { display: none; }
+        }
+    }
+
+    @include prioritize(Version,              Version);         // NOTE [1]
+    @include prioritize(DateCopyright,        PublicationDate); // NOTE [2]
+    @include prioritize(RepositoryUpdateDate, RepositoryMetadataUpdateDate);
+    @include prioritize(RemediationDate,      LastRemediationDate);
+    @include prioritize(Comments,             RemediationComments);
+    @include prioritize(Comments,             LastRemediationNote);
+    @include prioritize(RemediationComments,  LastRemediationNote);
+    @include prioritize(RemediatedAspects,    Remediation);
+    @include prioritize(TextQuality,          Quality);
+
+    // NOTE [1] Prioritize 'emma_version' over 'bib_version'.
+    // NOTE [2] If both are present then 'emma_PublicationDate' will just be
+    //  derived from 'dcterms_dateCopyright', so the former is redundant.
 }
 
 // Zero or more .search-list-item elements.

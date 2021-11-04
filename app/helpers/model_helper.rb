@@ -329,9 +329,6 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def render_field_values(
     item,
     model:      nil,
@@ -352,16 +349,7 @@ module ModelHelper
 
     value_opt = opt.slice(:model, :index, :min_index, :max_index, :no_format)
 
-    # Don't bother showing publication date if it's just derived from
-    # copyright date.
-    # noinspection RailsParamDefResolve
-    if (pub = item.try(:emma_publicationDate))
-      cpr = item.try(:dcterms_dateCopyright)
-      if cpr && (IsoDate.cast(pub).to_s == IsoDate.cast(cpr).to_s)
-        pairs.delete(:emma_publicationDate)
-      end
-    end
-
+    # noinspection RubyNilAnalysis
     pairs.map { |k, v|
       config = field = label = value = nil
       if v.is_a?(Symbol)
