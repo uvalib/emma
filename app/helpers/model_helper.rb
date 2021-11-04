@@ -425,31 +425,30 @@ module ModelHelper
 
     # Format the content of certain fields.
     unless Array.wrap(opt.delete(:no_format)).include?(field)
+      lines = nil
       # noinspection RubyCaseWithoutElseBlockInspection
       case field
         when :dc_description
-          format_description(value).tap do |parts|
-            if parts.size > 1
-              value = parts
-              prop  = prop.merge(type: 'textarea')
-            end
-          end
+          value = lines = format_description(value)
+        when :rem_comments, :s_accessibilitySummary
+          value = lines = format_multiline(value)
+        when :emma_lastRemediationNote, :rem_remediationComments
+          value = lines = format_multiline(value)
         when :dc_identifier, :dc_relation
           value = mark_invalid_identifiers(value)
         when :dc_language
           value = mark_invalid_languages(value)
       end
+      prop = prop.merge(type: 'textarea') if lines && (lines.size > 1)
     end
 
     # Pre-process value(s).
     if prop[:array]
-      v_idx = 0
-      value = Array.wrap(value)
-      value = value.map { |v| html_div(v, class: "item-#{v_idx += 1}") }
+      value = value.is_a?(Array) ? value.dup : [value]
+      value.map!.with_index(1) { |v, i| html_div(v, class: "item-#{i}") }
       value = safe_join(value, separator)
     elsif value.is_a?(Array)
-      separator ||= HTML_BREAK
-      value = safe_join(value, separator)
+      value = safe_join(value, (separator || HTML_BREAK))
     end
 
     # Create a help icon control if applicable.
@@ -620,22 +619,16 @@ module ModelHelper
   # cases.
   #
   def format_description(text)
+    # Look for signs of structure, otherwise just treat as unstructured.
     case text
-      when /"";/                      # Seen in some IA records.
-        text = text.gsub(/"" ""|""""/, '""; ""')
-
-      when /\.--v\. */                # Seen in some IA records.
-        text = text.sub(/(\S) +(v[^.\s]*\.) */, '\1 -- \2 ')
-        text.gsub!(/(\S) *-- *(v[^.\s]*\.) */, '\1; \2 ')
-
-      when /; *PART */i               # Seen in some IA records.
-      when /:;/                       # Observed in one unusual case.
-      when /[[:punct:]] *--.* +-- +/  # Blurbs/quotes with attribution.
-      when / +-- +.* +-- +/           # Table-of-contents title list.
-      when /(;[^;]+){4,}/             # Many sections indicated.
-
-      else                            # Otherwise not treated as "structured".
-        return [text]
+      when /"";/                     then double_quotes_to_sections(text)
+      when /\.--v\. */               then double_dash_to_sections(text)
+      when /; *PART */i              then # Seen in some IA records.
+      when /:;/                      then # Observed in one unusual case.
+      when /[[:punct:]] *--.* +-- +/ then # Blurbs/quotes with attribution.
+      when / +-- +.* +-- +/          then # Table-of-contents title list.
+      when /(;[^;]+){4,}/            then # Many sections indicated.
+      else                                return format_multiline(text)
     end
     q_section = nil
     text.split(/ *; */).flat_map { |part|
@@ -686,6 +679,39 @@ module ModelHelper
     }.compact.map { |line|
       line.gsub(/---/, EM_DASH).gsub(/--/,  EN_DASH)
     }
+  end
+
+  # Seen in some IA records.
+  #
+  # @param [String]
+  #
+  # @return [String]
+  #
+  def double_quotes_to_sections(text)
+    text.to_s.gsub(/"" ""|""""/, '""; ""')
+  end
+
+  # Seen in some IA records.
+  #
+  # @param [String]
+  #
+  # @return [String]
+  #
+  def double_dash_to_sections(text)
+    text.to_s.dup.tap do |result|
+      result.sub!( /(\S) +(v[^.\s]*\.) */,     '\1 -- \2 ')
+      result.gsub!(/(\S) *-- *(v[^.\s]*\.) */, '\1; \2 ')
+    end
+  end
+
+  # Transform a string with newlines/semicolons into an array of lines.
+  #
+  # @param [String] text
+  #
+  # @return [Array<String>]
+  #
+  def format_multiline(text)
+    Array.wrap(text).flat_map { |s| s.to_s.split(/ *[;\n] */) }.compact_blank!
   end
 
   # ===========================================================================
