@@ -385,11 +385,12 @@ class IsoDate < ScalarType
     HOUR     = '\d\d'
     MINUTE   = '\d\d'
     SECOND   = '\d\d'
-    TIME     = "(#{HOUR}):(#{MINUTE})(:(#{SECOND}))?"
+    FRACTION = '\.\d+'
+    TIME     = "(#{HOUR}):(#{MINUTE})(:(#{SECOND})(#{FRACTION})?)?"
 
     ZULU     = 'Z'
     H_OFFSET = '\d\d?'
-    M_OFFSET = '\d\d'
+    M_OFFSET = '\d\d?'
     ZONE     = "#{ZULU}|([+-])(#{H_OFFSET})(:(#{M_OFFSET}))?"
 
     # Valid values for this type start with one of these patterns.
@@ -454,7 +455,7 @@ class IsoDate < ScalarType
         when IsoYear                  then day_convert(v)
         when IsoDay                   then day_convert(v)
         when IsoDate                  then v.to_s
-        when START_PATTERN[:complete] then $1
+        when START_PATTERN[:complete] then datetime_clean($1)
         when START_PATTERN[:day]      then $1
         when START_PATTERN[:year]     then day_convert(v)
         else                               datetime_parse(v)
@@ -514,7 +515,7 @@ class IsoDate < ScalarType
     # @return [String, nil]
     #
     def datetime_parse(value)
-      translate(value).to_datetime.strftime.sub(/[+-]00(:00)?$/, ZULU)
+      datetime_clean(translate(value).to_datetime.strftime)
     rescue
       nil
     end
@@ -549,6 +550,23 @@ class IsoDate < ScalarType
       result = pdf_date_translate(value)
       result = american_date_translate(value) if result == value
       result
+    end
+
+    # Remove fractional seconds and normalize +00:00 to Z.
+    #
+    # @param [String, *] value
+    #
+    # @return [String]
+    #
+    # == Implementation Notes
+    # Fractional seconds are rounded unless >= 59 seconds.  In that case, the
+    # fractional part is truncated in order to avoid a potential cascade of
+    # changes to minute, hour, etc.
+    #
+    def datetime_clean(value)
+      value.to_s.strip.sub(/[+-]00?(:00?)?$/, ZULU).sub(/\d+\.\d+/) do |sec|
+        [sec.to_f.round, 59].min
+      end
     end
 
     # =========================================================================

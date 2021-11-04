@@ -74,9 +74,11 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # A pattern matching a likely year number.
     #
+    # If `match(YEAR_PATTERN)` succeeds, the year will be $2 or $3.
+    #
     # @type [Regexp]
     #
-    YEAR_PATTERN = /(?<=^|\W)(\d{4})(?=\W|$)/.freeze
+    YEAR_PATTERN = /^(\s*(\d{4})|[^\d]*\W(\d{4}))(?=\W|$)/.freeze
 
     # A pattern seen for years appended to item numbers.
     #
@@ -244,10 +246,25 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def item_date(rec)
       date = description(rec)
-      date = nil unless date&.match?(YEAR_PATTERN)
       date = nil if date&.match?(LEADING_ITEM_NUMBER)
-      IsoYear.cast(date)&.to_s ||
-        (rec&.dcterms_dateCopyright&.match(YEAR_PATTERN) && $1)
+      get_year(date) || get_year(rec&.dcterms_dateCopyright) ||
+        get_year(rec&.emma_publicationDate)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Attempt to extract a year from the given string.
+    #
+    # @param [String, nil] value
+    #
+    # @return [String, nil]
+    #
+    def get_year(value)
+      value.to_s.presence&.match(YEAR_PATTERN) && ($2 || $3)
     end
 
     # =========================================================================
