@@ -21,26 +21,32 @@ en:
 
       _template:
 
+        # @see ApiMigrate#TRANSFORM_METHODS
+
         existing_field:
 
-          # Remove the named field.  This is ignored if new_values is given.
+          # Remove the named field.  This is ignored if :translate is present.
           delete_field: Boolean
 
-          # Modify field value(s) *before* new_values translation.
-          prepare:
+          # Pre-process field value(s) before :translate (if present).
+          pre_translate:
             - method_1                    # - apply ApiMigrate#method_1
             - method_2                    # - then apply ApiMigrate#method_2
 
           # Translate to new field values based on old field value pattern(s).
-          new_values:
+          translate:
             new_1: ~                      # Skipped (no equivalent old value)
             new_2: 'old_value'            # Transform old value to new_2
             new_3: !ruby/regexp /pat/i    # Matching old values to new_3
             new_4: [Array<String,Regexp>] # Old values matching any to new_4
             new_5: !ruby/regexp /.*/      # All old values to new_5
-            new_6: ''                     # All old values to new_6
 
-          # Modify field value(s) *after* new_values translation.
+          # Process field value(s) after :pre_translate/:translate.
+          post_translate:
+            - method_1                    # - apply ApiMigrate#method_1
+            - method_2                    # - then apply ApiMigrate#method_2
+
+          # Modify field value(s) after :translate/:post_translate.
           normalize:
             - method_1                    # - apply ApiMigrate#method_1
             - method_2                    # - then apply ApiMigrate#method_2
@@ -64,9 +70,6 @@ en:
         dc_identifier:
           normalize:                normalize_identifier
 
-        dc_provenance:
-          delete_field:             true
-
         dc_relation:
           normalize:                normalize_identifier
 
@@ -80,9 +83,17 @@ en:
           normalize:                normalize_datetime
 
         parent-entry-search:
+          # A parameter that, for some span of time, crept into persisted data.
           delete_field:             true
 
+        rem_metadataSource:
+          normalize:                normalize_text_list
+
+        rem_remediatedBy:
+          normalize:                normalize_text_list
+
         rem_image_count:
+          # IA-only field that ended up as a part of initial bulk uploads.
           delete_field:             true
 
       # =======================================================================
@@ -93,78 +104,114 @@ en:
 
         <<: *GENERIC_TRANSFORMS
 
+        bib_version:
+          new_name:                 'emma_version'
+
+        dc_provenance:
+          delete_field:             true
+
+       #dc_rights:
+       #  translate:
+       #    copyright:              ~ # 'copyright'
+       #    cc0:                    'creativeCommons'
+       #    ccBy:                   ~
+       #    ccBySa:                 ~
+       #    ccByNc:                 ~
+       #    ccByNcSa:               ~
+       #    ccByNd:                 ~
+       #    ccByNcNd:               ~
+       #    license:                ~
+       #    embargo:                ~
+       #    publicDomain:           ~ # 'publicDomain'
+       #    other:                  ~ # 'other'
+
         emma_lastRemediationDate:
           new_name:                 'rem_remediationDate'
           normalize:                normalize_datetime
 
         emma_lastRemediationNote:
-          new_name:                 'rem_remediationComments'
+          new_name:                 'rem_comments'
+
+        emma_repositoryMetadataUpdateDate:
+          new_name:                 'emma_repositoryUpdateDate'
+          normalize:                normalize_datetime
 
         rem_quality:
           new_name:                 'rem_textQuality'
-          normalize:                summarize_quality
           new_min_max:              [0,1]
-          new_values:
+          post_translate:           summarize_quality
+          translate:
             ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
             rawOcr:                 'raw_ocr'
             cleanedOcr:             'cleaned_ocr'
             rekeyed:                ~ # 'rekeyed'
-            proofread:              'proofread'
-            published:              'published'
+            proofread:              ~ # 'proofread'
+            published:              ~ # 'published'
 
         rem_remediation:
           new_name:                 'rem_remediatedAspects'
-          new_values:
+          pre_translate:            normalize_text_list
+          post_translate:           preserve_remediation_comments
+          translate:
             ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
-            scannnedAndOcrd:        "Scanned and OCR'd"
-            proofreadCorrectedOcr:  'Proofread and Corrected OCR'
-            addedBookmarks:         'Added Bookmarks'
-            taggedPdf:              !ruby/regexp /^Tagged/
-            addedImageDescriptions: 'Added Image Descriptions'
-            structuredHeadings:     'Structured Headings'
-            linkedTOC:              'Linked TOC'
-            fixedTables:            'Fixed Tables'
-            addedMathMl:            ~ # !ruby/regexp /MathML/i
-            foreignLanguageMarkup:  ~ # !ruby/regexp /language/i
-            transcribersNotes:      ~ # !ruby/regexp /transcriber/i
-            annotations:            'Annotations'
+            scannedAndOcrd:
+              - "Scanned and OCR'd"
+              - 'ocr'
+              - !ruby/regexp /ocr.d/i
+            proofreadCorrectedOcr:
+              - 'Proofread and Corrected OCR'
+              - !ruby/regexp /corrected|proofread|proofed|cleaned/i
+            addedBookmarks:
+              - 'Added Bookmarks'
+              - !ruby/regexp /bookmarks?/i
+            taggedPdf:
+              - 'Tagged PDF'
+              - !ruby/regexp /tagged/i
+            addedImageDescriptions:
+              - 'Added Image Descriptions'
+              - !ruby/regexp /alt-text|image +descriptions?/i
+            structuredHeadings:
+              - 'Structured Headings'
+              - !ruby/regexp /^headings$/i
+              - !ruby/regexp /(format(ted)?|structured?)[ -]+headings?/i
+              - !ruby/regexp /headings? +(format(ted)?|structured?|markup)/i
+            linkedToc:
+              - 'Linked TOC'
+              - !ruby/regexp /linked +toc|toc +linked|table +of +contents?/i
+            fixedTables:
+              - 'Fixed Tables'
+              - !ruby/regexp /(format(ted)?|structured?)[ -]+tables?/i
+              - !ruby/regexp /tables? +(format(ted)?|structured?|markup)/i
+            addedMathMl:            !ruby/regexp /MathML/i
+            foreignLanguageMarkup:  !ruby/regexp /language/i
+            transcribersNotes:      !ruby/regexp /transcriber/i
+            annotations:            !ruby/regexp /annotations?/i
+
+        rem_remediationComments:
+          # NOTE: field being renamed; this is here to catch edge-cases.
+          new_name:                 'rem_comments'
 
         rem_source:
-          new_values:
+          translate:
             ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
-            bookshare:              ~ # !ruby/regexp /Bookshare/i
-            hathiTrust:             'HathiTrust'
-            internetArchive:        ~ # !ruby/regexp /IA|Internet\s+Archive/i
-            emma:                   ~ # !ruby/regexp /EMMA/i
-            accessTextNetwork:      ~ # !ruby/regexp /ATN|Access\s+Text/i
+            bookshare:              !ruby/regexp /Bookshare/i
+            hathiTrust:             !ruby/regexp /Hathi *Trust/i
+            internetArchive:
+              - 'IA'
+              - !ruby/regexp /Internet *Archive|archive\.org/i
+            emma:                   !ruby/regexp /EMMA/
+            accessTextNetwork:      !ruby/regexp /ATN|Access *Text *Net/
             publisher:              !ruby/regexp /publisher/i
-            purchased:              ~ # !ruby/regexp /purchase/i
-            faculty:                ~ # !ruby/regexp /faculty/i
-            student:                ~ # !ruby/regexp /student/i
+            purchased:              !ruby/regexp /purchase/i
+            faculty:                !ruby/regexp /faculty/i
+            student:                !ruby/regexp /student/i
             library:                !ruby/regexp /library/i
-            otherDso:               ~ # !ruby/regexp /dso/i
-            other:                  '' # NOTE: fallback matching any string
+            otherDso:               !ruby/regexp /dso/i
+            other:                  !ruby/regexp /.*/
 
         rem_status:
-          new_values:
+          translate:
             ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
             notRemediated:          'unremediated'
             remediated:             ~ # 'remediated'
             bornAccessible:         'born_accessible'
-
-       #bib_series:
-       #  new_name:                 'periodical_title'
-
-       #bib_seriesPosition:
-       #  new_name:                 'periodical_series_position'
-
-       #bib_seriesType:
-       #  new_values:
-       #    ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
-       #    book:                   ~ # 'book'
-       #    video:                  ~ # NOTE: new value
-       #    article:                ['journal', 'magazine', 'newspaper']
-       #    podcast:                ~ # NOTE: new value
-
-       #bib_version:
-       #  new_name:                 'emma_version'

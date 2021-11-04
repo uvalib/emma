@@ -1,0 +1,15 @@
+<%# app/views/upload/api_migrate.html.erb -%>
+<%-
+  title ||= 'EMMA data API migration'
+  list  ||= @list
+
+  if list.is_a?(Hash)
+    list = render_api_migration(list)
+  else
+    list = html_div(list, class: 'line-output')
+  end
+-%>
+
+<%= render 'upload/fallback', title: title, error: :none %>
+
+<%= list -%>

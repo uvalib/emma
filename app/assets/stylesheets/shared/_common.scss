@@ -409,3 +409,12 @@ fieldset {
         }
     }
 }
+
+// Rendering of lines of text from a file.
+.line-output {
+    display:       block;
+    font-family:   monospace;
+    font-size:     larger;
+    white-space:   break-spaces;
+    overflow-wrap: break-word;
+}

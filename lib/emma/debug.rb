@@ -534,6 +534,28 @@ module Emma::Debug
   # :section:
   # ===========================================================================
 
+  public
+
+  # Within the block, output to $stderr is captured and returned as a string.
+  #
+  # @return [String]
+  #
+  # @yield Block to execute.
+  # @yieldreturn [void]
+  #
+  def capture_stderr
+    saved, $stderr = $stderr, StringIO.new
+    yield
+    $stderr.string
+  ensure
+    # noinspection RubyMismatchedReturnType
+    $stderr = saved
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   if CONSOLE_DEBUGGING
 
     include FormatMethods

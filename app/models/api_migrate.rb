@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # API data migration.
 #
+# @see "en.emma.api_migrate"
+#
 class ApiMigrate
 
   include Emma::Common
@@ -19,12 +21,32 @@ class ApiMigrate
 
   # API migration configuration entries.
   #
+  # To ensure idempotent translations, for each new value, that value is
+  # included at the start of the list of old item pattern matches.
+  #
   # @type [Hash{Symbol=>Hash}]
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  CONFIGURATION_ENTRY = I18n.t('emma.api_migrate').deep_freeze
+  CONFIGURATION_ENTRY =
+    I18n.t('emma.api_migrate').map { |name, entries|
+      next if name.start_with?('_')
+      entries =
+        entries.map { |field, entry|
+          next if field.start_with?('_')
+          translations = entry[:translate].presence
+          translations &&=
+            translations.map { |new_item, old_item_patterns|
+              next if old_item_patterns.nil?
+              patterns = [new_item.to_s, *old_item_patterns].compact.uniq
+              [new_item, patterns]
+            }.compact.to_h.presence
+          entry = entry.merge(translate: translations).compact
+          [field, entry] if entry.present?
+        }.compact.to_h
+      [name, entries] if entries.present?
+    }.compact.to_h.deep_freeze
 
   # ===========================================================================
   # :section: Class methods
@@ -103,40 +125,61 @@ class ApiMigrate
       name && CONFIGURATION_ENTRY[name] || {}
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # The sequence of possible field transformations.
+    #
+    # @type [Array<Symbol>]
+    #
+    # @see "en.emma.api_migrate._template"
+    #
+    TRANSFORMATION_STEPS = %i[
+      pre_translate
+      translate
+      post_translate
+      normalize
+      new_min_max
+    ].freeze
+
     # Transform EMMA data fields.
     #
     # @param [Model, Hash]  record
     # @param [Symbol]       column    Default: :emma_data.
     # @param [Hash]         config
-    # @param [Boolean]      report
+    # @param [Hash]         opt       Passed to #report_changes.
     #
     # @return [Model, Hash]           Possibly modified *record*.
     #
-    def transform!(record, column: nil, config: {}, report: false, **)
-      column  ||= data_columns.first
+    def transform!(record, column: nil, config: {}, **opt)
+      column  ||= data_columns.first || :emma_data
       emma_data = record.try(column) || record[column]
       return record if emma_data.blank? || (emma_data == '{}')
 
+      opt.slice!(:report, :log)
       was_hash  = emma_data.is_a?(Hash)
       emma_data = parse_data(emma_data)
-      original  = (emma_data.deep_dup if report)
+      original  = (emma_data.deep_dup if opt.present?)
       emma_data.transform_values! { |value| remove_blank(value) }
       emma_data.compact_blank!
 
       # Apply transformations for each field listed in the configuration.
       config.each_pair do |field, edit|
 
-        # Remove field (unless the actual intent is to rename it).
+        # Remove field if directed (unless the actual intent is to rename it).
         new_field = edit[:new_name].presence
         emma_data.delete(field) if edit[:delete_field] && !new_field
         next unless emma_data.include?(field)
 
         # Apply the configured transformations.
         value = emma_data[field]
-        value = apply(  value, field, edit[:prepare])     if edit[:prepare]
-        value = mutate( value, field, edit[:new_values])  if edit[:new_values]
-        value = apply(  value, field, edit[:normalize])   if edit[:normalize]
-        value = reshape(value, field, edit[:new_min_max]) if edit[:new_min_max]
+        TRANSFORMATION_STEPS.each do |step|
+          next if (change = edit[step]).blank?
+          value = send(step, value, change, field: field, emma_data: emma_data)
+        end
 
         # Change name or update field data.
         emma_data.delete(field)  if new_field || value.blank?
@@ -145,8 +188,7 @@ class ApiMigrate
       end
 
       # Log changes made to the data field value(s).
-      # noinspection RubyMismatchedParameterType
-      report_changes(original, emma_data, column) if report
+      report_changes(column, original, emma_data, **opt) if opt.present?
 
       # Replace the data in the target record column.
       record[column] = was_hash ? emma_data : emma_data.to_json
@@ -159,60 +201,79 @@ class ApiMigrate
 
     protected
 
-    # Transform the value by applying each requested method.
+    # Transform the value before #translate by applying each requested method.
     #
-    # @param [*]      value
-    # @param [Symbol] field
-    # @param [Array]  meths
+    # @param [*]         value
+    # @param [Array]     meths
+    # @param [Symbol]    field
+    # @param [Hash, nil] emma_data
     #
     # @return [*]
     #
-    def apply(value, field, meths)
-      Array.wrap(meths).each do |meth|
-        if respond_to?(meth)
-          value = send(meth, value)
-        else
-          Log.warn("ApiMigrate: #{field}: #{meth}: invalid")
-        end
-      end
-      value
+    def pre_translate(value, meths, field:, emma_data: nil, **)
+      apply(value, meths, field: field, emma_data: emma_data) if value.present?
     end
 
     # Translate values.
     #
     # @param [*]      value
-    # @param [Symbol] _field
-    # @param [Hash]   changes
+    # @param [Hash]   translations
     #
     # @return [*]
     #
-    def mutate(value, _field, changes)
-      return value if changes.blank?
+    def translate(value, translations, **)
+      return value if value.blank? || translations.blank?
       is_array = value.is_a?(Array)
       value    = to_array(value) unless is_array
       value.map! do |item|
-        changes.find do |new_item, old_item_patterns|
+        translations.find do |new_item, old_item_patterns|
           found =
-            Array.wrap(old_item_patterns).any? do |pattern|
+            old_item_patterns.any? do |pattern|
               pattern.is_a?(Regexp) ? (item =~ pattern) : (item == pattern)
             end
           break new_item.to_s if found
         end || item
       end
+      value.uniq!
       is_array ? value : from_array(value)
+    end
+
+    # Transform the value after #translate by applying each requested method.
+    #
+    # @param [*]         value
+    # @param [Array]     meths
+    # @param [Symbol]    field
+    # @param [Hash, nil] emma_data
+    #
+    # @return [*]
+    #
+    def post_translate(value, meths, field:, emma_data: nil, **)
+      apply(value, meths, field: field, emma_data: emma_data) if value.present?
+    end
+
+    # Transform the value by applying each requested method.
+    #
+    # @param [*]      value
+    # @param [Array]  meths
+    # @param [Symbol] field
+    #
+    # @return [*]
+    #
+    def normalize(value, meths, field:, **)
+      apply(value, meths, field: field) if value.present?
     end
 
     # Change cardinality (single to array or array to single) based on the
     # specified range of values.
     #
     # @param [*]            value
-    # @param [Symbol]       field
     # @param [Array, Range] range
+    # @param [Symbol]       field
     #
     # @return [*]
     #
-    def reshape(value, field, range)
-      return value if range.blank?
+    def new_min_max(value, range, field:, **)
+      return value if value.blank? || range.blank?
       new_min = range.first || 0
       new_max = range.last  || 999_999_999
       if new_min > new_max
@@ -224,6 +285,34 @@ class ApiMigrate
       else
         value
       end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Transform the value by applying each requested method.
+    #
+    # @param [*]         value
+    # @param [Array]     meths
+    # @param [Symbol]    field
+    # @param [Hash, nil] emma_data
+    #
+    # @return [*]
+    #
+    def apply(value, meths, field:, emma_data: nil, **)
+      Array.wrap(meths).each do |meth|
+        if !respond_to?(meth)
+          Log.warn("ApiMigrate: #{field}: invalid method #{meth.inspect}")
+        elsif method(meth).arity.abs > 1
+          value = send(meth, value, emma_data)
+        else
+          value = send(meth, value)
+        end
+      end
+      value
     end
 
     # Transform a multi-item value into a single-item value.
@@ -252,33 +341,44 @@ class ApiMigrate
 
     # report_changes
     #
-    # @param [Hash]   original
-    # @param [Hash]   current
-    # @param [Symbol] record_field
+    # @param [Symbol]       column
+    # @param [Hash]         original
+    # @param [Hash]         current
+    # @param [Hash, nil]    report
+    # @param [Boolean, nil] log
     #
     # @return [void]
     #
-    def report_changes(original, current, record_field = nil)
+    def report_changes(column, original, current, report: nil, log: nil, **)
       changes = {}
       original.each_pair do |k, v|
         next if v == (now = current[k])
-        changes[k] = [v, now]
+        changes[k] = [now, v]
       end
       current.each_pair do |k, v|
         next if changes.include?(k) || (v == (was = original[k]))
-        changes[k] = [was, v]
+        changes[k] = [v, was]
       end
-      $stderr.puts "\n#{record_field.inspect}" if record_field
-      if changes.blank?
-        $stderr.puts 'NO CHANGES'
-      else
-        divider = '-' * 72
-        $stderr.puts divider
+      if report
+        report = report[:changes] ||= {}
+        report = report[column]   ||= {}
         changes.each_pair do |k, values|
-          values.prepend(k).map!(&:inspect)
-          $stderr.puts '--- %-25s | WAS: %s | NOW: %s' % values
+          report[k] = { now: values.first, was: values.last }
         end
-        $stderr.puts divider
+      end
+      if log
+        $stderr.puts("\n#{column.inspect}")
+        if changes.blank?
+          $stderr.puts('NO CHANGES')
+        else
+          col = $stderr.tty? ? [79, 25, 25] : [120, 35, 35]
+          $stderr.puts(divider = '-' * col[0])
+          changes.each_pair do |k, values|
+            field = [k, *values].map!(&:inspect)
+            $stderr.puts("--- %-#{col[1]}s NOW: %-#{col[2]}s WAS: %s" % field)
+          end
+          $stderr.puts(divider)
+        end
       end
     end
 
@@ -365,7 +465,7 @@ class ApiMigrate
     #
     def normalize_creator(value)
       if value.is_a?(Array)
-        value.map { |v| normalize_creator(v) }.compact
+        value.map { |v| normalize_creator(v) }.compact.uniq
       else
         BOGUS_CREATOR.find do |match|
           return if match.is_a?(Regexp) ? (value =~ match) : (value == match)
@@ -381,10 +481,10 @@ class ApiMigrate
     #
     def normalize_identifier(value)
       if value.is_a?(Array)
-        value.flat_map { |v| normalize_identifier(v) }.compact
+        value.flat_map { |v| normalize_identifier(v) }.compact.uniq
       else
         values = value.split(Api::Shared::IdentifierMethods::ID_SEPARATOR)
-        values.map { |v| PublicationIdentifier.cast(v)&.to_s }.compact
+        values.map { |v| PublicationIdentifier.cast(v)&.to_s }.compact.uniq
       end
     end
 
@@ -416,6 +516,22 @@ class ApiMigrate
       end
     end
 
+    # Split values on '.', ',', and ';'.
+    #
+    # @param [Array<String>, String] value
+    #
+    # @return [Array<String>]
+    #
+    def normalize_text_list(value)
+      Array.wrap(value).join("\n").split(/ *[.,;\n] */).compact_blank!
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # Reduce an array of quality values to the single highest value.
     #
     # @param [Array<String>, String] value
@@ -433,6 +549,37 @@ class ApiMigrate
       # noinspection RubyMismatchedReturnType
       return value unless value.is_a?(Array)
       TextQuality.values.reverse.find { |v| value.include?(v) }
+    end
+
+    # EMMA data fields that have, do, or will contain remediation comments.
+    #
+    # @type [Array<Symbol>]
+    #
+    COMMENT_FIELDS =
+      %i[emma_lastRemediationNote rem_remediationComments rem_comments].freeze
+
+    # Complete :rem_remediation translation by moving untranslated items to
+    # :rem_comments.
+    #
+    # @param [Array<String>, String] value
+    # @param [Hash]                  emma_data
+    #
+    # @return [Array<String>, String, nil]
+    #
+    # == Implementation Notes
+    # In order to avoid requiring that the API field migrations be done in a
+    # specific sequence, this method will favor the pre-migrated field names
+    # if they are present.
+    #
+    def preserve_remediation_comments(value, emma_data)
+      array = value.is_a?(Array)
+      value = Array.wrap(value)
+      if (other = value - RemediatedAspects.values).present?
+        f = COMMENT_FIELDS.find { |f| emma_data[f] } || COMMENT_FIELDS.last
+        emma_data[f] = [*emma_data[f], *other].compact_blank.uniq.join("\n")
+        value -= other
+      end
+      array ? value : value.first
     end
 
     # =========================================================================
@@ -465,6 +612,12 @@ class ApiMigrate
   #
   # @type [Boolean]
   #
+  attr_reader :log
+
+  # Generate a hash reporting on the changes for each record.
+  #
+  # @type [Hash, nil]
+  #
   attr_reader :report
 
   # ===========================================================================
@@ -475,12 +628,14 @@ class ApiMigrate
 
   # Create a new instance.
   #
-  # @param [Symbol, String, Integer, Float, nil] key    Default: latest.
-  # @param [Boolean]                             report
+  # @param [Symbol, String, Integer, Float, nil] key        Default: latest.
+  # @param [Boolean, Hash]                       report
+  # @param [Boolean]                             log
   # @param [Boolean]                             no_raise
   #
-  def initialize(key = nil, report: nil, no_raise: false, **)
-    @report = report.present?
+  def initialize(key = nil, report: nil, log: nil, no_raise: false, **)
+    @report = report.is_a?(Hash) ? report : ({} unless false?(report))
+    @log    = log.present?
     @name   = key ? migration_name(key) : CONFIGURATION_ENTRY.keys.last
     error   =
       if !@name
@@ -504,15 +659,21 @@ class ApiMigrate
 
   # Run the data migrations.
   #
-  # @param [Boolean] update           If *false*, the database is not updated.
+  # @param [Boolean] update           If *true*, the database is updated.
   # @param [*]       range            For #get_relation.
   # @param [Hash]    opt              Passed to #transform!.
   #
-  # @return [void]
+  # @return [Array{Hash}]             New record values.
   #
-  def run!(update: false, range: nil, **opt) # TODO: update: true
+  def run!(update: false, range: nil, **opt)
+    Log.info { '*** ApiMigrate DRY-RUN ***' } unless update
+    opt[:column] = data_columns  unless opt.key?(:column)
+    opt[:config] = configuration unless opt.key?(:config)
+    opt[:report] = @report       unless opt.key?(:report)
+    opt[:log]    = @log          unless opt.key?(:log)
     records = get_relation(range).map { |rec| transform!(rec.fields, **opt) }
     record_class.upsert_all(records) if update
+    records
   end
 
   # ===========================================================================
@@ -542,6 +703,7 @@ class ApiMigrate
   # @return [Symbol, nil]
   #
   def migration_name(key = nil)
+    # noinspection RubyMismatchedReturnType
     key ? super(key) : name
   end
 
@@ -555,27 +717,35 @@ class ApiMigrate
     key ? super(key) : CONFIGURATION_ENTRY[name]
   end
 
+  # ===========================================================================
+  # :section: ApiMigrate::ClassMethods overrides
+  # ===========================================================================
+
+  public
+
   # Transform fields.
   #
   # @param [Model, Hash]           record
-  # @param [Symbol, Array<Symbol>] column   Default: `#data_columns`
-  # @param [Hash, nil]             config   Default: `#configuration`.
-  # @param [Boolean]               report   Default: `#report`
+  # @param [Symbol, Array<Symbol>] column
+  # @param [Hash]                  opt      Passed to super
+  #
+  # @option opt [Hash, nil]    :report      Add modified field value(s).
+  # @option opt [Boolean, nil] :log         Log modified field value(s).
   #
   # @return [Model, Hash]             Possibly modified *record*.
   #
-  def transform!(record, column: nil, config: nil, report: nil, **)
-    cfg  = config || configuration
-    log  = report.nil? ? @report : report
-    $stderr.puts "\n*** Upload #{record[:id]} ***" if log
-    cols = column ? Array.wrap(column) : data_columns
-    cols.each { |col| super(record, column: col, config: cfg, report: log) }
-    if log
-      cols.each do |col|
-        data = record[col]
-        $stderr.puts "\n#{col.inspect} =\n#{data}" if data.present?
-      end
+  def transform!(record, column:, **opt)
+    log, rpt = opt.values_at(:log, :report)
+    if rpt
+      rpt[:table]  ||= record_class.name.tableize
+      rpt[:record] ||= {}
+      opt[:report] = rpt = rpt[:record][record[:id]] ||= {}
     end
+    $stderr.puts "\n*** Upload #{record[:id]} ***" if log
+    cols = Array.wrap(column).each { |col| super(record, column: col, **opt) }
+    flds = (record.slice(*cols).compact if rpt || log)
+    flds.each { |fld, dat| $stderr.puts "\n#{fld.inspect} =\n#{dat}" } if log
+    rpt[:results] = flds.transform_values { |v| safe_json_parse(v) }   if rpt
     record
   end
 

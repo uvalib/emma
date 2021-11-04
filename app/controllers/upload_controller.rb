@@ -630,22 +630,22 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/api_migrate?v[ersion]=[0.0.]5
+  # == GET /upload/api_migrate?v[ersion]=[0.0.]5(&verbose=true&dryrun=false)
+  #
   # Modify :emma_data fields and content.
   #
-  # @see "en.emma.api_migrate"
+  # @see ApiConcern#api_data_migration
   #
   def api_migrate
     __debug_route
-    opt = request_parameters
-    if (api_version = opt[:v] || opt[:version])
-      ApiMigrate.new(api_version).run!(update: false, report: true)
-      render plain: 'Results sent to $stderr'
-    else
-      render plain: 'No version'
+    @list = api_data_migration(**request_parameters)
+    respond_to do |format|
+      format.html
+      format.json { render json: @list }
+      format.xml  { render xml:  @list }
     end
   rescue => error
-    render plain: "ERROR: #{error}"
+    flash_now_failure(error)
     re_raise_if_internal_exception(error)
   end
 

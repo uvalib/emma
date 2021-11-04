@@ -1,6 +1,7 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-@use 'controllers/entry' as *;
+@use 'controllers/entry'     as *;
+@use 'shared/controls/grids' as *;
 
 //=============================================================================
 // Upload index page
@@ -63,5 +64,147 @@ body.upload-admin {
     }
     h3 {
         font-size: x-large;
+    }
+}
+
+//=============================================================================
+// API data migration results page
+//=============================================================================
+
+body.api_migrate {
+
+    .summary {}
+
+    .record-list {
+
+        margin:     2rem 0;
+        padding:    0;
+        list-style: none;
+
+        .record-results {
+
+            display:        flex;
+            flex-direction: column;
+            gap:            0.5rem;
+            margin-top:     2rem;
+
+            .record-id {
+                margin:      0;
+                padding:     0.25rem 0;
+                font-size:   larger;
+                font-weight: bold;
+                background:  whitesmoke;
+            }
+
+            .changes-label,
+            .results-label {
+                margin-left:   1rem;
+                margin-bottom: 0;
+            }
+
+            .changes,
+            .results {
+
+                margin-left: 1rem;
+
+                .column {
+                    margin-left: 1rem;
+                    line-height: 1.5;
+                    font-weight: bold;
+                    font-size:   large;
+                }
+
+                .fields {
+                    margin-left: 2rem;
+                }
+            }
+
+            .changes {
+
+                display:        flex;
+                flex-direction: column;
+                gap:            0.25rem;
+
+                .column {
+                    margin-bottom: 1rem;
+                }
+
+                .fields {
+
+                    display:     grid;
+                    gap:         0.5rem 1rem;
+                    align-items: baseline;
+                    grid-template-columns:
+                        [field] minmax(max-content, 0.25fr)
+                        [now]   minmax(max-content, 0.25fr)
+                        [was]   1fr;
+
+                    // Ensure hovering highlights the whole apparent row.
+                    > * {
+                        height: 100%;
+                    }
+
+                    // Table column headings.
+                    .row-0 {
+                        font-weight:     bold;
+                        border-bottom:   2px solid gray;
+                    }
+
+                    // EMMA data field name.
+                    .field:not(.row-0) {
+
+                        font-family: monospace;
+                        font-size:   larger;
+
+                        // Highlight the row when hovering over the field name.
+                        &:hover,
+                        &:hover + *,
+                        &:hover + * + * {
+                            $bg: lightcyan;
+                            text-shadow: 0.5px 0;
+                            box-shadow:  1rem 0 0 0 $bg;
+                            background:  $bg;
+                        }
+                    }
+
+                    // EMMA data field new value.
+                    .now { }
+
+                    // EMMA data field old value.
+                    .was { }
+                }
+            }
+
+            .results {
+
+                display:               grid;
+                grid-template-columns: repeat(2, auto);
+
+                .column {
+
+                    display:           inline-flex;
+                    margin-top:        0.5rem;
+                    grid-column-start: 1;
+
+                    // Toggles visibility of .fields panel.
+                    .toggle {
+                        margin-left: 1rem;
+                    }
+                }
+
+                // Collapsible panel listing of data fields.
+                .fields {
+
+                    @extend .model-list-item-panel; // For .data-list
+                    @extend .toggle-panel;
+
+                    @include grid-column-span;
+
+                    .data-list {
+                        margin: 0 1rem;
+                    }
+                }
+            }
+        }
     }
 }

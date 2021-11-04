@@ -11,6 +11,8 @@ module ApiConcern
 
   extend ActiveSupport::Concern
 
+  include SessionDebugHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -113,6 +115,45 @@ module ApiConcern
     ApiService.table.compact.tap do |result|
       result.keep_if { |service, _| only.include?(service) } if only.present?
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Modify :emma_data fields and content.
+  #
+  # @param [String, Integer, nil] api_version
+  # @param [Hash]                 opt
+  #
+  # @option [String, Integer] :version  If *api_version* is not given.
+  # @option [String, Integer] :v        Alias for :version
+  # @option [String, Boolean] :verbose  If *true*, generate log output.
+  # @option [String, Boolean] :report   If *false*, do not generate report.
+  # @option [String, Boolean] :dryrun   If *false*, actually update database.
+  # @option [String, Boolean] :dry_run  Alias for :dryrun.
+  #
+  # @return [String]
+  # @return [Hash]
+  # @return [nil]                       If no API version was specified.
+  #
+  # @see ApiMigrate#initialize
+  # @see ApiMigrate#run!
+  #
+  # == Usage Notes
+  # The default mode is to perform a dry-run, so :dryrun must be explicitly
+  # passed in as *true* to actually modify the database table.
+  #
+  def api_data_migration(api_version = nil, **opt)
+    version = api_version || opt[:v] || opt[:version] or return
+    verbose = opt.key?(:verbose) ? true?(opt[:verbose]) : session_debug?
+    report  = !false?(opt[:report])
+    dry_run = !false?(opt[:dryrun] || opt[:dry_run])
+    migrate = ApiMigrate.new(version, report: report, log: verbose)
+    records = migrate.run!(update: !dry_run)
+    { count: records.size }.merge!(migrate.report || {})
   end
 
   # ===========================================================================

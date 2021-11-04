@@ -17,6 +17,8 @@
     set_page_robots(:noindex, :nofollow)
   end
 
+  error = (html_tag(:p, error) unless error.blank? || (error == :none))
+
 -%>
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
@@ -24,6 +26,6 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<p><%= error -%></p>
+<%= error %>
 
 <%= page_notes_section %>
