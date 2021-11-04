@@ -23,6 +23,9 @@ module UserConcern
     #
     # @private
     #
+    #--
+    # noinspection RubyUnusedLocalVariable
+    #++
     def authenticate_user!(opts = {}); end
 
     # Defined by Devise.

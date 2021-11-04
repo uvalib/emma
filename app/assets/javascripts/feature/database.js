@@ -643,15 +643,12 @@ let DB = (function() {
      * @param {function(IDBDatabase)} [callback]
      */
     function clearObjectStore(store_name = defaultStore(), callback) {
-        const func  = 'DB.clearObjectStore';
-        let store   = dbObjectStore(func, store_name)
-        let request = store.clear();
-        let if_err  = callback && (() => callback());
-        let if_ok   = function(event) {
-            dbLog(func, `"${store_name}" cleared`);
-            callback && callback(request.transaction.db);
-        }
-        dbRequest(func, request, if_ok, if_err);
+        const func = 'DB.clearObjectStore';
+        let store  = dbObjectStore(func, store_name)
+        let req    = store.clear();
+        let cb     = () => callback && callback(req.transaction.db);
+        let if_ok  = () => { dbLog(func, `"${store_name}" cleared`); cb(); }
+        dbRequest(func, req, if_ok, cb);
     }
 
     /**

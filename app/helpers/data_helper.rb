@@ -219,10 +219,10 @@ module DataHelper
 
   # db_connection
   #
+  # @return [*]                       Return value of block.
+  #
   # @yield [db]
   # @yieldparam [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
-  #
-  # @return [*]                       Return value of block.
   #
   def db_connection(&block)
     ActiveRecord::Base.connection_pool.with_connection(&block)

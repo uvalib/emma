@@ -307,6 +307,7 @@ class ApiMigrate
     def parse_data(data)
       json_parse(data, no_raise: false) || {}
     rescue
+      # noinspection RubyUnusedLocalVariable
       patterns = {
         (char = "\001")    => { value: '{"',   regex: /\A{"/ },
         (char = char.succ) => { value: '":["', regex: /":\["/ },

@@ -38,10 +38,10 @@ module Emma::Extension
       # @option args[-1] [String, nil] :tag        Def: `#__ext_log_tag`.
       # @option args[-1] [String]      :separator  Def: `#EXT_LOG_SEPARATOR`.
       #
+      # @return [nil]
+      #
       # @yield Generate additional parts.
       # @yieldreturn [Array] Appended to *args*.
-      #
-      # @return [nil]
       #
       #--
       # == Variations
