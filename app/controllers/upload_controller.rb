@@ -37,8 +37,8 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  before_action :authenticate_dev!,  only:   %i[api_migrate]
-  before_action :authenticate_user!, except: %i[api_migrate show]
+  before_action :authenticate_admin!, only:   %i[api_migrate]
+  before_action :authenticate_user!,  except: %i[api_migrate show]
 
   # ===========================================================================
   # :section: Authorization

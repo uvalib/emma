@@ -148,9 +148,10 @@ module ApiConcern
   #
   def api_data_migration(api_version = nil, **opt)
     version = api_version || opt[:v] || opt[:version] or return
+    dry_run = !false?(opt[:dryrun] || opt[:dry_run])
+    raise "#{__method__}: developer-only option" unless dry_run || developer?
     verbose = opt.key?(:verbose) ? true?(opt[:verbose]) : session_debug?
     report  = !false?(opt[:report])
-    dry_run = !false?(opt[:dryrun] || opt[:dry_run])
     migrate = ApiMigrate.new(version, report: report, log: verbose)
     records = migrate.run!(update: !dry_run)
     { count: records.size }.merge!(migrate.report || {})

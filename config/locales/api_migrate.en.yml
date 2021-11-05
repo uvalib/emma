@@ -87,7 +87,7 @@ en:
           delete_field:             true
 
         rem_metadataSource:
-          normalize:                normalize_text_list
+          normalize:                normalize_metadata_source
 
         rem_remediatedBy:
           normalize:                normalize_text_list
@@ -131,6 +131,7 @@ en:
 
         emma_lastRemediationNote:
           new_name:                 'rem_comments'
+          pre_translate:            extract_remediated_aspects
 
         emma_repositoryMetadataUpdateDate:
           new_name:                 'emma_repositoryUpdateDate'
@@ -156,20 +157,20 @@ en:
             ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
             scannedAndOcrd:
               - "Scanned and OCR'd"
-              - 'ocr'
-              - !ruby/regexp /ocr.d/i
+              - !ruby/regexp /(?<!not )ocr.d|^ocr$/i
             proofreadCorrectedOcr:
               - 'Proofread and Corrected OCR'
-              - !ruby/regexp /corrected|proofread|proofed|cleaned/i
+              - !ruby/regexp /(?<!not )(corrected|proofread|proofed|cleaned)/i
             addedBookmarks:
               - 'Added Bookmarks'
-              - !ruby/regexp /bookmarks?/i
+              - !ruby/regexp /(?<!not )bookmark(ed|s)?/i
             taggedPdf:
               - 'Tagged PDF'
-              - !ruby/regexp /tagged/i
+              - !ruby/regexp /(?<!not )tagged/i
             addedImageDescriptions:
               - 'Added Image Descriptions'
-              - !ruby/regexp /alt-text|image +descriptions?/i
+              - !ruby/regexp /(?<!not )(alt-text|image +descriptions?)/i
+              - !ruby/regexp /images? +described?|described? +images?/i
             structuredHeadings:
               - 'Structured Headings'
               - !ruby/regexp /^headings$/i
@@ -177,7 +178,8 @@ en:
               - !ruby/regexp /headings? +(format(ted)?|structured?|markup)/i
             linkedToc:
               - 'Linked TOC'
-              - !ruby/regexp /linked +toc|toc +linked|table +of +contents?/i
+              - !ruby/regexp /table +of +contents?|^toc$/i
+              - !ruby/regexp /link(ed|s) +toc|toc +link(ed|s)/i
             fixedTables:
               - 'Fixed Tables'
               - !ruby/regexp /(format(ted)?|structured?)[ -]+tables?/i

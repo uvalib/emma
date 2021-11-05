@@ -89,11 +89,15 @@ body.api_migrate {
             margin-top:     2rem;
 
             .record-id {
+
+                $bg:         whitesmoke;
+
                 margin:      0;
                 padding:     0.25rem 0;
                 font-size:   larger;
                 font-weight: bold;
-                background:  whitesmoke;
+                background:  $bg;
+                box-shadow:  -0.5rem 0 0 0 $bg;
             }
 
             .changes-label,
@@ -135,9 +139,9 @@ body.api_migrate {
                     gap:         0.5rem 1rem;
                     align-items: baseline;
                     grid-template-columns:
-                        [field] minmax(max-content, 0.25fr)
-                        [now]   minmax(max-content, 0.25fr)
-                        [was]   1fr;
+                        [field] minmax(max-content, 0.15fr)
+                        [now]   minmax(auto,        0.30fr)
+                        [was]   minmax(auto,        0.50fr);
 
                     // Ensure hovering highlights the whole apparent row.
                     > * {
@@ -157,13 +161,17 @@ body.api_migrate {
                         font-size:   larger;
 
                         // Highlight the row when hovering over the field name.
+                        // Uses text-shadow because font-weight:bold causes
+                        // characters to be resized.
                         &:hover,
                         &:hover + *,
                         &:hover + * + * {
-                            $bg: lightcyan;
+
+                            $bg:         lightcyan;
+
                             text-shadow: 0.5px 0;
-                            box-shadow:  1rem 0 0 0 $bg;
                             background:  $bg;
+                            box-shadow:  1rem 0 0 0 $bg;
                         }
                     }
 
@@ -201,6 +209,7 @@ body.api_migrate {
                     @include grid-column-span;
 
                     .data-list {
+                        width:  100%;
                         margin: 0 1rem;
                     }
                 }

@@ -154,7 +154,7 @@ class ApiMigrate
     #
     # @return [Model, Hash]           Possibly modified *record*.
     #
-    def transform!(record, column: nil, config: {}, **opt)
+    def transform!(record, column: nil, config: configuration, **opt)
       column  ||= data_columns.first || :emma_data
       emma_data = record.try(column) || record[column]
       return record if emma_data.blank? || (emma_data == '{}')
@@ -216,15 +216,16 @@ class ApiMigrate
 
     # Translate values.
     #
-    # @param [*]      value
-    # @param [Hash]   translations
+    # @param [*]       value
+    # @param [Hash]    translations
+    # @param [Boolean] unique         If *false*, do not prune results.
     #
     # @return [*]
     #
-    def translate(value, translations, **)
+    def translate(value, translations, unique: true, **)
       return value if value.blank? || translations.blank?
       is_array = value.is_a?(Array)
-      value    = to_array(value) unless is_array
+      value    = is_array ? value.dup : to_array(value)
       value.map! do |item|
         translations.find do |new_item, old_item_patterns|
           found =
@@ -234,7 +235,7 @@ class ApiMigrate
           break new_item.to_s if found
         end || item
       end
-      value.uniq!
+      value.uniq! if unique
       is_array ? value : from_array(value)
     end
 
@@ -425,16 +426,18 @@ class ApiMigrate
 
     # Remove blank values.
     #
+    # Strings are conditioned by replacing HTML entities with Unicode
+    # characters and by replacing Unicode characters with ASCII characters
+    # where possible.
+    #
     # @param [Array<String>, String] value
     #
-    # @return [Array<String>, String, nil]
+    # @return [Array<String>, String, *]    Nil for an empty array.
     #
     def remove_blank(value)
-      if value.is_a?(Array)
-        value.map { |v| remove_blank(v) }.compact.presence
-      else
-        value unless value.blank? || (value == ModelHelper::EMPTY_VALUE)
-      end
+      value = value.map { |v| remove_blank(v) }.compact if value.is_a?(Array)
+      value = CGI.unescapeHTML(value.strip).scrub       if value.is_a?(String)
+      value unless value.blank? || (value == ModelHelper::EMPTY_VALUE)
     end
 
     # =========================================================================
@@ -452,7 +455,7 @@ class ApiMigrate
       /Adobe\s*InDesign/i,
       /Adobe\s*Acrobat/i,
       /Quark\s*XPress/i,
-      /OfficeJet/i
+      /Office\s*Jet/i
     ].deep_freeze
 
     # Remove bogus :dc_creator values which are probably due to file metadata
@@ -481,7 +484,7 @@ class ApiMigrate
     #
     def normalize_identifier(value)
       if value.is_a?(Array)
-        value.flat_map { |v| normalize_identifier(v) }.compact.uniq
+        value.flat_map { |v| normalize_identifier(v) }.uniq
       else
         values = value.split(Api::Shared::IdentifierMethods::ID_SEPARATOR)
         values.map { |v| PublicationIdentifier.cast(v)&.to_s }.compact.uniq
@@ -516,14 +519,31 @@ class ApiMigrate
       end
     end
 
-    # Split values on '.', ',', and ';'.
+    # normalize_metadata_source
     #
     # @param [Array<String>, String] value
     #
     # @return [Array<String>]
     #
+    def normalize_metadata_source(value)
+      if value.is_a?(Array)
+        value.flat_map { |v| normalize_metadata_source(v) }.uniq
+      else
+        values = normalize_text_list(value)
+        # noinspection SpellCheckingInspection
+        values.map { |v| v.gsub('Vanderbitl', 'Vanderbilt') }
+      end
+    end
+
+    # Split values on '.', ',', and ';'.
+    #
+    # @param [Array<String>, String, *] value
+    #
+    # @return [Array<String>]
+    #
     def normalize_text_list(value)
-      Array.wrap(value).join("\n").split(/ *[.,;\n] */).compact_blank!
+      value = Array.wrap(value).join("\n") unless value.is_a?(String)
+      value.split(/ *[.,;\n] */).compact_blank!
     end
 
     # =========================================================================
@@ -580,6 +600,42 @@ class ApiMigrate
         value -= other
       end
       array ? value : value.first
+    end
+
+    # EMMA data fields that have, do, or will contain remediation comments.
+    #
+    # @type [Array<Symbol>]
+    #
+    ASPECT_FIELDS = %i[rem_remediation rem_remediatedAspects].freeze
+
+    # Process :emma_lastRemediationNote by adding to :rem_remediatedAspects any
+    # values which can be detected.  The original value is returned.
+    #
+    # @param [String] value
+    # @param [Hash]   emma_data
+    #
+    # @return [String]
+    #
+    # == Implementation Notes
+    # In order to avoid requiring that the API field migrations be done in a
+    # specific sequence, this method will favor the pre-migrated field names
+    # if they are present.
+    #
+    def extract_remediated_aspects(value, emma_data)
+      cfg_path = %i[rem_remediation translate]
+      if !(table = configuration.dig(*cfg_path))
+        Log.warn { "#{__method__}: missing #{cfg_path.inspect}" }
+      elsif table.blank?
+        Log.warn { "#{__method__}: empty #{cfg_path.inspect}" }
+      elsif value.present?
+        phrases = value.scan(/([^.,;\n]+)( *)([.,;\n] *|\z)/).map(&:first)
+        terms   = translate(phrases, table, unique: false)
+        if (terms -= phrases).present?
+          f = ASPECT_FIELDS.find { |f| emma_data[f] } || ASPECT_FIELDS.last
+          emma_data[f] = [*emma_data[f], *terms].compact_blank.uniq
+        end
+      end
+      value
     end
 
     # =========================================================================
