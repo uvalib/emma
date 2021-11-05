@@ -565,7 +565,7 @@ class IsoDate < ScalarType
     #
     def datetime_clean(value)
       value.to_s.strip.sub(/[+-]00?(:00?)?$/, ZULU).sub(/\d+\.\d+/) do |sec|
-        [sec.to_f.round, 59].min
+        '%02d' % [sec.to_f.round, 59].min
       end
     end
 
