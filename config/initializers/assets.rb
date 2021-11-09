@@ -23,4 +23,10 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 
 # Compress JavaScripts and CSS.
 Rails.application.config.assets.css_compressor = :scss
-Rails.application.config.assets.js_compressor  = :terser
+# noinspection SpellCheckingInspection
+Rails.application.config.assets.js_compressor =
+  Terser.new(
+    compress: {
+      hoist_funs: false
+    }
+  )

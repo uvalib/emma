@@ -527,6 +527,29 @@ $(document).on('turbolinks:load', function() {
     const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
 
     // ========================================================================
+    // Constants - field validation
+    // ========================================================================
+
+    /**
+     * Remote identifier validation.
+     *
+     * @const
+     * @type {string}
+     */
+    const ID_VALIDATE_URL_BASE = '/search/validate?identifier=';
+
+    /**
+     * Validation methods table.
+     *
+     * @constant
+     * @type {Object<boolean|string|function(string|string[]):boolean>}
+     */
+    const FIELD_VALIDATION = deepFreeze({
+        dc_identifier: ID_VALIDATE_URL_BASE,
+        dc_relation:   ID_VALIDATE_URL_BASE,
+    });
+
+    // ========================================================================
     // Constants - Bulk operations
     // ========================================================================
 
@@ -2694,35 +2717,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Value separator.
-     *
-     * @const
-     * @type {RegExp}
-     *
-     * @see "Api::Shared::IdentifierMethods#id_separator"
-     */
-    const ID_SEPARATOR = /[,;|\s]+/;
-
-    /**
-     * Remote identifier validation.
-     *
-     * @const
-     * @type {string}
-     */
-    const ID_VALIDATE_URL_BASE = '/search/validate?identifier=';
-
-    /**
-     * Validation methods table.
-     *
-     * @constant
-     * @type {Object<boolean|string|function(string|string[]):boolean>}
-     */
-    const FIELD_VALIDATION = deepFreeze({
-        dc_identifier: ID_VALIDATE_URL_BASE,
-        dc_relation:   ID_VALIDATE_URL_BASE,
-    });
-
-    /**
      * Validate the value(s) for a field.
      *
      * @param {Selector} target
@@ -2773,11 +2767,12 @@ $(document).on('turbolinks:load', function() {
         // Prepare value for inclusion in the URL.
         let value = new_value;
         if (typeof value === 'string') {
-            value = value.split(ID_SEPARATOR);
+            value = value.split("\n");
         }
         if (Array.isArray(value)) {
             value = value.join(',');
-        } else {
+        }
+        if (isEmpty(value)) {
             consoleWarn(func, `${url}: no values given`);
             callback(false);
             return;
