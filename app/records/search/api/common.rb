@@ -990,7 +990,8 @@ class Oclc < PublicationIdentifier
     #
     # @type [Regexp]
     #
-    OCLC_PREFIX = /^\s*(#{OCLC_FORMAT.keys.join('|')}):?\s*/i.freeze
+    OCLC_PREFIX =
+      /^\s*(#{OCLC_FORMAT.keys.join('|').gsub(/[()]/, '\\\\\0')}):?\s*/i.freeze
 
     # A pattern matching the form of an OCN identifier.
     #
