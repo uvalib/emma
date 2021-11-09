@@ -483,12 +483,7 @@ class ApiMigrate
     # @return [Array<String>]
     #
     def normalize_identifier(value)
-      if value.is_a?(Array)
-        value.flat_map { |v| normalize_identifier(v) }.uniq
-      else
-        values = value.split(Api::Shared::IdentifierMethods::ID_SEPARATOR)
-        values.map { |v| PublicationIdentifier.cast(v)&.to_s }.compact.uniq
-      end
+      PublicationIdentifier.objects(value).map(&:to_s).uniq
     end
 
     # normalize_day

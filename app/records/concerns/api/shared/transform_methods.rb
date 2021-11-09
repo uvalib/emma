@@ -27,6 +27,7 @@ module Api::Shared::TransformMethods
   # @return [void]
   #
   def normalize_data_fields!(data = nil)
+    normalize_identifier_fields!(data)
     clean_dc_relation!(data)
     normalize_title_dates!(data)
     api_transitions!(data)

@@ -231,7 +231,7 @@ class PublicationIdentifier < ScalarType
     # @return [String]
     #
     def remove_prefix(v)
-      v.to_s.sub(/^\s*[a-z]+(:\s*|\s+)/i, '')
+      v.to_s.sub(/^\s*([a-z]+|\([a-z]+\)):?\s*/i, '')
     end
 
     # Indicate whether the given value has the characteristic prefix.
@@ -250,13 +250,15 @@ class PublicationIdentifier < ScalarType
 
     # Type-cast a value to a PublicationIdentifier.
     #
-    # @param [*] v                    Value to use or transform.
+    # @param [*]       v              Value to use or transform.
+    # @param [Boolean] invalid
     #
-    # @return [PublicationIdentifier]
-    # @return [nil]                   If *obj* is not a valid identifier.
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
     #
-    def cast(v)
-      v.is_a?(identifier_subclass) ? v : create(v) if v.present?
+    def cast(v, invalid: false)
+      v = create(v) unless v.is_a?(identifier_subclass)
+      v if invalid || v&.valid?
     end
 
     # Create a new instance.
@@ -264,17 +266,15 @@ class PublicationIdentifier < ScalarType
     # @param [String] v               Identifier number.
     # @param [Symbol, String] type    Determined from *v* if missing.
     #
-    # @return [PublicationIdentifier]
-    # @return [nil]                   If *v* is not a valid identifier.
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
     #
     def create(v, type = nil, *)
-      prefix, value = type ? [type, v.presence] : parts(v).map(&:presence)
-      return unless value
-      types = prefix ? Array.wrap(subclass(prefix)) : identifier_classes
-      types.find do |id_class|
-        id = id_class.new(value)
-        return id if id.valid?
-      end
+      prefix, value = type ? [type, v] : parts(v)
+      return                       if value.blank?
+      return type.new(value)       if (type = subclass(prefix))
+      value = "#{prefix}:#{value}" if prefix.present?
+      identifier_classes.find { |c| (id = c.new(value)).valid? and return id }
     end
 
     # =========================================================================
@@ -331,6 +331,20 @@ class PublicationIdentifier < ScalarType
 
   public
 
+  # Assign a new value to the instance, allowing for the possibility of an
+  # invalid identifier value.
+  #
+  # If *v* has the wrong kind of prefix then the result will be blank (and
+  # therefore invalid).
+  #
+  # @param [*] v
+  #
+  # @return [String]
+  #
+  def set(v)
+    @value = (v.blank? || (!prefix?(v) && v.include?(':'))) ? '' : normalize(v)
+  end
+
   # Return the string representation of the instance value.
   #
   # @return [String]
@@ -382,6 +396,67 @@ class PublicationIdentifier < ScalarType
       when Symbol, String then subclass_map[type.to_sym]
       when Class          then type if type < PublicationIdentifier
     end
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # The pattern which separates multiple identifiers within a String for use
+  # in conjunction with PublicationIdentifier#split.
+  #
+  # @type [Regexp]
+  #
+  ID_SEPARATOR = /[,;|\t\n]+/.freeze
+
+  # Create an array of identifier candidate strings.
+  #
+  # Spaces are also interpreted as separators in cases where they do not appear
+  # to be in use as part of the (ISBN) identifier (e.g. "92 75 31992 9").
+  #
+  # The individual subclasses can normalize invalid forms like that, but only
+  # if the string is split in a way that preserves the original intent.
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  #
+  # @return [Array<String>]
+  #
+  def self.split(value)
+    value = Array.wrap(value).map(&:to_s).join("\n") unless value.is_a?(String)
+    # noinspection RubyNilAnalysis
+    value.split(ID_SEPARATOR).flat_map { |id|
+      next unless (id = id.strip).present?
+      id.match?(/(^| )\d{1,2}( |$)/) ? id : id.split(/ +/)
+    }.compact_blank!
+  end
+
+  # Create an array of identifier instances from candidate string(s).
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  # @param [Boolean]                                   invalid
+  #
+  # @return [Array<PublicationIdentifier>]
+  # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
+  #
+  def self.objects(value, invalid: false)
+    result = split(value).map! { |id| cast(id, invalid: invalid) }
+    # noinspection RubyMismatchedReturnType
+    invalid ? result : result.compact
+  end
+
+  # Create a table of identifier instances from candidate string(s).
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  # @param [Boolean]                                   invalid
+  #
+  # @return [Hash{String=>PublicationIdentifier}]
+  # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
+  #
+  def self.object_map(value, invalid: false)
+    result = split(value).map! { |id| [id, cast(id, invalid: invalid)] }.to_h
+    invalid ? result : result.compact
   end
 
 end
@@ -853,18 +928,15 @@ class Issn < PublicationIdentifier
     # @param [String] v
     #
     def issn?(v)
-      to_issn(v, log: false).present?
+      to_issn(v, log: false, validate: true).present?
     end
 
     # If the value is an ISSN return it in a normalized form or *nil* otherwise
     #
     # @param [String]  v
     # @param [Boolean] log
-    # @param [Boolean] validate         If *true*, raise an exception if the
+    # @param [Boolean] validate         If *true*, return *nil* if the
     #                                     checksum provided in *v* is invalid.
-    #
-    # @raise [RuntimeError]             If *v* contains a check digit but it
-    #                                     is not valid.
     #
     # @return [String, nil]
     #
@@ -875,10 +947,12 @@ class Issn < PublicationIdentifier
         digits = digits[0...-1]
         # noinspection RubyMismatchedParameterType
         check  = checksum(digits)
-        if validate && (check != final)
-          raise "#{v.inspect}: check digit should be #{check}"
+        if !validate || (check == final)
+          digits << check
+        elsif log
+          err = "check digit should be #{check}"
+          Log.info { "#{__method__}: #{v.inspect}: #{err}" }
         end
-        digits << check
       elsif log
         Log.info { "#{__method__}: #{v.inspect} is not a valid ISSN" }
       end
@@ -1023,7 +1097,7 @@ class Oclc < PublicationIdentifier
     # @return [String]
     #
     def normalize(v)
-      to_oclc(v, log: false) || ''
+      to_oclc(v, log: false) || remove_prefix(v).delete('^0-9')
     end
 
     # =========================================================================
@@ -1218,7 +1292,7 @@ class Lccn < PublicationIdentifier
     # @return [String]
     #
     def normalize(v)
-      to_lccn(v, log: false) || ''
+      remove_prefix(v).rstrip
     end
 
     # =========================================================================
@@ -1431,24 +1505,15 @@ class Upc < PublicationIdentifier
     # @param [String] v
     #
     def upc?(v)
-      digits = normalize(v)
-      length = digits.size
-      last   = UPC_DIGITS - 1 # The check digit.
-      check  = digits[last]
-      digits = digits[0..(last-1)]
-      # noinspection RubyMismatchedParameterType
-      (length >= UPC_DIGITS) && (checksum(digits) == check)
+      to_upc(v, log: false, validate: true).present?
     end
 
     # If the value is a UPC return it in a normalized form or *nil* otherwise.
     #
     # @param [String]  v
     # @param [Boolean] log
-    # @param [Boolean] validate         If *true*, raise an exception if the
+    # @param [Boolean] validate         If *true*, return *nil* if the
     #                                     checksum provided in *v* is invalid.
-    #
-    # @raise [RuntimeError]             If *v* contains a check digit but it is
-    #                                     not valid.
     #
     # @return [String, nil]
     #
@@ -1461,12 +1526,14 @@ class Upc < PublicationIdentifier
         added  = upc[(last+1)..]
         # noinspection RubyMismatchedParameterType
         check  = checksum(digits)
-        if validate && (check != final)
-          raise "#{v.inspect}: check digit should be #{check}"
+        if !validate || (check == final)
+          "#{digits}#{check}#{added}"
+        elsif log
+          err = "check digit should be #{check}"
+          Log.info { "#{__method__}: #{v.inspect}: #{err}" }
         end
-        "#{digits}#{check}#{added}"
       elsif log
-        Log.info { "#{__method__}: #{v.inspect} is not a valid UPC" }
+        Log.info { "#{__method__}: #{v.inspect}: not a valid UPC" }
       end
     end
 
@@ -1590,7 +1657,7 @@ class Doi < PublicationIdentifier
     # @return [String]
     #
     def normalize(v)
-      to_doi(v, log: false) || ''
+      remove_prefix(v).rstrip
     end
 
     # =========================================================================

@@ -39,7 +39,6 @@ module Ingest::Shared::TransformMethods
   # @return [void]
   #
   def normalize_data_fields!(data = nil)
-    normalize_identifier_fields!(data)
     normalize_day_fields!(data)
     make_retrieval_link!(data)
     super(data)
@@ -60,18 +59,11 @@ module Ingest::Shared::TransformMethods
   #
   # @return [void]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def make_retrieval_link!(data = nil)
     link, rid = get_field_values(data, *RETRIEVAL_FIELDS)
     return if link.present? || rid.blank?
     link = Upload.make_retrieval_link(rid)
-    if data
-      data[:emma_retrievalLink] = link
-    else
-      try('emma_retrievalLink=', link)
-    end
+    set_field_value!(data, :emma_retrievalLink, link)
   end
 
 end

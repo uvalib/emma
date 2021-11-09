@@ -172,17 +172,25 @@ module SearchConcern
 
   public
 
-  # @private
-  ID_SEPARATOR = Api::Shared::IdentifierMethods::ID_SEPARATOR
+  # Indicate whether the argument contains only valid identifiers.
+  #
+  # @param [String, Array<String>] value
+  #
+  def valid_identifiers?(value)
+    ids = PublicationIdentifier.objects(value, invalid: true)
+    ids.present? && ids.all? { |id| id&.valid? }
+  end
 
   # Indicate whether the argument contains only valid identifiers.
   #
-  # @param [String, Array<String>] ids
+  # @param [String, Array<String>] value
   #
-  def valid_identifiers?(ids)
-    ids = ids.split(ID_SEPARATOR) if ids.is_a?(String)
-    ids = Array.wrap(ids)         unless ids.is_a?(Array)
-    ids.map { |id| PublicationIdentifier.cast(id) }.compact.present?
+  # @return [Hash{String=>String,nil}]
+  #
+  def validate_identifiers(value)
+    result = PublicationIdentifier.object_map(value, invalid: true)
+    # noinspection RubyMismatchedReturnType
+    result.transform_values! { |id| id.to_s if id&.valid? }
   end
 
   # ===========================================================================
@@ -222,7 +230,7 @@ module SearchConcern
     opt = request_parameters
     return if opt[:q].present?
     return if (identifier = opt[:identifier]).blank?
-    return if PublicationIdentifier.cast(identifier).present?
+    return if PublicationIdentifier.cast(identifier)
     opt[:q] = identifier.sub(/^[^:]+:/, '')
     redirect_to opt.except!(:identifier)
   end
@@ -237,7 +245,7 @@ module SearchConcern
     opt = request_parameters
     search_query_keys(**opt).find do |q_param|
       next if (q_param == :identifier) || (query = opt[q_param]).blank?
-      next unless (identifier = PublicationIdentifier.cast(query))&.valid?
+      next unless (identifier = PublicationIdentifier.cast(query))
       opt[:identifier] = identifier.to_s
       redirect_to opt.except!(q_param)
     end

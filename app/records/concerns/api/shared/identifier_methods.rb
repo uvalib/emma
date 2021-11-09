@@ -26,22 +26,6 @@ module Api::Shared::IdentifierMethods
   IDENTIFIER_FIELDS =
     %i[dc_identifier dc_relation periodical_identifier].freeze
 
-  # The pattern which separates multiple identifiers within a String.
-  #
-  # @type [Regexp]
-  #
-  ID_SEPARATOR = /[,;|\s]+/.freeze
-
-  # Normalization array handling.
-  #
-  # :required   Results always given as arrays.
-  # :forbidden  Results are only given a singles.
-  # :auto       Results given as arrays when indicated; singles otherwise.
-  #
-  # @type [Array<Symbol>]
-  #
-  ARRAY_MODES = %i[auto required forbidden].freeze unless defined?(ARRAY_MODES)
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -66,14 +50,6 @@ module Api::Shared::IdentifierMethods
     :required
   end
 
-  # The pattern which separates multiple identifiers within a String.
-  #
-  # @return [Regexp]
-  #
-  def id_separator
-    ID_SEPARATOR
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -84,43 +60,24 @@ module Api::Shared::IdentifierMethods
   #
   # @param [Hash, nil] data           Default: *self*
   # @param [Symbol]    mode           Default: `#id_array_mode`.
-  # @param [Regexp]    sep            Default: `#id_separator`.
   #
   # @return [void]
   #
-  def normalize_identifier_fields!(data = nil, mode = nil, sep = nil)
+  def normalize_identifier_fields!(data = nil, mode = nil)
     mode ||= id_array_mode
-    sep  ||= id_separator
     identifier_fields.each do |field|
-      value = data ? data[field] : try(field)
-      array = value.is_a?(Array)
-      value = value.is_a?(String) ? value.split(sep) : Array.wrap(value)
-      value = normalize_identifiers(value)
-      case mode
-        when :required  then # Keep value as array.
-        when :forbidden then value = value.first
-        else                 value = value.first unless array || value.many?
-      end
-      value = value.presence
-      # noinspection RubyNilAnalysis
-      if data.nil?
-        try("#{field}=", value)
-      elsif value
-        data[field] = value
-      elsif data.key?(field)
-        data.delete(field)
-      end
+      update_field_value!(data, field, mode) { |v| normalize_identifiers(v) }
     end
   end
 
   # Produce standard identifiers of the form "(prefix):(value)".
   #
-  # @param [Array<String, PublicationIdentifier, Array, nil>] values
+  # @param [String, PublicationIdentifier, Array, nil] values
   #
   # @return [Array<String>]
   #
-  def normalize_identifiers(*values)
-    values.flatten.map { |value| normalize_identifier(value) }.compact
+  def normalize_identifiers(values)
+    PublicationIdentifier.objects(values).map(&:to_s).uniq
   end
 
   # Produce a standard identifier of the form "(prefix):(value)".
@@ -150,21 +107,11 @@ module Api::Shared::IdentifierMethods
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def clean_dc_relation!(data = nil)
     related, std_ids = get_field_values(data, *RELATION_FIELDS)
     return if related.blank? || std_ids.blank?
-    related = (Array.wrap(related) - Array.wrap(std_ids)).presence
-    if data.nil?
-      # noinspection RailsParamDefResolve
-      try('dc_relation=', related)
-    elsif related
-      data[:dc_relation] = related
-    elsif data.key?(:dc_relation)
-      data.delete(:dc_relation)
-    end
+    related = Array.wrap(related) - Array.wrap(std_ids)
+    set_field_value!(data, :dc_relation, related)
   end
 
   # ===========================================================================

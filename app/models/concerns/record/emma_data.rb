@@ -123,29 +123,27 @@ module Record::EmmaData
     result = reject_blanks(result) unless allow_blank
     # noinspection RubyNilAnalysis
     result.map { |k, v|
-      v    = Array.wrap(v)
-      prop = Field.configuration_for(k, :entry) # TODO: should vary by record_class ???
-      type = prop[:type]
-      if type == 'json'
-        v = v.join("\n").strip
-      else
-        array = prop[:array]
-        lines = (type == 'textarea')
-        text  = lines || type.blank? || (type == 'text')
-        ids   = %i[dc_identifier dc_relation].include?(k)
-        if text && !ids
-          join = lines ? "\n"     : ';'
-          sep  = lines ? /[|\n]+/ : ';'
-          v = array ? v.join(join).split(sep) : v.map(&:to_s)
-          v = v.map!(&:strip).compact_blank!
-          v = v.join(join) unless array
-        else
-          join = "\n"
-          sep  = ids ? /[,;|\s]+/ : /[|\n]+/
+      v     = Array.wrap(v)
+      prop  = Field.configuration_for(k, :entry) # TODO: should vary by record_class ???
+      array = prop[:array]
+      type  = prop[:type]
+      join  = "\n"
+      sep   = /[|\t\n]+/
+      if %i[dc_identifier dc_relation].include?(k)
+        v = PublicationIdentifier.split(v)
+      elsif type == 'json'
+        v = v.join(join).strip
+      elsif (lines = (type == 'textarea')) || (type == 'text') || type.blank?
+        join = sep = ';' unless lines
+        if array
           v = v.join(join).split(sep).map!(&:strip).compact_blank!
-          v = v.first unless array
+        else
+          v = v.map(&:to_s).map!(&:strip).compact_blank!.join(join)
         end
+      else
+        v = v.join(join).split(sep).map!(&:strip).compact_blank!
       end
+      v = v.first if v.is_a?(Array) && !array
       [k, v] if allow_blank || v.present? || v.is_a?(FalseClass)
     }.compact.sort.to_h.tap { |hash|
       Api::Shared::TransformMethods.normalize_data_fields!(hash)

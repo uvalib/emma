@@ -19,22 +19,6 @@ module Api::Shared::DateMethods
 
   public
 
-  # Normalization array handling.
-  #
-  # :required   Results always given as arrays.
-  # :forbidden  Results are only given a singles.
-  # :auto       Results given as arrays when indicated; singles otherwise.
-  #
-  # @type [Array<Symbol>]
-  #
-  ARRAY_MODES = %i[auto required forbidden].freeze unless defined?(ARRAY_MODES)
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Fields that must be transmitted as "YYYY-MM-DD".
   #
   # @return [Array<Symbol>]
@@ -58,7 +42,7 @@ module Api::Shared::DateMethods
   # @return [Regexp]
   #
   def date_separator
-    /[|\n]+/
+    PART_SEPARATOR
   end
 
   # ===========================================================================
@@ -96,43 +80,26 @@ module Api::Shared::DateMethods
   #
   # @param [Hash, nil] data           Default: *self*
   # @param [Symbol]    mode           Default: `#date_array_mode`.
-  # @param [Regexp]    sep            Default: `#date_separator`.
   #
   # @return [void]
   #
-  def normalize_day_fields!(data = nil, mode = nil, sep = nil)
+  def normalize_day_fields!(data = nil, mode = nil)
     mode ||= date_array_mode
-    sep  ||= date_separator
     day_fields.each do |field|
-      value = data ? data[field] : try(field)
-      array = value.is_a?(Array)
-      value = value.is_a?(String) ? value.split(sep) : Array.wrap(value)
-      value = normalize_dates(value)
-      case mode
-        when :required  then # Keep value as array.
-        when :forbidden then value = value.first
-        else                 value = value.first unless array || value.many?
-      end
-      value = value.presence
-      # noinspection RubyNilAnalysis
-      if data.nil?
-        try("#{field}=", value)
-      elsif value
-        data[field] = value
-      elsif data.key?(field)
-        data.delete(field)
-      end
+      update_field_value!(data, field, mode) { |v| normalize_dates(v) }
     end
   end
 
   # Produce dates of the form "YYYY-MM-DD".
   #
-  # @param [Array<String, Date, Time, IsoDate, Array, nil>] values
+  # @param [String, Date, Time, IsoDate, Array, nil] values
   #
   # @return [Array<String>]
   #
-  def normalize_dates(*values)
-    values.flatten.map { |value| normalize_date(value) }.compact
+  def normalize_dates(values)
+    # noinspection RubyNilAnalysis
+    values = values.split(date_separator) if values.is_a?(String)
+    Array.wrap(values).map { |value| normalize_date(value) }.compact
   end
 
   # Produce a date of the form "YYYY-MM-DD".

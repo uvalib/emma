@@ -15,6 +15,28 @@ module Api::Shared::CommonMethods
   # :section:
   # ===========================================================================
 
+  public
+
+  # Normalization array handling.
+  #
+  # :required   Results always given as arrays.
+  # :forbidden  Results are only given a singles.
+  # :auto       Results given as arrays when indicated; singles otherwise.
+  #
+  # @type [Array<Symbol>]
+  #
+  ARRAY_MODES = %i[auto required forbidden].freeze
+
+  # Generic separator for splitting a string into parts.
+  #
+  # @type [Regexp]
+  #
+  PART_SEPARATOR = /[|\t\n]+/.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   protected
 
   # Reduce a string for comparison with another by eliminating surrounding
@@ -71,6 +93,67 @@ module Api::Shared::CommonMethods
 
   protected
 
+  # Get the target field value.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  # @param [Symbol]    field
+  #
+  # @return [*]
+  #
+  def get_field_value(data, field)
+    data.is_a?(Hash) ? data[field] : try(field)
+  end
+
+  # Set the target field value.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  # @param [Symbol]    field
+  # @param [*]         value
+  #
+  # @return [void]
+  #
+  def set_field_value!(data, field, value)
+    value = value.presence
+    # noinspection RubyNilAnalysis
+    if !data.is_a?(Hash)
+      try("#{field}=", value)
+    elsif value
+      data[field] = value
+    elsif data.key?(field)
+      data.delete(field)
+    end
+  end
+
+  # Update the target field.
+  #
+  # @param [Hash, nil]   data         Default: *self*.
+  # @param [Symbol]      field
+  # @param [Symbol, nil] mode         One of #ARRAY_MODES.
+  #
+  # @return [void]
+  #
+  # @yield [value] Generate a replacement value
+  # @yieldparam [*] value   The current field value.
+  # @yieldreturn [Array]    The new field value(s).
+  #
+  def update_field_value!(data, field, mode = nil)
+    value = get_field_value(data, field)
+    array = value.is_a?(Array)
+    value = yield(value)
+    case mode
+      when :required  then # Keep value as array.
+      when :forbidden then value = value.first
+      else                 value = value.first unless array || value.many?
+    end
+    set_field_value!(data, field, value)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
   # Get the indicated field values from the indicated target.
   #
   # @param [Hash, nil]     data       Default: *self*.
@@ -78,10 +161,10 @@ module Api::Shared::CommonMethods
   #
   # @return [Array]
   #
-  def get_field_values(data = nil, *fields)
-    data = nil if data == self
-    values = data&.values_at(*fields) || fields.map { |field| try(field) }
-    values.map(&:presence)
+  def get_field_values(data, *fields)
+    # noinspection RubyNilAnalysis
+    v = data.is_a?(Hash) ? data.values_at(*fields) : fields.map { |f| try(f) }
+    v.map(&:presence)
   end
 
   # Update the indicated target with the given values.
@@ -91,10 +174,18 @@ module Api::Shared::CommonMethods
   #
   # @return [void]
   #
-  def set_field_values!(data = nil, values)
-    data = nil if data == self
-    values = values.compact
-    data&.merge!(values) || values.each_pair { |k, v| try("#{k}=", v) }
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def set_field_values!(data, values)
+    if data.is_a?(Hash)
+      deletions = values.select { |_, v| v.blank? }.keys.presence
+      values.except!(*deletions) if deletions
+      data.except!(*deletions)   if deletions
+      data.merge!(values)
+    else
+      values.each_pair { |k, v| try("#{k}=", v) }
+    end
   end
 
 end

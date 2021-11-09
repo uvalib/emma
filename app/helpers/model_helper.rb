@@ -755,7 +755,7 @@ module ModelHelper
     type, id_part = value.split(':', 2)
     if id_part.nil? # No type prefix.
       value
-    elsif (identifier = PublicationIdentifier.create(id_part, type))
+    elsif (identifier = PublicationIdentifier.create(id_part, type))&.valid?
       identifier.to_s
     else
       tip = "This is not a valid #{type.upcase} identifier." # TODO: I18n

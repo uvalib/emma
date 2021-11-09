@@ -249,21 +249,21 @@ module Upload::EmmaDataMethods
       prop  = Field.configuration_for(k, :upload)
       array = prop[:array]
       type  = prop[:type]
-      lines = (type == 'textarea')
-      text  = lines || type.blank? || (type == 'text')
-      ids   = %i[dc_identifier dc_relation].include?(k)
-      if text && !ids
-        join = lines ? "\n"     : ';'
-        sep  = lines ? /[|\n]+/ : ';'
-        v = array ? v.join(join).split(sep) : v.map(&:to_s)
-        v = v.map!(&:strip).compact_blank!
-        v = v.join(join) unless array
+      join  = "\n"
+      sep   = /[|\t\n]+/
+      if %i[dc_identifier dc_relation].include?(k)
+        v = PublicationIdentifier.split(v)
+      elsif (lines = (type == 'textarea')) || (type == 'text') || type.blank?
+        join = sep = ';' unless lines
+        if array
+          v = v.join(join).split(sep).map!(&:strip).compact_blank!
+        else
+          v = v.map(&:to_s).map!(&:strip).compact_blank!.join(join)
+        end
       else
-        join = "\n"
-        sep  = ids ? /[,;|\s]+/ : /[|\n]+/
         v = v.join(join).split(sep).map!(&:strip).compact_blank!
-        v = v.first unless array
       end
+      v = v.first if v.is_a?(Array) && !array
       [k, v] if allow_blank || v.present? || v.is_a?(FalseClass)
     }.compact.sort.to_h.tap { |hash|
       Api::Shared::TransformMethods.normalize_data_fields!(hash)
