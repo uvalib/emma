@@ -350,8 +350,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<Class<PublicationIdentifier>>]
   #
   def self.identifier_classes
-    # noinspection RubyClassVariableUsageInspection
-    @@identifier_classes ||= PublicationIdentifier.subclasses.reverse
+    @identifier_classes ||= PublicationIdentifier.subclasses.reverse
   end
 
   # Identifier type names.
@@ -359,8 +358,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<Symbol>]
   #
   def self.identifier_types
-    # noinspection RubyClassVariableUsageInspection
-    @@identifier_types ||= identifier_classes.map(&:type)
+    @identifier_types ||= identifier_classes.map(&:type)
   end
 
   # Table of identifier subclasses.
@@ -368,8 +366,7 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{Symbol=>Class<PublicationIdentifier>}]
   #
   def self.subclass_map
-    # noinspection RubyClassVariableUsageInspection
-    @@subclass_map ||= identifier_classes.map { |c| [c.type, c] }.to_h
+    @subclass_map ||= identifier_classes.map { |c| [c.type, c] }.to_h
   end
 
   # Retrieve the matching identifier subclass.
