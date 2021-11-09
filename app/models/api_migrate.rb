@@ -21,7 +21,7 @@ class ApiMigrate
 
   # API migration configuration entries.
   #
-  # To ensure idempotent translations, for each new value, that value is
+  # To ensure idempotent translations, for each new value, the value itself is
   # included at the start of the list of old item pattern matches.
   #
   # @type [Hash{Symbol=>Hash}]
@@ -538,7 +538,7 @@ class ApiMigrate
     #
     def normalize_text_list(value)
       value = Array.wrap(value).join("\n") unless value.is_a?(String)
-      value.split(/ *[.,;\n] */).compact_blank!
+      value.split(/(?<=\w)\.(?=\s|\z)|[,;|\t\n]/).map(&:strip).compact_blank!
     end
 
     # =========================================================================
@@ -590,12 +590,46 @@ class ApiMigrate
       array = value.is_a?(Array)
       value = Array.wrap(value)
       if (other = value - RemediatedAspects.values).present?
-        f = COMMENT_FIELDS.find { |f| emma_data[f] } || COMMENT_FIELDS.last
-        emma_data[f] = [*emma_data[f], *other].compact_blank.uniq.join("\n")
+        add_values(emma_data, COMMENT_FIELDS, other, single: true)
         value -= other
       end
       array ? value : value.first
     end
+
+    # FormatFeature translations
+    #
+    # @type [Hash]
+    #
+    FORMAT_FEATURE_MIGRATION = {
+      emma_formatFeature: {
+        translate:
+          FormatFeature.values.map { |k|
+            v = k.sub(/\d+/, '_\0').underscore.gsub('_', ' *')
+            v = /(?<=\W)#{v}(\W|\z)/i
+            [k.to_sym, Array.wrap(v)]
+          }.to_h
+      }
+    }.deep_freeze
+
+    # Process :emma_lastRemediationNote by adding to :emma_formatFeature any
+    # values which can be detected.  The original value is returned.
+    #
+    # @param [String] value
+    # @param [Hash]   emma_data
+    #
+    # @return [String]
+    #
+    def extract_format_feature(value, emma_data)
+      add_translations(emma_data, value, FORMAT_FEATURE_MIGRATION)
+      value
+    end
+
+    # RemediatedAspects translations
+    #
+    # @type [Hash]
+    #
+    REMEDIATION_MIGRATION =
+      CONFIGURATION_ENTRY.dig(:'0_0_5', :rem_remediation, :translate)
 
     # EMMA data fields that have, do, or will contain remediation comments.
     #
@@ -617,20 +651,75 @@ class ApiMigrate
     # if they are present.
     #
     def extract_remediated_aspects(value, emma_data)
-      cfg_path = %i[rem_remediation translate]
-      if !(table = configuration.dig(*cfg_path))
-        Log.warn { "#{__method__}: missing #{cfg_path.inspect}" }
-      elsif table.blank?
-        Log.warn { "#{__method__}: empty #{cfg_path.inspect}" }
-      elsif value.present?
-        phrases = value.scan(/([^.,;\n]+)( *)([.,;\n] *|\z)/).map(&:first)
-        terms   = translate(phrases, table, unique: false)
-        if (terms -= phrases).present?
-          f = ASPECT_FIELDS.find { |f| emma_data[f] } || ASPECT_FIELDS.last
-          emma_data[f] = [*emma_data[f], *terms].compact_blank.uniq
-        end
-      end
+      add_translations(emma_data, value, REMEDIATION_MIGRATION, ASPECT_FIELDS)
       value
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Find terms within *value* and add them to the indicated data field.
+    #
+    # @param [Hash]                       emma_data
+    # @param [String]                     value
+    # @param [Hash]                       patterns
+    # @param [Array<Symbol>, Symbol, nil] fields
+    #
+    # @return [void]
+    #
+    def add_translations(emma_data, value, patterns, fields = nil)
+      return if value.blank?
+      field    = fields && find_field(emma_data, fields) || patterns.keys.last
+      patterns = patterns[field]      if patterns.key?(field)
+      patterns = patterns[:translate] if patterns.key?(:translate)
+      phrases  = normalize_text_list(value)
+      terms    = translate(phrases, patterns, unique: false)
+      add_values(emma_data, field, (terms - phrases))
+    end
+
+    # Add one or more values to the indicated data field.
+    #
+    # @param [Hash]                       emma_data
+    # @param [Symbol, Array<Symbol>]      fields
+    # @param [String, Array<String>]      values
+    # @param [Boolean]                    unique
+    # @param [Boolean, nil]               single
+    #
+    # @return [*]                     New value of `emma_data[field]`.
+    #
+    def add_values(emma_data, fields, values, unique: true, single: nil)
+      field   = find_field(emma_data, fields) or return
+      current = emma_data[field]
+      return current                             if values.blank?
+      single  = current && !current.is_a?(Array) if single.nil?
+      changed = [*current, *values].compact_blank!
+      changed.uniq!                              if unique
+      changed = changed.join("\n")               if single
+      emma_data[field] = changed
+    end
+
+    # To avoid requiring that the API field migrations be performed in a
+    # specific order, this method supports the ability to arrange potential
+    # target fields so that pre-migrated fields will be favored if they are
+    # present.
+    #
+    # If none are present, the last (or only) supplied field name is returned.
+    #
+    # @param [Hash]                       emma_data
+    # @param [Array<Symbol>, Symbol, nil] fields
+    #
+    # @return [Symbol, nil]
+    #
+    def find_field(emma_data, fields)
+      if fields.is_a?(Array)
+        # noinspection RubyNilAnalysis
+        fields.find { |f| emma_data[f] } || fields.last
+      else
+        fields&.to_sym
+      end
     end
 
     # =========================================================================

@@ -131,7 +131,9 @@ en:
 
         emma_lastRemediationNote:
           new_name:                 'rem_comments'
-          pre_translate:            extract_remediated_aspects
+          pre_translate:
+            - extract_format_feature
+            - extract_remediated_aspects
 
         emma_repositoryMetadataUpdateDate:
           new_name:                 'emma_repositoryUpdateDate'
