@@ -177,7 +177,7 @@ module SearchConcern
   # @param [String, Array<String>] value
   #
   def valid_identifiers?(value)
-    ids = PublicationIdentifier.objects(value, invalid: true)
+    ids = PublicationIdentifier.objects(value)
     ids.present? && ids.all? { |id| id&.valid? }
   end
 
@@ -188,7 +188,7 @@ module SearchConcern
   # @return [Hash{String=>String,nil}]
   #
   def validate_identifiers(value)
-    result = PublicationIdentifier.object_map(value, invalid: true)
+    result = PublicationIdentifier.object_map(value)
     # noinspection RubyMismatchedReturnType
     result.transform_values! { |id| id.to_s if id&.valid? }
   end
@@ -215,7 +215,7 @@ module SearchConcern
   #
   def identifier_alias_redirect
     opt     = request_parameters
-    aliases = opt.extract!(*PublicationIdentifier::identifier_types)
+    aliases = opt.extract!(*PublicationIdentifier.identifier_types)
     return if aliases.blank?
     opt[:identifier] = aliases.map { |type, term| "#{type}:#{term}" }.join(' ')
     redirect_to opt

@@ -483,7 +483,7 @@ class ApiMigrate
     # @return [Array<String>]
     #
     def normalize_identifier(value)
-      PublicationIdentifier.objects(value).map(&:to_s).uniq
+      PublicationIdentifier.objects(value).compact.map(&:to_s).uniq
     end
 
     # normalize_day

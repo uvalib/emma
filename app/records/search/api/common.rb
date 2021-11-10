@@ -231,7 +231,7 @@ class PublicationIdentifier < ScalarType
     # @return [String]
     #
     def remove_prefix(v)
-      v.to_s.sub(/^\s*([a-z]+|\([a-z]+\)):?\s*/i, '')
+      v.to_s.sub(/^\s*[a-z]+[\x20:]\s*/i, '')
     end
 
     # Indicate whether the given value has the characteristic prefix.
@@ -272,9 +272,8 @@ class PublicationIdentifier < ScalarType
     def create(v, type = nil, *)
       prefix, value = type ? [type, v] : parts(v)
       return                       if value.blank?
-      return type.new(value)       if (type = subclass(prefix))
       value = "#{prefix}:#{value}" if prefix.present?
-      identifier_classes.find { |c| (id = c.new(value)).valid? and return id }
+      identifier_classes.find { |c| c.candidate?(value) }&.new(value)
     end
 
     # =========================================================================
@@ -364,7 +363,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<Class<PublicationIdentifier>>]
   #
   def self.identifier_classes
-    @identifier_classes ||= PublicationIdentifier.subclasses.reverse
+    @identifier_classes ||= [Doi, Isbn, Issn, Upc, Oclc, Lccn]
   end
 
   # Identifier type names.
@@ -404,32 +403,14 @@ class PublicationIdentifier < ScalarType
 
   public
 
-  # The pattern which separates multiple identifiers within a String for use
-  # in conjunction with PublicationIdentifier#split.
-  #
-  # @type [Regexp]
-  #
-  ID_SEPARATOR = /[,;|\t\n]+/.freeze
-
   # Create an array of identifier candidate strings.
-  #
-  # Spaces are also interpreted as separators in cases where they do not appear
-  # to be in use as part of the (ISBN) identifier (e.g. "92 75 31992 9").
-  #
-  # The individual subclasses can normalize invalid forms like that, but only
-  # if the string is split in a way that preserves the original intent.
   #
   # @param [String, PublicationIdentifier, Array, nil] value
   #
   # @return [Array<String>]
   #
   def self.split(value)
-    value = Array.wrap(value).map(&:to_s).join("\n") unless value.is_a?(String)
-    # noinspection RubyNilAnalysis
-    value.split(ID_SEPARATOR).flat_map { |id|
-      next unless (id = id.strip).present?
-      id.match?(/(^| )\d{1,2}( |$)/) ? id : id.split(/ +/)
-    }.compact_blank!
+    Array.wrap(value).join("\n").split(/ *[,;|\t\n] */).compact_blank!
   end
 
   # Create an array of identifier instances from candidate string(s).
@@ -440,7 +421,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<PublicationIdentifier>]
   # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
   #
-  def self.objects(value, invalid: false)
+  def self.objects(value, invalid: true)
     result = split(value).map! { |id| cast(id, invalid: invalid) }
     # noinspection RubyMismatchedReturnType
     invalid ? result : result.compact
@@ -454,7 +435,7 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{String=>PublicationIdentifier}]
   # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
   #
-  def self.object_map(value, invalid: false)
+  def self.object_map(value, invalid: true)
     result = split(value).map! { |id| [id, cast(id, invalid: invalid)] }.to_h
     invalid ? result : result.compact
   end
@@ -496,11 +477,13 @@ class Isbn < PublicationIdentifier
     #
     ISBN_13_DIGITS = 13
 
-    # A valid ISBN has at least this many digits.
+    # If a value has a number of digits within this range it could be either a
+    # valid ISBN or intended as an ISBN but with one too few or one too many
+    # digits.
     #
-    # @type [Integer]
+    # @type [Range]
     #
-    ISBN_MIN_DIGITS = ISBN_10_DIGITS
+    CANDIDATE_RANGE = ((ISBN_10_DIGITS-1)..(ISBN_13_DIGITS+1)).freeze
 
     # A pattern matching any of the expected ISBN prefixes.
     #
@@ -508,11 +491,29 @@ class Isbn < PublicationIdentifier
     #
     ISBN_PREFIX = /^\s*ISBN(:\s*|\s+)/i.freeze
 
+    # Pattern fragment for a valid separator between groups of ISBN digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR = '[\x20[:punct:]]'
+
     # A pattern matching the form of an ISBN identifier.
     #
     # @type [Regexp]
     #
-    ISBN_IDENTIFIER = /^(\d+[\s[:punct:]]?)+[\dxX]$/.freeze
+    ISBN_IDENTIFIER = /^
+      (\d#{SEPARATOR}*){#{ISBN_10_DIGITS-1}}([\dX]#{SEPARATOR}*) |
+      (\d#{SEPARATOR}*){#{ISBN_13_DIGITS}}
+    $/ix.freeze
+
+    # A pattern matching the form of a (possibly invalid) ISBN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISBN_CANDIDATE = /^
+      (\d#{SEPARATOR}*){#{CANDIDATE_RANGE.min-1},#{CANDIDATE_RANGE.max-1}}
+      [\dX]#{SEPARATOR}*
+    $/ix.freeze
 
     # =========================================================================
     # :section: ScalarType overrides
@@ -535,7 +536,7 @@ class Isbn < PublicationIdentifier
     # @return [String]
     #
     def normalize(v)
-      remove_prefix(v).delete('^0-9xX')
+      remove_prefix(v).remove!(/#{SEPARATOR}/)
     end
 
     # =========================================================================
@@ -554,8 +555,8 @@ class Isbn < PublicationIdentifier
     # valid and invalid cases and handle each appropriately.
     #
     def candidate?(v)
-      (v = v.to_s.strip).sub!(ISBN_PREFIX, '').present? ||
-        (v.match?(ISBN_IDENTIFIER) && (v.count('0-9xX') >= ISBN_MIN_DIGITS))
+      v = v.to_s.strip
+      v.sub!(ISBN_PREFIX, '').present? || v.match?(ISBN_CANDIDATE)
     end
 
     # Extract the base identifier of a possible ISBN.
@@ -833,17 +834,19 @@ class Issn < PublicationIdentifier
 
     public
 
-    # A valid ISSN has at least this many digits.
-    #
-    # @type [Integer]
-    #
-    ISSN_MIN_DIGITS = 8
-
     # A valid ISSN has this number of digits ([0-9X]).
     #
     # @type [Integer]
     #
-    ISSN_DIGITS = ISSN_MIN_DIGITS
+    ISSN_DIGITS = 8
+
+    # If a value has a number of digits within this range it could be either a
+    # valid ISSN or intended as an ISSN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE = ((ISSN_DIGITS-1)..(ISSN_DIGITS+1)).freeze
 
     # A pattern matching any of the expected ISSN prefixes.
     #
@@ -851,11 +854,27 @@ class Issn < PublicationIdentifier
     #
     ISSN_PREFIX = /^\s*ISSN(:\s*|\s+)/i.freeze
 
+    # Pattern fragment for a valid separator between groups of ISSN digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR = '[\x20[:punct:]]'
+
     # A pattern matching the form of an ISSN identifier.
     #
     # @type [Regexp]
     #
-    ISSN_IDENTIFIER = /^(\d+[\s[:punct:]]?)+[\dxX]$/.freeze
+    ISSN_IDENTIFIER =
+      /^(\d#{SEPARATOR}*){#{ISSN_DIGITS-1}}([\dX]#{SEPARATOR}*)$/i.freeze
+
+    # A pattern matching the form of a (possibly invalid) ISSN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISSN_CANDIDATE = /^
+      (\d#{SEPARATOR}*){#{CANDIDATE_RANGE.min-1},#{CANDIDATE_RANGE.max-1}}
+      [\dX]#{SEPARATOR}*
+    $/ix.freeze
 
     # =========================================================================
     # :section: ScalarType overrides
@@ -878,7 +897,7 @@ class Issn < PublicationIdentifier
     # @return [String]
     #
     def normalize(v)
-      remove_prefix(v).delete('^0-9xX')
+      remove_prefix(v).remove!(/#{SEPARATOR}/)
     end
 
     # =========================================================================
@@ -892,8 +911,8 @@ class Issn < PublicationIdentifier
     # @param [String, *] v
     #
     def candidate?(v)
-      (v = v.to_s.strip).sub!(ISSN_PREFIX, '').present? ||
-        (v.match?(ISSN_IDENTIFIER) && (v.count('0-9xX') >= ISSN_MIN_DIGITS))
+      v = v.to_s.strip
+      v.sub!(ISSN_PREFIX, '').present? || v.match?(ISSN_CANDIDATE)
     end
 
     # Extract the base identifier of a possible ISSN.
@@ -1058,7 +1077,19 @@ class Oclc < PublicationIdentifier
     # @type [Range]
     #
     OCLC_DIGITS =
-      OCLC_FORMAT.values.flatten.compact.then { |a| (a.min..a.max) }.deep_freeze
+      OCLC_FORMAT.values.flatten.compact.then { |a| (a.min..a.max) }.freeze
+
+    # If a value has a number of digits within this range it could be either a
+    # valid OCLC or intended as an OCLC but with too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    # == Implementation Notes
+    # The minimum is a heuristic to account for OCLC numbers that were not
+    # left-zero-filled to give the number 8 digits.
+    #
+    CANDIDATE_RANGE = (3..(OCLC_DIGITS.max+1)).freeze
 
     # A pattern matching any of the expected OCN prefixes.
     #
@@ -1072,9 +1103,15 @@ class Oclc < PublicationIdentifier
     # @type [Regexp]
     #
     OCLC_IDENTIFIER = /^(
-      [1-9]\d{,#{OCLC_DIGITS.min - 1}} |
-      \d{#{OCLC_DIGITS.minmax.join(',')}}
+      \d{#{OCLC_DIGITS.minmax.join(',')}} |                  # Well-formed.
+      [1-9]\d{#{CANDIDATE_RANGE.min-1},#{OCLC_DIGITS.min-1}} # Not zero-filled.
     )$/x.freeze
+
+    # A pattern matching the form of a (possibly invalid) OCN identifier.
+    #
+    # @type [Regexp]
+    #
+    OCLC_CANDIDATE = /^\d{#{CANDIDATE_RANGE.minmax.join(',')}}$/.freeze
 
     # =========================================================================
     # :section: ScalarType overrides
@@ -1119,7 +1156,8 @@ class Oclc < PublicationIdentifier
     #
     def candidate?(v)
       v = v.to_s.strip
-      v.match?(/^[^:]+:/) && v.match?(OCLC_PREFIX) || identifier(v).present?
+      v.sub!(OCLC_PREFIX, '')
+      v.match?(OCLC_CANDIDATE)
     end
 
     # Extract the base identifier of a possible OCN.
@@ -1253,6 +1291,14 @@ class Lccn < PublicationIdentifier
     #
     LCCN_DIGITS = (8..10).freeze
 
+    # If a value has a number of digits within this range it could be either a
+    # valid LCCN or intended as an LCCN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    LCCN_RANGE = ((LCCN_DIGITS.min-1)..(LCCN_DIGITS.max+1)).freeze
+
     # A pattern matching any of the expected LCCN prefixes.
     #
     # @type [Regexp]
@@ -1265,11 +1311,19 @@ class Lccn < PublicationIdentifier
     #
     LCCN_IDENTIFIER = /^
       (
-        ([ _#a-z]{3})?\d{8}[ _#]? |
-        ([ _#a-z]{3})?\d{9}       |
-        ([ _#a-z]{2})?\d{10}
+        ([\x20_#a-z]{3})?\d{8}[\x20_#]? |
+        ([\x20_#a-z]{3})?\d{9}          |
+        ([\x20_#a-z]{2})?\d{10}
       )(\/.*)?$
     /ix.freeze
+
+    # A pattern matching the form of a (possibly invalid) LCCN identifier.
+    #
+    # @type [Regexp]
+    #
+    LCCN_CANDIDATE = /^
+      ([\x20_#a-z]{2,3})?\d{#{LCCN_RANGE.minmax.join(',')}}[\x20_#]?(\/.*)?
+    $/ix.freeze
 
     # =========================================================================
     # :section: ScalarType overrides
@@ -1306,7 +1360,8 @@ class Lccn < PublicationIdentifier
     # @param [String, *] v
     #
     def candidate?(v)
-      (v = v.to_s.strip).match?(LCCN_PREFIX) || v.match?(LCCN_IDENTIFIER)
+      v = v.to_s.strip
+      v.sub!(LCCN_PREFIX, '').present? || v.match?(LCCN_CANDIDATE)
     end
 
     # Extract the base identifier of a possible LCCN.
@@ -1422,17 +1477,38 @@ class Upc < PublicationIdentifier
     #
     UPC_DIGITS = 12
 
+    # If a value has a number of digits within this range it could be either a
+    # valid UPC or intended as an UPC but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE = ((UPC_DIGITS-1)..(UPC_DIGITS+1)).freeze
+
     # A pattern matching any of the expected UPC prefixes.
     #
     # @type [Regexp]
     #
     UPC_PREFIX = /^\s*UPC(:\s*|\s+)/i.freeze
 
+    # Pattern fragment for a valid separator between groups of UPC digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR = '[\x20[:punct:]]'
+
     # A pattern matching the form of a UPC identifier.
     #
     # @type [Regexp]
     #
-    UPC_IDENTIFIER = /^(\d+[\s[:punct:]]?)+\d$/.freeze
+    UPC_IDENTIFIER = /^(\d#{SEPARATOR}*){#{UPC_DIGITS}}$/.freeze
+
+    # A pattern matching the form of a (possibly invalid) UPC identifier.
+    #
+    # @type [Regexp]
+    #
+    UPC_CANDIDATE =
+      /^(\d#{SEPARATOR}*){#{CANDIDATE_RANGE.minmax.join(',')}}$/.freeze
 
     # =========================================================================
     # :section: ScalarType overrides
@@ -1455,7 +1531,7 @@ class Upc < PublicationIdentifier
     # @return [String]
     #
     def normalize(v)
-      remove_prefix(v).delete('^0-9')
+      remove_prefix(v).remove!(/#{SEPARATOR}/)
     end
 
     # =========================================================================
@@ -1469,8 +1545,8 @@ class Upc < PublicationIdentifier
     # @param [String, *] v
     #
     def candidate?(v)
-      (v = v.to_s.strip).sub!(UPC_PREFIX, '').present? ||
-        (v.match?(UPC_IDENTIFIER) && (v.count('0-9') >= UPC_DIGITS))
+      v = v.to_s.strip
+      v.sub!(UPC_PREFIX, '').present? || v.match?(UPC_CANDIDATE)
     end
 
     # Extract the base identifier of a possible UPC.
@@ -1626,8 +1702,8 @@ class Doi < PublicationIdentifier
     #
     DOI_PREFIX = %r{^\s*(
       doi(:\s*|\s+) |
-      https?://doi\.org/ |
-      https?://dx\.doi\.org/
+      (https?:)?(//)?doi\.org/ |
+      (https?:)?(//)?dx\.doi\.org/
     )}ix.freeze
 
     # A pattern matching the form of an DOI identifier.
@@ -1635,6 +1711,12 @@ class Doi < PublicationIdentifier
     # @type [Regexp]
     #
     DOI_IDENTIFIER = /^10\.\d{4,}(\.d+)*\/.*$/.freeze
+
+    # A pattern matching the form of a (possibly invalid) DOI identifier.
+    #
+    # @type [Regexp]
+    #
+    DOI_CANDIDATE = /^10\.\d/.freeze
 
     # =========================================================================
     # :section: ScalarType overrides
@@ -1676,7 +1758,8 @@ class Doi < PublicationIdentifier
     # valid and invalid cases and handle each appropriately.
     #
     def candidate?(v)
-      (v = v.to_s.strip).match?(DOI_PREFIX) || identifier(v).present?
+      v = v.to_s.strip
+      v.sub!(DOI_PREFIX, '').present? || v.match?(DOI_CANDIDATE)
     end
 
     # Extract the base identifier of a possible DOI.

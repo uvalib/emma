@@ -23,8 +23,7 @@ module Api::Shared::IdentifierMethods
   #
   # @type [Array<Symbol>]
   #
-  IDENTIFIER_FIELDS =
-    %i[dc_identifier dc_relation periodical_identifier].freeze
+  IDENTIFIER_FIELDS = %i[dc_identifier dc_relation].freeze
 
   # ===========================================================================
   # :section:
@@ -77,7 +76,7 @@ module Api::Shared::IdentifierMethods
   # @return [Array<String>]
   #
   def normalize_identifiers(values)
-    PublicationIdentifier.objects(values).map(&:to_s).uniq
+    PublicationIdentifier.objects(values).compact.map(&:to_s).uniq
   end
 
   # Produce a standard identifier of the form "(prefix):(value)".
@@ -88,7 +87,7 @@ module Api::Shared::IdentifierMethods
   # @return [nil]                     If *value* is not a valid identifier.
   #
   def normalize_identifier(value)
-    PublicationIdentifier.cast(value)&.to_s if value.present?
+    PublicationIdentifier.cast(value, invalid: true)&.to_s if value.present?
   end
 
   # ===========================================================================
