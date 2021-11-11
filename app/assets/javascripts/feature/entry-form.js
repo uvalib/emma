@@ -2482,7 +2482,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         function modifyOther(new_req, new_val) {
-            let changed        = false;
+            let changed   = false;
             const old_req = $other_input.attr('data-required')?.toString();
             if (old_req !== new_req?.toString()) {
                 $other_input.attr('data-required', new_req);
@@ -2530,23 +2530,36 @@ $(document).on('turbolinks:load', function() {
                 validate($input, values, update);
             }
 
-            function update(valid) {
+            function update(valid, notes) {
                 if (required || !missing) {
                     invalid ||= !valid;
                 }
+
                 // Update the status icon and tooltip.
+                let tip, icon;
                 if (valid) {
-                    setIcon($status,    Emma.Upload.Status.valid.label);
-                    setTooltip($status, Emma.Upload.Status.valid.tooltip);
+                    icon = Emma.Upload.Status.valid.label;
+                    tip  = Emma.Upload.Status.valid.tooltip;
                 } else if (invalid && !missing) {
-                    setIcon($status,    Emma.Upload.Status.invalid.label);
-                    setTooltip($status, Emma.Upload.Status.invalid.tooltip);
+                    icon = Emma.Upload.Status.invalid.label;
+                    tip  = Emma.Upload.Status.invalid.tooltip;
                 } else if (required) {
-                    setIcon($status,    Emma.Upload.Status.required.label);
+                    icon = Emma.Upload.Status.required.label;
+                }
+
+                if (tip) {
+                    if (isPresent(notes)) {
+                        tip = [tip, '', ...arrayWrap(notes)].join("\n");
+                    }
+                    setTooltip($status, tip);
+                } else {
                     restoreTooltip($status);
+                }
+
+                if (icon) {
+                    setIcon($status, icon);
                 } else {
                     restoreIcon($status);
-                    restoreTooltip($status);
                 }
 
                 // Update CSS status classes on all parts of the field.
@@ -2767,7 +2780,7 @@ $(document).on('turbolinks:load', function() {
         // Prepare value for inclusion in the URL.
         let value = new_value;
         if (typeof value === 'string') {
-            value = value.split("\n");
+            value = value.split(/[,;|\t\n]/);
         }
         if (Array.isArray(value)) {
             value = value.join(',');
@@ -2841,9 +2854,11 @@ $(document).on('turbolinks:load', function() {
             debug(func, 'complete', secondsSince(start), 'sec.');
             if (error) {
                 consoleWarn(func, `${url}:`, error);
-                callback(undefined);
+                callback(undefined, `system error: ${error}`);
+            } else if (isPresent(reply.errors)) {
+                callback(reply.valid, reply.errors);
             } else {
-                callback(reply.valid);
+                callback(reply.valid, reply.ids);
             }
         }
     }

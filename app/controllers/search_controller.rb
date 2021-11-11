@@ -174,10 +174,7 @@ class SearchController < ApplicationController
     __debug_route
     opt = request_parameters
     if (ids = opt[:identifier])
-      render json: { valid: valid_identifiers?(ids) }
-=begin
       render json: validate_identifiers(ids)
-=end
     end
   end
 

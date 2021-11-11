@@ -1,7 +1,9 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-@use 'controllers/entry'     as *;
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
 @use 'shared/controls/grids' as *;
+@use 'controllers/entry'     as *;
 
 //=============================================================================
 // Upload index page
@@ -211,6 +213,11 @@ body.api_migrate {
                     .data-list {
                         width:  100%;
                         margin: 0 1rem;
+                    }
+
+                    .invalid {
+                        color:  $error-fg;
+                        cursor: help;
                     }
                 }
             }

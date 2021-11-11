@@ -181,16 +181,26 @@ module SearchConcern
     ids.present? && ids.all? { |id| id&.valid? }
   end
 
-  # Indicate whether the argument contains only valid identifiers.
+  # Indicate whether the argument contains only valid identifiers and provide
+  # a list of individual validation problems.
   #
   # @param [String, Array<String>] value
   #
-  # @return [Hash{String=>String,nil}]
+  # @return [Hash]
   #
   def validate_identifiers(value)
-    result = PublicationIdentifier.object_map(value)
-    # noinspection RubyMismatchedReturnType
-    result.transform_values! { |id| id.to_s if id&.valid? }
+    ids    = []
+    errors = []
+    PublicationIdentifier.object_map(value).each_pair do |term, id|
+      if id&.valid?
+        ids << id.to_s
+      elsif id
+        errors << "#{id.to_s.inspect} is not a valid #{id.type.upcase}" # TODO: I18n
+      else
+        errors << "#{term.inspect} is not a standard identifier" # TODO: I18n
+      end
+    end
+    { valid: errors.blank?, ids: ids, errors: errors}
   end
 
   # ===========================================================================
