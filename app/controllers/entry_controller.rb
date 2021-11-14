@@ -606,67 +606,20 @@ class EntryController < ApplicationController
 
   public
 
-  # == GET /entry/bulk_reindex?id=(:id|SID|RANGE_LIST)
-  # Cause all of the listed items to be re-indexed.
+  # == GET /entry/bulk_reindex?size=PAGE_SIZE[&id=(:id|SID|RANGE_LIST)]
   #
-  # @note: This is very hacky and is meant to be temporary.
+  # Cause completed submission records to be re-indexed.
+  #
+  # @see #reindex_record
   #
   def bulk_reindex
     __debug_route
-    @list = [] # TODO: bulk_reindex ???
-    Log.info { "#{__method__}: #{@list.size} records" } # TODO: remove
-    size   = [1, params[:size].to_i].max
-    failed = @list.each_slice(size).flat_map { |items| reindex_record(items) }
+    opt = request_parameters.slice(:size).merge!(meth: __method__)
+    @list, failed = reindex_submissions(*@identifier, **opt)
     failure(:invalid, failed.uniq) if failed.present?
   rescue => error
     flash_now_failure(error)
     re_raise_if_internal_exception(error)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Cause all of the listed items to be re-indexed.
-  #
-  # @param [Entry, Array<Entry>] list
-  #
-  # @return [Array]  List of error(s).
-  #
-  # @note: This is very hacky and is meant to be temporary.
-  #
-  def reindex_record(list)
-    meth   = :bulk_reindex
-    sids   = []
-    failed = []
-    list   = Array.wrap(list)
-    result = ingest_api.put_records(*list)
-    errors = result.exec_report.error_table.dup
-    Log.debug { "#{meth}: put_records result: #{result.inspect}" }
-    Log.debug { "#{meth}: result.errors: #{errors.inspect}" }
-    if errors.present?
-      by_index = errors.select { |k| k.is_a?(Integer) }
-      if by_index.present?
-        by_index.transform_keys! { |idx| Entry.sid_value(list[idx-1]) }
-        sids   += by_index.keys
-        failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
-        errors  = errors.except(*by_index.keys)
-      end
-      failed << errors if errors.present?
-    end
-    Log.debug { "#{meth}: failed_sids: #{sids.inspect}" }
-    Log.debug { "#{meth}: failed_entries: #{failed.inspect}" }
-    list.each do |item|
-      sid = item.submission_id
-      if sids.include?(sid)
-        Log.warn { "#{meth}: #{sid}: still state #{item.state.inspect}" }
-      elsif errors.blank?
-        Log.debug { "#{meth}: accepted sid: #{sid.inspect}" }
-      end
-    end
-    failed
   end
 
   # ===========================================================================

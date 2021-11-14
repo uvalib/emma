@@ -789,6 +789,72 @@ module EntryConcern
     # TODO: bulk_check_entries
   end
 
+  # reindex_submissions
+  #
+  # @param [Array<Model,String>] entries
+  # @param [Hash, nil]           opt      To Entry#get_relation except for:
+  #
+  # @option opt [Symbol]  :meth           Passed to #reindex_record.
+  # @option opt [Boolean] :dryrun         Passed to #reindex_record.
+  #
+  # @return [(ActiveRecord::Relation, Array<String>)]
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def reindex_submissions(*entries, **opt)
+    opt[:repository] ||= EmmaRepository.default
+    size = positive(opt.delete(:size)) || 1
+    recs = Entry.get_relation(*entries, **opt.except(:meth, :dryrun))
+    fail = recs.each_slice(size).map { |items| reindex_record(items, **opt) }
+    return recs, fail.flatten
+  end
+
+  # ===========================================================================
+  # :section: Workflow - Bulk
+  # ===========================================================================
+
+  protected
+
+  # Cause all of the listed items to be re-indexed.
+  #
+  # @param [Upload, Array<Upload>, ActiveRecord::Relation] list
+  # @param [Symbol]                                        meth     Caller.
+  # @param [Boolean]                                       dryrun
+  #
+  # @return [Array]  List of error(s).
+  #
+  def reindex_record(list, meth: __method__, dryrun: false, **)
+    sids   = []
+    failed = []
+    list   = Array.wrap(list)
+    errors = {}
+    unless dryrun
+      result = ingest_api.put_records(*list)
+      errors = result.exec_report.error_table.dup
+      Log.debug { "#{meth}: put_records result: #{result.inspect}" }
+      Log.debug { "#{meth}: result.errors: #{errors.inspect}" }
+      if errors.present?
+        by_index = errors.select { |k| k.is_a?(Integer) }
+        if by_index.present?
+          by_index.transform_keys! { |idx| Entry.sid_value(list[idx-1]) }
+          sids   += by_index.keys
+          failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+          errors  = errors.except(*by_index.keys)
+        end
+        failed << errors if errors.present?
+      end
+      Log.debug { "#{meth}: failed sids: #{sids.inspect}" }
+      Log.debug { "#{meth}: failed entries: #{failed.inspect}" }
+    end
+    if errors.blank?
+      Log.debug do
+        "#{meth}: accepted sids: #{list.map(&:submission_id).inspect}"
+      end
+    end
+    failed
+  end
+
   # ===========================================================================
   # :section: PaginationConcern overrides
   # ===========================================================================
@@ -903,14 +969,20 @@ module EntryConcern
 
     __included(base, THIS_MODULE)
 
-    # In order to override #pagination_finalize this must be...
-    included_after(base, PaginationConcern, this: THIS_MODULE)
+    if base.is_a?(ApplicationController)
 
-    # =========================================================================
-    # :section: Helpers - methods exposed for use in views
-    # =========================================================================
+      # In order to override #pagination_finalize this must be...
+      included_after(base, PaginationConcern, this: THIS_MODULE)
 
-    helper_method *Record::Properties.public_instance_methods(false)
+      # =======================================================================
+      # :section: Helpers - methods exposed for use in views
+      # =======================================================================
+
+      helper_method *Record::Properties.public_instance_methods(false)
+
+    end
+
+    include IngestConcern
 
   end
 

@@ -421,7 +421,6 @@ module UploadConcern
 
   public
 
-
   # Gather information to create a bulk upload workflow instance.
   #
   # @param [Array, :unset, nil] rec
@@ -466,6 +465,77 @@ module UploadConcern
   def wf_check_partial_failure(wf = @workflow)
     return if (problems = wf.failures).blank?
     post_response(nil, problems, redirect: false, xhr: false)
+  end
+
+  # reindex_submissions
+  #
+  # @param [Array<Upload,String>] entries
+  # @param [Hash, nil]            opt       To Upload#get_relation except for:
+  #
+  # @option opt [Symbol]  :meth             Passed to #reindex_record.
+  # @option opt [Boolean] :dryrun           Passed to #reindex_record.
+  #
+  # @return [(ActiveRecord::Relation, Array<String>)]
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def reindex_submissions(*entries, **opt)
+    opt[:repository] ||= EmmaRepository.default
+    opt[:state]      ||= :completed
+    size = positive(opt.delete(:size)) || 1
+    recs = Upload.get_relation(*entries, **opt.except(:meth, :dryrun))
+    fail = recs.each_slice(size).map { |items| reindex_record(items, **opt) }
+    return recs, fail.flatten
+  end
+
+  # ===========================================================================
+  # :section: Workflow - Bulk
+  # ===========================================================================
+
+  protected
+
+  # Cause all of the listed items to be re-indexed.
+  #
+  # @param [Upload, Array<Upload>, ActiveRecord::Relation] list
+  # @param [Symbol]                                        meth     Caller.
+  # @param [Boolean]                                       dryrun
+  #
+  # @return [Array]  List of error(s).
+  #
+  def reindex_record(list, meth: __method__, dryrun: false, **)
+    sids   = []
+    failed = []
+    list   = Array.wrap(list)
+    errors = {}
+    unless dryrun
+      result = ingest_api.put_records(*list)
+      errors = result.exec_report.error_table
+      Log.debug { "#{meth}: put_records result: #{result.inspect}" }
+      Log.debug { "#{meth}: result.errors: #{errors.inspect}" }
+      if errors.present?
+        by_index = errors.select { |k| k.is_a?(Integer) }
+        if by_index.present?
+          by_index.transform_keys! { |idx| Upload.sid_for(list[idx-1]) }
+          sids   += by_index.keys
+          failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+          errors  = errors.except(*by_index.keys)
+        end
+        failed << errors if errors.present?
+      end
+      Log.debug { "#{meth}: failed sids: #{sids.inspect}" }
+      Log.debug { "#{meth}: failed entries: #{failed.inspect}" }
+    end
+    list.each do |item|
+      sid = item.submission_id
+      if sids.include?(sid)
+        Log.warn { "#{meth}: #{sid}: still state #{item.state.inspect}" }
+      elsif errors.blank?
+        Log.debug { "#{meth}: accepted sid: #{sid.inspect}" }
+        item.set_state(:completed) if item.state.blank?
+      end
+    end
+    failed
   end
 
   # ===========================================================================
@@ -582,14 +652,20 @@ module UploadConcern
 
     __included(base, THIS_MODULE)
 
-    # In order to override #pagination_finalize this must be...
-    included_after(base, PaginationConcern, this: THIS_MODULE)
+    if base.is_a?(ApplicationController)
 
-    # =========================================================================
-    # :section: Helpers - methods exposed for use in views
-    # =========================================================================
+      # In order to override #pagination_finalize this must be...
+      included_after(base, PaginationConcern, this: THIS_MODULE)
 
-    helper_method *UploadWorkflow::Properties.public_instance_methods(false)
+      # =======================================================================
+      # :section: Helpers - methods exposed for use in views
+      # =======================================================================
+
+      helper_method *UploadWorkflow::Properties.public_instance_methods(false)
+
+    end
+
+    include IngestConcern
 
   end
 
