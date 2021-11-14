@@ -128,6 +128,70 @@ TMPDIR =
 OAUTH2_PROVIDERS = %i[bookshare].freeze
 
 # =============================================================================
+# EMMA Federated Ingest API properties
+# =============================================================================
+
+# EMMA Federated Ingest API key.
+#
+# This does not have a default and *must* be provided through the environment.
+#
+# @type [String, nil]
+#
+INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
+
+# Current EMMA Federated Ingest API version.
+#
+# This is informational only; search API URLs do not include it.
+#
+# @type [String]
+#
+# @see EmmaStatus#api_version
+#
+INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.5').freeze
+
+# An override of the default EMMA Federated Ingest API request path.  If not
+# provided then IngestService#default_engine_url will be used.
+#
+# @type [String, nil]
+#
+INGEST_BASE_URL =
+  ENV['INGEST_BASE_URL'].then { |url|
+    url = url&.strip
+    url = nil if url&.empty?
+    if url&.include?('/')
+      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
+    end
+    url
+  }.freeze
+
+# =============================================================================
+# EMMA Unified Search API properties
+# =============================================================================
+
+# Current EMMA Unified Search API version.
+#
+# This is informational only; search API URLs do not include it.
+#
+# @type [String]
+#
+SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', INGEST_API_VERSION).freeze
+
+# An override of the default EMMA Unified Search API request path.  If not
+# provided then SearchService#default_engine_url will be used.
+#
+# @type [String, nil]
+#
+SEARCH_BASE_URL =
+  ENV['SEARCH_BASE_URL'].then { |url|
+    url = url&.strip
+    url = nil if url&.empty?
+    if url&.include?('/')
+      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
+    end
+    url
+  }.freeze
+
+# =============================================================================
 # Bookshare API properties
 # =============================================================================
 
@@ -151,10 +215,10 @@ BOOKSHARE_API_VERSION = ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
 #
 BOOKSHARE_BASE_URL =
   ENV.fetch('BOOKSHARE_BASE_URL', 'https://api.bookshare.org')
-    .strip
-    .sub(%r{^(http:)?//}, 'https://')
-    .sub(%r{/+$}, '')
-    .sub(%r{(/v.+)?$}) { $1 || "/#{BOOKSHARE_API_VERSION}" }
+     .strip
+     .sub(%r{^(http:)?//}, 'https://')
+     .sub(%r{/+$}, '')
+     .sub(%r{(/v.+)?$}) { $1 || "/#{BOOKSHARE_API_VERSION}" }
     .freeze
 
 # Base Bookshare authentication service path.
@@ -163,10 +227,10 @@ BOOKSHARE_BASE_URL =
 #
 BOOKSHARE_AUTH_URL =
   ENV.fetch('BOOKSHARE_AUTH_URL', 'https://auth.bookshare.org')
-    .strip
-    .sub(%r{^(http:)?//}, 'https://')
-    .sub(%r{/+$}, '')
-    .freeze
+     .strip
+     .sub(%r{^(http:)?//}, 'https://')
+     .sub(%r{/+$}, '')
+     .freeze
 
 # Users with pre-generated OAuth tokens for development purposes.
 #
@@ -178,68 +242,6 @@ BOOKSHARE_AUTH_URL =
 # @see AuthConcern#CONFIGURED_AUTH
 #
 BOOKSHARE_TEST_AUTH = ENV.fetch('BOOKSHARE_TEST_AUTH', nil).freeze
-
-# =============================================================================
-# EMMA Unified Search API properties
-# =============================================================================
-
-# Current EMMA Unified Search API version.
-#
-# This is informational only; search API URLs do not include it.
-#
-# @type [String]
-#
-SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', '0.0.5').freeze
-
-# An override of the default EMMA Unified Search API request path.  If not
-# provided then SearchService#default_engine_url will be used.
-#
-# @type [String, nil]
-#
-SEARCH_BASE_URL =
-  ENV['SEARCH_BASE_URL'].then { |url|
-    url = url&.strip
-    url = nil if url&.empty?
-    if url&.include?('/')
-      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
-    end
-    url
-  }.freeze
-
-# =============================================================================
-# EMMA Federated Ingest API properties
-# =============================================================================
-
-# EMMA Federated Ingest API key.
-#
-# This does not have a default and *must* be provided through the environment.
-#
-# @type [String, nil]
-#
-INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
-
-# Current EMMA Federated Ingest API version.
-#
-# This is informational only; search API URLs do not include it.
-#
-# @type [String]
-#
-INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.5').freeze
-
-# An override of the default EMMA Federated Ingest API request path.  If not
-# provided then IngestService#default_engine_url will be used.
-#
-# @type [String, nil]
-#
-INGEST_BASE_URL =
-  ENV['INGEST_BASE_URL'].then { |url|
-    url = url&.strip
-    url = nil if url&.empty?
-    if url&.include?('/')
-      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
-    end
-    url
-  }.freeze
 
 # =============================================================================
 # Internet Archive access

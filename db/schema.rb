@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_010020) do
+ActiveRecord::Schema.define(version: 2021_11_12_140000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -75,6 +75,14 @@ ActiveRecord::Schema.define(version: 2021_06_29_010020) do
     t.bigint "edition_id", null: false
     t.bigint "reading_list_id", null: false
     t.index ["edition_id", "reading_list_id"], name: "index_editions_reading_lists_on_edition_id_and_reading_list_id"
+  end
+
+  create_table "emma_statuses", force: :cascade do |t|
+    t.string "item"
+    t.string "value"
+    t.boolean "active"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "entries", force: :cascade do |t|
