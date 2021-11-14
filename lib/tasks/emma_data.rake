@@ -25,7 +25,7 @@ namespace :emma_data do
         "* Use '-- --quiet=false' to report non-activity",
         "* Use '-- --commit=false' to avoid updating the database",
         "* Use '-- --version=XXX' to test API version XXX data migration"]
-  task update: %i[environment] do |_task, args|
+  task update: :prerequisites do |_task, args|
 
     # Set parameters.
     version, commit, quiet = task_options(:version, :commit, :quiet, args)
@@ -54,7 +54,7 @@ namespace :emma_data do
         "* Use '-- --debug' for verbose data migration output",
         "* Use '-- --commit' to actually update the database",
         "* Use '-- --version=XXX' to test API version XXX data migration"]
-  task data_migrate: %i[environment] do |_task, args|
+  task data_migrate: :prerequisites do |_task, args|
 
     # Set parameters.
     version, commit, debug, time =
@@ -88,7 +88,7 @@ namespace :emma_data do
          "* Use '-- --debug' to list successful entries",
          "* Use '-- --commit=false' to avoid avoid sending to the Ingest API",
          "* Use '-- --chunk=SIZE' to update the index in batches"]
-  task reindex: %i[environment] do |_task, args|
+  task reindex: :prerequisites do |_task, args|
 
     # Set parameters.
     chunk, commit, debug, time =
@@ -130,10 +130,13 @@ namespace :emma_data do
 
   # ===========================================================================
 
+  # desc 'Required prerequisites for tasks in this namespace.'
+  task prerequisites: %w(environment db:load_config)
+
   # desc 'An alias for "rake data_migrate".'
-  task api_migrate: %i[data_migrate]
+  task api_migrate: :data_migrate
 
   # desc 'An alias for "rake reindex".'
-  task bulk_reindex: %i[reindex]
+  task bulk_reindex: :reindex
 
 end
