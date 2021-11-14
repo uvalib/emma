@@ -122,6 +122,12 @@ def production_deployment?
   application_deployment == :production
 end
 
+# Indicate whether this is the staging service instance.
+#
+def staging_deployment?
+  application_deployed? && (application_deployment == :staging)
+end
+
 # Indicate whether this is a development-build instance.
 #
 def development_build?

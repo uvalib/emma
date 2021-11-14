@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#! /usr/bin/env bash
 #
 # Run any necessary migrations.
 #
@@ -9,7 +9,7 @@
 # there so that EMMA config/env_vars.rb can derive the missing value(s).
 
 export SECRET_KEY_BASE=x
-bundle exec rails db:prepare
+bundle exec rails emma:prepare
 
 #
 # end of file
