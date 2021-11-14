@@ -14,6 +14,6 @@ require 'emma/rake'
 namespace :emma do
 
   desc 'Ensure the application is set up properly.'
-  task prepare: %w(db:prepare emma_data:update)
+  task update: %w(emma_data:update)
 
 end
