@@ -133,7 +133,6 @@ module ApiConcern
   # @option [String, Boolean] :verbose  If *true*, generate log output.
   # @option [String, Boolean] :report   If *false*, do not generate report.
   # @option [String, Boolean] :dryrun   If *false*, actually update database.
-  # @option [String, Boolean] :dry_run  Alias for :dryrun.
   #
   # @return [String]
   # @return [Hash]
@@ -143,17 +142,17 @@ module ApiConcern
   # @see ApiMigrate#run!
   #
   # == Usage Notes
-  # The default mode is to perform a dry-run, so :dryrun must be explicitly
+  # The default mode is to perform a dry run, so :dryrun must be explicitly
   # passed in as *true* to actually modify the database table.
   #
   def api_data_migration(api_version = nil, **opt)
     version = api_version || opt[:v] || opt[:version] or return
-    dry_run = !false?(opt[:dryrun] || opt[:dry_run])
-    raise "#{__method__}: developer-only option" unless dry_run || developer?
+    dryrun  = !false?(opt[:dryrun])
+    raise "#{__method__}: developer-only option" unless dryrun || developer?
     verbose = opt.key?(:verbose) ? true?(opt[:verbose]) : session_debug?
     report  = !false?(opt[:report])
     migrate = ApiMigrate.new(version, report: report, log: verbose)
-    records = migrate.run!(update: !dry_run)
+    records = migrate.run!(update: !dryrun)
     { count: records.size }.merge!(migrate.report || {})
   end
 
