@@ -37,7 +37,8 @@ class EntryController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  before_action :authenticate_user!, except: %i[show]
+  before_action :authenticate_admin!, only:   %i[bulk_reindex]
+  before_action :authenticate_user!,  except: %i[bulk_reindex show]
 
   # ===========================================================================
   # :section: Authorization
@@ -56,7 +57,7 @@ class EntryController < ApplicationController
   ]
   before_action :set_ingest_engine, only: %i[
     index         new           edit          delete
-    bulk_index    bulk_new      bulk_edit     bulk_delete
+    bulk_index    bulk_new      bulk_edit     bulk_delete   bulk_reindex
   ]
   before_action :index_redirect, only: %i[show]
   before_action :set_url,        only: %i[retrieval]

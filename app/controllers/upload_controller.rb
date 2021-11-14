@@ -37,8 +37,8 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  before_action :authenticate_admin!, only:   %i[api_migrate]
-  before_action :authenticate_user!,  except: %i[api_migrate show]
+  before_action :authenticate_admin!, only:   %i[api_migrate bulk_reindex]
+  before_action :authenticate_user!,  except: %i[api_migrate bulk_reindex show]
 
   # ===========================================================================
   # :section: Authorization
@@ -57,7 +57,7 @@ class UploadController < ApplicationController
   ]
   before_action :set_ingest_engine, only: %i[
     index         new           edit          delete
-    bulk_index    bulk_new      bulk_edit     bulk_delete
+    bulk_index    bulk_new      bulk_edit     bulk_delete   bulk_reindex
   ]
   before_action :index_redirect, only: %i[show]
   before_action :set_url,        only: %i[retrieval]
