@@ -132,11 +132,8 @@ namespace :emma_data do
 
   # desc 'Required prerequisites for tasks in this namespace.'
   task prerequisites: %w(environment db:load_config) do
-    require Rails.root.join('config/boot').to_path
-    ActiveRecord::Base.establish_connection
     $stderr.puts "TASK | env = #{(env = ActiveRecord::Tasks::DatabaseTasks.env).inspect}"
     $stderr.puts "TASK | configs = #{ActiveRecord::Base.configurations.configs_for(env_name: env).inspect}"
-    $stderr.puts "TASK | configurations = #{ActiveRecord::Base.configurations.inspect}"
     $stderr.puts
   end
 
