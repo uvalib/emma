@@ -39,7 +39,7 @@ namespace :emma_data do
     else
       show "Migrating EMMA data to API version '#{version}':" # TODO: I18n
       db_commit  = commit
-      idx_commit = commit && !staging_deployment?
+      idx_commit = commit && production_deployment?
       subtask('emma_data:data_migrate', version: version, commit: db_commit)
       subtask('emma_data:reindex', version: version, commit: idx_commit)
       EmmaStatus.api_version = version if db_commit
@@ -131,11 +131,7 @@ namespace :emma_data do
   # ===========================================================================
 
   # desc 'Required prerequisites for tasks in this namespace.'
-  task prerequisites: %w(environment db:load_config) do
-    $stderr.puts "TASK | env = #{(env = ActiveRecord::Tasks::DatabaseTasks.env).inspect}"
-    $stderr.puts "TASK | configs = #{ActiveRecord::Base.configurations.configs_for(env_name: env).inspect}"
-    $stderr.puts
-  end
+  task prerequisites: %w(environment db:load_config)
 
   # desc 'An alias for "rake data_migrate".'
   task api_migrate: :data_migrate
