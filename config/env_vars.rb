@@ -43,7 +43,10 @@ config && require(config) &&
 # Database properties
 # =============================================================================
 
-if rails_application? || rake_task?
+db_needed   = rails_application?
+db_needed ||= rake_task? && $*.any? { |arg| arg =~ /^(db|emma|emma_data):/ }
+
+if db_needed
 
   if ENV['DBHOST'] && ENV['DBPORT'] && ENV['DBUSER'] && ENV['DBPASSWD']
 
