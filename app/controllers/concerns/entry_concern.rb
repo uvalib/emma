@@ -807,13 +807,18 @@ module EntryConcern
   # @return [(Array<String>, Array<String>)]  Succeeded/failed
   #
   def reindex_submissions(*entries, **opt)
-    opt, sql_opt = partition_hash(opt, :atomic, :meth, :dryrun)
-    opt[:meth]           ||= __method__
-    sql_opt[:repository] ||= EmmaRepository.default
+    opt, sql_opt = partition_hash(opt, :atomic, :meth, :dryrun, :size)
+    opt[:meth] ||= __method__
+    if entries.blank?
+      sql_opt[:repository] ||= EmmaRepository.default
+      relation = Upload.get_relation(**sql_opt)
+    else
+      relation = Upload.get_relation(*entries)
+    end
     successes = []
     failures  = []
-    size      = positive(sql_opt.delete(:size)) || DEFAULT_REINDEX_BATCH
-    Entry.get_relation(*entries, **sql_opt).each_slice(size) do |items|
+    size      = positive(opt[:size]) || DEFAULT_REINDEX_BATCH
+    relation.each_slice(size) do |items|
       sids, fails = reindex_record(items, **opt)
       successes += sids
       failures  += fails
