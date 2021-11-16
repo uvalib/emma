@@ -10,7 +10,6 @@
 
 export SECRET_KEY_BASE=x
 bundle exec rails db:prepare
-bundle exec rails emma:update
 
 #
 # end of file
