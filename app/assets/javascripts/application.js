@@ -11,7 +11,7 @@
 // the bottom of the compiled file. JavaScript code in this file should be
 // added after the last require_* statement.
 //
-// See Sprockets README https://github.com/rails/sprockets#sprockets-directives
+// See Sprockets README https://github.com/rails/sprockets#directives
 // for details about supported directives.
 //
 //= require rails-ujs
