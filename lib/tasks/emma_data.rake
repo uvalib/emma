@@ -94,7 +94,7 @@ namespace :emma_data do
     # Set parameters.
     batch, atomic, commit, debug, time =
       task_options(:batch, :atomic, :commit, :debug, :time, args)
-    batch  = batch.presence || 10
+    batch  = batch.presence
     atomic = !atomic.nil? && !false?(atomic)
     commit = !commit.nil? && !false?(commit)
     debug  = !debug.nil?  && !false?(debug)
@@ -103,7 +103,7 @@ namespace :emma_data do
     # Execute.
     save_start_time if time
     include UploadConcern
-    options = { size: batch, dryrun: !commit, atomic: atomic }
+    options = { size: batch, atomic: atomic, dryrun: !commit }
     result, failed = reindex_submissions(**options)
 
     # Output success message(s).
