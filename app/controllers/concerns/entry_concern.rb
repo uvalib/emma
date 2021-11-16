@@ -798,22 +798,28 @@ module EntryConcern
   # reindex_submissions
   #
   # @param [Array<Model,String>] entries
-  # @param [Hash, nil]           opt      To Entry#get_relation except for:
+  # @param [Hash, nil]           opt          To Entry#get_relation except for:
   #
-  # @option opt [Symbol]  :meth           Passed to #reindex_record.
-  # @option opt [Boolean] :dryrun         Passed to #reindex_record.
+  # @option opt [Boolean] :atomic             Passed to #reindex_record.
+  # @option opt [Boolean] :dryrun             Passed to #reindex_record.
+  # @option opt [Symbol]  :meth               Passed to #reindex_record.
   #
-  # @return [(ActiveRecord::Relation, Array<String>)]
+  # @return [(Array<String>, Array<String>)]  Succeeded/failed
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def reindex_submissions(*entries, **opt)
-    opt[:repository] ||= EmmaRepository.default
-    size = positive(opt.delete(:size)) || DEFAULT_REINDEX_BATCH
-    recs = Entry.get_relation(*entries, **opt.except(:meth, :dryrun))
-    fail = recs.each_slice(size).map { |items| reindex_record(items, **opt) }
-    return recs, fail.flatten
+    opt, sql_opt = partition_hash(opt, :atomic, :meth, :dryrun)
+    opt[:meth]           ||= __method__
+    sql_opt[:repository] ||= EmmaRepository.default
+    successes = []
+    failures  = []
+    size      = positive(sql_opt.delete(:size)) || DEFAULT_REINDEX_BATCH
+    Entry.get_relation(*entries, **sql_opt).each_slice(size) do |items|
+      sids, fails = reindex_record(items, **opt)
+      successes += sids
+      failures  += fails
+      break if opt[:atomic] && failures.present?
+    end
+    return successes, failures
   end
 
   # ===========================================================================
@@ -824,41 +830,52 @@ module EntryConcern
 
   # Cause all of the listed items to be re-indexed.
   #
-  # @param [Upload, Array<Upload>, ActiveRecord::Relation] list
-  # @param [Symbol]                                        meth     Caller.
-  # @param [Boolean]                                       dryrun
+  # @param [Model, Array<Model>, ActiveRecord::Relation] list
+  # @param [Boolean]                                     atomic
+  # @param [Boolean]                                     dryrun
+  # @param [Symbol]                                      meth     Caller.
   #
-  # @return [Array]  List of error(s).
+  # @return [(Array<String>,Array<String>)]   Succeeded sids / failure messages
   #
-  def reindex_record(list, meth: __method__, dryrun: false, **)
-    sids   = []
-    failed = []
-    list   = Array.wrap(list)
-    errors = {}
+  def reindex_record(list, atomic: false, dryrun: false, meth: __method__, **)
+    successes = []
+    failures  = []
+    bad       = []
+    list      = Array.wrap(list)
+    sids      = list.map { |item| Entry.sid_value(item) }
+
     unless dryrun
       result = ingest_api.put_records(*list)
-      errors = result.exec_report.error_table.dup
+      errors = result.exec_report.error_table
       Log.debug { "#{meth}: put_records result: #{result.inspect}" }
-      Log.debug { "#{meth}: result.errors: #{errors.inspect}" }
-      if errors.present?
-        by_index = errors.select { |k| k.is_a?(Integer) }
-        if by_index.present?
-          by_index.transform_keys! { |idx| Entry.sid_value(list[idx-1]) }
-          sids   += by_index.keys
-          failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
-          errors  = errors.except(*by_index.keys)
-        end
-        failed << errors if errors.present?
+      Log.info  { "#{meth}: result.errors: #{errors.inspect}" }
+      if (by_index = errors.select { |k| k.is_a?(Integer) }).present?
+        by_index.transform_keys! { |idx| sids[idx-1] }
+        failures += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+        bad      += by_index.keys
+        errors    = errors.except(*by_index.keys)
       end
-      Log.debug { "#{meth}: failed sids: #{sids.inspect}" }
-      Log.debug { "#{meth}: failed entries: #{failed.inspect}" }
+      failures << errors if errors.present?
+      Log.info { "#{meth}: failed sids:    #{bad.inspect}" }
+      Log.info { "#{meth}: failed entries: #{failures.inspect}" }
     end
-    if errors.blank?
-      Log.debug do
-        "#{meth}: accepted sids: #{list.map(&:submission_id).inspect}"
-      end
+
+    if failures.blank?
+      # == All succeeded
+      Log.info { "#{meth}: accepted sids:  #{sids.inspect}" }
+      successes = sids
+
+    elsif atomic || bad.blank?
+      # == General failure -- nothing to retry
+      successes = []
+
+    elsif (list = list.reject { |i| bad.include?(i.submission_id) }).present?
+      # == Retry with the batch of non-failed items
+      successes, new_failures = reindex_record(list, meth: meth)
+      failures << new_failures
+
     end
-    failed
+    return successes, failures
   end
 
   # ===========================================================================

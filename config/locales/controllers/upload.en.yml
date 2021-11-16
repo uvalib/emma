@@ -633,6 +633,14 @@ en:
 
       # =======================================================================
 
+      bulk_reindex:
+        label:          'Re-index'
+        title:          'Bulk Re-indexing'
+        tooltip:        'Update submissions in the Unified Index'
+        description:    'TODO: ???'
+
+      # =======================================================================
+
       cancel:
         label:          'Cancel'
         title:          'Cancel Submission'

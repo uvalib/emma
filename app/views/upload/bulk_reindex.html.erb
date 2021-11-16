@@ -1,21 +1,14 @@
 <%# app/views/upload/bulk_reindex.html.erb -%>
 <%-
-  # Fall-back page for a failed bulk upload reindex action.
-  title ||= 'Bulk Re-indexing'
-  error ||= 'Items:'
+  # Results of re-indexing.
+  title ||= t('emma.upload.bulk_reindex.title')
   list  ||= @list || []
-  list  &&=
-    html_tag(:ul) {
-      list.map { |v|
-        html_tag(:li) {
-          v.try(:[], :submission_id) || v.try(:submission_id) || v.inspect
-        }
-      }
-    }
 -%>
 
-<%= render 'upload/fallback', title: title, error: error %>
+<%= render 'fallback', title: title, error: 'Items:' %>
 
 <ul>
-  <%= list %>
+  <%- list.each do |item| -%>
+    <li><%= Upload.sid_for(item) -%></li>
+  <%- end -%>
 </ul>

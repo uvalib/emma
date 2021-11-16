@@ -143,7 +143,7 @@ module ApiConcern
   #
   # == Usage Notes
   # The default mode is to perform a dry run, so :dryrun must be explicitly
-  # passed in as *true* to actually modify the database table.
+  # passed in as *false* to actually modify the database table.
   #
   def api_data_migration(api_version = nil, **opt)
     version = api_version || opt[:v] || opt[:version] or return

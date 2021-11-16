@@ -86,22 +86,25 @@ namespace :emma_data do
   desc ['Re-index completed EMMA submissions',
          "* Use '-- --time' for run time output",
          "* Use '-- --debug' to list successful entries",
-         "* Use '-- --commit=false' to avoid avoid sending to the Ingest API",
-         "* Use '-- --chunk=SIZE' to update the index in batches"]
+         "* Use '-- --atomic' to disallow failures within a batch",
+         "* Use '-- --commit=false' to avoid sending to the Ingest API",
+         "* Use '-- --batch=SIZE' to update the index in batches"]
   task reindex: :prerequisites do |_task, args|
 
     # Set parameters.
-    chunk, commit, debug, time =
-      task_options(:chunk, :commit, :debug, :time, args)
-    chunk  = chunk.presence || 10
-    commit = !false?(commit)
-    debug  = !debug.nil? && !false?(debug)
+    batch, atomic, commit, debug, time =
+      task_options(:batch, :atomic, :commit, :debug, :time, args)
+    batch  = batch.presence || 10
+    atomic = !atomic.nil? && !false?(atomic)
+    commit = !commit.nil? && !false?(commit)
+    debug  = !debug.nil?  && !false?(debug)
     time   = (time || debug || VERBOSE_DEFAULT) && !false?(time)
 
     # Execute.
     save_start_time if time
     include UploadConcern
-    result, failed = reindex_submissions(size: chunk, dryrun: !commit)
+    options = { size: batch, dryrun: !commit, atomic: atomic }
+    result, failed = reindex_submissions(**options)
 
     # Output success message(s).
     count   = positive(result.size - failed.size) || 0
@@ -117,7 +120,7 @@ namespace :emma_data do
 
     # Output failure message(s).
     if failed.present?
-      count   = failed.size
+      count   = atomic ? 'all' : failed.size  # TODO: I18n
       entries = 'submission'.pluralize(count) # TODO: I18n
       message = "#{count} #{entries} failed"  # TODO: I18n
       show "#{message}:", failed
