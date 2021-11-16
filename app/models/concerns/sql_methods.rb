@@ -133,27 +133,35 @@ module SqlMethods
     v = Array.wrap(v)      if v.is_a?(Range)
     v = v.strip            if v.is_a?(String)
     v = v.split(/\s*,\s*/) if v.is_a?(String) && v.include?(',')
+    v = v.uniq             if v.is_a?(Array)
     if v.is_a?(Array)
-      v = v.compact.sort.uniq if v.size > 1
-      ranges = v.chunk_while { |prev, this| prev.succ == this }.to_a
-      ranges.map! { |r| (r.size >= 5) ? Range.new(r.first, r.last) : r }
-      ranges, singles = ranges.partition { |r| r.is_a?(Range) }
-      ranges.map! do |range|
-        first, last = range.minmax.map { |s| sql_quote(s) }
-        "#{k} BETWEEN #{first} AND #{last}"
+      if (v.size > 1) && (v.map(&:class).uniq.size == 1)
+        ranges = v.sort.chunk_while { |prev, this| prev.succ == this }.to_a
+        ranges.map! { |r| (r.size >= 5) ? Range.new(r.first, r.last) : r }
+        ranges, singles = ranges.partition { |r| r.is_a?(Range) }
+        ranges.map! do |range|
+          first, last = range.minmax.map { |s| sql_quote(s) }
+          "#{k} BETWEEN #{first} AND #{last}"
+        end
+      else
+        ranges  = []
+        singles = v
       end
       if singles.present?
         singles.flatten!
         singles.map! { |s| sql_quote(s) }
-        ranges << "#{k} IN (%s)" % singles.join(',')
+        ranges << "#{k} IS NULL"                     if singles.reject!(&:nil?)
+        ranges << "#{k} IN (%s)" % singles.join(',') if singles.present?
       end
       if ranges.size > 1
         ranges.map! { |s| "(#{s})" }.join(' OR ')
       else
         ranges.first
       end
+    elsif (v = sql_quote(v))
+      "#{k} = #{v}"
     else
-      "#{k} = %s" % sql_quote(v)
+      "#{k} IS NULL"
     end
   end
 
@@ -327,15 +335,15 @@ module SqlMethods
       match = false       if false?(match)
       condition =
         case match
-          when Array                then 'IN (%s)' % quote(match)
-          when true                 then '= TRUE'
-          when false                then '= FALSE'
-          when nil, 'null', 'NULL'  then 'IS NULL'
-          when '*', 'any',  'ANY'   then 'IS NOT NULL'
-          when /^[<>=!]+\s*\d+$/    then "#{match}"
-          when String               then "LIKE '%#{match}%'"
-          when Symbol               then "= '#{match}'"
-          else                           "= #{match}"
+          when Array                    then 'IN (%s)' % quote(match)
+          when true                     then '= TRUE'
+          when false                    then '= FALSE'
+          when nil, /^nil$/i, /^NULL$/i then 'IS NULL'
+          when '*', /^ANY$/i            then 'IS NOT NULL'
+          when /^[<>=!]+\s*\d+$/        then "#{match}"
+          when String                   then "LIKE '%#{match}%'"
+          when Symbol                   then "= '#{match}'"
+          else                               "= #{match}"
         end
       "(#{name} #{condition})"
     }.compact.join(' AND ')
@@ -383,16 +391,17 @@ module SqlMethods
 
   # Return the value, quoted if necessary.
   #
-  # @param [Integer, Float, String]
+  # @param [Integer, Float, String, Symbol, nil]
   #
-  # @return [Integer, Float, String]
+  # @return [Integer, Float, String, nil]
   #
   def sql_quote(value)
     case value
-      when Integer, Float         then value
-      when /^\d+$/                then value.to_i
-      when /^-?(\.\d+|\d+\.\d*)$/ then value.to_f
-      else                             "'#{value}'"
+      when Integer, Float           then value
+      when nil, /^nil$/i, /^NULL$/i then nil
+      when /^\d+$/                  then value.to_i
+      when /^-?(\.\d+|\d+\.\d*)$/   then value.to_f
+      else                               "'#{value}'"
     end
   end
 

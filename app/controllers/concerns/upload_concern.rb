@@ -467,6 +467,12 @@ module UploadConcern
     post_response(nil, problems, redirect: false, xhr: false)
   end
 
+  # Default batch size for #reindex_submissions
+  #
+  # @type [Integer]
+  #
+  DEFAULT_REINDEX_BATCH = 100
+
   # reindex_submissions
   #
   # @param [Array<Upload,String>] entries
@@ -482,8 +488,8 @@ module UploadConcern
   #++
   def reindex_submissions(*entries, **opt)
     opt[:repository] ||= EmmaRepository.default
-    opt[:state]      ||= :completed
-    size = positive(opt.delete(:size)) || 1
+    opt[:state]      ||= [:completed, nil]
+    size = positive(opt.delete(:size)) || DEFAULT_REINDEX_BATCH
     recs = Upload.get_relation(*entries, **opt.except(:meth, :dryrun))
     fail = recs.each_slice(size).map { |items| reindex_record(items, **opt) }
     return recs, fail.flatten
