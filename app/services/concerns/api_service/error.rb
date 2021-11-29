@@ -107,19 +107,13 @@ class ApiService::Error < Api::Error
     #
     # @return [Array<String>]
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def extract_message(src)
       # First check for an error description embedded in the response headers.
       # If not present then look at the response body.
       error_description = oauth2_error_header(src)
 
       # If there is no response body then prevent further analysis.
-      body   = src.try(:response_body) || src.try(:body)
-      body ||= src.try(:response).try(:dig, :body)
-      body ||= src.try(:dig, :body)
-      body   = to_utf8(body).to_s.strip
+      body = extract_body(src)
       error_description ||= ([] unless body.present?)
 
       # Check for an HTML message, which may indicate that a web server is
@@ -140,6 +134,30 @@ class ApiService::Error < Api::Error
         end
 
       Array.wrap(error_description || body)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Get the message body from the source object.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [String]
+    #
+    #--
+    # noinspection RailsParamDefResolve
+    #++
+    def extract_body(src)
+      body   = nil
+      body ||= src.try(:response_body)
+      body ||= src.try(:body)
+      body ||= src.try(:response).try(:dig, :body)
+      body ||= src.try(:dig, :body)
+      to_utf8(body).to_s.strip
     end
 
     # =========================================================================

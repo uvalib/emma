@@ -60,25 +60,16 @@ class IaDownloadService::Error < ApiService::Error
     # @return [Array<String>]
     # @return [Array<ActiveSupport::SafeBuffer>]  If note(s) were added.
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def extract_message(src)
-      body   = src.try(:response_body) || src.try(:body)
-      body ||= src.try(:response).try(:dig, :body)
-      body ||= src.try(:dig, :body)
-      body   = to_utf8(body).to_s.strip
       result = []
-      if body.present?
+      if (body = extract_body(src)).present?
         result << "#{service_name} response: #{body}" # TODO: I18n
         if (notes = added_messages(body)).present?
           result += notes
-          row = 0
-          result.map! do |line|
-            classes = %w(line)
-            classes << 'first' if row.zero?
-            row += 1
-            html_div(line, class: css_classes(*classes))
+          result.map!.with_index do |line, count|
+            html_opt = { class: 'line' }
+            append_classes!(html_opt, 'first') if count.zero?
+            html_div(line, html_opt)
           end
         end
       end

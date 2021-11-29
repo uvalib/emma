@@ -439,8 +439,8 @@ module UploadWorkflow::Bulk::External
   #
   def db_failed_format!(items, message, position = 0)
     # noinspection RubyMismatchedReturnType
-    items.map! do |item|
-      db_failed_format(item, message, (position += 1))
+    items.map!.with_index(position.next) do |item, pos|
+      db_failed_format(item, message, pos)
     end
   end
 

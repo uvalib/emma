@@ -201,9 +201,9 @@ module LayoutHelper::Common
   def hidden_input(k, v, id: nil, separator: "\n")
     id = [id, k].compact_blank.join('-')
     if v.is_a?(Array)
-      i = 0
-      v = v.map { |e| hidden_field_tag("#{k}[]", e, id: "#{id}-#{i += 1}") }
-      safe_join(v, separator)
+      v.map.with_index(1) { |value, index|
+        hidden_field_tag("#{k}[]", value, id: "#{id}-#{index}")
+      }.join(separator).html_safe
     else
       hidden_field_tag(k, v, id: id)
     end
