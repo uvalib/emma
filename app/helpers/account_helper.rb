@@ -77,7 +77,7 @@ module AccountHelper
   #
   # @param [User] item
   # @param [*]    value
-  # @param [Hash] opt                 Passed to render method.
+  # @param [Hash] opt                 Passed to the render method.
   #
   # @return [Any]   HTML or scalar value.
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
