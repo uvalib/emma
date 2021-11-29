@@ -25,6 +25,8 @@ Rails.application.routes.draw do
   # EMMA Unified Search operations
   # ===========================================================================
 
+  get '/search/v2',       to: 'search#v2'
+  get '/search/v3',       to: 'search#v3'
   get '/search/advanced', to: 'search#advanced', as: 'advanced_search'
   get '/search/api',      to: 'search#direct'
   get '/search/direct',   to: 'search#direct'

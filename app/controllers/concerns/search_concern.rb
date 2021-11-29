@@ -13,8 +13,10 @@ module SearchConcern
 
   include ApiConcern
   include EngineConcern
+  include PaginationConcern
   include SearchCallConcern
 
+  include LayoutHelper
   include SearchHelper
 
   # Non-functional hints for RubyMine type checking.
@@ -37,6 +39,46 @@ module SearchConcern
   def search_api
     engine = requested_engine(SearchService)
     engine ? SearchService.new(base_url: engine) : api_service(SearchService)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # index_search
+  #
+  # @param [Boolean] titles           If *false*, get records not titles.
+  # @param [Boolean] save             If *false*, do not save search terms.
+  # @param [Boolean] scores           Calculate experimental relevancy scores.
+  # @param [Symbol]  items            Specify method for #pagination_finalize.
+  # @param [Hash]    opt              Passed to SearchService#get_records.
+  #
+  # @return [Search::Message::SearchRecordList]
+  # @return [Search::Message::SearchTitleList]    If :titles is *true*.
+  #
+  def index_search(titles: true, save: true, scores: false, items: nil, **opt)
+    save_search(**opt)                                if save
+    list = search_api.get_records(**opt)
+    list.calculate_scores!(**opt)                     if scores
+    flash_now_alert(list.exec_report)                 if list.error?
+    list = Search::Message::SearchTitleList.new(list) if titles
+    items ||= titles ? :titles : :records
+    pagination_finalize(list, items, **opt)
+    list
+  end
+
+  # index_record
+  #
+  # @param [Hash] **opt
+  #
+  # @return [Search::Message::SearchRecord]
+  #
+  # @see SearchService::Request::Records#get_record
+  #
+  def index_record(**opt)
+    search_api.get_record(**opt)
   end
 
   # ===========================================================================
@@ -90,7 +132,7 @@ module SearchConcern
   # Analyze the *list* object to generate the path for the next page of
   # results.
   #
-  # @param [Array<Search::Record::MetadataRecord>, nil] list
+  # @param [Search::Message::SearchTitleList, Array<Search::Record::MetadataRecord>, nil] list
   # @param [Hash, nil] url_params     Current request parameters.
   #
   # @return [String]                  Path to generate next page of results.
@@ -99,7 +141,7 @@ module SearchConcern
   # @see PaginationConcern#next_page_path
   #
   def next_page_path(list: nil, **url_params)
-    items = list&.to_a || page_items
+    items = list.try(:records) || list || page_items
     return if (items.size < page_size) || (last = items.last).blank?
 
     # General pagination parameters.

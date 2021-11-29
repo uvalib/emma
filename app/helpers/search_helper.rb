@@ -51,9 +51,10 @@ module SearchHelper
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Search::Api::Record] item
+  # @param [Upload, Model, Hash] item
   # @param [*]                   value
-  # @param [Hash]                opt    Passed to render method.
+  # @param [Symbol]              field
+  # @param [Hash]                opt    Passed to the render method.
   #
   # @return [Any]   HTML or scalar value.
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
@@ -61,13 +62,17 @@ module SearchHelper
   # @see ModelHelper::List#render_value
   # @see UploadHelper#upload_render_value
   #
-  def search_render_value(item, value, **opt)
-    case value
-      when :dc_title                then title_and_source_logo(item, **opt)
-      when :emma_repositoryRecordId then source_record_link(item, **opt)
-      when :emma_retrievalLink      then source_retrieval_link(item, **opt)
-      else                               upload_render_value(item, value, **opt)
-    end
+  def search_render_value(item, value, field: nil, **opt)
+    value = field || value
+    if item.is_a?(Model) && value.is_a?(Symbol)
+      # noinspection RubyMismatchedParameterType
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case value
+        when :dc_title                then title_and_source_logo(item, **opt)
+        when :emma_repositoryRecordId then source_record_link(item, **opt)
+        when :emma_retrievalLink      then source_retrieval_link(item, **opt)
+      end
+    end || upload_render_value(item, value, **opt)
   end
 
   # Display title of the associated work along with the logo of the source
@@ -431,23 +436,37 @@ module SearchHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Model]     item
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]     opt             Passed to #model_list_item.
+  # @param [Model, nil] item
+  # @param [Hash, nil]  pairs         Additional field mappings.
+  # @param [Hash]       opt           Passed to #model_list_item.
   #
   def search_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :search
-    opt[:pairs] = index_fields(model).merge(pairs || {})
-    # noinspection RailsParamDefResolve
-    if aggregate_style?
-      added = item.try(:get_scores, precision: 2, all: true) || {}
-      added[:sort_date] = item.try(:emma_sortDate).presence
-      added[:pub_date]  = item.try(:emma_publicationDate).presence
-      added[:rem_date]  = item.try(:rem_remediationDate).presence
-      added.transform_values! { |score| score || EMPTY_VALUE }
-      opt[:pairs].merge!(added)
+    if item
+      # noinspection RailsParamDefResolve
+      if aggregate_style?
+        added = item.try(:get_scores, precision: 2, all: true) || {}
+        added[:sort_date] = item.try(:emma_sortDate).presence
+        added[:pub_date]  = item.try(:emma_publicationDate).presence
+        added[:rem_date]  = item.try(:rem_remediationDate).presence
+        added.transform_values! { |score| score || EMPTY_VALUE }
+        pairs = (pairs&.dup || {}).merge!(added)
+      end
+      # noinspection RubyNilAnalysis
+      opt[:pairs] = item.field_hierarchy(**(pairs || {})) if item.aggregate?
     end
+    opt[:pairs] ||= Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
+  end
+
+  # NOTE: transitional
+  def search_list_item_v2(item, **opt)
+    search_list_item(item, **opt.merge(render: :render_grouped_fields))
+  end
+
+  # NOTE: transitional
+  def search_list_item_v3(item, **opt)
+    search_list_item(item, **opt.merge(render: :render_field_hierarchy))
   end
 
   # Include edit and delete controls below the entry number.

@@ -13,7 +13,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $body = $('body.search-index');
+    let $body = $('body.search-index, body.search.new-style');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($body)) {
@@ -37,8 +37,10 @@ $(document).on('turbolinks:load', function() {
      */
     const SEARCH_STYLE = {
         aggregate:  $body.hasClass('aggregate-style'),
-        grid:       $body.hasClass('grid-style'),
         compact:    $body.hasClass('compact-style'),
+        grid:       $body.hasClass('grid-style'),
+        v2:         $body.hasClass('search-v2'),
+        v3:         $body.hasClass('search-v3'),
         normal:     !$body.hasClass('new-style'),
     };
 
@@ -686,12 +688,18 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [store]
      */
     function updateDatabase(store = DB_STORE_NAME) {
+        const func = 'updateDatabase';
         openDatabase(store, function() {
             console.warn(`======== OPENING OBJECT STORE "${store}" ========`);
-            if (newSearch()) {
-                DB.clearObjectStore(store, storeItems);
-            } else {
-                DB.deleteItems('page', pageNumber(), storeItems);
+            try {
+                if (newSearch()) {
+                    DB.clearObjectStore(store, storeItems);
+                } else {
+                    DB.deleteItems('page', pageNumber(), storeItems);
+                }
+            }
+            catch (err) {
+                console.warn(`${func}: ${err}`);
             }
         });
     }

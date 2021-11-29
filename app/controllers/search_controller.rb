@@ -42,12 +42,14 @@ class SearchController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :identifier_alias_redirect,   only: %i[index]
-  before_action :invalid_identifier_redirect, only: %i[index]
-  before_action :identifier_keyword_redirect, only: %i[index]
-  before_action :set_immediate_search,        only: %i[index]
+  before_action(only: %i[v2 v3]) { @search_style = params[:action].to_sym }
+
+  before_action :identifier_alias_redirect,   only: %i[index v2 v3]
+  before_action :invalid_identifier_redirect, only: %i[index v2 v3]
+  before_action :identifier_keyword_redirect, only: %i[index v2 v3]
+  before_action :set_immediate_search,        only: %i[index v2 v3]
+  before_action :set_search_engine,           only: %i[index v2 v3]
   before_action :set_search_style,            only: %i[index]
-  before_action :set_search_engine,           only: %i[index]
   before_action :set_record_id,               only: %i[show]
 
   # ===========================================================================
@@ -78,7 +80,7 @@ class SearchController < ApplicationController
   #
   # Perform a search through the EMMA Unified Search API.
   #
-  # @see SearchService::Request::Records#get_records
+  # @see SearchConcern#index_search
   #
   def index
     __debug_route
@@ -89,14 +91,12 @@ class SearchController < ApplicationController
     q_params, s_params = partition_hash(s_params, *search_query_keys)
     q_params.compact_blank!
     if q_params.present?
-      opt    = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
-      result = search_api.get_records(**opt)
-      result.calculate_scores!(**opt) unless default_style?
-      @list = result
-      @list = Search::Message::SearchTitleList.new(result) if aggregate_style?
-      pagination_finalize(@list, :records, **opt)
-      save_search(**opt)                  unless playback
-      flash_now_alert(result.exec_report) if result.error?
+      opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+      opt[:save]   = !playback
+      opt[:scores] = !default_style?
+      opt[:titles] = aggregate_style?
+      opt[:items]  = :records
+      @list = index_search(**opt)
       respond_to do |format|
         format.html
         format.json { render_json index_values }
@@ -113,19 +113,77 @@ class SearchController < ApplicationController
   #
   # Display details of an existing catalog title.
   #
-  # @see SearchService::Request::Records#get_record
+  # @see SearchConcern#index_record
   #
   # @note This endpoint is not actually functional because it depends on a
   #   Unified Search API endpoint which does not exist.
   #
   def show
     __debug_route
-    @item = search_api.get_record(record_id: @record_id)
+    @item = index_record(record_id: @record_id)
     flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
+    end
+  end
+
+  # == GET /search/v2
+  #
+  # Perform a search through the EMMA Unified Search API.
+  #
+  # @see SearchConcern#index_search
+  #
+  def v2
+    __debug_route
+    opt      = pagination_setup
+    playback = opt.delete(:search_call)
+    search   = playback || opt
+    s_params = search.except(*NON_SEARCH_KEYS)
+    q_params, s_params = partition_hash(s_params, *search_query_keys)
+    q_params.compact_blank!
+    if q_params.present?
+      opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+      @list = index_search(save: !playback, items: :records, **opt)
+      respond_to do |format|
+        format.html { render 'search/index' }
+        format.json { render_json index_values }
+        format.xml  { render_xml  index_values }
+      end
+    elsif s_params.present?
+      redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
+    else
+      render 'search/advanced'
+    end
+  end
+
+  # == GET /search/v3
+  #
+  # Perform a search through the EMMA Unified Search API.
+  #
+  # @see SearchConcern#index_search
+  #
+  def v3
+    __debug_route
+    opt      = pagination_setup
+    playback = opt.delete(:search_call)
+    search   = playback || opt
+    s_params = search.except(*NON_SEARCH_KEYS)
+    q_params, s_params = partition_hash(s_params, *search_query_keys)
+    q_params.compact_blank!
+    if q_params.present?
+      opt   = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+      @list = index_search(save: !playback, **opt)
+      respond_to do |format|
+        format.html { render 'search/index' }
+        format.json { render_json index_values }
+        format.xml  { render_xml  index_values }
+      end
+    elsif s_params.present?
+      redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
+    else
+      render 'search/advanced'
     end
   end
 
@@ -148,13 +206,12 @@ class SearchController < ApplicationController
   #
   # Perform a search directly through the EMMA Unified Search API.
   #
-  # @see SearchService::Request::Records#get_records
+  # @see SearchConcern#index_search
   #
   def direct
     __debug_route
-    opt   = pagination_setup.reverse_merge(q: NULL_SEARCH)
-    @list = search_api.get_records(**opt)
-    pagination_finalize(@list, :records, **opt)
+    opt   = pagination_setup.reverse_merge(q: SearchTerm::NULL_SEARCH)
+    @list = index_search(titles: false, save: false, scores: false, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html { render 'search/index' }

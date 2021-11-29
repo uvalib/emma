@@ -114,12 +114,11 @@ module PaginationConcern
   # noinspection RailsParamDefResolve
   #++
   def pagination_finalize(list, meth = nil, **search)
-    items = list
-    items = list.send(meth) if meth && list.respond_to?(meth)
-    items = Array.wrap(items)
-    self.page_items  = items
-    self.total_items = list.try(:totalResults) || items.size
-    self.next_page   = next_page_path(**search)
+    count = list.try(:item_count) || list.try(:totalResults) || list.try(:size)
+    items = meth && list.try(meth) || list
+    self.page_items  = Array.wrap(items)
+    self.total_items = count || page_items.size
+    self.next_page   = next_page_path(list: list, **search)
   end
 
   # Analyze the *list* object to generate the path for the next page of
@@ -134,7 +133,7 @@ module PaginationConcern
   # @see SearchConcern#next_page_path
   #
   def next_page_path(list: nil, **url_params)
-    list ||= @list || self.page_items
+    list ||= @list || page_items
     # noinspection RailsParamDefResolve
     if list.try(:next).present?
 

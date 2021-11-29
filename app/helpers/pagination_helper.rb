@@ -313,25 +313,21 @@ module PaginationHelper
   #
   # @param [Integer, nil] count
   # @param [Integer, nil] total
+  # @param [String]       unit
   # @param [Hash]         opt         Options to .search-count wrapper element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_count(count, total = nil, **opt)
+  def pagination_count(count, total = nil, unit: nil, **opt)
     css_selector = '.search-count'
     count = positive(count).to_i
     total = positive(total).to_i
     total = nil unless total > count
     html_div(prepend_classes!(opt, css_selector)) do
-      number = number_with_delimiter(count)
-      if total
-        number << ' of ' << number_with_delimiter(total)
-        found = get_page_count_label(count: total)
-        "#{number} #{found}"
-      else
-        found = get_page_count_label(count: count)
-        "(#{number} #{found})"
-      end
+      found = get_page_count_label(count: (total || count), item: unit)
+      words = total ? [count, 'of', total, found] : [count, found]
+      label = words.map! { |v| number_with_delimiter(v) }.join(' ')
+      total ? label : "(#{label})"
     end
   end
 

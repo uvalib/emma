@@ -39,17 +39,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
     end
   end
 
-  # Simulates the :totalResults field of similar Bookshare API records.
-  #
-  # @return [Integer]
-  #
-  #--
-  # noinspection RubyInstanceMethodNamingConvention
-  #++
-  def totalResults
-    records&.size || 0
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -64,11 +53,39 @@ class Search::Message::SearchTitleList < Search::Api::Message
     @records ||= titles&.flat_map(&:records)
   end
 
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # NOTE: This reports the number of originating search result records.
+  #
+  # @return [Integer]
+  #
+  #--
+  # noinspection RubyInstanceMethodNamingConvention
+  #++
+  def totalResults
+    records&.size || 0
+  end
+
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # @return [Integer]
+  #
+  def item_count
+    # noinspection RubyMismatchedReturnType
+    titles.size
+  end
+
+  alias size   item_count
+  alias length item_count
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # @private
+  DEBUG_AGGREGATE = false
 
   # Organize metadata records into title records.
   #
@@ -80,15 +97,12 @@ class Search::Message::SearchTitleList < Search::Api::Message
     # noinspection RubyNilAnalysis
     src   = src.records if src.is_a?(Search::Message::SearchRecordList)
     recs0 = Array.wrap(src).compact_blank
-    recs0.group_by { |r| group_fields(r, 0) }.flat_map do |_key1, recs1|
-      $stderr.puts ''                                                                     # TODO: remove
-      $stderr.puts "--- GROUP_BY #{_key1.inspect} --- (#{recs1.size} records)"            # TODO: remove
-                                                                                          # TODO: remove
-      recs1.group_by { |r| group_fields(r, 1) }.flat_map do |_key2, recs2|
-        $stderr.puts "------ GROUP_BY #{_key2.inspect} --- (#{recs2.size} records)"       # TODO: remove
-                                                                                          # TODO: remove
-        recs2.group_by { |r| group_fields(r, 2) }.flat_map do |_key3, recs3|
-          $stderr.puts "--------- GROUP_BY #{_key3.inspect} --- (#{recs3.size} records)"  # TODO: remove
+    recs0.group_by { |r| group_fields(r, 0) }.flat_map do |key1, recs1|
+      __debug_group(0, key1, recs1)
+      recs1.group_by { |r| group_fields(r, 1) }.flat_map do |key2, recs2|
+        __debug_group(1, key2, recs2)
+        recs2.group_by { |r| group_fields(r, 2) }.flat_map do |key3, recs3|
+          __debug_group(2, key3, recs3)
           RECORD_CLASS.new(recs3)
         end
       end
@@ -110,12 +124,12 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # group_fields
   #
   # @param [Array<Search::Record::MetadataRecord>] records
-  # @param [Integer,Symbol,Array<Symbol>]          group
+  # @param [Integer,Symbol,Array<Symbol>]          level
   #
   # @return [Array]
   #
-  def group_fields(records, group)
-    fields = group.is_a?(Integer) ? GROUPING_LEVELS[group] : Array.wrap(group)
+  def group_fields(records, level)
+    fields = level.is_a?(Integer) ? GROUPING_LEVELS[level] : Array.wrap(level)
     RECORD_CLASS.extract_fields(records, fields).values
   end
 
@@ -141,6 +155,25 @@ class Search::Message::SearchTitleList < Search::Api::Message
       groups.flat_map { |recs| recursive_grouping(recs, level.next) }
     else
       groups.map! { |recs| RECORD_CLASS.new(recs) }
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  if DEBUG_AGGREGATE
+    def __debug_group(level, key, recs)
+      leader = '---' * (level + 1)
+      field  = key.inspect
+      count  = recs.size
+      $stderr.puts if level.zero?
+      $stderr.puts "#{leader} GROUP_BY #{field} --- (#{count} records)"
+    end
+  else
+    def __debug_group(*)
     end
   end
 

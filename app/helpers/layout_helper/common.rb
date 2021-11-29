@@ -218,10 +218,13 @@ module LayoutHelper::Common
   # @return [String]
   #
   def search_target_path(target = nil, **opt)
-    target   ||= DEFAULT_SEARCH_CONTROLLER
-    controller = "/#{target}"
-    action     = SearchTermsHelper::SEARCH_CONTROLLERS[target&.to_sym]
-    url_for(opt.merge(controller: controller, action: action, only_path: true))
+    target ||= DEFAULT_SEARCH_CONTROLLER
+    ctrlr    = "/#{target}"
+    action   = nil
+    action ||= ('v2' if v2_style?)
+    action ||= ('v3' if v3_style?)
+    action ||= SEARCH_CONTROLLERS[target&.to_sym]
+    url_for(opt.merge(controller: ctrlr, action: action, only_path: true))
   rescue ActionController::UrlGenerationError
     search_target_path(**opt)
   end

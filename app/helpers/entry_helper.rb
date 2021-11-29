@@ -117,39 +117,41 @@ module EntryHelper
 
   # Render the contents of the :file_data field.
   #
-  # @param [Model] item
-  # @param [Hash]  opt
+  # @param [Model, Hash, nil] item
+  # @param [Hash]             opt
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* did not have :file_data.
   #
   # @see #render_json_data
   #
+  # noinspection RailsParamDefResolve
   def render_file_data(item, **opt)                                             # NOTE: from UploadHelper
-    return unless item.respond_to?(:file_data)
-    render_json_data(item, item.file_data, **opt)
+    data = item.try(:file_data) || item.try(:[], :file_data) or return
+    render_json_data(item, data, **opt)
   end
 
   # Render the contents of the :emma_data field.
   #
-  # @param [Model] item
-  # @param [Hash]  opt
+  # @param [Model, Hash, nil] item
+  # @param [Hash]             opt
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* did not have :emma_data.
   #
   # @see #render_json_data
   #
+  # noinspection RailsParamDefResolve
   def render_emma_data(item, **opt)                                             # NOTE: from UploadHelper
-    return unless item.respond_to?(:emma_data)
-    pairs = json_parse(item.emma_data)
+    data  = item.try(:emma_data) || item.try(:[], :emma_data) or return
+    pairs = json_parse(data)
     pairs&.transform_keys! { |k| Model::SEARCH_RECORD_LABELS[k] || k }
     render_json_data(item, pairs, **opt)
   end
 
   # Render hierarchical data.
   #
-  # @param [Model, nil]        item
+  # @param [Model, Hash, nil]  item
   # @param [String, Hash, nil] value
   # @param [Hash]              opt        Passed to #render_field_values
   #
@@ -180,9 +182,9 @@ module EntryHelper
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Model] item
-  # @param [Any]   value
-  # @param [Hash]  opt                Passed to the render method.
+  # @param [Model, Hash] item
+  # @param [*]           value
+  # @param [Hash]        opt          Passed to the render method.
   #
   # @return [Field::Type]
   # @return [String]
@@ -191,17 +193,17 @@ module EntryHelper
   # @see ModelHelper::List#render_value
   #
   def entry_render_value(item, value, **opt)                                    # NOTE: from UploadHelper#upload_render_value
-    if !value.is_a?(Symbol)
-      render_value(item, value, **opt)
-    elsif item.is_a?(Record::EmmaData) && item.field_names.include?(value)
-      case value
-        when :file_data then render_file_data(item, **opt)
-        when :emma_data then render_emma_data(item, **opt)
-        else                 item[value] || EMPTY_VALUE
+    if value.is_a?(Symbol)
+      if item.is_a?(Record::EmmaData) && item.include?(value)
+        case value
+          when :file_data then render_file_data(item, **opt)
+          when :emma_data then render_emma_data(item, **opt)
+          else                 item[value] || EMPTY_VALUE
+        end
+      else
+        Field.for(item, value)
       end
-    else
-      Field.for(item, value) || render_value(item, value, **opt)
-    end
+    end || render_value(item, value, **opt)
   end
 
   alias_method :phase_render_value,  :entry_render_value # TODO: if item.is_a?(Phase) is required...

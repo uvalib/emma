@@ -595,6 +595,18 @@ module LayoutHelper::SearchFilters
     search_style == :aggregate
   end
 
+  # Indicate whether search results are displayed in the original manner.
+  #
+  def v2_style?
+    search_style == :v2
+  end
+
+  # Indicate whether search results are displayed in the original manner.
+  #
+  def v3_style?
+    search_style == :v3
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

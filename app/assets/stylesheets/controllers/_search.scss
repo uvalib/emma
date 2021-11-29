@@ -369,12 +369,24 @@ $sticky-top-narrow:     3.125rem;
 
     > .value {
 
+        &.list,
         &.textbox {
             width:       max-content;
             min-width:   15vw;
             max-width:   75vw;
             max-height:  20vh;
             overflow-y:  auto;
+        }
+
+        &.list {
+            // Firefox handling of max-content sometimes allows the longest
+            // lines to wrap.  This makes the wrapping more evident by showing
+            // that portion indented.
+            > * {
+                $indent:     1rem;
+                margin-left: $indent;
+                text-indent: -$indent;
+            }
         }
 
         &.textbox {
@@ -849,6 +861,8 @@ $sticky-top-narrow:     3.125rem;
 // Additional class along with "search-index", "search", and "index".
 body.new-style,
 body.dev-style,
+body.search-v2,
+body.search-v3,
 body.grid-style,
 body.compact-style,
 body.aggregate-style {
@@ -1662,11 +1676,23 @@ body.grid-style {
     }
 }
 
+body.search-v2,
+body.search-v3,
 body.aggregate-style {
 
     .search-list {
 
         .search-list-item {
+
+            > .value.list {
+                color:       limegreen;
+                text-shadow: 1px 1px 0 black;
+            }
+
+            > .value.enum {
+                color:       hotpink;
+                text-shadow: 1px 1px 0 black;
+            }
 
             > .value.field-Title {
 
@@ -1699,6 +1725,32 @@ body.aggregate-style {
                 .item-number {
                     background:  white;
                 }
+            }
+        }
+    }
+}
+
+body.search-v3 {
+
+    .search-list {
+
+        .search-list-item {
+
+            // Probably-temporary divider between metadata for individual files
+            > .label.field-NewFile,
+            > .value.field-NewFile {
+
+                $bg: ghostwhite;
+
+                line-height: 1.25;
+                font-size:   larger;
+                font-weight: bolder;
+                background:  $bg;
+                box-shadow:
+                     2px  1px 0 2px $bg,
+                     2px -1px 0 2px $bg,
+                    -2px  1px 0 2px $bg,
+                    -2px -1px 0 2px $bg;
             }
         }
     }
