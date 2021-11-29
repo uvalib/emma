@@ -75,6 +75,7 @@ $data-list-border-color: none;
     .label {
 
         font-weight: bold;
+        align-self:  baseline;
 
         @media #{$narrow-screen} {
             margin-bottom: $flex-gap-y;

@@ -94,12 +94,6 @@ $sticky-top-narrow:     3.125rem;
         &.field-Title {
             margin: 0.67rem 0 auto;
         }
-
-        &.array {
-            @media #{$not-narrow-screen} {
-                margin-top: 0.25rem;
-            }
-        }
     }
 
     .value {
@@ -129,8 +123,8 @@ $sticky-top-narrow:     3.125rem;
 
             // Make elements flush with the left edge of the array container.
             margin-left:   $element-x-padding;
-            margin-top:    0.25rem;
             margin-bottom: 0.25rem;
+            align-items:   center;
 
             @media #{$medium-width} {
                 grid-template-columns: repeat(3, minmax(33%, 1fr));
@@ -146,6 +140,7 @@ $sticky-top-narrow:     3.125rem;
                 @extend %control-shadow;
 
                 display:             block;
+                height:              100%;
                 padding:             $element-y-padding $element-x-padding;
                 background:          ghostwhite;
                 border:              $element-border solid gray;
@@ -207,10 +202,6 @@ $sticky-top-narrow:     3.125rem;
                     max-height: 3rem;
                 }
             }
-        }
-
-        &.field-Description {
-            font-size: large;
         }
     }
 }
@@ -315,6 +306,19 @@ $sticky-top-narrow:     3.125rem;
     // Components
     //=========================================================================
 
+    > .label,
+    > .value {
+
+        &.list {
+            line-height: 1.5;
+        }
+
+        &.textbox {
+            margin-top:    0.25rem;
+            margin-bottom: 0.25rem;
+        }
+    }
+
     > .label {
 
         &.field-Title {
@@ -359,14 +363,15 @@ $sticky-top-narrow:     3.125rem;
     > .value {
 
         &.textbox {
-
-            @include width-fit-content;
-
-            min-width:   50%;
-            max-width:   100%;
+            width:       max-content;
+            min-width:   15vw;
+            max-width:   75vw;
             max-height:  20vh;
-            line-height: 1.25;
             overflow-y:  auto;
+        }
+
+        &.textbox {
+            line-height: 1.25;
         }
 
         &.field-Title {
@@ -565,6 +570,14 @@ $sticky-top-narrow:     3.125rem;
 
         &.field-Format {
             font-weight: bold;
+        }
+
+        &.field-Identifier {
+            font-weight: bold;
+        }
+
+        &.field-Subject {
+            max-height: 10vh;
         }
 
         &.field-RetrievalLink {
@@ -1388,6 +1401,7 @@ body.aggregate-style {
 
             .field-RetrievalLink {
                 margin-bottom: 0.25rem;
+                align-self:    baseline;
             }
 
             > .label {
