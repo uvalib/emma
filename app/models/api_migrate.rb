@@ -452,10 +452,11 @@ class ApiMigrate
     # @type [Array<String,Regexp>]
     #
     BOGUS_CREATOR = [
-      /Adobe\s*InDesign/i,
       /Adobe\s*Acrobat/i,
+      /Adobe\s*Illustrator/i,
+      /Adobe\s*InDesign/i,
+      /Office\s*Jet/i,
       /Quark\s*XPress/i,
-      /Office\s*Jet/i
     ].deep_freeze
 
     # Remove bogus :dc_creator values which are probably due to file metadata
@@ -539,6 +540,19 @@ class ApiMigrate
     def normalize_text_list(value)
       value = Array.wrap(value).join("\n") unless value.is_a?(String)
       value.split(/(?<=\w)\.(?=\s|\z)|[,;|\t\n]/).map(&:strip).compact_blank!
+    end
+
+    # normalize_coverage
+    #
+    # @param [Array<String>, String] value
+    #
+    # @return [Array<String>, String]
+    #
+    def normalize_coverage(value)
+      coverage = from_array(value)
+      coverage = '(NONE)' if coverage&.match?(%r{^(NA|N/A|none)[[:punct:]]*$}i)
+      value = value.is_a?(Array) ? [coverage] : coverage if coverage
+      value
     end
 
     # =========================================================================
@@ -653,6 +667,66 @@ class ApiMigrate
     def extract_remediated_aspects(value, emma_data)
       add_translations(emma_data, value, REMEDIATION_MIGRATION, ASPECT_FIELDS)
       value
+    end
+
+    # Set a default :rem_coverage if none was provided unless :rem_status has
+    # a value (in which case, this is deferred until the post-translate step
+    # for :rem_status).  The new value is returned.
+    #
+    # @param [Array<String>, String] value
+    # @param [Hash]                  emma_data
+    #
+    # @return [Array<String>, String]
+    #
+    # @see #derive_default_coverage
+    #
+    def set_default_coverage(value, emma_data)
+      default = emma_data[:rem_status].blank?
+      default &&= default_coverage(value, emma_data)
+      value = value.is_a?(Array) ? [default] : default if default
+      value
+    end
+
+    # Based on :rem_status (and :rem_complete) add a :rem_coverage comment if
+    # none exists.  The original value is returned.
+    #
+    # @param [String] value
+    # @param [Hash]   emma_data
+    #
+    # @return [String]
+    #
+    # @see #set_default_coverage
+    #
+    def derive_default_coverage(value, emma_data)
+      default = default_coverage(emma_data[:rem_coverage], emma_data)
+      emma_data[:rem_coverage] = default if default
+      value
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    # If the current :rem_coverage is missing or is an automatically-generated
+    # value, return a default value based on :rem_status and :rem_complete.
+    #
+    # @param [Array<String>, String] current    Current :rem_coverage value.
+    # @param [Hash]                  emma_data
+    #
+    # @return [String, nil]
+    #
+    def default_coverage(current, emma_data)
+      current = from_array(current)
+      return unless current.blank? || current.match?(/^\([A-Z]+\)$/)
+      default =
+        case
+          when emma_data[:rem_status] == 'notRemediated' then 'NONE'
+          when true?(emma_data[:rem_complete])           then 'ALL'
+          else                                                'UNKNOWN'
+        end
+      '(%s)' % default # TODO: I18n
     end
 
     # =========================================================================

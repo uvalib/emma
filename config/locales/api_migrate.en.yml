@@ -213,9 +213,15 @@ en:
             otherDso:               !ruby/regexp /dso/i
             other:                  !ruby/regexp /.*/
 
+        rem_coverage:
+          post_translate:           set_default_coverage
+          normalize:                normalize_coverage
+          new_min_max:              [1,1]
+
         rem_status:
           translate:
             ### NEW VALUE ###       ### OLD VALUE PATTERN(S) ###
             notRemediated:          'unremediated'
             remediated:             ~ # 'remediated'
             bornAccessible:         'born_accessible'
+          post_translate:           derive_default_coverage
