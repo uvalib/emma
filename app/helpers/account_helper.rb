@@ -82,10 +82,10 @@ module AccountHelper
   # @return [Any]   HTML or scalar value.
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
-  # @see ModelHelper#render_value
+  # @see ModelHelper::List#render_value
   #
   def account_render_value(item, value, **opt)
-    case field_category(value)
+    case value.to_s.to_sym
       when :roles then account_roles(item, **opt)
       else             render_value(item, value, **opt)
     end
@@ -158,7 +158,7 @@ module AccountHelper
   #
   def account_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :account
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
@@ -238,7 +238,7 @@ module AccountHelper
     return {} unless item.is_a?(model)
     opt[:filter] ||= ACCOUNT_FIELD_FILTERS unless developer?
     pairs = model_field_values(item, **opt)
-    show_fields(model).map { |field, config|
+    Model.show_fields(model).map { |field, config|
       next if config[:ignored]
       next if config[:role] && !has_role?(config[:role])
       k = config[:label] || field
@@ -246,7 +246,7 @@ module AccountHelper
       v = model.find_record(v)&.uid || pairs[:email] if field == :effective_id
       v = EMPTY_VALUE if v.nil?
       [k, v]
-    }.compact.to_h.merge('Role Prototype': account_role_prototype(item))
+    }.compact.to_h.merge('Role Prototype' => account_role_prototype(item))
   end
 
   # account_columns
@@ -283,7 +283,7 @@ module AccountHelper
   #
   def account_form_fields(item, pairs: nil, **opt)
     opt[:model] = model = :account
-    opt[:pairs] = database_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.database_fields(model).merge(pairs || {})
     render_form_fields(item, **opt)
   end
 

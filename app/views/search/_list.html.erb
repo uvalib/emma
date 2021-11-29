@@ -2,6 +2,7 @@
 <%-
   # A sequence of EMMA Unified Search metadata records.
 
+  action ||= params[:action].to_s
   list   ||= []
   count  ||= list.size
   offset ||= page_offset
@@ -12,7 +13,7 @@
   skip = Array.wrap(skip)
   heading =
     unless skip.include?(:title)
-      title ||= t('emma.search.index.title')
+      title ||= t("emma.search.#{action}.title")
       title  += " (#{count})" unless skip.include?(:count)
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?

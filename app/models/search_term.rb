@@ -18,6 +18,18 @@ class SearchTerm
 
   public
 
+  # Query string which indicates a "null search".
+  #
+  # @type [String]
+  #
+  NULL_SEARCH = '*'
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # The URL parameter associated with this search term.
   #
   # @return [Symbol]

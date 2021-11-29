@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module TitleHelper
 
-  include ModelHelper
+  include BookshareHelper
   include ImageHelper
 
   # ===========================================================================
@@ -291,12 +291,12 @@ module TitleHelper
   # @return [Any]   HTML or scalar value.
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
-  # @see ModelHelper#render_value
+  # @see BookshareHelper#bookshare_render_value
   #
   def title_render_value(item, value, **opt)
     case field_category(value)
       when :title then title_link(item)
-      else             render_value(item, value, **opt)
+      else             bookshare_render_value(item, value, **opt)
     end
   end
 
@@ -314,7 +314,7 @@ module TitleHelper
   #
   def title_details(item, pairs: nil, **opt)
     opt[:model] = model = :title
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -332,7 +332,7 @@ module TitleHelper
   #
   def title_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :title
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

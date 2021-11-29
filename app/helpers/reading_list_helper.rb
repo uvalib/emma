@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module ReadingListHelper
 
-  include ModelHelper
+  include BookshareHelper
   include TitleHelper
 
   # ===========================================================================
@@ -120,13 +120,13 @@ module ReadingListHelper
   # @return [Any]   HTML or scalar value.
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
-  # @see ModelHelper#render_value
+  # @see BookshareHelper#bookshare_render_value
   #
   def reading_list_render_value(item, value, **opt)
     case field_category(value)
       when :name, :label then reading_list_link(item, **opt)
       when :subscription then reading_list_subscriptions(item, **opt)
-      else                    render_value(item, value, **opt)
+      else                    bookshare_render_value(item, value, **opt)
     end
   end
 
@@ -144,7 +144,7 @@ module ReadingListHelper
   #
   def reading_list_details(item, pairs: nil, **opt)
     opt[:model] = model = :reading_list
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -162,7 +162,7 @@ module ReadingListHelper
   #
   def reading_list_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :reading_list
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

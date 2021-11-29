@@ -14,6 +14,20 @@
 # extraneous label/value pairs during transitional times where the index may
 # present the same metadata value with both its new field name and its old
 # field name(s).
+#
+# NOTE: Model#configured_fields_for uses the equivalent submission record
+# fields as the basis for each of the entries defined here to avoid duplication
+# while allowing the field properties in the context of search results to
+# differ from the properties in the context of the submission form.
+#
+# E.g., the entry for `Model#fields_table[:search][:index][:dc_title]` is made
+# from the (normalized) properties of "emma.upload.record.emma_data.dc_title"
+# merged with the properties defined here for "emma.search.record.dc_title".
+#
+# That entry can include multiple properties, or it can be just a string (which
+# is interpreted by Field#normalize as representing just the :label property),
+# or it can be just a null entry (meaning that all properties from the
+# equivalent submission record field are used as-is).
 
 en:
 
@@ -23,250 +37,87 @@ en:
 
       record:
 
+        _base:
+          record: upload
+          field:  emma_data
+
         # =====================================================================
         # Title-level bibliographic information
         # =====================================================================
 
-        dc_title:
-          label:                            'Title'
-          max:                              1
-
-        bib_seriesType:
-          # NOTE: not yet in the index
-          label:                            'Series Type'
-          max:                              1
-
-        emma_version:
-          label:                            'Version'
-          max:                              1
-
-        bib_version:
-          # NOTE: superseded by emma_version
-          label:                            'Version.'
-          max:                              1
-
-        bib_series:
-          # NOTE: not yet in the index
-          label:                            'Series'
-          max:                              1
-
-        bib_seriesPosition:
-          # NOTE: not yet in the index
-          label:                            'Series Position'
-          max:                              1
-
-        dc_type:
-          label:                            'Type'
-          max:                              1
-
-        dc_format:
-          label:                            'Format'
-          max:                              1
-
-        dc_creator:
-          label:                            'Creator'
-          max:                              ~
-
-        dc_language:
-          label:                            'Language'
-          max:                              ~
-
-        dc_description:
-          label:                            'Description'
-          max:                              1
-
-        dc_publisher:
-          label:                            'Publisher'
-          max:                              1
-
-        dc_subject:
-          label:                            'Subject'
-          max:                              ~
-
-        dc_rights:
-          label:                            'Rights'
-          max:                              1
-
-        dc_provenance:
-          # NOTE: deprecated with API 0.0.5
-          label:                            'Provenance'
-          max:                              0
-
-        dc_identifier:
-          label:                            'Identifier'
-          max:                              ~
-
-        dc_relation:
-          label:                            'Related'
-          max:                              ~
-
-        dcterms_dateCopyright:
-          label:                            'Copyright Date'
-          max:                              1
-
-        emma_publicationDate:
-          # NOTE: if dateCopyright is present this will be a derived value.
-          label:                            'Publication Date'
-          max:                              1
-
-        dcterms_dateAccepted:
-          label:                            'Entry Created'
-          max:                              1
-
-        # =====================================================================
-        # Indexing information
-        # =====================================================================
-
-        emma_repository:
-          label:                            'Repository'
-          max:                              1
-
-        emma_collection:
-          label:                            'Collection'
-          max:                              ~
-
-        emma_repositoryUpdateDate:
-          label:                            'Entry Updated'
-          max:                              1
-
-        emma_repositoryMetadataUpdateDate:
-          # NOTE: renamed emma_repositoryUpdateDate
-          label:                            'Entry Updated.'
-          max:                              1
-
-        emma_recordId:
-          label:                            'EMMA Record ID'
-          max:                              1
-
-        emma_titleId:
-          label:                            'EMMA Title ID'
-          max:                              1
+        dc_title:                           ~ # 'Title'
+        bib_seriesType:                     ~ # 'Series Type'
+        emma_version:                       ~ # 'Version'
+        bib_version:                        ~ # 'Version.'
+        bib_series:                         ~ # 'Series'
+        bib_seriesPosition:                 ~ # 'Series Position'
+        dc_format:                          ~ # 'Format'
+        dc_type:                            ~ # 'Type'
+        dc_creator:                         ~ # 'Author/Creator'
+        dc_publisher:                       ~ # 'Publisher'
+        dcterms_dateCopyright:              ~ # 'Copyright Date'
+        emma_publicationDate:               ~ # 'Publication Date'
+        dc_language:                        ~ # 'Language'
+        dc_description:                     ~ # 'Description'
+        dc_subject:                         ~ # 'Subject'
+        dc_identifier:                      ~ # 'Identifier'
+        dc_relation:                        ~ # 'Related'
+        dc_rights:                          ~ # 'Rights'
 
         # =====================================================================
         # File-level technical information
         # =====================================================================
 
-        emma_formatVersion:
-          label:                            'Format Version'
-          max:                              1
-
-        emma_formatFeature:
-          label:                            'Format Feature'
-          max:                              ~
+        emma_formatVersion:                 ~ # 'Format Version'
+        emma_formatFeature:                 'Format Features'
 
         # =====================================================================
         # File-level remediation information
         # =====================================================================
 
-        rem_remediationDate:
-          label:                            'Date Remediated'
-          max:                              1
-
-        emma_lastRemediationDate:
-          # NOTE: renamed rem_remediationDate
-          label:                            'Date Remediated.'
-          max:                              1
-
-        rem_comments:
-          label:                            'Remediation Comments'
-          max:                              1
-
-        rem_remediationComments:
-          # NOTE: to be renamed rem_comments
-          label:                            'Remediation Comments.'
-          max:                              1
-
-        emma_lastRemediationNote:
-          # NOTE: to be renamed rem_comments
-          label:                            'Remediation Comments.'
-          max:                              1
-
-        rem_source:
-          label:                            'Source of Content'
-          max:                              1
-
-        rem_metadataSource:
-          label:                            'Source of Metadata'
-          max:                              ~
-
-        rem_remediatedBy:
-          label:                            'Remediated By'
-          max:                              ~
-
-        rem_complete:
-          label:                            'Entire Document Remediated?'
-          max:                              1
-
-        rem_coverage:
-          label:                            'Part(s) Remediated'
-          max:                              1
-
-        rem_remediatedAspects:
-          label:                            'Remediated Aspects'
-          max:                              ~
-
-        rem_remediation:
-          # NOTE: superseded by rem_remediatedAspects
-          label:                            'Remediated Aspects.'
-          max:                              ~
-
-        rem_textQuality:
-          label:                            'Text Quality'
-          max:                              1
-
-        rem_quality:
-          # NOTE: superseded by rem_textQuality
-          label:                            'Text Quality.'
-          max:                              1
-
-        rem_status:
-          label:                            'Remediation Status'
-          max:                              1
+        rem_status:                         ~ # 'Remediation Status'
+        rem_complete:                       'Completely Remediated?'
+        rem_coverage:                       ~ # 'Part(s) Remediated'
+        rem_comments:                       ~ # 'Remediation Comments'
+        rem_remediationComments:            ~ # 'Remediation Comments.'
+        emma_lastRemediationNote:           ~ # 'Remediation Comments.'
+        rem_remediatedAspects:              ~ # 'Remediated Aspects'
+        rem_remediation:                    ~ # 'Remediated Aspects.'
+        rem_textQuality:                    ~ # 'Text Quality'
+        rem_quality:                        ~ # 'Text Quality.'
+        rem_source:                         ~ # 'Source of Content'
+        rem_metadataSource:                 ~ # 'Source of Metadata'
+        rem_remediatedBy:                   ~ # 'Remediated By'
+        rem_remediationDate:                'Date Remediated'
+        emma_lastRemediationDate:           'Date Remediated.'
 
         # =====================================================================
         # File-level accessibility information
         # =====================================================================
 
-        s_accessibilityFeature:
-          label:                            'Accessibility Feature'
-          max:                              ~
+        s_accessibilityFeature:             ~ # 'Accessibility Features'
+        s_accessibilityControl:             ~ # 'Accessibility Controls'
+        s_accessibilityHazard:              ~ # 'Accessibility Hazards'
+        s_accessMode:                       ~ # 'Access Mode'
+        s_accessModeSufficient:             ~ # 'Sufficient Mode'
+        s_accessibilitySummary:             ~ # 'Accessibility Summary'
 
-        s_accessibilityControl:
-          label:                            'Accessibility Control'
-          max:                              ~
+        # =====================================================================
+        # File/title indexing information
+        # =====================================================================
 
-        s_accessibilityHazard:
-          label:                            'Accessibility Hazard'
-          max:                              ~
-
-        s_accessMode:
-          label:                            'Access Mode'
-          max:                              ~
-
-        s_accessModeSufficient:
-          label:                            'Sufficient Mode'
-          max:                              ~
-
-        s_accessibilityAPI:
-          label:                            'Accessibility API'
-          max:                              0
-
-        s_accessibilitySummary:
-          label:                            'Accessibility Summary'
-          max:                              1
+        emma_repository:                    ~ # 'Repository'
+        emma_collection:                    'Collection'
+        dcterms_dateAccepted:               'Entry Created'
+        emma_repositoryUpdateDate:          'Entry Updated'
+        emma_repositoryMetadataUpdateDate:  'Entry Updated.'
+        emma_recordId:                      ~ # 'EMMA Record ID'
+        emma_titleId:                       ~ # 'EMMA Title ID'
 
         # =====================================================================
         # File-level member repository information
         # =====================================================================
 
-        emma_webPageLink:
-          label:                            'Details Link'
-          max:                              1
-
-        emma_repositoryRecordId:
-          label:                            'Repository Record ID'
-          max:                              1
-
-        emma_retrievalLink:
-          label:                            'Retrieval Link'
-          max:                              1
+        emma_webPageLink:                   ~ # 'Details Link'
+        emma_repositoryRecordId:            ~ # 'Repository Record ID'
+        emma_retrievalLink:                 ~ # 'Retrieval Link'

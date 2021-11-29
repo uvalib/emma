@@ -158,7 +158,7 @@ module EntryHelper
   #
   def render_json_data(item, value, **opt)                                      # NOTE: from UploadHelper
     return unless item
-    opt[:model]     ||= model_for(item)
+    opt[:model]     ||= Model.for(item)
     opt[:no_format] ||= :dc_description
 
     pairs = json_parse(value).presence
@@ -188,7 +188,7 @@ module EntryHelper
   # @return [String]
   # @return [nil]
   #
-  # @see ModelHelper#render_value
+  # @see ModelHelper::List#render_value
   #
   def entry_render_value(item, value, **opt)                                    # NOTE: from UploadHelper#upload_render_value
     if !value.is_a?(Symbol)
@@ -220,8 +220,8 @@ module EntryHelper
   # @param [Hash]      opt            Passed to #model_details.
   #
   def entry_details(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :entry
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:model] = model = item && Model.for(item) || :entry
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -293,7 +293,7 @@ module EntryHelper
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
-  # This is invoked from ModelHelper#page_filter.
+  # This is invoked from ModelHelper::List#page_filter.
   #
   def entry_state_group_select(counts: nil, **opt)                              # NOTE: from UploadHelper#upload_state_group_select
     css_selector = ENTRY_GROUP_PANEL_CLASS
@@ -396,7 +396,7 @@ module EntryHelper
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
-  # This is invoked from ModelHelper#page_filter.
+  # This is invoked from ModelHelper::List#page_filter.
   #
   def entry_page_filter(*list, counts: nil, **opt)                              # NOTE: from UploadHelper#upload_page_filter
     return unless ENTRY_PAGE_FILTERING
@@ -562,8 +562,8 @@ module EntryHelper
   # @param [Hash]      opt            Passed to #model_list_item.
   #
   def entry_list_item(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :entry
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:model] = model = item && Model.for(item) || :entry
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
@@ -678,7 +678,7 @@ module EntryHelper
   def entry_control_icon(op, **opt)                                             # NOTE: from UploadHelper#upload_action_icon
     css_selector = '.icon'
     item         = opt.delete(:item)
-    model        = opt.delete(:model) || model_for(item)
+    model        = opt.delete(:model) || Model.for(item)
     id           = opt.delete(:id)    || item.try(:id)
     case (enabled = opt.delete(:enabled))
       when nil         then # Enabled if not specified otherwise.
@@ -754,8 +754,8 @@ module EntryHelper
   # @param [Hash]      opt            Passed to #render_form_fields.
   #
   def entry_form_fields(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :entry
-    opt[:pairs] = form_fields(model).merge(pairs || {})
+    opt[:model] = model = item && Model.for(item) || :entry
+    opt[:pairs] = Model.form_fields(model).merge(pairs || {})
     render_form_fields(item, **opt)
   end
 

@@ -2,12 +2,13 @@
 <%-
   # EMMA Unified Search results page.
 
-  title ||= t('emma.search.index.title')
-  list  ||= page_items
-  total ||= total_items
-  terms ||= search_terms
-  row   ||= 1
-  help  ||= help_popup(:search)
+  action ||= params[:action].to_s
+  title  ||= t("emma.search.#{action}.title")
+  list   ||= page_items
+  total  ||= total_items
+  terms  ||= search_terms
+  row    ||= 1
+  help   ||= help_popup(:search)
 
   page_opt = SearchTermsHelper::NON_SEARCH_KEYS
   page_terms, search = partition_hash(terms, *page_opt)
@@ -15,7 +16,7 @@
   search = search.presence
 
   unless modal?
-    label = t('emma.search.index.label', default: title)
+    label = t("emma.search.#{action}.label", default: title)
     terms = search
     terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
     set_page_title(label)
@@ -42,7 +43,7 @@
     top_controls = bottom_controls = nil
   end
 
-  template_opt = opt.merge!(skip: :title)
+  template_opt = opt.merge!(skip: :title, action: action)
 
 -%>
 

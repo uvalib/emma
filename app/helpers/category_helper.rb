@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module CategoryHelper
 
-  include ModelHelper
+  include BookshareHelper
 
   # ===========================================================================
   # :section:
@@ -56,7 +56,7 @@ module CategoryHelper
   #
   def category_details(item, pairs: nil, **opt)
     opt[:model] = model = :category
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -75,7 +75,7 @@ module CategoryHelper
   def category_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :category
     opt[:pairs] = item ? { category_link(item) => "(#{item.titleCount})" } : {}
-    opt[:pairs].merge!(index_fields(model))
+    opt[:pairs].merge!(Model.index_fields(model))
     opt[:pairs].merge!(pairs) if pairs.present?
     model_list_item(item, **opt)
   end

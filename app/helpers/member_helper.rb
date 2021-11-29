@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module MemberHelper
 
-  include ModelHelper
+  include BookshareHelper
 
   # ===========================================================================
   # :section:
@@ -61,6 +61,27 @@ module MemberHelper
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Bs::Api::Record] item
+  # @param [*]               value
+  # @param [Hash]            opt        Passed to the render method.
+  #
+  # @return [Any]   HTML or scalar value.
+  # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
+  #
+  # @see BookshareHelper#bookshare_render_value
+  #
+  def member_render_value(item, value, **opt)
+    bookshare_render_value(item, value, **opt)
+  end
+
+  # ===========================================================================
   # :section: Item details (show page) support
   # ===========================================================================
 
@@ -74,7 +95,7 @@ module MemberHelper
   #
   def member_details(item, pairs: nil, **opt)
     opt[:model] = model = :member
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -169,7 +190,7 @@ module MemberHelper
   #
   def member_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :member
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

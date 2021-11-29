@@ -175,6 +175,29 @@ class ScalarType
     "(#{to_s.inspect})"
   end
 
+  # ===========================================================================
+  # :section: Object class overrides
+  # ===========================================================================
+
+  public
+
+  # By default, Object#deep_dup will create a copy of an item, including values
+  # which are classes themselves, if the item says that it is duplicable.
+  #
+  # For items which are classes, e.g.:
+  #
+  #   { item: ScalarType }
+  #
+  # this would mean that the duplicated result would be something like:
+  #
+  #   { item: #<Class:0x00005590b0d928a8> }
+  #
+  # Returning *false* here prevents that.
+  #
+  def self.duplicable?
+    false
+  end
+
 end
 
 # ISO 8601 duration.

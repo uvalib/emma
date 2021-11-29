@@ -177,12 +177,8 @@ module DataConcern
         entry = fields[field] ||= {}
         Array.wrap(data).flatten.each do |item|
           item = item.to_s.squish
-          next if item.blank? || (item == ModelHelper::EMPTY_VALUE)
-          if entry.include?(item)
-            entry[item] += 1
-          else
-            entry[item] = 1
-          end
+          item = nil if item == ModelHelper::Fields::EMPTY_VALUE
+          entry[item] = entry[item]&.next || 1 unless item.blank?
         end
       end
     end

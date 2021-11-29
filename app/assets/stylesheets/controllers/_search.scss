@@ -358,6 +358,13 @@ $sticky-top-narrow:     3.125rem;
             padding:     0.25rem 0.3125rem;
             font-size:   small;
         }
+
+        // Field labels with help icons that are only for the submission form:
+        &.field-Repository {
+            .help-popup {
+                display: none;
+            }
+        }
     }
 
     > .value {
@@ -804,6 +811,12 @@ $sticky-top-narrow:     3.125rem;
 
         @media #{$narrow-screen} {
             @include grid-column-span;
+        }
+
+        // Superfluous because ModelHelper::Fields#field_pairs folds the
+        // information from :rem_complete into :rem_coverage.
+        .field-Complete {
+            display: none;
         }
     }
 }

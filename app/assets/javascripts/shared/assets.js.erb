@@ -521,12 +521,12 @@ var Emma = (function() {
             Style:  o$('<%= js UploadHelper::UPLOAD_STYLE %>'),
             Action: o$('<%= js UploadHelper::UPLOAD_ACTION_VALUES %>'),
             Filter: o$('<%= js UploadHelper::UPLOAD_FIELD_GROUP %>'),
-            Status: o$('<%= js ModelHelper::STATUS_MARKER %>'),
+            Status: o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
             Mime: {
                 to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>')
             },
             Field: {
-                empty:   '<%= ModelHelper::EMPTY_VALUE %>'
+                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>'
             },
             Repo:   {
                 name:    o$('<%= js EmmaRepository.pairs %>'),
@@ -606,12 +606,12 @@ var Emma = (function() {
             Style:  o$('<%= js EntryHelper::ENTRY_STYLE %>'),
             Action: o$('<%= js EntryHelper::ENTRY_ACTION_VALUES %>'),
             Filter: o$('<%= js EntryHelper::ENTRY_FIELD_GROUP %>'),
-            Status: o$('<%= js ModelHelper::STATUS_MARKER %>'),
+            Status: o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
             Mime: {
                 to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>')
             },
             Field: {
-                empty:   '<%= ModelHelper::EMPTY_VALUE %>'
+                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>'
             },
             Repo:   {
                 name:    o$('<%= js EmmaRepository.pairs %>'),

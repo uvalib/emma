@@ -417,7 +417,7 @@ en:
             # NOTE: Supplied by Unified Search service for non-EMMA items.
             min:          0
             max:          1
-            label:        'Download Link'
+            label:        'Retrieval Link'
             tooltip:      |
               Source repository URL to retrieve a copy of the remediated
               content file.
@@ -647,7 +647,7 @@ en:
             # IR:   Array<PublicationIdentifier>
             min:          0
             max:          ~
-            label:        'Relation'
+            label:        'Related'
             tooltip:      |
               Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
               related edition of the creative work represented by the

@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module PeriodicalHelper
 
-  include ModelHelper
+  include BookshareHelper
   include EditionHelper
 
   # ===========================================================================
@@ -170,7 +170,7 @@ module PeriodicalHelper
   # @return [Any]   HTML or scalar value.
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
-  # @see ModelHelper#render_value
+  # @see BookshareHelper#bookshare_render_value
   #
   def periodical_render_value(item, value, **opt)
     case field_category(value)
@@ -179,7 +179,7 @@ module PeriodicalHelper
       when :category      then periodical_category_links(item, **opt)
       when :language      then periodical_language_links(item, **opt)
       when :country       then periodical_country_links(item, **opt)
-      else                     render_value(item, value, **opt)
+      else                     bookshare_render_value(item, value, **opt)
     end
   end
 
@@ -197,7 +197,7 @@ module PeriodicalHelper
   #
   def periodical_details(item, pairs: nil, **opt)
     opt[:model] = model = :periodical
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -215,7 +215,7 @@ module PeriodicalHelper
   #
   def periodical_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :periodical
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 

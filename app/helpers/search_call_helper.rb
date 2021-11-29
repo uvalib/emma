@@ -51,7 +51,7 @@ module SearchCallHelper
   #                                     #model_details.
   #
   def search_call_details(item, pairs: nil, **opt)
-    opt[:model] = model_for(item)
+    opt[:model] = Model.for(item)
     fv_opt, opt = partition_hash(opt, :columns, :filter)
     opt[:pairs] = search_call_field_values(item, **fv_opt)
     opt[:pairs].merge!(pairs) if pairs.present?
@@ -73,8 +73,8 @@ module SearchCallHelper
   # @param [Hash]       opt           Passed to #model_list_item.
   #
   def search_call_list_item(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :search_call
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:model] = model = item && Model.for(item) || :search_call
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
@@ -226,7 +226,7 @@ module SearchCallHelper
     value =
       Array.wrap(value).map do |v|
         v_opt[:'data-value'] = v
-        if v == NULL_SEARCH
+        if v == SearchTerm::NULL_SEARCH
           star_opt = append_classes(v_opt, 'star')
           star_opt[:title] = 'Null search' # TODO: I18n
           html_span(ASTERISK, star_opt)

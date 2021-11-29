@@ -21,12 +21,6 @@ module SearchTermsHelper
 
   public
 
-  # Query string which indicates a "null search".
-  #
-  # @type [String]
-  #
-  NULL_SEARCH = '*'
-
   # Table of search types for each controller.
   #
   # Each entry may have:

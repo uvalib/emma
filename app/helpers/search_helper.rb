@@ -58,7 +58,8 @@ module SearchHelper
   # @return [Any]   HTML or scalar value.
   # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
   #
-  # @see ModelHelper#render_value
+  # @see ModelHelper::List#render_value
+  # @see UploadHelper#upload_render_value
   #
   def search_render_value(item, value, **opt)
     case value
@@ -158,7 +159,7 @@ module SearchHelper
   #
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToPrev()*
   #
-  def prev_record_link(index:, min_index: nil, **)
+  def prev_record_link(index: nil, min_index: nil, **)
     css_selector = '.prev'
     index     = positive(index)     || 0
     min_index = positive(min_index) || 0
@@ -185,7 +186,7 @@ module SearchHelper
   #
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToNext()*
   #
-  def next_record_link(index:, max_index: nil, **)
+  def next_record_link(index: nil, max_index: nil, **)
     css_selector = '.next'
     index     = positive(index) || 0
     max_index = max_index&.to_i
@@ -304,7 +305,7 @@ module SearchHelper
   #
   def search_item_details(item, pairs: nil, **opt)
     opt[:model] = model = :search
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -408,7 +409,7 @@ module SearchHelper
   # @see file:app/assets/javascripts/controllers/search.js *setupColorizeButtons()*
   #
   # == Usage Notes
-  # This is invoked from ModelHelper#page_filter.
+  # This is invoked from ModelHelper::List#page_filter.
   #
   def search_page_styles(dev_only: nil, **opt)
     return if default_style?

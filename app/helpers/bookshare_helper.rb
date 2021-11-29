@@ -9,10 +9,9 @@ __loading_begin(__FILE__)
 #
 module BookshareHelper
 
-  include Emma::Common
-
+  include ModelHelper
+  include BsApiHelper
   include HtmlHelper
-  include I18nHelper
 
   # ===========================================================================
   # :section:
@@ -162,6 +161,13 @@ module BookshareHelper
     end
   end
 
+  # Creator field categories.
+  #
+  # @type [Array<Symbol>]
+  #
+  CREATOR_FIELDS =
+    Bs::Shared::CreatorMethods::CREATOR_TYPES.map(&:to_sym).freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -275,6 +281,234 @@ module BookshareHelper
     end
     path = bookshare_url(path, **path_opt)
     external_link(label, path, title: tip) if path.present?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # @private
+  # @type [Array<Symbol>]
+  SEARCH_LINKS_OPTIONS =
+    %i[field method method_opt separator link_method].freeze
+
+  # Item terms as search links.
+  #
+  # Items in returned in two separately sorted groups: actionable links (<a>
+  # elements) followed by items which are not linkable (<span> elements).
+  #
+  # @param [Model] item
+  # @param [Hash]  opt                  Passed to :link_method except for:
+  #
+  # @option opt [Symbol] :field
+  # @option opt [Symbol] :method
+  # @option opt [Hash]   :method_opt    Passed to *method* call.
+  # @option opt [String] :separator     Default: #DEFAULT_ELEMENT_SEPARATOR
+  # @option opt [Symbol] :link_method   Default: :search_link
+  #
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
+  # @return [nil]                       If access method unsupported by *item*.
+  #
+  def search_links(item, **opt)
+    opt, html_opt = partition_hash(opt, *SEARCH_LINKS_OPTIONS)
+    meth  = opt[:method]
+    field = (opt[:field] || :title).to_s
+    case field
+      when 'creator_list'
+        meth ||= field.to_sym
+        field  = :author
+      when /_list$/
+        meth ||= field.to_sym
+        field  = field.delete_suffix('_list').to_sym
+      else
+        meth ||= field.pluralize.to_sym
+        field  = field.to_sym
+    end
+    unless item.respond_to?(meth)
+      __debug { "#{__method__}: #{item.class}: item.#{meth} invalid" }
+      return
+    end
+    html_opt[:field] = field
+
+    separator   = opt[:separator]   || DEFAULT_ELEMENT_SEPARATOR
+    link_method = opt[:link_method] || :search_link
+    check_link  = !opt.key?(:no_link)
+    method_opt  = (opt[:method_opt].presence if item.method(meth).arity >= 0)
+
+    values = method_opt ? item.send(meth, **method_opt) : item.send(meth)
+    values = values.is_a?(Array) ? values.dup : [values]
+    values.map! { |record|
+      link_opt = html_opt
+      if check_link
+        # noinspection RubyCaseWithoutElseBlockInspection
+        no_link  =
+          case field
+            when :categories then !record.bookshare_category
+          end
+        link_opt = link_opt.merge(no_link: no_link) if no_link
+      end
+      send(link_method, record, **link_opt)
+    }.compact!
+    values.sort_by! { |html_element|
+      term   = html_element.to_s
+      prefix = term.start_with?('<a') ? '' : 'ZZZ'
+      term.sub(/^<[^>]+>/, prefix)
+    }.uniq!
+    values.join(separator).html_safe
+  end
+
+  # @private
+  # @type [Array<Symbol>]
+  SEARCH_LINK_OPTIONS = %i[field all_words no_link scope controller].freeze
+
+  # Create a link to the search results index page for the given term(s).
+  #
+  # @param [Model, String] terms
+  # @param [Hash]          opt                Passed to #make_link except for:
+  #
+  # @option opt [Symbol]         :field       Default: :title.
+  # @option opt [Boolean]        :all_words
+  # @option opt [Boolean]        :no_link
+  # @option opt [Symbol, String] :scope
+  # @option opt [Symbol, String] :controller
+  #
+  # @return [ActiveSupport::SafeBuffer]       An HTML link element.
+  # @return [nil]                             If no *terms* were provided.
+  #
+  def search_link(terms, **opt)
+    terms = terms.to_s.strip.presence or return
+    opt, html_opt = partition_hash(opt, *SEARCH_LINK_OPTIONS)
+    field = opt[:field] || :title
+
+    # Generate the link label.
+    ftype = field_category(field)
+    lang  = (ftype == :language)
+    label = lang && ISO_639.find(terms)&.english_name || terms
+    terms = terms.sub(/\s+\([^)]+\)$/, '') if CREATOR_FIELDS.include?(ftype)
+
+    # If this instance should not be rendered as a link, return now.
+    return html_span(label, html_opt) if opt[:no_link]
+
+    # Otherwise, wrap the terms phrase in quotes unless directed to handled
+    # each word of the phrase separately.
+    ctrl   = opt[:scope] || opt[:controller] || request_parameters[:controller]
+    phrase = !opt[:all_words]
+    terms  = quote(terms) if phrase
+
+    # Create a tooltip unless one was provided.
+    unless (html_opt[:title] ||= opt[:tooltip])
+      scope = ctrl && "emma.#{ctrl}.index.tooltip"
+      words = phrase ? [terms] : terms.split(/\s/).compact
+      words.map! { |word| ISO_639.find(word)&.english_name || word } if lang
+      words.map! { |word| quote(word) }
+      final = words.pop
+      tip_terms =
+        if words.present?
+          words = words.join(', ')
+          field.to_s.pluralize   << ' ' << "containing #{words} or #{final}" # TODO: I18n
+        else
+          field.to_s.singularize << ' ' << final
+        end
+      html_opt[:title] = I18n.t(scope, terms: tip_terms, default: '')
+    end
+
+    # Generate the search path.
+    search = Array.wrap(field).map { |f| [f, terms] }.to_h
+    search[:controller] = ctrl
+    search[:action]     = :index
+    search[:only_path]  = true
+    path = url_for(search)
+
+    # noinspection RubyMismatchedParameterType
+    make_link(label, path, **html_opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Create record links to an external target or via the internal API interface
+  # endpoint.
+  #
+  # @param [Model, Array<String>, String] links
+  # @param [Hash] opt                 Passed to #make_link except for:
+  #
+  # @option opt [Boolean] :no_link
+  # @option opt [String]  :separator  Default: #DEFAULT_ELEMENT_SEPARATOR.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def record_links(links, **opt)
+    css_selector  = '.external-link'
+    opt, html_opt = partition_hash(opt, :no_link, :separator)
+    prepend_classes!(html_opt, css_selector)
+    separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
+    no_link   = opt[:no_link]
+    links = links.record_links if links.respond_to?(:record_links)
+    Array.wrap(links).map { |link|
+      next if link.blank?
+      path = (bs_api_explorer_url(link) unless no_link)
+      if path.present? && !path.match?(/[{}]/)
+        make_link(link, path, **html_opt)
+      else
+        html_div(link, class: 'non-link')
+      end
+    }.compact.join(separator).html_safe
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Bs::Api::Record] item
+  # @param [*]               value
+  # @param [Hash]            opt      Passed to the render method.
+  #
+  # @return [Any]   HTML or scalar value.
+  # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
+  #
+  # @see ModelHelper::List#render_value
+  #
+  def bookshare_render_value(item, value, **opt)
+    case field_category(value)
+      when :author      then author_links(item)
+      when :bookshareId then bookshare_link(item)
+      when :category    then category_links(item)
+      when :composer    then composer_links(item)
+      when :country     then country_links(item)
+      when :cover       then cover_image(item)
+      when :cover_image then cover_image(item)
+      when :creator     then creator_links(item)
+      when :editor      then editor_links(item)
+      when :fmt         then format_links(item)
+      when :format      then format_links(item)
+      when :language    then language_links(item)
+      when :link        then record_links(item)
+      when :narrator    then narrator_links(item)
+      when :numImage    then number_with_delimiter(item.image_count)
+      when :numPage     then number_with_delimiter(item.page_count)
+      when :thumbnail   then thumbnail(item)
+      else                   render_value(item, value, **opt)
+    end
+  end
+
+  # The type of named field regardless of pluralization or presence of a
+  # "_list" suffix.
+  #
+  # @param [Symbol, String, *] name
+  #
+  # @return [Symbol]
+  #
+  def field_category(name)
+    name.to_s.delete_suffix('_list').singularize.to_sym
   end
 
   # ===========================================================================

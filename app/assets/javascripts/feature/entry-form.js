@@ -2140,7 +2140,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}              [trim]     If *false*, keep white space.
      * @param {boolean}              [init]     If *true*, initializing.
      *
-     * @see "ModelHelper#render_form_input_multi"
+     * @see "ModelHelper::Form#render_form_input_multi"
      */
     function updateFieldsetInputs(target, new_value, trim, init) {
 
@@ -2210,7 +2210,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string|string[]|null} [setting]
      * @param {boolean}              [init]     If *true*, in initialization.
      *
-     * @see "ModelHelper#render_form_menu_multi"
+     * @see "ModelHelper::Form#render_form_menu_multi"
      */
     function updateFieldsetCheckboxes(target, setting, init) {
 
@@ -2296,7 +2296,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string|null}    [new_value]
      * @param {boolean}        [init]       If *true*, in initialization phase.
      *
-     * @see "ModelHelper#render_form_menu_single"
+     * @see "ModelHelper::Form#render_form_menu_single"
      */
     function updateMenu(target, new_value, init) {
         let $input = $(target);
@@ -2320,7 +2320,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}     [trim]          If *false*, don't trim white space.
      * @param {boolean}     [init]          If *true*, in initialization phase.
      *
-     * @see "ModelHelper#render_form_input"
+     * @see "ModelHelper::Form#render_form_input"
      */
     function updateTextAreaField(target, new_value, trim, init) {
         let $input = $(target);
@@ -2345,7 +2345,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}     [trim]          If *false*, don't trim white space.
      * @param {boolean}     [init]          If *true*, in initialization phase.
      *
-     * @see "ModelHelper#render_form_input"
+     * @see "ModelHelper::Form#render_form_input"
      */
     function updateTextInputField(target, new_value, trim, init) {
         let $input = $(target);

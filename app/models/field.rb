@@ -43,64 +43,6 @@ module Field
     end
   end
 
-  # field_configuration
-  #
-  # @param [Symbol]       field
-  # @param [Hash, String] entry
-  #
-  # @option entry [Integer, nil]   :min
-  # @option entry [Integer, nil]   :max
-  # @option entry [String]         :label
-  # @option entry [String]         :tooltip
-  # @option entry [String, Array]  :help          Help popup topic/subtopic.
-  # @option entry [String]         :notes         Inline notes.
-  # @option entry [String]         :notes_html    Inline HTML notes.
-  # @option entry [String]         :placeholder   Input area placeholder text.
-  # @option entry [Symbol, String] :type          See Usage Notes [1]
-  # @option entry [String]         :origin
-  # @option entry [String]         :role
-  #
-  # @return [Hash]
-  #
-  # == Usage Notes
-  # The :type indicates the type of HTML input element, either directly or
-  # indirectly.  If the value is a Symbol it is interpreted as an EnumType
-  # subclass which gives the range of values for a <select> element or the set
-  # of checkboxes to create within a <fieldset> element.  Any other value
-  # indicates <textarea> or the <input> type attribute to use.
-  #
-  def self.field_configuration(field, entry)
-    return unless entry.is_a?(Hash)
-    entry.map { |item, value|
-      case item
-        when :min, :max then value = value&.to_i
-        when :help      then value = Array.wrap(value).map(&:to_sym)
-        when :type      then value = enum_type(value) || value.to_s
-        when :role      then value = value&.to_sym
-        when /_html$/   then value = value.to_s.strip.html_safe
-        else
-          # Sub-field under :file_data or :emma_data.
-          value = send(__method__, item, value) if value.is_a?(Hash)
-      end
-      value = value.compact_blank if value.is_a?(Array)
-      value = value.strip         if value.is_a?(String) && !value.html_safe?
-      [item, value]
-    }.to_h.tap { |h|
-      set = SYNTHETIC_PROPERTIES
-      set = set.slice(:field) if h[:type] == 'json'
-      if set[:array]
-        h[:array]   = (h.key?(:max) && h[:max].nil?)
-        h[:array] ||= (h[:max].present? && h[:max] > 1)
-        h[:array] ||= (h[:min].present? && h[:min] > 1)
-      end
-      h[:ignored]  = h[:max].present? && !h[:max].positive?   if set[:ignored]
-      h[:required] = h[:min].to_i.positive?                   if set[:required]
-      h[:readonly] = h[:origin].to_s.remove('user').present?  if set[:readonly]
-      h[:type]   ||= h[:array] ? 'textarea' : 'text'          if set[:type]
-      h[:field]  ||= field                                    if set[:field]
-    }
-  end
-
   # Configuration properties for a field within a given model/controller.
   #
   # @param [Symbol, String, nil]       field
@@ -212,10 +154,11 @@ module Field
   # noinspection RubyCaseWithoutElseBlockInspection
   #++
   def self.normalize(entry, field = nil)
-    entry = field                                  if entry.nil?
-    entry = entry.to_s.titleize                    if entry.is_a?(Symbol)
-    entry = { label: entry }                       unless entry.is_a?(Hash)
-    entry = { field: field&.to_sym }.merge!(entry) unless entry.key?(:field)
+    entry = entry.to_s.titleize            if entry.is_a?(Symbol)
+    entry = { label: entry }               if entry.is_a?(String)
+    entry = {}                             unless entry.is_a?(Hash)
+    entry = { field: field }.merge!(entry) if field && !entry.key?(:field)
+    entry = entry.merge(field: field)      if field && (entry[:field] != field)
     entry.map { |item, value|
       case item
         when :min, :max then value = value&.to_i
@@ -239,7 +182,7 @@ module Field
   # @param [Hash{Symbol=>*}] entry
   # @param [Symbol, nil]     field
   #
-  # @return [Hash{Symbol=>*}] entry
+  # @return [Hash{Symbol=>*}]         The modified *entry*.
   #
   def self.finalize!(entry, field = nil)
     e   = entry
@@ -250,12 +193,10 @@ module Field
     max = e[:max].to_i
     ary = e.key?(:max) && e[:max].nil?
 
-    e.key?(:max) && (e[:max].nil? || (max > 1))
-
     e[:ignored]  = e[:max].present? && !max.positive?       if set[:ignored]
     e[:required] = e[:min].present? && min.positive?        if set[:required]
     e[:readonly] = e[:origin].to_s.remove('user').present?  if set[:readonly]
-    e[:array]    = ary || (max > 1)                         if set[:array]
+    e[:array]    = ary || (min > 1) || (max > 1)            if set[:array]
     e[:type]   ||= e[:array] ? 'textarea' : 'text'          if set[:type]
     e[:field]  ||= field                                    if set[:field]
 
@@ -362,7 +303,7 @@ module Field
 
   # Generate an appropriate field subclass instance if possible.
   #
-  # @param [Model]               item
+  # @param [Model, *]            item
   # @param [Symbol]              field
   # @param [Symbol, String, nil] model
   #
@@ -370,6 +311,7 @@ module Field
   # @return [nil]                     If *field* is not valid.
   #
   def self.for(item, field, model = nil)
+    model ||= Model.for(item)
     return if (cfg = configuration_for(field, model)).blank?
     array = cfg[:array]
     range = cfg[:type]
@@ -442,7 +384,7 @@ module Field
 
     # Initialize a new instance.
     #
-    # @param [Symbol, Model]       src
+    # @param [Symbol, Model, *]    src
     # @param [Symbol, nil]         field
     # @param [Symbol, String, nil] model
     # @param [*]                   value

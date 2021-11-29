@@ -1062,8 +1062,8 @@ module LayoutHelper::SearchFilters
     opt  ||= request_parameters
     target = search_target(**opt)
     keys   = SEARCH_PARAMETER_MENU_MAP[target]&.keys || []
-    keys  -= SearchTermsHelper::QUERY_PARAMETERS[target]
-    keys  += SearchTermsHelper::NON_SEARCH_KEYS
+    keys  -= QUERY_PARAMETERS[target]
+    keys  += NON_SEARCH_KEYS
     opt.except(*keys)
   end
 

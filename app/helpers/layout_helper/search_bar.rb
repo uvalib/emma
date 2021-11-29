@@ -136,11 +136,11 @@ module LayoutHelper::SearchBar
     # The initial determination of the order and initial input type selections
     # will be determined by the data supplied.
     values ||= url_parameters
-    values = values.except(*SearchTermsHelper::NON_SEARCH_KEYS)
+    values = values.except(*NON_SEARCH_KEYS)
     values.transform_keys! { |k| prm_map[k.to_sym] }
     values.slice!(*fields)
     values.transform_values! do |v|
-      (v == SearchTermsHelper::NULL_SEARCH) ? '' : v
+      (v == SearchTerm::NULL_SEARCH) ? '' : v
     end
 
     # This is a major section of the page so it should be present in the
@@ -462,7 +462,7 @@ module LayoutHelper::SearchBar
 
     # Input field contents.
     value ||= request_parameters[field]
-    value = '' if value == SearchTermsHelper::NULL_SEARCH
+    value = '' if value == SearchTerm::NULL_SEARCH
 
     # Input field element.
     prepend_classes!(opt, css_selector)

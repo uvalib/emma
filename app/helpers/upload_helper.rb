@@ -158,14 +158,16 @@ module UploadHelper
   #
   def render_json_data(item, value, **opt)                                      # NOTE: to EntryHelper
     return unless item
-    opt[:model]     ||= item && model_for(item) || :upload
+    opt[:model]     ||= item && Model.for(item) || :upload
     opt[:no_format] ||= :dc_description
+
     pairs = json_parse(value).presence
     pairs&.transform_values! do |v|
       v.is_a?(Hash) ? render_json_data(item, v, **opt) : v
     end
     pairs &&= render_field_values(item, pairs: pairs, **opt)
     pairs ||= render_empty_value(EMPTY_VALUE)
+
     # noinspection RubyMismatchedParameterType
     html_div(pairs, class: 'data-list')
   end
@@ -186,7 +188,7 @@ module UploadHelper
   # @return [String]
   # @return [nil]
   #
-  # @see ModelHelper#render_value
+  # @see ModelHelper::List#render_value
   #
   def upload_render_value(item, value, **opt)                                   # NOTE: to EntryHelper#entry_render_value
     if !value.is_a?(Symbol)
@@ -215,8 +217,8 @@ module UploadHelper
   # @param [Hash]      opt            Passed to #model_details.
   #
   def upload_details(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :upload
-    opt[:pairs] = show_fields(model).merge(pairs || {})
+    opt[:model] = model = item && Model.for(item) || :upload
+    opt[:pairs] = Model.show_fields(model).merge(pairs || {})
     model_details(item, **opt)
   end
 
@@ -286,7 +288,7 @@ module UploadHelper
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
-  # This is invoked from ModelHelper#page_filter.
+  # This is invoked from ModelHelper::List#page_filter.
   #
   def upload_state_group_select(counts: nil, **opt)                             # NOTE: to EntryHelper#entry_state_group_select
     css_selector = UPLOAD_GROUP_PANEL_CLASS
@@ -389,7 +391,7 @@ module UploadHelper
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
-  # This is invoked from ModelHelper#page_filter.
+  # This is invoked from ModelHelper::List#page_filter.
   #
   def upload_page_filter(*list, counts: nil, **opt)                             # NOTE: to EntryHelper#entry_page_filter
     return unless UPLOAD_PAGE_FILTERING
@@ -552,8 +554,8 @@ module UploadHelper
   # @param [Hash]      opt            Passed to #model_list_item.
   #
   def upload_list_item(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :upload
-    opt[:pairs] = index_fields(model).merge(pairs || {})
+    opt[:model] = model = item && Model.for(item) || :upload
+    opt[:pairs] = Model.index_fields(model).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
@@ -744,8 +746,8 @@ module UploadHelper
   # @param [Hash]      opt            Passed to #render_form_fields.
   #
   def upload_form_fields(item, pairs: nil, **opt)
-    opt[:model] = model = item && model_for(item) || :upload
-    opt[:pairs] = form_fields(model).merge(pairs || {})
+    opt[:model] = model = item && Model.for(item) || :upload
+    opt[:pairs] = Model.form_fields(model).merge(pairs || {})
     render_form_fields(item, **opt)
   end
 

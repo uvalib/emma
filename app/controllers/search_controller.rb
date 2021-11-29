@@ -103,7 +103,7 @@ class SearchController < ApplicationController
         format.xml  { render_xml  index_values }
       end
     elsif s_params.present?
-      redirect_to opt.merge!(q: NULL_SEARCH)
+      redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
     else
       render 'search/advanced'
     end

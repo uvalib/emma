@@ -95,7 +95,7 @@ $entry-entry-gap: 2rem;
     // they're tightened up.
     @if $data-list-border-color == none {
 
-        // @see ModelHelper#render_pair
+        // @see ModelHelper::List#render_pair
         .value.hierarchy {
 
             margin-bottom: 0;

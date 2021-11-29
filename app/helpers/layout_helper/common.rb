@@ -14,6 +14,7 @@ module LayoutHelper::Common
 
   include HtmlHelper
   include ParamsHelper
+  include SearchTermsHelper
 
   # ===========================================================================
   # :section:
