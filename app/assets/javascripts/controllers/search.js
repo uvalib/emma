@@ -828,7 +828,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Constants - colorize
+    // Constants - colorize titles
     // ========================================================================
 
     /**
@@ -944,7 +944,19 @@ $(document).on('turbolinks:load', function() {
     const COLORIZE_STATE_KEY = 'search-colorize';
 
     // ========================================================================
-    // Variables - colorize
+    // Constants - highlight fields
+    // ========================================================================
+
+    /**
+     * Session storage key for remembering the field highlighting selection.
+     *
+     * @const
+     * @type {string}
+     */
+    const FIELD_HIGHLIGHT_STATE_KEY = 'search-highlight-fields';
+
+    // ========================================================================
+    // Variables - colorize/highlight
     // ========================================================================
 
     /**
@@ -958,7 +970,7 @@ $(document).on('turbolinks:load', function() {
     let $button_tray = $(`.heading-bar .${BUTTON_TRAY_CLASS}`);
 
     // ========================================================================
-    // Functions - colorize
+    // Functions - colorize titles
     // ========================================================================
 
     /**
@@ -1081,7 +1093,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - colorize
+    // Functions - colorize titles
     // ========================================================================
 
     /**
@@ -1258,7 +1270,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - colorize
+    // Functions - colorize titles
     // ========================================================================
 
     /**
@@ -1304,7 +1316,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - colorize
+    // Functions - colorize titles
     // ========================================================================
 
     /**
@@ -1319,6 +1331,8 @@ $(document).on('turbolinks:load', function() {
         const func   = 'setupColorizeButton';
         const button = config || BUTTON_CONFIG[topic];
         let $button  = $button_tray.find(selector(button?.class));
+        let action   = button?.func;
+        let $result;
         if (isMissing(button)) {
             console.error(`${func}: ${topic}: invalid topic`);
         } else if (!button.active) {
@@ -1329,29 +1343,28 @@ $(document).on('turbolinks:load', function() {
             } else {
                 console.warn(`${func}: ${topic}: no buttons`);
             }
+        } else if (button.class.includes('highlight')) {
+            // console.log(`${func}: ${topic}: skip field highlight control`);
+        } else if (button.class.includes('colorize')) {
+            action ||= () => colorize(topic);
+            handleClickAndKeypress($button, function() {
+                let $this = $(this);
+                if ($this.hasClass('active')) {
+                    $this.removeClass('active');
+                    clearColorizeState();
+                    unColorize(topic);
+                } else {
+                    $this.addClass('active');
+                    setColorizeState(topic);
+                    action();
+                }
+            });
+            $result = $button.removeClass('active');
         } else {
-            // console.log(`${func}: ${topic}`);
-            let action = button.func;
-            if (button.class.includes('colorize')) {
-                action ||= () => colorize(topic);
-                handleClickAndKeypress($button, function() {
-                    let $this = $(this);
-                    if ($this.hasClass('active')) {
-                        $this.removeClass('active');
-                        clearColorizeState();
-                        unColorize(topic);
-                    } else {
-                        $this.addClass('active');
-                        setColorizeState(topic);
-                        action();
-                    }
-                });
-            } else {
-                action ||= () => console.error(`${func}: ${topic}: no action`);
-                handleClickAndKeypress($button, action);
-            }
-            return $button.removeClass('active');
+            action ||= () => console.error(`${func}: ${topic}: no action`);
+            handleClickAndKeypress($button, action);
         }
+        return $result;
     }
 
     /**
@@ -1381,9 +1394,154 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
+    // Functions - highlight fields
+    // ========================================================================
+
+    /**
+     * Highlight field groups.
+     */
+    function highlightFields() {
+        $result_items.addClass('highlight-fields');
+    }
+
+    /**
+     * Restore field display.
+     */
+    function unHighlightFields() {
+        $result_items.removeClass('highlight-fields');
+    }
+
+    // ========================================================================
+    // Functions - highlight fields
+    // ========================================================================
+
+    /**
+     * FieldHighlightState
+     *
+     * @typedef {{
+     *     enabled: ?(string|null|undefined),
+     * }} FieldHighlightState
+     */
+
+    /**
+     * Get the state of field highlighting.
+     *
+     * @returns {FieldHighlightState}
+     */
+    function getFieldHighlightState() {
+        const entry = sessionStorage.getItem(FIELD_HIGHLIGHT_STATE_KEY);
+        // console.log('GET FIELD HIGHLIGHT STATE', entry);
+        return fromJSON(entry) || {};
+    }
+
+    /**
+     * Remember the current field highlighting selection in the session.
+     *
+     * @param {boolean|FieldHighlightState} [enabled]
+     */
+    function setFieldHighlightState(enabled) {
+        let value;
+        if (typeof enabled === 'object') {
+            value = enabled;
+        } else {
+            value = { enabled: (enabled !== false) };
+        }
+        const entry = JSON.stringify(value);
+        // console.log('SET FIELD HIGHLIGHT STATE', entry);
+        sessionStorage.setItem(FIELD_HIGHLIGHT_STATE_KEY, entry);
+    }
+
+    /**
+     * Clear the state of field highlighting.
+     */
+    function clearFieldHighlightState() {
+        // console.log('REMOVE FIELD HIGHLIGHT STATE');
+        sessionStorage.removeItem(FIELD_HIGHLIGHT_STATE_KEY);
+    }
+
+    // ========================================================================
+    // Functions - highlight fields
+    // ========================================================================
+
+    /**
+     * Assign event handlers to the field highlighting button.
+     *
+     * @param {string}                 topic    {@link BUTTON_CONFIG} key.
+     * @param {StyleControlProperties} [config] {@link BUTTON_CONFIG} value.
+     *
+     * @returns {jQuery|undefined}
+     */
+    function setupFieldHighlightButton(topic, config) {
+        const func   = 'setupFieldHighlightButton';
+        const button = config || BUTTON_CONFIG[topic];
+        let $button  = $button_tray.find(selector(button?.class));
+        let action   = button?.func;
+        let $result;
+        if (isMissing(button)) {
+            console.error(`${func}: ${topic}: invalid topic`);
+        } else if (!button.active) {
+            // console.log(`${func}: ${topic}: inactive topic`);
+            console.log(`${func}: ${topic}: inactive topic`);
+        } else if (isMissing($button)) {
+            if (button.active === 'dev_only') {
+                // console.log(`${func}: ${topic}: inactive topic`);
+                console.log(`${func}: ${topic}: inactive topic`);
+            } else {
+                console.warn(`${func}: ${topic}: no buttons`);
+            }
+        } else if (button.class.includes('colorize')) {
+            // console.log(`${func}: ${topic}: skip title colorize control`);
+            console.log(`${func}: ${topic}: skip title colorize control`);
+        } else if (button.class.includes('highlight')) {
+            action ||= () => highlightFields();
+            handleClickAndKeypress($button, function() {
+                let $this = $(this);
+                if ($this.hasClass('active')) {
+                    $this.removeClass('active');
+                    clearFieldHighlightState();
+                    unHighlightFields();
+                } else {
+                    $this.addClass('active');
+                    setFieldHighlightState();
+                    action();
+                }
+            });
+            $result = $button.removeClass('active');
+            console.log(`${func}: ${topic}: HIGHLIGHT CONTROL`);
+        } else {
+            action ||= () => console.error(`${func}: ${topic}: no action`);
+            handleClickAndKeypress($button, action);
+            console.warn(`${func}: ${topic}: NO ACTION`);
+        }
+        console.log(`${func}: result:`, $result);
+        return $result;
+    }
+
+    /**
+     * Set up the container for only field highlight controls.
+     *
+     * @param {Object<StyleControlProperties>} [button_config]
+     *
+     * @returns {jQuery|undefined}    The active button.
+     */
+    function setupFieldHighlightButtons(button_config = BUTTON_CONFIG) {
+        const was_highlighting = getFieldHighlightState().enabled;
+        let $active_button;
+        $.each(button_config, function(topic, config) {
+            let $button = setupFieldHighlightButton(topic, config);
+            if ($button && was_highlighting) {
+                $active_button ||= $button.first();
+            }
+        });
+        $active_button?.click();
+        return $active_button;
+    }
+
+    // ========================================================================
     // Actions - colorize
     // ========================================================================
 
     setupColorizeButtons();
+    setupFieldHighlightButtons();
 
 });

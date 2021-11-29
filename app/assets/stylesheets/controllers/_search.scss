@@ -1244,7 +1244,8 @@ body.aggregate-style {
     //=========================================================================
 
     .restore-button,
-    .colorize-button {
+    .colorize-button,
+    .field-highlight-button {
 
         @extend %control-button-base;
 
@@ -1393,6 +1394,77 @@ body.aggregate-style {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    //=========================================================================
+    // Sections - field highlighting
+    //=========================================================================
+
+    .search-list {
+
+        .search-list-item.highlight-fields {
+
+            //=================================================================
+            // Indicate primary field scope - NOTE: testing
+            //=================================================================
+
+            @mixin primary($bg) {
+                background-color: $bg;
+            }
+
+            .scope-title:not(.field-Title) {
+                @include primary(beige);
+            }
+
+            .scope-file {
+                @include primary(lightcyan);
+            }
+
+            //=================================================================
+            // Indicate secondary field scope - NOTE: testing
+            //=================================================================
+
+            @mixin secondary($fg) {
+
+                $gap:   2px;
+                $box:   2px + $gap;
+                $mask:  white;
+                $shift: 6px;
+
+                box-shadow:
+                    0 0 0 $gap $mask, // inner gap
+                    0 0 0 $box $fg;   // outer boundary
+
+                &.value.array {
+                    box-shadow:
+                              0 0 0 $gap $mask, // inner gap
+                          -$gap 0 0 $gap $mask, // mask left side inner bound
+                              0 0 0 $box $fg,   // inner boundary
+                        -$shift 0 0 $gap $mask, // outer gap
+                        -$shift 0 0 $box $fg;   // outer boundary
+                }
+            }
+
+            .scope-bibliographic:not(.field-Title) {
+                @include secondary(black);
+            }
+
+            .scope-remediation {
+                @include secondary(red);
+            }
+
+            .scope-accessibility {
+                @include secondary(limegreen);
+            }
+
+            .scope-repository {
+                @include secondary(dodgerblue);
+            }
+
+            .scope-index {
+                @include secondary(hotpink);
             }
         }
     }

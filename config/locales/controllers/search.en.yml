@@ -87,6 +87,14 @@ en:
           field:        'field-TitleId'
           active:       true
 
+        by_field_group:
+          <<:           *COLORIZE_BUTTON
+          label:        'Fields'
+          class:        'field-highlight-button'
+          tooltip:      'Highlight field groups'
+          field:        ~
+          active:       true
+
       pagination:
         count:
           one:          '%{item}'
