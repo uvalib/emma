@@ -160,6 +160,7 @@ module LinkHelper
   def page_action_links(controller: nil, action: nil, **opt)
     controller ||= request_parameters[:controller]
     config_path  = [action, 'action_links'].compact.join('.')
+    # noinspection RubyMismatchedReturnType
     config_lookup(config_path, controller: controller, **opt) || {}
   end
 

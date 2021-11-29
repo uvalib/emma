@@ -90,6 +90,7 @@ module LayoutHelper::PageControls
     model   = model_class(controller)
     user    = (@user || current_user)
     subject = (user if model == User)
+    # noinspection RubyMismatchedReturnType
     actions.map { |entry|
       next if entry.blank?
       if entry.is_a?(Array)
@@ -174,6 +175,7 @@ module LayoutHelper::PageControls
         opt[:many] = true
       end
     end
+    # noinspection RubyMismatchedReturnType
     config_lookup('page_controls.label', **opt) || 'Controls'
   end
 

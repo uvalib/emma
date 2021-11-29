@@ -59,6 +59,7 @@ module LayoutHelper::DevControls
   # @return [String]
   #
   def dev_controls_label(**opt)
+    # noinspection RubyMismatchedReturnType
     config_lookup('dev_controls.label', **opt) || 'DEV'
   end
 

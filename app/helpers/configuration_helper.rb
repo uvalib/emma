@@ -132,14 +132,23 @@ module ConfigurationHelper
     fatal:      false,
     **opt
   )
+    entry =
+      config_lookup_paths(controller, action, *path).find do |full_path|
+        item = full_path.pop
+        cfg  = controller_configuration.dig(*full_path)
+        break cfg[item] if cfg.is_a?(Hash) && cfg.key?(item)
+      end
+    raise(CONFIG_FAIL) if entry.nil? && fatal
+    return default     if entry.nil?
+
     opt, i_opt = partition_hash(opt, :mode, :one, :many)
-    vals = %i[many one]
-    mode = opt[:mode]
-    if false?(mode) #|| vals.include?(item)
-      mode = nil
-    else
+    i_opt[:controller] ||= controller
+
+    # Use count-specific definitions if present.
+    if entry.is_a?(Hash) && !false?((mode = opt[:mode]))
+      vals = %i[many one]
+      mode = mode.to_sym unless mode.nil? || true?(mode)
       mode = nil if mode == :auto
-      mode = (mode.to_sym unless mode.nil? || true?(mode))
       mode = vals.find { |v| true?(opt[v]) } unless vals.include?(mode)
       mode ||=
         case i_opt[:count].to_i
@@ -147,21 +156,12 @@ module ConfigurationHelper
           when 1 then :one
           else        :many
         end
-      mode = nil if false?(opt[mode])
+      entry = entry[mode] unless false?(opt[mode]) || !entry.key?(mode)
     end
-    i_opt[:controller] ||= controller
 
-    lookup_order = config_lookup_order(controller, action)
-    lookup_order.map! { |path_parts| path_parts.join('.') }
-    config_flatten_order(lookup_order, *path).find do |full_path|
-      item  = full_path.pop
-      entry = controller_configuration.dig(*full_path)
-      next unless entry.is_a?(Hash) && entry.key?(item)
-      entry = entry[item]
-      entry = entry[mode] if mode && entry.is_a?(Hash) && entry.key?(mode)
-      return apply_config_interpolations(entry, **i_opt)
-    end
-    fatal ? raise(CONFIG_FAIL) : default
+    # Honor override of displayed unit names.
+    units = config_interpolations(**i_opt)
+    apply_config_interpolations(entry, units: units)
   end
 
   # Generate a hash of the most relevant button information with the form:
@@ -221,6 +221,19 @@ module ConfigurationHelper
 
   protected
 
+  # config_lookup_paths
+  #
+  # @param [Symbol, String] ctrlr
+  # @param [Symbol, String] action
+  # @param [String, Array]  path      Partial I18n path.
+  #
+  # @return [Array<Array<Symbol>>]
+  #
+  def config_lookup_paths(ctrlr, action, *path)
+    base_paths = config_lookup_order(ctrlr, action).map! { |v| v.join('.') }
+    config_flatten_order(base_paths, *path)
+  end
+
   # Generate a set of explicit paths through the configuration hierarchy based
   # on the path element(s) given.
   #
@@ -271,24 +284,23 @@ module ConfigurationHelper
 
   protected
 
-  # apply_config_interpolations
+  # Recursively apply supplied unit interpolations.
   #
   # @param [Hash, Array, String, Integer, Boolean, nil] item
-  # @param [Hash] opt
+  # @param [Hash]                                       units
   #
   # @return [Hash, Array, String, Integer, Boolean, nil]
   #
   #--
   # noinspection RubyNilAnalysis
   #++
-  def apply_config_interpolations(item, **opt)
-    opt[:units] ||= config_interpolations(**opt)
+  def apply_config_interpolations(item, units:, **)
     if item.is_a?(Hash)
-      item.transform_values { |v| send(__method__, v, **opt) }
+      item.transform_values { |v| send(__method__, v, units: units) }
     elsif item.is_a?(Array)
-      item.map { |v| send(__method__, v, **opt) }
+      item.map { |v| send(__method__, v, units: units) }
     elsif item.is_a?(String) && item.include?('%{')
-      item.gsub(SPRINTF_NAMED_REFERENCE) { |s| opt[:units][$1&.to_sym] || s }
+      item.gsub(SPRINTF_NAMED_REFERENCE) { |s| units[$1&.to_sym] || s }
     else
       item
     end
@@ -305,8 +317,19 @@ module ConfigurationHelper
   #                                           plural.
   # @param [Boolean, nil]        plural     If *true*, only plural; if *false*,
   #                                           only single.
+  # @param [Hash]                units      Specify one or more unit names.
+  #
+  # @option units [String] :item            Specify single unit name.
+  # @option units [String] :items           Specify plural unit name.
+  # @option units [String] :Item            Specify capitalized single unit.
+  # @option units [String] :Items           Specify capitalized plural units.
   #
   # @return [Hash{Symbol=>String}]
+  #
+  # == Usage Notes
+  # Specifying :item completely by-passes configuration lookup.  Specifying
+  # :items, :Item, and/or :Items will simply override the matching configured
+  # (or derived) value.
   #
   # == Implementation Notes
   # This method does not have an embedded fallback value -- it assumes that
@@ -321,40 +344,40 @@ module ConfigurationHelper
     mode:       nil,
     count:      nil,
     plural:     nil,
-    **
+    **units
   )
-    no_plural = no_single = nil
-    if !plural.nil?
-      no_plural = false?(plural)
-      no_single = !no_plural
-    elsif !count.nil?
-      no_plural = (count.to_i == 1)
-      no_single = !no_plural
-    end
-    mode ||= (true?(long) || false?(brief)) ? :long : :brief
+    units.slice!(:item, :items, :Item, :Items)
+    units.compact_blank!
 
-    # Get the most specific definition available.
-    single = plural = nil
-    config_lookup_order(controller, action).find do |base_path|
-      unit = controller_configuration.dig(*base_path, :unit)
-      unit = unit[mode] if unit.is_a?(Hash)
-      if unit.is_a?(String)
-        single = unit
-      elsif unit.is_a?(Hash)
-        single = unit[:one]  || unit.values.first
-        plural = unit[:many] || unit[:other]
-        single || plural
+    # Get the most specific definition available if none was provided.
+    unless units[:item]
+      mode ||= (true?(long) || false?(brief)) ? :long : :brief
+      config_lookup_order(controller, action).find do |base_path|
+        cfg = controller_configuration.dig(*base_path, :unit)
+        cfg = cfg[mode] if cfg.is_a?(Hash)
+        if cfg.is_a?(String)
+          units[:item]  = cfg
+        elsif cfg.is_a?(Hash)
+          units[:item]  = cfg[:one]  || cfg.values.first
+          units[:items] = cfg[:many] || cfg[:other]
+          units[:item] || units[:items]
+        end
       end
     end
 
+    # Derive any missing values.
+    units[:item]  ||= units[:Item]&.downcase  || units[:items]&.singularize
+    units[:items] ||= units[:Items]&.downcase || units[:item]&.pluralize
+    units[:Item]  ||= units[:item]&.capitalize
+    units[:Items] ||= units[:items]&.capitalize
+
     # Return with all interpolation values unless limitations were indicated.
-    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-    {
-      item:  (single ||= plural.singularize unless no_single),
-      Item:  (single.capitalize             unless no_single),
-      items: (plural ||= single.pluralize   unless no_plural),
-      Items: (plural.capitalize             unless no_plural),
-    }.compact
+    if true?(plural)
+      units.except!(:item, :Item)   unless count.to_i == 1
+    else
+      units.except!(:items, :Items) if false?(plural) || (count.to_i == 1)
+    end
+    units
   end
 
   # ===========================================================================

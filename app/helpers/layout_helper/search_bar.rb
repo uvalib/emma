@@ -298,6 +298,7 @@ module LayoutHelper::SearchBar
   #
   def search_bar_label(ctrlr = nil, target: nil, **opt)
     target = search_input_target(ctrlr || target) or return
+    # noinspection RubyMismatchedReturnType
     config_lookup('search_bar.label', controller: target, **opt)
   end
 
@@ -402,6 +403,7 @@ module LayoutHelper::SearchBar
   #
   def search_input_types(ctrlr = nil, target: nil, **opt)
     ctrlr = search_input_target(ctrlr || target)
+    # noinspection RubyMismatchedReturnType
     config_lookup('search_type', controller: ctrlr, **opt) || {}
   end
 
@@ -510,6 +512,7 @@ module LayoutHelper::SearchBar
   #
   def search_button_label(ctrlr = nil, target: nil, **opt)
     target = search_input_target(ctrlr || target) or return
+    # noinspection RubyMismatchedReturnType
     config_lookup('search_bar.button.label', controller: target, **opt)
   end
 

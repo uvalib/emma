@@ -374,6 +374,7 @@ module PaginationHelper
   #
   def get_page_number_label(controller: nil, **opt)
     controller ||= request_parameters[:controller]
+    # noinspection RubyMismatchedReturnType
     config_lookup('pagination.page', controller: controller, **opt)
   end
 
@@ -389,6 +390,7 @@ module PaginationHelper
   #
   def get_page_count_label(controller: nil, **opt)
     controller ||= request_parameters[:controller]
+    # noinspection RubyMismatchedReturnType
     config_lookup('pagination.count', controller: controller, **opt)
   end
 
