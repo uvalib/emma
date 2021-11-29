@@ -12,6 +12,7 @@ module SessionDebugHelper
   include ParamsHelper
   include HtmlHelper
   include RoleHelper
+  include DevHelper
 
   # ===========================================================================
   # :section:
@@ -24,7 +25,7 @@ module SessionDebugHelper
   def session_debug?
     dev           = developer?
     local         = !application_deployed?
-    on_by_default = local && dev
+    on_by_default = local && dev || dev_client?
     setting       = (session['app.debug'] if local || dev)
     on_by_default ? !false?(setting) : true?(setting)
   end

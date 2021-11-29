@@ -14,6 +14,7 @@ module AuthConcern
   include Emma::Json
 
   include AuthHelper
+  include DevHelper
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -159,9 +160,11 @@ module AuthConcern
   # Sign out of the local session and the OAuth2 session.
   #
   # (This is the normal sign-out but named as a convenience for places in the
-  # where the distinction with #local_sign_out needs to be stressed.)
+  # code where the distinction with #local_sign_out needs to be stressed.)
   #
   # @return [Boolean]                 False if there was no user.
+  #
+  # @note Currently unused.
   #
   def global_sign_out
     token = session['omniauth.auth']

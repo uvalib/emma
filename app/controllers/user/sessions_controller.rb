@@ -72,7 +72,7 @@ class User::SessionsController < Devise::SessionsController
     update_auth_data
     self.resource = warden.authenticate!(auth_options)
     api_update(user: resource.bookshare_user)
-    check_dev
+    remember_dev(resource)
     set_flash_notice
     sign_in_and_redirect(resource)
   rescue => error
@@ -93,7 +93,6 @@ class User::SessionsController < Devise::SessionsController
   def destroy
     __debug_route
     __debug_request
-    remember_dev
     user = current_user&.uid&.dup
     delete_auth_data(no_revoke: true?(params[:no_revoke]))
     super
