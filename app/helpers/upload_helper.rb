@@ -131,7 +131,8 @@ module UploadHelper
     render_json_data(item, data, **opt)
   end
 
-  # Render the contents of the :emma_data field.
+  # Render the contents of the :emma_data field in the same order of EMMA data
+  # fields as defined for search results.
   #
   # @param [Model, Hash, nil] item
   # @param [Hash]             opt
@@ -145,7 +146,11 @@ module UploadHelper
   def render_emma_data(item, **opt)                                             # NOTE: to EntryHelper
     data  = item.try(:emma_data) || item.try(:[], :emma_data) or return
     pairs = json_parse(data)
-    pairs&.transform_keys! { |k| Model::SEARCH_RECORD_LABELS[k] || k }
+    pairs &&=
+      Model::SEARCH_RECORD_FIELDS.map { |field, config|
+        value = pairs.delete(config[:label]) || pairs.delete(field)
+        [field, value] unless value.nil?
+      }.compact.to_h.merge(pairs)
     render_json_data(item, pairs, **opt)
   end
 

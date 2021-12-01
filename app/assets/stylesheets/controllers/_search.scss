@@ -13,6 +13,8 @@
 
 $row-separation:        0.75rem;
 $row-separation-narrow: 1rem;
+$row-line-height:       1.5;
+
 $value-right-margin:    calc(2 * #{$flex-gap-x});
 
 // The "top" values for sticky positioning -- the "narrow" version is much
@@ -87,6 +89,8 @@ $sticky-top-narrow:     3.125rem;
 
     .label {
 
+        line-height: $row-line-height;
+
         @media #{$narrow-screen} {
             margin-bottom: -0.75rem;
         }
@@ -108,23 +112,15 @@ $sticky-top-narrow:     3.125rem;
 
         &.array {
 
-            display: grid;
-
-            grid-template-columns: repeat(6, minmax(16.67%, 0.1667fr));
-
             @include grid-row-gap($row-separation);
 
-            // Array element properties
-            $element-border:    1px;
-            $element-x-padding: 5px;
-            $element-y-padding: 1px;
-            $element-x-margin:  -$element-x-padding - $element-border;
-            $element-y-margin:  -$element-y-padding - $element-border;
-
-            // Make elements flush with the left edge of the array container.
-            margin-left:   $element-x-padding;
-            margin-bottom: 0.25rem;
+            display:       grid;
             align-items:   center;
+            align-content: center;
+
+            @media #{$wide-screen} {
+                grid-template-columns: repeat(6, minmax(16.67%, 0.1667fr));
+            }
 
             @media #{$medium-width} {
                 grid-template-columns: repeat(3, minmax(33%, 1fr));
@@ -134,6 +130,13 @@ $sticky-top-narrow:     3.125rem;
                 margin-left:           0;
                 grid-template-columns: 1fr;
             }
+
+            // Array element properties
+            $element-border:    1px;
+            $element-x-padding: 5px;
+            $element-y-padding: 1px;
+            $element-x-margin:  -$element-x-padding - $element-border;
+            $element-y-margin:  -$element-y-padding - $element-border;
 
             > * {
 
@@ -302,24 +305,17 @@ $sticky-top-narrow:     3.125rem;
 
     $title-spans-entry: true;
 
+    $textbox-vspace: 0.25rem;
+
     //=========================================================================
     // Components
     //=========================================================================
 
-    > .label,
-    > .value {
-
-        &.list {
-            line-height: 1.5;
-        }
+    > .label {
 
         &.textbox {
-            margin-top:    0.25rem;
-            margin-bottom: 0.25rem;
+            margin-top: $textbox-vspace;
         }
-    }
-
-    > .label {
 
         &.field-Title {
 
@@ -369,6 +365,9 @@ $sticky-top-narrow:     3.125rem;
 
     > .value {
 
+        height:      100%;
+        line-height: $row-line-height;
+
         &.list,
         &.textbox {
             width:       max-content;
@@ -390,7 +389,10 @@ $sticky-top-narrow:     3.125rem;
         }
 
         &.textbox {
-            line-height: 1.25;
+            margin-top:    $textbox-vspace;
+            margin-bottom: $textbox-vspace;
+            height:        calc(100% - #{2 * $textbox-vspace});
+            line-height:   1.25;
         }
 
         &.field-Title {
@@ -399,6 +401,8 @@ $sticky-top-narrow:     3.125rem;
             z-index:       $z-raised;
             align-items:   flex-start;
             margin:        0;
+            height:        unset;
+            line-height:   unset;
             font-size:     x-large;
             font-weight:   bold;
             background:	   white;
@@ -596,7 +600,7 @@ $sticky-top-narrow:     3.125rem;
         }
 
         &.field-Subject {
-            max-height: 10vh;
+            padding-right: 0.5rem;
         }
 
         &.field-RetrievalLink {
@@ -1402,70 +1406,123 @@ body.aggregate-style {
     // Sections - field highlighting
     //=========================================================================
 
-    .search-list {
+    .search-list.highlight-fields {
 
-        .search-list-item.highlight-fields {
+        //=====================================================================
+        // Indicate primary field scope - NOTE: testing
+        //=====================================================================
 
-            //=================================================================
-            // Indicate primary field scope - NOTE: testing
-            //=================================================================
+        @mixin primary($bg) {
+            background-color: $bg;
+        }
 
-            @mixin primary($bg) {
-                background-color: $bg;
-            }
+        .scope-title:not(.field-Title) {
+            @include primary(beige);
+        }
 
-            .scope-title:not(.field-Title) {
-                @include primary(beige);
-            }
+        .scope-file {
+            @include primary(lightcyan);
+        }
 
-            .scope-file {
-                @include primary(lightcyan);
-            }
+        //=====================================================================
+        // Indicate secondary field scope - NOTE: testing
+        //=====================================================================
 
-            //=================================================================
-            // Indicate secondary field scope - NOTE: testing
-            //=================================================================
+        @mixin secondary($fg) {
 
-            @mixin secondary($fg) {
+            $gap:    2px;
+            $box:    2px + $gap;
+            $mask:   white;
+            $shift:  5px;
+            $exdent: 0.25rem;
 
-                $gap:   2px;
-                $box:   2px + $gap;
-                $mask:  white;
-                $shift: 6px;
+            box-shadow:
+                0 0 0 $gap $mask, // inner gap
+                0 0 0 $box $fg;   // outer boundary
 
+            &.value.array {
                 box-shadow:
-                    0 0 0 $gap $mask, // inner gap
-                    0 0 0 $box $fg;   // outer boundary
-
-                &.value.array {
-                    box-shadow:
-                              0 0 0 $gap $mask, // inner gap
-                          -$gap 0 0 $gap $mask, // mask left side inner bound
-                              0 0 0 $box $fg,   // inner boundary
-                        -$shift 0 0 $gap $mask, // outer gap
-                        -$shift 0 0 $box $fg;   // outer boundary
-                }
+                          0 0 0 $gap $mask, // inner gap
+                      -$gap 0 0 $gap $mask, // mask left side inner boundary
+                          0 0 0 $box $fg,   // inner boundary
+                    -$shift 0 0 $gap $mask, // outer gap
+                    -$shift 0 0 $box $fg;   // outer boundary
             }
 
-            .scope-bibliographic:not(.field-Title) {
-                @include secondary(black);
+            &.value:not(.array) {
+                margin-left:   -$exdent;
+                padding-left:  $exdent;
+                padding-right: 2 * $exdent;
             }
+        }
 
-            .scope-remediation {
-                @include secondary(red);
-            }
+        .scope-bibliographic:not(.field-Title) {
+            @include secondary(black);
+        }
 
-            .scope-accessibility {
-                @include secondary(limegreen);
-            }
+        .scope-remediation {
+            @include secondary(red);
+        }
 
-            .scope-repository {
-                @include secondary(dodgerblue);
-            }
+        .scope-accessibility {
+            @include secondary(limegreen);
+        }
 
-            .scope-index {
-                @include secondary(hotpink);
+        .scope-repository {
+            @include secondary(dodgerblue);
+        }
+
+        .scope-index {
+            @include secondary(hotpink);
+        }
+    }
+
+    .search-list.mark-types .value:not(.field-Title) {
+
+        @mixin type-marker($term, $color: red, $inner-color: black) {
+            &:before {
+                content:        '[#{$term}]';
+                position:       absolute;
+                left:           -2rem;
+                padding:        0 0.25rem;
+                color:          white;
+                background:     $color;
+                font-weight:    bold;
+                text-transform: uppercase;
+                text-shadow:
+                    -1px -1px 0 $inner-color,
+                    -1px  1px 0 $inner-color,
+                     1px -1px 0 $inner-color,
+                     1px  1px 0 $inner-color;
             }
+        }
+
+        &.text {
+            @include type-marker('text', gray);
+        }
+
+        &.textbox {
+            @include type-marker('textbox', dodgerblue);
+        }
+
+        &.date {
+            @include type-marker('date', green);
+        }
+
+        &.url {
+            @include type-marker('url', blue);
+        }
+
+        &.enum {
+            @include type-marker('enum', lime);
+        }
+
+        &.list {
+            @include type-marker('list', red);
+        }
+
+        &.array {
+            @include type-marker('array', violet);
         }
     }
 
@@ -1497,11 +1554,6 @@ body.aggregate-style {
         //=====================================================================
 
         .search-list-item {
-
-            .field-RetrievalLink {
-                margin-bottom: 0.25rem;
-                align-self:    baseline;
-            }
 
             > .label {
                 @include score-fields {
@@ -1755,16 +1807,6 @@ body.aggregate-style {
     .search-list {
 
         .search-list-item {
-
-            > .value.list {
-                color:       limegreen;
-                text-shadow: 1px 1px 0 black;
-            }
-
-            > .value.enum {
-                color:       hotpink;
-                text-shadow: 1px 1px 0 black;
-            }
 
             > .value.field-Title {
 

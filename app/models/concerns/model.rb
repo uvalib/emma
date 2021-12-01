@@ -352,20 +352,7 @@ module Model
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_RECORD_FIELDS =
-    database_fields(:entry)[:emma_data]
-      .select { |k, v| v.is_a?(Hash) unless k == :cond }
-      .deep_freeze
-
-  # Reverse mapping of EMMA search record field to the label configured for it.
-  #
-  # @type [Hash{String=>Symbol}]
-  #
-  SEARCH_RECORD_LABELS =
-    SEARCH_RECORD_FIELDS
-      .transform_values { |v| v[:label] }
-      .invert
-      .deep_freeze
+  SEARCH_RECORD_FIELDS = config_for(:search)[:all]
 
 end
 

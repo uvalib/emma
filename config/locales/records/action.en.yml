@@ -328,7 +328,10 @@ en:
             min:          0
             max:          1
             label:        'EMMA Title ID'
-            tooltip:      'Identifier assigned by the Unified Search index.'
+            tooltip:      |
+              An identifier assigned by the Unified Search index to associate
+              file-level search result entries with the title-level repository
+              item to which they belong.
             notes_html:   |
               <em>TODO</em>
             origin:       system
@@ -403,7 +406,7 @@ en:
             max:          1
             label:        'Retrieval Link'
             tooltip:      |
-              Source repository URL to retrieve a copy of the remediated
+              Source repository URL for retrieving a copy of the remediated
               content file.
             notes_html:   |
               <em>TODO</em>
@@ -521,8 +524,7 @@ en:
             max:          1
             label:        'Version'
             tooltip:      |
-              For book content, the edition or version of the book
-              (if applicable).
+              For book content, the edition or version of the book.
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter edition, version, etc.'
@@ -550,7 +552,9 @@ en:
             min:          0
             max:          ~
             label:        'Format Feature'
-            tooltip:      'Format features of remediated content file.'
+            tooltip:      |
+              Format-specific attributes which are exhibited by the remediated
+              content file.
             notes_html:   |
               <em>TODO</em>
             type:         !ruby/symbol FormatFeature
@@ -588,7 +592,7 @@ en:
             notes:        |
               Include authors, editors, translators, etc. of the creative work
               itself.  Do not include names involved in the creation of the
-              remediated file.
+              remediated content file.
             placeholder:  'Enter author(s) of the work'
 
           dc_identifier:
@@ -621,7 +625,7 @@ en:
               remediated content file.
             notes:        |
               Do not include names associated with the generation or production
-              of the remediated file.
+              of the remediated content file.
             placeholder:  'Enter publisher of the work'
 
           dc_relation:
@@ -710,8 +714,7 @@ en:
             max:          1
             label:        'Format'
             tooltip:      |
-              Original format of the creative work represented by the
-              remediated content file.
+              The file format (or variant) of the remediated content file.
             notes_html:   |
               <em>TODO</em>
             type:         !ruby/symbol DublinCoreFormat
@@ -774,8 +777,8 @@ en:
             max:          1
             label:        'Copyright Date'
             tooltip:      |
-              Copyright (or publication) date of the creative work represented
-              by the remediated content file.
+              The year of copyright (or publication) of the creative work
+              represented by the remediated content file.
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter date of the creative work'
@@ -897,7 +900,8 @@ en:
             max:          1
             label:        'Source of Content'
             tooltip:      |
-              The origin of the content on which the remediated file was based.
+              The source of the original content from which the remediated file
+              was scanned or copied.
             notes_html:   |
               <em>TODO</em>
             type:         !ruby/symbol SourceType
@@ -912,7 +916,7 @@ en:
             max:          ~
             label:        'Source of Metadata'
             tooltip:      |
-              The origin of the metadata for the original creative work on
+              The source of the metadata for the original creative work on
               which the remediated file was based.
             notes_html:   |
               <em>TODO</em>
@@ -929,7 +933,7 @@ en:
             max:          ~
             label:        'Remediated By'
             tooltip:      |
-              The origin of the remediated file.
+              The source of the remediations provided in the submitted file.
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter source of remediated file'
@@ -990,8 +994,8 @@ en:
             max:          ~
             label:        'Remediated Aspects'
             tooltip:      |
-              One or more selections which characterize the remediations that
-              are provided in this submission.
+              One or more terms which characterize the remediations that are
+              provided in this submission.
             notes_html:   |
               <em>TODO</em>
             type:         !ruby/symbol RemediatedAspects
@@ -1096,7 +1100,7 @@ en:
             tooltip:      |
               For an article or paper, the name of the journal or periodical
               in which it published; for book content, the name of the series
-              to which the book belongs (if applicable).
+              to which the book belongs.
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Journal name or publication series (if applicable)'
@@ -1128,7 +1132,7 @@ en:
             tooltip:      |
               For an article, the volume/issue/number of the journal or
               periodical; for book content, the volume number or other
-              description of position within a series of books (if applicable).
+              description of position within a series of books.
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Journal volume/issue/number'
@@ -1139,8 +1143,7 @@ en:
             max:          0
             label:        'Version.'
             tooltip:      |
-              For book content, the edition or version of the book
-              (if applicable).
+              For book content, the edition or version of the book.
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter edition, version, etc.'

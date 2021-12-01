@@ -282,21 +282,23 @@ module ModelHelper::Fields
   # Wrap invalid language values in a <span>.
   #
   # @param [*, Array<*>] value
+  # @param [Boolean]     code         If *true* display the ISO 639 code.
   #
   # @return [*, Array<*>]
   #
-  def mark_invalid_languages(value)
-    return value.map { |v| send(__method__, v) } if value.is_a?(Array)
-    name = IsoLanguage.find(value)&.english_name
-    if value == name
-      value
-    elsif name.present?
-      tip = VALID_LANGUAGE % value.inspect
-      html_span(name, title: tip)
-    else
-      tip = INVALID_LANGUAGE % value.inspect
-      html_span(value, title: tip, class: 'invalid')
+  def mark_invalid_languages(value, code: false)
+    if value.is_a?(Array)
+      return value.map { |v| send(__method__, v, code: code) }
     end
+    lang = IsoLanguage.find(value)
+    return value if code ? (value == lang&.alpha3) : lang
+    if lang
+      opt   = { title: (VALID_LANGUAGE % value.inspect) }
+      value = code ? lang.alpha3 : lang.english_name
+    else
+      opt   = { title: (INVALID_LANGUAGE % value.inspect), class: 'invalid' }
+    end
+    html_span(value, opt)
   end
 
   # Wrap invalid identifier values in a <span>.

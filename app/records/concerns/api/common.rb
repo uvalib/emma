@@ -1000,7 +1000,10 @@ class IsoLanguage < ScalarType
         entries.first
       else
         entries.find do |entry|
-          (value == entry.alpha3) || (value == entry.english_name.downcase)
+          (value == entry.alpha3) ||
+            entry.english_name.downcase.split(/\s*;\s*/).any? do |part|
+              value == part.strip
+            end
         end
       end
     end

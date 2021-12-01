@@ -27,6 +27,16 @@ $tray-pad: 1.5 * $icon-pad;
 $data-list-border-color: none;
 
 //=============================================================================
+// Mixins
+//=============================================================================
+
+@mixin value-box($color: black) {
+    padding:       0 0.25rem;
+    border:        1px solid $color;
+    border-radius: 0.125rem;
+}
+
+//=============================================================================
 // Item metadata
 //=============================================================================
 
@@ -317,13 +327,10 @@ $data-list-border-color: none;
 
         // Display multi-line fields inside a box.
         // @see ModelHelper::List#render_pair
+        &.list,
         &.textbox {
-
             @include width-fit-content;
-
-            padding:       0 0.25rem;
-            border:        1px solid darkgray;
-            border-radius: 0.125rem;
+            @include value-box(darkgray);
         }
 
         // Display fields with multiple values horizontally.
@@ -336,12 +343,12 @@ $data-list-border-color: none;
             margin-bottom:  0;
 
             > * {
+
+                @include value-box(blue);
+
                 margin-right:  0.5rem;
                 margin-bottom: 0.5rem;
-                padding:       0 0.25rem;
                 padding-top:   0.0625rem;
-                border:        1px solid blue;
-                border-radius: 0.125rem;
             }
 
             @media #{$narrow-screen} {

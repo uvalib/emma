@@ -1401,14 +1401,14 @@ $(document).on('turbolinks:load', function() {
      * Highlight field groups.
      */
     function highlightFields() {
-        $result_items.addClass('highlight-fields');
+        $item_list.addClass('highlight-fields');
     }
 
     /**
      * Restore field display.
      */
     function unHighlightFields() {
-        $result_items.removeClass('highlight-fields');
+        $item_list.removeClass('highlight-fields');
     }
 
     // ========================================================================

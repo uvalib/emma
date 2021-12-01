@@ -134,7 +134,7 @@ module ModelHelper::List
         when :dc_identifier, :dc_relation
           value = mark_invalid_identifiers(value)
         when :dc_language
-          value = mark_invalid_languages(value)
+          value = mark_invalid_languages(value, code: (model != :search))
       end
     end
 
