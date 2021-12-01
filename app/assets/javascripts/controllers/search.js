@@ -417,7 +417,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
 
     /**
      * Properties for each object store.
@@ -704,25 +704,10 @@ $(document).on('turbolinks:load', function() {
         });
     }
 
-    /**
-     * This is a temporary transitional function. // TODO: remove eventually
-     */
-    function deleteOldDatabase() {
-        const func    = 'deleteOldDatabase';
-        const db_name = 'emma';
-        console.warn(`======== CLEANING UP OLD "${db_name}" ========`);
-        let request = window.indexedDB.deleteDatabase(db_name);
-        request.onupgradeneeded = evt => console.log(`${func}: upgrade:`, evt);
-        request.onblocked       = evt => console.warn(`${func}: in use`);
-        request.onerror         = evt => console.error(`${func}:`, evt);
-        request.onsuccess       = evt => console.log(`${func}: success`);
-    }
-
     // ========================================================================
     // Actions - page data - database
     // ========================================================================
 
-    deleteOldDatabase(); // TODO: remove eventually
     setupDatabase();
     updateDatabase();
 

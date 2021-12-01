@@ -285,6 +285,37 @@ let DB = (function() {
         return result;
     }
 
+    /**
+     * Get/set the persisted name of the current database.
+     *
+     * @param {string} [new_name]
+     *
+     * @returns {string}
+     */
+    function savedDbName(new_name) {
+        if (new_name) {
+            localStorage.setItem('idb-current', new_name);
+        }
+        return new_name || localStorage.getItem('idb-current');
+    }
+
+    /**
+     * Get/set the persisted version of the current database.
+     *
+     * @param {number} [new_version]
+     *
+     * @returns {number}
+     */
+    function savedDbVersion(new_version) {
+        const table = fromJSON(localStorage.getItem('idb-version')) || {};
+        const name  = dbName();
+        if (new_version) {
+            table[name] = new_version;
+            localStorage.setItem('idb-version', asString(table));
+        }
+        return table[name];
+    }
+
     // ========================================================================
     // Functions - internal
     // ========================================================================
@@ -297,8 +328,11 @@ let DB = (function() {
      * @returns {string}
      */
     function dbName(new_name) {
-        db_name = new_name || db_name || DEFAULT_DB_NAME;
-        return db_name;
+        if (new_name) {
+            return db_name = savedDbName(new_name);
+        } else {
+            return db_name ||= savedDbName() || DEFAULT_DB_NAME;
+        }
     }
 
     /**
@@ -309,8 +343,11 @@ let DB = (function() {
      * @returns {number}
      */
     function dbVersion(new_version) {
-        db_version = new_version || db_version || DEFAULT_DB_VERSION;
-        return db_version;
+        if (new_version) {
+            return db_version = savedDbVersion(new_version);
+        } else {
+            return db_version ||= savedDbVersion() || DEFAULT_DB_VERSION;
+        }
     }
 
     /**
@@ -365,22 +402,28 @@ let DB = (function() {
      */
     function dbCreateObjectStore(store_name = defaultStore()) {
         const func     = 'dbCreateObjectStore';
-        const db       = dbDatabase();
-        dbLog(func, `creating "${store_name}" for database ${db.name}`);
         const template = getStoreTemplate(store_name);
-        let store      = db.createObjectStore(store_name, template.options);
-        $.each(template.record, function(key, properties) {
-            let index_options;
-            if (typeof properties.index === 'object') {
-                index_options = properties.index;
-            } else if (properties.index !== false) {
-                index_options = { unique: false };
-            }
-            if (index_options) {
-                dbLog(func, store_name, `creating index for "${key}"`);
-                store.createIndex(key, key, index_options);
-            }
-        });
+        try {
+            const db   = dbDatabase();
+            dbLog(func, `creating "${store_name}" for database ${db.name}`);
+            let store  = db.createObjectStore(store_name, template.options);
+            $.each(template.record, function(key, properties) {
+                let index_options;
+                if (typeof properties.index === 'object') {
+                    index_options = properties.index;
+                } else if (properties.index !== false) {
+                    index_options = { unique: false };
+                }
+                if (index_options) {
+                    dbLog(func, store_name, `creating index for "${key}"`);
+                    store.createIndex(key, key, index_options);
+                }
+            });
+        }
+        catch (error) {
+            dbError(func, `failed for object store ${store_name}`);
+            dbError(func, 'error', error);
+        }
     }
 
     /**

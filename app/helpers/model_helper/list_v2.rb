@@ -75,9 +75,8 @@ module ModelHelper::ListV2
       field_sort_order(field_properties.first)
     }.map! { |field, prop|
       opt[:row] += 1
-      value = render_value(item, prop[:value], **value_opt)
-      levels = SEARCH_FIELD_LEVEL[field]&.select { |s| s.is_a?(Symbol) }
-      levels = levels&.map! { |s| "scope-#{s}" }&.presence
+      value  = render_value(item, prop[:value], **value_opt)
+      levels = field_scopes(field).presence
       rp_opt = levels ? append_classes(opt, levels) : opt
       render_pair(prop[:label], value, prop: prop, **rp_opt)
     }.unshift(nil).join(separator).html_safe
@@ -109,6 +108,45 @@ module ModelHelper::ListV2
     sec = SECONDARY_LEVELS.index(sec) || SECONDARY_LEVELS.size
     [pri, sec, *rest]
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return with the CSS classes associated with the items field scope(s).
+  #
+  # @param [ Array, Symbol,nil] value
+  #
+  # @return [Array<String>]
+  #
+  def field_scopes(value)
+    #ModelHelper::ListV2.field_scopes(value)
+    levels = value.is_a?(Array) ? value : SEARCH_FIELD_LEVEL[value&.to_sym]
+    levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
+    levels.map! { |s| "scope-#{s}" }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+=begin
+  # Return with the CSS classes associated with the items field scope(s).
+  #
+  # @param [ Array, Symbol,nil] value
+  #
+  # @return [Array<String>]
+  #
+  def self.field_scopes(value)
+    levels = value.is_a?(Array) ? value : SEARCH_FIELD_LEVEL[value&.to_sym]
+    levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
+    levels.map! { |s| "scope-#{s}" }
+  end
+=end
 
   # ===========================================================================
   # :section:

@@ -97,10 +97,9 @@ module ModelHelper::ListV3
       if line.is_a?(Hash)
         record, field = line.values_at(:record, :field)
         value  = render_value(record, line[:value], field: field, **value_opt)
-        levels = line.values_at(:group, :sub_group).compact.presence
+        levels = field_scopes(line.values_at(:group, :sub_group))
         rp_opt = opt.merge(line.slice(:index, :row))
-        append_classes!(rp_opt, levels.map { |g| "scope-#{g}" }) if levels
-        rp_opt[:'data-prop'] = to_attr(line.slice(:type, :array)) # TODO: remove - testing
+        append_classes!(rp_opt, levels) if levels.present?
         render_pair(line[:label], value, prop: line, **rp_opt)
       else
         ERB::Util.h(line)
@@ -113,19 +112,6 @@ module ModelHelper::ListV3
   # ===========================================================================
 
   protected
-
-  def to_attr(h)  # TODO: remove - testing
-    case h
-      when Hash
-        '{ %s }' % h.map { |k, v| "#{k}: %s" % to_attr(v) }.join(', ')
-      when Array
-        '[%s]' % h.map { |v| to_attr(v) }.join(', ')
-      when String, Symbol, Numeric, Range, true, false, nil
-        h.inspect
-      else
-        h.class.to_s
-    end
-  end
 
   # Probably-temporary divider between metadata for individual files within
   # a compound search item.

@@ -1351,7 +1351,7 @@ body.aggregate-style {
 
             > .value.identity-highlight {
                 font-weight: bold;
-                background:  whitesmoke;
+                background:  ghostwhite;
             }
         }
 
@@ -1850,21 +1850,29 @@ body.search-v3 {
 
         .search-list-item {
 
+            @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
+                background: $bg;
+                box-shadow:
+                    $r-offset  1px 0 2px $bg,
+                    $r-offset -1px 0 2px $bg,
+                   -$l-offset  1px 0 2px $bg,
+                   -$l-offset -1px 0 2px $bg;
+            }
+
             // Probably-temporary divider between metadata for individual files
             > .label.field-NewFile,
             > .value.field-NewFile {
-
-                $bg: ghostwhite;
-
                 line-height: 1.25;
                 font-size:   larger;
                 font-weight: bolder;
-                background:  $bg;
-                box-shadow:
-                     2px  1px 0 2px $bg,
-                     2px -1px 0 2px $bg,
-                    -2px  1px 0 2px $bg,
-                    -2px -1px 0 2px $bg;
+            }
+
+            > .label.field-NewFile {
+                @include fill(2rem); // Extend to touch the .value element.
+            }
+
+            > .value.field-NewFile {
+                @include fill(2px);
             }
         }
     }

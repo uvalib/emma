@@ -64,10 +64,12 @@ module ModelHelper::List
     value_opt = opt.slice(:model, :index, :min_index, :max_index, :no_format)
     fp_opt    = opt.slice(:model).merge!(action: action, pairs: pairs)
 
-    field_pairs(item, **fp_opt, &block).map { |_field, prop|
+    field_pairs(item, **fp_opt, &block).map { |field, prop|
       opt[:row] += 1
-      value = render_value(item, prop[:value], **value_opt)
-      render_pair(prop[:label], value, prop: prop, **opt)
+      value  = render_value(item, prop[:value], **value_opt)
+      levels = field_scopes(field).presence
+      rp_opt = levels ? append_classes(opt, levels) : opt
+      render_pair(prop[:label], value, prop: prop, **rp_opt)
     }.unshift(nil).join(separator).html_safe
   end
 

@@ -95,10 +95,12 @@ module ModelHelper::Fields
         config ||= Field.configuration_for(field, model, action)
       else
         config ||= Field.configuration_for_label(field, model, action)
-        field    = config[:field]
+        field    = config[:field] if config&.dig(:field)&.is_a?(Symbol)
       end
-      prop = config.merge(value: value)
-      prop[:label] ||= (k if k.is_a?(String))
+      prop  = config&.dup || {}
+      prop[:field] ||= (field if field.is_a?(Symbol))
+      prop[:label] ||= (k     if k.is_a?(String))
+      prop[:value]   = value
       [field, prop]
     }.compact.to_h
   end
