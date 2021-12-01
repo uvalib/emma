@@ -12,7 +12,7 @@
     // @see ArtifactHelper#artifact_link
     .link {
         &.complete {
-            color: black;
+            color: $root-fg-color;
         }
     }
 

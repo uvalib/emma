@@ -8,8 +8,8 @@
 // DataController index page
 //=============================================================================
 
-$side-scroll-shadow: -1.5rem 0  0  0.5rem  white;
-$vert-scroll-shadow:  0      0  0  0.5rem  white;
+$side-scroll-shadow: -1.5rem  0  0  0.5rem  $root-bg-color;
+$vert-scroll-shadow:  0       0  0  0.5rem  $root-bg-color;
 
 .database-table-links {
     line-height: 1.375;
@@ -60,7 +60,7 @@ $database-table-max-columns: 25;
 
         .database-column {
 
-            background: white;
+            background: $root-bg-color;
 
             &.hierarchy {
                 max-height:  25vh;
@@ -87,7 +87,7 @@ $database-table-max-columns: 25;
                 padding:        0 1px;
                 font-weight:    bold;
                 text-transform: uppercase;
-                border-bottom:  2px solid black;
+                border-bottom:  2px solid $root-fg-color;
 
                 &.col-first {
                     z-index:    1;

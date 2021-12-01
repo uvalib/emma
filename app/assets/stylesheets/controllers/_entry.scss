@@ -52,7 +52,7 @@ $entry-entry-gap: 2rem;
 
             margin:      (2 * $entry-padding) 0;
             padding-top: 2 * $entry-padding;
-            border-top:  1px solid black;
+            border-top:  1px solid $root-fg-color;
 
             @media #{$narrow-screen} {
                 .text {
@@ -213,7 +213,7 @@ $entry-entry-gap: 2rem;
             line-height: 1.5;
             font-size:   medium;
             font-weight: bold;
-            color:       white;
+            color:       $root-rev-fg-color;
             background:  $uva-accent-orange; // For color contrast checkers.
             cursor:      pointer;
 
@@ -417,7 +417,7 @@ form.select-entry {
         border-radius: 0.25rem;
 
         option {
-            background: white;
+            background: $root-bg-color;
         }
 
         // This assumes that the first option is a blank value used to clear
@@ -559,7 +559,7 @@ form.select-entry {
         margin:      0;
         font-family: inherit;
         font-size:   large;
-        color:       black;
+        color:       $root-fg-color;
         border:      2px groove lightgray;
 
         &.optional {

@@ -86,8 +86,8 @@
     width:            inherit;
     margin:           0;
     padding:          $page-padding-y $page-padding-x;
-    color:            white;
-    background-color: $header-bg;
+    color:            $root-rev-fg-color;
+    background-color: $root-rev-bg-color;
 
     @media #{$not-wide-screen} {
         padding-top:    calc(2 * #{$page-padding-y});
@@ -97,7 +97,7 @@
 
     * {
         margin: auto 0;
-        color:  white;
+        color:  $root-rev-fg-color;
     }
 
     a {
@@ -249,7 +249,7 @@
     &:not(.disabled):not(.forbidden):hover {
         background-color: $uva-accent-orange;
         border-color:     $uppy-file-input-accent;
-        color:            white;
+        color:            $root-rev-fg-color;
     }
 
     &.disabled:hover, &.forbidden:hover {
@@ -262,7 +262,7 @@
 // Embolden characters by adding a text shadow in order to avoid changing the
 // width of the text.
 %hover-bold {
-    text-shadow: 0 0 1px black;
+    text-shadow: 0 0 1px $root-fg-color;
 }
 
 // A pop-out effect for panels.

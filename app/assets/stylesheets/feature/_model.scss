@@ -201,7 +201,7 @@ $data-list-border-color: none;
                 margin-left:    -$tray-pad;
                 margin-right:   -$tray-pad;
                 background:     whitesmoke;
-                border:         1px solid black;
+                border:         1px solid $root-fg-color;
                 border-radius:  0.25rem;
 
                 @media #{$narrow-screen} {
@@ -227,7 +227,7 @@ $data-list-border-color: none;
 
                 &:hover {
                     text-decoration:  none;
-                    background-color: white;
+                    background-color: $root-bg-color;
                 }
 
                 &:focus {
@@ -252,7 +252,7 @@ $data-list-border-color: none;
     padding:        $item-padding;
     padding-bottom: 2 * $item-padding;
     overflow-x:     auto;
-    border:         2px solid black;
+    border:         2px solid $root-fg-color;
     border-radius:  0.5rem;
     background:     lighter($uva-accent-yellow, 95%);
 

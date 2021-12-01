@@ -9,7 +9,8 @@
 
     $table-gap:        1.75rem;
     $table-narrow-gap: 1rem;
-    $table-border-bg:  $header-bg;
+    $table-border-bg:  $root-rev-bg-color;
+    $table-border-fg:  $root-rev-fg-color;
 
     display:        grid;
     position:       relative;
@@ -87,7 +88,7 @@
             }
 
             th {
-                color:         white;
+                color:         $table-border-fg;
                 border-bottom: none;
             }
         }
@@ -109,7 +110,7 @@
         top:        $table-gap;
         max-height: 95vh;
         overflow:   auto;
-        background: white;
+        background: $root-bg-color;
 
         @media #{$narrow-screen} {
             top: $table-narrow-gap;
@@ -127,7 +128,7 @@
                 position:    sticky;
                 top:         0;
                 padding-top: 0.5rem;
-                background:  white;
+                background:  $root-bg-color;
             }
         }
 
@@ -139,7 +140,7 @@
     &.sticky-head.dark-head {
 
         padding-bottom: 0;
-        background:     white;
+        background:     $root-bg-color;
         border:         2px solid $table-border-bg;
 
         //=====================================================================

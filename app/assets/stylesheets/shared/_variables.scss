@@ -231,10 +231,16 @@ $nominal-cover-x: 500px;
 
 @media #{$wide-screen} {
     :root {
+
+        // Scale.
+
         --page-padding:    2rem;
         --flex-gap:        1rem;
         --gap:             0.5rem;
         --scroll-easement: 0;
+
+        // Dimensions.
+
         --thumbnail-max-x: auto;
         --thumbnail-max-y: #{$nominal-thumbnail-y};
     }
@@ -246,10 +252,16 @@ $nominal-cover-x: 500px;
 
 @media #{$medium-width} {
     :root {
+
+        // Scale.
+
         --page-padding:    0.75rem;
         --flex-gap:        0.25rem;
         --gap:             0.25rem;
         --scroll-easement: #{$nominal-easement};
+
+        // Dimensions.
+
         --thumbnail-max-x: #{$nominal-thumbnail-x};
         --thumbnail-max-y: #{$nominal-thumbnail-x};
     }
@@ -261,10 +273,16 @@ $nominal-cover-x: 500px;
 
 @media #{$narrow-screen} {
     :root {
+
+        // Scale.
+
         --page-padding:    0.75rem;
         --flex-gap:        0.25rem;
         --gap:             0.25rem;
         --scroll-easement: #{$nominal-easement};
+
+        // Dimensions.
+
         --thumbnail-max-x: #{$nominal-thumbnail-x};
         --thumbnail-max-y: #{$nominal-thumbnail-x};
     }
@@ -275,6 +293,9 @@ $nominal-cover-x: 500px;
 //=============================================================================
 
 :root {
+
+    // Dimensions.
+
     --page-padding-x:    var(--page-padding);
     --page-padding-y:    calc(var(--page-padding) / 2);
     --flex-gap-x:        var(--flex-gap);
@@ -283,14 +304,27 @@ $nominal-cover-x: 500px;
     --gap-y:             var(--gap);
     --scroll-easement-x: var(--scroll-easement);
     --scroll-easement-y: 0;
+
+    // Color scheme.
+
+    --bg-color:          white;
+    --fg-color:          black;
+    --rev-bg-color:      #{$header-bg};
+    --rev-fg-color:      white;
 }
+
+//=============================================================================
+// SCSS aliases for CSS variables.
+//=============================================================================
+
+// Scale.
 
 $page-padding:      var(--page-padding);
 $flex-gap:          var(--flex-gap);
 $gap:               var(--gap);
-$thumbnail-max-x:   var(--thumbnail-max-x);
-$thumbnail-max-y:   var(--thumbnail-max-y);
 $scroll-easement:   var(--scroll-easement);
+
+// Dimensions.
 
 $page-padding-x:    var(--page-padding-x);
 $page-padding-y:    var(--page-padding-y);
@@ -300,3 +334,12 @@ $gap-x:             var(--gap-x);
 $gap-y:             var(--gap-y);
 $scroll-easement-x: var(--scroll-easement-x);
 $scroll-easement-y: var(--scroll-easement-y);
+$thumbnail-max-x:   var(--thumbnail-max-x);
+$thumbnail-max-y:   var(--thumbnail-max-y);
+
+// Color scheme.
+
+$root-bg-color:     var(--bg-color);
+$root-fg-color:     var(--fg-color);
+$root-rev-bg-color: var(--rev-bg-color);
+$root-rev-fg-color: var(--rev-fg-color);

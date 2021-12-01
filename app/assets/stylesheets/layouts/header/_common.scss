@@ -46,7 +46,7 @@ $enclosure-padding-narrow: 0.75rem;
 
     padding:        0.5rem;
     padding-right:  0;
-    border:         0.125rem dotted white;
+    border:         0.125rem dotted $root-rev-fg-color;
     border-radius:  0.75rem;
 
     @media #{$not-narrow-screen} {
@@ -57,7 +57,7 @@ $enclosure-padding-narrow: 0.75rem;
 // For controls with a white background within the header.
 %header-control-interior {
     * {
-        color:     black;
+        color:     $root-fg-color;
         font-size: large;
     }
 }

@@ -33,7 +33,7 @@ $sticky-top-narrow:     3.125rem;
     padding:       1px 0.5rem;
     font-size:     medium;
     font-weight:   normal;
-    color:         white;
+    color:         $root-rev-fg-color;
     background:    $panel-accent;
     border:        1px solid transparent;
     border-radius: 0.5rem;
@@ -107,7 +107,7 @@ $sticky-top-narrow:     3.125rem;
         }
 
         &.textbox {
-            box-shadow: 0 0 0 0.25rem white, 0 0 0 0.375rem lightgray;
+            box-shadow: 0 0 0 0.25rem $root-bg-color, 0 0 0 0.375rem lightgray;
         }
 
         &.array {
@@ -335,10 +335,10 @@ $sticky-top-narrow:     3.125rem;
                 align-items:	flex-start;
                 margin:		    0;
                 padding-top:    1.25rem;
-                background:	    white;
+                background:	    $root-bg-color;
                 box-shadow:
-                    0.5rem  -0.5rem  0       0.5rem white,
-                    0.25rem -0.25rem 0.75rem 0.5rem white;
+                    0.5rem  -0.5rem  0       0.5rem $root-bg-color,
+                    0.25rem -0.25rem 0.75rem 0.5rem $root-bg-color;
             }
         }
 
@@ -405,7 +405,7 @@ $sticky-top-narrow:     3.125rem;
             line-height:   unset;
             font-size:     x-large;
             font-weight:   bold;
-            background:	   white;
+            background:	   $root-bg-color;
             border-bottom: 1px solid darkgray;
 
             @if $title-spans-entry {
@@ -415,16 +415,16 @@ $sticky-top-narrow:     3.125rem;
             @media #{$wide-screen} {
                 top:        $sticky-top-wide;
                 box-shadow:
-                     0.50rem -2.00rem  1.00rem  2.00rem  white,
-                     0        0        0.25rem  0.50rem  white;
+                     0.50rem -2.00rem  1.00rem  2.00rem  $root-bg-color,
+                     0        0        0.25rem  0.50rem  $root-bg-color;
             }
 
             @media #{$medium-width} {
                 top:        $sticky-top-medium;
                 column-gap: calc(3 * #{$flex-gap-x});
                 box-shadow:
-                     0       -1.00rem  0        0.50rem  white,
-                     0        0        0.25rem  0.25rem  white;
+                     0       -1.00rem  0        0.50rem  $root-bg-color,
+                     0        0        0.25rem  0.25rem  $root-bg-color;
             }
 
             @media #{$narrow-screen} {
@@ -433,10 +433,10 @@ $sticky-top-narrow:     3.125rem;
 
                 top:            $sticky-top-narrow;
                 padding-bottom: 0.5rem;
-                border-color:   black;
+                border-color:   $root-fg-color;
                 box-shadow:
-                     0       -0.50rem  0        0.25rem  white,
-                     0        0.25rem  0.25rem  0        white;
+                     0       -0.50rem  0        0.25rem  $root-bg-color,
+                     0        0.25rem  0.25rem  0        $root-bg-color;
             }
 
             // @see SearchHelper#title_and_source
@@ -725,8 +725,8 @@ $sticky-top-narrow:     3.125rem;
             margin-bottom:  0;
             padding:        0;
             text-align:     center;
-            background:     white;
-            box-shadow:     0 0 0 0.75rem white;
+            background:     $root-bg-color;
+            box-shadow:     0 0 0 0.75rem $root-bg-color;
         }
 
         .container {
@@ -885,8 +885,8 @@ body.aggregate-style {
     // Box shadow sections which prevent scrolled text from
     // appearing above the title.
     $title-scroll-mask:
-        0.5rem  -0.25rem  0       0.5rem white,
-        0       0         0.25rem 0.5rem white;
+        0.5rem  -0.25rem  0       0.5rem $root-bg-color,
+        0       0         0.25rem 0.5rem $root-bg-color;
 
     //=========================================================================
     // Sections
@@ -1192,7 +1192,7 @@ body.aggregate-style {
                 .title {
                     @media #{$not-narrow-screen} {
                         box-shadow:
-                            1px -1px  0  1px  white,
+                            1px -1px  0  1px  $root-bg-color,
                             1px  1px  0  1px  darkgray;
                     }
                 }
@@ -1648,13 +1648,13 @@ body.aggregate-style {
                     border-radius: 0;
 
                     @media #{$wide-screen} {
-                        box-shadow: -0.875rem   0  0  1.125rem   white;
+                        box-shadow: -0.875rem   0  0  1.125rem  $root-bg-color;
                     }
                     @media #{$medium-width} {
-                        box-shadow: -0.3125rem  0  0  0.9375rem  white;
+                        box-shadow: -0.3125rem  0  0  0.9375rem $root-bg-color;
                     }
                     @media #{$narrow-screen} {
-                        box-shadow: -0.625rem   0  0  0.625rem   white;
+                        box-shadow: -0.625rem   0  0  0.625rem  $root-bg-color;
                     }
                 }
             }

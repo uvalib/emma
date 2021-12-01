@@ -23,9 +23,9 @@
     left:             $sn-margin;
     margin:           0;
     padding:          $sn-padding;
-    background-color: white;
-    border:           1px solid black;
-    box-shadow:       0 0 0 1px white;
+    background-color: $root-bg-color;
+    border:           1px solid $root-fg-color;
+    box-shadow:       0 0 0 1px $root-bg-color;
 
     &         { z-index: $z-hidden }
     &.visible { z-index: $z-popup; }
@@ -47,7 +47,7 @@
         padding-top: $sn-entry-gap;
 
         a, a:visited {
-            color:           black;
+            color:           $root-fg-color;
             text-decoration: none;
         }
 

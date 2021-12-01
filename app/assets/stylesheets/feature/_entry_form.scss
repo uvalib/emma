@@ -308,7 +308,7 @@
 
     display:         flex;
     padding:         1rem;
-    background:      white;
+    background:      $root-bg-color;
     border:          0.5rem solid $uva-accent-orange;
     border-radius:   0.75rem;
     flex-wrap:       wrap;
@@ -547,7 +547,7 @@ $form-gap-narrow: $form-gap / 3;
 
         position:   sticky;
         top:        1rem;
-        background: white;
+        background: $root-bg-color;
 
         // noinspection CssReplaceWithShorthandSafely
         @media #{$narrow-screen} {
@@ -577,9 +577,9 @@ $form-gap-narrow: $form-gap / 3;
         position:      sticky;
         top:           $form-gap;
         margin-bottom: $form-gap;
-        background:    white;
-        box-shadow:    0 -0.5rem 0      1.0rem white,
-                       0  0.5rem 0.5rem 0.5rem white;
+        background:    $root-bg-color;
+        box-shadow:    0 -0.5rem 0      1.0rem $root-bg-color,
+                       0  0.5rem 0.5rem 0.5rem $root-bg-color;
         z-index:       $z-controls;
 
         grid-template-columns: 1fr;
@@ -794,7 +794,7 @@ $form-gap-narrow: $form-gap / 3;
         p {
             font-weight: bold;
             word-break:  break-word;
-            box-shadow:  0 0 0.5rem 0.25rem white;
+            box-shadow:  0 0 0.5rem 0.25rem $root-bg-color;
         }
     }
 }

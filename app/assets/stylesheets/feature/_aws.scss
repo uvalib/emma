@@ -8,7 +8,8 @@
 // AWS admin page
 //=============================================================================
 
-$aws-bucket-color:       $uva-blue;
+$aws-bucket-bg:          $root-rev-bg-color;
+$aws-bucket-fg:          $root-rev-fg-color;
 $aws-bucket-padding:     0.5rem;
 $aws-admin-section-gap:  calc(2 * #{$page-padding});
 $aws-admin-column-space: 0.75rem;
@@ -29,7 +30,7 @@ $aws-admin-column-space: 0.75rem;
     text-indent:   0.5rem;
     font-size:     12pt;
     font-family:   Courier, monospace;
-    border:        2px solid $aws-bucket-color;
+    border:        2px solid $aws-bucket-bg;
     border-radius: 0.25rem;
 }
 
@@ -102,9 +103,9 @@ $aws-admin-column-space: 0.75rem;
     padding-bottom: 0.25rem;
     margin-bottom:  $aws-admin-column-space;
     font-weight:    bold;
-    color:          white;
-    background:     $aws-bucket-color;
-    border-bottom:  2px solid $aws-bucket-color;
+    color:          $aws-bucket-fg;
+    background:     $aws-bucket-bg;
+    border-bottom:  2px solid $aws-bucket-bg;
 }
 
 .first-prefix {

@@ -25,8 +25,8 @@ body {
 
     // Establish the default foreground/background colors for the sake of
     // accessibility checkers.
-    color:          black;
-    background:     white;
+    color:          $root-fg-color;
+    background:     $root-bg-color;
 
     @media #{$narrow-screen} {
         font-size: large;

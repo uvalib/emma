@@ -128,7 +128,7 @@ $search-button-width:    6rem;
             height:         34px;
             max-height:     34px;
             overflow:       hidden;
-            border:         1px solid white;
+            border:         1px solid $root-bg-color;
             border-radius:  4px;
             pointer-events: none;
 
@@ -142,8 +142,8 @@ $search-button-width:    6rem;
             option:before {
                 display:        block;
                 color:          $uva-text-gray;
-                background:     white;
-                border:         6px solid white;
+                background:     $root-bg-color;
+                border:         6px solid $root-bg-color;
                 content:        "...";
                 content:        "\22EF"; // MIDLINE HORIZONTAL ELLIPSIS
                 outline:        3px solid white;
@@ -361,7 +361,7 @@ $search-button-width:    6rem;
             margin-right: 0.5rem;
             margin-left:  calc(#{$gap-x} / 2);
             font-size:    large;
-            color:        black;
+            color:        $root-fg-color;
 
             // noinspection CssReplaceWithShorthandSafely
             @media #{$narrow-screen} {
