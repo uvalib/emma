@@ -69,9 +69,23 @@
 
     @extend .overlay;
 
-    transition: opacity 0.5s ease-in 0.75s;
+    display:         flex;
+    justify-content: center;
+    height:          1000%;
+    transition:      opacity 0.5s ease-in 0.75s;
 
-    .content {
+    %image-content {
+        top:               66vh;
+        width:             5vw;
+        height:            5vh;
+        margin:            0;
+        padding:           0;
+        background-image:  url('loading-balls.gif');
+        background-repeat: no-repeat;
+        background-size:   contain;
+    }
+
+    %text-content {
 
         $content-color: lighter($uva-blue, 75%);
 
@@ -86,5 +100,9 @@
         border:        1px solid $content-color;
         border-radius: 50%;
         box-shadow:    0 0 3rem 3rem $content-color;
+    }
+
+    .content {
+        @extend %image-content;
     }
 }
