@@ -5,6 +5,7 @@
 @use 'shared/functions'      as *;
 @use 'shared/controls/grids' as *;
 @use 'feature/model'         as *;
+@use 'feature/overlay'       as *;
 
 //=============================================================================
 // Search controls
@@ -66,43 +67,5 @@
 
 // An indicator that is presented during a time-consuming search.
 .search-in-progress {
-
-    @extend .overlay;
-
-    display:         flex;
-    justify-content: center;
-    height:          1000%;
-    transition:      opacity 0.5s ease-in 0.75s;
-
-    %image-content {
-        top:               66vh;
-        width:             5vw;
-        height:            5vh;
-        margin:            0;
-        padding:           0;
-        background-image:  url('loading-balls.gif');
-        background-repeat: no-repeat;
-        background-size:   contain;
-    }
-
-    %text-content {
-
-        $content-color: lighter($uva-blue, 75%);
-
-        top:           50vh;
-        width:         max-content;
-        height:        max-content;
-        margin:        0 auto;
-        padding:       1rem;
-        font-size:     xx-large;
-        color:         white;
-        background:    $content-color;
-        border:        1px solid $content-color;
-        border-radius: 50%;
-        box-shadow:    0 0 3rem 3rem $content-color;
-    }
-
-    .content {
-        @extend %image-content;
-    }
+    @include image-overlay('loading-balls.gif');
 }
