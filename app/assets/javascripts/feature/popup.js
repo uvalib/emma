@@ -531,6 +531,8 @@ $(document).on('turbolinks:load', function() {
      * Toggle visibility of a button and its popup element.
      *
      * @param {jQuery.Event} event
+     *
+     * @returns {boolean}
      */
     function onTogglePopup(event) {
         debugEvent('onTogglePopup', event);

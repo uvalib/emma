@@ -57,11 +57,13 @@ module EmmaHelper
     if mode == :brief
       list.join(separator)
     elsif list.size < 3
+      # noinspection RubyMismatchedArgumentType
       final = ' ' + final if final && !final.start_with?(/\s/)
       final = final + ' ' if final && !final.match?(/\s$/)
       list.join(final || separator)
     else
       final += ' ' if final && !final.end_with?(' ')
+      # noinspection RubyNilAnalysis
       list[0...-1].join(separator) << separator << final << list[-1]
     end
   end

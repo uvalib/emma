@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# noinspection RubyMismatchedArgumentType
 APP_ROOT = File.expand_path('..', __dir__)
 Dir.chdir(APP_ROOT) do
   begin

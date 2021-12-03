@@ -43,6 +43,7 @@ module BookshareService::Request::Messages
   # @see https://apidocs.bookshare.org/reference/index.html#_get-my-messages-list
   #
   def get_my_messages(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myMessages', **opt)
     api_return(Bs::Message::UserMessageList)
@@ -50,7 +51,7 @@ module BookshareService::Request::Messages
     .tap do |method|
       add_api method => {
         optional: {
-          status: String,
+          status:     String,
         },
         reference_id: '_get-my-messages-list'
       }
@@ -70,6 +71,7 @@ module BookshareService::Request::Messages
   # @see https://apidocs.bookshare.org/reference/index.html#_get-my-message
   #
   def get_my_message(messageId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myMessages', messageId, **opt)
     api_return(Bs::Message::UserMessage)
@@ -77,7 +79,7 @@ module BookshareService::Request::Messages
     .tap do |method|
     add_api method => {
       required: {
-        messageId: String,
+        messageId:  String,
       },
       reference_id: '_get-my-message'
     }
@@ -98,6 +100,7 @@ module BookshareService::Request::Messages
   # @see https://apidocs.bookshare.org/reference/index.html#_put-my-message
   #
   def update_my_message(messageId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'myMessages', messageId, **opt)
     api_return(Bs::Message::UserMessage)
@@ -105,10 +108,10 @@ module BookshareService::Request::Messages
     .tap do |method|
     add_api method => {
       required: {
-        messageId: String,
-        read:      Boolean,
+        messageId:  String,
+        read:       Boolean,
       },
-      reference_id:    '_put-my-message'
+      reference_id: '_put-my-message'
     }
   end
 

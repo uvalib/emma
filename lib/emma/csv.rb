@@ -51,9 +51,11 @@ module Emma::Csv
     src = src.body   if src.respond_to?(:body)
     src = src.string if src.respond_to?(:string)
     if src.is_a?(String)
+      # noinspection RubyMismatchedArgumentType
       CSV.foreach(src, **opt).to_a.map(&:to_h) if src.present?
     else
       src = src.to_io if src.respond_to?(:to_io)
+      # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
       CSV.parse(src, **opt).each.map do |row|
         row.to_h.transform_values { |col| force_utf8(col) }
       end

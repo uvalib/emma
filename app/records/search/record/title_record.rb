@@ -201,6 +201,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [String, nil]
     #
     def format(rec)
+      # noinspection RubyMismatchedReturnType
       rec&.dc_format&.strip&.presence
     end
 
@@ -320,6 +321,9 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash{Symbol=>*}]
     #
+    #--
+    # noinspection RubyMismatchedReturnType
+    #++
     def extract_fields(rec, fields)
       fields = fields.flatten
       fields.compact!
@@ -454,7 +458,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def initialize(term)
       @level = {}
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       if term.is_a?(Integer)
         name, type   = name_type
         @level[type] = Level.new(name: name, min_val: term)
@@ -710,7 +714,9 @@ class Search::Record::TitleRecord < Search::Api::Record
     super(rec || exemplar)
   end
 
+  # noinspection RubyMismatchedParameterType
   def format(rec = nil)
+    # noinspection RubyMismatchedArgumentType
     super(rec || exemplar)
   end
 

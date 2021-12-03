@@ -216,6 +216,9 @@ module Representable
       #
       # @see #__debug_show
       #
+      #--
+      # noinspection RubyMismatchedArgumentType
+      #++
       def __debug_method(mode, label, *methods)
         if mode == :input
           return unless DEBUG_INPUT

@@ -84,6 +84,7 @@ class BsApiController < ApplicationController
       path << '?' << url_query(opt) if opt.present?
       redirect_to sign_in_as_path(id: bookshare_user(user), redirect: path)
     else
+      # noinspection RubyMismatchedArgumentType
       @api_result = bs_api_explorer(request.method, path, opt)
       respond_to do |format|
         format.html

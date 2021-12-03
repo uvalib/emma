@@ -92,6 +92,9 @@ module I18nHelper
   # @return [Any]                             The specified value.
   # @return [nil]                             No non-empty value was found.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def i18n_lookup(controller, partial_path, *defaults, **opt)
     opt, i18n_opt = partition_hash(opt, :mode, :one, :many, :default)
     partial_path = partial_path.join('.') if partial_path.is_a?(Array)
@@ -124,6 +127,7 @@ module I18nHelper
       end
     end
     keys.uniq!
+    # noinspection RubyMismatchedArgumentType
     keys.push('') unless keys.last.blank?
     I18n.t(keys.shift, **i18n_opt.merge(units, default: keys)).presence
   end

@@ -46,6 +46,7 @@ module ConfigurationHelper
   # @return [Array<Symbol>]
   #
   def config_path(controller = nil, action = nil)
+    # noinspection RubyMismatchedArgumentType
     result = controller.to_s.underscore.split('/') << action
     result.compact_blank.map(&:to_sym)
   end
@@ -136,6 +137,7 @@ module ConfigurationHelper
       config_lookup_paths(controller, action, *path).find do |full_path|
         item = full_path.pop
         cfg  = controller_configuration.dig(*full_path)
+        # noinspection RubyMismatchedArgumentType
         break cfg[item] if cfg.is_a?(Hash) && cfg.key?(item)
       end
     raise(CONFIG_FAIL) if entry.nil? && fatal
@@ -230,6 +232,7 @@ module ConfigurationHelper
   # @return [Array<Array<Symbol>>]
   #
   def config_lookup_paths(ctrlr, action, *path)
+    # noinspection RubyMismatchedReturnType
     base_paths = config_lookup_order(ctrlr, action).map! { |v| v.join('.') }
     config_flatten_order(base_paths, *path)
   end
@@ -250,6 +253,7 @@ module ConfigurationHelper
       unless part.is_a?(Symbol) || (part.is_a?(String) && part.include?('.'))
         part = part.to_s.to_sym
       end
+      # noinspection RubyMismatchedArgumentType
       result << part
     end
     if (branches = path.shift)

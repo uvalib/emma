@@ -23,7 +23,7 @@ class Ingest::Api::Message < Ingest::Api::Record
   # @param [Hash, nil]                                   opt
   #
   def initialize(src, opt = nil)
-    # noinspection RubyScope, RubyMismatchedParameterType
+    # noinspection RubyScope, RubyMismatchedArgumentType
     create_message_wrapper(opt) do |opt|
       initialize_attributes unless src.is_a?(Model)
       apply_wrap!(opt)

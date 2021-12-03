@@ -943,7 +943,7 @@ module Workflow::Base::States
         state = state_object(state)
         trans =
           state.events.map { |evt, entry|
-            # noinspection RubyMismatchedParameterType
+            # noinspection RubyMismatchedArgumentType
             event_label(evt, number: false) << '->' <<
               entry.map { |e|
                 state_label(e.transitions_to, number: false)

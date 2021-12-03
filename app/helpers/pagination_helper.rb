@@ -273,7 +273,7 @@ module PaginationHelper
   # @return [nil]                     If *value* is invalid.
   #
   def page_path(value, page = nil)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     value.is_a?(Symbol) ? page_history(value, page) : value.to_s
   end
 
@@ -322,6 +322,7 @@ module PaginationHelper
     css_selector = '.search-count'
     count = positive(count).to_i
     total = positive(total).to_i
+    # noinspection RubyMismatchedArgumentType
     total = nil unless total > count
     html_div(prepend_classes!(opt, css_selector)) do
       found = get_page_count_label(count: (total || count), item: unit)

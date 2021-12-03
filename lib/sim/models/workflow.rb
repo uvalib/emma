@@ -274,6 +274,7 @@ module Workflow::Base::Transitions
       to   = to ? " -> #{state_label(to)}" : ''
       # noinspection RubyNilAnalysis
       chars  = line.size + from.size + to.size
+      # noinspection RubyMismatchedArgumentType
       spaces = ' ' * [1, (80 - chars)].max
       "#{line}#{spaces}#{from}#{to}"
     end

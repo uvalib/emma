@@ -87,7 +87,6 @@ module ApiConcern
   #
   def api_exec_report(*only)
     table = api_active_table(*only).transform_values(&:exec_report).compact
-    # noinspection RubyMismatchedReturnType
     (table.size == 1) ? table.values.first : table.presence
   end
 
@@ -101,7 +100,6 @@ module ApiConcern
   #
   def api_exception(*only)
     table = api_active_table(*only).transform_values(&:exception).compact
-    # noinspection RubyMismatchedReturnType
     (table.size == 1) ? table.values.first : table.presence
   end
 

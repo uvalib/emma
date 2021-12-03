@@ -65,7 +65,7 @@ module SearchHelper
   def search_render_value(item, value, field: nil, **opt)
     value = field || value
     if item.is_a?(Model) && value.is_a?(Symbol)
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       # noinspection RubyCaseWithoutElseBlockInspection
       case value
         when :dc_title                then title_and_source_logo(item, **opt)
@@ -91,7 +91,7 @@ module SearchHelper
     source = '' unless EmmaRepository.values.include?(source)
     prepend_classes!(opt, css_selector, source)
 
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     if aggregate_style?
       date   = Search::Record::TitleRecord.item_date(item)
       number = Search::Record::TitleRecord.item_number(item)
@@ -486,7 +486,7 @@ module SearchHelper
           end
       end
     list_item_number(item, **opt) do
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       upload_entry_icons(item, id: db_id) if db_id.present?
     end
   end

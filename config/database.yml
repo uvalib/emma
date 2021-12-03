@@ -1,7 +1,7 @@
 # config/database.yml
 
 # =============================================================================
-# PostgreSQL adapter settings - https://www.postgresql.org/docs/11/index.html
+# Postgres adapter settings - https://www.postgresql.org/docs/11/index.html
 # =============================================================================
 
 _db_postgres:                                                      &DB_POSTGRES

@@ -263,6 +263,7 @@ module Api::Schema
   # @return [*]
   #
   def scalar_default(type)
+    # noinspection RubyNilAnalysis
     type &&= type.to_s.demodulize.to_sym
     scalar_defaults[type] || enumeration_defaults[type]
   end

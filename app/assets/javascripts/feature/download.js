@@ -345,6 +345,8 @@ $(document).on('turbolinks:load', function() {
          * NOTE: Currently on single-select due to the Bookshare API method.
          *
          * @param {jQuery.Event} event
+         *
+         * @returns {boolean}
          */
         function onSubmit(event) {
             event.preventDefault();

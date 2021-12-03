@@ -69,6 +69,7 @@ module Emma::Extension
 
         part  = []
         part << [ldr, tag].compact.join(' ')
+        # noinspection RubyMismatchedArgumentType
         part << meth
         args.each do |a|
           case a

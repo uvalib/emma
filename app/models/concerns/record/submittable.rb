@@ -296,6 +296,7 @@ module Record::Submittable
       items.map do |item|
         next item   if item.is_a?(Entry)
         next rec_id if (rec_id = record_id(item))
+        # noinspection RubyMismatchedReturnType
         Log.warn { "#{__method__}: invalid item #{item.inspect}" }
       end
       items = normalize_index_items(*items, meth: __method__)
@@ -344,6 +345,9 @@ module Record::Submittable
     # mix of errors by index, errors by submission ID, and/or general errors,
     # but this method was written to be able to cope with the possibility.
     #
+    #--
+    # noinspection RubyMismatchedReturnType
+    #++
     def process_ingest_errors(result, *items)
 
       # If there were no errors then indicate that all items succeeded.
@@ -597,6 +601,7 @@ module Record::Submittable
       succeeded = []
       failed    = []
       repository_requests(items).each_pair do |_repo, repo_items|
+        # noinspection RubyMismatchedReturnType
         repo_items.map! { |item| record_id(item) }
         s, f = repository_remove(*repo_items, **opt)
         succeeded += s
@@ -630,6 +635,7 @@ module Record::Submittable
       succeeded = []
       failed    = []
       repository_requests(items).each_pair do |_repo, repo_items|
+        # noinspection RubyMismatchedReturnType
         repo_items.map! { |item| record_id(item) }
         s, f = repository_dequeue(*repo_items, **opt)
         succeeded += s
@@ -664,6 +670,9 @@ module Record::Submittable
     #   @param [Boolean] empty_key
     #   @return [Hash{String=>Array<Model>}]
     #
+    #--
+    # noinspection RubyMismatchedReturnType
+    #++
     def repository_requests(items, empty_key: false)                            # NOTE: from UploadWorkflow::External
       case items
         when Array, Model
@@ -782,6 +791,7 @@ module Record::Submittable
       succeeded = []
       failed    = []
       counter   = 0
+      # noinspection RubyMismatchedArgumentType
       items.each_slice(size) do |batch|
         throttle(counter)
         min = size * counter
@@ -929,6 +939,9 @@ module Record::Submittable
     # attempt.  If a later item fails, the successfully-destroyed items will
     # still be removed from the index.
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def entry_remove(*items, index: nil, atomic: true, force: nil, **opt)       # NOTE: from UploadWorkflow::External#upload_remove
       __debug_items("ENTRY WF #{__method__}", binding)
       type = Entry                                                              # TODO: NOTE: based on usage, Entry is implied
@@ -971,7 +984,6 @@ module Record::Submittable
       counter   = 0
       items =
         items.map { |item|
-          # noinspection RubyMismatchedParameterType
           if !item.is_a?(type)
             item                      # Only seen if *force* is *true*.
           elsif db_delete(item)

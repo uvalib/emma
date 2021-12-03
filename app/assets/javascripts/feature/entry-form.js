@@ -1345,7 +1345,7 @@ $(document).on('turbolinks:load', function() {
         const label = submitLabel($form);
         const tip   = submitTooltip($form);
         let $button = submitButton($form).attr('title', tip).text(label);
-        handleClickAndKeypress($button, clearFlash);
+        handleClickAndKeypress($button, clearFlashMessages);
     }
 
     /**
@@ -1364,7 +1364,7 @@ $(document).on('turbolinks:load', function() {
         const tip   = cancelTooltip($form);
         let $button = cancelButton($form).attr('title', tip).text(label);
         handleClickAndKeypress($button, cancelSubmission);
-        handleClickAndKeypress($button, clearFlash);
+        handleClickAndKeypress($button, clearFlashMessages);
     }
 
     /**
@@ -1381,7 +1381,7 @@ $(document).on('turbolinks:load', function() {
         if (isCreateForm($form)) {
             $button.addClass('best-choice');
         }
-        handleClickAndKeypress($button, clearFlash);
+        handleClickAndKeypress($button, clearFlashMessages);
     }
 
     /**
@@ -3483,8 +3483,6 @@ $(document).on('turbolinks:load', function() {
      * The Upload record is restored to its original state (non-existence in
      * the case of the create form).
      *
-     * For the upload form, the
-     *
      * @param {jQuery.Event} [event]
      */
     function cancelSubmission(event) {
@@ -4698,6 +4696,15 @@ $(document).on('turbolinks:load', function() {
         if (FEATURES.flash_errors) {
             flashError(text);
         }
+    }
+
+    /**
+     * Invoke clearFlash() and return void.
+     *
+     * @param {jQuery.Event} [event]    Ignored.
+     */
+    function clearFlashMessages(event) {
+        clearFlash();
     }
 
     // ========================================================================

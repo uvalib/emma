@@ -11,6 +11,9 @@ __loading_begin(__FILE__)
 # @see Representable::Hash
 # @see Api::Record::Schema::ClassMethods#schema
 #
+#--
+# noinspection RubyResolve
+#++
 class Api::Serializer::Hash < Api::Serializer
 
   include Representable::Hash

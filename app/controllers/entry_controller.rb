@@ -146,6 +146,7 @@ class EntryController < ApplicationController
   rescue Record::NotFound, ActiveRecord::RecordNotFound => error
     # As a convenience, if an index item is actually on another instance, fetch
     # it from there to avoid a potentially confusing result.
+    # noinspection RubyMismatchedReturnType
     [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
       next if base_url.start_with?(request.base_url)
       @host = base_url

@@ -491,9 +491,9 @@ let DB = (function() {
             store_name ||= defaultStore();
             tr_mode    ||= DEFAULT_TRANSACTION_MODE;
             tr = db.transaction(store_name, tr_mode);
-            tr.onabort    = e => dbError(func, 'transaction aborted');
-            tr.onerror    = e => dbError(func, 'transaction failed', tr.error);
-            tr.oncomplete = e => dbDebug(func, 'transaction complete');
+            tr.onabort    = _ => dbError(func, 'transaction aborted');
+            tr.onerror    = _ => dbError(func, 'transaction failed', tr.error);
+            tr.oncomplete = _ => dbDebug(func, 'transaction complete');
         }
         return tr;
     }

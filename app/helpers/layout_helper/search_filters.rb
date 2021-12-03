@@ -105,6 +105,9 @@ module LayoutHelper::SearchFilters
     #   @param [Array<Array>]  menu_pairs
     #   @param [Hash]          opt
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def make_menu(menu_name, values, **opt)
       config  = values.is_a?(Hash) ? values : current_menu_config(menu_name)
       pairs   = config[:menu]
@@ -121,6 +124,7 @@ module LayoutHelper::SearchFilters
           when Symbol
             EnumType.pairs_for(values)&.invert
           else
+            # noinspection RailsParamDefResolve
             val   = values.try(:pairs).presence
             val ||= values.try(:values).presence
             val ||= values

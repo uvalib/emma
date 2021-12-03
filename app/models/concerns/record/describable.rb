@@ -163,6 +163,7 @@ module Record::Describable
     # @see Record::Identification#id_value
     #
     def describe_id(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       id_value(model, opt)
     end
@@ -177,6 +178,7 @@ module Record::Describable
     # @see Record::EmmaIdentification#repository_name
     #
     def describe_repo(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       repo = repository_value(model)
       repository_name(repo || opt)
@@ -192,6 +194,7 @@ module Record::Describable
     # @see Record::EmmaIdentification#sid_value
     #
     def describe_sid(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       sid_value(model, opt)
     end
@@ -206,6 +209,7 @@ module Record::Describable
     # @see Record::EmmaIdentification#sid_value
     #
     def describe_submission(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       sid = describe_sid(model, opt)
       "submission #{sid.inspect}" # TODO: I18n
@@ -219,6 +223,7 @@ module Record::Describable
     # @see User#uid_value
     #
     def describe_user(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       # noinspection RailsParamDefResolve
       user = model.try(:user)
@@ -233,6 +238,7 @@ module Record::Describable
     # @see User#id_value
     #
     def describe_user_id(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       # noinspection RailsParamDefResolve
       user = model.try(:user)
@@ -257,6 +263,7 @@ module Record::Describable
     # The including class is expected to define an overriding class method.
     #
     def describe_type(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       model.class.send(__method__, model, **opt)
     end
@@ -272,6 +279,7 @@ module Record::Describable
     # The including class is expected to define an overriding class method.
     #
     def describe_status(model = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       model.class.send(__method__, model, **opt)
     end

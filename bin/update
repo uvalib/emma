@@ -3,6 +3,7 @@ require 'fileutils'
 include FileUtils
 
 # path to your application root.
+# noinspection RubyMismatchedArgumentType
 APP_ROOT = File.expand_path('..', __dir__)
 
 def system!(*args)

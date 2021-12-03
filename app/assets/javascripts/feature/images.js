@@ -65,6 +65,7 @@ $(document).on('turbolinks:load', function() {
             loadImage($image, src);
         } else if ((src = $image.attr('src')) && src.match(/^http/)) {
             debug('REPLACING IMAGE src ==', src);
+            // noinspection JSCheckFunctionSignatures
             $image.parent().append(imagePlaceholder());
             loadImage($image, src);
         } else {

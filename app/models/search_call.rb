@@ -325,7 +325,7 @@ class SearchCall < ApplicationRecord
   # @note - for dev traceability
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def assign_attributes(attr, opt = nil)
     #__debug_items(binding)
@@ -410,6 +410,7 @@ class SearchCall < ApplicationRecord
   # @return [Hash{Symbol=>Integer}]
   #
   def get_counts(src)
+    # noinspection RailsParamDefResolve
     case src
       when Hash            then count, total = src.values_at(:count, :total)
       when Array           then count = total = src.size

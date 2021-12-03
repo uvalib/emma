@@ -74,7 +74,6 @@ class Shrine
       # @return [Shrine::UploadedFile]
       #
       def attach_cached(value, **options)
-        # noinspection RubyMismatchedReturnType
         super
           .tap do |result|
             __ext_debug("--> #{result.inspect}") do

@@ -156,11 +156,9 @@ module TestHelper::SystemTests::Bookshare
     tables = node.find_all('table') rescue nil
     table =
       tables&.find { |t|
-        # noinspection RubyArgCount
         header = t.find_all('thead th') rescue nil
         header&.first&.text == 'Type'
       }
-    # noinspection RubyArgCount
     rows = (table&.find_all('tbody tr') rescue nil) || []
     rows.map { |row|
       parts = row.find_all('p') rescue []
@@ -268,10 +266,10 @@ module TestHelper::SystemTests::Bookshare
         type.camelize
 
       when /^(integer|boolean).*/
-        $1.camelize
+        $1.to_s.camelize
 
       when /(^string)/
-        parts = type.sub($1, '').tr('(),', ' ').squish
+        parts = type.sub($1.to_s, '').tr('(),', ' ').squish
         case parts
           when ''          then 'String'
           when 'date'      then 'IsoDay'
@@ -281,7 +279,7 @@ module TestHelper::SystemTests::Bookshare
         end
 
       when /(^enum)/
-        parts = type.sub($1, '').tr('(),', ' ').squish
+        parts = type.sub($1.to_s, '').tr('(),', ' ').squish
         found = parts = parts.presence&.split(' ')&.sort
         found &&=
           %w(BsAllowsType).find { |k| (parts - API_ENUMERATIONS[k]).blank? } ||
@@ -289,7 +287,7 @@ module TestHelper::SystemTests::Bookshare
         found || type
 
       when /(array$)/, /(array\(multi\)$)/
-        parts = type.sub($1, '').tr('<>,', ' ').squish
+        parts = type.sub($1.to_s, '').tr('<>,', ' ').squish
         type  = record_field_type(parts, 'String')
         "Array #{type}"
 
@@ -309,7 +307,6 @@ module TestHelper::SystemTests::Bookshare
   def record_fields(node)
     rows = node.find_all('tbody tr') rescue []
     rows.map { |row|
-      # noinspection RubyArgCount
       parts = row.find_all('p') rescue []
       name, desc, type = parts.map { |p| p.text.to_s.sub(/\s+/, ' ').strip }
       next unless name.present?
@@ -352,7 +349,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [String]
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
   #++
   def model_field_type(type)
     type = type.call rescue '?' if type.is_a?(Proc)
@@ -372,6 +369,9 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [Array<Hash>]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
+  #++
   def model_fields(type)
     name   = model_class(type)
     model  = name&.new('{}')
@@ -425,6 +425,7 @@ module TestHelper::SystemTests::Bookshare
   )
     missing  = missing.to_h unless missing.is_a?(Hash)
     header &&= "*** Missing #{header} ***\n"
+    # noinspection RubyMismatchedArgumentType
     indent   = ' ' * indent if indent.is_a?(Integer)
     width  ||= missing.keys.sort_by(&:size).last&.size || ''
     format   = "#{indent}%-#{width}s#{separator}#{APIDOC_URL}/%s/index.html#%s"
@@ -589,6 +590,7 @@ module TestHelper::SystemTests::Bookshare
     lines += Array.wrap(yield) if block_given?
     lines.flatten!
     if lines.present?
+      # noinspection RubyMismatchedArgumentType
       lines.unshift(header)  if header
       show(lines.join("\n")) if output
     end
@@ -610,7 +612,7 @@ module TestHelper::SystemTests::Bookshare
   # @yieldreturn [Hash, Array]
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def show_subsection(
     header,

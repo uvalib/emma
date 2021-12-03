@@ -108,7 +108,7 @@ module SearchCallHelper
   # @param [Hash]                          opt   Passed to #model_table_entries
   #
   def search_call_table_entries(list, **opt)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     model_table_entries(list, **opt) do |item, **row_opt|
       search_call_table_entry(item, **row_opt)
     end
@@ -120,7 +120,7 @@ module SearchCallHelper
   # @param [Hash]       opt           Passed to #model_table_entry
   #
   def search_call_table_entry(item, **opt)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     model_table_entry(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end
@@ -132,7 +132,7 @@ module SearchCallHelper
   # @param [Hash]                          opt  Passed to #model_table_headings
   #
   def search_call_table_headings(item, **opt)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     model_table_headings(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end

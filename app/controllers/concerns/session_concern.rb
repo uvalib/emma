@@ -92,8 +92,7 @@ module SessionConcern
   #
   def set_flash_notice(message = nil, action: nil, user: nil, **opt)
     message ||= status_message(status: :success, action: action, user: user)
-    # noinspection RubyMismatchedParameterType
-    flash_notice(message, **opt)
+    flash_notice(*message, **opt)
   end
 
   # Set `flash[:alert]` based on the current action and user name.
@@ -107,8 +106,7 @@ module SessionConcern
   #
   def set_flash_alert(message = nil, action: nil, user: nil, **opt)
     message ||= status_message(status: :failure, action: action, user: user)
-    # noinspection RubyMismatchedParameterType
-    flash_alert(message, **opt)
+    flash_alert(*message, **opt)
   end
 
   # Configured success or failure message.
@@ -303,7 +301,7 @@ module SessionConcern
   # created in BookshareService::Common#api.
   #
   #--
-  # noinspection RubyMismatchedParameterType
+  # noinspection RubyMismatchedArgumentType
   #++
   def session_update
     error = nil

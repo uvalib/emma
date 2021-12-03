@@ -11,7 +11,7 @@ module Middleware; end
 require 'faraday'
 require 'api_caching_middleware'
 
-# noinspection RubyMismatchedParameterType
+# noinspection RubyMismatchedArgumentType
 Faraday::Middleware.register_middleware(
   instrumentation:        Faraday::Request::Instrumentation,
   api_caching_middleware: ApiCachingMiddleware

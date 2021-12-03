@@ -86,7 +86,7 @@ module CachingMiddleware
     def initialize(app, opt = nil)
       @app = app
       opt  = DEFAULT_OPTIONS.deep_merge(opt || {})
-      @namespace = opt[:namespace]
+      @namespace       = opt[:namespace]
       raise 'including class must define :namespace' if @namespace.blank?
       @logger          = opt[:logger]
       @cache_dir       = opt[:cache_dir]
@@ -316,6 +316,7 @@ module CachingMiddleware
       log = log.to_s if log.is_a?(Pathname)
       if log.is_a?(String)
         log = File.join(TMPDIR, log) unless log.start_with?('/')
+        # noinspection RubyMismatchedArgumentType
         @logger =
           Logger.new(log).tap { |l| l.level = Logger.const_get(@log_level) }
       end
@@ -336,7 +337,7 @@ module CachingMiddleware
         options = @store_options&.dup || {}
         case type
           when :file_store
-            @cache_dir ||= File.join(FARADAY_CACHE_DIR, @namespace)
+            @cache_dir ||= File.join(FARADAY_CACHE_DIR, @namespace.to_s)
             @cache_dir ||= FARADAY_CACHE_DIR
             params << @cache_dir
           when :redis_cache_store

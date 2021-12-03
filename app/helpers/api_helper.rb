@@ -35,7 +35,7 @@ module ApiHelper
   # @return [String]                    If *html* is *false*.
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def format_api_result(value, indent: nil, separator: "\n", html: true)
     record = value.is_a?(Api::Record)

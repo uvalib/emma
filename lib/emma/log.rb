@@ -62,6 +62,9 @@ module Emma::Log
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def self.add(severity = nil, *args)
     if severity.is_a?(String)
       args.unshift(severity)

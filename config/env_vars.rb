@@ -44,6 +44,7 @@ config && require(config) &&
 # =============================================================================
 
 db_needed   = rails_application?
+# noinspection RubyMismatchedReturnType
 db_needed ||= rake_task? && $*.any? { |arg| arg =~ /^(db|emma|emma_data):/ }
 
 if db_needed

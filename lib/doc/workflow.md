@@ -3,8 +3,8 @@
 
 Two views of the upload workflow, which includes "sub-workflows" for:
 
-| ACTION     |                                                  |
-| ----------:| ------------------------------------------------ |
+|     ACTION |                                                  |
+|-----------:|--------------------------------------------------|
 | **Create** | Submitting a new item to create a new EMMA entry |
 | **Modify** | Updating an existing EMMA entry                  |
 | **Remove** | Deleting an existing EMMA entry                  |

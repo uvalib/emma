@@ -156,7 +156,6 @@ class Shrine
         __ext_debug do
           { destination: destination, options: options, '@io' => @io }
         end
-        # noinspection RubyMismatchedReturnType
         super
       end
 

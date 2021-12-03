@@ -67,6 +67,7 @@ class Action::BulkOperation < Action
   interpolation_methods do
 
     def describe_targets(action = nil, **)
+      # noinspection RubyMismatchedArgumentType
       action ||= self_for_instance_method(__method__)
       targets  = action.try(:targets).presence or return 'NONE'
 

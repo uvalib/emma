@@ -132,6 +132,9 @@ module AuthHelper
   #   @param [String]                        user   User to add.
   #   @param [String, ::OAuth2::AccessToken] token  Associated token.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def stored_auth_update_user(user, token = nil)
     if user.is_a?(OmniAuth::AuthHash)
       user, token = [user.uid, user.credentials.token]
@@ -152,7 +155,6 @@ module AuthHelper
 
     # Create or update the dynamic table entry.
     if stored_auth[user].blank?
-      # noinspection RubyMismatchedParameterType
       stored_auth[user] = stored_auth_entry_value(token)
     elsif stored_auth[user][:access_token] != token
       stored_auth[user][:access_token] = token

@@ -70,6 +70,7 @@ module UploadWorkflow::Bulk::External
     # Batch-execute this method unless it is being invoked within a batch.
     if opt[:bulk].blank?
       opt.merge!(index: index, atomic: atomic)
+      # noinspection RubyMismatchedArgumentType
       return batch_upload_operation(__method__, entries, **opt)
     end
 
@@ -114,6 +115,7 @@ module UploadWorkflow::Bulk::External
     # Batch-execute this method unless it is being invoked within a batch.
     if opt[:bulk].blank?
       opt.merge!(index: index, atomic: atomic)
+      # noinspection RubyMismatchedArgumentType
       return batch_upload_operation(__method__, entries, **opt)
     end
 
@@ -291,6 +293,7 @@ module UploadWorkflow::Bulk::External
       if atomic
         Upload.transaction do
           db_action.call.tap do |count|
+            # noinspection RubyMismatchedArgumentType
             unless count == ids.size
               msg = [__method__]
               msg << 'atomic delete failed'

@@ -132,7 +132,7 @@ module IngestService::Testing
       meth = opt[:meth] || calling_method&.to_sym
       inject_exception(meth) and return
       item = opt[:body] || (args[1].is_a?(Array) ? args[1] : args[1..])
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       inject_fault!(meth, item)
       super
     end

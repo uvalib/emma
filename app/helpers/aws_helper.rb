@@ -188,6 +188,9 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<Hash>]                           If *html* is *false*.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def render_s3_bucket(bucket, objects, **opt)
     css_selector  = '.aws-bucket'
     opt, html_opt = partition_hash(opt, *AWS_BUCKET_OPT)
@@ -210,7 +213,6 @@ module AwsHelper
       title ||= name
       parts <<
         html_tag(:h3, class: 'aws-bucket-hdg', id: "##{name}") do
-          # noinspection RubyMismatchedParameterType
           html_span(title) << s3_bucket_link(name)
         end
       skip_nav_append(title => name)
@@ -227,7 +229,6 @@ module AwsHelper
     objects.compact!
 
     # Transform the object instances into a sorted array of value hashes.
-    # noinspection RubyMismatchedParameterType
     if opt[:sortOrder] || opt[:direction]
       sort_order = opt[:sortOrder] || opt[:sort]
       direction  = opt[:direction] || is_reverse?(sort_order)
@@ -280,7 +281,6 @@ module AwsHelper
     end
 
     # Return the hashes themselves if not rendering HTML.
-    # noinspection RubyMismatchedReturnType
     return objects unless html
 
     # Prepend column headings.
@@ -340,6 +340,7 @@ module AwsHelper
     values  = obj.is_a?(Hash) ? obj.dup : s3_object_values(obj)
 
     # If not rendering HTML then just return with the column values.
+    # noinspection RubyMismatchedReturnType
     return values unless html
 
     # Render each column value.
@@ -411,6 +412,9 @@ module AwsHelper
   #
   # @return [Hash]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def value_hash(item, methods)
     result =
       (item.dup if item.is_a?(Hash)) ||
@@ -481,6 +485,9 @@ module AwsHelper
   #
   # @return [Array<Hash>]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def sort_objects!(array, sort_keys = nil)
     primary_sort = transform_sort_keys(S3_BUCKET_PRIMARY_SORT)
     sort_keys    = transform_sort_keys(sort_keys || S3_BUCKET_DEFAULT_SORT)

@@ -99,6 +99,7 @@ module Import
     else
       # noinspection RubyNilAnalysis
       prefix = "#{prefix}_" unless prefix.end_with?('_')
+      # noinspection RubyMismatchedArgumentType
       k = k.delete_prefix(prefix).camelize(:lower).prepend(prefix)
     end
     k.to_sym
@@ -314,6 +315,7 @@ module Import
   # @return [(nil,nil)]
   #
   def skip(k = nil, v = nil)
+    # noinspection RubyMismatchedArgumentType
     __debug_import(__method__, k, v)
     return nil, nil
   end
@@ -328,6 +330,7 @@ module Import
   # @return [(Symbol,Array)]
   #
   def default(k, v, prefix = name_prefix)
+    # noinspection RubyMismatchedArgumentType
     __debug_import(__method__, k, v)
     k = default_name(k, prefix)
     v = values(v)
@@ -348,6 +351,7 @@ module Import
   # @return [Hash]
   #
   def normalize_results(fields)
+    # noinspection RubyMismatchedReturnType
     fields.transform_values! do |v|
       (v.is_a?(Array) && (v.size <= 1)) ? v.first : v
     end

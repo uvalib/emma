@@ -716,6 +716,9 @@ module UploadWorkflow::External
   # If a later item fails, the successfully-destroyed items will still be
   # removed from the index.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def upload_remove(*items, index: nil, atomic: true, force: nil, **opt)        # NOTE: to Record::Submittable::SubmissionMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
 
@@ -757,7 +760,6 @@ module UploadWorkflow::External
     counter   = 0
     items =
       items.map { |item|
-        # noinspection RubyMismatchedParameterType
         if !item.is_a?(Upload)
           item                        # Only seen if *force* is *true*.
         elsif db_delete(item)
@@ -878,6 +880,7 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     counter   = 0
+    # noinspection RubyMismatchedArgumentType
     items.each_slice(size) do |batch|
       throttle(counter)
       min = size * counter
@@ -1019,6 +1022,7 @@ module UploadWorkflow::External
       # Searching by identifier (possibly modified by other criteria).
       items =
         items.flat_map { |item|
+          # noinspection RubyMismatchedReturnType
           item.is_a?(Upload) ? item : Upload.expand_ids(item) if item.present?
         }.compact
       identifiers = items.reject { |item| item.is_a?(Upload) }
@@ -1498,6 +1502,7 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     repository_requests(items).each_pair do |_repo, repo_items|
+      # noinspection RubyMismatchedReturnType
       repo_items.map! { |item| Upload.record_id(item) }
       s, f = repository_remove(*repo_items, **opt)
       succeeded += s
@@ -1531,6 +1536,7 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     repository_requests(items).each_pair do |_repo, repo_items|
+      # noinspection RubyMismatchedReturnType
       repo_items.map! { |item| Upload.record_id(item) }
       s, f = repository_dequeue(*repo_items, **opt)
       succeeded += s
@@ -1565,6 +1571,9 @@ module UploadWorkflow::External
   #   @param [Boolean] empty_key
   #   @return [Hash{String=>Array<Upload>}]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def repository_requests(items, empty_key: false)                              # NOTE: to Record::Submittable::MemberRepositoryMethods
     case items
       when Array, Upload

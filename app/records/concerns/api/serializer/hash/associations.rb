@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Overrides for Hash serializers.
 #
+#--
+# noinspection RubyResolve
+#++
 module Api::Serializer::Hash::Associations
 
   extend ActiveSupport::Concern

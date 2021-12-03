@@ -71,7 +71,7 @@ module Emma::Common::HtmlMethods
       part = part.camelize   if camelize
       part.presence
     }.compact.join(separator).tap { |result|
-      # noinspection RubyResolve
+      # noinspection RubyResolve, RubyMismatchedArgumentType
       result.prepend('Z') unless result.start_with?(/[a-z]/i)
     }
   end

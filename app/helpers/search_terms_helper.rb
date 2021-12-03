@@ -173,7 +173,6 @@ module SearchTermsHelper
   def search_parameters(prm = nil, **opt)
     keys  = search_query_keys(**opt)
     prm ||= url_parameters
-    # noinspection RubyMismatchedReturnType
     prm.slice(*keys).transform_values { |v| Array.wrap(v) }
   end
 
@@ -224,7 +223,7 @@ module SearchTermsHelper
   # @return [String]
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def list_search_terms(term_list = nil)
     separator = LIST_SEARCH_SEPARATOR

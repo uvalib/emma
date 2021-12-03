@@ -98,6 +98,7 @@ module Record
   #
   def added_modules(context, original)
     current = context.constants(false)
+    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     (current - original).map { |name| context.safe_const_get(name) }.compact
   end
 

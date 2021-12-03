@@ -220,6 +220,7 @@ module ParamsHelper
     v ||= request_parameters
     v = v[:action] || v['action'] if v.is_a?(Hash)
     if v.is_a?(String) || v.is_a?(Symbol)
+      # noinspection RubyMismatchedReturnType
       v.to_s.strip.underscore
     else
       # noinspection RailsParamDefResolve
@@ -262,6 +263,7 @@ module ParamsHelper
   def ctrlr_action_to_names(ctrlr = nil, action = nil)
     ctrlr  = request_parameters unless ctrlr || action
     result = []
+    # noinspection RubyMismatchedArgumentType
     if action
       result << controller_to_name(ctrlr)
       result << action_to_name(action)

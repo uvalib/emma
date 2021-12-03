@@ -9,6 +9,9 @@ __loading_begin(__FILE__)
 #
 # @see Api::Serializer::Hash::Associations
 #
+#--
+# noinspection RubyResolve
+#++
 module Bs::Api::Serializer::Hash::Associations
 
   extend ActiveSupport::Concern

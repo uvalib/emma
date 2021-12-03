@@ -9,6 +9,9 @@ __loading_begin(__FILE__)
 #
 # @see Api::Serializer::Hash::Schema
 #
+#--
+# noinspection RubyResolve
+#++
 module AwsS3::Api::Serializer::Hash::Schema
 
   include AwsS3::Api::Serializer::Schema

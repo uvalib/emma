@@ -651,6 +651,7 @@ class Upload < ApplicationRecord
   #
   def self.make_retrieval_link(rid, base_url = nil)                             # NOTE: to Record::EmmaData
     base_url ||= BULK_BASE_URL
+    # noinspection RubyMismatchedArgumentType
     File.join(base_url, 'download', rid).to_s if rid.present?
   end
 

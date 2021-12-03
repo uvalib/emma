@@ -31,7 +31,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @param [Hash, nil]                              opt
   #
   def initialize(src, opt = nil)
-    # noinspection RubyScope, RubyMismatchedParameterType
+    # noinspection RubyScope, RubyMismatchedArgumentType
     create_message_wrapper(opt) do |opt|
       apply_wrap!(opt)
       super(nil, opt)
@@ -148,8 +148,10 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #     recursive_grouping(Array.wrap(src).compact_blank)
   #   end
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def recursive_grouping(records, level = 0)
-    # noinspection RubyMismatchedParameterType
     groups = records.group_by { |rec| group_fields(rec, level) }.values
     if level.next < GROUPING_LEVELS.size
       groups.flat_map { |recs| recursive_grouping(recs, level.next) }

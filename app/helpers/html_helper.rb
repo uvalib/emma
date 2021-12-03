@@ -154,7 +154,7 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   #--
-  # noinspection RubyMismatchedParameterType
+  # noinspection RubyMismatchedArgumentType
   #++
   def icon_button(icon: nil, text: nil, url: nil, **opt)
     icon           ||= STAR
@@ -305,6 +305,9 @@ module HtmlHelper
   #
   # @see #append_classes!
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def merge_html_options!(html_opt, *args)
     args    = args.map { |a| a[:class] ? a.dup : a if a.is_a?(Hash) }.compact
     classes = args.map { |a| a.delete(:class) }.compact
@@ -423,6 +426,7 @@ module HtmlHelper
   def self.html_truncate(str, length = nil, **opt)
     length ||= HTML_TRUNCATE_MAX_LENGTH
     str = to_utf(str, **opt)
+    # noinspection RubyMismatchedArgumentType
     return str if str.bytesize <= length
     opt[:omission] ||= HTML_TRUNCATE_OMISSION
     opt[:omission] = to_utf(opt[:omission], **opt)
@@ -546,7 +550,6 @@ module HtmlHelper
       remaining    = max_length
       has_omission = false
       xml.children.each do |child|
-        # noinspection RubyNilAnalysis
         if remaining < omit_len
           break
         elsif remaining == omit_len
@@ -556,10 +559,11 @@ module HtmlHelper
           return
         else
           # noinspection RubyNilAnalysis
-          child_len = (opt[:content] ? child.content : child.to_s).bytesize
+          content   = child.content
+          child_len = (opt[:content] ? content : child.to_s).bytesize
           break if (child_len > remaining) && node.children.present?
           remaining   -= child_len
-          has_omission = child.content.end_with?(omission)
+          has_omission = content.end_with?(omission)
           node << child
         end
       end

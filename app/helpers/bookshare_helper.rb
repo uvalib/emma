@@ -377,6 +377,9 @@ module BookshareHelper
   # @return [ActiveSupport::SafeBuffer]       An HTML link element.
   # @return [nil]                             If no *terms* were provided.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def search_link(terms, **opt)
     terms = terms.to_s.strip.presence or return
     opt, html_opt = partition_hash(opt, *SEARCH_LINK_OPTIONS)
@@ -421,7 +424,6 @@ module BookshareHelper
     search[:only_path]  = true
     path = url_for(search)
 
-    # noinspection RubyMismatchedParameterType
     make_link(label, path, **html_opt)
   end
 

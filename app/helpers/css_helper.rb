@@ -27,6 +27,7 @@ module CssHelper
     classes     = css_class_array(*classes)
     opt_classes = html_opt&.dig(:class) || []
     opt_classes = opt_classes.split(' ') if opt_classes.is_a?(String)
+    # noinspection RubyMismatchedArgumentType
     (classes - opt_classes) != classes
   end
 
@@ -92,6 +93,7 @@ module CssHelper
     if html_opt.nil?
       # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
     elsif !html_opt.is_a?(Hash)
+      # noinspection RubyMismatchedArgumentType
       classes.unshift(html_opt)
       html_opt = nil
     end
@@ -144,6 +146,7 @@ module CssHelper
     if html_opt.nil?
       # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
     elsif !html_opt.is_a?(Hash)
+      # noinspection RubyMismatchedArgumentType
       classes.unshift(html_opt)
       html_opt = nil
     end

@@ -310,7 +310,7 @@ module FileFormat
   # @return [String]
   #
   def format_date(value)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     value = IsoDate.day_convert(value) || value if value.is_a?(String)
     value = value.to_date                       if value.is_a?(DateTime)
     value.to_s
@@ -323,7 +323,7 @@ module FileFormat
   # @return [String]
   #
   def format_date_time(value)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     value = IsoDate.datetime_convert(value) || value if value.is_a?(String)
     value = value.strftime('%F %R')                  if value.is_a?(Date)
     value.to_s.delete_suffix(' 00:00')
@@ -394,7 +394,7 @@ module FileFormat
   #
   def self.normalize_language(value)
     return value.map { |v| send(__method__, v) }.uniq if value.is_a?(Array)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     IsoLanguage.find(value)&.alpha3 || value
   end
 
@@ -422,7 +422,7 @@ module FileFormat
       configuration_table[type.to_sym] ||=
         {}.tap do |hash|
           sections.each do |section|
-            # noinspection RubyMismatchedParameterType
+            # noinspection RubyMismatchedArgumentType
             section = configuration_section(section) unless section.is_a?(Hash)
             hash.deep_merge!(section) if section.present?
           end

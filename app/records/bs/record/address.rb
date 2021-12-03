@@ -61,7 +61,7 @@ class Bs::Record::Address < Bs::Api::Record
 
   # Display the address attributes in a single string.
   #
-  # @param [String, nil] separator    Default: ' '.
+  # @param [String] separator         Default: ' '.
   #
   # @return [String]
   #

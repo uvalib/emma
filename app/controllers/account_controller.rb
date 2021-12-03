@@ -114,6 +114,9 @@ class AccountController < ApplicationController
   #
   # @see AccountConcern#create_account
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def create
     __debug_route
     @item   = create_account(no_raise: true)
@@ -159,6 +162,9 @@ class AccountController < ApplicationController
   #
   # @see AccountConcern#update_account
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def update
     __debug_route
     __debug_request
@@ -203,6 +209,9 @@ class AccountController < ApplicationController
   #
   # @see AccountConcern#destroy_accounts
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def destroy
     __debug_route
     @list = destroy_accounts

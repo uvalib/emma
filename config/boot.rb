@@ -173,6 +173,7 @@ end
 def rake_task?
   if !defined?(@in_rake) || @in_rake.nil?
     @in_rake   = $0.to_s.end_with?('rake')
+    # noinspection RubyMismatchedReturnType
     @in_rake ||= $0.to_s.end_with?('rails') && !rails_application? &&
       !$*.reject { |a| a.match(/^(-.*|new|console|generate)$/) }.empty?
     @in_rake &&=
@@ -241,6 +242,7 @@ end
 # BOOT
 # =============================================================================
 
+# noinspection RubyMismatchedArgumentType
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 
 require 'bundler/setup' # Set up gems listed in the Gemfile.

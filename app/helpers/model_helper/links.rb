@@ -71,7 +71,7 @@ module ModelHelper::Links
         scope &&= "emma.#{scope}.show.tooltip"
         html_opt[:title] = I18n.t(scope, default: '')
       end
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       make_link(label, path, **html_opt)
     end
   end

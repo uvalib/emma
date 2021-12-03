@@ -65,6 +65,7 @@ module Field
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
       next unless (section_cfg = config[section]).is_a?(Hash)
+      # noinspection RubyMismatchedReturnType
       sub_sections.find do |sub_sec|
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
@@ -97,6 +98,7 @@ module Field
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
       next unless (section_cfg = config[section]).is_a?(Hash)
+      # noinspection RubyMismatchedReturnType
       sub_sections.find do |sub_sec|
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
@@ -151,7 +153,7 @@ module Field
   # indicates <textarea> or the <input> type attribute to use.
   #
   #--
-  # noinspection RubyCaseWithoutElseBlockInspection
+  # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedArgumentType
   #++
   def self.normalize(entry, field = nil)
     entry = entry.to_s.titleize            if entry.is_a?(Symbol)

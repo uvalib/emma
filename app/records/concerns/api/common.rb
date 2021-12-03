@@ -269,7 +269,6 @@ class IsoDuration < ScalarType
     # @return [String]
     #
     def normalize(v)
-      # noinspection RubyMismatchedReturnType
       case v
         when ActiveSupport::Duration then return from_duration(v)
         when IsoDuration             then return v.to_s
@@ -619,9 +618,9 @@ class IsoDate < ScalarType
     #
     def american_date_translate(value)
       value.to_s.strip.sub(AMERICAN_DATE) do
-        mm = $1
-        dd = $3
-        yy = $4
+        mm = $1.to_s
+        dd = $3.to_s
+        yy = $4.to_s
         yy = '%02d%02d' % [DateTime.now.year.div(100), yy] if yy.size == 2
         '%04d-%02d-%02d' % [yy, mm, dd]
       end
@@ -676,7 +675,7 @@ class IsoDate < ScalarType
       # something like "2021-12" but will correctly interpret "2021/12" as
       # "December 2021", '/' is used as the date separator.
       result = []
-      # noinspection RubyResolve
+      # noinspection RubyResolve, RubyMismatchedArgumentType
       value.sub!(ASN_1_DATETIME) do
         result << [$1, $3, $5 ].compact_blank.join('/') # Date parts
         result << [$7, $9, $10].compact_blank.join(':') # Time parts

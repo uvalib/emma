@@ -69,7 +69,7 @@ class Api::Serializer < ::Representable::Decorator
   # This method must be overridden by the derived class to pass in :method.
   #
   #--
-  # noinspection RubyScope, RubyNilAnalysis
+  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def serialize(method: nil, **opt)
     __debug { ">>> #{self.class} serialize #{method}" }
@@ -81,7 +81,6 @@ class Api::Serializer < ::Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    # noinspection RubyMismatchedParameterType
     __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if log_timing
@@ -110,7 +109,7 @@ class Api::Serializer < ::Representable::Decorator
   # to `super`.
   #
   #--
-  # noinspection RubyScope, RubyNilAnalysis
+  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def deserialize(data, method: nil)
     return unless set_source_data(data)
@@ -123,7 +122,6 @@ class Api::Serializer < ::Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    # noinspection RubyMismatchedParameterType
     __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if log_timing
@@ -155,6 +153,7 @@ class Api::Serializer < ::Representable::Decorator
   # instance where #error? is *true*.
   #
   def set_source_data(data)
+    # noinspection RubyMismatchedReturnType
     @source_data ||= (data.dup if data.is_a?(String) || data.is_a?(Hash))
   end
 

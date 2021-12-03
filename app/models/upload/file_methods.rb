@@ -263,6 +263,7 @@ module Upload::FileMethods
       file_attacher.set(nil)
     end
   rescue => error
+    # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
     raise error unless no_raise
     re_raise_if_internal_exception(error)
@@ -502,6 +503,7 @@ module Upload::FileMethods
     old_file &&= FileUploader::UploadedFile.new(old_file)
     active_file_attacher.promote.tap { old_file&.delete }
   rescue => error
+    # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
     raise error unless no_raise
     re_raise_if_internal_exception(error)
@@ -520,6 +522,7 @@ module Upload::FileMethods
     active_file_attacher.set(nil)
     true
   rescue => error
+    # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
     raise error unless no_raise
     re_raise_if_internal_exception(error)

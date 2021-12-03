@@ -45,6 +45,7 @@ module BookshareService::Request::ReadingActivity
   # @see https://apidocs.bookshare.org/reference/index.html#_post-reading-activity-event
   #
   def create_reading_event(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'readingEvents', **opt)
     api_return(Bs::Message::StatusModel)

@@ -65,7 +65,7 @@ class IngestService::Error < ApiService::Error
     def extract_json(src)
       result   = ([] if src.blank?)
       result ||= (src unless src.is_a?(Hash))
-      # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+      # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
       result ||=
         case src.keys.first.to_s.downcase
           when /^document-\d+/      then parse_create_errors(src)
@@ -132,7 +132,7 @@ class IngestService::Error < ApiService::Error
           val.map! do |v|
             if v.match(/^\s*([^\s,]+),\d+\s*:\s*(.+)\s*$/)
               field[$1] ||= []
-              field[$1] << $2
+              field[$1] << $2.to_s
               next
             end
             v

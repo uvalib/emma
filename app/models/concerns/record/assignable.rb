@@ -61,7 +61,7 @@ module Record::Assignable
   # @see #ATTRIBUTE_OPTIONS_OPTS
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+  # noinspection RubyNilAnalysis
   #++
   def attribute_options(attr, opt = nil)
     return {} if attr.blank?
@@ -90,6 +90,8 @@ module Record::Assignable
     attr.merge!(user_id: user)    if (user &&= User.id_value(user))
     attr.slice!(*(only + force))  if only.present?
     attr.except!(*(excp - force)) if excp.present?
+
+    # noinspection RubyMismatchedReturnType
     opt[:blanks] ? attr : reject_blanks(attr)
   end
 

@@ -199,6 +199,7 @@ module ArtifactHelper
       # === Search::Api::Record ===
       fmts = [format_id] # Note that *nil* is acceptable in this case.
     end
+    # noinspection RubyMismatchedReturnType
     links = fmts.map { |fmt| artifact_link(item, fmt, **html_opt) }.compact
     safe_join(links, separator)
   end
@@ -256,9 +257,9 @@ module ArtifactHelper
 
   # An element for direct download of an artifact.
   #
-  # @param [String, nil]         label
-  # @param [String, Symbol, nil] fmt
-  # @param [Hash]                opt    Passed to #make_link.
+  # @param [String]         label
+  # @param [String, Symbol] fmt
+  # @param [Hash]           opt       Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -268,7 +269,6 @@ module ArtifactHelper
     fmt           = format_label(fmt)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
-    # noinspection RubyMismatchedParameterType
     make_link(label, '#', **prepend_classes!(opt, css_selector))
   end
 

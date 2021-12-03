@@ -168,7 +168,7 @@ class Ability
     LOCAL_ACTION_ALIAS.each_pair do |name, actions|
       alias_action(*actions, to: name) unless actions.blank?
     end
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     case role_prototype_for(user)
       when :developer     then act_as_developer(user)
       when :administrator then act_as_administrator(user)

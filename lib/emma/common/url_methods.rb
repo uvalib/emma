@@ -47,7 +47,7 @@ module Emma::Common::UrlMethods
   # @return [String]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def make_path(*args)
     opt = args.extract_options!
@@ -85,8 +85,10 @@ module Emma::Common::UrlMethods
   # @see #build_query_options
   #
   def url_query(*args)
+    # noinspection RubyMismatchedArgumentType
     opt = { decorate: true, unescape: false }.merge!(args.extract_options!)
     build_query_options(*args, opt).flat_map { |k, v|
+      # noinspection RubyMismatchedReturnType
       v.is_a?(Array) ? v.map { |e| "#{k}=#{e}" } : "#{k}=#{v}"
     }.join('&')
   end
@@ -112,6 +114,7 @@ module Emma::Common::UrlMethods
   # @return [Hash{String=>String}]
   #
   def build_query_options(*args)
+    # noinspection RubyMismatchedArgumentType
     opt = {
       minimize: true,
       decorate: false,

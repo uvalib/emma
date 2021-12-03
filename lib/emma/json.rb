@@ -66,7 +66,7 @@ module Emma::Json
   # keys to be converted to strings.
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
   #++
   def json_parse(arg, log: true, no_raise: true, **opt)
     str = false?(opt[:symbolize_keys])

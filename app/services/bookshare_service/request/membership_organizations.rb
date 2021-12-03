@@ -37,6 +37,7 @@ module BookshareService::Request::MembershipOrganizations
   # @see https://apidocs.bookshare.org/membership/index.html#_get-organization
   #
   def get_organization(organization:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'organizations', organization, **opt)
     api_return(Bs::Message::Organization)
@@ -84,6 +85,7 @@ module BookshareService::Request::MembershipOrganizations
   # @see https://apidocs.bookshare.org/membership/index.html#_create-organization
   #
   def create_organization(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'organizations', **opt)
     api_return(Bs::Message::Organization)
@@ -134,6 +136,7 @@ module BookshareService::Request::MembershipOrganizations
   # @see https://apidocs.bookshare.org/membership/index.html#_get-organization-members
   #
   def get_organization_members(organization:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'organizations', organization, 'members', **opt)
     api_return(Bs::Message::UserAccountList)
@@ -147,10 +150,10 @@ module BookshareService::Request::MembershipOrganizations
           organizationId: String,
         },
         optional: {
-          start:     String,
-          limit:     Integer,
-          sortOrder: BsMemberSortOrder,
-          direction: BsSortDirection,
+          start:          String,
+          limit:          Integer,
+          sortOrder:      BsMemberSortOrder,
+          direction:      BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_get-organization-members'
@@ -180,6 +183,7 @@ module BookshareService::Request::MembershipOrganizations
   # @see https://apidocs.bookshare.org/membership/index.html#_create-organizationmember
   #
   def add_organization_member(organization:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'organizations', organization, 'members', **opt)
     api_return(Bs::Message::UserAccount)
@@ -227,6 +231,7 @@ module BookshareService::Request::MembershipOrganizations
   # @see https://apidocs.bookshare.org/membership/index.html#_get-organization-types
   #
   def get_organization_types(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'organizationTypes', **opt)
     api_return(Bs::Message::OrganizationTypeList)

@@ -66,7 +66,7 @@ module TitleHelper
       html_opt[:id] = "container-img-#{id}"
       html_opt[:'data-group'] = opt[:group] if opt[:group].present?
       html_opt[:'data-turbolinks-permanent'] = true
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       image_element(url, link: link, alt: alt, row: row, **html_opt)
     else
       placeholder_element(comment: 'no thumbnail', **html_opt)
@@ -97,7 +97,7 @@ module TitleHelper
       link = title_path(id: id) if link.is_a?(TrueClass)
       link = nil                if link.is_a?(FalseClass)
       alt  = opt[:alt] || config_lookup('cover.image.alt', item: id)
-      # noinspection RubyMismatchedParameterType, RubyMismatchedReturnType
+      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
       image_element(url, link: link, alt: alt, **html_opt)
     else
       placeholder_element(comment: 'no cover image', **html_opt)

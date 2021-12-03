@@ -250,7 +250,7 @@ module OAuth2
       # Prepare headers and other options.
       opts    = opts&.dup || {}
       headers = opts[:headers]&.dup || {}
-      headers.merge!(params.delete(:headers)) if params[:headers]
+      headers.merge!(params.delete(:headers) || {})
       if meth == :get
         opts[:params] = params
       else
@@ -260,7 +260,7 @@ module OAuth2
       opts[:headers] = headers
       opts[:raise_errors] = false unless opts.key?(:raise_errors)
 
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       request(meth, options[:revoke_url], opts)
     end
 

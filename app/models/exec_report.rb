@@ -101,6 +101,7 @@ class ExecReport
   def add(*src)
     @parts +=
       src.flatten.compact_blank.flat_map { |item|
+        # noinspection RubyMismatchedReturnType
         item.is_a?(ExecReport) ? item.parts : ExecReport::Part[item]
       }.compact.tap { |added| @render_html ||= added.any?(&:html_safe?) }
     self
@@ -256,7 +257,7 @@ class ExecReport
     # @return [Array<Hash>, Hash, nil]
     #
     #--
-    # noinspection RubyNilAnalysis
+    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
     #++
     def serialize_filter(part)
       case part
@@ -286,6 +287,7 @@ class ExecReport
     #
     def message_hashes(src)
       extract_message_hashes(src, __method__).map! { |part|
+        # noinspection RubyMismatchedReturnType
         normalize_hash(part)
       }.compact_blank!
     end
@@ -435,7 +437,7 @@ class ExecReport
           result[HTML_KEY] = src.html_safe? unless result.key?(HTML_KEY)
 
         when Exception
-          # noinspection RubyMismatchedParameterType
+          # noinspection RubyMismatchedArgumentType
           src = ExecError.new(src) unless src.is_a?(ExecError)
           result = { TOPIC_KEY => src.message&.dup }
           result[DETAILS_KEY]   = src.messages[1..]&.deep_dup
@@ -999,6 +1001,7 @@ class ExecReport::Part
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_safe
+    # noinspection RubyMismatchedReturnType
     to_s(html: true)
   end
 
@@ -1436,7 +1439,7 @@ class ExecReport::FlashPart < ExecReport::Part
       sep = opt[:separator]
       opt[:separators] = [sep, sep.strip]
       res =
-        src.map.with_index(start) { |v, pos|
+        src.map.with_index(start || 1) { |v, pos|
           render_part(v, **opt.merge!(pos: pos))
         }
       opt[:html] ? html_join(res, sep) : res.join(sep) if res.present?

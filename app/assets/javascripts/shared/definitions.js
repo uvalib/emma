@@ -5,11 +5,21 @@
 // ============================================================================
 
 /**
+ * @typedef {Window.jQuery} jQuery
+ */
+
+/**
  * @typedef {string|jQuery|HTMLElement|EventTarget} Selector
  */
 
 /**
  * @typedef {Selector|Event|jQuery.Event} SelectorOrEvent
+ */
+
+/**
+ * @callback jQueryEventHandler
+ * @param {Event|jQuery.Event} [event]
+ * @returns {?boolean}
  */
 
 // ============================================================================
@@ -1090,9 +1100,9 @@ function debounce(callback, wait) {
 /**
  * Set an event handler without concern that it may already set.
  *
- * @param {jQuery}                 $element
- * @param {string}                 name     Event name.
- * @param {function(jQuery.Event)} func     Event handler.
+ * @param {jQuery}             $element
+ * @param {string}             name     Event name.
+ * @param {jQueryEventHandler} func     Event handler.
  *
  * @returns {jQuery}
  */
@@ -1104,8 +1114,8 @@ function handleEvent($element, name, func) {
  * Set click and keypress event handlers without concern that it may already
  * set.
  *
- * @param {jQuery}                 $element
- * @param {function(jQuery.Event)} func     Event handler.
+ * @param {jQuery}             $element
+ * @param {jQueryEventHandler} func     Event handler.
  *
  * @returns {jQuery}
  */
@@ -1116,9 +1126,9 @@ function handleClickAndKeypress($element, func) {
 /**
  * Set hover and focus event handlers.
  *
- * @param {jQuery}                 $element
- * @param {function(jQuery.Event)} funcEnter    Event handler for 'enter'.
- * @param {function(jQuery.Event)} [funcLeave]  Event handler for 'leave'.
+ * @param {jQuery}             $element
+ * @param {jQueryEventHandler} funcEnter    Event handler for 'enter'.
+ * @param {jQueryEventHandler} [funcLeave]  Event handler for 'leave'.
  */
 function handleHoverAndFocus($element, funcEnter, funcLeave) {
     if (funcEnter) {

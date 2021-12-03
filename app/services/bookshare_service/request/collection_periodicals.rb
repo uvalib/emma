@@ -50,10 +50,8 @@ module BookshareService::Request::CollectionPeriodicals
   #
   # @see https://apidocs.bookshare.org/catalog/index.html#_periodical-update
   #
-  #--
-  # noinspection LongLine
-  #++
   def update_periodical(seriesId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'periodicals', seriesId, **opt)
     api_return(Bs::Message::PeriodicalSeriesMetadataSummary)
@@ -98,6 +96,7 @@ module BookshareService::Request::CollectionPeriodicals
   # @see https://apidocs.bookshare.org/catalog/index.html#_put-periodical-edition-edit-metadata
   #
   def update_periodical_edition(seriesId:, editionId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'periodicals', seriesId, 'editions', editionId, **opt)
     api_return(Bs::Message::PeriodicalEdition)
@@ -136,6 +135,7 @@ module BookshareService::Request::CollectionPeriodicals
   # @see https://apidocs.bookshare.org/catalog/index.html#_withdraw-periodical-edition
   #
   def remove_periodical_edition(seriesId:, editionId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:delete, 'periodicals', seriesId, 'editions', editionId, **opt)
     api_return(Bs::Message::StatusModel)
@@ -143,11 +143,11 @@ module BookshareService::Request::CollectionPeriodicals
     .tap do |method|
       add_api method => {
         required: {
-          seriesId:        String,
-          editionId:       String,
+          seriesId:     String,
+          editionId:    String,
         },
-        reference_page:    'catalog',
-        reference_id:      '_withdraw-periodical-edition'
+        reference_page: 'catalog',
+        reference_id:   '_withdraw-periodical-edition'
       }
     end
 

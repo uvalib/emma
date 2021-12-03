@@ -101,7 +101,7 @@ module LayoutHelper::SearchBar
   # @return [nil]                             Search unavailable for *target*.
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def search_bar_container(
     target:   nil,
@@ -129,7 +129,6 @@ module LayoutHelper::SearchBar
     fields ||= types
     fields   = fields.dup  if fields.is_a?(Array)
     fields   = fields.keys if fields.is_a?(Hash)
-    # noinspection RubyMismatchedParameterType
     fields   = filter(fields, only: only, except: except)
 
     # Accumulate search term values limited to the selected set of fields.
@@ -162,6 +161,7 @@ module LayoutHelper::SearchBar
       row_opt[:first] = index.zero?
       row_opt[:index] = (index += 1)
       row_opt[:last]  = (index == rows.size)
+      # noinspection RubyMismatchedReturnType
       search_bar_row(field, value, **row_opt)
     end
 
@@ -591,6 +591,9 @@ module LayoutHelper::SearchBar
   #
   # @return [String]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def unique_id(*parts, unique: nil, index: nil, **opt)
     unique = hex_rand if unique.nil? || unique.is_a?(TrueClass)
     parts << unique   if unique

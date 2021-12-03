@@ -175,7 +175,7 @@ module EntryHelper
     pairs &&= render_field_values(item, pairs: pairs, **opt)
     pairs ||= render_empty_value(EMPTY_VALUE)
 
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     html_div(pairs, class: 'data-list')
   end
 
@@ -420,7 +420,7 @@ module EntryHelper
         all     = (group == :all)
         count   = counts[group] || (all ? list.size : items.size)
         enabled = all || count.positive?
-        # noinspection RubyMismatchedParameterType
+        # noinspection RubyMismatchedArgumentType
         enabled ||= active_state_group?(nil, properties, items)
         next unless enabled || session_debug?
 
@@ -653,6 +653,7 @@ module EntryHelper
         next unless can?(operation, item)
         action_opt = properties.merge(opt)
         action_opt[:item] ||= (item if item.is_a?(Model)) # TODO: should this just be Entry?
+        # noinspection RubyMismatchedReturnType
         entry_control_icon(operation, **action_opt)
       }.compact
     html_span(icons, class: css_classes(css_selector)) if icons.present?
@@ -702,7 +703,7 @@ module EntryHelper
     icon = opt.delete(:icon) || STAR
     tip  = opt.delete(:tip)
     opt[:title] ||= tip
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     if op == :check
       opt[:icon] ||= icon
       check_status_popup(item, path, **opt)

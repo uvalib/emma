@@ -27,7 +27,6 @@ module ModelHelper::ListV3
   # @param [Integer, nil]        row_offset   Def: 0.
   # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Hash]                opt
-  # @param [Proc]                block        Passed to #field_pairs.
   #
   # @option opt [Integer] :index              Offset to make unique element IDs
   #                                             passed to #render_pair.
@@ -35,7 +34,7 @@ module ModelHelper::ListV3
   # @return [ActiveSupport::SafeBuffer]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def render_field_hierarchy(
     item,
@@ -44,8 +43,7 @@ module ModelHelper::ListV3
     pairs:      nil,
     row_offset: nil,
     separator:  DEFAULT_ELEMENT_SEPARATOR,
-    **opt,
-    &block
+    **opt
   )
     return ''.html_safe unless item
 
@@ -100,6 +98,7 @@ module ModelHelper::ListV3
         levels = field_scopes(line.values_at(:group, :sub_group))
         rp_opt = opt.merge(line.slice(:index, :row))
         append_classes!(rp_opt, levels) if levels.present?
+        # noinspection RubyMismatchedReturnType
         render_pair(line[:label], value, prop: line, **rp_opt)
       else
         ERB::Util.h(line)

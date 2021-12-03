@@ -30,6 +30,7 @@ module ApiService::Definition
   #
   def add_api(prop)
     name_parts = self.to_s.split('::')
+    # noinspection RubyNilAnalysis
     name_parts.first.constantize.add_api(prop, name_parts.last)
   end
 

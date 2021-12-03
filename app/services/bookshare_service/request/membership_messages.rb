@@ -47,6 +47,7 @@ module BookshareService::Request::MembershipMessages
   # @see https://apidocs.bookshare.org/membership/index.html#_get-messages
   #
   def get_messages(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'messages', **opt)
     api_return(Bs::Message::UserMessageDetailList)
@@ -87,6 +88,7 @@ module BookshareService::Request::MembershipMessages
   # @see https://apidocs.bookshare.org/membership/index.html#_post-message
   #
   def create_message(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'messages', **opt)
     api_return(Bs::Message::UserMessageDetail)
@@ -125,6 +127,7 @@ module BookshareService::Request::MembershipMessages
   # @see https://apidocs.bookshare.org/membership/index.html#_put-message
   #
   def update_message(messageId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'messages', messageId, **opt)
     api_return(Bs::Message::UserMessageDetail)
@@ -153,6 +156,7 @@ module BookshareService::Request::MembershipMessages
   # @see https://apidocs.bookshare.org/membership/index.html#_delete-message
   #
   def expire_message(messageId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'messages', messageId, **opt)
   end

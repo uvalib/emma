@@ -38,6 +38,7 @@ module SearchConcern
   #
   def search_api
     engine = requested_engine(SearchService)
+    # noinspection RubyMismatchedReturnType
     engine ? SearchService.new(base_url: engine) : api_service(SearchService)
   end
 
@@ -140,6 +141,9 @@ module SearchConcern
   #
   # @see PaginationConcern#next_page_path
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def next_page_path(list: nil, **url_params)
     items = list.try(:records) || list || page_items
     return if (items.size < page_size) || (last = items.last).blank?

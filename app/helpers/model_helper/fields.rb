@@ -77,12 +77,11 @@ module ModelHelper::Fields
   # @return [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RubyMismatchedParameterType
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def field_pairs(item, model: nil, action: nil, pairs: nil, **, &block)
     model  = Model.for(model || item) || params[:controller]&.to_sym
     action = (action || params[:action])&.to_sym
-    # noinspection RubyNilAnalysis
     field_values(item, pairs, &block).map { |k, v|
       field, value, config = k, v, nil
       if v.is_a?(Symbol)
@@ -175,6 +174,9 @@ module ModelHelper::Fields
   # layout of information, and this method may not be that beneficial in those
   # cases.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def format_description(text)
     # Look for signs of structure, otherwise just treat as unstructured.
     case text

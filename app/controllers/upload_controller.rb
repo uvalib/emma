@@ -146,6 +146,7 @@ class UploadController < ApplicationController
     # As a convenience (for HTML only), if an index item is actually on another
     # instance, fetch it from there to avoid a potentially confusing result.
     if request.format.html?
+      # noinspection RubyMismatchedReturnType
       [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
         next if base_url.start_with?(request.base_url)
         @host = base_url
@@ -630,7 +631,7 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/api_migrate?v[ersion]=[0.0.]5(&verbose=true&dryrun=false)
+  # == GET /upload/api_migrate?(v|version)=[0.0.]5(&verbose=true&dryrun=false)
   #
   # Modify :emma_data fields and content.
   #

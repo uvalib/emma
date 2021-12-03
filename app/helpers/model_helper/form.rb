@@ -71,7 +71,7 @@ module ModelHelper::Form
   # #render_field_values
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
   def render_form_fields(
     item,
@@ -91,6 +91,7 @@ module ModelHelper::Form
     opt[:row]   = row_offset || 0
     opt[:model] = model
 
+    # noinspection RubyNilAnalysis
     pairs.map { |label, value|
       field = lbl = val = nil
       if value.is_a?(Symbol)
@@ -382,7 +383,6 @@ module ModelHelper::Form
 
     prepend_classes!(opt, css_selector)
     opt[:title] ||= config.dig(:disabled, :tooltip)
-    # noinspection RubyMismatchedReturnType
     submit_tag(label, opt)
   end
 
@@ -411,7 +411,7 @@ module ModelHelper::Form
     else
       url ||= (request.referer if local_request? && !same_request?)
       url ||= 'javascript:history.back();'
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       make_link(label, url, **opt)
     end
   end
@@ -434,6 +434,7 @@ module ModelHelper::Form
     year:   [IsoYear],
   }.transform_values! { |types|
     types.flat_map { |type|
+      # noinspection RubyMismatchedArgumentType
       [type].tap do |related|
         name = (type == BigDecimal) ? 'Decimal' : type
         related << safe_const_get("Axiom::Types::#{name}")
@@ -496,7 +497,6 @@ module ModelHelper::Form
         when :textarea then value.join("\n").split(/[ \t]*\n[ \t]*/).join("\n")
         else value.map { |v| v.to_s.strip.presence }.compact.join(' | ')
       end
-    # noinspection RubyMismatchedReturnType
     case type
       when :check    then render_check_box(name, value, **html_opt)
       when :number   then number_field_tag(name, value, html_opt.merge(min: 0))

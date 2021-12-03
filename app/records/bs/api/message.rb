@@ -29,7 +29,7 @@ class Bs::Api::Message < Bs::Api::Record
   # @param [Hash, nil]                                   opt
   #
   def initialize(src, opt = nil)
-    # noinspection RubyScope, RubyMismatchedParameterType
+    # noinspection RubyScope, RubyMismatchedArgumentType
     create_message_wrapper(opt) do |opt|
       apply_wrap!(opt)
       super(src, **opt)

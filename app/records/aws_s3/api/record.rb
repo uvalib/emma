@@ -28,6 +28,9 @@ class AwsS3::Api::Record < Api::Record
   #
   # @param [*] item
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def remove_empty_values(item)
     case item
       when ModelHelper::Fields::EMPTY_VALUE

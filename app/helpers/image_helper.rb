@@ -87,7 +87,7 @@ module ImageHelper
       opt, link_opt = partition_hash(opt, :class, :style)
       opt[:'aria-hidden'] ||= true
       link_opt[:tabindex] ||= -1
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       image = make_link(image, link, **link_opt)
     end
     html_div(image, opt)

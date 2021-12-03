@@ -226,6 +226,7 @@ module ApiService::Common
   #
   def api_path(*args)
     args   = args.flatten.join('/').strip
+    # noinspection RubyMismatchedArgumentType
     uri    = URI.parse(args)
     qry    = uri.query.presence
     path   = uri.path&.squeeze('/') || ''
@@ -255,7 +256,7 @@ module ApiService::Common
   # If overridden, this should be called first via 'super'.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def api_options(params = nil)
     params ||= @params
@@ -592,6 +593,9 @@ module ApiService::Common
   #
   # @see #api_headers
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def __debug_api_headers(
     options,
     headers,
@@ -616,6 +620,9 @@ module ApiService::Common
   #
   # @return [void]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def __debug_api_response(
     response: @response,
     error:    @exception,

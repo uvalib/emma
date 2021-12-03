@@ -59,7 +59,7 @@ module LinkHelper
     html_opt  = prepend_classes(link_opt, css_selector)
     html_opt[:method] ||= :delete if action == :destroy
     html_opt[:title]  ||= config_lookup("#{action}.tooltip", **look_opt)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     if path.match?(/^https?:/)
       external_link(label, path, **html_opt)
     else
@@ -118,7 +118,7 @@ module LinkHelper
     label  ||= labelize(action)
     path   ||= { controller: opt[:controller], action: action }.compact
     html_tag(:li, class: 'page-action') do
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       link_to_action(label, path: path)
     end
   end
@@ -136,7 +136,7 @@ module LinkHelper
     table ||= page_action_links(**opt)
     link_opt = { current: current, table: table }
     html_tag(:ul, class: 'page-actions') do
-      # noinspection RubyNilAnalysis
+      # noinspection RubyNilAnalysis, RubyMismatchedReturnType
       links = table.keys.map { |action| page_action_link(action, **link_opt) }
       first = links.index { |link| link.include?(ANOTHER) }
       first ? [links.delete_at(first), *links] : links
@@ -193,7 +193,7 @@ module LinkHelper
     table      ||= page_action_links(controller: controller)
 
     action = table.dig(action&.to_sym, :action) || action
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     path   = send(route_helper(controller, action))
 
     raise "model: expected Class; got #{model.class}" unless model.is_a?(Class)
@@ -316,7 +316,7 @@ module LinkHelper
     text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
     prepend_classes!(opt, css_selector)
     append_classes!(opt, *type) unless type == :text
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     html_div(text, opt)
   end
 

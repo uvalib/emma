@@ -400,9 +400,6 @@ module Record::Steppable
 
   # Class methods automatically added to the including record class.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   module ClassMethods
 
     include Record::Steppable
@@ -432,6 +429,7 @@ module Record::Steppable
     # @return [Hash, nil]
     #
     def get_state_table(item = nil, no_raise: true)
+      # noinspection RubyMismatchedArgumentType
       super((item || self), no_raise: no_raise)
     end
 
@@ -442,6 +440,7 @@ module Record::Steppable
     # @return [Array<Symbol>]
     #
     def get_state_names(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -609,9 +608,6 @@ module Record::Steppable
 
   # Instance methods to be added to the including record class.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   module InstanceMethods
 
     include Emma::Common
@@ -632,6 +628,7 @@ module Record::Steppable
     # @return [Hash]
     #
     def state_table(item = nil)
+      # noinspection RubyMismatchedArgumentType
       item and super or @state_table ||= super(self)
     end
 
@@ -643,6 +640,7 @@ module Record::Steppable
     # @return [Hash, nil]
     #
     def get_state_table(item = nil, no_raise: true)
+      # noinspection RubyMismatchedArgumentType
       super((item || self), no_raise: true)
     end
 
@@ -653,6 +651,7 @@ module Record::Steppable
     # @return [Array<Symbol>, nil]
     #
     def get_state_names(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -703,6 +702,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def existing_entry?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -711,6 +711,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def new_submission?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -725,6 +726,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def state_group(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -736,6 +738,7 @@ module Record::Steppable
     # @return [nil]                     If *group* is invalid.
     #
     def state_group_label(group = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -751,6 +754,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_created?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -760,6 +764,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_modified?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -769,6 +774,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_removed?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -778,6 +784,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def under_review?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -787,6 +794,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_submitted?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -796,6 +804,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_indexed?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -805,6 +814,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def completed?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -814,6 +824,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def in_process?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -823,6 +834,7 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def unsealed?(item = nil)
+      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -839,7 +851,7 @@ module Record::Steppable
     # @return [Class<Model::WorkflowJob>]
     #
     def job_class(item = nil)
-      # noinspection RubyMismatchedReturnType
+      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
       item and super or @job_class ||= super(self)
     end
 
@@ -993,6 +1005,7 @@ module Record::Steppable
       rescue => error
         aborting = true
         set_error(error)
+        # noinspection RubyMismatchedArgumentType
         set_exec_report(error)
       end
       if aborting

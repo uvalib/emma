@@ -87,6 +87,7 @@ end
 #
 def get_packages(file)
   file ||= SRC_FILE
+  # noinspection RubyMismatchedArgumentType
   text = File.read(file);                 # debug("text == #{text.inspect}")
   json = JSON.parse(text);                # debug("json == #{json.inspect}")
   pkgs = json&.dig('dependencies')&.keys;   debug("pkgs == #{pkgs.inspect}")

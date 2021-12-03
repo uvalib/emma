@@ -404,9 +404,6 @@ module Record::EmmaIdentification
   # Methods which are only appropriate if the including class is an
   # ApplicationRecord.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   module InstanceMethods
 
     include Record::EmmaIdentification

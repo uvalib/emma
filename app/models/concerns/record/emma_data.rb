@@ -89,6 +89,7 @@ module Record::EmmaData
     return if rid.blank?
     base_url   = base_url[:base_url] if base_url.is_a?(Hash)
     base_url ||= Record::Bulk::BULK_BASE_URL
+    # noinspection RubyMismatchedArgumentType
     File.join(base_url, 'download', rid).to_s
   end
 
@@ -165,7 +166,7 @@ module Record::EmmaData
   # @return [Hash]
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def generate_emma_data(data, attr)                                            # NOTE: from Upload#assign_attributes (sorta)
     data  = data&.dup || {}
@@ -224,7 +225,6 @@ module Record::EmmaData
     # @see Record::EmmaData#generate_emma_data
     #
     def generate_emma_data(data, attr = nil)
-      # noinspection RubyMismatchedParameterType
       super(data, (attr || self))
     end
 

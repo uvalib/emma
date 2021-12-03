@@ -112,6 +112,7 @@ module ApiMigrateHelper
           html_div('NO CHANGES', class: 'field') # TODO: I18n
         end
       end
+    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     column << fields
   end
 
@@ -126,11 +127,11 @@ module ApiMigrateHelper
   #
   def api_field_results(column, fields, level = nil)
     f_css = 'fields'
-    # noinspection RubyMismatchedParameterType
     if fields.present?
       f_id   = unique_id(f_css)
       column = html_span(column) << toggle_button(id: f_id)
       f_opt  = { class: "#{f_css} toggle-panel", id: f_id }
+      # noinspection RubyMismatchedArgumentType
       fields = render_json_data(:upload, fields)
     else
       f_opt  = { class: "#{f_css} empty open" }
@@ -138,6 +139,7 @@ module ApiMigrateHelper
     end
     column = html_tag(level, column, class: 'column')
     fields = html_div(fields, f_opt)
+    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     column << fields
   end
 

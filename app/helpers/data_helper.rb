@@ -106,6 +106,9 @@ module DataHelper
   # @return [Array<Hash>]
   # @return [Array<Array>]                      If *html* is *true*.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def table_records(
     name,
     *cols,
@@ -311,6 +314,7 @@ module DataHelper
       end
     first  = opt.delete(:first) || start_col
     last   = opt.delete(:last)
+    # noinspection RubyMismatchedArgumentType
     last ||= first + [(fields.size - 1 if type == :array).to_i, 0].max
     classes = []
     classes << "row-#{row}" if row

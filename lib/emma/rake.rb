@@ -88,6 +88,9 @@ module Emma::Rake
   #
   # @return [Array<String,nil>]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def task_options(*flags, task_args)
     flags << task_args if task_args.is_a?(String) || task_args.is_a?(Symbol)
     task_args = (task_args.presence if task_args.respond_to?(:to_a))

@@ -393,6 +393,7 @@ module Emma::Debug
       opt = args.extract_options!
 
       # Variations to inject the parameters of the calling method.
+      # noinspection RubyNilAnalysis
       if args[0..1].any? { |arg| arg.is_a?(Binding) }
 
         # Extract the method and/or binding from *args*.

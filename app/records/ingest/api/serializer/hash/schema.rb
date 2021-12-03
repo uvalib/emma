@@ -9,6 +9,9 @@ __loading_begin(__FILE__)
 #
 # @see Api::Serializer::Hash::Schema
 #
+#--
+# noinspection RubyResolve
+#++
 module Ingest::Api::Serializer::Hash::Schema
 
   include Ingest::Api::Serializer::Schema

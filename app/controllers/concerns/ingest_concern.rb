@@ -28,6 +28,7 @@ module IngestConcern
   #
   def ingest_api
     engine = requested_engine(IngestService)
+    # noinspection RubyMismatchedReturnType
     engine ? IngestService.new(base_url: engine) : api_service(IngestService)
   end
 

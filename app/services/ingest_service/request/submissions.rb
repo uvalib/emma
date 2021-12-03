@@ -249,7 +249,7 @@ module IngestService::Request::Submissions
   #   @param [String] id
   #
   def identifier_list(item)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     result =
       case item
         when Ingest::Message::IdentifierRecordList

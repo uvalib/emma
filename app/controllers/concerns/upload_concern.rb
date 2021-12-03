@@ -410,7 +410,7 @@ module UploadConcern
     opt[:params] ||= workflow_parameters
     opt[:no_sim]   = true if UploadWorkflow::Single::SIMULATION # TODO: remove
     opt[:html]     = params[:format].blank? || (params[:format] == 'html')
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.check_status(rec, **opt)
     @workflow.results
   end

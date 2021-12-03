@@ -165,6 +165,7 @@ DEBUG_MAX = 2048
 # @return [nil]
 #
 def __debug_impl(*args, &block)
+  # noinspection RubyMismatchedArgumentType
   opt = {
     debug:    true,
     leader:   DEBUG_LEADER,
@@ -199,7 +200,7 @@ __output_impl { "TRACE_LOADING = #{TRACE_LOADING.inspect}" } if TRACE_LOADING
 
 # Loading level and indentation.
 #
-# @param [Integer, nil] level
+# @param [Integer] level
 #
 # @return [String]
 #
@@ -330,6 +331,9 @@ if TRACE_NOTIFICATIONS
   #
   # @see http://guides.rubyonrails.org/active_support_instrumentation.html
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   NOTIFICATIONS =
     case TRACE_NOTIFICATIONS
       when String then Regexp.new(TRACE_NOTIFICATIONS)

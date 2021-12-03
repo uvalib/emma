@@ -6,6 +6,7 @@
 ENV['RAILS_LOG_TO_STDOUT'] ||= 'true' if %w(c console).include?($*.first)
 
 # Run Rails command.
+# noinspection RubyMismatchedArgumentType
 APP_PATH = File.expand_path('../config/application', __dir__)
 require_relative '../config/boot'
 require 'rails/commands'

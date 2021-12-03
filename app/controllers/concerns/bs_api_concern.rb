@@ -104,6 +104,7 @@ module BsApiConcern
           topic = 'ReadingLists' if name.match?('reading_list')
           order =
             TOPICS.index { |t|
+              # noinspection RubyMismatchedReturnType
               t.is_a?(Regexp) ? (topic =~ t) : (topic == t)
             } || TOPICS.size
           [order, name]

@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # Base class for object-specific serializers that process data passed in as a
 # Hash.
 #
+#--
+# noinspection RubyResolve
+#++
 class Bs::Api::Serializer::Hash < Api::Serializer::Hash
 
   include Bs::Api::Serializer::Hash::Schema

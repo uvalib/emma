@@ -82,7 +82,7 @@ module UploadWorkflow::Single::Data
   # @return [Upload, nil]
   #
   #--
-  # noinspection RubyMismatchedParameterType
+  # noinspection RubyMismatchedArgumentType
   #++
   def set_data(data)
     data = super

@@ -108,8 +108,8 @@ module DataConcern
     tbls  = Array.wrap(opt.delete(:tables)).presence
     names = tbls&.dup || names.presence || table_names.dup
     names.sort_by! { |n| (i = LATER_TABLES.index(n)) ? ('~%03d' % i) : n }
-    names.map! { |name| [name, table_records(name, *cols, **opt)] }
-    names.to_h
+    # noinspection RubyMismatchedReturnType
+    names.map! { |name| [name, table_records(name, *cols, **opt)] }.to_h
   end
 
   # Generate results for the indicated table.

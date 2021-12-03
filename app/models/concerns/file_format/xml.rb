@@ -251,7 +251,7 @@ module FileFormat::Xml
     name.to_s.strip
       .sub(/^[^:]+:/, '')                     # Strip leading scheme if present
       .sub(/^.*\.([^.]+)$/, '\1')             # Simplify compound term.
-      .sub(/^(.)/) { $1.downcase }            # Make first letter lowercase.
+      .sub(/^(.)/) { $1.to_s.downcase }       # Make first letter lowercase.
       .underscore                             # Transform camelcase.
       .tap { |k| k << 's' if k == 'format' }  # Avoid confusion with #format.
       .to_sym
@@ -308,6 +308,7 @@ module FileFormat::Xml
       __debug_line(*args, opt) do
         parts = [meth, filename]
         if element
+          # noinspection RubyNilAnalysis
           name = element.try(:name)&.inspect || element.class.name.demodulize
           parts << "element #{name}"
         end

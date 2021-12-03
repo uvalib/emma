@@ -112,6 +112,7 @@ module SerializationHelper
     elsif item.is_a?(Array)
       return if item.blank?
       make_opt = { separator: separator, serializer: serializer }
+      # noinspection RubyMismatchedReturnType
       item.map { |v| make_xml(v, **make_opt) }.compact.join(separator)
 
     elsif item.respond_to?(:to_xml)

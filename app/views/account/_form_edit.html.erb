@@ -95,7 +95,8 @@
 
     <%- if bookshare_user_menu -%>
       <%= f.label  :effective_id, menu_label,       menu_label_opt %>
-      <%= f.select :effective_id, menu_choices, {}, menu_value_opt %>
+      <%= # noinspection RubyMismatchedArgumentType
+          f.select :effective_id, menu_choices, {}, menu_value_opt %>
     <%- end -%>
 
   </div>

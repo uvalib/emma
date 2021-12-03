@@ -66,6 +66,7 @@ class FileHandle
   #
   def initialize(file)
     __debug_handle(file, leader: "initialize | #{file.class}")
+    # noinspection RubyMismatchedArgumentType
     @handle =
       case file
         when String     then File.new(file)

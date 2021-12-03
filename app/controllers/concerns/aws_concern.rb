@@ -61,6 +61,9 @@ module AwsConcern
   #
   # @return [Array<Symbol>]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def repositories(default: nil, **opt)
     opt    = url_parameters if opt.blank?
     emma   = EmmaRepository.default.to_sym
@@ -87,6 +90,9 @@ module AwsConcern
   #
   # @return [Array<Symbol>]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def deployments(default: nil, **opt)
     opt    = url_parameters if opt.blank?
     values = param_values(opt, *DEPLOYMENT_PARAMS)

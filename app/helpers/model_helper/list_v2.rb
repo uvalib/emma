@@ -70,8 +70,8 @@ module ModelHelper::ListV2
     value_opt = opt.slice(:model, :index, :min_index, :max_index, :no_format)
     fp_opt    = opt.slice(:model).merge!(action: action, pairs: pairs)
 
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     field_pairs(item, **fp_opt, &block).sort_by { |field_properties|
-      # noinspection RubyMismatchedParameterType
       field_sort_order(field_properties.first)
     }.map! { |field, prop|
       opt[:row] += 1

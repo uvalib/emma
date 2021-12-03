@@ -45,6 +45,7 @@ module BookshareService::Request::MembershipActiveTitles
   # @see https://apidocs.bookshare.org/membership/index.html#_user-active-books
   #
   def get_active_books(user: nil, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'activeBooks', **opt)
@@ -59,10 +60,10 @@ module BookshareService::Request::MembershipActiveTitles
           userIdentifier: String,
         },
         optional: {
-          start:     String,
-          limit:     Integer,
-          sortOrder: BsAssignedSortOrder,
-          direction: BsSortDirection,
+          start:          String,
+          limit:          Integer,
+          sortOrder:      BsAssignedSortOrder,
+          direction:      BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_user-active-books'
@@ -85,6 +86,7 @@ module BookshareService::Request::MembershipActiveTitles
   #
   def create_active_book(user: nil, bookshareId:, format:, **opt)
     opt.merge!(bookshareId: bookshareId, format: format)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'activeBooks', **opt)
@@ -119,6 +121,7 @@ module BookshareService::Request::MembershipActiveTitles
   # @see https://apidocs.bookshare.org/membership/index.html#_user-active-books-remove
   #
   def delete_active_book(user: nil, activeTitleId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'activeBooks', activeTitleId, **opt)
@@ -163,6 +166,7 @@ module BookshareService::Request::MembershipActiveTitles
   # @see https://apidocs.bookshare.org/membership/index.html#_user-active-periodicals
   #
   def get_active_periodicals(user: nil, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'activePeriodicals', **opt)
@@ -177,10 +181,10 @@ module BookshareService::Request::MembershipActiveTitles
           userIdentifier: String,
         },
         optional: {
-          start:     String,
-          limit:     Integer,
-          sortOrder: BsAssignedSortOrder,
-          direction: BsSortDirection,
+          start:          String,
+          limit:          Integer,
+          sortOrder:      BsAssignedSortOrder,
+          direction:      BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_user-active-periodicals'
@@ -203,6 +207,7 @@ module BookshareService::Request::MembershipActiveTitles
   #
   def create_active_periodical(user: nil, editionId:, format:, **opt)
     opt.merge!(editionId: editionId, format: format)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'activePeriodicals', **opt)
@@ -238,6 +243,7 @@ module BookshareService::Request::MembershipActiveTitles
   # @see https://apidocs.bookshare.org/membership/index.html#_user-active-periodicals-remove
   #
   def delete_active_periodical(user: nil, activeTitleId:, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'activePeriodicals', activeTitleId, **opt)
@@ -277,6 +283,7 @@ module BookshareService::Request::MembershipActiveTitles
   # @see https://apidocs.bookshare.org/membership/index.html#_get-active-book-profile
   #
   def get_active_books_profile(user: nil, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'activeBooksProfile', **opt)
@@ -314,6 +321,7 @@ module BookshareService::Request::MembershipActiveTitles
   # @see https://apidocs.bookshare.org/membership/index.html#_put-active-book-profile
   #
   def update_active_books_profile(user: nil, **opt)
+    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'activeBooksProfile', **opt)

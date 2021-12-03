@@ -110,9 +110,8 @@
 
         // From .layout-section.page.controls and
         // .layout-section.page.controls.page-controls.controls
-        //
-        // noinspection CssReplaceWithShorthandSafely
         .controls {
+
             display:        flex;
             flex-direction: row;
             flex-wrap:      wrap;
@@ -125,6 +124,8 @@
 
             // From .layout-section.page.control and
             // .layout-section.page.controls.page-controls.controls.control
+            //
+            // noinspection CssReplaceWithShorthandSafely
             .control {
 
                 @extend %control-button-base;

@@ -421,9 +421,11 @@ class PublicationIdentifier < ScalarType
   # @return [Array<PublicationIdentifier>]
   # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def self.objects(value, invalid: true)
     result = split(value).map! { |id| cast(id, invalid: invalid) }
-    # noinspection RubyMismatchedReturnType
     invalid ? result : result.compact
   end
 
@@ -436,6 +438,7 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
   #
   def self.object_map(value, invalid: true)
+    # noinspection RubyMismatchedReturnType
     result = split(value).map! { |id| [id, cast(id, invalid: invalid)] }.to_h
     invalid ? result : result.compact
   end
@@ -605,7 +608,7 @@ class Isbn < PublicationIdentifier
       digits = isbn.delete('^0-9')
       length = digits.size
       digits = digits[0...-1]
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       (length == ISBN_13_DIGITS) && (isbn13_checksum(digits) == check)
     end
 
@@ -623,7 +626,7 @@ class Isbn < PublicationIdentifier
       else
         digits = digits[0...-1]
       end
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       (length == ISBN_10_DIGITS) && (isbn10_checksum(digits) == check)
     end
 
@@ -653,7 +656,7 @@ class Isbn < PublicationIdentifier
       digits = digits&.slice(0...-1)
       valid  = digits && (check == checksum(digits))
       if isbn10 && valid
-        # noinspection RubyMismatchedParameterType
+        # noinspection RubyMismatchedArgumentType
         return +'978' << digits << isbn13_checksum(digits)
       elsif isbn10
         log &&= "#{v.inspect} is not a valid ISBN-10"
@@ -680,7 +683,7 @@ class Isbn < PublicationIdentifier
       digits = digits&.slice(0...-1)
       valid  = digits && (check == checksum(digits))
       if isbn13 && valid && digits&.delete_prefix!('978')
-        # noinspection RubyMismatchedParameterType
+        # noinspection RubyMismatchedArgumentType
         return digits << isbn10_checksum(digits)
       elsif isbn13 && valid
         log &&= "cannot convert #{v.inspect}"
@@ -714,7 +717,7 @@ class Isbn < PublicationIdentifier
     def checksum(isbn, validate: false, **)
       final  = isbn.last.upcase
       digits = isbn.delete('^0-9xX')
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       case digits.size
         when ISBN_13_DIGITS                 # Full ISBN-13.
           digits = digits[0...-1]
@@ -964,7 +967,7 @@ class Issn < PublicationIdentifier
       if digits&.size == ISSN_DIGITS
         final  = digits.last.upcase
         digits = digits[0...-1]
-        # noinspection RubyMismatchedParameterType
+        # noinspection RubyMismatchedArgumentType
         check  = checksum(digits)
         if !validate || (check == final)
           digits << check
@@ -1600,7 +1603,7 @@ class Upc < PublicationIdentifier
         digits = upc[0..(last-1)]
         final  = upc[last]
         added  = upc[(last+1)..]
-        # noinspection RubyMismatchedParameterType
+        # noinspection RubyMismatchedArgumentType
         check  = checksum(digits)
         if !validate || (check == final)
           "#{digits}#{check}#{added}"

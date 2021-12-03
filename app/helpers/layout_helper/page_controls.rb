@@ -90,7 +90,6 @@ module LayoutHelper::PageControls
     model   = model_class(controller)
     user    = (@user || current_user)
     subject = (user if model == User)
-    # noinspection RubyMismatchedReturnType
     actions.map { |entry|
       next if entry.blank?
       if entry.is_a?(Array)
@@ -154,6 +153,7 @@ module LayoutHelper::PageControls
         opt[:link_opt] = append_classes(link_opt, 'disabled') if current
         path = [p_ctrlr, :new] if p_action.to_s == 'new_select'
       end
+      # noinspection RubyMismatchedReturnType
       link_to_action(nil, path: path, **opt)
     }.compact.join("\n").html_safe
   end

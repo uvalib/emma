@@ -120,7 +120,7 @@ public
 def include_submodules(base, filename = nil)
   curr_constants = constants(false)
   if filename.present?
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     require_submodules(filename)
     curr_constants = constants(false) - curr_constants
   end

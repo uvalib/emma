@@ -264,7 +264,7 @@ module AuthConcern
     auth  = auth_hash(user)
     token = auth&.dig(:credentials, :token)
     if token.blank?
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       auth  = synthetic_auth_hash(uid)
       token = auth&.dig(:credentials, :token)
       user.update(access_token: token) if token.present?
@@ -321,6 +321,7 @@ module AuthConcern
   #
   def auth_debug_user?(user = nil)
     uid = User.uid_value(user || current_user)
+    # noinspection RubyMismatchedArgumentType
     session.key?('app.debug') && stored_auth.key?(uid)
   end
 

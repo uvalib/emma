@@ -54,7 +54,7 @@ module Emma::Time
   # @see Process#clock_gettime
   #
   def timestamp(unit = :float_second)
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     Process.clock_gettime(Process::CLOCK_MONOTONIC, unit)
   end
 
@@ -70,6 +70,7 @@ module Emma::Time
   def time_span(start_time, end_time = nil)
     end_time ||= timestamp
     start_time = end_time unless start_time.is_a?(Numeric)
+    # noinspection RubyMismatchedArgumentType
     delta = end_time - start_time
     time  = delta.abs
     sign  = ('-' unless time == delta)

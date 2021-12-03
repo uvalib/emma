@@ -64,6 +64,7 @@ module ModelHelper::List
     value_opt = opt.slice(:model, :index, :min_index, :max_index, :no_format)
     fp_opt    = opt.slice(:model).merge!(action: action, pairs: pairs)
 
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     field_pairs(item, **fp_opt, &block).map { |field, prop|
       opt[:row] += 1
       value  = render_value(item, prop[:value], **value_opt)
@@ -124,7 +125,7 @@ module ModelHelper::List
     # Format the content of certain fields.
     lines = nil
     unless Array.wrap(opt.delete(:no_format)).include?(field)
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       # noinspection RubyCaseWithoutElseBlockInspection
       case field
         when :dc_description
@@ -161,7 +162,7 @@ module ModelHelper::List
     if (help = prop[:help]).present?
       replace = topic = nil
       if field == :emma_retrievalLink
-        # noinspection RubyMismatchedParameterType
+        # noinspection RubyMismatchedArgumentType
         url     = extract_url(value)
         topic   = url_repository(url, default: !application_deployed?)
         replace = help.is_a?(Array) && (help.size > 1)

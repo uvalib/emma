@@ -50,6 +50,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_me
   #
   def get_user_identity(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'me', **opt)
     api_return(Bs::Message::UserIdentity)
@@ -72,6 +73,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-summary
   #
   def get_my_account(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', **opt)
     api_return(Bs::Message::MyAccountSummary)
@@ -98,6 +100,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-downloads
   #
   def get_my_download_history(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'history', **opt)
     api_return(Bs::Message::TitleDownloadList)
@@ -131,6 +134,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-preferences
   #
   def get_my_preferences(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'preferences', **opt)
     api_return(Bs::Message::MyAccountPreferences)
@@ -162,6 +166,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_put-myaccount-preferences
   #
   def update_my_preferences(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'myaccount', 'preferences', **opt)
     api_return(Bs::Message::MyAccountPreferences)
@@ -203,6 +208,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_get-my-recommendation-profile
   #
   def get_my_recommendation_profile(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'recommendationProfile', **opt)
     api_return(Bs::Message::RecommendationProfile)
@@ -237,6 +243,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_put-my-recommendation-profile
   #
   def update_my_recommendation_profile(**opt)
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'myaccount', 'recommendationProfile', **opt)
     api_return(Bs::Message::RecommendationProfile)

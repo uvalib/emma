@@ -67,6 +67,7 @@ module AwsS3Service::Common
     else
       opt[:bucket] ||= bucket_for(repo || items.first)
       raise request_error('no AWS S3 bucket') if opt[:bucket].blank?
+      # noinspection RubyMismatchedReturnType
       items = items.map { |key| submission_id(key) }.compact
       raise request_error('no submission IDs') if items.blank? # TODO: I18n
     end
@@ -235,6 +236,7 @@ module AwsS3Service::Common
         params[:copy_source] = "#{content.bucket_name}/#{content.key}"
         client.copy_object(params, opt)
       else
+        # noinspection RubyMismatchedArgumentType
         params[:body] = content.is_a?(String) ? StringIO.new(content) : content
         client.put_object(params, opt)
       end

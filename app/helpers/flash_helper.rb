@@ -396,7 +396,6 @@ module FlashHelper
   def flash_omission(count = nil, html: false, **)
     text = count ? "#{count} total" : 'more' # TODO: I18n
     text = "[#{text}]"
-    # noinspection RubyMismatchedReturnType
     html ? %Q(<div class="line">#{text}</div>).html_safe : "\n#{text}"
   end
 
@@ -448,6 +447,9 @@ module FlashHelper
   #   @param [Symbol, nil]             topic
   #   @param [Hash]                    opt
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def flash_format(*args, topic: nil, **opt)
     local, opt = partition_hash(opt, :meth, :status, :inspect, :log, :trace)
     meth = args.first.is_a?(Symbol) && args.shift || local[:meth] || __method__
@@ -529,7 +531,6 @@ module FlashHelper
       end
     result &&= [brackets.first, result, brackets.last].join if brackets
     result ||= ''
-    # noinspection RubyMismatchedReturnType
     if xhr
       result
     elsif html
@@ -568,9 +569,6 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer,String>]
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def flash_item(item, **opt)
     if item.is_a?(Array)
       return [] if item.blank?
@@ -595,7 +593,7 @@ module FlashHelper
     else
       opt[:max] ||= FLASH_MAX_ITEM_SIZE
       opt[:max]   = [opt[:max], flash_space_available].min
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       flash_item_render(item, **opt)
     end
   end
@@ -653,7 +651,7 @@ module FlashHelper
   def flash_template(msg, topic:, meth: nil, html: nil, separator: nil, **opt)
     scope = flash_i18n_scope
     topic = topic.to_sym
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     i18n_path = flash_i18n_path(scope, meth, topic)
     if msg.is_a?(Array)
       separator ||= html ? "\n" : ', '

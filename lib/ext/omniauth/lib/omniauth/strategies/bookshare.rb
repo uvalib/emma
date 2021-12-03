@@ -473,7 +473,7 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       #--
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       #++
       def synthetic_access_token(src)
         entry = token = nil
@@ -514,7 +514,7 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       #--
-      # noinspection RubyMismatchedParameterType, RubyMismatchedReturnType
+      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
       #++
       def synthetic_auth_hash(src)
         if src.is_a?(OmniAuth::AuthHash)

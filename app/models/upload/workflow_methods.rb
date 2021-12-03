@@ -245,7 +245,7 @@ module Upload::WorkflowMethods
       "#{old_state.inspect} -> #{new_state.inspect}"
     end
     unless new_state == old_state
-      # noinspection RubyMismatchedParameterType
+      # noinspection RubyMismatchedArgumentType
       dynamic_set_field(column, new_state.presence)
     end
     new_state.to_sym

@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Common SQL methods for database record models.
 #
-# TODO: PostgreSQL 11 handling of JSON?
+# TODO: Postgres 11 handling of JSON?
 #
 # @see https://www.postgresql.org/about/featurematrix/
 # @see https://www.postgresql.org/docs/11/datatype-json.html
@@ -128,6 +128,9 @@ module SqlMethods
   # @example Multiple values as a hash
   #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def sql_clause(k, v = nil)
     k, v = *k.first        if k.is_a?(Hash)
     v = Array.wrap(v)      if v.is_a?(Range)
@@ -252,6 +255,7 @@ module SqlMethods
         text = text.to_f
       end
     end
+    # noinspection RubyMismatchedReturnType
     return text unless text.is_a?(String)
     text = "%#{text}%" unless exact || text.match?(/^[%_]|[^\\][%_]/)
     match_case ? "'#{text}'" : "CAST('#{text}' AS CHAR)"

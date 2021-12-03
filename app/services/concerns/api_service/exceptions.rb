@@ -78,7 +78,7 @@ module ApiService::Exceptions
   def set_error(error, **opt)
     error = error_classes[error] if error.is_a?(Symbol)
     error = error.new(**opt)     if error.is_a?(Class)
-    # noinspection RubyMismatchedParameterType
+    # noinspection RubyMismatchedArgumentType
     @exception =
       case error
         when nil, ApiService::Error     then error
@@ -138,6 +138,7 @@ module ApiService::Exceptions
   # @return [ApiService::AuthError]
   #
   def auth_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:auth].new(*args)
   end
 
@@ -148,6 +149,7 @@ module ApiService::Exceptions
   # @return [ApiService::CommError]
   #
   def comm_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:comm].new(*args)
   end
 
@@ -158,6 +160,7 @@ module ApiService::Exceptions
   # @return [ApiService::SessionError]
   #
   def session_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:session].new(*args)
   end
 
@@ -168,6 +171,7 @@ module ApiService::Exceptions
   # @return [ApiService::ConnectError]
   #
   def connect_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:connect].new(*args)
   end
 
@@ -178,6 +182,7 @@ module ApiService::Exceptions
   # @return [ApiService::TimeoutError]
   #
   def timeout_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:timeout].new(*args)
   end
 
@@ -188,6 +193,7 @@ module ApiService::Exceptions
   # @return [ApiService::XmitError]
   #
   def xmit_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:xmit].new(*args)
   end
 
@@ -198,6 +204,7 @@ module ApiService::Exceptions
   # @return [ApiService::RecvError]
   #
   def recv_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:recv].new(*args)
   end
 
@@ -208,6 +215,7 @@ module ApiService::Exceptions
   # @return [ApiService::ParseError]
   #
   def parse_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:parse].new(*args)
   end
 
@@ -225,6 +233,7 @@ module ApiService::Exceptions
   # @return [ApiService::RequestError]
   #
   def request_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:request].new(*args)
   end
 
@@ -235,6 +244,7 @@ module ApiService::Exceptions
   # @return [ApiService::NoInputError]
   #
   def no_input_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:no_input].new(*args)
   end
 
@@ -251,6 +261,7 @@ module ApiService::Exceptions
   # @return [ApiService::ResponseError]
   #
   def response_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:response].new(*args)
   end
 
@@ -261,6 +272,7 @@ module ApiService::Exceptions
   # @return [ApiService::EmptyResultError]
   #
   def empty_result_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:empty_result].new(*args)
   end
 
@@ -271,6 +283,7 @@ module ApiService::Exceptions
   # @return [ApiService::HtmlResultError]
   #
   def html_result_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:html_result].new(*args)
   end
 
@@ -281,6 +294,7 @@ module ApiService::Exceptions
   # @return [ApiService::RedirectionError]
   #
   def redirect_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:redirection].new(*args)
   end
 
@@ -291,6 +305,7 @@ module ApiService::Exceptions
   # @return [ApiService::RedirectLimitError]
   #
   def redirect_limit_error(*args)
+    # noinspection RubyMismatchedReturnType
     error_classes[:redirect_limit].new(*args)
   end
 
@@ -355,6 +370,7 @@ module ApiService::Exceptions
       line.join('; ')
     end
     __debug_line(leader: '!!!') do
+      # noinspection RubyMismatchedArgumentType
       [service_name] << action.inspect << message << error.class
     end
   end

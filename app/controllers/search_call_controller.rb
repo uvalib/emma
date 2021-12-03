@@ -119,6 +119,9 @@ class SearchCallController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def show_values(item = @item, **)
     if item.is_a?(SearchCall)
       value = item.as_search_parameters
