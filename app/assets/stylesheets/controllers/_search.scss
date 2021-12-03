@@ -307,11 +307,22 @@ $sticky-top-narrow:     3.125rem;
 
     $textbox-vspace: 0.25rem;
 
+    $narrow-indent:  0.375rem;
+
     //=========================================================================
     // Components
     //=========================================================================
 
     > .label {
+
+        &.text,
+        &.date,
+        &.url {
+            display:        flex;
+            flex-direction: row;
+            align-items:    center;
+            height:         100%;
+        }
 
         &.textbox {
             margin-top: $textbox-vspace;
@@ -349,17 +360,24 @@ $sticky-top-narrow:     3.125rem;
             align-items:    center;
         }
 
-        .help-popup .control.icon {
-            margin-left: 0.375rem;
-            padding:     0.25rem 0.3125rem;
-            font-size:   small;
-        }
-
         // Field labels with help icons that are only for the submission form:
         &.field-Repository {
             .help-popup {
                 display: none;
             }
+        }
+
+        .text {
+            @media #{$medium-width} {
+                line-height:    1.25;
+                letter-spacing: -0.5px;
+            }
+        }
+
+        .help-popup .control.icon {
+            margin-left: 0.375rem;
+            padding:     0.25rem 0.3125rem;
+            font-size:   small;
         }
     }
 
@@ -368,13 +386,49 @@ $sticky-top-narrow:     3.125rem;
         height:      100%;
         line-height: $row-line-height;
 
+        &.text,
+        &.date,
+        &.url {
+
+            display:         flex;
+            flex-direction:  column;
+            justify-content: center;
+
+            @media #{$narrow-screen} {
+                padding-left: $narrow-indent;
+            }
+
+            // If conditions cause the URL to wrap, keep the lines together.
+            a {
+                line-height: 1.25;
+                word-break:  break-all;
+
+                @media #{$narrow-screen} {
+                    height: 100%;
+                }
+            }
+        }
+
         &.list,
         &.textbox {
+
             width:       max-content;
             min-width:   15vw;
-            max-width:   75vw;
             max-height:  20vh;
             overflow-y:  auto;
+
+            @media #{$wide-screen} {
+                max-width: 75vw;
+            }
+
+            @media #{$medium-width} {
+                max-width: 62.5vw;
+            }
+
+            @media #{$narrow-screen} {
+                width:     auto;
+                max-width: calc(100vw - 2.5rem);
+            }
         }
 
         &.list {
@@ -382,17 +436,29 @@ $sticky-top-narrow:     3.125rem;
             // lines to wrap.  This makes the wrapping more evident by showing
             // that portion indented.
             > * {
-                $indent:     1rem;
+
+                $indent: 1rem;
+
                 margin-left: $indent;
                 text-indent: -$indent;
+
+                @media #{$narrow-screen} {
+                    padding-left: $narrow-indent;
+                }
             }
         }
 
         &.textbox {
+
             margin-top:    $textbox-vspace;
             margin-bottom: $textbox-vspace;
             height:        calc(100% - #{2 * $textbox-vspace});
             line-height:   1.25;
+
+            @media #{$narrow-screen} {
+                margin-left:  $flex-gap-x;
+                padding-left: $narrow-indent - $flex-gap-x;
+            }
         }
 
         &.field-Title {
@@ -605,8 +671,7 @@ $sticky-top-narrow:     3.125rem;
 
         &.field-RetrievalLink {
             @media #{$narrow-screen} {
-                margin-top:    0.5rem;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
             }
         }
     }
@@ -969,6 +1034,7 @@ body.aggregate-style {
 
                 display:         flex;
                 flex-direction:  row-reverse;
+                flex-wrap:       wrap-reverse;
                 column-gap:      1rem;
                 row-gap:         0.5rem;
 
@@ -1440,19 +1506,35 @@ body.aggregate-style {
                 0 0 0 $gap $mask, // inner gap
                 0 0 0 $box $fg;   // outer boundary
 
-            &.value.array {
-                box-shadow:
-                          0 0 0 $gap $mask, // inner gap
-                      -$gap 0 0 $gap $mask, // mask left side inner boundary
-                          0 0 0 $box $fg,   // inner boundary
-                    -$shift 0 0 $gap $mask, // outer gap
-                    -$shift 0 0 $box $fg;   // outer boundary
+            @media #{$not-narrow-screen} {
+
+                &.value.array {
+                    box-shadow:
+                             0 0 0 $gap $mask, // inner gap
+                         -$gap 0 0 $gap $mask, // mask left side inner boundary
+                             0 0 0 $box $fg,   // inner boundary
+                       -$shift 0 0 $gap $mask, // outer gap
+                       -$shift 0 0 $box $fg;   // outer boundary
+                }
+
+                &.value:not(.array) {
+                    margin-left:   -$exdent;
+                    padding-left:  $exdent;
+                    padding-right: 2 * $exdent;
+                }
             }
 
-            &.value:not(.array) {
-                margin-left:   -$exdent;
-                padding-left:  $exdent;
-                padding-right: 2 * $exdent;
+            @media #{$narrow-screen} {
+
+                &.value:not(.array) {
+                    margin-left:   0;
+                    padding-right: 3 * $exdent;
+                }
+
+                &.value:not(.array):not(.list) {
+                    padding-left:  $exdent;
+                }
+
             }
         }
 
@@ -1477,7 +1559,7 @@ body.aggregate-style {
         }
     }
 
-    .search-list.mark-types .value:not(.field-Title) {
+    .search-list.mark-types .value {
 
         @mixin type-marker($term, $color: red, $inner-color: black) {
             &:before {
@@ -1862,17 +1944,32 @@ body.search-v3 {
             // Probably-temporary divider between metadata for individual files
             > .label.field-NewFile,
             > .value.field-NewFile {
+                margin:      0.5rem 0;
                 line-height: 1.25;
                 font-size:   larger;
                 font-weight: bolder;
             }
 
             > .label.field-NewFile {
+
                 @include fill(2rem); // Extend to touch the .value element.
+
+                @media #{$narrow-screen} {
+                    box-shadow:
+                        -1px  1px  0  3px  whitesmoke,
+                        -1px -1px  0  3px  whitesmoke;
+                }
             }
 
             > .value.field-NewFile {
+
                 @include fill(2px);
+
+                height: unset;
+
+                @media #{$narrow-screen} {
+                    display: none;
+                }
             }
         }
     }

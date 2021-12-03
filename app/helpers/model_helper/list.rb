@@ -175,14 +175,16 @@ module ModelHelper::List
     opt[:title] = prop[:tooltip] unless field == :dc_title
 
     # Option settings for both label and value.
-    status   = nil
-    status ||= ('array'     if prop[:array] && enum)
-    status ||= ('list'      if prop[:array])
-    status ||= ('enum'      if enum)
-    status ||= ('textbox'   if prop[:type] == 'textarea')
-    status ||= ('numeric'   if prop[:type] == 'number')
-    status ||= ('hierarchy' if prop[:type] == 'json')
-    status ||= prop[:type]
+    status = nil
+    unless field == :dc_title
+      status ||= ('array'     if prop[:array] && enum)
+      status ||= ('list'      if prop[:array])
+      status ||= ('enum'      if enum)
+      status ||= ('textbox'   if prop[:type] == 'textarea')
+      status ||= ('numeric'   if prop[:type] == 'number')
+      status ||= ('hierarchy' if prop[:type] == 'json')
+      status ||= prop[:type]
+    end
     prepend_classes!(opt, "row-#{row}", type, status)
 
     # Label and label HTML options.

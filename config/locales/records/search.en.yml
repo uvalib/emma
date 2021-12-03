@@ -60,7 +60,7 @@ en:
         dc_type:                            ~ # 'Type'
         dc_description:                     ~ # 'Description'
         dc_subject:                         ~ # 'Subject'
-        dc_identifier:                      'Standard Identifiers'
+        dc_identifier:                      'Identifiers'
         dc_relation:                        'Related Identifiers'
         dc_rights:                          ~ # 'Rights'
 
