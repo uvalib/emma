@@ -213,7 +213,7 @@ en:
       v3:
         <<: *INDEX
         <<: *HIERARCHY
-        title:          'EMMA Unified Search - Titles'
+        title:          'EMMA Unified Search - Title Results'
 
       # =======================================================================
 

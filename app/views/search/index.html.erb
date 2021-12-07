@@ -24,39 +24,33 @@
     set_page_description(title)
   end
 
-  title        = safe_join([title, help]) if help
-  list_heading = html_tag(:h1, title, class: 'heading')
-  list_bottom  = nil
-
-  opt = { list: list, total: total, page: page, row: (row if default_style?) }
-  top_controls, bottom_controls = index_controls(**opt)
-  bottom_controls = nil if list.blank?
-
-  if default_style?
-    opt[:row] += 1 if top_controls
-  else
+  unless (old_style = default_style?)
     append_page_classes('new-style', "#{search_style}-style")
     append_page_classes('dev-style') if session_debug?
-    list_heading = [list_heading, top_controls, search_page_styles]
-    list_heading = html_div(list_heading, class: 'heading-bar')
-    list_bottom  = bottom_controls
-    top_controls = bottom_controls = nil
   end
+
+  opt = { list: list, total: total, page: page, row: (row if old_style) }
+  top_ctrls, bottom_ctrls = index_controls(**opt)
+  bottom_ctrls = nil if list.blank?
+  list_ctrls   = old_style ? [] : [top_ctrls, search_page_styles]
+  list_heading = page_heading(title, *list_ctrls, help: help)
+  list_footing = (bottom_ctrls unless old_style)
+  bottom_ctrls = top_ctrls = nil unless old_style
+  opt[:row] += 1 if top_ctrls && opt[:row].is_a?(Integer)
 
   template_opt = opt.merge!(skip: :title, action: action)
 
 -%>
 
 <%= list_heading %>
-
 <%= page_description_section %>
 
 <%= page_directions_section %>
 <div class="search-list">
-  <%= top_controls %>
+  <%= top_ctrls %>
   <%= render 'search/list', template_opt %>
-  <%= bottom_controls %>
+  <%= bottom_ctrls %>
 </div>
-<%= list_bottom %>
 
+<%= list_footing %>
 <%= page_notes_section %>

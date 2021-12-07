@@ -13,8 +13,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section(action: :advanced) %>
 
 <%= page_directions_section(action: :advanced) %>

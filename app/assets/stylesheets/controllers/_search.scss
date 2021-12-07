@@ -1926,6 +1926,16 @@ body.aggregate-style {
     }
 }
 
+body.search-v2,
+body.search-v3 {
+
+    // This is only meaningful for "un-applying" a search style that was set
+    // for the "normal" /search results page.
+    .restore-button {
+        display: none;
+    }
+}
+
 body.search-v3 {
 
     .search-list {
