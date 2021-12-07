@@ -21,14 +21,17 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::ActivePeriodicalList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::ActivePeriodical
+
   schema do
-    has_many  :activeTitles, Bs::Record::ActivePeriodical
+    has_many  :activeTitles, LIST_ELEMENT
     has_many  :allows,       BsAllowsType
     has_one   :limit,        Integer
     has_many  :links,        Bs::Record::Link

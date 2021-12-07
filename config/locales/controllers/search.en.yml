@@ -151,7 +151,7 @@ en:
           index:
             - emma_titleId
 
-        file:
+        files:
           bibliographic:
             - dc_format
             - emma_formatFeature

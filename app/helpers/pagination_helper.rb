@@ -73,6 +73,29 @@ module PaginationHelper
 
   public
 
+  # Extract the number of "items" reported by an object.
+  #
+  # (For aggregate items, this is the number of aggregates as opposed to the
+  # number of records from which they are composed.)
+  #
+  # @param [Api::Record, Model, Array, Hash, *] value
+  # @param [*]                                  default
+  #
+  # @return [Numeric]
+  #
+  def item_count(value, default: 1)
+    result   = (value.size if value.is_a?(Hash) || value.is_a?(Array))
+    result ||= value.try(:item_count)   || value.try(:titles).try(:size)
+    result ||= value.try(:totalResults) || value.try(:records).try(:size)
+    result || default
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Default results per page for the current controller/action.
   #
   # @return [Integer]

@@ -119,7 +119,7 @@ class UploadController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render_json index_values }
-      format.xml  { render_xml  index_values }
+      format.xml  { render_xml  index_values(item: :entry) }
     end
   rescue SubmitError, Record::SubmitError => error
     show_search_failure(error)
@@ -723,25 +723,27 @@ class UploadController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [Array<Upload>] list
+  # @param [Hash]          opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list)
-    { entries: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :entries)
+    super(list, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @param [Upload, Hash] item
+  # @param [Hash]         opt
   #
   # @return [Hash{Symbol=>*}]
   #
-  def show_values(item = @item, **)
+  def show_values(item = @item, **opt)
     item = item.is_a?(Upload) ? item.attributes.symbolize_keys : item.dup
     data = item.extract!(:file_data).first&.last
     item[:file_data] = safe_json_parse(data)
-    # noinspection RubyMismatchedReturnType
-    item
+    super(item, **opt)
   end
 
   # Response values for de-serializing download information to JSON or XML.

@@ -230,6 +230,21 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
+     * RecordMessageProperties
+     *
+     * - list_type: only present with session_debug
+     * - item_type: only present with session_debug
+     *
+     * @typedef {{
+     *      total:     number,
+     *      limit:     number|null|undefined,
+     *      links:     array|null|undefined,
+     *      list_type: ?(string|null|undefined),
+     *      item_type: ?(string|null|undefined)
+     * }} RecordMessageProperties
+     */
+
+    /**
      * A complete submission database record.
      *
      * @typedef {{
@@ -264,12 +279,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @typedef {{
      *      entries: {
-     *          list:       UploadRecord[],
-     *          properties: {
-     *              total:  number,
-     *              limit:  number|null,
-     *              links:  array|null
-     *          }
+     *          properties: RecordMessageProperties,
+     *          list:       UploadRecord[]
      *      }
      * }} UploadRecordMessage
      */
@@ -334,13 +345,9 @@ $(document).on('turbolinks:load', function() {
      * JSON format of a response message containing a list of search results.
      *
      * @typedef {{
-     *      records: {
-     *          list:       SearchResultEntry[],
-     *          properties: {
-     *              total:  number,
-     *              limit:  number|null,
-     *              links:  array|null
-     *          }
+     *      response: {
+     *          properties: RecordMessageProperties,
+     *          records:    SearchResultEntry[]
      *      }
      * }} SearchResultMessage
      */
@@ -3169,7 +3176,7 @@ $(document).on('turbolinks:load', function() {
         } else {
             search_terms['q'] = search;
         }
-        const url = makeUrl('/search', search_terms);
+        const url = makeUrl('/search/direct', search_terms);
 
         debug(`${func}: VIA`, url);
 
@@ -3190,9 +3197,9 @@ $(document).on('turbolinks:load', function() {
         /**
          * Extract the list of search result entries returned as JSON.
          *
-         * @param {object}         data
-         * @param {string}         status
-         * @param {XMLHttpRequest} xhr
+         * @param {SearchResultMessage|object} data
+         * @param {string}                     status
+         * @param {XMLHttpRequest}             xhr
          */
         function onSuccess(data, status, xhr) {
             // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
@@ -3201,11 +3208,7 @@ $(document).on('turbolinks:load', function() {
             } else if (typeof(data) !== 'object') {
                 error = `unexpected data type ${typeof data}`;
             } else {
-                // The actual data may be inside '{ "response" : { ... } }'.
-                /** @type {SearchResultMessage} message */
-                const message = data.response   || data;
-                const entries = message.records || {};
-                records       = entries.list    || [];
+                records = data.response?.records || [];
             }
         }
 

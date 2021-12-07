@@ -71,7 +71,7 @@ class CategoryController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render_json index_values }
-      format.xml  { render_xml  index_values }
+      format.xml  { render_xml  index_values(item: :category) }
     end
   end
 
@@ -84,11 +84,13 @@ class CategoryController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [ApiCategoriesList] list
+  # @param [Hash]              opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list)
-    { categories: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :categories)
+    super(list, **opt)
   end
 
 end

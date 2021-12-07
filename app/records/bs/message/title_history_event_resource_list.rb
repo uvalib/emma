@@ -15,12 +15,16 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::TitleHistoryEventResourceList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::TitleHistoryEvent
+
   schema do
-    has_many :events, Bs::Record::TitleHistoryEvent
+    has_many :events, LIST_ELEMENT
   end
 
 end

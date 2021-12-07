@@ -44,11 +44,18 @@ module SerializationConcern
   # @option opt [String] :name        Passed to #make_xml.
   #
   def render_xml(item, **opt)
-    opt, render_opt = partition_hash(opt, :separator, :name)
-    item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
-    item = item.merge(error: api_exec_report) if api_error?
-    text = make_xml(item, **opt) || ''
-    render xml: text, **render_opt
+    xml_opt, opt = partition_hash(opt, :separator, :name)
+    if item.is_a?(Model)
+      xml_opt[:name] ||= :response
+    elsif item.is_a?(Hash)
+      item = { response: item } unless item.size == 1
+      item = item.merge(error: api_exec_report) if api_error?
+    else
+      item = { response: item }
+    end
+    text = make_xml(item, **xml_opt)
+    text = add_xml_prolog(text)
+    render xml: text, **opt
   end
 
   # ===========================================================================
@@ -59,37 +66,71 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [*] list
+  # @param [*]    list
+  # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>Array,Hash}]
+  # @option opt [Symbol, String] :wrap
+  # @option opt [Symbol, String] :name  Default: :list
   #
-  def index_values(list = nil)
-    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
-    limit =
-      case list
-        when Api::Record then list.try(:limit)
-        when Array       then list.size
-      end
-    {
-      list: page_items.map { |item| show_values(item, as: nil) },
-      properties: {
-        total: total_items,
-        limit: limit,
-        links: list.try(:links)
-      }
+  # @return [Hash{Symbol=>Array,Hash,*}]
+  #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
+  def index_values(list = nil, **opt)
+    wrap_name = opt.key?(:wrap) ? opt.delete(:wrap) : :response
+    list_name = opt.key?(:name) ? opt.delete(:name) : :list
+    item_name = opt.delete(:item)
+    debug     = session_debug?
+
+    items  = try(:page_items) || []
+    list ||= items
+
+    prop = {
+      total: total_items,
+      limit: list.try(:limit) || item_count(list),
+      links: list.try(:links)
     }
+    prop[:list_type] = list.class.name        if debug
+    prop[:item_type] = items.first.class.name if debug
+
+    if (elements = list.try(:elements))
+      items = elements.map { |v| v.to_hash(item: item_name) }
+    elsif list.is_a?(Model)
+      items = list.to_hash(item: item_name)
+      items = items[:titles] || items[:records] || items if items.size == 1
+    elsif list.is_a?(Array)
+      items = list.map { |v| show_values(v, as: nil) }
+    elsif list.is_a?(Hash)
+      items = list
+    else
+      items = [list]
+    end
+
+    items.try(:map!) { |v| { item_name => v } }       if item_name
+    items = { properties: prop, list_name => items }  if list_name
+    items = { wrap_name => items }                    if wrap_name
+    items
   end
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [Hash, *]     items
+  # @param [Hash, *]     item
   # @param [Symbol, nil] as           Either :hash or :array if given.
+  # @param [Symbol, String] name
   #
-  # @return [Hash{Symbol=>Hash,Array}]
+  # @return [Hash{Symbol=>Hash,Array,*}]
   #
-  def show_values(items, as: nil)
-    as ||= :hash
-    (as == :array) ? items.values : items
+  def show_values(item, as: nil, name: nil, **)
+    if as == :array
+      result = item.try(:values) || Array.wrap(item)
+    elsif item.is_a?(Model)
+      result = item.to_hash(item: name)
+    else
+      result = item
+    end
+    name ||= :item unless result.is_a?(Hash)
+    name ? { name => result } : result
   end
 
   # ===========================================================================

@@ -9,12 +9,16 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchRecordList < Search::Api::Message
 
+  include Search::Shared::CollectionMethods
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Search::Record::MetadataRecord
+
   schema do
-    has_many :records, Search::Record::MetadataRecord
+    has_many :records, LIST_ELEMENT
   end
 
   # ===========================================================================

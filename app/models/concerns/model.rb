@@ -23,11 +23,195 @@ module Model
     (respond_to?(:id) ? id : object_id).to_s
   end
 
-  # Indicate whether the including class is actually a composite of one or more
-  # Model instances.
+  # Indicate whether the Model instance is composed of other Model instances.
   #
   def aggregate?
-    false
+    self.class.send(__method__)
+  end
+
+  # The type for constituent Model elements for a class whose instances are
+  # aggregates.
+  #
+  # @return [Class, nil]
+  #
+  def aggregate_type
+    self.class.send(__method__)
+  end
+
+  # The field holding constituent Model elements for a class which supports
+  # aggregates.
+  #
+  # @return [Symbol, nil]
+  #
+  def aggregate_field
+    self.class.send(__method__)
+  end
+
+  # Indicate whether the Model instance is primarily a container for a list of
+  # other Model instances.
+  #
+  def collection?
+    self.class.send(__method__)
+  end
+
+  # The type for constituent Model elements for a class whose instances are
+  # collections.
+  #
+  # @return [Class, nil]
+  #
+  def collection_type
+    self.class.send(__method__)
+  end
+
+  # The field holding constituent Model elements for a class whose instances
+  # are collections.
+  #
+  # @return [Symbol, nil]
+  #
+  def collection_field
+    self.class.send(__method__)
+  end
+
+  # The constituent Model elements related to this Model instance.
+  #
+  # @return [Array]   Possibly empty.
+  # @return [nil]     If the instance is not an aggregate or collection.
+  #
+  def elements
+    relation_field = [collection_field, aggregate_field].compact.first
+    try(relation_field) if relation_field
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  extend ActiveSupport::Concern
+
+  # Methods which extend the including class.
+  #
+  module ClassMethods
+
+    # Indicate whether instances of the including class are composed of other
+    # Model instances.
+    #
+    def aggregate?
+      aggregate_type.present?
+    end
+
+    # The type for constituent Model elements for a class whose instances are
+    # aggregates.
+    #
+    # @return [Class<Model>, nil]
+    #
+    def aggregate_type
+      safe_const_get(:BASE_ELEMENT)
+    end
+
+    # The field holding constituent Model elements for a class which supports
+    # aggregates.
+    #
+    # @return [Symbol, nil]
+    #
+    def aggregate_field
+      safe_const_get(:BASE_FIELD)
+    end
+
+    # Indicate whether the including class is primarily a container for a list
+    # of other Model instances.
+    #
+    def collection?
+      collection_type.present?
+    end
+
+    # The type for constituent Model elements for a class whose instances are
+    # collections.
+    #
+    # @return [Class<Model>, nil]
+    #
+    def collection_type
+      safe_const_get(:LIST_ELEMENT)
+    end
+
+    # The field holding constituent Model elements for a class whose instances
+    # are collections.
+    #
+    # @return [Symbol, nil]
+    #
+    def collection_field
+      safe_const_get(:LIST_FIELD)
+    end
+
+    # Create a :LIST_FIELD or :BASE_FIELD constant for a class if it defines
+    # :LIST_ELEMENT or :BASE_ELEMENT (respectively).
+    #
+    # @param [Symbol, String] field_name
+    # @param [Class, nil]     field_type
+    #
+    # @return [Symbol, nil]
+    #
+    # @see Api::Record::Associations::ClassMethods#has_many
+    #
+    def set_relation_field(field_name, field_type)
+      @check_relations ||= validate_relations
+      return unless field_type
+      if field_type == collection_type
+        const_set(:LIST_FIELD, field_name.to_sym)
+      elsif field_type == aggregate_type
+        const_set(:BASE_FIELD, field_name.to_sym)
+      end
+    end
+
+    # Validate the including aggregate/collection class.
+    #
+    # If a record class is intended to be an aggregate it should both include
+    # Api::Shared::AggregateMethods and define :BASE_ELEMENT.
+    #
+    # If a record class is intended to be a collection it should both include
+    # Api::Shared::CollectionMethods and define :LIST_ELEMENT.
+    #
+    # @raise [SyntaxError]            A problem was detected in development.
+    #
+    # @return [TrueClass]
+    #
+    def validate_relations
+      a_mod  = ancestors.find { |m| m == Api::Shared::AggregateMethods }
+      c_mod  = ancestors.find { |m| m == Api::Shared::CollectionMethods }
+      a_type = aggregate_type
+      c_type = collection_type
+      both   = nil
+      miss   = []
+      if a_mod && c_mod
+        both = [a_mod, c_mod]
+      elsif a_type && c_type
+        both = [a_type, c_type]
+      else
+        miss << :BASE_ELEMENT                   if a_mod  && !a_type
+        miss << :LIST_ELEMENT                   if c_mod  && !c_type
+        miss << Api::Shared::AggregateMethods   if a_type && !a_mod
+        miss << Api::Shared::CollectionMethods  if c_type && !c_mod
+      end
+      failure =
+        if both.present?
+          both = both.join(' and ') if both.is_a?(Array)
+          "found #{both}: cannot be both an aggregate and a collection"
+        elsif miss.present?
+          miss.map! { |item|
+            item = item.to_s
+            kind = item.match?(/BASE|Aggregate/) ? :aggregate : :collection
+            "#{kind} record missing #{item}"
+          }.join('; AND ')
+        end
+      if failure.present?
+        failure = "BAD RECORD DEFINITION for #{self.name}: #{failure}"
+        Log.error(failure)
+        raise SyntaxError, failure unless production_deployment?
+      end
+      true
+    end
+
   end
 
   # ===========================================================================

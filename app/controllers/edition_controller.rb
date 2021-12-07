@@ -76,7 +76,7 @@ class EditionController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render_json index_values }
-      format.xml  { render_xml  index_values }
+      format.xml  { render_xml  index_values(item: :edition) }
     end
   end
 
@@ -179,21 +179,25 @@ class EditionController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [ApiPeriodicalEditionList] list
+  # @param [Hash]                     opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list)
-    { editions: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :editions)
+    super(list, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @param [Bs::Record::PeriodicalEdition, Hash] item
+  # @param [Hash]                                opt
   #
   # @return [Hash{Symbol=>Bs::Record::PeriodicalEdition,Hash}]
   #
-  def show_values(item = @item, **)
-    { edition: item }
+  def show_values(item = @item, **opt)
+    opt.reverse_merge!(name: :edition)
+    super(item, **opt)
   end
 
 end

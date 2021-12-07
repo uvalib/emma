@@ -17,18 +17,21 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::UserAccountList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::UserAccount
+
   schema do
     has_many  :allows,       BsAllowsType
     has_many  :links,        Bs::Record::Link
     has_one   :next
     has_one   :totalResults, Integer
-    has_many  :userAccounts, Bs::Record::UserAccount
+    has_many  :userAccounts, LIST_ELEMENT
   end
 
 end

@@ -109,14 +109,16 @@ class HomeController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Hash, nil]   result
-  # @param [Symbol, nil] as           Either :hash or :array if given.
+  # @param [Hash, nil] result
+  # @param [Hash]      opt
   #
   # @return [Hash{Symbol=>Hash,Array}]
   #
-  def show_values(result = nil, as: nil)
+  def show_values(result = nil, **opt)
+    opt.reverse_merge!(name: :account)
     result ||= { details: @item, preferences: @preferences, history: @history }
-    { account: super(result, as: as) }
+    # noinspection RubyMismatchedReturnType
+    super(result, **opt)
   end
 
 end

@@ -14,12 +14,16 @@ __loading_begin(__FILE__)
 #
 class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
 
+  include Ingest::Shared::CollectionMethods
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Ingest::Record::IdentifierRecord
+
   schema do
-    has_many :identifiers, Ingest::Record::IdentifierRecord
+    has_many :identifiers, LIST_ELEMENT
   end
 
   # ===========================================================================

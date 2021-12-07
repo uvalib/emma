@@ -118,10 +118,44 @@ module SerializationHelper
     elsif item.respond_to?(:to_xml)
       return if item.blank?
       name ||= (serializer || item.serializer(:xml)).element_render_name(item)
-      item.to_xml(wrap: name)
+      remove_xml_prolog(item.to_xml(wrap: name))
 
     elsif !item.nil?
       CGI.escape_html(item.to_s)
+    end
+  end
+
+  # @private
+  XML_PROLOG = Api::Serializer::Xml::XML_PROLOG
+
+  # add_xml_prolog
+  #
+  # @param [String, nil] item
+  #
+  # @return [String]
+  #
+  def add_xml_prolog(item)
+    text = item.to_s
+    text.start_with?(XML_PROLOG) ? text : "#{XML_PROLOG}\n#{text}"
+  end
+
+  # remove_xml_prolog
+  #
+  # @param [String, nil] item
+  # @param [Boolean]     aggressive   If *true*, check all lines.
+  #
+  # @return [String]
+  #
+  def remove_xml_prolog(item, aggressive: false)
+    text = item.to_s
+    if aggressive
+      text.split("\n").map { |line|
+        line.delete_prefix!(XML_PROLOG)&.lstrip || line
+      }.join("\n")
+    elsif text.start_with?(XML_PROLOG)
+      text.delete_prefix(XML_PROLOG).lstrip
+    else
+      text
     end
   end
 

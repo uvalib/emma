@@ -21,14 +21,17 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::ActiveBookList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::ActiveBook
+
   schema do
-    has_many  :activeTitles, Bs::Record::ActiveBook
+    has_many  :activeTitles, LIST_ELEMENT
     has_many  :allows,       BsAllowsType
     has_one   :limit,        Integer
     has_many  :links,        Bs::Record::Link

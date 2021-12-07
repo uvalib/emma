@@ -92,7 +92,7 @@ class TitleController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render_json index_values }
-      format.xml  { render_xml  index_values }
+      format.xml  { render_xml  index_values(item: :catalog_title) }
     end
   end
 
@@ -177,21 +177,25 @@ class TitleController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [Bs::Message::TitleMetadataSummaryList] list
+  # @param [Hash]                                  opt
   #
   # @return [Hash{Symbol=>Bs::Message::TitleMetadataSummaryList,Hash}]
   #
-  def index_values(list = @list)
-    { catalog_titles: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :catalog_titles)
+    super(list, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @param [Bs::Message::TitleMetadataDetail, Hash] item
+  # @param [Hash]                                   opt
   #
   # @return [Hash{Symbol=>Bs::Message::TitleMetadataDetail,Hash}]
   #
-  def show_values(item = @item, **)
-    { catalog_title: item }
+  def show_values(item = @item, **opt)
+    opt.reverse_merge!(name: :catalog_title)
+    super(item, **opt)
   end
 
 end

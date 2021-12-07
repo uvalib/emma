@@ -121,10 +121,12 @@ class BsApiController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [Hash] items
+  # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(items = @api_results)
+  def index_values(items = @api_results, **opt)
+    opt.reverse_merge!(wrap: :bookshare_api)
     result =
       items.map { |action, response|
         response = safe_json_parse(response)
@@ -143,22 +145,24 @@ class BsApiController < ApplicationController
         end
         [action, response]
       }.to_h
-    { bookshare_api: result }
+    super(result, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @param [Hash] item
+  # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def show_values(item = @api_result, **)
+  def show_values(item = @api_result, **opt)
+    opt.reverse_merge!(name: :bookshare_api)
     result =
       item.map { |k, v|
         v = safe_json_parse(v) if %i[result exception].include?(k)
         [k, v]
       }.to_h
-    { bookshare_api: result }
+    super(result, **opt)
   end
 
 end

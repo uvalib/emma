@@ -21,11 +21,14 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::TitleMetadataSummaryList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
+
+  LIST_ELEMENT = Bs::Record::TitleMetadataSummary
 
   schema do
     has_many  :allows,       BsAllowsType
@@ -33,7 +36,7 @@ class Bs::Message::TitleMetadataSummaryList < Bs::Api::Message
     has_many  :links,        Bs::Record::Link
     has_one   :message,      Bs::Record::StatusModel
     has_one   :next
-    has_many  :titles,       Bs::Record::TitleMetadataSummary
+    has_many  :titles,       LIST_ELEMENT
     has_one   :totalResults, Integer
   end
 

@@ -9,14 +9,18 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchTitleList < Search::Api::Message
 
+  include Search::Shared::CollectionMethods
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   RECORD_CLASS = Search::Record::TitleRecord
 
+  LIST_ELEMENT = Search::Record::TitleRecord
+
   schema do
-    has_many :titles, RECORD_CLASS
+    has_many :titles, LIST_ELEMENT
   end
 
   # ===========================================================================
@@ -113,57 +117,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # :section:
   # ===========================================================================
 
-  protected
-
-  GROUPING_LEVELS = [
-    %i[emma_titleId],     # primary grouping
-    %i[normalized_title], # secondary grouping
-    %i[emma_repository],  # tertiary grouping
-  ].deep_freeze
-
-  # group_fields
-  #
-  # @param [Array<Search::Record::MetadataRecord>] records
-  # @param [Integer,Symbol,Array<Symbol>]          level
-  #
-  # @return [Array]
-  #
-  def group_fields(records, level)
-    fields = level.is_a?(Integer) ? GROUPING_LEVELS[level] : Array.wrap(level)
-    RECORD_CLASS.extract_fields(records, fields).values
-  end
-
-  # Recursive group records.
-  #
-  # @param [Array<Search::Record::MetadataRecord>] records
-  # @param [Integer]                               level
-  #
-  # @return [Array<Search::Record::TitleRecord>]
-  #
-  # @note Probably works but isn't being used because the nested approach
-  #   generates more useful console debug output.  This method can be used as:
-  #   ...
-  #   def aggregate(src)
-  #     src = src.records if src.is_a?(Search::Message::SearchRecordList)
-  #     recursive_grouping(Array.wrap(src).compact_blank)
-  #   end
-  #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
-  def recursive_grouping(records, level = 0)
-    groups = records.group_by { |rec| group_fields(rec, level) }.values
-    if level.next < GROUPING_LEVELS.size
-      groups.flat_map { |recs| recursive_grouping(recs, level.next) }
-    else
-      groups.map! { |recs| RECORD_CLASS.new(recs) }
-    end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
   private
 
   if DEBUG_AGGREGATE
@@ -176,6 +129,79 @@ class Search::Message::SearchTitleList < Search::Api::Message
     end
   else
     def __debug_group(*)
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  GROUPING_LEVELS = [
+    %i[emma_titleId],     # primary grouping
+    %i[normalized_title], # secondary grouping
+    %i[emma_repository],  # tertiary grouping
+  ].deep_freeze
+
+  # group_fields
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  # @param [Integer,Symbol,Array<Symbol>]   level
+  #
+  # @return [Array]
+  #
+  def group_fields(rec, level)
+    fields = level.is_a?(Integer) ? GROUPING_LEVELS[level] : Array.wrap(level)
+    LIST_ELEMENT.extract_fields(rec, fields).values
+  end
+
+  # Recursive group records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  # @param [Integer]                               level
+  #
+  # @return [Array<Search::Record::TitleRecord>]
+  #
+  # @note Probably works but isn't being used because the nested approach
+  #   generates more useful console debug output.  This method can be used as:
+  #   ...
+  #   def aggregate(src)
+  #     src = src.records if src.is_a?(Search::Message::SearchRecordList)
+  #     recursive_grouping(Array.wrap(src).compact_blank)
+  #   end
+  #
+  def recursive_grouping(recs, level = 0)
+    groups = recs.group_by { |rec| group_fields(rec, level) }.values
+    if level.next < GROUPING_LEVELS.size
+      groups.flat_map { |group| recursive_grouping(group, level.next) }
+    else
+      # noinspection RubyMismatchedReturnType
+      groups.map! { |group| LIST_ELEMENT.new(group) }
+    end
+  end
+
+  # ===========================================================================
+  # :section: Api::Record overrides
+  # ===========================================================================
+
+  public
+
+  # Serialize the record instance into a Hash.
+  #
+  # If opt[:item] is present, this is used as an indicator that individual
+  # records should be wrapped (i.e., that the intended output format is XML).
+  #
+  # @param [Hash] opt                 Passed to Api::Record#to_hash.
+  #
+  def to_hash(**opt)
+    wrap = opt.delete(:item).present?
+    super(**opt).tap do |result|
+      if wrap
+        result[:titles]&.map! do |title|
+          title[:records].map! { |rec| { record: rec } }
+        end
+      end
     end
   end
 

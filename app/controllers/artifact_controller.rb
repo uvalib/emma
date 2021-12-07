@@ -75,7 +75,7 @@ class ArtifactController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render_json index_values }
-      format.xml  { render_xml  index_values }
+      format.xml  { render_xml  index_values(item: :artifact) }
     end
   end
 =end
@@ -187,22 +187,26 @@ class ArtifactController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [*] list
+  # @param [*]    list
+  # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list)
-    { artifacts: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :artifacts)
+    super(list, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @param [Bs::Record::ArtifactMetadata, Hash] item
+  # @param [Hash]                               opt
   #
   # @return [Hash{Symbol=>Bs::Record::ArtifactMetadata,Hash}]
   #
-  def show_values(item = @item, **)
-    { artifact: item }
+  def show_values(item = @item, **opt)
+    opt.reverse_merge!(name: :artifact)
+    super(item, **opt)
   end
 
 end

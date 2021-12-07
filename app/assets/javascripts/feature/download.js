@@ -61,20 +61,17 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * MemberEntry
-     *
-     * @typedef {{
-     *      member: Member
-     * }} MemberEntry
-     */
-
-    /**
      * MessageProperties
      *
+     * - list_type: only present with session_debug
+     * - item_type: only present with session_debug
+     *
      * @typedef {{
-     *      total:  number,
-     *      limit:  number|undefined,
-     *      links:  Linkage[]
+     *      total:     number,
+     *      limit:     number|undefined,
+     *      links:     Linkage[]|undefined,
+     *      list_type: ?(string|null|undefined),
+     *      item_type: ?(string|null|undefined)
      * }} MessageProperties
      */
 
@@ -83,8 +80,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @typedef {{
      *      members: {
-     *          list:       MemberEntry[],
-     *          properties: MessageProperties
+     *          properties: MessageProperties,
+     *          list:       Member[]
      *      }
      * }} MemberMessage
      */
@@ -379,7 +376,7 @@ $(document).on('turbolinks:load', function() {
 
         debug(func, 'VIA', url);
 
-        /** @type {MemberMessage|object|undefined} info */
+        /** @type {MemberMessage|object|undefined} */
         let message;
         let error = '';
 
@@ -396,7 +393,7 @@ $(document).on('turbolinks:load', function() {
          * Parse the reply to create the table of member account IDs and member
          * names.
          *
-         * @param {object}         data
+         * @param {*}              data
          * @param {string}         status
          * @param {XMLHttpRequest} xhr
          */
@@ -447,16 +444,16 @@ $(document).on('turbolinks:load', function() {
         /**
          * Produce a mapping of member ID to member name from the message.
          *
-         * @param {MemberMessage|object} [data]    Default: message.
+         * @param {MemberMessage|object} data   Default: message.
          *
          * @returns {object}
          */
         function extractMemberData(data) {
             let result    = {};
             const info    = data || message;
+            /** @type {Member[]} */
             const members = info?.members?.list || [];
-            members.forEach(function(entry) {
-                const member      = entry.member;
+            members.forEach(function(member) {
                 const name        = member.name || {};
                 const family_name = [name.prefix, name.lastName, name.suffix];
                 const given_name  = [name.firstName, name.middle];

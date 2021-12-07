@@ -73,7 +73,7 @@ class MemberController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render_json index_values }
-      format.xml  { render_xml  index_values }
+      format.xml  { render_xml  index_values(item: :member) }
     end
   end
 
@@ -143,23 +143,27 @@ class MemberController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [ApiUserAccountList] list
+  # @param [Hash]               opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list)
-    { members: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :members)
+    super(list, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Hash, nil]   result
-  # @param [Symbol, nil] as           Either :hash or :array if given.
+  # @param [Hash, nil] result
+  # @param [Hash]      opt
   #
   # @return [Hash{Symbol=>Hash,Array}]
   #
-  def show_values(result = nil, as: nil)
+  def show_values(result = nil, **opt)
+    opt.reverse_merge!(name: :member)
     result ||= { details: @item, preferences: @preferences, history: @history }
-    { member: super(result, as: as) }
+    # noinspection RubyMismatchedReturnType
+    super(result, **opt)
   end
 
 end

@@ -15,16 +15,19 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::TitleFileResourceList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::TitleFileResource
+
   schema do
     has_many  :links,              Bs::Record::Link
     has_one   :next
-    has_many  :titleFileResources, Bs::Record::TitleFileResource
+    has_many  :titleFileResources, LIST_ELEMENT
   end
 
 end

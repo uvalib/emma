@@ -19,6 +19,7 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::ReadingListTitlesList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
   include Bs::Shared::ReadingListMethods
 
@@ -26,13 +27,15 @@ class Bs::Message::ReadingListTitlesList < Bs::Api::Message
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::ReadingListTitle
+
   schema do
     has_many  :allows,        BsAllowsType
     has_one   :limit,         Integer
     has_many  :links,         Bs::Record::Link
     has_one   :next
     has_one   :readingListId
-    has_many  :titles,        Bs::Record::ReadingListTitle
+    has_many  :titles,        LIST_ELEMENT
     has_one   :totalResults,  Integer
   end
 

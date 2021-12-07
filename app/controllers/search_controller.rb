@@ -100,32 +100,12 @@ class SearchController < ApplicationController
       respond_to do |format|
         format.html
         format.json { render_json index_values }
-        format.xml  { render_xml  index_values }
+        format.xml  { render_xml  index_values(item: :record)  }
       end
     elsif s_params.present?
       redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
     else
       render 'search/advanced'
-    end
-  end
-
-  # == GET /search/:id
-  #
-  # Display details of an existing catalog title.
-  #
-  # @see SearchConcern#index_record
-  #
-  # @note This endpoint is not actually functional because it depends on a
-  #   Unified Search API endpoint which does not exist.
-  #
-  def show
-    __debug_route
-    @item = index_record(record_id: @record_id)
-    flash_now_alert(@item.exec_report) if @item.error?
-    respond_to do |format|
-      format.html
-      format.json { render_json show_values }
-      format.xml  { render_xml  show_values }
     end
   end
 
@@ -148,8 +128,8 @@ class SearchController < ApplicationController
       @list = index_search(save: !playback, items: :records, **opt)
       respond_to do |format|
         format.html { render 'search/index' }
-        format.json { render_json index_values }
-        format.xml  { render_xml  index_values }
+        format.json { render_json index_values(@list.records) }
+        format.xml  { render_xml  index_values(@list.records, item: :record) }
       end
     elsif s_params.present?
       redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
@@ -178,12 +158,32 @@ class SearchController < ApplicationController
       respond_to do |format|
         format.html { render 'search/index' }
         format.json { render_json index_values }
-        format.xml  { render_xml  index_values }
+        format.xml  { render_xml  index_values(item: :title) }
       end
     elsif s_params.present?
       redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
     else
       render 'search/advanced'
+    end
+  end
+
+  # == GET /search/:id
+  #
+  # Display details of an existing catalog title.
+  #
+  # @see SearchConcern#index_record
+  #
+  # @note This endpoint is not actually functional because it depends on a
+  #   Unified Search API endpoint which does not exist.
+  #
+  def show
+    __debug_route
+    @item = index_record(record_id: @record_id)
+    flash_now_alert(@item.exec_report) if @item.error?
+    respond_to do |format|
+      format.html
+      format.json { render_json show_values }
+      format.xml  { render_xml  show_values }
     end
   end
 
@@ -210,8 +210,9 @@ class SearchController < ApplicationController
   #
   def direct
     __debug_route
-    opt   = pagination_setup.reverse_merge(q: SearchTerm::NULL_SEARCH)
-    @list = index_search(titles: false, save: false, scores: false, **opt)
+    opt     = pagination_setup
+    opt[:q] = SearchTerm::NULL_SEARCH if opt.slice(*search_query_keys).blank?
+    @list   = index_search(titles: false, save: false, scores: false, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html { render 'search/index' }
@@ -244,22 +245,25 @@ class SearchController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [Search::SearchRecordList] list
+  # @param [Hash]                     opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list)
-    { records: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :response)
+    opt.reverse_merge!(name: list.respond_to?(:titles) ? :titles : :records)
+    super(list, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @param [Search::Record::MetadataRecord, Hash] item
+  # @param [Hash]                                 opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def show_values(item = @item, **)
-    # noinspection RubyMismatchedReturnType
-    sanitize_keys(item)
+  def show_values(item = @item, **opt)
+    sanitize_keys(super(item, **opt))
   end
 
 end

@@ -94,7 +94,7 @@ module ModelHelper::ListV2
 
   # @private
   SECONDARY_LEVELS =
-    Search::Record::TitleRecord::FIELD_HIERARCHY[:file].keys.freeze
+    Search::Record::TitleRecord::FIELD_HIERARCHY[:files].keys.freeze
 
   # field_sort_order
   #
@@ -122,31 +122,10 @@ module ModelHelper::ListV2
   # @return [Array<String>]
   #
   def field_scopes(value)
-    #ModelHelper::ListV2.field_scopes(value)
     levels = value.is_a?(Array) ? value : SEARCH_FIELD_LEVEL[value&.to_sym]
     levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
     levels.map! { |s| "scope-#{s}" }
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-=begin
-  # Return with the CSS classes associated with the items field scope(s).
-  #
-  # @param [ Array, Symbol,nil] value
-  #
-  # @return [Array<String>]
-  #
-  def self.field_scopes(value)
-    levels = value.is_a?(Array) ? value : SEARCH_FIELD_LEVEL[value&.to_sym]
-    levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
-    levels.map! { |s| "scope-#{s}" }
-  end
-=end
 
   # ===========================================================================
   # :section:

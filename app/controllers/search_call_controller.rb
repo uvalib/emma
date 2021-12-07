@@ -106,29 +106,34 @@ class SearchCallController < ApplicationController
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [Search::SearchRecordList] list
+  # @param [Hash]                     opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list)
-    { records: super(list) }
+  def index_values(list = @list, **opt)
+    opt.reverse_merge!(wrap: :response)
+    opt.reverse_merge!(name: list.respond_to?(:titles) ? :titles : :records)
+    super(list, **opt)
   end
 
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @param [SearchCall, Hash] item
+  # @param [Hash]             opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
   #--
   # noinspection RubyMismatchedReturnType
   #++
-  def show_values(item = @item, **)
+  def show_values(item = @item, **opt)
+    opt.reverse_merge!(name: :search_call)
     if item.is_a?(SearchCall)
-      value = item.as_search_parameters
+      result = item.as_search_parameters
     else
-      value = item.to_h.deep_symbolize_keys
+      result = item.to_h.deep_symbolize_keys
     end
-    { search_call: value }
+    super(result, **opt)
   end
 
 end

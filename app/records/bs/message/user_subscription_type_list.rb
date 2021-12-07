@@ -14,15 +14,18 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::UserSubscriptionTypeList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::UserSubscriptionType
+
   schema do
     has_many :links,                 Bs::Record::Link
-    has_many :userSubscriptionTypes, Bs::Record::UserSubscriptionType
+    has_many :userSubscriptionTypes, LIST_ELEMENT
   end
 
 end

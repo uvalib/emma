@@ -14,15 +14,18 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::PeriodicalSubscriptionList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::PeriodicalSubscription
+
   schema do
     has_many :links,  Bs::Record::Link
-    has_many :titles, Bs::Record::PeriodicalSubscription
+    has_many :titles, LIST_ELEMENT
   end
 
 end

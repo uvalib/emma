@@ -107,9 +107,11 @@ module Api::Record::Associations
     #
     # @see Api::Serializer::Associations::ClassMethods#has_one
     # @see Api::Record::Schema::ClassMethods#schema
+    # @see Model::ClassMethods#set_relation_field
     #
     def has_many(name, *args, **opt)
       add_collection_property(name, *args, **opt)
+      set_relation_field(name, args.first)
     end
 
     # Incorporate all record fields from another class.

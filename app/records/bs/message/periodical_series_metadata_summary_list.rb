@@ -22,11 +22,14 @@ __loading_begin(__FILE__)
 #++
 class Bs::Message::PeriodicalSeriesMetadataSummaryList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
+
+  LIST_ELEMENT = Bs::Record::PeriodicalSeriesMetadataSummary
 
   schema do
     has_many  :allows,       BsAllowsType
@@ -34,7 +37,7 @@ class Bs::Message::PeriodicalSeriesMetadataSummaryList < Bs::Api::Message
     has_many  :links,        Bs::Record::Link
     has_one   :message,      Bs::Record::StatusModel
     has_one   :next
-    has_many  :periodicals,  Bs::Record::PeriodicalSeriesMetadataSummary
+    has_many  :periodicals,  LIST_ELEMENT
     has_one   :totalResults, Integer
   end
 

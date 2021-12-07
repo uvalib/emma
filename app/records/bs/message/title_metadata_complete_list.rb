@@ -18,18 +18,21 @@ __loading_begin(__FILE__)
 #
 class Bs::Message::TitleMetadataCompleteList < Bs::Api::Message
 
+  include Bs::Shared::CollectionMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
+  LIST_ELEMENT = Bs::Record::TitleMetadataComplete
+
   schema do
     has_many  :allows,       BsAllowsType
     has_one   :limit,        Integer
     has_many  :links,        Bs::Record::Link
     has_one   :next
-    has_many  :titles,       Bs::Record::TitleMetadataComplete
+    has_many  :titles,       LIST_ELEMENT
     has_one   :totalResults, Integer
   end
 

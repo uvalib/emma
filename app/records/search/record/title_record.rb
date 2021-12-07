@@ -13,6 +13,7 @@ __loading_begin(__FILE__)
 #
 class Search::Record::TitleRecord < Search::Api::Record
 
+  include Search::Shared::AggregateMethods
   include Search::Shared::CreatorMethods
   include Search::Shared::DateMethods
   include Search::Shared::IdentifierMethods
@@ -23,10 +24,10 @@ class Search::Record::TitleRecord < Search::Api::Record
   # :section:
   # ===========================================================================
 
-  RECORD_CLASS = Search::Record::MetadataRecord
+  BASE_ELEMENT = Search::Record::MetadataRecord
 
   schema do
-    has_many :records, RECORD_CLASS
+    has_many :records, BASE_ELEMENT
   end
 
   delegate_missing_to :exemplar
@@ -583,7 +584,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Array<String>]           If empty, *rec* can be included.
   #
   def problems(rec)
-    return ["record is not a #{RECORD_CLASS}"] unless rec.is_a?(RECORD_CLASS)
+    return ["record is not a #{BASE_ELEMENT}"] unless rec.is_a?(BASE_ELEMENT)
     return []                                  unless exemplar.present?
     rec_fields = match_fields(rec)
     match_fields.map { |field, required_value|
@@ -636,7 +637,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @type [Array<Symbol>]
   #
-  PRIMARY_GROUPS = %i[title file].freeze
+  PRIMARY_GROUPS = %i[title files].freeze
 
   unless production_deployment?
     primary_groups = FIELD_HIERARCHY.keys
@@ -656,14 +657,16 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # All #records fields in hierarchical order.
   #
-  # @param [Hash] pairs               Additional title-level field/value pairs.
+  # @param [Boolean] wrap             Wrap arrays (for XML rendering).
+  # @param [Hash]    pairs            Additional title-level field/value pairs.
   #
   # @return [Hash{Symbol=>Hash,Array<Hash>}]
   #
-  def field_hierarchy(**pairs)
+  def field_hierarchy(wrap: false, **pairs)
     common_fields   = get_fields(:title, exemplar).merge!(pairs)
-    fields_per_file = records.map { |record| get_fields(:file, record) }
-    { title: common_fields, file: fields_per_file }
+    fields_per_file = records.map { |record| get_fields(:files, record) }
+    fields_per_file&.map! { |record| { file: record } } if wrap
+    { title: common_fields, files: fields_per_file }
   end
 
   # get_fields
@@ -678,18 +681,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     FIELD_HIERARCHY[group].transform_values do |fields|
       fields.map { |field| [field, record.try(field)] }.to_h.compact
     end
-  end
-
-  # ===========================================================================
-  # :section: Model overrides
-  # ===========================================================================
-
-  public
-
-  # Indicate that the instance is a composite of one or more Model instances.
-  #
-  def aggregate?
-    true
   end
 
   # ===========================================================================
@@ -748,6 +739,32 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   def sort_keys(rec = nil)
     super(rec || exemplar)
+  end
+
+  # ===========================================================================
+  # :section: Api::Record overrides
+  # ===========================================================================
+
+  public
+
+  # Serialize the record instance into a Hash.
+  #
+  # If opt[:item] is present, this is used as an indicator that individual
+  # file metadata sections should be wrapped (i.e., that the intended output
+  # format is XML).
+  #
+  # @param [Hash] opt                 Passed to Api::Record#to_hash except:
+  #
+  # @option opt [*] :item             If present, this is taken as an indicator
+  #                                     that arrays should be wrapped (for XML
+  #                                     rendering).
+  #
+  def to_hash(**opt)
+    wrap   = opt.delete(:item).present?
+    fields = field_hierarchy(wrap: wrap)
+    result = super(**opt)
+    result[:records]&.map! { |rec| { record: rec } } if wrap
+    reject_blanks(fields: fields).merge!(result)
   end
 
 end

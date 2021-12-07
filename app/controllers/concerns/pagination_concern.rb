@@ -111,11 +111,8 @@ module PaginationConcern
   # @see UploadConcern#pagination_finalize
   #
   def pagination_finalize(list, meth = nil, **search)
-    # noinspection RailsParamDefResolve
-    count = list.try(:item_count) || list.try(:totalResults) || list.try(:size)
-    items = meth && list.try(meth) || list
-    self.page_items  = Array.wrap(items)
-    self.total_items = count || page_items.size
+    self.page_items  = Array.wrap(meth && list.try(meth) || list)
+    self.total_items = item_count(list, default: page_items.size)
     self.next_page   = next_page_path(list: list, **search)
   end
 
