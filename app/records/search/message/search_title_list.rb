@@ -15,8 +15,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # :section:
   # ===========================================================================
 
-  RECORD_CLASS = Search::Record::TitleRecord
-
   LIST_ELEMENT = Search::Record::TitleRecord
 
   schema do
@@ -29,17 +27,39 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
   public
 
+  # The original metadata records in the original order.
+  #
+  # @return [Array<Search::Record::MetadataRecord>]
+  #
+  attr_reader :records
+
+  # Indicate whether only canonical records will be used.
+  #
+  # @return [Boolean]
+  #
+  attr_reader :canonical
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Initialize a new instance.
   #
   # @param [Search::Message::SearchRecordList, nil] src
-  # @param [Hash, nil]                              opt
+  # @param [Hash, nil]                              opt   To super except:
+  #
+  # @option opt [Boolean, nil] :canonical   Passed to #aggregate.
   #
   def initialize(src, opt = nil)
-    # noinspection RubyScope, RubyMismatchedArgumentType
+    # noinspection RubyScope, RubyMismatchedArgumentType, RubyNilAnalysis
     create_message_wrapper(opt) do |opt|
+      @canonical = opt.delete(:canonical)
       apply_wrap!(opt)
       super(nil, opt)
-      self.titles = aggregate(src)
+      @records    = Array.wrap(src.try(:records) || src).compact
+      self.titles = aggregate
     end
   end
 
@@ -48,14 +68,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # ===========================================================================
 
   public
-
-  # The original metadata records in title order.
-  #
-  # @return [Array<Search::Record::MetadataRecord>]
-  #
-  def records
-    @records ||= titles&.flat_map(&:records)
-  end
 
   # Simulates the :totalResults field of similar Bookshare API records.
   #
@@ -93,24 +105,25 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
   # Organize metadata records into title records.
   #
-  # @param [Search::Message::SearchRecordList, Array<Search::Record::MetadataRecord>, Search::Record::MetadataRecord, nil] src
+  # @param [Array<Search::Record::MetadataRecord>, nil] src  Default: `records`
+  # @param [Hash]                                       opt  To TitleRecord
   #
   # @return [Array<Search::Record::TitleRecord>]
   #
-  def aggregate(src)
-    # noinspection RubyNilAnalysis
-    src   = src.records if src.is_a?(Search::Message::SearchRecordList)
-    recs0 = Array.wrap(src).compact_blank
-    recs0.group_by { |r| group_fields(r, 0) }.flat_map do |key1, recs1|
+  def aggregate(src = nil, **opt)
+    opt[:canonical] = canonical unless opt.key?(:canonical)
+    recs0 = src ? Array.wrap(src).compact_blank : records
+    recs0.group_by { |r| group_fields(r, 0) }.flat_map { |key1, recs1|
       __debug_group(0, key1, recs1)
-      recs1.group_by { |r| group_fields(r, 1) }.flat_map do |key2, recs2|
+      recs1.group_by { |r| group_fields(r, 1) }.flat_map { |key2, recs2|
         __debug_group(1, key2, recs2)
-        recs2.group_by { |r| group_fields(r, 2) }.flat_map do |key3, recs3|
+        recs2.group_by { |r| group_fields(r, 2) }.flat_map { |key3, recs3|
           __debug_group(2, key3, recs3)
-          RECORD_CLASS.new(recs3)
-        end
-      end
-    end
+          # noinspection RubyMismatchedReturnType
+          LIST_ELEMENT.new(recs3, **opt)
+        }.compact_blank!
+      }.compact_blank!
+    }.compact_blank!
   end
 
   # ===========================================================================

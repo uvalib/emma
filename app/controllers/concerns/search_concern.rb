@@ -54,18 +54,35 @@ module SearchConcern
   # @param [Boolean] save             If *false*, do not save search terms.
   # @param [Boolean] scores           Calculate experimental relevancy scores.
   # @param [Symbol]  items            Specify method for #pagination_finalize.
+  # @param [Boolean] canonical        Passed to SearchTitleList#initialize.
   # @param [Hash]    opt              Passed to SearchService#get_records.
   #
   # @return [Search::Message::SearchRecordList]
   # @return [Search::Message::SearchTitleList]    If :titles is *true*.
   #
-  def index_search(titles: true, save: true, scores: false, items: nil, **opt)
+  # == Usage Notes
+  # If :titles is *true* then :canonical defaults to *true* on the production
+  # service and *false* everywhere else.
+  #
+  def index_search(
+    titles:    true,
+    save:      true,
+    scores:    false,
+    items:     nil,
+    canonical: nil,
+    **opt
+  )
     save_search(**opt)                                if save
     list = search_api.get_records(**opt)
     list.calculate_scores!(**opt)                     if scores
     flash_now_alert(list.exec_report)                 if list.error?
-    list = Search::Message::SearchTitleList.new(list) if titles
-    items ||= titles ? :titles : :records
+    if titles
+      canonical = production_deployment? if canonical.nil?
+      list = Search::Message::SearchTitleList.new(list, canonical: canonical)
+      items ||= :titles
+    else
+      items ||= :records
+    end
     pagination_finalize(list, items, **opt)
     list
   end

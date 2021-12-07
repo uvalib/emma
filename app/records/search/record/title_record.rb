@@ -38,6 +38,18 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   public
 
+  # Indicate whether only canonical records will be used.
+  #
+  # @return [Boolean]
+  #
+  attr_reader :canonical
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Data extraction methods appropriate as either instance- or class-methods.
   #
   module Methods
@@ -541,7 +553,9 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @param [Hash, nil] opt
   #
   def initialize(src, opt = nil)
-    opt ||= {}
+    opt = opt&.dup || {}
+    # noinspection RubyNilAnalysis
+    @canonical = opt.delete(:canonical).present?
     super(nil, **opt)
     initialize_attributes
     Array.wrap(src).each { |rec| add(rec, re_sort: false) }.presence and sort!
@@ -562,7 +576,9 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [nil]                                     If *rec* not added.
   #
   def add(rec, re_sort: true)
-    if (mismatches = problems(rec)).present?
+    if canonical && !rec.canonical?
+      Log.info { "#{self.class}##{__method__}: skipping #{rec}" }
+    elsif (mismatches = problems(rec)).present?
       Log.warn { "#{self.class}##{__method__}: %s" % mismatches.join('; ') }
     else
       self.records << rec.deep_dup

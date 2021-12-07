@@ -37,6 +37,54 @@ module Api::Shared::CommonMethods
   # :section:
   # ===========================================================================
 
+  public
+
+  # @private
+  PRODUCTION_HOST = URI.parse(PRODUCTION_BASE_URL).host.freeze rescue nil
+
+  # Indicate whether this record represents a canonical index entry.
+  #
+  # In production, for EMMA repository items, this would mean an entry whose
+  # :emma_retrievalLink starts with the base URL for the production service.
+  #
+  # @param [Api::Record, nil] rec  Default: `self`.
+  #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
+  def canonical?(rec = nil)
+    rec ||= self
+    if (elements = rec.try(:elements))
+      elements.all?(&:canonical?)
+    else
+      local = (rec.try(:emma_repository) == EmmaRepository.default)
+      url   = (rec.try(:emma_retrievalLink)   if local)
+      host  = (URI.parse(url).host rescue nil if url.present?)
+      host.blank? || (host == PRODUCTION_HOST)
+    end
+  end
+
+  # Indicate whether this record represents a canonical index entry.
+  #
+  # In production, for EMMA repository items, this would mean an entry whose
+  # :emma_retrievalLink starts with the base URL for the production service.
+  #
+  # @param [Api::Record, nil] rec  Default: `self`.
+  #
+  def empty?(rec = nil)
+    rec ||= self
+    # noinspection RubyNilAnalysis
+    if (elements = rec.try(:elements)).nil?
+      rec.fields.values.all?(&:blank?)
+    else
+      rec.elements.blank?
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   protected
 
   # Reduce a string for comparison with another by eliminating surrounding
