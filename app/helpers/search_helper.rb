@@ -440,6 +440,8 @@ module SearchHelper
   # @param [Hash, nil]  pairs         Additional field mappings.
   # @param [Hash]       opt           Passed to #model_list_item.
   #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def search_list_item(item, pairs: nil, **opt)
     opt[:model] = model = :search
     if item
@@ -472,7 +474,10 @@ module SearchHelper
   # Include edit and delete controls below the entry number.
   #
   # @param [Model] item
-  # @param [Hash]  opt                Passed to #list_item_number.
+  # @param [Hash]  opt                    Passed to #list_item_number.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* or *index* is *nil*.
   #
   # @see UploadHelper#upload_edit_icon
   # @see UploadHelper#upload_delete_icon
@@ -488,6 +493,41 @@ module SearchHelper
     list_item_number(item, **opt) do
       # noinspection RubyMismatchedArgumentType
       upload_entry_icons(item, id: db_id) if db_id.present?
+    end
+  end
+
+  # NOTE: transitional
+  def search_list_number_v2(item, **opt)
+    search_list_item_number(item, **opt)
+  end
+
+  # NOTE: transitional
+  def search_list_number_v3(item, **opt)
+    opt[:inner] = true
+    opt[:outer] = file_counts(item)
+    search_list_item_number(item, **opt)
+  end
+
+  # Include edit and delete controls below the entry number.
+  #
+  # @param [Search::Record::TitleRecord] item
+  # @param [Hash]                        opt    Passed to outer :ul.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def file_counts(item, **opt)
+    css_selector = '.file-counts'
+    counts = item.try(:get_format_counts) || {}
+    html_tag(:ul, prepend_classes!(opt, css_selector)) do
+      counts.map do |format, count|
+        html_tag(:li) do
+          count  = html_span(count, class: 'count')
+          format = format.try(:titleize).try(:upcase) || '???'
+          format = 'AUDIO' if format == 'DAISY AUDIO'
+          format = html_span(format, class: 'format')
+          count << format
+        end
+      end
     end
   end
 

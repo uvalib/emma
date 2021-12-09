@@ -368,16 +368,26 @@ module ModelHelper::List
   # Render an element containing the ordinal position of an entry within a list
   # based on the provided *offset* and *index*.
   #
-  # @param [Model]        item
-  # @param [Integer]      index       Index number.
-  # @param [Integer, nil] offset      Default: `#page_offset`.
-  # @param [Integer, nil] level       Heading tag level (@see #html_tag).
-  # @param [String, nil]  group       Sets :'data-group' for outer <div>.
-  # @param [Integer, nil] row
-  # @param [Hash]         opt         Passed to inner #html_tag.
+  # *1* Use :inner to pass additional element(s) to go inside the container; if
+  #     given as *true* this specifies that elements from the block will go
+  #     inside the container (this is the default unless :outer is given).
+  #
+  # *2* Use :outer to pass additional element(s) to go after the container
+  #     element; if given as *true* this specifies that elements from the block
+  #     will go after the container.
+  #
+  # @param [Model]                  item
+  # @param [Integer]                index   Index number.
+  # @param [Integer, nil]           offset  Default: `#page_offset`.
+  # @param [Integer, nil]           level   Heading tag level (@see #html_tag).
+  # @param [String, nil]            group   Sets :'data-group' for outer div.
+  # @param [Integer, nil]           row
+  # @param [Boolean, String, Array] inner   *1* above.
+  # @param [Boolean, String, Array] outer   *2* above.
+  # @param [Hash]                   opt     Passed to inner #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If *item* or *index* is *nil*.
+  # @return [nil]                           If *item* or *index* is *nil*.
   #
   # @yield [index,offset] To supply additional parts within .number element.
   # @yieldparam  [Integer] index      The effective index number.
@@ -394,6 +404,8 @@ module ModelHelper::List
     level:  nil,
     group:  nil,
     row:    nil,
+    inner:  nil,
+    outer:  nil,
     **opt
   )
     css_selector = '.number'
@@ -402,29 +414,46 @@ module ModelHelper::List
     index  = non_negative(index)
     row    = positive(row)
     offset = offset&.to_i || page_offset
-    parts  = []
+
+    # Set up outer parts if supplied.
+    inner_parts = []
+    outer_parts = []
+    if outer.is_a?(Array) || outer.is_a?(String)
+      outer_parts += Array.wrap(outer)
+    end
 
     # Label visible only to screen-readers:
     label = index ? 'Entry ' : 'Empty results' # TODO: I18n
-    parts << html_span(label, class: 'sr-only')
+    inner_parts << html_span(label, class: 'sr-only')
 
     # Visible item number value:
     value = index ? "#{offset + index + 1}" : ''
-    parts << html_span(value, class: 'value')
+    inner_parts << html_span(value, class: 'value')
+
+    # Add inner parts if supplied.
+    if inner.is_a?(Array) || inner.is_a?(String)
+      inner_parts += Array.wrap(inner)
+    end
 
     # Additional elements supplied by the block:
-    parts += Array.wrap(yield(index, offset)) if block_given?
+    if block_given? && (added = Array.wrap(yield(index, offset))).present?
+      if inner.is_a?(TrueClass) || outer.nil? || outer.is_a?(FalseClass)
+        inner_parts += added
+      else
+        outer_parts += added
+      end
+    end
 
     # Wrap parts in a container for group positioning:
     inner_opt = prepend_classes(opt, 'container')
-    container = html_tag(level, parts, inner_opt)
+    container = html_tag(level, inner_parts, inner_opt)
 
     # Wrap the container in the actual number grid element.
     outer_opt = { class: css_classes(css_selector) }
     append_classes!(outer_opt, "row-#{row}") if row
     outer_opt[:'data-group']    = group      if group
     outer_opt[:'data-title_id'] = item.try(:emma_titleId)
-    html_div(container, outer_opt)
+    html_div(container, outer_parts, outer_opt)
   end
 
   # Render a single entry for use within a list of items.

@@ -19,10 +19,13 @@
   opt  = { index: index, row: row, offset: offset, level: level, skip: skip }
   opt[:max_index] = count - 1 if count
 
-  list_method = { v2: :search_list_item_v2, v3: :search_list_item_v3 }
-  list_method = list_method[action.to_sym] || :search_list_item
+  number_method = "search_list_number_#{action}"
+  number_method = :search_list_item_number unless respond_to?(number_method)
+
+  list_method   = "search_list_item_#{action}"
+  list_method   = :search_list_item unless respond_to?(list_method)
 -%>
 
-<%= search_list_item_number(item, **opt) unless skip.include?(:number) %>
-<%= thumbnail(item, **opt, link: true)   unless skip.include?(:thumbnail) %>
+<%= send(number_method, item, **opt)   unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true) unless skip.include?(:thumbnail) %>
 <%= send(list_method, item, pairs: add, **opt) %>

@@ -706,6 +706,18 @@ class Search::Record::TitleRecord < Search::Api::Record
     end
   end
 
+  # get_format_counts
+  #
+  # @return [Hash{String=>Integer}]
+  #
+  def get_format_counts
+    (field_hierarchy[:files] || [])
+      .map { |file| file.dig(:bibliographic, :dc_format) }
+      .compact
+      .group_by(&:itself)
+      .transform_values(&:size)
+  end
+
   # ===========================================================================
   # :section: Search::Record::TitleRecord::Methods overrides
   # ===========================================================================

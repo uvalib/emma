@@ -135,7 +135,8 @@ $hcm-color:         transparent;
 //=============================================================================
 
 $z-hidden:         -1;
-$z-visible:         0;
+$z-normal:          0;
+$z-visible:         $z-normal;
 $z-raised:          1;
 $z-controls:        100;
 $z-tooltip:         200;

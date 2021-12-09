@@ -90,7 +90,7 @@ $database-table-max-columns: 25;
                 border-bottom:  2px solid $root-fg-color;
 
                 &.col-first {
-                    z-index:    1;
+                    z-index:    $z-raised;
                 }
 
                 &:not(.col-first) {

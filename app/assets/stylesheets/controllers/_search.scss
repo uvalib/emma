@@ -23,10 +23,9 @@ $value-right-margin:    calc(2 * #{$flex-gap-x});
 // stuck item number.  Also, this isn't using "vh" units because this seemed to
 // be inconsistent between emulations of, e.g., iPhone 5 and Galaxy Note 9.
 
-$sticky-top-wide:       2vh;
-$sticky-top-medium:     1.5vh;
-//$sticky-top-narrow:   7.5vh; // Don't scroll over sticky item number.
-$sticky-top-narrow:     3.125rem;
+$sticky-top-wide:   2vh;
+$sticky-top-medium: 1.5vh;
+$sticky-top-narrow: 3.125rem;
 
 // Use to display text as a substitute for a logo.
 %text-logo {
@@ -385,6 +384,7 @@ $sticky-top-narrow:     3.125rem;
 
         height:      100%;
         line-height: $row-line-height;
+        z-index:     $z-normal;
 
         &.text,
         &.date,
@@ -950,8 +950,8 @@ body.aggregate-style {
     // Box shadow sections which prevent scrolled text from
     // appearing above the title.
     $title-scroll-mask:
-        0.5rem  -0.25rem  0       0.5rem $root-bg-color,
-        0       0         0.25rem 0.5rem $root-bg-color;
+        0.25rem  -0.25rem  0         0.5rem  $root-bg-color,
+        0.125rem  0        0.125rem  0.5rem  $root-bg-color;
 
     //=========================================================================
     // Sections
@@ -1096,6 +1096,7 @@ body.aggregate-style {
 
             @media #{$narrow-screen} {
                 margin-top:      0;
+                padding-top:     0.5rem;
                 grid-column-end: 1;
                 z-index:         $z-controls;
             }
@@ -1106,6 +1107,8 @@ body.aggregate-style {
 
             .container {
 
+                height: 2.75rem;
+
                 @media #{$not-narrow-screen} {
                     display: none;
                 }
@@ -1115,11 +1118,14 @@ body.aggregate-style {
                 }
 
                 .control {
-                    margin-top: 1rem;
+                    align-self: flex-end;
                 }
             }
 
             > .control {
+
+                line-height: 1rem;
+
                 @media #{$narrow-screen} {
                     display: none;
                 }
@@ -1149,14 +1155,8 @@ body.aggregate-style {
                 }
 
                 .control {
-                    @media #{$wide-screen} {
-                        position: sticky;
-                        top:      3vh;
-                    }
-                    @media #{$medium-width} {
-                        position: sticky;
-                        top:      3vh;
-                    }
+                    position: sticky;
+                    top:      3vh;
                 }
             }
         }
@@ -1337,13 +1337,8 @@ body.aggregate-style {
 
                 border: none;
 
-                @media #{$narrow-screen} {
-                    margin-top: -1rem;
-                }
-
                 .title {
                     @media #{$narrow-screen} {
-                        margin-top:  0.5rem;
                         margin-left: $narrow-left-pad;
                     }
                 }
@@ -1940,6 +1935,14 @@ body.search-v3 {
 
     .search-list {
 
+        .number {
+
+            // Do not show file counts by default.
+            .file-counts {
+                display: none;
+            }
+        }
+
         .search-list-item {
 
             @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
@@ -1979,6 +1982,191 @@ body.search-v3 {
 
                 @media #{$narrow-screen} {
                     display: none;
+                }
+            }
+        }
+    }
+
+    //=========================================================================
+    // Sections - field highlighting
+    //=========================================================================
+
+    .search-list.highlight-fields {
+
+        column-gap: 1%;
+
+        @media #{$narrow-screen} {
+            column-gap: 0;
+        }
+
+        .number {
+
+            display: flex;
+
+            // Due to the way that setupToggleControl() adds the control button
+            @media #{$not-narrow-screen} {
+                flex-direction:  row-reverse;
+                justify-content: flex-end;
+            }
+
+            @media #{$narrow-screen} {
+                flex-direction:  row;
+                justify-content: flex-start;
+                padding-top:     1.75rem;
+            }
+
+            //=================================================================
+            // Elements
+            //=================================================================
+
+            .container {
+                .control {
+                    @media #{$narrow-screen} {
+                        margin-top: 0.125rem;
+                    }
+                }
+            }
+
+            .control,
+            .file-counts {
+                align-self: flex-start;
+            }
+
+            .control {
+
+                z-index: $z-raised;
+
+                @media #{$not-narrow-screen} {
+                    margin-top: 0.25rem;
+                }
+            }
+
+            .file-counts {
+
+                display:               grid;
+                grid-template-columns: [count] max-content [format] 1fr;
+                column-gap:            0.25rem;
+
+                margin:      0;
+                padding:     0.125rem 0.25rem;
+
+                // This gives each file count box a uniform appearance.
+
+                min-width:   3.75rem;
+                min-height:  2.25rem;
+                line-height: 1.25rem;
+                color:       green;
+                background:  lightyellow;
+                border:      1px solid gray;
+
+                @media #{$not-narrow-screen} {
+
+                    margin-left: 0.75rem;
+                    font-size:   small;
+
+                    // If the previous file count has a lot of lines, this
+                    // shadow  keeps it from appearing to run into the current
+                    // file count.
+
+                    box-shadow:  0 -0.5rem 0.5rem 0.25rem $root-bg-color;
+                }
+
+                @media #{$narrow-screen} {
+
+                    margin-left: 0.5rem;
+                    font-size:   medium;
+
+                    max-height:  2.25rem;
+                    min-height:  unset;
+                    overflow-y:  auto;
+                }
+
+                .count,
+                .format {
+                    @media #{$narrow-screen} {
+                        margin: auto 0;
+                    }
+                }
+
+                .count {
+                    text-align: right;
+                }
+
+                .format {
+                    text-align: left;
+                }
+            }
+
+            ul.file-counts {
+
+                list-style: none;
+
+                li {
+                    display: contents;
+                }
+
+                // Narrow the gap between subsequent count/format pairs.
+                li + li * {
+                    margin-top: -0.125rem;
+                }
+            }
+
+            //=================================================================
+            // When the associated list item is closed.
+            //=================================================================
+
+            // Constraining the height makes the file count behave as box that
+            // descends from a line that runs through the open/close control
+            // and the text of the title.
+            &:not(.open) {
+                height: 1.5rem;
+            }
+
+            //=================================================================
+            // When the associated list item is open.
+            //=================================================================
+
+            &.open {
+
+                .file-counts {
+                    position: sticky;
+                    top:      3vh;
+                }
+
+                @media #{$narrow-screen} {
+
+                    height: calc(100% - 5.5rem);
+
+                    .control,
+                    .file-counts {
+                        align-self: flex-start;
+                        top:        1rem;
+                    }
+                }
+            }
+        }
+
+        // Adjustments due to to .number changes:
+        .search-list-item {
+
+            @media #{$narrow-screen} {
+                margin-left:  -27.5vw;
+                margin-right: 27.5vw;
+            }
+
+            > .value.list,
+            > .value.textbox {
+
+                @media #{$wide-screen} {
+                    max-width: 66vw;
+                }
+
+                @media #{$medium-width} {
+                    max-width: 50vw;
+                }
+
+                @media #{$narrow-screen} {
+                    max-width: 75vw;
                 }
             }
         }
