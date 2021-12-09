@@ -210,6 +210,9 @@ module SessionConcern
   def access_denied_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
     redirect_back(fallback_location: root_path, alert: exception.message)
+  rescue => error
+    # noinspection RubyMismatchedArgumentType
+    error_handler_deep_fallback(__method__, error)
   end
 
   # Respond to page failures due to a failure to communicate with a remote
@@ -226,6 +229,9 @@ module SessionConcern
       flash_now_alert(exception)
       render
     end
+  rescue => error
+    # noinspection RubyMismatchedArgumentType
+    error_handler_deep_fallback(__method__, error)
   end
 
   # Respond to general page failures.
@@ -243,6 +249,29 @@ module SessionConcern
     elsif posting_html?
       redirect_back(fallback_location: root_path, alert: exception.message)
     end
+  rescue => error
+    # noinspection RubyMismatchedArgumentType
+    error_handler_deep_fallback(__method__, error)
+  end
+
+  # ===========================================================================
+  # :section: Exception handlers
+  # ===========================================================================
+
+  protected
+
+  # If there is an error in the error handler it's probably due to a missing
+  # template, so this method renders a safe page so that flash messages can
+  # be displayed.
+  #
+  # @param [Symbol]    meth           Failed error handler.
+  # @param [Exception] error
+  #
+  # @return [void]
+  #
+  def error_handler_deep_fallback(meth, error = nil)
+    Log.error { "#{meth} FAILED: #{error.inspect}" } if error
+    render welcome_path
   end
 
   # ===========================================================================

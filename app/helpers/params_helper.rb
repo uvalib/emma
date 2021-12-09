@@ -95,8 +95,8 @@ module ParamsHelper
   # @return [Integer]
   #
   def request_parameter_count(p = nil)
-    p ||= try(:params) || {}
-    p.keys.size
+    prm = p || try(:params) || {}
+    prm.keys.size
   end
 
   # All request parameters (including :controller and :action) as a Hash.
@@ -105,13 +105,10 @@ module ParamsHelper
   #
   # @return [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def request_parameters(p = nil)
-    p ||= try(:params) || {}
-    p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
-    p.symbolize_keys
+    prm = p || try(:params) || {}
+    prm = prm.try(:to_unsafe_h) || prm
+    prm.symbolize_keys
   end
 
   # The meaningful request URL parameters as a Hash (not including :controller
@@ -178,7 +175,7 @@ module ParamsHelper
   #
   def session_section(section = nil, p = nil)
     section, p = [nil, section] if section.is_a?(Hash)
-    section ||= (p || params)[:controller]&.to_s || 'all'
+    section = (section || request_parameters(p)[:controller] || :all).to_s
     session[section] = {} unless session[section].is_a?(Hash)
     session[section]
   end

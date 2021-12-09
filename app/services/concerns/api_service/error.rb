@@ -133,7 +133,19 @@ class ApiService::Error < Api::Error
           extract_json(data).presence
         end
 
-      Array.wrap(error_description || body)
+      error_description ||= body
+
+      # Note if this was an AWS-related error.
+      if (aws_error = aws_error_header(src))
+        err = error_description.presence
+        aws = "AWS error #{aws_error.inspect}"
+        aws = '(%s)' % aws if err
+        err = err.first if err.is_a?(Array) && (err.size == 1)
+        s   = (' ' if err.is_a?(String) && !err.match?(/\s$/))
+        error_description = err.is_a?(Array) ? [*err, aws] : "#{err}#{s}#{aws}"
+      end
+
+      Array.wrap(error_description)
     end
 
     # =========================================================================
@@ -141,6 +153,19 @@ class ApiService::Error < Api::Error
     # =========================================================================
 
     protected
+
+    # Get the message headers from the source object.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [Hash]
+    #
+    def extract_headers(src)
+      # noinspection RailsParamDefResolve
+      headers = src.try(:response_headers) || src.try(:headers) || src
+      headers = (headers.presence if headers.is_a?(Hash))
+      headers&.transform_keys { |k| k.to_s.downcase } || {}
+    end
 
     # Get the message body from the source object.
     #
@@ -173,16 +198,23 @@ class ApiService::Error < Api::Error
     # @return [String, nil]
     #
     def oauth2_error_header(src)
-      # noinspection RailsParamDefResolve
-      headers = src.try(:response_headers) || src.try(:headers) || src
-      return unless headers.is_a?(Hash)
-      headers = headers.transform_keys { |k| k.to_s.downcase }
-      return unless (www_authenticate = headers['www-authenticate']).present?
-      www_authenticate.split(/\s*,\s*/).find do |part|
+      www_authenticate = extract_headers(src)['www-authenticate'].presence
+      www_authenticate&.split(/\s*,\s*/)&.find do |part|
         k, v = part.split('=')
         next unless k == ERROR_TAG
         break v.to_s.sub(/^\s*(['"])\s*(.*)\s*\1\s*$/, '\2').presence
       end
+    end
+
+    # Extract an AWS error indication the response headers.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [String, nil]
+    #
+    def aws_error_header(src)
+      # noinspection SpellCheckingInspection
+      extract_headers(src)['x-amzn-errortype'].presence
     end
 
     # =========================================================================
