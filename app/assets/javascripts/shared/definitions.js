@@ -827,6 +827,24 @@ function create(element, properties) {
     return $element;
 }
 
+/**
+ * Ensure the indicated element will be included in the tab order, adding a
+ * tabindex attribute if necessary.
+ *
+ * @param {Selector} element
+ */
+function ensureTabbable(element) {
+    $(element).each(function() {
+        let $e         = $(this);
+        const link     = isDefined($e.attr('href'));
+        const input    = link  || isDefined($e.attr('type'));
+        const tabbable = input || isDefined($.attr('tabindex'));
+        if (!tabbable) {
+            $e.attr('tabindex', 0);
+        }
+    });
+}
+
 // ============================================================================
 // Functions - URL
 // ============================================================================
@@ -1120,6 +1138,7 @@ function handleEvent($element, name, func) {
  * @returns {jQuery}
  */
 function handleClickAndKeypress($element, func) {
+    ensureTabbable($element);
     return handleEvent($element, 'click', func).each(handleKeypressAsClick);
 }
 

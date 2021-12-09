@@ -556,6 +556,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     opt = opt&.dup || {}
     # noinspection RubyNilAnalysis
     @canonical = opt.delete(:canonical).present?
+    @hierarchy = nil
     super(nil, **opt)
     initialize_attributes
     Array.wrap(src).each { |rec| add(rec, re_sort: false) }.presence and sort!
@@ -581,6 +582,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     elsif (mismatches = problems(rec)).present?
       Log.warn { "#{self.class}##{__method__}: %s" % mismatches.join('; ') }
     else
+      @hierarchy = nil
       self.records << rec.deep_dup
       re_sort ? sort! : records
     end
@@ -679,10 +681,15 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Hash{Symbol=>Hash,Array<Hash>}]
   #
   def field_hierarchy(wrap: false, **pairs)
-    common_fields   = get_fields(:title, exemplar).merge!(pairs)
-    fields_per_file = records.map { |record| get_fields(:files, record) }
-    fields_per_file&.map! { |record| { file: record } } if wrap
-    { title: common_fields, files: fields_per_file }
+    result = @hierarchy ||= {
+      title: get_fields(:title, exemplar),
+      files: records.map { |record| get_fields(:files, record) }
+    }
+    result = result.deep_dup                          if pairs.present? || wrap
+    result[:title].merge!(pairs)                      if pairs.present?
+    result[:files].map! { |record| { file: record } } if wrap
+    # noinspection RubyMismatchedReturnType
+    result
   end
 
   # get_fields

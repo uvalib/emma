@@ -136,6 +136,9 @@ class SearchController < ApplicationController
     else
       render 'search/advanced'
     end
+  rescue => error
+    flash_now_failure(error)
+    render 'search/index'
   end
 
   # == GET /search/v3
@@ -165,6 +168,9 @@ class SearchController < ApplicationController
     else
       render 'search/advanced'
     end
+  rescue => error
+    flash_now_failure(error)
+    render 'search/index'
   end
 
   # == GET /search/:id

@@ -572,7 +572,10 @@ module LayoutHelper::SearchFilters
   # @return [Symbol]
   #
   def search_style
-    @search_style ||= session['app.search.style']&.to_sym || DEFAULT_STYLE
+    @search_style ||=
+      session['app.search.style']&.to_sym ||
+      %i[v2 v3].find { |a| request_parameters[:action]&.to_sym == a } ||
+      DEFAULT_STYLE
   end
 
   # Indicate whether search results are displayed in the original manner.

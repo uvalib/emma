@@ -229,7 +229,6 @@ module Search::Shared::ScoreMethods
     terms = scoring_words(terms, **opt)
     return 0.0 if field.blank? || terms.blank?
     hits  = terms.sum { |term| field.count(term) }
-    $stderr.puts "FIELD_SCORE | hits = #{hits} | terms = #{terms.size} | words = #{field.size} | terms = #{terms.inspect} | field = #{field.inspect}"
     100.0 * hits / field.size
   end
 

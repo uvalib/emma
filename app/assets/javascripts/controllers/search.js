@@ -1466,17 +1466,14 @@ $(document).on('turbolinks:load', function() {
             console.error(`${func}: ${topic}: invalid topic`);
         } else if (!button.active) {
             // console.log(`${func}: ${topic}: inactive topic`);
-            console.log(`${func}: ${topic}: inactive topic`);
         } else if (isMissing($button)) {
             if (button.active === 'dev_only') {
                 // console.log(`${func}: ${topic}: inactive topic`);
-                console.log(`${func}: ${topic}: inactive topic`);
             } else {
                 console.warn(`${func}: ${topic}: no buttons`);
             }
         } else if (button.class.includes('colorize')) {
             // console.log(`${func}: ${topic}: skip title colorize control`);
-            console.log(`${func}: ${topic}: skip title colorize control`);
         } else if (button.class.includes('highlight')) {
             action ||= () => highlightFields();
             handleClickAndKeypress($button, function() {
@@ -1492,13 +1489,12 @@ $(document).on('turbolinks:load', function() {
                 }
             });
             $result = $button.removeClass('active');
-            console.log(`${func}: ${topic}: HIGHLIGHT CONTROL`);
+            // console.log(`${func}: ${topic}: HIGHLIGHT CONTROL`);
         } else {
             action ||= () => console.error(`${func}: ${topic}: no action`);
             handleClickAndKeypress($button, action);
             console.warn(`${func}: ${topic}: NO ACTION`);
         }
-        console.log(`${func}: result:`, $result);
         return $result;
     }
 

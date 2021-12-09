@@ -74,10 +74,10 @@ module Api::Shared::CommonMethods
   def empty?(rec = nil)
     rec ||= self
     # noinspection RubyNilAnalysis
-    if (elements = rec.try(:elements)).nil?
-      rec.fields.values.all?(&:blank?)
-    else
+    if rec.respond_to?(:elements)
       rec.elements.blank?
+    else
+      rec.fields.values.all?(&:blank?)
     end
   end
 

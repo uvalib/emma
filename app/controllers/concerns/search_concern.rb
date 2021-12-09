@@ -72,10 +72,10 @@ module SearchConcern
     canonical: nil,
     **opt
   )
-    save_search(**opt)                                if save
+    save_search(**opt)                   if save
     list = search_api.get_records(**opt)
-    list.calculate_scores!(**opt)                     if scores
-    flash_now_alert(list.exec_report)                 if list.error?
+    list.calculate_scores!(**opt)        if scores
+    flash_now_alert(list.exec_report)    if list.error?
     if titles
       canonical = production_deployment? if canonical.nil?
       list = Search::Message::SearchTitleList.new(list, canonical: canonical)
