@@ -225,6 +225,9 @@ class SearchController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
+  rescue => error
+    flash_now_failure(error)
+    render 'search/index'
   end
 
   # == GET /search/validate?identifier=idval1[,idval2[,...]]
