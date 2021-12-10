@@ -399,6 +399,12 @@ TRACE_NOTIFICATIONS = TRACE_OUTPUT && true?(ENV['TRACE_NOTIFICATIONS'])
 #
 DEBUG_AWS = true?(ENV['DEBUG_AWS'])
 
+# Set to set the :debug option for Rack::Cors.
+#
+# @type [Boolean]
+#
+DEBUG_CORS = true?(ENV['DEBUG_CORS'])
+
 # Set to show low-level bulk import processing.
 #
 # @type [Boolean]

@@ -87,6 +87,9 @@ gem 'aws-sdk-s3', '~> 1.14'
 gem 'pdf-reader'
 gem 'shrine', '~> 3.0'
 
+# == API support
+gem 'rack-cors'
+
 # == Other
 gem 'iso-639'
 gem 'sanitize'
