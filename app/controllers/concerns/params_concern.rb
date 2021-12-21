@@ -110,6 +110,7 @@ module ParamsConcern
       comp = compress_value(path)
       session['app.current_path'] = (path.size <= comp.size) ? path : comp
     end
+    session['app.time'] = DateTime.now
   end
 
   # Set session on-screen debugging.
