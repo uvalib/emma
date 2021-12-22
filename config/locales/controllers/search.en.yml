@@ -124,7 +124,7 @@ en:
           cond:
             only:     []
 
-      field_hierarchy:  &HIERARCHY
+      field_hierarchy_v2:  &HIERARCHY_2
 
         title:
           bibliographic:
@@ -133,7 +133,6 @@ en:
             - emma_version
             - bib_version
             - bib_series
-            - bib_seriesPosition
             - dc_creator
             - dc_publisher
             - dcterms_dateCopyright
@@ -147,14 +146,16 @@ en:
             - dc_rights
           repository:
             - emma_repository
-            - emma_collection
+            - emma_collection     # NOTE: only shown if the same for all files
           index:
-            - emma_titleId
+            - emma_titleId        # NOTE: only shown if the same for all files
 
         files:
           bibliographic:
+            - bib_seriesPosition
             - dc_format
             - emma_formatFeature
+            - emma_collection     # NOTE: shown when not the same for all files
           remediation:
             - rem_status
             # rem_complete folded into rem_coverage
@@ -188,6 +189,80 @@ en:
           index:
             - emma_formatVersion
             - emma_recordId
+            - emma_titleId        # NOTE: shown when not the same for all files
+
+      field_hierarchy:  &HIERARCHY
+
+        title:
+          bibliographic:
+            - dc_title
+            - bib_seriesType
+            - emma_version
+            - bib_version
+            - bib_series
+            - dc_creator
+            - dc_publisher
+            - dcterms_dateCopyright
+            - emma_publicationDate
+            - dc_type
+            - dc_language
+            - dc_description
+            - dc_subject
+            - dc_identifier
+            - dc_relation
+            - dc_rights
+          repository:
+            - emma_repository
+            - emma_collection     # NOTE: only shown if the same for all files
+          index:
+            - emma_titleId        # NOTE: only shown if the same for all files
+
+        parts:
+          bibliographic:
+            - bib_seriesPosition
+
+          formats:
+            bibliographic:
+              - dc_format
+
+            files:
+              remediation:
+                - rem_status
+                # rem_complete folded into rem_coverage
+                - rem_coverage
+                - rem_comments
+                - rem_remediationComments
+                - emma_lastRemediationNote
+                - rem_remediatedAspects
+                - rem_remediation
+                - rem_textQuality
+                - rem_quality
+              accessibility:
+                - s_accessibilitySummary
+                - s_accessibilityFeature
+                - s_accessibilityControl
+                - s_accessibilityHazard
+                - s_accessMode
+                - s_accessModeSufficient
+              bibliographic:
+                - emma_formatFeature
+              repository:
+                - emma_collection # NOTE: shown when not the same for all files
+                - emma_retrievalLink
+                - rem_source
+                - rem_metadataSource
+                - rem_remediatedBy
+                - rem_remediationDate
+                - emma_lastRemediationDate
+                - dcterms_dateAccepted
+                - emma_repositoryUpdateDate
+                - emma_repositoryMetadataUpdateDate
+                - emma_repositoryRecordId
+                # emma_webPageLink used as the href for emma_repositoryRecordId
+              index:
+                - emma_formatVersion
+                - emma_recordId
+                - emma_titleId    # NOTE: shown when not the same for all files
 
       # =======================================================================
       # Pages
@@ -210,7 +285,7 @@ en:
 
       v2:
         <<: *INDEX
-        <<: *HIERARCHY
+        <<: *HIERARCHY_2
         title:          'EMMA Unified Search - Grouped Records'
 
       # =======================================================================

@@ -46,6 +46,8 @@ class Search::Record::MetadataRecord < Search::Api::Record
 
     all_from Search::Record::MetadataCommonRecord
 
+    has_one :bib_seriesPosition
+
   end
 
   # ===========================================================================
@@ -59,7 +61,7 @@ class Search::Record::MetadataRecord < Search::Api::Record
   # @param [Faraday::Response, Model, Hash, String, nil] src
   # @param [Hash, nil]                                   opt
   #
-  def initialize(src, opt = nil)
+  def initialize(src = nil, opt = nil)
     opt ||= {}
     super(src, **opt)
     normalize_data_fields!

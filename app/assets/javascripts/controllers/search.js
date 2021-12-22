@@ -1132,7 +1132,7 @@ $(document).on('turbolinks:load', function() {
             const fg_color = rgbColorInverse(color);
             item_list.forEach(function(item, position) {
                 let $item  = $(item);
-                let $title = $item.children('.field-Title.value');
+                let $title = $item.find('.field-Title.value');
                 $title.css({ color: fg_color, background: bg_color });
                 if (!$item.is(`.colorized.${by_topic}`)) {
                     addIdentityNumber($item, by_topic, number, position);
@@ -1153,7 +1153,7 @@ $(document).on('turbolinks:load', function() {
         const item_classes = ['colorized', ...TOPICS];
         $result_items.each(function() {
             let $item  = $(this);
-            let $title = $item.children('.field-Title.value');
+            let $title = $item.find('.field-Title.value');
             $title.css({ color: '', background: '' });
             $item.removeClass(item_classes);
         });
@@ -1218,7 +1218,7 @@ $(document).on('turbolinks:load', function() {
         });
         if (found) {
             // Update the item's identity number tag.
-            let $title = $item.children('.field-Title.value');
+            let $title = $item.find('.field-Title.value');
             let $tag   = $title.children('.identity-number');
             $tag.addClass(EXILE_MARKER);
 
@@ -1242,7 +1242,7 @@ $(document).on('turbolinks:load', function() {
         let $item   = $(item);
         const error = $item.hasClass(ERROR_MARKER);
         const exile = $item.hasClass(EXILE_MARKER);
-        let $title  = $item.children('.field-Title.value');
+        let $title  = $item.find('.field-Title.value');
         let $t_text = $title.children('.title');
         let $t_tag;
         if (error) {

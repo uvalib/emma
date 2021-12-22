@@ -50,7 +50,7 @@ en:
         emma_version:                       ~ # 'Version'
         bib_version:                        ~ # 'Version.'
         bib_series:                         ~ # 'Series'
-        bib_seriesPosition:                 ~ # 'Series Position'
+        bib_seriesPosition:                 'Part'
         dc_creator:                         ~ # 'Author/Creator'
         dc_publisher:                       ~ # 'Publisher'
         dcterms_dateCopyright:              ~ # 'Copyright Date'

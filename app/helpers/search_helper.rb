@@ -91,13 +91,16 @@ module SearchHelper
     source = '' unless EmmaRepository.values.include?(source)
     prepend_classes!(opt, css_selector, source)
 
-    # noinspection RubyMismatchedArgumentType
+    # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
     if aggregate_style?
-      date   = Search::Record::TitleRecord.item_date(item)
-      number = Search::Record::TitleRecord.item_number(item)
-      title  = ERB::Util.h(title)                      if date || number
-      title << html_span(date,   class: 'item-date')   if date
-      title << html_span(number, class: 'item-number') if number
+      date    = Search::Record::TitleRecord.item_date(item)
+      date  &&= date.presence
+      parts   = item.try(:all_item_numbers, '&thinsp;|&thinsp;'.html_safe)
+      parts ||= Search::Record::TitleRecord.item_number(item)
+      parts &&= parts.presence
+      title   = ERB::Util.h(title)                     if date || parts
+      title  << html_span(date,  class: 'item-date')   if date
+      title  << html_span(parts, class: 'item-number') if parts
     end
 
     title = html_div(title, opt)
@@ -172,7 +175,7 @@ module SearchHelper
     if index > min_index
       opt[:icon]  = UP_TRIANGLE
       opt[:title] = 'Go to the previous record' # TODO: I18n
-      opt[:url]   = '#field-Title-%d' % (index - 1)
+      opt[:url]   = '#value-Title-%d' % (index - 1)
     else
       opt[:icon]  = DELTA
       opt[:title] = 'This is the first record on the page' # TODO: I18n
@@ -200,7 +203,7 @@ module SearchHelper
     if index < max_index
       opt[:icon]  = DOWN_TRIANGLE
       opt[:title] = 'Go to the next record' # TODO: I18n
-      opt[:url]   = '#field-Title-%d' % (index + 1)
+      opt[:url]   = '#value-Title-%d' % (index + 1)
     else
       opt[:icon]  = REVERSE_DELTA
       opt[:title] = 'This is the last record on the page' # TODO: I18n
@@ -443,7 +446,7 @@ module SearchHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_list_item(item, pairs: nil, **opt)
-    opt[:model] = model = :search
+    opt[:model] = :search
     if item
       # noinspection RailsParamDefResolve
       if aggregate_style?
@@ -452,23 +455,25 @@ module SearchHelper
         added[:pub_date]  = item.try(:emma_publicationDate).presence
         added[:rem_date]  = item.try(:rem_remediationDate).presence
         added.transform_values! { |score| score || EMPTY_VALUE }
-        pairs = (pairs&.dup || {}).merge!(added)
+        pairs = pairs&.merge(added) || added
       end
       # noinspection RubyNilAnalysis
-      opt[:pairs] = item.field_hierarchy(**(pairs || {})) if item.aggregate?
+      opt[:pairs] = pairs || {} if item.aggregate?
     end
-    opt[:pairs] ||= Model.index_fields(model).merge(pairs || {})
+    opt[:pairs] ||= Model.index_fields(opt[:model]).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
   # NOTE: transitional
   def search_list_item_v2(item, **opt)
-    search_list_item(item, **opt.merge(render: :render_grouped_fields))
+    opt[:render] = :render_grouped_fields # For #model_list_item
+    search_list_item(item, **opt)
   end
 
   # NOTE: transitional
   def search_list_item_v3(item, **opt)
-    search_list_item(item, **opt.merge(render: :render_field_hierarchy))
+    opt[:render] = :render_field_hierarchy # For #model_list_item
+    search_list_item(item, **opt)
   end
 
   # Include edit and delete controls below the entry number.

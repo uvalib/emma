@@ -27,6 +27,18 @@ $sticky-top-wide:   2vh;
 $sticky-top-medium: 1.5vh;
 $sticky-top-narrow: 3.125rem;
 
+//=============================================================================
+// Macros
+//=============================================================================
+
+@mixin search-item-columns($label: 0.25fr, $value: 1fr) {
+    grid-template-columns: [label] minmax(auto, $label) [value] $value;
+}
+
+//=============================================================================
+// Base definitions
+//=============================================================================
+
 // Use to display text as a substitute for a logo.
 %text-logo {
     padding:       1px 0.5rem;
@@ -100,10 +112,6 @@ $sticky-top-narrow: 3.125rem;
     }
 
     .value {
-
-        @media #{$wide-screen} {
-            margin-right: $value-right-margin;
-        }
 
         &.textbox {
             box-shadow: 0 0 0 0.25rem $root-bg-color, 0 0 0 0.375rem lightgray;
@@ -312,7 +320,8 @@ $sticky-top-narrow: 3.125rem;
     // Components
     //=========================================================================
 
-    > .label {
+    > .label,
+    > .pair > .label {
 
         &.text,
         &.date,
@@ -380,7 +389,8 @@ $sticky-top-narrow: 3.125rem;
         }
     }
 
-    > .value {
+    > .value,
+    > .pair > .value {
 
         height:      100%;
         line-height: $row-line-height;
@@ -719,6 +729,9 @@ $sticky-top-narrow: 3.125rem;
         .value.field-#{$new-name} + .label.field-#{$old-name} {
             &, & + * { display: none; }
         }
+        .pair.field-#{$new-name} + .pair.field-#{$old-name} {
+            &, & + * { display: none; }
+        }
     }
 
     @include prioritize(Version,              Version);         // NOTE [1]
@@ -881,12 +894,12 @@ $sticky-top-narrow: 3.125rem;
         }
 
         @media #{$wide-screen} {
-            grid-template-columns: [label] minmax(auto, 0.1375fr) [value] 1fr;
+            @include search-item-columns(0.1375fr);
         }
 
         @media #{$medium-width} {
             margin-top:            calc(2 * #{$results-entry-gap-y});
-            grid-template-columns: [label] minmax(auto, 0.25fr) [value] 1fr;
+            @include search-item-columns(0.25fr);
         }
 
         @media #{$narrow-screen} {
@@ -1069,8 +1082,11 @@ body.aggregate-style {
 
     .search-list {
 
+        column-gap: 1%;
+
         @media #{$narrow-screen} {
-            margin: calc(2 * #{$results-entry-gap-y}) 0;
+            margin:     calc(2 * #{$results-entry-gap-y}) 0;
+            column-gap: 0.5rem;
         }
 
         //=====================================================================
@@ -1138,8 +1154,9 @@ body.aggregate-style {
             }
 
             @media #{$medium-width} {
-                padding-top:    0.25rem;
-                padding-bottom: 0.5rem;
+                margin-right:    0.375rem;
+                padding-top:     0.5rem;
+                padding-bottom:  0.5rem;
             }
 
             @media #{$narrow-screen} {
@@ -1155,7 +1172,7 @@ body.aggregate-style {
 
             .container {
 
-                height: 2.75rem;
+                height: 3rem;
 
                 @media #{$not-narrow-screen} {
                     display: none;
@@ -1173,7 +1190,7 @@ body.aggregate-style {
 
             > .toggle.for-item {
 
-                line-height: 1rem;
+                margin-top: 0.125rem;
 
                 @media #{$narrow-screen} {
                     display: none;
@@ -1187,20 +1204,35 @@ body.aggregate-style {
             &.open {
 
                 @media #{$wide-screen} {
-                    $excess:    3.5rem;
-                    height:     calc(100% - #{$excess});
-                    margin-top: 1.75rem;
+                    $excess:     3.5rem;
+                    height:      calc(100% - #{$excess});
+                    margin-top:  1.75rem;
+                    padding-top: 0.125rem;
                 }
 
                 @media #{$medium-width} {
-                    $excess:    2.5rem;
-                    height:     calc(100% - #{$excess});
-                    margin-top: 1.375rem;
+                    $excess:     2.5rem;
+                    height:      calc(100% - #{$excess});
+                    margin-top:  1.375rem;
+                    padding-top: 0.3125rem;
                 }
 
                 @media #{$narrow-screen} {
-                    $excess:    $narrow-logo-height + $narrow-item-separation;
-                    height:     calc(100% - #{$excess});
+                    $excess:     $narrow-logo-height + $narrow-item-separation;
+                    height:      calc(100% - #{$excess});
+                    /**
+                     * Constrain the width so that the higher z-index .number
+                     * doesn't prevent sub-section toggles from being clicked.
+                     * The "overflow: visible" *shouldn't* be needed -- it's
+                     * the specifying of the width for .container that should
+                     * keep the item toggle from being clipped/deformed.
+                     */
+                    width:       0;
+                    overflow:    visible;
+                }
+
+                .container {
+                    width: min-content;
                 }
 
                 .toggle.for-item {
@@ -1224,58 +1256,62 @@ body.aggregate-style {
                 grid-column-start: 2;
             }
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                max-width:  100%;
-                align-self: baseline;
+                &.field-Title {
 
-                @media #{$not-narrow-screen} {
-                    border: none;
-                }
+                    max-width:  100%;
+                    align-self: baseline;
 
-                @media #{$narrow-screen} {
-                    justify-content: flex-end;
-                    background:      ghostwhite;
-                }
-
-                > * {
-                    margin:     auto 0;
-                    padding:    0;
-                    align-self: center;
-                }
-
-                .title {
-
-                    letter-spacing: -0.125px; // NOTE: needed for Firefox
-                    cursor:         default;
-
-                    @media #{$wide-screen} {
-                        flex-basis:    100%;
-                        border-top:    $wide-open-padding solid transparent;
-                        border-bottom: $wide-open-padding solid transparent;
+                    @media #{$not-narrow-screen} {
+                        border: none;
                     }
 
-                    @media #{$medium-width} {
-                        flex-basis:    100%;
-                        border-top:    $medium-open-padding solid transparent;
-                        border-bottom: $medium-open-padding solid transparent;
+                    @media #{$narrow-screen} {
+                        justify-content: flex-end;
+                        background:      ghostwhite;
                     }
-                }
 
-                .repository {
+                    > * {
+                        margin:     auto 0;
+                        padding:    0;
+                        align-self: center;
+                    }
 
-                    img {
+                    .title {
 
-                        box-shadow: 2px 2px 4px 0 lightgray;
+                        letter-spacing: -0.125px; // NOTE: needed for Firefox
+                        cursor:         default;
 
-                        @media #{$narrow-screen} {
-                            max-height: $narrow-logo-height;
+                        @media #{$wide-screen} {
+                            flex-basis:    100%;
+                            border-top:    $wide-open-pad solid transparent;
+                            border-bottom: $wide-open-pad solid transparent;
+                        }
+
+                        @media #{$medium-width} {
+                            flex-basis:    100%;
+                            border-top:    $medium-open-pad solid transparent;
+                            border-bottom: $medium-open-pad solid transparent;
                         }
                     }
-                }
 
-                .prev-next {
-                    display: none;
+                    .repository {
+
+                        img {
+
+                            box-shadow: 2px 2px 4px 0 lightgray;
+
+                            @media #{$narrow-screen} {
+                                max-height: $narrow-logo-height;
+                            }
+                        }
+                    }
+
+                    .prev-next {
+                        display: none;
+                    }
                 }
             }
         }
@@ -1286,39 +1322,43 @@ body.aggregate-style {
 
         .search-list-item.open {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                top: 1vh;
+                &.field-Title {
 
-                @media #{$not-narrow-screen} {
-                    box-shadow: $title-scroll-mask;
-                }
+                    top: 1vh;
 
-                @media #{$narrow-screen} {
-                    box-shadow: $narrow-title-shadow, $title-scroll-mask;
-                }
-
-                > * {
                     @media #{$not-narrow-screen} {
-                        align-self: flex-start;
+                        box-shadow: $title-scroll-mask;
                     }
-                }
 
-                .title {
-                    @media #{$not-narrow-screen} {
-                        box-shadow:
-                            1px -1px  0  1px  $root-bg-color,
-                            1px  1px  0  1px  darkgray;
-                    }
-                }
-
-                .repository {
-                    @media #{$not-narrow-screen} {
-                        margin-top: 0;
-                    }
                     @media #{$narrow-screen} {
-                        position:   sticky;
-                        top:        0;
+                        box-shadow: $narrow-title-shadow, $title-scroll-mask;
+                    }
+
+                    > * {
+                        @media #{$not-narrow-screen} {
+                            align-self: flex-start;
+                        }
+                    }
+
+                    .title {
+                        @media #{$not-narrow-screen} {
+                            box-shadow:
+                                1px -1px  0  1px  $root-bg-color,
+                                1px  1px  0  1px  darkgray;
+                        }
+                    }
+
+                    .repository {
+                        @media #{$not-narrow-screen} {
+                            margin-top: 0;
+                        }
+                        @media #{$narrow-screen} {
+                            position:   sticky;
+                            top:        0;
+                        }
                     }
                 }
             }
@@ -1335,25 +1375,29 @@ body.aggregate-style {
                 padding-bottom: 1rem;
             }
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                @media #{$not-narrow-screen} {
-                    box-shadow: none;
-                }
+                &.field-Title {
 
-                @media #{$narrow-screen} {
-                    box-shadow: $narrow-title-shadow;
-                }
+                    @media #{$not-narrow-screen} {
+                        box-shadow: none;
+                    }
 
-                .title {
-                    overflow:      hidden;
-                    white-space:   nowrap;
-                    text-overflow: ellipsis;
+                    @media #{$narrow-screen} {
+                        box-shadow: $narrow-title-shadow;
+                    }
+
+                    .title {
+                        overflow:      hidden;
+                        white-space:   nowrap;
+                        text-overflow: ellipsis;
+                    }
                 }
             }
 
             > :not(.row-1) {
-                display: none;
+                display: none !important;
             }
         }
     }
@@ -1382,86 +1426,96 @@ body.aggregate-style {
 
         .search-list-item.colorized {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                border: none;
+                &.field-Title {
 
-                .title {
-                    @media #{$narrow-screen} {
-                        margin-left: $narrow-left-pad;
-                    }
-                }
+                    border: none;
 
-                .identity-number {
-
-                    word-break: keep-all;
-                    flex:       1 0 auto;
-
-                    @media #{$wide-screen} {
-                        margin-top:   $wide-open-padding;
-                        font-size:    larger;
-                    }
-
-                    @media #{$medium-width} {
-                        margin-top:   $medium-open-padding;
+                    @media #{$not-narrow-screen} {
+                        margin-left:  -0.25rem;
+                        padding-left: 0.25rem;
                     }
 
                     @media #{$narrow-screen} {
-                        margin-top:   $narrow-open-padding;
-                        margin-right: $narrow-open-padding;
-                        flex:         0 1 auto;
+                        margin-left: -$narrow-left-pad;
+                        .title {
+                            margin-left: $narrow-left-pad;
+                        }
                     }
 
-                    // Highlight out-of-sequence title index numbers.
-                    &.error,
-                    &.exile {
+                    .identity-number {
 
-                        $fg-color: red;
-                        $bg-color: white;
+                        word-break: keep-all;
+                        flex:       1 0 auto;
 
                         @media #{$wide-screen} {
-                            margin-top:   $wide-open-padding   - ($v-shift/2);
+                            margin-top:   $wide-open-pad;
+                            font-size:    larger;
                         }
+
                         @media #{$medium-width} {
-                            margin-top:   $medium-open-padding - ($v-shift/2);
+                            margin-top:   $medium-open-pad;
+                        }
+
+                        @media #{$narrow-screen} {
+                            margin-top:   $narrow-open-pad;
+                            margin-right: $narrow-open-pad;
+                            flex:         0 1 auto;
+                        }
+
+                        // Highlight out-of-sequence title index numbers.
+                        &.error,
+                        &.exile {
+
+                            $fg-color: red;
+                            $bg-color: white;
+
+                            @media #{$wide-screen} {
+                                margin-top:   $wide-open-pad   - ($v-shift/2);
+                            }
+                            @media #{$medium-width} {
+                                margin-top:   $medium-open-pad - ($v-shift/2);
+                            }
+                            @media #{$narrow-screen} {
+                                margin-top:   $narrow-open-pad - ($v-shift/2);
+                                margin-right: $narrow-open-pad - ($v-shift/2);
+                            }
+
+                            margin-right:  -$h-shift;
+                            color:         $fg-color;
+                            background:    $bg-color;
+                            border-bottom: $v-shift solid $bg-color;
+                            border-left:   $h-shift solid $bg-color;
+                            border-right:  $h-shift solid $bg-color;
+                            border-radius: 0.375rem;
+                            box-shadow:    0 0 0 0.25rem $fg-color;
+                        }
+
+                        &.exile:not(.error) {
+                            color: $uva-text-gray;
+                        }
+
+                        &:not(.error) {
+                            cursor: default;
+                        }
+                    }
+
+                    .repository {
+                        @media #{$wide-screen} {
+                            padding-bottom: 0;
                         }
                         @media #{$narrow-screen} {
-                            margin-top:   $narrow-open-padding - ($v-shift/2);
-                            margin-right: $narrow-open-padding - ($v-shift/2);
+                            margin-top: 0;
                         }
-
-                        margin-right:  -$h-shift;
-                        color:         $fg-color;
-                        background:    $bg-color;
-                        border-bottom: $v-shift solid $bg-color;
-                        border-left:   $h-shift solid $bg-color;
-                        border-right:  $h-shift solid $bg-color;
-                        border-radius: 0.375rem;
-                        box-shadow:    0 0 0 0.25rem $fg-color;
-                    }
-
-                    &.exile:not(.error) {
-                        color: $uva-text-gray;
-                    }
-
-                    &:not(.error) {
-                        cursor: default;
                     }
                 }
 
-                .repository {
-                    @media #{$wide-screen} {
-                        padding-bottom: 0;
-                    }
-                    @media #{$narrow-screen} {
-                        margin-top: 0;
-                    }
+                &.identity-highlight {
+                    font-weight: bold;
+                    background:  ghostwhite;
                 }
-            }
-
-            > .value.identity-highlight {
-                font-weight: bold;
-                background:  ghostwhite;
             }
         }
 
@@ -1471,19 +1525,23 @@ body.aggregate-style {
 
         .search-list-item.colorized.open {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                @media #{$narrow-screen} {
-                    box-shadow: $title-scroll-mask;
-                }
+                &.field-Title {
 
-                .title {
-                    box-shadow: none;
-                }
+                    @media #{$narrow-screen} {
+                        box-shadow: $title-scroll-mask;
+                    }
 
-                .repository {
-                    img {
+                    .title {
                         box-shadow: none;
+                    }
+
+                    .repository {
+                        img {
+                            box-shadow: none;
+                        }
                     }
                 }
             }
@@ -1495,16 +1553,20 @@ body.aggregate-style {
 
         .search-list-item.colorized:not(.open) {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                @media #{$narrow-screen} {
-                    box-shadow: none;
-                }
+                &.field-Title {
 
-                .repository {
-                    img {
-                        @media #{$narrow-screen} {
-                            box-shadow: none;
+                    @media #{$narrow-screen} {
+                        box-shadow: none;
+                    }
+
+                    .repository {
+                        img {
+                            @media #{$narrow-screen} {
+                                box-shadow: none;
+                            }
                         }
                     }
                 }
@@ -1528,6 +1590,14 @@ body.aggregate-style {
 
         .scope-title:not(.field-Title) {
             @include primary(beige);
+        }
+
+        .scope-parts {
+            // TODO: ???
+        }
+
+        .scope-formats {
+            // TODO: ???
         }
 
         .scope-files {
@@ -1603,52 +1673,56 @@ body.aggregate-style {
         }
     }
 
-    .search-list.mark-types .value {
+    .search-list.mark-types {
 
-        @mixin type-marker($term, $color: red, $inner-color: black) {
-            &:before {
-                content:        '[#{$term}]';
-                position:       absolute;
-                left:           -2rem;
-                padding:        0 0.25rem;
-                color:          white;
-                background:     $color;
-                font-weight:    bold;
-                text-transform: uppercase;
-                text-shadow:
-                    -1px -1px 0 $inner-color,
-                    -1px  1px 0 $inner-color,
-                     1px -1px 0 $inner-color,
-                     1px  1px 0 $inner-color;
+        > .value,
+        > .pair > .value {
+
+            @mixin type-marker($term, $color: red, $inner-color: black) {
+                &:before {
+                    content:        '[#{$term}]';
+                    position:       absolute;
+                    left:           -2rem;
+                    padding:        0 0.25rem;
+                    color:          white;
+                    background:     $color;
+                    font-weight:    bold;
+                    text-transform: uppercase;
+                    text-shadow:
+                        -1px -1px 0 $inner-color,
+                        -1px  1px 0 $inner-color,
+                         1px -1px 0 $inner-color,
+                         1px  1px 0 $inner-color;
+                }
             }
-        }
 
-        &.text {
-            @include type-marker('text', gray);
-        }
+            &.text {
+                @include type-marker('text', gray);
+            }
 
-        &.textbox {
-            @include type-marker('textbox', dodgerblue);
-        }
+            &.textbox {
+                @include type-marker('textbox', dodgerblue);
+            }
 
-        &.date {
-            @include type-marker('date', green);
-        }
+            &.date {
+                @include type-marker('date', green);
+            }
 
-        &.url {
-            @include type-marker('url', blue);
-        }
+            &.url {
+                @include type-marker('url', blue);
+            }
 
-        &.enum {
-            @include type-marker('enum', lime);
-        }
+            &.enum {
+                @include type-marker('enum', lime);
+            }
 
-        &.list {
-            @include type-marker('list', red);
-        }
+            &.list {
+                @include type-marker('list', red);
+            }
 
-        &.array {
-            @include type-marker('array', violet);
+            &.array {
+                @include type-marker('array', violet);
+            }
         }
     }
 
@@ -1681,10 +1755,13 @@ body.aggregate-style {
 
         .search-list-item {
 
-            > .label {
+            > .label,
+            > .pair > .label {
+
                 @include score-fields {
                     box-shadow: 0.375rem 0 0 0.625rem $score-fields-bg;
                 }
+
                 @media #{$narrow-screen} {
                     @include score-fields {
                         box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
@@ -1692,54 +1769,57 @@ body.aggregate-style {
                 }
             }
 
-            > .value {
+            > .value,
+            > .pair > .value {
+
                 @include score-fields {
                     box-shadow: -0.625rem 0 0 0.625rem $score-fields-bg;
                 }
+
                 @media #{$narrow-screen} {
                     @include score-fields {
                         box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
                     }
                 }
-            }
 
-            > .value.field-Title {
+                &.field-Title {
 
-                .item-score {
+                    .item-score {
 
-                    min-width:     1.75rem;
-                    margin:        auto 0;
-                    padding:       0.25rem;
-                    font-family:   monospace;
-                    font-size:     smaller;
-                    text-align:    center;
-                    word-break:    keep-all;
-                    color:         green;
-                    background:    white;
-                    border:        2px solid green;
-                    border-radius: 0.25rem;
+                        min-width:     1.75rem;
+                        margin:        auto 0;
+                        padding:       0.25rem;
+                        font-family:   monospace;
+                        font-size:     smaller;
+                        text-align:    center;
+                        word-break:    keep-all;
+                        color:         green;
+                        background:    white;
+                        border:        2px solid green;
+                        border-radius: 0.25rem;
 
-                    @media #{$wide-screen} {
-                        margin-left: 1rem;
-                    }
+                        @media #{$wide-screen} {
+                            margin-left: 1rem;
+                        }
 
-                    @media #{$medium-width} {
-                        margin-left: 0.5rem;
-                        margin-top:  $medium-open-padding - ($v-shift / 2);
-                    }
+                        @media #{$medium-width} {
+                            margin-left: 0.5rem;
+                            margin-top:  $medium-open-pad - ($v-shift / 2);
+                        }
 
-                    @media #{$narrow-screen} {
-                        margin-left: 1rem;
-                    }
+                        @media #{$narrow-screen} {
+                            margin-left: 1rem;
+                        }
 
-                    &.error {
-                        color:        red;
-                        border-color: red;
-                    }
+                        &.error {
+                            color:        red;
+                            border-color: red;
+                        }
 
-                    &.disabled {
-                        color:        darkgray;
-                        border-color: darkgray;
+                        &.disabled {
+                            color:        darkgray;
+                            border-color: darkgray;
+                        }
                     }
                 }
             }
@@ -1751,11 +1831,15 @@ body.aggregate-style {
 
         .search-list-item.open {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                .item-score {
-                    @media #{$wide-screen} {
-                        margin-top: $wide-open-padding + ($v-shift / 2);
+                &.field-Title {
+
+                    .item-score {
+                        @media #{$wide-screen} {
+                            margin-top: $wide-open-pad + ($v-shift / 2);
+                        }
                     }
                 }
             }
@@ -1767,20 +1851,24 @@ body.aggregate-style {
 
         .search-list-item.colorized {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                .item-score {
+                &.field-Title {
 
-                    border-radius: 0;
+                    .item-score {
 
-                    @media #{$wide-screen} {
-                        box-shadow: -0.875rem   0  0  1.125rem  $root-bg-color;
-                    }
-                    @media #{$medium-width} {
-                        box-shadow: -0.3125rem  0  0  0.9375rem $root-bg-color;
-                    }
-                    @media #{$narrow-screen} {
-                        box-shadow: -0.625rem   0  0  0.625rem  $root-bg-color;
+                        border-radius: 0;
+
+                        @media #{$wide-screen} {
+                            box-shadow: -0.875rem  0 0 1.125rem  $root-bg-color;
+                        }
+                        @media #{$medium-width} {
+                            box-shadow: -0.3125rem 0 0 0.9375rem $root-bg-color;
+                        }
+                        @media #{$narrow-screen} {
+                            box-shadow: -0.625rem  0 0 0.625rem  $root-bg-color;
+                        }
                     }
                 }
             }
@@ -1873,15 +1961,19 @@ body.grid-style {
             // Components
             //=================================================================
 
-            > .label {
+            > .label,
+            > .pair > .label {
                 display: none !important;
             }
 
-            > .value:not(.row-1) {
+            > .value:not(.row-1),
+            > .pair > .value:not(.row-1),
+            > .pair:not(.row-1) > .value {
                 display: revert !important;
             }
 
-            > .value {
+            > .value,
+            > .pair > .value {
 
                 &.textbox {
                     @include clean;
@@ -1934,36 +2026,44 @@ body.aggregate-style {
 
         .search-list-item {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                .item-date,
-                .item-number {
+                &.field-Title {
 
-                    margin-left: 0.5rem;
-                    padding:     0 0.5rem;
-                    color:       black;
-                    background:  whitesmoke;
-                    box-shadow:  inset 0 0 0 1px gray;
+                    .item-date,
+                    .item-number {
 
-                    @media #{$not-wide-screen} {
-                        padding: 0 0.375rem;
+                        margin-left: 0.5rem;
+                        padding:     0 0.5rem;
+                        color:       black;
+                        background:  whitesmoke;
+                        box-shadow:  inset 0 0 0 1px gray;
+
+                        @media #{$not-wide-screen} {
+                            padding: 0 0.375rem;
+                        }
                     }
-                }
 
-                .item-date {
-                    margin-left: 0.75rem;
-                    font-weight: normal;
+                    .item-date {
+                        margin-left: 0.75rem;
+                        font-weight: normal;
+                    }
                 }
             }
         }
 
         .search-list-item.colorized {
 
-            > .value.field-Title {
+            > .value,
+            > .pair > .value {
 
-                .item-date,
-                .item-number {
-                    background:  white;
+                &.field-Title {
+
+                    .item-date,
+                    .item-number {
+                        background:  white;
+                    }
                 }
             }
         }
@@ -2002,6 +2102,10 @@ body.search-v3 {
 
         .search-list-item {
 
+            @media #{$wide-screen} {
+                @include search-item-columns(0.15fr);
+            }
+
             @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
                 background: $bg;
                 box-shadow:
@@ -2011,18 +2115,37 @@ body.search-v3 {
                    -$l-offset -1px 0 2px $bg;
             }
 
-            // Probably-temporary divider between metadata for individual files
-            > .label.field-NewFile,
-            > .value.field-NewFile {
+            // Probably-temporary divider between metadata for individual parts
+            > .label.field-section,
+            > .pair > .label.field-section,
+            > .pair.field-section > .label,
+            > .value.field-section,
+            > .pair > .value.field-section,
+            > .pair.field-section > .value {
+
                 margin:      0.5rem 0;
                 line-height: 1.25;
                 font-size:   larger;
-                font-weight: bolder;
+
+                // Don't display the divider if not valid.
+                &[data-value="-"],
+                &:not([data-value]) {
+                    display: none;
+                }
             }
 
-            > .label.field-NewFile {
+            > .label.field-section,
+            > .pair > .label.field-section,
+            > .pair.field-section > .label {
 
                 @include fill(2rem); // Extend to touch the .value element.
+
+                display:     flex;
+                column-gap:  0.5rem;
+                font-weight: bolder;
+
+                border-top-left-radius:    0.75rem;
+                border-bottom-left-radius: 0.75rem;
 
                 @media #{$narrow-screen} {
                     box-shadow:
@@ -2031,7 +2154,9 @@ body.search-v3 {
                 }
             }
 
-            > .value.field-NewFile {
+            > .value.field-section,
+            > .pair > .value.field-section,
+            > .pair.field-section > .value {
 
                 @include fill(2px);
 
@@ -2039,6 +2164,42 @@ body.search-v3 {
 
                 @media #{$narrow-screen} {
                     display: none;
+                }
+
+                &.open {
+                    .details {
+                        display: none;
+                    }
+                }
+            }
+
+            //=================================================================
+            // Indentation levels
+            //=================================================================
+
+            $part-indent:   0;
+            $format-indent: 1rem;
+            $file-indent:   2rem;
+
+            > .label,
+            > .pair > .label {
+
+                &.field-NewPart   { margin-left: $part-indent; }
+                &.field-NewFormat { margin-left: $format-indent; }
+                &.field-NewFile   { margin-left: $file-indent; }
+
+
+                &.scope-parts.scope-formats.scope-files {
+                    margin-left: $file-indent;
+                }
+            }
+
+            > .value,
+            > .pair > .value {
+                &.scope-parts.scope-formats.scope-files {
+                    @media #{$narrow-screen} {
+                        margin-left: $file-indent;
+                    }
                 }
             }
         }
@@ -2050,12 +2211,6 @@ body.search-v3 {
 
     .search-list.highlight-fields {
 
-        column-gap: 1%;
-
-        @media #{$narrow-screen} {
-            column-gap: 0;
-        }
-
         .number {
 
             display: flex;
@@ -2066,9 +2221,14 @@ body.search-v3 {
                 justify-content: flex-end;
             }
 
+            @media #{$wide-screen} {
+                padding-top:     0;
+            }
+
             @media #{$narrow-screen} {
                 flex-direction:  row;
                 justify-content: flex-start;
+                margin-right:    -0.75rem;
                 padding-top:     1.75rem;
             }
 
@@ -2079,7 +2239,7 @@ body.search-v3 {
             .container {
                 .toggle.for-item {
                     @media #{$narrow-screen} {
-                        margin-top: 0.125rem;
+                        margin-top: 0;
                     }
                 }
             }
@@ -2112,26 +2272,30 @@ body.search-v3 {
                 background:  lightyellow;
                 border:      1px solid gray;
 
+                /**
+                 * If the previous file count has a lot of lines, this shadow
+                 * keeps it from appearing to run into the current file count.
+                 */
                 @media #{$not-narrow-screen} {
+                    box-shadow:   0 -0.5rem 0.5rem 0.25rem $root-bg-color;
+                }
 
-                    margin-left: 0.75rem;
-                    font-size:   small;
+                @media #{$wide-screen} {
+                    margin-left:  0.75rem;
+                    font-size:    small;
+                }
 
-                    // If the previous file count has a lot of lines, this
-                    // shadow  keeps it from appearing to run into the current
-                    // file count.
-
-                    box-shadow:  0 -0.5rem 0.5rem 0.25rem $root-bg-color;
+                @media #{$medium-width} {
+                    margin-left:  0.5rem;
+                    font-size:    small;
                 }
 
                 @media #{$narrow-screen} {
-
-                    margin-left: 0.5rem;
-                    font-size:   medium;
-
-                    max-height:  2.25rem;
-                    min-height:  unset;
-                    overflow-y:  auto;
+                    margin-left:  0.5rem;
+                    font-size:    medium;
+                    max-height:   2.25rem;
+                    min-height:   unset;
+                    overflow-y:   auto;
                 }
 
                 .count,
@@ -2199,27 +2363,39 @@ body.search-v3 {
             }
         }
 
-        // Adjustments due to to .number changes:
+        // Adjustments due to .number changes:
         .search-list-item {
+
+            @media #{$wide-screen} {
+                @include search-item-columns(0.1875fr);
+            }
+
+            @media #{$medium-width} {
+                @include search-item-columns(0.3125fr);
+            }
 
             @media #{$narrow-screen} {
                 margin-left:  -27.5vw;
                 margin-right: 27.5vw;
             }
 
-            > .value.list,
-            > .value.textbox {
+            > .value,
+            > .pair > .value {
 
-                @media #{$wide-screen} {
-                    max-width: 66vw;
-                }
+                &.list,
+                &.textbox {
 
-                @media #{$medium-width} {
-                    max-width: 50vw;
-                }
+                    @media #{$wide-screen} {
+                        max-width: 66vw;
+                    }
 
-                @media #{$narrow-screen} {
-                    max-width: 75vw;
+                    @media #{$medium-width} {
+                        max-width: 50vw;
+                    }
+
+                    @media #{$narrow-screen} {
+                        max-width: 75vw;
+                    }
                 }
             }
         }

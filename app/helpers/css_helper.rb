@@ -97,7 +97,7 @@ module CssHelper
       classes.unshift(html_opt)
       html_opt = nil
     end
-    html_opt = html_opt&.dup || {}
+    html_opt = html_opt&.deep_dup || {}
     append_classes!(html_opt, *classes, &block)
   end
 
@@ -150,7 +150,7 @@ module CssHelper
       classes.unshift(html_opt)
       html_opt = nil
     end
-    html_opt = html_opt&.dup || {}
+    html_opt = html_opt&.deep_dup || {}
     prepend_classes!(html_opt, *classes, &block)
   end
 
@@ -181,7 +181,7 @@ module CssHelper
   #
   def remove_classes(html_opt, *classes)
     Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
-    html_opt = html_opt&.dup || {}
+    html_opt = html_opt&.deep_dup || {}
     remove_classes!(html_opt, *classes)
   end
 
@@ -249,7 +249,7 @@ module CssHelper
   #
   def append_grid_cell_classes(html_opt, *classes, **opt)
     Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
-    html_opt = html_opt&.dup || {}
+    html_opt = html_opt&.deep_dup || {}
     append_grid_cell_classes!(html_opt, *classes, **opt)
   end
 
@@ -276,7 +276,7 @@ module CssHelper
   #
   def prepend_grid_cell_classes(html_opt, *classes, **opt)
     Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
-    html_opt = html_opt&.dup || {}
+    html_opt = html_opt&.deep_dup || {}
     prepend_grid_cell_classes!(html_opt, *classes, **opt)
   end
 
@@ -321,7 +321,7 @@ module CssHelper
   # @return [Hash]
   #
   def html_options(html_opt)
-    html_options!(html_opt&.dup || {})
+    html_options!(html_opt&.deep_dup || {})
   end
 
   # Retain only entries which are valid HTML attributes.

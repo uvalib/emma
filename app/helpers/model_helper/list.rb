@@ -84,6 +84,7 @@ module ModelHelper::List
   # @param [String, Integer]     index      Offset to make unique element IDs.
   # @param [Integer, nil]        row        Display row.
   # @param [String, nil]         separator  Between parts if *value* is array.
+  # @param [String, nil]         wrap       Class for outer wrapper.
   # @param [Hash]                opt        Passed to each #html_div except:
   #
   # @option opt [Symbol, Array<Symbol>] :no_format
@@ -107,6 +108,7 @@ module ModelHelper::List
     index:     nil,
     row:       1,
     separator: nil,
+    wrap:      nil,
     **opt
   )
     return if value.blank?
@@ -117,10 +119,8 @@ module ModelHelper::List
 
     # Pre-process label to derive names and identifiers.
     base = model_html_id(field || label)
-    type = "field-#{base}"
-    v_id = type.dup
-    l_id = +"label-#{base}"
-    [v_id, l_id].each { |id| id << "-#{index}" } if index
+    v_id = ['value', base, index].compact.join('-')
+    l_id = ['label', base, index].compact.join('-')
 
     # Extract range values.
     value = value.content if value.is_a?(Field::Type)
@@ -185,7 +185,10 @@ module ModelHelper::List
       status ||= ('hierarchy' if prop[:type] == 'json')
       status ||= prop[:type]
     end
-    prepend_classes!(opt, "row-#{row}", type, status)
+    prepend_classes!(opt, "field-#{base}", status, "row-#{row}")
+
+    # Explicit 'data-*' attributes.
+    opt.merge!(prop.select { |k, _| k.start_with?('data-') })
 
     # Label and label HTML options.
     l_opt = prepend_classes(opt, 'label').merge!(id: l_id)
@@ -202,8 +205,16 @@ module ModelHelper::List
     v_opt[:'aria-labelledby'] = l_id
     value = html_div(value, v_opt)
 
-    # noinspection RubyMismatchedReturnType
-    label << value
+    # Pair wrapper.
+    if wrap
+      wrap  = 'pair' if wrap.is_a?(TrueClass)
+      w_id  = [wrap, base, index].compact.join('-')
+      w_opt = prepend_classes(opt, wrap).merge!(id: w_id)
+      html_div(w_opt) { label << value }
+    else
+      # noinspection RubyMismatchedReturnType
+      label << value
+    end
   end
 
   # An indicator that can be used to stand for an empty list.

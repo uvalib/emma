@@ -55,7 +55,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   def initialize(src, opt = nil)
     # noinspection RubyScope, RubyMismatchedArgumentType, RubyNilAnalysis
     create_message_wrapper(opt) do |opt|
-      @canonical = opt.delete(:canonical)
+      @canonical  = opt.delete(:canonical)
       apply_wrap!(opt)
       super(nil, opt)
       @records    = Array.wrap(src.try(:records) || src).compact
@@ -112,17 +112,62 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   def aggregate(src = nil, **opt)
     opt[:canonical] = canonical unless opt.key?(:canonical)
-    recs0 = src ? Array.wrap(src).compact_blank : records
-    recs0.group_by { |r| group_fields(r, 0) }.flat_map { |key1, recs1|
-      __debug_group(0, key1, recs1)
-      recs1.group_by { |r| group_fields(r, 1) }.flat_map { |key2, recs2|
-        __debug_group(1, key2, recs2)
-        recs2.group_by { |r| group_fields(r, 2) }.flat_map { |key3, recs3|
-          __debug_group(2, key3, recs3)
-          # noinspection RubyMismatchedReturnType
-          LIST_ELEMENT.new(recs3, **opt)
-        }.compact_blank!
-      }.compact_blank!
+    file_level_records = src ? Array.wrap(src).compact_blank : records
+    recursive_group_records(file_level_records) do |records_for_title|
+      LIST_ELEMENT.new(records_for_title, **opt)
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Each grouping involves one or more Search::Record::MetadataRecord fields
+  # (or other instance methods).
+  #
+  # @type [Array<Array<Symbol>>]
+  #
+  GROUPING_LEVELS = [
+    %i[normalized_title],
+    %i[emma_repository],
+    %i[dc_creator dc_publisher emma_publicationDate]
+  ].deep_freeze
+
+  # @private
+  GROUPING_LEVEL_DEPTH = GROUPING_LEVELS.size
+
+  # group_fields
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  # @param [Integer, Symbol, Array<Symbol>] level
+  #
+  # @return [Array]
+  #
+  def group_fields(rec, level)
+    fields = level.is_a?(Integer) ? GROUPING_LEVELS[level] : Array.wrap(level)
+    LIST_ELEMENT.extract_fields(rec, fields).values
+  end
+
+  # Recursively group records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  # @param [Integer]       level      Incremented via recursion.
+  # @param [Array<Symbol>] fields     Supplied via recursion.
+  # @param [Proc]          block      Executed at the bottom-level.
+  #
+  # @return [Array<Search::Record::TitleRecord>]
+  #
+  # @yield [recs] Create a title-level record from field-level records.
+  # @yieldparam  [Array<Search::Record::MetadataRecord>] recs
+  # @yieldreturn [Search::Record::TitleRecord, nil]
+  #
+  def recursive_group_records(recs, level: 0, fields: [], &block)
+    __debug_group(level, fields, recs) if level.positive?
+    return block.call(recs) if level == GROUPING_LEVEL_DEPTH
+    recs.group_by { |r| group_fields(r, level) }.flat_map { |_flds, _recs|
+      recursive_group_records(_recs, level: (level+1), fields: _flds, &block)
     }.compact_blank!
   end
 
@@ -142,55 +187,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
     end
   else
     def __debug_group(*)
-    end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  GROUPING_LEVELS = [
-    %i[emma_titleId],     # primary grouping
-    %i[normalized_title], # secondary grouping
-    %i[emma_repository],  # tertiary grouping
-  ].deep_freeze
-
-  # group_fields
-  #
-  # @param [Search::Record::MetadataRecord] rec
-  # @param [Integer,Symbol,Array<Symbol>]   level
-  #
-  # @return [Array]
-  #
-  def group_fields(rec, level)
-    fields = level.is_a?(Integer) ? GROUPING_LEVELS[level] : Array.wrap(level)
-    LIST_ELEMENT.extract_fields(rec, fields).values
-  end
-
-  # Recursive group records.
-  #
-  # @param [Array<Search::Record::MetadataRecord>] recs
-  # @param [Integer]                               level
-  #
-  # @return [Array<Search::Record::TitleRecord>]
-  #
-  # @note Probably works but isn't being used because the nested approach
-  #   generates more useful console debug output.  This method can be used as:
-  #   ...
-  #   def aggregate(src)
-  #     src = src.records if src.is_a?(Search::Message::SearchRecordList)
-  #     recursive_grouping(Array.wrap(src).compact_blank)
-  #   end
-  #
-  def recursive_grouping(recs, level = 0)
-    groups = recs.group_by { |rec| group_fields(rec, level) }.values
-    if level.next < GROUPING_LEVELS.size
-      groups.flat_map { |group| recursive_grouping(group, level.next) }
-    else
-      # noinspection RubyMismatchedReturnType
-      groups.map! { |group| LIST_ELEMENT.new(group) }
     end
   end
 

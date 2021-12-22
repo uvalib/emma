@@ -73,6 +73,13 @@ $data-list-border-color: none;
     // Components
     //=========================================================================
 
+    // Used to group .label and .value grid elements to provide a logical
+    // pairing (for accessibility purposes) while not interfering with grid
+    // layout.
+    .pair {
+        @extend %logical-grouping;
+    }
+
     // noinspection CssOverwrittenProperties
     .label,
     .value {

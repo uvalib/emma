@@ -459,13 +459,13 @@ form.select-entry {
          */
 
         $max-heights: (
-            #field-FileFormatFeature:     17rem,
-            #field-AccessibilityControls: 12rem,
-            #field-AccessibilityHazards:  10.5rem,
-            #field-AccessMode:            18.75rem,
-            #field-AccessModeSufficient:  6.75rem,
-            #field-RemQuality:            8.5rem,
-            #field-RemTextQuality:        8.5rem
+            #value-FileFormatFeature:     17rem,
+            #value-AccessibilityControls: 12rem,
+            #value-AccessibilityHazards:  10.5rem,
+            #value-AccessMode:            18.75rem,
+            #value-AccessModeSufficient:  6.75rem,
+            #value-RemQuality:            8.5rem,
+            #value-RemTextQuality:        8.5rem
         );
 
         @each $element, $max-height in $max-heights {

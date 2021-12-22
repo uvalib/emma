@@ -13,9 +13,11 @@
 
     position:        fixed;
     display:         block;
-    padding:         0.45rem 0.5rem 0.6rem;
-    line-height:     0.9;
-    font-size:       x-large;
+    width:           1.3125em;
+    height:          1.25em;
+    padding-bottom:  0.125em;
+    line-height:     1;
+    font-size:       xx-large;
     text-decoration: none;
     color:           white;
     background:      $uva-accent-orange;
@@ -79,4 +81,3 @@
     }
 
 }
-
