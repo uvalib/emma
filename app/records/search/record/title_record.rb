@@ -811,11 +811,55 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Search::Record::MetadataRecord]
   #
   def copy_record(rec)
-    rec = rec.dup
-    if rec.bib_seriesPosition.blank?
-      rec.bib_seriesPosition = item_number(rec)&.to_s
+    rec.dup.tap do |result|
+      set_item_number(result, :bib_seriesPosition)
+      copy_identifier(result, :dc_identifier)
+      copy_identifier(result, :dc_relation)
     end
-    rec
+  end
+
+  # Generate a series position number if one isn't already present.
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  # @param [Symbol]                         field
+  #
+  # @return [void]
+  #
+  def set_item_number(rec, field)
+    return if rec.try(field).present?
+    value = item_number(rec)&.to_s
+    rec.try("#{field}=", value)
+  end
+
+  # Re-arrange the contents of the identifier field .
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  # @param [Symbol]                         field
+  #
+  # @return [void]
+  #
+  # @see #identifier_sort_key
+  #
+  def copy_identifier(rec, field)
+    value = rec.try(field)
+    return unless value.try(:many?)
+    value = value.sort_by { |id| identifier_sort_key(id) }
+    rec.try("#{field}=", value)
+  end
+
+  # Group identifiers of the same prefix in descending order of length
+  # (favoring ISBN-13 over ISBN-10).
+  #
+  # @param [String, nil] id
+  #
+  # @return [(String, Integer, String)]
+  #
+  def identifier_sort_key(id)
+    id     = PublicationIdentifier.cast(id, invalid: true)
+    value  = id.to_s
+    length = -value.size
+    prefix = id&.prefix || ''
+    [prefix, length, value]
   end
 
   # Produce a list of field mismatches which prevent *rec* from being eligible
@@ -874,6 +918,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     dc_creator
     dc_description
     dc_identifier
+    dc_related
     dc_rights
     dcterms_dateCopyright
     emma_titleId
@@ -897,8 +942,14 @@ class Search::Record::TitleRecord < Search::Api::Record
     end
     result.map { |field, value|
       next if value.blank?
-      value.uniq!    { |v| make_comparable(v) } if value.many?
-      value.sort_by! { |v| make_comparable(v) } if value.many?
+      if value.many?
+        if IDENTIFIER_FIELDS.include?(field)
+          value.sort_by! { |v| identifier_sort_key(v) }.uniq!
+        else
+          value.sort_by! { |v| make_comparable(v, field) }
+          value.uniq!    { |v| make_comparable(v, field) }
+        end
+      end
       value = value.join(' / ') unless array[field]
       [field, value]
     }.compact.to_h
@@ -925,11 +976,11 @@ class Search::Record::TitleRecord < Search::Api::Record
   def title_field_exclusive(recs = records)
     return [] unless recs.many?
     EXCLUSIVE_FIELDS.select do |field|
-      first_value = nil
+      first = nil
       recs.find do |rec|
         next if (value = field_value(rec, field)).blank?
-        next if first_value.nil? && (first_value = make_comparable(value))
-        first_value != make_comparable(value)
+        next if first.nil? && (first = make_comparable(value, field))
+        first != make_comparable(value, field)
       end
     end
   end
@@ -938,24 +989,42 @@ class Search::Record::TitleRecord < Search::Api::Record
   # a similar value.
   #
   # @param [Hash, Array, String, Any, nil] value
+  # @param [Symbol, nil]                   field
   #
   # @return [Hash, Array, String, Any]  Same type as original type of *value*.
   #
   #--
   # noinspection RubyNilAnalysis
   #++
-  def make_comparable(value)
+  def make_comparable(value, field = nil)
+    if Log.debug?
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case value
+        when Number, Model, Hash
+          Log.debug { "#{__method__}: ignoring field = #{field.inspect}" }
+      end
+    end
+    id_field = field && IDENTIFIER_FIELDS.include?(field)
     case value
-      when Hash
-        value.map { |k, v| [k, make_comparable(v)] }.sort!.to_h.compact_blank!
-      when Array
-        value.map { |v| make_comparable(v) }.compact_blank!.sort!
-      when Model
-        make_comparable(value.fields)
       when Number
         value.number_value
+      when Model
+        make_comparable(value.fields)
+      when Hash
+        value.map { |k, v|
+          v = make_comparable(v, k)
+          [k, v] if v.present?
+        }.compact.sort_by! { |kv| kv&.first || '' }.to_h
+      when Array
+        # noinspection RubyMismatchedArgumentType
+        if id_field
+          value.compact_blank.sort_by! { |v| identifier_sort_key(v) }
+        else
+          value.map { |v| make_comparable(v, field) }.compact_blank!.sort!
+        end
       else
-        value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
+        # noinspection RubyMismatchedReturnType
+        id_field ? value : value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
     end
   end
 
