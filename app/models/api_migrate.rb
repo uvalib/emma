@@ -558,6 +558,19 @@ class ApiMigrate
       value
     end
 
+    # Ensure that a field designated as 'boolean' is not persisted as a String.
+    #
+    # @param [Array, Any, nil] value
+    #
+    # @return [Array<Boolean>, Boolean, nil]
+    #
+    def normalize_boolean(value)
+      return              if value.nil?
+      return true?(value) unless value.is_a?(Array)
+      # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+      value.flat_map { |v| normalize_boolean(v) }
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================

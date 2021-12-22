@@ -139,6 +139,9 @@ en:
           new_name:                 'emma_repositoryUpdateDate'
           normalize:                normalize_datetime
 
+        rem_complete:
+          normalize:                normalize_boolean
+
         rem_quality:
           new_name:                 'rem_textQuality'
           new_min_max:              [0,1]
