@@ -1,4 +1,4 @@
-# app/records/concerns/api/serializer/hash.rb
+# app/records/concerns/api/serializer/obj.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -6,21 +6,18 @@
 __loading_begin(__FILE__)
 
 # Base class for object-specific serializers that process data passed in as a
-# Hash.
+# Obj (a Ruby [hash] object representation).
 #
-# @see Representable::Hash
+# @see Representable::Obj
 # @see Api::Record::Schema::ClassMethods#schema
 #
-#--
-# noinspection RubyResolve
-#++
-class Api::Serializer::Hash < Api::Serializer
+class Api::Serializer::Obj < Api::Serializer
 
-  include Representable::Hash
+  include Representable::Obj
   include Representable::Coercion
 
-  include Api::Serializer::Hash::Schema
-  include Api::Serializer::Hash::Associations
+  include Api::Serializer::Obj::Schema
+  include Api::Serializer::Obj::Associations
 
   # ===========================================================================
   # :section:
@@ -28,7 +25,7 @@ class Api::Serializer::Hash < Api::Serializer
 
   public
 
-  SERIALIZER_TYPE = :hash
+  SERIALIZER_TYPE = :obj
 
   # ===========================================================================
   # :section: Api::Serializer overrides
@@ -38,7 +35,7 @@ class Api::Serializer::Hash < Api::Serializer
 
   # Type of serializer.
   #
-  # @return [Symbol]                  Always :hash.
+  # @return [Symbol]                  Always :obj.
   #
   def serializer_type
     SERIALIZER_TYPE
@@ -47,17 +44,14 @@ class Api::Serializer::Hash < Api::Serializer
   # Render data elements.
   #
   # @param [Symbol, Proc] method
-  # @param [Boolean]      symbolize_keys
   # @param [Hash]         opt             Options argument for *method*.
   #
   # @return [String]
   #
-  # @see Representable::Hash#to_hash
+  # @see Representable::Obj#to_obj
   #
-  def serialize(method: :to_hash, symbolize_keys: SYMBOLIZE_KEYS, **opt)
-    result = super(method: method, **opt)
-    result = result.deep_symbolize_keys if symbolize_keys
-    result
+  def serialize(method: :to_obj, **opt)
+    super
   end
 
   # Load data elements.
@@ -68,9 +62,9 @@ class Api::Serializer::Hash < Api::Serializer
   # @return [Api::Record]
   # @return [nil]
   #
-  # @see Representable::Hash#from_hash
+  # @see Representable::Obj#from_obj
   #
-  def deserialize(data, method: :from_hash)
+  def deserialize(data, method: :from_obj)
     super
   end
 

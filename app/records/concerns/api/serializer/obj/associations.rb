@@ -1,22 +1,19 @@
-# app/records/concerns/api/serializer/hash/associations.rb
+# app/records/concerns/api/serializer/obj/associations.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# Overrides for Hash serializers.
+# Overrides for Obj serializers.
 #
-#--
-# noinspection RubyResolve
-#++
-module Api::Serializer::Hash::Associations
+module Api::Serializer::Obj::Associations
 
   extend ActiveSupport::Concern
 
   module ClassMethods
 
-    include Api::Serializer::Hash::Schema
+    include Api::Serializer::Obj::Schema
 
     # =========================================================================
     # :section: Record field schema DSL
@@ -24,7 +21,7 @@ module Api::Serializer::Hash::Associations
 
     protected
 
-    # Hash-specific operations for #attribute data elements.
+    # Obj-specific operations for #attribute data elements.
     #
     # @param [String, Symbol]        name
     # @param [String, Symbol, Class] element
@@ -40,7 +37,7 @@ module Api::Serializer::Hash::Associations
       options.delete(:attribute)
     end
 
-    # Hash-specific operations for #has_one data elements.
+    # Obj-specific operations for #has_one data elements.
     #
     # @param [String, Symbol]        name
     # @param [String, Symbol, Class] element
@@ -56,7 +53,7 @@ module Api::Serializer::Hash::Associations
       options.delete(:wrap) if boolean?(options[:wrap])
     end
 
-    # Hash-specific operations for #has_many data elements.
+    # Obj-specific operations for #has_many data elements.
     #
     # @param [String, Symbol]        wrapper
     # @param [String, Symbol, Class] element

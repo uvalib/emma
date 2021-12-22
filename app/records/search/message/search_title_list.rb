@@ -200,17 +200,16 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
   public
 
-  # Serialize the record instance into a Hash.
+  # The fields and values for this instance as a Hash.
   #
   # If opt[:item] is present, this is used as an indicator that individual
   # records should be wrapped (i.e., that the intended output format is XML).
   #
-  # @param [Hash] opt                 Passed to Api::Record#to_hash.
+  # @param [Hash] opt                 Passed to Api::Record#to_h.
   #
-  def to_hash(**opt)
-    wrap = opt.delete(:item).present?
+  def to_h(**opt)
     super(**opt).tap do |result|
-      if wrap
+      if opt[:item].present?
         result[:titles]&.map! do |title|
           title[:records].map! { |rec| { record: rec } }
         end

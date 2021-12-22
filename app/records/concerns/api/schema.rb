@@ -21,7 +21,7 @@ module Api::Schema
   #
   # @type [Array<Symbol>]
   #
-  SERIALIZER_TYPES = %i[json xml hash].freeze
+  SERIALIZER_TYPES = %i[json xml obj].freeze
 
   # The default serializer type.
   #
@@ -219,7 +219,7 @@ module Api::Schema
   #
   def format_of(data)
     if data.is_a?(Hash)
-      :hash
+      :obj
     elsif data =~ /\A\s*</
       :xml
     elsif data =~ /\A\s*[{\[]/

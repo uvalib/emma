@@ -65,7 +65,7 @@ class Api::Record
     @exception = error
     @exception = Api::Error.new(error) if error && !error.is_a?(Exception)
     if @exception && src.blank?
-      @serializer_type = :hash
+      @serializer_type = :obj
       initialize_attributes
     elsif (data = src || data).is_a?(Model) || data.is_a?(Hash)
       initialize_attributes(data)
@@ -155,19 +155,16 @@ class Api::Record
     serialize(:xml, **opt)
   end
 
-  # Serialize the record instance into a Hash.
+  # Serialize the record instance as a representation of a Ruby (hash) object.
   #
-  # @param [Boolean, nil] symbolize_keys
-  # @param [Hash]         opt             Passed to #serialize.
+  # @param [Hash] opt                 Passed to #serialize.
   #
   # @return [String]
   #
-  # @see Api::Serializer::Hash#serialize
-  # @see Api::Serializer::Hash::Schema#SYMBOLIZE_KEYS
+  # @see Api::Serializer::Obj#serialize
   #
-  def to_hash(symbolize_keys: nil, **opt)
-    opt[:symbolize_keys] = symbolize_keys unless symbolize_keys.nil?
-    serialize(:hash, **opt)
+  def to_obj(**opt)
+    serialize(:obj, **opt)
   end
 
   # ===========================================================================
@@ -233,6 +230,14 @@ class Api::Record
   # ===========================================================================
 
   public
+
+  # The fields and values for this instance as a Hash.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def to_h(*)
+    fields
+  end
 
   # Update record fields from a hash of values.
   #

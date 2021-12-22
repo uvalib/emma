@@ -96,8 +96,8 @@ class Api::Serializer < ::Representable::Decorator
   # If *data* is a String, it is assumed that it is already in the form
   # required by the derived serializer class.
   #
-  # @param [String, ::Hash] data
-  # @param [Symbol, Proc]   method
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
   #
   # @raise [Exception]                Propagated if raised by *method*.
   #
@@ -143,7 +143,7 @@ class Api::Serializer < ::Representable::Decorator
   # If *data* is a String, it is assumed that it is already in the form
   # required by the derived serializer class.
   #
-  # @param [String, ::Hash] data
+  # @param [String, Hash] data
   #
   # @return [String]
   # @return [nil]                 If *data* is neither a String nor a Hash.

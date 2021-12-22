@@ -181,7 +181,7 @@ module Api::Serializer::Associations
     #
     def all_from(other, except: nil, **)
       except &&= Array.wrap(except).compact.map(&:to_sym)
-      other.serializers[:hash].definitions.each_pair do |name, definition|
+      other.serializers[:obj].definitions.each_pair do |name, definition|
         next if except&.include?(name.to_sym)
         opt = definition.instance_variable_get(:@runtime_options)
         property(name, opt)

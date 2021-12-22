@@ -40,13 +40,13 @@ module Api::Record::Schema
       serializers[:xml]
     end
 
-    # The Hash serializer for the including class.
+    # The Obj serializer for the including class.
     #
-    # @return [Api::Serializer::Hash]
+    # @return [Api::Serializer::Obj]
     #
-    def hash_serializer
+    def obj_serializer
       # noinspection RubyMismatchedReturnType
-      serializers[:hash]
+      serializers[:obj]
     end
 
     # Schema definition block method.

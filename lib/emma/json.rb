@@ -30,8 +30,8 @@ module Emma::Json
   # @raise [MultiJson::ParseError] If *arg* failed to parse and !*no_raise*.
   #
   # @return [nil]                  If *arg* failed to parse and *no_raise*.
-  # @return [Array<Hash>]
   # @return [Hash]
+  # @return [Array<Hash>]
   #
   #--
   # == Variations
@@ -108,6 +108,38 @@ module Emma::Json
     json_parse(arg, **opt) || ((default == :original) ? arg : default)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # json_render
+  #
+  # @param [Hash, String, Any, nil] arg
+  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] align_values
+  # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
+  #
+  # @raise [MultiJson::ParseError]
+  # @raise [RuntimeError]
+  #
+  # @return [String]
+  #
+  # @see #pretty_json
+  #
+  def json_render(arg, no_raise: true, align_values: false, ruby_keys: false)
+    option = { align_values: align_values, ruby_keys: ruby_keys }
+    result = pretty_json(arg, no_raise: false, **option)
+    result.gsub!(/\n/, ' ') unless align_values
+    result
+  rescue => error
+    Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
+    raise error unless no_raise
+    re_raise_if_internal_exception(error)
+    arg.inspect
+  end
+
   # pretty_json
   #
   # @param [Hash, String, Any, nil] arg
@@ -149,6 +181,68 @@ module Emma::Json
     raise error unless no_raise
     re_raise_if_internal_exception(error)
     arg.pretty_inspect
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Recreate a Hash from Hash#to_s output.
+  #
+  # @param [String] arg
+  #
+  # @return [Array<Hash>, Hash, nil]
+  #
+  def hash_parse(arg)
+    json = arg.is_a?(Hash) ? arg : hash_inspect_to_json(arg)
+    json_parse(json)
+  end
+
+  # Translate from Hash#to_s output to JSON.
+  #
+  # @param [Hash, String] arg
+  #
+  # @return [String]
+  #
+  def hash_inspect_to_json(arg)
+    json = arg.is_a?(String) ? arg.dup : arg.to_s
+    json.gsub!(/(?<=^|\[|{|,)(\s*)'([^']+)' *(:|=>) */,     '\1"\2": ')
+    json.gsub!(/(?<=^|\[|{|,)(\s*)"([^"]+)" *(:|=>) */,     '\1"\2": ')
+    json.gsub!(/(?<=^|\[|{|,)(\s*)([^"\[{,\s]+) *(:|=>) */, '\1"\2": ')
+    json.gsub!(/(?<=[:,])(\s*)'([^']+)'\s*(?=[\]},])/,      '\1"\2"')
+    json.gsub!(/(?<=[:,])(\s*)nil\s*(?=[\]},])/,            '\1null')
+    json
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # hash_render
+  #
+  # @param [Hash, String, Any, nil] arg
+  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Hash]    opt
+  #
+  # @raise [MultiJson::ParseError]
+  # @raise [RuntimeError]
+  #
+  # @return [String]
+  #
+  # @see #json_render
+  #
+  def hash_render(arg, no_raise: true, **opt)
+    opt[:ruby_keys] = true unless opt.key?(:ruby_keys)
+    json_render(arg, no_raise: false, **opt)
+  rescue => error
+    Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
+    raise error unless no_raise
+    re_raise_if_internal_exception(error)
+    arg.inspect
   end
 
   # ===========================================================================
