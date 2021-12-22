@@ -359,7 +359,7 @@ module HtmlHelper
           prepend_classes!(r_opt, 'entry')
           html_div(r_opt) do
             key = html_div(k_opt) { ERB::Util.h(key) << ':' }
-            key << '&nbsp;'.html_safe << html_div(value, v_opt)
+            key << HTML_SPACE << html_div(value, v_opt)
           end
         else
           html_div(key, k_opt) << html_div(value, v_opt)

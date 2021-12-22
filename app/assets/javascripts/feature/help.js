@@ -25,7 +25,7 @@ $(document).on('turbolinks:load', function() {
      * @type {string[]}
      */
     const ILLUSTRATION_ONLY = deepFreeze([
-        '.for-help'
+        '.for-example'
     ]);
 
     // ========================================================================

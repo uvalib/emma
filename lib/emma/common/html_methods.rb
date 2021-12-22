@@ -41,6 +41,12 @@ module Emma::Common::HtmlMethods
   #
   HTML_BREAK = "<br/>\n".html_safe.freeze
 
+  # HTML non-breaking space.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  HTML_SPACE = '&nbsp;'.html_safe.freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================

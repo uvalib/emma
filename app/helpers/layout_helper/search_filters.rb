@@ -1110,7 +1110,7 @@ module LayoutHelper::SearchFilters
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(html_opt, css_selector, **opt)
-    html_div('&nbsp;'.html_safe, html_opt)
+    html_div(HTML_SPACE, html_opt)
   end
 
   # A label associated with a dropdown menu element.

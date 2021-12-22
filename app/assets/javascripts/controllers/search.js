@@ -53,7 +53,7 @@ $(document).on('turbolinks:load', function() {
     const ITEM_CLASS       = 'search-list-item';
     const ITEM_SELECTOR    = selector(ITEM_CLASS);
 
-    const CONTROL_CLASS    = 'control';
+    const CONTROL_CLASS    = 'toggle for-item';
     const CONTROL_SELECTOR = selector(CONTROL_CLASS);
 
     /**
@@ -260,12 +260,6 @@ $(document).on('turbolinks:load', function() {
      */
     const OPEN_MARKER = 'open';
 
-    const OPENED_TIP  = 'Close';
-    const OPENED_ICON = '▲';
-
-    const CLOSED_TIP  = 'Open';
-    const CLOSED_ICON = '▼';
-
     // ========================================================================
     // Functions - collapsible items
     // ========================================================================
@@ -293,9 +287,9 @@ $(document).on('turbolinks:load', function() {
         // Update the toggle control(s).
         let $controls = $number.find(CONTROL_SELECTOR);
         if ($item.hasClass(OPEN_MARKER)) {
-            openerControl($controls);
+            openerControl($controls, $number);
         } else {
-            closerControl($controls);
+            closerControl($controls, $number);
         }
 
         // Update the item itself.
@@ -307,14 +301,17 @@ $(document).on('turbolinks:load', function() {
      * list item.
      *
      * @param {jQuery} $control
+     * @param {jQuery} [$container]
      *
      * @returns {jQuery}              The $control (for chaining).
      */
-    function closerControl($control) {
-        $control.attr('title', OPENED_TIP);
-        $control.text(OPENED_ICON);
+    function closerControl($control, $container) {
+        $control.attr('title', Emma.Tree.closer.tooltip);
+        $control.text(Emma.Tree.closer.label);
         $control.addClass(OPEN_MARKER);
-        $control.parent().addClass(OPEN_MARKER);
+        let $parent = $container || $control.parent();
+        $parent.addClass(OPEN_MARKER);
+        $parent.find('*').addClass(OPEN_MARKER);
         return $control;
     }
 
@@ -323,14 +320,17 @@ $(document).on('turbolinks:load', function() {
      * list item.
      *
      * @param {jQuery} $control
+     * @param {jQuery} [$container]
      *
      * @returns {jQuery}              The $control (for chaining).
      */
-    function openerControl($control) {
-        $control.attr('title', CLOSED_TIP);
-        $control.text(CLOSED_ICON);
+    function openerControl($control, $container) {
+        $control.attr('title', Emma.Tree.opener.tooltip);
+        $control.text(Emma.Tree.opener.label);
         $control.removeClass(OPEN_MARKER);
-        $control.parent().removeClass(OPEN_MARKER);
+        let $parent = $container || $control.parent();
+        $parent.removeClass(OPEN_MARKER);
+        $parent.find('*').removeClass(OPEN_MARKER);
         return $control;
     }
 
@@ -371,13 +371,22 @@ $(document).on('turbolinks:load', function() {
         if (isEmpty(row)) {
             console.warn(`${func}: could not determine row for ${classes}`);
         } else {
-            // The toggle control visible for wide and medium-width screens:
-            let $control = createToggleControl(row).appendTo($number);
+            // Find or create the toggle control visible for wide and
+            // medium-width screens.
+            /** @type {jQuery} */
+            let $children  = $number.children();
+            let $control   = $children.filter(CONTROL_SELECTOR);
+            if (isMissing($control)) {
+                $control = createToggleControl(row).appendTo($number);
+            }
             handleClickAndKeypress($control, toggleItem);
 
-            // The toggle control visible for narrow screens:
-            let $container      = $number.children('.container');
-            let $narrow_control = $control.clone().appendTo($container);
+            // Find or create the toggle control visible for narrow screens.
+            let $container = $children.filter('.container');
+            let $narrow_control = $container.find(CONTROL_SELECTOR);
+            if (isMissing($narrow_control)) {
+                $narrow_control = $control.clone().appendTo($container);
+            }
             handleClickAndKeypress($narrow_control, toggleItem);
         }
     }
@@ -394,6 +403,79 @@ $(document).on('turbolinks:load', function() {
     // Make clicking on the title toggle the display of that item.
     $result_items.find('.field-Title.value .title').each(function() {
         handleClickAndKeypress($(this), toggleItem);
+    });
+
+    // ========================================================================
+    // Functions - collapsible sections
+    // ========================================================================
+
+    /**
+     * Toggle open/closed state of the associated item sub-section.
+     *
+     * @param {jQuery.Event|UIEvent} event
+     */
+    function toggleSection(event) {
+        let $target   = $(event.currentTarget || event.target || event);
+        const section = $target.attr('aria-controls');
+        let $section;
+        if (section) {
+            $section = $(`#${section}`);
+        } else {
+            $section = $target.parents('.pair.field-section').first();
+        }
+        let $enclosed = getSection($section);
+        if ($section.hasClass(OPEN_MARKER)) {
+            openerControl($target, $section);
+            $enclosed.addClass('hidden');
+        } else {
+            closerControl($target, $section);
+            $enclosed.removeClass('hidden');
+            let $sub_sections = $enclosed.filter('.pair.field-section');
+            $sub_sections.not('.open').each(function() {
+                getSection(this).addClass('hidden');
+            });
+        }
+    }
+
+    /**
+     * Get the set of elements controlled by the tree control at the given
+     * element.
+     *
+     * @param {Selector} section
+     *
+     * @returns {jQuery}
+     */
+    function getSection(section) {
+        let $section   = $(section);
+        const classes  = $section[0].classList;
+        const this_row = $.map(classes, cls => cls.match(/^row-\d+$/)).pop();
+        const related  = sectionSelector($section);
+        return $section.siblings(related).not(`.${this_row}`);
+    }
+
+    /**
+     * Build a string for use as a selector to match all of the lines related
+     * to the given item.
+     *
+     * @param {Selector} item
+     *
+     * @returns {string}
+     */
+    function sectionSelector(item) {
+        let $item = $(item);
+        return ['part', 'format', 'file'].map(function(k) {
+            const v = $item.attr(`data-${k}`);
+            return v && `[data-${k}="${v}"]`;
+        }).join('');
+    }
+
+    // ========================================================================
+    // Actions - collapsible sections
+    // ========================================================================
+
+    // Make clicking on sub-section toggles open/close that sub-section.
+    $result_items.find('.toggle').not('.for-item').each(function() {
+        handleClickAndKeypress($(this), toggleSection);
     });
 
     // ========================================================================

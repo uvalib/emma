@@ -939,9 +939,9 @@ body.aggregate-style {
     $narrow-logo-height:     2rem;
     $narrow-item-separation: 1.5rem;
 
-    $wide-open-padding:      1rem;
-    $medium-open-padding:    0.875rem;
-    $narrow-open-padding:    0.75rem;
+    $wide-open-pad:          1rem;
+    $medium-open-pad:        0.875rem;
+    $narrow-open-pad:        0.75rem;
 
     $v-shift:                0.25rem;
     $h-shift:                0.125rem;
@@ -1079,6 +1079,51 @@ body.aggregate-style {
 
         $narrow-title-shadow: 0 0 0.5rem 0.25rem ghostwhite;
 
+        .toggle {
+
+            width:           1.65rem;
+            height:          1.5rem;
+            padding:         0;
+            line-height:     0;
+            text-decoration: none;
+            border-radius:   50%;
+            border-color:    darkgray;
+
+            @media #{$narrow-screen} {
+                width:       1.875rem;
+                height:      1.75rem;
+            }
+
+            /**
+             * This may just be a Firefox thing, but the right triangle icon
+             * seems shifted with respect to the down triangle icon.
+             */
+            &:not(.open) {
+                text-indent: 2px;
+            }
+
+            &:hover {
+                box-shadow: none;
+            }
+
+            &.for-item {
+                // NOTE: open/close at the title level
+            }
+
+            &.for-part {
+                // NOTE: open/close a bibliographic part under a title
+            }
+
+            &.for-format {
+                // NOTE: open/close a format within a part section
+            }
+
+            &.for-file {
+                // NOTE: open/close a file within a format sub-section
+
+            }
+        }
+
         .number {
 
             position:   relative;
@@ -1087,6 +1132,10 @@ body.aggregate-style {
             border:     none;
             box-shadow: none;
             background: none;
+
+            @media #{$wide-screen} {
+                padding-top:     0.5rem;
+            }
 
             @media #{$medium-width} {
                 padding-top:    0.25rem;
@@ -1116,12 +1165,13 @@ body.aggregate-style {
                     @include screen-reader-only;
                 }
 
-                .control {
-                    align-self: flex-end;
+                .toggle.for-item {
+                    align-self:    flex-end;
+                    margin-bottom: 0;
                 }
             }
 
-            > .control {
+            > .toggle.for-item {
 
                 line-height: 1rem;
 
@@ -1153,7 +1203,7 @@ body.aggregate-style {
                     height:     calc(100% - #{$excess});
                 }
 
-                .control {
+                .toggle.for-item {
                     position: sticky;
                     top:      3vh;
                 }
@@ -1936,6 +1986,14 @@ body.search-v3 {
 
         .number {
 
+            .toggle.for-item {
+                @media #{$not-narrow-screen} {
+                    width:      1.875rem;
+                    height:     1.75rem;
+                    margin-top: 0;
+                }
+            }
+
             // Do not show file counts by default.
             .file-counts {
                 display: none;
@@ -2019,25 +2077,21 @@ body.search-v3 {
             //=================================================================
 
             .container {
-                .control {
+                .toggle.for-item {
                     @media #{$narrow-screen} {
                         margin-top: 0.125rem;
                     }
                 }
             }
 
-            .control,
+            .toggle.for-item,
             .file-counts {
                 align-self: flex-start;
             }
 
-            .control {
-
-                z-index: $z-raised;
-
-                @media #{$not-narrow-screen} {
-                    margin-top: 0.25rem;
-                }
+            .toggle.for-item {
+                margin-bottom: 0;
+                z-index:       $z-raised;
             }
 
             .file-counts {
@@ -2136,7 +2190,7 @@ body.search-v3 {
 
                     height: calc(100% - 5.5rem);
 
-                    .control,
+                    .toggle.for-item,
                     .file-counts {
                         align-self: flex-start;
                         top:        1rem;

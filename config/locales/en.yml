@@ -89,6 +89,14 @@ en:
           label:        'Less ▲'
           tooltip:      'See less'
 
+    tree:
+      control:
+        label:          '▶'
+        tooltip:        'Open'
+        open:
+          label:        '▼'
+          tooltip:      'Close'
+
     search_type:        &SEARCH_TYPE
 
       identifier:

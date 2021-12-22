@@ -7,7 +7,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    let $toggle_buttons = $('.toggle').not('.for-help');
+    let $toggle_buttons = $('.toggle.for-panel').not('.for-example');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($toggle_buttons)) {

@@ -278,7 +278,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_span(label, **opt)
-    css_selector = '.for-help'
+    css_selector = '.for-example'
     html_span(label, append_classes!(opt, css_selector))
   end
 

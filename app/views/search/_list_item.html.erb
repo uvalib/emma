@@ -18,6 +18,7 @@
   skip = [*skip, :thumbnail].uniq
   opt  = { index: index, row: row, offset: offset, level: level, skip: skip }
   opt[:max_index] = count - 1 if count
+  opt[:id]        = model_item_id(item)
 
   number_method = "search_list_number_#{action}"
   number_method = :search_list_item_number unless respond_to?(number_method)

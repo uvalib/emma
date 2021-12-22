@@ -473,8 +473,12 @@ module SearchHelper
 
   # Include edit and delete controls below the entry number.
   #
-  # @param [Model] item
-  # @param [Hash]  opt                    Passed to #list_item_number.
+  # @param [Model]   item
+  # @param [Boolean] edit
+  # @param [Boolean] toggle
+  # @param [Hash]    opt                  Passed to #list_item_number except:
+  #
+  # @option opt [String] :id              HTML ID of the item element.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* or *index* is *nil*.
@@ -482,30 +486,39 @@ module SearchHelper
   # @see UploadHelper#upload_edit_icon
   # @see UploadHelper#upload_delete_icon
   #
-  def search_list_item_number(item, **opt)
-    db_id =
-      if can?(:modify, item)
+  def search_list_item_number(item, edit: true, toggle: false, **opt)
+    opt[:inner] = opt[:inner].is_a?(TrueClass) ? [] : Array.wrap(opt[:inner])
+    opt[:outer] = Array.wrap(opt[:outer])
+    item_id     = opt.delete(:id)
+
+    if toggle
+      button = search_list_item_toggle(row: opt[:row], id: item_id)
+      opt[:inner] << button # Visible for narrow screens.
+      opt[:outer] << button # Visible for wide and medium-width screens.
+    end
+
+    if edit && can?(:modify, item)
+      db_id =
         Upload.id_for(item) ||
           if (sid = Upload.sid_for(item))
             Upload.where(submission_id: sid).first&.id
           end
-      end
-    list_item_number(item, **opt) do
       # noinspection RubyMismatchedArgumentType
-      upload_entry_icons(item, id: db_id) if db_id.present?
+      opt[:inner] << upload_entry_icons(item, id: db_id) if db_id.present?
     end
+
+    list_item_number(item, **opt)
   end
 
   # NOTE: transitional
   def search_list_number_v2(item, **opt)
-    search_list_item_number(item, **opt)
+    search_list_item_number(item, toggle: true, **opt)
   end
 
   # NOTE: transitional
   def search_list_number_v3(item, **opt)
-    opt[:inner] = true
     opt[:outer] = file_counts(item)
-    search_list_item_number(item, **opt)
+    search_list_item_number(item, toggle: true, **opt)
   end
 
   # Include edit and delete controls below the entry number.
@@ -529,6 +542,25 @@ module SearchHelper
         end
       end
     end
+  end
+
+  # search_list_item_toggle
+  #
+  # @param [Integer] row
+  # @param [Hash]    opt              Passed to #tree_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/controllers/search.js setupToggleControl()
+  #
+  def search_list_item_toggle(row: nil, **opt)
+    if (row = positive(row))
+      row = "row-#{row}"
+      prepend_classes!(opt, row)
+      opt[:'data-row'] ||= ".#{row}"
+    end
+    opt[:context] ||= :item
+    tree_button(**opt)
   end
 
   # ===========================================================================

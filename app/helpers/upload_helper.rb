@@ -345,7 +345,7 @@ module UploadHelper
 
     # An element following the group to hold a dynamic description of the group
     # button currently hovered/focused.  (@see javascripts/feature/records.js)
-    note = html_div('&nbsp;'.html_safe, class: 'note', 'aria-hidden': true)
+    note = html_div(HTML_SPACE, class: 'note', 'aria-hidden': true)
     note = html_div(note, class: 'note-tray', 'aria-hidden': true)
 
     # Include the group and note area in a panel.

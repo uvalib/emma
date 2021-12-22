@@ -465,6 +465,8 @@ module ModelHelper::List
   # @param [Hash]           opt           Passed to the render method.
   # @param [Proc]           block         Passed to the render method.
   #
+  # @option opt [String] :id              Element ID to assign to the list item
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   #--
@@ -473,24 +475,39 @@ module ModelHelper::List
   def model_list_item(item, model:, pairs: nil, render: nil, **opt, &block)
     opt[:model]  = model ||= Model.for(item)
     css_selector = ".#{model}-list-item"
-    html_opt     = { class: css_classes(css_selector) }
-    row          = positive(opt[:row])
+    html_opt = {
+      class:                   css_classes(css_selector),
+      id:                      opt.delete(:id) || model_item_id(item, **opt),
+      'data-group':            (opt[:group] = item.try(:state_group)),
+      'data-title_id':         item.try(:emma_titleId),
+      'data-normalized_title': item.try(:normalized_title),
+      'data-sort_date':        item.try(:emma_sortDate),
+      'data-pub_date':         item.try(:emma_publicationDate),
+      'data-rem_date':         item.try(:rem_remediationDate),
+      'data-item_score':       item.try(:total_score, precision: 2),
+    }
+    row = positive(opt[:row])
     append_classes!(html_opt, "row-#{row}") if row
-    append_classes!(html_opt, 'empty')      if (id = item).nil?
-    id &&= item.try(:submission_id) || item.try(:identifier) || hex_rand
-    html_opt[:id]                        = "#{model}-#{id}" if id
-    html_opt[:'data-group']= opt[:group] = item.try(:state_group)
-    html_opt[:'data-title_id']           = item.try(:emma_titleId)
-    html_opt[:'data-normalized_title']   = item.try(:normalized_title)
-    html_opt[:'data-sort_date']          = item.try(:emma_sortDate)
-    html_opt[:'data-pub_date']           = item.try(:emma_publicationDate)
-    html_opt[:'data-rem_date']           = item.try(:rem_remediationDate)
-    html_opt[:'data-item_score']         = item.try(:total_score, precision: 2)
+    append_classes!(html_opt, 'empty')      unless item
     html_div(html_opt) do
       render = :render_empty_value  if item.nil?
       render = :render_field_values if render.nil?
       send(render, item, pairs: pairs, **opt, &block)
     end
+  end
+
+  # Generate a standardized (base) element identifier from the given item.
+  #
+  # @param [Model, nil]     item
+  # @param [String, Symbol] model
+  #
+  # @return [String]
+  #
+  def model_item_id(item, model: nil, **)
+    # noinspection RailsParamDefResolve
+    id = item.try(:submission_id) || item.try(:identifier) || hex_rand
+    model ||= Model.for(item)
+    html_id(model, id, underscore: false)
   end
 
   # ===========================================================================

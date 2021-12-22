@@ -164,7 +164,7 @@ module EngineConcern
     engine  = "#{service} engine"
     notice  = ERB::Util.h("#{engine.upcase} #{url.inspect}")
     spaces  = opt.delete(:spaces) || FLASH_RESET_NOTICE_SPACES
-    spaces  = '&nbsp;'.html_safe * spaces if spaces.is_a?(Integer)
+    spaces  = HTML_SPACE * spaces if spaces.is_a?(Integer)
     spaces  = ERB::Util.h(spaces)
     label   = '[RESTORE DEFAULT]' # TODO: I18n
     tip     = "Click to restore the default #{engine}" # TODO: I18n

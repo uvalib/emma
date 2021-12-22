@@ -408,6 +408,34 @@ var Emma = (function() {
         /**
          * ====================================================================
          *
+         * feature/search.js
+         *
+         * - opener.text      Label for button to open a collapsed tree.
+         * - opener.tooltip   Tooltip for button to open a collapsed tree.
+         * - closer.text      Label for button to close an expanded tree.
+         * - closer.tooltip   Tooltip for button to close an expanded tree.
+         *
+         * ====================================================================
+         *
+         * @type {{
+         *    opener: ElementProperties,
+         *    closer: ElementProperties,
+         * }}
+         */
+        Tree: {
+            opener: {
+                label:   "<%= LayoutHelper::Common::TREE_OPENER_LABEL %>",
+                tooltip: "<%= LayoutHelper::Common::TREE_OPENER_TIP %>"
+            },
+            closer: {
+                label:   "<%= LayoutHelper::Common::TREE_CLOSER_LABEL %>",
+                tooltip: "<%= LayoutHelper::Common::TREE_CLOSER_TIP %>"
+            }
+        },
+
+        /**
+         * ====================================================================
+         *
          * feature/popup.js
          *
          * - button.class     Popup activator CSS class.

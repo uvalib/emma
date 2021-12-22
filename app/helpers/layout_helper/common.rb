@@ -22,40 +22,40 @@ module LayoutHelper::Common
 
   public
 
-  # Configuration for panel properties.
+  # Configuration for panel control properties.
   #
   # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  PANEL_CONFIG = I18n.t('emma.panel', default: {}).deep_freeze
+  PANEL_CTRL_CFG = I18n.t('emma.panel.control', default: {}).deep_freeze
 
   # Label for button to open a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
   PANEL_OPENER_LABEL =
-    non_breaking(PANEL_CONFIG.dig(:control, :label)).html_safe.freeze
+    non_breaking(PANEL_CTRL_CFG.dig(:control, :label)).html_safe.freeze
 
   # Tooltip for button to open a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_OPENER_TIP = PANEL_CONFIG.dig(:control, :tooltip)
+  PANEL_OPENER_TIP = PANEL_CTRL_CFG.dig(:control, :tooltip)
 
   # Label for button to close a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
   PANEL_CLOSER_LABEL =
-    non_breaking(PANEL_CONFIG.dig(:control, :open, :label)).html_safe.freeze
+    non_breaking(PANEL_CTRL_CFG.dig(:control, :open, :label)).html_safe.freeze
 
   # Tooltip for button to close a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_CLOSER_TIP = PANEL_CONFIG.dig(:control, :open, :tooltip)
+  PANEL_CLOSER_TIP = PANEL_CTRL_CFG.dig(:control, :open, :tooltip)
 
   # ===========================================================================
   # :section:
@@ -65,12 +65,14 @@ module LayoutHelper::Common
 
   # toggle_button
   #
-  # @param [String] id                HTML element controlled by this button.
-  # @param [String, nil] label        Default: #PANEL_OPENER_LABEL.
-  # @param [String, nil] selector     Selector of the element controlled by
-  #                                     this button (only used if panel.js
-  #                                     RESTORE_PANEL_STATE is *true*).
-  # @param [Hash] opt                 Passed to #button_tag.
+  # @param [String]          id         HTML element controlled by this button.
+  # @param [String, nil]     label      Default: #PANEL_OPENER_LABEL.
+  # @param [String, nil]     context    Default: 'for-panel'.
+  # @param [Boolean, String] open       Start with controlled element expanded.
+  # @param [String, nil]     selector   Selector of the element controlled by
+  #                                       this button (only used if panel.js
+  #                                       RESTORE_PANEL_STATE is *true*).
+  # @param [Hash] opt                   Passed to #button_tag.
   #
   # @raise [RuntimeError]             The controlled element was not specified.
   #
@@ -78,18 +80,98 @@ module LayoutHelper::Common
   #
   # @see file:app/assets/javascripts/feature/panel.js
   #
-  def toggle_button(id:, label: nil, selector: nil, **opt)
-    css_selector  = '.toggle'
-    opt[:type]  ||= 'button'
-    opt[:title] ||= PANEL_OPENER_TIP
-    opt[:'aria-controls'] = id       if id.present?
-    opt[:'data-selector'] = selector if selector.present?
-    raise 'no target id given' if opt[:'aria-controls'].blank?
-    if opt[:'data-selector'].present? && opt[:data].is_a?(Hash)
-      opt[:data] = opt[:data].except(:selector)
+  def toggle_button(
+    id:,
+    label:    nil,
+    context:  nil,
+    open:     nil,
+    selector: nil,
+    **opt
+  )
+    css_selector = '.toggle'
+    open = 'open' if open.is_a?(TrueClass)
+    open = nil    unless open.is_a?(String)
+    if context
+      # noinspection RubyNilAnalysis
+      context = "for-#{context}" unless context.start_with?('for-')
+    elsif css_class_array(opt[:class]).none? { |c| c.start_with?('for-') }
+      context = 'for-panel'
     end
-    label = label ? non_breaking(label) : PANEL_OPENER_LABEL
-    button_tag(label, prepend_classes!(opt, css_selector))
+    opt[:'aria-controls'] = id.presence or raise 'no target id given'
+    if selector.present?
+      opt[:'data-selector'] = selector
+      opt[:data] = opt[:data].except(:selector) if opt[:data].is_a?(Hash)
+    end
+    label       &&= non_breaking(label)
+    label       ||= open ? PANEL_CLOSER_LABEL : PANEL_OPENER_LABEL
+    opt[:title] ||= open ? PANEL_CLOSER_TIP   : PANEL_OPENER_TIP
+    opt[:type]  ||= 'button'
+    prepend_classes!(opt, css_selector, context, open)
+    button_tag(label, opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration for tree control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  TREE_CTRL_CFG = I18n.t('emma.tree.control', default: {}).deep_freeze
+
+  # Label for button to open a collapsed tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_OPENER_LABEL = non_breaking(TREE_CTRL_CFG[:label]).html_safe.freeze
+
+  # Tooltip for button to open a collapsed tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_OPENER_TIP = TREE_CTRL_CFG[:tooltip]
+
+  # Label for button to close an expanded tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_CLOSER_LABEL =
+    non_breaking(TREE_CTRL_CFG.dig(:open, :label)).html_safe.freeze
+
+  # Tooltip for button to close an expanded tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_CLOSER_TIP = TREE_CTRL_CFG.dig(:open, :tooltip)
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Tree open/close control.
+  #
+  # @param [Hash] opt                 Passed to #toggle_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/search.js
+  #
+  def tree_button(**opt)
+    opt[:label]   ||= opt[:open] ? TREE_CLOSER_LABEL : TREE_OPENER_LABEL
+    opt[:title]   ||= opt[:open] ? TREE_CLOSER_TIP   : TREE_OPENER_TIP
+    opt[:context] ||=
+      unless css_class_array(opt[:class]).any? { |c| c.start_with?('for-') }
+        'for-tree'
+      end
+    toggle_button(**opt)
   end
 
   # ===========================================================================

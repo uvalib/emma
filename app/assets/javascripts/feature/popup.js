@@ -10,7 +10,7 @@ $(document).on('turbolinks:load', function() {
     /** @const {Selector} */ const POPUP_SELECTOR = selector(POPUP_CLASS);
 
     /** @type {jQuery} */
-    let $popup_containers = $(POPUP_SELECTOR).not('.for-help');
+    let $popup_containers = $(POPUP_SELECTOR).not('.for-example');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($popup_containers)) {
