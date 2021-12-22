@@ -373,7 +373,7 @@ module UploadConcern
   # @option opt [Symbol] :from        Default: `#calling_method`.
   # @option opt [Symbol] :event
   #
-  # @return [*]                       @see UploadWorkflow::Single#results
+  # @return [Any]                     @see UploadWorkflow::Single#results
   #
   # @see UploadWorkflow::Single#generate
   #
@@ -654,6 +654,7 @@ module UploadConcern
     report    = item.presence && ExecReport[item]
     status  ||= report&.http_status || :bad_request
     message   = report&.render(html: html)&.presence
+    # noinspection RubyMismatchedArgumentType
     message ||= UploadWorkflow::Errors.make_label(item, default: '')
 
     opt = { meth: meth, status: status }

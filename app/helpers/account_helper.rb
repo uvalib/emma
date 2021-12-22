@@ -76,7 +76,7 @@ module AccountHelper
   # Transform a field value for HTML rendering.
   #
   # @param [User] item
-  # @param [*]    value
+  # @param [Any]  value
   # @param [Hash] opt                 Passed to the render method.
   #
   # @return [Any]   HTML or scalar value.
@@ -230,14 +230,17 @@ module AccountHelper
 
   # Specified field selections from the given User instance.
   #
-  # @param [User, *] item
-  # @param [Hash]    opt              Passed to #model_field_values
+  # @param [User, nil] item
+  # @param [Hash]      opt            Passed to #model_field_values
+  #
+  # @return [Hash{String=>ActiveSupport::SafeBuffer}]
   #
   def account_field_values(item, **opt)
     model = User
     return {} unless item.is_a?(model)
     opt[:filter] ||= ACCOUNT_FIELD_FILTERS unless developer?
     pairs = model_field_values(item, **opt)
+    # noinspection RubyMismatchedArgumentType
     Model.show_fields(model).map { |field, config|
       next if config[:ignored]
       next if config[:role] && !has_role?(config[:role])
@@ -254,7 +257,7 @@ module AccountHelper
   # @param [User, nil] item
   # @param [Hash]      opt            Passed to #account_field_values
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def account_columns(item = nil, **opt)
     actions = []
@@ -266,6 +269,7 @@ module AccountHelper
     end
     action_column = { actions: actions }
     data_columns  = account_field_values(item, **opt)
+    # noinspection RubyMismatchedArgumentType
     action_column.merge!(data_columns)
   end
 

@@ -260,7 +260,7 @@ module Api::Schema
   #
   # @param [Class, String, Symbol, nil] type
   #
-  # @return [*]
+  # @return [Any]
   #
   def scalar_default(type)
     # noinspection RubyNilAnalysis
@@ -282,7 +282,7 @@ module Api::Schema
   #
   # @param [Hash, nil] opt
   #
-  # @return [*]
+  # @return [Any]
   #
   def extract_type_option(opt)
     type_options(opt).values.first
@@ -292,7 +292,7 @@ module Api::Schema
   #
   # @param [Hash] opt                 Will have #TYPE_OPTION_KEYS removed.
   #
-  # @return [*]
+  # @return [Any]
   #
   def extract_type_option!(opt)
     return unless opt.is_a?(Hash)

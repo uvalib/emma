@@ -19,7 +19,7 @@ module IngestService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   INGEST_CONFIG = i18n_erb('emma.service.ingest').deep_freeze
 

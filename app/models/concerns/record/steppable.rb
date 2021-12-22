@@ -560,7 +560,7 @@ module Record::Steppable
     # Create an ActiveJob serializer for the given Record class if it does not
     # already exist.
     #
-    # @param [Model] base
+    # @param [Class, Module, Any] base
     #
     # @return [void]
     #
@@ -988,7 +988,7 @@ module Record::Steppable
     # @param [Symbol, nil]  new_state   Target state after *action*.
     # @param [Boolean]      auto_retry
     #
-    # @return [(*,Symbol)]              Action result and new effective state.
+    # @return [(Any,Symbol)]            Action result and new effective state.
     #
     # == Usage Notes
     # Ensures that if the action raises an exception then that is captured in
@@ -1033,12 +1033,12 @@ module Record::Steppable
 
     # Schedule a method to be run asynchronously (unless :async is *false*).
     #
-    # @param [Symbol]     meth
-    # @param [Array]      args      Arguments to *meth*.
-    # @param [Boolean, *] async     If *false* do not run asynchronously.
-    # @param [Hash]       opt
+    # @param [Symbol]  meth
+    # @param [Array]   args           Arguments to *meth*.
+    # @param [Boolean] async          If *false* do not run asynchronously.
+    # @param [Hash]    opt
     #
-    # @return [Boolean]   *false* if the job could not be processed.
+    # @return [Boolean]               False if the job could not be processed.
     #
     def job_run(meth, *args, async: true, **opt)
       async = false # TODO: remove when implementing async jobs
@@ -1054,7 +1054,7 @@ module Record::Steppable
     #
     # @param [Hash] opt               Passed to #cb_schedule.
     #
-    # @return [Boolean]   *false* if the callback could not be processed.
+    # @return [Boolean]               False if the job could not be processed.
     #
     def run_callback(**opt)
       callback     = opt.delete(:callback) or return true

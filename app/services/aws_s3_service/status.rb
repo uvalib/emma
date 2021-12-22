@@ -23,7 +23,7 @@ module AwsS3Service::Status
   # Title:  "Campbell Biology: Concepts & Connections"
   # ISBN:   "9780134296012"
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   SAMPLE_RECORD_ID_ACCESS= {
     ids:      'emma-2931211-pdf',

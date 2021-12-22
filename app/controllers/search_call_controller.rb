@@ -123,9 +123,6 @@ class SearchCallController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def show_values(item = @item, **opt)
     opt.reverse_merge!(name: :search_call)
     if item.is_a?(SearchCall)

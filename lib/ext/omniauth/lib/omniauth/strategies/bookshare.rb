@@ -192,7 +192,7 @@ module OmniAuth
 
       # Information about the user account.
       #
-      # @return [Hash{Symbol=>*}]
+      # @return [Hash{Symbol=>Any}]
       #
       def account_info
         @account_info ||= get_account_info
@@ -437,7 +437,7 @@ module OmniAuth
       #
       # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
       #
-      # @return [Hash{Symbol=>*}]
+      # @return [Hash{Symbol=>Any}]
       #
       #--
       # noinspection RubyNilAnalysis
@@ -683,7 +683,7 @@ module OmniAuth
 
         # call_app!
         #
-        # @return [*]
+        # @return [Any]
         #
         def call_app!(env = @env)
           __ext_debug { env }

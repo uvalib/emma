@@ -210,8 +210,8 @@ class User < ApplicationRecord
 
   # Value of :id for the indicated record.
   #
-  # @param [User, String, Integer, *] user  Default: self
-  # @param [Hash]                     opt
+  # @param [User, String, Integer, Any] user  Default: self
+  # @param [Hash]                       opt
   #
   # @return [String]
   # @return [nil]                     If no matching record was found.
@@ -223,8 +223,8 @@ class User < ApplicationRecord
 
   # Value of :id for the indicated record.
   #
-  # @param [User, String, Integer, *] user
-  # @param [Hash]                     opt
+  # @param [User, String, Integer, Any] user
+  # @param [Hash]                       opt
   #
   # @return [String]
   # @return [nil]                     If no matching record was found.
@@ -256,8 +256,8 @@ class User < ApplicationRecord
 
   # Return with the specified User record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Model, *] item
-  # @param [Hash]                   opt
+  # @param [String, Symbol, Integer, Hash, Model, Any, nil] item
+  # @param [Hash]                                           opt
   #
   # @return [User, nil]
   #
@@ -267,15 +267,15 @@ class User < ApplicationRecord
 
   # Return with the specified User record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Model, *] item
-  # @param [Hash]                   opt
+  # @param [String, Symbol, Integer, Hash, Model, Any, nil] item
+  # @param [Hash]                                           opt
   #
   # @option opt [Boolean] :no_raise   True by default.
   #
   # @return [User, nil]
   #
   def self.find_record(item, **opt)
-    # noinspection RubyMismatchedReturnType
+    item = item.to_s if item.is_a?(Symbol)
     if item.is_a?(String) && !digits_only?(item)
       find_by(email: item)
     else
@@ -292,7 +292,7 @@ class User < ApplicationRecord
 
   # Return the account ID of *user*.
   #
-  # @param [User, String, Integer, *] user  Default: self.
+  # @param [User, String, Symbol, Integer, Any, nil] user  Default: self.
   #
   # @return [String, nil]
   #
@@ -303,11 +303,15 @@ class User < ApplicationRecord
 
   # Return the account ID of *user*.
   #
-  # @param [User, String, Integer, *] user
+  # @param [User, String, Symbol, Integer, Any, nil] user
   #
   # @return [String, nil]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def self.uid_value(user)
+    user = user.to_s  if user.is_a?(Symbol)
     user = user.to_i  if digits_only?(user)
     user = find(user) if user.is_a?(Integer) && user.positive?
     user = user.uid   if user.is_a?(User)

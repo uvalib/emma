@@ -19,7 +19,7 @@ module AwsS3Service::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   AWS_S3_CONFIG = i18n_erb('emma.service.aws_s3').deep_freeze
 

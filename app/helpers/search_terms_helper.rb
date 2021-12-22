@@ -166,7 +166,7 @@ module SearchTermsHelper
 
   # Active query parameters.
   #
-  # @param [Hash{Symbol=>*}] prm   Default: `#url_parameters`.
+  # @param [Hash{Symbol=>Any}] prm    Default: `#url_parameters`.
   #
   # @return [Hash{Symbol=>Array<String>}]
   #

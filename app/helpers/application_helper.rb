@@ -24,7 +24,7 @@ module ApplicationHelper
   # Raw configuration entries for each controller that supplies content (i.e.,
   # those controllers with a subdirectory in app/view) plus 'en.emma.generic'.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection
@@ -37,7 +37,7 @@ module ApplicationHelper
 
   # Configuration for application properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection

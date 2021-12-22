@@ -247,8 +247,8 @@ class Phase::BulkOperation < Phase
 
   # The subclass-specific operation(s) performed when running.
   #
-  # @param [Symbol, *] prev_state
-  # @param [Hash]      opt
+  # @param [Symbol, Any] prev_state
+  # @param [Hash]        opt
   #
   # @return [Boolean]
   #
@@ -258,8 +258,8 @@ class Phase::BulkOperation < Phase
 
   # The operation(s) performed when pausing.
   #
-  # @param [Symbol, *] prev_state
-  # @param [Hash]      opt
+  # @param [Symbol, Any] prev_state
+  # @param [Hash]        opt
   #
   # @return [Boolean]
   #
@@ -271,8 +271,8 @@ class Phase::BulkOperation < Phase
 
   # The operation(s) performed when resuming.
   #
-  # @param [Symbol, *] prev_state
-  # @param [Hash]      opt
+  # @param [Symbol, Any] prev_state
+  # @param [Hash]        opt
   #
   # @return [Boolean]
   #
@@ -284,8 +284,8 @@ class Phase::BulkOperation < Phase
 
   # The operation(s) performed when restarting.
   #
-  # @param [Symbol, *] prev_state
-  # @param [Hash]      opt
+  # @param [Symbol, Any] prev_state
+  # @param [Hash]        opt
   #
   # @return [Boolean]
   #

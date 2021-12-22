@@ -105,7 +105,7 @@ class HelpController < ApplicationController
   # @param [Symbol] topic
   # @param [Hash]   opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def show_values(topic = @topic, **opt)
     opt.reverse_merge!(name: topic)

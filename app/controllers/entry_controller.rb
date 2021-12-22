@@ -718,7 +718,7 @@ class EntryController < ApplicationController
   # @param [Model, Hash] item
   # @param [Hash]        opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def show_values(item = @item, **opt)
     item = item.is_a?(ActiveRecord) ? item.attributes.symbolize_keys : item.dup

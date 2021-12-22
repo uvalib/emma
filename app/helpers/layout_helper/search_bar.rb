@@ -313,8 +313,8 @@ module LayoutHelper::SearchBar
   # @param [String, Symbol] operation
   # @param [Hash]           opt             Passed to #icon_button except for:
   #
-  # @option opt [*]               :field    Discarded.
-  # @option opt [*]               :target   Discarded.
+  # @option opt [Any]             :field    Discarded.
+  # @option opt [Any]             :target   Discarded.
   # @option opt [String, Boolean] :unique   Passed to #unique_id.
   # @option opt [Integer]         :index    Passed to #unique_id.
   #

@@ -108,7 +108,7 @@ module EngineConcern
   #
   # @param [Class<ApiService>] service
   #
-  # @return [*]                       *nil* if not redirecting
+  # @return [Any, nil]                *nil* if not redirecting
   #
   def set_engine_callback(service)
     opt = request_parameters

@@ -189,7 +189,7 @@ module ParamsHelper
   # Translate an item into the URL parameter for the controller with which it
   # is associated.
   #
-  # @param [Symbol, String, Hash, Module, *] v  Def: `params[:controller]`.
+  # @param [Symbol, String, Hash, Module, Any] v  Def: `params[:controller]`.
   #
   # @return [String]
   # @return [nil]
@@ -208,7 +208,7 @@ module ParamsHelper
   # Translate an item into the URL parameter for the controller with which it
   # is associated.
   #
-  # @param [Symbol, String, Hash, *] v  Def: `params[:action]`.
+  # @param [Symbol, String, Hash, Any] v  Def: `params[:action]`.
   #
   # @return [String]
   # @return [nil]
@@ -227,10 +227,10 @@ module ParamsHelper
 
   # Translate into the URL parameters for the associated controller and action.
   #
-  # @param [Symbol, String, Hash, Module, *] ctrlr   Def: `params[:controller]`
-  # @param [Symbol, String, nil]             action  Def: `params[:action]`
+  # @param [Symbol,String,Hash,Module,Any] ctrlr    Def: `params[:controller]`
+  # @param [Symbol,String,nil]             action   Def: `params[:action]`
   #
-  # @return [(*,*)]
+  # @return [(Any,Any)]
   #
   #--
   # == Variations
@@ -253,8 +253,8 @@ module ParamsHelper
   #   @return [(String,nil)]
   #
   # @overload ctrlr_action_to_names(ctrlr, action)
-  #   @param [Symbol, String, Hash, Module, *] ctrlr
-  #   @param [Symbol, String]                  action
+  #   @param [Symbol, String, Hash, Module, Any] ctrlr
+  #   @param [Symbol, String]                    action
   #   @return [(String,String)]
   #
   def ctrlr_action_to_names(ctrlr = nil, action = nil)

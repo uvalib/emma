@@ -19,7 +19,7 @@ module IaDownloadService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   IA_CONFIG = i18n_erb('emma.service.ia_download').deep_freeze
 

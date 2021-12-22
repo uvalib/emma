@@ -96,12 +96,12 @@ module Emma::Json
 
   # Attempt to interpret *arg* as JSON if it is a string.
   #
-  # @param [String, *] arg
-  # @param [*]         default        On parse failure, return this if provided
+  # @param [Hash, String, Any, nil] arg
+  # @param [Any]  default             On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
-  # @param [Hash]      opt            Passed to #json_parse.
+  # @param [Hash] opt                 Passed to #json_parse.
   #
-  # @return [Hash, *]
+  # @return [Hash, Any]
   #
   def safe_json_parse(arg, default: :original, **opt)
     # noinspection RubyMismatchedReturnType
@@ -110,7 +110,7 @@ module Emma::Json
 
   # pretty_json
   #
-  # @param [String, Hash, *] arg
+  # @param [Hash, String, Any, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.

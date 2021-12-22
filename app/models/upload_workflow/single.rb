@@ -179,7 +179,7 @@ module UploadWorkflow::Single::Data
   #
   # @param [Upload, Hash] data
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def record_data(data)
     data = data.attributes if data.is_a?(Upload)
@@ -471,6 +471,7 @@ module UploadWorkflow::Single::Actions
       parts = {}
       parts['event_args'] = ERB::Util.h(args.inspect) if args.present?
       parts['options']    = ERB::Util.h(opt.inspect)  if opt.present?
+      # noinspection RubyMismatchedArgumentType
       parts['record'] =
         ERB::Util.h(pretty_json(record)).tap { |rec|
           rec.gsub!(/:( +)/) { ':' + $1.gsub(/ /, '&nbsp;&nbsp;') }
@@ -1329,9 +1330,12 @@ class UploadWorkflow::Single < UploadWorkflow
 
   # Create a new instance.
   #
-  # @param [Upload, Hash, String nil] data
-  # @param [Hash]                     opt   Passed to #initialize_state
+  # @param [Upload, Hash, String, nil] data
+  # @param [Hash]                      opt    Passed to #initialize_state
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def initialize(data, **opt)
     __debug("UPLOAD WF initialize UploadWorkflow::Single | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect} | data = #{data.class}")
     opt[:user] ||= (User.id_value(data[:user_id]) if data.is_a?(Hash))

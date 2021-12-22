@@ -52,7 +52,7 @@ module Record::Exceptions                                                       
   # Otherwise, error message(s) are extracted from *problem*.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
+  # @param [Any]                                                       value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
@@ -124,11 +124,14 @@ module Record::Exceptions                                                       
 
     # Associate an exception with the instance.
     #
-    # @param [Class<Record::Error>, Record::Error, Exception, *] error
+    # @param [Class<Record::Error>, Record::Error, Exception, nil] error
     # @param [Hash] opt   Passed to initializer if *error* is a class.
     #
     # @return [Record::Error]         New value of @exception.
     #
+    #--
+    # noinspection RubyNilAnalysis,RubyMismatchedArgumentType
+    #++
     def set_error(error, **opt)
       error = error.new(**opt) if error.is_a?(Class)
       @exception =
@@ -173,7 +176,7 @@ class Record::Exceptions::FlashPart < FlashHelper::FlashPart
 
   # A hook for treating the first part of a entry as special.
   #
-  # @param [*]    src
+  # @param [Any]  src
   # @param [Hash] opt
   #
   # @return [String, ActiveSupport::Buffer, nil]

@@ -53,7 +53,7 @@ module EditionHelper
   # Transform a field value for HTML rendering.
   #
   # @param [Bs::Api::Record] item
-  # @param [*]               value
+  # @param [Any]             value
   # @param [Hash]            opt        Passed to the render method.
   #
   # @return [Any]   HTML or scalar value.

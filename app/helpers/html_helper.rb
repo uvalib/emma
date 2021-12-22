@@ -19,8 +19,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML "<div>" element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
+  # @param [Proc]                block  Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -30,8 +30,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML "<span>" element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
+  # @param [Proc]                block  Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -41,8 +41,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML "<button>" element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
+  # @param [Proc]                block  Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -57,7 +57,7 @@ module HtmlHelper
   # then it defaults to 'div'.
   #
   # @param [Symbol, String, Integer, nil] tag
-  # @param [Array<*>]                     args
+  # @param [Array<Any,nil>]               args
   #
   # @option args.last [String] :separator
   #
@@ -100,8 +100,8 @@ module HtmlHelper
   # Invoke #form_tag after normalizing element contents provided via the
   # parameter list and/or the block.
   #
-  # @param [String]   url_or_path
-  # @param [Array<*>] args            Passed to #form_tag except for:
+  # @param [String]     url_or_path
+  # @param [Array<Any>] args          Passed to #form_tag except for:
   #
   # @option args.last [String] :separator   Default: "\n"
   #
@@ -616,7 +616,7 @@ module HtmlHelper
   # Encode a string for use in HTTP message headers passed back to the client
   # as flash messages.
   #
-  # @param [ActiveSupport::SafeBuffer, String, *] value
+  # @param [ActiveSupport::SafeBuffer, String, Any, nil] value
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #

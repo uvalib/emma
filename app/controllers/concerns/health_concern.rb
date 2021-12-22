@@ -354,7 +354,7 @@ module HealthConcern
 
   # Set the current RunState
   #
-  # @param [Hash, String, *] source   Ignored unless RunState::DYNAMIC.
+  # @param [Hash, String, nil] source   Ignored unless RunState::DYNAMIC.
   #
   # @return [void]
   #

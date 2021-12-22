@@ -173,6 +173,7 @@ module ApiHelper
       when Exception
         value.pretty_inspect.gsub(/@[^=]+=/, (PF_NEWLINE + '\0'))
       else
+        # noinspection RubyMismatchedArgumentType
         pretty_json(value)
     end
   end
@@ -185,11 +186,11 @@ module ApiHelper
 
   # Attempt to interpret *arg* as an exception or a record with an exception.
   #
-  # @param [Bs::Api::Record, Exception, *] arg
-  # @param [*] default                On parse failure, return this if provided
+  # @param [Bs::Api::Record, Exception, Any] arg
+  # @param [Any] default              On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
   #
-  # @return [Hash, String, *]
+  # @return [Hash, String, Any]
   #
   def safe_exception_parse(arg, default: :original)
     case (ex = arg.try(:exception))

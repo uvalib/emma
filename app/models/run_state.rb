@@ -144,8 +144,11 @@ class RunState < Hash
   # If the argument is *true* or "true", a RunState is created which indicates
   # that the system is unavailable.
   #
-  # @param [String, Boolean, Hash, RunState, *] source
+  # @param [String, Boolean, Hash, RunState, Any, nil] source
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def initialize(source = nil)
     if source.blank?
       source  = AVAILABLE_DEFAULTS
@@ -155,7 +158,6 @@ class RunState < Hash
       default = AVAILABLE_DEFAULTS.merge(text: "invalid: #{source.inspect}")
       source  = safe_json_parse(source, log: false, default: default)
     end
-    # noinspection RubyMismatchedArgumentType
     merge!(source)
     @status ||= UNAVAILABLE_STATUS
     @code   ||= STATE.dig(@status, :code)
@@ -288,12 +290,15 @@ class RunState < Hash
   # Transform a value into either a duration (as an integral number of seconds)
   # or a fixed timestamp.
   #
-  # @param [String, Integer, ActiveSupport::Duration, Time, *] v
+  # @param [String, Integer, ActiveSupport::Duration, Time, Any] v
   #
   # @return [Time, Integer, nil]
   #
   # @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def timestamp_or_duration(v)
     unless (v = v.presence).nil? || digits_only?(v)
       v = v.sub(/^\s*(#{PLUS})\s*/i, 'Time.now + ')
@@ -306,6 +311,7 @@ class RunState < Hash
         unit = ABBREV_UNIT[abbr]
         "#{$1}.#{unit}"
       end
+      # noinspection RubyMismatchedArgumentType
       v = eval(v) rescue nil
     end
     return v if v.nil? || v.is_a?(Time)
@@ -330,7 +336,7 @@ class RunState < Hash
 
     # Set the current run state.
     #
-    # @param [Hash, String, *] source
+    # @param [Hash, String, Any, nil] source
     #
     # @return [void]
     #
@@ -377,7 +383,7 @@ class RunState < Hash
 
       # Set the current run state by replacing the contents of #STATE_FILE.
       #
-      # @param [Hash, String, *] source
+      # @param [Hash, String, Any] source
       #
       # @return [void]
       #

@@ -78,8 +78,8 @@ module Emma::Common::HtmlMethods
 
   # Combine an array containing a mix of items into an HTML-safe result.
   #
-  # @param [Array<ActiveSupport::SafeBuffer, String, *>] array
-  # @param [String, nil]                                 sep
+  # @param [Array<ActiveSupport::SafeBuffer, String, Any>] array
+  # @param [String, nil]                                   sep
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -90,7 +90,7 @@ module Emma::Common::HtmlMethods
   def html_join(array, sep = nil)
     sep &&= ERB::Util.unwrapped_html_escape(sep)
     array = array.flatten.map! { |v| ERB::Util.unwrapped_html_escape(v) }
-    array.join(sep).html_safe
+    array.join(sep || '').html_safe
   end
 
 end

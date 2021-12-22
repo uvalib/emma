@@ -117,7 +117,7 @@ module Record::Reportable
   #
   # @param [Symbol] col               Default: `#REPORT_COLUMN`.
   #
-  # @return [*]
+  # @return [Any]
   #
   def get_report_column(*, col: REPORT_COLUMN, **)
     dynamic_get_field(col)
@@ -125,7 +125,7 @@ module Record::Reportable
 
   # Dynamically update the contents of the current record's #REPORT_COLUMN.
   #
-  # @param [*] value
+  # @param [Any, nil]    value
   # @param [Symbol, nil] meth         Default: `#calling_method`.
   # @param [Boolean]     no_raise     Unless *false* do not raise an exception.
   # @param [Symbol]      col          Default: `#REPORT_COLUMN`.

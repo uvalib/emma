@@ -38,8 +38,8 @@ module ModelHelper::Fields
   # `item#field_names` is used.  If no block is provided and *pairs* is present
   # then this function simply returns *pairs* as-is.
   #
-  # @param [Model, Hash, *] item
-  # @param [Hash, nil]      pairs
+  # @param [Model, Hash, Any] item
+  # @param [Hash, nil]        pairs
   #
   # @return [Hash]
   #
@@ -47,11 +47,13 @@ module ModelHelper::Fields
   # @yieldparam  [Model] item         The supplied *item* parameter.
   # @yieldreturn [Hash]               Result will be merged into *pairs*.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def field_values(item, pairs = nil)
     if block_given?
       yield(item).reverse_merge(pairs || {})
     elsif pairs.present?
-      # noinspection RubyMismatchedReturnType
       pairs
     elsif item.is_a?(ApplicationRecord)
       # Convert :file_data and :emma_data into hashes and move to the end.
@@ -285,10 +287,24 @@ module ModelHelper::Fields
 
   # Wrap invalid language values in a <span>.
   #
-  # @param [*, Array<*>] value
-  # @param [Boolean]     code         If *true* display the ISO 639 code.
+  # @param [Any]     value            Value to check.
+  # @param [Boolean] code             If *true* display the ISO 639 code.
   #
-  # @return [*, Array<*>]
+  # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  #--
+  # == Variations
+  #++
+  #
+  # @overload mark_invalid_languages(value, code: false)
+  #   @param [String]        value
+  #   @param [Boolean]       code
+  #   @return [String, ActiveSupport::SafeBuffer, nil]
+  #
+  # @overload mark_invalid_languages(array, code: false)
+  #   @param [Array<String>] array
+  #   @param [Boolean]       code
+  #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
   def mark_invalid_languages(value, code: false)
     if value.is_a?(Array)
@@ -307,9 +323,21 @@ module ModelHelper::Fields
 
   # Wrap invalid identifier values in a <span>.
   #
-  # @param [*, Array<*>] value
+  # @param [Any] value                Value to check.
   #
-  # @return [*, Array<*>]
+  # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  #--
+  # == Variations
+  #++
+  #
+  # @overload mark_invalid_identifiers(value)
+  #   @param [String]        value
+  #   @return [String, ActiveSupport::SafeBuffer]
+  #
+  # @overload mark_invalid_identifiers(array)
+  #   @param [Array<String>] array
+  #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
   def mark_invalid_identifiers(value)
     return value.map { |v| send(__method__, v) } if value.is_a?(Array)

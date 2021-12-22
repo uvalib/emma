@@ -241,7 +241,7 @@ module Workflow::Base::Properties
 
   # URL parameters passed in through the constructor.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   attr_accessor :parameters
 
@@ -280,7 +280,7 @@ module Workflow::Base::Data
   # The characteristic "return value" of the workflow after an event has been
   # registered.
   #
-  # @return [*]
+  # @return [Any]
   #
   attr_accessor :results
 
@@ -292,9 +292,9 @@ module Workflow::Base::Data
 
   # set_data
   #
-  # @param [*] data
+  # @param [Any] data
   #
-  # @return [*]
+  # @return [Any]
   #
   def set_data(data)
     reset_status
@@ -557,7 +557,7 @@ module Workflow::Base::Events
   # Override :workflow for a Workflow subclass in order to redefine the
   # workflow event methods.
   #
-  # @param [Workflow, *] base
+  # @param [Workflow, Any] base
   #
   # @see Workflow::ClassMethods#workflow
   #
@@ -622,7 +622,7 @@ module Workflow::Base::Events
     # Override :workflow for a Workflow subclass in order to redefine the
     # workflow event methods.
     #
-    # @param [Workflow, *] base
+    # @param [Workflow, Any] base
     #
     # @see Workflow::ClassMethods#workflow
     #
@@ -1032,8 +1032,8 @@ class Workflow::Base
 
   # Create a new instance.
   #
-  # @param [*]    data
-  # @param [Hash] opt                 Passed to #initialize_state
+  # @param [Any, nil] data
+  # @param [Hash]     opt             Passed to #initialize_state
   #
   # @option opt [User, String] :user
   # @option opt [Boolean]      :no_sim
@@ -1053,8 +1053,8 @@ class Workflow::Base
 
   # Set initial state.
   #
-  # @param [*]    data
-  # @param [Hash] opt
+  # @param [Any, nil] data
+  # @param [Hash]     opt
   #
   # @option opt [Symbol, String] :start_state
   # @option opt [Symbol, String] :init_event
@@ -1191,7 +1191,7 @@ class Workflow::Base
 
   # The table field associated with workflow state.
   #
-  # @param [*] column_name            Ignored.
+  # @param [Any] column_name          Ignored.
   #
   # @return [Symbol]
   #
@@ -1301,8 +1301,8 @@ class Workflow::Base
   # Generate a new instance of the appropriate workflow variant subclass
   # (or the workflow base class if the variant could not be found).
   #
-  # @param [*]    data
-  # @param [Hash] opt             Passed to #initialize except for:
+  # @param [Any, nil] data
+  # @param [Hash]     opt         Passed to #initialize except for:
   #
   # @option opt [Symbol,String] :variant
   #

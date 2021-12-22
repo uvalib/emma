@@ -209,9 +209,9 @@ module SearchConcern
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
   #
-  # @param [*] value
+  # @param [Any] value
   #
-  # @return [*]                       Same type as *value*.
+  # @return [Any]                     Same type as *value*.
   #
   def sanitize_keys(value)
     if value.is_a?(Hash)
@@ -326,6 +326,8 @@ module SearchConcern
 
   # Process the URL parameter for setting the immediate searches.
   #
+  # @return [void]
+  #
   def set_immediate_search
     opt = request_parameters
     return unless opt.key?(:immediate_search)
@@ -339,11 +341,15 @@ module SearchConcern
 
   # Process the URL parameter for setting the search engine URL.
   #
+  # @return [void]
+  #
   def set_search_engine
     set_engine_callback(SearchService)
   end
 
   # Process the URL parameter for setting the search style.
+  #
+  # @return [void]
   #
   def set_search_style
     opt   = request_parameters

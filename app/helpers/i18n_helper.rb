@@ -258,7 +258,7 @@ module I18nHelper
   # @param [String] path
   # @param [Hash]   opt               Passed to I18n#translate.
   #
-  # @return [*]
+  # @return [Any]
   #
   def i18n_erb(path, **opt)
     result = I18n.t(path, **opt)
@@ -268,10 +268,10 @@ module I18nHelper
 
   # Interpret ERB.
   #
-  # @param [*]                                val
+  # @param [Any]                              val
   # @param [Thread::Backtrace::Location, nil] loc
   #
-  # @return [*]
+  # @return [Any]
   #
   def erb_interpolate(val, loc = nil)
     case val

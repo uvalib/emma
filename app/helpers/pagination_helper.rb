@@ -21,7 +21,7 @@ module PaginationHelper
 
   # Configuration for pagination control properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection
@@ -78,11 +78,14 @@ module PaginationHelper
   # (For aggregate items, this is the number of aggregates as opposed to the
   # number of records from which they are composed.)
   #
-  # @param [Api::Record, Model, Array, Hash, *] value
-  # @param [*]                                  default
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Any]                                       default
   #
   # @return [Numeric]
   #
+  #--
+  # noinspection RubyNilAnalysis, RailsParamDefResolve
+  #++
   def item_count(value, default: 1)
     result   = (value.size if value.is_a?(Hash) || value.is_a?(Array))
     result ||= value.try(:item_count)   || value.try(:titles).try(:size)

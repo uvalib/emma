@@ -33,7 +33,7 @@ module TestHelper::Utility
 
   # Return a User instance from the given identification.
   #
-  # @param [String, Symbol, User, *] user
+  # @param [String, Symbol, User, Any, nil] user
   #
   # @return [User]
   # @return [nil]                     If *user* could not be converted.

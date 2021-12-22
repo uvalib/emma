@@ -151,7 +151,7 @@ module Record::Properties                                                       
 
   # URL parameter names and default values.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   WF_URL_PARAMETER = {
     prefix:       TITLE_PREFIX,
@@ -296,7 +296,7 @@ module Record::Properties                                                       
   # EntryConcern) or in the context of the workflow instance (through the
   # parameters saved from the :params initializer option).
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def parameters
     # noinspection RailsParamDefResolve

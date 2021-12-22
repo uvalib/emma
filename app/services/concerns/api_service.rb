@@ -144,8 +144,8 @@ class ApiService
 
       # Add a method name and its properties to #api_methods.
       #
-      # @param [Hash{Symbol=>Hash{Symbol=>*}}] prop
-      # @param [String, nil]                   topic
+      # @param [Hash{Symbol=>Hash{Symbol=>Any}}] prop
+      # @param [String, nil]                     topic
       #
       # @return [void]
       #

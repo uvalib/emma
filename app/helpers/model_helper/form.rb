@@ -123,7 +123,7 @@ module ModelHelper::Form
   # Render a single label/value pair.
   #
   # @param [String, Symbol] label
-  # @param [*]              value
+  # @param [Any]            value
   # @param [Symbol]         field       For 'data-field' attribute.
   # @param [Symbol, String] model       Default: `params[:controller]`
   # @param [Integer]        index       Offset for making unique element IDs.
@@ -348,7 +348,7 @@ module ModelHelper::Form
   # render_form_input
   #
   # @param [String] name
-  # @param [*]      value
+  # @param [Any]    value
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -467,7 +467,7 @@ module ModelHelper::Form
   # render_field_item
   #
   # @param [String] name
-  # @param [*]      value
+  # @param [Any]    value
   # @param [Hash]   opt               Passed to render method except for:
   #
   # @option opt [String]         :base
@@ -518,7 +518,7 @@ module ModelHelper::Form
   # render_check_box
   #
   # @param [String] name
-  # @param [*]      value
+  # @param [Any]    value
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -587,7 +587,7 @@ module ModelHelper::Form
 
   # Indicate whether the value is a valid range type.
   #
-  # @param [*]       range
+  # @param [Any]     range
   # @param [Boolean] exception        If *true*, raise an exception if *false*.
   #
   # @raise [RuntimeError]             If not valid and *exception* is *true*.

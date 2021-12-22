@@ -39,7 +39,7 @@ module AccountConcern
 
   # Only allow a list of trusted parameters through.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def account_params
     prm = params[:user] ? params.require(:user) : params

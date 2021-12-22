@@ -76,8 +76,8 @@ module Representable
 
       # __debug_show
       #
-      # @param [Symbol, NilClass, *] mode
-      # @param [Array]               args
+      # @param [Symbol, Any, nil] mode
+      # @param [Array]            args
       #
       # @return [nil]
       #
@@ -89,14 +89,17 @@ module Representable
       #++
       #
       # @overload __debug_show(mode, *args)
-      #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
-      #   @param [Array]            args
+      #   @param [Symbol, nil] mode        Either :input, :output or *nil*
+      #   @param [Array]       args
       #
       # @overload __debug_show(*args)
-      #   @param [Array]            args
+      #   @param [Array]       args
       #
       # @see #__output_impl
       #
+      #--
+      # noinspection RubyMismatchedArgumentType
+      #++
       def __debug_show(mode, *args)
         mode =
           case mode
@@ -141,8 +144,8 @@ module Representable
       # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
       # no overrides are performed.
       #
-      # @param [Symbol, NilClass, *] mode
-      # @param [Array<Symbol>]       constants
+      # @param [Symbol, Any, nil] mode
+      # @param [Array<Symbol>]    constants
       #
       # @return [nil]
       #
@@ -151,14 +154,17 @@ module Representable
       #++
       #
       # @overload __debug_lambda(mode, *constants)
-      #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
-      #   @param [Array<Symbol>]    constants
+      #   @param [Symbol, nil]   mode        Either :input, :output or *nil*
+      #   @param [Array<Symbol>] constants
       #
       # @overload __debug_lambda(*constants)
-      #   @param [Array<Symbol>]    constants
+      #   @param [Array<Symbol>] constants
       #
       # @see #__debug_show
       #
+      #--
+      # noinspection RubyMismatchedArgumentType
+      #++
       def __debug_lambda(mode, *constants)
         if mode == :input
           return unless DEBUG_INPUT
@@ -195,9 +201,9 @@ module Representable
       # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
       # no overrides are performed.
       #
-      # @param [Symbol, NilClass, *] mode
-      # @param [String, nil]         label
-      # @param [Array<Symbol>]       methods
+      # @param [Symbol, Any, nil] mode
+      # @param [String, nil]      label
+      # @param [Array<Symbol>]    methods
       #
       # @return [nil]
       #
@@ -206,13 +212,13 @@ module Representable
       #++
       #
       # @overload __debug_method(mode, label, *methods)
-      #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
-      #   @param [String]           label
-      #   @param [Array<Symbol>]    methods
+      #   @param [Symbol, nil]   mode        Either :input, :output or *nil*
+      #   @param [String]        label
+      #   @param [Array<Symbol>] methods
       #
       # @overload __debug_method(label, *methods)
-      #   @param [String]           label
-      #   @param [Array<Symbol>]    methods
+      #   @param [String]        label
+      #   @param [Array<Symbol>] methods
       #
       # @see #__debug_show
       #

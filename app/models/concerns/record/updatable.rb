@@ -148,7 +148,7 @@ module Record::Updatable
     #
     # @param [Symbol, String] column  Database field name.
     #
-    # @return [*]
+    # @return [Any]
     #
     def dynamic_get_field(column)                                               # NOTE: from Upload::WorkflowMethods
       if new_record?
@@ -161,7 +161,7 @@ module Record::Updatable
     # Dynamically update a database column.
     #
     # @param [String, Symbol] column
-    # @param [*]              new_value
+    # @param [Any, nil]       new_value
     #
     # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
     #

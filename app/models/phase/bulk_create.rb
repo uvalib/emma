@@ -21,8 +21,8 @@ class Phase::BulkCreate < Phase::BulkOperation
 
   # Operations for creating entries in bulk.
   #
-  # @param [Symbol, *] prev_state
-  # @param [Hash]      opt
+  # @param [Symbol, Any] prev_state
+  # @param [Hash]        opt
   #
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.

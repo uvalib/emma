@@ -165,7 +165,7 @@ class ExecError < RuntimeError
 
     # Extract error message(s) from the given item.
     #
-    # @param [*] src
+    # @param [Any] src
     #
     # @return [Array<String>]
     #

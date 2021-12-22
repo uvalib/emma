@@ -119,8 +119,8 @@ module UploadWorkflow::Errors
 
     # Show the submission ID if it can be determined for the given item(s).
     #
-    # @param [Api::Record, Upload, Hash, String, *] item
-    # @param [String]                               default
+    # @param [Api::Record, Upload, Hash, String, Any] item
+    # @param [String]                                 default
     #
     # @return [String]
     #
@@ -166,7 +166,7 @@ module UploadWorkflow::Errors
 
     # A hook for treating the first part of a entry as special.
     #
-    # @param [*]    src
+    # @param [Any]  src
     # @param [Hash] opt
     #
     # @return [String, ActiveSupport::Buffer, nil]
@@ -197,11 +197,14 @@ module UploadWorkflow::Errors
   # Otherwise, error message(s) are extracted from *problem*.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
+  # @param [Any, nil]                                                  value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def failure(problem, value = nil)                                             # NOTE: to Record::Exceptions
     __debug_items("UPLOAD WF #{__method__}", binding)
 
@@ -379,7 +382,7 @@ module UploadWorkflow::Properties                                               
 
   # URL parameter names and default values.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   WF_URL_PARAMETER = {
     prefix:       TITLE_PREFIX,
@@ -524,7 +527,7 @@ module UploadWorkflow::Properties                                               
   # UploadConcern) or in the context of the workflow instance (through the
   # parameters saved from the :params initializer option).
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def parameters
     # noinspection RailsParamDefResolve
@@ -606,7 +609,7 @@ module UploadWorkflow::External
   # Indicate whether the item represents an EMMA repository entry (as opposed
   # to a member repository entry).
   #
-  # @param [Upload, String, #emma_repository, #emma_recordId, *] item
+  # @param [Upload, String, #emma_repository, #emma_recordId, Any] item
   #
   # @see Upload#valid_sid?
   # @see Upload#emma_native?
@@ -618,7 +621,7 @@ module UploadWorkflow::External
 
   # Indicate whether the item does not represent an existing EMMA entry.
   #
-  # @param [Model, String, *] item
+  # @param [Model, String, Any] item
   #
   def incomplete?(item)                                                         # NOTE: to Record::Submittable::RecordMethods
     item.is_a?(Upload) && !item.existing_entry?
@@ -1071,7 +1074,7 @@ module UploadWorkflow::External
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [(Integer, Hash{String=>*}, Array<String>)]
+  # @return [(Integer, Hash{String=>Any}, Array<String>)]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #
@@ -1489,13 +1492,13 @@ module UploadWorkflow::External
   #++
   #
   # @overload repository_removals(requests, **opt)
-  #   @param [Hash{Symbol=>Array}]            requests
-  #   @param [Hash]                           opt
+  #   @param [Hash{Symbol=>Array}]              requests
+  #   @param [Hash]                             opt
   #   @return [(Array,Array)]
   #
   # @overload repository_removals(items, **opt)
-  #   @param [Array<String,#emma_recordId,*>] items
-  #   @param [Hash]                           opt
+  #   @param [Array<String,#emma_recordId,Any>] items
+  #   @param [Hash]                             opt
   #   @return [(Array,Array)]
   #
   def repository_removals(items, **opt)                                         # NOTE: to Record::Submittable::MemberRepositoryMethods
@@ -1523,13 +1526,13 @@ module UploadWorkflow::External
   #++
   #
   # @overload repository_dequeues(requests, **opt)
-  #   @param [Hash{Symbol=>Array}]            requests
-  #   @param [Hash]                           opt
+  #   @param [Hash{Symbol=>Array}]              requests
+  #   @param [Hash]                             opt
   #   @return [(Array,Array)]
   #
   # @overload repository_dequeues(items, **opt)
-  #   @param [Array<String,#emma_recordId,*>] items
-  #   @param [Hash]                           opt
+  #   @param [Array<String,#emma_recordId,Any>] items
+  #   @param [Hash]                             opt
   #   @return [(Array,Array)]
   #
   def repository_dequeues(items, **opt)                                         # NOTE: to Record::Submittable::MemberRepositoryMethods
@@ -1562,13 +1565,13 @@ module UploadWorkflow::External
   #   @return [Hash{String=>Array<Upload>}]
   #
   # @overload repository_requests(requests, empty_key: false)
-  #   @param [Array<String,Upload,*>] requests
-  #   @param [Boolean]                empty_key
+  #   @param [Array<String,Upload,Any>]           requests
+  #   @param [Boolean]                            empty_key
   #   @return [Hash{String=>Array<Upload>}]
   #
   # @overload repository_requests(request, empty_key: false)
-  #   @param [Upload]  request
-  #   @param [Boolean] empty_key
+  #   @param [Upload]                             request
+  #   @param [Boolean]                            empty_key
   #   @return [Hash{String=>Array<Upload>}]
   #
   #--

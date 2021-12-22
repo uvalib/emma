@@ -244,7 +244,7 @@ module Record::EmmaData
 
     # Present :emma_data as a hash (if it is present).
     #
-    # @return [Hash{Symbol=>*}, nil]
+    # @return [Hash{Symbol=>Any}]
     #
     def emma_metadata                                                           # NOTE: from Upload::EmmaDataMethods
       @emma_metadata ||= parse_emma_data(emma_data, true)
@@ -295,7 +295,7 @@ module Record::EmmaData
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
     # @param [Boolean]                                           allow_blank
     #
-    # @return [Hash{String=>*}]       New value of :emma_data
+    # @return [Hash{String=>Any}]     New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
     def set_emma_data(data, allow_blank = true)                                 # NOTE: from Upload::EmmaDataMethods
@@ -309,7 +309,7 @@ module Record::EmmaData
     # @param [Hash]    data
     # @param [Boolean] allow_blank
     #
-    # @return [Hash{String=>*}]       New value of :emma_data
+    # @return [Hash{String=>Any}]     New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
     def modify_emma_data(data, allow_blank = true)                              # NOTE: from Upload::EmmaDataMethods

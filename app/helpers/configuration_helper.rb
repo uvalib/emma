@@ -56,7 +56,7 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] controller
   # @param [String, Symbol, nil] action
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def controller_configuration(controller = nil, action = nil)
     result = ApplicationHelper::CONTROLLER_CONFIGURATION
@@ -90,8 +90,8 @@ module ConfigurationHelper
   # looking under "en.emma.(controller)", then under 'en.emma.generic'.
   #
   # @param [String, Array] path       Partial I18n path.
-  # @param [*]             default    Returned on failure.
-  # @param [Boolean, *]    fatal      If *true* an exception is raised instead.
+  # @param [Any]           default    Returned on failure.
+  # @param [Boolean, Any]  fatal      If *true* an exception is raised instead.
   # @param [Hash]          opt        Passed to #config_interpolations except:
   #
   # @option opt [String, Symbol]          :controller
@@ -102,7 +102,7 @@ module ConfigurationHelper
   #
   # @raise [RuntimeError]             If *fatal* and configuration not found.
   #
-  # @return [*]                       The specified value or *default*.
+  # @return [Any]                     The specified value or *default*.
   #
   # @example Simple path - [:button, :label]
   # Returns the most specific configuration match from the list:

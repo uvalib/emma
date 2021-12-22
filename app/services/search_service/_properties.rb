@@ -19,7 +19,7 @@ module SearchService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   SEARCH_CONFIG = i18n_erb('emma.service.search').deep_freeze
 

@@ -25,7 +25,7 @@ class Attachment::PromoteJob < ApplicationJob
   #
   # @param [Model]  record
   # @param [Symbol] name              Should be :file.
-  # @param [*]      data              :file_data
+  # @param [Any]    data              :file_data
   #
   # @note Currently unused
   #

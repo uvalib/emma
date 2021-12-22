@@ -57,7 +57,7 @@ class IngestService::Error < ApiService::Error
     # @param [Hash, Array, nil] src
     #
     # @return [Array<String>]         If *json* was a Hash.
-    # @return [Array<*>]              Otherwise.
+    # @return [Array<Any>]            Otherwise.
     #
     # @see #parse_create_errors
     # @see #parse_delete_errors

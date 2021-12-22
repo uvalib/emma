@@ -187,8 +187,8 @@ module LayoutHelper::SearchFilters
 
     # Create reverse sort entries.
     #
-    # @param [Array<Array<String,*>>] pairs
-    # @param [Hash]                   config
+    # @param [Array<Array<String,Any>>] pairs
+    # @param [Hash]                     config
     #
     # @return [Array<Array<String,String>>]
     #
@@ -286,13 +286,13 @@ module LayoutHelper::SearchFilters
   # that can be expressed for a menu.  If a property there has a non-nil value,
   # then that value is used as the default for that property.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   SEARCH_MENU_DEFAULT = SEARCH_FILTERS_ROOT[:_default].compact.deep_freeze
 
   # Properties for the "filter reset" button.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   # @see #reset_menu
   #
@@ -795,7 +795,7 @@ module LayoutHelper::SearchFilters
   # @param [Hash]                opt        Passed to #search_form except for
   #                                           #MENU_OPTS and:
   #
-  # @option opt [*]    :default             Provided default value.
+  # @option opt [Any]  :default             Provided default value.
   # @option opt [Hash] :config              Pre-fetched menu configuration.
   #
   # @return [ActiveSupport::SafeBuffer]     HTML menu element.
@@ -1156,7 +1156,7 @@ module LayoutHelper::SearchFilters
 
   # Indicate whether the menu is already sorted.
   #
-  # @param [Array<Array<(String,*)>>] menu
+  # @param [Array<Array<(String,Any)>>] menu
   #
   def entries_sorted?(menu)
     sort_entries(menu) == menu
@@ -1164,9 +1164,9 @@ module LayoutHelper::SearchFilters
 
   # Return a sorted copy of the menu.
   #
-  # @param [Array<Array<(String,*)>>] menu
+  # @param [Array<Array<(String,Any)>>] menu
   #
-  # @return [Array<Array<(String,*)>>]
+  # @return [Array<Array<(String,Any)>>]
   #
   def sort_entries(menu)
     sort_entries!(menu.dup)
@@ -1174,9 +1174,9 @@ module LayoutHelper::SearchFilters
 
   # Sort the menu by value if the value is a number or by the label otherwise.
   #
-  # @param [Array<Array<(String,*)>>] menu
+  # @param [Array<Array<(String,Any)>>] menu
   #
-  # @return [Array<Array<(String,*)>>]  The possibly-modified *menu*.
+  # @return [Array<Array<(String,Any)>>]      The possibly-modified *menu*.
   #
   def sort_entries!(menu)
     menu.sort_by! { |lbl, val| val.is_a?(Integer) ? ('%09d' % val) : lbl.to_s }

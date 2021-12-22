@@ -74,10 +74,13 @@ module DataConcern
 
   # Interpret a parameter value as an array of values if possible.
   #
-  # @param [Array, *] value
+  # @param [Array, String, nil] value
   #
-  # @return [Array<String>, nil]
+  # @return [Array<String>, nil]      *nil* if *value* is *nil*.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def array_param(value)
     value = value.split(',')                        if value.is_a?(String)
     value.map { |s| s.to_s.strip.presence }.compact if value.is_a?(Array)

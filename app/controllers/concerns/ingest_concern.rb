@@ -40,6 +40,8 @@ module IngestConcern
 
   # Process the URL parameter for setting the ingest engine URL.
   #
+  # @return [void]
+  #
   def set_ingest_engine
     set_engine_callback(IngestService)
   end

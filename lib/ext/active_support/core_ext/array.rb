@@ -58,7 +58,7 @@ class Array
   # value then a duplicate of *other* is appended to *self* unless it is
   # already present.
   #
-  # @param [Array, *] other
+  # @param [Array, Any] other
   #
   # @return [self]
   #

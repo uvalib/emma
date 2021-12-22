@@ -261,7 +261,7 @@ module Upload::WorkflowMethods
   #
   # @param [Symbol, String] column    Database field name.
   #
-  # @return [*]
+  # @return [Any]
   #
   def dynamic_get_field(column)                                                 # NOTE: to Record::Updatable::InstanceMethods
     if new_record?
@@ -274,9 +274,9 @@ module Upload::WorkflowMethods
   # Set the current real-time value of a database record field.
   #
   # @param [Symbol, String] column    Database field name.
-  # @param [*]              new_value
+  # @param [Any]            new_value
   #
-  # @return [*]
+  # @return [Any]
   #
   # == Usage Notes
   # If the record is already persisted, this is a direct write which does not
@@ -501,7 +501,7 @@ module Upload::WorkflowMethods
   # Extra information communicated to the Upload form to support reverting      # NOTE: not relevant to Entry/Phase/Action.
   # the record when backing out of edit changes.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   attr_accessor :revert_data
 
@@ -513,7 +513,7 @@ module Upload::WorkflowMethods
 
   # Set @revert_data.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def set_revert_data                                                           # NOTE: not relevant to Entry/Phase/Action.
     @revert_data = fields.slice(*REVERT_DATA_FIELDS).compact
@@ -521,7 +521,7 @@ module Upload::WorkflowMethods
 
   # Safely get @revert_data.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def get_revert_data                                                           # NOTE: not relevant to Entry/Phase/Action.
     @revert_data || {}

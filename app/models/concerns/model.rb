@@ -243,7 +243,7 @@ module Model
 
   # The fields and values for this model instance.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def fields
     if is_a?(ApplicationRecord)
@@ -267,8 +267,8 @@ module Model
 
   # Get configured record fields for a model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] type       Model/controller type
-  # @param [Boolean]                         no_raise   If *true* return {}
+  # @param [Symbol, String, Class, Model, Any] type       Model/controller type
+  # @param [Boolean]                           no_raise   If *true* return {}
   #
   # @raise [RuntimeError]             If *type* does not map on to a model.
   #
@@ -282,6 +282,7 @@ module Model
       raise error unless no_raise
       return EMPTY_CONFIG
     end
+    # noinspection RubyMismatchedArgumentType
     fields_table[type] ||= configured_fields_for(type).deep_freeze
   end
 
@@ -317,7 +318,7 @@ module Model
 
   # Combine configuration settings for a given model/controller.
   #
-  # @param [Symbol, *] type
+  # @param [Symbol, Any] type
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -408,12 +409,12 @@ module Model
 
   # Return the model class associated with *item*.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Any, nil] item             Symbol, String, Class, Model
   #
   # @return [Class, nil]
   #
   #--
-  # noinspection RubyMismatchedReturnType
+  # noinspection RubyNilAnalysis
   #++
   def self.class_for(item)
     item = item.class             if item.is_a?(Model)
@@ -428,10 +429,13 @@ module Model
 
   # Return the name of the model associated with *item*.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Any, nil] item             Symbol, String, Class, Model
   #
   # @return [Symbol, nil]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def self.model_for(item)
     item = item.to_s                    if item.is_a?(Symbol)
     item = item.remove(CONFIG_PREFIX)   if item.is_a?(String)
@@ -443,7 +447,7 @@ module Model
 
   # Return the name of the model associated with *item*.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Any, nil] item            Symbol, String, Class, Model
   #
   # @return [Symbol, nil]
   #
@@ -474,7 +478,7 @@ module Model
 
   # Get configured record fields for the indicated model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Symbol, String, Class, Model, Any] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -485,7 +489,7 @@ module Model
   # Get configured record fields relevant to an :index action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Symbol, String, Class, Model, Any] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -496,7 +500,7 @@ module Model
   # Get configured record fields relevant to a :show action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Symbol, String, Class, Model, Any] item
   #
   # @return [Hash{Symbol=>Hash}]        Frozen result.
   #
@@ -506,7 +510,7 @@ module Model
 
   # Get all configured record fields for the indicated model.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Symbol, String, Class, Model, Any] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -516,7 +520,7 @@ module Model
 
   # Get all configured record fields for the indicated model.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [Symbol, String, Class, Model, Any] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #

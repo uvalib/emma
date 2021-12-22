@@ -299,7 +299,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash{Symbol=>Any}]
     #
     def match_fields(rec)
       extract_fields(rec, MATCH_FIELDS)
@@ -309,7 +309,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash{Symbol=>Any}]
     #
     def sort_fields(rec)
       extract_fields(rec, SORT_FIELDS)
@@ -329,10 +329,10 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # extract_fields
     #
-    # @param [Search::Record::MetadataRecord, Hash, *] rec
-    # @param [Array<Symbol>]                           fields
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    # @param [Array<Symbol>]                             fields
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash{Symbol=>Any}]
     #
     #--
     # noinspection RubyMismatchedReturnType
@@ -790,7 +790,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @param [Hash] opt                 Passed to Api::Record#to_hash except:
   #
-  # @option opt [*] :item             If present, this is taken as an indicator
+  # @option opt [Any] :item           If present, this is taken as an indicator
   #                                     that arrays should be wrapped (for XML
   #                                     rendering).
   #

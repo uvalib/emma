@@ -200,7 +200,7 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   # @yield To supply additional items.
-  # @yieldreturn [Array, String, *]
+  # @yieldreturn [Array, String, Any]
   #
   def show(*items, **opt)
     model_opt, opt = partition_hash(opt, *SHOW_MODEL_OPT)

@@ -46,7 +46,7 @@ class ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [Any, nil] v
     #
     def valid?(v)
       !v.nil?
@@ -54,7 +54,7 @@ class ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [*] v
+    # @param [Any, nil] v
     #
     # @return [String]
     #
@@ -98,7 +98,7 @@ class ScalarType
 
   # Initialize a new instance.
   #
-  # @param [*] v                      Optional initial value.
+  # @param [Any, nil] v               Optional initial value.
   #
   def initialize(v = nil, *)
     set(v)
@@ -106,7 +106,7 @@ class ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*] v
+  # @param [Any, nil] v
   #
   # @return [String]
   #
@@ -116,7 +116,7 @@ class ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*] v
+  # @param [Any, nil] v
   #
   # @return [String]
   #
@@ -137,7 +137,7 @@ class ScalarType
   # Indicate whether the instance is valid, or indicate whether *v* would be a
   # valid value.
   #
-  # @param [*] v
+  # @param [Any, nil] v
   #
   def valid?(v = nil)
     super(v || @value)
@@ -145,7 +145,7 @@ class ScalarType
 
   # Transform value into a valid form.
   #
-  # @param [*] v
+  # @param [Any, nil] v
   #
   # @return [String]
   #
@@ -256,7 +256,7 @@ class IsoDuration < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [Any, nil] v
     #
     def valid?(v)
       normalize(v).present?
@@ -264,16 +264,20 @@ class IsoDuration < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, Date, Time, IsoDate, *] v
+    # @param [String, Date, Time, IsoDate, Any, nil] v
     #
     # @return [String]
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def normalize(v)
       case v
         when ActiveSupport::Duration then return from_duration(v)
         when IsoDuration             then return v.to_s
         else                              v = v.to_s
       end
+      # noinspection RubyNilAnalysis, RubyMismatchedReturnType
       MATCH_PATTERN.any? { |pattern| v.match?(pattern) } ? v : ''
     end
 
@@ -334,7 +338,7 @@ class IsoDuration < ScalarType
     # @param [Float, Integer, nil] value2
     # @param [Integer]             multiplier
     #
-    # @return [(Float, *)]
+    # @return [(Float, Any)]
     #
     def fractional(value1, value2, multiplier)
       value1, fraction = value1.divmod(1)
@@ -442,7 +446,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [Any] v
     #
     def valid?(v)
       normalize(v).present?
@@ -450,7 +454,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
     #
     # @return [String]
     #
@@ -466,7 +470,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into a ISO 8601 form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
     #
     # @return [String, nil]
     #
@@ -486,7 +490,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into "YYYY-MM-DD" form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
     #
     # @return [String, nil]
     #
@@ -506,7 +510,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into a 4-digit year.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
     #
     # @return [String, nil]
     #
@@ -532,24 +536,25 @@ class IsoDate < ScalarType
 
     # Transform a value into ISO 8601 form.
     #
-    # @param [String, Date, Time, IsoDate, *] value
+    # @param [String, Date, Time, IsoDate, Any, nil] value
     #
     # @return [String, nil]
     #
     def datetime_parse(value)
-      datetime_clean(translate(value).to_datetime.strftime)
+      dt = translate(value)&.to_datetime&.strftime
+      datetime_clean(dt) if dt
     rescue
       nil
     end
 
     # Transform a value into "YYYY-MM-DD" form.
     #
-    # @param [String, Date, Time, IsoDate, *] value
+    # @param [String, Date, Time, IsoDate, Any, nil] value
     #
     # @return [String, nil]
     #
     def date_parse(value)
-      translate(value).to_date.strftime
+      translate(value)&.to_date&.strftime
     rescue
       nil
     end
@@ -563,10 +568,13 @@ class IsoDate < ScalarType
     # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
     # interpreted as month and "MM" will be interpreted as day.
     #
-    # @param [String, Date, Time, IsoDate, *] value
+    # @param [String, Date, Time, IsoDate, Any, nil] value
     #
-    # @return [String, Date, Time, IsoDate, *]
+    # @return [String, Date, Time, IsoDate, Any, nil]
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def translate(value)
       return value unless value.is_a?(String)
       result = pdf_date_translate(value)
@@ -576,7 +584,7 @@ class IsoDate < ScalarType
 
     # Remove fractional seconds and normalize +00:00 to Z.
     #
-    # @param [String, *] value
+    # @param [String, nil] value
     #
     # @return [String]
     #
@@ -646,7 +654,7 @@ class IsoDate < ScalarType
 
     # Transform an ISO/IEC 8824 (ASN.1) date string into a usable form.
     #
-    # @param [String, *] value
+    # @param [String, Any] value
     #
     # @return [String]
     #
@@ -668,7 +676,7 @@ class IsoDate < ScalarType
       tz = nil
       value.sub!(ASN_1_TIMEZONE) do |match|
         tz = (match == ZULU) ? match : $1 + [$2, $4].compact_blank.join(':')
-        nil # Remove the matched substring from *value*.
+        '' # Remove the matched substring from *value*.
       end
 
       # Get optional date and time parts.  Because Date#parse won't accept
@@ -692,7 +700,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* represents a year value.
     #
-    # @param [*] v
+    # @param [Any] v
     #
     def year?(v)
       normalize(v).match?(MATCH_PATTERN[:year])
@@ -700,7 +708,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* represents a day value.
     #
-    # @param [*] v
+    # @param [Any] v
     #
     def day?(v)
       normalize(v).match?(MATCH_PATTERN[:day])
@@ -708,7 +716,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* represents a full ISO 8601 date value.
     #
-    # @param [*] v
+    # @param [Any] v
     #
     def complete?(v)
       normalize(v).match?(MATCH_PATTERN[:complete])
@@ -722,7 +730,7 @@ class IsoDate < ScalarType
 
     # Type-cast an object to an instance of this type.
     #
-    # @param [*] v
+    # @param [Any, nil] v
     #
     # @return [self, nil]
     #
@@ -736,7 +744,7 @@ class IsoDate < ScalarType
 
     # Create a new instance of this type.
     #
-    # @param [*] v
+    # @param [Any, nil] v
     #
     # @return [self, nil]
     #
@@ -779,7 +787,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a year value, or indicate whether
   # *v* represents a year value.
   #
-  # @param [*] v
+  # @param [Any] v
   #
   def year?(v = nil)
     super(v || @value)
@@ -788,7 +796,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a day value, or indicate whether
   # *v* represents a day value.
   #
-  # @param [*] v
+  # @param [Any] v
   #
   def day?(v = nil)
     super(v || @value)
@@ -797,7 +805,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a full ISO 8601 date value, or
   # indicate whether *v* represents a full ISO 8601 date value.
   #
-  # @param [*] v
+  # @param [Any] v
   #
   def complete?(v = nil)
     super(v || @value)
@@ -827,7 +835,7 @@ class IsoYear < IsoDate
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [Any] v
     #
     def valid?(v)
       year?(v)
@@ -835,7 +843,7 @@ class IsoYear < IsoDate
 
     # Transform *v* into a valid form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [Any] v
     #
     # @return [String]
     #
@@ -895,7 +903,7 @@ class IsoDay < IsoDate
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [Any] v
     #
     def valid?(v)
       day?(v)
@@ -903,7 +911,7 @@ class IsoDay < IsoDate
 
     # Transform *v* into a valid form.
     #
-    # @param [String, Date, Time, IsoDate, *] v
+    # @param [String, Date, Time, IsoDate, Any] v
     #
     # @return [String]
     #
@@ -963,7 +971,7 @@ class IsoLanguage < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [String, Any] v
     #
     def valid?(v)
       v = normalize(v)
@@ -972,7 +980,7 @@ class IsoLanguage < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [String, Any] v
     #
     # @return [String]
     #
@@ -1149,7 +1157,7 @@ class EnumType < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [Any, nil] v
     #
     def valid?(v)
       v = normalize(v)
@@ -1208,7 +1216,7 @@ class EnumType < ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*] v
+  # @param [Any] v
   #
   # @return [String]
   #
@@ -1281,7 +1289,7 @@ module Api::Common
 
   # Member repository configurations.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection
@@ -1351,7 +1359,7 @@ module Api::Common
 
   # Language configuration.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection

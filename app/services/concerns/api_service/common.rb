@@ -300,13 +300,14 @@ module ApiService::Common
 
   # Process a message body component into a form ready for conversion to JSON.
   #
-  # @param [String, Hash, *] obj
+  # @param [Hash, String, Any, nil] obj
   #
-  # @return [String, Hash, *]
+  # @return [Hash, String, Any, nil]
   #
   def api_body(obj)
     obj = obj.as_json unless obj.is_a?(String)
     obj = reject_blanks(obj) if obj.is_a?(Hash)
+    # noinspection RubyMismatchedReturnType
     obj
   end
 
@@ -482,7 +483,7 @@ module ApiService::Common
 
     # Return with the options needed for the API request.
     # @type [Symbol] k
-    # @type [*]      v
+    # @type [Any]    v
     opt.slice(*specified_keys).map { |k, v|
       v = v.first if v.is_a?(Array) && (v.size <= 1)
       next if v.blank?

@@ -426,7 +426,7 @@ class Upload < ApplicationRecord
   # Allow :file_data and :emma_data to be seen fully when inspecting.
   #
   # @param [Symbol, String] name      Attribute name.
-  # @param [*] value                  Attribute value.
+  # @param [Any]            value     Attribute value.
   #
   # @return [String]
   #
@@ -512,7 +512,7 @@ class Upload < ApplicationRecord
 
   # Extract the repository associated with the item.
   #
-  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, *] item
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]
@@ -534,7 +534,7 @@ class Upload < ApplicationRecord
 
   # The full name of the indicated repository
   #
-  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, *] item
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -546,7 +546,7 @@ class Upload < ApplicationRecord
 
   # Extract the EMMA index entry identifier from the item.
   #
-  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, *] item
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
   #
   # @return [String]
   # @return [nil]
@@ -574,9 +574,9 @@ class Upload < ApplicationRecord
 
   # Indicate whether *item* is or contains a valid EMMA index record ID.
   #
-  # @param [String, #emma_repository, #emma_recordId, *] item
-  # @param [String, Array<String>]                       add_repo
-  # @param [String, Array<String>]                       add_fmt
+  # @param [String, #emma_repository, #emma_recordId, Any] item
+  # @param [String, Array<String>]                         add_repo
+  # @param [String, Array<String>]                         add_fmt
   #
   def self.valid_record_id?(item, add_repo: nil, add_fmt: nil)                  # NOTE: to Record::EmmaIdentification
     repo, rid, fmt, _version, remainder = record_id(item).to_s.split('-')
@@ -598,9 +598,9 @@ class Upload < ApplicationRecord
   #
   # @param [Upload, Hash, #repository, #emma_repository] item
   # @param [Symbol, String]                              key
-  # @param [*]                                           default
+  # @param [Any]                                         default
   #
-  # @return [*]
+  # @return [Any]
   #
   def self.get_value(item, key, default: nil)                                   # NOTE: to Record::Identification
     key = key.to_sym

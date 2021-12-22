@@ -177,7 +177,7 @@ class ReadingListController < ApplicationController
   def show_values(result = nil, **opt)
     opt.reverse_merge!(name: :reading_list)
     result ||= { details: @item, titles: @list }
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     super(result, **opt)
   end
 

@@ -267,7 +267,7 @@ module SearchCallHelper
   # @param [SearchCall, nil] item
   # @param [Hash]            opt      Passed to #search_call_field_values
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def search_call_columns(item = nil, **opt)
     search_call_field_values(item, **opt)

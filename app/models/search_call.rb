@@ -343,7 +343,7 @@ class SearchCall < ApplicationRecord
   # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
   # @param [Hash, nil]                                           opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   # @see #map_parameters
   # @see Record::Assignable#attribute_options

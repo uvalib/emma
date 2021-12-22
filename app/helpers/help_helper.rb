@@ -23,7 +23,7 @@ module HelpHelper
 
   # Configuration for help pages properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection
@@ -130,7 +130,7 @@ module HelpHelper
   #
   # @param [Symbol, String] topic
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def help_topic(topic)
     HELP_ENTRY[topic&.to_sym] || {}

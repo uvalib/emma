@@ -23,7 +23,7 @@ class Attachment::DestroyJob < ApplicationJob
 
   # perform
   #
-  # @param [*] data
+  # @param [Any] data
   #
   # @note Currently unused
   #

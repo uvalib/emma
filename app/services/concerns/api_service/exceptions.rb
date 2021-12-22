@@ -70,15 +70,17 @@ module ApiService::Exceptions
 
   # Set the latest API error.
   #
-  # @param [Exception, Class<ApiService::Error>, Symbol, *] error
+  # @param [Exception, Class<ApiService::Error>, Symbol, Any, nil] error
   # @param [Hash] opt   Passed to initializer if *error* is a class.
   #
   # @return [ApiService::Error]       New value of @exception.
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  #++
   def set_error(error, **opt)
     error = error_classes[error] if error.is_a?(Symbol)
     error = error.new(**opt)     if error.is_a?(Class)
-    # noinspection RubyMismatchedArgumentType
     @exception =
       case error
         when nil, ApiService::Error     then error

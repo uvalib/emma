@@ -104,7 +104,7 @@ module AuthConcern
   # Returns *true* if *obj* cannot be interpreted as a scope or resource since
   # user scope is the assumed default.
   #
-  # @param [User, Symbol, *] obj
+  # @param [User, Symbol, Any] obj
   #
   # @see Devise::Mapping#find_scope!
   #
@@ -203,15 +203,18 @@ module AuthConcern
 
   # Generate the authentication data to be associated with the given user.
   #
-  # @param [User, String, Integer, *] user  Default: `#current_user`.
+  # @param [User, String, Integer, Any, nil] user  Default: `#current_user`.
   #
   # @return [OmniAuth::AuthHash, nil]
   #
   def update_auth_data(user = nil)
     user = User.find_record(user || current_user) or return
+    # noinspection RubyNilAnalysis
     if user.is_bookshare_user?
+      # noinspection RubyMismatchedReturnType
       session['app.local.auth'] = nil
     else
+      # noinspection RubyMismatchedArgumentType
       session['app.local.auth'] = auth_hash(user)
       session['omniauth.auth']  = auth_hash(user.bookshare_user)
     end

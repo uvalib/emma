@@ -82,7 +82,7 @@ module Record::Searchable
   #   :pages    An array of arrays where each element has the IDs for that page
   #   :list     An array of matching Entry records.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   SEARCH_RECORDS_TEMPLATE = {
     offset: 0,

@@ -17,7 +17,7 @@ module SessionsHelper
 
   # Configuration for login session properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection

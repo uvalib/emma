@@ -21,8 +21,8 @@ class Phase::BulkRemove < Phase::BulkOperation
 
   # Operations for removing entries in bulk.
   #
-  # @param [Symbol, *] prev_state
-  # @param [Hash]      opt
+  # @param [Symbol, Any] prev_state
+  # @param [Hash]        opt
   #
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.

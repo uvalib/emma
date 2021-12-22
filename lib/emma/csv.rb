@@ -74,9 +74,9 @@ module Emma::Csv
 
   # force_utf8
   #
-  # @param [String, Array, *] item
+  # @param [String, Array, Hash, Any] item
   #
-  # @return [String, Array, *]        Replacement for *item*.
+  # @return [String, Array, Hash, Any]  Replacement for *item*.
   #
   def force_utf8(item)
     case item

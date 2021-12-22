@@ -56,7 +56,7 @@ module Record::Assignable
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   # @see #ATTRIBUTE_OPTIONS_OPTS
   #

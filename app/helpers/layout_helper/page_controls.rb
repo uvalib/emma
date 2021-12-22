@@ -187,7 +187,7 @@ module LayoutHelper::PageControls
 
   # model_class
   #
-  # @param [Symbol, String, ApplicationController, *] ctrlr
+  # @param [Symbol, String, ApplicationController, Any] ctrlr
   #
   # @return [Class]
   # @return [nil]

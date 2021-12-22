@@ -50,8 +50,8 @@ module Emma::Log
   # method.  If the next element of *args* is an Exception, a message is
   # constructed from its contents.
   #
-  # @param [Integer, Symbol, nil]             severity
-  # @param [Array<String,Symbol,Exception,*>] args
+  # @param [Integer, Symbol, nil]               severity
+  # @param [Array<String,Symbol,Exception,Any>] args
   #
   # @return [nil]
   #
@@ -93,8 +93,8 @@ module Emma::Log
 
   # Add a DEBUG-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
   #
   # @return [nil]
   #
@@ -104,8 +104,8 @@ module Emma::Log
 
   # Add an INFO-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
   #
   # @return [nil]
   #
@@ -115,8 +115,8 @@ module Emma::Log
 
   # Add a WARN-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
   #
   # @return [nil]
   #
@@ -126,8 +126,8 @@ module Emma::Log
 
   # Add an ERROR-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
   #
   # @return [nil]
   #
@@ -137,8 +137,8 @@ module Emma::Log
 
   # Add a FATAL-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
   #
   # @return [nil]
   #

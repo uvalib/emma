@@ -188,7 +188,7 @@ module Emma::Debug
     # @return [Array<String>]
     #
     # @yield To supply additional items.
-    # @yieldreturn [*, Array<*>]
+    # @yieldreturn [Any, Array<Any>]
     #
     # @see #__debug_inspect_item
     #
@@ -201,8 +201,8 @@ module Emma::Debug
 
     # Generate one or more inspections.
     #
-    # @param [Hash, Array, *] value
-    # @param [Hash, nil]      opt     Options passed to #__debug_inspect except
+    # @param [Hash, Array, Any] value
+    # @param [Hash, nil]        opt   Options passed to #__debug_inspect except
     #
     # @option opt [Boolean] :compact  If *true*, ignore empty values (but show
     #                                   if value is a FalseClass).
@@ -224,7 +224,7 @@ module Emma::Debug
 
     # Decorate and truncate inspection results.
     #
-    # @param [*]       value
+    # @param [Any]     value
     # @param [Integer] max            Default: #DEBUG_INSPECT_MAX.
     # @param [String]  omission       Default: #DEBUG_INSPECT_OMISSION.
     #
@@ -373,16 +373,16 @@ module Emma::Debug
     #   @param [Binding]        bind    Source of appended parameter values.
     #   @param [Array]          parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
-    #   @option opt [*] :only           Passed to #get_params.
-    #   @option opt [*] :except         Passed to #get_params.
+    #   @option opt [Any] :only         Passed to #get_params.
+    #   @option opt [Any] :except       Passed to #get_params.
     #
     # @overload __debug_items(bind, *parts, **opt)
     #   Injects the parameters of the calling method as indicated by *bind*.
     #   @param [Binding]        bind    Source of appended parameter values.
     #   @param [Array]          parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
-    #   @option opt [*] :only           Passed to #get_params.
-    #   @option opt [*] :except         Passed to #get_params.
+    #   @option opt [Any] :only         Passed to #get_params.
+    #   @option opt [Any] :except       Passed to #get_params.
     #
     # @overload __debug_items(*parts, **opt)
     #   The normal case with *parts* on a single output line.

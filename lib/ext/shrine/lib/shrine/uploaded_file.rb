@@ -33,7 +33,7 @@ class Shrine
     #
     # @raise [Record::SubmitError]    @see #extract_file_metadata
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash{Symbol=>Any}]
     #
     def emma_metadata
       @emma_metadata ||= extract_file_metadata
@@ -44,7 +44,7 @@ class Shrine
     #
     # @raise [Record::SubmitError]    If metadata was malformed.
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash{Symbol=>Any}]
     #
     def extract_file_metadata
       mime  = fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = nil
@@ -125,7 +125,7 @@ class Shrine
       # @param [Hash] options
       #
       # @return [IO]
-      # @return [*]                   Return from block if block given.
+      # @return [Any]                 Return from block if block given.
       #
       def open(**options)
         __ext_debug { options }
@@ -138,7 +138,7 @@ class Shrine
       # @param [Hash] options
       #
       # @return [Tempfile]
-      # @return [*]                   Return from block if block given.
+      # @return [Any]                 Return from block if block given.
       #
       def download(**options)
         __ext_debug { options }
@@ -217,7 +217,7 @@ class Shrine
 
       # extract_file_metadata
       #
-      # @return [Hash{Symbol=>*}]
+      # @return [Hash{Symbol=>Any}]
       #
       # This method overrides:
       # @see Shrine::UploadedFileExt#extract_file_metadata

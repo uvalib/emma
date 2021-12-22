@@ -77,7 +77,7 @@ module ModelHelper::List
   # Render a single label/value pair.
   #
   # @param [String, Symbol, nil] label
-  # @param [*]                   value
+  # @param [Any, nil]            value
   # @param [Hash, nil]           prop       Default: from field/model.
   # @param [Symbol, nil]         field
   # @param [Symbol, nil]         model      Default: `params[:controller]`
@@ -95,6 +95,9 @@ module ModelHelper::List
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  #++
   def render_pair(
     label,
     value,
@@ -125,7 +128,6 @@ module ModelHelper::List
     # Format the content of certain fields.
     lines = nil
     unless Array.wrap(opt.delete(:no_format)).include?(field)
-      # noinspection RubyMismatchedArgumentType
       # noinspection RubyCaseWithoutElseBlockInspection
       case field
         when :dc_description
@@ -146,7 +148,6 @@ module ModelHelper::List
     delta = {}
     delta[:type]  = 'textarea' if lines&.many? && !enum
     delta[:array] = true       if enum && !prop[:array]
-    # noinspection RubyNilAnalysis
     prop = prop.merge(delta)   if delta.present?
 
     # Pre-process value(s).
@@ -162,7 +163,6 @@ module ModelHelper::List
     if (help = prop[:help]).present?
       replace = topic = nil
       if field == :emma_retrievalLink
-        # noinspection RubyMismatchedArgumentType
         url     = extract_url(value)
         topic   = url_repository(url, default: !application_deployed?)
         replace = help.is_a?(Array) && (help.size > 1)
@@ -220,7 +220,7 @@ module ModelHelper::List
   # Transform a field value for HTML rendering.
   #
   # @param [Model, Hash, nil]    item
-  # @param [*]                   value
+  # @param [Any]                 value
   # @param [String, Symbol, nil] model  If provided, a model-specific method
   #                                       will be invoked instead.
   # @param [Hash]                opt    Passed to render method.
@@ -248,12 +248,12 @@ module ModelHelper::List
   # Attempt to interpret *method* as an *item* method or as a method defined
   # in the current context.
   #
-  # @param [Model, Hash, nil]  item
-  # @param [String, Symbol, *] m
-  # @param [Hash]              opt    Options (used only if appropriate).
+  # @param [Model, Hash, nil]    item
+  # @param [String, Symbol, Any] m
+  # @param [Hash]                opt    Options (used only if appropriate).
   #
-  # @return [Any]                     HTML or scalar value.
-  # @return [nil]                     If executed method returned *nil*.
+  # @return [Any]                       HTML or scalar value.
+  # @return [nil]                       If executed method returned *nil*.
   #
   def execute(item, m, **opt)
     if item.respond_to?(m)

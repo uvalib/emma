@@ -57,7 +57,7 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_in_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [*]           message      Passed to #set_flash_notice.
+  # @param [Any]         message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
   def auth_success_redirect(path = nil, user: nil, message: nil, **opt)
@@ -70,7 +70,7 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_out_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [*]           message      Passed to #set_flash_alert.
+  # @param [Any]         message      Passed to #set_flash_alert.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
   def auth_failure_redirect(path = nil, user: nil, message: nil, **opt)
@@ -157,7 +157,7 @@ module SessionConcern
   # @param [String] path              Default: `request.path`.
   # @param [Hash]   req_params        Default: `params`.
   #
-  # @return [Hash{String=>*}]
+  # @return [Hash{String=>Any}]
   #
   def last_operation_update(time: nil, path: nil, req_params: nil)
     req_params ||= params

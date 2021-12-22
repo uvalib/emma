@@ -144,11 +144,11 @@ module EntryConcern
 
   # entry_request_params
   #
-  # @param [Entry, Hash, *] entry
-  # @param [Hash, *]        opt
+  # @param [Entry, Hash, Any, nil] entry
+  # @param [Hash, nil]             opt
   #
   # @return [(Entry, Hash)]
-  # @return [(*, Hash)]
+  # @return [(Any, Hash)]
   #
   def entry_request_params(entry, opt)                                          # NOTE: from UploadConcern#workflow_parameters (sorta)
     entry, opt = [nil, entry] if entry.is_a?(Hash)
@@ -491,6 +491,7 @@ module EntryConcern
   # @return [Hash]                    From Record::Searchable#search_records.
   #
   def delete_entry(entries = nil, opt = nil)
+    # noinspection RubyMismatchedArgumentType
     entries, opt = entry_request_params(entries, opt)
     id_opt,  opt = partition_hash(opt, :ids, :id)
     entries ||= id_opt.values.first
@@ -501,8 +502,8 @@ module EntryConcern
 
   # For the 'destroy' endpoint... # TODO: ?
   #
-  # @param [String, Entry, Array] entries
-  # @param [Hash, nil]            opt   Default: `#get_entry_params`.
+  # @param [String, Entry, Array, nil] entries
+  # @param [Hash, nil]                 opt
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -512,6 +513,7 @@ module EntryConcern
   # noinspection RubyNilAnalysis
   #++
   def destroy_entry(entries = nil, opt = nil)                                   # NOTE: from UploadWorkflow::Actions#wf_remove_items
+    # noinspection RubyMismatchedArgumentType
     entries, opt = entry_request_params(entries, opt)
     id_opt,  opt = partition_hash(opt, :ids, :id)
     entries ||= id_opt.values.first
@@ -626,6 +628,7 @@ module EntryConcern
       opt.delete(:no_raise)
       parts = {}
       parts[:options] = ERB::Util.h(opt.inspect) if opt.present?
+      # noinspection RubyMismatchedArgumentType
       parts[:record] =
         ERB::Util.h(pretty_json(entry)).tap { |rec|
           rec.gsub!(/:( +)/) { ':' + $1.gsub(/ /, '&nbsp;&nbsp;') }
@@ -654,7 +657,7 @@ module EntryConcern
   #
   # @raise [Record::SubmitError]      If the record could not be found.
   #
-  # @return [(Integer, Hash{String=>*}, Array<String>)]
+  # @return [(Integer, Hash{String=>Any}, Array<String>)]
   #
   # @see Phase::Create#upload!
   # @see Phase::Edit#upload!
@@ -680,7 +683,7 @@ module EntryConcern
   #
   # @param [Hash, nil] opt
   #
-  # @return [*]
+  # @return [Any]
   #
   def bulk_new_entries(opt = nil)
     opt ||= get_entry_params
@@ -714,7 +717,7 @@ module EntryConcern
   #
   # @param [Hash, nil] opt
   #
-  # @return [*]
+  # @return [Any]
   #
   def bulk_edit_entries(opt = nil)
     opt ||= get_entry_params
@@ -748,7 +751,7 @@ module EntryConcern
   #
   # @param [Hash, nil] opt
   #
-  # @return [*]
+  # @return [Any]
   #
   def bulk_delete_entries(opt = nil)
     opt ||= get_entry_params
@@ -782,7 +785,7 @@ module EntryConcern
   #
   # @param [Hash, nil] opt
   #
-  # @return [*]
+  # @return [Any]
   #
   def bulk_check_entries(opt = nil)
     opt ||= get_entry_params
@@ -963,6 +966,7 @@ module EntryConcern
     report    = item.presence && ExecReport[item]
     status  ||= report&.http_status || :bad_request
     message   = report&.render(html: html)&.presence
+    # noinspection RubyMismatchedArgumentType
     message ||= Record::Rendering.make_label(item, default: '')
 
     opt = { meth: meth, status: status }

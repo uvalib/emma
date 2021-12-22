@@ -130,6 +130,7 @@ class ApiService::Error < Api::Error
         if (data = json_parse(body, symbolize_keys: false, log: false))
           data = data.compact
           data = data.first if data.is_a?(Array) && (data.size <= 1)
+          # noinspection RubyMismatchedArgumentType
           extract_json(data).presence
         end
 
@@ -237,10 +238,10 @@ class ApiService::Error < Api::Error
     # Extract message(s) from a response body that has been determined to be
     # JSON.
     #
-    # @param [Hash, *] src
+    # @param [Hash, Any, nil] src
     #
     # @return [Array<String>]         If *src* was a Hash.
-    # @return [Array<*>]              Otherwise.
+    # @return [Array<Any>]            Otherwise.
     #
     def extract_json(src)
       result   = ([] if src.blank?)
@@ -255,6 +256,7 @@ class ApiService::Error < Api::Error
           msg.remove(/\\"/)
         }.compact_blank.presence
       result ||= src['message'].presence
+      # noinspection RubyNilAnalysis
       result ||= src.values.flat_map { |v| v if v.is_a?(Array) }
       Array.wrap(result || src).compact
     end

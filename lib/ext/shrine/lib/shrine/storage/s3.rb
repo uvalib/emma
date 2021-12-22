@@ -34,8 +34,8 @@ class Shrine
         # @param [String, nil]          prefix
         # @param [Hash]                 upload_options
         # @param [Hash]                 multipart_threshold
-        # @param [*]                    signer
-        # @param [*]                    public
+        # @param [Any]                  signer
+        # @param [Any]                  public
         # @param [Hash]                 s3_options
         #
         # This method overrides:
@@ -202,7 +202,7 @@ class Shrine
 
         # get_object
         #
-        # @param [*]    object
+        # @param [Any]  object
         # @param [Hash] params
         #
         # @return [(Array,Integer)]

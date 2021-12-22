@@ -48,9 +48,10 @@ module Emma::Common::ExceptionMethods
   # Indicate whether *error* is an exception which matches or is derived from
   # one of the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, *] error
+  # @param [Exception, Any, nil] error
   #
   def internal_exception?(error)
+    # noinspection RubyNilAnalysis
     ancestors = (error.is_a?(Class) ? error : error.class).ancestors
     ancestors.size > (ancestors - INTERNAL_EXCEPTION).size
   end
@@ -58,16 +59,17 @@ module Emma::Common::ExceptionMethods
   # Indicate whether *error* is an exception which is not (derived from) one of
   # the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, *] error
+  # @param [Exception, Any, nil] error
   #
   def operational_exception?(error)
+    # noinspection RubyNilAnalysis
     a = (error.is_a?(Class) ? error : error.class).ancestors
     a.include?(Exception) && (a.size == (a - INTERNAL_EXCEPTION).size)
   end
 
   # Re-raise an exception which indicates a likely programming error.
   #
-  # @param [Exception, *] error
+  # @param [Exception, Any, nil] error
   #
   # == Usage Notes
   # The re-raise will happen only when running on the desktop.
@@ -87,8 +89,8 @@ module Emma::Common::ExceptionMethods
 
   # Raise NotImplementedError.
   #
-  # @param [String] message           Additional description.
-  # @param [Symbol] meth              Calling method to prepend to message.
+  # @param [String, nil] message      Additional description.
+  # @param [Symbol, nil] meth         Calling method to prepend to message.
   #
   # @raise [NotImplementedError]
   #

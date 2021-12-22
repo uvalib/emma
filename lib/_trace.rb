@@ -25,9 +25,9 @@ end
 
 # Convert a string to UTF-8 encoding.
 #
-# @param [String, *] v
+# @param [String, Any] v
 #
-# @return [String, *]
+# @return [String, Any]
 #
 def to_utf8(v)
   return v unless v.is_a?(String)
@@ -50,7 +50,7 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 
 # Write indented line(s) to $stderr.
 #
-# @param [Array<Hash,Array,String,*>] args
+# @param [Array<Hash,Array,String,Any>] args
 #
 # @option args.last [String]          :leader     At the start of each line.
 # @option args.last [String, Integer] :indent     Default: #CONS_INDENT.
@@ -87,6 +87,7 @@ def __output_impl(*args)
     max  = max - leader.size if max
     args =
       args.flat_map { |arg|
+        # noinspection RubyMismatchedReturnType
         case arg
           when Hash   then arg.map { |k, v| "#{k} = #{v}" }
           when Array  then arg.map(&:to_s)
@@ -127,8 +128,8 @@ end
 
 # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
 #
-# @param [Array<Hash,Array,String,*>] args    Passed to #__output_impl.
-# @param [Proc]                       block   Passed to #__output_impl.
+# @param [Array<Hash,Array,String,Any>] args    Passed to #__output_impl.
+# @param [Proc]                         block   Passed to #__output_impl.
 #
 # == Usage Notes
 # The method is only functional if #CONSOLE_OUTPUT is true.

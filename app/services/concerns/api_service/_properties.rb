@@ -91,7 +91,7 @@ module ApiService::Properties
 
   # The service identified by the given value.
   #
-  # @param [*] target
+  # @param [Any] target
   #
   # @return [String]
   #

@@ -46,7 +46,7 @@ module Upload::IdentifierMethods
 
   # Extract the database ID from the given item.
   #
-  # @param [Upload, Hash, String, *] item
+  # @param [Upload, Hash, String, Any] item
   #
   # @return [String]                  Record ID (:id).
   # @return [nil]                     No valid :id specified.
@@ -61,12 +61,13 @@ module Upload::IdentifierMethods
 
   # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
   #
-  # @param [Api::Record, Upload, Hash, String, *] item
+  # @param [Api::Record, Upload, Hash, String, Any] item
   #
   # @return [String]                  The submission ID.
   # @return [nil]                     No submission ID could be determined.
   #
   def sid_for(item)
+    # noinspection RubyMismatchedReturnType
     return item               if valid_sid?(item)
     return item.submission_id if item.is_a?(Upload)
     _, rid, _ = Upload.record_id(item)&.split('-')
@@ -75,7 +76,7 @@ module Upload::IdentifierMethods
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
-  # @param [String, *] value
+  # @param [Any] value                Must be a String.
   #
   def valid_sid?(value)                                                         # NOTE: to Record::EmmaIdentification
     value.is_a?(String) && value.match?(SID_PATTERN)

@@ -71,10 +71,10 @@ class Action::Store < Action::BulkPart
   #
   # @option opt [Boolean] :update_record  If *false* caller will update record.
   # @option opt [Boolean] :auto_retry     If *true* automatically retry.
-  # @option opt [*]       :env            From *request* by default.
+  # @option opt [Any]     :env            From *request* by default.
   # @option opt [Symbol]  :meth           Name of caller (for logging).
   #
-  # @return [(Integer, Hash{String=>*}, Array<String>)]
+  # @return [(Integer, Hash{String=>Any}, Array<String>)]
   #
   # @see Record::Uploadable#upload_file
   #

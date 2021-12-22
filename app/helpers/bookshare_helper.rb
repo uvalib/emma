@@ -471,7 +471,7 @@ module BookshareHelper
   # Transform a field value for HTML rendering.
   #
   # @param [Bs::Api::Record] item
-  # @param [*]               value
+  # @param [Any]             value
   # @param [Hash]            opt      Passed to the render method.
   #
   # @return [Any]   HTML or scalar value.
@@ -505,7 +505,7 @@ module BookshareHelper
   # The type of named field regardless of pluralization or presence of a
   # "_list" suffix.
   #
-  # @param [Symbol, String, *] name
+  # @param [Symbol, String, Any] name
   #
   # @return [Symbol]
   #

@@ -52,7 +52,7 @@ module BsApiHelper
   # @param [String] path
   # @param [Hash]   opt               Passed to #api.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def bs_api_explorer(meth, path, **opt)
     meth = meth&.downcase&.to_sym || :get

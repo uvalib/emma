@@ -62,7 +62,7 @@ module ModelHelper::Table
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated <thead>.
   # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated <tbody>.
   # @option opt [ActiveSupport::SafeBuffer] :tfoot  Pre-generated <tfoot>.
-  # @option opt [*] #MODEL_TABLE_OPTIONS            Passed to render methods.
+  # @option opt [Any] #MODEL_TABLE_OPTIONS          Passed to render methods.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -147,7 +147,7 @@ module ModelHelper::Table
   # @yield [item, **opt] Allows the caller to generate the item columns.
   # @yieldparam  [Model] item         Single item instance.
   # @yieldparam  [Hash]  opt          Field generation options.
-  # @yieldreturn [Hash{Symbol=>*}]    Same as #model_field_values return type.
+  # @yieldreturn [Hash{Symbol=>Any}]  Same as #model_field_values return type.
   #
   def model_table_entry(
     item,
@@ -269,7 +269,7 @@ module ModelHelper::Table
   # @param [String, Symbol, Array<String,Symbol>, nil] default
   # @param [String, Regexp, Array<String,Regexp>, nil] filter
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def model_field_values(item, columns: nil, default: nil, filter: nil, **)
     # noinspection RailsParamDefResolve

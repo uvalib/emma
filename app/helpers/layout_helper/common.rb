@@ -24,7 +24,7 @@ module LayoutHelper::Common
 
   # Configuration for panel properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection

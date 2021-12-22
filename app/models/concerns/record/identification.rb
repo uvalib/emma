@@ -60,7 +60,7 @@ module Record::Identification
 
   # The type of record for the given item.
   #
-  # @param [*] item
+  # @param [Any] item
   #
   # @return [Class<ApplicationRecord>]
   #
@@ -72,7 +72,7 @@ module Record::Identification
 
   # Name of the type of record for the given item.
   #
-  # @param [*] item
+  # @param [Any] item
   #
   # @return [String]
   #
@@ -96,8 +96,8 @@ module Record::Identification
 
   # Extract the database ID from the given item.
   #
-  # @param [Model, Hash, String, *] item
-  # @param [Hash]                   opt
+  # @param [Model, Hash, String, Any] item
+  # @param [Hash]                     opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   #
@@ -135,14 +135,15 @@ module Record::Identification
   #
   # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @param [Model, Hash, *]                       item
-  # @param [Symbol, String, Array<Symbol,String>] key
-  # @param [*]                                    default
+  # @param [Model, Hash, String, Symbol, Any, nil] item
+  # @param [Symbol, String, Array<Symbol,String>]  key
+  # @param [Any]                                   default
   #
-  # @return [*]
+  # @return [Any]
   #
   def get_value(item, key, default: nil, **)                                    # NOTE: from Upload
     return if key.blank?
+    # noinspection RubyNilAnalysis
     if key.is_a?(Array)
       key.find { |k| (v = get_value(item, k)) and break v }
     elsif item.respond_to?((key = key.to_sym))
@@ -176,7 +177,7 @@ module Record::Identification
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Model, *] item
+  # @param [String, Integer, Hash, Model, Any] item
   # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:
@@ -187,15 +188,17 @@ module Record::Identification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]
+  # @return [ApplicationRecord<Model>, nil]
   #
   def find_record(item, no_raise: false, meth: nil, **opt)                      # NOTE: from UploadWorkflow::External#get_record
+    # noinspection RubyMismatchedReturnType
     return item if item.nil? || item.is_a?(record_class)
     meth  ||= __method__
     record = error = id = nil
 
     id_key = opt.key?(:id_key) ? opt[:id_key] : id_column
     if id_key
+      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       opt.reverse_merge!(id_term(item, **opt))
       id = opt[id_key] || opt[alt_id_key(opt)]
@@ -323,8 +326,8 @@ module Record::Identification
   # If :sid_key set to *nil* then the result will always be in terms of :id_key
   # (which cannot be set to *nil*).
   #
-  # @param [String, Symbol, Integer, Hash, Model, *] v
-  # @param [Hash]                                    opt
+  # @param [String, Symbol, Integer, Hash, Model, Any] v
+  # @param [Hash]                                      opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   #
@@ -336,6 +339,7 @@ module Record::Identification
     v = opt     if v.nil? && opt.present?
     v = v.strip if v.is_a?(String)
     if v.is_a?(Model) || v.is_a?(Hash)
+      # noinspection RubyMismatchedArgumentType
       result[id_key] = get_value(v, id_key) if id_key
     elsif digits_only?(v)
       result[id_key] = v if id_key

@@ -99,7 +99,7 @@ module SqlMethods
   # Translate a key and value into a SQL condition.
   #
   # @param [String, Symbol, Hash] k
-  # @param [*]                    v
+  # @param [Any]                  v
   #
   # @return [String]
   #
@@ -109,7 +109,7 @@ module SqlMethods
   #
   # @overload sql_clause(k, v)
   #   @param [String, Symbol] k
-  #   @param [*]              v
+  #   @param [Any]            v
   #
   # @overload sql_clause(hash)
   #   @param [Hash] hash              Only the first pair is used.
@@ -240,11 +240,11 @@ module SqlMethods
 
   # Prepare a string for matching.
   #
-  # @param [String, *] text
-  # @param [Boolean]   exact
-  # @param [Boolean]   match_case
+  # @param [String, Any] text
+  # @param [Boolean]     exact
+  # @param [Boolean]     match_case
   #
-  # @return [String, *]
+  # @return [String, Any]
   #
   def sql_json_pattern(text, exact: false, match_case: false)
     if text.is_a?(String) || text.is_a?(Symbol)

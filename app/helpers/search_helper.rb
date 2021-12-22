@@ -52,7 +52,7 @@ module SearchHelper
   # Transform a field value for HTML rendering.
   #
   # @param [Upload, Model, Hash] item
-  # @param [*]                   value
+  # @param [Any]                 value
   # @param [Symbol]              field
   # @param [Hash]                opt    Passed to the render method.
   #

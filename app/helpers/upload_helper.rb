@@ -188,7 +188,7 @@ module UploadHelper
   # Transform a field value for HTML rendering.
   #
   # @param [Upload, Model, Hash] item
-  # @param [*]                   value
+  # @param [Any]                 value
   # @param [Hash]                opt    Passed to the render method.
   #
   # @return [Field::Type]
@@ -206,6 +206,7 @@ module UploadHelper
           else                 item[value] || EMPTY_VALUE
         end
       else
+        # noinspection RubyMismatchedArgumentType
         Field.for(item, value)
       end
     end || render_value(item, value, **opt)
@@ -604,7 +605,7 @@ module UploadHelper
 
   # Upload action icon definitions.                                             # NOTE: to EntryHelper::ENTRY_CONTROL_ICONS
   #
-  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
   #
   UPLOAD_ICONS = {
     check: {
@@ -1226,7 +1227,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*]                                value
+  # @param [Any, nil]                         value
   # @param [Hash{Symbol=>String}]             labels
   # @param [Boolean]                          debug_only
   #
@@ -1246,7 +1247,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*]                                value
+  # @param [Any, nil]                         value
   # @param [Symbol]                           meth
   # @param [Hash{Symbol=>String}]             labels
   # @param [Hash]                             opt
@@ -1357,7 +1358,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*]                                value
+  # @param [Any, nil]                         value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1373,7 +1374,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*]                                value
+  # @param [Any, nil]                         value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1520,7 +1521,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*]                                value
+  # @param [Any, nil]                         value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1536,7 +1537,7 @@ module UploadHelper
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [*]                                value
+  # @param [Any, nil]                         value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]

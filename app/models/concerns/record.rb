@@ -23,7 +23,7 @@ module Record
 
   # Indicate whether *base* is a class associated with a database schema.
   #
-  # @param [Class, *] base
+  # @param [Class, Module, Any] base
   #
   def record_class?(base)
     base.is_a?(Class) && (base <= ApplicationRecord)
@@ -31,7 +31,7 @@ module Record
 
   # Indicate whether *base* is a record class which is a model.
   #
-  # @param [Class, *] base
+  # @param [Class, Module, Any] base
   #
   def model_class?(base)
     record_class?(base) && base.ancestors.include?(Model)
@@ -67,8 +67,8 @@ module Record
 
   # Ensure that *mod* is only included in a record class.
   #
-  # @param [Class, Module, *] base
-  # @param [Module]           mod
+  # @param [Class, Module, Any] base
+  # @param [Module]             mod
   #
   # @raise [RuntimeError]             If *mod* should not be included in *base*
   #

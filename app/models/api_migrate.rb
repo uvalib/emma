@@ -203,12 +203,12 @@ class ApiMigrate
 
     # Transform the value before #translate by applying each requested method.
     #
-    # @param [*]         value
+    # @param [Any]       value
     # @param [Array]     meths
     # @param [Symbol]    field
     # @param [Hash, nil] emma_data
     #
-    # @return [*]
+    # @return [Any]
     #
     def pre_translate(value, meths, field:, emma_data: nil, **)
       apply(value, meths, field: field, emma_data: emma_data) if value.present?
@@ -216,11 +216,11 @@ class ApiMigrate
 
     # Translate values.
     #
-    # @param [*]       value
+    # @param [Any]     value
     # @param [Hash]    translations
     # @param [Boolean] unique         If *false*, do not prune results.
     #
-    # @return [*]
+    # @return [Any]
     #
     def translate(value, translations, unique: true, **)
       return value if value.blank? || translations.blank?
@@ -241,12 +241,12 @@ class ApiMigrate
 
     # Transform the value after #translate by applying each requested method.
     #
-    # @param [*]         value
+    # @param [Any]       value
     # @param [Array]     meths
     # @param [Symbol]    field
     # @param [Hash, nil] emma_data
     #
-    # @return [*]
+    # @return [Any]
     #
     def post_translate(value, meths, field:, emma_data: nil, **)
       apply(value, meths, field: field, emma_data: emma_data) if value.present?
@@ -254,11 +254,11 @@ class ApiMigrate
 
     # Transform the value by applying each requested method.
     #
-    # @param [*]      value
+    # @param [Any]    value
     # @param [Array]  meths
     # @param [Symbol] field
     #
-    # @return [*]
+    # @return [Any]
     #
     def normalize(value, meths, field:, **)
       apply(value, meths, field: field) if value.present?
@@ -267,11 +267,11 @@ class ApiMigrate
     # Change cardinality (single to array or array to single) based on the
     # specified range of values.
     #
-    # @param [*]            value
+    # @param [Any]          value
     # @param [Array, Range] range
     # @param [Symbol]       field
     #
-    # @return [*]
+    # @return [Any]
     #
     def new_min_max(value, range, field:, **)
       return value if value.blank? || range.blank?
@@ -296,12 +296,12 @@ class ApiMigrate
 
     # Transform the value by applying each requested method.
     #
-    # @param [*]         value
+    # @param [Any]       value
     # @param [Array]     meths
     # @param [Symbol]    field
     # @param [Hash, nil] emma_data
     #
-    # @return [*]
+    # @return [Any]
     #
     def apply(value, meths, field:, emma_data: nil, **)
       Array.wrap(meths).each do |meth|
@@ -318,10 +318,10 @@ class ApiMigrate
 
     # Transform a multi-item value into a single-item value.
     #
-    # @param [Array, *] value
-    # @param [String]   separator
+    # @param [Any]    value
+    # @param [String] separator
     #
-    # @return [*]
+    # @return [Any]                   The *value* itself if it was not an Array
     #
     def from_array(value, separator = "\n")
       return value unless value.is_a?(Array)
@@ -330,7 +330,7 @@ class ApiMigrate
 
     # Transform a single-item value into an array of items.
     #
-    # @param [*]      value
+    # @param [Any]    value
     # @param [String] separator
     #
     # @return [Array]
@@ -432,7 +432,7 @@ class ApiMigrate
     #
     # @param [Array<String>, String] value
     #
-    # @return [Array<String>, String, *]    Nil for an empty array.
+    # @return [Array<String>, String, Any]    Nil for an empty array.
     #
     def remove_blank(value)
       value = value.map { |v| remove_blank(v) }.compact if value.is_a?(Array)
@@ -536,7 +536,7 @@ class ApiMigrate
 
     # Split values on '.', ',', and ';'.
     #
-    # @param [Array<String>, String, *] value
+    # @param [Array<String>, String] value
     #
     # @return [Array<String>]
     #
@@ -759,13 +759,13 @@ class ApiMigrate
 
     # Add one or more values to the indicated data field.
     #
-    # @param [Hash]                       emma_data
-    # @param [Symbol, Array<Symbol>]      fields
-    # @param [String, Array<String>]      values
-    # @param [Boolean]                    unique
-    # @param [Boolean, nil]               single
+    # @param [Hash]                  emma_data
+    # @param [Symbol, Array<Symbol>] fields
+    # @param [String, Array<String>] values
+    # @param [Boolean]               unique
+    # @param [Boolean, nil]          single
     #
-    # @return [*]                     New value of `emma_data[field]`.
+    # @return [Any]                   New value of `emma_data[field]`.
     #
     def add_values(emma_data, fields, values, unique: true, single: nil)
       field   = find_field(emma_data, fields) or return
@@ -877,7 +877,7 @@ class ApiMigrate
   # Run the data migrations.
   #
   # @param [Boolean] update           If *true*, the database is updated.
-  # @param [*]       range            For #get_relation.
+  # @param [Any]     range            For #get_relation.
   # @param [Hash]    opt              Passed to #transform!.
   #
   # @return [Array{Hash}]             New record values.

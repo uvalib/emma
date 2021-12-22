@@ -19,7 +19,7 @@ module CookieHelper
 
   # Common cookie header settings.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   # @see Rack::Utils#add_cookie_to_header
   #
@@ -35,7 +35,7 @@ module CookieHelper
   #
   # @param [Symbol, String] key
   #
-  # @return [*]
+  # @return [Any]
   #
   def get_cookie(key)
     value = cookie_value(key)
@@ -47,12 +47,12 @@ module CookieHelper
   # Set the cookie in the request and the response.
   #
   # @param [Symbol, String] key
-  # @param [*]              value     Defaults to `opt[:value]`.
+  # @param [Any]            value     Defaults to `opt[:value]`.
   # @param [Hash]           opt       To Rack::Response::Helpers#set_cookie.
   #
-  # @option opt [*] :value            Defaults to *value* or *true* if missing.
+  # @option opt [Any] :value          Defaults to *value* or *true* if missing.
   #
-  # @return [*]                       The cookie value.
+  # @return [Any]                     The cookie value.
   #
   def set_cookie(key, value = nil, **opt)
     value = opt[:value] if value.nil?
@@ -93,7 +93,7 @@ module CookieHelper
   #
   # @param [String, Symbol] key
   #
-  # @return [*]
+  # @return [Any]
   #
   def cookie_value(key)
     session[SS_COOKIES][key.to_s] if session[SS_COOKIES].is_a?(Hash)
@@ -102,9 +102,9 @@ module CookieHelper
   # Save a copy of the cookie value in `session`.
   #
   # @param [String, Symbol] key
-  # @param [*]              value
+  # @param [Any]            value
   #
-  # @return [*]
+  # @return [Any]
   #
   def remember_cookie(key, value)
     session[SS_COOKIES] = {} unless session[SS_COOKIES].is_a?(Hash)
@@ -114,9 +114,8 @@ module CookieHelper
   # Remove the copy of the cookie value from `session`.
   #
   # @param [String, Symbol] key
-  # @param [*]              value
   #
-  # @return [*]
+  # @return [Any]
   #
   def forget_cookie(key)
     session[SS_COOKIES].delete(key.to_s) if session[SS_COOKIES].is_a?(Hash)

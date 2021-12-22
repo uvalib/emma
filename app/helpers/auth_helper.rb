@@ -21,11 +21,12 @@ module AuthHelper
 
   # Generate the authentication data to be associated with the given user.
   #
-  # @param [User] user
+  # @param [User, nil] user
   #
   # @return [OmniAuth::AuthHash, nil]
   #
   def auth_hash(user)
+    # noinspection RubyMismatchedArgumentType
     OmniAuth::Strategies::Bookshare.auth_hash(user) if user.is_a?(User)
   end
 

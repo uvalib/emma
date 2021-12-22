@@ -737,7 +737,7 @@ class UploadController < ApplicationController
   # @param [Upload, Hash] item
   # @param [Hash]         opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def show_values(item = @item, **opt)
     item = item.is_a?(Upload) ? item.attributes.symbolize_keys : item.dup

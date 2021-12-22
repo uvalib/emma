@@ -53,7 +53,7 @@ class FileParser::Pdf < FileParser
   # @param [Symbol] name
   # @param [Array]  args
   #
-  # @return [*]
+  # @return [Any]
   #
   def method_missing(name, *args)
     if pdf_reader.respond_to?(name)

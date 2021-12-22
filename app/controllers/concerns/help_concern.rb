@@ -23,7 +23,7 @@ module HelpConcern
   #
   # @param [Symbol] topic
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def get_help_entry(topic)
     entry = HELP_ENTRY[topic]&.except(:content_html)

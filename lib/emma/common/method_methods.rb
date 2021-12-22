@@ -91,7 +91,7 @@ module Emma::Common::MethodMethods
   # @option opt [Symbol, Array<Symbol>] :only
   # @option opt [Symbol, Array<Symbol>] :except
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def get_params(*args)
     opt    = args.extract_options!

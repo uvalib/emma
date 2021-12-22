@@ -74,7 +74,7 @@ module SerializationHelper
 
   # Serialize an item to JSON format.
   #
-  # @param [*]    item
+  # @param [Any]  item
   # @param [Hash] opt                 Passed to #to_json.
   #
   # @return [String]
@@ -85,7 +85,7 @@ module SerializationHelper
 
   # Serialize an item to XML format.
   #
-  # @param [*]               item
+  # @param [Any]             item
   # @param [String]          separator
   # @param [String]          name       Node name if item.respond_to?(:to_xml).
   # @param [Api::Serializer] serializer
@@ -99,7 +99,7 @@ module SerializationHelper
       serializer ||= Bs::Api::Serializer::Xml.new
       make_opt = { separator: separator, serializer: serializer }
       # @type [Symbol] k
-      # @type [*]      v
+      # @type [Any]    v
       item.map { |k, v|
         value = make_xml(v, **make_opt)
         next if value.nil? && !serializer.render_nil?

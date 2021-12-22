@@ -19,7 +19,7 @@ module LayoutHelper::Logo
 
   # Configuration for logo properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection

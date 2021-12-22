@@ -76,11 +76,11 @@ module Emma::Common::HashMethods
 
   # Recursively remove blank items from an object.
   #
-  # @param [Hash, Array, *] item
-  # @param [Boolean, nil]   squeeze   If *true* transform arrays with a single
-  #                                     element into scalars.
+  # @param [Hash, Array, Any] item
+  # @param [Boolean, nil]     squeeze   If *true* transform arrays with a
+  #                                       single element into scalars.
   #
-  # @return [Hash, Array, *]
+  # @return [Hash, Array, Any]
   #
   #--
   # == Variations
@@ -97,9 +97,9 @@ module Emma::Common::HashMethods
   #   @return [Array, nil]
   #
   # @overload _remove_blanks(item)
-  #   @param [*]            item
+  #   @param [Any]          item
   #   @param [Boolean, nil] squeeze
-  #   @return [*]
+  #   @return [Any]
   #
   # == Usage Notes
   # Empty strings and nils are considered blank, however an item or element

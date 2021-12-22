@@ -19,7 +19,7 @@ module HeadHelper::Common
 
   # Configuration for <head> properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection

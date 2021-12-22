@@ -28,13 +28,14 @@ module Field
 
   # Return an enumeration type expressed or implied by *value*.
   #
-  # @param [String, Symbol, Class, *] value
+  # @param [String, Symbol, Class, Any] value
   #
   # @return [Class] The class indicated by *value*.
   # @return [nil]   If *value* could not be cast a subclass of EnumType.
   #
   def self.enum_type(value)
     if value.is_a?(Class)
+      # noinspection RubyMismatchedReturnType
       value if value < EnumType
     elsif value.to_s.strip.casecmp?('boolean')
       TrueFalse
@@ -52,6 +53,9 @@ module Field
   #
   # @return [Hash]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def self.configuration_for(
     field,
     model         = nil,
@@ -85,6 +89,9 @@ module Field
   #
   # @return [Hash]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def self.configuration_for_label(
     label,
     model         = nil,
@@ -181,10 +188,10 @@ module Field
 
   # Generate derived fields for an entry.
   #
-  # @param [Hash{Symbol=>*}] entry
-  # @param [Symbol, nil]     field
+  # @param [Hash{Symbol=>Any}] entry
+  # @param [Symbol, nil]       field
   #
-  # @return [Hash{Symbol=>*}]         The modified *entry*.
+  # @return [Hash{Symbol=>Any}]       The modified *entry*.
   #
   def self.finalize!(entry, field = nil)
     e   = entry
@@ -305,7 +312,7 @@ module Field
 
   # Generate an appropriate field subclass instance if possible.
   #
-  # @param [Model, *]            item
+  # @param [Model, Any]          item
   # @param [Symbol]              field
   # @param [Symbol, String, nil] model
   #
@@ -368,7 +375,7 @@ module Field
 
     # The value associated with the instance.
     #
-    # @return [*]
+    # @return [Any]
     #
     attr_reader :value
 
@@ -386,10 +393,10 @@ module Field
 
     # Initialize a new instance.
     #
-    # @param [Symbol, Model, *]    src
+    # @param [Symbol, Model, Any]  src
     # @param [Symbol, nil]         field
     # @param [Symbol, String, nil] model
-    # @param [*]                   value
+    # @param [Any]                 value
     #
     def initialize(src, field = nil, model = nil, value = nil)
       @base  = src
@@ -448,7 +455,7 @@ module Field
 
     # The raw value for this field instance.
     #
-    # @return [*]
+    # @return [Any]
     #
     def value
       @value
@@ -456,9 +463,9 @@ module Field
 
     # Give the instance a value.
     #
-    # @param [*] new_value
+    # @param [Any, nil] new_value
     #
-    # @return [*]
+    # @return [Any]
     #
     def set(new_value)
       @valid = !new_value.nil?
@@ -562,10 +569,10 @@ module Field
 
     # Give the instance a value.
     #
-    # @param [*] new_value
+    # @param [Any, nil] new_value
     #
     # @return [Array]   If mode == :multiple
-    # @return [*]       If mode == :single
+    # @return [Any]     If mode == :single
     #
     def set(new_value)
       @valid = true

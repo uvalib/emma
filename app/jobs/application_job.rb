@@ -66,7 +66,7 @@ class ApplicationJob < ActiveJob::Base
   #
   # @param [Array] args               Ignored.
   #
-  # @return [*]                       Return value of #perform.
+  # @return [Any]                     Return value of #perform.
   #
   def perform_now(*args)
     __debug_job(__method__) { "`arguments` = #{arguments_inspect}" } # TODO: remove

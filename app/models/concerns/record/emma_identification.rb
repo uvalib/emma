@@ -57,8 +57,8 @@ module Record::EmmaIdentification
 
   # Extract the submission ID from the given item.
   #
-  # @param [Model, Hash, String, *] item
-  # @param [Hash]                   opt
+  # @param [Model, Hash, String, Any] item
+  # @param [Hash]                     opt
   #
   # @option opt [Symbol] :sid_key     Default: `#sid_column`.
   #
@@ -66,6 +66,7 @@ module Record::EmmaIdentification
   # @return [nil]                     No submission ID could be determined.
   #
   def sid_value(item, **opt)                                                    # NOTE: from Upload::IdentifierMethods#sid_for
+    # noinspection RubyMismatchedReturnType
     return item if valid_sid?(item)
     opt  = item.merge(opt) if item.is_a?(Hash)
     item = opt unless item.is_a?(Model)
@@ -75,7 +76,7 @@ module Record::EmmaIdentification
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
-  # @param [String, *] value
+  # @param [Any] value                Must be a String.
   #
   def valid_sid?(value)                                                         # NOTE: from Upload::IdentifierMethods
     value.is_a?(String) && value.match?(SID_PATTERN)
@@ -232,7 +233,7 @@ module Record::EmmaIdentification
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Model, *] item
+  # @param [String, Hash, Model, Any] item
   # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:
@@ -256,6 +257,7 @@ module Record::EmmaIdentification
     id_key  = opt.key?(:id_key)  ? opt[:id_key]  : id_column
     sid_key = opt.key?(:sid_key) ? opt[:sid_key] : sid_column
     if id_key || sid_key
+      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       opt.reverse_merge!(id_term(item, **opt))
       id  = id_key  && (opt[id_key] || opt[alt_id_key(opt)])
@@ -311,14 +313,17 @@ module Record::EmmaIdentification
   # If :sid_key set to *nil* then the result will always be in terms of :id_key
   # (which cannot be set to *nil*).
   #
-  # @param [String, Symbol, Integer, Hash, Model, *] v
-  # @param [Hash]                                    opt
+  # @param [String, Symbol, Integer, Hash, Model, Any, nil] v
+  # @param [Hash]                                          opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   # @option opt [Symbol] :sid_key     Default: `#sid_column`.
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def id_term(v, **opt)                                                         # NOTE: from Upload::IdentifierMethods
     result  = {}
     id_key  = opt.key?(:id_key)  ? opt.delete(:id_key)  : id_column

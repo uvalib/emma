@@ -210,6 +210,7 @@ module BookshareService::Testing
       end
       return unless ex.present?
       __debug_banner("#{self.class}.#{meth} #{ex.class}")
+      # noinspection RubyMismatchedArgumentType
       set_error(ex)
     end
 

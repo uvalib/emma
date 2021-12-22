@@ -45,7 +45,7 @@ module DataHelper
 
   # Indicate whether *name* is a valid table name.
   #
-  # @param [String, Symbol, *] name
+  # @param [String, Symbol, Any] name
   #
   def table_name?(name)
     table_names.include?(name.to_s)
@@ -53,7 +53,7 @@ module DataHelper
 
   # table_columns
   #
-  # @param [String, Symbol, *] table_name
+  # @param [String, Symbol, Any] table_name
   #
   # @return [Array<ConnectionAdapters::Column>]
   #
@@ -63,7 +63,7 @@ module DataHelper
 
   # table_column_names
   #
-  # @param [String, Symbol, *]    table_name
+  # @param [String, Symbol, Any]  table_name
   # @param [Array<String,Symbol>] cols          Column names; default: "*".
   #
   # @return [Array<String>]
@@ -76,7 +76,7 @@ module DataHelper
 
   # table_column_types
   #
-  # @param [String, Symbol, *]    table_name
+  # @param [String, Symbol, Any]  table_name
   # @param [Array<String,Symbol>] cols          Column names; default: "*".
   #
   # @return [Hash{Symbol=>Symbol}]
@@ -91,7 +91,7 @@ module DataHelper
 
   # table_records
   #
-  # @param [String, Symbol, *]    name          Database table name.
+  # @param [String, Symbol, Any]  name          Database table name.
   # @param [Array<String,Symbol>] cols          Column names; default: "*".
   # @param [Boolean, nil]         headings      If *false*, don't include the
   #                                               database schema.
@@ -222,7 +222,7 @@ module DataHelper
 
   # db_connection
   #
-  # @return [*]                       Return value of block.
+  # @return [Any]                     Return value of block.
   #
   # @yield [db]
   # @yieldparam [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
@@ -234,7 +234,7 @@ module DataHelper
   # db_columns
   #
   # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
-  # @param [String, Symbol, *]        table   Database table name.
+  # @param [String, Symbol, Any]        table   Database table name.
   #
   # @return [Array<ConnectionAdapters::Column>]
   #
@@ -245,9 +245,9 @@ module DataHelper
   # db_select
   #
   # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
-  # @param [String, Symbol, *]        table   Database table name.
-  # @param [Array<String,Symbol>]     cols    Column names; default: "*".
-  # @param [String, Symbol, Array, *] sort
+  # @param [String, Symbol, Any]        table   Database table name.
+  # @param [Array<String,Symbol>]       cols    Column names; default: "*".
+  # @param [String, Symbol, Array, Any] sort
   #
   # @return [Array<Array>]
   #
@@ -336,7 +336,7 @@ module DataHelper
 
   # Generate HTML to display a database record.
   #
-  # @param [*]            field
+  # @param [Any]          field
   # @param [Integer, nil] row
   # @param [Integer, nil] col
   # @param [Integer, nil] first       Index value of the first column.
@@ -431,8 +431,8 @@ module DataHelper
 
   # Generate HTML to display a list of values and counts.
   #
-  # @param [Array<Array<*,Integer>>] values
-  # @param [Hash]                    opt      Passed to outer #html_div.
+  # @param [Hash] values
+  # @param [Hash] opt                 Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

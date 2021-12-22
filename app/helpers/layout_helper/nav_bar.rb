@@ -21,7 +21,7 @@ module LayoutHelper::NavBar
 
   # Configuration for nav bar properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection
@@ -48,7 +48,7 @@ module LayoutHelper::NavBar
 
   # Configuration for dashboard page properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsI18nInspection

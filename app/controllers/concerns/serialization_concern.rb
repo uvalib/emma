@@ -25,7 +25,7 @@ module SerializationConcern
 
   # Render an item in JSON format.
   #
-  # @param [*]    item
+  # @param [Any]  item
   # @param [Hash] opt                 Passed to #render.
   #
   def render_json(item, **opt)
@@ -37,7 +37,7 @@ module SerializationConcern
 
   # Render an item in XML format.
   #
-  # @param [*]    item
+  # @param [Any]  item
   # @param [Hash] opt                 Passed to #render except for:
   #
   # @option opt [String] :separator   Passed to #make_xml.
@@ -66,13 +66,13 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [*]    list
+  # @param [Any]  list
   # @param [Hash] opt
   #
   # @option opt [Symbol, String] :wrap
   # @option opt [Symbol, String] :name  Default: :list
   #
-  # @return [Hash{Symbol=>Array,Hash,*}]
+  # @return [Hash{Symbol=>Any}]
   #
   #--
   # noinspection RailsParamDefResolve
@@ -115,11 +115,11 @@ module SerializationConcern
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [Hash, *]     item
-  # @param [Symbol, nil] as           Either :hash or :array if given.
+  # @param [Any]            item
+  # @param [Symbol, nil]    as        Either :hash or :array if given.
   # @param [Symbol, String] name
   #
-  # @return [Hash{Symbol=>Hash,Array,*}]
+  # @return [Hash{Symbol=>Any}]
   #
   def show_values(item, as: nil, name: nil, **)
     if as == :array

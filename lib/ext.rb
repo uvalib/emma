@@ -29,6 +29,8 @@ end
 # Loader methods
 # =============================================================================
 
+public
+
 # This method can be used as a simple mechanism to override member(s) of a
 # class or module by supplying new methods or redefinitions of existing methods
 # within a block that is prepended as an anonymous module.
