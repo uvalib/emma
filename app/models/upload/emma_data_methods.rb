@@ -253,6 +253,9 @@ module Upload::EmmaDataMethods
       sep   = /[|\t\n]+/
       if %i[dc_identifier dc_relation].include?(k)
         v = PublicationIdentifier.split(v)
+      elsif (type == 'boolean') || (type == TrueFalse)
+        v = v.first
+        v = true?(v) unless v.nil?
       elsif (lines = (type == 'textarea')) || (type == 'text') || type.blank?
         join = sep = ';' unless lines
         if array

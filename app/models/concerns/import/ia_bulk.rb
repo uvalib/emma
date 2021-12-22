@@ -214,11 +214,11 @@ module Import::IaBulk
   #
   # @param [Any] v
   #
-  # @return [String, nil]
+  # @return [Boolean, nil]
   #
   def rem_complete_value(v)
     v = string_value(v, first: true)
-    ('true' if false?(v)) || ('false' if true?(v)) if v.present?
+    false?(v) if v.present?
   end
 
   # Transform a "remediated_aspects" value into a :rem_remediatedAspects value.
