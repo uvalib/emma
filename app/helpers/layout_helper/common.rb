@@ -36,26 +36,26 @@ module LayoutHelper::Common
   # @type [ActiveSupport::SafeBuffer]
   #
   PANEL_OPENER_LABEL =
-    non_breaking(PANEL_CTRL_CFG.dig(:control, :label)).html_safe.freeze
+    non_breaking(PANEL_CTRL_CFG.dig(:label)).html_safe.freeze
 
   # Tooltip for button to open a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_OPENER_TIP = PANEL_CTRL_CFG.dig(:control, :tooltip)
+  PANEL_OPENER_TIP = PANEL_CTRL_CFG.dig(:tooltip)
 
   # Label for button to close a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
   PANEL_CLOSER_LABEL =
-    non_breaking(PANEL_CTRL_CFG.dig(:control, :open, :label)).html_safe.freeze
+    non_breaking(PANEL_CTRL_CFG.dig(:open, :label)).html_safe.freeze
 
   # Tooltip for button to close a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_CLOSER_TIP = PANEL_CTRL_CFG.dig(:control, :open, :tooltip)
+  PANEL_CLOSER_TIP = PANEL_CTRL_CFG.dig(:open, :tooltip)
 
   # ===========================================================================
   # :section:
