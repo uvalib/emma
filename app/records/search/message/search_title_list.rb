@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchTitleList < Search::Api::Message
 
+  include Search::Shared::IdentifierMethods
   include Search::Shared::CollectionMethods
 
   # ===========================================================================
@@ -101,7 +102,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   public
 
   # @private
-  DEBUG_AGGREGATE = false
+  DEBUG_AGGREGATE = true
 
   # Organize metadata records into title records.
   #
@@ -132,11 +133,69 @@ class Search::Message::SearchTitleList < Search::Api::Message
   GROUPING_LEVELS = [
     %i[normalized_title],
     %i[emma_repository],
-    %i[dc_creator dc_publisher emma_publicationDate]
+    %i[dc_identifier dc_creator dc_publisher emma_publicationDate]
   ].deep_freeze
 
   # @private
   GROUPING_LEVEL_DEPTH = GROUPING_LEVELS.size
+
+  class BottomLevel
+
+    include Comparable
+
+    # @private
+    IDENTIFIER_FIELDS = Api::Shared::IdentifierMethods::IDENTIFIER_FIELDS
+
+    # @return [PublicationIdentifierSet, nil]
+    attr_reader :ids
+
+    # @return [Array]
+    attr_reader :values
+
+    def initialize(hash)
+      @ids    = nil
+      @values = []
+      hash.each_pair do |field, value|
+        if IDENTIFIER_FIELDS.include?(field)
+          @ids = PublicationIdentifierSet.new(value)
+        else
+          @values << LIST_ELEMENT.make_comparable(value, field)
+        end
+      end
+      $stderr.puts "@@@@@@@ BottomLevel.ctor | #{self.inspect}"
+    end
+
+    # =========================================================================
+    # :section: Object overrides
+    # =========================================================================
+
+    public
+
+    def hash
+      # NOTE: so, since group_by is using #hash it's going to be pretty difficult to override equality...
+      #   Bottom line -- it may be necessary to implement an analogue to group_by which uses eql?()
+      #super
+      (
+        ids ? ids.hash : values.hash
+        #ids ? 0 : values.hash
+      )
+        .tap { |res| $stderr.puts "@@@@@@@ BottomLevel.hash | #{res.inspect} | #{self.inspect}" }
+    end
+
+    def eql?(other)
+      return false unless other.is_a?(BottomLevel)
+      (
+      ids && (ids == other.ids) || (values == other.values)
+      )
+        .tap { |res| $stderr.puts "@@@@@@@ BottomLevel.eql? | #{res.inspect} | #{self.inspect} | #{other.inspect}" }
+    end
+
+    def ==(other)
+      $stderr.puts '@@@@@@@ BottomLevel.=='
+      eql?(other)
+    end
+
+  end
 
   # group_fields
   #
@@ -146,8 +205,26 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @return [Array]
   #
   def group_fields(rec, level)
-    fields = level.is_a?(Integer) ? GROUPING_LEVELS[level] : Array.wrap(level)
-    LIST_ELEMENT.extract_fields(rec, fields).values
+    fields = []
+    if !level.is_a?(Integer)
+      fields = Array.wrap(level)
+    elsif (range = 0...GROUPING_LEVEL_DEPTH).cover?(level)
+      fields = GROUPING_LEVELS[level]
+    else
+      Log.error { "#{__method__}: level #{level} not in range #{range}" }
+    end
+    BottomLevel.new(LIST_ELEMENT.extract_fields(rec, fields))
+=begin
+    LIST_ELEMENT.extract_fields(rec, fields).map do |field, value|
+      if IDENTIFIER_FIELDS.include?(field)
+        PublicationIdentifierSet.new(value)
+      else
+        LIST_ELEMENT.make_comparable(value, field)
+      end
+        .tap { |res| $stderr.puts "@@@@@@@ group_fields | #{res.inspect} | #{field.inspect} | #{value.inspect} | -> #{res.inspect}" }
+    end
+=end
+    #LIST_ELEMENT.comparable_fields(rec, fields).values
   end
 
   # Recursively group records.

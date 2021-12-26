@@ -353,6 +353,88 @@ class Search::Record::TitleRecord < Search::Api::Record
       fields.map! { |f| [f.to_sym, field_value(rec, f)] }.to_h
     end
 
+    # comparable_fields
+    #
+    # @note This should probably be coalesced with extract_fields
+    #
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    # @param [Array<Symbol>]                             fields
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def comparable_fields(rec, fields)
+      extract_fields(rec, fields).map { |field, value|
+        [field, make_comparable(value, field)]
+      }.to_h
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # @private
+    IDENTIFIER_FIELDS = Api::Shared::IdentifierMethods::IDENTIFIER_FIELDS
+
+    # Transform a value into one whose elements are prepared for comparison
+    # with a similar value.
+    #
+    # @param [Hash, Array, String, Any, nil] value
+    # @param [Symbol, nil]                   field
+    #
+    # @return [Hash, Array, String, Any]  Same type as original type of *value*
+    #
+    #--
+    # noinspection RubyNilAnalysis
+    #++
+    def make_comparable(value, field = nil)
+      if Log.debug?
+        # noinspection RubyCaseWithoutElseBlockInspection
+        case value
+          when Number, Model, Hash
+            Log.debug { "#{__method__}: ignoring field = #{field.inspect}" }
+        end
+      end
+      id_field = field && IDENTIFIER_FIELDS.include?(field)
+      case value
+        when Number
+          value.number_value
+        when Model
+          make_comparable(value.fields)
+        when Hash
+          value.map { |k, v|
+            v = make_comparable(v, k)
+            [k, v] if v.present?
+          }.compact.sort_by! { |kv| kv&.first || '' }.to_h
+        when Array
+          # noinspection RubyMismatchedArgumentType
+          if id_field
+            value.compact_blank.sort_by! { |v| identifier_sort_key(v) }
+          else
+            value.map { |v| make_comparable(v, field) }.compact_blank!.sort!
+          end
+        else
+          # noinspection RubyMismatchedReturnType
+          id_field ? value : value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
+      end
+    end
+
+    # Group identifiers of the same prefix in descending order of length
+    # (favoring ISBN-13 over ISBN-10).
+    #
+    # @param [String, nil] id
+    #
+    # @return [(String, Integer, String)]
+    #
+    def identifier_sort_key(id)
+      id     = PublicationIdentifier.cast(id, invalid: true)
+      value  = id.to_s
+      length = -value.size
+      prefix = id&.prefix || ''
+      [prefix, length, value]
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================
@@ -553,7 +635,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       #
       # @param [Any] other
       #
-      # @return [Integer]   -1 if self is later, 1 if self is
+      # @return [Integer]   -1 if self is later, 1 if self is earlier
       #
       def <=>(other)
         other_min = other.try(:minimum) || other.try(:[], :min) || 0
@@ -718,7 +800,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Any] other
     #
-    # @return [Integer]   -1 if self is later, 1 if self is
+    # @return [Integer]   -1 if self is later, 1 if self is earlier
     #
     def <=>(other)
       other = Number.new(other) if other && !other.is_a?(Number)
@@ -847,6 +929,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     rec.try("#{field}=", value)
   end
 
+=begin
   # Group identifiers of the same prefix in descending order of length
   # (favoring ISBN-13 over ISBN-10).
   #
@@ -861,6 +944,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     prefix = id&.prefix || ''
     [prefix, length, value]
   end
+=end
 
   # Produce a list of field mismatches which prevent *rec* from being eligible
   # for inclusion in the instance.
@@ -985,6 +1069,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     end
   end
 
+=begin
   # Transform a value into one whose elements are prepared for comparison with
   # a similar value.
   #
@@ -1027,6 +1112,7 @@ class Search::Record::TitleRecord < Search::Api::Record
         id_field ? value : value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
     end
   end
+=end
 
   # ===========================================================================
   # :section: Class methods

@@ -20,6 +20,8 @@ Boolean = Axiom::Types::Boolean
 #
 class ScalarType
 
+  include Comparable
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -173,6 +175,38 @@ class ScalarType
   #
   def inspect
     "(#{to_s.inspect})"
+  end
+
+  # Value needed to make instances comparable.
+  #
+  # @return [Integer]
+  #
+  def hash
+    to_s.hash
+  end
+
+  # Value needed to make instances comparable.
+  #
+  # @param [Any] other
+  #
+  def eql?(other)
+    to_s == other.to_s
+  end
+
+  # ===========================================================================
+  # :section: Comparable
+  # ===========================================================================
+
+  public
+
+  # Comparison operator required by the Comparable mixin.
+  #
+  # @param [Any] other
+  #
+  # @return [Integer]   -1 if self is later, 1 if self is earlier
+  #
+  def <=>(other)
+    to_s <=> other.to_s
   end
 
   # ===========================================================================
