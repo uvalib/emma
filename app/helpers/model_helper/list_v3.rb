@@ -77,6 +77,12 @@ module ModelHelper::ListV3
 
   protected
 
+  # The term used for a file instance instead of 'file'. # TODO: I18n
+  #
+  # @type [String, nil]
+  #
+  FILE_TERM = 'copy'
+
   # item_lines
   #
   # @param [Search::Record::TitleRecord] item
@@ -177,9 +183,12 @@ module ModelHelper::ListV3
   # @param [Hash]        part_prop
   # @param [Hash]        opt
   #
+  # @option opt [String] :term        Override #FILE_TERM.
+  #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
   def part_lines(part_section, part_key, part_index, part_prop, opt)
+    opt[:term] ||= FILE_TERM
     part_section.flat_map.with_index(1) do |format, format_no|
       index = [*part_index, format_no]
       prop  = add_scope(part_prop, part_key, index: index)
@@ -193,7 +202,7 @@ module ModelHelper::ListV3
       # Create the heading row.
       value   = format.dig(:bibliographic, :dc_format).presence
       name    = value ? ERB::Util.h(value.titleize.upcase) : format_no
-      details = count_unique(lines, :file)
+      details = count_unique(lines, :file, term: opt[:term])
       h_opt   = opt.merge(row: h_row)
       heading = new_section(:format, name, value, details, index, prop, h_opt)
 
@@ -302,8 +311,8 @@ module ModelHelper::ListV3
   #
   PAIR_WRAPPER = 'pair'
 
-  # Probably-temporary divider between metadata for individual sections within
-  # a compound search item.
+  # Divider between metadata for individual sections within a compound search
+  # item.
   #
   # @note SIDE EFFECT: `opt[:row]` will be incremented.
   #
@@ -314,6 +323,8 @@ module ModelHelper::ListV3
   # @param [Any]            index       Unique line indicator.
   # @param [Hash]           prop
   # @param [Hash]           opt         Passed to #render_line.
+  #
+  # @option opt [String] :term          Override #FILE_TERM.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -331,8 +342,12 @@ module ModelHelper::ListV3
     toggle = search_list_item_toggle(id: tgt_id, context: type, open: open)
 
     # Prepend the toggle control to the label.
-    label   = (name if name.is_a?(ActiveSupport::SafeBuffer))
-    label ||= html_span("#{type.titleize} #{name}", class: 'text') # TODO: I18n
+    if name.is_a?(ActiveSupport::SafeBuffer)
+      label = name
+    else
+      term  = opt[:term] || FILE_TERM || type
+      label = html_span("#{term.titleize} #{name}", class: 'text')
+    end
     label = toggle << label
 
     # Make an non-empty value portion.
@@ -404,13 +419,14 @@ module ModelHelper::ListV3
   #
   # @param [Array<Hash,ActiveSupport::SafeBuffer>] lines
   # @param [String, Symbol]                        type
+  # @param [String, nil]                           term
   #
   # @return [String]
   #
-  def count_unique(lines, type)
+  def count_unique(lines, type, term: nil)
     lines = lines.select { |line| line.is_a?(Hash) }
     count = lines.map { |line| line[:"data-#{type}"] }.compact.uniq.size
-    "(#{count} %s)" % type.to_s.pluralize(count)
+    "(#{count} %s)" % (term || type).to_s.downcase.pluralize(count)
   end
 
   # ===========================================================================

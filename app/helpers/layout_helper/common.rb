@@ -65,14 +65,15 @@ module LayoutHelper::Common
 
   # toggle_button
   #
-  # @param [String]          id         HTML element controlled by this button.
-  # @param [String, nil]     label      Default: #PANEL_OPENER_LABEL.
-  # @param [String, nil]     context    Default: 'for-panel'.
-  # @param [Boolean, String] open       Start with controlled element expanded.
-  # @param [String, nil]     selector   Selector of the element controlled by
-  #                                       this button (only used if panel.js
-  #                                       RESTORE_PANEL_STATE is *true*).
-  # @param [Hash] opt                   Passed to #button_tag.
+  # @param [String]              id         Element controlled by this button.
+  # @param [String, nil]         label      Default: #PANEL_OPENER_LABEL.
+  # @param [String, Symbol, nil] context    Default: 'for-panel'.
+  # @param [Boolean, String]     open       Start with the element expanded.
+  # @param [String, nil]         selector   Selector of the element controlled
+  #                                           by this button (only used if
+  #                                           panel.js RESTORE_PANEL_STATE is
+  #                                           *true*).
+  # @param [Hash] opt                       Passed to #button_tag.
   #
   # @raise [RuntimeError]             The controlled element was not specified.
   #
