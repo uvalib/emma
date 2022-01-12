@@ -1,0 +1,13 @@
+class Object
+  # Recursive freezing support.
+  #
+  # @see Hash#deep_freeze
+  #
+  def deep_freeze: () -> self
+
+  # Recursive duplication support.
+  #
+  # @see Hash#rdup
+  #
+  def rdup: () -> (untyped | self)
+end

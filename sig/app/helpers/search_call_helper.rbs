@@ -1,0 +1,127 @@
+# View helper methods supporting access to search call records.
+#
+module SearchCallHelper
+  include ModelHelper
+
+  include PaginationHelper
+
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  SEARCH_CALL_SHOW_TOOLTIP: String
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Search::Api::Record] item
+  # @param [Hash]                opt    Passed to #model_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_call_link: (Search::Api::Record item, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render details of a search call.
+  #
+  # @param [SearchCall] item
+  # @param [Hash, nil]  pairs         Additional field mappings.
+  # @param [Hash]       opt           Passed to #search_call_field_values and
+  #                                     #model_details.
+  #
+  def search_call_details: (SearchCall item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [SearchCall] item
+  # @param [Hash, nil]  pairs         Additional field mappings.
+  # @param [Hash]       opt           Passed to #model_list_item.
+  #
+  def search_call_list_item: (SearchCall item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render search calls as a table.
+  #
+  # @param [SearchCall, Array<SearchCall>] list
+  # @param [Hash]                          opt   Passed to #model_table except:
+  #
+  # @option [Boolean] :extended       Indicate that this is the "extended"
+  #                                     version of the table which replaces
+  #                                     columns holding JSON data with columns
+  #                                     holding each JSON sub-field.
+  #
+  def search_call_table: (SearchCall|Array[SearchCall]|nil list, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render one or more entries for use within a <tbody>.
+  #
+  # @param [SearchCall, Array<SearchCall>] list
+  # @param [Hash]                          opt   Passed to #model_table_entries
+  #
+  def search_call_table_entries: (SearchCall|Array[SearchCall]|nil list, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[ActiveSupport::SafeBuffer])
+
+  # Render a single entry for use within a table of items.
+  #
+  # @param [SearchCall] item
+  # @param [Hash]       opt           Passed to #model_table_entry
+  #
+  def search_call_table_entry: (SearchCall item, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[ActiveSupport::SafeBuffer] | Array[String])
+
+  # Render column headings for a search call table.
+  #
+  # @param [SearchCall, Array<SearchCall>] item
+  # @param [Hash]                          opt  Passed to #model_table_headings
+  #
+  def search_call_table_headings: (SearchCall|Array[SearchCall]|nil item, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[ActiveSupport::SafeBuffer] | Array[String])
+
+  # Specified field selections from the given User instance.
+  #
+  # @param [SearchCall, Hash, nil] item
+  # @param [Hash]                  opt    Passed to #model_field_values
+  #
+  def search_call_field_values: (untyped item, **untyped opt) -> symHash
+
+  # Element containing a field name.
+  #
+  # @param [String, Symbol] field
+  # @param [Hash]           opt       Passed to #html_span except for:
+  #
+  # @option opt [Hash] :name          Passed to name #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_call_field: (String|Symbol field, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Element containing one or more field values.
+  #
+  # @param [String, Numeric, Array] value
+  # @param [Hash]                   opt     Passed to #html_span except for:
+  #
+  # @option opt [Hash]   :item              Passed to item #html_span.
+  # @option opt [String] :separator         Default: `#search_call_connector`.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_call_value: (String|Numeric|Array[String|Numeric] value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Element separating multiple values.
+  #
+  # @param [Hash] opt                 Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Implementation Notes
+  # The element is surrounded by spaces so that a compound value element can be
+  # copied and pasted legibly.
+  #
+  def search_call_connector: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # search_call_columns
+  #
+  # @param [SearchCall, nil] item
+  # @param [Hash]            opt      Passed to #search_call_field_values
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def search_call_columns: (?SearchCall? item, **untyped opt) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

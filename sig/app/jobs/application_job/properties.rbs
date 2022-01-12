@@ -1,0 +1,127 @@
+module ApplicationJob::Properties
+  extend ActiveSupport::Concern
+
+  # :nocov:
+  #include ActiveJob::Core
+
+  #include ActiveJob::QueueName
+
+  # Job queue keys and priorities.
+  #
+  # @type [Hash{Symbol=>Integer}]
+  #
+  QUEUE_PRIORITY: Hash[Symbol,Integer]
+
+  # All job queue keys.
+  #
+  # @type [Array<Symbol>]
+  #
+  QUEUE_KEYS: symArray
+
+  # All job queue names.
+  #
+  # @type [Array<String>]
+  #
+  QUEUE_NAMES: strArray
+
+  # The range of defined queue priorities.
+  #
+  # @type [Range]
+  #
+  PRIORITY_RANGE: Range[Integer]
+
+  DEFAULT_KEY: Symbol
+
+  DEFAULT_QUEUE: String
+
+  DEFAULT_PRIORITY: Integer
+
+  # The queue key for the current job.
+  #
+  # @type [Symbol, nil]
+  #
+  def queue_key: () -> Symbol?
+
+  # The defined priority for the current job.
+  #
+  # @type [Integer, nil]
+  #
+  def base_priority: () -> Integer?
+
+  # The queue key for the current job.
+  #
+  # @param [String, Symbol, Integer, Class, ApplicationJob, nil] val
+  #
+  # @type [Symbol, nil]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # -
+  def queue_key_for: (String|Symbol|Integer|Class|ApplicationJob|nil val) -> Symbol?
+
+  # The defined priority for the current job.
+  #
+  # @param [String, Symbol, Integer, Class, ApplicationJob, nil] val
+  #
+  # @type [Integer, nil]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # -
+  def priority_for: (String|Symbol|Integer|Class|ApplicationJob|nil val) -> Integer?
+
+  module ClassMethods
+    include ApplicationJob::Properties
+
+    # :nocov:
+    #include ActiveJob::QueueName::ClassMethods
+
+    #include ActiveJob::QueuePriority
+
+    #include ActiveJob::QueuePriority::ClassMethods
+
+    def queue_as: (?(String|Symbol|Integer|Class|ApplicationJob|nil) part_name) { () -> (String|Symbol|Integer|Class|ApplicationJob|nil) } -> void
+
+    def queue_with_priority: (?(String|Symbol|Integer|Class|ApplicationJob|nil) pri) { () -> (String|Symbol|Integer|Class|ApplicationJob|nil) } -> void
+
+    # The queue key for the current job.
+    #
+    # @type [Symbol]
+    #
+    def queue_key: () -> Symbol
+
+    # The defined priority for the current job.
+    #
+    # @type [Integer]
+    #
+    def base_priority: () -> Integer
+  end
+
+  module InstanceMethods
+    include ApplicationJob::Properties
+
+    # The queue key for the current job.
+    #
+    # @type [Symbol]
+    #
+    def queue_key: () -> Symbol
+
+    # The defined priority for the current job.
+    #
+    # @type [Integer]
+    #
+    def base_priority: () -> Integer
+
+    def default_queue_key: () -> Symbol
+
+    def default_queue_name: () -> String
+
+    def default_priority: () -> Integer
+
+    def queue_name_from_part: (String|Symbol|Integer|Class|ApplicationJob|nil part_name) -> untyped
+  end
+
+  private
+
+  include InstanceMethods
+end

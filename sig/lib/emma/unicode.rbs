@@ -1,0 +1,69 @@
+# Unicode utilities.
+#
+# -
+# noinspection RubyQuotedStringsInspection
+# +
+module Emma::Unicode
+  extend ::Emma::Unicode
+
+  # Produce a single character.
+  #
+  # @param [String, Integer] v
+  #
+  # @return [String]
+  #
+  def char: (String|Integer v) -> String
+
+  # Pad a character with thin spaces.
+  #
+  # @param [String, Integer]      v
+  # @param [String, Integer, nil] pad     Default: #THIN_SPACE
+  # @param [String, Integer, nil] left    Default: *pad*
+  # @param [String, Integer, nil] right   Default: *l_pad*
+  #
+  def pad_char: (String|Integer v, ?pad: String|Integer?, ?left: String|Integer?, ?right: String|Integer?) -> String
+
+  EN_SPACE: String
+
+  EM_SPACE: String
+
+  THIN_SPACE: String
+
+  EN_DASH: String
+
+  EM_DASH: String
+
+  UP_TRIANGLE: String
+
+  DELTA: String
+
+  RIGHT_TRIANGLE: String
+
+  DOWN_TRIANGLE: String
+
+  REVERSE_DELTA: String
+
+  BLACK_CIRCLE: String
+
+  STAR: String
+
+  WARNING_SIGN: String
+
+  CHECK_MARK: String
+
+  HEAVY_X: String
+
+  ASTERISK: String
+
+  QUESTION: String
+
+  BANG: String
+
+  HEAVY_PLUS: String
+
+  HEAVY_MINUS: String
+
+  private
+
+  def self.included: (Module base) -> void
+end

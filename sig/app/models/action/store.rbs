@@ -1,0 +1,67 @@
+# Manage execution of a Shrine file upload to AWS S3 storage.
+#
+# @see file:config/locales/state_table.en.yml *en.emma.state_table.action.store*
+#
+# @!method started?
+# @!method uploading?
+# @!method uploaded?
+# @!method promoting?
+# @!method completed?
+# @!method canceled?
+# @!method aborted?
+#
+# @!method started!
+# @!method uploading!
+# @!method uploaded!
+# @!method promoting!
+# @!method completed!
+# @!method canceled!
+# @!method aborted!
+#
+class Action::Store < Action::BulkPart
+  include Record::Sti::Leaf
+
+  include Record::Steppable
+
+  include Record::Uploadable
+
+  # Update database fields, including the structured contents of the :emma_data
+  # field.
+  #
+  # @param [Hash, ActionController::Parameters, Model, nil] attr
+  # @param [Hash, nil]                                      opt
+  #
+  # @return [void]
+  #
+  # @see Record::EmmaData#EMMA_DATA_KEYS
+  #
+  def assign_attributes: (Model|prmHash|nil attr, ?symHash? opt) -> void
+
+  def upload!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> httpResult
+
+  # Move the uploaded file associated with this item from :cache to :store.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :async      If *true* run callback asynchronously.
+  # @option opt [Symbol]  :meth       Name of caller (for logging).
+  #
+  # @return [Boolean]
+  #
+  def promote!: (**untyped opt) -> bool
+
+  # A textual description of the type of the Model instance.
+  #
+  # @return [String]
+  #
+  def self.describe_type: (*untyped, **untyped) ?{ () -> untyped } -> String
+
+  # A textual description of the status of the Action instance.
+  #
+  # @param [Action] action
+  # @param [Hash]   opt
+  #
+  # @return [String]
+  #
+  def self.describe_status: (Action action, **untyped opt) -> String
+end

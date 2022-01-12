@@ -1,0 +1,20 @@
+# Base class for all controllers.
+#
+class ApplicationController < ActionController::Base
+  include FlashConcern
+
+  include MetricsConcern
+
+  include ParamsHelper
+
+  # The current layout template.
+  #
+  # @return [String]                  Basename of views/layouts/* template.
+  # @return [FalseClass]              If this is an XHR request.
+  #
+  def current_layout: () -> (String | false)
+
+  # Indicate whether rendering within a modal dialog (<iframe>).
+  #
+  def modal?: () -> bool
+end

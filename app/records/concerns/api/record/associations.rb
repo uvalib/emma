@@ -35,11 +35,11 @@ module Api::Record::Associations
     # == Variations
     #++
     #
-    # @overload has_one(name, **opt)
+    # @overload attribute(name, **opt)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
     #
-    # @overload has_one(name, type, *_, **opt)
+    # @overload attribute(name, type, *_, **opt)
     #   @param [Symbol]                name
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
@@ -118,6 +118,8 @@ module Api::Record::Associations
     #
     # @param [Class<Api::Record>]    other
     # @param [Symbol, Array<Symbol>] except
+    #
+    # @return [void]
     #
     def all_from(other, except: nil, **)
       except &&= Array.wrap(except).compact.map(&:to_sym)

@@ -1,0 +1,7 @@
+# Shared values and methods.
+#
+# @see Search::Api::Common
+#
+module Ingest::Api::Common
+  include Search::Api::Common
+end

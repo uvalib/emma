@@ -128,6 +128,7 @@ class Action < ApplicationRecord
           # Invoke the related Record::Submittable method.
           meth = method_map[meth]
           meth = meth.call(target) if meth.is_a?(Proc)
+          # noinspection RubyMismatchedArgumentType
           send(meth, target)
         else
           # Invoke the service method directly.
@@ -163,6 +164,7 @@ class Action < ApplicationRecord
           # Invoke the related Record::Submittable method.
           meth = method_map[meth]
           meth = meth.call(target) if meth.is_a?(Proc)
+          # noinspection RubyMismatchedArgumentType
           send(meth, target)
         else
           # Invoke the service method directly.
@@ -179,12 +181,13 @@ class Action < ApplicationRecord
   #
   # @yield [target]
   # @yieldparam [Phase, Action] target
-  # @yieldreturn [ExecReport, Array<String>]
+  # @yieldreturn [ExecReport, Hash, String, Array<String>, Array<FlashPart>]
   #
   def external_action
     target = self
     errors = yield(target)
     if errors.present?
+      # noinspection RubyMismatchedArgumentType
       set_exec_report(errors)
       failed!
     end
@@ -235,6 +238,7 @@ class Action < ApplicationRecord
   if DEBUG_RECORD
 
     def show
+      # noinspection RubyMismatchedArgumentType
       super(:user, :phase, :entry)
     end
 

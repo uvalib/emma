@@ -1,0 +1,9 @@
+# Model for an artifact (i.e., an instance of remediated content).
+#
+class Artifact < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Authorizable
+end

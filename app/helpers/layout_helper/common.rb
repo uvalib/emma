@@ -40,7 +40,7 @@ module LayoutHelper::Common
 
   # Tooltip for button to open a collapsible panel.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [String]
   #
   PANEL_OPENER_TIP = PANEL_CTRL_CFG.dig(:tooltip)
 
@@ -53,7 +53,7 @@ module LayoutHelper::Common
 
   # Tooltip for button to close a collapsible panel.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [String]
   #
   PANEL_CLOSER_TIP = PANEL_CTRL_CFG.dig(:open, :tooltip)
 
@@ -134,7 +134,7 @@ module LayoutHelper::Common
 
   # Tooltip for button to open a collapsed tree.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [String]
   #
   TREE_OPENER_TIP = TREE_CTRL_CFG[:tooltip]
 
@@ -147,7 +147,7 @@ module LayoutHelper::Common
 
   # Tooltip for button to close an expanded tree.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [String]
   #
   TREE_CLOSER_TIP = TREE_CTRL_CFG.dig(:open, :tooltip)
 
@@ -188,6 +188,9 @@ module LayoutHelper::Common
   #
   CLIENT_MANAGES_HIDDEN_INPUTS = true
 
+  #--
+  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
+  #++
   def search_form(target, id = nil, hidden: nil, **opt, &block)
     search_form_with_hidden(target, id, hidden: hidden, **opt, &block)
   end unless CLIENT_MANAGES_HIDDEN_INPUTS
@@ -207,9 +210,9 @@ module LayoutHelper::Common
   #
   # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
   #
-  #++
-  # noinspection RubyUnusedLocalVariable
   #--
+  # noinspection RubyUnusedLocalVariable, RubyMismatchedParameterType
+  #++
   def search_form(target, id = nil, hidden: nil, **opt, &block)
     return if (path = search_target_path(target)).blank?
     opt[:method] ||= :get
@@ -237,6 +240,9 @@ module LayoutHelper::Common
   #
   # @note Used only if #CLIENT_MANAGES_HIDDEN_INPUTS is false.
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def search_form_with_hidden(target, id = nil, hidden: nil, **opt)
     return if (path = search_target_path(target)).blank?
     include_hidden = hidden.present? || (id.present? && (path == request.path))
@@ -268,6 +274,7 @@ module LayoutHelper::Common
     fields = fields&.symbolize_keys || url_parameters
     fields = fields.except!(id, *NON_SEARCH_KEYS).sort
     before_after = id ? fields.partition { |k, _| k <= id } : [fields, []]
+    # noinspection RubyMismatchedReturnType
     before_after.each { |a| a.map! { |k, v| hidden_input(k, v, id: id) } }
   end
 

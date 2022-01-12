@@ -1,0 +1,20 @@
+# Bs::Record::RecommendationProfile
+#
+# @attr [Array<BsAllowsType>]         allows
+# @attr [Array<String>]               excludedAuthors
+# @attr [Array<Bs::Record::Category>] excludedCategories
+# @attr [Array<BsContentWarning>]     excludedContentWarnings
+# @attr [Boolean]                     includeGlobalCollection
+# @attr [Array<String>]               includedAuthors
+# @attr [Array<Bs::Record::Category>] includedCategories
+# @attr [Array<BsContentWarning>]     includedContentWarnings
+# @attr [Array<Bs::Record::Link>]     links
+# @attr [BsGender]                    narratorGender
+# @attr [BsNarratorType]              narratorType
+# @attr [Integer]                     readingAge
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_recommendation_profile
+#
+class Bs::Record::RecommendationProfile < Bs::Api::Record
+  include Bs::Shared::LinkMethods
+end

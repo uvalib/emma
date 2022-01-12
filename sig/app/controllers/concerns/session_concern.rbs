@@ -1,0 +1,207 @@
+# Controller callbacks and support methods for working with `session`.
+#
+module SessionConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Debug
+
+  include ParamsConcern
+
+  include FlashConcern
+
+  include ApiConcern
+
+  include AuthConcern
+
+  # :nocov:
+  #include Devise::Controllers::Helpers
+
+  # Keys for session values that should not be touched by #cleanup_session.
+  #
+  # Note that all 'devise.*', 'omniauth.*' and 'warden.*' entries are preserved
+  # because any entry with a '.' in its key name is preserved.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  PRESERVE_SESSION_KEYS: Array[String|Regexp]
+
+  # Redirect after a successful authorization operation.
+  #
+  # @param [String, nil] path         Default: `#after_sign_in_path_for`.
+  # @param [User, nil]   user         Default: `#resource`.
+  # @param [Any]         message      Passed to #set_flash_notice.
+  # @param [Hash]        opt          Passed to #set_flash_notice.
+  #
+  def auth_success_redirect: (?String? path, ?user: User?, ?message: untyped?, **untyped opt) -> void
+
+  # Redirect after a failed authorization operation.
+  #
+  # @param [String, nil] path         Default: `#after_sign_out_path_for`.
+  # @param [User, nil]   user         Default: `#resource`.
+  # @param [Any]         message      Passed to #set_flash_alert.
+  # @param [Hash]        opt          Passed to #set_flash_alert.
+  #
+  def auth_failure_redirect: (?String? path, ?user: User?, ?message: untyped?, **untyped opt) -> void
+
+  # Set `flash[:notice]` based on the current action and user name.
+  #
+  # @param [String, nil]             message
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  # @param [Hash]                    opt      Passed to #flash_notice.
+  #
+  # @return [void]
+  #
+  def set_flash_notice: (?String? message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
+
+  # Set `flash[:alert]` based on the current action and user name.
+  #
+  # @param [String, nil]             message
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  # @param [Hash]                    opt      Passed to #flash_alert.
+  #
+  # @return [void]
+  #
+  def set_flash_alert: (?String? message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
+
+  # Configured success or failure message.
+  #
+  # @param [String, Symbol]          status
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  #
+  # @return [String]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def status_message: (status: String|Symbol, ?action: Symbol?, ?user: (anyHash|String|User)?) -> String
+
+  # Information about the last operation performed in this session.
+  #
+  # @return [Hash]
+  #
+  def last_operation: () -> strHash
+
+  # Time of the last operation performed in this session.
+  #
+  # @return [Integer]
+  #
+  def last_operation_time: () -> Integer
+
+  # Persist information about the last operation performed in this session.
+  #
+  # @param [Time]   time              Default: `Time.now`.
+  # @param [String] path              Default: `request.path`.
+  # @param [Hash]   req_params        Default: `params`.
+  #
+  # @return [Hash{String=>Any}]
+  #
+  def last_operation_update: (?time: Time?, ?path: String?, ?req_params: symHash?) -> strHash?
+
+  # Application-specific `#session` keys.
+  #
+  # @return [Array<String>]
+  #
+  def session_keys: () -> strArray
+
+  # Indicate whether handling of the current request should be wrapped by
+  # #session_update.
+  #
+  def session_updatable?: () -> bool
+
+  # Respond to the situation in which an authenticated user attempted to access
+  # a route that is not allowed by the user's role.
+  #
+  # @param [CanCan::AccessDenied] exception
+  #
+  # @return [Any]
+  #
+  def access_denied_handler: (CanCan::AccessDenied exception) -> void
+
+  # Respond to page failures due to a failure to communicate with a remote
+  # service.
+  #
+  # @param [ExecError, Faraday::Error] exception
+  #
+  # @return [nil]                     If not handled.
+  # @return [Any]                     Otherwise.
+  #
+  def connection_error_handler: (ExecError|Faraday::Error exception) -> void
+
+  # Respond to general page failures.
+  #
+  # @param [Exception] exception
+  #
+  # @return [nil]                     If not handled.
+  # @return [Any]                     Otherwise.
+  #
+  def fallback_error_handler: (Exception exception) -> void
+
+  # If there is an error in the error handler it's probably due to a missing
+  # template, so this method renders a safe page so that flash messages can
+  # be displayed.
+  #
+  # @param [Symbol]    meth           Failed error handler.
+  # @param [Exception] error
+  #
+  # @return [void]
+  #
+  def error_handler_deep_fallback: (Symbol meth, ?Exception? error) -> void
+
+  # Clean out empty session values.
+  #
+  # @return [void]
+  #
+  def cleanup_session: () -> void
+
+  # If a reboot occurred since the last session update, ensure consistency by
+  # performing a sign-out and cleaning up related session data.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # This must be invoked as a :before_action.
+  #
+  def session_check: () -> void
+
+  # Remember the last operation performed in this session and set the flash
+  # alert if there was an unprocessed ApiSession exception.
+  #
+  # @raise [Exception]                Propagated if raised by the block.
+  #
+  # == Usage Notes
+  # This must be invoked as an :around_action.
+  #
+  # == Implementation Notes
+  # The "ensure" block is executed before the ApplicationController
+  # "rescue_from".  However, note that Rails is doing something with "$!" which
+  # causes Faraday::ClientError to be the exception that's acted upon in that
+  # block, whereas :api_error_message shows the BookshareService::Error that is
+  # created in BookshareService::Common#api.
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def session_update: () { () -> void } -> void
+
+  private
+
+  #THIS_MODULE: untyped
+
+  include SerializationHelper
+
+  # :nocov:
+  #include AbstractController::Callbacks::ClassMethods
+
+  #include SessionConcern
+
+  # This overrides the DeviseController message to allow the standard
+  # 'already_authenticated' flash message to be overridden by
+  # `session['app.devise.failure.message']`.
+  #
+  # @see UserConcern#role_failure
+  #
+  #def require_no_authentication: () -> untyped
+end

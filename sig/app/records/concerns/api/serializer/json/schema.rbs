@@ -1,0 +1,49 @@
+# JSON-specific definition overrides for serialization.
+#
+module Api::Serializer::Json::Schema
+  include Api::Serializer::Schema
+
+  JSON_ELEMENT_PARSE_NAMING: Symbol
+
+  JSON_ATTRIBUTE_PARSE_NAMING: Symbol
+
+  JSON_ELEMENT_RENDER_NAMING: Symbol
+
+  JSON_ATTRIBUTE_RENDER_NAMING: Symbol
+
+  JSON_RENDER_EMPTY: bool
+
+  JSON_RENDER_NIL: bool
+
+  # The naming mode for de-serializing data elements from JSON.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_parse_naming: () -> Symbol
+
+  # The naming mode for serializing attributes from JSON.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_parse_naming: () -> Symbol
+
+  # The naming mode for serializing data elements to JSON.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_render_naming: () -> Symbol
+
+  # The naming mode for serializing attributes to JSON.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_render_naming: () -> Symbol
+
+  # The policy for serializing empty collections to JSON.
+  #
+  def render_empty?: () -> bool
+
+  # The policy for serializing empty elements to JSON.
+  #
+  def render_nil?: () -> bool
+end

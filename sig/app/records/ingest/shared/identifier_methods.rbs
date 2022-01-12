@@ -1,0 +1,14 @@
+# Methods mixed in to record elements related to standard identifiers.
+#
+module Ingest::Shared::IdentifierMethods
+  include Api::Shared::IdentifierMethods
+
+  # Produce standard identifiers of the form "(prefix):(value)", allowing
+  # invalid identifiers with the proper form but rejecting ones that don't.
+  #
+  # @param [String, PublicationIdentifier, Array, nil] values
+  #
+  # @return [Array<String>]
+  #
+  def normalize_identifiers: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] values) -> strArray
+end

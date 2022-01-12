@@ -1,0 +1,24 @@
+class ISO_639 < Array
+
+  def alpha3_bibliographic: () -> String
+  def alpha3_terminologic:  () -> String
+  def alpha2:               () -> String
+  def english_name:         () -> String
+  def french_name:          () -> String
+
+  alias alpha3 alpha3_bibliographic
+
+  # Entries for ISO 639-2 language codes plus a subset of ISO 639-3 codes for
+  # languages that are present in Bookshare.
+  #
+  # @type [(String,String,String,String,String)]
+  #
+  ISO_639_2: Array[[String,String,String,String,String]]
+
+  # An inverted index generated from the ISO_639_2 data. Used for searching
+  # all words and codes in all fields.
+  #
+  # @type [Hash{String=>Array<Integer>}]
+  #
+  INVERTED_INDEX: Hash[String,Array[Integer]]
+end

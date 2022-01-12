@@ -80,12 +80,14 @@ class EntryController < ApplicationController
   # Results for :index.
   #
   # @return [Array<Entry>]
+  # @return [Array<String>]
+  # @return [nil]
   #
   attr_reader :list
 
   # API results for :show.
   #
-  # @return [Entry]
+  # @return [Entry, nil]
   #
   attr_reader :item
 
@@ -113,6 +115,7 @@ class EntryController < ApplicationController
     opt.except!(:group, :groups) # TODO: upload -> entry
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_entries(groups: all, **opt)
+    # noinspection RubyMismatchedArgumentType
     pagination_finalize(result, **opt)
     @list  = result[:list]
     result = find_or_match_entries(groups: :only, **opt) if opt.delete(:group)
@@ -472,6 +475,7 @@ class EntryController < ApplicationController
     __debug_route
     @item = nil # cancel_entry # TODO: cancel_entry for Entry/Phase/Action ?
     if request.get?
+      # noinspection RubyMismatchedArgumentType
       redirect_to(params[:redirect] || entry_index_path)
     else
       post_response(:ok)
@@ -670,6 +674,11 @@ class EntryController < ApplicationController
   # @param [String]    fallback   Redirect fallback (def.: #entry_index_path).
   # @param [Symbol]    meth       Calling method.
   #
+  # @return [void]
+  #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def show_search_failure(error, fallback = nil, meth: nil)
     meth ||= calling_method
     if modal?
@@ -704,8 +713,8 @@ class EntryController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Array<Model>] list
-  # @param [Hash]         opt
+  # @param [Any]  list
+  # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #

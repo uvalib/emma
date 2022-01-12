@@ -1,0 +1,495 @@
+class UploadWorkflow::Bulk < UploadWorkflow
+end
+
+module UploadWorkflow::Bulk::Errors
+  include UploadWorkflow::Errors
+end
+
+module UploadWorkflow::Bulk::Properties
+  include UploadWorkflow::Properties
+
+  include UploadWorkflow::Bulk::Errors
+end
+
+# Upload mechanisms specific to bulk-upload workflows.
+#
+module UploadWorkflow::Bulk::External
+  include UploadWorkflow::External
+
+  include UploadWorkflow::Bulk::Properties
+
+  include UploadWorkflow::Bulk::Events
+
+  # Bulk uploads.
+  #
+  # @param [Array<Hash,Upload>] entries
+  # @param [Boolean]            index   If *false*, do not update index.
+  # @param [Boolean]            atomic  If *false*, do not stop on failure.
+  # @param [Hash]               opt     Passed to #bulk_upload_file via
+  #                                       #batch_upload_operation.
+  #
+  # @return [Array<(Array,Array)>]   Succeeded records and failed item messages.
+  #
+  # @see #bulk_upload_file
+  # @see #bulk_db_insert
+  # @see UploadWorkflow::External#add_to_index
+  #
+  # Compare with:
+  # UploadWorkflow::External#upload_create
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def bulk_upload_create: (Array[symHash|Upload] entries, ?index: bool, ?atomic: bool, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+
+  # Bulk modifications.
+  #
+  # @param [Array<Hash,Upload>] entries
+  # @param [Boolean]            index   If *false*, do not update index.
+  # @param [Boolean]            atomic  If *false*, do not stop on failure.
+  # @param [Hash]               opt     Passed to #bulk_upload_file via
+  #                                       #batch_upload_operation.
+  #
+  # @return [Array<(Array,Array)>]   Succeeded records and failed item messages.
+  #
+  # @see #bulk_upload_file
+  # @see #bulk_db_update
+  # @see #update_in_index
+  #
+  # Compare with:
+  # UploadWorkflow::External#upload_edit
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def bulk_upload_edit: (Array[symHash|Upload] entries, ?index: bool, ?atomic: bool, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+
+  # Bulk removal.
+  #
+  # @param [Array<String,Integer,Hash,Upload>] id_specs
+  # @param [Boolean] index            If *false*, do not update index.
+  # @param [Boolean] atomic           If *false*, do not stop on failure.
+  # @param [Hash]    opt              Passed to #batch_upload_remove.
+  #
+  # @return [Array<(Array,Array)>]           Succeeded items and failed item messages.
+  #
+  # == Implementation Notes
+  # For the time being, this does not use #bulk_db_delete because the speed
+  # advantage of using a single SQL DELETE statement probably overwhelmed by
+  # the need to fetch each record in order to call :delete_file on it.
+  #
+  def bulk_upload_remove: (Array[symHash|Upload] id_specs, ?index: bool, ?atomic: bool, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+
+  # Prepare entries for bulk insert/upsert to the database by ensuring that all
+  # associated files have been uploaded and moved into storage.
+  #
+  # Failures of individual uploads are logged; the method will return with only
+  # the successful uploads.
+  #
+  # @param [Array<Hash,Upload>] entries
+  # @param [String]             base_url
+  # @param [User, String]       user
+  # @param [Integer]            limit     Only the first *limit* records.
+  # @param [Hash]               opt       Passed to #new_record except for:
+  #
+  # @option opt [Hash] :bulk              Info to support bulk upload
+  #                                         reporting and error messages.
+  #
+  # @return [Array<(Array,Array)>]   Succeeded records and failed item messages.
+  #
+  # @see UploadWorkflow::External#new_record
+  # @see Upload#promote_file
+  #
+  def bulk_upload_file: (Array[symHash|Upload] entries, ?base_url: String?, ?user: (String|User)?, ?limit: Integer?, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  # Bulk create database records.
+  #
+  # @param [Array<Upload>] records
+  # @param [Hash]          opt        Passed to #bulk_db_operation.
+  #
+  # @return [Array<(Array,Array)>]   Succeeded records and failed item messages.
+  #
+  # @see ActiveRecord::Persistence::ClassMethods#insert_all
+  #
+  def bulk_db_insert: (Array[Upload] records, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  # Bulk modify database records.
+  #
+  # @param [Array<Upload>] records
+  # @param [Hash]          opt        Passed to #bulk_db_operation.
+  #
+  # @return [Array<(Array,Array)>]   Succeeded records and failed item messages.
+  #
+  # @see ActiveRecord::Persistence::ClassMethods#upsert_all
+  #
+  def bulk_db_update: (Array[Upload] records, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  # Bulk delete database records.
+  #
+  # @param [Array<String>] ids
+  # @param [Boolean]       atomic     If *false*, allow partial changes.
+  #
+  # @return [Array<(Array,Array)>]   Succeeded records and failed item messages.
+  #
+  # @see ActiveRecord::Persistence::ClassMethods#delete
+  #
+  # @deprecated Use UploadWorkflow::External#upload_remove instead.
+  #
+  # == Usage Notes
+  # This method should be avoided in favor of #upload_remove because use of
+  # SQL DELETE on multiple record IDs does nothing for removing the associated
+  # files in cloud storage.  Although code has been added to attempt to handle
+  # this issue, it's untested.
+  #
+  def bulk_db_delete: (strArray ids, ?atomic: bool) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  # Break sets of records into chunks of this size.
+  #
+  # @type [Integer]
+  #
+  BULK_DB_BATCH_SIZE: Integer
+
+  # Bulk database operation.
+  #
+  # If the number of records exceeds *size* then it is broken up into batches
+  # unless explicitly avoided.
+  #
+  # @param [Symbol]        op  Upload class method.
+  # @param [Array<Upload>] records
+  # @param [Boolean]       atomic     If *false*, allow partial changes.
+  # @param [Integer]       size       Default: #BULK_DB_BATCH_SIZE
+  #
+  # @return [Array<(Array<Upload>,Array<Upload>)>]   Succeeded/failed records.
+  #
+  # @see #bulk_db_operation_batches
+  # @see #bulk_db_operation_batch
+  #
+  # == Implementation Notes
+  # For currently undiscovered reasons, the MySQL instance on AWS will be
+  # overwhelmed if the "VALUE" portion of the "INSERT INTO" statement is very
+  # large.  Breaking the data into bite-size chunks is currently the only
+  # available work-around.
+  #
+  def bulk_db_operation: (Symbol op, Array[Upload] records, ?atomic: bool, ?size: Integer?) -> [Array[Upload], Array[Upload]]
+
+  # Invoke a database operation multiple times to process all of the given
+  # records with manageably-sized SQL commands.
+  #
+  # @param [Symbol]        op         Upload class method.
+  # @param [Array<Upload>] records
+  # @param [Integer]       size
+  #
+  # @return [Array<(Array<Upload>,Array<Upload>)>]   Succeeded/failed records.
+  #
+  def bulk_db_operation_batches: (Symbol op, Array[Upload] records, ?size: Integer) -> [Array[Upload], Array[Upload]]
+
+  # Invoke a database operation.
+  #
+  # @param [Symbol]        op         Upload class method.
+  # @param [Array<Upload>] records
+  # @param [Integer]       from       For logging; default: 0.
+  # @param [Integer]       to         For logging; default: tail of *records*.
+  #
+  # @return [Array<(Array<Upload>,Array<Upload>)>]   Succeeded/failed records.
+  #
+  # == Implementation Notes
+  # The 'failed' portion of the method return will always be empty if using
+  # MySQL because ActiveRecord::Result for bulk operations does not contain
+  # useful information.
+  #
+  def bulk_db_operation_batch: (Symbol op, Array[Upload] records, ?from: Integer?, ?to: Integer?) -> [Array[Upload], Array[Upload]]
+
+  # Replace a list of failed database items with error entries.
+  #
+  # @param [Array<Upload,Hash,String>] items
+  # @param [String]                    message
+  # @param [Integer]                   position
+  #
+  # @return [Array<FlashPart>]
+  #
+  def db_failed_format!: (Array[symHash|String|Upload] items, String message, ?Integer position) -> Array[UploadWorkflow::Errors::FlashPart]
+
+  # Create an error entry for a single failed database item.
+  #
+  # @param [Upload, Hash, String]  item
+  # @param [String, Array<String>] message
+  # @param [Integer]               position
+  #
+  # @return [FlashPart]
+  #
+  def db_failed_format: (symHash|String|Upload item, String|strArray message, Integer position) -> UploadWorkflow::Errors::FlashPart
+
+  # Add the indicated items from the EMMA Unified Index.
+  #
+  # @param [Array<Upload>] items
+  # @param [Boolean]       atomic
+  # @param [Hash]          opt        Passed to #batch_upload_operation.
+  #
+  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  #
+  # @return [Array<(Array,Array,Array)>]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
+  #
+  def bulk_add_to_index: (*Upload items, ?atomic: bool, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart], Array[Upload|String]]
+
+  # Add/modify the indicated items from the EMMA Unified Index.
+  #
+  # @param [Array<Upload>] items
+  # @param [Hash]          opt        Passed to #batch_upload_operation.
+  #
+  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  #
+  # @return [Array<(Array,Array,Array)>]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
+  #
+  def bulk_update_in_index: (*Upload items, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart], Array[Upload|String]]
+
+  # Remove the indicated items from the EMMA Unified Index.
+  #
+  # @param [Array<Upload, String>] items
+  # @param [Hash]                  opt    Passed to #batch_upload_operation.
+  #
+  # @raise [Api::Error] @see IngestService::Request::Submissions#delete_records
+  #
+  # @return [Array<(Array,Array)>]   Succeeded items and failed item messages.
+  #
+  def bulk_remove_from_index: (*(String|Upload) items, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+end
+
+# Workflow execution status information specific to bulk-upload workflows.
+#
+module UploadWorkflow::Bulk::Data
+  include UploadWorkflow::Data
+
+  include UploadWorkflow::Bulk::External
+
+  # Items to upsert/delete.
+  #
+  # @return [Array<Upload,String,Array>]
+  #
+  attr_reader entries: Array[String|Upload|Array[String|Upload]]
+
+  # The bulk operation control file supplied by the user.
+  #
+  # @return [String, nil]
+  #
+  attr_reader control_file: String | nil
+
+  # The characteristic "return value" of the workflow after an event has been
+  # registered.
+  #
+  # For bulk upload, this is always the list of successful items.
+  #
+  # @return [Array<Upload,String>]
+  #
+  def results: () -> Array[String|Upload]
+
+  # set_data
+  #
+  # @param [Array<Upload,String,Array>] data
+  #
+  # @return [Array<Upload,String,Array>]
+  #
+  def set_data: (Array[String|Upload|Array[String|Upload]] data) -> Array[String|Upload|Array[String|Upload]]
+
+  alias set_entries set_data
+
+  # reset_status
+  #
+  # @return [void]
+  #
+  def reset_status: (*untyped, **untyped) ?{ () -> untyped } -> void
+
+  # Indicate whether entries have been assigned.
+  #
+  def empty?: () -> bool
+
+  # Indicate whether the item is valid.
+  #
+  def complete?: () -> bool
+
+  # Indicate whether submission can happen.
+  #
+  def ready?: () -> bool
+end
+
+# New and overridden action methods specific to bulk-upload workflows.
+#
+module UploadWorkflow::Bulk::Actions
+  include UploadWorkflow::Actions
+
+  include UploadWorkflow::Bulk::Data
+
+  include Workflow::Base::Roles
+
+  # Set the workflow phase and state for all Upload records associated with
+  # the bulk action.
+  #
+  # @param [Array<Upload>]       items    Default: `#succeeded`.
+  # @param [String, Symbol, nil] state    Default: `#current_state`.
+  #
+  # @return [void]
+  #
+  def wf_set_records_state: (*Upload items, ?state: (String|Symbol)?) -> void
+end
+
+module UploadWorkflow::Bulk::Simulation
+  include UploadWorkflow::Simulation
+
+  attr_reader submission: untyped
+
+  attr_reader record: untyped
+end
+
+module UploadWorkflow::Bulk::Events
+  include UploadWorkflow::Events
+
+  include UploadWorkflow::Bulk::Simulation
+end
+
+# Overridden state transition methods specific to bulk-upload workflows.
+#
+module UploadWorkflow::Bulk::States
+  include UploadWorkflow::States
+
+  include UploadWorkflow::Bulk::Events
+
+  include UploadWorkflow::Bulk::Actions
+
+  # Upon entering the :staging state:
+  #
+  # The submission request (submitted file plus generated request form) has
+  # been added to the staging area.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_staging_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :unretrieved state:
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_unretrieved_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :retrieved state:
+  #
+  # The submission request has been retrieved by the member repository and
+  # removed from the staging area.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_retrieved_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :indexing state:
+  #
+  # For an EMMA-native submission, the item is being added to the index.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_indexing_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :indexed state:
+  #
+  # The submission is complete and present in the EMMA Unified Index.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_indexed_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :failed state:
+  #
+  # The system is terminating the workflow.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_failed_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :canceled state:
+  #
+  # The user is choosing to terminate the workflow.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_canceled_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :completed state:
+  #
+  # The user is choosing to terminate the workflow.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_completed_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :resuming state:
+  #
+  # Pseudo-state indicating the previous workflow state.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_resuming_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :purged state:
+  #
+  # All data associated with the submission is being eliminated.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_purged_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+end
+
+# Base class for bulk-upload workflows.
+#
+class UploadWorkflow::Bulk < UploadWorkflow
+  include UploadWorkflow::Bulk::Events
+
+  include UploadWorkflow::Bulk::States
+
+  include Workflow::Base::Transitions
+
+  # Create a new instance.
+  #
+  # @param [Array<Hash,Upload>] data
+  # @param [Hash]               opt   Passed to #initialize_state
+  #
+  def initialize: (Array[symHash|Upload] data, **untyped opt) -> void
+end

@@ -185,6 +185,7 @@ module Record::Updatable
     #
     def dynamic_set_fields(pairs)                                               # NOTE: from Upload::WorkflowMethods
       if readonly?
+        # noinspection RailsParamDefResolve
         send(:_raise_readonly_record_error)
       elsif destroyed?
         nil

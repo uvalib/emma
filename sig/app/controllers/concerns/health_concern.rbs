@@ -1,0 +1,215 @@
+# Support methods for the "/health" controller.
+#
+module HealthConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Time
+
+  include Emma::Debug
+
+  # Locale entries for this controller.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/controllers/health.en.yml
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  HEALTH_SUBSYSTEMS: symHash
+
+  # Default health check subsystem failure message.
+  #
+  # @type [String]
+  #
+  DEFAULT_HEALTH_FAILED_MESSAGE: String
+
+  # Subsystem health check properties.
+  #
+  class HealthEntry < Hash
+    include Emma::Common
+
+    # Initialize a new instance.
+    #
+    # @param [Symbol, Proc, String] method    Health check method (see below).
+    # @param [Boolean]              restart   See below.
+    # @param [String]               healthy   Message if healthy.
+    # @param [String]               degraded  Message if degraded.
+    # @param [String]               failed    Message if failed.
+    #
+    # == Health check methods
+    # *nil*     The implied health check method is used.
+    # *true*    The subsystem is always reported as healthy.
+    # *false*   The subsystem is always reported as failed.
+    #
+    # == Restart
+    # If :restart is *true* then a failed health check should result in a
+    # system restart in order to attempt to correct the underlying problem.
+    #
+    def initialize: (?method: (Symbol|String|Proc)?, ?restart: bool?, ?healthy: String?, ?degraded: String?, ?failed: String?) -> void
+  end
+
+  # The basic health status report object.
+  #
+  class HealthStatus
+    # @return [Boolean]
+    attr_accessor healthy: bool
+
+    # @return [Boolean]
+    attr_accessor degraded: bool
+
+    # @return [String]
+    attr_accessor message: String | nil
+
+    def initialize: (bool status, bool degraded, ?String? message) -> void
+
+    def healthy?: () -> bool
+
+    def failed?: () -> bool
+
+    def degraded?: () -> bool
+  end
+
+  # The health check response.
+  #
+  class HealthResponse
+    # @return [Hash{Symbol=>HealthStatus}]
+    attr_reader health: Hash[Symbol,HealthStatus]
+
+    def initialize: (?Hash[Symbol,HealthStatus]? status_values) -> void
+
+    def healthy?: () -> bool
+
+    def failed?: () -> bool
+
+    def degraded?: () -> bool
+  end
+
+  # Subsystems to monitor for health status.
+  #
+  # @type [Hash{Symbol=>HealthEntry}]
+  #
+  HEALTH_CHECK: Hash[Symbol,HealthEntry]
+
+  # Used for checks of subsystems that don't exist.
+  #
+  # @type [HealthEntry]
+  #
+  INVALID_HEALTH_CHECK: HealthEntry
+
+  # The value of `params[:subsystem]`, which may be one or more comma-separated
+  # subsystem names.
+  #
+  # @return [Array<String>]
+  #
+  def subsystems: () -> strArray
+
+  # Acquire build version and render as JSON.
+  #
+  def render_version: () -> void
+
+  # Acquire health status and render as JSON.
+  #
+  def render_check: () -> void
+
+  # Get the health status of one or more subsystems.
+  #
+  # @param [Array<String,Symbol>] subsystem   Default: `HEALTH_CHECK.keys`
+  #
+  # @return [Hash{Symbol=>HealthStatus}]
+  #
+  # @see #HEALTH_CHECK
+  #
+  def get_health_status: (*(Symbol|String) subsystem) -> Hash[Symbol,HealthStatus]
+
+  private
+
+  # Run a health check method to report on the status of a subsystem.
+  #
+  # If *entry* does not have an explicit :healthy message then the time taken
+  # for the check is displayed.
+  #
+  # @param [Symbol]           subsystem
+  # @param [HealthEntry, nil] entry
+  #
+  # @return [HealthStatus]
+  #
+  # -
+  # noinspection RubyScope
+  # +
+  def status_report: (Symbol subsystem, ?HealthEntry? entry) -> HealthStatus
+
+  # Health status of the database service.
+  #
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
+  #
+  def database_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+
+  # Health status of the Redis service.
+  #
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
+  #
+  def redis_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+
+  # Health status of AWS storage.
+  #
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
+  #
+  def storage_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+
+  # Health status of the Unified Search service.
+  #
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
+  #
+  def search_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+
+  # Health status of the Bookshare API service.
+  #
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
+  #
+  def bookshare_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+
+  # Health status of the ingest service.
+  #
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
+  #
+  def ingest_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+
+  public
+
+  # Get the current RunState and setup the HTTP response accordingly.
+  #
+  # @return [RunState]
+  #
+  def show_run_state: () -> RunState
+
+  # Restore system availability.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
+  #
+  def clear_run_state: () -> void
+
+  # Set the current RunState
+  #
+  # @param [Hash, String, nil] source   Ignored unless RunState::DYNAMIC.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
+  #
+  def update_run_state: (?(String|anyHash)? source) -> void
+
+  private
+
+  #THIS_MODULE: untyped
+end

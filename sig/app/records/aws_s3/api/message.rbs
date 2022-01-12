@@ -1,0 +1,12 @@
+# The base class for outbound deposits to an AWS S3 bucket.
+#
+class AwsS3::Api::Message < AwsS3::Api::Record
+  include Api::Message
+
+  # Initialize a new instance.
+  #
+  # @param [Model, Hash, nil] src
+  # @param [Hash, nil]        opt
+  #
+  def initialize: (Model|symHash|nil src, ?symHash? opt) -> void
+end

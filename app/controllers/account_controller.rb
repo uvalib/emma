@@ -49,13 +49,13 @@ class AccountController < ApplicationController
 
   # Database results for :index.
   #
-  # @return [Array<User>]
+  # @return [Array<User>, nil]
   #
   attr_reader :list
 
   # Database results for :show.
   #
-  # @return [User]
+  # @return [User, nil]
   #
   attr_reader :item
 

@@ -1,0 +1,5 @@
+# Grayscale PDF file format metadata extractor.
+#
+class FileParser::GrayscalePdf < FileParser::Pdf
+  include FileFormat::GrayscalePdf
+end

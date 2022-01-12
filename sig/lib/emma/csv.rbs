@@ -1,0 +1,46 @@
+# CSV utilities.
+#
+module Emma::Csv
+  include Emma::Common
+
+  # Generate data from a CSV file.
+  #
+  # @param [String, IO, StringIO, IO::Like] src
+  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Hash]    opt
+  #
+  # @return [Array<Hash>]
+  # @return [nil]                     Only if *no_raise* is *true*.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload csv_parse(path, no_raise:, **opt)
+  #   @param [String]                 path      Local file path.
+  #   @param [Boolean]                no_raise
+  #   @param [Hash]                   opt       Passed to CSV#foreach.
+  #
+  # @overload csv_parse(io, no_raise:, **opt)
+  #   @param [IO, StringIO, IO::Like] io        IO-like object.
+  #   @param [Boolean]                no_raise
+  #   @param [Hash]                   opt       Passed to CSV#parse.
+  #
+  # == Implementation Notes
+  # This addresses an observed issue with CSV#parse not enforcing UTF-8
+  # encoding.
+  #
+  def csv_parse: (String|IO|StringIO|IO::Like src, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | nil)
+
+  # force_utf8
+  #
+  # @param [String, Array, Hash, Any] item
+  #
+  # @return [String, Array, Hash, Any]  Replacement for *item*.
+  #
+  def force_utf8: (untyped item) -> untyped
+
+  private
+
+  def self.included: (Module base) -> void
+end

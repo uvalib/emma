@@ -1,0 +1,249 @@
+# Shared view helper CSS support methods.
+#
+module CssHelper
+  include Emma::Common
+
+  include Emma::Unicode
+
+  # Indicate whether the HTML options include any of the given CSS classes.
+  #
+  # @param [Hash, nil]          html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   CSS classes to find.
+  #
+  def has_class?: (symHash|nil html_opt, *(Array[_ToS]|_ToS|nil) classes) -> bool
+
+  # Combine arrays and space-delimited strings to produce a space-delimited
+  # string of CSS class names for use inline.
+  #
+  # @param [Array<#to_s,Array>] classes
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [classes] Exposes *args* so the block may modify it.
+  # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
+  # @yieldreturn [void]                   Return ignored.
+  #
+  def css_classes: (*(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> ActiveSupport::SafeBuffer
+
+  # Combine arrays and space-delimited strings to produce set of unique CSS
+  # class names.
+  #
+  # @param [Array<#to_s,Array>] classes
+  #
+  # @return [Array<String>]
+  #
+  # @yield [classes] Exposes *args* so the block may modify it.
+  # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
+  # @yieldreturn [void]                   Return ignored.
+  #
+  def css_class_array: (*(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> strArray
+
+  # Return a copy of *html_opt* where the classes are appended to the current
+  # `html_opt[:class]` value.
+  #
+  # @param [Hash, String, nil]  html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   CSS class names.
+  # @param [Proc]               block     Passed to #append_classes!.
+  #
+  # @return [Hash]                        A new hash with :class set.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload append_classes(html_opt, *classes, &block)
+  #   @param [Hash, String]       html_opt
+  #   @param [Array<#to_s,Array>] classes
+  #   @param [Proc]               block
+  #   @return [Hash]
+  #
+  # @overload append_classes(*classes, &block)
+  #   @param [Array<#to_s,Array>] classes
+  #   @param [Proc]               block
+  #   @return [Hash]
+  #
+  def append_classes: (symHash|nil html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+                    | (                      *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+
+  # Replace `html_opt[:class]` with a new string containing the original
+  # classes followed by the added classes.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   CSS class names.
+  # @param [Proc]               block     Passed to #css_classes.
+  #
+  # @return [Hash]                        The modified *html_opt* hash.
+  #
+  # Compare with:
+  # #prepend_classes!
+  #
+  def append_classes!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+
+  # Return a copy of *html_opt* where the classes are prepended to the current
+  # `html_opt[:class]` value.
+  #
+  # @param [Hash, String, nil]  html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   CSS class names.
+  # @param [Proc]               block     Passed to #prepend_classes!
+  #
+  # @return [Hash]                        A new hash with :class set.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload prepend_classes(html_opt, *classes, &block)
+  #   @param [Hash, String]               html_opt
+  #   @param [Array<#to_s,Array>] classes
+  #   @param [Proc]                       block
+  #   @return [Hash]
+  #
+  # @overload prepend_classes(*classes, &block)
+  #   @param [Array<#to_s,Array>] classes
+  #   @param [Proc]                       block
+  #   @return [Hash]
+  #
+  def prepend_classes: (symHash|nil html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+                     | (                      *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+
+  # Replace `html_opt[:class]` with a new string containing the added classes
+  # followed by the original classes.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   CSS class names.
+  # @param [Proc]               block     Passed to #css_classes.
+  #
+  # @return [Hash]                        The modified *html_opt* hash.
+  #
+  # Compare with:
+  # #append_classes!
+  #
+  def prepend_classes!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+
+  # Return a copy of *html_opt* where the classes are eliminated from the
+  # `html_opt[:class]` value.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   CSS class names.
+  #
+  # @return [Hash]                        A new hash with :class set.
+  #
+  def remove_classes: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) -> symHash
+
+  # Replace `html_opt[:class]` with a new string that includes none of the
+  # named classes.  If no classes remain, :class is removed from *html_opt*.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   CSS class names.
+  #
+  # @return [Hash]                        The modified *html_opt* hash.
+  #
+  def remove_classes!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) -> symHash
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Array<#to_s,Array>] classes
+  # @param [Hash]               opt       Internal options:
+  #
+  # @option opt [String]  :class
+  # @option opt [Integer] :row        Grid row (wide screen).
+  # @option opt [Integer] :col        Grid column (wide screen).
+  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
+  # @option opt [Integer] :col_max    Rightmost grid column (wide screen).
+  # @option opt [Boolean] :sr_only    If *true*, include 'sr-only' CSS class.
+  #
+  # @return [Array<String>]
+  #
+  def grid_cell_classes: (*(Array[_ToS]|_ToS|nil) classes, **untyped opt) -> strArray
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       To #append_grid_cell_classes!
+  #
+  # @return [Hash]                        A new hash.
+  #
+  def append_grid_cell_classes: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes, **untyped opt) -> symHash
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       Passed to #grid_cell_classes.
+  #
+  # @return [Hash]                        The modified *html_opt* hash.
+  #
+  def append_grid_cell_classes!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes, **untyped opt) -> symHash
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       To #prepend_grid_cell_classes!.
+  #
+  # @return [Hash]                        A new hash.
+  #
+  def prepend_grid_cell_classes: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes, **untyped opt) -> symHash
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       Passed to #grid_cell_classes.
+  #
+  # @return [Hash]                        The modified *html_opt* hash.
+  #
+  def prepend_grid_cell_classes!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes, **untyped opt) -> symHash
+
+  # These are observed hash keys which may travel alongside HTML attributes
+  # like :id, :class, :tabindex etc. when passed as named parameters, but
+  # should not be passed into methods which actually generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_HTML_ATTRIBUTES: symArray
+
+  # Make a copy which has only valid HTML attributes.
+  #
+  # @param [Hash, nil] html_opt       The target options hash.
+  #
+  # @return [Hash]
+  #
+  def html_options: (symHash|nil html_opt) -> symHash
+
+  # Retain only entries which are valid HTML attributes.
+  #
+  # @param [Hash] html_opt            The target options hash.
+  #
+  # @return [Hash]                    The modified *html_opt* hash.
+  #
+  def html_options!: (symHash html_opt) -> symHash
+
+  # Default number of digits produced by #hex_rand.
+  #
+  # @type [Integer]
+  #
+  HEX_RAND_DEFAULT_DIGITS: Integer
+
+  # Generate a string of random hex digits.
+  #
+  # @param [Integer] digits           Default: `#HEX_RAND_DEFAULT_DIGITS`
+  # @param [Boolean] upper            If *false* show lowercase hex digits.
+  #
+  # @return [String]
+  #
+  def hex_rand: (?digits: Integer?, upper: bool?) -> String
+
+  # Create a unique CSS identifier from *base* and a random hex digit string.
+  #
+  # @param [String] base
+  #
+  # @return [String]
+  #
+  def css_randomize: (String base) -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end

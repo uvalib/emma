@@ -1,0 +1,76 @@
+# Controller support methods for access to the Bookshare API service.
+#
+module BookshareConcern
+  extend ActiveSupport::Concern
+
+  include ApiConcern
+
+  # Access the Bookshare API service.
+  #
+  # @return [BookshareService]
+  #
+  def bs_api: () -> BookshareService
+
+  # Return a member associated with the given user.
+  #
+  # @param [User, String] for_user    Default: `#current_user`.
+  # @param [String]       _name       Member name (future).
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def get_member: (?(User|String)? for_user, ?String? _name) -> String?
+
+  # Extract the best-match URL parameter which represents an item identifier.
+  #
+  # @return [String]                  Value of `params[:id]`.
+  # @return [nil]                     No :id, :bookshareId found.
+  #
+  def set_bookshare_id: () -> String?
+
+  # Extract the URL parameter which specifies a journal/periodical series.
+  #
+  # @return [String]                  Value of `params[:series]`.
+  # @return [nil]                     No :series, :seriesId found.
+  #
+  def set_series_id: () -> String?
+
+  # Extract the URL parameter which specifies a journal/periodical edition.
+  #
+  # @return [String]                  Value of `params[:id]`.
+  # @return [nil]                     No :id, :edition, :editionId found.
+  #
+  def set_edition_id: () -> String?
+
+  # Extract the best-match URL parameter which represents an item format.
+  #
+  # @return [String]                  Value of `params[:fmt]`.
+  # @return [nil]                     No :fmt found.
+  #
+  def set_format: () -> String?
+
+  # Extract the URL parameter which specifies a reading list.
+  #
+  # @return [String]                  Value of `params[:id]`.
+  # @return [nil]                     No :id, :readingListId found.
+  #
+  def set_reading_list_id: () -> String?
+
+  # Extract the URL parameter which indicates a Bookshare member.
+  #
+  # @return [String]                  Value of `params[:member]`.
+  # @return [nil]                     No :member, :forUser found.
+  #
+  def set_member: () -> String?
+
+  # Extract the URL parameter which indicates a remote URL path.
+  #
+  # @return [String]                  Value of `params[:url]`.
+  # @return [nil]                     No :url found.
+  #
+  def set_url: () -> String?
+
+  private
+
+  #THIS_MODULE: untyped
+end

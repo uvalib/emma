@@ -1,0 +1,188 @@
+# Support methods for the "/upload" controller.
+#
+module UploadConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Emma::Csv
+
+  include Emma::Json
+
+  include UploadWorkflow::Properties
+
+  include ParamsHelper
+
+  include FlashHelper
+
+  # :nocov:
+  include PaginationConcern
+
+  MIME_REGISTRATION: Array[Class]
+
+  # URL parameters involved in pagination.                                      # NOTE: to EntryConcern::ENTRY_PAGE_PARAMS
+  #
+  # @type [Array<Symbol>]
+  #
+  UPLOAD_PAGE_PARAMS: symArray
+
+  # URL parameters involved in form submission.                                 # NOTE: to EntryConcern::ENTRY_FORM_PARAMS
+  #
+  # @type [Array<Symbol>]
+  #
+  UPLOAD_FORM_PARAMS: symArray
+
+  # POST/PUT/PATCH parameters from the entry form that are not relevant to the  # NOTE: to EntryConcern::IGNORED_ENTRY_FORM_PARAMS
+  # create/update of an Upload instance.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_UPLOAD_FORM_PARAMS: symArray
+
+  def upload_params: () -> symHash
+
+  def get_upload_params: (?prmHash? p) -> symHash
+
+  def upload_post_params: (?prmHash? p) -> symHash
+
+  def upload_bulk_post_params: (?prmHash? p, ?ActionDispatch::Request? req) -> Array[symHash]
+
+  def workflow_parameters: () -> symHash
+
+  def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash])?
+
+  # URL parameters associated with item/entry identification.                   # NOTE: to EntryConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
+  def set_identifiers: (?prmHash? p) -> String?
+
+  # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RECORDS_PARAMS: symArray
+
+  # Upload#search_records parameters that specify a distinct search query.      # NOTE: to EntryConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_ONLY_PARAMS: symArray
+
+  # Parameters used by #find_by_match_records or passed on to                   # NOTE: to EntryConcern
+  # Upload#search_records.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIND_OR_MATCH_PARAMS: symArray
+
+  def find_or_match_records: (*(String|anyArray) items, **untyped opt) -> symHash
+
+  def get_record: (?(String|Upload|anyHash)? id, **untyped opt) -> Upload?
+
+  def proxy_get_record: (String sid, String host) -> Upload?
+
+  # Gather information to create an upload workflow instance.
+  #
+  # @param [String, Integer, :unset, nil] rec
+  # @param [Hash, String, :unset, nil]    data
+  # @param [Hash]                         opt   To workflow initializer except:
+  #
+  # @option opt [Symbol] :from        Default: `#calling_method`.
+  # @option opt [Symbol] :event
+  #
+  # @return [Any]                     @see UploadWorkflow::Single#results
+  #
+  # @see UploadWorkflow::Single#generate
+  #
+  def wf_single: (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> untyped
+  #def wf_single: (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> httpResult           # For :validating, :replacing
+  #             | (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> Array[String|Upload] # For :removing, :removed
+  #             | (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> Upload?              # For all other states
+
+  # Determine whether the workflow state of the indicated item can be advanced.
+  #
+  # @param [String, Integer, nil] rec
+  # @param [Hash]                 opt
+  #
+  # @return [Array<String>]       @see UploadWorkflow::Single#wf_check_status
+  #
+  # @see UploadWorkflow::Single#check_status
+  #
+  def wf_single_check: (?rec: (String|Integer)?, **untyped opt) -> strArray
+
+  # Gather information to create a bulk upload workflow instance.
+  #
+  # @param [Array, :unset, nil] rec
+  # @param [Array, :unset, nil] data
+  # @param [Hash]               opt   To workflow initializer except for:
+  #
+  # @option opt [Symbol] :from        Default: `#calling_method`.
+  # @option opt [Symbol] :event
+  #
+  # @return [Array<Upload,String>]    @see UploadWorkflow::Bulk#results
+  #
+  # @see UploadWorkflow::Bulk#generate
+  #
+  def wf_bulk: (?rec: (anyArray|:unset)?, ?data: (anyArray|:unset)?, **untyped opt) -> Array[String|Upload]
+
+  # Produce flash error messages for failures that did not abort the workflow
+  # step but did affect the outcome (e.g. for bulk uploads where some of the
+  # original files could not be acquired).
+  #
+  # @param [Workflow] wf
+  #
+  def wf_check_partial_failure: (?Workflow wf) -> void
+
+  # Default batch size for #reindex_submissions
+  #
+  # @type [Integer]
+  #
+  DEFAULT_REINDEX_BATCH: Integer
+
+  # reindex_submissions
+  #
+  # @param [Array<Upload,String>] entries
+  # @param [Hash, nil]            opt       To Upload#get_relation except for:
+  #
+  # @option opt [Boolean] :atomic           Passed to #reindex_record.
+  # @option opt [Boolean] :dryrun           Passed to #reindex_record.
+  # @option opt [Symbol]  :meth             Passed to #reindex_record.
+  #
+  # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
+  #
+  def reindex_submissions: (*(String|Upload) entries, **untyped opt) -> [strArray, strArray]
+
+  # Older completed submissions did not update the :state column.  This method
+  # upgrades those records to the current practice.
+  #
+  # @param [Symbol] new_state
+  #
+  # @return [void]
+  #
+  def update_null_state_records: (?Symbol new_state) -> void
+
+  # Cause all of the listed items to be re-indexed.
+  #
+  # @param [Upload, Array<Upload>, ActiveRecord::Relation] list
+  # @param [Boolean]                                       atomic
+  # @param [Boolean]                                       dryrun
+  # @param [Symbol]                                        meth     Caller.
+  #
+  # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / failure messages
+  #
+  def reindex_record: (Upload|Array[Upload]|ActiveRecord::Relation list, ?atomic: bool, ?dryrun: bool, ?meth: Symbol) -> [strArray, strArray]
+
+  def pagination_finalize: (symHash result, **untyped opt) -> void
+
+  def post_response: ( Symbol|Integer|nil status,   (Upload|String|FlashHelper::FlashPart|Array[Upload|String|FlashHelper::FlashPart])? item, ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
+                   | (?(Symbol|Integer|nil) status, Exception item,                                                                           ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
+
+  private
+
+  #THIS_MODULE: untyped
+
+  include IngestConcern
+end

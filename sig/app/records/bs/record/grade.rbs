@@ -1,0 +1,30 @@
+# Bs::Record::Grade
+#
+# @attr [String]                  gradeCode
+# @attr [String]                  gradeId    *deprecated*
+# @attr [Array<Bs::Record::Link>] links
+# @attr [String]                  name
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_grade
+#
+class Bs::Record::Grade < Bs::Api::Record
+  include Bs::Shared::LinkMethods
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+
+  # Return the unique identifier for the represented item.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+end

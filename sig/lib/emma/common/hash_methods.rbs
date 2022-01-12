@@ -1,0 +1,79 @@
+module Emma::Common::HashMethods
+  # Strip off the hash elements identified by *keys* to return two hashes:
+  # - First, a hash containing only the requested option keys and values.
+  # - Second, a copy of the original *hash* without the those keys/values.
+  #
+  # @param [ActionController::Parameters, Hash, nil] hash
+  # @param [Array<Symbol>]                           keys
+  #
+  # @return [Array<(Hash, Hash)>]            Matching hash followed by remainder hash.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def partition_hash: (prmHash? hash, *Symbol keys) { () -> untyped } -> [symHash, symHash]
+
+  # Extract the elements identified by *keys* from *hash*.
+  #
+  # @param [ActionController::Parameters, Hash, nil] hash
+  # @param [Array<Symbol>]                           keys
+  #
+  # @return [Hash]                    The elements removed from *hash*.
+  #
+  def partition_hash!: (prmHash? hash, *Symbol keys) { () -> untyped } -> symHash
+
+  # Recursively remove blank items from a hash.
+  #
+  # @param [Hash, nil] item
+  # @param [Boolean]   reduce         If *true* transform arrays with a single
+  #                                     element into scalars.
+  #
+  # @return [Hash]
+  #
+  # @see #_remove_blanks
+  #
+  def reject_blanks: (anyHash? item, ?bool reduce) -> anyHash
+
+  private
+
+  # Recursively remove blank items from an object.
+  #
+  # @param [Hash, Array, Any] item
+  # @param [Boolean]          squeeze   If *true* transform arrays with a
+  #                                       single element into scalars.
+  #
+  # @return [Hash, Array, Any]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload _remove_blanks(hash)
+  #   @param [Hash]       hash
+  #   @param [Boolean]    squeeze
+  #   @return [Hash, nil]
+  #
+  # @overload _remove_blanks(array)
+  #   @param [Array]      array
+  #   @param [Boolean]    squeeze
+  #   @return [Array, nil]
+  #
+  # @overload _remove_blanks(item)
+  #   @param [FalseClass] item
+  #   @param [Boolean]    squeeze     Ignored
+  #   @return [FalseClass]
+  #
+  # @overload _remove_blanks(item)
+  #   @param [Any]        item
+  #   @param [Boolean]    squeeze     Ignored
+  #   @return [Any, nil]
+  #
+  # == Usage Notes
+  # Empty strings and nils are considered blank, however an item or element
+  # with the explicit value of *false* is not considered blank.
+  #
+  def _remove_blanks: (anyHash hash,   ?bool squeeze) -> anyHash
+                    | (anyArray array, ?bool squeeze) -> anyArray
+                    | (false item,     ?bool squeeze) -> false
+                    | (untyped item,   ?bool squeeze) -> (untyped | nil)
+end

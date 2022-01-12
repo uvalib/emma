@@ -1,0 +1,41 @@
+# ApiService::Identity
+#
+module ApiService::Identity
+  # The user that caused the #api method to be invoked.
+  #
+  # @return [User, nil]
+  #
+  attr_reader user: User | nil
+
+  # Extract the user name to be used for API parameters.
+  #
+  # @param [User, String] user
+  #
+  # @return [String]
+  #
+  def name_of: (User|String|nil user) -> String
+
+  # Set the user for the current session.
+  #
+  # @param [User, nil] u
+  #
+  # @raise [RuntimeError]             If *u* is invalid.
+  #
+  # @return [void]
+  #
+  def set_user: (User|nil u) -> void
+
+  # The current OAuth2 access bearer token.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no '@user'.
+  #
+  def access_token: () -> String?
+
+  # The current OAuth2 refresher token.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no '@user'.
+  #
+  def refresh_token: () -> String?
+end

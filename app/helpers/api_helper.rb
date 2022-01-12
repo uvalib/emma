@@ -173,7 +173,6 @@ module ApiHelper
       when Exception
         value.pretty_inspect.gsub(/@[^=]+=/, (PF_NEWLINE + '\0'))
       else
-        # noinspection RubyMismatchedArgumentType
         pretty_json(value)
     end
   end

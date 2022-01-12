@@ -1,0 +1,51 @@
+# Definitions for job logging.
+#
+# == Usage Notes
+# Include in each job class definition to resolve #job_name properly.
+#
+module ApplicationJob::Logging
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Emma::Debug
+
+  def job_warn: (*untyped args, ?meth: Symbol?) { () -> String } -> (true | nil)
+
+  def job_name: () -> String
+
+  def job_leader: (ApplicationJob job) -> String
+
+  def job_inspect: (ApplicationJob job) -> String
+
+  def arguments_inspect: (ApplicationJob job) -> String
+
+  def record_inspect: (ApplicationRecord r) -> String
+
+  def hash_inspect: (anyHash h) -> String
+
+  def array_inspect: (anyArray a) -> String
+
+  def item_inspect: (untyped v) -> untyped
+
+  def __debug_job: (ApplicationJob job, *untyped args, **untyped opt) { () -> untyped } -> nil
+                 | (                    *untyped args, **untyped opt) { () -> untyped } -> nil
+
+  module ClassMethods
+    include ApplicationJob::Logging
+  end
+
+  module InstanceMethods
+    include ApplicationJob::Logging
+
+    def job_inspect: (?ApplicationJob? job) -> String
+
+    def arguments_inspect: (?ApplicationJob? job) -> String
+
+    def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> nil
+  end
+
+  private
+
+  include InstanceMethods
+end

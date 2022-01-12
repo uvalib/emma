@@ -1,0 +1,276 @@
+# Base exception for external API service problems.
+#
+class ApiService::Error < Api::Error
+  # Extract Faraday::Response messages.
+  #
+  # @param [Faraday::Response] arg
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # As a side-effect, if @http_response is nil it will be set here.
+  #
+  def faraday_response: (Faraday::Response arg) -> strArray
+
+  # Enhance Faraday::Error messages.
+  #
+  # @param [Array<String>] messages
+  #
+  # @return [Array<String>]
+  #
+  def faraday_error: (*String messages) -> strArray
+
+  # Methods included in related error classes.
+  #
+  module ClassType
+    include Emma::Json
+
+    include Api::Error::Methods
+
+    # The descriptive name of the current instance service.
+    #
+    # @return [String]
+    #
+    def service_name: (*untyped, **untyped) ?{ () -> untyped } -> String
+
+    # Default error message for the current instance.
+    #
+    # @return [String]
+    #
+    def default_message: () -> String
+
+    # Prefix seen in Bookshare error messages and also in the header of OAuth2
+    # responses.
+    #
+    # @type [String]
+    #
+    # @see https://datatracker.ietf.org/doc/html/rfc6750
+    #
+    ERROR_TAG: String
+
+    # Get the message from within the response body of a Faraday exception.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [Array<String>]
+    #
+    def extract_message: (Faraday::Response|Faraday::Error|symHash src) -> strArray
+
+    # Get the message headers from the source object.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [Hash]
+    #
+    def extract_headers: (Faraday::Response|Faraday::Error|symHash src) -> strHash
+
+    # Get the message body from the source object.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [String]
+    #
+    # -
+    # noinspection RailsParamDefResolve
+    # +
+    def extract_body: (Faraday::Response|Faraday::Error|symHash src) -> String
+
+    # Extract the OAuth2 error description from the response headers.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [String, nil]
+    #
+    def oauth2_error_header: (Faraday::Response|Faraday::Error|symHash src) -> String?
+
+    # Extract an AWS error indication the response headers.
+    #
+    # @param [Faraday::Response, Faraday::Error, Hash] src
+    #
+    # @return [String, nil]
+    #
+    def aws_error_header: (Faraday::Response|Faraday::Error|symHash src) -> String?
+
+    # Extract message(s) from a response body that has been determined to be
+    # XML/HTML.
+    #
+    # @param [Nokogiri::HTML::Document, Nokogiri::XML::Document, nil] doc
+    #
+    # @return [Array<String>]
+    #
+    def extract_html: (Nokogiri::HTML::Document|Nokogiri::XML::Document|nil doc) -> strArray
+
+    # Extract message(s) from a response body that has been determined to be
+    # JSON.
+    #
+    # @param [Hash, Any, nil] src
+    #
+    # @return [Array<String>]         If *src* was a Hash.
+    # @return [Array<Any>]            Otherwise.
+    #
+    def extract_json: (anyHash src) -> strArray
+                    | (untyped src) -> anyArray
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include ClassType
+
+  # Produce a family of error subclasses based on the error types specified by
+  # the union of 'en.emma.error.api' and "en.emma.error.#{service}".
+  #
+  # For example, for `service` == :search, given type == :empty_result
+  # this method will define
+  #
+  #   class SearchService::EmptyResultError < ApiService::EmptyResultError
+  #     include SearchService::Error::ClassType
+  #   end
+  #
+  # @return [Hash{Symbol=>Class}]     The value of @error_classes.
+  #
+  def self.generate_error_classes: () -> Hash[Symbol,Class]
+
+  # A table of error types mapped on to error classes in the namespace of the
+  # related service.
+  #
+  # @return [Hash{Symbol=>Class}]
+  #
+  # @see ApiService::Error#generate_error_classes
+  #
+  def self.error_classes: () -> Hash[Symbol,Class]
+end
+
+# Exception raised to indicate that the user was not authorized to perform
+# the requested remote service action.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.auth*
+#
+class ApiService::AuthError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that there was a (transient) network error
+# when communicating with the remote service.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.comm*
+#
+class ApiService::CommError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that there was a session error in
+# communication with the remote service.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.session*
+#
+class ApiService::SessionError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that there was a problem establishing a
+# connection to the remote service.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.connect*
+#
+class ApiService::ConnectError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that the connection to the remote service
+# timed out.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.timeout*
+#
+class ApiService::TimeoutError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that there was network error while sending to
+# the remote service.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.xmit*
+#
+class ApiService::XmitError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that there was network error while receiving
+# from the remote service.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.recv*
+#
+class ApiService::RecvError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that the remote service returned malformed
+# network package data.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.parse*
+#
+class ApiService::ParseError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate a generic or unique issue with the request to
+# the remote service API.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.request*
+#
+class ApiService::RequestError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that no (valid) inputs were provided so no
+# service request was made.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.no_input*
+#
+class ApiService::NoInputError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate a generic or unique issue with the response
+# from the remote service API.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.response*
+#
+class ApiService::ResponseError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that a valid message was received but it had
+# no body or its body was empty.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.empty_result*
+#
+class ApiService::EmptyResultError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that a message with an HTML body was received
+# when HTML was not expected.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.html_result*
+#
+class ApiService::HtmlResultError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate a invalid redirect destination.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.redirection*
+#
+class ApiService::RedirectionError < ApiService::Error
+  include ApiService::Error::ClassType
+end
+
+# Exception raised to indicate that there were too many redirects.
+#
+# @see file:config/locales/error.en.yml *en.emma.error.api.redirect_limit*
+#
+class ApiService::RedirectLimitError < ApiService::Error
+  include ApiService::Error::ClassType
+end

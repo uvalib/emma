@@ -1,0 +1,154 @@
+# Upload record methods to support Shrine-based file objects uploaded from the
+# client.
+#
+# @!attribute [r] file
+#   A de-serialized representation of the :file_data column for this model.
+#   @return [FileUploader::UploadedFile]
+#
+# @!attribute [r] file_attacher
+#   Inserted by Shrine::Plugins:Activerecord.
+#   @return [FileUploader::Attacher]
+#
+# @!attribute [r] edit_file
+#   A de-serialized representation of the :edit_file_data column.
+#   @return [FileUploader::UploadedFile]
+#
+# @!attribute [r] edit_file_attacher
+#   Inserted by Shrine::Plugins:Activerecord.
+#   @return [FileUploader::Attacher]
+#
+module Upload::FileMethods
+  include Upload::WorkflowMethods
+
+  include FileNaming
+
+  #include ActiveRecord::Validations
+
+  # Represents a file that was uploaded to a storage.                         # NOTE: to Record::Uploadable
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  # @see Shrine::ClassMethods#inherited (Created via Shrine)
+  #
+  attr_reader file: FileUploader::UploadedFile
+
+  # Saves information about the uploaded file as an attachment to a record    # NOTE: to Record::Uploadable
+  # (saving the file data to the :file_data database column).
+  #
+  # The attaching process requires a temporary and a permanent storage to be
+  # registered (by default that's :cache and :store).
+  #
+  # @return [FileUploader::Attacher]
+  #
+  attr_reader file_attacher: FileUploader::Attacher
+
+  # Represents a file that was uploaded to a storage as a replacement for the
+  # originally-submitted file.
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  # @see #file
+  #
+  attr_reader edit_file: FileUploader::UploadedFile
+
+  # Saves information about the uploaded replacement as an attachment to a
+  # record (saving the file data to the :edit_file_data database column).
+  #
+  # The attaching process requires a temporary and a permanent storage to be
+  # registered (by default that's :cache and :store).
+  #
+  # @return [FileUploader::Attacher]
+  #
+  # @see #file_attacher
+  #
+  attr_reader edit_file_attacher: FileUploader::Attacher
+
+  # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: to Record::Uploadable
+  # be valid only for a single time.
+  #
+  # This should be generous to allow for network delays.
+  #
+  # @type [Integer]
+  #
+  ONE_TIME_USE_EXPIRATION: Integer
+
+  # The maximum age (in seconds) allowed for download links.                    # NOTE: to Record::Uploadable
+  #
+  # This allows the link to be reused for a while, but not long enough to allow
+  # sharing of content URLs for distribution.
+  #
+  # @type [Integer]
+  #
+  DOWNLOAD_EXPIRATION: Integer
+
+  def filename: () -> String?
+
+  def attached_file: () -> FileUploader::UploadedFile?
+
+  def edit_filename: () -> String?
+
+  def edit_attached_file: () -> FileUploader::UploadedFile?
+
+  def active_filename: () -> String?
+
+  def active_attached_file: () -> FileUploader::UploadedFile?
+
+  def attach_cached: () -> FileUploader::UploadedFile?
+
+  def edit_attach_cached: () -> FileUploader::UploadedFile?
+
+  def active_attach_cached: () -> FileUploader::UploadedFile?
+
+  def promote_file: (?no_raise: bool) -> void
+
+  def delete_file: (?no_raise: bool?, ?field: bool?) -> void
+
+  def download_url: (**untyped opt) -> String?
+
+  def s3_object: () -> Aws::S3::Object?
+
+  def fetch_and_upload_file: (String file_path, **untyped opt) -> FileUploader::UploadedFile
+
+  # Options for Down#open.                                                      # NOTE: to Record::Uploadable
+  #
+  # @type [Hash]
+  #
+  # @see Down::NetHttp#initialize
+  # @see Down::NetHttp#open
+  # @see Down::NetHttp#create_net_http
+  #
+  DOWN_OPEN_OPTIONS: symHash
+
+  # Acquire a remote file and copy it to storage.                               # NOTE: to Record::Uploadable#upload_remote
+  #
+  # @param [String] url
+  # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:
+  #
+  # @option opt [Integer] :read_retry
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  def upload_remote_file: (String url, **untyped opt) -> FileUploader::UploadedFile
+
+  def upload_local_file: (String url, **untyped opt) -> FileUploader::UploadedFile
+
+  def file_data_column: () -> Symbol
+
+  def active_file: () -> FileUploader::UploadedFile?
+
+  def active_file_attacher: () -> FileUploader::Attacher
+
+  def active_file_data: () -> String?
+
+  def attached_file_valid?: () -> bool
+
+  def note_cb: (Symbol `type`) -> void
+
+  def promote_cached_file: (?no_raise: bool, ?keep_cached: bool) -> FileUploader::UploadedFile?
+
+  def delete_cached_file: (?no_raise: bool) -> (true | nil)
+
+  private
+
+  def log_exception: (Exception excp, ?Symbol? meth) -> nil
+end

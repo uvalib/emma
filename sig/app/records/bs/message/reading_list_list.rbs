@@ -1,0 +1,18 @@
+# Bs::Message::ReadingListList
+#
+# @attr [Array<BsAllowsType>]                    allows
+# @attr [Integer]                                limit
+# @attr [Array<Bs::Record::Link>]                links
+# @attr [Array<Bs::Record::ReadingListUserView>] lists
+# @attr [String]                                 next
+# @attr [Integer]                                totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list_list
+#
+class Bs::Message::ReadingListList < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

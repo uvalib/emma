@@ -1,0 +1,84 @@
+# View helper methods supporting the creation of repository logos.
+#
+module LogoHelper
+  include HtmlHelper
+
+  # Logo image variants for different purposes.
+  #
+  # @type [Array<Symbol>]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  LOGO_TYPE: symArray
+
+  # Make a logo for a repository source.
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [Hash] opt                 Passed to #html_span wrapper except for:
+  #
+  # @option opt [String] :source      Overrides derived value if present.
+  # @option opt [String] :name        To be displayed instead of the source.
+  # @option opt [String] :logo        Logo asset name.
+  # @option opt [Symbol] :type        One of #LOGO_TYPE.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def repository_source_logo: (?(Model|String|Symbol|symHash)? item, ?symHash? opt) -> ActiveSupport::SafeBuffer
+
+  # Make a textual logo for a repository source.
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [Hash] opt                 Passed to #html_div except for:
+  #
+  # @option opt [String] :source      Overrides derived value if present.
+  # @option opt [String] :name        To be displayed instead of the source.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def repository_source: (Model|String|Symbol|symHash|nil item, ?symHash? opt) -> ActiveSupport::SafeBuffer
+
+  # normalize_repository
+  #
+  # @param [Model, Hash, String, Symbol, nil] src
+  #
+  # @return [String]                  One of EmmaRepository#values.
+  # @return [nil]                     If *src* did not indicate a repository.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def normalize_repository: (Model|String|Symbol|symHash|nil src) -> String?
+
+  # repository_name
+  #
+  # @param [Model, Hash, String, Symbol, nil] src
+  #
+  # @return [String]                  The name of the associated repository.
+  # @return [nil]                     If *src* did not indicate a repository.
+  #
+  def repository_name: (Model|String|Symbol|symHash|nil src) -> String?
+
+  # repository_logo
+  #
+  # @param [Model, Hash, String, Symbol, nil] src
+  # @param [Symbol, nil]                      type  One of #LOGO_TYPE.
+  #
+  # @return [String]                  The logo of the associated repository.
+  # @return [nil]                     If *src* did not indicate a repository.
+  #
+  def repository_logo: (Model|String|Symbol|symHash|nil src, ?Symbol? `type`) -> String?
+
+  # repository_tooltip
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [String]                           name
+  #
+  # @return [String]
+  #
+  def repository_tooltip: (Model|String|Symbol|symHash|nil item, ?String? name) -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end

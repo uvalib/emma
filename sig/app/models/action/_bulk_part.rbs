@@ -1,0 +1,5 @@
+# Base class for phases that can be part of compound actions.
+#
+class Action::BulkPart < Action
+  include Record::Bulk::Part
+end

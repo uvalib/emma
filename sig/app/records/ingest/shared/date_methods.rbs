@@ -1,0 +1,17 @@
+# Methods mixed in to record elements related to dates.
+#
+module Ingest::Shared::DateMethods
+  include Api::Shared::DateMethods
+
+  # Schema elements which should be transmitted as "YYYY-MM-DD".
+  #
+  # @type [Array<Symbol>]
+  #
+  DAY_FIELDS: symArray
+
+  # Field(s) that must be transmitted as "YYYY-MM-DD".
+  #
+  # @return [Array<Symbol>]
+  #
+  def day_fields: () -> symArray
+end

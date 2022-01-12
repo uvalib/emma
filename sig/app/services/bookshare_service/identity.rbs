@@ -1,0 +1,23 @@
+# BookshareService::Identity
+#
+module BookshareService::Identity
+  include ApiService::Identity
+
+  # Extract the user name to be used for API parameters.
+  #
+  # @param [User, String, nil] user
+  #
+  # @return [String]
+  #
+  def name_of: (User|String|nil user) -> String
+
+  # Set the user for the current session.
+  #
+  # @param [User, nil] u
+  #
+  # @raise [RuntimeError]             If *u* is invalid.
+  #
+  # @return [void]
+  #
+  def set_user: (User|nil u) -> void
+end

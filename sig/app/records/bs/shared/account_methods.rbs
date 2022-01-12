@@ -1,0 +1,24 @@
+# Methods mixed in to record elements related to user identities.
+#
+module Bs::Shared::AccountMethods
+  # :nocov:
+  #include Model
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # A label for the represented person.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+
+  # Return the unique identifier for the represented person.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+end

@@ -107,6 +107,7 @@ module UploadConcern
   #
   def upload_post_params(p = nil)                                               # NOTE: to EntryConcern#entry_post_params
     prm  = p ? get_upload_params(p) : upload_params
+    # noinspection RubyMismatchedArgumentType
     data = safe_json_parse(prm.delete(:upload), default: {})
     file = data[:file]
     prm[:file_data] = file unless file.blank? || (file == '{}')
@@ -122,8 +123,11 @@ module UploadConcern
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   #
-  # @return [Array<Hash>]
+  # @return [Array<Hash{Symbol=>Any}>]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def upload_bulk_post_params(p = nil, req = nil)                               # NOTE: to EntryConcern#entry_bulk_post_params
     prm = p ? get_upload_params(p) : upload_params
     src = prm[:src] || prm[:source]
@@ -133,7 +137,7 @@ module UploadConcern
 
   # workflow_parameters
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   def workflow_parameters                                                       # NOTE: to EntryConcern#entry_request_params (sorta)
     result = { id: @db_id, user_id: @user&.id }
@@ -254,7 +258,7 @@ module UploadConcern
   #
   # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   def find_or_match_records(*items, **opt)                                      # NOTE: to EntryConcern#find_or_match_entries
     items = items.flatten.compact
@@ -275,6 +279,7 @@ module UploadConcern
     user = opt.delete(:user)
     user = opt.delete(:user_id) || user || @user
     user = user.to_s.strip.downcase if user.is_a?(String) || user.is_a?(Symbol)
+    # noinspection RubyMismatchedArgumentType
     user = User.find_record(user)   unless %w(* 0 all false).include?(user)
     if user.is_a?(User)
       opt[:user_id]   = user.id  if user.id.present?
@@ -388,6 +393,7 @@ module UploadConcern
     opt[:user]    ||= @user
     opt[:params]  ||= workflow_parameters
     opt[:no_sim]    = true if UploadWorkflow::Single::SIMULATION # TODO: remove
+    # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.generate(rec, **opt)
     @workflow.send("#{event}!", data)
     failure(from, @workflow.failures) if @workflow.failures?
@@ -482,7 +488,7 @@ module UploadConcern
   # @option opt [Boolean] :dryrun           Passed to #reindex_record.
   # @option opt [Symbol]  :meth             Passed to #reindex_record.
   #
-  # @return [(Array<String>, Array<String>)]  Succeeded/failed
+  # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
   #
   def reindex_submissions(*entries, **opt)
     opt, sql_opt = partition_hash(opt, :atomic, :meth, :dryrun, :size)
@@ -531,8 +537,11 @@ module UploadConcern
   # @param [Boolean]                                       dryrun
   # @param [Symbol]                                        meth     Caller.
   #
-  # @return [(Array<String>,Array<String>)]   Succeeded sids / failure messages
+  # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / fail msgs
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def reindex_record(list, atomic: false, dryrun: false, meth: __method__, **)
     successes = []
     failures  = []
@@ -642,6 +651,9 @@ module UploadConcern
   #   @param [Boolean]                xhr
   #   @param [Symbol]                 meth
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)     # NOTE: to EntryConcern
     meth ||= calling_method
     __debug_items("UPLOAD #{meth} #{__method__}", binding)
@@ -660,6 +672,7 @@ module UploadConcern
     opt = { meth: meth, status: status }
 
     if html
+      # noinspection RubyMismatchedArgumentType
       if %i[ok found].include?(status) || (200..399).include?(status)
         flash_success(*message, **opt)
       else

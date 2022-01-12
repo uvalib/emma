@@ -1,0 +1,200 @@
+# Shared view helper methods supporting general page layout.
+#
+module LayoutHelper::Common
+  include Emma::Common
+
+  include Emma::Constants
+
+  include HtmlHelper
+
+  include ParamsHelper
+
+  include SearchTermsHelper
+
+  # Configuration for panel control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  PANEL_CTRL_CFG: symHash
+
+  # Label for button to open a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_OPENER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to open a collapsible panel.
+  #
+  # @type [String]
+  #
+  PANEL_OPENER_TIP: untyped
+
+  # Label for button to close a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_CLOSER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to close a collapsible panel.
+  #
+  # @type [String]
+  #
+  PANEL_CLOSER_TIP: untyped
+
+  # toggle_button
+  #
+  # @param [String]              id         Element controlled by this button.
+  # @param [String, nil]         label      Default: #PANEL_OPENER_LABEL.
+  # @param [String, Symbol, nil] context    Default: 'for-panel'.
+  # @param [Boolean, String]     open       Start with the element expanded.
+  # @param [String, nil]         selector   Selector of the element controlled
+  #                                           by this button (only used if
+  #                                           panel.js RESTORE_PANEL_STATE is
+  #                                           *true*).
+  # @param [Hash] opt                       Passed to #button_tag.
+  #
+  # @raise [RuntimeError]             The controlled element was not specified.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/panel.js
+  #
+  def toggle_button: (id: String, ?label: String?, ?context: (String|Symbol)?, ?open: (String|bool)?, ?selector: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Configuration for tree control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  TREE_CTRL_CFG: symHash
+
+  # Label for button to open a collapsed tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_OPENER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to open a collapsed tree.
+  #
+  # @type [String]
+  #
+  TREE_OPENER_TIP: String
+
+  # Label for button to close an expanded tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_CLOSER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to close an expanded tree.
+  #
+  # @type [String]
+  #
+  TREE_CLOSER_TIP: String
+
+  # Tree open/close control.
+  #
+  # @param [Hash] opt                 Passed to #toggle_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/search.js
+  #
+  def tree_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # If the client is responsible for managing hidden inputs on forms then they
+  # should not be generated via #search_form.
+  #
+  # @type [Boolean]
+  #
+  CLIENT_MANAGES_HIDDEN_INPUTS: bool
+
+  # A form used to create/modify a search.
+  #
+  # @param [Symbol, String, nil] target
+  # @param [Symbol, String, nil] id       @note [1]
+  # @param [Hash, nil]           hidden   note [1]
+  # @param [Hash]                opt      Passed to #html_form.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML form element.
+  # @return [nil]                         Search is not available for *target*.
+  #
+  # @yield To supply additional field(s) for the <form>.
+  # @yieldreturn [String, Array<String>]
+  #
+  # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
+  #
+  # +
+  # noinspection RubyUnusedLocalVariable
+  # -
+  def search_form: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer?
+
+  # A form used to create/modify a search.
+  #
+  # When searching via the indicated *target*, and *id* is supplied then the
+  # current URL parameters are included as hidden fields so that the current
+  # search is repeated but augmented with the added parameter.
+  #
+  # Otherwise a new search is assumed.
+  #
+  # @param [Symbol, String, nil] target
+  # @param [Symbol, String, nil] id       Passed to #hidden_parameter_for.
+  # @param [Hash, nil]           hidden   Passed to #hidden_parameter_for.
+  # @param [Hash]                opt      Passed to #html_form.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML form element.
+  # @return [nil]                         Search is not available for *target*.
+  #
+  # @yield To supply additional field(s) for the <form>.
+  # @yieldreturn [String, Array<String>]
+  #
+  # @note Used only if #CLIENT_MANAGES_HIDDEN_INPUTS is false.
+  #
+  def search_form_with_hidden: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer?
+
+  # Create sets of hidden fields to accompany the *id* field.
+  #
+  # The field names are sorted so that the method returns zero or more
+  # '<input type="hidden">' elements which should be inserted before the *id*
+  # field and zero or more elements that should be inserted after.
+  #
+  # This ensures that the resulting search URL will be generated with
+  # parameters in a consistent order.
+  #
+  # @param [Symbol, String, nil] id
+  # @param [Hash, nil]           fields   Default: based on #url_parameters
+  #
+  # @return [Array<(Array,Array)>]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def hidden_parameters_for: ((Symbol|String)? id, ?anyHash? fields) -> [Array[ActiveSupport::SafeBuffer], Array[ActiveSupport::SafeBuffer]]
+
+  # Generate a hidden <input> which indicates a parameter for the new search
+  # URL that will result from the associated facet value being removed from the
+  # current search.
+  #
+  # @param [Symbol, String]      k
+  # @param [String, Array]       v
+  # @param [Symbol, String, nil] id
+  # @param [String]              separator
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def hidden_input: (String|Symbol k, String|anyArray v, ?id: (String|Symbol)?, ?separator: String) -> ActiveSupport::SafeBuffer
+
+  # The target path for searches from the search bar.
+  #
+  # @param [Symbol, String, nil] target   Default: #DEFAULT_SEARCH_CONTROLLER
+  # @param [Hash]                opt      Passed to #url_for.
+  #
+  # @return [String]
+  #
+  def search_target_path: (?(Symbol|String)? target, **untyped opt) -> String
+end

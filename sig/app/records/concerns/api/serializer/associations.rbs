@@ -1,0 +1,203 @@
+# Definitions used within the #schema block when it is executed in the context
+# of a serializer class definition.
+#
+module Api::Serializer::Associations
+  extend ActiveSupport::Concern
+
+  module ClassMethods
+    include Api::Serializer::Schema
+
+    # Simulate ActiveRecord::Attributes#attribute to define a schema property
+    # that is handled as an attribute.
+    #
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt
+    #
+    # @return [void]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload attribute(name, **opt, &block)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload attribute(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    # == Examples
+    #
+    # @example JSON:
+    #   class XXX < Api::Record; schema { attribute :elem }; end  -->
+    #     "XXX" : { "elem" : "value" }
+    #
+    # @example XML:
+    #   class XXX < Api::Record; schema { attribute :elem }; end  -->
+    #     <XXX elem="value"></XXX>
+    #
+    # @see Declarative::Schema::DSL#property
+    # @see Api::Record::Schema::ClassMethods#schema
+    #
+    def attribute: (Symbol name, Symbol|String|Class `type`, *untyped ignored, **untyped opt) -> void
+                 | (Symbol name,                             *untyped ignored, **untyped opt) -> void
+
+    # Simulate ActiveRecord::Associations#has_one to define a schema property
+    # that is handled as a single element.
+    #
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt
+    # @param [Proc]   block           Passed to #property.
+    #
+    # @return [void]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload has_one(name, **opt, &block)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
+    #
+    # @overload has_one(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
+    #
+    # == Examples
+    #
+    # @example JSON:
+    #   class XXX < Api::Record; schema { has_one :elem }; end  -->
+    #     "XXX" : { "elem" : "value" }
+    #
+    # @example XML:
+    #   class XXX < Api::Record; schema { has_one :elem }; end  -->
+    #     <XXX><elem>value</elem></XXX>
+    #
+    # @see Declarative::Schema::DSL#property
+    # @see Api::Record::Schema::ClassMethods#schema
+    #
+    def has_one: (Symbol name, Symbol|String|Class `type`, *untyped ignored, **untyped opt) -> void
+               | (Symbol name,                             *untyped ignored, **untyped opt) -> void
+
+    # Simulate ActiveRecord::Associations#has_many to define a schema property
+    # that is handled as a collection.
+    #
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt
+    # @param [Proc]   block           Passed to #property.
+    #
+    # @return [void]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload has_many(name, **opt, &block)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
+    #
+    # @overload has_many(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
+    #
+    # == Examples
+    #
+    # @example JSON:
+    #   class XXX < Api::Record; schema { has_many :elem }; end  -->
+    #     "XXX" : { "elem" : [...] }
+    #
+    # @example XML (WRAP_COLLECTIONS = true)
+    #   class XXX < Api::Record; schema { has_many :elem }; end  -->
+    #     <XXX><elems><elem>...</elem>...<elem>...</elem></elems></XXX>
+    #
+    # @example XML (WRAP_COLLECTIONS = false)
+    #   class XXX < Api::Record; schema { has_many :elem }; end  -->
+    #     <XXX><elem>...</elem>...<elem>...</elem></XXX>
+    #
+    # @see Declarative::Schema::DSL#property
+    # @see Api::Record::Schema::ClassMethods#schema
+    #
+    def has_many: (Symbol name, Symbol|String|Class `type`, *untyped ignored, **untyped opt) -> void
+                | (Symbol name,                             *untyped ignored, **untyped opt) -> void
+
+    # Incorporate all record fields from another class.
+    #
+    # @param [Class<Api::Record>]    other
+    # @param [Symbol, Array<Symbol>] except
+    #
+    def all_from: (Class other, ?except: (Symbol|symArray)?) -> void
+
+    # Determine the class to be associated with a data element.
+    #
+    # @param [Class, String, Symbol, nil] type
+    # @param [Hash]                       opt   Passed to #extract_type_option!
+    #
+    # @raise [NameError]              If *type* is invalid.
+    #
+    # @return [Class]
+    #
+    # Compare with:
+    # Api::Record::Associations#make_default
+    #
+    # -
+    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # +
+    def get_type_class: (Symbol|String|Class|nil `type`, **untyped opt) -> Class
+
+    # decorator_class
+    #
+    # @param [Class, String, Symbol] record_class
+    #
+    # @raise [NameError]              If *record_class* is not valid.
+    #
+    # @return [Proc]
+    #
+    # @see Api::Serializer#serializer_type
+    #
+    def decorator_class: (Symbol|String|Class record_class) -> Proc
+
+    # Format-specific operations for #attribute data elements.
+    #
+    # @param [String, Symbol]        name
+    # @param [String, Symbol, Class] _element
+    # @param [Hash]                  options
+    #
+    # @return [void]
+    #
+    def prepare_attribute!: (Symbol|String name, Symbol|String|Class _element, untyped options) -> void
+
+    # Format-specific operations for #has_one data elements.
+    #
+    # @param [String, Symbol]        _name
+    # @param [String, Symbol, Class] _element
+    # @param [Hash]                  options
+    #
+    # @return [void]
+    #
+    def prepare_one!: (Symbol|String name, Symbol|String|Class _element, untyped options) -> void
+
+    # Format-specific operations for #has_many data elements.
+    #
+    # @param [String, Symbol]        _wrapper
+    # @param [String, Symbol, Class] _element
+    # @param [Hash]                  options
+    #
+    # @return [void]
+    #
+    def prepare_collection!: (Symbol|String _wrapper, Symbol|String|Class _element, untyped options) -> void
+  end
+end

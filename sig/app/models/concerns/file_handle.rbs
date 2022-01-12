@@ -1,0 +1,74 @@
+# An IO-like file object based on a number of types which are conceptually
+# related but do not actually share a common ancestor.
+#
+class FileHandle
+  # An object with one of these types may be used as the underlying handle.
+  #
+  # @type [Array<Module>]
+  #
+  VALID_BASE_TYPE: Array[Module]
+
+  # Indicate whether the given object may be used to create a FileHandle.
+  #
+  # @param [FileHandle, IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO, Any, nil] value
+  #
+  def self.compatible?: (untyped value) -> bool
+
+  # Expose @handle for use in #initialize.
+  #
+  # @type [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO]
+  #
+  attr_reader handle: IO | StringIO | IO::Like | Down::ChunkedIO | Tempfile
+
+  # Initialize a new instance.
+  #
+  # @param [FileHandle, String, IO, StringIO, Tempfile, Down::ChunkedIO] file
+  #
+  # @raise [RuntimeError]             If *file* is invalid.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload initialize(other)
+  #   @param [FileHandle] other
+  #
+  # @overload initialize(path)
+  #   @param [String] path
+  #
+  # @overload initialize(file)
+  #   @param [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO] file
+  #
+  def initialize: (String|FileHandle|IO|StringIO|IO::Like|Down::ChunkedIO|Tempfile file) -> void
+
+  private
+
+  include Emma::Debug::OutputMethods
+
+  # Debug method for this class.
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  # @param [Proc]  block              Passed to #__debug_items.
+  #
+  # @return [void]
+  #
+  def __debug_handle: (*untyped args, **untyped opt) { () -> untyped } -> nil
+
+  # Indicate whether the underlying object implements the given method.
+  #
+  # @param [Symbol, String] name
+  # @param [Boolean]        include_private
+  #
+  def respond_to_missing?: (Symbol|String name, ?bool include_private) -> bool
+
+  # Delegate to the underlying object.
+  #
+  # @param [Symbol, String] name
+  # @param [Array]          args
+  # @param [Proc]           block
+  #
+  # @return [Any]
+  #
+  def method_missing: (Symbol|String name, *untyped args) { () -> untyped } -> untyped
+end

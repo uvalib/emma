@@ -1,0 +1,21 @@
+# Model for a periodical.
+#
+class Periodical < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Authorizable
+
+  # Indicate whether the periodical includes the indicated artifact.
+  #
+  # @param [String, Artifact] item
+  #
+  def include?: (String|Artifact item) -> bool
+
+  # Indicate whether the periodical includes the indicated artifact.
+  #
+  # @param [String, Artifact] item
+  #
+  def has_artifact?: (String|Artifact item) -> bool
+end

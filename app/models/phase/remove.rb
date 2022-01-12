@@ -45,6 +45,7 @@ class Phase::Remove < Phase::BulkPart
 
   # Remove the entry from the index.
   #
+  # @param [ActionDispatch::Request, Hash, nil] request
   # @param [Hash] opt                 Passed to Action::UnIndex#deindex!
   #
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
@@ -88,6 +89,7 @@ class Phase::Remove < Phase::BulkPart
 
   # Remove the submission from its queue.
   #
+  # @param [ActionDispatch::Request, Hash, nil] request
   # @param [Hash] opt                 Passed to Action::UnQueue#unsubmit!
   #
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
@@ -131,6 +133,7 @@ class Phase::Remove < Phase::BulkPart
 
   # Remove the uploaded file associated with this item.
   #
+  # @param [ActionDispatch::Request, Hash, nil] request
   # @param [Hash] opt                 Passed to Action::UnStore#unstore!
   #
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
@@ -174,6 +177,7 @@ class Phase::Remove < Phase::BulkPart
 
   # Remove the item from the database.
   #
+  # @param [ActionDispatch::Request, Hash, nil] request
   # @param [Hash] opt                 Passed to Action::UnRecord#remove!
   #
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.

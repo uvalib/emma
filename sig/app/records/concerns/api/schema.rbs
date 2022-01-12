@@ -1,0 +1,211 @@
+# Values related to the details of serialization/de-serialization.
+#
+module Api::Schema
+  include Emma::Common
+
+  # The implemented serializer types.
+  #
+  # @type [Array<Symbol>]
+  #
+  SERIALIZER_TYPES: symArray
+
+  # The default serializer type.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_SERIALIZER_TYPE: Symbol
+
+  # The options to #attribute, #has_one, or #has_many definitions which
+  # indicate the specification of a type for the schema property or (in the
+  # case of #has_many) its constituent parts.
+  #
+  # @type [Array<Symbol>]
+  #
+  TYPE_OPTION_KEYS: symArray
+
+  # A table of schema property scalar types mapped to literals which are their
+  # default values.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  SCALAR_DEFAULTS: symHash
+
+  # The basic types that may be given as the second argument to #attribute,
+  # #has_one, or #has_many definitions.
+  #
+  # @type [Array<Symbol>]
+  #
+  SCALAR_TYPES: symArray
+
+  # Possible relationships between a schema property defined by 'attribute',
+  # 'has_one' or 'has_many' and the name of the serialized data element.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @example For "has_one :the_element_name":
+  #   :default =>
+  #       JSON: { "the_element_name": "value" }
+  #       XML:  '<the_element_name>value</the_element_name>'
+  #   :underscore =>
+  #       JSON: { "the_element_name": "value" }
+  #       XML:  '<the_element_name>value</the_element_name>'
+  #   :underscore_uppercase =>
+  #       JSON: { "THE_ELEMENT_NAME": "value" }
+  #       XML:  '<THE_ELEMENT_NAME>value</THE_ELEMENT_NAME>'
+  #   :camelcase =>
+  #       JSON: { "theElementName": "value" }
+  #       XML:  '<theElementName>value</theElementName>'
+  #   :full_camelcase =>
+  #       JSON: { "TheElementName": "value" }
+  #       XML:  '<TheElementName>value</TheElementName>'
+  #   :lowercase =>
+  #       JSON: { "the_element_name": "value" }
+  #       XML:  '<the_element_name>value</the_element_name>'
+  #   :uppercase =>
+  #       JSON: { "THE_ELEMENT_NAME": "value" }
+  #       XML:  '<THE_ELEMENT_NAME>value</THE_ELEMENT_NAME>'
+  #
+  # @example For "has_one :elementRecord":
+  #   :default =>
+  #       JSON: "elementRecord" : { ... }
+  #       XML:  '<elementRecord>...</elementRecord>'
+  #   :underscore =>
+  #       JSON: "element_record" : { ... }
+  #       XML:  '<element_record>...</element_record>'
+  #   :underscore_uppercase =>
+  #       JSON: "ELEMENT_RECORD" : { ... }
+  #       XML:  '<ELEMENT_RECORD>...</ELEMENT_RECORD>'
+  #   :camelcase  =>
+  #       JSON: "elementRecord" : { ... }
+  #       XML:  '<elementRecord>...</elementRecord>'
+  #   :full_camelcase =>
+  #       JSON: "ElementRecord" : { ... }
+  #       XML:  '<ElementRecord>value</ElementRecord>'
+  #   :lowercase =>
+  #       JSON: { "elementrecord": "value" }
+  #       XML:  '<elementrecord>value</elementrecord>'
+  #   :uppercase =>
+  #       JSON: { "ELEMENTRECORD": "value" }
+  #       XML:  '<ELEMENTRECORD>value</ELEMENTRECORD>'
+  #
+  ELEMENT_NAMING_MODES: symArray
+
+  # service_name
+  #
+  # @return [String]
+  #
+  def service_name: () -> String
+
+  # A table of schema property enumeration types mapped to literals which are
+  # their default values.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def enumeration_defaults: () -> Hash[Symbol,String]
+
+  # The enumeration types that may be given as the second argument to
+  # #attribute, #has_one, or #has_many definitions.
+  #
+  # @return [Array<Symbol>]
+  #
+  def enumeration_types: () -> symArray
+
+  # enumeration_default
+  #
+  # @param [Symbol] type
+  #
+  # @return [Any]
+  #
+  def enumeration_default: (Symbol `type`) -> untyped
+
+  # serializer_name
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def serializer_name: (Symbol|String `type`) -> String
+
+  # serializer_base
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def serializer_base: (Symbol|String `type`) -> String
+
+  # A table of schema property scalar types mapped to literals which are their
+  # default values.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def scalar_defaults: () -> symHash
+
+  # The basic types that may be given as the second argument to #attribute,
+  # #has_one, or #has_many definitions.
+  #
+  # @type [Array<Symbol>]
+  #
+  def scalar_types: () -> symArray
+
+  # Determine the format of the data.
+  #
+  # @param [String, Hash] data
+  #
+  # @return [Symbol]                  One of #SERIALIZER_TYPES
+  # @return [nil]                     Otherwise
+  #
+  def format_of: (String|symHash data) -> Symbol?
+
+  # Called to validate that *type* is in #SERIALIZER_TYPES.
+  #
+  # @param [Symbol] type
+  #
+  # @raise [SyntaxError]              If *type* is invalid.
+  #
+  # @return [TrueClass]
+  #
+  def assert_serializer_type: (Symbol `type`) -> true
+
+  # Indicate whether the type is a scalar (not a representer) class.
+  #
+  # @param [Class, String, Symbol, nil] type
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def scalar_type?: (Symbol|String|Class|nil `type`) -> bool
+
+  # Ensure that attributes get a type-appropriate default (otherwise they
+  # will just be *nil*).
+  #
+  # @param [Class, String, Symbol, nil] type
+  #
+  # @return [Any]
+  #
+  def scalar_default: (Symbol|String|Class|nil `type`) -> untyped
+
+  # Get options that specify type.
+  #
+  # @param [Hash, nil] opt
+  #
+  # @return [Hash]
+  #
+  def type_options: (symHash|nil opt) -> symHash
+
+  # Get type specification from options.
+  #
+  # @param [Hash, nil] opt
+  #
+  # @return [Any]
+  #
+  def extract_type_option: (symHash|nil opt) -> untyped
+
+  # Extract #TYPE_OPTION_KEYS from *opt* and get the type specification.
+  #
+  # @param [Hash] opt                 Will have #TYPE_OPTION_KEYS removed.
+  #
+  # @return [Any]
+  #
+  def extract_type_option!: (symHash opt) -> untyped
+end

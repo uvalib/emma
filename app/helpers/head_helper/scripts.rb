@@ -90,6 +90,7 @@ module HeadHelper::Scripts
     @page_javascript.compact_blank!
     @page_javascript.uniq!
     sources = @page_javascript.dup
+    # noinspection RubyMismatchedArgumentType
     sources << meta_options(**opt)
     javascript_include_tag(*sources)
   end

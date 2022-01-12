@@ -1,0 +1,29 @@
+# PDF file format metadata extractor.
+#
+class FileParser::Pdf < FileParser
+  include FileFormat::Pdf
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+
+  # The actual parser object.
+  #
+  # @return [PDF::Reader]
+  # @return [nil]
+  #
+  def pdf_reader: () -> PDF::Reader?
+
+  private
+
+  # method_missing
+  #
+  # @param [Symbol] name
+  # @param [Array]  args
+  #
+  # @return [Any]
+  #
+  def method_missing: (Symbol name, *untyped args) -> untyped
+end

@@ -1,0 +1,25 @@
+module Emma::Common::NumericMethods
+  # Interpret *value* as a positive integer.
+  #
+  # @param [String, Symbol, Numeric, Any] value
+  #
+  # @return [Integer]
+  # @return [nil]                     If *value* <= 0 or not a number.
+  #
+  def positive: (untyped value) -> (Integer | nil)
+
+  # Interpret *value* as zero or a positive integer.
+  #
+  # @param [String, Symbol, Numeric, Any] value
+  #
+  # @return [Integer]
+  # @return [nil]                     If *value* < 0 or not a number.
+  #
+  def non_negative: (untyped value) -> (Integer | nil)
+
+  # Indicate whether the given string value contains only decimal digits.
+  #
+  # @param [Any, nil] value
+  #
+  def digits_only?: (untyped value) -> bool
+end

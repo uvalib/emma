@@ -1,0 +1,26 @@
+# BookshareService::Common
+#
+module BookshareService::Common
+  include ApiService::Common
+
+  include BookshareService::Properties
+
+  include BookshareService::Identity
+
+  # Add service-specific API options.
+  #
+  # @param [Hash, nil] params         Default: @params.
+  #
+  # @return [Hash]                    New API parameters.
+  #
+  def api_options: (?symHash? params) -> symHash
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

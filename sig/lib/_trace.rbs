@@ -1,0 +1,187 @@
+# For AWS, add indentation prefix characters to help make debugging output
+# stand out from normal Rails.logger entries.
+#
+# @type [String]
+#
+CONS_INDENT: String
+
+# Initial characters which mark a debug line.
+#
+# @type [String]
+#
+DEBUG_LEADER: String
+
+# Truncate long debug output lines to this number of characters.
+#
+# @type [Integer]
+#
+DEBUG_MAX: Integer
+
+# Notification specifications can be a single String, Regexp, or Array of
+# either.
+#
+# @example All notifications
+#   /.*/
+#
+# @example Only caching notifications
+#   /^cache_.*/
+#
+# @example Notifications related to route processing
+#   [/\.action_dispatch/, /^.*process.*\.action_controller$/]
+#
+# @example Others
+#   * 'load_config_initializer.railties'
+#
+#   * 'request.action_dispatch'
+#
+#   * '!connection.active_record'
+#   * 'sql.active_record'
+#   * 'instantiation.active_record'
+#
+#   * 'start_processing.action_controller'
+#   * 'process_action.action_controller'
+#   * 'redirect_to.action_controller'
+#   * 'halted_callback.action_controller'
+#
+#   * '!compile_template.action_view'
+#   * '!render_template.action_view'
+#   * 'render_template.action_view'
+#   * 'render_partial.action_view'
+#
+#   * 'cache_read.active_support'
+#   * 'cache_write.active_support'
+#
+# @see http://guides.rubyonrails.org/active_support_instrumentation.html
+#
+# -
+# noinspection RubyMismatchedArgumentType
+# +
+NOTIFICATIONS: Regexp | bool
+
+# Limit each notification display to this number of characters.
+MAX_NOTIFICATION_SIZE: Integer
+
+class Object
+  public
+
+  # Used to neutralize method(s) if they are not supposed to be enabled.
+  #
+  # @param [Array<Symbol>] methods
+  #
+  def neutralize: (*Symbol methods) -> untyped
+
+  # Convert a string to UTF-8 encoding.
+  #
+  # @param [String, Any] v
+  #
+  # @return [String, Any]
+  #
+  def to_utf8: (untyped v) -> untyped
+
+  public
+
+  # Write indented line(s) to $stderr.
+  #
+  # @param [Array<Hash,Array,String,Any>] args
+  # @param [Hash]                         opt
+  #
+  # @option opt [String]                   :leader     At the start of each line.
+  # @option opt [String, Integer]          :indent     Default: #CONS_INDENT.
+  # @option opt [String]                   :separator  Default: "\n"
+  # @option opt [Boolean]                  :debug      Structure for debug output
+  # @option opt [Symbol, Integer, Boolean] :log        Note [1]
+  #
+  # @return [nil]
+  #
+  # @yield To supply additional items to output.
+  # @yieldreturn [Array<String>]
+  #
+  # == Usage Notes
+  # [1] When deployed, this option will create a log entry rather than produce
+  # $stderr output.  If not deployed, the log entry is created in addition to
+  # $stderr output.
+  #
+  def __output_impl: (*untyped args, **untyped opt) { () -> untyped } -> nil
+
+  # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
+  #
+  # @param [Array<Hash,Array,String,Any>] args    Passed to #__output_impl.
+  # @param [Hash]                         opt     Passed to #__output_impl.
+  # @param [Proc]                         block   Passed to #__output_impl.
+  #
+  # == Usage Notes
+  # The method is only functional if #CONSOLE_OUTPUT is true.
+  #
+  def __output: (*untyped args, **untyped opt) { () -> untyped } -> nil
+
+  public
+
+  # Write indented debug line(s) to $stderr.
+  #
+  # @param [Array] args                 Passed to #__output_impl.
+  # @param [Hash]  opt                  Passed to #__output_impl.
+  # @param [Proc]  block                Passed to #__output_impl.
+  #
+  # @return [nil]
+  #
+  def __debug_impl: (*untyped args, **untyped opt) { () -> untyped } -> nil
+
+  # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
+  #
+  # @param [Array] args                 Passed to #__debug_impl.
+  # @param [Hash]  opt                  Passed to #__debug_impl.
+  # @param [Proc]  block                Passed to #__debug_impl.
+  #
+  def __debug: (*untyped args, **untyped opt) { () -> untyped } -> nil
+
+  # Loading level and indentation.
+  #
+  # @param [Integer] level
+  #
+  # @return [String]
+  #
+  def __loading_level: (?Integer level) -> ::String
+
+  # Display console output to indicate that a file is being loaded.
+  #
+  # @param [String] file                Actual parameter should be __FILE__.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Place as the first non-comment line of a Ruby source file.
+  #
+  def __loading: (String file) -> nil
+
+  # Display console output to indicate that a file is being loaded.
+  #
+  # @param [String] file                Actual parameter should be __FILE__.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Place as the first non-comment line of a Ruby source file.
+  #
+  def __loading_begin: (String file) -> nil
+
+  # Display console output to indicate the end of a file that is being loaded.
+  #
+  # @param [String] file                Actual parameter should be __FILE__.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Place as the last non-comment line of a Ruby source file.
+  #
+  def __loading_end: (String file) -> nil
+
+  # Indicate invocation of a module's "included" block.
+  #
+  # @param [Module]      base
+  # @param [Module]      mod
+  # @param [String, nil] tag
+  #
+  # @return [nil]
+  #
+  def __included: (Module base, Module mod, ?String? tag) -> nil
+end

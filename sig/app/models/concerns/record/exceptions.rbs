@@ -1,0 +1,77 @@
+module Record::Exceptions
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Emma::Debug
+
+  # Error types and messages.                                                   # NOTE: from UploadWorkflow::Errors::UPLOAD_ERROR
+  #
+  # @type [Hash{Symbol=>(String,Class)}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  ENTRY_ERROR: Hash[Symbol,(String|Class)]
+
+  def failure: (Symbol|String|strArray|Exception|ExecReport|nil problem, ?untyped? value) -> void
+
+  # Methods which are only appropriate if the including class is an
+  # ApplicationRecord.
+  #
+  module InstanceMethods
+    # The exception raised within the instance.
+    #
+    # @return [Record::Error, nil]
+    #
+    attr_reader exception: Record::Error | nil
+
+    # Indicate whether the instance has experienced an exception.
+    #
+    def error?: () -> bool
+
+    # Associate an exception with the instance.
+    #
+    # @param [Class<Record::Error>, Record::Error, Exception, nil] error
+    # @param [Hash] opt   Passed to initializer if *error* is a class.
+    #
+    # @return [Record::Error]         New value of @exception.
+    #
+    # -
+    # noinspection RubyNilAnalysis,RubyMismatchedArgumentType
+    # +
+    def set_error: (Class|Record::Error|Exception|nil error, **untyped opt) -> Record::Error
+  end
+
+  private
+
+  include InstanceMethods
+end
+
+# Each instance translates to a distinct line in the flash message.
+#
+class Record::Exceptions::FlashPart < FlashHelper::FlashPart
+  include Record::Rendering
+
+  def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+end
+
+# Base class for workflow errors involving records.
+#
+class Record::Error < ExecError
+  include Record::Exceptions
+end
+
+# Exception raised when the specified record(s) could not be found, but through
+# mechanisms that did not raise an ActiveRecord::RecordNotFound.
+#
+class Record::NotFound < Record::Error
+end
+
+# Exception raised when criteria were missing to specify the record(s).
+#
+class Record::StatementInvalid < Record::Error
+end
+
+class Record::SubmitError < Record::Error
+end

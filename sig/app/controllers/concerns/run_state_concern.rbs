@@ -1,0 +1,62 @@
+# Controller callbacks for rejecting requests if the system is unavailable.
+#
+# @see RunState
+#
+# == Usage Notes
+# This is not included in controllers which have endpoints which should be
+# available regardless of the run state.
+#
+module RunStateConcern
+  extend ActiveSupport::Concern
+
+  # Controllers whose endpoints are exempt from redirection due to unavailable
+  # run state.
+  #
+  # @type [Array<String,Hash>]
+  #
+  NO_RUN_STATE_REDIRECT: Array[String|symHash]
+
+  # Controllers whose endpoints are exempt from redirection due to unavailable
+  # run state.
+  #
+  # @type [Array<String>]
+  #
+  RUN_STATE_EXEMPT_CONTROLLER:  strArray
+
+  # Per-controller endpoints which are exempt from redirection due to
+  # unavailable run state.
+  #
+  # @type [Hash{String=>Array<String>}]
+  #
+  RUN_STATE_EXEMPT_ACTION: Hash[String,strArray]
+
+  # Indicate whether the system is currently configured as unavailable.
+  #
+  def system_unavailable?: () -> bool
+
+  # Indicate whether the controller is not exempt from redirection.
+  #
+  # @param [String, Symbol, nil] ctrlr    Default: `params[:controller]`
+  # @param [String, Symbol, nil] action   Default: `params[:action]`
+  #
+  def run_state_redirect?: (?(String|Symbol)? ctrlr, ?(String|Symbol)? action) -> bool
+
+  # Unconditionally redirect to the page which indicates system unavailability.
+  #
+  def system_unavailable: () -> void
+
+  # Determine whether the system is unavailable.
+  #
+  def check_system_availability: () -> void
+
+  private
+
+  #THIS_MODULE: untyped
+
+  extend ParamsHelper
+
+  # :nocov:
+  #include AbstractController::Callbacks::ClassMethods
+
+  #include RunStateConcern
+end

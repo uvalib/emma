@@ -1,0 +1,94 @@
+# View helper methods for "/reading_list" pages.
+#
+module ReadingListHelper
+  include BookshareHelper
+
+  include TitleHelper
+
+  # Control whether thumbnails are shown for reading list entries.
+  #
+  # @type [Boolean]
+  #
+  READING_LIST_THUMBNAIL: bool
+
+  # Thumbnail element for the given reading list entry.
+  #
+  # NOTE: ReadingListTitle does not (currently) include a thumbnail link.
+  #
+  # While this is still the case, this method will discover the link by
+  # explicitly by fetching the catalog item.
+  #
+  # If #READING_LIST_THUMBNAIL is *false*, this method always returns *nil*.
+  #
+  # @param [Bs::Record::ReadingListTitle] item
+  # @param [Hash]                         opt  Passed to TitleHelper#thumbnail.
+  #
+  # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder element.
+  # @return [nil]                         If *item* has no thumbnail.
+  #
+  # @see TitleHelper#thumbnail
+  #
+  def rl_thumbnail: (Bs::Record::ReadingListTitle item, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  READING_LIST_SHOW_TOOLTIP: String
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #model_link except for:
+  #
+  # @option opt [String] :readingListId
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def reading_list_link: (Bs::Api::Record item, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Show reading list subscriptions.
+  #
+  # TODO: The Bookshare API doesn't seem to provide useful information here.
+  #
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #record_links.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def reading_list_subscriptions: (Bs::Api::Record item, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Bs::Api::Record] item
+  # @param [Any]             value
+  # @param [Hash]            opt      Passed to the render method.
+  #
+  # @return [Any]   HTML or scalar value.
+  # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
+  #
+  # @see BookshareHelper#bookshare_render_value
+  #
+  def reading_list_render_value: (Bs::Api::Record item, untyped value, **untyped opt) -> untyped?
+
+  # Render a metadata listing of a reading list.
+  #
+  # @param [Bs::Api::Record] item
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #model_details.
+  #
+  def reading_list_details: (Bs::Api::Record item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Bs::Api::Record] item
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #model_list_item.
+  #
+  def reading_list_list_item: (Bs::Api::Record item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

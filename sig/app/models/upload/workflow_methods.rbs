@@ -1,0 +1,142 @@
+# Workflow support for Upload records.
+#
+module Upload::WorkflowMethods
+  include Emma::Debug
+
+  DEFAULT_REVIEW_REQUIRED: bool
+
+  DEFAULT_AUTO_REVIEWABLE: bool
+
+  # The table column associated generally associated with workflow state.       # NOTE: not relevant to Entry/Phase/Action.
+  #
+  # @type [Symbol]
+  #
+  WORKFLOW_PHASE_COLUMN: Symbol
+
+  # The table columns associated with workflow state in general and workflow    # NOTE: to Record::Steppable::STATE_COLUMN
+  # state in the context of modifying an existing EMMA entry.
+  #
+  # @type [Array<Symbol>]
+  #
+  STATE_COLUMNS: symArray
+
+  # The table columns associated with the active workflow user.                 # NOTE: not relevant to Entry/Phase/Action.
+  #
+  # @type [Array<Symbol>]
+  #
+  USER_COLUMNS: symArray
+
+  # Groupings of states related by theme.                                       # NOTE: to Record::Steppable
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  STATE_GROUP: Hash[Symbol,symHash]
+
+  # Mapping of workflow state to category.                                      # NOTE: to Record::Steppable
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REVERSE_STATE_GROUP: Hash[Symbol,Symbol]
+
+  def state_column: () -> Symbol
+
+  # The database column currently associated with the active user.
+  #
+  # @return [Symbol]
+  #
+  def user_column: () -> Symbol
+
+  # The database column currently associated with the timestamp of the record.
+  #
+  # @return [Symbol]
+  #
+  def timestamp_column: () -> Symbol
+
+  def phase_column: () -> Symbol
+
+  def workflow_phase: () -> Symbol?
+
+  def edit_phase: () -> bool
+
+  def active_state: () -> Symbol?
+
+  def active_user: () -> String?
+
+  def existing_entry?: () -> bool
+
+  def new_submission?: () -> bool
+
+  def get_phase: () -> Symbol
+
+  def set_phase: (Symbol|String|nil new_value) -> Symbol
+
+  def get_state: (?(Symbol|String)? column) -> Symbol
+
+  def set_state: (Symbol|String|nil new_value, ?(Symbol|String)? column) -> Symbol
+
+  def dynamic_get_field: (Symbol|String column) -> untyped
+
+  def dynamic_set_field: (Symbol|String column, untyped new_value) -> untyped
+
+  def dynamic_set_fields: (symHash values) -> void
+
+  def being_created?: () -> bool
+
+  def being_modified?: () -> bool
+
+  def being_removed?: () -> bool
+
+  def under_review?: () -> bool
+
+  def being_submitted?: () -> bool
+
+  def being_indexed?: () -> bool
+
+  def completed?: () -> bool
+
+  def in_process?: () -> bool
+
+  def unsealed?: () -> bool
+
+  def sealed?: () -> bool
+
+  def state_group: (?(String|Symbol)? target_state) -> Symbol
+
+  def self.state_group: (String|Symbol|nil target_state) -> Symbol
+
+  def self.state_group_label: (String|Symbol|nil group) -> String?
+
+  # Indicate whether this submission must be reviewed.
+  #
+  # (If not it can be submitted directly.)
+  #
+  def review_required?: () -> bool
+
+  # Indicate whether this submission is eligible to be review automatically.
+  #
+  # (If not it a human reviewer accept it.)
+  #
+  def auto_reviewable?: () -> bool
+
+  def begin_editing: (**untyped opt) -> bool?
+
+  def finish_editing: (**untyped opt) -> bool?
+
+  # Extra information communicated to the Upload form to support reverting      # NOTE: not relevant to Entry/Phase/Action.
+  # the record when backing out of edit changes.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  attr_accessor revert_data: symHash
+
+  REVERT_DATA_FIELDS: symArray
+
+  def set_revert_data: () -> symHash
+
+  def get_revert_data: () -> symHash
+end

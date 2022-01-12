@@ -1,0 +1,18 @@
+# Base class for objects created to access the content of an existing
+# (already downloaded) file.
+#
+class FileParser < FileObject
+  include Emma::Common
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+
+  # Extracted metadata mapped to common metadata fields.
+  #
+  # @return [Hash]
+  #
+  def common_metadata: () -> symHash
+end

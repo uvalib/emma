@@ -1,0 +1,97 @@
+# Control record for an on-going review.
+#
+# @see file:config/locales/state_table.en.yml *en.emma.state_table.action.review*
+#
+# NOTE: from "Review sub-sequence"
+#
+# @!method started?
+# @!method reviewing?
+# @!method holding?
+# @!method approved?
+# @!method rejected?
+# @!method canceled?
+# @!method aborted?
+#
+# @!method started!
+# @!method reviewing!
+# @!method holding!
+# @!method approved!
+# @!method rejected!
+# @!method canceled!
+# @!method aborted!
+#
+class Action::Review < Action::Single
+  include Record::Sti::Leaf
+
+  include Record::Steppable
+
+  # Mark the start of a review.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :async      If *true* run callback asynchronously.
+  # @option opt [Symbol]  :meth       Name of caller (for logging).
+  #
+  # @return [Boolean]
+  #
+  def review!: (**untyped opt) -> bool
+
+  # Note that a started review was put on hold.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :async      If *true* run callback asynchronously.
+  # @option opt [Symbol]  :meth       Name of caller (for logging).
+  #
+  # @return [Boolean]
+  #
+  def hold!: (**untyped opt) -> bool
+
+  # Note the positive outcome of a review.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :async      If *true* run callback asynchronously.
+  # @option opt [Symbol]  :meth       Name of caller (for logging).
+  #
+  # @return [Boolean]
+  #
+  def approve!: (**untyped opt) -> bool
+
+  # Note the negative outcome of a review.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :async      If *true* run callback asynchronously.
+  # @option opt [Symbol]  :meth       Name of caller (for logging).
+  #
+  # @return [Boolean]
+  #
+  def reject!: (**untyped opt) -> bool
+
+  # Note the cancellation of a review.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :async      If *true* run callback asynchronously.
+  # @option opt [Symbol]  :meth       Name of caller (for logging).
+  #
+  # @return [Boolean]
+  #
+  def cancel!: (**untyped opt) -> bool
+
+  # A textual description of the type of the Model instance.
+  #
+  # @return [String]
+  #
+  def self.describe_type: (*untyped, **untyped) ?{ () -> untyped } -> String
+
+  # A textual description of the status of the Action instance.
+  #
+  # @param [Action] action
+  # @param [Hash]   opt
+  #
+  # @return [String]
+  #
+  def self.describe_status: (Action action, **untyped opt) -> String
+end

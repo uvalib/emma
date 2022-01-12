@@ -54,6 +54,8 @@ module Emma::Rake
   # @param [String, Symbol]                        name
   # @param [Hash, Array, Rake::TaskArguments, nil] args
   #
+  # @return [void]
+  #
   # noinspection RubyNilAnalysis
   def subtask(name, args = nil)
     hash =
@@ -190,15 +192,20 @@ module Emma::Rake
 
   # An override to provide a mock #session.
   #
+  # @return [Hash{String=>Any}]
+  #
   def session
     @session ||= { 'app.debug' => true }
   end
 
   # An override to provide a mock #current_user.
   #
+  # @return [User, nil]
+  #
   # @note Needs to be a user mapped to the developer role in 'users_roles'.
   #
   def current_user
+    # noinspection RubyMismatchedReturnType
     @current_user ||= User.where(email: 'rwl@virginia.edu').first
   end
 

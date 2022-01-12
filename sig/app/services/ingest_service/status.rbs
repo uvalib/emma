@@ -1,0 +1,28 @@
+# Health status interface.
+#
+module IngestService::Status
+  include ApiService::Status
+
+  # A sample service access and minimum number of expected results.
+  #
+  # Title:  "Campbell Biology: Concepts & Connections"
+  # ISBN:   "9780134296012"
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  SAMPLE_RECORD_ID_ACCESS: symHash
+
+  # Indicate whether the service is operational.
+  #
+  # @param [String, Array<String>] with
+  # @param [Proc]                  expect
+  #
+  # @return [Array<(TrueClass,nil)>]
+  # @return [Array<(FalseClass,String)>]
+  #
+  def active_status: (?with: (String|strArray)?, ?expect: Proc?) -> ([true, nil] | [false, String])
+
+  private
+
+  def self.included: (Module base) -> void
+end

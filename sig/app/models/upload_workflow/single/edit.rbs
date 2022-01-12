@@ -1,0 +1,152 @@
+class UploadWorkflow::Single::Edit < UploadWorkflow::Single
+  include UploadWorkflow::Edit
+end
+
+module UploadWorkflow::Single::Edit::Errors
+  include UploadWorkflow::Single::Errors
+end
+
+module UploadWorkflow::Single::Edit::Properties
+  include UploadWorkflow::Single::Properties
+
+  include UploadWorkflow::Single::Edit::Errors
+end
+
+module UploadWorkflow::Single::Edit::External
+  include UploadWorkflow::Single::External
+
+  include UploadWorkflow::Single::Edit::Properties
+
+  include UploadWorkflow::Single::Edit::Events
+end
+
+module UploadWorkflow::Single::Edit::Data
+  include UploadWorkflow::Single::Data
+
+  include UploadWorkflow::Single::Edit::External
+end
+
+# New and overridden action methods specific to single-entry update.
+#
+module UploadWorkflow::Single::Edit::Actions
+  include UploadWorkflow::Single::Actions
+
+  include UploadWorkflow::Single::Edit::Data
+
+  # wf_start_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::Data#set_record
+  # @see Upload#begin_editing
+  #
+  def wf_start_submission: (*untyped event_args) -> void
+
+  def wf_finalize_submission: (*untyped event_args) -> void
+
+  # Canceling an edit requires reverting data fields to their original values
+  # which depends on whether the original record was in the :create phase or
+  # in the :edit phase (that is, editing a previously edited record).
+  #
+  # The original field values are supplied to the client form in a hidden
+  # 'revert_data' field, which is supplied back to the workflow via the :revert
+  # URL parameter when canceling.
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_cancel_submission: (*untyped event_args) -> void
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::External#update_in_index
+  #
+  def wf_index_update: (*untyped _event_args) -> void
+end
+
+module UploadWorkflow::Single::Edit::Simulation
+  include UploadWorkflow::Single::Simulation
+end
+
+module UploadWorkflow::Single::Edit::Events
+  include UploadWorkflow::Single::Events
+
+  include UploadWorkflow::Single::Edit::Simulation
+end
+
+# Overridden state transition methods specific to single-entry update.
+#
+module UploadWorkflow::Single::Edit::States
+  include UploadWorkflow::Single::States
+
+  include UploadWorkflow::Single::Edit::Events
+
+  include UploadWorkflow::Single::Edit::Actions
+
+  # Upon entering the :editing state:
+  #
+  # The user is presented with the edit form pre-populated with
+  # previously-provided values.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_editing_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :replacing state:
+  #
+  # The supplied replacement file is being validated.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_replacing_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :modifying state:
+  #
+  # The modified submission is complete and ready to move into the submission
+  # queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_modifying_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :modified state:
+  #
+  # The modified submission is moving into the submission queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_modified_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+end
+
+# Single-entry update workflow.
+#
+class UploadWorkflow::Single::Edit < UploadWorkflow::Single
+  include UploadWorkflow::Single::Edit::Events
+
+  include UploadWorkflow::Single::Edit::States
+
+  include Workflow::Base::Transitions
+end

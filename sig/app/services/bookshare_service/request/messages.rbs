@@ -1,0 +1,64 @@
+# BookshareService::Request::Messages
+#
+# == Usage Notes
+#
+# === From API section 2.8 (Messages):
+# Messages are notifications or alerts to users individually, or to all users
+# associated with a Site. They are sent from a Membership Assistant or a
+# system process, and not from user to user.
+#
+# -
+# noinspection RubyParameterNamingConvention
+# +
+module BookshareService::Request::Messages
+  include BookshareService::Common
+
+  include BookshareService::Testing
+
+  # == GET /v2/myMessages
+  #
+  # == 2.8.1. Get my messages
+  # Request the list of messages that the user is able to see. These could be
+  # specific to the user, or system-wide messages.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [String] :status
+  #
+  # @return [Bs::Message::UserMessageList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-my-messages-list
+  #
+  def get_my_messages: (**untyped opt) -> Bs::Message::UserMessageList
+
+  # == GET /v2/myMessages/(messageId)
+  #
+  # == 2.8.2. Get a message of mine
+  # Request a message that the user is able to see. This could be specific to
+  # the user, or a system-wide message.
+  #
+  # @param [String] messageId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Bs::Message::UserMessage]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-my-message
+  #
+  def get_my_message: (messageId: String, **untyped opt) -> Bs::Message::UserMessage
+
+  # == PUT /v2/myMessages/(messageId)
+  #
+  # == 2.8.3. Mark message as read
+  # As an individual member, mark a message of mine as read or unread.
+  #
+  # @param [String] messageId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [Boolean] :read       *REQUIRED*
+  #
+  # @return [Bs::Message::UserMessage]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-my-message
+  #
+  def update_my_message: (messageId: String, **untyped opt) -> Bs::Message::UserMessage
+end

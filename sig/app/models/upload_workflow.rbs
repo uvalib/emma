@@ -1,0 +1,619 @@
+class UploadWorkflow < Workflow::Base
+  DESTRUCTIVE_TESTING: bool
+end
+
+# Common elements of workflows associated with the creation of new entries.
+#
+module UploadWorkflow::Create
+  # The 'uploads' table field associated with the workflow state for new
+  # entries.
+  #
+  # @type [Symbol]
+  #
+  STATE_COLUMN: Symbol
+end
+
+# Common elements of workflows associated with the change of existing entries.
+#
+module UploadWorkflow::Edit
+  # The 'uploads' table field associated with workflow state for workflows
+  # involving modification of existing entries.
+  #
+  # @type [Symbol]
+  #
+  STATE_COLUMN: Symbol
+end
+
+# Common elements of workflows associated with the removal of existing entries.
+#
+module UploadWorkflow::Remove
+  # The 'uploads' table field associated with workflow state for workflows
+  # involving modification of existing entries.
+  #
+  # @type [Symbol]
+  #
+  STATE_COLUMN: Symbol
+end
+
+# Support for handling errors generated within the upload workflow.
+#
+module UploadWorkflow::Errors
+  include Emma::Common
+
+  include Emma::Debug
+
+  # Error types and messages.                                                   # NOTE: to Record::Exceptions::ENTRY_ERROR
+  #
+  # @type [Hash{Symbol=>(String,Class)}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  UPLOAD_ERROR: Hash[Symbol,(String|Class)]
+
+  module RenderMethods
+    # Default label. TODO: I18n                                                 # NOTE: to Record::Rendering
+    #
+    # @type [String]
+    #
+    DEFAULT_LABEL: String
+
+    def make_label: (untyped item, ?default: String) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include RenderMethods
+
+  # Each instance translates to a distinct line in the flash message.
+  #
+  class FlashPart < FlashHelper::FlashPart
+    include UploadWorkflow::Errors::RenderMethods
+
+    def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+  end
+
+  # Exception raised when a submission is incomplete or invalid.
+  #
+  class SubmitError < ExecError
+  end
+
+  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?untyped? value) -> void
+end
+
+module UploadWorkflow::Properties
+  include Workflow::Base::Properties
+
+  include UploadWorkflow::Errors
+
+  # The Federated Ingest API cannot accept more than 1000 items; this puts a
+  # hard upper-bound on batch sizes and the size of input values that certain
+  # methods can accept.
+  #
+  # @type [Integer]
+  #
+  INGEST_MAX_SIZE: Integer
+
+  # A string added to the start of each title created on a non-production
+  # instance to help distinguish it from other index results.
+  #
+  # @type [String]
+  #
+  DEV_TITLE_PREFIX: String
+
+  # A string added to the start of each title.
+  #
+  # This should normally be *nil*.
+  #
+  # @type [String, nil]
+  #
+  # @see #title_prefix
+  #
+  TITLE_PREFIX: String | nil
+
+  # A fractional number of seconds to pause between iterations.
+  #
+  # If *false* or *nil* then throttling will not occur.
+  #
+  # @type [Float, FalseClass, nil]
+  #
+  THROTTLE_PAUSE: Float | false | nil
+
+  # Force deletions of Unified Index entries regardless of whether the item is
+  # in the "uploads" table.
+  #
+  # When *false*, items that cannot be found in the "uploads" table are treated
+  # as failures.
+  #
+  # When *true*, items identified by submission ID will be included in the
+  # argument list to #remove_from_index unconditionally.
+  #
+  # @type [Boolean]
+  #
+  # @see #force_delete
+  #
+  FORCE_DELETE_DEFAULT: bool
+
+  # Force deletions of Unified Index entries even if the record ID does not
+  # begin with "emma-".  (This is to support development during which sometimes
+  # fake member repository entries get into the index.)
+  #
+  # When *false*, only items with :emma_repositoryRecordId values beginning
+  # with "emma-" will be submitted to Federated Search Ingest.  All other will
+  # result in generating a request for consideration by the member repository.
+  #
+  # When *true*, all items will be submitted to Federated Search Ingest.
+  #
+  # @type [Boolean]
+  #
+  # @see #emergency_delete
+  #
+  EMERGENCY_DELETE_DEFAULT: bool
+
+  # For the special case of deleting all records (effectively wiping the
+  # database) this controls whether the next available ID should be set to 1.
+  #
+  # Otherwise, the next record after removing all records will have an 'id'
+  # which is 1 greater than the last record prior to the deletion.
+  #
+  # When *false*, do not truncate the "uploads" table.
+  #
+  # When *true*, truncate the "uploads" table, resetting the initial ID to 1.
+  #
+  # @type [Boolean]
+  #
+  TRUNCATE_DELETE_DEFAULT: bool
+
+  # Permit the "creation" of member repository items via a request to be queued
+  # to the appropriate member repository.
+  #
+  # @type [Boolean]
+  #
+  REPO_CREATE_DEFAULT: bool
+
+  # Permit the "update" of member repository items via a request to be queued
+  # to the appropriate member repository.
+  #
+  # @type [Boolean]
+  #
+  REPO_EDIT_DEFAULT: bool
+
+  # Permit the "removal" of member repository items via a request to be queued
+  # to the appropriate member repository.
+  #
+  # @type [Boolean]
+  #
+  REPO_REMOVE_DEFAULT: bool
+
+  # Default size for batching.
+  #
+  # If *false* or *nil* then no batching will occur.
+  #
+  # @type [Integer, FalseClass, nil]
+  #
+  # @see #BATCH_SIZE
+  #
+  BATCH_SIZE_DEFAULT: Integer
+
+  # Batches larger than this number are not permitted.
+  #
+  # @type [Integer]
+  #
+  MAX_BATCH_SIZE: Integer
+
+  # Break sets of submissions into chunks of this size.
+  #
+  # This is the value returned by #batch_size unless a different size was
+  # explicitly given via the :batch URL parameter.
+  #
+  # @type [Integer]
+  #
+  # @see #set_bulk_batch
+  # @see #MAX_BATCH_SIZE
+  #
+  BATCH_SIZE: Integer
+
+  # URL parameter names and default values.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  WF_URL_PARAMETER: symHash
+
+  # A string added to the start of each title.
+  #
+  # @return [String]                  Value to prepend to title.
+  # @return [FalseClass]              No prefix should be used.
+  #
+  # @see #TITLE_PREFIX
+  #
+  # == Usage Notes
+  # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
+  #
+  def title_prefix: () -> (String | false | nil)
+
+  # Force deletions of Unified Index entries regardless of whether the item is
+  # in the "uploads" table.
+  #
+  # @return [Boolean]
+  #
+  # @see #FORCE_DELETE_DEFAULT
+  #
+  def force_delete: () -> bool
+
+  # Force deletions of Unified Index entries even if the record ID does not
+  # begin with "emma-".  (This is to support development during which sometimes
+  # fake member repository entries get into the index.)
+  #
+  # @return [Boolean]
+  #
+  # @see #EMERGENCY_DELETE_DEFAULT
+  #
+  def emergency_delete: () -> bool
+
+  # If all "uploads" records are removed, reset the next ID to 1.
+  #
+  # @return [Boolean]
+  #
+  # @see #TRUNCATE_DELETE_DEFAULT
+  #
+  def truncate_delete: () -> bool
+
+  # Permit the "creation" of member repository items via a request to be queued
+  # to the appropriate member repository.
+  #
+  # @return [Boolean]
+  #
+  # @see #REPO_CREATE_DEFAULT
+  #
+  def repo_create: () -> bool
+
+  # Permit the "update" of member repository items via a request to be queued
+  # to the appropriate member repository.
+  #
+  # @return [Boolean]
+  #
+  # @see #REPO_EDIT_DEFAULT
+  #
+  def repo_edit: () -> bool
+
+  # Permit the "removal" of member repository items via a request to be queued
+  # to the appropriate member repository.
+  #
+  # @return [Boolean]
+  #
+  # @see #REPO_REMOVE_DEFAULT
+  #
+  def repo_remove: () -> bool
+
+  # Handle bulk uploads in batches.
+  #
+  # If this is disabled, the method returns *false*; otherwise it returns the
+  # batch size.
+  #
+  # @return [Integer]                 Bulk batch size.
+  # @return [FalseClass]              Bulk operations should not be batched.
+  #
+  # @see #set_bulk_batch
+  #
+  def batch_size: () -> (Integer | false)
+
+  # This provides URL parameters in either the context of the controller (via
+  # UploadConcern) or in the context of the workflow instance (through the
+  # parameters saved from the :params initializer option).
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def parameters: () -> symHash
+
+  # Extract the named URL parameter from *params*.
+  #
+  # @param [Symbol]    key            URL parameter name.
+  # @param [Hash, nil] params         Default: `#parameters`.
+  #
+  # @return [Boolean]
+  #
+  # == Implementation Notes
+  # If *default* is *false* then *true* is returned only if *value* is "true".
+  # If *default* is *true* then *false* is returned only if *value* is "false".
+  #
+  def parameter_setting: (Symbol key, ?symHash? params) -> bool
+end
+
+# Fundamental upload mechanisms for managing submissions which entail:
+#
+# * File storage/retrieval/removal
+# * Database create/update/delete
+# * Federated Index create/update/delete
+# * Member repository submission queue (AWS S3) create/update/delete
+#
+module UploadWorkflow::External
+  include UploadWorkflow::Properties
+
+  include UploadWorkflow::Events
+
+  include ExecReport::Constants
+
+  def aws_api: () -> AwsS3Service
+
+  def ingest_api: () -> IngestService
+
+  def emma_item?: (untyped item) -> bool
+
+  def incomplete?: (untyped item) -> bool
+
+  def upload_create: (?index: bool?, ?atomic: bool, **untyped data) -> ([Upload, []] | [nil, Array[String|UploadWorkflow::Errors::FlashPart]])
+
+  def upload_edit: (?index: bool?, ?atomic: bool, **untyped data) -> ([Upload, []] | [nil, Array[String|UploadWorkflow::Errors::FlashPart]])
+
+  def upload_remove: (*(Upload|String|Array[Upload|String]) items, ?index: bool?, ?atomic: bool, ?force: bool?, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+
+  def batch_upload_remove: (Array[Upload|symHash|String|Integer] ids, ?index: bool?, ?atomic: bool, ?force: bool?, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+
+  def batch_upload_operation: (Symbol op, Array[Upload|symHash|String|Integer] items, ?size: (Integer|bool)?, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+
+  def throttle: (Integer counter, ?frequency: Integer, ?pause: Float|bool) -> void
+
+  # The database ID for the item, or, failing that, the submission ID.
+  #
+  # @param [Upload, Hash, String] item
+  #
+  # @return [String]                  Record :id or :submission_id.
+  # @return [nil]                     No identifier could be determined.
+  #
+  def identifier: (Upload|symHash|String item) -> String?
+
+  # Return an array of the characteristic identifiers for the item.
+  #
+  # @param [Upload, Hash, String] item
+  #
+  # @return [Array<String>]
+  #
+  def identifiers: (Upload|symHash|String item) -> strArray
+
+  def get_record: (Upload|symHash|String|nil id, ?no_raise: bool, ?meth: Symbol?) -> (Upload | nil)
+
+  def find_records: (*(Upload|String|Array[Upload|String]) items, **untyped opt) -> Array[Upload]
+
+  def new_record: (?(Upload|symHash)? data) -> Upload
+
+  def collect_records: (*(Upload|String|Array[Upload|String]) items, ?all: bool, force: true,  **untyped opt) -> [Array[Upload|String], []]
+                     | (*(Upload|String|Array[Upload|String]) items, ?all: bool, ?force: bool, **untyped opt) -> [Array[Upload], Array[String|UploadWorkflow::Errors::FlashPart]]
+
+  def add_title_prefix: (Upload record, ?prefix: String|bool|nil) -> void
+
+  # Upload file via Shrine.                                                     # NOTE: to Record::Uploadable#upload_file
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Rack::Request::Env] :env
+  #
+  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  #
+  # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
+  #
+  def upload_file: (**untyped opt) -> httpResult
+
+  def db_insert: (Upload|symHash data) -> Upload
+
+  def db_update: (Upload|symHash|String record, ?symHash? data) -> Upload?
+
+  def db_delete: (Upload|symHash|String data) -> untyped?
+
+  # As a convenience for testing, sending to the Federated Search Ingest API    # NOTE: to Record::Submittable::IndexIngestMethods
+  # can be short-circuited here.  The value should be *false* normally.
+  #
+  # @type [Boolean]
+  #
+  DISABLE_UPLOAD_INDEX_UPDATE: bool
+
+  def add_to_index: (*Upload items, ?atomic: bool) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
+
+  def update_in_index: (*Upload items, ?atomic: bool) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
+
+  def remove_from_index: (*(Upload|String) items, ?atomic: bool) -> [Array[Upload|String], Array[UploadWorkflow::Errors::FlashPart]]
+
+  def skip_index_ingest: (Symbol meth, *(Upload|String) items) -> untyped
+
+  # Interpret error message(s) generated by Federated Ingest to determine which # NOTE: to Record::Submittable::IndexIngestMethods
+  # item(s) failed.
+  #
+  # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
+  # @param [Array<Upload, String>]                                   items
+  #
+  # @return [Array<(Array,Array,Array)>]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
+  #
+  # @see ExecReport#error_table
+  #
+  # == Implementation Notes
+  # It's not clear whether there would ever be situations where there was a mix
+  # of errors by index, errors by submission ID, and/or general errors, but
+  # this method was written to be able to cope with the possibility.
+  #
+  def process_ingest_errors: (Ingest::Message::Response|Hash[(String|Integer),String] result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
+
+  def normalize_index_items: (*(Upload|String|Array[Upload|String]) items, ?meth: Symbol?, ?max: Integer) -> Array[Upload|String]
+
+  # Failure messages for member repository requests. # TODO: I18n               # NOTE: to Record::Submittable::MemberRepositoryMethods
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  REPO_FAILURE: Hash[Symbol,String]
+
+  def repository_create: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  def repository_modify: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  def repository_remove: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  def repository_dequeue: (*(String|Model) items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  # Interpret error message(s) generated by AWS S3.                            # NOTE: to Record::Submittable::MemberRepositoryMethods
+  #
+  # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
+  # @param [Array<String, Upload>]                                  items
+  #
+  # @return [Array<(Array,Array)>]           Succeeded items and failed item messages.
+  #
+  # @see ExecReport#error_table
+  #
+  def process_aws_errors: (AwsS3::Message::Response|Hash[(String|Integer),String] result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  def repository_removals: (symHash|Array[Upload|String]|nil items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  def repository_dequeues: (symHash|Array[Upload|String]|nil items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+
+  def repository_requests: (symHash|Array[Upload|String]|nil items, ?empty_key: bool) -> Hash[String,Array[Upload]]
+end
+
+# Workflow execution status information.
+#
+module UploadWorkflow::Data
+  include Workflow::Base::Data
+
+  include UploadWorkflow::External
+end
+
+# Methods used in the context of responding to workflow events.
+#
+module UploadWorkflow::Actions
+  include Workflow::Base::Actions
+
+  include UploadWorkflow::Data
+
+  # wf_start_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_start_submission: (*untyped event_args) -> void
+
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_validate_submission: (*untyped event_args) -> void
+
+  # wf_finalize_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_finalize_submission: (*untyped event_args) -> void
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  def wf_index_update: (*untyped _event_args) -> void
+
+  # wf_list_items
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see Upload#expand_ids
+  #
+  def wf_list_items: (*untyped event_args) -> void
+
+  # wf_remove_items
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::External#batch_upload_remove
+  #
+  def wf_remove_items: (*untyped event_args) -> void
+
+  # wf_cancel_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_cancel_submission: (*untyped event_args) -> void
+end
+
+# Stubs for methods supporting internal workflow simulated activity.
+#
+module UploadWorkflow::Simulation
+  include Workflow::Base::Simulation
+end
+
+# Methods which are executed to initiate state transitions.
+#
+module UploadWorkflow::Events
+  include Workflow::Base::Events
+
+  include UploadWorkflow::Simulation
+end
+
+# Methods executed on transition into and out of a state.
+#
+module UploadWorkflow::States
+  include Workflow::Base::States
+
+  include UploadWorkflow::Events
+
+  include UploadWorkflow::Actions
+end
+
+# Standard create/update/delete workflows.
+#
+# NOTE: Since the workflow gem is geared toward pre-Ruby-3 handling of options,
+#   none of the methods for this and related classes/modules assume options are
+#   passed as the final element of *args (rather than via keyword arguments).
+#
+class UploadWorkflow < Workflow::Base
+  include UploadWorkflow::Events
+
+  include UploadWorkflow::States
+
+  include Workflow::Base::Transitions
+
+  include UploadWorkflow::Testing
+
+  # Indicate whether the workflow is dealing with the creation of a new EMMA
+  # entry.
+  #
+  def new_submission?: () -> bool
+
+  # Indicate whether the workflow is dealing with the update/deletion of an
+  # existing EMMA entry.
+  #
+  def existing_entry?: () -> bool
+
+  # The 'uploads' table field associated with workflow state.
+  #
+  # @return [Symbol]
+  #
+  # This method overrides:
+  # @see Workflow::ClassMethods#workflow_column
+  #
+  def self.workflow_column: (*untyped, **untyped) ?{ () -> untyped } -> Symbol
+
+  # Return the workflow type which is a key under 'en.emma.workflow'.
+  #
+  # @return [Symbol]
+  #
+  def self.workflow_type: () -> Symbol
+
+  # Sets up a direct descendent of this class to be the base of a set of
+  # subclass variants.
+  #
+  # @param [UploadWorkflow] workflow_base
+  #
+  # @return [void]
+  #
+  def self.inherited: (UploadWorkflow workflow_base) -> void
+end

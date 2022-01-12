@@ -88,6 +88,7 @@ class AwsS3::Record::SubmissionRequest < AwsS3::Api::Record
   #
   def initialize(src, opt = nil)
     opt ||= {}
+    # noinspection RubyMismatchedVariableType
     @file = @file_key = nil
     case src
       when AwsS3::Record::SubmissionRequest

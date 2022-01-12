@@ -1,0 +1,622 @@
+class UploadWorkflow::Single < UploadWorkflow
+end
+
+module UploadWorkflow::Single::Errors
+  include UploadWorkflow::Errors
+end
+
+module UploadWorkflow::Single::Properties
+  include UploadWorkflow::Properties
+
+  include UploadWorkflow::Single::Errors
+end
+
+module UploadWorkflow::Single::External
+  include UploadWorkflow::External
+
+  include UploadWorkflow::Single::Properties
+
+  include UploadWorkflow::Single::Events
+end
+
+# Workflow execution status information specific to single-item workflows.
+#
+module UploadWorkflow::Single::Data
+  include Emma::Json
+
+  include UploadWorkflow::Data
+
+  include UploadWorkflow::Single::External
+
+  # The Upload record associated with this workflow.
+  #
+  # @return [Upload, nil]
+  #
+  attr_reader record: Upload
+
+  # The characteristic "return value" of the workflow after an event has been
+  # registered.
+  #
+  # @return [Array<(Integer,Hash,Array<String>)>]  For :validating, :replacing
+  # @return [Array<Upload,String>]          For :removing, :removed
+  # @return [Upload, nil]                   For all other states
+  #
+  def results: () -> (httpResult | Array[String|Upload] | Upload | nil)
+
+  # If #record is *nil* then create it using *data*; otherwise update it using
+  # *data*.
+  #
+  # @param [Upload, Hash, String, nil] data
+  #
+  # @return [Upload, nil]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def set_data: (symHash|String|Upload|nil data) -> Upload?
+
+  alias set_record set_data
+
+  # Fields not preserved by #record_data.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_UPLOAD_FIELDS: symArray
+
+  # Prepare record data for use in creating a new record or updating an
+  # existing record.
+  #
+  # @param [Upload, Hash] data
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def record_data: (symHash|Upload data) -> symHash
+
+  # Clear the fields in an existing Upload record.
+  #
+  # @param [Upload, Hash, String, nil] data
+  #
+  # @return [Upload, nil]
+  #
+  def reset_record: (?(symHash|Upload|String)? data) -> Upload?
+
+  # Create a new Upload record.
+  #
+  # @param [Upload, Hash, String, nil] data
+  #
+  # @return [Upload, nil]
+  #
+  def create_record: (?(symHash|Upload|String)? data) -> Upload?
+
+  # Indicate whether a record was originally created by (or on behalf of) the
+  # workflow (as opposed to an existing record acquired from the database).
+  #
+  # @return [Boolean, nil]
+  #
+  def existing_record: () -> bool?
+
+  # Indicate whether the record is associated with an uploaded file.
+  #
+  def file_valid?: () -> bool
+
+  # Indicate whether the EMMA metadata associated with the record is valid.
+  #
+  def metadata_valid?: () -> bool
+
+  # Indicate whether a record has been assigned.
+  #
+  def empty?: () -> bool
+
+  # Indicate whether the item is valid.
+  #
+  def complete?: () -> bool
+end
+
+# New and overridden action methods specific to single-item upload workflows.
+#
+module UploadWorkflow::Single::Actions
+  include Emma::Json
+
+  include UploadWorkflow::Actions
+
+  include UploadWorkflow::Single::Data
+
+  # wf_start_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::Data#set_record
+  #
+  def wf_start_submission: (*untyped event_args) -> void
+
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::Data#set_record
+  #
+  def wf_validate_submission: (*untyped event_args) -> void
+
+  # wf_list_items
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_list_items: (*untyped event_args) -> void
+
+  # wf_remove_items
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_remove_items: (*untyped event_args) -> void
+
+  # wf_finalize_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_finalize_submission: (*untyped event_args) -> void
+
+  # wf_cancel_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_cancel_submission: (*untyped event_args) -> void
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  def wf_index_update: (*untyped _event_args) -> void
+
+  def wf_upload_file: (*untyped event_args) -> void
+
+  def wf_check_status: (*untyped event_args) -> void
+
+  def wf_check_retrieved: () -> String
+
+  def wf_check_indexed: () -> String
+
+  # Asset presence of an Upload record.
+  #
+  # @raise [RuntimeError]
+  #
+  # @return [TrueClass]
+  #
+  def assert_record_present: () -> true
+
+  # Asset that the Upload record is EMMA-native.
+  #
+  # @raise [RuntimeError]
+  #
+  # @return [TrueClass]
+  #
+  def assert_emma_record: () -> true
+end
+
+module UploadWorkflow::Single::Simulation
+  include UploadWorkflow::Simulation
+
+  # Simulated record properties.  (Always *nil* if `#SIMULATION` is *false*.)
+  #
+  # @return [RecordProperties]
+  # @return [nil]
+  #
+  attr_reader submission: untyped
+
+  def set_submission: (*untyped, **untyped) ?{ () -> untyped } -> untyped
+end
+
+module UploadWorkflow::Single::Events
+  include UploadWorkflow::Events
+
+  include UploadWorkflow::Single::Simulation
+end
+
+# Overridden state transition methods specific to single-item upload workflows.
+#
+# -
+# noinspection RubyTooManyMethodsInspection
+# +
+module UploadWorkflow::Single::States
+  include UploadWorkflow::States
+
+  include UploadWorkflow::Single::Events
+
+  include UploadWorkflow::Single::Actions
+
+  # Upon entering the :starting state.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_starting_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Set the record 'phase' when leaving the :starting state.
+  #
+  # @param [Workflow::State] state        State that is being exited.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_starting_exit: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :scheduling state:
+  #
+  # The submission is being scheduled for review.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_scheduling_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :assigning state:
+  #
+  # The submission is being assigned for review.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_assigning_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :holding state:
+  #
+  # The system is waiting for a reviewer (or the review process is paused).
+  #
+  # The submission will remain in this state until the reviewer's action causes
+  # the state to advance.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_holding_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :assigned state:
+  #
+  # The submission has been assigned for review.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_assigned_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # When leaving the :assigned state:
+  #
+  # The submission was assigned for review.
+  #
+  # @param [Workflow::State] state        State that is being exited.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_assigned_exit: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :reviewing state:
+  #
+  # The submission is under review.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_reviewing_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :rejected state:
+  #
+  # The submission has been rejected.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_rejected_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :approved state:
+  #
+  # The submission has been approved.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_approved_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :staging state:
+  #
+  # The submission request (submitted file plus generated request form) has
+  # been added to the staging area.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_staging_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :unretrieved state:
+  #
+  # For a member repository submission, the record's workflow will remain in
+  # this state until a separate action (external process or manual check via
+  # the web interface) determines that the submission has been retrieved and
+  # advances the state.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_unretrieved_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :retrieved state:
+  #
+  # The submission request has been retrieved by the member repository and
+  # removed from the staging area.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  # == Implementation Notes
+  # This method automatically transitions to :indexing, but that's only because
+  # there's no defined "signal" (from the perspective of the EMMA web service)
+  # to indicate that
+  #
+  def on_retrieved_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :indexing state:
+  #
+  # For an EMMA-native submission, the item is being added to the index.
+  #
+  # For a member repository submission, the record's workflow will remain in
+  # this state until a separate action (external process or manual check via
+  # the web interface) determines that the entry has appeared in the index.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_indexing_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :indexed state:
+  #
+  # The submission is complete and present in the EMMA Unified Index.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_indexed_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :suspended state:
+  #
+  # The system is pausing the workflow; it may be resumable.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_suspended_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :failed state:
+  #
+  # The system is terminating the workflow.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_failed_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :canceled state:
+  #
+  # The user is choosing to terminate the workflow.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_canceled_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :completed state:
+  #
+  # The user is choosing to terminate the workflow.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_completed_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :resuming state:
+  #
+  # Pseudo-state indicating the previous workflow state.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_resuming_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :purged state:
+  #
+  # All data associated with the submission is being eliminated.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_purged_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+end
+
+# Base class for single-item upload workflows.
+#
+class UploadWorkflow::Single < UploadWorkflow
+  include UploadWorkflow::Single::Events
+
+  include UploadWorkflow::Single::States
+
+  include Workflow::Base::Transitions
+
+  # Create a new instance.
+  #
+  # @param [Upload, Hash, String, nil] data
+  # @param [Hash]                      opt    Passed to #initialize_state
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def initialize: (symHash|String|Upload|nil data, **untyped opt) -> void
+
+  # Set initial state.
+  #
+  # @param [Any, nil] data
+  # @param [Hash]     opt
+  #
+  # @return [void]
+  #
+  def initialize_state: (untyped data, **untyped opt) -> void
+
+  # Indicate whether the workflow is dealing with the creation of a new EMMA
+  # entry.
+  #
+  def new_submission?: () -> bool
+
+  # Indicate whether the workflow is dealing with the update/deletion of an
+  # existing EMMA entry.
+  #
+  def existing_entry?: () -> bool
+
+  # Get the current state of the workflow item.
+  #
+  # @return [String]
+  #
+  def load_workflow_state: () -> String
+
+  # Set the current state of the workflow item.
+  #
+  # @param [Symbol, String] new_value
+  #
+  # @return [String]
+  #
+  def persist_workflow_state: (Symbol|String new_value) -> String
+
+  # Get the current real-time value of the record's workflow phase.
+  #
+  # @param [Upload, nil] rec          Default: `#record`.
+  #
+  # @return [Symbol, nil]
+  #
+  # @see Upload#get_phase
+  #
+  def get_workflow_phase: (?Upload? rec) -> Symbol?
+
+  # Set the current real-time value of the record's workflow phase.
+  #
+  # @param [Symbol, String, nil] new_value
+  # @param [Upload, nil]         rec        Default: `#record`.
+  #
+  # @return [Symbol, nil]
+  #
+  # @see Upload#set_phase
+  #
+  def set_workflow_phase: (?(Symbol|String)? new_value, ?Upload? rec) -> Symbol?
+
+  # Get the current real-time value of the appropriate workflow state field.
+  #
+  # @param [Upload, nil] rec          Default: `#record`.
+  #
+  # @return [String]  If the field had a *nil* value it will come back as ''.
+  # @return [nil]
+  #
+  # @see Upload#get_state
+  #
+  def get_workflow_state: (?Upload? rec) -> String?
+
+  # Set the current real-time value of the appropriate workflow state field.
+  #
+  # @param [Symbol, String, nil] new_value
+  # @param [Upload, nil]         rec        Default: `#record`.
+  #
+  # @return [String]  If the field had a *nil* value it will come back as ''.
+  # @return [nil]
+  #
+  # @see Upload#set_state
+  #
+  def set_workflow_state: (Symbol|String|nil new_value, ?Upload? rec) -> String?
+
+  # Generate a new instance of the appropriate workflow variant subclass.
+  #
+  # @param [String, Hash, Upload, nil] data
+  # @param [Hash]                      opt
+  #
+  # @return [UploadWorkflow::Single]
+  #
+  def self.generate: (symHash|String|Upload|nil data, **untyped opt) -> UploadWorkflow::Single
+
+  # Generate a new instance of the appropriate workflow variant subclass and
+  # perform checking based on its status.
+  #
+  # @param [String, Hash, Upload, nil] data
+  # @param [Hash]                      opt
+  #
+  # @option opt [String, Boolean] :html
+  #
+  # @return [UploadWorkflow::Single]
+  #
+  def self.check_status: (symHash|String|Upload|nil data, **untyped opt) -> UploadWorkflow::Single
+end

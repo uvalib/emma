@@ -1,0 +1,268 @@
+# Common model methods.
+#
+module Model
+  # A unique identifier for this model instance.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+
+  # Indicate whether the Model instance is composed of other Model instances.
+  #
+  def aggregate?: () -> bool
+
+  # The type for constituent Model elements for a class whose instances are
+  # aggregates.
+  #
+  # @return [Class, nil]
+  #
+  def aggregate_type: () -> Class?
+
+  # The field holding constituent Model elements for a class which supports
+  # aggregates.
+  #
+  # @return [Symbol, nil]
+  #
+  def aggregate_field: () -> Symbol?
+
+  # Indicate whether the Model instance is primarily a container for a list of
+  # other Model instances.
+  #
+  def collection?: () -> bool
+
+  # The type for constituent Model elements for a class whose instances are
+  # collections.
+  #
+  # @return [Class, nil]
+  #
+  def collection_type: () -> Class?
+
+  # The field holding constituent Model elements for a class whose instances
+  # are collections.
+  #
+  # @return [Symbol, nil]
+  #
+  def collection_field: () -> Symbol?
+
+  # The constituent Model elements related to this Model instance.
+  #
+  # @return [Array]   Possibly empty.
+  # @return [nil]     If the instance is not an aggregate or collection.
+  #
+  def elements: () -> symArray?
+
+  extend ActiveSupport::Concern
+
+  # Methods which extend the including class.
+  #
+  module ClassMethods
+    # Indicate whether instances of the including class are composed of other
+    # Model instances.
+    #
+    def aggregate?: () -> bool
+
+    # The type for constituent Model elements for a class whose instances are
+    # aggregates.
+    #
+    # @return [Class<Model>, nil]
+    #
+    def aggregate_type: () -> Class?
+
+    # The field holding constituent Model elements for a class which supports
+    # aggregates.
+    #
+    # @return [Symbol, nil]
+    #
+    def aggregate_field: () -> Symbol?
+
+    # Indicate whether the including class is primarily a container for a list
+    # of other Model instances.
+    #
+    def collection?: () -> bool
+
+    # The type for constituent Model elements for a class whose instances are
+    # collections.
+    #
+    # @return [Class<Model>, nil]
+    #
+    def collection_type: () -> Class?
+
+    # The field holding constituent Model elements for a class whose instances
+    # are collections.
+    #
+    # @return [Symbol, nil]
+    #
+    def collection_field: () -> Symbol?
+
+    # Create a :LIST_FIELD or :BASE_FIELD constant for a class if it defines
+    # :LIST_ELEMENT or :BASE_ELEMENT (respectively).
+    #
+    # @param [Symbol, String] field_name
+    # @param [Class, nil]     field_type
+    #
+    # @return [Symbol, nil]
+    #
+    # @see Api::Record::Associations::ClassMethods#has_many
+    #
+    def set_relation_field: (Symbol|String field_name, Class|nil field_type) -> Symbol?
+
+    # Validate the including aggregate/collection class.
+    #
+    # If a record class is intended to be an aggregate it should both include
+    # Api::Shared::AggregateMethods and define :BASE_ELEMENT.
+    #
+    # If a record class is intended to be a collection it should both include
+    # Api::Shared::CollectionMethods and define :LIST_ELEMENT.
+    #
+    # @raise [SyntaxError]            A problem was detected in development.
+    #
+    # @return [TrueClass]
+    #
+    def validate_relations: () -> true
+  end
+
+  # Indicate whether *name* is a field defined by this model.
+  #
+  # @param [Symbol, String]
+  #
+  def include?: (Symbol|String name) -> bool
+
+  # The fields defined by this model.
+  #
+  # @return [Array<Symbol>]
+  #
+  def field_names: () -> symArray
+
+  # The fields and values for this model instance.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def fields: () -> symHash
+
+  # Frozen Hash returned as a fall-back for failed configuration lookups.
+  #
+  # @type [Hash]
+  #
+  EMPTY_CONFIG: symHash
+
+  # Get configured record fields for a model/controller.
+  #
+  # @param [Symbol, String, Class, Model, Any] type       Model/controller type
+  # @param [Boolean]                           no_raise   If *true* return {}
+  #
+  # @raise [RuntimeError]             If *type* does not map on to a model.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def self.configuration_fields: (untyped `type`, ?no_raise: bool) -> Hash[Symbol,symHash]
+
+  # Keys under "emma.*.record" beginning with an underscore, which represent
+  # control directives and not record fields.
+  #
+  # @type [Array<Symbol>]
+  #
+  DIRECTIVES: symArray
+
+  # Configured record fields for each model/controller.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.fields_table: () -> Hash[Symbol,symHash]
+
+  # Combine configuration settings for a given model/controller.
+  #
+  # @param [Symbol, Any] type
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.configured_fields_for: (untyped `type`) -> Hash[Symbol,symHash]
+
+  # @private
+  CONFIG_PREFIX: Regexp
+
+  # Return the model class associated with *item*.
+  #
+  # @param [Any, nil] item             Symbol, String, Class, Model
+  #
+  # @return [Class, nil]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def self.class_for: (untyped item) -> Class?
+
+  # Return the name of the model associated with *item*.
+  #
+  # @param [Any, nil] item             Symbol, String, Class, Model
+  #
+  # @return [Symbol, nil]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def self.model_for: (untyped item) -> Symbol?
+
+  # Return the name of the model associated with *item*.
+  #
+  # @param [Any, nil] item            Symbol, String, Class, Model
+  #
+  # @return [Symbol, nil]
+  #
+  def self.for: (untyped item) -> Symbol?
+
+  private
+
+  def self.namespace_for: (untyped v) -> String
+
+  def self.namespaced?: (untyped v) -> bool
+
+  public
+
+  # Get configured record fields for the indicated model/controller.
+  #
+  # @param [Symbol, String, Class, Model, Any] item
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def self.config_for: (untyped item) -> Hash[Symbol,symHash]
+
+  # Get configured record fields relevant to an :index action for the indicated
+  # model/controller.
+  #
+  # @param [Symbol, String, Class, Model, Any] item
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def self.index_fields: (untyped item) -> Hash[Symbol,symHash]
+
+  # Get configured record fields relevant to a :show action for the indicated
+  # model/controller.
+  #
+  # @param [Symbol, String, Class, Model, Any] item
+  #
+  # @return [Hash{Symbol=>Hash}]        Frozen result.
+  #
+  def self.show_fields: (untyped item) -> Hash[Symbol,symHash]
+
+  # Get all configured record fields for the indicated model.
+  #
+  # @param [Symbol, String, Class, Model, Any] item
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def self.database_fields: (untyped item) -> Hash[Symbol,symHash]
+
+  # Get all configured record fields for the indicated model.
+  #
+  # @param [Symbol, String, Class, Model, Any] item
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def self.form_fields: (untyped item) -> Hash[Symbol,symHash]
+
+  # Mapping of label keys to fields from Search::Record::MetadataRecord.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SEARCH_RECORD_FIELDS: Hash[Symbol,symHash]
+end

@@ -1,0 +1,48 @@
+# Control bar panel with developer-only affordances.
+#
+module LayoutHelper::DevControls
+  include LayoutHelper::Common
+
+  include ConfigurationHelper
+
+  # Indicate whether it is appropriate to show developer-only controls.
+  #
+  def show_dev_controls?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+
+  # Render a container with developer-only controls.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [String, Symbol] :controller    Default: `params[:controller]`.
+  # @option opt [String, Symbol] :action        Default: `params[:action]`.
+  # @option opt [String]         :label_id
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       If no dev_controls configured.
+  #
+  def render_dev_controls: (**untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # dev_controls_label
+  #
+  # @param [Hash] opt                 Passed to #config_lookup.
+  #
+  # @return [String]
+  #
+  def dev_controls_label: (**untyped opt) -> String
+
+  # Generate developer-only controls.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dev_controls: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A control for toggling the #session_debug? status.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dev_toggle_debug: (**untyped opt) -> ActiveSupport::SafeBuffer
+end

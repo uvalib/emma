@@ -1,0 +1,77 @@
+# Methods mixed in to record elements related to catalog titles.
+#
+module Bs::Shared::TitleMethods
+  include Api::Shared::TitleMethods
+
+  include Bs::Shared::LinkMethods
+
+  # A unique identifier for this catalog title.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+
+  # A link to a title's thumbnail image.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def thumbnail_image: () -> String?
+
+  # A link to a title's cover image if present.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def cover_image: () -> String?
+
+  # All artifacts associated with this catalog title.
+  #
+  # @param [Array<BsFormatType>] types  Default: `BsFormatType#values`
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # Not all record types which include this module actually have an :artifacts
+  # property.
+  #
+  def artifact_list: (*BsFormatType types) -> strArray
+
+  # The number of pages.
+  #
+  # @return [Integer]
+  # @return [nil]                     If the value cannot be determined.
+  #
+  def page_count: () -> Integer?
+
+  # The number of images.
+  #
+  # @return [Integer]
+  # @return [nil]                     If the value cannot be determined.
+  #
+  def image_count: () -> Integer?
+
+  # Field(s) that may hold the title string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_fields: () -> symArray
+
+  # Field(s) that may hold the subtitle string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def subtitle_fields: () -> symArray
+
+  # Field(s) that may hold date information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def date_fields: () -> symArray
+
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def contents_fields: () -> symArray
+end

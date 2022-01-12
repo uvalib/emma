@@ -1,0 +1,73 @@
+# BookshareService::Properties
+#
+module BookshareService::Properties
+  include ApiService::Properties
+
+  # Configuration values from config/locales/service.en.yml
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  BOOKSHARE_CONFIG: symHash
+
+  # Maximum accepted value for a :limit parameter.
+  #
+  # @type [Integer]
+  #
+  # == Implementation Notes
+  # Determined experimentally.
+  #
+  MAX_LIMIT: Integer
+
+  # For use in example.
+  #
+  # @type [String]
+  #
+  DEFAULT_USER: String
+
+  # The primary Bookshare account used for testing.
+  #
+  # @type [String]
+  #
+  BOOKSHARE_TEST_ACCOUNT: String
+
+  # The identifier (:userAccountId) for the test member "Placeholder Member".
+  # (Only usable by #BOOKSHARE_TEST_ACCOUNT)
+  #
+  # @type [String]
+  #
+  BOOKSHARE_TEST_MEMBER: String
+
+  # Bookshare accounts used for testing.
+  #
+  # @type [Array<String>]
+  #
+  BOOKSHARE_TEST_USERS: strArray
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  # @see #BOOKSHARE_BASE_URL
+  #
+  def base_url: () -> String
+
+  # Bookshare API key.
+  #
+  # @return [String, nil]
+  #
+  # @see #BOOKSHARE_API_KEY
+  #
+  def api_key: () -> String?
+
+  # API version is not a part of request URLs.
+  #
+  # @return [String, nil]
+  #
+  # @see #BOOKSHARE_API_VERSION
+  #
+  def api_version: () -> String?
+
+  private
+
+  def self.included: (Module base) -> void
+end

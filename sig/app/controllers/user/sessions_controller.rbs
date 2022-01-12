@@ -1,0 +1,78 @@
+# User session controller.
+#
+# @see file:app/views/user/sessions/**
+#
+class User::SessionsController < Devise::SessionsController
+  include AuthConcern
+
+  include FlashConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include BookshareConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # == GET /users/sign_in
+  #
+  # Prompt the user for login credentials.
+  #
+  def new: () -> void
+
+  # == POST /users/sign_in
+  #
+  # Begin login session.
+  #
+  # @see AuthConcern#update_auth_data
+  #
+  def create: () -> void
+
+  # == DELETE /users/sign_out[?revoke=(true|false)]
+  #
+  # End login session.
+  #
+  # If the "no_revoke" parameter is missing or "false" then the local session
+  # is  ended _and_ its associated OAuth2 token is revoked.  If "no_revoke" is
+  # "true" then only the local session is ended.
+  #
+  # @see AuthConcern#delete_auth_data
+  #
+  def destroy: () -> void
+
+  # == GET /users/sign_in_local
+  #
+  # Sign in with a local EMMA username/password.
+  #
+  def sign_in_local: () -> void
+
+  # == GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
+  # == GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
+  #
+  # Sign in using information supplied outside of the OAuth2 flow.
+  #
+  # @see AuthConcern#local_sign_in
+  #
+  # == Usage Notes
+  # The initial request to this endpoint is redirected by Warden::Manager to
+  # OmniAuth::Strategies::Bookshare#request_call.  The second request is
+  # performed from OmniAuth::Strategies::Bookshare#callback_phase which
+  # provides the value for 'omniauth.auth'.
+  #
+  def sign_in_as: () -> void
+
+  # Trigger an exception if the signed-in user doesn't have a valid Bookshare
+  # OAuth2 token.
+  #
+  # @raise [RuntimeError]   If Bookshare account info was unavailable.
+  #
+  # @return [void]
+  #
+  def check_user_validity: () -> void
+
+  # Called to avoid timing-out waiting for credentials.
+  #
+  def no_devise_timeout: () -> void
+end

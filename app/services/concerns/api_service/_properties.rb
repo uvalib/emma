@@ -191,6 +191,7 @@ module ApiService::Properties
   #
   def engine_key(value)
     if value.is_a?(String) && value.include?('/')
+      # noinspection RubyMismatchedReturnType
       engines.find { |key, url| break key if value == url }
     elsif engines.include?((key = value.to_s.downcase.to_sym))
       key

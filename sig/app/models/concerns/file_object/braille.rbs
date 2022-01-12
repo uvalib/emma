@@ -1,0 +1,5 @@
+# A Braille file object.
+#
+class FileObject::Braille < FileObject
+  include FileFormat::Braille
+end

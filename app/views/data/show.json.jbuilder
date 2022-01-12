@@ -8,6 +8,7 @@
 name    ||= @name
 records ||= @item || []
 
+# noinspection RubyMismatchedArgumentType
 json.timestamp DateTime.now
 
 json.partial! 'data/details', records: records, name: name

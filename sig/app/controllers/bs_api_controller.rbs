@@ -1,0 +1,70 @@
+# Handle "Bookshare API Explorer" ("/bs_api" page) requests.
+#
+# @see BsApiConcern
+# @see file:app/views/bs_api/**
+#
+class BsApiController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include SerializationConcern
+
+  include BsApiConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # == GET /bs_api
+  #
+  # The main API test page.
+  #
+  def index: () -> void
+
+  # == GET /bs_api/v2/API_PATH[?API_OPTIONS]
+  # == GET /bs_api/v2/API_PATH[?user=API_USER]
+  #
+  # Direct access to the API guarded by authentication.  If the session is
+  # authenticated the endpoint will be (implicitly) contacted as that user.
+  # A configured user (one with a fixed OAuth2 token) may be specified in the
+  # URL options with "?user=xxx@bookshare.org" (or simply "?user=xxx" and
+  # "@bookshare.org" will be appended).
+  #
+  # NOTE: Intended to translate URLs within data directly into actionable links
+  #
+  def v2: () -> void
+
+  # == GET /bs_api/image[?url=...]
+  #
+  # Get an image.
+  #
+  # @see file:app/assets/javascripts/feature/images.js
+  #
+  # == Usage Notes
+  # This provides JavaScript with a way of asynchronously getting images
+  # without having to contend with CSRF.
+  #
+  def image: () -> void
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Hash] items
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?symHash items, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Hash] item
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def show_values: (?symHash item, **untyped opt) -> symHash
+end

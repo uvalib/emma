@@ -1,0 +1,17 @@
+# Bs::Message::CategoriesList
+#
+# @attr [Array<Bs::Record::CategorySummary>] categories
+# @attr [Integer]                            limit
+# @attr [Array<Bs::Record::Link>]            links
+# @attr [String]                             next
+# @attr [Integer]                            totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_categories_list
+#
+class Bs::Message::CategoriesList < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

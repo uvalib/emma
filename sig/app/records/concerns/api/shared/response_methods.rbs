@@ -1,0 +1,17 @@
+# Methods mixed in to message elements supporting error reporting.
+#
+module Api::Shared::ResponseMethods
+  # @return [ExecReport]
+  attr_reader exec_report: ExecReport
+
+  # Generate the error table.
+  #
+  # @param [Array<Faraday::Response, Exception, String, Array, nil>] src
+  #
+  # @return [ExecReport]
+  #
+  # == Usage Notes
+  # Intended to be executed in the initializer.
+  #
+  def initialize_exec_report: (*(Faraday::Response|Exception|String|nil|Array[Faraday::Response|Exception|String|nil]) src) -> ExecReport
+end

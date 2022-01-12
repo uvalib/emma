@@ -1,0 +1,334 @@
+# Support methods for the "/entry" controller.
+#
+module EntryConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Emma::Csv
+
+  include Emma::Json
+
+  include Record::Properties
+
+  include Record::Exceptions
+
+  include ParamsHelper
+
+  include FlashHelper
+
+  # :nocov:
+  #include PaginationConcern
+
+  MIME_REGISTRATION: Array[Class]
+
+  # URL parameters involved in pagination.                                      # NOTE: from UploadConcern#UPLOAD_PAGE_PARAMS
+  #
+  # @type [Array<Symbol>]
+  #
+  ENTRY_PAGE_PARAMS: symArray
+
+  # URL parameters involved in form submission.                                 # NOTE: from UploadConcern#UPLOAD_FORM_PARAMS
+  #
+  # @type [Array<Symbol>]
+  #
+  ENTRY_FORM_PARAMS: symArray
+
+  # POST/PUT/PATCH parameters from the entry form that are not relevant to the  # NOTE: from UploadConcern#IGNORED_UPLOAD_FORM_PARAMS
+  # create/update of an Entry instance.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_ENTRY_FORM_PARAMS: symArray
+
+  def entry_params: () -> symHash
+
+  def get_entry_params: (?prmHash? p) -> symHash
+
+  def entry_post_params: (?prmHash? p) -> symHash
+
+  def entry_bulk_post_params: (?prmHash? p, ?ActionDispatch::Request? req) -> Array[symHash]
+
+  def entry_request_params: ((Entry|untyped)? entry, ?symHash? prm) -> ([Entry, symHash] | [untyped, symHash])
+
+  def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash])?
+
+  # URL parameters associated with item/entry identification.                   # NOTE: from UploadConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMS: symArray
+
+  def set_identifiers: (?prmHash? p) -> String?
+
+  # Parameters used by Entry#search_records.                                    # NOTE: from UploadConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RECORDS_PARAMS: symArray
+
+  # Entry#search_records parameters that specify a distinct search query.       # NOTE: from UploadConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_ONLY_PARAMS: symArray
+
+  # Parameters used by #find_by_match_records or passed on to                   # NOTE: from UploadConcern
+  # Entry#search_records.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIND_OR_MATCH_PARAMS: symArray
+
+  def find_or_match_entries: (*(String|anyArray) items, **untyped opt) -> symHash
+
+  def get_entry: (?(String|Entry|anyHash)? item, **untyped opt) -> Entry?
+
+  def proxy_get_entry: (String sid, String host) -> Entry?
+
+  # For the 'new' endpoint, generate and persist a Phase::Create record and a
+  # temporary (un-persisted) Entry instance based on its attributes.
+  #
+  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
+  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  #
+  # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Phase record creation halted.
+  #
+  # @return [Entry]                         Un-persisted Entry instance.
+  #
+  def new_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+
+  # For the 'create' endpoint, update the Phase record created above and create # TODO: NOTE: used in place of Record::Submittable::SubmissionMethods#entry_create
+  # and persist a new Entry instance
+  #
+  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
+  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  #
+  # @raise [Record::StatementInvalid]       If submission ID was invalid.
+  # @raise [Record::NotFound]               If Phase::Create record not found.
+  # @raise [Record::SubmitError]            Invalid workflow transition.
+  # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
+  # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
+  #
+  # @return [Entry]                         New persisted Entry instance.
+  #
+  def create_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+
+  # For the 'edit' endpoint, generate and persist a Phase::Edit record and a    # TODO: NOTE: used in place of Record::Submittable::SubmissionMethods#entry_edit
+  # temporary (un-persisted) instance based on its attributes.
+  #
+  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
+  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  #
+  # @raise [Record::SubmitError]            If the Entry could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Phase record creation halted.
+  #
+  # @return [Entry]                         A record from the 'entries' table.
+  # @return [nil]                           If the Entry was not found.
+  #
+  def edit_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry?
+
+  # For the 'update' endpoint, get the matching Entry and update it from its
+  # most recent Phase::Edit.
+  #
+  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
+  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  #
+  # @raise [Record::NotFound]               If the Entry could not be found.
+  # @raise [Record::SubmitError]            If the Phase could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Entry record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Entry record update halted.
+  #
+  # @return [Entry]                         Updated Entry instance.
+  # @return [nil]                           If the Entry was not found.
+  #
+  def update_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry?
+
+  # For the 'delete' endpoint...
+  #
+  # @param [String, Entry, Array, nil] entries
+  # @param [Hash, nil]                 opt   Default: `#get_entry_params`.
+  #
+  # @raise [RangeError]               If :page is not valid.
+  #
+  # @return [Hash{Symbol=>Any}]       From Record::Searchable#search_records.
+  #
+  def delete_entry: (?(Entry|String|Integer|Array[String|Integer])? entries, ?symHash? opt) -> symHash
+
+  def destroy_entry: (?(Entry|String|Integer|Array[String|Integer])? entries, ?symHash? opt) -> anyArray
+
+  # For the 'renew' endpoint, find the most recent create and return with the
+  # related Entry.
+  #
+  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
+  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  #
+  # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
+  # @raise [Record::NotFound]           If Phase::Create could not be found.
+  #
+  # @return [Entry]                     A record from the 'entries' table.
+  #
+  def renew_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+
+  # For the 'reedit' endpoint, find the most recent edit and return with the
+  # related Entry.
+  #
+  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
+  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  #
+  # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
+  # @raise [Record::NotFound]           If Phase could not be found or created.
+  #
+  # @return [Entry]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def reedit_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+
+  # For the 'cancel' endpoint, ... # TODO: ?
+  #
+  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
+  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  #
+  # @raise [Record::SubmitError]                If Entry could not be found.
+  # @raise [ActiveRecord::RecordNotDestroyed]   If Phase could not be removed.
+  #
+  # @return [Entry]
+  # @return [nil]                               If the Entry was not found.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def cancel_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry?
+
+  def check_entry: (?(Entry|symHash)? item, ?symHash? opt) -> strArray
+
+  # Upload file to AWS S3 Shrine :cache.
+  #
+  # @param [Entry, Hash, nil] entry
+  # @param [Hash, nil]        opt     Default: `#entry_post_params`.
+  #
+  # @raise [Record::SubmitError]      If the record could not be found.
+  #
+  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  #
+  # @see Phase::Create#upload!
+  # @see Phase::Edit#upload!
+  #
+  def upload_file: (?(Entry|symHash)? entry, ?symHash? opt) -> httpResult
+
+  # bulk_new_entries
+  #
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
+  #
+  # @return [Any]
+  #
+  def bulk_new_entries: (?symHash? prm) -> untyped
+
+  # bulk_create_entries
+  #
+  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
+  #
+  # @raise [RuntimeError]             If both :src and :data are present.
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Created entries.
+  #
+  def bulk_create_entries: (?symHash? prm) -> Array[Entry]
+
+  # bulk_edit_entries
+  #
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
+  #
+  # @return [Any]
+  #
+  def bulk_edit_entries: (?symHash? prm) -> untyped
+
+  # bulk_update_entries
+  #
+  # @param [Hash, nil] prm
+  #
+  # @raise [RuntimeError]             If both :src and :data are present.
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Modified entries.
+  #
+  def bulk_update_entries: (?symHash? prm) -> Array[Entry]
+
+  # bulk_delete_entries
+  #
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
+  #
+  # @return [Any]
+  #
+  def bulk_delete_entries: (?symHash? prm) -> untyped
+
+  # bulk_destroy_entries
+  #
+  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params
+  #
+  # @raise [RuntimeError]             If both :src and :data are present.
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Removed entries.
+  #
+  def bulk_destroy_entries: (?symHash? prm) -> Array[Entry]
+
+  # bulk_check_entries
+  #
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
+  #
+  # @return [Any]
+  #
+  def bulk_check_entries: (?symHash? prm) -> untyped
+
+  # Default batch size for #reindex_submissions
+  #
+  # @type [Integer]
+  #
+  DEFAULT_REINDEX_BATCH: Integer
+
+  # reindex_submissions
+  #
+  # @param [Array<Model,String>] entries
+  # @param [Hash, nil]           opt          To Entry#get_relation except for:
+  #
+  # @option opt [Boolean] :atomic             Passed to #reindex_record.
+  # @option opt [Boolean] :dryrun             Passed to #reindex_record.
+  # @option opt [Symbol]  :meth               Passed to #reindex_record.
+  #
+  # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
+  #
+  def reindex_submissions: (*(Model|String) entries, **untyped opt) -> [strArray, strArray]
+
+  # Cause all of the listed items to be re-indexed.
+  #
+  # @param [Model, Array<Model>, ActiveRecord::Relation] list
+  # @param [Boolean]                                     atomic
+  # @param [Boolean]                                     dryrun
+  # @param [Symbol]                                      meth     Caller.
+  #
+  # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / failure messages
+  #
+  def reindex_record: (Model|Array[Model]|ActiveRecord::Relation list, ?atomic: bool, ?dryrun: bool, ?meth: Symbol) -> [strArray, strArray]
+
+  def pagination_finalize: (symHash result, **untyped opt) -> void
+
+  def post_response: ( Symbol|Integer|nil status,   (Model|String|FlashHelper::FlashPart|Array[Model|String|FlashHelper::FlashPart])? item, ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
+                   | (?(Symbol|Integer|nil) status, Exception item,                                                                         ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
+
+  private
+
+  #THIS_MODULE: untyped
+
+  include IngestConcern
+end

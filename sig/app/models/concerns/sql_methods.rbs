@@ -1,0 +1,301 @@
+# Common SQL methods for database record models.
+#
+# TODO: Postgres 11 handling of JSON?
+#
+# @see https://www.postgresql.org/about/featurematrix/
+# @see https://www.postgresql.org/docs/11/datatype-json.html
+# @see https://www.postgresql.org/docs/11/functions-json.html
+# @see https://www.postgresql.org/docs/11/hstore.html
+# @see https://www.postgresql.org/docs/11/functions-aggregate.html
+# @see https://www.postgresql.org/docs/11/functions-textsearch.html
+#
+module SqlMethods
+  include Emma::Common
+
+  # Indicate whether two records match.
+  #
+  # @param [ApplicationRecord] rec_1
+  # @param [ApplicationRecord] rec_2
+  #
+  def match?: (ApplicationRecord rec_1, ApplicationRecord rec_2) -> bool
+
+  # Translate hash keys/values into SQL conditions.
+  #
+  # @param [Array<Hash,String>]  terms
+  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
+  # @param [String, Symbol, nil] join       Alias for :connector.
+  # @param [Hash]                other      Additional terms.
+  #
+  # @return [String]  SQL expression.
+  # @return [Array]   SQL clauses if *connector* is set to *nil*.
+  #
+  # == Examples
+  #
+  # @example Single term - Hash
+  #   cond = { age: '18', hgt = 1.8 }
+  #   sql_terms(cond) -> "age = '18' AND hgt = '1.8'"
+  #
+  # @example Single term - SQL
+  #   ids = 'id IN (123, 456)'
+  #   sql_terms(ids) -> "(id IN (123, 456))"
+  #
+  # @example Multiple terms
+  #   sql_clauses(cond, ids)-> "age='18' AND hgt='1.8' AND (id IN (123, 456))"
+  #
+  def sql_terms: (*(anyHash|String) terms, ?join: Symbol|String|nil, connector: nil,            **untyped other) -> strArray
+               | (*(anyHash|String) terms, ?join: Symbol|String|nil, ?connector: Symbol|String, **untyped other) -> String
+
+  # Translate hash keys/values into SQL conditions.
+  #
+  # @param [Hash]           hash
+  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
+  # @param [String, Symbol, nil] join       Alias for :connector.
+  #
+  # @return [String]  SQL expression.
+  # @return [Array]   SQL clauses if *connector* is set to *nil*.
+  #
+  # == Examples
+  #
+  # @example AND-ed values
+  #   sql_clauses(id: '123', age: '18') -> "id = '123' AND age = '18'"
+  #
+  # @example OR-ed values
+  #   sql_clauses(id: '123', age: '18', join: :or)-> "id = '123' OR age = '18'"
+  #
+  def sql_clauses: (anyHash hash, ?join: Symbol|String|nil, connector: nil)            -> strArray
+                 | (anyHash hash, ?join: Symbol|String|nil, ?connector: String|Symbol) -> String
+
+  # Translate a key and value into a SQL condition.
+  #
+  # @param [String, Symbol, Hash] k
+  # @param [Any]                  v
+  #
+  # @return [String]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload sql_clause(k, v)
+  #   @param [String, Symbol] k
+  #   @param [Any]            v
+  #
+  # @overload sql_clause(hash)
+  #   @param [Hash] hash              Only the first pair is used.
+  #
+  # == Examples
+  #
+  # @example Single value
+  #   sql_clause(:id, '123') -> "id = '123'"
+  #
+  # @example Single value as a hash
+  #   sql_clause(id: '123')  -> "id = '123'"
+  #
+  # @example Multiple values
+  #   sql_clause(:id, %w(123 456 789)) -> "id IN ('123','456','789')"
+  #
+  # @example Multiple values as a hash
+  #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def sql_clause: (String|Symbol k, untyped v) -> String
+                | (anyHash)                    -> String
+
+  # Look for a value in a standard database field.
+  #
+  # @param [Symbol, String] column
+  # @param [String]         text
+  # @param [Boolean]        exact
+  # @param [Boolean]        match_case
+  #
+  # == Usage Notes
+  # Does not handle "match_case: true".
+  #
+  def sql_match_pattern: (Symbol|String column, String text, ?exact: bool, ?match_case: bool) -> String
+
+  # Look for value in a JSON-type database column.
+  #
+  # @param [Symbol, String] column
+  # @param [String, #to_s]  text
+  # @param [Boolean]        exact
+  # @param [Boolean]        match_case
+  #
+  # @see https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html
+  # @see https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql
+  #
+  # == Usage Notes
+  # Does not handle "exact: false" for field names yet, only field values.
+  #
+  def sql_match_json: (Symbol|String column, String text, ?exact: bool, ?match_case: bool) -> String
+
+  # Prepare a string for matching.
+  #
+  # @param [String, Any] text
+  # @param [Boolean]     exact
+  # @param [Boolean]     match_case
+  #
+  # @return [String, Any]
+  #
+  def sql_json_pattern: (untyped text, ?exact: bool, ?match_case: bool) -> untyped
+
+  # Generate a SQL JSON_TABLE definition.
+  #
+  # @param [Symbol, String]              column
+  # @param [String, nil]                 name       Def: derived from *column*.
+  # @param [Array, String, Symbol]       fields     JSON fields for *column*.
+  # @param [Hash{Symbol=>Array<Symbol>}] field_map  If *fields* not given.
+  #
+  # @return [String]
+  #
+  # == Implementation Notes
+  # * Documentation indicates that '$[*]' should work but only '$' seems to.
+  #
+  def sql_json_table: (Symbol|String column, ?fields: String?, ?name: (String|Symbol|Array[String|Symbol])?, ?field_map: Hash[Symbol,symArray]?) -> String
+
+  # Generate condition(s) for a WHERE clause.
+  #
+  # @param [Hash{Symbol=>Array<Symbol>}] field_map  For JSON fields.
+  # @param [Hash{Symbol=>Hash}]          param_map  For JSON fields.
+  # @param [Hash]                        matches    Field assertions.
+  #
+  # @return [String]                  Blank if no valid field assertions.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def sql_where_clause: (?field_map: Hash[Symbol,symArray]?, ?param_map: symHash?, **untyped matches) -> String
+
+  # Mapping of digits to visibly similar letters.
+  #
+  # @type [Hash{String=>String}]
+  #
+  DIGIT_TO_ALPHA: Hash[String,String]
+
+  # Some JSON key names have numbers in them but SQL seems to have a problem
+  # with that for the names defined within "COLUMNS()".
+  #
+  # @param [Array<String,Symbol>] name
+  #
+  # @return [String]
+  # @return [nil]                     If *name* was blank.
+  #
+  def sanitize_sql_name: (*(String|Symbol|nil) name) -> String?
+
+  # Make a string safe to use within an SQL LIKE statement.
+  #
+  # @param [String] text
+  # @param [String] escape_character
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # ActiveRecord::Sanitization::ClassMethods#sanitize_sql_like
+  #
+  def sanitize_sql_like: (String text, ?String escape_character) -> String
+
+  # Return the value, quoted if necessary.
+  #
+  # @param [Integer, Float, String, Symbol, nil]
+  #
+  # @return [Integer, Float, String, nil]
+  #
+  def sql_quote: (Integer|Float|String|Symbol|nil value) -> (Integer | Float | String | nil)
+
+  module InstanceMethods
+    include SqlMethods
+
+    # The fields defined in the schema for this record.
+    #
+    # @return [Array<Symbol>]
+    #
+    def field_names: () -> symArray
+
+    # Translate hash keys/values into SQL LIKE statements.
+    #
+    # @param [Array<Hash,String>]  terms
+    # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
+    # @param [String, Symbol, nil] join       Alias for :connector.
+    # @param [Hash]                opt        Passed to #merge_match_terms.
+    #
+    # @return [String]  SQL expression.
+    # @return [Array]   SQL clauses if *connector* is set to *nil*.
+    #
+    def sql_match: (*(anyHash|String) terms, ?join: Symbol|String|nil, connector: nil,            **untyped opt) -> strArray
+                 | (*(anyHash|String) terms, ?join: Symbol|String|nil, ?connector: Symbol|String, **untyped opt) -> String
+
+    # Accumulate match pairs.
+    #
+    # @param [String, Array, Hash] terms
+    # @param [Hash]                opt    Passed to #merge_match_terms!
+    #
+    def merge_match_terms: (*(anyHash|anyArray|String) terms, **untyped opt) -> Hash[Symbol,strArray]
+
+    # Accumulate match pairs.
+    #
+    # @param [Hash]                dst
+    # @param [String, Array, Hash] terms
+    # @param [Array<Symbol>]       columns    Limit fields to match.
+    # @param [Symbol]              type       Ignored unless :json.
+    # @param [Boolean]             sanitize   If *false* do not escape '%', '_'
+    #
+    # @return [Hash{Symbol=>Array<String>}] The modified *dst* hash.
+    #
+    def merge_match_terms!: (symHash dst, *(anyHash|anyArray|String) terms, ?columns: symArray?, ?type: Symbol?, ?sanitize: bool) -> Hash[Symbol,strArray]
+
+    # Dynamically create a derived table with JSON fields expanded into columns
+    #
+    # @param [String, Hash, nil] extra  Passed to #sql_extended_table
+    # @param [Hash]              opt    Passed to #sql_extended_table
+    #
+    # @return [ActiveRecord::Result]
+    #
+    def extended_table: (?(anyHash|String)? extra, **untyped opt) -> ActiveRecord::Result
+
+    # Generate the SQL statement for dynamically creating a derived table with
+    # JSON fields expanded into columns.
+    #
+    # @param [String, Hash, nil]           extra      More SQL appended to FROM
+    # @param [Hash{Symbol=>Array<Symbol>}] field_map
+    # @param [Array<Symbol>, Symbol, nil]  only
+    # @param [Array<Symbol>, Symbol, nil]  except
+    # @param [Hash]                        where      WHERE clause elements.
+    #
+    # @return [String]
+    #
+    def sql_extended_table: (?(anyHash|String)? extra, field_map: Hash[Symbol,symArray], ?only: symArray|Symbol|nil, ?except: symArray|Symbol|nil, **untyped where) -> String
+  end
+
+  # Class methods automatically added to the including class.
+  #
+  module ClassMethods
+    include InstanceMethods
+
+    # :nocov:
+    include ActiveRecord::ModelSchema::ClassMethods
+
+    include ActiveRecord::QueryMethods
+
+    # The fields defined in the schema for this record.
+    #
+    # @return [Array<Symbol>]
+    #
+    def field_names: () -> symArray
+
+    # Build a relation for finding records with columns containing matches on
+    # the given search term(s).
+    #
+    # @param [Array<Hash,String>]          terms
+    # @param [Symbol, String, Hash, Array] sort   No sort order if *nil*.
+    # @param [Hash]                        opt    Passed to #sql_match.
+    #
+    # @return [ActiveRecord::Relation]
+    #
+    def matching: (*(anyHash|String) terms, ?sort: (anyHash|Symbol|String|Array[Symbol|String]|nil), **untyped opt) -> ActiveRecord::Relation
+  end
+
+  private
+
+  def self.included: (Module base) -> void
+end

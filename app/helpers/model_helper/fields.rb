@@ -52,6 +52,7 @@ module ModelHelper::Fields
   #++
   def field_values(item, pairs = nil)
     if block_given?
+      # noinspection RubyMismatchedArgumentType
       yield(item).reverse_merge(pairs || {})
     elsif pairs.present?
       pairs
@@ -136,6 +137,7 @@ module ModelHelper::Fields
   def model_html_id(base)
     name = base.to_s.strip
     unless name.end_with?(*RESERVED_SUFFIX)
+      # noinspection RubyMismatchedReturnType
       FIELD_PREFIX.find { |prefix| name.delete_prefix!(prefix) }
     end
     name = 'None' if name.blank?

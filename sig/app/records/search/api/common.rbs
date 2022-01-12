@@ -1,0 +1,1250 @@
+# Shared values and methods.
+#
+# @see Api::Common
+#
+module Search::Api::Common
+  include Api::Common
+
+  # Type configurations.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/types/search.en.yml *en.emma.search.type*
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  CONFIGURATION: Hash[Symbol,symHash]
+
+  # Enumeration scalar type names and properties.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see #CONFIGURATION
+  #
+  ENUMERATIONS: Hash[Symbol,symHash]
+
+  # Enumeration type names.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see #CONFIGURATION
+  #
+  ENUMERATION_TYPES: symArray
+
+  # Enumeration default values.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #CONFIGURATION
+  #
+  ENUMERATION_DEFAULTS: Hash[Symbol,String]
+end
+
+# Publication Identifier
+#
+# == API description
+# The lowercase scheme and identifier for a publication.  For example,
+# isbn:97800110001. Only alphanumeric characters are accepted. No spaces or
+# other symbols are accepted. Dashes will be stripped from the stored
+# identifier. Accepted schemes are ISBN, ISSN, LCCN, UPC, OCLC, and DOI.
+#
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/PublicationIdentifier                   JSON schema specification
+#
+class PublicationIdentifier < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    # The subclass of PublicationIdentifier.
+    #
+    # @return [Class<PublicationIdentifier>]
+    #
+    def identifier_subclass: () -> Class
+
+    # class_type
+    #
+    # @return [Symbol]
+    #
+    def class_type: () -> Symbol
+
+    # class_prefix
+    #
+    # @return [String]
+    #
+    def class_prefix: () -> String
+
+    # The name of the represented identifier type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [Symbol]
+    #
+    def type: (?untyped? v) -> Symbol
+
+    # The identifier type portion of the value.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [String]
+    #
+    def prefix: (?untyped? v) -> String
+
+    # The identifier number portion of the value.
+    #
+    # @param [String, Any, nil] v
+    #
+    # @return [String]
+    #
+    def number: (untyped v) -> String
+
+    # Split a value into a type prefix and a number.
+    #
+    # @param [String, Any, nil] v
+    #
+    # @return [Array<(String, String)>]
+    #
+    def parts: (untyped v) -> [String, String]
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, Any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, Any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether a value could be used as a PublicationIdentifier.
+    #
+    # @param [String, Any, nil] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible PublicationIdentifier.
+    #
+    # @param [String, Any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> String?
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, Any, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the given value has the characteristic prefix.
+    #
+    # @param [String, Any, nil] v
+    #
+    def prefix?: (untyped v) -> bool
+
+    # Type-cast a value to a PublicationIdentifier.
+    #
+    # @param [Any, nil] v             Value to use or transform.
+    # @param [Boolean]  invalid
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def cast: (untyped v, ?invalid: bool) -> PublicationIdentifier?
+
+    # Create a new instance.
+    #
+    # @param [String, nil]    v       Identifier number.
+    # @param [Symbol, String] type    Determined from *v* if missing.
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def create: (String|nil v, ?(String|Symbol)? `type`) -> PublicationIdentifier?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # The identifier number portion of the value.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  # @return [String, nil]
+  #
+  def number: (?untyped? v) -> String?
+
+  # Split a value into a type prefix and a number.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  # @return [Array<(String, String)>]
+  #
+  def parts: (?untyped? v) -> [String, String]
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+
+  # Assign a new value to the instance, allowing for the possibility of an
+  # invalid identifier value.
+  #
+  # If *v* has the wrong kind of prefix then the result will be blank (and
+  # therefore invalid).
+  #
+  # @param [Any, nil] v
+  #
+  # @return [String]
+  #
+  def set: (untyped v) -> String
+
+  # Return the string representation of the instance value.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # Identifier subclasses.
+  #
+  # @return [Array<Class<PublicationIdentifier>>]
+  #
+  def self.identifier_classes: () -> Array[Class]
+
+  # Identifier type names.
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.identifier_types: () -> symArray
+
+  # Table of identifier subclasses.
+  #
+  # @return [Hash{Symbol=>Class<PublicationIdentifier>}]
+  #
+  def self.subclass_map: () -> Hash[Symbol,Class]
+
+  # Retrieve the matching identifier subclass.
+  #
+  # @param [Symbol, String, Class<PublicationIdentifier>, nil] type
+  #
+  # @return [Class<PublicationIdentifier>, nil]
+  #
+  def self.subclass: (?(Symbol|String|Class)? `type`) -> Class?
+
+  # Create an array of identifier candidate strings.
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  #
+  # @return [Array<String>]
+  #
+  def self.split: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value) -> strArray
+
+  # Create an array of identifier instances from candidate string(s).
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  # @param [Boolean]                                   invalid
+  #
+  # @return [Array<PublicationIdentifier>]
+  # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def self.objects: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, invalid: true)  -> Array[PublicationIdentifier|nil]
+                  | (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, ?invalid: bool) -> Array[PublicationIdentifier]
+
+  # Create a table of identifier instances from candidate string(s).
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  # @param [Boolean]                                   invalid
+  #
+  # @return [Hash{String=>PublicationIdentifier}]
+  # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
+  #
+  def self.object_map: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, invalid: true)  -> Hash[String,(PublicationIdentifier|nil)]
+                     | (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, ?invalid: bool) -> Hash[String,PublicationIdentifier]
+end
+
+# ISBN identifier.
+#
+class Isbn < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # Number of digits in an ISBN-10.
+    #
+    # @type [Integer]
+    #
+    ISBN_10_DIGITS: Integer
+
+    # Number of digits in an ISBN-13.
+    #
+    # @type [Integer]
+    #
+    ISBN_13_DIGITS: Integer
+
+    # If a value has a number of digits within this range it could be either a
+    # valid ISBN or intended as an ISBN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected ISBN prefixes.
+    #
+    # @type [Regexp]
+    #
+    ISBN_PREFIX: Regexp
+
+    # Pattern fragment for a valid separator between groups of ISBN digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR: String
+
+    # A pattern matching the form of an ISBN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISBN_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) ISBN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISBN_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an ISBN.
+    #
+    # @param [String, Any] v
+    #
+    # == Usage Notes
+    # If *v* matches #ISBN_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible ISBN.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> String?
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid ISBN.
+    #
+    # @param [String] v
+    #
+    def isbn?: (untyped v) -> bool
+
+    # Indicate whether the string is a valid ISBN-13.
+    #
+    # @param [String] v
+    #
+    def isbn13?: (untyped v) -> bool
+
+    # Indicate whether the value is a valid ISBN-10.
+    #
+    # @param [String] v
+    #
+    def isbn10?: (untyped v) -> bool
+
+    # If the value is an ISBN return it in a normalized form.
+    #
+    # @param [String]  v
+    # @param [Hash]    opt              Passed to #to_isbn13.
+    #
+    # @return [String, nil]
+    #
+    def to_isbn: (String v, **untyped opt) -> String?
+
+    # If the value is an ISBN-13; if it is an ISBN-10, convert it to the
+    # equivalent ISBN-13; otherwise return *nil*.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_isbn13: (String v, ?log: bool) -> String?
+
+    # If the value is an ISBN-10 return it; if it is an ISBN-13 that starts
+    # with "978", convert it to the equivalent ISBN-10; otherwise return *nil*.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_isbn10: (String v, ?log: bool) -> String?
+
+    # Generic ISBN checksum.
+    #
+    # @param [String]  isbn
+    # @param [Boolean] validate         If *true* an exception is raised if the
+    #                                     check digit is erroneous.
+    #
+    # @raise [RuntimeError]             If *isbn* contains a check digit but it
+    #                                     is not valid.
+    #
+    # @return [String, nil]
+    #
+    def checksum: (String isbn, ?validate: bool) -> String?
+
+    # Calculate the ISBN-13 checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit.
+    #
+    # @see https://www.isbn-international.org/content/isbn-users-manual
+    #
+    def isbn13_checksum: (String|Array[String|Integer] digits) -> String
+
+    # Calculate the ISBN-10 checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit or 'X'.
+    #
+    # @see https://en.wikipedia.org/wiki/Check_digit#ISBN_10
+    #
+    def isbn10_checksum: (String|Array[String|Integer] digits) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# ISSN identifier.
+#
+class Issn < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # A valid ISSN has this number of digits ([0-9X]).
+    #
+    # @type [Integer]
+    #
+    ISSN_DIGITS: Integer
+
+    # If a value has a number of digits within this range it could be either a
+    # valid ISSN or intended as an ISSN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected ISSN prefixes.
+    #
+    # @type [Regexp]
+    #
+    ISSN_PREFIX: Regexp
+
+    # Pattern fragment for a valid separator between groups of ISSN digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR: String
+
+    # A pattern matching the form of an ISSN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISSN_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) ISSN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISSN_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an ISSN.
+    #
+    # @param [String, Any] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible ISSN.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> String?
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid ISSN.
+    #
+    # @param [String] v
+    #
+    def issn?: (untyped v) -> bool
+
+    # If the value is an ISSN return it in a normalized form or *nil* otherwise
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    # @param [Boolean] validate         If *true*, return *nil* if the
+    #                                     checksum provided in *v* is invalid.
+    #
+    # @return [String, nil]
+    #
+    def to_issn: (String v, ?log: bool, ?validate: bool) -> String?
+
+    # Calculate the ISSN checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit or 'X'.
+    #
+    # @see https://www.issn.org/understanding-the-issn/assignment-rules/issn-manual/#2-1-construction-of-issn
+    #
+    def checksum: (String|Array[String|Integer] digits) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# OCN (OCLC Control Number) identifier.
+#
+# @see https://www.oclc.org/developer/news/2012/oclc-control-number-expansion-in-2013.en.html
+#
+class Oclc < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # The minimum/maximum number of digits associated with each expected OCN
+    # prefix.
+    #
+    # @type [Hash{Symbol=>Array<Integer,nil>}]
+    #
+    OCLC_FORMAT: Hash[Symbol,Array[Integer|nil]]
+
+    # A valid OCN has a number of digits in this range.
+    #
+    # @type [Range]
+    #
+    OCLC_DIGITS: Range[Integer]
+
+    # If a value has a number of digits within this range it could be either a
+    # valid OCLC or intended as an OCLC but with too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    # == Implementation Notes
+    # The minimum is a heuristic to account for OCLC numbers that were not
+    # left-zero-filled to give the number 8 digits.
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected OCN prefixes.
+    #
+    # @type [Regexp]
+    #
+    OCLC_PREFIX: Regexp
+
+    # A pattern matching the form of an OCN identifier.
+    #
+    # @type [Regexp]
+    #
+    OCLC_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) OCN identifier.
+    #
+    # @type [Regexp]
+    #
+    OCLC_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an OCN.
+    #
+    # @param [String, Any] v
+    #
+    # == Usage Notes
+    # If *v* matches #OCLC_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.  The one exception
+    # is if the prefix is "on" -- here the remainder must be a valid OCLC
+    # number (otherwise words like "one" are interpreted as "oclc:e").
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible OCN.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> String?
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid OCN.
+    #
+    # @param [String] v
+    #
+    def oclc?: (untyped v) -> bool
+
+    # If the value is an OCN return it in a normalized form or *nil* otherwise.
+    #
+    # If the string has a prefix then the number of included digits must match
+    # the number specified by the prefix.  If the string is only digits then it
+    # will be zero-filled on the left to make a valid OCN.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_oclc: (untyped v, ?log: bool) -> String?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# LCCN (LoC Control Number) identifier.
+#
+# @see http://www.loc.gov/marc/lccn_structure.html
+#
+class Lccn < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # Pre-2001 LCCNs have at least 13 characters; after that, 12 characters.
+    #
+    # The first characters (three prior to 2001, otherwise two) are alphabetic,
+    # but they may also be given as spaces.  It's not unlikely that they would
+    # be omitted from non-MARC metadata renderings.
+    #
+    # Pre-2001, the final character (supplement number) may also be given as a
+    # space.
+    #
+    # @type [Range]
+    #
+    LCCN_DIGITS: Range[Integer]
+
+    # If a value has a number of digits within this range it could be either a
+    # valid LCCN or intended as an LCCN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    LCCN_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected LCCN prefixes.
+    #
+    # @type [Regexp]
+    #
+    LCCN_PREFIX: Regexp
+
+    # A pattern matching the form of an LCCN identifier.
+    #
+    # @type [Regexp]
+    #
+    LCCN_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) LCCN identifier.
+    #
+    # @type [Regexp]
+    #
+    LCCN_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an LCCN.
+    #
+    # @param [String, Any] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible LCCN.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> String?
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid LCCN.
+    #
+    # @param [String] v
+    #
+    def lccn?: (untyped v) -> bool
+
+    # If the value is a LCCN return it in a normalized form or *nil* otherwise.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_lccn: (untyped v, ?log: bool) -> String?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# UPC identifier.
+#
+class Upc < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # A valid UPC has at least this many digits.
+    #
+    # Some forms have supplemental digits in addition to the base UPC number.
+    #
+    # @type [Integer]
+    #
+    UPC_DIGITS: Integer
+
+    # If a value has a number of digits within this range it could be either a
+    # valid UPC or intended as an UPC but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected UPC prefixes.
+    #
+    # @type [Regexp]
+    #
+    UPC_PREFIX: Regexp
+
+    # Pattern fragment for a valid separator between groups of UPC digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR: String
+
+    # A pattern matching the form of a UPC identifier.
+    #
+    # @type [Regexp]
+    #
+    UPC_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) UPC identifier.
+    #
+    # @type [Regexp]
+    #
+    UPC_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include a UPC.
+    #
+    # @param [String, Any] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible UPC.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> String?
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid UPC.
+    #
+    # @param [String] v
+    #
+    def upc?: (untyped v) -> bool
+
+    # If the value is a UPC return it in a normalized form or *nil* otherwise.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    # @param [Boolean] validate         If *true*, return *nil* if the
+    #                                     checksum provided in *v* is invalid.
+    #
+    # @return [String, nil]
+    #
+    def to_upc: (untyped v, ?log: bool, ?validate: bool) -> String?
+
+    # Calculate the UPC checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit.
+    #
+    def checksum: (String|Array[String|Integer] digits) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# DOI identifier.
+#
+# - UTF-8 Unicode characters
+# - Case-insensitive for ASCII Unicode characters
+# - Case-sensitive for non-ASCII Unicode characters
+#
+# @see https://www.doi.org/doi_handbook/2_Numbering.html
+#
+class Doi < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # A pattern matching any of the expected DOI prefixes.
+    #
+    # @type [Regexp]
+    #
+    DOI_PREFIX: Regexp
+
+    # A pattern matching the form of an DOI identifier.
+    #
+    # @type [Regexp]
+    #
+    DOI_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) DOI identifier.
+    #
+    # @type [Regexp]
+    #
+    DOI_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include a DOI.
+    #
+    # @param [String, Any] v
+    #
+    # == Usage Notes
+    # If *v* matches #DOI_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible DOI.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> String?
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    # == Implementation Notes
+    # Accounts for not-quite-valid forms like "doi:https://doi.org/..." by
+    # repeating prefix removal.
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid DOI.
+    #
+    # @param [String] v
+    #
+    def doi?: (untyped v) -> bool
+
+    # If the value is a DOI return it in a normalized form or *nil* otherwise.
+    #
+    # @param [String]  v
+    # @param [Boolean] log
+    #
+    # @return [String, nil]
+    #
+    def to_doi: (untyped v, ?log: bool) -> String?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# "Describes the type of work"
+#
+# @note Rejected for API 0.0.5
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.WorkType*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaCommonFields/emma_workType            JSON schema specification
+#
+class WorkType < EnumType
+end
+
+# "Feature of the format used by this instance of this work"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.FormatFeature*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaCommonFields/emma_formatFeature       JSON schema specification
+#
+class FormatFeature < EnumType
+end
+
+# "Ownership-based usage rights"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.Rights*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_rights                JSON schema specification
+#
+class Rights < EnumType
+end
+
+# "Source of this instance of the work"
+#
+# @note Deprecated with API 0.0.5
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.Provenance*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_provenance            JSON schema specification
+#
+class Provenance < EnumType
+end
+
+# "Format of this instance of the work"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.DublinCoreFormat*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFormat                          JSON schema specification
+# @see https://www.dublincore.org/specifications/dublin-core/dcmi-terms/terms/format                                                                DCMI Metadata Terms Format
+#
+class DublinCoreFormat < EnumType
+end
+
+# "Type of this instance of the work"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.DcmiType*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_type                  JSON schema specification
+# @see https://www.dublincore.org/specifications/dublin-core/dcmi-terms/terms/type                                                                  DCMI Metadata Terms Type
+#
+class DcmiType < EnumType
+end
+
+# "Accessibility features of this instance derived from schema.org"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yFeature*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityFeature    JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
+#
+class A11yFeature < EnumType
+end
+
+# "Accessibility controls of this instance derived from schema.org"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yControl*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityControl    JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
+#
+class A11yControl < EnumType
+end
+
+# "Accessibility hazards of this instance derived from schema.org"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yHazard*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityHazard     JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
+#
+class A11yHazard < EnumType
+end
+
+# "Accessibility APIs of this instance derived from schema.org"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yAPI*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityAPI        JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
+#
+# == Usage Notes
+# Because only ever has the value of "ARIA", it is generally ignored.
+#
+class A11yAPI < EnumType
+end
+
+# "How the user can perceive this instance of the work"
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.A11yAccessMode*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessMode              JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
+#
+class A11yAccessMode < EnumType
+end
+
+# "A list of single or combined access modes that are sufficient to understand"
+# "all the intellectual content of a resource"
+#
+# @see "en.emma.search.type.A11ySufficient"
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessModeSufficient    JSON schema specification
+# @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
+#
+class A11ySufficient < EnumType
+end
+
+# SourceType
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.SourceType*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_source              JSON schema specification
+#
+class SourceType < EnumType
+end
+
+# RemediatedAspects
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.RemediatedAspects*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_remediatedAspects   JSON schema specification
+#
+class RemediatedAspects < EnumType
+end
+
+# TextQuality
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.TextQuality*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_textQquality        JSON schema specification
+#
+class TextQuality < EnumType
+end
+
+# RemediationStatus
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.RemediationStatus*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_status              JSON schema specification
+#
+class RemediationStatus < EnumType
+end
+
+# SearchSort
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.SearchSort*
+# @see https://api.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/paths/search/get/parameters[name=sort]                                 JSON API specification
+#
+class SearchSort < EnumType
+end
+
+# SearchGroup
+#
+# == API description
+# (EXPERIMENTAL) Search results will be grouped by the given field.  Result
+# page size will automatically be limited to 10 maximum.  Each result will have
+# a number of grouped records provided as children, so the number of records
+# returned will be more than 10.  Cannot be combined with sorting by title or
+# date.
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.SearchGroup*
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/Group                                     JSON schema specification
+#
+class SearchGroup < EnumType
+end
+
+# SeriesType
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.SeriesType*
+#
+class SeriesType < EnumType
+end
+
+# TrueFalse
+#
+# @see file:config/locales/types/search.en.yml *en.emma.search.type.TrueFalse*
+#
+class TrueFalse < EnumType
+end

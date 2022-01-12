@@ -521,6 +521,9 @@ class Upload < ApplicationRecord
   # Depending on the context, the caller may need to validate the result with
   # EmmaRepository#valid?.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def self.repository_of(item)                                                  # NOTE: to Record::EmmaIdentification#repository_value
     item = item.to_s if item.is_a?(Symbol)
     if item && !item.is_a?(String)
@@ -555,6 +558,9 @@ class Upload < ApplicationRecord
   # If *item* is a String, it is assumed to be good.  Depending on the context,
   # the caller may need to validate the result with #valid_record_id?.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def self.record_id(item)                                                      # NOTE: to Record::EmmaIdentification
     result   = (item.to_s if item.nil?)
     result ||= (item.to_s.strip if item.is_a?(String) || item.is_a?(Symbol))

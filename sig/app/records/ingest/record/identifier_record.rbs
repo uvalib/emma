@@ -1,0 +1,39 @@
+# Metadata to uniquely identify a record in the EMMA Federated Search Index.
+#
+# Either:
+#
+# @attr [String]            emma_recordId
+#
+# Or:
+#
+# @attr [EmmaRepository]    emma_repository
+# @attr [String]            emma_repositoryRecordId
+# @attr [String]            emma_formatVersion        (optional)
+# @attr [DublinCoreFormat]  dc_format
+#
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/IdentifierRecord  JSON schema specification
+#
+class Ingest::Record::IdentifierRecord < Ingest::Api::Record
+  include Emma::Common
+
+  # Initialize a new instance.
+  #
+  # @param [Model, Hash, String nil] src
+  # @param [Hash, nil]               opt
+  #
+  # @option opt [String] :value       If *src* is *nil*, a unique record ID may
+  #                                     be provided here as the value for the
+  #                                     instance.
+  #
+  # @raise [Record::SubmitError]      If metadata was malformed.
+  #
+  def initialize: (Model|String|symHash|nil src, ?symHash? opt) -> void
+
+  # The unique identifier represented by this instance.
+  #
+  # @param [Boolean] no_version       If *true*, return "repo-rid-fmt".
+  #
+  # @return [String, nil]
+  #
+  def identifier: (?no_version: bool) -> String?
+end

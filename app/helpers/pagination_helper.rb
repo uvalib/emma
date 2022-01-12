@@ -299,14 +299,13 @@ module PaginationHelper
   # @return [nil]                     If *value* is invalid.
   #
   def page_path(value, page = nil)
-    # noinspection RubyMismatchedArgumentType
     value.is_a?(Symbol) ? page_history(value, page) : value.to_s
   end
 
   # A value to use in place of a path in order to engage browser history.
   #
-  # @param [Symbol]       action      One of [:back, :forward, :go].
-  # @param [Integer, nil] page        History page if *directive* is :go.
+  # @param [String, Symbol] action    One of [:back, :forward, :go].
+  # @param [Integer, nil]   page      History page if *directive* is :go.
   #
   # @return [String]
   #
@@ -344,6 +343,9 @@ module PaginationHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def pagination_count(count, total = nil, unit: nil, **opt)
     css_selector = '.search-count'
     count = positive(count).to_i

@@ -195,7 +195,7 @@ module Record::Steppable
 
   # Get the configured descriptive note for the state.
   #
-  # @param [Model, Symbol, String] item
+  # @param [Model, Symbol, String, nil] item
   #
   # @return [String, nil]
   #
@@ -206,7 +206,7 @@ module Record::Steppable
 
   # Get a natural-language description for the state.
   #
-  # @param [Model, Symbol, String] item
+  # @param [Model, Symbol, String, nil] item
   #
   # @return [String, nil]
   #
@@ -223,7 +223,7 @@ module Record::Steppable
 
   # Indicate whether this record represents an existing EMMA entry.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def existing_entry?(item)                                                     # NOTE: from Upload::WorkflowMethods
     state_value(item) == :completed
@@ -231,7 +231,7 @@ module Record::Steppable
 
   # Indicate whether this record represents an existing EMMA entry.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def new_submission?(item)                                                     # NOTE: from Upload::WorkflowMethods
     !existing_entry?(item)
@@ -245,11 +245,12 @@ module Record::Steppable
 
   # Return the group of the given state.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   # @return [Symbol]  Defaults to :all if *target_state* is invalid.
   #
   def state_group(item)                                                         # NOTE: from Upload::WorkflowMethods
+    # noinspection RubyNilAnalysis
     if item.is_a?(String) || item.is_a?(Symbol)
       state = item.to_sym
     else
@@ -260,13 +261,14 @@ module Record::Steppable
 
   # Return the label for the given state group.
   #
-  # @param [Model, String, Symbol] group
+  # @param [Model, String, Symbol, nil] group
   #
   # @return [String]
   # @return [nil]                     If *group* is invalid.
   #
   def state_group_label(group)                                                  # NOTE: from Upload::WorkflowMethods
     if group.is_a?(String) || group.is_a?(Symbol)
+      # noinspection RubyNilAnalysis
       group = group.to_sym
     else
       group = state_group(group)
@@ -284,7 +286,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step related to
   # the creation of a new EMMA entry.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def being_created?(item)                                                      # NOTE: from Upload::WorkflowMethods
     state_group(item) == :create
@@ -293,7 +295,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step related to
   # the modification of an existing EMMA entry.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def being_modified?(item)                                                     # NOTE: from Upload::WorkflowMethods
     state_group(item) == :edit
@@ -302,7 +304,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step related to
   # the removal of an existing EMMA entry.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def being_removed?(item)                                                      # NOTE: from Upload::WorkflowMethods
     state_group(item) == :remove
@@ -311,7 +313,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step related to
   # the review process.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def under_review?(item)                                                       # NOTE: from Upload::WorkflowMethods
     state_group(item) == :review
@@ -320,7 +322,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step related to
   # transmission to a member repository.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def being_submitted?(item)                                                    # NOTE: from Upload::WorkflowMethods
     state_group(item) == :submission
@@ -329,7 +331,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step related to
   # ingest into the EMMA Unified Index.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def being_indexed?(item)                                                      # NOTE: from Upload::WorkflowMethods
     state_group(item) == :finalization
@@ -338,7 +340,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step related to
   # ingest into the EMMA Unified Index.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def completed?(item)                                                          # NOTE: from Upload::WorkflowMethods
     state_group(item) == :done
@@ -347,7 +349,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step which leads
   # to a change in the associated EMMA index entry.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def in_process?(item)                                                         # NOTE: from Upload::WorkflowMethods
     item = state_group(item)
@@ -357,7 +359,7 @@ module Record::Steppable
   # Indicate whether this record is involved in a workflow step where
   # non-administrative data (EMMA or file data) could be changed.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def unsealed?(item)                                                           # NOTE: from Upload::WorkflowMethods
     item = state_group(item)
@@ -367,7 +369,7 @@ module Record::Steppable
   # Indicate whether this record is *not* involved in a workflow step where
   # non-administrative data (EMMA or file data) could be changed.
   #
-  # @param [Model, String, Symbol] item
+  # @param [Model, String, Symbol, nil] item
   #
   def sealed?(item)                                                             # NOTE: from Upload::WorkflowMethods
     !unsealed?(item)
@@ -387,6 +389,7 @@ module Record::Steppable
   #
   def job_class(item)
     cls = item.is_a?(Class) ? item : item.class
+    # noinspection RubyMismatchedReturnType
     "#{cls.name}::WorkflowJob".safe_constantize ||
       "#{cls.base_class}::WorkflowJob".safe_constantize ||
       Model::WorkflowJob
@@ -492,7 +495,7 @@ module Record::Steppable
 
     # Validate state table definitions and interconnections.
     #
-    # @param [Symbol, String, Array, Hash, nil] table   Def: `#state_table`
+    # @param [Hash, nil] table   Def: `#state_table`
     #
     # == Usage Notes
     # This is best put at the very end of the class definition so that any
@@ -988,7 +991,7 @@ module Record::Steppable
     # @param [Symbol, nil]  new_state   Target state after *action*.
     # @param [Boolean]      auto_retry
     #
-    # @return [(Any,Symbol)]            Action result and new effective state.
+    # @return [Array<(Any,Symbol)>]     Action result and new effective state.
     #
     # == Usage Notes
     # Ensures that if the action raises an exception then that is captured in

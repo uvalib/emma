@@ -1,0 +1,162 @@
+# View helper support methods related to `params` and `session`.
+#
+module ParamsHelper
+  # Request parameters that are not relevant to the application.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_PARAMETERS: symArray
+
+  # Used as the first character of a session value that has been compressed.
+  #
+  # @type [String]
+  #
+  # -
+  # noinspection RubyQuotedStringsInspection
+  # +
+  COMPRESSION_MARKER: String
+
+  # Indicate whether the current request is an HTTP GET.
+  #
+  def request_get?: () -> bool
+
+  # Indicate whether the current request is from client-side scripting.
+  #
+  def request_xhr?: () -> bool
+
+  # Indicate whether the current request is a normal HTTP GET that coming from
+  # the client browser session.
+  #
+  def route_request?: () -> bool
+
+  # Indicate whether the current request originates from an application page.
+  #
+  def local_request?: () -> bool
+
+  # Indicate whether the current request originates from an application page.
+  #
+  def same_request?: () -> bool
+
+  # The full request URL without request parameters.
+  #
+  # @return [String]
+  #
+  def request_path: () -> String
+
+  # All request parameters (including :controller and :action) as a Hash.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  #
+  # @return [Integer]
+  #
+  def request_parameter_count: (?prmHash? p) -> Integer
+
+  # All request parameters (including :controller and :action) as a Hash.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def request_parameters: (?prmHash? p) -> symHash
+
+  # The meaningful request URL parameters as a Hash (not including :controller
+  # or :action).
+  #
+  # @param [ActionController::Parameters, Hash, nil] prm  Default: `params`.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  # @see #request_parameters
+  # @see #IGNORED_PARAMETERS
+  #
+  def url_parameters: (?prmHash? prm) -> symHash
+
+  # Indicate whether the value has been compressed.
+  #
+  # @param [String, nil] v
+  #
+  def compressed_value?: (String|nil v) -> bool
+
+  # compress_value
+  #
+  # @param [String, nil] v
+  #
+  # @return [String]
+  #
+  def compress_value: (String|nil v) -> String
+
+  # decompress_value
+  #
+  # @param [String, nil] v
+  #
+  # @return [String, nil]
+  #
+  def decompress_value: (String|nil v) -> String?
+
+  # Get a reference to `session[section]`.
+  #
+  # @param [String, Symbol, nil] section
+  # @param [Hash, nil]           p        Default: `params`.
+  #
+  # @return [Hash]
+  #
+  def session_section: (?(String|Symbol)? section, ?symHash? p) -> anyHash
+
+  # Translate an item into the URL parameter for the controller with which it
+  # is associated.
+  #
+  # @param [Symbol, String, Hash, Module, Any] v  Def: `params[:controller]`.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def controller_to_name: (?untyped? v) -> String?
+
+  # Translate an item into the URL parameter for the controller with which it
+  # is associated.
+  #
+  # @param [Symbol, String, Hash, Any] v  Def: `params[:action]`.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def action_to_name: (?untyped? v) -> String?
+
+  # Translate into the URL parameters for the associated controller and action.
+  #
+  # @param [Symbol,String,Hash,Module,Any] ctrlr    Def: `params[:controller]`
+  # @param [Symbol,String,nil]             action   Def: `params[:action]`
+  #
+  # @return [Array<(Any,Any)>]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload ctrlr_action_to_names
+  #   Get :controller and :action from `#params`.
+  #   @return [Array<(String,String)>]
+  #
+  # @overload ctrlr_action_to_names(hash)
+  #   Extract :controller and/or :action from *hash*.
+  #   @param [Hash] hash
+  #   @return [Array<(String,String)>]
+  #   @return [Array<(String,nil)>]
+  #   @return [Array<(nil,String)>]
+  #   @return [Array<(nil,nil)>]
+  #
+  # @overload ctrlr_action_to_names(ctrlr)
+  #   @param [Symbol, String, Module] ctrlr
+  #   @return [Array<(String,nil)>]
+  #
+  # @overload ctrlr_action_to_names(ctrlr, action)
+  #   @param [Symbol, String, Hash, Module, Any] ctrlr
+  #   @param [Symbol, String]                    action
+  #   @return [Array<(String,String)>]
+  #
+  def ctrlr_action_to_names: (?(Module|Symbol|String|symHash)? ctrlr, ?(Symbol|String)? action) -> untyped
+
+  private
+
+  def self.included: (Module base) -> void
+end

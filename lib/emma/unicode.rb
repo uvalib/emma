@@ -37,6 +37,8 @@ module Emma::Unicode
   # @param [String, Integer, nil] left    Default: *pad*
   # @param [String, Integer, nil] right   Default: *l_pad*
   #
+  # @return [String]
+  #
   def pad_char(v, pad: nil, left: nil, right: nil)
     left  ||= pad || THIN_SPACE
     right ||= pad || left

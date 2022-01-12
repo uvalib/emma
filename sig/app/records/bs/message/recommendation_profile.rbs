@@ -1,0 +1,7 @@
+# Bs::Message::RecommendationProfile
+#
+# @see Bs::Record::RecommendationProfile
+#
+class Bs::Message::RecommendationProfile < Bs::Api::Message
+  include Bs::Shared::LinkMethods
+end

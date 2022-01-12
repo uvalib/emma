@@ -1,0 +1,117 @@
+# Record utility methods related to identifiers for EMMA submissions.
+#
+module Record::EmmaIdentification
+  extend ActiveSupport::Concern
+
+  include Record
+
+  include Record::Identification
+
+  extend ::Record::EmmaIdentification
+
+  SID_COLUMN: Symbol
+
+  # @type [String]                                                              # NOTE: from Upload::IdentifierMethods
+  SID_PREFIX: String
+
+  # @type [(Integer,Integer)]                                                   # NOTE: from Upload::IdentifierMethods
+  SID_LETTERS: [Integer, Integer]
+
+  # @type [Integer]                                                             # NOTE: from Upload::IdentifierMethods
+  SID_LETTER_SPAN: Integer
+
+  # @type [String]                                                              # NOTE: from Upload::IdentifierMethods
+  SID_LETTER_MATCH: String
+
+  # @type [Regexp]                                                              # NOTE: from Upload::IdentifierMethods
+  SID_PATTERN: Regexp
+
+  # Column name for the submission ID.
+  #
+  # @return [Symbol]
+  #
+  def sid_column: () -> Symbol
+
+  def sid_value: (untyped item, **untyped opt) -> String?
+
+  def valid_sid?: (untyped value) -> bool
+
+  def emma_native?: (untyped item) -> bool
+
+  def repository_value: (untyped item) -> String?
+
+  def repository_name: (untyped item) -> String?
+
+  def record_id: (untyped item) -> String?
+
+  def valid_record_id?: (untyped item, ?add_repo: (String|strArray)?, ?add_fmt: (String|strArray)?) -> bool
+
+  def generate_submission_id: (?(Time|DateTime)? time, ?prefix: bool|String) -> String
+
+  def sid_counter: () -> Integer
+
+  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol?, **untyped opt) -> ApplicationRecord
+
+  def id_term: (untyped v, **untyped opt) -> Hash[Symbol,(String|Integer|nil)]
+
+  # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
+  #
+  # @type [String]
+  #
+  RNG_TERM: String
+
+  def expand_id_range: (String|Integer|Model id, **untyped opt) -> strArray
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::EmmaIdentification
+  end
+
+  # Methods which are only appropriate if the including class is an
+  # ApplicationRecord.
+  #
+  module InstanceMethods
+    include Record::EmmaIdentification
+
+    # @see Record::EmmaIdentification#sid_value
+    #
+    def sid_value: (?untyped? item, **untyped opt) -> String?
+
+    # @see Record::EmmaIdentification#valid_sid?
+    #
+    def valid_sid?: (?untyped? value) -> bool
+
+    # @see Record::EmmaIdentification#emma_native?
+    #
+    def emma_native?: (?untyped? item) -> bool
+
+    # @see Record::EmmaIdentification#repository_value
+    #
+    def repository_value: (?untyped? item) -> String?
+
+    # @see Record::EmmaIdentification#repository_name
+    #
+    def repository_name: (?untyped? item) -> String?
+
+    # @see Record::EmmaIdentification#record_id
+    #
+    def record_id: (?untyped? item) -> String?
+
+    # @see Record::EmmaIdentification#valid_record_id?
+    #
+    def valid_record_id?: (?untyped? item, **untyped opt) -> bool
+  end
+
+  private
+
+  include InstanceMethods
+
+  public
+
+  # A unique identifier for this model instance.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+end

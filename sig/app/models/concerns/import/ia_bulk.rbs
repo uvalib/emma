@@ -1,0 +1,139 @@
+# Definitions for the pre-release bulk upload of items gathered by Internet
+# Archive.
+#
+module Import::IaBulk
+  include Import
+
+  extend ::Import::IaBulk
+
+  # Import schema.
+  #
+  # @type [
+  #   Hash{Symbol=>Symbol},
+  #   Hash{Symbol=>(Symbol,Symbol)},
+  #   Hash{Symbol=>(Symbol,Proc)}
+  # ]
+  #
+  # == Notes
+  #
+  # [1] Collection is always %w(emma_uploads_restricted); this can be ignored
+  #     since this is just be used internally by IA to distinguish these items.
+  #
+  # [2] The name of the contributed file is always the basename of the URL in
+  #     the :download field if it is present.  Otherwise it can be derived from
+  #     :identifier and :contributed_file.
+  #
+  # [3] Items that are only for IA internal use can be ignored since they are
+  #     not relevant to EMMA metadata.
+  #
+  # [4] Fields which pertain to upload into IA can be ignored because they are
+  #     not relevant to EMMA metadata.
+  #
+  # -
+  # noinspection SpellCheckingInspection
+  # +
+  SCHEMA: Hash[Symbol, (Symbol | [Symbol,Symbol] | [Symbol,Proc])]
+
+  # Each "format" provided gets mapping into several :emma_data fields.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  FORMAT: Hash[Symbol,symArray]
+
+  # Each "mediatype" contributes to the :dc_type value.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  MEDIA_TYPE: Hash[Symbol,Symbol]
+
+  # If no format was provided in order to determine :dc_format, then
+  # #normalize_results will use this table to come up with a guess based on
+  # 'media_type' (if it was given).
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  DC_TYPE_TO_DC_FORMAT: Hash[Symbol,Symbol]
+
+  # Import schema.
+  #
+  # @return [Hash]
+  #
+  def schema: () -> Hash[Symbol, (Symbol | [Symbol,Symbol] | [Symbol,Proc])]
+
+  # Translate a format value into one or more :emma_data fields as indicated by
+  # the #FORMAT mapping.
+  #
+  # @param [Symbol] _k                The name of the field being imported.
+  # @param [Any]    v
+  #
+  # @return [Array<(Array<Symbol>,Array)>]
+  #
+  def translate_formats: (Symbol _k, untyped v) -> [symArray, anyArray]
+
+  # Transform a "contributor" value into a :rem_source value.
+  #
+  # @note This is probably no longer an appropriate mapping.
+  #
+  # @param [Any] v
+  #
+  # @return [String, nil]
+  #
+  def rem_source_value: (untyped v) -> String?
+
+  # Transform a "mediatype" into a :dc_format.
+  #
+  # @param [Any] v
+  #
+  # @return [String, nil]
+  #
+  def media_type_values: (untyped v) -> String?
+
+  # Transform a "portion" value into a :rem_complete value.
+  #
+  # @param [Any] v
+  #
+  # @return [Boolean, nil]
+  #
+  def rem_complete_value: (untyped v) -> bool?
+
+  # Transform a "remediated_aspects" value into a :rem_remediatedAspects value.
+  #
+  # @param [Any] v
+  #
+  # @return [Array<String>]
+  #
+  def rem_aspect_values: (untyped v) -> strArray
+
+  # Transform a "remediation_status" value into a :rem_status value.
+  #
+  # @param [Any] v
+  #
+  # @return [String, nil]
+  #
+  def rem_status_value: (untyped v) -> String?
+
+  # Transform a "series_type" value into a :bib_seriesType value.
+  #
+  # @param [Any] v
+  #
+  # @return [String, nil]
+  #
+  def series_type_value: (untyped v) -> String?
+
+  # Transform a "text_quality" value into a :rem_textQuality value.
+  #
+  # @param [Any] v
+  #
+  # @return [String, nil]
+  #
+  def text_quality_value: (untyped v) -> String?
+
+  # Normalize single-element arrays to scalar values and sort the fields for
+  # easier comparison when reviewing/debugging.
+  #
+  # @param [Hash] fields
+  #
+  # @return [Hash]
+  #
+  def normalize_results: (symHash fields) -> symHash
+end

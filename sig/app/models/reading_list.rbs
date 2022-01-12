@@ -1,0 +1,27 @@
+# Model for a Reading List.
+#
+class ReadingList < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Authorizable
+
+  # Indicate whether the reading list includes the indicated title or artifact.
+  #
+  # @param [String, Title, Artifact] item
+  #
+  def include?: (String|Title|Artifact item) -> bool
+
+  # Indicate whether the reading list includes the indicated title.
+  #
+  # @param [String, Title] item
+  #
+  def has_title?: (String|Title item) -> bool
+
+  # Indicate whether the reading list includes the indicated artifact.
+  #
+  # @param [String, Artifact] item
+  #
+  def has_artifact?: (String|Artifact item) -> bool
+end

@@ -1,0 +1,277 @@
+# Debugging support methods.
+#
+module Emma::Debug
+  # Methods for processing values for debug output.
+  #
+  module FormatMethods
+    include Emma::Common
+
+    # Separator between parts on a single debug line.
+    #
+    # @type [String]
+    #
+    DEBUG_SEPARATOR: String
+
+    # Truncate long inspection results to this number of characters.
+    #
+    # @type [Integer]
+    #
+    DEBUG_INSPECT_MAX: Integer
+
+    # Truncation indicator appended to a truncated output.
+    #
+    # @type [String]
+    #
+    DEBUG_INSPECT_OMISSION: String
+
+    # Classes that don't need to be specially annotated in #__debug_inspect.
+    #
+    # @type [Array<Class>]
+    #
+    DEBUG_INSPECT_COMMON: Array[Class]
+
+    # Representation of the calling method.
+    #
+    # @param [String, Symbol, Binding, nil] call_class   Def: `self.class.name`
+    # @param [String, Symbol, Method,  nil] call_method  Def: `#calling_method`
+    #
+    # @return [String]
+    #
+    def __debug_label: (?call_class: (String|Symbol|Binding)?, ?call_method: (String|Symbol|Method)?) -> String
+
+    # Representation of the controller/action for a route.
+    #
+    # @param [String, Symbol, nil] controller   Default: `self.class.name`.
+    # @param [String, Symbol, nil] action       Default: `#calling_method`.
+    #
+    # @return [String]
+    #
+    def __debug_route_label: (?controller: (String|Symbol)?, ?action: (String|Symbol)?) -> String
+
+    # Session values transformed into a Hash.
+    #
+    # @param [Hash, ActionDispatch::Request, ActionDispatch::Request::Session] value
+    #
+    # @return [Hash]
+    # @return [nil]                   If *value* is invalid or indeterminate.
+    #
+    # -
+    # noinspection RailsParamDefResolve
+    # +
+    def __debug_session_hash: (?(anyHash|ActionDispatch::Request)? value) -> strHash?
+
+    # Environment values transformed into a Hash.
+    #
+    # @param [Hash, ActionDispatch::Request] value
+    #
+    # @return [Hash]
+    # @return [nil]                   If *value* is invalid or indeterminate.
+    #
+    # -
+    # noinspection RailsParamDefResolve
+    # +
+    def __debug_env_hash: (?(anyHash|ActionDispatch::Request)? value) -> strHash?
+
+    # HTTP message headers transformed into a Hash.
+    #
+    # @param [Hash, ActionDispatch::Request, ActionDispatch::Response] value
+    #
+    # @return [Hash]
+    # @return [nil]                   If *value* is invalid or indeterminate.
+    #
+    # -
+    # noinspection RailsParamDefResolve
+    # +
+    def __debug_header_hash: (?(anyHash|ActionDispatch::Request|ActionDispatch::Response)? value) -> strHash?
+
+    # Produce an inspection for each argument.
+    #
+    # @param [Array] args
+    # @param [Hash]  opt              Options passed to #__debug_inspect_item.
+    #
+    # @return [Array<String>]
+    #
+    # @yield To supply additional items.
+    # @yieldreturn [Any, Array<Any>]
+    #
+    # @see #__debug_inspect_item
+    #
+    def __debug_inspect_items: (*untyped args, **untyped opt) { () -> untyped } -> strArray
+
+    # Generate one or more inspections.
+    #
+    # @param [Hash, Array, Any] value
+    # @param [Hash]             opt   Options passed to #__debug_inspect except
+    #
+    # @option opt [Boolean] :compact  If *true*, ignore empty values (but show
+    #                                   if value is a FalseClass).
+    #
+    # @return [Array<String>]
+    #
+    def __debug_inspect_item: (untyped value, **untyped opt) -> strArray
+
+    # Decorate and truncate inspection results.
+    #
+    # @param [Any]     value
+    # @param [Integer] max            Default: #DEBUG_INSPECT_MAX.
+    # @param [String]  omission       Default: #DEBUG_INSPECT_OMISSION.
+    #
+    # @return [String]
+    #
+    # @see Module#inspect
+    #
+    def __debug_inspect: (untyped value, ?max: Integer?, ?omission: String?) -> String
+
+    # Generate lines to produce boxed-line text.
+    #
+    # @param [String]  text
+    # @param [Integer] line_length
+    # @param [Integer] gap_width
+    # @param [String]  char
+    #
+    # @return [Array<String>]
+    #
+    def __debug_box: (String text, ?line_length: Integer, ?gap_width: Integer, ?char: String) -> strArray
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  # Methods for emitting debug output.
+  #
+  # When a module includes "Emma::Debug", these are made available only if
+  # CONSOLE_DEBUGGING is defined.
+  #
+  module OutputMethods
+    include FormatMethods
+
+    # Output arguments in a single line.
+    #
+    # @param [Array] args             Passed to #__debug_impl.
+    # @param [Hash]  opt
+    # @param [Proc]  block            Passed to #__debug_impl.
+    #
+    # @return [nil]
+    #
+    def __debug_line: (*untyped args, **untyped opt) { () -> untyped } -> nil
+
+    # Output each data item on its own line, with special handling to inject
+    # the parameter values of the calling method if a Binding is given.
+    #
+    # @param [Array] args             Passed to #__debug_line.
+    # @param [Hash]  opt
+    # @param [Proc]  block            Passed to #__debug_inspect_items.
+    #
+    # @return [nil]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload __debug_items(meth, bind, *parts, **opt)
+    #   Injects the parameters of the calling method as indicated by *bind*.
+    #   @param [Symbol, Method] meth    Start of the output line.
+    #   @param [Binding]        bind    Source of appended parameter values.
+    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Hash]           opt     Passed to #__debug_line except for:
+    #   @option opt [Any] :only         Passed to #get_params.
+    #   @option opt [Any] :except       Passed to #get_params.
+    #
+    # @overload __debug_items(bind, *parts, **opt)
+    #   Injects the parameters of the calling method as indicated by *bind*.
+    #   @param [Binding]        bind    Source of appended parameter values.
+    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Hash]           opt     Passed to #__debug_line except for:
+    #   @option opt [Any] :only         Passed to #get_params.
+    #   @option opt [Any] :except       Passed to #get_params.
+    #
+    # @overload __debug_items(*parts, **opt)
+    #   The normal case with *parts* on a single output line.
+    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Hash]           opt     Passed to #__debug_line.
+    #
+    def __debug_items: (*untyped args, **untyped opt) { () -> untyped } -> nil
+
+    # Exception console debugging output.
+    #
+    # @param [String]    label
+    # @param [Exception] exception
+    # @param [Array]     args         Passed to #__debug_line.
+    # @param [Hash]      opt
+    # @param [Proc]      block        Passed to #__debug_line.
+    #
+    # args[-1] [Hash]                 Options passed to #__debug except for:
+    #
+    # @option args.last [Boolean] :trace  Finish with a call stack trace to log
+    #                                       output.
+    #
+    # @return [nil]
+    #
+    def __debug_exception: (String label, Exception exception, *untyped args, **untyped opt) { () -> untyped } -> nil
+
+    # Output a line for invocation of a route method.
+    #
+    # @param [String, Symbol] controller  Default: `self.class.name`.
+    # @param [String, Symbol] action      Default: `#calling_method`.
+    # @param [Hash]           opt         Passed to #__debug_line.
+    # @param [Proc]           block       Passed to #__debug_items.
+    #
+    # @return [nil]
+    #
+    # -
+    # noinspection RailsParamDefResolve
+    # +
+    def __debug_route: (?controller: (String|Symbol)?, ?action: (String|Symbol)?, **untyped opt) { () -> untyped } -> nil
+
+    # Output request values and contents.
+    #
+    # @param [Array] args             Passed to #__debug_items.
+    # @param [Hash]  opt
+    # @param [Proc]  block            Passed to #__debug_items.
+    #
+    # args[0]  [Symbol]               Calling method (def: `#calling_method`).
+    # args[-1] [Hash]                 Options passed to #__debug except for:
+    #
+    # @option args.last [ActionDispatch::Request] :req  Default: `#request`.
+    #
+    # @return [nil]
+    #
+    def __debug_request: (Symbol meth, *untyped args, ?req: ActionDispatch::Request?, **untyped opt) { () -> untyped } -> nil
+                       | (             *untyped args, ?req: ActionDispatch::Request?, **untyped opt) { () -> untyped } -> nil
+
+    # Output a box which highlights the given text.
+    #
+    # @param [String] text
+    # @param [Hash]   opt             Passed to #__debug_box.
+    #
+    # @return [nil]
+    #
+    def __debug_banner: (String text, **untyped opt) -> nil
+  end
+
+  # Within the block, output to $stderr is captured and returned as a string.
+  #
+  # @return [String]
+  #
+  # @yield Block to execute.
+  # @yieldreturn [void]
+  #
+  def capture_stderr: () { () -> void } -> String
+
+  include FormatMethods
+
+  include OutputMethods
+
+  include FormatMethods
+
+  private
+
+  # If CONSOLE_DEBUGGING is *false*, all of the debug output methods are
+  # neutralized so that debug statements are syntactically correct but will
+  # not emit output and their blocks will not be evaluated.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

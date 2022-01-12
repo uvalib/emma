@@ -128,7 +128,7 @@ module AwsConcern
   #
   # @param [Hash, nil] opt            Default: `#url_parameters`.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   def aws_params(opt = nil)
     prm = url_parameters(opt)
@@ -148,10 +148,11 @@ module AwsConcern
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
   # @param [AwsS3Service, nil]   service      Def: `AwsS3Service.instance`.
   #
-  # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`
-  #
   # @return [String]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def repo_bucket(repository, deployment = nil, service: nil, **)
     aws_s3 = service || AwsS3Service.instance
     aws_s3.bucket_for(repository, deployment)

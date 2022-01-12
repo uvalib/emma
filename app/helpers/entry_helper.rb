@@ -146,6 +146,7 @@ module EntryHelper
   def render_emma_data(item, **opt)                                             # NOTE: from UploadHelper
     data  = item.try(:emma_data) || item.try(:[], :emma_data) or return
     pairs = json_parse(data)
+    # noinspection RubyMismatchedArgumentType
     pairs &&=
       Model::SEARCH_RECORD_FIELDS.map { |field, config|
         value = pairs.delete(config[:label]) || pairs.delete(field)

@@ -1,0 +1,73 @@
+# The data and metadata to submit a new remediated variant to a member
+# repository via an AWS bucket pickup location.
+#
+# -
+# === Submission Fields
+# +
+# @attr [String]                        submission_id
+# -
+# === Fields not yet supported by the Unified Index
+# +
+# @attr [String]                        bib_series
+# @attr [SeriesType]                    bib_seriesType
+# @attr [String]                        bib_seriesPosition
+#
+# @see file:config/locales/records/upload.en.yml          *en.emma.upload.record.emma_data*
+# @see file:config/locales/records/search.en.yml          *en.emma.search.record*
+# @see file:app/assets/javascripts/feature/file-upload.js *EmmaData*
+#
+# @see AwsS3::Record::SubmissionRequest   (duplicate schema)
+# @see Search::Record::MetadataRecord     (schema subset)
+#
+class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
+  include AwsS3::Shared::CreatorMethods
+
+  include AwsS3::Shared::DateMethods
+
+  include AwsS3::Shared::IdentifierMethods
+
+  include AwsS3::Shared::TitleMethods
+
+  # The AWS S3 file object that is the subject of the submission.
+  #
+  # @type [Aws::S3::Object, nil]
+  #
+  attr_reader file: Aws::S3::Object | nil
+
+  # The AWS object key for the submitted file.
+  #
+  # @type [String]
+  #
+  attr_reader file_key: String
+
+  # The AWS object key for the submission package.
+  #
+  # @type [String]
+  #
+  attr_reader key: String
+
+  # Initialize a new instance.
+  #
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash] src
+  # @param [Hash]                                           opt
+  #
+  # @option opt [Aws::S3::Object] :file   Override file for submission.
+  #
+  def initialize: (AwsS3::Message::SubmissionRequest|Model|symHash src, **untyped opt) -> void
+
+  # Create a new SubmissionRequest unless *src* already is one.
+  #
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash] record
+  #
+  # @return [AwsS3::Message::SubmissionRequest]
+  #
+  def self.[]: (AwsS3::Message::SubmissionRequest|Model|symHash record) -> AwsS3::Message::SubmissionRequest
+
+  # Normalize to an array of submission records.
+  #
+  # @param [AwsS3::Message::SubmissionRequest, Model, Hash, Array] records
+  #
+  # @return [Array<AwsS3::Message::SubmissionRequest>]
+  #
+  def self.array: (AwsS3::Message::SubmissionRequest|Model|symHash|Array[AwsS3::Message::SubmissionRequest|Model|symHash] records) -> Array[AwsS3::Message::SubmissionRequest]
+end

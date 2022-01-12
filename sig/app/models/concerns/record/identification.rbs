@@ -1,0 +1,149 @@
+# Record utility methods related to identifiers.
+#
+module Record::Identification
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Record::Exceptions
+
+  extend ::Record::Identification
+
+  ID_COLUMN: Symbol
+
+  USER_COLUMN: Symbol
+
+  # The type of record for the current context.
+  #
+  # (This will be Entry unless within an instance of another type of Record.)
+  #
+  # @return [Class<ApplicationRecord>]
+  #
+  def record_class: () -> Class
+
+  # Name of the type of record for the current context.
+  #
+  # @return [String]
+  #
+  def record_name: () -> String
+
+  # The type of record for the given item.
+  #
+  # @param [Any] item
+  #
+  # @return [Class<ApplicationRecord>]
+  #
+  def record_class_for: (untyped item) -> Class
+
+  # Name of the type of record for the given item.
+  #
+  # @param [Any] item
+  #
+  # @return [String]
+  #
+  def record_name_for: (untyped item) -> String
+
+  # Column name for the record identifier.
+  #
+  # @return [Symbol]
+  #
+  def id_column: () -> Symbol
+
+  def id_value: (untyped item, **untyped opt) -> String?
+
+  # Column name for the identifier of the associated user.
+  #
+  # @return [Symbol]
+  #
+  def user_column: () -> Symbol
+
+  def get_value: (untyped item, Symbol|String|Array[Symbol|String] key, ?default: untyped?) -> untyped?
+
+  # A foreign-key reference to the current record.
+  #
+  # @param [Hash{Symbol=>Any}] opt
+  #
+  # E.g., :entry_id would indicate an Entry ID.
+  #
+  # @return [Symbol]
+  #
+  def alt_id_key: (symHash opt) -> Symbol
+
+  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol?, **untyped opt) -> ApplicationRecord?
+
+  def find_records: (*(Model|String|strArray) items, ?id_key: Symbol?, ?alt_id_key: Symbol?, **untyped opt) -> Array[Model]
+
+  def collect_records: (*(Model|String|strArray) items, ?all: bool, ?force: bool, ?type: Class?, **untyped opt) -> ([Array[Model], anyArray] | [Array[Model|String], []])
+
+  def id_term: (untyped v, **untyped opt) -> Hash[Symbol,(Integer|String|nil)]
+
+  def compact_ids: (*(String|Integer|Model|Array[String|Integer|Model]) items, **untyped opt) -> strArray
+
+  def expand_ids: (*(String|Integer|Model|Array[String|Integer|Model]) ids, **untyped opt) -> strArray
+
+  # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
+  #
+  # @type [String]
+  #
+  RNG_TERM: String
+
+  def expand_id_range: (String|Integer|Model id, **untyped opt) -> strArray
+
+  def minimum_id: (?id_key: Symbol?) -> Integer
+
+  def maximum_id: (?id_key: Symbol?) -> Integer
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::Identification
+  end
+
+  # Methods which are only appropriate if the including class is an
+  # ApplicationRecord.
+  #
+  module InstanceMethods
+    include Record::Identification
+
+    extend Record::Identification
+
+    # @see Record::Identification#record_class
+    #
+    def self.record_class: () -> Class
+
+    # @see Record::Identification#record_class
+    #
+    def record_class: () -> Class
+
+    # @see Record::Identification#id_value
+    #
+    def id_value: (?untyped? item, **untyped opt) -> String?
+
+    # @see Record::Identification#get_value
+    #
+    def get_value: (*untyped item_key, **untyped opt) -> untyped?
+
+    # @see Record::Identification#minimum_id
+    #
+    def minimum_id: (**untyped opt) -> Integer
+
+    # @see Record::Identification#maximum_id
+    #
+    def maximum_id: (**untyped opt) -> Integer
+  end
+
+  private
+
+  include InstanceMethods
+
+  # :nocov:
+  include Model
+
+  public
+
+  # A unique identifier for this model instance.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+end

@@ -1,0 +1,51 @@
+# Common base for Active Job classes.
+#
+# @!method job_name
+#
+class ApplicationJob < ActiveJob::Base
+  include Emma::Common
+
+  include Emma::Debug
+
+  # :nocov:
+  #include ApplicationJob::Properties
+
+  #include ApplicationJob::Logging
+
+  def initialize: (*untyped arguments, **untyped opt) -> void
+
+  def perform: (*untyped) -> untyped
+
+  # Run the job immediately.
+  #
+  # @param [Array] args               Ignored.
+  #
+  # @return [Any]                     Return value of #perform.
+  #
+  def perform_now: (*untyped args) -> untyped
+
+  # Queue the job to be run asynchronously.
+  #
+  # @param [Array] args               Ignored.
+  # @param [Hash]  options            Passed to ActiveJob::Enqueuing#enqueue.
+  #
+  # @return [FalseClass]              If the job could not be queued.
+  # @return [ApplicationJob]          Otherwise *self* is returned.
+  #
+  def perform_later: (*untyped args, **untyped options) -> untyped
+
+  # Called from #perform to initiate a callback if one was supplied via the job
+  # arguments.
+  #
+  # @param [AsyncCallback, nil] callback
+  # @param [Hash]               opt       Passed to #cb_schedule.
+  #
+  # @option opt [AsyncCallback] :callback
+  #
+  # @return [void]
+  #
+  def perform_callback: (untyped callback, **untyped opt) -> untyped
+end
+
+module Attachment
+end

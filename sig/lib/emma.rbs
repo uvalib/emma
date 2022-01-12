@@ -1,0 +1,101 @@
+# This constant is defined to mark sections of code that are present only to
+# give context information to RubyMine -- for example, "include" statements
+# which allow RubyMine to indicate which methods are overrides.
+#
+# (This constant is required to be a non-false value.)
+#
+ONLY_FOR_DOCUMENTATION: true
+
+module Emma
+end
+
+class Object
+  public
+
+  # Require files via one or more "glob" patterns.
+  #
+  # @param [String] relative_to         Normally supplied as __FILE__
+  # @param [Array<String>] patterns     One or more relative paths; each path may
+  #                                       include "glob" patterns to specify
+  #                                       multiple files.
+  #
+  # @return [void]
+  #
+  # @see Dir#glob
+  #
+  def require_files: (String relative_to, *String patterns) -> void
+
+  # Require subdirectories via one or more "glob" patterns.
+  #
+  # @param [String] relative_to         Normally supplied as __FILE__
+  # @param [Array<String>] patterns     One or more relative paths; each path may
+  #                                       include "glob" patterns to specify
+  #                                       multiple files.
+  #
+  # @return [void]
+  #
+  # @see #require_files
+  #
+  def require_subdirs: (String relative_to, *String patterns) -> void
+
+  # Require the submodules for a file which are stored in the subdirectory with
+  # the same base name.
+  #
+  # @param [String] filename            Normally supplied as __FILE__
+  #
+  # @return [void]
+  #
+  # @see #require_files
+  #
+  def require_submodules: (String filename) -> void
+
+  # Require subclasses of the class defined by the current file which are in the
+  # same namespace (and stored in the subdirectory with the same base name).
+  #
+  # @param [String] filename            Normally supplied as __FILE__
+  #
+  # @return [void]
+  #
+  # @see #require_submodules
+  #
+  def require_subclasses: (String filename) -> void
+
+  public
+
+  # Include submodules.
+  #
+  # @param [Class, Module] base         The class or module into which the
+  #                                       submodules will be included.
+  # @param [String, nil]   filename     If provided, first #require each file
+  #                                       from the subdirectory with the same
+  #                                       base name as *filename*.
+  #
+  # @return [Array<Module>]             The modules included into *base*.
+  #
+  # @yield [name, mod] Access the module before including in *base*.
+  #   Use 'next' within the block to skip inclusion of that module.
+  # @yieldparam [Symbol] name
+  # @yieldparam [Module] mod
+  # @yieldreturn [void]
+  #
+  # @see #require_submodules
+  #
+  def include_submodules: (Module base, ?String? filename) { (Symbol, Module) -> void } -> Array[Module]
+
+  # Ensure that the given modules are included before the current one (to be run
+  # from within an "included" block).
+  #
+  # @param [Class, Module] base           The class or module into which the
+  #                                         current module will be included.
+  # @param [Array<Module>] prerequisites  One or more modules that should already
+  #                                         have been included in the current
+  #                                         context.
+  # @param [Module, nil]   this           The module being included
+  #                                         (default: *self*).
+  #
+  # @raise [RuntimeError]   Only when run from the desktop.
+  #
+  # @return [void]
+  #
+  def included_after: (Module base, *Module prerequisites, ?this: Module?) -> void
+end

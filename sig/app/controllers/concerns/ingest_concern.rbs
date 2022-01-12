@@ -1,0 +1,25 @@
+# Controller support methods for access to the Ingest API service.
+#
+module IngestConcern
+  extend ActiveSupport::Concern
+
+  include ApiConcern
+
+  include EngineConcern
+
+  # Access the EMMA Federated Ingest API service.
+  #
+  # @return [IngestService]
+  #
+  def ingest_api: () -> IngestService
+
+  # Process the URL parameter for setting the ingest engine URL.
+  #
+  # @return [void]
+  #
+  def set_ingest_engine: () -> void
+
+  private
+
+  #THIS_MODULE: untyped
+end

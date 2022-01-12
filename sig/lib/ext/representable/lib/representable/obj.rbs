@@ -1,0 +1,39 @@
+module Representable
+  # Represent a Ruby (hash) object.
+  module Obj
+    extend Representable::Hash::ClassMethods
+
+    include Representable::Hash
+
+    include Emma::Json
+
+    module ClassMethods
+      include Representable::Hash::ClassMethods
+    end
+
+    # Create a (hash) object from a serialized Ruby hash (or JSON).
+    #
+    # @param [String] data
+    # @param [Array]  args            To Representable::Hash#from_hash
+    #
+    # @return [Hash]
+    #
+    def from_obj: (String data, *untyped args) -> self
+
+    # Serialize a (hash) object into a representation of a Ruby (hash) object.
+    #
+    # @param [Array] args             To Representable::Hash#to_hash
+    #
+    # @return [String]
+    #
+    def to_obj: (*untyped args) -> String
+
+    alias parse from_obj
+
+    alias render to_obj
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+end

@@ -1,0 +1,24 @@
+# The base class for objects that are deposited into AWS S3.
+#
+class AwsS3::Api::Record < Api::Record
+  include AwsS3::Api::Common
+
+  include AwsS3::Api::Schema
+
+  include AwsS3::Api::Record::Schema
+
+  include AwsS3::Api::Record::Associations
+
+  # Recursively remove empty values from the object.  Unlike #compact_blank:
+  #
+  # - Preserves instance of explicit *false* values.
+  # - Converts to *nil* instances of #EMPTY_VALUE.
+  # - Returns *nil* if the entire object was empty.
+  #
+  # @param [Any] item
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def remove_empty_values: (untyped item) -> untyped
+end

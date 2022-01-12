@@ -1,0 +1,42 @@
+# Methods mixed in to record elements related to standard identifiers.
+#
+module Search::Shared::IdentifierMethods
+  include Api::Shared::IdentifierMethods
+
+  # The ISBN.
+  #
+  # @return [String]
+  # @return [nil]                     If the value cannot be determined.
+  #
+  def isbn: () -> String?
+
+  # Related ISBNs omitting the main ISBN if part of the data array.
+  #
+  # @return [Array<String>]
+  #
+  def related_isbns: () -> strArray
+
+  # The main and related ISBNs.
+  #
+  # @return [Array<String>]
+  #
+  def all_isbns: () -> strArray
+
+  # Get only ISBN identifiers.
+  #
+  # @param [Array<Symbol>] fields
+  #
+  # @return [Array<String>]
+  #
+  def extract_isbns: (*Symbol fields) -> strArray
+end
+
+class PublicationIdentifierSet < Set
+  def initialize: (untyped ids) -> void
+
+  def hash: () -> Integer
+
+  def eql?: (untyped other) -> bool
+
+  def ==: (untyped other) -> bool
+end

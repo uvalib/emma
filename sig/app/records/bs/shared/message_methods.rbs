@@ -1,0 +1,24 @@
+# Methods mixed in to record elements related to messages.
+#
+module Bs::Shared::MessageMethods
+  # :nocov:
+  #include Model
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+
+  # Return the unique identifier for the represented item.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+end

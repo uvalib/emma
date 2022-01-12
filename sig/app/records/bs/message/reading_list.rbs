@@ -1,0 +1,22 @@
+# Bs::Message::ReadingList
+#
+# @attr [BsAccess]                access
+# @attr [Array<BsAllowsType>]     allows
+# @attr [String]                  assignedBy
+# @attr [IsoDate]                 dateUpdated
+# @attr [String]                  description
+# @attr [Array<Bs::Record::Link>] links
+# @attr [Integer]                 memberCount
+# @attr [String]                  name
+# @attr [String]                  owner
+# @attr [String]                  readingListId
+# @attr [Integer]                 subscriberCount
+# @attr [Integer]                 titleCount
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list
+#
+class Bs::Message::ReadingList < Bs::Api::Message
+  include Bs::Shared::LinkMethods
+
+  include Bs::Shared::ReadingListMethods
+end

@@ -1,0 +1,61 @@
+module Emma::Common::StringMethods
+  # Generic text list separator.
+  #
+  # @type [String]
+  #
+  LIST_SEPARATOR: String
+
+  # Separator between pairs of values (from a Hash).
+  #
+  # @type [String]
+  #
+  PAIR_SEPARATOR: String
+
+  # Strip HTML from value strings.
+  #
+  # @param [String, Symbol] string
+  #
+  # @return [String]
+  #
+  def sanitized_string: (String|Symbol string) -> String
+
+  # Generate a rendering of a hash as a delimited list of key-value pairs.
+  #
+  # @param [Hash] hash
+  # @param [Hash] opt                 Passed to #normalized_list; used locally:
+  #
+  # @option opt [String] :pair_separator   Default: #PAIR_SEPARATOR.
+  #
+  # @return [String]
+  #
+  def hash_string: (anyHash hash, **untyped opt) -> String
+
+  # Generate a rendering of an array as a delimited list of elements.
+  #
+  # @param [Array] array
+  # @param [Hash]  opt                Passed to #normalized_list; used locally:
+  #
+  # @option opt [String] :list_separator   Default: #LIST_SEPARATOR.
+  #
+  # @return [String]
+  #
+  def array_string: (anyArray array, **untyped opt) -> String
+
+  # Normalize nested arrays/hashes into a flat array of strings.
+  #
+  # @param [String, Symbol, Hash, Array<String,Symbol,Hash>] values
+  # @param [Hash]                                            opt
+  #
+  # @option opt [String]  :pair_separator   Passed to #hash_string.
+  # @option opt [String]  :list_separator   Passed to #array_string.
+  # @option opt [Boolean] :sanitize         Strip HTML from value strings
+  #                                           (default: *true*).
+  # @option opt [Boolean] :quote            Quote string values
+  #                                           (default: *false*)
+  # @option opt [Boolean] :inspect          Replace "v" with "v.inspect"
+  #                                           (default: *false*)
+  #
+  # @return [Array<String>]
+  #
+  def normalized_list: (untyped values, **untyped opt) -> strArray
+end

@@ -1,0 +1,33 @@
+# Support methods for managing developer status.
+#
+module DevHelper
+  include CookieHelper
+
+  # The header cookie indicating developer-only behaviors.
+  #
+  # @type [String]
+  #
+  DEV_COOKIE: String
+
+  # Indicate whether this is a developer client.
+  #
+  def dev_client?: () -> bool
+
+  # Set a cookie indicating a developer client.
+  #
+  # @param [User, nil] user
+  #
+  # @return [Boolean]
+  #
+  def remember_dev: (?User? user) -> bool
+
+  # Remove the cookie indicating a developer client.
+  #
+  # @return [void]
+  #
+  def forget_dev: (*untyped, **untyped) ?{ () -> untyped } -> void
+
+  private
+
+  def self.included: (Module base) -> void
+end

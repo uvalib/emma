@@ -1,0 +1,290 @@
+# Temporary directory.
+#
+# If provided as a relative path it will be expanded to the full absolute path.
+#
+# @type [String]
+#
+TMPDIR: String
+
+# OAuth2 providers for Devise.
+#
+# @type [Array<Symbol>]
+#
+OAUTH2_PROVIDERS: symArray
+
+# EMMA Federated Ingest API key.
+#
+# This does not have a default and *must* be provided through the environment.
+#
+# @type [String, nil]
+#
+INGEST_API_KEY: String | nil
+
+# Current EMMA Federated Ingest API version.
+#
+# This is informational only; search API URLs do not include it.
+#
+# @type [String]
+#
+# @see EmmaStatus#api_version
+#
+INGEST_API_VERSION: String
+
+# An override of the default EMMA Federated Ingest API request path.  If not
+# provided then IngestService#default_engine_url will be used.
+#
+# @type [String, nil]
+#
+INGEST_BASE_URL: String | nil
+
+# Current EMMA Unified Search API version.
+#
+# This is informational only; search API URLs do not include it.
+#
+# @type [String]
+#
+SEARCH_API_VERSION: String
+
+# An override of the default EMMA Unified Search API request path.  If not
+# provided then SearchService#default_engine_url will be used.
+#
+# @type [String, nil]
+#
+SEARCH_BASE_URL: String | nil
+
+# Bookshare API key.
+#
+# This does not have a default and *must* be provided through the environment.
+#
+# @type [String, nil]
+#
+BOOKSHARE_API_KEY: String | nil
+
+# Current Bookshare API version.
+#
+# @type [String]
+#
+BOOKSHARE_API_VERSION: String
+
+# Base Bookshare API request path.
+#
+# @type [String]
+#
+BOOKSHARE_BASE_URL: String
+
+# Base Bookshare authentication service path.
+#
+# @type [String]
+#
+BOOKSHARE_AUTH_URL: String
+
+# Users with pre-generated OAuth tokens for development purposes.
+#
+# The environment variable should be in a format acceptable to #json_parse
+# (either JSON or a rendering of a Ruby hash).
+#
+# @type [String, nil]
+#
+# @see AuthConcern#CONFIGURED_AUTH
+#
+BOOKSHARE_TEST_AUTH: String | nil
+
+# IA S3 access key generated when logged in as Internet Archive user
+# "emma_pull@archive.org".
+#
+# @type [String, nil]
+#
+# @see IaDownloadConcern#IA_AUTH
+#
+IA_ACCESS: String | nil
+
+# IA S3 secret generated when logged in as Internet Archive user
+# "emma_pull@archive.org".
+#
+# @type [String, nil]
+#
+# @see IaDownloadConcern#IA_AUTH
+#
+IA_SECRET: String | nil
+
+# IA server cookie for generation of "on-the-fly" content as Internet Archive
+# user "emma_pull@archive.org".
+#
+# @type [String, nil]
+#
+# @see IaDownloadConcern#IA_COOKIES
+#
+IA_USER_COOKIE: String | nil
+
+# IA server cookie for generation of "on-the-fly" content as Internet Archive
+# user "emma_pull@archive.org".
+#
+# @type [String, nil]
+#
+# @see IaDownloadConcern#IA_COOKIES
+#
+IA_SIG_COOKIE: String | nil
+
+# Base Internet Archive download path.
+#
+# @type [String]
+#
+IA_DOWNLOAD_BASE_URL: String
+
+# Amazon AWS region.
+#
+# This should be supplied by the UVA cloud infrastructure on startup.
+#
+# @type [String]
+#
+AWS_REGION: String
+
+# Amazon S3 storage.
+#
+# Defined in the "terraform-infrastructure" GitLab project in the files
+# "emma.lib.virginia.edu/ecs-tasks/staging/environment.vars" and
+# "emma.lib.virginia.edu/ecs-tasks/production/environment.vars".
+#
+# @type [String]
+#
+AWS_BUCKET: String
+
+# Amazon identity access key.
+#
+# This should be supplied by the UVA cloud infrastructure on startup.
+#
+# @type [String, nil]
+#
+AWS_ACCESS_KEY_ID: String | nil
+
+# Amazon identity secret.
+#
+# This should be supplied by the UVA cloud infrastructure on startup.
+#
+# @type [String, nil]
+#
+AWS_SECRET_KEY: String | nil
+
+# Control console debugging output.
+#
+# During normal operation this should be set to *false*.  Change the default
+# value here or override dynamically with the environment variable.
+#
+CONSOLE_DEBUGGING: bool
+
+# Control console output.
+#
+# Normally __output (and __debug) are not displayed in non-Rails invocations of
+# the code (e.g. rake, irb, etc) unless CONSOLE_DEBUGGING is *true*.
+#
+CONSOLE_OUTPUT: bool
+
+# Control TRACE_* activation.
+#
+# By default, the TRACE_* constants only active for when the code is being run
+# as a Rails application (i.e., not for "rake", "rails console", etc.).
+#
+TRACE_OUTPUT: bool
+
+# Control tracking of file load order.
+#
+# During normal operation this should be set to *false*.  Change the default
+# value here or override dynamically with the environment variable.
+#
+# @see #TRACE_OUTPUT
+# @see #__loading
+#
+TRACE_LOADING: bool
+
+# Control tracking of invocation of Concern "included" blocks.
+#
+# During normal operation this should be set to *false*.  Change the default
+# value here or override dynamically with the environment variable.
+#
+# @see #TRACE_OUTPUT
+# @see #__included
+#
+TRACE_CONCERNS: bool
+
+# Control tracking of Rails notifications.
+#
+# During normal operation this should be set to *false*.  Change the default
+# value here or override dynamically with the environment variable.
+#
+# @see #TRACE_OUTPUT
+# @see #NOTIFICATIONS
+#
+TRACE_NOTIFICATIONS: bool
+
+# When *true* invocation of each low-level IO operation triggers a log entry.
+#
+# @type [Boolean]
+#
+DEBUG_AWS: bool
+
+# Set to set the :debug option for Rack::Cors.
+#
+# @type [Boolean]
+#
+DEBUG_CORS: bool
+
+# Set to show low-level bulk import processing.
+#
+# @type [Boolean]
+#
+DEBUG_IMPORT: bool
+
+# When *true* invocation of each low-level IO operation triggers a log debug
+# entry.
+#
+# @type [Boolean]
+#
+DEBUG_IO: bool
+
+DEBUG_JOB: bool
+
+# Set to show registration of unique MIME types during startup.
+#
+# @type [Boolean]
+#
+DEBUG_MIME_TYPE: bool
+
+# When *true* invocation of each low-level IO operation triggers a log entry.
+#
+# @type [Boolean]
+#
+DEBUG_OAUTH: bool
+
+# When *true* invocation of each low-level IO operation triggers a log entry.
+#
+# @type [Boolean]
+#
+DEBUG_PUMA: bool
+
+# When *true* invocation of each low-level IO operation triggers a log entry.
+#
+# @type [Boolean]
+#
+DEBUG_SHRINE: bool
+
+# When *true* debug asset pipeline timings in "rake 'assets:precompile'".
+#
+# @type [Boolean]
+#
+DEBUG_SPROCKETS: bool
+
+# Set to show headers and data being sent to external APIs.
+#
+# @type [Boolean]
+#
+DEBUG_TRANSMISSION: bool
+
+DEBUG_WORKFLOW: bool
+
+DEBUG_RECORD: bool
+
+# Set to show low-level XML parse logging.
+#
+# @type [Boolean]
+#
+DEBUG_XML_PARSE: bool

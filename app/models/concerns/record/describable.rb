@@ -265,8 +265,10 @@ module Record::Describable
     # == Usage Notes
     # The including class is expected to define an overriding class method.
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def describe_type(model = nil, **opt)
-      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       model.class.send(__method__, model, **opt)
     end
@@ -281,8 +283,10 @@ module Record::Describable
     # == Usage Notes
     # The including class is expected to define an overriding class method.
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def describe_status(model = nil, **opt)
-      # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       model.class.send(__method__, model, **opt)
     end
@@ -363,6 +367,7 @@ module Record::Describable
 
     # @see Record::Describable#interpolation_table
     def interpolation_table
+      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__)
     end
 

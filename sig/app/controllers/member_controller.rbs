@@ -1,0 +1,90 @@
+# Handle Bookshare-only "/member" pages.
+#
+# @see MemberHelper
+# @see file:app/views/member/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
+#
+class MemberController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include SerializationConcern
+
+  include BookshareConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # == GET /member
+  #
+  # List all organization members.
+  #
+  # @see BookshareService::Request::Organization#get_my_organization_members
+  #
+  def index: () -> void
+
+  # == GET /member/:id
+  #
+  # Display details of an existing organization member.
+  #
+  # @see UserConcern#get_account_details
+  #
+  def show: () -> void
+
+  # == GET /member/new[?id=:id]
+  #
+  # Add metadata for a new organization member.
+  #
+  def new: () -> void
+
+  # == POST /member/:id
+  #
+  # Create an entry for a new organization member.
+  #
+  def create: () -> void
+
+  # == GET /member/:id/edit
+  #
+  # Modify metadata of an existing organization member entry.
+  #
+  def edit: () -> void
+
+  # == PUT   /member/:id
+  # == PATCH /member/:id
+  #
+  # Update the entry for an existing organization member.
+  #
+  def update: () -> void
+
+  # == DELETE /member/:id
+  #
+  # Remove an existing organization member entry.
+  #
+  def destroy: () -> void
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Bs::Message::UserAccountList] list
+  # @param [Hash]                         opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?untyped list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Hash, nil] result
+  # @param [Hash]      opt
+  #
+  # @return [Hash{Symbol=>Hash,Array}]
+  #
+  def show_values: (?anyHash? result, **untyped opt) -> symHash
+end

@@ -232,8 +232,8 @@ module Upload::EmmaDataMethods
 
   # parse_emma_data
   #
-  # @param [Search::Record::MetadataRecord, String, Hash, nil] data
-  # @param [Boolean]                                           allow_blank
+  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [Boolean] allow_blank
   #
   # @return [Hash]
   #

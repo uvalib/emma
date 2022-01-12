@@ -86,12 +86,14 @@ module Record::Sti
   # Indicate whether the current record is associated with a non-leaf class.
   #
   def sti_base?
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
   # Indicate whether the current record is associated with a leaf class.
   #
   def sti_child?
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 

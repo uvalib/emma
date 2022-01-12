@@ -1,0 +1,247 @@
+# Definitions for remediated file types.
+#
+# A class including this module is required to have the following constants
+# defined:
+#
+#   :FORMAT_FIELDS        Hash{Symbol=>Proc,Symbol}
+#   :FIELD_TRANSFORMS     Hash{Symbol=>Hash{Symbol=>Proc,Symbol}}
+#   :FIELD_ALWAYS_ARRAY   Array<Symbol>
+#
+module FileFormat
+  include Emma::Common
+
+  include Emma::Unicode
+
+  # Known format types.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see file:config/locales/types.en.yml
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  TYPES: symArray
+
+  # Placeholder for an unknown format.
+  #
+  # @type [String]
+  #
+  FORMAT_MISSING: String
+
+  # Separator between values of a multi-valued field.
+  #
+  # @type [String]
+  #
+  FILE_FORMAT_SEP: String
+
+  # FIELD_TRANSFORMS
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>Proc,Symbol}}]
+  #
+  # @see #field_transforms
+  #
+  FIELD_TRANSFORMS: Hash[Symbol,Hash[Symbol,(Proc|Symbol)]]
+
+  # File format fields whose values should be provided as an array even if
+  # there is only a single value element.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see #field_value_array
+  #
+  FIELD_ALWAYS_ARRAY: symArray
+
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  def configuration: () -> symHash
+
+  # parser
+  #
+  # @return [FileParser]
+  #
+  def parser: () -> FileParser
+
+  # parser_metadata
+  #
+  # @return [Any]                     Type is specific to the subclass.
+  #
+  def parser_metadata: () -> untyped
+
+  # Metadata extracted from the file format instance.
+  #
+  # @return [Hash]
+  #
+  def metadata: () -> strHash
+
+  # Extracted metadata mapped to common metadata fields.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def common_metadata: () -> symHash
+
+  # Metadata extracted from the file format instance.
+  #
+  # @param [Any] info                 Information supplied by the subclass.
+  #
+  # @return [Hash{String=>Any}]
+  #
+  # @yield [field, accessor, label, value]  Per-field processing by caller.
+  # @yieldparam [Symbol]              field
+  # @yieldparam [Symbol, Proc, Array] accessor
+  # @yieldparam [String]              label
+  # @yieldparam [Array<String>]       value
+  # @yieldreturn [(String,Array)] Pass back label/value pair.
+  #
+  def format_metadata: (untyped info) { (Symbol field, Symbol|symArray|Proc accessor, String label, strArray value) -> [String, strArray] } -> strHash
+
+  # Map metadata extracted from the file format instance into common metadata
+  # fields.
+  #
+  # @param [Any] info                 Information supplied by the subclass.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def mapped_metadata: (untyped info) -> symHash
+
+  # apply_field_accessor
+  #
+  # @param [Any]                 info
+  # @param [Symbol, Proc, Array] accessor
+  #
+  # @return [Array<String>]
+  #
+  def apply_field_accessor: (untyped info, Symbol|symArray|Proc accessor) -> strArray
+
+  # apply_field_transform
+  #
+  # @param [Symbol]        type
+  # @param [Symbol, Proc]  key
+  # @param [Array<String>] value
+  #
+  # @return [Array<String>]
+  #
+  def apply_field_transform: (Symbol `type`, Symbol|Proc key, strArray value) -> strArray
+
+  # Separator between values of a multi-valued field.
+  #
+  # @return [String]
+  #
+  def field_value_separator: () -> String
+
+  # format_fields
+  #
+  # @return [Hash{Symbol=>Proc,Symbol}]
+  #
+  def format_fields: () -> Hash[Symbol,(Proc|Symbol)]
+
+  # field_transforms
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>Proc,Symbol}}]
+  #
+  def field_transforms: () -> Hash[Symbol,Hash[Symbol,(Proc|Symbol)]]
+
+  # Fields whose values should be provided as an array even if there is only a
+  # single value element.
+  #
+  # @return [Array<Symbol>]
+  #
+  def field_value_array: () -> symArray
+
+  # mapped_metadata_fields
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def mapped_metadata_fields: () -> Hash[Symbol,Symbol]
+
+  # Transform a date object or string into "YYYY-MM-DD" format.
+  #
+  # @param [String, Date, DateTime] value
+  #
+  # @return [String]
+  #
+  def format_date: (String|Date|DateTime value) -> String
+
+  # Transform a date object or string into "YYYY-MM-DD HH:MM" format.
+  #
+  # @param [String, Date, DateTime] value
+  #
+  # @return [String]
+  #
+  def format_date_time: (String|Date|DateTime value) -> String
+
+  # format_image
+  #
+  # @param [String] _value
+  #
+  # @return [String]
+  #
+  def format_image: (String _value) -> String
+
+  # Used within #field_transforms to apply a method to each element of a
+  # value whether it is a scalar or an array.
+  #
+  # @param [Symbol]                meth
+  # @param [Array<String>, String] value
+  #
+  # @return [Array<String>, String]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload transform(meth, value)
+  #   @param [Symbol]        meth
+  #   @param [Array<String>] value
+  #   @return [Array<String>]
+  #
+  # @overload transform(meth, value)
+  #   @param [Symbol] meth
+  #   @param [String] value
+  #   @return [String]
+  #
+  def transform: (Symbol meth, strArray value) -> strArray
+               | (Symbol meth, String value)   -> String
+
+  # metadata_fmt
+  #
+  # @param [Symbol, String, nil] fmt
+  #
+  # @return [Symbol, String, nil]
+  #
+  def self.metadata_fmt: (Symbol|String|nil fmt) -> (Symbol | String | nil)
+
+  # normalize_language
+  #
+  # @param [String, Array<String>] value
+  #
+  # @return [String, Array<String>]
+  #
+  def self.normalize_language: (strArray value) -> strArray
+                             | (String value)    -> String
+
+  # Get configured properties for a file format.  If multiple sections are
+  # given each successive section is recursively merged into the previous.
+  #
+  # @param [Array<String, Symbol, Hash>] sections
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  def self.configuration: (*(symHash|String|Symbol) sections) -> symHash
+
+  # Get properties from a configuration section.
+  #
+  # @param [String, Symbol] section
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  def self.configuration_section: (String|Symbol section) -> symHash
+
+  # Configured properties for each file format.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.configuration_table: () -> symHash
+end

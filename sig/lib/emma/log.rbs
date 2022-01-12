@@ -1,0 +1,224 @@
+# Emma::Log
+#
+module Emma::Log
+  include Logger::Severity
+
+  LOG_LEVEL: Hash[Symbol, Integer]
+
+  # The current logger.
+  #
+  # @return [Logger]
+  #
+  def self.logger: () -> Logger
+
+  # Set the current logger.
+  #
+  # @param [Logger] logger
+  #
+  # @return [Logger]
+  #
+  def self.logger=: (Logger logger) -> Logger
+
+  # Add a log message.
+  #
+  # If the first element of *args* is a Symbol, that is taken to be the calling
+  # method.  If the next element of *args* is an Exception, a message is
+  # constructed from its contents.
+  #
+  # @param [Integer, Symbol, nil]               severity
+  # @param [Array<String,Symbol,Exception,Any>] args
+  #
+  # @return [nil]
+  #
+  # @yield To supply additional parts to the log entry.
+  # @yieldreturn [String, Array<String>]
+  #
+  # == Usage Notes
+  # This method always returns *nil* so that it can be used by itself as the
+  # final statement of a rescue block.
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def self.add: (?(Integer|Symbol)? severity, *untyped args) { () -> untyped } -> nil
+
+  # Add a DEBUG-level log message.
+  #
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
+  #
+  # @return [nil]
+  #
+  def self.debug: (*untyped args) { () -> untyped } -> nil
+
+  # Add an INFO-level log message.
+  #
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
+  #
+  # @return [nil]
+  #
+  def self.info: (*untyped args) { () -> untyped } -> nil
+
+  # Add a WARN-level log message.
+  #
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
+  #
+  # @return [nil]
+  #
+  def self.warn: (*untyped args) { () -> untyped } -> nil
+
+  # Add an ERROR-level log message.
+  #
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
+  #
+  # @return [nil]
+  #
+  def self.error: (*untyped args) { () -> untyped } -> nil
+
+  # Add a FATAL-level log message.
+  #
+  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
+  # @param [Proc]                               block   Passed to #add.
+  #
+  # @return [nil]
+  #
+  def self.fatal: (*untyped args) { () -> untyped } -> nil
+
+  # Translate to the form expected by Logger#add.
+  #
+  # @param [Integer, Symbol, String, nil] value
+  # @param [Symbol, nil]                  default
+  #
+  # @return [Integer]
+  #
+  def self.log_level: (Integer|Symbol|String value, ?Symbol default) -> Integer
+
+  # local_levels
+  #
+  # @return [Concurrent::Map]
+  #
+  # Compare with:
+  # ActiveSupport::LoggerThreadSafeLevel#local_levels
+  #
+  def self.local_levels: () -> Concurrent::Map
+
+  # local_log_id
+  #
+  # @return [Integer]
+  #
+  # Compare with:
+  # ActiveSupport::LoggerThreadSafeLevel#local_log_id
+  #
+  def self.local_log_id: () -> Integer
+
+  # Get thread-safe log level.
+  #
+  # @return [Integer]
+  #
+  # Compare with:
+  # ActiveSupport::LoggerThreadSafeLevel#local_level
+  #
+  def self.local_level: () -> Integer
+
+  # Set thread-safe log level.
+  #
+  # @param [Integer, Symbol, String, nil] value
+  #
+  # @return [Integer]
+  # @return [nil]                   If *value* is *nil*.
+  #
+  # Compare with:
+  # ActiveSupport::LoggerThreadSafeLevel#local_level=
+  #
+  def self.local_level=: (Integer|Symbol|String value) -> Integer
+                       | (nil value) -> nil
+
+  # Thread-safe log level.
+  #
+  # @return [Integer]
+  #
+  # Compare with:
+  # ActiveSupport::LoggerThreadSafeLevel#level
+  #
+  def self.level: () -> Integer
+
+  # Thread-safe storage for silenced status.
+  #
+  # @return [Concurrent::Map]
+  #
+  def self.silenced_map: () -> Concurrent::Map
+
+  # Indicate whether control is within a block where logging is silenced.
+  #
+  def self.silenced?: () -> bool
+
+  # Get thread-safe silenced flag.
+  #
+  # @return [Boolean]
+  #
+  def self.silenced: () -> (bool | nil)
+
+  # Set thread-safe silenced flag.
+  #
+  def self.silenced=: (bool flag) -> bool
+
+  # Thread-safe storage for silenced status.
+  #
+  # @return [Concurrent::Map]
+  #
+  def self.saved_log_level: () -> Concurrent::Map
+
+  # Control whether the logger is silent.
+  #
+  # @param [Boolean,nil] go_silent
+  #
+  # @return [Boolean]
+  # @return [nil]
+  #
+  def self.silent: (?bool go_silent) -> (bool | nil)
+
+  # Silences the logger for the duration of the block.
+  #
+  # @param [Integer, Symbol, String] tmp_level Passed to LoggerSilence#silence.
+  # @param [Proc]                    block     Passed to LoggerSilence#silence.
+  #
+  def self.silence: (?(Integer|Symbol|String) tmp_level) { () -> untyped } -> untyped
+
+  # Delegate any other method to @logger.
+  #
+  # @param [Symbol] meth
+  # @param [Array]  args
+  # @param [Proc]   block
+  #
+  def self.method_missing: (untyped meth, *untyped args) { () -> untyped } -> untyped
+
+  # The current logger.
+  #
+  # @return [Logger]
+  #
+  def logger: () -> Logger
+
+  # Set the current logger.
+  #
+  # @param [Logger] logger
+  #
+  # @return [Logger]
+  #
+  def logger=: (Logger logger) -> Logger
+
+  # Create a new instance of the assigned Logger class.
+  #
+  # @param [Array] args               @see Logger#initialize
+  #
+  def self.new: (*untyped args) -> Logger
+end
+
+# Defined as an "alias" for Emma::Log without needing to "include Emma".
+#
+# -
+# noinspection RubyConstantNamingConvention
+# +
+Log: Module

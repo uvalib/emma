@@ -1,0 +1,31 @@
+# Utility methods for reporting on records.                                     # NOTE: from UploadWorkflow::Errors::RenderMethods
+#
+module Record::Rendering
+  include Emma::Common
+
+  extend ::Record::Rendering
+
+  # Default label. TODO: I18n                                                   # NOTE: from UploadWorkflow::Errors::RenderMethods
+  #
+  # @type [String]
+  #
+  DEFAULT_LABEL: String
+
+  def make_label: (untyped item, ?default: String) -> String
+
+  private
+
+  # SID or ID of *item*
+  #
+  # @param [Model, Hash, String, Any, nil] item
+  #
+  # @return [String, nil]
+  #
+  # == Implementation Notes
+  # This exists solely to avoid a 'require' cycle by not making the module
+  # dependent on Record::EmmaIdentification.
+  #
+  def item_identity: (untyped item) -> String?
+
+  def self.included: (Module base) -> void
+end

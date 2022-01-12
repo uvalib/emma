@@ -290,9 +290,9 @@ module AccountConcern
 
   # Get the appropriate message to display.
   #
-  # @param [Symbol] action
-  # @param [Symbol] outcome
-  # @param [Hash]   config
+  # @param [Symbol]             action
+  # @param [Symbol]             outcome
+  # @param [Hash{Symbol=>Hash}] config
   #
   # @return [String, nil]
   #
@@ -305,10 +305,10 @@ module AccountConcern
 
   # Get the appropriate terms for message interpolations.
   #
-  # @param [Symbol] action
-  # @param [Hash]   config
+  # @param [Symbol]             action
+  # @param [Hash{Symbol=>Hash}] config
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   def interpolation_terms(action, config = account_fields)
     result = config.dig(action, :terms) || config.dig(action, :term) || {}
@@ -388,6 +388,7 @@ module AccountConcern
     private
 
     def self.included(base)
+      # noinspection RailsParamDefResolve
       base.try(:helper, self)
     end
 

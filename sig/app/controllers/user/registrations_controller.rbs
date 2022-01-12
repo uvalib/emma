@@ -1,0 +1,82 @@
+# Individual EMMA account maintenance.
+#
+# @see file:app/views/user/registrations/**
+#
+class User::RegistrationsController < Devise::RegistrationsController
+  include FlashConcern
+
+  include UserConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  # == GET /users/sign_up
+  #
+  def new: () -> void
+
+  # == POST /users
+  #
+  def create: () -> void
+
+  # == GET /users/edit
+  #
+  def edit: () -> void
+
+  # == PUT /users
+  #
+  def update: () -> void
+
+  # == GET /users/resign
+  #
+  def delete: () -> void
+
+  # == DELETE /users
+  #
+  def destroy: () -> void
+
+  # == GET /users/cancel
+  #
+  # Forces the session data which is usually expired after sign in to be
+  # expired now. This is useful if the user wants to cancel oauth signing in/up
+  # in the middle of the process, removing all OAuth session data.
+  #
+  def cancel: () -> void
+
+  # == GET /users/edit_select
+  #
+  def edit_select: () -> void
+
+  # Include User attributes to allowed parameters for account creation.
+  #
+  def configure_create_params: () -> void
+
+  # Include User attributes to allowed parameters for account modification.
+  #
+  def configure_update_params: () -> void
+
+  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # than operating on an explicit set of identifiers.
+  #
+  # @param [String, Array<String>, nil] id_params  Default: `params[:id]`.
+  #
+  def show_menu?: (?(String|strArray)? id_params) -> bool
+
+  # Specify acceptable URL parameters.
+  #
+  # @param [Symbol]                     action  Devise action name.
+  # @param [Array<Symbol>, Symbol, nil] keys    Default: `User.field_names`
+  # @param [Array<Symbol>, Symbol, nil] except  Default: [:id, :email]
+  #
+  # @return [ActiveSupport::HashWithIndifferentAccess]
+  #
+  # @yield [params]
+  # @yieldparam [ActionController::Parameters] params
+  # @yieldreturn [Hash,nil]
+  #
+  # == Usage Notes
+  # Due to the current uniqueness constraint on 'index_users_on_email', the
+  # email address can't be updated.
+  #
+  def allow_params: (Symbol action, ?keys: (Symbol|symArray)?, ?except: (Symbol|symArray)?) { (ActionController::Parameters) -> _ToHash[untyped,untyped]? } -> ActiveSupport::HashWithIndifferentAccess[untyped, untyped]
+end

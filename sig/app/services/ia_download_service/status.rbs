@@ -1,0 +1,9 @@
+# Health status interface.
+#
+module IaDownloadService::Status
+  include ApiService::Status
+
+  private
+
+  def self.included: (Module base) -> void
+end

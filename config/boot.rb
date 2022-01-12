@@ -54,7 +54,7 @@ FALSE_VALUES = %w(0 no false off).freeze
 
 # Indicate whether the item represents an explicit *true* value.
 #
-# @param [TrueClass, FalseClass, String, Symbol, Any, nil] value
+# @param [Any, nil] value
 #
 def true?(value)
   return value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
@@ -64,7 +64,7 @@ end
 
 # Indicate whether the item represents an explicit *false* value.
 #
-# @param [TrueClass, FalseClass, String, Symbol, Any, nil] value
+# @param [Any, nil] value
 #
 def false?(value)
   return !value if value.is_a?(TrueClass) || value.is_a?(FalseClass)

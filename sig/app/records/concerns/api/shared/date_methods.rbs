@@ -1,0 +1,67 @@
+# Methods mixed in to record elements related to dates.
+#
+module Api::Shared::DateMethods
+  include Api::Shared::CommonMethods
+
+  extend ::Api::Shared::DateMethods
+
+  # Fields that must be transmitted as "YYYY-MM-DD".
+  #
+  # @return [Array<Symbol>]
+  #
+  def day_fields: () -> symArray
+
+  # Policy for how date multiple date values are handled.
+  #
+  # (Default is :forbidden because this is what Ingest requires.)
+  #
+  # @return [Symbol]                  One of #ARRAY_MODES.
+  #
+  def date_array_mode: () -> Symbol
+
+  # The pattern which separates multiple date representations within a String.
+  #
+  # @return [Regexp]
+  #
+  def date_separator: () -> Regexp
+
+  # @private
+  TITLE_DATE_FIELDS: symArray
+
+  # Back-fill publication date / copyright date.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  #
+  # @return [void]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def normalize_title_dates!: (?symHash? data) -> void
+
+  # Produce day values of the form "YYYY-MM-DD".
+  #
+  # @param [Hash, nil] data           Default: *self*
+  # @param [Symbol]    mode           Default: `#date_array_mode`.
+  #
+  # @return [void]
+  #
+  def normalize_day_fields!: (?symHash? data, ?Symbol? mode) -> void
+
+  # Produce dates of the form "YYYY-MM-DD".
+  #
+  # @param [String, Date, Time, IsoDate, Array, nil] values
+  #
+  # @return [Array<String>]
+  #
+  def normalize_dates: (String|Date|Time|IsoDate|nil|Array[String|Date|Time|IsoDate|nil] values) -> strArray
+
+  # Produce a date of the form "YYYY-MM-DD".
+  #
+  # @param [String, Date, Time, IsoDate, nil] value
+  #
+  # @return [String]
+  # @return [nil]                     If *value* is not a valid date.
+  #
+  def normalize_date: (String|Date|Time|IsoDate|nil value) -> String?
+end

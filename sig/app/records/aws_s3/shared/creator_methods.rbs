@@ -1,0 +1,5 @@
+# Methods mixed in to record elements related to authors, editors, etc.
+#
+module AwsS3::Shared::CreatorMethods
+  include Api::Shared::CreatorMethods
+end

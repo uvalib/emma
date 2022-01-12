@@ -1,0 +1,112 @@
+# Handle Bookshare download requests.
+#
+# @see ArtifactHelper
+# @see file:app/views/artifact/**
+#
+# @note These endpoints are not currently presented as a part of EMMA.
+#
+# == Usage Notes
+# The abilities to retrieve or modify artifacts (instances of remediated
+# content) is dependent on the role(s) of the authenticated user.
+#
+class ArtifactController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include SerializationConcern
+
+  include BsDownloadConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # == GET /artifact/:id?fmt=:fmt
+  # == GET /artifact/:bookshareId?fmt=:fmt
+  #
+  # Get metadata for an existing artifact.
+  #
+  # @see BookshareService::Request::Titles#get_artifact_metadata
+  #
+  def show: () -> void
+
+  # == GET /artifact/new[?id=:id]
+  # == GET /artifact/new[?bookshareId=:bookshareId]
+  #
+  # Add metadata for a new artifact.
+  #
+  def new: () -> void
+
+  # == POST /artifact/:id
+  # == POST /artifact/:bookshareId
+  #
+  # Upload a new artifact.
+  #
+  def create: () -> void
+
+  # == GET /artifact/:id/edit
+  # == GET /artifact/:bookshareId/edit
+  #
+  # Modify metadata of an existing artifact entry.
+  #
+  def edit: () -> void
+
+  # == PUT   /artifact/:id
+  # == PUT   /artifact/:bookshareId
+  # == PATCH /artifact/:id
+  # == PATCH /artifact/:bookshareId
+  #
+  # Upload a replacement for an existing artifact.
+  #
+  def update: () -> void
+
+  # == DELETE /artifact/:id
+  # == DELETE /artifact/:bookshareId
+  #
+  # Remove an existing artifact entry.
+  #
+  def destroy: () -> void
+
+  # == GET /artifact/:bookshareId/:fmt?member=BS_ACCOUNT_ID
+  # == GET /artifact/:bookshareId/:fmt?forUser=BS_ACCOUNT_ID
+  #
+  # Download an artifact of the indicated Bookshare format type.
+  #
+  # @see BookshareService::Request::Titles#download_title
+  #
+  def download: () -> void
+
+  # == GET /artifact/retrieval?url=URL&forUser=BS_ACCOUNT_ID
+  # == GET /artifact/retrieval?url=URL&member=BS_ACCOUNT_ID
+  #
+  # Retrieve a Bookshare artifact from an absolute URL (as found in EMMA
+  # Unified Search results).
+  #
+  # @see BookshareService::Request::Titles#get_retrieval
+  #
+  def retrieval: () -> void
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Any]  list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?untyped list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Bs::Record::ArtifactMetadata, Hash] item
+  # @param [Hash]                               opt
+  #
+  # @return [Hash{Symbol=>Bs::Record::ArtifactMetadata,Hash}]
+  #
+  def show_values: (?(Bs::Record::ArtifactMetadata|anyHash) item, **untyped opt) -> Hash[Symbol, (Bs::Record::ArtifactMetadata|anyHash)]
+end

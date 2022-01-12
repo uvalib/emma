@@ -178,8 +178,8 @@ class EditionController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiPeriodicalEditionList] list
-  # @param [Hash]                     opt
+  # @param [Bs::Message::PeriodicalEditionList] list
+  # @param [Hash]                               opt
   #
   # @return [Hash{Symbol=>Hash}]
   #

@@ -20,7 +20,7 @@ module Emma::Common::HashMethods
   # @param [ActionController::Parameters, Hash, nil] hash
   # @param [Array<Symbol>]                           keys
   #
-  # @return [(Hash, Hash)]            Matching hash followed by remainder hash.
+  # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
   #--
   # noinspection RubyNilAnalysis
@@ -55,8 +55,8 @@ module Emma::Common::HashMethods
 
   # Recursively remove blank items from a hash.
   #
-  # @param [Hash, nil]    item
-  # @param [Boolean, nil] reduce      If *true* transform arrays with a single
+  # @param [Hash, nil] item
+  # @param [Boolean]   reduce         If *true* transform arrays with a single
   #                                     element into scalars.
   #
   # @return [Hash]
@@ -77,29 +77,34 @@ module Emma::Common::HashMethods
   # Recursively remove blank items from an object.
   #
   # @param [Hash, Array, Any] item
-  # @param [Boolean, nil]     squeeze   If *true* transform arrays with a
+  # @param [Boolean]          squeeze   If *true* transform arrays with a
   #                                       single element into scalars.
   #
-  # @return [Hash, Array, Any]
+  # @return [Hash, Array, Any, nil]
   #
   #--
   # == Variations
   #++
   #
   # @overload _remove_blanks(hash)
-  #   @param [Hash]         hash
-  #   @param [Boolean, nil] squeeze
+  #   @param [Hash]       hash
+  #   @param [Boolean]    squeeze
   #   @return [Hash, nil]
   #
   # @overload _remove_blanks(array)
-  #   @param [Array]        array
-  #   @param [Boolean, nil] squeeze
+  #   @param [Array]      array
+  #   @param [Boolean]    squeeze
   #   @return [Array, nil]
   #
   # @overload _remove_blanks(item)
-  #   @param [Any]          item
-  #   @param [Boolean, nil] squeeze
-  #   @return [Any]
+  #   @param [FalseClass] item
+  #   @param [Boolean]    squeeze     Ignored
+  #   @return [FalseClass]
+  #
+  # @overload _remove_blanks(item)
+  #   @param [Any]        item
+  #   @param [Boolean]    squeeze     Ignored
+  #   @return [Any, nil]
   #
   # == Usage Notes
   # Empty strings and nils are considered blank, however an item or element

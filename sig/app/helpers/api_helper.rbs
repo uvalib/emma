@@ -1,0 +1,85 @@
+# View helper methods for rendering API responses.
+#
+module ApiHelper
+  include Emma::Common
+
+  include Emma::Json
+
+  include HtmlHelper
+
+  extend ::ApiHelper
+
+  # Generate HTML from the result of an API method invocation.
+  #
+  # @param [Api::Record, Faraday::Response, Exception, Integer, String, nil] value
+  # @param [Integer, String] indent     Space count or literal indent string.
+  # @param [String]          separator  Default: "\n".
+  # @param [Boolean]         html       If *false* then URLs will not be turned
+  #                                       into <a> links and no HTML formatting
+  #                                       will be applied.
+  #
+  # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
+  # @return [String]                    If *html* is *false*.
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def format_api_result: (Api::Record|Faraday::Response|Exception|Integer|String|nil value, ?indent: (Integer|String)?, ?separator: String, ?html: true)  -> ActiveSupport::SafeBuffer
+                       | (Api::Record|Faraday::Response|Exception|Integer|String|nil value, ?indent: (Integer|String)?, ?separator: String, ?html: false) -> String
+
+  private
+
+  # Abbreviate all but the first instance of the rendering of an exception.
+  #
+  # @param [String, nil] html         An HTML-ready string.
+  #
+  # @return [String]                  The modified string.
+  #
+  def mask_later_exceptions: (String|nil html) -> String
+
+  # Transform URLs into links by translating Bookshare API hrefs into local
+  # paths.
+  #
+  # @param [String, nil] html         An HTML-ready string.
+  # @param [Hash]   opt               Passed to #make_link.
+  #
+  # @return [String]                  The modified string.
+  #
+  def make_links: (String|nil html, **untyped opt) -> String
+
+  public
+
+  PF_INDENT: String
+
+  PF_NEWLINE: String
+
+  PF_OPEN_BRACE: String
+
+  PF_CLOSE_BRACE: String
+
+  # Format data objects for Explorer display.
+  #
+  # @param [Api::Record, Exception, Numeric, String, nil] value
+  #
+  # @return [String]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def pretty_format: (Api::Record|Exception|Numeric|String|nil value) -> String
+
+  # Attempt to interpret *arg* as an exception or a record with an exception.
+  #
+  # @param [Bs::Api::Record, Exception, Any] arg
+  # @param [Any] default              On parse failure, return this if provided
+  #                                     (or return *arg* otherwise).
+  #
+  # @return [Hash, String, Any]
+  #
+  def safe_exception_parse: (Exception arg, ?default: untyped) -> (symHash | String)
+                          | (untyped arg,   ?default: untyped) -> untyped
+
+  private
+
+  def self.included: (Module base) -> void
+end

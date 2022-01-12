@@ -1,0 +1,11 @@
+# View helper methods supporting document "<head>" entries.
+#
+module HeadHelper
+  private
+
+  # Include the submodules defined in "app/helpers/head_helper/*.rb".
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

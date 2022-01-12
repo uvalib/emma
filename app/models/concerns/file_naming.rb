@@ -57,6 +57,7 @@ module FileNaming
     #
     def format_class(type)
       fmt = type.to_s.upcase_first
+      # noinspection RubyMismatchedReturnType
       "FileObject::#{fmt}".safe_constantize
     end
 

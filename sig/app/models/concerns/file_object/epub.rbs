@@ -1,0 +1,5 @@
+# An EPUB file object.
+#
+class FileObject::Epub < FileObject::Ocf
+  include FileFormat::Epub
+end

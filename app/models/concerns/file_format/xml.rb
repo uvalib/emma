@@ -94,8 +94,8 @@ module FileFormat::Xml
   #
   # @param [Nokogiri::XML::Element] element
   #
-  # @return [(Symbol,String)]
-  # @return [(Symbol,nil)]
+  # @return [Array<(Symbol,String)>]
+  # @return [Array<(Symbol,nil)>]
   #
   def parse_element(element)
     return unless element.element?
@@ -140,8 +140,8 @@ module FileFormat::Xml
   #
   # @param [Nokogiri::XML::Element] elem
   #
-  # @return [(Symbol,String)]
-  # @return [(Symbol,nil)]
+  # @return [Array<(Symbol,String)>]
+  # @return [Array<(Symbol,nil)>]
   # @return [nil]
   #
   def parse_meta(elem)
@@ -158,8 +158,8 @@ module FileFormat::Xml
   #
   # @param [Nokogiri::XML::Element] elem
   #
-  # @return [(Symbol,String)]
-  # @return [(Symbol,nil)]
+  # @return [Array<(Symbol,String)>]
+  # @return [Array<(Symbol,nil)>]
   #
   #--
   # noinspection RailsParamDefResolve
@@ -243,7 +243,7 @@ module FileFormat::Xml
   # Transform an element name (or the equivalent attribute from a <meta>) into
   # a #metadata key.
   #
-  # @param [String] name
+  # @param [String, Symbol] name
   #
   # @return [Symbol]
   #

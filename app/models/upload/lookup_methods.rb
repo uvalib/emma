@@ -102,9 +102,9 @@ module Upload::LookupMethods
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
   #
-  # @raise [RangeError]                 If :page is not valid.
+  # @raise [RangeError]                   If :page is not valid.
   #
-  # @return [Hash]                      @see #SEARCH_RECORDS_TEMPLATE
+  # @return [Hash{Symbol=>Any}]           @see #SEARCH_RECORDS_TEMPLATE
   #
   # @see ActiveRecord::Relation#where
   #

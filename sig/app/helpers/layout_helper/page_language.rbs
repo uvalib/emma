@@ -1,0 +1,22 @@
+# View helper methods support language annotation of the <html> element.
+#
+module LayoutHelper::PageLanguage
+  # The language code for the language of the current page for use with the
+  # "<html>" element.
+  #
+  # @return [String]
+  #
+  def page_language: () -> String
+
+  # Specify the language code for the current page.
+  #
+  # @param [String, Symbol] lang
+  #
+  # @return [String]
+  #
+  # == Usage Notes
+  # Only use as an override if the page is in a language that has not been set
+  # via I18n::Config#locale.
+  #
+  def set_page_language: (String|Symbol lang) -> String
+end

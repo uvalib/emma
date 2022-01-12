@@ -1,0 +1,16 @@
+# Bs::Record::UserSignedAgreement
+#
+# @attr [String]          agreementId
+# @attr [BsAgreementType] agreementType
+# @attr [String]          dateExpired
+# @attr [String]          dateSigned
+# @attr [String]          printName
+# @attr [String]          recordingUser
+# @attr [Boolean]         signedByLegalGuardian
+# @attr [String]          username
+#
+# @see https://apidocs.bookshare.org/membership/index.html#_user_signed_agreement
+#
+class Bs::Record::UserSignedAgreement < Bs::Api::Record
+  include Bs::Shared::AgreementMethods
+end

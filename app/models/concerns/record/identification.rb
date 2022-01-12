@@ -77,6 +77,7 @@ module Record::Identification
   # @return [String]
   #
   def record_name_for(item)
+    # noinspection RubyNilAnalysis
     record_class_for(item).name.demodulize.to_s
   end
 
@@ -101,7 +102,7 @@ module Record::Identification
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   #
-  # @return [String]                  Record ID (:id).
+  # @return [String]                  Record ID Array<(:id)>.
   # @return [nil]                     No valid :id specified.
   #
   def id_value(item, **opt)                                                     # NOTE: from Upload::IdentifierMethods#id_for
@@ -163,7 +164,7 @@ module Record::Identification
 
   # A foreign-key reference to the current record.
   #
-  #
+  # @param [Hash{Symbol=>Any}] opt
   #
   # E.g., :entry_id would indicate an Entry ID.
   #
@@ -253,6 +254,7 @@ module Record::Identification
         opt[:all] = true
       end
     end
+    # noinspection RubyMismatchedReturnType
     collect_records(*items, **opt).first || []
   end
 
@@ -273,8 +275,8 @@ module Record::Identification
   #
   # @raise [StandardException] If *all* is *true* and *items* were supplied.
   #
-  # @return [(Array<Model>,Array)]      Record instances and failed ids.
-  # @return [(Array<Model,String>,[])]  If *force* is *true*.
+  # @return [Array<(Array<Model>,Array)>]      Record instances and failed ids.
+  # @return [Array<(Array<Model,String>,[])>]  If *force* is *true*.
   #
   # @see Record::Searchable#get_records
   #
@@ -547,6 +549,7 @@ module Record::Identification
     # @see Record::Identification#record_class
     #
     def self.record_class
+      # noinspection RubyMismatchedReturnType
       self
     end
 
@@ -597,12 +600,14 @@ module Record::Identification
     # @see Record::Identification#minimum_id
     #
     def minimum_id(**opt)
+      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__, **opt)
     end
 
     # @see Record::Identification#maximum_id
     #
     def maximum_id(**opt)
+      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__, **opt)
     end
 

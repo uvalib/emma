@@ -1,0 +1,5 @@
+# A Kurzweil file object.
+#
+class FileObject::Kurzweil < FileObject
+  include FileFormat::Kurzweil
+end

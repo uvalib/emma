@@ -1,0 +1,709 @@
+# View helper methods for the <header> search filter controls.
+#
+module LayoutHelper::SearchFilters
+  include LayoutHelper::Common
+
+  module ClassMethods
+    include Emma::Common
+
+    # Get the search menu configuration for the current context.
+    #
+    # @param [Symbol, String] menu_name
+    # @param [Hash, nil]      properties
+    #
+    # @return [Hash]
+    #
+    def search_menu_config: (Symbol|String menu_name, symHash? properties) -> symHash
+
+    # current_menu_config
+    #
+    # @param [Symbol, String]      menu_name
+    # @param [Symbol, String, nil] target     Target search controller.
+    #
+    # @return [Hash]
+    #
+    # @see #SEARCH_MENU_MAP
+    #
+    def current_menu_config: (Symbol|String menu_name, ?target: (Symbol|String)?, **untyped ignored) -> symHash
+
+    # Generate an array of label/value pairs to be used with #select_tag.
+    #
+    # @param [Symbol] menu_name
+    # @param [Hash, String, Symbol, Class, Array<Array>] values
+    # @param [Hash]   opt             Passed to #make_menu_label.
+    #
+    # @return [Array<Array<(String,String)>>]
+    #
+    # @overload make_menu(menu_name, entries, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Hash]          entries      Configuration information.
+    #   @param [Hash]          opt
+    #
+    # @overload make_menu(menu_name, i18n_scope, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [String]        i18n_scope
+    #   @param [Hash]          opt
+    #
+    # @overload make_menu(menu_name, enum_type, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Symbol]        enum_type    Passed to EnumType.pairs_for.
+    #   @param [Hash]          opt
+    #
+    # @overload make_menu(menu_name, enum_class, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Class]         enum_class
+    #   @param [Hash]          opt
+    #
+    # @overload make_menu(menu_name, menu_pairs, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Array<Array>]  menu_pairs
+    #   @param [Hash]          opt
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType
+    # +
+    def make_menu: (Symbol menu_name, (String|Symbol|Class|symHash|Array[[untyped,untyped]]) values, **untyped opt) -> Array[[String,String]]
+
+    # Format a menu label.
+    #
+    # @param [Symbol, String] menu_name
+    # @param [String]         label       Original label text.
+    # @param [Hash]           opt         Passed to #current_menu_config except
+    #
+    # @option opt [Symbol] :fmt           One of:
+    #
+    #   *nil*       No formatting.
+    #   *false*     No formatting.
+    #   :none       No formatting.
+    #   :titleize   Format in "title case".
+    #   :upcase     Format as all uppercase.
+    #   :downcase   Format as all lowercase.
+    #   Symbol      Other String method.
+    #   *true*      Use :menu_format configuration value.
+    #   (missing)   Use :menu_format configuration value.
+    #
+    # @return [String]
+    #
+    # == Usage Notes
+    # This method is only engaged for menus with values that are not backed by
+    # configuration information that maps values to labels.
+    #
+    def make_menu_label: (Symbol|String menu_name, String label, **untyped opt) -> String
+
+    # Create reverse sort entries.
+    #
+    # @param [Array<Array<String,Any>>] pairs
+    # @param [Hash]                     config
+    #
+    # @return [Array<Array<String,String>>]
+    #
+    def add_reverse_pairs: (Array[[String,String]] pairs, symHash config) -> Array[[String,String]]
+
+    # Indicate whether the :sort is a reversed (descending) sort.
+    #
+    # @param [String] value           A :sort key.
+    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    #
+    def is_reverse?: (String value, ?String? suffix) -> bool
+
+    # Change :sort value to indicate a normal (ascending) sort.
+    #
+    # @param [String] value           Base :sort key.
+    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    #
+    # @return [String]                Value for :sortOrder parameter.
+    # @return [nil]                   If *value* is blank.
+    #
+    def ascending_sort: (String value, ?String? suffix) -> String?
+
+    # Change :sort value to indicate a reversed (descending) sort.
+    #
+    # @param [String] value           Base :sort key.
+    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    #
+    # @return [String]                Value for :sortOrder parameter.
+    # @return [nil]                   If *value* is blank.
+    #
+    def descending_sort: (String value, ?String? suffix) -> String?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include ClassMethods
+
+  # The names and properties of all of the search filter menus and default
+  # values.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  SEARCH_FILTERS_ROOT: symHash
+
+  # The value 'en.emma.search_filters._default' contains each of the properties
+  # that can be expressed for a menu.  If a property there has a non-nil value,
+  # then that value is used as the default for that property.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  SEARCH_MENU_DEFAULT: symHash
+
+  # Properties for the "filter reset" button.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # @see #reset_menu
+  #
+  SEARCH_RESET_CONTROL: symHash
+
+  # The names and base properties of all of the search control menus.
+  #
+  # @type [Hash]
+  #
+  SEARCH_MENU_BASE: symHash
+
+  # URL parameters for all search control menus.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_PARAMETERS: symArray
+
+  # If a :sort parameter value ends with this, it indicates that the sort
+  # should be performed in reverse order.
+  #
+  # @type [String]
+  #
+  REVERSE_SORT_SUFFIX: String
+
+  # Search filter configurations for each controller where they are enabled.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SEARCH_FILTERS_CONFIG: symHash
+
+  # Search control menu configurations for each controller configured to
+  # display them.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SEARCH_MENU_MAP: symHash
+
+  # Per-controller tables of the menu configurations associated with each
+  # :url_param value.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SEARCH_PARAMETER_MENU_MAP: symHash
+
+  # Indicate whether the search control panel starts in the open state.
+  #
+  # @type [Boolean]
+  #
+  SEARCH_FILTERS_START_EXPANDED: bool
+
+  # Indicate whether selecting a search menu value takes immediate effect.
+  #
+  # If not menu selection value(s) are only transmitted via the search submit
+  # button.
+  #
+  # @type [Boolean]
+  #
+  IMMEDIATE_SEARCH: bool
+
+  # New search styles.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_STYLES: symArray
+
+  # The default search results style.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_STYLE: Symbol
+
+  # Configuration for advanced search values.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  ADV_SEARCH_CONFIG: symHash
+
+  # Label for button to expand search filters.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  ADV_SEARCH_OPENER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to expand search filters.
+  #
+  # @type [String]
+  #
+  ADV_SEARCH_OPENER_TIP: String
+
+  # Label for button to contract search filters.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  ADV_SEARCH_CLOSER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to contract search filters.
+  #
+  # @type [String]
+  #
+  ADV_SEARCH_CLOSER_TIP: String
+
+  # Indicate whether it is appropriate to show the search filter controls.
+  #
+  # @param [Hash, nil] opt            Default: `#request_parameters`.
+  #
+  def show_search_filters?: (?symHash? opt) -> bool
+
+  # One or more rows of search filter controls.
+  #
+  # @param [String, Symbol] target        Default: `#search_target`.
+  # @param [Hash]           opt           Passed to #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         No controls were found for *target*.
+  #
+  # @see file:config/locales/en.yml *en.emma.search_filters*
+  # @see #generic_menu
+  # @see #sort_menu
+  # @see #size_menu
+  # @see #repository_menu
+  # @see #prefix_limit_menu
+  # @see #deployment_menu
+  # @see #before_menu
+  # @see #after_menu
+  # @see #reset_menu
+  #
+  def search_filter_container: (?target: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A control for toggling the visibility of advanced search filter controls.
+  #
+  # @param [Hash] opt                 Passed to #button_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def advanced_search_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Indicate whether selecting a search menu value takes immediate effect.
+  #
+  # If not menu selection value(s) are only transmitted via the search submit
+  # button.
+  #
+  # @type [Boolean]
+  #
+  # == Usage Notes
+  # This should normally be *false* because it a mode of operation that is
+  # generally not consider accessibility-friendly and, also, skews search call
+  # statistics.
+  #
+  def immediate_search?: () -> bool
+
+  # A hidden HTML elements which indicates that the page has been constructed
+  # with search filters which cause a new search whenever a value is selected.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def search_mode_marker: () -> ActiveSupport::SafeBuffer?
+
+  # Get the display style for search results.
+  #
+  # @return [Symbol]
+  #
+  def search_style: () -> Symbol
+
+  # Indicate whether search results are displayed in the original manner.
+  #
+  def default_style?: () -> bool
+
+  # Indicate whether search results are displayed as a grid.
+  #
+  def grid_style?: () -> bool
+
+  # Indicate whether search results are displayed compactly.
+  #
+  def compact_style?: () -> bool
+
+  # Indicate whether search results are aggregated into title-level units.
+  #
+  def aggregate_style?: () -> bool
+
+  # Indicate whether search results are displayed in the original manner.
+  #
+  def v2_style?: () -> bool
+
+  # Indicate whether search results are displayed in the original manner.
+  #
+  def v3_style?: () -> bool
+
+  # Options consumed by internal methods which should not be passed on along to
+  # the methods which generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see HtmlHelper#GRID_OPTS
+  #
+  MENU_OPTS: symArray
+
+  # An empty placeholder for a menu position.
+  #
+  # @param [Hash] opt                 Passed to #menu_spacer.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def blank_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Perform a search specifying a collation order for the results.
+  # (Default: `params[:sortOrder]`.)
+  #
+  # @param [Symbol] menu_name           Control name (should be :sort).
+  # @param [Hash]   opt                 Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  # @see ParamsConcern#resolve_sort
+  #
+  # == Implementation Notes
+  # This method produces a URL parameter (:sort) which is translated into the
+  # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
+  #
+  def sort_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Perform a search specifying a results page size.  (Default: `#page_size`.)
+  #
+  # @param [Symbol] menu_name           Control name (should be :size).
+  # @param [Hash]   opt                 Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  # @see PaginationHelper#page_size
+  #
+  def size_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Filter on repository.
+  #
+  # @param [Symbol] menu_name           Control name (should be :repository).
+  # @param [Hash]   opt                 Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  def repository_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Specify initial number of entries per object key.
+  #
+  # @param [Symbol] menu_name           Control name (should be :prefix_limit).
+  # @param [Hash]   opt                 Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  def prefix_limit_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Filter on deployment.
+  #
+  # @param [Symbol] menu_name           Control name (should be :deployment).
+  # @param [Hash]   opt                 Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  def deployment_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Any menu without a specific method.
+  #
+  # @param [Symbol] menu_name           Control name.
+  # @param [Hash]   opt                 Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def generic_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  private
+
+  # A menu control preceded by a menu label (if provided).
+  #
+  # @param [Symbol]              menu_name  Control name.
+  # @param [String, nil]         label      Label text passed to #menu_label.
+  # @param [String, Symbol, nil] target     Search target controller.
+  # @param [Hash]                opt        Passed to #menu_control.
+  #
+  # @return [ActiveSupport::SafeBuffer]     HTML label and control elements.
+  # @return [nil]                           Menu is not available for *target*.
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def menu_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A dropdown menu element.
+  #
+  # If *selected* is not specified `#SEARCH_MENU[menu_name][:url_param]` is
+  # used to extract a value from `#request_parameters`.
+  #
+  # If no option is currently selected, an initial "null" selection is
+  # prepended.
+  #
+  # Normally the element is a "<div>" but if #immediate_search? is true then it
+  # is a "<form>" which allows the enclosed "<select>" to perform a new
+  # modified search upon selection.
+  #
+  # @param [Symbol]              menu_name  Control name.
+  # @param [String, Symbol, nil] target     Passed to #search_form.
+  # @param [String, Array, nil]  selected   Selected menu item(s).
+  # @param [String, Symbol, nil] label_id   ID of associated label element.
+  # @param [Hash]                opt        Passed to #search_form except for
+  #                                           #MENU_OPTS and:
+  #
+  # @option opt [Any]  :default             Provided default value.
+  # @option opt [Hash] :config              Pre-fetched menu configuration.
+  #
+  # @return [ActiveSupport::SafeBuffer]     HTML menu element.
+  # @return [nil]                           If menu unavailable for *target*.
+  #
+  # @see HtmlHelper#grid_cell_classes
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def menu_control: (Symbol menu_name, ?target: (String|Symbol)?, ?selected: (String|anyArray)?, ?label_id: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A label associated with a dropdown menu element.
+  #
+  # @param [String, Symbol] menu_name     Control name.
+  # @param [Hash]           opt           Passed to #control_label.
+  #
+  # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def menu_label: (String|Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # menu_tooltip
+  #
+  # @param [String, Symbol] menu_name   Control name.
+  # @param [Hash]           opt         Passed to #config_tooltip.
+  #
+  # @return [String]                    Tooltip text.
+  # @return [nil]                       If no tooltip was defined.
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def menu_tooltip: (String|Symbol menu_name, **untyped opt) -> String?
+
+  # Date selection for the end of a date range.
+  #
+  # @param [Symbol] menu_name           Control name (should be :before).
+  # @param [Hash]   opt                 Passed to #date_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
+  # @return [nil]                       If menu is not available.
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def before_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Date selection for the beginning of a date range.
+  #
+  # @param [Symbol] menu_name           Control name (should be :after).
+  # @param [Hash]   opt                 Passed to #date_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
+  # @return [nil]                       If menu is not available.
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def after_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A date control preceded by a label (if provided).
+  #
+  # @param [Symbol]              menu_name  Control name.
+  # @param [String, nil]         label      Label text passed to #date_label.
+  # @param [String, Symbol, nil] target     Search target controller.
+  # @param [Hash]                opt        Passed to #date_control.
+  #
+  # @return [ActiveSupport::SafeBuffer]     HTML label and control elements.
+  # @return [nil]                           Menu is not available for *target*.
+  #
+  # @see #menu_container
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def date_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A date selection element.
+  #
+  # If *selected* is not specified `#SEARCH_MENU[name][:url_param]` is used to
+  # extract a value from `#request_parameters`.
+  #
+  # If no option is currently selected, an initial "null" selection is
+  # prepended.
+  #
+  # @param [Symbol]              menu_name  Control name.
+  # @param [String, Symbol, nil] target     Search target controller.
+  # @param [String, Date, nil]   selected   Date value.
+  # @param [String, Symbol, nil] label_id   ID of associated label element.
+  # @param [Hash]                opt        Passed to #search_form except for
+  #                                           #MENU_OPTS and:
+  #
+  # @option opt [Date, String]   :selected  Initial value.
+  # @option opt [Hash]           :config    Pre-fetched configuration info.
+  #
+  # @return [ActiveSupport::SafeBuffer]     HTML menu element.
+  # @return [nil]                           If menu is not available.
+  #
+  # @see HtmlHelper#grid_cell_classes
+  #
+  def date_control: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, ?selected: (String|Date)?, ?label_id: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A label associated with a dropdown menu element.
+  #
+  # @param [Symbol] menu_name             Control name.
+  # @param [Hash]   opt                   Passed to #control_label.
+  #
+  # @return [ActiveSupport::SafeBuffer]   Empty if no label was configured or
+  #                                         provided.
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def date_label: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # date_tooltip
+  #
+  # @param [Symbol] menu_name         Control name.
+  # @param [Hash]   opt               Passed to #config_tooltip'.
+  #
+  # @return [String]                  Tooltip text.
+  # @return [nil]                     If no tooltip was defined.
+  #
+  # -
+  # noinspection DuplicatedCode
+  # +
+  def date_tooltip: (Symbol menu_name, **untyped opt) -> String?
+
+  # The control for resetting filter menu selections to their default state.
+  #
+  # @param [Hash] opt                 Passed to #menu_spacer and #reset_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def reset_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A button to reset all filter menu selections to their default state.
+  #
+  # @param [Hash] opt             Passed to #link_to except for #GRID_OPTS and:
+  #
+  # @option opt [String] :url     Default from #request_parameters.
+  # @option opt [String] :class   CSS classes for both spacer and button.
+  # @option opt [String] :label   Button label.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #SEARCH_RESET_CONTROL
+  # @see #reset_parameters
+  # @see HtmlHelper#grid_cell_classes
+  #
+  def reset_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # URL parameters that should be cleared for the current search target.
+  #
+  # @param [Hash] opt                 Default: `#request_parameters`.
+  #
+  # @return [Hash]
+  #
+  def reset_parameters: (?untyped? opt) -> symHash
+
+  # A blank element used for occupying "voids" in the search control panel.
+  #
+  # @param [Hash] opt            Passed to #html_div except for #GRID_OPTS and:
+  #
+  # @option opt [String] :class       CSS classes for both spacer and button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see HtmlHelper#grid_cell_classes
+  #
+  def menu_spacer: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A label associated with a dropdown menu element.
+  #
+  # @param [String, Symbol]      name     Control name.
+  # @param [String, Symbol, nil] target   Search target controller.
+  # @param [String, nil]         label    Label text override.
+  # @param [Hash]                opt      Passed to #label_tag except for
+  #                                         #MENU_OPTS and:
+  #
+  # @option opt [Hash] :config            Pre-fetched configuration info.
+  #
+  # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
+  #
+  # @see HtmlHelper#grid_cell_classes
+  #
+  def control_label: (String|Symbol name, ?target: (String|Symbol)?, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Indicate whether the menu is already sorted.
+  #
+  # @param [Array<Array<(String,Any)>>] menu
+  #
+  def entries_sorted?: (Array[[String,untyped]] menu) -> bool
+
+  # Return a sorted copy of the menu.
+  #
+  # @param [Array<Array<(String,Any)>>] menu
+  #
+  # @return [Array<Array<(String,Any)>>]
+  #
+  def sort_entries: (Array[[String,untyped]] menu) -> Array[[String,untyped]]
+
+  # Sort the menu by value if the value is a number or by the label otherwise.
+  #
+  # @param [Array<Array<(String,Any)>>] menu
+  #
+  # @return [Array<Array<(String,Any)>>]      The possibly-modified *menu*.
+  #
+  def sort_entries!: (Array[[String,untyped]] menu) -> Array[[String,untyped]]
+
+  public
+
+  # current_menu_config
+  #
+  # @param [Symbol, String]      menu_name
+  # @param [Symbol, String, nil] target     Default: `#search_target`.
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see ClassMethods#current_menu_config
+  #
+  def current_menu_config: (Symbol|String menu_name, ?target: (Symbol|String)?, **untyped ignored) -> symHash
+
+  # Get the configured tooltip for the control.
+  #
+  # @param [String, Symbol] name      Control name.
+  # @param [Hash]           opt       Passed to #current_menu_config.
+  #
+  # @return [String]                  Tooltip text.
+  # @return [nil]                     If no tooltip was defined.
+  #
+  def config_tooltip: (Symbol|String name, **untyped opt) -> String?
+end

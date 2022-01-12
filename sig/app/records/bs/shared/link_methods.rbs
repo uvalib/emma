@@ -1,0 +1,28 @@
+# Methods mixed in to record elements with links.
+#
+module Bs::Shared::LinkMethods
+  # Return the indicated link if present.
+  #
+  # If *rel_name* is an array, the first matching *href* will be returned.
+  #
+  # @param [String, Symbol, Array] rel_name
+  #
+  # @return [String]
+  # @return [nil]                     If *rel_name* is not valid or present.
+  #
+  def get_link: (String|Symbol|anyArray rel_name) -> String?
+
+  # Return the links present in the record.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Symbol,String,Array] :only     Limit to these rel name(s).
+  # @option opt [Symbol,String,Array] :except   Exclude these rel name(s).
+  # @option opt [Boolean]             :self     Unless this is *true*, 'self'
+  #                                               links will be excluded.
+  #
+  # @return [Array<String>]
+  # @return [nil]                     If links are not valid or present.
+  #
+  def record_links: (**untyped opt) -> strArray?
+end

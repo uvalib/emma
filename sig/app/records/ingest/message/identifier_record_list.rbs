@@ -1,0 +1,26 @@
+# List of identifier records.
+#
+# @attr [Array<Ingest::Record::IdentifierRecord>] identifiers
+#
+# @see https://app.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/IdentifierRecordList                    Ingest API documentation
+# @see https://api.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5#/components/schemas/IdentifierRecordList JSON schema specification
+#
+class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
+  include Ingest::Shared::CollectionMethods
+
+  LIST_ELEMENT: untyped
+
+  # Strategy for pre-wrapping message data before de-serialization.
+  #
+  # @type [Hash{Symbol=>String,Boolean}]
+  #
+  WRAP_FORMATS: Hash[Symbol,(String|bool)]
+
+  # Update *opt[:wrap]* according to the supplied formats.
+  #
+  # @param [Hash] opt                 May be modified.
+  #
+  # @return [void]
+  #
+  def apply_wrap!: (symHash opt) -> void
+end

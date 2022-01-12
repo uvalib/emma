@@ -33,9 +33,11 @@ module Field
   # @return [Class] The class indicated by *value*.
   # @return [nil]   If *value* could not be cast a subclass of EnumType.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def self.enum_type(value)
     if value.is_a?(Class)
-      # noinspection RubyMismatchedReturnType
       value if value < EnumType
     elsif value.to_s.strip.casecmp?('boolean')
       TrueFalse
@@ -54,7 +56,7 @@ module Field
   # @return [Hash]
   #
   #--
-  # noinspection RubyMismatchedArgumentType
+  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
   #++
   def self.configuration_for(
     field,
@@ -71,6 +73,7 @@ module Field
       next unless (section_cfg = config[section]).is_a?(Hash)
       # noinspection RubyMismatchedReturnType
       sub_sections.find do |sub_sec|
+        # noinspection RubyNilAnalysis
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
         field_cfg = sub_section_cfg[field]
@@ -90,7 +93,7 @@ module Field
   # @return [Hash]
   #
   #--
-  # noinspection RubyMismatchedArgumentType
+  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
   #++
   def self.configuration_for_label(
     label,
@@ -107,6 +110,7 @@ module Field
       next unless (section_cfg = config[section]).is_a?(Hash)
       # noinspection RubyMismatchedReturnType
       sub_sections.find do |sub_sec|
+        # noinspection RubyNilAnalysis
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
         sub_section_cfg.find do |_, fld_cfg|
@@ -398,6 +402,9 @@ module Field
     # @param [Symbol, String, nil] model
     # @param [Any]                 value
     #
+    #--
+    # noinspection RubyMismatchedVariableType
+    #++
     def initialize(src, field = nil, model = nil, value = nil)
       @base  = src
       @field = @range = nil

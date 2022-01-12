@@ -1,0 +1,5 @@
+# A Microsoft Word (.docx) file object.
+#
+class FileObject::Word < FileObject
+  include FileFormat::Word
+end

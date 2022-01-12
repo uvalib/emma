@@ -32,12 +32,13 @@ module AuthHelper
 
   # Generate an auth hash based on fixed information.
   #
-  # @param [ActionController::Parameters, Hash, String, User] src
+  # @param [User, String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
   # @param [String, nil] token
   #
   # @return [OmniAuth::AuthHash, nil]
   #
   def synthetic_auth_hash(src, token = nil)
+    # noinspection RubyMismatchedArgumentType
     OmniAuth::Strategies::Bookshare.synthetic_auth_hash(src, token)
   end
 
@@ -121,6 +122,7 @@ module AuthHelper
   # @param [String, ::OAuth2::AccessToken, nil] token
   #
   # @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
+  # @return [nil]
   #
   #--
   # == Variations
@@ -134,7 +136,7 @@ module AuthHelper
   #   @param [String, ::OAuth2::AccessToken] token  Associated token.
   #
   #--
-  # noinspection RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedParameterType
   #++
   def stored_auth_update_user(user, token = nil)
     if user.is_a?(OmniAuth::AuthHash)

@@ -1,0 +1,12 @@
+# The base class for outbound messages to the EMMA Federated Ingestion API.
+#
+class Ingest::Api::Message < Ingest::Api::Record
+  include Api::Message
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
+  #
+  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?symHash? opt) -> void
+end

@@ -1,0 +1,24 @@
+# Handle metrics requests.
+#
+# NOTE: "GET /metrics" is handled by Prometheus::Middleware::Exporter
+#
+class MetricsController < ApplicationController
+  # == GET /metrics/test
+  #
+  # A temporary endpoint to test various Prometheus metrics.
+  #
+  # * A *counter* is a metric for a quantity that accumulates a numerical
+  #   value.
+  #
+  # * A *gauge* is a metric that represents a single numerical value that can
+  #   go up and down arbitrarily.
+  #
+  # * A *histogram* aggregates accumulations of values in "buckets" which
+  #   divide a number space into mutually exclusive regions.
+  #
+  # * A *summary* is a metric...
+  #
+  # @note This is out of date.
+  #
+  def test: () -> void
+end

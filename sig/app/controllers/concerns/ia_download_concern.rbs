@@ -1,0 +1,34 @@
+# Controller support methods for downloads from Internet Archive.
+#
+module IaDownloadConcern
+  extend ActiveSupport::Concern
+
+  include ActionController::DataStreaming
+
+  include ApiConcern
+
+  include SerializationHelper
+
+  # ia_download_api
+  #
+  # @return [IaDownloadService]
+  #
+  def ia_download_api: () -> IaDownloadService
+
+  # Send a copy of a file downloaded from Internet Archive.
+  #
+  # @param [String] url
+  # @param [Hash]   opt               Request headers,
+  #
+  # @raise [ExecError] @see IaDownloadService#download
+  #
+  # @return [void]
+  #
+  def ia_download_response: (String url, **untyped opt) -> void
+
+  private
+
+  #THIS_MODULE: untyped
+
+  include RepositoryHelper
+end

@@ -1,0 +1,47 @@
+# SearchService::Common
+#
+module SearchService::Common
+  include ApiService::Common
+
+  include SearchService::Properties
+
+  # api_headers
+  #
+  # @param [Hash]         params      Default: @params.
+  # @param [Hash]         headers     Default: {}.
+  # @param [String, Hash] body        Default: *nil* unless `#update_request?`.
+  #
+  # @return [Array<(Hash,Hash,String)>]      Message body plus headers for GET.
+  # @return [Array<(Hash,Hash,Hash)>]        Query plus headers for PUT, POST, PATCH.
+  #
+  def api_headers: (?symHash? params, ?strHash? headers, ?(String|strHash)? body) -> [symHash, strHash, (String|strHash)]
+
+  NON_PUBLISHER_SEARCH: symArray
+
+  # This override silently works around a limitation of the Unified Search
+  # index's handling of publisher searches.  The index treats this as a kind of
+  # hybrid between a search query and a search filter -- it does not accept a
+  # search which is only comprised of publisher search terms(s) alone.
+  #
+  # Its error message indicates that a publisher search can only be performed
+  # in conjunction with another search type ("identifier", "title", "creator",
+  # or "q" [keyword]) or with a filter selection from "format" ("Format" menu),
+  # "formatFeature" ("Feature" menu), or "accessibilityFeature"
+  # ("Accessibility" menu).
+  #
+  # If *opt* contains only :publisher then it adds filter selections for all of
+  # the known format types.  Unless there are records without at least one
+  # format type, this should make the :publisher term(s) search across all of
+  # the records.
+  #
+  def get_parameters: (Symbol meth, **untyped opt) -> symHash
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

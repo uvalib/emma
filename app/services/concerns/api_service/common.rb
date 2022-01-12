@@ -274,8 +274,8 @@ module ApiService::Common
   # @param [Hash, nil]         headers  Default: {}.
   # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
   #
-  # @return [(Hash,Hash,String)]      Message body plus headers for GET.
-  # @return [(Hash,Hash,Hash)]        Query plus headers for PUT, POST, PATCH.
+  # @return [Array<(Hash,Hash,String)>] Message body plus headers for GET.
+  # @return [Array<(Hash,Hash,Hash)>]   Query plus headers for PUT, POST, PATCH
   #
   #--
   # noinspection RubyNilAnalysis
@@ -615,14 +615,16 @@ module ApiService::Common
 
   # __debug_api_response
   #
-  # @param [Exception, nil] error
-  # @param [Symbol, nil]    action
-  # @param [Boolean]        full      If *true*, show complete body.
+  # @param [Faraday::Response,Hash] response
+  # @param [Exception]              error
+  # @param [Symbol,String]          action
+  # @param [Boolean]                full      If *true*, show complete body.
   #
   # @return [void]
   #
   #--
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # noinspection RailsParamDefResolve
   #++
   def __debug_api_response(
     response: @response,
@@ -630,7 +632,6 @@ module ApiService::Common
     action:   @action,
     full:     DEBUG_TRANSMISSION
   )
-    # noinspection RailsParamDefResolve
     response ||= error.try(:http_response) || error.try(:response)
     status     = ExecReport.http_status(error)
     status   ||= ExecReport.http_status(response)

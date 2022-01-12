@@ -1,0 +1,104 @@
+# Methods mixed in to record elements related to authors, editors, etc.
+#
+module Bs::Shared::CreatorMethods
+  include Api::Shared::CreatorMethods
+
+  # @type [Array<String>]
+  AUTHOR_TYPES: strArray
+
+  # @type [Array<String>]
+  EDITOR_TYPES: strArray
+
+  # @type [Array<String>]
+  COMPOSER_TYPES: strArray
+
+  # @type [Array<String>]
+  LYRICIST_TYPES: strArray
+
+  # @type [Array<String>]
+  ARRANGER_TYPES: strArray
+
+  # @type [Array<String>]
+  TRANSLATOR_TYPES: strArray
+
+  # @type [Array<String>]
+  CREATOR_TYPES: strArray
+
+  # The author(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def author_list: (**untyped opt) -> strArray
+
+  # The editor(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def editor_list: (**untyped opt) -> strArray
+
+  # The composer(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def composer_list: (**untyped opt) -> strArray
+
+  # The lyricist(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def lyricist_list: (**untyped opt) -> strArray
+
+  # The arranger(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def arranger_list: (**untyped opt) -> strArray
+
+  # The translator(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def translator_list: (**untyped opt) -> strArray
+
+  # The author(s)/creator(s) of this catalog title.
+  #
+  # @param [Array<String>] types      Default: `#CREATOR_TYPES`
+  # @param [Hash]          opt
+  #
+  # @option opt [Boolean] :role       If *true*, append the contributor type.
+  #
+  # @return [Array<String>]
+  #
+  def creator_list: (*String types, **untyped opt) -> strArray
+
+  # All contributor(s) to this catalog title.
+  #
+  # @param [Array<String>] types      Default: all
+  # @param [Hash]          opt
+  #
+  # @option opt [Boolean] :role       If *true*, append the contributor type.
+  #
+  # @return [Array<String>]
+  #
+  def contributor_list: (*String types, **untyped opt) -> strArray
+
+  # All contributors to this catalog title keyed by contributor type.
+  #
+  # @param [Array<String>] roles      Default: `BsContributorType#values`
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def contributor_table: (*String roles) -> Hash[Symbol,strArray]
+end

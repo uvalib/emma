@@ -1,0 +1,60 @@
+# Control record tracking queueing submission to an AWS S3 bucket.
+#
+# @see file:config/locales/state_table.en.yml *en.emma.state_table.action.queue*
+#
+# @!method started?
+# @!method submitting?
+# @!method unretrieved?
+# @!method retrieved?
+# @!method canceled?
+# @!method aborted?
+#
+# @!method started!
+# @!method submitting!
+# @!method unretrieved!
+# @!method retrieved!
+# @!method canceled!
+# @!method aborted!
+#
+class Action::Queue < Action::BulkPart
+  include Record::Sti::Leaf
+
+  include Record::Steppable
+
+  include Record::Uploadable
+
+  # Enqueue the submission package to the appropriate AWS S3 bucket.
+  #
+  # @param [String] sid               Submission ID.
+  # @param [Hash]   opt
+  #
+  # @option opt [Boolean] :async      If *true* run callback asynchronously.
+  # @option opt [Symbol]  :meth       Name of caller (for logging).
+  #
+  # @return [Boolean, nil]
+  #
+  def submit!: (sid: String, **untyped opt) -> bool?
+
+  # Indicate whether the item has been removed from the AWS S3 bucket.
+  #
+  # @param [String, nil] sid          Default: `#sid_value`
+  #
+  def not_in_queue?: (?String? sid, **untyped opt) -> bool
+
+  def check_retrieved: (?String? sid, ?advance: bool, **untyped opt) -> String
+
+  # A textual description of the type of the Model instance.
+  #
+  # @return [String]
+  #
+  def self.describe_type: (*untyped, **untyped) ?{ () -> untyped } -> String
+
+  # A textual description of the status of the Action instance.
+  #
+  # @param [Action] action
+  # @param [Hash]   opt
+  #
+  # @return [String]
+  #
+  def self.describe_status: (Action action, **untyped opt) -> String
+end

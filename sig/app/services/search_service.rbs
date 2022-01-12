@@ -1,0 +1,7 @@
+# Receive messages through the EMMA Unified Search API.
+#
+class SearchService < ApiService
+  DESTRUCTIVE_TESTING: bool
+
+  include Search
+end

@@ -1,0 +1,67 @@
+# HTTP utilities.
+#
+module HttpHelper
+  # HTTP_STATUS_TYPE
+  #
+  # @type [Hash{Symbol=>Array,Range}]
+  #
+  HTTP_STATUS_TYPE: Hash[Symbol,(Array[Integer]|Range[Integer])]
+
+  # HTTP_STATUS_RANGE
+  #
+  # @type [Hash{Symbol=>Array,Range}]
+  #
+  HTTP_STATUS_RANGE: Hash[Symbol,(Array[Integer]|Range[Integer])]
+
+  # info?
+  #
+  # @param [Integer] code
+  #
+  def info?: (Integer code) -> bool
+
+  # success?
+  #
+  # @param [Integer] code
+  #
+  def success?: (Integer code) -> bool
+
+  # redirect?
+  #
+  # @param [Integer] code
+  #
+  def redirect?: (Integer code) -> bool
+
+  # permanent_redirect?
+  #
+  # @param [Integer] code
+  #
+  def permanent_redirect?: (Integer code) -> bool
+
+  # temporary_redirect?
+  #
+  # @param [Integer] code
+  #
+  def temporary_redirect?: (Integer code) -> bool
+
+  # error?
+  #
+  # @param [Integer] code
+  #
+  def error?: (Integer code) -> bool
+
+  # server_error?
+  #
+  # @param [Integer] code
+  #
+  def client_error?: (Integer code) -> bool
+
+  # client_error?
+  #
+  # @param [Integer] code
+  #
+  def server_error?: (Integer code) -> bool
+
+  private
+
+  def self.included: (Module base) -> void
+end

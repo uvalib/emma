@@ -1,0 +1,314 @@
+module OmniAuth
+  module Strategies
+    # An extension of the +OAuth2+ strategy which sets up some defaults that
+    # would otherwise have to be specified in initializers/devise.rb.
+    #
+    # @see https://github.com/omniauth/omniauth-oauth2
+    #
+    # == Implementation Notes
+    # The base implementation of #uid, #info, #credentials, and #extra and
+    # their use of associated blocks within the class definition seem to be
+    # problematic used in conjunction with retrieving account information from
+    # +Bookshare+.  Thus, these methods are overridden explicitly in order to
+    # ensure consistency.
+    #
+    # -
+    # noinspection LongLine
+    # +
+    class Bookshare < OmniAuth::Strategies::OAuth2
+      include Emma::Common
+
+      include Emma::Json
+
+      include OmniAuth::ExtensionDebugging
+
+      # Direct access to the OmniAuth logger, automatically prefixed with this
+      # strategy's name.
+      #
+      # @param [Symbol] level
+      # @param [String] message
+      #
+      # @return [nil]
+      #
+      # == Implementation Notes
+      # Instead of attempting to override Configuration#default_logger this
+      # override simply manages its own logger instance.
+      #
+      def log: (Symbol level, String message) -> nil
+
+      # Performs the steps necessary to run the request phase of a strategy.
+      #
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      #
+      def request_call: () -> httpResult
+
+      # User login name.
+      #
+      # @return [String]
+      #
+      def uid: () -> String
+
+      # User account details.
+      #
+      # @return [Hash]
+      #
+      def info: () -> Hash[Symbol,String]
+
+      # Credential information for the authenticated user from #access_token.
+      #
+      # @return [Hash]
+      #
+      def credentials: () -> symHash
+
+      # Extra information.
+      #
+      # @return [Hash, nil]           Currently always *nil*.
+      #
+      def extra: () -> symHash?
+
+      # Generate authorization information for the authenticated user.
+      #
+      # @return [OmniAuth::AuthHash]
+      #
+      def auth_hash: () -> OmniAuth::AuthHash
+
+      # Information about the user account.
+      #
+      # @return [Hash{Symbol=>Any}]
+      #
+      def account_info: () -> symHash
+
+      # Acquire information about the user account from +Bookshare+.
+      #
+      # @param [Hash, nil] opt        Passed to ::OAuth2::AccessToken#get
+      #
+      # @return [Hash]
+      #
+      # == Implementation Notes
+      # NOTE: Needs to relate to:
+      # @see BookshareService::UserAccount#get_user_identity
+      #
+      # E.g.:
+      #
+      # !{
+      #   username: 'john@smith.com',
+      #   links: [],
+      #   !{
+      #     firstName: 'John',
+      #     lastName:  'Smith',
+      #     middle:    nil,
+      #     prefix:    nil,
+      #     suffix:    nil,
+      #     links:     []
+      #   }
+      # }
+      #
+      def get_account_info: (?symHash? opt) -> symHash
+
+      # The +OAuth2+ client instance.
+      #
+      # @return [::OAuth2::Client]
+      #
+      def client: () -> ::OAuth2::Client
+
+      # request_phase
+      #
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [(Integer, Hash{String=>*}, Array<String>)]
+      #
+      # @see ::OAuth2::ClientExt#request
+      #
+      def request_phase: () -> httpResult
+
+      # callback_phase
+      #
+      # @raise [OmniAuth::Strategies::OAuth2::CallbackError]
+      # @raise [OAuth2::Error]
+      # @raise [Timeout::Error]
+      # @raise [Errno::ETIMEDOUT]
+      # @raise [SocketError]
+      #
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      #
+      # -
+      # noinspection RubyScope
+      # +
+      def callback_phase: () -> httpResult
+
+      # An alternative to call_app! which generates a response for a redirect.
+      #
+      # @param [String] location
+      # @param [Hash]   log_extra
+      #
+      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      #
+      # -
+      # noinspection RubyStringKeysInHashInspection
+      # +
+      def call_redirect: (String location, **untyped log_extra) -> httpResult
+
+      # Trigger an exception if the signed-in user doesn't have a valid
+      # +Bookshare+ +OAuth2+ token.
+      #
+      # @return [void]
+      #
+      # @raise [RuntimeError]   If +Bookshare+ account info was unavailable.
+      #
+      def check_user_validity: () -> void
+
+      # Acquire the +OAuth2+ token from the remote service.
+      #
+      # @return [::OAuth2::AccessToken]
+      #
+      def build_access_token: () -> ::OAuth2::AccessToken
+
+      # The currently signed-in user.
+      #
+      # @return [User]
+      # @return [nil]
+      #
+      def current_user: () -> User?
+
+      # Normalize URL parameters from the item or *request* if none was given.
+      #
+      # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
+      #
+      # @return [Hash{Symbol=>Any}]
+      #
+      # -
+      # noinspection RubyNilAnalysis
+      # +
+      def url_parameters: (?(prmHash|Rack::Request)? params) -> symHash
+
+      # Generate an access token based on fixed information.
+      #
+      # @param [::OAuth2::AccessToken, ActionController::Parameters, Hash, String] src
+      #
+      # @return [::OAuth2::AccessToken, nil]
+      #
+      # -
+      # == Variations
+      # +
+      #
+      # @overload synthetic_access_token(atoken)
+      #   @param [::OAuth2::AccessToken] atoken
+      #
+      # @overload synthetic_access_token(uid)
+      #   @param [String] uid         Bookshare user identity (email address).
+      #
+      # @overload synthetic_access_token(params)
+      #   @param [ActionController::Parameters, Hash] params
+      #   @option params [String] :uid
+      #   @option params [String] :id             Alias for :uid.
+      #   @option params [String] :access_token
+      #   @option params [String] :token          Alias for :access_token.
+      #
+      # -
+      # noinspection RubyMismatchedArgumentType
+      # +
+      def synthetic_access_token: (String|prmHash|::OAuth2::AccessToken src) -> ::OAuth2::AccessToken?
+      #def synthetic_access_token: (::OAuth2::AccessToken atoken) -> ::OAuth2::AccessToken
+      #                          | (prmHash params)               -> (::OAuth2::AccessToken | nil)
+      #                          | (String uid)                   -> (::OAuth2::AccessToken | nil)
+
+      # Generate an auth hash based on fixed information.
+      #
+      # @param [String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
+      #
+      # @return [OmniAuth::AuthHash, nil]
+      #
+      # -
+      # == Variations
+      # +
+      #
+      # @overload synthetic_auth_hash(uid)
+      #   @param [String] uid         Bookshare user identity (email address).
+      #
+      # @overload synthetic_auth_hash(auth_hash)
+      #   @param [OmniAuth::AuthHash] auth_hash
+      #
+      # @overload synthetic_auth_hash(params)
+      #   @param [ActionController::Parameters, Hash] params
+      #   @option params [OmniAuth::AuthHash] :auth
+      #   @option params [String] :uid
+      #   @option params [String] :id             Alias for :uid.
+      #   @option params [String] :access_token
+      #   @option params [String] :token          Alias for :access_token.
+      #
+      # -
+      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+      # +
+      def synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src) -> OmniAuth::AuthHash?
+      #def synthetic_auth_hash: (OmniAuth::AuthHash auth_hash) -> OmniAuth::AuthHash
+      #                       | (prmHash params)               -> (OmniAuth::AuthHash | nil)
+      #                       | (String uid)                   -> (OmniAuth::AuthHash | nil)
+
+      # Create an AuthHash from the given source.
+      #
+      # @param [Hash, User] src
+      #
+      # @return [OmniAuth::AuthHash]
+      #
+      def self.auth_hash: (User|anyHash src) -> OmniAuth::AuthHash
+
+      # Generate an auth hash based on fixed information.
+      #
+      # @param [User, String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
+      # @param [String, nil] token
+      #
+      # @return [OmniAuth::AuthHash, nil]
+      #
+      # -
+      # == Variations
+      # +
+      #
+      # @overload synthetic_auth_hash(uid, token = nil)
+      #   @param [String, User] uid     Bookshare user identity (email address).
+      #   @param [String]       token   Default from #stored_auth.
+      #
+      # @overload synthetic_auth_hash(auth_hash)
+      #   @param [OmniAuth::AuthHash] auth_hash
+      #
+      # @overload synthetic_auth_hash(params)
+      #   @param [ActionController::Parameters, Hash] params
+      #   @option params [OmniAuth::AuthHash] :auth
+      #   @option params [String] :uid
+      #   @option params [String] :id             Alias for :uid.
+      #   @option params [String] :access_token
+      #   @option params [String] :token          Alias for :access_token.
+      #
+      def self.synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src, ?String? token) -> OmniAuth::AuthHash?
+      #def self.synthetic_auth_hash: (OmniAuth::AuthHash auth_hash)   -> OmniAuth::AuthHash
+      #                            | (prmHash params)                 -> (OmniAuth::AuthHash | nil)
+      #                            | (User|String uid, String? token) -> (OmniAuth::AuthHash | nil)
+
+      # Table of user names/tokens acquired for use in non-production deploys.
+      #
+      # Token are taken from the User table entries that have an :access_token
+      # value.  If BOOKSHARE_TEST_AUTH is supplied, it is used to prime (or
+      # update) the database table.
+      #
+      # @param [Hash, nil] values
+      #
+      # @return [Hash{String=>Hash}]
+      #
+      # == Usage Notes
+      # Because the logic is only performed once, direct changes to the User
+      # table will not be reflected here, however changes made indirectly via
+      # #stored_auth_update and/or #stored_auth_update_user will change both
+      # the value returned by this method and the associated User table entry.
+      #
+      def self.stored_auth: (?anyHash? values) -> Hash[String,anyHash]
+
+      # Produce a stored_auth table entry value.
+      #
+      # @param [String] token
+      #
+      # @return [Hash{Symbol=>String}]
+      #
+      def self.stored_auth_entry_value: (String token) -> { access_token: String, token_type: 'bearer', scope: 'basic' }
+    end
+  end
+end

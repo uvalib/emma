@@ -22,7 +22,7 @@ module Emma::Config
   # Load a YAML configuration file.
   #
   # @param [String, Pathname] path    Relative or absolute path to the file.
-  # @param [Boolean, nil]     erb     If *false* don't attempt ERB translation.
+  # @param [Boolean]          erb     If *false* don't attempt ERB translation.
   #
   # @return [Hash{Symbol=>Any}]       Contents of the YAML file.
   # @return [nil]                     If there was a problem.

@@ -1,0 +1,273 @@
+class RunState < Hash
+  include Emma::Common
+
+  include Emma::Json
+
+  # If *true*, then PUT "/health/run_state" will clear the RunState initially
+  # set at system startup. This allows a system which starts unavailable to be
+  # made available at some point.
+  #
+  # @type [Boolean]
+  #
+  CLEARABLE: bool
+
+  # If *true*, then allow RunState to be changed dynamically, allowing for the
+  # system to be repeatedly made available/unavailable.
+  #
+  # NOTE: Not recommended for production at this time.
+  #
+  # @type [Boolean]
+  #
+  DYNAMIC: bool
+
+  # If *true*, then RunState is set at system startup and cannot be changed.
+  #
+  # @type [Boolean]
+  #
+  STATIC: bool
+
+  # The run states and their properties.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # == Implementation Notes
+  # If further states are added, they should be added between :available and
+  # :unavailable so that they maintain their first/last positions.
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  STATE: Hash[Symbol,symHash]
+
+  # * AVAILABLE_STATUS references the run state for normal operation.
+  # * UNAVAILABLE_STATUS is the run state for general system unavailability.
+  AVAILABLE_STATUS: Symbol
+
+  # * AVAILABLE_STATUS references the run state for normal operation.
+  # * UNAVAILABLE_STATUS is the run state for general system unavailability.
+  UNAVAILABLE_STATUS: Symbol
+
+  # Defaults for the "available" run state.
+  #
+  # @type [Hash{Symbol=>String,Integer}]
+  #
+  AVAILABLE_DEFAULTS: Hash[Symbol,(String|Integer)]
+
+  # Defaults for the "unavailable" run state.
+  #
+  # @type [Hash{Symbol=>String,Integer}]
+  #
+  UNAVAILABLE_DEFAULTS: Hash[Symbol,(String|Integer)]
+
+  # The run state status expressed as one of `#STATE.keys`.
+  # (Derived from `self[:state]`).
+  #
+  # @return [Symbol]
+  #
+  attr_reader status: Symbol
+
+  # The HTTP result code associated with the run state.
+  # (Derived from `self[:code]`).
+  #
+  # @return [Integer]
+  #
+  attr_reader code: Integer
+
+  # The text-only message associated with the run state.
+  # (Derived from `self[:text]`, `self[:message]`, or `self[:html]`).
+  #
+  # @return [String]
+  #
+  attr_reader text: String
+
+  # The HTML-ready message associated with the run state.
+  # (Derived from `self[:html]` or `self[:message]`).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  attr_reader html: ActiveSupport::SafeBuffer
+
+  # The "Retry-After" time expressed as either a timestamp or seconds.
+  # (Derived from `self[:retry_after]`).
+  #
+  # @return [Time, Integer, nil]
+  #
+  # @see #timestamp_or_duration
+  #
+  attr_reader after: Time | Integer | nil
+
+  # List of attribute accessors for instances of this class.
+  #
+  # @type [Array<Symbol>]
+  #
+  ATTR_METHODS: symArray
+
+  # Create a new run state instance.
+  #
+  # With no arguments, a RunState is created which indicates that the system
+  # is available.
+  #
+  # If the argument is *true* or "true", a RunState is created which indicates
+  # that the system is unavailable.
+  #
+  # @param [String, Boolean, Hash, RunState, Any, nil] source
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def initialize: (?untyped? source) -> void
+
+  # Override Hash#merge! to set/update attributes.
+  #
+  # @param [Array<RunState,Hash>] others
+  #
+  # @return [self]
+  #
+  def merge!: (*(RunState|symHash) others) -> self
+
+  # Prepare a source value for assignment during initialization.
+  #
+  def normalize_value: (untyped v) -> untyped
+
+  # Indicate whether the system should be available.
+  #
+  def available?: () -> bool
+
+  # Indicate whether the system should be unavailable.
+  #
+  def unavailable?: () -> bool
+
+  # The value for the 'Retry-After' header: either a string representing a
+  # duration in seconds, or a time
+  #
+  # @return [String, nil]
+  #
+  def retry_value: () -> String?
+
+  # A regular expression  pattern fragment allowing for a duration to be
+  # expressed as, for example, "+ 30.minutes" or "in 30.minutes".
+  #
+  # @type [String]
+  #
+  PLUS: String
+
+  # A table of abbreviations with their matching time units.
+  #
+  # @type [Hash{String=>String}]
+  #
+  ABBREV_UNIT: Hash[String,String]
+
+  # A regular expression pattern fragment for time units.
+  #
+  # @type [String]
+  #
+  UNITS: String
+
+  # A regular expression pattern fragment for time unit abbreviations.
+  #
+  # @type [String]
+  #
+  ABBREVS: String
+
+  # Transform a value into either a duration (as an integral number of seconds)
+  # or a fixed timestamp.
+  #
+  # @param [String, Integer, ActiveSupport::Duration, Time, Any] v
+  #
+  # @return [Time, Integer, nil]
+  #
+  # @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def timestamp_or_duration: (untyped v) -> (Time | Integer | nil)
+
+  # The current run state.
+  #
+  # @return [RunState]
+  #
+  def self.current: () -> RunState
+
+  # Set the current run state.
+  #
+  # @param [Hash, String, Any, nil] source
+  #
+  # @return [void]
+  #
+  def self.set_current: (untyped source) -> void
+
+  # Clear the current run state.
+  #
+  # @return [void]
+  #
+  def self.clear_current: () -> void
+
+  # The relative path to the file which is used to communicate the current
+  # run state between threads.
+  #
+  # @type [String]
+  #
+  # == Implementation Notes
+  # This is in "tmp/pids" for extra assurance because that directory is
+  # cleared on startup by the infrastructure.
+  #
+  STATE_FILE: String
+
+  private
+
+  # Indicate whether the state file is present.
+  #
+  def self.state_file_exist?: () -> bool
+
+  # Ensure that the state file is removed.
+  #
+  def self.state_file_clear: () -> void
+
+  # Get the contents of the state file.
+  #
+  # @return [String]
+  # @return [nil]                 If #STATE_FILE does not exist.
+  #
+  def self.state_file_read: () -> String?
+
+  # Create or update the contents of the state file.
+  #
+  # @param [String, Hash] state
+  #
+  # @return [String]
+  # @return [nil]                 If #STATE_FILE could not be created.
+  #
+  def self.state_file_write: (String|symHash state) -> String?
+
+  # Add a warning-level log message.
+  #
+  # @param [Array]                args    Passed to #log.
+  # @param [Symbol, nil]          meth    Calling method.
+  # @param [Proc]                 block   Passed to #log.
+  #
+  # @return [nil]
+  #
+  def self.warn: (*untyped args, ?meth: Symbol?) { () -> untyped } -> nil
+
+  # Add a debug-level log message.
+  #
+  # @param [Array]                args    Passed to #log.
+  # @param [Symbol, nil]          meth    Calling method.
+  # @param [Proc]                 block   Passed to #log.
+  #
+  # @return [nil]
+  #
+  def self.debug: (*untyped args, ?meth: Symbol?) { () -> untyped } -> nil
+
+  # Add a log message.
+  #
+  # @param [Array]                args    Passed to Emma::Log#add
+  # @param [Integer, Symbol, nil] level   Severity level.
+  # @param [Symbol, nil]          meth    Calling method.
+  # @param [Proc]                 block   Passed to Emma::Log#add
+  #
+  # @return [nil]
+  #
+  def self.log: (*untyped args, level: Integer|Symbol|nil, ?meth: Symbol?) { () -> untyped } -> nil
+end

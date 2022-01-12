@@ -1,0 +1,7 @@
+class Phase::WorkflowJob < Model::WorkflowJob
+  include ApplicationJob::Logging
+
+  # Run the command(s) specified by the Phase. # TODO: needed?
+  #
+  def perform: (*untyped args) -> untyped
+end

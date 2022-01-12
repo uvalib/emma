@@ -1,0 +1,5 @@
+# EPUB file format metadata extractor.
+#
+class FileParser::Epub < FileParser::Ocf
+  include FileFormat::Epub
+end

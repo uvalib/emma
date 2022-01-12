@@ -1,0 +1,49 @@
+# SearchService::Properties
+#
+module SearchService::Properties
+  include ApiService::Properties
+
+  # Configuration values from config/locales/service.en.yml
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  SEARCH_CONFIG: symHash
+
+  DEFAULT_ENGINE: Symbol
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  # @see #default_engine_url
+  #
+  def base_url: () -> String
+
+  # An API key is not a part of search URLs.
+  #
+  # @return [nil]
+  #
+  def api_key: () -> nil
+
+  # API version is not a part of search URLs.
+  #
+  # @return [nil]
+  #
+  def api_version: () -> nil
+
+  # Valid search engine URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  def engines: () -> Hash[Symbol,String]
+
+  # Default search engine for this deployment.
+  #
+  # @return [String]
+  #
+  def default_engine_url: () -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end

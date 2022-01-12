@@ -1,0 +1,178 @@
+# ApiService::Exceptions
+#
+# @!attribute [r] exception
+#   @return [ApiService::Error, nil]
+#   The exception raised by the last #api access.
+#
+module ApiService::Exceptions
+  include Emma::Common
+
+  include Emma::Debug
+
+  include ApiService::Properties
+
+  # The exception raised by the last #api access.
+  #
+  # @return [ApiService::Error, nil]
+  #
+  attr_reader exception: ApiService::Error | nil
+
+  # Indicate whether the latest API request generated an exception.
+  #
+  def error?: () -> bool
+
+  # Clear the latest API exception.
+  #
+  # (This can be done after an #api call to avoid generation of a flash
+  # message.)
+  #
+  # @return [void]
+  #
+  def clear_error: () -> void
+
+  # The message associated with the latest API exception.
+  #
+  # @return [ExecReport]
+  # @return [nil]                     If there is no exception.
+  #
+  def exec_report: () -> ExecReport?
+
+  # Set the latest API error.
+  #
+  # @param [Exception, Class<ApiService::Error>, Symbol, Any, nil] error
+  # @param [Hash] opt   Passed to initializer if *error* is a class.
+  #
+  # @return [ApiService::Error]       New value of @exception.
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def set_error: (untyped error, **untyped opt) -> ApiService::Error
+
+  # A table of all error types and error classes for the current service.
+  #
+  # @return [Hash{Symbol=>Class}]
+  #
+  # @see ApiService::Error#error_classes
+  #
+  def error_classes: () -> Hash[Symbol,Class]
+
+  # Generate a service error indicating an authorization failure.
+  #
+  # @return [ApiService::AuthError]
+  #
+  def auth_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::AuthError
+
+  # Generate a service error indicating a network communication failure.
+  #
+  # @return [ApiService::CommError]
+  #
+  def comm_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::CommError
+
+  # Generate a service error indicating a network session failure.
+  #
+  # @return [ApiService::SessionError]
+  #
+  def session_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::SessionError
+
+  # Generate a service error indicating a failure to make a network connection.
+  #
+  # @return [ApiService::ConnectError]
+  #
+  def connect_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::ConnectError
+
+  # Generate a service error indicating a network session timeout.
+  #
+  # @return [ApiService::TimeoutError]
+  #
+  def timeout_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::TimeoutError
+
+  # Generate a service error indicating a network send failure.
+  #
+  # @return [ApiService::XmitError]
+  #
+  def xmit_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::XmitError
+
+  # Generate a service error indicating a network receive failure.
+  #
+  # @return [ApiService::RecvError]
+  #
+  def recv_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RecvError
+
+  # Generate a service error indicating a bad network packet.
+  #
+  # @return [ApiService::ParseError]
+  #
+  def parse_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::ParseError
+
+  # Generate a service error indicating the API request was invalid.
+  #
+  # @return [ApiService::RequestError]
+  #
+  def request_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RequestError
+
+  # Generate a service error indicating the API request was empty.
+  #
+  # @return [ApiService::NoInputError]
+  #
+  def no_input_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::NoInputError
+
+  # Wrap an exception or response in a service error.
+  #
+  # @return [ApiService::ResponseError]
+  #
+  def response_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::ResponseError
+
+  # Generate a service error indicating that the response had no data.
+  #
+  # @return [ApiService::EmptyResultError]
+  #
+  def empty_result_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::EmptyResultError
+
+  # Generate a service error indicating HTML was received instead of JSON.
+  #
+  # @return [ApiService::HtmlResultError]
+  #
+  def html_result_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::HtmlResultError
+
+  # Generate a service error indicating a failure to redirect.
+  #
+  # @return [ApiService::RedirectionError]
+  #
+  def redirect_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RedirectionError
+
+  # Generate a service error indicating too many redirects.
+  #
+  # @return [ApiService::RedirectLimitError]
+  #
+  def redirect_limit_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RedirectLimitError
+
+  private
+
+  # A table of all error types and error classes for the given service.
+  #
+  # @param [ApiService, Class, String, nil] service   Default: `self.class`.
+  #
+  # @return [Hash{Symbol=>Class}]
+  #
+  # @see ApiService::Error#error_classes
+  #
+  # +
+  # noinspection RubyNilAnalysis
+  # -
+  def get_error_classes: (?(ApiService|Class|String)? service) -> Hash[Symbol,Class]
+
+  # log_exception
+  #
+  # @param [Exception]              error
+  # @param [Symbol, nil]            action
+  # @param [Faraday::Response, nil] response
+  # @param [Symbol, String, nil]    meth
+  #
+  # @return [void]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def log_exception: (Exception error, ?action: Symbol?, ?response: Faraday::Response?, ?meth: (Symbol|String)?) -> void
+end

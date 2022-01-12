@@ -1,0 +1,5 @@
+# An RTF file object.
+#
+class FileObject::Rtf < FileObject
+  include FileFormat::Rtf
+end

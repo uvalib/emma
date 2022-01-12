@@ -1,0 +1,33 @@
+# Caching for items from an external API.
+#
+class ApiCachingMiddleware < Faraday::Middleware
+  include CachingMiddleware::Concern
+
+  # Default options.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  DEFAULT_OPTIONS: symHash
+
+  # Initialize an instance.
+  #
+  # @param [Faraday::Middleware] app
+  # @param [Hash, nil]           opt
+  #
+  # @option opt [Logger]                              :logger
+  # @option opt [String]                              :cache_dir
+  # @option opt [Symbol, ActiveSupport::Cache::Store] :store
+  # @option opt [Hash]                                :store_options
+  # @option opt [ActiveSupport::Duration, Integer]    :expires_in
+  #
+  def initialize: (Faraday::Middleware app, ?symHash? opt) -> void
+
+  # Generate cache key.
+  #
+  # @param [Faraday::Env] env
+  #
+  # @return [String]
+  # @return [nil]                     If there is no request active.
+  #
+  def key: (Faraday::Env env) -> String?
+end

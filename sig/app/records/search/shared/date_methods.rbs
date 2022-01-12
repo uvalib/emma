@@ -1,0 +1,5 @@
+# Methods mixed in to record elements related to dates.
+#
+module Search::Shared::DateMethods
+  include Api::Shared::DateMethods
+end

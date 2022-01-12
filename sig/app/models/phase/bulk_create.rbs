@@ -1,0 +1,25 @@
+# Bulk entry creation workflow tracking record.
+#
+# @see file:config/locales/state_table.en.yml *en.emma.state_table.phase.bulk_create*
+#
+class Phase::BulkCreate < Phase::BulkOperation
+  include Record::Sti::Leaf
+
+  # Operations for creating entries in bulk.
+  #
+  # @param [Symbol, Any] prev_state
+  # @param [Hash]        opt
+  #
+  # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.
+  #
+  # @return [Boolean]
+  #
+  def run_sequence: (?untyped? prev_state, **untyped opt) -> bool
+
+  # A textual description of the type of the Model instance.
+  #
+  # @return [String]
+  #
+  def self.describe_type: (*untyped, **untyped) ?{ () -> untyped } -> String
+end

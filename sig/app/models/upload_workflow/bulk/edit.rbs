@@ -1,0 +1,138 @@
+class UploadWorkflow::Bulk::Edit < UploadWorkflow::Bulk
+  include UploadWorkflow::Edit
+end
+
+module UploadWorkflow::Bulk::Edit::Errors
+  include UploadWorkflow::Bulk::Errors
+end
+
+module UploadWorkflow::Bulk::Edit::Properties
+  include UploadWorkflow::Bulk::Properties
+
+  include UploadWorkflow::Bulk::Edit::Errors
+end
+
+module UploadWorkflow::Bulk::Edit::External
+  include UploadWorkflow::Bulk::External
+
+  include UploadWorkflow::Bulk::Edit::Properties
+
+  include UploadWorkflow::Bulk::Edit::Events
+end
+
+module UploadWorkflow::Bulk::Edit::Data
+  include UploadWorkflow::Bulk::Data
+
+  include UploadWorkflow::Bulk::Edit::External
+end
+
+# New and overridden action methods specific to bulk update.
+#
+module UploadWorkflow::Bulk::Edit::Actions
+  include UploadWorkflow::Bulk::Actions
+
+  include UploadWorkflow::Bulk::Edit::Data
+
+  # This should be *false* in order to get the full benefit of batch operation.
+  #
+  # If this is *true* then it essentially defeats batching by segregating
+  # editing activities (download, upload, database) into one phase, and
+  # indexing into the following phase.  Batching occurs in each phase, but the
+  # entire set of entries must pass through one phase before entering the next.
+  #
+  # @type [Boolean]
+  #
+  DEFER_INDEXING: bool
+
+  # This action basically runs the bulk edit to completion.
+  #
+  # Since there are no review workflow steps, and indexing has to be done for
+  # each batch in order to support the notion of batching, then the bulk-edit
+  # workflow is "validated" by completing it and reporting on the
+  # successes/failures of the overall process.
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Bulk::External#bulk_upload_edit
+  #
+  def wf_validate_submission: (*untyped event_args) -> void
+
+  # For bulk-edit, this action is a "no-op" because indexing will have been
+  # done per-batch in #wf_validate_submission.
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  def wf_index_update: (*untyped _event_args) -> void
+end
+
+module UploadWorkflow::Bulk::Edit::Simulation
+  include UploadWorkflow::Bulk::Simulation
+end
+
+module UploadWorkflow::Bulk::Edit::Events
+  include UploadWorkflow::Bulk::Events
+
+  include UploadWorkflow::Bulk::Edit::Simulation
+end
+
+# Overridden state transition methods specific to bulk update.
+#
+module UploadWorkflow::Bulk::Edit::States
+  include UploadWorkflow::Bulk::States
+
+  include UploadWorkflow::Bulk::Edit::Events
+
+  include UploadWorkflow::Bulk::Edit::Actions
+
+  # Upon entering the :editing state:
+  #
+  # The user is presented with the edit form pre-populated with
+  # previously-provided values.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_editing_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :modifying state:
+  #
+  # The modified submission is complete and ready to move into the submission
+  # queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_modifying_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :modified state:
+  #
+  # The modified submission is moving into the submission queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_modified_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+end
+
+# Bulk update workflow.
+#
+class UploadWorkflow::Bulk::Edit < UploadWorkflow::Bulk
+  include UploadWorkflow::Bulk::Edit::Events
+
+  include UploadWorkflow::Bulk::Edit::States
+
+  include Workflow::Base::Transitions
+end

@@ -1,0 +1,19 @@
+# Persisted application status values.
+#
+class EmmaStatus < ApplicationRecord
+  API_VERSION_ITEM: Symbol
+
+  # Get current EMMA data API version.
+  #
+  # @return [EmmaStatus, nil]
+  #
+  # @see #INGEST_API_KEY
+  #
+  def self.api_version: () -> EmmaStatus?
+
+  # Set current EMMA data API version.
+  #
+  # @return [EmmaStatus, nil]
+  #
+  def self.api_version=: (untyped value) -> EmmaStatus?
+end

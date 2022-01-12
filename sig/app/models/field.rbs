@@ -1,0 +1,303 @@
+# Namespace for classes that manage the representation of data fields involved
+# in search, ingest or upload.
+#
+module Field
+  DEFAULT_MODEL: Symbol
+
+  # TODO: remove after upload -> entry
+  SYNTHETIC_KEYS: symArray
+
+  SYNTHETIC_PROPERTIES: symHash
+
+  # Return an enumeration type expressed or implied by *value*.
+  #
+  # @param [String, Symbol, Class, Any] value
+  #
+  # @return [Class] The class indicated by *value*.
+  # @return [nil]   If *value* could not be cast a subclass of EnumType.
+  #
+  def self.enum_type: (untyped value) -> Class?
+
+  # Configuration properties for a field within a given model/controller.
+  #
+  # @param [Symbol, String, nil]       field
+  # @param [Symbol, String, Hash, nil] model
+  # @param [Symbol, String, nil]       action
+  # @param [Array<nil,Symbol>]         sub_sections
+  #
+  # @return [Hash]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def self.configuration_for: (Symbol|String|nil field, ?(Symbol|String|symHash)? model, ?(Symbol|String)? action, ?sub_sections: Array[Symbol]?) -> symHash
+
+  # Find the field whose configuration entry has a matching label.
+  #
+  # @param [String, Symbol]            label
+  # @param [Symbol, String, Hash, nil] model
+  # @param [Symbol, String, nil]       action
+  # @param [Array<nil,Symbol>]         sub_sections
+  #
+  # @return [Hash]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def self.configuration_for_label: (Symbol|String label, ?(Symbol|String|symHash)? model, ?(Symbol|String)? action, ?sub_sections: Array[Symbol]?) -> symHash
+
+  # Normalize entry values.
+  #
+  # @param [Hash]        entry        Passed to #normalize
+  # @param [Symbol, nil] field        Passed to #normalize
+  #
+  def self.normalize!: (symHash entry, ?Symbol? field) -> symHash
+
+  # Ensure that field entry values are cleaned up and have the expected type.
+  #
+  # @param [Hash, String] entry
+  # @param [Symbol, nil]  field
+  #
+  # @option entry [Integer, nil]   :min
+  # @option entry [Integer, nil]   :max
+  # @option entry [String]         :label
+  # @option entry [String]         :tooltip
+  # @option entry [String, Array]  :help          Help popup topic/subtopic.
+  # @option entry [String]         :notes         Inline notes.
+  # @option entry [String]         :notes_html    Inline HTML notes.
+  # @option entry [String]         :placeholder   Input area placeholder text.
+  # @option entry [Symbol, String] :type          See Usage Notes [1]
+  # @option entry [String]         :origin
+  # @option entry [String]         :role
+  #
+  # @return [Hash]
+  #
+  # == Usage Notes
+  # The :type indicates the type of HTML input element, either directly or
+  # indirectly.  If the value is a Symbol it is interpreted as an EnumType
+  # subclass which gives the range of values for a <select> element or the set
+  # of checkboxes to create within a <fieldset> element.  Any other value
+  # indicates <textarea> or the <input> type attribute to use.
+  #
+  # -
+  # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedArgumentType
+  # +
+  def self.normalize: (symHash|String entry, ?Symbol? field) -> symHash
+
+  # Generate derived fields for an entry.
+  #
+  # @param [Hash{Symbol=>Any}] entry
+  # @param [Symbol, nil]       field
+  #
+  # @return [Hash{Symbol=>Any}]       The modified *entry*.
+  #
+  def self.finalize!: (symHash entry, ?Symbol? field) -> symHash
+
+  # Indicate whether the field configuration should be unused.
+  #
+  # @param [Hash]                entry
+  # @param [Symbol, String, nil] action
+  #
+  def self.unused?: (symHash entry, ?(Symbol|String)? action) -> bool
+
+  # Regenerate an entry with the fields in an order more helpful for logging.
+  #
+  # @param [Hash] entry               Passed to #reorder.
+  #
+  # @return [Hash]                    The modified *entry*.
+  #
+  def self.reorder!: (symHash entry) -> symHash
+
+  # Generate a copy of an entry with the fields in an order more helpful for
+  # logging.
+  #
+  # @param [Hash] entry
+  #
+  # @return [Hash]                    A modified copy of *entry*.
+  #
+  def self.reorder: (symHash entry) -> symHash
+
+  # Normalize :except and :only values.
+  #
+  # @param [Hash] entry
+  #
+  # @return [Hash]
+  #
+  def self.normalize_conditions: (symHash entry) -> symHash
+
+  private
+
+  # Cast *item* as an array of Symbols.
+  #
+  # @param [String, Symbol, Array] item
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.symbol_array: (String|Symbol|Array[String|Symbol] item) -> symArray
+
+  public
+
+  # Generate an appropriate field subclass instance if possible.
+  #
+  # @param [Model, Any]          item
+  # @param [Symbol]              field
+  # @param [Symbol, String, nil] model
+  #
+  # @return [Field::Type]             Instance based on *item* and *field*.
+  # @return [nil]                     If *field* is not valid.
+  #
+  def self.for: (untyped item, Symbol field, ?(Symbol|String)? model) -> Field::Type?
+
+  # Base class for field type descriptions.
+  #
+  class Type
+    # The class for the value of the Type instance.
+    #
+    # If this a derivative of EnumType then `base.values` defines the set of
+    # possible values.
+    #
+    # If it's something else (String by default) then it defines the type of
+    # value that may be associated with the instance.
+    #
+    # @return [Class]
+    #
+    attr_reader base: Class
+
+    # The data field associated with the instance.
+    #
+    # @return [Symbol]
+    #
+    attr_reader field: Symbol
+
+    # The value(s) associated with the instance (empty if :base is not an
+    # EnumType).
+    #
+    # @return [Array]
+    #
+    attr_reader range: strArray
+
+    # The value associated with the instance.
+    #
+    # @return [Any]
+    #
+    attr_reader value: untyped
+
+    # A positive indicator of whether the instance has been given a value.
+    #
+    # @return [FalseClass, TrueClass]
+    #
+    attr_reader valid: bool
+
+    # Initialize a new instance.
+    #
+    # @param [Symbol, Model, Any]  src
+    # @param [Symbol, nil]         field
+    # @param [Symbol, String, nil] model
+    # @param [Any]                 value
+    #
+    def initialize: (untyped src, ?Symbol? field, ?(Symbol|String)? model, ?untyped? value) -> void
+
+    # The resolved value for this field instance.
+    #
+    # @return [Array<String>, String, nil]
+    #
+    def content: () -> (strArray | String | nil)
+
+    # The raw value for this field instance.
+    #
+    # @return [Any]
+    #
+    def value: () -> untyped
+
+    # Give the instance a value.
+    #
+    # @param [Any, nil] new_value
+    #
+    # @return [Any]
+    #
+    def set: (untyped new_value) -> untyped
+
+    # Remove any value from the instance.
+    #
+    # @return [nil]
+    #
+    def clear: () -> nil
+
+    # Indicate whether this instance is associated with a value.
+    #
+    def set?: () -> bool
+
+    # Indicate whether this instance is not associated with a value.
+    #
+    def unset?: () -> bool
+
+    # Either :single or :multiple, depending on the subclass.
+    #
+    # @return [Symbol]
+    #
+    def mode: () -> Symbol
+
+    alias empty? unset?
+
+    alias blank? unset?
+
+    # Either :single or :multiple, depending on the subclass.
+    #
+    # @return [Symbol]
+    #
+    def self.mode: () -> Symbol
+
+    # The enumeration type on which the subclass is based.
+    #
+    # @return [Class, nil]
+    #
+    def self.base: () -> Class?
+  end
+
+  # A field which may have a single value.
+  #
+  class Single < Type
+    MODE: Symbol
+  end
+
+  # A field which may have multiple values.
+  #
+  class Collection < Type
+    MODE: Symbol
+  end
+
+  # A field based on a range of values defined by an EnumType.
+  #
+  class Range < Type
+    # Indicate whether this instance is unassociated with any field values.
+    #
+    def empty?: () -> bool
+
+    # Give the instance a value.
+    #
+    # @param [Any, nil] new_value
+    #
+    # @return [Array]   If mode == :multiple
+    # @return [Any]     If mode == :single
+    #
+    def set: (untyped new_value) -> (anyArray | untyped)
+  end
+
+  # A field which may have multiple values from a range.
+  #
+  class MultiSelect < Range
+    MODE: Symbol
+  end
+
+  # A field which may have a single value from a range.
+  #
+  class Select < Range
+    MODE: Symbol
+  end
+
+  # Special-case for a binary (true/false/unset) field.
+  #
+  class Binary < Select
+    BASE: Class
+  end
+end

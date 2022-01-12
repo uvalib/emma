@@ -43,6 +43,7 @@ class FileObject
   #   @param [String, nil]         ext
   #
   def initialize(handle, fmt: nil, ext: nil)
+    # noinspection RubyMismatchedVariableType
     @fmt         = fmt || self.class.fmt
     @ext         = ext || self.class.file_extension
     @file_handle = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
@@ -80,6 +81,7 @@ class FileObject
   # @return [FileHandle, nil]
   #
   def file_handle
+    # noinspection RubyMismatchedArgumentType
     @file_handle ||= (FileHandle.new(filename) if filename.present?)
   end
 

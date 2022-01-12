@@ -1,0 +1,36 @@
+# Methods mixed in to record elements related to external repository links.
+#
+# Attributes supplied by the including module:
+#
+# @attr [DublinCoreFormat]  dc_format
+# @attr [EmmaRepository]    emma_repository
+# @attr [String]            emma_repositoryRecordId
+# @attr [String]            emma_webPageLink
+# @attr [String]            emma_retrievalLink
+#
+module Search::Shared::LinkMethods
+  include Emma::Common
+
+  include Search
+
+  # URL of the associated work on the web site of the original repository.
+  #
+  # If :emma_webPageLink is provided, that value is used.  Otherwise, a URL is
+  # manufactured from 'en.emma.repository.*.title_path'.
+  #
+  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def record_title_url: () -> String?
+
+  # Original repository artifact download URL.
+  #
+  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def record_download_url: () -> String?
+end

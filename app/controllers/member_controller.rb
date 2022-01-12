@@ -142,7 +142,7 @@ class MemberController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiUserAccountList] list
+  # @param [Bs::Message::UserAccountList] list
   # @param [Hash]               opt
   #
   # @return [Hash{Symbol=>Hash}]
@@ -162,7 +162,7 @@ class MemberController < ApplicationController
   def show_values(result = nil, **opt)
     opt.reverse_merge!(name: :member)
     result ||= { details: @item, preferences: @preferences, history: @history }
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType
     super(result, **opt)
   end
 

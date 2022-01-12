@@ -1,0 +1,30 @@
+module Down
+  # These additions make ChunkedIO look sufficiently "IO-like" to IOWindow
+  # (defined by the 'archive-zip' gem) so that files uploaded to AWS S3 can be
+  # processed by Archive::Zip::Entry#parse.
+  #
+  # == Implementation Notes
+  # ChunkedIO does not care about 'lineno' (and neither does anything else in
+  # the call chain of interest) so providing a dummy instance variable *should*
+  # be harmless.
+  #
+  module ChunkedIOExt
+    # Implement position setter.
+    #
+    # @return [Integer]
+    #
+    def pos=: (Integer value) -> Integer
+
+    # Dummy method for IO-like behavior.
+    #
+    # @return [Integer]
+    #
+    def lineno: () -> Integer
+
+    # Dummy method for IO-like behavior.
+    #
+    # @return [Integer]
+    #
+    def lineno=: (Integer value) -> Integer
+  end
+end

@@ -1,0 +1,5 @@
+# DAISY AUDIO file format metadata extractor.
+#
+class FileParser::DaisyAudio < FileParser::Daisy
+  include FileFormat::DaisyAudio
+end

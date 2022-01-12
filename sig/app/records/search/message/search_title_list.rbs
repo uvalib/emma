@@ -1,0 +1,155 @@
+# Search::Message::SearchTitleList
+#
+class Search::Message::SearchTitleList < Search::Api::Message
+  include Search::Shared::IdentifierMethods
+
+  include Search::Shared::CollectionMethods
+
+  LIST_ELEMENT: untyped
+
+  # The original metadata records in the original order.
+  #
+  # @return [Array<Search::Record::MetadataRecord>]
+  #
+  attr_reader records: Array[Search::Record::MetadataRecord]
+
+  # Indicate whether only canonical records will be used.
+  #
+  # @return [Boolean]
+  #
+  attr_reader canonical: bool
+
+  # Initialize a new instance.
+  #
+  # @param [Search::Message::SearchRecordList, nil] src
+  # @param [Hash, nil]                              opt   To super except:
+  #
+  # @option opt [Boolean, nil] :canonical   Passed to #aggregate.
+  #
+  def initialize: (Search::Message::SearchRecordList|nil src, ?bool? opt) -> void
+
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # NOTE: This reports the number of originating search result records.
+  #
+  # @return [Integer]
+  #
+  # -
+  # noinspection RubyInstanceMethodNamingConvention
+  # +
+  def totalResults: () -> Integer
+
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # @return [Integer]
+  #
+  def item_count: () -> Integer
+
+  alias size item_count
+
+  alias length item_count
+
+  # @private
+  DEBUG_AGGREGATE: bool
+
+  # Organize metadata records into title records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>, nil] src  Default: `records`
+  # @param [Hash]                                       opt  To TitleRecord
+  #
+  # @return [Array<Search::Record::TitleRecord>]
+  #
+  def aggregate: (?Array[Search::Record::MetadataRecord]? src, **untyped opt) -> Array[Search::Record::TitleRecord]
+
+  # Each grouping involves one or more Search::Record::MetadataRecord fields
+  # (or other instance methods).
+  #
+  # @type [Array<Array<Symbol>>]
+  #
+  GROUPING_LEVELS: Array[symArray]
+
+  # @private
+  GROUPING_LEVEL_DEPTH: Integer
+
+  class GroupingCriteria
+    include Comparable
+
+    # @private
+    IDENTIFIER_FIELDS: symArray
+
+    # @return [PublicationIdentifierSet, nil]
+    attr_reader ids: PublicationIdentifierSet | nil
+
+    # @return [Array, nil]
+    attr_reader values: strArray | nil
+
+    def initialize: (symHash hash) -> void
+
+    # Indicate whether the other value is similar to the current value.
+    #
+    # @param [Any] other
+    #
+    # -
+    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+    # +
+    def match?: (untyped other) -> bool
+
+    def hash: () -> Integer
+
+    def eql?: (untyped other) -> bool
+
+    def ==: (untyped other) -> bool
+
+    def inspect: () -> String
+  end
+
+  # group_fields
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  # @param [Integer, Symbol, Array<Symbol>] level
+  #
+  # @return [GroupingCriteria]
+  #
+  def group_fields: (Search::Record::MetadataRecord rec, Integer|Symbol|symArray level) -> GroupingCriteria
+
+  # Recursively group records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  # @param [Integer] level            Incremented via recursion.
+  # @param [Any,nil] fields           Supplied via recursion.
+  # @param [Proc]    block            Executed at the bottom-level.
+  #
+  # @return [Array<Search::Record::TitleRecord>]
+  # @return [Search::Record::TitleRecord, nil]
+  #
+  # @yield [recs] Create a title-level record from field-level records.
+  # @yieldparam  [Array<Search::Record::MetadataRecord>] recs
+  # @yieldreturn [Search::Record::TitleRecord, nil]
+  #
+  def recursive_group_records: (Array[Search::Record::MetadataRecord] recs, ?level: Integer, ?fields: untyped) { (Array[Search::Record::MetadataRecord] recs) -> (Search::Record::TitleRecord | nil) } -> (Array[Search::Record::TitleRecord] | Search::Record::TitleRecord | nil)
+
+  # This functions as an alternative to Enumerable#group_by, but grouping by
+  # similarity rather than identity.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  # @param [Integer]                               level
+  #
+  # @return [Hash{GroupingCriteria=>Array<Search::Record::MetadataRecord>}]
+  #
+  def group_related: (Array[Search::Record::MetadataRecord] recs, Integer level) -> Hash[GroupingCriteria,Array[Search::Record::MetadataRecord]]
+
+  private
+
+  def __debug_group: (Integer level, untyped key, Array[Search::Record::MetadataRecord] recs) -> nil
+
+  public
+
+  # The fields and values for this instance as a Hash.
+  #
+  # If opt[:item] is present, this is used as an indicator that individual
+  # records should be wrapped (i.e., that the intended output format is XML).
+  #
+  # @param [Hash] opt                 Passed to Api::Record#to_h.
+  #
+  def to_h: (**untyped opt) -> symHash
+end

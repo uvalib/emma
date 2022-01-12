@@ -1,0 +1,46 @@
+class DataController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include DataConcern
+
+  # == GET /data[?tables=...]
+  #
+  # Get the contents of all database tables (or the named tables if given).
+  # (Defaults to HTML output.)
+  #
+  def index: () -> void
+
+  # == GET /data/TABLE_NAME
+  #
+  # Get the contents of the indicated database table.
+  #
+  def show: () -> void
+
+  # == GET /data/submissions
+  #
+  # Get a listing of EMMA submissions.
+  #
+  def submissions: () -> void
+
+  # == GET /data/counts
+  #
+  # Get a listing of EMMA submission field values.
+  #
+  def counts: () -> void
+
+  # Because DataHelper is biased toward assuming that non-HTML is expected,
+  # defaulting to HTML format requires setting `params[:format]` to make it
+  # appear as though a format has been explicitly requested.
+  #
+  # @param [Symbol, String] fmt
+  #
+  # @return [void]
+  #
+  def default_format: (Symbol|String fmt) -> void
+end

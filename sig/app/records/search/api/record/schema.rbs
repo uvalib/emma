@@ -1,0 +1,16 @@
+# Definition of the #schema method used within the class definition to declare
+# the serializable data elements associated with the class.
+#
+# @see Api::Record::Schema
+#
+module Search::Api::Record::Schema
+  extend ActiveSupport::Concern
+
+  include Api::Record::Schema
+
+  module ClassMethods
+    include Search::Api::Schema
+
+    include Api::Record::Schema::ClassMethods
+  end
+end

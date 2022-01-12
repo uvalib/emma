@@ -1,0 +1,139 @@
+# Model for a specific search call event instance.
+#
+class SearchCall < ApplicationRecord
+  include Emma::Debug
+
+  include Model
+
+  include Record
+
+  include Record::Assignable
+
+  include Record::Authorizable
+
+  # :nocov:
+  #extend SqlMethods::ClassMethods
+
+  # Each JSON-structured column of 'search_calls'.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  JSON_COLUMN_CONFIG: Hash[Symbol,symHash]
+
+  # Database fields holding attributes of the search that was performed.
+  #
+  # @type [Array<Symbol>]
+  #
+  JSON_COLUMNS: symArray
+
+  # JSON fields defined for each JSON column.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  JSON_COLUMN_FIELDS: Hash[Symbol,symArray]
+
+  # JSON sub-field parameters for each JSON column.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  JSON_COLUMN_PARAMETERS: Hash[Symbol,symHash]
+
+  # URL parameters which map into attributes.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  PARAMETER_MAP: Hash[Symbol,symArray]
+
+  # Create a new instance.
+  #
+  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
+  # @param [Proc, nil] block
+  #
+  # @note - for dev traceability
+  #
+  def initialize: (?(SearchCall|prmHash)? attr) { () -> untyped } -> void
+
+  # Produce a value that can be used for SearchController URL parameters.
+  #
+  # @return [Hash]
+  #
+  def as_search_parameters: () -> symHash
+
+  # Update database fields, including the structured contents of JSON fields.
+  #
+  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
+  # @param [Hash, nil]                                           opt
+  #
+  # @return [void]
+  #
+  # @note - for dev traceability
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def assign_attributes: (SearchCall|prmHash|nil attr, ?symHash? opt) -> void
+
+  # Called to prepare values to be used for assignment to record attributes.
+  #
+  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
+  # @param [Hash, nil]                                           opt
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  # @see #map_parameters
+  # @see Record::Assignable#attribute_options
+  #
+  def attribute_options: (SearchCall|prmHash|nil attr, ?symHash? opt) -> symHash
+
+  # Transform URL parameters into attribute settings.
+  #
+  # @param [ActionController::Parameters, Hash, nil] params
+  #
+  # @return [Hash{Symbol=>String,Array<String>}]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def map_parameters: (prmHash|nil params) -> Hash[Symbol,(String|strArray)]
+
+  # Extract a 'users' table index from the given item.
+  #
+  # @param [User, String, Numeric] src
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def get_user_id: (User|String|Numeric src) -> String?
+
+  # Generate a :record attribute value from the given item.
+  #
+  # @param [Api::Message, Hash, Array, Numeric, String] src
+  #
+  # @return [Hash{Symbol=>Integer}]
+  #
+  def get_counts: (Api::Message|String|Numeric|symHash|anyArray src) -> Hash[Symbol,Integer]
+
+  # Local options consumed by #search_records.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RECORDS_OPTIONS: symArray
+
+  def search_records: (*untyped identifiers, **untyped opt) -> untyped
+
+  # @see SqlMethods#sql_extended_table
+  #
+  def sql_extended_table: (?(String|symHash)? extra, **untyped opt) -> String
+
+  # @see SqlMethods#sql_extended_table
+  #
+  def self.sql_extended_table: (?(String|symHash)? extra, **untyped opt) -> String
+
+  # @see SqlMethods#sql_where_clause
+  #
+  def sql_where_clause: (**untyped opt) -> String
+
+  # @see SqlMethods#sql_where_clause
+  #
+  def self.sql_where_clause: (**untyped opt) -> String
+end

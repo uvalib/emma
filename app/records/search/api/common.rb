@@ -165,7 +165,7 @@ class PublicationIdentifier < ScalarType
     #
     # @param [String, Any, nil] v
     #
-    # @return [(String, String)]
+    # @return [Array<(String, String)>]
     #
     def parts(v)
       s = v.to_s.strip
@@ -308,7 +308,7 @@ class PublicationIdentifier < ScalarType
   #
   # @param [String, nil] v            Default: #value.
   #
-  # @return [(String, String)]
+  # @return [Array<(String, String)>]
   #
   def parts(v = nil)
     v ? super : [prefix, number]
@@ -448,6 +448,7 @@ end
 #
 class Isbn < PublicationIdentifier
 
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -817,6 +818,7 @@ end
 #
 class Issn < PublicationIdentifier
 
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1041,6 +1043,7 @@ end
 #
 class Oclc < PublicationIdentifier
 
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1261,6 +1264,7 @@ end
 #
 class Lccn < PublicationIdentifier
 
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1452,6 +1456,7 @@ end
 #
 class Upc < PublicationIdentifier
 
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1679,6 +1684,7 @@ end
 #
 class Doi < PublicationIdentifier
 
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 

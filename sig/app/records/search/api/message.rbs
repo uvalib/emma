@@ -1,0 +1,14 @@
+# The base class for inbound messages from the EMMA Unified Search API.
+#
+class Search::Api::Message < Search::Api::Record
+  include Api::Message
+
+  include Search::Shared::ResponseMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
+  #
+  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?symHash? opt) -> void
+end

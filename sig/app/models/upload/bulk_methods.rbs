@@ -1,0 +1,37 @@
+# Upload record methods to support bulk operations.
+#
+module Upload::BulkMethods
+  include Upload::WorkflowMethods
+
+  # Fallback URL base. TODO: ?                                                  # NOTE: to Record::Bulk
+  #
+  # @type [String]
+  #
+  BULK_BASE_URL: String
+
+  # Default user for bulk uploads. # TODO: ?                                    # NOTE: to Record::Bulk
+  #
+  # @type [String]
+  #
+  BULK_USER: String
+
+  # Fields that used within the instance but are not persisted to the database. # NOTE: to Record::Bulk
+  #
+  # @type [Array<Symbol>]
+  #
+  LOCAL_FIELDS: symArray
+
+  # Fields that are expected to be included in :emma_data.                      # NOTE: to Record::Bulk
+  #
+  # @type [Array<Symbol>]
+  #
+  INDEX_FIELDS: symArray
+
+  # Bulk upload URL.                                                            # NOTE: to Record::Bulk::Operation#manifest_path
+  #
+  # @return [String, nil]
+  #
+  attr_reader file_path: String?
+
+  def import_transform: (symHash fields, Module|String importer_name) -> symHash
+end

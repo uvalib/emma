@@ -1,0 +1,5 @@
+# A BRF file object.
+#
+class FileObject::Brf < FileObject
+  include FileFormat::Brf
+end

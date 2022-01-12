@@ -1,0 +1,24 @@
+module Faraday
+  # Required in order to pass parameters back to *.us.archive.org in the order
+  # in which they were received.
+  #
+  module IaParamsEncoder
+    extend Forwardable
+
+    extend EncodeMethods
+
+    extend DecodeMethods
+
+    # Same as the overridden method but does not sort.
+    #
+    # @param params [Hash, Array, #to_hash, nil] Parameters to be encoded
+    #
+    # @return [String]
+    #
+    # @raise [TypeError] If *params* can not be converted to a Hash.
+    #
+    def self.encode: ((Hash[(String|Symbol),untyped]) params) -> String
+                   | (Array[strArray] params)                 -> String
+                   | (nil params)                             -> nil
+  end
+end

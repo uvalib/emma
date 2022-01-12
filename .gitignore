@@ -77,6 +77,10 @@ tmtags
 /pkg
 # /Gemfile.lock
 
+# === RBS / TypeProf
+/.gem_rbs_collection/
+/rbs_collection.*
+
 # === RubyMine
 /.idea/
 

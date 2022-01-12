@@ -1,0 +1,5 @@
+# Methods mixed in to record elements related to catalog titles.
+#
+module Ingest::Shared::TitleMethods
+  include Api::Shared::TitleMethods
+end

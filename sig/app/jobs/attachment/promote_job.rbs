@@ -1,0 +1,17 @@
+# Promote a file from :cache to :store.
+#
+# @note Currently unused
+#
+class Attachment::PromoteJob < ApplicationJob
+  include ApplicationJob::Logging
+
+  # perform
+  #
+  # @param [Model]  record
+  # @param [Symbol] name              Should be :file.
+  # @param [Any]    data              :file_data
+  #
+  # @note Currently unused
+  #
+  def perform: (untyped record, untyped name, untyped data) -> untyped
+end

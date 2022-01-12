@@ -75,6 +75,7 @@ module EmmaHelper
   # @return [Hash{Symbol=>Hash}]
   #
   def emma_partners(type = :all)
+    # noinspection RubyMismatchedArgumentType
     if type.nil? || (type == :all)
       {}.merge!(*EMMA_PARTNER.values)
     elsif EMMA_PARTNER.key?(type)

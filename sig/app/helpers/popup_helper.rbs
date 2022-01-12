@@ -1,0 +1,42 @@
+# View helper methods supporting the display of popups.
+#
+module PopupHelper
+  include Emma::Unicode
+
+  include HtmlHelper
+
+  POPUP_BUTTON_CLASS: String
+
+  POPUP_PANEL_CLASS: String
+
+  POPUP_CLOSER_CLASS: String
+
+  POPUP_CONTROLS_CLASS: String
+
+  POPUP_DEFERRED_CLASS: String
+
+  POPUP_RESIZE_CLASS: String
+
+  POPUP_HIDDEN_MARKER: String
+
+  # Render a popup control and popup element.
+  #
+  # @param [Hash] opt                 Passed to 'popup-container' except for:
+  #
+  # @option opt [String]  :title      Tooltip for the visible control.
+  # @option opt [Boolean] :hidden     If *false*, panel is displayed initially.
+  # @option opt [Boolean] :resize     If *true*, the panel is resizeable.
+  # @option opt [Boolean] :left_grab  If *true*, resize grab is on the left.
+  # @option opt [Hash]    :control    Options for the visible control.
+  # @option opt [Hash]    :panel      Options for the popup panel element.
+  # @option opt [Hash]    :closer     Options for the panel closer icon.
+  # @option opt [Hash]    :close      Options for the panel close button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def popup_container: (**untyped opt) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

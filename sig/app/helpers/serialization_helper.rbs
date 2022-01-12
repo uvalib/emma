@@ -1,0 +1,82 @@
+# View helper methods supporting non-HTML rendering.
+#
+module SerializationHelper
+  include ParamsHelper
+
+  include PaginationHelper
+
+  # Indicate whether the ultimate target format is HTML.
+  #
+  # @param [Hash, nil] p              Default: `params`.
+  #
+  def rendering_html?: (?symHash? p) -> bool
+
+  # Indicate whether the ultimate target format is something other than HTML.
+  #
+  # @param [Hash, nil] p              Default: `params`.
+  #
+  def rendering_non_html?: (?symHash? p) -> bool
+
+  # Indicate whether the ultimate target format is JSON.
+  #
+  # @param [Hash, nil] p              Default: `params`.
+  #
+  def rendering_json?: (?symHash? p) -> bool
+
+  # Indicate whether the ultimate target format is XML.
+  #
+  # @param [Hash, nil] p              Default: `params`.
+  #
+  def rendering_xml?: (?symHash? p) -> bool
+
+  # Indicate whether the request originated from an HTML page.
+  #
+  # NOTE: This is probably insufficient.
+  #
+  def posting_html?: () -> bool
+
+  # Serialize an item to JSON format.
+  #
+  # @param [Any]  item
+  # @param [Hash] opt                 Passed to #to_json.
+  #
+  # @return [String]
+  #
+  def make_json: (untyped item, **untyped opt) -> String
+
+  # Serialize an item to XML format.
+  #
+  # @param [Any]             item
+  # @param [String]          separator
+  # @param [String]          name       Node name if item.respond_to?(:to_xml).
+  # @param [Api::Serializer] serializer
+  #
+  # @return [String]                  XML serialization of *item*.
+  # @return [nil]                     If *item* is *nil* or an empty collection
+  #
+  def make_xml: (untyped item, ?separator: String, ?name: String?, ?serializer: Api::Serializer?) -> String?
+
+  # @private
+  XML_PROLOG: String
+
+  # add_xml_prolog
+  #
+  # @param [String, nil] item
+  #
+  # @return [String]
+  #
+  def add_xml_prolog: (String|nil item) -> String
+
+  # remove_xml_prolog
+  #
+  # @param [String, nil] item
+  # @param [Boolean]     aggressive   If *true*, check all lines.
+  #
+  # @return [String]
+  #
+  def remove_xml_prolog: (String|nil item, ?aggressive: bool) -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end

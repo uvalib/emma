@@ -212,6 +212,7 @@ module Emma::Log
   #
   def self.local_level=(value)
     if value
+      # noinspection RubyMismatchedArgumentType
       local_levels[local_log_id] = log_level(value)
     else
       local_levels.delete(local_log_id) and nil
@@ -246,13 +247,17 @@ module Emma::Log
 
   # Get thread-safe silenced flag.
   #
-  # @return [Boolean]
+  # @return [Boolean, nil]
   #
   def self.silenced
     silenced_map[local_log_id]
   end
 
   # Set thread-safe silenced flag.
+  #
+  # @param [Boolean] flag
+  #
+  # @return [Boolean]
   #
   def self.silenced=(flag)
     silenced_map[local_log_id] = flag

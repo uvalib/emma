@@ -1,0 +1,133 @@
+# ApiService::Properties
+#
+module ApiService::Properties
+  include I18nHelper
+
+  # Control whether information requests are ever cached. # TODO: ???
+  #
+  # @type [Boolean]
+  #
+  CACHING: bool
+
+  # Control whether parameter validation errors cause a RuntimeError.
+  #
+  # @type [Boolean]
+  #
+  RAISE_ON_INVALID_PARAMS: bool
+
+  # Maximum length of redirection chain.
+  #
+  # @type [Integer]
+  #
+  MAX_REDIRECTS: Integer
+
+  # Options consumed by #api (and not passed on as URL query options).
+  #
+  # @type [Array<Symbol>]
+  #
+  SERVICE_OPTIONS: symArray
+
+  # Original request parameters which should not be passed on to the API.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_PARAMETERS: symArray
+
+  # HTTP methods used by the API.
+  #
+  # @type [Array<Symbol>]
+  #
+  # == Usage Notes
+  # Compare with BsAllowsType#values.
+  #
+  HTTP_METHODS: symArray
+
+  # Engine key values which indicate that the engine should be returned to
+  # normal.
+  #
+  # @type [Array<Symbol>]
+  #
+  RESET_KEYS: symArray
+
+  # The name of the service for logging.
+  #
+  # @return [String]
+  #
+  def service_name: (*untyped, **untyped) ?{ () -> untyped } -> String
+
+  # The service identified by the given value.
+  #
+  # @param [Any] target
+  #
+  # @return [String]
+  #
+  def name_for: (untyped target) -> String
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  def base_url: () -> String
+
+  # The URL for the API connection as a URI.
+  #
+  # @return [URI::Generic]
+  #
+  def base_uri: () -> URI::Generic
+
+  # API key (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_key: () -> String?
+
+  # API version (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_version: () -> String?
+
+  # Valid service endpoint URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  def engines: () -> Hash[Symbol,String]
+
+  # Default service endpoint for this deployment.
+  #
+  # @return [String]
+  #
+  def default_engine_url: () -> String
+
+  # The default service engine key.
+  #
+  # @return [Symbol, nil]
+  #
+  def default_engine_key: () -> Symbol?
+
+  # engine_url
+  #
+  # @param [Symbol, String] value   Engine name or URL.
+  #
+  # @return [String, nil]
+  #
+  def engine_url: (untyped value) -> String?
+
+  # engine_key
+  #
+  # @param [Symbol, String] value   Engine name or URL.
+  #
+  # @return [Symbol, nil]
+  #
+  def engine_key: (untyped value) -> Symbol?
+
+  # Maximum length of redirection chain.
+  #
+  # @type [Integer]
+  #
+  def max_redirects: () -> Integer
+
+  private
+
+  def self.included: (Module base) -> void
+end

@@ -104,11 +104,10 @@ module SearchCallHelper
 
   # Render one or more entries for use within a <tbody>.
   #
-  # @param [SearchCall, Array<SearchCall>] list
+  # @param [SearchCall, Array<SearchCall>, nil] list
   # @param [Hash]                          opt   Passed to #model_table_entries
   #
   def search_call_table_entries(list, **opt)
-    # noinspection RubyMismatchedArgumentType
     model_table_entries(list, **opt) do |item, **row_opt|
       search_call_table_entry(item, **row_opt)
     end
@@ -120,7 +119,6 @@ module SearchCallHelper
   # @param [Hash]       opt           Passed to #model_table_entry
   #
   def search_call_table_entry(item, **opt)
-    # noinspection RubyMismatchedArgumentType
     model_table_entry(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end
@@ -128,11 +126,10 @@ module SearchCallHelper
 
   # Render column headings for a search call table.
   #
-  # @param [SearchCall, Array<SearchCall>] item
+  # @param [SearchCall, Array<SearchCall>, nil] item
   # @param [Hash]                          opt  Passed to #model_table_headings
   #
   def search_call_table_headings(item, **opt)
-    # noinspection RubyMismatchedArgumentType
     model_table_headings(item, **opt) do |b_item, **b_opt|
       search_call_columns(b_item, **b_opt)
     end

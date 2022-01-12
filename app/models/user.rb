@@ -218,6 +218,7 @@ class User < ApplicationRecord
   #
   def id_value(user = nil, **opt)
     return id&.to_s if user.nil? && opt.blank?
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__, (user || self), **opt)
   end
 
@@ -262,6 +263,7 @@ class User < ApplicationRecord
   # @return [User, nil]
   #
   def find_record(item, **opt)
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__, item, **opt)
   end
 
@@ -274,6 +276,9 @@ class User < ApplicationRecord
   #
   # @return [User, nil]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def self.find_record(item, **opt)
     item = item.to_s if item.is_a?(Symbol)
     if item.is_a?(String) && !digits_only?(item)
@@ -298,6 +303,7 @@ class User < ApplicationRecord
   #
   def uid_value(user = nil)
     return uid.presence if user.nil?
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__, user)
   end
 

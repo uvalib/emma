@@ -1,0 +1,89 @@
+# An object containing information needed for displaying a search term field
+# and its values.
+#
+class SearchTerm
+  include Emma::Common
+
+  # Query string which indicates a "null search".
+  #
+  # @type [String]
+  #
+  NULL_SEARCH: String
+
+  # The URL parameter associated with this search term.
+  #
+  # @return [Symbol]
+  #
+  attr_reader parameter: Symbol
+
+  # The label to use for this search term.
+  #
+  # @return [String]
+  #
+  attr_reader label: String
+
+  # The label/value pairs for each value associated with this search term.
+  #
+  # @return [Hash{String=>String}]
+  #
+  attr_reader pairs: Hash[String,String]
+
+  # Indicates whether this is a query (text-only) search term.
+  #
+  # @return [Boolean]
+  #
+  attr_reader query: bool
+
+  # Initialize a new instance.
+  #
+  # @param [String, Symbol]           url_param
+  # @param [Hash, Array, String, nil] values
+  # @param [String, nil]              label
+  # @param [Boolean, nil]             query
+  # @param [Hash, nil]                config
+  #
+  def initialize: (String|Symbol url_param, ?(symHash|String|strArray)? values, ?label: String?, ?query: bool?, ?config: symHash?) -> void
+
+  # Return just the field value(s) associated with this instance.
+  #
+  # @return [Array<String>]
+  #
+  def values: () -> strArray
+
+  # Return just the textual descriptions of the field value(s) associated
+  # with this instance.
+  #
+  # @return [Array<String>]
+  #
+  def names: () -> strArray
+
+  # The number of field values associated with this instance.
+  #
+  # @return [Integer]
+  #
+  def count: () -> Integer
+
+  # Indicate whether this is a query (text-only) search term.
+  #
+  def query?: () -> bool
+
+  # Indicate whether this search term represents facet value(s).
+  #
+  def facet?: () -> bool
+
+  # Indicate whether this search term represents a "null search".
+  #
+  def null_search?: () -> bool
+
+  # Indicate whether this instance is unassociated with any field values.
+  #
+  def empty?: () -> bool
+
+  # Indicate whether this instance is associated with a single field values.
+  #
+  def single?: () -> bool
+
+  # Indicate whether this instance is associated with multiple field values.
+  #
+  def multiple?: () -> bool
+end

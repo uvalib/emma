@@ -1,0 +1,7 @@
+# Shared values and methods.
+#
+# @see Api::Common
+#
+module AwsS3::Api::Common
+  include Api::Common
+end

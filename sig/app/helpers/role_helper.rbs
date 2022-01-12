@@ -1,0 +1,27 @@
+# Support methods for working with authorization roles.
+#
+module RoleHelper
+  include Emma::Common
+
+  include Roles
+
+  # Indicate whether the current user has the developer role.
+  #
+  # == Implementation Notes
+  # Currently the :developer role applies regardless of the model.
+  #
+  def developer?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+
+  # Indicate whether the current user has the given role.
+  #
+  # If *role* is blank then the method always returns *true*.
+  #
+  # @param [Symbol, String, nil] role
+  # @param [User, nil]           user   Default: `current_user`.
+  #
+  def has_role?: (Symbol|String|nil role, ?User? user) -> bool
+
+  private
+
+  def self.included: (Module base) -> void
+end

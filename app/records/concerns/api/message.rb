@@ -35,6 +35,7 @@ module Api::Message
   # @yieldreturn [void]
   #
   def create_message_wrapper(opt = nil, &block)
+    # noinspection RubyMismatchedArgumentType
     (opt && opt[:in_msg]) ? yield(opt) : create_message(opt, &block)
   end
 
@@ -51,6 +52,7 @@ module Api::Message
     start_time = timestamp
     opt = opt&.dup || {}
     opt[:in_msg] = true
+    # noinspection RubyMismatchedArgumentType
     yield(opt)
   ensure
     elapsed_time = time_span(start_time)

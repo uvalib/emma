@@ -463,6 +463,7 @@ module ModelHelper::ListV3
   def field_scopes(value)
     levels = value.is_a?(Array) ? value : SEARCH_FIELD_LEVEL[value&.to_sym]
     levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
+    # noinspection RubyMismatchedReturnType
     levels.map! { |s| "scope-#{s}" }
   end
 

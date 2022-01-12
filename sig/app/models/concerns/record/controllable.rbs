@@ -1,0 +1,169 @@
+# Common methods for ActiveRecord classes that support communication of control
+# commands - either a :command and/or :condition column.
+#
+# @!attribute [rw] command
+#   Database :command column.
+#   @return [String]
+#
+# @!attribute [rw] condition
+#   Database :condition column.
+#   @return [String]
+#
+module Record::Controllable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  extend ::Record::Controllable
+
+  # The default name for the column which holds a command.
+  #
+  # @type [Symbol]
+  #
+  COMMAND_COLUMN: Symbol
+
+  # The default name for the column which holds a condition.
+  #
+  # @type [Symbol]
+  #
+  CONDITION_COLUMN: Symbol
+
+  # Commands and the conditions they create.
+  #
+  # :run      Begin operation.
+  #
+  # :pause    For a multi-step sequence, allow the current step to complete and
+  #           then wait until an indication is detected that the steps should
+  #           resume.
+  #
+  # :wait     For a batch job, allow the current (possibly multi-step) sequence
+  #           to complete and then wait until an indication is detected that
+  #           the next sequence should begin.
+  #
+  # :resume   Return to the running state after a :pause or :wait.
+  #
+  # :retry    For a multi-step sequence, interrupt the current step, back out
+  #           of any changes that might have been made from the previous steps,
+  #           and then retry the sequence from the beginning.
+  #
+  # :restart  For a job that is finished unsuccessfully, rerun the job from the
+  #           beginning.
+  #
+  # :abort    Interrupt the current job, back out of any changes that might
+  #           have been made, and then terminate the job.
+  #
+  # :quit     Interrupt the current job, back out of any changes made for the
+  #           current multi-step sequence, and then terminate the job.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # TODO: configuration instead of code ???
+  #
+  COMMAND_TABLE: Hash[Symbol,symHash]
+
+  # Legal values for the :command column.
+  #
+  # @type [Array<Symbol>]
+  #
+  COMMANDS: symArray
+
+  # Legal values for the :condition column.
+  #
+  # @type [Array<Symbol>]
+  #
+  CONDITIONS: symArray
+
+  # Conditions which indicate that the associated action is done.
+  #
+  # @type [Array<Symbol>]
+  #
+  FINAL_CONDITIONS: symArray
+
+  # SQL fragment for selecting a :condition which is final.
+  #
+  # @return [String]
+  #
+  def final_condition: () -> String
+
+  # Does the condition indicate that the associated action is done?
+  #
+  # @param [Symbol, String] current
+  #
+  def finished?: (Symbol|String current) -> bool
+
+  # Definitions to be included if the schema contains a :command column.
+  #
+  # @!method run?
+  # @!method pause?
+  # @!method wait?
+  # @!method resume?
+  # @!method retry?
+  # @!method restart?
+  # @!method abort?
+  # @!method quit?
+  #
+  # @!method run!
+  # @!method pause!
+  # @!method wait!
+  # @!method resume!
+  # @!method retry!
+  # @!method restart!
+  # @!method abort!
+  # @!method quit!
+  #
+  module CommandMethods
+    extend ActiveSupport::Concern
+
+    include Record
+
+    include Record::Controllable
+
+    private
+
+    include Record::Updatable
+  end
+
+  # Definitions to be included if the schema contains a :condition column.
+  #
+  # @!method running?
+  # @!method paused?
+  # @!method waiting?
+  # @!method resuming?
+  # @!method retrying?
+  # @!method restarting?
+  # @!method failed?
+  # @!method succeeded?
+  #
+  # @!method running!
+  # @!method paused!
+  # @!method waiting!
+  # @!method resuming!
+  # @!method retrying!
+  # @!method restarting!
+  # @!method failed!
+  # @!method succeeded!
+  #
+  module ConditionMethods
+    extend ActiveSupport::Concern
+
+    include Record
+
+    include Record::Controllable
+
+    # Does the current condition indicate that the associated action is done?
+    #
+    # @param [Symbol, String, nil] current  Default: `self[CONDITION_COLUMN]`
+    #
+    def finished?: (?(Symbol|String)? current) -> bool
+
+    private
+
+    include Record::Updatable
+  end
+
+  private
+
+  include CommandMethods
+
+  include ConditionMethods
+end

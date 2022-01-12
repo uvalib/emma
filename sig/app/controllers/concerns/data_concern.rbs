@@ -1,0 +1,173 @@
+# Controller support methods for database access.
+#
+module DataConcern
+  extend ActiveSupport::Concern
+
+  include ParamsHelper
+
+  include DataHelper
+
+  DATA_COLUMN_PARAMETERS: symArray
+
+  DATA_PARAMETERS: symArray
+
+  SUBMISSION_TABLE: String
+
+  SUBMISSION_COLUMNS: symArray
+
+  # URL parameters for DataController.
+  #
+  # @return [Hash]
+  #
+  # == Usage Notes
+  # Rails will set `params[:format]` if the URL is given with an extension
+  # (even if a :format parameter was explicitly given); `data_params[:html]`
+  # returns *true* if HTML was explicitly requested in either of these ways.
+  #
+  def data_params: () -> symHash
+
+  # Interpret a parameter value as an array of values if possible.
+  #
+  # @param [Array, String, nil] value
+  #
+  # @return [Array<String>, nil]      *nil* if *value* is *nil*.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def array_param: (String|anyArray|nil value) -> strArray?
+
+  # Tables to be displayed after all others.
+  #
+  # @type [Array<String>]
+  #
+  LATER_TABLES: strArray
+
+  # Generate a hash of results for each table name.
+  #
+  # @param [Array<String,Symbol>] names   Default: `DataHelper#table_names`.
+  # @param [Hash]                 opt     Passed to DataHelper#table_records.
+  #
+  # @return [Hash{String=>Array}]
+  #
+  def get_tables: (*(String|Symbol) names, **untyped opt) -> Hash[String,Array[anyHash|anyArray]]
+
+  # Generate results for the indicated table.
+  #
+  # @param [String, Symbol, nil] name   Default: `params[:id]`
+  # @param [Hash]                opt    Passed to DataHelper#table_records.
+  #
+  # @return [Array<(String,Array)>]
+  #
+  def get_table_records: (?(String|Symbol)? name, **untyped opt) -> [String, Array[anyHash|anyArray]]
+
+  # Generate results for EMMA submissions, which currently comes from a
+  # selection of fields from the 'uploads' table.
+  #
+  # When generating HTML, each record entry is an Array of field values;
+  # otherwise each record entry is a Hash.
+  #
+  # @param [Hash] opt                 Passed to #submission_records
+  #
+  # @return [Array<(String,Array)>]
+  #
+  def get_submission_records: (**untyped opt) -> [String, Array[anyHash|anyArray]]
+
+  # Generate a list of counts for each EMMA data field found across all
+  # submissions.
+  #
+  # @param [Boolean] all              If *true* also show values for fields
+  #                                     which are not valid.
+  # @param [Hash]    opt              Passed to #get_submission_records
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def get_submission_field_counts: (?all: bool, **untyped opt) -> Hash[Symbol,anyHash]
+
+  # Generate results for submission pseudo records.
+  #
+  # @param [String, Symbol, nil] table_name   Default: #SUBMISSION_TABLE.
+  # @param [Hash]                opt          Passed to #get_table_records.
+  #
+  # @return [Array<(String,Array)>]
+  #
+  def submission_records: (?table_name: (String|Symbol)?, **untyped opt) -> [String, Array[anyHash|anyArray]]
+
+  # Filter out invalid submissions for values intended for JSON or XML output,
+  # then limit the columns that will be included in the resultant records.
+  #
+  # @param [Array<Hash>]        records
+  # @param [Array<Symbol>, nil] columns
+  #
+  # @return [Array<Hash>]
+  #
+  def modify_submission_records!: (Array[anyHash] records, ?symArray? columns) -> Array[anyHash]
+
+  # Filter out invalid submissions for values intended for HTML output, then
+  # limit the columns that will be included in the resultant records.
+  #
+  # @param [Array<Array>]       records
+  # @param [Array<Symbol>, nil] columns
+  #
+  # @return [Array<Array>]
+  #
+  # -
+  # noinspection RubyInstanceMethodNamingConvention
+  # +
+  def modify_submission_records_for_html!: (Array[anyArray] records, ?symArray? columns) -> Array[anyArray]
+
+  # Enumerate the database columns which are relevant to data analysis output.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
+  def submission_result_columns: (?(Symbol|symArray)? columns) -> symArray
+
+  # Enumerate the record array indicies which are relevant to data analysis.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
+  def submission_result_indices: (?(Symbol|symArray)? columns) -> symArray
+
+  # States which indicate that the submission is either complete or that it is
+  # on track to becoming complete (in the case of submissions back to member
+  # repositories).
+  #
+  # @type [Array<Symbol>]
+  #
+  COMPLETION_STATES: symArray
+
+  # Indicate whether the submission is not completed (or in the process of
+  # being completed).
+  #
+  # @param [String, Symbol] state
+  #
+  def submission_incomplete?: (String|Symbol state) -> bool
+
+  # Title prefixes used in development/testing to denote submissions which are
+  # not meant to be presented in search results.
+  #
+  # @type [Array<String>]
+  #
+  BOGUS_TITLE_PREFIXES: strArray
+
+  # Words used in :rem_comments during development/testing to denote
+  # submissions which are not meant to be presented in search results.
+  #
+  # @type [Array<String>]
+  #
+  BOGUS_NOTE_WORDS: strArray
+
+  # Indicate whether this submission appears to be non-canonical.
+  #
+  # @param [String, Hash] emma_data
+  #
+  def submission_bogus?: (String|anyHash emma_data) -> bool
+
+  private
+
+  #THIS_MODULE: untyped
+end

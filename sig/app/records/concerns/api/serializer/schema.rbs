@@ -1,0 +1,126 @@
+# Common definitions for serialization.
+#
+module Api::Serializer::Schema
+  include Emma::Common
+
+  include Api::Schema
+
+  # The default naming mode for de-serialized data elements.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  DEFAULT_ELEMENT_PARSE_NAMING: Symbol
+
+  # The default naming mode for de-serialized attributes.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  DEFAULT_ATTRIBUTE_PARSE_NAMING: Symbol
+
+  # The default naming mode for serialized data elements.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  DEFAULT_ELEMENT_RENDER_NAMING: Symbol
+
+  # The default naming mode for serialized attributes.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  DEFAULT_ATTRIBUTE_RENDER_NAMING: Symbol
+
+  # The default policy for serializing empty collections.
+  #
+  # @type [Boolean]
+  #
+  DEFAULT_RENDER_EMPTY: bool
+
+  # The default policy for serializing empty elements.
+  #
+  # @type [Boolean]
+  #
+  DEFAULT_RENDER_NIL: bool
+
+  # The default naming mode for serialized data elements.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_parse_naming: () -> Symbol
+
+  # The default naming mode for serialized attributes.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_parse_naming: () -> Symbol
+
+  # The default naming mode for serialized data elements.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_render_naming: () -> Symbol
+
+  # The default naming mode for serialized attributes.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_render_naming: () -> Symbol
+
+  # The default policy for serializing empty collections.
+  #
+  # @see Representable::Binding::Collection#skipable_empty_value?
+  #
+  def render_empty?: () -> bool
+
+  # The default policy for serializing empty elements.
+  #
+  # @see Representable::Binding#skipable_empty_value?
+  #
+  def render_nil?: () -> bool
+
+  # Transform *name* into the form indicated by the given naming mode.
+  #
+  # @param [String, Symbol, Class] name
+  # @param [Symbol, nil]           mode   Default: `#element_parse_naming`.
+  #
+  # @return [String]
+  #
+  def element_parse_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+
+  # Transform *name* into the form indicated by the given naming mode.
+  #
+  # @param [String, Symbol, Class] name
+  # @param [Symbol, nil]           mode   Default: `#attribute_parse_naming`.
+  #
+  # @return [String]
+  #
+  def attribute_parse_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+
+  # Transform *name* into the form indicated by the given naming mode.
+  #
+  # @param [String, Symbol, Class] name
+  # @param [Symbol, nil]           mode   Default: `#element_render_naming`.
+  #
+  # @return [String]
+  #
+  def element_render_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+
+  # Transform *name* into the form indicated by the given naming mode.
+  #
+  # @param [String, Symbol, Class] name
+  # @param [Symbol, nil]           mode   Default: `#attribute_render_naming`.
+  #
+  # @return [String]
+  #
+  def attribute_render_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+
+  # Transform *name* into the form indicated by the given naming mode.
+  #
+  # @param [String, Symbol, Class] name
+  # @param [Symbol, nil]           mode
+  #
+  # @raise [RuntimeError]                If *mode* is invalid.
+  #
+  # @return [String]
+  #
+  def element_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+end

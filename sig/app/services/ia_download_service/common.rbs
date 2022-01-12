@@ -1,0 +1,73 @@
+# IaDownloadService::Common
+#
+module IaDownloadService::Common
+  include ApiService::Common
+
+  include IaDownloadService::Properties
+
+  # api_headers
+  #
+  # @param [Hash]         params      Default: @params.
+  # @param [Hash]         headers     Default: {}.
+  # @param [String, Hash] body        Default: *nil* unless `#update_request?`.
+  #
+  # @return [Array<(Hash,Hash,String)>]      Message body plus headers for GET.
+  # @return [Array<(Hash,Hash,Hash)>]        Query plus headers for PUT, POST, PATCH.
+  #
+  def api_headers: (?symHash? params, ?strHash? headers, ?(String|strHash)? body) -> [symHash, strHash, (String|strHash)]
+
+  # Send an API request.
+  #
+  # @param [Symbol]            verb     Should always be :get.
+  # @param [String]            action   Path to IA download.
+  # @param [Hash, String, nil] params   Should always be blank.
+  # @param [Hash, nil]         headers
+  # @param [Hash]              opt
+  #
+  # @option opt [Boolean]      :no_redirect
+  # @option opt [Integer, nil] :redirection
+  #
+  # @raise [ApiService::EmptyResultError]
+  # @raise [ApiService::HtmlResultError]
+  # @raise [ApiService::RedirectionError]
+  # @raise [ApiService::Error]
+  #
+  # @return [Faraday::Response]
+  # @return [nil]
+  #
+  # == Usage Notes
+  # Sets @response as a side-effect.
+  #
+  # == Implementation Notes
+  # This will take several iterations, depending on the nature of the IA file.
+  #
+  # 1. If the file is unencrypted and the item is public-domain then the
+  # original URL of the form "https:://archive.org/download/IDENT/IDENT.FORMAT"
+  # will probably succeed.
+  #
+  # 2. Otherwise a redirect will occur to
+  #
+  #   "https://ia803005.us.archive.org/FORMAT/index.php?id=IDENT&dir=/00/items/IDENT&doc=IDENT&type=FORMAT"
+  #
+  # which will succeed if the unencrypted item can be generated "on-the-fly".
+  #
+  # 3. As a last-ditch fallback, the encrypted form of the original URL is
+  # explicitly requested.
+  #
+  # NOTE: This method does not handle DAISY downloads from IA.
+  # At this time IA does not support "on-the-fly" generation of unencrypted
+  # DAISY.  The link to download encrypted DAISY is available without
+  # authentication directly from the client browser.  In fact, attempting to
+  # request it via this method has become problematic.
+  #
+  def transmit: (Symbol verb, String action, symHash|String|nil params, strHash|nil headers, **untyped opt) -> Faraday::Response?
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

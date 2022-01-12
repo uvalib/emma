@@ -69,6 +69,9 @@ class Phase::BulkOperation < Phase
   # @option attr [String|Array] :manifest   If *attr* is a Hash or Hash-like.
   # @option opt  [String|Array] :manifest   If *opt* hash is provided.
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def initialize(attr = nil, opt = nil, &block)
     data = (opt[:manifest] if opt.is_a?(Hash))
     # noinspection RubyNilAnalysis
@@ -124,6 +127,7 @@ class Phase::BulkOperation < Phase
   #
   def load_manifest(data = nil)
     data ||= @manifest_path
+    # noinspection RubyMismatchedVariableType
     case data
       when String
         @manifest_path = data

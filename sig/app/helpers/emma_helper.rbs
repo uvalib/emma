@@ -1,0 +1,41 @@
+# Methods for describing the EMMA grant and project.
+#
+module EmmaHelper
+  # EMMA grant partners
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  EMMA_PARTNER: symHash
+
+  # EMMA grant partner categories.
+  #
+  # @type [Array<Symbol>]
+  #
+  EMMA_PARTNER_TYPE: symArray
+
+  # Generate a textual list of EMMA partners.
+  #
+  # @param [Symbol, nil] type         One of :academic, :commercial, :all (def)
+  # @param [Symbol]      mode         One of :brief or :long (default).
+  # @param [String]      separator    Separator between items.
+  # @param [String]      final        Connector for final :long format item.
+  #
+  # @return [String]
+  #
+  def emma_partner_list: (?Symbol? `type`, ?mode: Symbol, ?separator: String, ?final: String) -> String
+
+  # Get a selection of EMMA partners.
+  #
+  # @param [Symbol, nil] type         One of :academic, :commercial, :all (def)
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def emma_partners: (?Symbol? `type`) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

@@ -1,0 +1,19 @@
+# Namespace for objects serialized into an AWS S3 bucket.
+#
+module AwsS3
+  module Api
+  end
+
+  module Message
+  end
+
+  module Record
+  end
+
+  module Shared
+  end
+end
+
+module AwsS3
+  include AwsS3::Api::Common
+end

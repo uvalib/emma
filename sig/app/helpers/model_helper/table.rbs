@@ -1,0 +1,148 @@
+# View helper methods supporting tabular display of Model instances (both
+# database items and API messages).
+#
+module ModelHelper::Table
+  include ModelHelper::List
+
+  # Make the heading row stick to the top of the table when scrolling.
+  #
+  # @type [Boolean]
+  #
+  # @see file:app/assets/stylesheets/shared/controls/_table.scss "CSS class .sticky-head"
+  #
+  STICKY_HEAD: bool
+
+  # Give the heading row a background.
+  #
+  # @type [Boolean]
+  #
+  # @see file:app/assets/stylesheets/shared/controls/_table.scss "CSS class .dark-head"
+  #
+  DARK_HEAD: bool
+
+  # Options used by some or all of the methods involved in rendering items in
+  # a tabular form.
+  #
+  # @type [Array<Symbol>]
+  #
+  MODEL_TABLE_OPTIONS: symArray
+
+  # Render model items as a table.
+  #
+  # @param [Model, Array<Model>] list
+  # @param [Hash]                opt    Passed to outer #html_tag except for:
+  #
+  # @option opt [Symbol, String]            :model
+  # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated <thead>.
+  # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated <tbody>.
+  # @option opt [ActiveSupport::SafeBuffer] :tfoot  Pre-generated <tfoot>.
+  # @option opt [Any] #MODEL_TABLE_OPTIONS          Passed to render methods.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [list, **opt] Allows the caller to define the table contents.
+  # @yieldparam  [Hash]         parts   Accumulated :thead/:tbody/:tfoot parts.
+  # @yieldparam  [Array<Model>] list    Normalized item list.
+  # @yieldparam  [Hash]         opt     Updated options.
+  # @yieldreturn [void] Block should update *parts*.
+  #
+  # @see #STICKY_HEAD
+  # @see #DARK_HEAD
+  #
+  def model_table: (Model|Array[Model]|nil list, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> untyped
+
+  # Render one or more entries for use within a <tbody>.
+  #
+  # @param [Model, Array<Model>] list
+  # @param [String, nil]         separator
+  # @param [Integer, nil]        row        Current row (prior to first entry).
+  # @param [Hash]                opt        Passed to #model_table_entry
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
+  #
+  # @yield [item, **opt] Allows the caller to define the item table entry.
+  # @yieldparam  [Model] item         Single item instance.
+  # @yieldparam  [Hash]  opt          Row-specific options.
+  # @yieldreturn [ActiveSupport::SafeBuffer]
+  #
+  def model_table_entries: (Model|Array[Model] list, ?separator: String, ?row: Integer?, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+                         | (Model|Array[Model] list, ?separator: nil,    ?row: Integer?, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
+
+  # Render a single entry for use within a table of items.
+  #
+  # @param [Model]                                     item
+  # @param [Integer]                                   row
+  # @param [Integer]                                   col
+  # @param [Symbol, Integer, nil]                      outer_tag
+  # @param [Symbol, Integer, nil]                      inner_tag
+  # @param [String, Symbol, Array<String,Symbol>, nil] columns
+  # @param [String, Regexp, Array<String,Regexp>, nil] filter
+  # @param [Hash]                                      opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
+  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
+  #
+  # @yield [item, **opt] Allows the caller to generate the item columns.
+  # @yieldparam  [Model] item         Single item instance.
+  # @yieldparam  [Hash]  opt          Field generation options.
+  # @yieldreturn [Hash{Symbol=>Any}]  Same as #model_field_values return type.
+  #
+  def model_table_entry: (Model item, ?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
+                       | (Model item, ?row: Integer, ?col: Integer, ?outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> Array[ActiveSupport::SafeBuffer]
+                       | (Model item, ?row: Integer, ?col: Integer, ?outer_tag: nil,            ?inner_tag: nil,            ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> Array[String]
+
+  # Render column headings for a table of model items.
+  #
+  # @param [Model, Array<Model>]                       item
+  # @param [Integer]                                   row
+  # @param [Integer]                                   col
+  # @param [Symbol, Integer, nil]                      outer_tag
+  # @param [Symbol, Integer, nil]                      inner_tag
+  # @param [Symbol, String, Array<Symbol,String>, nil] columns
+  # @param [String, Regexp, Array<String,Regexp>, nil] filter
+  # @param [Boolean]                                   dark
+  # @param [Hash]                                      opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
+  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
+  #
+  # @yield [item, **opt] Allows the caller to generate the item columns.
+  # @yieldparam  [Model] item         Single item instance.
+  # @yieldparam  [Hash]  opt          Field generation options.
+  # @yieldreturn [ActiveSupport::SafeBuffer]
+  #
+  # @see #DARK_HEAD
+  #
+  def model_table_headings: (Model|Array[Model]|nil item, ?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, ?dark: bool, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
+                          | (Model|Array[Model]|nil item, ?row: Integer, ?col: Integer, ?outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, ?dark: bool, **untyped opt) { (Model, symHash) -> symHash } -> Array[ActiveSupport::SafeBuffer]
+                          | (Model|Array[Model]|nil item, ?row: Integer, ?col: Integer, ?outer_tag: nil,            ?inner_tag: nil,            ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, ?dark: bool, **untyped opt) { (Model, symHash) -> symHash } -> Array[String]
+
+  # Specified field selections from the given model instance.
+  #
+  # @param [Model, Hash, nil]                          item
+  # @param [String, Symbol, Array<String,Symbol>, nil] columns
+  # @param [String, Symbol, Array<String,Symbol>, nil] default
+  # @param [String, Regexp, Array<String,Regexp>, nil] filter
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def model_field_values: (Model|symHash|nil item, ?columns: (String|Symbol|Array[String|Symbol])?, ?default: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?) -> symHash
+
+  # Setup row/column HTML options.
+  #
+  # @param [Symbol, String] field
+  # @param [Integer, nil]   row
+  # @param [Integer, nil]   col
+  # @param [Hash, nil]      opt
+  #
+  # @return [Hash]
+  #
+  def model_rc_options: (Symbol|String field, ?Integer? row, ?Integer? col, ?symHash? opt) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

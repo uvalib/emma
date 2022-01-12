@@ -1,0 +1,45 @@
+# OAuth2 negotiation.
+#
+# @see https://github.com/plataformatec/devise#omniauth
+#
+class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include SessionConcern
+
+  # OAuth2 providers recognized by this application.
+  #
+  # @type [Array<Symbol>]
+  #
+  PROVIDERS: symArray
+
+  # == GET  /users/auth/bookshare
+  # == POST /users/auth/bookshare
+  #
+  # Initiate authentication with the remote service.
+  #
+  def passthru: () -> void
+
+  # == GET  /users/auth/bookshare/callback
+  # == POST /users/auth/bookshare/callback
+  #
+  # Callback from the Bookshare auth service to finalize authentication.
+  #
+  # @see AuthConcern#set_auth_data
+  #
+  def bookshare: () -> void
+
+  # == GET /users/auth/bookshare/failure
+  #
+  # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
+  # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
+  #
+  def failure: () -> void
+
+  # Display a flash error message.
+  #
+  # @param [String, nil] message
+  # @param [String, nil] kind
+  #
+  # @return [void]
+  #
+  def set_flash_alert: (?String? message, ?String kind) -> void
+end

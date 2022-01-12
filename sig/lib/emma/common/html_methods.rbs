@@ -1,0 +1,58 @@
+module Emma::Common::HtmlMethods
+  # ASCII characters.
+  #
+  # @type [String]
+  #
+  ASCII: String
+
+  # Work break characters (for use with #tr or #delete). Sequences of any of
+  # these in #html_id will be replaced by a single separator character.
+  #
+  # @type [String]
+  #
+  HTML_ID_WORD_BREAK: String
+
+  # Characters (for use with #tr or #delete) that are ignored by #html_id.
+  #
+  # @type [String]
+  #
+  HTML_ID_IGNORED: String
+
+  # HTML break element.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  HTML_BREAK: ActiveSupport::SafeBuffer
+
+  # HTML non-breaking space.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  HTML_SPACE: ActiveSupport::SafeBuffer
+
+  # Combine parts into a value safe for use as an HTML ID (or class name).
+  #
+  # A 'Z' is prepended if the result would not have started with a letter.
+  #
+  # @param [Array]   parts
+  # @param [String]  separator        Separator between parts.
+  # @param [Boolean] underscore
+  # @param [Boolean] camelize         Replace underscores with caps.
+  #
+  # @return [String]
+  #
+  def html_id: (*(ActiveSupport::SafeBuffer|String) parts, ?separator: String, ?underscore: bool, ?camelize: bool) -> String
+
+  # Combine an array containing a mix of items into an HTML-safe result.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer, String, Any>] array
+  # @param [String, nil]                                   sep
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Usage Notes
+  # This is basically ActionView::Helpers::OutputSafetyHelper#safe_join but
+  # without the dependence on Rails.
+  #
+  def html_join: (anyArray array, ?String? sep) -> ActiveSupport::SafeBuffer
+end

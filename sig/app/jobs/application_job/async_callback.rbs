@@ -1,0 +1,98 @@
+# @note This class may go away...
+class ApplicationJob::AsyncCallback
+  include Emma::Debug
+
+  extend Emma::Debug
+
+  # @private
+  CLASS: Class
+
+  # @return [ApplicationRecord<Record::Steppable>]
+  attr_reader receiver: ApplicationRecord
+
+  # @return [Symbol]
+  attr_reader meth: Symbol
+
+  # @return [ApplicationJob::AsyncCallback, nil]
+  attr_reader callback: ApplicationJob::AsyncCallback | nil
+
+  # initialize
+  #
+  # @param [ApplicationRecord, Hash, AsyncCallback, nil] src
+  # @param [Symbol, nil]                                 meth
+  # @param [AsyncCallback, nil]                          callback
+  # @param [Hash]                                        opt
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload initialize(src)
+  #   @param [AsyncCallback] src
+  #
+  # @overload initialize(src)
+  #   @param [Hash] src
+  #   @option src [ApplicationRecord]   :cb_receiver   Required.
+  #   @option src [Symbol]              :cb_method     Required.
+  #   @option src [Hash, AsyncCallback] :callback      Optional.
+  #
+  # @overload initialize(receiver, meth, callback)
+  #   @param [ApplicationRecord] receiver
+  #   @param [Symbol]            meth
+  #   @param [AsyncCallback]     callback
+  #
+  # @overload initialize(receiver, meth, **opt)
+  #   @param [ApplicationRecord] receiver
+  #   @param [Symbol]            meth
+  #   @param [Hash]              opt                  In place of *callback*
+  #   @option opt [ApplicationRecord]  :cb_receiver   Required.
+  #   @option opt [Symbol]             :cb_method     Required.
+  #
+  # @overload initialize(**opt)
+  #   @param [Hash] opt                               In place of *callback*
+  #   @option opt [ApplicationRecord]  :cb_receiver   Required.
+  #   @option opt [Symbol]             :cb_method     Required.
+  #
+  def initialize: (?symHash|ApplicationRecord|ApplicationJob::AsyncCallback|nil src, ?Symbol? meth, ?ApplicationJob::AsyncCallback? callback, **untyped opt) -> void
+
+  # Enqueue or run the callback as a job.
+  #
+  # @param [Boolean] async            Run synchronously if provided as *false*.
+  # @param [Hash]    opt
+  #
+  # @return [Boolean]                 *false* if the job could not be processed
+  #
+  def cb_schedule: (?async: bool, **untyped opt) -> bool
+
+  # Run the callback as a synchronous job.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Boolean]                 Always *true* # TODO: ???
+  #
+  def cb_perform_now: (**untyped opt) -> bool
+
+  # Queue a job to run the callback asynchronously.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Boolean]                 *true* if queued; *false* if not.
+  #
+  def cb_perform_later: (**untyped opt) -> bool
+
+  def to_h: () -> { cb_receiver: ApplicationRecord, cb_method: Symbol, callback: ApplicationJob::AsyncCallback? }
+
+  alias to_hash to_h
+
+  def self.cb_values: (untyped source, *untyped ingored) -> [ApplicationRecord, Symbol, ApplicationJob::AsyncCallback?]?
+
+  class Serializer < ActiveJob::Serializers::ObjectSerializer
+    def serialize: (untyped item) -> anyHash
+
+    def deserialize: (anyHash hash) -> ApplicationJob::AsyncCallback
+
+    private
+
+    def klass: () -> Class
+  end
+end

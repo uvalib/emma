@@ -1,0 +1,92 @@
+# Metadata Common Fields.
+#
+# == API description
+# Fields common to metadata ingestion records and search results.
+#
+# -
+# === Common Emma Fields
+# +
+# @attr [EmmaRepository]                emma_repository
+# @attr [Array<String>]                 emma_collection
+# @attr [String]                        emma_repositoryRecordId
+# @attr [String]                        emma_retrievalLink
+# @attr [String]                        emma_webPageLink
+# @attr [IsoDay]                        emma_lastRemediationDate                # NOTE: being replaced by rem_remediationDate
+# @attr [IsoDay]                        emma_sortDate
+# @attr [IsoDay]                        emma_repositoryUpdateDate
+# @attr [IsoDay]                        emma_repositoryMetadataUpdateDate       # NOTE: being replaced by emma_repositoryUpdateDate
+# @attr [IsoDay]                        emma_publicationDate
+# @attr [String]                        emma_lastRemediationNote                # NOTE: being replaced by rem_comments
+# @attr [String]                        emma_version
+# @attr [String]                        emma_formatVersion
+# @attr [Array<FormatFeature>]          emma_formatFeature
+# -
+# === Dublin Core Fields
+# +
+# @attr [String]                        dc_title
+# @attr [Array<String>]                 dc_creator
+# @attr [Array<PublicationIdentifier>]  dc_identifier
+# @attr [String]                        dc_publisher
+# @attr [Array<PublicationIdentifier>]  dc_relation
+# @attr [Array<String>]                 dc_language
+# @attr [Rights]                        dc_rights
+# @attr [String]                        dc_description
+# @attr [DublinCoreFormat]              dc_format
+# @attr [DcmiType]                      dc_type
+# @attr [Array<String>]                 dc_subject
+# @attr [IsoDay]                        dcterms_dateAccepted
+# @attr [IsoYear]                       dcterms_dateCopyright
+# -
+# === Schema.org Fields
+# +
+# @attr [Array<A11yFeature>]            s_accessibilityFeature
+# @attr [Array<A11yControl>]            s_accessibilityControl
+# @attr [Array<A11yHazard>]             s_accessibilityHazard
+# @attr [Array<A11yAPI>]                s_accessibilityAPI
+# @attr [String]                        s_accessibilitySummary
+# @attr [Array<A11yAccessMode>]         s_accessMode
+# @attr [Array<A11ySufficient>]         s_accessModeSufficient
+# -
+# === Remediation Fields
+# +
+# @attr [SourceType]                    rem_source
+# @attr [Array<String>]                 rem_metadataSource
+# @attr [Array<String>]                 rem_remediatedBy
+# @attr [Boolean]                       rem_complete
+# @attr [String]                        rem_coverage
+# @attr [Array<RemediatedAspects>]      rem_remediatedAspects
+# @attr [TextQuality]                   rem_textQuality
+# @attr [RemediationStatus]             rem_status
+# @attr [IsoDay]                        rem_remediationDate
+# @attr [String]                        rem_comments
+# @attr [String]                        rem_remediationComments                 # NOTE: being renamed rem_comments
+#
+# @see https://app.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/MetadataCommonRecord                               Search API documentation
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/MetadataCommonRecord  JSON schema specification
+#
+# @see Search::Record::MetadataRecord    (schema superset)
+# @see Ingest::Record::IngestionRecord   (duplicate schema)
+# @see AwsS3::Message::SubmissionRequest (schema superset)
+#
+class Search::Record::MetadataCommonRecord < Search::Api::Record
+  include Search::Shared::CreatorMethods
+
+  include Search::Shared::DateMethods
+
+  include Search::Shared::IdentifierMethods
+
+  include Search::Shared::LinkMethods
+
+  include Search::Shared::ScoreMethods
+
+  include Search::Shared::TitleMethods
+
+  include Search::Shared::TransformMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
+  #
+  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?symHash? opt) -> void
+end

@@ -602,7 +602,7 @@ class Ability
 
   # Models which are managed by CanCan
   #
-  # @type [Array<Class>]
+  # @return [Array<Class>]
   #
   # @see #MODEL_NAMES
   #

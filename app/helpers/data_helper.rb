@@ -55,7 +55,7 @@ module DataHelper
   #
   # @param [String, Symbol, Any] table_name
   #
-  # @return [Array<ConnectionAdapters::Column>]
+  # @return [Array<ActiveRecord::ConnectionAdapters::Column>]
   #
   def table_columns(table_name)
     db_connection { |db| db_columns(db, table_name) }
@@ -93,18 +93,17 @@ module DataHelper
   #
   # @param [String, Symbol, Any]  name          Database table name.
   # @param [Array<String,Symbol>] cols          Column names; default: "*".
-  # @param [Boolean, nil]         headings      If *false*, don't include the
+  # @param [Boolean]              headings      If *false*, don't include the
   #                                               database schema.
-  # @param [Boolean, nil]         html          If *true*, produce records as
+  # @param [Boolean]              html          If *true*, produce records as
   #                                               arrays of values.
-  # @param [Boolean, nil]         no_raise      If *true*, don't raise
+  # @param [Boolean]              no_raise      If *true*, don't raise
   #                                               exceptions.
-  # @param [Boolean, nil]         raise_blank   If *true*, don't ignore blank
+  # @param [Boolean]              raise_blank   If *true*, don't ignore blank
   #                                               column names.
   #
-  #
   # @return [Array<Hash>]
-  # @return [Array<Array>]                      If *html* is *true*.
+  # @return [Array<Array<String>,Hash>]         If *html* is *true*.
   #
   #--
   # noinspection RubyMismatchedArgumentType
@@ -236,7 +235,7 @@ module DataHelper
   # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
   # @param [String, Symbol, Any]        table   Database table name.
   #
-  # @return [Array<ConnectionAdapters::Column>]
+  # @return [Array<ActiveRecord::ConnectionAdapters::Column>]
   #
   def db_columns(db, table)
     db.columns(table.to_s)
@@ -249,7 +248,7 @@ module DataHelper
   # @param [Array<String,Symbol>]       cols    Column names; default: "*".
   # @param [String, Symbol, Array, Any] sort
   #
-  # @return [Array<Array>]
+  # @return [Array<Hash>]
   #
   def db_select(db, table, cols, sort: nil)
     cols = cols.presence&.join(',') || '*'

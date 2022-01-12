@@ -1,0 +1,22 @@
+# Search::Message::RetrievalResult
+#
+# @attr [String]        key
+# @attr [Array<String>] messages
+# @attr [Array<String>] links
+#
+# Compare with:
+# Bs::Record::StatusModel
+#
+class Search::Message::RetrievalResult < Search::Api::Message
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+end

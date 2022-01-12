@@ -1,0 +1,42 @@
+# Metadata record schema for EMMA Federated Search Index.
+#
+# == API description
+# Schema for JSON documents which are retrieved from the EMMA Federated Search
+# Index ingestion service.
+#
+# -
+# === Unified Index Fields
+# +
+# @attr [String] emma_recordId
+# @attr [String] emma_titleId
+#
+# @see https://app.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/MetadataRecord                               Search API documentation
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/MetadataRecord  JSON schema specification
+#
+# @see Search::Message::SearchRecord        (duplicate schema)
+# @see Search::Record::MetadataCommonRecord (schema subset)
+# @see Ingest::Record::IngestionRecord      (schema subset)
+# @see AwsS3::Message::SubmissionRequest    (schema superset)
+#
+class Search::Record::MetadataRecord < Search::Api::Record
+  include Search::Shared::CreatorMethods
+
+  include Search::Shared::DateMethods
+
+  include Search::Shared::IdentifierMethods
+
+  include Search::Shared::LinkMethods
+
+  include Search::Shared::ScoreMethods
+
+  include Search::Shared::TitleMethods
+
+  include Search::Shared::TransformMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
+  #
+  def initialize: (?(Faraday::Response|Model|String|symHash)? src, ?symHash? opt) -> void
+end

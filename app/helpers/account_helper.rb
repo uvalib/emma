@@ -129,7 +129,7 @@ module AccountHelper
 
   # Render details of an account.
   #
-  # @param [User]      item
+  # @param [User,nil]  item
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #account_field_values and
   #                                     #model_details.
@@ -152,7 +152,7 @@ module AccountHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [User]      item
+  # @param [User, nil] item
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #model_list_item.
   #
@@ -170,8 +170,8 @@ module AccountHelper
 
   # Render accounts as a table.
   #
-  # @param [User, Array<User>] list
-  # @param [Hash]              opt    Passed to #model_table
+  # @param [User, Array<User>, nil] list
+  # @param [Hash]                   opt   Passed to #model_table
   #
   def account_table(list, **opt)
     opt[:model] ||= :account
@@ -182,11 +182,10 @@ module AccountHelper
 
   # Render one or more entries for use within a <tbody>.
   #
-  # @param [User, Array<User>] list
-  # @param [Hash]              opt    Passed to #model_table_entries
+  # @param [User, Array<User>, nil] list
+  # @param [Hash]                   opt   Passed to #model_table_entries
   #
   def account_table_entries(list, **opt)
-    # noinspection RubyMismatchedArgumentType
     model_table_entries(list, **opt) do |item, **row_opt|
       account_table_entry(item, **row_opt)
     end
@@ -198,7 +197,6 @@ module AccountHelper
   # @param [Hash] opt                 Passed to #model_table_entry
   #
   def account_table_entry(item, **opt)
-    # noinspection RubyMismatchedArgumentType
     model_table_entry(item, **opt) do |b_item, **b_opt|
       account_columns(b_item, **b_opt)
     end
@@ -206,11 +204,10 @@ module AccountHelper
 
   # Render column headings for an account table.
   #
-  # @param [User, Array<User>] item
-  # @param [Hash]              opt    Passed to #model_table_headings
+  # @param [User, Array<User>, nil] item
+  # @param [Hash]                   opt   Passed to #model_table_headings
   #
   def account_table_headings(item, **opt)
-    # noinspection RubyMismatchedArgumentType
     model_table_headings(item, **opt) do |b_item, **b_opt|
       account_columns(b_item, **b_opt)
     end

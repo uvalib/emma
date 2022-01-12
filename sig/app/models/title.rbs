@@ -1,0 +1,21 @@
+# Model for a title (i.e., a catalog entry).
+#
+class Title < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Authorizable
+
+  # Indicate whether the title includes the indicated artifact.
+  #
+  # @param [String, Artifact] item
+  #
+  def include?: (String|Artifact item) -> bool
+
+  # Indicate whether the title includes the indicated artifact.
+  #
+  # @param [String, Artifact] item
+  #
+  def has_artifact?: (String|Artifact item) -> bool
+end

@@ -48,6 +48,9 @@ class Action::BulkOperation < Action
   # @option attr [Array] :targets     If *attr* is a Hash or Hash-like.
   # @option opt  [Array] :targets     If *opt* hash is provided.
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def initialize(attr = nil, opt = nil, &block)
     data = (opt[:targets] if opt.is_a?(Hash))
     # noinspection RubyNilAnalysis

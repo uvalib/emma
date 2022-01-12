@@ -430,7 +430,7 @@ module LayoutHelper::SearchFilters
 
   # Tooltip for button to expand search filters.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [String]
   #
   ADV_SEARCH_OPENER_TIP = ADV_SEARCH_CONFIG[:tooltip]
 
@@ -443,7 +443,7 @@ module LayoutHelper::SearchFilters
 
   # Tooltip for button to contract search filters.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [String]
   #
   ADV_SEARCH_CLOSER_TIP = ADV_SEARCH_CONFIG.dig(:open, :tooltip)
 
@@ -507,6 +507,7 @@ module LayoutHelper::SearchFilters
     return if grid_rows.blank?
     prepend_classes!(opt, 'search-filter-container', "columns-#{max_columns}")
     append_classes!(opt, 'open') if SEARCH_FILTERS_START_EXPANDED
+    # noinspection RubyMismatchedReturnType
     html_div(opt) { grid_rows }
   end
 

@@ -1,0 +1,291 @@
+# View helper methods supporting the display and creation of Upload records,
+# including support for file upload via Uppy.
+#
+module UploadHelper
+  include Emma::Json
+
+  include Emma::Unicode
+
+  include ConfigurationHelper
+
+  include I18nHelper
+
+  include LinkHelper
+
+  include ModelHelper
+
+  include PopupHelper
+
+  include UploadWorkflow::Properties
+
+  # Paths used by entry-form.js.                                                # NOTE: to EntryHelper::ENTRY_PATH
+  #
+  # @type [Hash]
+  #
+  UPLOAD_PATH: Hash[Symbol,String]
+
+  # CSS styles.                                                                 # NOTE: to EntryHelper::ENTRY_STYLE
+  #
+  # @type [Hash]
+  #
+  UPLOAD_STYLE: Hash[Symbol,String]
+
+  # Display preview of Shrine uploads.  NOTE: Not currently enabled.            # NOTE: to EntryHelper::ENTRY_PREVIEW_ENABLED
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PREVIEW_ENABLED: bool
+
+  def preview_enabled?: () -> bool
+
+  def upload_preview: (?bool? force) -> ActiveSupport::SafeBuffer?
+
+  # Default link tooltip.                                                       # NOTE: to EntryHelper::ENTRY_SHOW_TOOLTIP
+  #
+  # @type [String]
+  #
+  UPLOAD_SHOW_TOOLTIP: String
+
+  def upload_link: (Upload item, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def render_file_data: (Model|symHash|nil item, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  def render_emma_data: (Model|symHash|nil item, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  def render_json_data: (Model|symHash|nil item, String|symHash|nil value, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  def upload_render_value: (Upload|Model|symHash item, untyped value, **untyped opt) -> (Field::Type | String | nil)
+
+  # Render upload attributes.                                                   # NOTE: to EntryHelper#entry_details
+  #
+  # @param [Upload]    item
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #model_details.
+  #
+  def upload_details: (Upload item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Groupings of states related by theme.                                       # NOTE: to EntryHelper::ENTRY_STATE_GROUP
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
+  #
+  UPLOAD_STATE_GROUP: symHash
+
+  # CSS class for the upload state selection panel.                             # NOTE: to EntryHelper::ENTRY_GROUP_PANEL_CLASS
+  #
+  # @type [String]
+  #
+  UPLOAD_GROUP_PANEL_CLASS: String
+
+  # CSS class for the state group controls container.                           # NOTE: to EntryHelper::ENTRY_GROUP_CLASS
+  #
+  # @type [String]
+  #
+  UPLOAD_GROUP_CLASS: String
+
+  # CSS class for a control within the upload state selection panel.            # NOTE: to EntryHelper::ENTRY_GROUP_CONTROL_CLASS
+  #
+  # @type [String]
+  #
+  UPLOAD_GROUP_CONTROL_CLASS: String
+
+  def upload_state_group_select: (?counts: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Control whether in-page filtering is allowed.                               # NOTE: to EntryHelper::ENTRY_PAGE_FILTERING
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PAGE_FILTERING: bool
+
+  # CSS class for the state group page filter panel.                            # NOTE: to EntryHelper::ENTRY_PAGE_FILTER_CLASS
+  #
+  # @type [String]
+  #
+  UPLOAD_PAGE_FILTER_CLASS: String
+
+  # CSS class for the state group controls container.                           # NOTE: to EntryHelper::ENTRY_FILTER_GROUP_CLASS
+  #
+  # @type [String]
+  #
+  UPLOAD_FILTER_GROUP_CLASS: String
+
+  # CSS class for a control within the state group controls container.          # NOTE: to EntryHelper::ENTRY_FILTER_CONTROL_CLASS
+  #
+  # @type [String]
+  #
+  UPLOAD_FILTER_CONTROL_CLASS: String
+
+  def upload_page_filter: (*Upload list, ?counts: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # CSS class for the debug-only panel of checkboxes to control filter          # NOTE: to EntryHelper::ENTRY_FILTER_OPTIONS_CLASS
+  # visibility.
+  #
+  # @type [String]
+  #
+  UPLOAD_FILTER_OPTIONS_CLASS: String
+
+  def upload_page_filter_options: (*Upload list, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def active_state_group?: (Symbol|nil group, symHash|nil properties, Array[Upload]|nil list) -> bool
+
+  # CSS class for the containing of a listing of Upload records.                # NOTE: to EntryHelper::ENTRY_LIST_CLASS
+  #
+  # @type [String]
+  #
+  UPLOAD_LIST_CLASS: String
+
+  # Render a single entry for use within a list of items.                       # NOTE: to EntryHelper#entry_list_item
+  #
+  # @param [Upload]    item
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #model_list_item.
+  #
+  def upload_list_item: (Upload? item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def upload_list_item_number: (Upload? item, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Text for #upload_no_records_row. # TODO: I18n                               # NOTE: to EntryHelper::ENTRY_NO_RECORDS
+  #
+  # @type [String]
+  #
+  UPLOAD_NO_RECORDS: String
+
+  def upload_no_records_row: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Upload action icon definitions.                                             # NOTE: to EntryHelper::ENTRY_CONTROL_ICONS
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+  #
+  UPLOAD_ICONS: Hash[Symbol,anyHash]
+
+  def upload_entry_icons: (Upload? item, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  def upload_action_icon: (Symbol op, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  def check_status_popup: (Upload item, String|Symbol path, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render pre-populated form fields.                                           # NOTE: to EntryHelper#entry_form_fields
+  #
+  # @param [Upload]    item
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #render_form_fields.
+  #
+  def upload_form_fields: (Upload? item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Button information for upload actions.                                      # NOTE: to EntryHelper::ENTRY_ACTION_VALUES
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  UPLOAD_ACTION_VALUES: Hash[Symbol,symHash]
+
+  # Screen-reader-only label for file input.  (This is to satisfy accessibility # NOTE: to EntryHelper
+  # checkers which don't ignore the file input which is made invisible in favor
+  # of the Uppy file input control).
+  #
+  # @type [String]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  FILE_LABEL: String
+
+  def upload_form: (Upload? item, ?label: String?, ?action: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def upload_submit_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def upload_cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def uploaded_filename_display: (?leader: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Element name for field group radio buttons.                                 # NOTE: to EntryHelper::ENTRY_FIELD_GROUP_NAME
+  #
+  # @type [String]
+  #
+  UPLOAD_FIELD_GROUP_NAME: String
+
+  # Field group radio buttons and their labels and tooltips.                    # NOTE: to EntryHelper::ENTRY_FIELD_GROUP
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  UPLOAD_FIELD_GROUP: Hash[Symbol,symHash]
+
+  def upload_field_group: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def upload_parent_entry_select: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def upload_field_container: (Upload? item, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Text for #upload_no_fields_row. # TODO: I18n                                # NOTE: to EntryHelper::ENTRY_NO_FIELDS
+  #
+  # @type [String]
+  #
+  UPLOAD_NO_FIELDS: String
+
+  def upload_no_fields_row: () -> ActiveSupport::SafeBuffer
+
+  def upload_items_menu: (?action: (Symbol|String)?, ?user: (String|User)?, ?prompt: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n      # NOTE: to EntryHelper::ENTRY_DELETE_LABEL
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  UPLOAD_DELETE_LABEL: Hash[Symbol,String]
+
+  UPLOAD_DELETE_OPTIONS: symArray
+
+  UPLOAD_DELETE_FORM_OPTIONS: symArray
+
+  UPLOAD_DELETE_SUBMIT_OPTIONS: symArray
+
+  def upload_delete_form: (*(String|Upload|nil) items, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def upload_delete_submit: (*(String|Upload|nil) items, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def upload_delete_cancel: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def bulk_upload_results: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def bulk_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, labels: Hash[Symbol,String], ?debug_only: bool, **untyped ignored) -> ActiveSupport::SafeBuffer
+
+  def bulk_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, labels: Hash[Symbol,String], ?meth: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n      # NOTE: to EntryHelper::BULK_ENTRY_LABEL
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  BULK_UPLOAD_LABEL: Hash[Symbol,String]
+
+  BULK_UPLOAD_OPTIONS: symArray
+
+  BULK_UPLOAD_FORM_OPTIONS: symArray
+
+  def bulk_upload_form: (?label: String?, ?action: (Symbol|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def bulk_upload_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def bulk_upload_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def bulk_upload_file_select: (ActionView::Helpers::FormBuilder f, Symbol meth, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  BULK_DELETE_LABEL: String
+
+  BULK_DELETE_OPTIONS: symArray
+
+  BULK_DELETE_FORM_OPTIONS: symArray
+
+  def bulk_delete_form: (?ids: (Upload|String|Array[Upload|String])?, ?label: String?, **untyped opt) -> untyped
+
+  def find_in_index: (*(Upload|String|nil) items) -> [Array[Search::Record::MetadataRecord], Array[String|Search::Record::MetadataRecord]]
+
+  def bulk_delete_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def bulk_delete_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

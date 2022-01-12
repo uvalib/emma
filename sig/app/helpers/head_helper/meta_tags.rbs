@@ -1,0 +1,153 @@
+# View helper methods for setting/getting <meta> tags.
+#
+module HeadHelper::MetaTags
+  include HeadHelper::Common
+
+  private
+
+  # @type [Hash]
+  DEFAULT_PAGE_META_TAGS: symHash
+
+  # Default separator to join meta tag content values which are arrays.
+  #
+  # @type [String]
+  #
+  META_TAG_CONTENT_SEPARATOR: String
+
+  # Default separator between meta tags.
+  #
+  # @type [String]
+  #
+  META_TAG_SEPARATOR: String
+
+  # Strings to prepend to the respective meta tags.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  META_TAG_PREFIX: Hash[Symbol,String]
+
+  # Strings to append to the respective meta tags.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  META_TAG_SUFFIX: Hash[Symbol,String]
+
+  public
+
+  # Access the meta tags for this page.
+  #
+  # If a block is given, this invocation is being used to accumulate "<meta>"
+  # tags; otherwise this invocation is being used to emit the "<meta>" tags.
+  #
+  # @return [ActiveSupport::SafeBuffer]   If no block given.
+  # @return [Hash]                        If block given.
+  #
+  # @yield To supply tag/value pairs to #set_page_meta_tags.
+  # @yieldreturn [Hash]
+  #
+  def page_meta_tags: () { () -> symHash } -> symHash
+                    | ()                   -> ActiveSupport::SafeBuffer
+
+  # Set the meta tags for this page, eliminating any previous value.
+  #
+  # @param [Hash, nil] pairs
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  # @yield To supply additional tag/value pairs for @page_meta_tags.
+  # @yieldreturn [Hash]
+  #
+  def set_page_meta_tags: (?symHash? pairs) { () -> symHash } -> symHash
+
+  # Add to the meta tags for this page.
+  #
+  # @param [Hash, nil] pairs
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  # @yield To supply additional tag/value pairs for @page_meta_tags.
+  # @yieldreturn [Hash]
+  #
+  def append_page_meta_tags: (?symHash? pairs) { () -> symHash } -> symHash
+
+  # Replace existing (or add new) meta tags for this page.
+  #
+  # @param [Hash, nil] pairs
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  # @yield To supply additional tag/value pairs for @page_meta_tags.
+  # @yieldreturn [Hash]
+  #
+  def replace_page_meta_tags: (?symHash? pairs) { () -> symHash } -> symHash
+
+  # Emit the "<meta>" tag(s) appropriate for the current page.
+  #
+  # @param [Hash] opt                 Passed to #emit_meta_tag except for:
+  #
+  # @option opt [String] :tag_separator   Default: #META_TAG_SEPARATOR
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def emit_page_meta_tags: (?symHash? opt) -> ActiveSupport::SafeBuffer
+
+  # Merge hashes, accumulating values as arrays for overlapping keys.
+  #
+  # @param [Hash, nil] src
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  def merge_meta_tags!: (symHash? src) -> symHash
+
+  # @type [Array<Symbol>]
+  EMIT_META_TAG_OPTIONS: symArray
+
+  # Generate a <meta> tag with special handling for :robots.
+  #
+  # @param [Symbol]                key
+  # @param [String, Symbol, Array] value
+  # @param [Hash]                  opt        Passed to #tag except for:
+  #
+  # @option opt [String]  :content_separator  Def.: #META_TAG_CONTENT_SEPARATOR
+  # @option opt [String]  :list_separator     Passed to #normalized_list.
+  # @option opt [String]  :pair_separator     Passed to #normalized_list.
+  # @option opt [Boolean] :sanitize           Passed to #normalized_list.
+  # @option opt [Boolean] :quote              Passed to #normalized_list.
+  #
+  # @return [ActiveSupport::SafeBuffer]       If valid.
+  # @return [nil]                             If the tag would be a "no-op".
+  #
+  def emit_meta_tag: (Symbol key, (String|Symbol|anyArray)? value, ?symHash? opt) -> ActiveSupport::SafeBuffer?
+
+  # Set <meta name="description">, eliminating any previous value.
+  #
+  # @param [Array<String,Symbol,Hash>] values
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  def set_page_description: (*(String|Symbol|anyHash) values) -> symHash
+
+  # Add to <meta name="description">.
+  #
+  # @param [Array<String,Symbol,Hash>] values
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  def append_page_description: (*(String|Symbol|anyHash) values) -> symHash
+
+  # Set <meta name="robots">.
+  #
+  # @param [Array<String,Symbol>] values
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  def set_page_robots: (*(String|Symbol) values) -> symHash
+
+  # Add to <meta name="robots">.
+  #
+  # @param [Array<String,Symbol>] values
+  #
+  # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  def append_page_robots: (*(String|Symbol) values) -> symHash
+end

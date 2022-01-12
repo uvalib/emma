@@ -1,0 +1,266 @@
+# View helper methods supporting creation of Model instances (both database
+# items and API messages).
+#
+module ModelHelper::Form
+  include ModelHelper::List
+
+  include RoleHelper
+
+  # Indicate whether the given field value produces an <input> that should be
+  # disabled.
+  #
+  # @param [Symbol, String]      field
+  # @param [Symbol, String, nil] model  Default: `params[:controller]`
+  #
+  # @see UploadHelper#upload_readonly_form_field?
+  #
+  def readonly_form_field?: (Symbol|String field, ?(Symbol|String)? model) -> bool
+
+  # Indicate whether the given field value is required for validation.
+  #
+  # @param [Symbol, String]      field
+  # @param [Symbol, String, nil] model  Default: `params[:controller]`
+  #
+  # @see UploadHelper#upload_required_form_field?
+  #
+  def required_form_field?: (untyped field, ?untyped? model) -> bool
+
+  # Render field/value pairs.
+  #
+  # @param [Model]               item
+  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
+  # @param [String, Symbol, nil] action       Default: `params[:action]`.
+  # @param [Hash, nil]           pairs        Except #render_form_pair options.
+  # @param [Integer, nil]        row_offset   Def: 0.
+  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash]                opt
+  # @param [Proc]                block        Passed to #field_values.
+  #
+  # @option opt [Integer] :index              Offset to make unique element IDs
+  #                                             passed to #render_form_pair.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # Compare with:
+  # #render_field_values
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # +
+  def render_form_fields: (Model item, ?model: (String|Symbol)?, ?action: (String|Symbol)?, ?pairs: anyHash?, ?row_offset: Integer?, ?separator: String?, **untyped opt) { (Model) -> anyHash } -> ActiveSupport::SafeBuffer
+
+  # Render a single label/value pair.
+  #
+  # @param [String, Symbol] label
+  # @param [Any]            value
+  # @param [Symbol]         field       For 'data-field' attribute.
+  # @param [Symbol, String] model       Default: `params[:controller]`
+  # @param [Integer]        index       Offset for making unique element IDs.
+  # @param [Integer]        row         Display row.
+  # @param [Boolean]        disabled
+  # @param [Boolean]        required    For 'data-required' attribute.
+  # @param [Hash]           opt
+  #
+  # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
+  # @return [nil]                       If *value* is blank.
+  #
+  # Compare with:
+  # #render_pair
+  #
+  def render_form_pair: (String|Symbol label, untyped value, ?field: Symbol?, ?model: (String|Symbol)? , ?index: Integer?, ?row: Integer, ?disabled: bool?, ?required: bool?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Single-select menu - drop-down.
+  #
+  # @param [String] name
+  # @param [Array]  value             Selected value(s) from `range#values`.
+  # @param [Class]  range             A class derived from EnumType whose
+  #                                     #values method will be used to populate
+  #                                     the menu.
+  # @param [Hash]   opt               Passed to #select_tag except for:
+  #
+  # @option opt [String] :name        Overrides *name*
+  # @option opt [String] :base        Name and id for <select>; default: *name*
+  #
+  # @raise [RuntimeError]             If *range* is not an EnumType.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateMenu()*
+  #
+  def render_form_menu_single: (String name, anyArray value, range: Class, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Multi-select menu - scrollable list of checkboxes.
+  #
+  # @param [String] name
+  # @param [Array]  value             Selected value(s) from `range#values`.
+  # @param [Class]  range             A class derived from EnumType whose
+  #                                     #values method will be used to populate
+  #                                     the menu.
+  # @param [Hash]   opt               Passed to #field_set_tag except for:
+  #
+  # @option opt [String] :name        Overrides *name*
+  # @option opt [String] :base        Name and id for <select>; default: *name*
+  #
+  # @raise [RuntimeError]             If *range* is not an EnumType.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateFieldsetCheckboxes()*
+  #
+  def render_form_menu_multi: (String name, anyArray value, range: Class, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Multiple single-line inputs.
+  #
+  # @param [String] name
+  # @param [Array]  value
+  # @param [Hash]   opt               Passed to :field_set_tag except for:
+  #
+  # @option [Boolean] :disabled       Passed to :render_form_input
+  # @option [Integer] :count
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateFieldsetInputs()*
+  #
+  def render_form_input_multi: (String name, anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # render_form_input
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/entry-form.js *updateTextInputField()*
+  #
+  def render_form_input: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Form submit button.
+  #
+  # @param [Hash]                config   Button info for model actions.
+  # @param [String, Symbol, nil] action   Default: `params[:action]`.
+  # @param [String, nil]         label    Override button label.
+  # @param [Hash] opt                     Passed to #submit_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_submit_button: (config: symHash, ?action: (String|Symbol)?, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Form cancel button.
+  #
+  # @param [Hash]                config   Button info for model actions.
+  # @param [String, Symbol, nil] action   Default: `params[:action]`.
+  # @param [String, nil]         label    Override button label.
+  # @param [String, Hash, nil]   url      Default: `history.back()`.
+  # @param [Hash] opt                     Passed to #button_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_cancel_button: (config: symHash, ?action: (String|Symbol)?, ?label: String?, ?url: (String|symHash)?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Field type indicators mapped on to related class(es).
+  #
+  # @type [Hash{Symbol=>Array<Class>}]
+  #
+  RENDER_FIELD_TYPE_TABLE: Hash[Symbol,Array[Class]]
+
+  # Mapping of actual type to the appropriate field type indicator.
+  #
+  # @type [Hash{Class=>Symbol}]
+  #
+  RENDER_FIELD_TYPE: Hash[Class,Symbol]
+
+  # Convert certain field types.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REPLACE_FIELD_TYPE: Hash[Symbol,Symbol]
+
+  # render_field_item
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt               Passed to render method except for:
+  #
+  # @option opt [String]         :base
+  # @option opt [String]         :name
+  # @option opt [Symbol, String] :model   Default: `params[:controller]`
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Local options for #render_check_box.
+  #
+  # @type [Array<Symbol>]
+  #
+  CHECK_OPTIONS: symArray
+
+  # render_check_box
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_check_box: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # STATUS_MARKER
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  STATUS_MARKER: Hash[Symbol,Hash[Symbol,String]]
+
+  # Generate a marker which can indicate the status of an input field.
+  #
+  # @param [Symbol, Array<Symbol>] status   One or more of %[invalid required].
+  # @param [String, Symbol]        label    Used with :required.
+  # @param [Hash]                  opt      Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def status_marker: (?status: (Symbol|symArray)? status, ?label: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Indicate whether the value is a valid range type.
+  #
+  # @param [Any]     range
+  # @param [Boolean] exception        If *true*, raise an exception if *false*.
+  #
+  # @raise [RuntimeError]             If not valid and *exception* is *true*.
+  #
+  def valid_range?: (untyped range, ?exception: bool) -> bool
+
+  # Translate attributes.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The potentially-modified *opt* hash.
+  #
+  # == Implementation Notes
+  # Disabled input fields are given the :readonly attribute because the
+  # :disabled attribute prevents those fields from being included in the data
+  # sent with the form submission.
+  #
+  def normalize_attributes!: (symHash opt) -> symHash
+
+  # Submit button for the delete model form.
+  #
+  # @param [Hash]                config   Button info for model actions.
+  # @param [String, Symbol, nil] action   Default: `params[:action]`.
+  # @param [String, nil]         label    Override button label.
+  # @param [String, Hash, nil]   url
+  # @param [Hash]                opt      Passed to #button_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_submit_button: (config: symHash, ?action: (String|Symbol)?, ?label: String?, ?url: (String|anyHash)?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

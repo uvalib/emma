@@ -1,0 +1,81 @@
+# Methods relating to error reporting.
+#
+module Record::Reportable
+  extend ActiveSupport::Concern
+
+  include Emma::Json
+
+  include Record
+
+  include Record::Exceptions
+
+  include Record::Updatable::InstanceMethods
+
+  # :nocov:
+  #include Record::Controllable::ConditionMethods
+
+  # The default name for the column that holds error report(s).
+  #
+  # @type [Symbol]
+  #
+  REPORT_COLUMN: Symbol
+
+  # Whether the #REPORT_COLUMN should be persisted as a Hash.
+  #
+  # @type [Boolean]
+  #
+  REPORT_HASH: bool
+
+  # Workflow errors.
+  #
+  # @param [Boolean, nil] refresh     If *true*, re-fetch from the database.
+  #
+  # @return [ExecReport]
+  #
+  def exec_report: (?bool? refresh) -> ExecReport
+
+  # Fetch the current value of #REPORT_COLUMN for the current record.
+  #
+  # @param [Boolean, nil] refresh     If *false*, don't re-fetch.
+  #
+  # @return [ExecReport]
+  #
+  def get_exec_report: (?bool? refresh) -> ExecReport
+
+  # Update the current value of #REPORT_COLUMN for the current record.
+  #
+  # @param [ExecReport, Hash, Array<String>, String, nil] value
+  #
+  # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
+  #
+  # @return [ExecReport]                    New value of `#exec_report`.
+  #
+  def set_exec_report: (?errorArgs value) -> ExecReport
+
+  # Clear the current value of #REPORT_COLUMN for the current record.
+  #
+  # @return [nil]
+  #
+  def clear_exec_report: (*untyped, **untyped) ?{ () -> untyped } -> nil
+
+  # Dynamically get the contents of the current record's #REPORT_COLUMN.
+  #
+  # @param [Symbol] col               Default: `#REPORT_COLUMN`.
+  #
+  # @return [Any]
+  #
+  def get_report_column: (?col: Symbol) -> untyped
+
+  # Dynamically update the contents of the current record's #REPORT_COLUMN.
+  #
+  # @param [Any, nil]    value
+  # @param [Symbol, nil] meth         Default: `#calling_method`.
+  # @param [Boolean]     no_raise     Unless *false* do not raise an exception.
+  # @param [Symbol]      col          Default: `#REPORT_COLUMN`.
+  #
+  # @raise [RuntimeError]             If updating failed and !no_raise.
+  #
+  # @return [Boolean]
+  #
+  def set_report_column: (untyped? value, ?meth: Symbol?, ?no_raise: bool, ?col: Symbol) -> bool
+end

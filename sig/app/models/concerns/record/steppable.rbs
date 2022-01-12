@@ -1,0 +1,479 @@
+# Common methods for ActiveRecord classes that are used to track outcomes
+# across multiple steps.
+#
+# @!attribute [rw] state
+#   Database :state column.
+#   @return [String]
+#
+# == Usage Notes
+# If the including class does not define a STATE_TABLE constant before the
+# include of this module, #generate_state_methods will need to be run
+# explicitly with a Hash with state values as keys.
+#
+module Record::Steppable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  extend ::Record::Steppable
+
+  # The default state column name.                                              # NOTE: from Upload::WorkflowMethods::STATE_COLUMNS
+  #
+  # @type [Symbol]
+  #
+  STATE_COLUMN: Symbol
+
+  # Workflow state configurations.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/state_table.en.yml *en.emma.state_table*
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  STATE_TABLES: Hash[Symbol,symHash]
+
+  # Groupings of states related by theme.                                       # NOTE: from Upload::WorkflowMethods
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  STATE_GROUP: Hash[Symbol,symHash]
+
+  # Mapping of workflow state to category.                                      # NOTE: from Upload::WorkflowMethods
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REVERSE_STATE_GROUP: Hash[Symbol,Symbol]
+
+  def state_column: () -> untyped
+
+  # Workflow state table associated with *item*.
+  #
+  # @param [Model, Class<Model>] item
+  #
+  # @return [Hash]
+  #
+  def state_table: (Model|Class item) -> symHash
+
+  # Workflow state configuration for *item*.
+  #
+  # @param [Model, Class<Model>] item
+  # @param [Boolean]             no_raise
+  #
+  # @return [Hash, nil]
+  #
+  def get_state_table: (Model|Class item, ?no_raise: bool) -> symHash?
+
+  # All valid workflow states for *item*.
+  #
+  # @param [Model, Class<Model>] item
+  #
+  # @return [Array<Symbol>]
+  #
+  def get_state_names: (Model|Class item) -> symArray
+
+  # Cast value in a form for comparison.
+  #
+  # @param [Model, Symbol, String, nil] item
+  #
+  # @return [Symbol, nil]
+  #
+  def state_value: (Model|Symbol|String|nil item) -> Symbol?
+
+  # Get the configured descriptive note for the state.
+  #
+  # @param [Model, Symbol, String, nil] item
+  #
+  # @return [String, nil]
+  #
+  def state_note: (Model|Symbol|String|nil item) -> String?
+
+  # Get a natural-language description for the state.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  # @return [String, nil]
+  #
+  def state_description: (Model|Symbol|String|nil item) -> String?
+
+  def existing_entry?: (Model|Symbol|String|nil item) -> bool
+
+  def new_submission?: (Model|Symbol|String|nil item) -> bool
+
+  def state_group: (Model|Symbol|String|nil item) -> untyped
+
+  def state_group_label: (Model|Symbol|String|nil group) -> untyped
+
+  def being_created?: (Model|Symbol|String|nil item) -> bool
+
+  def being_modified?: (Model|Symbol|String|nil item) -> bool
+
+  def being_removed?: (Model|Symbol|String|nil item) -> bool
+
+  def under_review?: (Model|Symbol|String|nil item) -> bool
+
+  def being_submitted?: (Model|Symbol|String|nil item) -> bool
+
+  def being_indexed?: (Model|Symbol|String|nil item) -> bool
+
+  def completed?: (Model|Symbol|String|nil item) -> bool
+
+  def in_process?: (Model|Symbol|String|nil item) -> bool
+
+  def unsealed?: (Model|Symbol|String|nil item) -> bool
+
+  def sealed?: (Model|Symbol|String|nil item) -> bool
+
+  # job_class
+  #
+  # @param [Model, Class<Model>] item
+  #
+  # @return [Class<ApplicationJob>]
+  #
+  def job_class: (Model|Class item) -> Class
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::Steppable
+
+    include Record::Updatable::ClassMethods
+
+    # Workflow state table.
+    #
+    # @param [Model, Class<Model>, nil] item      Default: self.
+    #
+    # @return [Hash]
+    #
+    def state_table: (?(Model|Class)? item) -> symHash
+
+    # Workflow state configuration.
+    #
+    # @param [Model, Class<Model>, nil] item      Default: self.
+    # @param [Boolean]                  no_raise
+    #
+    # @return [Hash, nil]
+    #
+    def get_state_table: (?(Model|Class)? item, ?no_raise: bool) -> symHash?
+
+    # All valid workflow states.
+    #
+    # @param [Model, Class<Model>, nil] item
+    #
+    # @return [Array<Symbol>]
+    #
+    def get_state_names: (?(Model|Class)? item) -> symArray
+
+    # Return the class from app/jobs associated with the record class.
+    #
+    # @param [Model, Class<Model>, nil] item  Default: self.
+    #
+    # @return [Class<Model::WorkflowJob>]
+    #
+    def job_class: (?(Model|Class)? item) -> Class
+
+    # Called from the including class to generate query- and action-methods
+    # associated with the column.
+    #
+    # @param [Array<Symbol,String>, nil] states   Default: #get_state_names
+    #
+    # @return [void]
+    #
+    # == Usage Notes
+    # If the including class has defined a STATE_TABLE or STATEs constant prior
+    # to including this module, this method will be invoked implicitly using
+    # that set of state values.  Otherwise, this method will have be invoked
+    # explicitly after the state table has been defined.
+    #
+    def generate_state_methods: (?Array[Symbol|String]? states) -> void
+
+    # Validate state table definitions and interconnections.
+    #
+    # @param [Hash, nil] table   Def: `#state_table`
+    #
+    # == Usage Notes
+    # This is best put at the very end of the class definition so that any
+    # methods specified in the table definitions will have been defined.
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def validate_state_table: (?symHash? table) -> nil
+
+    # Create an ActiveJob serializer for the given Record class if it does not
+    # already exist.
+    #
+    # @param [Class, Module, Any] base
+    #
+    # @return [void]
+    #
+    def generate_job_serializer: (untyped base) -> void
+  end
+
+  # Instance methods to be added to the including record class.
+  #
+  module InstanceMethods
+    include Emma::Common
+
+    include Record::Steppable
+
+    include Record::Reportable
+
+    # Workflow state table associated with the current record.
+    #
+    # @param [Model, Class<Model>, nil] item  Default: self.
+    #
+    # @return [Hash]
+    #
+    def state_table: (?(Model|Class)? item) -> symHash
+
+    # Workflow state configuration associated with the current record.
+    #
+    # @param [Model, Class<Model>, nil] item      Default: self.
+    # @param [Boolean]                  no_raise
+    #
+    # @return [Hash, nil]
+    #
+    def get_state_table: (?(Model|Class)? item, ?no_raise: bool) -> symHash?
+
+    # All valid workflow states for the current record.
+    #
+    # @param [Model, Class<Model>, nil] item      Default: self.
+    #
+    # @return [Array<Symbol>, nil]
+    #
+    def get_state_names: (?(Model|Class)? item) -> symArray?
+
+    # Cast value in a form for comparison.
+    #
+    # @param [Model, Symbol, String, nil] item  Default: `self`.
+    #
+    # @return [Symbol, nil]
+    #
+    def state_value: (?(Model|Symbol|String)? item) -> Symbol?
+
+    # Get the configured descriptive note for the current state.
+    #
+    # @param [Model, Symbol, String, nil] item  Default: `self`.
+    #
+    # @return [String, nil]
+    #
+    def state_note: (?(Model|Symbol|String)? item) -> String?
+
+    # Get a natural-language description for the current state.
+    #
+    # @param [Model, Symbol, String, nil] item  Default: `self[STATE_COLUMN]`.
+    #
+    # @return [String, nil]
+    #
+    def state_description: (?(Model|Symbol|String)? item) -> String?
+
+    # Indicate whether this record represents an existing EMMA entry.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def existing_entry?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record represents an existing EMMA entry.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def new_submission?: (?(Model|Symbol|String)? item) -> bool
+
+    # Return the state group of the record.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def state_group: (?(Model|Symbol|String)? item) -> Symbol
+
+    # Return the label for the state group of the record.
+    #
+    # @param [Model, String, Symbol, nil] group   Default: `self`.
+    #
+    # @return [String]
+    # @return [nil]                     If *group* is invalid.
+    #
+    def state_group_label: (?(Model|Symbol|String)? group) -> String?
+
+    # Indicate whether this record is involved in a workflow step related to
+    # the creation of a new EMMA entry.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def being_created?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step related to
+    # the modification of an existing EMMA entry.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def being_modified?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step related to
+    # the removal of an existing EMMA entry.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def being_removed?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step related to
+    # the review process.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def under_review?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step related to
+    # transmission to a member repository.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def being_submitted?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step related to
+    # ingest into the EMMA Unified Index.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def being_indexed?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step related to
+    # ingest into the EMMA Unified Index.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def completed?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step which leads
+    # to a change in the associated EMMA index entry.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def in_process?: (?(Model|Symbol|String)? item) -> bool
+
+    # Indicate whether this record is involved in a workflow step where
+    # non-administrative data (EMMA or file data) could be changed.
+    #
+    # @param [Model, String, Symbol, nil] item  Default: `self`.
+    #
+    def unsealed?: (?(Model|Symbol|String)? item) -> bool
+
+    # Return the class from app/jobs associated with the record class.
+    #
+    # @param [Model, Class<Model>, nil] item  Default: self.
+    #
+    # @return [Class<Model::WorkflowJob>]
+    #
+    def job_class: (?(Model|Symbol|String)? item) -> untyped
+
+    # Get the next legal state(s).
+    #
+    # If "emma.state_table.[...].next" is *false*, *nil* or missing, the result
+    # is an empty array (indicating a terminal state).
+    #
+    # @param [Symbol, String, nil] curr_state   Passed to #state_value.
+    #
+    # @return [Array<Symbol>]
+    #
+    def transitions: (?(Symbol|String)? curr_state) -> symArray
+
+    # Get the next legal state.
+    #
+    # @param [Symbol, String, nil] curr_state   Passed to #transitions.
+    #
+    # @return [Symbol, nil]
+    #
+    def next_state: (?(Symbol|String)? curr_state) -> Symbol?
+
+    # Indicate whether the value represents a terminal state.
+    #
+    # @param [Symbol, String, nil] curr_state  Passed to #transitions.
+    #
+    def final_state?: (?(Symbol|String)? curr_state) -> bool
+
+    # Indicate whether the current record can transition to the given state.
+    #
+    # @param [Symbol, String] new_state
+    #
+    def can_transition_to?: (Symbol|String new_state) -> bool
+
+    # Indicate whether the current record can't transition to the given state.
+    #
+    # @param [Symbol, String] new_state
+    #
+    def cannot_transition_to?: (Symbol|String new_state) -> bool
+
+    # Transition to a new state.
+    #
+    # @param [Symbol, String] new_state
+    # @param [Symbol]         meth        For error messages.
+    # @param [Boolean]        no_raise    If *false* raise on error.
+    #
+    # @raise [Record::SubmitError]    If !*no_raise* and invalid transition.
+    #
+    # @return [nil]                   If *no_raise* and invalid transition.
+    # @return [Symbol]                The state before the transition.
+    #
+    def transition_to: (Symbol|String new_state, ?meth: Symbol?, ?no_raise: bool?) -> Symbol?
+
+    # For each state/action pair of the sequence, transition to the state and
+    # perform the action.  An action which is not a proc or a the name of a
+    # method then it represents the end of the sequence and the value is used
+    # as the return value of this method.
+    #
+    # @param [Hash{Symbol=>Proc,Symbol,Boolean}, nil] sequence
+    # @param [Symbol] meth            For error reporting.
+    #
+    # @raise [Record::SubmitError]    If !*no_raise* and invalid transition.
+    #
+    # @return [Boolean]
+    #
+    # @yield To supply additional state/action pairs.
+    # @yieldreturn [Hash{Symbol=>Proc,Symbol,Boolean}]
+    #
+    def transition_sequence: (meth: Symbol, ?sequence: Hash[Symbol,(Proc|Symbol|bool)]?) { () -> untyped } -> bool
+
+    # Execute a sequence step.
+    #
+    # @param [Proc, Symbol] step        Action to perform.
+    # @param [Symbol, nil]  new_state   Target state after *action*.
+    # @param [Boolean]      auto_retry
+    #
+    # @return [Array<(Any,Symbol)>]            Action result and new effective state.
+    #
+    # == Usage Notes
+    # Ensures that if the action raises an exception then that is captured in
+    # the instance's :report column.
+    #
+    def execute_step: (Symbol|Proc step, ?Symbol? new_state, ?auto_retry: bool) -> [untyped, Symbol]
+
+    # Schedule a method to be run asynchronously (unless :async is *false*).
+    #
+    # @param [Symbol]  meth
+    # @param [Array]   args           Arguments to *meth*.
+    # @param [Boolean] async          If *false* do not run asynchronously.
+    # @param [Hash]    opt
+    #
+    # @return [Boolean]               False if the job could not be processed.
+    #
+    def job_run: (Symbol meth, *untyped args, ?async: bool, **untyped opt) -> bool
+
+    # If the option hash includes a :callback then invoke it.
+    #
+    # @param [Hash] opt               Passed to #cb_schedule.
+    #
+    # @return [Boolean]               False if the job could not be processed.
+    #
+    def run_callback: (**untyped opt) -> bool
+  end
+
+  private
+
+  include InstanceMethods
+end

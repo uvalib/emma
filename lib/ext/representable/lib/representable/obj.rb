@@ -57,7 +57,6 @@ module Representable
       $stderr.puts "................... Representable::Obj.to_obj | #{args.inspect}" # TODO: remove
       opt  = args.last.is_a?(::Hash) ? args.pop : {}
       hash = to_hash(*args)
-      # noinspection RubyMismatchedArgumentType
       hash_render(hash, **opt)
     end
 

@@ -1,0 +1,365 @@
+# Handle "/entry" requests.
+#
+# @see EntryHelper
+# @see file:app/views/entry/**
+#
+class EntryController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include SerializationConcern
+
+  include AwsConcern
+
+  include IngestConcern
+
+  include IaDownloadConcern
+
+  include EntryConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  #include ActionController::RespondWith
+
+  #extend CanCan::ControllerAdditions::ClassMethods
+
+  # Results for :index.
+  #
+  # @return [Array<Entry>]
+  # @return [Array<String>]
+  # @return [nil]
+  #
+  attr_reader list: (Array[Entry] | strArray)?
+
+  # API results for :show.
+  #
+  # @return [Entry, nil]
+  #
+  attr_reader item: Entry?
+
+  # == GET /entry[?id=(:id|SID|RANGE_LIST)]
+  # == GET /entry[?selected=(:id|SID|RANGE_LIST)]
+  # == GET /entry[?group=WORKFLOW_GROUP]
+  #
+  # Display the current user's EMMA entries.
+  #
+  # If an item specification is given by one of EntryConcern#IDENTIFIER_PARAMS
+  # then the results will be limited to the matching entries.
+  # NOTE: Currently this is not limited only to the current user's entries.
+  #
+  # @see EntryConcern#find_or_match_entries
+  #
+  def index: () -> void
+
+  # == GET /entry/show/(:id|SID)
+  #
+  # Display a single entry.
+  #
+  # @see EntryConcern#get_entry
+  #
+  def show: () -> void
+
+  # == GET /entry/new
+  #
+  # Initiate creation of a new EMMA entry by displaying the form which prompts
+  # to upload a file and collects metadata for the new entry.
+  #
+  # TODO: verify this:
+  # On the initial visit to the page, @entry_id should be *nil*.  On subsequent
+  # visits (due to "Cancel" returning to this same page), @entry_id will be
+  # included in order to reuse the Entry record that was created at that time.
+  #
+  # @see EntryConcern#new_entry
+  # @see EntryController#create
+  # @see file:app/assets/javascripts/feature/entry-form.js
+  #
+  def new: () -> void
+
+  # == POST  /entry/create
+  # == PUT   /entry/create
+  # == PATCH /entry/create
+  #
+  # Invoked from the handler for the Uppy 'upload-success' event to finalize
+  # the creation of a new EMMA entry.
+  #
+  # @see EntryConcern#create_entry
+  # @see EntryController#new
+  #
+  def create: () -> void
+
+  # == GET /entry/edit/:id
+  # == GET /entry/edit/SELECT
+  # == GET /entry/edit_select
+  #
+  # Initiate modification of an existing EMMA entry by prompting for metadata
+  # changes and/or upload of a replacement file.
+  #
+  # If :id is "SELECT" then a menu of editable items is presented.
+  #
+  # @see EntryConcern#edit_entry
+  # @see EntryController#update
+  # @see file:app/assets/javascripts/feature/entry-form.js
+  #
+  def edit: () -> void
+
+  # == PUT   /entry/update/:id
+  # == PATCH /entry/update/:id
+  #
+  # Finalize modification of an existing EMMA entry.
+  #
+  # @see EntryConcern#update_entry
+  # @see EntryController#edit
+  #
+  def update: () -> void
+
+  # == GET /entry/delete/:id[?force=true&truncate=true&emergency=true]
+  # == GET /entry/delete/SID[?...]
+  # == GET /entry/delete/RANGE_LIST[?...]
+  # == GET /entry/delete/SELECT[?...]
+  # == GET /entry/delete_select
+  #
+  # Initiate removal of an existing EMMA entry along with its associated file.
+  #
+  # If :id is "SELECT" then a menu of deletable items is presented.
+  #
+  # Use :force to attempt to remove an item from the EMMA Unified Search index
+  # even if a database record was not found.
+  #
+  # @see EntryConcern#delete_entry
+  # @see EntryController#destroy
+  #
+  def delete: () -> void
+
+  # == DELETE /entry/destroy/:id[?force=true&truncate=true&emergency=true]
+  # == DELETE /entry/destroy/SID[?...]
+  # == DELETE /entry/destroy/RANGE_LIST[?...]
+  #
+  # Finalize removal of an existing EMMA entry.
+  #
+  # @see EntryConcern#destroy_entry
+  # @see EntryController#delete
+  #
+  def destroy: () -> void
+
+  # == GET /entry/bulk
+  #
+  # Currently a non-functional placeholder.
+  #
+  def bulk_index: () -> void
+
+  # == GET /entry/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
+  # Display a form prompting for a bulk operation manifest (either CSV or JSON)
+  # containing an row/element for each entry to submit.
+  #
+  # @see EntryConcern#bulk_new_entries
+  # @see EntryController#bulk_create
+  #
+  def bulk_new: () -> void
+
+  # == POST /entry/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
+  # Create the specified Entry records, download and store the associated
+  # files, and post the new entries to the Federated Ingest API.
+  #
+  # @see EntryConcern#bulk_create_entries
+  # @see EntryController#bulk_new
+  #
+  def bulk_create: () -> void
+
+  # == GET /entry/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
+  # Display a form prompting for a bulk operation manifest (either CSV or JSON)
+  # containing an row/element for each entry to change.
+  #
+  # @see EntryConcern#bulk_edit_entries
+  # @see EntryController#bulk_update
+  #
+  def bulk_edit: () -> void
+
+  # == PUT   /entry/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # == PATCH /entry/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
+  # Modify or create the specified Entry records, download and store the
+  # associated files (if changed), and post the new/modified entries to the
+  # Federated Ingest API.
+  #
+  # @see EntryConcern#bulk_update_entries
+  # @see EntryController#bulk_edit
+  #
+  def bulk_update: () -> void
+
+  # == GET /entry/bulk_delete[?force=false]
+  #
+  # Specify entries to delete by :id, SID, or RANGE_LIST.
+  #
+  # @see EntryConcern#bulk_delete_entries
+  # @see EntryController#bulk_destroy
+  #
+  def bulk_delete: () -> void
+
+  # == DELETE /entry/bulk[?force=true]
+  #
+  # @see EntryConcern#bulk_destroy_entries
+  # @see EntryController#bulk_delete
+  #
+  def bulk_destroy: () -> void
+
+  # == POST /entry/renew
+  #
+  # Invoked to resupply field values to a form generated for "/new".
+  #
+  # @see EntryConcern#renew_entry
+  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  #
+  def renew: () -> void
+
+  # == POST /entry/reedit?id=:id
+  #
+  # Invoked to resupply field values to a form generated for "/edit".
+  #
+  # @see EntryConcern#reedit_entry
+  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  #
+  def reedit: () -> void
+
+  # == GET  /entry/cancel?id=:id[&redirect=URL][&reset=bool][&fields=...]
+  # == POST /entry/cancel?id=:id[&fields=...]
+  #
+  # Invoked to cancel the current submission form instead of submitting.
+  #
+  # * If invoked via :get, a :redirect is expected.
+  # * If invoked via :post, only a status is returned.
+  #
+  # Either way, the identified Entry record is deleted if it was in the
+  # :create phase.  If it was in the :edit phase, its fields are reset
+  #
+  # @see EntryConcern#cancel_entry
+  # @see file:app/assets/javascripts/feature/entry-form.js *cancelForm()*
+  #
+  def cancel: () -> void
+
+  # == GET /entry/check/:id
+  # == GET /entry/check/SID
+  #
+  # Invoked to determine whether the workflow state of the indicated item can
+  # be advanced.
+  #
+  # @see EntryConcern#check_entry
+  #
+  def check: () -> void
+
+  # == POST /entry/endpoint
+  #
+  # Invoked from 'Uppy.XHRUpload'.
+  #
+  # @see EntryConcern#upload_file
+  # @see file:app/assets/javascripts/feature/entry-form.js
+  #
+  def endpoint: () -> void
+
+  # == GET /download/:id
+  #
+  # Download the file associated with an EMMA submission.
+  #
+  # @see EntryConcern#get_entry
+  # @see Record::Uploadable#download_url
+  #
+  def download: () -> void
+
+  # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
+  #
+  # Retrieve a file from a member repository.
+  #
+  # @raise [ExecError] @see IaDownloadConcern#ia_download_response
+  #
+  def retrieval: () -> void
+
+  # == GET /entry/admin[?(deploy|deployment)=('production'|'staging')]
+  # == GET /entry/admin[?(repo|repository)=('emma'|'ia')]
+  #
+  # Entry submission administration.
+  #
+  # @see AwsConcern#get_object_table
+  #
+  def admin: () -> void
+
+  # == GET /entry/bulk_reindex?size=PAGE_SIZE[&id=(:id|SID|RANGE_LIST)]
+  #
+  # Cause completed submission records to be re-indexed.
+  #
+  # @see #reindex_record
+  #
+  def bulk_reindex: () -> void
+
+  # == GET /phases
+  #
+  # List Phase records # TODO: probably temporary
+  #
+  def phases: () -> void
+
+  # == GET /actions
+  #
+  # List Action records # TODO: probably temporary
+  #
+  def actions: () -> void
+
+  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # than operating on an explicit set of identifiers.
+  #
+  # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
+  #
+  def show_menu?: (?(String|strArray)? id_params) -> bool
+
+  # Display the failure on the screen -- immediately if modal, or after a
+  # redirect otherwise.
+  #
+  # @param [Exception] error
+  # @param [String]    fallback   Redirect fallback (def.: #entry_index_path).
+  # @param [Symbol]    meth       Calling method.
+  #
+  # @return [void]
+  #
+  def show_search_failure: (Exception error, ?String? fallback, ?meth: Symbol?) -> void
+
+  # If the :show endpoint is given an :id which is actually a specification for
+  # multiple items then there is a redirect to :index.
+  #
+  # @return [void]
+  #
+  def index_redirect: () -> void
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Any]  list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?untyped list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Model, Hash] item
+  # @param [Hash]        opt
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def show_values: (?(Model|anyHash) item, **untyped opt) -> symHash
+
+  # Response values for de-serializing download information to JSON or XML.
+  #
+  # @param [String] url
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def download_values: (?String url) -> { url: String }
+end

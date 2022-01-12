@@ -1,0 +1,4 @@
+# Namespace for objects serialized/de-serialized via an external API.
+#
+module Api
+end

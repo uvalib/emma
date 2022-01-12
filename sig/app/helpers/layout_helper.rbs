@@ -1,0 +1,11 @@
+# View helper methods supporting general page layout.
+#
+module LayoutHelper
+  private
+
+  # Include the submodules defined in "app/helpers/layout_helper/*.rb".
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

@@ -1,0 +1,94 @@
+# Namespace for ActiveRecord mixin modules.
+#
+module Record
+  extend ::Record
+
+  # Indicate whether *base* is a class associated with a database schema.
+  #
+  # @param [Class, Module, Any] base
+  #
+  def record_class?: (untyped base) -> bool
+
+  # Indicate whether *base* is a record class which is a model.
+  #
+  # @param [Class, Module, Any] base
+  #
+  def model_class?: (untyped base) -> bool
+
+  # Indicate whether the record schema includes any of the given columns.
+  #
+  # @param [Array<Symbol,String,Array>] columns
+  # @param [Boolean]                    any   If *false*, all are required.
+  #
+  def has_column?: (*(Symbol|String|Array[Symbol|String]) columns, ?any: bool) -> bool
+
+  # Overrides #__included defined in lib/_trace.rb.
+  #
+  # @param [Module]      base
+  # @param [Module]      mod
+  # @param [String, nil] tag
+  #
+  # @return [nil]
+  #
+  def __included: (Module base, Module mod, ?String? tag) -> nil
+
+  # Ensure that *mod* is only included in a record class.
+  #
+  # @param [Class, Module, Any] base
+  # @param [Module]             mod
+  #
+  # @raise [RuntimeError]             If *mod* should not be included in *base*
+  #
+  # @return [TrueClass]
+  #
+  # == Usage Notes
+  # The assertion is only invoked when running on the desktop.
+  #
+  def assert_record_class: (untyped base, Module mod) -> true
+
+  # added_modules # TODO: keep?
+  #
+  # @param [Module]        context    Calling context.
+  # @param [Array<Symbol>] original   Original set of constants.
+  #
+  # @return [Array<Class<Module>>]
+  #
+  def added_modules: (Module context, symArray original) -> Array[Class]
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record
+
+    # :nocov:
+    include ActiveRecord::ModelSchema::ClassMethods
+
+    # Indicate whether the record schema includes any of the given columns.
+    #
+    # @param [Array<Symbol,String,Array>] columns
+    # @param [Boolean]                    any   If *false*, all are required.
+    #
+    def has_column?: (*(Symbol|String|Array[Symbol|String]) columns, ?any: bool) -> bool
+  end
+
+  # Methods which are only appropriate if the including class is an
+  # ApplicationRecord.
+  #
+  module InstanceMethods
+    include Record
+
+    # Indicate whether the schema of the current record includes any of the
+    # given columns.
+    #
+    # @param [Array<Symbol,String,Array>] columns
+    # @param [Hash]                       opt
+    #
+    # @see Record::ClassMethods#has_column?
+    #
+    def has_column?: (*(Symbol|String|Array[Symbol|String]) columns, **untyped opt) -> bool
+  end
+
+  private
+
+  def self.included: (Module base) -> void
+end

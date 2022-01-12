@@ -66,7 +66,7 @@ module ModelHelper::Table
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @yield [list, **opt] Allows the caller to define the table contents.
+  # @yield [parts, list, **opt] Allows the caller to define the table contents.
   # @yieldparam  [Hash]         parts   Accumulated :thead/:tbody/:tfoot parts.
   # @yieldparam  [Array<Model>] list    Normalized item list.
   # @yieldparam  [Hash]         opt     Updated options.
@@ -83,6 +83,7 @@ module ModelHelper::Table
     css_selector = ".#{model}-table"
 
     parts = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h
+    # noinspection RubyMismatchedArgumentType
     yield(parts, list, **opt) if block_given?
     parts[:thead] ||= model_table_headings(list, **opt)
     parts[:tbody] ||= model_table_entries(list, **opt)
@@ -135,9 +136,10 @@ module ModelHelper::Table
   # @param [Model]                                     item
   # @param [Integer]                                   row
   # @param [Integer]                                   col
-  # @param [Symbol, String]                            outer_tag
-  # @param [Symbol, String]                            inner_tag
+  # @param [Symbol, Integer, nil]                      outer_tag
+  # @param [Symbol, Integer, nil]                      inner_tag
   # @param [String, Symbol, Array<String,Symbol>, nil] columns
+  # @param [String, Regexp, Array<String,Regexp>, nil] filter
   # @param [Hash]                                      opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -190,10 +192,11 @@ module ModelHelper::Table
   # @param [Model, Array<Model>]                       item
   # @param [Integer]                                   row
   # @param [Integer]                                   col
-  # @param [Symbol, String]                            outer_tag
-  # @param [Symbol, String]                            inner_tag
-  # @param [Boolean]                                   dark
+  # @param [Symbol, Integer, nil]                      outer_tag
+  # @param [Symbol, Integer, nil]                      inner_tag
   # @param [Symbol, String, Array<Symbol,String>, nil] columns
+  # @param [String, Regexp, Array<String,Regexp>, nil] filter
+  # @param [Boolean]                                   dark
   # @param [Hash]                                      opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -213,9 +216,9 @@ module ModelHelper::Table
     col:        1,
     outer_tag:  :tr,
     inner_tag:  :th,
-    dark:       DARK_HEAD,
     columns:    nil,
     filter:     nil,
+    dark:       DARK_HEAD,
     **opt
   )
     opt.except!(*MODEL_TABLE_OPTIONS)
@@ -296,6 +299,9 @@ module ModelHelper::Table
   #
   # @return [Hash]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def model_rc_options(field, row = nil, col = nil, opt = nil)
     field = html_id(field)
     prepend_classes(opt, field).tap do |html_opt|

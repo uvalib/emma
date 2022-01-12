@@ -1,0 +1,21 @@
+# View helper methods for the page <footer>.
+#
+module LayoutHelper::Footer
+  include LayoutHelper::Common
+
+  include HtmlHelper
+
+  # Content for the footer. # TODO: I18n
+  #
+  # @type [Hash]
+  #
+  FOOTER_TABLE: symHash
+
+  # Render a table of values from `#session`.
+  #
+  # @param [Hash] opt                 Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def footer_table: (**untyped opt) -> ActiveSupport::SafeBuffer
+end

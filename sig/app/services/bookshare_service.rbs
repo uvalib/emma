@@ -1,0 +1,14 @@
+# Send/receive messages through the Bookshare API.
+#
+# == Authentication and authorization
+# Bookshare uses OAuth2, which is handled in this application by Devise and
+# OmniAuth.
+#
+# @see file:lib/emma/config.rb
+# @see file:config/initializers/devise.rb
+#
+class BookshareService < ApiService
+  DESTRUCTIVE_TESTING: bool
+
+  include Bs
+end

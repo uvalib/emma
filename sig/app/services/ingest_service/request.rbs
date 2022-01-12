@@ -1,0 +1,4 @@
+# Definition of the API requests and parameters.
+#
+module IngestService::Request
+end

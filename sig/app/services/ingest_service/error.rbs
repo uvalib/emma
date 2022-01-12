@@ -1,0 +1,167 @@
+# Generic exception for Federated Ingest API problems.
+#
+# == Usage Notes
+# This is generally *not* the base class for exceptions in the IngestService
+# namespace:  Variants based on the error types defined under "emma.error.api"
+# are derived from the related ApiService class; e.g.:
+#
+#   `IngestService::AuthError < ApiService::AuthError`
+#
+# Only a distinct error type defined under "emma.error.ingest" would derive
+# from this class; e.g. if "emma.error.ingest.unique" existed it would be
+# defined as:
+#
+#   `IngestService::UniqueError < IngestService::Error`
+#
+# An exception in the IngestService namespace can be identified by checking
+# for `exception.is_a?(IngestService::Error::ClassType)`.
+#
+class IngestService::Error < ApiService::Error
+  # Methods included in related error classes.
+  #
+  module ClassType
+    include ApiService::Error::ClassType
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol]
+    #
+    def service: () -> Symbol
+
+    # Extract message(s) from a response body that has been determined to be
+    # JSON.
+    #
+    # @param [Hash, Array, nil] src
+    #
+    # @return [Array<String>]         If *json* was a Hash.
+    # @return [Array<Any>]            Otherwise.
+    #
+    # @see #parse_create_errors
+    # @see #parse_delete_errors
+    #
+    def extract_json: (anyHash src)              -> strArray
+                    | (symHash|anyArray|nil src) -> anyArray
+
+    # Ingest creation error messages.
+    #
+    # @param [Hash] src
+    #
+    # @return [Array<String>]
+    #
+    # == Implementation Notes
+    # The ingest service returns JSON error messages in the response body which
+    # indicate one or more specific issues for each problematic item; e.g.:
+    #
+    #   {
+    #     "document-1" : [
+    #       " : 'FIELD_A' is a required property",
+    #       " : 'FIELD_B' is a required property",
+    #       "FIELD_C,N : MESSAGE_CN",
+    #       "FIELD_D,M : MESSAGE_DM",
+    #       ...
+    #     ],
+    #     "document-2" : [
+    #       " : 'FIELD_E' is a required property",
+    #       " : 'FIELD_F' is a required property",
+    #       "FIELD_G,N : MESSAGE_GN",
+    #       "FIELD_H,M : MESSAGE_HM",
+    #       ...
+    #     ]
+    #   }
+    #
+    # where the each key is the literal "document" separated by a "-" and the
+    # ordinal number of the problematic posted entry.
+    #
+    def parse_create_errors: (anyHash src) -> strArray
+
+    # Ingest deletion error messages.
+    #
+    # @param [Hash] src
+    #
+    # @return [Array<String>]
+    #
+    # == Usage Notes
+    # This is not likely to be invoked because "/recordDeletes" returns with
+    # HTTP 202 even if there were errors.  For that reason, the error messages
+    # will not be copied into an exception -- they will be found in the
+    # message body.
+    #
+    # == Implementation Notes
+    # For deletion of records:
+    #
+    #   {
+    #     "emma-RID_A-FMT_A" : [ 'Document not found' ],
+    #     "emma-RID_B-FMT_B" : [ 'Document not found' ],
+    #   }
+    #
+    # where "RID_?" is the repository ID of the offending entry.
+    #
+    def parse_delete_errors: (anyHash src) -> strArray
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include IngestService::Error::ClassType
+end
+
+class IngestService::AuthError < ApiService::AuthError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::CommError < ApiService::CommError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::SessionError < ApiService::SessionError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::ConnectError < ApiService::ConnectError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::TimeoutError < ApiService::TimeoutError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::XmitError < ApiService::XmitError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::RecvError < ApiService::RecvError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::ParseError < ApiService::ParseError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::RequestError < ApiService::RequestError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::NoInputError < ApiService::NoInputError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::ResponseError < ApiService::ResponseError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::EmptyResultError < ApiService::EmptyResultError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::HtmlResultError < ApiService::HtmlResultError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::RedirectionError < ApiService::RedirectionError
+  include IngestService::Error::ClassType
+end
+
+class IngestService::RedirectLimitError < ApiService::RedirectLimitError
+  include IngestService::Error::ClassType
+end

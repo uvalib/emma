@@ -1,0 +1,56 @@
+# Methods supporting "destructive testing".
+#
+module AwsS3Service::Testing
+  include AwsS3Service::Common
+
+  include Emma::Debug
+
+  private
+
+  FAULT_INJECTION: bool
+
+  FORCED_EXCEPTION: bool
+
+  # noinspection RubyUnusedLocalVariable
+  ALL_FAULTS: Integer
+
+  FAULT_METHOD: Hash[Symbol,(Integer|nil)]
+
+  DEFAULT_EXCEPTION: Symbol
+
+  EXCEPTION_TYPE: Hash[Symbol,String]
+
+  EXCEPTION_METHOD: Hash[Symbol,Symbol]
+
+  public
+
+  # Inject faults (if defined) prior to invoking the API.
+  #
+  # @param [Symbol] operation
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
+  # @param [Hash]   opt
+  #
+  def api: (Symbol operation, *(AwsS3::Message::SubmissionRequest|Model|symHash|String) items, **untyped opt) -> untyped
+
+  # Injection point for "destructive testing" modifications to message data.
+  #
+  # @param [Symbol, nil]                             meth  API service method
+  # @param [AwsS3::Message::SubmissionRequest,Array] item  Target record(s).
+  #
+  # @return [Integer]               Test cases applied.
+  # @return [nil]                   If no injection was performed
+  #
+  def inject_fault!: (Symbol|nil meth, AwsS3::Message::SubmissionRequest|Model|symHash|String|Array[AwsS3::Message::SubmissionRequest|Model|symHash|String] item) -> Integer?
+
+  # Injection point for "destructive testing" simulation of exception.
+  # If an exception is not specified, the calling method must be included
+  # in #EXCEPTION_METHOD.
+  #
+  # @param [Symbol, nil] meth     Calling method.
+  # @param [Class<ApiService::Error>,ApiService::Error,Symbol,String,nil] ex
+  # @param [Array]       args     Passed to initializer if *ex* is a class.
+  #
+  # @return [ApiService::Error, nil]
+  #
+  def inject_exception: (Symbol|nil meth, ?(Class|ApiService::Error|Symbol|String)? ex, *untyped args) -> ApiService::Error?
+end

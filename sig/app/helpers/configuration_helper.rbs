@@ -1,0 +1,191 @@
+# Methods supporting "/config/locales" configuration lookup.
+#
+module ConfigurationHelper
+  include Emma::Common
+
+  include ParamsHelper
+
+  CONFIG_ITEM_KEYS: symArray
+
+  CONFIG_STATE_KEYS: symArray
+
+  # Fall-back fatal configuration message. # TODO: I18n
+  #
+  # @type [String]
+  #
+  CONFIG_FAIL: String
+
+  # Determine the path through the configuration hierarchy for the given
+  # controller/action pair.
+  #
+  # For ctrlr == 'user/registrations' and action == 'edit' this yields
+  # %i[user registrations edit].
+  #
+  # @param [String, Symbol, nil] ctrlr
+  # @param [String, Symbol, nil] action
+  #
+  # @return [Array<Symbol>]
+  #
+  def config_path: (String|Symbol|nil ctrlr, String|Symbol|nil action) -> symArray
+                 | (String|Symbol|nil ctrlr)                           -> symArray
+                 | ()                                                  -> symArray
+
+  # controller_configuration
+  #
+  # @param [String, Symbol, nil] ctrlr
+  # @param [String, Symbol, nil] action
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def controller_configuration: (String|Symbol|nil ctrlr, String|Symbol|nil action) -> symHash
+                              | (String|Symbol|nil ctrlr)                           -> symHash
+                              | ()                                                  -> symHash
+
+  # config_lookup_order
+  #
+  # @param [String, Symbol, nil] ctrlr
+  # @param [String, Symbol, nil] action
+  #
+  # @return [Array<Array<Symbol>>]
+  #
+  def config_lookup_order: (String|Symbol|nil ctrlr, String|Symbol|nil action) -> Array[symArray]
+                         | (String|Symbol|nil ctrlr)                           -> Array[symArray]
+                         | ()                                                  -> Array[symArray]
+
+  # Find the best match from config/locales for the given partial path, first
+  # looking under "en.emma.(ctrlr)", then under 'en.emma.generic'.
+  #
+  # @param [String, Array]       path       Partial I18n path.
+  # @param [Symbol, String, nil] ctrlr
+  # @param [Symbol, String, nil] action
+  # @param [Any]                 default  Returned on failure.
+  # @param [Boolean]             fatal    If *true* then raise exceptions.
+  # @param [Hash]                opt      To #config_interpolations except:
+  #
+  # @option opt [String, Symbol, Boolean] :mode
+  # @option opt [Boolean]                 :one
+  # @option opt [Boolean]                 :many
+  #
+  # @raise [RuntimeError]             If *fatal* and configuration not found.
+  #
+  # @return [Any]                     The specified value or *default*.
+  #
+  # @example Simple path - [:button, :label]
+  # Returns the most specific configuration match from the list:
+  #   * "en.emma.(ctrlr).(action).button.label"
+  #   * "en.emma.(ctrlr).generic.button.label"
+  #   * "en.emma.(ctrlr).button.label"
+  #   * "en.emma.generic.(action).button.label"
+  #   * "en.emma.generic.button.label"
+  #
+  # @example Branching path - [[:button1, :button2], :label]
+  # Returns the most specific configuration match from the list:
+  #   * "en.emma.(ctrlr).(action).button1.label"
+  #   * "en.emma.(ctrlr).(action).button2.label"
+  #   * "en.emma.(ctrlr).generic.button1.label"
+  #   * "en.emma.(ctrlr).generic.button2.label"
+  #   * "en.emma.(ctrlr).button1.label"
+  #   * "en.emma.(ctrlr).button2.label"
+  #   * "en.emma.generic.(action).button1.label"
+  #   * "en.emma.generic.(action).button2.label"
+  #   * "en.emma.generic.button1.label"
+  #   * "en.emma.generic.button2.label"
+  #
+  def config_lookup: (*(String|Symbol|Array[String|Symbol]) path, ?ctrlr: (String|Symbol)?, ?action: (String|Symbol)?, ?default: untyped?, ?fatal: bool, **untyped opt) -> untyped
+
+  # Generate a hash of the most relevant button information with the form:
+  #
+  #   {
+  #     submit: {
+  #       enabled: {
+  #         label:   String,
+  #         tooltip: String,
+  #       },
+  #       disabled: {
+  #         label:   String,
+  #         tooltip: String,
+  #       },
+  #     },
+  #     ...
+  #   }
+  #
+  # The result will have all of the items for the given controller/action
+  # that contain and label and/or tooltip under them.
+  #
+  # @param [String, Symbol] ctrlr
+  # @param [String, Symbol] action
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>String,Hash}}]
+  #
+  def config_button_values: (Symbol|String ctrlr, Symbol|String action) -> Hash[Symbol,Hash[Symbol,(String|symHash)]]
+
+  # config_lookup_paths
+  #
+  # @param [Symbol, String, nil] ctrlr
+  # @param [Symbol, String, nil] action
+  # @param [String, Array]       path     Partial I18n path.
+  #
+  # @return [Array<Array<Symbol>>]
+  #
+  def config_lookup_paths: (Symbol|String|nil ctrlr, Symbol|String|nil action, *(String|Symbol|Array[String|Symbol]) path) -> Array[symArray]
+
+  # Generate a set of explicit paths through the configuration hierarchy based
+  # on the path element(s) given.
+  #
+  # @param [String, Symbol, Array] path   Partial I18n path.
+  # @param [Integer]               depth  Recursion depth.
+  #
+  # @return [Array<Array<Symbol>>]
+  #
+  def config_flatten_order: (*(String|Symbol|Array[String|Symbol]) path, ?depth: Integer) -> Array[symArray]
+
+  # Recursively apply supplied unit interpolations.
+  #
+  # @param [Hash, Array, String, Integer, Boolean, nil] item
+  # @param [Hash]                                       units
+  #
+  # @return [Hash, Array, String, Integer, Boolean, nil]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def apply_config_interpolations: (anyHash  item, units: symHash, **untyped ignored) -> anyHash
+                                 | (anyArray item, units: symHash, **untyped ignored) -> anyArray
+                                 | (untyped  item, units: symHash, **untyped ignored) -> untyped
+
+  # The variations on the description of a model item managed by a controller.
+  #
+  # @param [String, Symbol, nil] ctrlr
+  # @param [String, Symbol, nil] action
+  # @param [Boolean]             brief      Default: *true*.
+  # @param [Boolean]             long       Default: *false*.
+  # @param [Symbol, nil]         mode       To specify either :brief or :long.
+  # @param [Integer, nil]        count      If == 1, only single; if != 1, only
+  #                                           plural.
+  # @param [Boolean, nil]        plural     If *true*, only plural; if *false*,
+  #                                           only single.
+  # @param [Hash]                units      Specify one or more unit names.
+  #
+  # @option units [String] :item            Specify single unit name.
+  # @option units [String] :items           Specify plural unit name.
+  # @option units [String] :Item            Specify capitalized single unit.
+  # @option units [String] :Items           Specify capitalized plural units.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  # == Usage Notes
+  # Specifying :item completely by-passes configuration lookup.  Specifying
+  # :items, :Item, and/or :Items will simply override the matching configured
+  # (or derived) value.
+  #
+  # == Implementation Notes
+  # This method does not have an embedded fallback value -- it assumes that
+  # some form of 'emma.generic.unit' will be found if there is no definition
+  # for the given controller.
+  #
+  def config_interpolations: (?ctrlr: (String|Symbol)?, ?action: (String|Symbol)?, ?brief: bool, ?long: bool, ?mode: Symbol?, ?count: Integer?, ?plural: bool?, **untyped units) -> Hash[Symbol,String]
+
+  private
+
+  def self.included: (Module base) -> void
+end

@@ -17,7 +17,7 @@ module UserConcern
 
     # Defined by Devise.
     #
-    # @return [void]
+    # @return [User, nil]
     #
     # @see Devise::Controllers::Helpers#define_helpers
     #
@@ -55,12 +55,12 @@ module UserConcern
   # @param [String]         id        If *nil*, assumes the current user.
   # @param [Symbol, String] meth      Calling method.
   #
-  # @return [(
+  # @return [Array<(
   #   Bs::Message::MyAccountSummary,
   #   Bs::Message::MyAccountPreferences,
   #   Bs::Message::TitleDownloadList
-  # )]
-  # @return [(nil,nil,nil)]
+  # )>]
+  # @return [Array<(nil,nil,nil)>]
   #
   def get_account_details(id: nil, meth: nil)
     meth ||= calling_method

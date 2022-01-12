@@ -1,0 +1,69 @@
+# Base class for object-specific serializers that process XML data.
+#
+# @see Representable::XML
+# @see Api::Record::Schema::ClassMethods#schema
+#
+class Api::Serializer::Xml < Api::Serializer
+  include Representable::XML
+
+  include Representable::Coercion
+
+  include Api::Serializer::Xml::Schema
+
+  include Api::Serializer::Xml::Associations
+
+  SERIALIZER_TYPE: Symbol
+
+  # The leading line of an XML document.
+  #
+  # @type [String]
+  #
+  XML_PROLOG: String
+
+  # Type of serializer.
+  #
+  # @return [Symbol]                  Always :xml.
+  #
+  def serializer_type: () -> Symbol
+
+  # Render data elements in XML format.
+  #
+  # @param [Symbol, Proc] method
+  # @param [Hash]         opt         Options argument for *method*.
+  #
+  # @return [String]
+  #
+  # @see Representable::XML#to_xml
+  #
+  def serialize: (?method: Symbol|Proc, **untyped opt) -> String
+
+  # Load data elements from the supplied data in XML format.
+  #
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
+  #
+  # @return [Api::Record]
+  # @return [nil]
+  #
+  # @see Representable::XML#from_xml
+  #
+  def deserialize: (symHash|String data, ?method: Symbol|Proc) -> Api::Record?
+
+  # Add XML namespaces to a copy of a top-level XML element.
+  #
+  # @param [String]    xml
+  # @param [Hash, nil] additional     Added namespaces.
+  #
+  # @return [String]                  Modified XML.
+  #
+  def add_xml_namespaces: (String xml, ?additional: symHash?) -> String
+
+  # Set source data string for XML data.
+  #
+  # @param [String, Hash] data
+  #
+  # @return [String]
+  # @return [nil]                 If *data* is neither a String nor a Hash.
+  #
+  def set_source_data: (symHash|String data) -> String?
+end

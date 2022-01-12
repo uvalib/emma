@@ -1,0 +1,47 @@
+# Send/receive messages to/from a remote service.
+#
+# @see file:lib/emma/config.rb
+# @see file:config/initializers/devise.rb
+#
+class ApiService
+  include Emma::Common
+
+  include Api
+
+  # Internal service options along with connection options.
+  #
+  # @return [Hash]
+  #
+  # @see ApiService::Common#SERVICE_OPTIONS
+  # @see ApiService::Common#make_connection
+  #
+  attr_reader options: symHash
+
+  # Initialize a new instance
+  #
+  # @param [User, nil]   user         User instance which includes a
+  #                                     Bookshare user identity and token.
+  # @param [String, nil] base_url     Base URL to the external service (instead
+  #                                     of #BASE_URL defined by the subclass).
+  # @param [Hash]        opt          Stored in @options
+  #
+  def initialize: (?user: User?, ?base_url: String?, **untyped opt) -> void
+
+  # A table of all service instances.
+  #
+  # @return [Hash{Class=>ApiService}]
+  #
+  def self.table: () -> Hash[Class,ApiService]
+
+  # Remove all service instances.
+  #
+  # @return [void]
+  #
+  def self.clear: () -> void
+
+  # Each subclass gets its own distinct set of service state variables.
+  #
+  # @param [ApiService] subclass
+  #
+  def self.inherited: (ApiService subclass) -> void
+end

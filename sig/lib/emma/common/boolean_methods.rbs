@@ -1,0 +1,13 @@
+module Emma::Common::BooleanMethods
+  # Text values which represent a Boolean value.
+  #
+  # @type [Array<String>]
+  #
+  BOOLEAN_VALUES: strArray
+
+  # Indicate whether the item represents a true or false value.
+  #
+  # @param [Any, nil] value
+  #
+  def boolean?: (untyped value) -> bool
+end

@@ -1,0 +1,12 @@
+# Bs::Record::TitleHistoryEvent
+#
+# @attr [String]  action
+# @attr [String]  comment
+# @attr [IsoDate] date
+# @attr [String]  format
+# @attr [String]  personName
+#
+# @see https://apidocs.bookshare.org/catalog/index.html#_title_history_event
+#
+class Bs::Record::TitleHistoryEvent < Bs::Api::Record
+end

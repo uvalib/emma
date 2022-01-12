@@ -1,0 +1,798 @@
+# -
+# noinspection RubyConstantNamingConvention
+# +
+Boolean: untyped
+
+# Base class for custom scalar types.
+#
+class ScalarType
+  include Comparable
+
+  module Methods
+    include Emma::Common
+
+    # Default value for items of this type.
+    #
+    # @return [String]
+    #
+    def default: () -> String
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # The value wrapped by this instance.
+  #
+  # @return [String, nil]
+  #
+  attr_reader value: String | nil
+
+  # Initialize a new instance.
+  #
+  # @param [Any, nil] v               Optional initial value.
+  #
+  def initialize: (?untyped? v) -> void
+
+  # Assign a new value to the instance.
+  #
+  # @param [Any, nil] v
+  #
+  # @return [String]
+  #
+  def value=: (untyped v) -> String
+
+  # Assign a new value to the instance.
+  #
+  # @param [Any, nil] v
+  #
+  # @return [String]
+  #
+  def set: (untyped v) -> String
+
+  # Indicate whether the instance is valid, or indicate whether *v* would be a
+  # valid value.
+  #
+  # @param [Any, nil] v
+  #
+  def valid?: (?untyped? v) -> bool
+
+  # Transform value into a valid form.
+  #
+  # @param [Any, nil] v
+  #
+  # @return [String]
+  #
+  def normalize: (?untyped? v) -> String
+
+  # Return the string representation of the instance value.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # Return the inspection of the instance value.
+  #
+  # @return [String]
+  #
+  def inspect: () -> String
+
+  # Value needed to make instances comparable.
+  #
+  # @return [Integer]
+  #
+  def hash: () -> Integer
+
+  # Value needed to make instances comparable.
+  #
+  # @param [Any] other
+  #
+  def eql?: (untyped other) -> bool
+
+  # Comparison operator required by the Comparable mixin.
+  #
+  # @param [Any] other
+  #
+  # @return [Integer]   -1 if self is later, 1 if self is earlier
+  #
+  def <=>: (untyped other) -> (-1 | 0 | +1)
+
+  # By default, Object#deep_dup will create a copy of an item, including values
+  # which are classes themselves, if the item says that it is duplicable.
+  #
+  # For items which are classes, e.g.:
+  #
+  #   { item: ScalarType }
+  #
+  # this would mean that the duplicated result would be something like:
+  #
+  #   { item: #<Class:0x00005590b0d928a8> }
+  #
+  # Returning *false* here prevents that.
+  #
+  def self.duplicable?: () -> bool
+end
+
+# ISO 8601 duration.
+#
+# @see https://en.wikipedia.org/wiki/ISO_8601#Durations
+#
+class IsoDuration < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    # Valid values for this type start with one of these patterns.
+    #
+    # By the standard, the lowest-order component may be fractional.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    START_PATTERN: Hash[Symbol,Regexp]
+
+    # Valid values for this type match one of these patterns.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    MATCH_PATTERN: Hash[Symbol,Regexp]
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, Date, Time, IsoDate, Any, nil] v
+    #
+    # @return [String]
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType
+    # +
+    def normalize: (untyped v) -> String
+
+    # Translate an ActiveSupport::Duration into an ISO 8601 duration.
+    #
+    # @param [ActiveSupport::Duration] duration
+    #
+    # @return [String]
+    #
+    def from_duration: (ActiveSupport::Duration duration) -> String
+
+    # @private
+    EPSILON: Float
+
+    # fractional
+    #
+    # @param [Float]               value1
+    # @param [Float, Integer, nil] value2
+    # @param [Integer]             multiplier
+    #
+    # @return [Array<(Float, Any)>]
+    #
+    def fractional: (Float value1, Float|Integer|nil value2, Integer multiplier) -> [Float, untyped]
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# ISO 8601 general date.
+#
+# @see http://xml.coverpages.org/ISO-FDIS-8601.pdf
+#
+class IsoDate < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    YEAR: String
+
+    MONTH: String
+
+    DAY: String
+
+    DATE: String
+
+    HOUR: String
+
+    MINUTE: String
+
+    SECOND: String
+
+    FRACTION: String
+
+    TIME: String
+
+    ZULU: String
+
+    H_OFFSET: String
+
+    M_OFFSET: String
+
+    ZONE: String
+
+    # Valid values for this type start with one of these patterns.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    START_PATTERN: Hash[Symbol,Regexp]
+
+    # Valid values for this type match one of these patterns.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    MATCH_PATTERN: Hash[Symbol,Regexp]
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Transform *v* into a ISO 8601 form.
+    #
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def datetime_convert: (untyped v) -> String?
+
+    # Transform *v* into "YYYY-MM-DD" form.
+    #
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def day_convert: (untyped v) -> String?
+
+    # Transform *v* into a 4-digit year.
+    #
+    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def year_convert: (untyped v) -> String?
+
+    # Transform a value into ISO 8601 form.
+    #
+    # @param [String, Date, Time, IsoDate, Any, nil] value
+    #
+    # @return [String, nil]
+    #
+    def datetime_parse: (untyped value) -> String?
+
+    # Transform a value into "YYYY-MM-DD" form.
+    #
+    # @param [String, Date, Time, IsoDate, Any, nil] value
+    #
+    # @return [String, nil]
+    #
+    def date_parse: (untyped value) -> String?
+
+    # Transform a date string into a usable form.
+    #
+    # Because DateTime#parse doesn't cope with American date formats, dates of
+    # the form "M/D/Y" are converted to "YYYY-MM-DD", however forms like
+    # "YYYY/MM/..." are preserved (since DateTime#parse can deal with those).
+    #
+    # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
+    # interpreted as month and "MM" will be interpreted as day.
+    #
+    # @param [String, Date, Time, IsoDate, Any, nil] value
+    #
+    # @return [String, Date, Time, IsoDate, Any, nil]
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType
+    # +
+    def translate: (untyped value) -> untyped
+
+    # Remove fractional seconds and normalize +00:00 to Z.
+    #
+    # @param [String, nil] value
+    #
+    # @return [String]
+    #
+    # == Implementation Notes
+    # Fractional seconds are rounded unless >= 59 seconds.  In that case, the
+    # fractional part is truncated in order to avoid a potential cascade of
+    # changes to minute, hour, etc.
+    #
+    def datetime_clean: (String|nil value) -> String
+
+    MM: String
+
+    DD: String
+
+    YY: String
+
+    AMERICAN_DATE: Regexp
+
+    # Transform an American-style date string into a usable form.
+    #
+    # Because DateTime#parse doesn't cope with American date formats, dates of
+    # the form "M/D/Y" are converted to "YYYY-MM-DD", however forms like
+    # "YYYY/MM/..." are preserved (since DateTime#parse can deal with those).
+    #
+    # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
+    # interpreted as month and "MM" will be interpreted as day.
+    #
+    # @param [String] value
+    #
+    # @return [String]
+    #
+    def american_date_translate: (String value) -> String
+
+    OPTIONAL_SECONDS: String
+
+    OPTIONAL_MINUTES: String
+
+    OPTIONAL_TIME: String
+
+    OPTIONAL_DAY: String
+
+    OPTIONAL_MONTH: String
+
+    ASN_1_DATETIME: Regexp
+
+    ASN_1_TIMEZONE: Regexp
+
+    # Transform an ISO/IEC 8824 (ASN.1) date string into a usable form.
+    #
+    # @param [String, Any] value
+    #
+    # @return [String]
+    #
+    # @see http://www.verypdf.com/pdfinfoeditor/pdf-date-format.htm
+    #
+    def pdf_date_translate: (untyped value) -> String
+
+    # Indicate whether *v* represents a year value.
+    #
+    # @param [Any] v
+    #
+    def year?: (untyped v) -> bool
+
+    # Indicate whether *v* represents a day value.
+    #
+    # @param [Any] v
+    #
+    def day?: (untyped v) -> bool
+
+    # Indicate whether *v* represents a full ISO 8601 date value.
+    #
+    # @param [Any] v
+    #
+    def complete?: (untyped v) -> bool
+
+    # Type-cast an object to an instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [self, nil]
+    #
+    def cast: (untyped v) -> (self | nil)
+
+    # Create a new instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [self, nil]
+    #
+    def create: (untyped v) -> (self | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+
+  # Indicate whether the instance represents a year value, or indicate whether
+  # *v* represents a year value.
+  #
+  # @param [Any] v
+  #
+  def year?: (?untyped? v) -> bool
+
+  # Indicate whether the instance represents a day value, or indicate whether
+  # *v* represents a day value.
+  #
+  # @param [Any] v
+  #
+  def day?: (?untyped? v) -> bool
+
+  # Indicate whether the instance represents a full ISO 8601 date value, or
+  # indicate whether *v* represents a full ISO 8601 date value.
+  #
+  # @param [Any] v
+  #
+  def complete?: (?untyped? v) -> bool
+end
+
+# ISO 8601 year.
+#
+class IsoYear < IsoDate
+  module Methods
+    include IsoDate::Methods
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# ISO 8601 day.
+#
+class IsoDay < IsoDate
+  module Methods
+    include IsoDate::Methods
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, Date, Time, IsoDate, Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# ISO 639-2 alpha-3 language code.
+#
+class IsoLanguage < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [String, Any] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [String, Any] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Find a matching language entry.
+    #
+    # @param [String] value
+    #
+    # @return [ISO_639, nil]
+    #
+    def find: (String value) -> (ISO_639 | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# Base class for enumeration scalar types.
+#
+class EnumType < ScalarType
+  module Enumerations
+    # Called from API record definitions to provide this base class with the
+    # values that will be accessed implicitly from subclasses.
+    #
+    # @param [Hash{Symbol=>Hash}] new_entries
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def add_enumerations: (Hash[Symbol,symHash] new_entries) -> Hash[Symbol,symHash]
+
+    # Enumeration definitions accumulated from API records.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    # == Implementation Notes
+    # This needs to be a class variable so that all subclasses reference the same
+    # set of values.
+    #
+    def enumerations: () -> Hash[Symbol,symHash]
+
+    # The values for an enumeration.
+    #
+    # @param [Symbol, String] entry
+    #
+    # @return [Array<String>]
+    #
+    def values_for: (Symbol|String entry) -> strArray
+
+    # The value/label pairs for an enumeration.
+    #
+    # @param [Symbol, String] entry
+    #
+    # @return [Hash]
+    #
+    def pairs_for: (Symbol|String entry) -> symHash
+
+    # The default for an enumeration.
+    #
+    # @param [Symbol, String] entry
+    #
+    # @return [String]
+    #
+    def default_for: (Symbol|String entry) -> String
+  end
+
+  extend Enumerations
+
+  module Methods
+    include ScalarType::Methods
+
+    # The default value associated with this enumeration type.  If no default
+    # is explicitly defined the initial value is returned.
+    #
+    # @return [String]
+    #
+    def default: () -> String
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [Any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # The name of the represented enumeration type.
+    #
+    # @return [Symbol]
+    #
+    def type: () -> Symbol
+
+    # The enumeration values associated with the subclass.
+    #
+    # @return [Array<String>]
+    #
+    def values: () -> strArray
+
+    # The value/label pairs associated with the subclass.
+    #
+    # @return [Hash]
+    #
+    def pairs: () -> symHash
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Assign a new value to the instance.
+  #
+  # @param [Any] v
+  #
+  # @return [String]
+  #
+  def set: (untyped v) -> String
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def valid?: (?untyped? v) -> bool
+end
+
+# Shared values and methods.
+#
+module Api::Common
+  # Values associated with each deployment type.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/en.yml *en.emma.application.deployment*
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  DEPLOYMENT: Hash[Symbol,symHash]
+
+  # Table of deployment names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #DEPLOYMENT
+  #
+  DEPLOYMENT_MAP: Hash[Symbol,String]
+
+  # Member repository configurations.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  REPOSITORY_CONFIG: symHash
+
+  # The default repository for uploads.
+  #
+  # @type [String]
+  #
+  # @see file:config/locales/repository.en.yml *en.emma.repository._default*
+  #
+  DEFAULT_REPOSITORY: String
+
+  # Values associated with each source repository.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/repository.en.yml *en.emma.repository*
+  # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaRepository  JSON schema specification
+  #
+  REPOSITORY: Hash[Symbol,symHash]
+
+  # Table of repository names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #REPOSITORY
+  #
+  REPOSITORY_MAP: Hash[Symbol,String]
+
+  # Bookshare category codes and names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see file:config/locales/types.en.yml *en.emma.categories*
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  CATEGORY: Hash[Symbol,String]
+
+  # Table of Bookshare category names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #CATEGORY
+  #
+  CATEGORY_MAP: Hash[Symbol,String]
+
+  # Language configuration.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  LANGUAGE_CONFIG: symHash
+
+  # All language codes and labels.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see file:config/locales/types.en.yml *en.emma.language.list*
+  #
+  LANGUAGE: Hash[Symbol,String]
+
+  # Languages that appear first in the list.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see file:config/locales/types.en.yml *en.emma.language.primary*
+  #
+  PRIMARY_LANGUAGES: symArray
+
+  # Language codes and labels in preferred order.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #PRIMARY_LANGUAGES
+  # @see #LANGUAGE
+  #
+  LANGUAGE_MAP: Hash[Symbol,String]
+end
+
+# Establish the Api::Shared namespace.
+#
+module Api::Shared
+end
+
+# @see Api::Common#DEPLOYMENT_MAP
+class Deployment < EnumType
+end
+
+# @see Api::Common#REPOSITORY_MAP
+class EmmaRepository < EnumType
+end
+
+# @see Api::Common#CATEGORY_MAP
+class CategoriesType < EnumType
+end
+
+# @see Api::Common#LANGUAGE_MAP
+class LanguageType < EnumType
+end

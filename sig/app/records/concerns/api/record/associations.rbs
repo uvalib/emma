@@ -1,0 +1,197 @@
+# Definitions used within the #schema block when it is executed in the context
+# of the class which includes this module.
+#
+module Api::Record::Associations
+  extend ActiveSupport::Concern
+
+  module ClassMethods
+    include Api::Schema
+
+    # In the context of a class derived from Api::Record, this definition
+    # allows the method to be mapped directly to Module#attr_accessor.
+    #
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt             Passed to #add_single_property.
+    #
+    # @return [void]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload attribute(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload attribute(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    # @see Api::Serializer::Associations::ClassMethods#attribute
+    # @see Api::Record::Schema::ClassMethods#schema
+    #
+    def attribute: (Symbol name, Symbol|String|Class `type`, *untyped ignored, **untyped opt) -> void
+                 | (Symbol name,                             *untyped ignored, **untyped opt) -> void
+
+    # In the context of a class derived from Api::Record, this definition
+    # allows the method to be mapped directly to Module#attr_accessor.
+    #
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt             Passed to #add_single_property.
+    #
+    # @return [void]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload has_one(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload has_one(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    # @see Api::Serializer::Associations::ClassMethods#has_one
+    # @see Api::Record::Schema::ClassMethods#schema
+    #
+    def has_one: (Symbol name, Symbol|String|Class `type`, *untyped ignored, **untyped opt) -> void
+               | (Symbol name,                             *untyped ignored, **untyped opt) -> void
+
+    # In the context of a class derived from Api::Record, this definition
+    # allows the method to be mapped directly to Module#attr_accessor.
+    #
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt             Passed to #add_collection_property.
+    #
+    # @return [void]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload has_many(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload has_many(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    # @see Api::Serializer::Associations::ClassMethods#has_one
+    # @see Api::Record::Schema::ClassMethods#schema
+    # @see Model::ClassMethods#set_relation_field
+    #
+    def has_many: (Symbol name, Symbol|String|Class `type`, *untyped ignored, **untyped opt) -> void
+                | (Symbol name,                             *untyped ignored, **untyped opt) -> void
+
+    # Incorporate all record fields from another class.
+    #
+    # @param [Class<Api::Record>]    other
+    # @param [Symbol, Array<Symbol>] except
+    #
+    # @return [void]
+    #
+    def all_from: (Class other, ?except: (Symbol|symArray)?) -> void
+
+    # Define a single data element property.
+    #
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt                     Passed to #make_default.
+    #
+    # @return [void]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload add_single_property(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload add_single_property(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    def add_single_property: (Symbol name, Symbol|String|Class `type`, *untyped ignored, **untyped opt) -> void
+                           | (Symbol name,                             *untyped ignored, **untyped opt) -> void
+
+    # Define an array data element property.
+    #
+    # @param [Symbol] name
+    #
+    # @return [void]
+    #
+    def add_collection_property: (Symbol name) -> void
+
+    # Store the property name and default value and create the property via
+    # Module#attr_accessor.
+    #
+    # @param [Symbol, String] name
+    # @param [Any, nil]       default
+    #
+    # @return [void]
+    #
+    # @see #add_property_default
+    #
+    def add_property: (Symbol|String name, ?untyped? default) -> void
+
+    # Get a default for a schema property data element.
+    #
+    # @param [Class, String, Symbol, nil] type
+    # @param [Hash]                       opt   Passed to #extract_type_option
+    #
+    # @raise [NameError]                        If *type* is invalid.
+    #
+    # @return [Proc]  An anonymous method that generates the default value.
+    # @return [Any]   A literal value.
+    #
+    # Compare with:
+    # Api::Serializer::Associations#get_type_class
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def make_default: (Symbol|String|Class|nil `type`, **untyped opt) -> untyped
+
+    # The fields defined in the schema for this record.
+    #
+    # @return [Array<Symbol>]
+    #
+    def field_names: () -> symArray
+
+    # A mapping of schema property names to their default values for use in
+    # constructing an error instance.
+    #
+    # Hash values may be literal instances of scalar types, or they may be
+    # classes or procs.
+    #
+    # @type [Hash{Symbol=>Any}]
+    #
+    # @see Api::Record#default_data
+    #
+    def property_defaults: () -> symHash
+
+    # Set the default value for a property.
+    #
+    # @param [Symbol, String] name
+    # @param [Any, nil]       value
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def add_property_default: (Symbol|String name, untyped value) -> symHash
+  end
+end

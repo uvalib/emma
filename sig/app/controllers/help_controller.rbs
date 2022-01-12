@@ -1,0 +1,54 @@
+# Handle "/help" pages.
+#
+# @see HelpHelper
+# @see file:app/views/help/**
+#
+class HelpController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include SerializationConcern
+
+  include HelpConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # == GET /help
+  #
+  # The main help page.
+  #
+  # @see HelpHelper#help_topics
+  #
+  def index: () -> void
+
+  # == GET /help/:topic
+  # == GET /help?topic=:topic
+  #
+  # The topic help page.
+  #
+  def show: () -> void
+
+  # Response values for serializing the index page to JSON or XML.
+  #
+  # @param [Array] list
+  # @param [Hash]  opt
+  #
+  # @return [Hash{Symbol=>Array,Hash}]
+  #
+  def index_values: (?anyArray list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Symbol] topic
+  # @param [Hash]   opt
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def show_values: (?Symbol topic, **untyped opt) -> symHash
+end

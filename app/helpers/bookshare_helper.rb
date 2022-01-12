@@ -88,7 +88,7 @@ module BookshareHelper
   # Mapping of an application action (expressed as "controller-action") to the
   # associated Bookshare action (expressed as a #BOOKSHARE_ACTION key).
   #
-  # @type [Hash{Symbol=>Symbol}]
+  # @type [Hash{Symbol=>Hash}]
   #
   ACTION_MAPPING = {
     title: {

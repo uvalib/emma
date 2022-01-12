@@ -1,0 +1,11 @@
+# Tactile file format metadata extractor.
+#
+class FileParser::Tactile < FileParser
+  include FileFormat::Tactile
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

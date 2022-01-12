@@ -251,7 +251,7 @@ BOOKSHARE_TEST_AUTH = ENV.fetch('BOOKSHARE_TEST_AUTH', nil).freeze
 # IA S3 access key generated when logged in as Internet Archive user
 # "emma_pull@archive.org".
 #
-# @type [String]
+# @type [String, nil]
 #
 # @see IaDownloadConcern#IA_AUTH
 #
@@ -260,7 +260,7 @@ IA_ACCESS = ENV.fetch('IA_ACCESS', nil).freeze
 # IA S3 secret generated when logged in as Internet Archive user
 # "emma_pull@archive.org".
 #
-# @type [String]
+# @type [String, nil]
 #
 # @see IaDownloadConcern#IA_AUTH
 #
@@ -269,7 +269,7 @@ IA_SECRET = ENV.fetch('IA_SECRET', nil).freeze
 # IA server cookie for generation of "on-the-fly" content as Internet Archive
 # user "emma_pull@archive.org".
 #
-# @type [String]
+# @type [String, nil]
 #
 # @see IaDownloadConcern#IA_COOKIES
 #
@@ -278,7 +278,7 @@ IA_USER_COOKIE = ENV.fetch('IA_USER_COOKIE', nil).freeze
 # IA server cookie for generation of "on-the-fly" content as Internet Archive
 # user "emma_pull@archive.org".
 #
-# @type [String]
+# @type [String, nil]
 #
 # @see IaDownloadConcern#IA_COOKIES
 #
@@ -322,7 +322,7 @@ AWS_BUCKET =
 #
 # This should be supplied by the UVA cloud infrastructure on startup.
 #
-# @type [String]
+# @type [String, nil]
 #
 AWS_ACCESS_KEY_ID = ENV.fetch('AWS_ACCESS_KEY_ID', nil).freeze
 
@@ -330,7 +330,7 @@ AWS_ACCESS_KEY_ID = ENV.fetch('AWS_ACCESS_KEY_ID', nil).freeze
 #
 # This should be supplied by the UVA cloud infrastructure on startup.
 #
-# @type [String]
+# @type [String, nil]
 #
 AWS_SECRET_KEY = ENV.fetch('AWS_SECRET_KEY', nil).freeze
 

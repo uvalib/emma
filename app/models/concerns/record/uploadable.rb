@@ -247,7 +247,7 @@ module Record::Uploadable
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [(Integer, Hash{String=>Any}, Array<String>)]
+  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #
@@ -321,7 +321,7 @@ module Record::Uploadable
     $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
     raise error
   ensure
-    # noinspection RubyScope
+    # noinspection RubyScope, RubyMismatchedReturnType
     io&.close
   end
 

@@ -1,0 +1,25 @@
+# Health status interface.
+#
+module SearchService::Status
+  include ApiService::Status
+
+  # A sample ISBN search and minimum number of expected results.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  SAMPLE_ISBN_SEARCH: symHash
+
+  # Indicate whether the service is operational.
+  #
+  # @param [Hash] with
+  # @param [Proc] expect
+  #
+  # @return [Array<(TrueClass,nil)>]
+  # @return [Array<(FalseClass,String)>]
+  #
+  def active_status: (?with: symHash?, ?expect: Proc?) -> ([true, nil] | [false, String])
+
+  private
+
+  def self.included: (Module base) -> void
+end

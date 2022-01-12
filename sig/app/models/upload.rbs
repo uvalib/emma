@@ -1,0 +1,125 @@
+# A file object uploaded from the client.
+#
+class Upload < ApplicationRecord
+  include ActiveModel::Validations
+
+  include Emma::Common
+
+  include Model
+
+  # Control whether field validation should occur.
+  #
+  # NOTE: Not currently supported
+  #
+  # @type [Boolean]
+  #
+  FIELD_VALIDATION: bool
+
+  # Create a new instance.
+  #
+  # @param [Hash, Upload] attr        Passed to #assign_attributes via super.
+  # @param [Proc]         block       Passed to super.
+  #
+  # This method overrides:
+  # @see ActiveRecord::Core#initialize
+  #
+  def initialize: (?(Upload|symHash)? attr) { () -> untyped } -> void
+
+  # Mutually-exclusive modes of operation in #assign_attributes.
+  #
+  # @type [Array<Symbol>]
+  #
+  ASSIGN_MODES: symArray
+
+  # Non-field keys used to pass control information to #assign_attributes.
+  #
+  # @type [Array<Symbol>]
+  #
+  ASSIGN_CONTROL_OPTIONS: symArray
+
+  def assign_attributes: (Upload|symHash opt) -> self
+
+  # Formatted record contents.
+  #
+  # @param [Hash, nil] attr
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see ActiveRecord::Core#inspect
+  #
+  def inspect: (?symHash? attr) -> String
+
+  private
+
+  # Allow :file_data and :emma_data to be seen fully when inspecting.
+  #
+  # @param [Symbol, String] name      Attribute name.
+  # @param [Any]            value     Attribute value.
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see ActiveRecord::AttributeMethods#format_for_inspect
+  #
+  def format_for_inspect: (Symbol|String name, untyped value) -> String
+
+  # log_ignored
+  #
+  # @param [String] label
+  # @param [Hash]   values
+  # @param [Symbol, nil] caller
+  #
+  def log_ignored: (String label, symHash values, ?Symbol? caller) -> nil
+
+  public
+
+  # The fields defined in the schema for this record.
+  #
+  # @return [Array<Symbol>]
+  #
+  def field_names: () -> symArray
+
+  def emma_native?: (?Upload? item) -> bool
+
+  def self.emma_native?: (Upload|symHash|String item) -> bool
+
+  def self.repository_of: (untyped item) -> String?
+
+  def self.repository_name: (untyped item) -> String?
+
+  def self.record_id: (untyped item) -> String?
+
+  def self.valid_record_id?: (untyped item, ?add_repo: (String|strArray)?, ?add_fmt: (String|strArray)?) -> bool
+
+  def self.get_value: (Upload|symHash item, String|Symbol key, ?default: untyped?) -> untyped
+
+  def make_retrieval_link: (String rid, ?String? base_url) -> String?
+
+  def self.make_retrieval_link: (String rid, ?String? base_url) -> String?
+
+  # Configured requirements for Upload fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def upload_fields: () -> Hash[Symbol,symHash]
+
+  # Indicate whether all required fields have valid values.
+  #
+  def required_fields_valid?: () -> bool
+
+  # Indicate whether all required fields have valid values.
+  #
+  def emma_data_valid?: () -> bool
+
+  private
+
+  # Compare the source fields against configured requirements.
+  #
+  # @param [Upload, Hash] source
+  # @param [Hash]         required_fields
+  #
+  # @return [void]
+  #
+  def check_required: (Upload|symHash source, symHash required_fields) -> void
+end

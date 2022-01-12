@@ -1,0 +1,723 @@
+# Base class for workflow types.
+#
+# NOTE: This is placed into the Workflow namespace set up by the workflow gem.
+#
+# NOTE: Since the workflow gem is geared toward pre-Ruby-3 handling of options,
+#   none of the methods for this and related classes/modules assume options are
+#   passed as the final element of *args (rather than via keyword arguments).
+#
+class Workflow::Base
+  include Workflow
+
+  # Even if workflow debugging is enabled, displaying transition hooks may be
+  # too noisy.
+  #
+  # @type [Boolean]
+  #
+  DEBUG_TRANSITION: bool
+
+  # Engage a simulated submission record instead of the actual database to
+  # simplify trials at the command line or within IRB.
+  #
+  # @type [Boolean]
+  #
+  SIMULATION: bool
+
+  # Root workflow configuration.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  CONFIGURATION: Hash[Symbol,symHash]
+
+  # The state which indicates that the item associated with the workflow has
+  # progressed to the the end.
+  #
+  # @type [Symbol]
+  #
+  FINAL_STATE: Symbol
+end
+
+# Classes of users recognized within *workflow* definitions.
+#
+# @note TODO: harmonize with existing roles
+#
+module Workflow::Base::Roles
+  # The default "user" if none was given.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_ROLE: Symbol
+
+  # Workflow roles. # TODO: harmonize with existing roles
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  ROLE: Hash[Symbol,symArray]
+
+  IF_USER: symHash
+
+  IF_SUBMITTER: symHash
+
+  IF_REVIEWER: symHash
+
+  IF_ADMIN: symHash
+
+  IF_SYSTEM: symHash
+
+  IF_DEV: symHash
+
+  IF_SYS_DEBUG: symHash
+
+  IF_DEV_DEBUG: symHash
+
+  # The current workflow user.
+  #
+  # @return [User,String]
+  #
+  def current_user: () -> (User | String)
+
+  # The workflow role of the current workflow user.
+  #
+  # @return [Symbol]
+  #
+  def current_role: () -> Symbol
+
+  # Set the workflow user.
+  #
+  # @param [User, String, Symbol, nil] user
+  #
+  # @return [User, String]
+  #
+  def set_current_user: (?(User|String|Symbol)? user) -> (User | String)
+
+  # Set the workflow user role.
+  #
+  # @param [User, String, Symbol, nil] role
+  #
+  # @return [Symbol]
+  #
+  def set_current_role: (?(User|String|Symbol)? role) -> Symbol
+
+  # Get the "workflow user" based on the provided identity.
+  #
+  # @param [User, String, Symbol, nil] user
+  #
+  # @return [Symbol, nil]
+  #
+  def get_role: (User|String|Symbol|nil user) -> Symbol?
+
+  # Indicate whether the instance is associated with a user acting in the
+  # capacity of a submitter.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  #
+  def user?: (?(User|String|Symbol)? u) -> bool
+
+  # Indicate whether the instance is associated with a user acting in the
+  # capacity of a submitter.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  #
+  def submitter?: (?(User|String|Symbol)? u) -> bool
+
+  # Indicate whether the instance is associated with a user acting in the
+  # capacity of a reviewer.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  #
+  def reviewer?: (?(User|String|Symbol)? u) -> bool
+
+  # Indicate whether the instance is associated with an administrator user or
+  # process.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  #
+  def administrator?: (?(User|String|Symbol)? u) -> bool
+
+  # Indicate whether the instance is associated with the system process.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  #
+  def system?: (?(User|String|Symbol)? u) -> bool
+
+  # Indicate whether the instance is associated with a developer.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  #
+  def developer?: (?(User|String|Symbol)? u) -> bool
+
+  # The workflow role(s) for the given user.
+  #
+  # @param [User, String, Symbol, nil] u  Default: WorkflowRoles#current_user
+  #
+  # @return [Array<Symbol>]
+  #
+  # @see #ROLE
+  #
+  def wf_roles: (?(User|String|Symbol)? u) -> symArray
+end
+
+# Support for workflow properties that can be set via URL parameters.
+#
+module Workflow::Base::Properties
+  # URL parameters passed in through the constructor.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  attr_accessor parameters: symHash
+end
+
+# Workflow execution status information.
+#
+module Workflow::Base::Data
+  include Workflow::Base::Properties
+
+  # Succeeded items.
+  #
+  # @return [Array]
+  #
+  attr_accessor succeeded: anyArray
+
+  # Failed items.
+  #
+  # @return [Array]
+  #
+  attr_accessor failures: anyArray
+
+  # The characteristic "return value" of the workflow after an event has been
+  # registered.
+  #
+  # @return [Any]
+  #
+  attr_accessor results: untyped
+
+  # set_data
+  #
+  # @param [Any] data
+  #
+  # @return [Any]
+  #
+  def set_data: (untyped data) -> untyped
+
+  # reset_status
+  #
+  # @return [void]
+  #
+  def reset_status: (*untyped, **untyped) ?{ () -> untyped } -> void
+
+  # Indicate whether data has been assigned.
+  #
+  def empty?: () -> bool
+
+  # Indicate whether data is valid and sufficient.
+  #
+  def complete?: () -> bool
+
+  # Indicate whether operation(s) have failed.
+  #
+  def failures?: () -> bool
+
+  # Indicate whether operation(s) have succeeded.
+  #
+  def succeeded?: () -> bool
+
+  # Indicate whether submission is permissible.
+  #
+  def ready?: () -> bool
+end
+
+# Support for methods used in the context of responding to workflow events.
+#
+module Workflow::Base::Actions
+  include Workflow::Base::Data
+end
+
+# Stubs for methods supporting internal workflow simulated activity.
+#
+module Workflow::Base::Simulation
+  # Indicate whether simulation is in effect.
+  #
+  # @return [Boolean]
+  #
+  def simulating: (*untyped, **untyped) ?{ () -> untyped } -> bool
+
+  # Neutralize debugging methods when not debugging.
+  #
+  # @return [nil]
+  #
+  def __debug_sim: (*untyped, **untyped) ?{ () -> untyped } -> nil
+end
+
+# Methods which are executed to initiate state transitions.
+#
+# The Workflow gem dynamically creates helper methods based on the *workflow*
+# definition.  This module creates "shims" for each of these that insert
+# additional logging support.
+#
+# @!method start!
+# @!method start?
+# @!method create!
+# @!method create?
+# @!method edit!
+# @!method edit?
+# @!method remove!
+# @!method remove?
+# @!method cancel!
+# @!method cancel?
+# @!method submit!
+# @!method submit?
+# @!method upload!
+# @!method upload?
+# @!method abort!
+# @!method abort?
+#
+# @!method can_start?
+# @!method can_create?
+# @!method can_edit?
+# @!method can_remove?
+# @!method can_cancel?
+# @!method can_submit?
+# @!method can_upload?
+# @!method can_abort?
+#
+# @!method advance!
+# @!method advance?
+# @!method fail!
+# @!method fail?
+# @!method suspend!
+# @!method suspend?
+# @!method schedule!
+# @!method schedule?
+# @!method approve!
+# @!method approve?
+# @!method reject!
+# @!method reject?
+# @!method hold!
+# @!method hold?
+# @!method assign!
+# @!method assign?
+# @!method review!
+# @!method review?
+# @!method index!
+# @!method index?
+# @!method timeout!
+# @!method timeout?
+# @!method resume!
+# @!method resume?
+# @!method purge!
+# @!method purge?
+# @!method reset!
+# @!method reset?
+#
+# @!method can_advance?
+# @!method can_fail?
+# @!method can_suspend?
+# @!method can_schedule?
+# @!method can_approve?
+# @!method can_reject?
+# @!method can_hold?
+# @!method can_assign?
+# @!method can_review?
+# @!method can_index?
+# @!method can_timeout?
+# @!method can_resume?
+# @!method can_purge?
+# @!method can_reset?
+#
+# @see Workflow::ClassMethods#assign_workflow
+#
+module Workflow::Base::Events
+  include Workflow::Base::Simulation
+
+  # All defined workflow events.
+  #
+  # @type [Array<Symbol>]
+  #
+  # -
+  # noinspection LongLine
+  # +
+  EVENTS: symArray
+
+  # event_number
+  #
+  # @param [Symbol, String, nil]  event
+  #
+  # @return [Integer]             On error, -1 is returned.
+  #
+  def event_number: (Symbol|String|nil event) -> Integer
+
+  # event_label
+  #
+  # @param [Symbol, String, nil]  event
+  # @param [String, Boolean, nil] number
+  #
+  # @return [String]
+  #
+  def event_label: (Symbol|String|nil event, ?number: String|bool|nil) -> String
+
+  # Override :workflow for a Workflow subclass in order to redefine the
+  # workflow event methods.
+  #
+  # @param [Workflow, Any] base
+  #
+  # @see Workflow::ClassMethods#workflow
+  #
+  def self.included: (Module base) -> void
+
+  include Emma::Debug::OutputMethods
+
+  include Workflow::Base::Roles
+
+  # __debug_event
+  #
+  # @param [Symbol, String] event
+  # @param [Array]          args
+  #
+  def __debug_event: (Symbol|String event, *untyped args) -> nil
+end
+
+# Methods executed on transition into and out of a state.
+#
+# @!method on_starting_entry
+# @!method on_starting_exit
+#
+# @!method on_creating_entry
+# @!method on_creating_exit
+# @!method on_validating_entry
+# @!method on_validating_exit
+# @!method on_submitting_entry
+# @!method on_submitting_exit
+# @!method on_submitted_entry
+# @!method on_submitted_exit
+#
+# @!method on_editing_entry
+# @!method on_editing_exit
+# @!method on_replacing_entry
+# @!method on_replacing_exit
+# @!method on_modifying_entry
+# @!method on_modifying_exit
+# @!method on_modified_entry
+# @!method on_modified_exit
+#
+# @!method on_removing_entry
+# @!method on_removing_exit
+# @!method on_removed_entry
+# @!method on_removed_exit
+#
+# @!method on_scheduling_entry
+# @!method on_scheduling_exit
+# @!method on_assigning_entry
+# @!method on_assigning_exit
+# @!method on_holding_entry
+# @!method on_holding_exit
+# @!method on_assigned_entry
+# @!method on_assigned_exit
+# @!method on_reviewing_entry
+# @!method on_reviewing_exit
+# @!method on_rejected_entry
+# @!method on_rejected_exit
+# @!method on_approved_entry
+# @!method on_approved_exit
+#
+# @!method on_staging_entry
+# @!method on_staging_exit
+# @!method on_unretrieved_entry
+# @!method on_unretrieved_exit
+# @!method on_retrieved_entry
+# @!method on_retrieved_exit
+#
+# @!method on_indexing_entry
+# @!method on_indexing_exit
+# @!method on_indexed_entry
+# @!method on_indexed_exit
+#
+# @!method on_suspended_entry
+# @!method on_suspended_exit
+# @!method on_failed_entry
+# @!method on_failed_exit
+# @!method on_canceled_entry
+# @!method on_canceled_exit
+# @!method on_completed_entry
+# @!method on_completed_exit
+#
+# @!method on_purged_entry
+# @!method on_purged_exit
+#
+# @see Workflow::InstanceMethods#run_on_entry
+# @see Workflow::InstanceMethods#run_on_exit
+#
+module Workflow::Base::States
+  include Workflow::Base::Events
+
+  include Workflow::Base::Actions
+
+  # All defined workflow states.
+  #
+  # @type [Array<Symbol>]
+  #
+  # -
+  # noinspection LongLine
+  # +
+  STATES: symArray
+
+  # States that will not assigned to @previous_state.
+  #
+  # @type [Array<Symbol>]
+  #
+  HIDDEN_STATE: symArray
+
+  # state_object
+  #
+  # @param [Symbol, String, Workflow::State, nil] state
+  #
+  # @return [Workflow::State]
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+  # +
+  def state_object: (?(Workflow::State|Symbol|String)? state) -> Workflow::State
+
+  # state_number
+  #
+  # @param [Symbol, String, Workflow::State, nil] state
+  #
+  # @return [Integer]             On error, -1 is returned.
+  #
+  def state_number: (Workflow::State|Symbol|String|nil state) -> Integer
+
+  # state_label
+  #
+  # @param [Symbol, String, Workflow::State, nil] state
+  # @param [String, Boolean, nil]                 number
+  #
+  # @return [String]
+  #
+  def state_label: (Workflow::State|Symbol|String|nil state, ?number: String|bool|nil) -> String
+
+  include Emma::Debug::OutputMethods
+
+  # __debug_entry
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  def __debug_entry: (Workflow::State state, ?Symbol? _event, *untyped _event_args) -> nil
+
+  # __debug_exit
+  #
+  # @param [Workflow::State] state        State that is being exited.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  def __debug_exit: (Workflow::State state, ?Symbol? _event, *untyped _event_args) -> nil
+end
+
+# Hooks executed during transitions.
+#
+# == Usage Notes
+# These are generally only of interest for detailed debugging because logic
+# associated with specific transitions is applied by defining the appropriate
+# "on_*_entry" method in WorkflowStates.
+#
+module Workflow::Base::Transitions
+end
+
+# Common workflow aspects.
+#
+# @!attribute [rw] prev_state
+#   @return [Symbol, nil]
+#
+class Workflow::Base
+  include Workflow::Base::Roles
+
+  include Workflow::Base::Events
+
+  include Workflow::Base::States
+
+  include Workflow::Base::Transitions
+
+  IF_DEBUG: symHash
+
+  IF_COMPLETE: symHash
+
+  IF_READY: symHash
+
+  # Last state before :suspended, :failed, :canceled, or :completed.
+  #
+  # @return [Symbol, nil]
+  #
+  attr_reader prev_state: Symbol | nil
+
+  # Create a new instance.
+  #
+  # @param [Any, nil] data
+  # @param [Hash]     opt             Passed to #initialize_state
+  #
+  # @option opt [User, String] :user
+  # @option opt [Boolean]      :no_sim
+  #
+  def initialize: (untyped data, **untyped opt) -> void
+
+  # Set initial state.
+  #
+  # @param [Any, nil] data
+  # @param [Hash]     opt
+  #
+  # @option opt [Symbol, String] :start_state
+  # @option opt [Symbol, String] :init_event
+  #
+  # @return [void]
+  #
+  def initialize_state: (untyped data, **untyped opt) -> void
+
+  # Current workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def curr_state: () -> Symbol
+
+  # Initial workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def init_state: () -> Symbol
+
+  # Final (completed) workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def final_state: () -> Symbol
+
+  # Get the current state of the workflow item.
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see Workflow::InstanceMethods#load_workflow_state
+  #
+  def load_workflow_state: () -> String
+
+  # Set the current state of the workflow item.
+  #
+  # @param [Symbol, String] new_value
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see Workflow::InstanceMethods#persist_workflow_state
+  #
+  def persist_workflow_state: (Symbol|String new_value) -> String
+
+  # The table field associated with workflow state.
+  #
+  # @return [Symbol]
+  #
+  def workflow_column: () -> Symbol
+
+  # Return the workflow type.
+  #
+  # @return [Symbol]
+  #
+  def workflow_type: () -> Symbol
+
+  # The workflow phase is indicated by the variant type of the subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def workflow_phase: () -> Symbol?
+
+  # Return the variant workflow type or *nil* if the class is not a workflow
+  # variant subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def variant_type: () -> Symbol?
+
+  # The table field associated with workflow state.
+  #
+  # @param [Any] column_name          Ignored.
+  #
+  # @return [Symbol]
+  #
+  # This method overrides:
+  # @see Workflow::ClassMethods#workflow_column
+  #
+  def self.workflow_column: (?untyped? column_name) -> Symbol
+
+  # Workflow model configuration.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.configuration: () -> Hash[Symbol,symHash]
+
+  # Workflow state labels.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.state_label: () -> Hash[Symbol,symHash]
+
+  # Final (completed) workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def self.final_state: () -> Symbol
+
+  # Return the workflow type which is a key under 'en.emma.workflow'.
+  #
+  # @return [Symbol]
+  #
+  def self.workflow_type: () -> Symbol
+
+  # The workflow phase is indicated by the variant type of the subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def self.workflow_phase: () -> Symbol?
+
+  # Return the variant workflow type or *nil* if the class is not a workflow
+  # variant subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def self.variant_type: () -> Symbol?
+
+  # The default workflow variant type.
+  #
+  # @return [Symbol, nil]
+  #
+  def self.default_variant: () -> Symbol?
+
+  # Table of variant workflow types under this workflow base class.
+  #
+  # @return [Hash{Symbol=>Class<UploadWorkflow>}]
+  #
+  def self.variant_table: () -> Hash[Symbol,Class]
+
+  # Variant workflow types under this workflow base class.
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.variant_types: () -> symArray
+
+  # Indicate whether the value denotes a workflow variant.
+  #
+  # @param [Symbol, String, nil] value
+  #
+  def self.variant?: (Symbol|String|nil value) -> bool
+
+  # Generate a new instance of the appropriate workflow variant subclass
+  # (or the workflow base class if the variant could not be found).
+  #
+  # @param [Any, nil] data
+  # @param [Hash]     opt         Passed to #initialize except for:
+  #
+  # @option opt [Symbol,String] :variant
+  #
+  # @return [Workflow::Base]
+  #
+  def self.generate: (untyped data, **untyped opt) -> Workflow::Base
+end

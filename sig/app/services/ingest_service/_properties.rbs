@@ -1,0 +1,57 @@
+# IngestService::Properties
+#
+module IngestService::Properties
+  include ApiService::Properties
+
+  # Configuration values from config/locales/service.en.yml
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  INGEST_CONFIG: symHash
+
+  # Valid ingest endpoint URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  INGEST_ENGINES: Hash[Symbol,String]
+
+  DEFAULT_ENGINE: Symbol
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  # @see #default_engine_url
+  #
+  def base_url: () -> String
+
+  # Federated Ingest API key.
+  #
+  # @return [String, nil]
+  #
+  # @see #INGEST_API_KEY
+  #
+  def api_key: () -> String?
+
+  # API version is not a part of request URLs.
+  #
+  # @return [nil]
+  #
+  def api_version: () -> nil
+
+  # Valid search engine URLs.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  def engines: () -> Hash[Symbol,String]
+
+  # Default search engine for this deployment.
+  #
+  # @return [String]
+  #
+  def default_engine_url: () -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end

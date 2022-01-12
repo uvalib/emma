@@ -1,0 +1,43 @@
+# This module is included in the base message classes.
+#
+# Since messages are slight variations on records, the base message classes
+# derive from their respective record types, which is why this is a module and
+# not a class.  However, because this module is included in the base message
+# classes, `is_a?(Api::Message)` can be used to generically distinguish message
+# instances from record instances.
+#
+module Api::Message
+  include Emma::Time
+
+  # Annotate and time the creation of a message.
+  #
+  # @param [Hash, nil] opt
+  #
+  # @option opt [Boolean] :in_msg     If already engaged in message creation,
+  #                                     avoid additional pre- and post-actions.
+  #
+  # @yield Block in which message creation actions take place.
+  # @yieldparam [Hash] opt            Option hash to use within block.
+  # @yieldreturn [void]
+  #
+  def create_message_wrapper: (?symHash? opt) { (symHash opt) -> untyped } -> untyped
+
+  # Annotate and time the creation of a message.
+  #
+  # @param [Hash, nil] opt
+  #
+  # @yield Block in which message creation actions take place.
+  # @yieldparam [Hash] opt            Option hash to use within block.
+  # @yieldreturn [void]
+  #
+  def create_message: (symHash|nil opt) { (symHash opt) -> untyped } -> untyped
+
+  # Update *opt[:wrap]* according to the supplied formats.
+  #
+  # @param [Hash] opt                 May be modified.
+  # @param [Hash] formats             Supplied by including class.
+  #
+  # @return [void]
+  #
+  def apply_wrap!: (symHash opt, ?symHash? formats) -> void
+end

@@ -75,6 +75,7 @@ module Record::Reportable
   #
   def get_exec_report(refresh = true)
     if !defined?(@exec_report) || @exec_report.nil?
+      # noinspection RubyMismatchedArgumentType
       @exec_report = ExecReport.new(self, get_report_column)
     elsif refresh
       @exec_report.set(get_report_column)
@@ -85,12 +86,15 @@ module Record::Reportable
 
   # Update the current value of #REPORT_COLUMN for the current record.
   #
-  # @param [ExecReport, Hash, Array<String>, String, nil] value
+  # @param [ExecReport, Hash, String, Array<String>, Array<FlashPart>, nil] value
   #
   # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
   #
   # @return [ExecReport]                    New value of `#exec_report`.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def set_exec_report(value = nil)
     @exec_report ||= ExecReport.new(self)
     @exec_report.set(value || ExecError::DEFAULT_ERROR)

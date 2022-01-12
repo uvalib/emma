@@ -1,0 +1,113 @@
+class UploadWorkflow::Single::Remove < UploadWorkflow::Single
+  include UploadWorkflow::Remove
+end
+
+module UploadWorkflow::Single::Remove::Errors
+  include UploadWorkflow::Single::Errors
+end
+
+module UploadWorkflow::Single::Remove::Properties
+  include UploadWorkflow::Single::Properties
+
+  include UploadWorkflow::Single::Remove::Errors
+end
+
+module UploadWorkflow::Single::Remove::External
+  include UploadWorkflow::Single::External
+
+  include UploadWorkflow::Single::Remove::Properties
+
+  include UploadWorkflow::Single::Remove::Events
+end
+
+module UploadWorkflow::Single::Remove::Data
+  include UploadWorkflow::Single::Data
+
+  include UploadWorkflow::Single::Remove::External
+end
+
+# New and overridden action methods specific to single-entry removal.
+#
+module UploadWorkflow::Single::Remove::Actions
+  include UploadWorkflow::Single::Actions
+
+  include UploadWorkflow::Single::Remove::Data
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::External#remove_from_index
+  #
+  def wf_index_update: (*untyped _event_args) -> void
+end
+
+module UploadWorkflow::Single::Remove::Simulation
+  include UploadWorkflow::Single::Simulation
+end
+
+module UploadWorkflow::Single::Remove::Events
+  include UploadWorkflow::Single::Events
+
+  include UploadWorkflow::Single::Remove::Simulation
+end
+
+# Overridden state transition methods specific to single-entry removal.
+#
+module UploadWorkflow::Single::Remove::States
+  include UploadWorkflow::Single::States
+
+  include UploadWorkflow::Single::Remove::Events
+
+  include UploadWorkflow::Single::Remove::Actions
+
+  # Upon entering the :removing state:
+  #
+  # The user is presented with a request for confirmation that the item
+  # should be submitted for removal.
+  #
+  # The workflow remains in this state until the user either cancels or
+  # submits to confirm removal of the indicated item(s).
+  #
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_removing_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :removed state:
+  #
+  # The removal request is created.
+  #
+  # For EMMA-native items this causes the items to be removed directly.
+  #
+  # For member repository items this causes a removal request to be staged.
+  #
+  # Transition out of this workflow state happens automatically; in the case
+  # of EMMA-native items, the next state depends upon the success of the
+  # requested removal.
+  #
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_removed_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+end
+
+# Single-entry removal workflow.
+#
+class UploadWorkflow::Single::Remove < UploadWorkflow::Single
+  include UploadWorkflow::Single::Remove::Events
+
+  include UploadWorkflow::Single::Remove::States
+
+  include Workflow::Base::Transitions
+end

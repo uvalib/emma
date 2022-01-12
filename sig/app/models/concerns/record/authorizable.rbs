@@ -1,0 +1,28 @@
+# Add role-based authorization to an ActiveRecord class.
+#
+module Record::Authorizable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  extend ::Record::Authorizable
+
+  # The list of record types that are subject to role-based authorization.
+  #
+  # @return [Array<Class>]
+  #
+  def authorizable_classes: () -> Array[Class]
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::Authorizable
+  end
+
+  # Methods which are only appropriate if the including class is an
+  # ApplicationRecord.
+  #
+  module InstanceMethods
+    include Record::Authorizable
+  end
+end

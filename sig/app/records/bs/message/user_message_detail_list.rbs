@@ -1,0 +1,14 @@
+# Bs::Message::UserMessageDetailList
+#
+# @attr [Array<Bs::Record::Link>]              links
+# @attr [Array<Bs::Record::UserMessageDetail>] messages
+#
+# @see https://apidocs.bookshare.org/membership/index.html#_user_message_detail_list
+#
+class Bs::Message::UserMessageDetailList < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

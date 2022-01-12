@@ -1,0 +1,5 @@
+# Methods supporting transformations of data fields.
+#
+module Search::Shared::TransformMethods
+  include Api::Shared::TransformMethods
+end

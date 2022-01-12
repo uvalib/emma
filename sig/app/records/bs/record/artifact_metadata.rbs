@@ -1,0 +1,41 @@
+# Bs::Record::ArtifactMetadata
+#
+# @attr [String]                    brailleCode
+# @attr [BsBrailleGrade]            brailleGrade
+# @attr [BsBrailleMusicScoreLayout] brailleMusicScoreLayout
+# @attr [BsBrailleType]             brailleType
+# @attr [IsoDate]                   dateAdded
+# @attr [IsoDuration]               duration
+# @attr [String]                    externalIdentifierCode
+# @attr [String]                    format
+# @attr [String]                    fundingSource
+# @attr [String]                    globalBookServiceId
+# @attr [Bs::Record::Narrator]      narrator
+# @attr [Integer]                   numberOfVolumes
+# @attr [String]                    producer
+# @attr [String]                    supplier
+# @attr [Bs::Record::Name]          transcriber
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_artifact_metadata
+#
+class Bs::Record::ArtifactMetadata < Bs::Api::Record
+  include Bs::Shared::ArtifactMethods
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> untyped
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label: () -> untyped
+
+  # A relative identifier for the represented artifact.
+  #
+  # @return [String]
+  #
+  def identifier: () -> untyped
+end

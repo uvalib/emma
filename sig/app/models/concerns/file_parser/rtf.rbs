@@ -1,0 +1,11 @@
+# RTF file format metadata extractor.
+#
+class FileParser::Rtf < FileParser
+  include FileFormat::Rtf
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

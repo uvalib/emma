@@ -1,0 +1,153 @@
+# Common methods to support Shrine-based file objects uploaded from the client.
+#
+# @!attribute [r] file
+#   A de-serialized representation of the :file_data column for this model.
+#   @return [FileUploader::UploadedFile]
+#
+# @!attribute [r] file_attacher
+#   Inserted by Shrine::Plugins:Activerecord.
+#   @return [FileUploader::Attacher]
+#
+module Record::Uploadable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  # :nocov:
+  #include ActiveRecord::Validations
+
+  #include Record::Testing
+
+  # The default name for the column which holds upload data.
+  #
+  # @type [Symbol]
+  #
+  FILE_DATA_COLUMN: Symbol
+
+  # Whether the #FILE_DATA_COLUMN should be persisted as a Hash.
+  #
+  # @type [Boolean]
+  #
+  FILE_DATA_HASH: bool
+
+  # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: from Upload::FileMethods
+  # be valid only for a single time.
+  #
+  # This should be generous to allow for network delays.
+  #
+  # @type [Integer]
+  #
+  ONE_TIME_USE_EXPIRATION: Integer
+
+  # The maximum age (in seconds) allowed for download links.                    # NOTE: from Upload::FileMethods
+  #
+  # This allows the link to be reused for a while, but not long enough to allow
+  # sharing of content URLs for distribution.
+  #
+  # @type [Integer]
+  #
+  DOWNLOAD_EXPIRATION: Integer
+
+  # Represents a file that was uploaded to a storage.
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  # @see Shrine::ClassMethods#inherited (Created via Shrine)
+  #
+  attr_reader file: FileUploader::UploadedFile
+
+  # Saves information about the uploaded file as an attachment to a record
+  # (saving the file data to the :file_data database column).
+  #
+  # The attaching process requires a temporary and a permanent storage to be
+  # registered (by default that's :cache and :store).
+  #
+  # @return [FileUploader::Attacher]
+  #
+  attr_reader file_attacher: FileUploader::Attacher
+
+  def filename: () -> String?
+
+  def attached_file: () -> FileUploader::UploadedFile?
+
+  def attach_cached: () -> FileUploader::UploadedFile?
+
+  def file_attacher_load: (?(symHash|String)? data) -> FileUploader::UploadedFile?
+
+  def promote_file: (?no_raise: bool) -> void
+
+  def delete_file: (?no_raise: bool) -> void
+
+  def download_url: (**untyped opt) -> String?
+
+  def s3_object: () -> Aws::S3::Object?
+
+  # Upload file via Shrine.                                                     # NOTE: from UploadWorkflow::External
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Rack::Request::Env] :env
+  #
+  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  #
+  # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
+  #
+  def upload_file: (**untyped opt) -> httpResult
+
+  def fetch_and_upload_file: (String file, **untyped opt) -> FileUploader::UploadedFile
+
+  # Options for Down#open.                                                      # NOTE: from Upload::FileMethods
+  #
+  # @type [Hash]
+  #
+  # @see Down::NetHttp#initialize
+  # @see Down::NetHttp#open
+  # @see Down::NetHttp#create_net_http
+  #
+  DOWN_OPEN_OPTIONS: symHash
+
+  # Acquire a remote file and copy it to storage.                               # NOTE: from Upload::FileMethods#upload_remote_file
+  #
+  # @param [String] url
+  # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:
+  #
+  # @option opt [Integer] :read_retry
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  def upload_remote: (String url, **untyped opt) -> FileUploader::UploadedFile
+
+  def upload_local: (String path, **untyped opt) -> FileUploader::UploadedFile
+
+  def attached_file_valid?: () -> bool
+
+  def note_cb: (Symbol `type`) -> void
+
+  def promote_cached_file: (?no_raise: bool, ?keep_cached: bool) -> FileUploader::UploadedFile?
+
+  def delete_cached_file: (?no_raise: bool) -> (true | nil)
+
+  private
+
+  def log_exception: (Exception excp, ?Symbol? meth) -> nil
+
+  include Record::EmmaData
+
+  include Record::Uploadable
+
+  # :nocov:
+  # TODO: remove after upload -> entry
+  #include ActiveRecord::Validations
+
+  #include ActiveRecord::Callbacks::ClassMethods
+
+  public
+
+  # Action subclasses that operate on AWS S3 member repository queues need
+  # to be given the submission ID dynamically since it will not be included
+  # in the data that they carry.
+  #
+  # @return [String]
+  #
+  attr_accessor submission_id: String
+end

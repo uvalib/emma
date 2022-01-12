@@ -83,8 +83,8 @@ class CategoryController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiCategoriesList] list
-  # @param [Hash]              opt
+  # @param [Bs::Message::CategoriesList] list
+  # @param [Hash]                        opt
   #
   # @return [Hash{Symbol=>Hash}]
   #

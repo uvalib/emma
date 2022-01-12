@@ -1,0 +1,26 @@
+# Support methods for the "/help" controller.
+#
+module HelpConcern
+  extend ActiveSupport::Concern
+
+  include HelpHelper
+
+  # get_help_entry
+  #
+  # @param [Symbol] topic
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def get_help_entry: (Symbol topic) -> symHash
+
+  # Extract the URL parameter which specifies a help topic.
+  #
+  # @return [Symbol]                  Value of `params[:id]`.
+  # @return [nil]                     No :id, :topic found.
+  #
+  def set_help_topic: () -> Symbol?
+
+  private
+
+  #THIS_MODULE: untyped
+end

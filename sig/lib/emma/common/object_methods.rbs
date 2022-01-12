@@ -1,0 +1,20 @@
+module Emma::Common::ObjectMethods
+  # Transform a hash into a struct recursively.  (Any hash value which is
+  # itself a hash will be converted to a struct).
+  #
+  # @param [Hash]         hash
+  # @param [Boolean, nil] arrays      If *true*, convert hashes within arrays.
+  #
+  # @return [Struct]
+  #
+  def struct: (anyHash hash, ?bool arrays) -> Struct[untyped]
+
+  # Translate a item into a class.
+  #
+  # @param [Symbol, String, Class, nil] name
+  #
+  # @return [Class]
+  # @return [nil]
+  #
+  def to_class: (untyped name) -> (Class | nil)
+end

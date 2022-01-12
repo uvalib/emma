@@ -33,6 +33,8 @@ module EngineConcern
 
   # The session key associated with the given service.
   #
+  # @param [String, Symbol, Class<ApiService>] service
+  #
   # @return [String]
   #
   def service_session_key(service)

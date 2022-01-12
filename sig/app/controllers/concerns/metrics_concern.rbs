@@ -1,0 +1,69 @@
+# Support methods for the Prometheus metrics.
+#
+module MetricsConcern
+  extend ActiveSupport::Concern
+
+  # Prometheus metrics registry.
+  #
+  # @type [Prometheus::Client::Registry]
+  #
+  REGISTRY: Prometheus::Client::Registry
+
+  # Set up one or more metrics of the same type.
+  #
+  # @param [Symbol]                     type
+  # @param [Hash{Symbol=>String,Array}] hash
+  # @param [Hash]                       opt   Passed to Registry method.
+  #
+  # @return [Hash{Symbol=>Prometheus::Client::Metric}]
+  #
+  def self.metrics: (Symbol `type`, Hash[Symbol,(String|anyArray)] hash, **untyped opt) -> Hash[Symbol,Prometheus::Client::Metric]
+
+  # Prometheus counter metrics.
+  #
+  # @type [Hash{Symbol=>Prometheus::Client::Counter}]
+  #
+  # @see https://github.com/prometheus/client_ruby#counter
+  #
+  # -
+  # noinspection RubyConstantNamingConvention
+  # +
+  Counter: Hash[Symbol,Prometheus::Client::Counter]
+
+  # Prometheus gauge metrics.
+  #
+  # @type [Hash{Symbol=>Prometheus::Client::Gauge}]
+  #
+  # @see https://github.com/prometheus/client_ruby#gauge
+  #
+  # -
+  # noinspection RubyConstantNamingConvention
+  # +
+  Gauge: Hash[Symbol,Prometheus::Client::Gauge]
+
+  # Prometheus histogram metrics.
+  #
+  # @type [Hash{Symbol=>Prometheus::Client::Histogram}]
+  #
+  # @see https://github.com/prometheus/client_ruby#histogram
+  #
+  # -
+  # noinspection RubyConstantNamingConvention
+  # +
+  Histogram: Hash[Symbol,Prometheus::Client::Histogram]
+
+  # Prometheus summary metrics.
+  #
+  # @type [Hash{Symbol=>Prometheus::Client::Summary}]
+  #
+  # @see https://github.com/prometheus/client_ruby#summary
+  #
+  # -
+  # noinspection RubyConstantNamingConvention
+  # +
+  Summary: Hash[Symbol,Prometheus::Client::Summary]
+
+  private
+
+  #THIS_MODULE: untyped
+end

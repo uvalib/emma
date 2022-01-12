@@ -1,0 +1,26 @@
+# Manipulate file formats which are based on the ZIP archive format.
+#
+module FileFormat::Zip
+  include Emma::Common
+
+  # get_archive_entry
+  #
+  # @param [String, nil]             zip_path
+  # @param [String, FileHandle, nil] file       Physical archive file.
+  # @param [Boolean]                 recurse
+  #
+  # @return [String]  File contents
+  # @return [nil]     If *zip_path* or *file* is blank, or could not be read.
+  #
+  def get_archive_entry: (String|nil zip_path, FileHandle|String|nil file, ?recurse: bool) -> String?
+
+  # Locate the indicated file in the given archive.
+  #
+  # @param [String, nil]             ext        Target filename extension.
+  # @param [String, FileHandle, nil] file       Physical archive file.
+  #
+  # @return [String]  Path to metadata archive entry.
+  # @return [nil]     If *ext* or *file* is blank, or could not be read.
+  #
+  def find_zip_path: (String|nil ext, FileHandle|String|nil file) -> String?
+end

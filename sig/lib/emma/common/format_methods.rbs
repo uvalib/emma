@@ -1,0 +1,179 @@
+module Emma::Common::FormatMethods
+  # @type [Array<Symbol>]
+  INFLECT_SINGULAR: symArray
+
+  # @type [Array<Symbol>]
+  INFLECT_PLURAL: symArray
+
+  # Pluralize or singularize *text*.  If neither *inflection* nor *count* is
+  # specified then a copy of the original string is returned.
+  #
+  # @param [ActiveSupport::SafeBuffer, String] text
+  # @param [Integer, nil]                      count
+  # @param [Symbol, nil]                       inflect
+  #
+  # @return [ActiveSupport::SafeBuffer, String]
+  #
+  # @see #INFLECT_SINGULAR
+  # @see #INFLECT_PLURAL
+  #
+  def inflection: (ActiveSupport::SafeBuffer text, ?Integer? count, ?Symbol? inflect) -> ActiveSupport::SafeBuffer
+                | (String text,                    ?Integer? count, ?Symbol? inflect) -> String
+
+  # Render text that will not break on word boundaries.
+  #
+  # @param [String, nil] text
+  # @param [Boolean]     force        If *true* then the translation will
+  #                                     happen even if text.html_safe?.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def non_breaking: (String? text, ?force: bool) -> ActiveSupport::SafeBuffer
+
+  # Render a camel-case or snake-case string as in "title case" words separated
+  # by non-breakable spaces.
+  #
+  # If *text* is already HTML-ready it is returned directly.
+  #
+  # @param [String, Symbol, nil]  text
+  # @param [Integer, nil]         count       Passed to #inflection.
+  # @param [Boolean]              breakable   If *false* replace spaces with
+  #                                             '&nbsp;' so that the result is
+  #                                             not word-breakable.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def labelize: ((String|Symbol)? text, ?Integer? count, ?breakable: bool) -> ActiveSupport::SafeBuffer
+
+  # @type [Array<String>]
+  QUOTE_MARKS: strArray
+
+  # @type [Array<ActiveSupport::SafeBuffer>]
+  HTML_QUOTES: Array[ActiveSupport::SafeBuffer]
+
+  # Add surrounding quotation marks to a term.
+  #
+  # If the term is already quoted, those quotation marks are preserved.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, Array] term
+  # @param [String]                                   quote
+  # @param [String]                                   separator
+  #
+  # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  # @overload quote(term, quote: '"', separator: ', ')
+  #   @param [String] term
+  #   @param [String] quote
+  #   @param [String] separator
+  #   @return [String]
+  #
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array<String>] terms
+  #   @param [String]        quote
+  #   @param [String]        separator
+  #   @return [String]
+  #
+  # @overload quote(term, quote: '"', separator: ', ')
+  #   @param [ActiveSupport::SafeBuffer] term
+  #   @param [String]                quote
+  #   @param [String]                separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array<ActiveSupport::SafeBuffer>] terms
+  #   @param [String]                       quote
+  #   @param [String]                       separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  def quote: (Array[ActiveSupport::SafeBuffer] terms, ?quote: String, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
+           | (Array[String] terms,                    ?quote: String, ?separator: String) -> Array[String]
+           | (ActiveSupport::SafeBuffer term,         ?quote: String, ?separator: String) -> ActiveSupport::SafeBuffer
+           | (String term,                            ?quote: String, ?separator: String) -> String
+
+  # Remove pairs of surrounding quotation marks from a term.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, Array] term
+  # @param [String]                                   separator
+  #
+  # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  # @overload strip_quotes(term, separator: ', ')
+  #   @param [String] term
+  #   @param [String] separator
+  #   @return [String]
+  #
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array<String>] terms
+  #   @param [String]        separator
+  #   @return [String]
+  #
+  # @overload strip_quotes(term, separator: ', ')
+  #   @param [ActiveSupport::SafeBuffer] term
+  #   @param [String]                separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array<ActiveSupport::SafeBuffer>] terms
+  #   @param [String]                       separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  def strip_quotes: (Array[ActiveSupport::SafeBuffer] terms, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
+                  | (Array[String] terms,                    ?separator: String) -> Array[String]
+                  | (ActiveSupport::SafeBuffer term,         ?separator: String) -> ActiveSupport::SafeBuffer
+                  | (String term,                            ?separator: String) -> String
+
+  # Match a named reference like "%{name}" for a #sprintf argument.
+  #
+  # @type [Regexp]
+  #
+  SPRINTF_NAMED_REFERENCE: Regexp
+
+  # Match a formatted named reference like "%<name>s" for a #sprintf argument.
+  #
+  # @type [Regexp]
+  #
+  SPRINTF_FMT_NAMED_REFERENCE: Regexp
+
+  # Extract the named references in a format string.
+  #
+  # @param [String]                text   String with #sprintf formatting.
+  # @param [Array<Regexp>, Regexp] match  Patterns to match
+  #
+  # @return [Array<Symbol>]
+  #
+  # @see Kernel#sprintf
+  #
+  def named_references: (String text, ?(Regexp|Array[Regexp])? match) -> symArray
+
+  # Parts of a complete #sprintf format as regular expression fragments.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # -
+  # noinspection SpellCheckingInspection
+  # +
+  SPRINTF_FMT_PARTS: Hash[Symbol,String]
+
+  # Match a named reference along with "%<name>s" the format portion.
+  #
+  # $1 = [String, nil] named format
+  # $2 = [String, nil] flags
+  # $3 = [String, nil] width
+  # $4 = [String, nil] precision
+  # $5 = [String]      type
+  #
+  # @type [Regexp]
+  #
+  SPRINTF_FORMAT: Regexp
+
+  # Extract the named references in a format string and pair them with their
+  # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
+  # each "%<name>" reference is paired with the format which follows it.
+  #
+  # @param [String]      text         String with #sprintf formatting.
+  # @param [String, nil] default_fmt  Format value for "%{name}" matches.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def named_references_and_formats: (String text, ?default_fmt: String|nil) -> Hash[Symbol,String]
+end

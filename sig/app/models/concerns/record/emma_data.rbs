@@ -1,0 +1,85 @@
+# Record methods to support processing of EMMA metadata fields.
+#
+module Record::EmmaData
+  extend ActiveSupport::Concern
+
+  include Emma::Json
+
+  include Record
+
+  include Record::EmmaIdentification
+
+  # The default name for the column that holds EMMA metadata values.
+  #
+  # @type [Symbol]
+  #
+  EMMA_DATA_COLUMN: Symbol
+
+  # Whether the #EMMA_DATA_COLUMN should be persisted as a Hash.
+  #
+  # @type [Boolean]
+  #
+  EMMA_DATA_HASH: bool
+
+  # EMMA data fields configuration.
+  #
+  # @type [Hash]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  EMMA_DATA_CONFIG: symHash
+
+  # EMMA data field names.
+  #
+  # @type [Array<Symbol>]
+  #
+  EMMA_DATA_KEYS: symArray
+
+  # EMMA data fields that default to the current time.
+  #
+  # @type [Array<Symbol>]
+  #
+  DEFAULT_TIME_NOW_FIELDS: symArray
+
+  def make_retrieval_link: (String? rid, ?(symHash|String)? base_url) -> String?
+
+  def make_emma_record: (symHash data) -> Search::Record::MetadataRecord
+
+  def parse_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> symHash
+
+  def generate_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, prmHash|String|Model|Search::Record::MetadataRecord|nil attr) -> symHash
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::EmmaData
+  end
+
+  # Instance implementations to be included if the schema has an
+  # EMMA_DATA_COLUMN column.
+  #
+  module InstanceMethods
+    include Record::EmmaData
+
+    # @see Record::EmmaData#make_retrieval_link
+    #
+    def make_retrieval_link: (?String? rid, ?(symHash|String)? base_url) -> String?
+
+    # @see Record::EmmaData#generate_emma_data
+    #
+    def generate_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, prmHash|String|Model|Search::Record::MetadataRecord|nil attr) -> symHash
+
+    def emma_record: () -> Search::Record::MetadataRecord
+
+    def emma_metadata: () -> symHash
+
+    def set_emma_data: (anyHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+
+    def modify_emma_data: (symHash data, ?bool allow_blank) -> String?
+  end
+
+  private
+
+  include InstanceMethods
+end

@@ -1,0 +1,126 @@
+# Set internal debugging of Representable pipeline actions.
+#
+# - *false* for normal operation
+# - *true*  for full debugging
+# - :input  for debugging parsing/de-serialization.
+# - :output for debugging rendering/serialization.
+#
+# @type [Boolean, Symbol]
+#
+DEBUG_REPRESENTABLE: bool | Symbol
+
+module Representable
+  # Overrides adding extra debugging around method calls.
+  #
+  module RepresentableDebug
+    # @private
+    def self.included: (Module base) -> void
+
+    private
+
+    DEBUG_MODES: [:input, :output, bool, nil]
+
+    DEBUG_INPUT: bool
+
+    DEBUG_OUTPUT: bool
+
+    LEADER: String
+
+    SEPARATOR: String
+
+    # __debug_show
+    #
+    # @param [Symbol, Any, nil] mode
+    # @param [Array]            args
+    # @param [Hash]             opt
+    #
+    # @return [nil]
+    #
+    # @yield To supply additional items to show.
+    # @yieldreturn [Array, Any]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload __debug_show(mode, *args, **opt)
+    #   @param [Symbol, nil] mode        Either :input, :output or *nil*
+    #   @param [Array]       args
+    #   @param [Hash]        opt
+    #
+    # @overload __debug_show(*args, **opt)
+    #   @param [Array]       args
+    #   @param [Hash]        opt
+    #
+    # @see #__output_impl
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType
+    # +
+    def __debug_show: ((:input|:output|nil) mode, *untyped args, **untyped opt) { () -> untyped } -> nil
+                    | (                           *untyped args, **untyped opt) { () -> untyped } -> nil
+
+    # Override one or more lambdas in order to "inject" a debug statement
+    # before invoking the original definition.
+    #
+    # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
+    # no overrides are performed.
+    #
+    # @param [Symbol, Any, nil] mode
+    # @param [Array<Symbol>]    constants
+    #
+    # @return [nil]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload __debug_lambda(mode, *constants)
+    #   @param [Symbol, nil]   mode        Either :input, :output or *nil*
+    #   @param [Array<Symbol>] constants
+    #
+    # @overload __debug_lambda(*constants)
+    #   @param [Array<Symbol>] constants
+    #
+    # @see #__debug_show
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType
+    # +
+    def __debug_lambda: ((:input|:output|nil) mode, *Symbol constants) -> nil
+                      | (                           *Symbol constants) -> nil
+
+    # Override one or more methods in order to "inject" a debug statement
+    # before invoking the original definition.
+    #
+    # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
+    # no overrides are performed.
+    #
+    # @param [Symbol, Any, nil] mode
+    # @param [String, nil]      label
+    # @param [Array<Symbol>]    methods
+    #
+    # @return [nil]
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload __debug_method(mode, label, *methods)
+    #   @param [Symbol, nil]   mode        Either :input, :output or *nil*
+    #   @param [String]        label
+    #   @param [Array<Symbol>] methods
+    #
+    # @overload __debug_method(label, *methods)
+    #   @param [String]        label
+    #   @param [Array<Symbol>] methods
+    #
+    # @see #__debug_show
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType
+    # +
+    def __debug_method: ((:input|:output|nil) mode, String label, *Symbol methods) -> nil
+                      | (                           String label, *Symbol methods) -> nil
+  end
+end

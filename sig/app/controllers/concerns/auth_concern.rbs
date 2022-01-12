@@ -1,0 +1,180 @@
+# Controller support methods for authentication.
+#
+module AuthConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Json
+
+  include AuthHelper
+
+  include DevHelper
+
+  # :nocov:
+  #include Devise::Controllers::Helpers
+
+  # A table of pre-authorized user/token pairs for development purposes.
+  # (Not generated for non-Rails-application executions.)
+  #
+  # Tokens are taken from the User table entries that have an :access_token
+  # value.  If ENV['BOOKSHARE_TEST_AUTH'] is supplied, it is used to prime (or
+  # update) database table.
+  #
+  # @type [Hash{String=>String}, nil]
+  #
+  CONFIGURED_AUTH: Hash[String,String] | nil
+
+  # The "home" URL for a signed-in user.
+  #
+  # @param [User, Symbol] resource_or_scope
+  #
+  # @return [String]
+  #
+  def signed_in_root_path: (User|Symbol resource_or_scope) -> String
+
+  # The URL to which Devise redirects after signing in.
+  #
+  # @param [User, Symbol] resource_or_scope
+  #
+  # @return [String]
+  #
+  # == Implementation Notes
+  # This does not use Devise::Controllers::StoreLocation#store_location_for
+  # to avoid the potential of overwhelming session store by copying
+  # session['app.current_path'] into session['user_return_to']. This seems to
+  # be safe because the overridden function seems to be the only place where
+  # that session entry is used.
+  #
+  def after_sign_in_path_for: (User|Symbol resource_or_scope) -> String
+
+  # The URL to which Devise redirects after signing out.
+  #
+  # @param [User, Symbol] resource_or_scope
+  #
+  # @return [String]
+  #
+  def after_sign_out_path_for: (User|Symbol resource_or_scope) -> String
+
+  private
+
+  # Indicate whether the given resource/scope specifies the User resource.
+  #
+  # Returns *true* if *obj* cannot be interpreted as a scope or resource since
+  # user scope is the assumed default.
+  #
+  # @param [User, Symbol, Any] obj
+  #
+  # @see Devise::Mapping#find_scope!
+  #
+  def user_scope?: (User|Symbol|untyped obj) -> bool
+
+  public
+
+  # Sign in a local (EMMA) session.
+  #
+  # @return [User]
+  #
+  # @see Devise::Controllers::SignInOut#sign_in
+  #
+  def local_sign_in: () -> User
+
+  # Sign out of the local (EMMA) session *without* revoking the OAuth2 token
+  # (which signs out of the OAuth2 session).
+  #
+  # @return [Boolean]                 False if there was no user.
+  #
+  # @see Devise::Controllers::SignInOut#sign_out
+  # @see #delete_auth_data
+  #
+  def local_sign_out: () -> bool
+
+  # Sign out of the local session and the OAuth2 session.
+  #
+  # (This is the normal sign-out but named as a convenience for places in the
+  # code where the distinction with #local_sign_out needs to be stressed.)
+  #
+  # @return [Boolean]                 False if there was no user.
+  #
+  # @note Currently unused.
+  #
+  def global_sign_out: () -> bool
+
+  # Set `session['omniauth.auth']` from `request.env['omniauth.auth']` and
+  # return with the new or returning user.
+  #
+  # @param [ActionDispatch::Request, OmniAuth::AuthHash, Hash] src
+  #
+  # @raise [RuntimeError]             If *src* does not have auth data.
+  # @raise [RuntimeError]             If a User could not be found or created.
+  #
+  # @return [User]
+  #
+  def set_auth_data: (ActionDispatch::Request|OmniAuth::AuthHash|anyHash src) -> User
+
+  # Generate the authentication data to be associated with the given user.
+  #
+  # @param [User, String, Integer, Any, nil] user  Default: `#current_user`.
+  #
+  # @return [OmniAuth::AuthHash, nil]
+  #
+  def update_auth_data: (?(User|String|Integer|untyped)? user) -> OmniAuth::AuthHash?
+
+  # Terminate the local login session ('omniauth.auth') and the session with
+  # the OAuth2 provider (if appropriate)
+  #
+  # @param [Boolean] no_revoke        If *true*, do not revoke the token with
+  #                                     the OAuth2 provider.
+  #
+  # @return [void]
+  #
+  # @see #revoke_access_token
+  #
+  def delete_auth_data: (?no_revoke: bool) -> void
+
+  # Lookup (and update) User by login name.
+  #
+  # @param [String, nil] uid          Default: params[:uid] or params[:id].
+  #
+  # @return [User]                    The updated record of the indicated user.
+  # @return [nil]                     No record for the indicated user.
+  #
+  def user_from_id: (?String? uid) -> User?
+
+  # Create a User from authentication data (from the session or from the
+  # User table of the database).
+  #
+  # @param [OmniAuth::AuthHash, nil] auth_data  Default: params[:auth]
+  #
+  # @return [User]                    Updated record of the indicated user.
+  # @return [nil]                     If `session['omniauth.auth']` is invalid.
+  #
+  def user_from_auth_data: (?OmniAuth::AuthHash? auth_data) -> User?
+
+  # user_from_session
+  #
+  # @return [User, nil]
+  #
+  def user_from_session: () -> User?
+
+  # Indicate whether the user is one is capable of short-circuiting the
+  # authorization process.
+  #
+  # @param [User, String, nil] user   Default: `#current_user`
+  #
+  def auth_debug_user?: (?(User|String)? user) -> bool
+
+  # revoke_access_token
+  #
+  # @param [Hash, nil] token          Default: `session['omniauth.auth']`.
+  #
+  # @return [OAuth2::Response]
+  # @return [nil]                     If no token was provided or found.
+  #
+  # -
+  # noinspection RubyResolve
+  # +
+  def revoke_access_token: (?anyHash? token) -> OAuth2::Response?
+
+  private
+
+  #THIS_MODULE: untyped
+end

@@ -7,6 +7,7 @@
 
 list ||= @list || {}
 
+# noinspection RubyMismatchedArgumentType
 json.timestamp DateTime.now
 json.count     list.size
 

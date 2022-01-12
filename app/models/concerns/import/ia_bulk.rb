@@ -173,7 +173,7 @@ module Import::IaBulk
   # @param [Symbol] _k                The name of the field being imported.
   # @param [Any]    v
   #
-  # @return [(Array<Symbol>,Array)]
+  # @return [Array<(Array<Symbol>,Array)>]
   #
   def translate_formats(_k, v)
     key    = hash_key(v)

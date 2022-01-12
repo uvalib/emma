@@ -39,7 +39,7 @@ module TitleHelper
 
   # Thumbnail element for the given catalog title.
   #
-  # @param [Model]           item
+  # @param [Model, nil]      item
   # @param [Boolean, String] link         If *true* make the image a link to
   #                                         the show page for the item.
   # @param [Hash]            opt          Passed to #image_element.
@@ -58,6 +58,7 @@ module TitleHelper
     prepend_classes!(html_opt, css_selector)
     # noinspection RailsParamDefResolve
     if (url = item.try(:thumbnail_image)).present?
+      # noinspection RubyNilAnalysis
       id   = item.identifier
       link = title_path(id: id) if link.is_a?(TrueClass)
       link = nil                if link.is_a?(FalseClass)

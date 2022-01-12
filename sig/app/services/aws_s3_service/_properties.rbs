@@ -1,0 +1,72 @@
+# AwsS3Service::Properties
+#
+module AwsS3Service::Properties
+  include ApiService::Properties
+
+  # Configuration values from config/locales/service.en.yml
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  AWS_S3_CONFIG: symHash
+
+  # There are two S3 buckets for each member repository used to queue
+  # submissions and two S3 buckets for EMMA which include storage used by
+  # Shrine.
+  #
+  # "emma-storage-production"   EMMA uploads (et. al.)
+  # "emma-storage-staging"      Development EMMA uploads
+  #
+  # "emma-bs-queue-production"  Submissions to Bookshare
+  # "emma-bs-queue-staging"     Test submissions to Bookshare
+  #
+  # "emma-ht-queue-production"  Submissions to HathiTrust
+  # "emma-ht-queue-staging"     Test submissions to HathiTrust
+  #
+  # "emma-ia-queue-production"  Submissions to Internet Archive
+  # "emma-ia-queue-staging"     Test submissions to Internet Archive
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+  #
+  S3_BUCKET: Hash[Symbol,Hash[Symbol,String]]
+
+  # A list of the member repositories.
+  #
+  # @type [Array<Symbol>]
+  #
+  MEMBER_REPOSITORIES: symArray
+
+  # S3 options are kept in encrypted credentials but can be overridden by
+  # environment variables.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  S3_OPTIONS: Hash[Symbol,String]
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  def base_url: () -> String
+
+  # The URL for the API connection as a URI.
+  #
+  # @return [URI::Generic]
+  #
+  def base_uri: () -> URI::Generic
+
+  # Federated AwsS3 API key.
+  #
+  # @return [nil]
+  #
+  def api_key: () -> nil
+
+  # API version is not a part of request URLs.
+  #
+  # @return [nil]
+  #
+  def api_version: () -> nil
+
+  private
+
+  def self.included: (Module base) -> void
+end

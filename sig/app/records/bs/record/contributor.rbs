@@ -1,0 +1,27 @@
+# Bs::Record::Contributor
+#
+# @attr [Array<Bs::Record::Link>]     links
+# @attr [Bs::Record::ContributorName] name
+# @attr [BsContributorType]           type
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_contributor
+#
+class Bs::Record::Contributor < Bs::Api::Record
+  include Bs::Shared::LinkMethods
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # A label for the item.
+  #
+  # @param [Boolean, String] role     If *true*, append the contributor type;
+  #                                     if a string, display that as the role;
+  #                                     otherwise no role is appended.
+  #
+  # @return [String]
+  #
+  def label: (?String|bool? role) -> String
+end

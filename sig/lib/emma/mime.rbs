@@ -1,0 +1,20 @@
+# Generic MIME type methods.
+#
+# @see file:config/initializers/mime_types.rb
+#
+module Emma::Mime
+  # Indicate whether the given string matches a known file extension.
+  #
+  # @param [String, Symbol] ext
+  #
+  def known_extension?: (String|Symbol ext) -> bool
+
+  # Given a file extension, return the associated MIME type.
+  #
+  # @param [String, Symbol] ext
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def ext_to_mime: (String|Symbol ext) -> (String | nil)
+end

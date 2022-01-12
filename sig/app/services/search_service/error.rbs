@@ -1,0 +1,97 @@
+# Generic exception for Unified Search API problems.
+#
+# == Usage Notes
+# This is generally *not* the base class for exceptions in the SearchService
+# namespace:  Variants based on the error types defined under "emma.error.api"
+# are derived from the related ApiService class; e.g.:
+#
+#   `SearchService::AuthError < ApiService::AuthError`
+#
+# Only a distinct error type defined under "emma.error.search" would derive
+# from this class; e.g. if "emma.error.search.unique" existed it would be
+# defined as:
+#
+#   `SearchService::UniqueError < SearchService::Error`
+#
+# An exception in the SearchService namespace can be identified by checking for
+# `exception.is_a?(SearchService::Error::ClassType)`.
+#
+class SearchService::Error < ApiService::Error
+  # Methods included in related error classes.
+  #
+  module ClassType
+    include ApiService::Error::ClassType
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol]
+    #
+    def service: () -> Symbol
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include ClassType
+end
+
+class SearchService::AuthError < ApiService::AuthError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::CommError < ApiService::CommError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::SessionError < ApiService::SessionError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::ConnectError < ApiService::ConnectError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::TimeoutError < ApiService::TimeoutError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::XmitError < ApiService::XmitError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::RecvError < ApiService::RecvError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::ParseError < ApiService::ParseError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::RequestError < ApiService::RequestError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::NoInputError < ApiService::NoInputError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::ResponseError < ApiService::ResponseError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::EmptyResultError < ApiService::EmptyResultError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::HtmlResultError < ApiService::HtmlResultError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::RedirectionError < ApiService::RedirectionError
+  include SearchService::Error::ClassType
+end
+
+class SearchService::RedirectLimitError < ApiService::RedirectLimitError
+  include SearchService::Error::ClassType
+end

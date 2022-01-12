@@ -1,0 +1,198 @@
+module CachingMiddleware
+  # Common middleware default values.
+  #
+  module Defaults
+    # Directory for caching.
+    CACHE_ROOT_DIR: String
+
+    # Faraday cache directory for :file_store.
+    FARADAY_CACHE_DIR: String
+
+    # Default expiration time.
+    DEFAULT_EXPIRATION: ActiveSupport::Duration
+
+    # Default options appropriate for any including class.
+    #
+    DEFAULT_OPTIONS: symHash
+  end
+
+  # A common implementation for locally-defined caching middleware.
+  #
+  module Concern
+    extend ActiveSupport::Concern
+
+    include CachingMiddleware::Defaults
+
+    # @return [Logger, nil]
+    attr_reader logger: Logger | nil
+
+    # @return [String]
+    attr_reader http_header: String
+
+    # @return [ActiveSupport::Cache::Store]
+    attr_reader store: ActiveSupport::Cache::Store
+
+    # @return [Hash]
+    attr_reader store_options: symHash
+
+    # @return [Array<String>]
+    attr_reader cacheable_paths: strArray
+
+    # Initialize
+    #
+    # @param [Faraday::Middleware] app
+    # @param [Hash, nil]           opt
+    #
+    # @option opt [Logger]                              :logger
+    # @option opt [String]                              :cache_dir
+    # @option opt [Symbol, ActiveSupport::Cache::Store] :store
+    # @option opt [Hash]                                :store_options
+    # @option opt [String]                              :http_header
+    # @option opt [Array<String>]                       :cacheable_paths
+    #
+    # @raise [RuntimeError]           If opt[:namespace] is missing.
+    #
+    def initialize: (Faraday::Middleware app, ?symHash? opt) -> void
+
+    # Generate cache key.
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [String]
+    # @return [nil]                   If there is no request active.
+    #
+    def key: (Faraday::Env env) -> String?
+
+    # call
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [Faraday::Response]
+    # @return [nil]
+    #
+    def call: (Faraday::Env env) -> Faraday::Response?
+
+    # Report the expiration based on the requested path.
+    #
+    # @param [Faraday::Env] _env
+    #
+    # @return [Numeric]
+    #
+    def expiration: (?Faraday::Env? _env) -> ActiveSupport::Duration
+
+    # request_url
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [String]
+    # @return [nil]                   If there is no request active.
+    #
+    def request_url: (Faraday::Env env) -> String?
+
+    # call!
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [Faraday::Response]
+    # @return [nil]
+    #
+    def call!: (Faraday::Env env) -> Faraday::Response?
+
+    # Indicate whether the given request is eligible for caching.
+    #
+    # @param [Faraday::Env] env
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def cacheable?: (Faraday::Env env) -> bool
+
+    # Does the request/response indicate that it holds a completed response.
+    #
+    # @param [Faraday::Env] env
+    #
+    def complete?: (Faraday::Env env) -> bool
+
+    # Show whether the request/response has been updated with a hit status.
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [String]                Either 'HIT' or 'MISS'.
+    # @return [nil]                   No request or response active.
+    #
+    def hit_status: (Faraday::Env env) -> String?
+
+    # read_cache
+    #
+    # @param [Faraday::Env] env
+    # @param [String, nil]  cache_key
+    #
+    # @return [Faraday::Env]
+    # @return [nil]                   Could not determine *cache_key*.
+    #
+    def read_cache: (Faraday::Env env, ?String? cache_key) -> Faraday::Env?
+
+    # write_cache
+    #
+    # @param [Faraday::Env] env
+    # @param [String, nil]  cache_key
+    #
+    # @return [Boolean]
+    # @return [nil]                   Could not determine *cache_key*.
+    #
+    def write_cache: (Faraday::Env env, ?String? cache_key) -> bool?
+
+    # Generate options to override the default cache options set in the
+    # initializer based on the nature of the request.
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [Hash]
+    #
+    def cache_opt: (Faraday::Env env) -> symHash
+
+    # to_response
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [Faraday::Response]
+    #
+    def to_response: (Faraday::Env env) -> Faraday::Response
+
+    # log
+    #
+    # @param [String] message
+    #
+    # @return [nil]
+    #
+    def log: (String message) -> nil
+
+    # log_status
+    #
+    # @param [Faraday::Env] env
+    # @param [String, nil]  cache_key
+    # @param [String, nil]  note
+    #
+    # @return [nil]
+    #
+    def log_status: (Faraday::Env env, ?String? cache_key, ?String? note) -> nil
+
+    private
+
+    # Run from #initialize to set up the logger.
+    #
+    # @raise [RuntimeError]           If @logger is invalid.
+    #
+    # @return [void]
+    #
+    def initialize_logger: () -> void
+
+    # Run from #initialize to set up the cache store.
+    #
+    # @raise [RuntimeError]           If @store is invalid.
+    #
+    # @return [void]
+    #
+    def initialize_store: () -> void
+  end
+end

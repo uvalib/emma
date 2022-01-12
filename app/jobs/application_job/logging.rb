@@ -109,10 +109,12 @@ module ApplicationJob::Logging
     public
 
     def job_inspect(job = nil)
+      # noinspection RubyMismatchedArgumentType
       super(job || self)
     end
 
     def arguments_inspect(job = nil)
+      # noinspection RubyMismatchedArgumentType
       super(job || self)
     end
 

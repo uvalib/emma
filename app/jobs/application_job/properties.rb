@@ -38,7 +38,7 @@ module ApplicationJob::Properties
 
   # All job queue keys.
   #
-  # @type [Array<String>]
+  # @type [Array<Symbol>]
   #
   QUEUE_KEYS = QUEUE_PRIORITY.keys.freeze
 
@@ -109,6 +109,7 @@ module ApplicationJob::Properties
   # noinspection RailsParamDefResolve
   #--
   def priority_for(val)
+    # noinspection RubyMismatchedReturnType
     return val                                if val.nil? || val.is_a?(Integer)
     return QUEUE_PRIORITY[queue_key_for(val)] if val.respond_to?(:to_sym)
     result = val.try(:priority)
@@ -237,18 +238,22 @@ module ApplicationJob::Properties
     public
 
     def default_queue_key
+      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__)
     end
 
     def default_queue_name
+      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__)
     end
 
     def default_priority
+      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__)
     end
 
     def queue_name_from_part(part_name)
+      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__, part_name)
     end
 

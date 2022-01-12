@@ -1,0 +1,6 @@
+# A request to change to a prior submission to a member repository.
+#
+# @note This capability is not currently supported by any member repository.
+#
+class AwsS3::Message::ModificationRequest < AwsS3::Message::SubmissionRequest
+end

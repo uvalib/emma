@@ -1,0 +1,229 @@
+# View helper methods supporting the display and creation of Model instances
+# (both database items and API messages).
+#
+module ModelHelper::ListV3
+  include ModelHelper::List
+
+  # Render field/value pairs of a title-level record.
+  #
+  # @param [Search::Record::TitleRecord, nil] item
+  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
+  # @param [String, Symbol, nil] action       Default: `params[:action]`.
+  # @param [Hash, nil]           pairs        Except for #render_pair options.
+  # @param [Integer, nil]        row_offset   Def: 0.
+  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash]                opt
+  #
+  # @option opt [Integer] :index              Offset to make unique element IDs
+  #                                             passed to #render_pair.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def render_field_hierarchy: (Search::Record::TitleRecord? item, ?model: (String|Symbol)?, ?action: (String|Symbol)?, ?pairs: symHash?, ?row_offset: Integer?, ?separator: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # item_lines
+  #
+  # @param [Search::Record::TitleRecord] item
+  # @param [Hash, nil]                   hierarchy
+  # @param [Hash]                        opt
+  #
+  # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  def item_lines: (Search::Record::TitleRecord item, symHash? hierarchy, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
+
+  # title_level_lines
+  #
+  # @param [Hash]  main_section
+  # @param [Array] main_index
+  # @param [Hash]  main_prop
+  # @param [Hash]  opt
+  #
+  # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  def title_level_lines: (symHash main_section, Array[Symbol|Integer] main_index, symHash main_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
+
+  # part_level_lines
+  #
+  # @param [Array<Hash>] main_section
+  # @param [Array]       main_index
+  # @param [Hash]        main_prop
+  # @param [Hash]        opt
+  #
+  # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  def part_level_lines: (Array[symHash] main_section, Array[Symbol|Integer] main_index, symHash main_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
+
+  # part_section_lines
+  #
+  # @param [Hash]  part
+  # @param [Array] part_index
+  # @param [Hash]  part_prop
+  # @param [Hash]  opt
+  #
+  # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  def part_section_lines: (symHash part, Array[Symbol|Integer] part_index, symHash part_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
+
+  # part_level_lines
+  #
+  # @param [Array<Hash>] part_section
+  # @param [Symbol]      part_key
+  # @param [Array]       part_index
+  # @param [Hash]        part_prop
+  # @param [Hash]        opt
+  #
+  # @option opt [String] :term        Override #FILE_TERM.
+  #
+  # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  def part_lines: (Array[symHash] part_section, Symbol part_key, Array[Symbol|Integer] part_index, symHash part_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
+
+  # format_section_lines
+  #
+  # @param [Hash]  format
+  # @param [Array] format_index
+  # @param [Hash]  format_prop
+  # @param [Hash]  opt
+  #
+  # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  def format_section_lines: (symHash format, Array[Symbol|Integer] format_index, symHash format_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
+
+  # part_level_lines
+  #
+  # @param [Array<Hash>] files
+  # @param [Symbol]      section_key
+  # @param [Array]       section_index
+  # @param [Hash]        section_prop
+  # @param [Hash]        opt
+  #
+  # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  def file_lines: (Array[symHash] files, Symbol section_key, Array[Symbol|Integer] section_index, symHash section_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
+
+  # file_section_lines
+  #
+  # @param [Hash]  section
+  # @param [Array] section_index
+  # @param [Hash]  section_prop
+  # @param [Hash]  opt
+  #
+  # @return [Array<Hash>]
+  #
+  def file_section_lines: (symHash section, Array[Symbol|Integer] section_index, symHash section_prop, symHash opt) -> Array[symHash]
+
+  # field_lines
+  #
+  # @param [Hash] pairs
+  # @param [Hash] field_prop
+  # @param [Hash] opt
+  #
+  # @return [Array<Hash>]
+  #
+  def field_lines: (symHash pairs, symHash field_prop, symHash opt) -> Array[symHash]
+
+  # render_field
+  #
+  # @param [Hash] line
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def render_field: (symHash line, symHash opt) -> ActiveSupport::SafeBuffer?
+
+  # The CSS class wrapping label/values pairs (if any).
+  #
+  # @type [String, nil]
+  #
+  PAIR_WRAPPER: String?
+
+  # Probably-temporary divider between metadata for individual sections within
+  # a compound search item.
+  #
+  # @note SIDE EFFECT: `opt[:row]` will be incremented.
+  #
+  # @param [Symbol, String] type
+  # @param [Any]            name        Distinct section indicator.
+  # @param [Any, nil]       data_value  For 'data-value'.
+  # @param [Any, nil]       details
+  # @param [Any]            index       Unique line indicator.
+  # @param [Hash]           prop
+  # @param [Hash]           opt         Passed to #render_line.
+  #
+  # @option opt [String] :term          Override #FILE_TERM.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def new_section: (Symbol|String `type`, untyped name, untyped data_value, untyped details, untyped index, symHash prop, symHash opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single label/value line.
+  #
+  # @param [String, Symbol, nil] label
+  # @param [Any, nil]            value
+  # @param [Hash]                opt        Passed #render_pair.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_line: ((String|Symbol)? label, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # skip_entry?
+  #
+  # @param [Symbol]              key
+  # @param [Any]                 value
+  # @param [Symbol]              meth
+  # @param [Hash, Array, Symbol] except
+  #
+  def skip_entry?: (Symbol key, untyped value, ?meth: Symbol?, ?except: (Symbol|symArray|symHash)?) -> bool
+
+  # Create a copy of the Hash where *scope* is appended to the :scopes value.
+  #
+  # @param [Hash]   item
+  # @param [Symbol] scope
+  # @param [Hash]   opt               Additional key/value pairs.
+  #
+  # @return [Hash]                    A modified copy of *item*.
+  #
+  def add_scope: (symHash item, Symbol scope, **untyped opt) -> symHash
+
+  # count_unique
+  #
+  # @param [Array<Hash,ActiveSupport::SafeBuffer>] lines
+  # @param [String, Symbol]                        type
+  # @param [String, nil]                           term
+  #
+  # @return [String]
+  #
+  def count_unique: (Array[symHash|ActiveSupport::SafeBuffer] lines, String|Symbol `type`, term: String?) -> String
+
+  # @private
+  SEARCH_FIELD_LEVEL: Hash[Symbol,Array[Symbol|Integer]]
+
+  # Return with the CSS classes associated with the items field scope(s).
+  #
+  # @param [Array, Symbol, String, nil] value
+  #
+  # @return [Array<String>]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload field_scopes(single)
+  #   Interpret the argument as a field name used to lookup the scope values.
+  #   @param [Symbol, String, nil] single
+  #   @return [Array<String>]
+  #
+  # @overload field_scopes(array)
+  #   Extract the scopes from *array*.
+  #   @param [Array<Symbol>]       array
+  #   @return [Array<String>]
+  #
+  def field_scopes: (untyped value) -> strArray
+
+  private
+
+  def self.included: (Module base) -> void
+end

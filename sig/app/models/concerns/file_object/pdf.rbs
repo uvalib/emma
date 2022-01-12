@@ -1,0 +1,5 @@
+# A PDF file object.
+#
+class FileObject::Pdf < FileObject
+  include FileFormat::Pdf
+end

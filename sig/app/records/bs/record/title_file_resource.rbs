@@ -1,0 +1,13 @@
+# Bs::Record::TitleFileResource
+#
+# @attr [IsoDate]                 lastModifiedDate
+# @attr [Array<Bs::Record::Link>] links
+# @attr [String]                  localURI
+# @attr [String]                  mimeType
+# @attr [String]                  size
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_title_file_resource
+#
+class Bs::Record::TitleFileResource < Bs::Api::Record
+  include Bs::Shared::LinkMethods
+end

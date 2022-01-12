@@ -1,0 +1,725 @@
+# Search results aggregated under a single title from a specific repository.
+#
+# Each item in :records will have the same values for :emma_titleId, :dc_title,
+# and :emma_repository, but will have differing values for :dc_format and/or
+# :dc_description.
+#
+class Search::Record::TitleRecord < Search::Api::Record
+  include Search::Shared::AggregateMethods
+
+  include Search::Shared::CreatorMethods
+
+  include Search::Shared::DateMethods
+
+  include Search::Shared::IdentifierMethods
+
+  include Search::Shared::LinkMethods
+
+  include Search::Shared::TitleMethods
+
+  BASE_ELEMENT: untyped
+
+  # Data extraction methods appropriate as either instance- or class-methods.
+  #
+  module Methods
+    include Emma::Common
+
+    include Emma::Unicode
+
+    DEFAULT_LEVEL_NAME: String
+
+    # Fields whose values are identical across all #records.
+    #
+    # @type [Array<Symbol>]
+    #
+    MATCH_FIELDS: symArray
+
+    # Fields whose values are used as keys to sort #records.
+    #
+    # @type [Array<Symbol>]
+    #
+    SORT_FIELDS: symArray
+
+    # A pattern matching a complete level name and value, where:
+    #
+    #   $1 is the level name
+    #   $2 is a number, or a sequence of numbers/ranges
+    #
+    # @type [Regexp]
+    #
+    NUMBER_PATTERN: Regexp
+
+    # A pattern matching a likely item number.
+    #
+    # @type [Regexp]
+    #
+    LEADING_ITEM_NUMBER: Regexp
+
+    # A pattern matching a likely year number.
+    #
+    # If `match(YEAR_PATTERN)` succeeds, the year will be $2 or $3.
+    #
+    # @type [Regexp]
+    #
+    YEAR_PATTERN: Regexp
+
+    # A pattern seen for years appended to item numbers.
+    #
+    # @type [Regexp]
+    #
+    TRAILING_YEAR: Regexp
+
+    # Normalize a level numbering name.
+    #
+    # @param [String]
+    #
+    # @return [String]
+    #
+    def number_name: (String? name) -> String
+
+    # Reduce a hierarchy of numbering levels to a single value.
+    #
+    # @param [Number, Hash{Any=>Number::Level}, nil] item
+    #
+    # @return [Float]
+    #
+    # -
+    # noinspection RubyUnusedLocalVariable
+    # +
+    def number_value: (Number|Hash[untyped,Number::Level]|nil item) -> Float
+
+    # Reduce a hierarchy of numbering levels to a pair of single values.
+    #
+    # @param [Number, Hash{Any=>Number::Level}] item
+    #
+    # @return [Array<(Float,Float)>]         Min and max level numbers.
+    #
+    def number_range: (Number|Hash[untyped,Number::Level] item) -> [Float, Float]
+
+    # Item title.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def title: (Search::Record::MetadataRecord? rec) -> String?
+
+    # Item title ID.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def title_id: (Search::Record::MetadataRecord? rec) -> String?
+
+    # Item repository.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def repository: (Search::Record::MetadataRecord? rec) -> String?
+
+    # Item repository record ID.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def repo_id: (Search::Record::MetadataRecord? rec) -> String?
+
+    # Item format.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def format: (Search::Record::MetadataRecord? rec) -> String?
+
+    # Item description.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    def description: (Search::Record::MetadataRecord? rec) -> String?
+
+    # Item numbering extracted from #description for HathiTrust items, or from
+    # the repository record ID for selected Internet Archive items.
+    #
+    # The result allows for a hierarchy of parts, e.g. "vol. 2 pt. 7-12" would
+    # result in { 'v' => 2..2, 'p' => 7..12 }
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [Search::Record::TitleRecord::Number, nil]
+    #
+    # == Implementation Notes
+    # * Only HathiTrust items consistently use the description field to hold
+    #   the volume/chapter/number of the item.
+    #
+    # * The heuristic for Internet Archive items is pretty much guesswork.  The
+    #   digits in the identifier following the leading term appear to be "0000"
+    #   for standalone items; in items where the number appears to represent a
+    #   volume, it always starts with a zero, e.g.: "0001", "0018", etc.
+    #
+    def item_number: (Search::Record::MetadataRecord? rec) -> Search::Record::TitleRecord::Number?
+
+    # Item date extracted from description, title or :dcterms_dateCopyright.
+    #
+    # @param [Search::Record::MetadataRecord, nil] rec
+    #
+    # @return [String, nil]
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def item_date: (Search::Record::MetadataRecord? rec) -> String?
+
+    # Attempt to extract a year from the given string.
+    #
+    # @param [String, nil] value
+    #
+    # @return [String, nil]
+    #
+    def get_year: (String? value) -> String?
+
+    # Fields values used to determine whether *rec* can be included.
+    #
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def match_fields: (Search::Record::MetadataRecord|symHash|nil rec) -> symHash
+
+    # Field values used as the basis of #sort_keys.
+    #
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def sort_fields: (Search::Record::MetadataRecord|symHash|nil rec) -> symHash
+
+    # The values for *rec* for use with Enumerable#sort_by.
+    #
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    #
+    # @return [Array]
+    #
+    def sort_keys: (Search::Record::MetadataRecord|symHash|nil rec) -> symArray
+
+    # extract_fields
+    #
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    # @param [Array<Symbol>]                             fields
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # +
+    def extract_fields: (Search::Record::MetadataRecord|symHash|nil rec, symArray fields) -> symHash
+
+    # comparable_fields
+    #
+    # @note This should probably be coalesced with extract_fields
+    #
+    # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    # @param [Array<Symbol>]                             fields
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def comparable_fields: (Search::Record::MetadataRecord|symHash|nil rec, symArray fields) -> symHash
+
+    # @private
+    IDENTIFIER_FIELDS: symArray
+
+    # Transform a value into one whose elements are prepared for comparison
+    # with a similar value.
+    #
+    # @param [Hash, Array, String, Any, nil] value
+    # @param [Symbol, nil]                   field
+    #
+    # @return [Hash, Array, String, Any]  Same type as original type of *value*
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def make_comparable: (untyped value, ?Symbol? field) -> untyped
+
+    # Group identifiers of the same prefix in descending order of length
+    # (favoring ISBN-13 over ISBN-10).
+    #
+    # @param [String, nil] id
+    #
+    # @return [Array<(String, Integer, String)>]
+    #
+    def identifier_sort_key: (String? id) -> [String, Integer, String]
+
+    # Normalize a value for use as a sort key value.
+    #
+    # @param [Any, nil] item
+    #
+    # @return [Any]
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def sort_key_value: (untyped item) -> untyped
+
+    # field_value
+    #
+    # @param [Search::Record::MetadataRecord, Hash] rec
+    # @param [Symbol, String]                       field
+    #
+    # @return [Any, nil]
+    #
+    def field_value: (Search::Record::MetadataRecord|symHash rec, Symbol|String field) -> untyped?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Item numbering extracted from #description.
+  #
+  # The result allows for a hierarchy of parts, e.g. "vol. 2 pt. 6-18" would
+  # result in:
+  #
+  #   { 'v' => { name: 'vol.', min: 2, max: 2 },
+  #     'p' => { name: 'pt.',  min: 6, max: 18 } }
+  #
+  class Number
+    include Comparable
+
+    include Emma::Common
+
+    include Emma::Unicode
+
+    include Search::Record::TitleRecord::Methods
+
+    # A single numbering level entry.
+    #
+    class Level < Hash
+      include Comparable
+
+      include Search::Record::TitleRecord::Methods
+
+      # Initialize a new level entry.
+      #
+      # @param [Hash] opt             Passed to #update!
+      #
+      def initialize: (**untyped opt) -> void
+
+      # Update :min/:max values if appropriate; set :name if missing.
+      #
+      # @param [String]        name
+      # @param [Integer]       min_val
+      # @param [Integer]       max_val
+      # @param [String, Range] range
+      #
+      # @return [self]
+      #
+      def update!: (?name: String?, ?min_val: Integer?, ?max_val: Integer?, ?range: (String|Range[Integer])?) -> self
+
+      # minimum
+      #
+      # @return [Integer]
+      #
+      def minimum: () -> Integer
+
+      # maximum
+      #
+      # @return [Integer]
+      #
+      def maximum: () -> Integer
+
+      # range
+      #
+      # @return [String]
+      #
+      def range: () -> String
+
+      def to_s: () -> String
+
+      # Value needed to make instances usable from Enumerable#group_by.
+      #
+      # @return [Integer]
+      #
+      def hash: () -> Integer
+
+      # Operator needed to make instances usable from Enumerable#group_by.
+      #
+      # @param [Any] other
+      #
+      def eql?: (untyped other) -> bool
+
+      # Comparison operator required by the Comparable mixin.
+      #
+      # @param [Any] other
+      #
+      # @return [Integer]   -1 if self is later, 1 if self is earlier
+      #
+      def <=>: (untyped other) -> (-1 | 0 | +1)
+    end
+
+    # Levels of numbering extracted from the item.
+    #
+    # @return [Hash{String=>Level}]
+    #
+    attr_reader level: Hash[String,Level]
+
+    # Item numbering extracted from #description or a direct level number.
+    #
+    # The result allows for a hierarchy of parts, e.g. "vol. 2 pt. 7-12" would
+    # result in { 'v' => 2..2, 'p' => 7..12 }
+    #
+    # @param [String, Integer, Hash, nil] term
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def initialize: (?untyped? term) -> void
+
+    # Add to #level.
+    #
+    # @param [String, nil] name
+    # @param [Any]         value
+    # @param [Hash]        opt        Passed to Level initializer.
+    #
+    # @return [void]
+    #
+    def add_level: (String? name, ?untyped? value, **untyped opt) -> void
+
+    # Make the level name and type.
+    #
+    # @param [String, nil] value      @see #number_name
+    #
+    # @return [Array<(String,String)>]       Normalized name and entry type.
+    #
+    def name_type: (?String? value) -> [String, String]
+
+    # Reduce a hierarchy of numbering levels to a single value.
+    #
+    # @param [Number, Hash, nil] item   Default: `#level`.
+    #
+    # @return [Float]
+    #
+    def number_value: (?(symHash|Number)? item) -> Float
+
+    # Reduce a hierarchy of numbering levels to a pair of single values.
+    #
+    # @param [Number, Hash, nil] item   Default: `#level`.
+    #
+    # @return [Array<(Float,Float)>]           Min and max level numbers.
+    #
+    def number_range: (?(symHash|Number)? item) -> [Float, Float]
+
+    def to_s: () -> String
+
+    # Value needed to make instances usable from Enumerable#group_by.
+    #
+    # @return [Integer]
+    #
+    def hash: () -> Integer
+
+    # Operator needed to make instances usable from Enumerable#group_by.
+    #
+    # @param [Any] other
+    #
+    def eql?: (untyped other) -> bool
+
+    # Comparison operator required by the Comparable mixin.
+    #
+    # @param [Any] other
+    #
+    # @return [Integer]   -1 if self is later, 1 if self is earlier
+    #
+    def <=>: (untyped other) -> (-1 | 0 | +1)
+  end
+
+  # Indicate whether only canonical records will be used.
+  #
+  # @return [Boolean]
+  #
+  attr_reader canonical: bool
+
+  # An artificial record element representing the metadata common to all
+  # constituent file-level records.
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
+  attr_reader exemplar: Search::Record::MetadataRecord
+
+  # Initialize a new instance.
+  #
+  # @param [Array<Search::Record::MetadataRecord>, Search::Record::MetadataRecord, nil] src
+  # @param [Hash, nil] opt
+  #
+  def initialize: (Array[Search::Record::MetadataRecord]|Search::Record::MetadataRecord|nil src, ?symHash? opt) -> void
+
+  # Copy usable record(s) from the source.
+  #
+  # @param [Array<Search::Record::MetadataRecord>, Search::Record::MetadataRecord, nil] src
+  #
+  # @return [Array<Search::Record::MetadataRecord>]
+  #
+  # == Implementation Notes
+  # Because #problems uses #exemplar to check validity, it is (temporarily) set
+  # here as the copy of the first valid record encountered.
+  #
+  def copy_records: (Array[Search::Record::MetadataRecord]|Search::Record::MetadataRecord|nil src) -> Array[Search::Record::MetadataRecord]
+
+  # Copy the record, adding an item_number if appropriate.
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
+  def copy_record: (Search::Record::MetadataRecord rec) -> Search::Record::MetadataRecord
+
+  # Generate a series position number if one isn't already present.
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  # @param [Symbol]                         field
+  #
+  # @return [void]
+  #
+  def set_item_number: (Search::Record::MetadataRecord rec, Symbol field) -> void
+
+  # Re-arrange the contents of the identifier field .
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  # @param [Symbol]                         field
+  #
+  # @return [void]
+  #
+  # @see #identifier_sort_key
+  #
+  def copy_identifier: (Search::Record::MetadataRecord rec, Symbol field) -> void
+
+  # Produce a list of field mismatches which prevent *rec* from being eligible
+  # for inclusion in the instance.
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  #
+  # @return [Array<String>]           If empty, *rec* can be included.
+  #
+  # == Implementation Notes
+  # On its first invocation, #exemplar will be nil because it has not yet been
+  # assigned in #copy_records.
+  #
+  def problems: (Search::Record::MetadataRecord rec) -> strArray
+
+  # Create the exemplar as a copy of the first record, with #UNION_FIELDS
+  # replaced by combined information from all of the records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs   Default: #records.
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
+  def make_exemplar: (?Array[Search::Record::MetadataRecord]? recs) -> Search::Record::MetadataRecord
+
+  # Record fields honored by #title_field_union.
+  #
+  # These values show up in the exemplar as a conjunction of the unique record
+  # value(s).
+  #
+  # @type [Array<Symbol>]
+  #
+  UNION_FIELDS: symArray
+
+  # Combined information from the #UNION_FIELDS values all of the records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def title_field_union: (?Array[Search::Record::MetadataRecord] recs) -> symHash
+
+  # Record fields honored by #title_field_exclusive.
+  #
+  # These fields either show up in the exemplar because they are identical in
+  # all of the records *or* they show up in each individual file-level record.
+  #
+  # @type [Array<Symbol>]
+  #
+  EXCLUSIVE_FIELDS: symArray
+
+  # List fields which have more than one value across all of the records.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_field_exclusive: (?Array[Search::Record::MetadataRecord] recs) -> symArray
+
+  # Recursively convert configuration items from String to Symbol.
+  #
+  # @param [Hash, Array, String, Symbol, Any] item
+  #
+  # @return [Hash, Array, Symbol, Any]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload symbolize_values(string)
+  #   @param [String] string
+  #   @return [Symbol] String converted to symbol.
+  #
+  # @overload symbolize_values(non_string)
+  #   @param [Hash, Array, Any] non_string
+  #   @return [Hash, Array, Any] Same type, possibly a modified copy.
+  #
+  def self.symbolize_values: (anyHash item)  -> symHash
+                           | (anyArray item) -> symArray
+                           | (String item)   -> Symbol
+                           | (untyped item)  -> untyped
+
+  # hierarchy_paths
+  #
+  # @param [Hash, Array, Any] item
+  # @param [Array<Symbol>]    path
+  #
+  # @return [Array<Array<Array<(Symbol,Array<Symbol,Integer>)>>>]
+  #
+  def self.hierarchy_paths: (untyped item, ?symArray path) -> Array[[Symbol, Array[Symbol|Integer]]]
+
+  # Hierarchical field ordering.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  FIELD_HIERARCHY: Hash[Symbol,symHash]
+
+  # HIERARCHY_PATHS
+  #
+  # @type [Hash{Symbol=>Array<Symbol,Integer>}]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  HIERARCHY_PATHS: Hash[Symbol,Array[Symbol|Integer]]
+
+  # @private
+  DEBUG_HIERARCHY: bool
+
+  # All #records fields in hierarchical order.
+  #
+  # @param [Boolean] wrap             Wrap arrays (for XML rendering).
+  # @param [Hash]    pairs            Additional title-level field/value pairs.
+  #
+  # @return [Hash{Symbol=>Hash,Array<Hash>}]
+  #
+  def field_hierarchy: (?wrap: bool, **untyped pairs) -> Hash[Symbol,(symHash|Array[symHash])]
+
+  # get_format_counts
+  #
+  # @return [Hash{String=>Integer}]
+  #
+  def get_format_counts: () -> Hash[String,Integer]
+
+  # make_field_hierarchy
+  #
+  # @return [Hash{Symbol=>Hash,Array<Hash>}]
+  #
+  def make_field_hierarchy: () -> Hash[Symbol,(symHash|Array[symHash])]
+
+  # get_title_fields
+  #
+  # @param [Search::Record::MetadataRecord, nil] rec    Default: #exemplar
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def get_title_fields: (?Search::Record::MetadataRecord? rec) -> symHash
+
+  # get_part_fields
+  #
+  # @param [Array<Search::Record::MetadataRecord>]
+  #
+  # @return [Array<Hash>]
+  #
+  def get_part_fields: (?Array[Search::Record::MetadataRecord] recs) -> Array[symHash]
+
+  # get_file_fields
+  #
+  # @param [Array<Symbol, Search::Record::MetadataRecord>] group
+  #
+  # @return [Array<Hash>]
+  #
+  def get_file_fields: (*(Symbol|Search::Record::MetadataRecord) group) -> Array[symHash]
+
+  # get_fields
+  #
+  # @param [Search::Record::MetadataRecord, nil] rec
+  # @param [Array<Symbol>]                       group
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def get_fields: (Search::Record::MetadataRecord? rec, *Symbol group) -> symHash
+
+  # get_record_fields
+  #
+  # @param [Search::Record::MetadataRecord, Hash, nil] rec
+  # @param [Array<Symbol>, Symbol]                     fields
+  #
+  # @return [Hash]
+  #
+  def get_record_fields: (Search::Record::MetadataRecord? rec, Symbol|symArray fields) -> symHash
+
+  # To support XML rendering...
+  #
+  # @param [Hash, Any, nil] value
+  # @param [Array<Symbol>]  keys
+  #
+  # @return [Hash, Any]               The Array<(possibly modified)> *value*.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def wrap_array!: (untyped value, *Symbol keys) -> untyped
+
+  private
+
+  # Output fields of records which do not agree with the common title fields
+  # in the exemplar.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  #
+  # @return [void]
+  #
+  def validate_title_fields: (?Array[Search::Record::MetadataRecord] recs) -> void
+
+  public
+
+  # all_item_numbers
+  #
+  # @param [String, nil] separator
+  #
+  # @return [Array<String>]               If *separator* not given.
+  # @return [ActiveSupport::SafeBuffer]   If *separator* is HTML-safe.
+  # @return [String]                      If *separator* is a plain string.
+  #
+  def all_item_numbers: (?String? separator) -> (strArray | ActiveSupport::SafeBuffer | String)
+
+  # The fields and values for this instance as a Hash.
+  #
+  # If opt[:item] is present, this is used as an indicator that individual
+  # file metadata sections should be wrapped (i.e., that the intended output
+  # format is XML).
+  #
+  # @param [Hash] opt                 Passed to Api::Record#to_obj except:
+  #
+  # @option opt [Any] :item           If present, this is taken as an indicator
+  #                                     that arrays should be wrapped (for XML
+  #                                     rendering).
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def to_h: (**untyped opt) -> symHash
+end

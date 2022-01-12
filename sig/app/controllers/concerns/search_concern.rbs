@@ -1,0 +1,173 @@
+# Support methods for the "/search" controller.
+#
+module SearchConcern
+  extend ActiveSupport::Concern
+
+  include ApiConcern
+
+  include EngineConcern
+
+  include PaginationConcern
+
+  include SearchCallConcern
+
+  include LayoutHelper
+
+  include SearchHelper
+
+  # :nocov:
+  #include PaginationConcern
+
+  # Access the EMMA Unified Search API service.
+  #
+  # @return [SearchService]
+  #
+  def search_api: () -> SearchService
+
+  # index_search
+  #
+  # @param [Boolean] titles           If *false*, get records not titles.
+  # @param [Boolean] save             If *false*, do not save search terms.
+  # @param [Boolean] scores           Calculate experimental relevancy scores.
+  # @param [Symbol]  items            Specify method for #pagination_finalize.
+  # @param [Boolean] canonical        Passed to SearchTitleList#initialize.
+  # @param [Hash]    opt              Passed to SearchService#get_records.
+  #
+  # @return [Search::Message::SearchRecordList]
+  # @return [Search::Message::SearchTitleList]    If :titles is *true*.
+  #
+  # == Usage Notes
+  # If :titles is *true* then :canonical defaults to *true* on the production
+  # service and *false* everywhere else.
+  #
+  def index_search: (?titles: true, ?save: bool, ?scores: bool, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchTitleList
+                  | (titles: false, ?save: bool, ?scores: bool, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchRecordList
+
+  # index_record
+  #
+  # @param [Hash] **opt
+  #
+  # @return [Search::Message::SearchRecord]
+  #
+  # @see SearchService::Request::Records#get_record
+  #
+  def index_record: (**untyped opt) -> Search::Message::SearchRecord
+
+  # Indicate whether search calls should be recorded by default.
+  #
+  # @type [Boolean]
+  #
+  SAVE_SEARCHES: bool
+
+  # Indicate whether the current search should be recorded.
+  #
+  # @param [User, nil] user           Default: `#current_user`.
+  #
+  def save_search?: (?User? user) -> bool
+
+  # Record a search call.
+  #
+  # @param [User, nil]    user        Default: `#current_user`.
+  # @param [Array, #to_a] result      Default: @list.
+  # @param [Boolean]      force       Save even if #save_search? is *false*.
+  # @param [Hash]         parameters  Default: `#search_call_params`.
+  #
+  # @return [SearchCall]              New record.
+  # @return [nil]                     If saving was not possible.
+  #
+  def save_search: (?user: User?, ?result: (anyArray|_ToA[untyped])?, ?force: bool, **untyped parameters) -> SearchCall?
+
+  # Analyze the *list* object to generate the path for the next page of
+  # results.
+  #
+  # @param [Search::Message::SearchTitleList, Array<Search::Record::MetadataRecord>, nil] list
+  # @param [Hash, nil] url_params     Current request parameters.
+  #
+  # @return [String]                  Path to generate next page of results.
+  # @return [nil]                     If there is no next page.
+  #
+  # @see PaginationConcern#next_page_path
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def next_page_path: (?list: (Search::Message::SearchTitleList|Array[Search::Record::MetadataRecord])?, **untyped url_params) -> String?
+
+  # Eliminate values from keys that would be problematic when rendering the
+  # hash as JSON or XML.
+  #
+  # @param [Any] value
+  #
+  # @return [Any]                     Same type as *value*.
+  #
+  def sanitize_keys: (anyHash value)  -> anyHash
+                   | (anyArray value) -> (anyArray | untyped)
+                   | (String value)   -> (String | strArray)
+                   | (untyped value)  -> untyped
+
+  # Indicate whether the argument contains only valid identifiers.
+  #
+  # @param [String, Array<String>] value
+  #
+  def valid_identifiers?: (String|strArray value) -> bool
+
+  # Indicate whether the argument contains only valid identifiers and provide
+  # a list of individual validation problems.
+  #
+  # @param [String, Array<String>] value
+  #
+  # @return [Hash]
+  #
+  def validate_identifiers: (String|strArray value) -> { valid: bool, ids: strArray, errors: strArray }
+
+  # Extract the URL parameter which specifies an index record.
+  #
+  # @return [String]                  Value of `params[:id]`.
+  # @return [nil]                     No :id, :recordId found.
+  #
+  def set_record_id: () -> String?
+
+  # Re-cast URL parameters which are aliases for :identifier and redirect to
+  # the modified URL if found.
+  #
+  # @return [void]
+  #
+  def identifier_alias_redirect: () -> void
+
+  # Translate an identifier query to a keyword query if the search term does
+  # not look like a valid identifier.
+  #
+  # @return [void]
+  #
+  def invalid_identifier_redirect: () -> void
+
+  # Translate a keyword query for an identifier into an identifier query.
+  # For other query types, queries that include a standard identifier prefix
+  # (e.g. "isbn:...") are re-cast as :identifier queries.
+  #
+  # @return [void]
+  #
+  def identifier_keyword_redirect: () -> void
+
+  # Process the URL parameter for setting the immediate searches.
+  #
+  # @return [void]
+  #
+  def set_immediate_search: () -> void
+
+  # Process the URL parameter for setting the search engine URL.
+  #
+  # @return [void]
+  #
+  def set_search_engine: () -> void
+
+  # Process the URL parameter for setting the search style.
+  #
+  # @return [void]
+  #
+  def set_search_style: () -> void
+
+  private
+
+  #THIS_MODULE: untyped
+end

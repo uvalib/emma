@@ -61,6 +61,9 @@ class Search::Record::MetadataRecord < Search::Api::Record
   # @param [Faraday::Response, Model, Hash, String, nil] src
   # @param [Hash, nil]                                   opt
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def initialize(src = nil, opt = nil)
     opt ||= {}
     super(src, **opt)

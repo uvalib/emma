@@ -1,0 +1,37 @@
+# AwsS3::Message::Response
+#
+# @attr [Array<String>] messages
+#
+class AwsS3::Message::Response < AwsS3::Api::Message
+  include AwsS3::Shared::ResponseMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,String>, nil] src
+  # @param [Array<AwsS3::Message::SubmissionRequest,String>, nil]       sent
+  # @param [Hash]                                                       opt
+  #
+  def initialize: (Array[AwsS3::Message::SubmissionRequest|Model|String]? src, ?Array[AwsS3::Message::SubmissionRequest|String]? sent, **untyped opt) -> void
+
+  # Translate one or more objects or strings into submission ID's.
+  #
+  # @param [AwsS3::Message::SubmissionRequest, String, Symbol, Array, nil] src
+  #
+  # @return [Array<String>]
+  #
+  def sids_for: (AwsS3::Message::SubmissionRequest|String|Symbol|nil|Array[AwsS3::Message::SubmissionRequest|String|Symbol|nil] src) -> strArray
+
+  # Strategy for pre-wrapping message data before de-serialization.
+  #
+  # @type [Hash{Symbol=>String,Boolean}]
+  #
+  WRAP_FORMATS: Hash[Symbol,(String|bool)]
+
+  # Update *opt[:wrap]* according to the supplied formats.
+  #
+  # @param [Hash] opt                 May be modified.
+  #
+  # @return [void]
+  #
+  def apply_wrap!: (symHash opt) -> void
+end

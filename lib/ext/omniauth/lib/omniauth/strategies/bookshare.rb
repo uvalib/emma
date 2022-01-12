@@ -42,7 +42,9 @@ module OmniAuth
 
       args %i[client_id client_secret]
 
-      option :name,          name.demodulize.to_s.underscore
+      # noinspection RubyMismatchedArgumentType
+      option :name,          name&.demodulize&.to_s&.underscore
+      # noinspection RubyMismatchedArgumentType
       option :client_id,     BOOKSHARE_API_KEY
       option :client_secret, ''
       option :client_options, {
@@ -67,6 +69,11 @@ module OmniAuth
       # Direct access to the OmniAuth logger, automatically prefixed with this
       # strategy's name.
       #
+      # @param [Symbol] level
+      # @param [String] message
+      #
+      # @return [nil]
+      #
       # == Implementation Notes
       # Instead of attempting to override Configuration#default_logger this
       # override simply manages its own logger instance.
@@ -78,7 +85,8 @@ module OmniAuth
 
       # Performs the steps necessary to run the request phase of a strategy.
       #
-      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
       def request_call
         __ext_debug
@@ -139,7 +147,7 @@ module OmniAuth
 
       # User account details.
       #
-      # @return [Hash, nil]
+      # @return [Hash]
       #
       def info
         {
@@ -263,6 +271,7 @@ module OmniAuth
       # request_phase
       #
       # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [(Integer, Hash{String=>*}, Array<String>)]
       #
       # @see ::OAuth2::ClientExt#request
       #
@@ -272,6 +281,7 @@ module OmniAuth
         prms = authorize_params
         url  = code.authorize_url(prms)
         __ext_debug(req) { { authorize_url: url } }
+        # noinspection RubyMismatchedReturnType
         redirect(url)
       end
 
@@ -283,7 +293,8 @@ module OmniAuth
       # @raise [Errno::ETIMEDOUT]
       # @raise [SocketError]
       #
-      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
       #--
       # noinspection RubyScope
@@ -370,7 +381,7 @@ module OmniAuth
       # @param [String] location
       # @param [Hash]   log_extra
       #
-      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
       #--
       # noinspection RubyStringKeysInHashInspection
@@ -410,6 +421,7 @@ module OmniAuth
       #
       def build_access_token
         __ext_debug
+        # @type [String] code
         code = request.params['code']
         prms = token_params.to_hash(symbolize_keys: true)
         # noinspection RubyResolve
@@ -491,7 +503,7 @@ module OmniAuth
 
       # Generate an auth hash based on fixed information.
       #
-      # @param [ActionController::Parameters, OmniAuth::AuthHash, Hash, String] src
+      # @param [String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
       #
       # @return [OmniAuth::AuthHash, nil]
       #
@@ -577,7 +589,7 @@ module OmniAuth
 
       # Generate an auth hash based on fixed information.
       #
-      # @param [ActionController::Parameters, Hash, String, User] src
+      # @param [User, String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
       # @param [String, nil] token
       #
       # @return [OmniAuth::AuthHash, nil]

@@ -1,0 +1,130 @@
+# Manage user accounts as represented in the User table ("/account" pages).
+#
+# Note that these are not directly related to Bookshare accounts -- only to the
+# "reflections" of those accounts maintained in the local database.
+#
+# @see AccountHelper
+# @see file:app/views/account/**
+#
+class AccountController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include AccountConcern
+
+  # Database results for :index.
+  #
+  # @return [Array<User>]
+  # @return [nil]
+  #
+  attr_reader list: Array[User]?
+
+  # Database results for :show.
+  #
+  # @return [User, nil]
+  #
+  attr_reader item: User?
+
+  # == GET /account
+  #
+  # List all user accounts.
+  #
+  # @see AccountConcern#get_accounts
+  #
+  def index: () -> void
+
+  # == GET /account/show/:id
+  #
+  # Display details of an existing user account.
+  #
+  # @see AccountConcern#get_account
+  #
+  def show: () -> void
+
+  # == GET /account/new
+  #
+  # Display a form for creation of a new user account.
+  #
+  # @see AccountConcern#new_account
+  #
+  def new: () -> void
+
+  # == POST  /account/create
+  # == PUT   /account/create
+  # == PATCH /account/create
+  #
+  # Create a new user account.
+  #
+  # == Usage Notes
+  # In order to allow the database to auto-generate the record ID, the :id
+  # parameter will be rejected unless "force_id=true" is included in the URL
+  # parameters.
+  #
+  # @see AccountConcern#create_account
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def create: () -> void
+
+  # == GET /account/edit/:id
+  # == GET /account/edit/SELECT
+  # == GET /account/edit_select
+  #
+  # Display a form for modification of an existing user account.
+  #
+  # @see #show_menu?
+  # @see AccountConcern#get_account
+  #
+  def edit: () -> void
+
+  # == PUT   /account/update/:id
+  # == PATCH /account/update/:id
+  #
+  # Update an existing user account.
+  #
+  # @see AccountConcern#update_account
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def update: () -> void
+
+  # == GET /account/delete/:id
+  # == GET /account/delete/SELECT
+  # == GET /account/delete_select
+  #
+  # Select existing user account(s) to remove.
+  #
+  # If :id is "SELECT" then a menu of deletable items is presented.
+  #
+  # @see #show_menu?
+  # @see AccountConcern#find_accounts
+  #
+  def delete: () -> void
+
+  # == DELETE /account/destroy/:id
+  #
+  # Remove existing user account(s).
+  #
+  # @see AccountConcern#destroy_accounts
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def destroy: () -> void
+
+  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # than operating on an explicit set of identifiers.
+  #
+  # @param [Array<String,Integer>] ids  Default: `#id_params`.
+  #
+  def show_menu?: (?Array[String|Integer]? ids) -> bool
+end

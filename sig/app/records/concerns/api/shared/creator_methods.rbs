@@ -1,0 +1,66 @@
+# Methods mixed in to record elements related to authors, editors, etc.
+#
+module Api::Shared::CreatorMethods
+  include Api::Shared::CommonMethods
+
+  # The author(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def author_list: (**untyped opt) -> strArray
+
+  # The editor(s) of this catalog title.
+  #
+  # @return [Array<String>]
+  #
+  def editor_list: () -> strArray
+
+  # The composer(s) of this catalog title.
+  #
+  # @return [Array<String>]
+  #
+  def composer_list: () -> strArray
+
+  # The lyricist(s) of this catalog title.
+  #
+  # @return [Array<String>]
+  #
+  def lyricist_list: () -> strArray
+
+  # The arranger(s) of this catalog title.
+  #
+  # @return [Array<String>]
+  #
+  def arranger_list: () -> strArray
+
+  # The translator(s) of this catalog title.
+  #
+  # @return [Array<String>]
+  #
+  def translator_list: () -> strArray
+
+  # The creator(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def creators: (**untyped opt) -> strArray
+
+  # The author(s)/creator(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #contributor_list.
+  #
+  # @return [Array<String>]
+  #
+  def creator_list: (**untyped opt) -> strArray
+
+  # All contributor(s) to this catalog title, stripping terminal punctuation
+  # from each name where appropriate.
+  #
+  # @return [Array<String>]
+  #
+  def contributor_list: () -> strArray
+end

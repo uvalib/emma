@@ -9,6 +9,7 @@ list ||= @list || {}
 
 xml.instruct!
 xml.emma_tables do
+  # noinspection RubyMismatchedArgumentType
   xml.timestamp DateTime.now
   xml.count     list.size
   xml.tables do

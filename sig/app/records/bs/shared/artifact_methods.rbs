@@ -1,0 +1,15 @@
+# Methods mixed in to record elements related to artifacts.
+#
+module Bs::Shared::ArtifactMethods
+  # A method name for use where there may be confusion with `params[:format]`.
+  #
+  # @return [String]
+  #
+  def fmt: () -> String
+
+  # A method name for use where there may be confusion with `params[:format]`.
+  #
+  # @return [Array<String>]
+  #
+  def fmts: () -> strArray
+end

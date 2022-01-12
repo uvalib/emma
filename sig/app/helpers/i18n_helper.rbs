@@ -1,0 +1,144 @@
+# Methods supporting I18n lookup.
+#
+module I18nHelper
+  include Emma::Common
+
+  include ParamsHelper
+
+  # The descriptions of a model managed by a controller.
+  #
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
+  # @param [Hash]                opt          Passed to #i18n_interpolations.
+  #
+  # @return [Hash]
+  #
+  def units_of: (String|Symbol|nil controller, **untyped opt) -> symHash
+
+  # The applicable description of a model managed by a controller.
+  #
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
+  # @param [Hash]                opt          Passed to #i18n_interpolations
+  #                                             except for:
+  #
+  # @option opt [Boolean] :plural
+  # @option opt [Boolean] :capitalize
+  #
+  # @return [String]
+  #
+  def unit_of: (String|Symbol|nil controller, **untyped opt) -> symHash
+
+  # i18n_lookup_order
+  #
+  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] action
+  #
+  # @return [Array<Symbol>]
+  #
+  def i18n_lookup_order: (?(String|Symbol)? controller, ?(String|Symbol)? action) -> symArray
+
+  # Find the best match from config/locales for the given partial path, first
+  # looking under "en.emma.(controller)", then under 'en.emma.generic'.
+  #
+  # @param [String, Symbol, nil] controller
+  # @param [String, Array]       partial_path I18n tree below *controller*.
+  # @param [Array<String>]       defaults     Prepended to I18n :default.
+  # @param [Hash]                opt          Passed to #i18n_interpolations
+  #                                             except for:
+  #
+  # @option opt [String, Symbol, Boolean] :mode
+  # @option opt [Boolean]                 :one
+  # @option opt [Boolean]                 :many
+  #
+  # @return [Any]                             The specified value.
+  # @return [nil]                             No non-empty value was found.
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def i18n_lookup: (String|Symbol|nil controller, String|strArray partial_path, *String defaults, **untyped opt) -> untyped?
+
+  # Generate a hash of the most relevant button information with the form:
+  #
+  #   {
+  #     submit: {
+  #       enabled: {
+  #         label:   String,
+  #         tooltip: String,
+  #       },
+  #       disabled: {
+  #         label:   String,
+  #         tooltip: String,
+  #       },
+  #     },
+  #     ...
+  #   }
+  #
+  # The result will have all of the items for the given controller/action
+  # that contain and label and/or tooltip under them.
+  #
+  # @param [String, Symbol] controller
+  # @param [String, Symbol] action
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>String,Hash}}]
+  #
+  def i18n_button_values: (String|Symbol controller, String|Symbol action) -> Hash[Symbol,Hash[Symbol,symHash]]
+
+  # The variations on the description of a model item managed by a controller.
+  #
+  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] action
+  # @param [Hash]                opt  Passed to I18n#translate except for:
+  #
+  # @option opt [Boolean] :brief      Default.
+  # @option opt [Boolean] :long
+  # @option opt [Integer] :count      If == 1, only single; if != 1, only
+  #                                     plural; default: *nil*.
+  # @option opt [Boolean] :plural     If *true*, only plural; if *false*, only
+  #                                     single; default: *nil*.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  # == Implementation Notes
+  # This method does not have an embedded fallback value -- it assumes that
+  # some form of 'emma.generic.unit' will be found if there is no definition
+  # for the given controller.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def i18n_interpolations: (?controller: String|Symbol|nil, ?action: String|Symbol|nil, **untyped opt) -> Hash[Symbol,String]
+
+  # Parse ERB within the item found at the given config location.
+  #
+  # @param [String] path
+  # @param [Hash]   opt               Passed to I18n#translate.
+  #
+  # @return [Any]
+  #
+  def i18n_erb: (String path, **untyped opt) -> untyped
+
+  # Interpret ERB.
+  #
+  # @param [Any]                              val
+  # @param [Thread::Backtrace::Location, nil] loc
+  #
+  # @return [Any]
+  #
+  def erb_interpolate: (untyped val, ?Thread::Backtrace::Location? loc) -> untyped
+
+  private
+
+  # Interpret ERB within a string.
+  #
+  # @param [String]                           str
+  # @param [Thread::Backtrace::Location, nil] loc
+  #
+  # @return [String]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def erb_process: (String str, ?Thread::Backtrace::Location? loc) -> String
+
+  def self.included: (Module base) -> void
+end

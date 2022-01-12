@@ -35,7 +35,7 @@ module Record::Debugging
 
     # Show instance output.
     #
-    # @param [Array] parts
+    # @param [Array<Any>] parts
     # @param [Hash]  opt              Passed to ShowMethods#output.
     #
     def show(*parts, **opt)
@@ -114,6 +114,8 @@ module Record::Debugging
       #
       # @param [Array] parts
       # @param [Hash]  opt                Passed to ShowMethods#output.
+      #
+      # @return [nil]
       #
       def show(*parts, **opt)
         opt[:tag] ||= "#{name} |"

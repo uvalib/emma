@@ -1,0 +1,54 @@
+# Overrides to Api::Serializer::Associations for XML serializers.
+#
+module Api::Serializer::Xml::Associations
+  extend ActiveSupport::Concern
+
+  module ClassMethods
+    include Api::Serializer::Xml::Schema
+
+    # XML-specific operations for #attribute data elements.
+    #
+    # @param [String, Symbol]        name
+    # @param [String, Symbol, Class] element
+    # @param [Hash]                  options
+    #
+    # @return [void]
+    #
+    # This method replaces:
+    # @see Api::Serializer::Associations#prepare_attribute!
+    #
+    def prepare_attribute!: (Symbol|String name, Symbol|String|Class element, untyped options) -> void
+
+    # XML-specific operations for #has_one data elements.
+    #
+    # @param [String, Symbol]        name
+    # @param [String, Symbol, Class] element
+    # @param [Hash]                  options
+    #
+    # @return [void]
+    #
+    # This method replaces:
+    # @see Api::Serializer::Associations#prepare_one!
+    #
+    def prepare_one!: (Symbol|String name, Symbol|String|Class element, untyped options) -> void
+
+    # XML-specific operations for #has_many data elements.
+    #
+    # @param [String, Symbol]        wrapper
+    # @param [String, Symbol, Class] element
+    # @param [Hash]                  options
+    #
+    # @option options [Boolean] :wrap
+    #
+    # If options[:wrap] is *true* then it will be replaced by the *wrapper*;
+    # this forces a specific collection to be wrapped even when
+    # #WRAP_COLLECTIONS is *false*.
+    #
+    # @return [void]
+    #
+    # This method replaces:
+    # @see Api::Serializer::Associations#prepare_collection!
+    #
+    def prepare_collection!: (Symbol|String name, Symbol|String|Class element, untyped options) -> void
+  end
+end

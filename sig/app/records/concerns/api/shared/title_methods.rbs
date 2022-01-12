@@ -1,0 +1,124 @@
+# Methods mixed in to record elements related to catalog titles.
+#
+module Api::Shared::TitleMethods
+  include Api::Shared::CommonMethods
+
+  # :nocov:
+  #include Model
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+
+  # A unique identifier for this catalog title.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+
+  # Sanitizer for catalog title contents.
+  #
+  # @type [Sanitize]
+  #
+  CONTENT_SANITIZE: Sanitize
+
+  # The full title in a form that it can be used for comparisons.
+  #
+  # @return [String]
+  #
+  def normalized_title: () -> String
+
+  # The title and subtitle of this catalog title.
+  #
+  # @return [String]
+  #
+  def full_title: () -> String
+
+  # The year of publication.
+  #
+  # @return [Integer]
+  # @return [nil]                     If the value cannot be determined.
+  #
+  # @see Search::Shared::TitleMethods#date_fields
+  #
+  def year: () -> Integer?
+
+  # The synopsis or description with rudimentary formatting.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If the value cannot be determined.
+  #
+  # == Implementation Notes
+  # [1]  Repair malformed HTML entities.
+  # [2]  Transform one or more newlines into a pair of breaks.
+  # [3]  Normalize space characters.
+  # [4]  Strip leading/trailing spaces only after normalization.
+  # [5]  Eliminate sequences like "<p><p>".
+  # [6]  Normalize breaks, removing any leading spaces.
+  # [7]  Eliminate orphaned elements like "<p><br/>".
+  # [8]  Put explicit list elements on their own lines.
+  # [9]  Put implied list elements on their own lines.
+  # [10] Put *apparent* list elements on their own lines.
+  # [11] Treat a run of spaces as an implied paragraph break.
+  # [12] Special paragraph break.
+  # [13] Reduce runs of breaks to just a pair of breaks.
+  # [14] Remove leading breaks.
+  # [15] Remove trailing breaks.
+  #
+  def contents: () -> ActiveSupport::SafeBuffer?
+
+  # Reduce a string for comparison with another by eliminating characters to
+  # ignore for comparison.
+  #
+  # @param [String] value
+  #
+  # @return [String]
+  #
+  def significant: (String value) -> String
+
+  # A link to a title's thumbnail image.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def thumbnail_image: () -> String?
+
+  # A link to a title's cover image if present.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def cover_image: () -> String?
+
+  # Field(s) that may hold the title string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_fields: () -> symArray
+
+  # Field(s) that may hold the subtitle string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def subtitle_fields: () -> symArray
+
+  # Field(s) that may hold date information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def date_fields: () -> symArray
+
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def contents_fields: () -> symArray
+end

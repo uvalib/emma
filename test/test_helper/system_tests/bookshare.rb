@@ -284,6 +284,7 @@ module TestHelper::SystemTests::Bookshare
         found &&=
           %w(BsAllowsType).find { |k| (parts - API_ENUMERATIONS[k]).blank? } ||
           API_ENUMERATIONS.find { |k, values| break k if parts == values }
+        # noinspection RubyMismatchedReturnType
         found || type
 
       when /(array$)/, /(array\(multi\)$)/
@@ -293,6 +294,7 @@ module TestHelper::SystemTests::Bookshare
 
       else
         type = record_type(type)
+        # noinspection RubyMismatchedArgumentType
         type = "Bs::Record::#{type}" unless API_ENUMERATIONS.key?(type)
         type
     end

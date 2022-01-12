@@ -1,0 +1,11 @@
+module OmniAuth
+  module ExtensionDebugging
+    include Emma::Extension::Debugging
+
+    include Emma::Extension::NoDebugging
+
+    def __ext_log_leader: () -> String
+
+    def __ext_log_tag: () -> String
+  end
+end

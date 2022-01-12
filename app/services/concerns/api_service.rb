@@ -65,7 +65,7 @@ class ApiService
 
   # Remove all service instances.
   #
-  # @return [Hash{Class=>ApiService}]
+  # @return [void]
   #
   def self.clear
     table.clear
@@ -127,7 +127,7 @@ class ApiService
       # Remove the single instance of the class so that a fresh instance will
       # be generated the next time #instance is accessed.
       #
-      # @return [nil]
+      # @return [void]
       #
       def self.clear
         ApiService.table.delete(self)

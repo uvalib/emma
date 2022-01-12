@@ -1,0 +1,214 @@
+# Textual record descriptions.
+#
+module Record::Describable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  include Record::EmmaIdentification
+
+  extend ::Record::Describable
+
+  # Extract the interpolation methods defined in the current context indexed by
+  # their respective interpolation keys.
+  #
+  # E.g.: The method #describe_repo is added as { repo: :describe_repo }.
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def interpolation_table: () -> Hash[Symbol,Symbol]
+
+  # Replace #sprintf named references with the matching values extracted from
+  # *model* or *opt*.
+  #
+  # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
+  # then the interpolated value will follow the same case.
+  #
+  # @param [String, Any] text
+  # @param [Model, Any]  model
+  # @param [Hash]        opt
+  #
+  # @return [String]                  A (possibly modified) copy of *text*.
+  #
+  # @see Kernel#sprintf
+  #
+  def interpolations: (untyped text, untyped model, **untyped opt) -> String
+
+  # Process a lambda or method reference and return a final result string.
+  #
+  # @param [String, Symbol, Proc, nil] note
+  # @param [Model, Any]                model
+  # @param [Hash]                      opt
+  #
+  # @option opt [String, Symbol, Proc] :note  Only used if *note* is *nil*.
+  #
+  # @return [String]                  From #interpolations.
+  # @return [nil]                     If *note* is *nil*.
+  #
+  # @see Kernel#sprintf
+  #
+  def process_note: (?(String|Symbol|Proc)? note, untyped model, **untyped opt) -> String?
+
+  # Extract the interpolation methods defined in the current context indexed by
+  # their respective interpolation keys.
+  #
+  # E.g.: The method #describe_repo is added as { repo: :describe_repo }.
+  #
+  # @param [Class, Module, Any] mod   Default self or self.class.
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  # @see InterpolationMethods
+  #
+  def generate_interpolation_table: (?untyped? mod) -> Hash[Symbol,Symbol]
+
+  # Common interpolation methods.
+  #
+  # @see #generate_interpolation_table
+  #
+  # == Implementation Notes
+  # These are encapsulated in their own module to support extendability.
+  #
+  module InterpolationMethods
+    include Record::Describable
+
+    extend ::Record::Describable::InterpolationMethods
+
+    # A replacement value for '%{id}' in #sprintf formats.
+    #
+    # @param [Model, Any] model
+    # @param [Hash]       opt
+    #
+    # @return [String, nil]
+    #
+    # @see Record::Identification#id_value
+    #
+    def describe_id: (?untyped? model, **untyped opt) -> String?
+
+    # A replacement value for '%{repo}' or '%{repository}' in #sprintf formats.
+    #
+    # @param [Model, Any] model
+    # @param [Hash]       opt
+    #
+    # @return [String, nil]
+    #
+    # @see Record::EmmaIdentification#repository_name
+    #
+    def describe_repo: (?untyped? model, **untyped opt) -> String?
+
+    # A replacement value for '%{sid}' in #sprintf formats.
+    #
+    # @param [Model, Any] model
+    # @param [Hash]       opt
+    #
+    # @return [String, nil]
+    #
+    # @see Record::EmmaIdentification#sid_value
+    #
+    def describe_sid: (?untyped? model, **untyped opt) -> String?
+
+    # A replacement value for '%{submission}' in #sprintf formats.
+    #
+    # @param [Model, Any] model
+    # @param [Hash]       opt
+    #
+    # @return [String, nil]
+    #
+    # @see Record::EmmaIdentification#sid_value
+    #
+    def describe_submission: (?untyped? model, **untyped opt) -> String?
+
+    # A replacement value for '%{user}' in #sprintf formats.
+    #
+    # @param [Model, Any, nil] model
+    # @param [Hash]            _opt   Unused
+    #
+    # @return [String, nil]
+    #
+    # @see User#uid_value
+    #
+    def describe_user: (?untyped? model, **untyped) -> String?
+
+    # A replacement value for '%{user_id}' in #sprintf formats.
+    #
+    # @param [Model, Any, nil] model
+    # @param [Hash]            _opt   Unused
+    #
+    # @return [String, nil]
+    #
+    # @see User#id_value
+    #
+    def describe_user_id: (?untyped? model, **untyped) -> String?
+
+    # A textual description of the type of the Model instance for use as a
+    # replacement value for '%{text}' in #sprintf formats.
+    #
+    # @param [Model, Any] model
+    # @param [Hash]       opt
+    #
+    # @return [String]
+    #
+    # == Usage Notes
+    # The including class is expected to define an overriding class method.
+    #
+    def describe_type: (?untyped? model, **untyped opt) -> String
+
+    # A textual description of the status of the Model instance.
+    #
+    # @param [Model, Any] model
+    # @param [Hash]       opt
+    #
+    # @return [String]
+    #
+    # == Usage Notes
+    # The including class is expected to define an overriding class method.
+    #
+    def describe_status: (?untyped? model, **untyped opt) -> String
+
+    # self_for_instance_method
+    #
+    # @param [Symbol] meth            Calling method.
+    #
+    # @raise [RuntimeError]           If a class method is being defined.
+    #
+    # @return [self]                  If an instance method is being defined.
+    #
+    def self_for_instance_method: (Symbol meth) -> self
+  end
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::Describable
+
+    include Record::Describable::InterpolationMethods
+
+    # Creates an override to InterpolationMethods which includes all of its
+    # methods along with the methods defined within the block.
+    #
+    # @return [void]
+    #
+    def interpolation_methods: () { () -> untyped } -> void
+  end
+
+  # Methods which are only appropriate if the including class is an
+  # ApplicationRecord.
+  #
+  module InstanceMethods
+    include Record::Describable
+
+    include Record::Describable::InterpolationMethods
+
+    # @see Record::Describable#interpolation_table
+    def interpolation_table: () -> Hash[Symbol,Symbol]
+
+    # @see Record::Describable#interpolations
+    def interpolations: (untyped text, ?untyped? model, **untyped opt) -> String
+  end
+
+  private
+
+  THIS_MODULE: untyped
+
+  include InstanceMethods
+end

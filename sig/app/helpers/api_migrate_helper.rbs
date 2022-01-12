@@ -1,0 +1,97 @@
+# View helper methods for rendering API data migration results.
+#
+module ApiMigrateHelper
+  include UploadHelper
+
+  # Render an API data migration report.
+  #
+  # @param [Hash]    report
+  # @param [Integer] level            Heading level (default: 2 [:h2]).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_api_migration: (symHash report, ?Integer level) -> ActiveSupport::SafeBuffer
+
+  # Render details of the EMMA data migration for a specific database record.
+  #
+  # @param [Integer] rid              Record number.
+  # @param [Hash]    entry            Migration data for this record.
+  # @param [Integer] level            Heading level.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def api_record_changes: (Integer rid, symHash entry, Integer level) -> ActiveSupport::SafeBuffer
+
+  # Render a labelled section for `entry[part]` values.
+  #
+  # @param [Integer]        rid       Record number.
+  # @param [Hash]           entry     Migration data for this record.
+  # @param [Symbol, String] part      Section of *entry*.
+  # @param [Integer]        level     Heading level.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #api_field_changes
+  # @see #api_field_results
+  #
+  def api_field_section: (Integer rid, symHash entry, Symbol|String part, Integer level) -> ActiveSupport::SafeBuffer
+
+  # Render changes to EMMA data field contents as a table of fields with before
+  # and after values.
+  #
+  # @param [String, Symbol] column    Database column (e.g. :emma_data).
+  # @param [Hash]           fields    Each changed EMMA field and its values.
+  # @param [Integer]        level     Heading level.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def api_field_changes: (Symbol|String column, symHash fields, ?Integer? level) -> ActiveSupport::SafeBuffer
+
+  # Render the resulting value of a modified EMMA data field as a collapsible
+  # panel.
+  #
+  # @param [String, Symbol] column    Database column (e.g. :emma_data).
+  # @param [Hash]           fields    Database column contents.
+  # @param [Integer]        level     Heading level.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def api_field_results: (Symbol|String column, symHash fields, ?Integer? level) -> ActiveSupport::SafeBuffer
+
+  private
+
+  # Template for a change table line.
+  #
+  # @type [Hash]
+  #
+  ROW_PARTS: Hash[Symbol,String]
+
+  # Change table heading row elements.
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def change_table_head: () -> Array[ActiveSupport::SafeBuffer]
+
+  # Change table data row elements.
+  #
+  # @param [Symbol, String] field     EMMA data field.
+  # @param [Hash]           values    Old and new field values.
+  # @param [Integer]        row       Table line row number.
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def change_table_line: (Symbol|String field, symHash values, row: Integer row) -> Array[ActiveSupport::SafeBuffer]
+
+  # Change table row element.
+  #
+  # @param [Symbol, String] name      Element CSS class.
+  # @param [String]         value     Element content.
+  # @param [Integer]        row       Table row number.
+  # @param [Integer]        col       Table column number.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def change_table_cell: (Symbol|String name, String value, Integer row, Integer col) -> ActiveSupport::SafeBuffer
+
+  def self.included: (Module base) -> void
+end

@@ -1,0 +1,45 @@
+# Upload record methods to support management of EMMA metadata fields.
+#
+module Upload::EmmaDataMethods
+  include Emma::Json
+
+  include Upload::WorkflowMethods
+
+  # Core table columns.                                                         # NOTE: not relevant to Entry/Phase/Action.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_COLUMNS: symArray
+
+  def emma_data_column: () -> Symbol
+
+  def active_emma_data: () -> String?
+
+  def emma_record: () -> Search::Record::MetadataRecord
+
+  def emma_metadata: () -> symHash
+
+  def set_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+
+  def modify_emma_data: (symHash data, ?bool allow_blank) -> String
+
+  def edit_emma_record: () -> Search::Record::MetadataRecord
+
+  def edit_emma_metadata: () -> symHash
+
+  def set_edit_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+
+  def modify_edit_emma_data: (symHash data, ?bool allow_blank) -> String
+
+  def active_emma_record: () -> Search::Record::MetadataRecord
+
+  def active_emma_metadata: () -> symHash
+
+  def set_active_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+
+  def modify_active_emma_data: (symHash data, ?bool allow_blank) -> String
+
+  def make_emma_record: (symHash data) -> Search::Record::MetadataRecord
+
+  def parse_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> symHash
+end

@@ -1,0 +1,181 @@
+# View helper methods supporting manipulation of Model instance fields.
+#
+module ModelHelper::Fields
+  include ModelHelper::Links
+
+  include Emma::Json
+
+  include Emma::Unicode
+
+  # Field value used to explicitly indicate missing data.
+  #
+  # @type [String]
+  #
+  EMPTY_VALUE: String
+
+  # Field/value pairs.
+  #
+  # If *pairs* is not provided (as a parameter or through a block) then
+  # `item#field_names` is used.  If no block is provided and *pairs* is present
+  # then this function simply returns *pairs* as-is.
+  #
+  # @param [Model, Hash, Any] item
+  # @param [Hash, nil]        pairs
+  #
+  # @return [Hash]
+  #
+  # @yield [item] To supply additional field/value pairs based on *item*.
+  # @yieldparam  [Model] item         The supplied *item* parameter.
+  # @yieldreturn [Hash]               Result will be merged into *pairs*.
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def field_values: (Model|anyHash|untyped item, ?anyHash? pairs) { (Model) -> anyHash } -> anyHash
+
+  # field_pairs
+  #
+  # @param [Model, Hash, nil]    item
+  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
+  # @param [String, Symbol, nil] action       Default: `params[:action]`.
+  # @param [Hash, nil]           pairs        Except for #render_pair options.
+  # @param [Proc]                block        Passed to #field_values.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def field_pairs: ((Model|anyHash)? item, ?model: (String|Symbol)?, ?action: (String|Symbol)?, ?pairs: anyHash?) { (Model) -> anyHash } -> symHash
+
+  # EMMA data field prefixes with trailing underscore for #model_html_id.
+  #
+  # @type [Array<String>]
+  #
+  FIELD_PREFIX: strArray
+
+  # Suffixes indicating field names to be preserved in #model_html_id.
+  #
+  # @type [Array<String>]
+  #
+  RESERVED_SUFFIX: strArray
+
+  # Create a base for .field-* and .value-* classes.
+  #
+  # @param [Symbol, String, nil] base   Default: 'None'.
+  #
+  # @return [String]
+  #
+  def model_html_id: ((Symbol|String)? base) -> String
+
+  # Match a major section title in a table-of-contents listing.
+  #
+  # @type [Regexp]
+  #
+  # -
+  # noinspection SpellCheckingInspection
+  # +
+  SECTION_TITLE_RE: Regexp
+
+  # For use with String#scan to step through quote/attribute pairs.
+  #
+  # @type [Regexp]
+  #
+  BLURB_RE: Regexp
+
+  # Reformat descriptions which are structured in a way that one would find
+  # in MARC metadata.
+  #
+  # @param [String] text
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # Descriptions like this don't currently seem to appear very often in search
+  # results.  Even for those that do, they may not adhere to the expected
+  # layout of information, and this method may not be that beneficial in those
+  # cases.
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def format_description: (String text) -> strArray
+
+  # Seen in some IA records.
+  #
+  # @param [String]
+  #
+  # @return [String]
+  #
+  def double_quotes_to_sections: (String text) -> String
+
+  # Seen in some IA records.
+  #
+  # @param [String]
+  #
+  # @return [String]
+  #
+  def double_dash_to_sections: (String text) -> String
+
+  # Transform a string with newlines/semicolons into an array of lines.
+  #
+  # @param [String] text
+  #
+  # @return [Array<String>]
+  #
+  def format_multiline: (String text) -> strArray
+
+  VALID_LANGUAGE: String
+
+  # TODO: I18n
+  INVALID_LANGUAGE: String
+
+  # Wrap invalid language values in a <span>.
+  #
+  # @param [Any]     value            Value to check.
+  # @param [Boolean] code             If *true* display the ISO 639 code.
+  #
+  # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload mark_invalid_languages(value, code: false)
+  #   @param [String]        value
+  #   @param [Boolean]       code
+  #   @return [String, ActiveSupport::SafeBuffer, nil]
+  #
+  # @overload mark_invalid_languages(array, code: false)
+  #   @param [Array<String>] array
+  #   @param [Boolean]       code
+  #   @return [Array<String, ActiveSupport::SafeBuffer>]
+  #
+  def mark_invalid_languages: (strArray value, ?code: bool) -> Array[ActiveSupport::SafeBuffer|String]
+                            | (String value,   ?code: bool) -> (ActiveSupport::SafeBuffer | String)
+
+  # Wrap invalid identifier values in a <span>.
+  #
+  # @param [Any] value                Value to check.
+  #
+  # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload mark_invalid_identifiers(value)
+  #   @param [String]        value
+  #   @return [String, ActiveSupport::SafeBuffer]
+  #
+  # @overload mark_invalid_identifiers(array)
+  #   @param [Array<String>] array
+  #   @return [Array<String, ActiveSupport::SafeBuffer>]
+  #
+  def mark_invalid_identifiers: (strArray value) -> Array[ActiveSupport::SafeBuffer|String]
+                              | (String value)   -> (ActiveSupport::SafeBuffer | String)
+
+  private
+
+  def self.included: (Module base) -> void
+end

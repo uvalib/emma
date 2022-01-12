@@ -54,7 +54,7 @@ module IngestService::Properties
 
   # Federated Ingest API key.
   #
-  # @return [String]
+  # @return [String, nil]
   #
   # @see #INGEST_API_KEY
   #

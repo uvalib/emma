@@ -467,9 +467,11 @@ class ApiMigrate
     #
     # @return [Array<String>, String]
     #
+    #--
+    # noinspection RubyMismatchedReturnType
+    #++
     def normalize_creator(value)
       if value.is_a?(Array)
-        # noinspection RubyMismatchedReturnType
         value.flat_map { |v| normalize_creator(v) }.compact.uniq
       else
         BOGUS_CREATOR.find do |match|
@@ -867,6 +869,7 @@ class ApiMigrate
     @report = report.is_a?(Hash) ? report : ({} unless false?(report))
     @log    = log.present?
     @name   = key ? migration_name(key) : CONFIGURATION_ENTRY.keys.last
+    # noinspection RubyMismatchedArgumentType
     error   =
       if !@name
         "invalid configuration name #{key.inspect}"
@@ -966,6 +969,7 @@ class ApiMigrate
   def transform!(record, column:, **opt)
     log, rpt = opt.values_at(:log, :report)
     if rpt
+      # noinspection RubyNilAnalysis
       rpt[:table]  ||= record_class.name.tableize
       rpt[:record] ||= {}
       opt[:report] = rpt = rpt[:record][record[:id]] ||= {}
@@ -974,6 +978,7 @@ class ApiMigrate
     cols = Array.wrap(column).each { |col| super(record, column: col, **opt) }
     flds = (record.slice(*cols).compact if rpt || log)
     flds.each { |fld, dat| $stderr.puts "\n#{fld.inspect} =\n#{dat}" } if log
+    # noinspection RubyMismatchedReturnType
     rpt[:results] = flds.transform_values { |v| safe_json_parse(v) }   if rpt
     record
   end

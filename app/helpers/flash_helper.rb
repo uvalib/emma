@@ -326,6 +326,8 @@ module FlashHelper
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
+  # @return [String]
+  #
   # @see #flash_format
   #
   def flash_xhr(*args, **opt)

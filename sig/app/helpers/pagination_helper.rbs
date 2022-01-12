@@ -1,0 +1,387 @@
+# View helper methods supporting pagination.
+#
+module PaginationHelper
+  include HtmlHelper
+
+  include ParamsHelper
+
+  include ConfigurationHelper
+
+  # Configuration for pagination control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  PAGINATION_CONFIG: symHash
+
+  # Separator between pagination controls.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PAGINATION_SEPARATOR: ActiveSupport::SafeBuffer
+
+  # Properties for the "start over" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # == Usage Notes
+  # To link to the base search without any search terms (a.k.a. "null search").
+  #
+  START_OVER: Hash[Symbol,String]
+
+  # Properties for the "first page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  FIRST_PAGE: Hash[Symbol,String]
+
+  # Properties for the "last page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  LAST_PAGE: Hash[Symbol,String]
+
+  # Properties for the "previous page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  PREV_PAGE: Hash[Symbol,String]
+
+  # Properties for the "next page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  NEXT_PAGE: Hash[Symbol,String]
+
+  # Extract the number of "items" reported by an object.
+  #
+  # (For aggregate items, this is the number of aggregates as opposed to the
+  # number of records from which they are composed.)
+  #
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Any]                                       default
+  #
+  # @return [Numeric]
+  #
+  # -
+  # noinspection RubyNilAnalysis, RailsParamDefResolve
+  # +
+  def item_count: (untyped value, ?default: untyped) -> Numeric
+
+  # Default results per page for the current controller/action.
+  #
+  # @return [Integer]
+  #
+  def default_page_size: () -> Integer
+
+  # Default results per page for the given controller/action.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Symbol] :controller
+  # @option opt [Symbol] :action
+  #
+  # @return [Integer]
+  #
+  def get_page_size: (**untyped opt) -> Integer
+
+  # Get the number of results per page.
+  #
+  # @return [Integer]
+  #
+  def page_size: () -> Integer
+
+  # Set the number of results per page.
+  #
+  # @param [Integer] value
+  #
+  # @return [Integer]
+  #
+  def page_size=: (Integer value) -> Integer
+
+  # Get the path to the first page of results.
+  #
+  # @return [String]                  URL for the first page of results.
+  # @return [nil]                     If @first_page is unset.
+  #
+  def first_page: () -> String?
+
+  # Set the path to the first page of results.
+  #
+  # @param [String, Symbol] value
+  #
+  # @return [String]                  New URL for the first page of results.
+  # @return [nil]                     If @first_page is unset.
+  #
+  def first_page=: (String|Symbol value) -> String?
+
+  # Get the path to the last page of results.
+  #
+  # @return [String]                  URL for the last page of results.
+  # @return [nil]                     If @last_page is unset.
+  #
+  def last_page: () -> String?
+
+  # Set the path to the last page of results.
+  #
+  # @param [String, Symbol] value
+  #
+  # @return [String]                  New URL for the last page of results.
+  # @return [nil]                     If @last_page is unset.
+  #
+  def last_page=: (String|Symbol value) -> String?
+
+  # Get the path to the next page of results
+  #
+  # @return [String]                  URL for the next page of results.
+  # @return [nil]                     If @next_page is unset.
+  #
+  def next_page: () -> String?
+
+  # Set the path to the next page of results
+  #
+  # @param [String, Symbol] value
+  #
+  # @return [String]                  New URL for the next page of results.
+  # @return [nil]                     If @next_page is unset.
+  #
+  def next_page=: (String|Symbol value) -> String?
+
+  # Get the path to the previous page of results.
+  #
+  # @return [String]                  URL for the previous page of results.
+  # @return [nil]                     If @prev_page is unset.
+  #
+  def prev_page: () -> String?
+
+  # Set the path to the previous page of results.
+  #
+  # @param [String, Symbol] value
+  #
+  # @return [String]                  New URL for the previous page of results.
+  # @return [nil]                     If @prev_page is unset.
+  #
+  def prev_page=: (String|Symbol value) -> String?
+
+  # Get the offset of the current page into the total set of results.
+  #
+  # @return [Integer]
+  #
+  def page_offset: () -> Integer
+
+  # Set the offset of the current page into the total set of results.
+  #
+  # @param [Integer] value
+  #
+  # @return [Integer]
+  #
+  def page_offset=: (Integer value) -> Integer
+
+  # Get the current page of result items.
+  #
+  # @return [Array]
+  #
+  def page_items: () -> Array[Model|symHash]
+
+  # Set the current page of result items.
+  #
+  # @param [Array] values
+  #
+  # @return [Array]
+  #
+  def page_items=: (Array[Model|symHash] values) -> Array[Model|symHash]
+
+  # Get the total results count.
+  #
+  # @return [Integer]
+  #
+  def total_items: () -> Integer
+
+  # Set the total results count.
+  #
+  # @param [Integer] value
+  #
+  # @return [Integer]
+  #
+  def total_items=: (Integer value) -> Integer
+
+  # Interpret *value* as a URL path or a JavaScript action.
+  #
+  # @param [String, Symbol] value     One of [:back, :forward, :go].
+  # @param [Integer, nil]   page      Passed to #page_history for *action* :go.
+  #
+  # @return [String]                  A value usable with 'href'.
+  # @return [nil]                     If *value* is invalid.
+  #
+  def page_path: (String|Symbol value, ?Integer? page) -> String?
+
+  # A value to use in place of a path in order to engage browser history.
+  #
+  # @param [Symbol]       action      One of [:back, :forward, :go].
+  # @param [Integer, nil] page        History page if *directive* is :go.
+  #
+  # @return [String]
+  #
+  def page_history: (String|Symbol action, ?Integer? page) -> String
+
+  # Page number display element.
+  #
+  # @param [Integer]   page
+  # @param [Hash, nil] opt            Options to .page-count wrapper element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *count* is negative.
+  #
+  def page_number: (Integer page, ?symHash? opt) -> ActiveSupport::SafeBuffer?
+
+  # Page count display element.
+  #
+  # @param [Integer, nil] count
+  # @param [Integer, nil] total
+  # @param [String]       unit
+  # @param [Hash]         opt         Options to .search-count wrapper element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_count: (Integer? count, ?Integer? total, ?unit: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Placeholder for an item that would have been a link if it had a path.
+  #
+  # @param [String, Hash, nil] fp     Passed to #pagination_first.
+  # @param [String, Hash, nil] pp     Passed to #pagination_prev.
+  # @param [String, Hash, nil] np     Passed to #pagination_next.
+  # @param [String, nil]       sep    Passed to #pagination_separator.
+  # @param [Hash]              opt    For .pagination-controls container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_controls: (?fp: (String|symHash)?, ?pp: (String|symHash)?, ?np: (String|symHash)?, ?sep: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Page number label for the given controller/action.
+  #
+  # @param [Symbol]  controller       Default: `params[:controller]`.
+  # @param [Hash]    opt              Passed to #config_lookup.
+  #
+  # @return [String]                  The specified value.
+  # @return [nil]                     No non-empty value was found.
+  #
+  def get_page_number_label: (?controller: Symbol?, **untyped opt) -> String?
+
+  # Page count label for the given controller/action.
+  #
+  # @param [Symbol]  controller       Default: `params[:controller]`.
+  # @param [Hash]    opt              Passed to #config_lookup; in particular:
+  #
+  # @option opt [Integer] :count
+  #
+  # @return [String]                  The specified value.
+  # @return [nil]                     No non-empty value was found.
+  #
+  def get_page_count_label: (?controller: Symbol?, **untyped opt) -> String?
+
+  # pagination_separator
+  #
+  # @param [String, nil] content      Default: `#PAGINATION_SEPARATOR`.
+  # @param [Hash]        opt
+  #
+  # @see #html_span
+  #
+  def pagination_separator: (?String? content, **untyped opt) -> String
+
+  # pagination_first
+  #
+  # @param [String, Hash, nil] path   Default: `#first_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_first: (?(String|symHash)? path, **untyped opt) -> String?
+
+  # pagination_prev
+  #
+  # @param [String, Hash, nil] path   Default: `#prev_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_prev: (?(String|symHash)? path, **untyped opt) -> String?
+
+  # pagination_next
+  #
+  # @param [String, Hash, nil] path   Default: `#next_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_next: (?(String|symHash)? path, **untyped opt) -> String?
+
+  # pagination_last
+  #
+  # @param [String, Hash, nil] path   Default: `#last_page`.
+  # @param [Hash]              opt
+  #
+  # @see #pagination_control
+  #
+  def pagination_last: (?(String|symHash)? path, **untyped opt) -> String?
+
+  # A pagination control link or a non-actionable placeholder if *path* is not
+  # valid.
+  #
+  # @param [String, Hash]      label
+  # @param [String, Hash, nil] path
+  # @param [Hash]              opt    Passed to #link_to or <span> except for:
+  #
+  # @option [String] :prefix
+  # @option [String] :suffix
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_control: (String|symHash label, String|symHash|nil path, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_first_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_first_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_prev_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_prev_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_next_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_next_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_last_icon
+  #
+  # @param [Hash] opt
+  #
+  # @see #pagination_icon
+  #
+  def pagination_last_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A decorative visual representation of a control action.
+  #
+  # @param [String, nil] content
+  # @param [Hash]        opt
+  #
+  # @see #html_span
+  #
+  def pagination_icon: (?String? content, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

@@ -1,0 +1,5 @@
+# A DAISY file object.
+#
+class FileObject::Daisy < FileObject::Ocf
+  include FileFormat::Daisy
+end

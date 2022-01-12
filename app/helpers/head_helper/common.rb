@@ -37,7 +37,7 @@ module HeadHelper::Common
   # @param [String] src
   # @param [Hash]   opt
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   # == Implementation Notes
   # Note that 'reload' is the documented value for 'data-turbolinks-track'

@@ -1,0 +1,24 @@
+# Methods mixed in to record elements related to periodicals.
+#
+module Bs::Shared::PeriodicalMethods
+  # :nocov:
+  #include Model
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+
+  # Return the unique identifier for the represented periodical.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+end

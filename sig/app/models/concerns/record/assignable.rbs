@@ -1,0 +1,93 @@
+# Methods relating to record field assignment.
+#
+module Record::Assignable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  include Record::Identification
+
+  include SqlMethods
+
+  # :nocov:
+  #include ActiveRecord::Core
+
+  # Option parameters for #attribute_options:
+  #
+  # * :from     A record used to provide initial field values.
+  # * :user     Transformed into a :user_id value.
+  # * :force    Allow these fields unconditionally.
+  # * :except   Ignore these fields (default: []).
+  # * :only     Not limited if *false* (default: `#field_name`).
+  # * :blanks   If *true*, allow blanks (default: *false*).
+  #
+  ATTRIBUTE_OPTIONS_OPTS: symArray
+
+  # Called to prepare values to be used for assignment to record attributes.
+  #
+  # @param [Hash, ActionController::Parameters, Model, nil] attr
+  # @param [Hash, nil]                                      opt
+  #
+  # @option attr [ApplicationRecord]            :from
+  # @option attr [User, String, Integer]        :user
+  # @option attr [Symbol, Array<Symbol>]        :force
+  # @option attr [Symbol, Array<Symbol>]        :except
+  # @option attr [Symbol, Array<Symbol>, false] :only
+  # @option attr [Boolean]                      :blanks
+  #
+  # @raise [RuntimeError]             If the type of *attr* is invalid.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  # @see #ATTRIBUTE_OPTIONS_OPTS
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def attribute_options: (Model|prmHash|nil attr, ?symHash? opt) -> symHash
+
+  # The fields that will be accepted by #attribute_options.
+  #
+  # @return [Array<Symbol>]
+  #
+  def allowed_keys: () -> symArray
+
+  # The fields that will be ignored by #attribute_options from a source
+  # passed in via the :from parameter.
+  #
+  # @return [Array<Symbol>]
+  #
+  def ignored_keys: () -> symArray
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::Assignable
+  end
+
+  # Methods which are only appropriate if the including class is an
+  # ApplicationRecord.
+  #
+  module InstanceMethods
+    include Record::Assignable
+
+    # :nocov:
+    #include ActiveRecord::AttributeAssignment
+
+    # Update database fields, including the structured contents of JSON fields.
+    #
+    # @param [Hash, ActionController::Parameters, Model, nil] attr
+    # @param [Hash, nil]                                      opt
+    #
+    # @return [void]
+    #
+    # @see #attribute_options
+    # @see ActiveModel::AttributeAssignment#assign_attributes
+    #
+    def assign_attributes: (Model|prmHash|nil attr, ?symHash? opt) -> void
+  end
+
+  private
+
+  include InstanceMethods
+end

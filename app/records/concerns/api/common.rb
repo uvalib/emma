@@ -372,7 +372,7 @@ class IsoDuration < ScalarType
     # @param [Float, Integer, nil] value2
     # @param [Integer]             multiplier
     #
-    # @return [(Float, Any)]
+    # @return [Array<(Float, Any)>]
     #
     def fractional(value1, value2, multiplier)
       value1, fraction = value1.divmod(1)
@@ -1040,6 +1040,7 @@ class IsoLanguage < ScalarType
       if entries.size <= 1
         entries.first
       else
+        # @type [ISO_639] entry
         entries.find do |entry|
           (value == entry.alpha3) ||
             entry.english_name.downcase.split(/\s*;\s*/).any? do |part|

@@ -1,0 +1,32 @@
+# Bs::Message::MyAccountSummary
+#
+# @attr [Bs::Record::Address]       address
+# @attr [Boolean]                   canDownload
+# @attr [String]                    dateOfBirth
+# @attr [Bs::Record::Name]          guardian
+# @attr [Boolean]                   hasAgreement
+# @attr [Array<Bs::Record::Link>]   links
+# @attr [Bs::Record::Name]          name
+# @attr [String]                    phoneNumber
+# @attr [BsProofOfDisabilityStatus] proofOfDisabilityStatus
+# @attr [Bs::Record::StudentStatus] studentStatus
+# @attr [BsSubscriptionStatus]      subscriptionStatus
+# @attr [String]                    username
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_myaccount_summary
+#
+# == Implementation Notes
+# Similar to Bs::Message::UserAccount, but without the following fields:
+#   :allowAdultContent
+#   :deleted
+#   :emailAddress
+#   :language
+#   :locked
+#   :roles
+#   :site
+#
+class Bs::Message::MyAccountSummary < Bs::Api::Message
+  include Bs::Shared::AccountMethods
+
+  include Bs::Shared::LinkMethods
+end

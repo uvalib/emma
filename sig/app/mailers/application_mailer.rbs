@@ -1,0 +1,4 @@
+# @note Currently unused
+#
+class ApplicationMailer < ActionMailer::Base
+end

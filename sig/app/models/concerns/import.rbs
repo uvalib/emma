@@ -1,0 +1,238 @@
+# Common bulk import methods.
+#
+module Import
+  include Emma::Common
+
+  # The prefix applied to imported field names that have not otherwise been
+  # assigned a field name to be used within :emma_data.
+  #
+  # @type [String]
+  #
+  DEFAULT_NAME_PREFIX: String
+
+  # Convert imported data fields.
+  #
+  # @param [Hash] fields
+  #
+  # @return [Hash]
+  #
+  # == Usage Notes
+  # The caller should take care to ensure that *fields* only contains import
+  # fields; if database attributes, or :file_data/:emma_data fields appear here
+  # they will be treated as import fields to which the default transformation
+  # will be applied.
+  #
+  def translate_fields: (anyHash fields) -> symHash
+
+  # Import schema.
+  #
+  # @return [Hash]
+  #
+  def schema: () -> symHash
+
+  # String prepended to an imported data key which turns it into a key that can
+  # be included in data storage.
+  #
+  # @return [String]
+  #
+  def name_prefix: () -> String
+
+  # Translate an import field name to a destination field name.
+  #
+  # @param [Symbol, String] k
+  # @param [String, nil]    prefix
+  #
+  # @return [Symbol]
+  #
+  def default_name: (Symbol|String k, ?String prefix) -> Symbol
+
+  # Transform a value into a name that can be used as a symbolized hash key.
+  #
+  # @param [Any] v
+  #
+  # @return [Symbol]
+  #
+  def hash_key: (untyped v) -> Symbol
+
+  # Transform a data item.
+  #
+  # Strings containing ";" are interpreted as multi-valued items; these are
+  # transformed into an array.
+  #
+  # Arrays without multiple items are transformed into strings.
+  #
+  # @param [Any] v
+  #
+  # @return [Array, String, Integer, Boolean, nil]
+  #
+  def values: (untyped v) -> untyped
+
+  # Transform a data item into an array unconditionally.
+  #
+  # @param [Any] v
+  #
+  # @return [Array]
+  #
+  # @yield [element] Allow replacement of each array element.
+  # @yieldparam [String] element
+  # @yieldreturn [String] The replacement element.
+  #
+  def array_value: (untyped v) { (untyped element) -> untyped } -> anyArray
+
+  # Transform a data item into a string.
+  #
+  # @param [Any]    v
+  # @param [String] join              Connector if *v* is an array.  If *join*
+  #                                     is set to *nil* then only the first
+  #                                     array element is selected.
+  # @param [Boolean] first            If *true* then only the first array
+  #                                     element is selected.
+  #
+  # @return [String, nil]
+  #
+  def string_value: (untyped v, ?join: String, ?first: bool) -> String?
+
+  # Transform a data item into a counting number (1 or greater).
+  #
+  # @param [Any] v
+  #
+  # @return [Integer, nil]
+  #
+  def ordinal_value: (untyped v) -> Integer?
+
+  # Transform a date data item into a four-digit year.
+  #
+  # @param [String] v
+  #
+  # @return [String, nil]
+  #
+  def year_value: (untyped v) -> String?
+
+  # Transform a data item into one or more three-character ISO 639 values.
+  #
+  # @param [Any] v
+  #
+  # @return [Array<String>]
+  #
+  def language_values: (untyped v) -> strArray
+
+  # Transform a data item into one or more DOI identifiers.
+  #
+  # @param [Any] v
+  #
+  # @return [Array<String>]
+  #
+  def doi_values: (untyped v) -> strArray
+
+  # Transform a data item into one or more ISBN identifiers.
+  #
+  # @param [Any] v
+  #
+  # @return [Array<String>]
+  #
+  def isbn_values: (untyped v) -> strArray
+
+  # Transform a data item into one or more ISSN identifiers.
+  #
+  # @param [Any] v
+  #
+  # @return [Array<String>]
+  #
+  def issn_values: (untyped v) -> strArray
+
+  # Transform a data item into one or more LCCN identifiers.
+  #
+  # @param [Any] v
+  #
+  # @return [Array<String>]
+  #
+  def lccn_values: (untyped v) -> strArray
+
+  # Transform a data item into one or more identifiers of the form expected by
+  # :dc_identifier and :dc_relation.
+  #
+  # @param [Any]           v
+  # @param [String, #to_s] prefix
+  #
+  # @return [Array<String>]
+  #
+  def identifier_values: (untyped v, String|_ToStr prefix) -> strArray
+
+  # Transform a data item into an EnumType value.
+  #
+  # @param [Any]   v
+  # @param [Class] type               A subclass of EnumType.
+  #
+  # @return [String, nil]
+  #
+  def enum_value: (untyped v, Class `type`) -> String?
+
+  # Transform a data item into an array of EnumType values.
+  #
+  # @param [Any]   v
+  # @param [Class] type               A subclass of EnumType.
+  #
+  # @return [Array<String>]
+  #
+  def enum_values: (untyped v, Class `type`) -> strArray
+
+  # Referenced in the schema as a translation target that indicates that the
+  # associated import field should be skipped and not included in data stored
+  # in the record.
+  #
+  # @param [Any] k                    Imported field being skipped.
+  # @param [Any] v
+  #
+  # @return [Array<(nil,nil)>]
+  #
+  def skip: (?untyped? k, ?untyped? v) -> [nil, nil]
+
+  # Default transformation.
+  #
+  # @param [Symbol, String] k
+  # @param [Any]            v
+  # @param [String]         prefix
+  #
+  # @return [Array<(Symbol,Any)>]
+  # @return [Array<(Symbol,Array)>]
+  #
+  def default: (untyped k, untyped v, ?String prefix) -> [Symbol, untyped]
+
+  # Normalize single-element arrays to scalar values and sort the fields for
+  # easier comparison when reviewing/debugging.
+  #
+  # @param [Hash] fields
+  #
+  # @return [Hash]
+  #
+  def normalize_results: (symHash fields) -> symHash
+
+  # Apply the appropriate method for the given import field.
+  #
+  # @param [Symbol, String] k         Import field name.
+  # @param [Any]            v         Import field value.
+  #
+  # @return [Array<(Symbol,Any)>]
+  #
+  def resolve: (Symbol|String k, untyped v) -> [Symbol, untyped]
+
+  # get_importer
+  #
+  # @param [Module, String, Symbol] mod
+  #
+  # @return [Module, nil]
+  #
+  def self.get_importer: (Module|String|Symbol mod) -> Module?
+
+  include Emma::Debug::OutputMethods
+
+  # __debug_import
+  #
+  # @param [String, Symbol] label
+  # @param [Any]            k
+  # @param [Any]            v
+  #
+  # @return [nil]
+  #
+  def __debug_import: (String|Symbol label, untyped k, untyped v) -> nil
+end

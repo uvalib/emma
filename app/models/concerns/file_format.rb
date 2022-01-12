@@ -393,6 +393,7 @@ module FileFormat
   # @return [String, Array<String>]
   #
   def self.normalize_language(value)
+    # noinspection RubyMismatchedArgumentType
     return value.map { |v| send(__method__, v) }.uniq if value.is_a?(Array)
     # noinspection RubyMismatchedArgumentType
     IsoLanguage.find(value)&.alpha3 || value

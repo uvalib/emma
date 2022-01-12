@@ -1,0 +1,5 @@
+# A DAISY AUDIO file object.
+#
+class FileObject::DaisyAudio < FileObject::Daisy
+  include FileFormat::DaisyAudio
+end

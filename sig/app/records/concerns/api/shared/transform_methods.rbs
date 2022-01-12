@@ -1,0 +1,31 @@
+# Methods supporting transformations of data fields.
+#
+module Api::Shared::TransformMethods
+  include Api::Shared::IdentifierMethods
+
+  include Api::Shared::DateMethods
+
+  extend ::Api::Shared::TransformMethods
+
+  # Transform data fields.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  #
+  # @return [void]
+  #
+  def normalize_data_fields!: (?symHash? data) -> void
+
+  # Old ("deprecated") fields paired with the new field name.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  RENAMED_FIELDS: Hash[Symbol,Symbol]
+
+  # Back-fill "deprecated" fields.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  #
+  # @return [void]
+  #
+  def api_transitions!: (?symHash? data) -> void
+end

@@ -1,0 +1,135 @@
+class UploadWorkflow::Single::Create < UploadWorkflow::Single
+  include UploadWorkflow::Create
+end
+
+module UploadWorkflow::Single::Create::Errors
+  include UploadWorkflow::Single::Errors
+end
+
+module UploadWorkflow::Single::Create::Properties
+  include UploadWorkflow::Single::Properties
+
+  include UploadWorkflow::Single::Create::Errors
+end
+
+module UploadWorkflow::Single::Create::External
+  include UploadWorkflow::Single::External
+
+  include UploadWorkflow::Single::Create::Properties
+
+  include UploadWorkflow::Single::Create::Events
+end
+
+module UploadWorkflow::Single::Create::Data
+  include UploadWorkflow::Single::Data
+
+  include UploadWorkflow::Single::Create::External
+end
+
+# New and overridden action methods specific to single-entry submission.
+#
+module UploadWorkflow::Single::Create::Actions
+  include UploadWorkflow::Single::Actions
+
+  include UploadWorkflow::Single::Create::Data
+
+  def wf_finalize_submission: (*untyped event_args) -> void
+
+  # wf_cancel_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::Actions#wf_remove_items
+  #
+  def wf_cancel_submission: (*untyped event_args) -> void
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::External#add_to_index
+  #
+  def wf_index_update: (*untyped _event_args) -> void
+end
+
+module UploadWorkflow::Single::Create::Simulation
+  include UploadWorkflow::Single::Simulation
+end
+
+module UploadWorkflow::Single::Create::Events
+  include UploadWorkflow::Single::Events
+
+  include UploadWorkflow::Single::Create::Simulation
+end
+
+# Overridden state transition methods specific to single-entry submission.
+#
+module UploadWorkflow::Single::Create::States
+  include UploadWorkflow::Single::States
+
+  include UploadWorkflow::Single::Create::Events
+
+  include UploadWorkflow::Single::Create::Actions
+
+  # Upon entering the :creating state:
+  #
+  # The user is presented with the form for submitting a new item.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_creating_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :validating state:
+  #
+  # The supplied file is being validated.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_validating_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :submitting state:
+  #
+  # The submission is complete and ready to move into the submission queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_submitting_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :submitted state:
+  #
+  # The submission is moving into the submission queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_submitted_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+end
+
+# Single-entry submission workflow.
+#
+class UploadWorkflow::Single::Create < UploadWorkflow::Single
+  include UploadWorkflow::Single::Create::Events
+
+  include UploadWorkflow::Single::Create::States
+
+  include Workflow::Base::Transitions
+end

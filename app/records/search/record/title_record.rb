@@ -125,7 +125,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Reduce a hierarchy of numbering levels to a single value.
     #
-    # @param [Number, Hash{Any=>Number::Level}] item
+    # @param [Number, Hash{Any=>Number::Level}, nil] item
     #
     # @return [Float]
     #
@@ -133,6 +133,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # noinspection RubyUnusedLocalVariable
     #++
     def number_value(item)
+      # noinspection RubyNilAnalysis
       return item.number_value if item.respond_to?(:number_value)
       factor = nil
       # noinspection RailsParamDefResolve
@@ -140,7 +141,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       levels.reduce(0.0) do |result, type_entry|
         _type, entry = type_entry
         factor = factor ? (factor * 10.0) : 1.0
-        (value = entry&.dig(:min)) ? (result += value / factor) : result
+        (value = entry&.dig(:min)) ? (result + (value / factor)) : result
       end
     end
 
@@ -148,7 +149,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Number, Hash{Any=>Number::Level}] item
     #
-    # @return [(Float,Float)]         Min and max level numbers.
+    # @return [Array<(Float,Float)>]  Min and max level numbers.
     #
     def number_range(item)
       return item.number_range if item.respond_to?(:number_range)
@@ -422,7 +423,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, nil] id
     #
-    # @return [(String, Integer, String)]
+    # @return [Array<(String, Integer, String)>]
     #
     def identifier_sort_key(id)
       id     = PublicationIdentifier.cast(id, invalid: true)
@@ -760,7 +761,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, nil] value      @see #number_name
     #
-    # @return [(String,String)]       Normalized name and entry type.
+    # @return [Array<(String,String)>]  Normalized name and entry type.
     #
     def name_type(value = nil)
       name = number_name(value)
@@ -783,7 +784,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       if item.nil? || (item == self)
         @number_value ||= super(@level)
       else
-        # noinspection RailsParamDefResolve
+        # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
         item.try(__method__) || super(item.try(:level) || item)
       end
     end
@@ -792,13 +793,13 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Number, Hash, nil] item   Default: `#level`.
     #
-    # @return [(Float,Float)]           Min and max level numbers.
+    # @return [Array<(Float,Float)>]  Min and max level numbers.
     #
     def number_range(item = nil)
       if item.nil? || (item == self)
         @number_range ||= super(@level)
       else
-        # noinspection RailsParamDefResolve
+        # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
         item.try(__method__) || super(item.try(:level) || item)
       end
     end
@@ -846,7 +847,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       other_min, other_max = other&.number_range || [0, 0]
       self_min,  self_max  = number_range
       # noinspection RubyMismatchedReturnType
-      (self_min <=> other_min).nonzero? || (self_max <=> other_max)
+      (self_min <=> other_min)&.nonzero? || (self_max <=> other_max)
     end
 
   end
@@ -885,8 +886,8 @@ class Search::Record::TitleRecord < Search::Api::Record
     opt = opt&.dup || {}
     # noinspection RubyNilAnalysis
     @canonical = opt.delete(:canonical).present?
-    @hierarchy = nil
-    @exemplar  = nil
+    # noinspection RubyMismatchedVariableType
+    @hierarchy = @exemplar = nil
     super(nil, **opt)
     initialize_attributes
     self.records = copy_records(src)
@@ -1059,10 +1060,11 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Symbol>]
   #
-  def title_field_exclusive(recs = records)
+  def title_field_exclusive(recs = records.to_a)
     return [] unless recs.many?
     EXCLUSIVE_FIELDS.select do |field|
       first = nil
+      # noinspection RubyMismatchedReturnType
       recs.find do |rec|
         next if (value = field_value(rec, field)).blank?
         next if first.nil? && (first = make_comparable(value, field))
@@ -1110,7 +1112,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @param [Hash, Array, Any] item
   # @param [Array<Symbol>]    path
   #
-  # @return [Array<Array<(Symbol,Array<Symbol,Integer>)>>]
+  # @return [Array<Array<Array<(Symbol,Array<Symbol,Integer>)>>>]
   #
   def self.hierarchy_paths(item, path = [])
     case item
@@ -1146,6 +1148,9 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @type [Hash{Symbol=>Array<Symbol,Integer>}]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   HIERARCHY_PATHS = hierarchy_paths(FIELD_HIERARCHY).to_h.deep_freeze
 
   # ===========================================================================
@@ -1213,7 +1218,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   def get_title_fields(rec = nil)
     rec = exemplar if rec.nil? || (rec == self)
-    get_fields(:title, rec)
+    get_fields(rec, :title)
   end
 
   # get_part_fields
@@ -1222,7 +1227,8 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Hash>]
   #
-  def get_part_fields(recs = records)
+  def get_part_fields(recs = records.to_a)
+    # noinspection RubyMismatchedReturnType
     recs.group_by { |rec| item_number(rec) }.map do |part, recs1|
       part = { bib_seriesPosition: part.to_s }
       fmts =
@@ -1246,17 +1252,17 @@ class Search::Record::TitleRecord < Search::Api::Record
       when Search::Record::MetadataRecord then Array.wrap(group.pop)
       when Array                          then group.pop
       else                                     records
-    end.map { |rec| get_fields(*group, rec) }
+    end.map { |rec| get_fields(rec, *group) }
   end
 
   # get_fields
   #
-  # @param [Array<Symbol>]                       group
   # @param [Search::Record::MetadataRecord, nil] rec
+  # @param [Array<Symbol>]                       group
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def get_fields(*group, rec)
+  def get_fields(rec, *group)
     case (section = rec.presence && FIELD_HIERARCHY.dig(*group))
       when Hash
         section.transform_values { |fields|
@@ -1322,11 +1328,11 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [void]
   #
-  def validate_title_fields(recs = records)
+  def validate_title_fields(recs = records.to_a)
     title_fields        = get_title_fields
     shared_title_values = make_comparable(title_fields)
     recs.each.with_index(1) do |rec, idx|
-      rec_fields       = get_fields(:title, rec)
+      rec_fields       = get_fields(rec, :title)
       rec_title_fields = make_comparable(rec_fields)
       shared_title_values.each_pair do |section, shared_values|
         rec_title_fields[section]&.each_pair do |k, v|

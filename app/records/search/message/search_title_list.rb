@@ -114,6 +114,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   def aggregate(src = nil, **opt)
     opt[:canonical] = canonical unless opt.key?(:canonical)
     file_level_records = src ? Array.wrap(src).compact_blank : records
+    # noinspection RubyMismatchedReturnType
     recursive_group_records(file_level_records) do |records_for_title|
       LIST_ELEMENT.new(records_for_title, **opt)
     end
@@ -176,6 +177,13 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
     public
 
+    # Indicate whether the other value is similar to the current value.
+    #
+    # @param [Any] other
+    #
+    #--
+    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+    #++
     def match?(other)
       return false unless other.is_a?(GroupingCriteria)
       return true  if ids && other.ids && ids.intersect?(other.ids)
@@ -239,6 +247,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @param [Proc]    block            Executed at the bottom-level.
   #
   # @return [Array<Search::Record::TitleRecord>]
+  # @return [Search::Record::TitleRecord, nil]
   #
   # @yield [recs] Create a title-level record from field-level records.
   # @yieldparam  [Array<Search::Record::MetadataRecord>] recs
@@ -248,6 +257,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
     __debug_group(level, fields, recs) if level.positive?
     return block.call(recs) if level == GROUPING_LEVEL_DEPTH
     group_related(recs, level).flat_map { |flds, group|
+      # noinspection RubyMismatchedReturnType
       recursive_group_records(group, level: (level+1), fields: flds, &block)
     }.compact_blank!
   end
@@ -288,7 +298,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
       $stderr.puts "#{leader} GROUP_BY #{fields} --- (#{count} records)"
     end
   else
-    def __debug_group(*)
+    def __debug_group(...)
     end
   end
 

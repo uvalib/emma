@@ -1,0 +1,5 @@
+# Base class for database record models.
+#
+class ApplicationRecord < ActiveRecord::Base
+  include SqlMethods
+end

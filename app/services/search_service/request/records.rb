@@ -127,6 +127,7 @@ module SearchService::Request::Records
   #
   def get_records(**opt)
     opt.slice(:prev_id, :prev_value).each { |k, v| opt[k] = CGI.unescape(v) }
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'search', **opt)
     api_return(Search::Message::SearchRecordList)
@@ -191,6 +192,7 @@ module SearchService::Request::Records
     # NOTE: In order to try out this method for test purposes, additional
     #   search terms are required in order for the API to perform a search.
     opt.merge!(q: 'RWL', fmt: DublinCoreFormat.values) if opt.blank?
+    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, record_id: record_id, **opt)
     api(:get, 'search', **opt)
     api_return(Search::Message::SearchRecord, recordId: record_id)

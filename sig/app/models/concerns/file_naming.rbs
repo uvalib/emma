@@ -1,0 +1,97 @@
+# FileNaming
+#
+module FileNaming
+  include Emma::Mime
+
+  # If *true*, only known file types are considered acceptable.
+  #
+  # @type [Boolean]
+  #
+  STRICT_FORMATS: bool
+
+  include FileFormat::Zip
+
+  # Create an instance of the appropriate FileObject subclass based on the
+  # indicated type and, if provided, the file contents
+  #
+  # @param [Symbol, String]                     type
+  # @param [FileHandle, IO, StringIO, Tempfile] handle
+  #
+  # @return [Class, nil]
+  #
+  def self.format_class_instance: (Symbol|String `type`, ?(FileHandle|IO|StringIO|IO::Like|Tempfile)? handle) -> untyped
+
+  # format_class
+  #
+  # @param [Symbol, String] type
+  #
+  # @return [Class, nil]
+  #
+  def self.format_class: (Symbol|String `type`) -> Class?
+
+  # format_classes
+  #
+  # @return [Hash{Symbol=>Class}]
+  #
+  def self.format_classes: () -> Hash[Symbol,Class]
+
+  # mime_types
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def self.mime_types: () -> Hash[Symbol,strArray]
+
+  # file_extensions
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def self.file_extensions: () -> Hash[Symbol,strArray]
+
+  # mime_to_fmt
+  #
+  # @return [Hash{String=>Array<Symbol>}]
+  #
+  def self.mime_to_fmt: () -> Hash[String,symArray]
+
+  # ext_to_fmt
+  #
+  # @return [Hash{String=>Array<Symbol>}]
+  #
+  def self.ext_to_fmt: () -> Hash[String,symArray]
+
+  # Map extension to file format.
+  #
+  # @param [String, Symbol] ext
+  #
+  # @return [Symbol]
+  # @return [nil]
+  #
+  def ext_to_fmt: (Symbol|String ext) -> Symbol?
+
+  # Map file format to (preferred) file extension.
+  #
+  # @param [Symbol, String, nil] fmt
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def fmt_to_ext: (Symbol|String|nil fmt) -> String?
+
+  # Given a MIME type, return the associated upload format.
+  #
+  # @param [String, ActiveStorage::Attachment, nil] mime
+  #
+  # @return [Symbol]
+  # @return [nil]
+  #
+  def mime_to_fmt: (String|ActiveStorage::Attachment|nil mime) -> Symbol?
+
+  # Map file format to (preferred) MIME type.
+  #
+  # @param [Symbol, String, nil] fmt
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def fmt_to_mime: (Symbol|String|nil fmt) -> String?
+end

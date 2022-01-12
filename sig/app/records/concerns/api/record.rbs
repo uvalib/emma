@@ -1,0 +1,209 @@
+# The base class for objects that interact with an API, either to be
+# initialized through de-serialized data received from that API or to be
+# serialized into data to be sent to that API.
+#
+class Api::Record
+  include Model
+
+  include Api::Common
+
+  include Api::Schema
+
+  include Api::Record::Schema
+
+  include Api::Record::Associations
+
+  # @return [Symbol]
+  attr_reader serializer_type: Symbol
+
+  # @return [Exception, nil]
+  attr_reader exception: Exception | nil
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Symbol]                                      format   Note [1]
+  # @param [TrueClass, Hash{Symbol=>String,true}]        wrap     Note [2]
+  # @param [Exception, String, TrueClass]                error    Note [3]
+  # @param [Hash]                                        data     Note [4]
+  #
+  # == Notes
+  #
+  # [1] One of Api::Schema#SERIALIZER_TYPES.  If not provided it will be
+  #     determined heuristically from *data*, with #DEFAULT_SERIALIZER_TYPE as
+  #     a fall-back.
+  #
+  # [2] A strategy for wrapping the data prior to de-serialization.  If *true*
+  #     then all types are wrapped as determined by #wrap_outer.  If a Hash,
+  #     then each key-value pair gives the format template to use or *true* to
+  #     use the template supplied by #wrap_outer.
+  #
+  # [3] If an error indication is present, the instance is initialized to
+  #     defaults and *data* is ignored.
+  #
+  # [4] An alternative mechanism for specifying the source data (only used if
+  #     *src* is *nil* [which may be the case if a Hash value was used and it
+  #     gets interpreted as named parameters]).
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def initialize: (?(Faraday::Response|Model|String|anyHash)? src, ?format: Symbol?, ?wrap: (true|Hash[Symbol,(String|true)])?, ?error: (true|String|Exception)? error, **untyped data) -> void
+
+  # A serializer instance of the currently-selected type.
+  #
+  # @param [Symbol, nil] type         Default: #serializer_type
+  #
+  # @return [Api::Serializer]
+  #
+  # @see Api::Record::Schema::ClassMethods#serializers
+  #
+  def serializer: (?Symbol? `type`) -> Api::Serializer
+
+  # Load data elements from the supplied data.
+  #
+  # (If the data is a String, it must already be in the form required by the
+  # serializer.)
+  #
+  # @param [String, Hash] data
+  # @param [Symbol, nil] type         Default: #serializer_type
+  #
+  # @return [Api::Record]
+  # @return [nil]
+  #
+  # @see Api::Serializer#deserialize
+  #
+  def deserialize: (symHash|String data, ?Symbol? `type`) -> Api::Record?
+
+  # Serialize data elements to the indicated format.
+  #
+  # @param [Symbol, nil] type         Default: #serializer_type
+  # @param [Hash]        opt          Passed to Api::Serializer#serialize
+  #
+  # @return [String]
+  #
+  # @see Api::Serializer#serialize
+  #
+  def serialize: (Symbol|nil `type`, **untyped opt) -> String
+
+  # Serialize the record instance into JSON format.
+  #
+  # @param [Hash] opt                 Passed to #serialize.
+  #
+  # @return [String]
+  #
+  # @see Api::Serializer::Json#serialize
+  #
+  def to_json: (**untyped opt) -> String
+
+  # Serialize the record instance into XML format.
+  #
+  # @param [Hash] opt                 Passed to #serialize.
+  #
+  # @return [String]
+  #
+  # @see Api::Serializer::Xml#serialize
+  #
+  def to_xml: (**untyped opt) -> String
+
+  # Serialize the record instance as a representation of a Ruby (hash) object.
+  #
+  # @param [Hash] opt                 Passed to #serialize.
+  #
+  # @return [String]
+  #
+  # @see Api::Serializer::Obj#serialize
+  #
+  def to_obj: (**untyped opt) -> String
+
+  # Returns *nil* unless this instance is an error placeholder.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no exception.
+  #
+  def error_message: () -> String?
+
+  # Indicate whether this is an instance created as part of a placeholder
+  # generated due to a failure to acquire valid data from the source.
+  #
+  def error?: () -> bool
+
+  # Indicate whether this is a valid data instance.
+  #
+  def valid?: () -> bool
+
+  # Default data used to initialize an instance.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  # @see Api::Record::Associations#property_defaults
+  #
+  def default_data: () -> symHash
+
+  # The field definitions in the schema for this record.
+  #
+  # @return [Array<Hash>]
+  #
+  def field_definitions: () -> Array[symHash]
+
+  # The fields and values for this instance as a Hash.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def to_h: () -> symHash
+
+  # Update record fields from a hash of values.
+  #
+  # @param [Hash] hash
+  #
+  # @return [self]
+  #
+  def update: (symHash hash) -> self
+
+  # The fields defined in the schema for this record.
+  #
+  # @return [Array<Symbol>]
+  #
+  def field_names: () -> symArray
+
+  # inspect
+  #
+  # @return [String]
+  #
+  def inspect: () -> String
+
+  # Directly assign schema attributes.
+  #
+  # @param [Model, Hash, nil] data      Default: *defaults*.
+  # @param [Hash, nil]        default   Default: #default_data.
+  #
+  # @raise [RuntimeError]               If *data* is not a Model or a Hash.
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # With no (or nil) argument, this initializes all fields from #default_data.
+  # (This is useful in situations where you want all fields displayable whether
+  # they were initialized with data or not).
+  #
+  # If *data* is provided, then *only* those fields will be initialized.
+  # (This is useful where you want fields that were not initialized with data
+  # to return *nil*.)
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def initialize_attributes: (?(symHash|Model)? data, ?symHash default) -> void
+
+  # wrap_outer
+  #
+  # @param [Hash, String] data
+  # @param [Symbol]       fmt         Default: `#serializer_type`
+  # @param [String]       name        Element name (default based on class).
+  # @param [String]       template
+  #
+  # @return [Hash, String]            Same type as *data*.
+  #
+  def wrap_outer: (data: anyHash, ?fmt: Symbol?, ?name: String?, ?template:String?) -> anyHash
+                | (data: String,  ?fmt: Symbol?, ?name: String?, ?template:String?) -> String
+end

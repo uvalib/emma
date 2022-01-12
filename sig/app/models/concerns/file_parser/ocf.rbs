@@ -1,0 +1,113 @@
+# Open Container Format (OCF) metadata extractor.
+#
+# EPUB and DAISY both use Open Container Format.
+#
+# The logic here is generalized to suit either EPUB or DAISY layouts.
+#
+# @see FileFormat::Xml
+# @see FileFormat::Zip
+#
+class FileParser::Ocf < FileParser
+  include FileFormat::Ocf
+
+  include FileFormat::Xml
+
+  include FileFormat::Zip
+
+  # The location of the .opf file in the ZIP archive.
+  #
+  # @return [String, nil]
+  #
+  def opf_zip_path: () -> String?
+
+  # The location of the .ncx file in the ZIP archive.
+  #
+  # @return [String, nil]
+  #
+  def ncx_zip_path: () -> String?
+
+  # Gather all metadata values.
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def retrieve_metadata: () -> Hash[Symbol,strArray]
+
+  # Extract metadata values from the .opf file.
+  #
+  # <dc-metadata>
+  #   <dc:title>                    -> :title
+  #   <dc:creator>                  -> :creator
+  #   <dc:contributor>              -> :contributor
+  #   <dc:contributor role="edt">   -> :editor
+  #   <dc:language>                 -> :language
+  #   <dc:date>                     -> :date
+  #   <dc:date event="publication"> -> :publication_date
+  #   <dc:date event="conversion">  -> :producedDate
+  #   <dc:publisher>                -> :publisher
+  #   <dc:subject>                  -> :subject
+  #   <dc:type>                     -> :type
+  #   <dc:rights>                   -> :rights
+  #   <dc:format>                   -> :formats
+  #   <dc:source>                   -> :source
+  #   <dc:coverage>                 -> :coverage
+  #   <dc:relation>                 -> :relation
+  #   <dc:description>              -> :description
+  #   <dc:identifier>               -> :identifier
+  #
+  # <x-metadata>
+  #   <meta name="DCTERMS.date.dateCopyrighted" -> :dateCopyrighted
+  #   <meta name="Synopsis"                     -> :synopsis
+  #   <meta name="cover"                        -> :cover [*]
+  #   <meta name="dtb:audioFormat"              -> :audioFormat
+  #   <meta name="dtb:multimediaContent"        -> :multimediaContent
+  #   <meta name="dtb:multimediaType"           -> :multimediaType
+  #   <meta name="dtb:narrator"                 -> :narrator
+  #   <meta name="dtb:producedDate"             -> :producedDate
+  #   <meta name="dtb:producer"                 -> :producer
+  #   <meta name="dtb:revision"                 -> :revision
+  #   <meta name="dtb:revisionDate"             -> :revisionDate
+  #   <meta name="dtb:revisionDescription"      -> :revisionDescription
+  #   <meta name="dtb:sourceDate"               -> :sourceDate
+  #   <meta name="dtb:sourceEdition"            -> :sourceEdition
+  #   <meta name="dtb:sourcePublisher"          -> :sourcePublisher
+  #   <meta name="dtb:sourceRights"             -> :sourceRights
+  #   <meta name="dtb:sourceTitle"              -> :sourceTitle
+  #   <meta name="dtb:totalTime"                -> :totalTime
+  #
+  # [*] If :cover is present, its value is the id for the <manifest> <item>
+  # that indicates ZIP archive file associated with the cover image.
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def get_opf_metadata: () -> Hash[Symbol,strArray]
+
+  # Extract metadata values from the .ncx file.
+  #
+  # <head>
+  #   <meta name="dtb:depth"          -> :depth
+  #   <meta name="dtb:generator"      -> :generator
+  #   <meta name="dtb:maxPageNumber"  -> :synopsis
+  #   <meta name="dtb:totalPageCount" -> :totalPageCount
+  #   <meta name="dtb:uid"            -> :uid
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def get_ncx_metadata: () -> Hash[Symbol,strArray]
+
+  # Extract cover image.
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def get_image_metadata: () -> Hash[Symbol,strArray]
+
+  # retrieve_cover_image
+  #
+  # @param [Nokogiri::XML::Element] manifest_item
+  # @param [String, nil]            cover_id
+  #
+  # @return [String, nil]
+  #
+  # NOTE: This definitely applies to EPUB but maybe not to DAISY.
+  #
+  def retrieve_cover_image: (Nokogiri::XML::Element manifest_item, ?String? cover_id) -> String?
+end

@@ -7,5 +7,6 @@
 
 fields ||= @list
 
+# noinspection RubyMismatchedArgumentType
 json.timestamp DateTime.now
 json.partial! 'data/fields', fields: fields

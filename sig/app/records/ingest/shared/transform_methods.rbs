@@ -1,0 +1,33 @@
+# Methods supporting transformations of data fields.
+#
+module Ingest::Shared::TransformMethods
+  include Api::Shared::TransformMethods
+
+  extend ::Ingest::Shared::TransformMethods
+
+  # Because :dc_title is a required field for ingest into Unified Search, this
+  # value is supplied if the metadata does not include a title.
+  #
+  # @type [String, nil] # TODO: MISSING_TITLE: I18n - keep?
+  #
+  MISSING_TITLE: String | nil
+
+  # Transform data fields.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  #
+  # @return [void]
+  #
+  def normalize_data_fields!: (?symHash? data) -> void
+
+  # @private
+  RETRIEVAL_FIELDS: symArray
+
+  # Produce a retrieval link for an item.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  #
+  # @return [void]
+  #
+  def make_retrieval_link!: (?symHash? data) -> void
+end

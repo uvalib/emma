@@ -46,7 +46,7 @@ module DataConcern
 
   # URL parameters for DataController.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   # == Usage Notes
   # Rails will set `params[:format]` if the URL is given with an extension
@@ -120,7 +120,7 @@ module DataConcern
   # @param [String, Symbol, nil] name   Default: `params[:id]`
   # @param [Hash]                opt    Passed to DataHelper#table_records.
   #
-  # @return [(String,Array)]
+  # @return [Array<(String,Array)>]
   #
   def get_table_records(name = nil, **opt)
     opt  = data_params.merge(**opt)
@@ -137,7 +137,7 @@ module DataConcern
   #
   # @param [Hash] opt                 Passed to #submission_records
   #
-  # @return [(String,Array)]
+  # @return [Array<(String,Array)>]
   #
   def get_submission_records(**opt)
 
@@ -147,6 +147,7 @@ module DataConcern
     columns = Array.wrap(opt.delete(:columns)).presence
 
     submission_records(**opt).tap do |_name, records|
+      # noinspection RubyMismatchedArgumentType
       if records.first.is_a?(Hash)
         modify_submission_records!(records, columns)
       else
@@ -204,7 +205,7 @@ module DataConcern
   # @param [String, Symbol, nil] table_name   Default: #SUBMISSION_TABLE.
   # @param [Hash]                opt          Passed to #get_table_records.
   #
-  # @return [(String,Array)]
+  # @return [Array<(String,Array)>]
   #
   def submission_records(table_name: nil, **opt)
     table_name ||= SUBMISSION_TABLE

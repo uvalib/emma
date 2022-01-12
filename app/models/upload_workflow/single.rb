@@ -66,9 +66,9 @@ module UploadWorkflow::Single::Data
   # The characteristic "return value" of the workflow after an event has been
   # registered.
   #
-  # @return [(Integer,Hash,Array<String>)]  For :validating, :replacing
-  # @return [Array<Upload,String>]          For :removing, :removed
-  # @return [Upload, nil]                   For all other states
+  # @return [Array<(Integer,Hash,Array<String>)>]   For :validating, :replacing
+  # @return [Array<Upload,String>]                  For :removing, :removed
+  # @return [Upload, nil]                           For all other states
   #
   def results
     @results ||= record
@@ -109,6 +109,7 @@ module UploadWorkflow::Single::Data
 
       # Retrieve (or create) the record in the database table.
       if data.is_a?(Upload)
+        # noinspection RubyMismatchedVariableType
         @record   = data
         @existing = !@record.new_record?
 
@@ -471,7 +472,6 @@ module UploadWorkflow::Single::Actions
       parts = {}
       parts['event_args'] = ERB::Util.h(args.inspect) if args.present?
       parts['options']    = ERB::Util.h(opt.inspect)  if opt.present?
-      # noinspection RubyMismatchedArgumentType
       parts['record'] =
         ERB::Util.h(pretty_json(record)).tap { |rec|
           rec.gsub!(/:( +)/) { ':' + $1.gsub(/ /, '&nbsp;&nbsp;') }
@@ -1355,8 +1355,8 @@ class UploadWorkflow::Single < UploadWorkflow
 
   # Set initial state.
   #
-  # @param [Upload, Hash, String, Array, nil] data
-  # @param [Hash]                            opt
+  # @param [Any, nil] data
+  # @param [Hash]     opt
   #
   # @return [void]
   #
@@ -1436,6 +1436,9 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_phase
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def set_workflow_phase(new_value = nil, rec = nil)
     (rec || record)&.set_phase(new_value)
   end

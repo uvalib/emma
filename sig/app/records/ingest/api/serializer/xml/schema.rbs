@@ -1,0 +1,9 @@
+# XML-specific definition overrides for serialization.
+#
+# @see Api::Serializer::Xml::Schema
+#
+module Ingest::Api::Serializer::Xml::Schema
+  include Ingest::Api::Serializer::Schema
+
+  include Api::Serializer::Xml::Schema
+end

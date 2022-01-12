@@ -132,8 +132,7 @@ module ApiConcern
   # @option [String, Boolean] :report   If *false*, do not generate report.
   # @option [String, Boolean] :dryrun   If *false*, actually update database.
   #
-  # @return [String]
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   # @return [nil]                       If no API version was specified.
   #
   # @see ApiMigrate#initialize

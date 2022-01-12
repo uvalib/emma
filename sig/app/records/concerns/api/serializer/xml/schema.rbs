@@ -1,0 +1,131 @@
+# XML-specific definition overrides for serialization.
+#
+module Api::Serializer::Xml::Schema
+  include Api::Serializer::Schema
+
+  XML_ELEMENT_PARSE_NAMING: Symbol
+
+  XML_ATTRIBUTE_PARSE_NAMING: Symbol
+
+  XML_ELEMENT_RENDER_NAMING: Symbol
+
+  XML_ATTRIBUTE_RENDER_NAMING: Symbol
+
+  XML_RENDER_EMPTY: bool
+
+  XML_RENDER_NIL: bool
+
+  # Collections of elements can be handled in one of two ways:
+  #
+  # 1. WRAP_COLLECTIONS == *true*
+  #
+  # The collection is contained within a "wrapper" element whose tag is the
+  # plural of the element name; e.g., one or more "<copy>" elements wrapped
+  # inside a "<copies>" element:
+  #
+  #   <holding>
+  #     <copies>
+  #       <copy>...</copy>
+  #       <copy>...</copy>
+  #       <copy>...</copy>
+  #     </copies>
+  #   </holding>
+  #
+  # 2. WRAP_COLLECTIONS == *false*
+  #
+  # The collection of elements are repeated directly; e.g.:
+  #
+  #   <holding>
+  #     <copy>...</copy>
+  #     <copy>...</copy>
+  #     <copy>...</copy>
+  #   </holding>
+  #
+  # @type [Boolean]
+  #
+  WRAP_COLLECTIONS: bool
+
+  # If this value is *false* then #attribute schema values are serialized
+  # (rendered) as XML attributes; if *true* then they are serialized as XML
+  # elements (removing the distinction between #attribute and #has_one).
+  #
+  # @type [Boolean]
+  #
+  ATTRIBUTES_AS_ELEMENTS: bool
+
+  # Mapping of class to XML type.
+  #
+  # @type [Hash{Class=>String}]
+  #
+  XML_TYPE: Hash[Class,String]
+
+  # Scalar values are expressed as strings by default.
+  #
+  # @type [String]
+  #
+  DEFAULT_XML_TYPE: String
+
+  # Base set of XML namespaces to present when rendering full messages.
+  #
+  # @type [Hash{String=>String}]
+  #
+  # -
+  # noinspection RubyStringKeysInHashInspection
+  # +
+  DEFAULT_XML_NAMESPACES: Hash[String,String]
+
+  # If this value is *false* then #attribute schema values are serialized
+  # (rendered) as XML attributes; if *true* then they are serialized as XML
+  # elements (removing the distinction between #attribute and #has_one).
+  #
+  def attributes_as_elements?: () -> bool
+
+  # The set of XML namespaces.
+  #
+  # @type [Hash{String=>String}]
+  #
+  def xml_namespaces: () -> Hash[String,String]
+
+  # The naming mode for de-serializing data elements from XML.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_parse_naming: () -> Symbol
+
+  # The naming mode for serializing attributes from XML.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_parse_naming: () -> Symbol
+
+  # The naming mode for serializing data elements to XML.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_render_naming: () -> Symbol
+
+  # The naming mode for serializing attributes to XML.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_render_naming: () -> Symbol
+
+  # The policy for serializing empty collections to XML.
+  #
+  def render_empty?: () -> bool
+
+  # The policy for serializing empty elements to XML.
+  #
+  def render_nil?: () -> bool
+
+  # Transform *name* into the form indicated by the given naming mode.
+  #
+  # @param [String, Symbol, Class] name
+  # @param [Symbol, nil]           mode
+  #
+  # @raise [RuntimeError]                If *mode* is invalid.
+  #
+  # @return [String]
+  #
+  def element_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+end

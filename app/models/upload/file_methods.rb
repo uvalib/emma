@@ -371,7 +371,7 @@ module Upload::FileMethods
     $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
     raise error
   ensure
-    # noinspection RubyScope
+    # noinspection RubyScope, RubyMismatchedReturnType
     io&.close
   end
 

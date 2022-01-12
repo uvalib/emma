@@ -1,0 +1,46 @@
+# Base class for object-specific serializers that process data passed in as a
+# Obj (a Ruby [hash] object representation).
+#
+# @see Representable::Obj
+# @see Api::Record::Schema::ClassMethods#schema
+#
+class Api::Serializer::Obj < Api::Serializer
+  include Representable::Obj
+
+  include Representable::Coercion
+
+  include Api::Serializer::Obj::Schema
+
+  include Api::Serializer::Obj::Associations
+
+  SERIALIZER_TYPE: Symbol
+
+  # Type of serializer.
+  #
+  # @return [Symbol]                  Always :obj.
+  #
+  def serializer_type: () -> Symbol
+
+  # Render data elements.
+  #
+  # @param [Symbol, Proc] method
+  # @param [Hash]         opt             Options argument for *method*.
+  #
+  # @return [String]
+  #
+  # @see Representable::Obj#to_obj
+  #
+  def serialize: (?method: Symbol|Proc, **untyped opt) -> String
+
+  # Load data elements.
+  #
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
+  #
+  # @return [Api::Record]
+  # @return [nil]
+  #
+  # @see Representable::Obj#from_obj
+  #
+  def deserialize: (symHash|String data, ?method: Symbol|Proc) -> Api::Record?
+end

@@ -1,0 +1,213 @@
+# View helper methods for "/data" pages.
+#
+module DataHelper
+  include CssHelper
+
+  # All known EMMA record fields (including those not currently in use).
+  #
+  # @type [Array<Symbol>]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  EMMA_DATA_FIELDS: symArray
+
+  # table_names
+  #
+  # @return [Array<String>]
+  #
+  def table_names: () -> strArray
+
+  # Indicate whether *name* is a valid table name.
+  #
+  # @param [String, Symbol, Any] name
+  #
+  def table_name?: (untyped name) -> bool
+
+  # table_columns
+  #
+  # @param [String, Symbol, Any] table_name
+  #
+  # @return [Array<ActiveRecord::ConnectionAdapters::Column>]
+  #
+  def table_columns: (untyped table_name) -> Array[ActiveRecord::ConnectionAdapters::Column]
+
+  # table_column_names
+  #
+  # @param [String, Symbol, Any]  table_name
+  # @param [Array<String,Symbol>] cols          Column names; default: "*".
+  #
+  # @return [Array<String>]
+  #
+  def table_column_names: (untyped table_name, *(String|Symbol) cols) -> strArray
+
+  # table_column_types
+  #
+  # @param [String, Symbol, Any]  table_name
+  # @param [Array<String,Symbol>] cols          Column names; default: "*".
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def table_column_types: (untyped table_name, *(String|Symbol) cols) -> Hash[Symbol,Symbol]
+
+  # table_records
+  #
+  # @param [String, Symbol, Any]  name          Database table name.
+  # @param [Array<String,Symbol>] cols          Column names; default: "*".
+  # @param [Boolean]              headings      If *false*, don't include the
+  #                                               database schema.
+  # @param [Boolean]              html          If *true*, produce records as
+  #                                               arrays of values.
+  # @param [Boolean]              no_raise      If *true*, don't raise
+  #                                               exceptions.
+  # @param [Boolean]              raise_blank   If *true*, don't ignore blank
+  #                                               column names.
+  #
+  # @return [Array<Hash>]
+  # @return [Array<Array<String>,Hash>]         If *html* is *true*.
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def table_records: (untyped name, *(String|Symbol) cols, ?headings: bool, html: true,  ?no_raise: bool, ?raise_blank: bool) -> Array[strArray|symHash]
+                   | (untyped name, *(String|Symbol) cols, ?headings: bool, ?html: bool, ?no_raise: bool, ?raise_blank: bool) -> Array[symHash]
+
+  private
+
+  # Error message for an invalid table name.
+  #
+  # @param [String, Symbol] name
+  #
+  # @return [String]
+  #
+  def invalid_table_name: (String|Symbol name) -> String
+
+  # Error message for blank column(s).
+  #
+  # @param [Array] columns
+  #
+  # @return [String]
+  # @return [nil]                     If no columns are given.
+  #
+  def blank_columns: (*(String|Symbol) columns) -> String
+                   | ()                         -> nil
+
+  # Error message for invalid column(s).
+  #
+  # @param [Array] columns
+  #
+  # @return [String]
+  # @return [nil]                     If no columns are given.
+  #
+  def invalid_columns: (*(String|Symbol) columns) -> String
+                     | ()                         -> nil
+
+  # db_connection
+  #
+  # @return [Any]                     Return value of block.
+  #
+  # @yield [db]
+  # @yieldparam [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
+  #
+  def db_connection: () { (ActiveRecord::ConnectionAdapters::AbstractAdapter) -> untyped } -> untyped
+
+  # db_columns
+  #
+  # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
+  # @param [String, Symbol, Any]        table   Database table name.
+  #
+  # @return [Array<ConnectionAdapters::Column>]
+  #
+  def db_columns: (ActiveRecord::ConnectionAdapters::AbstractAdapter db, untyped table) -> Array[ActiveRecord::ConnectionAdapters::Column]
+
+  # db_select
+  #
+  # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
+  # @param [String, Symbol, Any]        table   Database table name.
+  # @param [Array<String,Symbol>]       cols    Column names; default: "*".
+  # @param [String, Symbol, Array, Any] sort
+  #
+  # @return [Array<Hash>]
+  #
+  def db_select: (ActiveRecord::ConnectionAdapters::AbstractAdapter db, untyped table, Array[String|Symbol] cols, ?sort: (String|Symbol|Array[String|Symbol])?) -> Array[anyHash]
+
+  public
+
+  # Generate HTML to display a database table.
+  #
+  # @param [Array<Hash>]    records
+  # @param [String, Symbol] name        Database table name.
+  # @param [Integer]        start_row
+  # @param [Hash]           opt         Passed to #html_db_record.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_table: (Array[symHash] records, ?name: (String|Symbol)?, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate HTML to display a database record.
+  #
+  # @param [Hash, Array]  fields
+  # @param [Integer, nil] row
+  # @param [Integer]      start_col
+  # @param [Hash]         opt         Passed to #html_db_column except:
+  #
+  # @option opt [Integer] :first      Index value of the first record.
+  # @option opt [Integer] :last       Index value of the last record.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_record: (symHash|Array[symHash] fields, ?row: Integer?, ?start_col: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate HTML to display a database record.
+  #
+  # @param [Any]          field
+  # @param [Integer, nil] row
+  # @param [Integer, nil] col
+  # @param [Integer, nil] first       Index value of the first column.
+  # @param [Integer, nil] last        Index value of the last column.
+  # @param [Hash]         opt         Passed to #html_db_column.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_column: (untyped field, ?row: Integer?, ?col: Integer?, ?first: Integer?, ?last: Integer?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate HTML to display table of EMMA submission field values.
+  #
+  # @param [Hash]           fields
+  # @param [String, Symbol] name      Database table name.
+  # @param [Integer]        start_row
+  # @param [Hash]           opt       Passed to #html_db_field.
+  #
+  # @option opt [Integer] :row        Start row (default: 1).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_field_table: (symHash fields, ?name: (String|Symbol)?, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate HTML to display a summary of all values for a given EMMA field.
+  #
+  # @param [Symbol]         field
+  # @param [Hash]           values
+  # @param [Integer, nil]   row
+  # @param [Hash]           opt       Passed to #html_db_column.
+  #
+  # @option opt [Integer] :first      Index value of the first record.
+  # @option opt [Integer] :last       Index value of the last record.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_field: (Symbol field, symHash values, ?row: Integer?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate HTML to display a list of values and counts.
+  #
+  # @param [Hash] values
+  # @param [Hash] opt                 Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_db_field_values: (symHash values, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

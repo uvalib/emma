@@ -1,0 +1,81 @@
+# View helper methods for the <header> nav bar.
+#
+module LayoutHelper::NavBar
+  include LayoutHelper::Common
+
+  include LinkHelper
+
+  private
+
+  # Configuration for nav bar properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  NAV_BAR_CONFIG: symHash
+
+  # The controllers included on the nav bar.
+  #
+  # @type [Array<Symbol>]
+  #
+  # == Implementation Notes
+  # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
+  #
+  NAV_BAR_CONTROLLERS: symArray
+
+  # The important nav bar entries.
+  #
+  # @type [Array<Symbol>]
+  #
+  # == Implementation Notes
+  # Should contain some or all of superset #PRIMARY_CONTROLLERS.
+  #
+  PRIMARY_CONTROLLERS: symArray
+
+  # Configuration for dashboard page properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  DASHBOARD_CONFIG: symHash
+
+  # Default dashboard link label.
+  #
+  # @type [String]
+  #
+  DASHBOARD_LABEL: String
+
+  # Default dashboard link tooltip.
+  #
+  # @type [String]
+  #
+  DASHBOARD_TOOLTIP: String
+
+  # Controller link labels.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  CONTROLLER_LABEL: Hash[Symbol,String]
+
+  # Controller link tooltips.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  CONTROLLER_TOOLTIP: Hash[Symbol,String]
+
+  public
+
+  # Indicate whether it is appropriate to show the nav bar.
+  #
+  def show_nav_bar?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+
+  # Generate an element containing links for the main page of each controller.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def nav_bar_links: () -> ActiveSupport::SafeBuffer
+end

@@ -1,0 +1,13 @@
+# Values related to the details of serialization/de-serialization.
+#
+# @see Search::Api::Schema
+#
+module Ingest::Api::Schema
+  include Search::Api::Schema
+
+  # service_name
+  #
+  # @return [String]
+  #
+  def service_name: () -> String
+end

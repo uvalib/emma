@@ -1,0 +1,5 @@
+# A Grayscale PDF file object.
+#
+class FileObject::GrayscalePdf < FileObject::Pdf
+  include FileFormat::GrayscalePdf
+end

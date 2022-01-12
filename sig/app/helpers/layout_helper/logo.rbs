@@ -1,0 +1,53 @@
+# View helper methods for the <header> logo.
+#
+module LayoutHelper::Logo
+  include LayoutHelper::Common
+
+  private
+
+  # Configuration for logo properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  LOGO_CONFIG: symHash
+
+  # Text logo.
+  #
+  # @type [String]
+  #
+  LOGO_TEXT: String
+
+  # Logo image relative asset path.
+  #
+  # @type [String]
+  #
+  LOGO_ASSET: String
+
+  # Logo image alt text.
+  #
+  # @type [String]
+  #
+  LOGO_ALT_TEXT: String
+
+  public
+
+  # The application tagline.
+  #
+  # @return [String]
+  #
+  def logo_tagline: () -> String
+
+  # The application logo.
+  #
+  # @param [Symbol] mode              Either :text or :image; default: :image.
+  # @param [Hash]   opt               Passed to outer #html_div except for:
+  #
+  # @option opt [String] :alt         Passed to #image_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def logo_element: (?mode: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+end

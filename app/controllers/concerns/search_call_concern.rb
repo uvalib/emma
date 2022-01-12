@@ -62,8 +62,6 @@ module SearchCallConcern
   # @param [Symbol, String, Hash, Array] sort         Def.: :created_at
   # @param [Hash]                        hash_terms   Added to *terms*.
   #
-  # @option opt [Symbol, String, Hash, (Symbol, Hash)] :sort  Default: :id
-  #
   # @return [ActiveRecord::Relation<SearchCall>]
   #
   def get_search_calls(*terms, columns: nil, sort: :created_at, **hash_terms)

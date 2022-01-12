@@ -61,12 +61,13 @@ class SearchController < ApplicationController
   # API results for :index.
   #
   # @return [Search::Message::SearchRecordList]
+  # @return [Search::Message::SearchTitleList]
   #
   attr_reader :list
 
   # API results for :show.
   #
-  # @return [Search::Message::SearchRecord]
+  # @return [Search::Message::SearchRecord, nil]
   #
   attr_reader :item
 
@@ -253,8 +254,8 @@ class SearchController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Search::SearchRecordList] list
-  # @param [Hash]                     opt
+  # @param [Search::Message::SearchRecordList, Search::Message::SearchTitleList] list
+  # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -266,12 +267,13 @@ class SearchController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Search::Record::MetadataRecord, Hash] item
-  # @param [Hash]                                 opt
+  # @param [Search::Message::SearchRecord, Hash] item
+  # @param [Hash]                                opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
   def show_values(item = @item, **opt)
+    # noinspection RubyMismatchedReturnType
     sanitize_keys(super(item, **opt))
   end
 

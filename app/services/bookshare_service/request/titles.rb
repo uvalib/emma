@@ -236,14 +236,14 @@ module BookshareService::Request::Titles
   # @param [BsFormatType] format
   # @param [Hash]         opt         Passed to #api.
   #
-  # @return [Bs::Message::ArtifactMetadata]
+  # @return [Bs::Record::ArtifactMetadata]
   # @return [nil]                     If the requested format was not present.
   #
   # @note This is not a real Bookshare API call.
   #
   def get_artifact_metadata(bookshareId:, format:, **opt)
     title = get_title(bookshareId: bookshareId, **opt)
-    # noinspection RubyArgCount
+    # noinspection RubyMismatchedReturnType
     title.artifact_list.find { |a| format == a.format }
   end
     .tap do |method|

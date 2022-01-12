@@ -1,0 +1,97 @@
+# Generic exception for AWS S3 API problems.
+#
+# == Usage Notes
+# This is generally *not* the base class for exceptions in the AwsS3Service
+# namespace:  Variants based on the error types defined under "emma.error.api"
+# are derived from the related ApiService class; e.g.:
+#
+#   `AwsS3Service::AuthError < ApiService::AuthError`
+#
+# Only a distinct error type defined under "emma.error.aws_s3" would derive
+# from this class; e.g. if "emma.error.aws_s3.unique" existed it would be
+# defined as:
+#
+#   `AwsS3Service::UniqueError < AwsS3Service::Error`
+#
+# An exception in the AwsS3Service namespace can be identified by checking for
+# `exception.is_a?(AwsS3Service::Error::ClassType)`.
+#
+class AwsS3Service::Error < ApiService::Error
+  # Methods included in related error classes.
+  #
+  module ClassType
+    include ApiService::Error::ClassType
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol]
+    #
+    def service: () -> Symbol
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include ClassType
+end
+
+class AwsS3Service::AuthError < ApiService::AuthError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::CommError < ApiService::CommError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::SessionError < ApiService::SessionError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::ConnectError < ApiService::ConnectError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::TimeoutError < ApiService::TimeoutError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::XmitError < ApiService::XmitError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::RecvError < ApiService::RecvError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::ParseError < ApiService::ParseError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::RequestError < ApiService::RequestError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::NoInputError < ApiService::NoInputError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::ResponseError < ApiService::ResponseError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::EmptyResultError < ApiService::EmptyResultError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::HtmlResultError < ApiService::HtmlResultError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::RedirectionError < ApiService::RedirectionError
+  include AwsS3Service::Error::ClassType
+end
+
+class AwsS3Service::RedirectLimitError < ApiService::RedirectLimitError
+  include AwsS3Service::Error::ClassType
+end

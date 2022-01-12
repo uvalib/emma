@@ -1,0 +1,11 @@
+# Kurzweil file format metadata extractor.
+#
+class FileParser::Kurzweil < FileParser
+  include FileFormat::Kurzweil
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

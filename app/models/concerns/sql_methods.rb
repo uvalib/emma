@@ -400,6 +400,7 @@ module SqlMethods
   # @return [Integer, Float, String, nil]
   #
   def sql_quote(value)
+    # noinspection RubyMismatchedReturnType
     case value
       when Integer, Float           then value
       when nil, /^nil$/i, /^NULL$/i then nil
@@ -529,6 +530,7 @@ module SqlMethods
     # @return [ActiveRecord::Result]
     #
     def extended_table(extra = nil, **opt)
+      # noinspection RubyMismatchedArgumentType
       sql = sql_extended_table(extra, **opt)
       ActiveRecord::Base.connection.exec_query(sql)
     end
@@ -544,6 +546,9 @@ module SqlMethods
     #
     # @return [String]
     #
+    #--
+    # noinspection RubyMismatchedParameterType
+    #++
     def sql_extended_table(
       extra       = nil,
       field_map:, # Must be supplied by the subclass.

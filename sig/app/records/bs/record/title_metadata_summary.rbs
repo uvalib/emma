@@ -1,0 +1,61 @@
+# Bs::Record::TitleMetadataSummary
+#
+# @attr [Array<BsAllowsType>]            allows
+# @attr [Array<Bs::Record::Name>]        arrangers         *deprecated*
+# @attr [Array<Bs::Record::Name>]        authors           *deprecated*
+# @attr [Boolean]                        available
+# @attr [String]                         bookshareId
+# @attr [Array<Bs::Record::Category>]    categories
+# @attr [Array<Bs::Record::Name>]        composers         *deprecated*
+# @attr [Array<BsContentWarning>]        contentWarnings
+# @attr [Array<Bs::Record::Contributor>] contributors
+# @attr [IsoYear]                        copyrightDate
+# @attr [Array<Bs::Record::Format>]      externalFormats
+# @attr [Array<Bs::Record::Format>]      formats
+# @attr [String]                         instruments
+# @attr [String]                         isbn13
+# @attr [Array<String>]                  languages
+# @attr [Array<Bs::Record::Link>]        links
+# @attr [Array<Bs::Record::Name>]        lyricists         *deprecated*
+# @attr [IsoDate]                        publishDate
+# @attr [Integer]                        readingAgeMaximum
+# @attr [Integer]                        readingAgeMinimum
+# @attr [String]                         seriesNumber
+# @attr [String]                         seriesTitle
+# @attr [String]                         site
+# @attr [String]                         subtitle
+# @attr [String]                         synopsis
+# @attr [String]                         title
+# @attr [String]                         titleContentType
+# @attr [Array<Bs::Record::Name>]        translators       *deprecated*
+# @attr [String]                         vocalParts
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_summary
+#
+# == Implementation Notes
+# Similar to Bs::Record::AssignedTitleMetadataSummary, but without fields:
+#   :assignedBy
+#   :dateAdded
+#   :dateDownloaded
+# And adds these fields:
+#   :arrangers
+#   :categories
+#   :contentWarnings
+#   :contributors
+#   :lyricists
+#   :readingAgeMaximum
+#   :readingAgeMinimum
+#   :site
+#   :translators
+#
+class Bs::Record::TitleMetadataSummary < Bs::Api::Record
+  include Bs::Shared::ArtifactMethods
+
+  include Bs::Shared::CreatorMethods
+
+  include Bs::Shared::IdentifierMethods
+
+  include Bs::Shared::LinkMethods
+
+  include Bs::Shared::TitleMethods
+end

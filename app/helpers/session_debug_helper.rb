@@ -61,6 +61,7 @@ module SessionDebugHelper
           v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
         end
       end
+    # noinspection RubyMismatchedArgumentType
     table.merge!(pairs)
     prepend_classes!(opt, css_selector)
     grid_table(table, **opt)

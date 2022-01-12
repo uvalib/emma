@@ -1,0 +1,31 @@
+# Methods mixed in to record elements related to catalog titles.
+#
+module Search::Shared::TitleMethods
+  include Api::Shared::TitleMethods
+
+  extend ::Search::Shared::TitleMethods
+
+  # A unique identifier for this index entry.
+  #
+  # @return [String]
+  #
+  def identifier: () -> String
+
+  # Field(s) that may hold the title string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_fields: () -> symArray
+
+  # Field(s) that may hold date information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def date_fields: () -> symArray
+
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def contents_fields: () -> symArray
+end

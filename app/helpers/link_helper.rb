@@ -82,6 +82,9 @@ module LinkHelper
   #
   # @return [Hash{Symbol=>String}]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def page_action_entry(action = nil, current: nil, table: nil, **opt)
     current = (current || params[:action])&.to_sym
     action  = (opt.delete(:action) || action || current)&.to_sym
@@ -102,6 +105,9 @@ module LinkHelper
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *action* not configured.
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def page_action_link(
     action = nil,
     current: nil,
@@ -287,16 +293,19 @@ module LinkHelper
 
   # Supply an element containing configured text for the current action.
   #
-  # @param [String, Symbol, nil] type         Default: 'text'.
-  # @param [String, nil]         text         Override text to display.
-  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
-  # @param [String, Symbol, nil] action       Default: `params[:action]`.
-  # @param [String, Symbol, nil] tag          Tag for the internal text block.
-  # @param [Hash]                opt          Passed to #html_div.
+  # @param [String, Symbol, nil]  type        Default: 'text'.
+  # @param [String, nil]          text        Override text to display.
+  # @param [String, Symbol, nil]  controller  Default: `params[:controller]`.
+  # @param [String, Symbol, nil]  action      Default: `params[:action]`.
+  # @param [Symbol, Integer, nil] tag         Tag for the internal text block.
+  # @param [Hash]                 opt         Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def page_text_section(
     type = nil,
     text = nil,
@@ -316,7 +325,6 @@ module LinkHelper
     text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
     prepend_classes!(opt, css_selector)
     append_classes!(opt, *type) unless type == :text
-    # noinspection RubyMismatchedArgumentType
     html_div(text, opt)
   end
 

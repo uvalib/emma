@@ -1,0 +1,162 @@
+# Methods mixed in to record elements related to dates.
+#
+module Search::Shared::ScoreMethods
+  include Emma::Common
+
+  include Api::Shared::CommonMethods
+
+  include Search::Shared::IdentifierMethods
+
+  # @type [Array<Symbol>]
+  SCORE_TYPES: symArray
+
+  attr_accessor search_title_score: Float
+
+  attr_accessor search_creator_score: Float
+
+  attr_accessor search_publisher_score: Float
+
+  attr_accessor search_identifier_score: Float
+
+  attr_accessor search_keyword_score: Float
+
+  # Get the summation of all current score attribute values.
+  #
+  # @param [Numeric, nil] precision   Passed to Float#round if given.
+  # @param [Hash]         opt         Passed to #get_scores.
+  #
+  # @return [Float,Integer]           Integer if *precision* <= 0.
+  #
+  # == Usage Notes
+  #
+  def total_score: (?precision: Numeric?, **untyped opt) -> (Float | Integer)
+
+  # All search score attribute values.
+  #
+  # @param [Numeric, nil] precision   Passed to Float#round if given.
+  # @param [Boolean]      all         If *true*, include 0 and nil values.
+  #
+  # @return [Hash{Symbol=>Float,nil}]
+  #
+  # == Usage Notes
+  # * These are the current values of the search score attributes as assigned
+  #   directly or via #calculate_scores!.
+  # * If a non-zero :keyword_score is present then that is the *only* value
+  #   returned.
+  #
+  def get_scores: (?precision: Numeric?, ?all: bool?) -> Hash[Symbol,(Float|nil)]
+
+  # Update search score attribute values.
+  #
+  # @param [String, Array<String>] terms  Given to all score methods if present
+  # @param [Hash]                  opt    Passed to score methods except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :types  Default: $SCORE_TYPES.
+  #
+  # @return [Array<Float>]
+  #
+  # == Implementation Notes
+  # If included :keyword is always placed last so that #calculate_keyword_score
+  # can take advantage of the calculations of the other scores.  If no types
+  # are specified all defined types *except* :keyword are calculated.
+  #
+  def calculate_scores!: (?(String|strArray)? terms, **untyped opt) -> Array[Float]
+
+  # Calculate a title search relevancy score.
+  #
+  # @param [String, Array<String>] terms
+  # @param [Hash]                  opt
+  #
+  # @option opt [String, Array<String>] :title
+  #
+  # @return [Float]
+  #
+  # == Implementation Notes
+  # The actual relevancy seems to discount certain "stop words", but the actual
+  # behavior cannot be easily inferred from the search results.
+  #
+  def calculate_title_score: (?(String|strArray)? terms, **untyped opt) -> Float
+
+  # Calculate a creator search relevancy score.
+  #
+  # @param [String, Array<String>] terms
+  # @param [Hash]                  opt
+  #
+  # @option opt [String, Array<String>] :creator
+  #
+  # @return [Float]
+  #
+  def calculate_creator_score: (?(String|strArray)? terms, **untyped opt) -> Float
+
+  # Calculate a publisher search relevancy score.
+  #
+  # @param [String, Array<String>] terms
+  # @param [Hash]                  opt
+  #
+  # @option opt [String, Array<String>] :publisher
+  #
+  # @return [Float]
+  #
+  def calculate_publisher_score: (?(String|strArray)? terms, **untyped opt) -> Float
+
+  # Calculate a standard identifier search relevancy score.
+  #
+  # @param [String, Array<String>] terms
+  # @param [Hash]                  opt
+  #
+  # @option opt [String, Array<String>] :identifier
+  #
+  # @return [Float]                   Either 0.0 or 100.0.
+  #
+  def calculate_identifier_score: (?(String|strArray)? terms, **untyped opt) -> Float
+
+  # Calculate a keyword search relevancy score as a combination of title,
+  # creator and publisher scores.
+  #
+  # @param [String, Array<String>] terms
+  # @param [Hash]                  opt
+  #
+  # @option opt [String, Array<String>] :q
+  # @option opt [String, Array<String>] :keyword
+  #
+  # @return [Float]
+  #
+  def calculate_keyword_score: (?(String|strArray)? terms, **untyped opt) -> Float
+
+  # @type [String,Array<String>]
+  DEF_NO_BREAK: String | strArray
+
+  # @type [String]
+  KEEP: String
+
+  # Generate a score from the number of words found in *field* which are also
+  # found in *terms*.
+  #
+  # @param [Array<String>, String, Symbol] field
+  # @param [Array<String>, String]         terms
+  # @param [Hash]                          opt    Passed to #scoring_words
+  #
+  # @return [Float]
+  #
+  def field_score: (strArray|String|Symbol field, strArray|String terms, **untyped opt) -> Float
+
+  # Break a word on spaces or punctuation into one or more normalized words.
+  #
+  # @param [Symbol, String, Array<String>] value
+  # @param [String, Array<String>]         no_break     Default: #DEF_NO_BREAK
+  # @param [String, Array<String>]         stop_words   Default: []
+  # @param [String, Array<String>]         keep_words   Default: []
+  #
+  # @return [Array<String>]
+  #
+  def scoring_words: (strArray|String|Symbol value, ?no_break: (strArray|String)?, ?stop_words: (strArray|String)?, ?keep_words: (strArray|String)?) -> strArray
+
+  # Break a word on spaces or punctuation into one or more normalized words.
+  #
+  # @param [String]  word
+  # @param [Boolean] lowercase
+  #
+  # @return [Array<String>]
+  #
+  def break_words: (String word, ?bool lowercase) -> strArray
+end

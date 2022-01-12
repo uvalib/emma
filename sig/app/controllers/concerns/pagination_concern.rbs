@@ -1,0 +1,67 @@
+# Controller support methods for managing pagination.
+#
+module PaginationConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include ParamsHelper
+
+  include SearchTermsHelper
+
+  include PaginationHelper
+
+  # Pagination setup.
+  #
+  # @param [ActionController::Parameters, Hash, nil] opt  Default: `params`.
+  #
+  # @option opt [Symbol] :controller
+  #
+  # @return [Hash{Symbol=>String}]    URL parameters.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def pagination_setup: (?prmHash? opt) -> Hash[Symbol,String]
+
+  # Finish setting of pagination values based on the result list and original
+  # URL parameters.
+  #
+  # @param [Api::Record, Array] list
+  # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
+  # @param [Hash]               search  Passed to #next_page_path.
+  #
+  # @return [void]
+  #
+  # @see UploadConcern#pagination_finalize
+  #
+  def pagination_finalize: (Api::Record|anyArray list, ?Symbol? meth, **untyped search) -> void
+
+  # Analyze the *list* object to generate the path for the next page of
+  # results.
+  #
+  # @param [Array, #next, #get_link] list
+  # @param [Hash]                    url_params For `list.next`.
+  #
+  # @return [String]                  Path to generate next page of results.
+  # @return [nil]                     If there is no next page.
+  #
+  # @see SearchConcern#next_page_path
+  #
+  def next_page_path: (?list: (Api::Record|_Next|_GetLink|anyArray)?, **untyped url_params) -> String?
+
+  # Clean up pagination-related parameters.
+  #
+  # @return [void]
+  #
+  def cleanup_pagination: () -> void
+
+  private
+
+  #THIS_MODULE: untyped
+
+  # :nocov:
+  include AbstractController::Callbacks::ClassMethods
+
+  include PaginationConcern
+end

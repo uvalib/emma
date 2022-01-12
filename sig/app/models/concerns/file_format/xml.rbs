@@ -1,0 +1,150 @@
+# Manipulate file formats which contain one or more XML files.
+#
+module FileFormat::Xml
+  include Emma::Common
+
+  # Metadata may be retrieved either by index or as a method call.
+  #
+  # E.g. :title is available as either `metadata[:title]` or `metadata.title`.
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+
+  # Gather all metadata values.
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def retrieve_metadata: () -> Hash[Symbol,strArray]
+
+  # parse_metadata
+  #
+  # @param [Nokogiri::XML::Element, Nokogiri::XML::NodeSet] section
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def parse_metadata: (Nokogiri::XML::NodeSet|Nokogiri::XML::Element section) -> Hash[Symbol,strArray]
+
+  # parse_elements
+  #
+  # @param [Nokogiri::XML::Element, Nokogiri::XML::NodeSet] section
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def parse_elements: (Nokogiri::XML::NodeSet|Nokogiri::XML::Element section) ->  Hash[Symbol,strArray]
+
+  # Extract information from a single element.
+  #
+  # @param [Nokogiri::XML::Element] element
+  #
+  # @return [Array<(Symbol,String)>]
+  # @return [Array<(Symbol,nil)>]
+  #
+  def parse_element: (Nokogiri::XML::Element element) -> [Symbol, String?]
+
+  # parse_metas
+  #
+  # @param [Nokogiri::XML::Element, Nokogiri::XML::NodeSet] section
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def parse_metas: (Nokogiri::XML::NodeSet|Nokogiri::XML::Element section) -> Hash[Symbol,strArray]
+
+  # Extract information from a single <meta> element.
+  #
+  # @param [Nokogiri::XML::Element] elem
+  #
+  # @return [Array<(Symbol,String)>]
+  # @return [Array<(Symbol,nil)>]
+  # @return [nil]
+  #
+  def parse_meta: (Nokogiri::XML::Element elem) -> [Symbol, String?]?
+
+  # Return element values as a hash.
+  #
+  # @param [Nokogiri::XML::Element] elem
+  #
+  # @return [Array<(Symbol,String)>]
+  # @return [Array<(Symbol,nil)>]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def get_properties: (Nokogiri::XML::Element elem) -> [Symbol, String?]
+
+  # Return element attributes as a hash.
+  #
+  # @param [Nokogiri::XML::Element] elem
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def get_attributes: (Nokogiri::XML::Element elem) -> Hash[Symbol,String]
+
+  # Roles mapped on to one or more MARC relator codes.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  ROLE_TYPE: Hash[Symbol,symArray]
+
+  # MARC relator codes mapped on to roles.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  TYPE_ROLE: Hash[Symbol,Symbol]
+
+  # role_type
+  #
+  # @param [String] relator_code
+  #
+  # @return [Symbol]
+  # @return [nil]
+  #
+  # @see https://www.loc.gov/marc/relators/relacode.html
+  # @see https://www.loc.gov/marc/relators/relaterm.html
+  #
+  def role_type: (String relator_code) -> Symbol?
+
+  # Transform an element name (or the equivalent attribute from a <meta>) into
+  # a #metadata key.
+  #
+  # @param [String] name
+  #
+  # @return [Symbol]
+  #
+  def make_key: (String|Symbol name) -> Symbol
+
+  include Emma::Debug::OutputMethods
+
+  # Display console output.
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  #
+  # @return [nil]
+  #
+  # @see #get_attributes
+  # @see #get_properties
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload __debug_parse(element)
+  #   @param [Nokogiri::XML::Element] element
+  #
+  # @overload __debug_parse(element, inner)
+  #   @param [Nokogiri::XML::Element] element
+  #   @param [Nokogiri::XML::Element] inner
+  #
+  # @overload __debug_parse(meth, element)
+  #   @param [Symbol]                 meth
+  #   @param [Nokogiri::XML::Element] element
+  #
+  # @overload __debug_parse(meth, element, inner)
+  #   @param [Symbol]                 meth
+  #   @param [Nokogiri::XML::Element] element
+  #   @param [Nokogiri::XML::Element] inner
+  #
+  def __debug_parse: (Symbol meth, Nokogiri::XML::NodeSet|Nokogiri::XML::Element element, ?Nokogiri::XML::Element inner) -> nil
+                   | (             Nokogiri::XML::NodeSet|Nokogiri::XML::Element element, ?Nokogiri::XML::Element inner) -> nil
+end

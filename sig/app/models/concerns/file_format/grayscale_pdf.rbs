@@ -1,0 +1,68 @@
+# Grayscale PDF file format support.
+#
+# @see FileFormat::Pdf
+#
+module FileFormat::GrayscalePdf
+  include FileFormat
+
+  include FileFormat::Pdf
+
+  # Type of associated files.
+  #
+  # @type [Symbol]                    One of FileFormat#TYPES
+  #
+  # @see FileObject#fmt
+  #
+  FILE_TYPE: Symbol
+
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  GRAYSCALE_PDF_FORMAT: symHash
+
+  # MIME type(s) associated with instances of this file format.
+  #
+  # @type [Array<String>]
+  #
+  # @see FileObject#mime_types
+  #
+  MIME_TYPES: strArray
+
+  # File extension(s) associated with instances of this file format.
+  #
+  # @type [Array<String>]
+  #
+  # @see FileObject#file_extensions
+  #
+  FILE_EXTENSIONS: strArray
+
+  # FORMAT_FIELDS
+  #
+  # @type [Hash{Symbol=>Proc,Symbol}]
+  #
+  # @see FileFormat#format_fields
+  #
+  FORMAT_FIELDS: Hash[Symbol,(Proc|Symbol)]
+
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  # @see FileFormat#mapped_metadata_fields
+  #
+  FIELD_MAP: Hash[Symbol,Symbol]
+
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  def configuration: () -> symHash
+
+  # parser
+  #
+  # @return [FileParser::GrayscalePdf]
+  #
+  def parser: () -> FileParser::GrayscalePdf
+end

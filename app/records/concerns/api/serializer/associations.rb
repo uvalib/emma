@@ -35,11 +35,11 @@ module Api::Serializer::Associations
     # == Variations
     #++
     #
-    # @overload has_one(name, **opt, &block)
+    # @overload attribute(name, **opt, &block)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
     #
-    # @overload has_one(name, type, *_, **opt)
+    # @overload attribute(name, type, *_, **opt)
     #   @param [Symbol]                name
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.

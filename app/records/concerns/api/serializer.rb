@@ -51,6 +51,7 @@ class Api::Serializer < ::Representable::Decorator
   # @see Api::Schema#DEFAULT_SERIALIZER_TYPE
   #
   def serializer_type
+    # noinspection RubyMismatchedReturnType
     SERIALIZER_TYPES.find { |type|
       self.class.to_s =~ /::#{type}/i
     } || DEFAULT_SERIALIZER_TYPE

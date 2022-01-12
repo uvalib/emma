@@ -1,0 +1,14 @@
+# Bs::Record::CategorySummary
+#
+# @attr [String]                  description
+# @attr [Array<Bs::Record::Link>] links
+# @attr [String]                  name
+# @attr [Integer]                 titleCount
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_category_summary
+#
+class Bs::Record::CategorySummary < Bs::Api::Record
+  include Bs::Shared::CategoryMethods
+
+  include Bs::Shared::LinkMethods
+end

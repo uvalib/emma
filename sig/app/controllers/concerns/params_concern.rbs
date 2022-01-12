@@ -1,0 +1,125 @@
+# Controller callbacks for working with received URL parameters.
+#
+# @see ParamsHelper
+#
+module ParamsConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include ParamsHelper
+
+  include SearchTermsHelper
+
+  # Accumulator for the URL parameters to be used for redirection after
+  # "before" actions have been run.
+  #
+  # @param [String, Hash] url
+  #
+  # @return [TrueClass]               Default setting which will cause the
+  #                                     final state of `params` to be used by
+  #                                     #conditional_redirect.
+  # @return [FalseClass]              Setting by an intermediate filter
+  # @return [String]                  Redirection URL.
+  # @return [Hash]                    Redirection path components.
+  #
+  # @see #conditional_redirect
+  #
+  def will_redirect: (?(String|anyHash)? url) -> (bool | String | anyHash)
+
+  # Called to ensure that a fresh copy is requested each time.
+  #
+  def no_cache: () -> void
+
+  # Called from non-SearchController pages to ensure that the search defined in
+  # the page header performs the intended operation on the SearchController and
+  # not the current controller.
+  #
+  # @see #SEARCH_CONTROLLERS
+  # @see #DEFAULT_SEARCH_CONTROLLER
+  #
+  def search_redirect: () -> void
+
+  # The current path stored in the session cookie.
+  #
+  # @return [String]                  Value of `session['app.current_path']`.
+  # @return [nil]                     No 'app.current_path' found.
+  #
+  def get_current_path: () -> String?
+
+  # Set current page used by Devise as the redirect target after sign-in.
+  #
+  # @return [void]
+  #
+  def set_current_path: () -> void
+
+  # Set session on-screen debugging.
+  #
+  # @return [void]
+  #
+  def set_debug: () -> void
+
+  # Visiting the index page of a controller sets the session origin.
+  #
+  # This allows pages to behave differently depending on whether they are
+  # reached from a search, or from somewhere else.
+  #
+  # @return [void]
+  #
+  def set_origin: () -> void
+
+  # Resolve the menu-generated :sort selection into the appropriate pair of
+  # :sortOrder and :direction parameters.
+  #
+  # @return [void]
+  #
+  # @see LayoutHelper#sort_menu
+  #
+  def resolve_sort: () -> void
+
+  # Load `params` with values last set when searching.
+  #
+  # @return [void]
+  #
+  def initialize_menus: () -> void
+
+  # Clean up URL parameters and redirect.
+  #
+  # This eliminates "noise" parameters injected by the advanced search forms
+  # and other situations where empty or unneeded parameters accumulate.
+  #
+  # == Usage Notes
+  # If a callback relies on the :commit parameter, it must be run before this
+  # callback.
+  #
+  def cleanup_parameters: () -> void
+
+  # To be run after all before_actions that modify params and require a
+  # redirect in order to normalize the URL.
+  #
+  # @return [void]
+  #
+  # @see #will_redirect
+  #
+  def conditional_redirect: () -> void
+
+  private
+
+  # Set :sortOrder and :direction parameters.
+  #
+  # @param [String] sort_value
+  #
+  # @return [void]
+  #
+  def set_sort_params: (String sort_value) -> void
+
+  THIS_MODULE: untyped
+
+  # Needed for #set_sort_params.
+  include LayoutHelper::SearchFilters
+
+  # :nocov:
+  #include AbstractController::Callbacks::ClassMethods
+
+  include ParamsConcern
+end

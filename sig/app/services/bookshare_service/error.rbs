@@ -1,0 +1,120 @@
+# Generic exception for Bookshare API problems.
+#
+# == Usage Notes
+# This is generally *not* the base class for exceptions in the BookshareService
+# namespace:  Variants based on the error types defined under "emma.error.api"
+# are derived from the related ApiService class; e.g.:
+#
+#   `BookshareService::AuthError < ApiService::AuthError`
+#
+# Only a distinct error type defined under "emma.error.bookshare" would derive
+# from this class; e.g. "emma.error.bookshare.account" is defined as:
+#
+#   `BookshareService::AccountError < BookshareService::Error`
+#
+# An exception in the BookshareService namespace can be identified by checking
+# for `exception.is_a?(BookshareService::Error::ClassType)`.
+#
+class BookshareService::Error < ApiService::Error
+  # Methods included in related error classes.
+  #
+  module ClassType
+    include ApiService::Error::ClassType
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol]
+    #
+    def service: () -> Symbol
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include ClassType
+end
+
+class BookshareService::AuthError < ApiService::AuthError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::CommError < ApiService::CommError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::SessionError < ApiService::SessionError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::ConnectError < ApiService::ConnectError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::TimeoutError < ApiService::TimeoutError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::XmitError < ApiService::XmitError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::RecvError < ApiService::RecvError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::ParseError < ApiService::ParseError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::RequestError < ApiService::RequestError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::NoInputError < ApiService::NoInputError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::ResponseError < ApiService::ResponseError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::EmptyResultError < ApiService::EmptyResultError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::HtmlResultError < ApiService::HtmlResultError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::RedirectionError < ApiService::RedirectionError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::RedirectLimitError < ApiService::RedirectLimitError
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::AccountError < BookshareService::Error
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::SubscriptionError < BookshareService::Error
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::TitleError < BookshareService::Error
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::PeriodicalError < BookshareService::Error
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::ReadingListError < BookshareService::Error
+  include BookshareService::Error::ClassType
+end
+
+class BookshareService::OrganizationError < BookshareService::Error
+  include BookshareService::Error::ClassType
+end

@@ -1,0 +1,21 @@
+# Bs::Message::ActivePeriodicalList
+#
+# @attr [Array<Bs::Record::ActivePeriodical>] activeTitles
+# @attr [Array<BsAllowsType>]                 allows
+# @attr [Integer]                             limit
+# @attr [Array<Bs::Record::Link>]             links
+# @attr [Bs::Record::StatusModel]             message
+# @attr [String]                              next
+# @attr [Integer]                             totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_active_periodical_list
+#
+# @see Bs::Message::ActiveBookList (similar schema)
+#
+class Bs::Message::ActivePeriodicalList < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

@@ -1,0 +1,89 @@
+# The base class for serialization/de-serialization of objects derived from
+# Api::Record.
+#
+class Api::Serializer < ::Representable::Decorator
+  include Emma::Time
+
+  include Emma::Debug
+
+  include Api::Serializer::Schema
+
+  include Api::Serializer::Associations
+
+  # @type [String, Hash]
+  attr_reader source_data: String | symHash
+
+  # @type [Boolean]
+  attr_accessor log_timing: bool
+
+  # Initialize a new instance.
+  #
+  # @param [Api::Record, nil] represented
+  #
+  def initialize: (?Api::Record? represented) -> void
+
+  # Type of serializer (based on the name of descendent class if not set
+  # explicitly).
+  #
+  # @return [Symbol]
+  #
+  # @see Api::Schema#SERIALIZER_TYPES
+  # @see Api::Schema#DEFAULT_SERIALIZER_TYPE
+  #
+  def serializer_type: () -> Symbol
+
+  # Render data elements in serialized format.
+  #
+  # @param [Symbol, Proc] method
+  # @param [Hash]         opt         Options argument for *method*.
+  #
+  # @raise [Exception]                Propagated if raised by *method*.
+  #
+  # @return [String]
+  #
+  # == Usage Notes
+  # This method must be overridden by the derived class to pass in :method.
+  #
+  # -
+  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def serialize: (?method: Symbol|Proc|nil, **untyped opt) -> String
+
+  # Load data elements from the supplied data.
+  #
+  # If *data* is a String, it is assumed that it is already in the form
+  # required by the derived serializer class.
+  #
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
+  #
+  # @raise [Exception]                Propagated if raised by *method*.
+  #
+  # @return [Api::Record]
+  # @return [nil]
+  #
+  # == Usage Notes
+  # The derived class must override this to pass in :method via the arguments
+  # to `super`.
+  #
+  # -
+  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def deserialize: (String|symHash data, ?method: (Symbol|Proc)?) -> Api::Record?
+
+  # Set source data string.
+  #
+  # If *data* is a String, it is assumed that it is already in the form
+  # required by the derived serializer class.
+  #
+  # @param [String, Hash] data
+  #
+  # @return [String]
+  # @return [nil]                 If *data* is neither a String nor a Hash.
+  #
+  # == Usage Notes
+  # This method will not be invoked (and @source_data will be *nil*) for an
+  # instance where #error? is *true*.
+  #
+  def set_source_data: (String|symHash data) -> String?
+end

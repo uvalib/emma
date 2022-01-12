@@ -1,0 +1,6 @@
+# General support methods.
+#
+module Emma::Common
+  private
+  def self.included: (Module base) -> void
+end

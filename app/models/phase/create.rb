@@ -57,7 +57,7 @@ class Phase::Create < Phase::BulkPart
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.
   #
-  # @return [(Integer, Hash{String=>Any}, Array<String>)]
+  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
   #
   # @see Action::Store#upload!
   #
@@ -365,7 +365,7 @@ class Phase::Create < Phase::BulkPart
 
   # A textual description of the type of the Model instance.
   #
-  # @param [Phash] phase
+  # @param [Phase] phase
   # @param [Hash]  opt
   #
   # @return [String]

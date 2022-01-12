@@ -1,0 +1,54 @@
+class Array[unchecked out Elem] < Object
+  # Recursively freeze an Array and all of its elements so that the contents of
+  # the elements cannot be modified.
+  #
+  # @return [self]
+  #
+  # @see Hash#deep_freeze
+  #
+  # == Usage Notes
+  # This should not be used in any situation where the elements are live
+  # objects subject to active updating (which would be unusable if frozen).
+  #
+  def deep_freeze: () -> self
+
+  # Recursive duplication.
+  #
+  # @return [Array]
+  #
+  # @see Hash#rdup
+  #
+  # == Usage Notes
+  # A deeply-nested array may reference objects that cannot or should not be
+  # duplicated. To avoid that situation, a class may redefine #duplicable? to
+  # return *false* (so that Object#rdup returns *self*), or a class may define
+  # #rdup with customized behaviors.
+  #
+  def rdup: () -> anyArray
+
+  # Recursive merge.
+  #
+  # @param [Array] other
+  #
+  # @return [Array]
+  #
+  def rmerge: (anyArray other) -> anyArray
+
+  # Recursive merge into self.
+  #
+  # If *other* is an Array, then duplicates of its elements are appended to
+  # *self* unless they are already present.  If *other* is any other non-nil
+  # value then a duplicate of *other* is appended to *self* unless it is
+  # already present.
+  #
+  # @param [Array, Any] other
+  #
+  # @return [self]
+  #
+  # == Usage Notes
+  # It is assumed that *other* is a flat array (that is, that its elements are
+  # not arrays); if it is not flat, any sub-arrays will be duplicated and
+  # appended to *self* unconditionally.
+  #
+  def rmerge!: (untyped other) -> self
+end

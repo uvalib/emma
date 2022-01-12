@@ -1,0 +1,117 @@
+# Base exception for API errors.
+#
+class Api::Error < ExecError
+  # If applicable, the HTTP response that resulted in the original exception.
+  #
+  # @return [Faraday::Response, nil]
+  #
+  attr_reader http_response: Faraday::Response | nil
+
+  # If applicable, the HTTP status for the received message that resulted in
+  # the original exception.
+  #
+  # @return [Integer, nil]
+  #
+  attr_reader http_status: Integer | nil
+
+  # Initialize a new instance.
+  #
+  # @param [Array<Faraday::Response,Exception,Hash,String,Integer,nil>] args
+  # @param [Hash]                                                       opt
+  #
+  # == Implementation Notes
+  # Each element of @messages is duplicated in order to ensure that there are
+  # no unexpected entanglements with the original message source(s).
+  #
+  def initialize: (*(Faraday::Response|Exception|String|Integer|anyHash) args, **untyped opt) -> void
+
+  # inspect
+  #
+  # @return [String]
+  #
+  def inspect: () -> String
+
+  # Extract Faraday::Response messages.
+  #
+  # @param [Faraday::Response] arg
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # As a side-effect, if @http_response is nil it will be set here.
+  #
+  def faraday_response: (Faraday::Response arg) -> strArray
+
+  # Enhance Faraday::Error messages.
+  #
+  # @param [Array<String>] messages
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # As a side-effect, if @http_status is nil and HTTP status can be determined,
+  # then @http_status will be set here.
+  #
+  def faraday_error: (*String messages) -> strArray
+
+  # Methods to be included in related subclasses.
+  #
+  module Methods
+    include ExecError::Methods
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol, nil]
+    #
+    def service: () -> Symbol?
+
+    # Name of the error and subkey into config/locales/error.en.yml.
+    #
+    # @return [Symbol, nil]
+    #
+    def error_type: () -> Symbol?
+
+    # Error configuration extracted from "config/locales/error.en.yml".
+    #
+    # @return [Hash{Symbol=>String}]
+    #
+    def error_config: () -> Hash[Symbol,String]
+
+    # Error types extracted from "config/locales/error.en.yml".
+    #
+    # (Entries whose names start with '_' are excluded).
+    #
+    # @return [Array<Symbol>]
+    #
+    def error_types: () -> symArray
+
+    # The descriptive name of the service for use in display and messages.
+    #
+    # @param [Symbol, String, nil] source     Source repository
+    #
+    # @return [String]
+    #
+    def service_name: (?source: (Symbol|String)?) -> String
+
+    # Default error message for the current instance based on the name of its
+    # class.
+    #
+    # @param [Symbol, String, nil] source     Source repository
+    # @param [Symbol, String, nil] type       Error type.
+    # @param [Boolean]             allow_nil
+    #
+    # @return [String]                The appropriate error message.
+    # @return [nil]                   If *allow_nil* is set to *true* and no
+    #                                   default message is defined.
+    #
+    # @see file:config/locales/error.en.yml *en.emma.error.api*
+    #
+    def default_message: (?source: (Symbol|String)?, ?type: (Symbol|String)?, ?allow_nil: bool) -> String?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+end

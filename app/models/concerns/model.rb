@@ -26,6 +26,7 @@ module Model
   # Indicate whether the Model instance is composed of other Model instances.
   #
   def aggregate?
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
@@ -35,6 +36,7 @@ module Model
   # @return [Class, nil]
   #
   def aggregate_type
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
@@ -44,6 +46,7 @@ module Model
   # @return [Symbol, nil]
   #
   def aggregate_field
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
@@ -51,6 +54,7 @@ module Model
   # other Model instances.
   #
   def collection?
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
@@ -60,6 +64,7 @@ module Model
   # @return [Class, nil]
   #
   def collection_type
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
@@ -69,6 +74,7 @@ module Model
   # @return [Symbol, nil]
   #
   def collection_field
+    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 

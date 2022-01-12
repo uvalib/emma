@@ -1,0 +1,64 @@
+# Definition of the #schema method used within the class definition to declare
+# the serializable data elements associated with the class.
+#
+module Api::Record::Schema
+  extend ActiveSupport::Concern
+
+  module ClassMethods
+    include Api::Schema
+
+    # The serializers for the including class.
+    #
+    # @return [Hash{Symbol=>Api::Serializer}]
+    #
+    attr_reader serializers: Hash[Symbol,Api::Serializer]
+
+    # The JSON serializer for the including class.
+    #
+    # @return [Api::Serializer::Json]
+    #
+    def json_serializer: () -> Api::Serializer::Json
+
+    # The XML serializer for the including class.
+    #
+    # @return [Api::Serializer::Xml]
+    #
+    def xml_serializer: () -> Api::Serializer::Xml
+
+    # The Obj serializer for the including class.
+    #
+    # @return [Api::Serializer::Obj]
+    #
+    def obj_serializer: () -> Api::Serializer::Obj
+
+    # Schema definition block method.
+    #
+    # This method is used within the definition of a class derived from
+    # Api::Record to specify its serializable data elements within the
+    # block supplied to the method.
+    #
+    # In addition, class-specific serializers are created using these data
+    # element definitions by also executing the provided block.
+    #
+    # @param [Array<Symbol>] serializer_types
+    # @param [Proc]          block
+    #
+    # @return [void]
+    #
+    # @see Api::Schema#SERIALIZER_TYPES
+    # @see Api::Serializer::Associations::ClassMethods#attribute
+    # @see Api::Serializer::Associations::ClassMethods#has_one
+    # @see Api::Serializer::Associations::ClassMethods#has_many
+    #
+    def schema: (*Symbol serializer_types) { () -> untyped } -> void
+
+    # Duplicate the schema from another class.
+    #
+    # @param [Class<Api::Record>] other
+    # @param [Hash]               opt     Passed to #all_from.
+    #
+    # @return [void]
+    #
+    def schema_from: (Class other, **untyped opt) -> void
+  end
+end

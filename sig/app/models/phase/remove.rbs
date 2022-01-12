@@ -1,0 +1,126 @@
+# Entry removal workflow tracking record.
+#
+# @see file:config/locales/state_table.en.yml *en.emma.state_table.phase.remove*
+#
+# @!method started?
+# @!method deindexing?
+# @!method dequeuing?
+# @!method unstoring?
+# @!method removing?
+# @!method removed?
+# @!method canceling?
+# @!method canceled?
+# @!method aborted?
+#
+# @!method started!
+# @!method deindexing!
+# @!method dequeuing!
+# @!method unstoring!
+# @!method removing!
+# @!method removed!
+# @!method canceling!
+# @!method canceled!
+# @!method aborted!
+#
+class Phase::Remove < Phase::BulkPart
+  include Record::Sti::Leaf
+
+  include Record::Steppable
+
+  # Remove the entry from the index.
+  #
+  # @param [ActionDispatch::Request, Hash, nil] request
+  # @param [Hash] opt                 Passed to Action::UnIndex#deindex!
+  #
+  # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.
+  #
+  # @return [nil]       Failed to transition record to the new state.
+  # @return [Boolean]   *false* if the action could not be processed.
+  #
+  def deindex!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> bool?
+
+  # Method called from the action launched by #deindex!.
+  #
+  # @param [Action] action
+  # @param [Hash]   opt
+  #
+  # @return [Boolean]   *false* if the callback's callback failed to process.
+  #
+  def deindex_cb: (?Action? action, **untyped opt) -> bool
+
+  # Remove the submission from its queue.
+  #
+  # @param [ActionDispatch::Request, Hash, nil] request
+  # @param [Hash] opt                 Passed to Action::UnQueue#unsubmit!
+  #
+  # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.
+  #
+  # @return [nil]       Failed to transition record to the new state.
+  # @return [Boolean]   *false* if the action could not be processed.
+  #
+  def unsubmit!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> bool?
+
+  # Method called from the action launched by #unsubmit!.
+  #
+  # @param [Action] action
+  # @param [Hash]   opt
+  #
+  # @return [Boolean]   *false* if the callback's callback failed to process.
+  #
+  def unsubmit_cb: (?Action? action, **untyped opt) -> bool
+
+  # Remove the uploaded file associated with this item.
+  #
+  # @param [ActionDispatch::Request, Hash, nil] request
+  # @param [Hash] opt                 Passed to Action::UnStore#unstore!
+  #
+  # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.
+  #
+  # @return [nil]       Failed to transition record to the new state.
+  # @return [Boolean]   *false* if the action could not be processed.
+  #
+  def unstore!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> bool?
+
+  # Method called from the action launched by #unstore!.
+  #
+  # @param [Action] action
+  # @param [Hash]   opt
+  #
+  # @return [Boolean]   *false* if the callback's callback failed to process.
+  #
+  def unstore_cb: (?Action? action, **untyped opt) -> bool
+
+  # Remove the item from the database.
+  #
+  # @param [ActionDispatch::Request, Hash, nil] request
+  # @param [Hash] opt                 Passed to Action::UnRecord#remove!
+  #
+  # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.
+  #
+  # @return [nil]       Failed to transition record to the new state.
+  # @return [Boolean]   *false* if the action could not be processed.
+  #
+  def remove!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> bool?
+
+  # Method called from the action launched by #remove!.
+  #
+  # @param [Action] action
+  # @param [Hash]   opt
+  #
+  # @return [Boolean]   *false* if the callback's callback failed to process.
+  #
+  def remove_cb: (?Action? action, **untyped opt) -> bool
+
+  # A textual description of the type of the Model instance.
+  #
+  # @param [Phase] phase
+  # @param [Hash]  opt
+  #
+  # @return [String]
+  #
+  def self.describe_type: (Phase phase, **untyped opt) -> String
+end

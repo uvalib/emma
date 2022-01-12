@@ -1,0 +1,11 @@
+# Bs::Record::ReadingListSubscription
+#
+# @attr [Array<BsAllowsType>]      allows
+# @attr [Boolean]                  enabled
+# @attr [Array<Bs::Record::Link>]  links
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list_subscription
+#
+class Bs::Record::ReadingListSubscription < Bs::Api::Record
+  include Bs::Shared::LinkMethods
+end

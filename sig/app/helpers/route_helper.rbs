@@ -1,0 +1,25 @@
+# View helper methods for dynamic references to local URLs.
+#
+module RouteHelper
+  # Return the appropriate route helper method.
+  #
+  # @param [Symbol, String]      controller
+  # @param [Symbol, String, nil] action
+  #
+  # @return [Symbol]
+  #
+  def route_helper: (Symbol|String controller, ?(Symbol|String)? action) -> Symbol
+
+  # get_path_for
+  #
+  # @param [Symbol, String]      controller
+  # @param [Symbol, String, nil] action
+  #
+  # @return [String, nil]
+  #
+  def get_path_for: (Symbol|String controller, ?(Symbol|String)? action, **untyped opt) -> String?
+
+  private
+
+  def self.included: (Module base) -> void
+end

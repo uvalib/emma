@@ -1,0 +1,33 @@
+# View helper support methods related to `#session`.
+#
+module SessionDebugHelper
+  include ParamsHelper
+
+  include HtmlHelper
+
+  include RoleHelper
+
+  include DevHelper
+
+  # Indicate whether on-screen debugging is applicable.
+  #
+  def session_debug?: () -> bool
+
+  # Session keys that are not reported in the session debug table.
+  #
+  # @type [Array<String>]
+  #
+  SESSION_SKIP_KEYS: strArray
+
+  # Render a table of values from `#session`.
+  #
+  # @param [Hash] opt                 Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def session_debug: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

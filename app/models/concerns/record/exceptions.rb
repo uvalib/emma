@@ -179,7 +179,7 @@ class Record::Exceptions::FlashPart < FlashHelper::FlashPart
   # @param [Any]  src
   # @param [Hash] opt
   #
-  # @return [String, ActiveSupport::Buffer, nil]
+  # @return [ActiveSupport::SafeBuffer, String, nil]
   #
   def render_topic(src, **opt)                                                  # NOTE: from UploadWorkflow::Errors::FlashPart
     src = make_label(src, default: '').presence || src

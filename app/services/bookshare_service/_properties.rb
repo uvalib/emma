@@ -75,7 +75,7 @@ module BookshareService::Properties
 
   # Bookshare API key.
   #
-  # @return [String]
+  # @return [String, nil]
   #
   # @see #BOOKSHARE_API_KEY
   #
@@ -85,7 +85,7 @@ module BookshareService::Properties
 
   # API version is not a part of request URLs.
   #
-  # @return [nil]
+  # @return [String, nil]
   #
   # @see #BOOKSHARE_API_VERSION
   #

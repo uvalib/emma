@@ -1,0 +1,28 @@
+# Ingest::Message::Response
+#
+# @attr [Array<String>] messages
+#
+class Ingest::Message::Response < Ingest::Api::Message
+  include Ingest::Shared::ResponseMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
+  #
+  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?symHash? opt) -> void
+
+  # Strategy for pre-wrapping message data before de-serialization.
+  #
+  # @type [Hash{Symbol=>String,Boolean}]
+  #
+  WRAP_FORMATS: Hash[Symbol,(String|bool)]
+
+  # Update *opt[:wrap]* according to the supplied formats.
+  #
+  # @param [Hash] opt                 May be modified.
+  #
+  # @return [void]
+  #
+  def apply_wrap!: (symHash opt) -> void
+end

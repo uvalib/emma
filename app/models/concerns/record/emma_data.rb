@@ -220,6 +220,9 @@ module Record::EmmaData
 
     # @see Record::EmmaData#make_retrieval_link
     #
+    #--
+    # noinspection RubyMismatchedParameterType
+    #++
     def make_retrieval_link(rid = nil, base_url = nil)
       rid ||= emma_data[:emma_retrievalLink]
       super(rid, base_url)
@@ -228,6 +231,7 @@ module Record::EmmaData
     # @see Record::EmmaData#generate_emma_data
     #
     def generate_emma_data(data, attr = nil)
+      # noinspection RubyMismatchedArgumentType
       super(data, (attr || self))
     end
 

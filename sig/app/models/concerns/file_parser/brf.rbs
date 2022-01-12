@@ -1,0 +1,11 @@
+# BRF file format metadata extractor.
+#
+class FileParser::Brf < FileParser
+  include FileFormat::Brf
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

@@ -130,7 +130,7 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] _env
     #
-    # @return [Numeric]
+    # @return [ActiveSupport::Duration]
     #
     def expiration(_env = nil)
       DEFAULT_EXPIRATION
@@ -349,6 +349,7 @@ module CachingMiddleware
             abort "unexpected type #{type.inspect}"
         end
         params << options
+        # noinspection RubyMismatchedVariableType
         @store = ActiveSupport::Cache.lookup_store(type, *params)
       end
       unless @store.is_a?(ActiveSupport::Cache::Store)

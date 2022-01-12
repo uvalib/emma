@@ -1,0 +1,31 @@
+# Model for a specific item within search results.
+#
+class SearchResult < ApplicationRecord
+  include Emma::Debug
+
+  include Model
+
+  include Record
+
+  include Record::Assignable
+
+  include Record::Authorizable
+
+  # Create a new instance.
+  #
+  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
+  # @param [Proc, nil] block
+  #
+  # @note - for dev traceability
+  #
+  def initialize: (?(SearchResult|prmHash)? attr) { () -> untyped } -> void
+
+  # Update database fields...
+  #
+  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
+  # @param [Hash, nil]                                             opt
+  #
+  # @return [void]
+  #
+  def assign_attributes: (SearchResult|prmHash|nil attr, ?untyped? opt) -> void
+end

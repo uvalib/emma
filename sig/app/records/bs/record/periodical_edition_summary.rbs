@@ -1,0 +1,10 @@
+# Bs::Record::PeriodicalEditionSummary
+#
+# @attr [String] editionId
+# @attr [String] editionName
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition_summary
+#
+class Bs::Record::PeriodicalEditionSummary < Bs::Api::Record
+  include Bs::Shared::EditionMethods
+end

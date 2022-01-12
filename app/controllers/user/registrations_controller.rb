@@ -181,11 +181,11 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @param [Array<Symbol>, Symbol, nil] keys    Default: `User.field_names`
   # @param [Array<Symbol>, Symbol, nil] except  Default: [:id, :email]
   #
-  # @return [void]
+  # @return [ActiveSupport::HashWithIndifferentAccess]
   #
   # @yield [params]
   # @yieldparam [ActionController::Parameters] params
-  # @yieldreturn [Array<Symbol>]
+  # @yieldreturn [Hash,nil]
   #
   # == Usage Notes
   # Due to the current uniqueness constraint on 'index_users_on_email', the

@@ -1,0 +1,99 @@
+# Controller support methods for any API service(s) that have been activated.
+#
+module ApiConcern
+  extend ActiveSupport::Concern
+
+  include SessionDebugHelper
+
+  # Find or create the instance of the requested service.
+  #
+  # @param [Class] service
+  #
+  # @return [ApiService]
+  #
+  def api_service: (Class service) -> ApiService
+
+  # Update all active API service(s).
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Hash]         opt
+  #
+  # @return [Hash{Class=>ApiService}]
+  #
+  def api_update: (*Class only, **untyped opt) -> Hash[Class,ApiService]
+
+  # Remove all active API service(s).
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [nil]
+  #
+  def api_clear: (*Class only) -> nil
+
+  # Indicate whether any API service has been activated.
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  def api_active?: (*Class only) -> bool
+
+  # Indicate whether any API request generated an exception.
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  def api_error?: (*Class only) -> bool
+
+  # Get the current API exception message(s).
+  #
+  # @param [Array<Class>] only          If given, limit to those service(s).
+  #
+  # @return [Hash{Class=>ExecReport}]   Multiple services with error messages.
+  # @return [ExecReport]                Current service error message.
+  # @return [nil]                       No service error or service not active.
+  #
+  def api_exec_report: (*Class only) -> (Hash[Class,ExecReport] | ExecReport)?
+
+  # Get the current Bookshare API exception.
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [Hash{Class=>Exception}]  Multiple services with exceptions.
+  # @return [Exception]               Current service exception.
+  # @return [nil]                     No exception or service not active.
+  #
+  def api_exception: (*Class only) -> (Hash[Class,Exception] | Exception)?
+
+  # The ApiService.table with any blank entries removed.
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [Hash{Class=>ApiService}]
+  #
+  def api_active_table: (*Class only) -> Hash[Class,ApiService]
+
+  # Modify :emma_data fields and content.
+  #
+  # @param [String, Integer, nil] api_version
+  # @param [Hash]                 opt
+  #
+  # @option [String, Integer] :version  If *api_version* is not given.
+  # @option [String, Integer] :v        Alias for :version
+  # @option [String, Boolean] :verbose  If *true*, generate log output.
+  # @option [String, Boolean] :report   If *false*, do not generate report.
+  # @option [String, Boolean] :dryrun   If *false*, actually update database.
+  #
+  # @return [Hash]
+  # @return [nil]                       If no API version was specified.
+  #
+  # @see ApiMigrate#initialize
+  # @see ApiMigrate#run!
+  #
+  # == Usage Notes
+  # The default mode is to perform a dry run, so :dryrun must be explicitly
+  # passed in as *false* to actually modify the database table.
+  #
+  def api_data_migration: (?(String|Integer)? api_version, **untyped opt) -> symHash?
+
+  private
+
+  #THIS_MODULE: untyped
+end

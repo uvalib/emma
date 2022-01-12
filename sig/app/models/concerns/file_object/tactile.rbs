@@ -1,0 +1,5 @@
+# A Tactile file object.
+#
+class FileObject::Tactile < FileObject
+  include FileFormat::Tactile
+end

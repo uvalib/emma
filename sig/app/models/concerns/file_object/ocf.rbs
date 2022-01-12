@@ -1,0 +1,9 @@
+# An OCF-based file object.
+#
+# @see FileFormat::Ocf
+# @see FileObject::Daisy
+# @see FileObject::Epub
+#
+class FileObject::Ocf < FileObject
+  include FileFormat::Ocf
+end

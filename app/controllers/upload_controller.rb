@@ -79,13 +79,15 @@ class UploadController < ApplicationController
 
   # Results for :index.
   #
-  # @return [Array<Upload>]
+  # @return [Array<Upload,String>]
+  # @return [Hash{Symbol=>Any}]
+  # @return [nil]
   #
   attr_reader :list
 
   # API results for :show.
   #
-  # @return [Upload]
+  # @return [Upload, nil]
   #
   attr_reader :item
 
@@ -112,6 +114,7 @@ class UploadController < ApplicationController
     opt    = url_parameters.except!(*UPLOAD_FORM_PARAMS)
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_records(groups: all, **opt)
+    # noinspection RubyMismatchedArgumentType
     pagination_finalize(result, **opt)
     @list  = result[:list]
     result = find_or_match_records(groups: :only, **opt) if opt.delete(:group)
@@ -294,6 +297,7 @@ class UploadController < ApplicationController
     opt   = { start_state: :removing, event: :submit, variant: :remove }
     @list = wf_single(rec: rec, data: dat, **opt)
     failure(:file_id) unless @list.present?
+    # noinspection RubyMismatchedArgumentType
     post_response(:found, @list, redirect: back)
   rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
@@ -492,6 +496,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = wf_single(event: :cancel)
     if request.get?
+      # noinspection RubyMismatchedArgumentType
       redirect_to(params[:redirect] || upload_index_path)
     else
       post_response(:ok)
@@ -689,6 +694,11 @@ class UploadController < ApplicationController
   # @param [String]    fallback   Redirect fallback (def.: #upload_index_path).
   # @param [Symbol]    meth       Calling method.
   #
+  # @return [void]
+  #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def show_search_failure(error, fallback = nil, meth: nil)
     meth ||= calling_method
     if modal?
@@ -723,8 +733,8 @@ class UploadController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Array<Upload>] list
-  # @param [Hash]          opt
+  # @param [Any]  list
+  # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #

@@ -1,0 +1,146 @@
+# Controller support methods for access to the AWS S3 API service.
+#
+module AwsConcern
+  extend ActiveSupport::Concern
+
+  include ApiConcern
+
+  REPOSITORY_PARAMS: symArray
+
+  DEPLOYMENT_PARAMS: symArray
+
+  NON_AWS_PARAMS: symArray
+
+  # Access the AWS S3 API service.
+  #
+  # @return [AwsS3Service]
+  #
+  def aws_api: () -> AwsS3Service
+
+  # repositories
+  #
+  # If :emma is included it will be moved to the end of the list.
+  #
+  # @param [String, Symbol, Array, nil] default   Default: '*'
+  # @param [Hash]                       prm       Passed to #param_values.
+  #
+  # @return [Array<Symbol>]
+  #
+  def repositories: (?default: (String|Symbol|Array[String|Symbol])?, **untyped prm) -> symArray
+
+  # deployments
+  #
+  # @param [String, Symbol, Array, nil] default   Default: '*'
+  # @param [Hash]                       prm       Passed to #param_values.
+  #
+  # @return [Array<Symbol>]
+  #
+  def deployments: (?default: (String|Symbol|Array[String|Symbol])?, **untyped prm) -> symArray
+
+  # Get a list of values from one of the indicated parameter keys.
+  #
+  # @param [Hash, nil]     opt        Default: `#url_parameters`.
+  # @param [Array<Symbol>] keys
+  #
+  # @return [Array<String>]
+  #
+  def param_values: (anyHash opt, *Symbol keys) -> strArray
+
+  # aws_params
+  #
+  # @param [Hash, nil] opt            Default: `#url_parameters`.
+  #
+  # @return [Hash]
+  #
+  def aws_params: (?anyHash? opt) -> anyHash
+
+  # repo_bucket
+  #
+  # @param [Symbol, String]      repository
+  # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
+  # @param [AwsS3Service, nil]   service      Def: `AwsS3Service.instance`.
+  #
+  # @return [String]
+  #
+  def repo_bucket: (Symbol|String repository, ?(Symbol|String)? deployment, ?service: AwsS3Service?, **untyped ignored) -> String
+
+  # get_repo_bucket
+  #
+  # @param [Symbol, String]      repository
+  # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
+  # @param [Hash]   opt                       Passed to #get_s3_bucket
+  #
+  # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`
+  #
+  # @return [Aws::S3::Bucket]
+  #
+  def get_repo_bucket: (Symbol|String repository, ?(Symbol|String)? deployment, **untyped opt) -> Aws::S3::Bucket
+
+  # get_repo_objects
+  #
+  # @param [Symbol, String]      repository
+  # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
+  # @param [Hash]   opt                       Passed to #get_s3_objects
+  #
+  # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`
+  #
+  # @return [Array<Aws::S3::Object>]
+  #
+  def get_repo_objects: (Symbol|String repository, ?(Symbol|String)? deployment, **untyped opt) -> Array[Aws::S3::Object]
+
+  # get_bucket_table
+  #
+  # @param [Array<Symbol,String>] repos
+  # @param [Array<Symbol,String>] deploys
+  # @param [Hash]                 opt
+  #
+  # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
+  #
+  # @return [Hash{String=>Aws::S3::Bucket}]
+  #
+  def get_bucket_table: (Array[Symbol|String] repos, Array[Symbol|String] deploys, **untyped opt) -> Hash[String,Aws::S3::Bucket]
+
+  # get_object_table
+  #
+  # @param [Array<Symbol,String>] repos
+  # @param [Array<Symbol,String>] deploys
+  # @param [Hash]                 opt
+  #
+  # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
+  #
+  # @return [Hash{String=>Array<Aws::S3::Object>}]
+  #
+  def get_object_table: (Array[Symbol|String] repos, Array[Symbol|String] deploys, **untyped opt) -> Hash[String,Array[Aws::S3::Object]]
+
+  # get_s3_bucket
+  #
+  # @param [String] bucket
+  # @param [Hash]   opt                       Passed to #s3_bucket except for:
+  #
+  # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
+  #
+  # @return [Aws::S3::Bucket]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def get_s3_bucket: (String bucket, **untyped opt) -> Aws::S3::Bucket
+
+  # get_s3_objects
+  #
+  # @param [String, Aws::S3::Bucket] bucket
+  # @param [Hash]   opt                       Passed to #s3_bucket except for:
+  #
+  # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
+  #
+  # @return [Array<Aws::S3::Object>]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def get_s3_objects: (String|Aws::S3::Bucket bucket, **untyped opt) -> Array[Aws::S3::Object]
+
+  private
+
+  #THIS_MODULE: untyped
+end

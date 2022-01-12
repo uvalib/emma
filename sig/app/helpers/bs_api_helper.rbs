@@ -1,0 +1,36 @@
+# View helper methods for the "Bookshare API Explorer" ("/bs_api" pages).
+#
+module BsApiHelper
+  include Emma::Common
+
+  include ApiHelper
+
+  extend ::BsApiHelper
+
+  # :nocov:
+  #include BookshareConcern
+
+  # Generate a URL to an external (Bookshare-related) site, refactored so that
+  # it passes through the application's "Bookshare API Explorer" endpoint.
+  #
+  # @param [String] path
+  # @param [Hash]   prm               Passed to #make_path.
+  #
+  # @return [String]
+  #
+  def bs_api_explorer_url: (String path, **untyped prm) -> String
+
+  # Invoke a Bookshare API method for display in the "Bookshare API Explorer".
+  #
+  # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def bs_api_explorer: (Symbol meth, String path, **untyped opt) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

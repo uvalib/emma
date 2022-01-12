@@ -1,0 +1,59 @@
+# Controller support methods for non-HTML responses.
+#
+module SerializationConcern
+  extend ActiveSupport::Concern
+
+  include ParamsHelper
+
+  include PaginationHelper
+
+  include SerializationHelper
+
+  include ApiConcern
+
+  # Render an item in JSON format.
+  #
+  # @param [Any]  item
+  # @param [Hash] opt                 Passed to #render.
+  #
+  def render_json: (untyped item, **untyped opt) -> void
+
+  # Render an item in XML format.
+  #
+  # @param [Any]  item
+  # @param [Hash] opt                 Passed to #render except for:
+  #
+  # @option opt [String] :separator   Passed to #make_xml.
+  # @option opt [String] :name        Passed to #make_xml.
+  #
+  def render_xml: (untyped item, **untyped opt) -> void
+
+  # Response values for serializing the index page to JSON or XML.
+  #
+  # @param [Any]  list
+  # @param [Hash] opt
+  #
+  # @option opt [Symbol, String] :wrap
+  # @option opt [Symbol, String] :name  Default: :list
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def index_values: (?untyped? list, **untyped opt) -> symHash
+
+  # Response values for serializing the show page to JSON or XML.
+  #
+  # @param [Any]            item
+  # @param [Symbol, nil]    as        Either :hash or :array if given.
+  # @param [Symbol, String] name
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def show_values: (untyped item, ?as: (:hash|:array)?, ?name: (String|Symbol)?) -> symHash
+
+  private
+
+  #THIS_MODULE: untyped
+end

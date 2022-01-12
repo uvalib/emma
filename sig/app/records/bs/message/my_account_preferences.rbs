@@ -1,0 +1,19 @@
+# Bs::Message::MyAccountPreferences
+#
+# @attr [Boolean]                 allowAdultContent
+# @attr [Integer]                 brailleCellLineWidth
+# @attr [BsBrailleFmt]            brailleFormat
+# @attr [BsBrailleGrade]          brailleGrade
+# @attr [Bs::Record::Format]      format
+# @attr [String]                  language
+# @attr [Array<Bs::Record::Link>] links
+# @attr [Boolean]                 showAllBooks
+# @attr [Boolean]                 useUeb
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_myaccount_preferences
+#
+class Bs::Message::MyAccountPreferences < Bs::Api::Message
+  include Bs::Shared::ArtifactMethods
+
+  include Bs::Shared::LinkMethods
+end

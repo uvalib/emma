@@ -1,0 +1,31 @@
+# Class methods for validating records.
+#
+module Record::Validatable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  # :nocov:
+  #include ActiveRecord::Validations
+
+  # Control whether field validation should occur.                              # NOTE: from Upload
+  #
+  # NOTE: Not currently supported
+  #
+  # @type [Boolean]
+  #
+  FIELD_VALIDATION: bool
+
+  def entry_fields: () -> Hash[Symbol,symHash]
+
+  def required_fields_valid?: () -> bool
+
+  def emma_data_valid?: () -> bool
+
+  def check_required: (?symHash? required_fields, ?(symHash|Entry)? source) -> void
+
+  private
+
+  # :nocov:
+  include ActiveRecord::Validations
+end

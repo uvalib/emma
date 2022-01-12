@@ -1,0 +1,111 @@
+# Handle "/search" requests.
+#
+# @see SearchHelper
+# @see file:app/views/search/**
+#
+class SearchController < ApplicationController
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include SerializationConcern
+
+  include SearchConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # API results for :index.
+  #
+  # @return [Search::Message::SearchRecordList]
+  # @return [Search::Message::SearchTitleList]
+  #
+  attr_reader list: Search::Message::SearchRecordList | Search::Message::SearchTitleList
+
+  # API results for :show.
+  #
+  # @return [Search::Message::SearchRecord, nil]
+  #
+  attr_reader item: Search::Message::SearchRecord?
+
+  # == GET /search
+  #
+  # Perform a search through the EMMA Unified Search API.
+  #
+  # @see SearchConcern#index_search
+  #
+  def index: () -> void
+
+  # == GET /search/v2
+  #
+  # Perform a search through the EMMA Unified Search API.
+  #
+  # @see SearchConcern#index_search
+  #
+  def v2: () -> void
+
+  # == GET /search/v3
+  #
+  # Perform a search through the EMMA Unified Search API.
+  #
+  # @see SearchConcern#index_search
+  #
+  def v3: () -> void
+
+  # == GET /search/:id
+  #
+  # Display details of an existing catalog title.
+  #
+  # @see SearchConcern#index_record
+  #
+  # @note This endpoint is not actually functional because it depends on a
+  #   Unified Search API endpoint which does not exist.
+  #
+  def show: () -> void
+
+  # == GET /search/advanced
+  #
+  # Present the advanced search form.
+  #
+  def advanced: () -> void
+
+  # == GET /search/api?...
+  # == GET /search/direct?...
+  #
+  # Perform a search directly through the EMMA Unified Search API.
+  #
+  # @see SearchConcern#index_search
+  #
+  def direct: () -> void
+
+  # == GET /search/validate?identifier=idval1[,idval2[,...]]
+  #
+  # Indicate whether the supplied value is a valid field value.
+  #
+  # @see file:app/assets/javascripts/feature/entry-form.js *remoteValidate()*
+  # @see file:app/assets/javascripts/feature/entry-form.js *ID_VALIDATE_URL_BASE*
+  #
+  def validate: () -> void
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Search::Message::SearchRecordList, Search::Message::SearchTitleList] list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?(Search::Message::SearchRecordList | Search::Message::SearchTitleList) list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Search::Message::SearchRecord, Hash] item
+  # @param [Hash]                                opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def show_values: (?(Search::Message::SearchRecord|anyHash) item, **untyped opt) -> symHash
+end

@@ -1,0 +1,56 @@
+# Handle health-check requests.
+#
+# @see file:app/views/health/**
+#
+# == Usage Notes
+# The endpoints implemented by this controller render only JSON and do not
+# require authentication of the requester.
+#
+class HealthController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include RunStateConcern
+
+  include LogConcern
+
+  include HealthConcern
+
+  # == GET /version
+  # == GET /health/version
+  #
+  def version: () -> void
+
+  # == GET /healthcheck[?logging=true]
+  # == GET /health/check[?logging=true]
+  # == GET /health/check/:subsystem[?logging=true]
+  #
+  # @see HealthConcern#render_check
+  #
+  def check: () -> void
+
+  # == GET /health/run_state
+  #
+  # @see HealthConcern#show_run_state
+  #
+  def run_state: () -> void
+
+  # == PUT /health/run_state
+  #
+  # @see HealthConcern#update_run_state
+  #
+  # == Usage Notes
+  # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
+  #
+  def set_run_state: () -> void
+
+  # Excess logging is turned off for the standard all-subsystems health check
+  # (which is hit frequently by automated processes) unless the URL parameter
+  # 'logging=true' is included.
+  #
+  # If one or more comma-delimited subsystems is specified, full logging is
+  # performed unless the URL parameter 'logging=false' is included.
+  #
+  def suppress_logger: () -> void
+end

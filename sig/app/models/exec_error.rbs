@@ -1,0 +1,79 @@
+# Base exception for augmented application errors.
+#
+class ExecError < RuntimeError
+  # Placeholder error message.
+  #
+  # @type [String]
+  #
+  DEFAULT_ERROR: String
+
+  # Individual error messages (if the originator supplied multiple messages).
+  #
+  # @return [Array<String>]
+  #
+  attr_reader messages: strArray
+
+  # Initialize a new instance.
+  #
+  # @param [Array<Exception, Hash, String, nil>] args
+  # @param [Hash]                                opt
+  #
+  # == Implementation Notes
+  # Each element of @messages is duplicated in order to ensure that there are
+  # no unexpected entanglements with the original message source(s).
+  #
+  def initialize: (*(Exception|String|symHash|nil) args, **untyped opt) -> void
+
+  # Indicate that the instance has no messages.
+  #
+  def blank?: () -> bool
+
+  # To satisfy Kernel#raise this returns the instance itself.
+  #
+  # @return [Exception]
+  #
+  def exception: (*untyped, **untyped) ?{ () -> untyped } -> Exception
+
+  # If applicable, the original exception that was rescued which resulted in
+  # raising an ExecError exception.
+  #
+  # @return [Exception, nil]
+  #
+  def cause: () -> Exception?
+
+  # Execution stack associated with the original exception.
+  #
+  # @return [Array<String>, nil]
+  #
+  def backtrace: () -> strArray?
+
+  # inspect
+  #
+  # @return [String]
+  #
+  def inspect: () -> String
+
+  # Methods to be included in related subclasses.
+  #
+  module Methods
+    # Fallback error message.
+    #
+    # @return [String]
+    #
+    def default_message: (*untyped, **untyped) ?{ () -> untyped } -> String
+
+    # Extract error message(s) from the given item.
+    #
+    # @param [Any] src
+    #
+    # @return [Array<String>]
+    #
+    def extract_message: (untyped src) -> strArray
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+end

@@ -1,0 +1,228 @@
+# Support methods for the "/account" controller.
+#
+module AccountConcern
+  extend ActiveSupport::Concern
+
+  # URL parameters allowed for creating/updating a user account.
+  #
+  # @type [Array<Symbol>]
+  #
+  ACCT_PARAMETERS: symArray
+
+  # Columns searched for generic (:like) matches.
+  #
+  # @type [Array<Symbol>]
+  #
+  ACCT_MATCH_COLUMNS: symArray
+
+  # Only allow a list of trusted parameters through.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def account_params: () -> symHash
+
+  # Get the User identifier(s) specified by parameters.
+  #
+  # @return [Array<String,Integer>]
+  #
+  def id_params: () -> Array[String|Integer]
+
+  # Normalize a list of User identifiers (:id or :email).
+  #
+  # @param [Array<String, Integer, nil>] ids
+  # @param [Regexp]                      separator
+  #
+  # @return [Array<String,Integer>]
+  #
+  def identifier_list: (*(String|Integer) ids, ?separator: Regexp) -> Array[String|Integer]
+
+  # Get the indicated User account records.
+  #
+  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
+  #
+  # @raise [ActiveRecord::RecordNotFound]   If *ids* is blank.
+  #
+  # @return [Array<User>]
+  #
+  def find_accounts: (?Array[String|Integer]? ids) -> Array[User]
+
+  # Get the indicated User account record.
+  #
+  # @param [String, Integer, nil] id    Default: `params[:id]`.
+  #
+  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
+  #
+  # @return [User, nil]
+  #
+  def find_account: (?(String|Integer)? id) -> User?
+
+  # Get matching User account records or all records if no terms are given.
+  #
+  # @param [Array<String,Hash,Array,nil>] terms
+  # @param [Array, nil]                   columns     Def.: #ACCT_MATCH_COLUMNS
+  # @param [Symbol, String, Hash, Array]  sort        Def.: :id
+  # @param [Hash]                         hash_terms  Added to *terms*.
+  #
+  # @return [ActiveRecord::Relation<User>]
+  #
+  def get_accounts: (*(String|anyArray|anyHash) terms, ?columns: anyArray? , ?sort: (Symbol|String|anyArray|anyHash), **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
+
+  # Get the indicated User account record.
+  #
+  # @param [String, Integer, nil] id    Default: `params[:id]`.
+  #
+  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
+  #
+  # @return [User, nil]
+  #
+  def get_account: (?(String|Integer)? id) -> User?
+
+  # Create a new User account record.
+  #
+  # @param [Hash,nil] attr            Initial User attributes.
+  #
+  # @return [User]
+  #
+  def new_account: (?anyHash? attr) -> User
+
+  # Create a new persisted User account.
+  #
+  # @param [Boolean]        no_raise  If *true*, use #save instead of #save!.
+  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
+  # @param [Hash]           attr      Initial User attributes.
+  #
+  # @raise [ActiveRecord::RecordNotSaved]   If #save! failed.
+  #
+  # @return [User]
+  #
+  def create_account: (?no_raise: bool, ?force_id: (bool|String), **untyped attr) -> User
+
+  # Modify an existing (persisted) User account.
+  #
+  # @param [Boolean] no_raise  If *true*, use #update instead of #update!.
+  # @param [Hash]    attr      New attributes (default: `#account_params`).
+  #
+  # @raise [ActiveRecord::RecordNotSaved]   If #update! failed.
+  #
+  # @return [User, nil]
+  #
+  def update_account: (?no_raise: bool, **untyped attr) -> User?
+
+  # Remove an existing (persisted) User account.
+  #
+  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
+  # @param [Boolean] no_raise   If *true*, use #destroy instead of #destroy!.
+  #
+  # @raise [ActiveRecord::RecordNotFound]       If *ids* is blank.
+  # @raise [ActiveRecord::RecordNotDestroyed]   If #destroy! failed.
+  #
+  # @return [Array<User>]
+  #
+  def destroy_accounts: (*(String|Integer) ids, ?no_raise: bool, **untyped ignored) -> Array[User]
+
+  # redirect_success
+  #
+  # @param [Symbol]            action
+  # @param [String, nil]       message
+  # @param [User, String, nil] redirect
+  # @param [Hash]              opt        Passed to redirect.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def redirect_success: (Symbol action, ?String? message, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # redirect_failure
+  #
+  # @param [Symbol]                             action
+  # @param [String, nil]                        message
+  # @param [String, Array, ActiveModel::Errors] error
+  # @param [User, String, nil]                  redirect
+  # @param [Hash]                               opt       Passed to redirect.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def redirect_failure: (Symbol action, ?String? message, ?error: (String|anyArray|ActiveModel::Errors)?, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Configured account record fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def account_fields: (*untyped, **untyped) ?{ () -> untyped } -> Hash[Symbol,anyHash]
+
+  # Get the appropriate message to display.
+  #
+  # @param [Symbol] action
+  # @param [Symbol] outcome
+  # @param [Hash]   config
+  #
+  # @return [String, nil]
+  #
+  def message_for: (Symbol action, Symbol outcome, ?Hash[Symbol,anyHash] config) -> String?
+
+  # Get the appropriate terms for message interpolations.
+  #
+  # @param [Symbol] action
+  # @param [Hash]   config
+  #
+  # @return [Hash]
+  #
+  def interpolation_terms: (Symbol action, ?Hash[Symbol,anyHash] config) -> symHash
+
+  module DeviseMethods
+    # devise_mapping
+    #
+    # @return [Devise::Mapping]
+    #
+    # @see DeviseController#devise_mapping
+    #
+    def devise_mapping: () -> Devise::Mapping
+
+    # resource_class
+    #
+    # @return [Class]
+    #
+    # @see DeviseController#resource_class
+    # @see Devise::Mapping#to
+    #
+    def resource_class: () -> Class
+
+    # resource_name
+    #
+    # @return [String]
+    #
+    # @see DeviseController#resource_name
+    # @see Devise::Mapping#name
+    #
+    def resource_name: () -> String
+
+    alias scope_name resource_name
+
+    # resource
+    #
+    # @return [User, nil]
+    #
+    # @see DeviseController#resource
+    #
+    def resource: () -> User?
+
+    # resource=
+    #
+    # @param [User, nil] new_resource
+    #
+    # @return [User, nil]
+    #
+    # @see DeviseController#resource=
+    #
+    def resource=: (User? new_resource) -> User?
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  private
+
+  #THIS_MODULE: untyped
+
+  include DeviseMethods
+end

@@ -1,0 +1,9 @@
+module OAuth2
+  module ExtensionDebugging
+    include Emma::Extension::Debugging
+
+    include Emma::Extension::NoDebugging
+
+    def __ext_log_leader: () -> String
+  end
+end

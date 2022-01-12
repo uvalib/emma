@@ -312,7 +312,7 @@ module ModelHelper::List
   # @param [Integer, #to_i, nil] row    Default: 1.
   # @param [Hash]    opt                Passed to #page_filter.
   #
-  # @return [(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
+  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
   def index_controls(
     list:   nil,
@@ -387,7 +387,7 @@ module ModelHelper::List
   #     element; if given as *true* this specifies that elements from the block
   #     will go after the container.
   #
-  # @param [Model]                  item
+  # @param [Model, nil]             item
   # @param [Integer]                index   Index number.
   # @param [Integer, nil]           offset  Default: `#page_offset`.
   # @param [Integer, nil]           level   Heading tag level (@see #html_tag).
@@ -447,6 +447,7 @@ module ModelHelper::List
     end
 
     # Additional elements supplied by the block:
+    # noinspection RubyMismatchedArgumentType
     if block_given? && (added = Array.wrap(yield(index, offset))).present?
       if inner.is_a?(TrueClass) || outer.nil? || outer.is_a?(FalseClass)
         inner_parts += added

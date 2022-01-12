@@ -1,0 +1,59 @@
+# IngestService::Common
+#
+module IngestService::Common
+  include ApiService::Common
+
+  include IngestService::Properties
+
+  # The ingest service actually takes its API key via headers.
+  #
+  # @param [Hash, nil] params         Default: @params.
+  #
+  # @return [Hash]                    New API parameters.
+  #
+  def api_options: (?symHash? params) -> symHash
+
+  # Add API key header.
+  #
+  # @param [Hash, nil]         params   Default: @params.
+  # @param [Hash, nil]         headers  Default: {}.
+  # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
+  #
+  # @return [Array<(Hash,Hash,String)>]      Message body plus headers for GET.
+  # @return [Array<(Hash,Hash,Hash)>]        Query plus headers for PUT, POST, PATCH.
+  #
+  def api_headers: (?symHash? params, ?strHash? headers, ?(String|strHash)? body) -> [symHash, strHash, (String|strHash)]
+
+  # Send an API request.
+  #
+  # @param [Symbol]            verb
+  # @param [String]            action
+  # @param [Hash, String, nil] params
+  # @param [Hash, nil]         headers
+  # @param [Hash]              opt
+  #
+  # @option opt [Boolean]      :no_redirect
+  # @option opt [Integer, nil] :redirection
+  #
+  # @raise [ApiService::EmptyResultError]
+  # @raise [ApiService::HtmlResultError]
+  # @raise [ApiService::RedirectionError]
+  # @raise [ApiService::Error]
+  #
+  # @return [Faraday::Response]
+  # @return [nil]
+  #
+  # == Usage Notes
+  # Sets @response as a side-effect.
+  #
+  def transmit: (Symbol verb, String action, symHash|String|nil params, strHash|nil headers, **untyped opt) -> Faraday::Response?
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

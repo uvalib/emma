@@ -1,0 +1,37 @@
+# Support methods for the "/search_call" controller.
+#
+module SearchCallConcern
+  extend ActiveSupport::Concern
+
+  # @type [Array<Symbol>]
+  SC_PARAMETERS: symArray
+
+  # Columns searched for generic (:like) matches.
+  #
+  # @type [Array<Symbol>]
+  #
+  SC_MATCH_COLUMNS: symArray
+
+  # Only allow a list of trusted parameters through. # TODO: strong params
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  #
+  # @return [Hash]
+  #
+  def search_call_params: (?prmHash? p) -> symHash
+
+  # Get matching SearchCall records or all records if no terms are given.
+  #
+  # @param [Array<String,Hash,Array>]    terms
+  # @param [Array, nil]                  columns      Def.: #SC_MATCH_COLUMNS
+  # @param [Symbol, String, Hash, Array] sort         Def.: :created_at
+  # @param [Hash]                        hash_terms   Added to *terms*.
+  #
+  # @return [ActiveRecord::Relation<SearchCall>]
+  #
+  def get_search_calls: (*(anyHash|anyArray|String) terms, ?columns: symArray?, ?sort: (anyHash|anyArray|String|Symbol), **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[SearchCall, Integer]
+
+  private
+
+  #THIS_MODULE: untyped
+end

@@ -1,0 +1,122 @@
+# View helper methods supporting variations for the member repositories.
+#
+module RepositoryHelper
+  include HtmlHelper
+
+  include ArtifactHelper
+
+  # HathiTrust parameters which cause a prompt for login.
+  #
+  # @type [String]
+  #
+  # -
+  # noinspection SpellCheckingInspection
+  # +
+  HT_URL_PARAMS: String
+
+  # Internet Archive items that don't require EMMA login.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  IA_DIRECT_LINK_PATTERNS: Array[String|Regexp]
+
+  # Indicate whether the given URL is an EMMA link.
+  #
+  # @param [String] url
+  #
+  def emma_link?: (String url) -> bool
+
+  # Indicate whether the given URL is a Bookshare link.
+  #
+  # @param [String] url
+  #
+  # == Usage Notes
+  # This exists to support the handful of items which are represented as
+  # belonging to the "EMMA" repository but which are actually Bookshare items
+  # from the "EMMA Collection".
+  #
+  def bs_link?: (String url) -> bool
+
+  # Indicate whether the given URL is an Internet Archive link.
+  #
+  # @param [String] url
+  #
+  def ht_link?: (String url) -> bool
+
+  # Indicate whether the given URL is an Internet Archive link.
+  #
+  # @param [String] url
+  #
+  def ia_link?: (String url) -> bool
+
+  # Report the member repository associated with the given URL.
+  #
+  # @param [String]               url
+  # @param [Symbol, Boolean, nil] default   *true* => `EmmaRepository#default`.
+  #
+  # @return [String]                  One of EmmaRepository#values.
+  # @return [nil]                     If not associated with any repository.
+  #
+  def url_repository: (String url, ?default: (Symbol|bool)?) -> String?
+
+  # Produce a link to retrieve an EMMA file.
+  #
+  # @param [Api::Record] _item        Unused.
+  # @param [String]       label
+  # @param [String]       url
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see HtmlHelper#download_link
+  #
+  def emma_retrieval_link: (Api::Record _item, String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Produce a control to manage download of a Bookshare item artifact.
+  #
+  # @param [Api::Record] item
+  # @param [String]      label
+  # @param [String]      url
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see ArtifactHelper#download_links
+  #
+  def bs_retrieval_link: (Api::Record item, String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Produce a link to open a new browser tab to retrieve a file from the
+  # HathiTrust web site.
+  #
+  # @param [Api::Record] _item        Unused.
+  # @param [String]       label
+  # @param [String]       url
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see HtmlHelper#download_link
+  #
+  def ht_retrieval_link: (Api::Record _item, String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Produce a link to retrieve an Internet Archive file.
+  #
+  # @param [Api::Record] _item        Unused.
+  # @param [String]       label
+  # @param [String]       url
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see HtmlHelper#download_link
+  #
+  # == Implementation Notes
+  # Encrypted DAISY files are handled differently; for an explanation:
+  # @see IaDownloadConcern#ia_download_response
+  #
+  def ia_retrieval_link: (Api::Record _item, String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

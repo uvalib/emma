@@ -25,7 +25,7 @@ class Shrine
     # @param [Shrine::UploadedFile]    uploaded_file
     # @param [ActionDispatch::Request] request
     #
-    # @return [(Integer, Hash, Array<String>)]
+    # @return [Array<(Integer, Hash, Array<String>)>]
     #
     # @see file:app/assets/javascripts/feature/download.js *onFileUploadSuccess()*
     #
@@ -86,7 +86,7 @@ class Shrine
       #
       # @param [ActionDispatch::Request] request
       #
-      # @return [(Integer, Hash, Array<String>)]
+      # @return [Array<(Integer, Hash, Array<String>)>]
       #
       # This method overrides:
       # @see Shrine::UploadEndpoint#handle_request
@@ -170,7 +170,7 @@ class Shrine
       # @param [Shrine::UploadedFile, Hash] uploaded_file
       # @param [ActionDispatch::Request]    request
       #
-      # @return [(Integer, Hash, Array<String>)]
+      # @return [Array<(Integer, Hash, Array<String>)>]
       #
       # This method overrides:
       # @see Shrine::UploadEndpointExt#make_response

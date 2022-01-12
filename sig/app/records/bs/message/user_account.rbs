@@ -1,0 +1,9 @@
+# Bs::Message::UserAccount
+#
+# @see Bs::Record::UserAccount
+#
+class Bs::Message::UserAccount < Bs::Api::Message
+  include Bs::Shared::AccountMethods
+
+  include Bs::Shared::LinkMethods
+end

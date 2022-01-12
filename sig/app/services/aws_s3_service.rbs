@@ -1,0 +1,7 @@
+# Deposit and retrieve records via AWS S3.
+#
+class AwsS3Service < ApiService
+  DESTRUCTIVE_TESTING: bool
+
+  include AwsS3
+end

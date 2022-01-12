@@ -1,0 +1,110 @@
+# Base class for file objects.
+#
+# @see FileNaming
+# @see FileHandle
+#
+class FileObject
+  include Emma::Debug
+
+  include FileNaming
+
+  # Create a new instance.
+  #
+  # @param [String, FileHandle, IO, StringIO, Tempfile, IO::Like] handle
+  # @param [Symbol, String, nil] fmt  Override `self.class.fmt`.
+  # @param [String, nil]         ext  Override `self.class.file_extension`.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload initialize(path, fmt: nil, ext: nil)
+  #   @param [String]              path
+  #   @param [Symbol, String, nil] fmt
+  #   @param [String, nil]         ext
+  #
+  # @overload initialize(handle, fmt: nil, ext: nil)
+  #   @param [FileHandle, IO, StringIO, Tempfile, IO::Like] handle
+  #   @param [Symbol, String, nil] fmt
+  #   @param [String, nil]         ext
+  #
+  def initialize: (String|IO|StringIO|IO::Like|Tempfile|FileHandle handle, ?fmt: String|Symbol|nil, ?ext: String?) -> void
+
+  # Format type of the file.
+  #
+  # @return [Symbol]                  One of FileFormat#TYPES.
+  #
+  attr_reader fmt: Symbol
+
+  # Filename extension.
+  #
+  # @return [String, nil]
+  #
+  attr_reader ext: String?
+
+  # filename
+  #
+  # @return [String, nil]
+  #
+  def filename: () -> String?
+
+  # file_handle
+  #
+  # @return [FileHandle, nil]
+  #
+  def file_handle: () -> FileHandle?
+
+  module ClassMethods
+    include Emma::Debug
+
+    include FileNaming
+
+    # File format defined for the subclass.
+    #
+    # @raise [NameError]              If the subclass does not define FILE_TYPE
+    #
+    # @return [Symbol]
+    #
+    def fmt: () -> Symbol
+
+    # file_extension
+    #
+    # @return [String]
+    # @return [nil]
+    #
+    def file_extension: () -> String?
+
+    # File extensions defined for the subclass.
+    #
+    # @return [Array<String>]
+    #
+    def file_extensions: () -> strArray
+
+    # MIME types defined for the subclass.
+    #
+    # @return [Array<String>]
+    #
+    def mime_types: () -> strArray
+
+    # To be run once per type...
+    #
+    # @return [void]
+    #
+    def register_mime_types: () -> void
+
+    private
+
+    include Emma::Debug::OutputMethods
+
+    # __debug_mime
+    #
+    # @param [Binding] bind         Passed to #__debug_items.
+    # @param [Proc]    block        Passed to #__debug_items.
+    #
+    # @return [nil]
+    #
+    def __debug_mime: (Binding bind) { () -> untyped } -> nil
+  end
+
+  extend ClassMethods
+end

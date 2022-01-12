@@ -163,7 +163,7 @@ class PeriodicalController < ApplicationController
   def show_values(result = nil, **opt)
     opt.reverse_merge!(name: :periodical)
     result ||= { details: @item, editions: @list }
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType
     super(result, **opt)
   end
 

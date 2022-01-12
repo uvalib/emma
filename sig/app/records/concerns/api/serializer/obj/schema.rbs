@@ -1,0 +1,49 @@
+# Obj-specific definition overrides for serialization.
+#
+module Api::Serializer::Obj::Schema
+  include Api::Serializer::Schema
+
+  OBJ_ELEMENT_PARSE_NAMING: Symbol
+
+  OBJ_ATTRIBUTE_PARSE_NAMING: Symbol
+
+  OBJ_ELEMENT_RENDER_NAMING: Symbol
+
+  OBJ_ATTRIBUTE_RENDER_NAMING: Symbol
+
+  OBJ_RENDER_EMPTY: bool
+
+  OBJ_RENDER_NIL: bool
+
+  # The naming mode for de-serializing data elements from Obj format.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_parse_naming: () -> Symbol
+
+  # The naming mode for serializing attributes from Obj format.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_parse_naming: () -> Symbol
+
+  # The naming mode for serializing data elements to Obj format.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def element_render_naming: () -> Symbol
+
+  # The naming mode for serializing attributes to Obj format.
+  #
+  # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  def attribute_render_naming: () -> Symbol
+
+  # The policy for serializing empty collections to Obj format.
+  #
+  def render_empty?: () -> bool
+
+  # The policy for serializing empty elements to Obj format.
+  #
+  def render_nil?: () -> bool
+end

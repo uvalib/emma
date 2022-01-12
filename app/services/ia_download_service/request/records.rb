@@ -27,11 +27,12 @@ module IaDownloadService::Request::Records
   #
   # @raise [ExecError]                If the download failed.
   #
-  # @return [(String,String,String)]
-  # @return [(String,String,nil)]
+  # @return [Array<(String,String,String)>]
+  # @return [Array<(String,String,nil)>]
   #
   def download(url, **opt)
     api(:get, url, **opt)
+    # noinspection RubyNilAnalysis
     data = response.body
     type = response['Content-Type']
     disp = response['Content-Disposition']

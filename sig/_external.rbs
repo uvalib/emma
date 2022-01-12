@@ -1,0 +1,559 @@
+# sig/_external.rbs
+#
+# NOTE: stopgap for things that don't currently have RBS definitions
+
+# =============================================================================
+# Shorthand notation for manually-edited RBS definitions
+# =============================================================================
+
+type anyHash    = Hash[untyped,untyped]   # Generic Hash
+type anyArray   = Array[untyped]          # Generic Array
+
+type symHash    = Hash[Symbol,untyped]    # Hash with Symbol keys
+type symArray   = Array[Symbol]           # Array of Symbol
+
+type strHash    = Hash[String,untyped]    # Hash with String keys
+type strArray   = Array[String]           # Array of String
+
+type prmHash    = symHash | ActionController::Parameters
+
+type httpResult = [Integer, strHash, strArray] | [Integer, Rack::Utils::HeaderHash, Rack::BodyProxy]
+type errorArgs  = Exception | ExecReport | symHash | String | strArray | Array[Record::Exceptions::FlashPart] | nil
+
+# =============================================================================
+# Duck-typing definitions
+# =============================================================================
+
+interface _DateTime
+  def strftime: (String fmt) -> String
+end
+
+# from Bs::Shared::LinkMethods
+interface _GetLink
+  def get_link: (untyped) -> String?
+end
+
+# from Bs::Message::* schema
+interface _Next
+  def next: () -> String?
+end
+
+
+# =============================================================================
+# Gems that don't currently have RBS definitions
+# =============================================================================
+
+module ActionCable
+  module Channel
+    class Base
+    end
+  end
+  module Connection
+    class Base
+    end
+  end
+end
+
+module ActionMailer
+  class Base
+  end
+end
+
+module ActiveRecord
+  module Callbacks
+    module ClassMethods
+    end
+  end
+end
+
+module Aws
+  module S3
+    class Bucket
+    end
+    class Object
+    end
+    class Resource
+    end
+  end
+end
+
+module CanCan
+  module Ability
+  end
+  class Error < StandardError
+  end
+  class AccessDenied < Error
+  end
+end
+
+module Devise
+  module Models
+    module DatabaseAuthenticatable
+    end
+    module Rememberable
+    end
+    module Trackable
+    end
+    module Registerable
+    end
+    module Omniauthable
+    end
+  end
+  class Mapping
+  end
+  class ConfirmationsController
+  end
+  class OmniauthCallbacksController
+  end
+  class PasswordsController
+  end
+  class RegistrationsController
+  end
+  class SessionsController
+  end
+  class UnlocksController
+  end
+end
+
+module Down
+  class ChunkedIO
+  end
+end
+
+module Errno
+  class E2BIG < SystemCallError
+  end
+  class EACCES < SystemCallError
+  end
+  class EADDRINUSE < SystemCallError
+  end
+  class EADDRNOTAVAIL < SystemCallError
+  end
+  class EADV < SystemCallError
+  end
+  class EAFNOSUPPORT < SystemCallError
+  end
+  class EAGAIN < SystemCallError
+  end
+  class EALREADY < SystemCallError
+  end
+  class EAUTH < SystemCallError
+  end
+  class EBADARCH < SystemCallError
+  end
+  class EBADE < SystemCallError
+  end
+  class EBADEXEC < SystemCallError
+  end
+  class EBADF < SystemCallError
+  end
+  class EBADFD < SystemCallError
+  end
+  class EBADMACHO < SystemCallError
+  end
+  class EBADMSG < SystemCallError
+  end
+  class EBADR < SystemCallError
+  end
+  class EBADRPC < SystemCallError
+  end
+  class EBADRQC < SystemCallError
+  end
+  class EBADSLT < SystemCallError
+  end
+  class EBFONT < SystemCallError
+  end
+  class EBUSY < SystemCallError
+  end
+  class ECANCELED < SystemCallError
+  end
+  class ECAPMODE < SystemCallError
+  end
+  class ECHILD < SystemCallError
+  end
+  class ECHRNG < SystemCallError
+  end
+  class ECOMM < SystemCallError
+  end
+  class ECONNABORTED < SystemCallError
+  end
+  class ECONNREFUSED < SystemCallError
+  end
+  class ECONNRESET < SystemCallError
+  end
+  class EDEADLK < SystemCallError
+  end
+  class EDEADLOCK < SystemCallError
+  end
+  class EDESTADDRREQ < SystemCallError
+  end
+  class EDEVERR < SystemCallError
+  end
+  class EDOM < SystemCallError
+  end
+  class EDOOFUS < SystemCallError
+  end
+  class EDOTDOT < SystemCallError
+  end
+  class EDQUOT < SystemCallError
+  end
+  class EEXIST < SystemCallError
+  end
+  class EFAULT < SystemCallError
+  end
+  class EFBIG < SystemCallError
+  end
+  class EFTYPE < SystemCallError
+  end
+  class EHOSTDOWN < SystemCallError
+  end
+  class EHOSTUNREACH < SystemCallError
+  end
+  class EHWPOISON < SystemCallError
+  end
+  class EIDRM < SystemCallError
+  end
+  class EILSEQ < SystemCallError
+  end
+  class EINPROGRESS < SystemCallError
+  end
+  class EINTR < SystemCallError
+  end
+  class EINVAL < SystemCallError
+  end
+  class EIO < SystemCallError
+  end
+  class EIPSEC < SystemCallError
+  end
+  class EISCONN < SystemCallError
+  end
+  class EISDIR < SystemCallError
+  end
+  class EISNAM < SystemCallError
+  end
+  class EKEYEXPIRED < SystemCallError
+  end
+  class EKEYREJECTED < SystemCallError
+  end
+  class EKEYREVOKED < SystemCallError
+  end
+  class EL2HLT < SystemCallError
+  end
+  class EL2NSYNC < SystemCallError
+  end
+  class EL3HLT < SystemCallError
+  end
+  class EL3RST < SystemCallError
+  end
+  class ELAST < SystemCallError
+  end
+  class ELIBACC < SystemCallError
+  end
+  class ELIBBAD < SystemCallError
+  end
+  class ELIBEXEC < SystemCallError
+  end
+  class ELIBMAX < SystemCallError
+  end
+  class ELIBSCN < SystemCallError
+  end
+  class ELNRNG < SystemCallError
+  end
+  class ELOOP < SystemCallError
+  end
+  class EMEDIUMTYPE < SystemCallError
+  end
+  class EMFILE < SystemCallError
+  end
+  class EMLINK < SystemCallError
+  end
+  class EMSGSIZE < SystemCallError
+  end
+  class EMULTIHOP < SystemCallError
+  end
+  class ENAMETOOLONG < SystemCallError
+  end
+  class ENAVAIL < SystemCallError
+  end
+  class ENEEDAUTH < SystemCallError
+  end
+  class ENETDOWN < SystemCallError
+  end
+  class ENETRESET < SystemCallError
+  end
+  class ENETUNREACH < SystemCallError
+  end
+  class ENFILE < SystemCallError
+  end
+  class ENOANO < SystemCallError
+  end
+  class ENOATTR < SystemCallError
+  end
+  class ENOBUFS < SystemCallError
+  end
+  class ENOCSI < SystemCallError
+  end
+  class ENODATA < SystemCallError
+  end
+  class ENODEV < SystemCallError
+  end
+  class ENOENT < SystemCallError
+  end
+  class ENOEXEC < SystemCallError
+  end
+  class ENOKEY < SystemCallError
+  end
+  class ENOLCK < SystemCallError
+  end
+  class ENOLINK < SystemCallError
+  end
+  class ENOMEDIUM < SystemCallError
+  end
+  class ENOMEM < SystemCallError
+  end
+  class ENOMSG < SystemCallError
+  end
+  class ENONET < SystemCallError
+  end
+  class ENOPKG < SystemCallError
+  end
+  class ENOPOLICY < SystemCallError
+  end
+  class ENOPROTOOPT < SystemCallError
+  end
+  class ENOSPC < SystemCallError
+  end
+  class ENOSR < SystemCallError
+  end
+  class ENOSTR < SystemCallError
+  end
+  class ENOSYS < SystemCallError
+  end
+  class ENOTBLK < SystemCallError
+  end
+  class ENOTCAPABLE < SystemCallError
+  end
+  class ENOTCONN < SystemCallError
+  end
+  class ENOTDIR < SystemCallError
+  end
+  class ENOTEMPTY < SystemCallError
+  end
+  class ENOTNAM < SystemCallError
+  end
+  class ENOTRECOVERABLE < SystemCallError
+  end
+  class ENOTSOCK < SystemCallError
+  end
+  class ENOTSUP < SystemCallError
+  end
+  class ENOTTY < SystemCallError
+  end
+  class ENOTUNIQ < SystemCallError
+  end
+  class ENXIO < SystemCallError
+  end
+  class EOPNOTSUPP < SystemCallError
+  end
+  class EOVERFLOW < SystemCallError
+  end
+  class EOWNERDEAD < SystemCallError
+  end
+  class EPERM < SystemCallError
+  end
+  class EPFNOSUPPORT < SystemCallError
+  end
+  class EPIPE < SystemCallError
+  end
+  class EPROCLIM < SystemCallError
+  end
+  class EPROCUNAVAIL < SystemCallError
+  end
+  class EPROGMISMATCH < SystemCallError
+  end
+  class EPROGUNAVAIL < SystemCallError
+  end
+  class EPROTO < SystemCallError
+  end
+  class EPROTONOSUPPORT < SystemCallError
+  end
+  class EPROTOTYPE < SystemCallError
+  end
+  class EPWROFF < SystemCallError
+  end
+  class EQFULL < SystemCallError
+  end
+  class ERANGE < SystemCallError
+  end
+  class EREMCHG < SystemCallError
+  end
+  class EREMOTE < SystemCallError
+  end
+  class EREMOTEIO < SystemCallError
+  end
+  class ERESTART < SystemCallError
+  end
+  class ERFKILL < SystemCallError
+  end
+  class EROFS < SystemCallError
+  end
+  class ERPCMISMATCH < SystemCallError
+  end
+  class ESHLIBVERS < SystemCallError
+  end
+  class ESHUTDOWN < SystemCallError
+  end
+  class ESOCKTNOSUPPORT < SystemCallError
+  end
+  class ESPIPE < SystemCallError
+  end
+  class ESRCH < SystemCallError
+  end
+  class ESRMNT < SystemCallError
+  end
+  class ESTALE < SystemCallError
+  end
+  class ESTRPIPE < SystemCallError
+  end
+  class ETIME < SystemCallError
+  end
+  class ETIMEDOUT < SystemCallError
+  end
+  class ETOOMANYREFS < SystemCallError
+  end
+  class ETXTBSY < SystemCallError
+  end
+  class EUCLEAN < SystemCallError
+  end
+  class EUNATCH < SystemCallError
+  end
+  class EUSERS < SystemCallError
+  end
+  class EWOULDBLOCK < SystemCallError
+  end
+  class EXDEV < SystemCallError
+  end
+  class EXFULL < SystemCallError
+  end
+  class NOERROR < SystemCallError
+  end
+end
+
+module Faraday
+  class Connection
+  end
+  module DecodeMethods
+  end
+  module EncodeMethods
+  end
+  class Error < StandardError
+  end
+  class Env
+  end
+  class Middleware
+  end
+  class Response
+  end
+end
+
+module Hashie
+  class Hash < ::Hash
+  end
+  class Mash < Hash
+  end
+end
+
+module IO::Like
+  extend _ToIO
+end
+
+class Logger
+  class Formatter
+  end
+  module Severity
+  end
+end
+
+module OAuth2
+  class AccessToken
+  end
+  class Client
+  end
+  class Response
+  end
+end
+
+module OmniAuth
+  class AuthHash
+  end
+  class KeyStore < Hashie::Mash
+  end
+  class Strategies::OAuth2
+  end
+  module Strategy
+    class Options < KeyStore
+    end
+    def redirect: (untyped uri) -> httpResult
+  end
+end
+
+module PDF
+  class Reader
+  end
+end
+
+module Prometheus
+  module Client
+    class Metric
+    end
+    class Counter   < Metric
+    end
+    class Gauge     < Metric
+    end
+    class Histogram < Metric
+    end
+    class Summary   < Metric
+    end
+    class Registry
+    end
+  end
+end
+
+module Rake
+  module DSL
+  end
+  class TaskArguments
+  end
+end
+
+module Representable
+  module Coercion
+  end
+  class Decorator
+  end
+  module Hash
+    module ClassMethods
+    end
+  end
+  module JSON
+  end
+  module XML
+  end
+end
+
+class Sanitize
+end
+
+class Shrine
+  class Attacher
+  end
+  class UploadedFile
+  end
+end
+
+module Workflow
+  class Base
+  end
+  class State
+  end
+end

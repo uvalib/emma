@@ -94,6 +94,9 @@ module Emma::Common::ExceptionMethods
   #
   # @raise [NotImplementedError]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def not_implemented(message = nil, meth: nil, **)
     meth ||= calling_method&.to_sym
     raise NotImplementedError, [self.class, meth, message].compact.join(': ')

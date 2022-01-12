@@ -61,6 +61,9 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr  Default: params[:controller].
   # @param [Hash, nil]           opt    Default: `#request_parameters`.
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def show_search_bar?(ctrlr = nil, opt = nil)
     ctrlr, opt = [nil, ctrlr] if ctrlr.is_a?(Hash)
     opt = opt&.symbolize_keys || request_parameters
@@ -189,6 +192,9 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def search_bar_row(field, value = nil, first: nil, last: nil, **opt)
     css_selector = '.search-bar-row'
     id_opt, opt  = partition_hash(opt, :target, :unique, :index)
@@ -214,6 +220,8 @@ module LayoutHelper::SearchBar
   #
   # @param [Hash] opt                 Passed to #search_row_control.
   #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def search_row_add(**opt)
     opt[:title] ||= 'Include another search term type.' # TODO: I18n
     opt[:icon]  ||= HEAVY_PLUS
@@ -223,6 +231,8 @@ module LayoutHelper::SearchBar
   # Reveal the associated search-bar-row.
   #
   # @param [Hash] opt                 Passed to #search_row_control.
+  #
+  # @return [ActiveSupport::SafeBuffer]
   #
   def search_row_remove(**opt)
     opt[:title] ||= 'Remove this search term' # TODO: I18n
@@ -440,6 +450,9 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def search_input(field, ctrlr = nil, target: nil, value: nil, **opt)
     css_selector = '.search-input'
     target  = search_input_target(ctrlr, target: target)
@@ -492,6 +505,9 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def search_button(ctrlr = nil, target: nil, label: nil, **opt)
     css_selector = '.search-button'
     label      ||= search_button_label(ctrlr || target)
@@ -554,6 +570,9 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def search_controls(ctrlr = nil, target: nil, form: nil, **opt)
     css_selector  = '.search-controls'
     opt, html_opt = partition_hash(opt, :only, :except)

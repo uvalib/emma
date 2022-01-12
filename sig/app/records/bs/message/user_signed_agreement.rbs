@@ -1,0 +1,7 @@
+# Bs::Message::UserSignedAgreement
+#
+# @see Bs::Record::UserSignedAgreement
+#
+class Bs::Message::UserSignedAgreement < Bs::Api::Message
+  include Bs::Shared::AgreementMethods
+end

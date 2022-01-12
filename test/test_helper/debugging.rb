@@ -127,6 +127,7 @@ module TestHelper::Debugging
     details = opt[:reflections] || !opt.key?(:reflections)
     indent  = opt[:indent]|| TEST_DEBUG_INDENT
     not_indented = (indent == TEST_DEBUG_INDENT)
+    # noinspection RubyMismatchedReturnType
     show(**show_opt) do
       item.pretty_inspect.tap do |result|
         result.prepend("\n") if not_indented
@@ -154,6 +155,7 @@ module TestHelper::Debugging
   def show_reflections(item, **opt)
     opt, show_opt = partition_hash(opt, :indent)
     indent = opt[:indent] || TEST_DEBUG_INDENT
+    # noinspection RubyMismatchedReturnType
     show(**show_opt) do
       item._reflections.map do |key, entry|
         items = Array.wrap(item.send(key)) rescue nil
@@ -174,6 +176,7 @@ module TestHelper::Debugging
   #
   def show_url(url: nil, **opt)
     url ||= "URL = #{current_url}"
+    # noinspection RubyMismatchedReturnType
     show(url.to_s, **opt)
   end
 
@@ -187,6 +190,7 @@ module TestHelper::Debugging
   def show_user(user: nil, **opt)
     user ||= current_user || 'anonymous'
     user = find_user(user) if user.is_a?(Symbol)
+    # noinspection RubyMismatchedReturnType
     show(user.to_s, **opt)
   end
 
@@ -207,6 +211,7 @@ module TestHelper::Debugging
     model_opt[:output] = false
     items += Array.wrap(yield) if block_given?
     items.flatten.map { |item|
+      # noinspection RubyMismatchedReturnType
       case item
         when String             then item
         when ActiveRecord::Base then show_model(item, **model_opt)
@@ -249,6 +254,7 @@ module TestHelper::Debugging
     user = opt[:user] || current_user
     verb = opt[:verb] || verb
     url  = opt[:url]  || url
+    # noinspection RubyMismatchedReturnType
     show_trace(**show_opt) do
       TRACE_SEPARATOR.merge(
         user:   user.inspect,
@@ -276,6 +282,7 @@ module TestHelper::Debugging
     status = opt[:status] || resp&.response_code
     expect = opt[:expect]
     body   = resp&.body&.gsub(/\n/, TRACE_NL)&.truncate(TRACE_BODY)
+    # noinspection RubyMismatchedReturnType
     show_trace(**show_opt) do
       {}.tap { |lines|
         lines[:redir]  = redir.inspect if redir
@@ -305,6 +312,7 @@ module TestHelper::Debugging
     width  = pairs.keys.map(&:to_s).sort_by(&:size).last&.size || ''
     format = "#{indent}*** %-#{width}s = %s"
     lines  = pairs.map { |k, v| sprintf(format, k, v) }
+    # noinspection RubyMismatchedReturnType
     show(**show_opt) do
       lines.join("\n") << "\n\n"
     end

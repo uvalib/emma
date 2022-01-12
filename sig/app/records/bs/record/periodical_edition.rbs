@@ -1,0 +1,18 @@
+# Bs::Record::PeriodicalEdition
+#
+# @attr [String]                    editionId
+# @attr [String]                    editionName
+# @attr [IsoDate]                   expirationDate
+# @attr [Array<Bs::Record::Format>] formats
+# @attr [Array<Bs::Record::Link>]   links
+# @attr [IsoDate]                   publicationDate
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition
+#
+class Bs::Record::PeriodicalEdition < Bs::Api::Record
+  include Bs::Shared::ArtifactMethods
+
+  include Bs::Shared::EditionMethods
+
+  include Bs::Shared::LinkMethods
+end

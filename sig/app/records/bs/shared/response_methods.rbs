@@ -1,0 +1,5 @@
+# Methods mixed in to message elements supporting error reporting.
+#
+module Bs::Shared::ResponseMethods
+  include Api::Shared::ResponseMethods
+end

@@ -1,0 +1,78 @@
+# Support methods for working with authentication strategies.
+#
+module CookieHelper
+  include ParamsHelper
+
+  # Common cookie header settings.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # @see Rack::Utils#add_cookie_to_header
+  #
+  COOKIE_OPTIONS: symHash
+
+  # Get the current value of the cookie from the request.
+  #
+  # @param [Symbol, String] key
+  #
+  # @return [Any]
+  #
+  def get_cookie: (Symbol|String key) -> untyped
+
+  # Set the cookie in the request and the response.
+  #
+  # @param [Symbol, String] key
+  # @param [Any]            value     Defaults to `opt[:value]`.
+  # @param [Hash]           opt       To Rack::Response::Helpers#set_cookie.
+  #
+  # @option opt [Any] :value          Defaults to *value* or *true* if missing.
+  #
+  # @return [Any]                     The cookie value.
+  #
+  def set_cookie: (Symbol|String key, ?untyped? value, **untyped opt) -> untyped
+
+  # Remove the cookie from the request and indicate removal in the response.
+  #
+  # @param [Symbol, String] key
+  # @param [Hash]           opt       To Rack::Response::Helpers#delete_cookie.
+  #
+  # @return [void]
+  #
+  def delete_cookie: (Symbol|String key, **untyped opt) -> void
+
+  # Session section which reports on cookies that have been set manually or
+  # from the request.
+  #
+  # @type [String]
+  #
+  SS_COOKIES: String
+
+  # Get the saved value of the cookie from `session`.
+  #
+  # @param [String, Symbol] key
+  #
+  # @return [Any]
+  #
+  def cookie_value: (Symbol|String key) -> untyped
+
+  # Save a copy of the cookie value in `session`.
+  #
+  # @param [String, Symbol] key
+  # @param [Any]            value
+  #
+  # @return [Any]
+  #
+  def remember_cookie: (Symbol|String key, untyped value) -> untyped
+
+  # Remove the copy of the cookie value from `session`.
+  #
+  # @param [String, Symbol] key
+  #
+  # @return [Any]
+  #
+  def forget_cookie: (Symbol|String key) -> untyped
+
+  private
+
+  def self.included: (Module base) -> void
+end

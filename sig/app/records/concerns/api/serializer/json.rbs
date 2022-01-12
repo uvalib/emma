@@ -1,0 +1,54 @@
+# Base class for object-specific serializers that process JSON data.
+#
+# @see Representable::JSON
+# @see Api::Record::Schema::ClassMethods#schema
+#
+class Api::Serializer::Json < Api::Serializer
+  include Representable::JSON
+
+  include Representable::Coercion
+
+  include Api::Serializer::Json::Schema
+
+  include Api::Serializer::Json::Associations
+
+  SERIALIZER_TYPE: Symbol
+
+  # Type of serializer.
+  #
+  # @return [Symbol]                  Always :json.
+  #
+  def serializer_type: () -> Symbol
+
+  # Render data elements in JSON format.
+  #
+  # @param [Symbol, Proc] method
+  # @param [Hash]         opt         Options argument for *method*.
+  #
+  # @return [String]
+  #
+  # @see Representable::JSON#to_json
+  #
+  def serialize: (?method: Symbol|Proc, **untyped opt) -> String
+
+  # Load data elements from the supplied data in JSON format.
+  #
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
+  #
+  # @return [Api::Record]
+  # @return [nil]
+  #
+  # @see Representable::JSON#from_json
+  #
+  def deserialize: (symHash|String data, ?method: Symbol|Proc) -> Api::Record?
+
+  # Set source data string for JSON data.
+  #
+  # @param [String, Hash] data
+  #
+  # @return [String]
+  # @return [nil]                 If *data* is neither a String nor a Hash.
+  #
+  def set_source_data: (symHash|String data) -> String?
+end

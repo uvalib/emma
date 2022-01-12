@@ -1,0 +1,87 @@
+# Bs::Record::TitleMetadataComplete
+#
+# @attr [Boolean]                             adultContent
+# @attr [Boolean]                             allowRecommend
+# @attr [Array<BsAllowsType>]                 allows
+# @attr [Array<Bs::Record::Name>]             arrangers            *deprecated*
+# @attr [Array<Bs::Record::ArtifactMetadata>] artifacts
+# @attr [Array<Bs::Record::Name>]             authors              *deprecated*
+# @attr [Boolean]                             available
+# @attr [String]                              bookshareId
+# @attr [Array<Bs::Record::Category>]         categories
+# @attr [Array<Bs::Record::Name>]             composers            *deprecated*
+# @attr [Array<BsContentWarning>]             contentWarnings
+# @attr [Array<Bs::Record::Contributor>]      contributors
+# @attr [String]                              copyright            *deprecated*
+# @attr [IsoYear]                             copyrightDate
+# @attr [String]                              copyrightHolder
+# @attr [Array<String>]                       countries
+# @attr [Integer]                             dtbookSize
+# @attr [String]                              edition
+# @attr [String]                              externalCategoryCode
+# @attr [Array<Bs::Record::Format>]           externalFormats
+# @attr [Array<Bs::Record::Format>]           formats
+# @attr [Array<Bs::Record::Grade>]            grades
+# @attr [String]                              hasChordSymbols      *Boolean*
+# @attr [String]                              instruments
+# @attr [String]                              isbn13
+# @attr [String]                              key
+# @attr [Array<String>]                       languages
+# @attr [IsoDate]                             lastUpdated
+# @attr [Array<Bs::Record::Link>]             links
+# @attr [Array<Bs::Record::Name>]             lyricists            *deprecated*
+# @attr [Boolean]                             marrakeshAvailable
+# @attr [Boolean]                             marrakeshPODException
+# @attr [String]                              movementNumber
+# @attr [String]                              movementTitle
+# @attr [String]                              musicLayout
+# @attr [String]                              musicScoreType
+# @attr [String]                              notes
+# @attr [Integer]                             numImages
+# @attr [Integer]                             numPages
+# @attr [String]                              opus
+# @attr [String]                              proofreader
+# @attr [IsoDate]                             publishDate
+# @attr [String]                              publisher
+# @attr [Integer]                             readingAgeMaximum
+# @attr [Integer]                             readingAgeMinimum
+# @attr [Array<String>]                       relatedIsbns
+# @attr [String]                              replacementId
+# @attr [String]                              seriesNumber
+# @attr [String]                              seriesSubtitle
+# @attr [String]                              seriesTitle
+# @attr [String]                              site
+# @attr [String]                              submitter
+# @attr [String]                              subtitle
+# @attr [String]                              synopsis
+# @attr [String]                              title
+# @attr [String]                              titleContentType
+# @attr [String]                              titleSource
+# @attr [Array<Bs::Record::Name>]             translators          *deprecated*
+# @attr [Bs::Record::UsageRestriction]        usageRestriction
+# @attr [String]                              vocalParts
+# @attr [IsoDate]                             withdrawalDate
+#
+# @see https://apidocs.bookshare.org/catalog/index.html#_title_metadata_complete
+#
+# == Implementation Notes
+# Similar to Bs::Message::TitleMetadataDetail, but adds these fields:
+#   :dtbookSize
+#   :lastUpdated
+#   :numImages
+#   :proofreader
+#   :submitter
+#   :titleSource
+#   :withdrawalDate
+#
+class Bs::Record::TitleMetadataComplete < Bs::Api::Record
+  include Bs::Shared::ArtifactMethods
+
+  include Bs::Shared::CreatorMethods
+
+  include Bs::Shared::IdentifierMethods
+
+  include Bs::Shared::LinkMethods
+
+  include Bs::Shared::TitleMethods
+end

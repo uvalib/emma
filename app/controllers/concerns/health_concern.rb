@@ -92,7 +92,7 @@ module HealthConcern
     # @return [Boolean]
     attr_accessor :degraded
 
-    # @return [String]
+    # @return [String, nil]
     attr_accessor :message
 
     def initialize(status, degraded, message = nil)
@@ -269,7 +269,8 @@ module HealthConcern
 
   # Health status of the database service.
   #
-  # @return [(Boolean,String)]
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
   #
   def database_status(...)
     healthy = ActiveRecord::Base.connection_pool.with_connection(&:active?)
@@ -279,7 +280,8 @@ module HealthConcern
 
   # Health status of the Redis service.
   #
-  # @return [(Boolean,String)]
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
   #
   def redis_status(...)
     healthy = true # TODO: Redis health status
@@ -289,7 +291,8 @@ module HealthConcern
 
   # Health status of AWS storage.
   #
-  # @return [(Boolean,String)]
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
   #
   def storage_status(...)
     healthy = true # TODO: AWS health status
@@ -299,7 +302,8 @@ module HealthConcern
 
   # Health status of the Unified Search service.
   #
-  # @return [(Boolean,String)]
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
   #
   def search_status(...)
     SearchService.active_status
@@ -307,7 +311,8 @@ module HealthConcern
 
   # Health status of the Bookshare API service.
   #
-  # @return [(Boolean,String)]
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
   #
   def bookshare_status(...)
     BookshareService.active_status
@@ -315,7 +320,8 @@ module HealthConcern
 
   # Health status of the ingest service.
   #
-  # @return [(Boolean,String)]
+  # @return [Array<(Boolean,String)>]
+  # @return [Array<(Boolean,nil)>]
   #
   def ingest_status(...)
     IngestService.active_status

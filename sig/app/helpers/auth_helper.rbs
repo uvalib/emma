@@ -1,0 +1,103 @@
+# Support methods for working with authentication strategies.
+#
+module AuthHelper
+  include Emma::Common
+
+  extend ::AuthHelper
+
+  # Generate the authentication data to be associated with the given user.
+  #
+  # @param [User, nil] user
+  #
+  # @return [OmniAuth::AuthHash, nil]
+  #
+  def auth_hash: (User user) -> OmniAuth::AuthHash
+               | (nil user)  -> nil
+
+  # Generate an auth hash based on fixed information.
+  #
+  # @param [User, String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
+  # @param [String, nil] token
+  #
+  # @return [OmniAuth::AuthHash, nil]
+  #
+  def synthetic_auth_hash: (User|String|OmniAuth::AuthHash|prmHash src, ?String? token) -> OmniAuth::AuthHash?
+
+  # Table of user names/tokens acquired for use in non-production deploys.
+  #
+  # Token are taken from the User table entries that have an :access_token
+  # value.  If BOOKSHARE_TEST_AUTH is supplied, it is used to prime (or update)
+  # the database table.
+  #
+  # @param [Boolean, nil] refresh     If *true*, re-read the database.
+  #
+  # @return [Hash{String=>Hash}]
+  #
+  # == Usage Notes
+  # Because the logic is only performed once, direct changes to the User
+  # table will not be reflected here, however changes made indirectly via
+  # #stored_auth_update and/or #stored_auth_update_user will change both
+  # the value returned by this method and the associated User table entry.
+  #
+  def stored_auth: (?bool refresh) -> Hash[String,anyHash]
+
+  # Produce a stored_auth table entry value.
+  #
+  # @param [String] token
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def stored_auth_entry_value: (String token) -> Hash[Symbol,String]
+
+  # auth_default_options
+  #
+  # @return [OmniAuth::Strategy::Options]
+  #
+  def auth_default_options: () -> OmniAuth::Strategy::Options
+
+  # Get user names/tokens from the database.
+  #
+  # @param [String, Array<String>] accounts   Default: #BOOKSHARE_TEST_USERS
+  #
+  # @return [Hash{String=>Hash}]
+  #
+  def stored_auth_fetch: (?accounts: (String|strArray)?) -> Hash[String,anyHash]
+
+  # Add or update one or more user name/token entries.
+  #
+  # @param [Hash{String=>String}, nil] pairs
+  #
+  # @return [void]
+  #
+  def stored_auth_update: (Hash[String,String]? pairs) -> void
+
+  # Add or update a user name/token entry.
+  #
+  # If input parameters were invalid then no change will be made.
+  #
+  # @param [OmniAuth::AuthHash, String]         user
+  # @param [String, ::OAuth2::AccessToken, nil] token
+  #
+  # @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload stored_auth_update_user(auth)
+  #   @param [OmniAuth::AuthHash]            auth   User/token to add
+  #
+  # @overload stored_auth_update_user(auth)
+  #   @param [String]                        user   User to add.
+  #   @param [String, ::OAuth2::AccessToken] token  Associated token.
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def stored_auth_update_user: (OmniAuth::AuthHash user)                         -> Hash[String,anyHash]?
+                             | (String user, String|::OAuth2::AccessToken token) -> Hash[String,anyHash]?
+
+  private
+
+  def self.included: (Module base) -> void
+end

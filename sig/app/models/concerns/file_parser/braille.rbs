@@ -1,0 +1,11 @@
+# Braille file format metadata extractor.
+#
+class FileParser::Braille < FileParser
+  include FileFormat::Braille
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

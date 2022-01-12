@@ -1,0 +1,9 @@
+# Bs::Message::PeriodicalSeriesMetadataSummary
+#
+# @see Bs::Record::PeriodicalSeriesMetadataSummary
+#
+class Bs::Message::PeriodicalSeriesMetadataSummary < Bs::Api::Message
+  include Bs::Shared::LinkMethods
+
+  include Bs::Shared::PeriodicalMethods
+end

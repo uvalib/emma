@@ -1,0 +1,228 @@
+# View helper methods supporting access and linkages to AWS S3.
+#
+module AwsHelper
+  include HtmlHelper
+
+  include LayoutHelper
+
+  S3_EMPTY_BUCKET: String
+
+  # TODO: I18n
+  S3_PREFIX_LIMIT: Integer
+
+  S3_OBJECT_VALUES: symArray
+
+  AWS_CONSOLE_URL: String
+
+  AWS_BUCKET_URL: String
+
+  AWS_SORT_OPT: symArray
+
+  AWS_FILTER_OPT: symArray
+
+  AWS_RENDER_OPT: symArray
+
+  S3_BUCKET_PRIMARY_SORT: Symbol
+
+  S3_BUCKET_DEFAULT_SORT: String
+
+  # Return the AWS console URL for a given AWS S3 bucket.
+  #
+  # @param [String, Aws::S3::Bucket] bucket
+  # @param [String, nil]             region   Default: `#AWS_REGION`
+  #
+  # @return [String]
+  #
+  def s3_bucket_url: (String|Aws::S3::Bucket bucket, ?region: String?) -> String
+
+  # Generate an HTML link to display the AWS console for a given AWS S3 bucket
+  # in a new browser tab.
+  #
+  # @param [String, Aws::S3::Bucket] bucket
+  # @param [Hash]                    opt      Passed to #external_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def s3_bucket_link: (String|Aws::S3::Bucket bucket, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a table of S3 buckets and objects as HTML.
+  #
+  # @param [Hash{String=>Array<Aws::S3::Object>}] table
+  # @param [Hash]                                 opt     To #render_s3_bucket
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_s3_bucket_table: (Hash[String,Array[Aws::S3::Object]] table, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a table of S3 buckets and objects as JSON.
+  #
+  # @param [Hash{String=>Array<Aws::S3::Object>}] table
+  # @param [Hash]                                 opt     To #render_s3_bucket
+  #                                                         except:
+  #
+  # @option opt [Boolean] :erb            If *true*, prepare for use within an
+  #                                         ERB template.
+  #
+  # @return [ActiveSupport::SafeBuffer]   If :erb is *true*.
+  # @return [String]                      Otherwise.
+  #
+  def json_s3_bucket_table: (Hash[String,Array[Aws::S3::Object]] table, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
+
+  # Render a table of S3 buckets and objects as JSON.
+  #
+  # @param [Hash{String=>Array<Aws::S3::Object>}] table
+  # @param [Hash]                                 opt     To #render_s3_bucket
+  #                                                         except:
+  #
+  # @option opt [Boolean] :erb            If *true*, prepare for use within an
+  #                                         ERB template.
+  #
+  # @return [ActiveSupport::SafeBuffer]   If :erb is *true*.
+  # @return [String]                      Otherwise.
+  #
+  def xml_s3_bucket_table: (Hash[String,Array[Aws::S3::Object]] table, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
+
+  # URL parameters which modify the behavior of #render_s3_bucket.
+  #
+  # @param [Hash, nil] opt            Default: `#url_parameters`.
+  #
+  # @return [Hash]
+  #
+  def s3_bucket_params: (?symHash? opt) -> symHash
+
+  AWS_BUCKET_OPT: symArray
+
+  # Show the contents of an S3 bucket.
+  #
+  # @param [String, Aws::S3::Bucket, nil] bucket
+  # @param [Array<Aws::S3::Object>]       objects
+  # @param [Hash]                         opt       Passed to #html_div except:
+  #
+  # @option opt [Date, DateTime]   :after           Date range minimum.
+  # @option opt [Date, DateTime]   :before          Date range maximum.
+  # @option opt [String, Regexp]   :prefix          Only matching objects.
+  # @option opt [Integer, Boolean] :prefix_limit    Max shown per prefix; if
+  #                                                   *false*, no limit if nil
+  #                                                   or *true*, the default
+  #                                                   #S3_PREFIX_LIMIT is used.
+  # @option opt [Hash]             :object          Passed to #render_s3_object
+  # @option opt [Boolean]          :html            Default: *true*.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<Hash>]                           If *html* is *false*.
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # +
+  def render_s3_bucket: (String|Aws::S3::Bucket|nil bucket, Array[Aws::S3::Object] objects, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[symHash])
+
+  # Show column headings for an S3 object.
+  #
+  # @param [Hash] opt                         Passed to #render_s3_object
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Hash]                            If *html* is *false*.
+  #
+  def render_s3_object_headings: (**untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+
+  # Show an S3 object table row.
+  #
+  # @param [Hash] opt                         Passed to #render_s3_object
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Hash]                            If *html* is *false*.
+  #
+  def render_s3_object_row: (symHash obj, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+
+  # Show the contents of an S3 object.
+  #
+  # @param [Aws::S3::Object, Hash] obj
+  # @param [Hash]                  opt        Passed to #html_div except for:
+  #
+  # @option opt [Boolean] :section            Start of a new section.
+  # @option opt [Integer] :row                Row counter for this object.
+  # @option opt [Hash]    :column             Passed to inner #html_div.
+  # @option opt [Boolean] :html               Default: *true*.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Hash]                            If *html* is *false*.
+  #
+  def render_s3_object: (symHash|Aws::S3::Object obj, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+
+  # Show an S3 object placeholder indicating an empty S3 bucket.
+  #
+  # @param [String, nil] label
+  # @param [Boolean]     html         Default: *true*
+  # @param [Hash]        opt          For *label*.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Hash]                        If *html* is *false*.
+  #
+  def render_s3_object_placeholder: (?label: String?, ?html: untyped? html, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+
+  # Extract values from an S3 object.
+  #
+  # @param [Aws::S3::Object, Hash, nil] obj
+  # @param [Array<Symbol>]              methods
+  #
+  # @return [Hash]
+  #
+  def s3_object_values: (symHash|Aws::S3::Object|nil obj, ?symArray methods) -> symHash
+
+  # Extract values from an item.
+  #
+  # @param [Any, nil]      item
+  # @param [Array<Symbol>] methods
+  #
+  # @return [Hash]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # +
+  def value_hash: (untyped item, symArray methods) -> symHash
+
+  NUM_SIZE_OPT: symHash
+
+  # Format a value for display.
+  #
+  # @param [Any]         item
+  # @param [Symbol, nil] hint
+  #
+  # @return [Any]
+  #
+  def value_format: (anyArray|Integer|_DateTime|bool|String item, ?Symbol? hint) -> String
+                  | (untyped item,                                ?Symbol? hint) -> untyped
+
+  # Return the prefix of the given object key.
+  #
+  # @param [String] key
+  #
+  # @return [String]
+  #
+  def prefix_of: (String key) -> String
+
+  # Sort an array of hashes based on the sort keys and their direction (forward
+  # sort if *true*; reverse sort if *false).
+  #
+  # @param [Array<Hash>]                                 array
+  # @param [Array<Symbol>, Hash{Symbol=>String,Boolean}] sort_keys
+  #
+  # @return [Array<Hash>]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # +
+  def sort_objects!: (Array[symHash] array, ?(symArray|Hash[Symbol,(String|bool)])? sort_keys) -> Array[symHash]
+
+  # Normalize sort keys.
+  #
+  # @param [Symbol, Array<Symbol>, Hash{Symbol=>String,Boolean}] sort_keys
+  #
+  # @return [Hash{Symbol=>Boolean}]
+  #
+  def transform_sort_keys: (Symbol|symArray|Hash[Symbol,(String|bool)] sort_keys) -> Hash[Symbol,bool]
+
+  private
+
+  def self.included: (Module base) -> void
+end

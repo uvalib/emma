@@ -1,0 +1,11 @@
+# Model for a role.
+#
+class Role < ApplicationRecord
+  include Roles
+
+  # Display the User instance as the user identifier.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+end

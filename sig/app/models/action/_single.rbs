@@ -1,0 +1,5 @@
+# Base class for actions that are not part of compound actions.
+#
+class Action::Single < Action
+  include Record::Sti::Branch
+end

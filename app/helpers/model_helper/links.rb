@@ -63,6 +63,7 @@ module ModelHelper::Links
     if opt[:no_link]
       html_span(label, html_opt)
     else
+      # noinspection RubyMismatchedArgumentType
       path = (yield(label) if block_given?) || opt[:path] || opt[:path_method]
       path = path.call(item, label) if path.is_a?(Proc)
       unless (html_opt[:title] ||= opt[:tooltip])

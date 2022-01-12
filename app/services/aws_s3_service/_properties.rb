@@ -94,7 +94,7 @@ module AwsS3Service::Properties
 
   # Federated AwsS3 API key.
   #
-  # @return [String]
+  # @return [nil]
   #
   def api_key
     not_implemented 'unused for Aws::S3'

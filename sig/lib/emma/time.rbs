@@ -1,0 +1,62 @@
+# Time and time span methods.
+#
+module Emma::Time
+  MICROSECONDS_PER_SECOND: Float
+
+  MILLISECONDS_PER_SECOND: Float
+
+  SECONDS_PER_MICROSECOND: Float
+
+  SECONDS_PER_MILLISECOND: Float
+
+  SECONDS_PER_SECOND: Float
+
+  SECONDS_PER_MINUTE: Float
+
+  SECONDS_PER_HOUR: Float
+
+  MINUTES_PER_SECOND: Float
+
+  HOURS_PER_SECOND: Float
+
+  MICROSECOND: Float
+
+  MILLISECOND: Float
+
+  SECOND: Float
+
+  MINUTE: Float
+
+  HOUR: Float
+
+  MICROSECONDS: Float
+
+  MILLISECONDS: Float
+
+  SECONDS: Float
+
+  MINUTES: Float
+
+  HOURS: Float
+
+  # The current time in seconds.
+  #
+  # @param [Symbol, nil] unit
+  #
+  # @return [Float]
+  #
+  # @see Process#clock_gettime
+  #
+  def timestamp: (?Symbol unit) -> Float
+
+  # A time span message.
+  #
+  # @param [Float]     start_time
+  # @param [Float,nil] end_time       Default: the current timestamp.
+  #
+  # @return [String]
+  #
+  # @see #timestamp
+  #
+  def time_span: (Float start_time, ?Float? end_time) -> String
+end

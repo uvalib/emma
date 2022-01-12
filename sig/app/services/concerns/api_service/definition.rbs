@@ -1,0 +1,87 @@
+# Interface to the shared data structure which holds the definition of the API
+# requests and parameters.
+#
+module ApiService::Definition
+  # Add a method name and its properties to #api_methods.
+  #
+  # The actual functionality is defined within ApiService#inherited -- this
+  # method exposes it to the modules containing the methods which implement
+  # individual API endpoints.
+  #
+  # @param [Hash{Symbol=>Hash{Symbol=>Any}}] prop
+  #
+  # @return [void]
+  #
+  # @see ApiService#add_api
+  #
+  def add_api: (Hash[Symbol,symHash] prop) -> void
+
+  # Properties for each method which implements an API request.
+  #
+  # The actual functionality is defined within ApiService#inherited -- this
+  # method exposes it to the modules containing the methods which implement
+  # individual API endpoints.
+  #
+  # @param [Hash, Symbol, String, nil] arg
+  #
+  # @return [Hash, nil]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload api_methods(arg)
+  #   Return properties of all methods.
+  #   @param [Hash] arg
+  #   @option arg [Boolean] :synthetic  Default: false.
+  #
+  # @overload api_methods(arg)
+  #   Properties of the named method or *nil*.
+  #   @param [Symbol, String] arg       Method name.
+  #
+  # @see ApiService#api_methods
+  #
+  def api_methods: (?(Symbol|String|symHash)? arg) -> symHash?
+
+  # The optional API query parameters for the given method.
+  #
+  # @param [Symbol, String] meth
+  #
+  # @return [Array<Symbol>]
+  #
+  def optional_parameters: (Symbol|String meth) -> symArray
+
+  # The required API query parameters for the given method.
+  #
+  # @param [Symbol, String] meth
+  # @param [Boolean]        all
+  #
+  # @return [Array<Symbol>]
+  #
+  # == Usage Notes
+  # By default, these are only the Query or FormData parameters that would be
+  # the required parameters that are to be passed through the method's "**opt"
+  # options hash.  If :all is *true*, the result will also include the method's
+  # named parameters (translated to the name used in the documentation [e.g.,
+  # "userIdentifier" instead of "user"]).
+  #
+  def required_parameters: (Symbol|String meth, ?all: bool) -> symArray
+
+  # The subset of required API request parameters which are passed to the
+  # implementation method via named parameters.
+  #
+  # @param [Symbol, String] meth
+  # @param [Boolean]        no_alias
+  #
+  # @return [Array<Symbol>]
+  #
+  # == Usage Notes
+  # By default, the names are translated to the documented parameter names.
+  # If :no_alias is *true* then the actual parameter names are returned.
+  #
+  def named_parameters: (Symbol|String meth, ?no_alias: bool) -> symArray
+
+  private
+
+  def self.included: (Module base) -> void
+end

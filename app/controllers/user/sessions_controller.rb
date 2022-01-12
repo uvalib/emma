@@ -168,6 +168,8 @@ class User::SessionsController < Devise::SessionsController
 
   # Called to avoid timing-out waiting for credentials.
   #
+  # @return [void]
+  #
   def no_devise_timeout
     request.env['devise.skip_timeout'] = true
   end

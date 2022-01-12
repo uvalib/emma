@@ -113,6 +113,7 @@ module HtmlHelper
     content   = args.flatten
     content  += Array.wrap(yield) if block_given?
     content   = content.compact_blank
+    # noinspection RubyMismatchedReturnType
     form_tag(url_or_path, options) do
       safe_join(content, separator)
     end

@@ -1,0 +1,16 @@
+# Bs::Message::ActiveBookProfile
+#
+# @attr [Array<BsAllowsType>]               allows
+# @attr [Array<Bs::Record::Link>]           links
+# @attr [Integer]                           maxContributions
+# @attr [Bs::Record::ActiveBookPreferences] preferences
+# @attr [Bs::Record::RecommendationProfile] recommendationProfile
+# @attr [Bs::Record::ReadingListUserView]   requestList
+# @attr [Boolean]                           useRecommendations
+# @attr [Boolean]                           useRequestList
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_active_book_profile
+#
+class Bs::Message::ActiveBookProfile < Bs::Api::Message
+  include Bs::Shared::LinkMethods
+end

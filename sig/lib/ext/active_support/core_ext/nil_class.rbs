@@ -1,0 +1,12 @@
+class NilClass
+  # This prevents values that might be *nil* from causing a problem in ERB
+  # templates when used in a context where an empty string would be acceptable.
+  #
+  # @return [nil]
+  #
+  def html_safe: () -> nil
+
+  # Indicates that *nil* is treated as HTML-safe.
+  #
+  def html_safe?: () -> true
+end

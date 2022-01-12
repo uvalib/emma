@@ -1,0 +1,136 @@
+class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
+  include UploadWorkflow::Create
+end
+
+module UploadWorkflow::Bulk::Create::Errors
+  include UploadWorkflow::Bulk::Errors
+end
+
+module UploadWorkflow::Bulk::Create::Properties
+  include UploadWorkflow::Bulk::Properties
+
+  include UploadWorkflow::Bulk::Create::Errors
+end
+
+module UploadWorkflow::Bulk::Create::External
+  include UploadWorkflow::Bulk::External
+
+  include UploadWorkflow::Bulk::Create::Properties
+
+  include UploadWorkflow::Bulk::Create::Events
+end
+
+module UploadWorkflow::Bulk::Create::Data
+  include UploadWorkflow::Bulk::Data
+
+  include UploadWorkflow::Bulk::Create::External
+end
+
+# New and overridden action methods specific to bulk submission.
+#
+module UploadWorkflow::Bulk::Create::Actions
+  include UploadWorkflow::Bulk::Actions
+
+  include UploadWorkflow::Bulk::Create::Data
+
+  # This should be *false* in order to get the full benefit of batch operation.
+  #
+  # If this is *true* then it essentially defeats batching by segregating
+  # creation activities (download, upload, database) into one phase, and
+  # indexing into the following phase.  Batching occurs in each phase, but the
+  # entire set of entries must pass through one phase before entering the next.
+  #
+  # @type [Boolean]
+  #
+  DEFER_INDEXING: bool
+
+  # This action basically runs the bulk upload to completion.
+  #
+  # Since there are no review workflow steps, and indexing has to be done for
+  # each batch in order to support the notion of batching, then the bulk-upload
+  # workflow is "validated" by completing it and reporting on the
+  # successes/failures of the overall process.
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Bulk::External#bulk_upload_create
+  #
+  def wf_validate_submission: (*untyped event_args) -> void
+
+  # For bulk-upload, this action is a "no-op" because indexing will have been
+  # done per-batch in #wf_validate_submission.
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  def wf_index_update: (*untyped _event_args) -> void
+end
+
+module UploadWorkflow::Bulk::Create::Simulation
+  include UploadWorkflow::Bulk::Simulation
+end
+
+module UploadWorkflow::Bulk::Create::Events
+  include UploadWorkflow::Bulk::Events
+
+  include UploadWorkflow::Bulk::Create::Simulation
+end
+
+# Overridden state transition methods specific to bulk submission.
+#
+module UploadWorkflow::Bulk::Create::States
+  include UploadWorkflow::Bulk::States
+
+  include UploadWorkflow::Bulk::Create::Events
+
+  include UploadWorkflow::Bulk::Create::Actions
+
+  # Upon entering the :creating state:
+  #
+  # The user is presented with the form for submitting a new item.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_creating_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :submitting state:
+  #
+  # The submission is complete and ready to move into the submission queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_submitting_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+
+  # Upon entering the :submitted state:
+  #
+  # The submission is moving into the submission queue.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          event        Triggering event
+  # @param [Array]           event_args
+  #
+  # @return [self]                        Return *self* for chaining.
+  #
+  def on_submitted_entry: (Workflow::State state, Symbol event, *untyped event_args) -> self
+end
+
+# Bulk submission workflow.
+#
+class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
+  include UploadWorkflow::Bulk::Create::Events
+
+  include UploadWorkflow::Bulk::Create::States
+
+  include Workflow::Base::Transitions
+end

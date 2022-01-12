@@ -92,6 +92,8 @@ module ParamsHelper
 
   # All request parameters (including :controller and :action) as a Hash.
   #
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  #
   # @return [Integer]
   #
   def request_parameter_count(p = nil)
@@ -173,6 +175,9 @@ module ParamsHelper
   #
   # @return [Hash]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def session_section(section = nil, p = nil)
     section, p = [nil, section] if section.is_a?(Hash)
     section = (section || request_parameters(p)[:controller] || :all).to_s
@@ -230,7 +235,7 @@ module ParamsHelper
   # @param [Symbol,String,Hash,Module,Any] ctrlr    Def: `params[:controller]`
   # @param [Symbol,String,nil]             action   Def: `params[:action]`
   #
-  # @return [(Any,Any)]
+  # @return [Array<(Any,Any)>]
   #
   #--
   # == Variations
@@ -238,25 +243,28 @@ module ParamsHelper
   #
   # @overload ctrlr_action_to_names
   #   Get :controller and :action from `#params`.
-  #   @return [(String,String)]
+  #   @return [Array<(String,String)>]
   #
   # @overload ctrlr_action_to_names(hash)
   #   Extract :controller and/or :action from *hash*.
   #   @param [Hash] hash
-  #   @return [(String,String)]
-  #   @return [(String,nil)]
-  #   @return [(nil,String)]
-  #   @return [(nil,nil)]
+  #   @return [Array<(String,String)>]
+  #   @return [Array<(String,nil)>]
+  #   @return [Array<(nil,String)>]
+  #   @return [Array<(nil,nil)>]
   #
   # @overload ctrlr_action_to_names(ctrlr)
   #   @param [Symbol, String, Module] ctrlr
-  #   @return [(String,nil)]
+  #   @return [Array<(String,nil)>]
   #
   # @overload ctrlr_action_to_names(ctrlr, action)
   #   @param [Symbol, String, Hash, Module, Any] ctrlr
   #   @param [Symbol, String]                    action
-  #   @return [(String,String)]
+  #   @return [Array<(String,String)>]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def ctrlr_action_to_names(ctrlr = nil, action = nil)
     ctrlr  = request_parameters unless ctrlr || action
     result = []

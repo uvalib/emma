@@ -1,0 +1,50 @@
+class Model::WorkflowJob < ApplicationJob
+  include ApplicationJob::Logging
+
+  # :nocov:
+  #extend ActiveJob::Core
+
+  # @private
+  CLASS: Class
+
+  PERFORM_OPTS: symArray
+
+  # Run the command(s) specified by the Action.
+  #
+  # @param [Array] args
+  #
+  # @return [void]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload perform(model, meth, callback, **opt)
+  #   @param [Model]            model
+  #   @param [Symbol]           meth
+  #   @param [AsyncCallback]    callback
+  #   @param [Hash]             opt
+  #   @option opt [Model, nil]    :from       Passed to *meth*.
+  #   @option opt [AsyncCallback] :callback   Ignored.
+  #
+  # @overload perform(model, meth, **opt)
+  #   @param [Model]            model
+  #   @param [Symbol]           meth
+  #   @param [Hash]             opt
+  #   @option opt [Model, nil]    :from       Passed to *meth*.
+  #   @option opt [AsyncCallback] :callback   Optional.
+  #
+  # @overload perform(model, **opt)
+  #   @param [Model]            model
+  #   @option opt [Symbol]        :meth
+  #   @option opt [Model, nil]    :from       Passed to *meth*.
+  #   @option opt [AsyncCallback] :callback   Optional.
+  #
+  # @overload perform(**opt)
+  #   @option opt [Model]         :receiver # TODO: ?
+  #   @option opt [Symbol]        :meth
+  #   @option opt [Model, nil]    :from       Passed to *meth*.
+  #   @option opt [AsyncCallback] :callback   Optional.
+  #
+  def perform: (*untyped args) -> untyped
+end

@@ -1,0 +1,8 @@
+# @note Currently unused
+#
+module ApplicationCable
+  # @note Currently unused
+  #
+  class Connection < ActionCable::Connection::Base
+  end
+end

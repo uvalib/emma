@@ -1,0 +1,840 @@
+# An object encapsulating error reporting information.
+#
+# @!attribute [r] part
+#   Error report parts [x].
+#   @return [Array<ExecReport::Part>]
+#
+# @!attribute [rw] render_html
+#   When *true*, render methods return ActiveSupport::SafeBuffer [x].
+#   @return [Boolean]
+#
+# == Usage Notes
+# Rather than attempting to (partially) process error information at the site
+# of its reception, the raw information is wrapped in an ExecReport so that it
+# may be processed as needed.
+#
+class ExecReport
+
+  # Error report parts.
+  #
+  # @return [Array<ExecReport::Part>]
+  #
+  attr_reader parts: Array[ExecReport::Part]
+
+  # When *true*, render methods return ActiveSupport::SafeBuffer.
+  #
+  # @return [Boolean]
+  #
+  attr_accessor render_html: bool
+
+  # Initialize a new instance.
+  #
+  # @param [Array] src
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload initialize(base, *src)
+  #   @param [ApplicationRecord] base
+  #   @param [Array<ExecReport,Exception,Hash,Array<String>,String,nil>] src
+  #
+  # @overload initialize(*src)
+  #   @param [Array<ExecReport,Hash,Array<String>,String,nil>] src
+  #
+  def initialize: (?ApplicationRecord base, *errorArgs src) -> void
+
+  # Clear the instance.
+  #
+  # @return [self]
+  #
+  def clear: (*untyped, **untyped) ?{ () -> untyped } -> self
+
+  # Replace the original data of the instance.
+  #
+  # @param [Array<ExecReport, Exception, Hash, Array<String>, String, nil>] src
+  #
+  # @return [self]
+  #
+  def set: (*errorArgs src) -> self
+
+  # Accumulate data from the given source(s).
+  #
+  # @param [Array<ExecReport, Exception, Hash, Array<String>, String, nil>] src
+  #
+  # @return [self]
+  #
+  def add: (*errorArgs src) -> self
+
+  # Find the first exception associated with a error report part.
+  #
+  # @return [Exception, nil]
+  #
+  def exception: () -> Exception?
+
+  # Produce error report lines.
+  #
+  # @param [Boolean, nil] html        Set/unset HTML-safe output.
+  #
+  # @return [Array<String>]
+  #
+  def render: (?html: bool?) -> strArray
+
+  # Indicate whether the report is currently set to produce HTML-safe values.
+  #
+  def html_safe?: () -> bool
+
+  # Indicate whether the error report has any valid data.
+  #
+  # This is not the same as `self.part.empty?`.
+  #
+  def blank?: () -> bool
+
+  # Duplication is deep by default.
+  #
+  # @return [ExecReport]
+  #
+  def dup: () -> ExecReport
+
+  # Freeze all contents.
+  #
+  def deep_freeze: () -> self
+
+  # Values relating to analyzing/constructing error reports.
+  #
+  module Constants
+    TOPIC_KEY: Symbol
+
+    TOPIC_SEP: String
+
+    DETAILS_KEY: Symbol
+
+    DETAILS_SEP: String
+
+    STATUS_KEYS: symArray
+
+    STATUS_KEY: Symbol
+
+    HTML_KEYS: symArray
+
+    HTML_KEY: Symbol
+
+    EXCEPTION_KEY: Symbol
+
+    # Error key prefix which indicates a general (non-item-specific) error
+    # message entry.
+    #
+    # @type [String]
+    #
+    GENERAL_ERROR_TAG: String
+
+    GENERAL_ERROR_KEY: String
+  end
+
+  include Constants
+
+  # Methods for converting to/from hashes.
+  #
+  module DataMethods
+    include Emma::Common
+
+    include Emma::Json
+
+    include ExecReport::Constants
+
+    # Prepare an error report value for assignment to a database column.
+    #
+    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, Any, nil] src
+    #
+    # @return [String, nil]           *nil* if *src* was blank.
+    #
+    def serialize: (untyped src) -> String?
+
+    # Interpret an error report value from a database column.
+    #
+    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, Any, nil] src
+    #
+    # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
+    #
+    def deserialize: (untyped src) -> Array[Hash[Symbol,(String|strArray)]]?
+
+    # Remove or transform data that should not be persisted as is.
+    #
+    # @param [Array<Hash>, Hash, nil] part
+    #
+    # @return [Array<Hash>, Hash, nil]
+    #
+    # -
+    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # +
+    def serialize_filter: (Array[symHash]|symHash|nil part) -> (Array[symHash] | symHash | nil)
+
+    # Get topic/details from *src*.
+    #
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    #
+    # @return [Array<Hash{Symbol=>String,Array<String>}>]
+    #
+    def message_hashes: (untyped src) -> Array[Hash[Symbol,(String|strArray)]]
+
+    # Get topic/details from *src*.
+    #
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    #
+    # @return [Hash{Symbol=>String,Array<String>}]
+    #
+    def message_hash: (untyped src) -> Hash[Symbol,(String|strArray)]
+
+    # normalize_hash
+    #
+    # @param [Hash] hash
+    #
+    # @return [Hash{Symbol=>String,Array<String>}]
+    #
+    def normalize_hash: (anyHash hash) -> Hash[Symbol,(String|strArray)]
+
+    # normalize_value
+    #
+    # @param [Array, String, Any, nil] value
+    #
+    # @return [Array, String, Any, nil]
+    #
+    # -
+    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # +
+    def normalize_value: (untyped value) -> untyped
+
+    # Attempt to get an HTTP status value from *src*.
+    #
+    # @param [ExecReport, Exception, Faraday::Response, Any, nil] src
+    #
+    # @return [Integer, Symbol, nil]
+    #
+    def extract_status: (untyped src) -> (Integer | Symbol | nil)
+
+    # Attempt to get topic/details from *src*.
+    #
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    # @param [Symbol, nil] meth
+    #
+    # @return [Array<Hash{Symbol=>Array}>]
+    #
+    # -
+    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+    # +
+    def extract_message_hashes: (untyped src, ?Symbol? meth) -> Array[Hash[Symbol,strArray]]
+
+    # Attempt to get topic/details from *src*.
+    #
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    # @param [Symbol, nil] meth
+    #
+    # @return [Hash{Symbol=>Array<String>}]
+    #
+    # -
+    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+    # +
+    def extract_message_hash: (untyped src, ?Symbol? meth) -> Hash[Symbol,strArray]
+
+    # Create message hash values from *src*.
+    #
+    # @param [ExecReport::Part, Exception, Hash, String, nil] src
+    # @param [Symbol, nil]                                    meth
+    #
+    # @return [Hash{Symbol=>Array}]
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def make_message_hash: (untyped src, ?Symbol? meth) -> Hash[Symbol,strArray]
+
+    # message_line
+    #
+    # @param [Array<String, nil>] args
+    # @param [String]             separator
+    # @param [Hash]               opt
+    #
+    # @see #message_topic
+    # @see #message_details
+    #
+    def message_line: (*(String|nil) args, ?separator: String, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
+
+    # message_topic
+    #
+    # @param [Array<String>, String, nil] src
+    # @param [Hash]                       opt
+    #
+    # @option opt [String, nil] :separator  Default: `opt[:t_sep]`.
+    # @option opt [String, nil] :t_sep      Default: #TOPIC_SEP.
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #message_portion
+    #
+    def message_topic: (String|strArray|nil src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # message_details
+    #
+    # @param [Array<String>, String, nil] src
+    # @param [Hash]                       opt
+    #
+    # @option opt [String, nil] :separator  Default: `opt[:d_sep]`.
+    # @option opt [String, nil] :d_sep      Default: #DETAILS_SEP.
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #message_portion
+    #
+    def message_details: (String|strArray|nil src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # message_portion
+    #
+    # @param [Array<String>, String, nil] src
+    # @param [Hash]                       opt
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #message_part
+    #
+    def message_portion: (String|strArray|nil src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # message_part
+    #
+    # @param [String, nil] src
+    # @param [Hash]        opt
+    #
+    # @option opt [String]        :separator
+    # @option opt [Array<String>] :separators
+    # @option opt [Boolean, nil]  :html
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    def message_part: (String|nil src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include DataMethods
+
+  # Logic which is not dependent on an ExecReport instance.
+  #
+  module BaseMethods
+    include Emma::Common
+
+    include Emma::Json
+
+    include ExecReport::Constants
+
+    include ExecReport::DataMethods
+
+    # Get the HTTP status value from *src*.
+    #
+    # @param [ExecReport, Exception, Faraday::Response, Any, nil] src
+    #
+    # @return [Integer, Symbol, nil]
+    #
+    def http_status: (untyped src) -> (Integer | Symbol | nil)
+
+    # error_table
+    #
+    # @param [Array<ExecReport,Exception,Hash,Array,Any>] entries
+    #
+    # @return [Hash{String,Integer=>String}]
+    #
+    def error_table: (*untyped entries) -> Hash[(String|Integer),String]
+
+    # Return workflow error messages as multiple string(s).
+    #
+    # @param [ExecReport, Model, Exception, Hash, Array, Any, nil] src
+    # @param [Boolean, nil]                                        html
+    #
+    # @return [Array<String>]
+    #
+    def error_messages: (untyped src, ?bool? html) -> strArray
+
+    def error_table_hash: (untyped|anyArray src) -> strHash
+
+    def inspect_item: (untyped value) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include BaseMethods
+
+  # Prepare the error report value for assignment to a database column.
+  #
+  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, Array, String, Any, nil] src  Default: `self`.
+  #
+  # @return [String, nil]           *nil* if *src* was blank.
+  #
+  def serialize: (?untyped? src) -> String?
+
+  # Interpret the error report value from a database column.
+  #
+  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, Array, String, Any, nil] src  Default: `self`.
+  #
+  # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
+  #
+  def deserialize: (?untyped? src) -> Array[Hash[Symbol,(String|strArray)]]?
+
+  # The error table for the current instance.
+  #
+  # @param [Array<ExecReport,Exception,Hash,Array,Any,nil>] entries   Def.: `self`.
+  #
+  # @return [Hash{String,Integer=>String}]
+  #
+  def error_table: (*untyped entries) -> Hash[(String|Integer),String]
+
+  # Return error messages from the instance as multiple string(s).
+  #
+  # @param [ExecReport, Model, Exception, Hash, Array, Any, nil] src   Def.: `self`.
+  # @param [Boolean, nil]                                        html
+  #
+  # @return [Array<String>]
+  #
+  def error_messages: (?untyped? src, ?bool? html) -> strArray
+
+  # Return the HTTP status value from the instance.
+  #
+  # @param [ExecReport, Exception, Faraday::Response, Any, nil] src
+  #
+  # @return [Integer, Symbol, nil]
+  #
+  def http_status: (?untyped? src) -> (Integer | Symbol | nil)
+
+  # Get topic/details from *src*.
+  #
+  # @param [ExecReport, Exception, Hash, Array, String, Any, nil] src   Default: `self`.
+  #
+  # @return [Array<Hash{Symbol=>String,Array<String>}>]
+  #
+  def message_hashes: (?untyped? src) -> Array[Hash[Symbol,(String|strArray)]]
+
+  # Get topic/details from *src*.
+  #
+  # @param [ExecReport, Exception, Hash, String, Any, nil] src  Default: `self.exception`.
+  #
+  # @return [Hash{Symbol=>String,Array<String>}]
+  #
+  def message_hash: (?untyped? src) -> Hash[Symbol,(String|strArray)]
+
+  # Attempt to get an HTTP status value from *src*.
+  #
+  # @param [ExecReport, ActiveModel::Errors, Exception, Any, nil] src  Def.: `self`.
+  #
+  # @return [Integer, Symbol, nil]
+  #
+  def extract_status: (?untyped? src) -> (Integer | Symbol | nil)
+
+  # Attempt to get topic/details from *src*.
+  #
+  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src    Def.: `self.part`.
+  # @param [Symbol, nil] meth
+  #
+  # @return [Array<Hash{Symbol=>Array<String>}>]
+  #
+  def extract_message_hashes: (?untyped? src, ?Symbol? meth) -> Array[Hash[Symbol,strArray]]
+
+  # Attempt to get topic/details from *src*.
+  #
+  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src  Def.: `self.exception`.
+  # @param [Symbol, nil] meth
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def extract_message_hash: (?untyped? src, ?Symbol? meth) -> Hash[Symbol,strArray]
+
+  # Generate an ExecReport if necessary.
+  #
+  # @param [ExecReport, Any]
+  #
+  # @return [ExecReport]
+  #
+  def self.[]: (untyped src) -> ExecReport
+end
+
+# A single ExecReport entry.
+#
+class ExecReport::Part
+  include Emma::Json
+
+  include ExecReport::Constants
+
+  # Main report text.
+  #
+  # @return [String, nil]
+  #
+  attr_reader topic: String | nil
+
+  # List of specific errors/problems.
+  #
+  # @return [Array<String>]
+  #
+  attr_reader details: strArray
+
+  # Additional tagged information.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  attr_reader info: Hash[Symbol,symHash]
+
+  # When *true*, render methods return ActiveSupport::SafeBuffer.
+  #
+  # @return [Boolean]
+  #
+  attr_accessor render_html: bool
+
+  # The originating exception (if applicable).
+  #
+  # @return [Exception, nil]
+  #
+  attr_reader exception: Exception | nil
+
+  # Initialize a new instance.
+  #
+  # @param [ExecReport::Part, Hash, Array, String, Any, nil] src
+  #
+  # == Implementation Notes
+  # Member variables are initialized in the order which optimizes display when
+  # the instance is inspected.
+  #
+  def initialize: (untyped src) -> void
+
+  # Indicate whether the part is currently set to produce HTML-safe values.
+  #
+  def html_safe?: () -> bool
+
+  # Indicate whether the error report part has any valid data.
+  #
+  # The "out-of-band" contents of :info are not evaluated.
+  #
+  def blank?: () -> bool
+
+  # Duplication is deep by default.
+  #
+  # @note Because :exception is not strictly a part of the data, it is copied
+  #   by reference.
+  #
+  # @return [ExecReport::Part]
+  #
+  def dup: () -> ExecReport::Part
+
+  # Freeze all contents.
+  #
+  def deep_freeze: () -> self
+
+  # Inspect the contents of the instance without repeating the contents of
+  # @info[:exception] (if present).
+  #
+  # @return [String]
+  #
+  def inspect: () -> String
+
+  # Generate a string representation of the report part.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :html       If *true*, return an HTML-safe string.
+  #
+  # @return [ActiveSupport::SafeBuffer]   If opt[:html] is *true*.
+  # @return [String]
+  #
+  def to_s: (**untyped opt) -> (ActiveSupport::SafeBuffer | String)
+
+  # Generate an HTML-safe string representation of the parts of the entry.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_safe: () -> ActiveSupport::SafeBuffer
+
+  # Methods for converting to/from hashes.
+  #
+  module DataMethods
+    include ExecReport::DataMethods
+
+    # Interpret an error report value from a database column.
+    #
+    # @param [ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    #
+    # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
+    #
+    def deserialize: (untyped src) -> Array[Hash[Symbol,(String|strArray)]]?
+
+    # extract_topic
+    #
+    # @param [Any] src
+    #
+    # @return [String, nil]
+    #
+    def extract_topic: (untyped src) -> String?
+
+    # extract_details
+    #
+    # @param [Any] src
+    #
+    # @return [Array<String>]
+    #
+    def extract_details: (untyped src) -> strArray
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include DataMethods
+
+  # Logic which is not dependent on an ExecReport::Part instance.
+  #
+  module BaseMethods
+    include ExecReport::BaseMethods
+
+    include ExecReport::Part::DataMethods
+
+    # Generate a rendering of the error report part.
+    #
+    # @param [ExecReport::Part, Hash, Any] src
+    # @param [Hash]                        opt  Passed to #render_line
+    #
+    # @option opt [String, nil]  :separator
+    # @option opt [Boolean, nil] :html
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    def render: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Generate a rendering of the error report part.
+    #
+    # @param [ExecReport::Part, Hash, Array, Any] src
+    # @param [String, nil]                        separator
+    # @param [Hash]                               opt
+    #
+    # @option opt [Boolean, nil] :html
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #render_topic
+    # @see #render_details
+    #
+    def render_line: (untyped src, ?separator: String?, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Render the leading topic portion of the report part.
+    #
+    # @param [ExecReport::Part, Hash, Array, String, Any] src
+    # @param [Hash]                                       opt
+    #
+    # @option opt [String, nil] :separator  Default: `opt[:t_sep]`.
+    # @option opt [String, nil] :t_sep      Default: #TOPIC_SEP.
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #render_portion
+    #
+    def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Render the trailing details portion of the report part.
+    #
+    # @param [ExecReport::Part, Hash, Array, String, Any] src
+    # @param [Hash]                                      opt
+    #
+    # @option opt [String, nil] :separator  Default: `opt[:d_sep]`.
+    # @option opt [String, nil] :d_sep      Default: #DETAILS_SEP.
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #render_portion
+    #
+    def render_details: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Render either the topic or details portion of the report part.
+    #
+    # @param [String, Array<String>] src
+    # @param [Hash]                  opt
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #render_part
+    #
+    def render_portion: (String|strArray src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Generate a rendering of a single part of the entry.
+    #
+    # @param [String, nil] src
+    # @param [Hash]        opt
+    #
+    # @option opt [Boolean, nil] :html
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    def render_part: (String|nil src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include BaseMethods
+
+  # Prepare an error report part for assignment to a database column.
+  #
+  # @param [ExecReport::Part, Exception, Hash, Array, String, Any, nil] src  Def: self
+  #
+  # @return [String, nil]           *nil* if *src* was blank.
+  #
+  def serialize: (?untyped? src) -> String?
+
+  # Interpret an error report part from a database column.
+  #
+  # @param [ExecReport::Part, Exception, Hash, Array, Any, nil] src  Def: self
+  #
+  # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
+  #
+  def deserialize: (?untyped? src) -> Array[Hash[Symbol,(String|strArray)]]?
+
+  # Get topic/details from *src*.
+  #
+  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src   Default: `self`
+  #
+  # @return [Array<Hash{Symbol=>String,Array<String>}>]
+  #
+  def message_hashes: (?untyped? src) -> Array[Hash[Symbol,(String|strArray)]]
+
+  # Get topic/details from *src*.
+  #
+  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src  Default: `self`.
+  #
+  # @return [Hash{Symbol=>String,Array<String>}]
+  #
+  def message_hash: (?untyped? src) -> Hash[Symbol,(String|strArray)]
+
+  # Generate a rendering of the error report part.
+  #
+  # @param [ExecReport::Part, Hash, Any, nil] src   Default: `self`.
+  # @param [Hash]                             opt
+  #
+  # @option opt [String, nil]  :separator
+  # @option opt [Boolean, nil] :html          Default: `#render_html`.
+  #
+  # @return [String, ActiveSupport::SafeBuffer, nil]
+  #
+  def render: (?untyped? src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+  # http_status
+  #
+  # @return [Integer, nil]
+  #
+  def http_status: () -> Integer?
+
+  # Generate an ExecReport::Part if necessary.
+  #
+  # @param [ExecReport::Part, Any]
+  #
+  # @return [ExecReport::Part]
+  #
+  def self.[]: (untyped src) -> ExecReport::Part
+end
+
+# Each instance translates to a distinct line in the flash message.
+#
+class ExecReport::FlashPart < ExecReport::Part
+  # Create a new instance.
+  #
+  # @param [ExecReport::Part, Hash, String, Integer, Array, nil] topic
+  # @param [ExecReport::Part, Hash, String, Array, nil]          details
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload initialize(topic)
+  #   @param [ExecReport::Part, Hash, String, Integer] topic
+  #
+  # @overload initialize(details)
+  #   @param [Array] details
+  #
+  # @overload initialize(topic, details)
+  #   @param [ExecReport::Part, Hash, String, Integer] topic
+  #   @param [ExecReport::Part, Hash, String, Array]   details
+  #
+  def initialize: (untyped topic, ?untyped? details) -> void
+
+  # Logic which is not dependent on an ExecReport::Part instance.
+  #
+  module BaseMethods
+    include ExecReport::Part::BaseMethods
+
+    # Generate a rendering of the error report part.
+    #
+    # @param [ExecReport::Part, Hash, Any] src
+    # @param [Hash]                        opt
+    #
+    # @option opt [Integer, nil] :first       Index of the first column.
+    # @option opt [Integer, nil] :last        Index of the last column.
+    # @option opt [String, nil]  :separator
+    # @option opt [Boolean, nil] :html
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    def render: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Render the leading topic portion of the report part.
+    #
+    # @param [ExecReport::Part, Hash, Array, String, Any] src
+    # @param [Hash]                                       opt
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Render the trailing details portion of the report part.
+    #
+    # @param [ExecReport::Part, Hash, Array, String, Any] src
+    # @param [Hash]                                       opt
+    #
+    # @option opt [Integer, nil] :start
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    def render_details: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    # Render either the topic or details portion of the report part.
+    #
+    # @param [String, Array<String>] src
+    # @param [Integer, nil]          start
+    # @param [Hash]                  opt
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
+    # @see #render_part
+    #
+    def render_portion: (String|strArray src, ?start: Integer?, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include BaseMethods
+
+  # Generate a rendering of the parts of the entry.
+  #
+  # @param [ExecReport::Part, Hash, nil] src   Default: `self`.
+  # @param [Hash]                        opt
+  #
+  # @return [String, ActiveSupport::SafeBuffer, nil]
+  #
+  # @see #render_part
+  #
+  def render: (?(ExecReport::Part|symHash)? src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+
+  # A short-cut for creating a FlashPart only if required.
+  #
+  # @param [FlashPart, Any] other
+  #
+  # @return [FlashPart]
+  #
+  def self.[]: (untyped other) -> ExecReport::FlashPart
+end

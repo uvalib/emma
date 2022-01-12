@@ -90,11 +90,14 @@ module Record::Submittable
 
     # If a prefix was specified, apply it to the record's title.
     #
-    # @param [Model]  record
-    # @param [String] prefix
+    # @param [Model]        record
+    # @param [String, bool] prefix
     #
     # @return [void]
     #
+    #--
+    # noinspection RubyMismatchedParameterType
+    #++
     def add_title_prefix(record, prefix: title_prefix)                          # NOTE: from UploadWorkflow::External
       return unless prefix.present?
       return unless record.respond_to?(:emma_metadata)
@@ -231,8 +234,8 @@ module Record::Submittable
     #
     # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
     #
-    # @return [(Array,Array,Array)]   Succeeded records, failed item messages,
-    #                                   and records to roll back.
+    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+    #                                         msgs, and records to roll back.
     #
     def add_to_index(*items, atomic: true, **)                                  # NOTE: from UploadWorkflow::External
       __debug_items("ENTRY WF #{__method__}", binding)
@@ -264,8 +267,8 @@ module Record::Submittable
     #
     # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
     #
-    # @return [(Array,Array,Array)]   Succeeded records, failed item messages,
-    #                                   and records to roll back.
+    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+    #                                         msgs, and records to roll back.
     #
     def update_in_index(*items, atomic: true, **)                               # NOTE: from UploadWorkflow::External
       __debug_items("ENTRY WF #{__method__}", binding)
@@ -288,7 +291,7 @@ module Record::Submittable
     #
     # @raise [Api::Error] @see IngestService::Request::Submissions#delete_records
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     def remove_from_index(*items, atomic: true, **)                             # NOTE: from UploadWorkflow::External
       __debug_items("ENTRY WF #{__method__}", binding)
@@ -336,8 +339,8 @@ module Record::Submittable
     # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
     # @param [Array<Model,String>]                                     items
     #
-    # @return [(Array,Array,Array)]   Succeeded records, failed item messages,
-    #                                   and records to roll back.
+    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+    #                                         msgs, and records to roll back.
     #
     # @see ExecReport#error_table
     #
@@ -403,6 +406,7 @@ module Record::Submittable
     #
     def normalize_index_items(*items, meth: nil, max: INGEST_MAX_SIZE)          # NOTE: from UploadWorkflow::External
       items = items.flatten.compact
+      # noinspection RubyMismatchedReturnType
       return items unless items.size > max
       error = "#{meth || __method__}: item count: #{item.size} > #{max}"
       Log.error(error)
@@ -453,7 +457,7 @@ module Record::Submittable
     # @param [Array<Model>] items
     # @param [Hash]         opt
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     def repository_create(*items, **opt)                                        # NOTE: from UploadWorkflow::External
       succeeded = []
@@ -475,7 +479,7 @@ module Record::Submittable
     # @param [Array<Model>] items
     # @param [Hash]         opt
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     # @note This capability is not yet supported by any member repository.
     #
@@ -498,7 +502,7 @@ module Record::Submittable
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     # @note This capability is not yet supported by any member repository.
     #
@@ -533,7 +537,7 @@ module Record::Submittable
     #
     # @option opt [String] :repo      Required for String items.
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     def repository_dequeue(*items, **opt)                                       # NOTE: from UploadWorkflow::External
       succeeded = []
@@ -558,7 +562,7 @@ module Record::Submittable
     # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
     # @param [Array<String,Model>]                                    items
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     # @see ExecReport#error_table
     #
@@ -582,7 +586,7 @@ module Record::Submittable
     # @param [Hash, Array, Model] items
     # @param [Hash]               opt     Passed to #repository_remove.
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     #--
     # == Variations
@@ -591,16 +595,17 @@ module Record::Submittable
     # @overload repository_removals(requests, **opt)
     #   @param [Hash{Symbol=>Array}]              requests
     #   @param [Hash]                             opt
-    #   @return [(Array,Array)]
+    #   @return [Array<(Array,Array)>]
     #
     # @overload repository_removals(items, **opt)
     #   @param [Array<String,#emma_recordId,Any>] items
     #   @param [Hash]                             opt
-    #   @return [(Array,Array)]
+    #   @return [Array<(Array,Array)>]
     #
     def repository_removals(items, **opt)                                       # NOTE: from UploadWorkflow::External
       succeeded = []
       failed    = []
+      # noinspection RubyMismatchedArgumentType
       repository_requests(items).each_pair do |_repo, repo_items|
         # noinspection RubyMismatchedReturnType
         repo_items.map! { |item| record_id(item) }
@@ -616,7 +621,7 @@ module Record::Submittable
     # @param [Hash, Array] items
     # @param [Hash]        opt        Passed to #repository_remove.
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     #--
     # == Variations
@@ -625,12 +630,12 @@ module Record::Submittable
     # @overload repository_dequeues(requests, **opt)
     #   @param [Hash{Symbol=>Array}]              requests
     #   @param [Hash]                             opt
-    #   @return [(Array,Array)]
+    #   @return [Array<(Array,Array)>]
     #
     # @overload repository_dequeues(items, **opt)
     #   @param [Array<String,#emma_recordId,Any>] items
     #   @param [Hash]                             opt
-    #   @return [(Array,Array)]
+    #   @return [Array<(Array,Array)>]
     #
     def repository_dequeues(items, **opt)                                       # NOTE: from UploadWorkflow::External
       succeeded = []
@@ -680,6 +685,7 @@ module Record::Submittable
           items  = (items.is_a?(Array) ? items.flatten : [items]).compact_blank
           result = items.group_by { |request| repository_value(request) }
         when Hash
+          # noinspection RubyNilAnalysis
           result = items.transform_values { |requests| Array.wrap(requests) }
         else
           result = {}
@@ -718,7 +724,7 @@ module Record::Submittable
     # @param [Hash]    opt            Passed to #entry_remove via
     #                                   #batch_entry_operation.
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     def batch_entry_remove(ids, index: true, atomic: true, force: nil, **opt)   # NOTE: from UploadWorkflow::External#batch_upload_remove
       __debug_items("ENTRY WF #{__method__}", binding)
@@ -732,6 +738,7 @@ module Record::Submittable
       # items can be successfully removed from the index.
       opt[:requests] ||= {} if repo_remove
       opt.merge!(index: index, atomic: atomic, force: force)
+      # noinspection RubyMismatchedArgumentType
       succeeded, failed = batch_entry_operation(:entry_remove, items, **opt)
 
       # After all batch operations have completed, truncate the database table
@@ -774,7 +781,7 @@ module Record::Submittable
     # @param [Integer, Boolean]                 size     Default: #BATCH_SIZE.
     # @param [Hash]                             opt
     #
-    # @return [(Array,Array)]   Succeeded records and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     def batch_entry_operation(op, items, size: nil, **opt)                      # NOTE: from UploadWorkflow::External#batch_upload_operation
       __debug_items((dbg = "ENTRY WF #{op}"), binding)
@@ -853,8 +860,8 @@ module Record::Submittable
     # @param [Boolean] atomic         Passed to #add_to_index.
     # @param [Hash]    data           @see Entry#assign_attributes.
     #
-    # @return [(Entry,Array>]         Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
-    # @return [(nil,Array)]           No record; one or more error messages.
+    # @return [Array<(Entry,Array>)]  Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
+    # @return [Array<(nil,Array)>]    No record; one or more error messages.
     #
     # @see #db_insert
     # @see #add_to_index
@@ -887,8 +894,8 @@ module Record::Submittable
     # @param [Boolean] atomic         Passed to #update_in_index.
     # @param [Hash]    data           @see Entry#assign_attributes
     #
-    # @return [(Entry,Array>]         Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
-    # @return [(nil,Array)]           No record; one or more error messages.
+    # @return [Array<(Entry,Array>)]  Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
+    # @return [Array<(nil,Array)>]    No record; one or more error messages.
     #
     # @see #db_update
     # @see #update_in_index
@@ -930,7 +937,7 @@ module Record::Submittable
     #                                             even if the related database
     #                                             entries do not exist.
     #
-    # @return [(Array,Array)]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     # @see #remove_from_index
     #

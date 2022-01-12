@@ -1,0 +1,86 @@
+# Methods for accessing records.
+#
+module Record::Searchable
+  extend ActiveSupport::Concern
+
+  include Record
+
+  include Record::EmmaIdentification
+
+  # :nocov:
+  #include ActiveRecord::FinderMethods
+
+  STATE_COLUMN: Symbol
+
+  def get_record: (symHash|String|Symbol|Integer|Model|nil item, **untyped opt) -> Model?
+
+  def get_records: (*(String|Symbol|Integer|Model|nil) identifiers, **untyped opt) -> Array[Model]
+
+  # The #search_records method returns a hash with these fields in this order.  # NOTE: from Upload::LookupMethods
+  #
+  #   :offset   The list offset for display purposes (not the SQL OFFSET).
+  #   :limit    The page size.
+  #   :page     The ordinal number of the current page.
+  #   :first    If the given :page is the first page of the record set.
+  #   :last     If the given :page is the last page of the record set.
+  #   :total    Count of all matching records.
+  #   :min_id   The :id of the first matching record.
+  #   :max_id   The :id of the last matching record.
+  #   :groups   Table of counts for each state group.
+  #   :pages    An array of arrays where each element has the IDs for that page
+  #   :list     An array of matching Entry records.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  SEARCH_RECORDS_TEMPLATE: symHash
+
+  # Local options consumed by #search_records.                                  # NOTE: from Upload::LookupMethods
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RECORDS_OPTIONS: symArray
+
+  def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) identifiers, **untyped opt) -> symHash
+
+  def get_relation: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> ActiveRecord::Relation
+
+  def group_by_state: (ActiveRecord::Relation relation, ?Symbol column) -> Hash[Symbol,Integer]
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::Searchable
+
+    # Locate records matching the submission ID given as either *sid* or
+    # `opt[:submission_id]`.
+    #
+    # @param [Model, Hash, String, Symbol, nil] sid
+    # @param [Integer] max                Log error if matches exceed this.
+    # @param [Symbol]  meth               Calling method for logging.
+    # @param [Boolean] no_raise           If *true*, return *nil* on error.
+    # @param [Hash]    opt                Passed to #where.
+    #
+    # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
+    # @raise [Record::NotFound]           If record not found.
+    #
+    # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
+    #
+    def matching_sid: (?(symHash|String|Symbol|Model)? sid, ?max: Integer?, ?meth: Symbol?, ?no_raise: bool, **untyped opt) -> ActiveRecord::Relation
+
+    # Get the latest record matching the submission ID given as either *sid* or
+    # `opt[:submission_id]`.
+    #
+    # Returns *nil* on error if *no_raise* is *true*.
+    #
+    # @param [Model, Hash, String, Symbol, nil] sid
+    # @param [Symbol, String] sort    In case of multiple SIDs (:created_at).
+    # @param [Hash]           opt     Passed to #matching_sid.
+    #
+    # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
+    # @raise [Record::NotFound]           If record not found.
+    #
+    # @return [Model]                     Or *nil* on error if *no_raise*.
+    #
+    def latest_for_sid: (?(symHash|String|Symbol|Model)? sid, ?sort: (Symbol|String)?, **untyped opt) -> Model?
+  end
+end

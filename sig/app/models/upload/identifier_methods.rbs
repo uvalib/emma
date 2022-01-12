@@ -1,0 +1,59 @@
+# Upload record utility methods related to identifiers.
+#
+module Upload::IdentifierMethods
+  def included: (Module base) -> void
+
+  include Emma::Common
+
+  extend ::Upload::IdentifierMethods
+
+  # @type [String]                                                              # NOTE: to Record::EmmaIdentification
+  SID_PREFIX: String
+
+  # @type [(Integer,Integer)]                                                   # NOTE: to Record::EmmaIdentification
+  SID_LETTERS: [Integer, Integer]
+
+  # @type [Integer]                                                             # NOTE: to Record::EmmaIdentification
+  SID_LETTER_SPAN: Integer
+
+  # @type [String]                                                              # NOTE: to Record::EmmaIdentification
+  SID_LETTER_MATCH: String
+
+  # @type [Regexp]                                                              # NOTE: to Record::EmmaIdentification
+  SID_PATTERN: Regexp
+
+  def id_for: (untyped item) -> String?
+
+  # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
+  #
+  # @param [Api::Record, Upload, Hash, String, Any] item
+  #
+  # @return [String]                  The submission ID.
+  # @return [nil]                     No submission ID could be determined.
+  #
+  def sid_for: (untyped item) -> String?
+
+  def valid_sid?: (untyped value) -> bool
+
+  def generate_submission_id: (?(Time|DateTime)? time, ?prefix: bool|String) -> String
+
+  def sid_counter: () -> Integer
+
+  def id_term: (symHash|Symbol|String|Integer|Upload v) -> Hash[Symbol,(String|Integer|nil)]
+
+  def minimum_id: () -> Integer
+
+  def maximum_id: () -> Integer
+
+  def compact_ids: (*(String|Integer|Upload|Array[String|Integer|Upload]) items, **untyped opt) -> strArray
+
+  def expand_ids: (*(String|Integer|Upload|Array[String|Integer|Upload]) ids, **untyped opt) -> strArray
+
+  # A valid ID range term for interpolation into a Regexp.                      # NOTE: to Record::Identification::RNG_TERM
+  #
+  # @type [String]
+  #
+  RANGE_TERM: String
+
+  def expand_id_range: (String|Integer|Upload id, **untyped opt) -> strArray
+end

@@ -1,0 +1,9 @@
+# Bs::Message::UserSubscription
+#
+# @see Bs::Record::UserSubscription
+#
+class Bs::Message::UserSubscription < Bs::Api::Message
+  include Bs::Shared::LinkMethods
+
+  include Bs::Shared::SubscriptionMethods
+end

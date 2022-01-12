@@ -68,6 +68,9 @@ module RunStateConcern
   # @param [String, Symbol, nil] ctrlr    Default: `params[:controller]`
   # @param [String, Symbol, nil] action   Default: `params[:action]`
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def run_state_redirect?(ctrlr = nil, action = nil)
     ctrlr, action = ctrlr_action_to_names(ctrlr, action)
     exempt_ctrlr  = RUN_STATE_EXEMPT_CONTROLLER.include?(ctrlr)

@@ -1,0 +1,311 @@
+# View helper methods for the <header> search bar.
+#
+module LayoutHelper::SearchBar
+  include LayoutHelper::SearchFilters
+
+  include ConfigurationHelper
+
+  include I18nHelper
+
+  # A table of search bar behavior for each controller.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SEARCH_BAR: symHash
+
+  # The icon used within the search bar to clear the current search.
+  #
+  # @type [String]
+  #
+  CLEAR_SEARCH_ICON: String
+
+  # Indicate whether it is appropriate to show the search bar.
+  #
+  # @param [Symbol, String, nil] ctrlr  Default: params[:controller].
+  # @param [Hash, nil]           opt    Default: `#request_parameters`.
+  #
+  def show_search_bar?: (?(Symbol|String)? ctrlr, ?symHash? opt) -> bool
+
+  # Indicate whether it is appropriate to show the search input menu.
+  #
+  # @param [Symbol, String, nil] ctrlr  Passed to #search_input_types.
+  # @param [Hash]                opt    Passed to #search_input_types.
+  #
+  def show_input_select?: (?(Symbol|String)? ctrlr, **untyped opt) -> bool
+
+  # search_bar_container
+  #
+  # @param [Symbol, String, nil]   target     Default: `#search_input_target`
+  # @param [Array, Hash, nil]      fields     Default: `#search_input_types`.
+  # @param [Hash, nil]             values     Default: `#url_parameters`.
+  # @param [Symbol, Array<Symbol>] only
+  # @param [Symbol, Array<Symbol>] except
+  # @param [Integer, nil]          maximum    Maximum input rows in group.
+  # @param [Integer, nil]          minimum    Minimum input rows in group.
+  # @param [Hash]                  form_opt   Passed to #html_form.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                             Search unavailable for *target*.
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def search_bar_container: (?target: (Symbol|String)?, ?fields: (symArray|symHash)?, ?values: symHash?, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, ?maximum: Integer?, ?minimum: Integer?, **untyped form_opt) -> ActiveSupport::SafeBuffer?
+
+  # Generate a row within a search-bar-group.
+  #
+  # @param [Symbol, String, nil] field      Passed to #search_input.
+  # @param [String, nil]         value      Passed to #search_input.
+  # @param [Boolean, nil]        first      If *true* this is the first row.
+  # @param [Boolean, nil]        last       If *true* this is the last row.
+  # @param [Hash]                opt        Passed to outer #html_div except:
+  #
+  # @option opt [String, Symbol]  :target
+  # @option opt [String, Boolean] :unique   Passed to #unique_id.
+  # @option opt [Integer]         :index    Passed to #unique_id.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_bar_row: ((Symbol|String)? field, ?String? value, ?first: bool?, ?last: bool?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Reveal the next search-bar-row in the current search-bar-group.
+  #
+  # @param [Hash] opt                 Passed to #search_row_control.
+  #
+  def search_row_add: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Reveal the associated search-bar-row.
+  #
+  # @param [Hash] opt                 Passed to #search_row_control.
+  #
+  def search_row_remove: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate an element for selecting search type.
+  #
+  # @param [Hash] opt                       Passed to #select_tag except for
+  #                                           #MENU_OPTS and:
+  #
+  # @option opt [String, Symbol]  :target
+  # @option opt [String, Boolean] :unique   Passed to #unique_id.
+  # @option opt [Integer]         :index    Passed to #unique_id.
+  #
+  # @return [ActiveSupport::SafeBuffer]     An HTML input element.
+  # @return [nil]                           Search unavailable for target.
+  #
+  def search_input_select: (**untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Generate an element for entering search terms.
+  #
+  # @param [Symbol, String, nil] field
+  # @param [String, nil]         value
+  # @param [Hash]                opt        Passed to #html_div except for:
+  #
+  # @option opt [String, Symbol]  :target
+  # @option opt [String, Boolean] :unique   Passed to #unique_id.
+  # @option opt [Integer]         :index    Passed to #unique_id.
+  #
+  # @return [ActiveSupport::SafeBuffer]     An HTML input element.
+  # @return [nil]                           Search unavailable for target.
+  #
+  # @see #search_input
+  #
+  def search_bar: ((String|Symbol)? field, ?String? value, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # search_bar_label
+  #
+  # @param [Symbol, String, nil] ctrlr    Default: *target*
+  # @param [Symbol, String, nil] target   Default: `#search_input_target`
+  # @param [Hash]                opt      Passed to #config_lookup.
+  #
+  # @return [String]                      The specified value.
+  # @return [nil]                         No non-empty value was found.
+  #
+  def search_bar_label: (?(Symbol|String)? ctrlr, ?target: (Symbol|String)?, **untyped opt) -> String?
+
+  # An operation on a search-bar-row.
+  #
+  # @param [String, Symbol] operation
+  # @param [Hash]           opt             Passed to #icon_button except for:
+  #
+  # @option opt [Any]             :field    Discarded.
+  # @option opt [Any]             :target   Discarded.
+  # @option opt [String, Boolean] :unique   Passed to #unique_id.
+  # @option opt [Integer]         :index    Passed to #unique_id.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_row_control: (String|Symbol operation, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The URL parameter to which search terms should be applied.
+  #
+  # @param [Symbol, String, nil] ctrlr  Default: `#search_input_target`
+  # @param [Hash]                opt    Passed to #search_input_type.
+  #
+  # @return [Symbol]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
+  #
+  def search_input_field: (?(String|Symbol)? ctrlr, **untyped opt) -> Symbol?
+
+  # Screen-reader-only label for the input field.
+  #
+  # @param [Symbol, String, nil] ctrlr  Passed to #search_input_type.
+  # @param [Hash]                opt    Passed to #search_input_type.
+  #
+  # @return [String]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
+  #
+  def search_input_label: (?(String|Symbol)? ctrlr, **untyped opt) -> String?
+
+  # Placeholder text displayed in the search input box.
+  #
+  # @param [Symbol, String, nil] ctrlr  Passed to #search_input_type.
+  # @param [Hash]                opt    Passed to #search_input_type.
+  #
+  # @return [String]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
+  #
+  def search_input_placeholder: (?(String|Symbol)? ctrlr, **untyped opt) -> String?
+
+  # Properties of the indicated search input type.
+  #
+  # @param [Symbol, String, nil] ctrlr    Default: `#search_input_types`
+  # @param [Symbol, String, nil] target   Default: `#search_input_types`
+  # @param [Symbol, String, nil] field    Input type; first one if not given.
+  # @param [Hash]                opt      Passed to #search_input_types.
+  #
+  # @return [Hash{Symbol=>Symbol,String}]
+  #
+  def search_input_type: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?field: (String|Symbol)?, **untyped opt) -> Hash[Symbol,(Symbol|String)]
+
+  # All defined input types.
+  #
+  # @param [Symbol, String, nil] ctrlr    Default: *target*
+  # @param [Symbol, String, nil] target   Default: `#search_input_target`
+  # @param [Hash]                opt      Passed to #config_lookup.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def search_input_types: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped opt) -> symHash
+
+  # search_input_target
+  #
+  # @param [Symbol, String, nil] ctrlr    Default: *target*
+  # @param [Symbol, String, nil] target   Default: `#search_target`
+  #
+  # @return [Symbol]                      The controller used for searching.
+  # @return [nil]                         If search input should not be enabled
+  #
+  def search_input_target: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped ignored) -> Symbol?
+
+  # Generate a form search field input control.
+  #
+  # @param [Symbol, String, nil] field      Default: `#search_input_field`.
+  # @param [Symbol, String, nil] ctrlr      Default: *target*.
+  # @param [Symbol, String, nil] target     Default: `#search_input_target`.
+  # @param [String, nil]         value      Default: `params[*field*]`.
+  # @param [Hash]                opt        Passed to #search_field_tag except:
+  #
+  # @option opt [String, Boolean] :unique   Passed to #unique_id.
+  # @option opt [Integer]         :index    Passed to #unique_id.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_input: ((String|Symbol)? field, ?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?value: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  SEARCH_READY_TOOLTIP: String
+
+  SEARCH_NOT_READY_TOOLTIP: String
+
+  # Generate a form submit control.
+  #
+  # @param [Symbol, String, nil] ctrlr    Default: *target*
+  # @param [Symbol, String, nil] target   Default: `#search_input_target`
+  # @param [String, nil]         label    Default: `#search_button_label`.
+  # @param [Hash]                opt      Passed to #submit_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_button: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # search_button_label
+  #
+  # @param [Symbol, String, nil] ctrlr    Default: *target*
+  # @param [Symbol, String, nil] target   Default: `#search_input_target`
+  # @param [Hash]                opt      Passed to #config_lookup.
+  #
+  # @return [String]                      The specified value.
+  # @return [nil]                         No non-empty value was found.
+  #
+  def search_button_label: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped opt) -> String?
+
+  # search_clear_button
+  #
+  # @param [Hash] opt                       Passed to #link_to except for:
+  #
+  # @option opt [String, Boolean] :unique   Passed to #unique_id.
+  # @option opt [Integer]         :index    Passed to #unique_id.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/advanced-search.js *clearSearch()*
+  # @see HtmlHelper#icon_button
+  #
+  def search_clear_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  SEARCH_CONTROLS: symArray
+
+  # A container for the search submit, filter reset, and filter toggle buttons.
+  #
+  # @param [Symbol, String, nil]   ctrlr    Default: *target*
+  # @param [Symbol, String, nil]   target   Default: `#search_button`
+  # @param [String, nil]           form     Form element identifier.
+  # @param [Hash]                  opt      Passed to #html_div except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :only     One or more #SEARCH_CONTROLS.
+  # @option opt [Symbol, Array<Symbol>] :except   One or more #SEARCH_CONTROLS.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_controls: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?form: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Combine parts into a value for use an an HTML ID of a element associated
+  # with a specific search input row.
+  #
+  # Unless *unique* is *false* or a string, #hex_rand will be used to generate
+  # a value to make the resulting ID unique.
+  #
+  # @param [Array]                parts
+  # @param [String, Boolean, nil] unique  Value unique to a search unique.
+  # @param [Integer, nil]         index   Value unique to an input row.
+  # @param [Hash]                 opt     Passed to #html_id.
+  #
+  # @return [String]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def unique_id: (*String parts, ?unique: (String|bool)?, ?index: Integer?, **untyped opt) -> String
+
+  # Filter values from an array.
+  #
+  # @param [Array<Symbol>, Symbol, nil] obj
+  # @param [Array<Symbol>, Symbol, nil] only
+  # @param [Array<Symbol>, Symbol, nil] except
+  #
+  # @return [Array]                   A modified copy of *obj*.
+  #
+  def filter: ((Symbol|symArray)? obj, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, **untyped ignored) -> symArray
+
+  # Filter values from an array.
+  #
+  # @param [Array<Symbol>]              array
+  # @param [Array<Symbol>, Symbol, nil] only
+  # @param [Array<Symbol>, Symbol, nil] except
+  #
+  # @return [Array]                   The original object, possibly modified.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def filter!: (symArray array, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, **untyped ignored) -> symArray
+end

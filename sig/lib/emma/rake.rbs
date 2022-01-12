@@ -1,0 +1,131 @@
+# Rake support methods.
+#
+# == Usage Notes
+# This is designed so that "require 'emma/rake'" will set up definitions in the
+# *.rake file in one step.  Loading this file in any other context is untested
+# and probably not a good idea.
+#
+module Emma::Rake
+  include Emma::Common
+
+  include Emma::Time
+
+  extend ::Emma::Rake
+
+  # True for "rake --quiet" or when not running from the command line.
+  #
+  # @type [Boolean]
+  #
+  QUIET_DEFAULT: bool
+
+  # True for "rake --verbose" or when running from the command line unless
+  # "rake --quiet".
+  #
+  # @type [Boolean]
+  #
+  VERBOSE_DEFAULT: bool
+
+  # Run a Rake task from within a task definition.
+  #
+  # @param [String, Symbol]                        name
+  # @param [Hash, Array, Rake::TaskArguments, nil] args
+  #
+  # noinspection RubyNilAnalysis
+  def subtask: (String|Symbol name, ?(Rake::TaskArguments|strArray|Hash[(String|Symbol),(String|Symbol)])? args) -> void
+
+  # task_options
+  #
+  # @param [Array<String,Symbol>] flags
+  #
+  # @return [Array<String,nil>]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # +
+  def task_options: (*(String|Symbol|Rake::TaskArguments|strArray|nil) flags) -> Array[String?]
+
+  # Indicate whether the option flag was provided via task arguments or on the
+  # the command line (after "--").
+  #
+  # @param [String, Symbol]                  flag
+  # @param [Rake::TaskArguments, Array, nil] task_args
+  #
+  def task_option?: (String|Symbol flag, ?(Rake::TaskArguments|strArray)? task_args) -> bool
+
+  # Return the value of an option flag provided via task arguments or on the
+  # the command line (after "--").
+  #
+  # A flag of the form "--name" will return "" if present.
+  # A flag of the form "--name=value" will return *value* if present.
+  #
+  # @param [String, Symbol]                  flag
+  # @param [Rake::TaskArguments, Array, nil] args   From task arguments.
+  #
+  # @return [String, nil]
+  #
+  def task_option: (String|Symbol flag, ?(Rake::TaskArguments|strArray)? args) -> String?
+
+  # Option flags on the "rake" command line after "--" will be ignored by Rake
+  # but will be available in $*.
+  #
+  # @return [Array<String>]
+  #
+  def cli_task_options: () -> strArray
+
+  # A time span message.
+  #
+  # @param [Float] start_time         Default: time now.
+  #
+  # @return [Float]
+  #
+  def save_start_time: (?Float? start_time) -> Float
+
+  # A time span message.
+  #
+  # @param [Float] start_time         Default: @start_time.
+  #
+  # @return [String]
+  #
+  def elapsed_time: (?Float? start_time) -> String
+
+  # Send line(s) to output.
+  #
+  # @param [Array<String, Array, nil>] lines
+  # @param [IO]                        io
+  #
+  # @return [nil]
+  #
+  def show: (*(String|anyArray|nil) lines, ?io: IO) -> nil
+
+  # An override to provide a mock #session.
+  #
+  def session: () -> strHash
+
+  # An override to provide a mock #current_user.
+  #
+  # @note Needs to be a user mapped to the developer role in 'users_roles'.
+  #
+  def current_user: () -> User
+
+  module DSL
+    # :nocov:
+    include Rake::DSL
+
+    # Override Rake::DSL#desc for multi-line descriptions.
+    # (Only the first is visible with "rake -T".)
+    #
+    # @param [Array<String, Array>] line
+    #
+    def desc: (*(String|anyArray|nil) line) -> String
+  end
+
+  private
+
+  def self.included: (Module base) -> void
+end
+
+class Object
+  extend Emma::Rake::DSL
+
+  include Emma::Rake
+end

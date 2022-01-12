@@ -20,7 +20,7 @@ module Import
   # The prefix applied to imported field names that have not otherwise been
   # assigned a field name to be used within :emma_data.
   #
-  # @type [String, nil]
+  # @type [String]
   #
   DEFAULT_NAME_PREFIX = 'x_'
 
@@ -88,7 +88,7 @@ module Import
   # Translate an import field name to a destination field name.
   #
   # @param [Symbol, String] k
-  # @param [String, nil]    prefix
+  # @param [String]         prefix
   #
   # @return [Symbol]
   #
@@ -251,7 +251,8 @@ module Import
   # Transform a data item into one or more identifiers of the form expected by
   # :dc_identifier and :dc_relation.
   #
-  # @param [Any] v
+  # @param [Any]           v
+  # @param [String, #to_s] prefix
   #
   # @return [Array<String>]
   #
@@ -312,7 +313,7 @@ module Import
   # @param [Any] k                    Imported field being skipped.
   # @param [Any] v
   #
-  # @return [(nil,nil)]
+  # @return [Array<(nil,nil)>]
   #
   def skip(k = nil, v = nil)
     # noinspection RubyMismatchedArgumentType
@@ -324,10 +325,10 @@ module Import
   #
   # @param [Symbol, String] k
   # @param [Any]            v
-  # @param [String, nil]    prefix
+  # @param [String]         prefix
   #
-  # @return [(Symbol,Any)]
-  # @return [(Symbol,Array)]
+  # @return [Array<(Symbol,Any)>]
+  # @return [Array<(Symbol,Array)>]
   #
   def default(k, v, prefix = name_prefix)
     # noinspection RubyMismatchedArgumentType
@@ -362,7 +363,7 @@ module Import
   # @param [Symbol, String] k         Import field name.
   # @param [Any]            v         Import field value.
   #
-  # @return [(Symbol,Any)]
+  # @return [Array<(Symbol,Any)>]
   #
   def resolve(k, v)
     k     = k.to_sym

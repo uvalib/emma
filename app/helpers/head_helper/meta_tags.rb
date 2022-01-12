@@ -115,6 +115,7 @@ module HeadHelper::MetaTags
   #
   def replace_page_meta_tags(pairs = nil)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
+    # noinspection RubyMismatchedArgumentType
     @page_meta_tags.merge!(pairs) if pairs.present?
     @page_meta_tags.merge!(yield) if block_given?
     @page_meta_tags

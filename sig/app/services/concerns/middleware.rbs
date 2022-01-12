@@ -1,0 +1,3 @@
+# This stub exists to satisfy the Zeitwerk loader.
+module Middleware
+end

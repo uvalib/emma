@@ -144,6 +144,9 @@ module Record::Properties                                                       
   # @see #set_bulk_batch
   # @see #MAX_BATCH_SIZE
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   BATCH_SIZE = [
     (ENV['BATCH_SIZE']&.to_i || BATCH_SIZE_DEFAULT || MAX_BATCH_SIZE),
     MAX_BATCH_SIZE
@@ -174,6 +177,7 @@ module Record::Properties                                                       
   #
   # @return [String]                  Value to prepend to title.
   # @return [FalseClass]              No prefix should be used.
+  # @return [nil]                     No prefix is defined.
   #
   # @see #TITLE_PREFIX
   #

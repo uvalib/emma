@@ -1,0 +1,16 @@
+# Health status interface.
+#
+module ApiService::Status
+  include Emma::Common
+
+  # Indicate whether the service is operational.
+  #
+  # @return [Array<(TrueClass,nil)>]
+  # @return [Array<(FalseClass,String)>]
+  #
+  def active_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+
+  private
+
+  def self.included: (Module base) -> void
+end

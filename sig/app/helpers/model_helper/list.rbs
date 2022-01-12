@@ -1,0 +1,218 @@
+# View helper methods supporting display of Model instances (both database
+# items and API messages).
+#
+module ModelHelper::List
+  include ModelHelper::Fields
+
+  NO_RESULTS: String
+
+  # Render field/value pairs.
+  #
+  # @param [Model, Hash, nil]    item
+  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
+  # @param [String, Symbol, nil] action       Default: `params[:action]`.
+  # @param [Hash, nil]           pairs        Except for #render_pair options.
+  # @param [Integer, nil]        row_offset   Def: 0.
+  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash]                opt
+  # @param [Proc]                block        Passed to #field_values.
+  #
+  # @option opt [Integer] :index              Offset to make unique element IDs
+  #                                             passed to #render_pair.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_field_values: ((Model|symHash)? item, ?model: (String|Symbol)?, ?action: (String|Symbol)?, ?pairs: anyHash?, ?row_offset: Integer?, ?separator: String?, **untyped opt) { () -> untyped } -> ActiveSupport::SafeBuffer
+
+  # Render a single label/value pair.
+  #
+  # @param [String, Symbol, nil] label
+  # @param [Any, nil]            value
+  # @param [Hash, nil]           prop       Default: from field/model.
+  # @param [Symbol, nil]         field
+  # @param [Symbol, nil]         model      Default: `params[:controller]`
+  # @param [String, Integer]     index      Offset to make unique element IDs.
+  # @param [Integer, nil]        row        Display row.
+  # @param [String, nil]         separator  Between parts if *value* is array.
+  # @param [String, nil]         wrap       Class for outer wrapper.
+  # @param [Hash]                opt        Passed to each #html_div except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :no_format
+  #
+  # @return [ActiveSupport::SafeBuffer]     HTML label and value elements.
+  # @return [nil]                           If *value* is blank.
+  #
+  # == Usage Notes
+  # If *label* is HTML then no ".field-???" class is included for the ".label"
+  # and ".value" elements.
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def render_pair: ((String|Symbol)? label, untyped value, ?prop: symHash?, ?field: Symbol?, ?model: Symbol?, ?index: (String|Integer)?, ?row: Integer?, ?separator: String?, ?wrap: String?, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # An indicator that can be used to stand for an empty list.
+  #
+  # @param [String, nil] message      Default: #NO_RESULTS.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_empty_value: (?String? message) -> ActiveSupport::SafeBuffer
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Model, Hash, nil]    item
+  # @param [Any]                 value
+  # @param [String, Symbol, nil] model  If provided, a model-specific method
+  #                                       will be invoked instead.
+  # @param [Hash]                opt    Passed to render method.
+  #
+  # @return [Any]   HTML or scalar value.
+  # @return [nil]   If *value* was *nil* or *item* resolved to *nil*.
+  #
+  def render_value: ((Model|symHash)? item, untyped value, ?model: (String|Symbol)?, **untyped opt) -> untyped?
+
+  # Attempt to interpret *method* as an *item* method or as a method defined
+  # in the current context.
+  #
+  # @param [Model, Hash, nil]    item
+  # @param [String, Symbol, Any] m
+  # @param [Hash]                opt    Options (used only if appropriate).
+  #
+  # @return [Any]                       HTML or scalar value.
+  # @return [nil]                       If executed method returned *nil*.
+  #
+  def execute: ((Model|symHash)? item, untyped m, **untyped opt) -> untyped?
+
+  # Options used with template :locals.
+  #
+  # @type [Array<Symbol>]
+  #
+  VIEW_TEMPLATE_OPT: symArray
+
+  # Method options which are processed internally and not passed on as HTML
+  # options.
+  #
+  # @type [Array<Symbol>]
+  #
+  ITEM_ENTRY_OPT: symArray
+
+  # Generate applied search terms and top/bottom pagination controls.
+  #
+  # @param [Array, nil]          list   Default: #page_items.
+  # @param [Integer, #to_i, nil] count  Default: *list* size.
+  # @param [Integer, #to_i, nil] total  Default: count.
+  # @param [Integer, #to_i, nil] page
+  # @param [Integer, #to_i, nil] size   Default: #page_size.
+  # @param [Integer, #to_i, nil] row    Default: 1.
+  # @param [Hash]    opt                Passed to #page_filter.
+  #
+  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  #
+  def index_controls: (?list: Array[Model]?, ?count: (Integer|_ToI)?, ?total: (Integer|_ToI)?, ?page: (Integer|_ToI)?, ?size: (Integer|_ToI)?, ?row: (Integer|_ToI)?, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
+
+  # Optional page style controls in line with the top pagination control.
+  #
+  # @param [Hash] opt                 Passed to model-specific method except:
+  #
+  # @option opt [String, Symbol] :model   Default: `params[:controller]`
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see SearchHelper#search_page_styles
+  #
+  def page_styles: (**untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # An optional page filter control in line with the top pagination control.
+  #
+  # @param [Hash] opt                 Passed to model-specific method except:
+  #
+  # @option opt [String, Symbol] :model   Default: `params[:controller]`
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see UploadHelper#upload_page_filter
+  #
+  def page_filter: (**untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Render an element containing the ordinal position of an entry within a list
+  # based on the provided *offset* and *index*.
+  #
+  # *1* Use :inner to pass additional element(s) to go inside the container; if
+  #     given as *true* this specifies that elements from the block will go
+  #     inside the container (this is the default unless :outer is given).
+  #
+  # *2* Use :outer to pass additional element(s) to go after the container
+  #     element; if given as *true* this specifies that elements from the block
+  #     will go after the container.
+  #
+  # @param [Model]                  item
+  # @param [Integer]                index   Index number.
+  # @param [Integer, nil]           offset  Default: `#page_offset`.
+  # @param [Integer, nil]           level   Heading tag level (@see #html_tag).
+  # @param [String, nil]            group   Sets :'data-group' for outer div.
+  # @param [Integer, nil]           row
+  # @param [Boolean, String, Array] inner   *1* above.
+  # @param [Boolean, String, Array] outer   *2* above.
+  # @param [Hash]                   opt     Passed to inner #html_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                           If *item* or *index* is *nil*.
+  #
+  # @yield [index,offset] To supply additional parts within .number element.
+  # @yieldparam  [Integer] index      The effective index number.
+  # @yieldparam  [Integer] offset     The effective page offset.
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def list_item_number: (Model item, index: Integer, ?offset: Integer?, ?level: Integer?, ?group: String?, ?row: Integer?, ?inner: (bool|String|strArray)?, ?outer: (bool|String|strArray)?, **untyped opt) { (Integer, Integer) -> Array[ActiveSupport::SafeBuffer] } -> ActiveSupport::SafeBuffer
+                      | (nil item,   index: Integer, ?offset: Integer?, ?level: Integer?, ?group: String?, ?row: Integer?, ?inner: (bool|String|strArray)?, ?outer: (bool|String|strArray)?, **untyped opt) { (*untyped) -> void }                                     -> nil
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Model, nil]     item
+  # @param [String, Symbol] model
+  # @param [Hash, nil]      pairs         Label/value pairs.
+  # @param [Symbol]         render        Default: #render_field_values.
+  # @param [Hash]           opt           Passed to the render method.
+  # @param [Proc]           block         Passed to the render method.
+  #
+  # @option opt [String] :id              Element ID to assign to the list item
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def model_list_item: (untyped item, model: untyped model, ?pairs: untyped? pairs, ?render: untyped? render, **untyped opt) { () -> untyped } -> untyped
+
+  # Generate a standardized (base) element identifier from the given item.
+  #
+  # @param [Model, nil]     item
+  # @param [String, Symbol] model
+  #
+  # @return [String]
+  #
+  def model_item_id: (untyped item, ?model: untyped? model) -> untyped
+
+  # Render a metadata listing of a model instance.
+  #
+  # @param [Model]          item
+  # @param [Hash, nil]      pairs         Label/value pairs.
+  # @param [Hash]           opt           Passed to #render_field_values.
+  # @param [Proc]           block         Passed to #render_field_values.
+  #
+  # @option opt [Symbol] :model           Default: `Model#for(item)`.
+  # @option opt [String] :class           Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If *item* is blank.
+  #
+  def model_details: (untyped? item, ?pairs: anyHash?, **untyped opt) { (Model) -> anyHash } -> ActiveSupport::SafeBuffer?
+
+  private
+
+  def self.included: (Module base) -> void
+end

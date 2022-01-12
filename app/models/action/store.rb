@@ -54,6 +54,7 @@ class Action::Store < Action::BulkPart
     __debug_items(binding)
     data, attr = partition_hash(attr, *EMMA_DATA_KEYS)
     attr = attribute_options(attr, opt)
+    # noinspection RubyMismatchedArgumentType
     attr[:emma_data] = generate_emma_data(data, attr)
     super(attr, opt)
   end
@@ -74,7 +75,7 @@ class Action::Store < Action::BulkPart
   # @option opt [Any]     :env            From *request* by default.
   # @option opt [Symbol]  :meth           Name of caller (for logging).
   #
-  # @return [(Integer, Hash{String=>Any}, Array<String>)]
+  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
   #
   # @see Record::Uploadable#upload_file
   #

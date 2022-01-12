@@ -16,8 +16,8 @@ module Emma::Common::ObjectMethods
   # Transform a hash into a struct recursively.  (Any hash value which is
   # itself a hash will be converted to a struct).
   #
-  # @param [Hash]         hash
-  # @param [Boolean, nil] arrays      If *true*, convert hashes within arrays.
+  # @param [Hash]    hash
+  # @param [Boolean] arrays           If *true*, convert hashes within arrays.
   #
   # @return [Struct]
   #
@@ -47,8 +47,10 @@ module Emma::Common::ObjectMethods
   # @return [Class]
   # @return [nil]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def to_class(name)
-    # noinspection RubyMismatchedReturnType
     return name if name.nil? || name.is_a?(Class)
     c = name.to_s.underscore.delete_suffix('_controller').classify
     c.safe_constantize or Log.warn { "#{__method__}: #{name.inspect} invalid" }

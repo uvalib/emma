@@ -1,0 +1,116 @@
+# The time that the application was started.
+#
+# @type [Time]
+#
+BOOT_TIME: Time
+
+# The TeamCity build version.
+#
+# If there is (erroneously) more than one "buildtag.*" file, the build numbers
+# will be listed separated by commas.
+#
+# @type [String]
+#
+BUILD_VERSION: String
+
+# For use by the application in desktop (non-deployed) testing.
+#
+# @type [String]
+#
+PRODUCTION_BASE_URL: String
+
+# For use by the application in desktop (non-deployed) testing.
+#
+# @type [String]
+#
+STAGING_BASE_URL: String
+
+# Text values which represent *true*.
+#
+# @type [Array<String>]
+#
+TRUE_VALUES: strArray
+
+# Text values which represent *false*.
+#
+# @type [Array<String>]
+#
+FALSE_VALUES: strArray
+
+class Object
+  # Indicate whether the item represents an explicit *true* value.
+  #
+  # @param [TrueClass, FalseClass, String, Symbol, Any, nil] value
+  #
+  def true?: (untyped value) -> bool
+
+  # Indicate whether the item represents an explicit *false* value.
+  #
+  # @param [TrueClass, FalseClass, String, Symbol, Any, nil] value
+  #
+  def false?: (untyped value) -> bool
+
+  # Produce JSON for use with "assets.js.erb".
+  #
+  # @param [String, Hash, Array, Any, nil] arg
+  #
+  # @return [String]
+  #
+  # @see file:app/assets/javascripts/shared/assets.js.erb *js$()*
+  #
+  def js: (untyped arg) -> String
+
+  # Indicate whether this is a deployed instance.
+  #
+  def application_deployed?: () -> bool
+
+  # The true deployment type.
+  #
+  # @return [Symbol]
+  #
+  def aws_deployment: () -> Symbol
+
+  # The deployment type.  Desktop development should use 'staging' resources.
+  #
+  # @return [Symbol]
+  #
+  # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/production/environment.vars
+  # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/staging/environment.vars
+  #
+  def application_deployment: () -> Symbol
+
+  # Indicate whether this is the production service instance.
+  #
+  def production_deployment?: () -> bool
+
+  # Indicate whether this is the staging service instance.
+  #
+  def staging_deployment?: () -> bool
+
+  # Indicate whether this is a development-build instance.
+  #
+  def development_build?: () -> bool
+
+  # Indicate whether this instance is being run from the interactive debugger.
+  #
+  # == Usage Notes
+  # For interactive debugging RubyMine uses 'ruby-debug-ide'.
+  #
+  def in_debugger?: () -> bool
+
+  # Indicate whether this instance is being run from a Docker container on a
+  # development machine.
+  #
+  def in_local_docker?: () -> bool
+
+  # For use within initialization code to branch between code that is intended
+  # for the Rails application versus code that is run in other contexts (e.g.,
+  # rake).
+  #
+  def rails_application?: () -> bool
+
+  # Indicate whether this instance is being run as "rake" or "rails" with a Rake
+  # task argument.
+  #
+  def rake_task?: () -> bool
+end

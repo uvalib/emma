@@ -1,0 +1,57 @@
+# View helper methods for setting/getting <link rel="stylesheet"> meta-tags.
+#
+module HeadHelper::Stylesheets
+  include HeadHelper::Common
+
+  private
+
+  # @type [Array<String>]
+  DEFAULT_PAGE_STYLESHEETS: strArray
+
+  public
+
+  # Access the stylesheets for this page.
+  #
+  # If a block is given, this invocation is being used to accumulate stylesheet
+  # sources; otherwise this invocation is being used to emit the stylesheet
+  # "<link>" element(s).
+  #
+  # @return [ActiveSupport::SafeBuffer]   If no block given.
+  # @return [Array<String>]               If block given.
+  #
+  # @yield To supply sources(s) to #set_page_stylesheets.
+  # @yieldreturn [String, Array<String>]
+  #
+  def page_stylesheets: () { () -> (String | strArray) } -> strArray
+                      | ()                               -> ActiveSupport::SafeBuffer
+
+  # Set the stylesheet(s) for this page, eliminating any previous value(s).
+  #
+  # @param [Array] sources
+  #
+  # @return [Array<String>]           The updated @page_stylesheets contents.
+  #
+  # @yield To supply additional source(s) to @page_stylesheets.
+  # @yieldreturn [String, Array<String>]
+  #
+  def set_page_stylesheets: (*anyArray sources) { () -> (String | strArray) } -> strArray
+
+  # Add to the stylesheet(s) for this page.
+  #
+  # @param [Array] sources
+  #
+  # @return [Array<String>]           The updated @page_stylesheets contents.
+  #
+  # @yield To supply additional source(s) to @page_stylesheets.
+  # @yieldreturn [String, Array<String>]
+  #
+  def append_page_stylesheets: (*anyArray sources) { () -> (String | strArray) } -> strArray
+
+  # Emit the stylesheet "<link>" tag(s) appropriate for the current page.
+  #
+  # @param [Hash] opt                 Passed to #stylesheet_link_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def emit_page_stylesheets: (**untyped opt) -> ActiveSupport::SafeBuffer
+end

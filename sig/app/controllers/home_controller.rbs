@@ -1,0 +1,56 @@
+# Handle "/home" pages.
+#
+# @see file:app/views/home/**
+#
+# == Usage Notes
+# The endpoints implemented by this controller do not require authentication of
+# the requester because the methods/views react according to the identity
+# associated with the current session.
+#
+class HomeController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include SerializationConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # == GET /home
+  #
+  # The main application page.
+  #
+  # == Implementation Notes
+  # There is no app/views/home/main.html.erb; this method renders the user
+  # dashboard for an authenticated session or the welcome screen otherwise.
+  #
+  def main: () -> void
+
+  # == GET /home/welcome
+  #
+  # The main application page for anonymous users.
+  #
+  def welcome: () -> void
+
+  # == GET /home/dashboard
+  #
+  # The main application page for authenticated users.
+  #
+  # @see UserConcern#get_account_details
+  #
+  def dashboard: () -> void
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Hash, nil] result
+  # @param [Hash]      opt
+  #
+  # @return [Hash{Symbol=>Hash,Array}]
+  #
+  def show_values: (?anyHash? result, **untyped opt) -> symHash
+end

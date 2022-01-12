@@ -1,0 +1,150 @@
+# View helper methods supporting processing and display of search terms.
+#
+module SearchTermsHelper
+  include Emma::Common
+
+  include Emma::Json
+
+  include Emma::Unicode
+
+  include ConfigurationHelper
+
+  # Table of search types for each controller.
+  #
+  # Each entry may have:
+  #
+  #   :label          Label for the menu selection.
+  #   :tooltip        Tooltip for the menu selection.
+  #   :placeholder    Placeholder text to display in the search input box.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SEARCH_TYPE: Hash[Symbol,symHash]
+
+  # Non-facet search fields per controller.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  QUERY_PARAMETERS: Hash[Symbol,symArray]
+
+  # URL parameters that are search-related but "out-of-band".
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGINATION_KEYS: symArray
+
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_KEYS: symArray
+
+  # URL parameters that do not represent relevant search result
+  # characteristics for #search_terms.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_TERM_KEYS: symArray
+
+  # Term separator for #list_search_terms.
+  #
+  # @type [String]
+  #
+  LIST_SEARCH_SEPARATOR: String
+
+  # URL parameters related to search menu settings.
+  #
+  # @type [Array<Symbol>]
+  #
+  # TODO: This may be questionable...
+  #
+  SEARCH_KEYS: symArray
+
+  # URL parameters related to search sort menu settings.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_SORT_KEYS: symArray
+
+  # Controllers which supply their own search capabilities.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  SEARCH_CONTROLLERS: Hash[Symbol,String]
+
+  # The search controller that should be used on any pages whose controllers
+  # do not provide their own search capability.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_SEARCH_CONTROLLER: Symbol
+
+  # The current search target (the current controller by default).
+  #
+  # @param [Hash, Symbol, String, nil] target
+  # @param [Hash]                      opt
+  #
+  # @return [Symbol]                  The controller used for searching.
+  # @return [nil]                     If searching should not be enabled.
+  #
+  def search_target: (?(Symbol|String|symHash)? target, **untyped opt) -> Symbol?
+
+  # Prepare label/value pairs that can be used with #options_for_select to
+  # generate a search type selection menu.
+  #
+  # @param [Hash, Symbol, String, nil] target
+  # @param [Hash]                      opt      Passed to #search_target.
+  #
+  # @return [Array<Array<(String,Symbol)>>]
+  #
+  def search_query_menu_pairs: (?(Symbol|String|symHash)? target, **untyped opt) -> Array[[String,Symbol]]
+
+  # The URL parameters associated with queries for the indicated search target.
+  #
+  # @param [Hash, Symbol, String, nil] target
+  # @param [Hash]                      opt      Passed to #search_target.
+  #
+  # @return [Array<Symbol>]
+  #
+  def search_query_keys: (?(Symbol|String|symHash)? target, **untyped opt) -> symArray
+
+  # Active query parameters.
+  #
+  # @param [Hash{Symbol=>Any}] prm    Default: `#url_parameters`.
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def search_parameters: (?symHash? prm, **untyped opt) -> Hash[Symbol,strArray]
+
+  # Active search terms.
+  #
+  # The result is ordered such that text-only (query) fields(s) come before
+  # facet selection fields.
+  #
+  # @param [Hash, Symbol, String, nil]  target  Passed to #search_target.
+  # @param [Hash{Symbol=>String,Array}] pairs   Default: `#url_parameters`.
+  # @param [Symbol, Array<Symbol>]      only
+  # @param [Symbol, Array<Symbol>]      except
+  # @param [Hash]                       opt     Passed to #search_target.
+  #
+  # @return [Hash{Symbol=>SearchTerm}]
+  #
+  def search_terms: (?(Symbol|String|symHash)? target, ?pairs: symHash, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped opt) -> Hash[Symbol,SearchTerm]
+
+  # Produce a text-only listing of search terms.
+  #
+  # @param [Hash{Symbol=>SearchTerm}, nil] term_list  Default: `#search_terms`.
+  #
+  # @option term_list [String] :separator   Default: #LIST_SEARCH_SEPARATOR.
+  #
+  # @return [String]
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def list_search_terms: (?Hash[Symbol,SearchTerm]? term_list) -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end

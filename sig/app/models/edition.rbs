@@ -1,0 +1,9 @@
+# Model for a periodical edition.
+#
+class Edition < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Authorizable
+end

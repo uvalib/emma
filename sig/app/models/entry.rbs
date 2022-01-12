@@ -1,0 +1,210 @@
+# An 'entries' table record which is a completed EMMA entry.
+#
+# @!attribute [r]  user_id
+#   The user who submitted the entry.
+#   (Set via initial Phase::Create action)
+#
+# @!attribute [rw] submission_id
+#   The submission ID for the entry.
+#   (Set via initial Phase::Create action)
+#
+# @!attribute [rw] repository
+#   The repository associated with the entry.
+#   (Set via initial Phase::Create action)
+#
+# @!attribute [rw] fmt
+#   The format of the file.
+#   (Set via Phase::Create or completed Phase::Edit)
+#
+# @!attribute [rw] ext
+#   The extension of the file.
+#   (Set via Phase::Create or completed Phase::Edit)
+#
+# @!attribute [rw] emma_data
+#   JSON metadata from the file.
+#   (Set via Phase::Create or completed Phase::Edit)
+#
+# @!attribute [rw] file_data
+#   Shrine metadata for the file.
+#   (Set via Phase::Create or completed Phase::Edit)
+#
+# @!attribute [r]  created_at
+#   Time of record creation.
+#
+# @!attribute [rw] updated_at
+#   Last time record was modified.
+#
+class Entry < ApplicationRecord
+  DESTRUCTIVE_TESTING: bool
+
+  include Model
+
+  include Record
+
+  include Record::EmmaData
+
+  include Record::Assignable
+
+  include Record::Authorizable
+
+  include Record::Controllable
+
+  include Record::Describable
+
+  include Record::Searchable
+
+  include Record::Submittable
+
+  include Record::Uploadable
+
+  # NOTE: needed for #file_name
+  include Record::Validatable
+
+  include Record::Testing
+
+  include Record::Debugging
+
+  # :nocov:
+  extend Record::Describable::ClassMethods
+
+  DEF_REPO: String
+
+  # Create a new instance.
+  #
+  # @param [Hash, Entry] attr         Passed to #assign_attributes via super.
+  # @param [Proc]        block        Passed to super.
+  #
+  # This method overrides:
+  # @see ActiveRecord::Core#initialize
+  #
+  def initialize: (?(Entry|symHash)? attr) { (self) -> untyped } -> void
+
+  # Update database fields, including the structured contents of the :emma_data
+  # field.
+  #
+  # @param [Hash, ActionController::Parameters, Model, nil] attr
+  # @param [Hash, nil]                                      opt
+  #
+  # @return [void]
+  #
+  # @see Record::EmmaData#EMMA_DATA_KEYS
+  #
+  def assign_attributes: (Model|prmHash|nil attr, ?symHash? opt) -> void
+
+  # The latest phase, representing the current status of the entry.
+  #
+  # @return [Phase, nil]
+  #
+  def current_phase: () -> Phase?
+
+  # Get Phase records associated with this record for the phase given either
+  # as *phase_type* or `opt[:type]`.
+  #
+  # @param [Symbol,String,Phase,Class,nil] phase_type   Def: #current_phase.
+  # @param [Hash]                          opt          For #where.
+  #
+  # @return [ActiveRecord::Relation<Phase>]
+  #
+  # == Examples
+  #
+  # @example Creation event
+  #   define_method(:creates) { phase_scope(:create).last }
+  #
+  # @example Edit events
+  #   define_method(:edits) { phase_scope(:edit) }
+  #
+  # @example Removal event
+  #   define_method(:removes) { phase_scope(:remove) }
+  #
+  # @example Review events
+  #   define_method(:reviews) { phase_scope(:review) }
+  #
+  def phase_scope: (?(String|Symbol|Class|Phase)? phase_type, **untyped opt) -> ActiveRecord::Relation # _ActiveRecord_Relation[Phase, Integer]
+
+  # Create a new Phase for this Entry, initializing it with the current values
+  # from this record.
+  #
+  # @param [Symbol, String, nil] type     If *nil*, opt[:type] must be present.
+  # @param [Hash]                opt      Passed to ActiveRecord#create!
+  #
+  # @raise [Record::SubmitError]            If type not given.
+  # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
+  # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
+  #
+  # @return [Phase]
+  #
+  def generate_phase: (String|Symbol|nil `type`, **untyped opt) -> Phase
+
+  # Get user(s) for the given phase associated with this record.
+  #
+  # @param [Symbol, String, Phase, Class] phase_type
+  #
+  # @return [Array<User>]
+  #
+  def users: (String|Symbol|Class|Phase phase_type) -> Array[User]
+
+  # The user who submitted the entry.
+  #
+  # @return [User, nil]
+  #
+  def submitter: () -> User?
+
+  # The user(s) who modified the entry.
+  #
+  # @return [Array<User>]
+  #
+  def editors: () -> Array[User]
+
+  # The user who removed the entry.
+  #
+  # @return [User, nil]
+  #
+  def remover: () -> User?
+
+  # The user(s) who reviewed the entry.
+  #
+  # @return [Array<User>]
+  #
+  def reviewers: () -> Array[User]
+
+  # uploaders # TODO: keep ???
+  #
+  # @return [Array<User>]
+  #
+  def uploaders: () -> Array[User]
+
+  # Get the latest matching Entry record.
+  #
+  # @param [Model, Hash, String, Symbol, nil] sid
+  # @param [Hash]                             opt
+  #
+  # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
+  # @raise [Record::NotFound]           If record not found.
+  #
+  # @return [Entry]
+  #
+  def self.latest_for_sid: (?(Model|symHash|String|Symbol)? sid, **untyped opt) -> Entry
+
+  def self.sid_counter: () -> Integer
+
+  # A textual description of the type of the Model instance.
+  #
+  # @return [String]
+  #
+  def self.describe_type: () -> String
+
+  # A textual description of the status of the Entry instance. # TODO: I18n
+  #
+  # @param [Entry] entry
+  # @param [Hash]  opt                To Phase#describe_status except for:
+  #
+  # @option opt [Phase] :phase        Default: `#current_phase`.
+  #
+  # @return [String]
+  #
+  def self.describe_status: (Entry entry, **untyped opt) -> String
+
+  def show: () -> nil
+
+  def self.show: () -> nil
+end

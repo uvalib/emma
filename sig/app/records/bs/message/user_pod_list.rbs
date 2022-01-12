@@ -1,0 +1,15 @@
+# Bs::Message::UserPodList
+#
+# @attr [Array<BsAllowsType>]        allows
+# @attr [Array<Bs::Record::UserPod>] disabilities
+# @attr [Array<Bs::Record::Link>]    links
+#
+# @see https://apidocs.bookshare.org/membership/index.html#_user_pod_list
+#
+class Bs::Message::UserPodList < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

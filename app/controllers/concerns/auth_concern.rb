@@ -40,6 +40,7 @@ module AuthConcern
   #
   CONFIGURED_AUTH ||=
     if rails_application?
+      # @type [Hash, nil]
       updates = safe_json_parse(BOOKSHARE_TEST_AUTH, default: nil)
       stored_auth_update(updates) if updates.present?
       stored_auth_fetch.deep_freeze
