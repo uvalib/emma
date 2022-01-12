@@ -419,12 +419,25 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Flag controlling console debug output.
+     * Flag controlling overall console debug output.
      *
      * @constant
-     * @type {boolean}
+     * @type {boolean|undefined}
      */
     const DEBUGGING = true;
+
+    /**
+     * Flags controlling console debug output for specific purposes.
+     *
+     * @constant
+     * @type {{INPUT: boolean, XHR: boolean, UPLOAD: boolean, SUBMIT: boolean}}
+     */
+    const DEBUG = (DEBUGGING === false) ? {} : {
+        INPUT:  false,  // Log low-level keystrokes
+        SUBMIT: true,   // Submission
+        UPLOAD: true,   // File upload
+        XHR:    true,   // External communication
+    };
 
     /**
      * Uppy plugin selection plus other optional settings.
@@ -443,7 +456,7 @@ $(document).on('turbolinks:load', function() {
         image_preview:  false,        // Requires '@uppy/thumbnail-generator'
         flash_messages: true,
         flash_errors:   true,
-        debugging:      DEBUGGING
+        debugging:      DEBUG.UPLOAD
     });
 
     /**
@@ -1073,7 +1086,7 @@ $(document).on('turbolinks:load', function() {
         else            { range = '*'; }
         const url = makeUrl('/upload.json', { selected: range });
 
-        debug(`${func}: VIA`, url);
+        debugXhr(`${func}: VIA`, url);
 
         /** @type {UploadRecord[]} records */
         let records;
@@ -1097,7 +1110,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
+            // debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -1135,7 +1148,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(`${func}: complete`, secondsSince(start), 'sec.');
+            debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
             } else if (warning) {
@@ -1265,7 +1278,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
+            // debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -1303,9 +1316,9 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(`${func}: complete`, secondsSince(start), 'sec.');
+            debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
             if (record) {
-                debug(`${func}: data from server:`, record);
+                // debugXhr(`${func}: data from server:`, record);
             } else if (warning) {
                 consoleWarn(`${func}: ${url}:`, warning);
             } else {
@@ -1527,6 +1540,12 @@ $(document).on('turbolinks:load', function() {
         let $form      = $(form);
         let $container = $form.parent();
 
+        if (isDefined(feature.debugging)) {
+            DEBUG.UPLOAD = feature.debugging;
+        } else {
+            feature.debugging = DEBUG.UPLOAD;
+        }
+
         // Get targets for these features; disable the feature if its target is
         // not present.
         if (feature.drag_and_drop) {
@@ -1678,7 +1697,7 @@ $(document).on('turbolinks:load', function() {
          * @param {{id: string, fileIDs: string[]}} data
          */
         function onFileUploadStarting(data) {
-            debug('Uppy:', 'upload', data);
+            debugUppy('upload', data);
             clearFlash();
             const upload = uppy.getPlugin('XHRUpload');
             // noinspection JSUnresolvedFunction
@@ -1711,7 +1730,7 @@ $(document).on('turbolinks:load', function() {
          */
         function onFileUploadSuccess(file, response) {
 
-            debug('Uppy:', 'upload-success', file, response);
+            debugUppy('upload-success', file, response);
 
             if (features.popup_messages) {
                 uppyInfoClear(uppy);
@@ -1801,7 +1820,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}        image
          */
         function onThumbnailGenerated(file, image) {
-            debug('Uppy:', 'thumbnail:generated', file, image);
+            debugUppy('thumbnail:generated', file, image);
             features.image_preview.src = image;
         }
     }
@@ -1825,7 +1844,7 @@ $(document).on('turbolinks:load', function() {
         });
 
         uppy.on('upload-pause', function(file_id, is_paused) {
-            debug('Uppy:', 'upload-pause', file_id, is_paused);
+            debugUppy('upload-pause', file_id, is_paused);
             if (is_paused) {
                 info('PAUSED');   // TODO: I18n
             } else {
@@ -1834,29 +1853,29 @@ $(document).on('turbolinks:load', function() {
         });
 
         uppy.on('upload-retry', function(file_id) {
-            debug('Uppy:', 'upload-retry', file_id);
+            debugUppy('upload-retry', file_id);
             warn('Retrying...'); // TODO: I18n
         });
 
         uppy.on('retry-all', function(files) {
-            debug('Uppy:', 'retry-all', files);
+            debugUppy('retry-all', files);
             const count   = files ? files.length : 0;
             const uploads = (count === 1) ? 'upload' : `${count} uploads`;
             warn(`Retrying ${uploads}...`); // TODO: I18n
         });
 
         uppy.on('pause-all', function() {
-            debug('Uppy:', 'pause-all');
+            debugUppy('pause-all');
             info('Uploading PAUSED'); // TODO: I18n
         });
 
         uppy.on('cancel-all', function() {
-            debug('Uppy:', 'cancel-all');
+            debugUppy('cancel-all');
             warn('Uploading CANCELED'); // TODO: I18n
         });
 
         uppy.on('resume-all', function() {
-            debug('Uppy:', 'resume-all');
+            debugUppy('resume-all');
             warn('Uploading RESUMED'); // TODO: I18n
         });
 
@@ -1882,7 +1901,7 @@ $(document).on('turbolinks:load', function() {
 
         // This event occurs after 'upload-success' or 'upload-error'.
         uppy.on('complete', function(result) {
-            console.log('Uppy: complete', result);
+            debugUppy('complete', result);
         });
 
         // This event is observed concurrent with the 'progress' event.
@@ -1890,97 +1909,97 @@ $(document).on('turbolinks:load', function() {
             const bytes = progress.bytesUploaded;
             const total = progress.bytesTotal;
             const pct   = percent(bytes, total);
-            console.log('Uppy: Uploading', bytes, 'of', total, `(${pct}%)`);
+            debugUppy('uploading', bytes, 'of', total, `(${pct}%)`);
         });
 
         // This event is observed concurrent with the 'upload-progress' event.
         uppy.on('progress', function(percent) {
-            console.log('Uppy: progress', percent);
+            debugUppy('progress', percent);
         });
 
         uppy.on('reset-progress', function() {
-            console.log('Uppy: reset-progress');
+            debugUppy('reset-progress');
         });
 
         uppy.on('file-added', function(file) {
-            console.log('Uppy: file-added', file);
+            debugUppy('file-added', file);
         });
 
         uppy.on('file-removed', function(file) {
-            console.log('Uppy: file-removed', file);
+            debugUppy('file-removed', file);
         });
 
         uppy.on('preprocess-progress', function(file, status) {
-            console.log('Uppy: preprocess-progress', file, status);
+            debugUppy('preprocess-progress', file, status);
         });
 
         uppy.on('preprocess-complete', function(file) {
-            console.log('Uppy: preprocess-complete', file);
+            debugUppy('preprocess-complete', file);
         });
 
         uppy.on('is-offline', function() {
-            console.log('Uppy: OFFLINE');
+            debugUppy('OFFLINE');
         });
 
         uppy.on('is-online', function() {
-            console.log('Uppy: ONLINE');
+            debugUppy('ONLINE');
         });
 
         uppy.on('back-online', function() {
-            console.log('Uppy: BACK ONLINE');
+            debugUppy('BACK ONLINE');
         });
 
         uppy.on('info-visible', function() {
-            console.log('Uppy: info-visible');
+            debugUppy('info-visible');
         });
 
         uppy.on('info-hidden', function() {
-            console.log('Uppy: info-hidden');
+            debugUppy('info-hidden');
         });
 
         uppy.on('plugin-remove', function(instance) {
-            console.log('Uppy: plugin-remove', (instance.id || instance));
+            debugUppy('plugin-remove', (instance.id || instance));
         });
 
         if (features.dashboard) {
             uppy.on('dashboard:modal-open', function() {
-                console.log('Uppy: dashboard:modal-open');
+                debugUppy('dashboard:modal-open');
             });
             uppy.on('dashboard:modal-closed', function() {
-                console.log('Uppy: dashboard:modal-closed');
+                debugUppy('dashboard:modal-closed');
             });
             uppy.on('dashboard:file-edit-start', function() {
-                console.log('Uppy: dashboard:file-edit-start');
+                debugUppy('dashboard:file-edit-start');
             });
             uppy.on('dashboard:file-edit-complete', function() {
-                console.log('Uppy: dashboard:file-edit-complete');
+                debugUppy('dashboard:file-edit-complete');
             });
         }
 
         if (features.image_preview) {
             uppy.on('thumbnail:request', function(file) {
-                console.log('Uppy: thumbnail:request', file);
+                debugUppy('thumbnail:request', file);
             });
             uppy.on('thumbnail:cancel', function(file) {
-                console.log('Uppy: thumbnail:cancel', file);
+                debugUppy('thumbnail:cancel', file);
             });
             uppy.on('thumbnail:error', function(file, error) {
-                console.log('Uppy: thumbnail:error', file, error);
+                debugUppy('thumbnail:error', file, error);
             });
             uppy.on('thumbnail:all-generated', function() {
-                console.log('Uppy: thumbnail:all-generated');
+                debugUppy('thumbnail:all-generated');
             });
         }
 
         if (features.upload_to_aws) {
             uppy.on('s3-multipart:part-uploaded', function(file, pt) {
-                console.log('Uppy: s3-multipart:part-uploaded', file, pt);
+                debugUppy('s3-multipart:part-uploaded', file, pt);
             });
         }
 
 /*
         uppy.on('state-update', function(prev_state, next_state, patch) {
-            console.log('Uppy: state-update', prev_state, next_state, patch);
+            debugUppy('state-update', prev_state, next_state, patch);
         });
 */
     }
@@ -2865,7 +2884,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received data: |', data, '|');
+            // debugXhr(func, 'received data: |', data, '|');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -2898,7 +2917,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            debugXhr(func, 'complete', secondsSince(start), 'sec.');
             if (error) {
                 consoleWarn(func, `${url}:`, error);
                 callback(undefined, `system error: ${error}`);
@@ -3171,7 +3190,7 @@ $(document).on('turbolinks:load', function() {
                 repository:      (new_repo || EMPTY_VALUE),
                 emma_repository: (new_repo || null)
             };
-            console.log(`${func}:`, (new_repo || 'cleared'));
+            debug(`${func}:`, (new_repo || 'cleared'));
             populateFormFields(set_repo, $form);
         }
     }
@@ -3218,7 +3237,7 @@ $(document).on('turbolinks:load', function() {
         }
         const url = makeUrl('/search/direct', search_terms);
 
-        debug(`${func}: VIA`, url);
+        debugXhr(`${func}: VIA`, url);
 
         /** @type {SearchResultEntry[]} records */
         let records = undefined;
@@ -3242,7 +3261,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest}             xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
+            // debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -3276,7 +3295,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(`${func}: complete`, secondsSince(start), 'sec.');
+            debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
             } else {
@@ -3383,7 +3402,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event} event
          */
         function onChange(event) {
-            // debug('*** CHANGE ***');
+            DEBUG.INPUT && console.log('*** CHANGE ***');
             validateInputField(event);
         }
 
@@ -3394,7 +3413,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event|ClipboardEvent} event
          */
         function onCut(event) {
-            // debug('*** CUT ***');
+            DEBUG.INPUT && console.log('*** CUT ***');
             validateInputField(event);
         }
 
@@ -3405,7 +3424,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event|ClipboardEvent} event
          */
         function onPaste(event) {
-            // debug('*** PASTE ***');
+            DEBUG.INPUT && console.log('*** PASTE ***');
             validateInputField(event);
         }
 
@@ -3418,7 +3437,7 @@ $(document).on('turbolinks:load', function() {
          * @returns {function}
          */
         function onKeyUp(event) {
-            // debug('*** KEYUP ***');
+            DEBUG.INPUT && console.log('*** KEYUP ***');
             validateInputField(event, undefined, false);
         }
 
@@ -3646,7 +3665,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function beforeAjax(arg) {
-            // debug('ajax:before - arguments', Array.from(arguments));
+            debugXhr('ajax:before - arguments', Array.from(arguments));
         }
 
         /**
@@ -3655,7 +3674,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function beforeAjaxFormSubmission(arg) {
-            // debug('ajax:beforeSend - arguments', Array.from(arguments));
+            debugXhr('ajax:beforeSend - arguments', Array.from(arguments));
 
             // Disable empty database fields so they are not transmitted back
             // as form data.
@@ -3679,7 +3698,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxStopped(arg) {
-            debug('ajax:stopped - arguments', Array.from(arguments));
+            debugXhr('ajax:stopped - arguments', Array.from(arguments));
         }
 
         /**
@@ -3688,7 +3707,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionSuccess(arg) {
-            // debug('ajax:success - arguments', Array.from(arguments));
+            debugXhr('ajax:success - arguments', Array.from(arguments));
             const data  = arg.data;
             const event = arg.originalEvent || {};
             // noinspection JSUnusedLocalSymbols
@@ -3703,7 +3722,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionError(arg) {
-            // debug('ajax:error - arguments', Array.from(arguments));
+            debugXhr('ajax:error - arguments', Array.from(arguments));
             const error = arg.data;
             const event = arg.originalEvent || {};
             // noinspection JSUnusedLocalSymbols
@@ -3719,7 +3738,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionComplete(arg) {
-            // debug('ajax:complete - arguments', Array.from(arguments));
+            debugXhr('ajax:complete - arguments', Array.from(arguments));
             onCreateComplete();
         }
 
@@ -4788,6 +4807,24 @@ $(document).on('turbolinks:load', function() {
      */
     function debugSection(...args) {
         if (DEBUGGING) { consoleWarn('>>>>>', ...args, '<<<<<'); }
+    }
+
+    /**
+     * Emit a console message if debugging uploads.
+     *
+     * @param {...*} args
+     */
+    function debugUppy(...args) {
+        if (DEBUG.UPLOAD) { consoleLog('Uppy:', ...args); }
+    }
+
+    /**
+     * Emit a console message if debugging communications.
+     *
+     * @param {...*} args
+     */
+    function debugXhr(...args) {
+        if (DEBUG.XHR) { consoleLog('XHR:', ...args); }
     }
 
 });
