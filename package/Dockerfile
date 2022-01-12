@@ -9,7 +9,7 @@
 # For build-base:
 # @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
-FROM ruby:2.7.2-alpine
+FROM ruby:3.1.0-alpine
 RUN apk upgrade && \
     apk add --no-cache \
     bash \
