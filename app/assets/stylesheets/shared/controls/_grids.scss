@@ -1,7 +1,8 @@
 // app/assets/stylesheets/shared/controls/_grids.scss
+//
+// Definitions supporting grid controls.
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Grid definitions.
@@ -40,7 +41,6 @@
 /// @param {Numeric} $gap-y           Row gap
 ///
 @mixin grid-row-gap($gap-y) {
-
     grid-row-gap: $gap-y; // Required by Safari
     row-gap:      $gap-y;
 }
@@ -50,7 +50,6 @@
 /// @param {Numeric} $gap-x           Column gap
 ///
 @mixin grid-column-gap($gap-x) {
-
     grid-column-gap: $gap-x; // Required by Safari
     column-gap:      $gap-x;
 }
@@ -139,17 +138,17 @@
 
         @for $n from 1 through $max-cols {
             &.columns-#{$n} {
-                @media #{$wide-screen} {
+                @media #{v.$wide-screen} {
                     $count: $wide-max;
                     @if ($n < $count) { $count: $n; }
                     grid-template-columns: repeat($count, $wide-template);
                 }
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     $count: $medium-max;
                     @if ($n < $count) { $count: $n; }
                     grid-template-columns: repeat($count, $medium-template);
                 }
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     $count: $narrow-max;
                     @if ($n < $count) { $count: $n; }
                     grid-template-columns: repeat($count, $narrow-template);

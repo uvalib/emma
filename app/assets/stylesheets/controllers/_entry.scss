@@ -1,21 +1,25 @@
 // app/assets/stylesheets/controllers/_entry.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/common'           as *;
-@use 'shared/functions'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as *;
-@use 'shared/controls/grids'   as *;
-@use 'feature/model'           as *;
+@use 'sass:math';
+@use 'shared/variables'      as v;
+@use 'shared/functions'      as f;
+@use 'shared/mixins'         as x;
+@use 'shared/controls/grids' as g;
+@use 'shared/feature/model'  as m;
 
 //=============================================================================
-// Entry index page
+// Internal constants
 //=============================================================================
 
 $entry-padding:   0.5rem;
 $entry-entry-gap: 2rem;
 
+//=============================================================================
+// Entry index page
+//=============================================================================
+
 // Entry metadata fields for index listings.
+// @see ModelHelper::List#model_list_item
 .entry-list-item {
 
     @extend .model-list-item-panel;
@@ -23,7 +27,7 @@ $entry-entry-gap: 2rem;
     // List data items in horizontal columns when there is enough room,
     // followed by a hierarchical rendering of :file_data, followed by a
     // hierarchical rendering of :emma_data.
-    @media #{$wide-screen} {
+    @media #{v.$wide-screen} {
 
         grid-template-columns: repeat(9, auto);
 
@@ -44,7 +48,7 @@ $entry-entry-gap: 2rem;
     .field-FileData,
     .field-EmmaData {
 
-        @include grid-column-span;
+        @include g.grid-column-span;
 
         margin: (3 * $entry-padding) 0;
 
@@ -52,9 +56,9 @@ $entry-entry-gap: 2rem;
 
             margin:      (2 * $entry-padding) 0;
             padding-top: 2 * $entry-padding;
-            border-top:  1px solid $root-fg-color;
+            border-top:  1px solid v.$root-fg-color;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 .text {
                     font-size: larger;
                     padding-bottom: 0;
@@ -73,7 +77,7 @@ $entry-entry-gap: 2rem;
 
             margin-top: calc(#{$entry-padding} / 2);
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
 
                 margin: $entry-padding 0;
 
@@ -93,7 +97,7 @@ $entry-entry-gap: 2rem;
 
     // If hierarchical areas don't have a border then they look better if
     // they're tightened up.
-    @if $data-list-border-color == none {
+    @if m.$data-list-border-color == none {
 
         // @see ModelHelper::List#render_pair
         .value.hierarchy {
@@ -117,7 +121,7 @@ $entry-entry-gap: 2rem;
     //=========================================================================
 
     .invalid {
-        color:  $error-fg;
+        color:  v.$error-fg;
         cursor: help;
     }
 }
@@ -127,31 +131,32 @@ $entry-entry-gap: 2rem;
 
     @extend .model-list;
 
-    @include grid-row-gap($entry-entry-gap);
+    @include g.grid-row-gap($entry-entry-gap);
 
     .pagination-top {
 
-        margin-bottom: $entry-entry-gap / 2;
+        margin-bottom: math.div($entry-entry-gap, 2);
 
         .entry-page-filter-panel {
 
             flex: 1 1 auto;
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 margin-top:    -0.5rem;
                 margin-bottom: -0.5rem;
                 margin-left:   2.5rem;
             }
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 margin-top:    1rem;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-bottom: -0.5rem;
             }
 
             > label {
+                // noinspection SassScssResolvedByNameOnly
                 @extend %sr-only;
             }
         }
@@ -161,24 +166,26 @@ $entry-entry-gap: 2rem;
 
         padding-top: $entry-padding * 0.75;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             margin-left:  -0.25rem;
             margin-right: 0.25rem;
         }
     }
 
     .no-records {
-        @media #{$not-narrow-screen} {
-            margin-bottom: $entry-entry-gap / 2;
+        @media #{v.$not-narrow-screen} {
+            margin-bottom: math.div($entry-entry-gap, 2);
         }
     }
 }
 
+// @see UploadHelper#check_status_popup
+// @see EntryHelper#check_status_popup
 .check-status-popup {
 
     @extend .popup-container;
 
-    @media #{$medium-width} {
+    @media #{v.$medium-width} {
         top: 0;
     }
 
@@ -189,14 +196,15 @@ $entry-entry-gap: 2rem;
         border-color: transparent;
 
         .symbol {
-            text-shadow: 0 0 0.5rem $uva-accent-orange;
+            text-shadow: 0 0 0.5rem v.$uva-accent-orange;
         }
     }
 
     // The panel displaying content which is hidden until activated.
+    // @see PopupHelper#popup_container
     .popup-panel {
 
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             min-height: unset;
         }
 
@@ -213,8 +221,8 @@ $entry-entry-gap: 2rem;
             line-height: 1.5;
             font-size:   medium;
             font-weight: bold;
-            color:       $root-rev-fg-color;
-            background:  $uva-accent-orange; // For color contrast checkers.
+            color:       v.$root-rev-fg-color;
+            background:  v.$uva-accent-orange; // For color contrast checkers.
             cursor:      pointer;
 
             &:hover {
@@ -237,11 +245,13 @@ body.entry-check.modal {
 //=============================================================================
 
 // Entry entry fields.
+// @see ModelHelper::List#model_details
 .entry-details {
     @extend .entry-list-item; // INSTEAD OF @extend .model-details;
 }
 
 // Container for an .entry-details.
+// @see file:app/views/entry/_details.html.erb
 .entry-container {
 
     @extend .model-container;
@@ -255,18 +265,20 @@ body.entry-check.modal {
 // Entry new/edit/delete pages
 //=============================================================================
 
+// @see LinkHelper#page_items_menu
 form.select-entry {
 
     margin: 3rem 0;
 
     select {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %control-shadow;
 
         max-width:     100%;
         padding:       2px;
         font-size:     large;
-        background:    lighter($focus-accent, 90%);
+        background:    f.lighter(v.$focus-accent, 90%);
         border:        1px solid #14457f;
         border-radius: 0.125rem;
 
@@ -280,15 +292,18 @@ form.select-entry {
     }
 }
 
+// @see file:app/views/account/_selected.html.erb
+// @see file:app/views/entry/_selected.html.erb
+// @see file:app/views/upload/_selected.html.erb
 .selected-item {
 
     .selected-header {
 
-        margin:    $page-padding 0;
+        margin:    v.$page-padding 0;
         font-size: large;
 
         .item {
-            color: $uva-text-orange;
+            color: v.$uva-text-orange;
         }
     }
 
@@ -296,7 +311,7 @@ form.select-entry {
 
         @extend .toggle-panel;
 
-        @media #{$not-narrow-screen} {
+        @media #{v.$not-narrow-screen} {
             margin-left:  2rem;
             margin-right: 2rem;
         }
@@ -317,6 +332,7 @@ form.select-entry {
     }
 }
 
+// @see EntryHelper#entry_field_container
 .entry-fields {
 
     display:     grid;
@@ -333,11 +349,11 @@ form.select-entry {
     min-height:     75vh;
     grid-auto-rows: max-content;
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
 
         grid-template-columns: 1fr;
 
-        @include grid-row-gap(0.25rem);
+        @include g.grid-row-gap(0.25rem);
     }
 
     //=========================================================================
@@ -397,11 +413,12 @@ form.select-entry {
             background: whitesmoke;
 
             label {
+                // noinspection SassScssResolvedByNameOnly
                 @extend %hover-bold;
             }
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             margin: 0 -0.25rem;
             border: 0.25rem solid transparent;
         }
@@ -410,20 +427,20 @@ form.select-entry {
     // Single-select dropdown menu.
     .menu.single {
 
-        @include width-fit-content;
+        @include x.width-fit-content;
 
         padding-left:  0.25rem;
         height:        2rem;
         border-radius: 0.25rem;
 
         option {
-            background: $root-bg-color;
+            background: v.$root-bg-color;
         }
 
         // This assumes that the first option is a blank value used to clear
         // the menu selection.
         option:first-of-type {
-            color: $uva-text-gray;
+            color: v.$uva-text-gray;
         }
     }
 
@@ -436,7 +453,7 @@ form.select-entry {
         line-height:    1.5;
         border-radius:  0.5rem;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             line-height: 1.625;
         }
 
@@ -490,7 +507,7 @@ form.select-entry {
         line-height:     2;
         font-weight:     bold;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             margin-top: 0.75rem;
         }
 
@@ -500,7 +517,7 @@ form.select-entry {
             padding:       0.3125rem 0.375rem;
             font-size:     small;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-top:    -0.25rem;
                 margin-bottom: 0.5rem;
                 font-size:     medium;
@@ -511,7 +528,7 @@ form.select-entry {
         // noinspection CssReplaceWithShorthandSafely
         .status-marker {
 
-            @include user-select(none);
+            @include x.user-select(none);
 
             margin-top:    0;
             margin-bottom: auto;
@@ -522,7 +539,7 @@ form.select-entry {
             cursor:        default;
             visibility:    hidden;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-right: 0.25rem;
                 font-size:    x-large;
             }
@@ -543,7 +560,7 @@ form.select-entry {
 
                 &.invalid {
                     visibility: visible;
-                    color:      $error-fg;
+                    color:      v.$error-fg;
                 }
 
                 &.required {
@@ -559,7 +576,7 @@ form.select-entry {
         margin:      0;
         font-family: inherit;
         font-size:   large;
-        color:       $root-fg-color;
+        color:       v.$root-fg-color;
         border:      2px groove lightgray;
 
         &.optional {
@@ -569,19 +586,19 @@ form.select-entry {
         }
 
         &.invalid {
-            background: $input-error-bg;
+            background: v.$input-error-bg;
         }
 
         &.required {
         }
 
         &.sealed {
-            background: $input-sealed-bg;
+            background: v.$input-sealed-bg;
         }
 
         &.disabled {
 
-            background: $input-disabled-bg;
+            background: v.$input-disabled-bg;
 
             // For Firefox, this prevents browser-supplied controls for numeric
             // and date fields from being displayed.  This isn't needed for
@@ -594,16 +611,16 @@ form.select-entry {
 
         &.menu.single {
 
-            @media #{$wide-screen}   { min-width: 50%;  }
-            @media #{$medium-width}  { min-width: 75%;  }
-            @media #{$narrow-screen} { min-width: 100%; }
+            @media #{v.$wide-screen}   { min-width: 50%;  }
+            @media #{v.$medium-width}  { min-width: 75%;  }
+            @media #{v.$narrow-screen} { min-width: 100%; }
 
             &.valid:not(.disabled) {
-                background: $focus-accent;
+                background: v.$focus-accent;
             }
 
             &.valid.sealed {
-                background: $ro-focus-accent;
+                background: v.$ro-focus-accent;
             }
         }
 
@@ -614,7 +631,7 @@ form.select-entry {
         // De-emphasize this field to indicate that it is no longer required
         // after "rem_complete" (Entire Document Remediated?) is set to "true".
         &.field-Coverage[data-required="false"] {
-            background: $input-sealed-bg;
+            background: v.$input-sealed-bg;
         }
     }
 
@@ -623,7 +640,7 @@ form.select-entry {
     // vertically when switching between field filter settings.
     > .no-fields {
 
-        @include grid-column-span;
+        @include g.grid-column-span;
 
         font-style:  italic;
         font-weight: bold;

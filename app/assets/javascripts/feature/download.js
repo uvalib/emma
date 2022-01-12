@@ -1,8 +1,26 @@
 // app/assets/javascripts/feature/download.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { Emma }                    from '../shared/assets'
+import { consoleLog, consoleWarn } from '../shared/logging'
+import {
+    HTTP,
+    SECOND,
+    compact,
+    create,
+    cssClass,
+    deepFreeze,
+    handleClickAndKeypress,
+    handleEvent,
+    isMissing,
+    isPresent,
+    randomizeClass,
+    scrollIntoView,
+    secondsSince,
+    selector,
+    urlParameters,
+} from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

@@ -1,7 +1,6 @@
 // app/assets/stylesheets/vendor/_select2.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
 
 // @import '../../../node_modules/select2/dist/css/select2.css';
 
@@ -15,6 +14,7 @@
     .select2-selection--multiple {
 
         &:focus-within {
+            // noinspection SassScssResolvedByNameOnly
             @extend %focus;
         }
 
@@ -72,7 +72,7 @@
         // A currently-selected value within the drop-down menu which is not
         // highlighted.
         &:not(.select2-results__option--highlighted)[aria-selected="true"] {
-            background-color: $selected-bg;
+            background-color: v.$selected-bg;
         }
     }
 }

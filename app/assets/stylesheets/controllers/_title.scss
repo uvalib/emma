@@ -1,11 +1,11 @@
 // app/assets/stylesheets/controllers/_title.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/mixins'         as *;
-@use 'shared/controls/grids' as *;
-@use 'feature/images'        as *;
-@use 'feature/model'         as *;
+@use 'sass:math';
+@use 'shared/variables'      as v;
+@use 'shared/mixins'         as x;
+@use 'shared/controls/grids' as g;
+@use 'shared/feature/images' as i;
+@use 'shared/feature/model'  as m;
 
 //=============================================================================
 // Catalog Title index page
@@ -18,11 +18,11 @@
 
     grid-auto-rows: min-content;
 
-    @media #{$not-wide-screen} {
-        margin-top: $results-entry-gap-y;
+    @media #{v.$not-wide-screen} {
+        margin-top: m.$results-entry-gap-y;
     }
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         padding-top: 0.25rem;
         border-top:  2px solid lightgray;
     }
@@ -33,7 +33,7 @@
 
     .label {
         &.field-Title {
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 display: none;
             }
         }
@@ -42,15 +42,15 @@
     .value {
 
         a + a {
-            margin-left: $gap-x;
+            margin-left: v.$gap-x;
         }
 
         &.field-Title {
 
             font-weight: bold;
 
-            @media #{$narrow-screen} {
-                @include grid-column-span;
+            @media #{v.$narrow-screen} {
+                @include g.grid-column-span;
             }
 
             a:not(:hover) {
@@ -59,7 +59,7 @@
         }
 
         &.field-Authors {
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
 
                 display:        flex;
                 flex-direction: column;
@@ -78,6 +78,7 @@
 }
 
 // Zero or more .title-list-item elements.
+// @see file:app/views/title/index.html.erb
 .title-list {
 
     @extend .model-list;
@@ -85,7 +86,7 @@
 
     justify-items: stretch;
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         grid-template-columns: 1fr max-content min-content;
     }
 
@@ -95,12 +96,12 @@
 
     .number {
 
-        @media #{$not-wide-screen} {
-            margin-top: $results-entry-gap-y;
+        @media #{v.$not-wide-screen} {
+            margin-top: m.$results-entry-gap-y;
         }
 
         // Push item number to the right and hide.
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             visibility:  hidden;
             grid-column: 3 / -1;
         }
@@ -109,16 +110,17 @@
     // @see TitleHelper#thumbnail
     .thumbnail {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %thumbnail-dimensions;
 
-        margin-bottom: $results-entry-gap-y;
+        margin-bottom: m.$results-entry-gap-y;
 
-        @media #{$not-wide-screen} {
-            margin-top: $results-entry-gap-y;
+        @media #{v.$not-wide-screen} {
+            margin-top: m.$results-entry-gap-y;
         }
 
         // Push thumbnail to the right and occupy the right side of the entry.
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             grid-column: 3 / -1;
             grid-row:    span 2;
         }
@@ -130,6 +132,7 @@
 //=============================================================================
 
 // Catalog Title metadata values.
+// @see ModelHelper::List#model_details
 .title-details {
 
     @extend .model-details;
@@ -138,11 +141,11 @@
     // Components
     //=========================================================================
 
-    $break-height:           2 * $results-entry-margin-y / 3;
+    $break-height:           2 * math.div(m.$results-entry-margin-y, 3);
 
-    $synopsis-pad:           $results-entry-margin-y;
+    $synopsis-pad:           m.$results-entry-margin-y;
     $synopsis-border-width:  2px;
-    $synopsis-border-color:  $image-border-color;
+    $synopsis-border-color:  i.$image-border-color;
     $synopsis-border-radius: 4 * $synopsis-border-width;
 
     .label {
@@ -153,16 +156,16 @@
 
     .value {
 
-        @include width-fit-content(90%);
+        @include x.width-fit-content(90%);
 
         display:        flex;
         flex-direction: column;
 
         > * {
 
-            @include width-fit-content;
+            @include x.width-fit-content;
 
-            margin-top: $results-entry-margin-y;
+            margin-top: m.$results-entry-margin-y;
 
             &:first-child {
                 margin-top: 0;
@@ -175,11 +178,11 @@
         }
 
         a + a {
-            margin-top: $results-entry-margin-y;
+            margin-top: m.$results-entry-margin-y;
         }
 
         &.field-Authors {
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
 
                 flex-direction: row;
                 flex-wrap:      wrap;
@@ -189,8 +192,8 @@
 
                     flex:          0 0 auto;
                     margin:        0;
-                    margin-right:  $results-entry-margin-y;
-                    margin-bottom: $results-entry-margin-y;
+                    margin-right:  m.$results-entry-margin-y;
+                    margin-bottom: m.$results-entry-margin-y;
 
                     &:last-child { margin-right: 0; }
                 }
@@ -199,21 +202,21 @@
 
         &.field-Synopsis {
 
-            margin-bottom: calc(#{$results-entry-gap-y} / 2);
+            margin-bottom: calc(#{m.$results-entry-gap-y} / 2);
             padding:       $synopsis-pad;
             line-height:   1.375;
             border:        $synopsis-border-width solid $synopsis-border-color;
             border-radius: $synopsis-border-radius;
 
-            @media #{$medium-width} {
-                margin-right: $results-entry-gap-y;
+            @media #{v.$medium-width} {
+                margin-right: m.$results-entry-gap-y;
             }
         }
 
         &.field-Categories {
             a + a {
                 &:last-of-type + span {
-                    margin-top: $results-entry-margin-y;
+                    margin-top: m.$results-entry-margin-y;
                 }
             }
         }
@@ -239,7 +242,7 @@
 
         &.field-Formats {
             .artifact + .artifact {
-                margin-top: $results-entry-margin-y;
+                margin-top: m.$results-entry-margin-y;
             }
         }
     }
@@ -247,6 +250,7 @@
 
 // Wrapper for .title-details which displays the full-size cover image to the
 // right on large screens.
+// @see file:app/views/title/_details.html.erb
 .title-container {
 
     @extend .model-container;
@@ -263,20 +267,20 @@
         // Prevent flex from trying to equalize the width of this column with
         // the .title-details column.
         flex-basis:  0;
-        margin-left: $page-padding-x;
+        margin-left: v.$page-padding-x;
 
         // Reserve width to avoid watching the page re-layout if a cover image
         // is acquired asynchronously.
-        @media #{$wide-screen} {
-            min-width: $nominal-cover-x;
+        @media #{v.$wide-screen} {
+            min-width: v.$nominal-cover-x;
         }
 
-        @media #{$medium-width} {
+        @media #{v.$medium-width} {
             min-width: unset;
-            max-width: $nominal-cover-x;
+            max-width: v.$nominal-cover-x;
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             min-width: unset;
             max-width: 100%;
         }

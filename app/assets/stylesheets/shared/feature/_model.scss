@@ -1,0 +1,25 @@
+// app/assets/stylesheets/shared/feature/_model.scss
+//
+// Shared definitions supporting `feature/_model.scss`.
+
+@use 'shared/variables' as v;
+
+//=============================================================================
+// Definitions
+//=============================================================================
+
+$results-entry-gap-x: v.$page-padding-x;
+$results-entry-gap-y: v.$page-padding;
+
+// This fixed value will maintain an acceptable separation between links
+// without being scaled to display dimensions.
+$results-entry-margin-y: 0.67rem;
+
+// Padding for control icons (.number .container .icon-tray .icon).
+$icon-pad: 0.25rem;
+
+// Padding for control icon holder (.number .container .icon-tray).
+$tray-pad: 1.5 * $icon-pad;
+
+// For .model-list-item-panel and derivatives.
+$data-list-border-color: none;

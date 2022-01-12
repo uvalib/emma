@@ -1,0 +1,16 @@
+// app/assets/stylesheets/shared/layouts/_header.scss
+//
+// Shared definitions used in `layouts/header/*`.
+
+//=============================================================================
+// Constants
+//=============================================================================
+
+// For enclosures which are the only child elements of header layout sections.
+// section.
+$enclosure-indent-wide:    4vw;
+$enclosure-indent-medium:  3vw;
+$enclosure-indent-narrow:  0;
+$enclosure-padding-wide:   1.25rem;
+$enclosure-padding-medium: 1rem;
+$enclosure-padding-narrow: 0.75rem;

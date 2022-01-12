@@ -1,31 +1,37 @@
 // app/assets/stylesheets/layouts/_footer.scss
+//
+// Classes related to generic page footer styles.
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
+
+//=============================================================================
+// Internal constants.
+//=============================================================================
+
+$footer-margin-top: 1rem;
 
 //=============================================================================
 // Page footer.
 //=============================================================================
-
-$footer-margin-top: 1rem;
 
 // The <footer> at the bottom of every page.
 //
 // noinspection CssReplaceWithShorthandSafely
 .layout-footer {
     position:       relative;
-    z-index:        $z-raised;
+    z-index:        v.$z-raised;
     display:        flex;
     flex-direction: column;
     margin:         0;
-    margin-top:     calc(#{$footer-margin-top} - #{$hcm-divider-width});
+    margin-top:     calc(#{$footer-margin-top} - #{v.$hcm-divider-width});
     padding:        0;
-    border-top:     $hcm-divider-width solid $root-rev-bg-color;
-    box-shadow:     0 0 1rem -0.25rem $root-rev-bg-color;
+    border-top:     v.$hcm-divider-width solid v.$root-rev-bg-color;
+    box-shadow:     0 0 1rem -0.25rem v.$root-rev-bg-color;
 }
 
 .footer-section {
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %banner;
 
     flex-direction: column;
@@ -40,7 +46,7 @@ $footer-margin-top: 1rem;
         grid-template-columns: 1fr 1fr;
         gap:                   0.25rem 1rem;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             grid-template-columns: 1fr;
             gap:                   0.5rem;
         }
@@ -53,7 +59,7 @@ $footer-margin-top: 1rem;
             line-height: 1.25;
             word-break:  keep-all;
 
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
 
                 justify-content: center;
 

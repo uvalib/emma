@@ -1,7 +1,8 @@
 // app/assets/stylesheets/shared/controls/_shapes.scss
+//
+// Definitions supporting shaped elements.
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'sass:math';
 
 // ============================================================================
 // CSS "icons"
@@ -18,8 +19,8 @@
     height:        0;
     margin:        auto 0;
     padding:       0;
-    border-top:    ($height / 2) solid transparent;
-    border-bottom: ($height / 2) solid transparent;
+    border-top:    math.div($height, 2) solid transparent;
+    border-bottom: math.div($height, 2) solid transparent;
 
     @if $direction == left {
         border-left:  none;
@@ -41,20 +42,4 @@
     margin:  auto 0;
     padding: 0;
     border:  $height solid;
-}
-
-// ============================================================================
-// CSS "icons"
-// ============================================================================
-
-.left-triangle-icon {
-    @include triangle-icon(left);
-}
-
-.right-triangle-icon {
-    @include triangle-icon(right);
-}
-
-.square-icon {
-    @include square-icon;
 }

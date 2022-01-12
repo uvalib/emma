@@ -1,15 +1,14 @@
 // app/assets/stylesheets/controllers/_periodical.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/controls/grids' as *;
-@use 'feature/model'         as *;
+@use 'shared/variables'      as v;
+@use 'shared/controls/grids' as g;
 
 //=============================================================================
 // Periodical index page
 //=============================================================================
 
 // Periodical metadata label/value pairs for index listings.
+// @see ModelHelper::List#model_list_item
 .periodical-list-item {
 
     @extend .model-list-item;
@@ -20,7 +19,7 @@
 
     .label {
         &.field-Title {
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 display: none;
             }
         }
@@ -31,8 +30,8 @@
 
             font-weight: bold;
 
-            @media #{$narrow-screen} {
-                @include grid-column-span;
+            @media #{v.$narrow-screen} {
+                @include g.grid-column-span;
             }
 
             a:not(:hover) {
@@ -52,6 +51,7 @@
 //=============================================================================
 
 // Periodical metadata values.
+// @see ModelHelper::List#model_details
 .periodical-details {
     @extend .model-details;
 }
@@ -68,11 +68,12 @@
 
     .periodical-details {}
 
+    // @see file:app/views/edition/index.html.erb
     .edition-list {
 
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             margin-top: -0.75rem;
         }
 
@@ -84,7 +85,7 @@
                 flex-direction:  row;
                 justify-content: space-between;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
 
                     flex-direction: column;
 

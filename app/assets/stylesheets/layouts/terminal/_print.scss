@@ -1,9 +1,8 @@
-// app/assets/stylesheets/shared/_print.scss
+// app/assets/stylesheets/layouts/terminal/_print.scss
 //
 // Rudimentary support for print rendering of search results.
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'sass:math';
 
 @media print {
 
@@ -41,7 +40,7 @@
 
         grid-template-columns: 1fr;
         margin:     0;
-        margin-top: ($section-gap / 2);
+        margin-top: math.div($section-gap, 2);
         padding:    0;
         column-gap: $column-gap;
         row-gap:    1rem;
@@ -78,7 +77,7 @@
 
             .value.array {
 
-                column-gap: ($column-gap / 2);
+                column-gap: math.div($column-gap, 2);
 
                 > * {
                     margin:       -0.25rem;

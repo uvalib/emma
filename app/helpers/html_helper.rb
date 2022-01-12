@@ -620,7 +620,7 @@ module HtmlHelper
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #
-  # @see file:app/assets/javascripts/feature/flash.js *xhrDecode()*
+  # @see file:app/assets/javascripts/shared/flash.js *xhrDecode()*
   #
   # == Implementation Notes
   # JavaScript uses UTF-16 strings, so the most straightforward way to prepare

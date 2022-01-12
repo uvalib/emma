@@ -1,19 +1,18 @@
 // app/assets/stylesheets/layouts/header/_nav_bar.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'layouts/header/common' as *;
+@use 'shared/variables' as v;
 
 // Navigation bar (<nav>) at the top of every page just below the top banner.
 .layout-navbar {
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %banner;
 
     &:last-child {
-        padding-bottom: calc(2 * #{$page-padding-y});
+        padding-bottom: calc(2 * #{v.$page-padding-y});
     }
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         flex-direction: column;
         padding-bottom: 0; // For .top.shadow.enclosure.
     }
@@ -25,6 +24,7 @@
     // @see LayoutHelper#nav_bar_links
     .links {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %header-section;
 
         flex-wrap:   wrap;
@@ -36,7 +36,7 @@
             width:        max-content;
             margin-right: 0.5rem;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-top:    0;
                 margin-bottom: 0.5rem;
             }
@@ -46,7 +46,7 @@
         .active:not(.separator) {
 
             margin-top: -3px;
-            border-top: 3px solid $uva-accent-orange;
+            border-top: 3px solid v.$uva-accent-orange;
 
             &:not(.disabled):hover {
                 text-decoration: underline;
@@ -67,25 +67,27 @@
     // @see LayoutHelper#render_dev_controls
     .dev-controls {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %header-section;
+        // noinspection SassScssResolvedByNameOnly
         @extend %header-control-panel;
 
-        $page-control-gap-x: $gap-x;
-        $page-control-gap-y: calc(#{$gap-y} / 2);
+        $page-control-gap-x: v.$gap-x;
+        $page-control-gap-y: calc(#{v.$gap-y} / 2);
 
         width:           max-content;
         max-width:       100%;
         flex-wrap:       nowrap;
         justify-content: flex-start;
         align-items:     baseline;
-        border-color:    $debug-fg;
+        border-color:    v.$debug-fg;
         border-style:    dashed;
 
-        @media #{$medium-width} {
+        @media #{v.$medium-width} {
             max-width:   98%;
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             max-width:   95%;
         }
 
@@ -101,7 +103,7 @@
             display:       block;
             width:         max-content;
             margin-top:    $page-control-gap-y;
-            margin-bottom: $gap-y;
+            margin-bottom: v.$gap-y;
             margin-left:   0;
             margin-right:  $page-control-gap-x;
             font-size:     larger;
@@ -118,7 +120,7 @@
             margin:         0;
             flex:           1 1 max-content;
 
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
                 margin-bottom: $page-control-gap-y;
             }
 
@@ -128,16 +130,17 @@
             // noinspection CssReplaceWithShorthandSafely
             .control {
 
+                // noinspection SassScssResolvedByNameOnly
                 @extend %control-button-base;
 
                 margin:       0;
                 margin-right: $page-control-gap-x;
                 font-size:    larger;
                 color:        inherit;
-                border-color: $debug-fg;
+                border-color: v.$debug-fg;
                 border-width: 2px;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     margin-top:    $page-control-gap-y;
                     margin-bottom: $page-control-gap-y;
                 }

@@ -1,14 +1,11 @@
 // app/assets/stylesheets/controllers/_edition.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'feature/model'    as *;
-
 //=============================================================================
 // Periodical edition index page
 //=============================================================================
 
 // Periodical edition metadata label/value pairs for index listings.
+// @see ModelHelper::List#model_list_item
 .edition-list-item {
     @extend .model-list-item;
 }
@@ -32,6 +29,7 @@
 //=============================================================================
 
 // Periodical edition metadata values.
+// @see ModelHelper::List#model_details
 .edition-details {
     @extend .model-details;
 }

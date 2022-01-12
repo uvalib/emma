@@ -1,7 +1,7 @@
 // app/assets/stylesheets/feature/_scroll.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'sass:math';
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Scroll-to-top button
@@ -9,6 +9,7 @@
 
 .scroll-to-top {
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %button-hover;
 
     position:        fixed;
@@ -20,10 +21,10 @@
     font-size:       xx-large;
     text-decoration: none;
     color:           white;
-    background:      $uva-accent-orange;
-    border:          1px solid $uva-accent-orange;
+    background:      v.$uva-accent-orange;
+    border:          1px solid v.$uva-accent-orange;
     border-radius:   50%;
-    z-index:         $z-scroll-to-top;
+    z-index:         v.$z-scroll-to-top;
 
     &.icon {
         font-size:       x-large;
@@ -45,6 +46,7 @@
     }
 
     &.hidden {
+        // noinspection SassScssResolvedByNameOnly
         @extend %hidden;
     }
 
@@ -52,10 +54,10 @@
 
         $button-bottom:       3rem;
         $button-right:        3rem;
-        $button-bottom-small: $button-bottom / 2;
-        $button-right-small:  $button-right / 2;
+        $button-bottom-small: math.div($button-bottom, 2);
+        $button-right-small:  math.div($button-right, 2);
 
-        @media #{$not-narrow-screen} {
+        @media #{v.$not-narrow-screen} {
 
             bottom: $button-bottom;
             right:  $button-right;
@@ -66,7 +68,7 @@
             }
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
 
             bottom: $button-bottom-small;
             right:  $button-right-small;

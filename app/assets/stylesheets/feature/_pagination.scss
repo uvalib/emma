@@ -1,14 +1,15 @@
 // app/assets/stylesheets/feature/_pagination.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Pagination controls.
 //=============================================================================
 
+// @see PaginationHelper#pagination_controls
 .pagination-controls {
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %control-group;
 
     width:         min-content;
@@ -18,7 +19,7 @@
     line-height:   1.5;
     border-radius: 0.75rem;
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         margin:    0 auto;
         font-size: medium;
     }
@@ -38,7 +39,7 @@
         text-decoration: none;
 
         &:focus {
-            outline:        2px solid $button-accent;
+            outline:        2px solid v.$button-accent;
             outline-offset: -0.125rem;
         }
 
@@ -47,7 +48,7 @@
 
             font-weight: bold;
 
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
                 font-size: small;
             }
         }
@@ -80,24 +81,25 @@
         font-weight: bold;
         color:       gray;
 
-        @media #{$not-narrow-screen} {
+        @media #{v.$not-narrow-screen} {
             font-size: x-large;
         }
     }
 }
 
+// @see ModelHelper::List#index_controls
 .pagination-top {
 
     display:        flex;
     flex-wrap:      wrap;
     flex-direction: row;
 
-    @media #{$not-narrow-screen} {
+    @media #{v.$not-narrow-screen} {
         align-items: center;
         max-width:   inherit;
     }
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         flex-direction: column;
     }
 
@@ -114,15 +116,15 @@
         flex:        0 1 auto;
         line-height: 1.25;
 
-        @media #{$not-narrow-screen} {
+        @media #{v.$not-narrow-screen} {
             margin-left: 1.5rem;
         }
 
-        @media #{$medium-width} {
+        @media #{v.$medium-width} {
             flex-basis: 50%; // Push .upload-page-filter-panel to next row.
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             flex-direction: column;
             align-items:    center;
             margin:         1rem 0 0;
@@ -134,7 +136,7 @@
             font-weight:   bold;
             word-spacing:  0.125rem;
             color:         white;
-            background:    $uva-blue;
+            background:    v.$uva-blue;
             border:        2px solid lightgray;
             border-radius: 4px;
         }
@@ -144,14 +146,14 @@
             display: inline-block;
             margin:  auto 0;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin: 0.5rem 0 0;
             }
         }
 
         .page-count + .search-count,
         .search-count + .page-count {
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
                 margin-left: 1rem;
             }
         }

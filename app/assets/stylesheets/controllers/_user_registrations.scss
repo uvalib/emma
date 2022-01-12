@@ -1,8 +1,6 @@
 // app/assets/stylesheets/controllers/_user_registrations.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/controls/grids' as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // New user page
@@ -12,11 +10,17 @@
     @extend .account-fields;
 }
 
+// @see file:app/views/user/sessions/_local_form.html.erb
+// @see file:app/views/user/registrations/new.html.erb
+// @see file:app/views/user/registrations/edit.html.erb
+// @see file:app/views/user/passwords/new.html.erb
+// @see file:app/views/user/passwords/edit.html.erb
+// @see file:app/views/devise/unlocks/new.html.erb
 .sign-in-form:not(.inline) {
 
     @extend .account-form;
 
-    @media #{$wide-screen} {
+    @media #{v.$wide-screen} {
         width: 75%;
     }
 

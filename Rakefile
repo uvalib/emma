@@ -6,4 +6,12 @@
 
 require_relative 'config/application'
 
+# Ensure that ERB asset pre-processing comes before the 'jsbundling-rails' and
+# 'cssbundling-rails' enhancements of 'assets:precompile'.
+class EmmaRailtie < Rails::Railtie
+  rake_tasks do
+    load 'lib/tasks/emma_assets.rake'
+  end
+end
+
 Rails.application.load_tasks

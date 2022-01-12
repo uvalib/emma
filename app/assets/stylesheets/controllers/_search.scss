@@ -1,11 +1,11 @@
 // app/assets/stylesheets/controllers/_search.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/functions'      as *;
-@use 'shared/mixins'         as *;
-@use 'shared/controls/grids' as *;
-@use 'feature/model'         as *;
+@use 'sass:math';
+@use 'shared/variables'      as v;
+@use 'shared/functions'      as f;
+@use 'shared/mixins'         as x;
+@use 'shared/controls/grids' as g;
+@use 'shared/feature/model'  as m;
 
 //=============================================================================
 // Unified Search pages
@@ -15,7 +15,7 @@ $row-separation:        0.75rem;
 $row-separation-narrow: 1rem;
 $row-line-height:       1.5;
 
-$value-right-margin:    calc(2 * #{$flex-gap-x});
+$value-right-margin:    calc(2 * #{v.$flex-gap-x});
 
 // The "top" values for sticky positioning -- the "narrow" version is much
 // larger because it is actually applied only to the .field-Title element,
@@ -44,8 +44,8 @@ $sticky-top-narrow: 3.125rem;
     padding:       1px 0.5rem;
     font-size:     medium;
     font-weight:   normal;
-    color:         $root-rev-fg-color;
-    background:    $panel-accent;
+    color:         v.$root-rev-fg-color;
+    background:    v.$panel-accent;
     border:        1px solid transparent;
     border-radius: 0.5rem;
 }
@@ -71,7 +71,7 @@ $sticky-top-narrow: 3.125rem;
         max-width:  100%;
         background: white;
 
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             height:     4.5rem;
             max-height: 4.5rem;
         }
@@ -83,10 +83,10 @@ $sticky-top-narrow: 3.125rem;
 
     @extend .label-value-pairs;
 
-    @include grid-row-gap($row-separation);
+    @include g.grid-row-gap($row-separation);
 
-    @media #{$narrow-screen} {
-        @include grid-row-gap($row-separation-narrow);
+    @media #{v.$narrow-screen} {
+        @include g.grid-row-gap($row-separation-narrow);
     }
 
     //=========================================================================
@@ -102,7 +102,7 @@ $sticky-top-narrow: 3.125rem;
 
         line-height: $row-line-height;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             margin-bottom: -0.75rem;
         }
 
@@ -114,26 +114,26 @@ $sticky-top-narrow: 3.125rem;
     .value {
 
         &.textbox {
-            box-shadow: 0 0 0 0.25rem $root-bg-color, 0 0 0 0.375rem lightgray;
+            box-shadow: 0 0 0 0.25rem v.$root-bg-color, 0 0 0 0.375rem lightgray;
         }
 
         &.array {
 
-            @include grid-row-gap($row-separation);
+            @include g.grid-row-gap($row-separation);
 
             display:       grid;
             align-items:   center;
             align-content: center;
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 grid-template-columns: repeat(6, minmax(16.67%, 0.1667fr));
             }
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 grid-template-columns: repeat(3, minmax(33%, 1fr));
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-left:           0;
                 grid-template-columns: 1fr;
             }
@@ -147,6 +147,7 @@ $sticky-top-narrow: 3.125rem;
 
             > * {
 
+                // noinspection SassScssResolvedByNameOnly
                 @extend %control-shadow;
 
                 display:             block;
@@ -156,21 +157,21 @@ $sticky-top-narrow: 3.125rem;
                 border:              $element-border solid gray;
                 border-right-color:  black;
                 border-bottom-color: black;
-                border-radius:       $element-x-padding / 2;
+                border-radius:       math.div($element-x-padding, 2);
                 cursor:              text;
 
                 // noinspection CssReplaceWithShorthandSafely
-                @media #{$not-narrow-screen} {
+                @media #{v.$not-narrow-screen} {
                     margin:          $element-y-margin $element-x-margin;
                     margin-right:    1rem;
                 }
 
-                @media #{$wide-screen} {
+                @media #{v.$wide-screen} {
                     word-break:      keep-all;
                     word-wrap:       break-word;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     margin:          $element-y-margin 0;
                 }
             }
@@ -181,14 +182,14 @@ $sticky-top-narrow: 3.125rem;
             display:         flex;
             flex-direction:  row;
             justify-content: space-between;
-            gap:             $flex-gap-y $flex-gap-x;
+            gap:             v.$flex-gap-y v.$flex-gap-x;
             margin:          0 0 auto;
             font-size:       x-large;
             font-weight:     bold;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
 
-                @include grid-column-span;
+                @include g.grid-column-span;
 
                 flex-wrap: wrap-reverse;
             }
@@ -228,7 +229,7 @@ $sticky-top-narrow: 3.125rem;
     grid-template-columns: max-content 1fr;
     gap:                   1rem;
 
-    @media #{$not-wide-screen} {
+    @media #{v.$not-wide-screen} {
         grid-template-columns: 1fr;
     }
 
@@ -242,9 +243,10 @@ $sticky-top-narrow: 3.125rem;
 
         &.logo {
 
+            // noinspection SassScssResolvedByNameOnly
             @extend %invisible;
 
-            @media #{$not-wide-screen} {
+            @media #{v.$not-wide-screen} {
                 display: none;
             }
         }
@@ -268,7 +270,7 @@ $sticky-top-narrow: 3.125rem;
 
             max-width: unset;
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 grid-template-columns: minmax(max-content, 50%);
             }
 
@@ -276,7 +278,7 @@ $sticky-top-narrow: 3.125rem;
 
                 word-break: normal;
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     margin-left: 0;
                 }
             }
@@ -289,7 +291,7 @@ $sticky-top-narrow: 3.125rem;
             list-style: square;
             list-style: disclosure-closed; // NOTE: Firefox only
 
-            @media #{$not-wide-screen} {
+            @media #{v.$not-wide-screen} {
                 list-style-position: inside;
             }
         }
@@ -299,6 +301,25 @@ $sticky-top-narrow: 3.125rem;
 //=============================================================================
 // Metadata record search index page
 //=============================================================================
+
+/**
+ * During transitional times, the index may be supplying the same metadata
+ * field via two (or more) field names, this mixin supports "turning off"
+ * label/value pairs of an older field if a label/value pair of the newer
+ * field is present.
+ *
+ * For the mixin to operate, ordering of pairs in "en.emma.search.record"
+ * must be maintained so that older name(s) for a given field follow the
+ * newest name for the field.
+ */
+@mixin prioritize($new-name, $old-name) {
+    .value.field-#{$new-name} + .label.field-#{$old-name} {
+        &, & + * { display: none; }
+    }
+    .pair.field-#{$new-name} + .pair.field-#{$old-name} {
+        &, & + * { display: none; }
+    }
+}
 
 // Metadata record label/value pairs for index listings.
 .search-list-item {
@@ -340,7 +361,7 @@ $sticky-top-narrow: 3.125rem;
 
             @if $title-spans-entry {
 
-                @include screen-reader-only;
+                @include x.screen-reader-only;
 
                 position:       unset !important;
 
@@ -348,16 +369,16 @@ $sticky-top-narrow: 3.125rem;
 
                 position:	    sticky;
                 top:		    2vh;
-                z-index:        $z-raised;
+                z-index:        v.$z-raised;
                 display:	    flex;
                 flex-direction: row;
                 align-items:	flex-start;
                 margin:		    0;
                 padding-top:    1.25rem;
-                background:	    $root-bg-color;
+                background:	    v.$root-bg-color;
                 box-shadow:
-                    0.5rem  -0.5rem  0       0.5rem $root-bg-color,
-                    0.25rem -0.25rem 0.75rem 0.5rem $root-bg-color;
+                    0.5rem  -0.5rem  0       0.5rem v.$root-bg-color,
+                    0.25rem -0.25rem 0.75rem 0.5rem v.$root-bg-color;
             }
         }
 
@@ -376,7 +397,7 @@ $sticky-top-narrow: 3.125rem;
         }
 
         .text {
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 line-height:    1.25;
                 letter-spacing: -0.5px;
             }
@@ -403,7 +424,7 @@ $sticky-top-narrow: 3.125rem;
             flex-direction:  column;
             justify-content: center;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 padding-left: $narrow-indent;
             }
 
@@ -412,7 +433,7 @@ $sticky-top-narrow: 3.125rem;
                 line-height: 1.25;
                 word-break:  break-all;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     height: 100%;
                 }
             }
@@ -426,15 +447,15 @@ $sticky-top-narrow: 3.125rem;
             max-height:  20vh;
             overflow-y:  auto;
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 max-width: 75vw;
             }
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 max-width: 62.5vw;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 width:     auto;
                 max-width: calc(100vw - 2.5rem);
             }
@@ -451,7 +472,7 @@ $sticky-top-narrow: 3.125rem;
                 margin-left: $indent;
                 text-indent: -$indent;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     padding-left: $narrow-indent;
                 }
             }
@@ -464,54 +485,54 @@ $sticky-top-narrow: 3.125rem;
             height:        calc(100% - #{2 * $textbox-vspace});
             line-height:   1.25;
 
-            @media #{$narrow-screen} {
-                margin-left:  $flex-gap-x;
-                padding-left: $narrow-indent - $flex-gap-x;
+            @media #{v.$narrow-screen} {
+                margin-left:  v.$flex-gap-x;
+                padding-left: calc(#{$narrow-indent} - #{v.$flex-gap-x});
             }
         }
 
         &.field-Title {
 
             position:      sticky;
-            z-index:       $z-raised;
+            z-index:       v.$z-raised;
             align-items:   flex-start;
             margin:        0;
             height:        unset;
             line-height:   unset;
             font-size:     x-large;
             font-weight:   bold;
-            background:	   $root-bg-color;
+            background:	   v.$root-bg-color;
             border-bottom: 1px solid darkgray;
 
             @if $title-spans-entry {
-                @include grid-column-span;
+                @include g.grid-column-span;
             }
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 top:        $sticky-top-wide;
                 box-shadow:
-                     0.50rem -2.00rem  1.00rem  2.00rem  $root-bg-color,
-                     0        0        0.25rem  0.50rem  $root-bg-color;
+                     0.50rem -2.00rem  1.00rem  2.00rem  v.$root-bg-color,
+                     0        0        0.25rem  0.50rem  v.$root-bg-color;
             }
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 top:        $sticky-top-medium;
-                column-gap: calc(3 * #{$flex-gap-x});
+                column-gap: calc(3 * #{v.$flex-gap-x});
                 box-shadow:
-                     0       -1.00rem  0        0.50rem  $root-bg-color,
-                     0        0        0.25rem  0.25rem  $root-bg-color;
+                     0       -1.00rem  0        0.50rem  v.$root-bg-color,
+                     0        0        0.25rem  0.25rem  v.$root-bg-color;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
 
-                @include hyphenation;
+                @include x.hyphenation;
 
                 top:            $sticky-top-narrow;
                 padding-bottom: 0.5rem;
-                border-color:   $root-fg-color;
+                border-color:   v.$root-fg-color;
                 box-shadow:
-                     0       -0.50rem  0        0.25rem  $root-bg-color,
-                     0        0.25rem  0.25rem  0        $root-bg-color;
+                     0       -0.50rem  0        0.25rem  v.$root-bg-color,
+                     0        0.25rem  0.25rem  0        v.$root-bg-color;
             }
 
             // @see SearchHelper#title_and_source
@@ -520,13 +541,13 @@ $sticky-top-narrow: 3.125rem;
                 margin: 0;
                 flex:   1 1 100%;
 
-                @media #{$wide-screen} {
+                @media #{v.$wide-screen} {
                     height:         100%;
                     padding-bottom: 1rem;
                     font-size:      larger;
                 }
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     height:         100%;
                     padding-bottom: 0.75rem;
                     margin-right:   $value-right-margin;
@@ -541,10 +562,10 @@ $sticky-top-narrow: 3.125rem;
                  * height is given so that if the title needs to be scrolled,
                  * the fourth line is partially displayed but clipped.
                  */
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     max-height:     4em;
                     margin-top:     0.5rem;
-                    padding-right:  $scroll-easement;
+                    padding-right:  v.$scroll-easement;
                     overflow-y:     auto;
                 }
             }
@@ -555,16 +576,16 @@ $sticky-top-narrow: 3.125rem;
                 display:         flex;
                 justify-content: flex-end;
 
-                @media #{$wide-screen} {
+                @media #{v.$wide-screen} {
                     padding-bottom:  1rem;
                 }
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     margin-left:     $value-right-margin;
                     padding-bottom:  0.75rem;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     justify-content: flex-start;
                     margin-top:      -0.5rem;
                 }
@@ -576,14 +597,14 @@ $sticky-top-narrow: 3.125rem;
                     border:     1px solid lightgray;
                     box-shadow: 2px 2px 6px 0 lightgray;
 
-                    @media #{$not-wide-screen} {
+                    @media #{v.$not-wide-screen} {
                         max-height: 2.5rem;
                     }
                 }
             }
 
             // Controls for moving up and down through the list.
-            // @see "SearchHelper#prev_next_controls"
+            // @see SearchHelper#prev_next_controls
             .prev-next {
 
                 display:        flex;
@@ -592,17 +613,17 @@ $sticky-top-narrow: 3.125rem;
                 margin:         0;
                 flex:           0 0 auto;
 
-                @media #{$wide-screen} {
-                    margin-left:    $flex-gap-x;
+                @media #{v.$wide-screen} {
+                    margin-left:    v.$flex-gap-x;
                     padding-top:    0.75rem;
                 }
 
-                @media #{$medium-width} {
-                    margin-left:    $flex-gap-x;
+                @media #{v.$medium-width} {
+                    margin-left:    v.$flex-gap-x;
                     padding-top:    0.5rem;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     flex-direction: row;
                     margin-top:     -0.5rem;
                     margin-bottom:  auto;
@@ -612,6 +633,7 @@ $sticky-top-narrow: 3.125rem;
                 .prev,
                 .next {
 
+                    // noinspection SassScssResolvedByNameOnly
                     @extend %button-hover;
 
                     min-width:     unset;
@@ -633,6 +655,7 @@ $sticky-top-narrow: 3.125rem;
                         cursor: default;
 
                         &:focus {
+                            // noinspection SassScssResolvedByNameOnly
                             @extend %focus;
                         }
                     }
@@ -643,23 +666,23 @@ $sticky-top-narrow: 3.125rem;
                         width:      1.25em; // em not rem
                         text-align: center;
 
-                        @media #{$narrow-screen} {
+                        @media #{v.$narrow-screen} {
                             width:  1.5em; // em not rem
                         }
                     }
                 }
 
                 .prev {
-                    @media #{$not-narrow-screen} {
+                    @media #{v.$not-narrow-screen} {
                         margin-top: -0.5rem;
                     }
                 }
 
                 .next {
-                    @media #{$not-narrow-screen} {
+                    @media #{v.$not-narrow-screen} {
                         margin-top: 0.25rem;
                     }
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         margin-left: 0.25rem;
                     }
                 }
@@ -679,7 +702,7 @@ $sticky-top-narrow: 3.125rem;
         }
 
         &.field-RetrievalLink {
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-bottom: 1rem;
             }
         }
@@ -690,7 +713,7 @@ $sticky-top-narrow: 3.125rem;
     //=========================================================================
 
     .invalid {
-        color:  $error-fg;
+        color:  v.$error-fg;
         cursor: help;
     }
 
@@ -715,25 +738,6 @@ $sticky-top-narrow: 3.125rem;
     // Hide neighboring field pairs with the same meaning.
     //=========================================================================
 
-    /**
-     * During transitional times, the index may be supplying the same metadata
-     * field via two (or more) field names, this mixin supports "turning off"
-     * label/value pairs of an older field if a label/value pair of the newer
-     * field is present.
-     *
-     * For the mixin to operate, ordering of pairs in "en.emma.search.record"
-     * must be maintained so that older name(s) for a given field follow the
-     * newest name for the field.
-     */
-    @mixin prioritize($new-name, $old-name) {
-        .value.field-#{$new-name} + .label.field-#{$old-name} {
-            &, & + * { display: none; }
-        }
-        .pair.field-#{$new-name} + .pair.field-#{$old-name} {
-            &, & + * { display: none; }
-        }
-    }
-
     @include prioritize(Version,              Version);         // NOTE [1]
     @include prioritize(DateCopyright,        PublicationDate); // NOTE [2]
     @include prioritize(RepositoryUpdateDate, RepositoryMetadataUpdateDate);
@@ -754,7 +758,7 @@ $sticky-top-narrow: 3.125rem;
 
     @extend .model-list;
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         grid-template-columns: 1fr;
     }
 
@@ -762,8 +766,8 @@ $sticky-top-narrow: 3.125rem;
     // Components
     //=========================================================================
 
-    $item-number-bg:     lighter($uva-accent-blue, 97.5%);
-    $item-number-border: $uva-accent-blue;
+    $item-number-bg:     f.lighter(v.$uva-accent-blue, 97.5%);
+    $item-number-border: v.$uva-accent-blue;
 
     .pagination-top {
         // TODO: ???
@@ -775,8 +779,8 @@ $sticky-top-narrow: 3.125rem;
         font-size:   large;
         font-weight: bold;
 
-        @media #{$not-narrow-screen} {
-            margin-bottom:  calc(2 * #{$results-entry-gap-y});
+        @media #{v.$not-narrow-screen} {
+            margin-bottom:  calc(2 * #{m.$results-entry-gap-y});
             padding-left:   0.25rem;
             padding-right:  0.5rem;
             text-align:     right;
@@ -784,41 +788,41 @@ $sticky-top-narrow: 3.125rem;
             border:         1px solid $item-number-border;
         }
 
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             padding-bottom: 1.75rem;
         }
 
-        @media #{$medium-width} {
-            margin-top:     calc(2 * #{$results-entry-gap-y});
-            padding-bottom: calc(2 * #{$results-entry-gap-y});
+        @media #{v.$medium-width} {
+            margin-top:     calc(2 * #{m.$results-entry-gap-y});
+            padding-bottom: calc(2 * #{m.$results-entry-gap-y});
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
 
-            @include grid-column-span;
+            @include g.grid-column-span;
 
             position:       sticky;
             top:            0;
             margin-bottom:  0;
             padding:        0;
             text-align:     center;
-            background:     $root-bg-color;
-            box-shadow:     0 0 0 0.75rem $root-bg-color;
+            background:     v.$root-bg-color;
+            box-shadow:     0 0 0 0.75rem v.$root-bg-color;
         }
 
         .container {
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 top:            $sticky-top-wide;
                 margin-top:     0.625rem;
             }
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 top:            $sticky-top-medium;
                 margin-top:     0.75rem;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 top:            0;
                 flex-direction: row;
             }
@@ -827,18 +831,18 @@ $sticky-top-narrow: 3.125rem;
 
                 margin: 0;
 
-                @media #{$wide-screen} {
+                @media #{v.$wide-screen} {
                     padding-top:   0.25rem;
                 }
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     padding-top:   0.125rem;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     height:        1.75rem;
                     padding-top:   0.125rem;
-                    margin-bottom: $gap-y;
+                    margin-bottom: v.$gap-y;
                     background:    $item-number-bg;
                     border-bottom: 1px solid $item-number-border;
                     flex:          1 0 auto;
@@ -848,27 +852,27 @@ $sticky-top-narrow: 3.125rem;
             .icon-tray {
 
 
-                @media #{$not-narrow-screen} {
+                @media #{v.$not-narrow-screen} {
                     margin-top:     1rem;
                     margin-left:    0;
-                    margin-right:   -$icon-pad;
-                    padding-top:    $icon-pad / 2;
-                    padding-bottom: $icon-pad / 2;
+                    margin-right:   -(m.$icon-pad);
+                    padding-top:    math.div(m.$icon-pad, 2);
+                    padding-bottom: math.div(m.$icon-pad, 2);
                     box-shadow:     2px 2px 1px 1px lightgray;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     position:       absolute;
                     top:            0.125rem;
                     right:          0;
                     flex-direction: row;
                     margin:         0;
-                    padding:        0 ($icon-pad / 2);
+                    padding:        0 math.div(m.$icon-pad, 2);
                 }
             }
 
             .icon {
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
 
                     margin: 0;
 
@@ -888,22 +892,22 @@ $sticky-top-narrow: 3.125rem;
      */
     .search-list-item {
 
-        @media #{$not-narrow-screen} {
-            margin-bottom:         calc(2 * #{$results-entry-gap-y});
+        @media #{v.$not-narrow-screen} {
+            margin-bottom:         calc(2 * #{m.$results-entry-gap-y});
             padding-bottom:        0.5rem;
         }
 
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             @include search-item-columns(0.1375fr);
         }
 
-        @media #{$medium-width} {
-            margin-top:            calc(2 * #{$results-entry-gap-y});
+        @media #{v.$medium-width} {
+            margin-top:            calc(2 * #{m.$results-entry-gap-y});
             @include search-item-columns(0.25fr);
         }
 
-        @media #{$narrow-screen} {
-            @include grid-column-span;
+        @media #{v.$narrow-screen} {
+            @include g.grid-column-span;
         }
 
         // Superfluous because ModelHelper::Fields#field_pairs folds the
@@ -939,6 +943,89 @@ $sticky-top-narrow: 3.125rem;
 // New styles
 //=============================================================================
 
+@mixin primary($bg) {
+    background-color: $bg;
+}
+
+@mixin secondary($fg) {
+
+    $gap:    2px;
+    $box:    2px + $gap;
+    $mask:   white;
+    $shift:  5px;
+    $exdent: 0.25rem;
+
+    box-shadow:
+             0 0 0 $gap $mask, // inner gap
+             0 0 0 $box $fg;   // outer boundary
+
+    @media #{v.$not-narrow-screen} {
+
+        &.value.array {
+            box-shadow:
+                0 0 0 $gap $mask, // inner gap
+                -$gap 0 0 $gap $mask, // mask left side inner boundary
+                0 0 0 $box $fg,   // inner boundary
+                -$shift 0 0 $gap $mask, // outer gap
+                -$shift 0 0 $box $fg;   // outer boundary
+        }
+
+        &.value:not(.array) {
+            margin-left:   -$exdent;
+            padding-left:  $exdent;
+            padding-right: 2 * $exdent;
+        }
+    }
+
+    @media #{v.$narrow-screen} {
+
+        &.value:not(.array) {
+            margin-left:   0;
+            padding-right: 3 * $exdent;
+        }
+
+        &.value:not(.array):not(.list) {
+            padding-left:  $exdent;
+        }
+
+    }
+}
+
+@mixin type-marker($term, $color: red, $inner-color: black) {
+    &:before {
+        content:        '[#{$term}]';
+        position:       absolute;
+        left:           -2rem;
+        padding:        0 0.25rem;
+        color:          white;
+        background:     $color;
+        font-weight:    bold;
+        text-transform: uppercase;
+        text-shadow:
+                        -1px -1px 0 $inner-color,
+                        -1px  1px 0 $inner-color,
+                        1px -1px 0 $inner-color,
+                        1px  1px 0 $inner-color;
+    }
+}
+
+$score-fields-bg: lightgray;
+
+@mixin score-fields {
+    &.field-CreatorScore,
+    &.field-IdentifierScore,
+    &.field-KeywordScore,
+    &.field-PubDate,
+    &.field-PublisherScore,
+    &.field-RemDate,
+    &.field-SortDate,
+    &.field-TitleScore {
+        font-weight: bold;
+        background:  $score-fields-bg;
+        @content;
+    }
+}
+
 // Additional class along with "search-index", "search", and "index".
 body.new-style,
 body.dev-style,
@@ -962,8 +1049,8 @@ body.aggregate-style {
     // Box shadow sections which prevent scrolled text from
     // appearing above the title.
     $title-scroll-mask:
-        0.25rem  -0.25rem  0         0.5rem  $root-bg-color,
-        0.125rem  0        0.125rem  0.5rem  $root-bg-color;
+        0.25rem  -0.25rem  0         0.5rem  v.$root-bg-color,
+        0.125rem  0        0.125rem  0.5rem  v.$root-bg-color;
 
     //=========================================================================
     // Sections
@@ -978,16 +1065,16 @@ body.aggregate-style {
 
         display: grid;
 
-        @media #{$not-narrow-screen} {
+        @media #{v.$not-narrow-screen} {
             grid-template-columns: auto 1fr;
         }
 
-        @media #{$medium-width} {
-            margin:  calc(2 * #{$results-entry-gap-y}) auto;
+        @media #{v.$medium-width} {
+            margin:  calc(2 * #{m.$results-entry-gap-y}) auto;
             row-gap: 1rem;
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             grid-template-columns: 1fr;
         }
 
@@ -996,7 +1083,7 @@ body.aggregate-style {
         //=====================================================================
 
         .heading {
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 margin:      auto 0;
                 grid-row:    1;
                 grid-column: 1;
@@ -1012,12 +1099,12 @@ body.aggregate-style {
             row-gap:        0.5rem;
             grid-column:    unset;
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 grid-row: 1/3;
                 row-gap:  1rem;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 row-gap:         0.25rem;
                 justify-content: center;
             }
@@ -1027,11 +1114,11 @@ body.aggregate-style {
                 flex-direction: row-reverse;
                 column-gap:     1rem;
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     flex-basis: 100%;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     margin:          0.5rem 0;
                     flex-direction:  row;
                     column-gap:      0.5rem;
@@ -1050,14 +1137,14 @@ body.aggregate-style {
                 column-gap:      1rem;
                 row-gap:         0.5rem;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     margin-top:      0.5rem;
                     column-gap:      0.5rem;
                     row-gap:         0.25rem;
                     justify-content: center;
                 }
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     display: none;
                 }
             }
@@ -1068,7 +1155,7 @@ body.aggregate-style {
 
             display: none;
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 display:         flex;
                 flex-direction:  row-reverse;
                 column-gap:      1rem;
@@ -1084,8 +1171,8 @@ body.aggregate-style {
 
         column-gap: 1%;
 
-        @media #{$narrow-screen} {
-            margin:     calc(2 * #{$results-entry-gap-y}) 0;
+        @media #{v.$narrow-screen} {
+            margin:     calc(2 * #{m.$results-entry-gap-y}) 0;
             column-gap: 0.5rem;
         }
 
@@ -1105,7 +1192,7 @@ body.aggregate-style {
             border-radius:   50%;
             border-color:    darkgray;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 width:       1.875rem;
                 height:      1.75rem;
             }
@@ -1149,21 +1236,21 @@ body.aggregate-style {
             box-shadow: none;
             background: none;
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 padding-top:     0.5rem;
             }
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 margin-right:    0.375rem;
                 padding-top:     0.5rem;
                 padding-bottom:  0.5rem;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-top:      0;
                 padding-top:     0.5rem;
                 grid-column-end: 1;
-                z-index:         $z-controls;
+                z-index:         v.$z-controls;
             }
 
             //=================================================================
@@ -1174,12 +1261,12 @@ body.aggregate-style {
 
                 height: 3rem;
 
-                @media #{$not-narrow-screen} {
+                @media #{v.$not-narrow-screen} {
                     display: none;
                 }
 
                 .value {
-                    @include screen-reader-only;
+                    @include x.screen-reader-only;
                 }
 
                 .toggle.for-item {
@@ -1192,7 +1279,7 @@ body.aggregate-style {
 
                 margin-top: 0.125rem;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     display: none;
                 }
             }
@@ -1203,21 +1290,21 @@ body.aggregate-style {
 
             &.open {
 
-                @media #{$wide-screen} {
+                @media #{v.$wide-screen} {
                     $excess:     3.5rem;
                     height:      calc(100% - #{$excess});
                     margin-top:  1.75rem;
                     padding-top: 0.125rem;
                 }
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     $excess:     2.5rem;
                     height:      calc(100% - #{$excess});
                     margin-top:  1.375rem;
                     padding-top: 0.3125rem;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     $excess:     $narrow-logo-height + $narrow-item-separation;
                     height:      calc(100% - #{$excess});
                     /**
@@ -1248,7 +1335,7 @@ body.aggregate-style {
             min-width: 100%;
             margin:    0;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 width:             92.5vw;
                 margin-left:       -(2rem + $narrow-left-pad);
                 margin-right:      (2rem + $narrow-left-pad);
@@ -1264,11 +1351,11 @@ body.aggregate-style {
                     max-width:  100%;
                     align-self: baseline;
 
-                    @media #{$not-narrow-screen} {
+                    @media #{v.$not-narrow-screen} {
                         border: none;
                     }
 
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         justify-content: flex-end;
                         background:      ghostwhite;
                     }
@@ -1284,13 +1371,13 @@ body.aggregate-style {
                         letter-spacing: -0.125px; // NOTE: needed for Firefox
                         cursor:         default;
 
-                        @media #{$wide-screen} {
+                        @media #{v.$wide-screen} {
                             flex-basis:    100%;
                             border-top:    $wide-open-pad solid transparent;
                             border-bottom: $wide-open-pad solid transparent;
                         }
 
-                        @media #{$medium-width} {
+                        @media #{v.$medium-width} {
                             flex-basis:    100%;
                             border-top:    $medium-open-pad solid transparent;
                             border-bottom: $medium-open-pad solid transparent;
@@ -1303,7 +1390,7 @@ body.aggregate-style {
 
                             box-shadow: 2px 2px 4px 0 lightgray;
 
-                            @media #{$narrow-screen} {
+                            @media #{v.$narrow-screen} {
                                 max-height: $narrow-logo-height;
                             }
                         }
@@ -1329,33 +1416,33 @@ body.aggregate-style {
 
                     top: 1vh;
 
-                    @media #{$not-narrow-screen} {
+                    @media #{v.$not-narrow-screen} {
                         box-shadow: $title-scroll-mask;
                     }
 
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         box-shadow: $narrow-title-shadow, $title-scroll-mask;
                     }
 
                     > * {
-                        @media #{$not-narrow-screen} {
+                        @media #{v.$not-narrow-screen} {
                             align-self: flex-start;
                         }
                     }
 
                     .title {
-                        @media #{$not-narrow-screen} {
+                        @media #{v.$not-narrow-screen} {
                             box-shadow:
-                                1px -1px  0  1px  $root-bg-color,
+                                1px -1px  0  1px  v.$root-bg-color,
                                 1px  1px  0  1px  darkgray;
                         }
                     }
 
                     .repository {
-                        @media #{$not-narrow-screen} {
+                        @media #{v.$not-narrow-screen} {
                             margin-top: 0;
                         }
-                        @media #{$narrow-screen} {
+                        @media #{v.$narrow-screen} {
                             position:   sticky;
                             top:        0;
                         }
@@ -1370,7 +1457,7 @@ body.aggregate-style {
 
         .search-list-item:not(.open) {
 
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
                 max-height:     4rem;
                 padding-bottom: 1rem;
             }
@@ -1380,11 +1467,11 @@ body.aggregate-style {
 
                 &.field-Title {
 
-                    @media #{$not-narrow-screen} {
+                    @media #{v.$not-narrow-screen} {
                         box-shadow: none;
                     }
 
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         box-shadow: $narrow-title-shadow;
                     }
 
@@ -1410,11 +1497,12 @@ body.aggregate-style {
     .colorize-button,
     .field-highlight-button {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %control-button-base;
 
         &.active {
-            background-color: $input-disabled-bg;
-            border-color:     $input-disabled-fg;
+            background-color: v.$input-disabled-bg;
+            border-color:     v.$input-disabled-fg;
         }
     }
 
@@ -1433,12 +1521,12 @@ body.aggregate-style {
 
                     border: none;
 
-                    @media #{$not-narrow-screen} {
+                    @media #{v.$not-narrow-screen} {
                         margin-left:  -0.25rem;
                         padding-left: 0.25rem;
                     }
 
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         margin-left: -$narrow-left-pad;
                         .title {
                             margin-left: $narrow-left-pad;
@@ -1450,16 +1538,16 @@ body.aggregate-style {
                         word-break: keep-all;
                         flex:       1 0 auto;
 
-                        @media #{$wide-screen} {
+                        @media #{v.$wide-screen} {
                             margin-top:   $wide-open-pad;
                             font-size:    larger;
                         }
 
-                        @media #{$medium-width} {
+                        @media #{v.$medium-width} {
                             margin-top:   $medium-open-pad;
                         }
 
-                        @media #{$narrow-screen} {
+                        @media #{v.$narrow-screen} {
                             margin-top:   $narrow-open-pad;
                             margin-right: $narrow-open-pad;
                             flex:         0 1 auto;
@@ -1472,15 +1560,15 @@ body.aggregate-style {
                             $fg-color: red;
                             $bg-color: white;
 
-                            @media #{$wide-screen} {
-                                margin-top:   $wide-open-pad   - ($v-shift/2);
+                            @media #{v.$wide-screen} {
+                                margin-top:   $wide-open-pad   - math.div($v-shift, 2);
                             }
-                            @media #{$medium-width} {
-                                margin-top:   $medium-open-pad - ($v-shift/2);
+                            @media #{v.$medium-width} {
+                                margin-top:   $medium-open-pad - math.div($v-shift, 2);
                             }
-                            @media #{$narrow-screen} {
-                                margin-top:   $narrow-open-pad - ($v-shift/2);
-                                margin-right: $narrow-open-pad - ($v-shift/2);
+                            @media #{v.$narrow-screen} {
+                                margin-top:   $narrow-open-pad - math.div($v-shift, 2);
+                                margin-right: $narrow-open-pad - math.div($v-shift, 2);
                             }
 
                             margin-right:  -$h-shift;
@@ -1494,7 +1582,7 @@ body.aggregate-style {
                         }
 
                         &.exile:not(.error) {
-                            color: $uva-text-gray;
+                            color: v.$uva-text-gray;
                         }
 
                         &:not(.error) {
@@ -1503,10 +1591,10 @@ body.aggregate-style {
                     }
 
                     .repository {
-                        @media #{$wide-screen} {
+                        @media #{v.$wide-screen} {
                             padding-bottom: 0;
                         }
-                        @media #{$narrow-screen} {
+                        @media #{v.$narrow-screen} {
                             margin-top: 0;
                         }
                     }
@@ -1530,7 +1618,7 @@ body.aggregate-style {
 
                 &.field-Title {
 
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         box-shadow: $title-scroll-mask;
                     }
 
@@ -1558,13 +1646,13 @@ body.aggregate-style {
 
                 &.field-Title {
 
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         box-shadow: none;
                     }
 
                     .repository {
                         img {
-                            @media #{$narrow-screen} {
+                            @media #{v.$narrow-screen} {
                                 box-shadow: none;
                             }
                         }
@@ -1583,10 +1671,6 @@ body.aggregate-style {
         //=====================================================================
         // Indicate primary field scope - NOTE: testing
         //=====================================================================
-
-        @mixin primary($bg) {
-            background-color: $bg;
-        }
 
         .scope-title:not(.field-Title) {
             @include primary(beige);
@@ -1607,50 +1691,6 @@ body.aggregate-style {
         //=====================================================================
         // Indicate secondary field scope - NOTE: testing
         //=====================================================================
-
-        @mixin secondary($fg) {
-
-            $gap:    2px;
-            $box:    2px + $gap;
-            $mask:   white;
-            $shift:  5px;
-            $exdent: 0.25rem;
-
-            box-shadow:
-                0 0 0 $gap $mask, // inner gap
-                0 0 0 $box $fg;   // outer boundary
-
-            @media #{$not-narrow-screen} {
-
-                &.value.array {
-                    box-shadow:
-                             0 0 0 $gap $mask, // inner gap
-                         -$gap 0 0 $gap $mask, // mask left side inner boundary
-                             0 0 0 $box $fg,   // inner boundary
-                       -$shift 0 0 $gap $mask, // outer gap
-                       -$shift 0 0 $box $fg;   // outer boundary
-                }
-
-                &.value:not(.array) {
-                    margin-left:   -$exdent;
-                    padding-left:  $exdent;
-                    padding-right: 2 * $exdent;
-                }
-            }
-
-            @media #{$narrow-screen} {
-
-                &.value:not(.array) {
-                    margin-left:   0;
-                    padding-right: 3 * $exdent;
-                }
-
-                &.value:not(.array):not(.list) {
-                    padding-left:  $exdent;
-                }
-
-            }
-        }
 
         .scope-bibliographic:not(.field-Title) {
             @include secondary(black);
@@ -1677,24 +1717,6 @@ body.aggregate-style {
 
         > .value,
         > .pair > .value {
-
-            @mixin type-marker($term, $color: red, $inner-color: black) {
-                &:before {
-                    content:        '[#{$term}]';
-                    position:       absolute;
-                    left:           -2rem;
-                    padding:        0 0.25rem;
-                    color:          white;
-                    background:     $color;
-                    font-weight:    bold;
-                    text-transform: uppercase;
-                    text-shadow:
-                        -1px -1px 0 $inner-color,
-                        -1px  1px 0 $inner-color,
-                         1px -1px 0 $inner-color,
-                         1px  1px 0 $inner-color;
-                }
-            }
 
             &.text {
                 @include type-marker('text', gray);
@@ -1732,23 +1754,6 @@ body.aggregate-style {
 
     .search-list {
 
-        $score-fields-bg: lightgray;
-
-        @mixin score-fields {
-            &.field-CreatorScore,
-            &.field-IdentifierScore,
-            &.field-KeywordScore,
-            &.field-PubDate,
-            &.field-PublisherScore,
-            &.field-RemDate,
-            &.field-SortDate,
-            &.field-TitleScore {
-                font-weight: bold;
-                background:  $score-fields-bg;
-                @content;
-            }
-        }
-
         //=====================================================================
         // Components
         //=====================================================================
@@ -1762,7 +1767,7 @@ body.aggregate-style {
                     box-shadow: 0.375rem 0 0 0.625rem $score-fields-bg;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     @include score-fields {
                         box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
                     }
@@ -1776,7 +1781,7 @@ body.aggregate-style {
                     box-shadow: -0.625rem 0 0 0.625rem $score-fields-bg;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     @include score-fields {
                         box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
                     }
@@ -1798,16 +1803,16 @@ body.aggregate-style {
                         border:        2px solid green;
                         border-radius: 0.25rem;
 
-                        @media #{$wide-screen} {
+                        @media #{v.$wide-screen} {
                             margin-left: 1rem;
                         }
 
-                        @media #{$medium-width} {
+                        @media #{v.$medium-width} {
                             margin-left: 0.5rem;
-                            margin-top:  $medium-open-pad - ($v-shift / 2);
+                            margin-top:  $medium-open-pad - math.div($v-shift, 2);
                         }
 
-                        @media #{$narrow-screen} {
+                        @media #{v.$narrow-screen} {
                             margin-left: 1rem;
                         }
 
@@ -1837,8 +1842,8 @@ body.aggregate-style {
                 &.field-Title {
 
                     .item-score {
-                        @media #{$wide-screen} {
-                            margin-top: $wide-open-pad + ($v-shift / 2);
+                        @media #{v.$wide-screen} {
+                            margin-top: $wide-open-pad + math.div($v-shift, 2);
                         }
                     }
                 }
@@ -1860,14 +1865,14 @@ body.aggregate-style {
 
                         border-radius: 0;
 
-                        @media #{$wide-screen} {
-                            box-shadow: -0.875rem  0 0 1.125rem  $root-bg-color;
+                        @media #{v.$wide-screen} {
+                            box-shadow: -0.875rem  0 0 1.125rem  v.$root-bg-color;
                         }
-                        @media #{$medium-width} {
-                            box-shadow: -0.3125rem 0 0 0.9375rem $root-bg-color;
+                        @media #{v.$medium-width} {
+                            box-shadow: -0.3125rem 0 0 0.9375rem v.$root-bg-color;
                         }
-                        @media #{$narrow-screen} {
-                            box-shadow: -0.625rem  0 0 0.625rem  $root-bg-color;
+                        @media #{v.$narrow-screen} {
+                            box-shadow: -0.625rem  0 0 0.625rem  v.$root-bg-color;
                         }
                     }
                 }
@@ -1876,26 +1881,33 @@ body.aggregate-style {
     }
 }
 
+$column-count: 0;
+$next-column:  1;
+
+@function show-($columns: 1) {
+    $start-column: $next-column;
+    $end-column:   $start-column;
+    $columns:      if((not $columns or ($columns == 0)), 1, $columns);
+    @if $columns > 1 {
+        $end-column: $end-column + $columns;
+    }
+    $next-column:  $next-column  + $columns;
+    $column-count: $column-count + $columns;
+    @return #{$start-column}/#{$end-column};
+}
+
+@function -hide() {
+    @return false;
+}
+
+@mixin clean() {
+    font-weight: revert;
+    background:  revert;
+    border:      revert;
+    box-shadow:  revert;
+}
+
 body.grid-style {
-
-    $column-count: 0;
-    $next-column:  1;
-
-    @function show-($columns: 1) {
-        $start-column: $next-column;
-        $end-column:   $start-column;
-        $columns:      if((not $columns or ($columns == 0)), 1, $columns);
-        @if $columns > 1 {
-            $end-column: $end-column + $columns;
-        }
-        $next-column:  $next-column  + $columns;
-        $column-count: $column-count + $columns;
-        @return #{$start-column}/#{$end-column};
-    }
-
-    @function -hide() {
-        @return false;
-    }
 
     // Each column is either hidden or given a distinct column slot so that
     // there is a consistent display of columns regardless of whether the item
@@ -1931,13 +1943,6 @@ body.grid-style {
         RepositoryRecordId:     show-(),
         RetrievalLink:          show-(),
     );
-
-    @mixin clean() {
-        font-weight: revert;
-        background:  revert;
-        border:      revert;
-        box-shadow:  revert;
-    }
 
     //=========================================================================
     // Sections
@@ -2040,7 +2045,7 @@ body.aggregate-style {
                         background:  whitesmoke;
                         box-shadow:  inset 0 0 0 1px gray;
 
-                        @media #{$not-wide-screen} {
+                        @media #{v.$not-wide-screen} {
                             padding: 0 0.375rem;
                         }
                     }
@@ -2080,6 +2085,15 @@ body.search-v3 {
     }
 }
 
+@mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
+    background: $bg;
+    box-shadow:
+                $r-offset  1px 0 2px $bg,
+                $r-offset -1px 0 2px $bg,
+                -$l-offset  1px 0 2px $bg,
+                -$l-offset -1px 0 2px $bg;
+}
+
 body.search-v3 {
 
     .search-list {
@@ -2087,7 +2101,7 @@ body.search-v3 {
         .number {
 
             .toggle.for-item {
-                @media #{$not-narrow-screen} {
+                @media #{v.$not-narrow-screen} {
                     width:      1.875rem;
                     height:     1.75rem;
                     margin-top: 0;
@@ -2102,17 +2116,8 @@ body.search-v3 {
 
         .search-list-item {
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 @include search-item-columns(0.15fr);
-            }
-
-            @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
-                background: $bg;
-                box-shadow:
-                    $r-offset  1px 0 2px $bg,
-                    $r-offset -1px 0 2px $bg,
-                   -$l-offset  1px 0 2px $bg,
-                   -$l-offset -1px 0 2px $bg;
             }
 
             // Probably-temporary divider between metadata for individual parts
@@ -2147,7 +2152,7 @@ body.search-v3 {
                 border-top-left-radius:    0.75rem;
                 border-bottom-left-radius: 0.75rem;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     box-shadow:
                         -1px  1px  0  3px  whitesmoke,
                         -1px -1px  0  3px  whitesmoke;
@@ -2162,7 +2167,7 @@ body.search-v3 {
 
                 height: unset;
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     display: none;
                 }
 
@@ -2197,7 +2202,7 @@ body.search-v3 {
             > .value,
             > .pair > .value {
                 &.scope-parts.scope-formats.scope-files {
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         margin-left: $file-indent;
                     }
                 }
@@ -2216,16 +2221,16 @@ body.search-v3 {
             display: flex;
 
             // Due to the way that setupToggleControl() adds the control button
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
                 flex-direction:  row-reverse;
                 justify-content: flex-end;
             }
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 padding-top:     0;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 flex-direction:  row;
                 justify-content: flex-start;
                 margin-right:    -0.75rem;
@@ -2238,7 +2243,7 @@ body.search-v3 {
 
             .container {
                 .toggle.for-item {
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         margin-top: 0;
                     }
                 }
@@ -2251,7 +2256,7 @@ body.search-v3 {
 
             .toggle.for-item {
                 margin-bottom: 0;
-                z-index:       $z-raised;
+                z-index:       v.$z-raised;
             }
 
             .file-counts {
@@ -2276,21 +2281,21 @@ body.search-v3 {
                  * If the previous file count has a lot of lines, this shadow
                  * keeps it from appearing to run into the current file count.
                  */
-                @media #{$not-narrow-screen} {
-                    box-shadow:   0 -0.5rem 0.5rem 0.25rem $root-bg-color;
+                @media #{v.$not-narrow-screen} {
+                    box-shadow:   0 -0.5rem 0.5rem 0.25rem v.$root-bg-color;
                 }
 
-                @media #{$wide-screen} {
+                @media #{v.$wide-screen} {
                     margin-left:  0.75rem;
                     font-size:    small;
                 }
 
-                @media #{$medium-width} {
+                @media #{v.$medium-width} {
                     margin-left:  0.5rem;
                     font-size:    small;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
                     margin-left:  0.5rem;
                     font-size:    medium;
                     max-height:   2.25rem;
@@ -2300,7 +2305,7 @@ body.search-v3 {
 
                 .count,
                 .format {
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         margin: auto 0;
                     }
                 }
@@ -2350,7 +2355,7 @@ body.search-v3 {
                     top:      3vh;
                 }
 
-                @media #{$narrow-screen} {
+                @media #{v.$narrow-screen} {
 
                     height: calc(100% - 5.5rem);
 
@@ -2366,15 +2371,15 @@ body.search-v3 {
         // Adjustments due to .number changes:
         .search-list-item {
 
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 @include search-item-columns(0.1875fr);
             }
 
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 @include search-item-columns(0.3125fr);
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-left:  -27.5vw;
                 margin-right: 27.5vw;
             }
@@ -2385,15 +2390,15 @@ body.search-v3 {
                 &.list,
                 &.textbox {
 
-                    @media #{$wide-screen} {
+                    @media #{v.$wide-screen} {
                         max-width: 66vw;
                     }
 
-                    @media #{$medium-width} {
+                    @media #{v.$medium-width} {
                         max-width: 50vw;
                     }
 
-                    @media #{$narrow-screen} {
+                    @media #{v.$narrow-screen} {
                         max-width: 75vw;
                     }
                 }

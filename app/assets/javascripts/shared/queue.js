@@ -1,7 +1,8 @@
 // app/assets/javascripts/shared/queue.js
 
-//= require shared/assets
-//= require shared/definitions
+
+import { flatten, isEmpty } from '../shared/definitions'
+
 
 // ============================================================================
 // Class Queue
@@ -10,7 +11,7 @@
 /**
  * A generic FIFO queue.
  */
-class Queue {
+export class Queue {
 
     constructor(...args) { this.array = flatten(args) }
 
@@ -68,7 +69,7 @@ class Queue {
 /**
  * A queue for managing a set of callbacks.
  */
-class CallbackQueue extends Queue {
+export class CallbackQueue extends Queue {
 
     /**
      * Create a new instance.

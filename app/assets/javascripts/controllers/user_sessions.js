@@ -1,8 +1,8 @@
 // app/assets/javascripts/controllers/user_sessions.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { handleClickAndKeypress, isMissing } from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

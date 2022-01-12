@@ -1,8 +1,21 @@
 // app/assets/javascripts/feature/popup.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { Emma }                                  from '../shared/assets'
+import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
+import {
+    elementSelector,
+    handleClickAndKeypress,
+    handleEvent,
+    isDefined,
+    isEmpty,
+    isMissing,
+    isPresent,
+    notDefined,
+    scrollIntoView,
+    selector,
+} from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

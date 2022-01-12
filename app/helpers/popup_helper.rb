@@ -48,6 +48,8 @@ module PopupHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see file:app/assets/stylesheets/layouts/controls/_popup.scss
+  #
   def popup_container(**opt)
     css_selector = '.popup-container'
     hidden = (POPUP_HIDDEN_MARKER if !opt.key?(:hidden) || opt.delete(:hidden))

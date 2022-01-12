@@ -72,6 +72,8 @@ tmtags
 # =============================================================================
 
 # === Ruby / Rails
+/app/assets/builds/*
+!/app/assets/builds/.keep
 /pkg
 # /Gemfile.lock
 

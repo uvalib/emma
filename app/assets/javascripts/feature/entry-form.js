@@ -1,11 +1,61 @@
 // app/assets/javascripts/feature/entry-form.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
-//= require feature/flash
 
-//import Uppy from 'uppy'; // TODO: Use webpacker for ES6.
+import { Rails }                                 from '../vendor/rails'
+import { Emma }                                  from '../shared/assets'
+import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
+import {
+    clearFlash,
+    extractFlashMessage,
+    flashError,
+    flashMessage,
+} from '../shared/flash'
+import {
+    Uppy,
+    AwsS3,
+    Dashboard,
+    DragDrop,
+    FileInput,
+    Informer,
+    ProgressBar,
+    StatusBar,
+    ThumbnailGenerator,
+    XHRUpload,
+} from '../vendor/uppy'
+import {
+    HTTP,
+    K,
+    MINUTES,
+    SECONDS,
+    arrayWrap,
+    asDateTime,
+    asSize,
+    asString,
+    cancelAction,
+    compact,
+    debounce,
+    deepFreeze,
+    delegateInputClick,
+    fromJSON,
+    handleClickAndKeypress,
+    handleEvent,
+    htmlDecode,
+    isDefined,
+    isEmpty,
+    isMissing,
+    isPresent,
+    makeUrl,
+    notDefined,
+    onPageExit,
+    percent,
+    scrollIntoView,
+    secondsSince,
+    selector,
+    timeOf,
+    toggleClass,
+    toggleVisibility,
+} from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 
@@ -383,14 +433,14 @@ $(document).on('turbolinks:load', function() {
      * @type {UppyFeatures}
      */
     const FEATURES = deepFreeze({
-        replace_input:  true,
-        upload_to_aws:  false,
-        popup_messages: true,
-        progress_bar:   true,
-        status_bar:     false,
-        dashboard:      false,
-        drag_and_drop:  false,
-        image_preview:  false,
+        replace_input:  true,         // Requires '@uppy/file-input'
+        upload_to_aws:  false,        // Requires '@uppy/aws-s3'
+        popup_messages: true,         // Requires '@uppy/informer'
+        progress_bar:   true,         // Requires '@uppy/progress-bar'
+        status_bar:     false,        // Requires '@uppy/status-bar'
+        dashboard:      false,        // Requires '@uppy/dashboard'
+        drag_and_drop:  false,        // Requires '@uppy/drag-drop'
+        image_preview:  false,        // Requires '@uppy/thumbnail-generator'
         flash_messages: true,
         flash_errors:   true,
         debugging:      DEBUGGING
@@ -1521,19 +1571,16 @@ $(document).on('turbolinks:load', function() {
     function buildUppy(form, features) {
         let $form     = $(form);
         let container = $form[0].parentElement;
-        // noinspection JSUnresolvedVariable, JSUnresolvedFunction
-        let uppy = Uppy.Core({
+        let uppy = new Uppy({
             id:          $form[0].id,
             autoProceed: true,
             debug:       features.debugging
         });
         if (features.dashboard) {
-            // noinspection JSUnresolvedVariable
-            uppy.use(Uppy.Dashboard, { target: container, inline: true });
+            uppy.use(Dashboard, { target: container, inline: true });
         } else {
             if (features.replace_input) {
-                // noinspection JSUnresolvedVariable
-                uppy.use(Uppy.FileInput, {
+                uppy.use(FileInput, {
                     target: buttonTray($form)[0], // NOTE: not container
                     locale: {
                         strings: {
@@ -1543,39 +1590,32 @@ $(document).on('turbolinks:load', function() {
                 });
             }
             if (features.drag_and_drop) {
-                // noinspection JSUnresolvedVariable
-                uppy.use(Uppy.DragDrop, { target: features.drag_and_drop });
+                uppy.use(DragDrop, { target: features.drag_and_drop });
             }
             if (features.progress_bar) {
-                // noinspection JSUnresolvedVariable
-                uppy.use(Uppy.ProgressBar, { target: container });
+                uppy.use(ProgressBar, { target: container });
             }
             if (features.status_bar) {
-                // noinspection JSUnresolvedVariable
-                uppy.use(Uppy.StatusBar, {
+                uppy.use(StatusBar, {
                     target: container,
                     showProgressDetails: true
                 });
             }
         }
         if (features.popup_messages) {
-            // noinspection JSUnresolvedVariable
-            uppy.use(Uppy.Informer, { target: container });
+            uppy.use(Informer, { target: container });
         }
         if (features.image_preview) {
-            // noinspection JSUnresolvedVariable
-            uppy.use(Uppy.ThumbnailGenerator, { thumbnailWidth: 400 });
+            uppy.use(ThumbnailGenerator, { thumbnailWidth: 400 });
         }
         if (features.upload_to_aws) {
-            // noinspection JSUnresolvedVariable
-            uppy.use(Uppy.AwsS3, {
+            uppy.use(AwsS3, {
                 // limit:     2,
                 timeout:      UPLOAD_TIMEOUT,
                 companionUrl: 'https://companion.myapp.com/' // TODO: ???
             });
         }
-        // noinspection JSUnresolvedVariable, JSUnusedGlobalSymbols
-        uppy.use(Uppy.XHRUpload, {
+        uppy.use(XHRUpload, {
             endpoint:   Emma.Upload.Path.endpoint,
             fieldName: 'file',
             timeout:   0, // UPLOAD_TIMEOUT, // NOTE: no Uppy timeout for now

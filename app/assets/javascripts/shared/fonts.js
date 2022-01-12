@@ -1,6 +1,8 @@
 // app/assets/javascripts/shared/fonts.js
-//
-//= require shared/definitions
+
+
+import { isMissing, handleEvent } from '../shared/definitions'
+
 
 /**
  * Load Typekit fonts, adding the script if it is not already present.

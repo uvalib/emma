@@ -1,14 +1,13 @@
 // app/assets/stylesheets/controllers/_member.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'feature/model'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Member index page
 //=============================================================================
 
 // Member metadata label/value pairs for index listings.
+// @see ModelHelper::List#model_list_item
 .member-list-item {
 
     @extend .model-list-item;
@@ -34,20 +33,24 @@
 //=============================================================================
 
 // Member metadata values.
+// @see ModelHelper::List#model_details
 .member-details {
     @extend .model-details;
 }
 
 // Member preference settings.
+// @see file:app/views/member/_preferences.html.erb
 .member-preferences {
     @extend .model-details;
 }
 
 // Member download history.
+// @see MemberHelper#member_history
+// @see file:app/views/member/_history.html.erb
 .member-history {
 
     display: block;
-    margin:  $page-padding 0;
+    margin:  v.$page-padding 0;
 
     .history-list {
         @extend .toggle-panel;
@@ -69,6 +72,7 @@
 
 // Container for a .member-details and .member-preferences in a two-column
 // format for wide screens.
+// @see file:app/views/member/_details.html.erb
 .member-container {
 
     @extend .model-container;
@@ -82,7 +86,7 @@
     .member-preferences {
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             margin-top: -0.5rem;
         }
     }

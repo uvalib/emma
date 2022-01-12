@@ -1,34 +1,10 @@
 // app/assets/stylesheets/controllers/_home.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'shared/mixins'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Welcome page
 //=============================================================================
-
-.panel {
-
-    @extend %panel;
-    @extend %panel-interior;
-    @extend %block-shadow;
-
-    @include width-fit-content;
-
-    min-width:   50%;
-    max-width:   50%;
-    padding:     1rem;
-    line-height: 1.375;
-
-    @media #{$medium-width} {
-        max-width: 100%;
-    }
-
-    @media #{$narrow-screen} {
-        max-width: 90%;
-    }
-}
 
 body.home-main,
 body.home-welcome,
@@ -36,12 +12,12 @@ body.home-dashboard {
 
     .sign-in {
 
-        margin-top:    $page-padding;
-        margin-bottom: $page-padding;
+        margin-top:    v.$page-padding;
+        margin-bottom: v.$page-padding;
         font-weight:   bold;
 
-        @media #{$not-wide-screen} {
-            margin-top: calc(2 * #{$page-padding});
+        @media #{v.$not-wide-screen} {
+            margin-top: calc(2 * #{v.$page-padding});
         }
     }
 

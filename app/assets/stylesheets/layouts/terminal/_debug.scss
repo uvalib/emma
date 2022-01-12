@@ -1,7 +1,6 @@
-// app/assets/stylesheets/shared/_debug.scss
+// app/assets/stylesheets/layouts/terminal/_debug.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Debugging.
@@ -18,6 +17,7 @@
     // Special control shown if RunState.unavailable? unless RunState::STATIC.
     .restore-availability {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %control-button-base;
 
         width:         min-content;
@@ -25,7 +25,7 @@
         margin-bottom: 1rem;
         font-size:     medium;
         font-weight:   bold;
-        background:    $root-bg-color;
+        background:    v.$root-bg-color;
     }
 
     // noinspection CssReplaceWithShorthandSafely
@@ -56,7 +56,7 @@
         font-weight: bold;
     }
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
 
         .session-debug-table {
             grid-template-columns: 1fr;
@@ -76,7 +76,7 @@
     }
 
     .note {
-        color:       $debug-fg;
+        color:       v.$debug-fg;
         margin-left: 0.5rem;
     }
 }
@@ -85,14 +85,14 @@
 
     width: 50%;
 
-    @media #{$not-wide-screen} {
+    @media #{v.$not-wide-screen} {
         width:      100%;
-        margin-top: calc(2 * #{$page-padding});
+        margin-top: calc(2 * #{v.$page-padding});
     }
 
     .ability-header {
-        @media #{$narrow-screen} {
-            margin:    calc(2 * #{$flex-gap-y}) 0;
+        @media #{v.$narrow-screen} {
+            margin:    calc(2 * #{v.$flex-gap-y}) 0;
             font-size: x-large;
         }
     }
@@ -104,7 +104,7 @@
     table {
 
         width:        100%;
-        border:       2px solid $uva-accent-orange;
+        border:       2px solid v.$uva-accent-orange;
         table-layout: fixed;
 
         thead {
@@ -131,7 +131,7 @@
 
         .can {
             font-weight:      bold;
-            background-color: $success-bg;
+            background-color: v.$success-bg;
         }
     }
 }

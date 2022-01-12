@@ -1,8 +1,9 @@
 // app/assets/javascripts/feature/iframe.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { consoleError, consoleLog }          from '../shared/logging'
+import { handleClickAndKeypress, isMissing } from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

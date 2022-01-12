@@ -1,6 +1,8 @@
 // app/assets/javascripts/shared/session.js
 
-//= require shared/definitions
+
+import { focusable, isInternetExplorer, urlFrom } from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

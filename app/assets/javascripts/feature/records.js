@@ -1,8 +1,19 @@
 // app/assets/javascripts/feature/records.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { Emma }       from '../shared/assets'
+import { consoleLog } from '../shared/logging'
+import {
+    asParams,
+    delegateInputClick,
+    handleEvent,
+    handleHoverAndFocus,
+    isEvent,
+    isMissing,
+    isPresent,
+    toggleVisibility,
+} from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 
@@ -97,7 +108,9 @@ $(document).on('turbolinks:load', function() {
      * @type {jQuery}
      */
     let $filter_options_controls =
-        $filter_options_panel.find(`.${Emma.Record.FilterOptions.Control.class}`);
+        $filter_options_panel.find(
+            `.${Emma.Record.FilterOptions.Control.class}`
+        );
 
     /**
      * The debug-only checkboxes to enable/disable the presence of

@@ -1,8 +1,26 @@
 // app/assets/javascripts/feature/advanced-search.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { Emma }       from '../shared/assets'
+import { consoleLog } from '../shared/logging'
+import {
+    arrayWrap,
+    compact,
+    debounce,
+    deepFreeze,
+    handleClickAndKeypress,
+    handleEvent,
+    isDefined,
+    isEmpty,
+    isEvent,
+    isMissing,
+    isPresent,
+    notDefined,
+    randomizeClass,
+    toggleVisibility,
+    urlParameters,
+} from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

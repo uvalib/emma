@@ -2,13 +2,12 @@
 //
 // NOTE: this may go away...
 
-@use 'controllers/entry' as *;
-
 //=============================================================================
 // Action index page
 //=============================================================================
 
 // Action metadata label/value pairs for index listings.
+// @see ModelHelper::List#model_list_item
 .action-list-item {
     @extend .entry-list-item;
 }
@@ -23,6 +22,7 @@
 //=============================================================================
 
 // Action metadata values.
+// @see ModelHelper::List#model_details
 .action-details {
     @extend .entry-details;
 }

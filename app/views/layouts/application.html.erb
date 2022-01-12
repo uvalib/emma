@@ -20,7 +20,7 @@
     <%= page_favicon %>
     <%= page_stylesheets %>
     <%= page_script_settings %>
-    <%= page_javascripts %>
+    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
   </head>
 
   <body class="<%= page_classes -%>">

@@ -1,8 +1,8 @@
 // app/assets/javascripts/feature/help.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { deepFreeze, isMissing } from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

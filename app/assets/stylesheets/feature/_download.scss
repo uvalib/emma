@@ -1,7 +1,28 @@
 // app/assets/stylesheets/feature/_download.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
+
+//=============================================================================
+// Internal mixins
+//=============================================================================
+
+// Properties for hidden controls that are shown at different stages.
+// @see file:app/assets/javascripts/feature/download.js
+%transient-control {
+
+    display:         inline-block;
+    margin-left:     v.$gap-x;
+    line-height:     1.25;
+    vertical-align:  baseline;
+    font-weight:     bold;
+    font-size:       smaller;
+    text-decoration: none;
+    cursor:          pointer;
+
+    @media #{v.$narrow-screen} {
+        margin: 0.5rem 0 0;
+    }
+}
 
 //=============================================================================
 // Artifact download controls
@@ -12,25 +33,7 @@
     // @see ArtifactHelper#artifact_link
     .link {
         &.complete {
-            color: $root-fg-color;
-        }
-    }
-
-    // Properties for hidden controls that are shown at different stages.
-    // @see file:app/assets/javascripts/feature/download.js
-    %transient-control {
-
-        display:         inline-block;
-        margin-left:     $gap-x;
-        line-height:     1.25;
-        vertical-align:  baseline;
-        font-weight:     bold;
-        font-size:       smaller;
-        text-decoration: none;
-        cursor:          pointer;
-
-        @media #{$narrow-screen} {
-            margin: 0.5rem 0 0;
+            color: v.$root-fg-color;
         }
     }
 
@@ -46,7 +49,7 @@
 
         padding:          3px 6px;
         color:            black;
-        background-color: $alert-bg;
+        background-color: v.$alert-bg;
         border-radius:    3px;
         cursor:           default;
     }
@@ -57,7 +60,7 @@
         @extend %transient-control;
 
         padding:          2px 6px;
-        background-color: $success-bg;
+        background-color: v.$success-bg;
         border:           1px solid black;
         border-radius:    6px;
 
@@ -72,14 +75,14 @@
         padding: 1rem;
         font:    revert;
 
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             top:        2rem;
             left:       2rem;
             max-width:  33vw;
             min-height: unset;
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             padding: 0.5rem;
         }
 
@@ -127,7 +130,7 @@
             // members in the list, then the panel will grow down the page
             // (meaning that the submit button may be far from the top of the
             // panel and below the bottom of the screen).
-            @media #{$wide-screen} {
+            @media #{v.$wide-screen} {
                 max-height: 25vh;
             }
 
@@ -137,7 +140,7 @@
             // to give this element enough vertical space for the whole list.
             // Zeroing out the basis allows flex to resolve the layout without
             // concern for the "ideal" height of the element.
-            @media #{$not-wide-screen} {
+            @media #{v.$not-wide-screen} {
                 flex-basis: 0;
             }
 
@@ -167,6 +170,7 @@
 
             button {
 
+                // noinspection SassScssResolvedByNameOnly
                 @extend %control-button;
 
                 font-size:     large;

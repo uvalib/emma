@@ -1,20 +1,26 @@
 // app/assets/stylesheets/controllers/_data.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'feature/model'    as *;
+@use 'shared/variables' as v;
+
+//=============================================================================
+// Internal constants
+//=============================================================================
+
+$database-table-max-columns: 25;
+
+$side-scroll-shadow: -1.5rem  0  0  0.5rem  v.$root-bg-color;
+$vert-scroll-shadow:  0       0  0  0.5rem  v.$root-bg-color;
 
 //=============================================================================
 // DataController index page
 //=============================================================================
 
-$side-scroll-shadow: -1.5rem  0  0  0.5rem  $root-bg-color;
-$vert-scroll-shadow:  0       0  0  0.5rem  $root-bg-color;
-
+// @see file:app/views/data/index.html.erb
 .database-table-links {
     line-height: 1.375;
 }
 
+// @see file:app/views/data/_heading.html.erb
 .database-table-name {
 
     margin-top: 4rem;
@@ -33,12 +39,12 @@ $vert-scroll-shadow:  0       0  0  0.5rem  $root-bg-color;
 // DataController index or show page
 //=============================================================================
 
-$database-table-max-columns: 25;
-
 /**
  * NOTE: This is crude, mostly because the normal intended output is JSON.
  * Some minimal styling is supplied just to help confirm results from the
  * controller by being able to view them as a web page.
+ *
+ * @see DataHelper#html_db_table
  */
 .database-table {
 
@@ -54,13 +60,15 @@ $database-table-max-columns: 25;
     grid-template-columns: $columns;
     gap:                   1rem;
 
+    // @see DataHelper#html_db_record
     .database-record {
 
         display: contents;
 
+        // @see DataHelper#html_db_column
         .database-column {
 
-            background: $root-bg-color;
+            background: v.$root-bg-color;
 
             &.hierarchy {
                 max-height:  25vh;
@@ -87,10 +95,10 @@ $database-table-max-columns: 25;
                 padding:        0 1px;
                 font-weight:    bold;
                 text-transform: uppercase;
-                border-bottom:  2px solid $root-fg-color;
+                border-bottom:  2px solid v.$root-fg-color;
 
                 &.col-first {
-                    z-index:    $z-raised;
+                    z-index:    v.$z-raised;
                 }
 
                 &:not(.col-first) {
@@ -101,6 +109,7 @@ $database-table-max-columns: 25;
     }
 }
 
+// @see file:app/views/data/_heading.html.erb
 .database-table.empty {
 
     // No data is driving the grid layout so make the column headers the same.
@@ -117,6 +126,7 @@ $database-table-max-columns: 25;
 // DataController counts page
 //=============================================================================
 
+// @see DataHelper#html_db_field_table
 .database-counts-table {
 
     display:               grid;
@@ -125,6 +135,7 @@ $database-table-max-columns: 25;
     row-gap:               3rem;
     margin-top:            4.5rem;
 
+    // @see DataHelper#html_db_field
     .database-field-counts {
 
         display: contents;
@@ -140,11 +151,12 @@ $database-table-max-columns: 25;
             grid-column-start: 1;
 
             &.invalid {
-                color:         $error-fg;
+                color:         v.$error-fg;
                 cursor:        default;
             }
         }
 
+        // @see DataHelper#html_db_field_values
         .field-values {
 
             display:               grid;

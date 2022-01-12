@@ -1,0 +1,24 @@
+// app/assets/stylesheets/layouts/controls/_lists.scss
+
+@use 'shared/controls/lists' as l;
+
+//=============================================================================
+// Tabular lists.
+//=============================================================================
+
+// A two-column list where each row is a label followed by a value.
+.list-2-column {
+
+    @include l.tabular-list(2);
+
+    grid-template-columns: [label] auto [value] 1fr;
+}
+
+// A three-column list where each row is a number, a label, and a value.
+.list-3-column {
+
+    @include l.tabular-list(3);
+
+    grid-template-columns:
+        [number] minmax(1%, max-content) [label] auto [value] 1fr;
+}

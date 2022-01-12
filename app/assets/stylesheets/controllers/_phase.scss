@@ -2,13 +2,12 @@
 //
 // NOTE: this may go away...
 
-@use 'controllers/entry' as *;
-
 //=============================================================================
 // Phase index page
 //=============================================================================
 
 // Phase metadata label/value pairs for index listings.
+// @see ModelHelper::List#model_list_item
 .phase-list-item {
     @extend .entry-list-item;
 }
@@ -23,6 +22,7 @@
 //=============================================================================
 
 // Phase metadata values.
+// @see ModelHelper::List#model_details
 .phase-details {
     @extend .entry-details;
 }

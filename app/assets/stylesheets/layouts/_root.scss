@@ -1,0 +1,138 @@
+// app/assets/stylesheets/layouts/_root.scss
+
+@use 'shared/variables' as v;
+
+//=============================================================================
+// Desktop root definitions (specific to large screens)
+//=============================================================================
+
+@media #{v.$wide-screen} {
+    :root {
+
+        // Scale.
+
+        --page-padding:    2rem;
+        --flex-gap:        1rem;
+        --gap:             0.5rem;
+        --scroll-easement: 0;
+
+        // Dimensions.
+
+        --thumbnail-max-x: auto;
+        --thumbnail-max-y: #{v.$nominal-thumbnail-y};
+    }
+}
+
+//=============================================================================
+// Tablet root definitions (specific to medium screens)
+//=============================================================================
+
+@media #{v.$medium-width} {
+    :root {
+
+        // Scale.
+
+        --page-padding:    0.75rem;
+        --flex-gap:        0.25rem;
+        --gap:             0.25rem;
+        --scroll-easement: #{v.$nominal-easement};
+
+        // Dimensions.
+
+        --thumbnail-max-x: #{v.$nominal-thumbnail-x};
+        --thumbnail-max-y: #{v.$nominal-thumbnail-x};
+    }
+}
+
+//=============================================================================
+// Mobile root definitions (specific to small screens)
+//=============================================================================
+
+@media #{v.$narrow-screen} {
+    :root {
+
+        // Scale.
+
+        --page-padding:    0.75rem;
+        --flex-gap:        0.25rem;
+        --gap:             0.25rem;
+        --scroll-easement: #{v.$nominal-easement};
+
+        // Dimensions.
+
+        --thumbnail-max-x: #{v.$nominal-thumbnail-x};
+        --thumbnail-max-y: #{v.$nominal-thumbnail-x};
+    }
+}
+
+//=============================================================================
+// Responsive definitions.
+//=============================================================================
+
+:root {
+
+    // Dimensions.
+
+    --page-padding-x:    var(--page-padding);
+    --page-padding-y:    calc(var(--page-padding) / 2);
+    --flex-gap-x:        var(--flex-gap);
+    --flex-gap-y:        var(--flex-gap);
+    --gap-x:             var(--gap);
+    --gap-y:             var(--gap);
+    --scroll-easement-x: var(--scroll-easement);
+    --scroll-easement-y: 0;
+
+    // Color scheme.
+
+    --bg-color:          white;
+    --fg-color:          black;
+    --rev-bg-color:      #{v.$header-bg};
+    --rev-fg-color:      white;
+}
+
+//=============================================================================
+// General layout.
+//=============================================================================
+
+// Prevent modal pages rendered inside an <iframe> from allowing scroll events
+// to chain to the underlying page (which happens when the page is scrolled to
+// the end of the <iframe> and you keep attempting to scroll).
+html.modal {
+    // noinspection CssBrowserCompatibilityForProperties
+    overscroll-behavior: none;
+}
+
+body {
+
+    display:        flex;
+    flex-direction: column;
+    min-height:     100vh;
+    margin:         0;
+    padding:        0;
+    font-family:    v.$font-normal;
+
+    // Establish the default foreground/background colors for the sake of
+    // accessibility checkers.
+    color:          v.$root-fg-color;
+    background:     v.$root-bg-color;
+
+    @media #{v.$narrow-screen} {
+        font-size: large;
+    }
+
+    // The <header> and <footer> areas of the page.
+    .layout-header,
+    .layout-footer {
+        flex: 0 0 auto;
+    }
+
+    // The <main> content area of the page.
+    .layout-content {
+        flex: 1 1 auto;
+    }
+}
+
+// Avoid the additional interior dotted outline in Firefox.
+::-moz-focus-inner {
+    border: 0;
+}

@@ -18,7 +18,7 @@ module HeadHelper::Stylesheets
   private
 
   # @type [Array<String>]
-  DEFAULT_PAGE_STYLESHEETS = HEAD_CONFIG[:stylesheets]
+  DEFAULT_PAGE_STYLESHEETS = HEAD_CONFIG[:stylesheets] || []
 
   # ===========================================================================
   # :section:

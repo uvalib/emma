@@ -1,18 +1,21 @@
 // app/assets/stylesheets/feature/_aws.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/common'           as *;
-@use 'shared/controls/buttons' as *;
+@use 'shared/variables'        as v;
+@use 'shared/controls/buttons' as b;
+
+//=============================================================================
+// Internal constants
+//=============================================================================
+
+$aws-bucket-bg:          v.$root-rev-bg-color;
+$aws-bucket-fg:          v.$root-rev-fg-color;
+$aws-bucket-padding:     0.5rem;
+$aws-admin-section-gap:  calc(2 * #{v.$page-padding});
+$aws-admin-column-space: 0.75rem;
 
 //=============================================================================
 // AWS admin page
 //=============================================================================
-
-$aws-bucket-bg:          $root-rev-bg-color;
-$aws-bucket-fg:          $root-rev-fg-color;
-$aws-bucket-padding:     0.5rem;
-$aws-admin-section-gap:  calc(2 * #{$page-padding});
-$aws-admin-column-space: 0.75rem;
 
 .admin-section {
     margin-top: $aws-admin-section-gap;
@@ -24,6 +27,7 @@ $aws-admin-column-space: 0.75rem;
     justify-content: space-between;
 }
 
+// @see AwsHelper#render_s3_bucket
 .aws-bucket {
     display:       grid;
     padding:       0 0 $aws-bucket-padding;
@@ -34,6 +38,7 @@ $aws-admin-column-space: 0.75rem;
     border-radius: 0.25rem;
 }
 
+// @see AwsHelper#render_s3_object
 .aws-object {
 
     display:    grid;
@@ -45,7 +50,7 @@ $aws-admin-column-space: 0.75rem;
         [size]   0.5fr
         [date]   1fr;
 
-    @media #{$medium-width} {
+    @media #{v.$medium-width} {
         grid-template-columns:
             [prefix] 0.6fr
             [key]    1fr
@@ -53,7 +58,7 @@ $aws-admin-column-space: 0.75rem;
             [date]   1fr;
     }
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         grid-template-columns: 1fr;
         margin-bottom:         1rem;
         padding-bottom:        $aws-admin-column-space;
@@ -71,7 +76,7 @@ $aws-admin-column-space: 0.75rem;
 
     &.row {
         .last_modified {
-            @media #{$medium-width} {
+            @media #{v.$medium-width} {
                 word-spacing: -6px;
             }
         }
@@ -79,7 +84,7 @@ $aws-admin-column-space: 0.75rem;
 }
 
 .aws-bucket {
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
 
         line-height: 1.375;
 
@@ -98,6 +103,7 @@ $aws-admin-column-space: 0.75rem;
     }
 }
 
+// @see AwsHelper#render_s3_object_headings
 .column-headings {
     padding-top:    $aws-bucket-padding;
     padding-bottom: 0.25rem;
@@ -108,11 +114,14 @@ $aws-admin-column-space: 0.75rem;
     border-bottom:  2px solid $aws-bucket-bg;
 }
 
+// @see AwsHelper#render_s3_object
 .first-prefix {
     margin-top: $aws-admin-column-space;
 }
 
+// @see AwsHelper#s3_bucket_link
 .aws-link {
-    @include link-button(lightgray);
+    @include b.link-button(lightgray);
+    // noinspection SassScssResolvedByNameOnly
     @extend %control-button;
 }

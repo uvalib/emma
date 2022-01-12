@@ -1,13 +1,19 @@
 // app/assets/javascripts/shared/logging.js
 
-//= require shared/definitions
+
+import { asString, flatten } from '../shared/definitions'
+
+
+// ============================================================================
+// Exported functions
+// ============================================================================
 
 /**
  * Emit a console log message.
  *
  * @param {...*} args
  */
-function consoleLog(...args) {
+export function consoleLog(...args) {
     console.log(...consoleArgs(args));
 }
 
@@ -16,7 +22,7 @@ function consoleLog(...args) {
  *
  * @param {...*} args
  */
-function consoleWarn(...args) {
+export function consoleWarn(...args) {
     console.warn(...consoleArgs(args));
 }
 
@@ -25,9 +31,13 @@ function consoleWarn(...args) {
  *
  * @param {...*} args
  */
-function consoleError(...args) {
+export function consoleError(...args) {
     console.error(...consoleArgs(args));
 }
+
+// ============================================================================
+// Internal functions
+// ============================================================================
 
 /**
  * Prepare for console output.

@@ -1,8 +1,6 @@
 // app/assets/stylesheets/controllers/_user_sessions.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/controls/grids' as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Page header
@@ -22,30 +20,37 @@ body.user_sessions {
 // Login page
 //=============================================================================
 
+// @see file:app/views/user/sessions/new.html.erb
+// @see file:app/views/user/registrations/edit.html.erb
+// @see file:app/views/devise/shared/_links.html.erb
 .sign-in-links {
 
     display:     grid;
     align-items: center;
 
-    @media #{$wide-screen} {
+    @media #{v.$wide-screen} {
         gap: 1rem 3rem;
         grid-template-columns:
             [label] auto [uid] 1fr [pwd] 1fr [actions] 1fr [options] 1fr;
     }
 
-    @media #{$medium-width} {
+    @media #{v.$medium-width} {
         gap: 1rem;
         grid-template-columns:
             [label] auto [uid] 1fr [pwd] 1fr [actions] auto [options] auto;
     }
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         gap: 1rem;
         grid-template-columns: 1fr;
     }
 
+    // @see file:app/views/devise/shared/_links.html.erb
+    // @see file:app/views/user/sessions/_omniauth.html.erb
+    // @see file:app/views/user/registrations/edit.html.erb
     .sign-in-link {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %control-button;
 
         padding:           0.75rem;
@@ -54,12 +59,14 @@ body.user_sessions {
         grid-column-start: 1;
     }
 
+    // @see file:app/views/user/sessions/_local.html.erb
+    // @see file:app/views/user/sessions/_token.html.erb
     .sign-in-form.inline {
 
         display:     contents;
         line-height: 1.5;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             display: inline-grid;
         }
 
@@ -79,7 +86,7 @@ body.user_sessions {
             flex-wrap:   nowrap;
             align-items: center;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-top:  0.25rem;
                 margin-left: 0;
             }
@@ -89,7 +96,7 @@ body.user_sessions {
 
             .label {
                 font-weight:  bold;
-                margin-right: $flex-gap-x;
+                margin-right: v.$flex-gap-x;
             }
 
             .value {
@@ -99,12 +106,13 @@ body.user_sessions {
 
         .actions {
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 margin-right: 100%; // Push to next line.
             }
 
             input[type='submit'] {
 
+                // noinspection SassScssResolvedByNameOnly
                 @extend %control-button-base;
 
                 line-height: 1;
@@ -118,7 +126,7 @@ body.user_sessions {
             }
 
             input[type='checkbox'] {
-                margin-right: calc(#{$flex-gap-x} / 2);
+                margin-right: calc(#{v.$flex-gap-x} / 2);
             }
         }
 

@@ -1,0 +1,9 @@
+// app/assets/stylesheets/application.sass.scss
+//
+// Entry point for the SASS build designated in package.json.
+
+@import 'vendor';           // Library style overrides
+@import 'layouts';          // Base page styles
+@import 'feature';          // Base feature styles
+@import 'controllers';      // Controller-specific styles
+@import 'layouts/terminal'; // Special style overrides

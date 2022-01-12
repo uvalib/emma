@@ -1,8 +1,7 @@
 // app/assets/stylesheets/feature/_overlay.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'shared/functions' as *;
+@use 'shared/variables' as v;
+@use 'shared/functions' as f;
 
 //=============================================================================
 // Content overlay frames
@@ -21,13 +20,13 @@
 
     // Add the "visible" class to the element to make the overlay appear.
     &.visible {
-        z-index: $z-overlay;
+        z-index: v.$z-overlay;
         opacity: 1;
     }
 
     // Without the addition of the "visible" class, the overlay remains hidden.
     &:not(.visible) {
-        z-index: $z-hidden;
+        z-index: v.$z-hidden;
         opacity: 0;
     }
 
@@ -35,75 +34,5 @@
     .content {
         position: sticky;
         display:  block;
-    }
-}
-
-//=============================================================================
-// Content overlay mixins
-//=============================================================================
-
-/// Make a dynamic overlay featuring an image.
-///
-/// @param {String}  $img-path        Path to image file.
-/// @param {Numeric} $img-width       Width of image element.
-/// @param {Numeric} $img-height      Height of image element.
-/// @param {Numeric} $img-y-pos       Distance of image from top of screen.
-///
-@mixin image-overlay(
-    $img-path,
-    $img-width:  5vw,
-    $img-height: 5vh,
-    $img-y-pos:  66vh
-) {
-
-    @extend .overlay;
-
-    display:         flex;
-    justify-content: center;
-
-    &.visible {
-        height: 1000%;
-    }
-
-    .content {
-        top:               $img-y-pos;
-        width:             $img-width;
-        height:            $img-height;
-        margin:            0;
-        padding:           0;
-        background-image:  #{url($img-path)};
-        background-repeat: no-repeat;
-        background-size:   contain;
-    }
-}
-
-/// Make a dynamic overlay featuring text.
-///
-/// @param {Color}   $txt-bg          Color flare surrounding text.
-/// @param {Numeric} $txt-width       Width of text element.
-/// @param {Numeric} $txt-height      Height of text element.
-/// @param {Numeric} $txt-y-pos       Distance of text from top of screen.
-///
-@mixin text-overlay(
-    $txt-bg:     lighter($uva-blue, 75%),
-    $txt-width:  max-content,
-    $txt-height: max-content,
-    $txt-y-pos:  50vh
-) {
-
-    @extend .overlay;
-
-    .content {
-        top:           $txt-y-pos;
-        width:         $txt-width;
-        height:        $txt-height;
-        margin:        0 auto;
-        padding:       1rem;
-        font-size:     xx-large;
-        color:         white;
-        background:    $txt-bg;
-        border:        1px solid $txt-bg;
-        border-radius: 50%;
-        box-shadow:    0 0 3rem 3rem $txt-bg;
     }
 }

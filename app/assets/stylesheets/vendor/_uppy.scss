@@ -1,8 +1,7 @@
 // app/assets/stylesheets/vendor/_uppy.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'shared/functions' as *;
+@use 'shared/variables' as v;
+@use 'shared/functions' as f;
 
 // @import '../../../node_modules/uppy/dist/uppy.css';
 
@@ -19,6 +18,7 @@
 
 // Upload action button.
 .uppy-FileInput-btn {
+    // noinspection SassScssResolvedByNameOnly
     @extend %control-button;
 }
 
@@ -48,7 +48,7 @@
 
     // The actual message popup.
     p[role="alert"] {
-        background-color: $uva-accent-orange;
+        background-color: v.$uva-accent-orange;
     }
 }
 
@@ -93,7 +93,7 @@
         display:          block;
         height:           100%;
         margin-top:       0;
-        background-color: lighter($uva-accent-orange, 40%);;
+        background-color: f.lighter(v.$uva-accent-orange, 40%);;
         border-radius:    0.25rem;
     }
 
@@ -110,8 +110,8 @@
         left:          95%;
         padding:       0.25rem;
         font-weight:   bold;
-        color:         $root-fg-color;
-        background:    $root-bg-color;
+        color:         v.$root-fg-color;
+        background:    v.$root-bg-color;
         border-radius: 0.75rem;
         visibility:    inherit;
 
@@ -136,8 +136,8 @@
                 content:       "saving...";
                 display:       inline-block;
                 padding:       0.25rem;
-                color:         $root-fg-color;
-                background:    $root-bg-color;
+                color:         v.$root-fg-color;
+                background:    v.$root-bg-color;
                 border-radius: 0.75rem;
                 transform:     translate(-75%, -135%);
             }

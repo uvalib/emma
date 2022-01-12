@@ -1,14 +1,13 @@
 // app/assets/stylesheets/controllers/_reading_list.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'feature/model'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Reading List index page
 //=============================================================================
 
 // Reading List metadata label/value pairs for index listings.
+// @see ModelHelper::List#model_list_item
 .reading_list-list-item {
     @extend .model-list-item;
 }
@@ -23,6 +22,7 @@
 //=============================================================================
 
 // Reading List metadata values.
+// @see ModelHelper::List#model_details
 .reading_list-details {
     @extend .model-details;
 }
@@ -65,6 +65,7 @@
     .reading_list-details {}
 
     // Listing of catalog titles associated with the Reading List.
+    // @see file:app/views/title/index.html.erb
     .title-list {
 
         // NOTE: If ReadingListHelper#READING_LIST_THUMBNAIL is *false*
@@ -74,7 +75,7 @@
 
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             margin-top: -0.5rem;
         }
     }

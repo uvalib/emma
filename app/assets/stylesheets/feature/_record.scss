@@ -1,12 +1,12 @@
 // app/assets/stylesheets/feature/_record.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Repository record popup control
 //=============================================================================
 
+// @see SearchHelper#record_popup
 .record-popup {
 
     @extend .popup-container;
@@ -15,9 +15,10 @@
         // TODO: ??? .record-popup .control.text
     }
 
+    // noinspection DuplicatedCode
     .popup-panel {
 
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             position: fixed;
             top:      3rem;
             bottom:   3rem;
@@ -25,7 +26,7 @@
             right:    3rem;
         }
 
-        @media #{$medium-width} {
+        @media #{v.$medium-width} {
             position: fixed;
             top:      2rem;
             bottom:   2rem;

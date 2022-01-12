@@ -541,6 +541,7 @@ module PaginationHelper
   # @param [Hash] opt
   #
   # @see #pagination_icon
+  # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_prev_icon(**opt)
     pagination_icon(**prepend_classes!(opt, 'left-triangle-icon'))
@@ -551,6 +552,7 @@ module PaginationHelper
   # @param [Hash] opt
   #
   # @see #pagination_icon
+  # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_next_icon(**opt)
     pagination_icon(**prepend_classes!(opt, 'right-triangle-icon'))
@@ -561,6 +563,7 @@ module PaginationHelper
   # @param [Hash] opt
   #
   # @see #pagination_icon
+  # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_last_icon(**opt)
     pagination_icon(**prepend_classes!(opt, 'square-icon'))

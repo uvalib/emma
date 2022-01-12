@@ -1,9 +1,7 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/controls/grids' as *;
-@use 'controllers/entry'     as *;
+@use 'shared/variables'      as v;
+@use 'shared/controls/grids' as g;
 
 //=============================================================================
 // Upload index page
@@ -31,11 +29,13 @@ body.upload-check.modal {
 //=============================================================================
 
 // Upload entry fields.
+// @see ModelHelper::List#model_details
 .upload-details {
     @extend .entry-details;
 }
 
 // Container for an .upload-details.
+// @see app/views/upload/_details.html.erb
 .upload-container {
     @extend .entry-container;
 }
@@ -44,6 +44,7 @@ body.upload-check.modal {
 // Upload new/edit/delete pages
 //=============================================================================
 
+// @see UploadHelper#upload_field_container
 .upload-fields {
     @extend .entry-fields;
 }
@@ -77,12 +78,14 @@ body.api_migrate {
 
     .summary {}
 
+    // @see ApiMigrateHelper#render_api_migration
     .record-list {
 
         margin:     2rem 0;
         padding:    0;
         list-style: none;
 
+        // @see ApiMigrateHelper#api_record_changes
         .record-results {
 
             display:        flex;
@@ -208,7 +211,7 @@ body.api_migrate {
                     @extend .model-list-item-panel; // For .data-list
                     @extend .toggle-panel;
 
-                    @include grid-column-span;
+                    @include g.grid-column-span;
 
                     .data-list {
                         width:  100%;
@@ -216,7 +219,7 @@ body.api_migrate {
                     }
 
                     .invalid {
-                        color:  $error-fg;
+                        color:  v.$error-fg;
                         cursor: help;
                     }
                 }

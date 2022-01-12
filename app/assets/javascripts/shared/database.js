@@ -1,8 +1,15 @@
-// app/assets/javascripts/feature/database.js
+// app/assets/javascripts/shared/database.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import {
+    arrayWrap,
+    asString,
+    fromJSON,
+    isDefined,
+    isEmpty,
+    notEmpty,
+} from '../shared/definitions'
+
 
 /**
  * RecordProperties
@@ -96,7 +103,7 @@
  * @property {function:IDBDatabase}                 database
  * @property {function}                             closeDatabase
  */
-let DB = (function() {
+export let DB = (function() {
 
     /**
      * IndexQueryValue

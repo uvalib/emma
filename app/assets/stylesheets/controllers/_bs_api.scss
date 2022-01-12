@@ -1,8 +1,13 @@
 // app/assets/stylesheets/controllers/_bs_api.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'shared/mixins'    as *;
+@use 'shared/variables' as v;
+@use 'shared/mixins'    as x;
+
+//=============================================================================
+// Internal constants
+//=============================================================================
+
+$api-background-color: snow;
 
 //=============================================================================
 // Bookshare API test page
@@ -11,12 +16,10 @@
 body.bs_api-index,
 body.bs_api-v2 {
 
-    $api-background-color: snow;
-
     background-color: $api-background-color;
 
     .layout-content {
-        box-shadow: 0 0 0 $page-padding $api-background-color;
+        box-shadow: 0 0 0 v.$page-padding $api-background-color;
     }
 
     //=========================================================================
@@ -48,8 +51,8 @@ body.bs_api-v2 {
         @extend %api-section;
 
         display:     block;
-        margin-top:  $page-padding-y;
-        padding-top: $page-padding-y;
+        margin-top:  v.$page-padding-y;
+        padding-top: v.$page-padding-y;
     }
 
     .methods {
@@ -59,13 +62,13 @@ body.bs_api-v2 {
         padding:          1rem;
         column-count:     auto;
         column-width:     27.5vw;
-        background-color: $uva-light-gray;
+        background-color: v.$uva-light-gray;
 
-        @media #{$wide-screen} {
+        @media #{v.$wide-screen} {
             column-width: 15vw;
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             padding-top:  0;
             column-width: unset;
         }
@@ -78,7 +81,7 @@ body.bs_api-v2 {
 
         > * {
 
-            @include width-fit-content;
+            @include x.width-fit-content;
 
             display: block;
             margin:  0 (-$item-padding) $item-padding;
@@ -87,11 +90,11 @@ body.bs_api-v2 {
 
         .success {
             color:            blue;
-            background-color: $root-bg-color;
+            background-color: v.$root-bg-color;
         }
 
         .error {
-            color: $error-fg;
+            color: v.$error-fg;
         }
     }
 
@@ -137,7 +140,7 @@ body.bs_api-v2 {
             @extend %api-panel;
 
             &.success {
-                background-color: $root-bg-color;
+                background-color: v.$root-bg-color;
             }
 
             &.error {

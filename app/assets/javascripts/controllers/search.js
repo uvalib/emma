@@ -1,9 +1,27 @@
 // app/assets/javascripts/controllers/search.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
-//= require feature/database
+
+import { Emma }          from '../shared/assets'
+import { DB }            from '../shared/database'
+import { CallbackQueue } from '../shared/queue'
+import {
+    DEFAULT_HEX_DIGITS,
+    HEX_BASE,
+    arrayWrap,
+    equivalent,
+    fromJSON,
+    handleClickAndKeypress,
+    isDefined,
+    isEmpty,
+    isMissing,
+    isPresent,
+    makeUrl,
+    rgbColor,
+    rgbColorInverse,
+    selector,
+    urlParameters,
+} from '../shared/definitions'
+
 
 // noinspection FunctionTooLongJS
 $(document).on('turbolinks:load', function() {
@@ -296,6 +314,7 @@ $(document).on('turbolinks:load', function() {
         $item.toggleClass(OPEN_MARKER);
     }
 
+    // noinspection DuplicatedCode
     /**
      * Set the control to indicate that its function is to close the associated
      * list item.
@@ -315,6 +334,7 @@ $(document).on('turbolinks:load', function() {
         return $control;
     }
 
+    // noinspection DuplicatedCode
     /**
      * Set the control to indicate that its function is to open the associated
      * list item.

@@ -1,16 +1,17 @@
 // app/assets/stylesheets/feature/_flash.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Flash message display.
 //=============================================================================
 
+// @see file:app/views/layouts/_messages.html.erb
 .flash-messages {
 
     > * {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %block-shadow;
 
         margin:        1rem 0;
@@ -21,11 +22,11 @@
     }
 
     .notice {
-        background-color: $notice-bg;
+        background-color: v.$notice-bg;
     }
 
     .alert {
-        background-color: $alert-bg;
+        background-color: v.$alert-bg;
     }
 
     // A boxed area within the flash message.

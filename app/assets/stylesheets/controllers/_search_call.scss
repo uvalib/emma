@@ -1,9 +1,5 @@
 // app/assets/stylesheets/controllers/_search_call.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'feature/model'    as *;
-
 //=============================================================================
 // Search call index page
 //=============================================================================
@@ -14,6 +10,7 @@
 }
 
 // Zero or more .search_call-list-item elements.
+// @see ModelHelper::List#model_list_item
 .search_call-list {
     @extend .model-list;
 }
@@ -140,6 +137,7 @@
 //=============================================================================
 
 // Search call metadata values.
+// @see ModelHelper::List#model_details
 .search_call-details {
     @extend .search_call-list-item; // INSTEAD OF @extend .model-details;
 }

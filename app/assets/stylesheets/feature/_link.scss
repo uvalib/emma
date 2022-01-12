@@ -1,21 +1,26 @@
 // app/assets/stylesheets/feature/_link.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'sass:math';
+@use 'shared/variables' as v;
+
+//=============================================================================
+// Internal constants
+//=============================================================================
+
+$page-section-gap:       3rem;
+$page-section-gap-small: math.div($page-section-gap, 2);
 
 //=============================================================================
 // Common page text sections
 //=============================================================================
 
-$page-section-gap:       3rem;
-$page-section-gap-small: $page-section-gap / 2;
-
 // Text sections on pages.
+// @see LinkHelper#page_text_section
 .page-text-section {
 
-    margin: $page-padding 0;
+    margin: v.$page-padding 0;
 
-    @media #{$wide-screen} {
+    @media #{v.$wide-screen} {
         width: 50%;
     }
 
@@ -24,7 +29,7 @@ $page-section-gap-small: $page-section-gap / 2;
 
         margin-top: $page-section-gap;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             margin-top: $page-section-gap-small;
         }
     }
@@ -56,7 +61,7 @@ $page-section-gap-small: $page-section-gap / 2;
 
         margin: $page-section-gap 0;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             margin: $page-section-gap-small 0;
         }
     }
@@ -68,11 +73,12 @@ $page-section-gap-small: $page-section-gap / 2;
 
         font-size:    larger;
         font-weight:  bold;
-        border-color: $alert-fg;
+        border-color: v.$alert-fg;
     }
 }
 
 // List of upload actions (new, edit, delete).
+// @see LinkHelper#page_action_list
 ul.page-actions {
 
     margin-top: 3rem;
@@ -85,11 +91,11 @@ ul.page-actions {
         list-style-position: inside;
 
         .control:focus {
-            outline-color:   $text-focus;
+            outline-color:   v.$text-focus;
             outline-offset:  2.5px;
         }
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
 
             margin-top: 0.75rem;
 

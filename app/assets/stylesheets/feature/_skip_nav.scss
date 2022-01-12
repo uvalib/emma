@@ -1,21 +1,25 @@
 // app/assets/stylesheets/feature/_skip_nav.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'shared/mixins'    as *;
+@use 'shared/variables' as v;
+@use 'shared/mixins'    as x;
+
+//=============================================================================
+// Internal constants
+//=============================================================================
+
+$sn-padding:   0.25rem;
+$sn-margin:    3 * $sn-padding;
+$sn-entry-gap: 0.1rem;
 
 //=============================================================================
 // "Skip navigation" menu
 //=============================================================================
 
 // Make the "skip navigation" menu visible when one of its links gets focus.
+// @see file:app/views/layouts/_skip_nav.html.erb
 .skip-nav {
 
-    $sn-padding:   0.25rem;
-    $sn-margin:    3 * $sn-padding;
-    $sn-entry-gap: 0.1rem;
-
-    @include user-select(none);
+    @include x.user-select(none);
 
     display:          block;
     position:         absolute;
@@ -23,15 +27,16 @@
     left:             $sn-margin;
     margin:           0;
     padding:          $sn-padding;
-    background-color: $root-bg-color;
-    border:           1px solid $root-fg-color;
-    box-shadow:       0 0 0 1px $root-bg-color;
+    background-color: v.$root-bg-color;
+    border:           1px solid v.$root-fg-color;
+    box-shadow:       0 0 0 1px v.$root-bg-color;
 
-    &         { z-index: $z-hidden }
-    &.visible { z-index: $z-popup; }
+    &         { z-index: v.$z-hidden }
+    &.visible { z-index: v.$z-popup; }
 
     .skip-nav-heading {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %clear-default-styling;
 
         margin-bottom:           2 * $sn-entry-gap;
@@ -42,12 +47,13 @@
 
     .skip-nav-menu {
 
+        // noinspection SassScssResolvedByNameOnly
         @extend %clear-default-styling;
 
         padding-top: $sn-entry-gap;
 
         a, a:visited {
-            color:           $root-fg-color;
+            color:           v.$root-fg-color;
             text-decoration: none;
         }
 
@@ -57,6 +63,7 @@
 
         li {
 
+            // noinspection SassScssResolvedByNameOnly
             @extend %clear-default-styling;
 
             margin:     $sn-entry-gap;

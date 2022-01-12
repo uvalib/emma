@@ -1,8 +1,10 @@
 // app/assets/javascripts/feature/images.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { Emma }                    from '../shared/assets'
+import { consoleLog, consoleWarn } from '../shared/logging'
+import { isMissing, secondsSince } from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

@@ -1,21 +1,8 @@
 // app/assets/stylesheets/layouts/header/_common.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/common'           as *;
-@use 'shared/controls/buttons' as *;
-
-//=============================================================================
-// Constants
-//=============================================================================
-
-// For enclosures which are the only child elements of header layout sections.
-// section.
-$enclosure-indent-wide:    4vw;
-$enclosure-indent-medium:  3vw;
-$enclosure-indent-narrow:  0;
-$enclosure-padding-wide:   1.25rem;
-$enclosure-padding-medium: 1rem;
-$enclosure-padding-narrow: 0.75rem;
+@use 'shared/variables'        as v;
+@use 'shared/controls/buttons' as b;
+@use 'shared/layouts/header'   as h;
 
 //=============================================================================
 // Placeholder classes
@@ -31,10 +18,10 @@ $enclosure-padding-narrow: 0.75rem;
 
     @extend %header-section;
 
-    max-width:        calc(#{$lg-width} - (2 * #{$page-padding-x}));
+    max-width:        calc(#{v.$lg-width} - (2 * #{v.$page-padding-x}));
     background-color: inherit;
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         width:     100%;
         min-width: unset;
         max-width: unset;
@@ -46,10 +33,10 @@ $enclosure-padding-narrow: 0.75rem;
 
     padding:        0.5rem;
     padding-right:  0;
-    border:         0.125rem dotted $root-rev-fg-color;
+    border:         0.125rem dotted v.$root-rev-fg-color;
     border-radius:  0.75rem;
 
-    @media #{$not-narrow-screen} {
+    @media #{v.$not-narrow-screen} {
         padding-bottom: 0.25rem;
     }
 }
@@ -57,27 +44,28 @@ $enclosure-padding-narrow: 0.75rem;
 // For controls with a white background within the header.
 %header-control-interior {
     * {
-        color:     $root-fg-color;
+        color:     v.$root-fg-color;
         font-size: large;
     }
 }
 
 %header-button {
 
-    @include link-button;
+    @include b.link-button; // link-button;
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %control-button-base;
 
     // Needs to be heavier against a dark background.
     &:hover {
-        box-shadow: 0 0 0.75rem 0.375rem $uva-accent-orange;
+        box-shadow: 0 0 0.75rem 0.375rem v.$uva-accent-orange;
     }
 
     padding-left:     8px;
     padding-right:    8px;
     text-align:       center;
-    color:            $uva-accent-blue;
-    background-color: $panel-bg;
+    color:            v.$uva-accent-blue;
+    background-color: v.$panel-bg;
 }
 
 // Treat the including class as the top part of a visually enclosed header
@@ -87,16 +75,16 @@ $enclosure-padding-narrow: 0.75rem;
 
     margin: 0 auto;
 
-    @media #{$wide-screen} {
-        padding: $enclosure-padding-wide;
+    @media #{v.$wide-screen} {
+        padding: h.$enclosure-padding-wide;
     }
 
-    @media #{$medium-width} {
-        padding: $enclosure-padding-medium;
+    @media #{v.$medium-width} {
+        padding: h.$enclosure-padding-medium;
     }
 
-    @media #{$narrow-screen} {
-        padding: $enclosure-padding-narrow;
+    @media #{v.$narrow-screen} {
+        padding: h.$enclosure-padding-narrow;
     }
 }
 
@@ -115,7 +103,7 @@ $enclosure-padding-narrow: 0.75rem;
     $y:      $offset;
     $blur:   18px;
     $spread: 8px;
-    $color:  rgba($uva-accent-teal, 0.35);
+    $color:  rgba(v.$uva-accent-teal, 0.35);
 
     box-shadow:
          #{$x}  #{$y} $blur $spread $color,
@@ -146,4 +134,36 @@ $enclosure-padding-narrow: 0.75rem;
     border-top-left-radius:  0;
     border-top-right-radius: 0;
     border-top:              none;
+}
+
+//=============================================================================
+// Page header.
+//=============================================================================
+
+// The <header> area of the page.
+//
+// noinspection CssReplaceWithShorthandSafely
+.layout-header {
+
+    position:        relative;
+    z-index:         v.$z-raised;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: flex-start;
+    margin:          0;
+    margin-bottom:   -(v.$hcm-divider-width);
+    padding:         0;
+    border-bottom:   v.$hcm-divider-width solid v.$root-rev-bg-color;
+    box-shadow:      0 0 1rem -0.25rem v.$root-rev-bg-color;
+
+    @media #{v.$medium-width} {
+
+        > :first-child {
+            padding-top: var(--page-padding);
+        }
+
+        > :last-child {
+            padding-bottom: var(--page-padding);
+        }
+    }
 }

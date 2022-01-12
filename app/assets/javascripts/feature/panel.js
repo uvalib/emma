@@ -1,8 +1,14 @@
 // app/assets/javascripts/feature/panel.js
 
-//= require shared/assets
-//= require shared/definitions
-//= require shared/logging
+
+import { Emma }       from '../shared/assets'
+import { consoleLog } from '../shared/logging'
+import {
+    handleClickAndKeypress,
+    isMissing,
+    isPresent,
+} from '../shared/definitions'
+
 
 $(document).on('turbolinks:load', function() {
 

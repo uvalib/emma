@@ -1,8 +1,9 @@
 // app/assets/stylesheets/shared/controls/_lists.scss
+//
+// Definitions supporting lists and list elements.
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/controls/grids' as *;
+@use 'shared/variables'      as v;
+@use 'shared/controls/grids' as g;
 
 //=============================================================================
 // List definitions.
@@ -24,7 +25,7 @@
 
     display: grid;
 
-    @include grid-columns($template, $columns);
+    @include g.grid-columns($template, $columns);
 
     gap: $y-gap $x-gap;
 
@@ -37,39 +38,18 @@
     // A heading within the grid that spans all columns.
     .list-heading {
 
-        @include grid-column-span;
+        @include g.grid-column-span;
 
-        margin: $page-padding-y 0;
+        margin: v.$page-padding-y 0;
 
         &:first-child {
 
             margin-top:    0;
-            margin-bottom: $page-padding;
+            margin-bottom: v.$page-padding;
 
             &.empty {
                 margin-bottom: 0;
             }
         }
     }
-}
-
-//=============================================================================
-// Tabular lists.
-//=============================================================================
-
-// A two-column list where each row is a label followed by a value.
-.list-2-column {
-
-    @include tabular-list(2);
-
-    grid-template-columns: [label] auto [value] 1fr;
-}
-
-// A three-column list where each row is a number, a label, and a value.
-.list-3-column {
-
-    @include tabular-list(3);
-
-    grid-template-columns:
-        [number] minmax(1%, max-content) [label] auto [value] 1fr;
 }

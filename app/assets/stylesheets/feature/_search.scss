@@ -1,11 +1,9 @@
 // app/assets/stylesheets/feature/_search.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/functions'      as *;
-@use 'shared/controls/grids' as *;
-@use 'feature/model'         as *;
-@use 'feature/overlay'       as *;
+@use 'shared/variables'       as v;
+@use 'shared/controls/grids'  as g;
+@use 'shared/feature/model'   as m;
+@use 'shared/feature/overlay' as o;
 
 //=============================================================================
 // Search controls
@@ -14,29 +12,31 @@
 .pagination-top,
 .pagination-bottom {
 
-    @include grid-column-span;
+    @include g.grid-column-span;
 
     max-width: inherit;
     margin:    0;
 }
 
+// @see ModelHelper::List#index_controls
 .pagination-top {
 
-    margin-top:    $results-entry-gap-y;
-    margin-bottom: calc(2 * #{$results-entry-gap-y});
+    margin-top:    m.$results-entry-gap-y;
+    margin-bottom: calc(2 * #{m.$results-entry-gap-y});
 
-    @media #{$narrow-screen} {
-        margin-bottom: $results-entry-gap-y;
+    @media #{v.$narrow-screen} {
+        margin-bottom: m.$results-entry-gap-y;
     }
 }
 
+// @see ModelHelper::List#index_controls
 .pagination-bottom {
 
-    margin-top:    calc(#{$results-entry-gap-y} / 2);
+    margin-top:    calc(#{m.$results-entry-gap-y} / 2);
     margin-bottom: 0;
 
-    @media #{$not-wide-screen} {
-        margin-top: calc(2 * #{$results-entry-gap-y});
+    @media #{v.$not-wide-screen} {
+        margin-top: calc(2 * #{m.$results-entry-gap-y});
     }
 }
 
@@ -55,7 +55,7 @@
         display: inline-block;
         margin:  0 0 0 0.75rem;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             margin-top: 0.5rem;
         }
     }
@@ -66,6 +66,7 @@
 //=============================================================================
 
 // An indicator that is presented during a time-consuming search.
+// @see file:app/views/layouts/_overlays.html.erb
 .search-in-progress {
-    @include image-overlay('loading-balls.gif');
+    @include o.image-overlay('loading-balls.gif');
 }

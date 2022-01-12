@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # View helper methods supporting access and linkages to AWS S3.
 #
+# @see file:app/assets/stylesheets/feature/_aws.scss
+#
 module AwsHelper
 
   include HtmlHelper

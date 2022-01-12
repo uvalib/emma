@@ -1,28 +1,25 @@
 // app/assets/stylesheets/feature/_images.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables'      as v;
+@use 'shared/feature/images' as i;
 
 //=============================================================================
 // Common <img> properties.
 //=============================================================================
 
-$image-border-width: 1px;
-$image-border-color: gray;
-
 %image {
     object-fit:    contain;
-    border:        $image-border-width solid $image-border-color;
+    border:        i.$image-border-width solid i.$image-border-color;
     border-radius: 3px;
 }
 
 %thumbnail-dimensions {
 
-    max-width:  $thumbnail-max-x;
-    max-height: $thumbnail-max-y;
-    height:     $thumbnail-max-y;
+    max-width:  v.$thumbnail-max-x;
+    max-height: v.$thumbnail-max-y;
+    height:     v.$thumbnail-max-y;
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         max-height: unset;
         height:     auto;
     }
@@ -73,7 +70,7 @@ $image-border-color: gray;
 
         @extend %placeholder-image;
 
-        width:     $min-thumbnail-width - (2 * $image-border-width);
+        width:     $min-thumbnail-width - (2 * i.$image-border-width);
         height:    auto;
         transform: scale(0.5);
     }
@@ -94,6 +91,7 @@ $image-border-color: gray;
             outline: none;
 
             img {
+                // noinspection SassScssResolvedByNameOnly
                 @extend %focus;
             }
         }

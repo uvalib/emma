@@ -1,7 +1,8 @@
 // app/assets/stylesheets/shared/controls/_buttons.scss
+//
+// Definitions supporting button controls.
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
+@use 'shared/variables' as v;
 
 // ============================================================================
 // Controls
@@ -15,6 +16,7 @@
 ///
 @mixin link-button($light: white, $dark: darkgray, $width: 2px) {
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %button-hover;
 
     display: block;
@@ -39,12 +41,13 @@
 ///
 @mixin clear-selection-button {
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %button-hover;
 
     margin:          auto -0.125rem auto 0.5rem;
     padding:         0 0.125rem;
     text-decoration: none;
-    color:           $uva-accent-blue;
+    color:           v.$uva-accent-blue;
     background:      whitesmoke;
     border:          2px solid gray;
     border-radius:   50%;
@@ -52,7 +55,7 @@
 
     &:focus {
         text-decoration: none;
-        outline-color:   $text-focus;
+        outline-color:   v.$text-focus;
         outline-offset:  -0.5px;
     }
 

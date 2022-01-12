@@ -1,14 +1,14 @@
 // app/assets/stylesheets/controllers/_category.scss
 
-@use 'shared/variables' as *;
-@use 'shared/common'    as *;
-@use 'feature/model'    as *;
+@use 'shared/variables'     as v;
+@use 'shared/feature/model' as m;
 
 //=============================================================================
 // Category index page
 //=============================================================================
 
 // Category metadata label/value pairs for index listings.
+// @see file:ModelHelper::List#model_list_item
 .category-list-item {
 
     @extend .model-list-item;
@@ -23,24 +23,25 @@
     //=========================================================================
 
     .label {
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             flex: 1 1 75%;
         }
     }
 
     .value {
 
-        margin-left: $gap-x;
+        margin-left: v.$gap-x;
 
-        @media #{$narrow-screen} {
-            margin-left:  calc(2 * #{$gap-x});
-            margin-right: calc(2 * #{$gap-x});
+        @media #{v.$narrow-screen} {
+            margin-left:  calc(2 * #{v.$gap-x});
+            margin-right: calc(2 * #{v.$gap-x});
             flex:         0 0 auto;
         }
     }
 }
 
 // Zero or more .category-list-item elements.
+// @see file:app/views/category/index.html.erb
 .category-list {
 
     @extend .model-list;
@@ -50,7 +51,7 @@
     //=========================================================================
 
     .pagination-bottom {
-        margin-top: $results-entry-gap-y;
+        margin-top: m.$results-entry-gap-y;
     }
 }
 

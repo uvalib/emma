@@ -1,12 +1,11 @@
 // app/assets/stylesheets/controllers/_help.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/common'         as *;
-@use 'shared/controls/grids' as *;
-@use 'feature/model'         as *;
+@use 'shared/variables'      as v;
+@use 'shared/controls/grids' as g;
+@use 'shared/feature/model'  as m;
 
 //=============================================================================
-// Mixins
+// Internal mixins
 //=============================================================================
 
 @mixin help-interior {
@@ -28,10 +27,10 @@
 }
 
 %help-layout {
-    @media #{$wide-screen} {
+    @media #{v.$wide-screen} {
         max-width: 50vw;
     }
-    @media #{$medium-width} {
+    @media #{v.$medium-width} {
         max-width: 75vw;
     }
 }
@@ -60,7 +59,7 @@
 
         margin-left: 1rem;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
 
             margin-left: 0;
 
@@ -78,7 +77,7 @@
     h6 { margin-top: 2rem; font-size: 1.05em; }
 
     a:focus {
-        outline-color: $text-focus;
+        outline-color: v.$text-focus;
     }
 
     p {
@@ -98,9 +97,9 @@
         line-height:         1.5;
         list-style-position: inside;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
 
-            margin-bottom: $flex-gap-y;
+            margin-bottom: v.$flex-gap-y;
 
             a {
                 margin: 0 -0.25rem 0 -0.5rem;
@@ -131,7 +130,7 @@
                 max-width: 75%;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 max-width: 100%;
             }
         }
@@ -148,7 +147,7 @@
         justify-content: space-between;
         align-items:     flex-end;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             flex-wrap: wrap-reverse;
         }
 
@@ -163,13 +162,13 @@
             display: block;
             flex:    0 1 auto;
 
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
                 margin: auto 0.5rem;
             }
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 max-width:     90%;
-                margin-bottom: calc(2 * #{$flex-gap-y});
+                margin-bottom: calc(2 * #{v.$flex-gap-y});
             }
 
             img {
@@ -192,12 +191,12 @@
 
         @include help-interior;
 
-        @media #{$not-narrow-screen} {
+        @media #{v.$not-narrow-screen} {
 
             display:        flex;
             flex-direction: row;
 
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 flex-direction: column;
             }
 
@@ -219,7 +218,7 @@
                 flex:          1 0 auto;
                 margin-bottom: auto !important;
 
-                @media #{$not-narrow-screen} {
+                @media #{v.$not-narrow-screen} {
                     max-width: 50%; // Chrome needs this; other browsers don't.
                 }
             }
@@ -235,9 +234,9 @@
 
         @extend .label-value-pairs;
 
-        margin: $results-entry-gap-y $results-entry-gap-x;
+        margin: m.$results-entry-gap-y m.$results-entry-gap-x;
 
-        @media #{$narrow-screen} {
+        @media #{v.$narrow-screen} {
             grid-template-columns: [label] 1fr [value] 2fr;
         }
 
@@ -247,7 +246,7 @@
 
         // Menu selection.
         .label {
-            @media #{$narrow-screen} {
+            @media #{v.$narrow-screen} {
                 word-break: keep-all;
             }
         }
@@ -259,7 +258,7 @@
 
             &:last-of-type { margin-bottom: 0; }
 
-            @media #{$not-narrow-screen} {
+            @media #{v.$not-narrow-screen} {
 
                 display:         list-item;
                 margin-left:     1.25rem;
@@ -286,6 +285,7 @@
 
 %help-panel {
 
+    // noinspection SassScssResolvedByNameOnly
     @extend %panel;
     @extend %help-layout;
     @extend %help-styles;
@@ -293,11 +293,11 @@
     margin:  1rem 0;
     padding: 0.5rem 1rem;
 
-    @media #{$wide-screen} {
+    @media #{v.$wide-screen} {
         max-width: 50%;
     }
 
-    @media #{$medium-width} {
+    @media #{v.$medium-width} {
         max-width: 75%;
     }
 }
@@ -307,6 +307,8 @@
 //=============================================================================
 
 // A generic help section.
+// @see HelpHelper#help_section
+// @see file:app/views/help/index.html.erb
 .help-section {
     @extend %help-elements;
 }
@@ -329,14 +331,15 @@
 //=============================================================================
 
 // Help metadata label/value pairs for index listings.
+// @see file:app/views/help/_list.html.erb
 .help-list-item {
 
     @extend .model-list-item;
     @extend %help-styles;
 
-    margin-left: $results-entry-gap-x;
+    margin-left: m.$results-entry-gap-x;
 
-    @media #{$narrow-screen} {
+    @media #{v.$narrow-screen} {
         margin-left: 0;
     }
 
@@ -344,6 +347,7 @@
 }
 
 // Zero or more .help-list-item elements.
+// @see file:app/views/help/index.html.erb
 .help-list {
 
     @extend .model-list;
@@ -351,14 +355,14 @@
     @extend %help-styles;
     @extend %help-elements;
 
-    margin-top: $results-entry-gap-y;
+    margin-top: m.$results-entry-gap-y;
 
     //=========================================================================
     // Components
     //=========================================================================
 
     .entry-title {
-        @include grid-column-span;
+        @include g.grid-column-span;
     }
 }
 
@@ -367,11 +371,13 @@
 //=============================================================================
 
 // Help metadata values.
+// @see ModelHelper::List#model_details
 .help-details {
     @extend .model-details;
 }
 
 // Container for a .help-details.
+// @see HelpHelper#help_container
 .help-container {
 
     @extend .model-container;
@@ -395,6 +401,7 @@ body.help {
 // Help may contain normally-functional elements which are only for the purpose
 // of illustration.
 //
+// @see HelpHelper#help_section
 // @see file:app/assets/javascripts/feature/help.js
 //
 .help-section {
@@ -403,7 +410,7 @@ body.help {
     .advanced-search-toggle {
         display:          inline;
         font-size:        inherit;
-        color:            $root-rev-fg-color;
+        color:            v.$root-rev-fg-color;
         border:           1px solid gray;
     }
 
@@ -414,9 +421,9 @@ body.help {
         padding:          5px 10px;
         text-decoration:  none;
         font-size:        small;
-        color:            $root-rev-fg-color;
-        background-color: $bookshare-button;
-        border:           1px solid $bookshare-border;
+        color:            v.$root-rev-fg-color;
+        background-color: v.$bookshare-button;
+        border:           1px solid v.$bookshare-border;
         border-radius:    4px;
         box-shadow:       none;
     }
@@ -427,8 +434,8 @@ body.help {
         margin-top:       0.75rem;
         padding:          0.1825rem 0.375rem;
         font-weight:      normal;
-        color:            $root-rev-fg-color;
-        background-color: $root-rev-bg-color;
+        color:            v.$root-rev-fg-color;
+        background-color: v.$root-rev-bg-color;
     }
 
     // An inline rendering of the "Search" button.
@@ -451,11 +458,11 @@ body.help {
         padding:          1px 4px;
         text-decoration:  none;
         font-size:        inherit;
-        color:            $root-rev-fg-color;
-        background-color: $root-rev-bg-color;
-        border:           1px solid $root-rev-bg-color;
+        color:            v.$root-rev-fg-color;
+        background-color: v.$root-rev-bg-color;
+        border:           1px solid v.$root-rev-bg-color;
         border-radius:    0.375rem;
-        box-shadow:       inset 0 0 0 1px $root-rev-fg-color;
+        box-shadow:       inset 0 0 0 1px v.$root-rev-fg-color;
     }
 
     // An inline rendering of the inline "More/Less" toggle button.

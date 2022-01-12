@@ -5,10 +5,6 @@
 // ============================================================================
 
 /**
- * @typedef {Window.jQuery} jQuery
- */
-
-/**
  * @typedef {string|jQuery|HTMLElement|EventTarget} Selector
  */
 
@@ -32,7 +28,7 @@
  * @constant
  * @type {number}
  */
-const SECOND = 1000;
+export const SECOND = 1000;
 
 // noinspection PointlessArithmeticExpressionJS
 /**
@@ -41,7 +37,7 @@ const SECOND = 1000;
  * @constant
  * @type {number}
  */
-const SECONDS = 1 * SECOND;
+export const SECONDS = 1 * SECOND;
 
 // noinspection MagicNumberJS
 /**
@@ -50,7 +46,7 @@ const SECONDS = 1 * SECOND;
  * @constant
  * @type {number}
  */
-const MINUTE = 60 * SECONDS;
+export const MINUTE = 60 * SECONDS;
 
 // noinspection PointlessArithmeticExpressionJS
 /**
@@ -59,7 +55,7 @@ const MINUTE = 60 * SECONDS;
  * @constant
  * @type {number}
  */
-const MINUTES = 1 * MINUTE;
+export const MINUTES = 1 * MINUTE;
 
 /**
  * Kilobyte multiplier.
@@ -67,7 +63,7 @@ const MINUTES = 1 * MINUTE;
  * @constant
  * @type {number}
  */
-const K = 1024;
+export const K = 1024;
 
 /**
  * HTTP response codes.
@@ -75,7 +71,7 @@ const K = 1024;
  * @constant
  * @type {object}
  */
-const HTTP = Object.freeze({
+export const HTTP = Object.freeze({
     ok:                     200,
     created:                201,
     accepted:               202,
@@ -111,7 +107,7 @@ const HTTP = Object.freeze({
  *
  * @returns {number}
  */
-function percent(part, total) {
+export function percent(part, total) {
     return total ? ((part / total) * 100) : 0;
 }
 
@@ -123,7 +119,7 @@ function percent(part, total) {
  *
  * @returns {string}                  Blank if *value* is not a number.
  */
-function asSize(value, full) {
+export function asSize(value, full) {
     const n = Number.parseFloat(value);
     if (!n && (n !== 0)) {
         return '';
@@ -155,7 +151,7 @@ function asSize(value, full) {
  *
  * @returns {array}
  */
-function arrayWrap(item) {
+export function arrayWrap(item) {
     return Array.isArray(item) ? item : [item];
 }
 
@@ -166,7 +162,7 @@ function arrayWrap(item) {
  *
  * @returns {[string, any][]}
  */
-function objectEntries(item) {
+export function objectEntries(item) {
     return Object.entries(item).filter(kv => item.hasOwnProperty(kv[0]));
 }
 
@@ -178,7 +174,7 @@ function objectEntries(item) {
  *
  * @returns {string}
  */
-function asString(item, limit) {
+export function asString(item, limit) {
     const s_quote = "'";
     const d_quote = '"';
     let result    = '';
@@ -248,7 +244,7 @@ function asString(item, limit) {
  *
  * @returns {object|undefined}
  */
-function fromJSON(item, caller) {
+export function fromJSON(item, caller) {
     const func = caller || 'fromJSON';
     let result = undefined;
     if (typeof item == 'object') {
@@ -272,7 +268,7 @@ function fromJSON(item, caller) {
  *
  * @returns {Array|object|string|*}
  */
-function compact(item, trim) {
+export function compact(item, trim) {
     if (typeof item === 'string') {
         return (trim === false) ? item : item.trim();
 
@@ -295,7 +291,7 @@ function compact(item, trim) {
  *
  * @returns {Array}
  */
-function flatten(item) {
+export function flatten(item) {
     let result = [];
     if (arguments.length > 1) {
         Array.from(arguments).forEach(v => result.push(...flatten(v)));
@@ -315,7 +311,7 @@ function flatten(item) {
  *
  * @returns {Array|object|*}          An immutable copy of *item*.
  */
-function deepFreeze(item) {
+export function deepFreeze(item) {
     let new_item;
     if (Array.isArray(item)) {
         new_item = item.map(v => deepFreeze(v));
@@ -336,7 +332,7 @@ function deepFreeze(item) {
  *
  * @returns {boolean}
  */
-function equivalent(item1, item2) {
+export function equivalent(item1, item2) {
     const a1 = Array.isArray(item1);
     const a2 = Array.isArray(item2);
     const o1 = !a1 && (typeof item1 === 'object');
@@ -376,7 +372,7 @@ function equivalent(item1, item2) {
  *
  * @returns {number}
  */
-function timeOf(value) {
+export function timeOf(value) {
     let result;
     switch (typeof value) {
         case 'object': result = value.getTime(); break;
@@ -394,7 +390,7 @@ function timeOf(value) {
  *
  * @returns {number}
  */
-function secondsSince(start_time, time_now) {
+export function secondsSince(start_time, time_now) {
     const start = timeOf(start_time);
     const now   = timeOf(time_now);
     return (now - start) / SECOND;
@@ -414,7 +410,7 @@ function secondsSince(start_time, time_now) {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
  */
-function asDateTime(value, opt = {}) {
+export function asDateTime(value, opt = {}) {
     const separator  = opt.separator || ' ';
     const date_value = (value instanceof Date) ? value : new Date(value);
     let date, time;
@@ -441,7 +437,7 @@ function asDateTime(value, opt = {}) {
  *
  * @returns {boolean}
  */
-function isDefined(item) {
+export function isDefined(item) {
     return typeof item !== 'undefined';
 }
 
@@ -452,7 +448,7 @@ function isDefined(item) {
  *
  * @returns {boolean}
  */
-function notDefined(item) {
+export function notDefined(item) {
     return typeof item === 'undefined';
 }
 
@@ -463,7 +459,7 @@ function notDefined(item) {
  *
  * @returns {boolean}
  */
-function isEmpty(item) {
+export function isEmpty(item) {
     if (!item) {
         return true;
     } else if (isDefined(item.length)) {
@@ -486,7 +482,7 @@ function isEmpty(item) {
  *
  * @returns {boolean}
  */
-function notEmpty(item) {
+export function notEmpty(item) {
     return !isEmpty(item);
 }
 
@@ -497,7 +493,7 @@ function notEmpty(item) {
  *
  * @returns {boolean}
  */
-function isMissing(item) {
+export function isMissing(item) {
     return isEmpty(item);
 }
 
@@ -508,7 +504,7 @@ function isMissing(item) {
  *
  * @returns {boolean}
  */
-function isPresent(item) {
+export function isPresent(item) {
     return notEmpty(item);
 }
 
@@ -519,7 +515,7 @@ function isPresent(item) {
  *
  * @returns {boolean}
  */
-function isEvent(item) {
+export function isEvent(item) {
     return (item instanceof Event) || (item instanceof jQuery.Event);
 }
 
@@ -533,7 +529,7 @@ function isEvent(item) {
  * @constant
  * @type {number}
  */
-const HEX_BASE = 16;
+export const HEX_BASE = 16;
 
 /**
  * Default digits for {@link hexRand}.
@@ -541,7 +537,7 @@ const HEX_BASE = 16;
  * @constant
  * @type {number}
  */
-const DEFAULT_HEX_DIGITS = 6;
+export const DEFAULT_HEX_DIGITS = 6;
 
 /**
  * Render a number as a string of hex digits.  If *length* is given, left-fill
@@ -552,7 +548,7 @@ const DEFAULT_HEX_DIGITS = 6;
  *
  * @returns {string}
  */
-function hexString(value, length) {
+export function hexString(value, length) {
     let result;
     if (typeof value === 'number') {
         result = value.toString(HEX_BASE);
@@ -571,7 +567,7 @@ function hexString(value, length) {
  *
  * @returns {string}
  */
-function hexRand(length = DEFAULT_HEX_DIGITS) {
+export function hexRand(length = DEFAULT_HEX_DIGITS) {
     const random = Math.floor(Math.random() * (HEX_BASE ** length));
     return hexString(random, length);
 }
@@ -583,7 +579,7 @@ function hexRand(length = DEFAULT_HEX_DIGITS) {
  *
  * @returns {string}
  */
-function randomizeClass(css_class) {
+export function randomizeClass(css_class) {
     return css_class + '-' + hexRand();
 }
 
@@ -594,7 +590,7 @@ function randomizeClass(css_class) {
  * @param {string}              cls
  * @param {boolean}             [setting]
  */
-function toggleClass(sel, cls, setting) {
+export function toggleClass(sel, cls, setting) {
     arrayWrap(sel).forEach(element => $(element).toggleClass(cls, setting));
 }
 
@@ -605,7 +601,7 @@ function toggleClass(sel, cls, setting) {
  *
  * @returns {string[]}
  */
-function cssClasses(...args) {
+export function cssClasses(...args) {
     let result = [];
     args.forEach(function(arg) {
         let values = undefined;
@@ -631,7 +627,7 @@ function cssClasses(...args) {
  *
  * @returns {string}
  */
-function cssClass(...args) {
+export function cssClass(...args) {
     return cssClasses(...args).join(' ');
 }
 
@@ -642,7 +638,7 @@ function cssClass(...args) {
  *
  * @returns {string}
  */
-function selector(...args) {
+export function selector(...args) {
     const func = 'selector';
     let result = [];
     args.forEach(function(arg) {
@@ -699,7 +695,7 @@ function selector(...args) {
  *
  * @returns {string}
  */
-function elementSelector(element) {
+export function elementSelector(element) {
     let e = $(element)[0];
     if (e.id) {
         return `#${e.id}`;
@@ -721,7 +717,7 @@ function elementSelector(element) {
  *
  * @returns {string}
  */
-function rgbColor(value) {
+export function rgbColor(value) {
     const digits = hexString(value, DEFAULT_HEX_DIGITS);
     return '#' + digits;
 }
@@ -733,7 +729,7 @@ function rgbColor(value) {
  *
  * @returns {string}
  */
-function rgbColorInverse(value) {
+export function rgbColorInverse(value) {
     const digits = hexString(value, DEFAULT_HEX_DIGITS);
     return '#' + rotateHexDigits(digits);
 }
@@ -746,7 +742,7 @@ function rgbColorInverse(value) {
  *
  * @returns {string}
  */
-function rotateHexDigits(value, shift = HEX_BASE/2) {
+export function rotateHexDigits(value, shift = HEX_BASE/2) {
     const digits = hexString(value);
     return Array.from(digits)
         .map(digit => hexString((Number(`0x${digit}`) + shift) % HEX_BASE))
@@ -764,7 +760,7 @@ function rotateHexDigits(value, shift = HEX_BASE/2) {
  *
  * @returns {string}
  */
-function attributeSelector(attributes) {
+export function attributeSelector(attributes) {
     const list = attributes.join('], [');
     return `[${list}]`;
 }
@@ -776,7 +772,7 @@ function attributeSelector(attributes) {
  *
  * @returns {string}
  */
-function htmlDecode(text) {
+export function htmlDecode(text) {
     let str = text.toString().trim();
     let doc = str && new DOMParser().parseFromString(str, 'text/html');
     return doc?.documentElement?.textContent;
@@ -789,7 +785,7 @@ function htmlDecode(text) {
  *
  * @returns {jQuery}
  */
-function scrollIntoView(element) {
+export function scrollIntoView(element) {
     let $element = $(element);
     const rect   = $element[0].getBoundingClientRect();
     const top    = 0;
@@ -810,7 +806,7 @@ function scrollIntoView(element) {
  *
  * @returns {jQuery}
  */
-function create(element, properties) {
+export function create(element, properties) {
     const obj  = (typeof element === 'object');
     const prop = (obj ? element     : properties) || {};
     const tag  = (obj ? element.tag : element)    || 'div';
@@ -833,7 +829,7 @@ function create(element, properties) {
  *
  * @param {Selector} element
  */
-function ensureTabbable(element) {
+export function ensureTabbable(element) {
     $(element).each(function() {
         let $e         = $(this);
         const link     = isDefined($e.attr('href'));
@@ -856,7 +852,7 @@ function ensureTabbable(element) {
  *
  * @returns {string}
  */
-function urlFrom(arg) {
+export function urlFrom(arg) {
     let result = undefined;
     if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
         result = arg;
@@ -880,7 +876,7 @@ function urlFrom(arg) {
  *
  * @returns {object}
  */
-function asParams(item) {
+export function asParams(item) {
     const func = 'asParams';
     let result = {};
     if (typeof item === 'string') {
@@ -919,7 +915,7 @@ function asParams(item) {
  *
  * @returns {object}
  */
-function urlParameters(path) {
+export function urlParameters(path) {
     const prms = path ? path.replace(/^[^?]*\?/, '') : window.location.search;
     return asParams(prms);
 }
@@ -931,7 +927,7 @@ function urlParameters(path) {
  *
  * @returns {string}
  */
-function makeUrl(...parts) {
+export function makeUrl(...parts) {
     const func = 'makeUrl';
     let path   = [];
     let params = {};
@@ -1054,7 +1050,7 @@ function makeUrl(...parts) {
  *
  * @param {string|Selector|Event} arg
  */
-function cancelAction(arg) {
+export function cancelAction(arg) {
     let button;
     if (notDefined(arg)) {
         button = this;
@@ -1090,7 +1086,7 @@ function cancelAction(arg) {
  * @constant
  * @type {number}
  */
-const DEBOUNCE_DELAY = 250; // milliseconds
+export const DEBOUNCE_DELAY = 250; // milliseconds
 
 /**
  * Generate a wrapper function which executes the callback function only after
@@ -1101,7 +1097,7 @@ const DEBOUNCE_DELAY = 250; // milliseconds
  *
  * @returns {function}
  */
-function debounce(callback, wait) {
+export function debounce(callback, wait) {
     let delay = wait || DEBOUNCE_DELAY; // milliseconds
     let timeout;
     return function() {
@@ -1124,7 +1120,7 @@ function debounce(callback, wait) {
  *
  * @returns {jQuery}
  */
-function handleEvent($element, name, func) {
+export function handleEvent($element, name, func) {
     return $element.off(name, func).on(name, func);
 }
 
@@ -1137,7 +1133,7 @@ function handleEvent($element, name, func) {
  *
  * @returns {jQuery}
  */
-function handleClickAndKeypress($element, func) {
+export function handleClickAndKeypress($element, func) {
     ensureTabbable($element);
     return handleEvent($element, 'click', func).each(handleKeypressAsClick);
 }
@@ -1149,7 +1145,7 @@ function handleClickAndKeypress($element, func) {
  * @param {jQueryEventHandler} funcEnter    Event handler for 'enter'.
  * @param {jQueryEventHandler} [funcLeave]  Event handler for 'leave'.
  */
-function handleHoverAndFocus($element, funcEnter, funcLeave) {
+export function handleHoverAndFocus($element, funcEnter, funcLeave) {
     if (funcEnter) {
         handleEvent($element, 'mouseenter', funcEnter);
         handleEvent($element, 'focus',      funcEnter);
@@ -1166,16 +1162,16 @@ function handleHoverAndFocus($element, funcEnter, funcLeave) {
  * @param {function} callback
  * @param {boolean}  [debug]        If *true* show console warnings on events.
  */
-function onPageExit(callback, debug) {
+export function onPageExit(callback, debug) {
     if (debug) {
         handleEvent($(document), 'turbolinks:click', function() {
             // Leaving the page due to clicking on a link.
-            consoleWarn('>>>>> turbolinks:click EVENT <<<<<');
+            console.warn('>>>>> turbolinks:click EVENT <<<<<');
             callback();
         });
         handleEvent($(window), 'beforeunload', function() {
             // Leaving the page via history.back() or history.forward().
-            consoleWarn('>>>>> window beforeunload EVENT <<<<<');
+            console.warn('>>>>> window beforeunload EVENT <<<<<');
             callback();
         });
     } else {
@@ -1194,7 +1190,7 @@ function onPageExit(callback, debug) {
  * @constant
  * @type {string[]}
  */
-const FOCUS_ELEMENTS =
+export const FOCUS_ELEMENTS =
     deepFreeze(['a', 'area', 'button', 'input', 'select', 'textarea']);
 
 /**
@@ -1203,7 +1199,7 @@ const FOCUS_ELEMENTS =
  * @constant
  * @type {string}
  */
-const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
+export const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
 
 /**
  * Attributes indicating that an element should receive focus.
@@ -1211,7 +1207,7 @@ const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
  * @constant
  * @type {string[]}
  */
-const FOCUS_ATTRIBUTES =
+export const FOCUS_ATTRIBUTES =
     deepFreeze(['href', 'controls', 'data-path', 'draggable', 'tabindex']);
 
 /**
@@ -1220,7 +1216,7 @@ const FOCUS_ATTRIBUTES =
  * @constant
  * @type {string}
  */
-const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
+export const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
 
 /**
  * Selector for focusable elements.
@@ -1228,7 +1224,7 @@ const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
  * @constant
  * @type {string}
  */
-const FOCUS_SELECTOR =
+export const FOCUS_SELECTOR =
     FOCUS_ELEMENTS_SELECTOR + ', ' + FOCUS_ATTRIBUTES_SELECTOR;
 
 /**
@@ -1237,7 +1233,7 @@ const FOCUS_SELECTOR =
  * @constant
  * @type {string[]}
  */
-const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
+export const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
 
 /**
  * Selector for focusable elements that should not receive focus.
@@ -1245,7 +1241,7 @@ const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
  * @constant
  * @type {string}
  */
-const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
+export const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
 
 /**
  * For "buttons" or "links" which are not <a> tags (or otherwise don't
@@ -1275,7 +1271,7 @@ const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
  *
  * @returns {jQuery}
  */
-function handleKeypressAsClick(selector, direct, match, except) {
+export function handleKeypressAsClick(selector, direct, match, except) {
 
     /**
      * Determine the target(s) based on the *direct* argument.
@@ -1325,7 +1321,8 @@ function handleKeypressAsClick(selector, direct, match, except) {
             let $target = $(event?.target || this);
             const href  = $target.attr('href');
             if (!href || (href === '#')) {
-                $target.click().focusin();
+                $target.click();
+                $target.focusin();
                 return false;
             }
         }
@@ -1340,7 +1337,7 @@ function handleKeypressAsClick(selector, direct, match, except) {
  *
  * @param {Selector} element
  */
-function delegateInputClick(element) {
+export function delegateInputClick(element) {
 
     const func   = 'delegateInputClick';
     let $element = $(element);
@@ -1370,7 +1367,7 @@ function delegateInputClick(element) {
  *
  * @returns {boolean}
  */
-function focusable(element) {
+export function focusable(element) {
     return isPresent($(element).filter(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR));
 }
 
@@ -1382,7 +1379,7 @@ function focusable(element) {
  *
  * @returns {jQuery}
  */
-function focusableIn(element) {
+export function focusableIn(element) {
     return $(element).find(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR);
 }
 
@@ -1396,7 +1393,7 @@ function focusableIn(element) {
  *
  * @returns {boolean} If *true* then *element* is becoming visible.
  */
-function toggleVisibility(element, visible) {
+export function toggleVisibility(element, visible) {
     const invisibility_marker = 'invisible';
     let $element = $(element);
     let make_visible, hidden, visibility;
@@ -1423,7 +1420,7 @@ function toggleVisibility(element, visible) {
  *
  * @returns {boolean}
  */
-function isInternetExplorer() {
+export function isInternetExplorer() {
     // noinspection PlatformDetectionJS
     const ua = navigator.userAgent || '';
     return ua.includes('MSIE ') || ua.includes('Trident/');
@@ -1433,7 +1430,7 @@ function isInternetExplorer() {
 // Functions - Turbolinks
 // ============================================================================
 
-const DEBUG_TURBOLINKS = true;
+export const DEBUG_TURBOLINKS = true;
 
 // noinspection ES6ConvertVarToLetConst
 /*var $document = $(document);*/
