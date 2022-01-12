@@ -51,10 +51,10 @@ class Action::Schedule < Action::Single
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
-      scheduling: ->(*) {
+      scheduling: ->(*, **) {
         $stderr.puts "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: schedule review
       },
-      assigning:  ->(*) { assign! }
+      assigning:  ->(*, **) { assign! }
     }} and run_callback(**opt)
   end
 
@@ -71,7 +71,7 @@ class Action::Schedule < Action::Single
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
-      assigning: ->(*) {
+      assigning: ->(*, **) {
         $stderr.puts "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: assign reviewer
       },
       holding:   true
@@ -88,7 +88,7 @@ class Action::Schedule < Action::Single
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'submitting for review' # TODO: I18n
   end
 

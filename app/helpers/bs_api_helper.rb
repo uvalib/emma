@@ -32,13 +32,13 @@ module BsApiHelper
   # it passes through the application's "Bookshare API Explorer" endpoint.
   #
   # @param [String] path
-  # @param [Hash]   opt               Passed to #make_path.
+  # @param [Hash]   prm               Passed to #make_path.
   #
   # @return [String]
   #
-  def bs_api_explorer_url(path, **opt)
+  def bs_api_explorer_url(path, **prm)
     api_version = "/#{BOOKSHARE_API_VERSION}/"
-    make_path(path, opt).tap do |result|
+    make_path(path, **prm).tap do |result|
       result.delete_prefix!(BOOKSHARE_BASE_URL)
       unless result.start_with?('http', api_version)
         result.prepend(api_version).squeeze!('/')

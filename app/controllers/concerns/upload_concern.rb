@@ -170,7 +170,7 @@ module UploadConcern
       name = nil
     elsif src.is_a?(ActionDispatch::Http::UploadedFile)
       name = src.original_filename
-      data = src
+      data = src.read
     elsif src
       name = src
       data =

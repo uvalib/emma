@@ -434,7 +434,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_anonymous(*)
+  def act_as_anonymous(...)
     can :list, Artifact
     can :read, Title
     can :read, Periodical

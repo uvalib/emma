@@ -74,46 +74,46 @@ module HeadHelper::MetaTags
 
   # Set the meta tags for this page, eliminating any previous value.
   #
-  # @param [Hash] pairs
+  # @param [Hash, nil] pairs
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
   #
-  def set_page_meta_tags(pairs)
+  def set_page_meta_tags(pairs = nil)
     @page_meta_tags = {}
-    merge_meta_tags!(pairs)
+    merge_meta_tags!(pairs) if pairs.present?
     merge_meta_tags!(yield) if block_given?
     @page_meta_tags
   end
 
   # Add to the meta tags for this page.
   #
-  # @param [Hash] pairs
+  # @param [Hash, nil] pairs
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
   #
-  def append_page_meta_tags(pairs)
+  def append_page_meta_tags(pairs = nil)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
-    merge_meta_tags!(pairs)
+    merge_meta_tags!(pairs) if pairs.present?
     merge_meta_tags!(yield) if block_given?
     @page_meta_tags
   end
 
   # Replace existing (or add new) meta tags for this page.
   #
-  # @param [Hash] pairs
+  # @param [Hash, nil] pairs
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
   #
-  def replace_page_meta_tags(pairs)
+  def replace_page_meta_tags(pairs = nil)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
     @page_meta_tags.merge!(pairs) if pairs.present?
     @page_meta_tags.merge!(yield) if block_given?

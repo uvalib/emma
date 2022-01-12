@@ -74,7 +74,7 @@ class ApiService::Error < Api::Error
     #
     # @return [String]
     #
-    def service_name(*)
+    def service_name(...)
       @service_name ||= super
     end
 

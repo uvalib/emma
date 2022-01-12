@@ -235,7 +235,7 @@ module Api::Serializer::Associations
     # @see Api::Serializer#serializer_type
     #
     def decorator_class(record_class)
-      ->(*_args, **opt) {
+      ->(*, **opt) {
         current = opt.dig(:options, :doc).class.to_s
         format  = current.match?(/xml/i) ? :xml : serializer.serializer_type
         format  = format.to_s.capitalize

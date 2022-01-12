@@ -49,7 +49,7 @@ class Phase::BulkEdit < Phase::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'BULK EDIT' # TODO: I18n
   end
 

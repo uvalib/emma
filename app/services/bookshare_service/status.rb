@@ -22,7 +22,7 @@ module BookshareService::Status
   # @return [(TrueClass,nil)]
   # @return [(FalseClass,String)]
   #
-  def active_status(*)
+  def active_status(...)
     result = BookshareService.new.get_title_count
     if result.is_a?(Exception)
       active  = false

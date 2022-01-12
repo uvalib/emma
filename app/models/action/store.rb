@@ -90,7 +90,7 @@ class Action::Store < Action::BulkPart
     env  = request || env
     env  = env.env if env.is_a?(ActionDispatch::Request)
     transition_sequence(**opt) {{
-      uploading: ->(*) { stat, hdrs, body = upload_file(env: env) }
+      uploading: ->(*, **) { stat, hdrs, body = upload_file(env: env) }
     }}
     auto_retry    = opt.key?(:auto_retry)    ? opt[:auto_retry]    : false
     update_record = opt.key?(:update_record) ? opt[:update_record] : true
@@ -145,7 +145,7 @@ class Action::Store < Action::BulkPart
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
-      promoting: ->(*) { promote_file },
+      promoting: ->(*, **) { promote_file },
       completed: true
     }} or return false
     $stderr.puts "++++++++++++++++++++++++ #{CLASS}.promote! | action.file_data #{file_data.class} | BAD | after promote_file" if file_data.is_a?(String)
@@ -163,7 +163,7 @@ class Action::Store < Action::BulkPart
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'uploading' # TODO: I18n
   end
 

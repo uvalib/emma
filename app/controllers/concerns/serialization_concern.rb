@@ -130,7 +130,7 @@ module SerializationConcern
       result = item
     end
     name ||= :item unless result.is_a?(Hash)
-    name ? { name => result } : result
+    name ? { name.to_sym => result } : result
   end
 
   # ===========================================================================

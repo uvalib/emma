@@ -178,10 +178,10 @@ module BookshareHelper
   # originating controller and action.
   #
   # @param [Hash, String, nil] path
-  # @param [Hash]              path_opt   Passed to #make_path.
+  # @param [Hash]              prm    Passed to #make_path.
   #
-  # @return [String]                      A full URL.
-  # @return [nil]                         If the URL could not be determined.
+  # @return [String]                  A full URL.
+  # @return [nil]                     If the URL could not be determined.
   #
   #--
   # == Variations
@@ -189,16 +189,16 @@ module BookshareHelper
   #
   # @overload bookshare_url(url, **path_opt)
   #   @param [String, nil] url        Full or partial URL.
-  #   @param [Hash]        path_opt
+  #   @param [Hash]        prm
   #
   # @overload bookshare_url(hash, **path_opt)
   #   @param [Hash]        hash       Controller/action.
-  #   @param [Hash]        path_opt
+  #   @param [Hash]        prm
   #
   #--
   # noinspection RubyNilAnalysis
   #++
-  def bookshare_url(path, **path_opt)
+  def bookshare_url(path, **prm)
 
     # If *path* was not given, get a #BOOKSHARE_ACTION reference based on the
     # current or specified controller/action.
@@ -222,7 +222,7 @@ module BookshareHelper
     # If the path contains format references (e.g., "%{id}") then they should
     # be satisfied by the options passed in to the method.
     if (ref_keys = named_references(path, SPRINTF_NAMED_REFERENCE)).present?
-      ref_opt, path_opt = partition_hash(path_opt, *ref_keys)
+      ref_opt, prm = partition_hash(prm, *ref_keys)
       ref_opt.compact_blank!
       ref_opt.transform_values! { |v| v.is_a?(String) ? url_escape(v) : v }
       ref_opt[:ids] ||= ref_opt[:id]
@@ -233,14 +233,14 @@ module BookshareHelper
     # Before using the (remaining) options as URL parameters, apply parameter
     # name translations.
     param_map = PARAM_MAPPING[controller.to_sym] || {}
-    path_opt =
-      path_opt.map { |k, v|
+    path_prm =
+      prm.map { |k, v|
         k = param_map[k] if param_map.key?(k)
         v = v.join(',')  if v.is_a?(Array)
         [k, v] unless k.blank? || v.blank?
       }.compact.to_h
 
-    make_path(path, path_opt)
+    make_path(path, **path_prm)
   end
 
   # ===========================================================================

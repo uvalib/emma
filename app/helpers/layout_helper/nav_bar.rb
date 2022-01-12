@@ -93,7 +93,7 @@ module LayoutHelper::NavBar
 
   # Indicate whether it is appropriate to show the nav bar.
   #
-  def show_nav_bar?(*)
+  def show_nav_bar?(...)
     true
   end
 
@@ -102,10 +102,10 @@ module LayoutHelper::NavBar
   # @return [ActiveSupport::SafeBuffer]
   #
   def nav_bar_links
-    curr_params = url_parameters.except(:limit)
-    curr_path   = request.path
-    base_path   = curr_path.sub(%r{^(/[^/]*)/.*$}, '\1')
-    curr_path  += '?' + url_query(curr_params) if curr_params.present?
+    curr_path  = request.path
+    base_path  = curr_path.sub(%r{^(/[^/]*)/.*$}, '\1')
+    curr_prm   = url_parameters.except(:limit)
+    curr_path += '?' + url_query(curr_prm) if curr_prm.present?
     html_div(class: 'links') do
       first = true
       NAV_BAR_CONTROLLERS.map do |controller|

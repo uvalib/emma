@@ -78,29 +78,32 @@ module Representable
       #
       # @param [Symbol, Any, nil] mode
       # @param [Array]            args
+      # @param [Hash]             opt
       #
       # @return [nil]
       #
       # @yield To supply additional items to show.
-      # @yieldreturn [Array]
+      # @yieldreturn [Array, Any]
       #
       #--
       # == Variations
       #++
       #
-      # @overload __debug_show(mode, *args)
+      # @overload __debug_show(mode, *args, **opt)
       #   @param [Symbol, nil] mode        Either :input, :output or *nil*
       #   @param [Array]       args
+      #   @param [Hash]        opt
       #
-      # @overload __debug_show(*args)
+      # @overload __debug_show(*args, **opt)
       #   @param [Array]       args
+      #   @param [Hash]        opt
       #
       # @see #__output_impl
       #
       #--
       # noinspection RubyMismatchedArgumentType
       #++
-      def __debug_show(mode, *args)
+      def __debug_show(mode, *args, **opt)
         mode =
           case mode
             when :input  then 'I' if DEBUG_INPUT
@@ -109,13 +112,7 @@ module Representable
             else              '-'
           end
         return if mode.blank?
-        opt = args.extract_options! || {}
-        if block_given?
-          added_args = Array.wrap(yield)
-          added_opt  = added_args.extract_options!
-          args += added_args
-          opt = opt.merge(added_opt) if added_opt.present?
-        end
+        args += Array.wrap(yield) if block_given?
         line  = +"#{LEADER}#{mode} #{args.shift}"
         items =
           opt.map do |k, v|
@@ -274,9 +271,9 @@ module Representable
     Class = ->(input, options) do
       binding = options[:binding]
       object_class = binding.evaluate_option(:class, input, options)
-      __debug_show(:input) {
-        ["Class #{object_class}", input: input, options: options]
-      }
+      __debug_show(:input, input: input, options: options) do
+        "Class #{object_class}"
+      end
       unless object_class
         raise DeserializeError,
           ":class did not return class constant for `#{binding.name}`."
@@ -294,7 +291,7 @@ module Representable
       include RepresentableDebug
 
       def read(hash, as)
-        __debug_show(:input) { ["Hash.#{__method__}", as: as, hash: hash] }
+        __debug_show(:input, as: as, hash: hash) { "Hash.#{__method__}" }
         if hash.is_a?(Array)
           hash
         elsif hash.key?(as)

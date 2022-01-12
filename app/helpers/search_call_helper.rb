@@ -220,10 +220,10 @@ module SearchCallHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_call_value(value, **opt)
-    v_opt = { class: 'item' }
-    item  = opt.delete(:item) and merge_html_options!(v_opt, item)
-    sep   = opt.delete(:separator)
-    value =
+    v_opt  = { class: 'item' }
+    item   = opt.delete(:item) and merge_html_options!(v_opt, item)
+    sep    = opt.delete(:separator)
+    result =
       Array.wrap(value).map do |v|
         v_opt[:'data-value'] = v
         if v == SearchTerm::NULL_SEARCH
@@ -238,10 +238,10 @@ module SearchCallHelper
       end
     prepend_classes!(opt, 'value')
     html_span(opt) do
-      if value.size > 1
-        safe_join(value, (sep || search_call_connector))
+      if result.size > 1
+        safe_join(result, (sep || search_call_connector))
       else
-        value
+        result
       end
     end
   end

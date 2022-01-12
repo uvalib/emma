@@ -348,12 +348,12 @@ module CssHelper
 
   # Generate a string of random hex digits.
   #
-  # @param [Integer] digits
+  # @param [Integer] digits           Default: `#HEX_RAND_DEFAULT_DIGITS`
   # @param [Boolean] upper            If *false* show lowercase hex digits.
   #
   # @return [String]
   #
-  def hex_rand(digits = nil, upper: nil)
+  def hex_rand(digits: nil, upper: nil)
     digits = digits.to_i
     digits = HEX_RAND_DEFAULT_DIGITS unless digits.positive?
     format = "%0#{digits}X"

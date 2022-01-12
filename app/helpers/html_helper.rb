@@ -56,8 +56,8 @@ module HtmlHelper
   # If *tag* is a number it is translated to 'h1'-'h6'.  If *tag* is 0 or *nil*
   # then it defaults to 'div'.
   #
-  # @param [Symbol, String, Integer, nil] tag
-  # @param [Array<Any,nil>]               args
+  # @param [Symbol, Integer, nil] tag
+  # @param [Array<Any,nil>]       args
   #
   # @option args.last [String] :separator
   #
@@ -73,13 +73,13 @@ module HtmlHelper
   #++
   #
   # @overload html_tag(tag, content, options = nil, escape = true)
-  #   @param [Symbol, String, Integer, nil]           tag
+  #   @param [Symbol, String, nil]                    tag
   #   @param [ActiveSupport::SafeBuffer, String, nil] content
   #   @param [Hash]                                   options
   #   @param [Boolean]                                escape
   #
   # @overload html_tag(tag, options = nil, escape = true, &block)
-  #   @param [Symbol, String, Integer, nil]           tag
+  #   @param [Symbol, String, nil]                    tag
   #   @param [Hash]                                   options
   #   @param [Boolean]                                escape
   #   @param [Proc]                                   block
@@ -100,8 +100,8 @@ module HtmlHelper
   # Invoke #form_tag after normalizing element contents provided via the
   # parameter list and/or the block.
   #
-  # @param [String]     url_or_path
-  # @param [Array<Any>] args          Passed to #form_tag except for:
+  # @param [String, Hash] url_or_path
+  # @param [Array<Any>]   args        Passed to #form_tag except for:
   #
   # @option args.last [String] :separator   Default: "\n"
   #
@@ -358,7 +358,7 @@ module HtmlHelper
         if wrap
           prepend_classes!(r_opt, 'entry')
           html_div(r_opt) do
-            key = html_div(k_opt) { ERB::Util.h(key) << ':' }
+            key = html_div(k_opt) { ERB::Util.h(key.to_s) << ':' }
             key << HTML_SPACE << html_div(value, v_opt)
           end
         else

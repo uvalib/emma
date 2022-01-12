@@ -141,13 +141,13 @@ module Workflow::Base::Simulation
   # Output for simulated action.
   #
   # @param [Array] args             Passed to #__debug_line.
+  # @param [Hash]  opt
   # @param [Proc]  block            Passed to #__debug_line.
   #
   # @return [nil]
   #
-  def __debug_sim(*args, &block)
-    # noinspection RubyNilAnalysis
-    opt  = args.extract_options!.reverse_merge(leader: '   ')
+  def __debug_sim(*args, **opt, &block)
+    opt.reverse_merge!(leader: '   ')
     meth = args.first.is_a?(Symbol) ? args.shift : calling_method
     args.unshift(':%-20s' % meth)
     __debug_line(*args, **opt, &block)

@@ -57,28 +57,26 @@ module AwsConcern
   # If :emma is included it will be moved to the end of the list.
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
-  # @param [Hash]                       opt       Default: `#url_parameters`.
+  # @param [Hash]                       prm       Passed to #param_values.
   #
   # @return [Array<Symbol>]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
-  def repositories(default: nil, **opt)
-    opt    = url_parameters if opt.blank?
-    emma   = EmmaRepository.default.to_sym
-    values = param_values(opt, *REPOSITORY_PARAMS)
-    values = values.presence || Array.wrap(default).compact.presence || %w(*)
-    values.map! do |v|
-      case v.to_s.downcase
-        when 'bs', /bookshare/         then :bookshare
-        when 'ia', /internet.*archive/ then :internetArchive
-        when 'ht', /hathi.*trust/      then :hathiTrust
-        when emma.to_s                 then emma
-        else                                '*'
-      end
+  def repositories(default: nil, **prm)
+    values = param_values(prm, *REPOSITORY_PARAMS)
+    values = values.presence || Array.wrap(default).compact.presence
+    if values.nil? || values.include?('*')
+      values = EmmaRepository.values.map(&:to_sym)
+    else
+      values.map! { |v|
+        case v.to_s.downcase
+          when 'bs', /bookshare/         then :bookshare
+          when 'ia', /internet.*archive/ then :internetArchive
+          when 'ht', /hathi.*trust/      then :hathiTrust
+          else Log.debug { "#{__method__}: #{v.inspect}: invalid" }
+        end
+      }.uniq!
     end
-    values = EmmaRepository.values.map(&:to_sym) if values.include?('*')
+    emma = EmmaRepository.default.to_sym
     values << emma if values.delete(emma)
     values
   end
@@ -86,25 +84,25 @@ module AwsConcern
   # deployments
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
-  # @param [Hash]                       opt       Default: `#url_parameters`.
+  # @param [Hash]                       prm       Passed to #param_values.
   #
   # @return [Array<Symbol>]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
-  def deployments(default: nil, **opt)
-    opt    = url_parameters if opt.blank?
-    values = param_values(opt, *DEPLOYMENT_PARAMS)
-    values = values.presence || Array.wrap(default).compact.presence || %w(*)
-    values.map! do |v|
-      case v.to_s.downcase
-        when /prod/        then :production
-        when /stag/, /dev/ then :staging
-        else                    '*'
-      end
+  def deployments(default: nil, **prm)
+    values = param_values(prm, *DEPLOYMENT_PARAMS)
+    values = values.presence || Array.wrap(default).compact.presence
+    if values.nil? || values.include?('*')
+      values = Deployment.values.map(&:to_sym)
+    else
+      values.map! { |v|
+        # noinspection SpellCheckingInspection
+        case v.to_s.downcase
+          when /prod(uction)?/                then :production
+          when /stag(ing)?/, /dev(elopment)?/ then :staging
+          else Log.debug { "#{__method__}: #{v.inspect}: invalid" }
+        end
+      }.uniq!
     end
-    values = Deployment.values.map(&:to_sym) if values.include?('*')
     values
   end
 
@@ -116,25 +114,26 @@ module AwsConcern
 
   # Get a list of values from one of the indicated parameter keys.
   #
-  # @param [Hash]          opt
+  # @param [Hash, nil]     opt        Default: `#url_parameters`.
   # @param [Array<Symbol>] keys
   #
   # @return [Array<String>]
   #
   def param_values(opt, *keys)
-    opt.values_at(*keys).compact_blank.first.to_s.downcase.split(/\s*,\s*/)
+    prm = url_parameters(opt.presence)
+    prm.values_at(*keys).compact_blank.first.to_s.downcase.split(/\s*,\s*/)
   end
 
   # aws_params
   #
-  # @param [Hash] opt
+  # @param [Hash, nil] opt            Default: `#url_parameters`.
   #
   # @return [Hash]
   #
   def aws_params(opt = nil)
-    opt = url_parameters if opt.blank?
-    opt[:service] ||= AwsS3Service.instance
-    opt.except!(*NON_AWS_PARAMS)
+    prm = url_parameters(opt)
+    prm[:service] ||= AwsS3Service.instance
+    prm.except!(*NON_AWS_PARAMS)
   end
 
   # ===========================================================================

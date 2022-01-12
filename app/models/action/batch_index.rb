@@ -64,7 +64,7 @@ class Action::BatchIndex < Action::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'indexing %{targets}' # TODO: I18n
   end
 

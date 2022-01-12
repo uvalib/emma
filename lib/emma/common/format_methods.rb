@@ -24,26 +24,19 @@ module Emma::Common::FormatMethods
   # Pluralize or singularize *text*.  If neither *inflection* nor *count* is
   # specified then a copy of the original string is returned.
   #
-  # @overload infection(text, inflection = nil, count = nil)
-  #   @param [ActiveSupport::Buffer] text
-  #   @param [Symbol, Integer, nil]  inflection
-  #   @param [Integer, nil]          count
-  #   @return [ActiveSupport::Buffer]
+  # @param [ActiveSupport::SafeBuffer, String] text
+  # @param [Integer, nil]                      count
+  # @param [Symbol, nil]                       inflect
   #
-  # @overload infection(text, inflection = nil, count = nil)
-  #   @param [String]                text
-  #   @param [Symbol, Integer, nil]  inflection
-  #   @param [Integer, nil]          count
-  #   @return [String]
+  # @return [ActiveSupport::SafeBuffer, String]
   #
   # @see #INFLECT_SINGULAR
   # @see #INFLECT_PLURAL
   #
-  def inflection(text, inflection = nil, count = nil)
-    count, inflection = [inflection, nil] if inflection.is_a?(Integer)
-    if (count == 1) || INFLECT_SINGULAR.include?(inflection)
+  def inflection(text, count = nil, inflect: nil)
+    if (count == 1) || INFLECT_SINGULAR.include?(inflect)
       text.to_s.singularize
-    elsif count.is_a?(Integer) || INFLECT_PLURAL.include?(inflection)
+    elsif count.is_a?(Integer) || INFLECT_PLURAL.include?(inflect)
       text.to_s.pluralize
     else
       text.to_s.dup

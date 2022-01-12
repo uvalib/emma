@@ -32,40 +32,53 @@ module Emma::Extension
 
       # Debug method for the including class.
       #
-      # @param [Array] args
-      #
-      # @option args[-1] [String, nil] :leader     Def: `#__ext_log_leader`.
-      # @option args[-1] [String, nil] :tag        Def: `#__ext_log_tag`.
-      # @option args[-1] [String]      :separator  Def: `#EXT_LOG_SEPARATOR`.
+      # @param [Array]       args
+      # @param [String, nil] leader     Default: `#__ext_log_leader`.
+      # @param [String, nil] tag        Default: `#__ext_log_tag`.
+      # @param [String, nil] separator  Default: `#EXT_LOG_SEPARATOR`.
+      # @param [Hash]        opt        Appended to *args* if present.
       #
       # @return [nil]
       #
       # @yield Generate additional parts.
-      # @yieldreturn [Array] Appended to *args*.
+      # @yieldreturn [Array, Any] Appended to *args*.
       #
       #--
       # == Variations
       #++
       #
-      # @overload __ext_log(meth, *args, tag:, &block)
-      #   @param [Symbol] meth        Calling method
-      #   @param [Array]  args
+      # @overload __ext_log(meth, *args, leader: nil, tag: nil, separator: nil, &block)
+      #   Specify calling method.
+      #   @param [Symbol]      meth
+      #   @param [Array]       args
+      #   @param [String, nil] leader
+      #   @param [String, nil] tag
+      #   @param [String, nil] separator
+      #   @param [Hash]        opt
       #   @return [nil]
       #
-      # @overload __ext_log(*args, tag:, &block)
-      #   @param [Array]  args
+      # @overload __ext_log(*args, leader: nil, tag: nil, separator: nil, &block)
+      #   Calling method defaults to `#calling_method`.
+      #   @param [Array]       args
+      #   @param [String, nil] leader
+      #   @param [String, nil] tag
+      #   @param [String, nil] separator
+      #   @param [Hash]        opt
       #   @return [nil]
       #
-      def __ext_log(*args)
+      def __ext_log(*args, leader: nil, tag: nil, separator: nil, **opt)
         meth = args.first.is_a?(Symbol) ? args.shift : calling_method&.to_sym
         meth = 'NEW' if meth == :initialize
-        opt  = args.last.is_a?(Hash) ? args.pop.dup : {}
-        ldr  = opt.key?(:leader) ? opt.delete(:leader) : __ext_log_leader
-        tag  = opt.key?(:tag)    ? opt.delete(:tag)    : __ext_log_tag
-        sep  = (opt.delete(:separator) || EXT_LOG_SEPARATOR)
+        ldr  = leader    || __ext_log_leader
+        tag  = tag       || __ext_log_tag
+        sep  = separator || EXT_LOG_SEPARATOR
 
-        args << opt if opt.present?
         args += Array.wrap(yield) if block_given?
+        if opt.present?
+          # noinspection RubyNilAnalysis
+          opt = args.pop.merge(opt) if args.last.is_a?(Hash)
+          args << opt
+        end
 
         part  = []
         part << [ldr, tag].compact.join(' ')
@@ -88,9 +101,9 @@ module Emma::Extension
 
       # Debug method for the including class.
       #
-      # @param [Array]          args
-      # @param [Hash]           opt
-      # @param [Proc]           block   Passed to #__debug_items.
+      # @param [Array] args
+      # @param [Hash]  opt            Passed to #__debug_items.
+      # @param [Proc]  block          Passed to #__debug_items.
       #
       # @option opt [String, nil] :leader     Default: `#__ext_log_leader`.
       # @option opt [String, nil] :tag        Default: `#__ext_log_tag`.
@@ -103,16 +116,18 @@ module Emma::Extension
       #++
       #
       # @overload __ext_debug(meth, *args, tag:, **opt, &block)
-      #   @param [Symbol]      meth   Calling method
-      #   @param [Array]       args
-      #   @param [Hash]        opt
-      #   @param [Proc]        block  Passed to #__debug_items.
+      #   Specify calling method.
+      #   @param [Symbol] meth
+      #   @param [Array]  args
+      #   @param [Hash]   opt
+      #   @param [Proc]   block
       #   @return [nil]
       #
       # @overload __ext_log(*args, tag:, &block)
-      #   @param [Array]       args
-      #   @param [Hash]        opt
-      #   @param [Proc]        block  Passed to #__debug_items.
+      #   Calling method defaults to `#calling_method`.
+      #   @param [Array]  args
+      #   @param [Hash]   opt
+      #   @param [Proc]   block
       #   @return [nil]
       #
       def __ext_debug(*args, **opt, &block)
@@ -128,7 +143,7 @@ module Emma::Extension
 
         opt[:leader]      = [ldr, tag].compact.join(' ')
         opt[:separator] ||= EXT_LOG_SEPARATOR
-        __debug_items(meth, *args, opt, &block)
+        __debug_items(meth, *args, **opt, &block)
       end
 
       # =======================================================================

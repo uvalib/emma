@@ -1037,7 +1037,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def title_field_union(recs = records)
+  def title_field_union(recs = records.to_a)
     field_union(recs, UNION_FIELDS)
   end
 

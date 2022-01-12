@@ -76,6 +76,7 @@ module Representable
         extend  ClassMethods
         register_feature Representable::Obj
       end
+      base
     end
   end
 

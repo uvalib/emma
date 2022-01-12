@@ -41,7 +41,7 @@ module IngestService::Common
   def api_headers(params = nil, headers = nil, body = nil)
     params, headers, body = super
     # noinspection RubyNilAnalysis
-    headers = headers.merge('X-API-Key' => api_key)
+    headers = headers.merge('X-API-Key' => api_key) if api_key
     return params, headers, body
   end
 

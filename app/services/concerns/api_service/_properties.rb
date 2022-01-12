@@ -78,7 +78,7 @@ module ApiService::Properties
   #
   # @return [String]
   #
-  def service_name(*)
+  def service_name(...)
     # noinspection RailsParamDefResolve
     @service_name ||= ApiService.name_for(try(:name) || self.class.try(:name))
   end
@@ -164,7 +164,7 @@ module ApiService::Properties
   # @return [Symbol, nil]
   #
   def default_engine_key
-    engines.find { |_, url| url == default_engine_url }&.first
+    engines.find { |_, url| url == default_engine_url }&.first&.first
   end
 
   # engine_url

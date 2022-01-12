@@ -106,7 +106,7 @@ module ParamsConcern
       session.delete('app.current_path')
     else
       prms = url_parameters.except(:id)
-      path = make_path(request.path, prms)
+      path = make_path(request.path, **prms)
       comp = compress_value(path)
       session['app.current_path'] = (path.size <= comp.size) ? path : comp
     end

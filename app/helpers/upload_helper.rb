@@ -334,7 +334,7 @@ module UploadHelper
         append_classes!(link_opt, 'current')  if group == curr_group
         append_classes!(link_opt, 'disabled') if url   == curr_path
         append_classes!(link_opt, 'hidden')   unless enabled
-        make_link(label, url, link_opt)
+        make_link(label, url, **link_opt)
       end
 
     # Wrap the controls in a group.
@@ -557,9 +557,9 @@ module UploadHelper
 
   # Render a single entry for use within a list of items.                       # NOTE: to EntryHelper#entry_list_item
   #
-  # @param [Upload]    item
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #model_list_item.
+  # @param [Upload, nil item
+  # @param [Hash, nil]  pairs         Additional field mappings.
+  # @param [Hash]       opt           Passed to #model_list_item.
   #
   def upload_list_item(item, pairs: nil, **opt)
     opt[:model] = model = item && Model.for(item) || :upload
@@ -569,8 +569,8 @@ module UploadHelper
 
   # Include control icons below the entry number.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt               Passed to #list_item_number.
+  # @param [Upload, nil] item
+  # @param [Hash]        opt          Passed to #list_item_number.
   #
   def upload_list_item_number(item, **opt)                                      # NOTE: to EntryHelper#entry_list_item_number
     list_item_number(item, **opt) do
@@ -629,8 +629,8 @@ module UploadHelper
   # Generate an element with icon controls for the operation(s) the user is
   # authorized to perform on the item.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt                 Passed to #upload_action_icon
+  # @param [Upload, nil] item
+  # @param [Hash]        opt            Passed to #upload_action_icon
   #
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no operations are authorized.
@@ -638,6 +638,7 @@ module UploadHelper
   # @see #UPLOAD_ICONS
   #
   def upload_entry_icons(item, **opt)                                           # NOTE: to EntryHelper#entry_control_icons
+    return if item.blank?
     css_selector = '.icon-tray'
     icons =
       # @type [Symbol] operation
@@ -750,9 +751,9 @@ module UploadHelper
 
   # Render pre-populated form fields.                                           # NOTE: to EntryHelper#entry_form_fields
   #
-  # @param [Upload]    item
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #render_form_fields.
+  # @param [Upload, nil] item
+  # @param [Hash, nil]   pairs        Additional field mappings.
+  # @param [Hash]        opt          Passed to #render_form_fields.
   #
   def upload_form_fields(item, pairs: nil, **opt)
     opt[:model] = model = item && Model.for(item) || :upload
@@ -789,7 +790,7 @@ module UploadHelper
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
   #
-  # @param [Upload]         item
+  # @param [Upload, nil]    item
   # @param [String]         label     Label for the submit button.
   # @param [String, Symbol] action    Either :new or :edit.
   # @param [Hash]           opt       Passed to #form_with except for:
@@ -1032,8 +1033,8 @@ module UploadHelper
 
   # Form fields are wrapped in an element for easier grid manipulation.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt               Passed to #html_div.
+  # @param [Upload, nil] item
+  # @param [Hash]        opt          Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1426,7 +1427,7 @@ module UploadHelper
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.
   #
-  # @param [String,Array<String>,nil] ids
+  # @param [String,Upload,Array<String,Upload>,nil] ids
   # @param [String] label                 Label for the submit button.
   # @param [Hash]   opt                   Passed to #form_with except for:
   #
@@ -1437,7 +1438,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form(label: nil, ids: nil, **opt)                             # NOTE: to EntryHelper#bulk_entry_delete_form
+  def bulk_delete_form(ids: nil, label: nil, **opt)                             # NOTE: to EntryHelper#bulk_entry_delete_form
     css_selector  = '.bulk-entry-form.delete'
     action        = :bulk_delete
     ids           = Array.wrap(ids).compact.presence

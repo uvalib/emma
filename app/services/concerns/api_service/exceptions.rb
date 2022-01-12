@@ -135,90 +135,74 @@ module ApiService::Exceptions
 
   # Generate a service error indicating an authorization failure.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::AuthError]
   #
-  def auth_error(*args)
+  def auth_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:auth].new(*args)
+    error_classes[:auth].new(...)
   end
 
   # Generate a service error indicating a network communication failure.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::CommError]
   #
-  def comm_error(*args)
+  def comm_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:comm].new(*args)
+    error_classes[:comm].new(...)
   end
 
   # Generate a service error indicating a network session failure.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::SessionError]
   #
-  def session_error(*args)
+  def session_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:session].new(*args)
+    error_classes[:session].new(...)
   end
 
   # Generate a service error indicating a failure to make a network connection.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::ConnectError]
   #
-  def connect_error(*args)
+  def connect_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:connect].new(*args)
+    error_classes[:connect].new(...)
   end
 
   # Generate a service error indicating a network session timeout.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::TimeoutError]
   #
-  def timeout_error(*args)
+  def timeout_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:timeout].new(*args)
+    error_classes[:timeout].new(...)
   end
 
   # Generate a service error indicating a network send failure.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::XmitError]
   #
-  def xmit_error(*args)
+  def xmit_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:xmit].new(*args)
+    error_classes[:xmit].new(...)
   end
 
   # Generate a service error indicating a network receive failure.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::RecvError]
   #
-  def recv_error(*args)
+  def recv_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:recv].new(*args)
+    error_classes[:recv].new(...)
   end
 
   # Generate a service error indicating a bad network packet.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::ParseError]
   #
-  def parse_error(*args)
+  def parse_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:parse].new(*args)
+    error_classes[:parse].new(...)
   end
 
   # ===========================================================================
@@ -229,25 +213,20 @@ module ApiService::Exceptions
 
   # Generate a service error indicating the API request was invalid.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
-  #
   # @return [ApiService::RequestError]
   #
-  def request_error(*args)
+  def request_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:request].new(*args)
+    error_classes[:request].new(...)
   end
 
   # Generate a service error indicating the API request was empty.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::NoInputError]
   #
-  def no_input_error(*args)
+  def no_input_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:no_input].new(*args)
+    error_classes[:no_input].new(...)
   end
 
   # ===========================================================================
@@ -258,57 +237,47 @@ module ApiService::Exceptions
 
   # Wrap an exception or response in a service error.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::ResponseError]
   #
-  def response_error(*args)
+  def response_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:response].new(*args)
+    error_classes[:response].new(...)
   end
 
   # Generate a service error indicating that the response had no data.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::EmptyResultError]
   #
-  def empty_result_error(*args)
+  def empty_result_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:empty_result].new(*args)
+    error_classes[:empty_result].new(...)
   end
 
   # Generate a service error indicating HTML was received instead of JSON.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::HtmlResultError]
   #
-  def html_result_error(*args)
+  def html_result_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:html_result].new(*args)
+    error_classes[:html_result].new(...)
   end
 
   # Generate a service error indicating a failure to redirect.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::RedirectionError]
   #
-  def redirect_error(*args)
+  def redirect_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:redirection].new(*args)
+    error_classes[:redirection].new(...)
   end
 
   # Generate a service error indicating too many redirects.
   #
-  # @param [Array<Faraday::Response, Exception, String, Array, nil>] args
-  #
   # @return [ApiService::RedirectLimitError]
   #
-  def redirect_limit_error(*args)
+  def redirect_limit_error(...)
     # noinspection RubyMismatchedReturnType
-    error_classes[:redirect_limit].new(*args)
+    error_classes[:redirect_limit].new(...)
   end
 
   # ===========================================================================
@@ -325,9 +294,9 @@ module ApiService::Exceptions
   #
   # @see ApiService::Error#error_classes
   #
-  #++
-  # noinspection RubyNilAnalysis
   #--
+  # noinspection RubyNilAnalysis
+  #++
   def get_error_classes(service = nil)
     service ||= self
     service   = service.class if service.is_a?(ApiService)

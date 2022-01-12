@@ -45,7 +45,7 @@ class Action::UnRecord < Action::BulkPart
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
-      removing:  ->(*) {
+      removing:  ->(*, **) {
         $stderr.puts "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: remove record
       },
       completed: true
@@ -62,7 +62,7 @@ class Action::UnRecord < Action::BulkPart
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'removing from database' # TODO: I18n
   end
 

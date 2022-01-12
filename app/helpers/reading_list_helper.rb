@@ -50,7 +50,7 @@ module ReadingListHelper
   end
 
   unless READING_LIST_THUMBNAIL
-    def rl_thumbnail(*)
+    def rl_thumbnail(...)
     end
   end
 
@@ -102,7 +102,7 @@ module ReadingListHelper
   def reading_list_subscriptions(item, **opt)
     # noinspection RailsParamDefResolve
     subscription = item.try(:subscription)
-    record_links(subscription.links, opt) if subscription&.enabled
+    record_links(subscription.links, **opt) if subscription&.enabled
   end
 
   # ===========================================================================

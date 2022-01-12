@@ -80,7 +80,7 @@ module UploadWorkflow::Bulk::Create::Actions
   #
   def wf_validate_submission(*event_args)
     __debug_items(binding)
-    opt = event_args.extract_options!&.dup || {}
+    opt = event_args.extract_options!.dup
     opt[:index]        = false if DEFER_INDEXING && !opt.key?(:index)
     opt[:user]       ||= current_user
     opt[:base_url]   ||= nil #request.base_url

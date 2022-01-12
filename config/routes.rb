@@ -298,85 +298,85 @@ end
 # noinspection RubyInstanceMethodNamingConvention
 unless ONLY_FOR_DOCUMENTATION
   # :nocov:
-  def account_index_path(*);                      end
-  def account_index_url(*);                       end
-  def artifact_index_path(*);                     end
-  def artifact_index_url(*);                      end
-  def bs_api_index_path(*);                       end
-  def bs_api_index_url(*);                        end
-  def bulk_create_entry_path(*);                  end
-  def bulk_create_entry_url(*);                   end
-  def bulk_destroy_entry_path(*);                 end
-  def bulk_destroy_entry_url(*);                  end
-  def bulk_update_entry_path(*);                  end
-  def bulk_update_entry_url(*);                   end
-  def category_index_path(*);                     end
-  def category_index_url(*);                      end
-  def check_health_path(*);                       end
-  def check_health_url(*);                        end
-  def check_subsystem_health_path(*);             end
-  def check_subsystem_health_url(*);              end
-  def confirmation_path(*);                       end
-  def confirmation_url(*);                        end
-  def dashboard_path(*);                          end
-  def dashboard_url(*);                           end
-  def destroy_user_session_path(*);               end
-  def destroy_user_session_url(*);                end
-  def edit_password_path(*);                      end
-  def edit_password_url(*);                       end
-  def edit_user_registration_path(*);             end # /users/edit
-  def edit_user_registration_url(*);              end
-  def edition_index_path(*);                      end
-  def edition_index_url(*);                       end
-  def entry_index_path(*);                        end
-  def entry_index_url(*);                         end
-  def home_path(*);                               end
-  def home_url(*);                                end
-  def member_index_path(*);                       end
-  def member_index_url(*);                        end
-  def metrics_test_path(*);                       end
-  def metrics_test_url(*);                        end
-  def new_user_registration_path(*);              end # /users/new
-  def new_user_registration_url(*);               end
-  def new_user_session_path(*);                   end
-  def new_user_session_url(*);                    end
-  def password_path(*);                           end
-  def password_url(*);                            end
-  def periodical_index_path(*);                   end
-  def periodical_index_url(*);                    end
-  def reading_list_index_path(*);                 end
-  def reading_list_index_url(*);                  end
-  def registration_path(*);                       end
-  def registration_url(*);                        end
-  def root_path(*);                               end
-  def root_url(*);                                end
-  def run_state_health_path(*);                   end
-  def run_state_health_url(*);                    end
-  def search_index_path(*);                       end
-  def search_index_url(*);                        end
-  def session_path(*);                            end
-  def session_url(*);                             end
-  def set_state_health_path(*);                   end
-  def set_state_health_url(*);                    end
-  def sign_in_as_path(*);                         end # /users/sign_in_as
-  def sign_in_as_url(*);                          end
-  def sign_in_local_path(*);                      end # /users/sign_in_local
-  def sign_in_local_url(*);                       end
-  def system_unavailable_path(*);                 end
-  def system_unavailable_url(*);                  end
-  def title_index_path(*);                        end
-  def title_index_url(*);                         end
-  def unlock_path(*);                             end
-  def unlock_url(*);                              end
-  def upload_index_path(*);                       end
-  def upload_index_url(*);                        end
-  def user_bookshare_omniauth_authorize_path(*);  end
-  def user_bookshare_omniauth_authorize_url(*);   end
-  def user_edit_select_path(*);                   end # /users/edit_select
-  def user_edit_select_url(*);                    end
-  def version_health_path(*);                     end
-  def version_health_url(*);                      end
-  def welcome_path(*);                            end
-  def welcome_url(*);                             end
+  def account_index_path(...);                     end
+  def account_index_url(...);                      end
+  def artifact_index_path(...);                    end
+  def artifact_index_url(...);                     end
+  def bs_api_index_path(...);                      end
+  def bs_api_index_url(...);                       end
+  def bulk_create_entry_path(...);                 end
+  def bulk_create_entry_url(...);                  end
+  def bulk_destroy_entry_path(...);                end
+  def bulk_destroy_entry_url(...);                 end
+  def bulk_update_entry_path(...);                 end
+  def bulk_update_entry_url(...);                  end
+  def category_index_path(...);                    end
+  def category_index_url(...);                     end
+  def check_health_path(...);                      end
+  def check_health_url(...);                       end
+  def check_subsystem_health_path(...);            end
+  def check_subsystem_health_url(...);             end
+  def confirmation_path(...);                      end
+  def confirmation_url(...);                       end
+  def dashboard_path(...);                         end
+  def dashboard_url(...);                          end
+  def destroy_user_session_path(...);              end
+  def destroy_user_session_url(...);               end
+  def edit_password_path(...);                     end
+  def edit_password_url(...);                      end
+  def edit_user_registration_path(...);            end # /users/edit
+  def edit_user_registration_url(...);             end
+  def edition_index_path(...);                     end
+  def edition_index_url(...);                      end
+  def entry_index_path(...);                       end
+  def entry_index_url(...);                        end
+  def home_path(...);                              end
+  def home_url(...);                               end
+  def member_index_path(...);                      end
+  def member_index_url(...);                       end
+  def metrics_test_path(...);                      end
+  def metrics_test_url(...);                       end
+  def new_user_registration_path(...);             end # /users/new
+  def new_user_registration_url(...);              end
+  def new_user_session_path(...);                  end
+  def new_user_session_url(...);                   end
+  def password_path(...);                          end
+  def password_url(...);                           end
+  def periodical_index_path(...);                  end
+  def periodical_index_url(...);                   end
+  def reading_list_index_path(...);                end
+  def reading_list_index_url(...);                 end
+  def registration_path(...);                      end
+  def registration_url(...);                       end
+  def root_path(...);                              end
+  def root_url(...);                               end
+  def run_state_health_path(...);                  end
+  def run_state_health_url(...);                   end
+  def search_index_path(...);                      end
+  def search_index_url(...);                       end
+  def session_path(...);                           end
+  def session_url(...);                            end
+  def set_state_health_path(...);                  end
+  def set_state_health_url(...);                   end
+  def sign_in_as_path(...);                        end # /users/sign_in_as
+  def sign_in_as_url(...);                         end
+  def sign_in_local_path(...);                     end # /users/sign_in_local
+  def sign_in_local_url(...);                      end
+  def system_unavailable_path(...);                end
+  def system_unavailable_url(...);                 end
+  def title_index_path(...);                       end
+  def title_index_url(...);                        end
+  def unlock_path(...);                            end
+  def unlock_url(...);                             end
+  def upload_index_path(...);                      end
+  def upload_index_url(...);                       end
+  def user_bookshare_omniauth_authorize_path(...); end
+  def user_bookshare_omniauth_authorize_url(...);  end
+  def user_edit_select_path(...);                  end # /users/edit_select
+  def user_edit_select_url(...);                   end
+  def version_health_path(...);                    end
+  def version_health_url(...);                     end
+  def welcome_path(...);                           end
+  def welcome_url(...);                            end
   # :nocov:
 end

@@ -79,13 +79,12 @@ module ApplicationJob::Logging
 
   public
 
-  def __debug_job(job, *args, &block)
-    # noinspection RubyNilAnalysis
-    unless args.last.is_a?(Hash) && args.last.key?(:leader)
-      opt = args.last.is_a?(Hash) ? args.pop.dup : {}
-      args << opt.merge!(leader: "#{job_leader(job)}:")
+  def __debug_job(job, *args, **opt, &block)
+    unless opt.key?(:leader) || !args.first.is_a?(ApplicationJob)
+      # noinspection RubyMismatchedArgumentType
+      opt[:leader] = "#{job_leader(args.first)}:"
     end
-    __debug_line(*args, &block)
+    __debug_line(*args, **opt, &block)
   end
     .tap { |meth| neutralize(meth) unless DEBUG_JOB }
 
@@ -123,9 +122,9 @@ module ApplicationJob::Logging
 
     public
 
-    def __debug_job(*args, &block)
+    def __debug_job(*args, **opt, &block)
       args.prepend(self) unless args.first.is_a?(ApplicationJob)
-      super(*args, &block)
+      super(*args, **opt, &block)
     end
       .tap { |meth| neutralize(meth) unless DEBUG_JOB }
 

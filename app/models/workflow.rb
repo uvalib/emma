@@ -11,6 +11,10 @@ require 'workflow'
 #
 # NOTE: This is placed into the Workflow namespace set up by the workflow gem.
 #
+# NOTE: Since the workflow gem is geared toward pre-Ruby-3 handling of options,
+#   none of the methods for this and related classes/modules assume options are
+#   passed as the final element of *args (rather than via keyword arguments).
+#
 class Workflow::Base
 
   include Workflow
@@ -311,7 +315,7 @@ module Workflow::Base::Data
   #
   # @return [void]
   #
-  def reset_status(*)
+  def reset_status(...)
     self.succeeded = []
     self.failures  = []
     self.results   = nil
@@ -369,7 +373,7 @@ module Workflow::Base::Simulation
   #
   # @return [Boolean]
   #
-  def simulating(*)
+  def simulating(...)
     false
   end
 
@@ -377,7 +381,7 @@ module Workflow::Base::Simulation
   #
   # @return [nil]
   #
-  def __debug_sim(*)
+  def __debug_sim(...)
   end
 
 end
@@ -610,7 +614,8 @@ module Workflow::Base::Events
     #
     def __debug_event(event, *args)
       line = 'UPLOAD WF ***** EVENT ' + event_label(event)
-      __debug_line(line, *args, leader: "\n")
+      opt  = args.last.is_a?(Hash) ? args.pop.dup : {}
+      __debug_line(line, *args, **opt, leader: "\n")
     end
 
     # =========================================================================
@@ -850,7 +855,7 @@ module Workflow::Base::States
     #
     # @return [self]                  For chaining.
     #
-    define_method("on_#{state}_entry") do |_state, event, *event_args|
+    define_method("on_#{state}_entry") do |_state, event, *event_args, **|
       __debug_entry(state, event, *event_args)
       self
     end
@@ -863,7 +868,7 @@ module Workflow::Base::States
     #
     # @return [self]                  For chaining.
     #
-    define_method("on_#{state}_exit") do |_state, event, *event_args|
+    define_method("on_#{state}_exit") do |_state, event, *event_args, **|
       __debug_exit(state, event, *event_args)
       @prev_state = state unless HIDDEN_STATE.include?(state)
       self
@@ -925,8 +930,8 @@ module Workflow::Base::States
 
   if not DEBUG_WORKFLOW
 
-    def __debug_entry(*); end
-    def __debug_exit(*);  end
+    def __debug_entry(...); end
+    def __debug_exit(...);  end
 
   else
 
@@ -938,7 +943,7 @@ module Workflow::Base::States
     # @param [Symbol]          _event       Triggering event
     # @param [Array]           _event_args
     #
-    def __debug_entry(state, _event = nil, *_event_args)
+    def __debug_entry(state, _event = nil, *_event_args, **)
       __debug_line do
         state = state_object(state)
         trans =
@@ -960,7 +965,7 @@ module Workflow::Base::States
     # @param [Symbol]          _event       Triggering event
     # @param [Array]           _event_args
     #
-    def __debug_exit(state, _event = nil, *_event_args)
+    def __debug_exit(state, _event = nil, *_event_args, **)
       __debug_line do
         'UPLOAD WF <<<<< LEAVE ' + state_label(state)
       end
@@ -1295,7 +1300,8 @@ class Workflow::Base
   # @param [Symbol, String, nil] value
   #
   def self.variant?(value)
-    variant_types.include?(value&.to_sym)
+    # noinspection RubyNilAnalysis
+    variant_types.include?(value.to_sym) if value.present?
   end
 
   # Generate a new instance of the appropriate workflow variant subclass

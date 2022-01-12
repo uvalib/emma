@@ -60,6 +60,7 @@ class EmmaStatus < ApplicationRecord
     attr = { active: true, updated_at: now }
     if (current = api_version)
       current.update(attr)
+      current
     else
       attr.merge!(item: API_VERSION_ITEM, value: value, created_at: now)
       insert(attr)

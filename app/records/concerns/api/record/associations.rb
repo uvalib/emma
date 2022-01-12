@@ -219,7 +219,7 @@ module Api::Record::Associations
         elsif type.is_a?(Class) || (type = name.constantize)
           !name.start_with?("#{service_name}::")
         end
-      no_arg ? ->(*) { type.new } : ->(*a, **o) { type.new(nil, *a, **o) }
+      no_arg ? ->(*, **) { type.new } : ->(*a, **o) { type.new(nil, *a, **o) }
     end
 
     # =========================================================================

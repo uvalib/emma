@@ -102,7 +102,7 @@ module Record::Reportable
   #
   # @return [nil]
   #
-  def clear_exec_report(*)
+  def clear_exec_report(...)
     set_report_column(nil)
     exec_report.clear
   end

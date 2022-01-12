@@ -40,40 +40,40 @@ module ConfigurationHelper
   # For ctrlr == 'user/registrations' and action == 'edit' this yields
   # %i[user registrations edit].
   #
-  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
   # @return [Array<Symbol>]
   #
-  def config_path(controller = nil, action = nil)
+  def config_path(ctrlr = nil, action = nil)
     # noinspection RubyMismatchedArgumentType
-    result = controller.to_s.underscore.split('/') << action
+    result = ctrlr.to_s.underscore.split('/') << action
     result.compact_blank.map(&:to_sym)
   end
 
   # controller_configuration
   #
-  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def controller_configuration(controller = nil, action = nil)
+  def controller_configuration(ctrlr = nil, action = nil)
     result = ApplicationHelper::CONTROLLER_CONFIGURATION
-    return result unless controller
-    path = config_path(controller, action)
+    return result unless ctrlr
+    path = config_path(ctrlr, action)
     result.dig(*path) || {}
   end
 
   # config_lookup_order
   #
-  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
   # @return [Array<Array<Symbol>>]
   #
-  def config_lookup_order(controller = nil, action = nil)
-    ctr, sub, act = path = config_path(controller, action)
+  def config_lookup_order(ctrlr = nil, action = nil)
+    ctr, sub, act = path = config_path(ctrlr, action)
     sub, act = [nil, sub] if action && (path.size == 2)
     result = []
     result << [ctr, sub, act]      if ctr && sub && act
@@ -87,15 +87,15 @@ module ConfigurationHelper
   end
 
   # Find the best match from config/locales for the given partial path, first
-  # looking under "en.emma.(controller)", then under 'en.emma.generic'.
+  # looking under "en.emma.(ctrlr)", then under 'en.emma.generic'.
   #
-  # @param [String, Array] path       Partial I18n path.
-  # @param [Any]           default    Returned on failure.
-  # @param [Boolean, Any]  fatal      If *true* an exception is raised instead.
-  # @param [Hash]          opt        Passed to #config_interpolations except:
+  # @param [String, Array]       path       Partial I18n path.
+  # @param [Symbol, String, nil] ctrlr
+  # @param [Symbol, String, nil] action
+  # @param [Any]                 default  Returned on failure.
+  # @param [Boolean]             fatal    If *true* then raise exceptions.
+  # @param [Hash]                opt      To #config_interpolations except:
   #
-  # @option opt [String, Symbol]          :controller
-  # @option opt [String, Symbol]          :action
   # @option opt [String, Symbol, Boolean] :mode
   # @option opt [Boolean]                 :one
   # @option opt [Boolean]                 :many
@@ -106,20 +106,20 @@ module ConfigurationHelper
   #
   # @example Simple path - [:button, :label]
   # Returns the most specific configuration match from the list:
-  #   * "en.emma.(controller).(action).button.label"
-  #   * "en.emma.(controller).generic.button.label"
-  #   * "en.emma.(controller).button.label"
+  #   * "en.emma.(ctrlr).(action).button.label"
+  #   * "en.emma.(ctrlr).generic.button.label"
+  #   * "en.emma.(ctrlr).button.label"
   #   * "en.emma.generic.(action).button.label"
   #   * "en.emma.generic.button.label"
   #
   # @example Branching path - [[:button1, :button2], :label]
   # Returns the most specific configuration match from the list:
-  #   * "en.emma.(controller).(action).button1.label"
-  #   * "en.emma.(controller).(action).button2.label"
-  #   * "en.emma.(controller).generic.button1.label"
-  #   * "en.emma.(controller).generic.button2.label"
-  #   * "en.emma.(controller).button1.label"
-  #   * "en.emma.(controller).button2.label"
+  #   * "en.emma.(ctrlr).(action).button1.label"
+  #   * "en.emma.(ctrlr).(action).button2.label"
+  #   * "en.emma.(ctrlr).generic.button1.label"
+  #   * "en.emma.(ctrlr).generic.button2.label"
+  #   * "en.emma.(ctrlr).button1.label"
+  #   * "en.emma.(ctrlr).button2.label"
   #   * "en.emma.generic.(action).button1.label"
   #   * "en.emma.generic.(action).button2.label"
   #   * "en.emma.generic.button1.label"
@@ -127,14 +127,16 @@ module ConfigurationHelper
   #
   def config_lookup(
     *path,
-    controller: nil,
-    action:     nil,
-    default:    nil,
-    fatal:      false,
+    ctrlr:   nil,
+    action:  nil,
+    default: nil,
+    fatal:   false,
     **opt
   )
-    entry =
-      config_lookup_paths(controller, action, *path).find do |full_path|
+    ctrlr  = opt[:controller] ||= ctrlr
+    action = opt[:action]     ||= action
+    entry  =
+      config_lookup_paths(ctrlr, action, *path).find do |full_path|
         item = full_path.pop
         cfg  = controller_configuration.dig(*full_path)
         # noinspection RubyMismatchedArgumentType
@@ -144,7 +146,6 @@ module ConfigurationHelper
     return default     if entry.nil?
 
     opt, i_opt = partition_hash(opt, :mode, :one, :many)
-    i_opt[:controller] ||= controller
 
     # Use count-specific definitions if present.
     if entry.is_a?(Hash) && !false?((mode = opt[:mode]))
@@ -185,14 +186,14 @@ module ConfigurationHelper
   # The result will have all of the items for the given controller/action
   # that contain and label and/or tooltip under them.
   #
-  # @param [String, Symbol] controller
+  # @param [String, Symbol] ctrlr
   # @param [String, Symbol] action
   #
   # @return [Hash{Symbol=>Hash{Symbol=>String,Hash}}]
   #
-  def config_button_values(controller, action)
-    lookup_order  = config_lookup_order(controller, action)
-    action_config = controller_configuration(controller, action)
+  def config_button_values(ctrlr, action)
+    lookup_order  = config_lookup_order(ctrlr, action)
+    action_config = controller_configuration(ctrlr, action)
     buttons       = action_config.select { |_, v| v.is_a?(Hash) }.keys
     buttons.map { |button|
       config = {}
@@ -225,9 +226,9 @@ module ConfigurationHelper
 
   # config_lookup_paths
   #
-  # @param [Symbol, String] ctrlr
-  # @param [Symbol, String] action
-  # @param [String, Array]  path      Partial I18n path.
+  # @param [Symbol, String, nil] ctrlr
+  # @param [Symbol, String, nil] action
+  # @param [String, Array]       path     Partial I18n path.
   #
   # @return [Array<Array<Symbol>>]
   #
@@ -312,7 +313,7 @@ module ConfigurationHelper
 
   # The variations on the description of a model item managed by a controller.
   #
-  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   # @param [Boolean]             brief      Default: *true*.
   # @param [Boolean]             long       Default: *false*.
@@ -341,22 +342,24 @@ module ConfigurationHelper
   # for the given controller.
   #
   def config_interpolations(
-    controller: nil,
-    action:     nil,
-    brief:      true,
-    long:       false,
-    mode:       nil,
-    count:      nil,
-    plural:     nil,
+    ctrlr:  nil,
+    action: nil,
+    brief:  true,
+    long:   false,
+    mode:   nil,
+    count:  nil,
+    plural: nil,
     **units
   )
+    ctrlr  = units[:controller] || ctrlr
+    action = units[:action]     || action
     units.slice!(:item, :items, :Item, :Items)
     units.compact_blank!
 
     # Get the most specific definition available if none was provided.
     unless units[:item]
       mode ||= (true?(long) || false?(brief)) ? :long : :brief
-      config_lookup_order(controller, action).find do |base_path|
+      config_lookup_order(ctrlr, action).find do |base_path|
         cfg = controller_configuration.dig(*base_path, :unit)
         cfg = cfg[mode] if cfg.is_a?(Hash)
         if cfg.is_a?(String)

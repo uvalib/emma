@@ -62,7 +62,7 @@ module TestHelper::SystemTests::Index
 
     # For search results, *terms* will at least be an empty hash.
     unless terms.nil?
-      assert_search_terms(terms)
+      assert_search_terms(**terms)
       assert_search_count(model, **opt)
     end
   end

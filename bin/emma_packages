@@ -51,30 +51,26 @@ def output(*lines)
   lines.each { |line| $stdout.puts(line) } and nil
 end
 
-def alert(*args)
-  opt = args.last.is_a?(Hash) ? args.pop : {}
+def alert(*args, **opt)
   pre = opt[:prefix]
   pre &&= "#{pre} "
   args += [yield].flatten if block_given?
   args.each { |line| $stderr.puts "#{pre}#{line}" } and nil
 end
 
-def warn(*args)
-  opt = args.last.is_a?(Hash) && args.pop || {}
+def warn(*args, **opt)
   opt[:prefix] = 'WARNING:' unless opt.key?(:prefix)
   alert(*args, **opt)
 end
 
-def fail(*args)
-  opt = args.last.is_a?(Hash) && args.pop || {}
+def fail(*args, **opt)
   opt[:prefix] = 'FATAL ERROR:' unless opt.key?(:prefix)
   alert(*args, **opt)
   exit(1)
 end
 
-def debug(*args, &block)
+def debug(*args, **opt, &block)
   return unless VERBOSE
-  opt = args.last.is_a?(Hash) && args.pop || {}
   opt[:prefix] = 'DEBUG:' unless opt.key?(:prefix)
   alert(*args, **opt, &block)
 end

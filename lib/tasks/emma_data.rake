@@ -120,9 +120,9 @@ namespace :emma_data do
 
     # Output failure message(s).
     if failed.present?
-      count   = atomic ? 'all' : failed.size  # TODO: I18n
-      entries = 'submission'.pluralize(count) # TODO: I18n
-      message = "#{count} #{entries} failed"  # TODO: I18n
+      count   = atomic ? 'all' : failed.size       # TODO: I18n
+      entries = 'submission'.pluralize(count.to_i) # TODO: I18n
+      message = "#{count} #{entries} failed"       # TODO: I18n
       show "#{message}:", failed
     end
 

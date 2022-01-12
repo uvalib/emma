@@ -46,7 +46,7 @@ class Action::UnStore < Action::BulkPart
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
-      unstoring: ->(*) { delete_file },
+      unstoring: ->(*, **) { delete_file },
       completed: true
     }} and run_callback(**opt)
   end
@@ -61,7 +61,7 @@ class Action::UnStore < Action::BulkPart
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'removing from storage' # TODO: I18n
   end
 

@@ -271,7 +271,7 @@ module HealthConcern
   #
   # @return [(Boolean,String)]
   #
-  def database_status(*)
+  def database_status(...)
     healthy = ActiveRecord::Base.connection_pool.with_connection(&:active?)
     message = nil # TODO: Database status message?
     return healthy, message
@@ -281,7 +281,7 @@ module HealthConcern
   #
   # @return [(Boolean,String)]
   #
-  def redis_status(*)
+  def redis_status(...)
     healthy = true # TODO: Redis health status
     message = nil  # TODO: Redis status message?
     return healthy, message
@@ -291,7 +291,7 @@ module HealthConcern
   #
   # @return [(Boolean,String)]
   #
-  def storage_status(*)
+  def storage_status(...)
     healthy = true # TODO: AWS health status
     message = nil  # TODO: AWS status message?
     return healthy, message
@@ -301,7 +301,7 @@ module HealthConcern
   #
   # @return [(Boolean,String)]
   #
-  def search_status(*)
+  def search_status(...)
     SearchService.active_status
   end
 
@@ -309,7 +309,7 @@ module HealthConcern
   #
   # @return [(Boolean,String)]
   #
-  def bookshare_status(*)
+  def bookshare_status(...)
     BookshareService.active_status
   end
 
@@ -317,7 +317,7 @@ module HealthConcern
   #
   # @return [(Boolean,String)]
   #
-  def ingest_status(*)
+  def ingest_status(...)
     IngestService.active_status
   end
 

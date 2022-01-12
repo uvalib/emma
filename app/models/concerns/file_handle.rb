@@ -84,7 +84,7 @@ class FileHandle
 
   if not DEBUG_IO
 
-    def __debug_handle(*); end
+    def __debug_handle(...); end
 
     delegate_missing_to :@handle
 
@@ -103,7 +103,7 @@ class FileHandle
     def __debug_handle(*args, **opt, &block)
       sep = opt[:separator] ||= ' | '
       opt[:leader] = [*opt[:leader], 'FileHandle'].compact.join(sep)
-      __debug_items(*args, opt, &block)
+      __debug_items(*args, **opt, &block)
     end
 
     # Indicate whether the underlying object implements the given method.

@@ -83,18 +83,16 @@ module Emma::Rake
 
   # task_options
   #
-  # @param [Array<String,Symbol>]            flags
-  # @param [Rake::TaskArguments, Array, nil] task_args
+  # @param [Array<String,Symbol>] flags
   #
   # @return [Array<String,nil>]
   #
   #--
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
-  def task_options(*flags, task_args)
-    flags << task_args if task_args.is_a?(String) || task_args.is_a?(Symbol)
-    task_args = (task_args.presence if task_args.respond_to?(:to_a))
-    flags.map { |flag| task_option(flag, task_args) }
+  def task_options(*flags)
+    flags, args = flags.partition { |f| f.is_a?(String) || f.is_a?(Symbol) }
+    flags.map { |flag| task_option(flag, args) }
   end
 
   # Indicate whether the option flag was provided via task arguments or on the

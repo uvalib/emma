@@ -22,7 +22,7 @@ module ApiService::Status
   # @return [(TrueClass,nil)]
   # @return [(FalseClass,String)]
   #
-  def active_status(*)
+  def active_status(...)
     not_implemented 'to be overridden'
   end
 

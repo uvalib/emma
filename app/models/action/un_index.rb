@@ -61,7 +61,7 @@ class Action::UnIndex < Action::BulkPart
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'removing from index' # TODO: I18n
   end
 

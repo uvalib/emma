@@ -350,7 +350,7 @@ module Record::Uploadable
   # Indicate whether the attached file is valid.
   #
   def attached_file_valid?                                                      # NOTE: from Upload::FileMethods
-    return if file.nil?
+    return false if file.nil?
     file_attacher.validate
     file_attacher.errors.each { |e|
       errors.add(:file, :invalid, message: e)

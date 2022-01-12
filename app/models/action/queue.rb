@@ -50,7 +50,7 @@ class Action::Queue < Action::BulkPart
     opt[:meth] ||= __method__
     self.submission_id = sid
     transition_sequence(**opt) {{
-      submitting:  ->(*) { member_repository_action(:creation_request) },
+      submitting:  ->(*, **) { member_repository_action(:creation_request) },
       unretrieved: true
     }} and run_callback(**opt)
   end
@@ -103,7 +103,7 @@ class Action::Queue < Action::BulkPart
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'submitting to %{repo}' # TODO: I18n
   end
 

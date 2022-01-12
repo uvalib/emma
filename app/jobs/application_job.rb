@@ -112,4 +112,8 @@ class ApplicationJob < ActiveJob::Base
 
 end
 
+# Namespace for app/jobs/attachment.
+module Attachment
+end
+
 __loading_end(__FILE__)

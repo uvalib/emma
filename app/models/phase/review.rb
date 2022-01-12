@@ -286,7 +286,7 @@ class Phase::Review < Phase::Single
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'is being submitted for review' # TODO: I18n
   end
 

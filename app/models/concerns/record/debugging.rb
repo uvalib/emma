@@ -70,9 +70,9 @@ module Record::Debugging
 
     public
 
-    def __debug_step(*args, &block)
+    def __debug_step(*args, **opt, &block)
       $stderr.puts "\n\n###################################################"
-      __debug_items(*args, &block)
+      __debug_items(*args, **opt, &block)
     end
 
   else

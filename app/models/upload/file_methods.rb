@@ -445,7 +445,7 @@ module Upload::FileMethods
   # Indicate whether the attached file is valid.
   #
   def attached_file_valid?                                                      # NOTE: to Record::Uploadable
-    return unless active_file
+    return false unless active_file
     active_file_attacher.validate
     active_file_attacher.errors.each { |e|
       errors.add(:file, :invalid, message: e)

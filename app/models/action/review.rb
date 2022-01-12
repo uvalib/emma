@@ -133,7 +133,7 @@ class Action::Review < Action::Single
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'reviewing' # TODO: I18n
   end
 

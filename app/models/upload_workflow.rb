@@ -1578,6 +1578,7 @@ module UploadWorkflow::External
   # noinspection RubyMismatchedReturnType
   #++
   def repository_requests(items, empty_key: false)                              # NOTE: to Record::Submittable::MemberRepositoryMethods
+    return {} if items.blank?
     case items
       when Array, Upload
         items  = (items.is_a?(Array) ? items.flatten : [items]).compact_blank
@@ -1691,7 +1692,7 @@ module UploadWorkflow::Actions
   #
   def wf_remove_items(*event_args)
     __debug_items(binding)
-    opt = event_args.extract_options!&.dup || {}
+    opt = event_args.extract_options! || {}
     opt[:force]     = force_delete     unless opt.key?(:force)
     opt[:emergency] = emergency_delete unless opt.key?(:emergency)
     opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
@@ -1751,6 +1752,10 @@ end
 
 # Standard create/update/delete workflows.
 #
+# NOTE: Since the workflow gem is geared toward pre-Ruby-3 handling of options,
+#   none of the methods for this and related classes/modules assume options are
+#   passed as the final element of *args (rather than via keyword arguments).
+#
 class UploadWorkflow < Workflow::Base
 
   include UploadWorkflow::Events
@@ -1791,7 +1796,7 @@ class UploadWorkflow < Workflow::Base
   # This method overrides:
   # @see Workflow::ClassMethods#workflow_column
   #
-  def self.workflow_column(*)
+  def self.workflow_column(...)
     Upload::PRIMARY_STATE_COLUMN
   end
 
@@ -1908,7 +1913,7 @@ class UploadWorkflow < Workflow::Base
           # This method overrides:
           # @see Workflow::ClassMethods#workflow_column
           #
-          def self.workflow_column(*)
+          def self.workflow_column(...)
             @workflow_state_column_name ||=
               safe_const_get(:STATE_COLUMN) || super
           end

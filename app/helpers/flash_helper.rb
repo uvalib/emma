@@ -672,9 +672,8 @@ module FlashHelper
   # @return [String]
   #
   def flash_i18n_scope
-    self.class.name.underscore.split('_').reject { |part|
-      %w(controller concern helper).include?(part)
-    }.join('_')
+    parts = self.class.name&.split('_') || []
+    parts.reject { |p| %w(controller concern helper).include?(p) }.join('_')
   end
 
   # Build an I18n path.

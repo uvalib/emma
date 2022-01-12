@@ -75,7 +75,7 @@ class ExecReport
   #
   # @return [self]
   #
-  def clear(*)
+  def clear(...)
     @parts = []
     @render_html = false
     self

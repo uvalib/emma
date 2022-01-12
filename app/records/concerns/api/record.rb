@@ -235,7 +235,7 @@ class Api::Record
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def to_h(*)
+  def to_h(**)
     fields
   end
 

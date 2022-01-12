@@ -47,14 +47,14 @@ module HeadHelper::Favicon
 
   # Set the favicon for this page, eliminating any previous value.
   #
-  # @param [String] src
+  # @param [String, nil] src
   #
   # @return [String]                  The updated @page_favicon.
   #
   # @yield To supply a value to @page_favicon.
   # @yieldreturn [String]
   #
-  def set_page_favicon(src)
+  def set_page_favicon(src = nil)
     @page_favicon = block_given? && yield || src
   end
 

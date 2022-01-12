@@ -39,12 +39,13 @@ class Api::Error < ExecError
   # Initialize a new instance.
   #
   # @param [Array<Faraday::Response,Exception,Hash,String,Integer,nil>] args
+  # @param [Hash]                                                       opt
   #
   # == Implementation Notes
   # Each element of @messages is duplicated in order to ensure that there are
   # no unexpected entanglements with the original message source(s).
   #
-  def initialize(*args)
+  def initialize(*args, **opt)
     @http_response = @http_status = @cause = nil
     args.map! do |arg|
       # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
@@ -73,7 +74,7 @@ class Api::Error < ExecError
         Log.warn { "Api::Error#initialize: @cause #{@cause.class} unexpected" }
     end
     @http_status ||= @http_response&.status
-    super(*args)
+    super(*args, **opt)
   rescue => e
     Log.error { "Api::Error#initialize: #{e.class}: #{e.message}" }
     re_raise_if_internal_exception(e)
@@ -180,7 +181,7 @@ class Api::Error < ExecError
       @error_type ||=
         if (c = is_a?(Class) ? self : self.class)
           type = c.safe_const_get(:ERROR_TYPE)
-          type ||= c.name.demodulize.to_s.underscore.remove(/_error$/)
+          type ||= c.name&.demodulize&.to_s&.underscore&.remove(/_error$/)
           type&.to_sym
         end
     end

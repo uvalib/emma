@@ -82,7 +82,7 @@ module Record::Describable
   # @option opt [String, Symbol, Proc] :note  Only used if *note* is *nil*.
   #
   # @return [String]                  From #interpolations.
-  # @return [nil]                     If *text* is *nil*.
+  # @return [nil]                     If *note* is *nil*.
   #
   # @see Kernel#sprintf
   #
@@ -166,7 +166,7 @@ module Record::Describable
     def describe_id(model = nil, **opt)
       # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
-      id_value(model, opt)
+      id_value(model, **opt)
     end
 
     # A replacement value for '%{repo}' or '%{repository}' in #sprintf formats.
@@ -197,7 +197,7 @@ module Record::Describable
     def describe_sid(model = nil, **opt)
       # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
-      sid_value(model, opt)
+      sid_value(model, **opt)
     end
 
     # A replacement value for '%{submission}' in #sprintf formats.
@@ -212,20 +212,20 @@ module Record::Describable
     def describe_submission(model = nil, **opt)
       # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
-      sid = describe_sid(model, opt)
+      sid = describe_sid(model, **opt)
       "submission #{sid.inspect}" # TODO: I18n
     end
 
     # A replacement value for '%{user}' in #sprintf formats.
     #
     # @param [Model, Any, nil] model
-    # @param [Hash]            opt
+    # @param [Hash]            _opt   Unused.
     #
     # @return [String, nil]
     #
     # @see User#uid_value
     #
-    def describe_user(model = nil, **opt)
+    def describe_user(model = nil, **_opt)
       # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       # noinspection RailsParamDefResolve
@@ -235,13 +235,13 @@ module Record::Describable
     # A replacement value for '%{user_id}' in #sprintf formats.
     #
     # @param [Model, Any, nil] model
-    # @param [Hash]            opt
+    # @param [Hash]            _opt   Unused.
     #
     # @return [String, nil]
     #
     # @see User#id_value
     #
-    def describe_user_id(model = nil, **opt)
+    def describe_user_id(model = nil, **_opt)
       # noinspection RubyMismatchedArgumentType
       model ||= self_for_instance_method(__method__)
       # noinspection RailsParamDefResolve

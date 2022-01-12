@@ -99,7 +99,7 @@ module ApiService::Common
 
   # Most recently invoked HTTP request URL.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm
   #
   # @return [String]
   #
@@ -119,11 +119,11 @@ module ApiService::Common
   #--
   # noinspection RubyNilAnalysis
   #++
-  def latest_endpoint(opt = nil)
-    opt = (opt || @params).dup
-    opt.delete(:api_key) unless opt.delete(:complete)
-    opt = url_query(opt).presence
-    [@action, opt].compact.join('?')
+  def latest_endpoint(prm = nil)
+    prm = (prm || @params).dup
+    prm.delete(:api_key) unless prm.delete(:complete)
+    prm = url_query(prm).presence
+    [@action, prm].compact.join('?')
   end
 
   # ===========================================================================
@@ -173,7 +173,7 @@ module ApiService::Common
     options, headers, body = api_headers(@params)
       .tap { |parts| __debug_api_headers(*parts) }
     if body.present?
-      @action = make_path(@action, options) if options.present?
+      @action = make_path(@action, **options) if options.present?
       options = body
     end
     transmit(@verb, @action, options, headers, **opt)
@@ -506,22 +506,22 @@ module ApiService::Common
 
   # Preserve keys that would be mistaken for an ignored system parameter.
   #
-  # @param [Hash] opt
+  # @param [Hash] prm
   #
-  # @return [Hash]                    A modified copy of *opt*.
+  # @return [Hash]                    A modified copy of *prm*.
   #
-  def encode_parameters(**opt)
-    encode_parameters!(opt)
+  def encode_parameters(**prm)
+    encode_parameters!(prm)
   end
 
   # Preserve keys that would be mistaken for an ignored system parameter.
   #
-  # @param [Hash] opt
+  # @param [Hash] prm
   #
-  # @return [Hash]                    The original *opt* now modified.
+  # @return [Hash]                    The original *prm* now modified.
   #
-  def encode_parameters!(opt)
-    opt.transform_keys! { |k| encode_parameter(k) }
+  def encode_parameters!(prm)
+    prm.transform_keys! { |k| encode_parameter(k) }
   end
 
   # Reverse the transform of #encode_parameter.
@@ -536,22 +536,22 @@ module ApiService::Common
 
   # Restore preserved keys.
   #
-  # @param [Hash] opt
+  # @param [Hash] prm
   #
-  # @return [Hash]                    A modified copy of *opt*.
+  # @return [Hash]                    A modified copy of *prm*.
   #
-  def decode_parameters(**opt)
-    decode_parameters!(opt)
+  def decode_parameters(**prm)
+    decode_parameters!(prm)
   end
 
   # Restore preserved keys.
   #
-  # @param [Hash] opt
+  # @param [Hash] prm
   #
-  # @return [Hash]                    The original *opt* now modified.
+  # @return [Hash]                    The original *prm* now modified.
   #
-  def decode_parameters!(opt)
-    opt.transform_keys! { |k| decode_parameter(k) }
+  def decode_parameters!(prm)
+    prm.transform_keys! { |k| decode_parameter(k) }
   end
 
   # ===========================================================================

@@ -19,7 +19,7 @@ public
 #
 def neutralize(*methods)
   methods.each do |meth|
-    define_method(meth) { |*| }
+    define_method(meth) { |*, **| }
   end
 end
 
@@ -51,12 +51,13 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # Write indented line(s) to $stderr.
 #
 # @param [Array<Hash,Array,String,Any>] args
+# @param [Hash]                         opt
 #
-# @option args.last [String]          :leader     At the start of each line.
-# @option args.last [String, Integer] :indent     Default: #CONS_INDENT.
-# @option args.last [String]          :separator  Default: "\n"
-# @option args.last [Boolean]         :debug      Structure for debug output.
-# @option args.last [Symbol, Integer, Boolean] :log   Note [1]
+# @option opt [String]                   :leader     At the start of each line.
+# @option opt [String, Integer]          :indent     Default: #CONS_INDENT.
+# @option opt [String]                   :separator  Default: "\n"
+# @option opt [Boolean]                  :debug      Structure for debug output
+# @option opt [Symbol, Integer, Boolean] :log        Note [1]
 #
 # @return [nil]
 #
@@ -68,9 +69,8 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # $stderr output.  If not deployed, the log entry is created in addition to
 # $stderr output.
 #
-def __output_impl(*args)
+def __output_impl(*args, **opt)
   return if defined?(Log) && Log.silenced?
-  opt = args.extract_options!
   sep = opt[:separator] || "\n"
 
   # Construct the string that is prepended to each output line.
@@ -129,13 +129,14 @@ end
 # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
 #
 # @param [Array<Hash,Array,String,Any>] args    Passed to #__output_impl.
+# @param [Hash]                         opt     Passed to #__output_impl.
 # @param [Proc]                         block   Passed to #__output_impl.
 #
 # == Usage Notes
 # The method is only functional if #CONSOLE_OUTPUT is true.
 #
-def __output(*args, &block)
-  __output_impl(*args, &block)
+def __output(*args, **opt, &block)
+  __output_impl(*args, **opt, &block)
 end
 
 neutralize(:__output) unless CONSOLE_OUTPUT
@@ -161,28 +162,29 @@ DEBUG_MAX = 2048
 # Write indented debug line(s) to $stderr.
 #
 # @param [Array] args                 Passed to #__output_impl.
+# @param [Hash]  opt                  Passed to #__output_impl.
 # @param [Proc]  block                Passed to #__output_impl.
 #
 # @return [nil]
 #
-def __debug_impl(*args, &block)
-  # noinspection RubyMismatchedArgumentType
-  opt = {
+def __debug_impl(*args, **opt, &block)
+  opt.reverse_merge!(
     debug:    true,
     leader:   DEBUG_LEADER,
     max:      DEBUG_MAX,
     omission: '...'
-  }.merge!(args.extract_options!)
-  __output_impl(*args, opt, &block)
+  )
+  __output_impl(*args, **opt, &block)
 end
 
 # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
 #
 # @param [Array] args                 Passed to #__debug_impl.
+# @param [Hash]  opt                  Passed to #__debug_impl.
 # @param [Proc]  block                Passed to #__debug_impl.
 #
-def __debug(*args, &block)
-  __debug_impl(*args, &block)
+def __debug(*args, **opt, &block)
+  __debug_impl(*args, **opt, &block)
 end
 
 neutralize(:__debug) unless CONSOLE_DEBUGGING
@@ -278,9 +280,9 @@ __output_impl("TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}") if TRACE_CONCERNS
 
 # Indicate invocation of a module's "included" block.
 #
-# @param [Module]         base
-# @param [Module, String] mod
-# @param [String, nil]    tag
+# @param [Module]      base
+# @param [Module]      mod
+# @param [String, nil] tag
 #
 # @return [nil]
 #

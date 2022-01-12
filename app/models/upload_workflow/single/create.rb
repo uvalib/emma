@@ -68,7 +68,7 @@ module UploadWorkflow::Single::Create::Actions
     if record.emma_native?
       self.succeeded = [record]
     else
-      opt = event_args.last.is_a?(Hash) ? event_args.last : {}
+      opt = event_args.extract_options!
       s, f = repository_create(*record, **opt)
       self.succeeded = s
       self.failures += f

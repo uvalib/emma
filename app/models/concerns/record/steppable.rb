@@ -74,7 +74,7 @@ module Record::Steppable
               when :note_proc
                 item = :note
                 value = value.strip
-                value = "->(*) { #{value} }" unless value.start_with?('->')
+                value = "->(*, **) { #{value} }" unless value.start_with?('->')
                 value = eval(value) rescue 'BAD PROC'
               else
                 value = value.strip if value.is_a?(String)

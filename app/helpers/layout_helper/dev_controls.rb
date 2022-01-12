@@ -21,7 +21,7 @@ module LayoutHelper::DevControls
 
   # Indicate whether it is appropriate to show developer-only controls.
   #
-  def show_dev_controls?(*)
+  def show_dev_controls?(...)
     developer? || !application_deployed?
   end
 

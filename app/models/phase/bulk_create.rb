@@ -49,7 +49,7 @@ class Phase::BulkCreate < Phase::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'BULK UPLOAD' # TODO: I18n
   end
 

@@ -73,7 +73,7 @@ class Action::BatchStore < Action::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'storing %{targets}' # TODO: I18n
   end
 

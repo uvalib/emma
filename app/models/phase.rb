@@ -193,7 +193,7 @@ class Phase < ApplicationRecord
   #
   # @raise [RuntimeError]
   #
-  def set_exec_report(*)
+  def set_exec_report(...)
     not_implemented "invalid for #{self.class}"
   end
 
@@ -201,7 +201,7 @@ class Phase < ApplicationRecord
   #
   # @raise [RuntimeError]
   #
-  def clear_exec_report(*)
+  def clear_exec_report(...)
     not_implemented "invalid for #{self.class}"
   end
 

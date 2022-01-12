@@ -66,7 +66,7 @@ class Action::BatchQueue < Action::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'submitting to %{repo}: %{targets}' # TODO: I18n
   end
 

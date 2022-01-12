@@ -41,21 +41,21 @@ module Emma::Common::UrlMethods
   # parameter after the '?' -- this is a concession to Bookshare URLs like
   # "myReadingLists/(id)?delete".
   #
-  # @param [Array] args               URL path components, except for args[-1]
-  #                                     which is passed as #url_query options.
+  # @param [Array] args               URL path components.
+  # @param [Hash]  opt                Passed as #url_query options.
   #
   # @return [String]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyNilAnalysis
   #++
-  def make_path(*args)
-    opt = args.extract_options!
+  def make_path(*args, **opt)
+    opt.reverse_merge!(args.extract_options!) if args.last.is_a?(Hash)
     url = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '')
     url, query = url.split('?', 2)
     parts = query.to_s.split('&').compact_blank
     first = (parts.shift unless parts.blank? || parts.first.include?('='))
-    query = url_query(parts, opt).presence
+    query = url_query(*parts, **opt).presence
     url << '?'   if first || query
     url << first if first
     url << '&'   if first && query
@@ -66,66 +66,50 @@ module Emma::Common::UrlMethods
   # Combine URL query parameters into a URL query string.
   #
   # @param [Array<URI,String,Array,Hash>] args
+  # @param [Hash] opt                 Passed to #build_query_options.
   #
-  # @option args.last [Boolean] :minimize   If *false*, do not reduce single-
-  #                                           element array values to scalars
-  #                                           (default: *true*).
+  # @option opt [Boolean] :decorate   If *false*, do not modify keys for multi-
+  #                                     element array values (default: *true*).
   #
-  # @option args.last [Boolean] :decorate   If *false*, do not modify keys for
-  #                                           multi-element array values
-  #                                           (default: *true*).
-  #
-  # @option args.last [Boolean] :replace    If *true*, subsequence key values
-  #                                           replace previous ones; if *false*
-  #                                           then values are accumulated as
-  #                                           arrays (default: *false*).
+  # @option opt [Boolean] :unescape   If *true*, unescape values
+  #                                     (default: *false*).
   #
   # @return [String]
   #
   # @see #build_query_options
   #
-  def url_query(*args)
-    # noinspection RubyMismatchedArgumentType
-    opt = { decorate: true, unescape: false }.merge!(args.extract_options!)
-    build_query_options(*args, opt).flat_map { |k, v|
-      # noinspection RubyMismatchedReturnType
-      v.is_a?(Array) ? v.map { |e| "#{k}=#{e}" } : "#{k}=#{v}"
+  def url_query(*args, **opt)
+    opt.reverse_merge!(args.extract_options!) if args.last.is_a?(Hash)
+    opt.reverse_merge!(decorate: true, unescape: false)
+    build_query_options(*args, **opt).flat_map { |k, value|
+      Array.wrap(value).map { |v| "#{k}=#{v}" }
     }.join('&')
   end
 
   # Transform URL query parameters into a hash.
   #
   # @param [Array<URI,String,Array,Hash>] args
-  #
-  # @option args.last [Boolean] :minimize   If *false*, do not reduce single-
-  #                                           element array values to scalars
-  #                                           (default: *true*).
-  #
-  # @option args.last [Boolean] :decorate   If *true*, modify keys for multi-
-  #                                           element values (default: *false*)
-  #
-  # @option args.last [Boolean] :replace    If *true*, subsequence key values
-  #                                           replace previous ones; if *false*
-  #                                           then values are accumulated as
-  #                                           arrays (default: *false*).
-  #
-  # @option args.last [Boolean] :unescape   If *false*, do not unescape values.
+  # @param [Boolean] minimize         If *false*, do not reduce single-element
+  #                                     array values to scalars (def: *true*).
+  # @param [Boolean] decorate         If *true*, modify keys for multi-element
+  #                                     array values (default: *false*).
+  # @param [Boolean] replace          If *true*, subsequence key values replace
+  #                                     previous ones; if *false* then values
+  #                                     accumulated as arrays (def: *false*).
+  # @param [Boolean] unescape         If *false*, do not unescape values.
+  # @param [Hash]    opt              Included in *args* if present.
   #
   # @return [Hash{String=>String}]
   #
-  def build_query_options(*args)
-    # noinspection RubyMismatchedArgumentType
-    opt = {
-      minimize: true,
-      decorate: false,
-      replace:  false,
-      unescape: true
-    }.merge!(args.extract_options!)
-    minimize = opt.delete(:minimize)
-    decorate = opt.delete(:decorate)
-    replace  = opt.delete(:replace)
-    unescape = opt.delete(:unescape)
-    opt      = reject_blanks(opt)
+  def build_query_options(
+    *args,
+    minimize: true,
+    decorate: false,
+    replace:  false,
+    unescape: true,
+    **opt
+  )
+    opt = reject_blanks(opt).reverse_merge!(args.extract_options!)
     args << opt if opt.present?
     result = {}
     args.each do |arg|

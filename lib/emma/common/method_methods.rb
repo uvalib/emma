@@ -54,18 +54,26 @@ module Emma::Common::MethodMethods
   # Return the indicated method.  If *meth* is something other than a Symbol or
   # a Method then *nil* is returned.
   #
-  # @overload get_method(meth, *)
-  #   @param [Method] meth
-  #   @return [Method]
+  # @param [Array<Symbol,Binding,Method>] args
   #
-  # @overload get_method(bind, *)
-  #   @param [Binding] bind
-  #   @return [Method, nil]
+  # @return [Method, nil]
+  #
+  #--
+  # == Variations
+  #++
   #
   # @overload get_method(meth, bind, *)
   #   @param [Symbol]  meth
   #   @param [Binding] bind
   #   @return [Method, nil]
+  #
+  # @overload get_method(bind, *)
+  #   @param [Binding] bind
+  #   @return [Method, nil]
+  #
+  # @overload get_method(meth, *)
+  #   @param [Method] meth
+  #   @return [Method]
   #
   def get_method(*args)
     meth = (args.shift unless args.first.is_a?(Binding))
@@ -79,24 +87,32 @@ module Emma::Common::MethodMethods
   # Return a table of a method's parameters and their values given a Binding
   # from that method invocation.
   #
-  # @overload get_params(bind, **opt)
-  #   @param [Binding]        bind
-  #   @param [Hash]           opt
-  #
-  # @overload get_params(meth, bind, **opt)
-  #   @param [Symbol, Method] meth
-  #   @param [Binding]        bind
-  #   @param [Hash]           opt
-  #
-  # @option opt [Symbol, Array<Symbol>] :only
-  # @option opt [Symbol, Array<Symbol>] :except
+  # @param [Array]                 args
+  # @param [Symbol, Array<Symbol>] only
+  # @param [Symbol, Array<Symbol>] except
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_params(*args)
-    opt    = args.extract_options!
-    only   = Array.wrap(opt[:only]).presence
-    except = Array.wrap(opt[:except]).presence
+  #--
+  # == Variations
+  #++
+  #
+  # @overload get_params(meth, bind, only: [], except: [], **)
+  #   @param [Symbol, Method]        meth
+  #   @param [Binding]               bind
+  #   @param [Symbol, Array<Symbol>] only
+  #   @param [Symbol, Array<Symbol>] except
+  #   @return [Hash{Symbol=>Any}]
+  #
+  # @overload get_params(bind, only: [], except: [], **)
+  #   @param [Binding]               bind
+  #   @param [Symbol, Array<Symbol>] only
+  #   @param [Symbol, Array<Symbol>] except
+  #   @return [Hash{Symbol=>Any}]
+  #
+  def get_params(*args, only: [], except: [], **)
+    only   = Array.wrap(only).presence
+    except = Array.wrap(except).presence
     meth   = (args.shift unless args.first.is_a?(Binding))
     bind   = (args.shift if args.first.is_a?(Binding))
     if !meth.is_a?(Method) && bind.is_a?(Binding)

@@ -48,7 +48,7 @@ module MemberHelper
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def member_history_fields(*)
+  def member_history_fields(...)
     Model.configuration_fields(:member)[:history] || {}
   end
 
@@ -56,7 +56,7 @@ module MemberHelper
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def member_preference_fields(*)
+  def member_preference_fields(...)
     Model.configuration_fields(:member)[:preferences] || {}
   end
 

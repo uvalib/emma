@@ -64,7 +64,7 @@ class Action::BatchUnRecord < Action::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'removing from database: %{targets}' # TODO: I18n
   end
 

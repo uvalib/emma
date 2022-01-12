@@ -161,7 +161,7 @@ class FileObject
 
     if not DEBUG_MIME_TYPE
 
-      def __debug_mime(*); end
+      def __debug_mime(...); end
 
     else
 

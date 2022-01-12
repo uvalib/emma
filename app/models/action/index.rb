@@ -70,7 +70,7 @@ class Action::Index < Action::BulkPart
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
-      indexing: ->(*) { ingest_action(:put_records) },
+      indexing: ->(*, **) { ingest_action(:put_records) },
       indexed:  true
     }} and run_callback(**opt)
   end
@@ -124,7 +124,7 @@ class Action::Index < Action::BulkPart
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'indexing' # TODO: I18n
   end
 

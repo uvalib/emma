@@ -59,15 +59,15 @@ module Record::Updatable
     # creates:
     #
     #   * valid_command?(value = nil, **)   Is the value of :command legal?
-    #   * command_values(*)                 All legal :command values.
-    #   * self.command_values(*)            All legal :command values.
+    #   * command_values(...)               All legal :command values.
+    #   * self.command_values(...)          All legal :command values.
     #   * set_command!(value, **)           Set :command to the given value.
-    #   * clear_command?(*)                 Is :command set to NULL ?
-    #   * clear_command!(*)                 Set :command to NULL.
-    #   * pause?(*)                         Is :command set to :pause ?
-    #   * pause!(*)                         Set :command to :pause.
-    #   * cancel?(*)                        Is :command set to :cancel ?
-    #   * cancel!(*)                        Set :command to :cancel.
+    #   * clear_command?(...)               Is :command set to NULL ?
+    #   * clear_command!(...)               Set :command to NULL.
+    #   * pause?(...)                       Is :command set to :pause ?
+    #   * pause!(...)                       Set :command to :pause.
+    #   * cancel?(...)                      Is :command set to :cancel ?
+    #   * cancel!(...)                      Set :command to :cancel.
     #
     # NOTE: The imperative methods update an entry that exists in the database
     # immediately without needing to use #save.
@@ -93,11 +93,11 @@ module Record::Updatable
             #{col_name}_VALUES.include?(value)
           end
 
-          def #{column}_values(*)
+          def #{column}_values(...)
             #{col_name}_VALUES
           end
 
-          def self.#{column}_values(*)
+          def self.#{column}_values(...)
             #{col_name}_VALUES
           end
 
@@ -105,17 +105,17 @@ module Record::Updatable
             dynamic_set_fields(#{column}: value).present?
           end
 
-          def clear_#{column}?(*)
+          def clear_#{column}?(...)
             #{column}.blank?
           end
 
-          def clear_#{column}!(*)
+          def clear_#{column}!(...)
             set_#{column}!(nil)
           end
 
           #{values}.each do |value|
-            define_method("\#{value}?") { |*| #{column} == value }
-            define_method("\#{value}!") { |*| set_#{column}!(value) }
+            define_method("\#{value}?") { |*, **| #{column} == value }
+            define_method("\#{value}!") { |*, **| set_#{column}!(value) }
           end
 
         HEREDOC

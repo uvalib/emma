@@ -46,7 +46,7 @@ class Action::UnQueue < Action::BulkPart
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
-      dequeuing: ->(*) { member_repository_action(:dequeue) },
+      dequeuing: ->(*, **) { member_repository_action(:dequeue) },
       completed: true
     }} and run_callback(**opt)
   end
@@ -61,7 +61,7 @@ class Action::UnQueue < Action::BulkPart
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'sending removal request to %{repo}' # TODO: I18n
   end
 

@@ -77,15 +77,15 @@ class BsApiController < ApplicationController
   #
   def v2
     __debug_route
-    opt  = url_parameters
-    path = opt.delete(:api_path).to_s
-    if (user = opt.delete(:user)).present?
+    prm  = url_parameters
+    path = prm.delete(:api_path).to_s
+    if (user = prm.delete(:user)).present?
       path = request.fullpath.sub(/\?.*/, '')
-      path << '?' << url_query(opt) if opt.present?
+      path << '?' << url_query(prm) if prm.present?
       redirect_to sign_in_as_path(id: bookshare_user(user), redirect: path)
     else
       # noinspection RubyMismatchedArgumentType
-      @api_result = bs_api_explorer(request.method, path, opt)
+      @api_result = bs_api_explorer(request.method, path, **prm)
       respond_to do |format|
         format.html
         format.json { render_json show_values }

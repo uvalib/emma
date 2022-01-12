@@ -265,7 +265,7 @@ module FileFormat::Xml
 
   if not DEBUG_XML_PARSE
 
-    def __debug_parse(*); end
+    def __debug_parse(...); end
 
   else
 
@@ -274,6 +274,7 @@ module FileFormat::Xml
     # Display console output.
     #
     # @param [Array] args
+    # @param [Hash]  opt
     #
     # @return [nil]
     #
@@ -300,12 +301,11 @@ module FileFormat::Xml
     #   @param [Nokogiri::XML::Element] element
     #   @param [Nokogiri::XML::Element] inner
     #
-    def __debug_parse(*args)
-      opt     = args.extract_options!
+    def __debug_parse(*args, **opt)
       meth    = args.first.is_a?(Symbol) ? args.shift : calling_method
       element = args.shift
       inner   = args.shift
-      __debug_line(*args, opt) do
+      __debug_line(*args, **opt) do
         parts = [meth, filename]
         if element
           # noinspection RubyNilAnalysis

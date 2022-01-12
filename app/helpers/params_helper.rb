@@ -107,22 +107,22 @@ module ParamsHelper
   #
   def request_parameters(p = nil)
     prm = p || try(:params) || {}
-    prm = prm.try(:to_unsafe_h) || prm
+    prm = prm.to_unsafe_h if prm.respond_to?(:to_unsafe_h)
     prm.symbolize_keys
   end
 
   # The meaningful request URL parameters as a Hash (not including :controller
   # or :action).
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  # @param [ActionController::Parameters, Hash, nil] prm  Default: `params`.
   #
   # @return [Hash{Symbol=>String}]
   #
   # @see #request_parameters
   # @see #IGNORED_PARAMETERS
   #
-  def url_parameters(p = nil)
-    request_parameters(p).except!(*IGNORED_PARAMETERS)
+  def url_parameters(prm = nil)
+    request_parameters(prm).except!(*IGNORED_PARAMETERS)
   end
 
   # ===========================================================================
@@ -141,12 +141,12 @@ module ParamsHelper
 
   # compress_value
   #
-  # @param [String] v
+  # @param [String, nil] v
   #
   # @return [String]
   #
   def compress_value(v)
-    COMPRESSION_MARKER + Base64.strict_encode64(Zlib.deflate(v))
+    COMPRESSION_MARKER + Base64.strict_encode64(Zlib.deflate(v || ''))
   end
 
   # decompress_value

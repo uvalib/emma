@@ -24,7 +24,7 @@ module RoleHelper
   # == Implementation Notes
   # Currently the :developer role applies regardless of the model.
   #
-  def developer?(*)
+  def developer?(...)
     current_user.present? && current_user.developer?
   end
 

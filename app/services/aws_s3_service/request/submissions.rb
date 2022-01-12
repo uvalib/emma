@@ -28,9 +28,9 @@ module AwsS3Service::Request::Submissions
   #
   def creation_request(*records, **opt)
     opt[:meth] ||= __method__
-    records = AwsS3::Message::SubmissionRequest.array(records)
+    requested = AwsS3::Message::SubmissionRequest.array(records)
     succeeded = put_records(*records, **opt)
-    api_return(records, succeeded)
+    api_return(requested, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -48,9 +48,9 @@ module AwsS3Service::Request::Submissions
   #
   def modification_request(*records, **opt)
     opt[:meth] ||= __method__
-    records   = AwsS3::Message::ModificationRequest.array(records)
-    succeeded = put_records(*records, **opt)
-    api_return(records, succeeded)
+    requested = AwsS3::Message::ModificationRequest.array(records)
+    succeeded = put_records(*requested, **opt)
+    api_return(requested, succeeded)
   end
     .tap do |method|
       add_api method => {
@@ -68,9 +68,9 @@ module AwsS3Service::Request::Submissions
   #
   def removal_request(*records, **opt)
     opt[:meth] ||= __method__
-    records   = AwsS3::Message::RemovalRequest.array(records)
-    succeeded = put_records(*records, **opt)
-    api_return(records, succeeded)
+    requested = AwsS3::Message::RemovalRequest.array(records)
+    succeeded = put_records(*requested, **opt)
+    api_return(requested, succeeded)
   end
     .tap do |method|
       add_api method => {

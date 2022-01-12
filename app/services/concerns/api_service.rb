@@ -89,7 +89,7 @@ class ApiService
 
       # The single instance of this class.
       #
-      # @param [Hash, nil] opt        Passed to ApiService#initialize.
+      # @param [Hash] opt             Passed to ApiService#initialize.
       #
       # @return [ApiService]
       #
@@ -105,10 +105,7 @@ class ApiService
       # per-request and not per-thread (potentially spanning multiple requests
       # by different users).
       #
-      #--
-      # noinspection RubyNilAnalysis
-      #++
-      def self.instance(opt = nil)
+      def self.instance(**opt)
         opt = reject_blanks(opt)
         srv = ApiService.table[self]
         use_existing   = srv.present?
@@ -119,12 +116,12 @@ class ApiService
 
       # Update the service instance with new information.
       #
-      # @param [Hash, nil] opt           Passed to ApiService#initialize.
+      # @param [Hash] opt             Passed to #instance.
       #
       # @return [ApiService]
       #
-      def self.update(opt = nil)
-        instance(opt)
+      def self.update(**opt)
+        instance(**opt)
       end
 
       # Remove the single instance of the class so that a fresh instance will

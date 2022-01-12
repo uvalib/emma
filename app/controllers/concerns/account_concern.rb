@@ -284,7 +284,7 @@ module AccountConcern
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def account_fields(*)
+  def account_fields(...)
     Model.configuration_fields(:account)[:all] || {}
   end
 

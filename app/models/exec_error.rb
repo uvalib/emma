@@ -44,12 +44,13 @@ class ExecError < RuntimeError
   # Initialize a new instance.
   #
   # @param [Array<Exception, Hash, String, nil>] args
+  # @param [Hash]                                opt
   #
   # == Implementation Notes
   # Each element of @messages is duplicated in order to ensure that there are
   # no unexpected entanglements with the original message source(s).
   #
-  def initialize(*args)
+  def initialize(*args, **opt)
     @messages ||= []  # May have been initialized by the subclass.
     @cause    ||= nil # May have been set by the subclass.
     args.each do |arg|
@@ -61,6 +62,7 @@ class ExecError < RuntimeError
         else Log.warn { "ExecError#initialize: #{arg.inspect} ignored" } if arg
       end
     end
+    @messages += extract_message(opt) if opt.present?
     case @cause
       when nil
         # Ignore
@@ -107,7 +109,7 @@ class ExecError < RuntimeError
   #
   # @return [Exception]
   #
-  def exception(*)
+  def exception(...)
     self
   end
 
@@ -159,7 +161,7 @@ class ExecError < RuntimeError
     #
     # @return [String]
     #
-    def default_message(*)
+    def default_message(...)
       DEFAULT_ERROR
     end
 

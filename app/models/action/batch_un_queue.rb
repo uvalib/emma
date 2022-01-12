@@ -64,7 +64,7 @@ class Action::BatchUnQueue < Action::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type(*)
+  def self.describe_type(...)
     'sending removal request to %{repo} for %{targets}' # TODO: I18n
   end
 

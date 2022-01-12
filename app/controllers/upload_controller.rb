@@ -516,10 +516,11 @@ class UploadController < ApplicationController
   def check
     __debug_route
     @list = wf_single_check
+    data  = { messages: @list }
     respond_to do |format|
       format.html
-      format.json { render_json(messages: @list) }
-      format.xml  { render_xml( messages: @list) }
+      format.json { render_json data }
+      format.xml  { render_xml  data }
     end
   rescue => error
     flash_now_failure(error)
@@ -616,10 +617,10 @@ class UploadController < ApplicationController
   #
   def admin
     __debug_route
-    opt           = url_parameters
-    @repo         = repositories(**opt)
-    @deploy       = deployments(**opt)
-    @object_table = get_object_table(@repo, @deploy, **opt)
+    prm           = url_parameters
+    @repo         = repositories(**prm)
+    @deploy       = deployments(**prm)
+    @object_table = get_object_table(@repo, @deploy, **prm)
   rescue => error
     flash_now_failure(error)
     re_raise_if_internal_exception(error)

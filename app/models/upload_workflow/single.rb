@@ -589,7 +589,7 @@ module UploadWorkflow::Single::Simulation
   #
   attr_reader :submission
 
-  def set_submission(*)
+  def set_submission(...)
     raise "#{__method__} only available if DEBUG_WORKFLOW is true"
   end
 

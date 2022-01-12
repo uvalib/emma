@@ -144,16 +144,16 @@ module EntryConcern
 
   # entry_request_params
   #
-  # @param [Entry, Hash, Any, nil] entry
-  # @param [Hash, nil]             opt
+  # @param [Entry, Hash{Symbol=>Any}, Any, nil] entry
+  # @param [Hash{Symbol=>Any}, nil]             prm
   #
   # @return [(Entry, Hash)]
   # @return [(Any, Hash)]
   #
-  def entry_request_params(entry, opt)                                          # NOTE: from UploadConcern#workflow_parameters (sorta)
-    entry, opt = [nil, entry] if entry.is_a?(Hash)
-    opt ||= request.get? ? get_entry_params : entry_post_params
-    return entry, opt
+  def entry_request_params(entry, prm = nil)                                    # NOTE: from UploadConcern#workflow_parameters (sorta)
+    entry, prm = [nil, entry] if entry.is_a?(Hash)
+    prm ||= request.get? ? get_entry_params : entry_post_params
+    return entry, prm
   end
 
   # ===========================================================================
@@ -184,7 +184,7 @@ module EntryConcern
       name = nil
     elsif src.is_a?(ActionDispatch::Http::UploadedFile)
       name = src.original_filename
-      data = src
+      data = src.read
     elsif src
       name = src
       data =
@@ -452,8 +452,13 @@ module EntryConcern
   def edit_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
     item, opt = entry_request_params(item, opt)
-    # noinspection RubyMismatchedReturnType
-    get_entry(item, **opt).tap { |entry| entry&.generate_phase(:Edit, **opt) }
+    get_entry(item, **opt).tap do |entry|
+      if entry.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      else
+        entry.generate_phase(:Edit, **opt)
+      end
+    end
   end
 
   # For the 'update' endpoint, get the matching Entry and update it from its
@@ -471,9 +476,10 @@ module EntryConcern
   #
   def update_entry(item = nil, opt = nil)
     item, opt = entry_request_params(item, opt)
-    # noinspection RubyMismatchedReturnType
     get_entry(item, **opt) do |entry|
-      if (phase = entry.phases.where(type: :Edit).order(:created_at).last)
+      if entry.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      elsif (phase = entry.phases.where(type: :Edit).order(:created_at).last)
         entry.update!(from: phase)
       else
         failure("No Phase::Edit for Entry #{entry.id}") # TODO: I18n
@@ -584,14 +590,22 @@ module EntryConcern
   #--
   # noinspection RubyNilAnalysis
   #++
-  def cancel_entry(entry = nil, opt = nil)
-    entry, opt = entry_request_params(entry, opt)
-    entry   = get_entry(entry, no_raise: true, **opt)
-    sid     = entry&.sid_value || opt[:submission_id]
-    phase   = entry&.current_phase
-    phase ||= Phase::Edit.where(submission_id: sid).order(:updated_at).last
-    phase ||= Phase::Create.where(submission_id: sid).order(:created_at).last
-    phase&.destroy! or failure("No record for submission #{sid.inspect}") # TODO: I18n
+  def cancel_entry(item = nil, opt = nil)
+    item, opt = entry_request_params(item, opt)
+    get_entry(item, no_raise: true, **opt).tap do |entry|
+      if entry.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      else
+        unless (phase = entry.current_phase)
+          sid   = entry.sid_value || opt[:submission_id]
+          phase =
+            Phase::Edit.where(submission_id: sid).order(:updated_at).last ||
+            Phase::Create.where(submission_id: sid).order(:created_at).last
+          failure("No record for submission #{sid.inspect}") unless phase # TODO: I18n
+        end
+        phase.destroy!
+      end
+    end
   end
 
   # Get a description of the status of the Entry, if it exists, or a temporary
@@ -681,15 +695,15 @@ module EntryConcern
 
   # bulk_new_entries
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
   #
   # @return [Any]
   #
-  def bulk_new_entries(opt = nil)
-    opt ||= get_entry_params
+  def bulk_new_entries(prm = nil)
+    prm ||= get_entry_params
     # noinspection RubyNilAnalysis
-    if opt.slice(:src, :source, :manifest).present?
-      post make_path(bulk_create_entry_path, **opt)
+    if prm.slice(:src, :source, :manifest).present?
+      post make_path(bulk_create_entry_path, **prm)
     else
       # TODO: ???
     end
@@ -697,15 +711,15 @@ module EntryConcern
 
   # bulk_create_entries
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Created entries.
   #
-  def bulk_create_entries(opt = nil)
-    data = entry_bulk_post_params(opt) << { base_url: request.base_url }
+  def bulk_create_entries(prm = nil)
+    data = entry_bulk_post_params(prm) << { base_url: request.base_url }
     succeeded = []
     failed    = []
     # TODO: bulk_create_entries
@@ -715,15 +729,15 @@ module EntryConcern
 
   # bulk_edit_entries
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
   #
   # @return [Any]
   #
-  def bulk_edit_entries(opt = nil)
-    opt ||= get_entry_params
+  def bulk_edit_entries(prm = nil)
+    prm ||= get_entry_params
     # noinspection RubyNilAnalysis
-    if opt.slice(:src, :source, :manifest).present?
-      put make_path(bulk_update_entry_path, **opt)
+    if prm.slice(:src, :source, :manifest).present?
+      put make_path(bulk_update_entry_path, **prm)
     else
       # TODO: bulk_edit_entries
     end
@@ -731,15 +745,15 @@ module EntryConcern
 
   # bulk_update_entries
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Modified entries.
   #
-  def bulk_update_entries(opt = nil)
-    data = entry_bulk_post_params(opt) << { base_url: request.base_url }
+  def bulk_update_entries(prm = nil)
+    data = entry_bulk_post_params(prm) << { base_url: request.base_url }
     succeeded = []
     failed    = []
     # TODO: bulk_update_entries
@@ -749,15 +763,15 @@ module EntryConcern
 
   # bulk_delete_entries
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
   #
   # @return [Any]
   #
-  def bulk_delete_entries(opt = nil)
-    opt ||= get_entry_params
+  def bulk_delete_entries(prm = nil)
+    prm ||= get_entry_params
     # noinspection RubyNilAnalysis
-    if opt.slice(:src, :source, :manifest).present?
-      delete make_path(bulk_destroy_entry_path, **opt)
+    if prm.slice(:src, :source, :manifest).present?
+      delete make_path(bulk_destroy_entry_path, **prm)
     else
       # TODO: bulk_delete_entries
     end
@@ -765,15 +779,15 @@ module EntryConcern
 
   # bulk_destroy_entries
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Removed entries.
   #
-  def bulk_destroy_entries(opt = nil)
-    data = entry_bulk_post_params(opt) << { base_url: request.base_url }
+  def bulk_destroy_entries(prm = nil)
+    data = entry_bulk_post_params(prm) << { base_url: request.base_url }
     succeeded = []
     failed    = []
     # TODO: bulk_destroy_entries
@@ -783,12 +797,12 @@ module EntryConcern
 
   # bulk_check_entries
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] prm            Default: `#get_entry_params`
   #
   # @return [Any]
   #
-  def bulk_check_entries(opt = nil)
-    opt ||= get_entry_params
+  def bulk_check_entries(prm = nil)
+    prm ||= get_entry_params
     # TODO: bulk_check_entries
   end
 

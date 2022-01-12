@@ -578,7 +578,7 @@ module UploadWorkflow::Bulk::Data
   #
   # @return [void]
   #
-  def reset_status(*)
+  def reset_status(...)
     super
     @control_file = nil
   end

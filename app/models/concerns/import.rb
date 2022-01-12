@@ -413,7 +413,7 @@ module Import
 
   if not DEBUG_IMPORT
 
-    def __debug_import(*); end
+    def __debug_import(...); end
 
   else
 

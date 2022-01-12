@@ -54,17 +54,17 @@ module PaginationConcern
     main_page    = request.path
     path_opt     = { decorate: true, unescape: true }
     mp_opt       = opt.merge(path_opt)
-    current_page = make_path(main_page, mp_opt)
+    current_page = make_path(main_page, **mp_opt)
     first_page   = main_page
     on_first     = (current_page == first_page)
     unless on_first
       mp_opt     = opt.except(*PAGINATION_KEYS).merge!(path_opt)
-      first_page = make_path(main_page, mp_opt)
+      first_page = make_path(main_page, **mp_opt)
       on_first   = (current_page == first_page)
     end
     unless on_first
       mp_opt     = opt.except(:limit, *PAGINATION_KEYS).merge!(path_opt)
-      first_page = make_path(main_page, mp_opt)
+      first_page = make_path(main_page, **mp_opt)
       on_first   = (current_page == first_page)
     end
 
@@ -133,10 +133,10 @@ module PaginationConcern
     if list.try(:next).present?
 
       # General pagination parameters.
-      opt    = url_parameters(url_params).except!(:start)
-      page   = positive(opt.delete(:page))
-      offset = positive(opt.delete(:offset))
-      limit  = positive(opt.delete(:limit))
+      prm    = url_parameters(url_params).except!(:start)
+      page   = positive(prm.delete(:page))
+      offset = positive(prm.delete(:offset))
+      limit  = positive(prm.delete(:limit))
       size   = limit || page_size
       if offset && page
         offset = nil if offset == ((page - 1) * size)
@@ -146,14 +146,14 @@ module PaginationConcern
       else
         page ||= 1
       end
-      opt[:page]   = page   + 1    if page
-      opt[:offset] = offset + size if offset
-      opt[:limit]  = limit         if limit && (limit != default_page_size)
+      prm[:page]   = page   + 1    if page
+      prm[:offset] = offset + size if offset
+      prm[:limit]  = limit         if limit && (limit != default_page_size)
 
       # Parameters specific to the Bookshare API.
-      opt[:start] = list.next
+      prm[:start] = list.next
 
-      make_path(request.path, opt)
+      make_path(request.path, **prm)
 
     else
       list.try(:get_link, :next)

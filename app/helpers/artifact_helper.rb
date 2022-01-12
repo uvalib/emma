@@ -116,7 +116,7 @@ module ArtifactHelper
     if item.is_a?(Bs::Api::Record)
       repo    = 'bookshare'
       type    = BsFormatType
-      type    = BsPeriodicalFormat if item.class.name.include?('Periodical')
+      type    = BsPeriodicalFormat if item.class.name&.include?('Periodical')
       format  = format&.to_s || type.default
       lbl_key = "emma.bookshare.type.#{type}.#{format}"
       url   ||= bs_download_path(bookshareId: item.identifier, fmt: format)

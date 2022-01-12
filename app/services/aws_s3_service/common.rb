@@ -87,31 +87,14 @@ module AwsS3Service::Common
   # This provides a uniform call for initializing the object with information
   # needed to build the object to return, including error information.
   #
-  # @param [Array] args
-  # @param [Hash]  opt
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,String>] records
+  # @param [Array<AwsS3::Message::SubmissionRequest,String>]       succeeded
+  # @param [Hash]                                                  opt
   #
-  #--
-  # == Variations
-  #++
+  # @return [AwsS3::Message::Response]
   #
-  # @overload initialize(records, succeeded, **opt)
-  #   Defaulting *type* to AwsS3::Message::Response.
-  #   @param [Array<AwsS3::Message::SubmissionRequest>] records
-  #   @param [Array<AwsS3::Message::SubmissionRequest>] succeeded
-  #   @param [Hash]                                     opt
-  #
-  # @overload api_return(type, *args, **opt)
-  #   @param [Class<Api::Record>] type
-  #   @param [Array]              args
-  #   @param [Hash]               opt
-  #
-  def api_return(*args, **opt)
-    if args.first.is_a?(Class)
-      super
-    else
-      opt[:error] = exception if exception
-      AwsS3::Message::Response.new(*args, **opt)
-    end
+  def api_return(records, succeeded, **opt)
+    super(AwsS3::Message::Response, records, succeeded, **opt)
   end
 
   # ===========================================================================
@@ -188,7 +171,7 @@ module AwsS3Service::Common
   # @return [Aws::S3::Resource]
   #
   def s3_resource(**opt)
-    client = opt[:client] || s3_client(opt)
+    client = opt[:client] || s3_client(**opt)
     Aws::S3::Resource.new(client: client)
   end
 
@@ -215,7 +198,7 @@ module AwsS3Service::Common
   #
   # @param [String, Aws::S3::Bucket]                 bucket
   # @param [String]                                  key
-  # @param [AWS::S3::Object, String, StringIO, File] content
+  # @param [Aws::S3::Object, String, StringIO, File] content
   # @param [Hash]                                    opt
   #
   # @option opt [Symbol]          :meth     Calling method for logging

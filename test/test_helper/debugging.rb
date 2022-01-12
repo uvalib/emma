@@ -338,23 +338,14 @@ module TestHelper::Debugging
         base.class_eval do
           %i[get put post patch delete head].each do |meth|
             next unless method_defined?(meth)
-            define_method(meth) do |*args|
+            define_method(meth) do |*args, **opt|
               # Extract any options specific to the tracing methods.  Remaining
               # options are passed to the underlying HTTP method call.
-              pre_opt = post_opt = {}
-              if args.last.is_a?(Hash)
-                trace_opt, opt = partition_hash(args.last, *TRACE_OPTIONS)
-                if trace_opt.present?
-                  pre_opt  = trace_opt.slice(*PRE_OPTIONS)
-                  post_opt = trace_opt.slice(*POST_OPTIONS)
-                  args.pop
-                  args.push(opt)
-                end
-              end
+              trace_opt, opt = partition_hash(opt, *TRACE_OPTIONS)
               # Call the underlying HTTP method between tracing output calls.
-              show_pre_send(meth, args.first, pre_opt)
-              super(*args)
-              show_post_send(post_opt)
+              show_pre_send(meth, args.first, **trace_opt.slice(*PRE_OPTIONS))
+              super(*args, **opt)
+              show_post_send(**trace_opt.slice(*POST_OPTIONS))
             end
           end
         end
