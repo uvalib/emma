@@ -61,7 +61,7 @@ module Search::Shared::IdentifierMethods
 
 end
 
-class PublicationIdentifierSet < SortedSet
+class PublicationIdentifierSet < Set
 
   # ===========================================================================
   # :section:
@@ -70,8 +70,9 @@ class PublicationIdentifierSet < SortedSet
   public
 
   def initialize(ids)
-    ids = Array.wrap(ids)
-    ids = ids.map { |v| PublicationIdentifier.cast(v, invalid: true) }
+    ids = Array.wrap(ids).compact
+    ids.map! { |v| PublicationIdentifier.cast(v, invalid: true) }
+    ids.sort!
     super(ids)
   end
 
