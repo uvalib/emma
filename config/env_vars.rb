@@ -451,6 +451,12 @@ DEBUG_PUMA = true?(ENV['DEBUG_PUMA'])
 #
 DEBUG_SHRINE = true?(ENV['DEBUG_SHRINE'])
 
+# When *true* debug asset pipeline timings in "rake 'assets:precompile'".
+#
+# @type [Boolean]
+#
+DEBUG_SPROCKETS = true?(ENV['DEBUG_SPROCKETS'])
+
 # Set to show headers and data being sent to external APIs.
 #
 # @type [Boolean]
