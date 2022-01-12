@@ -133,13 +133,24 @@ class Search::Message::SearchTitleList < Search::Api::Message
   GROUPING_LEVELS = [
     %i[normalized_title],
     %i[emma_repository],
-    %i[dc_identifier dc_creator dc_publisher emma_publicationDate]
+    %i[dc_creator dc_publisher emma_publicationDate]
   ].deep_freeze
 
   # @private
   GROUPING_LEVEL_DEPTH = GROUPING_LEVELS.size
 
-  class BottomLevel
+  # Encapsulates a subset of field values to provide a single object for use
+  # with Enumerable#group_by.
+  #
+  # == Implementation Notes
+  # This is still under development because the intent was to dynamically
+  # vary the comparison criteria if standard ID(s) are present, however
+  # Enumerable#group_by uses #hash not #eql?.
+  #
+  # It may be necessary to implement an analogue to #group_by which uses #eql?
+  # for this to work out as intended.
+  #
+  class GroupingCriteria
 
     include Comparable
 
@@ -149,20 +160,30 @@ class Search::Message::SearchTitleList < Search::Api::Message
     # @return [PublicationIdentifierSet, nil]
     attr_reader :ids
 
-    # @return [Array]
+    # @return [Array, nil]
     attr_reader :values
 
     def initialize(hash)
-      @ids    = nil
-      @values = []
-      hash.each_pair do |field, value|
-        if IDENTIFIER_FIELDS.include?(field)
-          @ids = PublicationIdentifierSet.new(value)
-        else
-          @values << LIST_ELEMENT.make_comparable(value, field)
-        end
+      id, val = partition_hash(hash, *IDENTIFIER_FIELDS)
+      @ids    = [*id.values].compact_blank!.presence
+      @ids  &&= PublicationIdentifierSet.new(@ids)
+      @values = val.values.map { |v| LIST_ELEMENT.make_comparable(v) }.presence
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    def match?(other)
+      return false unless other.is_a?(GroupingCriteria)
+      return true  if ids && other.ids && ids.intersect?(other.ids)
+      return true  if values == other.values
+      return false if values.blank? || other.values.blank?
+      values.each_with_index.all? do |v, i|
+        v.blank? || other.values[i].blank? || (v == other.values[i])
       end
-      $stderr.puts "@@@@@@@ BottomLevel.ctor | #{self.inspect}"
     end
 
     # =========================================================================
@@ -172,27 +193,21 @@ class Search::Message::SearchTitleList < Search::Api::Message
     public
 
     def hash
-      # NOTE: so, since group_by is using #hash it's going to be pretty difficult to override equality...
-      #   Bottom line -- it may be necessary to implement an analogue to group_by which uses eql?()
-      #super
-      (
-        ids ? ids.hash : values.hash
-        #ids ? 0 : values.hash
-      )
-        .tap { |res| $stderr.puts "@@@@@@@ BottomLevel.hash | #{res.inspect} | #{self.inspect}" }
+      ids&.hash || values.hash
     end
 
     def eql?(other)
-      return false unless other.is_a?(BottomLevel)
-      (
       ids && (ids == other.ids) || (values == other.values)
-      )
-        .tap { |res| $stderr.puts "@@@@@@@ BottomLevel.eql? | #{res.inspect} | #{self.inspect} | #{other.inspect}" }
     end
 
     def ==(other)
-      $stderr.puts '@@@@@@@ BottomLevel.=='
       eql?(other)
+    end
+
+    def inspect
+      i_list = ids ? ids.to_a.map(&:inspect).join(', ').tr('()', '') : '---'
+      v_list = values.map(&:inspect).join(', ')
+      "<#{i_list} | #{v_list} | GroupingCriteria>"
     end
 
   end
@@ -202,7 +217,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @param [Search::Record::MetadataRecord] rec
   # @param [Integer, Symbol, Array<Symbol>] level
   #
-  # @return [Array]
+  # @return [GroupingCriteria]
   #
   def group_fields(rec, level)
     fields = []
@@ -213,26 +228,15 @@ class Search::Message::SearchTitleList < Search::Api::Message
     else
       Log.error { "#{__method__}: level #{level} not in range #{range}" }
     end
-    BottomLevel.new(LIST_ELEMENT.extract_fields(rec, fields))
-=begin
-    LIST_ELEMENT.extract_fields(rec, fields).map do |field, value|
-      if IDENTIFIER_FIELDS.include?(field)
-        PublicationIdentifierSet.new(value)
-      else
-        LIST_ELEMENT.make_comparable(value, field)
-      end
-        .tap { |res| $stderr.puts "@@@@@@@ group_fields | #{res.inspect} | #{field.inspect} | #{value.inspect} | -> #{res.inspect}" }
-    end
-=end
-    #LIST_ELEMENT.comparable_fields(rec, fields).values
+    GroupingCriteria.new(LIST_ELEMENT.extract_fields(rec, fields))
   end
 
   # Recursively group records.
   #
   # @param [Array<Search::Record::MetadataRecord>] recs
-  # @param [Integer]       level      Incremented via recursion.
-  # @param [Array<Symbol>] fields     Supplied via recursion.
-  # @param [Proc]          block      Executed at the bottom-level.
+  # @param [Integer] level            Incremented via recursion.
+  # @param [Any]     fields           Supplied via recursion.
+  # @param [Proc]    block            Executed at the bottom-level.
   #
   # @return [Array<Search::Record::TitleRecord>]
   #
@@ -240,12 +244,33 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @yieldparam  [Array<Search::Record::MetadataRecord>] recs
   # @yieldreturn [Search::Record::TitleRecord, nil]
   #
-  def recursive_group_records(recs, level: 0, fields: [], &block)
+  def recursive_group_records(recs, level: 0, fields: nil, &block)
     __debug_group(level, fields, recs) if level.positive?
     return block.call(recs) if level == GROUPING_LEVEL_DEPTH
-    recs.group_by { |r| group_fields(r, level) }.flat_map { |_flds, _recs|
-      recursive_group_records(_recs, level: (level+1), fields: _flds, &block)
+    group_related(recs, level).flat_map { |flds, group|
+      recursive_group_records(group, level: (level+1), fields: flds, &block)
     }.compact_blank!
+  end
+
+  # This functions as an alternative to Enumerable#group_by, but grouping by
+  # similarity rather than identity.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  # @param [Integer]                               level
+  #
+  # @return [Hash{GroupingCriteria=>Array<Search::Record::MetadataRecord>}]
+  #
+  def group_related(recs, level)
+    result = {}
+    recs.each do |rec|
+      criteria = group_fields(rec, level)
+      if (related = result.keys.find { |key| key.match?(criteria) })
+        result[related] << rec
+      else
+        result[criteria] = [rec]
+      end
+    end
+    result
   end
 
   # ===========================================================================
@@ -255,12 +280,12 @@ class Search::Message::SearchTitleList < Search::Api::Message
   private
 
   if DEBUG_AGGREGATE
-    def __debug_group(level, key, recs)
+    def __debug_group(level, fields, recs)
       leader = '---' * (level + 1)
-      field  = key.inspect
+      fields = fields.inspect
       count  = recs.size
       $stderr.puts if level.zero?
-      $stderr.puts "#{leader} GROUP_BY #{field} --- (#{count} records)"
+      $stderr.puts "#{leader} GROUP_BY #{fields} --- (#{count} records)"
     end
   else
     def __debug_group(*)

@@ -313,7 +313,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>Any}]
     #
     def match_fields(rec)
-      extract_fields(rec, MATCH_FIELDS)
+      comparable_fields(rec, MATCH_FIELDS)
     end
 
     # Field values used as the basis of #sort_keys.
@@ -373,9 +373,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     # =========================================================================
 
     public
-
-    # @private
-    IDENTIFIER_FIELDS = Api::Shared::IdentifierMethods::IDENTIFIER_FIELDS
 
     # Transform a value into one whose elements are prepared for comparison
     # with a similar value.
@@ -475,6 +472,48 @@ class Search::Record::TitleRecord < Search::Api::Record
       elsif respond_to?(field)
         send(field, rec)
       end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # @private
+    IDENTIFIER_FIELDS = Api::Shared::IdentifierMethods::IDENTIFIER_FIELDS
+
+    # Combined information from the values of the given fields of all of the
+    # records.
+    #
+    # @param [Array<Search::Record::MetadataRecord>] recs
+    # @param [Array<Symbol>]                         fields
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def field_union(recs, fields)
+      array  = fields.map { |k| [k, false] }.to_h
+      result = fields.map { |k| [k, []] }.to_h
+      recs.each do |rec|
+        fields.each do |field|
+          next unless (value = field_value(rec, field))
+          array[field] ||= value.is_a?(Array)
+          result[field] += Array.wrap(value)
+        end
+      end
+      result.map { |field, value|
+        next if value.blank?
+        if value.many?
+          if IDENTIFIER_FIELDS.include?(field)
+            value.sort_by! { |v| identifier_sort_key(v) }.uniq!
+          else
+            value.sort_by! { |v| make_comparable(v, field) }
+            value.uniq!    { |v| make_comparable(v, field) }
+          end
+        end
+        value = value.join(' / ') unless array[field]
+        [field, value]
+      }.compact.to_h
     end
 
     # =========================================================================
@@ -929,23 +968,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     rec.try("#{field}=", value)
   end
 
-=begin
-  # Group identifiers of the same prefix in descending order of length
-  # (favoring ISBN-13 over ISBN-10).
-  #
-  # @param [String, nil] id
-  #
-  # @return [(String, Integer, String)]
-  #
-  def identifier_sort_key(id)
-    id     = PublicationIdentifier.cast(id, invalid: true)
-    value  = id.to_s
-    length = -value.size
-    prefix = id&.prefix || ''
-    [prefix, length, value]
-  end
-=end
-
   # Produce a list of field mismatches which prevent *rec* from being eligible
   # for inclusion in the instance.
   #
@@ -962,7 +984,8 @@ class Search::Record::TitleRecord < Search::Api::Record
     return []                                  unless exemplar.present?
     rec_fields = match_fields(rec)
     match_fields(exemplar).map { |field, required_value|
-      next if (rec_value = rec_fields[field]) == required_value
+      next if required_value.blank? || (rec_value = rec_fields[field]).blank?
+      next if rec_value == required_value
       "#{field}: #{rec_value.inspect} != #{required_value.inspect}"
     }.compact
   end
@@ -1015,28 +1038,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Hash{Symbol=>Any}]
   #
   def title_field_union(recs = records)
-    array  = UNION_FIELDS.map { |k| [k, false] }.to_h
-    result = UNION_FIELDS.map { |k| [k, []] }.to_h
-    recs.each do |rec|
-      UNION_FIELDS.each do |field|
-        next unless (value = field_value(rec, field))
-        array[field] ||= value.is_a?(Array)
-        result[field] += Array.wrap(value)
-      end
-    end
-    result.map { |field, value|
-      next if value.blank?
-      if value.many?
-        if IDENTIFIER_FIELDS.include?(field)
-          value.sort_by! { |v| identifier_sort_key(v) }.uniq!
-        else
-          value.sort_by! { |v| make_comparable(v, field) }
-          value.uniq!    { |v| make_comparable(v, field) }
-        end
-      end
-      value = value.join(' / ') unless array[field]
-      [field, value]
-    }.compact.to_h
+    field_union(recs, UNION_FIELDS)
   end
 
   # Record fields honored by #title_field_exclusive.
@@ -1068,51 +1070,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       end
     end
   end
-
-=begin
-  # Transform a value into one whose elements are prepared for comparison with
-  # a similar value.
-  #
-  # @param [Hash, Array, String, Any, nil] value
-  # @param [Symbol, nil]                   field
-  #
-  # @return [Hash, Array, String, Any]  Same type as original type of *value*.
-  #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def make_comparable(value, field = nil)
-    if Log.debug?
-      # noinspection RubyCaseWithoutElseBlockInspection
-      case value
-        when Number, Model, Hash
-          Log.debug { "#{__method__}: ignoring field = #{field.inspect}" }
-      end
-    end
-    id_field = field && IDENTIFIER_FIELDS.include?(field)
-    case value
-      when Number
-        value.number_value
-      when Model
-        make_comparable(value.fields)
-      when Hash
-        value.map { |k, v|
-          v = make_comparable(v, k)
-          [k, v] if v.present?
-        }.compact.sort_by! { |kv| kv&.first || '' }.to_h
-      when Array
-        # noinspection RubyMismatchedArgumentType
-        if id_field
-          value.compact_blank.sort_by! { |v| identifier_sort_key(v) }
-        else
-          value.map { |v| make_comparable(v, field) }.compact_blank!.sort!
-        end
-      else
-        # noinspection RubyMismatchedReturnType
-        id_field ? value : value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
-    end
-  end
-=end
 
   # ===========================================================================
   # :section: Class methods

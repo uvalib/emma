@@ -175,7 +175,7 @@ module ModelHelper::ListV3
     }.compact_blank!
   end
 
-  # part_level_lines
+  # part_lines
   #
   # @param [Array<Hash>] part_section
   # @param [Symbol]      part_key
@@ -188,8 +188,8 @@ module ModelHelper::ListV3
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
   def part_lines(part_section, part_key, part_index, part_prop, opt)
-    opt[:term] ||= FILE_TERM
-    part_section.flat_map.with_index(1) do |format, format_no|
+    opt[:term] = FILE_TERM unless (original_term = opt[:term])
+    part_section.flat_map.with_index(1) { |format, format_no|
       index = [*part_index, format_no]
       prop  = add_scope(part_prop, part_key, index: index)
       prop[:'data-format'] = format_no
@@ -207,7 +207,9 @@ module ModelHelper::ListV3
       heading = new_section(:format, name, value, details, index, prop, h_opt)
 
       [heading, *lines]
-    end
+    }.tap {
+      opt[:term] = original_term
+    }
   end
 
   # format_section_lines
@@ -286,7 +288,7 @@ module ModelHelper::ListV3
     }.compact_blank!
   end
 
-  # render_field
+  # Render a single field label and value.
   #
   # @param [Hash] line
   # @param [Hash] opt
@@ -331,11 +333,11 @@ module ModelHelper::ListV3
   def new_section(type, name, data_value, details, index, prop, opt)
     css_selector = '.field-section'
     opt[:row] += 1
-    open   = true
-    type   = type.to_s
-    field  = :"new_#{type.underscore}"
-    base   = model_html_id(field)
-    index  = index.compact.join('-') if index.is_a?(Array)
+    open  = true
+    type  = type.to_s
+    field = :"new_#{type.underscore}"
+    base  = model_html_id(field)
+    index = index.compact.join('-') if index.is_a?(Array)
 
     # The open/close toggle control for this section.
     tgt_id = [(PAIR_WRAPPER || 'value'), base, index].compact.join('-')
@@ -345,14 +347,14 @@ module ModelHelper::ListV3
     if name.is_a?(ActiveSupport::SafeBuffer)
       label = name
     else
-      term  = opt[:term] || FILE_TERM || type
-      label = html_span("#{term.titleize} #{name}", class: 'text')
+      term  = (opt[:term] || type).to_s.titleize
+      label = html_span("#{term} #{name}", class: 'text')
     end
     label = toggle << label
 
     # Make an non-empty value portion.
-    value  = details || HTML_SPACE
-    value  = html_span(value, class: 'details')
+    value = details || HTML_SPACE
+    value = html_span(value, class: 'details')
 
     opt = prepend_classes(opt, css_selector, ('open' if open))
     opt.merge!(index: index, field: field, 'data-value': data_value)

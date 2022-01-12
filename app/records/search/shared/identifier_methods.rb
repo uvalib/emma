@@ -61,7 +61,7 @@ module Search::Shared::IdentifierMethods
 
 end
 
-class PublicationIdentifierSet < Set
+class PublicationIdentifierSet < SortedSet
 
   # ===========================================================================
   # :section:
@@ -73,7 +73,6 @@ class PublicationIdentifierSet < Set
     ids = Array.wrap(ids)
     ids = ids.map { |v| PublicationIdentifier.cast(v, invalid: true) }
     super(ids)
-    $stderr.puts "@@@@@@@ PublicationIdentifierSet.ctor | #{self.inspect}"
   end
 
   # ===========================================================================
@@ -82,19 +81,12 @@ class PublicationIdentifierSet < Set
 
   public
 
-  def hash
-    super
-      .tap { |res| $stderr.puts "@@@@@@@ PublicationIdentifierSet.hash | #{res.inspect} | #{self.inspect}" }
-  end
-
   def eql?(other)
     other = self.class.new(other) unless other.is_a?(self.class)
     intersect?(other)
-      .tap { |res| $stderr.puts "@@@@@@@ PublicationIdentifierSet.eql? | #{res.inspect} | #{self.inspect} | #{other.inspect}" }
   end
 
   def ==(other)
-    $stderr.puts '@@@@@@@ PublicationIdentifierSet.=='
     # noinspection RubyMismatchedReturnType
     eql?(other)
   end
