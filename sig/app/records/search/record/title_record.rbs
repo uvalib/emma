@@ -203,10 +203,11 @@ class Search::Record::TitleRecord < Search::Api::Record
     # The values for *rec* for use with Enumerable#sort_by.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    # @param [Boolean]                                   exact
     #
     # @return [Array]
     #
-    def sort_keys: (Search::Record::MetadataRecord|symHash|nil rec) -> symArray
+    def sort_keys: (Search::Record::MetadataRecord|symHash|nil rec, ?bool exact) -> symArray
 
     # extract_fields
     #
@@ -259,13 +260,14 @@ class Search::Record::TitleRecord < Search::Api::Record
     # Normalize a value for use as a sort key value.
     #
     # @param [Any, nil] item
+    # @param [Boolean]  exact
     #
     # @return [Any]
     #
     # -
     # noinspection RubyNilAnalysis
     # +
-    def sort_key_value: (untyped item) -> untyped
+    def sort_key_value: (untyped item, ?bool exact) -> untyped
 
     # field_value
     #
@@ -479,6 +481,17 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Search::Record::MetadataRecord]
   #
   def copy_record: (Search::Record::MetadataRecord rec) -> Search::Record::MetadataRecord
+
+  # Sort records.
+  #
+  # If #sort_keys results in a set of value which cause Array#sort_by! to
+  # fail then re-attempt with a less exact set of values.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  #
+  # @return [Array<Search::Record::MetadataRecord>]
+  #
+  def sort_records!: (Array[Search::Record::MetadataRecord] recs) -> Array[Search::Record::MetadataRecord]
 
   # Generate a series position number if one isn't already present.
   #

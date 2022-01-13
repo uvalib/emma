@@ -330,11 +330,12 @@ class Search::Record::TitleRecord < Search::Api::Record
     # The values for *rec* for use with Enumerable#sort_by.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
+    # @param [Boolean]                                   exact
     #
     # @return [Array]
     #
-    def sort_keys(rec)
-      sort_fields(rec).values.map { |v| sort_key_value(v) }
+    def sort_keys(rec, exact = true)
+      sort_fields(rec).values.map { |v| sort_key_value(v, exact) }
     end
 
     # extract_fields
@@ -442,18 +443,19 @@ class Search::Record::TitleRecord < Search::Api::Record
     # Normalize a value for use as a sort key value.
     #
     # @param [Any, nil] item
+    # @param [Boolean] exact
     #
     # @return [Any]
     #
     #--
     # noinspection RubyNilAnalysis
     #++
-    def sort_key_value(item)
-      case item
-        when String then item.strip
-        when Array  then item.map { |v| sort_key_value(v) }
-        else             item.try(:to_datetime) || item.try(:number_value) || 0
-      end
+    def sort_key_value(item, exact = true)
+      return item.map { |v| sort_key_value(v, exact) } if item.is_a?(Array)
+      return item.strip            if item.is_a?(String)
+      return item.to_datetime.to_s if item.respond_to?(:to_datetime)
+      result = item&.try(:number_value) || item
+      exact ? (result || 0) : result.to_s
     end
 
     # field_value
@@ -921,9 +923,22 @@ class Search::Record::TitleRecord < Search::Api::Record
       else
         copy_record(rec).tap { |r| @exemplar ||= r }
       end
-    }.compact.tap { |recs|
-      recs.sort_by! { |rec| sort_keys(rec) } if recs.many?
-    }
+    }.compact.tap { |recs| sort_records!(recs) if recs.many? }
+  end
+
+  # Sort records.
+  #
+  # If #sort_keys results in a set of value which cause Array#sort_by! to
+  # fail then re-attempt with a less exact set of values.
+  #
+  # @param [Array<Search::Record::MetadataRecord>] recs
+  #
+  # @return [Array<Search::Record::MetadataRecord>]
+  #
+  def sort_records!(recs)
+    recs.sort_by! { |rec| sort_keys(rec) }
+  rescue
+    recs.sort_by! { |rec| sort_keys(rec, false) }
   end
 
   # Copy the record, adding an item_number if appropriate.
