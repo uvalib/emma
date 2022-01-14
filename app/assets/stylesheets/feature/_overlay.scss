@@ -1,7 +1,7 @@
 // app/assets/stylesheets/feature/_overlay.scss
 
-@use 'shared/variables' as v;
-@use 'shared/functions' as f;
+@use 'shared/variables' as *;
+@use 'shared/functions' as *;
 
 //=============================================================================
 // Content overlay frames
@@ -20,13 +20,13 @@
 
     // Add the "visible" class to the element to make the overlay appear.
     &.visible {
-        z-index: v.$z-overlay;
+        z-index: $z-overlay;
         opacity: 1;
     }
 
     // Without the addition of the "visible" class, the overlay remains hidden.
     &:not(.visible) {
-        z-index: v.$z-hidden;
+        z-index: $z-hidden;
         opacity: 0;
     }
 

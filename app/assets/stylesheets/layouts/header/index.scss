@@ -2,8 +2,7 @@
 //
 // Classes related to generic page header styles.
 
-@import 'common';
-@import 'banner';
-@import 'navbar';
-@import 'search';
-@import 'page_controls';
+@use 'banner';
+@use 'navbar';
+@use 'search';
+@use 'page_controls';

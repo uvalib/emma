@@ -1,7 +1,7 @@
 // app/assets/stylesheets/controllers/_bs_api.scss
 
-@use 'shared/variables' as v;
-@use 'shared/mixins'    as x;
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Internal constants
@@ -19,7 +19,7 @@ body.bs_api-v2 {
     background-color: $api-background-color;
 
     .layout-content {
-        box-shadow: 0 0 0 v.$page-padding $api-background-color;
+        box-shadow: 0 0 0 $page-padding $api-background-color;
     }
 
     //=========================================================================
@@ -51,8 +51,8 @@ body.bs_api-v2 {
         @extend %api-section;
 
         display:     block;
-        margin-top:  v.$page-padding-y;
-        padding-top: v.$page-padding-y;
+        margin-top:  $page-padding-y;
+        padding-top: $page-padding-y;
     }
 
     .methods {
@@ -62,13 +62,13 @@ body.bs_api-v2 {
         padding:          1rem;
         column-count:     auto;
         column-width:     27.5vw;
-        background-color: v.$uva-light-gray;
+        background-color: $uva-light-gray;
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             column-width: 15vw;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             padding-top:  0;
             column-width: unset;
         }
@@ -81,7 +81,7 @@ body.bs_api-v2 {
 
         > * {
 
-            @include x.width-fit-content;
+            @include width-fit-content;
 
             display: block;
             margin:  0 (-$item-padding) $item-padding;
@@ -90,11 +90,11 @@ body.bs_api-v2 {
 
         .success {
             color:            blue;
-            background-color: v.$root-bg-color;
+            background-color: $root-bg-color;
         }
 
         .error {
-            color: v.$error-fg;
+            color: $error-fg;
         }
     }
 
@@ -140,7 +140,7 @@ body.bs_api-v2 {
             @extend %api-panel;
 
             &.success {
-                background-color: v.$root-bg-color;
+                background-color: $root-bg-color;
             }
 
             &.error {

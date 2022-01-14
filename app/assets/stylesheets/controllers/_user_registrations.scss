@@ -1,6 +1,8 @@
 // app/assets/stylesheets/controllers/_user_registrations.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
+
+@use 'controllers/account';
 
 //=============================================================================
 // New user page
@@ -20,7 +22,7 @@
 
     @extend .account-form;
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         width: 75%;
     }
 

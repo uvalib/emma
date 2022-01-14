@@ -1,28 +1,17 @@
 // app/assets/stylesheets/feature/_images.scss
 
-@use 'shared/variables'      as v;
-@use 'shared/feature/images' as i;
+@use 'shared/variables'      as *;
+@use 'shared/mixins'         as *;
+@use 'shared/feature/images' as image;
 
 //=============================================================================
-// Common <img> properties.
+// Internal placeholder classes
 //=============================================================================
 
 %image {
     object-fit:    contain;
-    border:        i.$image-border-width solid i.$image-border-color;
+    border:        image.$border-width solid image.$border-color;
     border-radius: 3px;
-}
-
-%thumbnail-dimensions {
-
-    max-width:  v.$thumbnail-max-x;
-    max-height: v.$thumbnail-max-y;
-    height:     v.$thumbnail-max-y;
-
-    @media #{v.$narrow-screen} {
-        max-height: unset;
-        height:     auto;
-    }
 }
 
 %placeholder-image {
@@ -30,7 +19,7 @@
 }
 
 //=============================================================================
-// Cover images.
+// Cover images
 //=============================================================================
 
 // @see TitleHelper#cover_image
@@ -50,7 +39,7 @@
 }
 
 //=============================================================================
-// Thumbnail images.
+// Thumbnail images
 //=============================================================================
 
 // @see TitleHelper#thumbnail
@@ -63,14 +52,14 @@
 
     img {
         @extend %image;
-        @extend %thumbnail-dimensions;
+        @include image.thumbnail-dimensions;
     }
 
     .placeholder {
 
         @extend %placeholder-image;
 
-        width:     $min-thumbnail-width - (2 * i.$image-border-width);
+        width:     $min-thumbnail-width - (2 * image.$border-width);
         height:    auto;
         transform: scale(0.5);
     }
@@ -91,8 +80,7 @@
             outline: none;
 
             img {
-                // noinspection SassScssResolvedByNameOnly
-                @extend %focus;
+                @include focus;
             }
         }
     }

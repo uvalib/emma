@@ -1,8 +1,10 @@
 // app/assets/stylesheets/layouts/index.scss
 
-@import 'root';
-@import 'common';
-@import 'controls';
-@import 'content';
-@import 'header';
-@import 'footer';
+@use 'root';
+@use 'common';
+@use 'controls';
+@use 'content';
+@use 'header';
+@use 'footer';
+@use 'print';
+@use 'debug';

@@ -25,7 +25,7 @@ via `@use` without causing duplication in the resulting compiled file in
 |             **[controls/_lists.scss](controls/_lists.scss)** | Definitions supporting lists and list elements        |
 |             **[controls/_popup.scss](controls/_popup.scss)** | Definitions supporting pop-up elements                |
 |           **[controls/_shapes.scss](controls/_shapes.scss)** | Definitions supporting shaped elements                |
-|             **[controls/_table.scss](controls/_table.scss)** | Definitions supporting tables and table elements      |
+|            **[controls/_table.scss](controls/_tables.scss)** | Definitions supporting tables and table elements      |
 |   **[layouts/_header.scss](../shared/layouts/_header.scss)** | Shared definitions used in `layouts/header/*`         |
 |   **[feature/_images.scss](../shared/feature/_images.scss)** | Shared definitions supporting `feature/_images.scss`  |
 |     **[feature/_model.scss](../shared/feature/_model.scss)** | Shared definitions supporting `feature/_model.scss`   |

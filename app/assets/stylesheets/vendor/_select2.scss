@@ -1,8 +1,9 @@
 // app/assets/stylesheets/vendor/_select2.scss
 
-@use 'shared/variables' as v;
+// @use '../../../node_modules/select2/dist/css/select2.css';
 
-// @import '../../../node_modules/select2/dist/css/select2.css';
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Overrides of Select2 styles (node_modules/select2/dist/css/select2.css)
@@ -14,8 +15,7 @@
     .select2-selection--multiple {
 
         &:focus-within {
-            // noinspection SassScssResolvedByNameOnly
-            @extend %focus;
+            @include focus;
         }
 
         // The default no-wrap style is a problem for constraining the width of
@@ -66,13 +66,13 @@
 
         // A currently-selected value within the drop-down menu.
         &[aria-selected="true"]:after {
-            content: "\2714"; // HEAVY CHECK MARK
+            content: $HEAVY_CHECK_MARK;
         }
 
         // A currently-selected value within the drop-down menu which is not
         // highlighted.
         &:not(.select2-results__option--highlighted)[aria-selected="true"] {
-            background-color: v.$selected-bg;
+            background-color: $selected-bg;
         }
     }
 }

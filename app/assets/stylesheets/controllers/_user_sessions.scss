@@ -1,6 +1,8 @@
 // app/assets/stylesheets/controllers/_user_sessions.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables'         as *;
+
+@use 'layouts/controls/buttons' as button-classes;
 
 //=============================================================================
 // Page header
@@ -28,19 +30,19 @@ body.user_sessions {
     display:     grid;
     align-items: center;
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         gap: 1rem 3rem;
         grid-template-columns:
             [label] auto [uid] 1fr [pwd] 1fr [actions] 1fr [options] 1fr;
     }
 
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         gap: 1rem;
         grid-template-columns:
             [label] auto [uid] 1fr [pwd] 1fr [actions] auto [options] auto;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         gap: 1rem;
         grid-template-columns: 1fr;
     }
@@ -50,8 +52,7 @@ body.user_sessions {
     // @see file:app/views/user/registrations/edit.html.erb
     .sign-in-link {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-button;
+        @extend .control-button;
 
         padding:           0.75rem;
         font-size:         large;
@@ -66,7 +67,7 @@ body.user_sessions {
         display:     contents;
         line-height: 1.5;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             display: inline-grid;
         }
 
@@ -86,7 +87,7 @@ body.user_sessions {
             flex-wrap:   nowrap;
             align-items: center;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-top:  0.25rem;
                 margin-left: 0;
             }
@@ -96,7 +97,7 @@ body.user_sessions {
 
             .label {
                 font-weight:  bold;
-                margin-right: v.$flex-gap-x;
+                margin-right: $flex-gap-x;
             }
 
             .value {
@@ -106,14 +107,13 @@ body.user_sessions {
 
         .actions {
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-right: 100%; // Push to next line.
             }
 
             input[type='submit'] {
 
-                // noinspection SassScssResolvedByNameOnly
-                @extend %control-button-base;
+                @extend .basic-button;
 
                 line-height: 1;
             }
@@ -126,7 +126,7 @@ body.user_sessions {
             }
 
             input[type='checkbox'] {
-                margin-right: calc(#{v.$flex-gap-x} / 2);
+                margin-right: calc(#{$flex-gap-x} / 2);
             }
         }
 

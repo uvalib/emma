@@ -1,7 +1,10 @@
 // app/assets/stylesheets/controllers/_account.scss
 
-@use 'shared/variables'      as v;
-@use 'shared/controls/grids' as g;
+@use 'shared/variables'      as *;
+@use 'shared/controls/grids' as grid;
+
+@use 'feature/entry_form'    as form-classes;
+@use 'feature/model'         as model-classes;
 
 //=============================================================================
 // Account index page
@@ -22,18 +25,18 @@
         'narrow': ('columns': 1, 'template': 1fr)
     );
 
-    @include g.grid-column-classes($max-columns, max-content, $columns-map);
+    @include grid.column-classes($max-columns, max-content, $columns-map);
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         // NOTE: This is a kludge because ".column-#{count}" is not being added
         grid-template-columns: auto;
     }
 
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         padding: 1rem 1rem 0.5rem;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         padding-bottom: 0;
     }
 
@@ -43,7 +46,7 @@
 
     %effective-user {
         font-weight: bold;
-        color:       v.$uva-emergency-red;
+        color:       $uva-emergency-red;
     }
 
     .label {
@@ -139,7 +142,7 @@
 
     grid-template-columns: 1fr;
 
-    @media #{v.$not-wide-screen} {
+    @media #{$not-wide-screen} {
         margin-top: 1.5rem;
     }
 
@@ -149,7 +152,7 @@
     }
 
     .button-tray {
-        @include g.grid-row(unset);
+        @include grid.row(unset);
     }
 }
 
@@ -161,7 +164,7 @@
     @extend .entry-form-container;
 
     .account-form {
-        margin-top: v.$page-padding;
+        margin-top: $page-padding;
     }
 
     .account-delete-form {

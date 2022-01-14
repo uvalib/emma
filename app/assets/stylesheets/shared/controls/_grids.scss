@@ -2,6 +2,9 @@
 //
 // Definitions supporting grid controls.
 
+@use 'sass:map';
+@use 'sass:meta';
+
 @use 'shared/variables' as v;
 
 //=============================================================================
@@ -12,7 +15,7 @@
 ///
 /// @param {Numeric} $row
 ///
-@mixin grid-row($row) {
+@mixin row($row) {
     grid-row-start: $row;
     grid-row-end:   $row;
 }
@@ -21,7 +24,7 @@
 ///
 /// @param {Numeric} $column
 ///
-@mixin grid-column($column) {
+@mixin column($column) {
     grid-column-start: $column;
     grid-column-end:   $column;
 }
@@ -31,7 +34,7 @@
 /// @param {Numeric} $end             Ending column.
 /// @param {Numeric} $start           Starting column.
 ///
-@mixin grid-column-span($end: -1, $start: 1) {
+@mixin column-span($end: -1, $start: 1) {
     grid-column-start: $start;
     grid-column-end:   $end;
 }
@@ -40,7 +43,7 @@
 ///
 /// @param {Numeric} $gap-y           Row gap
 ///
-@mixin grid-row-gap($gap-y) {
+@mixin row-gap($gap-y) {
     grid-row-gap: $gap-y; // Required by Safari
     row-gap:      $gap-y;
 }
@@ -49,7 +52,7 @@
 ///
 /// @param {Numeric} $gap-x           Column gap
 ///
-@mixin grid-column-gap($gap-x) {
+@mixin column-gap($gap-x) {
     grid-column-gap: $gap-x; // Required by Safari
     column-gap:      $gap-x;
 }
@@ -59,7 +62,7 @@
 /// @param {String}  $template
 /// @param {Numeric} $columns
 ///
-@mixin grid-columns($template, $columns: 1) {
+@mixin columns($template, $columns: 1) {
     @if $template {
         @if $columns <= 1 {
             grid-template-columns: $template;
@@ -78,10 +81,10 @@
 ///
 /// @param {Numeric} $max
 ///
-@mixin grid-cell-col-classes($max) {
+@mixin cell-col-classes($max) {
     @for $n from 1 through $max {
         .col-#{$n} {
-            @include grid-column($n);
+            @include column($n);
         }
     }
 }
@@ -91,10 +94,10 @@
 ///
 /// @param {Numeric} $max
 ///
-@mixin grid-cell-row-classes($max) {
+@mixin cell-row-classes($max) {
     @for $n from 1 through $max {
         .row-#{$n} {
-            @include grid-row($n);
+            @include row($n);
         }
     }
 }
@@ -105,11 +108,11 @@
 /// @param {String}  $template
 /// @param {Map}     $template-map
 ///
-@mixin grid-column-classes($max-cols, $template: false, $template-map: false) {
+@mixin column-classes($max-cols, $template: false, $template-map: false) {
 
-    @if type-of($template-map) != 'map' {
+    @if meta.type-of($template-map) != 'map' {
 
-        @include grid-columns($template, $max-cols);
+        @include columns($template, $max-cols);
 
         @for $n from 1 through $max-cols {
             &.columns-#{$n} {
@@ -123,18 +126,18 @@
 
     } @else {
 
-        $wide-map:        map-get($template-map, 'wide');
-        $medium-map:      map-get($template-map, 'medium');
-        $narrow-map:      map-get($template-map, 'narrow');
+        $wide-map:        map.get($template-map, 'wide');
+        $medium-map:      map.get($template-map, 'medium');
+        $narrow-map:      map.get($template-map, 'narrow');
 
-        $wide-max:        map-get($wide-map,   'columns')  or $max-cols;
-        $wide-template:   map-get($wide-map,   'template') or $template;
+        $wide-max:        map.get($wide-map,   'columns')  or $max-cols;
+        $wide-template:   map.get($wide-map,   'template') or $template;
 
-        $medium-max:      map-get($medium-map, 'columns')  or $wide-max;
-        $medium-template: map-get($medium-map, 'template') or $wide-template;
+        $medium-max:      map.get($medium-map, 'columns')  or $wide-max;
+        $medium-template: map.get($medium-map, 'template') or $wide-template;
 
-        $narrow-max:      map-get($narrow-map, 'columns')  or $medium-max;
-        $narrow-template: map-get($narrow-map, 'template') or $medium-template;
+        $narrow-max:      map.get($narrow-map, 'columns')  or $medium-max;
+        $narrow-template: map.get($narrow-map, 'template') or $medium-template;
 
         @for $n from 1 through $max-cols {
             &.columns-#{$n} {

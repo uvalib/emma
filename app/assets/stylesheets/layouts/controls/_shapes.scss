@@ -1,6 +1,6 @@
 // app/assets/stylesheets/layouts/controls/_shapes.scss
 
-@use 'shared/controls/shapes' as s;
+@use 'shared/controls/shapes' as shape;
 
 // ============================================================================
 // CSS "icons"
@@ -8,15 +8,15 @@
 
 // @see PaginationHelper#pagination_prev_icon
 .left-triangle-icon {
-    @include s.triangle-icon(left);
+    @include shape.triangle-icon(left);
 }
 
 // @see PaginationHelper#pagination_next_icon
 .right-triangle-icon {
-    @include s.triangle-icon(right);
+    @include shape.triangle-icon(right);
 }
 
 // @see PaginationHelper#pagination_last_icon
 .square-icon {
-    @include s.square-icon;
+    @include shape.square-icon;
 }

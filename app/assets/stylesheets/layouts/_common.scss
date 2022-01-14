@@ -2,296 +2,8 @@
 //
 // General-use CSS classes and SCSS placeholder classes.
 
-@use 'shared/variables' as v;
-@use 'shared/mixins'    as x;
-
-//=============================================================================
-// Placeholder classes
-//=============================================================================
-
-// Remove the element from display.
-%hidden {
-    display: none !important;
-}
-
-// Hide the contents of the element while maintaining the space it occupies on
-// the display.
-%invisible {
-    visibility: hidden !important;
-}
-
-// Hide the contents of the element while maintaining horizontal displacement.
-%invisible-height {
-    @extend %invisible;
-    height: 0;
-}
-
-// Hide the contents of the element while maintaining vertical displacement.
-%invisible-width {
-    @extend %invisible;
-    width: 0;
-}
-
-// Make focus outline more easily seen.
-%focus {
-    outline:        2px solid v.$focus-accent;
-    outline-offset: 2px;
-}
-
-// Make an actionable item (e.g. <a>) appear non-functional.
-// NOTE: The link should also have attribute 'tabindex="-1"'.
-%disabled {
-    text-decoration: none;
-    &:active { pointer-events:  none; }
-    &:focus  { outline:         none; }
-    &:hover  { text-decoration: none; }
-}
-
-// Make an element only visible to screen readers.
-%sr-only {
-    @include x.screen-reader-only;
-}
-
-// Counteract the effects of %sr-only (except for position and border).
-%not-sr-only {
-    width:       unset;
-    height:      unset;
-    padding:     unset;
-    margin:      unset;
-    white-space: unset;
-    overflow:    unset;
-    clip:        unset;
-}
-
-// For an element which should not inherit the default styling imposed by the
-// browser (particularly for h1-h6 elements being used to define document
-// structure but intended to be styled by supplied CSS class(es).
-//
-// noinspection CssBrowserCompatibilityForProperties
-%clear-default-styling {
-    margin:         0;
-    margin-block:   0;
-    margin-inline:  0;
-    padding:        0;
-    padding-block:  0;
-    padding-inline: 0;
-    font-size:      inherit;
-    font-weight:    inherit;
-}
-
-// An element that spans the entire width of the display.
-%banner {
-
-    display:          flex;
-    flex-direction:   row;
-    justify-content:  space-between;
-    width:            inherit;
-    margin:           0;
-    padding:          v.$page-padding-y v.$page-padding-x;
-    color:            v.$root-rev-fg-color;
-    background-color: v.$root-rev-bg-color;
-
-    @media #{v.$not-wide-screen} {
-        padding-top:    calc(2 * #{v.$page-padding-y});
-        padding-bottom: calc(2 * #{v.$page-padding-y});
-        padding-right:  calc(#{v.$page-padding-x} + #{v.$scroll-easement});
-    }
-
-    * {
-        margin: auto 0;
-        color:  v.$root-rev-fg-color;
-    }
-
-    a {
-
-        text-decoration: none;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-
-    .disabled {
-        color: lightgray;
-    }
-}
-
-// A panel for highlighting content.
-%panel {
-    display:          block;
-    padding:          0.5rem;
-    background-color: v.$panel-bg;
-    border:           2px solid v.$panel-border;
-    border-radius:    0.625rem;
-}
-
-// Definitions for elements within a %panel.
-%panel-interior {
-
-    > * {
-
-        margin-top: 0.5rem;
-
-        &:first-child {
-            margin-top:     0;
-            padding-top:    0;
-        }
-
-        &:last-child {
-            margin-bottom:  0;
-            padding-bottom: 0;
-        }
-    }
-
-    > br {
-
-        margin-top: 0.25rem;
-
-        &:first-child {
-            margin-top: 0.25rem;
-        }
-    }
-}
-
-// A grouping of related controls into a single element.
-%control-group {
-
-    @extend %panel;
-
-    @include x.user-select(none);
-
-    display:     inline-flex;
-    padding:     0.25rem 0.5rem;
-    align-items: baseline;
-
-    > * {
-        display:     inline-flex;
-        flex:        0 1 auto;
-        align-items: baseline;
-    }
-}
-
-// Highlight button on hover.
-%button-hover {
-
-    cursor:      pointer;
-    user-select: none;
-
-    &:focus {
-        text-decoration: underline;
-    }
-
-    &:hover {
-        text-decoration: underline;
-        box-shadow:      0 0 0.5rem 0.25rem v.$uva-accent-orange;
-    }
-
-    &:focus:hover {
-        outline-color:   transparent;
-    }
-
-    &.forbidden:focus,
-    &.forbidden:hover {
-        text-decoration: none;
-        box-shadow:      none;
-    }
-}
-
-// Style like a button.
-//
-// The baseline appearance inherits (conceptually) from .uppy-FileInput-btn.
-// Classes that extend this may need to add "color: inherit" to get the
-// intended color for text (and, by default, borders).
-//
-%control-button-base {
-
-    @extend %button-hover;
-
-    // From .uppy-FileInput-btn in node_modules/uppy/dist/uppy.css
-    //margin:           0;
-    //padding:          10px 15px;
-    font-family:        sans-serif;
-    //font-size:        0.85em;
-    color:              v.$control-text;
-    background:         none;
-    border:             1px solid v.$control-accent;
-    border-radius:      8px;
-    //cursor:           pointer;
-    -webkit-appearance: none;
-
-    display:            block;
-    margin:             auto 0;
-    padding:            2px 6px;
-    line-height:        1.125;
-    white-space:        pre;
-    text-decoration:    none;
-    font-size:          large;
-
-    &.disabled,
-    &.forbidden {
-        background-color: v.$input-disabled-bg;
-        border-color:     v.$input-disabled-fg;
-    }
-}
-
-// Style like a control button.
-//
-// This provides the look and feel for buttons in general.
-//
-%control-button {
-
-    @extend %control-button-base;
-
-    // Restore some items that %control-button-base has overridden:
-    margin:      0;
-    padding:     10px 15px;
-    line-height: 1;
-    font-size:   0.85em;
-
-    &:not(.disabled):not(.forbidden):hover {
-        background-color: v.$uva-accent-orange;
-        border-color:     v.$uppy-file-input-accent;
-        color:            v.$root-rev-fg-color;
-    }
-
-    &.disabled:hover, &.forbidden:hover {
-        color: unset;
-    }
-
-    @extend %button-hover;
-}
-
-// Embolden characters by adding a text shadow in order to avoid changing the
-// width of the text.
-%hover-bold {
-    text-shadow: 0 0 1px v.$root-fg-color;
-}
-
-// A pop-out effect for panels.
-%popup-shadow {
-    box-shadow: v.$popup-shadow;
-}
-
-// A subtle pop-out effect for text blocks.
-%block-shadow {
-    box-shadow: v.$block-shadow;
-}
-
-// A very subtle pop-out effect for controls.
-%control-shadow {
-
-    box-shadow: v.$control-shadow;
-
-    &:focus {
-        box-shadow: none;
-    }
-}
-
-// Applied to elements which provide containment without interfering with flex
-// or grid layout.
-%logical-grouping {
-    display: contents;
-}
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Common settings.
@@ -304,7 +16,7 @@ button:focus,
 select:focus,
 textarea:focus,
 [tabindex]:not([tabindex="-1"]):focus {
-    @extend %focus;
+    @include focus;
 }
 
 // Allow <fieldset> to be used like <div> by eliminating browser-defined
@@ -321,22 +33,31 @@ fieldset {
 
 // Include to remove an element from the display.
 .hidden {
-    @extend %hidden;
+    @include hidden;
 }
 
 // Include to hide the contents of an element while maintaining the space it
 // occupies on the display.
 .invisible {
 
-    @extend %invisible;
+    @include invisible;
 
     &.preserve-width {
-        @extend %invisible-height;
+        @include invisible-height;
     }
 
     &.preserve-height {
-        @extend %invisible-width;
+        @include invisible-width;
     }
+}
+
+// Make an actionable item (e.g. <a>) appear non-functional.
+// NOTE: The link should also have attribute 'tabindex="-1"'.
+%disabled {
+    text-decoration: none;
+    &:active { pointer-events:  none; }
+    &:focus  { outline:         none; }
+    &:hover  { text-decoration: none; }
 }
 
 // Include to "de-activate" an active element like a button or link.
@@ -357,7 +78,7 @@ fieldset {
 
 // Include to make an element only visible to screen readers.
 .sr-only {
-    @include x.screen-reader-only;
+    @include sr-only;
 }
 
 // Indicate that a link is not active because the user is not authorized.
@@ -365,82 +86,4 @@ fieldset {
     text-decoration: none;
     &:active { pointer-events:  none; }
     &:hover  { text-decoration: none; }
-}
-
-//=============================================================================
-// Generic elements
-//=============================================================================
-
-.control-button {
-    @extend %control-button;
-}
-
-.panel {
-
-    @extend %panel;
-    @extend %panel-interior;
-    @extend %block-shadow;
-
-    @include x.width-fit-content;
-
-    min-width:   50%;
-    max-width:   50%;
-    padding:     1rem;
-    line-height: 1.375;
-
-    @media #{v.$medium-width} {
-        max-width: 100%;
-    }
-
-    @media #{v.$narrow-screen} {
-        max-width: 90%;
-    }
-}
-
-// @see LayoutHelper#toggle_button
-.toggle {
-
-    @extend %control-button-base;
-
-    background-color: v.$panel-bg;
-}
-
-// Controlled by a .toggle button.
-.toggle-panel {
-    &:not(.open) {
-        display: none;
-    }
-}
-
-// Holds title text and a .toggle button.
-.toggle-panel-title {
-
-    display:        inline-flex;
-    flex-direction: row;
-
-    @media #{v.$narrow-screen} {
-
-        margin-bottom: v.$page-padding;
-        flex-wrap:     wrap;
-
-        .list-heading {
-            margin-bottom: 1rem;
-        }
-    }
-
-    @media #{v.$not-narrow-screen} {
-        .toggle {
-            margin-left:  v.$gap-x;
-            margin-right: v.$gap-x;
-        }
-    }
-}
-
-// Rendering of lines of text from a file.
-.line-output {
-    display:       block;
-    font-family:   monospace;
-    font-size:     larger;
-    white-space:   break-spaces;
-    overflow-wrap: break-word;
 }

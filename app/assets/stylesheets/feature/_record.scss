@@ -1,6 +1,8 @@
 // app/assets/stylesheets/feature/_record.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables'       as *;
+
+@use 'layouts/controls/popup' as popup-classes;
 
 //=============================================================================
 // Repository record popup control
@@ -18,7 +20,7 @@
     // noinspection DuplicatedCode
     .popup-panel {
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             position: fixed;
             top:      3rem;
             bottom:   3rem;
@@ -26,7 +28,7 @@
             right:    3rem;
         }
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             position: fixed;
             top:      2rem;
             bottom:   2rem;

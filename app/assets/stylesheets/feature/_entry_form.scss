@@ -1,9 +1,13 @@
 // app/assets/stylesheets/feature/_entry_form.scss
 
 @use 'sass:math';
-@use 'shared/variables'      as v;
-@use 'shared/mixins'         as x;
-@use 'shared/controls/grids' as g;
+
+@use 'shared/variables'         as *;
+@use 'shared/mixins'            as *;
+@use 'shared/controls/grids'    as grid;
+
+@use 'layouts/controls/buttons' as button-classes;
+@use 'vendor/uppy';
 
 //=============================================================================
 // Internal constants
@@ -28,7 +32,7 @@ $form-gap-narrow: math.div($form-gap, 3);
     border:          1px solid gray;
     border-radius:   0.25rem;
 
-    @media #{v.$not-narrow-screen} {
+    @media #{$not-narrow-screen} {
         padding-right: 0.5rem;
     }
 
@@ -44,11 +48,11 @@ $form-gap-narrow: math.div($form-gap, 3);
         border:      0.25rem solid transparent;
         flex:        1 1 auto;
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             flex-basis: 25%;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin:     0;
             flex-basis: 33%;
         }
@@ -63,19 +67,18 @@ $form-gap-narrow: math.div($form-gap, 3);
 
         label {
 
-            @include x.user-select(none);
+            @include user-select(none);
 
             padding-left: 0.5rem;
 
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 padding-left: 0.375rem;
             }
         }
 
         &:not(.disabled):hover {
             label {
-                // noinspection SassScssResolvedByNameOnly
-                @extend %hover-bold;
+                @include hover-bold;
             }
         }
     }
@@ -127,17 +130,16 @@ $form-gap-narrow: math.div($form-gap, 3);
     display:         flex;
     flex-direction:  column;
     margin:          2.75rem 0 0.5rem;
-    color:           v.$control-text;
+    color:           $control-text;
 
     // Make up for missing .note-tray element.
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         margin-bottom: 2rem;
     }
 
     // Note preceding the selection controls (screen-reader only).
     > label {
-        // noinspection SassScssResolvedByNameOnly
-        @extend %sr-only;
+        @include sr-only;
     }
 
     // Note following the selection controls which moves within a container
@@ -149,7 +151,7 @@ $form-gap-narrow: math.div($form-gap, 3);
 
         // Don't allow showGroupNote() to move the text under the button
         // for the handheld form factor.
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             display: none;
         }
 
@@ -162,7 +164,7 @@ $form-gap-narrow: math.div($form-gap, 3);
 
             // Don't allow showGroupNote() to move the text under the button
             // for the handheld form factor.
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-left: 0 !important;
             }
         }
@@ -174,25 +176,24 @@ $form-gap-narrow: math.div($form-gap, 3);
         display: grid;
         gap:     0.5rem;
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             grid-template-columns: repeat(9, 1fr);
         }
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             grid-template-columns: repeat(5, 1fr);
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             grid-template-columns: repeat(3, 1fr);
             gap:                   0.25rem;
         }
 
         .control {
 
-            // noinspection SassScssResolvedByNameOnly
-            @extend %control-button;
+            @extend .control-button;
 
-            @include x.user-select(none);
+            @include user-select(none);
 
             display:        flex;
             flex-direction: column;
@@ -202,7 +203,7 @@ $form-gap-narrow: math.div($form-gap, 3);
             font-size:      medium;
             font-weight:    bold;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 padding:   0.5rem 0;
                 font-size: smaller;
             }
@@ -213,7 +214,7 @@ $form-gap-narrow: math.div($form-gap, 3);
             }
 
             &.disabled {
-                background: v.$input-sealed-bg;
+                background: $input-sealed-bg;
                 cursor:     default;
             }
 
@@ -240,11 +241,11 @@ $form-gap-narrow: math.div($form-gap, 3);
             &.disabled:focus, &.forbidden:focus {
                 text-decoration: none;
                 box-shadow:      none;
-                background:      v.$input-sealed-bg;
+                background:      $input-sealed-bg;
             }
 
             .label {
-                @include x.user-select(none);
+                @include user-select(none);
             }
         }
     }
@@ -270,7 +271,7 @@ $form-gap-narrow: math.div($form-gap, 3);
         width:     max-content;
         max-width: inherit;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             width: 100%;
         }
 
@@ -279,7 +280,7 @@ $form-gap-narrow: math.div($form-gap, 3);
         //=====================================================================
 
         .prefix {
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 margin-bottom: 0;
                 flex-basis:    100%;
             }
@@ -297,18 +298,18 @@ $form-gap-narrow: math.div($form-gap, 3);
 
     @extend %entry-radio-group;
 
-    margin:     v.$page-padding 0;
+    margin:     $page-padding 0;
     padding:    0.25rem;
-    background: v.$debug-bg;
+    background: $debug-bg;
 
     justify-content: flex-start;
 
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         margin-top:    1.5rem;
         margin-bottom: 1.5rem;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         margin-top:    1.5rem;
         margin-left:   0.125rem;
         margin-right:  0.25rem;
@@ -321,8 +322,8 @@ $form-gap-narrow: math.div($form-gap, 3);
 
     display:         flex;
     padding:         1rem;
-    background:      v.$root-bg-color;
-    border:          0.5rem solid v.$uva-accent-orange;
+    background:      $root-bg-color;
+    border:          0.5rem solid $uva-accent-orange;
     border-radius:   0.75rem;
     flex-wrap:       wrap;
     align-items:     center;
@@ -345,7 +346,7 @@ $form-gap-narrow: math.div($form-gap, 3);
         line-height: 1.5;
         flex:        1 1 auto;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin-bottom: 0.5rem;
             line-height:   2;
             flex:          1 1 100%;
@@ -359,14 +360,12 @@ $form-gap-narrow: math.div($form-gap, 3);
     .search-button,
     .search-cancel {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-button;
+        @extend .control-button;
 
         flex: 0 0 auto;
 
         &:focus {
-            // noinspection SassScssResolvedByNameOnly
-            @extend %focus;
+            @include focus;
         }
     }
 }
@@ -382,7 +381,7 @@ $form-gap-narrow: math.div($form-gap, 3);
         [submit] auto [cancel] auto [file] auto [selected] 1fr;
     gap: $form-gap;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         margin-right: 0.25rem;
         gap:          $form-gap-narrow;
     }
@@ -407,8 +406,7 @@ $form-gap-narrow: math.div($form-gap, 3);
     .upload-hidden, // TODO: remove after upload -> entry
     .hidden-field {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %hidden;
+        @include hidden;
 
         // Invisible file data holder.
         &[name="upload[file]"]#upload_file_data { }         // TODO: remove after upload -> entry
@@ -424,22 +422,20 @@ $form-gap-narrow: math.div($form-gap, 3);
     //=========================================================================
 
     %entry-grid-control {
-        @include g.grid-row(1);
+        @include grid.row(1);
         max-height: 2.25rem;
     }
 
     // ERB-provided submit to '/upload/create' or '/upload/update'.
     .submit-button { // input[type="submit"].uppy-FileInput-btn
+        @extend .control-button;
         @extend %entry-grid-control;
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-button;
     }
 
     // ERB-provided cancel (back to '/upload/new' or '/upload/edit').
     .cancel-button { // button[type="cancel"].uppy-FileInput-btn
+        @extend .control-button;
         @extend %entry-grid-control;
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-button;
     }
 
     // ERB-provided file chooser.
@@ -455,19 +451,19 @@ $form-gap-narrow: math.div($form-gap, 3);
     // Display for the selected filename moved into place via entry-form.js.
     .uploaded-filename {
 
-        @include g.grid-row(1);
+        @include grid.row(1);
 
         line-height: 1.5;
 
-        @media #{v.$narrow-screen} {
-            @include g.grid-row(2);
-            @include g.grid-column-span;
+        @media #{$narrow-screen} {
+            @include grid.row(2);
+            @include grid.column-span;
         }
     }
 
     // Only for .entry-delete-form (which wraps the "Delete" button).
     .button_to {
-        @include g.grid-row(1);
+        @include grid.row(1);
     }
 
     //=========================================================================
@@ -476,15 +472,15 @@ $form-gap-narrow: math.div($form-gap, 3);
 
     .button-tray {
 
-        @include g.grid-row(1);
-        @include g.grid-column-span;
+        @include grid.row(1);
+        @include grid.column-span;
 
         display:        flex;
         flex-direction: row;
         flex-wrap:      wrap;
         max-width:      inherit;
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             width: max-content;
         }
 
@@ -499,25 +495,23 @@ $form-gap-narrow: math.div($form-gap, 3);
             margin:       0;
             margin-right: 0.5rem;
 
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
                 margin-bottom: 1rem;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-bottom: 0.5rem;
             }
         }
 
         .submit-button {
+            @extend .control-button;
             @extend %entry-tray-control;
-            // noinspection SassScssResolvedByNameOnly
-            @extend %control-button;
         }
 
         .cancel-button {
+            @extend .control-button;
             @extend %entry-tray-control;
-            // noinspection SassScssResolvedByNameOnly
-            @extend %control-button;
         }
 
         // Appended to .button-tray and moved into place via entry-form.js.
@@ -534,15 +528,15 @@ $form-gap-narrow: math.div($form-gap, 3);
             margin-right: 0;
             line-height:  2.15;
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 max-width: 75vw;
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 max-width: 92.5vw;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 .filename {
                     max-width: 85vw;
                 }
@@ -558,17 +552,15 @@ $form-gap-narrow: math.div($form-gap, 3);
     .upload-field-group, // TODO: remove after upload -> entry
     .entry-field-group {
 
-        @include g.grid-column-span;
-
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-shadow;
+        @include grid.column-span;
+        @include control-shadow;
 
         position:   sticky;
         top:        1rem;
-        background: v.$root-bg-color;
+        background: $root-bg-color;
 
         // noinspection CssReplaceWithShorthandSafely
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             padding:       0.25rem;
             padding-right: 0.5rem;
             line-height:   1.25;
@@ -577,7 +569,7 @@ $form-gap-narrow: math.div($form-gap, 3);
 
     .parent-entry-select {
 
-        @include g.grid-column-span;
+        @include grid.column-span;
 
         // TODO: ??? ... .bulk-entry-form .parent-entry-select
     }
@@ -588,22 +580,22 @@ $form-gap-narrow: math.div($form-gap, 3);
 
     .controls {
 
-        @include g.grid-row(1);
-        @include g.grid-column-span;
+        @include grid.row(1);
+        @include grid.column-span;
 
         display:       grid;
         position:      sticky;
         top:           $form-gap;
         margin-bottom: $form-gap;
-        background:    v.$root-bg-color;
-        box-shadow:    0 -0.5rem 0      1.0rem v.$root-bg-color,
-                       0  0.5rem 0.5rem 0.5rem v.$root-bg-color;
-        z-index:       v.$z-controls;
+        background:    $root-bg-color;
+        box-shadow:    0 -0.5rem 0      1.0rem $root-bg-color,
+                       0  0.5rem 0.5rem 0.5rem $root-bg-color;
+        z-index:       $z-controls;
 
         grid-template-columns: 1fr;
         gap:                   $form-gap;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             top:           2 * $form-gap-narrow;
             margin-bottom: $form-gap-narrow;
             gap:           $form-gap-narrow;
@@ -618,9 +610,9 @@ $form-gap-narrow: math.div($form-gap, 3);
     .upload-fields, // TODO: remove after upload -> entry
     .entry-fields {
 
-        @include g.grid-column-span;
+        @include grid.column-span;
 
-        z-index: v.$z-visible; // NOTE: Needed for Firefox.
+        z-index: $z-visible; // NOTE: Needed for Firefox.
     }
 
     //=========================================================================
@@ -653,7 +645,7 @@ $form-gap-narrow: math.div($form-gap, 3);
     // Add to a button to accent it as the next best action to perform.
     .best-choice:not(:hover) {
 
-        box-shadow: 0 0 0.5rem 0.25rem v.$button-accent;
+        box-shadow: 0 0 0.5rem 0.25rem $button-accent;
 
         &:focus {
             outline: 1px solid gray;
@@ -671,8 +663,8 @@ $form-gap-narrow: math.div($form-gap, 3);
 
     .line,
     .form-controls {
-        @include g.grid-column-span;
-        @include g.grid-column-gap(0.5rem);
+        @include grid.column-span;
+        @include grid.column-gap(0.5rem);
     }
 
     .line {
@@ -684,7 +676,7 @@ $form-gap-narrow: math.div($form-gap, 3);
 
         display: grid;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin-top: 1.5rem;
         }
     }
@@ -698,7 +690,7 @@ $form-gap-narrow: math.div($form-gap, 3);
 
         flex: 0 1 33%;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             flex: 1 1 auto;
         }
     }
@@ -710,8 +702,7 @@ $form-gap-narrow: math.div($form-gap, 3);
         // input itself.
         label {
 
-            // noinspection SassScssResolvedByNameOnly
-            @extend %control-button;
+            @extend .control-button;
 
             height: max-content;
         }
@@ -720,8 +711,7 @@ $form-gap-narrow: math.div($form-gap, 3);
         // would remove the item from the form).
         input[type="file"].control-button,
         input[type="file"].uppy-FileInput-btn {
-            // noinspection SassScssResolvedByNameOnly
-            @extend %sr-only;
+            @include sr-only;
         }
     }
 }
@@ -737,14 +727,14 @@ $form-gap-narrow: math.div($form-gap, 3);
     $status-bar-is-white-space: true;
 
     display:       grid;
-    margin-top:    v.$page-padding;
+    margin-top:    $page-padding;
     margin-bottom: 1.5rem;
 
     @if $status-bar-is-white-space {
         margin-top: 0;
     }
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         width: 50vw;
     }
 
@@ -761,17 +751,17 @@ $form-gap-narrow: math.div($form-gap, 3);
         width:      inherit;
         max-width:  95vw;
         margin-top: 0;
-        z-index:    v.$z-visible;
+        z-index:    $z-visible;
     }
 
     // Inserted by Uppy via entry-form.js if FEATURES.status_bar is true.
     .uppy-ProgressBar,
     .uppy-StatusBar {
 
-        @include g.grid-row(1);
-        @include g.grid-column-span;
+        @include grid.row(1);
+        @include grid.column-span;
 
-        z-index: v.$z-uppy-progress;
+        z-index: $z-uppy-progress;
 
         @if $status-bar-is-white-space {
 
@@ -798,23 +788,23 @@ $form-gap-narrow: math.div($form-gap, 3);
     // Inserted by Uppy via entry-form.js.
     .uppy-Informer {
 
-        @include g.grid-row(1);
-        @include g.grid-column-span;
+        @include grid.row(1);
+        @include grid.column-span;
 
         display:         inline-flex;
         justify-content: center;
         align-items:     center;
         position:        unset;
-        z-index:         v.$z-uppy-informer;
+        z-index:         $z-uppy-informer;
 
         &[aria-hidden="true"] {
-            z-index: v.$z-hidden;
+            z-index: $z-hidden;
         }
 
         p {
             font-weight: bold;
             word-break:  break-word;
-            box-shadow:  0 0 0.5rem 0.25rem v.$root-bg-color;
+            box-shadow:  0 0 0.5rem 0.25rem $root-bg-color;
         }
     }
 }
@@ -823,11 +813,10 @@ $form-gap-narrow: math.div($form-gap, 3);
 //
 // @see file:app/assets/javascripts/feature/entry-form.js *addBulkOpResult*
 //
-// noinspection SassScssResolvedByNameOnly
 .bulk-op-results {
 
-    @extend %panel;
-    @extend %block-shadow;
+    @include panel;
+    @include block-shadow;
 
     padding:          1rem;
     background-color: ghostwhite;
@@ -862,15 +851,16 @@ $form-gap-narrow: math.div($form-gap, 3);
             font-weight: bold;
 
             &.date {
-                // noinspection SassScssResolvedByNameOnly
-                @extend %sr-only;
+
+                @include sr-only;
+
                 position: unset !important;
             }
         }
 
         .value {
             &.file {
-                word-wrap: anywhere;
+                overflow-wrap: anywhere;
             }
         }
     }
@@ -895,7 +885,7 @@ $form-gap-narrow: math.div($form-gap, 3);
 
         margin-top: 2rem;
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             margin-bottom: -$bulk-vertical-adjust;
         }
     }

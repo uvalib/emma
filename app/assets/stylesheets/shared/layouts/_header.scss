@@ -2,15 +2,106 @@
 //
 // Shared definitions used in `layouts/header/*`.
 
+@use 'shared/variables'         as v;
+@use 'shared/controls/buttons'  as b;
+
+@use 'layouts/controls/buttons' as button-classes;
+
 //=============================================================================
 // Constants
 //=============================================================================
 
 // For enclosures which are the only child elements of header layout sections.
 // section.
-$enclosure-indent-wide:    4vw;
-$enclosure-indent-medium:  3vw;
-$enclosure-indent-narrow:  0;
-$enclosure-padding-wide:   1.25rem;
-$enclosure-padding-medium: 1rem;
-$enclosure-padding-narrow: 0.75rem;
+$enclosure-indent-wide:     4vw;
+$enclosure-indent-medium:   3vw;
+$enclosure-indent-narrow:   0;
+
+$enclosure-pad-wide:        1.25rem;
+$enclosure-pad-medium:      1rem;
+$enclosure-pad-narrow:      0.75rem;
+
+//=============================================================================
+// Mixins
+//=============================================================================
+
+@mixin section {
+    display:        flex;
+    flex-direction: row;
+    width:          100%;
+}
+
+@mixin search-section {
+
+    @include section;
+
+    max-width:        calc(#{v.$lg-width} - (2 * #{v.$page-padding-x}));
+    background-color: inherit;
+
+    @media #{v.$narrow-screen} {
+        width:     100%;
+        min-width: unset;
+        max-width: unset;
+    }
+}
+
+// noinspection CssReplaceWithShorthandSafely
+@mixin control-panel {
+
+    padding:        0.5rem;
+    padding-right:  0;
+    border:         0.125rem dotted v.$root-rev-fg-color;
+    border-radius:  0.75rem;
+
+    @media #{v.$not-narrow-screen} {
+        padding-bottom: 0.25rem;
+    }
+}
+
+/// For controls with a white background within the header.
+///
+@mixin control-interior {
+    * {
+        color:     v.$root-fg-color;
+        font-size: large;
+    }
+}
+
+@mixin button {
+
+    @include b.link-button;
+
+    @extend .basic-button;
+
+    // Needs to be heavier against a dark background.
+    &:hover {
+        box-shadow: 0 0 0.75rem 0.375rem v.$uva-accent-orange;
+    }
+
+    padding-left:     8px;
+    padding-right:    8px;
+    text-align:       center;
+    color:            v.$uva-accent-blue;
+    background-color: v.$panel-bg;
+}
+
+/// Treat the including class as the top part of a visually enclosed header
+/// area which is actually comprised of individual enclosures, one per layout
+/// section.
+///
+@mixin enclosure {
+
+    margin: 0 auto;
+
+    @media #{v.$wide-screen} {
+        padding: $enclosure-pad-wide;
+    }
+
+    @media #{v.$medium-width} {
+        padding: $enclosure-pad-medium;
+    }
+
+    @media #{v.$narrow-screen} {
+        padding: $enclosure-pad-narrow;
+    }
+}

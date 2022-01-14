@@ -5,6 +5,8 @@
 @use 'shared/variables' as v;
 @use 'shared/functions' as f;
 
+@use 'feature/overlay'  as overlay-classes;
+
 //=============================================================================
 // Content overlay mixins
 //=============================================================================
@@ -16,7 +18,7 @@
 /// @param {Numeric} $img-height      Height of image element.
 /// @param {Numeric} $img-y-pos       Distance of image from top of screen.
 ///
-@mixin image-overlay(
+@mixin image(
     $img-path,
     $img-width:  5vw,
     $img-height: 5vh,
@@ -51,7 +53,7 @@
 /// @param {Numeric} $txt-height      Height of text element.
 /// @param {Numeric} $txt-y-pos       Distance of text from top of screen.
 ///
-@mixin text-overlay(
+@mixin text(
     $txt-bg:     f.lighter(v.$uva-blue, 75%),
     $txt-width:  max-content,
     $txt-height: max-content,

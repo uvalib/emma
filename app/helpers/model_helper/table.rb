@@ -22,7 +22,7 @@ module ModelHelper::Table
   #
   # @type [Boolean]
   #
-  # @see file:app/assets/stylesheets/shared/controls/_table.scss "CSS class .sticky-head"
+  # @see file:app/assets/stylesheets/layouts/controls/_tables.scss "CSS class .sticky-head"
   #
   STICKY_HEAD = true
 
@@ -30,7 +30,7 @@ module ModelHelper::Table
   #
   # @type [Boolean]
   #
-  # @see file:app/assets/stylesheets/shared/controls/_table.scss "CSS class .dark-head"
+  # @see file:app/assets/stylesheets/layouts/controls/_tables.scss "CSS class .dark-head"
   #
   DARK_HEAD = true
 

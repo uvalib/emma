@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_pagination.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Pagination controls.
@@ -9,8 +10,7 @@
 // @see PaginationHelper#pagination_controls
 .pagination-controls {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %control-group;
+    @include control-group;
 
     width:         min-content;
     height:        min-content;
@@ -19,7 +19,7 @@
     line-height:   1.5;
     border-radius: 0.75rem;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         margin:    0 auto;
         font-size: medium;
     }
@@ -39,7 +39,7 @@
         text-decoration: none;
 
         &:focus {
-            outline:        2px solid v.$button-accent;
+            outline:        2px solid $button-accent;
             outline-offset: -0.125rem;
         }
 
@@ -48,7 +48,7 @@
 
             font-weight: bold;
 
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
                 font-size: small;
             }
         }
@@ -81,7 +81,7 @@
         font-weight: bold;
         color:       gray;
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
             font-size: x-large;
         }
     }
@@ -94,12 +94,12 @@
     flex-wrap:      wrap;
     flex-direction: row;
 
-    @media #{v.$not-narrow-screen} {
+    @media #{$not-narrow-screen} {
         align-items: center;
         max-width:   inherit;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         flex-direction: column;
     }
 
@@ -116,15 +116,15 @@
         flex:        0 1 auto;
         line-height: 1.25;
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
             margin-left: 1.5rem;
         }
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             flex-basis: 50%; // Push .upload-page-filter-panel to next row.
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             flex-direction: column;
             align-items:    center;
             margin:         1rem 0 0;
@@ -136,7 +136,7 @@
             font-weight:   bold;
             word-spacing:  0.125rem;
             color:         white;
-            background:    v.$uva-blue;
+            background:    $uva-blue;
             border:        2px solid lightgray;
             border-radius: 4px;
         }
@@ -146,14 +146,14 @@
             display: inline-block;
             margin:  auto 0;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin: 0.5rem 0 0;
             }
         }
 
         .page-count + .search-count,
         .search-count + .page-count {
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
                 margin-left: 1rem;
             }
         }

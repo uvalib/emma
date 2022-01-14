@@ -1,24 +1,22 @@
 // app/assets/stylesheets/controllers/index.scss
 
-@import 'entry'; // Defines classes extended by 'action', 'phase', etc.
-
-@import 'account';
-@import 'action';
-@import 'artifact';
-@import 'bs_api';
-@import 'category';
-@import 'data';
-@import 'edition';
-//@import 'entry';
-@import 'help';
-@import 'home';
-@import 'member';
-@import 'periodical';
-@import 'phase';
-@import 'reading_list';
-@import 'search';
-@import 'search_call';
-@import 'title';
-@import 'upload';
-@import 'user_registrations';
-@import 'user_sessions';
+@use 'account';
+@use 'action';
+@use 'artifact';
+@use 'bs_api';
+@use 'category';
+@use 'data';
+@use 'edition';
+@use 'entry';
+@use 'help';
+@use 'home';
+@use 'member';
+@use 'periodical';
+@use 'phase';
+@use 'reading_list';
+@use 'search';
+@use 'search_call';
+@use 'title';
+@use 'upload';
+@use 'user_registrations';
+@use 'user_sessions';

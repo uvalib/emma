@@ -1,6 +1,39 @@
 // app/assets/stylesheets/layouts/header/_banner.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
+
+//=============================================================================
+// Page header.
+//=============================================================================
+
+// The <header> area of the page.
+//
+// noinspection CssReplaceWithShorthandSafely
+.layout-header {
+
+    position:        relative;
+    z-index:         $z-raised;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: flex-start;
+    margin:          0;
+    margin-bottom:   -($hcm-divider-width);
+    padding:         0;
+    border-bottom:   $hcm-divider-width solid $root-rev-bg-color;
+    box-shadow:      0 0 1rem -0.25rem $root-rev-bg-color;
+
+    @media #{$medium-width} {
+
+        > :first-child {
+            padding-top: $page-padding;
+        }
+
+        > :last-child {
+            padding-bottom: $page-padding;
+        }
+    }
+}
 
 //=============================================================================
 // Header banner
@@ -9,8 +42,7 @@
 // The content at the top of every page.
 .layout-banner {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %banner;
+    @include banner;
 
     flex-wrap: wrap;
     font-size: x-large;
@@ -32,16 +64,16 @@
         margin-top:      0;
         flex:            0 1 auto;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             flex-direction: column;
         }
 
         > * {
 
-            margin: auto v.$flex-gap-x auto 0;
+            margin: auto $flex-gap-x auto 0;
 
-            @media #{v.$narrow-screen} {
-                margin: v.$flex-gap-y 0 0;
+            @media #{$narrow-screen} {
+                margin: $flex-gap-y 0 0;
             }
         }
     }
@@ -57,7 +89,7 @@
             max-width:  33%;
             margin-top: -0.5rem;
 
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 display: none;
             }
         }
@@ -66,13 +98,13 @@
 
             min-width: 100%;
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 display: none;
             }
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 margin-top: 0.5rem;
             }
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-top: 1.5rem;
             }
         }
@@ -80,7 +112,7 @@
         > * {
             width:       100%;
             text-align:  center;
-            color:       v.$uva-accent-yellow;
+            color:       $uva-accent-yellow;
         }
 
         a {
@@ -105,31 +137,31 @@
         justify-content: flex-end;
         max-width:       50%;
         margin-top:      auto;
-        margin-left:     v.$page-padding-x;
+        margin-left:     $page-padding-x;
         flex:            0 1 auto;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin-top:    0;
-            margin-bottom: v.$flex-gap-y;
+            margin-bottom: $flex-gap-y;
         }
 
         > * {
 
-            margin: auto 0 auto v.$flex-gap-x;
+            margin: auto 0 auto $flex-gap-x;
 
-            @media #{v.$narrow-screen} {
-                margin: v.$flex-gap-y 0 0;
+            @media #{$narrow-screen} {
+                margin: $flex-gap-y 0 0;
             }
         }
 
         .help-popup {
 
-            @media #{v.$narrow-screen} {
-                margin-top: calc(2 * #{v.$flex-gap-y});
+            @media #{$narrow-screen} {
+                margin-top: calc(2 * #{$flex-gap-y});
             }
 
             .popup-panel {
-                @media #{v.$wide-screen} {
+                @media #{$wide-screen} {
                     top:   2.25rem;
                     left:  unset;
                     right: 0;
@@ -154,12 +186,12 @@
         font-size:  xx-large;
         flex:       0 0 auto;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             max-height: 5rem;
         }
 
         &:hover {
-            box-shadow: 0 0 1rem 0.25rem v.$uva-accent-orange;
+            box-shadow: 0 0 1rem 0.25rem $uva-accent-orange;
         }
 
         * {
@@ -185,11 +217,11 @@
         font-variant: small-caps;
         flex:         0 1 auto;
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             font-size: small;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             display: none;
         }
     }
@@ -221,8 +253,7 @@
     //
     .session {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %button-hover;
+        @include hover-highlight;
 
         min-width:     max-content;
         max-width:     max-content;
@@ -232,8 +263,8 @@
         border-radius: 0.5rem;
         flex:          0 0 auto;
 
-        @media #{v.$narrow-screen} {
-            margin-top:    v.$flex-gap-y;
+        @media #{$narrow-screen} {
+            margin-top:    $flex-gap-y;
             margin-bottom: auto;
         }
 

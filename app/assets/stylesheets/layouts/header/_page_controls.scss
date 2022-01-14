@@ -1,6 +1,9 @@
 // app/assets/stylesheets/layouts/header/_page_controls.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables'         as *;
+@use 'shared/layouts/header'    as header;
+
+@use 'layouts/controls/buttons' as button-classes;
 
 //=============================================================================
 // Sections - controller/action
@@ -31,8 +34,7 @@
     // @see LayoutHelper#page_controls
     .control {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-button-base;
+        @extend .basic-button;
 
         font-size: larger;
         color:     inherit;
@@ -46,13 +48,11 @@
     // @see LayoutHelper#render_page_controls
     .page-controls {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-section;
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-control-panel;
+        @include header.section;
+        @include header.control-panel;
 
-        $page-control-gap-x: v.$gap-x;
-        $page-control-gap-y: calc(#{v.$gap-y} / 2);
+        $page-control-gap-x: $gap-x;
+        $page-control-gap-y: calc(#{$gap-y} / 2);
 
         width:           max-content;
         max-width:       100%;
@@ -61,12 +61,12 @@
         justify-content: flex-start;
         align-items:     baseline;
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             max-width:     98%;
             margin-bottom: 1vh;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             max-width:     95%;
         }
 
@@ -77,7 +77,7 @@
         // noinspection CssReplaceWithShorthandSafely
         .label {
             margin-top:    $page-control-gap-y;
-            margin-bottom: v.$gap-y;
+            margin-bottom: $gap-y;
             margin-left:   0;
             margin-right:  $page-control-gap-x;
         }
@@ -92,14 +92,14 @@
                 margin:       0;
                 margin-right: $page-control-gap-x;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     margin-top:    $page-control-gap-y;
                     margin-bottom: $page-control-gap-y;
                 }
 
                 &.disabled {
                     text-decoration-color: transparent;
-                    background-color:      v.$panel-accent;
+                    background-color:      $panel-accent;
                     border-color:          white;
                     pointer-events:        none;
                 }

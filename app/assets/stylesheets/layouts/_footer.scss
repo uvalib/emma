@@ -2,7 +2,8 @@
 //
 // Classes related to generic page footer styles.
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Internal constants.
@@ -19,20 +20,19 @@ $footer-margin-top: 1rem;
 // noinspection CssReplaceWithShorthandSafely
 .layout-footer {
     position:       relative;
-    z-index:        v.$z-raised;
+    z-index:        $z-raised;
     display:        flex;
     flex-direction: column;
     margin:         0;
-    margin-top:     calc(#{$footer-margin-top} - #{v.$hcm-divider-width});
+    margin-top:     calc(#{$footer-margin-top} - #{$hcm-divider-width});
     padding:        0;
-    border-top:     v.$hcm-divider-width solid v.$root-rev-bg-color;
-    box-shadow:     0 0 1rem -0.25rem v.$root-rev-bg-color;
+    border-top:     $hcm-divider-width solid $root-rev-bg-color;
+    box-shadow:     0 0 1rem -0.25rem $root-rev-bg-color;
 }
 
 .footer-section {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %banner;
+    @include banner;
 
     flex-direction: column;
 
@@ -46,7 +46,7 @@ $footer-margin-top: 1rem;
         grid-template-columns: 1fr 1fr;
         gap:                   0.25rem 1rem;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             grid-template-columns: 1fr;
             gap:                   0.5rem;
         }
@@ -59,7 +59,7 @@ $footer-margin-top: 1rem;
             line-height: 1.25;
             word-break:  keep-all;
 
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
 
                 justify-content: center;
 

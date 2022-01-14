@@ -1,8 +1,12 @@
 // app/assets/stylesheets/controllers/_help.scss
 
-@use 'shared/variables'      as v;
-@use 'shared/controls/grids' as g;
-@use 'shared/feature/model'  as m;
+@use 'shared/variables'      as *;
+@use 'shared/mixins'         as *;
+@use 'shared/controls/grids' as grid;
+@use 'shared/feature/model'  as model;
+
+@use 'feature/model'         as model-classes;
+@use 'vendor/uppy';
 
 //=============================================================================
 // Internal mixins
@@ -19,7 +23,7 @@
 }
 
 //=============================================================================
-// Placeholder classes
+// Internal placeholder classes
 //=============================================================================
 
 %help-text {
@@ -27,10 +31,10 @@
 }
 
 %help-layout {
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         max-width: 50vw;
     }
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         max-width: 75vw;
     }
 }
@@ -59,7 +63,7 @@
 
         margin-left: 1rem;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
 
             margin-left: 0;
 
@@ -77,7 +81,7 @@
     h6 { margin-top: 2rem; font-size: 1.05em; }
 
     a:focus {
-        outline-color: v.$text-focus;
+        outline-color: $text-focus;
     }
 
     p {
@@ -97,9 +101,9 @@
         line-height:         1.5;
         list-style-position: inside;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
 
-            margin-bottom: v.$flex-gap-y;
+            margin-bottom: $flex-gap-y;
 
             a {
                 margin: 0 -0.25rem 0 -0.5rem;
@@ -130,7 +134,7 @@
                 max-width: 75%;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 max-width: 100%;
             }
         }
@@ -147,7 +151,7 @@
         justify-content: space-between;
         align-items:     flex-end;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             flex-wrap: wrap-reverse;
         }
 
@@ -162,13 +166,13 @@
             display: block;
             flex:    0 1 auto;
 
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
                 margin: auto 0.5rem;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 max-width:     90%;
-                margin-bottom: calc(2 * #{v.$flex-gap-y});
+                margin-bottom: calc(2 * #{$flex-gap-y});
             }
 
             img {
@@ -191,12 +195,12 @@
 
         @include help-interior;
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
 
             display:        flex;
             flex-direction: row;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 flex-direction: column;
             }
 
@@ -218,7 +222,7 @@
                 flex:          1 0 auto;
                 margin-bottom: auto !important;
 
-                @media #{v.$not-narrow-screen} {
+                @media #{$not-narrow-screen} {
                     max-width: 50%; // Chrome needs this; other browsers don't.
                 }
             }
@@ -234,9 +238,9 @@
 
         @extend .label-value-pairs;
 
-        margin: m.$results-entry-gap-y m.$results-entry-gap-x;
+        margin: model.$list-item-gap-y model.$list-item-gap-x;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             grid-template-columns: [label] 1fr [value] 2fr;
         }
 
@@ -246,7 +250,7 @@
 
         // Menu selection.
         .label {
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 word-break: keep-all;
             }
         }
@@ -258,7 +262,7 @@
 
             &:last-of-type { margin-bottom: 0; }
 
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
 
                 display:         list-item;
                 margin-left:     1.25rem;
@@ -285,19 +289,19 @@
 
 %help-panel {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %panel;
+    @include panel;
+
     @extend %help-layout;
     @extend %help-styles;
 
     margin:  1rem 0;
     padding: 0.5rem 1rem;
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         max-width: 50%;
     }
 
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         max-width: 75%;
     }
 }
@@ -337,9 +341,9 @@
     @extend .model-list-item;
     @extend %help-styles;
 
-    margin-left: m.$results-entry-gap-x;
+    margin-left: model.$list-item-gap-x;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         margin-left: 0;
     }
 
@@ -355,14 +359,14 @@
     @extend %help-styles;
     @extend %help-elements;
 
-    margin-top: m.$results-entry-gap-y;
+    margin-top: model.$list-item-gap-y;
 
     //=========================================================================
     // Components
     //=========================================================================
 
     .entry-title {
-        @include g.grid-column-span;
+        @include grid.column-span;
     }
 }
 
@@ -410,7 +414,7 @@ body.help {
     .advanced-search-toggle {
         display:          inline;
         font-size:        inherit;
-        color:            v.$root-rev-fg-color;
+        color:            $root-rev-fg-color;
         border:           1px solid gray;
     }
 
@@ -421,9 +425,9 @@ body.help {
         padding:          5px 10px;
         text-decoration:  none;
         font-size:        small;
-        color:            v.$root-rev-fg-color;
-        background-color: v.$bookshare-button;
-        border:           1px solid v.$bookshare-border;
+        color:            $root-rev-fg-color;
+        background-color: $bookshare-button;
+        border:           1px solid $bookshare-border;
         border-radius:    4px;
         box-shadow:       none;
     }
@@ -434,8 +438,8 @@ body.help {
         margin-top:       0.75rem;
         padding:          0.1825rem 0.375rem;
         font-weight:      normal;
-        color:            v.$root-rev-fg-color;
-        background-color: v.$root-rev-bg-color;
+        color:            $root-rev-fg-color;
+        background-color: $root-rev-bg-color;
     }
 
     // An inline rendering of the "Search" button.
@@ -458,11 +462,11 @@ body.help {
         padding:          1px 4px;
         text-decoration:  none;
         font-size:        inherit;
-        color:            v.$root-rev-fg-color;
-        background-color: v.$root-rev-bg-color;
-        border:           1px solid v.$root-rev-bg-color;
+        color:            $root-rev-fg-color;
+        background-color: $root-rev-bg-color;
+        border:           1px solid $root-rev-bg-color;
         border-radius:    0.375rem;
-        box-shadow:       inset 0 0 0 1px v.$root-rev-fg-color;
+        box-shadow:       inset 0 0 0 1px $root-rev-fg-color;
     }
 
     // An inline rendering of the inline "More/Less" toggle button.

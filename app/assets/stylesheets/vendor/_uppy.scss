@@ -1,9 +1,11 @@
 // app/assets/stylesheets/vendor/_uppy.scss
 
-@use 'shared/variables' as v;
-@use 'shared/functions' as f;
+// @use '../../../node_modules/uppy/dist/uppy.css';
 
-// @import '../../../node_modules/uppy/dist/uppy.css';
+@use 'shared/variables'         as *;
+@use 'shared/functions'         as *;
+
+@use 'layouts/controls/buttons' as button-classes;
 
 //=============================================================================
 // Overrides of Uppy styles (node_modules/uppy/dist/uppy.css)
@@ -18,8 +20,7 @@
 
 // Upload action button.
 .uppy-FileInput-btn {
-    // noinspection SassScssResolvedByNameOnly
-    @extend %control-button;
+    @extend .control-button;
 }
 
 // The container for the file select button which is displayed instead of the
@@ -48,7 +49,7 @@
 
     // The actual message popup.
     p[role="alert"] {
-        background-color: v.$uva-accent-orange;
+        background-color: $uva-accent-orange;
     }
 }
 
@@ -93,7 +94,7 @@
         display:          block;
         height:           100%;
         margin-top:       0;
-        background-color: f.lighter(v.$uva-accent-orange, 40%);;
+        background-color: lighter($uva-accent-orange, 40%);;
         border-radius:    0.25rem;
     }
 
@@ -110,8 +111,8 @@
         left:          95%;
         padding:       0.25rem;
         font-weight:   bold;
-        color:         v.$root-fg-color;
-        background:    v.$root-bg-color;
+        color:         $root-fg-color;
+        background:    $root-bg-color;
         border-radius: 0.75rem;
         visibility:    inherit;
 
@@ -136,8 +137,8 @@
                 content:       "saving...";
                 display:       inline-block;
                 padding:       0.25rem;
-                color:         v.$root-fg-color;
-                background:    v.$root-bg-color;
+                color:         $root-fg-color;
+                background:    $root-bg-color;
                 border-radius: 0.75rem;
                 transform:     translate(-75%, -135%);
             }

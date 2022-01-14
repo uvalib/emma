@@ -1,16 +1,18 @@
 // app/assets/stylesheets/feature/_aws.scss
 
-@use 'shared/variables'        as v;
-@use 'shared/controls/buttons' as b;
+@use 'shared/variables'         as *;
+@use 'shared/controls/buttons'  as *;
+
+@use 'layouts/controls/buttons' as button-classes;
 
 //=============================================================================
 // Internal constants
 //=============================================================================
 
-$aws-bucket-bg:          v.$root-rev-bg-color;
-$aws-bucket-fg:          v.$root-rev-fg-color;
+$aws-bucket-bg:          $root-rev-bg-color;
+$aws-bucket-fg:          $root-rev-fg-color;
 $aws-bucket-padding:     0.5rem;
-$aws-admin-section-gap:  calc(2 * #{v.$page-padding});
+$aws-admin-section-gap:  calc(2 * #{$page-padding});
 $aws-admin-column-space: 0.75rem;
 
 //=============================================================================
@@ -50,7 +52,7 @@ $aws-admin-column-space: 0.75rem;
         [size]   0.5fr
         [date]   1fr;
 
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         grid-template-columns:
             [prefix] 0.6fr
             [key]    1fr
@@ -58,7 +60,7 @@ $aws-admin-column-space: 0.75rem;
             [date]   1fr;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         grid-template-columns: 1fr;
         margin-bottom:         1rem;
         padding-bottom:        $aws-admin-column-space;
@@ -76,7 +78,7 @@ $aws-admin-column-space: 0.75rem;
 
     &.row {
         .last_modified {
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 word-spacing: -6px;
             }
         }
@@ -84,7 +86,7 @@ $aws-admin-column-space: 0.75rem;
 }
 
 .aws-bucket {
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
 
         line-height: 1.375;
 
@@ -121,7 +123,8 @@ $aws-admin-column-space: 0.75rem;
 
 // @see AwsHelper#s3_bucket_link
 .aws-link {
-    @include b.link-button(lightgray);
-    // noinspection SassScssResolvedByNameOnly
-    @extend %control-button;
+
+    @include link-button(lightgray);
+
+    @extend .control-button;
 }

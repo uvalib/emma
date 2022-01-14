@@ -1,10 +1,31 @@
-// app/assets/stylesheets/shared/layouts/_images.scss
+// app/assets/stylesheets/shared/feature/_images.scss
 //
 // Shared definitions supporting `feature/_images.scss`.
+
+@use 'shared/variables' as v;
 
 //=============================================================================
 // Constants
 //=============================================================================
 
-$image-border-width: 1px;
-$image-border-color: gray;
+$border-width:      1px;
+$border-color:      gray;
+
+$thumbnail-max-x:   var(--thumbnail-max-x);
+$thumbnail-max-y:   var(--thumbnail-max-y);
+
+//=============================================================================
+// Mixins
+//=============================================================================
+
+@mixin thumbnail-dimensions {
+
+    max-width:  $thumbnail-max-x;
+    max-height: $thumbnail-max-y;
+    height:     $thumbnail-max-y;
+
+    @media #{v.$narrow-screen} {
+        max-height: unset;
+        height:     auto;
+    }
+}

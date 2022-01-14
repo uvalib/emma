@@ -1,7 +1,9 @@
 // app/assets/stylesheets/controllers/_periodical.scss
 
-@use 'shared/variables'      as v;
-@use 'shared/controls/grids' as g;
+@use 'shared/variables'      as *;
+@use 'shared/controls/grids' as grid;
+
+@use 'feature/model'         as model-classes;
 
 //=============================================================================
 // Periodical index page
@@ -19,7 +21,7 @@
 
     .label {
         &.field-Title {
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 display: none;
             }
         }
@@ -30,8 +32,8 @@
 
             font-weight: bold;
 
-            @media #{v.$narrow-screen} {
-                @include g.grid-column-span;
+            @media #{$narrow-screen} {
+                @include grid.column-span;
             }
 
             a:not(:hover) {
@@ -73,7 +75,7 @@
 
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             margin-top: -0.75rem;
         }
 
@@ -85,7 +87,7 @@
                 flex-direction:  row;
                 justify-content: space-between;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
 
                     flex-direction: column;
 

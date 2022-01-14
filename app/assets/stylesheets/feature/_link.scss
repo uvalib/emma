@@ -1,7 +1,10 @@
 // app/assets/stylesheets/feature/_link.scss
 
 @use 'sass:math';
-@use 'shared/variables' as v;
+
+@use 'shared/variables'        as *;
+
+@use 'layouts/controls/panels' as panel-classes;
 
 //=============================================================================
 // Internal constants
@@ -18,9 +21,9 @@ $page-section-gap-small: math.div($page-section-gap, 2);
 // @see LinkHelper#page_text_section
 .page-text-section {
 
-    margin: v.$page-padding 0;
+    margin: $page-padding 0;
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         width: 50%;
     }
 
@@ -29,7 +32,7 @@ $page-section-gap-small: math.div($page-section-gap, 2);
 
         margin-top: $page-section-gap;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin-top: $page-section-gap-small;
         }
     }
@@ -61,7 +64,7 @@ $page-section-gap-small: math.div($page-section-gap, 2);
 
         margin: $page-section-gap 0;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin: $page-section-gap-small 0;
         }
     }
@@ -73,7 +76,7 @@ $page-section-gap-small: math.div($page-section-gap, 2);
 
         font-size:    larger;
         font-weight:  bold;
-        border-color: v.$alert-fg;
+        border-color: $alert-fg;
     }
 }
 
@@ -91,11 +94,11 @@ ul.page-actions {
         list-style-position: inside;
 
         .control:focus {
-            outline-color:   v.$text-focus;
+            outline-color:   $text-focus;
             outline-offset:  2.5px;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
 
             margin-top: 0.75rem;
 

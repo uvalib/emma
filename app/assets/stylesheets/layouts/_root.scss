@@ -1,12 +1,12 @@
 // app/assets/stylesheets/layouts/_root.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
 
 //=============================================================================
 // Desktop root definitions (specific to large screens)
 //=============================================================================
 
-@media #{v.$wide-screen} {
+@media #{$wide-screen} {
     :root {
 
         // Scale.
@@ -19,7 +19,7 @@
         // Dimensions.
 
         --thumbnail-max-x: auto;
-        --thumbnail-max-y: #{v.$nominal-thumbnail-y};
+        --thumbnail-max-y: #{$nominal-thumbnail-y};
     }
 }
 
@@ -27,7 +27,7 @@
 // Tablet root definitions (specific to medium screens)
 //=============================================================================
 
-@media #{v.$medium-width} {
+@media #{$medium-width} {
     :root {
 
         // Scale.
@@ -35,12 +35,12 @@
         --page-padding:    0.75rem;
         --flex-gap:        0.25rem;
         --gap:             0.25rem;
-        --scroll-easement: #{v.$nominal-easement};
+        --scroll-easement: #{$nominal-easement};
 
         // Dimensions.
 
-        --thumbnail-max-x: #{v.$nominal-thumbnail-x};
-        --thumbnail-max-y: #{v.$nominal-thumbnail-x};
+        --thumbnail-max-x: #{$nominal-thumbnail-x};
+        --thumbnail-max-y: #{$nominal-thumbnail-x};
     }
 }
 
@@ -48,7 +48,7 @@
 // Mobile root definitions (specific to small screens)
 //=============================================================================
 
-@media #{v.$narrow-screen} {
+@media #{$narrow-screen} {
     :root {
 
         // Scale.
@@ -56,12 +56,12 @@
         --page-padding:    0.75rem;
         --flex-gap:        0.25rem;
         --gap:             0.25rem;
-        --scroll-easement: #{v.$nominal-easement};
+        --scroll-easement: #{$nominal-easement};
 
         // Dimensions.
 
-        --thumbnail-max-x: #{v.$nominal-thumbnail-x};
-        --thumbnail-max-y: #{v.$nominal-thumbnail-x};
+        --thumbnail-max-x: #{$nominal-thumbnail-x};
+        --thumbnail-max-y: #{$nominal-thumbnail-x};
     }
 }
 
@@ -86,7 +86,7 @@
 
     --bg-color:          white;
     --fg-color:          black;
-    --rev-bg-color:      #{v.$header-bg};
+    --rev-bg-color:      #{$header-bg};
     --rev-fg-color:      white;
 }
 
@@ -109,14 +109,14 @@ body {
     min-height:     100vh;
     margin:         0;
     padding:        0;
-    font-family:    v.$font-normal;
+    font-family:    $font-normal;
 
     // Establish the default foreground/background colors for the sake of
     // accessibility checkers.
-    color:          v.$root-fg-color;
-    background:     v.$root-bg-color;
+    color:          $root-fg-color;
+    background:     $root-bg-color;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         font-size: large;
     }
 

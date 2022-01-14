@@ -1,0 +1,71 @@
+// app/assets/stylesheets/layouts/controls/_panels.scss
+
+@use 'shared/variables'         as *;
+@use 'shared/mixins'            as *;
+@use 'shared/controls/buttons'  as b;
+
+@use 'layouts/controls/buttons' as button-classes;
+
+//=============================================================================
+// Generic elements - panels
+//=============================================================================
+
+.panel {
+
+    @include panel;
+    @include panel-interior;
+    @include width-fit-content;
+    @include block-shadow;
+
+    min-width:   50%;
+    max-width:   50%;
+    padding:     1rem;
+    line-height: 1.375;
+
+    @media #{$medium-width} {
+        max-width: 100%;
+    }
+
+    @media #{$narrow-screen} {
+        max-width: 90%;
+    }
+}
+
+// @see LayoutHelper#toggle_button
+.toggle {
+
+    @extend .basic-button;
+
+    background-color: $panel-bg;
+}
+
+// Controlled by a .toggle button.
+.toggle-panel {
+    &:not(.open) {
+        display: none;
+    }
+}
+
+// Holds title text and a .toggle button.
+.toggle-panel-title {
+
+    display:        inline-flex;
+    flex-direction: row;
+
+    @media #{$narrow-screen} {
+
+        margin-bottom: $page-padding;
+        flex-wrap:     wrap;
+
+        .list-heading {
+            margin-bottom: 1rem;
+        }
+    }
+
+    @media #{$not-narrow-screen} {
+        .toggle {
+            margin-left:  $gap-x;
+            margin-right: $gap-x;
+        }
+    }
+}

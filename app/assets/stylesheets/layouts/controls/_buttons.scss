@@ -1,5 +1,74 @@
 // app/assets/stylesheets/layouts/controls/_buttons.scss
 
-// @use 'shared/controls/buttons' as b;
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
-// NOTE: placeholder for button-related classes
+//=============================================================================
+// Generic elements - buttons
+//=============================================================================
+
+/**
+ * Style like a button.
+ *
+ * The baseline appearance inherits (conceptually) from .uppy-FileInput-btn.
+ * Classes that extend this may need to add "color: inherit" to get the
+ * intended color for text (and, by default, borders).
+ */
+.basic-button {
+
+    @include hover-highlight;
+
+    // From .uppy-FileInput-btn in node_modules/uppy/dist/uppy.css
+    //margin:           0;
+    //padding:          10px 15px;
+    font-family:        sans-serif;
+    //font-size:        0.85em;
+    color:              $control-text;
+    background:         none;
+    border:             1px solid $control-accent;
+    border-radius:      8px;
+    //cursor:           pointer;
+    -webkit-appearance: none;
+
+    display:            block;
+    margin:             auto 0;
+    padding:            2px 6px;
+    line-height:        1.125;
+    white-space:        pre;
+    text-decoration:    none;
+    font-size:          large;
+
+    &.disabled,
+    &.forbidden {
+        background-color: $input-disabled-bg;
+        border-color:     $input-disabled-fg;
+    }
+}
+
+/**
+ * Style like a control button.
+ *
+ * This provides the look and feel for buttons in general.
+ */
+.control-button {
+
+    @extend .basic-button;
+
+    // Restore some items that .basic-button has overridden:
+    margin:      0;
+    padding:     10px 15px;
+    line-height: 1;
+    font-size:   0.85em;
+
+    &:not(.disabled):not(.forbidden):hover {
+        background-color: $uva-accent-orange;
+        border-color:     $uppy-file-input-accent;
+        color:            $root-rev-fg-color;
+    }
+
+    &.disabled:hover, &.forbidden:hover {
+        color: unset;
+    }
+
+    @include hover-highlight;
+}

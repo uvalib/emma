@@ -2,6 +2,8 @@
 //
 // General-use SCSS @mixin definitions.
 
+@use 'shared/variables' as v;
+
 // ============================================================================
 // Generic - Widths
 // ============================================================================
@@ -129,6 +131,211 @@
 }
 
 // ============================================================================
+// Appearance
+// ============================================================================
+
+/// Remove the element from display.
+///
+@mixin hidden {
+    display: none !important;
+}
+
+/// Hide the contents of the element while maintaining the space it occupies on
+/// the display.
+///
+@mixin invisible {
+    visibility: hidden !important;
+}
+
+/// Hide the contents of the element while maintaining horizontal displacement.
+///
+@mixin invisible-height {
+
+    @include invisible;
+
+    height: 0;
+}
+
+/// Hide the contents of the element while maintaining vertical displacement.
+///
+@mixin invisible-width {
+
+    @include invisible;
+
+    width: 0;
+}
+
+/// Make focus outline more easily seen.
+///
+@mixin focus {
+    outline:        2px solid v.$focus-accent;
+    outline-offset: 2px;
+}
+
+/// Embolden characters by adding a text shadow in order to avoid changing the
+/// width of the text.
+///
+@mixin hover-bold {
+    text-shadow: 0 0 1px v.$root-fg-color;
+}
+
+/// A pop-out effect for panels.
+///
+@mixin popup-shadow {
+    box-shadow: v.$popup-shadow;
+}
+
+/// A subtle pop-out effect for text blocks.
+///
+@mixin block-shadow {
+    box-shadow: v.$block-shadow;
+}
+
+/// A very subtle pop-out effect for controls.
+///
+@mixin control-shadow {
+
+    box-shadow: v.$control-shadow;
+
+    &:focus {
+        box-shadow: none;
+    }
+}
+
+/// Highlight on hover.
+///
+@mixin hover-highlight {
+
+    cursor:      pointer;
+    user-select: none;
+
+    &:focus {
+        text-decoration: underline;
+    }
+
+    &:hover {
+        text-decoration: underline;
+        box-shadow:      0 0 0.5rem 0.25rem v.$uva-accent-orange;
+    }
+
+    &:focus:hover {
+        outline-color:   transparent;
+    }
+
+    &.forbidden:focus,
+    &.forbidden:hover {
+        text-decoration: none;
+        box-shadow:      none;
+    }
+}
+
+// ============================================================================
+// Layout
+// ============================================================================
+
+/// Applied to elements which provide containment without interfering with flex
+/// or grid layout.
+///
+@mixin logical-grouping {
+    display: contents;
+}
+
+/// An element that spans the entire width of the display.
+///
+@mixin banner {
+
+    display:          flex;
+    flex-direction:   row;
+    justify-content:  space-between;
+    width:            inherit;
+    margin:           0;
+    padding:          v.$page-padding-y v.$page-padding-x;
+    color:            v.$root-rev-fg-color;
+    background-color: v.$root-rev-bg-color;
+
+    @media #{v.$not-wide-screen} {
+        padding-top:    calc(2 * #{v.$page-padding-y});
+        padding-bottom: calc(2 * #{v.$page-padding-y});
+        padding-right:  calc(#{v.$page-padding-x} + #{v.$scroll-easement});
+    }
+
+    * {
+        margin: auto 0;
+        color:  v.$root-rev-fg-color;
+    }
+
+    a {
+
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .disabled {
+        color: lightgray;
+    }
+}
+
+/// A panel for highlighting content.
+///
+@mixin panel {
+    display:          block;
+    padding:          0.5rem;
+    background-color: v.$panel-bg;
+    border:           2px solid v.$panel-border;
+    border-radius:    0.625rem;
+}
+
+/// Definitions for elements within a %panel.
+///
+@mixin panel-interior {
+
+    > * {
+
+        margin-top: 0.5rem;
+
+        &:first-child {
+            margin-top:     0;
+            padding-top:    0;
+        }
+
+        &:last-child {
+            margin-bottom:  0;
+            padding-bottom: 0;
+        }
+    }
+
+    > br {
+
+        margin-top: 0.25rem;
+
+        &:first-child {
+            margin-top: 0.25rem;
+        }
+    }
+}
+
+/// A grouping of related controls into a single element.
+///
+@mixin control-group {
+
+    @include panel;
+    @include user-select(none);
+
+    display:     inline-flex;
+    padding:     0.25rem 0.5rem;
+    align-items: baseline;
+
+    > * {
+        display:     inline-flex;
+        flex:        0 1 auto;
+        align-items: baseline;
+    }
+}
+
+// ============================================================================
 // Special
 // ============================================================================
 
@@ -146,7 +353,7 @@
 /// This was made a mixin so that the effect could be applied within @media
 /// queries.  (Using @extend inside a @media query makes SASS crash.)
 ///
-@mixin screen-reader-only {
+@mixin sr-only {
 
     // Make the element visually undetectable.
     position: absolute;
@@ -167,6 +374,35 @@
         background: inherit !important;
     }
 }
+
+/// Counteract the effects of sr-only (except for position and border).
+///
+@mixin not-sr-only {
+    width:       unset;
+    height:      unset;
+    padding:     unset;
+    margin:      unset;
+    white-space: unset;
+    overflow:    unset;
+    clip:        unset;
+}
+
+/// For an element which should not inherit the default styling imposed by the
+/// browser (particularly for h1-h6 elements being used to define document
+/// structure but intended to be styled by supplied CSS class(es).
+///
+// noinspection CssBrowserCompatibilityForProperties
+@mixin clear-default-styling {
+    margin:         0;
+    margin-block:   0;
+    margin-inline:  0;
+    padding:        0;
+    padding-block:  0;
+    padding-inline: 0;
+    font-size:      inherit;
+    font-weight:    inherit;
+}
+
 
 // ============================================================================
 // Platform-specific

@@ -2,6 +2,9 @@
 //
 // General-use SCSS @function definitions.
 
+@use 'sass:color';
+@use 'sass:math';
+
 //=============================================================================
 // SASS functions - numeric
 //=============================================================================
@@ -16,7 +19,7 @@
 ///
 @function percent($value) {
     $result: $value + 0%;
-    @return if((abs($result) < 1%), ($result * 100), $result);
+    @return if((math.abs($result) < 1%), ($result * 100), $result);
 }
 
 //=============================================================================
@@ -39,10 +42,10 @@
 ///     rgba() if the intent of using transparency is to lighten a color.
 ///
 /// Use this in place of the SASS lighten() or darken() functions since the
-///     may have unintended consequences versus scale-color():
+///     may have unintended consequences versus color.scale():
 ///
 @function lighter($color, $level) {
-    @return scale-color($color, $lightness: percent($level));
+    @return color.scale($color, $lightness: percent($level));
 }
 
 /// Scale a color darker (or lighter).

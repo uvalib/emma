@@ -1,11 +1,15 @@
 // app/assets/stylesheets/feature/_model.scss
 
 @use 'sass:math';
-@use 'shared/variables'      as v;
-@use 'shared/functions'      as f;
-@use 'shared/mixins'         as x;
-@use 'shared/controls/grids' as g;
-@use 'shared/feature/model'  as m;
+
+@use 'shared/variables'        as *;
+@use 'shared/functions'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/grids'   as grid;
+@use 'shared/feature/model'    as model;
+
+@use 'layouts/controls/lists'  as list-classes;
+@use 'layouts/controls/tables' as table-classes;
 
 //=============================================================================
 // Internal mixins
@@ -28,13 +32,13 @@
 
     @extend .list-2-column;
 
-    margin-bottom: m.$results-entry-gap-y;
+    margin-bottom: model.$list-item-gap-y;
     break-inside:  avoid;
     break-inside:  avoid-column;
     break-after:   left;
     align-content: flex-start;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         grid-template-columns: 100%;
     }
 
@@ -58,14 +62,13 @@
     // pairing (for accessibility purposes) while not interfering with grid
     // layout.
     .pair {
-        // noinspection SassScssResolvedByNameOnly
-        @extend %logical-grouping;
+        @include logical-grouping;
     }
 
     // noinspection CssOverwrittenProperties
     .label,
     .value {
-        margin-bottom: m.$results-entry-margin-y;
+        margin-bottom: model.$list-item-margin-y;
         word-break:    break-word;
         break-inside:  avoid;
         break-inside:  avoid-column;
@@ -76,15 +79,15 @@
         font-weight: bold;
         align-self:  baseline;
 
-        @media #{v.$narrow-screen} {
-            margin-bottom: v.$flex-gap-y;
+        @media #{$narrow-screen} {
+            margin-bottom: $flex-gap-y;
         }
     }
 
     .value {
 
-        @media #{v.$narrow-screen} {
-            margin-bottom: calc(3 * #{m.$results-entry-gap-y} / 2);
+        @media #{$narrow-screen} {
+            margin-bottom: calc(3 * #{model.$list-item-gap-y} / 2);
         }
 
         // noinspection CssOverwrittenProperties
@@ -96,7 +99,7 @@
             > * {
 
                 display:    block;
-                margin-top: m.$results-entry-margin-y;
+                margin-top: model.$list-item-margin-y;
 
                 &:first-child {
                     margin-top: 0;
@@ -139,7 +142,7 @@
 
     @extend .list-2-column;
 
-    margin:        m.$results-entry-gap-y 0;
+    margin:        model.$list-item-gap-y 0;
     align-content: flex-start;
 
     //=========================================================================
@@ -148,15 +151,14 @@
 
     .number {
 
-        font-family: v.$font-condensed;
+        font-family: $font-condensed;
         cursor:      text;
 
         // Sticky container which keeps the item number and icon tray in view
         // as the item is scrolled off the top of the screen.
         .container {
 
-            // noinspection SassScssResolvedByNameOnly
-            @extend %clear-default-styling;
+            @include clear-default-styling;
 
             display:        flex;
             flex-direction: column;
@@ -170,6 +172,9 @@
             // Components
             //=================================================================
 
+            $tray-pad: (model.$tray-pad);
+            $icon-pad: (model.$icon-pad);
+
             // Item number value.
             .value {
 
@@ -177,7 +182,7 @@
                 font-size:     large;
                 font-weight:   bold;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     font-size: larger;
                 }
             }
@@ -188,38 +193,36 @@
                 display:        flex;
                 flex-direction: column;
                 align-items:    center;
-                padding:        m.$tray-pad;
-                margin-left:    -(m.$tray-pad);
-                margin-right:   -(m.$tray-pad);
+                padding:        $tray-pad;
+                margin-left:    -$tray-pad;
+                margin-right:   -$tray-pad;
                 background:     whitesmoke;
-                border:         1px solid v.$root-fg-color;
+                border:         1px solid $root-fg-color;
                 border-radius:  0.25rem;
 
-                @media #{v.$narrow-screen} {
-                    padding-left:  m.$icon-pad;
-                    padding-right: m.$icon-pad;
+                @media #{$narrow-screen} {
+                    padding-left:  $icon-pad;
+                    padding-right: $icon-pad;
                 }
             }
 
             // Action button icon to perform an operation to the current item.
             .icon {
 
-                // noinspection SassScssResolvedByNameOnly
-                @extend %button-hover;
+                @include hover-highlight;
+                @include user-select(none);
 
-                @include x.user-select(none);
-
-                padding:         0 m.$icon-pad;
-                margin-left:     -(m.$icon-pad);
-                margin-right:    -(m.$icon-pad);
+                padding:         0 $icon-pad;
+                margin-left:     -$icon-pad;
+                margin-right:    -$icon-pad;
                 text-decoration: none;
                 font-size:       large;
-                color:           v.$uva-accent-blue;
+                color:           $uva-accent-blue;
                 border-radius:   50%;
 
                 &:hover {
                     text-decoration:  none;
-                    background-color: v.$root-bg-color;
+                    background-color: $root-bg-color;
                 }
 
                 &:focus {
@@ -244,9 +247,9 @@
     padding:        $item-padding;
     padding-bottom: 2 * $item-padding;
     overflow-x:     auto;
-    border:         2px solid v.$root-fg-color;
+    border:         2px solid $root-fg-color;
     border-radius:  0.5rem;
-    background:     f.lighter(v.$uva-accent-yellow, 95%);
+    background:     lighter($uva-accent-yellow, 95%);
 
     gap: 0 2rem;
 
@@ -259,9 +262,9 @@
     }
 
     // List data items in horizontal columns when there is enough room.
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
 
-        @include g.grid-column-classes($max-columns, auto);
+        @include grid.column-classes($max-columns, auto);
 
         grid-template-columns: repeat($max-columns, auto);
 
@@ -270,12 +273,12 @@
     }
 
     // Revert to one data item label/value per line with less room.
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         grid-template-columns: [label] minmax(10%,auto) [value] 1fr;
     }
 
     // Each label and value on a separate line on narrow screens.
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
 
         grid-template-columns: 1fr;
 
@@ -295,7 +298,7 @@
 
         // Make data values easier to distinguish from labels in single-column
         // display if they are not already clear.
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
 
             .text {
                 padding-bottom: $value-separation;
@@ -313,7 +316,7 @@
 
     .value {
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             padding-top: $value-separation;
         }
 
@@ -321,7 +324,7 @@
         // @see ModelHelper::List#render_pair
         &.list,
         &.textbox {
-            @include x.width-fit-content;
+            @include width-fit-content;
             @include value-box(darkgray);
         }
 
@@ -343,7 +346,7 @@
                 padding-top:   0.0625rem;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
 
                 flex-direction: column;
                 margin-bottom:  0.5rem;
@@ -376,19 +379,19 @@
         margin:  0 $wide-margin;
         padding: $item-padding;
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             margin: 0 $medium-margin;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
 
             margin: 0 $narrow-margin;
 
             grid-template-columns: 1fr;
         }
 
-        @if not m.$data-list-border-color == none {
-            border:         2px solid m.$data-list-border-color;
+        @if not model.$data-list-border-color == none {
+            border:         2px solid model.$data-list-border-color;
             border-radius:  0.5rem;
         }
 
@@ -399,11 +402,11 @@
             margin-left:  -4rem;
             margin-right: $wide-margin;
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 margin-right: $medium-margin * 1.25;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-top:   math.div($narrow-margin, 2);
                 margin-left:  $narrow-margin;
                 margin-right: $narrow-margin;
@@ -433,7 +436,7 @@
     // Add a top margin except to the first label/value pair.
     .value + .label,
     .value + .label + .value {
-        margin-top: m.$results-entry-margin-y;
+        margin-top: model.$list-item-margin-y;
     }
 }
 
@@ -444,8 +447,8 @@
     display:        flex;
     flex-direction: column;
 
-    @media #{v.$wide-screen} {
-        margin-top:     v.$page-padding;
+    @media #{$wide-screen} {
+        margin-top:     $page-padding;
         flex-direction: row;
     }
 
@@ -455,7 +458,7 @@
 
     > * {
 
-        margin: 0 0 v.$page-padding-y 0;
+        margin: 0 0 $page-padding-y 0;
 
         &:last-child {
             img {
@@ -463,23 +466,37 @@
             }
         }
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
 
             flex:         1 1 50%;
-            margin-right: v.$page-padding-x;
+            margin-right: $page-padding-x;
 
             &:last-child {
                 margin-right: 0;
             }
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
 
-            margin-top: calc(2 * #{v.$page-padding});
+            margin-top: calc(2 * #{$page-padding});
 
             &:first-child {
                 margin-top: 0;
             }
         }
     }
+}
+
+//=============================================================================
+// Hacks
+//=============================================================================
+
+// This was necessary because "@extend .label-value-pairs;" for
+// .search-label-value-pairs (controllers/_search.scss) was failing with
+// 'Use "@extend .label-value-pairs !optional" to avoid this error.'
+//
+// For unknown reasons, extending this works to achieve the intended result.
+//
+%label-value-pairs {
+    @extend .label-value-pairs;
 }

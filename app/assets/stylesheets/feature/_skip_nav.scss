@@ -1,7 +1,7 @@
 // app/assets/stylesheets/feature/_skip_nav.scss
 
-@use 'shared/variables' as v;
-@use 'shared/mixins'    as x;
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Internal constants
@@ -19,7 +19,7 @@ $sn-entry-gap: 0.1rem;
 // @see file:app/views/layouts/_skip_nav.html.erb
 .skip-nav {
 
-    @include x.user-select(none);
+    @include user-select(none);
 
     display:          block;
     position:         absolute;
@@ -27,17 +27,16 @@ $sn-entry-gap: 0.1rem;
     left:             $sn-margin;
     margin:           0;
     padding:          $sn-padding;
-    background-color: v.$root-bg-color;
-    border:           1px solid v.$root-fg-color;
-    box-shadow:       0 0 0 1px v.$root-bg-color;
+    background-color: $root-bg-color;
+    border:           1px solid $root-fg-color;
+    box-shadow:       0 0 0 1px $root-bg-color;
 
-    &         { z-index: v.$z-hidden }
-    &.visible { z-index: v.$z-popup; }
+    &         { z-index: $z-hidden }
+    &.visible { z-index: $z-popup; }
 
     .skip-nav-heading {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %clear-default-styling;
+        @include clear-default-styling;
 
         margin-bottom:           2 * $sn-entry-gap;
         font-style:              italic;
@@ -47,13 +46,12 @@ $sn-entry-gap: 0.1rem;
 
     .skip-nav-menu {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %clear-default-styling;
+        @include clear-default-styling;
 
         padding-top: $sn-entry-gap;
 
         a, a:visited {
-            color:           v.$root-fg-color;
+            color:           $root-fg-color;
             text-decoration: none;
         }
 
@@ -63,8 +61,7 @@ $sn-entry-gap: 0.1rem;
 
         li {
 
-            // noinspection SassScssResolvedByNameOnly
-            @extend %clear-default-styling;
+            @include clear-default-styling;
 
             margin:     $sn-entry-gap;
             padding:    $sn-entry-gap $sn-entry-gap 0;

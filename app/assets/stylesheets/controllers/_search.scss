@@ -1,11 +1,16 @@
 // app/assets/stylesheets/controllers/_search.scss
 
+@use 'sass:map';
 @use 'sass:math';
-@use 'shared/variables'      as v;
-@use 'shared/functions'      as f;
-@use 'shared/mixins'         as x;
-@use 'shared/controls/grids' as g;
-@use 'shared/feature/model'  as m;
+
+@use 'shared/variables'         as *;
+@use 'shared/functions'         as *;
+@use 'shared/mixins'            as *;
+@use 'shared/controls/grids'    as grid;
+@use 'shared/feature/model'     as model;
+
+@use 'layouts/controls/buttons' as button-classes;
+@use 'feature/model'            as model-classes;
 
 //=============================================================================
 // Unified Search pages
@@ -15,7 +20,7 @@ $row-separation:        0.75rem;
 $row-separation-narrow: 1rem;
 $row-line-height:       1.5;
 
-$value-right-margin:    calc(2 * #{v.$flex-gap-x});
+$value-right-margin:    calc(2 * #{$flex-gap-x});
 
 // The "top" values for sticky positioning -- the "narrow" version is much
 // larger because it is actually applied only to the .field-Title element,
@@ -28,7 +33,7 @@ $sticky-top-medium: 1.5vh;
 $sticky-top-narrow: 3.125rem;
 
 //=============================================================================
-// Macros
+// Internal mixins
 //=============================================================================
 
 @mixin search-item-columns($label: 0.25fr, $value: 1fr) {
@@ -36,7 +41,7 @@ $sticky-top-narrow: 3.125rem;
 }
 
 //=============================================================================
-// Base definitions
+// Internal placeholder classes
 //=============================================================================
 
 // Use to display text as a substitute for a logo.
@@ -44,11 +49,15 @@ $sticky-top-narrow: 3.125rem;
     padding:       1px 0.5rem;
     font-size:     medium;
     font-weight:   normal;
-    color:         v.$root-rev-fg-color;
-    background:    v.$panel-accent;
+    color:         $root-rev-fg-color;
+    background:    $panel-accent;
     border:        1px solid transparent;
     border-radius: 0.5rem;
 }
+
+//=============================================================================
+// Base definitions
+//=============================================================================
 
 // @see LogoHelper#repository_source_logo
 .repository {
@@ -71,7 +80,7 @@ $sticky-top-narrow: 3.125rem;
         max-width:  100%;
         background: white;
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             height:     4.5rem;
             max-height: 4.5rem;
         }
@@ -81,12 +90,13 @@ $sticky-top-narrow: 3.125rem;
 // Label/value pairs appropriate for either .search-list-item or .file-info.
 .search-label-value-pairs {
 
-    @extend .label-value-pairs;
+    // noinspection SassScssResolvedByNameOnly
+    @extend %label-value-pairs;
 
-    @include g.grid-row-gap($row-separation);
+    @include grid.row-gap($row-separation);
 
-    @media #{v.$narrow-screen} {
-        @include g.grid-row-gap($row-separation-narrow);
+    @media #{$narrow-screen} {
+        @include grid.row-gap($row-separation-narrow);
     }
 
     //=========================================================================
@@ -102,7 +112,7 @@ $sticky-top-narrow: 3.125rem;
 
         line-height: $row-line-height;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin-bottom: -0.75rem;
         }
 
@@ -114,26 +124,26 @@ $sticky-top-narrow: 3.125rem;
     .value {
 
         &.textbox {
-            box-shadow: 0 0 0 0.25rem v.$root-bg-color, 0 0 0 0.375rem lightgray;
+            box-shadow: 0 0 0 0.25rem $root-bg-color, 0 0 0 0.375rem lightgray;
         }
 
         &.array {
 
-            @include g.grid-row-gap($row-separation);
+            @include grid.row-gap($row-separation);
 
             display:       grid;
             align-items:   center;
             align-content: center;
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 grid-template-columns: repeat(6, minmax(16.67%, 0.1667fr));
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 grid-template-columns: repeat(3, minmax(33%, 1fr));
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-left:           0;
                 grid-template-columns: 1fr;
             }
@@ -147,8 +157,7 @@ $sticky-top-narrow: 3.125rem;
 
             > * {
 
-                // noinspection SassScssResolvedByNameOnly
-                @extend %control-shadow;
+                @include control-shadow;
 
                 display:             block;
                 height:              100%;
@@ -161,17 +170,17 @@ $sticky-top-narrow: 3.125rem;
                 cursor:              text;
 
                 // noinspection CssReplaceWithShorthandSafely
-                @media #{v.$not-narrow-screen} {
+                @media #{$not-narrow-screen} {
                     margin:          $element-y-margin $element-x-margin;
                     margin-right:    1rem;
                 }
 
-                @media #{v.$wide-screen} {
+                @media #{$wide-screen} {
                     word-break:      keep-all;
                     word-wrap:       break-word;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     margin:          $element-y-margin 0;
                 }
             }
@@ -182,14 +191,14 @@ $sticky-top-narrow: 3.125rem;
             display:         flex;
             flex-direction:  row;
             justify-content: space-between;
-            gap:             v.$flex-gap-y v.$flex-gap-x;
+            gap:             $flex-gap-y $flex-gap-x;
             margin:          0 0 auto;
             font-size:       x-large;
             font-weight:     bold;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
 
-                @include g.grid-column-span;
+                @include grid.column-span;
 
                 flex-wrap: wrap-reverse;
             }
@@ -229,7 +238,7 @@ $sticky-top-narrow: 3.125rem;
     grid-template-columns: max-content 1fr;
     gap:                   1rem;
 
-    @media #{v.$not-wide-screen} {
+    @media #{$not-wide-screen} {
         grid-template-columns: 1fr;
     }
 
@@ -243,10 +252,9 @@ $sticky-top-narrow: 3.125rem;
 
         &.logo {
 
-            // noinspection SassScssResolvedByNameOnly
-            @extend %invisible;
+            @include invisible;
 
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 display: none;
             }
         }
@@ -270,7 +278,7 @@ $sticky-top-narrow: 3.125rem;
 
             max-width: unset;
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 grid-template-columns: minmax(max-content, 50%);
             }
 
@@ -278,7 +286,7 @@ $sticky-top-narrow: 3.125rem;
 
                 word-break: normal;
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     margin-left: 0;
                 }
             }
@@ -291,7 +299,7 @@ $sticky-top-narrow: 3.125rem;
             list-style: square;
             list-style: disclosure-closed; // NOTE: Firefox only
 
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 list-style-position: inside;
             }
         }
@@ -361,7 +369,7 @@ $sticky-top-narrow: 3.125rem;
 
             @if $title-spans-entry {
 
-                @include x.screen-reader-only;
+                @include sr-only;
 
                 position:       unset !important;
 
@@ -369,16 +377,16 @@ $sticky-top-narrow: 3.125rem;
 
                 position:	    sticky;
                 top:		    2vh;
-                z-index:        v.$z-raised;
+                z-index:        $z-raised;
                 display:	    flex;
                 flex-direction: row;
                 align-items:	flex-start;
                 margin:		    0;
                 padding-top:    1.25rem;
-                background:	    v.$root-bg-color;
+                background:	    $root-bg-color;
                 box-shadow:
-                    0.5rem  -0.5rem  0       0.5rem v.$root-bg-color,
-                    0.25rem -0.25rem 0.75rem 0.5rem v.$root-bg-color;
+                    0.5rem  -0.5rem  0       0.5rem $root-bg-color,
+                    0.25rem -0.25rem 0.75rem 0.5rem $root-bg-color;
             }
         }
 
@@ -397,7 +405,7 @@ $sticky-top-narrow: 3.125rem;
         }
 
         .text {
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 line-height:    1.25;
                 letter-spacing: -0.5px;
             }
@@ -424,7 +432,7 @@ $sticky-top-narrow: 3.125rem;
             flex-direction:  column;
             justify-content: center;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 padding-left: $narrow-indent;
             }
 
@@ -433,7 +441,7 @@ $sticky-top-narrow: 3.125rem;
                 line-height: 1.25;
                 word-break:  break-all;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     height: 100%;
                 }
             }
@@ -447,15 +455,15 @@ $sticky-top-narrow: 3.125rem;
             max-height:  20vh;
             overflow-y:  auto;
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 max-width: 75vw;
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 max-width: 62.5vw;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 width:     auto;
                 max-width: calc(100vw - 2.5rem);
             }
@@ -472,7 +480,7 @@ $sticky-top-narrow: 3.125rem;
                 margin-left: $indent;
                 text-indent: -$indent;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     padding-left: $narrow-indent;
                 }
             }
@@ -485,54 +493,54 @@ $sticky-top-narrow: 3.125rem;
             height:        calc(100% - #{2 * $textbox-vspace});
             line-height:   1.25;
 
-            @media #{v.$narrow-screen} {
-                margin-left:  v.$flex-gap-x;
-                padding-left: calc(#{$narrow-indent} - #{v.$flex-gap-x});
+            @media #{$narrow-screen} {
+                margin-left:  $flex-gap-x;
+                padding-left: calc(#{$narrow-indent} - #{$flex-gap-x});
             }
         }
 
         &.field-Title {
 
             position:      sticky;
-            z-index:       v.$z-raised;
+            z-index:       $z-raised;
             align-items:   flex-start;
             margin:        0;
             height:        unset;
             line-height:   unset;
             font-size:     x-large;
             font-weight:   bold;
-            background:	   v.$root-bg-color;
+            background:	   $root-bg-color;
             border-bottom: 1px solid darkgray;
 
             @if $title-spans-entry {
-                @include g.grid-column-span;
+                @include grid.column-span;
             }
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 top:        $sticky-top-wide;
                 box-shadow:
-                     0.50rem -2.00rem  1.00rem  2.00rem  v.$root-bg-color,
-                     0        0        0.25rem  0.50rem  v.$root-bg-color;
+                     0.50rem -2.00rem  1.00rem  2.00rem  $root-bg-color,
+                     0        0        0.25rem  0.50rem  $root-bg-color;
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 top:        $sticky-top-medium;
-                column-gap: calc(3 * #{v.$flex-gap-x});
+                column-gap: calc(3 * #{$flex-gap-x});
                 box-shadow:
-                     0       -1.00rem  0        0.50rem  v.$root-bg-color,
-                     0        0        0.25rem  0.25rem  v.$root-bg-color;
+                     0       -1.00rem  0        0.50rem  $root-bg-color,
+                     0        0        0.25rem  0.25rem  $root-bg-color;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
 
-                @include x.hyphenation;
+                @include hyphenation;
 
                 top:            $sticky-top-narrow;
                 padding-bottom: 0.5rem;
-                border-color:   v.$root-fg-color;
+                border-color:   $root-fg-color;
                 box-shadow:
-                     0       -0.50rem  0        0.25rem  v.$root-bg-color,
-                     0        0.25rem  0.25rem  0        v.$root-bg-color;
+                     0       -0.50rem  0        0.25rem  $root-bg-color,
+                     0        0.25rem  0.25rem  0        $root-bg-color;
             }
 
             // @see SearchHelper#title_and_source
@@ -541,13 +549,13 @@ $sticky-top-narrow: 3.125rem;
                 margin: 0;
                 flex:   1 1 100%;
 
-                @media #{v.$wide-screen} {
+                @media #{$wide-screen} {
                     height:         100%;
                     padding-bottom: 1rem;
                     font-size:      larger;
                 }
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     height:         100%;
                     padding-bottom: 0.75rem;
                     margin-right:   $value-right-margin;
@@ -562,10 +570,10 @@ $sticky-top-narrow: 3.125rem;
                  * height is given so that if the title needs to be scrolled,
                  * the fourth line is partially displayed but clipped.
                  */
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     max-height:     4em;
                     margin-top:     0.5rem;
-                    padding-right:  v.$scroll-easement;
+                    padding-right:  $scroll-easement;
                     overflow-y:     auto;
                 }
             }
@@ -576,16 +584,16 @@ $sticky-top-narrow: 3.125rem;
                 display:         flex;
                 justify-content: flex-end;
 
-                @media #{v.$wide-screen} {
+                @media #{$wide-screen} {
                     padding-bottom:  1rem;
                 }
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     margin-left:     $value-right-margin;
                     padding-bottom:  0.75rem;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     justify-content: flex-start;
                     margin-top:      -0.5rem;
                 }
@@ -597,7 +605,7 @@ $sticky-top-narrow: 3.125rem;
                     border:     1px solid lightgray;
                     box-shadow: 2px 2px 6px 0 lightgray;
 
-                    @media #{v.$not-wide-screen} {
+                    @media #{$not-wide-screen} {
                         max-height: 2.5rem;
                     }
                 }
@@ -613,17 +621,17 @@ $sticky-top-narrow: 3.125rem;
                 margin:         0;
                 flex:           0 0 auto;
 
-                @media #{v.$wide-screen} {
-                    margin-left:    v.$flex-gap-x;
+                @media #{$wide-screen} {
+                    margin-left:    $flex-gap-x;
                     padding-top:    0.75rem;
                 }
 
-                @media #{v.$medium-width} {
-                    margin-left:    v.$flex-gap-x;
+                @media #{$medium-width} {
+                    margin-left:    $flex-gap-x;
                     padding-top:    0.5rem;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     flex-direction: row;
                     margin-top:     -0.5rem;
                     margin-bottom:  auto;
@@ -633,8 +641,7 @@ $sticky-top-narrow: 3.125rem;
                 .prev,
                 .next {
 
-                    // noinspection SassScssResolvedByNameOnly
-                    @extend %button-hover;
+                    @include hover-highlight;
 
                     min-width:     unset;
                     margin:        0;
@@ -655,8 +662,7 @@ $sticky-top-narrow: 3.125rem;
                         cursor: default;
 
                         &:focus {
-                            // noinspection SassScssResolvedByNameOnly
-                            @extend %focus;
+                            @include focus;
                         }
                     }
 
@@ -666,23 +672,23 @@ $sticky-top-narrow: 3.125rem;
                         width:      1.25em; // em not rem
                         text-align: center;
 
-                        @media #{v.$narrow-screen} {
+                        @media #{$narrow-screen} {
                             width:  1.5em; // em not rem
                         }
                     }
                 }
 
                 .prev {
-                    @media #{v.$not-narrow-screen} {
+                    @media #{$not-narrow-screen} {
                         margin-top: -0.5rem;
                     }
                 }
 
                 .next {
-                    @media #{v.$not-narrow-screen} {
+                    @media #{$not-narrow-screen} {
                         margin-top: 0.25rem;
                     }
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         margin-left: 0.25rem;
                     }
                 }
@@ -702,7 +708,7 @@ $sticky-top-narrow: 3.125rem;
         }
 
         &.field-RetrievalLink {
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-bottom: 1rem;
             }
         }
@@ -713,7 +719,7 @@ $sticky-top-narrow: 3.125rem;
     //=========================================================================
 
     .invalid {
-        color:  v.$error-fg;
+        color:  $error-fg;
         cursor: help;
     }
 
@@ -758,7 +764,7 @@ $sticky-top-narrow: 3.125rem;
 
     @extend .model-list;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         grid-template-columns: 1fr;
     }
 
@@ -766,8 +772,8 @@ $sticky-top-narrow: 3.125rem;
     // Components
     //=========================================================================
 
-    $item-number-bg:     f.lighter(v.$uva-accent-blue, 97.5%);
-    $item-number-border: v.$uva-accent-blue;
+    $item-number-bg:     lighter($uva-accent-blue, 97.5%);
+    $item-number-border: $uva-accent-blue;
 
     .pagination-top {
         // TODO: ???
@@ -779,8 +785,8 @@ $sticky-top-narrow: 3.125rem;
         font-size:   large;
         font-weight: bold;
 
-        @media #{v.$not-narrow-screen} {
-            margin-bottom:  calc(2 * #{m.$results-entry-gap-y});
+        @media #{$not-narrow-screen} {
+            margin-bottom:  calc(2 * #{model.$list-item-gap-y});
             padding-left:   0.25rem;
             padding-right:  0.5rem;
             text-align:     right;
@@ -788,41 +794,41 @@ $sticky-top-narrow: 3.125rem;
             border:         1px solid $item-number-border;
         }
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             padding-bottom: 1.75rem;
         }
 
-        @media #{v.$medium-width} {
-            margin-top:     calc(2 * #{m.$results-entry-gap-y});
-            padding-bottom: calc(2 * #{m.$results-entry-gap-y});
+        @media #{$medium-width} {
+            margin-top:     calc(2 * #{model.$list-item-gap-y});
+            padding-bottom: calc(2 * #{model.$list-item-gap-y});
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
 
-            @include g.grid-column-span;
+            @include grid.column-span;
 
             position:       sticky;
             top:            0;
             margin-bottom:  0;
             padding:        0;
             text-align:     center;
-            background:     v.$root-bg-color;
-            box-shadow:     0 0 0 0.75rem v.$root-bg-color;
+            background:     $root-bg-color;
+            box-shadow:     0 0 0 0.75rem $root-bg-color;
         }
 
         .container {
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 top:            $sticky-top-wide;
                 margin-top:     0.625rem;
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 top:            $sticky-top-medium;
                 margin-top:     0.75rem;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 top:            0;
                 flex-direction: row;
             }
@@ -831,18 +837,18 @@ $sticky-top-narrow: 3.125rem;
 
                 margin: 0;
 
-                @media #{v.$wide-screen} {
+                @media #{$wide-screen} {
                     padding-top:   0.25rem;
                 }
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     padding-top:   0.125rem;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     height:        1.75rem;
                     padding-top:   0.125rem;
-                    margin-bottom: v.$gap-y;
+                    margin-bottom: $gap-y;
                     background:    $item-number-bg;
                     border-bottom: 1px solid $item-number-border;
                     flex:          1 0 auto;
@@ -851,28 +857,30 @@ $sticky-top-narrow: 3.125rem;
 
             .icon-tray {
 
+                $icon-pad:      (model.$icon-pad);
+                $icon-pad-half: math.div($icon-pad, 2);
 
-                @media #{v.$not-narrow-screen} {
+                @media #{$not-narrow-screen} {
                     margin-top:     1rem;
                     margin-left:    0;
-                    margin-right:   -(m.$icon-pad);
-                    padding-top:    math.div(m.$icon-pad, 2);
-                    padding-bottom: math.div(m.$icon-pad, 2);
+                    margin-right:   -$icon-pad;
+                    padding-top:    $icon-pad-half;
+                    padding-bottom: $icon-pad-half;
                     box-shadow:     2px 2px 1px 1px lightgray;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     position:       absolute;
                     top:            0.125rem;
                     right:          0;
                     flex-direction: row;
                     margin:         0;
-                    padding:        0 math.div(m.$icon-pad, 2);
+                    padding:        0 $icon-pad-half;
                 }
             }
 
             .icon {
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
 
                     margin: 0;
 
@@ -892,22 +900,22 @@ $sticky-top-narrow: 3.125rem;
      */
     .search-list-item {
 
-        @media #{v.$not-narrow-screen} {
-            margin-bottom:         calc(2 * #{m.$results-entry-gap-y});
+        @media #{$not-narrow-screen} {
+            margin-bottom:         calc(2 * #{model.$list-item-gap-y});
             padding-bottom:        0.5rem;
         }
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             @include search-item-columns(0.1375fr);
         }
 
-        @media #{v.$medium-width} {
-            margin-top:            calc(2 * #{m.$results-entry-gap-y});
+        @media #{$medium-width} {
+            margin-top:            calc(2 * #{model.$list-item-gap-y});
             @include search-item-columns(0.25fr);
         }
 
-        @media #{v.$narrow-screen} {
-            @include g.grid-column-span;
+        @media #{$narrow-screen} {
+            @include grid.column-span;
         }
 
         // Superfluous because ModelHelper::Fields#field_pairs folds the
@@ -959,7 +967,7 @@ $sticky-top-narrow: 3.125rem;
              0 0 0 $gap $mask, // inner gap
              0 0 0 $box $fg;   // outer boundary
 
-    @media #{v.$not-narrow-screen} {
+    @media #{$not-narrow-screen} {
 
         &.value.array {
             box-shadow:
@@ -977,7 +985,7 @@ $sticky-top-narrow: 3.125rem;
         }
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
 
         &.value:not(.array) {
             margin-left:   0;
@@ -1044,13 +1052,14 @@ body.aggregate-style {
     $narrow-open-pad:        0.75rem;
 
     $v-shift:                0.25rem;
+    $v-shift-half:           math.div($v-shift, 2);
     $h-shift:                0.125rem;
 
     // Box shadow sections which prevent scrolled text from
     // appearing above the title.
     $title-scroll-mask:
-        0.25rem  -0.25rem  0         0.5rem  v.$root-bg-color,
-        0.125rem  0        0.125rem  0.5rem  v.$root-bg-color;
+        0.25rem  -0.25rem  0         0.5rem  $root-bg-color,
+        0.125rem  0        0.125rem  0.5rem  $root-bg-color;
 
     //=========================================================================
     // Sections
@@ -1065,16 +1074,16 @@ body.aggregate-style {
 
         display: grid;
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
             grid-template-columns: auto 1fr;
         }
 
-        @media #{v.$medium-width} {
-            margin:  calc(2 * #{m.$results-entry-gap-y}) auto;
+        @media #{$medium-width} {
+            margin:  calc(2 * #{model.$list-item-gap-y}) auto;
             row-gap: 1rem;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             grid-template-columns: 1fr;
         }
 
@@ -1083,7 +1092,7 @@ body.aggregate-style {
         //=====================================================================
 
         .heading {
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 margin:      auto 0;
                 grid-row:    1;
                 grid-column: 1;
@@ -1099,12 +1108,12 @@ body.aggregate-style {
             row-gap:        0.5rem;
             grid-column:    unset;
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 grid-row: 1/3;
                 row-gap:  1rem;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 row-gap:         0.25rem;
                 justify-content: center;
             }
@@ -1114,11 +1123,11 @@ body.aggregate-style {
                 flex-direction: row-reverse;
                 column-gap:     1rem;
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     flex-basis: 100%;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     margin:          0.5rem 0;
                     flex-direction:  row;
                     column-gap:      0.5rem;
@@ -1137,14 +1146,14 @@ body.aggregate-style {
                 column-gap:      1rem;
                 row-gap:         0.5rem;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     margin-top:      0.5rem;
                     column-gap:      0.5rem;
                     row-gap:         0.25rem;
                     justify-content: center;
                 }
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     display: none;
                 }
             }
@@ -1155,7 +1164,7 @@ body.aggregate-style {
 
             display: none;
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 display:         flex;
                 flex-direction:  row-reverse;
                 column-gap:      1rem;
@@ -1171,8 +1180,8 @@ body.aggregate-style {
 
         column-gap: 1%;
 
-        @media #{v.$narrow-screen} {
-            margin:     calc(2 * #{m.$results-entry-gap-y}) 0;
+        @media #{$narrow-screen} {
+            margin:     calc(2 * #{model.$list-item-gap-y}) 0;
             column-gap: 0.5rem;
         }
 
@@ -1192,7 +1201,7 @@ body.aggregate-style {
             border-radius:   50%;
             border-color:    darkgray;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 width:       1.875rem;
                 height:      1.75rem;
             }
@@ -1236,21 +1245,21 @@ body.aggregate-style {
             box-shadow: none;
             background: none;
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 padding-top:     0.5rem;
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 margin-right:    0.375rem;
                 padding-top:     0.5rem;
                 padding-bottom:  0.5rem;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-top:      0;
                 padding-top:     0.5rem;
                 grid-column-end: 1;
-                z-index:         v.$z-controls;
+                z-index:         $z-controls;
             }
 
             //=================================================================
@@ -1261,12 +1270,12 @@ body.aggregate-style {
 
                 height: 3rem;
 
-                @media #{v.$not-narrow-screen} {
+                @media #{$not-narrow-screen} {
                     display: none;
                 }
 
                 .value {
-                    @include x.screen-reader-only;
+                    @include sr-only;
                 }
 
                 .toggle.for-item {
@@ -1279,7 +1288,7 @@ body.aggregate-style {
 
                 margin-top: 0.125rem;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     display: none;
                 }
             }
@@ -1290,21 +1299,21 @@ body.aggregate-style {
 
             &.open {
 
-                @media #{v.$wide-screen} {
+                @media #{$wide-screen} {
                     $excess:     3.5rem;
                     height:      calc(100% - #{$excess});
                     margin-top:  1.75rem;
                     padding-top: 0.125rem;
                 }
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     $excess:     2.5rem;
                     height:      calc(100% - #{$excess});
                     margin-top:  1.375rem;
                     padding-top: 0.3125rem;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     $excess:     $narrow-logo-height + $narrow-item-separation;
                     height:      calc(100% - #{$excess});
                     /**
@@ -1335,7 +1344,7 @@ body.aggregate-style {
             min-width: 100%;
             margin:    0;
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 width:             92.5vw;
                 margin-left:       -(2rem + $narrow-left-pad);
                 margin-right:      (2rem + $narrow-left-pad);
@@ -1351,11 +1360,11 @@ body.aggregate-style {
                     max-width:  100%;
                     align-self: baseline;
 
-                    @media #{v.$not-narrow-screen} {
+                    @media #{$not-narrow-screen} {
                         border: none;
                     }
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         justify-content: flex-end;
                         background:      ghostwhite;
                     }
@@ -1371,13 +1380,13 @@ body.aggregate-style {
                         letter-spacing: -0.125px; // NOTE: needed for Firefox
                         cursor:         default;
 
-                        @media #{v.$wide-screen} {
+                        @media #{$wide-screen} {
                             flex-basis:    100%;
                             border-top:    $wide-open-pad solid transparent;
                             border-bottom: $wide-open-pad solid transparent;
                         }
 
-                        @media #{v.$medium-width} {
+                        @media #{$medium-width} {
                             flex-basis:    100%;
                             border-top:    $medium-open-pad solid transparent;
                             border-bottom: $medium-open-pad solid transparent;
@@ -1390,7 +1399,7 @@ body.aggregate-style {
 
                             box-shadow: 2px 2px 4px 0 lightgray;
 
-                            @media #{v.$narrow-screen} {
+                            @media #{$narrow-screen} {
                                 max-height: $narrow-logo-height;
                             }
                         }
@@ -1416,33 +1425,33 @@ body.aggregate-style {
 
                     top: 1vh;
 
-                    @media #{v.$not-narrow-screen} {
+                    @media #{$not-narrow-screen} {
                         box-shadow: $title-scroll-mask;
                     }
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         box-shadow: $narrow-title-shadow, $title-scroll-mask;
                     }
 
                     > * {
-                        @media #{v.$not-narrow-screen} {
+                        @media #{$not-narrow-screen} {
                             align-self: flex-start;
                         }
                     }
 
                     .title {
-                        @media #{v.$not-narrow-screen} {
+                        @media #{$not-narrow-screen} {
                             box-shadow:
-                                1px -1px  0  1px  v.$root-bg-color,
+                                1px -1px  0  1px  $root-bg-color,
                                 1px  1px  0  1px  darkgray;
                         }
                     }
 
                     .repository {
-                        @media #{v.$not-narrow-screen} {
+                        @media #{$not-narrow-screen} {
                             margin-top: 0;
                         }
-                        @media #{v.$narrow-screen} {
+                        @media #{$narrow-screen} {
                             position:   sticky;
                             top:        0;
                         }
@@ -1457,7 +1466,7 @@ body.aggregate-style {
 
         .search-list-item:not(.open) {
 
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
                 max-height:     4rem;
                 padding-bottom: 1rem;
             }
@@ -1467,11 +1476,11 @@ body.aggregate-style {
 
                 &.field-Title {
 
-                    @media #{v.$not-narrow-screen} {
+                    @media #{$not-narrow-screen} {
                         box-shadow: none;
                     }
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         box-shadow: $narrow-title-shadow;
                     }
 
@@ -1497,12 +1506,11 @@ body.aggregate-style {
     .colorize-button,
     .field-highlight-button {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-button-base;
+        @extend .basic-button;
 
         &.active {
-            background-color: v.$input-disabled-bg;
-            border-color:     v.$input-disabled-fg;
+            background-color: $input-disabled-bg;
+            border-color:     $input-disabled-fg;
         }
     }
 
@@ -1521,12 +1529,12 @@ body.aggregate-style {
 
                     border: none;
 
-                    @media #{v.$not-narrow-screen} {
+                    @media #{$not-narrow-screen} {
                         margin-left:  -0.25rem;
                         padding-left: 0.25rem;
                     }
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         margin-left: -$narrow-left-pad;
                         .title {
                             margin-left: $narrow-left-pad;
@@ -1538,16 +1546,16 @@ body.aggregate-style {
                         word-break: keep-all;
                         flex:       1 0 auto;
 
-                        @media #{v.$wide-screen} {
+                        @media #{$wide-screen} {
                             margin-top:   $wide-open-pad;
                             font-size:    larger;
                         }
 
-                        @media #{v.$medium-width} {
+                        @media #{$medium-width} {
                             margin-top:   $medium-open-pad;
                         }
 
-                        @media #{v.$narrow-screen} {
+                        @media #{$narrow-screen} {
                             margin-top:   $narrow-open-pad;
                             margin-right: $narrow-open-pad;
                             flex:         0 1 auto;
@@ -1560,15 +1568,15 @@ body.aggregate-style {
                             $fg-color: red;
                             $bg-color: white;
 
-                            @media #{v.$wide-screen} {
-                                margin-top:   $wide-open-pad   - math.div($v-shift, 2);
+                            @media #{$wide-screen} {
+                                margin-top:   $wide-open-pad   - $v-shift-half;
                             }
-                            @media #{v.$medium-width} {
-                                margin-top:   $medium-open-pad - math.div($v-shift, 2);
+                            @media #{$medium-width} {
+                                margin-top:   $medium-open-pad - $v-shift-half;
                             }
-                            @media #{v.$narrow-screen} {
-                                margin-top:   $narrow-open-pad - math.div($v-shift, 2);
-                                margin-right: $narrow-open-pad - math.div($v-shift, 2);
+                            @media #{$narrow-screen} {
+                                margin-top:   $narrow-open-pad - $v-shift-half;
+                                margin-right: $narrow-open-pad - $v-shift-half;
                             }
 
                             margin-right:  -$h-shift;
@@ -1582,7 +1590,7 @@ body.aggregate-style {
                         }
 
                         &.exile:not(.error) {
-                            color: v.$uva-text-gray;
+                            color: $uva-text-gray;
                         }
 
                         &:not(.error) {
@@ -1591,10 +1599,10 @@ body.aggregate-style {
                     }
 
                     .repository {
-                        @media #{v.$wide-screen} {
+                        @media #{$wide-screen} {
                             padding-bottom: 0;
                         }
-                        @media #{v.$narrow-screen} {
+                        @media #{$narrow-screen} {
                             margin-top: 0;
                         }
                     }
@@ -1618,7 +1626,7 @@ body.aggregate-style {
 
                 &.field-Title {
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         box-shadow: $title-scroll-mask;
                     }
 
@@ -1646,13 +1654,13 @@ body.aggregate-style {
 
                 &.field-Title {
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         box-shadow: none;
                     }
 
                     .repository {
                         img {
-                            @media #{v.$narrow-screen} {
+                            @media #{$narrow-screen} {
                                 box-shadow: none;
                             }
                         }
@@ -1767,7 +1775,7 @@ body.aggregate-style {
                     box-shadow: 0.375rem 0 0 0.625rem $score-fields-bg;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     @include score-fields {
                         box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
                     }
@@ -1781,7 +1789,7 @@ body.aggregate-style {
                     box-shadow: -0.625rem 0 0 0.625rem $score-fields-bg;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     @include score-fields {
                         box-shadow: 0.5rem 0 0 0.5rem $score-fields-bg;
                     }
@@ -1803,16 +1811,16 @@ body.aggregate-style {
                         border:        2px solid green;
                         border-radius: 0.25rem;
 
-                        @media #{v.$wide-screen} {
+                        @media #{$wide-screen} {
                             margin-left: 1rem;
                         }
 
-                        @media #{v.$medium-width} {
+                        @media #{$medium-width} {
                             margin-left: 0.5rem;
-                            margin-top:  $medium-open-pad - math.div($v-shift, 2);
+                            margin-top:  $medium-open-pad - $v-shift-half;
                         }
 
-                        @media #{v.$narrow-screen} {
+                        @media #{$narrow-screen} {
                             margin-left: 1rem;
                         }
 
@@ -1842,8 +1850,8 @@ body.aggregate-style {
                 &.field-Title {
 
                     .item-score {
-                        @media #{v.$wide-screen} {
-                            margin-top: $wide-open-pad + math.div($v-shift, 2);
+                        @media #{$wide-screen} {
+                            margin-top: $wide-open-pad + $v-shift-half;
                         }
                     }
                 }
@@ -1865,14 +1873,17 @@ body.aggregate-style {
 
                         border-radius: 0;
 
-                        @media #{v.$wide-screen} {
-                            box-shadow: -0.875rem  0 0 1.125rem  v.$root-bg-color;
+                        @media #{$wide-screen} {
+                            box-shadow:
+                                -0.875rem  0 0 1.125rem  $root-bg-color;
                         }
-                        @media #{v.$medium-width} {
-                            box-shadow: -0.3125rem 0 0 0.9375rem v.$root-bg-color;
+                        @media #{$medium-width} {
+                            box-shadow:
+                                -0.3125rem 0 0 0.9375rem $root-bg-color;
                         }
-                        @media #{v.$narrow-screen} {
-                            box-shadow: -0.625rem  0 0 0.625rem  v.$root-bg-color;
+                        @media #{$narrow-screen} {
+                            box-shadow:
+                                -0.625rem  0 0 0.625rem  $root-bg-color;
                         }
                     }
                 }
@@ -2007,7 +2018,7 @@ body.grid-style {
                     }
                 }
 
-                @each $type in map-keys($field-columns) {
+                @each $type in map.keys($field-columns) {
                     &.field-#{$type} {
                         $columns: map-get($field-columns, $type);
                         @if $columns {
@@ -2045,7 +2056,7 @@ body.aggregate-style {
                         background:  whitesmoke;
                         box-shadow:  inset 0 0 0 1px gray;
 
-                        @media #{v.$not-wide-screen} {
+                        @media #{$not-wide-screen} {
                             padding: 0 0.375rem;
                         }
                     }
@@ -2101,7 +2112,7 @@ body.search-v3 {
         .number {
 
             .toggle.for-item {
-                @media #{v.$not-narrow-screen} {
+                @media #{$not-narrow-screen} {
                     width:      1.875rem;
                     height:     1.75rem;
                     margin-top: 0;
@@ -2116,7 +2127,7 @@ body.search-v3 {
 
         .search-list-item {
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 @include search-item-columns(0.15fr);
             }
 
@@ -2152,7 +2163,7 @@ body.search-v3 {
                 border-top-left-radius:    0.75rem;
                 border-bottom-left-radius: 0.75rem;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     box-shadow:
                         -1px  1px  0  3px  whitesmoke,
                         -1px -1px  0  3px  whitesmoke;
@@ -2167,7 +2178,7 @@ body.search-v3 {
 
                 height: unset;
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     display: none;
                 }
 
@@ -2202,7 +2213,7 @@ body.search-v3 {
             > .value,
             > .pair > .value {
                 &.scope-parts.scope-formats.scope-files {
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         margin-left: $file-indent;
                     }
                 }
@@ -2221,16 +2232,16 @@ body.search-v3 {
             display: flex;
 
             // Due to the way that setupToggleControl() adds the control button
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
                 flex-direction:  row-reverse;
                 justify-content: flex-end;
             }
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 padding-top:     0;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 flex-direction:  row;
                 justify-content: flex-start;
                 margin-right:    -0.75rem;
@@ -2243,7 +2254,7 @@ body.search-v3 {
 
             .container {
                 .toggle.for-item {
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         margin-top: 0;
                     }
                 }
@@ -2256,7 +2267,7 @@ body.search-v3 {
 
             .toggle.for-item {
                 margin-bottom: 0;
-                z-index:       v.$z-raised;
+                z-index:       $z-raised;
             }
 
             .file-counts {
@@ -2281,21 +2292,21 @@ body.search-v3 {
                  * If the previous file count has a lot of lines, this shadow
                  * keeps it from appearing to run into the current file count.
                  */
-                @media #{v.$not-narrow-screen} {
-                    box-shadow:   0 -0.5rem 0.5rem 0.25rem v.$root-bg-color;
+                @media #{$not-narrow-screen} {
+                    box-shadow:   0 -0.5rem 0.5rem 0.25rem $root-bg-color;
                 }
 
-                @media #{v.$wide-screen} {
+                @media #{$wide-screen} {
                     margin-left:  0.75rem;
                     font-size:    small;
                 }
 
-                @media #{v.$medium-width} {
+                @media #{$medium-width} {
                     margin-left:  0.5rem;
                     font-size:    small;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     margin-left:  0.5rem;
                     font-size:    medium;
                     max-height:   2.25rem;
@@ -2305,7 +2316,7 @@ body.search-v3 {
 
                 .count,
                 .format {
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         margin: auto 0;
                     }
                 }
@@ -2355,7 +2366,7 @@ body.search-v3 {
                     top:      3vh;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
 
                     height: calc(100% - 5.5rem);
 
@@ -2371,15 +2382,15 @@ body.search-v3 {
         // Adjustments due to .number changes:
         .search-list-item {
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 @include search-item-columns(0.1875fr);
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 @include search-item-columns(0.3125fr);
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-left:  -27.5vw;
                 margin-right: 27.5vw;
             }
@@ -2390,15 +2401,15 @@ body.search-v3 {
                 &.list,
                 &.textbox {
 
-                    @media #{v.$wide-screen} {
+                    @media #{$wide-screen} {
                         max-width: 66vw;
                     }
 
-                    @media #{v.$medium-width} {
+                    @media #{$medium-width} {
                         max-width: 50vw;
                     }
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         max-width: 75vw;
                     }
                 }

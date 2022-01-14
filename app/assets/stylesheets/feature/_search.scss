@@ -1,9 +1,9 @@
 // app/assets/stylesheets/feature/_search.scss
 
-@use 'shared/variables'       as v;
-@use 'shared/controls/grids'  as g;
-@use 'shared/feature/model'   as m;
-@use 'shared/feature/overlay' as o;
+@use 'shared/variables'       as *;
+@use 'shared/controls/grids'  as grid;
+@use 'shared/feature/model'   as model;
+@use 'shared/feature/overlay' as overlay;
 
 //=============================================================================
 // Search controls
@@ -12,7 +12,7 @@
 .pagination-top,
 .pagination-bottom {
 
-    @include g.grid-column-span;
+    @include grid.column-span;
 
     max-width: inherit;
     margin:    0;
@@ -21,22 +21,22 @@
 // @see ModelHelper::List#index_controls
 .pagination-top {
 
-    margin-top:    m.$results-entry-gap-y;
-    margin-bottom: calc(2 * #{m.$results-entry-gap-y});
+    margin-top:    model.$list-item-gap-y;
+    margin-bottom: calc(2 * #{model.$list-item-gap-y});
 
-    @media #{v.$narrow-screen} {
-        margin-bottom: m.$results-entry-gap-y;
+    @media #{$narrow-screen} {
+        margin-bottom: model.$list-item-gap-y;
     }
 }
 
 // @see ModelHelper::List#index_controls
 .pagination-bottom {
 
-    margin-top:    calc(#{m.$results-entry-gap-y} / 2);
+    margin-top:    calc(#{model.$list-item-gap-y} / 2);
     margin-bottom: 0;
 
-    @media #{v.$not-wide-screen} {
-        margin-top: calc(2 * #{m.$results-entry-gap-y});
+    @media #{$not-wide-screen} {
+        margin-top: calc(2 * #{model.$list-item-gap-y});
     }
 }
 
@@ -55,7 +55,7 @@
         display: inline-block;
         margin:  0 0 0 0.75rem;
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             margin-top: 0.5rem;
         }
     }
@@ -68,5 +68,5 @@
 // An indicator that is presented during a time-consuming search.
 // @see file:app/views/layouts/_overlays.html.erb
 .search-in-progress {
-    @include o.image-overlay('loading-balls.gif');
+    @include overlay.image('loading-balls.gif');
 }

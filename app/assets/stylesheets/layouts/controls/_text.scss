@@ -1,0 +1,14 @@
+// app/assets/stylesheets/layouts/controls/_text.scss
+
+//=============================================================================
+// Generic elements - text display
+//=============================================================================
+
+// For rendering of lines of text from a file.
+.line-output {
+    display:       block;
+    font-family:   monospace;
+    font-size:     larger;
+    white-space:   break-spaces;
+    overflow-wrap: break-word;
+}

@@ -1,6 +1,6 @@
 // app/assets/stylesheets/controllers/_data.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
 
 //=============================================================================
 // Internal constants
@@ -8,8 +8,8 @@
 
 $database-table-max-columns: 25;
 
-$side-scroll-shadow: -1.5rem  0  0  0.5rem  v.$root-bg-color;
-$vert-scroll-shadow:  0       0  0  0.5rem  v.$root-bg-color;
+$side-scroll-shadow: -1.5rem  0  0  0.5rem  $root-bg-color;
+$vert-scroll-shadow:  0       0  0  0.5rem  $root-bg-color;
 
 //=============================================================================
 // DataController index page
@@ -68,7 +68,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  v.$root-bg-color;
         // @see DataHelper#html_db_column
         .database-column {
 
-            background: v.$root-bg-color;
+            background: $root-bg-color;
 
             &.hierarchy {
                 max-height:  25vh;
@@ -95,10 +95,10 @@ $vert-scroll-shadow:  0       0  0  0.5rem  v.$root-bg-color;
                 padding:        0 1px;
                 font-weight:    bold;
                 text-transform: uppercase;
-                border-bottom:  2px solid v.$root-fg-color;
+                border-bottom:  2px solid $root-fg-color;
 
                 &.col-first {
-                    z-index:    v.$z-raised;
+                    z-index:    $z-raised;
                 }
 
                 &:not(.col-first) {
@@ -151,7 +151,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  v.$root-bg-color;
             grid-column-start: 1;
 
             &.invalid {
-                color:         v.$error-fg;
+                color:         $error-fg;
                 cursor:        default;
             }
         }

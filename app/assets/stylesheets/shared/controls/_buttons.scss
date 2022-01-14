@@ -3,6 +3,7 @@
 // Definitions supporting button controls.
 
 @use 'shared/variables' as v;
+@use 'shared/mixins'    as x;
 
 // ============================================================================
 // Controls
@@ -16,8 +17,7 @@
 ///
 @mixin link-button($light: white, $dark: darkgray, $width: 2px) {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %button-hover;
+    @include x.hover-highlight;
 
     display: block;
     border:  $width solid transparent;
@@ -41,8 +41,7 @@
 ///
 @mixin clear-selection-button {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %button-hover;
+    @include x.hover-highlight;
 
     margin:          auto -0.125rem auto 0.5rem;
     padding:         0 0.125rem;

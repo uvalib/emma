@@ -8,12 +8,12 @@
 // Definitions
 //=============================================================================
 
-$results-entry-gap-x: v.$page-padding-x;
-$results-entry-gap-y: v.$page-padding;
+$list-item-gap-x: v.$page-padding-x;
+$list-item-gap-y: v.$page-padding;
 
 // This fixed value will maintain an acceptable separation between links
 // without being scaled to display dimensions.
-$results-entry-margin-y: 0.67rem;
+$list-item-margin-y: 0.67rem;
 
 // Padding for control icons (.number .container .icon-tray .icon).
 $icon-pad: 0.25rem;

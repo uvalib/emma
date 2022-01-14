@@ -1,6 +1,8 @@
 // app/assets/stylesheets/feature/_download.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables'         as *;
+
+@use 'layouts/controls/buttons' as button-classes;
 
 //=============================================================================
 // Internal mixins
@@ -11,7 +13,7 @@
 %transient-control {
 
     display:         inline-block;
-    margin-left:     v.$gap-x;
+    margin-left:     $gap-x;
     line-height:     1.25;
     vertical-align:  baseline;
     font-weight:     bold;
@@ -19,7 +21,7 @@
     text-decoration: none;
     cursor:          pointer;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         margin: 0.5rem 0 0;
     }
 }
@@ -33,7 +35,7 @@
     // @see ArtifactHelper#artifact_link
     .link {
         &.complete {
-            color: v.$root-fg-color;
+            color: $root-fg-color;
         }
     }
 
@@ -49,7 +51,7 @@
 
         padding:          3px 6px;
         color:            black;
-        background-color: v.$alert-bg;
+        background-color: $alert-bg;
         border-radius:    3px;
         cursor:           default;
     }
@@ -60,7 +62,7 @@
         @extend %transient-control;
 
         padding:          2px 6px;
-        background-color: v.$success-bg;
+        background-color: $success-bg;
         border:           1px solid black;
         border-radius:    6px;
 
@@ -75,14 +77,14 @@
         padding: 1rem;
         font:    revert;
 
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             top:        2rem;
             left:       2rem;
             max-width:  33vw;
             min-height: unset;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             padding: 0.5rem;
         }
 
@@ -110,6 +112,7 @@
         }
 
         // NOTE: Chrome has a bug where grid doesn't work for <fieldset>.
+        // noinspection CssBrowserCompatibilityForProperties
         > .fields,
         > fieldset {
 
@@ -130,7 +133,7 @@
             // members in the list, then the panel will grow down the page
             // (meaning that the submit button may be far from the top of the
             // panel and below the bottom of the screen).
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 max-height: 25vh;
             }
 
@@ -140,7 +143,7 @@
             // to give this element enough vertical space for the whole list.
             // Zeroing out the basis allows flex to resolve the layout without
             // concern for the "ideal" height of the element.
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 flex-basis: 0;
             }
 
@@ -170,8 +173,7 @@
 
             button {
 
-                // noinspection SassScssResolvedByNameOnly
-                @extend %control-button;
+                @extend .control-button;
 
                 font-size:     large;
                 border-radius: 4px;

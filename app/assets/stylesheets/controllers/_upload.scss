@@ -1,7 +1,9 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-@use 'shared/variables'      as v;
-@use 'shared/controls/grids' as g;
+@use 'shared/variables'      as *;
+@use 'shared/controls/grids' as grid;
+
+@use 'controllers/entry';
 
 //=============================================================================
 // Upload index page
@@ -211,7 +213,7 @@ body.api_migrate {
                     @extend .model-list-item-panel; // For .data-list
                     @extend .toggle-panel;
 
-                    @include g.grid-column-span;
+                    @include grid.column-span;
 
                     .data-list {
                         width:  100%;
@@ -219,7 +221,7 @@ body.api_migrate {
                     }
 
                     .invalid {
-                        color:  v.$error-fg;
+                        color:  $error-fg;
                         cursor: help;
                     }
                 }

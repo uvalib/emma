@@ -3,7 +3,7 @@
 // Definitions supporting lists and list elements.
 
 @use 'shared/variables'      as v;
-@use 'shared/controls/grids' as g;
+@use 'shared/controls/grids' as grid;
 
 //=============================================================================
 // List definitions.
@@ -21,11 +21,11 @@
 /// overall grid.  Increasing the margin below grid cell elements does not seem
 /// to have this problem.
 ///
-@mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $template: false) {
+@mixin tabular($columns, $y-gap: 0, $x-gap: 2%, $template: false) {
 
     display: grid;
 
-    @include g.grid-columns($template, $columns);
+    @include grid.columns($template, $columns);
 
     gap: $y-gap $x-gap;
 
@@ -38,7 +38,7 @@
     // A heading within the grid that spans all columns.
     .list-heading {
 
-        @include g.grid-column-span;
+        @include grid.column-span;
 
         margin: v.$page-padding-y 0;
 

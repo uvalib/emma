@@ -1,6 +1,6 @@
 // app/assets/stylesheets/controllers/_home.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
 
 //=============================================================================
 // Welcome page
@@ -12,12 +12,12 @@ body.home-dashboard {
 
     .sign-in {
 
-        margin-top:    v.$page-padding;
-        margin-bottom: v.$page-padding;
+        margin-top:    $page-padding;
+        margin-bottom: $page-padding;
         font-weight:   bold;
 
-        @media #{v.$not-wide-screen} {
-            margin-top: calc(2 * #{v.$page-padding});
+        @media #{$not-wide-screen} {
+            margin-top: calc(2 * #{$page-padding});
         }
     }
 

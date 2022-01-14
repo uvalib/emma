@@ -1,8 +1,8 @@
-// app/assets/stylesheets/layouts/controls/_table.scss
+// app/assets/stylesheets/layouts/controls/_tables.scss
 
-@use 'shared/variables'      as v;
-@use 'shared/controls/grids' as g;
-@use 'shared/controls/table' as t;
+@use 'shared/variables'       as *;
+@use 'shared/controls/grids'  as grid;
+@use 'shared/controls/tables' as table;
 
 // ============================================================================
 // Grid-based table.
@@ -10,18 +10,13 @@
 
 .grid-table {
 
-    $table-gap:        1.75rem;
-    $table-narrow-gap: 1rem;
-    $table-border-bg:  v.$root-rev-bg-color;
-    $table-border-fg:  v.$root-rev-fg-color;
-
     display:        grid;
     position:       relative;
-    padding-bottom: $table-gap;
+    padding-bottom: table.$gap;
     line-height:    1.25;
 
-    @media #{v.$narrow-screen} {
-        padding-bottom: $table-narrow-gap;
+    @media #{$narrow-screen} {
+        padding-bottom: table.$narrow-gap;
     }
 
     //=========================================================================
@@ -30,13 +25,13 @@
 
     $max-columns: 50;
 
-    gap: $table-gap;
+    gap: table.$gap;
 
-    @include g.grid-column-classes($max-columns, 1fr);
-    @include g.grid-cell-col-classes($max-columns);
+    @include grid.column-classes($max-columns, 1fr);
+    @include grid.cell-col-classes($max-columns);
 
-    @media #{v.$narrow-screen} {
-        gap: $table-narrow-gap;
+    @media #{$narrow-screen} {
+        gap: table.$narrow-gap;
     }
 
     //=========================================================================
@@ -51,19 +46,19 @@
 
         tr.spanner {
             display: none;
-            z-index: v.$z-hidden;
+            z-index: $z-hidden;
         }
 
         th {
             min-width:     max-content;
             text-align:    start;
-            border-bottom: 2px solid $table-border-bg;
-            z-index:       v.$z-visible;
+            border-bottom: 2px solid table.$border-bg;
+            z-index:       $z-visible;
         }
     }
 
     td {
-        z-index: v.$z-hidden - 1;
+        z-index: $z-hidden - 1;
     }
 
     //=========================================================================
@@ -87,11 +82,11 @@
                 height:     2.5rem;
                 width:      100%;
                 margin-top: -0.5rem;
-                background: $table-border-bg;
+                background: table.$border-bg;
             }
 
             th {
-                color:         $table-border-fg;
+                color:         table.$border-fg;
                 border-bottom: none;
             }
         }
@@ -110,13 +105,13 @@
     &.sticky-head {
 
         position:   sticky;
-        top:        $table-gap;
+        top:        table.$gap;
         max-height: 95vh;
         overflow:   auto;
-        background: v.$root-bg-color;
+        background: $root-bg-color;
 
-        @media #{v.$narrow-screen} {
-            top: $table-narrow-gap;
+        @media #{$narrow-screen} {
+            top: table.$narrow-gap;
         }
 
         //=====================================================================
@@ -126,12 +121,12 @@
         thead {
             th {
 
-                @include g.grid-row(1);
+                @include grid.row(1);
 
                 position:    sticky;
                 top:         0;
                 padding-top: 0.5rem;
-                background:  v.$root-bg-color;
+                background:  $root-bg-color;
             }
         }
 
@@ -143,8 +138,8 @@
     &.sticky-head.dark-head {
 
         padding-bottom: 0;
-        background:     v.$root-bg-color;
-        border:         2px solid $table-border-bg;
+        background:     $root-bg-color;
+        border:         2px solid table.$border-bg;
 
         //=====================================================================
         // Elements
@@ -154,8 +149,8 @@
 
             tr.spanner {
 
-                @include g.grid-row(1);
-                @include g.grid-column-span;
+                @include grid.row(1);
+                @include grid.column-span;
 
                 position: sticky;
                 top:      0;
@@ -170,10 +165,10 @@
 
         .row-last {
 
-            padding-bottom: $table-gap;
+            padding-bottom: table.$gap;
 
-            @media #{v.$narrow-screen} {
-                padding-bottom: $table-narrow-gap;
+            @media #{$narrow-screen} {
+                padding-bottom: table.$narrow-gap;
             }
         }
     }

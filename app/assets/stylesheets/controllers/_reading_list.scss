@@ -1,6 +1,8 @@
 // app/assets/stylesheets/controllers/_reading_list.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables' as *;
+
+@use 'feature/model'    as model-classes;
 
 //=============================================================================
 // Reading List index page
@@ -75,7 +77,7 @@
 
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             margin-top: -0.5rem;
         }
     }

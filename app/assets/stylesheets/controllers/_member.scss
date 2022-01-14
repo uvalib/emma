@@ -1,6 +1,9 @@
 // app/assets/stylesheets/controllers/_member.scss
 
-@use 'shared/variables' as v;
+@use 'shared/variables'        as *;
+
+@use 'layouts/controls/panels' as panel-classes;
+@use 'feature/model'           as model-classes;
 
 //=============================================================================
 // Member index page
@@ -50,7 +53,7 @@
 .member-history {
 
     display: block;
-    margin:  v.$page-padding 0;
+    margin:  $page-padding 0;
 
     .history-list {
         @extend .toggle-panel;
@@ -86,7 +89,7 @@
     .member-preferences {
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
-        @media #{v.$wide-screen} {
+        @media #{$wide-screen} {
             margin-top: -0.5rem;
         }
     }

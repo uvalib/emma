@@ -1,7 +1,9 @@
 // app/assets/stylesheets/controllers/_category.scss
 
-@use 'shared/variables'     as v;
-@use 'shared/feature/model' as m;
+@use 'shared/variables'     as *;
+@use 'shared/feature/model' as model;
+
+@use 'feature/model'        as model-classes;
 
 //=============================================================================
 // Category index page
@@ -23,18 +25,18 @@
     //=========================================================================
 
     .label {
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             flex: 1 1 75%;
         }
     }
 
     .value {
 
-        margin-left: v.$gap-x;
+        margin-left: $gap-x;
 
-        @media #{v.$narrow-screen} {
-            margin-left:  calc(2 * #{v.$gap-x});
-            margin-right: calc(2 * #{v.$gap-x});
+        @media #{$narrow-screen} {
+            margin-left:  calc(2 * #{$gap-x});
+            margin-right: calc(2 * #{$gap-x});
             flex:         0 0 auto;
         }
     }
@@ -51,7 +53,7 @@
     //=========================================================================
 
     .pagination-bottom {
-        margin-top: m.$results-entry-gap-y;
+        margin-top: model.$list-item-gap-y;
     }
 }
 

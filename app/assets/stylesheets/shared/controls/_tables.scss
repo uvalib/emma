@@ -1,0 +1,14 @@
+// app/assets/stylesheets/shared/controls/_tables.scss
+//
+// Definitions supporting tables and table elements.
+
+@use 'shared/variables' as v;
+
+// ============================================================================
+// Grid-based table.
+// ============================================================================
+
+$gap:        1.75rem;
+$narrow-gap: 1rem;
+$border-bg:  v.$root-rev-bg-color;
+$border-fg:  v.$root-rev-fg-color;

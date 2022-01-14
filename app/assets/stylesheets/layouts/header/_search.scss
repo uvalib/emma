@@ -1,9 +1,12 @@
 // app/assets/stylesheets/layouts/header/_search.scss
 
-@use 'shared/variables'        as v;
-@use 'shared/controls/buttons' as b;
-@use 'shared/controls/grids'   as g;
-@use 'shared/layouts/header'   as h;
+@use 'shared/variables'         as *;
+@use 'shared/mixins'            as *;
+@use 'shared/controls/buttons'  as *;
+@use 'shared/controls/grids'    as grid;
+@use 'shared/layouts/header'    as header;
+
+@use 'layouts/controls/buttons' as button-classes;
 
 //=============================================================================
 // Internal constants
@@ -31,29 +34,84 @@ $search-button-width:    6rem;
 }
 
 //=============================================================================
+// Internal placeholder classes
+//=============================================================================
+
+// Treat the including class as the top part of a visually enclosed header
+// area which is actually comprised of individual enclosures, one per layout
+// section.
+%complete-shadow-enclosure {
+
+    @include header.enclosure;
+
+    border-radius: 1rem;
+    border:        2px solid whitesmoke;
+
+    $offset: 6px;
+    $x:      $offset;
+    $y:      $offset;
+    $blur:   18px;
+    $spread: 8px;
+    $color:  rgba($uva-accent-teal, 0.35);
+
+    box-shadow:
+         #{$x}  #{$y} $blur $spread $color,
+        -#{$x}  #{$y} $blur $spread $color,
+         #{$x} -#{$y} $blur $spread $color,
+        -#{$x} -#{$y} $blur $spread $color;
+}
+
+// Treat the including class as the top part of a visually enclosed header
+// area which is actually comprised of individual enclosures, one per layout
+// section.
+%top-shadow-enclosure {
+
+    @extend %complete-shadow-enclosure;
+
+    border-bottom-left-radius:  0;
+    border-bottom-right-radius: 0;
+    border-bottom:              none;
+}
+
+// Treat the including class as the bottom part of a visually enclosed header
+// area which is actually comprised of individual enclosures, one per layout
+// section.
+%bottom-shadow-enclosure {
+
+    @extend %complete-shadow-enclosure;
+
+    border-top-left-radius:  0;
+    border-top-right-radius: 0;
+    border-top:              none;
+}
+
+//=============================================================================
 // Sections - generic
 //=============================================================================
 
+// Header sections.
+.layout-section,
+.layout-section > .enclosure {
+    @include banner;
+}
+
 // Header sections whose content is a single .enclosure child element.
 .layout-section:not(.enclosure) {
-
-    // noinspection SassScssResolvedByNameOnly
-    @extend %banner;
 
     display:    block;
     margin:     0;
     overflow-y: hidden;
 
-    @media #{v.$wide-screen} {
-        padding: 0 h.$enclosure-indent-wide;
+    @media #{$wide-screen} {
+        padding: 0 header.$enclosure-indent-wide;
     }
 
-    @media #{v.$medium-width} {
-        padding: 0 h.$enclosure-indent-medium;
+    @media #{$medium-width} {
+        padding: 0 header.$enclosure-indent-medium;
     }
 
-    @media #{v.$narrow-screen} {
-        padding: 0 h.$enclosure-indent-narrow;
+    @media #{$narrow-screen} {
+        padding: 0 header.$enclosure-indent-narrow;
     }
 }
 
@@ -62,10 +120,7 @@ $search-button-width:    6rem;
 .layout-section.enclosure,
 .layout-section > .enclosure {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %banner;
-    // noinspection SassScssResolvedByNameOnly
-    @extend %enclosure;
+    @include header.enclosure;
 
     justify-content: flex-start;
     align-items:     flex-start;
@@ -100,14 +155,13 @@ $search-button-width:    6rem;
 
     // @see LayoutHelper#menu_spacer
     .menu-spacer {
-        // noinspection SassScssResolvedByNameOnly
-        @extend %invisible-height;
+        @include invisible-height;
     }
 
     // @see LayoutHelper#reset_button
-    .menu-button {
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-button;
+    .menu-button,
+    .search-button {
+        @include header.button;
     }
 
     // @see LayoutHelper#menu_label
@@ -116,7 +170,7 @@ $search-button-width:    6rem;
 
         font-size: large;
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
             text-align: right;
         }
     }
@@ -125,8 +179,7 @@ $search-button-width:    6rem;
     .menu-control,
     .date-control {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-control-interior;
+        @include header.control-interior;
 
         /**
          * After Select2 initializes, multi-select <select> elements will be
@@ -149,7 +202,7 @@ $search-button-width:    6rem;
             height:         34px;
             max-height:     34px;
             overflow:       hidden;
-            border:         1px solid v.$root-bg-color;
+            border:         1px solid $root-bg-color;
             border-radius:  4px;
             pointer-events: none;
 
@@ -162,11 +215,11 @@ $search-button-width:    6rem;
             // noinspection CssOverwrittenProperties
             option:before {
                 display:        block;
-                color:          v.$uva-text-gray;
-                background:     v.$root-bg-color;
-                border:         6px solid v.$root-bg-color;
+                color:          $uva-text-gray;
+                background:     $root-bg-color;
+                border:         6px solid $root-bg-color;
                 content:        "...";
-                content:        "\22EF"; // MIDLINE HORIZONTAL ELLIPSIS
+                content:        $HORIZONTAL_ELLIPSIS;
                 outline:        3px solid white;
                 outline-offset: -2px;
             }
@@ -174,8 +227,7 @@ $search-button-width:    6rem;
     }
 
     .search-input-label {
-        // noinspection SassScssResolvedByNameOnly
-        @extend %sr-only;
+        @include sr-only;
     }
 
     // @see LayoutHelper#search_input
@@ -187,19 +239,14 @@ $search-button-width:    6rem;
 
     // @see LayoutHelper#search_bar
     .search-bar {
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-control-interior;
+        @include header.control-interior;
     }
 
     // @see LayoutHelper#search_button
     .search-button {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-button;
-
         &:focus {
-            // noinspection SassScssResolvedByNameOnly
-            @extend %focus;
+            @include focus;
         }
 
         &:not(.ready):hover{
@@ -208,12 +255,12 @@ $search-button-width:    6rem;
 
         &.ready:not(:hover) {
 
-            @include b.link-button(lightgray, gray);
+            @include link-button(lightgray, gray);
 
-            box-shadow: 0 0 0.75rem 0.5rem v.$button-accent;
+            box-shadow: 0 0 0.75rem 0.5rem $button-accent;
 
             &:focus {
-                @include b.link-button(gray, gray);
+                @include link-button(gray, gray);
             }
         }
     }
@@ -221,17 +268,16 @@ $search-button-width:    6rem;
     // @see LayoutHelper#advanced_search_button
     .advanced-search-toggle {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %control-button-base;
+        @extend .basic-button;
 
         width:            $advanced-toggle-width;
         margin:           0;
         color:            inherit;
-        background-color: v.$panel-accent;
+        background-color: $panel-accent;
         border:           2px outset;
 
         &:hover {
-            background-color: v.$panel-accent;
+            background-color: $panel-accent;
         }
     }
 
@@ -252,7 +298,6 @@ $search-button-width:    6rem;
     // Variations
     //=========================================================================
 
-    // noinspection SassScssResolvedByNameOnly
     &.shadow {
 
         &.top      { @extend %top-shadow-enclosure; }
@@ -264,16 +309,16 @@ $search-button-width:    6rem;
 
             margin-top: 2rem; // Keep shadow from being clipped.
 
-            @media #{v.$wide-screen} {
-                padding-top: calc(#{h.$enclosure-padding-wide} + 0.5rem);
+            @media #{$wide-screen} {
+                padding-top: calc(#{header.$enclosure-pad-wide} + 0.5rem);
             }
 
-            @media #{v.$medium-width} {
-                padding-top: calc(#{h.$enclosure-padding-medium} + 0.5rem);
+            @media #{$medium-width} {
+                padding-top: calc(#{header.$enclosure-pad-medium} + 0.5rem);
             }
 
-            @media #{v.$narrow-screen} {
-                padding-top: calc(#{h.$enclosure-padding-narrow} + 0.5rem);
+            @media #{$narrow-screen} {
+                padding-top: calc(#{header.$enclosure-pad-narrow} + 0.5rem);
                 margin-top:  4.5vh;
             }
         }
@@ -281,16 +326,16 @@ $search-button-width:    6rem;
         &.bottom,
         &.complete {
 
-            @media #{v.$wide-screen} {
+            @media #{$wide-screen} {
                 margin-bottom: 4vh;
             }
 
-            @media #{v.$medium-width} {
+            @media #{$medium-width} {
                 //margin-bottom: 1vh;
                 margin-bottom: 2.5vh;
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 margin-bottom: 4vh;
             }
         }
@@ -312,7 +357,7 @@ $search-button-width:    6rem;
 
     //padding-top: 2vh; // For .top.shadow.enclosure child.
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         //padding-top: 4vh; // For .top.shadow.enclosure child.
     }
 }
@@ -325,7 +370,7 @@ $search-button-width:    6rem;
     grid-template-columns: [container] 1fr [controls] auto;
     column-gap:            1rem;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         grid-template-columns: 1fr;
     }
 
@@ -342,12 +387,12 @@ $search-button-width:    6rem;
     // @see file:app/assets/javascripts/feature/advanced-search.js *clearSearchTerms()*
     .search-clear {
 
-        @include b.clear-selection-button; // clear-selection-button;
+        @include clear-selection-button;
 
         position:          relative;
         margin:            auto 0;
         padding:           0 0.25rem;
-        color:             v.$uva-text-gray;
+        color:             $uva-text-gray;
         background-color:  white;
         border-color:      transparent;
 
@@ -367,13 +412,12 @@ $search-button-width:    6rem;
 
     .search-bar-row {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-section;
+        @include header.section;
 
         flex-wrap:       nowrap;
         justify-content: flex-start;
 
-        @media #{v.$not-wide-screen} {
+        @media #{$not-wide-screen} {
             flex-wrap:       wrap;
             justify-content: space-between;
         }
@@ -387,12 +431,12 @@ $search-button-width:    6rem;
 
             height:       1.75rem;
             margin-right: 0.5rem;
-            margin-left:  calc(#{v.$gap-x} / 2);
+            margin-left:  calc(#{$gap-x} / 2);
             font-size:    large;
-            color:        v.$root-fg-color;
+            color:        $root-fg-color;
 
             // noinspection CssReplaceWithShorthandSafely
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 flex:         1 1 auto;
                 height:       2rem;
                 max-width:    80vw;
@@ -417,16 +461,16 @@ $search-button-width:    6rem;
 
             display:      flex;
             flex-wrap:    nowrap;
-            margin-right: calc(2 * #{v.$gap-x});
+            margin-right: calc(2 * #{$gap-x});
             flex:         1 1 auto;
 
-            @media #{v.$medium-width} {
-                margin-right: calc(4 * #{v.$gap-x});
+            @media #{$medium-width} {
+                margin-right: calc(4 * #{$gap-x});
             }
 
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 max-width: 80vw;
-                margin:    calc(2 * #{v.$gap-y}) 0;
+                margin:    calc(2 * #{$gap-y}) 0;
             }
         }
     }
@@ -434,8 +478,8 @@ $search-button-width:    6rem;
     // @see LayoutHelper#search_bar_container
     .search-bar-container {
 
-        $sb-row-vertical-gap:        v.$gap-y;
-        $sb-row-narrow-vertical-gap: calc(3 * #{v.$gap-y});
+        $sb-row-vertical-gap:        $gap-y;
+        $sb-row-narrow-vertical-gap: calc(3 * #{$gap-y});
         $sb-clear-inset:             -1.75rem;
 
         display:               grid;
@@ -445,8 +489,7 @@ $search-button-width:    6rem;
         // Elements
         //=====================================================================
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-control-interior;
+        @include header.control-interior;
 
         .search-bar {
             .search-clear {
@@ -466,8 +509,7 @@ $search-button-width:    6rem;
             user-select:  none;
 
             &:focus {
-                // noinspection SassScssResolvedByNameOnly
-                @extend %focus;
+                @include focus;
             }
 
             // This is a technique for rendering the icon in a color since the
@@ -481,14 +523,13 @@ $search-button-width:    6rem;
 
         .search-bar-group {
 
-            // noinspection SassScssResolvedByNameOnly
-            @extend %header-section;
+            @include header.section;
 
             flex-direction:  column;
             flex-wrap:       nowrap;
             justify-content: flex-start;
 
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 flex-wrap:       wrap;
                 justify-content: space-between;
             }
@@ -501,7 +542,7 @@ $search-button-width:    6rem;
 
                     margin-top: $sb-row-vertical-gap;
 
-                    @media #{v.$narrow-screen} {
+                    @media #{$narrow-screen} {
                         margin-top: $sb-row-narrow-vertical-gap;
                     }
                 }
@@ -513,21 +554,21 @@ $search-button-width:    6rem;
 
         row-gap: 0;
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
             .advanced-search-toggle:not(.visible) { display: none; }
             .menu-button.reset:not(.visible)      { display: none; }
         }
 
         // noinspection CssReplaceWithShorthandSafely
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             grid-template:   'search reset toggle' / 1fr 1fr 1fr;
             column-gap:      1rem;
             justify-content: space-between;
             justify-items:   center;
             width:           100%;
             margin:          0;
-            margin-top:      calc(3 * #{v.$page-padding-y});
-            margin-bottom:   calc(2 * #{v.$page-padding-y});
+            margin-top:      calc(3 * #{$page-padding-y});
+            margin-bottom:   calc(2 * #{$page-padding-y});
         }
     }
 }
@@ -542,15 +583,15 @@ $search-button-width:    6rem;
 
     //padding-top: 0.5vh; // For .bottom.shadow.enclosure child.
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         //padding-bottom: 2vh;
     }
 
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         //padding-bottom: 1.5vh;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         //padding-bottom: 1vh;
     }
 }
@@ -563,17 +604,17 @@ $search-button-width:    6rem;
     padding-bottom:  3vh;
     justify-content: space-between;
 
-    @media #{v.$wide-screen} {
+    @media #{$wide-screen} {
         grid-template-columns: [container] 1fr [controls] auto;
         column-gap:            1rem;
     }
 
-    @media #{v.$medium-width} {
+    @media #{$medium-width} {
         grid-template-columns: [container] 0.9375fr [controls] auto;
         padding-bottom:        2vh;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         grid-template-columns: 1fr;
         overflow-y:            hidden;
     }
@@ -585,10 +626,8 @@ $search-button-width:    6rem;
     // @see LayoutHelper#search_filter_container
     .search-filter-container {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-search-section;
-        // noinspection SassScssResolvedByNameOnly
-        @extend %header-control-panel;
+        @include header.search-section;
+        @include header.control-panel;
 
         //=====================================================================
         // Grid layout
@@ -598,7 +637,7 @@ $search-button-width:    6rem;
         max-width:  unset;
         overflow-y: hidden;
         box-sizing: border-box;
-        gap:        0 v.$gap-x; // @see %grid-cell
+        gap:        0 $gap-x; // @see %grid-cell
 
         // Maximum number of physical columns per width breakpoint.
 
@@ -611,25 +650,25 @@ $search-button-width:    6rem;
 
         // Layout of each logical column.
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             $column: minmax(25vw, 1fr);
-            @include g.grid-column-classes($max-columns, $column, $columns-map);
+            @include grid.column-classes($max-columns, $column, $columns-map);
         }
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
             $column: [label] max-content [menu] minmax(10vw, 1fr);
-            @include g.grid-column-classes($max-columns, $column, $columns-map);
+            @include grid.column-classes($max-columns, $column, $columns-map);
         }
 
         //=====================================================================
         // Grid cell placeholder classes
         //=====================================================================
 
-        // In order for %hidden-grid-cell to work, vertical grid gap must be
+        // In order for hidden-grid-cell to work, vertical grid gap must be
         // managed "manually" here rather than via grid-gap.
         %grid-cell {
             display: block;
-            margin:  0 0 v.$gap-y;
+            margin:  0 0 $gap-y;
         }
 
         //=====================================================================
@@ -643,7 +682,7 @@ $search-button-width:    6rem;
 
             @extend %grid-cell;
 
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 display: none;
             }
         }
@@ -654,7 +693,7 @@ $search-button-width:    6rem;
 
             @extend %grid-cell;
 
-            @media #{v.$not-wide-screen} {
+            @media #{$not-wide-screen} {
                 display: none;
             }
 
@@ -673,13 +712,13 @@ $search-button-width:    6rem;
 
             @extend %grid-cell;
 
-            margin-top:   calc(3 * #{v.$gap-y} / 2);
-            margin-right: v.$gap-x;
+            margin-top:   calc(3 * #{$gap-y} / 2);
+            margin-right: $gap-x;
             user-select:  none;
 
             &.col-first {
-                @media #{v.$wide-screen} {
-                    @include g.grid-column(1);
+                @media #{$wide-screen} {
+                    @include grid.column(1);
                 }
             }
         }
@@ -690,8 +729,8 @@ $search-button-width:    6rem;
 
             @extend %grid-cell;
 
-            margin-top:   calc(#{v.$gap-y} / 2);
-            margin-right: calc(3 * #{v.$gap-x});
+            margin-top:   calc(#{$gap-y} / 2);
+            margin-right: calc(3 * #{$gap-x});
 
             > * {
                 min-height:  2.25rem;
@@ -725,7 +764,7 @@ $search-button-width:    6rem;
                     @include hidden-grid-cell;
                 }
 
-                @media #{v.$narrow-screen} {
+                @media #{$narrow-screen} {
                     &:not(.col-first) {
                         @include hidden-grid-cell;
                     }
@@ -736,11 +775,11 @@ $search-button-width:    6rem;
 
     .search-controls {
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             display: none;
         }
 
-        @media #{v.$not-narrow-screen} {
+        @media #{$not-narrow-screen} {
 
             row-gap: 0.9rem;
 
@@ -760,11 +799,11 @@ $search-button-width:    6rem;
             padding-left:  1.25rem;
             padding-right: 0.25rem;
             border:        none;
-            box-shadow:    inset 0 0 8px 1px v.$uva-accent-teal;
+            box-shadow:    inset 0 0 8px 1px $uva-accent-teal;
         }
 
         .search-controls {
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
                 row-gap: 1.25rem;
             }
         }

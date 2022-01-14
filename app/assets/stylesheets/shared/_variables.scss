@@ -249,8 +249,6 @@ $gap-x:             var(--gap-x);
 $gap-y:             var(--gap-y);
 $scroll-easement-x: var(--scroll-easement-x);
 $scroll-easement-y: var(--scroll-easement-y);
-$thumbnail-max-x:   var(--thumbnail-max-x);
-$thumbnail-max-y:   var(--thumbnail-max-y);
 
 // Color scheme.
 
@@ -258,3 +256,8 @@ $root-bg-color:     var(--bg-color);
 $root-fg-color:     var(--fg-color);
 $root-rev-bg-color: var(--rev-bg-color);
 $root-rev-fg-color: var(--rev-fg-color);
+
+// Unicode characters.
+
+$HORIZONTAL_ELLIPSIS: "\22EF"; // MIDLINE HORIZONTAL ELLIPSIS
+$HEAVY_CHECK_MARK:    "\2714"; // HEAVY CHECK MARK

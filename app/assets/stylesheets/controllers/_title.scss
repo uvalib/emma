@@ -1,11 +1,16 @@
 // app/assets/stylesheets/controllers/_title.scss
 
 @use 'sass:math';
-@use 'shared/variables'      as v;
-@use 'shared/mixins'         as x;
-@use 'shared/controls/grids' as g;
-@use 'shared/feature/images' as i;
-@use 'shared/feature/model'  as m;
+
+@use 'shared/variables'       as *;
+@use 'shared/mixins'          as *;
+@use 'shared/controls/grids'  as grid;
+@use 'shared/feature/images'  as image;
+@use 'shared/feature/model'   as model;
+
+@use 'layouts/controls/lists' as list-classes;
+@use 'feature/images'         as image-classes;
+@use 'feature/model'          as model-classes;
 
 //=============================================================================
 // Catalog Title index page
@@ -18,11 +23,11 @@
 
     grid-auto-rows: min-content;
 
-    @media #{v.$not-wide-screen} {
-        margin-top: m.$results-entry-gap-y;
+    @media #{$not-wide-screen} {
+        margin-top: model.$list-item-gap-y;
     }
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         padding-top: 0.25rem;
         border-top:  2px solid lightgray;
     }
@@ -33,7 +38,7 @@
 
     .label {
         &.field-Title {
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
                 display: none;
             }
         }
@@ -42,15 +47,15 @@
     .value {
 
         a + a {
-            margin-left: v.$gap-x;
+            margin-left: $gap-x;
         }
 
         &.field-Title {
 
             font-weight: bold;
 
-            @media #{v.$narrow-screen} {
-                @include g.grid-column-span;
+            @media #{$narrow-screen} {
+                @include grid.column-span;
             }
 
             a:not(:hover) {
@@ -59,7 +64,7 @@
         }
 
         &.field-Authors {
-            @media #{v.$narrow-screen} {
+            @media #{$narrow-screen} {
 
                 display:        flex;
                 flex-direction: column;
@@ -86,7 +91,7 @@
 
     justify-items: stretch;
 
-    @media #{v.$narrow-screen} {
+    @media #{$narrow-screen} {
         grid-template-columns: 1fr max-content min-content;
     }
 
@@ -96,12 +101,12 @@
 
     .number {
 
-        @media #{v.$not-wide-screen} {
-            margin-top: m.$results-entry-gap-y;
+        @media #{$not-wide-screen} {
+            margin-top: model.$list-item-gap-y;
         }
 
         // Push item number to the right and hide.
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             visibility:  hidden;
             grid-column: 3 / -1;
         }
@@ -110,17 +115,16 @@
     // @see TitleHelper#thumbnail
     .thumbnail {
 
-        // noinspection SassScssResolvedByNameOnly
-        @extend %thumbnail-dimensions;
+        @include image.thumbnail-dimensions;
 
-        margin-bottom: m.$results-entry-gap-y;
+        margin-bottom: model.$list-item-gap-y;
 
-        @media #{v.$not-wide-screen} {
-            margin-top: m.$results-entry-gap-y;
+        @media #{$not-wide-screen} {
+            margin-top: model.$list-item-gap-y;
         }
 
         // Push thumbnail to the right and occupy the right side of the entry.
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             grid-column: 3 / -1;
             grid-row:    span 2;
         }
@@ -141,11 +145,11 @@
     // Components
     //=========================================================================
 
-    $break-height:           2 * math.div(m.$results-entry-margin-y, 3);
+    $break-height:           2 * math.div(model.$list-item-margin-y, 3);
 
-    $synopsis-pad:           m.$results-entry-margin-y;
+    $synopsis-pad:           model.$list-item-margin-y;
     $synopsis-border-width:  2px;
-    $synopsis-border-color:  i.$image-border-color;
+    $synopsis-border-color:  image.$border-color;
     $synopsis-border-radius: 4 * $synopsis-border-width;
 
     .label {
@@ -156,16 +160,16 @@
 
     .value {
 
-        @include x.width-fit-content(90%);
+        @include width-fit-content(90%);
 
         display:        flex;
         flex-direction: column;
 
         > * {
 
-            @include x.width-fit-content;
+            @include width-fit-content;
 
-            margin-top: m.$results-entry-margin-y;
+            margin-top: model.$list-item-margin-y;
 
             &:first-child {
                 margin-top: 0;
@@ -178,11 +182,11 @@
         }
 
         a + a {
-            margin-top: m.$results-entry-margin-y;
+            margin-top: model.$list-item-margin-y;
         }
 
         &.field-Authors {
-            @media #{v.$not-narrow-screen} {
+            @media #{$not-narrow-screen} {
 
                 flex-direction: row;
                 flex-wrap:      wrap;
@@ -192,8 +196,8 @@
 
                     flex:          0 0 auto;
                     margin:        0;
-                    margin-right:  m.$results-entry-margin-y;
-                    margin-bottom: m.$results-entry-margin-y;
+                    margin-right:  model.$list-item-margin-y;
+                    margin-bottom: model.$list-item-margin-y;
 
                     &:last-child { margin-right: 0; }
                 }
@@ -202,21 +206,21 @@
 
         &.field-Synopsis {
 
-            margin-bottom: calc(#{m.$results-entry-gap-y} / 2);
+            margin-bottom: calc(#{model.$list-item-gap-y} / 2);
             padding:       $synopsis-pad;
             line-height:   1.375;
             border:        $synopsis-border-width solid $synopsis-border-color;
             border-radius: $synopsis-border-radius;
 
-            @media #{v.$medium-width} {
-                margin-right: m.$results-entry-gap-y;
+            @media #{$medium-width} {
+                margin-right: model.$list-item-gap-y;
             }
         }
 
         &.field-Categories {
             a + a {
                 &:last-of-type + span {
-                    margin-top: m.$results-entry-margin-y;
+                    margin-top: model.$list-item-margin-y;
                 }
             }
         }
@@ -242,7 +246,7 @@
 
         &.field-Formats {
             .artifact + .artifact {
-                margin-top: m.$results-entry-margin-y;
+                margin-top: model.$list-item-margin-y;
             }
         }
     }
@@ -267,20 +271,20 @@
         // Prevent flex from trying to equalize the width of this column with
         // the .title-details column.
         flex-basis:  0;
-        margin-left: v.$page-padding-x;
+        margin-left: $page-padding-x;
 
         // Reserve width to avoid watching the page re-layout if a cover image
         // is acquired asynchronously.
-        @media #{v.$wide-screen} {
-            min-width: v.$nominal-cover-x;
+        @media #{$wide-screen} {
+            min-width: $nominal-cover-x;
         }
 
-        @media #{v.$medium-width} {
+        @media #{$medium-width} {
             min-width: unset;
-            max-width: v.$nominal-cover-x;
+            max-width: $nominal-cover-x;
         }
 
-        @media #{v.$narrow-screen} {
+        @media #{$narrow-screen} {
             min-width: unset;
             max-width: 100%;
         }
