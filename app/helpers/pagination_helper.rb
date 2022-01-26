@@ -93,6 +93,22 @@ module PaginationHelper
     result || default
   end
 
+  # Determine the number of records reported by an object.
+  #
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  #
+  # @return [Integer]
+  #
+  def record_count(value)
+    Array.wrap(value).sum do |item|
+      if item.is_a?(Hash)
+        1
+      else
+        item.try(:totalResults) || item.try(:records)&.size || item.try(:size)
+      end
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -282,6 +298,24 @@ module PaginationHelper
   #
   def total_items=(value)
     @total_items = value.to_i
+  end
+
+  # Get the total number of records returned from the API.
+  #
+  # @return [Integer]
+  #
+  def total_records
+    @total_records ||= 0
+  end
+
+  # Set the total number of records returned from the API.
+  #
+  # @param [Integer] value
+  #
+  # @return [Integer]
+  #
+  def total_records=(value)
+    @total_records = value.to_i
   end
 
   # ===========================================================================

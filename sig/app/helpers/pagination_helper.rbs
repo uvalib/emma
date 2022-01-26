@@ -70,6 +70,14 @@ module PaginationHelper
   # +
   def item_count: (untyped value, ?default: untyped) -> Numeric
 
+  # Determine the number of records reported by an object.
+  #
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  #
+  # @return [Integer]
+  #
+  def record_count: (untyped value) -> Integer
+
   # Default results per page for the current controller/action.
   #
   # @return [Integer]
@@ -206,6 +214,20 @@ module PaginationHelper
   # @return [Integer]
   #
   def total_items=: (Integer value) -> Integer
+
+  # Get the total number of records returned from the API.
+  #
+  # @return [Integer]
+  #
+  def total_records: () -> Integer
+
+  # Set the total number of records returned from the API.
+  #
+  # @param [Integer] value
+  #
+  # @return [Integer]
+  #
+  def total_records=: (Integer value) -> Integer
 
   # Interpret *value* as a URL path or a JavaScript action.
   #

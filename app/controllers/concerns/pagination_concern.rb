@@ -111,9 +111,10 @@ module PaginationConcern
   # @see UploadConcern#pagination_finalize
   #
   def pagination_finalize(list, meth = nil, **search)
-    self.page_items  = Array.wrap(meth && list.try(meth) || list)
-    self.total_items = item_count(list, default: page_items.size)
-    self.next_page   = next_page_path(list: list, **search)
+    self.page_items    = Array.wrap(meth && list.try(meth) || list)
+    self.total_items   = item_count(list, default: page_items.size)
+    self.total_records = record_count(list)
+    self.next_page     = next_page_path(list: list, **search)
   end
 
   # Analyze the *list* object to generate the path for the next page of

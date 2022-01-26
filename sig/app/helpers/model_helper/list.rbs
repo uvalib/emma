@@ -99,9 +99,10 @@ module ModelHelper::List
 
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Array, nil]          list   Default: #page_items.
-  # @param [Integer, #to_i, nil] count  Default: *list* size.
-  # @param [Integer, #to_i, nil] total  Default: count.
+  # @param [Array, nil]          list     Default: #page_items.
+  # @param [Integer, #to_i, nil] count    Default: *list* size.
+  # @param [Integer, #to_i, nil] total    Default: count.
+  # @param [Integer, #to_i, nil] records
   # @param [Integer, #to_i, nil] page
   # @param [Integer, #to_i, nil] size   Default: #page_size.
   # @param [Integer, #to_i, nil] row    Default: 1.
@@ -109,7 +110,7 @@ module ModelHelper::List
   #
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
-  def index_controls: (?list: Array[Model]?, ?count: (Integer|_ToI)?, ?total: (Integer|_ToI)?, ?page: (Integer|_ToI)?, ?size: (Integer|_ToI)?, ?row: (Integer|_ToI)?, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
+  def index_controls: (?list: Array[Model]?, ?count: (Integer|_ToI)?, ?total: (Integer|_ToI)?, ?records: (Integer|_ToI)?, ?page: (Integer|_ToI)?, ?size: (Integer|_ToI)?, ?row: (Integer|_ToI)?, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
 
   # Optional page style controls in line with the top pagination control.
   #

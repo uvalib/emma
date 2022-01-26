@@ -304,9 +304,10 @@ module ModelHelper::List
 
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Array, nil]          list   Default: #page_items.
-  # @param [Integer, #to_i, nil] count  Default: *list* size.
-  # @param [Integer, #to_i, nil] total  Default: count.
+  # @param [Array, nil]          list     Default: #page_items.
+  # @param [Integer, #to_i, nil] count    Default: *list* size.
+  # @param [Integer, #to_i, nil] total    Default: count.
+  # @param [Integer, #to_i, nil] records
   # @param [Integer, #to_i, nil] page
   # @param [Integer, #to_i, nil] size   Default: #page_size.
   # @param [Integer, #to_i, nil] row    Default: 1.
@@ -315,24 +316,26 @@ module ModelHelper::List
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
   def index_controls(
-    list:   nil,
-    count:  nil,
-    total:  nil,
-    page:   nil,
-    size:   nil,
-    row:    1,
+    list:    nil,
+    count:   nil,
+    total:   nil,
+    records: nil,
+    page:    nil,
+    size:    nil,
+    row:     1,
     **opt
   )
     opt.except!(*VIEW_TEMPLATE_OPT)
-    items   = list            || page_items
-    unit    = items&.first&.aggregate? ? 'title' : 'record'
-    count   = positive(count) || items.size
-    total   = positive(total) || count
-    page    = positive(page)  || 1
-    size    = positive(size)  || page_size
-    row   &&= 1 + (positive(row) || 1)
+    items   = list              || page_items
+    count   = positive(count)   || items.size
+    total   = positive(total)   || count
+    records = positive(records) || 0
+    page    = positive(page)    || 1
+    size    = positive(size)    || page_size
+    row   &&= (positive(row) || 1) + 1
     paging  = (page > 1)
-    more    = (count < total) || (count == size)
+    more    = (count < total) || (count == size) || (records == size)
+    unit    = items&.first&.aggregate? ? 'title' : 'record'
     links   = pagination_controls
     counts  = []
     counts << page_number(page) if paging || more
