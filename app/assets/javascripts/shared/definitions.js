@@ -1425,31 +1425,3 @@ export function isInternetExplorer() {
     const ua = navigator.userAgent || '';
     return ua.includes('MSIE ') || ua.includes('Trident/');
 }
-
-// ============================================================================
-// Functions - Turbolinks
-// ============================================================================
-
-export const DEBUG_TURBOLINKS = true;
-
-// noinspection ES6ConvertVarToLetConst
-/*var $document = $(document);*/
-
-if (DEBUG_TURBOLINKS) {
-    [
-        'click',
-        'before-visit',
-        'visit',
-        'request-start',
-        'request-end',
-        'before-cache',
-        'before-render',
-        'render',
-        'load',
-    ].forEach(function(name) {
-        const event_name = `turbolinks:${name}`;
-        handleEvent($(document), event_name, function() {
-            console.warn(`========== ${event_name} ==========`);
-        });
-    });
-}

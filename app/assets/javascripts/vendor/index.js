@@ -2,5 +2,6 @@
 
 import './rails'
 import './jquery'
-import './select2' // This is needed by controls on almost all pages.
-//import './uppy'  // This does not need to be loaded unconditionally.
+import './select2'      // Needed by controls on almost all pages.
+//import './turbolinks' // Should at the end of application.js.
+//import './uppy'       // Does not need to be loaded unconditionally.
