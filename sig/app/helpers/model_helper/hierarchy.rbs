@@ -1,7 +1,8 @@
-# View helper methods supporting the display and creation of Model instances
-# (both database items and API messages).
+# View helper methods supporting the hierarchical display of model records.
 #
-module ModelHelper::ListV3
+# @note In use with Search items but untested with any other Model class.
+#
+module ModelHelper::Hierarchy
   include ModelHelper::List
 
   # Render field/value pairs of a title-level record.
@@ -19,12 +20,17 @@ module ModelHelper::ListV3
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see #item_lines
+  # @see Search::Record::TitleRecord#field_hierarchy
+  #
   # -
   # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   # +
   def render_field_hierarchy: (Search::Record::TitleRecord? item, ?model: (String|Symbol)?, ?action: (String|Symbol)?, ?pairs: symHash?, ?row_offset: Integer?, ?separator: String?, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # item_lines
+  FILE_TERM: String?
+
+  # Data for all of the lines that represent a hierarchical entry.
   #
   # @param [Search::Record::TitleRecord] item
   # @param [Hash, nil]                   hierarchy
@@ -32,9 +38,12 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see *en.emma.search.field_hierarchy*
+  #
   def item_lines: (Search::Record::TitleRecord item, symHash? hierarchy, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
-  # title_level_lines
+  # Data for the lines of title-level information which relates to the overall
+  # creative work.
   #
   # @param [Hash]  main_section
   # @param [Array] main_index
@@ -43,9 +52,17 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see "en.emma.search.field_hierarchy.title"
+  #
   def title_level_lines: (symHash main_section, Array[Symbol|Integer] main_index, symHash main_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
-  # part_level_lines
+  # Data for the lines representing all portions of a work (e.g. volumes) as
+  # indicated by bibliographic metadata across all of the related file-level
+  # records.
+  #
+  # Each portion is represented in the return value by an HTML heading entry
+  # (indicating the volume number) followed by multiple Hash/HTML entries for
+  # each format available for that portion.
   #
   # @param [Array<Hash>] main_section
   # @param [Array]       main_index
@@ -54,9 +71,11 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see "en.emma.search.field_hierarchy.parts"
+  #
   def part_level_lines: (Array[symHash] main_section, Array[Symbol|Integer] main_index, symHash main_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
-  # part_section_lines
+  # Data for the lines representing a specific portion of a work (e.g. volume).
   #
   # @param [Hash]  part
   # @param [Array] part_index
@@ -65,9 +84,16 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see "en.emma.search.field_hierarchy.parts.*"
+  #
   def part_section_lines: (symHash part, Array[Symbol|Integer] part_index, symHash part_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
-  # part_level_lines
+  # Data for the lines representing all of the available formats for a specific
+  # portion of a work (e.g. volume).
+  #
+  # Each format is represented in the return value by an HTML heading entry
+  # (indicating the format) followed by multiple Hash/HTML entries for that
+  # format.
   #
   # @param [Array<Hash>] part_section
   # @param [Symbol]      part_key
@@ -79,9 +105,12 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see "en.emma.search.field_hierarchy.parts.files"
+  #
   def part_lines: (Array[symHash] part_section, Symbol part_key, Array[Symbol|Integer] part_index, symHash part_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
-  # format_section_lines
+  # Data for the lines representing all of the copies of a specific format of a
+  # portion of a work.
   #
   # @param [Hash]  format
   # @param [Array] format_index
@@ -90,9 +119,15 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see "en.emma.search.field_hierarchy.parts.files"
+  #
   def format_section_lines: (symHash format, Array[Symbol|Integer] format_index, symHash format_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
-  # part_level_lines
+  # Data for the lines representing each copy of a specific format of a portion
+  # of a work.
+  #
+  # Each copy is represented in the return value by an HTML heading entry
+  # followed by multiple Hash entries for that copy.
   #
   # @param [Array<Hash>] files
   # @param [Symbol]      section_key
@@ -104,7 +139,8 @@ module ModelHelper::ListV3
   #
   def file_lines: (Array[symHash] files, Symbol section_key, Array[Symbol|Integer] section_index, symHash section_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
-  # file_section_lines
+  # Data for the lines representing all of the sets of metadata items of a
+  # unique copy of a specific format of a portion of a work.
   #
   # @param [Hash]  section
   # @param [Array] section_index
@@ -113,15 +149,27 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash>]
   #
+  # @see "en.emma.search.field_hierarchy.title.*"
+  # @see "en.emma.search.field_hierarchy.parts.*"
+  # @see "en.emma.search.field_hierarchy.parts.formats.*"
+  # @see "en.emma.search.field_hierarchy.parts.formats.files.*"
+  #
   def file_section_lines: (symHash section, Array[Symbol|Integer] section_index, symHash section_prop, symHash opt) -> Array[symHash]
 
-  # field_lines
+  # Data for the lines representing a set of metadata items of a unique copy
+  # of a specific format of a portion of a work.
   #
   # @param [Hash] pairs
   # @param [Hash] field_prop
   # @param [Hash] opt
   #
   # @return [Array<Hash>]
+  #
+  # @see "en.emma.search.field_hierarchy.**.bibliographic"
+  # @see "en.emma.search.field_hierarchy.**.repository"
+  # @see "en.emma.search.field_hierarchy.**.index"
+  # @see "en.emma.search.field_hierarchy.**.remediation"
+  # @see "en.emma.search.field_hierarchy.**.accessibility"
   #
   def field_lines: (symHash pairs, symHash field_prop, symHash opt) -> Array[symHash]
 
@@ -140,8 +188,8 @@ module ModelHelper::ListV3
   #
   PAIR_WRAPPER: String?
 
-  # Probably-temporary divider between metadata for individual sections within
-  # a compound search item.
+  # A heading/divider between sections within a compound search item, which is
+  # rendered as a toggle for a collapsible container.
   #
   # @note SIDE EFFECT: `opt[:row]` will be incremented.
   #
@@ -169,7 +217,9 @@ module ModelHelper::ListV3
   #
   def render_line: ((String|Symbol)? label, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # skip_entry?
+  # Indicate whether a section should be ignored, either because its name
+  # starts with an underscore (indicating "out-of-band" information) or because
+  # it was indicated by the :except parameter.
   #
   # @param [Symbol]              key
   # @param [Any]                 value
@@ -197,31 +247,6 @@ module ModelHelper::ListV3
   # @return [String]
   #
   def count_unique: (Array[symHash|ActiveSupport::SafeBuffer] lines, String|Symbol `type`, term: String?) -> String
-
-  # @private
-  SEARCH_FIELD_LEVEL: Hash[Symbol,Array[Symbol|Integer]]
-
-  # Return with the CSS classes associated with the items field scope(s).
-  #
-  # @param [Array, Symbol, String, nil] value
-  #
-  # @return [Array<String>]
-  #
-  # -
-  # == Variations
-  # +
-  #
-  # @overload field_scopes(single)
-  #   Interpret the argument as a field name used to lookup the scope values.
-  #   @param [Symbol, String, nil] single
-  #   @return [Array<String>]
-  #
-  # @overload field_scopes(array)
-  #   Extract the scopes from *array*.
-  #   @param [Array<Symbol>]       array
-  #   @return [Array<String>]
-  #
-  def field_scopes: (untyped value) -> strArray
 
   private
 

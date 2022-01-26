@@ -12,6 +12,7 @@ module LayoutHelper::DevControls
   include LayoutHelper::Common
 
   include ConfigurationHelper
+  include SessionDebugHelper
 
   # ===========================================================================
   # :section:
@@ -69,23 +70,65 @@ module LayoutHelper::DevControls
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def dev_controls(**opt)
     prepend_classes!(opt, 'control')
     controls = []
-    controls << dev_toggle_debug(**opt)
-    safe_join(controls)
+    controls << dev_toggle_session_debug(**opt)
+    controls << dev_toggle_controller_debug(**opt)
+    safe_join(controls.compact)
   end
 
-  # A control for toggling the #session_debug? status.
+  # A control for toggling application debug status.
   #
-  # @param [Hash] opt
+  # @param [Boolean, nil] state       Default: `#session_debug?`.
+  # @param [Hash]         opt         Passed to #dev_toggle_debug.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def dev_toggle_debug(**opt)
-    state = session_debug?
-    label = 'Debug %s' % (state ? 'ON' : 'OFF')
-    link  = request_parameters.merge!(debug: !state)
+  def dev_toggle_session_debug(state: nil, **opt)
+    param = 'app.debug'
+    dev_toggle_debug(ctrlr: nil, state: state, param: param, **opt)
+  end
+
+  # A control for toggling debugging features for a specific controller.
+  #
+  # @param [Symbol, nil]  ctrlr       Default: `params[:controller]`.
+  # @param [Boolean, nil] state       Default: `#session_debug?(ctrlr)`.
+  # @param [Hash]         opt         Passed to #dev_toggle_debug.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def dev_toggle_controller_debug(ctrlr: nil, state: nil, **opt)
+    ctrlr ||= params[:controller]&.to_sym
+    return unless ParamsConcern::SPECIAL_DEBUG_CONTROLLERS.include?(ctrlr)
+    param = "app.#{ctrlr}.debug"
+    dev_toggle_debug(ctrlr: ctrlr, state: state, param: param, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # A control for toggling a debug status. # TODO: I18n
+  #
+  # @param [Symbol, String, nil] ctrlr
+  # @param [Boolean, nil]        state  Default: `#session_debug?(ctrlr)`.
+  # @param [Symbol, String, nil] param  URL debug parameter (default: :debug).
+  # @param [Hash]                opt    Passed to #link_to.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dev_toggle_debug(ctrlr:, state:, param:, **opt)
+    param = param&.to_sym || :debug
+    state = session_debug?(ctrlr) if state.nil?
+    label = ctrlr ? "#{ctrlr.to_s.titleize} debug" : 'Debug'
+    label = "#{label} %s" % (state ? 'ON' : 'OFF')
+    link  = request_parameters.merge!(param => !state)
     tip   = 'Click to turn %s' % (state ? 'off' : 'on')
     link_to(label, link, **opt.merge!(title: tip))
   end

@@ -102,7 +102,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   public
 
   # @private
-  DEBUG_AGGREGATE = true
+  DEBUG_AGGREGATE = false
 
   # Organize metadata records into title records.
   #
@@ -213,9 +213,12 @@ class Search::Message::SearchTitleList < Search::Api::Message
     end
 
     def inspect
-      i_list = ids ? ids.to_a.map(&:inspect).join(', ').tr('()', '') : '---'
-      v_list = values.map(&:inspect).join(', ')
-      "<#{i_list} | #{v_list} | GroupingCriteria>"
+      part = { ids: ids&.to_a, values: values }
+      part.transform_values! { |v| v&.map(&:inspect)&.join(', ') }
+      part[:ids].tr!('()', '') if part[:ids]
+      # noinspection RubyMismatchedReturnType
+      part.transform_values! { |v| v || '---' }
+      '<%{ids} | %{values} | GroupingCriteria>' % part
     end
 
   end

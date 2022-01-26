@@ -48,9 +48,15 @@ module SearchConcern
 
   public
 
+  # @private
+  DEF_TITLE_SEARCH = (LayoutHelper::SearchFilters::DEFAULT_RESULTS == :title)
+
+  # @private
+  GENERATE_SCORES = false
+
   # index_search
   #
-  # @param [Boolean] titles           If *false*, get records not titles.
+  # @param [Boolean] titles           If *false*, return records not titles.
   # @param [Boolean] save             If *false*, do not save search terms.
   # @param [Boolean] scores           Calculate experimental relevancy scores.
   # @param [Symbol]  items            Specify method for #pagination_finalize.
@@ -65,24 +71,31 @@ module SearchConcern
   # service and *false* everywhere else.
   #
   def index_search(
-    titles:    true,
+    titles:    nil,
     save:      true,
-    scores:    false,
+    scores:    nil,
     items:     nil,
     canonical: nil,
     **opt
   )
-    save_search(**opt)                   if save
+    titles = title_results? if titles.nil?
+    scores = search_debug?  if scores.nil? && GENERATE_SCORES
+
+    save_search(**opt)      if save
+
     list = search_api.get_records(**opt)
-    list.calculate_scores!(**opt)        if scores
-    flash_now_alert(list.exec_report)    if list.error?
+    if list.error?
+      flash_now_alert(list.exec_report)
+    elsif scores
+      list.calculate_scores!(**opt)
+    end
+
     if titles
       canonical = production_deployment? if canonical.nil?
       list = Search::Message::SearchTitleList.new(list, canonical: canonical)
-      items ||= :titles
-    else
-      items ||= :records
     end
+
+    items ||= titles ? :titles : :records
     pagination_finalize(list, items, **opt)
     list
   end
@@ -347,29 +360,87 @@ module SearchConcern
     set_engine_callback(SearchService)
   end
 
-  # Process the URL parameter for setting the search style.
+  # Process the URL parameter for setting the search results type (i.e.,
+  # title-level display or file-level display).
+  #
+  # @param [Symbol, String, nil] type
   #
   # @return [void]
   #
-  def set_search_style
-    opt   = request_parameters
-    style = session['app.search.style'].presence
-    if (in_params = opt.key?(:style))
-      value = opt.delete(:style)&.strip&.downcase
-      if value.blank? || ApiService::RESET_KEYS.include?(value.to_sym)
-        style = nil
-      elsif LayoutHelper::SearchFilters::SEARCH_STYLES.include?(value.to_sym)
-        style = value
+  # == Usage Notes
+  # Either run manually or as a controller action, the method will update
+  # `session['app.search.style']`.  In the latter case, if *style* is taken
+  # from the URL parameter a redirect will occur.
+  #
+  def set_search_results(type = nil)
+    valid_values = LayoutHelper::SearchFilters::SEARCH_RESULTS
+    set_search_feature(:results, type, valid_values, meth: __method__)
+  end
+
+  # Process the URL parameter for setting the search style.
+  #
+  # @param [Symbol, String, nil] style
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Either run manually or as a controller action, the method will update
+  # `session['app.search.style']`.  In the latter case, if *style* is taken
+  # from the URL parameter a redirect will occur.
+  #
+  def set_search_style(style = nil)
+    valid_values = LayoutHelper::SearchFilters::SEARCH_STYLES
+    set_search_feature(:style, style, valid_values, meth: __method__)
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  private
+
+  # set_search_feature
+  #
+  # @param [Symbol]               param_key
+  # @param [Any,nil]              value
+  # @param [Array<Symbol>,Symbol] valid_values
+  # @param [String]               session_key
+  # @param [Symbol]               meth
+  #
+  # @return [void]
+  #
+  def set_search_feature(
+    param_key,
+    value,
+    valid_values,
+    session_key: nil,
+    meth:        __method__
+  )
+    valid_values  = Array.wrap(valid_values)
+    session_key ||= "app.search.#{param_key}"
+    opt = nil
+    if value.nil?
+      if (prm = request_parameters).key?(param_key)
+        opt   = prm
+        value = opt.delete(param_key).presence
       else
-        Log.warn("#{__method__}: invalid style #{value.inspect}")
+        value = session[session_key].presence
       end
     end
-    if style
-      session['app.search.style'] = style
-    else
-      session.delete('app.search.style')
+    if (value &&= value.to_s.strip.presence&.underscore&.to_sym)
+      if EngineConcern::RESET_KEYS.include?(value)
+        value = nil
+      elsif !valid_values.include?(value)
+        Log.warn("#{meth}: invalid #{param_key} value '#{value}'")
+        return
+      end
     end
-    redirect_to opt if in_params
+    if value
+      session[session_key] = value.to_s
+    else
+      session.delete(session_key)
+    end
+    redirect_to opt if opt && !false?(opt[:redirect])
   end
 
   # ===========================================================================

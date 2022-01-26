@@ -310,10 +310,7 @@ module LayoutHelper::Common
   def search_target_path(target = nil, **opt)
     target ||= DEFAULT_SEARCH_CONTROLLER
     ctrlr    = "/#{target}"
-    action   = nil
-    action ||= ('v2' if v2_style?)
-    action ||= ('v3' if v3_style?)
-    action ||= SEARCH_CONTROLLERS[target&.to_sym]
+    action   = SEARCH_CONTROLLERS[target&.to_sym]
     url_for(opt.merge(controller: ctrlr, action: action, only_path: true))
   rescue ActionController::UrlGenerationError
     search_target_path(**opt)

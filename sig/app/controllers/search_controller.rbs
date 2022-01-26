@@ -40,22 +40,6 @@ class SearchController < ApplicationController
   #
   def index: () -> void
 
-  # == GET /search/v2
-  #
-  # Perform a search through the EMMA Unified Search API.
-  #
-  # @see SearchConcern#index_search
-  #
-  def v2: () -> void
-
-  # == GET /search/v3
-  #
-  # Perform a search through the EMMA Unified Search API.
-  #
-  # @see SearchConcern#index_search
-  #
-  def v3: () -> void
-
   # == GET /search/:id
   #
   # Display details of an existing catalog title.

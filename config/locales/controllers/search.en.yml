@@ -44,56 +44,95 @@ en:
       # Controls
       # =======================================================================
 
+      results:
+
+        _template:      &SEARCH_RESULTS_TYPE
+          label:        'Search Results Mode'
+          class:        ~
+          tooltip:      ~
+          active:       true # @see LayoutHelper::SearchFilters#permitted_by?
+          default:      ~
+
+        title:
+          <<:           *SEARCH_RESULTS_TYPE
+          label:        'Results By Title'
+          class:        'title_results'
+          default:      true
+
+        file:
+          <<:           *SEARCH_RESULTS_TYPE
+          label:        'Results By File'
+          class:        'file_results'
+
       styles:
 
-        _colorize:      &COLORIZE_BUTTON
+        _colorize:      &SEARCH_STYLE
           label:        'Mark'
           class:        'colorize-button'
           ident:        'metadata field'
-          tooltip:      'Mark entries with the same %{ident} in the same color'
           field:        '' # Indicates topic has no matching metadata field.
-          active:       !ruby/symbol dev_only
+          tooltip:      'Mark entries with the same %{ident} in the same color'
+          active:       !ruby/symbol debug_only # @see LayoutHelper::SearchFilters#permitted_by?
 
         # NOTE: The order here is the reverse of the order of display.
 
         restore:
-          label:        'Normal'
+          <<:           *SEARCH_STYLE
+          label:        'Debug'
           class:        'restore-button'
-          tooltip:      'Restore the normal search results display'
+          tooltip:      |
+            Click to turn off debugging controls and return to normal display
+            of search results.
           field:        ~ # Indicates that this is not a topic button.
-          active:       true
 
         by_repo_id:
-          <<:           *COLORIZE_BUTTON
+          <<:           *SEARCH_STYLE
           label:        'Repo ID'
           ident:        '"repository record ID"'
           field:        'field-RepositoryRecordId'
+          active:       [!ruby/symbol dev_only, !ruby/symbol debug_only]
 
         by_identifier:
-          <<:           *COLORIZE_BUTTON
+          <<:           *SEARCH_STYLE
           label:        'ISBN'
           ident:        'standard identifier'
           field:        'field-Identifier'
+          active:       [!ruby/symbol dev_only, !ruby/symbol debug_only]
 
         by_title_text:
-          <<:           *COLORIZE_BUTTON
+          <<:           *SEARCH_STYLE
           label:        'Title'
           ident:        'title text'
+          active:       [!ruby/symbol dev_only, !ruby/symbol debug_only]
 
         by_title_id:
-          <<:           *COLORIZE_BUTTON
+          <<:           *SEARCH_STYLE
           label:        'Title ID'
           ident:        '"title ID"'
           field:        'field-TitleId'
-          active:       true
 
-        by_field_group:
-          <<:           *COLORIZE_BUTTON
+        field_groups:
+          <<:           *SEARCH_STYLE
           label:        'Fields'
-          class:        'field-highlight-button'
-          tooltip:      'Highlight field groups'
+          class:        'field_groups-button'
           field:        ~
-          active:       true
+          tooltip:      'Highlight field groups'
+
+        format_counts:
+          <<:           *SEARCH_STYLE
+          label:        'Formats'
+          class:        'format_counts-button'
+          field:        ~
+          tooltip:      'Show/hide format counts'
+          active:       [!ruby/symbol title_only, !ruby/symbol debug_only]
+
+        collapsed:
+          <<:           *SEARCH_STYLE
+          label:        'Collapse'
+          class:        'collapsed-button'
+          field:        ~
+          tooltip:      'Collapse/expand all search result items'
+          active:       [!ruby/symbol file_only, !ruby/symbol debug_only]
 
       pagination:
         count:
@@ -124,74 +163,7 @@ en:
           cond:
             only:     []
 
-      field_hierarchy_v2:  &HIERARCHY_2
-
-        title:
-          bibliographic:
-            - dc_title
-            - bib_seriesType
-            - emma_version
-            - bib_version
-            - bib_series
-            - dc_creator
-            - dc_publisher
-            - dcterms_dateCopyright
-            - emma_publicationDate
-            - dc_type
-            - dc_language
-            - dc_description
-            - dc_subject
-            - dc_identifier
-            - dc_relation
-            - dc_rights
-          repository:
-            - emma_repository
-            - emma_collection     # NOTE: only shown if the same for all files
-          index:
-            - emma_titleId        # NOTE: only shown if the same for all files
-
-        files:
-          bibliographic:
-            - bib_seriesPosition
-            - dc_format
-            - emma_formatFeature
-            - emma_collection     # NOTE: shown when not the same for all files
-          remediation:
-            - rem_status
-            # rem_complete folded into rem_coverage
-            - rem_coverage
-            - rem_comments
-            - rem_remediationComments
-            - emma_lastRemediationNote
-            - rem_remediatedAspects
-            - rem_remediation
-            - rem_textQuality
-            - rem_quality
-          accessibility:
-            - s_accessibilitySummary
-            - s_accessibilityFeature
-            - s_accessibilityControl
-            - s_accessibilityHazard
-            - s_accessMode
-            - s_accessModeSufficient
-          repository:
-            - emma_retrievalLink
-            - rem_source
-            - rem_metadataSource
-            - rem_remediatedBy
-            - rem_remediationDate
-            - emma_lastRemediationDate
-            - dcterms_dateAccepted
-            - emma_repositoryUpdateDate
-            - emma_repositoryMetadataUpdateDate
-            - emma_repositoryRecordId
-            # emma_webPageLink used as the href for emma_repositoryRecordId
-          index:
-            - emma_formatVersion
-            - emma_recordId
-            - emma_titleId        # NOTE: shown when not the same for all files
-
-      field_hierarchy:  &HIERARCHY
+      field_hierarchy:
 
         title:
           bibliographic:
@@ -280,20 +252,6 @@ en:
 
       direct:
         <<: *INDEX
-
-      # =======================================================================
-
-      v2:
-        <<: *INDEX
-        <<: *HIERARCHY_2
-        title:          'EMMA Unified Search - Grouped Records'
-
-      # =======================================================================
-
-      v3:
-        <<: *INDEX
-        <<: *HIERARCHY
-        title:          'EMMA Unified Search - Title Results'
 
       # =======================================================================
 

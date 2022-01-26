@@ -10,35 +10,38 @@
   row    ||= 1
   help   ||= help_popup(:search)
 
-  page_opt = SearchTermsHelper::NON_SEARCH_KEYS
-  page_terms, search = partition_hash(terms, *page_opt)
-  page   = page_terms[:page]&.values&.first&.to_i || 1
+  pagination, search =
+    partition_hash(terms, *SearchTermsHelper::NON_SEARCH_KEYS)
+  page   = pagination[:page]&.values&.first&.to_i || 1
   search = search.presence
 
   unless modal?
     label = t("emma.search.#{action}.label", default: title)
     terms = search
-    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
+    terms = terms.merge(page: pagination[:page]) if terms && (page > 1)
     set_page_title(label)
     append_page_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
   end
 
-  unless (old_style = default_style?)
-    append_page_classes('new-style', "#{search_style}-style")
-    append_page_classes('dev-style') if session_debug?
-  end
+  append_page_classes(*search_result_classes, *search_style_classes)
 
-  opt = { list: list, total: total, page: page, row: (row if old_style) }
-  top_ctrls, bottom_ctrls = index_controls(**opt)
-  bottom_ctrls = nil if list.blank?
-  list_ctrls   = old_style ? [] : [top_ctrls, search_page_styles]
+  opt = { list: list, total: total, page: page, records: total_records }
+  opt[:row]    = row     if file_results?
+  top, bottom  = index_controls(**opt)
+  bottom       = nil     if list.blank?
+
+  list_ctrls   = [top, search_page_styles, search_page_results]
   list_heading = page_heading(title, *list_ctrls, help: help)
-  list_footing = (bottom_ctrls unless old_style)
-  bottom_ctrls = top_ctrls = nil unless old_style
-  opt[:row] += 1 if top_ctrls && opt[:row].is_a?(Integer)
+  list_footing = (bottom if title_results?)
+
+  bottom = top = nil if title_results?
+  opt[:row]   += 1   if top && opt[:row].is_a?(Integer)
 
   template_opt = opt.merge!(skip: :title, action: action)
+
+  list_classes = %w(search-list)
+  list_classes << 'scores' if relevancy_scores?
 
 -%>
 
@@ -46,10 +49,10 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<div class="search-list">
-  <%= top_ctrls %>
+<div class="<%= css_classes(list_classes) -%>">
+  <%= top %>
   <%= render 'search/list', template_opt %>
-  <%= bottom_ctrls %>
+  <%= bottom %>
 </div>
 
 <%= list_footing %>

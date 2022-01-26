@@ -213,17 +213,29 @@ module LayoutHelper::SearchFilters
   #
   IMMEDIATE_SEARCH: bool
 
-  # New search styles.
+  # Search display style variants.
   #
   # @type [Array<Symbol>]
   #
   SEARCH_STYLES: symArray
 
-  # The default search results style.
+  # The default search display style.
   #
   # @type [Symbol]
   #
   DEFAULT_STYLE: Symbol
+
+  # Search result display variants.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RESULTS: symArray
+
+  # The default search result display.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_RESULTS: Symbol
 
   # Configuration for advanced search values.
   #
@@ -313,37 +325,59 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def search_mode_marker: () -> ActiveSupport::SafeBuffer?
+  def immediate_search_marker: () -> ActiveSupport::SafeBuffer?
 
-  # Get the display style for search results.
+  # Get the display mode for search results.
+  #
+  # @return [Symbol]
+  #
+  def search_results: () -> Symbol
+
+  # Indicate whether search results are displayed hierarchically (by title).
+  #
+  def title_results?: () -> bool
+
+  # Indicate whether search results are displayed literally (per file).
+  #
+  def file_results?: () -> bool
+
+  # Indicate whether search debug controls should be displayed.
+  #
+  def search_debug?: () -> bool
+
+  # Indicate whether search dev controls should be displayed.
+  #
+  def search_dev?: () -> bool
+
+  # Configuration conditionals.
+  #
+  # @type [Hash{Symbol=>Proc,Symbol}]
+  #
+  CONFIG_CONDITION: Hash[Symbol,Proc|Symbol]
+
+  # Indicate whether the guard condition is satisfied.
+  #
+  # @param [Array<Symbol,String>, Symbol, String, Boolean, nil] guard
+  #
+  def permitted_by?: (?(Symbol|String|bool|Array[Symbol|String])? guard) -> bool
+
+  # Normalize :active property values for use by #permitted_by?.
+  #
+  # @param [Array<Symbol,String,Boolean,nil>, Symbol, String, Boolean, nil] val
+  #
+  # @return [TrueClass, FalseClass, Array<Symbol>]
+  #
+  def self.guard_values: (Symbol|String|bool|nil|Array[Symbol|String|bool|nil] val) -> (bool | symArray)
+
+  # Get the display style variant for search results.
   #
   # @return [Symbol]
   #
   def search_style: () -> Symbol
 
-  # Indicate whether search results are displayed in the original manner.
+  # Indicate whether search results are displayed in the normal way.
   #
   def default_style?: () -> bool
-
-  # Indicate whether search results are displayed as a grid.
-  #
-  def grid_style?: () -> bool
-
-  # Indicate whether search results are displayed compactly.
-  #
-  def compact_style?: () -> bool
-
-  # Indicate whether search results are aggregated into title-level units.
-  #
-  def aggregate_style?: () -> bool
-
-  # Indicate whether search results are displayed in the original manner.
-  #
-  def v2_style?: () -> bool
-
-  # Indicate whether search results are displayed in the original manner.
-  #
-  def v3_style?: () -> bool
 
   # Options consumed by internal methods which should not be passed on along to
   # the methods which generate HTML elements.
@@ -467,6 +501,7 @@ module LayoutHelper::SearchFilters
   # @param [String, Symbol, nil] target     Passed to #search_form.
   # @param [String, Array, nil]  selected   Selected menu item(s).
   # @param [String, Symbol, nil] label_id   ID of associated label element.
+  # @param [Boolean, nil]        disabled
   # @param [Hash]                opt        Passed to #search_form except for
   #                                           #MENU_OPTS and:
   #
@@ -481,7 +516,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection RubyNilAnalysis
   # +
-  def menu_control: (Symbol menu_name, ?target: (String|Symbol)?, ?selected: (String|anyArray)?, ?label_id: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def menu_control: (Symbol menu_name, ?target: (String|Symbol)?, ?selected: (String|anyArray)?, ?label_id: (String|Symbol)?, ?disabled: bool?, **untyped opt) -> ActiveSupport::SafeBuffer?
 
   # A label associated with a dropdown menu element.
   #

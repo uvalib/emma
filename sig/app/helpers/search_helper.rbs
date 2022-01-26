@@ -31,6 +31,50 @@ module SearchHelper
   #
   def search_item_link: (Search::Api::Record item, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # In debug mode, add date and volume information to the title line.
+  #
+  # @type [Boolean]
+  #
+  SHOW_EXTENDED_TITLE: bool
+
+  # Indicate whether items should get extended titles.
+  #
+  def extended_title?: () -> bool
+
+  # Add date and volume information to the title line.
+  #
+  # @param [Search::Api::Record] item
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
+  # +
+  def extended_title: (Search::Api::Record item) -> ActiveSupport::SafeBuffer?
+
+  # In debug mode, add a display of the (supposed) relevancy score.
+  #
+  # @note This is probably not very helpful for `title_results? == true`.
+  #
+  # @type [Boolean]
+  #
+  SHOW_RELEVANCY_SCORE: bool
+
+  # Indicate whether items should show relevancy scores.
+  #
+  def relevancy_scores?: () -> bool
+
+  # Generate an element to display a score for the item.
+  #
+  # @param [Search::Api::Record] item
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
+  # +
+  def relevancy_scores: (Search::Api::Record item) -> ActiveSupport::SafeBuffer?
+
   # Transform a field value for HTML rendering.
   #
   # @param [Upload, Model, Hash] item
@@ -109,6 +153,31 @@ module SearchHelper
   #
   def source_record_link: (Search::Api::Record item, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # The defined levels for rendering an item hierarchically.
+  #
+  # @return [Hash{Symbol=>Array<Symbol,Integer>}]
+  #
+  # == Usage Notes
+  # This is invoked from ModelHelper::Fields#field_levels.
+  #
+  def search_field_levels: (**untyped ignored) -> Hash[Symbol,Array[Symbol|Integer]]
+
+  # CSS classes for the current #search_style.
+  #
+  # @param [String] suffix
+  #
+  # @return [Array<String>]
+  #
+  def search_style_classes: (?String suffix) -> strArray
+
+  # CSS classes for the current #search_results.
+  #
+  # @param [String] suffix
+  #
+  # @return [Array<String>]
+  #
+  def search_result_classes: (?String suffix) -> strArray
+
   # Make a clickable link to retrieve a remediated file.
   #
   # @param [Search::Api::Record] item
@@ -169,12 +238,9 @@ module SearchHelper
   # +
   SEARCH_STYLE_BUTTONS: Hash[Symbol,symHash]
 
-  # Control for filtering which records are displayed.
+  # Controls for applying one or more search style variants.
   #
-  # @param [Boolean,nil] dev_only     If *true*, activate developer controls.
-  # @param [Hash]        opt          Passed to outer #html_div except:
-  #
-  # @option opt [Boolean] :dev_only   If *true*, activate developer controls.
+  # @param [Hash] opt                 Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -183,9 +249,35 @@ module SearchHelper
   # @see file:app/assets/javascripts/controllers/search.js *setupColorizeButtons()*
   #
   # == Usage Notes
-  # This is invoked from ModelHelper::List#page_filter.
+  # This is invoked from ModelHelper::List#page_styles.
   #
-  def search_page_styles: (?dev_only: bool?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def search_page_styles: (**untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # Search result types.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  SEARCH_RESULT_TYPES: Hash[Symbol,symHash]
+
+  # Parameters not included in the base path in #search_page_results.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RESULT_IGNORED_PARAMS: symArray
+
+  # Control for selecting the type of search results to display.
+  #
+  # @param [String,Array,nil] selected  Selected menu item(s).
+  # @param [Hash]             opt       Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #SEARCH_RESULT_TYPES
+  #
+  def search_page_results: (?selected: (String|Symbol)?,  **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
@@ -197,17 +289,10 @@ module SearchHelper
   #
   def search_list_item: (Model|nil item, ?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # NOTE: transitional
-  def search_list_item_v2: (Model|nil item, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # NOTE: transitional
-  def search_list_item_v3: (Model|nil item, **untyped opt) -> ActiveSupport::SafeBuffer
-
   # Include edit and delete controls below the entry number.
   #
   # @param [Model]   item
   # @param [Boolean] edit
-  # @param [Boolean] toggle
   # @param [Hash]    opt                  Passed to #list_item_number except:
   #
   # @option opt [String] :id              HTML ID of the item element.
@@ -218,22 +303,17 @@ module SearchHelper
   # @see UploadHelper#upload_edit_icon
   # @see UploadHelper#upload_delete_icon
   #
-  def search_list_item_number: (Model? item, ?edit: bool, ?toggle: bool, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def search_list_item_number: (Model? item, ?edit: bool, **untyped opt) -> ActiveSupport::SafeBuffer?
 
-  # NOTE: transitional
-  def search_list_number_v2: (Model item, **untyped opt) -> ActiveSupport::SafeBuffer?
-
-  # NOTE: transitional
-  def search_list_number_v3: (Search::Record::TitleRecord item, **untyped opt) -> ActiveSupport::SafeBuffer?
-
-  # Include edit and delete controls below the entry number.
+  # Generate a summary of the number of files per each format associated with
+  # this item.
   #
-  # @param [Search::Record::TitleRecord] item
-  # @param [Hash]                        opt    Passed to outer :ul.
+  # @param [Search::Record::TitleRecord, nil] item
+  # @param [Hash]                             opt   Passed to outer :ul.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def file_counts: (Search::Record::TitleRecord item, **untyped opt) -> ActiveSupport::SafeBuffer
+  def format_counts: (Search::Record::TitleRecord? item, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # search_list_item_toggle
   #

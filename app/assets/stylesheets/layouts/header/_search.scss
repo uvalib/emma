@@ -746,6 +746,10 @@ $search-button-width:    6rem;
                 width:       97.5%;
                 font-family: inherit;
             }
+
+            .select2-search__field:focus {
+                outline-color: transparent;
+            }
         }
 
         //=====================================================================

@@ -48,6 +48,38 @@ module ModelHelper::Fields
   # +
   def field_pairs: ((Model|anyHash)? item, ?model: (String|Symbol)?, ?action: (String|Symbol)?, ?pairs: anyHash?) { (Model) -> anyHash } -> symHash
 
+  # The defined levels for rendering an item hierarchically.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Array<Symbol,Integer>}]
+  #
+  # @see SearchHelper#search_field_levels
+  #
+  def field_levels: (**untyped opt) -> Hash[Symbol,Array[Symbol|Integer]]
+
+  # Return with the CSS classes associated with the items field scope(s).
+  #
+  # @param [Array, Symbol, String, nil] value
+  #
+  # @return [Array<String>]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload field_scopes(single)
+  #   Interpret the argument as a field name used to lookup the scope values.
+  #   @param [Symbol, String, nil] single
+  #   @return [Array<String>]
+  #
+  # @overload field_scopes(array)
+  #   Extract the scopes from *array*.
+  #   @param [Array<Symbol>]       array
+  #   @return [Array<String>]
+  #
+  def field_scopes: (untyped value) -> strArray
+
   # EMMA data field prefixes with trailing underscore for #model_html_id.
   #
   # @type [Array<String>]

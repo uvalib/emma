@@ -296,9 +296,6 @@ module UploadHelper
   # @see #UPLOAD_STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  # == Usage Notes
-  # This is invoked from ModelHelper::List#page_filter.
-  #
   def upload_state_group_select(counts: nil, **opt)                             # NOTE: to EntryHelper#entry_state_group_select
     css_selector = UPLOAD_GROUP_PANEL_CLASS
     curr_path  = opt.delete(:curr_path)  || request.fullpath

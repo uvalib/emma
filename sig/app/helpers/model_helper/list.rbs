@@ -104,9 +104,10 @@ module ModelHelper::List
   # @param [Integer, #to_i, nil] total    Default: count.
   # @param [Integer, #to_i, nil] records
   # @param [Integer, #to_i, nil] page
-  # @param [Integer, #to_i, nil] size   Default: #page_size.
-  # @param [Integer, #to_i, nil] row    Default: 1.
-  # @param [Hash]    opt                Passed to #page_filter.
+  # @param [Integer, #to_i, nil] size     Default: #page_size.
+  # @param [Integer, #to_i, nil] row      Default: 1.
+  # @param [Hash]    opt                  Passed to #page_results,
+  #                                         #page_filter, and #page_styles.
   #
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
@@ -124,6 +125,18 @@ module ModelHelper::List
   #
   def page_styles: (**untyped opt) -> ActiveSupport::SafeBuffer?
 
+  # Optional page result type controls in line with the top pagination control.
+  #
+  # @param [Hash] opt                 Passed to model-specific method except:
+  #
+  # @option opt [String, Symbol] :model   Default: `params[:controller]`
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see SearchHelper#search_page_results
+  #
+  def page_results: (**untyped opt) -> ActiveSupport::SafeBuffer?
+
   # An optional page filter control in line with the top pagination control.
   #
   # @param [Hash] opt                 Passed to model-specific method except:
@@ -133,6 +146,7 @@ module ModelHelper::List
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   # @see UploadHelper#upload_page_filter
+  # @see EntryHelper#entry_page_filter
   #
   def page_filter: (**untyped opt) -> ActiveSupport::SafeBuffer?
 

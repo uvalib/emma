@@ -68,8 +68,8 @@ module ModelHelper::List
     field_pairs(item, **fp_opt, &block).map { |field, prop|
       opt[:row] += 1
       value  = render_value(item, prop[:value], **value_opt)
-      levels = field_scopes(field).presence
-      rp_opt = levels ? append_classes(opt, levels) : opt
+      scopes = field_scopes(field).presence
+      rp_opt = scopes ? append_classes(opt, scopes) : opt
       render_pair(prop[:label], value, prop: prop, **rp_opt)
     }.unshift(nil).join(separator).html_safe
   end
@@ -309,9 +309,10 @@ module ModelHelper::List
   # @param [Integer, #to_i, nil] total    Default: count.
   # @param [Integer, #to_i, nil] records
   # @param [Integer, #to_i, nil] page
-  # @param [Integer, #to_i, nil] size   Default: #page_size.
-  # @param [Integer, #to_i, nil] row    Default: 1.
-  # @param [Hash]    opt                Passed to #page_filter.
+  # @param [Integer, #to_i, nil] size     Default: #page_size.
+  # @param [Integer, #to_i, nil] row      Default: 1.
+  # @param [Hash]    opt                  Passed to #page_results,
+  #                                         #page_filter, and #page_styles.
   #
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
@@ -341,10 +342,11 @@ module ModelHelper::List
     counts << page_number(page) if paging || more
     counts << pagination_count(count, total, unit: unit)
     counts  = html_div(*counts, class: 'counts')
-    styles  = page_styles(**opt)
+    results = page_results(**opt)
     filter  = page_filter(**opt)
+    styles  = page_styles(**opt)
     top_css = css_classes('pagination-top', (row && "row-#{row}"))
-    top     = html_div(links, counts, styles, filter, class: top_css)
+    top     = html_div(links, counts, results, filter, styles, class: top_css)
     bottom  = html_div(links, class: 'pagination-bottom')
     return top, bottom
   end
@@ -364,6 +366,21 @@ module ModelHelper::List
     try("#{model}_#{__method__}", **opt)
   end
 
+  # Optional page result type controls in line with the top pagination control.
+  #
+  # @param [Hash] opt                 Passed to model-specific method except:
+  #
+  # @option opt [String, Symbol] :model   Default: `params[:controller]`
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see SearchHelper#search_page_results
+  #
+  def page_results(**opt)
+    model = opt.delete(:model) || params[:controller]
+    try("#{model}_#{__method__}", **opt)
+  end
+
   # An optional page filter control in line with the top pagination control.
   #
   # @param [Hash] opt                 Passed to model-specific method except:
@@ -373,6 +390,7 @@ module ModelHelper::List
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   # @see UploadHelper#upload_page_filter
+  # @see EntryHelper#entry_page_filter
   #
   def page_filter(**opt)
     model = opt.delete(:model) || params[:controller]

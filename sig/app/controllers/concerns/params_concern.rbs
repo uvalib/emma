@@ -53,6 +53,15 @@ module ParamsConcern
   #
   def set_current_path: () -> void
 
+  # Controllers with their own independent on-screen debugging facilities.
+  #
+  # On these pages, the "&debug=..." URL parameter is treated as if it was
+  # "&app.(ctrlr).debug=...".
+  #
+  # @type [Array<Symbol>]
+  #
+  SPECIAL_DEBUG_CONTROLLERS: symArray
+
   # Set session on-screen debugging.
   #
   # @return [void]

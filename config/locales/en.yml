@@ -169,6 +169,7 @@ en:
         multiple:       false       # Allow multiple selections.
         menu:           ~           # Hard-wired label/value pairs.
         menu_format:    'titleize'  # Transform for values into menu labels.
+        active:         true        # @see LayoutHelper::SearchFilters#permitted_by?
 
       _reset:
         label:          'Reset'
@@ -263,6 +264,7 @@ en:
         default:        100
         multiple:       false
         menu_format:    'none'
+        active:         !ruby/symbol file_only
 
       sort:
         url_param:      sort

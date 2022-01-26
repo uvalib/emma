@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::SearchFilters
 
   include LayoutHelper::Common
+  include RoleHelper
 
   # ===========================================================================
   # :section:
@@ -193,8 +194,9 @@ module LayoutHelper::SearchFilters
     # @return [Array<Array<String,String>>]
     #
     def add_reverse_pairs(pairs, config)
-      config = config[:reverse] if config.is_a?(Hash) && config.key?(:reverse)
-      return pairs unless config.is_a?(Hash) && true?(config[:enabled])
+      return pairs unless config.is_a?(Hash)
+      return pairs unless (config = config[:reverse]).is_a?(Hash)
+      return pairs unless true?(config[:enabled])
       except = Array.wrap(config[:except])
       pairs.flat_map do |fwd_pair|
         label, value = fwd_pair = fwd_pair.map(&:to_s)
@@ -394,17 +396,29 @@ module LayoutHelper::SearchFilters
   #
   IMMEDIATE_SEARCH = false
 
-  # New search styles.
+  # Search display style variants.
   #
   # @type [Array<Symbol>]
   #
   SEARCH_STYLES = %i[compact grid aggregate].freeze
 
-  # The default search results style.
+  # The default search display style.
   #
   # @type [Symbol]
   #
   DEFAULT_STYLE = :normal
+
+  # Search result display variants.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RESULTS = %i[title file].freeze
+
+  # The default search result display.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_RESULTS = :title
 
   # ===========================================================================
   # :section:
@@ -486,7 +500,8 @@ module LayoutHelper::SearchFilters
   #
   def search_filter_container(target: nil, **opt)
     target    = search_target(target) or return
-    grid_rows = SEARCH_MENU_MAP.dig(target, :layout)&.deep_dup || [[]]
+    config    = SEARCH_MENU_MAP[target]   || {}
+    grid_rows = config[:layout]&.deep_dup || [[]]
     grid_opt  = { target: target, row: 0 }
     grid_opt[:row_max] = grid_rows.size
     grid_opt[:col_max] = max_columns = grid_rows.map(&:size).max
@@ -495,10 +510,16 @@ module LayoutHelper::SearchFilters
       grid_opt[:col]  = 0
       menus.map { |name|
         grid_opt[:col] += 1
-        name = name.to_s.presence&.delete_suffix('_menu')&.to_sym || :blank
-        meth = :"#{name}_menu"
-        meth = :generic_menu unless respond_to?(meth, true)
-        send(meth, name, **grid_opt)
+        name  = name.to_s.presence&.delete_suffix('_menu')&.to_sym || :blank
+        meth  = :"#{name}_menu"
+        meth  = :generic_menu unless respond_to?(meth, true)
+        guard = config.dig(name, :active)
+        if guard.nil? || permitted_by?(guard)
+          menu_opt = grid_opt
+        else
+          menu_opt = grid_opt.merge(disabled: true)
+        end
+        send(meth, name, **menu_opt)
       }.compact.tap { |columns|
         grid_opt[:row] -= 1 if columns.blank?
       }.presence
@@ -531,6 +552,12 @@ module LayoutHelper::SearchFilters
     button_tag(label, prepend_classes!(opt, css_selector))
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Indicate whether selecting a search menu value takes immediate effect.
   #
   # If not menu selection value(s) are only transmitted via the search submit
@@ -555,7 +582,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def search_mode_marker
+  def immediate_search_marker
     css_selector = '.immediate-search-marker'
     if immediate_search?
       html_div('immediate', class: css_classes(css_selector, 'hidden'))
@@ -568,51 +595,108 @@ module LayoutHelper::SearchFilters
 
   public
 
-  # Get the display style for search results.
+  # Get the display mode for search results.
+  #
+  # @return [Symbol]
+  #
+  def search_results
+    @results_type ||= session['app.search.results']&.to_sym || DEFAULT_RESULTS
+  end
+
+  # Indicate whether search results are displayed hierarchically (by title).
+  #
+  def title_results?
+    search_results == :title
+  end
+
+  # Indicate whether search results are displayed literally (per file).
+  #
+  def file_results?
+    search_results == :file
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether search debug controls should be displayed.
+  #
+  def search_debug?
+    session_debug?(:search)
+  end
+
+  # Indicate whether search dev controls should be displayed.
+  #
+  def search_dev?
+    session_debug?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration conditionals.
+  #
+  # @type [Hash{Symbol=>Proc,Symbol}]
+  #
+  CONFIG_CONDITION = {
+    title_only: :title_results?,
+    file_only:  :file_results?,
+    debug_only: :search_debug?,
+    dev_only:   :search_dev?,
+  }
+
+  # Indicate whether the guard condition is satisfied.
+  #
+  # @param [Array<Symbol,String>, Symbol, String, Boolean, nil] guard
+  #
+  def permitted_by?(guard)
+    return false if false?(guard)
+    return true  if true?(guard)
+    return false if (guards = Array.wrap(guard).compact.map(&:to_sym)).blank?
+    guards.all? { |g| (m = CONFIG_CONDITION[g]).is_a?(Proc) ? m.call : try(m) }
+  end
+
+  # Normalize :active property values for use by #permitted_by?.
+  #
+  # @param [Array<Symbol,String,Boolean,nil>, Symbol, String, Boolean, nil] val
+  #
+  # @return [TrueClass, FalseClass, Array<Symbol>]
+  #
+  def self.guard_values(val)
+    guards = Array.wrap(val).compact
+    return false if guards.blank? || guards.any? { |item| false?(item) }
+    return true  if guards.any? { |item| true?(item) }
+    guards.map!(&:to_sym).uniq!
+    if (invalid = guards - CONFIG_CONDITION.keys).present?
+      invalid = invalid.first unless invalid.many?
+      Log.warn("#{__method__}: not in CONFIG_CONDITION: #{invalid.inspect}")
+    end
+    guards
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get the display style variant for search results.
   #
   # @return [Symbol]
   #
   def search_style
-    @search_style ||=
-      session['app.search.style']&.to_sym ||
-      %i[v2 v3].find { |a| request_parameters[:action]&.to_sym == a } ||
-      DEFAULT_STYLE
+    @search_style ||= session['app.search.style']&.to_sym || DEFAULT_STYLE
   end
 
-  # Indicate whether search results are displayed in the original manner.
+  # Indicate whether search results are displayed in the normal way.
   #
   def default_style?
     search_style == DEFAULT_STYLE
-  end
-
-  # Indicate whether search results are displayed as a grid.
-  #
-  def grid_style?
-    search_style == :grid
-  end
-
-  # Indicate whether search results are displayed compactly.
-  #
-  def compact_style?
-    search_style == :compact
-  end
-
-  # Indicate whether search results are aggregated into title-level units.
-  #
-  def aggregate_style?
-    search_style == :aggregate
-  end
-
-  # Indicate whether search results are displayed in the original manner.
-  #
-  def v2_style?
-    search_style == :v2
-  end
-
-  # Indicate whether search results are displayed in the original manner.
-  #
-  def v3_style?
-    search_style == :v3
   end
 
   # ===========================================================================
@@ -771,8 +855,14 @@ module LayoutHelper::SearchFilters
     opt[:config] ||= current_menu_config(menu_name, **opt)
     opt[:title]  ||= menu_tooltip(menu_name, **opt)
     l_id  = "#{menu_name}_label"
-    menu  = menu_control(menu_name, label_id: l_id, **opt) or return
-    label = menu_label(menu_name, label: label, id: l_id, **opt)
+    l_opt = m_opt = opt
+    if opt[:disabled]
+      append_classes!(opt, :disabled)
+      note  = 'NOTE: this value is fixed for results by title.' # TODO: I18n
+      m_opt = opt.merge(title: [opt[:title], note].compact.join("\n"))
+    end
+    menu  = menu_control(menu_name, label_id: l_id, **m_opt) or return
+    label = menu_label(menu_name, label: label, id: l_id, **l_opt)
     # noinspection RubyMismatchedReturnType
     label << menu
   end
@@ -793,6 +883,7 @@ module LayoutHelper::SearchFilters
   # @param [String, Symbol, nil] target     Passed to #search_form.
   # @param [String, Array, nil]  selected   Selected menu item(s).
   # @param [String, Symbol, nil] label_id   ID of associated label element.
+  # @param [Boolean, nil]        disabled
   # @param [Hash]                opt        Passed to #search_form except for
   #                                           #MENU_OPTS and:
   #
@@ -807,7 +898,14 @@ module LayoutHelper::SearchFilters
   #--
   # noinspection RubyNilAnalysis
   #++
-  def menu_control(menu_name, target: nil, selected: nil, label_id: nil, **opt)
+  def menu_control(
+    menu_name,
+    target:   nil,
+    selected: nil,
+    label_id: nil,
+    disabled: nil,
+    **opt
+  )
     css_selector  = '.menu-control'
     opt, html_opt = partition_hash(opt, :config, :default, *MENU_OPTS)
     target    = search_target(target) or return
@@ -846,6 +944,7 @@ module LayoutHelper::SearchFilters
     select_opt  = { 'data-placeholder': any_label, 'data-default': default }
     select_opt[:'aria-labelledby'] = label_id              if label_id
     select_opt[:multiple]          = multiple              if multiple
+    select_opt[:disabled]          = disabled              if disabled
     select_opt[:onchange]          = 'this.form.submit();' if immediate_search?
     menu = select_tag(url_param, option_tags, select_opt)
 

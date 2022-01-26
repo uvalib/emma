@@ -47,6 +47,76 @@ module SearchHelper
   # :section:
   # ===========================================================================
 
+  protected
+
+  # In debug mode, add date and volume information to the title line.
+  #
+  # @type [Boolean]
+  #
+  SHOW_EXTENDED_TITLE = false
+
+  # Indicate whether items should get extended titles.
+  #
+  def extended_title?
+    SHOW_EXTENDED_TITLE && search_debug?
+  end
+
+  # Add date and volume information to the title line.
+  #
+  # @param [Search::Api::Record] item
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  #--
+  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
+  #++
+  def extended_title(item)
+    date    = Search::Record::TitleRecord.item_date(item).presence
+    parts   = item.try(:all_item_numbers, '&thinsp;|&thinsp;'.html_safe)
+    parts ||= Search::Record::TitleRecord.item_number(item).presence
+    title   = ERB::Util.h(item.full_title)
+    title  << html_span(date,  class: 'item-date')   if date
+    title  << html_span(parts, class: 'item-number') if parts
+    title
+  end
+
+  # In debug mode, add a display of the (supposed) relevancy score.
+  #
+  # @note This is probably not very helpful for `search_results == :title`.
+  #
+  # @type [Boolean]
+  #
+  SHOW_RELEVANCY_SCORE = false
+
+  # Indicate whether items should show relevancy scores.
+  #
+  def relevancy_scores?
+    SHOW_RELEVANCY_SCORE && search_debug?
+  end
+
+  # Generate an element to display a score for the item.
+  #
+  # @param [Search::Api::Record] item
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def relevancy_scores(item)
+    # noinspection RailsParamDefResolve
+    scores = item.try(:get_scores).presence or return
+    scores.compact!
+    types = scores.keys.map { |type| type.to_s.delete_suffix('_score') }
+    types = [types[0...-1].join(', '), types[-1]].compact_blank.join(' and ')
+    tip   = +'This is a guess at the relevancy "score" for this item'
+    tip  << " based on its #{types} metadata" if types.present?
+    tip  << '.'
+    score = scores.values.sum.round
+    html_span(score, class: 'item-score', title: tip)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # Transform a field value for HTML rendering.
@@ -86,41 +156,18 @@ module SearchHelper
   #
   def title_and_source_logo(item, **opt)
     css_selector = '.title'
-    title  = item.full_title
+    score  = relevancy_scores? && relevancy_scores(item)
+    title  = extended_title? && extended_title(item) || item.full_title
     source = item.emma_repository
     source = '' unless EmmaRepository.values.include?(source)
     prepend_classes!(opt, css_selector, source)
 
-    # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
-    if aggregate_style?
-      date    = Search::Record::TitleRecord.item_date(item)
-      date  &&= date.presence
-      parts   = item.try(:all_item_numbers, '&thinsp;|&thinsp;'.html_safe)
-      parts ||= Search::Record::TitleRecord.item_number(item)
-      parts &&= parts.presence
-      title   = ERB::Util.h(title)                     if date || parts
-      title  << html_span(date,  class: 'item-date')   if date
-      title  << html_span(parts, class: 'item-number') if parts
-    end
-
-    title = html_div(title, opt)
-    logo  = repository_source_logo(source)
-    ctrl  = prev_next_controls(**opt)
-
-    # noinspection RailsParamDefResolve, RubyScope
-    if aggregate_style? && (scores = item.try(:get_scores)).present?
-      scores.compact!
-      types = scores.keys.map { |type| type.to_s.delete_suffix('_score') }
-      types = [types[0...-1].join(', '), types[-1]].compact_blank.join(' and ')
-      tip   = +'This is a guess at the relevancy "score" for this item'
-      tip  << " based on its #{types} metadata" if types.present?
-      tip  << '.'
-      score = scores.values.sum.round
-      ctrl << html_span(score, class: 'item-score', title: tip)
-    end
-
-    # noinspection RubyMismatchedReturnType
-    title << logo << ctrl
+    elements = []
+    elements << html_div(title, opt)
+    elements << repository_source_logo(source)
+    elements << prev_next_controls(**opt)
+    elements << score if score.present?
+    safe_join(elements)
   end
 
   # Display title of the associated work along with the source repository.
@@ -302,6 +349,56 @@ module SearchHelper
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The defined levels for rendering an item hierarchically.
+  #
+  # @return [Hash{Symbol=>Array<Symbol,Integer>}]
+  #
+  # == Usage Notes
+  # This is invoked from ModelHelper::Fields#field_levels.
+  #
+  def search_field_levels(**)
+    Search::Record::TitleRecord::HIERARCHY_PATHS
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # CSS classes for the current #search_style.
+  #
+  # @param [String] suffix
+  #
+  # @return [Array<String>]
+  #
+  def search_style_classes(suffix: '-style')
+    styles = [search_style]
+    styles << :dev if search_debug?
+    styles.compact_blank!
+    styles.reject! { |v| EngineConcern::RESET_KEYS.include?(v) }
+    styles.map! { |v| v.to_s.delete_suffix(suffix) << suffix }
+  end
+
+  # CSS classes for the current #search_results.
+  #
+  # @param [String] suffix
+  #
+  # @return [Array<String>]
+  #
+  def search_result_classes(suffix: '_results')
+    results = [search_results]
+    results.compact_blank!
+    results.reject! { |v| EngineConcern::RESET_KEYS.include?(v) }
+    results.map! { |v| v.to_s.delete_suffix(suffix) << suffix }
+  end
+
+  # ===========================================================================
   # :section: Item details (show page) support
   # ===========================================================================
 
@@ -399,18 +496,14 @@ module SearchHelper
       field = SEARCH_STYLE_BUTTON_TEMPLATE[:field] if false?(field)
       prop.delete(:field) if (prop[:field] = field).nil?
 
-      active = prop[:active] || false
-      prop[:active] = true?(active) || (false?(active) ? false : active.to_sym)
+      prop[:active] = LayoutHelper::SearchFilters.guard_values(prop[:active])
 
       [style, prop]
     }.compact.to_h.deep_freeze
 
-  # Control for filtering which records are displayed.
+  # Controls for applying one or more search style variants.
   #
-  # @param [Boolean,nil] dev_only     If *true*, activate developer controls.
-  # @param [Hash]        opt          Passed to outer #html_div except:
-  #
-  # @option opt [Boolean] :dev_only   If *true*, activate developer controls.
+  # @param [Hash] opt                 Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -419,17 +512,83 @@ module SearchHelper
   # @see file:app/assets/javascripts/controllers/search.js *setupColorizeButtons()*
   #
   # == Usage Notes
-  # This is invoked from ModelHelper::List#page_filter.
+  # This is invoked from ModelHelper::List#page_styles.
   #
-  def search_page_styles(dev_only: nil, **opt)
-    return if default_style?
-    dev_only = session_debug? if dev_only.nil?
+  def search_page_styles(**opt)
+    common_opt = { class: 'style-button' }
+    buttons =
+      SEARCH_STYLE_BUTTONS.values.map { |prop|
+        next unless permitted_by?(prop[:active])
+        button_opt = common_opt.merge(title: prop[:tooltip])
+        prepend_classes!(button_opt, prop[:class])
+        html_button(prop[:label], button_opt)
+      }.compact
+    return unless buttons.present?
     prepend_classes!(opt, SEARCH_STYLE_CONTAINER)
+    html_div(buttons, **opt)
+  end
+
+  # Search result types.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  SEARCH_RESULT_TYPES =
+    I18n.t('emma.search.results').map { |style, prop|
+      next if style.start_with?('_')
+      prop = prop.dup
+      prop[:label] ||= style.to_s
+
+      tooltip = prop.delete(:title).presence || prop[:tooltip].presence
+      prop.delete(:tooltip) if (prop[:tooltip] = tooltip).blank?
+
+      prop[:active] = LayoutHelper::SearchFilters.guard_values(prop[:active])
+
+      [style, prop]
+    }.compact.to_h.deep_freeze
+
+  # Parameters not included in the base path in #search_page_results.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RESULT_IGNORED_PARAMS =
+    UploadConcern::UPLOAD_PAGE_PARAMS || EntryConcern::ENTRY_PAGE_PARAMS
+
+  # Control for selecting the type of search results to display.
+  #
+  # @param [String,Symbol,nil] selected  Selected menu item.
+  # @param [Hash]              opt       Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #SEARCH_RESULT_TYPES
+  #
+  # == Usage Notes
+  # This is invoked from ModelHelper::List#page_results.
+  #
+  def search_page_results(selected: nil, **opt)
+    css_selector = '.results.single.menu-control'
+    base_path    = request.path
+    url_params   = url_parameters.except(*SEARCH_RESULT_IGNORED_PARAMS)
+    prm_selected = url_params.delete(:results)
+    selected   ||= prm_selected || search_results
+    default      = nil
+    pairs =
+      SEARCH_RESULT_TYPES.map { |type, prop|
+        next unless permitted_by?(prop[:active])
+        default = type if prop[:default]
+        [prop[:label], type]
+      }.compact
+    opt[:'data-path'] = make_path(request.path, **url_params)
+    prepend_classes!(opt, css_selector)
     html_div(**opt) do
-      SEARCH_STYLE_BUTTONS.values.map do |prop|
-        next unless prop[:active].is_a?(Symbol) ? dev_only : prop[:active]
-        html_button(prop[:label], class: prop[:class], title: prop[:tooltip])
-      end
+      menu_name   = :results
+      option_tags = options_for_select(pairs, selected)
+      select_opt  = { id: unique_id(menu_name) }
+      select_opt[:'data-default'] = default if default
+      select_tag(menu_name, option_tags, select_opt)
     end
   end
 
@@ -451,7 +610,7 @@ module SearchHelper
     opt[:model] = :search
     if item
       # noinspection RailsParamDefResolve
-      if aggregate_style?
+      if relevancy_scores?
         added = item.try(:get_scores, precision: 2, all: true) || {}
         added[:sort_date] = item.try(:emma_sortDate).presence
         added[:pub_date]  = item.try(:emma_publicationDate).presence
@@ -460,30 +619,18 @@ module SearchHelper
         pairs = pairs&.merge(added) || added
       end
       # noinspection RubyNilAnalysis
-      opt[:pairs] = pairs || {} if item.aggregate?
+      opt[:pairs]    = pairs || {}             if item.aggregate?
+      opt[:render] ||= :render_field_hierarchy if title_results?
     end
     opt[:pairs] ||= Model.index_fields(opt[:model]).merge(pairs || {})
     model_list_item(item, **opt)
   end
 
-  # NOTE: transitional
-  def search_list_item_v2(item, **opt)
-    opt[:render] = :render_grouped_fields # For #model_list_item
-    search_list_item(item, **opt)
-  end
-
-  # NOTE: transitional
-  def search_list_item_v3(item, **opt)
-    opt[:render] = :render_field_hierarchy # For #model_list_item
-    search_list_item(item, **opt)
-  end
-
   # Include edit and delete controls below the entry number.
   #
-  # @param [Model]   item
-  # @param [Boolean] edit
-  # @param [Boolean] toggle
-  # @param [Hash]    opt                  Passed to #list_item_number except:
+  # @param [Model, nil] item
+  # @param [Boolean]    edit
+  # @param [Hash]       opt               Passed to #list_item_number except:
   #
   # @option opt [String] :id              HTML ID of the item element.
   #
@@ -493,15 +640,19 @@ module SearchHelper
   # @see UploadHelper#upload_edit_icon
   # @see UploadHelper#upload_delete_icon
   #
-  def search_list_item_number(item, edit: true, toggle: false, **opt)
-    opt[:inner] = opt[:inner].is_a?(TrueClass) ? [] : Array.wrap(opt[:inner])
-    opt[:outer] = Array.wrap(opt[:outer])
+  def search_list_item_number(item, edit: true, **opt)
+    return unless item
+    opt[:inner] = nil if opt[:inner].is_a?(TrueClass)
+    opt[:inner] = Array.wrap(opt[:inner]).dup
+    opt[:outer] = Array.wrap(opt[:outer]).dup
     item_id     = opt.delete(:id)
 
-    if toggle
+    if title_results?
       button = search_list_item_toggle(row: opt[:row], id: item_id)
       opt[:inner] << button # Visible for narrow screens.
       opt[:outer] << button # Visible for wide and medium-width screens.
+      # noinspection RubyMismatchedArgumentType
+      opt[:outer].prepend(format_counts(item)) if search_debug?
     end
 
     if edit && can?(:modify, item)
@@ -517,28 +668,18 @@ module SearchHelper
     list_item_number(item, **opt)
   end
 
-  # NOTE: transitional
-  def search_list_number_v2(item, **opt)
-    search_list_item_number(item, toggle: true, **opt)
-  end
-
-  # NOTE: transitional
-  def search_list_number_v3(item, **opt)
-    opt[:outer] = file_counts(item)
-    search_list_item_number(item, toggle: true, **opt)
-  end
-
-  # Include edit and delete controls below the entry number.
+  # Generate a summary of the number of files per each format associated with
+  # this item.
   #
-  # @param [Search::Record::TitleRecord] item
-  # @param [Hash]                        opt    Passed to outer :ul.
+  # @param [Search::Record::TitleRecord, nil] item
+  # @param [Hash]                             opt   Passed to outer :ul.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def file_counts(item, **opt)
-    css_selector = '.file-counts'
-    counts = item.try(:get_format_counts) || {}
+  def format_counts(item, **opt)
+    css_selector = '.format-counts'
     html_tag(:ul, prepend_classes!(opt, css_selector)) do
+      counts = item&.get_format_counts || {}
       counts.map do |format, count|
         html_tag(:li) do
           count  = html_span(count, class: 'count')

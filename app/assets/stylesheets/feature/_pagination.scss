@@ -150,12 +150,5 @@
                 margin: 0.5rem 0 0;
             }
         }
-
-        .page-count + .search-count,
-        .search-count + .page-count {
-            @media #{$not-narrow-screen} {
-                margin-left: 1rem;
-            }
-        }
     }
 }

@@ -24,9 +24,15 @@ module SearchConcern
   #
   def search_api: () -> SearchService
 
+  # @private
+  DEF_TITLE_SEARCH: bool
+
+  # @private
+  GENERATE_SCORES: bool
+
   # index_search
   #
-  # @param [Boolean] titles           If *false*, get records not titles.
+  # @param [Boolean] titles           If *false*, return records not titles.
   # @param [Boolean] save             If *false*, do not save search terms.
   # @param [Boolean] scores           Calculate experimental relevancy scores.
   # @param [Symbol]  items            Specify method for #pagination_finalize.
@@ -40,8 +46,8 @@ module SearchConcern
   # If :titles is *true* then :canonical defaults to *true* on the production
   # service and *false* everywhere else.
   #
-  def index_search: (?titles: true, ?save: bool, ?scores: bool, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchTitleList
-                  | (titles: false, ?save: bool, ?scores: bool, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchRecordList
+  def index_search: (?titles: true?, ?save: bool, ?scores: bool?, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchTitleList
+                  | (titles:  false, ?save: bool, ?scores: bool?, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchRecordList
 
   # index_record
   #
@@ -161,13 +167,46 @@ module SearchConcern
   #
   def set_search_engine: () -> void
 
-  # Process the URL parameter for setting the search style.
+  # Process the URL parameter for setting the search results type (i.e.,
+  # title-level display or file-level display).
+  #
+  # @param [Symbol, String, nil] type
   #
   # @return [void]
   #
-  def set_search_style: () -> void
+  # == Usage Notes
+  # Either run manually or as a controller action, the method will update
+  # `session['app.search.style']`.  In the latter case, if *style* is taken
+  # from the URL parameter a redirect will occur.
+  #
+  def set_search_results: (?(String|Symbol)? `type`) -> void
+
+  # Process the URL parameter for setting the search style.
+  #
+  # @param [Symbol, String, nil] style
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # Either run manually or as a controller action, the method will update
+  # `session['app.search.style']`.  In the latter case, if *style* is taken
+  # from the URL parameter a redirect will occur.
+  #
+  def set_search_style: (?(String|Symbol)? style) -> void
 
   private
+
+  # set_search_feature
+  #
+  # @param [Symbol]               param_key
+  # @param [Any,nil]              value
+  # @param [Array<Symbol>,Symbol] valid_values
+  # @param [String]               session_key
+  # @param [Symbol]               meth
+  #
+  # @return [void]
+  #
+  def set_search_feature: (Symbol param_key, untyped value, Symbol|symArray valid_values, ?session_key: String?, ?meth: Symbol) -> void
 
   #THIS_MODULE: untyped
 end

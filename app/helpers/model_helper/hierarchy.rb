@@ -1,14 +1,15 @@
-# app/helpers/model_helper/list_v3.rb
+# app/helpers/model_helper/hierarchy.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# View helper methods supporting the display and creation of Model instances
-# (both database items and API messages).
+# View helper methods supporting the hierarchical display of model records.
 #
-module ModelHelper::ListV3
+# @note In use with Search items but untested with any other Model class.
+#
+module ModelHelper::Hierarchy
 
   include ModelHelper::List
 
@@ -32,6 +33,9 @@ module ModelHelper::ListV3
   #                                             passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #item_lines
+  # @see Search::Record::TitleRecord#field_hierarchy
   #
   #--
   # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
@@ -83,7 +87,7 @@ module ModelHelper::ListV3
   #
   FILE_TERM = 'copy'
 
-  # item_lines
+  # Data for all of the lines that represent a hierarchical entry.
   #
   # @param [Search::Record::TitleRecord] item
   # @param [Hash, nil]                   hierarchy
@@ -91,12 +95,16 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see *en.emma.search.field_hierarchy*
+  #
   def item_lines(item, hierarchy, opt)
     opt[:record_map] ||= item.records.map { |r| [r.emma_recordId, r] }.to_h
-    item_index = [opt[:index]]
-    item_prop  = { record: item }
-    skip_opt   = { meth: __method__, except: { hash: :title, array: :parts } }
-    (hierarchy || item.field_hierarchy).flat_map { |main_key, main_section|
+    item_index  = [opt[:index]]
+    item_prop   = { record: item }
+    skip_opt    = { meth: __method__, except: { hash: :title, array: :parts } }
+    hierarchy ||= item.try(:field_hierarchy) || {}
+    # noinspection RubyNilAnalysis
+    hierarchy.flat_map { |main_key, main_section|
       next if skip_entry?(main_key, main_section, **skip_opt)
       main_index = item_index
       main_prop  = add_scope(item_prop, main_key)
@@ -108,7 +116,8 @@ module ModelHelper::ListV3
     }.compact_blank!
   end
 
-  # title_level_lines
+  # Data for the lines of title-level information which relates to the overall
+  # creative work.
   #
   # @param [Hash]  main_section
   # @param [Array] main_index
@@ -117,11 +126,19 @@ module ModelHelper::ListV3
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
+  # @see "en.emma.search.field_hierarchy.title"
+  #
   def title_level_lines(main_section, main_index, main_prop, opt)
     file_section_lines(main_section, main_index, main_prop, opt)
   end
 
-  # part_level_lines
+  # Data for the lines representing all portions of a work (e.g. volumes) as
+  # indicated by bibliographic metadata across all of the related file-level
+  # records.
+  #
+  # Each portion is represented in the return value by an HTML heading entry
+  # (indicating the volume number) followed by multiple Hash/HTML entries for
+  # each format available for that portion.
   #
   # @param [Array<Hash>] main_section
   # @param [Array]       main_index
@@ -129,6 +146,8 @@ module ModelHelper::ListV3
   # @param [Hash]        opt
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  # @see "en.emma.search.field_hierarchy.parts"
   #
   def part_level_lines(main_section, main_index, main_prop, opt)
     multiple_parts = main_section.many?
@@ -157,7 +176,7 @@ module ModelHelper::ListV3
     end
   end
 
-  # part_section_lines
+  # Data for the lines representing a specific portion of a work (e.g. volume).
   #
   # @param [Hash]  part
   # @param [Array] part_index
@@ -165,6 +184,8 @@ module ModelHelper::ListV3
   # @param [Hash]  opt
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  # @see "en.emma.search.field_hierarchy.parts.*"
   #
   def part_section_lines(part, part_index, part_prop, opt)
     skip_opt = { meth: __method__, except: { array: :formats } }
@@ -175,7 +196,12 @@ module ModelHelper::ListV3
     }.compact_blank!
   end
 
-  # part_lines
+  # Data for the lines representing all of the available formats for a specific
+  # portion of a work (e.g. volume).
+  #
+  # Each format is represented in the return value by an HTML heading entry
+  # (indicating the format) followed by multiple Hash/HTML entries for that
+  # format.
   #
   # @param [Array<Hash>] part_section
   # @param [Symbol]      part_key
@@ -186,6 +212,8 @@ module ModelHelper::ListV3
   # @option opt [String] :term        Override #FILE_TERM.
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  # @see "en.emma.search.field_hierarchy.parts.files"
   #
   def part_lines(part_section, part_key, part_index, part_prop, opt)
     opt[:term] = FILE_TERM unless (original_term = opt[:term])
@@ -212,7 +240,8 @@ module ModelHelper::ListV3
     }
   end
 
-  # format_section_lines
+  # Data for the lines representing all of the copies of a specific format of a
+  # portion of a work.
   #
   # @param [Hash]  format
   # @param [Array] format_index
@@ -220,6 +249,8 @@ module ModelHelper::ListV3
   # @param [Hash]  opt
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
+  #
+  # @see "en.emma.search.field_hierarchy.parts.files"
   #
   def format_section_lines(format, format_index, format_prop, opt)
     skip_opt = { meth: __method__, except: { array: :files } }
@@ -230,7 +261,11 @@ module ModelHelper::ListV3
     }.compact_blank!
   end
 
-  # part_level_lines
+  # Data for the lines representing each copy of a specific format of a portion
+  # of a work.
+  #
+  # Each copy is represented in the return value by an HTML heading entry
+  # followed by multiple Hash entries for that copy.
   #
   # @param [Array<Hash>] files
   # @param [Symbol]      section_key
@@ -255,7 +290,8 @@ module ModelHelper::ListV3
     end
   end
 
-  # file_section_lines
+  # Data for the lines representing all of the sets of metadata items of a
+  # unique copy of a specific format of a portion of a work.
   #
   # @param [Hash]  section
   # @param [Array] section_index
@@ -263,6 +299,11 @@ module ModelHelper::ListV3
   # @param [Hash]  opt
   #
   # @return [Array<Hash>]
+  #
+  # @see "en.emma.search.field_hierarchy.title.*"
+  # @see "en.emma.search.field_hierarchy.parts.*"
+  # @see "en.emma.search.field_hierarchy.parts.formats.*"
+  # @see "en.emma.search.field_hierarchy.parts.formats.files.*"
   #
   def file_section_lines(section, section_index, section_prop, opt)
     skip_opt = { meth: __method__, except: { hash: '*' } }
@@ -273,13 +314,20 @@ module ModelHelper::ListV3
     }.compact_blank!
   end
 
-  # field_lines
+  # Data for the lines representing a set of metadata items of a unique copy
+  # of a specific format of a portion of a work.
   #
   # @param [Hash] pairs
   # @param [Hash] field_prop
   # @param [Hash] opt
   #
   # @return [Array<Hash>]
+  #
+  # @see "en.emma.search.field_hierarchy.**.bibliographic"
+  # @see "en.emma.search.field_hierarchy.**.repository"
+  # @see "en.emma.search.field_hierarchy.**.index"
+  # @see "en.emma.search.field_hierarchy.**.remediation"
+  # @see "en.emma.search.field_hierarchy.**.accessibility"
   #
   def field_lines(pairs, field_prop, opt)
     fp_opt = opt.slice(:model, :action)
@@ -296,14 +344,13 @@ module ModelHelper::ListV3
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def render_field(line, opt)
-    opt         = opt.except(:action, :record_map)
     value_opt   = opt.slice(:model, :index, :min_index, :max_index, :no_format)
     label, record, field = line.values_at(:label, :record, :field)
     value       = render_value(record, line[:value], field: field, **value_opt)
     opt[:row]   = line[:row]
     opt[:index] = Array.wrap(line[:index]).compact.join('-')
     scopes      = field_scopes(line[:scopes])
-    append_classes!(opt, scopes) if scopes.present?
+    opt         = append_classes(opt, scopes) if scopes.present?
     render_line(label, value, prop: line, **opt)
   end
 
@@ -313,8 +360,8 @@ module ModelHelper::ListV3
   #
   PAIR_WRAPPER = 'pair'
 
-  # Divider between metadata for individual sections within a compound search
-  # item.
+  # A heading/divider between sections within a compound search item, which is
+  # rendered as a toggle for a collapsible container.
   #
   # @note SIDE EFFECT: `opt[:row]` will be incremented.
   #
@@ -344,13 +391,12 @@ module ModelHelper::ListV3
     toggle = search_list_item_toggle(id: tgt_id, context: type, open: open)
 
     # Prepend the toggle control to the label.
-    if name.is_a?(ActiveSupport::SafeBuffer)
-      label = name
-    else
+    label = name
+    unless label.is_a?(ActiveSupport::SafeBuffer)
       term  = (opt[:term] || type).to_s.titleize
-      label = html_span("#{term} #{name}", class: 'text')
+      label = "#{term} #{label}"
     end
-    label = toggle << label
+    label = toggle << html_span(label, class: 'text')
 
     # Make an non-empty value portion.
     value = details || HTML_SPACE
@@ -371,11 +417,14 @@ module ModelHelper::ListV3
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_line(label, value, **opt)
+    opt.except!(:action, :record_map, :term)
     opt[:wrap] ||= PAIR_WRAPPER
     render_pair(label, value, **opt) || ''.html_safe
   end
 
-  # skip_entry?
+  # Indicate whether a section should be ignored, either because its name
+  # starts with an underscore (indicating "out-of-band" information) or because
+  # it was indicated by the :except parameter.
   #
   # @param [Symbol]              key
   # @param [Any]                 value
@@ -383,7 +432,7 @@ module ModelHelper::ListV3
   # @param [Hash, Array, Symbol] except
   #
   def skip_entry?(key, value, meth: nil, except: nil, **)
-    return true if key.start_with?('_')
+    return true if key.blank? || key.start_with?('_')
     ok = { hash: [], array: [] }
     if except.is_a?(Hash)
       # noinspection RubyMismatchedArgumentType
@@ -429,42 +478,6 @@ module ModelHelper::ListV3
     lines = lines.select { |line| line.is_a?(Hash) }
     count = lines.map { |line| line[:"data-#{type}"] }.compact.uniq.size
     "(#{count} %s)" % (term || type).to_s.downcase.pluralize(count)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # @private
-  SEARCH_FIELD_LEVEL = Search::Record::TitleRecord::HIERARCHY_PATHS
-
-  # Return with the CSS classes associated with the items field scope(s).
-  #
-  # @param [Array, Symbol, String, nil] value
-  #
-  # @return [Array<String>]
-  #
-  #--
-  # == Variations
-  #++
-  #
-  # @overload field_scopes(single)
-  #   Interpret the argument as a field name used to lookup the scope values.
-  #   @param [Symbol, String, nil] single
-  #   @return [Array<String>]
-  #
-  # @overload field_scopes(array)
-  #   Extract the scopes from *array*.
-  #   @param [Array<Symbol>]       array
-  #   @return [Array<String>]
-  #
-  def field_scopes(value)
-    levels = value.is_a?(Array) ? value : SEARCH_FIELD_LEVEL[value&.to_sym]
-    levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
-    # noinspection RubyMismatchedReturnType
-    levels.map! { |s| "scope-#{s}" }
   end
 
   # ===========================================================================

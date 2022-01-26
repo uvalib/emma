@@ -83,6 +83,10 @@
         border-color:    $debug-fg;
         border-style:    dashed;
 
+        @media #{$wide-screen} {
+            min-width:   max-content;
+        }
+
         @media #{$medium-width} {
             max-width:   98%;
         }

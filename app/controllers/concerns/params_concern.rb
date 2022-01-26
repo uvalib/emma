@@ -113,32 +113,68 @@ module ParamsConcern
     session['app.time'] = DateTime.now
   end
 
-  # Set session on-screen debugging.
+  # Controllers with their own independent on-screen debugging facilities.
+  #
+  # On these pages, the "&debug=..." URL parameter is treated as if it was
+  # "&app.(ctrlr).debug=...".
+  #
+  # @type [Array<Symbol>]
+  #
+  SPECIAL_DEBUG_CONTROLLERS = %i[search]
+
+  # Set session on-screen debugging:
+  #
+  # URL parameters:
+  # - 'debug'               manage debugging relative to the current controller
+  # - 'app.debug'           general debugging
+  # - 'app.(ctrlr).debug'   manage debugging for the indicated controller
+  #
+  # Session keys:
+  # - session['app.debug']          general debugging display
+  # - session['app.search.debug']   search debugging only
   #
   # @return [void]
   #
   def set_debug
     return unless route_request?
-    return unless (debug = params.delete(:debug))
 
-    if true?(debug)
-      Log.info("#{__method__}: debug=#{debug.inspect} -> ON")
-      session['app.debug'] = true
+    ctrlr = params[:controller]&.to_sym
+    ctrlr = nil unless SPECIAL_DEBUG_CONTROLLERS.include?(ctrlr)
+    debug_parameters =
+      url_parameters.keys.map { |k|
+        case k.to_s
+          when 'debug'                 then context = ctrlr
+          when 'app.debug'             then context = nil
+          when /^app\.([^.]+)\.debug$/ then context = $1
+          else                              next
+        end
+        [context, params.delete(k)]
+      }.compact.to_h
+    return if debug_parameters.empty?
 
-    elsif false?(debug)
-      Log.info("#{__method__}: debug=#{debug.inspect} -> OFF")
-      if application_deployed?
-        session.delete('app.debug')
+    debug_parameters.each_pair do |context, debug|
+      key    = context ? "app.#{context}.debug" : 'app.debug'
+      log_as = "#{__method__}: #{key}=#{debug.inspect} -> %s"
+
+      if false?(debug)
+        Log.info(log_as % 'OFF')
+        if application_deployed?
+          session.delete(key)
+        else
+          session[key] = false
+        end
+
+      elsif true?(debug)
+        Log.info(log_as % 'ON')
+        session[key] = true
+
+      elsif debug.to_s.casecmp?('reset')
+        Log.info(log_as % 'RESET')
+        session.delete(key)
+
       else
-        session['app.debug'] = false
+        Log.warn(log_as % 'UNEXPECTED')
       end
-
-    elsif debug.to_s.casecmp?('reset')
-      Log.info("#{__method__}: debug=#{debug.inspect} -> RESET")
-      session.delete('app.debug')
-
-    else
-      Log.warn("#{__method__}: debug=#{debug.inspect} -> UNEXPECTED")
     end
 
     will_redirect

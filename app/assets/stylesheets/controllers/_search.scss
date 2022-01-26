@@ -16,11 +16,23 @@
 // Unified Search pages
 //=============================================================================
 
-$row-separation:        0.75rem;
-$row-separation-narrow: 1rem;
-$row-line-height:       1.5;
+$row-separation:         0.75rem;
+$row-separation-narrow:  1rem;
+$row-line-height:        1.5;
 
-$value-right-margin:    calc(2 * #{$flex-gap-x});
+$narrow-left-pad:        0.25rem;
+$narrow-logo-height:     2rem;
+$narrow-item-separation: 1.5rem;
+
+$wide-open-pad:          1rem;
+$medium-open-pad:        0.875rem;
+$narrow-open-pad:        0.75rem;
+
+$v-shift:                0.25rem;
+$v-shift-half:           math.div($v-shift, 2);
+$h-shift:                0.125rem;
+
+$value-right-margin:     calc(2 * #{$flex-gap-x});
 
 // The "top" values for sticky positioning -- the "narrow" version is much
 // larger because it is actually applied only to the .field-Title element,
@@ -58,6 +70,153 @@ $sticky-top-narrow: 3.125rem;
 //=============================================================================
 // Base definitions
 //=============================================================================
+
+/**
+ * To have the page title, pagination controls, and data analysis controls
+ * together, h1.heading and div.pagination-top contained within this element.
+ */
+.heading-bar {
+
+    display: grid;
+
+    @media #{$not-narrow-screen} {
+        grid-template-columns: auto 1fr;
+    }
+
+    @media #{$medium-width} {
+        margin:  calc(2 * #{model.$list-item-gap-y}) auto;
+        row-gap: 1rem;
+    }
+
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+    }
+
+    //=====================================================================
+    // Components
+    //=====================================================================
+
+    .heading {
+        @media #{$medium-width} {
+            margin:      auto 0;
+            grid-row:    1;
+            grid-column: 1;
+        }
+    }
+
+    // Search result type selection.
+    .results.menu-control {
+
+        display:           grid;
+        grid-auto-rows:    2rem;
+        grid-auto-columns: max-content;
+
+        > * {
+            font-size: large;
+        }
+    }
+
+    // Button tray for (dev only) page styles.
+    .button-tray {
+        display:        flex;
+        flex-direction: row-reverse;
+        flex-wrap:      wrap-reverse;
+        column-gap:     1rem;
+        row-gap:        0.5rem;
+    }
+
+    // Moved from top of .search-list
+    .pagination-top {
+
+        margin:         auto 0;
+        flex-direction: row-reverse;
+        column-gap:     1rem;
+        row-gap:        0.5rem;
+        grid-column:    unset;
+
+        @media #{$medium-width} {
+            grid-row:   1/3;
+            row-gap:    1rem;
+        }
+
+        @media #{$narrow-screen} {
+            row-gap:         0.25rem;
+            justify-content: center;
+        }
+
+        .counts,
+        .results.menu-control,
+        .button-tray {
+
+            @media #{$narrow-screen} {
+                flex:            1 1 100%;
+                justify-content: center;
+            }
+
+            @media #{$not-narrow-screen} {
+                margin-left:     1.5rem;
+            }
+        }
+
+        .counts {
+
+            flex-direction: row-reverse;
+            column-gap:     1rem;
+
+            @media #{$medium-width} {
+                flex-basis:      100%;
+            }
+
+            @media #{$narrow-screen} {
+                margin:          0.5rem 0;
+                flex-direction:  row;
+                column-gap:      0.5rem;
+                align-items:     baseline;
+            }
+        }
+
+        // Search result type selection.
+        .results.menu-control {
+        }
+
+        // Button tray enabled for the desktop and handheld form factors.
+        .button-tray {
+
+            @media #{$medium-width} {
+                display:         none;
+            }
+
+            @media #{$narrow-screen} {
+                margin-top:      0.5rem;
+                column-gap:      0.5rem;
+                row-gap:         0.25rem;
+            }
+        }
+    }
+
+    // Search result type selection.
+    > .results.menu-control {
+        display: none;
+    }
+
+    // Button tray enabled for the tablet form factor.
+    > .button-tray {
+
+        @media #{$wide-screen} {
+            display:       none;
+        }
+
+        @media #{$medium-width} {
+            align-content: baseline;
+            grid-row:      2;
+            grid-column:   1;
+        }
+
+        @media #{$narrow-screen} {
+            display:       none;
+        }
+    }
+}
 
 // @see LogoHelper#repository_source_logo
 .repository {
@@ -576,6 +735,10 @@ $sticky-top-narrow: 3.125rem;
                     padding-right:  $scroll-easement;
                     overflow-y:     auto;
                 }
+
+                &:focus {
+                    outline-offset: 1px;
+                }
             }
 
             // @see SearchHelper#title_and_source_logo
@@ -623,7 +786,7 @@ $sticky-top-narrow: 3.125rem;
 
                 @media #{$wide-screen} {
                     margin-left:    $flex-gap-x;
-                    padding-top:    0.75rem;
+                    padding-top:    0.5rem;
                 }
 
                 @media #{$medium-width} {
@@ -775,8 +938,9 @@ $sticky-top-narrow: 3.125rem;
     $item-number-bg:     lighter($uva-accent-blue, 97.5%);
     $item-number-border: $uva-accent-blue;
 
+    // Replaced by .heading-bar .pagination-top.
     .pagination-top {
-        // TODO: ???
+        display: none;
     }
 
     .number {
@@ -948,552 +1112,391 @@ $sticky-top-narrow: 3.125rem;
 }
 
 //=============================================================================
-// New styles
+// Hierarchical results
 //=============================================================================
 
-@mixin primary($bg) {
-    background-color: $bg;
-}
+// Box shadow sections preventing scrolled text from appearing above the title.
+$title-scroll-mask:
+    0.25rem  -0.25rem  0         0.5rem  $root-bg-color,
+    0.125rem  0        0.125rem  0.5rem  $root-bg-color;
 
-@mixin secondary($fg) {
+@mixin collapsible-search-list {
 
-    $gap:    2px;
-    $box:    2px + $gap;
-    $mask:   white;
-    $shift:  5px;
-    $exdent: 0.25rem;
-
-    box-shadow:
-             0 0 0 $gap $mask, // inner gap
-             0 0 0 $box $fg;   // outer boundary
-
-    @media #{$not-narrow-screen} {
-
-        &.value.array {
-            box-shadow:
-                0 0 0 $gap $mask, // inner gap
-                -$gap 0 0 $gap $mask, // mask left side inner boundary
-                0 0 0 $box $fg,   // inner boundary
-                -$shift 0 0 $gap $mask, // outer gap
-                -$shift 0 0 $box $fg;   // outer boundary
-        }
-
-        &.value:not(.array) {
-            margin-left:   -$exdent;
-            padding-left:  $exdent;
-            padding-right: 2 * $exdent;
-        }
-    }
+    column-gap: 1%;
 
     @media #{$narrow-screen} {
-
-        &.value:not(.array) {
-            margin-left:   0;
-            padding-right: 3 * $exdent;
-        }
-
-        &.value:not(.array):not(.list) {
-            padding-left:  $exdent;
-        }
-
+        margin:                calc(2 * #{model.$list-item-gap-y}) 0;
+        column-gap:            0.5rem;
+        grid-template-columns: auto 1fr;
     }
-}
-
-@mixin type-marker($term, $color: red, $inner-color: black) {
-    &:before {
-        content:        '[#{$term}]';
-        position:       absolute;
-        left:           -2rem;
-        padding:        0 0.25rem;
-        color:          white;
-        background:     $color;
-        font-weight:    bold;
-        text-transform: uppercase;
-        text-shadow:
-                        -1px -1px 0 $inner-color,
-                        -1px  1px 0 $inner-color,
-                        1px -1px 0 $inner-color,
-                        1px  1px 0 $inner-color;
-    }
-}
-
-$score-fields-bg: lightgray;
-
-@mixin score-fields {
-    &.field-CreatorScore,
-    &.field-IdentifierScore,
-    &.field-KeywordScore,
-    &.field-PubDate,
-    &.field-PublisherScore,
-    &.field-RemDate,
-    &.field-SortDate,
-    &.field-TitleScore {
-        font-weight: bold;
-        background:  $score-fields-bg;
-        @content;
-    }
-}
-
-// Additional class along with "search-index", "search", and "index".
-body.new-style,
-body.dev-style,
-body.search-v2,
-body.search-v3,
-body.grid-style,
-body.compact-style,
-body.aggregate-style {
-
-    $narrow-left-pad:        0.25rem;
-    $narrow-logo-height:     2rem;
-    $narrow-item-separation: 1.5rem;
-
-    $wide-open-pad:          1rem;
-    $medium-open-pad:        0.875rem;
-    $narrow-open-pad:        0.75rem;
-
-    $v-shift:                0.25rem;
-    $v-shift-half:           math.div($v-shift, 2);
-    $h-shift:                0.125rem;
-
-    // Box shadow sections which prevent scrolled text from
-    // appearing above the title.
-    $title-scroll-mask:
-        0.25rem  -0.25rem  0         0.5rem  $root-bg-color,
-        0.125rem  0        0.125rem  0.5rem  $root-bg-color;
 
     //=========================================================================
-    // Sections
+    // Components
     //=========================================================================
 
-    /**
-     * In order to have the page title, pagination controls, and data analysis
-     * controls together, h1.heading and div.pagination-top are moved inside of
-     * this element which is created dynamically in search.js.
-     */
-    .heading-bar {
+    $narrow-title-shadow: 0 0 0.5rem 0.25rem ghostwhite;
 
-        display: grid;
+    .toggle {
 
-        @media #{$not-narrow-screen} {
-            grid-template-columns: auto 1fr;
+        width:           1.65rem;
+        height:          1.5rem;
+        padding:         0;
+        line-height:     0;
+        text-decoration: none;
+        border-radius:   50%;
+        border-color:    darkgray;
+
+        @media #{$narrow-screen} {
+            width:       1.875rem;
+            height:      1.75rem;
+        }
+
+        /**
+         * This may just be a Firefox thing, but the right triangle icon seems
+         * shifted with respect to the down triangle icon.
+         */
+        &:not(.open) {
+            text-indent: 2px;
+        }
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &.for-item {
+            // NOTE: open/close at the title level
+        }
+
+        &.for-part {
+            // NOTE: open/close a bibliographic part under a title
+        }
+
+        &.for-format {
+            // NOTE: open/close a format within a part section
+        }
+
+        &.for-file {
+            // NOTE: open/close a file within a format sub-section
+
+        }
+    }
+
+    .number {
+
+        position:   relative;
+        margin:     auto 0;
+        padding:    0;
+        border:     none;
+        box-shadow: none;
+        background: none;
+
+        @media #{$wide-screen} {
+            padding-top:     0.5rem;
         }
 
         @media #{$medium-width} {
-            margin:  calc(2 * #{model.$list-item-gap-y}) auto;
-            row-gap: 1rem;
+            margin-right:    0.375rem;
+            padding-top:     0.5rem;
+            padding-bottom:  0.5rem;
         }
 
         @media #{$narrow-screen} {
-            grid-template-columns: 1fr;
+            margin-top:      0;
+            padding-top:     0.5rem;
+            grid-column-end: 1;
+            z-index:         $z-controls;
         }
 
         //=====================================================================
-        // Components
+        // Special handling for the item toggle.
         //=====================================================================
 
-        .heading {
-            @media #{$medium-width} {
-                margin:      auto 0;
-                grid-row:    1;
-                grid-column: 1;
+        .container {
+
+            height: 3.25rem;
+
+            @media #{$not-narrow-screen} {
+                display: none;
+            }
+
+            .value {
+                @include sr-only;
+            }
+
+            .toggle.for-item {
+                align-self:    flex-end;
+                margin-bottom: 0;
             }
         }
 
-        // Moved from top of .search-list
-        .pagination-top {
+        > .toggle.for-item {
 
-            margin:         auto 0;
-            flex-direction: row-reverse;
-            column-gap:     1rem;
-            row-gap:        0.5rem;
-            grid-column:    unset;
+            margin-top: 0.125rem;
+
+            @media #{$narrow-screen} {
+                display: none;
+            }
+        }
+
+        //=====================================================================
+        // When the associated list item is open.
+        //=====================================================================
+
+        &.open {
+
+            @media #{$wide-screen} {
+                $excess:     3.5rem;
+                height:      calc(100% - #{$excess});
+                margin-top:  1.75rem;
+                padding-top: 0.125rem;
+            }
 
             @media #{$medium-width} {
-                grid-row: 1/3;
-                row-gap:  1rem;
+                $excess:     2.5rem;
+                height:      calc(100% - #{$excess});
+                margin-top:  1.375rem;
+                padding-top: 0.3125rem;
             }
 
             @media #{$narrow-screen} {
-                row-gap:         0.25rem;
-                justify-content: center;
+                $excess:     $narrow-logo-height + $narrow-item-separation;
+                height:      calc(100% - #{$excess});
+                /**
+                 * Constrain the width so that the higher z-index .number
+                 * doesn't prevent sub-section toggles from being clicked.
+                 * The "overflow: visible" *shouldn't* be needed -- it's the
+                 * specifying of the width for .container that should keep the
+                 * item toggle from being clipped/deformed.
+                 */
+                width:       0;
+                overflow:    visible;
             }
 
-            .counts {
-
-                flex-direction: row-reverse;
-                column-gap:     1rem;
-
-                @media #{$medium-width} {
-                    flex-basis: 100%;
-                }
-
-                @media #{$narrow-screen} {
-                    margin:          0.5rem 0;
-                    flex-direction:  row;
-                    column-gap:      0.5rem;
-                    justify-content: center;
-                    align-items:     baseline;
-                    flex:            1 1 auto;
-                }
+            .container {
+                width: min-content;
             }
 
-            // Button tray enabled for the desktop and handheld form factors.
-            .button-tray {
-
-                display:         flex;
-                flex-direction:  row-reverse;
-                flex-wrap:       wrap-reverse;
-                column-gap:      1rem;
-                row-gap:         0.5rem;
-
-                @media #{$narrow-screen} {
-                    margin-top:      0.5rem;
-                    column-gap:      0.5rem;
-                    row-gap:         0.25rem;
-                    justify-content: center;
-                }
-
-                @media #{$medium-width} {
-                    display: none;
-                }
-            }
-        }
-
-        // Button tray enabled for the tablet form factor.
-        .button-tray {
-
-            display: none;
-
-            @media #{$medium-width} {
-                display:         flex;
-                flex-direction:  row-reverse;
-                column-gap:      1rem;
-                row-gap:         0.5rem;
-                justify-content: flex-end;
-                grid-row:        2;
-                grid-column:     1;
+            .toggle.for-item {
+                position: sticky;
+                top:      3vh;
             }
         }
     }
 
-    .search-list {
+    // Item "closed" by default; click to toggle "open".
+    .search-list-item {
 
-        column-gap: 1%;
+        min-width: 100%;
+        margin:    0;
 
         @media #{$narrow-screen} {
-            margin:     calc(2 * #{model.$list-item-gap-y}) 0;
-            column-gap: 0.5rem;
+            width:             92.5vw;
+            margin-left:       -(2rem + $narrow-left-pad);
+            margin-right:      (2rem + $narrow-left-pad);
+            margin-bottom:     $narrow-item-separation;
+            grid-column-start: 2;
         }
 
-        //=====================================================================
-        // Components
-        //=====================================================================
+        > .value,
+        > .pair > .value {
 
-        $narrow-title-shadow: 0 0 0.5rem 0.25rem ghostwhite;
+            &.field-Title {
 
-        .toggle {
-
-            width:           1.65rem;
-            height:          1.5rem;
-            padding:         0;
-            line-height:     0;
-            text-decoration: none;
-            border-radius:   50%;
-            border-color:    darkgray;
-
-            @media #{$narrow-screen} {
-                width:       1.875rem;
-                height:      1.75rem;
-            }
-
-            /**
-             * This may just be a Firefox thing, but the right triangle icon
-             * seems shifted with respect to the down triangle icon.
-             */
-            &:not(.open) {
-                text-indent: 2px;
-            }
-
-            &:hover {
-                box-shadow: none;
-            }
-
-            &.for-item {
-                // NOTE: open/close at the title level
-            }
-
-            &.for-part {
-                // NOTE: open/close a bibliographic part under a title
-            }
-
-            &.for-format {
-                // NOTE: open/close a format within a part section
-            }
-
-            &.for-file {
-                // NOTE: open/close a file within a format sub-section
-
-            }
-        }
-
-        .number {
-
-            position:   relative;
-            margin:     auto 0;
-            padding:    0;
-            border:     none;
-            box-shadow: none;
-            background: none;
-
-            @media #{$wide-screen} {
-                padding-top:     0.5rem;
-            }
-
-            @media #{$medium-width} {
-                margin-right:    0.375rem;
-                padding-top:     0.5rem;
-                padding-bottom:  0.5rem;
-            }
-
-            @media #{$narrow-screen} {
-                margin-top:      0;
-                padding-top:     0.5rem;
-                grid-column-end: 1;
-                z-index:         $z-controls;
-            }
-
-            //=================================================================
-            // Special handling for the item toggle.
-            //=================================================================
-
-            .container {
-
-                height: 3rem;
+                max-width:  100%;
+                align-self: baseline;
 
                 @media #{$not-narrow-screen} {
-                    display: none;
-                }
-
-                .value {
-                    @include sr-only;
-                }
-
-                .toggle.for-item {
-                    align-self:    flex-end;
-                    margin-bottom: 0;
-                }
-            }
-
-            > .toggle.for-item {
-
-                margin-top: 0.125rem;
-
-                @media #{$narrow-screen} {
-                    display: none;
-                }
-            }
-
-            //=================================================================
-            // When the associated list item is open.
-            //=================================================================
-
-            &.open {
-
-                @media #{$wide-screen} {
-                    $excess:     3.5rem;
-                    height:      calc(100% - #{$excess});
-                    margin-top:  1.75rem;
-                    padding-top: 0.125rem;
-                }
-
-                @media #{$medium-width} {
-                    $excess:     2.5rem;
-                    height:      calc(100% - #{$excess});
-                    margin-top:  1.375rem;
-                    padding-top: 0.3125rem;
+                    border: none;
                 }
 
                 @media #{$narrow-screen} {
-                    $excess:     $narrow-logo-height + $narrow-item-separation;
-                    height:      calc(100% - #{$excess});
-                    /**
-                     * Constrain the width so that the higher z-index .number
-                     * doesn't prevent sub-section toggles from being clicked.
-                     * The "overflow: visible" *shouldn't* be needed -- it's
-                     * the specifying of the width for .container that should
-                     * keep the item toggle from being clipped/deformed.
-                     */
-                    width:       0;
-                    overflow:    visible;
+                    justify-content: flex-end;
+                    background:      ghostwhite;
                 }
 
-                .container {
-                    width: min-content;
+                > * {
+                    margin:     auto 0;
+                    padding:    0;
+                    align-self: center;
                 }
 
-                .toggle.for-item {
-                    position: sticky;
-                    top:      3vh;
-                }
-            }
-        }
+                .title {
 
-        // Item "closed" by default; click to toggle "open".
-        .search-list-item {
+                    letter-spacing: -0.125px; // NOTE: needed for Firefox
+                    cursor:         default;
 
-            min-width: 100%;
-            margin:    0;
-
-            @media #{$narrow-screen} {
-                width:             92.5vw;
-                margin-left:       -(2rem + $narrow-left-pad);
-                margin-right:      (2rem + $narrow-left-pad);
-                margin-bottom:     $narrow-item-separation;
-                grid-column-start: 2;
-            }
-
-            > .value,
-            > .pair > .value {
-
-                &.field-Title {
-
-                    max-width:  100%;
-                    align-self: baseline;
-
-                    @media #{$not-narrow-screen} {
-                        border: none;
+                    @media #{$wide-screen} {
+                        flex-basis:    100%;
+                        border-top:    $wide-open-pad solid transparent;
+                        border-bottom: $wide-open-pad solid transparent;
                     }
 
-                    @media #{$narrow-screen} {
-                        justify-content: flex-end;
-                        background:      ghostwhite;
-                    }
-
-                    > * {
-                        margin:     auto 0;
-                        padding:    0;
-                        align-self: center;
-                    }
-
-                    .title {
-
-                        letter-spacing: -0.125px; // NOTE: needed for Firefox
-                        cursor:         default;
-
-                        @media #{$wide-screen} {
-                            flex-basis:    100%;
-                            border-top:    $wide-open-pad solid transparent;
-                            border-bottom: $wide-open-pad solid transparent;
-                        }
-
-                        @media #{$medium-width} {
-                            flex-basis:    100%;
-                            border-top:    $medium-open-pad solid transparent;
-                            border-bottom: $medium-open-pad solid transparent;
-                        }
-                    }
-
-                    .repository {
-
-                        img {
-
-                            box-shadow: 2px 2px 4px 0 lightgray;
-
-                            @media #{$narrow-screen} {
-                                max-height: $narrow-logo-height;
-                            }
-                        }
-                    }
-
-                    .prev-next {
-                        display: none;
+                    @media #{$medium-width} {
+                        flex-basis:    100%;
+                        border-top:    $medium-open-pad solid transparent;
+                        border-bottom: $medium-open-pad solid transparent;
                     }
                 }
-            }
-        }
 
-        //=====================================================================
-        // Components - when the list item is open
-        //=====================================================================
+                .repository {
 
-        .search-list-item.open {
-
-            > .value,
-            > .pair > .value {
-
-                &.field-Title {
-
-                    top: 1vh;
-
-                    @media #{$not-narrow-screen} {
-                        box-shadow: $title-scroll-mask;
+                    @media #{$medium-width} {
+                        margin-top: 0;
                     }
 
-                    @media #{$narrow-screen} {
-                        box-shadow: $narrow-title-shadow, $title-scroll-mask;
-                    }
+                    img {
 
-                    > * {
-                        @media #{$not-narrow-screen} {
-                            align-self: flex-start;
-                        }
-                    }
+                        box-shadow: 2px 2px 4px 0 lightgray;
 
-                    .title {
-                        @media #{$not-narrow-screen} {
-                            box-shadow:
-                                1px -1px  0  1px  $root-bg-color,
-                                1px  1px  0  1px  darkgray;
-                        }
-                    }
-
-                    .repository {
-                        @media #{$not-narrow-screen} {
-                            margin-top: 0;
-                        }
                         @media #{$narrow-screen} {
-                            position:   sticky;
-                            top:        0;
+                            max-height: $narrow-logo-height;
+                        }
+                    }
+                }
+
+                .prev-next {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .search-list-item.colorized {
+
+        > .value,
+        > .pair > .value {
+
+            &.field-Title {
+
+                .identity-number {
+
+                    // noinspection CssReplaceWithShorthandSafely
+                    @media #{$narrow-screen} {
+                        margin-top:    auto;
+                        margin-bottom: auto;
+                        margin-left:   0.25rem;
+                        margin-right:  0.5rem;
+                    }
+
+                    &.error,
+                    &.exile {
+                        @media #{$narrow-screen} {
+                            margin-right: 0.25rem;
                         }
                     }
                 }
             }
         }
+    }
 
-        //=====================================================================
-        // Components - when the list item is closed
-        //=====================================================================
+    //=========================================================================
+    // Components - when the list item is open
+    //=========================================================================
 
-        .search-list-item:not(.open) {
+    .search-list-item.open {
 
-            @media #{$not-narrow-screen} {
-                max-height:     4rem;
-                padding-bottom: 1rem;
-            }
+        > .value,
+        > .pair > .value {
 
-            > .value,
-            > .pair > .value {
+            &.field-Title {
 
-                &.field-Title {
+                top: 1vh;
 
+                @media #{$not-narrow-screen} {
+                    box-shadow: $title-scroll-mask;
+                }
+
+                @media #{$narrow-screen} {
+                    box-shadow: $narrow-title-shadow, $title-scroll-mask;
+                }
+
+                > * {
                     @media #{$not-narrow-screen} {
-                        box-shadow: none;
+                        align-self: flex-start;
                     }
+                }
 
+                .title {
+                    @media #{$not-narrow-screen} {
+                        box-shadow:
+                            1px -1px  0  1px  $root-bg-color,
+                            1px  1px  0  1px  darkgray;
+                    }
+                }
+
+                .repository {
+                    @media #{$not-narrow-screen} {
+                        margin-top: 0;
+                    }
                     @media #{$narrow-screen} {
-                        box-shadow: $narrow-title-shadow;
-                    }
-
-                    .title {
-                        overflow:      hidden;
-                        white-space:   nowrap;
-                        text-overflow: ellipsis;
+                        position:   sticky;
+                        top:        0;
                     }
                 }
             }
+        }
+    }
 
-            > :not(.row-1) {
-                display: none !important;
+    //=========================================================================
+    // Components - when the list item is closed
+    //=========================================================================
+
+    .search-list-item:not(.open) {
+
+        @media #{$not-narrow-screen} {
+            max-height:     4rem;
+            padding-bottom: 1rem;
+        }
+
+        > .value,
+        > .pair > .value {
+
+            &.field-Title {
+
+                @media #{$not-narrow-screen} {
+                    box-shadow: none;
+                }
+
+                @media #{$narrow-screen} {
+                    box-shadow: $narrow-title-shadow;
+                }
+
+                .title {
+                    overflow:      hidden;
+                    white-space:   nowrap;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        > :not(.row-1) {
+            display: none !important;
+        }
+    }
+}
+
+body.search.title_results {
+
+    .search-list {
+        @include collapsible-search-list;
+    }
+}
+
+//=============================================================================
+// Style - title colorization
+//=============================================================================
+
+body.search.dev-style {
+
+    .heading-bar {
+        // @see "SearchHelper#search_page_styles"
+        .style-button {
+
+            @extend .basic-button;
+
+            &.active {
+                background-color: $input-disabled-bg;
+                border-color:     $input-disabled-fg;
             }
         }
     }
@@ -1501,18 +1504,6 @@ body.aggregate-style {
     //=========================================================================
     // Sections - title colorization
     //=========================================================================
-
-    .restore-button,
-    .colorize-button,
-    .field-highlight-button {
-
-        @extend .basic-button;
-
-        &.active {
-            background-color: $input-disabled-bg;
-            border-color:     $input-disabled-fg;
-        }
-    }
 
     .search-list {
 
@@ -1536,8 +1527,20 @@ body.aggregate-style {
 
                     @media #{$narrow-screen} {
                         margin-left: -$narrow-left-pad;
-                        .title {
+                    }
+
+                    .title {
+
+                        @media #{$not-narrow-screen} {
+                            padding-bottom: 0;
+                        }
+
+                        @media #{$narrow-screen} {
                             margin-left: $narrow-left-pad;
+                        }
+
+                        &:focus {
+                            outline-offset: 2px;
                         }
                     }
 
@@ -1555,10 +1558,13 @@ body.aggregate-style {
                             margin-top:   $medium-open-pad;
                         }
 
+                        // noinspection CssReplaceWithShorthandSafely
                         @media #{$narrow-screen} {
-                            margin-top:   $narrow-open-pad;
-                            margin-right: $narrow-open-pad;
-                            flex:         0 1 auto;
+                            margin-top:    auto;
+                            margin-bottom: auto;
+                            margin-left:   0.25rem;
+                            margin-right:  0.5rem;
+                            flex:          0 1 auto;
                         }
 
                         // Highlight out-of-sequence title index numbers.
@@ -1575,8 +1581,7 @@ body.aggregate-style {
                                 margin-top:   $medium-open-pad - $v-shift-half;
                             }
                             @media #{$narrow-screen} {
-                                margin-top:   $narrow-open-pad - $v-shift-half;
-                                margin-right: $narrow-open-pad - $v-shift-half;
+                                margin-right: 0.25rem;
                             }
 
                             margin-right:  -$h-shift;
@@ -1604,6 +1609,29 @@ body.aggregate-style {
                         }
                         @media #{$narrow-screen} {
                             margin-top: 0;
+                        }
+                    }
+
+                    .prev-next {
+
+                        @media #{$narrow-screen} {
+                            margin-top:   0;
+                            margin-left:  0.25rem;
+                            margin-right: 0.25rem;
+                        }
+
+                        .prev,
+                        .next {
+
+                            &:focus:not(:hover) {
+                                box-shadow: 0 0 0.25rem 0.25rem white;
+                            }
+
+                            .symbol {
+                                border-radius: 50%;
+                                background:    ghostwhite;
+                                box-shadow:    inset -1px 0 0 0 darkgray;
+                            }
                         }
                     }
                 }
@@ -1669,15 +1697,96 @@ body.aggregate-style {
             }
         }
     }
+}
+
+body.search:not(.dev-style) {
+    .heading-bar {
+        .button-tray {
+            display: none;
+        }
+    }
+}
+
+//=============================================================================
+// Style - field highlighting
+//=============================================================================
+
+body.search.dev-style {
+
+    @mixin primary($bg) {
+        background-color: $bg;
+    }
+
+    @mixin secondary($fg) {
+
+        $gap:    2px;
+        $box:    2px + $gap;
+        $mask:   white;
+        $shift:  5px;
+        $exdent: 0.25rem;
+
+        box-shadow:
+            0 0 0 $gap $mask, // inner gap
+            0 0 0 $box $fg;   // outer boundary
+
+        @media #{$not-narrow-screen} {
+
+            &.value.array {
+                box-shadow:
+                          0 0 0 $gap $mask, // inner gap
+                      -$gap 0 0 $gap $mask, // mask left side inner boundary
+                          0 0 0 $box $fg,   // inner boundary
+                    -$shift 0 0 $gap $mask, // outer gap
+                    -$shift 0 0 $box $fg;   // outer boundary
+            }
+
+            &.value:not(.array) {
+                margin-left:   -$exdent;
+                padding-left:  $exdent;
+                padding-right: 2 * $exdent;
+            }
+        }
+
+        @media #{$narrow-screen} {
+
+            &.value:not(.array) {
+                margin-left:   0;
+                padding-right: 3 * $exdent;
+            }
+
+            &.value:not(.array):not(.list) {
+                padding-left:  $exdent;
+            }
+
+        }
+    }
+
+    @mixin type-marker($term, $color: red, $inner-color: black) {
+        &:before {
+            content:        '[#{$term}]';
+            position:       absolute;
+            left:           -2rem;
+            padding:        0 0.25rem;
+            color:          white;
+            background:     $color;
+            font-weight:    bold;
+            text-transform: uppercase;
+            text-shadow:
+                -1px -1px  0  $inner-color,
+                -1px  1px  0  $inner-color,
+                 1px -1px  0  $inner-color,
+                 1px  1px  0  $inner-color;
+        }
+    }
 
     //=========================================================================
     // Sections - field highlighting
     //=========================================================================
 
-    .search-list.highlight-fields {
+    .search-list.field_groups {
 
         //=====================================================================
-        // Indicate primary field scope - NOTE: testing
+        // Indicate primary field scope
         //=====================================================================
 
         .scope-title:not(.field-Title) {
@@ -1697,7 +1806,7 @@ body.aggregate-style {
         }
 
         //=====================================================================
-        // Indicate secondary field scope - NOTE: testing
+        // Indicate secondary field scope
         //=====================================================================
 
         .scope-bibliographic:not(.field-Title) {
@@ -1755,12 +1864,36 @@ body.aggregate-style {
             }
         }
     }
+}
+
+//=============================================================================
+// Style - relevancy scores
+//=============================================================================
+
+body.search.dev-style {
+
+    $score-fields-bg: lightgray;
+
+    @mixin score-fields {
+        &.field-CreatorScore,
+        &.field-IdentifierScore,
+        &.field-KeywordScore,
+        &.field-PubDate,
+        &.field-PublisherScore,
+        &.field-RemDate,
+        &.field-SortDate,
+        &.field-TitleScore {
+            font-weight: bold;
+            background:  $score-fields-bg;
+            @content;
+        }
+    }
 
     //=========================================================================
-    // Sections - search scores
+    // Sections - relevancy scores
     //=========================================================================
 
-    .search-list {
+    .search-list.scores {
 
         //=====================================================================
         // Components
@@ -1892,33 +2025,37 @@ body.aggregate-style {
     }
 }
 
-$column-count: 0;
-$next-column:  1;
+//=============================================================================
+// Results type - grid
+//=============================================================================
 
-@function show-($columns: 1) {
-    $start-column: $next-column;
-    $end-column:   $start-column;
-    $columns:      if((not $columns or ($columns == 0)), 1, $columns);
-    @if $columns > 1 {
-        $end-column: $end-column + $columns;
+body.search.grid-style {
+
+    $column-count: 0;
+    $next-column:  1;
+
+    @function show-($columns: 1) {
+        $start-col: $next-column;
+        $end-col:   $start-col;
+        $columns:   if((not $columns or ($columns == 0)), 1, $columns);
+        @if $columns > 1 {
+            $end-col: $end-col + $columns;
+        }
+        $next-column:  $next-column  + $columns;
+        $column-count: $column-count + $columns;
+        @return math.div($start-col, $end-col);
     }
-    $next-column:  $next-column  + $columns;
-    $column-count: $column-count + $columns;
-    @return #{$start-column}/#{$end-column};
-}
 
-@function -hide() {
-    @return false;
-}
+    @function -hide() {
+        @return false;
+    }
 
-@mixin clean() {
-    font-weight: revert;
-    background:  revert;
-    border:      revert;
-    box-shadow:  revert;
-}
-
-body.grid-style {
+    @mixin clean() {
+        font-weight: revert;
+        background:  revert;
+        border:      revert;
+        box-shadow:  revert;
+    }
 
     // Each column is either hidden or given a distinct column slot so that
     // there is a consistent display of columns regardless of whether the item
@@ -2034,9 +2171,11 @@ body.grid-style {
     }
 }
 
-body.search-v2,
-body.search-v3,
-body.aggregate-style {
+//=============================================================================
+// Style - extended title
+//=============================================================================
+
+body.search {
 
     .search-list {
 
@@ -2086,26 +2225,20 @@ body.aggregate-style {
     }
 }
 
-body.search-v2,
-body.search-v3 {
+body.search.title_results {
 
-    // This is only meaningful for "un-applying" a search style that was set
-    // for the "normal" /search results page.
-    .restore-button {
-        display: none;
+    @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
+        background: $bg;
+        box-shadow:
+             $r-offset  1px  0  2px  $bg,
+             $r-offset -1px  0  2px  $bg,
+            -$l-offset  1px  0  2px  $bg,
+            -$l-offset -1px  0  2px  $bg;
     }
-}
 
-@mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
-    background: $bg;
-    box-shadow:
-                $r-offset  1px 0 2px $bg,
-                $r-offset -1px 0 2px $bg,
-                -$l-offset  1px 0 2px $bg,
-                -$l-offset -1px 0 2px $bg;
-}
-
-body.search-v3 {
+    //=========================================================================
+    // Sections
+    //=========================================================================
 
     .search-list {
 
@@ -2119,8 +2252,8 @@ body.search-v3 {
                 }
             }
 
-            // Do not show file counts by default.
-            .file-counts {
+            // Do not show format counts by default.
+            .format-counts {
                 display: none;
             }
         }
@@ -2131,7 +2264,7 @@ body.search-v3 {
                 @include search-item-columns(0.15fr);
             }
 
-            // Probably-temporary divider between metadata for individual parts
+            // Divider between metadata for individual parts
             > .label.field-section,
             > .pair > .label.field-section,
             > .pair.field-section > .label,
@@ -2167,6 +2300,14 @@ body.search-v3 {
                     box-shadow:
                         -1px  1px  0  3px  whitesmoke,
                         -1px -1px  0  3px  whitesmoke;
+                }
+
+                // Open/close toggle button
+                .toggle {}
+
+                // Section label
+                .text {
+                    cursor: default;
                 }
             }
 
@@ -2220,12 +2361,15 @@ body.search-v3 {
             }
         }
     }
+}
 
-    //=========================================================================
-    // Sections - field highlighting
-    //=========================================================================
+//=============================================================================
+// Style - format counts
+//=============================================================================
 
-    .search-list.highlight-fields {
+body.search.title_results {
+
+    .search-list.format_counts {
 
         .number {
 
@@ -2253,6 +2397,11 @@ body.search-v3 {
             //=================================================================
 
             .container {
+
+                @media #{$narrow-screen} {
+                    padding-top: 0.25rem;
+                }
+
                 .toggle.for-item {
                     @media #{$narrow-screen} {
                         margin-top: 0;
@@ -2261,7 +2410,7 @@ body.search-v3 {
             }
 
             .toggle.for-item,
-            .file-counts {
+            .format-counts {
                 align-self: flex-start;
             }
 
@@ -2270,10 +2419,12 @@ body.search-v3 {
                 z-index:       $z-raised;
             }
 
-            .file-counts {
+            .format-counts {
 
                 display:               grid;
                 grid-template-columns: [count] max-content [format] 1fr;
+                align-content:         center;
+                row-gap:               0.0625rem;
                 column-gap:            0.25rem;
 
                 margin:      0;
@@ -2282,8 +2433,7 @@ body.search-v3 {
                 // This gives each file count box a uniform appearance.
 
                 min-width:   3.75rem;
-                min-height:  2.25rem;
-                line-height: 1.25rem;
+                line-height: 0.875;
                 color:       green;
                 background:  lightyellow;
                 border:      1px solid gray;
@@ -2293,54 +2443,56 @@ body.search-v3 {
                  * keeps it from appearing to run into the current file count.
                  */
                 @media #{$not-narrow-screen} {
-                    box-shadow:   0 -0.5rem 0.5rem 0.25rem $root-bg-color;
+                    margin-top:   -1.25rem;
+                    min-height:   4rem;
+                    font-size:    small;
+                    box-shadow:   0 -0.25rem 0.5rem 0.25rem $root-bg-color;
                 }
 
                 @media #{$wide-screen} {
                     margin-left:  0.75rem;
-                    font-size:    small;
                 }
 
                 @media #{$medium-width} {
                     margin-left:  0.5rem;
-                    font-size:    small;
                 }
 
                 @media #{$narrow-screen} {
+                    height:       1.75rem;
+                    width:        12.5rem;
+                    margin-right: -8.625rem;
                     margin-left:  0.5rem;
                     font-size:    medium;
-                    max-height:   2.25rem;
-                    min-height:   unset;
                     overflow-y:   auto;
+                    flex:         1 0 auto;
+                    grid-template-columns: repeat(3, 1fr 1fr);
                 }
 
                 .count,
                 .format {
-                    @media #{$narrow-screen} {
-                        margin: auto 0;
-                    }
+                    margin: auto 0;
                 }
 
                 .count {
+
                     text-align: right;
                 }
 
                 .format {
                     text-align: left;
+
+                    @media #{$narrow-screen} {
+                        margin-right: 0.125rem;
+                    }
                 }
             }
 
-            ul.file-counts {
+            ul.format-counts {
 
                 list-style: none;
 
                 li {
                     display: contents;
-                }
-
-                // Narrow the gap between subsequent count/format pairs.
-                li + li * {
-                    margin-top: -0.125rem;
                 }
             }
 
@@ -2361,9 +2513,9 @@ body.search-v3 {
 
             &.open {
 
-                .file-counts {
+                .format-counts {
                     position: sticky;
-                    top:      3vh;
+                    top:      1vh;
                 }
 
                 @media #{$narrow-screen} {
@@ -2371,7 +2523,7 @@ body.search-v3 {
                     height: calc(100% - 5.5rem);
 
                     .toggle.for-item,
-                    .file-counts {
+                    .format-counts {
                         align-self: flex-start;
                         top:        1rem;
                     }
@@ -2414,6 +2566,23 @@ body.search-v3 {
                     }
                 }
             }
+        }
+    }
+}
+
+//=============================================================================
+// Style - collapsed (file results)
+//=============================================================================
+
+body.search.file_results.dev-style {
+
+    .search-list.collapsed {
+        @include collapsible-search-list;
+    }
+
+    .search-list:not(.collapsed) {
+        .toggle {
+            display: none;
         }
     }
 }

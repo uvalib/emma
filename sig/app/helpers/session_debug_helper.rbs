@@ -11,7 +11,9 @@ module SessionDebugHelper
 
   # Indicate whether on-screen debugging is applicable.
   #
-  def session_debug?: () -> bool
+  # @param [Symbol,String,nil] controller   Controller-specific debugging.
+  #
+  def session_debug?: (?(Symbol|String)? controller) -> bool
 
   # Session keys that are not reported in the session debug table.
   #

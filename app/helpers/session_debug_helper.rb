@@ -22,12 +22,22 @@ module SessionDebugHelper
 
   # Indicate whether on-screen debugging is applicable.
   #
-  def session_debug?
-    dev           = developer?
-    local         = !application_deployed?
-    on_by_default = local && dev || dev_client?
-    setting       = (session['app.debug'] if local || dev)
-    on_by_default ? !false?(setting) : true?(setting)
+  # @param [Symbol,String,nil] controller   Controller-specific debugging.
+  #
+  def session_debug?(controller = nil)
+    dev     = developer?
+    local   = !application_deployed?
+    setting =
+      if controller
+        session["app.#{controller}.debug"]
+      elsif local || dev
+        session['app.debug']
+      end
+    if local && dev || dev_client?
+      !false?(setting)  # Debugging *on* by default.
+    else
+      true?(setting)    # Debugging *off* by default.
+    end
   end
 
   # ===========================================================================

@@ -38,11 +38,33 @@ module LayoutHelper::DevControls
   #
   def dev_controls: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  # A control for toggling the #session_debug? status.
+  # A control for toggling application debug status.
   #
-  # @param [Hash] opt
+  # @param [Boolean, nil] state       Default: `#session_debug?`.
+  # @param [Hash]         opt         Passed to #dev_toggle_debug.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def dev_toggle_debug: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def dev_toggle_session_debug: (?state: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A control for toggling debugging features for a specific controller.
+  #
+  # @param [Symbol, nil]  ctrlr       Default: `params[:controller]`.
+  # @param [Boolean, nil] state       Default: `#session_debug?(ctrlr)`.
+  # @param [Hash]         opt         Passed to #dev_toggle_debug.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def dev_toggle_controller_debug: (?ctrlr: Symbol|nil, ?state: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer?
+
+  # A control for toggling a debug status. # TODO: I18n
+  #
+  # @param [Symbol, String, nil] ctrlr
+  # @param [Boolean, nil]        state  Default: `#session_debug?(ctrlr)`.
+  # @param [Symbol, String, nil] param  URL debug parameter (default: :debug).
+  # @param [Hash]                opt    Passed to #link_to.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dev_toggle_debug: (ctrlr: Symbol|nil, state: bool|nil, param: Symbol|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 end

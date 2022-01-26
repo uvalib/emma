@@ -113,6 +113,52 @@ module ModelHelper::Fields
 
   public
 
+  # The defined levels for rendering an item hierarchically.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Array<Symbol,Integer>}]
+  #
+  # @see SearchHelper#search_field_levels
+  #
+  def field_levels(**opt)
+    model = opt.delete(:model) || params[:controller]
+    try("#{model}_#{__method__}") || {}
+  end
+
+  # Return with the CSS classes associated with the items field scope(s).
+  #
+  # @param [Array, Symbol, String, nil] value
+  #
+  # @return [Array<String>]
+  #
+  #--
+  # == Variations
+  #++
+  #
+  # @overload field_scopes(single)
+  #   Interpret the argument as a field name used to lookup the scope values.
+  #   @param [Symbol, String, nil] single
+  #   @return [Array<String>]
+  #
+  # @overload field_scopes(array)
+  #   Extract the scopes from *array*.
+  #   @param [Array<Symbol>]       array
+  #   @return [Array<String>]
+  #
+  def field_scopes(value)
+    levels = value.is_a?(Array) ? value : field_levels[value&.to_sym]
+    levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
+    # noinspection RubyMismatchedReturnType
+    levels.map! { |s| "scope-#{s}" }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # EMMA data field prefixes with trailing underscore for #model_html_id.
   #
   # @type [Array<String>]
