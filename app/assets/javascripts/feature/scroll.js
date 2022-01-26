@@ -87,8 +87,8 @@ $(document).on('turbolinks:load', function() {
         $scroll_target = $(selector);
         return isMissing($scroll_target);
     });
-    let $prev_buttons = $(PREV_SELECTOR);
-    let $next_buttons = $(NEXT_SELECTOR);
+    let $prev_buttons = $(PREV_SELECTOR).not('.forbidden');
+    let $next_buttons = $(NEXT_SELECTOR).not('.forbidden');
 
     // ========================================================================
     // Event handlers

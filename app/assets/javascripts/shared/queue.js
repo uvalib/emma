@@ -1,6 +1,7 @@
 // app/assets/javascripts/shared/queue.js
 
 
+import { BaseClass }        from '../shared/base-class'
 import { flatten, isEmpty } from '../shared/definitions'
 
 
@@ -11,9 +12,27 @@ import { flatten, isEmpty } from '../shared/definitions'
 /**
  * A generic FIFO queue.
  */
-export class Queue {
+export class Queue extends BaseClass {
 
-    constructor(...args) { this.array = flatten(args) }
+    static CLASS_NAME = 'Queue';
+
+    /**
+     * Create a new instance.
+     *
+     * @param {...any} args
+     */
+    constructor(...args) {
+        super();
+        this.array = flatten(args);
+    }
+
+    // ========================================================================
+    // Properties
+    // ========================================================================
+
+    get first()     { return this.array[0] }
+    get last()      { return this.array[this.array.length-1] }
+    get presence()  { return this.isEmpty() ? undefined : this.array }
 
     // ========================================================================
     // Methods
@@ -28,38 +47,6 @@ export class Queue {
     pop()           { return this.array.shift() }
     forEach(fn)     { this.array.forEach(fn) }
 
-    // ========================================================================
-    // Properties
-    // ========================================================================
-
-    get first()     { return this.array[0] }
-    get last()      { return this.array[this.array.length-1] }
-    get presence()  { return this.isEmpty() ? undefined : this.array }
-
-    // ========================================================================
-    // Private methods @note: Not yet handled properly by the Terser compressor
-    // ========================================================================
-
-    log(...args)   { this.constructor.log(...args) }
-    warn(...args)  { this.constructor.warn(...args) }
-    error(...args) { this.constructor.error(...args) }
-    //#log(...args)   { this.constructor.log(...args) }
-    //#warn(...args)  { this.constructor.warn(...args) }
-    //#error(...args) { this.constructor.error(...args) }
-
-    // ========================================================================
-    // Class properties
-    // ========================================================================
-
-    static get className() { return 'Queue' }
-
-    // ========================================================================
-    // Class methods
-    // ========================================================================
-
-    static log(...args)    { console.log(this.className, ...args) }
-    static warn(...args)   { console.warn(this.className, ...args) }
-    static error(...args)  { console.error(this.className, ...args) }
 }
 
 // ============================================================================
@@ -71,13 +58,16 @@ export class Queue {
  */
 export class CallbackQueue extends Queue {
 
+    static CLASS_NAME = 'CallbackQueue';
+
     /**
      * Create a new instance.
      *
-     * @param {function|function[]} args
+     * @param {...function} args
      */
     constructor(...args) {
-        super(...args.filter(arg => this.validate(arg)));
+        super(...args.filter(arg => this.#validate(arg)));
+        this.finished = false;
     }
 
     // ========================================================================
@@ -87,12 +77,12 @@ export class CallbackQueue extends Queue {
     /**
      * Push a callback on to the queue.
      *
-     * @param {function|function[]} args
+     * @param {...function} args
      *
      * @returns {number|undefined}
      */
     push(...args) {
-        const elements = args.filter(arg => this.validate(arg));
+        const elements = args.filter(arg => this.#validate(arg));
         return isEmpty(elements) ? undefined : super.push(...elements);
     }
 
@@ -108,25 +98,11 @@ export class CallbackQueue extends Queue {
     process() {
         this.forEach(fn => fn());
         this.clear();
-        return true;
+        return this.finished = true;
     }
 
     // ========================================================================
-    // Properties
-    // ========================================================================
-
-    /**
-     * Property which returns the process function only if there are any
-     * callbacks in queue.
-     *
-     * @returns {function|undefined}
-     */
-    get callbacks() {
-        return this.presence && this.process
-    }
-
-    // ========================================================================
-    // Private methods @note: Not yet handled properly by the Terser compressor
+    // Private methods
     // ========================================================================
 
     /**
@@ -137,21 +113,13 @@ export class CallbackQueue extends Queue {
      *
      * @returns {boolean}
      */
-    validate(callback, from) {
-    //#validate(callback, from) {
+    #validate(callback, from) {
         const type = typeof(callback);
-        if (type === 'function') {
-            return true;
-        } else {
+        let valid  = (type === 'function');
+        if (!valid) {
             const warning = `invalid element type "${type}"`;
-            this.warn(from ? `${from}: ${warning}` : warning);
-            return false;
+            this._warn(from ? `${from}: ${warning}` : warning);
         }
+        return valid;
     }
-
-    // ========================================================================
-    // Class properties
-    // ========================================================================
-
-    static get className() { return 'CallbackQueue' }
 }

@@ -173,12 +173,13 @@ module SearchHelper
     min_index = positive(min_index) || 0
     opt = {}
     if index > min_index
-      opt[:icon]  = UP_TRIANGLE
-      opt[:title] = 'Go to the previous record' # TODO: I18n
-      opt[:url]   = '#value-Title-%d' % (index - 1)
+      opt[:icon]     = UP_TRIANGLE
+      opt[:title]    = 'Go to the previous record' # TODO: I18n
+      opt[:url]      = '#value-Title-%d' % (index - 1)
     else
-      opt[:icon]  = DELTA
-      opt[:title] = 'This is the first record on the page' # TODO: I18n
+      opt[:icon]     = DELTA
+      opt[:title]    = 'This is the first record on the page' # TODO: I18n
+      opt[:tabindex] = -1
       append_classes!(opt, 'forbidden')
     end
     prepend_classes!(opt, css_selector)
@@ -201,12 +202,13 @@ module SearchHelper
     max_index = (1 << 32) unless max_index && (max_index >= 0)
     opt = {}
     if index < max_index
-      opt[:icon]  = DOWN_TRIANGLE
-      opt[:title] = 'Go to the next record' # TODO: I18n
-      opt[:url]   = '#value-Title-%d' % (index + 1)
+      opt[:icon]     = DOWN_TRIANGLE
+      opt[:title]    = 'Go to the next record' # TODO: I18n
+      opt[:url]      = '#value-Title-%d' % (index + 1)
     else
-      opt[:icon]  = REVERSE_DELTA
-      opt[:title] = 'This is the last record on the page' # TODO: I18n
+      opt[:icon]     = REVERSE_DELTA
+      opt[:title]    = 'This is the last record on the page' # TODO: I18n
+      opt[:tabindex] = -1
       append_classes!(opt, 'forbidden')
     end
     prepend_classes!(opt, css_selector)

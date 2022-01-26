@@ -90,6 +90,7 @@ module LayoutHelper::Common
     **opt
   )
     css_selector = '.toggle'
+    opt[:'aria-controls'] = id.presence or raise 'no target id given'
     open = 'open' if open.is_a?(TrueClass)
     open = nil    unless open.is_a?(String)
     if context
@@ -98,7 +99,6 @@ module LayoutHelper::Common
     elsif css_class_array(opt[:class]).none? { |c| c.start_with?('for-') }
       context = 'for-panel'
     end
-    opt[:'aria-controls'] = id.presence or raise 'no target id given'
     if selector.present?
       opt[:'data-selector'] = selector
       opt[:data] = opt[:data].except(:selector) if opt[:data].is_a?(Hash)

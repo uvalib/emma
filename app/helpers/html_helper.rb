@@ -158,20 +158,24 @@ module HtmlHelper
   # noinspection RubyMismatchedArgumentType
   #++
   def icon_button(icon: nil, text: nil, url: nil, **opt)
-    icon           ||= STAR
-    text           ||= opt[:title] || 'Action' # TODO: I18n
-    opt[:title]    ||= text
-    opt[:role]     ||= 'button'
-    opt[:tabindex] ||= 0 unless url
+    icon        ||= STAR
+    text        ||= opt[:title] || 'Action' # TODO: I18n
+    opt[:title] ||= text
 
     sr_only = html_span(text, class: 'text sr-only')
     symbol  = html_span(icon, class: 'symbol', 'aria-hidden': true)
-    link    = sr_only << symbol
+    label   = sr_only << symbol
 
     if url
-      make_link(link, url, **opt)
+      make_link(label, url, **opt)
     else
-      html_span(link, opt)
+      if opt[:tabindex].to_i == -1
+        opt.except!(:tabindex, :role)
+      else
+        opt[:tabindex] ||= 0
+        opt[:role]     ||= 'button'
+      end
+      html_span(label, opt)
     end
   end
 

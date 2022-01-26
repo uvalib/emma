@@ -182,47 +182,58 @@ export function asString(item, limit) {
     let right     = '';
     let space     = '';
 
-    if (typeof item === 'string') {
-        // A string value.
-        result += item;
-        if ((item[0] !== s_quote) && (item[0] !== d_quote)) {
-            left = right = d_quote;
-        }
+    switch (typeof item) {
+        case 'string':
+            result += item;
+            if ((item[0] !== s_quote) && (item[0] !== d_quote)) {
+                left = right = d_quote;
+            }
+            break;
+        case 'boolean':
+        case 'symbol':
+        case 'bigint':
+            result += item.toString();
+            break;
+        case 'number':
+            // A numeric, NaN, or Infinity value.
+            result += (item || (item === 0)) ? item.toString() : 'null';
+            break;
+        default:
+            if (!item) {
+                // Undefined or null value.
+                result += 'null';
 
-    } else if (typeof item === 'boolean') {
-        // A true/false value.
-        result += item.toString();
+            } else if (item instanceof RegExp) {
+                // A regular expression.
+                result += item.toString();
 
-    } else if (typeof item === 'number') {
-        // A numeric, NaN, or Infinity value.
-        result += (item || (item === 0)) ? item.toString() : 'null';
+            } else if (item instanceof Date) {
+                // A date value.
+                result += asDateTime(item);
+                left = right = d_quote;
 
-    } else if (item instanceof Date) {
-        // A date value.
-        result += asDateTime(item);
-        left = right = d_quote;
+            } else if (Array.isArray(item)) {
+                // An array object.
+                result = item.map(v => asString(v)).join(', ');
+                left   = '[';
+                right  = ']';
 
-    } else if (!item) {
-        // Undefined or null value.
-        result += 'null';
+            } else if (item.hasOwnProperty('originalEvent')) {
+                // JSON.stringify fails with "cyclic object value" for jQuery
+                // events.
+                result = asString(item.originalEvent);
 
-    } else if (Array.isArray(item)) {
-        // An array object.
-        result = item.map(v => asString(v)).join(', ');
-        left   = '[';
-        right  = ']';
-
-    } else if (item.hasOwnProperty('originalEvent')) {
-        // JSON.stringify fails with "cyclic object value" for jQuery events.
-        result = asString(item.originalEvent);
-
-    } else {
-        // A generic object.
-        let pr = objectEntries(item);
-        result = pr.map(kv => `"${kv[0]}": ${asString(kv[1])}`).join(', ');
-        left   = '{';
-        right  = '}';
-        if (result) { space = ' '; }
+            } else {
+                // A generic object.
+                result =
+                    objectEntries(item).map(
+                        kv => `"${kv[0]}": ${asString(kv[1])}`
+                    ).join(', ');
+                left   = '{';
+                right  = '}';
+                if (result) { space = ' '; }
+            }
+            break;
     }
 
     left  = `${left}${space}`;
@@ -834,7 +845,7 @@ export function ensureTabbable(element) {
         let $e         = $(this);
         const link     = isDefined($e.attr('href'));
         const input    = link  || isDefined($e.attr('type'));
-        const tabbable = input || isDefined($.attr('tabindex'));
+        const tabbable = input || isDefined($e.attr('tabindex'));
         if (!tabbable) {
             $e.attr('tabindex', 0);
         }
@@ -1399,7 +1410,7 @@ export function toggleVisibility(element, visible) {
     let make_visible, hidden, visibility;
     if (isDefined(visible)) {
         make_visible = visible;
-    } else if (isDefined((hidden = $.attr('aria-hidden')))) {
+    } else if (isDefined((hidden = $element.attr('aria-hidden')))) {
         make_visible = hidden && (hidden !== 'false');
     } else if (isDefined((visibility = $element.css('visibility')))) {
         make_visible = (visibility === 'hidden');

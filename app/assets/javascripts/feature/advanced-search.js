@@ -46,7 +46,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    const DEBUGGING = true;
+    const DEBUGGING = false;
 
     /**
      * State value indicating the search filter panel is open (expanded).

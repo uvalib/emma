@@ -12,6 +12,18 @@ import {
 
 
 /**
+ * @typedef {string|null|undefined} optString
+ */
+
+/**
+ * @typedef {number|null|undefined} optNumber
+ */
+
+/**
+ * @typedef {IDBCursorWithValue|null|undefined} optCursor
+ */
+
+/**
  * RecordProperties
  *
  * @note The optional "default" entry is only used by the database client.
@@ -33,75 +45,90 @@ import {
  */
 
 /**
+ * @typedef {Object<StoreTemplate>} StoreTemplates
+ */
+
+/**
  * DatabaseProperties
  *
  * @typedef {{
  *      name:     string,
  *      version:  number,
  *      store:    string,
- *      template: Object<StoreTemplate>,
+ *      template: StoreTemplates,
  * }} DatabaseProperties
  */
 
 /**
- * @typedef {Object<StoreTemplate>} StoreTemplates
+ * Callback - a generic callback argument.
+ *
+ * @typedef {function} Callback
  */
 
 /**
- * @typedef {
- *      function(StoreTemplates|string,?StoreTemplate):StoreTemplates
- * } FunctionStoreTemplate
+ * @typedef {function(IDBDatabase)} DbCallback
  */
 
 /**
- * @typedef {
- *      function(StoreTemplates|string,?StoreTemplate):StoreTemplates
- * } FunctionObjectStore
+ * @typedef {function(optCursor, ?number)} CursorCallback
  */
 
 /**
- * @typedef {
- *      function(?function(IDBCursorWithValue|null,?number))
- * } FunctionWithCursorCallback
+ * @typedef {function(object[])} ObjectsCallback
  */
 
 /**
- * @typedef {
- *      function(string,any,?function(object[]))
- * } FunctionWithObjectsCallback
+ * @typedef {function(number)} NumberCallback
  */
 
 /**
- * @typedef {
- *      function(string,any,?function(number))
- * } FunctionWithNumberCallback
+ * @typedef {function(IDBValidKey[])} KeysCallback
  */
 
 /**
+ * trArg - a generic transaction argument.
+ *
+ * @typedef {IDBObjectStore|IDBTransaction|string} trArg
+ */
+
+/**
+ * FunctionStoreTemplates
+ *
  * @typedef {
- *      function(string,any,?function(IDBValidKey[]))
- * } FunctionWithKeysCallback
+ *      function(StoreTemplates|string, ?StoreTemplate) : StoreTemplates
+ * } FunctionStoreTemplates
+ */
+
+/**
+ * FunctionOpenDatabase
+ *
+ * @typedef {
+ *      function(optString, optNumber, ?DbCallback, ?string)
+ * } FunctionOpenDatabase
  */
 
 /**
  * An interface to the browser object store.
  *
  * @type {object}
- * @property {function:DatabaseProperties}          getProperties
- * @property {function(string,?number)}             setDatabase
- * @property {function(?string):string}             defaultStore
- * @property {function(?string):StoreTemplate}      getStoreTemplate
- * @property {FunctionStoreTemplate}                addStoreTemplates
- * @property {FunctionObjectStore}                  openObjectStore
- * @property {FunctionObjectStore}                  clearObjectStore
- * @property {function(object|object[], ?function)} storeItems
- * @property {FunctionWithCursorCallback}           fetchItems
- * @property {FunctionWithObjectsCallback}          lookupItems
- * @property {FunctionWithNumberCallback}           countItems
- * @property {FunctionWithKeysCallback}             lookupStoreKeys
- * @property {function(string,any)}                 deleteItems
- * @property {function:IDBDatabase}                 database
- * @property {function}                             closeDatabase
+ * @property {function:DatabaseProperties}                    getProperties
+ * @property {function(string,?number)}                       setDatabase
+ * @property {function(?string):?string}                      defaultStore
+ * @property {function(?string):StoreTemplate}                getStoreTemplate
+ * @property {FunctionStoreTemplates}                         addStoreTemplates
+ * @property {FunctionOpenDatabase}                           openDatabase
+ * @property {function(optString,?DbCallback)}                openObjectStore
+ * @property {function(optString,?DbCallback)}                clearObjectStore
+ * @property {function(optString,?DbCallback)}                clearAllStores
+ * @property {function(object|object[],?Callback,...trArg)}   storeItems
+ * @property {function(?CursorCallback,...trArg)}             fetchItems
+ * @property {function(string,any,?ObjectsCallback,...trArg)} lookupItems
+ * @property {function(string,any,?ObjectsCallback,...trArg)} lookupItems
+ * @property {function(string,any,?NumberCallback,...trArg)}  countItems
+ * @property {function(string,any,?KeysCallback,...trArg)}    lookupStoreKeys
+ * @property {function(string,any,?Callback,...trArg)}        deleteItems
+ * @property {function:?IDBDatabase}                          database
+ * @property {function:?IDBDatabase}                          closeDatabase
  */
 export let DB = (function() {
 
@@ -402,6 +429,24 @@ export let DB = (function() {
     }
 
     /**
+     * Execute the callback with the current database.
+     *
+     * @param {DbCallback} callback
+     * @param {optString}  [database]
+     * @param {string}     [caller]
+     */
+    function dbWithDatabase(callback, database, caller) {
+        const db = dbDatabase();
+        if (!db || (database && (database !== dbName()))) {
+            openDatabase(database, null, callback, caller);
+        } else if (db) {
+            callback(db);
+        } else {
+            dbError(`dbWithDatabase: no database name given`);
+        }
+    }
+
+    /**
      * Create the named object store and set up indices according to its
      * associated template's record properties.
      *
@@ -508,8 +553,8 @@ export let DB = (function() {
     /**
      * dbObjectStore
      *
-     * @param {string}                                    func  For logging.
-     * @param {...(IDBObjectStore|IDBTransaction|string)} args
+     * @param {string}   func         For logging.
+     * @param {...trArg} args
      *
      * @returns {IDBObjectStore}
      */
@@ -646,18 +691,19 @@ export let DB = (function() {
     // ========================================================================
 
     /**
-     * openObjectStore
+     * openDatabase
      *
-     * @param {string}                [store_name]
-     * @param {function(IDBDatabase)} [callback]
+     * @param {optString}  new_name
+     * @param {optNumber}  new_version
+     * @param {DbCallback} [callback]
+     * @param {string}     [caller]
      */
-    function openObjectStore(store_name = defaultStore(), callback) {
-        const func     = 'DB.openObjectStore';
-        const name     = dbName();
-        const version  = dbVersion();
+    function openDatabase(new_name, new_version, callback, caller) {
+        const func     = caller      || 'DB.openDatabase';
+        const name     = new_name    || dbName();
+        const version  = new_version || dbVersion();
         const database = `${name} (v${version})`;
-        defaultStore(store_name);
-        dbLog(`${func}: store_name: ${default_store}; database: ${database}`);
+        dbLog(`${func}: ${database}`);
 
         let request = window.indexedDB.open(name, version);
         request.onupgradeneeded = event => dbSetupDatabase(event, func);
@@ -685,12 +731,28 @@ export let DB = (function() {
     }
 
     /**
+     * Set the default store (if given) then open the database.
+     *
+     * @param {optString}  store_name
+     * @param {DbCallback} [callback]
+     */
+    function openObjectStore(store_name, callback) {
+        const func     = 'DB.openObjectStore';
+        const name     = dbName();
+        const version  = dbVersion();
+        const database = `${name} (v${version})`;
+        if (store_name) { defaultStore(store_name); }
+        dbLog(`${func}: store_name: ${default_store}; database: ${database}`);
+        openDatabase(name, version, callback, func);
+    }
+
+    /**
      * Remove all items from the indicated object store.
      *
      * @note This does not effect the autoIncrement sequence.
      *
-     * @param {string}                [store_name]
-     * @param {function(IDBDatabase)} [callback]
+     * @param {optString}  store_name
+     * @param {DbCallback} [callback]
      */
     function clearObjectStore(store_name = defaultStore(), callback) {
         const func = 'DB.clearObjectStore';
@@ -702,11 +764,26 @@ export let DB = (function() {
     }
 
     /**
+     * Clear all object stores.
+     *
+     * @param {optString}  database
+     * @param {DbCallback} [callback]
+     */
+    function clearAllObjectStores(database, callback) {
+        const func = 'DB.clearAllObjectStores';
+        dbWithDatabase(function(db) {
+            const stores = Array.from(db.objectStoreNames);
+            const cb     = () => callback && callback(db);
+            stores.forEach(store => DB.clearObjectStore(store, cb));
+        }, database, func);
+    }
+
+    /**
      * Persist one or more items to the database store.
      *
      * @param {object|object[]} item
      * @param {function}        [callback]  Called upon completion.
-     * @param {...(IDBObjectStore|IDBTransaction|string)} [args]
+     * @param {...trArg}        [args]
      */
     function storeItems(item, callback, ...args) {
         const func = 'DB.storeItems';
@@ -728,8 +805,8 @@ export let DB = (function() {
      * Iterate through each item of the default object store (or the object
      * stored name given as the second argument).
      *
-     * @param {function(IDBCursorWithValue|null,?number)} [item_cb]
-     * @param {...(IDBObjectStore|IDBTransaction|string)} [args]
+     * @param {CursorCallback} [item_cb]
+     * @param {...trArg}       [args]
      */
     function fetchItems(item_cb, ...args) {
         const func  = 'DB.fetchItems';
@@ -738,7 +815,7 @@ export let DB = (function() {
         let request = store.openCursor();
         let if_err  = item_cb && (() => item_cb(null, -1));
         let if_ok   = function(event) {
-            /** @type {IDBCursorWithValue|null} */
+            /** @type {optCursor} */
             let cursor = event.target.result;
             item_cb && item_cb(cursor, number);
             if (cursor) {
@@ -754,10 +831,10 @@ export let DB = (function() {
     /**
      * Get items with matching values for the given index key.
      *
-     * @param {string}                                    index_key
-     * @param {any|IDBKeyRange}                           index_value
-     * @param {function(object[])}                        [callback]
-     * @param {...(IDBObjectStore|IDBTransaction|string)} [args]
+     * @param {string}          index_key
+     * @param {any|IDBKeyRange} index_value
+     * @param {ObjectsCallback} [callback]
+     * @param {...trArg}        [args]
      */
     function lookupItems(index_key, index_value, callback, ...args) {
         const func  = 'DB.lookupItems';
@@ -778,10 +855,10 @@ export let DB = (function() {
     /**
      * Count items with matching values for the given index key.
      *
-     * @param {string}                                    index_key
-     * @param {any|IDBKeyRange}                           index_value
-     * @param {function(number)}                          [callback]
-     * @param {...(IDBObjectStore|IDBTransaction|string)} [args]
+     * @param {string}           index_key
+     * @param {any|IDBKeyRange}  index_value
+     * @param {function(number)} [callback]
+     * @param {...trArg}         [args]
      */
     function countItems(index_key, index_value, callback, ...args) {
         const func  = 'DB.countItems';
@@ -803,10 +880,10 @@ export let DB = (function() {
      * Get object store keys for items with matching values for the given index
      * key.
      *
-     * @param {string}                                    index_key
-     * @param {any}                                       index_value
-     * @param {function(IDBValidKey[])}                   [callback]
-     * @param {...(IDBObjectStore|IDBTransaction|string)} [args]
+     * @param {string}       index_key
+     * @param {any}          index_value
+     * @param {KeysCallback} [callback]
+     * @param {...trArg}     [args]
      */
     function lookupStoreKeys(index_key, index_value, callback, ...args) {
         const func  = 'DB.lookupStoreKeys';
@@ -827,10 +904,10 @@ export let DB = (function() {
     /**
      * Delete items with matching values for the given index key.
      *
-     * @param {string}                                    index_key
-     * @param {any|IDBKeyRange}                           index_value
-     * @param {function}                                  [callback]
-     * @param {...(IDBObjectStore|IDBTransaction|string)} [args]
+     * @param {string}          index_key
+     * @param {any|IDBKeyRange} index_value
+     * @param {Callback}        [callback]
+     * @param {...trArg}        [args]
      */
     function deleteItems(index_key, index_value, callback, ...args) {
         const func  = 'DB.deleteItems';
@@ -892,8 +969,10 @@ export let DB = (function() {
         defaultStore:       defaultStore,
         getStoreTemplate:   getStoreTemplate,
         addStoreTemplates:  addStoreTemplates,
+        openDatabase:       openDatabase,
         openObjectStore:    openObjectStore,
         clearObjectStore:   clearObjectStore,
+        clearAllStores:     clearAllObjectStores,
         storeItems:         storeItems,
         fetchItems:         fetchItems,
         lookupItems:        lookupItems,
