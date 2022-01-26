@@ -2574,7 +2574,7 @@ body.search.title_results {
 // Style - collapsed (file results)
 //=============================================================================
 
-body.search.file_results.dev-style {
+body.search.file_results {
 
     .search-list.collapsed {
         @include collapsible-search-list;
