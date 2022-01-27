@@ -391,7 +391,6 @@
 /// browser (particularly for h1-h6 elements being used to define document
 /// structure but intended to be styled by supplied CSS class(es).
 ///
-// noinspection CssBrowserCompatibilityForProperties
 @mixin clear-default-styling {
     margin:         0;
     margin-block:   0;

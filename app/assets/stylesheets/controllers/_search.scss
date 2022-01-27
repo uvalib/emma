@@ -1138,8 +1138,8 @@ $title-scroll-mask:
 
     .toggle {
 
+        aspect-ratio:    1;
         width:           1.65rem;
-        height:          1.5rem;
         padding:         0;
         line-height:     0;
         text-decoration: none;
@@ -1148,7 +1148,6 @@ $title-scroll-mask:
 
         @media #{$narrow-screen} {
             width:       1.875rem;
-            height:      1.75rem;
         }
 
         /**
@@ -2247,7 +2246,6 @@ body.search.title_results {
             .toggle.for-item {
                 @media #{$not-narrow-screen} {
                     width:      1.875rem;
-                    height:     1.75rem;
                     margin-top: 0;
                 }
             }
