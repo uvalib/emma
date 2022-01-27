@@ -1247,13 +1247,13 @@ module UploadHelper
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
   # @param [Any, nil]                         value
-  # @param [Symbol]                           meth
   # @param [Hash{Symbol=>String}]             labels
+  # @param [Symbol]                           meth
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_input(f, param, value = nil, meth: :text_field, labels:, **opt)      # NOTE: to EntryHelper
+  def bulk_input(f, param, value = nil, labels:, meth: :text_field, **opt)      # NOTE: to EntryHelper
     label = f.label(param, labels[param])
     input = f.send(meth, param, value: value, **opt)
     html_div(class: 'line') { label << input }
@@ -1483,7 +1483,7 @@ module UploadHelper
 
   # find_in_index
   #
-  # @param [Array<Upload, String>] items
+  # @param [Array<String,Upload>] items
   #
   # @return [Array<(Array<Search::Record::MetadataRecord>,Array)>]
   #
