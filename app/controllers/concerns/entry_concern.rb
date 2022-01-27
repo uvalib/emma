@@ -859,9 +859,9 @@ module EntryConcern
     opt[:meth] ||= __method__
     if entries.blank?
       sql_opt[:repository] ||= EmmaRepository.default
-      relation = Upload.get_relation(**sql_opt)
+      relation = Entry.get_relation(**sql_opt)
     else
-      relation = Upload.get_relation(*entries)
+      relation = Entry.get_relation(*entries)
     end
     successes = []
     failures  = []
