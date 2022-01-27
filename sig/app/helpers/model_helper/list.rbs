@@ -212,6 +212,22 @@ module ModelHelper::List
   #
   def model_item_id: (untyped item, ?model: untyped? model) -> untyped
 
+  # All :emma_titleId value(s) associated with the item.
+  #
+  # @param [Model, nil] item
+  #
+  # @return [String,nil]
+  #
+  def title_id_values: (untyped item) -> String?
+
+  # Values supporting search result analysis of relevancy scoring.
+  #
+  # @param [Model, nil] item
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  def score_values: (untyped item) -> symHash
+
   # Render a metadata listing of a model instance.
   #
   # @param [Model]          item

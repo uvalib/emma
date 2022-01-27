@@ -10,7 +10,6 @@ import {
     DEFAULT_HEX_DIGITS,
     HEX_BASE,
     arrayWrap,
-    equivalent,
     handleClickAndKeypress,
     isDefined,
     isMissing,
@@ -994,6 +993,15 @@ $(document).on('turbolinks:load', function() {
         }
 
         /**
+         * Indicate whether the feature is active.
+         *
+         * @returns {boolean}
+         */
+        get active() {
+            return this.$buttons?.hasClass('active') || false;
+        }
+
+        /**
          * Indicate whether the feature is disabled.
          *
          * @returns {boolean}
@@ -1419,6 +1427,40 @@ $(document).on('turbolinks:load', function() {
         }
 
         // ====================================================================
+        // Properties
+        // ====================================================================
+
+        /**
+         * The CSS class which marks the current topic.
+         *
+         * @returns {string|undefined}
+         */
+        get topicClass() {
+            return this._topicClass(this.topic);
+        }
+
+        /**
+         * The CSS class which marks the current topic.
+         *
+         * @returns {string|undefined}
+         */
+        get topicSelector() {
+            const topic_class = this.topicClass;
+            return topic_class && selector(topic_class);
+        }
+
+        /**
+         * The button for the current topic.
+         *
+         * @returns {jQuery|undefined}
+         */
+        get $topicButton() {
+            const match = this.topicSelector;
+            let $button = match && this.$buttons?.filter(match);
+            return isPresent($button) ? $button : undefined;
+        }
+
+        // ====================================================================
         // SessionState property overrides
         // ====================================================================
 
@@ -1444,6 +1486,19 @@ $(document).on('turbolinks:load', function() {
             } else {
                 this.value = { topic: this.topic, search: currentSearch() };
             }
+        }
+
+        // ====================================================================
+        // AdvancedFeature property overrides
+        // ====================================================================
+
+        /**
+         * Indicate whether the feature is active.
+         *
+         * @returns {boolean}
+         */
+        get active() {
+            return this.$topicButton?.hasClass('active') || false;
         }
 
         // ====================================================================
@@ -1478,13 +1533,10 @@ $(document).on('turbolinks:load', function() {
          * @returns {jQuery|undefined}  The active button.
          */
         initialize(refresh, new_topic) {
-            const previous  = this.value;
-            const topic     = new_topic || previous.topic;
-            let re_colorize = refresh;
-            if (notDefined(re_colorize)) {
-                re_colorize = equivalent(previous.search, currentSearch());
-            }
-            return super.initialize(re_colorize, topic);
+            const previous = this.value;
+            const topic    = new_topic || previous.topic;
+            const colorize = isDefined(refresh) ? refresh : isDefined(topic);
+            return super.initialize(colorize, topic);
         }
 
         // ====================================================================
@@ -1662,13 +1714,17 @@ $(document).on('turbolinks:load', function() {
          * @returns {boolean}
          */
         _markItemAsExile(item) {
-            let $item          = $(item);
-            const store_key    = $item.attr('data-title_id');
-            const current_page = pageNumber();
+            let $item        = $(item);
+            const store_keys = $item.attr('data-title_id') || '';
+            const curr_page  = pageNumber();
             let found;
-            $.each(store_items[store_key], function(page, records) {
-                found = isPresent(records) && (Number(page) - current_page);
-                return !found; // continue unless a related item was found
+            store_keys.split(',').forEach(function(key) {
+                if (!found) {
+                    $.each(store_items[key], function(page, recs) {
+                        found = isPresent(recs) && (Number(page) - curr_page);
+                        return !found; // continue unless related item found
+                    });
+                }
             });
             if (found) {
                 // Update the item's identity number tag.
@@ -1791,6 +1847,19 @@ $(document).on('turbolinks:load', function() {
         _tagChar(by_topic) {
             const special = { by_title_text: 'T' };
             return special[by_topic] || by_topic.replace(/^by_/, '')[0];
+        }
+
+        /**
+         * The CSS class which indicates the given topic.
+         *
+         * @param {string} topic
+         *
+         * @returns {string|undefined}
+         */
+        _topicClass(topic) {
+            if (typeof topic === 'string') {
+                return 'by_' + topic.replace(/^\./, '').replace(/^by_/, '');
+            }
         }
 
     }

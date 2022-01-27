@@ -508,20 +508,18 @@ module ModelHelper::List
   def model_list_item(item, model:, pairs: nil, render: nil, **opt, &block)
     opt[:model]  = model ||= Model.for(item)
     css_selector = ".#{model}-list-item"
+    opt[:group]  = item.try(:state_group)
+    score_data   = relevancy_scores? && score_values(item)
+    row          = positive(opt[:row])
     html_opt = {
-      class:                   css_classes(css_selector),
-      id:                      opt.delete(:id) || model_item_id(item, **opt),
-      'data-group':            (opt[:group] = item.try(:state_group)),
-      'data-title_id':         item.try(:emma_titleId),
-      'data-normalized_title': item.try(:normalized_title),
-      'data-sort_date':        item.try(:emma_sortDate),
-      'data-pub_date':         item.try(:emma_publicationDate),
-      'data-rem_date':         item.try(:rem_remediationDate),
-      'data-item_score':       item.try(:total_score, precision: 2),
+      class:           css_classes(css_selector),
+      id:              opt.delete(:id) || model_item_id(item, **opt),
+      'data-group':    opt[:group],
+      'data-title_id': title_id_values(item),
     }
-    row = positive(opt[:row])
+    html_opt.merge!(score_data)             if score_data.present?
     append_classes!(html_opt, "row-#{row}") if row
-    append_classes!(html_opt, 'empty')      unless item
+    append_classes!(html_opt, 'empty')      if item.nil?
     html_div(html_opt) do
       render = :render_empty_value  if item.nil?
       render = :render_field_values if render.nil?
@@ -541,6 +539,45 @@ module ModelHelper::List
     id = item.try(:submission_id) || item.try(:identifier) || hex_rand
     model ||= Model.for(item)
     html_id(model, id, underscore: false)
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  protected
+
+  # All :emma_titleId value(s) associated with the item.
+  #
+  # @param [Model, nil] item
+  #
+  # @return [String,nil]
+  #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
+  def title_id_values(item)
+    multiple = item.try(:records)&.map(&:emma_titleId)&.compact&.uniq&.presence
+    multiple&.join(',') || item.try(:emma_titleId).presence
+  end
+
+  # Values supporting search result analysis of relevancy scoring.
+  #
+  # @param [Model, nil] item
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
+  def score_values(item)
+    {
+      'data-normalized_title': item.try(:normalized_title),
+      'data-sort_date':        item.try(:emma_sortDate),
+      'data-pub_date':         item.try(:emma_publicationDate),
+      'data-rem_date':         item.try(:rem_remediationDate),
+      'data-item_score':       item.try(:total_score, precision: 2),
+    }
   end
 
   # ===========================================================================
