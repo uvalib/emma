@@ -15,6 +15,10 @@
   drop_down     = help_image(:drop_down)
   single_select = help_image(:one_selection)
   dual_select   = help_image(:two_selections)
+  closed_toggle = LayoutHelper::Common::TREE_OPENER_LABEL
+  closed_toggle = html_span(closed_toggle, class: 'toggle for-item closed')
+  open_toggle   = LayoutHelper::Common::TREE_CLOSER_LABEL
+  open_toggle   = html_span(open_toggle, class: 'toggle for-item open')
 
 -%>
 
@@ -57,6 +61,13 @@
       <ul>
         <li><a href="#search_sort_help">Sort By</a></li>
         <li><a href="#search_page_help">Page Size</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#search_display_help">Search Display Modes</a>
+      <ul>
+        <li><a href="#search_by_title_help">Results By Title</a></li>
+        <li><a href="#search_by_file_help">Results By File</a></li>
       </ul>
     </li>
   </ul>
@@ -433,12 +444,97 @@
   </h3>
 
   <p>
+    For "Results By File":<br/>
     Select the number of results per page.
     While some search terms may be so specific that the index can eliminate all
     but the exactly right entry, more general terms may result in dozens (or
     thousands) of results.
     This filter gives you control over how large result sets are broken into
     easier-to-handle chunks.
+  </p>
+
+  <p>
+    For "Results By Title":<br/>
+    This menu is disabled; the number of records acquired from the index is set
+    to the largest value that can be accommodated.
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="search_display_help">
+
+  <h2 class="section" id="search_display_help">
+    Search Display Modes
+  </h2>
+
+  <p>
+    The search index underlying EMMA deals in low-level quantities that
+    correspond to individual files (one entry for every copy of every format
+    for a given title).
+    The default EMMA search display mode takes these raw results and reshapes
+    into a hierarchical view of title-level entries.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h3 class="sub-section" id="search_by_title_help">
+    <span class="menu-control">Results By Title</span>
+  </h3>
+
+  <p>
+    In this display mode, search results from the index are aggregated into a
+    set of entries which represent creative works at the title level (as they
+    would be seen at the originating repository.
+    Each entry starts in a collapsed state;
+    click the <%= closed_toggle -%> toggle control to expand it.
+  </p>
+
+  <p>
+    Each title-level entry begins with bibliographic metadata that applies to
+    the creative work, followed by one or more collapsible sections.
+    Each section starts in an expanded state;
+    click the <%= open_toggle -%> toggle control to collapse it.
+  </p>
+
+  <p>
+    Each section represents a format in which a copy of the creative work is
+    available (EPUB, DAISY, etc.) and contains remediation metadata and other
+    information which is specific to the file itself.
+  </p>
+
+  <p>
+    It is not unusual for entries based on HathiTrust items to have a more
+    complex structure, since these can be comprised of multiple copies of
+    multiple volumes.
+    Each volume will be its own "sub-tree" with potentially multiple formats
+    (although, typically, just PDF), and each format having potentially
+    multiple copies (unique scans from different universities).
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h3 class="sub-section" id="search_by_file_help">
+    <span class="menu-control">Results By File</span>
+  </h3>
+
+  <p>
+    In this display mode there is a one-to-one correspondence between items
+    returned by the index and the search result entries that are displayed on
+    the page.
+    All information for all (file-level) items are displayed fully expanded.
+  </p>
+
+  <p>
+    This mode might be useful if you are scanning for information that is not
+    directly searchable by the index's defined search types.
+    In this case, your browser's search-in-page facility can be used to find
+    occurrences of the information directly on the page.
+  </p>
+
+  <p>
+    This mode may also be useful if you want search results in JSON format for
+    automated processing (by appending "<code>&results=file&format=json</code>"
+    to the URL).
   </p>
 
 </section>
