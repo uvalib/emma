@@ -8,8 +8,8 @@
   records  = list.select { |e| e.is_a?(Upload) }
   repo   ||= records.first&.repository
   logo   ||= repository_source_logo(repo)
-  force  ||= force_delete
   help   ||= help_popup(:upload, :delete)
+  force  ||= force_delete
 
   unless modal?
     set_page_title(title)
