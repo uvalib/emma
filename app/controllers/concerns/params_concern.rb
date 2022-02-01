@@ -152,28 +152,22 @@ module ParamsConcern
       }.compact.to_h
     return if debug_parameters.empty?
 
+    on  = true
+    off = application_deployed? && !dev_client? && :delete
+
     debug_parameters.each_pair do |context, debug|
-      key    = context ? "app.#{context}.debug" : 'app.debug'
-      log_as = "#{__method__}: #{key}=#{debug.inspect} -> %s"
-
-      if false?(debug)
-        Log.info(log_as % 'OFF')
-        if application_deployed?
-          session.delete(key)
-        else
-          session[key] = false
+      key   = context ? "app.#{context}.debug" : 'app.debug'
+      log   = "#{__method__}: #{key}=#{debug.inspect} -> %s"
+      state =
+        if debug.to_s.casecmp?('reset') then Log.info(log % 'RESET') || off
+        elsif false?(debug)             then Log.info(log % 'OFF')   || off
+        elsif true?(debug)              then Log.info(log % 'ON')    || on
+        else                                 Log.warn(log % 'UNEXPECTED')
         end
-
-      elsif true?(debug)
-        Log.info(log_as % 'ON')
-        session[key] = true
-
-      elsif debug.to_s.casecmp?('reset')
-        Log.info(log_as % 'RESET')
-        session.delete(key)
-
-      else
-        Log.warn(log_as % 'UNEXPECTED')
+      case state
+        when true, false then session[key] = state
+        when :delete     then session.delete(key)
+        else                  # no change
       end
     end
 
