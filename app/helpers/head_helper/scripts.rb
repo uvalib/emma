@@ -88,11 +88,24 @@ module HeadHelper::Scripts
     @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
     @page_javascript.flatten!
     @page_javascript.compact_blank!
-    @page_javascript.uniq!
-    sources = @page_javascript.dup
-    # noinspection RubyMismatchedArgumentType
-    sources << meta_options(**opt)
-    javascript_include_tag(*sources)
+    javascript_include_tag(*@page_javascript, opt) << app_javascript(**opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Main JavaScript for the application.
+  #
+  # @param [Hash] opt                 Passed to #javascript_include_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_javascript(**opt)
+    opt['data-turbolinks-track'] ||= 'reload'
+    javascript_include_tag('application', opt).prepend("\n")
   end
 
   # ===========================================================================

@@ -54,4 +54,12 @@ module HeadHelper::Stylesheets
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_stylesheets: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Main stylesheet for the application.
+  #
+  # @param [Hash] opt                 Passed to #stylesheet_link_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_stylesheet: (**untyped opt) -> ActiveSupport::SafeBuffer
 end

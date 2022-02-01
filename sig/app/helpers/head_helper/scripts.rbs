@@ -55,6 +55,14 @@ module HeadHelper::Scripts
   #
   def emit_page_javascripts: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Main JavaScript for the application.
+  #
+  # @param [Hash] opt                 Passed to #javascript_include_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_javascript: (**untyped opt) -> ActiveSupport::SafeBuffer
+
   # Dynamic overrides for JavaScript settings that are otherwise supplied at
   # the time of asset compilation.  Setting values here makes it possible to
   # change values that were in effect at that time -- particularly useful for

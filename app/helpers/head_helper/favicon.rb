@@ -66,7 +66,6 @@ module HeadHelper::Favicon
   #
   def emit_page_favicon(**opt)
     @page_favicon ||= DEFAULT_PAGE_FAVICON
-    opt = meta_options(**opt)
     favicon_link_tag(@page_favicon, opt)
   end
 

@@ -4,12 +4,14 @@
 
   main_id = 'main' # TODO: I18n for 'Main Content'
 
+  set_page_title('Modal Dialog')
+
 -%>
 <!DOCTYPE html>
 <html lang="<%= page_language -%>" class="modal">
 
   <head>
-    <title>Modal Dialog</title>
+    <%= page_title %>
     <%= page_stylesheets %>
     <%= page_script_settings %>
     <%= page_javascripts %>

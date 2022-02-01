@@ -88,11 +88,25 @@ module HeadHelper::Stylesheets
     @page_stylesheets ||= DEFAULT_PAGE_STYLESHEETS.dup
     @page_stylesheets.flatten!
     @page_stylesheets.compact_blank!
-    @page_stylesheets.uniq!
-    @page_stylesheets.map! do |src|
-      stylesheet_link_tag(src, meta_options(src, **opt))
-    end
-    safe_join(@page_stylesheets, "\n")
+    stylesheet_link_tag(*@page_stylesheets, opt) << app_stylesheet(**opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Main stylesheet for the application.
+  #
+  # @param [Hash] opt                 Passed to #stylesheet_link_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_stylesheet(**opt)
+    opt['media']                 ||= 'all'
+    opt['data-turbolinks-track'] ||= 'reload'
+    stylesheet_link_tag('application', opt).prepend("\n")
   end
 
 end

@@ -36,14 +36,9 @@ en:
         # NOTE: Handled via HeadHelper::Stylesheets#page_stylesheets
         - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css'
         - 'https://releases.transloadit.com/uppy/v1.31.0/uppy.min.css'
-        - 'application'
 
       javascripts:
         # NOTE: Now handling by Yarn through /package.json.
-        #- 'https://code.jquery.com/jquery-3.6.0.min.js'
-        #- 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js'
-        #- 'https://releases.transloadit.com/uppy/v1.31.1/uppy.min.js'
-        #- 'application'
         - ~
 
     # =========================================================================
