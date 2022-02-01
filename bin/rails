@@ -3,6 +3,7 @@
 # bin/rails
 
 # This is required by `rails console`.
+# noinspection RubyMismatchedArgumentType
 ENV['RAILS_LOG_TO_STDOUT'] ||= 'true' if %w(c console).include?($*.first)
 
 # Run Rails command.

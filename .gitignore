@@ -101,9 +101,12 @@ tmtags
 /.bundle
 
 # === Yarn/NPM
+/.yarnrc
+/.yarnrc.yml
 /node_modules/
 /yarn-error.log
 /yarn.lock
+/package-lock.json
 
 # === ByeBug gem
 .byebug_history
