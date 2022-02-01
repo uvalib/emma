@@ -44,6 +44,14 @@ $sticky-top-wide:   2vh;
 $sticky-top-medium: 1.5vh;
 $sticky-top-narrow: 3.125rem;
 
+// Background color for the title (the fixed portion) of collapsible entries.
+
+body.search {
+    --title-bg: #{lighter($uva-accent-teal, 92.5%)};
+}
+
+$title-bg: var(--title-bg);
+
 //=============================================================================
 // Internal mixins
 //=============================================================================
@@ -1302,6 +1310,7 @@ $title-scroll-mask:
             &.field-Title {
 
                 max-width:  100%;
+                background: $title-bg;
                 align-self: baseline;
 
                 @media #{$not-narrow-screen} {
@@ -1310,7 +1319,6 @@ $title-scroll-mask:
 
                 @media #{$narrow-screen} {
                     justify-content: flex-end;
-                    background:      ghostwhite;
                 }
 
                 > * {
@@ -1418,8 +1426,8 @@ $title-scroll-mask:
                 .title {
                     @media #{$not-narrow-screen} {
                         box-shadow:
-                            1px -1px  0  1px  $root-bg-color,
-                            1px  1px  0  1px  darkgray;
+                            2px  0    0    0    $title-bg,
+                            1px  1px  0    1px  darkgray;
                     }
                 }
 
@@ -2191,7 +2199,7 @@ body.search {
                         margin-left: 0.5rem;
                         padding:     0 0.5rem;
                         color:       black;
-                        background:  whitesmoke;
+                        background:  $title-bg;
                         box-shadow:  inset 0 0 0 1px gray;
 
                         @media #{$not-wide-screen} {
@@ -2226,7 +2234,7 @@ body.search {
 
 body.search.title_results {
 
-    @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: whitesmoke) {
+    @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: $title-bg) {
         background: $bg;
         box-shadow:
              $r-offset  1px  0  2px  $bg,
@@ -2296,8 +2304,8 @@ body.search.title_results {
 
                 @media #{$narrow-screen} {
                     box-shadow:
-                        -1px  1px  0  3px  whitesmoke,
-                        -1px -1px  0  3px  whitesmoke;
+                        -1px  1px  0  3px  $title-bg,
+                        -1px -1px  0  3px  $title-bg;
                 }
 
                 // Open/close toggle button
