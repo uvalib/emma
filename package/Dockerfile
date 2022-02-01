@@ -56,6 +56,7 @@ WORKDIR $APP_HOME
 
 # To avoid installing documentation for gems.
 ADD storage/gemrc         $HOME/.gemrc
+ADD storage/yarnrc        $HOME/.yarnrc
 ADD storage/bundle-config $HOME/.bundle/config
 
 # Update bundler if needed then install required gems.

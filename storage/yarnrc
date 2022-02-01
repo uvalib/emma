@@ -1,0 +1,6 @@
+# storage/yarnrc
+#
+# The Dockerfile copies this to $HOME/.yarnrc in order to control how Yarn
+# installs packages.
+
+--install.silent true
