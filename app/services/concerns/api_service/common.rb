@@ -91,8 +91,10 @@ module ApiService::Common
   #   Return whether *http_method* is an update.
   #   @param [Symbol, String] http_method
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  #++
   def update_request?(http_method = nil)
-    # noinspection RubyNilAnalysis
     http_method = http_method.downcase.to_sym if http_method.is_a?(String)
     %i[put post patch].include?(http_method || @verb)
   end

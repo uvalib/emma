@@ -369,7 +369,7 @@ module FlashHelper
   #
   def flash_target(type)
     type = type&.to_sym
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     FLASH_TARGETS.include?(type) ? type : FLASH_TARGETS.first
   end
 

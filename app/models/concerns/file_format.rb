@@ -383,6 +383,7 @@ module FileFormat
   #
   def self.metadata_fmt(fmt)
     type = fmt&.downcase
+    # noinspection RubyMismatchedArgumentType
     TYPES.include?(type) ? type : fmt
   end
 

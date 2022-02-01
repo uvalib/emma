@@ -409,6 +409,9 @@ module SearchConcern
   #
   # @return [void]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def set_search_feature(
     param_key,
     value,
@@ -428,6 +431,7 @@ module SearchConcern
       end
     end
     if (value &&= value.to_s.strip.presence&.underscore&.to_sym)
+      # noinspection RubyMismatchedArgumentType
       if EngineConcern::RESET_KEYS.include?(value)
         value = nil
       elsif !valid_values.include?(value)

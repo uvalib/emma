@@ -103,6 +103,7 @@ module LayoutHelper::DevControls
   #
   def dev_toggle_controller_debug(ctrlr: nil, state: nil, **opt)
     ctrlr ||= params[:controller]&.to_sym
+    # noinspection RubyMismatchedArgumentType
     return unless ParamsConcern::SPECIAL_DEBUG_CONTROLLERS.include?(ctrlr)
     param = "app.#{ctrlr}.debug"
     dev_toggle_debug(ctrlr: ctrlr, state: state, param: param, **opt)

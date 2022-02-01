@@ -152,6 +152,7 @@ module ConfigurationHelper
       vals = %i[many one]
       mode = mode.to_sym unless mode.nil? || true?(mode)
       mode = nil if mode == :auto
+      # noinspection RubyMismatchedArgumentType
       mode = vals.find { |v| true?(opt[v]) } unless vals.include?(mode)
       mode ||=
         case i_opt[:count].to_i

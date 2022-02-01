@@ -395,6 +395,7 @@ class Search::Record::TitleRecord < Search::Api::Record
             Log.debug { "#{__method__}: ignoring field = #{field.inspect}" }
         end
       end
+      # noinspection RubyMismatchedArgumentType
       id_field = field && IDENTIFIER_FIELDS.include?(field)
       case value
         when Number

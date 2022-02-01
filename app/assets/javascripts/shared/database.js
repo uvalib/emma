@@ -715,7 +715,7 @@ export let DB = (function() {
         // Event handlers
         // ====================================================================
 
-        function onOpenBlocked(event) {
+        function onOpenBlocked(_event) {
             dbWarn(func, database, 'in use; cannot upgrade');
             // TODO: sleep and retry???
         }

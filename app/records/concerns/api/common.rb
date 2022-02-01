@@ -1195,8 +1195,7 @@ class EnumType < ScalarType
     # @param [Any, nil] v
     #
     def valid?(v)
-      v = normalize(v)
-      values.include?(v)
+      values.include?(normalize(v))
     end
 
     # =========================================================================

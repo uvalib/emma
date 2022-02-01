@@ -387,6 +387,7 @@ module Record::Submittable
         failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
       elsif sids.present?
         sids = sids.map { |v| sid_value(v) }.uniq
+        # noinspection RubyMismatchedArgumentType
         rollback, succeeded =
           items.partition { |item| sids.include?(sid_value(item)) }
       end

@@ -1681,7 +1681,7 @@ $(document).on('turbolinks:load', function() {
             let $item   = $(item);
             const tip   = $item.attr('title') || '';
             const parts = tip.split(separator, 2);
-            let new_tip = parts[0].trimRight();
+            let new_tip = parts[0].trimEnd();
             const added = (state_text || '').trim();
             if (added) {
                 new_tip += separator + added;

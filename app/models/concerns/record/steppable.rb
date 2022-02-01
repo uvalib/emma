@@ -904,6 +904,7 @@ module Record::Steppable
     def can_transition_to?(new_state, **)
       curr_state = state_value
       new_state  = state_value(new_state)
+      # noinspection RubyMismatchedArgumentType
       (curr_state == new_state) || transitions(curr_state).include?(new_state)
     end
 
@@ -931,6 +932,7 @@ module Record::Steppable
       new_state  = state_value(new_state)
       unless curr_state == new_state
         next_states = transitions(curr_state)
+        # noinspection RubyMismatchedArgumentType
         error =
           if next_states.blank?
             "#{curr_state} is terminal"

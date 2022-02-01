@@ -288,18 +288,15 @@ $(document).on('turbolinks:load', function() {
     function toggleItem(event) {
         /** @type {jQuery} */
         let $target = $(event.currentTarget || event.target);
-        let $item, $number, $control;
+        let $item, $number;
         if ($target.is(CONTROL_SELECTOR)) {
-            $control = $target;
-            $number  = $control.parents('.number');
+            $number  = $target.parents('.number');
             $item    = $number.next();
         } else if ($target.is(ITEM_SELECTOR)) {
             $item    = $target;
-            $control = $target.find('.value.field-Title .title');
             $number  = $item.prev();
         } else {
-            $control = $target;
-            $item    = $control.parents(ITEM_SELECTOR);
+            $item    = $target.parents(ITEM_SELECTOR);
             $number  = $item.prev();
         }
 

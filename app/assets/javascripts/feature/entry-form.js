@@ -1634,6 +1634,7 @@ $(document).on('turbolinks:load', function() {
                 companionUrl: 'https://companion.myapp.com/' // TODO: ???
             });
         }
+        // noinspection JSUnusedGlobalSymbols
         uppy.use(XHRUpload, {
             endpoint:   Emma.Upload.Path.endpoint,
             fieldName: 'file',
