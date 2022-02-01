@@ -1,15 +1,12 @@
 // app/assets/javascripts/feature/scroll.js
 
 
-import { Emma }       from '../shared/assets'
-import { consoleLog } from '../shared/logging'
-import {
-    deepFreeze,
-    handleClickAndKeypress,
-    handleEvent,
-    isMissing,
-    selector,
-} from '../shared/definitions'
+import { Emma }                                from '../shared/assets'
+import { selector }                            from '../shared/css'
+import { isMissing }                           from '../shared/definitions'
+import { handleClickAndKeypress, handleEvent } from '../shared/events'
+import { consoleLog }                          from '../shared/logging'
+import { deepFreeze }                          from '../shared/objects'
 
 
 $(document).on('turbolinks:load', function() {

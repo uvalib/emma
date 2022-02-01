@@ -1,8 +1,9 @@
 // app/assets/javascripts/shared/session-state.js
 
 
-import { BaseClass }                       from '../shared/base-class'
-import { fromJSON, isPresent, notDefined } from '../shared/definitions'
+import { BaseClass }             from '../shared/base-class'
+import { isPresent, notDefined } from '../shared/definitions'
+import { fromJSON }              from '../shared/objects'
 
 
 // ============================================================================

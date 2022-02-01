@@ -4,5 +4,5 @@
 // which is processed into '/app/assets/builds/javascripts-shared-assets.js'
 // by the "emma_assets:erb" Rake task.
 
-import { Emma } from '../../builds/javascripts-shared-assets';
-export { Emma };
+
+export { Emma } from '../../builds/javascripts-shared-assets'

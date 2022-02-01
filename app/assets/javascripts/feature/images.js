@@ -2,8 +2,9 @@
 
 
 import { Emma }                    from '../shared/assets'
+import { isMissing }               from '../shared/definitions'
 import { consoleLog, consoleWarn } from '../shared/logging'
-import { isMissing, secondsSince } from '../shared/definitions'
+import { secondsSince }            from '../shared/time'
 
 
 $(document).on('turbolinks:load', function() {

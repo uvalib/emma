@@ -1,13 +1,10 @@
 // app/assets/javascripts/feature/panel.js
 
 
-import { Emma }       from '../shared/assets'
-import { consoleLog } from '../shared/logging'
-import {
-    handleClickAndKeypress,
-    isMissing,
-    isPresent,
-} from '../shared/definitions'
+import { Emma }                   from '../shared/assets'
+import { isMissing, isPresent }   from '../shared/definitions'
+import { handleClickAndKeypress } from '../shared/events'
+import { consoleLog }             from '../shared/logging'
 
 
 $(document).on('turbolinks:load', function() {

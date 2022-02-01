@@ -1,11 +1,12 @@
 // app/assets/javascripts/shared/logging.js
 
 
-import { asString, flatten } from '../shared/definitions'
+import { flatten }  from '../shared/objects'
+import { asString } from '../shared/strings'
 
 
 // ============================================================================
-// Exported functions
+// Functions - Logging
 // ============================================================================
 
 /**
@@ -36,7 +37,7 @@ export function consoleError(...args) {
 }
 
 // ============================================================================
-// Internal functions
+// Functions - internal
 // ============================================================================
 
 /**

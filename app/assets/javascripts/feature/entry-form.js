@@ -3,13 +3,46 @@
 
 import { Rails }                                 from '../vendor/rails'
 import { Emma }                                  from '../shared/assets'
+import { delegateInputClick, toggleVisibility }  from '../shared/accessibility'
+import { selector, toggleClass }                 from '../shared/css'
+import { htmlDecode, scrollIntoView }            from '../shared/html'
+import { HTTP }                                  from '../shared/http'
 import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
+import { K, asSize, percent }                    from '../shared/math'
+import { asString }                              from '../shared/strings'
+import { cancelAction, makeUrl }                 from '../shared/url'
+import {
+    isDefined,
+    isEmpty,
+    isMissing,
+    isPresent,
+    notDefined,
+} from '../shared/definitions'
+import {
+    debounce,
+    handleClickAndKeypress,
+    handleEvent,
+    onPageExit,
+} from '../shared/events'
 import {
     clearFlash,
     extractFlashMessage,
     flashError,
     flashMessage,
 } from '../shared/flash'
+import {
+    arrayWrap,
+    compact,
+    deepFreeze,
+    fromJSON,
+} from '../shared/objects'
+import {
+    MINUTES,
+    SECONDS,
+    asDateTime,
+    secondsSince,
+    timeOf,
+} from '../shared/time'
 import {
     Uppy,
     AwsS3,
@@ -22,39 +55,6 @@ import {
     ThumbnailGenerator,
     XHRUpload,
 } from '../vendor/uppy'
-import {
-    HTTP,
-    K,
-    MINUTES,
-    SECONDS,
-    arrayWrap,
-    asDateTime,
-    asSize,
-    asString,
-    cancelAction,
-    compact,
-    debounce,
-    deepFreeze,
-    delegateInputClick,
-    fromJSON,
-    handleClickAndKeypress,
-    handleEvent,
-    htmlDecode,
-    isDefined,
-    isEmpty,
-    isMissing,
-    isPresent,
-    makeUrl,
-    notDefined,
-    onPageExit,
-    percent,
-    scrollIntoView,
-    secondsSince,
-    selector,
-    timeOf,
-    toggleClass,
-    toggleVisibility,
-} from '../shared/definitions'
 
 
 $(document).on('turbolinks:load', function() {
@@ -2695,11 +2695,10 @@ $(document).on('turbolinks:load', function() {
                     result = JSON.parse(result);
                 }
                 catch (_err) {
-                    const len = result.length;
-                    if (result[len-1] === ']') {
-                        result = result.substr(1, (len-2));
+                    if (result.slice(-1) === ']') {
+                        result = result.slice(1, -1);
                     } else {
-                        result = result.substr(1);
+                        result = result.slice(1);
                     }
                     result = [result];
                 }

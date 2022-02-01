@@ -2,18 +2,17 @@
 
 
 import { Emma }                                  from '../shared/assets'
+import { elementSelector, selector }             from '../shared/css'
+import { decodeObject }                          from '../shared/decode'
+import { handleClickAndKeypress, handleEvent }   from '../shared/events'
+import { scrollIntoView }                        from '../shared/html'
 import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
 import {
-    elementSelector,
-    handleClickAndKeypress,
-    handleEvent,
     isDefined,
     isEmpty,
     isMissing,
     isPresent,
     notDefined,
-    scrollIntoView,
-    selector,
 } from '../shared/definitions'
 
 
@@ -260,7 +259,7 @@ $(document).on('turbolinks:load', function() {
         // then fetch it.  The element will appear only if successfully loaded.
         // noinspection HtmlUnknownTag
         let $content = $(`<${type}>`);
-        $content.attr(Emma.to_object($placeholder.data('attr')));
+        $content.attr(decodeObject($placeholder.data('attr')));
         $content.addClass(HIDDEN_MARKER);
         $content.insertAfter($placeholder);
         handleEvent($content, 'error', onError);

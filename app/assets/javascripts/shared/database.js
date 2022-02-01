@@ -1,15 +1,14 @@
 // app/assets/javascripts/shared/database.js
 
 
-import {
-    arrayWrap,
-    asString,
-    fromJSON,
-    isDefined,
-    isEmpty,
-    notEmpty,
-} from '../shared/definitions'
+import { isDefined, isEmpty, notEmpty } from '../shared/definitions'
+import { asString }                     from '../shared/strings'
+import { arrayWrap, fromJSON }          from '../shared/objects'
 
+
+// ============================================================================
+// JSDoc type definitions
+// ============================================================================
 
 /**
  * @typedef {string|null|undefined} optString
@@ -106,6 +105,10 @@ import {
  *      function(optString, optNumber, ?DbCallback, ?string)
  * } FunctionOpenDatabase
  */
+
+// ============================================================================
+// Database
+// ============================================================================
 
 /**
  * An interface to the browser object store.
@@ -963,6 +966,7 @@ export let DB = (function() {
     // Exposed definitions
     // ========================================================================
 
+    // noinspection JSUnusedGlobalSymbols
     return {
         getProperties:      getProperties,
         setDatabase:        setDatabase,

@@ -1,7 +1,8 @@
 // app/assets/javascripts/feature/help.js
 
 
-import { deepFreeze, isMissing } from '../shared/definitions'
+import { isMissing }  from '../shared/definitions'
+import { deepFreeze } from '../shared/objects'
 
 
 $(document).on('turbolinks:load', function() {

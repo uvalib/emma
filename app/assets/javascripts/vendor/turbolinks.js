@@ -5,7 +5,7 @@
 // in place.
 
 
-import { handleEvent } from '../shared/definitions'
+import { handleEvent } from '../shared/events'
 
 
 const DEBUG_TURBOLINKS  = true;

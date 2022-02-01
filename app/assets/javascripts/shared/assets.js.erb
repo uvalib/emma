@@ -11,14 +11,16 @@
 //
 // @see "/lib/tasks/emma_assets.rake"
 // @see "HeadHelper::Scripts#page_script_settings"
+//
+// noinspection JSFileReferences, LongLine
 
 
-// noinspection JSFileReferences
+import { deepFreeze } from '../javascripts/shared/objects'
 import {
-    deepFreeze,
-    fromJSON,
-    isDefined,
-} from '../javascripts/shared/definitions'
+    decodeArray   as a$,
+    decodeBoolean as b$,
+    decodeObject  as o$,
+} from '../javascripts/shared/decode'
 
 
 // noinspection JSUnresolvedVariable
@@ -119,152 +121,260 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * }} StyleControlProperties
  */
 
-// noinspection LongLine
 /**
- * Values "imported" from the Rails project via the asset pipeline.
+ * ImageProperties
+ *
+ * - placeholder.alt    Placeholder image alt text.
+ * - placeholder.class  Placeholder image CSS class.
+ * - placeholder.asset  Asset path for the animated "downloading" GIF.
+ *
+ * @typedef {{
+ *    placeholder: {
+ *        alt:    string,
+ *        class:  string,
+ *        asset:  string,
+ *    }
+ * }} ImageProperties
+ */
+
+/**
+ * DownloadProperties
+ *
+ * - button.class       Artifact download button element CSS class.
+ * - progress.class     Artifact download progress indicator element CSS class.
+ * - failure.class      Artifact download failure message element CSS class.
+ * - failure.prefix     Prefix for download failure message labels.
+ * - failure.canceled   Failure message for a user-canceled download.
+ * - failure.sign_in    Message for authentication failure.
+ * - failure.unknown    Unknown download failure.
+ *
+ * @typedef {{
+ *    button:       ElementProperties,
+ *    progress:     ElementProperties,
+ *    failure: {
+ *        class:    string,
+ *        prefix:   string,
+ *        canceled: string,
+ *        sign_in:  string,
+ *        unknown:  string
+ *    }
+ * }} DownloadProperties
+ */
+
+/**
+ * SearchStyleProperties
+ *
+ * - container          Properties for the style button tray.
+ * - control.template   Default colorize button properties.
+ * - control.buttons    Properties for each colorize button.
+ *
+ * @typedef {{
+ *    container: ElementProperties,
+ *    control: {
+ *        template: StyleControlProperties,
+ *        buttons:  Object<StyleControlProperties>
+ *    }
+ * }} SearchStyleProperties
+ */
+
+/**
+ * AdvSearchProperties
+ *
+ * - opener.text      Label for button to open advanced search controls.
+ * - opener.tooltip   Tooltip for button to open advanced search controls.
+ * - closer.text      Label for button to close advanced search controls.
+ * - closer.tooltip   Tooltip for button to close advanced search controls.
+ * - search_type      Label, tooltip and placeholder for each search type
+ *
+ * @typedef {{
+ *    opener:       ElementProperties,
+ *    closer:       ElementProperties,
+ *    search_type:  Object.<string,ElementProperties>,
+ * }} AdvSearchProperties
+ */
+
+/**
+ * PanelProperties
+ *
+ * - opener.text      Label for button to open a collapsible panel.
+ * - opener.tooltip   Tooltip for button to open a collapsible panel.
+ * - closer.text      Label for button to close a collapsible panel.
+ * - closer.tooltip   Tooltip for button to close a collapsible panel.
+ *
+ * @typedef {{
+ *    opener: ElementProperties,
+ *    closer: ElementProperties,
+ * }}PanelProperties
+ */
+
+/**
+ * TreeProperties
+ *
+ * - opener.text      Label for button to open a collapsed tree.
+ * - opener.tooltip   Tooltip for button to open a collapsed tree.
+ * - closer.text      Label for button to close an expanded tree.
+ * - closer.tooltip   Tooltip for button to close an expanded tree.
+ *
+ * @typedef {{
+ *    opener: ElementProperties,
+ *    closer: ElementProperties,
+ * }}TreeProperties
+ */
+
+/**
+ * PopupProperties
+ *
+ * - button.class     Popup activator CSS class.
+ * - panel.class      Popup panel CSS class.
+ * - closer.class     CSS class signifying a panel close control.
+ * - controls.class   CSS class for controls below the panel.
+ * - deferred.class   CSS class signifying deferred content.
+ * - hidden.class     CSS class indicating a hidden element.
+ *
+ * @typedef {{
+ *    button:   ElementProperties,
+ *    panel:    ElementProperties,
+ *    closer:   ElementProperties,
+ *    controls: ElementProperties,
+ *    deferred: ElementProperties,
+ *    hidden:   ElementProperties,
+ * }} PopupProperties
+ */
+
+/**
+ * EntryProperties
+ *
+ * - Path.index         The endpoint for listing submissions.
+ * - Path.new           The new entry creation form.
+ * - Path.edit          The existing entry modification form.
+ * - Path.create        The POST endpoint for creating a database entry for the uploaded file.
+ * - Path.renew         The POST endpoint for generating a fresh database entry.
+ * - Path.reedit        The POST endpoint for re-starting an edit workflow on an existing database entry.
+ * - Path.cancel        The endpoint for canceling a submission.
+ * - Path.endpoint      Shrine's upload endpoint (the server route to which uploads are directed).
+ * - Style.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
+ * - Style.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
+ * - Action             Form action label/tooltips for controller actions.
+ * - Filter             Form action label/tooltips for form field filter selections.
+ * - Status             Status marker label/tooltips.
+ * - Mime.to_fmt        A table mapping MIME type to file format.
+ * - Field.empty        Blank field value indicator.
+ * - Repo.default       The name of the default repository.
+ *
+ * @typedef {{
+ *    Path: {
+ *        index:        string,
+ *        new:          string,
+ *        edit:         string,
+ *        create:       string,
+ *        renew:        string,
+ *        reedit:       string,
+ *        cancel:       string,
+ *        endpoint:     string,
+ *    },
+ *    Style: {
+ *        drag_target:  string,
+ *        preview:      string,
+ *    },
+ *    Action: {
+ *        new:          RouteActionProperties,
+ *        edit:         RouteActionProperties,
+ *        delete:       RouteActionProperties,
+ *        bulk_new:     RouteActionProperties,
+ *        bulk_edit:    RouteActionProperties,
+ *        bulk_delete:  RouteActionProperties,
+ *    },
+ *    Filter: {
+ *        available:    FieldGroupProperties,
+ *        filled:       FieldGroupProperties,
+ *        invalid:      FieldGroupProperties,
+ *        all:          FieldGroupProperties,
+ *    },
+ *    Status: {
+ *        required:     ElementProperties,
+ *        invalid:      ElementProperties,
+ *        valid:        ElementProperties,
+ *        disabled:     ElementProperties,
+ *    },
+ *    Mime: {
+ *        to_fmt:       Object.<string,string[]>,
+ *    },
+ *    Field: {
+ *        empty:        string,
+ *    },
+ *    Repo: {
+ *        name:         Object.<string,string>,
+ *        default:      string,
+ *    },
+ * }} EntryProperties
+ */
+
+/**
+ * RecordProperties
+ *
+ * - GroupPanel     Selection for type of Entry records to show.
+ * - PageFilter     Entry records filter radio button panel.
+ * - FilterOptions  Debug-only filter option panel.
+ * - List           Container for a listing of Entry records.
+ * - StateGroup     Workflow state groups.
+ *
+ * @typedef {{
+ *    GroupPanel:     object,
+ *    PageFilter:     object,
+ *    FilterOptions:  object,
+ *    List:           object,
+ *    StateGroup:     string[],
+ * }} RecordProperties
+ */
+
+/**
+ * ScrollProperties
+ *
+ * - target   Properties for the element which is scrolled to the top.
+ * - button   Properties for the scroll-to-top button.
+ *
+ * @typedef {{
+ *     target:  ElementProperties,
+ *     button:  ElementProperties,
+ * }} ScrollProperties
+ */
+
+// ============================================================================
+// Application settings
+// ============================================================================
+
+/**
+ * Values taken from the Rails project via the asset pipeline.
  *
  * Note that a change to any of the values from Rails will require either
  * recompiling the assets or a dynamic override via #page_script_settings.
  *
  * @type {object}
  *
- * @property {function} to_boolean
- * @property {function} to_number
- * @property {function} to_array
- * @property {function} to_object
- *
  * @property {string}   RAILS_ENV
  * @property {boolean}  DEPLOYED
  * @property {string}   SESSION_ID
  *
- * @property {object}   Image
- * @property {object}   Download
- * @property {object}   SearchStyle
- * @property {object}   AdvSearch
- * @property {object}   Panel
- * @property {object}   Tree
- * @property {object}   Popup
- * @property {object}   Upload
- * @property {object}   Entry
- * @property {object}   Scroll
+ * @property {ImageProperties}       Image
+ * @property {DownloadProperties}    Download
+ * @property {SearchStyleProperties} SearchStyle
+ * @property {AdvSearchProperties}   AdvSearch
+ * @property {PanelProperties}       Panel
+ * @property {TreeProperties}        Tree
+ * @property {PopupProperties}       Popup
+ * @property {EntryProperties}       Upload
+ * @property {EntryProperties}       Entry
+ * @property {RecordProperties}      Record
+ * @property {RecordProperties}      Record2
+ * @property {ScrollProperties}      Scroll
  */
 export const Emma = (function() {
-
-    // ========================================================================
-    // Function definitions - Type conversions
-    //
-    // These are primarily for *.js.erb files to allow values that will be
-    // inserted by ERB pre-processing to be expressed as a string, so that the
-    // Javascript has valid syntax even before pre-processing.
-    // ========================================================================
-
-    // noinspection FunctionNamingConventionJS
-    /**
-     * Interpret a string as a boolean value.
-     *
-     * @param {*} arg
-     *
-     * @returns {boolean}
-     */
-    function b$(arg) {
-        switch (typeof arg) {
-            case 'boolean': return arg;
-            case 'string':  return arg.toLowerCase() === 'true';
-            default:        return isDefined(arg);
-        }
-    }
-
-    // noinspection FunctionNamingConventionJS
-    /**
-     * Interpret a string as a integer value.
-     *
-     * @param {*} arg
-     *
-     * @returns {number}
-     */
-    function i$(arg) {
-        switch (typeof arg) {
-            case 'number': return arg;
-            case 'string': return Math.max(0, parseInt(arg));
-            default:       return 0;
-        }
-    }
-
-    // noinspection FunctionNamingConventionJS
-    /**
-     * Interpret a string as an Array definition.
-     *
-     * @param {*}      arg
-     * @param {string} [separator]    Default: ','
-     *
-     * @returns {Array}
-     */
-    function a$(arg, separator) {
-      let result;
-      if (Array.isArray(arg)) {
-          result = arg;
-      } else if (typeof arg === 'object') {
-          result = Object.values(arg);
-      } else if (typeof arg === 'string') {
-          let string = arg.trim();
-          if (string.startsWith('[')) {
-              result = js$(arg);
-          } else {
-              let array = string.split(separator || ',');
-              result = array.map(function(element) { return element.trim(); });
-          }
-      }
-      return result || [];
-    }
-
-    // noinspection FunctionNamingConventionJS
-    /**
-     * Interpret a string as an Object definition.
-     *
-     * @param {*} arg
-     *
-     * @returns {object}
-     */
-    function o$(arg) {
-        let result;
-        if (typeof arg === 'object') {
-            result = arg;
-        } else if (typeof arg === 'string') {
-            result = js$(arg);
-        }
-        return result || {};
-    }
-
-    // noinspection FunctionNamingConventionJS
-    /**
-     * Convert a string prepared with "#js" to an array or object.
-     *
-     * @param {string} arg
-     *
-     * @returns {Array|Object|undefined}
-     *
-     * @see file:config/boot.rb "#js"
-     */
-    function js$(arg) {
-        const str = arg.includes('%5C') ? decodeURIComponent(arg) : arg;
-        return fromJSON(str.replace(/\n/g, '\\n'));
-    }
 
     // ========================================================================
     // Application settings
     // ========================================================================
 
-    // noinspection LongLine
     const settings = {
-
-        // ====================================================================
-        // Exported conversion functions
-        // ====================================================================
-
-        to_boolean: b$,
-        to_number:  i$,
-        to_array:   a$,
-        to_object:  o$,
 
         // ====================================================================
         // General settings (at the time of asset creation).
@@ -278,25 +388,6 @@ export const Emma = (function() {
         // Feature settings
         // ====================================================================
 
-        /**
-         * ====================================================================
-         *
-         * feature/images.js
-         *
-         * - placeholder.alt    Placeholder image alt text.
-         * - placeholder.class  Placeholder image CSS class.
-         * - placeholder.asset  Asset path for the animated "downloading" GIF.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    placeholder: {
-         *        alt:    string,
-         *        class:  string,
-         *        asset:  string,
-         *    }
-         * }}
-         */
         Image: {
             placeholder: {
                 alt:   "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
@@ -305,33 +396,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/download.js
-         *
-         * - button.class       Artifact download button element CSS class.
-         * - progress.class     Artifact download progress indicator element CSS class.
-         * - failure.class      Artifact download failure message element CSS class.
-         * - failure.prefix     Prefix for download failure message labels.
-         * - failure.canceled   Failure message for a user-canceled download.
-         * - failure.sign_in    Message for authentication failure.
-         * - failure.unknown    Unknown download failure.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    button:       ElementProperties,
-         *    progress:     ElementProperties,
-         *    failure: {
-         *        class:    string,
-         *        prefix:   string,
-         *        canceled: string,
-         *        sign_in:  string,
-         *        unknown:  string
-         *    }
-         * }}
-         */
         Download: {
             button: {
                 class:    "<%= ArtifactHelper::DOWNLOAD_BUTTON_CLASS %>"
@@ -348,25 +412,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * controllers/search.js
-         *
-         * - container          Properties for the style button tray.
-         * - control.template   Default colorize button properties.
-         * - control.buttons    Properties for each colorize button.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    container: ElementProperties,
-         *    control: {
-         *        template: StyleControlProperties,
-         *        buttons:  Object<StyleControlProperties>
-         *    }
-         * }}
-         */
         SearchStyle: {
             container: {
                 class: "<%= SearchHelper::SEARCH_STYLE_CONTAINER %>"
@@ -377,25 +422,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/advanced-search.js
-         *
-         * - opener.text      Label for button to open advanced search controls.
-         * - opener.tooltip   Tooltip for button to open advanced search controls.
-         * - closer.text      Label for button to close advanced search controls.
-         * - closer.tooltip   Tooltip for button to close advanced search controls.
-         * - search_type      Label, tooltip and placeholder for each search type
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    opener:       ElementProperties,
-         *    closer:       ElementProperties,
-         *    search_type:  { string: ElementProperties }
-         * }}
-         */
         AdvSearch: {
             opener: {
                 label:   "<%= LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_LABEL %>",
@@ -408,23 +434,6 @@ export const Emma = (function() {
             search_type: o$('<%= js SearchTermsHelper::SEARCH_TYPE %>')
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/panel.js
-         *
-         * - opener.text      Label for button to open a collapsible panel.
-         * - opener.tooltip   Tooltip for button to open a collapsible panel.
-         * - closer.text      Label for button to close a collapsible panel.
-         * - closer.tooltip   Tooltip for button to close a collapsible panel.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    opener: ElementProperties,
-         *    closer: ElementProperties,
-         * }}
-         */
         Panel: {
             opener: {
                 label:   "<%= LayoutHelper::Common::PANEL_OPENER_LABEL %>",
@@ -436,23 +445,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/search.js
-         *
-         * - opener.text      Label for button to open a collapsed tree.
-         * - opener.tooltip   Tooltip for button to open a collapsed tree.
-         * - closer.text      Label for button to close an expanded tree.
-         * - closer.tooltip   Tooltip for button to close an expanded tree.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    opener: ElementProperties,
-         *    closer: ElementProperties,
-         * }}
-         */
         Tree: {
             opener: {
                 label:   "<%= LayoutHelper::Common::TREE_OPENER_LABEL %>",
@@ -464,29 +456,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/popup.js
-         *
-         * - button.class     Popup activator CSS class.
-         * - panel.class      Popup panel CSS class.
-         * - closer.class     CSS class signifying a panel close control.
-         * - controls.class   CSS class for controls below the panel.
-         * - deferred.class   CSS class signifying deferred content.
-         * - hidden.class     CSS class indicating a hidden element.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    button:   ElementProperties,
-         *    panel:    ElementProperties,
-         *    closer:   ElementProperties,
-         *    controls: ElementProperties,
-         *    deferred: ElementProperties,
-         *    hidden:   ElementProperties,
-         * }}
-         */
         Popup: {
             button: {
                 class: "<%= PopupHelper::POPUP_BUTTON_CLASS %>"
@@ -508,73 +477,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/file-upload.js
-         *
-         * - Path.index         The endpoint for listing submissions.
-         * - Path.new           The new entry creation form.
-         * - Path.edit          The existing entry modification form.
-         * - Path.create        The POST endpoint for creating a database entry for the uploaded file.
-         * - Path.renew         The POST endpoint for generating a fresh database entry.
-         * - Path.reedit        The POST endpoint for re-starting an edit workflow on an existing database entry.
-         * - Path.cancel        The endpoint for canceling a submission.
-         * - Path.endpoint      Shrine's upload endpoint (the server route to which uploads are directed).
-         * - Style.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
-         * - Style.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
-         * - Action             Form action label/tooltips for controller actions.
-         * - Filter             Form action label/tooltips for form field filter selections.
-         * - Status             Status marker label/tooltips.
-         * - Mime.to_fmt        A table mapping MIME type to file format.
-         * - Field.empty        Blank field value indicator.
-         * - Repo.default       The name of the default repository.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    Path: {
-         *        index:        string,
-         *        new:          string,
-         *        edit:         string,
-         *        create:       string,
-         *        renew:        string,
-         *        reedit:       string,
-         *        cancel:       string,
-         *        endpoint:     string,
-         *    },
-         *    Style: {
-         *        drag_target:  string,
-         *        preview:      string,
-         *    },
-         *    Action: {
-         *        new:          RouteActionProperties,
-         *        edit:         RouteActionProperties,
-         *        delete:       RouteActionProperties,
-         *        bulk_new:     RouteActionProperties,
-         *        bulk_edit:    RouteActionProperties,
-         *        bulk_delete:  RouteActionProperties
-         *    },
-         *    Filter: {
-         *        available:    FieldGroupProperties,
-         *        filled:       FieldGroupProperties,
-         *        invalid:      FieldGroupProperties,
-         *        all:          FieldGroupProperties
-         *    },
-         *    Status: {
-         *        required:     ElementProperties,
-         *        invalid:      ElementProperties,
-         *        valid:        ElementProperties,
-         *        disabled:     ElementProperties
-         *    },
-         *    Mime: {
-         *        to_fmt:       object,
-         *    },
-         *    Field: {
-         *        empty:        string,
-         *    }
-         * }}
-         */
         Upload: {
             Path:   o$('<%= js UploadHelper::UPLOAD_PATH %>'),
             Style:  o$('<%= js UploadHelper::UPLOAD_STYLE %>'),
@@ -593,73 +495,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/entry-form.js
-         *
-         * - Path.index         The endpoint for listing submissions.
-         * - Path.new           The new entry creation form.
-         * - Path.edit          The existing entry modification form.
-         * - Path.create        The POST endpoint for creating a database entry for the uploaded file.
-         * - Path.renew         The POST endpoint for generating a fresh database entry.
-         * - Path.reedit        The POST endpoint for re-starting an edit workflow on an existing database entry.
-         * - Path.cancel        The endpoint for canceling a submission.
-         * - Path.endpoint      Shrine's upload endpoint (the server route to which uploads are directed).
-         * - Style.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
-         * - Style.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
-         * - Action             Form action label/tooltips for controller actions.
-         * - Filter             Form action label/tooltips for form field filter selections.
-         * - Status             Status marker label/tooltips.
-         * - Mime.to_fmt        A table mapping MIME type to file format.
-         * - Field.empty        Blank field value indicator.
-         * - Repo.default       The name of the default repository.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    Path: {
-         *        index:        string,
-         *        new:          string,
-         *        edit:         string,
-         *        create:       string,
-         *        renew:        string,
-         *        reedit:       string,
-         *        cancel:       string,
-         *        endpoint:     string,
-         *    },
-         *    Style: {
-         *        drag_target:  string,
-         *        preview:      string,
-         *    },
-         *    Action: {
-         *        new:          RouteActionProperties,
-         *        edit:         RouteActionProperties,
-         *        delete:       RouteActionProperties,
-         *        bulk_new:     RouteActionProperties,
-         *        bulk_edit:    RouteActionProperties,
-         *        bulk_delete:  RouteActionProperties
-         *    },
-         *    Filter: {
-         *        available:    FieldGroupProperties,
-         *        filled:       FieldGroupProperties,
-         *        invalid:      FieldGroupProperties,
-         *        all:          FieldGroupProperties
-         *    },
-         *    Status: {
-         *        required:     ElementProperties,
-         *        invalid:      ElementProperties,
-         *        valid:        ElementProperties,
-         *        disabled:     ElementProperties
-         *    },
-         *    Mime: {
-         *        to_fmt:       object,
-         *    },
-         *    Field: {
-         *        empty:        string,
-         *    }
-         * }}
-         */
         Entry: {
             Path:   o$('<%= js EntryHelper::ENTRY_PATH %>'),
             Style:  o$('<%= js EntryHelper::ENTRY_STYLE %>'),
@@ -678,27 +513,6 @@ export const Emma = (function() {
             }
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/records.js
-         *
-         * - GroupPanel     Selection for type of Upload records to show.
-         * - PageFilter     Upload records filter radio button panel.
-         * - FilterOptions  Debug-only filter option panel.
-         * - List           Container for a listing of Upload records.
-         * - StateGroup     Workflow state groups.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *    GroupPanel:     object,
-         *    PageFilter:     object,
-         *    FilterOptions:  object,
-         *    List:           object,
-         *    StateGroup:     string[]
-         * }}
-         */
         Record: {
             GroupPanel: {
                 class:  '<%= UploadHelper::UPLOAD_GROUP_PANEL_CLASS %>',
@@ -724,21 +538,6 @@ export const Emma = (function() {
             StateGroup: a$('<%= js UploadHelper::UPLOAD_STATE_GROUP.keys %>'),
         },
 
-        /**
-         * ====================================================================
-         *
-         * feature/scroll.js
-         *
-         * - target   Properties for the element which is scrolled to the top.
-         * - button   Properties for the scroll-to-top button.
-         *
-         * ====================================================================
-         *
-         * @type {{
-         *     target:  ElementProperties,
-         *     button:  ElementProperties
-         * }}
-         */
         Scroll: {
             target: o$('<%= js LayoutHelper::Scroll::SCROLL_TARGET %>'),
             button: o$('<%= js LayoutHelper::Scroll::SCROLL_TOP %>')
@@ -765,7 +564,7 @@ export const Emma = (function() {
     });
 
     // ========================================================================
-    // Exported values.
+    // Exposed values
     // ========================================================================
 
     return deepFreeze(settings);

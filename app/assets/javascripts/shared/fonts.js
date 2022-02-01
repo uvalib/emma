@@ -1,7 +1,8 @@
 // app/assets/javascripts/shared/fonts.js
 
 
-import { isMissing, handleEvent } from '../shared/definitions'
+import { isMissing }   from '../shared/definitions'
+import { handleEvent } from '../shared/events'
 
 
 /**

@@ -1,25 +1,21 @@
 // app/assets/javascripts/feature/search-analysis.js
 
 
-import { Emma }                         from '../shared/assets'
-import { DB }                           from '../shared/database'
-import { BaseClass }                    from '../shared/base-class'
-import { SessionState, removeByPrefix } from '../shared/session-state'
-import { CallbackQueue }                from '../shared/queue'
+import { Emma }                               from '../shared/assets'
+import { DB }                                 from '../shared/database'
+import { BaseClass }                          from '../shared/base-class'
+import { SessionState, removeByPrefix }       from '../shared/session-state'
+import { CallbackQueue }                      from '../shared/queue'
+import { rgbColor, rgbColorInverse }          from '../shared/color'
+import { DEF_HEX_DIGITS, HEX_BASE, selector } from '../shared/css'
+import { handleClickAndKeypress }             from '../shared/events'
+import { arrayWrap }                          from '../shared/objects'
+import { makeUrl, urlParameters }             from '../shared/url'
 import {
-    DEFAULT_HEX_DIGITS,
-    HEX_BASE,
-    arrayWrap,
-    handleClickAndKeypress,
     isDefined,
     isMissing,
     isPresent,
-    makeUrl,
     notDefined,
-    rgbColor,
-    rgbColorInverse,
-    selector,
-    urlParameters,
 } from '../shared/definitions'
 
 
@@ -831,7 +827,6 @@ $(document).on('turbolinks:load', function() {
     const EARLY_EXILE_TOOLTIP =
         'A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE';
 
-    // noinspection SpellCheckingInspection
     /**
      * Narrow no-break space.
      *
@@ -846,7 +841,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    const COLOR_RANGE = HEX_BASE ** DEFAULT_HEX_DIGITS;
+    const COLOR_RANGE = HEX_BASE ** DEF_HEX_DIGITS;
 
     /**
      * Used when generating a new contrasting item title background color.

@@ -1,18 +1,16 @@
 // app/assets/javascripts/feature/records.js
 
 
-import { Emma }       from '../shared/assets'
-import { consoleLog } from '../shared/logging'
+import { Emma }                                 from '../shared/assets'
+import { delegateInputClick, toggleVisibility } from '../shared/accessibility'
+import { consoleLog }                           from '../shared/logging'
+import { isMissing, isPresent }                 from '../shared/definitions'
+import { asParams }                             from '../shared/url'
 import {
-    asParams,
-    delegateInputClick,
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-    isMissing,
-    isPresent,
-    toggleVisibility,
-} from '../shared/definitions'
+} from '../shared/events'
 
 
 $(document).on('turbolinks:load', function() {

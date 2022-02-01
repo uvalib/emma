@@ -1,8 +1,8 @@
 // app/assets/javascripts/feature/skip-nav.js
 
 
-import { consoleLog }           from '../shared/logging'
 import { isMissing, isPresent } from '../shared/definitions'
+import { consoleLog }           from '../shared/logging'
 
 
 $(document).on('turbolinks:load', function() {

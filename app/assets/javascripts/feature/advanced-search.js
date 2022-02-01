@@ -1,25 +1,25 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
-import { Emma }       from '../shared/assets'
-import { consoleLog } from '../shared/logging'
+import { Emma }                           from '../shared/assets'
+import { toggleVisibility }               from '../shared/accessibility'
+import { randomizeClass }                 from '../shared/css'
+import { consoleLog }                     from '../shared/logging'
+import { arrayWrap, compact, deepFreeze } from '../shared/objects'
+import { urlParameters }                  from '../shared/url'
 import {
-    arrayWrap,
-    compact,
-    debounce,
-    deepFreeze,
-    handleClickAndKeypress,
-    handleEvent,
     isDefined,
     isEmpty,
-    isEvent,
     isMissing,
     isPresent,
     notDefined,
-    randomizeClass,
-    toggleVisibility,
-    urlParameters,
 } from '../shared/definitions'
+import {
+    debounce,
+    handleClickAndKeypress,
+    handleEvent,
+    isEvent,
+} from '../shared/events'
 
 
 $(document).on('turbolinks:load', function() {

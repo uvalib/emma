@@ -1,14 +1,10 @@
 // app/assets/javascripts/shared/flash.js
 
 
-import {
-    SECONDS,
-    isDefined,
-    isEmpty,
-    isMissing,
-    scrollIntoView,
-    selector,
-} from '../shared/definitions';
+import { isDefined, isEmpty, isMissing } from '../shared/definitions'
+import { scrollIntoView }                from '../shared/html'
+import { selector }                      from '../shared/css'
+import { SECONDS }                       from '../shared/time'
 
 
 // ============================================================================

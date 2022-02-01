@@ -1,8 +1,9 @@
 // app/assets/javascripts/shared/queue.js
 
 
-import { BaseClass }        from '../shared/base-class'
-import { flatten, isEmpty } from '../shared/definitions'
+import { BaseClass } from '../shared/base-class'
+import { isEmpty }   from '../shared/definitions'
+import { flatten }   from '../shared/objects'
 
 
 // ============================================================================
