@@ -2,18 +2,24 @@
 <%-
   # EMMA download help page.
 
-  signed_in  = help_jump('signed in', :sign_in)
-  search     = help_jump('search',    :search)
-  emma_logo  = repository_source_logo(:emma)
-  bs_logo    = repository_source_logo(:bookshare)
-  ht_logo    = repository_source_logo(:hathiTrust)
-  ia_logo    = repository_source_logo(:internetArchive)
-  ia_timeout = help_image(:ia_timeout, class: 'no-border wide')
+  ht_title            = 'Downloading a HathiTrust item'
+  ia_title            = 'Downloading an Internet Archive item'
+  bs_title            = 'Downloading a Bookshare item'
+  emma_title          = 'Downloading an EMMA item'
 
-  ia_help            = 'https://help.archive.org/hc/en-us/articles'
-  is_disability_help = '360026244752-Disability-Access-General-Information'
-  ia_disability_page = "#{ia_help}/#{is_disability_help}"
-  ia_disability_link = external_link('Disability Access', ia_disability_page)
+  ht_logo             = repository_source_logo(:hathiTrust)
+  ia_logo             = repository_source_logo(:internetArchive)
+  bs_logo             = repository_source_logo(:bookshare)
+  emma_logo           = repository_source_logo(:emma)
+
+  signed_in           = help_jump('signed in', :sign_in)
+  search              = help_jump('search',    :search)
+  ia_timeout          = help_image(:ia_timeout, class: 'no-border wide')
+
+  ia_help             = 'https://help.archive.org/hc/en-us/articles'
+  is_disability_help  = '360026244752-Disability-Access-General-Information'
+  ia_disability_page  = "#{ia_help}/#{is_disability_help}"
+  ia_disability_link  = external_link('Disability Access', ia_disability_page)
 
 -%>
 
@@ -30,33 +36,17 @@
     Topics in this section:
   </label>
   <ul>
-    <li>
-      <a href="#download_hathiTrust_help">
-        Downloading a HathiTrust item
-      </a>
-    </li>
-    <li>
-      <a href="#download_internetArchive_help">
-        Downloading an Internet Archive item
-      </a>
-    </li>
-    <li>
-      <a href="#download_bookshare_help">
-        Downloading a Bookshare item
-      </a>
-    </li>
-    <li>
-      <a href="#download_emma_help">
-        Downloading an EMMA item
-      </a>
-    </li>
+    <li><a href="#download_hathiTrust_help"><%=      ht_title   -%></a></li>
+    <li><a href="#download_internetArchive_help"><%= ia_title   -%></a></li>
+    <li><a href="#download_bookshare_help"><%=       bs_title   -%></a></li>
+    <li><a href="#download_emma_help"><%=            emma_title -%></a></li>
   </ul>
 </nav>
 
 <section role="region" aria-labelledby="download_hathiTrust_help">
 
   <h2 class="section" id="download_hathiTrust_help">
-    <span class="text">Downloading a HathiTrust item</span>
+    <span class="text"><%= ht_title -%></span>
     <%= ht_logo %>
   </h2>
 
@@ -84,7 +74,7 @@
 <section role="region" aria-labelledby="download_internetArchive_help">
 
   <h2 class="section" id="download_internetArchive_help">
-    <span class="text">Downloading an Internet Archive item</span>
+    <span class="text"><%= ia_title -%></span>
     <%= ia_logo %>
   </h2>
 
@@ -127,7 +117,7 @@
 <section role="region" aria-labelledby="download_bookshare_help">
 
   <h2 class="section" id="download_bookshare_help">
-    <span class="text">Downloading a Bookshare item</span>
+    <span class="text"><%= bs_title -%></span>
     <%= bs_logo %>
   </h2>
 
@@ -237,7 +227,7 @@
 <section role="region" aria-labelledby="download_emma_help">
 
   <h2 class="section" id="download_emma_help">
-    <span class="text">Downloading an EMMA item</span>
+    <span class="text"><%= emma_title -%></span>
     <%= emma_logo %>
   </h2>
 

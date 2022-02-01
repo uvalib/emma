@@ -22,15 +22,11 @@
     }
 }
 
-//=============================================================================
-// Internal placeholder classes
-//=============================================================================
-
-%help-text {
+@mixin help-text {
     line-height: 1.35;
 }
 
-%help-layout {
+@mixin help-layout {
     @media #{$wide-screen} {
         max-width: 50vw;
     }
@@ -38,6 +34,10 @@
         max-width: 75vw;
     }
 }
+
+//=============================================================================
+// Internal placeholder classes
+//=============================================================================
 
 %help-styles {
 
@@ -85,7 +85,7 @@
     }
 
     p {
-        @extend %help-text;
+        @include help-text;
 
         a {
             display: inline;
@@ -141,24 +141,33 @@
     }
 }
 
-%help-elements {
+//=============================================================================
+// Elements
+//=============================================================================
+
+// A generic help section.
+// @see HelpHelper#help_section
+// @see file:app/views/help/index.html.erb
+.help-section {
 
     // Major sub-heading.
     .section {
 
-        display:         flex;
-        flex-direction:  row;
-        justify-content: space-between;
-        align-items:     flex-end;
+        display:        flex;
+        flex-direction: row;
+        align-items:    baseline;
 
         @media #{$narrow-screen} {
-            flex-wrap: wrap-reverse;
+            flex-wrap:  wrap-reverse;
         }
 
         // Sub-heading text.
         .text {
             display: block;
             flex:    1 1 auto;
+        }
+        .control-button + .text:before {
+            content: "#{$NNBS}#{$EN_DASH}#{$NNBS}";
         }
 
         // Repository logo.
@@ -187,7 +196,7 @@
 
     // Minor sub-heading.
     .sub-section {
-        // TODO: ??? %help-elements .sub-section
+        // TODO: ??? .help-section .sub-section
     }
 
     // Container for elements to be arranged side-by-side.
@@ -258,7 +267,7 @@
         // Description of menu selection.
         .value {
 
-            @extend %help-text;
+            @include help-text;
 
             &:last-of-type { margin-bottom: 0; }
 
@@ -287,11 +296,11 @@
     }
 }
 
-%help-panel {
+// Special information box.
+.help-intro {
 
     @include panel;
 
-    @extend %help-layout;
     @extend %help-styles;
 
     margin:  1rem 0;
@@ -306,26 +315,10 @@
     }
 }
 
-//=============================================================================
-// Elements
-//=============================================================================
-
-// A generic help section.
-// @see HelpHelper#help_section
-// @see file:app/views/help/index.html.erb
-.help-section {
-    @extend %help-elements;
-}
-
-// Special information box.
-.help-intro {
-    @extend %help-panel;
-}
-
 // Free-standing panel containing help topic table-of-contents links.
 .help-toc {
 
-    @extend %help-panel;
+    @extend .help-intro;
 
     margin: 3rem 0;
 }
@@ -355,9 +348,10 @@
 .help-list {
 
     @extend .model-list;
-    @extend %help-layout;
     @extend %help-styles;
-    @extend %help-elements;
+    @extend .help-section;
+
+    @include help-layout;
 
     margin-top: model.$list-item-gap-y;
 
@@ -385,8 +379,9 @@
 .help-container {
 
     @extend .model-container;
-    @extend %help-layout;
     @extend %help-styles;
+
+    @include help-layout;
 
     flex-wrap:      wrap;
     flex-direction: column;
@@ -408,7 +403,7 @@ body.help {
 // @see HelpHelper#help_section
 // @see file:app/assets/javascripts/feature/help.js
 //
-.help-section {
+body.help {
 
     // An inline rendering of the panel "More/Less" toggle button.
     .advanced-search-toggle {

@@ -4,6 +4,8 @@
 
 @use 'sass:math';
 
+@use 'shared/mixins' as *;
+
 @media print {
 
     $section-gap: 3rem;
@@ -21,14 +23,20 @@
         width: 100%;
     }
 
-    .skip-nav               { display: none; }
-    .layout-header          { display: none; }
-    .search-in-progress     { display: none; }
-    .scroll-to-top          { display: none; }
+    p, img {
+        page-break-inside: avoid !important;
+        page-break-before: avoid !important;
+        page-break-after:  avoid !important;
+    }
 
-    .flash-messages         { display: none; }
-    .help-popup             { display: none; }
-    .pagination-controls    { display: none; }
+    .skip-nav               { display: none !important; }
+    .layout-header          { display: none !important; }
+    .search-in-progress     { display: none !important; }
+    .scroll-to-top          { display: none !important; }
+
+    .flash-messages         { display: none !important; }
+    .help-popup             { display: none !important; }
+    .pagination-controls    { display: none !important; }
 
     .layout-content {
         margin:  0;
@@ -52,7 +60,7 @@
         }
 
         .pagination-bottom {
-            display: none;
+            display: none !important;
         }
 
         .number {
@@ -146,6 +154,18 @@
             .session-debug-table {
                 border-top: none;
             }
+        }
+    }
+
+    .help-intro,
+    .help-toc {
+        page-break-inside: avoid !important;
+    }
+
+    body.help:not(.modal) {
+
+        .entry-title {
+            page-break-before: always !important;
         }
     }
 }

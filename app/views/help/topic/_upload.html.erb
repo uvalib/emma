@@ -2,6 +2,26 @@
 <%-
   # EMMA upload help page.
 
+  overview_title    = 'OVERVIEW'
+  index_title       = 'Show your past and current uploads'
+  new_title         = 'Submitting a new item to EMMA'
+  edit_title        = 'Updating an existing EMMA entry'
+  delete_title      = 'Removing an existing EMMA entry'
+
+  index_label       = t('emma.upload.index.label')
+  new_label         = t('emma.upload.new.label')
+  edit_label        = t('emma.upload.edit.label')
+  delete_label      = t('emma.upload.delete.label')
+
+  btn_opt           = { class: 'control-button' }
+  index_btn         = help_span(index_label,  **btn_opt)
+  new_btn           = help_span(new_label,    **btn_opt)
+  edit_btn          = help_span(edit_label,   **btn_opt)
+  delete_btn        = help_span(delete_label, **btn_opt)
+
+  nav_menu_item     = t('emma.upload.label')
+  actions_menu      = 'Upload Actions'
+
   signed_in         = help_jump('signed in', :sign_in)
   delta             = UploadHelper::UPLOAD_ICONS.dig(:edit, :icon)
   delta             = html_span(delta, 'aria-label': 'triangle')
@@ -9,37 +29,45 @@
   x                 = html_span(x, 'aria-label': 'X')
   edit_tip          = UploadHelper::UPLOAD_ICONS.dig(:edit, :tip)
   delete_tip        = UploadHelper::UPLOAD_ICONS.dig(:delete, :tip)
-  upload_actions    = help_image(:upload_actions)
+
   panel_opener      = LayoutHelper::Common::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')
 
   create_config     = UploadHelper::UPLOAD_ACTION_VALUES[:new]
   create_select     = create_config.dig(:select, :enabled, :label)
-  create_select     = help_span(create_select, class: 'control-button')
+  create_select     = help_span(create_select, **btn_opt)
   create_submit     = create_config.dig(:submit, :enabled, :label)
-  create_submit     = help_span(create_submit, class: 'control-button')
+  create_submit     = help_span(create_submit, **btn_opt)
   create_cancel     = create_config.dig(:cancel, :enabled, :label)
-  create_cancel     = help_span(create_cancel, class: 'control-button')
+  create_cancel     = help_span(create_cancel, **btn_opt)
 
   edit_config       = UploadHelper::UPLOAD_ACTION_VALUES[:edit]
   edit_select       = edit_config.dig(:select, :enabled, :label)
-  edit_select       = help_span(edit_select, class: 'control-button')
+  edit_select       = help_span(edit_select, **btn_opt)
   edit_submit       = edit_config.dig(:submit, :enabled, :label)
-  edit_submit       = help_span(edit_submit, class: 'control-button')
+  edit_submit       = help_span(edit_submit, **btn_opt)
   edit_cancel       = edit_config.dig(:cancel, :enabled, :label)
-  edit_cancel       = help_span(edit_cancel, class: 'control-button')
+  edit_cancel       = help_span(edit_cancel, **btn_opt)
 
   delete_config     = UploadHelper::UPLOAD_ACTION_VALUES[:delete]
   delete_submit     = delete_config.dig(:submit, :enabled, :label)
-  delete_submit     = help_span(delete_submit, class: 'control-button')
+  delete_submit     = help_span(delete_submit, **btn_opt)
   delete_cancel     = delete_config.dig(:cancel, :enabled, :label)
-  delete_cancel     = help_span(delete_cancel, class: 'control-button')
+  delete_cancel     = help_span(delete_cancel, **btn_opt)
 
+  menu_opt          = { class: 'wide' }
+  source_menu       = help_image(:source_menu,            **menu_opt)
+  source_menu_open  = help_image(:source_menu_opened,     **menu_opt)
+  source_menu_ht    = help_image(:source_menu_ht,         **menu_opt)
+  source_selected   = help_image(:source_selected_fields, **menu_opt)
+
+  prepare_step      = 'Prepare a file for upload'
+  select_step       = 'Select a file to upload'
+  repository_step   = 'Indicate the Source Repository'
+  metadata_step     = 'Provide metadata'
+  submit_step       = 'Complete the submission'
   upload_step       = 0
-  source_menu       = help_image(:source_menu,            class: 'wide')
-  source_menu_open  = help_image(:source_menu_opened,     class: 'wide')
-  source_menu_ht    = help_image(:source_menu_ht,         class: 'wide')
-  source_selected   = help_image(:source_selected_fields, class: 'wide')
+
 -%>
 
 <p>
@@ -52,51 +80,56 @@
     Topics in this section:
   </label>
   <ul>
-    <li>
-      <a href="#upload_overview_help">OVERVIEW</a>
-    </li>
-    <li>
-      <a href="#upload_new_help">Submitting a new item to EMMA</a>
-    </li>
-    <li>
-      <a href="#upload_edit_help">Updating an existing EMMA entry</a>
-    </li>
-    <li>
-      <a href="#upload_delete_help">Removing an existing EMMA entry</a>
-    </li>
+    <li><a href="#upload_overview_help"><%= overview_title -%></a></li>
+    <li><a href="#upload_new_help"><%=      new_title      -%></a></li>
+    <li><a href="#upload_edit_help"><%=     edit_title     -%></a></li>
+    <li><a href="#upload_delete_help"><%=   delete_title   -%></a></li>
   </ul>
 </nav>
 
 <section role="region" aria-labelledby="upload_overview_help">
 
   <h2 class="section" id="upload_overview_help">
-    OVERVIEW
+    <span class="text"><%= overview_title -%></span>
   </h2>
 
   <p>
     All of EMMA’s functionality related to working with submissions is
-    available after selecting Uploads from the navigation menu.
-    The Uploads main page displays all of the files that have been previously
-    uploaded to EMMA under your account.
+    available after selecting <%= nav_menu_item -%> from the navigation menu.
+    The <%= nav_menu_item -%> main page displays all of the files that have
+    been previously uploaded to EMMA under your account.
   </p>
 
   <h3 class="sub-section" id="upload_actions_menu_help">
-    Upload Actions menu
+    <%= actions_menu -%> menu
   </h3>
 
   <p>
-    The available functions are displayed at the top of each Uploads page as a
-    set of buttons:
-    <%= upload_actions %>
+    The available functions are displayed at the top of each
+    <%= nav_menu_item -%> page as a set of buttons:
+    <%= help_image(:upload_actions) %>
   </p>
 
   <div class="choices">
-    <div class="label"><a href="#upload_new_help">Create</a></div>
-    <div class="value">Submit a new item</div>
-    <div class="label"><a href="#upload_edit_help">Change</a></div>
-    <div class="value">Modify an existing item</div>
-    <div class="label"><a href="#upload_delete_help">Remove</a></div>
-    <div class="value">Remove an existing item</div>
+    <div class="label">
+      <a href="#upload_index_help"><%= index_label -%></a>
+    </div>
+    <div class="value"><%= index_title -%></div>
+
+    <div class="label">
+      <a href="#upload_new_help"><%= new_label -%></a>
+    </div>
+    <div class="value"><%= new_title -%></div>
+
+    <div class="label">
+      <a href="#upload_edit_help"><%= edit_label -%></a>
+    </div>
+    <div class="value"><%= edit_title -%></div>
+
+    <div class="label">
+      <a href="#upload_delete_help"><%= delete_label -%></a>
+    </div>
+    <div class="value"><%= delete_title -%></div>
   </div>
 
   <p>
@@ -110,13 +143,13 @@
   </p>
 
   <h3 class="sub-section" id="upload_actions_menu_help">
-    Upload Actions short-cuts
+    Action short-cuts
   </h3>
 
   <p>
-    Each item listed on the Uploads page is associated with controls to manage
-    that item (to the left of the item details on desktop displays;
-    at the top of the screen on mobile displays):
+    Each item listed on the <%= nav_menu_item -%> page is associated with
+    controls to manage that item (to the left of the item details on desktop
+    displays; at the top of the screen on mobile displays):
   </p>
 
   <div class="choices">
@@ -138,10 +171,22 @@
 
 </section>
 
+<section role="region" aria-labelledby="upload_index_help">
+
+  <h2 class="section" id="upload_index_help">
+    <%= index_btn -%> <span class="text"><%= index_title -%></span>
+  </h2>
+
+  <p>
+    This is a listing of your completed and pending EMMA submissions.
+  </p>
+
+</section>
+
 <section role="region" aria-labelledby="upload_new_help">
 
   <h2 class="section" id="upload_new_help">
-    Submitting a new item to EMMA
+    <%= new_btn -%> <span class="text"><%= new_title -%></span>
   </h2>
 
   <p>
@@ -152,8 +197,7 @@
   </p>
 
   <h3 class="sub-section" id="upload_new_prepare_help">
-    Step <%= upload_step += 1 -%>:
-    Prepare a file for upload
+    Step <%= upload_step += 1 -%>: <%= prepare_step -%>
   </h3>
 
   <p>
@@ -164,8 +208,7 @@
   </p>
 
   <h3 class="sub-section" id="upload_new_select_help">
-    Step <%= upload_step += 1 -%>:
-    Select a file to upload
+    Step <%= upload_step += 1 -%>: <%= select_step -%>
   </h3>
 
   <p>
@@ -195,8 +238,7 @@
   </p>
 
   <h3 class="sub-section" id="upload_repository_help">
-    Step <%= upload_step += 1 -%>:
-    Indicate the Source Repository
+    Step <%= upload_step += 1 -%>: <%= repository_step -%>
   </h3>
 
   <%= source_menu %>
@@ -238,8 +280,7 @@
   </p>
 
   <h3 class="sub-section" id="upload_new_metadata_help">
-    Step <%= upload_step += 1 -%>:
-    Provide metadata
+    Step <%= upload_step += 1 -%>: <%= metadata_step -%>
   </h3>
 
   <p>
@@ -325,8 +366,7 @@
   <%# --------------------------------------------------------------------- -%>
 
   <h3 class="sub-section" id="upload_new_submit_help">
-    Step <%= upload_step += 1 -%>:
-    Complete the submission
+    Step <%= upload_step += 1 -%>: <%= submit_step -%>
   </h3>
 
   <p>
@@ -372,11 +412,11 @@
 <section role="region" aria-labelledby="upload_edit_help">
 
   <h2 class="section" id="upload_edit_help">
-    Updating an existing EMMA entry
+    <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
   </h2>
 
   <p>
-    If you arrive at this page through the Upload Actions
+    If you arrive at this page through the <%= actions_menu -%>
     <strong>Change</strong> button,
     you will be presented with a drop-down list of your previous submissions.
     Select the desired entry from the list to proceed.
@@ -392,7 +432,7 @@
     You may modify metadata associated with your submission by reviewing and
     modifying the metadata fields
     (refer to
-    "<a href="#upload_new_help">Submitting a new item to EMMA</a>"
+    "<a href="#upload_new_help"><%= new_title -%></a>"
     above for a description of how the fields are organized).
   </p>
 
@@ -403,7 +443,7 @@
     <%= edit_select -%>
     button.
     Refer to
-    "<a href="#upload_new_select_help">Select a file to upload</a>"
+    "<a href="#upload_new_select_help"><%= select_step -%></a>"
     above for a description of the remainder of this process.
   </p>
 
@@ -425,11 +465,11 @@
 <section role="region" aria-labelledby="upload_delete_help">
 
   <h2 class="section" id="upload_delete_help">
-    Removing an existing EMMA entry
+    <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
   </h2>
 
   <p>
-    If you arrive at this page through the Upload Actions
+    If you arrive at this page through the <%= actions_menu -%>
     <strong>Remove</strong> button,
     you will be presented with a drop-down list of your previous submissions.
     Select the desired entry from the list to proceed.
