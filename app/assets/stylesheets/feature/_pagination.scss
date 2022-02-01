@@ -144,7 +144,7 @@
         .search-count {
 
             display: inline-block;
-            margin:  auto 0;
+            margin:  auto 0 auto 0.75rem;
 
             @media #{$narrow-screen} {
                 margin: 0.5rem 0 0;
