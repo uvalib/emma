@@ -189,7 +189,6 @@ export class SessionState extends BaseClass {
 
     /** @returns {string|undefined} */
     static get keyPrefix() { return undefined }
-
 }
 
 // ============================================================================
@@ -208,6 +207,10 @@ export class SessionToggle extends SessionState {
      *     enabled: ?(string|null|undefined),
      * }} ToggleState
      */
+
+    // ========================================================================
+    // Constructor
+    // ========================================================================
 
     static CLASS_NAME = 'SessionToggle';
 

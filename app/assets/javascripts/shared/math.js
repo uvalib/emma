@@ -13,6 +13,22 @@
  */
 export const K = 1024;
 
+/**
+ * Kilobyte multiplier.
+ *
+ * @constant
+ * @type {number}
+ */
+export const KB = K;
+
+/**
+ * Megabyte multiplier.
+ *
+ * @constant
+ * @type {number}
+ */
+export const MB = KB * KB;
+
 // ============================================================================
 // Functions - Math
 // ============================================================================

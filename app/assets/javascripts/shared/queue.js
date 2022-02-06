@@ -47,7 +47,6 @@ export class Queue extends BaseClass {
     push(...args)   { return this.array.push(...args) }
     pop()           { return this.array.shift() }
     forEach(fn)     { this.array.forEach(fn) }
-
 }
 
 // ============================================================================

@@ -862,7 +862,15 @@ $(document).on('turbolinks:load', function() {
 
         static CLASS_NAME = 'RelevancyScores';
 
+        // ====================================================================
+        // Methods
+        // ====================================================================
+
         initialize() { this._validateRelevancyScores() }
+
+        // ====================================================================
+        // Protected methods
+        // ====================================================================
 
         /**
          * Mark suspicious relevancy scores.
@@ -1399,6 +1407,10 @@ $(document).on('turbolinks:load', function() {
          * }} ColorizeState
          */
 
+        // ====================================================================
+        // Constructor
+        // ====================================================================
+
         static CLASS_NAME = 'ColorizeFeature';
 
         /**
@@ -1856,7 +1868,6 @@ $(document).on('turbolinks:load', function() {
                 return 'by_' + topic.replace(/^\./, '').replace(/^by_/, '');
             }
         }
-
     }
 
     // ========================================================================
