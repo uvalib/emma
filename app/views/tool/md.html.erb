@@ -1,0 +1,29 @@
+<%# app/views/tool/md.html.erb -%>
+<%-
+  # Math Detective API test harness.
+
+  title ||= t('emma.tool.md.title')
+  help  ||= nil # TODO: help_popup(:tool, :md)
+
+  unless modal?
+    set_page_title(t('emma.tool.md.label', default: title))
+    set_page_description(title)
+  end
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<div class="grid-container">
+  <%= md_input %>
+  <%= md_status  class: 'hidden' %>
+  <%= md_error   class: 'hidden' %>
+  <%= md_mathml  class: 'hidden' %>
+  <%= md_latex   class: 'hidden' %>
+  <%= md_spoken  class: 'hidden' %>
+  <%= md_results class: 'hidden' %>
+  <%= md_preview class: 'hidden' %>
+</div>
+
+<%= page_notes_section %>

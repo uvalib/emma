@@ -1,0 +1,23 @@
+<%# app/views/tool/index.html.erb -%>
+<%-
+  # Trial pages
+
+  title ||= t('emma.tool.index.title')
+  help  ||= nil # TODO: help_popup(:tool)
+
+  unless modal?
+    set_page_title(t('emma.tool.index.label', default: title))
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<ul class="tool-list">
+  <li class="tool-item"><%= link_to('Math Detective', md_trial_path) -%></li>
+</ul>
+
+<%= page_notes_section %>

@@ -1,0 +1,43 @@
+# config/locales/controllers/tool.en.yml
+
+en:
+
+  emma:
+
+    tool:
+
+      label:              'Tools'
+      title:              'Standalone Utilities'
+      tooltip:            'Standalone utilities supporting remediation.'
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:          false
+
+      search_filters:
+        enabled:          false
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:            'Tools'
+        title:            'Standalone Utilities'
+
+      md:
+        label:            'Math Detective'
+        title:            'Math Detective API trial'
+        description_html: |
+          This page allows you to process an image file (JPEG, PNG,
+          <em>etc.</em>) through Benetech's Math Detective, a backend service
+          for the automated conversion of equations in images to an accessible
+          form.
+        notes:            |
+          This is a standalone service and not currently integrated into the
+          EMMA submission process.
+          Technical questions about the nature of Math Detective can be posed
+          on the FRAME/EMMA Slack or forwarded to Benetech directly.

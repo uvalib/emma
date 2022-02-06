@@ -290,6 +290,15 @@ Rails.application.routes.draw do
 
   resources :data, only: %i[index show]
 
+  # ===========================================================================
+  # Utilities and tools pages
+  # ===========================================================================
+
+  resources :tool, only: %i[index]
+
+  get   '/tool/md',       to: 'tool#md',       as: 'md_trial'
+  match '/tool/md_proxy', to: 'tool#md_proxy', as: 'md_proxy', via: %i[get post]
+
 end
 
 # Non-functional hints for RubyMine type checking.

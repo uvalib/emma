@@ -65,6 +65,7 @@ en:
         - 'member'
         - 'reading_list'
         - 'bs_api'
+        - 'tool'
         - 'help'
         - 'home'
 
@@ -76,6 +77,7 @@ en:
 
         - 'search'
         - 'upload'
+        - 'tool'
         - 'help'
         - 'home'
 
