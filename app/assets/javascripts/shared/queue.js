@@ -24,7 +24,7 @@ export class Queue extends BaseClass {
      */
     constructor(...args) {
         super();
-        this.array = flatten(args);
+        this.array = flatten(...args);
     }
 
     // ========================================================================

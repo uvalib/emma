@@ -619,7 +619,7 @@ $(document).on('turbolinks:load', function() {
             const this_row = $.map(classes, c => c.match(/^row-\d+$/)).pop();
             const related  = sectionSelector($section);
             let $lines     = $section.siblings(related).not(`.${this_row}`);
-            lines = [...lines, ...$lines.toArray()];
+            lines.push(...$lines.toArray());
         });
         return $(lines);
     }

@@ -34,6 +34,7 @@ import {
     arrayWrap,
     compact,
     deepFreeze,
+    dup,
     fromJSON,
 } from '../shared/objects'
 import {
@@ -1535,8 +1536,8 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeUppy(form) {
 
-        /** @type {UppyFeatureSettings} feature */
-        let feature    = $.extend({}, FEATURES);
+        /** @type {UppyFeatureSettings} */
+        let feature    = dup(FEATURES);
         let $form      = $(form);
         let $container = $form.parent();
 
@@ -2488,7 +2489,7 @@ $(document).on('turbolinks:load', function() {
         /** @type {boolean|string|undefined} */
         let warn  = undefined;
         if (typeof other_name === 'object') {
-            other = $.extend({}, other_name);
+            other = dup(other_name);
             error = isMissing(other) && 'empty secondary argument';
         } else if (isDefined(other_name)) {
             other = FIELD_RELATIONSHIP[other_name];
@@ -3239,7 +3240,7 @@ $(document).on('turbolinks:load', function() {
 
         debugXhr(`${func}: VIA`, url);
 
-        /** @type {SearchResultEntry[]} records */
+        /** @type {SearchResultEntry[]} */
         let records = undefined;
         let warning, error;
         const start = Date.now();
@@ -3587,7 +3588,7 @@ $(document).on('turbolinks:load', function() {
             }
         }
         if (fields) {
-            /** @type {string} data */
+            /** @type {string} */
             let data = fields;
             if (typeof data !== 'string') {
                 data = JSON.stringify(data);

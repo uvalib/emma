@@ -199,8 +199,8 @@ export function makeUrl(...parts) {
         path.unshift(window.location.origin);
     } else {
         let tmp_path = [path_starter];
-        tmp_path.push(path.slice(0, starter_index));
-        tmp_path.push(path.slice(starter_index + 1));
+        tmp_path.push(...path.slice(0, starter_index));
+        tmp_path.push(...path.slice(starter_index + 1));
         path = tmp_path;
     }
 

@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/objects.js
 
 
-import { isPresent } from '../shared/definitions'
+import { isDefined, isPresent } from '../shared/definitions'
 
 
 // ============================================================================
@@ -16,7 +16,13 @@ import { isPresent } from '../shared/definitions'
  * @returns {array}
  */
 export function arrayWrap(item) {
-    return Array.isArray(item) ? item : [item];
+    if (typeof(item) === 'undefined')        { return []; }        else
+    if (item === null)                       { return []; }        else
+    if (Array.isArray(item))                 { return item; }      else
+    if (item instanceof Set)                 { return [...item]; } else
+    if (item instanceof Map)                 { return [...item]; } else
+    if (typeof item?.toArray === 'function') { return item.toArray(); }
+    return [item];
 }
 
 /**
@@ -27,7 +33,11 @@ export function arrayWrap(item) {
  * @returns {[string, any][]}
  */
 export function objectEntries(item) {
-    return Object.entries(item).filter(kv => item.hasOwnProperty(kv[0]));
+    if (item && (typeof item === 'object')) {
+        return Object.entries(item).filter(kv => item.hasOwnProperty(kv[0]));
+    } else {
+        return [];
+    }
 }
 
 /**
@@ -40,10 +50,11 @@ export function objectEntries(item) {
  */
 export function fromJSON(item, caller) {
     const func = caller || 'fromJSON';
-    let result = undefined;
-    if (typeof item == 'object') {
+    const type = item && typeof(item);
+    let result;
+    if (type === 'object') {
         result = item;
-    } else if (item && (typeof item === 'string')) {
+    } else if (type === 'string') {
         try {
             result = JSON.parse(item);
         }
@@ -81,19 +92,20 @@ export function compact(item, trim) {
 /**
  * Flatten one or more nested arrays.
  *
- * @param {Array|*} item...
+ * @param {...*} args
  *
  * @returns {Array}
  */
-export function flatten(item) {
-    let result = [];
-    if (arguments.length > 1) {
-        Array.from(arguments).forEach(v => result.push(...flatten(v)));
-    } else if (Array.isArray(item)) {
+export function flatten(...args) {
+    let item, result = [];
+    if (args.length > 1) {
+        args.forEach(v => result.push(...flatten(v)));
+    } else if (Array.isArray((item = args[0]))) {
         item.forEach(v => result.push(...flatten(v)));
+    } else if (typeof item === 'string') {
+        (item = item.trim()) && result.push(item);
     } else {
-        const value = (typeof item === 'string') ? item.trim() : item;
-        if (value) { result.push(value); }
+        isDefined(item) && result.push(item);
     }
     return result;
 }
@@ -116,6 +128,50 @@ export function deepFreeze(item) {
         new_item = item;
     }
     return Object.freeze(new_item);
+}
+
+/**
+ * Make a duplicate of the given item.
+ *
+ * @param {array|object|*} item
+ * @param {boolean}        [deep]
+ *
+ * @returns {array|object|*}
+ */
+export function dup(item, deep) {
+    if (Array.isArray(item)) {
+        return deep ? item.map(v => dup(v, deep)) : [...item];
+    } else if (typeof item === 'object') {
+        return deep ? $.extend(true, {}, item) : $.extend({}, item);
+    } else if (typeof item === 'string') {
+        return '' + item;
+    } else {
+        return item;
+    }
+}
+
+/**
+ * Make a duplicate of the given array.
+ *
+ * @param {array|undefined} item
+ * @param {boolean}         [deep]
+ *
+ * @returns {array}
+ */
+export function dupArray(item, deep) {
+    return Array.isArray(item) ? dup(item, deep) : [];
+}
+
+/**
+ * Make a duplicate of the given object.
+ *
+ * @param {object|undefined} item
+ * @param {boolean}          [deep]
+ *
+ * @returns {object}
+ */
+export function dupObject(item, deep) {
+    return (typeof item === 'object') ? dup(item, deep) : {};
 }
 
 /**
