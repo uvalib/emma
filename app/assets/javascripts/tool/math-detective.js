@@ -228,7 +228,12 @@ export function setup(root) {
     function showContainer(container, output, selector = '.output') {
         let $container = $(container);
         $container.removeClass(HIDDEN_MARKER);
-        output && $container.find(selector).text(output).scrollTop(0);
+        if (output) {
+            let $output = $container.find(selector);
+            $output.text(output);
+            $output.removeAttr('style'); // Undo manual resizing.
+            $output.scrollTop(0);        // Forget previous scroll position.
+        }
     }
 
     /**
