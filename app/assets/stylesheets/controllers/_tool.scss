@@ -24,59 +24,207 @@ body.tool.index {
 
 body.tool.md {
 
-    h2 {
-        display:       inline-block;
-        margin-bottom: 0.5rem;
-    }
+    $row-gap-wide:   2.5rem;
+    $row-gap-medium: 2rem;
+    $row-gap-narrow: 1.5rem;
 
-    label {
-        margin-right:  0.5rem;
-        font-weight:   bold;
-    }
-
-    .page-text-section {
-        &:last-of-type {
-            margin-bottom: 1rem;
-        }
-    }
+    $label-h-gap:    0.5rem;
+    $label-v-gap:    0.5rem;
 
     .grid-container {
+
         display:               grid;
         max-width:             95vw;
         min-height:            25vh;
         margin:                3rem 0;
         grid-template-columns: 1fr;
         align-content:         start;
+
+        @media #{$wide-screen} {
+            row-gap:           $row-gap-wide;
+        }
+
+        @media #{$medium-width} {
+            row-gap:           $row-gap-medium;
+        }
+
+        @media #{$narrow-screen} {
+            row-gap:           $row-gap-narrow;
+        }
     }
 
     // Wrapper containing the file input element.
     .input-prompt {
 
-        margin: 0;
+        display:         flex;
+        flex-direction:  row;
+        justify-content: flex-start;
+        align-items:     baseline;
+        column-gap:      $label-h-gap;
 
-        .input-label {}
-        .file-input  {}
-    }
+        @media #{$wide-screen} {
+            margin-bottom: $row-gap-wide;
+        }
 
-    .status {
-        width:          max-content;
-        padding:        0.375rem 0.5rem;
-        font-weight:    bold;
-        color:          white;
-        background:     $uva-accent-green;
-        border-radius:  0.25rem;
+        @media #{$medium-width} {
+            margin-bottom: $row-gap-medium;
+        }
+
+        @media #{$narrow-screen} {
+            margin-bottom: $row-gap-narrow;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .input-label {
+            font-weight: bold;
+            flex:        0 0 max-content;
+        }
+
+        .file-input  {
+            flex:        1 1 auto;
+            font-size:   medium;
+        }
     }
 
     .container {
+
         max-width:      inherit;
-        margin-top:     2.5rem;
         grid-column:    1/1;
+
+        //=====================================================================
+        // Components - label
+        //=====================================================================
+
+        .label-text {
+
+            display:       inline-block;
+            margin-bottom: $label-v-gap;
+
+            @media #{$narrow-screen} {
+                font-size: x-large;
+            }
+        }
+
+        .clipboard-icon {
+            display:       inline-block;
+            margin-left:    $label-h-gap;
+            vertical-align: super;
+            cursor:         pointer;
+        }
+
+        .copy-note {
+            display:       inline-block;
+            margin-left:    $label-h-gap;
+            vertical-align: super;
+            color:          gray;
+        }
+
+        .label-line {
+
+            display:         flex;
+            flex-direction:  row;
+            flex-wrap:       wrap;
+            justify-content: flex-start;
+            column-gap:      $label-h-gap;
+            row-gap:         $label-v-gap * 0.5;
+            margin-bottom:   $label-v-gap;
+
+            @media #{$wide-screen} {
+                max-width:   calc(50% + 1.25rem);
+            }
+
+            .label-text {
+                margin:     0;
+                flex:       1 1 min-content;
+                align-self: first baseline;
+            }
+
+            .copy-note,
+            .clipboard-icon {
+                margin:     0;
+                flex:       0 0 auto;
+                align-self: baseline;
+            }
+        }
+
+        //=====================================================================
+        // Components - output
+        //=====================================================================
+
+        .output {
+
+            padding:          0.5rem;
+            white-space:      pre-wrap;
+            overflow:         auto;
+            border:           2px solid $uva-accent-green;
+            border-radius:    0.25rem;
+
+            @media #{$wide-screen} {
+                height:       10vh;
+                width:        50%;
+            }
+
+            @media #{$medium-width} {
+                height:       15vh;
+                width:        97.5%;
+            }
+
+            @media #{$narrow-screen} {
+                height:       20vh;
+                width:        95%;
+                margin-right: 0.5rem;
+            }
+        }
+
+        textarea.output {
+            display:          block;
+            font-family:      inherit;
+            font-size:        medium;
+            overflow-y:       scroll;
+            resize:           vertical;
+        }
+    }
+
+    .status-container {
+
+        display:         flex;
+        flex-direction:  row;
+        flex-wrap:       wrap;
+        justify-content: flex-start;
+        align-items:     baseline;
+        column-gap:      $label-h-gap;
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .status-label {
+            font-weight:   bold;
+            flex:          0 0 max-content;
+        }
+
+        .status {
+            padding:       0.375rem 0.5rem;
+            font-weight:   bold;
+            color:         white;
+            background:    $uva-accent-green;
+            border-radius: 0.25rem;
+            flex:          0 0 max-content;
+        }
     }
 
     .preview-container {
 
+        //=====================================================================
+        // Components
+        //=====================================================================
+
         .preview-label {
-            display:     block;
+            display:       block;
+            margin-bottom: $label-v-gap;
         }
 
         .file-preview {
@@ -94,12 +242,33 @@ body.tool.md {
 
     .error-container {
 
-        margin-top:     5rem;
-        font-weight:    bold;
-        color:          red;
+        margin-top:  5rem;
+        font-weight: bold;
+        color:       red;
+
+        @mixin error-margins($h-value) {
+            margin-top:    $h-value * 1.5;
+            margin-bottom: $h-value;
+        }
+
+        @media #{$wide-screen} {
+            @include error-margins($row-gap-wide);
+        }
+
+        @media #{$medium-width} {
+            @include error-margins($row-gap-medium);
+        }
+
+        @media #{$narrow-screen} {
+            @include error-margins($row-gap-narrow);
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
 
         .no-equations {
-            // Displayed when no translations were returned.
+            // Fixed text displayed when no translations were returned.
         }
 
         .error-message {
@@ -109,32 +278,25 @@ body.tool.md {
         }
     }
 
-    .output {
-        min-height:     10vh;
-        padding:        0.5rem;
-        white-space:    pre-wrap;
-        overflow:       auto;
-        border:         2px solid $uva-accent-green;
-        border-radius:  0.25rem;
-
+    .error-container.hidden + .container {
         @media #{$wide-screen} {
-            width: 50%;
+            margin-top: $row-gap-wide;
         }
-
+        @media #{$medium-width} {
+            margin-top: $row-gap-medium;
+        }
         @media #{$narrow-screen} {
-            margin-right: 0.5rem;
+            margin-top: $row-gap-narrow;
         }
     }
 
-    .clipboard-icon {
-        margin-left:    0.5rem;
-        vertical-align: super;
-        cursor:         pointer;
-    }
+    //=========================================================================
+    // Layout adjustments
+    //=========================================================================
 
-    .clipboard-icon + .text {
-        margin-left:    0.5rem;
-        vertical-align: super;
-        color:          gray;
+    .page-text-section {
+        &:last-of-type {
+            margin-bottom: 1rem;
+        }
     }
 }

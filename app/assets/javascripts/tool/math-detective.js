@@ -7,6 +7,7 @@
 
 
 import { Api }                                 from '../shared/api'
+import { selector }                            from '../shared/css'
 import { isDefined, isMissing, isPresent}      from '../shared/definitions'
 import { HTTP }                                from '../shared/http'
 import { encodeImageOrUrl }                    from '../shared/image'
@@ -76,8 +77,11 @@ function endpoint(path, proxy) {
  */
 export function setup(root) {
 
-    const COPY_NOTE = 'Copy this output';
-    const EMPTY     = 'EMPTY';
+    const HIDDEN_MARKER      = 'hidden';
+    const COPY_NOTE_CLASS    = 'copy-note';
+    const COPY_NOTE_SELECTOR = selector(COPY_NOTE_CLASS);
+
+    const COPY_TIP  = 'Copy this output to clipboard'; // TODO: I18n
 
     // ========================================================================
     // Variables
@@ -115,7 +119,6 @@ export function setup(root) {
      * @param {Event|jQuery.Event} event
      */
     function onNewFile(event) {
-        console.log('onInput event', event);
         const file = $file_input[0]?.files[0];
         if (file) {
             clearDisplay();
@@ -194,14 +197,12 @@ export function setup(root) {
      * @param {boolean} no_equations?
      */
     function showError(message, no_equations) {
-        let $message = $error.find('.error-message');
-        let $no_eqs  = $error.find('.no-equations');
+        let $message = $error.find('.error-message').addClass(HIDDEN_MARKER);
+        let $no_eqs  = $error.find('.no-equations').addClass(HIDDEN_MARKER);
         if (message) {
-            $message.text(message).removeClass('hidden');
-            $no_eqs.addClass('hidden');
+            $message.text(message).removeClass(HIDDEN_MARKER);
         } else if (no_equations) {
-            $message.addClass('hidden');
-            $no_eqs.removeClass('hidden');
+            $no_eqs.removeClass(HIDDEN_MARKER);
         }
         showContainer($error);
     }
@@ -226,8 +227,8 @@ export function setup(root) {
      */
     function showContainer(container, output, selector = '.output') {
         let $container = $(container);
-        output && $container.find(selector).text(output);
-        $container.removeClass('hidden');
+        $container.removeClass(HIDDEN_MARKER);
+        output && $container.find(selector).text(output).scrollTop(0);
     }
 
     /**
@@ -236,11 +237,8 @@ export function setup(root) {
      * @param {Selector} [container]    If missing, all containers are hidden.
      */
     function hideContainers(container) {
-        if (container) {
-            $(container).addClass('hidden');
-        } else {
-            $containers.addClass('hidden');
-        }
+        let $target = container ? $(container) : $containers;
+        $target.addClass(HIDDEN_MARKER);
     }
 
     /**
@@ -262,7 +260,7 @@ export function setup(root) {
      */
     function setupClipboardIcon(icon) {
         let $icon = $(icon);
-        isDefined($icon.attr('title'))    || $icon.attr('title',    COPY_NOTE);
+        isDefined($icon.attr('title'))    || $icon.attr('title',    COPY_TIP);
         isDefined($icon.attr('role'))     || $icon.attr('role',     'button');
         isDefined($icon.attr('tabindex')) || $icon.attr('tabindex', 0);
         addCopyNote($icon);
@@ -270,7 +268,7 @@ export function setup(root) {
     }
 
     /**
-     * Create an annotation element after the icon if it is not already there.
+     * Create an annotation element near the icon if it is not already there.
      *
      * @param {Selector} icon
      *
@@ -278,10 +276,10 @@ export function setup(root) {
      */
     function addCopyNote(icon) {
         let $icon = $(icon);
-        let $note = $icon.siblings('.text');
+        let $note = $icon.siblings(COPY_NOTE_SELECTOR);
         if (isMissing($note)) {
-            $note = $('<span class="text hidden">');
-            $note.insertAfter($icon);
+            $note = $(`<span class="${COPY_NOTE_CLASS} ${HIDDEN_MARKER}">`);
+            $note.insertBefore($icon);
         }
         return $note;
     }
@@ -296,11 +294,11 @@ export function setup(root) {
     function copyOutput(tgt) {
         resetCopyNotes();
         let $btn   = $(isEvent(tgt) ? (tgt.currentTarget || tgt.target) : tgt);
-        let $note  = $btn.siblings('.text');
+        let $note  = $btn.siblings(COPY_NOTE_SELECTOR);
         const text = $btn.parents('.container').first().find('.output').text();
         navigator.clipboard.writeText(text).then(
-            () => $note.text('(copied)').removeClass('hidden'),
-            () => $note.text('(failed)').removeClass('hidden')
+            () => $note.text('(copied)').removeClass(HIDDEN_MARKER),
+            () => $note.text('(failed)').removeClass(HIDDEN_MARKER)
         );
         return true;
     }
@@ -310,7 +308,9 @@ export function setup(root) {
      * inserted after .clipboard-icon elements.
      */
     function resetCopyNotes() {
-        $copy_icons.siblings('.text').text('').addClass('hidden');
+        let $notes = $copy_icons.siblings(COPY_NOTE_SELECTOR);
+        $notes.addClass(HIDDEN_MARKER);
+        $notes.text('');
     }
 }
 
@@ -593,40 +593,7 @@ export class MathDetectiveApi extends Api {
     _submitImageOnComplete(result, warning, error, xhr, cb = this._onFetch) {
         const func  = 'submitImage';
         this.result = result || {};
-        switch (xhr.status) {
-            case HTTP.ok:           // NOTE: undocumented
-            case HTTP.created:
-                this.md_status = this.result.status;
-                this.error     = this.result.error;
-                console.log(`${func}: WARNING: ${this.error}`);
-                break;
-
-            case HTTP.bad_request:  // NOTE: undocumented
-                this.md_status = this.result.error  || 'ERROR';
-                this.error     = this._errorMessage || 'unknown error';
-                console.log(`${func}: WARNING: ${this.error}`);
-                break;
-
-            case HTTP.forbidden:
-                this.md_status = this.result.error  || 'ERROR';
-                this.error     = this._errorMessage || 'unknown error';
-                console.log(`${func}: WARNING: ${this.error}`);
-                break;
-
-            case HTTP.payload_too_large:
-            case HTTP.bad_gateway:
-                this.md_status = this.result.error  || 'ERROR';
-                this.error     = 'API limited to images <= 5 MB';
-                console.log(`${func}: WARNING: ${this.error}`);
-                break;
-
-            default:
-                this.md_status = this.result.error  || 'FATAL';
-                this.error     = this._errorMessage;
-                this.error   ||= `unexpected HTTP ${xhr.status}`;
-                console.error(`${func}: ERROR: ${this.error}`);
-                break;
-        }
+        this._updateStatus(xhr.status, func);
         this._showStatus();
         if (this.running) {
             this._fetchLoop(cb);
@@ -652,38 +619,62 @@ export class MathDetectiveApi extends Api {
     _fetchImageOnComplete(result, warning, error, xhr, cb = this._onFetch) {
         const func  = 'submitImage';
         this.result = result || {};
-        switch (xhr.status) {
-            case HTTP.ok:           // Image has completed processing.
-            case HTTP.accepted:     // Image is still being processed.
-                this.md_status = this.result.status;
-                this.error     = this.result.error;
-                console.log(`${func}: WARNING: ${this.error}`);
-                break;
-
-            case HTTP.forbidden:
-                this.md_status = this.result.error  || 'ERROR';
-                this.error     = this._errorMessage || 'unknown error';
-                console.log(`${func}: WARNING: ${this.error}`);
-                break;
-
-            case HTTP.not_found:
-                this.md_status = this.result.error  || 'ERROR';
-                this.error     = this._errorMessage;
-                this.error   ||= `could not find item ${handle}`;
-                console.log(`${func}: WARNING: ${this.error}`);
-                break;
-
-            default:
-                this.md_status = this.result.error  || 'FATAL';
-                this.error     = this._errorMessage;
-                this.error   ||= `unexpected HTTP ${xhr.status}`;
-                console.error(`${func}: ERROR: ${this.error}`);
-                break;
-        }
+        this._updateStatus(xhr.status, func);
         this._showStatus();
         if (!this.running) {
             cb && cb(this);
         }
+    }
+
+    _updateStatus(xhr_status, caller) {
+        const func = caller || '_updateStatus';
+        let warn, err;
+        /*
+         * NOTE: [1] Image has completed processing
+         *  Only _fetchImage but also seen with _submitImage (undocumented).
+         *
+         * NOTE: [2] Image processing started
+         *  Only _submitImage (but never actually seen).
+         *
+         * NOTE: [3] Image is still being processed
+         *  Only _fetchImage.
+         *
+         * NOTE: [4] Seen for _submitImage but undocumented.
+         */
+        switch (xhr_status) {
+            case HTTP.ok:                   // NOTE: [1]
+            case HTTP.created:              // NOTE: [2]
+            case HTTP.accepted:             // NOTE: [3]
+                this.md_status    = this.result.status;
+                warn = this.error = this.result.error;
+                break;
+
+            case HTTP.bad_request:          // NOTE: [4]
+            case HTTP.forbidden:
+                this.md_status    = this.result.error  || 'ERROR';
+                warn = this.error = this._errorMessage || 'unknown error';
+                break;
+
+            case HTTP.not_found:            // NOTE: only for _fetchImage
+                this.md_status    = this.result.error  || 'ERROR';
+                warn = this.error = this._errorMessage ||
+                    `could not find item ${this.handle}`;
+                break;
+
+            case HTTP.payload_too_large:    // NOTE: only for _submitImage
+            case HTTP.bad_gateway:          // NOTE: only for _submitImage
+                this.md_status    = this.result.error  || 'ERROR';
+                warn = this.error = 'API limited to images <= 5 MB';
+                break;
+
+            default:
+                this.md_status    = this.result.error  || 'FATAL';
+                err = this.error  = this._errorMessage ||
+                    `unexpected HTTP ${xhr_status}`;
+                break;
+        }
+        warn && console.log(`${func}: WARNING: ${warn}`);
+        err  && console.error(`${func}: ERROR: ${err}`);
     }
 
     _showStatus(value) {
