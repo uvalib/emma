@@ -65,10 +65,11 @@ class ToolController < ApplicationController
   #
   # A simple Math Detective API test page for selecting a single file.
   #
-  def md_test
+  def md
   end
 
-  # == GET /tool/md_proxy
+  # == GET  /tool/md_proxy
+  # == POST /tool/md_proxy
   #
   # Proxy the Math Detective API request to avoid CORS.
   #

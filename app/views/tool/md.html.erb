@@ -9,6 +9,8 @@
     set_page_title(t('emma.tool.md.label', default: title))
     set_page_description(title)
   end
+
+  clipboard_input = true # true?(params[:experimental])
 -%>
 
 <%= page_heading(title, help: help) %>
@@ -16,7 +18,8 @@
 
 <%= page_directions_section %>
 <div class="grid-container">
-  <%= md_input %>
+  <%= md_file_input %>
+  <%= md_clipboard_input if clipboard_input %>
   <%= md_status  class: 'hidden' %>
   <%= md_error   class: 'hidden' %>
   <%= md_mathml  class: 'hidden' %>

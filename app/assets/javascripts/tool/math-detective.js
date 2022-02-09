@@ -12,10 +12,11 @@ import { isDefined, isMissing, isPresent}      from '../shared/definitions'
 import { HTTP }                                from '../shared/http'
 import { encodeImageOrUrl }                    from '../shared/image'
 //import { MB }                                from '../shared/math'
-import { SECONDS }                             from '../shared/time'
+import { SECOND, SECONDS }                     from '../shared/time'
 import {
     handleClickAndKeypress,
     handleEvent,
+    handleHoverAndFocus,
     isEvent
 } from '../shared/events'
 
@@ -87,30 +88,191 @@ export function setup(root) {
     // Variables
     // ========================================================================
 
-    let $root       = root ? $(root) : $('body');
-    let $file_input = $root.find('.file-input');
-    let $containers = $root.find('.container');
-    let $status     = $containers.filter('.status-container');
-    let $preview    = $containers.filter('.preview-container');
-    let $error      = $containers.filter('.error-container');
-    let $mathml     = $containers.filter('.mathml-container');
-    let $latex      = $containers.filter('.latex-container');
-    let $spoken     = $containers.filter('.spoken-container');
-    let $results    = $containers.filter('.api-container');
-    let $copy_icons = $containers.find('.clipboard-icon');
+    let $root        = root ? $(root) : $('body');
+
+    let $clip_prompt = $root.find('.clipboard-prompt');
+    let $clip_input, $clip_label, $clip_note, clip_type;
+    /** @type {ClipboardItem|undefined} */ let clip_item;
+
+    let $file_prompt = $root.find('.file-prompt');
+    let $file_input;
+
+    let $containers  = $root.find('.container');
+    let $status      = $containers.filter('.status-container');
+    let $preview     = $containers.filter('.preview-container');
+    let $error       = $containers.filter('.error-container');
+    let $mathml      = $containers.filter('.mathml-container');
+    let $latex       = $containers.filter('.latex-container');
+    let $spoken      = $containers.filter('.spoken-container');
+    let $results     = $containers.filter('.api-container');
+    let $copy_icons  = $containers.find('.clipboard-icon');
 
     // ========================================================================
     // Actions
     // ========================================================================
 
-    handleEvent($file_input, 'change', onNewFile);
+    if (isPresent($clip_prompt)) {
+        $clip_input = $clip_prompt.find('.clipboard-input');
+        $clip_note  = $clip_prompt.find('.clipboard-note');
+        setupClipboardInput();
+    }
+
+    if (isPresent($file_prompt)) {
+        $file_input = $file_prompt.find('.file-input');
+        handleEvent($file_input, 'change', onNewFile);
+    }
 
     $copy_icons.each(function() {
         setupClipboardIcon(this);
     });
 
     // ========================================================================
-    // Internal functions - processing
+    // Internal functions - processing from clipboard
+    // ========================================================================
+
+    /**
+     * Prepare the clipboard input button if the current environment allows
+     * reading image data from the clipboard, or hiding it if not.
+     */
+    function setupClipboardInput() {
+        const func = 'setupClipboardInput';
+        // noinspection JSValidateTypes
+        /** @type {PermissionDescriptor} */
+        const permission = { name: 'clipboard-read' };
+        navigator.permissions.query(permission).then(result => {
+            let click = true, hover = true, note;
+            switch (result.state) {
+                case 'granted':
+                    break;
+                case 'prompt':
+                    check(); // Force the permissions prompt to appear.
+                    break;
+                default:
+                    hover = false;
+                    note  = 'Change settings to allow clipboard access';
+                    break;
+            }
+            click && handleClickAndKeypress($clip_input, processClipboard);
+            hover && handleHoverAndFocus($clip_input, check, forget);
+            showClipboardNote(note, func);
+        }).catch(reason => {
+            let message = (reason instanceof Error) ? reason.message : reason;
+            if (message?.includes('PermissionName')) {
+                console.log(`${func}: not available for this browser`);
+            } else {
+                console.warn(`${func}:`, (message || 'unknown error'));
+            }
+            $clip_prompt.addClass(HIDDEN_MARKER);
+        });
+
+        function check() {
+            document.hasFocus() && checkClipboard(func);
+            return true;
+        }
+
+        function forget() {
+            clip_item = clip_type = undefined;
+            resetClipboardNote();
+            return true;
+        }
+    }
+
+    /**
+     * Look for an image on the clipboard.  When found, update clip_item and
+     * clip_type, and execute the callback if provided.
+     *
+     * @param {string}                           [caller]
+     * @param {function(ClipboardItem?,string?)} [callback]
+     */
+    function checkClipboard(caller, callback) {
+        const func = caller || 'checkClipboard';
+        clip_item = clip_type = undefined;
+        navigator.clipboard.read().then(items => {
+            items.forEach(item => {
+                clip_item = item;
+                if (!clip_type) {
+                    const types = item.types;
+                    clip_type = types.filter(t => t.startsWith('image'))[0];
+                    if (clip_type) {
+                        callback && callback(clip_item, clip_type);
+                    }
+                }
+            });
+            let data;
+            if (clip_type && callback) {
+                data = undefined; // Processing has started.
+            } if (clip_type) {
+                data = 'Image';
+            } else if (clip_item) {
+                data = 'No image';
+            } else {
+                data = 'Nothing';
+            }
+            data && showClipboardNote(`${data} saved in the clipboard`, func);
+        }).catch(reason => {
+            let message = (reason instanceof Error) ? reason.message : reason;
+            if (message?.includes('permission')) {
+                setupClipboardInput();
+            } else {
+                message ||= 'unknown error';
+                console.warn(`${func}:`, message);
+                showClipboardNote(message, func);
+            }
+        });
+    }
+
+    /**
+     * Process file data from the clipboard through the Math Detective API and
+     * render the results.
+     *
+     * @param {Event|jQuery.Event} event
+     */
+    function processClipboard(event) {
+        const func = 'processClipboard';
+        processClipboardItem() || checkClipboard(func, processClipboardItem);
+    }
+
+    /**
+     * Process image data from the clipboard.
+     *
+     * @param {ClipboardItem} [item]
+     * @param {string}        [type]
+     *
+     * @returns {Promise|undefined}
+     */
+    function processClipboardItem(item, type) {
+        const i = item || clip_item || undefined;
+        const t = type || clip_type || undefined;
+        return i && t && i.getType(t).then(blob => processFile(blob));
+    }
+
+    /**
+     * Display a note next to the clipboard select button.
+     *
+     * @param {string} note
+     * @param {string} [caller]
+     */
+    function showClipboardNote(note, caller) {
+        if ($clip_note) {
+            if (note) {
+                $clip_note.text(note).removeClass(HIDDEN_MARKER);
+            } else {
+                resetClipboardNote();
+            }
+        }
+    }
+
+    /**
+     * Hide the note next to the clipboard select button.
+     */
+    function resetClipboardNote() {
+        if ($clip_note) {
+            $clip_note.text('').addClass(HIDDEN_MARKER);
+        }
+    }
+
+    // ========================================================================
+    // Internal functions - processing from file
     // ========================================================================
 
     /**
@@ -119,9 +281,13 @@ export function setup(root) {
      * @param {Event|jQuery.Event} event
      */
     function onNewFile(event) {
-        const file = $file_input[0]?.files[0];
-        if (file) {
-            clearDisplay();
+        const func = 'onNewFile';
+        let input, file;
+        if (!(input = $file_input[0])) {
+            console.error(`${func}: no $file_input element`);
+        } else if (!(file = input.files[0])) {
+            console.log(`${func}: no file selected`);
+        } else {
             processFile(file);
         }
     }
@@ -129,13 +295,19 @@ export function setup(root) {
     /**
      * Read an image file and process it.
      *
-     * @param {File} file
+     * @param {File|Blob} file
      */
     function processFile(file) {
+        clearDisplay();
+        const file_name = (file instanceof File) ? file.name : '(clipboard)';
         let reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onloadend = (event) => process(file.name, event.target.result);
+        reader.onloadend = (event) => process(file_name, event.target.result);
     }
+
+    // ========================================================================
+    // Internal functions - processing
+    // ========================================================================
 
     /**
      * Process file data through the Math Detective API and render the results.
@@ -252,6 +424,7 @@ export function setup(root) {
     function clearDisplay() {
         hideContainers();
         resetCopyNotes();
+        resetClipboardNote();
     }
 
     // ========================================================================

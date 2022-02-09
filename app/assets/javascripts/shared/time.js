@@ -1,6 +1,6 @@
 // app/assets/javascripts/shared/time.js
 //
-// noinspection MagicNumberJS, PointlessArithmeticExpressionJS
+// noinspection MagicNumberJS
 
 
 import { compact } from '../shared/objects'

@@ -25,21 +25,51 @@ module MdHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_input(**opt)
-    css_selector = '.input-prompt'
+  def md_file_input(**opt)
+    css_selector = '.file-prompt'
 
     input_css    = 'file-input'
     input_id     = unique_id(input_css)
     input_opt    = { class: input_css, accept: 'image/*' }
     input        = file_field_tag(input_id, input_opt)
 
-    label_css    = 'input-label'
     label_text   = 'Image file' # TODO: I18n
+    label_css    = 'file-label'
     label        = label_tag(input_id, "#{label_text}:", class: label_css)
 
     prepend_classes!(opt, css_selector)
     html_div(opt) do
       label << input
+    end
+  end
+
+  # Get image for Math Detective from the clipboard.
+  #
+  # NOTE: Not currently possible with Firefox.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_clipboard_input(**opt)
+    css_selector = '.clipboard-prompt'
+
+    input_text   = 'Paste' # TODO: I18n
+    input_css    = 'clipboard-input'
+    input_id     = unique_id(input_css)
+    input_opt    = { class: input_css, id: input_id }
+    input        = html_tag(:button, input_text, input_opt)
+
+    label_text   = 'Clipboard image' # TODO: I18n
+    label_css    = 'clipboard-label'
+    label        = label_tag(input_id, "#{label_text}:", class: label_css)
+
+    note_css     = 'clipboard-note'
+    note         = html_span('', class: "#{note_css} hidden")
+
+    prepend_classes!(opt, css_selector)
+    html_div(opt) do
+      label << input << note
     end
   end
 

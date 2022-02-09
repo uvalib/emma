@@ -53,32 +53,24 @@ body.tool.md {
         }
     }
 
-    // Wrapper containing the file input element.
-    .input-prompt {
-
+    %input-prompt {
         display:         flex;
         flex-direction:  row;
         justify-content: flex-start;
         align-items:     baseline;
         column-gap:      $label-h-gap;
+    }
 
-        @media #{$wide-screen} {
-            margin-bottom: $row-gap-wide;
-        }
+    // Wrapper containing the file input element.
+    .file-prompt {
 
-        @media #{$medium-width} {
-            margin-bottom: $row-gap-medium;
-        }
-
-        @media #{$narrow-screen} {
-            margin-bottom: $row-gap-narrow;
-        }
+        @extend %input-prompt;
 
         //=====================================================================
         // Components
         //=====================================================================
 
-        .input-label {
+        .file-label {
             font-weight: bold;
             flex:        0 0 max-content;
         }
@@ -86,6 +78,27 @@ body.tool.md {
         .file-input  {
             flex:        1 1 auto;
             font-size:   medium;
+        }
+    }
+
+    // Wrapper containing the clipboard input element.
+    .clipboard-prompt {
+
+        @extend %input-prompt;
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .clipboard-label {
+            font-weight: bold;
+            flex:        0 0 max-content;
+        }
+
+        .clipboard-input {
+            flex:        0 1 auto;
+            font-size:   medium;
+            padding:     0.125rem 0.5rem;
         }
     }
 

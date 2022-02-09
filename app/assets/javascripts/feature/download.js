@@ -107,7 +107,6 @@ $(document).on('turbolinks:load', function() {
      */
     const DEBUGGING = true;
 
-    // noinspection PointlessArithmeticExpressionJS
     /**
      * Frequency for re-requesting a download link.
      *
