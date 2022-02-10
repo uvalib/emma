@@ -94,7 +94,6 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
-    return unless route_request?
     # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller].to_s.downcase
       when 'artifact'   then return if params[:action] == 'show'
@@ -136,8 +135,6 @@ module ParamsConcern
   # @return [void]
   #
   def set_debug
-    return unless route_request?
-
     ctrlr = params[:controller]&.to_sym
     ctrlr = nil unless SPECIAL_DEBUG_CONTROLLERS.include?(ctrlr)
     debug_parameters =
@@ -172,6 +169,30 @@ module ParamsConcern
     end
 
     will_redirect
+  end
+
+  # Set suppression of developer-only controls.
+  #
+  # URL parameters:
+  # - 'dev_controls'
+  # - 'app.dev_controls'
+  #
+  # Session keys:
+  # - session['app.dev_controls']
+  #
+  # @return [void]
+  #
+  def set_dev_controls
+    session_key = 'app.dev_controls'
+    url_keys    = %i[dev_controls app.dev_controls]
+    parameters  = url_keys.map { |k| [k, params.delete(k)] }.to_h.compact
+    value       = parameters.values.first
+    if true?(value)
+      session.delete(session_key)
+    elsif false?(value)
+      session[session_key] = false
+    end
+    will_redirect if parameters.present?
   end
 
   # Visiting the index page of a controller sets the session origin.
@@ -330,6 +351,7 @@ module ParamsConcern
 
     before_action :search_redirect
     before_action :set_current_path,     if:     :route_request?
+    before_action :set_dev_controls,     if:     :route_request?
     before_action :set_debug,            if:     :route_request?
     before_action :set_origin,           only:   %i[index]
     before_action :resolve_sort,         only:   %i[index]

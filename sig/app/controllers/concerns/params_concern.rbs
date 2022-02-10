@@ -62,11 +62,33 @@ module ParamsConcern
   #
   SPECIAL_DEBUG_CONTROLLERS: symArray
 
-  # Set session on-screen debugging.
+  # Set session on-screen debugging:
+  #
+  # URL parameters:
+  # - 'debug'               manage debugging relative to the current controller
+  # - 'app.debug'           general debugging
+  # - 'app.(ctrlr).debug'   manage debugging for the indicated controller
+  #
+  # Session keys:
+  # - session['app.debug']          general debugging display
+  # - session['app.search.debug']   search debugging only
   #
   # @return [void]
   #
   def set_debug: () -> void
+
+  # Set suppression of developer-only controls.
+  #
+  # URL parameters:
+  # - 'dev_controls'
+  # - 'app.dev_controls'
+  #
+  # Session keys:
+  # - session['app.dev_controls']
+  #
+  # @return [void]
+  #
+  def set_dev_controls: () -> void
 
   # Visiting the index page of a controller sets the session origin.
   #

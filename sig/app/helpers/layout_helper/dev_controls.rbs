@@ -9,6 +9,10 @@ module LayoutHelper::DevControls
   #
   def show_dev_controls?: (*untyped, **untyped) ?{ () -> untyped } -> bool
 
+  # Indicate whether display of developer-only controls is not suppressed.
+  #
+  def allow_dev_controls?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+
   # Render a container with developer-only controls.
   #
   # @param [Hash] opt
@@ -37,6 +41,20 @@ module LayoutHelper::DevControls
   # @return [ActiveSupport::SafeBuffer]
   #
   def dev_controls: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A control for turning off display of developer-only controls. # TODO: I18n
+  #
+  # For the sake of demos, where the presence of developer-only controls might
+  # be confusing, this control redirects with "app.dev_controls=false".
+  #
+  # To restore developer-only controls, the URL parameter
+  # "app.dev_controls=true" must be supplied manually.
+  #
+  # @param [Hash] opt                 Passed to #dev_toggle_debug.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dev_hide_dev_controls: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # A control for toggling application debug status.
   #
