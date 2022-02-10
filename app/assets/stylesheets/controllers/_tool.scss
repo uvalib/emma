@@ -313,3 +313,9 @@ body.tool.md {
         }
     }
 }
+
+body.tool.md:not(.debug) {
+    .api-container {
+        display: none; // Hide API results display if not debugging.
+    }
+}
