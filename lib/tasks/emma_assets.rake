@@ -20,12 +20,6 @@ namespace :emma_assets do
   #
   BACKUP_CSS_SOURCES = !application_deployed?
 
-
-  CSS_SOURCE_MAP = 'app/assets/builds/application.css.map'
-  CSS_SRC_DIR    = 'app/assets/stylesheets'
-  CSS_DST_ROOT   = "/C#{Rails.root}"
-  CSS_DST_DIR    = "#{CSS_DST_ROOT}/#{CSS_SRC_DIR}"
-
   # ===========================================================================
   # Tasks
   # ===========================================================================
@@ -44,6 +38,12 @@ namespace :emma_assets do
 
   public
 
+  CSS_SOURCE_MAP = 'app/assets/builds/application.css.map'
+  CSS_SRC_DIR    = 'app/assets/stylesheets'
+  DEV_ROOT       = ENV.fetch('DEV_ROOT') { Rails.root.to_s }
+  CSS_DST_ROOT   = "/C#{DEV_ROOT}"
+  CSS_DST_DIR    = "#{CSS_DST_ROOT}/#{CSS_SRC_DIR}"
+
   # Replace "file:///" references with "file://C:/".
   #
   # @param [String] file                CSS source map.
@@ -52,8 +52,10 @@ namespace :emma_assets do
   #
   def edit_source_map(file = CSS_SOURCE_MAP)
     $stderr.puts '*** Transform CSS source map'
+    cur_root = "#{Rails.root}/".gsub(%r{/}, '\\/')
+    dev_root = "C:#{DEV_ROOT}/".gsub(%r{/}, '\\/')
     run <<~HEREDOC
-      sed --in-place 's/file:\\/\\/\\//file:\\/\\/C:\\//g' '#{file}'
+      sed -E --in-place 's/(file:\\/\\/)#{cur_root}/\\1#{dev_root}/g' '#{file}'
     HEREDOC
   end
 
