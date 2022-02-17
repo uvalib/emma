@@ -40,7 +40,7 @@ namespace :emma_assets do
 
   CSS_SOURCE_MAP = 'app/assets/builds/application.css.map'
   CSS_SRC_DIR    = 'app/assets/stylesheets'
-  DEV_ROOT       = ENV.fetch('DEV_ROOT') { Rails.root.to_s }
+  DEV_ROOT       = '/home/rwl/Work/emma' # NOTE: has to be hard-wired.
   CSS_DST_ROOT   = "/C#{DEV_ROOT}"
   CSS_DST_DIR    = "#{CSS_DST_ROOT}/#{CSS_SRC_DIR}"
 
