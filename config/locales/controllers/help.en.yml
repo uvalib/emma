@@ -44,6 +44,7 @@ en:
           tooltip:      'Help with EMMA %{topic}.'
           intro:        'Information on how to %{topic} in EMMA.'
           content:      'COMING SOON...' # Use ~ to indicate an ERB template.
+          enabled:      true
 
         sign_in:
           <<:           *TOPIC_TEMPLATE
@@ -78,7 +79,8 @@ en:
           content:      ~ # @see file:app/views/help/topic/_upload.html.erb
 
         entry:
-          <<: *SUBMISSION_TOPIC
+          <<:           *SUBMISSION_TOPIC
+          enabled:      debug
 
       # =======================================================================
       # Illustrations

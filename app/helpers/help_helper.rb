@@ -14,6 +14,7 @@ module HelpHelper
 
   include HtmlHelper
   include PopupHelper
+  include SessionDebugHelper
 
   # ===========================================================================
   # :section:
@@ -147,7 +148,10 @@ module HelpHelper
   # @return [Array<Symbol>]
   #
   def help_topics
-    HELP_ENTRY.keys
+    HELP_ENTRY.select { |_, entry|
+      enabled = entry[:enabled]
+      (enabled == 'debug') ? session_debug? : (enabled.nil? || true?(enabled))
+    }.keys
   end
 
   # Each help topic with its title.
