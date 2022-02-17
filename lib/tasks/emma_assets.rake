@@ -53,7 +53,7 @@ namespace :emma_assets do
   def edit_source_map(file = CSS_SOURCE_MAP)
     $stderr.puts '*** Transform CSS source map'
     cur_root = "#{Rails.root}/".gsub(%r{/}, '\\/')
-    dev_root = "C:#{DEV_ROOT}/".gsub(%r{/}, '\\/')
+    dev_root = "/C:#{DEV_ROOT}/".gsub(%r{/}, '\\/')
     run <<~HEREDOC
       sed -E --in-place 's/(file:\\/\\/)#{cur_root}/\\1#{dev_root}/g' '#{file}'
     HEREDOC
