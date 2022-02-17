@@ -6,13 +6,13 @@
 // @see https://api-docs.dev.mathdetective.ai Documentation
 
 
-import { Api }                                 from '../shared/api'
-import { selector }                            from '../shared/css'
-import { isDefined, isMissing, isPresent}      from '../shared/definitions'
-import { HTTP }                                from '../shared/http'
-import { encodeImageOrUrl }                    from '../shared/image'
-//import { MB }                                from '../shared/math'
-import { SECOND, SECONDS }                     from '../shared/time'
+import { Api }                            from '../shared/api'
+import { selector }                       from '../shared/css'
+import { isDefined, isMissing, isPresent} from '../shared/definitions'
+import { HTTP }                           from '../shared/http'
+import { encodeImageOrUrl }               from '../shared/image'
+//import { MB }                           from '../shared/math'
+import { SECONDS }                        from '../shared/time'
 import {
     handleClickAndKeypress,
     handleEvent,
@@ -88,15 +88,13 @@ export function setup(root) {
     // Variables
     // ========================================================================
 
+    /** @type {ClipboardItem|undefined} */
+    let clip_item;
+    let $clip_input, $clip_note, clip_type, $file_input;
+
     let $root        = root ? $(root) : $('body');
-
     let $clip_prompt = $root.find('.clipboard-prompt');
-    let $clip_input, $clip_label, $clip_note, clip_type;
-    /** @type {ClipboardItem|undefined} */ let clip_item;
-
     let $file_prompt = $root.find('.file-prompt');
-    let $file_input;
-
     let $containers  = $root.find('.container');
     let $status      = $containers.filter('.status-container');
     let $preview     = $containers.filter('.preview-container');
@@ -200,7 +198,7 @@ export function setup(root) {
             });
             let data;
             if (clip_type && callback) {
-                data = undefined; // Processing has started.
+                // Processing has started.
             } if (clip_type) {
                 data = 'Image';
             } else if (clip_item) {

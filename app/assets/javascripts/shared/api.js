@@ -1,13 +1,13 @@
 // app/assets/javascripts/shared/api.js
 
 
-import { BaseClass }          from '../shared/base-class'
-import { isDefined, isEmpty } from '../shared/definitions'
-import { HTTP }               from '../shared/http'
-import { dup, dupObject }     from '../shared/objects'
-import { makeUrl }            from '../shared/url'
-import * as xhr               from '../shared/xhr'
-import { Rails }              from '../vendor/rails'
+import { BaseClass }      from '../shared/base-class'
+import { isEmpty }        from '../shared/definitions'
+import { HTTP }           from '../shared/http'
+import { dup, dupObject } from '../shared/objects'
+import { makeUrl }        from '../shared/url'
+import * as xhr           from '../shared/xhr'
+import { Rails }          from '../vendor/rails'
 
 
 // ============================================================================
