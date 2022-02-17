@@ -3,37 +3,40 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Enhance the enhancements of 'assets:precompile' by 'cssbundling-rails' and
-# 'jsbundling-rails' in order to pre-process .js.erb files.
+# Enhancements to 'assets:precompile'.
 
-unless defined?(ERB_ENHANCED)
+namespace :emma_assets do
 
-  require 'erb'
-  require 'emma/rake'
+  # Set to *false* to avoid post-processing the CSS source map.
+  #
+  # @note This should be for both desktop and deployed assets.
+  #
+  FIX_CSS_MAP = true
 
-  ASSETS_ROOT = 'app/assets'
-  JS_SRC      = 'javascripts'
-  JS_DST      = 'builds'
+  # Set to *false* to avoid making a copy of CSS/SCSS source files on the
+  # desktop development system.
+  #
+  # @note This should only be done on the desktop.
+  #
+  BACKUP_CSS_SOURCES = !application_deployed?
+
+
+  CSS_SOURCE_MAP = 'app/assets/builds/application.css.map'
+  CSS_SRC_DIR    = 'app/assets/stylesheets'
+  CSS_DST_ROOT   = "/C#{Rails.root}"
+  CSS_DST_DIR    = "#{CSS_DST_ROOT}/#{CSS_SRC_DIR}"
 
   # ===========================================================================
   # Tasks
   # ===========================================================================
 
-  namespace :emma_assets do
-
-    ERB_ASSETS = %w(
-      javascripts/shared/assets.js.erb
-    )
-
-    desc ['Pre-process .js.erb files', *ERB_ASSETS.map { |f| "- #{f}" }]
-    task erb: [:environment] do
-      ERB_ASSETS.each { |erb_file| preprocess_erb(erb_file) }
-    end
-
+  desc ['Post-process CSS sourcemap', 'Replaces file:// with file://C:']
+  task fix_css_map: [:environment] do
+    $stderr.puts
+    backup_css_sources if BACKUP_CSS_SOURCES
+    edit_source_map    if FIX_CSS_MAP
+    $stderr.puts
   end
-
-  # @private
-  ERB_ENHANCED = Rake::Task['assets:precompile'].enhance(['emma_assets:erb'])
 
   # ===========================================================================
   # Methods
@@ -41,29 +44,70 @@ unless defined?(ERB_ENHANCED)
 
   public
 
-  # Process an ERB asset source into the build directory.
+  # Replace "file:///" references with "file://C:/".
   #
-  # @param [String] src   Asset source file (with or without .erb suffix).
-  # @param [String] dst   Derived if not provided.
+  # @param [String] file                CSS source map.
+  #
+  # @note This assumes that 'sass' is run with '--source-map-urls=absolute'
+  #
+  def edit_source_map(file = CSS_SOURCE_MAP)
+    $stderr.puts '*** Transform CSS source map'
+    run <<~HEREDOC
+      sed --in-place 's/file:\\/\\/\\//file:\\/\\/C:\\//g' '#{file}'
+    HEREDOC
+  end
+
+  # Backup CSS source files for use with source maps.
+  #
+  # @param [String] src_dir             Asset source directory.
+  # @param [String] dst_dir             Copy of asset source directory.
   #
   # @return [void]
   #
-  def preprocess_erb(src, dst = nil)
-    src   = src.delete_prefix('/')
-    src   = src.delete_prefix("#{ASSETS_ROOT}/").delete_prefix("#{JS_SRC}/")
-    src   = "#{JS_SRC}/#{src}".delete_suffix('.erb')
+  # @note This allows CSS source maps to be usable from the desktop
+  #   development system even from a web console to the deployed instance
+  #   since the absolute path will be resolved by the browser.
+  #
+  def backup_css_sources(src_dir = CSS_SRC_DIR, dst_dir = CSS_DST_DIR)
+    $stderr.puts '*** Backup CSS sources (desktop only)'
+    dst_dir ||= "#{CSS_DST_ROOT}/#{src_dir}"
+    bg_run <<~HEREDOC
+      mkdir -p '#{dst_dir}'
+      cp --archive --update #{src_dir}/* #{dst_dir}
+    HEREDOC
+  end
 
-    dst &&= dst.delete_prefix('/')
-    dst &&= dst.delete_prefix("#{ASSETS_ROOT}/").delete_prefix("#{JS_DST}/")
-    dst ||= src
+  # ===========================================================================
+  # Methods
+  # ===========================================================================
 
-    dst   = "#{ASSETS_ROOT}/#{JS_DST}/#{dst.tr('/', '-')}"
-    src   = "#{ASSETS_ROOT}/#{src}.erb"
+  private
 
-    file  = File.read(src)
-    erb   = ERB.new(file, trim_mode: '<>').tap { |erb| erb.filename = src }
-    data  = erb.result
-    File.write(dst, data)
+  # Run a sequence of shell commands in the background.
+  #
+  # @param [Array<String>] command    Individual shell commands with arguments.
+  #
+  def bg_run(*command, &block)
+    run(*command, async: true, &block)
+  end
+
+  # Run a sequence of shell commands.
+  #
+  # @param [Array<String>] command    Individual shell commands with arguments.
+  # @param [Boolean]       async      If *true*, run in the background.
+  #
+  def run(*command, async: false)
+    command += Array.wrap(yield) if block_given?
+    # noinspection RubyMismatchedReturnType
+    command  = command.flat_map { |c| c.is_a?(String) ? c.split("\n") : c }
+    command.map! { |cmd| cmd.to_s.strip.sub(/\s*(&&|;)$/, '') }.compact_blank!
+    subshell = command.many? && async
+    command  = command.join(' && ')
+    command  = "(#{command})" if subshell
+    command  = "#{command} &" if async
+    sh(command)
   end
 
 end
+
+Rake::Task['assets:precompile'].enhance(['emma_assets:fix_css_map'])

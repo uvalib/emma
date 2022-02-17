@@ -10,7 +10,7 @@ require_relative 'config/application'
 # 'cssbundling-rails' enhancements of 'assets:precompile'.
 class EmmaRailtie < Rails::Railtie
   rake_tasks do
-    load 'lib/tasks/emma_assets.rake'
+    load 'lib/tasks/railtie.rake'
   end
 end
 
