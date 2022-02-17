@@ -3,8 +3,9 @@
 
 import { Emma }                                 from '../shared/assets'
 import { delegateInputClick, toggleVisibility } from '../shared/accessibility'
-import { consoleLog }                           from '../shared/logging'
+import { pageController }                       from '../shared/controller'
 import { isMissing, isPresent }                 from '../shared/definitions'
+import { consoleLog }                           from '../shared/logging'
 import { asParams }                             from '../shared/url'
 import {
     handleEvent,
@@ -16,18 +17,34 @@ import {
 $(document).on('turbolinks:load', function() {
 
     /**
-     * The element containing the upload workflow state select controls.
+     * Original-style "uploads" submissions.
      *
-     * @type {jQuery}
+     * @constant
+     * @type {boolean}
      */
-    let $group_select_panel = $(`.${Emma.Record.GroupPanel.class}`);
+    const UPLOAD_CONTROLLER = (pageController() === 'upload');
 
     /**
-     * The element containing the upload page filter controls.
+     * Page assets.js properties.
+     *
+     * @constant
+     * @type {RecordProperties}
+     */
+    const PROPERTY = UPLOAD_CONTROLLER ? Emma.UploadRecord : Emma.EntryRecord;
+
+    /**
+     * The element containing the submission workflow state select controls.
      *
      * @type {jQuery}
      */
-    let $page_filter_panel = $(`.${Emma.Record.PageFilter.class}`);
+    let $group_select_panel = $(`.${PROPERTY.GroupPanel.class}`);
+
+    /**
+     * The element containing the submission page filter controls.
+     *
+     * @type {jQuery}
+     */
+    let $page_filter_panel = $(`.${PROPERTY.PageFilter.class}`);
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($group_select_panel) && isMissing($page_filter_panel)) {
@@ -46,6 +63,14 @@ $(document).on('turbolinks:load', function() {
      */
     const DEBUGGING = false;
 
+    /**
+     * Base name (singular of the related database table).
+     *
+     * @constant
+     * @type {string}
+     */
+    const RECORD = UPLOAD_CONTROLLER ? 'upload' : 'entry';
+
     // ========================================================================
     // Variables - group select
     // ========================================================================
@@ -57,7 +82,7 @@ $(document).on('turbolinks:load', function() {
      * @type {jQuery}
      */
     let $group_select_links =
-        $group_select_panel.find(`.${Emma.Record.GroupPanel.Control.class}`);
+        $group_select_panel.find(`.${PROPERTY.GroupPanel.Control.class}`);
 
     /**
      * An element which receives a description of the state group button being
@@ -72,13 +97,13 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * The upload state group controls (each is an element containing a radio
+     * The workflow state group controls (each is an element containing a radio
      * button and a label).
      *
      * @type {jQuery}
      */
     let $page_filter_controls =
-        $page_filter_panel.find(`.${Emma.Record.PageFilter.Control.class}`);
+        $page_filter_panel.find(`.${PROPERTY.PageFilter.Control.class}`);
 
     /**
      * Radio buttons which cause the set of displayed records to be filtered.
@@ -97,7 +122,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $filter_options_panel = $(`.${Emma.Record.FilterOptions.class}`);
+    let $filter_options_panel = $(`.${PROPERTY.FilterOptions.class}`);
 
     /**
      * The filter option controls (each is an element containing a checkbox and
@@ -106,9 +131,7 @@ $(document).on('turbolinks:load', function() {
      * @type {jQuery}
      */
     let $filter_options_controls =
-        $filter_options_panel.find(
-            `.${Emma.Record.FilterOptions.Control.class}`
-        );
+        $filter_options_panel.find(`.${PROPERTY.FilterOptions.Control.class}`);
 
     /**
      * The debug-only checkboxes to enable/disable the presence of
@@ -128,7 +151,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $record_list = $(`.${Emma.Record.List.class}`);
+    let $record_list = $(`.${PROPERTY.List.class}`);
 
     /**
      * The record list elements actually related to record display (not
@@ -136,8 +159,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $record_lines = $record_list.children('.number, .upload-list-item, .entry-list-item');  // TODO: remove after upload -> entry
-    //let $record_lines = $record_list.children('.number, .entry-list-item');                   // TODO: use after upload -> entry
+    let $record_lines = $record_list.children(`.number, .${RECORD}-list-item`);
 
     /**
      * The record list elements that are shown when there are no records.
@@ -198,13 +220,13 @@ $(document).on('turbolinks:load', function() {
      * Get the highest-priority workflow state group represented by the given
      * elements.
      *
-     * @param {string[]} [group_list]   Default: Emma.Record.StateGroup.
-     * @param {Selector} [match]     Default: $record_lines.
+     * @param {string[]} [group_list]   Default: PROPERTY.StateGroup.
+     * @param {Selector} [match]        Default: $record_lines.
      *
      * @returns {string|undefined}
      */
     function defaultStateGroup(group_list, match) {
-        const groups  = group_list || Emma.Record.StateGroup;
+        const groups  = group_list || PROPERTY.StateGroup;
         let $elements = (match ? $(match) : $record_lines).filter(':visible');
         let result    = undefined;
         // noinspection FunctionWithInconsistentReturnsJS

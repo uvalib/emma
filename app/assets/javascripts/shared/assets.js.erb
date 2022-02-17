@@ -57,31 +57,40 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * ElementProperties
  *
  * @typedef {{
- *     active:    ?(boolean|null|undefined),
- *     tag:       ?(string|null|undefined),
- *     type:      ?(string|null|undefined),
- *     class:     ?(string|null|undefined),
- *     tooltip:   ?(string|null|undefined),
- *     label:     ?(string|null|undefined),
- *     text:      ?(string|null|undefined),
- *     html:      ?(string|null|undefined),
- *     func:      ?(function|null|undefined)
+ *     active:      ?(boolean|null|undefined),
+ *     tag:         ?(string|null|undefined),
+ *     type:        ?(string|null|undefined),
+ *     class:       ?(string|null|undefined),
+ *     tooltip:     ?(string|null|undefined),
+ *     label:       ?(string|null|undefined),
+ *     text:        ?(string|null|undefined),
+ *     html:        ?(string|null|undefined),
+ *     func:        ?(function|null|undefined),
  * }} ElementProperties
+ */
+
+/**
+ * ToggleProperties
+ *
+ * @typedef {{
+ *     opener:      ElementProperties,
+ *     closer:      ElementProperties,
+ * }} ToggleProperties
  */
 
 /**
  * Action Properties
  *
  * @typedef {{
- *     tag:       ?(string|null|undefined),
- *     type:      ?(string|null|undefined),
- *     class:     ?(string|null|undefined),
- *     tooltip:   ?(string|null|undefined),
- *     label:     ?(string|null|undefined),
- *     text:      ?(string|null|undefined),
- *     html:      ?(string|null|undefined),
- *     enabled:   ?(ElementProperties|null|undefined),
- *     disabled:  ?(ElementProperties|null|undefined)
+ *     tag:         ?(string|null|undefined),
+ *     type:        ?(string|null|undefined),
+ *     class:       ?(string|null|undefined),
+ *     tooltip:     ?(string|null|undefined),
+ *     label:       ?(string|null|undefined),
+ *     text:        ?(string|null|undefined),
+ *     html:        ?(string|null|undefined),
+ *     enabled:     ?(ElementProperties|null|undefined),
+ *     disabled:    ?(ElementProperties|null|undefined),
  * }} ActionProperties
  */
 
@@ -89,9 +98,9 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * RouteActionProperties
  *
  * @typedef {{
- *     submit:    ActionProperties,
- *     cancel:    ActionProperties,
- *     select:    ?(ActionProperties|null|undefined)
+ *     submit:      ActionProperties,
+ *     cancel:      ActionProperties,
+ *     select:      ?(ActionProperties|null|undefined),
  * }} RouteActionProperties
  */
 
@@ -99,10 +108,10 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * FieldGroupProperties
  *
  * @typedef {{
- *     label:     ?(string|null),
- *     tooltip:   ?(string|null),
- *     enabled:   ?(boolean|string|null),
- *     default:   ?(boolean|string|null)
+ *     label:       ?(string|null),
+ *     tooltip:     ?(string|null),
+ *     enabled:     ?(boolean|string|null),
+ *     default:     ?(boolean|string|null),
  * }} FieldGroupProperties
  */
 
@@ -112,12 +121,12 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @see "en.emma.search.styles"
  *
  * @typedef {{
- *     label:     ?(string|null|undefined),
- *     class:     ?(string|null|undefined),
- *     tooltip:   ?(string|null|undefined),
- *     field:     ?(string|null|undefined),
- *     active:    ?(boolean|string|null|undefined),
- *     func:      ?(function|null|undefined)
+ *     label:       ?(string|null|undefined),
+ *     class:       ?(string|null|undefined),
+ *     tooltip:     ?(string|null|undefined),
+ *     field:       ?(string|null|undefined),
+ *     active:      ?(boolean|string|null|undefined),
+ *     func:        ?(function|null|undefined),
  * }} StyleControlProperties
  */
 
@@ -130,11 +139,73 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *
  * @typedef {{
  *    placeholder: {
- *        alt:    string,
- *        class:  string,
- *        asset:  string,
- *    }
+ *        alt:      string,
+ *        class:    string,
+ *        asset:    string,
+ *    },
  * }} ImageProperties
+ */
+
+/**
+ * PanelProperties
+ *
+ * - opener             Label/tooltip for a button to open a collapsible panel
+ * - closer             Label/tooltip for a button to close a collapsible panel
+ *
+ * @typedef {ToggleProperties} PanelProperties
+ */
+
+/**
+ * TreeProperties
+ *
+ * - opener             Label/tooltip for a button to open a collapsed tree.
+ * - closer             Label/tooltip for a button to close an expanded tree.
+ *
+ * @typedef {ToggleProperties} TreeProperties
+ */
+
+/**
+ * PopupProperties
+ *
+ * - button.class       Popup activator CSS class.
+ * - panel.class        Popup panel CSS class.
+ * - closer.class       CSS class signifying a panel close control.
+ * - controls.class     CSS class for controls below the panel.
+ * - deferred.class     CSS class signifying deferred content.
+ * - hidden.class       CSS class indicating a hidden element.
+ *
+ * @typedef {{
+ *    button:       ElementProperties,
+ *    panel:        ElementProperties,
+ *    closer:       ElementProperties,
+ *    controls:     ElementProperties,
+ *    deferred:     ElementProperties,
+ *    hidden:       ElementProperties,
+ * }} PopupProperties
+ */
+
+/**
+ * SearchProperties
+ *
+ * - type                       Label/tooltip/placeholder for each search type.
+ * - Filter.control             Button to expand/contract search filters.
+ * - Style.container            Properties for the style button tray.
+ * - Style.control.template     Default colorize button properties.
+ * - Style.control.buttons      Properties for each colorize button.
+ *
+ * @typedef {{
+ *    type:             Object.<string,ElementProperties>,
+ *    Filter: {
+ *        control:      ToggleProperties,
+ *    },
+ *    Style: {
+ *        container:    ElementProperties,
+ *        control: {
+ *            template: StyleControlProperties,
+ *            buttons:  Object<StyleControlProperties>,
+ *        },
+ *    },
+ * }} SearchProperties
  */
 
 /**
@@ -156,89 +227,9 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *        prefix:   string,
  *        canceled: string,
  *        sign_in:  string,
- *        unknown:  string
- *    }
+ *        unknown:  string,
+ *    },
  * }} DownloadProperties
- */
-
-/**
- * SearchStyleProperties
- *
- * - container          Properties for the style button tray.
- * - control.template   Default colorize button properties.
- * - control.buttons    Properties for each colorize button.
- *
- * @typedef {{
- *    container: ElementProperties,
- *    control: {
- *        template: StyleControlProperties,
- *        buttons:  Object<StyleControlProperties>
- *    }
- * }} SearchStyleProperties
- */
-
-/**
- * AdvSearchProperties
- *
- * - opener.text      Label for button to open advanced search controls.
- * - opener.tooltip   Tooltip for button to open advanced search controls.
- * - closer.text      Label for button to close advanced search controls.
- * - closer.tooltip   Tooltip for button to close advanced search controls.
- * - search_type      Label, tooltip and placeholder for each search type
- *
- * @typedef {{
- *    opener:       ElementProperties,
- *    closer:       ElementProperties,
- *    search_type:  Object.<string,ElementProperties>,
- * }} AdvSearchProperties
- */
-
-/**
- * PanelProperties
- *
- * - opener.text      Label for button to open a collapsible panel.
- * - opener.tooltip   Tooltip for button to open a collapsible panel.
- * - closer.text      Label for button to close a collapsible panel.
- * - closer.tooltip   Tooltip for button to close a collapsible panel.
- *
- * @typedef {{
- *    opener: ElementProperties,
- *    closer: ElementProperties,
- * }}PanelProperties
- */
-
-/**
- * TreeProperties
- *
- * - opener.text      Label for button to open a collapsed tree.
- * - opener.tooltip   Tooltip for button to open a collapsed tree.
- * - closer.text      Label for button to close an expanded tree.
- * - closer.tooltip   Tooltip for button to close an expanded tree.
- *
- * @typedef {{
- *    opener: ElementProperties,
- *    closer: ElementProperties,
- * }}TreeProperties
- */
-
-/**
- * PopupProperties
- *
- * - button.class     Popup activator CSS class.
- * - panel.class      Popup panel CSS class.
- * - closer.class     CSS class signifying a panel close control.
- * - controls.class   CSS class for controls below the panel.
- * - deferred.class   CSS class signifying deferred content.
- * - hidden.class     CSS class indicating a hidden element.
- *
- * @typedef {{
- *    button:   ElementProperties,
- *    panel:    ElementProperties,
- *    closer:   ElementProperties,
- *    controls: ElementProperties,
- *    deferred: ElementProperties,
- *    hidden:   ElementProperties,
- * }} PopupProperties
  */
 
 /**
@@ -312,30 +303,30 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * RecordProperties
  *
- * - GroupPanel     Selection for type of Entry records to show.
- * - PageFilter     Entry records filter radio button panel.
- * - FilterOptions  Debug-only filter option panel.
- * - List           Container for a listing of Entry records.
- * - StateGroup     Workflow state groups.
+ * - GroupPanel         Selection for type of Entry records to show.
+ * - PageFilter         Entry records filter radio button panel.
+ * - FilterOptions      Debug-only filter option panel.
+ * - List               Container for a listing of Entry records.
+ * - StateGroup         Workflow state groups.
  *
  * @typedef {{
- *    GroupPanel:     object,
- *    PageFilter:     object,
- *    FilterOptions:  object,
- *    List:           object,
- *    StateGroup:     string[],
+ *    GroupPanel:       object,
+ *    PageFilter:       object,
+ *    FilterOptions:    object,
+ *    List:             object,
+ *    StateGroup:       string[],
  * }} RecordProperties
  */
 
 /**
  * ScrollProperties
  *
- * - target   Properties for the element which is scrolled to the top.
- * - button   Properties for the scroll-to-top button.
+ * - target             Properties for an element which is scrolled to the top.
+ * - button             Properties for the scroll-to-top button.
  *
  * @typedef {{
- *     target:  ElementProperties,
- *     button:  ElementProperties,
+ *     target:      ElementProperties,
+ *     button:      ElementProperties,
  * }} ScrollProperties
  */
 
@@ -355,18 +346,17 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @property {boolean}  DEPLOYED
  * @property {string}   SESSION_ID
  *
- * @property {ImageProperties}       Image
- * @property {DownloadProperties}    Download
- * @property {SearchStyleProperties} SearchStyle
- * @property {AdvSearchProperties}   AdvSearch
- * @property {PanelProperties}       Panel
- * @property {TreeProperties}        Tree
- * @property {PopupProperties}       Popup
- * @property {EntryProperties}       Upload
- * @property {EntryProperties}       Entry
- * @property {RecordProperties}      Record
- * @property {RecordProperties}      Record2
- * @property {ScrollProperties}      Scroll
+ * @property {ImageProperties}    Image
+ * @property {PanelProperties}    Panel
+ * @property {TreeProperties}     Tree
+ * @property {PopupProperties}    Popup
+ * @property {SearchProperties}   Search
+ * @property {DownloadProperties} Download
+ * @property {EntryProperties}    Upload
+ * @property {EntryProperties}    Entry
+ * @property {RecordProperties}   UploadRecord
+ * @property {RecordProperties}   EntryRecord
+ * @property {ScrollProperties}   Scroll
  */
 export const Emma = (function() {
 
@@ -390,157 +380,179 @@ export const Emma = (function() {
 
         Image: {
             placeholder: {
-                alt:   "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
-                class: "<%= ImageHelper::PLACEHOLDER_IMAGE_CLASS %>",
-                asset: Image_placeholder_asset,
+                alt:    "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
+                class:  "<%= ImageHelper::PLACEHOLDER_IMAGE_CLASS %>",
+                asset:  Image_placeholder_asset,
             }
-        },
-
-        Download: {
-            button: {
-                class:    "<%= ArtifactHelper::DOWNLOAD_BUTTON_CLASS %>"
-            },
-            progress: {
-                class:    "<%= ArtifactHelper::DOWNLOAD_PROGRESS_CLASS %>"
-            },
-            failure: {
-                class:    "<%= ArtifactHelper::DOWNLOAD_FAILURE_CLASS %>",
-                prefix:   "<%= I18n.t('emma.download.failure.prefix') %>",
-                canceled: "<%= I18n.t('emma.download.failure.canceled') %>",
-                sign_in:  "<%= I18n.t('emma.download.failure.sign_in') %>",
-                unknown:  "<%= I18n.t('emma.download.failure.unknown') %>"
-            }
-        },
-
-        SearchStyle: {
-            container: {
-                class: "<%= SearchHelper::SEARCH_STYLE_CONTAINER %>"
-            },
-            control: {
-                template: o$('<%= js SearchHelper::SEARCH_STYLE_BUTTON_TEMPLATE %>'),
-                buttons:  o$('<%= js SearchHelper::SEARCH_STYLE_BUTTONS %>')
-            }
-        },
-
-        AdvSearch: {
-            opener: {
-                label:   "<%= LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_LABEL %>",
-                tooltip: "<%= LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_TIP %>"
-            },
-            closer: {
-                label:   "<%= LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_LABEL %>",
-                tooltip: "<%= LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_TIP %>"
-            },
-            search_type: o$('<%= js SearchTermsHelper::SEARCH_TYPE %>')
         },
 
         Panel: {
             opener: {
                 label:   "<%= LayoutHelper::Common::PANEL_OPENER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::PANEL_OPENER_TIP %>"
+                tooltip: "<%= LayoutHelper::Common::PANEL_OPENER_TIP %>",
             },
             closer: {
                 label:   "<%= LayoutHelper::Common::PANEL_CLOSER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::PANEL_CLOSER_TIP %>"
-            }
+                tooltip: "<%= LayoutHelper::Common::PANEL_CLOSER_TIP %>",
+            },
         },
 
         Tree: {
             opener: {
                 label:   "<%= LayoutHelper::Common::TREE_OPENER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::TREE_OPENER_TIP %>"
+                tooltip: "<%= LayoutHelper::Common::TREE_OPENER_TIP %>",
             },
             closer: {
                 label:   "<%= LayoutHelper::Common::TREE_CLOSER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::TREE_CLOSER_TIP %>"
-            }
+                tooltip: "<%= LayoutHelper::Common::TREE_CLOSER_TIP %>",
+            },
         },
 
         Popup: {
             button: {
-                class: "<%= PopupHelper::POPUP_BUTTON_CLASS %>"
+                class:   "<%= PopupHelper::POPUP_BUTTON_CLASS %>",
             },
             panel: {
-                class: "<%= PopupHelper::POPUP_PANEL_CLASS %>"
+                class:   "<%= PopupHelper::POPUP_PANEL_CLASS %>",
             },
             closer: {
-                class: "<%= PopupHelper::POPUP_CLOSER_CLASS %>"
+                class:   "<%= PopupHelper::POPUP_CLOSER_CLASS %>",
             },
             controls: {
-                class: "<%= PopupHelper::POPUP_CONTROLS_CLASS %>"
+                class:   "<%= PopupHelper::POPUP_CONTROLS_CLASS %>",
             },
             deferred: {
-                class: "<%= PopupHelper::POPUP_DEFERRED_CLASS %>"
+                class:   "<%= PopupHelper::POPUP_DEFERRED_CLASS %>",
             },
             hidden: {
-                class: "<%= PopupHelper::POPUP_HIDDEN_MARKER %>"
-            }
+                class:   "<%= PopupHelper::POPUP_HIDDEN_MARKER %>",
+            },
+        },
+
+        Search: {
+            type:       o$('<%= js SearchTermsHelper::SEARCH_TYPE %>'),
+            Filter: {
+                control:
+                    o$('<%= js LayoutHelper::SearchFilters::ADV_SEARCH %>'),
+            },
+            Style: {
+                container: {
+                    class:  "<%= SearchHelper::SEARCH_STYLE_CONTAINER %>",
+                },
+                control: {
+                    template:
+                        o$('<%= js SearchHelper::SEARCH_STYLE_BUTTON_TEMPLATE %>'),
+                    buttons:
+                        o$('<%= js SearchHelper::SEARCH_STYLE_BUTTONS %>'),
+                },
+            },
+        },
+
+        Download: {
+            button: {
+                class:      "<%= ArtifactHelper::DOWNLOAD_BUTTON_CLASS %>",
+            },
+            progress: {
+                class:      "<%= ArtifactHelper::DOWNLOAD_PROGRESS_CLASS %>",
+            },
+            failure: {
+                class:      "<%= ArtifactHelper::DOWNLOAD_FAILURE_CLASS %>",
+                prefix:     "<%= I18n.t('emma.download.failure.prefix') %>",
+                canceled:   "<%= I18n.t('emma.download.failure.canceled') %>",
+                sign_in:    "<%= I18n.t('emma.download.failure.sign_in') %>",
+                unknown:    "<%= I18n.t('emma.download.failure.unknown') %>",
+            },
         },
 
         Upload: {
-            Path:   o$('<%= js UploadHelper::UPLOAD_PATH %>'),
-            Style:  o$('<%= js UploadHelper::UPLOAD_STYLE %>'),
-            Action: o$('<%= js UploadHelper::UPLOAD_ACTION_VALUES %>'),
-            Filter: o$('<%= js UploadHelper::UPLOAD_FIELD_GROUP %>'),
-            Status: o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
+            Path:        o$('<%= js UploadHelper::UPLOAD_PATH %>'),
+            Style:       o$('<%= js UploadHelper::UPLOAD_STYLE %>'),
+            Action:      o$('<%= js UploadHelper::UPLOAD_ACTION_VALUES %>'),
+            Filter:      o$('<%= js UploadHelper::UPLOAD_FIELD_GROUP %>'),
+            Status:      o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
             Mime: {
-                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>')
+                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>'),
             },
             Field: {
-                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>'
+                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>',
             },
             Repo:   {
                 name:    o$('<%= js EmmaRepository.pairs %>'),
-                default: '<%= EmmaRepository.default %>'
-            }
+                default: '<%= EmmaRepository.default %>',
+            },
         },
 
         Entry: {
-            Path:   o$('<%= js EntryHelper::ENTRY_PATH %>'),
-            Style:  o$('<%= js EntryHelper::ENTRY_STYLE %>'),
-            Action: o$('<%= js EntryHelper::ENTRY_ACTION_VALUES %>'),
-            Filter: o$('<%= js EntryHelper::ENTRY_FIELD_GROUP %>'),
-            Status: o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
+            Path:        o$('<%= js EntryHelper::ENTRY_PATH %>'),
+            Style:       o$('<%= js EntryHelper::ENTRY_STYLE %>'),
+            Action:      o$('<%= js EntryHelper::ENTRY_ACTION_VALUES %>'),
+            Filter:      o$('<%= js EntryHelper::ENTRY_FIELD_GROUP %>'),
+            Status:      o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
             Mime: {
-                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>')
+                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>'),
             },
             Field: {
-                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>'
+                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>',
             },
             Repo:   {
                 name:    o$('<%= js EmmaRepository.pairs %>'),
-                default: '<%= EmmaRepository.default %>'
-            }
+                default: '<%= EmmaRepository.default %>',
+            },
         },
 
-        Record: {
+        UploadRecord: {
             GroupPanel: {
-                class:  '<%= UploadHelper::UPLOAD_GROUP_PANEL_CLASS %>',
+                class:      '<%= UploadHelper::UPLOAD_GROUP_PANEL_CLASS %>',
                 Control: {
-                    class: '<%= UploadHelper::UPLOAD_GROUP_CONTROL_CLASS %>'
-                }
+                    class:  '<%= UploadHelper::UPLOAD_GROUP_CONTROL_CLASS %>',
+                },
             },
             PageFilter: {
-                class:  '<%= UploadHelper::UPLOAD_PAGE_FILTER_CLASS %>',
+                class:      '<%= UploadHelper::UPLOAD_PAGE_FILTER_CLASS %>',
                 Control: {
-                    class: '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>'
-                }
+                    class:  '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>',
+                },
             },
             FilterOptions: {
-                class:  '<%= UploadHelper::UPLOAD_FILTER_OPTIONS_CLASS %>',
+                class:      '<%= UploadHelper::UPLOAD_FILTER_OPTIONS_CLASS %>',
                 Control: {
-                    class: '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>'
-                }
+                    class:  '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>',
+                },
             },
             List: {
-                class: '<%= UploadHelper::UPLOAD_LIST_CLASS %>',
+                class:      '<%= UploadHelper::UPLOAD_LIST_CLASS %>',
             },
             StateGroup: a$('<%= js UploadHelper::UPLOAD_STATE_GROUP.keys %>'),
         },
 
+        EntryRecord: {
+            GroupPanel: {
+                class:      '<%= EntryHelper::ENTRY_GROUP_PANEL_CLASS %>',
+                Control: {
+                    class:  '<%= EntryHelper::ENTRY_GROUP_CONTROL_CLASS %>',
+                },
+            },
+            PageFilter: {
+                class:      '<%= EntryHelper::ENTRY_PAGE_FILTER_CLASS %>',
+                Control: {
+                    class:  '<%= EntryHelper::ENTRY_FILTER_CONTROL_CLASS %>',
+                },
+            },
+            FilterOptions: {
+                class:      '<%= EntryHelper::ENTRY_FILTER_OPTIONS_CLASS %>',
+                Control: {
+                    class:  '<%= EntryHelper::ENTRY_FILTER_CONTROL_CLASS %>',
+                },
+            },
+            List: {
+                class:      '<%= EntryHelper::ENTRY_LIST_CLASS %>',
+            },
+            StateGroup: a$('<%= js EntryHelper::ENTRY_STATE_GROUP.keys %>'),
+        },
+
         Scroll: {
-            target: o$('<%= js LayoutHelper::Scroll::SCROLL_TARGET %>'),
-            button: o$('<%= js LayoutHelper::Scroll::SCROLL_TOP %>')
+            target:     o$('<%= js LayoutHelper::Scroll::SCROLL_TARGET %>'),
+            button:     o$('<%= js LayoutHelper::Scroll::SCROLL_TOP %>'),
         }
 
     };

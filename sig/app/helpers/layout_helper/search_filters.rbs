@@ -246,29 +246,11 @@ module LayoutHelper::SearchFilters
   # +
   ADV_SEARCH_CONFIG: symHash
 
-  # Label for button to expand search filters.
+  # Labels/tooltips for expanding and contracting search filters.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [Hash{Symbol=>Hash{Symbol=>String,ActiveSupport::SafeBuffer}}]
   #
-  ADV_SEARCH_OPENER_LABEL: ActiveSupport::SafeBuffer
-
-  # Tooltip for button to expand search filters.
-  #
-  # @type [String]
-  #
-  ADV_SEARCH_OPENER_TIP: String
-
-  # Label for button to contract search filters.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  ADV_SEARCH_CLOSER_LABEL: ActiveSupport::SafeBuffer
-
-  # Tooltip for button to contract search filters.
-  #
-  # @type [String]
-  #
-  ADV_SEARCH_CLOSER_TIP: String
+  ADV_SEARCH: Hash[Symbol,Hash[Symbol,String|ActiveSupport::SafeBuffer]]
 
   # Indicate whether it is appropriate to show the search filter controls.
   #

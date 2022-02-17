@@ -86,7 +86,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {object}
      */
-    const SEARCH_TYPE = Emma.AdvSearch.search_type[SEARCH_TARGET] || [];
+    const SEARCH_TYPE = Emma.Search.type[SEARCH_TARGET] || [];
 
     /**
      * Search types.
@@ -812,9 +812,10 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean} opening
      */
     function setFilterPanelToggle(opening) {
-        /** @type {{label: string, tooltip: string}} */
-        const value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
-        $advanced_toggle.html(value.label).attr('title', value.tooltip);
+        const action = opening ? 'closer' : 'opener';
+        const button = Emma.Search.Filter.control[action];
+        $advanced_toggle.html(button.label);
+        $advanced_toggle.attr('title', button.tooltip);
     }
 
     /**

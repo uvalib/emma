@@ -435,31 +435,20 @@ module LayoutHelper::SearchFilters
   #++
   ADV_SEARCH_CONFIG = I18n.t('emma.search_bar.advanced').deep_freeze
 
-  # Label for button to expand search filters.
+  # Labels/tooltips for expanding and contracting search filters.
   #
-  # @type [ActiveSupport::SafeBuffer]
+  # @type [Hash{Symbol=>Hash{Symbol=>String,ActiveSupport::SafeBuffer}}]
   #
-  ADV_SEARCH_OPENER_LABEL =
-    non_breaking(ADV_SEARCH_CONFIG[:label]).html_safe.freeze
-
-  # Tooltip for button to expand search filters.
-  #
-  # @type [String]
-  #
-  ADV_SEARCH_OPENER_TIP = ADV_SEARCH_CONFIG[:tooltip]
-
-  # Label for button to contract search filters.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  ADV_SEARCH_CLOSER_LABEL =
-    non_breaking(ADV_SEARCH_CONFIG.dig(:open, :label)).html_safe.freeze
-
-  # Tooltip for button to contract search filters.
-  #
-  # @type [String]
-  #
-  ADV_SEARCH_CLOSER_TIP = ADV_SEARCH_CONFIG.dig(:open, :tooltip)
+  ADV_SEARCH = {
+    opener: {
+      label:    non_breaking(ADV_SEARCH_CONFIG[:label]).html_safe,
+      tooltip:  ADV_SEARCH_CONFIG[:tooltip],
+    },
+    closer: {
+      label:    non_breaking(ADV_SEARCH_CONFIG.dig(:open, :label)).html_safe,
+      tooltip:  ADV_SEARCH_CONFIG.dig(:open, :tooltip)
+    }
+  }.deep_freeze
 
   # ===========================================================================
   # :section:
@@ -539,16 +528,11 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   #
   def advanced_search_button(**opt)
-    if SEARCH_FILTERS_START_EXPANDED
-      label = ADV_SEARCH_CLOSER_LABEL
-      tip   = ADV_SEARCH_CLOSER_TIP
-    else
-      label = ADV_SEARCH_OPENER_LABEL
-      tip   = ADV_SEARCH_OPENER_TIP
-    end
     css_selector  = '.advanced-search-toggle'
+    control       = SEARCH_FILTERS_START_EXPANDED ? :closer : :opener
     opt[:type]  ||= 'button'
-    opt[:title] ||= tip
+    opt[:title] ||= ADV_SEARCH[control][:tooltip]
+    label         = ADV_SEARCH[control][:label]
     button_tag(label, prepend_classes!(opt, css_selector))
   end
 

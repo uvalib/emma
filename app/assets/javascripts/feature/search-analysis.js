@@ -178,7 +178,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const BUTTON_TRAY_CLASS = Emma.SearchStyle.container.class;
+    const BUTTON_TRAY_CLASS = Emma.Search.Style.container.class;
 
     /**
      * Advanced experimental controls.
@@ -186,7 +186,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {Object<StyleControlProperties>}
      */
-    const BUTTON_CONFIG = Emma.SearchStyle.control.buttons;
+    const BUTTON_CONFIG = Emma.Search.Style.control.buttons;
 
     /**
      * CSS class for the button(s) for removing advanced feature controls.

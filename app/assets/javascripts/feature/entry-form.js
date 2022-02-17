@@ -4,6 +4,7 @@
 import { Rails }                                 from '../vendor/rails'
 import { Emma }                                  from '../shared/assets'
 import { delegateInputClick, toggleVisibility }  from '../shared/accessibility'
+import { pageController }                        from '../shared/controller'
 import { selector, toggleClass }                 from '../shared/css'
 import { htmlDecode, scrollIntoView }            from '../shared/html'
 import { HTTP }                                  from '../shared/http'
@@ -326,6 +327,33 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
+     * A complete submission database record.
+     *
+     * @typedef {{
+     *      id:             number,
+     *      file_data:      FileData,
+     *      emma_data:      EmmaData,
+     *      user_id:        number,
+     *      repository:     string,
+     *      submission_id:  string,
+     *      fmt:            string,
+     *      ext:            string,
+     *      created_at:     string,
+     *      updated_at:     string,
+     * }} EntryRecord
+     *
+     * @see "en.emma.entry.record"
+     */
+
+    /**
+     * @typedef {UploadRecord|EntryRecord} SubmissionRecord
+     */
+
+    /**
+     * @typedef {UploadRecord[]|EntryRecord[]} SubmissionRecords
+     */
+
+    /**
      * JSON format of a response message containing a list of submissions.
      *
      * @typedef {{
@@ -334,6 +362,29 @@ $(document).on('turbolinks:load', function() {
      *          list:       UploadRecord[]
      *      }
      * }} UploadRecordMessage
+     */
+
+    /**
+     * JSON format of a response message containing a list of submissions.
+     *
+     * @typedef {{
+     *      entries: {
+     *          properties: RecordMessageProperties,
+     *          list:       EntryRecord[]
+     *      }
+     * }} EntryRecordMessage
+     */
+
+    /**
+     * @typedef {
+     *      UploadRecordMessage | EntryRecordMessage
+     * } SubmissionRecordMessage
+     */
+
+    /**
+     * @typedef {
+     *      function(UploadRecord[]) | function(EntryRecord[])
+     * } SubmissionRecordsCB
      */
 
     /**
@@ -493,12 +544,36 @@ $(document).on('turbolinks:load', function() {
     const DEBOUNCE_DELAY = 500; // milliseconds
 
     /**
+     * Original-style "uploads" submissions.
+     *
+     * @constant
+     * @type {boolean}
+     */
+    const UPLOAD_CONTROLLER = (pageController() === 'upload');
+
+    /**
+     * Base name (singular of the related database table).
+     *
+     * @constant
+     * @type {string}
+     */
+    const RECORD = UPLOAD_CONTROLLER ? 'upload' : 'entry';
+
+    /**
+     * Page assets.js properties.
+     *
+     * @constant
+     * @type {EntryProperties}
+     */
+    const PROPERTIES = UPLOAD_CONTROLLER ? Emma.Upload : Emma.Entry;
+
+    /**
      * The value used to denote that a database field has been intentionally
      * left blank.
      *
      * @type {string}
      */
-    const EMPTY_VALUE = Emma.Upload.Field.empty;
+    const EMPTY_VALUE = PROPERTIES.Field.empty;
 
     /**
      * Generic form selector.
@@ -514,8 +589,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const DRAG_AND_DROP_SELECTOR = selector([Emma.Upload.Style.drag_target, Emma.Entry.Style.drag_target]); // TODO: remove after upload -> entry
-    //const DRAG_AND_DROP_SELECTOR = selector(Emma.Entry.Style.drag_target);  // TODO: use after upload -> entry
+    const DRAG_AND_DROP_SELECTOR = selector(PROPERTIES.Style.drag_target);
 
     /**
      * Selector for thumbnail display of the selected file.
@@ -523,8 +597,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const PREVIEW_SELECTOR = selector([Emma.Upload.Style.preview, Emma.Entry.Style.preview]); // TODO: remove after upload -> entry
-    //const PREVIEW_SELECTOR = selector(Emma.Entry.Style.preview);  // TODO: use after upload -> entry
+    const PREVIEW_SELECTOR = selector(PROPERTIES.Style.preview);
 
     /**
      * Selectors for input fields.
@@ -824,8 +897,8 @@ $(document).on('turbolinks:load', function() {
      * If *record* is given, the first database ID is set to be the one which
      * succeeds it.
      *
-     * @param {Selector}            [results]
-     * @param {UploadRecord|number} [record]    The current max database ID.
+     * @param {Selector}                [results]
+     * @param {SubmissionRecord|number} [record]   The current max database ID.
      *
      * @returns {string}
      */
@@ -892,7 +965,7 @@ $(document).on('turbolinks:load', function() {
          * Establish the lower-bound of database ID's to search (starting with
          * the first ID after the current latest ID) then schedule an update.
          *
-         * @param {UploadRecord[]} list
+         * @param {SubmissionRecords} list
          */
         function startMonitoring(list) {
             const record = list.slice(-1)[0] || {};
@@ -938,7 +1011,7 @@ $(document).on('turbolinks:load', function() {
          * Add lines for any entries that have appeared since the last round
          * then schedule a new round.
          *
-         * @param {UploadRecord[]} list
+         * @param {SubmissionRecords} list
          */
         function addNewLines(list) {
             if (isPresent(list)) {
@@ -971,10 +1044,10 @@ $(document).on('turbolinks:load', function() {
     /**
      * Add a line to bulk operation results.
      *
-     * @param {Selector}                   results
-     * @param {UploadRecord|object|string} entry
-     * @param {number|string}              [index]
-     * @param {Date|number}                [time]
+     * @param {Selector}                       results
+     * @param {SubmissionRecord|object|string} entry
+     * @param {number|string}                  [index]
+     * @param {Date|number}                    [time]
      *
      * @returns {string}              The added result entry.
      *
@@ -1073,9 +1146,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Get a sequence of EMMA entries.
      *
-     * @param {string|number|null}       min
-     * @param {string|number|null}       max
-     * @param {function(UploadRecord[])} callback
+     * @param {string|number|null}  min
+     * @param {string|number|null}  max
+     * @param {SubmissionRecordsCB} callback
      */
     function fetchEntryList(min, max, callback) {
 
@@ -1085,11 +1158,12 @@ $(document).on('turbolinks:load', function() {
         else if (max)   { range = `1-${max}`; }
         else if (min)   { range = `${min}`; }
         else            { range = '*'; }
-        const url = makeUrl('/upload.json', { selected: range });
+        const base = `${PROPERTIES.Path.index}.json`;
+        const url  = makeUrl(base, { selected: range });
 
         debugXhr(`${func}: VIA`, url);
 
-        /** @type {UploadRecord[]} records */
+        /** @type {SubmissionRecords} */
         let records;
         let warning, error;
         const start = Date.now();
@@ -1118,7 +1192,7 @@ $(document).on('turbolinks:load', function() {
                 error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
-                /** @type {UploadRecordMessage} message */
+                /** @type {SubmissionRecordMessage} */
                 const message = data.response   || data;
                 const entries = message.entries || {};
                 records       = entries.list    || [];
@@ -1250,12 +1324,12 @@ $(document).on('turbolinks:load', function() {
         let $form  = formElement(form);
         let url;
         if (isCreateForm($form)) {
-            url = Emma.Upload.Path.renew;
+            url = PROPERTIES.Path.renew;
         } else {
-            url = makeUrl(Emma.Upload.Path.reedit, { id: dbId($form) });
+            url = makeUrl(PROPERTIES.Path.reedit, submissionParams($form));
         }
 
-        /** @type {UploadRecord} record */
+        /** @type {SubmissionRecord} */
         let record  = undefined;
         let warning, error;
         const start = Date.now();
@@ -1389,8 +1463,7 @@ $(document).on('turbolinks:load', function() {
 
         // Uppy will replace <input type="file"> with its own mechanisms so
         // the original should not be displayed.
-        $form.find('input#upload_file, input#entry_file').css('display', 'none'); // TODO: remove after upload -> entry
-        //$form.find('input#entry_file').css('display', 'none');                  // TODO: use after upload -> entry
+        $form.find(`input#${RECORD}_file`).css('display', 'none');
 
         // Reposition it so that it comes before the display of the uploaded
         // filename.
@@ -1637,7 +1710,7 @@ $(document).on('turbolinks:load', function() {
         }
         // noinspection JSUnusedGlobalSymbols
         uppy.use(XHRUpload, {
-            endpoint:   Emma.Upload.Path.endpoint,
+            endpoint:   PROPERTIES.Path.endpoint,
             fieldName: 'file',
             timeout:   0, // UPLOAD_TIMEOUT, // NOTE: no Uppy timeout for now
             // limit:  1,
@@ -1704,11 +1777,10 @@ $(document).on('turbolinks:load', function() {
             const upload = uppy.getPlugin('XHRUpload');
             // noinspection JSUnresolvedFunction
             const url    = upload.getOptions({}).endpoint;
-            const db_id  = dbId($form);
             if (isMissing(url)) {
                 console.error('No endpoint for upload');
-            } else if (db_id) {
-                const new_url = makeUrl(url, { id: db_id });
+            } else {
+                const new_url = makeUrl(url, submissionParams($form));
                 // noinspection JSCheckFunctionSignatures
                 upload.setOptions({ endpoint: new_url });
                 showUppyProgressBar($form);
@@ -1762,7 +1834,7 @@ $(document).on('turbolinks:load', function() {
                 if (!emma_data.dc_format) {
                     const meta = file_data.metadata;
                     const mime = meta?.mime_type;
-                    const fmt  = Emma.Upload.Mime.to_fmt[mime] || [];
+                    const fmt  = PROPERTIES.Mime.to_fmt[mime] || [];
                     if (fmt[0]) { emma_data.dc_format = fmt[0]; }
                 }
             }
@@ -2606,13 +2678,13 @@ $(document).on('turbolinks:load', function() {
                 // Update the status icon and tooltip.
                 let tip, icon;
                 if (valid) {
-                    icon = Emma.Upload.Status.valid.label;
-                    tip  = Emma.Upload.Status.valid.tooltip;
+                    icon = PROPERTIES.Status.valid.label;
+                    tip  = PROPERTIES.Status.valid.tooltip;
                 } else if (invalid && !missing) {
-                    icon = Emma.Upload.Status.invalid.label;
-                    tip  = Emma.Upload.Status.invalid.tooltip;
+                    icon = PROPERTIES.Status.invalid.label;
+                    tip  = PROPERTIES.Status.invalid.tooltip;
                 } else if (required) {
-                    icon = Emma.Upload.Status.required.label;
+                    icon = PROPERTIES.Status.required.label;
                 }
 
                 if (tip) {
@@ -2965,7 +3037,7 @@ $(document).on('turbolinks:load', function() {
             clearFlash();
             hideParentEntrySelect($form);
             const new_repo = $menu.val() || '';
-            if (!new_repo || (new_repo === Emma.Upload.Repo.default)) {
+            if (!new_repo || (new_repo === PROPERTIES.Repo.default)) {
                 setSourceRepository(new_repo);
             } else {
                 let $popup = showParentEntrySelect($form);
@@ -3067,7 +3139,7 @@ $(document).on('turbolinks:load', function() {
             const FROM_PARENT  = true;
             const CLEARED      = null;
             const AS_IS        = '';
-            const repo_name    = Emma.Upload.Repo.name[new_repo];
+            const repo_name    = PROPERTIES.Repo.name[new_repo];
             const source_field = {
                 repository:                         new_repo,
                 emma_recordId:                      CLEARED,
@@ -3571,9 +3643,9 @@ $(document).on('turbolinks:load', function() {
      * @param {string|object} [fields]
      */
     function cancelCurrent(form, redirect, fields) {
-        let $form   = formElement(form);
-        const db_id = dbId($form);
-        let params  = { id: db_id, redirect: Emma.Upload.Path.index };
+        let $form  = formElement(form);
+        const sid  = submissionParams($form);
+        let params = $.extend({ redirect: PROPERTIES.Path.index }, sid);
         if (redirect) {
             const curr_path = window.location.pathname;
             const curr_url  = window.location.origin + curr_path;
@@ -3582,7 +3654,7 @@ $(document).on('turbolinks:load', function() {
                 redirect.startsWith(curr_url);
             if (back_here && fileSelected($form) && !canSubmit($form)) {
                 params.reset    = true;
-                params.redirect = makeUrl(redirect, { id: db_id });
+                params.redirect = makeUrl(redirect, sid);
             } else {
                 params.redirect = redirect;
             }
@@ -3595,7 +3667,7 @@ $(document).on('turbolinks:load', function() {
             }
             params.revert = encodeURIComponent(data);
         }
-        cancelAction(makeUrl(Emma.Upload.Path.cancel, params));
+        cancelAction(makeUrl(PROPERTIES.Path.cancel, params));
     }
 
     /**
@@ -3625,9 +3697,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string|object} [fields]
      */
     function abortCurrent(form, fields) {
-        let $form   = formElement(form);
-        const db_id = dbId($form);
-        let params  = { id: db_id };
+        let $form  = formElement(form);
+        let params = submissionParams($form);
         if (fields) {
             /** @type {string} */
             let data = fields;
@@ -3637,7 +3708,7 @@ $(document).on('turbolinks:load', function() {
             params.revert = encodeURIComponent(data);
         }
         $.ajax({
-            url:     makeUrl(Emma.Upload.Path.cancel, params),
+            url:     makeUrl(PROPERTIES.Path.cancel, params),
             type:    'POST',
             headers: { 'X-CSRF-Token': Rails.csrfToken() },
             async:   false
@@ -3842,7 +3913,7 @@ $(document).on('turbolinks:load', function() {
         } else {
             const current_action = termAction($form);
             let [action, general, first] = [];
-            $.each(Emma.Upload.Filter, function(group, property) {
+            $.each(PROPERTIES.Filter, function(group, property) {
                 if (property.default === current_action) {
                     action = group;
                 } else if (property.default) {
@@ -4175,7 +4246,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function emmaDataElement(form) {
-        return formElement(form).find('#upload_emma_data');
+        return formElement(form).find(`#${RECORD}_emma_data`);
     }
 
     /**
@@ -4186,8 +4257,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fileDataElement(form) {
-        return formElement(form).find('#upload_file_data, #entry_file_data'); // TODO: remove after upload -> entry
-        //return formElement(form).find('#entry_file_data');                  // TODO: use after upload -> entry
+        return formElement(form).find(`#${RECORD}_file_data`);
     }
 
     /**
@@ -4214,18 +4284,23 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * The database ID assigned to the current submission.
+     * The database ID or submission ID assigned to the current submission.
      *
-     * @param {Selector} [form]       Passed to {@link formField}
+     * @param {Selector} form
      *
-     * @returns {string|undefined}
+     * @returns { {id: string} | {submission_id: string} | {} }
      */
-    function dbId(form) {
-        const db_id = formField('id', form).val();
-        if (!db_id) {
-            console.warn('No database record ID for upload');
+    function submissionParams(form) {
+        if (UPLOAD_CONTROLLER) {
+            const value = formField('id', form).val();
+            if (value) { return { id: value } }
+            console.warn(`No database record ID for ${RECORD}`);
+        } else {
+            const value = formField('submission_id', form).val();
+            if (value) { return { submission_id: value } }
+            console.warn(`No submission ID for ${RECORD}`);
         }
-        return db_id;
+        return {};
     }
 
     /**
@@ -4287,8 +4362,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldDisplayFilterContainer(form) {
-        return formElement(form).find('.upload-field-group, .entry-field-group');   // TODO: remove after upload -> entry
-        //return formElement(form).find('.entry-field-group');                      // TODO: use after upload -> entry
+        return formElement(form).find(`.${RECORD}-field-group`);
     }
 
     /**
@@ -4332,8 +4406,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldContainer(form) {
-        return formElement(form).find('.upload-fields, .entry-fields'); // TODO: remove after upload -> entry
-        //return formElement(form).find('.entry-fields');               // TODO: use after upload -> entry
+        return formElement(form).find(`.${RECORD}-fields`);
     }
 
     /**
@@ -4453,7 +4526,7 @@ $(document).on('turbolinks:load', function() {
      */
     function requireFormCancellation(form) {
         let $form     = formElement(form);
-        const message = 'Cancel this upload before retrying'; // TODO: I18n
+        const message = 'Cancel this submission before retrying'; // TODO: I18n
         const tooltip = { 'title': message };
         hideUppyProgressBar($form);
         disableSubmit($form).attr(tooltip);
@@ -4725,7 +4798,7 @@ $(document).on('turbolinks:load', function() {
      */
     function assetObject(form) {
         let $form    = formElement(form);
-        const action = Emma.Upload.Action;
+        const action = PROPERTIES.Action;
         let result;
         if (isBulkOperationForm($form)) {
             result = isUpdateForm($form) ? action.bulk_edit : action.bulk_new;
@@ -4811,7 +4884,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Emit a console message if debugging uploads.
+     * Emit a console message if debugging file uploads.
      *
      * @param {...*} args
      */
