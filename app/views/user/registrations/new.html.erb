@@ -31,6 +31,8 @@
 <%= render 'devise/shared/error_messages', resource: user %>
 
 <%= page_directions_section %>
-<%= render 'account/form_new', user: user, form_opt: form_opt %>
+<div class="account-form-container new">
+  <%= render 'account/form_new', user: user, form_opt: form_opt %>
+</div>
 
 <%= page_notes_section %>

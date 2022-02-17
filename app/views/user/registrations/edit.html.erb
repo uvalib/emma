@@ -48,7 +48,9 @@
 <%= awaiting -%>
 
 <%= page_directions_section %>
-<%= render 'account/form_edit', user: user, form_opt: form_opt %>
+<div class="account-form-container edit">
+  <%= render 'account/form_edit', user: user, form_opt: form_opt %>
+</div>
 <%= render 'user/registrations/resignation' %>
 
 <%= page_notes_section %>
