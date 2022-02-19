@@ -11,7 +11,7 @@ class IngestService < ApiService
 
   DESTRUCTIVE_TESTING = false
 
-  include Ingest
+  #include Ingest # NOTE: commented-out
 
   # Include send/receive modules from "app/services/ingest_service/**.rb".
   include_submodules(self)

@@ -11,7 +11,7 @@ class SearchService < ApiService
 
   DESTRUCTIVE_TESTING = false
 
-  include Search
+  #include Search # NOTE: commented-out
 
   # Include send/receive modules from "app/services/search_service/**.rb".
   include_submodules(self)

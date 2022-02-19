@@ -16,7 +16,7 @@ class ApiService
 
   include Emma::Common
 
-  include Api
+  #include Api # NOTE: commented-out
 
   include_submodules(self)
 
