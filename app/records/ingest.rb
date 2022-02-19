@@ -19,7 +19,7 @@ module Ingest
   module Shared;  end
 end
 
-require 'ingest/api/common'
+#require 'ingest/api/common' # NOTE: commented-out
 
 module Ingest
   include Ingest::Api::Common

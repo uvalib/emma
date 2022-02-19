@@ -11,7 +11,6 @@ __loading_begin(__FILE__)
 
 require 'bookshare_service'
 require 'search_service'
-require 'ingest_service'
 
 # Base class for all controllers.
 #

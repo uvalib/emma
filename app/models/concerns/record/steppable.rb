@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'updatable'
+#require_relative 'reportable' # NOTE: commented-out
+#require_relative 'updatable' # NOTE: commented-out
 
 # Common methods for ActiveRecord classes that are used to track outcomes
 # across multiple steps.

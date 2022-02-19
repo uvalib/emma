@@ -17,7 +17,7 @@ module Bs
   module Shared;  end
 end
 
-require 'bs/api/common'
+#require 'bs/api/common' # NOTE: commented-out
 
 #--
 # noinspection RubyClassModuleNamingConvention

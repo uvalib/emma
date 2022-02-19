@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Definition of the API requests and parameters.
 #
 module AwsS3Service::Request
-  include_submodules(self)
+  #include_submodules(self) # NOTE: commented-out
 end
 
 __loading_end(__FILE__)

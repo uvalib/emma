@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'sti'
+#require_relative 'sti' # NOTE: commented-out
 
 # Methods for ActiveRecord that involve bulk operations.
 #

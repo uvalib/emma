@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'identification'
+#require_relative 'identification' # NOTE: commented-out
 
 # Record utility methods related to identifiers for EMMA submissions.
 #

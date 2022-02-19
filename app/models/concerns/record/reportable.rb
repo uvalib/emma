@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'exceptions'
-require_relative 'updatable'
+#require_relative 'exceptions' # NOTE: commented-out
+#require_relative 'updatable' # NOTE: commented-out
 
 # Methods relating to error reporting.
 #

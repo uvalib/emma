@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'emma_identification'
-require_relative 'steppable'
+#require_relative 'emma_identification' # NOTE: commented-out
+#require_relative 'steppable' # NOTE: commented-out
 
 # Methods for accessing records.
 #

@@ -19,7 +19,7 @@ module Search
   module Shared;  end
 end
 
-require 'search/api/common'
+#require 'search/api/common' # NOTE: commented-out
 
 module Search
   include Search::Api::Common

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'rendering'
+#require_relative 'rendering' # NOTE: commented-out
 
 module Record::Exceptions                                                       # NOTE: from UploadWorkflow::Errors
 

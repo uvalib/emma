@@ -6,6 +6,8 @@
 # Extensions to classes that need to be established as soon as possible during
 # initialization.
 
+Rails.autoloaders.main.log! if true?(ENV['DEBUG_ZEITWERK'])
+
 require 'oj'
 # noinspection RubyResolve -- Allow Oj to override JSON methods.
 Oj.optimize_rails
