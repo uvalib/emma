@@ -8,6 +8,7 @@
 __loading_begin(__FILE__)
 
 require 'faraday'
+require 'faraday/retry'
 require_subdirs(__FILE__)
 
 __loading_end(__FILE__)

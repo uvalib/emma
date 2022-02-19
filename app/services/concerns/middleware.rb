@@ -8,7 +8,6 @@ __loading_begin(__FILE__)
 # This stub exists to satisfy the Zeitwerk loader.
 module Middleware; end
 
-require 'faraday'
 require 'api_caching_middleware'
 
 # noinspection RubyMismatchedArgumentType

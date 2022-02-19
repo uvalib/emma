@@ -77,6 +77,7 @@ gem 'rolify'
 
 # == Serialization
 gem 'faraday'
+gem 'faraday-retry'
 gem 'multi_json'
 gem 'nokogiri'
 gem 'oj'
