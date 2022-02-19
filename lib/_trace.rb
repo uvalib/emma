@@ -195,6 +195,12 @@ neutralize(:__debug) unless CONSOLE_DEBUGGING
 
 __output_impl { "TRACE_LOADING = #{TRACE_LOADING.inspect}" } if TRACE_LOADING
 
+# For AWS, make the indentation standout in CloudWatch.
+#
+# @type [String]
+#
+LOAD_INDENT = $stderr.isatty ? ' ' : '_'
+
 # Indentation for #__loading_level.
 @load_level = 0
 
@@ -208,10 +214,10 @@ __output_impl { "TRACE_LOADING = #{TRACE_LOADING.inspect}" } if TRACE_LOADING
 # @return [String]
 #
 def __loading_level(level = @load_level)
-  result = +''
-  result << ' ' if level < 10
-  result << level.to_s
-  result << (' ' * ((2 * level) + 1))
+  number = '%-2d' % level
+  indent = LOAD_INDENT * (2 * level)
+  gap    = ' '
+  "#{number}#{indent}#{gap}"
 end
 
 # Display console output to indicate that a file is being loaded.

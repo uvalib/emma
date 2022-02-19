@@ -9,8 +9,8 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchTitleList < Search::Api::Message
 
-  include Search::Shared::IdentifierMethods
   include Search::Shared::CollectionMethods
+  include Search::Shared::IdentifierMethods
 
   # ===========================================================================
   # :section:

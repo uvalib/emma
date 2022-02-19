@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# This is included in record classes that define :BASE_ELEMENT to confirm that
-# they are intended to function as aggregates.
+# This is included in record classes that define :LIST_ELEMENT to confirm that
+# they are intended to function as collections.
 #
 # @see Model::ClassMethods#validate_relations
 #
