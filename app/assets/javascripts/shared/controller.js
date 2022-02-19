@@ -43,7 +43,7 @@ export function pageControllerAction(path) {
         let url = (typeof path === 'string') ? path : undefined;
         url &&= url.replace(/^https?:/, '').replace(/^\/\//, '');
         url &&= url.replace(/#.*$/, '').replace(/\?.*$/, '').trim();
-        url ||= window.location.pathname;
+        url ||= window.location.pathname.replace(/^\//, '');
         [ctrlr, action] = url.split('/')
     }
     return { controller: ctrlr, action: (action || 'index') };
