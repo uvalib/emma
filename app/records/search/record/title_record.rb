@@ -38,6 +38,17 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   public
 
+  # Each grouping involves one or more Search::Record::MetadataRecord fields
+  # (or other instance methods).
+  #
+  # @type [Array<Array<Symbol>>]
+  #
+  GROUPING_LEVELS = [
+    %i[normalized_title],
+    %i[emma_repository],
+    %i[dc_creator dc_publisher emma_publicationDate]
+  ].deep_freeze
+
   # Data extraction methods appropriate as either instance- or class-methods.
   #
   module Methods
@@ -57,8 +68,10 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @type [Array<Symbol>]
     #
-    MATCH_FIELDS =
+    MATCH_FIELDS = GROUPING_LEVELS.flatten.freeze
+=begin
       Search::Message::SearchTitleList::GROUPING_LEVELS.flatten.freeze
+=end
 
     # Fields whose values are used as keys to sort #records.
     #
