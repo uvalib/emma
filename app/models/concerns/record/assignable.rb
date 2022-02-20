@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require_relative 'identification' # NOTE: commented-out
-
 # Methods relating to record field assignment.
 #
 module Record::Assignable

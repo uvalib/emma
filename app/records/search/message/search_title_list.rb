@@ -126,18 +126,8 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
   protected
 
-=begin
-  # Each grouping involves one or more Search::Record::MetadataRecord fields
-  # (or other instance methods).
-  #
+  # @private
   # @type [Array<Array<Symbol>>]
-  #
-  GROUPING_LEVELS = [
-    %i[normalized_title],
-    %i[emma_repository],
-    %i[dc_creator dc_publisher emma_publicationDate]
-  ].deep_freeze
-=end
   GROUPING_LEVELS = Search::Record::TitleRecord::GROUPING_LEVELS
 
   # @private

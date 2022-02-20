@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require_relative 'emma_identification' # NOTE: commented-out
-
 # Textual record descriptions.
 #
 module Record::Describable

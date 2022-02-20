@@ -17,11 +17,6 @@ module Bs
   module Shared;  end
 end
 
-#require 'bs/api/common' # NOTE: commented-out
-
-#--
-# noinspection RubyClassModuleNamingConvention
-#++
 module Bs
   include Bs::Api::Common
 end

@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require_relative 'identification' # NOTE: commented-out
-
 # Common methods for ActiveRecord classes that are part of a Single Table
 # Inheritance (STI) hierarchy.  ActiveRecord applies STI to classes whose
 # database schema contains a :type column.

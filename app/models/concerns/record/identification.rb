@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require_relative 'exceptions' # NOTE: commented-out
-
 # Record utility methods related to identifiers.
 #
 module Record::Identification

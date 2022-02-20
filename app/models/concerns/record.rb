@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require 'emma/common' # NOTE: commented-out
-#require 'emma/debug' # NOTE: commented-out
-#require 'emma/json' # NOTE: commented-out
-
 # Namespace for ActiveRecord mixin modules.
 #
 module Record

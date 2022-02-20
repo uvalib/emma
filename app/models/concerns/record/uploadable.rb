@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require_relative '../file_uploader' # NOTE: commented-out
-
 # Common methods to support Shrine-based file objects uploaded from the client.
 #
 # @!attribute [r] file

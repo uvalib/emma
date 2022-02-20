@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require_relative 'emma_identification' # NOTE: commented-out
-
 # Record methods to support processing of EMMA metadata fields.
 #
 module Record::EmmaData

@@ -11,7 +11,7 @@ class AwsS3Service < ApiService
 
   DESTRUCTIVE_TESTING = false
 
-  #include AwsS3 # NOTE: commented-out
+  include AwsS3
 
   # Include send/receive modules from "app/services/aws_s3_service/**.rb".
   include_submodules(self)

@@ -14,8 +14,6 @@ module AwsS3
   module Shared;  end
 end
 
-#require 'aws_s3/api/common' # NOTE: commented-out
-
 module AwsS3
   include AwsS3::Api::Common
 end

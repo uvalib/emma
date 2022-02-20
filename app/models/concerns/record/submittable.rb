@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#require_relative 'emma_identification' # NOTE: commented-out
-#require_relative 'exceptions' # NOTE: commented-out
-#require_relative 'properties' # NOTE: commented-out
-
 # TODO: workflow logic
 #
 # NOTE: This is basically UploadWorkflow::External but without any of the

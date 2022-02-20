@@ -69,9 +69,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @type [Array<Symbol>]
     #
     MATCH_FIELDS = GROUPING_LEVELS.flatten.freeze
-=begin
-      Search::Message::SearchTitleList::GROUPING_LEVELS.flatten.freeze
-=end
 
     # Fields whose values are used as keys to sort #records.
     #

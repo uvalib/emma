@@ -18,7 +18,7 @@ class BookshareService < ApiService
 
   DESTRUCTIVE_TESTING = false
 
-  #include Bs # NOTE: commented-out
+  include Bs
 
   # Include send/receive modules from "app/services/bookshare_service/**.rb".
   include_submodules(self)
