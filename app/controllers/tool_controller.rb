@@ -16,6 +16,10 @@ class ToolController < ApplicationController
   include SessionConcern
   include RunStateConcern
   include SerializationConcern
+  include AwsConcern        # NOTE: added for testing
+  include IngestConcern     # NOTE: added for testing
+  include IaDownloadConcern # NOTE: added for testing
+  include UploadConcern     # NOTE: added for testing
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
