@@ -18,6 +18,12 @@ ENV.keys.each do |k|
   ENV.delete(k) if ENV[k].empty?
 end
 
+$stderr.puts
+ENV.each_pair do |k, v|
+  $stderr.puts "  ENV[#{k}=#{v.inspect}"
+end
+$stderr.puts
+
 # =============================================================================
 # Configuration values for desktop-only deployments
 # =============================================================================
