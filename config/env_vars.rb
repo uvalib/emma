@@ -78,6 +78,9 @@ if db_needed
       $stderr.puts '** Defaulting to DATABASE postgres / DEPLOYMENT staging **'
       ENV['DATABASE']   ||= 'postgres'
       ENV['DEPLOYMENT'] ||= 'staging'
+      ENV['DBUSER']     ||= 'emma_development'
+      ENV['DBNAME']     ||= 'emma_development'
+      ENV['DBPASSWD']   ||= 'Woh7ivei0iD2ye'
     end
 
     databases = %w(postgres mysql)
