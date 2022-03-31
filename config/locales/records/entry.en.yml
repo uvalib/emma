@@ -7,6 +7,7 @@
 # relationship, so the two sets of fields are distinct.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/entry.en.yml
 #
 # MIN MAX INTERPRETATION
 # --- --- ---------------------------------------------------------------------
@@ -518,49 +519,18 @@ en:
             placeholder:  'Enter description'
             type:         textarea
 
-          emma_version:
-            # FMM5: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
-            # IA:   "version"
-            # SR:   String
-            # IR:   String
-            min:          0
-            max:          1
-            label:        'Version'
-            tooltip:      |
-              For book content, the edition or version of the book.
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Enter edition, version, etc.'
-
           emma_formatVersion:
             # FMM5: *missing*
             # IA:   N/A
             # SR:   String
             # IR:   String
             min:          0
-            max:          1
+            max:          0
             label:        'Format Version'
             tooltip:      'Format version of remediated content file.'
             notes_html:   |
-              <em>TODO</em>
+              <em>DEPRECATED</em>
             placeholder:  'Enter format version'
-
-          emma_formatFeature:
-            # FMM5: "Feature", Required, Repeatable
-            # IA:   "contributed_format"
-            # SR:   Array<FormatFeature>
-            # IR:   Array<FormatFeature>
-            # NOTE: Can't actually be required:
-            # NOTE: Depends on type of remediated content.
-            min:          0
-            max:          ~
-            label:        'Format Feature'
-            tooltip:      |
-              Format-specific attributes which are exhibited by the remediated
-              content file.
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol FormatFeature
 
           # ===================================================================
           # emma_data JSON keys - Bibliographic information
@@ -580,6 +550,85 @@ en:
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter title of work'
+
+          emma_version:
+            # FMM5: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
+            # IA:   "version"
+            # SR:   String
+            # IR:   String
+            min:          0
+            max:          1
+            label:        'Version'
+            tooltip:      |
+              For book content, the edition or version of the book.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Enter edition, version, etc.'
+
+          bib_seriesType:
+            # FMM5: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
+            # IA:   "series_type"
+            # SR:   *missing*
+            # IR:   *missing*
+            # NOTE: It might be better to make this required but add an
+            # NOTE:   enumeration selection for "Other".
+            min:          0
+            max:          1
+            label:        'Series Type'
+            tooltip:      |
+              The type of publication from which the content was extracted.
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol SeriesType
+
+          bib_series:
+            # FMM5: "Series Name", Optional, Non-repeatable
+            # IA:   *missing*
+            # SR:   *missing*
+            # IR:   *missing*
+            min:          0
+            max:          1
+            label:        'Series Title'
+            tooltip:      |
+              For an article or paper, the name of the journal or periodical
+              in which it published; for book content, the name of the series
+              to which the book belongs.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Journal name or publication series (if applicable)'
+
+          bib_seriesPosition:
+            # FMM5: "Series Position", Optional, Non-repeatable
+            # IA:   "volume"
+            # SR:   *missing*
+            # IR:   *missing*
+            min:          0
+            max:          1
+            label:        'Series Position'
+            tooltip:      |
+              For an article, the volume/issue/number of the journal or
+              periodical; for book content, the volume number or other
+              description of position within a series of books.
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Journal volume/issue/number'
+
+          dc_publisher:
+            # FMM5: "Publisher", Required, Non-repeatable
+            # IA:   "publisher"
+            # SR:   String
+            # IR:   String
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          1
+            label:        'Publisher'
+            tooltip:      |
+              Publisher/producer of the creative work represented by the
+              remediated content file.
+            notes:        |
+              Do not include names associated with the generation or production
+              of the remediated content file.
+            placeholder:  'Enter publisher of the work'
 
           dc_creator:
             # FMM5: "Contributor", Required, Repeatable
@@ -613,23 +662,6 @@ en:
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter ISBN/etc for the work'
-
-          dc_publisher:
-            # FMM5: "Publisher", Required, Non-repeatable
-            # IA:   "publisher"
-            # SR:   String
-            # IR:   String
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          1
-            label:        'Publisher'
-            tooltip:      |
-              Publisher/producer of the creative work represented by the
-              remediated content file.
-            notes:        |
-              Do not include names associated with the generation or production
-              of the remediated content file.
-            placeholder:  'Enter publisher of the work'
 
           dc_relation:
             # FMM5: "Related ID", Optional, Repeatable, "ISBN, DOI, OCLC, LCCN"
@@ -689,7 +721,7 @@ en:
             label:        'Provenance'
             tooltip:      'Originator of the remediated content file.'
             notes_html:   |
-              <em>TODO</em>
+              <em>DEPRECATED</em>
             type:         !ruby/symbol Provenance
 
           dc_description:
@@ -708,19 +740,20 @@ en:
             placeholder:  'Description/synopsis/abstract of the work'
             type:         textarea
 
-          dc_format:
-            # FMM5: "Format", Required, Non-repeatable
-            # IA:   "contributed_format"
-            # SR:   DublinCoreFormat
-            # IR:   DublinCoreFormat
-            min:          1
-            max:          1
-            label:        'Format'
+          dc_subject:
+            # FMM5: *missing*
+            # IA:   "subject"
+            # SR:   Array<String>
+            # IR:   Array<String>
+            min:          0
+            max:          ~
+            label:        'Subject'
             tooltip:      |
-              The file format (or variant) of the remediated content file.
+              Subject/keyword characterizing the creative work represented by
+              the remediated content file.
             notes_html:   |
               <em>TODO</em>
-            type:         !ruby/symbol DublinCoreFormat
+            placeholder:  'Enter keyword/subject term'
 
           dc_type:
             # FMM5: *missing*
@@ -737,20 +770,36 @@ en:
               <em>TODO</em>
             type:         !ruby/symbol DcmiType
 
-          dc_subject:
-            # FMM5: *missing*
-            # IA:   "subject"
-            # SR:   Array<String>
-            # IR:   Array<String>
-            min:          0
-            max:          ~
-            label:        'Subject'
+          dc_format:
+            # FMM5: "Format", Required, Non-repeatable
+            # IA:   "contributed_format"
+            # SR:   DublinCoreFormat
+            # IR:   DublinCoreFormat
+            min:          1
+            max:          1
+            label:        'Format'
             tooltip:      |
-              Subject/keyword characterizing the creative work represented by
-              the remediated content file.
+              The file format (or variant) of the remediated content file.
             notes_html:   |
               <em>TODO</em>
-            placeholder:  'Enter keyword/subject term'
+            type:         !ruby/symbol DublinCoreFormat
+
+          emma_formatFeature:
+            # FMM5: "Feature", Required, Repeatable
+            # IA:   "contributed_format"
+            # SR:   Array<FormatFeature>
+            # IR:   Array<FormatFeature>
+            # NOTE: Can't actually be required:
+            # NOTE: Depends on type of remediated content.
+            min:          0
+            max:          ~
+            label:        'Format Feature'
+            tooltip:      |
+              Format-specific attributes which are exhibited by the remediated
+              content file.
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol FormatFeature
 
           dcterms_dateAccepted:
             # FMM5: *missing*
@@ -785,109 +834,6 @@ en:
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter date of the creative work'
-
-          # ===================================================================
-          # emma_data JSON keys - Accessibility information
-          # ===================================================================
-
-          s_accessibilityFeature:
-            # FMM5: "Accessibility Feature", Required, Repeatable
-            # IA:   *missing*
-            # SR:   Array<A11yFeature>
-            # IR:   Array<A11yFeature>
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Accessibility Features'
-            tooltip:      'Accessibility features of the remediated content.'
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol A11yFeature
-
-          s_accessibilityControl:
-            # FMM5: *missing*
-            # IA:   *missing*
-            # SR:   Array<A11yControl>
-            # IR:   Array<A11yControl>
-            min:          0
-            max:          ~
-            label:        'Accessibility Controls'
-            tooltip:      'Accessibility controls of the remediated content.'
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol A11yControl
-
-          s_accessibilityHazard:
-            # FMM5: "Accessibility Hazard", Required, Repeatable
-            # IA:   *missing*
-            # SR:   Array<A11yHazard>
-            # IR:   Array<A11yHazard>
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Accessibility Hazards'
-            tooltip:      'Accessibility hazards of the remediated content.'
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol A11yHazard
-
-          s_accessMode:
-            # FMM5: "Access Mode", Required, Repeatable
-            # IA:   *missing*
-            # SR:   Array<A11yAccessMode>
-            # IR:   Array<A11yAccessMode>
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Access Mode'
-            tooltip:      'Access mode for the remediated content.'
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol A11yAccessMode
-
-          s_accessModeSufficient:
-            # FMM5: "Access Mode Sufficient", Required, Repeatable
-            # IA:   *missing*
-            # SR:   Array<A11ySufficient>
-            # IR:   Array<A11ySufficient>
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          ~
-            label:        'Sufficient Mode'
-            tooltip:      'Access mode sufficient for the remediated content.'
-            notes_html:   |
-              <em>TODO</em>
-            type:         !ruby/symbol A11ySufficient
-
-          s_accessibilitySummary:
-            # FMM5: "Accessibility Summary", Required, Non-repeatable
-            # IA:   *missing*
-            # SR:   String
-            # IR:   String
-            # TODO: Should be 'min: 1' if actually required.
-            min:          0
-            max:          1
-            label:        'Accessibility Summary'
-            tooltip:      'Accessibility summary for the remediated content.'
-            notes_html:   |
-              <em>TODO</em>
-            placeholder:  'Enter accessibility details'
-            type:         textarea
-
-          s_accessibilityAPI:
-            # FMM5: N/A
-            # IA:   N/A
-            # SR:   Array<A11yAPI>
-            # IR:   Array<A11yAPI>
-            # NOTE: Not used.
-            min:          0
-            max:          0
-            label:        'Accessibility API'
-            tooltip:      'Unused'
-            notes_html:   |
-              <em>This field is unused</em>
-            type:         !ruby/symbol A11yAPI
-            origin:       system
 
           # ===================================================================
           # emma_data JSON keys - Remediation information
@@ -1089,56 +1035,111 @@ en:
             type:         textarea
 
           # ===================================================================
-          # emma_data JSON keys - new bibliographic fields
+          # emma_data JSON keys - Accessibility information
           # ===================================================================
 
-          bib_series:
-            # FMM5: "Series Name", Optional, Non-repeatable
+          s_accessibilityFeature:
+            # FMM5: "Accessibility Feature", Required, Repeatable
             # IA:   *missing*
-            # SR:   *missing*
-            # IR:   *missing*
+            # SR:   Array<A11yFeature>
+            # IR:   Array<A11yFeature>
+            # TODO: Should be 'min: 1' if actually required.
             min:          0
-            max:          1
-            label:        'Series'
-            tooltip:      |
-              For an article or paper, the name of the journal or periodical
-              in which it published; for book content, the name of the series
-              to which the book belongs.
+            max:          ~
+            label:        'Accessibility Features'
+            tooltip:      'Accessibility features of the remediated content.'
             notes_html:   |
               <em>TODO</em>
-            placeholder:  'Journal name or publication series (if applicable)'
+            type:         !ruby/symbol A11yFeature
 
-          bib_seriesType:
-            # FMM5: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
-            # IA:   "series_type"
-            # SR:   *missing*
-            # IR:   *missing*
-            # NOTE: It might be better to make this required but add an
-            # NOTE:   enumeration selection for "Other".
+          s_accessibilityControl:
+            # FMM5: *missing*
+            # IA:   *missing*
+            # SR:   Array<A11yControl>
+            # IR:   Array<A11yControl>
             min:          0
-            max:          1
-            label:        'Series Type'
-            tooltip:      |
-              The type of publication from which the content was extracted.
+            max:          ~
+            label:        'Accessibility Controls'
+            tooltip:      'Accessibility controls of the remediated content.'
             notes_html:   |
               <em>TODO</em>
-            type:         !ruby/symbol SeriesType
+            type:         !ruby/symbol A11yControl
 
-          bib_seriesPosition:
-            # FMM5: "Series Position", Optional, Non-repeatable
-            # IA:   "volume"
-            # SR:   *missing*
-            # IR:   *missing*
+          s_accessibilityHazard:
+            # FMM5: "Accessibility Hazard", Required, Repeatable
+            # IA:   *missing*
+            # SR:   Array<A11yHazard>
+            # IR:   Array<A11yHazard>
+            # TODO: Should be 'min: 1' if actually required.
             min:          0
-            max:          1
-            label:        'Series Position'
-            tooltip:      |
-              For an article, the volume/issue/number of the journal or
-              periodical; for book content, the volume number or other
-              description of position within a series of books.
+            max:          ~
+            label:        'Accessibility Hazards'
+            tooltip:      'Accessibility hazards of the remediated content.'
             notes_html:   |
               <em>TODO</em>
-            placeholder:  'Journal volume/issue/number'
+            type:         !ruby/symbol A11yHazard
+
+          s_accessMode:
+            # FMM5: "Access Mode", Required, Repeatable
+            # IA:   *missing*
+            # SR:   Array<A11yAccessMode>
+            # IR:   Array<A11yAccessMode>
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          ~
+            label:        'Access Mode'
+            tooltip:      'Access mode for the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol A11yAccessMode
+
+          s_accessModeSufficient:
+            # FMM5: "Access Mode Sufficient", Required, Repeatable
+            # IA:   *missing*
+            # SR:   Array<A11ySufficient>
+            # IR:   Array<A11ySufficient>
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          ~
+            label:        'Sufficient Mode'
+            tooltip:      'Access mode sufficient for the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
+            type:         !ruby/symbol A11ySufficient
+
+          s_accessibilitySummary:
+            # FMM5: "Accessibility Summary", Required, Non-repeatable
+            # IA:   *missing*
+            # SR:   String
+            # IR:   String
+            # TODO: Should be 'min: 1' if actually required.
+            min:          0
+            max:          1
+            label:        'Accessibility Summary'
+            tooltip:      'Accessibility summary for the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
+            placeholder:  'Any details not otherwise mentioned above'
+            type:         textarea
+
+          s_accessibilityAPI:
+            # FMM5: N/A
+            # IA:   N/A
+            # SR:   Array<A11yAPI>
+            # IR:   Array<A11yAPI>
+            # NOTE: Not used.
+            min:          0
+            max:          0
+            label:        'Accessibility API'
+            tooltip:      'Unused'
+            notes_html:   |
+              <em>This field is unused</em>
+            type:         !ruby/symbol A11yAPI
+            origin:       system
+
+          # ===================================================================
+          # emma_data JSON keys - other fields
+          # ===================================================================
 
           bib_version:
             # NOTE: superseded by emma_version
@@ -1150,10 +1151,6 @@ en:
             notes_html:   |
               <em>TODO</em>
             placeholder:  'Enter edition, version, etc.'
-
-          # ===================================================================
-          # emma_data JSON keys - other fields
-          # ===================================================================
 
           rem_image_count:
             # FMM5: N/A
