@@ -92,7 +92,7 @@ end
 # Indicate whether this is a deployed instance.
 #
 def application_deployed?
-  !!ENV['AWS_DEFAULT_REGION'] || !'local'.casecmp?(ENV['DEPLOYMENT'])
+  !!ENV['AWS_DEFAULT_REGION'] || !'local'.casecmp?(ENV['DEPLOYMENT'].to_s)
 end
 
 # The true deployment type.

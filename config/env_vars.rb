@@ -49,8 +49,9 @@ config && require(config) &&
 # Database properties
 # =============================================================================
 
-db_needed =
-  rails_application? || (rake_task? && $*.any? { |arg| !arg.start_with?('-') })
+db_needed   = rails_application?
+# noinspection RubyMismatchedReturnType
+db_needed ||= rake_task? && $*.any? { |arg| arg =~ /^(db|emma|emma_data):/ }
 
 if db_needed
 
@@ -72,16 +73,6 @@ if db_needed
     # defined in order to derive the missing value(s).
 
     host_port_missing = !(ENV['DBHOST'] && ENV['DBPORT'])
-
-    # Have to assume we're in AWS staging running "rake assets:precompile".
-    if host_port_missing && !ENV['DATABASE']
-      $stderr.puts '** Defaulting to DATABASE postgres / DEPLOYMENT staging **'
-      ENV['DATABASE']   ||= 'postgres'
-      ENV['DEPLOYMENT'] ||= 'staging'
-      ENV['DBUSER']     ||= 'emma_development'
-      ENV['DBNAME']     ||= 'emma_development'
-      ENV['DBPASSWD']   ||= 'Woh7ivei0iD2ye'
-    end
 
     databases = %w(postgres mysql)
     database = type = nil

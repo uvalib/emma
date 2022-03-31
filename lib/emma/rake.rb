@@ -206,7 +206,20 @@ module Emma::Rake
   #
   def current_user
     # noinspection RubyMismatchedReturnType
-    @current_user ||= User.where(email: 'rwl@virginia.edu').first
+    @current_user ||=
+      begin
+        User.where(email: 'rwl@virginia.edu').first
+      rescue
+        # No database for "rake assets:precompile" in Dockerfile, so default
+        # to setting up a fake user in a way that the database will not be
+        # accessed.
+        User.new(email: 'fake@virginia.edu', effective_id: 1).tap do |user|
+          user.instance_exec do
+            @developer     = true
+            @administrator = true
+          end
+        end
+      end
   end
 
   # ===========================================================================
