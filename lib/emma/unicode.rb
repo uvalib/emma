@@ -39,6 +39,8 @@ module Emma::Unicode
   #
   # @return [String]
   #
+  # @note Currently unused.
+  #
   def pad_char(v, pad: nil, left: nil, right: nil)
     left  ||= pad || THIN_SPACE
     right ||= pad || left

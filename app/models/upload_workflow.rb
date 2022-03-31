@@ -650,8 +650,8 @@ module UploadWorkflow::External
   # @see #db_insert
   # @see #add_to_index
   #
-  # Compare with:
-  # UploadWorkflow::Bulk::External#bulk_upload_create
+  # == Implementation Notes
+  # Compare with UploadWorkflow::Bulk::External#bulk_upload_create
   #
   def upload_create(index: nil, atomic: true, **data)                           # NOTE: to Record::Submittable::SubmissionMethods#entry_create
     __debug_items("UPLOAD WF #{__method__}", binding)
@@ -680,8 +680,8 @@ module UploadWorkflow::External
   # @see #db_update
   # @see #update_in_index
   #
-  # Compare with:
-  # UploadWorkflow::Bulk::External#bulk_upload_edit
+  # == Implementation Notes
+  # Compare with UploadWorkflow::Bulk::External#bulk_upload_edit
   #
   def upload_edit(index: nil, atomic: true, **data)                             # NOTE: to Record::Submittable::SubmissionMethods#entry_edit
     __debug_items("UPLOAD WF #{__method__}", binding)

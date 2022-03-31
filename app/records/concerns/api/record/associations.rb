@@ -199,8 +199,8 @@ module Api::Record::Associations
     # @return [Proc]  An anonymous method that generates the default value.
     # @return [Any]   A literal value.
     #
-    # Compare with:
-    # Api::Serializer::Associations#get_type_class
+    # == Implementation Notes
+    # Compare with Api::Serializer::Associations#get_type_class
     #
     #--
     # noinspection RubyNilAnalysis

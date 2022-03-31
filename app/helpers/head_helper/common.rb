@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Shared view helper methods supporting document "<head>" entries.
+# Shared view helper methods supporting document '<head>' entries.
 #
 module HeadHelper::Common
 
@@ -17,7 +17,7 @@ module HeadHelper::Common
 
   public
 
-  # Configuration for <head> properties.
+  # Configuration for '<head>' properties.
   #
   # @type [Hash{Symbol=>Any}]
   #

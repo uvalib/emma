@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   #
   def current_layout: () -> (String | false)
 
-  # Indicate whether rendering within a modal dialog (<iframe>).
+  # Indicate whether rendering within a modal dialog ('<iframe>').
   #
   def modal?: () -> bool
 end

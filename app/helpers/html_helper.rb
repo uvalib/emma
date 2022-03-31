@@ -17,7 +17,7 @@ module HtmlHelper
 
   public
 
-  # Short-cut for generating an HTML "<div>" element.
+  # Short-cut for generating an HTML '<div>' element.
   #
   # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
   # @param [Proc]                block  Passed to #html_tag.
@@ -28,7 +28,7 @@ module HtmlHelper
     html_tag(:div, *args, &block)
   end
 
-  # Short-cut for generating an HTML "<span>" element.
+  # Short-cut for generating an HTML '<span>' element.
   #
   # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
   # @param [Proc]                block  Passed to #html_tag.
@@ -39,7 +39,7 @@ module HtmlHelper
     html_tag(:span, *args, &block)
   end
 
-  # Short-cut for generating an HTML "<button>" element.
+  # Short-cut for generating an HTML '<button>' element.
   #
   # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
   # @param [Proc]                block  Passed to #html_tag.
@@ -121,13 +121,12 @@ module HtmlHelper
 
   # An "empty" element that can be used as a placeholder.
   #
-  # @param [Hash] opt                 Passed to #html_div except for:
+  # @param [Hash] opt                         Passed to #html_div except for:
   #
-  # @option opt [String]                :comment  The text of an HTML comment
-  #                                                 to place inside the empty
-  #                                                 element.
-  # @option opt [Symbol,String,Integer] :tag      The HTML tag to use for the
-  #                                                 element instead of "<div>".
+  # @option opt [String]            :comment  The text of an HTML comment to
+  #                                             place inside the empty element.
+  # @option opt [Symbol,String,Integer] :tag  The HTML tag to use for the
+  #                                             element instead of *div*.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

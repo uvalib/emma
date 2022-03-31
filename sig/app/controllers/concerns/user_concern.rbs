@@ -60,6 +60,8 @@ module UserConcern
   #
   # @param [Hash] opt                 Passed to #authenticate_user!
   #
+  # @note Currently unused.
+  #
   def authenticate_dev!: (**untyped opt) -> void
 
   private

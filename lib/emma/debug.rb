@@ -555,6 +555,8 @@ module Emma::Debug
   # @yield Block to execute.
   # @yieldreturn [void]
   #
+  # @note Currently unused.
+  #
   def capture_stderr
     saved, $stderr = $stderr, StringIO.new
     yield

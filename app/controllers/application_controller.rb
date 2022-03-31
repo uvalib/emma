@@ -86,7 +86,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Indicate whether rendering within a modal dialog (<iframe>).
+  # Indicate whether rendering within a modal dialog ('<iframe>').
   #
   def modal?
     @modal ||= true?(params[:modal])

@@ -50,7 +50,7 @@ module FileFormat::Xml
   #
   def parse_metas: (Nokogiri::XML::NodeSet|Nokogiri::XML::Element section) -> Hash[Symbol,strArray]
 
-  # Extract information from a single <meta> element.
+  # Extract information from a single '<meta>' element.
   #
   # @param [Nokogiri::XML::Element] elem
   #
@@ -104,8 +104,8 @@ module FileFormat::Xml
   #
   def role_type: (String relator_code) -> Symbol?
 
-  # Transform an element name (or the equivalent attribute from a <meta>) into
-  # a #metadata key.
+  # Transform an element name (or the equivalent attribute from a '<meta>')
+  # into a #metadata key.
   #
   # @param [String] name
   #

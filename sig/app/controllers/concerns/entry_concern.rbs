@@ -255,7 +255,7 @@ module EntryConcern
 
   # bulk_update_entries
   #
-  # @param [Hash, nil] prm
+  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
@@ -288,6 +288,8 @@ module EntryConcern
   # @param [Hash, nil] prm            Default: `#get_entry_params`
   #
   # @return [Any]
+  #
+  # @note Currently unused.
   #
   def bulk_check_entries: (?symHash? prm) -> untyped
 

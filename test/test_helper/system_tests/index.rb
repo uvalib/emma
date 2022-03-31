@@ -67,7 +67,7 @@ module TestHelper::SystemTests::Index
     end
   end
 
-  # Generate a string for search terms as they would appear in the <title>
+  # Generate a string for search terms as they would appear in the '<title>'
   # element.
   #
   # @param [Hash] terms               Except:

@@ -1,9 +1,9 @@
-# Shared view helper methods supporting document "<head>" entries.
+# Shared view helper methods supporting document '<head>' entries.
 #
 module HeadHelper::Common
   include Emma::Common
 
-  # Configuration for <head> properties.
+  # Configuration for '<head>' properties.
   #
   # @type [Hash{Symbol=>Any}]
   #

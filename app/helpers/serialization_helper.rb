@@ -32,6 +32,8 @@ module SerializationHelper
   #
   # @param [Hash, nil] p              Default: `params`.
   #
+  # @note Currently unused.
+  #
   def rendering_non_html?(p = nil)
     !rendering_html?(p)
   end
@@ -39,6 +41,8 @@ module SerializationHelper
   # Indicate whether the ultimate target format is JSON.
   #
   # @param [Hash, nil] p              Default: `params`.
+  #
+  # @note Currently unused.
   #
   def rendering_json?(p = nil)
     p ||= params
@@ -49,6 +53,8 @@ module SerializationHelper
   # Indicate whether the ultimate target format is XML.
   #
   # @param [Hash, nil] p              Default: `params`.
+  #
+  # @note Currently unused.
   #
   def rendering_xml?(p = nil)
     p ||= params

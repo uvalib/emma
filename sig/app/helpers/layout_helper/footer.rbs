@@ -1,4 +1,4 @@
-# View helper methods for the page <footer>.
+# View helper methods for the page '<footer>'.
 #
 module LayoutHelper::Footer
   include LayoutHelper::Common

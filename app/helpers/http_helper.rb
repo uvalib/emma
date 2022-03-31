@@ -47,6 +47,8 @@ module HttpHelper
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def info?(code)
     HTTP_CONTINUE.include?(code)
   end
@@ -54,6 +56,8 @@ module HttpHelper
   # success?
   #
   # @param [Integer] code
+  #
+  # @note Currently unused.
   #
   def success?(code)
     HTTP_SUCCESS.include?(code)
@@ -63,6 +67,8 @@ module HttpHelper
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def redirect?(code)
     HTTP_REDIRECT.include?(code)
   end
@@ -70,6 +76,8 @@ module HttpHelper
   # permanent_redirect?
   #
   # @param [Integer] code
+  #
+  # @note Currently unused.
   #
   def permanent_redirect?(code)
     HTTP_PERM_REDIRECT.include?(code)
@@ -79,6 +87,8 @@ module HttpHelper
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def temporary_redirect?(code)
     HTTP_TEMP_REDIRECT.include?(code)
   end
@@ -87,21 +97,27 @@ module HttpHelper
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def error?(code)
     HTTP_ERROR.include?(code)
+  end
+
+  # client_error?
+  #
+  # @param [Integer] code
+  #
+  # @note Currently unused.
+  #
+  def client_error?(code)
+    HTTP_CLIENT_ERROR.include?(code)
   end
 
   # server_error?
   #
   # @param [Integer] code
   #
-  def client_error?(code)
-    HTTP_CLIENT_ERROR.include?(code)
-  end
-
-  # client_error?
-  #
-  # @param [Integer] code
+  # @note Currently unused.
   #
   def server_error?(code)
     HTTP_SERVER_ERROR.include?(code)

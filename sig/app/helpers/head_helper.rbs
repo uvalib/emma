@@ -1,4 +1,4 @@
-# View helper methods supporting document "<head>" entries.
+# View helper methods supporting document '<head>' entries.
 #
 module HeadHelper
   private

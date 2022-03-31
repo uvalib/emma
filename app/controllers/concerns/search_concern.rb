@@ -252,6 +252,8 @@ module SearchConcern
   #
   # @param [String, Array<String>] value
   #
+  # @note Currently Unused.
+  #
   def valid_identifiers?(value)
     ids = PublicationIdentifier.objects(value)
     ids.present? && ids.all? { |id| id&.valid? }

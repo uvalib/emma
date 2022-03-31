@@ -1,4 +1,4 @@
-# View helper methods for the <header> nav bar.
+# View helper methods for the '<header>' nav bar.
 #
 module LayoutHelper::NavBar
   include LayoutHelper::Common

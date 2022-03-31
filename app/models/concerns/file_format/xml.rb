@@ -136,7 +136,7 @@ module FileFormat::Xml
     result
   end
 
-  # Extract information from a single <meta> element.
+  # Extract information from a single '<meta>' element.
   #
   # @param [Nokogiri::XML::Element] elem
   #
@@ -240,8 +240,8 @@ module FileFormat::Xml
     TYPE_ROLE[relator_code&.to_sym]
   end
 
-  # Transform an element name (or the equivalent attribute from a <meta>) into
-  # a #metadata key.
+  # Transform an element name (or the equivalent attribute from a '<meta>')
+  # into a #metadata key.
   #
   # @param [String, Symbol] name
   #

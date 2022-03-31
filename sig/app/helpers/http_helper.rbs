@@ -17,11 +17,15 @@ module HttpHelper
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def info?: (Integer code) -> bool
 
   # success?
   #
   # @param [Integer] code
+  #
+  # @note Currently unused.
   #
   def success?: (Integer code) -> bool
 
@@ -29,11 +33,15 @@ module HttpHelper
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def redirect?: (Integer code) -> bool
 
   # permanent_redirect?
   #
   # @param [Integer] code
+  #
+  # @note Currently unused.
   #
   def permanent_redirect?: (Integer code) -> bool
 
@@ -41,23 +49,31 @@ module HttpHelper
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def temporary_redirect?: (Integer code) -> bool
 
   # error?
   #
   # @param [Integer] code
   #
+  # @note Currently unused.
+  #
   def error?: (Integer code) -> bool
+
+  # client_error?
+  #
+  # @param [Integer] code
+  #
+  # @note Currently unused.
+  #
+  def client_error?: (Integer code) -> bool
 
   # server_error?
   #
   # @param [Integer] code
   #
-  def client_error?: (Integer code) -> bool
-
-  # client_error?
-  #
-  # @param [Integer] code
+  # @note Currently unused.
   #
   def server_error?: (Integer code) -> bool
 

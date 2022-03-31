@@ -15,6 +15,8 @@ module AwsConcern
   #
   # @return [AwsS3Service]
   #
+  # @note Currently unused.
+  #
   def aws_api: () -> AwsS3Service
 
   # repositories
@@ -74,6 +76,8 @@ module AwsConcern
   #
   # @return [Aws::S3::Bucket]
   #
+  # @note Currently unused.
+  #
   def get_repo_bucket: (Symbol|String repository, ?(Symbol|String)? deployment, **untyped opt) -> Aws::S3::Bucket
 
   # get_repo_objects
@@ -86,6 +90,8 @@ module AwsConcern
   #
   # @return [Array<Aws::S3::Object>]
   #
+  # @note Currently unused.
+  #
   def get_repo_objects: (Symbol|String repository, ?(Symbol|String)? deployment, **untyped opt) -> Array[Aws::S3::Object]
 
   # get_bucket_table
@@ -97,6 +103,8 @@ module AwsConcern
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
   # @return [Hash{String=>Aws::S3::Bucket}]
+  #
+  # @note Currently unused.
   #
   def get_bucket_table: (Array[Symbol|String] repos, Array[Symbol|String] deploys, **untyped opt) -> Hash[String,Aws::S3::Bucket]
 

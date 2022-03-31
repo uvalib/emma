@@ -100,8 +100,8 @@ module Emma::Log
   #
   # @return [Concurrent::Map]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_levels
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_levels
   #
   def self.local_levels: () -> Concurrent::Map
 
@@ -109,8 +109,8 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_log_id
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_log_id
   #
   def self.local_log_id: () -> Integer
 
@@ -118,8 +118,8 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_level
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level
   #
   def self.local_level: () -> Integer
 
@@ -130,8 +130,8 @@ module Emma::Log
   # @return [Integer]
   # @return [nil]                   If *value* is *nil*.
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_level=
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level=
   #
   def self.local_level=: (Integer|Symbol|String value) -> Integer
                        | (nil value) -> nil
@@ -140,8 +140,8 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#level
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#level
   #
   def self.level: () -> Integer
 

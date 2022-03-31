@@ -191,6 +191,7 @@ $(document).on('turbolinks:load', function() {
      * }} FileData
      *
      * @see "en.emma.upload.record.file_data"
+     * @see "Shrine::InstanceMethods#upload"
      */
 
     /**
@@ -376,12 +377,16 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
+     * SubmissionRecordMessage
+     *
      * @typedef {
      *      UploadRecordMessage | EntryRecordMessage
      * } SubmissionRecordMessage
      */
 
     /**
+     * SubmissionRecordsCB
+     *
      * @typedef {
      *      function(UploadRecord[]) | function(EntryRecord[])
      * } SubmissionRecordsCB
@@ -1015,7 +1020,7 @@ $(document).on('turbolinks:load', function() {
          */
         function addNewLines(list) {
             if (isPresent(list)) {
-                /** @type {jQuery} $lines */
+                /** @type {jQuery} */
                 let $lines = $results.children();
 
                 // Remove initialization line(s) if present.
@@ -1316,7 +1321,7 @@ $(document).on('turbolinks:load', function() {
      * In either case, {@link initializeEntryForm} is called with the new
      * fields to complete page initialization.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]       Default: {@link formElement}.
      */
     function refreshRecord(form) {
 
@@ -1496,7 +1501,7 @@ $(document).on('turbolinks:load', function() {
      * Initialize the state of the cancel button, and set it up to clear the
      * form when it is activated.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]       Default: {@link formElement}.
      *
      * == Implementation Notes
      * Although the button is created with 'type="reset"' HTML reset behavior
@@ -4661,7 +4666,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The tooltip for the Submit button after the form is validated.
      *
-     * @param {Selector} [form]       Passed to {@link assetObject}.
+     * @param {Selector} [form]       Passed to {@link submitTooltip}.
      *
      * @returns {string}
      */
@@ -4672,7 +4677,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The tooltip for the Submit button before the form is validated.
      *
-     * @param {Selector} [form]       Passed to {@link assetObject}.
+     * @param {Selector} [form]       Passed to {@link submitTooltip}.
      *
      * @returns {string}
      */
@@ -4683,7 +4688,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The current label for the Cancel button.
      *
-     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {Selector} [form]         Default: {@link formElement}.
      * @param {boolean}  [can_cancel]   Default: `canCancel()`.
      *
      * @returns {string}
@@ -4698,7 +4703,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The current tooltip for the Cancel button.
      *
-     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {Selector} [form]         Default: {@link formElement}.
      * @param {boolean}  [can_cancel]   Default: `canCancel()`.
      *
      * @returns {string}

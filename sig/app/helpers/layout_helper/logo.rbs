@@ -1,4 +1,4 @@
-# View helper methods for the <header> logo.
+# View helper methods for the '<header>' logo.
 #
 module LayoutHelper::Logo
   include LayoutHelper::Common

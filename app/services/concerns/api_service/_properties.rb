@@ -51,7 +51,7 @@ module ApiService::Properties
   #
   # @type [Array<Symbol>]
   #
-  # == Usage Notes
+  # == Implementation Notes
   # Compare with BsAllowsType#values.
   #
   HTTP_METHODS =

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods for setting/getting the <title> meta-tag.
+# View helper methods for setting/getting the '<title>' meta-tag.
 #
 module HeadHelper::PageTitle
 
@@ -52,7 +52,7 @@ module HeadHelper::PageTitle
   # Access the page title.
   #
   # If a block is given, this invocation is being used to accumulate text into
-  # the title; otherwise this invocation is being used to emit the "<title>"
+  # the title; otherwise this invocation is being used to emit the '<title>'
   # element.
   #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
@@ -101,16 +101,16 @@ module HeadHelper::PageTitle
     @page_title
   end
 
-  # Emit the "<title>" element (within "<head>").
+  # Emit the '<title>' element (within '<head>').
   #
   # @param [Hash] opt                 Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # == Implementation Notes
-  # Emit the <title> element with `data-turbolinks-eval="false"` so that it is
-  # not included in Turbolinks' determination of whether the contents of <head>
-  # have changed.
+  # Emit the '<title>' element with 'data-turbolinks-eval="false"' so that it
+  # is not included in Turbolinks' determination of whether the contents of
+  # '<head>' have changed.
   #
   def emit_page_title(**opt)
     @page_title ||= []

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods support CSS class annotation of the <body> element.
+# View helper methods support CSS class annotation of the '<body>' element.
 #
 module LayoutHelper::PageClasses
 
@@ -15,11 +15,11 @@ module LayoutHelper::PageClasses
 
   public
 
-  # Access the classes for the "<body>" element.
+  # Access the classes for the '<body>' element.
   #
   # If a block is given, this invocation is being used to accumulate CSS class
   # names; otherwise this invocation is being used to emit the CSS classes for
-  # inclusion in the "<body>" element definition.
+  # inclusion in the '<body>' element definition.
   #
   # @return [String]                      If no block given.
   # @return [Array<String>]               If block given.
@@ -35,7 +35,7 @@ module LayoutHelper::PageClasses
     end
   end
 
-  # Set the classes for the "<body>" element, eliminating any previous value.
+  # Set the classes for the '<body>' element, eliminating any previous value.
   #
   # @param [Array] values
   #
@@ -51,7 +51,7 @@ module LayoutHelper::PageClasses
     @page_classes
   end
 
-  # Add to the classes for the "<body>" element.
+  # Add to the classes for the '<body>' element.
   #
   # @param [Array] values
   #
@@ -67,7 +67,7 @@ module LayoutHelper::PageClasses
     @page_classes
   end
 
-  # Emit the CSS classes for inclusion in the "<body>" element definition.
+  # Emit the CSS classes for inclusion in the '<body>' element definition.
   #
   # @return [String]
   #

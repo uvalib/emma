@@ -65,6 +65,8 @@ module ApiConcern
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
   #
+  # @note Currently unused.
+  #
   def api_active?(*only)
     api_active_table(*only).present?
   end

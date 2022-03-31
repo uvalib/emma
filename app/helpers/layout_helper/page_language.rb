@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods support language annotation of the <html> element.
+# View helper methods support language annotation of the '<html>' element.
 #
 module LayoutHelper::PageLanguage
 
@@ -16,7 +16,7 @@ module LayoutHelper::PageLanguage
   public
 
   # The language code for the language of the current page for use with the
-  # "<html>" element.
+  # '<html>' element.
   #
   # @return [String]
   #
@@ -33,6 +33,8 @@ module LayoutHelper::PageLanguage
   # == Usage Notes
   # Only use as an override if the page is in a language that has not been set
   # via I18n::Config#locale.
+  #
+  # @note Currently unused.
   #
   def set_page_language(lang)
     @page_language = lang.to_s.downcase.sub(/-.*$/, '')

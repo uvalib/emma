@@ -162,7 +162,7 @@ module ModelHelper::Fields
   # TODO: I18n
   INVALID_LANGUAGE: String
 
-  # Wrap invalid language values in a <span>.
+  # Wrap invalid language values in a *span*.
   #
   # @param [Any]     value            Value to check.
   # @param [Boolean] code             If *true* display the ISO 639 code.
@@ -186,7 +186,7 @@ module ModelHelper::Fields
   def mark_invalid_languages: (strArray value, ?code: bool) -> Array[ActiveSupport::SafeBuffer|String]
                             | (String value,   ?code: bool) -> (ActiveSupport::SafeBuffer | String)
 
-  # Wrap invalid identifier values in a <span>.
+  # Wrap invalid identifier values in a *span*.
   #
   # @param [Any] value                Value to check.
   #

@@ -54,7 +54,6 @@ module Representable
     # @return [String]
     #
     def to_obj(*args)
-      $stderr.puts "................... Representable::Obj.to_obj | #{args.inspect}" # TODO: remove
       opt  = args.last.is_a?(::Hash) ? args.pop : {}
       hash = to_hash(*args)
       hash_render(hash, **opt)

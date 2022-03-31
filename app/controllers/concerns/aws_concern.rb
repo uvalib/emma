@@ -41,6 +41,8 @@ module AwsConcern
   #
   # @return [AwsS3Service]
   #
+  # @note Currently unused.
+  #
   def aws_api
     # noinspection RubyMismatchedReturnType
     api_service(AwsS3Service)
@@ -168,6 +170,8 @@ module AwsConcern
   #
   # @return [Aws::S3::Bucket]
   #
+  # @note Currently unused.
+  #
   def get_repo_bucket(repository, deployment = nil, **opt)
     opt  = aws_params(opt)
     name = repo_bucket(repository, deployment, **opt)
@@ -184,6 +188,8 @@ module AwsConcern
   #
   # @return [Array<Aws::S3::Object>]
   #
+  # @note Currently unused.
+  #
   def get_repo_objects(repository, deployment = nil, **opt)
     opt  = aws_params(opt)
     name = repo_bucket(repository, deployment, **opt)
@@ -199,6 +205,8 @@ module AwsConcern
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
   # @return [Hash{String=>Aws::S3::Bucket}]
+  #
+  # @note Currently unused.
   #
   def get_bucket_table(repos, deploys, **opt)
     opt = aws_params(opt)

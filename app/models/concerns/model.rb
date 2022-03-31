@@ -508,7 +508,7 @@ module Model
   #
   # @param [Symbol, String, Class, Model, Any] item
   #
-  # @return [Hash{Symbol=>Hash}]        Frozen result.
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
   def self.show_fields(item)
     config_for(item)[:show] || EMPTY_CONFIG

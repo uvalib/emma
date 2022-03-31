@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods for the <header> search filter controls.
+# View helper methods for the '<header>' search filter controls.
 #
 module LayoutHelper::SearchFilters
 
@@ -477,12 +477,13 @@ module LayoutHelper::SearchFilters
   # @return [nil]                         No controls were found for *target*.
   #
   # @see file:config/locales/en.yml *en.emma.search_filters*
-  # @see #generic_menu
+  # @see #blank_menu
   # @see #sort_menu
   # @see #size_menu
   # @see #repository_menu
   # @see #prefix_limit_menu
   # @see #deployment_menu
+  # @see #generic_menu
   # @see #before_menu
   # @see #after_menu
   # @see #reset_menu
@@ -859,8 +860,8 @@ module LayoutHelper::SearchFilters
   # If no option is currently selected, an initial "null" selection is
   # prepended.
   #
-  # Normally the element is a "<div>" but if #immediate_search? is true then it
-  # is a "<form>" which allows the enclosed "<select>" to perform a new
+  # Normally the element is a '<div>' but if #immediate_search? is true then it
+  # is a '<form>' which allows the enclosed '<select>' to perform a new
   # modified search upon selection.
   #
   # @param [Symbol]              menu_name  Control name.

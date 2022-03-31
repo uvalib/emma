@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods for the <main> section..
+# View helper methods for the '<main>' section..
 #
 module LayoutHelper::Main
 
@@ -20,7 +20,7 @@ module LayoutHelper::Main
 
   public
 
-  # Render the \<h1\> heading for the page.
+  # Render the *h1* heading for the page.
   #
   # @param [ActiveSupport::SafeBuffer, String]                     title
   # @param [Array<ActiveSupport::SafeBuffer>]                      controls

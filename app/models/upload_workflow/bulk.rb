@@ -58,8 +58,8 @@ module UploadWorkflow::Bulk::External
   # @see #bulk_db_insert
   # @see UploadWorkflow::External#add_to_index
   #
-  # Compare with:
-  # UploadWorkflow::External#upload_create
+  # == Implementation Notes
+  # Compare with UploadWorkflow::External#upload_create
   #
   #--
   # noinspection DuplicatedCode
@@ -103,8 +103,8 @@ module UploadWorkflow::Bulk::External
   # @see #bulk_db_update
   # @see #update_in_index
   #
-  # Compare with:
-  # UploadWorkflow::External#upload_edit
+  # == Implementation Notes
+  # Compare with UploadWorkflow::External#upload_edit
   #
   #--
   # noinspection DuplicatedCode

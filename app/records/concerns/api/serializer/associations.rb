@@ -203,8 +203,8 @@ module Api::Serializer::Associations
     #
     # @return [Class]
     #
-    # Compare with:
-    # Api::Record::Associations#make_default
+    # == Implementation Notes
+    # Compare with Api::Record::Associations#make_default
     #
     #--
     # noinspection RubyNilAnalysis, RubyMismatchedReturnType

@@ -1436,7 +1436,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {object}
      *
      * @see https://select2.org/i18n
-     * @see file:../../../node_modules/select2/src/js/select2/i18n/en.js
+     * @see file:node_modules/select2/src/js/select2/i18n/en.js
      */
     function select2Language() {
         const text = { // TODO: I18n

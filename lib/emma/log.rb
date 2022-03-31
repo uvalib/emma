@@ -170,8 +170,8 @@ module Emma::Log
   #
   # @return [Concurrent::Map]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_levels
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_levels
   #
   def self.local_levels
     # noinspection RubyResolve
@@ -182,8 +182,8 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_log_id
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_log_id
   #
   def self.local_log_id
     Thread.current.__id__
@@ -193,8 +193,8 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_level
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level
   #
   def self.local_level
     local_levels[local_log_id]
@@ -207,8 +207,8 @@ module Emma::Log
   # @return [Integer]
   # @return [nil]                   If *value* is *nil*.
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#local_level=
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level=
   #
   def self.local_level=(value)
     if value
@@ -223,8 +223,8 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # Compare with:
-  # ActiveSupport::LoggerThreadSafeLevel#level
+  # == Implementation Notes
+  # Compare with ActiveSupport::LoggerThreadSafeLevel#level
   #
   def self.level
     local_level || logger.level

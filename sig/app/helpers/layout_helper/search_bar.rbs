@@ -1,4 +1,4 @@
-# View helper methods for the <header> search bar.
+# View helper methods for the '<header>' search bar.
 #
 module LayoutHelper::SearchBar
   include LayoutHelper::SearchFilters

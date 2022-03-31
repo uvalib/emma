@@ -50,6 +50,8 @@ module DevHelper
   #
   # @return [void]
   #
+  # @note Currently unused.
+  #
   def forget_dev(...)
     delete_cookie(DEV_COOKIE)
   end

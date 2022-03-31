@@ -146,6 +146,8 @@ module UserConcern
   #
   # @param [Hash] opt                 Passed to #authenticate_user!
   #
+  # @note Currently unused.
+  #
   def authenticate_dev!(**opt)
     authenticate_user!(**opt)
     role_failure(:developer) unless current_user&.developer?

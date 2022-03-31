@@ -38,6 +38,8 @@ module ApplicationHelper
   #
   # @return [String]
   #
+  # @note Currently unused.
+  #
   def app_name: () -> String
 
   # Indicate whether a view template partial exists.

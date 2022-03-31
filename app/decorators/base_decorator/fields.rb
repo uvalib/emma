@@ -333,7 +333,7 @@ module ModelHelper::Fields
   INVALID_LANGUAGE = 'The underlying data contains this value ' \
                      'instead of a valid ISO 639 language code.'
 
-  # Wrap invalid language values in a <span>.
+  # Wrap invalid language values in a *span*.
   #
   # @param [Any]     value            Value to check.
   # @param [Boolean] code             If *true* display the ISO 639 code.
@@ -369,7 +369,7 @@ module ModelHelper::Fields
     html_span(value, opt)
   end
 
-  # Wrap invalid identifier values in a <span>.
+  # Wrap invalid identifier values in a *span*.
   #
   # @param [Any] value                Value to check.
   #

@@ -29,7 +29,7 @@ module HeadHelper::Favicon
   # Access the favicon appropriate for the current page.
   #
   # If a block is given, this invocation is being used to set the favicon;
-  # otherwise this invocation is being used to emit the favicon "<link>" tag.
+  # otherwise this invocation is being used to emit the favicon '<link>' tag.
   #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [String]                      If block given.
@@ -49,7 +49,7 @@ module HeadHelper::Favicon
   #
   # @param [String, nil] src
   #
-  # @return [String]                  The updated @page_favicon.
+  # @return [String]                  The new @page_favicon.
   #
   # @yield To supply a value to @page_favicon.
   # @yieldreturn [String]
@@ -58,7 +58,7 @@ module HeadHelper::Favicon
     @page_favicon = block_given? && yield || src
   end
 
-  # Emit the shortcut icon "<link>" tag appropriate for the current page.
+  # Emit the shortcut icon '<link>' tag appropriate for the current page.
   #
   # @param [Hash] opt                 Passed to #favicon_link_tag
   #

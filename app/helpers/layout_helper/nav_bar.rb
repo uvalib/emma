@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods for the <header> nav bar.
+# View helper methods for the '<header>' nav bar.
 #
 module LayoutHelper::NavBar
 

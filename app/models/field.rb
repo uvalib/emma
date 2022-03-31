@@ -53,7 +53,7 @@ module Field
   # @param [Symbol, String, nil]       action
   # @param [Array<nil,Symbol>]         sub_sections
   #
-  # @return [Hash]
+  # @return [Hash]                    Frozen result.
   #
   #--
   # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
@@ -90,7 +90,7 @@ module Field
   # @param [Symbol, String, nil]       action
   # @param [Array<nil,Symbol>]         sub_sections
   #
-  # @return [Hash]
+  # @return [Hash]                    Frozen result.
   #
   #--
   # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
@@ -159,9 +159,9 @@ module Field
   # == Usage Notes
   # The :type indicates the type of HTML input element, either directly or
   # indirectly.  If the value is a Symbol it is interpreted as an EnumType
-  # subclass which gives the range of values for a <select> element or the set
-  # of checkboxes to create within a <fieldset> element.  Any other value
-  # indicates <textarea> or the <input> type attribute to use.
+  # subclass which gives the range of values for a '<select>' element or the
+  # set of checkboxes to create within a '<fieldset>' element.  Any other value
+  # indicates '<textarea>' or the '<input>' type attribute to use.
   #
   #--
   # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedArgumentType

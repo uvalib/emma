@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods for setting/getting <script> meta-tags.
+# View helper methods for setting/getting '<script>' meta-tags.
 #
 module HeadHelper::Scripts
 
@@ -30,7 +30,7 @@ module HeadHelper::Scripts
   #
   # If a block is given, this invocation is being used to accumulate script
   # sources; otherwise this invocation is being used to emit the JavaScript
-  # "<script>" element(s).
+  # '<script>' element(s).
   #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Array<String>]               If block given.
@@ -50,7 +50,7 @@ module HeadHelper::Scripts
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The updated @page_javascript contents.
+  # @return [Array<String>]           The new @page_javascript contents.
   #
   # @yield To supply additional source(s) to @page_javascript.
   # @yieldreturn [String, Array<String>]
@@ -78,7 +78,7 @@ module HeadHelper::Scripts
     @page_javascript
   end
 
-  # Emit the "<script>" tag(s) appropriate for the current page.
+  # Emit the '<script>' tag(s) appropriate for the current page.
   #
   # @param [Hash] opt                 Passed to #javascript_include_tag
   #

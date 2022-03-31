@@ -240,6 +240,8 @@ module FlashHelper
   #
   # @return [void]
   #
+  # @note Currently unused.
+  #
   # @see #flash_now_notice
   # @see #flash_format
   #

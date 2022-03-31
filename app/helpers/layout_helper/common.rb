@@ -205,7 +205,7 @@ module LayoutHelper::Common
   # @return [ActiveSupport::SafeBuffer]   An HTML form element.
   # @return [nil]                         Search is not available for *target*.
   #
-  # @yield To supply additional field(s) for the <form>.
+  # @yield To supply additional field(s) for the '<form>'.
   # @yieldreturn [String, Array<String>]
   #
   # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
@@ -235,7 +235,7 @@ module LayoutHelper::Common
   # @return [ActiveSupport::SafeBuffer]   An HTML form element.
   # @return [nil]                         Search is not available for *target*.
   #
-  # @yield To supply additional field(s) for the <form>.
+  # @yield To supply additional field(s) for the '<form>'.
   # @yieldreturn [String, Array<String>]
   #
   # @note Used only if #CLIENT_MANAGES_HIDDEN_INPUTS is false.

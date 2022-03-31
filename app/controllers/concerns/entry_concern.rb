@@ -736,7 +736,7 @@ module EntryConcern
     if prm.slice(:src, :source, :manifest).present?
       post make_path(bulk_create_entry_path, **prm)
     else
-      # TODO: ???
+      # TODO: bulk_new_entries
     end
   end
 
@@ -776,7 +776,7 @@ module EntryConcern
 
   # bulk_update_entries
   #
-  # @param [Hash, nil] prm
+  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
@@ -831,6 +831,8 @@ module EntryConcern
   # @param [Hash, nil] prm            Default: `#get_entry_params`
   #
   # @return [Any]
+  #
+  # @note Currently unused.
   #
   def bulk_check_entries(prm = nil)
     prm ||= get_entry_params

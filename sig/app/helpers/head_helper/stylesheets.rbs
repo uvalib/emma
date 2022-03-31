@@ -1,4 +1,4 @@
-# View helper methods for setting/getting <link rel="stylesheet"> meta-tags.
+# View helper methods for setting/getting '<link rel="stylesheet">' meta-tags.
 #
 module HeadHelper::Stylesheets
   include HeadHelper::Common
@@ -14,7 +14,7 @@ module HeadHelper::Stylesheets
   #
   # If a block is given, this invocation is being used to accumulate stylesheet
   # sources; otherwise this invocation is being used to emit the stylesheet
-  # "<link>" element(s).
+  # '<link>' element(s).
   #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Array<String>]               If block given.
@@ -29,7 +29,7 @@ module HeadHelper::Stylesheets
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The updated @page_stylesheets contents.
+  # @return [Array<String>]           The new @page_stylesheets contents.
   #
   # @yield To supply additional source(s) to @page_stylesheets.
   # @yieldreturn [String, Array<String>]
@@ -47,7 +47,7 @@ module HeadHelper::Stylesheets
   #
   def append_page_stylesheets: (*anyArray sources) { () -> (String | strArray) } -> strArray
 
-  # Emit the stylesheet "<link>" tag(s) appropriate for the current page.
+  # Emit the stylesheet '<link>' tag(s) appropriate for the current page.
   #
   # @param [Hash] opt                 Passed to #stylesheet_link_tag
   #

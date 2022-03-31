@@ -34,6 +34,8 @@ module ApiConcern
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
   #
+  # @note Currently unused.
+  #
   def api_active?: (*Class only) -> bool
 
   # Indicate whether any API request generated an exception.

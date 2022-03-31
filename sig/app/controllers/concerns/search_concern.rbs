@@ -115,6 +115,8 @@ module SearchConcern
   #
   # @param [String, Array<String>] value
   #
+  # @note Currently unused.
+  #
   def valid_identifiers?: (String|strArray value) -> bool
 
   # Indicate whether the argument contains only valid identifiers and provide

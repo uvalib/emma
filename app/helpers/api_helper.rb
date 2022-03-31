@@ -28,7 +28,7 @@ module ApiHelper
   # @param [Integer, String] indent     Space count or literal indent string.
   # @param [String]          separator  Default: "\n".
   # @param [Boolean]         html       If *false* then URLs will not be turned
-  #                                       into <a> links and no HTML formatting
+  #                                       into *a* links and no HTML formatting
   #                                       will be applied.
   #
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.

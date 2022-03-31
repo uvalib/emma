@@ -347,6 +347,8 @@ module HealthConcern
   #
   # @return [void]
   #
+  # @note Currently unused.
+  #
   # == Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #

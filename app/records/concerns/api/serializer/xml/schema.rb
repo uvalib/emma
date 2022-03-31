@@ -35,8 +35,8 @@ module Api::Serializer::Xml::Schema
   # 1. WRAP_COLLECTIONS == *true*
   #
   # The collection is contained within a "wrapper" element whose tag is the
-  # plural of the element name; e.g., one or more "<copy>" elements wrapped
-  # inside a "<copies>" element:
+  # plural of the element name; e.g., one or more '<copy>' elements wrapped
+  # inside a '<copies>' element:
   #
   #   <holding>
   #     <copies>

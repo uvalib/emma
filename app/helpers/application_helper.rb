@@ -60,6 +60,8 @@ module ApplicationHelper
   #
   # @return [String]
   #
+  # @note Currently unused.
+  #
   def app_name
     APP_CONFIG[:name]
   end

@@ -161,9 +161,6 @@ module Roles
   #
   # @type [Hash{Symbol=>String}]
   #
-  # Compare with:
-  # BsRoleType#values
-  #
   # == Implementation Notes
   # With no role (due to lack of user information) an unauthenticated user
   # would be a "Guest" user.  If authenticated (as a guess) that would imply an
@@ -182,6 +179,8 @@ module Roles
   #
   # :membershipAssistant  Presumably a "Membership Assistant" user, OR an
   #                         "Administrator" user.
+  #
+  # Compare with BsRoleType#values
   #
   BOOKSHARE_ROLES = {
     individual:          'API section 1.9',

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods for setting/getting <meta> tags.
+# View helper methods for setting/getting '<meta>' tags.
 #
 module HeadHelper::MetaTags
 
@@ -55,8 +55,8 @@ module HeadHelper::MetaTags
 
   # Access the meta tags for this page.
   #
-  # If a block is given, this invocation is being used to accumulate "<meta>"
-  # tags; otherwise this invocation is being used to emit the "<meta>" tags.
+  # If a block is given, this invocation is being used to accumulate '<meta>'
+  # tags; otherwise this invocation is being used to emit the '<meta>' tags.
   #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Hash]                        If block given.
@@ -76,7 +76,7 @@ module HeadHelper::MetaTags
   #
   # @param [Hash, nil] pairs
   #
-  # @return [Hash]                    The updated @page_meta_tags contents.
+  # @return [Hash]                    The new @page_meta_tags contents.
   #
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
@@ -121,7 +121,7 @@ module HeadHelper::MetaTags
     @page_meta_tags
   end
 
-  # Emit the "<meta>" tag(s) appropriate for the current page.
+  # Emit the '<meta>' tag(s) appropriate for the current page.
   #
   # @param [Hash] opt                 Passed to #emit_meta_tag except for:
   #
@@ -165,7 +165,7 @@ module HeadHelper::MetaTags
   EMIT_META_TAG_OPTIONS =
     %i[content_separator list_separator pair_separator sanitize quote].freeze
 
-  # Generate a <meta> tag with special handling for :robots.
+  # Generate a '<meta>' tag with special handling for :robots.
   #
   # @param [Symbol]                key
   # @param [String, Symbol, Array] value
@@ -221,7 +221,7 @@ module HeadHelper::MetaTags
 
   public
 
-  # Set <meta name="description">, eliminating any previous value.
+  # Set '<meta name="description">', eliminating any previous value.
   #
   # @param [Array<String,Symbol,Hash>] values
   #
@@ -232,7 +232,7 @@ module HeadHelper::MetaTags
     replace_page_meta_tags(description: normalized_list(values, **opt))
   end
 
-  # Add to <meta name="description">.
+  # Add to '<meta name="description">'.
   #
   # @param [Array<String,Symbol,Hash>] values
   #
@@ -249,7 +249,7 @@ module HeadHelper::MetaTags
 
   public
 
-  # Set <meta name="robots">.
+  # Set '<meta name="robots">'.
   #
   # @param [Array<String,Symbol>] values
   #
@@ -259,7 +259,7 @@ module HeadHelper::MetaTags
     replace_page_meta_tags(robots: values.map(&:to_sym))
   end
 
-  # Add to <meta name="robots">.
+  # Add to '<meta name="robots">'.
   #
   # @param [Array<String,Symbol>] values
   #
