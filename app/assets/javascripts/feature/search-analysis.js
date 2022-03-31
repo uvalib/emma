@@ -9,7 +9,7 @@ import { CallbackQueue }                      from '../shared/queue'
 import { rgbColor, rgbColorInverse }          from '../shared/color'
 import { DEF_HEX_DIGITS, HEX_BASE, selector } from '../shared/css'
 import { handleClickAndKeypress }             from '../shared/events'
-import { arrayWrap }                          from '../shared/objects'
+import { arrayWrap, compact }                 from '../shared/objects'
 import { makeUrl, urlParameters }             from '../shared/url'
 import {
     isDefined,
@@ -19,9 +19,9 @@ import {
 } from '../shared/definitions'
 
 
-// ========================================================================
+// ============================================================================
 // Exported functions
-// ========================================================================
+// ============================================================================
 
 /**
  * Make a hidden clone of an item's title to prepare it for use by the
@@ -57,9 +57,9 @@ export function cloneTitle(item, title) {
     return title_id;
 }
 
-// ========================================================================
+// ============================================================================
 // Actions
-// ========================================================================
+// ============================================================================
 
 // noinspection FunctionTooLongJS
 $(document).on('turbolinks:load', function() {
@@ -1345,6 +1345,76 @@ $(document).on('turbolinks:load', function() {
         static CLASS_NAME = 'ToggleFieldGroups';
 
         constructor(key_base = 'field_groups') { super(key_base) }
+
+        // ====================================================================
+        // AdvancedFeature method overrides
+        // ====================================================================
+
+        /**
+         * Activate the associated feature.
+         *
+         * @param {*} [arg]
+         */
+        activate(arg) {
+            const scope_note       = ($pair) => this.scopeNote($pair);
+            const saved_title_attr = 'data-pre-field-group-title';
+            this.$root.find('.pair').each(function() {
+                let $pair = $(this);
+                let note, cur_title = $pair.attr('title');
+                if (cur_title && (note = scope_note($pair))) {
+                    let old_title = $pair.attr(saved_title_attr);
+                    if (!old_title) {
+                        old_title = cur_title;
+                        $pair.attr(saved_title_attr, old_title);
+                    }
+                    $pair.attr('title', `${old_title}\n\n${note}`);
+                }
+            });
+            super.activate(arg);
+        }
+
+        /**
+         * De-activate the associated feature.
+         */
+        deactivate() {
+            super.deactivate();
+            const saved_title_attr = 'data-pre-field-group-title';
+            this.$root.find('.pair').each(function() {
+                let $pair     = $(this);
+                let old_title = $pair.attr(saved_title_attr);
+                if (old_title) {
+                    $pair.attr('title', old_title);
+                }
+            });
+        }
+
+        // ====================================================================
+        // Methods
+        // ====================================================================
+
+        /**
+         * Create a tooltip addition base on the item's "scope-*" classes.
+         *
+         * @param {Selector} item
+         *
+         * @returns {string}
+         */
+        scopeNote(item) {
+            let $item = $(item);
+            let part  = [];
+            arrayWrap($item[0]?.classList)
+                .filter(cls => cls.startsWith('scope-'))
+                .forEach(function(cls) {
+                    const scope = cls.replace('scope-', '').toUpperCase();
+                    switch (scope) {
+                        case 'PARTS': case 'FORMATS':                break;
+                        case 'FILES': part[0] = 'FILE-level';        break;
+                        case 'TITLE': part[0] = 'TITLE-level';       break;
+                        default:      part[1] = `${scope} metadata`; break;
+                    }
+                });
+            return compact(part).join(' ');
+        }
     }
 
     /**

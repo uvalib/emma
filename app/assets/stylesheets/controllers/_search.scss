@@ -1142,7 +1142,9 @@ $title-scroll-mask:
     // Components
     //=========================================================================
 
-    $narrow-title-shadow: 0 0 0.5rem 0.25rem ghostwhite;
+    $narrow-title-shadow:      0       0       0.5rem  0.25rem  ghostwhite;
+    $not-narrow-title-shadow: -0.5rem  0       0       0        $title-bg;
+    $title-bottom-shadow:      0       2px     0       0        darkgray;
 
     .toggle {
 
@@ -1329,6 +1331,8 @@ $title-scroll-mask:
 
                 .title {
 
+                    margin-left:    -0.25rem;
+                    padding-left:   0.25rem;
                     letter-spacing: -0.125px; // NOTE: needed for Firefox
                     cursor:         default;
 
@@ -1410,11 +1414,11 @@ $title-scroll-mask:
                 top: 1vh;
 
                 @media #{$not-narrow-screen} {
-                    box-shadow: $title-scroll-mask;
+                    box-shadow: $not-narrow-title-shadow, $title-scroll-mask;
                 }
 
                 @media #{$narrow-screen} {
-                    box-shadow: $narrow-title-shadow, $title-scroll-mask;
+                    box-shadow: $narrow-title-shadow,     $title-scroll-mask;
                 }
 
                 > * {
@@ -1423,11 +1427,9 @@ $title-scroll-mask:
                     }
                 }
 
-                .title {
+                .title:not(:focus) {
                     @media #{$not-narrow-screen} {
-                        box-shadow:
-                            2px  0    0    0    $title-bg,
-                            1px  1px  0    1px  darkgray;
+                        box-shadow: $title-bottom-shadow;
                     }
                 }
 
@@ -1461,7 +1463,7 @@ $title-scroll-mask:
             &.field-Title {
 
                 @media #{$not-narrow-screen} {
-                    box-shadow: none;
+                    box-shadow: $not-narrow-title-shadow;
                 }
 
                 @media #{$narrow-screen} {

@@ -19,8 +19,7 @@ export function arrayWrap(item) {
     if (typeof(item) === 'undefined')        { return []; }        else
     if (item === null)                       { return []; }        else
     if (Array.isArray(item))                 { return item; }      else
-    if (item instanceof Set)                 { return [...item]; } else
-    if (item instanceof Map)                 { return [...item]; } else
+    if (typeof item?.forEach === 'function') { return [...item]; } else
     if (typeof item?.toArray === 'function') { return item.toArray(); }
     return [item];
 }
