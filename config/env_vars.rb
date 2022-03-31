@@ -72,9 +72,11 @@ if db_needed
     case (v = ENV['DATABASE']&.downcase)
       when /^post/  then database, type = %w(postgres postgres)
       when /^mysql/ then database, type = %w(mysql standard)
-      when nil      then raise 'missing ENV[DATABASE]' if host_port_missing
+      when nil      then $stderr.puts 'Defaulting to Postgres'
+      #when nil      then raise 'missing ENV[DATABASE]' if host_port_missing
       else               raise "#{v.inspect} not in #{databases.inspect}"
     end
+    database, type = %w(postgres postgres) unless database
 
     # noinspection RubyCaseWithoutElseBlockInspection
     case database
