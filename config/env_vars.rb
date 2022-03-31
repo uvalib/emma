@@ -43,9 +43,8 @@ config && require(config) &&
 # Database properties
 # =============================================================================
 
-db_needed   = rails_application?
-# noinspection RubyMismatchedReturnType
-db_needed ||= rake_task? && $*.any? { |arg| arg =~ /^(db|emma|emma_data):/ }
+db_needed =
+  rails_application? || (rake_task? && $*.any? { |arg| !arg.start_with?('-') })
 
 if db_needed
 
