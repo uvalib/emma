@@ -213,12 +213,10 @@ module Emma::Rake
         # No database for "rake assets:precompile" in Dockerfile, so default
         # to setting up a fake user in a way that the database will not be
         # accessed.
-        User.new(email: 'fake@virginia.edu', effective_id: 1).tap do |user|
-          user.instance_exec do
-            @developer     = true
-            @administrator = true
-          end
-        end
+        Struct.new(:id, :email) {
+          def developer?;     true; end
+          def administrator?; true; end
+        }.new(1, 'fake@virginia.edu')
       end
   end
 
