@@ -134,10 +134,20 @@ module Record
       columns   = columns.flatten.compact.map(&:to_s)
       remainder = (column_names - columns).size
       any ? (total > remainder) : (total == (remainder + columns.size))
-    rescue ActiveRecord::ConnectionNotEstablished => error
-      # Only seen from the desktop via "rails runner" for a single file;
-      # in this case only, allow the method to return *true*.
-      $*.include?('runner') or raise error
+
+    rescue ActiveRecord::ActiveRecordError => error
+      # There are two cases where this method is allowed to just return *true*
+      # rather than raising an exception when the database is not available:
+      #
+      # * The first is running "rake assets:precompile", which triggers the
+      #   "emma_assets:erb" task, which needs to run #js_properties.
+      #
+      # * The second is only seen from the desktop via "rails runner" for a
+      #   single file.
+      #
+      return true if rake_task? && $*.any? { |arg| arg.include?('assets:') }
+      return true if $*.include?('runner')
+      raise error
     end
 
   end
