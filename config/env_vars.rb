@@ -20,7 +20,7 @@ end
 
 $stderr.puts
 ENV.each_pair do |k, v|
-  $stderr.puts "  ENV[#{k}=#{v.inspect}"
+  $stderr.puts "  ENV[#{k}] = #{v.inspect}"
 end
 $stderr.puts
 
@@ -73,13 +73,19 @@ if db_needed
 
     host_port_missing = !(ENV['DBHOST'] && ENV['DBPORT'])
 
+    # Have to assume we're in AWS staging running "rake assets:precompile".
+    if host_port_missing && !ENV['DATABASE']
+      $stderr.puts '** Defaulting to DATABASE postgres / DEPLOYMENT staging **'
+      ENV['DATABASE']   ||= 'postgres'
+      ENV['DEPLOYMENT'] ||= 'staging'
+    end
+
     databases = %w(postgres mysql)
     database = type = nil
     case (v = ENV['DATABASE']&.downcase)
       when /^post/  then database, type = %w(postgres postgres)
       when /^mysql/ then database, type = %w(mysql standard)
-      when nil      then $stderr.puts 'Defaulting to Postgres'
-      #when nil      then raise 'missing ENV[DATABASE]' if host_port_missing
+      when nil      then raise 'missing ENV[DATABASE]' if host_port_missing
       else               raise "#{v.inspect} not in #{databases.inspect}"
     end
     database, type = %w(postgres postgres) unless database
