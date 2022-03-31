@@ -1,0 +1,9 @@
+# Bs::Record::BisacCode
+#
+# @attr [String] code
+# @attr [String] description
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_bisac_code
+#
+class Bs::Record::BisacCode < Bs::Api::Record
+end

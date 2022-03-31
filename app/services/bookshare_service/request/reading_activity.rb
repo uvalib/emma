@@ -14,6 +14,9 @@ __loading_begin(__FILE__)
 # through a title. These events are location-based, referring to a span of text
 # that could be a page, chapter, or an arbitrary set of continuous text.
 #
+#--
+# noinspection RubyParameterNamingConvention
+#++
 module BookshareService::Request::ReadingActivity
 
   include BookshareService::Common
@@ -66,6 +69,35 @@ module BookshareService::Request::ReadingActivity
           locationDescription:  String,
         },
         reference_id:           '_post-reading-activity-event'
+      }
+    end
+
+  # == GET /v2/myReadingPosition/(bookshareId)/(format)
+  #
+  # == 2.9.2. Get my reading position
+  # Get my reading position for a specific title format.
+  #
+  # @param [String]       bookshareId
+  # @param [BsFormatType] format
+  # @param [Hash]         opt         Passed to #api.
+  #
+  # @return [Bs::Message::ReadingPosition]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-reading-position
+  #
+  def get_reading_position(bookshareId:, format:, **opt)
+    # noinspection RubyMismatchedArgumentType
+    opt = get_parameters(__method__, **opt)
+    api(:get, 'myReadingPosition', bookshareId, format, **opt)
+    api_return(Bs::Message::ReadingPosition)
+  end
+    .tap do |method|
+      add_api method => {
+        required: {
+          bookshareId: String,
+          format:      BsFormatType,
+        },
+        reference_id:  '_get-reading-position'
       }
     end
 

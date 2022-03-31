@@ -1,0 +1,7 @@
+# Bs::Message::ReadingPosition
+#
+# @see Bs::Record::ReadingPosition
+#
+class Bs::Message::ReadingPosition < Bs::Api::Message
+  include Bs::Shared::LinkMethods
+end

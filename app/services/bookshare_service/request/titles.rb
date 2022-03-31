@@ -374,6 +374,44 @@ module BookshareService::Request::Titles
       }
     end
 
+  # == GET /v2/bisacCodes
+  #
+  # == 2.1.8. Get a list of BISAC category codes
+  # Get a list of BISAC category codes that are used by the system. The listing
+  # can be filtered by matches against partial code or description values. The
+  # BISAC codes are maintained by the Book Industry Study Group and described
+  # on their website BISAC code list.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [String]  :codeStartsWith
+  # @option opt [String]  :descriptionStartsWith
+  # @option opt [String]  :start
+  # @option opt [Integer] :limit      Default: 100
+  #
+  # @return [Bs::Message::BisacCodeList]
+  #
+  # @see https://bisg.org/page/BISACSubjectCodes
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-bisac-codes
+  #
+  def get_bisac_codes(**opt)
+    # noinspection RubyMismatchedArgumentType
+    opt = get_parameters(__method__, **opt)
+    api(:get, 'bisacCodes', **opt)
+    api_return(Bs::Message::BisacCodeList)
+  end
+    .tap do |method|
+      add_api method => {
+        optional: {
+          codeStartsWith:         String,
+          descriptionStartsWith:  String,
+          start:                  String,
+          limit:                  Integer,
+        },
+        reference_id: '_get-bisac-codes'
+      }
+    end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

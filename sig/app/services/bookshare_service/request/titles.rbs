@@ -204,6 +204,28 @@ module BookshareService::Request::Titles
   #
   def get_categories: (**untyped opt) -> Bs::Message::CategoriesList
 
+  # == GET /v2/bisacCodes
+  #
+  # == 2.1.8. Get a list of BISAC category codes
+  # Get a list of BISAC category codes that are used by the system. The listing
+  # can be filtered by matches against partial code or description values. The
+  # BISAC codes are maintained by the Book Industry Study Group and described
+  # on their website BISAC code list.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [String]  :codeStartsWith
+  # @option opt [String]  :descriptionStartsWith
+  # @option opt [String]  :start
+  # @option opt [Integer] :limit      Default: 100
+  #
+  # @return [Bs::Message::BisacCodeList]
+  #
+  # @see https://bisg.org/page/BISACSubjectCodes
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-bisac-codes
+  #
+  def get_bisac_codes: (**untyped opt) -> Bs::Message::BisacCodeList
+
   # Retrieve an artifact by URL.
   #
   # This supports downloads of Bookshare items from EMMA Unified Search results
