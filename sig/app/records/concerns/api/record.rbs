@@ -73,7 +73,7 @@ class Api::Record
   #
   # @see Api::Serializer#deserialize
   #
-  def deserialize: (symHash|String data, ?Symbol? `type`) -> Api::Record?
+  def deserialize: (symHash|String data, ?Symbol? `type`) -> (Api::Record | nil)
 
   # Serialize data elements to the indicated format.
   #
@@ -121,7 +121,7 @@ class Api::Record
   # @return [String]
   # @return [nil]                     If there is no exception.
   #
-  def error_message: () -> String?
+  def error_message: () -> (String | nil)
 
   # Indicate whether this is an instance created as part of a placeholder
   # generated due to a failure to acquire valid data from the source.

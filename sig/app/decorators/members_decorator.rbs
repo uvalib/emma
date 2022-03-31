@@ -1,0 +1,8 @@
+# Collection presenter for "/member" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Array<Bs::Record::UserAccount>]
+#
+class MembersDecorator < BaseCollectionDecorator
+end

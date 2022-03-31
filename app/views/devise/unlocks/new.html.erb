@@ -2,11 +2,15 @@
 <%-
   # Unlock instructions page.
 
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+
   user  ||= current_user
+
   title ||= t('emma.user.unlocks.new.title')
+  help  ||= nil
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -28,7 +32,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<%= page_heading(title, help: help) %>
 
 <%= form_for(user, form_opt) do |f| -%>
 
@@ -46,5 +50,3 @@
 <%- end -%>
 
 <%= render 'devise/shared/links' unless modal? %>
-
-<%- abort 'devise/unlocks/new - NOT EXPECTED TO BE USED' -%>

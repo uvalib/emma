@@ -31,7 +31,7 @@ module IngestService::Properties
   #
   # @see #INGEST_API_KEY
   #
-  def api_key: () -> String?
+  def api_key: () -> (String | nil)
 
   # API version is not a part of request URLs.
   #

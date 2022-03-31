@@ -84,7 +84,7 @@ class ApplicationJob::AsyncCallback
 
   alias to_hash to_h
 
-  def self.cb_values: (untyped source, *untyped ingored) -> [ApplicationRecord, Symbol, ApplicationJob::AsyncCallback?]?
+  def self.cb_values: (untyped source, *untyped ingored) -> ([ApplicationRecord, Symbol, ApplicationJob::AsyncCallback?] | nil)
 
   class Serializer < ActiveJob::Serializers::ObjectSerializer
     def serialize: (untyped item) -> anyHash

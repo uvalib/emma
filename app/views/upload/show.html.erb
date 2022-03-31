@@ -2,30 +2,36 @@
 <%-
   # Show details of an upload
 
+  view_debug(__FILE__)
+
   item  ||= @item
-  title ||= t('emma.upload.show.title', name: item&.filename)
-  host  ||= @host
   image ||= nil
-  help  ||= nil # help_popup(:upload, :show) # TODO: ???
+  dec     = UploadDecorator.new(item, cover: image, **context)
+  item  ||= dec.object
+
+  title ||= dec.page_heading(name: item.filename)
+  help  ||= nil # dec.help_topic
+  host  ||= @host
 
   title = "#{host} - #{title}" if host.present?
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
-  template_opt = { item: item, image: image }
+  template_opt = { dec: dec }
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
+<%= dec.preview %>
 <%= render 'upload/details', template_opt %>
-<%= upload_preview %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? || cannot?(:edit, Upload) %>
+<%= dec.action_list unless modal? || cannot?(:edit, Upload) %>

@@ -181,8 +181,8 @@ module Emma::Debug
 
     # Produce an inspection for each argument.
     #
-    # @param [Array] args
-    # @param [Hash]  opt              Options passed to #__debug_inspect_item.
+    # @param [Array<*>] args
+    # @param [Hash]     opt           Options passed to #__debug_inspect_item.
     #
     # @return [Array<String>]
     #
@@ -340,9 +340,9 @@ module Emma::Debug
 
     # Output arguments in a single line.
     #
-    # @param [Array] args             Passed to #__debug_impl.
-    # @param [Hash]  opt
-    # @param [Proc]  block            Passed to #__debug_impl.
+    # @param [Array<*>] args          Passed to #__debug_impl.
+    # @param [Hash]     opt
+    # @param [Proc]     block         Passed to #__debug_impl.
     #
     # @return [nil]
     #
@@ -354,9 +354,9 @@ module Emma::Debug
     # Output each data item on its own line, with special handling to inject
     # the parameter values of the calling method if a Binding is given.
     #
-    # @param [Array] args             Passed to #__debug_line.
-    # @param [Hash]  opt
-    # @param [Proc]  block            Passed to #__debug_inspect_items.
+    # @param [Array<*>] args          Passed to #__debug_line.
+    # @param [Hash]     opt
+    # @param [Proc]     block         Passed to #__debug_inspect_items.
     #
     # @return [nil]
     #
@@ -368,7 +368,7 @@ module Emma::Debug
     #   Injects the parameters of the calling method as indicated by *bind*.
     #   @param [Symbol, Method] meth    Start of the output line.
     #   @param [Binding]        bind    Source of appended parameter values.
-    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Array<*>]       parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
     #   @option opt [Any] :only         Passed to #get_params.
     #   @option opt [Any] :except       Passed to #get_params.
@@ -376,14 +376,14 @@ module Emma::Debug
     # @overload __debug_items(bind, *parts, **opt)
     #   Injects the parameters of the calling method as indicated by *bind*.
     #   @param [Binding]        bind    Source of appended parameter values.
-    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Array<*>]       parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
     #   @option opt [Any] :only         Passed to #get_params.
     #   @option opt [Any] :except       Passed to #get_params.
     #
     # @overload __debug_items(*parts, **opt)
     #   The normal case with *parts* on a single output line.
-    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Array<*>]       parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line.
     #
     def __debug_items(*args, **opt, &block)
@@ -393,9 +393,9 @@ module Emma::Debug
       if args[0..1].any? { |arg| arg.is_a?(Binding) }
 
         # Extract the method and/or binding from *args*.
-        gp_opt, opt = partition_hash(opt, :only, :except)
-        meth = (args.shift unless args.first.is_a?(Binding))
-        bind = (args.shift if args.first.is_a?(Binding))
+        gp_opt = extract_hash!(opt, :only, :except)
+        meth   = (args.shift unless args.first.is_a?(Binding))
+        bind   = (args.shift if args.first.is_a?(Binding))
         meth ||= (bind.eval('__method__') if bind.is_a?(Binding))
 
         # Append calling method parameter values if possible.
@@ -418,7 +418,7 @@ module Emma::Debug
     #
     # @param [String]    label
     # @param [Exception] exception
-    # @param [Array]     args         Passed to #__debug_line.
+    # @param [Array<*>]  args         Passed to #__debug_line.
     # @param [Hash]      opt
     # @param [Proc]      block        Passed to #__debug_line.
     #
@@ -471,7 +471,7 @@ module Emma::Debug
 
     # Output request values and contents.
     #
-    # @param [Array]                   args   Passed to #__debug_items.
+    # @param [Array<*>]                args   Passed to #__debug_items.
     # @param [ActionDispatch::Request] req    Default: `#request`.
     # @param [Hash]                    opt    Passed to #__debug_items.
     # @param [Proc]                    block  Passed to #__debug_items.
@@ -485,14 +485,14 @@ module Emma::Debug
     # @overload __debug_request(meth, *args, req: nil, **opt)
     #   Specify calling method.
     #   @param [Symbol]                  meth
-    #   @param [Array]                   args
+    #   @param [Array<*>]                args
     #   @param [ActionDispatch::Request] req
     #   @param [Hash]                    opt
     #   @return [nil]
     #
     # @overload __debug_request(*args, req: nil, **opt)
     #   Calling method defaults to `#calling_method`.
-    #   @param [Array]                   args
+    #   @param [Array<*>]                args
     #   @param [ActionDispatch::Request] req
     #   @param [Hash]                    opt
     #   @return [nil]

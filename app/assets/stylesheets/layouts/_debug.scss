@@ -1,9 +1,8 @@
 // app/assets/stylesheets/layouts/terminal/_debug.scss
 
-@use 'shared/variables'         as *;
-
-@use 'layouts/controls/buttons' as button-classes;
-@use 'layouts/controls/panels'  as panel-classes;
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/panels'  as panel;
 
 //=============================================================================
 // Debugging.
@@ -20,7 +19,7 @@
     // Special control shown if RunState.unavailable? unless RunState::STATIC.
     .restore-availability {
 
-        @extend .basic-button;
+        @include button.basic;
 
         width:         min-content;
         padding:       0.375rem 0.75rem;
@@ -100,7 +99,7 @@
     }
 
     .ability-list {
-        @extend .toggle-panel;
+        @include panel.toggle-panel;
     }
 
     table {

@@ -47,7 +47,7 @@ module Record::Describable
   #
   # @see Kernel#sprintf
   #
-  def process_note: (?(String|Symbol|Proc)? note, untyped model, **untyped opt) -> String?
+  def process_note: (?(String|Symbol|Proc)? note, untyped model, **untyped opt) -> (String | nil)
 
   # Extract the interpolation methods defined in the current context indexed by
   # their respective interpolation keys.
@@ -83,7 +83,7 @@ module Record::Describable
     #
     # @see Record::Identification#id_value
     #
-    def describe_id: (?untyped? model, **untyped opt) -> String?
+    def describe_id: (?untyped? model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{repo}' or '%{repository}' in #sprintf formats.
     #
@@ -94,7 +94,7 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#repository_name
     #
-    def describe_repo: (?untyped? model, **untyped opt) -> String?
+    def describe_repo: (?untyped? model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{sid}' in #sprintf formats.
     #
@@ -105,7 +105,7 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
-    def describe_sid: (?untyped? model, **untyped opt) -> String?
+    def describe_sid: (?untyped? model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{submission}' in #sprintf formats.
     #
@@ -116,7 +116,7 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
-    def describe_submission: (?untyped? model, **untyped opt) -> String?
+    def describe_submission: (?untyped? model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{user}' in #sprintf formats.
     #
@@ -127,7 +127,7 @@ module Record::Describable
     #
     # @see User#uid_value
     #
-    def describe_user: (?untyped? model, **untyped) -> String?
+    def describe_user: (?untyped? model, **untyped) -> (String | nil)
 
     # A replacement value for '%{user_id}' in #sprintf formats.
     #
@@ -138,7 +138,7 @@ module Record::Describable
     #
     # @see User#id_value
     #
-    def describe_user_id: (?untyped? model, **untyped) -> String?
+    def describe_user_id: (?untyped? model, **untyped) -> (String | nil)
 
     # A textual description of the type of the Model instance for use as a
     # replacement value for '%{text}' in #sprintf formats.

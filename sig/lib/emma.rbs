@@ -81,21 +81,4 @@ class Object
   # @see #require_submodules
   #
   def include_submodules: (Module base, ?String? filename) { (Symbol, Module) -> void } -> Array[Module]
-
-  # Ensure that the given modules are included before the current one (to be run
-  # from within an "included" block).
-  #
-  # @param [Class, Module] base           The class or module into which the
-  #                                         current module will be included.
-  # @param [Array<Module>] prerequisites  One or more modules that should already
-  #                                         have been included in the current
-  #                                         context.
-  # @param [Module, nil]   this           The module being included
-  #                                         (default: *self*).
-  #
-  # @raise [RuntimeError]   Only when run from the desktop.
-  #
-  # @return [void]
-  #
-  def included_after: (Module base, *Module prerequisites, ?this: Module?) -> void
 end

@@ -36,7 +36,7 @@ module Upload::LookupMethods
   # Get Upload records specified by either :id or :submission_id.
   #
   # @param [Array<Upload, String, Integer, Array>] identifiers
-  # @param [Hash]                                  opt  @see #get_relation
+  # @param [Hash]                                  opt  Passed to #get_relation
   #
   # @return [Array<Upload>]
   #
@@ -109,39 +109,32 @@ module Upload::LookupMethods
   # @see ActiveRecord::Relation#where
   #
   def search_records(*identifiers, **opt)                                       # NOTE: to Record::Searchable
-    local_opt, opt = partition_hash(opt, *SEARCH_RECORDS_OPTIONS)
+    prop   = extract_hash!(opt, *SEARCH_RECORDS_OPTIONS)
     result = SEARCH_RECORDS_TEMPLATE.dup
 
     # Handle the case where a range has been specified which resolves to an
     # empty set of identifiers.  Otherwise, #get_relation will treat this case
     # identically to one where no identifiers where specified to limit results.
     if identifiers.present?
-      identifiers = expand_ids(*identifiers)
-      return result if identifiers.blank?
+      identifiers = expand_ids(*identifiers).presence or return result
     end
 
     # Start by looking at results for all matches (without :limit or :offset).
-    all = get_relation(*identifiers, **opt)
+    all = get_relation(*identifiers, **opt, sort: nil)
 
     # Handle the case where only a :groups summary is expected.
-    if local_opt[:groups] == :only
-      result[:groups] = group_by_state(all)
-      return result
-    end
+    return result.merge!(groups: group_by_state(all)) if prop[:groups] == :only
 
-    # noinspection RailsParamDefResolve
-    all_ids = all.pluck(:id)
-    page    = local_opt[:page]&.to_i
-    offset  = local_opt[:offset]
-    limit   = positive(local_opt[:limit])
+    # Group record IDs into pages.
+    all_ids = all.order(:id).pluck(:id)
+    limit   = positive(prop[:limit])
     pg_size = limit || 10 # TODO: fall-back page size for grouping
     pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
 
-    if page
+    if (page = prop[:page]&.to_i)
       if page > 1
-        ids_on_page = pages[page - 2]
-        raise RangeError, "Page #{page} is invalid" if ids_on_page.nil?
-        offset = ids_on_page.last
+        offset = pages[page - 2]&.last
+        raise RangeError, "Page #{page} is invalid" if offset.nil?
       else
         page   = 1
         offset = nil
@@ -150,10 +143,10 @@ module Upload::LookupMethods
       result[:first]  = (page == 1)
       result[:last]   = (page >= pages.size)
       result[:limit]  = limit = pg_size
-      result[:offset] = ((page - 1) * pg_size)
+      result[:offset] = (page - 1) * pg_size
     else
       result[:limit]  = limit
-      result[:offset] = offset
+      result[:offset] = offset = prop[:offset]
     end
 
     result[:total]  = all_ids.size
@@ -161,10 +154,10 @@ module Upload::LookupMethods
     result[:max_id] = all_ids.last
 
     # Include the array of arrays of database IDs if requested.
-    result[:pages] = pages if local_opt[:pages]
+    result[:pages]  = pages if prop[:pages]
 
     # Generate a :groups summary if requested.
-    result[:groups] = group_by_state(all) if local_opt[:groups]
+    result[:groups] = group_by_state(all) if prop[:groups]
 
     # Finally, get the specific set of results.
     opt.merge!(limit: limit, offset: offset)
@@ -180,9 +173,10 @@ module Upload::LookupMethods
   # supplied then this method is essentially an invocation of #where which
   # returns the matching records.
   #
-  # @param [Array<Upload, String, Integer, Array>] identifiers
+  # @param [Array<Upload, String, Integer, Array>] items
   # @param [Hash]                                  opt  Passed to #where except
   #
+  # @option opt [Symbol, nil] :sort     No sort if explicitly *nil*.
   # @option opt [Integer,nil] :offset
   # @option opt [Integer,nil] :limit
   #
@@ -191,18 +185,17 @@ module Upload::LookupMethods
   # @see Upload#expand_ids
   # @see ActiveRecord::Relation#where
   #
-  def get_relation(*identifiers, **opt)                                         # NOTE: to Record::Searchable
-    terms = []
-
+  def get_relation(*items, **opt)                                               # NOTE: to Record::Searchable
     ids  = Array.wrap(opt.delete(:id))
     sids = Array.wrap(opt.delete(:submission_id))
-    if identifiers.present?
-      identifiers = expand_ids(*identifiers).map { |term| id_term(term) }
-      ids  = identifiers.map { |term| term[:id].presence            } + ids
-      sids = identifiers.map { |term| term[:submission_id].presence } + sids
+    if items.present?
+      items = expand_ids(*items).map { |term| id_term(term) }
+      ids   = items.map { |term| term[:id]            } + ids
+      sids  = items.map { |term| term[:submission_id] } + sids
     end
-    ids  = ids.uniq.compact.presence
-    sids = sids.uniq.compact.presence
+    ids   = ids.compact_blank!.uniq.presence
+    sids  = sids.compact_blank!.uniq.presence
+    terms = []
     if ids && sids
       terms << sql_terms(id: ids, submission_id: sids, join: :or)
     elsif ids
@@ -210,6 +203,7 @@ module Upload::LookupMethods
     elsif sids
       opt[:submission_id] = sids
     end
+    sort = opt.key?(:sort) ? opt.delete(:sort) : (:id unless ids || sids)
 
     user_opt = opt.extract!(*(USER_COLUMNS - %i[review_user]))
     terms << sql_terms(user_opt, join: :or) if user_opt.present?
@@ -223,6 +217,7 @@ module Upload::LookupMethods
 
     query  = sql_terms(opt, *terms, join: :and)
     result = where(query)
+    result = result.order(sort)  if sort.present?
     result = result.limit(limit) if limit.present?
     result
   end
@@ -237,7 +232,7 @@ module Upload::LookupMethods
   #
   # @param [ActiveRecord::Relation] relation
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Integer}]
   #
   def group_by_state(relation)                                                  # NOTE: to Record::Searchable
     group_count = {}

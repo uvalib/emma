@@ -1,0 +1,63 @@
+# View helper methods supporting creation of Model instances (both database
+# items and API messages).
+#
+module BaseCollectionDecorator::Form
+  include BaseDecorator::Form
+
+  # Generate a form with controls for deleting a model instance.
+  #
+  # @param [String] label             Label for the submit button.
+  # @param [Hash]   opt               Passed to '.model-form.delete' except:
+  #
+  # @option opt [String] :cancel      Cancel button redirect URL passed to
+  #                                     #delete_cancel_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_form: (?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # delete_submit_option_keys
+  #
+  # @return [Array<Symbol>]
+  #
+  def delete_submit_option_keys: () -> symArray
+
+  # delete_submit_path
+  #
+  # @param [Array<Model,String>, Model, String, nil] ids
+  # @param [Hash]                                    opt
+  #
+  # @return [String, nil]
+  #
+  def delete_submit_path: (?(Model|String|Array[Model|String])? ids, **untyped opt) -> (String | nil)
+
+  # Submit button for the delete model form.
+  #
+  # @param [String, Symbol, nil] action
+  # @param [String, nil]         label    Override button label.
+  # @param [String, Hash, nil]   url
+  # @param [Hash]                opt      Passed to #button_to.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_submit_button: (?action: String|Symbol|nil, ?label: String?, ?url: String|symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Cancel button for the delete form.
+  #
+  # @param [Hash] opt                 Passed to #cancel_button
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # item_ids
+  #
+  # @param [Array<Model,String>, Model, String, nil] items  Def: `#object`.
+  #
+  # @return [Array<String>]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def item_ids: (?(Model|String|Array[Model|String])? items) -> strArray
+end

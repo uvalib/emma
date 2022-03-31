@@ -27,7 +27,7 @@ module FileNaming
   #
   # @return [Class, nil]
   #
-  def self.format_class: (Symbol|String `type`) -> Class?
+  def self.format_class: (Symbol|String `type`) -> (Class | nil)
 
   # format_classes
   #
@@ -66,7 +66,7 @@ module FileNaming
   # @return [Symbol]
   # @return [nil]
   #
-  def ext_to_fmt: (Symbol|String ext) -> Symbol?
+  def ext_to_fmt: (Symbol|String ext) -> (Symbol | nil)
 
   # Map file format to (preferred) file extension.
   #
@@ -75,7 +75,7 @@ module FileNaming
   # @return [String]
   # @return [nil]
   #
-  def fmt_to_ext: (Symbol|String|nil fmt) -> String?
+  def fmt_to_ext: (Symbol|String|nil fmt) -> (String | nil)
 
   # Given a MIME type, return the associated upload format.
   #
@@ -84,7 +84,7 @@ module FileNaming
   # @return [Symbol]
   # @return [nil]
   #
-  def mime_to_fmt: (String|ActiveStorage::Attachment|nil mime) -> Symbol?
+  def mime_to_fmt: (String|ActiveStorage::Attachment|nil mime) -> (Symbol | nil)
 
   # Map file format to (preferred) MIME type.
   #
@@ -93,5 +93,5 @@ module FileNaming
   # @return [String]
   # @return [nil]
   #
-  def fmt_to_mime: (Symbol|String|nil fmt) -> String?
+  def fmt_to_mime: (Symbol|String|nil fmt) -> (String | nil)
 end

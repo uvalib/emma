@@ -142,7 +142,7 @@ class RunState < Hash
   #
   # @return [String, nil]
   #
-  def retry_value: () -> String?
+  def retry_value: () -> (String | nil)
 
   # A regular expression  pattern fragment allowing for a duration to be
   # expressed as, for example, "+ 30.minutes" or "in 30.minutes".
@@ -229,7 +229,7 @@ class RunState < Hash
   # @return [String]
   # @return [nil]                 If #STATE_FILE does not exist.
   #
-  def self.state_file_read: () -> String?
+  def self.state_file_read: () -> (String | nil)
 
   # Create or update the contents of the state file.
   #
@@ -238,7 +238,7 @@ class RunState < Hash
   # @return [String]
   # @return [nil]                 If #STATE_FILE could not be created.
   #
-  def self.state_file_write: (String|symHash state) -> String?
+  def self.state_file_write: (String|symHash state) -> (String | nil)
 
   # Add a warning-level log message.
   #

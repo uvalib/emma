@@ -18,13 +18,13 @@ class FileParser::Ocf < FileParser
   #
   # @return [String, nil]
   #
-  def opf_zip_path: () -> String?
+  def opf_zip_path: () -> (String | nil)
 
   # The location of the .ncx file in the ZIP archive.
   #
   # @return [String, nil]
   #
-  def ncx_zip_path: () -> String?
+  def ncx_zip_path: () -> (String | nil)
 
   # Gather all metadata values.
   #
@@ -109,5 +109,5 @@ class FileParser::Ocf < FileParser
   #
   # NOTE: This definitely applies to EPUB but maybe not to DAISY.
   #
-  def retrieve_cover_image: (Nokogiri::XML::Element manifest_item, ?String? cover_id) -> String?
+  def retrieve_cover_image: (Nokogiri::XML::Element manifest_item, ?String? cover_id) -> (String | nil)
 end

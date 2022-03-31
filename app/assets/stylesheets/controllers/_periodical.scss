@@ -10,7 +10,7 @@
 //=============================================================================
 
 // Periodical metadata label/value pairs for index listings.
-// @see ModelHelper::List#model_list_item
+// @see PeriodicalDecorator#list_item
 .periodical-list-item {
 
     @extend .model-list-item;
@@ -53,7 +53,7 @@
 //=============================================================================
 
 // Periodical metadata values.
-// @see ModelHelper::List#model_details
+// @see PeriodicalDecorator#details
 .periodical-details {
     @extend .model-details;
 }

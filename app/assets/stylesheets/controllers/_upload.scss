@@ -1,7 +1,8 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/controls/grids' as grid;
+@use 'shared/variables'       as *;
+@use 'shared/controls/grids'  as grid;
+@use 'shared/controls/panels' as panel;
 
 @use 'controllers/entry';
 
@@ -31,7 +32,7 @@ body.upload-check.modal {
 //=============================================================================
 
 // Upload entry fields.
-// @see ModelHelper::List#model_details
+// @see UploadDecorator#details
 .upload-details {
     @extend .entry-details;
 }
@@ -45,11 +46,6 @@ body.upload-check.modal {
 //=============================================================================
 // Upload new/edit/delete pages
 //=============================================================================
-
-// @see UploadHelper#upload_field_container
-.upload-fields {
-    @extend .entry-fields;
-}
 
 // When not actively downloading, the element for .uppy-ProgressBar creates a
 // visible gap between the directions and the top of the form.
@@ -211,8 +207,8 @@ body.api_migrate {
                 .fields {
 
                     @extend .model-list-item-panel; // For .data-list
-                    @extend .toggle-panel;
 
+                    @include panel.toggle-panel;
                     @include grid.column-span;
 
                     .data-list {

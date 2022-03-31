@@ -1,25 +1,31 @@
 <%# app/views/search_call/show.html.erb -%>
 <%-
-  # Search call record.
+  # A SearchCall record show page.
+
+  view_debug(__FILE__)
 
   item  ||= @item
-  title ||= t('emma.search_call.show.title')
-  help  ||= nil # help_popup(:search_call, :show) # TODO: ???
+  dec     = SearchCallDecorator.new(item, **context)
+
+  title ||= dec.page_heading
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(Search: title)
     set_page_robots(:nofollow)
   end
 
+  template_opt = { dec: dec }
+
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'search_call/details', item: item %>
+<%= render 'search_call/details', template_opt %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

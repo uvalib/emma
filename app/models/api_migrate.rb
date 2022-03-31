@@ -437,7 +437,7 @@ class ApiMigrate
     def remove_blank(value)
       value = value.map { |v| remove_blank(v) }.compact if value.is_a?(Array)
       value = CGI.unescapeHTML(value.strip).scrub       if value.is_a?(String)
-      value unless value.blank? || (value == ModelHelper::Fields::EMPTY_VALUE)
+      value unless value.blank? || (value == BaseDecorator::EMPTY_VALUE)
     end
 
     # =========================================================================
@@ -959,7 +959,7 @@ class ApiMigrate
   #
   # @param [Model, Hash]           record
   # @param [Symbol, Array<Symbol>] column
-  # @param [Hash]                  opt      Passed to super
+  # @param [Hash]                  opt
   #
   # @option opt [Hash, nil]    :report      Add modified field value(s).
   # @option opt [Boolean, nil] :log         Log modified field value(s).

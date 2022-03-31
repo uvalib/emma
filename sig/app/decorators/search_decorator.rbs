@@ -1,0 +1,293 @@
+# Base item presenter for "/search" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Search::Record::MetadataRecord, Search::Record::TitleRecord]
+#
+class SearchDecorator < BaseDecorator
+  include LogoHelper
+
+  include RepositoryHelper
+
+  module Paths
+  end
+
+  # Methods and values sharable with the related collection decorator.
+  #
+  module Methods
+    include CssHelper
+
+    include LayoutHelper
+
+    # Bridge the gap between "emma.search.record" (which defines the order of
+    # display of data fields) and "emma.entry.record.emma_data" (which holds
+    # the details about each data field).
+    #
+    # @param [Hash, nil] config
+    # @param [Symbol]    field
+    #
+    # @return [Hash]
+    #
+    def field_properties: (symHash|nil config, Symbol field) -> symHash
+
+    # The defined levels for rendering an item hierarchically.
+    #
+    # @param [Hash] opt
+    #
+    # @return [Hash{Symbol=>Array<Symbol,Integer>}]
+    #
+    def field_levels: (**untyped opt) -> Hash[Symbol,Array[Symbol|Integer]]
+
+    # CSS class for the colorization button tray.
+    #
+    # @type [String]
+    #
+    STYLE_CONTAINER: String
+
+    # Colorization button configuration template.
+    #
+    # @type [Hash{Symbol=>String,Symbol}]
+    #
+    # -
+    # noinspection RailsI18nInspection
+    # +
+    STYLE_BUTTON_TEMPLATE: Hash[Symbol,Array[String|Symbol]]
+
+    # Colorization buttons.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    # -
+    # noinspection RailsI18nInspection
+    # +
+    STYLE_BUTTONS: symHash
+
+    # Search result types.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    # -
+    # noinspection RailsI18nInspection
+    # +
+    RESULT_TYPES: symHash
+
+    # Parameters not included in the base path in #search_list_results.
+    #
+    # @type [Array<Symbol>]
+    #
+    RESULT_IGNORED_PARAMS: symArray
+
+    # In debug mode, add date and volume information to the title line.
+    #
+    # @type [Boolean]
+    #
+    SHOW_EXTENDED_TITLE: bool
+
+    # Indicate whether items should get extended titles.
+    #
+    def extended_title?: () -> bool
+
+    # In debug mode, add a display of the (supposed) relevancy score.
+    #
+    # @note This is probably not very helpful for `search_results == :title`.
+    #
+    # @type [Boolean]
+    #
+    SHOW_RELEVANCY_SCORE: bool
+
+    # Indicate whether items should show relevancy scores.
+    #
+    def relevancy_scores?: () -> bool
+
+    # CSS classes for the current #search_style.
+    #
+    # @param [String] suffix
+    #
+    # @return [Array<String>]
+    #
+    def style_classes: (?suffix: String) -> strArray
+
+    # CSS classes for the current #search_results.
+    #
+    # @param [String] suffix
+    #
+    # @return [Array<String>]
+    #
+    def result_classes: (?suffix: String) -> strArray
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Any]       value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to the render method or super.
+  #
+  # @return [Field::Type]
+  # @return [String]
+  # @return [nil]
+  #
+  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+
+  # Add date and volume information to the title line.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
+  # +
+  def extended_title: () -> (ActiveSupport::SafeBuffer | nil)
+
+  # Display title of the associated work along with the logo of the source
+  # repository.
+  #
+  # @param [Hash] opt                 Passed to #html_div for title and to
+  #                                     #prev_next_controls.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see LogoHelper#repository_source_logo
+  #
+  def title_and_source_logo: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Display title of the associated work along with the source repository.
+  #
+  # @param [Hash] opt                 Passed to #html_div for title and to
+  #                                     #prev_next_controls.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see LogoHelper#repository_source
+  #
+  def title_and_source: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element containing controls for moving up and down through the list.
+  #
+  # @param [Hash] opt   Passed to #prev_record_link and #next_record_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def prev_next_controls: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a control for jumping to the previous record in the list.
+  #
+  # @param [Integer, #to_i]      index      Current index.
+  # @param [Integer, #to_i, nil] min_index  Default: 0.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/scroll.js *scrollToPrev()*
+  #
+  def prev_record_link: (?index: Integer?, ?min_index: Integer?) -> ActiveSupport::SafeBuffer
+
+  # Create a control for jumping to the next record in the list.
+  #
+  # @param [Integer, #to_i]      index      Current index.
+  # @param [Integer, #to_i, nil] max_index  Default: 1<<32.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/scroll.js *scrollToNext()*
+  #
+  def next_record_link: (?index: Integer?, ?min_index: Integer?) -> ActiveSupport::SafeBuffer
+
+  # Make a clickable link to the display page for the title on the originating
+  # repository's web site.
+  #
+  # @param [Hash] opt                 Passed to #record_popup or #make_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see RepositoryHelper#url_repository
+  #
+  def source_record_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Make a clickable link to retrieve a remediated file.
+  #
+  # @param [Hash] opt                   Passed to #make_link except for:
+  #
+  # @option opt [String] :label         Link text (default: the URL).
+  # @option opt [String] :url           Overrides `item.record_download_url`.
+  #
+  # @return [ActiveSupport::SafeBuffer] HTML link element.
+  # @return [nil]                       If no *url* was provided or found.
+  #
+  # @see RepositoryHelper#url_repository
+  # @see RepositoryHelper#emma_retrieval_link
+  # @see RepositoryHelper#bs_retrieval_link
+  # @see RepositoryHelper#ht_retrieval_link
+  # @see RepositoryHelper#ia_retrieval_link
+  #
+  def source_retrieval_link: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render a metadata listing of a search result item.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a container with the repository ID displayed as a link but acting as
+  # a popup toggle button and a popup panel which is initially hidden.
+  #
+  # @param [Hash] opt                 Passed to #popup_container except for:
+  #
+  # @option opt [Hash] :attr          Options for deferred content.
+  # @option opt [Hash] :placeholder   Options for transient placeholder.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
+  #
+  def record_popup: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # list_item_toggle
+  #
+  # @param [Integer] row
+  # @param [Hash]    opt              Passed to #tree_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/controllers/search.js setupToggleControl()
+  #
+  def list_item_toggle: (?row: Integer?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate an element to display a score for the item.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def relevancy_scores: () -> (ActiveSupport::SafeBuffer | nil)
+
+  # Values supporting search result analysis of relevancy scoring.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def score_values: () -> symHash
+end

@@ -1,7 +1,5 @@
 // app/assets/stylesheets/feature/_link.scss
 
-@use 'sass:math';
-
 @use 'shared/variables'        as *;
 
 @use 'layouts/controls/panels' as panel-classes;
@@ -11,14 +9,14 @@
 //=============================================================================
 
 $page-section-gap:       3rem;
-$page-section-gap-small: math.div($page-section-gap, 2);
+$page-section-gap-small: $page-section-gap * 0.5;
 
 //=============================================================================
 // Common page text sections
 //=============================================================================
 
 // Text sections on pages.
-// @see LinkHelper#page_text_section
+// @see LayoutHelper::PageSections#page_text_section
 .page-text-section {
 
     margin: $page-padding 0;
@@ -80,8 +78,8 @@ $page-section-gap-small: math.div($page-section-gap, 2);
     }
 }
 
-// List of upload actions (new, edit, delete).
-// @see LinkHelper#page_action_list
+// List of controller actions (new, edit, delete).
+// @see BaseDecorator::Links#action_list
 ul.page-actions {
 
     margin-top: 3rem;

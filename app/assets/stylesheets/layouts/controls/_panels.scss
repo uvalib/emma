@@ -1,10 +1,11 @@
 // app/assets/stylesheets/layouts/controls/_panels.scss
+//
+// Common panel-related elements.
 
-@use 'shared/variables'         as *;
-@use 'shared/mixins'            as *;
-@use 'shared/controls/buttons'  as b;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/panels'  as panel;
 
 //=============================================================================
 // Generic elements - panels
@@ -31,19 +32,17 @@
     }
 }
 
-// @see LayoutHelper#toggle_button
+// @see PanelHelper#toggle_button
 .toggle {
 
-    @extend .basic-button;
+    @include button.basic;
 
     background-color: $panel-bg;
 }
 
 // Controlled by a .toggle button.
 .toggle-panel {
-    &:not(.open) {
-        display: none;
-    }
+    @include panel.toggle-panel;
 }
 
 // Holds title text and a .toggle button.

@@ -2,35 +2,32 @@
 <%-
   # An Artifact metadata edit form.
 
+  view_debug(__FILE__)
+
   # NOTE: Currently this is a fall-back in case there was a problem with the
   # link to Bookshare.  Normally, it would only be seen if going directly to
   # the EMMA endpoint.
 
-  title ||= t('emma.artifact.edit.title')
   id    ||= @bookshare_id
   fmt   ||= @format
-  help  ||= nil
+  dec     = ArtifactDecorator.new(bookshareId: id, fmt: fmt, **context)
+
+  title ||= dec.page_heading
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
-  click_to =
-    if can?(:modify, Artifact)
-      'Click %s to' % link_to_action('here', bookshareId: id, fmt: fmt)
-    else
-      'User %s cannot' % current_user.to_s.inspect
-    end.html_safe
-
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<p><%= click_to -%> modify artifact metadata.</p>
+<%= dec.model_form %>
 
 <%= page_notes_section %>

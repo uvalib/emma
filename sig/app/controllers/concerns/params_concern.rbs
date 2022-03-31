@@ -45,7 +45,7 @@ module ParamsConcern
   # @return [String]                  Value of `session['app.current_path']`.
   # @return [nil]                     No 'app.current_path' found.
   #
-  def get_current_path: () -> String?
+  def get_current_path: () -> (String | nil)
 
   # Set current page used by Devise as the redirect target after sign-in.
   #

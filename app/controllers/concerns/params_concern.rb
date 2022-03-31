@@ -15,8 +15,31 @@ module ParamsConcern
 
   include Emma::Common
 
+  include DevHelper
   include ParamsHelper
   include SearchTermsHelper
+
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include LayoutHelper::SearchFilters
+    # :nocov:
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Controllers with their own independent on-screen debugging facilities.
+  #
+  # On these pages, the "&debug=..." URL parameter is treated as if it was
+  # "&app.(ctrlr).debug=...".
+  #
+  # @type [Array<Symbol>]
+  #
+  SPECIAL_DEBUG_CONTROLLERS = %i[search]
 
   # ===========================================================================
   # :section:
@@ -73,21 +96,29 @@ module ParamsConcern
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # The current path stored in the session cookie.
   #
   # @return [String]                  Value of `session['app.current_path']`.
   # @return [nil]                     No 'app.current_path' found.
   #
+  # @return [String]
+  #
   def get_current_path
     decompress_value(session['app.current_path']).tap do |path|
       session.delete('app.current_path') if path.blank?
     end
   end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
 
   # Set current page used by Devise as the redirect target after sign-in.
   #
@@ -111,15 +142,6 @@ module ParamsConcern
     end
     session['app.time'] = DateTime.now
   end
-
-  # Controllers with their own independent on-screen debugging facilities.
-  #
-  # On these pages, the "&debug=..." URL parameter is treated as if it was
-  # "&app.(ctrlr).debug=...".
-  #
-  # @type [Array<Symbol>]
-  #
-  SPECIAL_DEBUG_CONTROLLERS = %i[search]
 
   # Set session on-screen debugging:
   #

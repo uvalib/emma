@@ -47,7 +47,7 @@ class Api::Serializer::Xml < Api::Serializer
   #
   # @see Representable::XML#from_xml
   #
-  def deserialize: (symHash|String data, ?method: Symbol|Proc) -> Api::Record?
+  def deserialize: (symHash|String data, ?method: Symbol|Proc) -> (Api::Record | nil)
 
   # Add XML namespaces to a copy of a top-level XML element.
   #
@@ -65,5 +65,5 @@ class Api::Serializer::Xml < Api::Serializer
   # @return [String]
   # @return [nil]                 If *data* is neither a String nor a Hash.
   #
-  def set_source_data: (symHash|String data) -> String?
+  def set_source_data: (symHash|String data) -> (String | nil)
 end

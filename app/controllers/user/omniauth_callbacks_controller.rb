@@ -36,6 +36,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # Initiate authentication with the remote service.
   #
+  # @see #user_bookshare_omniauth_authorize_path  Route helper
+  #
   def passthru
     __debug_route
     __debug_request
@@ -47,6 +49,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # Callback from the Bookshare auth service to finalize authentication.
   #
+  # @see #user_bookshare_omniauth_callback_path   Route helper
   # @see AuthConcern#set_auth_data
   #
   def bookshare

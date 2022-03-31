@@ -14,6 +14,7 @@ module SearchTermsHelper
   include Emma::Unicode
 
   include ConfigurationHelper
+  include ParamsHelper
 
   # ===========================================================================
   # :section:
@@ -55,7 +56,7 @@ module SearchTermsHelper
   #
   # @type [Array<Symbol>]
   #
-  PAGINATION_KEYS = %i[start offset page prev_id prev_value].freeze
+  PAGINATION_KEYS = Paginator::PAGINATION_KEYS
 
   # URL parameters that are not directly used in searches.
   #
@@ -162,18 +163,6 @@ module SearchTermsHelper
   def search_query_keys(target = nil, **opt)
     target = search_target(target, **opt)
     QUERY_PARAMETERS[target] || []
-  end
-
-  # Active query parameters.
-  #
-  # @param [Hash{Symbol=>Any}] prm    Default: `#url_parameters`.
-  #
-  # @return [Hash{Symbol=>Array<String>}]
-  #
-  def search_parameters(prm = nil, **opt)
-    keys  = search_query_keys(**opt)
-    prm ||= url_parameters
-    prm.slice(*keys).transform_values { |v| Array.wrap(v) }
   end
 
   # ===========================================================================

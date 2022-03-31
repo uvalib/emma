@@ -7,7 +7,7 @@ module Upload::LookupMethods
 
   extend ::Upload::LookupMethods
 
-  def get_record: (symHash|Symbol|String|Integer|Upload identifier) -> Upload?
+  def get_record: (symHash|Symbol|String|Integer|Upload identifier) -> (Upload | nil)
 
   def get_records: (*(symHash|Symbol|String|Integer|Upload) identifiers, **untyped opt) -> Array[Upload]
 

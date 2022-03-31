@@ -10,7 +10,7 @@ module Bs::Shared::LinkMethods
   # @return [String]
   # @return [nil]                     If *rel_name* is not valid or present.
   #
-  def get_link: (String|Symbol|anyArray rel_name) -> String?
+  def get_link: (String|Symbol|anyArray rel_name) -> (String | nil)
 
   # Return the links present in the record.
   #
@@ -24,5 +24,5 @@ module Bs::Shared::LinkMethods
   # @return [Array<String>]
   # @return [nil]                     If links are not valid or present.
   #
-  def record_links: (**untyped opt) -> strArray?
+  def record_links: (**untyped opt) -> (strArray | nil)
 end

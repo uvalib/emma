@@ -257,6 +257,16 @@ end
 
 public
 
+module Workflow::Base::External
+
+  # Model/controller options passed in through the constructor.
+  #
+  # @return [Upload::Options]
+  #
+  attr_reader :model_options
+
+end
+
 # Workflow execution status information.
 #
 module Workflow::Base::Data
@@ -1043,8 +1053,12 @@ class Workflow::Base
   # @option opt [User, String] :user
   # @option opt [Boolean]      :no_sim
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def initialize(data, **opt)
-    @parameters = opt[:params] || {}
+    @params        = opt[:params]  || {}
+    @model_options = opt[:options] || Upload::Options.new(@params)
     simulating(false) if opt[:no_sim] # TODO: remove?
     set_current_user(opt[:user])
     initialize_state(data, **opt)

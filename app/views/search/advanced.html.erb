@@ -2,11 +2,13 @@
 <%-
   # EMMA Unified Search advanced search page.
 
+  view_debug(__FILE__)
+
   title ||= t('emma.search.advanced.title')
-  help  ||= help_popup(:search)
+  help  ||= :search
 
   unless modal?
-    set_page_title(t('emma.search.advanced.label', default: title))
+    set_page_meta_title(t('emma.search.advanced.label', default: title))
     set_page_description(title)
     set_page_robots(:noindex)
   end

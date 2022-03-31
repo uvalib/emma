@@ -1,0 +1,15 @@
+// app/assets/stylesheets/shared/controls/_panels.scss
+//
+// Definitions supporting toggle-able panels.
+
+// ============================================================================
+// Mixins
+// ============================================================================
+
+/// Controlled by a .toggle button.
+///
+@mixin toggle-panel {
+    &:not(.open) {
+        display: none;
+    }
+}

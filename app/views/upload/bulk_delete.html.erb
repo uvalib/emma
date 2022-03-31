@@ -2,29 +2,31 @@
 <%-
   # Prompt for a data file to direct the removal of multiple submissions.
 
-  title ||= t('emma.upload.bulk_delete.title')
-  logo  ||= repository_source_logo
+  view_debug(__FILE__)
+
   list  ||= @list
-  help  ||= nil # help_popup(:upload, :bulk_delete) # TODO: ???
+  dec     = UploadsDecorator.new(list: list, **context)
+
+  title ||= dec.page_heading
+  help  ||= nil # dec.help_topic
+  logo  ||= repository_source_logo
+  help  ||= dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<div class="heading container">
-  <h1 class="heading"><%= title -%><%= help -%></h1>
-  <%= logo %>
-</div>
-
+<%= page_heading(title, help: help, logo: logo) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= bulk_delete_form(ids: list) %>
-<%= bulk_upload_results %>
+<%= dec.bulk_op_form %>
+<%= dec.bulk_op_results %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

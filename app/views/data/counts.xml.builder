@@ -5,11 +5,11 @@
 #
 # A table of EMMA submission fields with a count of each unique value.
 
-fields ||= @list
+list ||= @list
 
 xml.instruct!
 xml.emma_field_counts do
   # noinspection RubyMismatchedArgumentType
   xml.timestamp DateTime.now
-  xml << render('data/fields', fields: fields)
+  xml << render('data/fields', fields: list)
 end

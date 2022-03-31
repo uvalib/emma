@@ -59,13 +59,13 @@ module Upload::WorkflowMethods
 
   def phase_column: () -> Symbol
 
-  def workflow_phase: () -> Symbol?
+  def workflow_phase: () -> (Symbol | nil)
 
   def edit_phase: () -> bool
 
-  def active_state: () -> Symbol?
+  def active_state: () -> (Symbol | nil)
 
-  def active_user: () -> String?
+  def active_user: () -> (String | nil)
 
   def existing_entry?: () -> bool
 
@@ -109,7 +109,7 @@ module Upload::WorkflowMethods
 
   def self.state_group: (String|Symbol|nil target_state) -> Symbol
 
-  def self.state_group_label: (String|Symbol|nil group) -> String?
+  def self.state_group_label: (String|Symbol|nil group) -> (String | nil)
 
   # Indicate whether this submission must be reviewed.
   #
@@ -123,9 +123,9 @@ module Upload::WorkflowMethods
   #
   def auto_reviewable?: () -> bool
 
-  def begin_editing: (**untyped opt) -> bool?
+  def begin_editing: (**untyped opt) -> (bool | nil)
 
-  def finish_editing: (**untyped opt) -> bool?
+  def finish_editing: (**untyped opt) -> (bool | nil)
 
   # Extra information communicated to the Upload form to support reverting      # NOTE: not relevant to Entry/Phase/Action.
   # the record when backing out of edit changes.

@@ -54,7 +54,7 @@ module AccountConcern
   #
   # @return [User, nil]
   #
-  def find_account: (?(String|Integer)? id) -> User?
+  def find_account: (?(String|Integer)? id) -> (User | nil)
 
   # Get matching User account records or all records if no terms are given.
   #
@@ -75,7 +75,7 @@ module AccountConcern
   #
   # @return [User, nil]
   #
-  def get_account: (?(String|Integer)? id) -> User?
+  def get_account: (?(String|Integer)? id) -> (User | nil)
 
   # Create a new User account record.
   #
@@ -106,7 +106,7 @@ module AccountConcern
   #
   # @return [User, nil]
   #
-  def update_account: (?no_raise: bool, **untyped attr) -> User?
+  def update_account: (?no_raise: bool, **untyped attr) -> (User | nil)
 
   # Remove an existing (persisted) User account.
   #
@@ -157,7 +157,7 @@ module AccountConcern
   #
   # @return [String, nil]
   #
-  def message_for: (Symbol action, Symbol outcome, ?Hash[Symbol,anyHash] config) -> String?
+  def message_for: (Symbol action, Symbol outcome, ?Hash[Symbol,anyHash] config) -> (String | nil)
 
   # Get the appropriate terms for message interpolations.
   #
@@ -203,7 +203,7 @@ module AccountConcern
     #
     # @see DeviseController#resource
     #
-    def resource: () -> User?
+    def resource: () -> (User | nil)
 
     # resource=
     #
@@ -213,7 +213,7 @@ module AccountConcern
     #
     # @see DeviseController#resource=
     #
-    def resource=: (User? new_resource) -> User?
+    def resource=: (User? new_resource) -> (User | nil)
 
     private
 

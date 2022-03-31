@@ -1,13 +1,13 @@
-# app/views/account/submissions.json.jbuilder
+# app/views/data/submissions.json.jbuilder
 #
 # frozen_string_literal: true
 # warn_indent:           true
 #
 # Artificial database records representing EMMA submissions as JSON.
 
-name    ||= nil
-records ||= @list
+list ||= @list
+name ||= nil
 
 # noinspection RubyMismatchedArgumentType
 json.timestamp DateTime.now
-json.partial! 'data/details', records: records, name: name
+json.partial! 'data/details', list: list, name: name

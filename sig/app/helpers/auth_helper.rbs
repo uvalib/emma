@@ -21,7 +21,7 @@ module AuthHelper
   #
   # @return [OmniAuth::AuthHash, nil]
   #
-  def synthetic_auth_hash: (User|String|OmniAuth::AuthHash|prmHash src, ?String? token) -> OmniAuth::AuthHash?
+  def synthetic_auth_hash: (User|String|OmniAuth::AuthHash|prmHash src, ?String? token) -> (OmniAuth::AuthHash | nil)
 
   # Table of user names/tokens acquired for use in non-production deploys.
   #
@@ -94,8 +94,8 @@ module AuthHelper
   # -
   # noinspection RubyMismatchedArgumentType
   # +
-  def stored_auth_update_user: (OmniAuth::AuthHash user)                         -> Hash[String,anyHash]?
-                             | (String user, String|::OAuth2::AccessToken token) -> Hash[String,anyHash]?
+  def stored_auth_update_user: (OmniAuth::AuthHash user)                         -> (Hash[String,anyHash] | nil)
+                             | (String user, String|::OAuth2::AccessToken token) -> (Hash[String,anyHash] | nil)
 
   private
 

@@ -259,9 +259,7 @@ module IngestService::Request::Submissions
           item.identifiers
         when Ingest::Record::IdentifierRecord
           item
-        when Model
-          Ingest::Record::IdentifierRecord.new(item)
-        when Hash, String
+        when Model, Hash, String
           identifier_records(item)
         else
           Log.warn { "#{__method__}: unexpected: #{item.inspect}" }
@@ -284,7 +282,7 @@ module IngestService::Request::Submissions
 
   # Generate records.
   #
-  # @param [Hash, String] item
+  # @param [Model, Hash, String] item
   #
   # @return [Array<Ingest::Record::IdentifierRecord>]
   #
@@ -302,34 +300,40 @@ module IngestService::Request::Submissions
   # etc.
   #
   def identifier_records(item)
-    result = []
-    case item
-      when Hash   then attr = item.symbolize_keys
-      when /-\*$/ then attr = { emma_repositoryRecordId: item }
-      when /-/    then attr = { emma_recordId: item }
-      else             attr = { emma_repositoryRecordId: item }
+    if item.is_a?(String)
+      case item
+        when /-\*$/ then attr = { emma_repositoryRecordId: item }
+        when /-/    then attr = { emma_recordId: item }
+        else             attr = { emma_repositoryRecordId: item }
+      end
+    else
+      # noinspection RailsParamDefResolve
+      case (i = item)
+        when Model then attr = i.try(:emma_metadata)&.presence&.dup || i.fields
+        when Hash  then attr = i.symbolize_keys
+        else            attr = {}
+      end
+      attr.merge!(attr[:emma_data]) if attr[:emma_data].is_a?(Hash)
+      attr[:emma_repositoryRecordId] ||= attr[:submission_id]
+      attr[:emma_repository]         ||= attr[:repository]
+      attr[:dc_format]               ||= attr[:fmt]
+      attr.slice!(*INGEST_ID_FIELDS).compact_blank!
     end
-    attr.compact!
-    if attr[:emma_recordId]
-      attr.slice!(:emma_recordId)
-      result = [attr]
-    elsif attr[:emma_repositoryRecordId] && attr[:dc_format]
-      attr[:emma_repository] ||= EmmaRepository.default
-      attr.slice!(*INGEST_ID_FIELDS)
-      result = [attr]
-    elsif (rid = attr[:emma_repositoryRecordId])
+    unless (result = attr.slice(:emma_recordId)).present?
       repo = format = nil
-      if rid.include?('-')
-        repo, rid, format = rid.split('-')
-        format = nil if format == '*'
+      if (rid = attr[:emma_repositoryRecordId])&.include?('-')
+        repo, rid, format = rid.split('-').map(&:presence)
         attr[:emma_repositoryRecordId] = rid
       end
-      attr[:emma_repository] ||= repo || EmmaRepository.default
-      attr.slice!(*INGEST_ID_FIELDS)
-      format = Array.wrap(format).presence || DublinCoreFormat.values
-      result = format.map { |fmt| attr.merge(dc_format: fmt) }
+      if rid
+        attr[:emma_repository] ||= repo || EmmaRepository.default
+        format ||= attr[:dc_format]
+        format &&= ([format] unless format == '*')
+        format ||= DublinCoreFormat.values
+        result = format.map { |fmt| attr.merge(dc_format: fmt) }
+      end
     end
-    result.map { |v|
+    Array.wrap(result).map { |v|
       next unless allowed_record_id?(v[:emma_recordId])
       next unless allowed_repository_id?(v[:emma_repositoryRecordId])
       Ingest::Record::IdentifierRecord.new(v)

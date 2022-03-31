@@ -2,44 +2,49 @@
 <%-
   # Reading Lists results page.
 
-  title ||= t('emma.reading_list.index.title')
-  list  ||= page_items
-  total ||= total_items
-  terms ||= search_terms
-  row   ||= 1
-  help  ||= nil
+  view_debug(__FILE__)
 
-  page_opt = SearchCall::SEARCH_RECORDS_OPTIONS
+  list   ||= @page.page_items
+  dec      = ReadingListsDecorator.new(list, **context)
+  list   ||= dec.object
+
+  title  ||= dec.page_heading
+  help   ||= nil # dec.help_topic
+  total  ||= @page.total_items
+  terms  ||= search_terms
+  row    ||= 1
+
+  page_opt = Record::Searchable::SEARCH_RECORDS_OPTIONS
   page_terms, search = partition_hash(terms, *page_opt)
-  page   = page_terms[:page]&.values&.first&.to_i || 1
-  search = search.presence
+  page     = positive(page_terms[:page]&.values&.first) || 1
+  search   = search.presence
 
   unless modal?
-    label = t('emma.reading_list.index.label', default: title)
-    terms = search
-    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
-    set_page_title(label)
-    append_page_title('-', list_search_terms(terms)) if terms
+    label = dec.page_meta_title(default: title)
+    terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
+    set_page_meta_title(label)
+    append_page_meta_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
   end
 
-  opt = { list: list, total: total, page: page, row: row }
-  top_controls, bottom_controls = index_controls(**opt)
-  opt[:row] += 1 if top_controls
+  opt = { total: total, page: page, row: row }
 
-  template_opt = opt.merge!(skip: :title)
+  top_controls, bottom_controls = dec.index_controls(**opt)
+  opt[:row] += 1        if top_controls
+  bottom_controls = nil if list.blank?
+
+  template_opt = opt.merge!(dec: dec, skip: :title)
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
 <div class="reading_list-list">
   <%= top_controls %>
   <%= render 'reading_list/list', template_opt %>
-  <%= bottom_controls if list.present? %>
+  <%= bottom_controls %>
 </div>
 
 <%= page_notes_section %>

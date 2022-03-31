@@ -97,6 +97,7 @@ gem 'shrine', '~> 3.0'
 gem 'rack-cors'
 
 # == Other
+gem 'draper'
 gem 'iso-639'
 gem 'sanitize'
 gem 'workflow'

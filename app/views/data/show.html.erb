@@ -2,14 +2,17 @@
 <%-
   # The contents of a database table.
 
+  view_debug(__FILE__)
+
   item  ||= @item || []
   name  ||= @name
+
   title ||= t('emma.data.show.title', table: (name&.titleize || '???'))
-  help  ||= nil # help_popup(:data, :show) # TODO: ???
+  help  ||= nil # %i[data show]
 
   unless modal?
     label = t('emma.data.show.label', default: title)
-    set_page_title(label)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -21,11 +24,10 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'data/details', records: item %>
+<%= render 'data/details', list: item %>
 
 <%= page_notes_section %>

@@ -98,7 +98,7 @@ module SessionConcern
   #
   # @return [Hash{String=>Any}]
   #
-  def last_operation_update: (?time: Time?, ?path: String?, ?req_params: symHash?) -> strHash?
+  def last_operation_update: (?time: Time?, ?path: String?, ?req_params: symHash?) -> (strHash | nil)
 
   # Application-specific `#session` keys.
   #

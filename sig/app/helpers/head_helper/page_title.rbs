@@ -11,25 +11,25 @@ module HeadHelper::PageTitle
   #
   # @type [String]
   #
-  PAGE_TITLE_PREFIX: String
+  META_TITLE_PREFIX: String
 
   # String prepended to all page titles.
   #
   # @type [String]
   #
-  PAGE_TITLE_HEADER: String
+  META_TITLE_LEADER: String
 
   # Text at the end of all page titles.
   #
   # @type [String]
   #
-  PAGE_TITLE_SUFFIX: String
+  META_TITLE_SUFFIX: String
 
   # String appended to all page titles.
   #
   # @type [String]
   #
-  PAGE_TITLE_TRAILER: String
+  META_TITLE_TRAILER: String
 
   public
 
@@ -42,7 +42,7 @@ module HeadHelper::PageTitle
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Array<String>]               If block given.
   #
-  # @yield To supply value(s) to #set_page_title.
+  # @yield To supply value(s) to #set_page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
   def page_title: () { () -> (String | strArray) } -> strArray
@@ -52,9 +52,9 @@ module HeadHelper::PageTitle
   #
   # @param [Array] values
   #
-  # @return [Array<String>]           The updated @page_title contents.
+  # @return [Array<String>]           The new @page_meta_title contents.
   #
-  # @yield To supply additional values to @page_title.
+  # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
   def set_page_title: (*anyArray values) { () -> (String | strArray) } -> strArray
@@ -63,9 +63,9 @@ module HeadHelper::PageTitle
   #
   # @param [Array] values
   #
-  # @return [Array<String>]           The updated @page_title contents.
+  # @return [Array<String>]           The updated @page_meta_title contents.
   #
-  # @yield To supply additional values to @page_title.
+  # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
   def append_page_title: (*anyArray values) { () -> (String | strArray) } -> strArray

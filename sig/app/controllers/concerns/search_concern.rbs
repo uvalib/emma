@@ -13,8 +13,6 @@ module SearchConcern
 
   include LayoutHelper
 
-  include SearchHelper
-
   # :nocov:
   #include PaginationConcern
 
@@ -35,7 +33,6 @@ module SearchConcern
   # @param [Boolean] titles           If *false*, return records not titles.
   # @param [Boolean] save             If *false*, do not save search terms.
   # @param [Boolean] scores           Calculate experimental relevancy scores.
-  # @param [Symbol]  items            Specify method for #pagination_finalize.
   # @param [Boolean] canonical        Passed to SearchTitleList#initialize.
   # @param [Hash]    opt              Passed to SearchService#get_records.
   #
@@ -46,8 +43,8 @@ module SearchConcern
   # If :titles is *true* then :canonical defaults to *true* on the production
   # service and *false* everywhere else.
   #
-  def index_search: (?titles: true?, ?save: bool, ?scores: bool?, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchTitleList
-                  | (titles:  false, ?save: bool, ?scores: bool?, ?items: Symbol? items, ?canonical: bool?, **untyped opt) -> Search::Message::SearchRecordList
+  def index_search: (?titles: true?, ?save: bool, ?scores: bool?, ?canonical: bool?, **untyped opt) -> Search::Message::SearchTitleList
+                  | (titles:  false, ?save: bool, ?scores: bool?, ?canonical: bool?, **untyped opt) -> Search::Message::SearchRecordList
 
   # index_record
   #
@@ -81,7 +78,7 @@ module SearchConcern
   # @return [SearchCall]              New record.
   # @return [nil]                     If saving was not possible.
   #
-  def save_search: (?user: User?, ?result: (anyArray|_ToA[untyped])?, ?force: bool, **untyped parameters) -> SearchCall?
+  def save_search: (?user: User?, ?result: (anyArray|_ToA[untyped])?, ?force: bool, **untyped parameters) -> (SearchCall | nil)
 
   # Analyze the *list* object to generate the path for the next page of
   # results.
@@ -97,7 +94,7 @@ module SearchConcern
   # -
   # noinspection RubyNilAnalysis
   # +
-  def next_page_path: (?list: (Search::Message::SearchTitleList|Array[Search::Record::MetadataRecord])?, **untyped url_params) -> String?
+  def next_page_path: (?list: (Search::Message::SearchTitleList|Array[Search::Record::MetadataRecord])?, **untyped url_params) -> (String | nil)
 
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
@@ -133,7 +130,7 @@ module SearchConcern
   # @return [String]                  Value of `params[:id]`.
   # @return [nil]                     No :id, :recordId found.
   #
-  def set_record_id: () -> String?
+  def set_record_id: () -> (String | nil)
 
   # Re-cast URL parameters which are aliases for :identifier and redirect to
   # the modified URL if found.

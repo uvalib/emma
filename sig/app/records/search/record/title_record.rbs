@@ -102,7 +102,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def title: (Search::Record::MetadataRecord? rec) -> String?
+    def title: (Search::Record::MetadataRecord? rec) -> (String | nil)
 
     # Item title ID.
     #
@@ -110,7 +110,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def title_id: (Search::Record::MetadataRecord? rec) -> String?
+    def title_id: (Search::Record::MetadataRecord? rec) -> (String | nil)
 
     # Item repository.
     #
@@ -118,7 +118,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def repository: (Search::Record::MetadataRecord? rec) -> String?
+    def repository: (Search::Record::MetadataRecord? rec) -> (String | nil)
 
     # Item repository record ID.
     #
@@ -126,7 +126,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def repo_id: (Search::Record::MetadataRecord? rec) -> String?
+    def repo_id: (Search::Record::MetadataRecord? rec) -> (String | nil)
 
     # Item format.
     #
@@ -134,7 +134,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def format: (Search::Record::MetadataRecord? rec) -> String?
+    def format: (Search::Record::MetadataRecord? rec) -> (String | nil)
 
     # Item description.
     #
@@ -142,7 +142,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def description: (Search::Record::MetadataRecord? rec) -> String?
+    def description: (Search::Record::MetadataRecord? rec) -> (String | nil)
 
     # Item numbering extracted from #description for HathiTrust items, or from
     # the repository record ID for selected Internet Archive items.
@@ -163,7 +163,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #   for standalone items; in items where the number appears to represent a
     #   volume, it always starts with a zero, e.g.: "0001", "0018", etc.
     #
-    def item_number: (Search::Record::MetadataRecord? rec) -> Search::Record::TitleRecord::Number?
+    def item_number: (Search::Record::MetadataRecord? rec) -> (Search::Record::TitleRecord::Number | nil)
 
     # Item date extracted from description, title or :dcterms_dateCopyright.
     #
@@ -174,7 +174,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # -
     # noinspection RubyNilAnalysis
     # +
-    def item_date: (Search::Record::MetadataRecord? rec) -> String?
+    def item_date: (Search::Record::MetadataRecord? rec) -> (String | nil)
 
     # Attempt to extract a year from the given string.
     #
@@ -182,7 +182,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def get_year: (String? value) -> String?
+    def get_year: (String? value) -> (String | nil)
 
     # Fields values used to determine whether *rec* can be included.
     #
@@ -276,7 +276,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Any, nil]
     #
-    def field_value: (Search::Record::MetadataRecord|symHash rec, Symbol|String field) -> untyped?
+    def field_value: (Search::Record::MetadataRecord|symHash rec, Symbol|String field) -> (untyped | nil)
 
     private
 

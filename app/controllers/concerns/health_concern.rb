@@ -14,6 +14,8 @@ module HealthConcern
   include Emma::Time
   include Emma::Debug
 
+  include ParamsHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================

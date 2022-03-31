@@ -1,9 +1,8 @@
 // app/assets/stylesheets/layouts/header/_page_controls.scss
 
-@use 'shared/variables'         as *;
-@use 'shared/layouts/header'    as header;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/layouts/header'   as header;
 
 //=============================================================================
 // Sections - controller/action
@@ -31,10 +30,10 @@
         margin:         0;
     }
 
-    // @see LayoutHelper#page_controls
+    // @see LayoutHelper::PageControls#page_controls
     .control {
 
-        @extend .basic-button;
+        @include button.basic;
 
         font-size: larger;
         color:     inherit;
@@ -45,7 +44,7 @@
 // Controller- and action-specific page controls.
 .layout-section.page.controls {
 
-    // @see LayoutHelper#render_page_controls
+    // @see LayoutHelper::PageControls#render_page_controls
     .page-controls {
 
         @include header.section;

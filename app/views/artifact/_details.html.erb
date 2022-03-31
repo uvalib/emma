@@ -2,14 +2,14 @@
 <%-
   # An Artifact metadata listing.
 
-  item  ||= nil or return
+  view_debug(__FILE__)
+
+  item  ||= nil
+  dec   ||= item && ArtifactDecorator.new(item, **context) or return
+
   add   ||= nil
   level ||= 1
 
-  role = ('role="article"'.html_safe if level == 1)
-
 -%>
 
-<div <%= role -%> class="artifact-container">
-  <%= artifact_details(item, pairs: add) %>
-</div>
+<%= dec.details_element(pairs: add, level: level) %>

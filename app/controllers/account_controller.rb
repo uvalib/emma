@@ -10,7 +10,8 @@ __loading_begin(__FILE__)
 # Note that these are not directly related to Bookshare accounts -- only to the
 # "reflections" of those accounts maintained in the local database.
 #
-# @see AccountHelper
+# @see AccountDecorator
+# @see AccountsDecorator
 # @see file:app/views/account/**
 #
 class AccountController < ApplicationController
@@ -69,20 +70,25 @@ class AccountController < ApplicationController
   #
   # List all user accounts.
   #
+  # @see #users_path                  Route helper
+  # @see #account_index_path          Route helper
   # @see AccountConcern#get_accounts
   #
   def index
     __debug_route
-    opt    = pagination_setup
+    @page  = pagination_setup
+    opt    = @page.initial_parameters
     search = opt.delete(:like)
-    opt.except!(:limit, *PAGINATION_KEYS) # TODO: paginate account listings
+    opt.except!(:limit, *Paginator::PAGINATION_KEYS)
     @list  = get_accounts(*search, **opt).to_a
+    @page.finalize(@list, **opt)
   end
 
   # == GET /account/show/:id
   #
   # Display details of an existing user account.
   #
+  # @see #show_account_path           Route helper
   # @see AccountConcern#get_account
   #
   def show
@@ -94,6 +100,7 @@ class AccountController < ApplicationController
   #
   # Display a form for creation of a new user account.
   #
+  # @see #new_account_path            Route helper
   # @see AccountConcern#new_account
   #
   def new
@@ -112,6 +119,7 @@ class AccountController < ApplicationController
   # parameter will be rejected unless "force_id=true" is included in the URL
   # parameters.
   #
+  # @see #create_account_path         Route helper
   # @see AccountConcern#create_account
   #
   #--
@@ -140,6 +148,8 @@ class AccountController < ApplicationController
   #
   # Display a form for modification of an existing user account.
   #
+  # @see #edit_account_path           Route helper
+  # @see #edit_select_account_path    Route helper
   # @see #show_menu?
   # @see AccountConcern#get_account
   #
@@ -160,6 +170,7 @@ class AccountController < ApplicationController
   #
   # Update an existing user account.
   #
+  # @see #update_account_path         Route helper
   # @see AccountConcern#update_account
   #
   #--
@@ -191,6 +202,8 @@ class AccountController < ApplicationController
   #
   # If :id is "SELECT" then a menu of deletable items is presented.
   #
+  # @see #delete_account_path         Route helper
+  # @see #delete_select_account_path  Route helper
   # @see #show_menu?
   # @see AccountConcern#find_accounts
   #
@@ -199,7 +212,9 @@ class AccountController < ApplicationController
     @list = nil
     unless show_menu?((ids = id_params))
       @list = find_accounts(ids)
-      flash_now_alert("No records match #{quote(ids)}") if @list.blank? # TODO: I18n
+      unless @list.present? || last_operation_path&.include?('/destroy')
+        flash_now_alert("No records match #{quote(ids)}") # TODO: I18n
+      end
     end
   end
 
@@ -207,6 +222,7 @@ class AccountController < ApplicationController
   #
   # Remove existing user account(s).
   #
+  # @see #destroy_account_path        Route helper
   # @see AccountConcern#destroy_accounts
   #
   #--

@@ -144,7 +144,7 @@ module BookshareService::Request::Titles
   #
   # @note This is not a real Bookshare API call.
   #
-  def get_artifact_metadata: (bookshareId: String, format: BsFormatType, **untyped opt) -> Bs::Record::ArtifactMetadata?
+  def get_artifact_metadata: (bookshareId: String, format: BsFormatType, **untyped opt) -> (Bs::Record::ArtifactMetadata | nil)
 
   # == GET /v2/titles/(bookshareId)/(format)/resources
   #

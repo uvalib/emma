@@ -9,11 +9,11 @@ class EmmaStatus < ApplicationRecord
   #
   # @see #INGEST_API_KEY
   #
-  def self.api_version: () -> EmmaStatus?
+  def self.api_version: () -> (EmmaStatus | nil)
 
   # Set current EMMA data API version.
   #
   # @return [EmmaStatus, nil]
   #
-  def self.api_version=: (untyped value) -> EmmaStatus?
+  def self.api_version=: (untyped value) -> (EmmaStatus | nil)
 end

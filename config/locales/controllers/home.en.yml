@@ -52,6 +52,7 @@ en:
             participation, please email
             <a href="mailto:%{project_email}">%{project_email}</a>.
           </p>
+        _endpoint:      true
 
       # =======================================================================
 
@@ -68,8 +69,12 @@ en:
         page_controls:
           label:        'EMMA Account Actions:'
           actions:
-            - [user/registrations, edit]
+            - [account, edit]
             - [account, index]
             - [account, new]
             - [account, edit_select]
             - [account, delete_select]
+
+        _endpoint:      true
+
+      # =======================================================================

@@ -33,7 +33,7 @@ class Action::Queue < Action::BulkPart
   #
   # @return [Boolean, nil]
   #
-  def submit!: (sid: String, **untyped opt) -> bool?
+  def submit!: (sid: String, **untyped opt) -> (bool | nil)
 
   # Indicate whether the item has been removed from the AWS S3 bucket.
   #

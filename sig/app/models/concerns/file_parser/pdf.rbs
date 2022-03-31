@@ -14,7 +14,7 @@ class FileParser::Pdf < FileParser
   # @return [PDF::Reader]
   # @return [nil]
   #
-  def pdf_reader: () -> PDF::Reader?
+  def pdf_reader: () -> (PDF::Reader | nil)
 
   private
 

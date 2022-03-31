@@ -71,7 +71,7 @@ class Phase::Edit < Phase::BulkPart
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def promote!: (**untyped opt) -> bool?
+  def promote!: (**untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #promote!.
   #
@@ -92,7 +92,7 @@ class Phase::Edit < Phase::BulkPart
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def index!: (**untyped opt) -> bool?
+  def index!: (**untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #index!.
   #
@@ -113,7 +113,7 @@ class Phase::Edit < Phase::BulkPart
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def submit!: (**untyped opt) -> bool?
+  def submit!: (**untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #submit!.
   #

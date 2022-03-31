@@ -16,35 +16,54 @@ module Field
   # @return [Class] The class indicated by *value*.
   # @return [nil]   If *value* could not be cast a subclass of EnumType.
   #
-  def self.enum_type: (untyped value) -> Class?
+  def self.enum_type: (untyped value) -> (Class | nil)
 
   # Configuration properties for a field within a given model/controller.
   #
-  # @param [Symbol, String, nil]       field
-  # @param [Symbol, String, Hash, nil] model
-  # @param [Symbol, String, nil]       action
-  # @param [Array<nil,Symbol>]         sub_sections
+  # @param [Symbol, String, Array, nil] field
+  # @param [Symbol, String, nil]        model
+  # @param [Symbol, String, nil]        action
   #
   # @return [Hash]                    Frozen result.
   #
   # -
+  # == Variations
+  # +
+  #
+  # @overload configuration_for(field, model = nil, action = nil)
+  #   Look the named field in the configuration subtree for *action* if given
+  #   and then in the :all subtree.  For hierarchical configurations (currently
+  #   only for submissions), the top-level is checked for *field* and then
+  #   the sub-sections within :emma_data, :file_data, and :file_data :metadata.
+  #   @param [Symbol, String, nil]        field
+  #   @param [Symbol, String, Hash, nil]  model
+  #   @param [Symbol, String, nil]        action
+  #
+  # @overload configuration_for(field_path, model = nil, action = nil)
+  #   The field name to check is taken from the end of the array; the remainder
+  #   is used to limit the sub-section to check.
+  #   @param [Array<Symbol,String,Array>] field_path
+  #   @param [Symbol, String, Hash, nil]  model
+  #   @param [Symbol, String, nil]        action
+  #
+  # -
   # noinspection RubyMismatchedArgumentType
   # +
-  def self.configuration_for: (Symbol|String|nil field, ?(Symbol|String|symHash)? model, ?(Symbol|String)? action, ?sub_sections: Array[Symbol]?) -> symHash
+  def self.configuration_for: (Symbol|String|nil                                   field, ?(Symbol|String)? model, ?(Symbol|String)? action) -> symHash
+                            | ([Array[Symbol|String]|Symbol|String, Symbol|String] field, ?(Symbol|String)? model, ?(Symbol|String)? action) -> symHash
 
   # Find the field whose configuration entry has a matching label.
   #
-  # @param [String, Symbol]            label
-  # @param [Symbol, String, Hash, nil] model
-  # @param [Symbol, String, nil]       action
-  # @param [Array<nil,Symbol>]         sub_sections
+  # @param [String, Symbol, nil] label
+  # @param [Symbol, String, nil] model
+  # @param [Symbol, String, nil] action
   #
   # @return [Hash]                    Frozen result.
   #
   # -
   # noinspection RubyMismatchedArgumentType
   # +
-  def self.configuration_for_label: (Symbol|String label, ?(Symbol|String|symHash)? model, ?(Symbol|String)? action, ?sub_sections: Array[Symbol]?) -> symHash
+  def self.configuration_for_label: ((Symbol|String)? label, ?(Symbol|String)? model, ?(Symbol|String)? action) -> symHash
 
   # Normalize entry values.
   #
@@ -142,11 +161,13 @@ module Field
   # @param [Model, Any]          item
   # @param [Symbol]              field
   # @param [Symbol, String, nil] model
+  # @param [*]                   value
+  # @param [Hash, nil]           config
   #
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.
   #
-  def self.for: (untyped item, Symbol field, ?(Symbol|String)? model) -> Field::Type?
+  def self.for: (untyped item, Symbol field, ?(Symbol|String)? model, ?value: untyped?, ?config: symHash?) -> (Field::Type | nil)
 
   # Base class for field type descriptions.
   #
@@ -193,7 +214,7 @@ module Field
     # @param [Symbol, Model, Any]  src
     # @param [Symbol, nil]         field
     # @param [Symbol, String, nil] model
-    # @param [Any]                 value
+    # @param [*]                   value
     #
     def initialize: (untyped src, ?Symbol? field, ?(Symbol|String)? model, ?untyped? value) -> void
 
@@ -251,7 +272,7 @@ module Field
     #
     # @return [Class, nil]
     #
-    def self.base: () -> Class?
+    def self.base: () -> (Class | nil)
   end
 
   # A field which may have a single value.

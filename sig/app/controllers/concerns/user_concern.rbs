@@ -14,7 +14,7 @@ module UserConcern
   # -
   # noinspection RubyUnusedLocalVariable
   # +
-  def authenticate_user!: (?anyHash opts) -> User?
+  def authenticate_user!: (?anyHash opts) -> (User | nil)
 
   # Defined by Devise.
   #
@@ -24,7 +24,7 @@ module UserConcern
   #
   # @private
   #
-  def current_user: () -> User?
+  def current_user: () -> (User | nil)
 
   include FlashConcern
 

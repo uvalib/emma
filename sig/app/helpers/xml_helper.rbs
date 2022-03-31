@@ -1,0 +1,77 @@
+# XML-related methods.
+#
+module XmlHelper
+  include EncodingHelper
+
+  extend ::XmlHelper
+
+  HTML_TRUNCATE_MAX_LENGTH: Integer
+
+  HTML_TRUNCATE_OMISSION: String
+
+  HTML_TRUNCATE_SEPARATOR: (ActiveSupport::SafeBuffer | String | nil)
+
+  # Truncate either normal or html_safe strings.
+  #
+  # If *str* is html_safe, it is assumed that it is HTML content and it is
+  # processed by #xml_truncate.  Otherwise, String#truncate is used.
+  #
+  # @param [ActiveSupport::SafeBuffer, String] str
+  # @param [Integer, nil] length            Def: `#HTML_TRUNCATE_MAX_LENGTH`
+  # @param [Hash]         opt
+  #
+  # @option opt [Boolean]      :content     If *true*, base on content size.
+  # @option opt [String, nil]  :omission    Def: `#HTML_TRUNCATE_OMISSION`
+  # @option opt [String, nil]  :separator   Def: `#HTML_TRUNCATE_SEPARATOR`
+  # @option opt [Boolean, nil] :xhr         Encode for message headers.
+  #
+  # @return [ActiveSupport::SafeBuffer]     If *str* was html_safe.
+  # @return [String]                        If *str* was not HTML.
+  #
+  # == Usage Notes
+  # Since *str* may be a sequence of HTML elements or even just a text string
+  # with HTML entities, it is wrapped in a "<div>" to make sure that the
+  # Nokogiri parser is dealing with valid XML.
+  #
+  # @note The result has UTF-8 encoding (even if no truncation was performed).
+  #
+  def html_truncate: (ActiveSupport::SafeBuffer str, ?Integer? length, **untyped opt) -> ActiveSupport::SafeBuffer
+                   | (String                    str, ?Integer? length, **untyped opt) -> String
+
+  # Truncate XML so that the rendered result is limited to the given length.
+  #
+  # If truncation is required it is done by truncating the content of
+  # Nokogiri::XML::Text nodes.  If there is not enough room for even a single
+  # character inside the final element then that element will not be included.
+  #
+  # @param [Nokogiri::XML::Node] xml
+  # @param [Integer, nil]        len      Def: `#HTML_TRUNCATE_MAX_LENGTH`
+  # @param [Hash]                opt
+  #
+  # @option opt [Boolean]     :content    If *true*, base on content size.
+  # @option opt [String, nil] :omission   Def: `#HTML_TRUNCATE_OMISSION`
+  # @option opt [String, nil] :separator  Def: `#HTML_TRUNCATE_SEPARATOR`
+  #
+  # @return [Nokogiri::XML::Node]
+  # @return [nil]
+  #
+  # == Usage Notes
+  # May be problematic for small *len* values, depending on the nature of the
+  # *xml* input, but generally the result will fit within *len* (even if it
+  # is overly-aggressive in pruning the element hierarchy at the point where
+  # the available length budget runs out).
+  #
+  def xml_truncate: (Nokogiri::XML::Node xml, ?Integer? len, **untyped opt) -> (Nokogiri::XML::Node | nil)
+
+  # Copy of an XML node without its children.
+  #
+  # @param [Nokogiri::XML::Node] node
+  #
+  # @return [Nokogiri::XML::Node]
+  #
+  def blank_node_copy: (Nokogiri::XML::Node node) -> Nokogiri::XML::Node
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

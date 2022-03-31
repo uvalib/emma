@@ -12,7 +12,6 @@ __loading_begin(__FILE__)
 #
 class HelpController < ApplicationController
 
-  include UserConcern
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
@@ -54,6 +53,7 @@ class HelpController < ApplicationController
   #
   # The main help page.
   #
+  # @see #help_index_path             Route helper
   # @see HelpHelper#help_topics
   #
   def index
@@ -71,6 +71,8 @@ class HelpController < ApplicationController
   # == GET /help?topic=:topic
   #
   # The topic help page.
+  #
+  # @see #help_path                   Route helper
   #
   def show
     __debug_route

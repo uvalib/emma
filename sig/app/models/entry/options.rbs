@@ -1,0 +1,34 @@
+class Entry::Options < Options
+  include Record::Properties
+
+  # @private
+  MODEL_TYPE: Symbol
+
+  # URL parameters associated with item/entry identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMS: symArray
+
+  def initialize: (?symHash? prm) -> void
+
+  def option_method: (Symbol|String key) -> (Symbol | nil)
+
+  # Get URL parameters relevant to the current operation.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `Options#params`
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def get_model_params: (?prmHash? p) -> symHash
+
+  MODEL_DATA_PARAMS: Hash[Symbol, Symbol]
+
+  def model_data_params: () -> Hash[Symbol, Symbol]
+end

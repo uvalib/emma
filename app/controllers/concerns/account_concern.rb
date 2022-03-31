@@ -90,8 +90,7 @@ module AccountConcern
     if ids.present? && uids.present?
       User.matching(id: ids, email: uids, join: :or).to_a
     elsif ids.present?
-      # noinspection RubyMismatchedReturnType
-      User.find(ids)
+      User.where(id: ids).to_a
     elsif uids.present?
       User.where(email: uids).to_a
     else
@@ -211,8 +210,8 @@ module AccountConcern
   # @return [Array<User>]
   #
   def destroy_accounts(*ids, no_raise: false, **)
-    find_accounts(ids.presence).tap do |record|
-      no_raise ? record.destroy : record.destroy!
+    find_accounts(ids.presence).tap do |records|
+      no_raise ? records.each(&:destroy) : records.each(&:destroy!)
     end
   end
 
@@ -234,9 +233,17 @@ module AccountConcern
   def redirect_success(action, message = nil, redirect: nil, **opt)
     message ||= message_for(action, :success)
     message &&= message % interpolation_terms(action)
-    message ||= 'SUCCESS' # TODO: I18n
+    message ||=
+      case action
+        when :new, :create
+          'Account created.' # TODO: I18n
+        when :delete, :delete_select, :destroy
+          'Account removed.' # TODO: I18n
+        else
+          'Account updated.' # TODO: I18n
+      end
     opt[:notice] = message
-    if redirect
+    if (redirect ||= params[:redirect])
       redirect_to(redirect, opt)
     else
       redirect_back(fallback_location: account_index_path, **opt)

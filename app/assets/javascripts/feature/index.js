@@ -2,11 +2,11 @@
 
 import './advanced-search'
 import './download'
-import './entry-form'
 import './flash'
 import './help'
 import './iframe'
 import './images'
+import './model-form'
 import './panel'
 import './popup'
 import './records'

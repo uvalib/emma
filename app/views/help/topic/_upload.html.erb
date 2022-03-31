@@ -2,6 +2,8 @@
 <%-
   # EMMA upload help page.
 
+  view_debug(__FILE__)
+
   overview_title    = 'OVERVIEW'
   index_title       = 'Show your past and current uploads'
   new_title         = 'Submitting a new item to EMMA'
@@ -23,17 +25,17 @@
   actions_menu      = 'Upload Actions'
 
   signed_in         = help_jump('signed in', :sign_in)
-  delta             = UploadHelper::UPLOAD_ICONS.dig(:edit, :icon)
+  delta             = UploadDecorator::CONTROL_ICONS.dig(:edit, :icon)
   delta             = html_span(delta, 'aria-label': 'triangle')
-  x                 = UploadHelper::UPLOAD_ICONS.dig(:delete, :icon)
+  x                 = UploadDecorator::CONTROL_ICONS.dig(:delete, :icon)
   x                 = html_span(x, 'aria-label': 'X')
-  edit_tip          = UploadHelper::UPLOAD_ICONS.dig(:edit, :tip)
-  delete_tip        = UploadHelper::UPLOAD_ICONS.dig(:delete, :tip)
+  edit_tip          = UploadDecorator::CONTROL_ICONS.dig(:edit, :tip)
+  delete_tip        = UploadDecorator::CONTROL_ICONS.dig(:delete, :tip)
 
-  panel_opener      = LayoutHelper::Common::PANEL_OPENER_LABEL
+  panel_opener      = PanelHelper::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')
 
-  create_config     = UploadHelper::UPLOAD_ACTION_VALUES[:new]
+  create_config     = UploadDecorator.form_actions[:new]
   create_select     = create_config.dig(:select, :enabled, :label)
   create_select     = help_span(create_select, **btn_opt)
   create_submit     = create_config.dig(:submit, :enabled, :label)
@@ -41,7 +43,7 @@
   create_cancel     = create_config.dig(:cancel, :enabled, :label)
   create_cancel     = help_span(create_cancel, **btn_opt)
 
-  edit_config       = UploadHelper::UPLOAD_ACTION_VALUES[:edit]
+  edit_config       = UploadDecorator.form_actions[:edit]
   edit_select       = edit_config.dig(:select, :enabled, :label)
   edit_select       = help_span(edit_select, **btn_opt)
   edit_submit       = edit_config.dig(:submit, :enabled, :label)
@@ -49,7 +51,7 @@
   edit_cancel       = edit_config.dig(:cancel, :enabled, :label)
   edit_cancel       = help_span(edit_cancel, **btn_opt)
 
-  delete_config     = UploadHelper::UPLOAD_ACTION_VALUES[:delete]
+  delete_config     = UploadDecorator.form_actions[:delete]
   delete_submit     = delete_config.dig(:submit, :enabled, :label)
   delete_submit     = help_span(delete_submit, **btn_opt)
   delete_cancel     = delete_config.dig(:cancel, :enabled, :label)

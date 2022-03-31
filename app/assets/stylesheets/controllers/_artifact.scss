@@ -7,7 +7,7 @@
 //=============================================================================
 
 // Artifact metadata label/value pairs for index listings.
-// @see ModelHelper::List#model_list_item
+// @see ArtifactDecorator#list_item
 .artifact-list-item {
     @extend .model-list-item;
 }
@@ -22,7 +22,7 @@
 //=============================================================================
 
 // Artifact metadata values.
-// @see ModelHelper::List#model_details
+// @see ArtifactDecorator#details
 .artifact-details {
     @extend .model-details;
 }

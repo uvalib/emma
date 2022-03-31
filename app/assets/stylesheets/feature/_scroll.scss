@@ -1,7 +1,5 @@
 // app/assets/stylesheets/feature/_scroll.scss
 
-@use 'sass:math';
-
 @use 'shared/variables' as *;
 @use 'shared/mixins'    as *;
 
@@ -53,8 +51,8 @@
 
         $button-bottom:       3rem;
         $button-right:        3rem;
-        $button-bottom-small: math.div($button-bottom, 2);
-        $button-right-small:  math.div($button-right, 2);
+        $button-bottom-small: $button-bottom * 0.5;
+        $button-right-small:  $button-right * 0.5;
 
         @media #{$not-narrow-screen} {
 

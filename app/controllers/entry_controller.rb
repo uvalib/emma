@@ -7,18 +7,21 @@ __loading_begin(__FILE__)
 
 # Handle "/entry" requests.
 #
-# @see EntryHelper
+# @see EntryDecorator
+# @see EntriesDecorator
 # @see file:app/views/entry/**
 #
 class EntryController < ApplicationController
 
   include UserConcern
   include ParamsConcern
+  include OptionsConcern
   include SessionConcern
   include RunStateConcern
   include PaginationConcern
   include SerializationConcern
   include AwsConcern
+  include BookshareConcern
   include IngestConcern
   include IaDownloadConcern
   include EntryConcern
@@ -107,16 +110,17 @@ class EntryController < ApplicationController
   # then the results will be limited to the matching entries.
   # NOTE: Currently this is not limited only to the current user's entries.
   #
+  # @see #entry_index_path            Route helper
   # @see EntryConcern#find_or_match_entries
   #
   def index
     __debug_route
-    opt    = url_parameters.except!(*ENTRY_FORM_PARAMS)
+    @page  = pagination_setup
+    opt    = @page.initial_parameters
     opt.except!(:group, :groups) # TODO: upload -> entry
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_entries(groups: all, **opt)
-    # noinspection RubyMismatchedArgumentType
-    pagination_finalize(result, **opt)
+    @page.finalize(result, **opt)
     @list  = result[:list]
     result = find_or_match_entries(groups: :only, **opt) if opt.delete(:group)
     @group_counts = result[:groups]
@@ -136,6 +140,7 @@ class EntryController < ApplicationController
   #
   # Display a single entry.
   #
+  # @see #show_entry_path             Route helper
   # @see EntryConcern#get_entry
   #
   def show
@@ -179,9 +184,10 @@ class EntryController < ApplicationController
   # visits (due to "Cancel" returning to this same page), @entry_id will be
   # included in order to reuse the Entry record that was created at that time.
   #
+  # @see #new_entry_path              Route helper
   # @see EntryConcern#new_entry
   # @see EntryController#create
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def new
     __debug_route
@@ -198,6 +204,7 @@ class EntryController < ApplicationController
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
   #
+  # @see #create_entry_path           Route helper
   # @see EntryConcern#create_entry
   # @see EntryController#new
   #
@@ -219,9 +226,11 @@ class EntryController < ApplicationController
   #
   # If :id is "SELECT" then a menu of editable items is presented.
   #
+  # @see #edit_entry_path             Route helper
+  # @see #edit_select_entry_path      Route helper
   # @see EntryConcern#edit_entry
   # @see EntryController#update
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def edit
     __debug_route
@@ -236,6 +245,7 @@ class EntryController < ApplicationController
   #
   # Finalize modification of an existing EMMA entry.
   #
+  # @see #update_entry_path           Route helper
   # @see EntryConcern#update_entry
   # @see EntryController#edit
   #
@@ -262,6 +272,8 @@ class EntryController < ApplicationController
   # Use :force to attempt to remove an item from the EMMA Unified Search index
   # even if a database record was not found.
   #
+  # @see #delete_entry_path           Route helper
+  # @see #delete_select_entry_path    Route helper
   # @see EntryConcern#delete_entry
   # @see EntryController#destroy
   #
@@ -281,6 +293,7 @@ class EntryController < ApplicationController
   #
   # Finalize removal of an existing EMMA entry.
   #
+  # @see #destroy_entry_path          Route helper
   # @see EntryConcern#destroy_entry
   # @see EntryController#delete
   #
@@ -305,6 +318,8 @@ class EntryController < ApplicationController
   #
   # Currently a non-functional placeholder.
   #
+  # @see #bulk_entry_index_path       Route helper
+  #
   def bulk_index
     __debug_route
     # TODO: bulk_index ???
@@ -318,6 +333,7 @@ class EntryController < ApplicationController
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing an row/element for each entry to submit.
   #
+  # @see #bulk_new_entry_path         Route helper
   # @see EntryConcern#bulk_new_entries
   # @see EntryController#bulk_create
   #
@@ -334,6 +350,7 @@ class EntryController < ApplicationController
   # Create the specified Entry records, download and store the associated
   # files, and post the new entries to the Federated Ingest API.
   #
+  # @see #bulk_create_entry_path      Route helper
   # @see EntryConcern#bulk_create_entries
   # @see EntryController#bulk_new
   #
@@ -352,12 +369,13 @@ class EntryController < ApplicationController
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing an row/element for each entry to change.
   #
+  # @see #bulk_edit_entry_path        Route helper
   # @see EntryConcern#bulk_edit_entries
   # @see EntryController#bulk_update
   #
   def bulk_edit
     __debug_route
-    bulk_edit_entries
+    @list = bulk_edit_entries
   rescue => error
     flash_now_failure(error)
     re_raise_if_internal_exception(error)
@@ -370,6 +388,7 @@ class EntryController < ApplicationController
   # associated files (if changed), and post the new/modified entries to the
   # Federated Ingest API.
   #
+  # @see #bulk_update_entry_path      Route helper
   # @see EntryConcern#bulk_update_entries
   # @see EntryController#bulk_edit
   #
@@ -387,6 +406,7 @@ class EntryController < ApplicationController
   #
   # Specify entries to delete by :id, SID, or RANGE_LIST.
   #
+  # @see #bulk_delete_entry_path      Route helper
   # @see EntryConcern#bulk_delete_entries
   # @see EntryController#bulk_destroy
   #
@@ -400,6 +420,7 @@ class EntryController < ApplicationController
 
   # == DELETE /entry/bulk[?force=true]
   #
+  # @see #bulk_destroy_entry_path     Route helper
   # @see EntryConcern#bulk_destroy_entries
   # @see EntryController#bulk_delete
   #
@@ -423,8 +444,9 @@ class EntryController < ApplicationController
   #
   # Invoked to resupply field values to a form generated for "/new".
   #
+  # @see #renew_entry_path                                  Route helper
   # @see EntryConcern#renew_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def renew
     __debug_route
@@ -443,8 +465,9 @@ class EntryController < ApplicationController
   #
   # Invoked to resupply field values to a form generated for "/edit".
   #
+  # @see #reedit_entry_path                                 Route helper
   # @see EntryConcern#reedit_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def reedit
     __debug_route
@@ -470,8 +493,9 @@ class EntryController < ApplicationController
   # Either way, the identified Entry record is deleted if it was in the
   # :create phase.  If it was in the :edit phase, its fields are reset
   #
+  # @see #cancel_entry_path                                 Route helper
   # @see EntryConcern#cancel_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *cancelForm()*
+  # @see file:app/assets/javascripts/feature/model-form.js  *cancelForm()*
   #
   def cancel
     __debug_route
@@ -497,6 +521,7 @@ class EntryController < ApplicationController
   # Invoked to determine whether the workflow state of the indicated item can
   # be advanced.
   #
+  # @see #check_entry_path            Route helper
   # @see EntryConcern#check_entry
   #
   def check
@@ -523,8 +548,9 @@ class EntryController < ApplicationController
   #
   # Invoked from 'Uppy.XHRUpload'.
   #
+  # @see #entries_path                Route helper
   # @see EntryConcern#upload_file
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def endpoint
     __debug_route
@@ -550,6 +576,7 @@ class EntryController < ApplicationController
   #
   # Download the file associated with an EMMA submission.
   #
+  # @see #file_download_path          Route helper
   # @see EntryConcern#get_entry
   # @see Record::Uploadable#download_url
   #
@@ -573,6 +600,8 @@ class EntryController < ApplicationController
   #
   # @raise [ExecError] @see IaDownloadConcern#ia_download_response
   #
+  # @see #retrieval_path              Route helper
+  #
   def retrieval
     __debug_route
     if ia_link?(@url)
@@ -595,6 +624,7 @@ class EntryController < ApplicationController
   #
   # Entry submission administration.
   #
+  # @see #admin_entry_path            Route helper
   # @see AwsConcern#get_object_table
   #
   def admin
@@ -618,7 +648,8 @@ class EntryController < ApplicationController
   #
   # Cause completed submission records to be re-indexed.
   #
-  # @see #reindex_record
+  # @see #bulk_reindex_entry_path     Route helper
+  # @see EntryConcern#reindex_record
   #
   def bulk_reindex
     __debug_route

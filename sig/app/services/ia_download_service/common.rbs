@@ -60,7 +60,7 @@ module IaDownloadService::Common
   # authentication directly from the client browser.  In fact, attempting to
   # request it via this method has become problematic.
   #
-  def transmit: (Symbol verb, String action, symHash|String|nil params, strHash|nil headers, **untyped opt) -> Faraday::Response?
+  def transmit: (Symbol verb, String action, symHash|String|nil params, strHash|nil headers, **untyped opt) -> (Faraday::Response | nil)
 
   private
 

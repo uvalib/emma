@@ -81,6 +81,8 @@ en:
           - member_link
           - roles
 
+        _endpoint:      true
+
       # =======================================================================
 
       show:
@@ -108,14 +110,16 @@ en:
           - roles
           - links
 
+        _endpoint:      true
+
       # =======================================================================
 
       new:              &NEW_ACTION
         title:          'Add Bookshare Member'
         tooltip:        'Create an entry for a new Bookshare organization member.'
+        _endpoint:      true
 
       # =======================================================================
-
 
       create:
         <<: *NEW_ACTION
@@ -125,9 +129,9 @@ en:
       edit:             &EDIT_ACTION
         title:          'Modify Bookshare Member'
         tooltip:        'Make changes to this Bookshare organization member.'
+        _endpoint:      true
 
       # =======================================================================
-
 
       update:
         <<: *EDIT_ACTION
@@ -137,6 +141,7 @@ en:
       delete:           &DELETE_ACTION
         title:          'Remove Bookshare Member'
         tooltip:        'Remove this Bookshare member from the organization.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -158,6 +163,8 @@ en:
           - downloadedBy
           - downloadedFor
 
+        _endpoint:      true
+
       # =======================================================================
 
       preferences:
@@ -174,3 +181,7 @@ en:
           - brailleCellLineWidth
           - preferred_fmt
           - preferred_language
+
+        _endpoint:      true
+
+      # =======================================================================

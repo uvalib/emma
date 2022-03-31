@@ -60,18 +60,20 @@ en:
       # =======================================================================
 
       run_state:
-        title:            'System Run State'
+        title:          'System Run State'
+
         state:
           available:
-            title:        'System Available'
+            title:      'System Available'
             property:
-              code:       200
-              text:       'EMMA is available'
+              code:     200
+              text:     'EMMA is available'
           unavailable:
-            title:        'SYSTEM UNAVAILABLE'
+            title:      'SYSTEM UNAVAILABLE'
             property:
-              code:       503
-              text:       'EMMA is temporarily unavailable for maintenance'
+              code:     503
+              text:     'EMMA is temporarily unavailable for maintenance'
+
         exempt:
           - health
           - help
@@ -82,3 +84,7 @@ en:
           - user/sessions:
               - sign_in_as
               - destroy
+
+        _endpoint:      true
+
+      # =======================================================================

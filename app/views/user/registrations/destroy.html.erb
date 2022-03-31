@@ -1,5 +1,6 @@
 <%# app/views/user/registrations/destroy.html.erb -%>
 <%-
   # Fall-back page for a failed account removal.
+  view_debug(__FILE__)
 -%>
 <%= render 'user/fallback', action: :destroy %>

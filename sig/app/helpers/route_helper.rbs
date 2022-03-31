@@ -6,18 +6,21 @@ module RouteHelper
   # @param [Symbol, String]      controller
   # @param [Symbol, String, nil] action
   #
-  # @return [Symbol]
+  # @return [Symbol, Proc]
   #
-  def route_helper: (Symbol|String controller, ?(Symbol|String)? action) -> Symbol
+  def route_helper: (Symbol|String controller, ?(Symbol|String)? action) -> (Symbol | Proc | String)
 
   # get_path_for
   #
-  # @param [Symbol, String]      controller
-  # @param [Symbol, String, nil] action
+  # @param [Array<Symbol,String>] arg     Controller and optional action.
+  # @param [Boolean]              warn
+  # @param [Hash]                 opt
   #
   # @return [String, nil]
   #
-  def get_path_for: (Symbol|String controller, ?(Symbol|String)? action, **untyped opt) -> String?
+  def get_path_for: (Symbol|String|nil controller, Symbol|String|nil action, ?warn: bool, **untyped opt) -> (String | nil)
+                  | (Symbol|String|nil controller,                           ?warn: bool, **untyped opt) -> (String | nil)
+                  | (                                                        ?warn: bool, **untyped opt) -> (String | nil)
 
   private
 

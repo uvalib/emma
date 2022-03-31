@@ -39,6 +39,8 @@ class DataController < ApplicationController
   # Get the contents of all database tables (or the named tables if given).
   # (Defaults to HTML output.)
   #
+  # @see #data_index_path             Route helper
+  #
   def index
     __debug_route
     default_format(:html)
@@ -49,6 +51,8 @@ class DataController < ApplicationController
   # == GET /data/TABLE_NAME
   #
   # Get the contents of the indicated database table.
+  #
+  # @see #data_path                   Route helper
   #
   def show
     __debug_route
@@ -61,6 +65,8 @@ class DataController < ApplicationController
   #
   # Get a listing of EMMA submissions.
   #
+  # @see #data_submissions_path       Route helper
+  #
   def submissions
     __debug_route
     default_format(:json)
@@ -71,6 +77,8 @@ class DataController < ApplicationController
   # == GET /data/counts
   #
   # Get a listing of EMMA submission field values.
+  #
+  # @see #data_counts_path            Route helper
   #
   def counts
     __debug_route

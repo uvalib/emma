@@ -24,7 +24,7 @@ module LayoutHelper::DevControls
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no dev_controls configured.
   #
-  def render_dev_controls: (**untyped opt) -> ActiveSupport::SafeBuffer?
+  def render_dev_controls: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # dev_controls_label
   #
@@ -63,7 +63,7 @@ module LayoutHelper::DevControls
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def dev_toggle_session_debug: (?state: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def dev_toggle_session_debug: (?state: bool|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A control for toggling debugging features for a specific controller.
   #
@@ -73,7 +73,7 @@ module LayoutHelper::DevControls
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def dev_toggle_controller_debug: (?ctrlr: Symbol|nil, ?state: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def dev_toggle_controller_debug: (?ctrlr: Symbol|nil, ?state: bool|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A control for toggling a debug status. # TODO: I18n
   #

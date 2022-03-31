@@ -2,6 +2,8 @@
 <%-
   # Devise-controller-related errors.
 
+  view_debug(__FILE__)
+
   resource ||= current_user
   errors   ||= resource&.errors
 

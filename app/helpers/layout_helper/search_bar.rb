@@ -12,7 +12,9 @@ module LayoutHelper::SearchBar
   include LayoutHelper::SearchFilters
 
   include ConfigurationHelper
-  include I18nHelper
+  include LinkHelper
+  include ParamsHelper
+  include SearchTermsHelper
 
   # ===========================================================================
   # :section:
@@ -116,7 +118,7 @@ module LayoutHelper::SearchBar
     minimum:  nil,
     **form_opt
   )
-    css_selector = '.search-bar-container'
+    css      = '.search-bar-container'
     target   = search_input_target(target) or return
     config   = SEARCH_BAR[(target || params[:controller])&.to_sym]
     minimum  = minimum ? [minimum, 1].max : config[:min_rows]
@@ -172,7 +174,7 @@ module LayoutHelper::SearchBar
     input_group = html_div(rows, class: 'search-bar-group')
     controls    = ''.html_safe # NOTE: moving search button...
 
-    prepend_classes!(form_opt, css_selector)
+    prepend_css!(form_opt, css)
     search_form(target, **form_opt) do
       input_group << controls
     end
@@ -196,8 +198,8 @@ module LayoutHelper::SearchBar
   # noinspection RubyMismatchedParameterType
   #++
   def search_bar_row(field, value = nil, first: nil, last: nil, **opt)
-    css_selector = '.search-bar-row'
-    id_opt, opt  = partition_hash(opt, :target, :unique, :index)
+    css    = '.search-bar-row'
+    id_opt = extract_hash!(opt, :target, :unique, :index)
 
     # Row elements.
     input  = search_bar(field, value, **id_opt)
@@ -206,11 +208,11 @@ module LayoutHelper::SearchBar
     ctrl &&= first ? search_row_add(**id_opt) : search_row_remove(**id_opt)
 
     # Row container.
-    opt[:id] ||= unique_id(css_selector, **id_opt)
-    prepend_classes!(opt, css_selector)
-    append_classes!(opt, 'first')  if first
-    append_classes!(opt, 'last')   if last
-    append_classes!(opt, 'hidden') unless first || value.present?
+    opt[:id] ||= unique_id(css, **id_opt)
+    prepend_css!(opt, css)
+    append_css!(opt, 'first')  if first
+    append_css!(opt, 'last')   if last
+    append_css!(opt, 'hidden') unless first || value.present?
     html_div(opt) do
       [menu, input, ctrl].compact
     end
@@ -253,8 +255,8 @@ module LayoutHelper::SearchBar
   # @return [nil]                           Search unavailable for target.
   #
   def search_input_select(**opt)
-    css_selector = '.search-input-select'
-    target       = search_input_target(opt.delete(:target))
+    css    = '.search-input-select'
+    target = search_input_target(opt.delete(:target))
     return unless target && show_input_select?(target)
 
     pairs    = search_query_menu_pairs(target)
@@ -262,10 +264,10 @@ module LayoutHelper::SearchBar
     option_tags = options_for_select(pairs, selected)
 
     opt.except!(:field, *MENU_OPTS)
-    id_opt, opt = partition_hash(opt, :unique, :index)
+    id_opt = extract_hash!(opt, :unique, :index)
 
-    prepend_classes!(opt, css_selector)
-    opt[:id]           ||= unique_id(css_selector, **id_opt) if id_opt.present?
+    prepend_css!(opt, css)
+    opt[:id]           ||= unique_id(css, **id_opt) if id_opt.present?
     opt[:'aria-label'] ||= 'Search Type' # TODO: I18n
     # NOTE: Blank name so that it is not included with form submission data.
     select_tag('', option_tags, opt)
@@ -287,11 +289,11 @@ module LayoutHelper::SearchBar
   # @see #search_input
   #
   def search_bar(field, value = nil, **opt)
-    css_selector = '.search-bar'
-    id_opt, opt  = partition_hash(opt, :target, :unique, :index)
+    css    = '.search-bar'
+    id_opt = extract_hash!(opt, :target, :unique, :index)
     target = id_opt[:target] ||= search_input_target
     return unless target && show_search_bar?(target)
-    prepend_classes!(opt, css_selector)
+    prepend_css!(opt, css)
     html_div(opt) do
       search_input(field, value: value, **id_opt)
     end
@@ -331,11 +333,11 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_row_control(operation, **opt)
-    css_selector = ".search-row-control.#{operation}"
+    css = ".search-row-control.#{operation}"
     opt.except!(:field, :target)
-    id_opt, opt = partition_hash(opt, :unique, :index)
-    opt[:id] ||= unique_id(css_selector, **id_opt)
-    prepend_classes!(opt, css_selector)
+    id_opt     = extract_hash!(opt, :unique, :index)
+    opt[:id] ||= unique_id(css, **id_opt)
+    prepend_css!(opt, css)
     icon_button(**opt)
   end
 
@@ -450,42 +452,40 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Used by EntryDecorator#parent_entry_select
+  # @note Used by UploadDecorator#parent_entry_select
+  #
   #--
   # noinspection RubyMismatchedParameterType
   #++
   def search_input(field, ctrlr = nil, target: nil, value: nil, **opt)
-    css_selector = '.search-input'
-    target  = search_input_target(ctrlr, target: target)
-    field ||= search_input_field(target)
-    field   = field&.to_sym
+    css      = '.search-input'
+    target   = search_input_target(ctrlr, target: target)
+    field  ||= search_input_field(target)
+    field    = field&.to_sym
 
-    id_opt, opt = partition_hash(opt, :unique, :index)
-    if id_opt.present?
-      label_id = unique_id(css_selector, 'label', **id_opt)
-      input_id = unique_id(css_selector, **id_opt)
-    else
-      label_id = "#{field}_label"
-      input_id = field
-    end
+    id_opt   = extract_hash!(opt, :unique, :index).presence
+    label_id = id_opt ? unique_id(css, 'label', **id_opt) : "#{field}_label"
+    input_id = id_opt ? unique_id(css, **id_opt)          : field
 
     # Screen-reader-only label element.
-    label = search_input_label(target, field: field)
-    label &&= html_span(label, id: label_id, class: 'search-input-label')
-    label ||= ''.html_safe
+    label    = search_input_label(target, field: field)
+    label  &&= html_span(label, id: label_id, class: 'search-input-label')
+    label  ||= ''.html_safe
 
     # Input field contents.
-    value ||= request_parameters[field]
-    value = '' if value == SearchTerm::NULL_SEARCH
+    value  ||= request_parameters[field]
+    value    = '' if value == SearchTerm::NULL_SEARCH
 
     # Input field element.
-    prepend_classes!(opt, css_selector)
+    prepend_css!(opt, css)
     opt[:'aria-labelledby'] = label_id
     opt[:placeholder]     ||= search_input_placeholder(target, field: field)
     opt[:id]              ||= input_id
     input = search_field_tag(field, value, opt)
 
     # Control for clearing search terms.
-    clear = search_clear_button(**id_opt)
+    clear = search_clear_button(**id_opt.to_h)
 
     # Result.
     # noinspection RubyMismatchedReturnType
@@ -509,11 +509,11 @@ module LayoutHelper::SearchBar
   # noinspection RubyMismatchedParameterType
   #++
   def search_button(ctrlr = nil, target: nil, label: nil, **opt)
-    css_selector = '.search-button'
-    label      ||= search_button_label(ctrlr || target)
+    css     = '.search-button'
+    label ||= search_button_label(ctrlr || target)
     opt[:'data-ready']     ||= SEARCH_READY_TOOLTIP
     opt[:'data-not-ready'] ||= SEARCH_NOT_READY_TOOLTIP
-    prepend_classes!(opt, css_selector)
+    prepend_css!(opt, css)
     submit_tag(label, opt)
   end
 
@@ -525,6 +525,9 @@ module LayoutHelper::SearchBar
   #
   # @return [String]                      The specified value.
   # @return [nil]                         No non-empty value was found.
+  #
+  # @note Used by EntryDecorator#parent_entry_select
+  # @note Used by UploadDecorator#parent_entry_select
   #
   def search_button_label(ctrlr = nil, target: nil, **opt)
     target = search_input_target(ctrlr || target) or return
@@ -541,18 +544,18 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/advanced-search.js *clearSearch()*
-  # @see HtmlHelper#icon_button
+  # @see file:javascripts/feature/advanced-search.js *clearSearchTerm()*
+  # @see LinkHelper#icon_button
   #
   def search_clear_button(**opt)
-    css_selector = '.search-clear'
-    id_opt, opt  = partition_hash(opt, :unique, :index)
+    css    = '.search-clear'
+    id_opt = extract_hash!(opt, :unique, :index)
     opt.except!(:field, *MENU_OPTS)
-    prepend_classes!(opt, css_selector)
+    prepend_css!(opt, css)
     opt[:title] ||= 'Clear search terms' # TODO: I18n
     opt[:icon]  ||= CLEAR_SEARCH_ICON
     opt[:url]   ||= '#'
-    opt[:id]    ||= unique_id(css_selector, **id_opt)
+    opt[:id]    ||= unique_id(css, **id_opt)
     icon_button(**opt)
   end
 
@@ -574,12 +577,12 @@ module LayoutHelper::SearchBar
   # noinspection RubyMismatchedParameterType
   #++
   def search_controls(ctrlr = nil, target: nil, form: nil, **opt)
-    css_selector  = '.search-controls'
-    opt, html_opt = partition_hash(opt, :only, :except)
+    css     = '.search-controls'
     target  = search_input_target(ctrlr, target: target)
-    buttons = filter(SEARCH_CONTROLS, **opt)
-    prepend_classes!(html_opt, css_selector)
-    html_div(html_opt) do
+    f_opt   = extract_hash!(opt, :only, :except)
+    buttons = filter(SEARCH_CONTROLS, **f_opt)
+    prepend_css!(opt, css)
+    html_div(opt) do
       buttons.map do |key|
         # noinspection RubyCaseWithoutElseBlockInspection
         case key
@@ -596,30 +599,6 @@ module LayoutHelper::SearchBar
   # ===========================================================================
 
   protected
-
-  # Combine parts into a value for use an an HTML ID of a element associated
-  # with a specific search input row.
-  #
-  # Unless *unique* is *false* or a string, #hex_rand will be used to generate
-  # a value to make the resulting ID unique.
-  #
-  # @param [Array]                parts
-  # @param [String, Boolean, nil] unique  Value unique to a search unique.
-  # @param [Integer, nil]         index   Value unique to an input row.
-  # @param [Hash]                 opt     Passed to #html_id.
-  #
-  # @return [String]
-  #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
-  def unique_id(*parts, unique: nil, index: nil, **opt)
-    unique = hex_rand if unique.nil? || unique.is_a?(TrueClass)
-    parts << unique   if unique
-    parts << index    if index
-    opt.reverse_merge!(underscore: false, camelize: false)
-    html_id(*parts, **opt)
-  end
 
   # Filter values from an array.
   #

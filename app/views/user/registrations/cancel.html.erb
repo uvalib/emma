@@ -1,6 +1,6 @@
 <%# app/views/user/registrations/cancel.html.erb -%>
 <%-
   # Fall-back page for a failed cancel action.
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
 -%>
 <%= render 'user/fallback', title: 'CANCELLATION' %>
-<%- abort 'user/registrations/cancel - NOT EXPECTED TO BE USED' -%>

@@ -60,7 +60,7 @@ module Api::Shared::CommonMethods
   #
   # @return [String, nil]
   #
-  def get_value: (*Symbol fields) -> String?
+  def get_value: (*Symbol fields) -> (String | nil)
 
   # Get the first non-empty value given a list of fields.
   #

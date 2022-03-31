@@ -51,7 +51,7 @@ module EntryConcern
 
   def entry_request_params: ((Entry|untyped)? entry, ?symHash? prm) -> ([Entry, symHash] | [untyped, symHash])
 
-  def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash])?
+  def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash] | nil)
 
   # URL parameters associated with item/entry identification.                   # NOTE: from UploadConcern
   #
@@ -65,7 +65,7 @@ module EntryConcern
   #
   DATA_PARAMS: symArray
 
-  def set_identifiers: (?prmHash? p) -> String?
+  def set_identifiers: (?prmHash? p) -> (String | nil)
 
   # Parameters used by Entry#search_records.                                    # NOTE: from UploadConcern
   #
@@ -88,9 +88,9 @@ module EntryConcern
 
   def find_or_match_entries: (*(String|anyArray) items, **untyped opt) -> symHash
 
-  def get_entry: (?(String|Entry|anyHash)? item, **untyped opt) -> Entry?
+  def get_entry: (?(String|Entry|anyHash)? item, **untyped opt) -> (Entry | nil)
 
-  def proxy_get_entry: (String sid, String host) -> Entry?
+  def proxy_get_entry: (String sid, String host) -> (Entry | nil)
 
   # For the 'new' endpoint, generate and persist a Phase::Create record and a
   # temporary (un-persisted) Entry instance based on its attributes.
@@ -134,7 +134,7 @@ module EntryConcern
   # @return [Entry]                         A record from the 'entries' table.
   # @return [nil]                           If the Entry was not found.
   #
-  def edit_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry?
+  def edit_entry: (?(Entry|symHash)? item, ?symHash? opt) -> (Entry | nil)
 
   # For the 'update' endpoint, get the matching Entry and update it from its
   # most recent Phase::Edit.
@@ -150,7 +150,7 @@ module EntryConcern
   # @return [Entry]                         Updated Entry instance.
   # @return [nil]                           If the Entry was not found.
   #
-  def update_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry?
+  def update_entry: (?(Entry|symHash)? item, ?symHash? opt) -> (Entry | nil)
 
   # For the 'delete' endpoint...
   #
@@ -208,7 +208,7 @@ module EntryConcern
   # -
   # noinspection RubyNilAnalysis
   # +
-  def cancel_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry?
+  def cancel_entry: (?(Entry|symHash)? item, ?symHash? opt) -> (Entry | nil)
 
   def check_entry: (?(Entry|symHash)? item, ?symHash? opt) -> strArray
 
@@ -323,14 +323,10 @@ module EntryConcern
   #
   def reindex_record: (Model|Array[Model]|ActiveRecord::Relation list, ?atomic: bool, ?dryrun: bool, ?meth: Symbol) -> [strArray, strArray]
 
-  def pagination_finalize: (symHash result, **untyped opt) -> void
-
   def post_response: ( Symbol|Integer|nil status,   (Model|String|FlashHelper::FlashPart|Array[Model|String|FlashHelper::FlashPart])? item, ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
                    | (?(Symbol|Integer|nil) status, Exception item,                                                                         ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
 
   private
 
   #THIS_MODULE: untyped
-
-  include IngestConcern
 end

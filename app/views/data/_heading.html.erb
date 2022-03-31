@@ -2,16 +2,21 @@
 <%-
   # A database table heading.
 
-  name    ||= nil or return
-  records ||= []
-  id      ||= nil
-  tag     ||= :h2
+  view_debug(__FILE__)
 
-  count = positive(records.size - 1) || 0
-  css   = ['database-table-name', ('empty' if count.zero?)]
-  opt   = { id: id, class: css_classes(css) }.compact
-  count = "#{count} #{'record'.pluralize(count)}"
-  title = html_span("#{name.titleize} (#{name} - #{count})")
+  name  ||= nil or return
+  list  ||= []
+
+  title ||= name.titleize
+  id    ||= nil
+  tag   ||= :h2
+
+  count   = positive(list.size - 1) || 0
+  number  = "#{count} #{'record'.pluralize(count)}"
+  title   = html_span("#{title} (#{name} - #{number})")
+
+  opt = { class: 'database-table-name', id: id }.compact
+  append_css!(opt, 'empty') if count.zero?
 
 -%>
 

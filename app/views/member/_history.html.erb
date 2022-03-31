@@ -2,29 +2,34 @@
 <%-
   # Organization Member download history.
 
-  hist  ||= @history or return
-  list  ||= hist.titleDownloads
-  count ||= hist.totalResults || list&.size || 0
-  level ||= 2
-  skip  ||= nil
+  view_debug(__FILE__)
 
-  skip = Array.wrap(skip)
-  role = ('role="complementary"'.html_safe if level > 1)
-  panel_id = css_randomize(MemberHelper::MEMBER_HISTORY_CSS_CLASS)
+  item   ||= nil
+  hist   ||= nil
+  dec    ||= item && MemberDecorator.new(item, history: hist, **context) or return
+  hist   ||= dec.history_data
+  list   ||= dec.downloads
+
+  count  ||= positive(hist&.totalResults) || list.size
+  level  ||= 2
+  skip   ||= nil
+
+  skip     = [*skip]
+  role     = ('role="complementary"'.html_safe if level > 1)
+  panel_id = css_randomize(MemberDecorator::HISTORY_CSS_CLASS)
   heading  =
     unless skip.include?(:title)
       title ||= t('emma.member.history.title')
       title  += " (#{count} events)" unless skip.include?(:count)
       classes = ('empty' if list.blank?)
-      html_div(class: 'toggle-panel-title') {
-        member_history_title(title, level: level, class: classes) <<
-          member_history_control(id: panel_id)
-      }
+      title   = dec.history_title(title, level: level, class: classes)
+      control = dec.history_control(id: panel_id)
+      html_div(class: 'toggle-panel-title') { title << control }
     end
 
 -%>
 
 <div <%= role -%> class="member-history">
   <%= heading %>
-  <%= member_history(list, id: panel_id) %>
+  <%= dec.history_list(id: panel_id) %>
 </div>

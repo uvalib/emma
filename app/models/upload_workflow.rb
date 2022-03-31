@@ -235,7 +235,7 @@ end
 #
 module UploadWorkflow::Properties                                               # NOTE: to Record::Properties (all)
 
-  include Workflow::Base::Properties
+  #include Workflow::Base::Properties
   include UploadWorkflow::Errors
 
   # ===========================================================================
@@ -387,16 +387,37 @@ module UploadWorkflow::Properties                                               
   #
   # @type [Hash{Symbol=>Any}]
   #
-  WF_URL_PARAMETER = {
+  WF_PARAMETER_DEFAULT = {
     prefix:       TITLE_PREFIX,
+    batch:        BATCH_SIZE,
     force:        FORCE_DELETE_DEFAULT,
     emergency:    EMERGENCY_DELETE_DEFAULT,
     truncate:     TRUNCATE_DELETE_DEFAULT,
     repo_create:  REPO_CREATE_DEFAULT,
     repo_edit:    REPO_EDIT_DEFAULT,
     repo_remove:  REPO_REMOVE_DEFAULT,
-    batch:        BATCH_SIZE
   }.freeze
+
+  # Module method mapped to URL parameter.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_METHOD_MAP = {
+    prefix:      :title_prefix,
+    batch:       :batch_size,
+    force:       :force_delete,
+    emergency:   :emergency_delete,
+    truncate:    :truncate_delete,
+    repo_create: :repo_create,
+    repo_edit:   :repo_edit,
+    repo_remove: :repo_remove,
+  }.freeze
+
+  # URL parameter mapped to module method.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_PARAMETER_MAP = WF_METHOD_MAP.invert.freeze
 
   # ===========================================================================
   # :section: Property values
@@ -416,14 +437,11 @@ module UploadWorkflow::Properties                                               
   # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
   #
   def title_prefix
-    value = parameters[:prefix]
-    if value.nil? || true?(value)
-      TITLE_PREFIX
-    elsif false?(value)
-      false
-    else
-      value.to_s
-    end
+    key   = WF_PARAMETER_MAP[__method__]
+    value = parameters[key]
+    return false if false?(value)
+    value = nil  if true?(value)
+    value&.to_s || WF_PARAMETER_DEFAULT[key]
   end
 
   # Force deletions of Unified Index entries regardless of whether the item is
@@ -434,7 +452,8 @@ module UploadWorkflow::Properties                                               
   # @see #FORCE_DELETE_DEFAULT
   #
   def force_delete
-    parameter_setting(:force)
+    key = WF_PARAMETER_MAP[__method__]
+    parameter_setting(key)
   end
 
   # Force deletions of Unified Index entries even if the record ID does not
@@ -446,7 +465,8 @@ module UploadWorkflow::Properties                                               
   # @see #EMERGENCY_DELETE_DEFAULT
   #
   def emergency_delete
-    parameter_setting(:emergency)
+    key = WF_PARAMETER_MAP[__method__]
+    parameter_setting(key)
   end
 
   # If all "uploads" records are removed, reset the next ID to 1.
@@ -456,7 +476,8 @@ module UploadWorkflow::Properties                                               
   # @see #TRUNCATE_DELETE_DEFAULT
   #
   def truncate_delete
-    parameter_setting(:truncate)
+    key = WF_PARAMETER_MAP[__method__]
+    parameter_setting(key)
   end
 
   # Permit the "creation" of member repository items via a request to be queued
@@ -467,8 +488,9 @@ module UploadWorkflow::Properties                                               
   # @see #REPO_CREATE_DEFAULT
   #
   def repo_create
-    #parameter_setting(:repo_create, params)
-    REPO_CREATE_DEFAULT # TODO: conditionally accept based on user
+    key = WF_PARAMETER_MAP[__method__]
+    # TODO: conditionally accept repo_create based on user?
+    WF_PARAMETER_DEFAULT[key]
   end
 
   # Permit the "update" of member repository items via a request to be queued
@@ -479,8 +501,9 @@ module UploadWorkflow::Properties                                               
   # @see #REPO_EDIT_DEFAULT
   #
   def repo_edit
-    #parameter_setting(:repo_edit, params)
-    REPO_EDIT_DEFAULT # TODO: conditionally accept based on user
+    key = WF_PARAMETER_MAP[__method__]
+    # TODO: conditionally accept repo_edit based on user?
+    WF_PARAMETER_DEFAULT[key]
   end
 
   # Permit the "removal" of member repository items via a request to be queued
@@ -491,11 +514,12 @@ module UploadWorkflow::Properties                                               
   # @see #REPO_REMOVE_DEFAULT
   #
   def repo_remove
-    #parameter_setting(:repo_remove, params)
-    REPO_REMOVE_DEFAULT # TODO: conditionally accept based on user
+    key = WF_PARAMETER_MAP[__method__]
+    # TODO: conditionally accept repo_remove based on user?
+    WF_PARAMETER_DEFAULT[key]
   end
 
-  # Handle bulk uploads in batches.
+  # Handle bulk operations in batches.
   #
   # If this is disabled, the method returns *false*; otherwise it returns the
   # batch size.
@@ -506,19 +530,12 @@ module UploadWorkflow::Properties                                               
   # @see #set_bulk_batch
   #
   def batch_size
-    value = parameters[:batch]
+    key   = WF_PARAMETER_MAP[__method__]
+    value = parameters[key]
+    return false if false?(value)
+    value = positive(value)
     # noinspection RubyMismatchedReturnType
-    if value.blank?
-      BATCH_SIZE
-    elsif false?(value)
-      false
-    elsif true?(value)
-      (value.to_s == '1') ? 1 : BATCH_SIZE
-    elsif value.to_i.positive?
-      [value.to_i, MAX_BATCH_SIZE].min
-    else
-      BATCH_SIZE
-    end
+    value ? [value, MAX_BATCH_SIZE].min : WF_PARAMETER_DEFAULT[key]
   end
 
   # ===========================================================================
@@ -533,9 +550,12 @@ module UploadWorkflow::Properties                                               
   #
   # @return [Hash{Symbol=>Any}]
   #
+  # @see Upload::Options#model_params
+  # @see Workflow::Base::Properties#parameters
+  #
   def parameters
     # noinspection RailsParamDefResolve
-    try(:upload_params) || super || {}
+    try(:model_params) || super || {}
   end
 
   # ===========================================================================
@@ -547,7 +567,7 @@ module UploadWorkflow::Properties                                               
   # Extract the named URL parameter from *params*.
   #
   # @param [Symbol]    key            URL parameter name.
-  # @param [Hash, nil] params         Default: `#parameters`.
+  # @param [Hash, nil] prm            Default: `#parameters`.
   #
   # @return [Boolean]
   #
@@ -555,10 +575,10 @@ module UploadWorkflow::Properties                                               
   # If *default* is *false* then *true* is returned only if *value* is "true".
   # If *default* is *true* then *false* is returned only if *value* is "false".
   #
-  def parameter_setting(key, params = nil)
-    params ||= parameters
-    value    = params&.dig(key)
-    default  = WF_URL_PARAMETER[key]
+  def parameter_setting(key, prm = nil)
+    prm   ||= parameters
+    value   = prm&.dig(key)
+    default = WF_PARAMETER_DEFAULT[key]
     case value
       when true, false then value
       when nil         then default
@@ -583,6 +603,7 @@ public
 #
 module UploadWorkflow::External
 
+  include Workflow::Base::External
   include UploadWorkflow::Properties
   include UploadWorkflow::Events
 
@@ -733,7 +754,7 @@ module UploadWorkflow::External
     items, failed = collect_records(*items, force: force)
     requested = []
     if force
-      emergency = opt[:emergency] || emergency_delete
+      emergency = opt[:emergency] || model_options.emergency_delete
       # Mark as failed any non-EMMA-items that could not be added to a request
       # for removal of member repository items.
       items, failed =
@@ -741,7 +762,7 @@ module UploadWorkflow::External
           emma_item?(item) || incomplete?(item) ||
             (Upload.sid_for(item) if emergency)
         end
-      if repo_remove
+      if model_options.repo_remove
         deferred = opt.key?(:requests)
         requests = opt.delete(:requests) || {}
         failed.delete_if do |item|
@@ -826,13 +847,13 @@ module UploadWorkflow::External
 
     # Batching occurs unconditionally in order to ensure that the requested
     # items can be successfully removed from the index.
-    opt[:requests] ||= {} if repo_remove
+    opt[:requests] ||= {} if model_options.repo_remove
     opt.merge!(index: index, atomic: atomic, force: force)
     succeeded, failed = batch_upload_operation(:upload_remove, items, **opt)
 
     # After all batch operations have completed, truncate the database table
     # (i.e., so that the next entry starts with id == 1) if appropriate.
-    if truncate_delete && (ids == %w(*))
+    if model_options.truncate_delete && (ids == %w(*))
       if failed.present?
         Log.warn('database not truncated due to the presence of errors')
       elsif !Upload.connection.truncate(Upload.table_name)
@@ -842,7 +863,7 @@ module UploadWorkflow::External
 
     # Member repository removal requests that were deferred in #upload_remove
     # are handled now.
-    if repo_remove && opt[:requests].present?
+    if model_options.repo_remove && opt[:requests].present?
       if atomic && failed.present?
         Log.warn('failure(s) prevented generation of repo removal requests')
       else
@@ -876,13 +897,13 @@ module UploadWorkflow::External
     opt[:bulk] ||= { total: items.size }
 
     # Set batch size for this iteration.
-    size = batch_size     if size.nil?
-    size = -1             if size.is_a?(FalseClass)
-    size =  0             if size.is_a?(TrueClass)
+    size = model_options.batch_size if size.nil?
+    size = -1                       if size.is_a?(FalseClass)
+    size =  0                       if size.is_a?(TrueClass)
     size = size.to_i
-    size = items.size     if size.negative?
-    size = BATCH_SIZE     if size.zero?
-    size = MAX_BATCH_SIZE if size > MAX_BATCH_SIZE
+    size = items.size               if size.negative?
+    size = BATCH_SIZE               if size.zero?
+    size = MAX_BATCH_SIZE           if size > MAX_BATCH_SIZE
 
     succeeded = []
     failed    = []
@@ -992,7 +1013,8 @@ module UploadWorkflow::External
   def new_record(data = nil)                                                    # NOTE: to Record::Submittable::RecordMethods
     __debug_items("UPLOAD WF #{__method__}", binding)
     Upload.new(data).tap do |record|
-      add_title_prefix(record) if title_prefix
+      # noinspection RubyMismatchedArgumentType
+      p = model_options.title_prefix and add_title_prefix(record, prefix: p)
     end
   end
 
@@ -1052,12 +1074,12 @@ module UploadWorkflow::External
 
   # If a prefix was specified, apply it to the record's title.
   #
-  # @param [Upload]       record
-  # @param [String, bool] prefix
+  # @param [Upload] record
+  # @param [String] prefix
   #
   # @return [void]
   #
-  def add_title_prefix(record, prefix: title_prefix)                            # NOTE: to Record::Submittable::RecordMethods
+  def add_title_prefix(record, prefix:)                                         # NOTE: to Record::Submittable::RecordMethods
     return unless prefix.present?
     return unless record.respond_to?(:active_emma_metadata)
     return unless (title = record.active_emma_metadata[:dc_title])
@@ -1121,8 +1143,9 @@ module UploadWorkflow::External
     record, data = [nil, record] if record.is_a?(Hash)
     unless record.is_a?(Upload)
       if data.is_a?(Hash)
-        opt, data = partition_hash(data, :no_raise, :meth)
-        ids, data = partition_hash(data, :id, :submission_id)
+        data = data.dup
+        opt  = extract_hash!(data, :no_raise, :meth)
+        ids  = extract_hash!(data, :id, :submission_id)
         id   = record || ids.values.first
       else
         opt  = {}
@@ -1294,6 +1317,7 @@ module UploadWorkflow::External
     by_index = errors.select { |k| k.is_a?(Integer) }
     if by_index.present?
       errors.except!(*by_index.keys)
+      # noinspection RubyMismatchedReturnType
       by_index.transform_keys! { |idx| Upload.sid_for(items[idx-1]) }
       sids   += by_index.keys
       failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
@@ -1312,6 +1336,7 @@ module UploadWorkflow::External
     if errors.present?
       failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
     elsif sids.present?
+      # noinspection RubyMismatchedReturnType
       sids = sids.map { |v| Upload.sid_for(v) }.uniq
       rollback, succeeded =
         items.partition { |itm| sids.include?(itm.submission_id) }
@@ -1369,7 +1394,7 @@ module UploadWorkflow::External
     failed    = []
     if items.blank?
       failed << REPO_FAILURE[:no_items]
-    elsif !repo_create
+    elsif !model_options.repo_create
       failed << REPO_FAILURE[:no_create]
     else
       result = aws_api.creation_request(*items, **opt)
@@ -1420,7 +1445,7 @@ module UploadWorkflow::External
       # Emergency override for deleting bogus entries creating during
       # testing/development.
       succeeded, failed = remove_from_index(*items)
-    elsif !repo_remove
+    elsif !model_options.repo_remove
       failed << REPO_FAILURE[:no_remove]
     else
       result = aws_api.removal_request(*items, **opt)
@@ -1671,7 +1696,7 @@ module UploadWorkflow::Actions
   def wf_list_items(*event_args)
     __debug_items(binding)
     event_args.pop if event_args.last.is_a?(Hash)
-    force = force_delete
+    force = model_options.force_delete
     items = Upload.expand_ids(*event_args.flatten.compact)
     emma_items, repo_items = items.partition { |item| emma_item?(item) }
 
@@ -1680,7 +1705,8 @@ module UploadWorkflow::Actions
     self.succeeded += emma_items.map { |item| get_record(item, **opt) || item }
 
     if repo_items.present?
-      if force && repo_remove
+      if force && model_options.repo_remove
+        # noinspection RubyMismatchedReturnType
         self.succeeded += repo_items.map { |item| Upload.record_id(item) }
       else
         self.failures  += repo_items
@@ -1699,9 +1725,7 @@ module UploadWorkflow::Actions
   def wf_remove_items(*event_args)
     __debug_items(binding)
     opt = event_args.extract_options! || {}
-    opt[:force]     = force_delete     unless opt.key?(:force)
-    opt[:emergency] = emergency_delete unless opt.key?(:emergency)
-    opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
+    opt.reverse_merge!(model_options.all)
     s, f = batch_upload_remove(event_args, **opt)
     self.succeeded = s
     self.failures += f

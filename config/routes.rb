@@ -57,6 +57,8 @@ Rails.application.routes.draw do
 
   # === UploadWorkflow::Bulk
 
+  get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',    as: 'bulk_reindex_upload'
+
   get    '/upload/bulk_new',      to: 'upload#bulk_new',        as: 'bulk_new_upload'
   post   '/upload/bulk',          to: 'upload#bulk_create',     as: 'bulk_create_upload'
 
@@ -80,10 +82,9 @@ Rails.application.routes.draw do
 
   get    '/upload/admin',         to: 'upload#admin',           as: 'admin_upload'
 
-  # === Temporary
+  # === Other
 
   get    '/upload/api_migrate',   to: 'upload#api_migrate',     as: 'api_migrate'
-  get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',    as: 'bulk_reindex'
 
   # ===========================================================================
   # EMMA entry operations
@@ -109,6 +110,8 @@ Rails.application.routes.draw do
   delete '/entry/destroy/:id',    to: 'entry#destroy',        as: 'destroy_entry'
 
   # === Bulk operation workflows
+
+  get    '/entry/bulk_reindex',   to: 'entry#bulk_reindex',   as: 'bulk_reindex_entry'
 
   get    '/entry/bulk_new',       to: 'entry#bulk_new',       as: 'bulk_new_entry'
   post   '/entry/bulk',           to: 'entry#bulk_create',    as: 'bulk_create_entry'
@@ -179,7 +182,10 @@ Rails.application.routes.draw do
   get '/artifact/retrieval',          to: 'artifact#retrieval', as: 'bs_retrieval'
   get '/artifact/:bookshareId/:fmt',  to: 'artifact#download',  as: 'bs_download'
 
-  resources :artifact, except: %i[index]
+  resources :artifact, except: %i[index create]
+
+  post  '/artifact/create',     to: 'artifact#create', as: 'create_artifact'
+  match '/artifact/update/:id', to: 'artifact#update', as: 'update_artifact', via: %i[put patch]
 
   # ===========================================================================
   # Organization operations
@@ -252,28 +258,32 @@ Rails.application.routes.draw do
   end
 
   devise_scope :user do
-    get '/users/new',           to: 'user/registrations#new',         as: 'user_new'
-    get '/users/edit_select',   to: 'user/registrations#edit_select', as: 'user_edit_select'
+    get   '/users/new',         to: 'user/registrations#new',         as: 'new_user'
+    match '/users/create',      to: 'user/registrations#create',      as: 'create_user',        via: %i[post put patch]
+    get   '/users/edit_select', to: 'user/registrations#edit_select', as: 'edit_select_user',   defaults: { id: 'SELECT' }
+    get   '/users/edit/:id',    to: 'user/registrations#edit',        as: 'edit_user'
+    match '/users/update/:id',  to: 'user/registrations#update',      as: 'update_user',        via: %i[post put patch]
   end
 
   # ===========================================================================
   # Local account operations
   # ===========================================================================
 
+  resources :account, only: %i[index]
+
+  get    '/account/show/:id',       to: 'account#show',           as: 'show_account'
+
   get    '/account/new_select',     to: redirect('/account/new'), as: 'new_select_account'      # Only for consistency
   get    '/account/new',            to: 'account#new',            as: 'new_account'
   match  '/account/create',         to: 'account#create',         as: 'create_account',         via: %i[post put patch]
 
   get    '/account/edit_select',    to: 'account#edit',           as: 'edit_select_account',    defaults: { id: 'SELECT' }
-  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account'
+  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: current_user.id }
   match  '/account/update/:id',     to: 'account#update',         as: 'update_account',         via: %i[put patch]
 
   get    '/account/delete_select',  to: 'account#delete',         as: 'delete_select_account',  defaults: { id: 'SELECT' }
   get    '/account/delete/:id',     to: 'account#delete',         as: 'delete_account'
   delete '/account/destroy/:id',    to: 'account#destroy',        as: 'destroy_account'
-
-  get    '/account/show/:id',       to: 'account#show',           as: 'show_account'
-  get    '/account',                to: 'account#index',          as: 'account_index'
 
   # ===========================================================================
   # Search call viewer
@@ -287,8 +297,9 @@ Rails.application.routes.draw do
 
   get '/data/submissions', to: 'data#submissions'
   get '/data/counts',      to: 'data#counts'
+  get '/data',             to: 'data#index', as: 'data_index'
 
-  resources :data, only: %i[index show]
+  resource :data, only: %i[show]
 
   # ===========================================================================
   # Utilities and tools pages
@@ -307,64 +318,254 @@ unless ONLY_FOR_DOCUMENTATION
   # :nocov:
   def account_index_path(...);                     end
   def account_index_url(...);                      end
+  def admin_entry_path(...);                       end
+  def admin_entry_url(...);                        end
+  def admin_upload_path(...);                      end
+  def admin_upload_url(...);                       end
+  def advanced_search_path(...);                   end
+  def advanced_search_url(...);                    end
+  def api_migrate_path(...);                       end
+  def api_migrate_url(...);                        end
   def artifact_index_path(...);                    end
   def artifact_index_url(...);                     end
+  def artifact_path(...);                          end
+  def artifact_url(...);                           end
   def bs_api_index_path(...);                      end
   def bs_api_index_url(...);                       end
+  def bs_download_path(...);                       end
+  def bs_download_url(...);                        end
+  def bs_retrieval_path(...);                      end
+  def bs_retrieval_url(...);                       end
   def bulk_create_entry_path(...);                 end
   def bulk_create_entry_url(...);                  end
+  def bulk_create_upload_path(...);                end
+  def bulk_create_upload_url(...);                 end
+  def bulk_delete_entry_path(...);                 end
+  def bulk_delete_entry_url(...);                  end
+  def bulk_delete_upload_path(...);                end
+  def bulk_delete_upload_url(...);                 end
   def bulk_destroy_entry_path(...);                end
   def bulk_destroy_entry_url(...);                 end
+  def bulk_destroy_upload_path(...);               end
+  def bulk_destroy_upload_url(...);                end
+  def bulk_edit_entry_path(...);                   end
+  def bulk_edit_entry_url(...);                    end
+  def bulk_edit_upload_path(...);                  end
+  def bulk_edit_upload_url(...);                   end
+  def bulk_entry_index_path(...);                  end
+  def bulk_entry_index_url(...);                   end
+  def bulk_new_entry_path(...);                    end
+  def bulk_new_entry_url(...);                     end
+  def bulk_new_upload_path(...);                   end
+  def bulk_new_upload_url(...);                    end
+  def bulk_reindex_entry_path(...);                end
+  def bulk_reindex_entry_url(...);                 end
+  def bulk_reindex_upload_path(...);               end
+  def bulk_reindex_upload_url(...);                end
   def bulk_update_entry_path(...);                 end
   def bulk_update_entry_url(...);                  end
+  def bulk_update_upload_path(...);                end
+  def bulk_update_upload_url(...);                 end
+  def bulk_upload_index_path(...);                 end
+  def bulk_upload_index_url(...);                  end
+  def cancel_entry_path(...);                      end
+  def cancel_entry_url(...);                       end
+  def cancel_upload_path(...);                     end
+  def cancel_upload_url(...);                      end
+  def cancel_user_registration_path(...);          end
+  def cancel_user_registration_url(...);           end
   def category_index_path(...);                    end
   def category_index_url(...);                     end
+  def check_entry_path(...);                       end
+  def check_entry_url(...);                        end
   def check_health_path(...);                      end
   def check_health_url(...);                       end
   def check_subsystem_health_path(...);            end
   def check_subsystem_health_url(...);             end
+  def check_upload_path(...);                      end
+  def check_upload_url(...);                       end
   def confirmation_path(...);                      end
   def confirmation_url(...);                       end
+  def create_account_path(...);                    end
+  def create_account_url(...);                     end
+  def create_artifact_path(...);                   end
+  def create_artifact_url(...);                    end
+  def create_entry_path(...);                      end
+  def create_entry_url(...);                       end
+  def create_upload_path(...);                     end
+  def create_upload_url(...);                      end
+  def create_user_path(...);                       end
+  def create_user_registration_path(...);          end
+  def create_user_registration_url(...);           end
+  def create_user_url(...);                        end
   def dashboard_path(...);                         end
   def dashboard_url(...);                          end
+  def data_counts_path(...);                       end
+  def data_counts_url(...);                        end
+  def data_index_path(...);                        end
+  def data_index_url(...);                         end
+  def data_path(...);                              end
+  def data_submissions_path(...);                  end
+  def data_submissions_url(...);                   end
+  def data_url(...);                               end
+  def delete_account_path(...);                    end
+  def delete_account_url(...);                     end
+  def delete_entry_path(...);                      end
+  def delete_entry_url(...);                       end
+  def delete_select_account_path(...);             end
+  def delete_select_account_url(...);              end
+  def delete_select_entry_path(...);               end
+  def delete_select_entry_url(...);                end
+  def delete_select_upload_path(...);              end
+  def delete_select_upload_url(...);               end
+  def delete_select_user_registration_path(...);   end
+  def delete_select_user_registration_url(...);    end
+  def delete_upload_path(...);                     end
+  def delete_upload_url(...);                      end
+  def delete_user_registration_path(...);          end
+  def delete_user_registration_url(...);           end
+  def destroy_account_path(...);                   end
+  def destroy_account_url(...);                    end
+  def destroy_entry_path(...);                     end
+  def destroy_entry_url(...);                      end
+  def destroy_upload_path(...);                    end
+  def destroy_upload_url(...);                     end
+  def destroy_user_registration_path(...);         end
+  def destroy_user_registration_url(...);          end
   def destroy_user_session_path(...);              end
   def destroy_user_session_url(...);               end
+  def edit_account_path(...);                      end
+  def edit_account_url(...);                       end
+  def edit_artifact_path(...);                     end
+  def edit_artifact_url(...);                      end
+  def edit_edition_path(...);                      end
+  def edit_edition_url(...);                       end
+  def edit_entry_path(...);                        end
+  def edit_entry_url(...);                         end
+  def edit_member_path(...);                       end
+  def edit_member_url(...);                        end
   def edit_password_path(...);                     end
   def edit_password_url(...);                      end
+  def edit_periodical_path(...);                   end
+  def edit_periodical_url(...);                    end
+  def edit_select_account_path(...);               end
+  def edit_select_account_url(...);                end
+  def edit_select_entry_path(...);                 end
+  def edit_select_entry_url(...);                  end
+  def edit_select_upload_path(...);                end
+  def edit_select_upload_url(...);                 end
+  def edit_select_user_path(...);                  end # /users/edit_select
+  def edit_select_user_registration_path(...);     end
+  def edit_select_user_registration_url(...);      end
+  def edit_select_user_url(...);                   end
+  def edit_title_path(...);                        end
+  def edit_title_url(...);                         end
+  def edit_upload_path(...);                       end
+  def edit_upload_url(...);                        end
+  def edit_user_path(...);                         end
   def edit_user_registration_path(...);            end # /users/edit
   def edit_user_registration_url(...);             end
+  def edit_user_url(...);                          end
+  def edition_download_path(...);                  end
+  def edition_download_url(...);                   end
   def edition_index_path(...);                     end
   def edition_index_url(...);                      end
+  def entries_path(...);                           end
+  def entries_url(...);                            end
   def entry_index_path(...);                       end
   def entry_index_url(...);                        end
+  def file_download_path(...);                     end
+  def file_download_url(...);                      end
+  def healthcheck_path(...);                       end
+  def healthcheck_url(...);                        end
+  def help_index_path(...);                        end
+  def help_index_url(...);                         end
+  def help_path(...);                              end
+  def help_url(...);                               end
+  def history_title_path(...);                     end
+  def history_title_url(...);                      end
   def home_path(...);                              end
   def home_url(...);                               end
+  def md_proxy_path(...);                          end
+  def md_proxy_url(...);                           end
+  def md_trial_path(...);                          end
+  def md_trial_url(...);                           end
   def member_index_path(...);                      end
   def member_index_url(...);                       end
+  def member_path(...);                            end
+  def member_url(...);                             end
   def metrics_test_path(...);                      end
   def metrics_test_url(...);                       end
+  def new_account_path(...);                       end
+  def new_account_url(...);                        end
+  def new_artifact_path(...);                      end
+  def new_artifact_url(...);                       end
+  def new_edition_path(...);                       end
+  def new_edition_url(...);                        end
+  def new_entry_path(...);                         end
+  def new_entry_url(...);                          end
+  def new_member_path(...);                        end
+  def new_member_url(...);                         end
+  def new_periodical_path(...);                    end
+  def new_periodical_url(...);                     end
+  def new_title_path(...);                         end
+  def new_title_url(...);                          end
+  def new_upload_path(...);                        end
+  def new_upload_url(...);                         end
+  def new_user_path(...);                          end
   def new_user_registration_path(...);             end # /users/new
   def new_user_registration_url(...);              end
   def new_user_session_path(...);                  end
   def new_user_session_url(...);                   end
+  def new_user_url(...);                           end
   def password_path(...);                          end
   def password_url(...);                           end
   def periodical_index_path(...);                  end
   def periodical_index_url(...);                   end
   def reading_list_index_path(...);                end
   def reading_list_index_url(...);                 end
+  def reedit_entry_path(...);                      end
+  def reedit_entry_url(...);                       end
+  def reedit_upload_path(...);                     end
+  def reedit_upload_url(...);                      end
   def registration_path(...);                      end
   def registration_url(...);                       end
+  def renew_entry_path(...);                       end
+  def renew_entry_url(...);                        end
+  def renew_upload_path(...);                      end
+  def renew_upload_url(...);                       end
+  def retrieval_path(...);                         end
+  def retrieval_url(...);                          end
   def root_path(...);                              end
   def root_url(...);                               end
   def run_state_health_path(...);                  end
   def run_state_health_url(...);                   end
+  def search_api_path(...);                        end
+  def search_api_url(...);                         end
+  def search_call_index_path(...);                 end
+  def search_call_index_url(...);                  end
+  def search_call_path(...);                       end
+  def search_call_url(...);                        end
+  def search_direct_path(...);                     end
+  def search_direct_url(...);                      end
   def search_index_path(...);                      end
   def search_index_url(...);                       end
+  def search_path(...);                            end
+  def search_url(...);                             end
+  def search_validate_path(...);                   end
+  def search_validate_url(...);                    end
   def session_path(...);                           end
   def session_url(...);                            end
-  def set_state_health_path(...);                  end
-  def set_state_health_url(...);                   end
+  def set_run_state_health_path(...);              end
+  def set_run_state_health_url(...);               end
+  def show_account_path(...);                      end
+  def show_account_url(...);                       end
+  def show_entry_path(...);                        end
+  def show_entry_url(...);                         end
+  def show_upload_path(...);                       end
+  def show_upload_url(...);                        end
+  def show_user_registration_path(...);            end
+  def show_user_registration_url(...);             end
   def sign_in_as_path(...);                        end # /users/sign_in_as
   def sign_in_as_url(...);                         end
   def sign_in_local_path(...);                     end # /users/sign_in_local
@@ -373,16 +574,34 @@ unless ONLY_FOR_DOCUMENTATION
   def system_unavailable_url(...);                 end
   def title_index_path(...);                       end
   def title_index_url(...);                        end
+  def title_path(...);                             end
+  def title_url(...);                              end
+  def tool_index_path(...);                        end
+  def tool_index_url(...);                         end
   def unlock_path(...);                            end
   def unlock_url(...);                             end
+  def update_account_path(...);                    end
+  def update_account_url(...);                     end
+  def update_artifact_path(...);                   end
+  def update_artifact_url(...);                    end
+  def update_entry_path(...);                      end
+  def update_entry_url(...);                       end
+  def update_upload_path(...);                     end
+  def update_upload_url(...);                      end
+  def update_user_path(...);                       end
+  def update_user_url(...);                        end
   def upload_index_path(...);                      end
   def upload_index_url(...);                       end
+  def uploads_path(...);                           end
+  def uploads_url(...);                            end
   def user_bookshare_omniauth_authorize_path(...); end
   def user_bookshare_omniauth_authorize_url(...);  end
-  def user_edit_select_path(...);                  end # /users/edit_select
-  def user_edit_select_url(...);                   end
+  def user_registration_path(...);                 end
+  def user_registration_url(...);                  end
   def version_health_path(...);                    end
   def version_health_url(...);                     end
+  def version_path(...);                           end
+  def version_url(...);                            end
   def welcome_path(...);                           end
   def welcome_url(...);                            end
   # :nocov:

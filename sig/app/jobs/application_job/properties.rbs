@@ -40,13 +40,13 @@ module ApplicationJob::Properties
   #
   # @type [Symbol, nil]
   #
-  def queue_key: () -> Symbol?
+  def queue_key: () -> (Symbol | nil)
 
   # The defined priority for the current job.
   #
   # @type [Integer, nil]
   #
-  def base_priority: () -> Integer?
+  def base_priority: () -> (Integer | nil)
 
   # The queue key for the current job.
   #
@@ -57,7 +57,7 @@ module ApplicationJob::Properties
   # -
   # noinspection RailsParamDefResolve
   # -
-  def queue_key_for: (String|Symbol|Integer|Class|ApplicationJob|nil val) -> Symbol?
+  def queue_key_for: (String|Symbol|Integer|Class|ApplicationJob|nil val) -> (Symbol | nil)
 
   # The defined priority for the current job.
   #
@@ -68,7 +68,7 @@ module ApplicationJob::Properties
   # -
   # noinspection RailsParamDefResolve
   # -
-  def priority_for: (String|Symbol|Integer|Class|ApplicationJob|nil val) -> Integer?
+  def priority_for: (String|Symbol|Integer|Class|ApplicationJob|nil val) -> (Integer | nil)
 
   module ClassMethods
     include ApplicationJob::Properties

@@ -1,0 +1,48 @@
+# Item presenter for "/edition" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Bs::Record::PeriodicalEdition]
+#
+class EditionDecorator < BookshareDecorator
+  module Paths
+  end
+
+  module Methods
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to super except for:
+  #
+  # @option opt [String] :editionId
+  # @option opt [String] :edition       Alias for :editionId
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a metadata listing of an edition.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+end

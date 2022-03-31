@@ -132,7 +132,7 @@ module LayoutHelper::Common
   # +
   # noinspection RubyUnusedLocalVariable
   # -
-  def search_form: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer?
+  def search_form: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
 
   # A form used to create/modify a search.
   #
@@ -155,39 +155,7 @@ module LayoutHelper::Common
   #
   # @note Used only if #CLIENT_MANAGES_HIDDEN_INPUTS is false.
   #
-  def search_form_with_hidden: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer?
-
-  # Create sets of hidden fields to accompany the *id* field.
-  #
-  # The field names are sorted so that the method returns zero or more
-  # '<input type="hidden">' elements which should be inserted before the *id*
-  # field and zero or more elements that should be inserted after.
-  #
-  # This ensures that the resulting search URL will be generated with
-  # parameters in a consistent order.
-  #
-  # @param [Symbol, String, nil] id
-  # @param [Hash, nil]           fields   Default: based on #url_parameters
-  #
-  # @return [Array<(Array,Array)>]
-  #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def hidden_parameters_for: ((Symbol|String)? id, ?anyHash? fields) -> [Array[ActiveSupport::SafeBuffer], Array[ActiveSupport::SafeBuffer]]
-
-  # Generate a hidden <input> which indicates a parameter for the new search
-  # URL that will result from the associated facet value being removed from the
-  # current search.
-  #
-  # @param [Symbol, String]      k
-  # @param [String, Array]       v
-  # @param [Symbol, String, nil] id
-  # @param [String]              separator
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def hidden_input: (String|Symbol k, String|anyArray v, ?id: (String|Symbol)?, ?separator: String) -> ActiveSupport::SafeBuffer
+  def search_form_with_hidden: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
 
   # The target path for searches from the search bar.
   #

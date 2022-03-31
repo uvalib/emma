@@ -28,17 +28,6 @@ interface _DateTime
   def strftime: (String fmt) -> String
 end
 
-# from Bs::Shared::LinkMethods
-interface _GetLink
-  def get_link: (untyped) -> String?
-end
-
-# from Bs::Message::* schema
-interface _Next
-  def next: () -> String?
-end
-
-
 # =============================================================================
 # Gems that don't currently have RBS definitions
 # =============================================================================
@@ -117,6 +106,17 @@ end
 
 module Down
   class ChunkedIO
+  end
+end
+
+module Draper
+  module LazyHelpers
+  end
+  module ViewHelpers
+  end
+  class Decorator
+  end
+  class CollectionDecorator
   end
 end
 

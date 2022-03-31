@@ -293,7 +293,7 @@ export function extractFlashMessage(xhr) {
  *
  * @returns {string}
  *
- * @see "HtmlHelper#xhr_encode"
+ * @see "EncodingHelper#xhr_encode"
  */
 export function xhrDecode(data) {
     if (isEmpty(data)) { return ''; }

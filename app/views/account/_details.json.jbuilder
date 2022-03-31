@@ -1,5 +1,8 @@
 # app/views/account/_details.json.jbuilder
 #
+# frozen_string_literal: true
+# warn_indent:           true
+#
 # Details of a local EMMA user account as JSON.
 
 user    ||= @item

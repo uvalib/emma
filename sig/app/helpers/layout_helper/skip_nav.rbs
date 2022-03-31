@@ -68,5 +68,5 @@ module LayoutHelper::SkipNav
   # @return [ActiveSupport::SafeBuffer]   HTML link element.
   # @return [nil]                         If *label* or *link* is missing.
   #
-  def render_skip_nav_link: (String|Symbol|Array[String|Symbol] label, String link, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def render_skip_nav_link: (String|Symbol|Array[String|Symbol] label, String link, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 end

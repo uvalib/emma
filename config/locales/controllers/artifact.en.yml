@@ -41,6 +41,8 @@ en:
           - fmt
           - dateAdded
 
+        _endpoint:      true
+
       # =======================================================================
 
       show:
@@ -51,12 +53,15 @@ en:
         display_fields: # @see 'en.emma.artifact.record'
           - !ruby/symbol all
 
+        _endpoint:      true
+
       # =======================================================================
 
       new:              &NEW_ACTION
         label:          'Upload'
         title:          'Add Artifact'
         tooltip:        'Upload a new Bookshare artifact.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -69,6 +74,7 @@ en:
         label:          'Replace'
         title:          'Modify Artifact'
         tooltip:        'Make changes to this Bookshare artifact entry.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -81,6 +87,7 @@ en:
         label:          'Delete'
         title:          'Delete Artifact'
         tooltip:        'Delete an artifact.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -92,15 +99,20 @@ en:
       history:
         title:          'Artifact History'
         tooltip:        'View modifications for this Bookshare artifact entry.'
+        _endpoint:      true
 
       # =======================================================================
 
       download:
         label:          'Download'
         title:          'Artifact Download'
+        _endpoint:      true
 
       # =======================================================================
 
       retrieval:
         label:          'Download'
         title:          'Artifact Download'
+        _endpoint:      true
+
+      # =======================================================================

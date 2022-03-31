@@ -2,17 +2,19 @@
 <%-
   # Fall-back error page for a failed Entry action.
 
+  view_debug(__FILE__)
+
   item   ||= @item || params[:id]
   item     = item.id if item.respond_to?(:id)
+
   action ||= params[:action]
   title  ||= t("emma.entry.#{action}.title", default: nil)
   title  ||= t("emma.entry.#{action}.label", default: :'emma.entry.label')
   error  ||= t("emma.entry.#{action}.failure", id: item, default: nil)
   error  ||= "ERROR record #{item}"
-  help   ||= nil
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -21,8 +23,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

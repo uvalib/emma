@@ -1,0 +1,17 @@
+# View helper support generation of decorators.
+#
+module DecoratorHelper
+  # Generate context values for inclusion in the parameters to a decorator
+  # constructor.
+  #
+  # @param [Symbol, String, nil] action
+  # @param [Hash]                opt
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def context: (?Symbol|String|nil action, **untyped opt) -> symHash
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

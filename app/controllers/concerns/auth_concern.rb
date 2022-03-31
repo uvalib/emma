@@ -12,9 +12,11 @@ module AuthConcern
   extend ActiveSupport::Concern
 
   include Emma::Json
+  include Emma::Debug
 
   include AuthHelper
-  include DevHelper
+
+  include ParamsConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

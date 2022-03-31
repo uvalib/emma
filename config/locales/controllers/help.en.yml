@@ -149,6 +149,9 @@ en:
         title:          'EMMA Help Topics'
         tooltip:        'Get help on using the EMMA system.'
         intro:          ~ # TODO: 'EMMA Help Introduction' ???
+        _endpoint:      true
+
+      # =======================================================================
 
       show:
         # Most of the values on the show page are driven by the topic values
@@ -156,3 +159,6 @@ en:
         label:          '%{Topic} Help'
         title:          'EMMA %{Topic} Help'
         intro:          'Information on how to %{topic} in EMMA.'
+        _endpoint:      true
+
+      # =======================================================================

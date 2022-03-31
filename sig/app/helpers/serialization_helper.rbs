@@ -3,8 +3,6 @@
 module SerializationHelper
   include ParamsHelper
 
-  include PaginationHelper
-
   # Indicate whether the ultimate target format is HTML.
   #
   # @param [Hash, nil] p              Default: `params`.
@@ -60,7 +58,7 @@ module SerializationHelper
   # @return [String]                  XML serialization of *item*.
   # @return [nil]                     If *item* is *nil* or an empty collection
   #
-  def make_xml: (untyped item, ?separator: String, ?name: String?, ?serializer: Api::Serializer?) -> String?
+  def make_xml: (untyped item, ?separator: String, ?name: String?, ?serializer: Api::Serializer?) -> (String | nil)
 
   # @private
   XML_PROLOG: String

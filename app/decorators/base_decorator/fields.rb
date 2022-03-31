@@ -1,18 +1,17 @@
-# app/helpers/model_helper/fields.rb
+# app/decorators/base_decorator/fields.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# View helper methods supporting manipulation of Model instance fields.
+# Methods supporting manipulation of Model instance fields.
 #
-module ModelHelper::Fields
-
-  include ModelHelper::Links
+module BaseDecorator::Fields
 
   include Emma::Json
-  include Emma::Unicode
+
+  include BaseDecorator::Links
 
   # ===========================================================================
   # :section:
@@ -34,77 +33,259 @@ module ModelHelper::Fields
 
   # Field/value pairs.
   #
-  # If *pairs* is not provided (as a parameter or through a block) then
-  # `item#field_names` is used.  If no block is provided and *pairs* is present
-  # then this function simply returns *pairs* as-is.
-  #
-  # @param [Model, Hash, Any] item
-  # @param [Hash, nil]        pairs
+  # @param [Model, Hash, nil] item    Default: `#object`.
   #
   # @return [Hash]
   #
-  # @yield [item] To supply additional field/value pairs based on *item*.
-  # @yieldparam  [Model] item         The supplied *item* parameter.
-  # @yieldreturn [Hash]               Result will be merged into *pairs*.
-  #
   #--
-  # noinspection RubyMismatchedReturnType
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
   #++
-  def field_values(item, pairs = nil)
-    if block_given?
-      # noinspection RubyMismatchedArgumentType
-      yield(item).reverse_merge(pairs || {})
-    elsif pairs.present?
-      pairs
-    elsif item.is_a?(ApplicationRecord)
-      # Convert :file_data and :emma_data into hashes and move to the end.
-      data, pairs = partition_hash(item.fields, :file_data, :emma_data)
-      data.each_pair { |k, v| pairs[k] = json_parse(v) }
-    elsif item.is_a?(Api::Record)
-      item.field_names.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
-    elsif item.is_a?(Hash)
-      item
-    else
-      {}
+  def field_values(item = nil)
+    item ||= object
+    case item
+      when ApplicationRecord
+        # Convert :file_data and :emma_data into hashes and move to the end.
+        data, pairs = partition_hash(item.fields, :file_data, :emma_data)
+        data.each_pair { |k, v| pairs[k] = json_parse(v) }
+      when Api::Record
+        item.field_names.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
+      when Hash
+        item
+      else
+        {}
     end
   end
 
   # field_pairs
   #
-  # @param [Model, Hash, nil]    item
-  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
-  # @param [String, Symbol, nil] action       Default: `params[:action]`.
-  # @param [Hash, nil]           pairs        Except for #render_pair options.
-  # @param [Proc]                block        Passed to #field_values.
+  # @param [Model, Hash, nil]           item        Passed to #field_values.
+  # @param [String, Symbol, nil]        action
+  # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  # == Usage Notes
+  # If *field_root* is given it is used to transform the field into a path
+  # into the configuration.  The only current use is to allow specification of
+  # :file_data so that configuration lookup is limited to the hierarchy within
+  # the configuration for :file_data.  (This allows [:file_data][:id] to be
+  # associated with the proper field configuration.)
+  #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
   #++
-  def field_pairs(item, model: nil, action: nil, pairs: nil, **, &block)
-    model  = Model.for(model || item) || params[:controller]&.to_sym
-    action = (action || params[:action])&.to_sym
-    field_values(item, pairs, &block).map { |k, v|
+  def field_pairs(item = nil, action: nil, field_root: nil, **)
+    field_values(item).map { |k, v|
       field, value, config = k, v, nil
       if v.is_a?(Symbol)
         field = v
       elsif k.is_a?(Symbol) && v.is_a?(Hash)
-        value, config = [k, v]
+        config = v
+        value  = config[:value]
       end
-      next unless value.present? || value.is_a?(FalseClass)
-      if field.is_a?(Symbol)
-        config ||= Field.configuration_for(field, model, action)
-      else
-        config ||= Field.configuration_for_label(field, model, action)
+
+      if field_root
+        field    = [field_root, field]
+        config   = field_configuration(field, action)
+      elsif field.is_a?(String)
+        config ||= field_configuration_for_label(field, action)
         field    = config[:field] if config&.dig(:field)&.is_a?(Symbol)
+      else
+        config ||= field_configuration(field, action)
       end
-      prop  = config&.dup || {}
+
+      prop = field_properties(field, config)
+      prop[:field]   = field.join('_').to_sym if field.is_a?(Array)
       prop[:field] ||= (field if field.is_a?(Symbol))
       prop[:label] ||= (k     if k.is_a?(String))
       prop[:value]   = value
+
       [field, prop]
     }.compact.to_h
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Field type indicators mapped on to related class(es).
+  #
+  # @type [Hash{Symbol=>Array<Class>}]
+  #
+  RENDER_FIELD_TYPE_TABLE = {
+    check:  [Boolean, TrueClass, FalseClass],
+    date:   [IsoDate, IsoDay, Date, DateTime],
+    number: [Integer, BigDecimal],
+    time:   [Time, ActiveSupport::TimeWithZone],
+    year:   [IsoYear],
+  }.transform_values! { |types|
+    types.flat_map { |type|
+      [type].tap do |related|
+        name = (type == BigDecimal) ? 'Decimal' : type
+        related << safe_const_get("Axiom::Types::#{name}")
+        related << safe_const_get("ActiveModel::Type::#{name}")
+      end
+    }.compact
+  }.deep_freeze
+
+  # Mapping of actual type to the appropriate field type indicator.
+  #
+  # @type [Hash{Class=>Symbol}]
+  #
+  RENDER_FIELD_TYPE =
+    RENDER_FIELD_TYPE_TABLE.flat_map { |field, types|
+      types.map { |type| [type, field] }
+    }.sort_by { |pair| pair.first.to_s }.to_h.freeze
+
+  # Convert certain field types.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REPLACE_FIELD_TYPE = {
+=begin
+    year: :text, # Currently treating :year as plain text.
+    date: :text, # Currently treating :date as plain text.
+    time: :text, # Currently treating :time as plain text.
+=end
+  }.freeze
+
+  # render_field_item
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt               Passed to render method except for:
+  #
+  # @option opt [String] :base
+  # @option opt [String] :name
+  # @option opt [Symbol] :type
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_field_item(name, value, **opt)
+    normalize_attributes!(opt)
+    local = extract_hash!(opt, :base, :name, :type)
+    field = opt[:'data-field']
+    name  = local[:name] || name || local[:base] || field
+    value = Array.wrap(value).compact_blank
+    type  = local[:type] || field_configuration(field)[:type]
+    type  = type.to_sym                          if type.is_a?(String)
+    type  = RENDER_FIELD_TYPE[value.first.class] unless type.is_a?(Symbol)
+    type  = REPLACE_FIELD_TYPE[type] || type || :text
+    value =
+      case type
+        when :check    then true?(value.first)
+        when :number   then value.first.to_s.remove(/[^\d]/)
+        when :year     then value.first.to_s.sub(/\s.*$/, '')
+        when :date     then value.first.to_s
+        when :time     then value.first.to_s.sub(/^([^ ]+).*$/, '\1')
+        when :textarea then value.join("\n").split(/[ \t]*\n[ \t]*/).join("\n")
+        else value.map { |v| v.to_s.strip.presence }.compact.join(' | ')
+      end
+    case type
+      when :check    then render_check_box(name, value, **opt)
+      when :number   then h.number_field_tag(name, value, opt.merge(min: 0))
+      when :year     then h.text_field_tag(name, value, opt)
+      when :date     then h.date_field_tag(name, value, opt)
+      when :time     then h.time_field_tag(name, value, opt)
+      when :textarea then h.text_area_tag(name, value, opt)
+      when :email    then h.email_field_tag(name, value, opt)
+      when :password then h.password_field_tag(name, value, opt)
+      else                h.text_field_tag(name, value, opt)
+    end
+  end
+
+  # Local options for #render_check_box.
+  #
+  # @type [Array<Symbol>]
+  #
+  CHECK_OPTIONS =
+    %i[id checked disabled readonly required data-required label].freeze
+
+  # render_check_box
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_check_box(name, value, **opt)
+    css      = '.checkbox.single'
+    html_opt = remainder_hash!(opt, *CHECK_OPTIONS)
+    normalize_attributes!(opt)
+
+    # Checkbox control.
+    checked  = opt.delete(:checked)
+    checkbox = h.check_box_tag(name, value, checked, opt)
+
+    # Label for checkbox.
+    lbl_opt  = { for: opt[:id] }.compact
+    label    = opt.delete(:label) || value
+    label    = h.label_tag(name, label, lbl_opt)
+
+    # Checkbox/label combination.
+    prepend_css!(html_opt, css)
+    html_div(html_opt) do
+      checkbox << label
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # This is a "hook" to allow customization by SearchDecorator.
+  #
+  # @param [Symbol]    field
+  # @param [Hash, nil] config
+  #
+  # @return [Hash]
+  #
+  def field_properties(field, config = nil)
+    field_configuration(field).merge(config || {})
+  end
+
+  # Indicate whether the value is a valid range type.
+  #
+  # @param [Any]     range
+  # @param [Boolean] exception        If *true*, raise an exception if *false*.
+  #
+  # @raise [RuntimeError]             If not valid and *exception* is *true*.
+  #
+  def valid_range?(range, exception: false)
+    valid = range.is_a?(Class) && (range < EnumType)
+    exception &&= !valid
+    raise "range: #{range.inspect}: not a subclass of EnumType" if exception
+    valid
+  end
+
+  # Translate attributes.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The potentially-modified *opt* hash.
+  #
+  # == Implementation Notes
+  # Disabled input fields are given the :readonly attribute because the
+  # :disabled attribute prevents those fields from being included in the data
+  # sent with the form submission.
+  #
+  def normalize_attributes!(opt)
+    field    = opt.delete(:field)    || opt[:'data-field']
+    required = opt.delete(:required) || opt[:'data-required']
+    readonly = opt.delete(:disabled) || opt[:readonly]
+
+    opt[:'data-field']    = field if field
+    opt[:'data-required'] = true  if required
+    opt[:readonly]        = true  if readonly
+
+    append_css!(opt, 'required')  if required
+    append_css!(opt, 'disabled')  if readonly
+    opt
   end
 
   # ===========================================================================
@@ -119,11 +300,8 @@ module ModelHelper::Fields
   #
   # @return [Hash{Symbol=>Array<Symbol,Integer>}]
   #
-  # @see SearchHelper#search_field_levels
-  #
   def field_levels(**opt)
-    model = opt.delete(:model) || params[:controller]
-    try("#{model}_#{__method__}") || {}
+    {} # May be overridden by the subclass.
   end
 
   # Return with the CSS classes associated with the items field scope(s).
@@ -224,9 +402,6 @@ module ModelHelper::Fields
   # layout of information, and this method may not be that beneficial in those
   # cases.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def format_description(text)
     # Look for signs of structure, otherwise just treat as unstructured.
     case text
@@ -252,6 +427,7 @@ module ModelHelper::Fields
             [gap, "#{q_section} #{$2}", "\n"].compact
           else
             q_section = nil
+            # noinspection RubyMismatchedReturnType
             line.match?(/^\d+ +/) ? line : "#{BLACK_CIRCLE}#{EN_SPACE}#{line}"
           end
 

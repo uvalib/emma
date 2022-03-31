@@ -2,13 +2,16 @@
 <%-
   # EMMA topic help page.
 
+  view_debug(__FILE__)
+
   item  ||= @topic
+
   entry   = help_topic(item)
   title ||= entry[:label] || t('emma.help.show.title', **entry)
   intro ||= entry[:intro] || t('emma.help.show.intro', default: '', **entry)
 
   unless modal?
-    set_page_title(t('emma.help.show.label', default: title, **entry))
+    set_page_meta_title(t('emma.help.show.label', default: title, **entry))
     set_page_description(title)
   end
 
@@ -18,7 +21,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<%= page_heading(title) %>
 
 <%= intro %>
 

@@ -98,6 +98,9 @@ end
 
 public
 
+# Setup decorators.
+Draper::ViewContext.test_strategy :fast
+
 # Augment the base class for test cases.
 #
 class ActiveSupport::TestCase

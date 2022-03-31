@@ -2,12 +2,15 @@
 <%-
   # EMMA help page.
 
+  view_debug(__FILE__)
+
   list  ||= help_topics
+
   title ||= t('emma.help.index.title')
   intro ||= t('emma.help.index.intro', default: '')
 
   unless modal?
-    set_page_title(t('emma.help.index.label', default: title))
+    set_page_meta_title(t('emma.help.index.label', default: title))
     set_page_description(title)
     help_links(list).each { |label, path| skip_nav_append(label => path) }
   end
@@ -17,7 +20,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<%= page_heading(title) %>
 
 <div class="help-intro">
   <%= intro %>

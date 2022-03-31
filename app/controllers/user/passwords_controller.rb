@@ -11,7 +11,6 @@ __loading_begin(__FILE__)
 #
 class User::PasswordsController < Devise::PasswordsController
 
-  include FlashConcern
   include SessionConcern
   include RunStateConcern
 

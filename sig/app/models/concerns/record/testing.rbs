@@ -40,7 +40,7 @@ module Record::Testing
   # @return [Integer]               Test cases applied.
   # @return [nil]                   If no injection was performed
   #
-  def inject_fault!: (Symbol? meth, symHash|Model|nil item) -> Integer?
+  def inject_fault!: (Symbol? meth, symHash|Model|nil item) -> (Integer | nil)
 
   # Injection point for "destructive testing" simulation of exception.
   # If an exception is not specified, the calling method must be included

@@ -2,51 +2,57 @@
 <%-
   # A list of submissions by the current user.
 
-  title ||= t('emma.entry.index.title')
-  list  ||= page_items
-  total ||= total_items
-  terms ||= search_terms
-  row   ||= 1
-  help  ||= help_popup(:entry)
+  view_debug(__FILE__)
+
+  list   ||= @page.page_items
+  dec      = EntriesDecorator.new(list, **context)
+  list   ||= dec.object
+
+  title  ||= dec.page_heading
+  help   ||= dec.help_topic
+  total  ||= @page.total_items
+  terms  ||= search_terms
+  row    ||= 1
 
   page_opt = Entry::SEARCH_RECORDS_OPTIONS.dup << :group
   page_terms, search = partition_hash(terms, *page_opt)
-  page   = page_terms[:page]&.values&.first&.to_i || 1
-  search = search.presence
+  page     = positive(page_terms[:page]&.values&.first) || 1
+  search   = search.presence
 
   unless modal?
-    label = t('emma.entry.index.label', default: title)
+    label = dec.page_meta_title(default: title)
+    terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
     group = page_terms[:group]&.values&.first
     group = Entry.state_group_label(group) if group # TODO: upload -> entry
-    terms = search
-    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
-    set_page_title(label)
-    append_page_title('-', group)                    if group
-    append_page_title('-', list_search_terms(terms)) if terms
+    set_page_meta_title(label)
+    append_page_meta_title('-', group)                    if group
+    append_page_meta_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
     set_page_robots(:nofollow)
   end
 
-  opt = { list: list, total: total, page: page, row: row }
-  top_controls, bottom_controls = index_controls(**opt)
-  opt[:row] += 1 if top_controls
+  opt = { total: total, page: page, row: row }
 
-  template_opt = opt.merge!(skip: :title)
+  top_controls, bottom_controls = dec.index_controls(**opt)
+  opt[:row] += 1        if top_controls
+  bottom_controls = nil if list.blank?
+
+  template_opt = opt.merge!(dec: dec, skip: :title)
 
 -%>
 
 <%= page_heading(title, help: help) %>
 
-<%= entry_page_filter_options if session_debug? %>
+<%= dec.list_filter_options if session_debug? %>
 <%= page_description_section %>
-<%= entry_state_group_select %>
+<%= dec.state_group_select %>
 
 <%= page_directions_section %>
-<div class="<%= EntryHelper::ENTRY_LIST_CLASS -%>">
+<div class="<%= dec.css_list_class -%>">
   <%= top_controls %>
   <%= render 'entry/list', template_opt %>
-  <%= bottom_controls if list.present? %>
+  <%= bottom_controls %>
 </div>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

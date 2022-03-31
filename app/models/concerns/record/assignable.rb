@@ -37,8 +37,9 @@ module Record::Assignable
   # * :except   Ignore these fields (default: []).
   # * :only     Not limited if *false* (default: `#field_name`).
   # * :blanks   If *true*, allow blanks (default: *false*).
+  # * :options  An Options instance.
   #
-  ATTRIBUTE_OPTIONS_OPTS = %i[from user force except only blanks]
+  ATTRIBUTE_OPTIONS_OPTS = %i[from user force except only blanks options]
 
   # Called to prepare values to be used for assignment to record attributes.
   #
@@ -77,9 +78,10 @@ module Record::Assignable
     end
     attr.merge!(opt) if opt.present?
 
-    opt, attr = partition_hash(attr, *ATTRIBUTE_OPTIONS_OPTS)
+    opt   = extract_hash!(attr, *ATTRIBUTE_OPTIONS_OPTS)
     from  = opt[:from] && attribute_options(opt[:from], except: ignored_keys)
     user  = (opt[:user] unless attr.key?(:user_id) || from&.dig(:user_id))
+    opts  = [opt.delete(:options), from&.delete(:options)].compact.first
     force = Array.wrap(opt[:force])
     excp  = Array.wrap(opt[:except])
     only  = !false?(opt[:only]) && Array.wrap(opt[:only] || allowed_keys)
@@ -88,6 +90,7 @@ module Record::Assignable
     attr.merge!(user_id: user)    if (user &&= User.id_value(user))
     attr.slice!(*(only + force))  if only.present?
     attr.except!(*(excp - force)) if excp.present?
+    attr.merge!(options: opts)    if opts
 
     # noinspection RubyMismatchedReturnType
     opt[:blanks] ? attr : reject_blanks(attr)
@@ -137,6 +140,30 @@ module Record::Assignable
     end
 
     # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Model/controller options passed in through the constructor.
+    #
+    # @return [Entry::Options]
+    #
+    attr_reader :model_options
+
+    # set_model_options
+    #
+    # @param [Options, Hash, nil] options
+    #
+    # @return [Options, nil]
+    #
+    def set_model_options(options)
+      options = options[:options]  if options.is_a?(Hash)
+      # noinspection RubyMismatchedReturnType
+      @model_options = (options.dup if options.is_a?(Options))
+    end
+
+    # =========================================================================
     # :section: ActiveRecord overrides
     # =========================================================================
 
@@ -154,6 +181,7 @@ module Record::Assignable
     #
     def assign_attributes(attr, opt = nil)
       attr = attribute_options(attr, opt)
+      set_model_options(attr&.delete(:options))
       super(attr)
     rescue => err # TODO: testing - remove?
       Log.warn { "#{record_name}.#{__method__}: #{err.class}: #{err.message}" }

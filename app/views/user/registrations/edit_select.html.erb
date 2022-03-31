@@ -2,23 +2,26 @@
 <%-
   # Select a user to edit.
 
+  view_debug(__FILE__)
+
+  dec     = UsersDecorator.new(**context(:edit))
+
   title ||= 'Select a local EMMA account' # TODO: I18n
-  help  ||= nil # help_popup(:account, :edit_select) # TODO: ???
+  help  ||= nil # %i[account edit_select]
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= account_items_menu(controller: 'user/registrations', action: :edit) %>
+<%= dec.items_menu %>
 
 <%= page_notes_section %>
 <%= render 'devise/shared/links' unless modal? %>

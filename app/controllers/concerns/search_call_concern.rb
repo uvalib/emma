@@ -11,6 +11,8 @@ module SearchCallConcern
 
   extend ActiveSupport::Concern
 
+  include ParamsHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================

@@ -10,7 +10,6 @@ __loading_begin(__FILE__)
 module SerializationHelper
 
   include ParamsHelper
-  include PaginationHelper
 
   # ===========================================================================
   # :section:

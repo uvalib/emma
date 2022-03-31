@@ -63,5 +63,5 @@ module Api::Shared::DateMethods
   # @return [String]
   # @return [nil]                     If *value* is not a valid date.
   #
-  def normalize_date: (String|Date|Time|IsoDate|nil value) -> String?
+  def normalize_date: (String|Date|Time|IsoDate|nil value) -> (String | nil)
 end

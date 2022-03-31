@@ -11,7 +11,6 @@ module LayoutHelper::Main
 
   include LayoutHelper::Common
 
-  include HelpHelper
   include LogoHelper
 
   # ===========================================================================
@@ -94,14 +93,17 @@ module LayoutHelper::Main
   # noinspection RubyMismatchedArgumentType
   #++
   def page_heading(title, *controls, help: nil, logo: nil, **)
-    help  &&= help_popup(*Array.wrap(help).first(2)) unless help.html_safe?
-    logo  &&= repository_source_logo(logo)           unless logo.html_safe?
+    unless help.blank? || help.html_safe?
+      help = Array.wrap(help).first(2).presence
+      help &&= help_popup(*help)
+    end
+    logo  &&= repository_source_logo(logo) unless logo.html_safe?
 
     added   = (yield if block_given?)
     added   = [*controls, *added].compact.presence
 
     title   = ERB::Util.h(title)
-    title   = html_span(title, class: 'text') << help if help
+    title   = html_span(title, class: 'text') << help if help.present?
 
     heading = html_tag(:h1, title, class: 'heading')
     heading = html_div(class: 'heading container') { heading << logo } if logo

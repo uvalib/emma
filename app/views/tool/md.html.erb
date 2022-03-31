@@ -2,13 +2,16 @@
 <%-
   # Math Detective API test harness.
 
+  view_debug(__FILE__)
+
   title ||= t('emma.tool.md.title')
-  help  ||= nil # TODO: help_popup(:tool, :md)
+  help  ||= nil # %i[tool md]
 
   unless modal?
-    set_page_title(t('emma.tool.md.label', default: title))
+    set_page_meta_title(t('emma.tool.md.label', default: title))
     set_page_description(title)
   end
+
 -%>
 
 <%= page_heading(title, help: help) %>

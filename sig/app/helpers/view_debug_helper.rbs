@@ -1,0 +1,29 @@
+# View helper support methods for debugging display generation.
+#
+module ViewDebugHelper
+  # Indicate whether debugging of view files is active.
+  #
+  def view_debug?: () -> bool
+
+  # Output to STDERR.
+  #
+  # @param [String] template
+  # @param [Array]  arg
+  # @param [String] separator
+  #
+  # @return [void]
+  #
+  def view_debug: (String template, *untyped arg, ?separator: String) -> void
+
+  # view_abort
+  #
+  # @param [String] template
+  # @param [Array]  arg
+  # @param [String] separator
+  #
+  def view_abort: (String template, *untyped arg, ?separator: String) -> void
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

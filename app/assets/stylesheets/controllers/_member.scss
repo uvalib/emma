@@ -1,16 +1,16 @@
 // app/assets/stylesheets/controllers/_member.scss
 
-@use 'shared/variables'        as *;
+@use 'shared/variables'       as *;
+@use 'shared/controls/panels' as panel;
 
-@use 'layouts/controls/panels' as panel-classes;
-@use 'feature/model'           as model-classes;
+@use 'feature/model'          as model-classes;
 
 //=============================================================================
 // Member index page
 //=============================================================================
 
 // Member metadata label/value pairs for index listings.
-// @see ModelHelper::List#model_list_item
+// @see MemberDecorator#list_item
 .member-list-item {
 
     @extend .model-list-item;
@@ -36,7 +36,7 @@
 //=============================================================================
 
 // Member metadata values.
-// @see ModelHelper::List#model_details
+// @see MemberDecorator#details
 .member-details {
     @extend .model-details;
 }
@@ -48,7 +48,7 @@
 }
 
 // Member download history.
-// @see MemberHelper#member_history
+// @see MemberDecorator#history_list
 // @see file:app/views/member/_history.html.erb
 .member-history {
 
@@ -56,15 +56,23 @@
     margin:  $page-padding 0;
 
     .history-list {
-        @extend .toggle-panel;
+        @include panel.toggle-panel;
     }
 
     .history-item {
 
-        @extend .model-details;
+        @extend .label-value-pairs;
 
         padding-top: 1rem;
         border-top:  1px solid gray;
+
+        @media #{$wide-screen} {
+            grid-template-columns: [label] 0.1fr [value] 1fr;
+        }
+
+        @media #{$medium-width} {
+            grid-template-columns: [label] 0.2fr [value] 1fr;
+        }
 
         &:last-of-type {
             padding-bottom: 1rem;

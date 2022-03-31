@@ -1,0 +1,94 @@
+# Item presenter for "/search_call" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [SearchCall]
+#
+class SearchCallDecorator < BaseDecorator
+  module Paths
+  end
+
+  module Methods
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render details of a search call.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super except:
+  #
+  # @option opt [String, Symbol, Array<String,Symbol>] :columns
+  # @option opt [String, Regexp, Array<String,Regexp>] :filter
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #model_field_values
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Specified field selections from the given SearchCall instance.
+  #
+  # @param [SearchCall, Hash, nil] item   Default: `#object`
+  # @param [Hash]                  opt    Passed to super
+  #
+  # @return [Hash{String=>ActiveSupport::SafeBuffer}]
+  #
+  def model_field_values: (?SearchCall|symHash|nil item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
+
+  # Element containing a field name.
+  #
+  # @param [String, Symbol] field
+  # @param [Hash]           opt       Passed to #html_span except for:
+  #
+  # @option opt [Hash] :name          Passed to name #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_call_field: (String|Symbol field, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Element containing one or more field values.
+  #
+  # @param [String, Numeric, Array] value
+  # @param [Hash]                   opt     Passed to #html_span except for:
+  #
+  # @option opt [Hash]   :item              Passed to item #html_span.
+  # @option opt [String] :separator         Default: `#search_call_connector`.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_call_value: (String|Numeric|anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Element separating multiple values.
+  #
+  # @param [Hash] opt                 Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Implementation Notes
+  # The element is surrounded by spaces so that a compound value element can be
+  # copied and pasted legibly.
+  #
+  def search_call_connector: (**untyped opt) -> ActiveSupport::SafeBuffer
+end

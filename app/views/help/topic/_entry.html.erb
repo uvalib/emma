@@ -2,18 +2,20 @@
 <%-
   # EMMA entry form help page.
 
+  view_debug(__FILE__)
+
   signed_in         = help_jump('signed in', :sign_in)
-  delta             = EntryHelper::ENTRY_CONTROL_ICONS.dig(:edit, :icon)
+  delta             = EntryDecorator::CONTROL_ICONS.dig(:edit, :icon)
   delta             = html_span(delta, 'aria-label': 'triangle')
-  x                 = EntryHelper::ENTRY_CONTROL_ICONS.dig(:delete, :icon)
+  x                 = EntryDecorator::CONTROL_ICONS.dig(:delete, :icon)
   x                 = html_span(x, 'aria-label': 'X')
-  edit_tip          = EntryHelper::ENTRY_CONTROL_ICONS.dig(:edit, :tip)
-  delete_tip        = EntryHelper::ENTRY_CONTROL_ICONS.dig(:delete, :tip)
+  edit_tip          = EntryDecorator::CONTROL_ICONS.dig(:edit, :tip)
+  delete_tip        = EntryDecorator::CONTROL_ICONS.dig(:delete, :tip)
   upload_actions    = help_image(:upload_actions)
-  panel_opener      = LayoutHelper::Common::PANEL_OPENER_LABEL
+  panel_opener      = PanelHelper::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')
 
-  create_config     = EntryHelper::ENTRY_ACTION_VALUES[:new]
+  create_config     = EntryDecorator.form_actions[:new]
   create_select     = create_config.dig(:select, :enabled, :label)
   create_select     = help_span(create_select, class: 'control-button')
   create_submit     = create_config.dig(:submit, :enabled, :label)
@@ -21,7 +23,7 @@
   create_cancel     = create_config.dig(:cancel, :enabled, :label)
   create_cancel     = help_span(create_cancel, class: 'control-button')
 
-  edit_config       = EntryHelper::ENTRY_ACTION_VALUES[:edit]
+  edit_config       = EntryDecorator.form_actions[:edit]
   edit_select       = edit_config.dig(:select, :enabled, :label)
   edit_select       = help_span(edit_select, class: 'control-button')
   edit_submit       = edit_config.dig(:submit, :enabled, :label)
@@ -29,7 +31,7 @@
   edit_cancel       = edit_config.dig(:cancel, :enabled, :label)
   edit_cancel       = help_span(edit_cancel, class: 'control-button')
 
-  delete_config     = EntryHelper::ENTRY_ACTION_VALUES[:delete]
+  delete_config     = EntryDecorator.form_actions[:delete]
   delete_submit     = delete_config.dig(:submit, :enabled, :label)
   delete_submit     = help_span(delete_submit, class: 'control-button')
   delete_cancel     = delete_config.dig(:cancel, :enabled, :label)

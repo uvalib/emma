@@ -117,7 +117,7 @@ module ApiService::Common
   # -
   # noinspection RubyScope
   # +
-  def api: (Symbol|String verb, *(String|ScalarType) args, **untyped opt) -> Faraday::Response?
+  def api: (Symbol|String verb, *(String|ScalarType) args, **untyped opt) -> (Faraday::Response | nil)
 
   # Construct a message to be returned from the method that executed :api.
   # This provides a uniform call for initializing the object with information
@@ -244,7 +244,7 @@ module ApiService::Common
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
   #
-  def transmit: (Symbol verb, String action, symHash|String|nil params, anyHash|nil headers, **untyped opt) -> Faraday::Response?
+  def transmit: (Symbol verb, String action, symHash|String|nil params, anyHash|nil headers, **untyped opt) -> (Faraday::Response | nil)
 
   # Extract API parameters from *opt*.
   #

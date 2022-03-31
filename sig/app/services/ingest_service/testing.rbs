@@ -42,7 +42,7 @@ module IngestService::Testing
   # @return [Integer]               Test cases applied.
   # @return [nil]                   If no injection was performed
   #
-  def inject_fault!: (Symbol|nil meth, untyped opt) -> Integer?
+  def inject_fault!: (Symbol|nil meth, untyped opt) -> (Integer | nil)
 
   # Injection point for "destructive testing" simulation of exception.
   # If an exception is not specified, the calling method must be included
@@ -54,5 +54,5 @@ module IngestService::Testing
   #
   # @return [ApiService::Error, nil]
   #
-  def inject_exception: (Symbol|nil meth, ?(Class|ApiService::Error|Symbol|String)? ex, *untyped args) -> ApiService::Error?
+  def inject_exception: (Symbol|nil meth, ?(Class|ApiService::Error|Symbol|String)? ex, *untyped args) -> (ApiService::Error | nil)
 end

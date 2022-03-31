@@ -2,10 +2,9 @@
 
 // @use '../../../node_modules/uppy/dist/uppy.css';
 
-@use 'shared/variables'         as *;
-@use 'shared/functions'         as *;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as *;
+@use 'shared/functions'        as *;
+@use 'shared/controls/buttons' as button;
 
 //=============================================================================
 // Overrides of Uppy styles (node_modules/uppy/dist/uppy.css)
@@ -20,7 +19,7 @@
 
 // Upload action button.
 .uppy-FileInput-btn {
-    @extend .control-button;
+    @include button.control;
 }
 
 // The container for the file select button which is displayed instead of the
@@ -83,7 +82,7 @@
 // The container for the upload progress bar (a minimalistic alternative to
 // .uppy-StatusBar.
 //
-// @see file:app/assets/javascripts/feature/entry-form.js *hideUppyProgressBar*
+// @see file:javascripts/shared/uploader.js *hideUppyProgressBar()*
 //
 .uppy-ProgressBar {
 
@@ -101,7 +100,7 @@
     // The percentage counter, which has been moved to the center of the space
     // occupied by the progress bar.
     //
-    // @see file:app/assets/javascripts/feature/entry-form.js *initializeUppyProgressBar()*
+    // @see file:javascripts/shared/uploader.js *initializeUppyProgressBar()*
     //
     .uppy-ProgressBar-percentage {
 
@@ -122,7 +121,7 @@
     }
 
     // After the file has been received, Uppy will make the progress bar
-    // aria-hidden, but entry-form.js will not mark the element with
+    // aria-hidden, but model-form.js will not mark the element with
     // ".invisible" until the server response is received.  Rather than leaving
     // the progress at "100%", indicate that the server is processing the file.
     &[aria-hidden="true"]:not(.invisible) {

@@ -30,12 +30,12 @@ module ApiService::Identity
   # @return [String]
   # @return [nil]                     If there is no '@user'.
   #
-  def access_token: () -> String?
+  def access_token: () -> (String | nil)
 
   # The current OAuth2 refresher token.
   #
   # @return [String]
   # @return [nil]                     If there is no '@user'.
   #
-  def refresh_token: () -> String?
+  def refresh_token: () -> (String | nil)
 end

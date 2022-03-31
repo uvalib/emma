@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle Bookshare-only "/reading_list" pages.
 #
-# @see ReadingListHelper
+# @see ReadingListDecorator
+# @see ReadingListsDecorator
 # @see file:app/views/reading_list/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -59,13 +60,15 @@ class ReadingListController < ApplicationController
   # List all reading lists available to the user (private lists, shared lists,
   # or organization list to which the user is subscribed).
   #
+  # @see #reading_list_index_path     Route helper
   # @see BookshareService::Request::ReadingLists#get_reading_lists_list
   #
   def index
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @list = bs_api.get_reading_lists_list(**opt)
-    pagination_finalize(@list, :lists, **opt)
+    @page.finalize(@list, :lists, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
@@ -78,15 +81,17 @@ class ReadingListController < ApplicationController
   #
   # Display details of a reading list.
   #
+  # @see #reading_list_path           Route helper
   # @see BookshareService::Request::ReadingLists#get_reading_list
   # @see BookshareService::Request::ReadingLists#get_reading_list_titles
   #
   def show
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @item = bs_api.get_reading_list(readingListId: @id)
     @list = bs_api.get_reading_list_titles(readingListId: @id, no_raise: true)
-    pagination_finalize(@list, :titles, **opt)
+    @page.finalize(@list, :titles, **opt)
     flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
@@ -99,6 +104,8 @@ class ReadingListController < ApplicationController
   #
   # Add details for a new reading list.
   #
+  # @see #new_reading_list_path       Route helper
+  #
   def new
     __debug_route
     # TODO: get fields :name, :description, :access
@@ -107,6 +114,8 @@ class ReadingListController < ApplicationController
   # == POST /reading_list/:id
   #
   # Create a new reading list.
+  #
+  # @see #reading_list_path           Route helper
   #
   def create
     __debug_route
@@ -118,6 +127,8 @@ class ReadingListController < ApplicationController
   #
   # Modify metadata of an existing reading list.
   #
+  # @see #edit_reading_list_path      Route helper
+  #
   def edit
     __debug_route
     # TODO: modify fields :name, :description, :access, :titles
@@ -127,6 +138,8 @@ class ReadingListController < ApplicationController
   # == PATCH /reading_list/:id
   #
   # Update the entry for an existing reading list.
+  #
+  # @see #reading_list_path           Route helper
   #
   def update
     __debug_route
@@ -143,6 +156,8 @@ class ReadingListController < ApplicationController
   # == DELETE /reading_list/:id
   #
   # Remove an existing reading list.
+  #
+  # @see #reading_list_path           Route helper
   #
   def destroy
     __debug_route

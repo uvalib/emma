@@ -10,9 +10,7 @@
 //=============================================================================
 
 // @see HelpHelper#help_popup
-.help-popup {
-
-    @extend .popup-container;
+.popup-container.help-popup {
 
     .control.icon {
         padding:     0.375rem 0.5rem;

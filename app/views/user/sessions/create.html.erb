@@ -1,5 +1,6 @@
 <%# app/views/user/sessions/create.html.erb -%>
 <%-
   # Fall-back page for a failed sign-in.
+  view_debug(__FILE__)
 -%>
 <%= render 'user/fallback', action: :create %>

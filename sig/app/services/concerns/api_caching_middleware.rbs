@@ -29,5 +29,5 @@ class ApiCachingMiddleware < Faraday::Middleware
   # @return [String]
   # @return [nil]                     If there is no request active.
   #
-  def key: (Faraday::Env env) -> String?
+  def key: (Faraday::Env env) -> (String | nil)
 end

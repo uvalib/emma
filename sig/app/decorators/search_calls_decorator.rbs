@@ -1,0 +1,21 @@
+# Collection presenter for "/search_call" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Array<SearchCall>]
+#
+class SearchCallsDecorator < BaseCollectionDecorator
+  # Render search calls as a table.
+  #
+  # @param [Boolean] extended         If *true*, indicate that this is the
+  #                                     "extended" version of the table which
+  #                                     replaces columns holding JSON data with
+  #                                     columns holding each JSON sub-field.
+  # @param [Hash]    opt              Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @note This hasn't been updated since the conversion to Postgres.
+  #
+  def table: (?extended: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+end

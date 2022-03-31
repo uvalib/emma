@@ -2,11 +2,15 @@
 <%-
   # Local EMMA user account details.
 
-  user    ||= @item
+  view_debug(__FILE__)
+
+  user    ||= nil
+  dec     ||= user && AccountDecorator.new(user, **context) or return
+
   add     ||= nil
   columns ||= nil
   filter  ||= nil
 
 -%>
 
-<%= account_details(user, pairs: add, columns: columns, filter: filter) %>
+<%= dec.details(pairs: add, columns: columns, filter: filter) %>

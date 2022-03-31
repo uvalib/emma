@@ -114,7 +114,7 @@ module LayoutHelper::SearchFilters
     # @return [String]                Value for :sortOrder parameter.
     # @return [nil]                   If *value* is blank.
     #
-    def ascending_sort: (String value, ?String? suffix) -> String?
+    def ascending_sort: (String value, ?String? suffix) -> (String | nil)
 
     # Change :sort value to indicate a reversed (descending) sort.
     #
@@ -124,7 +124,7 @@ module LayoutHelper::SearchFilters
     # @return [String]                Value for :sortOrder parameter.
     # @return [nil]                   If *value* is blank.
     #
-    def descending_sort: (String value, ?String? suffix) -> String?
+    def descending_sort: (String value, ?String? suffix) -> (String | nil)
 
     private
 
@@ -278,7 +278,7 @@ module LayoutHelper::SearchFilters
   # @see #after_menu
   # @see #reset_menu
   #
-  def search_filter_container: (?target: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def search_filter_container: (?target: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A control for toggling the visibility of advanced search filter controls.
   #
@@ -308,7 +308,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def immediate_search_marker: () -> ActiveSupport::SafeBuffer?
+  def immediate_search_marker: () -> (ActiveSupport::SafeBuffer | nil)
 
   # Get the display mode for search results.
   #
@@ -367,7 +367,7 @@ module LayoutHelper::SearchFilters
   #
   # @type [Array<Symbol>]
   #
-  # @see HtmlHelper#GRID_OPTS
+  # @see GridHelper#GRID_OPTS
   #
   MENU_OPTS: symArray
 
@@ -394,7 +394,7 @@ module LayoutHelper::SearchFilters
   # This method produces a URL parameter (:sort) which is translated into the
   # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
   #
-  def sort_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def sort_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Perform a search specifying a results page size.  (Default: `#page_size`.)
   #
@@ -404,9 +404,9 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  # @see PaginationHelper#page_size
+  # @see Paginator#page_size
   #
-  def size_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def size_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Filter on repository.
   #
@@ -416,7 +416,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  def repository_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def repository_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Specify initial number of entries per object key.
   #
@@ -426,7 +426,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  def prefix_limit_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def prefix_limit_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Filter on deployment.
   #
@@ -436,7 +436,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  def deployment_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def deployment_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Any menu without a specific method.
   #
@@ -449,7 +449,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection DuplicatedCode
   # +
-  def generic_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def generic_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   private
 
@@ -466,7 +466,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection DuplicatedCode
   # +
-  def menu_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def menu_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A dropdown menu element.
   #
@@ -494,12 +494,12 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]     HTML menu element.
   # @return [nil]                           If menu unavailable for *target*.
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   # -
   # noinspection RubyNilAnalysis
   # +
-  def menu_control: (Symbol menu_name, ?target: (String|Symbol)?, ?selected: (String|anyArray)?, ?label_id: (String|Symbol)?, ?disabled: bool?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def menu_control: (Symbol menu_name, ?target: (String|Symbol)?, ?selected: (String|anyArray)?, ?label_id: (String|Symbol)?, ?disabled: bool?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A label associated with a dropdown menu element.
   #
@@ -524,7 +524,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection DuplicatedCode
   # +
-  def menu_tooltip: (String|Symbol menu_name, **untyped opt) -> String?
+  def menu_tooltip: (String|Symbol menu_name, **untyped opt) -> (String | nil)
 
   # Date selection for the end of a date range.
   #
@@ -537,7 +537,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection DuplicatedCode
   # +
-  def before_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def before_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Date selection for the beginning of a date range.
   #
@@ -550,7 +550,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection DuplicatedCode
   # +
-  def after_menu: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def after_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A date control preceded by a label (if provided).
   #
@@ -567,7 +567,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection DuplicatedCode
   # +
-  def date_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def date_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A date selection element.
   #
@@ -590,9 +590,9 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]     HTML menu element.
   # @return [nil]                           If menu is not available.
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
-  def date_control: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, ?selected: (String|Date)?, ?label_id: (String|Symbol)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def date_control: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, ?selected: (String|Date)?, ?label_id: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A label associated with a dropdown menu element.
   #
@@ -617,7 +617,7 @@ module LayoutHelper::SearchFilters
   # -
   # noinspection DuplicatedCode
   # +
-  def date_tooltip: (Symbol menu_name, **untyped opt) -> String?
+  def date_tooltip: (Symbol menu_name, **untyped opt) -> (String | nil)
 
   # The control for resetting filter menu selections to their default state.
   #
@@ -639,7 +639,7 @@ module LayoutHelper::SearchFilters
   #
   # @see #SEARCH_RESET_CONTROL
   # @see #reset_parameters
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   def reset_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -659,7 +659,7 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   def menu_spacer: (**untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -675,7 +675,7 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   def control_label: (String|Symbol name, ?target: (String|Symbol)?, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -723,5 +723,5 @@ module LayoutHelper::SearchFilters
   # @return [String]                  Tooltip text.
   # @return [nil]                     If no tooltip was defined.
   #
-  def config_tooltip: (Symbol|String name, **untyped opt) -> String?
+  def config_tooltip: (Symbol|String name, **untyped opt) -> (String | nil)
 end

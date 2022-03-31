@@ -4,12 +4,14 @@
   #
   # NOTE: This template replaces 'devise/sessions/new'.
 
+  view_debug(__FILE__)
+
   title ||= t('emma.user.sessions.new.title', default: nil)
   title ||= t('emma.user.sessions.new.label', default: 'Sign in')
-  help  ||= help_popup(:sign_in)
+  help  ||= :sign_in
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end

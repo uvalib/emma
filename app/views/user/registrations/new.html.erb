@@ -4,35 +4,32 @@
   #
   # NOTE: This template replaces 'devise/registrations/new'.
 
+  view_debug(__FILE__)
+
   # TODO: Send an invite with a link including an encrypted token and only show this page if a valid token is presented.
 
   user  ||= resource
-  title ||= t('emma.user.registrations.new.title', default: nil)
-  title ||= t('emma.user.registrations.new.label', default: 'Sign up')
-  help  ||= nil # help_popup(:account, :new) # TODO: ???
+  dec     = UserDecorator.new(user, **context(:new))
+
+  title ||= dec.page_heading(default: nil)
+  title ||= dec.page_meta_title(default: 'Sign up')
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
-  form_opt = {
-    as:   resource_name,
-    url:  registration_path(resource_name),
-    html: { class: 'sign-in-form field-pairs' }
-  }
-
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_heading(title, help: help) %>
 
 <%= page_description_section %>
 <%= render 'devise/shared/error_messages', resource: user %>
 
 <%= page_directions_section %>
-<div class="account-form-container new">
-  <%= render 'account/form_new', user: user, form_opt: form_opt %>
-</div>
+<%= dec.model_form %>
 
 <%= page_notes_section %>

@@ -84,19 +84,25 @@ module Emma::Common::HtmlMethods
 
   # Combine an array containing a mix of items into an HTML-safe result.
   #
-  # @param [Array<ActiveSupport::SafeBuffer, String, Any>] array
-  # @param [String, nil]                                   sep
+  # @param [Array, any]  items
+  # @param [String, nil] separator
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [array] To supply additional content elements.
+  # @yieldparam  [Array<String>] array
+  # @yieldreturn [Array<String>, String, nil]
   #
   # == Usage Notes
   # This is basically ActionView::Helpers::OutputSafetyHelper#safe_join but
   # without the dependence on Rails.
   #
-  def html_join(array, sep = nil)
-    sep &&= ERB::Util.unwrapped_html_escape(sep)
-    array = array.flatten.map! { |v| ERB::Util.unwrapped_html_escape(v) }
-    array.join(sep || '').html_safe
+  def html_join(items, separator = nil)
+    sep   = separator ? ERB::Util.unwrapped_html_escape(separator) : ''
+    array = items.is_a?(Array) ? items.flatten : [items]
+    added = (yield(array) if block_given?)
+    array += Array.wrap(added) unless added.nil? || added.equal?(array)
+    array.map! { |v| ERB::Util.unwrapped_html_escape(v) }.join(sep).html_safe
   end
 
 end

@@ -41,7 +41,9 @@ module UserConcern
     # :nocov:
   end
 
-  include FlashConcern
+  include FlashHelper
+
+  include AuthConcern
   include BookshareConcern
 
   # ===========================================================================

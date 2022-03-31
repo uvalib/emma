@@ -16,6 +16,7 @@ class SearchCall < ApplicationRecord
   include Record
   include Record::Assignable
   include Record::Authorizable
+  include Record::Searchable
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -422,23 +423,6 @@ class SearchCall < ApplicationRecord
     total ||= count
     count = nil if count == total
     { total: total, count: count }.compact
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Local options consumed by #search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RECORDS_OPTIONS = Upload::SEARCH_RECORDS_OPTIONS
-
-  def search_records(*identifiers, **opt)
-    local_opt, opt = partition_hash(opt, *SEARCH_RECORDS_OPTIONS)
-    # TODO: search_records???
   end
 
   # ===========================================================================

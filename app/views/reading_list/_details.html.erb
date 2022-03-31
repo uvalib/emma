@@ -2,20 +2,16 @@
 <%-
   # A Reading List metadata listing with associated titles.
 
-  item  ||= nil or return
+  view_debug(__FILE__)
+
+  item  ||= nil
   list  ||= nil
-  count ||= nil
+  dec   ||= item && ReadingListDecorator.new(item, titles: list, **context) or return
+
   add   ||= nil
   level ||= 1
   skip  ||= nil
 
-  skip = Array.wrap(skip)
-  role = ('role="article"'.html_safe if level == 1)
-  opt  = { list: list, count: count, level: (level + 1), skip: skip }
-
 -%>
 
-<div <%= role -%> class="reading_list-container">
-  <%= reading_list_details(item, pairs: add) %>
-  <%= render('reading_list/titles', opt) unless skip.include?(:titles) %>
-</div>
+<%= dec.details_element(pairs: add, level: level, skip: skip) %>

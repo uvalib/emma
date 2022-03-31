@@ -1,0 +1,34 @@
+# Item presenter for hierarchical result "/search" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Search::Record::TitleRecord]
+#
+class SearchTitleDecorator < SearchDecorator
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Include control icons below the entry number.
+  #
+  # @param [Boolean] edit
+  # @param [Hash]   opt               Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a summary of the number of files per each format associated with
+  # this item.
+  #
+  # @param [Hash] opt                 Passed to outer :ul.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def format_counts: (**untyped opt) -> ActiveSupport::SafeBuffer
+end

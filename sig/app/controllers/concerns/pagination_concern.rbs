@@ -9,46 +9,16 @@ module PaginationConcern
 
   include SearchTermsHelper
 
-  include PaginationHelper
-
-  # Pagination setup.
+  # Create a Paginator for the current controller action.
   #
-  # @param [ActionController::Parameters, Hash, nil] opt  Default: `params`.
+  # @param [ApplicationController] ctrlr      Default: calling controller.
+  # @param [Class<Paginator>]      paginator  Paginator class.
+  # @param [Hash]                  opt        Additions/overrides to `#params`.
   #
-  # @option opt [Symbol] :controller
+  # @return [Paginator]
   #
-  # @return [Hash{Symbol=>String}]    URL parameters.
-  #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def pagination_setup: (?prmHash? opt) -> Hash[Symbol,String]
-
-  # Finish setting of pagination values based on the result list and original
-  # URL parameters.
-  #
-  # @param [Api::Record, Array] list
-  # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
-  # @param [Hash]               search  Passed to #next_page_path.
-  #
-  # @return [void]
-  #
-  # @see UploadConcern#pagination_finalize
-  #
-  def pagination_finalize: (Api::Record|anyArray list, ?Symbol? meth, **untyped search) -> void
-
-  # Analyze the *list* object to generate the path for the next page of
-  # results.
-  #
-  # @param [Array, #next, #get_link] list
-  # @param [Hash]                    url_params For `list.next`.
-  #
-  # @return [String]                  Path to generate next page of results.
-  # @return [nil]                     If there is no next page.
-  #
-  # @see SearchConcern#next_page_path
-  #
-  def next_page_path: (?list: (Api::Record|_Next|_GetLink|anyArray)?, **untyped url_params) -> String?
+  def pagination_setup: (?ApplicationController? ctrlr, paginator: singleton(Paginator)|untyped, **untyped opt) -> Paginator
+                      | (?ApplicationController? ctrlr,                                          **untyped opt) -> Paginator
 
   # Clean up pagination-related parameters.
   #
@@ -59,9 +29,4 @@ module PaginationConcern
   private
 
   #THIS_MODULE: untyped
-
-  # :nocov:
-  include AbstractController::Callbacks::ClassMethods
-
-  include PaginationConcern
 end

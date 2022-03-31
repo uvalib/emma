@@ -41,7 +41,7 @@ module ApiService::Definition
   #
   # @see ApiService#api_methods
   #
-  def api_methods: (?(Symbol|String|symHash)? arg) -> symHash?
+  def api_methods: (?(Symbol|String|symHash)? arg) -> (symHash | nil)
 
   # The optional API query parameters for the given method.
   #

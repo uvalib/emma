@@ -50,7 +50,7 @@ en:
           label:        'Search Results Mode'
           class:        ~
           tooltip:      ~
-          active:       true # @see LayoutHelper::SearchFilters#permitted_by?
+          active:       true # @see SearchModesHelper#permitted_by?
           default:      ~
 
         title:
@@ -72,7 +72,7 @@ en:
           ident:        'metadata field'
           field:        '' # Indicates topic has no matching metadata field.
           tooltip:      'Mark entries with the same %{ident} in the same color'
-          active:       !ruby/symbol debug_only # @see LayoutHelper::SearchFilters#permitted_by?
+          active:       !ruby/symbol debug_only # @see SearchModesHelper#permitted_by?
 
         # NOTE: The order here is the reverse of the order of display.
 
@@ -248,6 +248,8 @@ en:
         display_fields: # @see 'en.emma.search.record'
           - !ruby/symbol all
 
+        _endpoint:      true
+
       # =======================================================================
 
       direct:
@@ -262,6 +264,8 @@ en:
 
         display_fields: # @see 'en.emma.search.record'
           - !ruby/symbol all
+
+        _endpoint:      true
 
       # =======================================================================
 
@@ -280,3 +284,7 @@ en:
 
         display_fields: # @see 'en.emma.search.record'
           - !ruby/symbol all
+
+        _endpoint:      true
+
+      # =======================================================================

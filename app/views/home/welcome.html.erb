@@ -2,10 +2,13 @@
 <%-
   # Application main page for anonymous users.
 
+  view_debug(__FILE__)
+
   title ||= t('emma.home.welcome.title', default: :'emma.home.title')
+  help  ||= nil # %i[home welcome]
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
   end
 
@@ -20,8 +23,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section(**template_opt) %>
 
 <%= page_directions_section %>

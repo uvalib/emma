@@ -130,8 +130,8 @@ module HeadHelper::MetaTags
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_meta_tags(opt = nil)
-    opt, html_opt = partition_hash(opt, :tag_separator)
-    tag_separator = opt[:tag_separator] || META_TAG_SEPARATOR
+    opt, html_opt     = partition_hash(opt, :tag_separator)
+    tag_separator     = opt[:tag_separator] || META_TAG_SEPARATOR
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
     # noinspection RubyMismatchedReturnType
     @page_meta_tags.map { |key, value|
@@ -182,8 +182,7 @@ module HeadHelper::MetaTags
   #
   def emit_meta_tag(key, value, opt = nil)
     opt, html_opt = partition_hash(opt, *EMIT_META_TAG_OPTIONS)
-    list_separator =
-      opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR
+    separator = opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR
 
     # The tag name comes from the provided *key*.
     html_opt[:name] = key.to_s
@@ -195,12 +194,12 @@ module HeadHelper::MetaTags
     if value.any? { |v| v.is_a?(Symbol) }
       value.map! { |v| v.to_s.downcase }.sort!.uniq!
       return if (value == %w(index)) || (value == %w(follow index))
-      list_separator = ','
+      separator = ','
     end
 
     # The tag content is formed from the value(s) accumulated for this item.
     html_opt[:content] =
-      normalized_list(value, **opt).join(list_separator).tap do |content|
+      normalized_list(value, **opt).join(separator).tap do |content|
         if (prefix = META_TAG_PREFIX[key]) && !content.start_with?(prefix)
           prefix = "#{prefix} - " unless prefix.end_with?(' ')
           content.prepend(prefix)

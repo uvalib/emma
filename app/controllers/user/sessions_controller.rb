@@ -11,8 +11,8 @@ __loading_begin(__FILE__)
 #
 class User::SessionsController < Devise::SessionsController
 
+  include ApiConcern
   include AuthConcern
-  include FlashConcern
   include SessionConcern
   include RunStateConcern
   include BookshareConcern
@@ -49,6 +49,8 @@ class User::SessionsController < Devise::SessionsController
   #
   # Prompt the user for login credentials.
   #
+  # @see #new_user_session_path       Route helper
+  #
   def new
     __debug_route
     opt  = request_parameters
@@ -64,6 +66,7 @@ class User::SessionsController < Devise::SessionsController
   #
   # Begin login session.
   #
+  # @see #user_session_path           Route helper
   # @see AuthConcern#update_auth_data
   #
   def create
@@ -88,6 +91,7 @@ class User::SessionsController < Devise::SessionsController
   # is  ended _and_ its associated OAuth2 token is revoked.  If "no_revoke" is
   # "true" then only the local session is ended.
   #
+  # @see #destroy_user_session_path   Route helper
   # @see AuthConcern#delete_auth_data
   #
   def destroy
@@ -113,6 +117,8 @@ class User::SessionsController < Devise::SessionsController
   #
   # Sign in with a local EMMA username/password.
   #
+  # @see #sign_in_local_path          Route helper
+  #
   def sign_in_local
     __debug_route
   end
@@ -122,6 +128,7 @@ class User::SessionsController < Devise::SessionsController
   #
   # Sign in using information supplied outside of the OAuth2 flow.
   #
+  # @see #sign_in_as_path             Route helper
   # @see AuthConcern#local_sign_in
   #
   # == Usage Notes

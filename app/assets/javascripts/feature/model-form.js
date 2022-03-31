@@ -1,16 +1,17 @@
-// app/assets/javascripts/feature/entry-form.js
+// app/assets/javascripts/feature/model-form.js
 
 
 import { Rails }                                 from '../vendor/rails'
 import { Emma }                                  from '../shared/assets'
-import { delegateInputClick, toggleVisibility }  from '../shared/accessibility'
+import { delegateInputClick }                    from '../shared/accessibility'
 import { pageController }                        from '../shared/controller'
 import { selector, toggleClass }                 from '../shared/css'
 import { htmlDecode, scrollIntoView }            from '../shared/html'
 import { HTTP }                                  from '../shared/http'
 import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
-import { K, asSize, percent }                    from '../shared/math'
-import { asString }                              from '../shared/strings'
+import { K, asSize }                             from '../shared/math'
+import { asString, camelCase, singularize }      from '../shared/strings'
+import { Uploader }                              from '../shared/uploader'
 import { cancelAction, makeUrl }                 from '../shared/url'
 import {
     isDefined,
@@ -39,24 +40,11 @@ import {
     fromJSON,
 } from '../shared/objects'
 import {
-    MINUTES,
     SECONDS,
     asDateTime,
     secondsSince,
     timeOf,
 } from '../shared/time'
-import {
-    Uppy,
-    AwsS3,
-    Dashboard,
-    DragDrop,
-    FileInput,
-    Informer,
-    ProgressBar,
-    StatusBar,
-    ThumbnailGenerator,
-    XHRUpload,
-} from '../vendor/uppy'
 
 
 $(document).on('turbolinks:load', function() {
@@ -67,7 +55,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const ENTRY_FORM_CLASS = 'entry-form';
+    const MODEL_FORM_CLASS = 'model-form';
 
     /**
      * CSS class for single-entry form elements.
@@ -75,7 +63,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {String}
      */
-    const ENTRY_FORM_SELECTOR = selector(ENTRY_FORM_CLASS);
+    const MODEL_FORM_SELECTOR = selector(MODEL_FORM_CLASS);
 
     /**
      * Single-entry operation forms on the page.
@@ -88,7 +76,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {jQuery}
      */
-    let $entry_form = $(ENTRY_FORM_SELECTOR);
+    let $model_form = $(MODEL_FORM_SELECTOR);
 
     /**
      * CSS classes for bulk operation form elements.
@@ -96,7 +84,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const BULK_FORM_CLASS = 'bulk-entry-form';
+    const BULK_FORM_CLASS = 'bulk-op-form';
 
     /**
      * CSS classes for bulk operation form elements.
@@ -112,64 +100,16 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {jQuery}
      */
-    let $bulk_operation_form = $(BULK_FORM_SELECTOR).not('.delete');
+    let $bulk_op_form = $(BULK_FORM_SELECTOR).not('.delete');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($entry_form) && isMissing($bulk_operation_form)) {
+    if (isMissing($model_form) && isMissing($bulk_op_form)) {
         return;
     }
 
     // ========================================================================
     // JSDoc type definitions
     // ========================================================================
-
-    /**
-     * Uppy plugin selection plus other optional settings.
-     *
-     * replace_input:   Hide the <input type="file"> present in the container.
-     * upload_to_aws:   Cloud upload enabled.
-     * progress_bar:    Minimal upload progress bar.
-     * status_bar:      Heftier progress and control bar.
-     * popup_messages:  Popup event/status messages.
-     * dashboard:       Uppy dashboard.
-     * drag_and_drop:   Drag-and-drop file selection enabled.
-     * image_preview:   Image preview thumbnail.
-     * flash_messages   Display flash messages.
-     * flash_errors     Display flash errors.
-     * debugging:       Turn on Uppy debugging.
-     *
-     * @typedef {{
-     *      replace_input:  boolean,
-     *      upload_to_aws:  boolean,
-     *      progress_bar:   boolean,
-     *      status_bar:     boolean,
-     *      popup_messages: boolean,
-     *      dashboard:      boolean,
-     *      drag_and_drop:  boolean,
-     *      image_preview:  boolean,
-     *      flash_messages: boolean,
-     *      flash_errors:   boolean,
-     *      debugging:      boolean
-     * }} UppyFeatures
-     */
-
-    /**
-     * A live copy of Uppy features.
-     *
-     * @typedef {{
-     *      replace_input:  boolean,
-     *      upload_to_aws:  boolean,
-     *      progress_bar:   boolean,
-     *      status_bar:     boolean,
-     *      popup_messages: boolean,
-     *      dashboard:      boolean,
-     *      drag_and_drop:  boolean|HTMLElement,
-     *      image_preview:  boolean|HTMLElement,
-     *      flash_messages: boolean,
-     *      flash_errors:   boolean,
-     *      debugging:      boolean
-     * }} UppyFeatureSettings
-     */
 
     /**
      * Shrine upload information for the submission.
@@ -253,33 +193,6 @@ $(document).on('turbolinks:load', function() {
      *
      * @see "en.emma.entry.record.emma_data"
      * @see "AwsS3::Record::SubmissionRequest"
-     */
-
-    /**
-     * Shrine upload response message.
-     *
-     * @typedef { EmmaData | {error: string} } EmmaDataOrError
-     */
-
-    /**
-     * Shrine upload response message.
-     *
-     * @typedef {{
-     *      emma_data:  ?EmmaDataOrError,
-     *      id:         string,
-     *      storage:    string,
-     *      metadata:   FileDataMetadata
-     * }} ShrineResponseBody
-     */
-
-    /**
-     * Shrine upload response message.
-     *
-     * @typedef {{
-     *      status:     number,
-     *      body:       ShrineResponseBody,
-     *      uploadURL:  string
-     * }} ShrineResponseMessage
      */
 
     /**
@@ -503,39 +416,10 @@ $(document).on('turbolinks:load', function() {
      * @type {UppyFeatures}
      */
     const FEATURES = deepFreeze({
-        replace_input:  true,         // Requires '@uppy/file-input'
-        upload_to_aws:  false,        // Requires '@uppy/aws-s3'
-        popup_messages: true,         // Requires '@uppy/informer'
-        progress_bar:   true,         // Requires '@uppy/progress-bar'
-        status_bar:     false,        // Requires '@uppy/status-bar'
-        dashboard:      false,        // Requires '@uppy/dashboard'
-        drag_and_drop:  false,        // Requires '@uppy/drag-drop'
-        image_preview:  false,        // Requires '@uppy/thumbnail-generator'
         flash_messages: true,
         flash_errors:   true,
         debugging:      DEBUG.UPLOAD
     });
-
-    /**
-     * How long to wait for the server to confirm the upload.
-     *
-     * The default is 30 seconds but that has been seen to be too short for
-     * certain files (either because of size or because of complexity when
-     * parsing for metadata).
-     *
-     * @constant
-     * @type {number}
-     */
-    const UPLOAD_TIMEOUT = 5 * MINUTES;
-
-    // noinspection MagicNumberJS
-    /**
-     * How long to display transient Uppy popup messages.
-     *
-     * @constant
-     * @type {number}
-     */
-    const MESSAGE_DURATION = 30 * SECONDS;
 
     /**
      * How long to wait after the user enters characters into a field before
@@ -549,12 +433,12 @@ $(document).on('turbolinks:load', function() {
     const DEBOUNCE_DELAY = 500; // milliseconds
 
     /**
-     * Original-style "uploads" submissions.
+     * Current controller.
      *
      * @constant
-     * @type {boolean}
+     * @type {string}
      */
-    const UPLOAD_CONTROLLER = (pageController() === 'upload');
+    const CONTROLLER = pageController();
 
     /**
      * Base name (singular of the related database table).
@@ -562,15 +446,15 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const RECORD = UPLOAD_CONTROLLER ? 'upload' : 'entry';
+    const MODEL = singularize(CONTROLLER);
 
     /**
      * Page assets.js properties.
      *
      * @constant
-     * @type {EntryProperties}
+     * @type {ModelProperties}
      */
-    const PROPERTIES = UPLOAD_CONTROLLER ? Emma.Upload : Emma.Entry;
+    const PROPERTIES = Emma[camelCase(MODEL)];
 
     /**
      * The value used to denote that a database field has been intentionally
@@ -586,23 +470,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const FORM_SELECTOR = ENTRY_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
-
-    /**
-     * Selector for Uppy drag-and-drop target.
-     *
-     * @constant
-     * @type {string}
-     */
-    const DRAG_AND_DROP_SELECTOR = selector(PROPERTIES.Style.drag_target);
-
-    /**
-     * Selector for thumbnail display of the selected file.
-     *
-     * @constant
-     * @type {string}
-     */
-    const PREVIEW_SELECTOR = selector(PROPERTIES.Style.preview);
+    const FORM_SELECTOR = MODEL_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
 
     /**
      * Selectors for input fields.
@@ -613,11 +481,19 @@ $(document).on('turbolinks:load', function() {
     const FORM_FIELD_TYPES = deepFreeze([
         'select',
         'textarea',
-        'input[type="text"]',
+        'input[type="checkbox"]',
         'input[type="date"]',
-        'input[type="time"]',
+        'input[type="datetime-local"]',
+        'input[type="email"]',
+        'input[type="month"]',
         'input[type="number"]',
-        'input[type="checkbox"]'
+        'input[type="password"]',
+        'input[type="range"]',
+        'input[type="tel"]',
+        'input[type="text"]',
+        'input[type="time"]',
+        'input[type="url"]',
+        'input[type="week"]',
     ]);
 
     /**
@@ -641,14 +517,18 @@ $(document).on('turbolinks:load', function() {
     const FIELD_RELATIONSHIP = deepFreeze({
         rem_complete: {
             name:           'rem_coverage',
-            required:       function() { return $(this).val() !== 'true'; },
+            required:       (el) => ($(el).val() !== 'true'),
             unrequired_val: ''
         },
         rem_coverage: {
             name:           'rem_complete',
-            required:       function() { return isMissing($(this).val()); },
+            required:       (el) => isMissing($(el).val()),
             required_val:   '',
             unrequired_val: 'false'
+        },
+        password: {
+            name:           'password_confirmation',
+            required:       (el) => $(el).hasClass('valid'),
         }
     });
 
@@ -665,15 +545,6 @@ $(document).on('turbolinks:load', function() {
         SUBMITTED: 'submitted',
         CANCELED:  'canceled'
     });
-
-    /**
-     * Base message displayed if Uppy encounters an error when uploading the
-     * file.
-     *
-     * @constant
-     * @type {string}
-     */
-    const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
 
     // ========================================================================
     // Constants - field validation
@@ -738,7 +609,7 @@ $(document).on('turbolinks:load', function() {
     const OLD_DATA = '.' + OLD_DATA_MARKER;
 
     /**
-     * Interval for checking the contents of the "upload" table.
+     * Interval for checking the contents of the model database table.
      *
      * @constant
      * @type {number}
@@ -768,35 +639,212 @@ $(document).on('turbolinks:load', function() {
 
     // Setup Uppy for any <input type="file"> elements (unless this page is
     // being reached via browser history).
-    $entry_form.each(function() {
+    $model_form.each(function() {
         let $form = $(this);
-        if (!isUppyInitialized($form)) {
 
-            initializeUppy($form);
-            initializeUppyProgressBar($form);
+        // Setup file uploader (if applicable).
+        initializeFileUploader($form);
 
-            // noinspection JSDeprecatedSymbols
-            switch (performance.navigation.type) {
-                case PerformanceNavigation.TYPE_BACK_FORWARD:
-                    debugSection('HISTORY BACK/FORWARD');
-                    refreshRecord($form);
-                    break;
-                case PerformanceNavigation.TYPE_RELOAD:
-                    debugSection('PAGE REFRESH');
-                    // TODO: this causes a junk record to be created for /new.
-                    refreshRecord($form);
-                    break;
-                default:
-                    initializeEntryForm($form);
-                    break;
-            }
+        // noinspection JSDeprecatedSymbols
+        switch (performance.navigation.type) {
+            case PerformanceNavigation.TYPE_BACK_FORWARD:
+                debugSection('HISTORY BACK/FORWARD');
+                refreshRecord($form);
+                break;
+            case PerformanceNavigation.TYPE_RELOAD:
+                debugSection('PAGE REFRESH');
+                // TODO: this causes a junk record to be created for /new.
+                refreshRecord($form);
+                break;
+            default:
+                initializeModelForm($form);
+                break;
         }
     });
 
     // Setup handlers for bulk operation pages.
-    $bulk_operation_form.each(function() {
-        initializeBulkForm(this);
+    $bulk_op_form.each(function() {
+        initializeBulkOpForm(this);
     });
+
+    // ========================================================================
+    // Functions - Uploader
+    // ========================================================================
+
+    // noinspection ES6ConvertVarToLetConst
+    /**
+     * @type {Uploader|undefined}
+     */
+    var uploader;
+
+    /**
+     * Indicate whether the form requires file uploading capability.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {boolean}
+     *
+     * @see "BaseDecorator::Form#model_form"
+     */
+    function isFileUploader(form) {
+        return formElement(form).hasClass('file-uploader');
+    }
+
+    /**
+     * Initialize the file uploader if the form requires it.
+     *
+     * @param {Selector} form
+     *
+     * @returns {Uploader|undefined}
+     */
+    function initializeFileUploader(form) {
+        let $form = $(form);
+        if (!uploader && isFileUploader($form)) {
+            uploader = newUploader($form);
+        }
+        return uploader;
+    }
+
+    /**
+     * Create a new uploader instance.
+     *
+     * @param {Selector} form
+     *
+     * @returns {Uploader}
+     */
+    function newUploader(form) {
+        let $form = $(form);
+        const state = {
+            new:    isCreateForm($form),
+            edit:   isUpdateForm($form),
+            bulk:   isBulkOpForm($form),
+        };
+        const callbacks = {
+            onSelect:   onSelect,
+            onStart:    onStart,
+            onError:    onError,
+            onSuccess:  onSuccess,
+        };
+        let instance = new Uploader($form, MODEL, FEATURES, state, callbacks);
+        return instance.initialize();
+
+        /**
+         * Callback invoked when the file select button is pressed.
+         *
+         * @param {jQuery.Event} [event]    Ignored.
+         */
+        function onSelect(event) {
+            clearFlash();
+        }
+
+        /**
+         * This event occurs between the 'file-added' and 'upload-started'
+         * events.
+         *
+         * The current value of the submission's database ID applied to the
+         * upload endpoint URL in order to correlate the upload with the
+         * appropriate workflow.
+         *
+         * @param {{id: string, fileIDs: string[]}} data
+         *
+         * @returns {object}          URL parameters for the remote endpoint.
+         */
+        function onStart(data) {
+            clearFlash();
+            return submissionParams($form);
+        }
+
+        /**
+         * This event occurs when the response from POST /entry/endpoint is
+         * received with success status (200).  At this point, the file has
+         * been uploaded by Shrine, but has not yet been validated.
+         *
+         * @param {Uppy.UppyFile}         file
+         * @param {ShrineResponseMessage} response
+         *
+         * @see "Shrine::UploadEndpointExt#make_response"
+         *
+         * == Implementation Notes
+         * The normal Shrine response has been augmented to include an
+         * 'emma_data' object in addition to the fields associated with
+         * 'file_data'.
+         */
+        function onSuccess(file, response) {
+
+            let body = response.body || {};
+
+            // Save uploaded EMMA metadata.
+            /** @type {EmmaDataOrError} */
+            let emma_data = body.emma_data || {};
+            if (isPresent(emma_data)) {
+                emma_data = compact(emma_data);
+                let $emma_data = emmaDataElement($form);
+                if (isPresent($emma_data)) {
+                    $emma_data.val(asString(emma_data));
+                }
+                delete body.emma_data;
+            }
+
+            // Set hidden field value to the uploaded file data so that it is
+            // submitted with the form as the attachment.
+            /** @type {FileData} */
+            const file_data = body;
+            if (file_data) {
+                let $file_data = fileDataElement($form);
+                if (isPresent($file_data)) {
+                    $file_data.val(asString(file_data));
+                }
+                if (!emma_data.dc_format) {
+                    const meta = file_data.metadata;
+                    const mime = meta?.mime_type;
+                    const fmt  = PROPERTIES.Mime.to_fmt[mime] || [];
+                    if (fmt[0]) { emma_data.dc_format = fmt[0]; }
+                }
+            }
+
+            if (emma_data.error) {
+
+                // If there was a problem with the uploaded file (e.g. not an
+                // expected file type) it will be reported here.
+                showFlashError(emma_data.error);
+
+            } else {
+
+                // Display the name of the provisionally uploaded file.
+                //
+                instance.displayUploadedFilename(file_data);
+
+                // Disable the file select button.
+                //
+                // The 'cancel' button is used to select a different file
+                // because previous metadata (manually or automatically
+                // acquired) may no longer be appropriate.
+                //
+                instance.disableFileSelectButton();
+
+                // Update form fields with the transmitted EMMA data.
+                //
+                // When the form is submitted these values should take
+                // precedence over the original values which will be
+                // retransmitted the hidden '#entry_emma_data' field.
+                //
+                populateFormFields(emma_data, $form) || validateForm($form);
+            }
+        }
+
+        /**
+         * This event occurs when the response from POST /entry/endpoint is
+         * received with a failure status (4xx).
+         *
+         * @param {Uppy.UppyFile}                  file
+         * @param {Error}                          error
+         * @param {{status: number, body: string}} [response]
+         */
+        function onError(file, error, response) {
+            showFlashError(error?.message || error);
+            requireFormCancellation($form);
+        }
+    }
 
     // ========================================================================
     // Functions - Bulk operations
@@ -807,14 +855,16 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} form
      */
-    function initializeBulkForm(form) {
+    function initializeBulkOpForm(form) {
 
         let $form = $(form);
+
+        // Setup file uploader (if applicable).
+        initializeFileUploader($form);
 
         // Setup buttons.
         setupSubmitButton($form);
         setupCancelButton($form);
-        setupFileSelectButton($form);
 
         // Start with submit disabled until a bulk control file is supplied.
         disableSubmit($form);
@@ -832,20 +882,21 @@ $(document).on('turbolinks:load', function() {
         handleEvent($form, 'submit', monitorBulkOperation);
 
         // When a file has been selected, display its name and enable submit.
-        let $input = fileSelectContainer($form).children('input[type="file"]');
-        handleEvent($input, 'change', setBulkFilename);
+        if (uploader) {
 
-        /**
-         * Update the form after the bulk control file is selected.
-         *
-         * @param {jQuery.Event} event
-         */
-        function setBulkFilename(event) {
-            const filename = ((event.target.files || [])[0] || {}).name;
-            if (isPresent(filename)) {
-                displayFilename(filename, $form);
-                fileSelectButton($form).removeClass('best-choice');
-                enableSubmit($form);
+            handleEvent(uploader.fileSelectInput(), 'change', setBulkFilename);
+
+            /**
+             * Update the form after the bulk control file is selected.
+             *
+             * @param {jQuery.Event} event
+             */
+            function setBulkFilename(event) {
+                const filename = ((event.target.files || [])[0] || {}).name;
+                if (uploader.displayFilename(filename)) {
+                    uploader.fileSelectButton().removeClass('best-choice');
+                    enableSubmit($form);
+                }
             }
         }
     }
@@ -857,7 +908,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {boolean}
      */
-    function isBulkOperationForm(form) {
+    function isBulkOpForm(form) {
         return formElement(form).hasClass('bulk');
     }
 
@@ -888,7 +939,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {jQuery}
      *
-     * @see file:app/assets/stylesheets/feature/_entry_form.scss .bulk-op-results-label
+     * @see file:stylesheets/feature/_model_form.scss .bulk-op-results-label
      */
     function bulkOpResultsLabel(results) {
         let $results = bulkOpResults(results);
@@ -952,9 +1003,9 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorBulkOperation(event) {
         const target = event?.currentTarget || event?.target;
-        let $form    = target ? $(target) : $bulk_operation_form;
+        let $form    = target ? $(target) : $bulk_op_form;
         disableSubmit($form);
-        disableFileSelectButton($form);
+        uploader?.disableFileSelectButton();
 
         let $results = bulkOpResults();
         let $label   = bulkOpResultsLabel($results);
@@ -1056,7 +1107,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {string}              The added result entry.
      *
-     * @see file:app/assets/stylesheets/feature/_entry_form.scss .bulk-op-results
+     * @see file:stylesheets/feature/_model_form.scss .bulk-op-results
      */
     function addBulkOpResult(results, entry, index, time) {
         let $results = bulkOpResults(results);
@@ -1318,7 +1369,7 @@ $(document).on('turbolinks:load', function() {
      * If this is an update form, then the appropriate field values are
      * generated to put the Upload record in the initial workflow edit state.
      *
-     * In either case, {@link initializeEntryForm} is called with the new
+     * In either case, {@link initializeModelForm} is called with the new
      * fields to complete page initialization.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
@@ -1404,7 +1455,7 @@ $(document).on('turbolinks:load', function() {
             } else {
                 consoleError(`${func}: ${url}:`, (error || 'unknown failure'));
             }
-            initializeEntryForm($form, record);
+            initializeModelForm($form, record);
         }
     }
 
@@ -1414,14 +1465,13 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector}      form
      * @param {string|object} [start_data]  Replacement data.
      */
-    function initializeEntryForm(form, start_data) {
+    function initializeModelForm(form, start_data) {
 
         let $form = $(form);
 
         // Setup buttons.
         setupSubmitButton($form);
         setupCancelButton($form);
-        setupFileSelectButton($form);
 
         // Prevent password managers from incorrectly interpreting any of the
         // fields as something that might pertain to user information.
@@ -1458,36 +1508,9 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Initialize the Uppy-provided file select button container.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     */
-    function initializeFileSelectContainer(form) {
-        let $form    = formElement(form);
-        let $element = fileSelectContainer($form);
-
-        // Uppy will replace <input type="file"> with its own mechanisms so
-        // the original should not be displayed.
-        $form.find(`input#${RECORD}_file`).css('display', 'none');
-
-        // Reposition it so that it comes before the display of the uploaded
-        // filename.
-        $element.insertBefore(uploadedFilenameDisplay($form));
-
-        // This hidden element is inappropriately part of the tab order.
-        let $uppy_file_input = $element.find('.uppy-FileInput-input');
-        $uppy_file_input.attr('tabindex',        -1);
-        $uppy_file_input.attr('aria-hidden',     true);
-        $uppy_file_input.attr('aria-labelledby', 'fi_label');
-
-        // Set the tooltip for the file select button.
-        $element.find('button,label').attr('title', fileSelectTooltip($form));
-    }
-
-    /**
      * Initialize the state of the submit button.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupSubmitButton(form) {
         let $form   = formElement(form);
@@ -1512,41 +1535,29 @@ $(document).on('turbolinks:load', function() {
         const label = cancelLabel($form);
         const tip   = cancelTooltip($form);
         let $button = cancelButton($form).attr('title', tip).text(label);
+        handleClickAndKeypress($button, clearFlashMessages);
         handleClickAndKeypress($button, cancelSubmission);
-        handleClickAndKeypress($button, clearFlashMessages);
-    }
-
-    /**
-     * Initialize the state of the file select button.
-     *
-     * @param {Selector} [form]       Passed to {@link formElement}.
-     */
-    function setupFileSelectButton(form) {
-        let $form   = formElement(form);
-        const label = fileSelectLabel($form);
-        const tip   = fileSelectTooltip($form);
-        let $button = fileSelectContainer($form).children('button');
-        $button.addClass('file-select-button').attr('title', tip).text(label);
-        if (isCreateForm($form)) {
-            $button.addClass('best-choice');
-        }
-        handleClickAndKeypress($button, clearFlashMessages);
     }
 
     /**
      * Adjust an input element to prevent password managers from interpreting
      * certain fields like "Title" as ones that they should offer to
-     * autocomplete.
+     * autocomplete (unless the field has been explicitly rendered with
+     * autocomplete turned on).
      *
      * @param {Selector} element
      */
     function turnOffAutocomplete(element) {
         let $element = $(element);
         if ($element[0] instanceof HTMLInputElement) {
-            $(element).attr({
-                'autocomplete':  'off',
-                'data-lpignore': 'true' // LastPass requires this.
-            });
+            let autocomplete = $element.attr('autocomplete');
+            let last_pass    = $element.attr('data-lpignore');
+            if (isMissing(autocomplete)) {
+                $element.attr('autocomplete', (autocomplete = 'off'));
+            }
+            if (isMissing(last_pass) && (autocomplete === 'off')) {
+                $element.attr('data-lpignore', 'true'); // Needed for LastPass.
+            }
         }
     }
 
@@ -1592,613 +1603,6 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - Uppy
-    // ========================================================================
-
-    /**
-     * Indicate whether Uppy already appears to be set up.
-     *
-     * @param {Selector} [container]  Default: {@link formContainer}.
-     *
-     * @returns {boolean}
-     */
-    function isUppyInitialized(container) {
-        let $container = formContainer(container);
-        return isPresent($container.find('.uppy-Root'));
-    }
-
-    /**
-     * Initialize Uppy file uploader.
-     *
-     * @param {Selector} form
-     */
-    function initializeUppy(form) {
-
-        /** @type {UppyFeatureSettings} */
-        let feature    = dup(FEATURES);
-        let $form      = $(form);
-        let $container = $form.parent();
-
-        if (isDefined(feature.debugging)) {
-            DEBUG.UPLOAD = feature.debugging;
-        } else {
-            feature.debugging = DEBUG.UPLOAD;
-        }
-
-        // Get targets for these features; disable the feature if its target is
-        // not present.
-        if (feature.drag_and_drop) {
-            feature.drag_and_drop = $container.find(DRAG_AND_DROP_SELECTOR)[0];
-        }
-        if (feature.image_preview) {
-            feature.image_preview = $container.find(PREVIEW_SELECTOR)[0];
-        }
-
-        // === Initialization ===
-
-        let uppy = buildUppy($form, feature);
-
-        // Events for these features are also applicable to Uppy.Dashboard.
-        if (feature.dashboard) {
-            feature.replace_input = true;
-            feature.drag_and_drop = true;
-            feature.progress_bar  = true;
-            feature.status_bar    = true;
-        }
-
-        // === Event handlers ===
-
-        setupHandlers(uppy, $form, feature);
-
-        if (feature.popup_messages) { setupMessages(uppy,  feature); }
-        if (feature.debugging)      { setupDebugging(uppy, feature); }
-
-        // === Display cleanup ===
-
-        if (feature.replace_input) { initializeFileSelectContainer($form); }
-    }
-
-    /**
-     * Build an Uppy instance with specified plugins.
-     *
-     * @param {Selector}            form
-     * @param {UppyFeatureSettings} features
-     *
-     * @returns {Uppy.Uppy}
-     */
-    function buildUppy(form, features) {
-        let $form     = $(form);
-        let container = $form[0].parentElement;
-        let uppy = new Uppy({
-            id:          $form[0].id,
-            autoProceed: true,
-            debug:       features.debugging
-        });
-        if (features.dashboard) {
-            uppy.use(Dashboard, { target: container, inline: true });
-        } else {
-            if (features.replace_input) {
-                uppy.use(FileInput, {
-                    target: buttonTray($form)[0], // NOTE: not container
-                    locale: {
-                        strings: {
-                            chooseFiles: fileSelectLabel($form)
-                        }
-                    }
-                });
-            }
-            if (features.drag_and_drop) {
-                uppy.use(DragDrop, { target: features.drag_and_drop });
-            }
-            if (features.progress_bar) {
-                uppy.use(ProgressBar, { target: container });
-            }
-            if (features.status_bar) {
-                uppy.use(StatusBar, {
-                    target: container,
-                    showProgressDetails: true
-                });
-            }
-        }
-        if (features.popup_messages) {
-            uppy.use(Informer, { target: container });
-        }
-        if (features.image_preview) {
-            uppy.use(ThumbnailGenerator, { thumbnailWidth: 400 });
-        }
-        if (features.upload_to_aws) {
-            uppy.use(AwsS3, {
-                // limit:     2,
-                timeout:      UPLOAD_TIMEOUT,
-                companionUrl: 'https://companion.myapp.com/' // TODO: ???
-            });
-        }
-        // noinspection JSUnusedGlobalSymbols
-        uppy.use(XHRUpload, {
-            endpoint:   PROPERTIES.Path.endpoint,
-            fieldName: 'file',
-            timeout:   0, // UPLOAD_TIMEOUT, // NOTE: no Uppy timeout for now
-            // limit:  1,
-            headers:   { 'X-CSRF-Token': Rails.csrfToken() },
-            getResponseError: function(body, xhr) {
-                let message, flash, result;
-                result  = fromJSON(body) || {};
-                message = result.message || body;
-                message = message ? message.trim() : UPLOAD_ERROR_MESSAGE;
-                flash   = compact(extractFlashMessage(xhr));
-                if (isPresent(flash)) {
-                    message = message.replace(/([^:])$/, '$1:');
-                    if (flash.length > 1) {
-                        message += "\n" + flash.join("\n");
-                    } else {
-                        message += ' ' + flash[0];
-                    }
-                } else {
-                    message = message.replace(/:$/, '');
-                }
-                return new Error(message);
-            }
-        });
-        return uppy;
-    }
-
-    /**
-     * Setup handlers for Uppy events that drive the workflow of uploading
-     * a file and creating a database entry from it.
-     *
-     * @param {Uppy.Uppy}           uppy
-     * @param {Selector}            form
-     * @param {UppyFeatureSettings} features
-     */
-    function setupHandlers(uppy, form, features) {
-
-        let $form = $(form);
-
-        uppy.on('upload',         onFileUploadStarting);
-        uppy.on('upload-success', onFileUploadSuccess);
-        uppy.on('upload-error',   onFileUploadError);
-
-        if (features.image_preview) {
-            uppy.on('thumbnail:generated', onThumbnailGenerated);
-        }
-
-        // ====================================================================
-        // Handlers
-        // ====================================================================
-
-        /**
-         * This event occurs between the 'file-added' and 'upload-started'
-         * events.
-         *
-         * The current value of the submission's database ID applied to the
-         * upload endpoint URL in order to correlate the upload with the
-         * appropriate workflow.
-         *
-         * @param {{id: string, fileIDs: string[]}} data
-         */
-        function onFileUploadStarting(data) {
-            debugUppy('upload', data);
-            clearFlash();
-            const upload = uppy.getPlugin('XHRUpload');
-            // noinspection JSUnresolvedFunction
-            const url    = upload.getOptions({}).endpoint;
-            if (isMissing(url)) {
-                console.error('No endpoint for upload');
-            } else {
-                const new_url = makeUrl(url, submissionParams($form));
-                // noinspection JSCheckFunctionSignatures
-                upload.setOptions({ endpoint: new_url });
-                showUppyProgressBar($form);
-            }
-        }
-
-        /**
-         * This event occurs when the response from POST /upload/endpoint is
-         * received with success status (200).  At this point, the file has
-         * been uploaded by Shrine, but has not yet been validated.
-         *
-         * @param {Uppy.UppyFile}         file
-         * @param {ShrineResponseMessage} response
-         *
-         * @see "Shrine::UploadEndpointExt#make_response"
-         *
-         * == Implementation Notes
-         * The normal Shrine response has been augmented to include an
-         * 'emma_data' object in addition to the fields associated with
-         * 'file_data'.
-         */
-        function onFileUploadSuccess(file, response) {
-
-            debugUppy('upload-success', file, response);
-
-            if (features.popup_messages) {
-                uppyInfoClear(uppy);
-            }
-
-            let body = response.body || {};
-
-            // Save uploaded EMMA metadata.
-            let emma_data = body.emma_data || {};
-            if (isPresent(emma_data)) {
-                emma_data = compact(emma_data);
-                let $emma_data = emmaDataElement($form);
-                if (isPresent($emma_data)) {
-                    $emma_data.val(asString(emma_data));
-                }
-                delete body.emma_data;
-            }
-
-            // Set hidden field value to the uploaded file data so that it is
-            // submitted with the form as the attachment.
-            const file_data = body;
-            if (file_data) {
-                let $file_data = fileDataElement($form);
-                if (isPresent($file_data)) {
-                    $file_data.val(asString(file_data));
-                }
-                if (!emma_data.dc_format) {
-                    const meta = file_data.metadata;
-                    const mime = meta?.mime_type;
-                    const fmt  = PROPERTIES.Mime.to_fmt[mime] || [];
-                    if (fmt[0]) { emma_data.dc_format = fmt[0]; }
-                }
-            }
-
-            if (emma_data.error) {
-
-                // If there was a problem with the uploaded file (e.g. not an
-                // expected file type) it will be reported here.
-                showFlashError(emma_data.error);
-
-            } else {
-
-                // Display the name of the provisionally uploaded file.
-                // noinspection JSCheckFunctionSignatures
-                displayUploadedFilename(file_data, $form);
-
-                // Disable the file select button.
-                //
-                // The 'cancel' button is used to select a different file
-                // because previous metadata (manually or automatically
-                // acquired) may no longer be appropriate.
-                //
-                disableFileSelectButton($form);
-
-                // Update form fields with the transmitted EMMA data.
-                //
-                // When the form is submitted these values should take
-                // precedence over the original values which will be
-                // retransmitted the hidden '#upload_emma_data' field.
-                //
-                populateFormFields(emma_data, $form);
-            }
-        }
-
-        /**
-         * This event occurs when the response from POST /upload/endpoint is
-         * received with a failure status (4xx).
-         *
-         * @param {Uppy.UppyFile}                  file
-         * @param {Error}                          error
-         * @param {{status: number, body: string}} [response]
-         */
-        function onFileUploadError(file, error, response) {
-            consoleWarn('Uppy:', 'upload-error', file, error, response);
-            showFlashError(error?.message || error);
-            uppy.getFiles().forEach(function(file) {
-                uppy.removeFile(file.id);
-            });
-            requireFormCancellation($form);
-        }
-
-        /**
-         * This event occurs when a thumbnail of an uploaded image is
-         * available.
-         *
-         * @param {Uppy.UppyFile} file
-         * @param {string}        image
-         */
-        function onThumbnailGenerated(file, image) {
-            debugUppy('thumbnail:generated', file, image);
-            features.image_preview.src = image;
-        }
-    }
-
-    /**
-     * Setup handlers for Uppy events that should trigger popup messages.
-     *
-     * @param {Uppy.Uppy}           uppy
-     * @param {UppyFeatureSettings} features
-     */
-    function setupMessages(uppy, features) {
-
-        const error = (text) => uppyError(uppy, text);
-        const warn  = (text) => uppyWarn(uppy, text);
-        const popup = (text) => uppyPopup(uppy, text);
-        const info  = (text) => uppyInfo(uppy, text);
-
-        uppy.on('upload-started', function(file) {
-            consoleWarn('Uppy:', 'upload-started', file);
-            info(`Uploading "${file.name || file}"`); // TODO: I18n
-        });
-
-        uppy.on('upload-pause', function(file_id, is_paused) {
-            debugUppy('upload-pause', file_id, is_paused);
-            if (is_paused) {
-                info('PAUSED');   // TODO: I18n
-            } else {
-                popup('RESUMED'); // TODO: I18n
-            }
-        });
-
-        uppy.on('upload-retry', function(file_id) {
-            debugUppy('upload-retry', file_id);
-            warn('Retrying...'); // TODO: I18n
-        });
-
-        uppy.on('retry-all', function(files) {
-            debugUppy('retry-all', files);
-            const count   = files ? files.length : 0;
-            const uploads = (count === 1) ? 'upload' : `${count} uploads`;
-            warn(`Retrying ${uploads}...`); // TODO: I18n
-        });
-
-        uppy.on('pause-all', function() {
-            debugUppy('pause-all');
-            info('Uploading PAUSED'); // TODO: I18n
-        });
-
-        uppy.on('cancel-all', function() {
-            debugUppy('cancel-all');
-            warn('Uploading CANCELED'); // TODO: I18n
-        });
-
-        uppy.on('resume-all', function() {
-            debugUppy('resume-all');
-            warn('Uploading RESUMED'); // TODO: I18n
-        });
-
-        uppy.on('restriction-failed', function(file, msg) {
-            consoleWarn('Uppy:', 'restriction-failed', file, msg);
-            error(msg);
-        });
-
-        uppy.on('error', function(msg) {
-            consoleWarn('Uppy:', 'error', msg);
-            error(msg);
-        });
-
-    }
-
-    /**
-     * Set up console debugging messages for other Uppy events.
-     *
-     * @param {Uppy.Uppy}           uppy
-     * @param {UppyFeatureSettings} features
-     */
-    function setupDebugging(uppy, features) {
-
-        // This event occurs after 'upload-success' or 'upload-error'.
-        uppy.on('complete', function(result) {
-            debugUppy('complete', result);
-        });
-
-        // This event is observed concurrent with the 'progress' event.
-        uppy.on('upload-progress', function(file, progress) {
-            const bytes = progress.bytesUploaded;
-            const total = progress.bytesTotal;
-            const pct   = percent(bytes, total);
-            debugUppy('uploading', bytes, 'of', total, `(${pct}%)`);
-        });
-
-        // This event is observed concurrent with the 'upload-progress' event.
-        uppy.on('progress', function(percent) {
-            debugUppy('progress', percent);
-        });
-
-        uppy.on('reset-progress', function() {
-            debugUppy('reset-progress');
-        });
-
-        uppy.on('file-added', function(file) {
-            debugUppy('file-added', file);
-        });
-
-        uppy.on('file-removed', function(file) {
-            debugUppy('file-removed', file);
-        });
-
-        uppy.on('preprocess-progress', function(file, status) {
-            debugUppy('preprocess-progress', file, status);
-        });
-
-        uppy.on('preprocess-complete', function(file) {
-            debugUppy('preprocess-complete', file);
-        });
-
-        uppy.on('is-offline', function() {
-            debugUppy('OFFLINE');
-        });
-
-        uppy.on('is-online', function() {
-            debugUppy('ONLINE');
-        });
-
-        uppy.on('back-online', function() {
-            debugUppy('BACK ONLINE');
-        });
-
-        uppy.on('info-visible', function() {
-            debugUppy('info-visible');
-        });
-
-        uppy.on('info-hidden', function() {
-            debugUppy('info-hidden');
-        });
-
-        uppy.on('plugin-remove', function(instance) {
-            debugUppy('plugin-remove', (instance.id || instance));
-        });
-
-        if (features.dashboard) {
-            uppy.on('dashboard:modal-open', function() {
-                debugUppy('dashboard:modal-open');
-            });
-            uppy.on('dashboard:modal-closed', function() {
-                debugUppy('dashboard:modal-closed');
-            });
-            uppy.on('dashboard:file-edit-start', function() {
-                debugUppy('dashboard:file-edit-start');
-            });
-            uppy.on('dashboard:file-edit-complete', function() {
-                debugUppy('dashboard:file-edit-complete');
-            });
-        }
-
-        if (features.image_preview) {
-            uppy.on('thumbnail:request', function(file) {
-                debugUppy('thumbnail:request', file);
-            });
-            uppy.on('thumbnail:cancel', function(file) {
-                debugUppy('thumbnail:cancel', file);
-            });
-            uppy.on('thumbnail:error', function(file, error) {
-                debugUppy('thumbnail:error', file, error);
-            });
-            uppy.on('thumbnail:all-generated', function() {
-                debugUppy('thumbnail:all-generated');
-            });
-        }
-
-        if (features.upload_to_aws) {
-            uppy.on('s3-multipart:part-uploaded', function(file, pt) {
-                debugUppy('s3-multipart:part-uploaded', file, pt);
-            });
-        }
-
-/*
-        uppy.on('state-update', function(prev_state, next_state, patch) {
-            debugUppy('state-update', prev_state, next_state, patch);
-        });
-*/
-    }
-
-    // ========================================================================
-    // Functions - Uppy informer
-    // ========================================================================
-
-    /**
-     * Invoke `uppy.info` with an error message.
-     *
-     * @param {Uppy.Uppy} uppy
-     * @param {string}    text
-     * @param {number}    [duration]
-     */
-    function uppyError(uppy, text, duration) {
-        uppyPopup(uppy, text, duration, 'error');
-    }
-
-    /**
-     * Invoke `uppy.info` with a warning message.
-     *
-     * @param {Uppy.Uppy} uppy
-     * @param {string}    text
-     * @param {number}    [duration]
-     */
-    function uppyWarn(uppy, text, duration) {
-        uppyPopup(uppy, text, duration, 'warning');
-    }
-
-    /**
-     * Invoke `uppy.info` with a temporary message.
-     *
-     * @param {Uppy.Uppy}                uppy
-     * @param {string}                   text
-     * @param {number}                   [duration]
-     * @param {'info'|'warning'|'error'} [info_level]
-     */
-    function uppyPopup(uppy, text, duration, info_level) {
-        const time = duration || MESSAGE_DURATION;
-        uppyInfo(uppy, text, time, info_level);
-    }
-
-    /**
-     * Invoke `uppy.info`.
-     *
-     * If no duration is given the information bubble will remain until
-     * intentionally cleared.
-     *
-     * @param {Uppy.Uppy}                uppy
-     * @param {string}                   text
-     * @param {number}                   [duration]
-     * @param {'info'|'warning'|'error'} [info_level]
-     */
-    function uppyInfo(uppy, text, duration, info_level) {
-        const level = info_level || 'info';
-        const time  = duration   || 1000 * MINUTES;
-        uppy.info(text, level, time);
-    }
-
-    /**
-     * Invoke `uppy.info` with an empty string and very short duration.
-     *
-     * @param {Uppy.Uppy} uppy
-     */
-    function uppyInfoClear(uppy) {
-        uppyInfo(uppy, '', 1);
-    }
-
-    // ========================================================================
-    // Functions - Uppy progress bar
-    // ========================================================================
-
-    /**
-     * The element starts with 'aria-hidden="true"' (so that attribute alone
-     * alone isn't sufficient for conditional styling), however the element
-     * (and its children) are not invisible.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     *
-     * @see file:app/assets/stylesheets/vendor/_uppy.scss .uppy-ProgressBar
-     */
-    function initializeUppyProgressBar(form) {
-        hideUppyProgressBar(form);
-    }
-
-    /**
-     * Start displaying the Uppy progress bar.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     */
-    function showUppyProgressBar(form) {
-        toggleUppyProgressBar(form, true);
-    }
-
-    /**
-     * Stop displaying the Uppy progress bar.
-     *
-     * Note that the 'hideAfterFinish' option for ProgressBar *only* sets
-     * 'aria-hidden' -- it doesn't actually hide the control itself.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     */
-    function hideUppyProgressBar(form) {
-        toggleUppyProgressBar(form, false);
-    }
-
-    /**
-     * Hide/show the .uppy-ProgressBar element by adding/removing the CSS
-     * "invisible" class.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [visible]
-     */
-    function toggleUppyProgressBar(form, visible) {
-        let $control = formContainer(form).find('.uppy-ProgressBar');
-        toggleVisibility($control, visible);
-    }
-
-    // ========================================================================
     // Functions - form fields
     // ========================================================================
 
@@ -2213,8 +1617,11 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {object}   data
      * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {boolean}             False if validateForm didn't occur.
      */
     function populateFormFields(data, form) {
+        let revalidated = false;
         if (isPresent(data)) {
             let $form = formElement(form);
             let count = 0;
@@ -2228,8 +1635,10 @@ $(document).on('turbolinks:load', function() {
             if (count) {
                 resolveRelatedFields();
                 validateForm($form);
+                revalidated = true;
             }
         }
+        return revalidated;
     }
 
     /**
@@ -2285,7 +1694,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}              [trim]     If *false*, keep white space.
      * @param {boolean}              [init]     If *true*, initializing.
      *
-     * @see "ModelHelper::Form#render_form_input_multi"
+     * @see "BaseDecorator::Form#render_form_input_multi"
      */
     function updateFieldsetInputs(target, new_value, trim, init) {
 
@@ -2355,7 +1764,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string|string[]|null} [setting]
      * @param {boolean}              [init]     If *true*, in initialization.
      *
-     * @see "ModelHelper::Form#render_form_menu_multi"
+     * @see "BaseDecorator::Form#render_form_menu_multi"
      */
     function updateFieldsetCheckboxes(target, setting, init) {
 
@@ -2441,7 +1850,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string|null}    [new_value]
      * @param {boolean}        [init]       If *true*, in initialization phase.
      *
-     * @see "ModelHelper::Form#render_form_menu_single"
+     * @see "BaseDecorator::Form#render_form_menu_single"
      */
     function updateMenu(target, new_value, init) {
         let $input = $(target);
@@ -2465,7 +1874,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}     [trim]          If *false*, don't trim white space.
      * @param {boolean}     [init]          If *true*, in initialization phase.
      *
-     * @see "ModelHelper::Form#render_form_input"
+     * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextAreaField(target, new_value, trim, init) {
         let $input = $(target);
@@ -2490,7 +1899,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}     [trim]          If *false*, don't trim white space.
      * @param {boolean}     [init]          If *true*, in initialization phase.
      *
-     * @see "ModelHelper::Form#render_form_input"
+     * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextInputField(target, new_value, trim, init) {
         let $input = $(target);
@@ -2617,7 +2026,7 @@ $(document).on('turbolinks:load', function() {
         function isBoolean(v, is_true) {
             let result = v;
             if (typeof result === 'function') {
-                result = result.call($this_input);
+                result = result($this_input);
             }
             if (typeof result !== 'boolean') {
                 result = String(result).toLowerCase();
@@ -2635,6 +2044,12 @@ $(document).on('turbolinks:load', function() {
             }
             if (isDefined(new_val) && ($other_input.val() !== new_val)) {
                 $other_input.val(new_val);
+                // This shouldn't be necessary.
+                if ((this_name === 'rem_complete') &&
+                    (rawOriginalValue($other_input) === '(ALL)')) {
+                    setOriginalValue($other_input, '');
+                    $other_input.text(new_val);
+                }
                 changed = true;
             }
             return changed;
@@ -2642,21 +2057,25 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Update the input field and label for a <select>, <textarea>, or
-     * <input type="text">.
+     * Update the input field for <select>, <textarea>, or <input type="text">,
+     * along with its label, and possibly other related fields.
      *
      * For these types, the label is a sibling of the input element.
      *
      * @param {Selector} target
      * @param {*}        values
+     *
+     * @see "BaseDecorator::Form#form_note_pair"
      */
     function updateFieldAndLabel(target, values) {
-        let $input  = $(target);
-        const id    = $input.attr('id');
-        let $label  = $input.siblings(`label[for="${id}"]`);
-        // noinspection JSCheckFunctionSignatures
-        let $status = $label.find('.status-marker');
-        const parts = [$input, $label, $status];
+        let $input   = $(target);
+        const id     = $input.attr('id');
+        const field  = $input.attr('data-field');
+        /** @type {jQuery} $label, $status, $related */
+        let $label   = $input.siblings(`label[for="${id}"]`);
+        let $status  = $label.find('.status-marker');
+        let $related = $input.siblings(`[data-for="${field}"]`);
+        const parts  = [$input, $label, $status, ...$related];
 
         if ($input.attr('readonly')) {
 
@@ -2666,23 +2085,25 @@ $(document).on('turbolinks:load', function() {
         } else {
 
             const required = ($input.attr('data-required') === 'true');
+            const optional = ($input.attr('data-required') === 'false');
             const missing  = isEmpty(values);
             let invalid    = required && missing;
 
-            if (missing) {
+            if (invalid) {
                 update(false);
             } else {
                 validate($input, values, update);
             }
 
             function update(valid, notes) {
+
                 if (required || !missing) {
                     invalid ||= !valid;
                 }
 
                 // Update the status icon and tooltip.
-                let tip, icon;
-                if (valid) {
+                let icon, tip;
+                if (valid && (required || !missing)) {
                     icon = PROPERTIES.Status.valid.label;
                     tip  = PROPERTIES.Status.valid.tooltip;
                 } else if (invalid && !missing) {
@@ -2690,12 +2111,14 @@ $(document).on('turbolinks:load', function() {
                     tip  = PROPERTIES.Status.invalid.tooltip;
                 } else if (required) {
                     icon = PROPERTIES.Status.required.label;
+                } else {
+                    icon = PROPERTIES.Status.blank.label;
                 }
 
-                if (tip) {
-                    if (isPresent(notes)) {
-                        tip = [tip, '', ...arrayWrap(notes)].join("\n");
-                    }
+                const plus_notes = isPresent(notes) && arrayWrap(notes);
+                if (tip && plus_notes) {
+                    setTooltip($status, [tip, '', ...plus_notes].join("\n"));
+                } else if (tip ||= plus_notes) {
                     setTooltip($status, tip);
                 } else {
                     restoreTooltip($status);
@@ -2710,7 +2133,7 @@ $(document).on('turbolinks:load', function() {
                 // Update CSS status classes on all parts of the field.
                 toggleClass(parts, 'required', required);
                 toggleClass(parts, 'invalid',  invalid);
-                toggleClass(parts, 'valid',    valid);
+                toggleClass(parts, 'valid',    (!!valid && !missing));
             }
         }
     }
@@ -2785,11 +2208,10 @@ $(document).on('turbolinks:load', function() {
             }
         }
         if (Array.isArray(result)) {
-            result = compact(result);
-            result = result.map(function(v) { return htmlDecode(v); });
-            result = result.join("\n");
+            return compact(result).map(v => htmlDecode(v)).join("\n");
+        } else {
+            return result;
         }
-        return result;
     }
 
     /**
@@ -2878,27 +2300,44 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} target
      * @param {*}        new_value    Current *target* value if not given.
-     * @param {function} [callback]   Required for remote validation.
-     *
-     * @returns {boolean|undefined}
+     * @param {function} callback     Required.
      */
     function validate(target, new_value, callback) {
         let $input  = $(target);
         const field = $input.attr('data-field');
         const entry = FIELD_VALIDATION[field];
-        let valid;
-        if (typeof entry === 'string') {
-            const value = isDefined(new_value) ? new_value : $input.val();
+        const value = isDefined(new_value) ? new_value : $input.val();
+        let valid, notes, min, max;
+        if (isEmpty(value)) {
+            notes = 'empty value';
+            valid = undefined;
+        } else if (typeof entry === 'string') {
             remoteValidate(field, value, callback);
+            return;
         } else if (typeof entry === 'function') {
-            const value = isDefined(new_value) ? new_value : $input.val();
+            notes = undefined;
             valid = entry(value);
-            callback && callback(valid);
+        } else if (typeof entry === 'boolean') {
+            notes = undefined;
+            valid = entry;
+        } else if (field === 'password_confirmation') {
+            let $pwd = inputFields().filter('[data-field="password"]');
+            if ($pwd.hasClass('valid')) {
+                valid = (value === $pwd.val());
+            } else if ($pwd.hasClass('invalid')) {
+                valid = false;
+            }
+        } else if ((min = $input.attr('minlength')) && (value.length < min)) {
+            notes = 'Not enough characters.'; // TODO: I18n
+            valid = false;
+        } else if ((max = $input.attr('maxlength')) && (value.length > max)) {
+            notes = 'Too many characters.'; // TODO: I18n
+            valid = false;
         } else {
-            valid = (typeof entry !== 'boolean') || entry;
-            callback && callback(valid);
+            notes = undefined;
+            valid = true;
         }
-        return valid;
+        callback(valid, notes);
     }
 
     /**
@@ -3545,17 +2984,20 @@ $(document).on('turbolinks:load', function() {
         let $form   = formElement(form);
         let $fields = inputFields($form);
         let ready   = !$fields.hasClass('invalid');
-        if (ready && !fileSelected($form)) {
-            let changes = 0;
-            if (isUpdateForm($form)) {
-                $fields.each(function() {
-                    let $item = $(this);
-                    if (valueOf($item) !== getOriginalValue($item)) {
-                        changes++;
-                    }
-                });
+        if ((ready &&= !menuMultiFields($form).hasClass('invalid'))) {
+            const updating = isUpdateForm($form);
+            let recheck = updating;
+            if (uploader) {
+                if (uploader.fileSelected()) {
+                    recheck = false;
+                } else if (!updating) {
+                    ready = false;
+                }
             }
-            ready = (changes > 0);
+            if (recheck) {
+                const items = $fields.toArray();
+                ready = items.some(i => (valueOf(i) !== getOriginalValue(i)));
+            }
         }
         if (ready) {
             enableSubmit($form);
@@ -3631,12 +3073,15 @@ $(document).on('turbolinks:load', function() {
         let $button = $(event.target);
         let $form   = formElement($button);
         if (!formState($form)) {
-            let fields = undefined;
-            if (isUpdateForm($form)) {
-                fields = revertEditData($form);
-            }
             setFormCanceled($form);
-            cancelCurrent($form, $button.attr('data-path'), fields);
+            let cancel_path = $button.attr('data-path');
+            if (PROPERTIES.Path.cancel) {
+                const fields = isUpdateForm($form) && revertEditData($form);
+                cancelCurrent($form, cancel_path, fields);
+            } else {
+                cancel_path ||= $button.attr('href') || 'back';
+                cancelAction(cancel_path);
+            }
         }
     }
 
@@ -3652,12 +3097,13 @@ $(document).on('turbolinks:load', function() {
         const sid  = submissionParams($form);
         let params = $.extend({ redirect: PROPERTIES.Path.index }, sid);
         if (redirect) {
-            const curr_path = window.location.pathname;
-            const curr_url  = window.location.origin + curr_path;
-            const back_here =
-                redirect.startsWith(curr_path) ||
-                redirect.startsWith(curr_url);
-            if (back_here && fileSelected($form) && !canSubmit($form)) {
+            let back_here;
+            if (!uploader || uploader.fileSelected()) {
+                const p = window.location.pathname;   // Current path.
+                const u = window.location.origin + p; // Current URL.
+                back_here = redirect.startsWith(p) || redirect.startsWith(u);
+            }
+            if (back_here && !canSubmit($form)) {
                 params.reset    = true;
                 params.redirect = makeUrl(redirect, sid);
             } else {
@@ -3938,7 +3384,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]  Passed to {@link fieldDisplayFilterButtons}.
      *
-     * @see "UploadHelper#upload_field_group"
+     * @see "BaseDecorator::Form#field_group_controls"
      */
     function monitorFieldDisplayFilterButtons(form) {
 
@@ -3972,7 +3418,7 @@ $(document).on('turbolinks:load', function() {
      * @overload filterFieldDisplay(form_sel)
      *  @param {Selector}    form_sel
      *
-     * @see "UploadHelper#upload_field_group"
+     * @see "BaseDecorator::Form#field_group_controls"
      */
     function filterFieldDisplay(new_mode, form_sel) {
         const func = 'filterFieldDisplay';
@@ -4070,67 +3516,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Disable the file select button.
-     *
-     * @param {Selector} [form]       Passed to {@link formElement}.
-     *
-     * @returns {jQuery}              The file select button.
-     */
-    function disableFileSelectButton(form) {
-        let $form   = formElement(form);
-        const label = fileSelectDisabledLabel($form);
-        const tip   = fileSelectDisabledTooltip($form);
-        return fileSelectButton($form)
-            .removeClass('best-choice')
-            .addClass('forbidden')
-            .attr('title', tip)
-            .text(label);
-    }
-
-    /**
-     * Display the name of the uploaded file.
-     *
-     * @param {{
-     *      id:      string,
-     *      storage: string,
-     *      metadata: {
-     *          filename:  string,
-     *          size:      number,
-     *          mime_type: string,
-     *      }
-     * }} file_data
-     * @param {Selector} [form]       Default: {@link formElement}.
-     */
-    function displayUploadedFilename(file_data, form) {
-        const metadata = file_data?.metadata;
-        const filename = metadata?.filename;
-        displayFilename(filename, form);
-    }
-
-    /**
-     * Display the name of the file selected by the user.
-     *
-     * @param {String}   filename
-     * @param {Selector} [form]       Default: {@link formElement}.
-     */
-    function displayFilename(filename, form) {
-        if (isPresent(filename)) {
-            let $form    = formElement(form);
-            let $element = uploadedFilenameDisplay($form);
-            if (isPresent($element)) {
-                let $filename = $element.find('.filename');
-                if (isPresent($filename)) {
-                    $filename.text(filename);
-                } else {
-                    $element.text(filename);
-                }
-                $element.addClass('complete');
-            }
-            hideUppyProgressBar($form);
-        }
-    }
-
-    /**
      * Set a temporary tooltip.
      *
      * @param {Selector} element
@@ -4182,7 +3567,7 @@ $(document).on('turbolinks:load', function() {
                 $element.attr('data-icon', old_icon);
             }
         }
-        const new_icon = icon || '';
+        const new_icon = icon || PROPERTIES.Status.blank.label;
         $element.text(new_icon);
     }
 
@@ -4202,17 +3587,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * The parent element of the form.
-     *
-     * @param {Selector} [container]    Passed to {@link formElement}.
-     *
-     * @returns {jQuery}
-     */
-    function formContainer(container) {
-        return formElement(container).parent();
-    }
-
-    /**
      * The given form element or the first file upload form on the page.
      *
      * @param {Selector} [form]       Default: FORM_SELECTOR.
@@ -4225,8 +3599,8 @@ $(document).on('turbolinks:load', function() {
             $form = $form.parents(FORM_SELECTOR);
         }
         if (isMissing($form)) {
-            const bulk = isMissing($entry_form);
-            $form = bulk ? $bulk_operation_form : $entry_form;
+            const bulk = isMissing($model_form);
+            $form = bulk ? $bulk_op_form : $model_form;
         }
         return $form.first();
     }
@@ -4251,7 +3625,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function emmaDataElement(form) {
-        return formElement(form).find(`#${RECORD}_emma_data`);
+        return formElement(form).find(`#${MODEL}_emma_data`);
     }
 
     /**
@@ -4262,7 +3636,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fileDataElement(form) {
-        return formElement(form).find(`#${RECORD}_file_data`);
+        return formElement(form).find(`#${MODEL}_file_data`);
     }
 
     /**
@@ -4296,14 +3670,14 @@ $(document).on('turbolinks:load', function() {
      * @returns { {id: string} | {submission_id: string} | {} }
      */
     function submissionParams(form) {
-        if (UPLOAD_CONTROLLER) {
-            const value = formField('id', form).val();
-            if (value) { return { id: value } }
-            console.warn(`No database record ID for ${RECORD}`);
-        } else {
+        if (MODEL === 'entry') {
             const value = formField('submission_id', form).val();
             if (value) { return { submission_id: value } }
-            console.warn(`No submission ID for ${RECORD}`);
+            console.warn(`No submission ID for ${MODEL}`);
+        } else {
+            const value = formField('id', form).val();
+            if (value) { return { id: value } }
+            console.warn(`No database record ID for ${MODEL}`);
         }
         return {};
     }
@@ -4315,7 +3689,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {jQuery}
      *
-     * @see "UploadHelper#upload_submit_button"
+     * @see "BaseDecorator::Form#model_form"
+     * @see Uploader.buttonTray
      */
     function buttonTray(form) {
         return formElement(form).find('.button-tray');
@@ -4328,7 +3703,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {jQuery}
      *
-     * @see "UploadHelper#upload_submit_button"
+     * @see "BaseDecorator::Form#submit_button"
      */
     function submitButton(form) {
         return buttonTray(form).children('.submit-button');
@@ -4342,21 +3717,10 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      *
      * @see setupCancelButton
-     * @see "UploadHelper#upload_cancel_button"
+     * @see "BaseDecorator::Form#cancel_button"
      */
     function cancelButton(form) {
         return buttonTray(form).children('.cancel-button');
-    }
-
-    /**
-     * The element displaying the uploaded file.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     *
-     * @returns {jQuery}
-     */
-    function uploadedFilenameDisplay(form) {
-        return formElement(form).find('.uploaded-filename');
     }
 
     /**
@@ -4367,7 +3731,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldDisplayFilterContainer(form) {
-        return formElement(form).find(`.${RECORD}-field-group`);
+        return formElement(form).find('.field-group');
     }
 
     /**
@@ -4382,28 +3746,6 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * The Uppy-generated element containing the file select button.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     *
-     * @returns {jQuery}
-     */
-    function fileSelectContainer(form) {
-        return formElement(form).find('.uppy-FileInput-container');
-    }
-
-    /**
-     * The Uppy-generated file select button.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     *
-     * @returns {jQuery}
-     */
-    function fileSelectButton(form) {
-        return fileSelectContainer(form).children('.file-select-button');
-    }
-
-    /**
      * The container element for all input fields and their labels.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
@@ -4411,7 +3753,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldContainer(form) {
-        return formElement(form).find(`.${RECORD}-fields`);
+        return formElement(form).find('.form-fields');
     }
 
     /**
@@ -4437,14 +3779,14 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Only input fields which are checkboxes.
+     * Containers for groups of checkboxes.
      *
-     * @param {Selector} [form]       Passed to {@link inputFields}.
+     * @param {Selector} [form]       Passed to {@link fieldContainer}.
      *
      * @returns {jQuery}
      */
-    function checkboxInputFields(form) {
-        return inputFields(form).filter('[type="checkbox"]');
+    function menuMultiFields(form) {
+        return fieldContainer(form).find('.menu.multi.value[data-field]');
     }
 
     // ========================================================================
@@ -4471,29 +3813,6 @@ $(document).on('turbolinks:load', function() {
      */
     function canCancel(form) {
         return true; // TODO: canCancel?
-    }
-
-    /**
-     * Indicate whether file select is enabled.
-     *
-     * @param {Selector} [form]       Passed to {@link fileSelected}.
-     *
-     * @returns {boolean}
-     */
-    function canSelect(form) {
-        return !fileSelected(form);
-    }
-
-    /**
-     * Indicate whether the user has selected a file (which implies that the
-     * file has been uploaded for validation).
-     *
-     * @param {Selector} [form]       Passed to {@link uploadedFilenameDisplay}
-     *
-     * @returns {boolean}
-     */
-    function fileSelected(form) {
-        return uploadedFilenameDisplay(form).css('display') !== 'none';
     }
 
     /**
@@ -4533,9 +3852,9 @@ $(document).on('turbolinks:load', function() {
         let $form     = formElement(form);
         const message = 'Cancel this submission before retrying'; // TODO: I18n
         const tooltip = { 'title': message };
-        hideUppyProgressBar($form);
+        uploader?.cancel();
+        uploader?.disableFileSelectButton()?.attr(tooltip);
         disableSubmit($form).attr(tooltip);
-        disableFileSelectButton($form).attr(tooltip);
         fieldContainer($form).attr(tooltip);
         inputFields($form).attr(tooltip).each(function() {
             this.disabled = true;
@@ -4643,9 +3962,9 @@ $(document).on('turbolinks:load', function() {
      */
     function submitLabel(form, can_submit) {
         let $form   = formElement(form);
-        const op    = assetObject($form).submit || {};
-        const state = buttonProperties($form, op, 'submit', can_submit);
-        return state?.label || op.label;
+        const asset = endpointProperties($form).submit || {};
+        const state = buttonProperties($form, 'submit', can_submit, asset);
+        return state?.label || asset.label;
     }
 
     /**
@@ -4658,9 +3977,9 @@ $(document).on('turbolinks:load', function() {
      */
     function submitTooltip(form, can_submit) {
         let $form   = formElement(form);
-        const op    = assetObject($form).submit || {};
-        const state = buttonProperties($form, op, 'submit', can_submit);
-        return state?.tooltip || op?.tooltip;
+        const asset = endpointProperties($form).submit || {};
+        const state = buttonProperties($form, 'submit', can_submit, asset);
+        return state?.tooltip || asset?.tooltip;
     }
 
     /**
@@ -4695,9 +4014,9 @@ $(document).on('turbolinks:load', function() {
      */
     function cancelLabel(form, can_cancel) {
         let $form   = formElement(form);
-        const op    = assetObject($form).cancel || {};
-        const state = buttonProperties($form, op, 'cancel', can_cancel);
-        return state?.label || op?.label;
+        const asset = endpointProperties($form).cancel || {};
+        const state = buttonProperties($form, 'cancel', can_cancel, asset);
+        return state?.label || asset?.label;
     }
 
     /**
@@ -4710,75 +4029,25 @@ $(document).on('turbolinks:load', function() {
      */
     function cancelTooltip(form, can_cancel) {
         let $form   = formElement(form);
-        const op    = assetObject($form).cancel || {};
-        const state = buttonProperties($form, op, 'cancel', can_cancel);
-        return state?.tooltip || op?.tooltip;
-    }
-
-    /**
-     * The current label for the file select button.
-     *
-     * @param {Selector} [form]         Passed to {@link formElement}.
-     * @param {boolean}  [can_select]   Default: `canSelect()`.
-     *
-     * @returns {string}
-     */
-    function fileSelectLabel(form, can_select) {
-        let $form   = formElement(form);
-        const op    = assetObject($form).select || {};
-        const state = buttonProperties($form, op, 'select', can_select);
-        return state?.label || op?.label;
-    }
-
-    /**
-     * The current tooltip for the file select button.
-     *
-     * @param {Selector} [form]         Passed to {@link formElement}.
-     * @param {boolean}  [can_select]   Default: `canSelect()`.
-     *
-     * @returns {string}
-     */
-    function fileSelectTooltip(form, can_select) {
-        let $form   = formElement(form);
-        const op    = assetObject($form).select || {};
-        const state = buttonProperties($form, op, 'select', can_select);
-        return state?.tooltip || op?.tooltip;
-    }
-
-    /**
-     * The label for the file select button when disabled.
-     *
-     * @param {Selector} [form]       Passed to {@link assetObject}.
-     *
-     * @returns {string}
-     */
-    function fileSelectDisabledLabel(form) {
-        return fileSelectLabel(form, false);
-    }
-
-    /**
-     * The tooltip for the file select button when disabled.
-     *
-     * @param {Selector} [form]       Passed to {@link assetObject}.
-     *
-     * @returns {string}
-     */
-    function fileSelectDisabledTooltip(form) {
-        return fileSelectTooltip(form, false);
+        const asset = endpointProperties($form).cancel || {};
+        const state = buttonProperties($form, 'cancel', can_cancel, asset);
+        return state?.tooltip || asset?.tooltip;
     }
 
     /**
      * Get label/tooltip properties for the indicated operation depending on
      * whether it is enabled or disabled.
      *
-     * @param {Selector}           [form] Passed to {@link assetObject}.
-     * @param {ActionProperties} [values] Pre-fetched property values.
-     * @param {string}          [op_name] Name of the operation.
-     * @param {boolean}     [can_perform] Pre-determined enabled/disabled state
+     * @param {Selector}         form     Passed to {@link endpointProperties}.
+     * @param {string}           op_name  Name of the operation.
+     * @param {boolean}    [can_perform]  Pre-determined enabled/disabled state
+     * @param {ActionProperties} [asset]  Pre-fetched property values.
      *
      * @returns {ElementProperties|null}
+     *
+     * @see Uploader.buttonProperties
      */
-    function buttonProperties(form, values, op_name, can_perform) {
+    function buttonProperties(form, op_name, can_perform, asset) {
         const func  = 'buttonProperties';
         let $form   = formElement(form);
         let perform = can_perform;
@@ -4786,31 +4055,31 @@ $(document).on('turbolinks:load', function() {
             switch (op_name) {
                 case 'submit': perform = canSubmit($form); break;
                 case 'cancel': perform = canCancel($form); break;
-                case 'select': perform = canSelect($form); break;
+                //case 'select': perform = canSelect($form); break;
                 default:       consoleError(`${func}: invalid: "${op_name}"`);
             }
         }
-        const op = isPresent(values) ? values : assetObject($form)[op_name];
+        const op = asset || endpointProperties($form)[op_name];
         return op && (perform ? op.enabled : op.disabled);
     }
 
     /**
-     * Get the Emma data branch associated with the current type of form.
+     * Get the configuration properties for the current form action.
      *
      * @param {Selector} [form]       Passed to {@link isUpdateForm}.
      *
-     * @returns {RouteActionProperties}
+     * @returns {EndpointProperties}
+     *
+     * @see Uploader.#endpointProperties
      */
-    function assetObject(form) {
+    function endpointProperties(form) {
         let $form    = formElement(form);
-        const action = PROPERTIES.Action;
-        let result;
-        if (isBulkOperationForm($form)) {
-            result = isUpdateForm($form) ? action.bulk_edit : action.bulk_new;
+        const action = PROPERTIES.Action || {};
+        if (isBulkOpForm($form)) {
+            return isUpdateForm($form) ? action.bulk_edit : action.bulk_new;
         } else {
-            result = isUpdateForm($form) ? action.edit : action.new;
+            return isUpdateForm($form) ? action.edit : action.new;
         }
-        return result;
     }
 
     // ========================================================================
@@ -4886,15 +4155,6 @@ $(document).on('turbolinks:load', function() {
      */
     function debugSection(...args) {
         if (DEBUGGING) { consoleWarn('>>>>>', ...args, '<<<<<'); }
-    }
-
-    /**
-     * Emit a console message if debugging file uploads.
-     *
-     * @param {...*} args
-     */
-    function debugUppy(...args) {
-        if (DEBUG.UPLOAD) { consoleLog('Uppy:', ...args); }
     }
 
     /**

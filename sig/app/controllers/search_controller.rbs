@@ -70,8 +70,8 @@ class SearchController < ApplicationController
   #
   # Indicate whether the supplied value is a valid field value.
   #
-  # @see file:app/assets/javascripts/feature/entry-form.js *remoteValidate()*
-  # @see file:app/assets/javascripts/feature/entry-form.js *ID_VALIDATE_URL_BASE*
+  # @see file:app/assets/javascripts/feature/model-form.js *remoteValidate()*
+  # @see file:app/assets/javascripts/feature/model-form.js *ID_VALIDATE_URL_BASE*
   #
   def validate: () -> void
 

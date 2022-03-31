@@ -57,7 +57,7 @@ module BookshareService::Properties
   #
   # @see #BOOKSHARE_API_KEY
   #
-  def api_key: () -> String?
+  def api_key: () -> (String | nil)
 
   # API version is not a part of request URLs.
   #
@@ -65,7 +65,7 @@ module BookshareService::Properties
   #
   # @see #BOOKSHARE_API_VERSION
   #
-  def api_version: () -> String?
+  def api_version: () -> (String | nil)
 
   private
 

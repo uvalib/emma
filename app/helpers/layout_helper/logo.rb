@@ -68,10 +68,11 @@ module LayoutHelper::Logo
   # @return [ActiveSupport::SafeBuffer]
   #
   def logo_element(mode: :image, **opt)
-    css_selector = '.logo'
-    alt_text     = opt.delete(:alt) || LOGO_ALT_TEXT
+    css      = '.logo'
+    alt_text = opt.delete(:alt) || LOGO_ALT_TEXT
     opt[:'data-turbolinks-permanent'] = true
-    html_div(prepend_classes!(opt, css_selector)) do
+    prepend_css!(opt, css)
+    html_div(opt) do
       link_to(root_path, title: logo_tagline) do
         if mode == :text
           LOGO_TEXT

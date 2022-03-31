@@ -11,8 +11,12 @@ module HelpHelper
 
   include Emma::Common
   include Emma::Constants
+  include Emma::Unicode
 
+  include ApplicationHelper
   include HtmlHelper
+  include LinkHelper
+  include ParamsHelper
   include PopupHelper
   include SessionDebugHelper
 
@@ -105,10 +109,14 @@ module HelpHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If *topic* is blank.
+  #
   # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
   def help_popup(topic, sub_topic = nil, **opt)
-    css_selector = '.help-popup'
+    return if topic.blank?
+    css    = '.help-popup'
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
@@ -117,8 +125,9 @@ module HelpHelper
     opt[:title]       ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
     opt[:control]     ||= { icon: QUESTION }
 
-    popup_container(**prepend_classes!(opt, css_selector)) do
-      ph_opt = prepend_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
+    prepend_css!(opt, css)
+    popup_container(**opt) do
+      ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
       ph_opt[:'data-path']  = help_path(id: topic, modal: true)
       ph_opt[:'data-attr']  = attr.to_json
@@ -213,12 +222,11 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_toc(*topics, **opt)
-    opt, outer_opt = partition_hash(opt, :type, :tag, :inner)
-    link_type = opt[:type]
-    outer_tag = opt[:tag] || :ul
-    inner_opt = opt[:inner]&.dup || {}
+    link_type = opt.delete(:type)
+    outer_tag = opt.delete(:tag) || :ul
+    inner_opt = opt.delete(:inner)&.dup || {}
     inner_tag = inner_opt.delete(:tag).presence || :li
-    html_tag(outer_tag, outer_opt) do
+    html_tag(outer_tag, opt) do
       help_links(*topics, type: link_type).map do |title, path|
         html_tag(inner_tag, inner_opt) { link_to(title, path) }
       end
@@ -282,8 +290,9 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_span(label, **opt)
-    css_selector = '.for-example'
-    html_span(label, append_classes!(opt, css_selector))
+    css = '.for-example'
+    append_css!(opt, css)
+    html_span(label, opt)
   end
 
   # Render a help link within help text.
@@ -315,8 +324,8 @@ module HelpHelper
   # @return [nil]                         No content and *wrap* is *false*.
   #
   def help_section(item: nil, wrap: true, **opt)
-    css_selector = '.help-section'
-    prepend_classes!(opt, css_selector)
+    css = '.help-section'
+    prepend_css!(opt, css)
     help_container(item: item, wrap: wrap, **opt)
   end
 
@@ -345,7 +354,7 @@ module HelpHelper
   # @see config/locales/controllers/help.en.yml
   #
   def help_container(item: nil, wrap: true, **opt)
-    css_selector  = '.help-container'
+    css       = '.help-container'
     topic     = (item || request_parameters[:id]).to_sym
     partial   = "help/topic/#{topic}"
     content   = HELP_ENTRY.dig(topic, :content)
@@ -355,7 +364,8 @@ module HelpHelper
     row   = ("row-#{row}" if row)
     modal = ('modal'      if modal?)
     opt[:role] = 'article' if opt.delete(:level) == 1
-    html_div(content, prepend_classes!(opt, css_selector, row, modal))
+    prepend_css!(opt, css, row, modal)
+    html_div(content, opt)
   end
 
   # ===========================================================================

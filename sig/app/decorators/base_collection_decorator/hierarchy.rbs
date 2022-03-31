@@ -1,0 +1,5 @@
+# View helper methods supporting the hierarchical display of model records.
+#
+module BaseCollectionDecorator::Hierarchy
+  include BaseDecorator::Hierarchy
+end

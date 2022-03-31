@@ -52,6 +52,8 @@ class MetricsController < ApplicationController
   #
   # @note This is out of date.
   #
+  # @see #metrics_test_path           Route helper
+  #
   def test
     value = rand(0..100)
 

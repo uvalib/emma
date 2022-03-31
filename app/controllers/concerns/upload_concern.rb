@@ -17,15 +17,17 @@ module UploadConcern
   include Emma::Csv
   include Emma::Json
 
-  include UploadWorkflow::Properties
+  include UploadWorkflow::Errors
 
   include ParamsHelper
   include FlashHelper
 
+  include IngestConcern
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include PaginationConcern
+    include OptionsConcern
     # :nocov:
   end
 
@@ -44,56 +46,28 @@ module UploadConcern
 
   public
 
-  # URL parameters involved in pagination.                                      # NOTE: to EntryConcern::ENTRY_PAGE_PARAMS
-  #
-  # @type [Array<Symbol>]
-  #
-  UPLOAD_PAGE_PARAMS = %i[page start offset limit].freeze
-
-  # URL parameters involved in form submission.                                 # NOTE: to EntryConcern::ENTRY_FORM_PARAMS
-  #
-  # @type [Array<Symbol>]
-  #
-  UPLOAD_FORM_PARAMS = %i[selected field-group cancel].freeze
-
-  # POST/PUT/PATCH parameters from the entry form that are not relevant to the  # NOTE: to EntryConcern::IGNORED_ENTRY_FORM_PARAMS
-  # create/update of an Upload instance.
-  #
-  # @type [Array<Symbol>]
-  #
-  IGNORED_UPLOAD_FORM_PARAMS = (UPLOAD_PAGE_PARAMS + UPLOAD_FORM_PARAMS).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>Any}]
   #
   def upload_params                                                             # NOTE: to EntryConcern#entry_params
-    @upload_params ||= get_upload_params
+    @upload_params ||= model_options.model_params
   end
 
-  # Get URL parameters relevant to the current operation.
+  # Get URL parameters relevant to the current operation.                       # NOTE: method now unused
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
   #
   # @return [Hash{Symbol=>Any}]
   #
   def get_upload_params(p = nil)                                                # NOTE: to EntryConcern#get_entry_params
-    prm = url_parameters(p)
-    prm.except!(*IGNORED_UPLOAD_FORM_PARAMS)
-    prm.deep_symbolize_keys!
-    reject_blanks(prm)
+    model_options.get_model_params(p)
   end
 
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
   # @return [Hash{Symbol=>Any}]
   #
@@ -106,14 +80,12 @@ module UploadConcern
   # being replaced.
   #
   def upload_post_params(p = nil)                                               # NOTE: to EntryConcern#entry_post_params
-    prm  = p ? get_upload_params(p) : upload_params
-    # noinspection RubyMismatchedArgumentType
-    data = safe_json_parse(prm.delete(:upload), default: {})
-    file = data[:file]
-    prm[:file_data] = file unless file.blank? || (file == '{}')
-    prm[:base_url]  = request.base_url
-    prm[:revert]  &&= safe_json_parse(prm[:revert])
-    @upload_params  = reject_blanks(prm)
+    model_options.model_post_params(p).tap do |prm|
+      if p.nil?
+        prm[:base_url] = request.base_url
+        @upload_params = prm
+      end
+    end
   end
 
   # Extract POST parameters and data for bulk operations.
@@ -129,7 +101,7 @@ module UploadConcern
   # noinspection RubyMismatchedParameterType
   #++
   def upload_bulk_post_params(p = nil, req = nil)                               # NOTE: to EntryConcern#entry_bulk_post_params
-    prm = p ? get_upload_params(p) : upload_params
+    prm = model_options.model_post_params(p)
     src = prm[:src] || prm[:source]
     opt = src ? { src: src } : { data: (req || request) }
     Array.wrap(fetch_data(**opt)).map(&:symbolize_keys)
@@ -203,7 +175,7 @@ module UploadConcern
   #
   # @type [Array<Symbol>]
   #
-  IDENTIFIER_PARAMS = %i[id selected submission_id].freeze
+  IDENTIFIER_PARAMS = Upload::Options::IDENTIFIER_PARAMS
 
   # Extract the best-match URL parameter which represents an item identifier.
   #
@@ -340,7 +312,7 @@ module UploadConcern
   def get_record(id)                                                            # NOTE: to EntryConcern#get_entry
     if (result = Upload.get_record(id))
       result
-    elsif Upload.id_term(id).values.first.blank?
+    elsif id.blank? || Upload.id_term(id).values.first.blank?
       failure(:file_id)
     else
       Log.warn { "#{__method__}: #{id}: non-existent record" }
@@ -388,10 +360,11 @@ module UploadConcern
     raise "#{__method__}: missing :from"           unless from
     raise "#{__method__}: #{from}: missing :event" unless event
     rec  = (rec  || @db_id || @identifier unless rec  == :unset)
-    data = (data || workflow_parameters unless data == :unset)
+    data = (data || workflow_parameters   unless data == :unset)
     opt[:variant] ||= event if UploadWorkflow::Single.variant?(event)
     opt[:user]    ||= @user
     opt[:params]  ||= workflow_parameters
+    opt[:options] ||= model_options
     opt[:no_sim]    = true if UploadWorkflow::Single::SIMULATION # TODO: remove
     # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.generate(rec, **opt)
@@ -411,11 +384,12 @@ module UploadConcern
   #
   def wf_single_check(rec: nil, **opt)
     opt.delete(:from)
-    rec          ||= @db_id || @identifier
-    opt[:user]   ||= @user
-    opt[:params] ||= workflow_parameters
-    opt[:no_sim]   = true if UploadWorkflow::Single::SIMULATION # TODO: remove
-    opt[:html]     = params[:format].blank? || (params[:format] == 'html')
+    rec           ||= @db_id || @identifier
+    opt[:user]    ||= @user
+    opt[:params]  ||= workflow_parameters
+    opt[:options] ||= model_options
+    opt[:no_sim]    = true if UploadWorkflow::Single::SIMULATION # TODO: remove
+    opt[:html]      = params[:format].blank? || (params[:format] == 'html')
     # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.check_status(rec, **opt)
     @workflow.results
@@ -455,6 +429,7 @@ module UploadConcern
     opt[:variant] ||= event if UploadWorkflow::Bulk.variant?(event)
     opt[:user]    ||= @user
     opt[:params]  ||= workflow_parameters
+    opt[:options] ||= model_options
     opt[:no_sim]    = true if UploadWorkflow::Bulk::SIMULATION # TODO: remove
     @workflow = UploadWorkflow::Bulk.generate(rec, **opt)
     @workflow.send("#{event}!", *data)
@@ -491,7 +466,7 @@ module UploadConcern
   # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
   #
   def reindex_submissions(*entries, **opt)
-    opt, sql_opt = partition_hash(opt, :atomic, :meth, :dryrun, :size)
+    sql_opt = remainder_hash!(opt, :atomic, :meth, :dryrun, :size)
     opt[:meth] ||= __method__
     if entries.blank?
       update_null_state_records unless opt[:dryrun]
@@ -581,34 +556,6 @@ module UploadConcern
 
     end
     return successes, failures
-  end
-
-  # ===========================================================================
-  # :section: PaginationConcern overrides
-  # ===========================================================================
-
-  public
-
-  # Finish setting of pagination values based on the result list and original
-  # URL parameters.
-  #
-  # @param [Hash] result              From #find_or_match_records.
-  # @param [Hash] opt                 Passed to #next_page_path.
-  #
-  # @return [void]
-  #
-  # @see PaginationConcern#pagination_finalize
-  #
-  def pagination_finalize(result, **opt)                                        # NOTE: to EntryConcern
-    self.page_items   = result[:list]
-    self.page_size    = result[:limit]
-    self.page_offset  = result[:offset]
-    self.total_items  = result[:total]
-    first, last, page = result.values_at(:first, :last, :page)
-    self.next_page    = (url_for(opt.merge(page: (page + 1)))     unless last)
-    self.prev_page    = (url_for(opt.merge(page: (page - 1)))     unless first)
-    self.first_page   = (url_for(opt.except(*UPLOAD_PAGE_PARAMS)) unless first)
-    self.prev_page    = first_page if page == 2
   end
 
   # ===========================================================================
@@ -702,20 +649,36 @@ module UploadConcern
 
     __included(base, THIS_MODULE)
 
-    if base.is_a?(ApplicationController)
+    include OptionsConcern
+    include PaginationConcern
 
-      # In order to override #pagination_finalize this must be...
-      included_after(base, PaginationConcern, this: THIS_MODULE)
+    # =========================================================================
+    # :section: OptionsConcern overrides
+    # =========================================================================
 
-      # =======================================================================
-      # :section: Helpers - methods exposed for use in views
-      # =======================================================================
-
-      helper_method *UploadWorkflow::Properties.public_instance_methods(false)
-
+    # Create a @model_options instance from the current parameters.
+    #
+    # @return [Upload::Options]
+    #
+    def set_model_options
+      @model_options = Upload::Options.new(request_parameters)
     end
 
-    include IngestConcern
+    # =========================================================================
+    # :section: PaginatorConcern overrides
+    # =========================================================================
+
+    # Create a Paginator for the current controller action.
+    #
+    # @param [Class<Paginator>] paginator  Paginator class.
+    # @param [Hash]             opt        Passed to super.
+    #
+    # @return [Upload::Paginator]
+    #
+    def pagination_setup(paginator: Upload::Paginator, **opt)
+      # noinspection RubyMismatchedReturnType
+      super
+    end
 
   end
 

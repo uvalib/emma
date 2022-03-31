@@ -63,13 +63,13 @@ class Api::Error < ExecError
     #
     # @return [Symbol, nil]
     #
-    def service: () -> Symbol?
+    def service: () -> (Symbol | nil)
 
     # Name of the error and subkey into config/locales/error.en.yml.
     #
     # @return [Symbol, nil]
     #
-    def error_type: () -> Symbol?
+    def error_type: () -> (Symbol | nil)
 
     # Error configuration extracted from "config/locales/error.en.yml".
     #
@@ -106,7 +106,7 @@ class Api::Error < ExecError
     #
     # @see file:config/locales/error.en.yml *en.emma.error.api*
     #
-    def default_message: (?source: (Symbol|String)?, ?type: (Symbol|String)?, ?allow_nil: bool) -> String?
+    def default_message: (?source: (Symbol|String)?, ?type: (Symbol|String)?, ?allow_nil: bool) -> (String | nil)
 
     private
 

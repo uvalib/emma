@@ -156,16 +156,37 @@ module Record::Properties                                                       
   #
   # @type [Hash{Symbol=>Any}]
   #
-  WF_URL_PARAMETER = {
+  WF_PARAMETER_DEFAULT = {
     prefix:       TITLE_PREFIX,
+    batch:        BATCH_SIZE,
     force:        FORCE_DELETE_DEFAULT,
     emergency:    EMERGENCY_DELETE_DEFAULT,
     truncate:     TRUNCATE_DELETE_DEFAULT,
     repo_create:  REPO_CREATE_DEFAULT,
     repo_edit:    REPO_EDIT_DEFAULT,
     repo_remove:  REPO_REMOVE_DEFAULT,
-    batch:        BATCH_SIZE
   }.freeze
+
+  # Module method mapped to URL parameter.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_METHOD_MAP = {
+    prefix:      :title_prefix,
+    batch:       :batch_size,
+    force:       :force_delete,
+    emergency:   :emergency_delete,
+    truncate:    :truncate_delete,
+    repo_create: :repo_create,
+    repo_edit:   :repo_edit,
+    repo_remove: :repo_remove,
+  }.freeze
+
+  # URL parameter mapped to module method.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_PARAMETER_MAP = WF_METHOD_MAP.invert.freeze
 
   # ===========================================================================
   # :section: Property values
@@ -185,14 +206,11 @@ module Record::Properties                                                       
   # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
   #
   def title_prefix
-    value = parameters[:prefix]
-    if value.nil? || true?(value)
-      TITLE_PREFIX
-    elsif false?(value)
-      false
-    else
-      value.to_s
-    end
+    key   = WF_PARAMETER_MAP[__method__]
+    value = parameters[key]
+    return false if false?(value)
+    value = nil  if true?(value)
+    value&.to_s || WF_PARAMETER_DEFAULT[key]
   end
 
   # Force deletions of Unified Index entries regardless of whether the item is
@@ -203,7 +221,8 @@ module Record::Properties                                                       
   # @see #FORCE_DELETE_DEFAULT
   #
   def force_delete
-    parameter_setting(:force)
+    key = WF_PARAMETER_MAP[__method__]
+    parameter_setting(key)
   end
 
   # Force deletions of Unified Index entries even if the record ID does not
@@ -215,7 +234,8 @@ module Record::Properties                                                       
   # @see #EMERGENCY_DELETE_DEFAULT
   #
   def emergency_delete
-    parameter_setting(:emergency)
+    key = WF_PARAMETER_MAP[__method__]
+    parameter_setting(key)
   end
 
   # If all "entries" records are removed, reset the next ID to 1.
@@ -225,7 +245,8 @@ module Record::Properties                                                       
   # @see #TRUNCATE_DELETE_DEFAULT
   #
   def truncate_delete
-    parameter_setting(:truncate)
+    key = WF_PARAMETER_MAP[__method__]
+    parameter_setting(key)
   end
 
   # Permit the "creation" of member repository items via a request to be queued
@@ -236,8 +257,9 @@ module Record::Properties                                                       
   # @see #REPO_CREATE_DEFAULT
   #
   def repo_create
-    #parameter_setting(:repo_create, params)
-    REPO_CREATE_DEFAULT # TODO: conditionally accept based on user
+    key = WF_PARAMETER_MAP[__method__]
+    # TODO: conditionally accept repo_create based on user?
+    WF_PARAMETER_DEFAULT[key]
   end
 
   # Permit the "update" of member repository items via a request to be queued
@@ -248,8 +270,9 @@ module Record::Properties                                                       
   # @see #REPO_EDIT_DEFAULT
   #
   def repo_edit
-    #parameter_setting(:repo_edit, params)
-    REPO_EDIT_DEFAULT # TODO: conditionally accept based on user
+    key = WF_PARAMETER_MAP[__method__]
+    # TODO: conditionally accept repo_edit based on user?
+    WF_PARAMETER_DEFAULT[key]
   end
 
   # Permit the "removal" of member repository items via a request to be queued
@@ -260,8 +283,9 @@ module Record::Properties                                                       
   # @see #REPO_REMOVE_DEFAULT
   #
   def repo_remove
-    #parameter_setting(:repo_remove, params)
-    REPO_REMOVE_DEFAULT # TODO: conditionally accept based on user
+    key = WF_PARAMETER_MAP[__method__]
+    # TODO: conditionally accept repo_remove based on user?
+    WF_PARAMETER_DEFAULT[key]
   end
 
   # Handle bulk operations in batches.
@@ -275,19 +299,12 @@ module Record::Properties                                                       
   # @see #set_bulk_batch
   #
   def batch_size
-    value = parameters[:batch]
+    key   = WF_PARAMETER_MAP[__method__]
+    value = parameters[key]
+    return false if false?(value)
+    value = positive(value)
     # noinspection RubyMismatchedReturnType
-    if value.blank?
-      BATCH_SIZE
-    elsif false?(value)
-      false
-    elsif true?(value)
-      (value.to_s == '1') ? 1 : BATCH_SIZE
-    elsif value.to_i.positive?
-      [value.to_i, MAX_BATCH_SIZE].min
-    else
-      BATCH_SIZE
-    end
+    value ? [value, MAX_BATCH_SIZE].min : WF_PARAMETER_DEFAULT[key]
   end
 
   # ===========================================================================
@@ -302,9 +319,11 @@ module Record::Properties                                                       
   #
   # @return [Hash{Symbol=>Any}]
   #
+  # @see Entry::Options#model_params
+  #
   def parameters
     # noinspection RailsParamDefResolve
-    try(:entry_params) || {}
+    try(:model_params) || try(:params) || {}
   end
 
   # ===========================================================================
@@ -316,7 +335,7 @@ module Record::Properties                                                       
   # Extract the named URL parameter from *params*.
   #
   # @param [Symbol]    key            URL parameter name.
-  # @param [Hash, nil] params         Default: `#parameters`.
+  # @param [Hash, nil] prm            Default: `#parameters`.
   #
   # @return [Boolean]
   #
@@ -324,10 +343,10 @@ module Record::Properties                                                       
   # If *default* is *false* then *true* is returned only if *value* is "true".
   # If *default* is *true* then *false* is returned only if *value* is "false".
   #
-  def parameter_setting(key, params = nil)
-    params ||= parameters
-    value    = params&.dig(key)
-    default  = WF_URL_PARAMETER[key]
+  def parameter_setting(key, prm = nil)
+    prm   ||= parameters
+    value   = prm&.dig(key)
+    default = WF_PARAMETER_DEFAULT[key]
     case value
       when true, false then value
       when nil         then default

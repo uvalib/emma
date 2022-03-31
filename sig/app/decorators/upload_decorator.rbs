@@ -1,0 +1,388 @@
+# Item presenter for "/upload" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Upload]
+#
+class UploadDecorator < BaseDecorator
+  include ConfigurationHelper
+
+  module Paths
+
+    # Paths used by model-form.js.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    PATH: Hash[Symbol,String]
+
+    def index_path: (**untyped opt) -> String
+
+    def show_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def new_path: (**untyped opt) -> String
+
+    def create_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def edit_select_path: (**untyped opt) -> String
+
+    def edit_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def update_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def delete_select_path: (**untyped opt) -> String
+
+    def delete_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def destroy_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def bulk_create_path: (**untyped opt) -> String
+
+    def bulk_update_path: (**untyped opt) -> String
+
+    def bulk_delete_path: (**untyped opt) -> String
+  end
+
+  module Methods
+    include LayoutHelper
+
+    include SessionDebugHelper
+
+    # Uploader properties.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    UPLOAD: Hash[Symbol,String]
+
+    # Display preview of Shrine uploads.  NOTE: Not currently enabled.
+    #
+    # @type [Boolean]
+    #
+    PREVIEW_ENABLED: bool
+
+    # Indicate whether preview is enabled.
+    #
+    # == Usage Notes
+    # Uppy preview is only for image files.
+    #
+    def preview_enabled?: () -> bool
+
+    # Groupings of states related by theme.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
+    #
+    STATE_GROUP: symHash
+
+    # CSS class for the state selection panel.
+    #
+    # @type [String]
+    #
+    GROUP_PANEL_CLASS: String
+
+    # CSS class for the state group controls container.
+    #
+    # @type [String]
+    #
+    GROUP_CLASS: String
+
+    # CSS class for a control within the state selection panel.
+    #
+    # @type [String]
+    #
+    GROUP_CONTROL_CLASS: String
+
+    # Control whether display list filtering is allowed.
+    #
+    # @type [Boolean]
+    #
+    LIST_FILTERING: bool
+
+    # CSS class for the state group list filter panel.
+    #
+    # @type [String]
+    #
+    LIST_FILTER_CLASS: String
+
+    # CSS class for the state group controls container.
+    #
+    # @type [String]
+    #
+    FILTER_GROUP_CLASS: String
+
+    # CSS class for a control within the state group controls container.
+    #
+    # @type [String]
+    #
+    FILTER_CONTROL_CLASS: String
+
+    # CSS class for the debug-only panel of checkboxes to control filter
+    # visibility.
+    #
+    # @type [String]
+    #
+    FILTER_OPTIONS_CLASS: String
+
+    # Indicate whether the state group described by *properties* should be an
+    # active state group selection.
+    #
+    # @param [Symbol, nil]        group
+    # @param [Hash, nil]          properties
+    # @param [Array<Upload>, nil] list
+    #
+    def active_state_group?: (Symbol? group, symHash? properties, Array[Upload]? list) -> bool
+
+    # Control icon definitions.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+    #
+    CONTROL_ICONS: Hash[Symbol,symHash]
+
+    # Element for displaying the name of the file that was uploaded.
+    #
+    # @param [String] leader          Text preceding the filename.
+    # @param [Hash]   opt             Passed to #html_div for outer <div>.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def uploaded_filename_display: (?leader: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # Supply an element to contain a preview thumbnail of an image file.
+  #
+  # @param [Boolean] force
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If preview is not enabled.
+  #
+  def preview: (?bool force) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render the contents of the :file_data field.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see #render_json_data
+  #
+  def render_file_data: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render the contents of the :emma_data field in the same order of EMMA data
+  # fields as defined for search results.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see #render_json_data
+  #
+  def render_emma_data: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render hierarchical data.
+  #
+  # @param [String, Hash, nil] value
+  # @param [Hash]              opt        Passed to #render_field_values
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If *value* was not valid JSON.
+  #
+  def render_json_data: (String|anyHash|nil value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Any]       value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to the render method or super.
+  #
+  # @return [Field::Type]
+  # @return [String]
+  # @return [nil]
+  #
+  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+
+  # Render item attributes.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super except:
+  #
+  # @option opt [String, Symbol, Array<String,Symbol>] :columns
+  # @option opt [String, Regexp, Array<String,Regexp>] :filter
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #model_field_values
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Include control icons below the entry number.
+  #
+  # @param [Hash] opt                 Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate an element with icon controls for the operation(s) the user is
+  # authorized to perform on the item.
+  #
+  # @param [Hash] opt                   Passed to #control_icon_button
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       If no operations are authorized.
+  #
+  # @see #CONTROL_ICONS
+  #
+  def control_icon_buttons: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Produce an action icon based on either :path or :id.
+  #
+  # @param [Symbol] action                One of #CONTROL_ICONS.keys.
+  # @param [Hash]   opt                   Passed to #make_link except for:
+  #
+  # @option opt [String, Proc]  :path
+  # @option opt [String]        :icon
+  # @option opt [String]        :tip
+  # @option opt [Boolean, Proc] :enabled
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
+  # @return [nil]                         If *item* unrelated to a submission.
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def control_icon: (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Create a container with the repository ID displayed as a link but acting as
+  # a popup toggle button and a popup panel which is initially hidden.
+  #
+  # @param [String, Symbol]  path
+  # @param [String, Integer] id       Object identifier.
+  # @param [Hash]            opt      To PopupHelper#popup_container except:
+  #
+  # @option opt [Hash] :attr          Options for deferred content.
+  # @option opt [Hash] :placeholder   Options for transient placeholder.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
+  #
+  def check_status_popup: (String|Symbol path, id: String|Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Screen-reader-only label for file input.  (This is to satisfy accessibility
+  # checkers which don't ignore the file input which is made invisible in favor
+  # of the Uppy file input control).
+  #
+  # @type [String]
+  #
+  FILE_LABEL: String
+
+  # Button information for item actions.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  FORM_ACTIONS: symHash
+
+  # Button information for upload actions.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  def form_actions: () -> symHash
+
+  # Generate a form with controls for uploading a file, entering metadata, and
+  # submitting.
+  #
+  # @param [String]         label     Label for the submit button.
+  # @param [String, Symbol] action    Either :new or :edit.
+  # @param [Hash]           opt       Passed to #form_with except for:
+  #
+  # @option opt [String] :cancel      URL for cancel button action (default:
+  #                                     :back).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see ScrollHelper#scroll_to_top_target!
+  #
+  def model_form: (?label: String?, ?action: String|Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Upload cancel button.
+  #
+  # @param [Hash] opt                 Passed to #button_tag except for:
+  #
+  # @option opt [String, Symbol] :action    Default: `params[:action]`.
+  # @option opt [String]         :label     Default: based on :action.
+  # @option opt [String]         :url       Default: `params[:cancel]` or
+  #                                           `request.referer`.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
+  #
+  # @note Uses 'params'
+  # @note Uses 'request'
+  # @note ParamsHelper#local_request? uses 'request'
+  # @note ParamsHelper#same_request? uses 'request'
+  #
+  def cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Element name for field group radio buttons.
+  #
+  # @type [String]
+  #
+  FIELD_GROUP_NAME: String
+
+  # Field group radio buttons and their labels and tooltips.
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+  #
+  FIELD_GROUP: Hash[Symbol,Hash[Symbol,String]]
+
+  # Control for filtering which fields are displayed.
+  #
+  # @param [Hash] opt                 Passed to #html_div for outer <div>.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #FIELD_GROUP
+  # @see file:app/assets/javascripts/feature/model-form.js *fieldDisplayFilterSelect()*
+  #
+  def field_group: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Element for prompting for the EMMA index entry of the member repository
+  # item which was the basis for the remediated item which is being submitted.
+  #
+  # @param [Hash] opt                 Passed to #html_div for outer <div>.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/model-form.js *monitorSourceRepository()*
+  #
+  # @note LayoutHelper#search_input uses 'params'
+  # @note LayoutHelper#search_button_label uses 'params'
+  #
+  def parent_entry_select: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a prompt for #items_menu.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [User,String,Symbol,nil] :user
+  #
+  # @return [String]
+  #
+  def items_menu_prompt: (**untyped opt) -> String
+end

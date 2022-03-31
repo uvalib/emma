@@ -9,7 +9,7 @@
 //=============================================================================
 
 // Action metadata label/value pairs for index listings.
-// @see ModelHelper::List#model_list_item
+// @see ActionDecorator#list_item
 .action-list-item {
     @extend .entry-list-item;
 }
@@ -24,7 +24,7 @@
 //=============================================================================
 
 // Action metadata values.
-// @see ModelHelper::List#model_details
+// @see ActionDecorator#details
 .action-details {
     @extend .entry-details;
 }

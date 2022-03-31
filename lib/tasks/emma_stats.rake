@@ -25,6 +25,7 @@ end
 #
 EMMA_STATS_DIRECTORIES ||= [
   %w(Controllers        app/controllers),
+  %w(Decorators         app/decorators),
   %w(Helpers            app/helpers),
   %w(Models             app/models),
   %w(Records            app/records),
@@ -39,6 +40,7 @@ EMMA_STATS_DIRECTORIES ||= [
   %w(JavaScripts        app/assets/javascripts),
 # %w(JavaScript         app/javascript),
   %w(Controller\ tests  test/controllers),
+  %w(Decorator\ tests   test/decorators),
   %w(Helper\ tests      test/helpers),
   %w(Model\ tests       test/models),
 # %w(Channel\ tests     test/channels),

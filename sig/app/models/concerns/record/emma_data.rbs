@@ -42,7 +42,7 @@ module Record::EmmaData
   #
   DEFAULT_TIME_NOW_FIELDS: symArray
 
-  def make_retrieval_link: (String? rid, ?(symHash|String)? base_url) -> String?
+  def make_retrieval_link: (String? rid, ?(symHash|String)? base_url) -> (String | nil)
 
   def make_emma_record: (symHash data) -> Search::Record::MetadataRecord
 
@@ -64,7 +64,7 @@ module Record::EmmaData
 
     # @see Record::EmmaData#make_retrieval_link
     #
-    def make_retrieval_link: (?String? rid, ?(symHash|String)? base_url) -> String?
+    def make_retrieval_link: (?String? rid, ?(symHash|String)? base_url) -> (String | nil)
 
     # @see Record::EmmaData#generate_emma_data
     #
@@ -74,9 +74,9 @@ module Record::EmmaData
 
     def emma_metadata: () -> symHash
 
-    def set_emma_data: (anyHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+    def set_emma_data: (anyHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
 
-    def modify_emma_data: (symHash data, ?bool allow_blank) -> String?
+    def modify_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
   end
 
   private

@@ -13,13 +13,13 @@ module Upload::EmmaDataMethods
 
   def emma_data_column: () -> Symbol
 
-  def active_emma_data: () -> String?
+  def active_emma_data: () -> (String | nil)
 
   def emma_record: () -> Search::Record::MetadataRecord
 
   def emma_metadata: () -> symHash
 
-  def set_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+  def set_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
 
   def modify_emma_data: (symHash data, ?bool allow_blank) -> String
 
@@ -27,7 +27,7 @@ module Upload::EmmaDataMethods
 
   def edit_emma_metadata: () -> symHash
 
-  def set_edit_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+  def set_edit_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
 
   def modify_edit_emma_data: (symHash data, ?bool allow_blank) -> String
 
@@ -35,7 +35,7 @@ module Upload::EmmaDataMethods
 
   def active_emma_metadata: () -> symHash
 
-  def set_active_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> String?
+  def set_active_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
 
   def modify_active_emma_data: (symHash data, ?bool allow_blank) -> String
 

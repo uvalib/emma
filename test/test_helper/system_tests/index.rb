@@ -9,8 +9,6 @@ module TestHelper::SystemTests::Index
 
   include TestHelper::SystemTests::Common
 
-  include PaginationHelper
-
   SEARCH_COUNT_CLASS = '.search-count'
   SEARCH_TERMS_CLASS = '.search-terms' # TODO: test on header facet selections
   VALUE_SELECTOR     = "#{SEARCH_TERMS_CLASS} .term .value"
@@ -52,7 +50,7 @@ module TestHelper::SystemTests::Index
 
     # Validate pagination if provided.
     if index || page
-      size  ||= get_page_size(controller: model)
+      size  ||= Paginator.get_page_size(controller: model)
       page  ||= (index - 1) / size
       index ||= (page * size) + 1
       (page  <= 0)    ? assert_first_page : assert_not_first_page
@@ -144,12 +142,12 @@ module TestHelper::SystemTests::Index
   # @yieldreturn [void]
   #
   def visit_index(url, **opt)
+    model = nil
+    # noinspection RailsParamDefResolve
     if url.is_a?(Symbol)
       model = url
       terms = opt[:terms] || {}
       url   = url_for(controller: model, action: :index, **terms)
-    else
-      model = nil
     end
     visit url
     if block_given?

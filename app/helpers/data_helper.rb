@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module DataHelper
 
+  include Emma::Json
+
   include CssHelper
 
   # ===========================================================================
@@ -25,9 +27,8 @@ module DataHelper
   # noinspection RailsI18nInspection
   #++
   EMMA_DATA_FIELDS =
-    I18n.t('emma.upload.record.emma_data').map { |k, v|
-      k if v.is_a?(Hash)
-    }.compact.freeze
+    I18n.t('emma.upload.record.emma_data').except(*Field::PROPERTY_KEYS)
+        .keys.freeze
 
   # ===========================================================================
   # :section:
@@ -273,13 +274,14 @@ module DataHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_db_table(records, name: nil, start_row: 1, **opt)
-    css_selector = '.database-table'
+    css       = '.database-table'
     records ||= []
     count     = positive(records.size - 1) || 0
-    classes   = [css_selector]
-    classes << 'empty' if count.zero?
-    html_opt = prepend_classes(classes)
-    html_opt[:id] = name if name.present?
+    html_opt  = append_css(css)
+
+    append_css!(html_opt, 'empty') if count.zero?
+    html_opt[:id] = name           if name.present?
+
     html_div(**html_opt) do
       opt[:first] ||= start_row
       opt[:last]  ||= opt[:first] + [(count - 1), 0].max
@@ -302,7 +304,7 @@ module DataHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_db_record(fields, row: nil, start_col: 1, **opt)
-    css_selector = '.database-record'
+    css    = '.database-record'
     fields = :empty if fields.blank?
     # noinspection RubyCaseWithoutElseBlockInspection
     type =
@@ -319,7 +321,7 @@ module DataHelper
     classes << "row-#{row}" if row
     classes << 'row-first'  if row && (row == first)
     classes << 'row-last'   if row && (row == last)
-    rec_opt = prepend_classes(opt, css_selector, type, classes)
+    rec_opt = prepend_css(opt, css, type, classes)
     html_div(rec_opt) do
       if type == :array
         opt[:first] = first
@@ -345,7 +347,7 @@ module DataHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_db_column(field, row: nil, col: nil, first: nil, last: nil, **opt)
-    css_selector = '.database-column'
+    css = '.database-column'
     # noinspection RubyCaseWithoutElseBlockInspection
     type =
       case field
@@ -358,7 +360,7 @@ module DataHelper
     classes << "col-#{col}" if col
     classes << 'col-first'  if col && (col == first)
     classes << 'col-last'   if col && (col == last)
-    prepend_classes!(opt, css_selector, type, classes)
+    prepend_css!(opt, css, type, classes)
     html_div(opt) do
       (type == :hierarchy) ? pretty_json(field) : field
     end
@@ -382,9 +384,9 @@ module DataHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_db_field_table(fields, name: nil, start_row: 1, **opt)
-    css_selector = '.database-counts-table'
+    css      = '.database-counts-table'
     html_opt = { id: name.presence }.compact
-    prepend_classes!(html_opt, css_selector)
+    prepend_css!(html_opt, css)
     html_div(**html_opt) do
       opt[:first] ||= start_row
       opt[:last]  ||= opt[:first] + fields.size - 1
@@ -407,7 +409,7 @@ module DataHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_db_field(field, values, row: nil, **opt)
-    css_selector = '.database-field-counts'
+    css     = '.database-field-counts'
     anchor  = opt.delete(:id)    || field.to_s
     first   = opt.delete(:first) || row
     last    = opt.delete(:last)  || first
@@ -415,11 +417,11 @@ module DataHelper
     classes << "row-#{row}" if row
     classes << 'row-first'  if row && (row == first)
     classes << 'row-last'   if row && (row == last)
-    prepend_classes!(opt, css_selector, classes)
+    prepend_css!(opt, css, classes)
     html_div(opt) do
       field_opt = { class: 'field-name' }
       unless EMMA_DATA_FIELDS.include?(field)
-        append_classes!(field_opt, 'invalid')
+        append_css!(field_opt, 'invalid')
         field_opt[:title] = 'This is not a valid EMMA data field' # TODO: I18n
       end
       field  = html_div(field, field_opt)
@@ -436,8 +438,8 @@ module DataHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_db_field_values(values, **opt)
-    css_selector = '.field-values'
-    prepend_classes!(opt, css_selector)
+    css = '.field-values'
+    prepend_css!(opt, css)
     html_div(opt) do
       total  = values.values.sum
       values = values.map { |value, count| [count, Array.wrap(value)] }

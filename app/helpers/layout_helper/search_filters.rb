@@ -10,7 +10,10 @@ __loading_begin(__FILE__)
 module LayoutHelper::SearchFilters
 
   include LayoutHelper::Common
-  include RoleHelper
+
+  include GridHelper
+  include ParamsHelper
+  include SearchModesHelper
 
   # ===========================================================================
   # :section:
@@ -315,6 +318,8 @@ module LayoutHelper::SearchFilters
   #
   # @type [Array<Symbol>]
   #
+  # @note Currently unused.
+  #
   SEARCH_PARAMETERS =
     SEARCH_MENU_BASE.values.map { |config| config[:url_param] }.uniq.freeze
 
@@ -386,39 +391,6 @@ module LayoutHelper::SearchFilters
   # @type [Boolean]
   #
   SEARCH_FILTERS_START_EXPANDED = SEARCH_FILTERS_ROOT[:expanded].present?
-
-  # Indicate whether selecting a search menu value takes immediate effect.
-  #
-  # If not menu selection value(s) are only transmitted via the search submit
-  # button.
-  #
-  # @type [Boolean]
-  #
-  IMMEDIATE_SEARCH = false
-
-  # Search display style variants.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_STYLES = %i[compact grid aggregate].freeze
-
-  # The default search display style.
-  #
-  # @type [Symbol]
-  #
-  DEFAULT_STYLE = :normal
-
-  # Search result display variants.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RESULTS = %i[title file].freeze
-
-  # The default search result display.
-  #
-  # @type [Symbol]
-  #
-  DEFAULT_RESULTS = :title
 
   # ===========================================================================
   # :section:
@@ -516,8 +488,8 @@ module LayoutHelper::SearchFilters
     end
     grid_rows.compact!
     return if grid_rows.blank?
-    prepend_classes!(opt, 'search-filter-container', "columns-#{max_columns}")
-    append_classes!(opt, 'open') if SEARCH_FILTERS_START_EXPANDED
+    prepend_css!(opt, 'search-filter-container', "columns-#{max_columns}")
+    append_css!(opt, 'open') if SEARCH_FILTERS_START_EXPANDED
     # noinspection RubyMismatchedReturnType
     html_div(opt) { grid_rows }
   end
@@ -529,12 +501,13 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   #
   def advanced_search_button(**opt)
-    css_selector  = '.advanced-search-toggle'
+    css           = '.advanced-search-toggle'
     control       = SEARCH_FILTERS_START_EXPANDED ? :closer : :opener
     opt[:type]  ||= 'button'
     opt[:title] ||= ADV_SEARCH[control][:tooltip]
     label         = ADV_SEARCH[control][:label]
-    button_tag(label, prepend_classes!(opt, css_selector))
+    prepend_css!(opt, css)
+    button_tag(label, opt)
   end
 
   # ===========================================================================
@@ -542,24 +515,6 @@ module LayoutHelper::SearchFilters
   # ===========================================================================
 
   public
-
-  # Indicate whether selecting a search menu value takes immediate effect.
-  #
-  # If not menu selection value(s) are only transmitted via the search submit
-  # button.
-  #
-  # @type [Boolean]
-  #
-  # == Usage Notes
-  # This should normally be *false* because it a mode of operation that is
-  # generally not consider accessibility-friendly and, also, skews search call
-  # statistics.
-  #
-  def immediate_search?
-    @immediate_search ||= session['app.search.immediate']&.to_sym
-    @immediate_search ||= IMMEDIATE_SEARCH.to_s.to_sym
-    @immediate_search == :true
-  end
 
   # A hidden HTML elements which indicates that the page has been constructed
   # with search filters which cause a new search whenever a value is selected.
@@ -568,120 +523,10 @@ module LayoutHelper::SearchFilters
   # @return [nil]
   #
   def immediate_search_marker
-    css_selector = '.immediate-search-marker'
+    css = '.immediate-search-marker'
     if immediate_search?
-      html_div('immediate', class: css_classes(css_selector, 'hidden'))
+      html_div('immediate', class: css_classes(css, 'hidden'))
     end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Get the display mode for search results.
-  #
-  # @return [Symbol]
-  #
-  def search_results
-    @results_type ||= session['app.search.results']&.to_sym || DEFAULT_RESULTS
-  end
-
-  # Indicate whether search results are displayed hierarchically (by title).
-  #
-  def title_results?
-    search_results == :title
-  end
-
-  # Indicate whether search results are displayed literally (per file).
-  #
-  def file_results?
-    search_results == :file
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Indicate whether search debug controls should be displayed.
-  #
-  def search_debug?
-    session_debug?(:search)
-  end
-
-  # Indicate whether search dev controls should be displayed.
-  #
-  def search_dev?
-    session_debug?
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Configuration conditionals.
-  #
-  # @type [Hash{Symbol=>Proc,Symbol}]
-  #
-  CONFIG_CONDITION = {
-    title_only: :title_results?,
-    file_only:  :file_results?,
-    debug_only: :search_debug?,
-    dev_only:   :search_dev?,
-  }
-
-  # Indicate whether the guard condition is satisfied.
-  #
-  # @param [Array<Symbol,String>, Symbol, String, Boolean, nil] guard
-  #
-  def permitted_by?(guard)
-    return false if false?(guard)
-    return true  if true?(guard)
-    return false if (guards = Array.wrap(guard).compact.map(&:to_sym)).blank?
-    guards.all? { |g| (m = CONFIG_CONDITION[g]).is_a?(Proc) ? m.call : try(m) }
-  end
-
-  # Normalize :active property values for use by #permitted_by?.
-  #
-  # @param [Array<Symbol,String,Boolean,nil>, Symbol, String, Boolean, nil] val
-  #
-  # @return [TrueClass, FalseClass, Array<Symbol>]
-  #
-  def self.guard_values(val)
-    guards = Array.wrap(val).compact
-    return false if guards.blank? || guards.any? { |item| false?(item) }
-    return true  if guards.any? { |item| true?(item) }
-    guards.map!(&:to_sym).uniq!
-    if (invalid = guards - CONFIG_CONDITION.keys).present?
-      invalid = invalid.first unless invalid.many?
-      Log.warn("#{__method__}: not in CONFIG_CONDITION: #{invalid.inspect}")
-    end
-    guards
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Get the display style variant for search results.
-  #
-  # @return [Symbol]
-  #
-  def search_style
-    @search_style ||= session['app.search.style']&.to_sym || DEFAULT_STYLE
-  end
-
-  # Indicate whether search results are displayed in the normal way.
-  #
-  def default_style?
-    search_style == DEFAULT_STYLE
   end
 
   # ===========================================================================
@@ -695,7 +540,7 @@ module LayoutHelper::SearchFilters
   #
   # @type [Array<Symbol>]
   #
-  # @see HtmlHelper#GRID_OPTS
+  # @see GridHelper#GRID_OPTS
   #
   MENU_OPTS = [:target, :label, :selected, *GRID_OPTS].freeze
 
@@ -730,10 +575,11 @@ module LayoutHelper::SearchFilters
     direction = prm[:direction]
     opt[:selected] ||= prm[:sort] || prm[:sortOrder]
     opt[:selected] &&= descending_sort(opt[:selected]) if direction == 'desc'
-    menu_container(menu_name, **append_classes!(opt, 'non-search'))
+    append_css!(opt, 'non-search')
+    menu_container(menu_name, **opt)
   end
 
-  # Perform a search specifying a results page size.  (Default: `#page_size`.)
+  # Perform a search specifying a results page size.
   #
   # @param [Symbol] menu_name           Control name (should be :size).
   # @param [Hash]   opt                 Passed to #menu_container.
@@ -741,18 +587,19 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  # @see PaginationHelper#page_size
+  # @see Paginator#page_size
   #
   def size_menu(menu_name, **opt)
     opt[:config]     = config = current_menu_config(menu_name, **opt)
-    opt[:default]  ||= opt.dig(:config, :default) || page_size
+    opt[:default]  ||= opt.dig(:config, :default) || @page.page_size
     url_param        = (config[:url_param] || menu_name).to_sym
     opt[:selected] ||= request_parameters[url_param]
     opt[:selected] ||= opt[:default]
     opt[:selected]   = opt[:selected].first if opt[:selected].is_a?(Array)
     opt[:selected]   = opt[:selected].to_i
     opt.delete(:selected) if opt[:selected].zero?
-    menu_container(menu_name, **append_classes!(opt, 'non-search'))
+    append_css!(opt, 'non-search')
+    menu_container(menu_name, **opt)
   end
 
   # Filter on repository.
@@ -842,7 +689,7 @@ module LayoutHelper::SearchFilters
     l_id  = "#{menu_name}_label"
     l_opt = m_opt = opt
     if opt[:disabled]
-      append_classes!(opt, :disabled)
+      append_css!(opt, :disabled)
       note  = 'NOTE: this value is fixed for results by title.' # TODO: I18n
       m_opt = opt.merge(title: [opt[:title], note].compact.join("\n"))
     end
@@ -878,7 +725,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]     HTML menu element.
   # @return [nil]                           If menu unavailable for *target*.
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   #--
   # noinspection RubyNilAnalysis
@@ -891,9 +738,9 @@ module LayoutHelper::SearchFilters
     disabled: nil,
     **opt
   )
-    css_selector  = '.menu-control'
-    opt, html_opt = partition_hash(opt, :config, :default, *MENU_OPTS)
+    css       = '.menu-control'
     target    = search_target(target) or return
+    html_opt  = remainder_hash!(opt, :config, :default, *MENU_OPTS)
     config    = opt[:config]  || current_menu_config(menu_name, target: target)
     pairs     = config[:menu] || []
     default   = opt.key?(:default) ? opt[:default] : config[:default]
@@ -934,7 +781,7 @@ module LayoutHelper::SearchFilters
     menu = select_tag(url_param, option_tags, select_opt)
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css_selector, mode, **opt)
+    prepend_grid_cell_classes!(html_opt, css, mode, **opt)
     if immediate_search?
       search_form(target, url_param, **html_opt) { menu }
     else
@@ -953,8 +800,9 @@ module LayoutHelper::SearchFilters
   # noinspection DuplicatedCode
   #++
   def menu_label(menu_name, **opt)
-    css_selector = '.menu-label'
-    control_label(menu_name, **append_classes!(opt, css_selector))
+    css = '.menu-label'
+    append_css!(opt, css)
+    control_label(menu_name, **opt)
   end
 
   # menu_tooltip
@@ -1061,25 +909,25 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]     HTML menu element.
   # @return [nil]                           If menu is not available.
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   def date_control(menu_name, target: nil, selected: nil, label_id: nil, **opt)
-    opt, html_opt = partition_hash(opt, :config, :default, *MENU_OPTS)
-    css_selector  = '.date-control'
+    css       = '.date-control'
     target    = search_target(target) or return
+    html_opt  = remainder_hash!(opt, :config, :default, *MENU_OPTS)
     config    = opt[:config] || current_menu_config(menu_name, target: target)
     default   = opt.key?(:default) ? opt[:default] : config[:default]
     url_param = (config[:url_param] || menu_name).to_sym
 
     # Get the initial value for the field.
-    value = selected || request_parameters[url_param] || default
+    value     = selected || request_parameters[url_param] || default
 
     # Setup the <input> element.
-    date_opt = { 'aria-labelledby': label_id, 'data-default': default }
-    input = date_field_tag(url_param, value, reject_blanks(date_opt))
+    date_opt  = { 'aria-labelledby': label_id, 'data-default': default }
+    input     = date_field_tag(url_param, value, reject_blanks(date_opt))
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css_selector, **opt)
+    prepend_grid_cell_classes!(html_opt, css, **opt)
     html_div(**html_opt) { input }
   end
 
@@ -1094,8 +942,9 @@ module LayoutHelper::SearchFilters
   # noinspection DuplicatedCode
   #++
   def date_label(menu_name, **opt)
-    css_selector = '.date-label'
-    control_label(menu_name, **append_classes!(opt, css_selector))
+    css = '.date-label'
+    append_css!(opt, css)
+    control_label(menu_name, **opt)
   end
 
   # date_tooltip
@@ -1142,17 +991,17 @@ module LayoutHelper::SearchFilters
   #
   # @see #SEARCH_RESET_CONTROL
   # @see #reset_parameters
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   def reset_button(**opt)
-    css_selector  = '.menu-button.reset.preserve-width'
-    opt, html_opt = partition_hash(opt, :url, :class, :label, *MENU_OPTS)
-    label = opt[:label] || SEARCH_RESET_CONTROL[:label]
-    label = non_breaking(label)
-    url   = opt[:url] || reset_parameters
-    url   = url_for(url) if url.is_a?(Hash)
+    css      = '.menu-button.reset.preserve-width'
+    html_opt = remainder_hash!(opt, :url, :class, :label, *MENU_OPTS)
+    label    = opt[:label] || SEARCH_RESET_CONTROL[:label]
+    label    = non_breaking(label)
+    url      = opt[:url] || reset_parameters
+    url      = url_for(url) if url.is_a?(Hash)
     html_opt[:title] ||= SEARCH_RESET_CONTROL[:tooltip]
-    prepend_grid_cell_classes!(html_opt, css_selector, **opt)
+    prepend_grid_cell_classes!(html_opt, css, **opt)
     link_to(label, url, **html_opt)
   end
 
@@ -1185,16 +1034,16 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   def menu_spacer(**opt)
-    css_selector  = '.menu-spacer'
-    opt, html_opt = partition_hash(opt, :class, *MENU_OPTS)
+    css      = '.menu-spacer'
+    html_opt = remainder_hash!(opt, :class, *MENU_OPTS)
     html_opt[:'aria-hidden'] = true
     opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css_selector, **opt)
+    prepend_grid_cell_classes!(html_opt, css, **opt)
     html_div(HTML_SPACE, html_opt)
   end
 
@@ -1210,13 +1059,13 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
   #
-  # @see HtmlHelper#grid_cell_classes
+  # @see GridHelper#grid_cell_classes
   #
   def control_label(name, target: nil, label: nil, **opt)
-    css_selector  = '.menu-label'
-    opt, html_opt = partition_hash(opt, :config, *MENU_OPTS)
-    config  = opt[:config] || current_menu_config(name, target: target)
-    label ||= config[:label]
+    css      = '.menu-label'
+    html_opt = remainder_hash!(opt, :config, *MENU_OPTS)
+    config   = opt[:config] || current_menu_config(name, target: target)
+    label  ||= config[:label]
     return ''.html_safe if label.blank?
 
     # Adjust label appearance.
@@ -1228,7 +1077,7 @@ module LayoutHelper::SearchFilters
     opt.delete(:col_max) # Labels shouldn't have the 'col-last' CSS class.
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css_selector, **opt)
+    prepend_grid_cell_classes!(html_opt, css, **opt)
     url_param = (config[:url_param] || name).to_sym
     label_tag(url_param, label, html_opt)
   end

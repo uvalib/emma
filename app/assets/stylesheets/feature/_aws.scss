@@ -1,9 +1,7 @@
 // app/assets/stylesheets/feature/_aws.scss
 
-@use 'shared/variables'         as *;
-@use 'shared/controls/buttons'  as *;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
 
 //=============================================================================
 // Internal constants
@@ -123,8 +121,6 @@ $aws-admin-column-space: 0.75rem;
 
 // @see AwsHelper#s3_bucket_link
 .aws-link {
-
-    @include link-button(lightgray);
-
-    @extend .control-button;
+    @include button.link(lightgray);
+    @include button.control;
 }

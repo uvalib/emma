@@ -11,7 +11,9 @@ module FlashHelper
 
   include Emma::Common
 
+  include EncodingHelper
   include HtmlHelper
+  include XmlHelper
 
   # ===========================================================================
   # :section:
@@ -85,7 +87,8 @@ module FlashHelper
     # @see #render_part
     #
     def render(first: nil, last: nil, part: nil, **opt)
-      prepend_classes!(opt, 'line')
+      css = '.line'
+      prepend_css!(opt, css)
       opt[:separator] ||= HTML_BREAK
       html_div(opt) do
         part = opt.slice(:html, :separator).reverse_merge(part || {})
@@ -110,12 +113,12 @@ module FlashHelper
     # @return [ActiveSupport::SafeBuffer]
     #
     def render_part(part, pos: nil, first: 1, last: -1, **opt)
+      css      = '.part'
       html_opt = opt.except(:xhr, :html, :separator, :separators)
-      classes  = %w(part)
-      classes << "col-#{pos}" if pos
-      classes << 'first'      if pos == first
-      classes << 'last'       if pos == last
-      prepend_classes!(html_opt, *classes)
+      prepend_css!(html_opt, css)
+      append_css!(html_opt, "col-#{pos}") if pos
+      append_css!(html_opt, 'first')      if pos == first
+      append_css!(html_opt, 'last')       if pos == last
       html_div(html_opt) do
         super(part, **opt)
       end
@@ -455,8 +458,8 @@ module FlashHelper
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
   def flash_format(*args, topic: nil, **opt)
-    local, opt = partition_hash(opt, :meth, :status, :inspect, :log, :trace)
-    meth = args.first.is_a?(Symbol) && args.shift || local[:meth] || __method__
+    prop = extract_hash!(opt, :meth, :status, :inspect, :log, :trace)
+    meth = args.first.is_a?(Symbol) && args.shift || prop[:meth] || __method__
     item = args.shift
     rpt  = ExecReport[item]
     args = args.flat_map { |arg| arg.is_a?(ExecReport) ? arg.parts : arg }
@@ -476,10 +479,10 @@ module FlashHelper
     msg = rpt.render(html: html)
 
     # Log exceptions or messages.
-    unless false?(local[:log])
-      status = local[:status] || rpt.http_status || '???'
+    unless false?(prop[:log])
+      status = prop[:status] || rpt.http_status || '???'
       if (excp = rpt.exception)
-        trace    = true?(local[:trace])
+        trace    = true?(prop[:trace])
         trace  ||=
           !excp.is_a?(UploadWorkflow::SubmitError) && # TODO: remove after upload -> entry
           !excp.is_a?(Record::Error) &&
@@ -500,7 +503,7 @@ module FlashHelper
 
     # Assemble the message.
     if msg.present? || args.present?
-      inspect = local[:inspect]
+      inspect = prop[:inspect]
       fi_opt  = { xhr: xhr, html: html }
       max     = flash_space_available
 
@@ -636,7 +639,7 @@ module FlashHelper
     # noinspection RailsParamDefResolve
     res  = item.try(:render) || item.to_s
     res  = res.inspect if inspect && !res.html_safe? && !res.start_with?('"')
-    res  = max ? safe_truncate(res, max, xhr: xhr) : to_utf(res, xhr: xhr)
+    res  = max ? html_truncate(res, max, xhr: xhr) : to_utf(res, xhr: xhr)
     html ? ERB::Util.h(res) : res
   end
 

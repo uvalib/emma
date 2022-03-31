@@ -228,7 +228,7 @@ module Model
 
   # Indicate whether *name* is a field defined by this model.
   #
-  # @param [Symbol, String]
+  # @param [Symbol, String, *]
   #
   def include?(name)
     field_names.include?(name&.to_sym)
@@ -281,9 +281,7 @@ module Model
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
   def self.configuration_fields(type, no_raise: false)
-    arg  = type
-    type = model_for(type) unless type.is_a?(Symbol)
-    if type.blank?
+    unless (arg = type).is_a?(Symbol) || (type = model_for(type))
       Log.warn((error = "#{__method__}: #{arg}: invalid"))
       raise error unless no_raise
       return EMPTY_CONFIG
@@ -532,21 +530,7 @@ module Model
   #
   def self.form_fields(item)
     database_fields(item)
-      .except(:file_data, :emma_data)
-      .merge!(Model::SEARCH_RECORD_FIELDS)
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Mapping of label keys to fields from Search::Record::MetadataRecord.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  SEARCH_RECORD_FIELDS = config_for(:search)[:all]
 
 end
 

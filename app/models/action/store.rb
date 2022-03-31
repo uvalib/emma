@@ -52,7 +52,7 @@ class Action::Store < Action::BulkPart
   #
   def assign_attributes(attr, opt = nil)
     __debug_items(binding)
-    data, attr = partition_hash(attr, *EMMA_DATA_KEYS)
+    data = extract_hash!(attr, *EMMA_DATA_KEYS)
     attr = attribute_options(attr, opt)
     # noinspection RubyMismatchedArgumentType
     attr[:emma_data] = generate_emma_data(data, attr)
@@ -84,7 +84,7 @@ class Action::Store < Action::BulkPart
   #
   def upload!(request, **opt)                                                   # NOTE: from UploadWorkflow::Single::Actions#wf_upload_file
     __debug_step(binding)
-    opt, cb_opt = partition_hash(opt, :meth, :env, :auto_retry, :update_record)
+    cb_opt = remainder_hash!(opt, :meth, :env, :auto_retry, :update_record)
     opt[:meth] ||= __method__
     stat = hdrs = body = nil
     env  = opt.delete(:env)

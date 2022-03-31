@@ -11,7 +11,8 @@ module EngineConcern
 
   extend ActiveSupport::Concern
 
-  include Emma::Common
+  include ParamsHelper
+
   include FlashConcern
 
   # ===========================================================================

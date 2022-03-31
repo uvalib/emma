@@ -11,9 +11,8 @@ module SerializationConcern
 
   extend ActiveSupport::Concern
 
-  include ParamsHelper
-  include PaginationHelper
   include SerializationHelper
+  include SessionDebugHelper
 
   include ApiConcern
 
@@ -44,7 +43,7 @@ module SerializationConcern
   # @option opt [String] :name        Passed to #make_xml.
   #
   def render_xml(item, **opt)
-    xml_opt, opt = partition_hash(opt, :separator, :name)
+    xml_opt = extract_hash!(opt, :separator, :name)
     if item.is_a?(Model)
       xml_opt[:name] ||= :response
     elsif item.is_a?(Hash)
@@ -83,12 +82,12 @@ module SerializationConcern
     item_name = opt.delete(:item)
     debug     = session_debug?
 
-    items  = try(:page_items) || []
+    items  = @page.page_items || []
     list ||= items
 
     prop = {
-      total: total_items,
-      limit: list.try(:limit) || item_count(list),
+      total: @page.total_items,
+      limit: list.try(:limit) || @page.item_count(list),
       links: list.try(:links)
     }
     prop[:list_type] = list.class.name        if debug

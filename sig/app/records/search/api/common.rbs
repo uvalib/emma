@@ -131,7 +131,7 @@ class PublicationIdentifier < ScalarType
     #
     # @return [String, nil]
     #
-    def identifier: (untyped v) -> String?
+    def identifier: (untyped v) -> (String | nil)
 
     # Strip the characteristic prefix of the including class.
     #
@@ -155,7 +155,7 @@ class PublicationIdentifier < ScalarType
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
     #
-    def cast: (untyped v, ?invalid: bool) -> PublicationIdentifier?
+    def cast: (untyped v, ?invalid: bool) -> (PublicationIdentifier | nil)
 
     # Create a new instance.
     #
@@ -165,7 +165,7 @@ class PublicationIdentifier < ScalarType
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
     #
-    def create: (String|nil v, ?(String|Symbol)? `type`) -> PublicationIdentifier?
+    def create: (String|nil v, ?(String|Symbol)? `type`) -> (PublicationIdentifier | nil)
 
     private
 
@@ -180,7 +180,7 @@ class PublicationIdentifier < ScalarType
   #
   # @return [String, nil]
   #
-  def number: (?untyped? v) -> String?
+  def number: (?untyped? v) -> (String | nil)
 
   # Split a value into a type prefix and a number.
   #
@@ -238,7 +238,7 @@ class PublicationIdentifier < ScalarType
   #
   # @return [Class<PublicationIdentifier>, nil]
   #
-  def self.subclass: (?(Symbol|String|Class)? `type`) -> Class?
+  def self.subclass: (?(Symbol|String|Class)? `type`) -> (Class | nil)
 
   # Create an array of identifier candidate strings.
   #
@@ -359,7 +359,7 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def identifier: (untyped v) -> String?
+    def identifier: (untyped v) -> (String | nil)
 
     # Strip the characteristic prefix of the including class.
     #
@@ -394,7 +394,7 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_isbn: (String v, **untyped opt) -> String?
+    def to_isbn: (String v, **untyped opt) -> (String | nil)
 
     # If the value is an ISBN-13; if it is an ISBN-10, convert it to the
     # equivalent ISBN-13; otherwise return *nil*.
@@ -404,7 +404,7 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_isbn13: (String v, ?log: bool) -> String?
+    def to_isbn13: (String v, ?log: bool) -> (String | nil)
 
     # If the value is an ISBN-10 return it; if it is an ISBN-13 that starts
     # with "978", convert it to the equivalent ISBN-10; otherwise return *nil*.
@@ -414,7 +414,7 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_isbn10: (String v, ?log: bool) -> String?
+    def to_isbn10: (String v, ?log: bool) -> (String | nil)
 
     # Generic ISBN checksum.
     #
@@ -427,7 +427,7 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def checksum: (String isbn, ?validate: bool) -> String?
+    def checksum: (String isbn, ?validate: bool) -> (String | nil)
 
     # Calculate the ISBN-13 checksum for the supplied array of digits.
     #
@@ -537,7 +537,7 @@ class Issn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def identifier: (untyped v) -> String?
+    def identifier: (untyped v) -> (String | nil)
 
     # Strip the characteristic prefix of the including class.
     #
@@ -562,7 +562,7 @@ class Issn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_issn: (String v, ?log: bool, ?validate: bool) -> String?
+    def to_issn: (String v, ?log: bool, ?validate: bool) -> (String | nil)
 
     # Calculate the ISSN checksum for the supplied array of digits.
     #
@@ -676,7 +676,7 @@ class Oclc < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def identifier: (untyped v) -> String?
+    def identifier: (untyped v) -> (String | nil)
 
     # Strip the characteristic prefix of the including class.
     #
@@ -703,7 +703,7 @@ class Oclc < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_oclc: (untyped v, ?log: bool) -> String?
+    def to_oclc: (untyped v, ?log: bool) -> (String | nil)
 
     private
 
@@ -796,7 +796,7 @@ class Lccn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def identifier: (untyped v) -> String?
+    def identifier: (untyped v) -> (String | nil)
 
     # Strip the characteristic prefix of the including class.
     #
@@ -819,7 +819,7 @@ class Lccn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_lccn: (untyped v, ?log: bool) -> String?
+    def to_lccn: (untyped v, ?log: bool) -> (String | nil)
 
     private
 
@@ -911,7 +911,7 @@ class Upc < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def identifier: (untyped v) -> String?
+    def identifier: (untyped v) -> (String | nil)
 
     # Strip the characteristic prefix of the including class.
     #
@@ -936,7 +936,7 @@ class Upc < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_upc: (untyped v, ?log: bool, ?validate: bool) -> String?
+    def to_upc: (untyped v, ?log: bool, ?validate: bool) -> (String | nil)
 
     # Calculate the UPC checksum for the supplied array of digits.
     #
@@ -1025,7 +1025,7 @@ class Doi < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def identifier: (untyped v) -> String?
+    def identifier: (untyped v) -> (String | nil)
 
     # Strip the characteristic prefix of the including class.
     #
@@ -1052,7 +1052,7 @@ class Doi < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    def to_doi: (untyped v, ?log: bool) -> String?
+    def to_doi: (untyped v, ?log: bool) -> (String | nil)
 
     private
 

@@ -50,7 +50,7 @@ module LayoutHelper::SearchBar
   # -
   # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   # +
-  def search_bar_container: (?target: (Symbol|String)?, ?fields: (symArray|symHash)?, ?values: symHash?, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, ?maximum: Integer?, ?minimum: Integer?, **untyped form_opt) -> ActiveSupport::SafeBuffer?
+  def search_bar_container: (?target: (Symbol|String)?, ?fields: (symArray|symHash)?, ?values: symHash?, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, ?maximum: Integer?, ?minimum: Integer?, **untyped form_opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate a row within a search-bar-group.
   #
@@ -92,7 +92,7 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]     An HTML input element.
   # @return [nil]                           Search unavailable for target.
   #
-  def search_input_select: (**untyped opt) -> ActiveSupport::SafeBuffer?
+  def search_input_select: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate an element for entering search terms.
   #
@@ -109,7 +109,7 @@ module LayoutHelper::SearchBar
   #
   # @see #search_input
   #
-  def search_bar: ((String|Symbol)? field, ?String? value, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def search_bar: ((String|Symbol)? field, ?String? value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # search_bar_label
   #
@@ -120,7 +120,7 @@ module LayoutHelper::SearchBar
   # @return [String]                      The specified value.
   # @return [nil]                         No non-empty value was found.
   #
-  def search_bar_label: (?(Symbol|String)? ctrlr, ?target: (Symbol|String)?, **untyped opt) -> String?
+  def search_bar_label: (?(Symbol|String)? ctrlr, ?target: (Symbol|String)?, **untyped opt) -> (String | nil)
 
   # An operation on a search-bar-row.
   #
@@ -144,7 +144,7 @@ module LayoutHelper::SearchBar
   # @return [Symbol]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
-  def search_input_field: (?(String|Symbol)? ctrlr, **untyped opt) -> Symbol?
+  def search_input_field: (?(String|Symbol)? ctrlr, **untyped opt) -> (Symbol | nil)
 
   # Screen-reader-only label for the input field.
   #
@@ -154,7 +154,7 @@ module LayoutHelper::SearchBar
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
-  def search_input_label: (?(String|Symbol)? ctrlr, **untyped opt) -> String?
+  def search_input_label: (?(String|Symbol)? ctrlr, **untyped opt) -> (String | nil)
 
   # Placeholder text displayed in the search input box.
   #
@@ -164,7 +164,7 @@ module LayoutHelper::SearchBar
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
-  def search_input_placeholder: (?(String|Symbol)? ctrlr, **untyped opt) -> String?
+  def search_input_placeholder: (?(String|Symbol)? ctrlr, **untyped opt) -> (String | nil)
 
   # Properties of the indicated search input type.
   #
@@ -195,7 +195,7 @@ module LayoutHelper::SearchBar
   # @return [Symbol]                      The controller used for searching.
   # @return [nil]                         If search input should not be enabled
   #
-  def search_input_target: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped ignored) -> Symbol?
+  def search_input_target: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped ignored) -> (Symbol | nil)
 
   # Generate a form search field input control.
   #
@@ -236,7 +236,7 @@ module LayoutHelper::SearchBar
   # @return [String]                      The specified value.
   # @return [nil]                         No non-empty value was found.
   #
-  def search_button_label: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped opt) -> String?
+  def search_button_label: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped opt) -> (String | nil)
 
   # search_clear_button
   #
@@ -248,7 +248,7 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/advanced-search.js *clearSearch()*
-  # @see HtmlHelper#icon_button
+  # @see LinkHelper#icon_button
   #
   def search_clear_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -267,24 +267,6 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_controls: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?form: String?, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Combine parts into a value for use an an HTML ID of a element associated
-  # with a specific search input row.
-  #
-  # Unless *unique* is *false* or a string, #hex_rand will be used to generate
-  # a value to make the resulting ID unique.
-  #
-  # @param [Array]                parts
-  # @param [String, Boolean, nil] unique  Value unique to a search unique.
-  # @param [Integer, nil]         index   Value unique to an input row.
-  # @param [Hash]                 opt     Passed to #html_id.
-  #
-  # @return [String]
-  #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def unique_id: (*String parts, ?unique: (String|bool)?, ?index: Integer?, **untyped opt) -> String
 
   # Filter values from an array.
   #

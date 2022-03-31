@@ -93,7 +93,7 @@ module BookshareService::Request::Periodicals
   #
   # @note This is not a real Bookshare API call.
   #
-  def get_periodical_edition: (seriesId: String, editionId: String, **untyped opt) -> Bs::Record::PeriodicalEdition?
+  def get_periodical_edition: (seriesId: String, editionId: String, **untyped opt) -> (Bs::Record::PeriodicalEdition | nil)
 
   # == GET /v2/periodicals/(seriesId)/editions/(editionId)/(format)
   #

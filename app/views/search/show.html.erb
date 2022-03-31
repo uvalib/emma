@@ -2,26 +2,28 @@
 <%-
   # A EMMA Unified Search metadata record show page.
 
+  view_debug(__FILE__)
+
   item  ||= @item
   image ||= nil
-  title ||= item&.label || t('emma.search.show.title')
+  dec     = SearchDecorator.new(item, cover: image, **context)
+  item  ||= dec.object
+
+  title ||= item.label&.presence || dec.page_heading
+  help  ||= nil # dec.help_topic
   logo  ||= repository_source_logo(item, type: :wide)
-  help  ||= nil # help_popup(:search, :show) # TODO: ???
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: dec.page_heading)
+    set_page_meta_title(label)
     set_page_description(Search: title)
   end
 
-  template_opt = { item: item, image: image }
+  template_opt = { dec: dec }
 
 -%>
 
-<div class="heading container">
-  <h1 class="heading"><%= title -%><%= help -%></h1>
-  <%= logo %>
-</div>
-
+<%= page_heading(title, help: help, logo: logo) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

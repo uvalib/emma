@@ -1,0 +1,6 @@
+# Common view helper methods supporting display of Model instances (both
+# database items and API messages).
+#
+module BaseCollectionDecorator::Links
+  include BaseDecorator::Links
+end

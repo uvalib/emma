@@ -58,6 +58,9 @@ class HomeController < ApplicationController
   #
   # The main application page.
   #
+  # @see #root_path                   Route helper
+  # @see #home_path                   Route helper
+  #
   # == Implementation Notes
   # There is no app/views/home/main.html.erb; this method renders the user
   # dashboard for an authenticated session or the welcome screen otherwise.
@@ -75,6 +78,8 @@ class HomeController < ApplicationController
   #
   # The main application page for anonymous users.
   #
+  # @see #welcome_path                Route helper
+  #
   def welcome
     __debug_route
   end
@@ -83,6 +88,7 @@ class HomeController < ApplicationController
   #
   # The main application page for authenticated users.
   #
+  # @see #dashboard_path              Route helper
   # @see UserConcern#get_account_details
   #
   def dashboard

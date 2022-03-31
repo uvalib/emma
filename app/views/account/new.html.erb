@@ -2,26 +2,28 @@
 <%-
   # Create a new local EMMA user account.
 
+  view_debug(__FILE__)
+
   item  ||= @item || User.new
-  title ||= t('emma.account.new.title')
-  help  ||= nil # help_popup(:account, :new) # TODO: ???
+  dec     = AccountDecorator.new(item, **context)
+
+  title ||= dec.page_heading
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<div class="account-form-container new">
-  <%= render 'account/form_new', user: item %>
-</div>
+<%= dec.model_form %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

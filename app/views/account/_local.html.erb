@@ -2,12 +2,16 @@
 <%-
   # Displays information about the local account.
 
+  view_debug(__FILE__)
+
   user  ||= current_user
+  dec   ||= AccountDecorator.new(user, **context)
+
+  add   ||= nil
   level ||= 1
   skip  ||= nil
 
-  skip = Array.wrap(skip)
-
+  skip    = [*skip]
   heading =
     if (level == 1) && !skip.include?(:title)
       title ||= 'EMMA Local Account Details' # TODO: I18n
@@ -18,4 +22,4 @@
 
 <%= heading %>
 
-<%= render 'account/details', user: user %>
+<%= dec.details(pairs: add) %>

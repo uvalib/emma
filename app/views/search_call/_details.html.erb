@@ -2,11 +2,15 @@
 <%-
   # A single search call record.
 
-  item    ||= @item
+  view_debug(__FILE__)
+
+  item    ||= nil
+  dec     ||= item && SearchCallDecorator.new(item, **context) or return
+
   add     ||= nil
   columns ||= nil
   filter  ||= nil
 
 -%>
 
-<%= search_call_details(item, pairs: add, columns: columns, filter: filter) %>
+<%= dec.details(pairs: add, columns: columns, filter: filter) %>

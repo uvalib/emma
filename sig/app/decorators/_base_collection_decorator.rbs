@@ -1,0 +1,71 @@
+# Common base for collection decorator classes.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Array<Model>]
+#
+class BaseCollectionDecorator < Draper::CollectionDecorator
+
+  # Methods for each decorator collection class instance.
+  #
+  # @!attribute [r] object_class
+  #   @return [Class]
+  #
+  module InstanceMethods
+    include BaseDecorator::InstanceMethods
+
+    def inspect: (?max: Integer) -> String
+  end
+
+  # Methods for each decorator collection class.
+  #
+  module ClassMethods
+    include BaseDecorator::ClassMethods
+
+    # The decorator class for list elements.
+    #
+    # @return [Class]
+    #
+    def decorator_class: () -> Class
+
+    # The Draper::Decorator#object_class for list elements.
+    #
+    # @return [Class]
+    #
+    def object_class: () -> Class
+  end
+
+  include InstanceMethods
+  extend  ClassMethods
+
+  # @private
+  DEFAULT_ACTION: Symbol
+
+  # initialize
+  #
+  # @param [Any, nil] obj
+  # @param [Hash]     opt
+  #
+  def initialize: (?untyped obj, **untyped opt) -> void
+
+  # Set to *true* to see how each collection decorator overrides Array methods.
+  #
+  # @type [Boolean]
+  #
+  # @see BaseDecorator#DEBUG_DECORATOR_INHERITANCE
+  #
+  DEBUG_COLLECTION_INHERITANCE: bool
+
+  # Define the association between a collection decorator and the decorator
+  # for its elements.
+  #
+  # This also causes the element decorator's Common module to be included so
+  # that the collection decorator acquires the same definitions.
+  #
+  # @param [Class] base
+  #
+  # @return [void]
+  #
+  def self.collection_of: (Class base) -> void
+
+end

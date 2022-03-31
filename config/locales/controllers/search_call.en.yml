@@ -66,6 +66,8 @@ en:
         display_fields: # @see 'en.emma.search_call.record'
           - !ruby/symbol all
 
+        _endpoint:      true
+
       # =======================================================================
 
       show:
@@ -75,5 +77,7 @@ en:
 
         display_fields: # @see 'en.emma.search_call.record'
           - !ruby/symbol all
+
+        _endpoint:      true
 
       # =======================================================================

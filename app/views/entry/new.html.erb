@@ -2,14 +2,20 @@
 <%-
   # Prompt to upload a file and create a new EMMA entry.
 
-  title ||= t('emma.entry.new.title')
+  view_debug(__FILE__)
+
   item  ||= @item
-  repo  ||= item&.repository
+  dec     = EntryDecorator.new(item, **context)
+  item  ||= dec.object
+
+  title ||= dec.page_heading
+  help  ||= dec.help_topic
+  repo  ||= item.repository
   logo  ||= repository_source_logo(repo)
-  help  ||= help_popup(:entry, :new)
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -20,8 +26,8 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= entry_form(item, action: :new) %>
-<%= entry_preview %>
+<%= dec.preview %>
+<%= dec.model_form %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

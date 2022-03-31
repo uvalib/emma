@@ -1,0 +1,160 @@
+# Options that may be specific to the the originating controller.
+#
+class Options
+  include Emma::Json
+
+  include ParamsHelper
+
+  # URL parameters associated with item/entry identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMS: symArray
+
+  # URL parameters involved in pagination.
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGE_PARAMS: symArray
+
+  # URL parameters involved in form submission.
+  #
+  # @type [Array<Symbol>]
+  #
+  FORM_PARAMS: symArray
+
+  # POST/PUT/PATCH parameters from the entry form that are not relevant to the
+  # create/update of a model instance.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_FORM_PARAMS: symArray
+
+  # The associated model type.
+  #
+  # @return [Symbol]
+  #
+  attr_reader model: Symbol
+
+  # Create a new options object.
+  #
+  # @param [Symbol, any] model
+  # @param [Hash, nil]   prm
+  #
+  def initialize: (untyped model, ?symHash? prm) -> void
+
+  # Indicate whether the item is a valid option.
+  #
+  # @param [Symbol, String] key
+  #
+  def key?: (Symbol|String key) -> bool
+
+  # Get an option value.
+  #
+  # @param [Symbol, String] key
+  # @param [Boolean]        log   If *false* do not warn about bad keys.
+  #
+  # @return [Any, nil]
+  #
+  def get: (Symbol|String key, ?log: bool) -> untyped
+
+  # Set an option value.
+  #
+  # @param [Symbol, String] key
+  # @param [Any, nil]       value
+  #
+  # @return [Any, nil]
+  #
+  def set: (Symbol|String key, untyped value) -> untyped
+
+  # Fill @value with all option settings from defaults and supplied URL params.
+  #
+  # @param [Boolean] clean            If *true*, remove option parameters from
+  #                                     the local copy of URL parameters.
+  # @param [Hash]    opt              Passed to #get.
+  #
+  # @return [Hash{Symbol=>Any}]       Updated option values.
+  #
+  def all: (?clean: bool, **untyped opt) -> symHash
+
+  alias [] get
+
+  alias []= set
+
+  # The valid option keys defined by the subclass.
+  #
+  # @return [Array<Symbol>]
+  #
+  def option_keys: () -> symArray
+
+  # The method associated with the given option key.
+  #
+  # @param [Symbol, String]
+  #
+  # @return [Symbol, nil]
+  #
+  def option_method: (Symbol|String key) -> (Symbol | nil)
+
+  # Supplied URL parameters.
+  #
+  # @note This method will be used in ParamsHelper.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def params: () -> symHash
+
+  # URL parameters relevant to the associated model/controller.
+  #
+  # @note This method will be used by Record::Properties#parameters.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def model_params: () -> symHash
+
+  # Get URL parameters relevant to the current operation.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def get_model_params: (?prmHash? p) -> symHash
+
+  # Extract POST parameters that are usable for creating/updating a new model
+  # instance.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `Options#params`
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def model_post_params: (?prmHash? p) -> symHash
+
+  # ignored_form_params
+  #
+  # @return [Array<Symbol>]
+  #
+  def ignored_form_params: () -> symArray
+
+  # model_data_params
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def model_data_params: () -> Hash[Symbol, Symbol]
+
+  # Extract POST parameters that are usable for creating/updating an Upload
+  # instance.
+  #
+  # @param [Hash] prm         Parameters to update
+  # @param [Hash] opt         Options to #json_parse.
+  #
+  # @return [Hash, nil]       The new contents of *prm* if modified.
+  #
+  def extract_model_data!: (symHash prm, **untyped opt) -> (symHash | nil)
+
+  def inspect: () -> untyped
+end

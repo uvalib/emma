@@ -49,7 +49,7 @@ module Record::Identification
   #
   def id_column: () -> Symbol
 
-  def id_value: (untyped item, **untyped opt) -> String?
+  def id_value: (untyped item, **untyped opt) -> (String | nil)
 
   # Column name for the identifier of the associated user.
   #
@@ -57,7 +57,7 @@ module Record::Identification
   #
   def user_column: () -> Symbol
 
-  def get_value: (untyped item, Symbol|String|Array[Symbol|String] key, ?default: untyped?) -> untyped?
+  def get_value: (untyped item, Symbol|String|Array[Symbol|String] key, ?default: untyped?) -> (untyped | nil)
 
   # A foreign-key reference to the current record.
   #
@@ -69,7 +69,7 @@ module Record::Identification
   #
   def alt_id_key: (symHash opt) -> Symbol
 
-  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol?, **untyped opt) -> ApplicationRecord?
+  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol?, **untyped opt) -> (ApplicationRecord | nil)
 
   def find_records: (*(Model|String|strArray) items, ?id_key: Symbol?, ?alt_id_key: Symbol?, **untyped opt) -> Array[Model]
 
@@ -117,11 +117,11 @@ module Record::Identification
 
     # @see Record::Identification#id_value
     #
-    def id_value: (?untyped? item, **untyped opt) -> String?
+    def id_value: (?untyped? item, **untyped opt) -> (String | nil)
 
     # @see Record::Identification#get_value
     #
-    def get_value: (*untyped item_key, **untyped opt) -> untyped?
+    def get_value: (*untyped item_key, **untyped opt) -> (untyped | nil)
 
     # @see Record::Identification#minimum_id
     #

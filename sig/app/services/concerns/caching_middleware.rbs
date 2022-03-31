@@ -61,7 +61,7 @@ module CachingMiddleware
     # @return [String]
     # @return [nil]                   If there is no request active.
     #
-    def key: (Faraday::Env env) -> String?
+    def key: (Faraday::Env env) -> (String | nil)
 
     # call
     #
@@ -70,7 +70,7 @@ module CachingMiddleware
     # @return [Faraday::Response]
     # @return [nil]
     #
-    def call: (Faraday::Env env) -> Faraday::Response?
+    def call: (Faraday::Env env) -> (Faraday::Response | nil)
 
     # Report the expiration based on the requested path.
     #
@@ -87,7 +87,7 @@ module CachingMiddleware
     # @return [String]
     # @return [nil]                   If there is no request active.
     #
-    def request_url: (Faraday::Env env) -> String?
+    def request_url: (Faraday::Env env) -> (String | nil)
 
     # call!
     #
@@ -96,7 +96,7 @@ module CachingMiddleware
     # @return [Faraday::Response]
     # @return [nil]
     #
-    def call!: (Faraday::Env env) -> Faraday::Response?
+    def call!: (Faraday::Env env) -> (Faraday::Response | nil)
 
     # Indicate whether the given request is eligible for caching.
     #
@@ -120,7 +120,7 @@ module CachingMiddleware
     # @return [String]                Either 'HIT' or 'MISS'.
     # @return [nil]                   No request or response active.
     #
-    def hit_status: (Faraday::Env env) -> String?
+    def hit_status: (Faraday::Env env) -> (String | nil)
 
     # read_cache
     #
@@ -130,7 +130,7 @@ module CachingMiddleware
     # @return [Faraday::Env]
     # @return [nil]                   Could not determine *cache_key*.
     #
-    def read_cache: (Faraday::Env env, ?String? cache_key) -> Faraday::Env?
+    def read_cache: (Faraday::Env env, ?String? cache_key) -> (Faraday::Env | nil)
 
     # write_cache
     #
@@ -140,7 +140,7 @@ module CachingMiddleware
     # @return [Boolean]
     # @return [nil]                   Could not determine *cache_key*.
     #
-    def write_cache: (Faraday::Env env, ?String? cache_key) -> bool?
+    def write_cache: (Faraday::Env env, ?String? cache_key) -> (bool | nil)
 
     # Generate options to override the default cache options set in the
     # initializer based on the nature of the request.

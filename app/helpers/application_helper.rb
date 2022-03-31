@@ -22,7 +22,8 @@ module ApplicationHelper
   public
 
   # Raw configuration entries for each controller that supplies content (i.e.,
-  # those controllers with a subdirectory in app/view) plus 'en.emma.generic'.
+  # those controllers with a subdirectory in app/view) plus 'emma.generic'
+  # and distinct entries for each 'emma.user' Devise controller.
   #
   # @type [Hash{Symbol=>Any}]
   #
@@ -30,9 +31,20 @@ module ApplicationHelper
   # noinspection RailsI18nInspection
   #++
   CONTROLLER_CONFIGURATION =
-    I18n.t('emma').select { |_, config|
+    I18n.t('emma').select { |k, config|
+      next true if k == :generic
       next unless config.is_a?(Hash)
-      config[:index].is_a?(Hash) || config[:welcome].is_a?(Hash)
+      config.any? do |_, cfg|
+        next unless cfg.is_a?(Hash)
+        cfg[:_endpoint] || cfg.any? { |_, v| v.is_a?(Hash) && v[:_endpoint] }
+      end
+    }.then { |configs|
+      configs = configs.transform_values { |config| config.except(:record) }
+      devise  = configs[:user].select { |_, v| v.is_a?(Hash) && v.key?(:new) }
+      user    = configs[:user].except(*devise.keys)
+      devise.transform_keys! { |k| :"user_#{k}" }
+      devise.transform_values! { |cfg| user.deep_dup.deep_merge!(cfg) }
+      configs.merge!(user: user, **devise)
     }.deep_freeze
 
   # Configuration for application properties.
@@ -81,52 +93,6 @@ module ApplicationHelper
       prefixes << p[:controller]
     end
     lookup_context.template_exists?(path, prefixes, true)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Render a description for the page from configuration.
-  #
-  # @param [String, Symbol, nil] controller   Default: `params[:controller]`
-  # @param [String, Symbol, nil] action       Default: `params[:action]`
-  # @param [Hash]                opt          Passed to #html_div
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
-  #
-  def page_description(controller: nil, action: nil, **opt)
-    text = page_text(controller: controller, action: action)
-    html_div(text, prepend_classes!(opt, 'panel')) if text.present?
-  end
-
-  # Get the configured page description.
-  #
-  # @param [String, Symbol, nil] controller   Default: `params[:controller]`
-  # @param [String, Symbol, nil] action       Default: `params[:action]`
-  # @param [String, Symbol, nil] type         Optional type under action.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [String]
-  # @return [nil]
-  #
-  def page_text(controller: nil, action: nil, type: nil)
-    controller ||= params[:controller]
-    action     ||= params[:action]
-    path  = config_path(controller, action)
-    entry = CONTROLLER_CONFIGURATION.dig(*path) || {}
-    types = Array.wrap(type).compact.map(&:to_sym)
-    types = %i[description text] if types.blank? || types == %i[description]
-    # noinspection RubyMismatchedReturnType
-    types.find do |t|
-      html  = "#{t}_html".to_sym
-      plain = t.to_sym
-      text  = entry[html]&.strip&.presence&.html_safe || entry[plain]&.strip
-      return text if text.present?
-    end
   end
 
   # ===========================================================================

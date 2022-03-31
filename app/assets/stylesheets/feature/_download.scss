@@ -1,8 +1,7 @@
 // app/assets/stylesheets/feature/_download.scss
 
-@use 'shared/variables'         as *;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
 
 //=============================================================================
 // Internal mixins
@@ -32,19 +31,19 @@
 
 .artifact {
 
-    // @see ArtifactHelper#artifact_link
+    // @see ArtifactDecorator#link
     .link {
         &.complete {
             color: $root-fg-color;
         }
     }
 
-    // @see ArtifactHelper#download_progress
+    // @see ArtifactDecorator#download_progress
     .progress {
         @extend %transient-control;
     }
 
-    // @see ArtifactHelper#download_failure
+    // @see ArtifactDecorator#download_failure
     .failure {
 
         @extend %transient-control;
@@ -56,7 +55,7 @@
         cursor:           default;
     }
 
-    // @see ArtifactHelper#download_button
+    // @see ArtifactDecorator#download_button
     .button {
 
         @extend %transient-control;
@@ -173,7 +172,7 @@
 
             button {
 
-                @extend .control-button;
+                @include button.control;
 
                 font-size:     large;
                 border-radius: 4px;

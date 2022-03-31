@@ -2,11 +2,18 @@
 <%-
   # A EMMA Unified Search metadata record listing.
 
-  item  ||= nil or return
+  view_debug(__FILE__)
+
+  item  ||= nil
   image ||= nil
+  dec   ||= item && SearchDecorator.new(item, cover: image, **context) or return
+  item  ||= dec.object
+
   add   ||= nil
   level ||= 1
   skip  ||= nil
+
+  skip    = [*skip, :cover]
 
   append_page_description(
     ISBN:     item.isbn,
@@ -14,12 +21,8 @@
     Author:   item.creators.first(3),
   ) unless modal?
 
-  skip = [*skip, :cover_image].uniq
-  role = ('role="article"'.html_safe if level == 1)
-
 -%>
 
-<div <%= role -%> class="search-container">
-  <%= search_item_details(item, pairs: add) %>
-  <%= image || cover_image(item) unless skip.include?(:cover_image) %>
-</div>
+<%= dec.details_element(pairs: add, level: level) do -%>
+  <%= dec.cover(placeholder: false) unless skip.include?(:cover) %>
+<%- end -%>

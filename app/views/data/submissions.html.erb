@@ -2,25 +2,27 @@
 <%-
   # Artificial database records representing EMMA submissions.
 
-  title ||= t('emma.data.submissions.title')
+  view_debug(__FILE__)
+
   list  ||= @list
   name  ||= nil # Not directly from a specific table.
-  help  ||= nil # help_popup(:data, :submissions) # TODO: ???
+
+  title ||= t('emma.data.submissions.title')
+  help  ||= nil # %i[data submissions]
 
   unless modal?
     label = t('emma.data.submissions.label', default: title)
-    set_page_title(label)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'data/details', records: list, name: name %>
+<%= render 'data/details', list: list, name: name %>
 
 <%= page_notes_section %>

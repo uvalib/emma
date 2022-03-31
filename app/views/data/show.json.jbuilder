@@ -5,10 +5,9 @@
 #
 # The contents of a database table as JSON.
 
-name    ||= @name
-records ||= @item || []
+item ||= @item
+name ||= @name
 
 # noinspection RubyMismatchedArgumentType
 json.timestamp DateTime.now
-
-json.partial! 'data/details', records: records, name: name
+json.partial! 'data/details', list: item, name: name

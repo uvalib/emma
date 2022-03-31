@@ -297,14 +297,14 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Current search page style.
+     * Current search list display style.
      *
      * @note Can't rely on `params` because `params['style']` will have already
      *  been removed via the server redirect.
      *
      * @returns {string}
      */
-    function pageStyle() {
+    function listStyle() {
         let result;
         $.each(SEARCH_STYLE, function(style, active) {
             result = active && style;
@@ -485,7 +485,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const DB_STORE_NAME = `style_${pageStyle()}`;
+    const DB_STORE_NAME = `style_${listStyle()}`;
 
     // ========================================================================
     // Variables - page data

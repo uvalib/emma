@@ -181,7 +181,7 @@ module SqlMethods
   # @return [String]
   # @return [nil]                     If *name* was blank.
   #
-  def sanitize_sql_name: (*(String|Symbol|nil) name) -> String?
+  def sanitize_sql_name: (*(String|Symbol|nil) name) -> (String | nil)
 
   # Make a string safe to use within an SQL LIKE statement.
   #

@@ -14,6 +14,8 @@ module LayoutHelper::PageControls
 
   include ConfigurationHelper
   include LinkHelper
+  include ParamsHelper
+  include RoleHelper
 
   # ===========================================================================
   # :section:
@@ -43,15 +45,15 @@ module LayoutHelper::PageControls
   # @return [nil]                       If no page_controls configured.
   #
   def render_page_controls(**opt)
-    css_selector = '.page-controls'
-    opt          = request_parameters.merge(opt)
-    controller   = opt[:controller].to_sym
-    action       = opt[:action].to_sym
-    id           = opt[:selected] || opt[:id]
+    css        = '.page-controls'
+    opt        = request_parameters.merge(opt)
+    id         = opt[:selected] || opt[:id]
+    controller = opt[:controller].to_sym
+    action     = opt[:action].to_sym
+    ca_opt     = { controller: controller, action: action }
 
     select   = (id == 'SELECT') && %i[new edit delete].include?(action)
-    pca_opt  = { controller: controller, action: action }
-    pca_opt[:action] = :"#{action}_select" if select
+    pca_opt  = select ? ca_opt.merge(action: :"#{action}_select") : ca_opt
     actions  = page_control_actions(**pca_opt).presence or return
 
     anchor   = "#{action}-page-controls"
@@ -61,12 +63,12 @@ module LayoutHelper::PageControls
     label    = html_div(l_opt) { page_controls_label(**opt) }
 
     ctl_opt  = { class: 'controls', 'aria-labelledby': label_id, id: anchor }
-    pc_opt   = { controller: controller, action: action, id: id }
+    pc_opt   = ca_opt.merge(id: id)
     controls = html_div(ctl_opt) { page_controls(*actions, **pc_opt) }
 
     skip_nav_prepend(controller => anchor)
 
-    html_div(class: css_classes(css_selector)) do
+    html_div(class: css_classes(css)) do
       label << controls
     end
   end
@@ -124,38 +126,64 @@ module LayoutHelper::PageControls
     html_opt = { class: 'control', method: path_opt.delete(:method) }.compact
     item_id  = path_opt.delete(:id)
     link_opt = path_opt.delete(:link_opt)&.dup || {}
-    append_classes!(html_opt, link_opt[:class])
+    append_css!(html_opt, link_opt[:class])
     path_opt[:link_opt] = link_opt.merge!(html_opt)
     controller = controller&.to_sym
     action     = action&.to_sym
     pairs.map { |path|
-      opt = path_opt.dup
-      p_ctrlr, p_action = path
-      if p_action
-        if item_id && %i[new edit delete].include?(p_action.to_sym)
+      ctr, act = path
+      opt = path_opt.merge(controller: ctr, action: act)
+      if opt[:action]
+        if item_id && %i[new edit delete].include?(opt[:action])
           if item_id != 'SELECT'
             opt[:id] = item_id
-          elsif !p_action.end_with?('_select')
-            path = [p_ctrlr, (p_action = :"#{p_action}_select")]
+          elsif !opt[:action].end_with?('_select')
+            opt[:action] = :"#{opt[:action]}_select"
           end
         end
         current =
-          if action && (controller == p_ctrlr)
+          if action && (controller == opt[:controller])
             # noinspection RubyNilAnalysis
             a_sel = action.end_with?('_select')
-            p_sel = p_action.end_with?('_select')
+            p_sel = opt[:action].end_with?('_select')
             case
-              when p_sel && !a_sel then p_action == :"#{action}_select"
-              when a_sel && !p_sel then action == :"#{p_action}_select"
-              else                      action == p_action
+              when p_sel && !a_sel then opt[:action] == :"#{action}_select"
+              when a_sel && !p_sel then action == :"#{opt[:action]}_select"
+              else                      action == opt[:action]
             end
           end
-        opt[:link_opt] = append_classes(link_opt, 'disabled') if current
-        path = [p_ctrlr, :new] if p_action.to_s == 'new_select'
+        opt[:link_opt] = append_css(link_opt, 'disabled') if current
+        opt[:action] = :new if opt[:action] == :new_select
       end
-      # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
-      link_to_action(nil, path: path, **opt)
+      # noinspection RubyMismatchedReturnType
+      page_control(**opt)
     }.compact.join("\n").html_safe
+  end
+
+  # This is a kludge specifically for getting the controls on "/home/dashboard"
+  # to look right.  Although the :edit control is going to "/account/edit/:id",
+  # we want the label/tooltip configuration for "/user/registrations/edit".
+  # (The generic "/account/edit" refers to changing "an account" rather than
+  # "your account").
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def page_control(**opt)
+    label = tip = nil
+    ctr, act, id = opt.values_at(:controller, :action, :id)
+    if (ctr == :account) && (act == :edit) && (!id || (id == current_user&.id))
+      cfg_opt = { ctrlr: 'user/registrations', action: act }
+      label   = config_lookup('label',   **cfg_opt)
+      tip     = config_lookup('tooltip', **cfg_opt)
+    end
+    if tip
+      opt[:link_opt] ||= {}
+      opt[:link_opt][:title] = tip
+    end
+    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
+    link_to_action(label, **opt)
   end
 
   # page_controls_label

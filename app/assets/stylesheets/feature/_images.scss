@@ -22,7 +22,7 @@
 // Cover images
 //=============================================================================
 
-// @see TitleHelper#cover_image
+// @see BaseDecorator::List#cover
 .cover-image {
 
     img {
@@ -42,7 +42,7 @@
 // Thumbnail images
 //=============================================================================
 
-// @see TitleHelper#thumbnail
+// @see BaseDecorator::List#thumbnail
 .thumbnail {
 
     // NOTE: Determined experimentally for consistency across results pages.

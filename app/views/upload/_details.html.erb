@@ -2,18 +2,20 @@
 <%-
   # A listing of an upload entry details.
 
-  item  ||= nil or return
+  view_debug(__FILE__)
+
+  item  ||= nil
   image ||= nil
+  dec   ||= item && UploadDecorator.new(item, cover: image, **context) or return
+
   add   ||= nil
   level ||= 1
   skip  ||= nil
 
-  skip = Array.wrap(skip)
-  role = ('role="article"'.html_safe if level == 1)
+  skip    = [*skip]
 
 -%>
 
-<div <%= role -%> class="upload-container">
-  <%= upload_details(item, pairs: add) %>
-  <%= image || cover_image(item) unless skip.include?(:cover_image) %>
-</div>
+<%= dec.details_element(pairs: add, level: level) do -%>
+  <%= dec.cover(placeholder: false) unless skip.include?(:cover) %>
+<%- end -%>

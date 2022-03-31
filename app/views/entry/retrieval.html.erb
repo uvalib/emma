@@ -1,7 +1,11 @@
 <%# app/views/entry/retrieval.html.erb -%>
 <%-
   # Fall-back page for a failed Entry retrieval action.
+
+  view_debug(__FILE__)
+
   title ||= t('emma.download.title', default: :'emma.download.label')
   error ||= t('emma.download.error.server')
+
 -%>
 <%= render 'entry/fallback', title: title, error: error %>

@@ -79,7 +79,7 @@ class EntryController < ApplicationController
   #
   # @see EntryConcern#new_entry
   # @see EntryController#create
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def new: () -> void
 
@@ -106,7 +106,7 @@ class EntryController < ApplicationController
   #
   # @see EntryConcern#edit_entry
   # @see EntryController#update
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def edit: () -> void
 
@@ -218,7 +218,7 @@ class EntryController < ApplicationController
   # Invoked to resupply field values to a form generated for "/new".
   #
   # @see EntryConcern#renew_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see file:app/assets/javascripts/feature/model-form.js *refreshRecord()*
   #
   def renew: () -> void
 
@@ -227,7 +227,7 @@ class EntryController < ApplicationController
   # Invoked to resupply field values to a form generated for "/edit".
   #
   # @see EntryConcern#reedit_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see file:app/assets/javascripts/feature/model-form.js *refreshRecord()*
   #
   def reedit: () -> void
 
@@ -243,7 +243,7 @@ class EntryController < ApplicationController
   # :create phase.  If it was in the :edit phase, its fields are reset
   #
   # @see EntryConcern#cancel_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *cancelForm()*
+  # @see file:app/assets/javascripts/feature/model-form.js *cancelForm()*
   #
   def cancel: () -> void
 
@@ -262,7 +262,7 @@ class EntryController < ApplicationController
   # Invoked from 'Uppy.XHRUpload'.
   #
   # @see EntryConcern#upload_file
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def endpoint: () -> void
 

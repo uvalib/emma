@@ -91,7 +91,7 @@ module ParamsHelper
   #
   # @return [String, nil]
   #
-  def decompress_value: (String|nil v) -> String?
+  def decompress_value: (String|nil v) -> (String | nil)
 
   # Get a reference to `session[section]`.
   #
@@ -110,7 +110,7 @@ module ParamsHelper
   # @return [String]
   # @return [nil]
   #
-  def controller_to_name: (?untyped? v) -> String?
+  def controller_to_name: (?untyped? v) -> (String | nil)
 
   # Translate an item into the URL parameter for the controller with which it
   # is associated.
@@ -120,7 +120,7 @@ module ParamsHelper
   # @return [String]
   # @return [nil]
   #
-  def action_to_name: (?untyped? v) -> String?
+  def action_to_name: (?untyped? v) -> (String | nil)
 
   # Translate into the URL parameters for the associated controller and action.
   #

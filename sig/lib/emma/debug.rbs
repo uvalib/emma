@@ -58,7 +58,7 @@ module Emma::Debug
     # -
     # noinspection RailsParamDefResolve
     # +
-    def __debug_session_hash: (?(anyHash|ActionDispatch::Request)? value) -> strHash?
+    def __debug_session_hash: (?(anyHash|ActionDispatch::Request)? value) -> (strHash | nil)
 
     # Environment values transformed into a Hash.
     #
@@ -70,7 +70,7 @@ module Emma::Debug
     # -
     # noinspection RailsParamDefResolve
     # +
-    def __debug_env_hash: (?(anyHash|ActionDispatch::Request)? value) -> strHash?
+    def __debug_env_hash: (?(anyHash|ActionDispatch::Request)? value) -> (strHash | nil)
 
     # HTTP message headers transformed into a Hash.
     #
@@ -82,7 +82,7 @@ module Emma::Debug
     # -
     # noinspection RailsParamDefResolve
     # +
-    def __debug_header_hash: (?(anyHash|ActionDispatch::Request|ActionDispatch::Response)? value) -> strHash?
+    def __debug_header_hash: (?(anyHash|ActionDispatch::Request|ActionDispatch::Response)? value) -> (strHash | nil)
 
     # Produce an inspection for each argument.
     #

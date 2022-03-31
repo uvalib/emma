@@ -16,14 +16,14 @@ module Model
   #
   # @return [Class, nil]
   #
-  def aggregate_type: () -> Class?
+  def aggregate_type: () -> (Class | nil)
 
   # The field holding constituent Model elements for a class which supports
   # aggregates.
   #
   # @return [Symbol, nil]
   #
-  def aggregate_field: () -> Symbol?
+  def aggregate_field: () -> (Symbol | nil)
 
   # Indicate whether the Model instance is primarily a container for a list of
   # other Model instances.
@@ -35,21 +35,21 @@ module Model
   #
   # @return [Class, nil]
   #
-  def collection_type: () -> Class?
+  def collection_type: () -> (Class | nil)
 
   # The field holding constituent Model elements for a class whose instances
   # are collections.
   #
   # @return [Symbol, nil]
   #
-  def collection_field: () -> Symbol?
+  def collection_field: () -> (Symbol | nil)
 
   # The constituent Model elements related to this Model instance.
   #
   # @return [Array]   Possibly empty.
   # @return [nil]     If the instance is not an aggregate or collection.
   #
-  def elements: () -> symArray?
+  def elements: () -> (symArray | nil)
 
   extend ActiveSupport::Concern
 
@@ -66,14 +66,14 @@ module Model
     #
     # @return [Class<Model>, nil]
     #
-    def aggregate_type: () -> Class?
+    def aggregate_type: () -> (Class | nil)
 
     # The field holding constituent Model elements for a class which supports
     # aggregates.
     #
     # @return [Symbol, nil]
     #
-    def aggregate_field: () -> Symbol?
+    def aggregate_field: () -> (Symbol | nil)
 
     # Indicate whether the including class is primarily a container for a list
     # of other Model instances.
@@ -85,14 +85,14 @@ module Model
     #
     # @return [Class<Model>, nil]
     #
-    def collection_type: () -> Class?
+    def collection_type: () -> (Class | nil)
 
     # The field holding constituent Model elements for a class whose instances
     # are collections.
     #
     # @return [Symbol, nil]
     #
-    def collection_field: () -> Symbol?
+    def collection_field: () -> (Symbol | nil)
 
     # Create a :LIST_FIELD or :BASE_FIELD constant for a class if it defines
     # :LIST_ELEMENT or :BASE_ELEMENT (respectively).
@@ -104,7 +104,7 @@ module Model
     #
     # @see Api::Record::Associations::ClassMethods#has_many
     #
-    def set_relation_field: (Symbol|String field_name, Class|nil field_type) -> Symbol?
+    def set_relation_field: (Symbol|String field_name, Class|nil field_type) -> (Symbol | nil)
 
     # Validate the including aggregate/collection class.
     #
@@ -123,9 +123,9 @@ module Model
 
   # Indicate whether *name* is a field defined by this model.
   #
-  # @param [Symbol, String]
+  # @param [Symbol, String, *]
   #
-  def include?: (Symbol|String name) -> bool
+  def include?: (Symbol|String|untyped name) -> bool
 
   # The fields defined by this model.
   #
@@ -189,7 +189,7 @@ module Model
   # -
   # noinspection RubyNilAnalysis
   # +
-  def self.class_for: (untyped item) -> Class?
+  def self.class_for: (untyped item) -> (Class | nil)
 
   # Return the name of the model associated with *item*.
   #
@@ -200,7 +200,7 @@ module Model
   # -
   # noinspection RubyNilAnalysis
   # +
-  def self.model_for: (untyped item) -> Symbol?
+  def self.model_for: (untyped item) -> (Symbol | nil)
 
   # Return the name of the model associated with *item*.
   #
@@ -208,7 +208,7 @@ module Model
   #
   # @return [Symbol, nil]
   #
-  def self.for: (untyped item) -> Symbol?
+  def self.for: (untyped item) -> (Symbol | nil)
 
   private
 
@@ -264,5 +264,5 @@ module Model
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_RECORD_FIELDS: Hash[Symbol,symHash]
+  #SEARCH_RECORD_FIELDS: Hash[Symbol,symHash]
 end

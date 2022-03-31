@@ -16,14 +16,14 @@ module Bs::Shared::TitleMethods
   # @return [String]
   # @return [nil]                     If the link was not present.
   #
-  def thumbnail_image: () -> String?
+  def thumbnail_image: () -> (String | nil)
 
   # A link to a title's cover image if present.
   #
   # @return [String]
   # @return [nil]                     If the link was not present.
   #
-  def cover_image: () -> String?
+  def cover_image: () -> (String | nil)
 
   # All artifacts associated with this catalog title.
   #
@@ -42,14 +42,14 @@ module Bs::Shared::TitleMethods
   # @return [Integer]
   # @return [nil]                     If the value cannot be determined.
   #
-  def page_count: () -> Integer?
+  def page_count: () -> (Integer | nil)
 
   # The number of images.
   #
   # @return [Integer]
   # @return [nil]                     If the value cannot be determined.
   #
-  def image_count: () -> Integer?
+  def image_count: () -> (Integer | nil)
 
   # Field(s) that may hold the title string.
   #

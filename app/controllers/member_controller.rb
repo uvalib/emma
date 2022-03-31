@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle Bookshare-only "/member" pages.
 #
-# @see MemberHelper
+# @see MemberDecorator
+# @see MembersDecorator
 # @see file:app/views/member/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -46,7 +47,7 @@ class MemberController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  # Undo the over-encoding required in MemberHelper#member_link.
+  # Undo the over-encoding required in MemberDecorator#link.
   before_action do
     @account_id = params[:userAccountId] || params[:username] || params[:id]
     @account_id &&= CGI.unescape(@account_id)
@@ -62,13 +63,15 @@ class MemberController < ApplicationController
   #
   # List all organization members.
   #
+  # @see #member_index_path           Route helper
   # @see BookshareService::Request::Organization#get_my_organization_members
   #
   def index
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @list = bs_api.get_my_organization_members(**opt)
-    pagination_finalize(@list, :userAccounts, **opt)
+    @page.finalize(@list, :userAccounts, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
@@ -81,6 +84,7 @@ class MemberController < ApplicationController
   #
   # Display details of an existing organization member.
   #
+  # @see #member_path                 Route helper
   # @see UserConcern#get_account_details
   #
   def show
@@ -97,6 +101,8 @@ class MemberController < ApplicationController
   #
   # Add metadata for a new organization member.
   #
+  # @see #new_member_path             Route helper
+  #
   def new
     __debug_route
   end
@@ -105,6 +111,8 @@ class MemberController < ApplicationController
   #
   # Create an entry for a new organization member.
   #
+  # @see #member_path                 Route helper
+  #
   def create
     __debug_route
   end
@@ -112,6 +120,8 @@ class MemberController < ApplicationController
   # == GET /member/:id/edit
   #
   # Modify metadata of an existing organization member entry.
+  #
+  # @see #edit_member_path            Route helper
   #
   def edit
     __debug_route
@@ -122,6 +132,8 @@ class MemberController < ApplicationController
   #
   # Update the entry for an existing organization member.
   #
+  # @see #member_path                 Route helper
+  #
   def update
     __debug_route
   end
@@ -129,6 +141,8 @@ class MemberController < ApplicationController
   # == DELETE /member/:id
   #
   # Remove an existing organization member entry.
+  #
+  # @see #member_path                 Route helper
   #
   def destroy
     __debug_route

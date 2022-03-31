@@ -125,7 +125,7 @@ class Phase < ApplicationRecord
   #
   # @return [ExecReport, nil]
   #
-  def get_exec_report: (?bool? refresh) -> ExecReport?
+  def get_exec_report: (?bool? refresh) -> (ExecReport | nil)
 
   # Phase records don't have a REPORT_COLUMN.
   #
@@ -143,20 +143,20 @@ class Phase < ApplicationRecord
   #
   # @return [Action, nil]
   #
-  def newest_action: () -> Action?
+  def newest_action: () -> (Action | nil)
 
   # The most-recently updated action, representing the current status of the
   # Phase instance.
   #
   # @return [Action, nil]
   #
-  def current_action: () -> Action?
+  def current_action: () -> (Action | nil)
 
   # The latest failed action.
   #
   # @return [Action, nil]
   #
-  def failed_action: () -> Action?
+  def failed_action: () -> (Action | nil)
 
   # Actions that are not finished.
   #
@@ -240,7 +240,7 @@ class Phase < ApplicationRecord
   #
   def self.describe_status: (Phase phase, **untyped opt) -> String
 
-  def describe_parts: (?Phase? phase, **untyped opt) -> String?
+  def describe_parts: (?Phase? phase, **untyped opt) -> (String | nil)
 
   def show: () -> nil
 

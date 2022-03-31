@@ -10,7 +10,6 @@ module TestHelper::SystemTests::Bookshare
   include TestHelper::SystemTests::Common
 
   include BookshareConcern
-  include BookshareHelper
 
   # ===========================================================================
   # :section:

@@ -2,36 +2,31 @@
 <%-
   # Display a list of Entry records.
 
-  list   ||= []
+  view_debug(__FILE__)
+
+  list   ||= nil
+  dec    ||= EntriesDecorator.new(list, **context)
+  list   ||= dec.object
+
   count  ||= list.size
-  offset ||= page_offset
+  offset ||= @page.page_offset
   level  ||= 1
   row    ||= level
   skip   ||= nil
 
-  skip = Array.wrap(skip)
-  heading =
+  skip     = [*skip, :thumbnail]
+  heading  =
     unless skip.include?(:title)
-      title ||= t('emma.entry.index.title')
+      title ||= dec.page_heading
       title  += " (#{count})" unless skip.include?(:count)
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?
-      html_tag(level, h(title), class: classes)
+      html_tag(level, title, class: classes)
     end
-
-  opt = { offset: offset, level: (level + 1), skip: skip }
+  level += 1
 
 -%>
 
 <%= heading %>
 
-<%- if list.blank? -%>
-  <%= render 'entry/list_item', opt.merge!(index: -1, row: row) %>
-<%- else -%>
-  <%- list.each_with_index do |item, idx| -%>
-    <%- opt.merge!(index: idx, row: (row + idx), item: item) -%>
-    <%= render 'entry/list_item', opt %>
-  <%- end -%>
-<%- end -%>
-
-<%= entry_no_records_row %>
+<%= dec.render(row: row, offset: offset, level: level, skip: skip) %>

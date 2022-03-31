@@ -11,20 +11,14 @@ module SearchConcern
 
   extend ActiveSupport::Concern
 
+  include FlashHelper
+  include ParamsHelper
+  include SearchModesHelper
+  include SearchTermsHelper
+
   include ApiConcern
   include EngineConcern
-  include PaginationConcern
   include SearchCallConcern
-
-  include LayoutHelper
-  include SearchHelper
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include PaginationConcern
-    # :nocov:
-  end
 
   # ===========================================================================
   # :section:
@@ -49,9 +43,6 @@ module SearchConcern
   public
 
   # @private
-  DEF_TITLE_SEARCH = (LayoutHelper::SearchFilters::DEFAULT_RESULTS == :title)
-
-  # @private
   GENERATE_SCORES = false
 
   # index_search
@@ -59,7 +50,6 @@ module SearchConcern
   # @param [Boolean] titles           If *false*, return records not titles.
   # @param [Boolean] save             If *false*, do not save search terms.
   # @param [Boolean] scores           Calculate experimental relevancy scores.
-  # @param [Symbol]  items            Specify method for #pagination_finalize.
   # @param [Boolean] canonical        Passed to SearchTitleList#initialize.
   # @param [Hash]    opt              Passed to SearchService#get_records.
   #
@@ -70,14 +60,8 @@ module SearchConcern
   # If :titles is *true* then :canonical defaults to *true* on the production
   # service and *false* everywhere else.
   #
-  def index_search(
-    titles:    nil,
-    save:      true,
-    scores:    nil,
-    items:     nil,
-    canonical: nil,
-    **opt
-  )
+  def index_search(titles: nil, save: true, scores: nil, canonical: nil, **opt)
+
     titles = title_results? if titles.nil?
     scores = search_debug?  if scores.nil? && GENERATE_SCORES
 
@@ -92,12 +76,10 @@ module SearchConcern
 
     if titles
       canonical = production_deployment? if canonical.nil?
-      list = Search::Message::SearchTitleList.new(list, canonical: canonical)
+      Search::Message::SearchTitleList.new(list, canonical: canonical)
+    else
+      list
     end
-
-    items ||= titles ? :titles : :records
-    pagination_finalize(list, items, **opt)
-    list
   end
 
   # index_record
@@ -152,65 +134,6 @@ module SearchConcern
     attr[:result]     ||= result || @list
     # noinspection RubyMismatchedReturnType
     SearchCall.create(attr)
-  end
-
-  # ===========================================================================
-  # :section: PaginationConcern overrides
-  # ===========================================================================
-
-  public
-
-  # Analyze the *list* object to generate the path for the next page of
-  # results.
-  #
-  # @param [Search::Message::SearchTitleList, Array<Search::Record::MetadataRecord>, nil] list
-  # @param [Hash, nil] url_params     Current request parameters.
-  #
-  # @return [String]                  Path to generate next page of results.
-  # @return [nil]                     If there is no next page.
-  #
-  # @see PaginationConcern#next_page_path
-  #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def next_page_path(list: nil, **url_params)
-    items = list.try(:records) || list || page_items
-    return if (items.size < page_size) || (last = items.last).blank?
-
-    # General pagination parameters.
-    prm    = url_parameters(url_params)
-    page   = positive(prm.delete(:page))
-    offset = positive(prm.delete(:offset))
-    limit  = positive(prm.delete(:limit))
-    size   = limit || page_size
-    if offset && page
-      offset = nil if offset == ((page - 1) * size)
-    elsif offset
-      page   = (offset / size) + 1
-      offset = nil
-    else
-      page ||= 1
-    end
-    prm[:page]   = page   + 1    if page
-    prm[:offset] = offset + size if offset
-    prm[:limit]  = limit         if limit && (limit != default_page_size)
-
-    # Parameters specific to the Unified Search API.
-    title = date = nil
-    case prm[:sort]&.to_sym
-      when :title               then title = last.dc_title
-      when :sortDate            then date  = last.emma_sortDate
-      when :publicationDate     then date  = last.emma_publicationDate
-      when :lastRemediationDate then date  = last.rem_remediationDate
-      else                           prm.except!(:prev_id, :prev_value)
-    end
-    if title || date
-      prm[:prev_id]    = url_escape(last.emma_recordId)
-      prm[:prev_value] = url_escape(title || IsoDay.cast(date))
-    end
-
-    make_path(request.path, **prm)
   end
 
   # ===========================================================================
@@ -375,7 +298,7 @@ module SearchConcern
   # from the URL parameter a redirect will occur.
   #
   def set_search_results(type = nil)
-    valid_values = LayoutHelper::SearchFilters::SEARCH_RESULTS
+    valid_values = SearchModesHelper::SEARCH_RESULTS
     set_search_feature(:results, type, valid_values, meth: __method__)
   end
 
@@ -391,7 +314,7 @@ module SearchConcern
   # from the URL parameter a redirect will occur.
   #
   def set_search_style(style = nil)
-    valid_values = LayoutHelper::SearchFilters::SEARCH_STYLES
+    valid_values = SearchModesHelper::SEARCH_STYLES
     set_search_feature(:style, style, valid_values, meth: __method__)
   end
 
@@ -461,8 +384,23 @@ module SearchConcern
 
     __included(base, THIS_MODULE)
 
-    # In order to override #next_page_path this must be...
-    included_after(base, PaginationConcern, this: THIS_MODULE)
+    include PaginationConcern
+
+    # =========================================================================
+    # :section: PaginatorConcern overrides
+    # =========================================================================
+
+    # Create a Paginator for the current controller action.
+    #
+    # @param [Class<Paginator>] paginator  Paginator class.
+    # @param [Hash]             opt        Passed to super.
+    #
+    # @return [SearchPaginator]
+    #
+    def pagination_setup(paginator: SearchPaginator, **opt)
+      # noinspection RubyMismatchedReturnType
+      super
+    end
 
   end
 

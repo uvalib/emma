@@ -161,9 +161,9 @@ DEBUG_MAX = 2048
 
 # Write indented debug line(s) to $stderr.
 #
-# @param [Array] args                 Passed to #__output_impl.
-# @param [Hash]  opt                  Passed to #__output_impl.
-# @param [Proc]  block                Passed to #__output_impl.
+# @param [Array<Any,nil>] args        Passed to #__output_impl.
+# @param [Hash]           opt         Passed to #__output_impl.
+# @param [Proc]           block       Passed to #__output_impl.
 #
 # @return [nil]
 #
@@ -179,9 +179,9 @@ end
 
 # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
 #
-# @param [Array] args                 Passed to #__debug_impl.
-# @param [Hash]  opt                  Passed to #__debug_impl.
-# @param [Proc]  block                Passed to #__debug_impl.
+# @param [Array<Any,nil>] args        Passed to #__debug_impl.
+# @param [Hash]           opt         Passed to #__debug_impl.
+# @param [Proc]           block       Passed to #__debug_impl.
 #
 def __debug(*args, **opt, &block)
   __debug_impl(*args, **opt, &block)

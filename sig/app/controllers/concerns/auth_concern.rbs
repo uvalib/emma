@@ -116,7 +116,7 @@ module AuthConcern
   #
   # @return [OmniAuth::AuthHash, nil]
   #
-  def update_auth_data: (?(User|String|Integer|untyped)? user) -> OmniAuth::AuthHash?
+  def update_auth_data: (?(User|String|Integer|untyped)? user) -> (OmniAuth::AuthHash | nil)
 
   # Terminate the local login session ('omniauth.auth') and the session with
   # the OAuth2 provider (if appropriate)
@@ -137,7 +137,7 @@ module AuthConcern
   # @return [User]                    The updated record of the indicated user.
   # @return [nil]                     No record for the indicated user.
   #
-  def user_from_id: (?String? uid) -> User?
+  def user_from_id: (?String? uid) -> (User | nil)
 
   # Create a User from authentication data (from the session or from the
   # User table of the database).
@@ -147,13 +147,13 @@ module AuthConcern
   # @return [User]                    Updated record of the indicated user.
   # @return [nil]                     If `session['omniauth.auth']` is invalid.
   #
-  def user_from_auth_data: (?OmniAuth::AuthHash? auth_data) -> User?
+  def user_from_auth_data: (?OmniAuth::AuthHash? auth_data) -> (User | nil)
 
   # user_from_session
   #
   # @return [User, nil]
   #
-  def user_from_session: () -> User?
+  def user_from_session: () -> (User | nil)
 
   # Indicate whether the user is one is capable of short-circuiting the
   # authorization process.
@@ -172,7 +172,7 @@ module AuthConcern
   # -
   # noinspection RubyResolve
   # +
-  def revoke_access_token: (?anyHash? token) -> OAuth2::Response?
+  def revoke_access_token: (?anyHash? token) -> (OAuth2::Response | nil)
 
   private
 

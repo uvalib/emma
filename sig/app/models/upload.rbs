@@ -84,19 +84,19 @@ class Upload < ApplicationRecord
 
   def self.emma_native?: (Upload|symHash|String item) -> bool
 
-  def self.repository_of: (untyped item) -> String?
+  def self.repository_of: (untyped item) -> (String | nil)
 
-  def self.repository_name: (untyped item) -> String?
+  def self.repository_name: (untyped item) -> (String | nil)
 
-  def self.record_id: (untyped item) -> String?
+  def self.record_id: (untyped item) -> (String | nil)
 
   def self.valid_record_id?: (untyped item, ?add_repo: (String|strArray)?, ?add_fmt: (String|strArray)?) -> bool
 
   def self.get_value: (Upload|symHash item, String|Symbol key, ?default: untyped?) -> untyped
 
-  def make_retrieval_link: (String rid, ?String? base_url) -> String?
+  def make_retrieval_link: (String rid, ?String? base_url) -> (String | nil)
 
-  def self.make_retrieval_link: (String rid, ?String? base_url) -> String?
+  def self.make_retrieval_link: (String rid, ?String? base_url) -> (String | nil)
 
   # Configured requirements for Upload fields.
   #

@@ -49,7 +49,7 @@ module Api::Shared::IdentifierMethods
   # @return [String]
   # @return [nil]                     If *value* is not a valid identifier.
   #
-  def normalize_identifier: (String|PublicationIdentifier|nil value) -> String?
+  def normalize_identifier: (String|PublicationIdentifier|nil value) -> (String | nil)
 
   # @private
   RELATION_FIELDS: symArray
@@ -68,7 +68,7 @@ module Api::Shared::IdentifierMethods
   # @return [String]
   # @return [nil]                     If the value cannot be determined.
   #
-  def isbn: () -> String?
+  def isbn: () -> (String | nil)
 
   # Related ISBNs omitting the main ISBN if part of the data array.
   #

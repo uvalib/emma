@@ -452,7 +452,7 @@ class User < ApplicationRecord
   #
   # @return [String, nil]
   #
-  # @see LinkHelper#page_menu_label
+  # @see BaseDecorator::Menu#items_menu_label
   #
   def menu_label(item = nil)
     (item || self).uid.presence

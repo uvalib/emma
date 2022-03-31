@@ -11,16 +11,11 @@ module ConfigurationHelper
 
   include Emma::Common
 
-  include ParamsHelper
-
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
-
-  CONFIG_ITEM_KEYS  = %i[label tooltip].freeze
-  CONFIG_STATE_KEYS = %i[enabled disabled].freeze
 
   # Fall-back fatal configuration message. # TODO: I18n
   #
@@ -145,7 +140,7 @@ module ConfigurationHelper
     raise(CONFIG_FAIL) if entry.nil? && fatal
     return default     if entry.nil?
 
-    opt, i_opt = partition_hash(opt, :mode, :one, :many)
+    i_opt = remainder_hash!(opt, :mode, :one, :many)
 
     # Use count-specific definitions if present.
     if entry.is_a?(Hash) && !false?((mode = opt[:mode]))
@@ -155,10 +150,10 @@ module ConfigurationHelper
       # noinspection RubyMismatchedArgumentType
       mode = vals.find { |v| true?(opt[v]) } unless vals.include?(mode)
       mode ||=
-        case i_opt[:count].to_i
-          when 0 then (request_parameters[:action] == 'index') ? :many : :one
-          when 1 then :one
-          else        :many
+        if (count = i_opt[:count].to_i).zero?
+          (action && (action.to_s != 'index')) ? :one : :many
+        else
+          (count == 1) ? :one : :many
         end
       entry = entry[mode] unless false?(opt[mode]) || !entry.key?(mode)
     end
@@ -166,57 +161,6 @@ module ConfigurationHelper
     # Honor override of displayed unit names.
     units = config_interpolations(**i_opt)
     apply_config_interpolations(entry, units: units)
-  end
-
-  # Generate a hash of the most relevant button information with the form:
-  #
-  #   {
-  #     submit: {
-  #       enabled: {
-  #         label:   String,
-  #         tooltip: String,
-  #       },
-  #       disabled: {
-  #         label:   String,
-  #         tooltip: String,
-  #       },
-  #     },
-  #     ...
-  #   }
-  #
-  # The result will have all of the items for the given controller/action
-  # that contain and label and/or tooltip under them.
-  #
-  # @param [String, Symbol] ctrlr
-  # @param [String, Symbol] action
-  #
-  # @return [Hash{Symbol=>Hash{Symbol=>String,Hash}}]
-  #
-  def config_button_values(ctrlr, action)
-    lookup_order  = config_lookup_order(ctrlr, action)
-    action_config = controller_configuration(ctrlr, action)
-    buttons       = action_config.select { |_, v| v.is_a?(Hash) }.keys
-    buttons.map { |button|
-      config = {}
-      CONFIG_ITEM_KEYS.each do |key|
-        CONFIG_STATE_KEYS.each do |state|
-          lookup_order.find do |base_path|
-            entry = controller_configuration.dig(*base_path, button) || {}
-            if entry[state].is_a?(Hash) && entry[state].key?(key)
-              value = entry[state][key]
-            elsif entry.key?(key)
-              value = entry[key]
-            else
-              next
-            end
-            config[state]     ||= {}
-            config[state][key]  = value unless config[state].key?(key)
-            config[key]         = value unless config.key?(key)
-          end
-        end
-      end
-      [button, config]
-    }.compact.to_h
   end
 
   # ===========================================================================

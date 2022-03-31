@@ -1,0 +1,52 @@
+# View helper methods supporting the creation of tree controls.
+#
+module TreeHelper
+  include PanelHelper
+
+  # Configuration for tree control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  TREE_CTRL_CFG: symHash
+
+  # Label for button to open a collapsed tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_OPENER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to open a collapsed tree.
+  #
+  # @type [String]
+  #
+  TREE_OPENER_TIP: String
+
+  # Label for button to close an expanded tree.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  TREE_CLOSER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to close an expanded tree.
+  #
+  # @type [String]
+  #
+  TREE_CLOSER_TIP: String
+
+  # Tree open/close control.
+  #
+  # @param [Hash] opt                 Passed to PanelHelper#toggle_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/search.js
+  #
+  def tree_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

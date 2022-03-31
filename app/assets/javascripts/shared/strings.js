@@ -10,6 +10,77 @@ import { asDateTime }    from '../shared/time'
 // ============================================================================
 
 /**
+ * Convert the first character of a string to uppercase.
+ *
+ * @param {string} item
+ *
+ * @returns {string}
+ */
+export function capitalize(item) {
+    const s = String(item).trim();
+    return s[0].toUpperCase() + s.slice(1);
+}
+
+/**
+ * Convert a string to "snake case".
+ *
+ * @param {string} item
+ *
+ * @returns {string}
+ */
+export function underscore(item) {
+    const s     = String(item).trim();
+    const start = s.replace(/^(_*).*/, '$1');
+    return s.replace(/_*([A-Z]+)/g, '_$1').replace(/^_*/, start).toLowerCase();
+}
+
+/**
+ * Convert a name to "camel case".
+ *
+ * @param {string} item
+ *
+ * @returns {string}
+ */
+export function camelCase(item) {
+    const s     = underscore(item);
+    const start = s.replace(/^(_*).*/, '$1');
+    return s.split(/_+/).map(i => capitalize(i)).join('').replace(/^/, start);
+}
+
+/**
+ * Convert a plural to the singular form.
+ *
+ * @param {string} item
+ *
+ * @returns {string}
+ *
+ * @note This isn't meant to be comprehensive; it's tuned to returning the
+ *  singular form of existing model/controller names.
+ */
+export function singularize(item) {
+    if (item.endsWith('ies')) { return item.replace(/ies$/, 'y') } else
+    if (item.endsWith('es'))  { return item.replace(/es$/,  '')  } else
+    if (item.endsWith('s'))   { return item.replace(/s$/,   '')  } else
+                              { return item }
+}
+
+/**
+ * Manually interpolate a string.
+ *
+ * @param {string|*}       item
+ * @param {Object<string>} values
+ *
+ * @returns {string|*}
+ */
+export function interpolate(item, values) {
+    if ((typeof item === 'string') && item.includes('${')) {
+        return item.replace(/\${([^}\n]+)}/g, ((_, name) => values[name]));
+    } else {
+        return item;
+    }
+}
+
+/**
  * Render an item as a string (used in place of `JSON.stringify`).
  *
  * @param {*}      item

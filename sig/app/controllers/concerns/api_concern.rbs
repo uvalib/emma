@@ -52,7 +52,7 @@ module ApiConcern
   # @return [ExecReport]                Current service error message.
   # @return [nil]                       No service error or service not active.
   #
-  def api_exec_report: (*Class only) -> (Hash[Class,ExecReport] | ExecReport)?
+  def api_exec_report: (*Class only) -> (Hash[Class,ExecReport] | ExecReport | nil)
 
   # Get the current Bookshare API exception.
   #
@@ -62,7 +62,7 @@ module ApiConcern
   # @return [Exception]               Current service exception.
   # @return [nil]                     No exception or service not active.
   #
-  def api_exception: (*Class only) -> (Hash[Class,Exception] | Exception)?
+  def api_exception: (*Class only) -> (Hash[Class,Exception] | Exception | nil)
 
   # The ApiService.table with any blank entries removed.
   #
@@ -93,7 +93,7 @@ module ApiConcern
   # The default mode is to perform a dry run, so :dryrun must be explicitly
   # passed in as *false* to actually modify the database table.
   #
-  def api_data_migration: (?(String|Integer)? api_version, **untyped opt) -> symHash?
+  def api_data_migration: (?(String|Integer)? api_version, **untyped opt) -> (symHash | nil)
 
   private
 

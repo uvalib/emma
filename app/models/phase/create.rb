@@ -265,7 +265,7 @@ class Phase::Create < Phase::BulkPart
   #
   def complete!(**opt)
     __debug_step(binding)
-    opt, attr = partition_hash(opt, :async, :meth)
+    attr = remainder_hash!(opt, :async, :meth)
     $stderr.puts "........... complete! | BEFORE UPDATE |\nattr = #{attr.inspect} |\nattributes = #{attributes.inspect}"
     update!(attr)
     $stderr.puts "........... complete! | AFTER  UPDATE |\nattr = #{attr.inspect} |\nattributes = #{attributes.inspect}"

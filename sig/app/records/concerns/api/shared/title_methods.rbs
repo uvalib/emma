@@ -49,7 +49,7 @@ module Api::Shared::TitleMethods
   #
   # @see Search::Shared::TitleMethods#date_fields
   #
-  def year: () -> Integer?
+  def year: () -> (Integer | nil)
 
   # The synopsis or description with rudimentary formatting.
   #
@@ -73,7 +73,7 @@ module Api::Shared::TitleMethods
   # [14] Remove leading breaks.
   # [15] Remove trailing breaks.
   #
-  def contents: () -> ActiveSupport::SafeBuffer?
+  def contents: () -> (ActiveSupport::SafeBuffer | nil)
 
   # Reduce a string for comparison with another by eliminating characters to
   # ignore for comparison.
@@ -89,14 +89,14 @@ module Api::Shared::TitleMethods
   # @return [String]
   # @return [nil]                     If the link was not present.
   #
-  def thumbnail_image: () -> String?
+  def thumbnail_image: () -> (String | nil)
 
   # A link to a title's cover image if present.
   #
   # @return [String]
   # @return [nil]                     If the link was not present.
   #
-  def cover_image: () -> String?
+  def cover_image: () -> (String | nil)
 
   # Field(s) that may hold the title string.
   #

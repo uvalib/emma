@@ -32,17 +32,17 @@ module Record::EmmaIdentification
   #
   def sid_column: () -> Symbol
 
-  def sid_value: (untyped item, **untyped opt) -> String?
+  def sid_value: (untyped item, **untyped opt) -> (String | nil)
 
   def valid_sid?: (untyped value) -> bool
 
   def emma_native?: (untyped item) -> bool
 
-  def repository_value: (untyped item) -> String?
+  def repository_value: (untyped item) -> (String | nil)
 
-  def repository_name: (untyped item) -> String?
+  def repository_name: (untyped item) -> (String | nil)
 
-  def record_id: (untyped item) -> String?
+  def record_id: (untyped item) -> (String | nil)
 
   def valid_record_id?: (untyped item, ?add_repo: (String|strArray)?, ?add_fmt: (String|strArray)?) -> bool
 
@@ -76,7 +76,7 @@ module Record::EmmaIdentification
 
     # @see Record::EmmaIdentification#sid_value
     #
-    def sid_value: (?untyped? item, **untyped opt) -> String?
+    def sid_value: (?untyped? item, **untyped opt) -> (String | nil)
 
     # @see Record::EmmaIdentification#valid_sid?
     #
@@ -88,15 +88,15 @@ module Record::EmmaIdentification
 
     # @see Record::EmmaIdentification#repository_value
     #
-    def repository_value: (?untyped? item) -> String?
+    def repository_value: (?untyped? item) -> (String | nil)
 
     # @see Record::EmmaIdentification#repository_name
     #
-    def repository_name: (?untyped? item) -> String?
+    def repository_name: (?untyped? item) -> (String | nil)
 
     # @see Record::EmmaIdentification#record_id
     #
-    def record_id: (?untyped? item) -> String?
+    def record_id: (?untyped? item) -> (String | nil)
 
     # @see Record::EmmaIdentification#valid_record_id?
     #

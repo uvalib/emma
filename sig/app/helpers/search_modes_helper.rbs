@@ -1,0 +1,112 @@
+# View helper methods for search options.
+#
+module SearchModesHelper
+  include SessionDebugHelper
+
+  extend ::SearchModesHelper
+
+  # Indicate whether selecting a search menu value takes immediate effect.
+  #
+  # If not menu selection value(s) are only transmitted via the search submit
+  # button.
+  #
+  # @type [Boolean]
+  #
+  IMMEDIATE_SEARCH: bool
+
+  # Search display style variants.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_STYLES: symArray
+
+  # The default search display style.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_STYLE: Symbol
+
+  # Search result display variants.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RESULTS: symArray
+
+  # The default search result display.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_RESULTS: Symbol
+
+  # Indicate whether selecting a search menu value takes immediate effect.
+  #
+  # If not menu selection value(s) are only transmitted via the search submit
+  # button.
+  #
+  # @type [Boolean]
+  #
+  # == Usage Notes
+  # This should normally be *false* because it a mode of operation that is
+  # generally not consider accessibility-friendly and, also, skews search call
+  # statistics.
+  #
+  def immediate_search?: () -> bool
+
+  # Get the display mode for search results.
+  #
+  # @return [Symbol]
+  #
+  def search_results: () -> Symbol
+
+  # Indicate whether search results are displayed hierarchically (by title).
+  #
+  def title_results?: () -> bool
+
+  # Indicate whether search results are displayed literally (per file).
+  #
+  def file_results?: () -> bool
+
+  # Indicate whether search debug controls should be displayed.
+  #
+  def search_debug?: () -> bool
+
+  # Indicate whether search dev controls should be displayed.
+  #
+  def search_dev?: () -> bool
+
+  # Configuration conditionals.
+  #
+  # @type [Hash{Symbol=>Proc,Symbol}]
+  #
+  CONFIG_CONDITION: Hash[Symbol, Proc|Symbol]
+
+  # Indicate whether the guard condition is satisfied.
+  #
+  # @param [Array<Symbol,String>, Symbol, String, Boolean, nil] guard
+  #
+  def permitted_by?: (Array[Symbol|String]|Symbol|String|bool|nil guard) -> bool
+
+  # Normalize :active property values for use by #permitted_by?.
+  #
+  # @param [Array<Symbol,String,Boolean,nil>, Symbol, String, Boolean, nil] val
+  #
+  # @return [TrueClass, FalseClass, Array<Symbol>]
+  #
+  def self.guard_values: (Array[Symbol|String]|Symbol|String|bool|nil val) -> (symArray | bool)
+
+  # Get the display style variant for search results.
+  #
+  # @return [Symbol]
+  #
+  def search_style: () -> Symbol
+
+  # Indicate whether search results are displayed in the normal way.
+  #
+  # @note Currently unused.
+  #
+  def default_style?: () -> bool
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

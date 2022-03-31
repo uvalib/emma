@@ -10,7 +10,7 @@
 //=============================================================================
 
 // Local EMMA user account metadata label/value pairs for index listings.
-// @see ModelHelper::List#model_list_item
+// @see AccountDecorator#list_item
 .account-list-item {
 
     @extend .model-list-item-panel;
@@ -84,10 +84,8 @@
 }
 
 // Grid table of local EMMA user accounts.
-// @see ModelHelper::Table#model_table
-.account-table {
-
-    @extend .model-table;
+// @see AccountDecorator#table
+.model-table.account {
 
     td {
         min-width: max-content;
@@ -111,7 +109,7 @@
 }
 
 // Account metadata values.
-// @see ModelHelper::List#model_details
+// @see AccountDecorator#details
 .account-details {
     @extend .account-list-item; // INSTEAD OF @extend .model-details;
 }
@@ -125,19 +123,9 @@
 // Account new/edit/delete pages
 //=============================================================================
 
-// @see AccountHelper#account_field_container
-// @see file:app/views/account/_form_new.html.erb
-// @see file:app/views/account/_form_edit.html.erb
-.account-fields {
-    @extend .entry-fields;
-}
-
-// @see AccountHelper#account_form
-// @see AccountHelper#account_delete_form
-.account-form,
-.account-delete-form {
-
-    @extend .entry-form;
+// @see AccountDecorator#model_form
+// @see AccountDecorator#delete_form
+.model-form.account {
 
     grid-template-columns: 1fr;
 
@@ -145,28 +133,22 @@
         margin-top: 1.5rem;
     }
 
-    .account-fields {
-        min-height:    unset;
+    .form-fields {
         margin-bottom: 2rem;
     }
 
     .button-tray {
         @include grid.row(unset);
     }
-}
 
-// @see AccountHelper#account_form
-// @see AccountHelper#account_delete_form
-// @see file:app/views/account/new.html.erb
-.account-form-container {
-
-    @extend .entry-form-container;
-
-    .account-form {
+    // @see AccountDecorator#model_form
+    &.new,
+    &.edit {
         margin-top: $page-padding;
     }
 
-    .account-delete-form {
+    // @see AccountDecorator#delete_form
+    &.delete {
         width: max-content;
     }
 }

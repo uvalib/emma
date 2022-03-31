@@ -2,12 +2,14 @@
 <%-
   # Fall-back page for a failed Artifact retrieval.
 
+  view_debug(__FILE__)
+
   title ||= t('emma.artifact.retrieval.title')
+  help  ||= nil # %i[artifact retrieval]
   error ||= @error
-  help  ||= nil
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -17,8 +19,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

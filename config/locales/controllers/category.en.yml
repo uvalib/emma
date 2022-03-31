@@ -42,8 +42,14 @@ en:
         label:          'Categories'
         title:          'Bookshare Category Index'
         tooltip:        'Get a Bookshare category listing.'
+        _endpoint:      true
+
+      # =======================================================================
 
       show:
         label:          'Category'
         title:          'Bookshare Category'
         tooltip:        'See Bookshare items in this category.'
+        _endpoint:      true
+
+      # =======================================================================

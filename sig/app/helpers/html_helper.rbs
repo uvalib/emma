@@ -160,7 +160,7 @@ module HtmlHelper
   # @return [String]                  A full URL.
   # @return [nil]                     No URL could be extracted.
   #
-  def extract_url: (String|nil text) -> String?
+  def extract_url: (String|nil text) -> (String | nil)
 
   # Merge values from one or more options hashes.
   #
@@ -180,159 +180,12 @@ module HtmlHelper
   #
   # @return [Hash]                      The modified *opt* hash.
   #
-  # @see #append_classes!
+  # @see #append_css!
   #
   # -
   # noinspection RubyMismatchedReturnType
   # +
   def merge_html_options!: (symHash html_opt, *(symHash|nil) args) -> symHash
-
-  # Options consumed by internal methods which should not be passed on along to
-  # the methods which generate HTML elements.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @see #grid_cell_classes
-  #
-  GRID_OPTS: symArray
-
-  # Render a table of values.
-  #
-  # @param [Hash] pairs               Key-value pairs to display.
-  # @param [Hash] opt                 Passed to outer #html_div except for:
-  #                                     #GRID_OPTS and
-  #
-  # @option opt [Boolean] :wrap       If *true* then key/value pairs are joined
-  #                                     within a wrapper element.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def grid_table: (symHash pairs, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Safely truncate either normal or html_safe strings via #html_truncate.
-  #
-  # @param [ActiveSupport::SafeBuffer, String] str
-  # @param [Integer, nil]                      length
-  # @param [Hash]                              opt
-  #
-  # @return [ActiveSupport::SafeBuffer]   If *str* was html_safe.
-  # @return [String]                      If *str* was not HTML.
-  #
-  # @see #html_truncate
-  #
-  def safe_truncate: (ActiveSupport::SafeBuffer|String str, ?Integer? length, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
-
-  HTML_TRUNCATE_MAX_LENGTH: Integer
-
-  HTML_TRUNCATE_OMISSION: String
-
-  HTML_TRUNCATE_SEPARATOR: String | nil
-
-  # Truncate either normal or html_safe strings.
-  #
-  # If *str* is html_safe, it is assumed that it is HTML content and it is
-  # processed by #xml_truncate.  Otherwise, String#truncate is used.
-  #
-  # @param [ActiveSupport::SafeBuffer, String] str
-  # @param [Integer, nil] length            Def: `#HTML_TRUNCATE_MAX_LENGTH`
-  # @param [Hash]         opt
-  #
-  # @option opt [Boolean]      :content     If *true*, base on content size.
-  # @option opt [String, nil]  :omission    Def: `#HTML_TRUNCATE_OMISSION`
-  # @option opt [String, nil]  :separator   Def: `#HTML_TRUNCATE_SEPARATOR`
-  # @option opt [Boolean, nil] :xhr         Encode for message headers.
-  #
-  # @return [ActiveSupport::SafeBuffer]     If *str* was html_safe.
-  # @return [String]                        If *str* was not HTML.
-  #
-  # == Usage Notes
-  # Since *str* may be a sequence of HTML elements or even just a text string
-  # with HTML entities, it is wrapped in a "<div>" to make sure that the
-  # Nokogiri parser is dealing with valid XML.
-  #
-  # @note The result has UTF-8 encoding (even if no truncation was performed).
-  #
-  def self.html_truncate: (ActiveSupport::SafeBuffer|String str, ?Integer? length, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
-
-  # Truncate XML so that the rendered result is limited to the given length.
-  #
-  # If truncation is required it is done by truncating the content of
-  # Nokogiri::XML::Text nodes.  If there is not enough room for even a single
-  # character inside the final element then that element will not be included.
-  #
-  # @param [Nokogiri::XML::Node] xml
-  # @param [Integer, nil]        len      Def: `#HTML_TRUNCATE_MAX_LENGTH`
-  # @param [Hash]                opt
-  #
-  # @option opt [Boolean]     :content    If *true*, base on content size.
-  # @option opt [String, nil] :omission   Def: `#HTML_TRUNCATE_OMISSION`
-  # @option opt [String, nil] :separator  Def: `#HTML_TRUNCATE_SEPARATOR`
-  #
-  # @return [Nokogiri::XML::Node]
-  # @return [nil]
-  #
-  # == Usage Notes
-  # May be problematic for small *len* values, depending on the nature of the
-  # *xml* input, but generally the result will fit within *len* (even if it
-  # is overly-aggressive in pruning the element hierarchy at the point where
-  # the available length budget runs out).
-  #
-  def self.xml_truncate: (Nokogiri::XML::Node xml, ?Integer? len, **untyped opt) -> Nokogiri::XML::Node?
-
-  private
-
-  # Copy of an XML node without its children.
-  #
-  # @param [Nokogiri::XML::Node] node
-  #
-  # @return [Nokogiri::XML::Node]
-  #
-  def self.blank_copy: (Nokogiri::XML::Node node) -> Nokogiri::XML::Node
-
-  public
-
-  # Convert a string to UTF-8.
-  #
-  # If *xhr* is *true*, the result is encoded for use in HTTP message headers
-  # passed back to the client as flash messages.
-  #
-  # @param [ActiveSupport::SafeBuffer, String, nil] value
-  # @param [Boolean, nil]                           xhr
-  #
-  # @return [ActiveSupport::SafeBuffer]   If *value* was HTML-safe.
-  # @return [String]                      Otherwise.
-  #
-  # @see #to_utf8
-  # @see #xhr_encode
-  #
-  def self.to_utf: (ActiveSupport::SafeBuffer|String value, ?xhr: bool?) -> (ActiveSupport::SafeBuffer | String)
-
-  # Encode a string for use in HTTP message headers passed back to the client
-  # as flash messages.
-  #
-  # @param [ActiveSupport::SafeBuffer, String, Any, nil] value
-  #
-  # @return [ActiveSupport::SafeBuffer, String]
-  #
-  # @see file:app/assets/javascripts/shared/flash.js *xhrDecode()*
-  #
-  # == Implementation Notes
-  # JavaScript uses UTF-16 strings, so the most straightforward way to prepare
-  # a string to be passed back to the client would be to encode as 'UTF-16BE',
-  # however that would halve the number of characters that could be transmitted
-  # via 'X-Flash-Message'.
-  #
-  # Another strategy would be to use ERB::Util#url_encode to produce only
-  # ASCII-equivalent characters, then use "decodeURIComponent()" on the client
-  # side to restore the string.  However, that method encodes *many* characters
-  # that don't need to be encoded for this purpose (e.g. ' ' becomes '%20').
-  #
-  # This method takes a similar approach, but only encodes non-ASCII-equivalent
-  # characters. Assuming that these will be infrequent for flash messages, this
-  # should minimize the impact of encoding on the size of the transmitted
-  # string.  (The '%' character is also encoded to avoid ambiguity.)
-  #
-  def self.xhr_encode: (untyped value) -> (ActiveSupport::SafeBuffer | String)
 
   private
 

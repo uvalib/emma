@@ -2,18 +2,21 @@
 <%-
   # A sequence of help entries.
 
+  view_debug(__FILE__)
+
   list   ||= []
+
   level  ||= 1
   row    ||= level
   skip   ||= nil
 
-  skip = Array.wrap(skip)
+  skip    = [*skip]
   heading =
     unless skip.include?(:title)
       title ||= t('emma.help.index.title')
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?
-      html_tag(level, h(title), class: classes)
+      html_tag(level, title, class: classes)
     end
 
   level += 1

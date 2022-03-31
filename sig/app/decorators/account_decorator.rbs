@@ -1,0 +1,172 @@
+# Item presenter for "/account" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [User]
+#
+class AccountDecorator < BaseDecorator
+
+  module Paths
+    include BaseDecorator::Paths
+
+    def index_path:         (**untyped opt)                 -> String
+    def show_path:          (?untyped item, **untyped opt)  -> String
+    def new_path:           (**untyped opt)                 -> String
+    def create_path:        (**untyped opt)                 -> String
+    def edit_select_path:   (**untyped opt)                 -> String
+    def edit_path:          (?untyped item, **untyped opt)  -> String
+    def update_path:        (?untyped item, **untyped opt)  -> String
+    def delete_select_path: (**untyped opt)                 -> String
+    def delete_path:        (?untyped item, **untyped opt)  -> String
+    def destroy_path:       (?untyped item, **untyped opt)  -> String
+  end
+
+  module Methods
+    include BaseDecorator::Methods
+
+    # Get all configured record fields for the model.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def model_form_fields: () -> Hash[Symbol, symHash]
+
+    # Generate a prompt for #items_menu.
+    #
+    # @return [String]
+    #
+    def items_menu_prompt: () -> String
+
+    CONTROL_ICONS: Hash[Symbol, symHash]
+
+    # Control icon definitions.
+    #
+    # @return [Hash{Symbol=>Hash{Symbol=>Any}}]
+    #
+    def control_icons: () -> Hash[Symbol, symHash]
+
+    # Descriptive term for an item of the given type.
+    #
+    # @param [Symbol, String, nil] model        Default: `#model_type`.
+    # @param [Boolean]             capitalize
+    #
+    # @return [String]
+    #
+    def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
+
+    EMAIL_FIELD_READONLY: String
+    PASSWORD_PLACEHOLDER: String
+    MINIMUM_PASSWORD_LENGTH: Integer | nil
+
+    # Button information for upload actions.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    def form_action: () -> symHash
+  end
+
+  module InstanceMethods
+    include BaseDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BaseDecorator::ClassMethods
+    include Paths
+    include Methods
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to #link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def show_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Any]         value
+  # @param [Symbol, nil] field        Unused here.
+  # @param [Hash]        opt          Passed to super or #roles.
+  #
+  # @return [Any]                     HTML or scalar value.
+  # @return [nil]                     If *value* or *object* is *nil*.
+  #
+  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+
+  # Create a list of User roles.
+  #
+  # @param [Hash] opt                 Passed to #html_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def roles: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a single term which describes the role level of *item*.
+  #
+  # @param [Hash] opt                 Passed to #html_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def role_prototype: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render details of an account.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super except:
+  #
+  # @option opt [String, Symbol, Array<String,Symbol>] :columns
+  # @option opt [String, Regexp, Array<String,Regexp>] :filter
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #model_field_values
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil]  pairs         Additional field mappings.
+  # @param [Hash]       opt           Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # table_columns
+  #
+  # @param [Hash] opt                 Passed to super
+  #
+  # @return [Hash]
+  #
+  def table_columns: (**untyped opt) -> anyHash
+
+  # Patterns for User record columns which are not included for
+  # non-developers.
+  #
+  # @type [Array<String,Symbol,Regexp>]
+  #
+  FIELD_FILTERS: Array[String|Symbol|Regexp]
+
+  # Specified field selections from the given User instance.
+  #
+  # @param [User, Hash, nil] item     Default: `#object`
+  # @param [Hash]            opt      Passed to super
+  #
+  # @return [Hash{String=>ActiveSupport::SafeBuffer}]
+  #
+  def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
+
+  FORM_ACTIONS: Hash[Symbol,symHash]
+
+  def form_actions: () -> Hash[Symbol,symHash]
+
+  FIELD_GROUP: Hash[Symbol,Hash[Symbol,String]]
+end

@@ -6,6 +6,7 @@ import { delegateInputClick, toggleVisibility } from '../shared/accessibility'
 import { pageController }                       from '../shared/controller'
 import { isMissing, isPresent }                 from '../shared/definitions'
 import { consoleLog }                           from '../shared/logging'
+import { camelCase, singularize }               from '../shared/strings'
 import { asParams }                             from '../shared/url'
 import {
     handleEvent,
@@ -17,12 +18,28 @@ import {
 $(document).on('turbolinks:load', function() {
 
     /**
-     * Original-style "uploads" submissions.
+     * Current controller.
      *
      * @constant
-     * @type {boolean}
+     * @type {string}
      */
-    const UPLOAD_CONTROLLER = (pageController() === 'upload');
+    const CONTROLLER = pageController();
+
+    /**
+     * Base name (singular of the related database table).
+     *
+     * @constant
+     * @type {string}
+     */
+    const MODEL = singularize(CONTROLLER);
+
+    /**
+     * Controller assets.js properties.
+     *
+     * @constant
+     * @type {ModelProperties}
+     */
+    const CONTROLLER_PROPERTIES = Emma[camelCase(MODEL)];
 
     /**
      * Page assets.js properties.
@@ -30,24 +47,24 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {RecordProperties}
      */
-    const PROPERTY = UPLOAD_CONTROLLER ? Emma.UploadRecord : Emma.EntryRecord;
+    const PROPERTY = CONTROLLER_PROPERTIES?.Record;
 
     /**
      * The element containing the submission workflow state select controls.
      *
      * @type {jQuery}
      */
-    let $group_select_panel = $(`.${PROPERTY.GroupPanel.class}`);
+    let $group_select_panel = PROPERTY && $(`.${PROPERTY.GroupPanel.class}`);
 
     /**
-     * The element containing the submission page filter controls.
+     * The element containing the submission list filter controls.
      *
      * @type {jQuery}
      */
-    let $page_filter_panel = $(`.${PROPERTY.PageFilter.class}`);
+    let $list_filter_panel = PROPERTY && $(`.${PROPERTY.ListFilter.class}`);
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($group_select_panel) && isMissing($page_filter_panel)) {
+    if (isMissing($group_select_panel) && isMissing($list_filter_panel)) {
         return;
     }
 
@@ -62,14 +79,6 @@ $(document).on('turbolinks:load', function() {
      * @type {boolean}
      */
     const DEBUGGING = false;
-
-    /**
-     * Base name (singular of the related database table).
-     *
-     * @constant
-     * @type {string}
-     */
-    const RECORD = UPLOAD_CONTROLLER ? 'upload' : 'entry';
 
     // ========================================================================
     // Variables - group select
@@ -93,7 +102,7 @@ $(document).on('turbolinks:load', function() {
     let $group_select_note = $group_select_panel.find('.note-tray .note');
 
     // ========================================================================
-    // Variables - page filters
+    // Variables - list filter
     // ========================================================================
 
     /**
@@ -102,16 +111,16 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $page_filter_controls =
-        $page_filter_panel.find(`.${PROPERTY.PageFilter.Control.class}`);
+    let $list_filter_controls =
+        $list_filter_panel.find(`.${PROPERTY.ListFilter.Control.class}`);
 
     /**
      * Radio buttons which cause the set of displayed records to be filtered.
      *
      * @type {jQuery}
      */
-    let $page_filter_radio_buttons =
-        $page_filter_controls.find('input[type="radio"]');
+    let $list_filter_radio_buttons =
+        $list_filter_controls.find('input[type="radio"]');
 
     // ========================================================================
     // Variables - filter options
@@ -159,7 +168,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $record_lines = $record_list.children(`.number, .${RECORD}-list-item`);
+    let $record_lines = $record_list.children(`.number, .${MODEL}-list-item`);
 
     /**
      * The record list elements that are shown when there are no records.
@@ -175,11 +184,11 @@ $(document).on('turbolinks:load', function() {
 
     // Broaden click targets for radio buttons and checkboxes that are paired
     // with labels.
-    $page_filter_controls.each(function() { delegateInputClick(this); });
+    $list_filter_controls.each(function() { delegateInputClick(this); });
     $filter_options_controls.each(function() { delegateInputClick(this); });
 
     // Listen for a change to the record filter selection.
-    handleEvent($page_filter_radio_buttons, 'change', function(event) {
+    handleEvent($list_filter_radio_buttons, 'change', function(event) {
         let $target = $(event.target);
         if ($target.is(':checked')) {
             filterPageDisplay($target.val());
@@ -197,8 +206,8 @@ $(document).on('turbolinks:load', function() {
 
     // Initialize controls and the initial record filtering.
     initializeFilterOptions();
-    if ($page_filter_panel.is(':visible')) {
-        pageFilterSelect();
+    if ($list_filter_panel.is(':visible')) {
+        listFilterSelect();
     } else {
         filterPageDisplayAll();
     }
@@ -269,7 +278,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - page filter
+    // Functions - list filter
     // ========================================================================
 
     /**
@@ -277,8 +286,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {string}
      */
-    function pageFilterCurrent() {
-        return $page_filter_radio_buttons.filter(':checked').val();
+    function listFilterCurrent() {
+        return $list_filter_radio_buttons.filter(':checked').val();
     }
 
     /**
@@ -287,27 +296,25 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string}   [new_group]
      */
-    function pageFilterSelect(new_group) {
-        let $buttons = $page_filter_radio_buttons.filter(':visible');
-        let group    = new_group || requestedStateGroup();
-        if (!group) {
-            let groups = $buttons.map(function() { return this.value; });
-            group = defaultStateGroup(groups);
-        }
-        group = group || 'done';
+    function listFilterSelect(new_group) {
+        let $buttons = $list_filter_radio_buttons.filter(':visible');
+        let group    = new_group;
+        group ||= requestedStateGroup();
+        group ||= defaultStateGroup($buttons.map((_, button) => button.value));
+        group ||= 'done';
         $buttons.filter(`[value="${group}"]`).prop('checked', true).change();
     }
 
     /**
      * Update the displayed set of records based on state group.
      *
-     * @param {string|null} [new_group]     Default {@link pageFilterCurrent}
+     * @param {string|null} [new_group]     Default {@link listFilterCurrent}
      *
-     * @see "UploadHelper#upload_page_filter"
+     * @see "BaseCollectionDecorator::List#list_filter"
      */
     function filterPageDisplay(new_group) {
         const func  = 'filterPageDisplay';
-        const group = new_group || pageFilterCurrent();
+        const group = new_group || listFilterCurrent();
         debug(`${func}: arg = "${new_group}"; group = "${group}"`)
         if (group === 'all') {
             filterPageDisplayAll();
@@ -341,7 +348,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - page filter
+    // Functions - list filter
     // ========================================================================
 
     /**
@@ -355,10 +362,10 @@ $(document).on('turbolinks:load', function() {
         let checked   = 0;
         let unchecked = 0;
         $filter_options_checkboxes.each(function() {
-            let $this = $(this);
-            if ($this.val() === 'ALL_FILTERS') {
+            let $checkbox = $(this);
+            if ($checkbox.val() === 'ALL_FILTERS') {
                 all = this;
-            } else if ($this.is(':checked')) {
+            } else if ($checkbox.is(':checked')) {
                 checked++;
             } else {
                 unchecked++;
@@ -377,7 +384,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} checkbox
      *
-     * @see "UploadHelper#upload_page_filter_options"
+     * @see "BaseCollectionDecorator::List#list_filter_options"
      */
     function filterOptionToggle(checkbox) {
         const func    = 'filterOptionToggle';
@@ -388,26 +395,26 @@ $(document).on('turbolinks:load', function() {
         let $sel_controls, $pag_controls, any_checked;
         if (group === 'ALL_FILTERS') {
             $filter_options_checkboxes.each(function() {
-                let $this = $(this);
-                if ($this.val() === 'ALL_FILTERS') {
+                let $checkbox = $(this);
+                if ($checkbox.val() === 'ALL_FILTERS') {
                     // noinspection JSUnusedGlobalSymbols
                     this.indeterminate = false;
                 } else {
-                    $this.prop('checked', enable);
+                    $checkbox.prop('checked', enable);
                 }
             });
             $sel_controls = $group_select_links;
-            $pag_controls = $page_filter_controls;
+            $pag_controls = $list_filter_controls;
             any_checked   = enable;
         } else {
             const only    = `[data-group="${group}"]`;
             $sel_controls = $group_select_links.filter(only);
-            $pag_controls = $page_filter_controls.filter(only);
+            $pag_controls = $list_filter_controls.filter(only);
             any_checked   = initializeFilterOptions();
         }
         $sel_controls.toggleClass('hidden', !enable);
         $pag_controls.toggleClass('hidden', !enable);
-        $page_filter_panel.toggleClass('hidden', !any_checked);
+        $list_filter_panel.toggleClass('hidden', !any_checked);
     }
 
     // ========================================================================

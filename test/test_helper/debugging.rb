@@ -123,9 +123,9 @@ module TestHelper::Debugging
   # @return [String]
   #
   def show_model(item, **opt)
-    opt, show_opt = partition_hash(opt, *SHOW_MODEL_OPT)
-    details = opt[:reflections] || !opt.key?(:reflections)
-    indent  = opt[:indent]|| TEST_DEBUG_INDENT
+    show_opt = remainder_hash!(opt, *SHOW_MODEL_OPT)
+    details  = opt[:reflections] || !opt.key?(:reflections)
+    indent   = opt[:indent]|| TEST_DEBUG_INDENT
     not_indented = (indent == TEST_DEBUG_INDENT)
     # noinspection RubyMismatchedReturnType
     show(**show_opt) do
@@ -153,8 +153,8 @@ module TestHelper::Debugging
   # @return [String]
   #
   def show_reflections(item, **opt)
-    opt, show_opt = partition_hash(opt, :indent)
-    indent = opt[:indent] || TEST_DEBUG_INDENT
+    show_opt = remainder_hash!(opt, :indent)
+    indent   = opt[:indent] || TEST_DEBUG_INDENT
     # noinspection RubyMismatchedReturnType
     show(**show_opt) do
       item._reflections.map do |key, entry|
@@ -207,7 +207,7 @@ module TestHelper::Debugging
   # @yieldreturn [Array, String, Any]
   #
   def show(*items, **opt)
-    model_opt, opt = partition_hash(opt, *SHOW_MODEL_OPT)
+    model_opt = extract_hash!(opt, *SHOW_MODEL_OPT)
     model_opt[:output] = false
     items += Array.wrap(yield) if block_given?
     items.flatten.map { |item|
@@ -250,10 +250,10 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   def show_pre_send(verb, url, **opt)
-    opt, show_opt = partition_hash(opt, *SHOW_PRE_SEND_OPT)
-    user = opt[:user] || current_user
-    verb = opt[:verb] || verb
-    url  = opt[:url]  || url
+    show_opt = remainder_hash!(opt, *SHOW_PRE_SEND_OPT)
+    user     = opt[:user] || current_user
+    verb     = opt[:verb] || verb
+    url      = opt[:url]  || url
     # noinspection RubyMismatchedReturnType
     show_trace(**show_opt) do
       TRACE_SEPARATOR.merge(
@@ -276,12 +276,12 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   def show_post_send(**opt)
-    opt, show_opt = partition_hash(opt, *SHOW_POST_SEND_OPT)
-    resp   = opt[:response] || response
-    redir  = resp&.redirection? && resp.redirect_url
-    status = opt[:status] || resp&.response_code
-    expect = opt[:expect]
-    body   = resp&.body&.gsub(/\n/, TRACE_NL)&.truncate(TRACE_BODY)
+    show_opt = remainder_hash!(opt, *SHOW_POST_SEND_OPT)
+    resp     = opt[:response] || response
+    redir    = resp&.redirection? && resp.redirect_url
+    status   = opt[:status] || resp&.response_code
+    expect   = opt[:expect]
+    body     = resp&.body&.gsub(/\n/, TRACE_NL)&.truncate(TRACE_BODY)
     # noinspection RubyMismatchedReturnType
     show_trace(**show_opt) do
       {}.tap { |lines|
@@ -305,13 +305,13 @@ module TestHelper::Debugging
   # @yieldreturn [Hash]
   #
   def show_trace(**opt)
-    opt, show_opt = partition_hash(opt, *SHOW_TRACE_OPT)
-    pairs  = block_given? && yield || {}
-    indent = opt[:indent] || ''
-    indent = ' ' * indent if indent.is_a?(Integer)
-    width  = pairs.keys.map(&:to_s).sort_by(&:size).last&.size || ''
-    format = "#{indent}*** %-#{width}s = %s"
-    lines  = pairs.map { |k, v| sprintf(format, k, v) }
+    show_opt = remainder_hash!(opt, *SHOW_TRACE_OPT)
+    pairs    = block_given? && yield || {}
+    indent   = opt[:indent] || ''
+    indent   = ' ' * indent if indent.is_a?(Integer)
+    width    = pairs.keys.map(&:to_s).sort_by(&:size).last&.size || ''
+    format   = "#{indent}*** %-#{width}s = %s"
+    lines    = pairs.map { |k, v| sprintf(format, k, v) }
     # noinspection RubyMismatchedReturnType
     show(**show_opt) do
       lines.join("\n") << "\n\n"
@@ -349,7 +349,7 @@ module TestHelper::Debugging
             define_method(meth) do |*args, **opt|
               # Extract any options specific to the tracing methods.  Remaining
               # options are passed to the underlying HTTP method call.
-              trace_opt, opt = partition_hash(opt, *TRACE_OPTIONS)
+              trace_opt = extract_hash!(opt, *TRACE_OPTIONS)
               # Call the underlying HTTP method between tracing output calls.
               show_pre_send(meth, args.first, **trace_opt.slice(*PRE_OPTIONS))
               super(*args, **opt)

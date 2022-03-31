@@ -12,7 +12,7 @@
 // @see file:lib/tasks/emma_assets.rake
 // @see HeadHelper::Scripts#page_script_settings
 //
-// noinspection JSFileReferences, LongLine
+// noinspection JSFileReferences, ES6UnusedImports, LongLine
 
 
 import { deepFreeze } from '../javascripts/shared/objects'
@@ -57,15 +57,15 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * ElementProperties
  *
  * @typedef {{
- *     active:      ?(boolean|null|undefined),
- *     tag:         ?(string|null|undefined),
- *     type:        ?(string|null|undefined),
- *     class:       ?(string|null|undefined),
- *     tooltip:     ?(string|null|undefined),
- *     label:       ?(string|null|undefined),
- *     text:        ?(string|null|undefined),
- *     html:        ?(string|null|undefined),
- *     func:        ?(function|null|undefined),
+ *     active:          ?(boolean|null|undefined),
+ *     tag:             ?(string|null|undefined),
+ *     type:            ?(string|null|undefined),
+ *     class:           ?(string|null|undefined),
+ *     tooltip:         ?(string|null|undefined),
+ *     label:           ?(string|null|undefined),
+ *     text:            ?(string|null|undefined),
+ *     html:            ?(string|null|undefined),
+ *     func:            ?(function|null|undefined),
  * }} ElementProperties
  */
 
@@ -73,46 +73,126 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * ToggleProperties
  *
  * @typedef {{
- *     opener:      ElementProperties,
- *     closer:      ElementProperties,
+ *     opener:          ElementProperties,
+ *     closer:          ElementProperties,
  * }} ToggleProperties
  */
 
 /**
- * Action Properties
+ * ActionProperties
  *
  * @typedef {{
- *     tag:         ?(string|null|undefined),
- *     type:        ?(string|null|undefined),
- *     class:       ?(string|null|undefined),
- *     tooltip:     ?(string|null|undefined),
- *     label:       ?(string|null|undefined),
- *     text:        ?(string|null|undefined),
- *     html:        ?(string|null|undefined),
- *     enabled:     ?(ElementProperties|null|undefined),
- *     disabled:    ?(ElementProperties|null|undefined),
+ *     tag:             ?(string|null|undefined),
+ *     type:            ?(string|null|undefined),
+ *     class:           ?(string|null|undefined),
+ *     tooltip:         ?(string|null|undefined),
+ *     label:           ?(string|null|undefined),
+ *     text:            ?(string|null|undefined),
+ *     html:            ?(string|null|undefined),
+ *     enabled:         ?(ElementProperties|null|undefined),
+ *     disabled:        ?(ElementProperties|null|undefined),
  * }} ActionProperties
  */
 
 /**
- * RouteActionProperties
+ * EndpointProperties
  *
  * @typedef {{
- *     submit:      ActionProperties,
- *     cancel:      ActionProperties,
- *     select:      ?(ActionProperties|null|undefined),
- * }} RouteActionProperties
+ *     submit:          ActionProperties,
+ *     cancel:          ActionProperties,
+ *     select:          ?(ActionProperties|null|undefined),
+ * }} EndpointProperties
+ */
+
+/**
+ * ControllerActionProperties
+ *
+ * @typedef {{
+ *    new:              EndpointProperties,
+ *    edit:             EndpointProperties,
+ *    delete:           EndpointProperties,
+ *    bulk_new:         ?EndpointProperties,
+ *    bulk_edit:        ?EndpointProperties,
+ *    bulk_delete:      ?EndpointProperties,
+ * }} ControllerActionProperties
  */
 
 /**
  * FieldGroupProperties
  *
  * @typedef {{
- *     label:       ?(string|null),
- *     tooltip:     ?(string|null),
- *     enabled:     ?(boolean|string|null),
- *     default:     ?(boolean|string|null),
+ *     label:           ?(string|null),
+ *     tooltip:         ?(string|null),
+ *     enabled:         ?(boolean|string|null),
+ *     default:         ?(boolean|string|null),
  * }} FieldGroupProperties
+ */
+
+/**
+ * FilterProperties
+ *
+ * @typedef {{
+ *    available:        FieldGroupProperties,
+ *    filled:           FieldGroupProperties,
+ *    invalid:          FieldGroupProperties,
+ *    all:              FieldGroupProperties,
+ * }} FilterProperties
+ */
+
+/**
+ * StatusProperties
+ *
+ * @typedef {{
+ *    required:         ElementProperties,
+ *    invalid:          ElementProperties,
+ *    valid:            ElementProperties,
+ *    disabled:         ElementProperties,
+ *    blank:            ElementProperties,
+ * }} StatusProperties
+ */
+
+/**
+ * MimeProperties
+ *
+ * - to_fmt             A table mapping MIME type to file format.
+ *
+ * @typedef {{
+ *    to_fmt:           Object.<string,string[]>,
+ * }} MimeProperties
+ */
+
+/**
+ * FieldProperties
+ *
+ * - empty              Blank field value indicator.
+ *
+ * @typedef {{
+ *    empty:            string,
+ * }} FieldProperties
+ */
+
+/**
+ * RepositoryProperties
+ *
+ * - name               A mapping of repository name to displayable label.
+ * - default            The name of the default repository.
+ *
+ * @typedef {{
+ *    name:             Object.<string,string>,
+ *    default:          string,
+ * }} RepositoryProperties
+ */
+
+/**
+ * UploaderProperties
+ *
+ * - drag_target        CSS class for an Uppy drag-and-drop target.
+ * - preview            CSS class for an Uppy preview thumbnail image.
+ *
+ * @typedef {{
+ *    drag_target:      string,
+ *    preview:          string,
+ * }} UploaderProperties
  */
 
 /**
@@ -121,12 +201,12 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @see "en.emma.search.styles"
  *
  * @typedef {{
- *     label:       ?(string|null|undefined),
- *     class:       ?(string|null|undefined),
- *     tooltip:     ?(string|null|undefined),
- *     field:       ?(string|null|undefined),
- *     active:      ?(boolean|string|null|undefined),
- *     func:        ?(function|null|undefined),
+ *     label:           ?(string|null|undefined),
+ *     class:           ?(string|null|undefined),
+ *     tooltip:         ?(string|null|undefined),
+ *     field:           ?(string|null|undefined),
+ *     active:          ?(boolean|string|null|undefined),
+ *     func:            ?(function|null|undefined),
  * }} StyleControlProperties
  */
 
@@ -139,9 +219,9 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *
  * @typedef {{
  *    placeholder: {
- *        alt:      string,
- *        class:    string,
- *        asset:    string,
+ *        alt:          string,
+ *        class:        string,
+ *        asset:        string,
  *    },
  * }} ImageProperties
  */
@@ -175,13 +255,25 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * - hidden.class       CSS class indicating a hidden element.
  *
  * @typedef {{
- *    button:       ElementProperties,
- *    panel:        ElementProperties,
- *    closer:       ElementProperties,
- *    controls:     ElementProperties,
- *    deferred:     ElementProperties,
- *    hidden:       ElementProperties,
+ *    button:           ElementProperties,
+ *    panel:            ElementProperties,
+ *    closer:           ElementProperties,
+ *    controls:         ElementProperties,
+ *    deferred:         ElementProperties,
+ *    hidden:           ElementProperties,
  * }} PopupProperties
+ */
+
+/**
+ * ScrollProperties
+ *
+ * - target             Properties for an element which is scrolled to the top.
+ * - button             Properties for the scroll-to-top button.
+ *
+ * @typedef {{
+ *     target:          ElementProperties,
+ *     button:          ElementProperties,
+ * }} ScrollProperties
  */
 
 /**
@@ -220,31 +312,88 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * - failure.unknown    Unknown download failure.
  *
  * @typedef {{
- *    button:       ElementProperties,
- *    progress:     ElementProperties,
+ *    button:           ElementProperties,
+ *    progress:         ElementProperties,
  *    failure: {
- *        class:    string,
- *        prefix:   string,
- *        canceled: string,
- *        sign_in:  string,
- *        unknown:  string,
+ *        class:        string,
+ *        prefix:       string,
+ *        canceled:     string,
+ *        sign_in:      string,
+ *        unknown:      string,
  *    },
  * }} DownloadProperties
  */
 
 /**
- * EntryProperties
+ * RecordProperties
  *
- * - Path.index         The endpoint for listing submissions.
- * - Path.new           The new entry creation form.
- * - Path.edit          The existing entry modification form.
- * - Path.create        The POST endpoint for creating a database entry for the uploaded file.
- * - Path.renew         The POST endpoint for generating a fresh database entry.
- * - Path.reedit        The POST endpoint for re-starting an edit workflow on an existing database entry.
- * - Path.cancel        The endpoint for canceling a submission.
- * - Path.endpoint      Shrine's upload endpoint (the server route to which uploads are directed).
- * - Style.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
- * - Style.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
+ * - GroupPanel         Selection for type of Entry records to show.
+ * - ListFilter         Entry records filter radio button panel.
+ * - FilterOptions      Debug-only filter option panel.
+ * - List               Container for a listing of Entry records.
+ * - StateGroup         Workflow state groups.
+ *
+ * @typedef {{
+ *    GroupPanel: {
+ *        class:        string,
+ *        Control: {
+ *            class:    string,
+ *        },
+ *    },
+ *    ListFilter: {
+ *        class:        string,
+ *        Control: {
+ *            class:    string,
+ *        },
+ *    },
+ *    FilterOptions: {
+ *        class:        string,
+ *        Control: {
+ *            class:    string,
+ *        },
+ *    },
+ *    List: {
+ *        class:        string,
+ *    },
+ *    StateGroup:       string[],
+ * }} RecordProperties
+ */
+
+/**
+ * PathProperties
+ *
+ * - index              The endpoint for listing submissions.
+ * - show               Display a single item.
+ * - new                The new entry creation form.
+ * - create             The POST endpoint for creating a database entry for the uploaded file.
+ * - edit               The existing entry modification form.
+ * - update             The POST endpoint for modifying a database entry for the uploaded file.
+ * - renew              The POST endpoint for generating a fresh database entry.
+ * - reedit             The POST endpoint for re-starting an edit workflow on an existing database entry.
+ * - cancel             The endpoint for canceling a submission.
+ * - endpoint           Shrine's upload endpoint (the server route to which uploads are directed).
+ *
+ * @typedef {{
+ *    index:            string,
+ *    show:             string,
+ *    new:              ?string,
+ *    create:           ?string,
+ *    edit:             ?string,
+ *    update:           ?string,
+ *    delete:           ?string,
+ *    destroy:          ?string,
+ *    renew:            ?string,
+ *    reedit:           ?string,
+ *    cancel:           ?string,
+ *    endpoint:         ?string,
+ * }} PathProperties
+ */
+
+/**
+ * ModelProperties
+ *
+ * - Upload.drag_target CSS class for the element used to hold an Uppy drag-and-drop target.
+ * - Upload.preview     CSS class for the element used to hold an Uppy preview thumbnail image.
  * - Action             Form action label/tooltips for controller actions.
  * - Filter             Form action label/tooltips for form field filter selections.
  * - Status             Status marker label/tooltips.
@@ -253,81 +402,16 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * - Repo.default       The name of the default repository.
  *
  * @typedef {{
- *    Path: {
- *        index:        string,
- *        new:          string,
- *        edit:         string,
- *        create:       string,
- *        renew:        string,
- *        reedit:       string,
- *        cancel:       string,
- *        endpoint:     string,
- *    },
- *    Style: {
- *        drag_target:  string,
- *        preview:      string,
- *    },
- *    Action: {
- *        new:          RouteActionProperties,
- *        edit:         RouteActionProperties,
- *        delete:       RouteActionProperties,
- *        bulk_new:     RouteActionProperties,
- *        bulk_edit:    RouteActionProperties,
- *        bulk_delete:  RouteActionProperties,
- *    },
- *    Filter: {
- *        available:    FieldGroupProperties,
- *        filled:       FieldGroupProperties,
- *        invalid:      FieldGroupProperties,
- *        all:          FieldGroupProperties,
- *    },
- *    Status: {
- *        required:     ElementProperties,
- *        invalid:      ElementProperties,
- *        valid:        ElementProperties,
- *        disabled:     ElementProperties,
- *    },
- *    Mime: {
- *        to_fmt:       Object.<string,string[]>,
- *    },
- *    Field: {
- *        empty:        string,
- *    },
- *    Repo: {
- *        name:         Object.<string,string>,
- *        default:      string,
- *    },
- * }} EntryProperties
- */
-
-/**
- * RecordProperties
- *
- * - GroupPanel         Selection for type of Entry records to show.
- * - PageFilter         Entry records filter radio button panel.
- * - FilterOptions      Debug-only filter option panel.
- * - List               Container for a listing of Entry records.
- * - StateGroup         Workflow state groups.
- *
- * @typedef {{
- *    GroupPanel:       object,
- *    PageFilter:       object,
- *    FilterOptions:    object,
- *    List:             object,
- *    StateGroup:       string[],
- * }} RecordProperties
- */
-
-/**
- * ScrollProperties
- *
- * - target             Properties for an element which is scrolled to the top.
- * - button             Properties for the scroll-to-top button.
- *
- * @typedef {{
- *     target:      ElementProperties,
- *     button:      ElementProperties,
- * }} ScrollProperties
+ *    Path:             PathProperties,
+ *    Upload:           UploaderProperties,
+ *    Action:           ControllerActionProperties,
+ *    Filter:           FilterProperties,
+ *    Status:           StatusProperties,
+ *    Mime:             MimeProperties,
+ *    Field:            FieldProperties,
+ *    Repo:             RepositoryProperties,
+ *    Record:           RecordProperties,
+ * }} ModelProperties
  */
 
 // ============================================================================
@@ -350,13 +434,13 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @property {PanelProperties}    Panel
  * @property {TreeProperties}     Tree
  * @property {PopupProperties}    Popup
+ * @property {ScrollProperties}   Scroll
  * @property {SearchProperties}   Search
  * @property {DownloadProperties} Download
- * @property {EntryProperties}    Upload
- * @property {EntryProperties}    Entry
- * @property {RecordProperties}   UploadRecord
- * @property {RecordProperties}   EntryRecord
- * @property {ScrollProperties}   Scroll
+ * @property {ModelProperties}    Account
+ * @property {ModelProperties}    User
+ * @property {ModelProperties}    Entry
+ * @property {ModelProperties}    Upload
  */
 export const Emma = (function() {
 
@@ -380,31 +464,31 @@ export const Emma = (function() {
 
         Image: {
             placeholder: {
-                alt:    "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
-                class:  "<%= ImageHelper::PLACEHOLDER_IMAGE_CLASS %>",
-                asset:  Image_placeholder_asset,
+                alt:     "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
+                class:   "<%= ImageHelper::PLACEHOLDER_IMAGE_CLASS %>",
+                asset:   Image_placeholder_asset,
             }
         },
 
         Panel: {
             opener: {
-                label:   "<%= LayoutHelper::Common::PANEL_OPENER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::PANEL_OPENER_TIP %>",
+                label:   "<%= PanelHelper::PANEL_OPENER_LABEL %>",
+                tooltip: "<%= PanelHelper::PANEL_OPENER_TIP %>",
             },
             closer: {
-                label:   "<%= LayoutHelper::Common::PANEL_CLOSER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::PANEL_CLOSER_TIP %>",
+                label:   "<%= PanelHelper::PANEL_CLOSER_LABEL %>",
+                tooltip: "<%= PanelHelper::PANEL_CLOSER_TIP %>",
             },
         },
 
         Tree: {
             opener: {
-                label:   "<%= LayoutHelper::Common::TREE_OPENER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::TREE_OPENER_TIP %>",
+                label:   "<%= TreeHelper::TREE_OPENER_LABEL %>",
+                tooltip: "<%= TreeHelper::TREE_OPENER_TIP %>",
             },
             closer: {
-                label:   "<%= LayoutHelper::Common::TREE_CLOSER_LABEL %>",
-                tooltip: "<%= LayoutHelper::Common::TREE_CLOSER_TIP %>",
+                label:   "<%= TreeHelper::TREE_CLOSER_LABEL %>",
+                tooltip: "<%= TreeHelper::TREE_CLOSER_TIP %>",
             },
         },
 
@@ -429,131 +513,54 @@ export const Emma = (function() {
             },
         },
 
+        Scroll: {
+            target: o$('<%= js ScrollHelper::SCROLL_TARGET %>'),
+            button: o$('<%= js ScrollHelper::SCROLL_TOP %>'),
+        },
+
         Search: {
-            type:       o$('<%= js SearchTermsHelper::SEARCH_TYPE %>'),
+            type:   o$('<%= js SearchTermsHelper::SEARCH_TYPE %>'),
             Filter: {
                 control:
                     o$('<%= js LayoutHelper::SearchFilters::ADV_SEARCH %>'),
             },
             Style: {
                 container: {
-                    class:  "<%= SearchHelper::SEARCH_STYLE_CONTAINER %>",
+                    class: "<%= SearchDecorator::STYLE_CONTAINER %>",
                 },
                 control: {
                     template:
-                        o$('<%= js SearchHelper::SEARCH_STYLE_BUTTON_TEMPLATE %>'),
+                        o$('<%= js SearchDecorator::STYLE_BUTTON_TEMPLATE %>'),
                     buttons:
-                        o$('<%= js SearchHelper::SEARCH_STYLE_BUTTONS %>'),
+                        o$('<%= js SearchDecorator::STYLE_BUTTONS %>'),
                 },
             },
         },
 
         Download: {
             button: {
-                class:      "<%= ArtifactHelper::DOWNLOAD_BUTTON_CLASS %>",
+                class:    "<%= ArtifactDecorator::DOWNLOAD_BUTTON_CLASS %>",
             },
             progress: {
-                class:      "<%= ArtifactHelper::DOWNLOAD_PROGRESS_CLASS %>",
+                class:    "<%= ArtifactDecorator::DOWNLOAD_PROGRESS_CLASS %>",
             },
             failure: {
-                class:      "<%= ArtifactHelper::DOWNLOAD_FAILURE_CLASS %>",
-                prefix:     "<%= I18n.t('emma.download.failure.prefix') %>",
-                canceled:   "<%= I18n.t('emma.download.failure.canceled') %>",
-                sign_in:    "<%= I18n.t('emma.download.failure.sign_in') %>",
-                unknown:    "<%= I18n.t('emma.download.failure.unknown') %>",
+                class:    "<%= ArtifactDecorator::DOWNLOAD_FAILURE_CLASS %>",
+                prefix:   "<%= I18n.t('emma.download.failure.prefix') %>",
+                canceled: "<%= I18n.t('emma.download.failure.canceled') %>",
+                sign_in:  "<%= I18n.t('emma.download.failure.sign_in') %>",
+                unknown:  "<%= I18n.t('emma.download.failure.unknown') %>",
             },
         },
 
-        Upload: {
-            Path:        o$('<%= js UploadHelper::UPLOAD_PATH %>'),
-            Style:       o$('<%= js UploadHelper::UPLOAD_STYLE %>'),
-            Action:      o$('<%= js UploadHelper::UPLOAD_ACTION_VALUES %>'),
-            Filter:      o$('<%= js UploadHelper::UPLOAD_FIELD_GROUP %>'),
-            Status:      o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
-            Mime: {
-                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>'),
-            },
-            Field: {
-                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>',
-            },
-            Repo:   {
-                name:    o$('<%= js EmmaRepository.pairs %>'),
-                default: '<%= EmmaRepository.default %>',
-            },
-        },
+        // ====================================================================
+        // Model properties
+        // ====================================================================
 
-        Entry: {
-            Path:        o$('<%= js EntryHelper::ENTRY_PATH %>'),
-            Style:       o$('<%= js EntryHelper::ENTRY_STYLE %>'),
-            Action:      o$('<%= js EntryHelper::ENTRY_ACTION_VALUES %>'),
-            Filter:      o$('<%= js EntryHelper::ENTRY_FIELD_GROUP %>'),
-            Status:      o$('<%= js ModelHelper::Form::STATUS_MARKER %>'),
-            Mime: {
-                to_fmt:  o$('<%= js FileNaming.mime_to_fmt %>'),
-            },
-            Field: {
-                empty:   '<%= ModelHelper::Fields::EMPTY_VALUE %>',
-            },
-            Repo:   {
-                name:    o$('<%= js EmmaRepository.pairs %>'),
-                default: '<%= EmmaRepository.default %>',
-            },
-        },
-
-        UploadRecord: {
-            GroupPanel: {
-                class:      '<%= UploadHelper::UPLOAD_GROUP_PANEL_CLASS %>',
-                Control: {
-                    class:  '<%= UploadHelper::UPLOAD_GROUP_CONTROL_CLASS %>',
-                },
-            },
-            PageFilter: {
-                class:      '<%= UploadHelper::UPLOAD_PAGE_FILTER_CLASS %>',
-                Control: {
-                    class:  '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>',
-                },
-            },
-            FilterOptions: {
-                class:      '<%= UploadHelper::UPLOAD_FILTER_OPTIONS_CLASS %>',
-                Control: {
-                    class:  '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>',
-                },
-            },
-            List: {
-                class:      '<%= UploadHelper::UPLOAD_LIST_CLASS %>',
-            },
-            StateGroup: a$('<%= js UploadHelper::UPLOAD_STATE_GROUP.keys %>'),
-        },
-
-        EntryRecord: {
-            GroupPanel: {
-                class:      '<%= EntryHelper::ENTRY_GROUP_PANEL_CLASS %>',
-                Control: {
-                    class:  '<%= EntryHelper::ENTRY_GROUP_CONTROL_CLASS %>',
-                },
-            },
-            PageFilter: {
-                class:      '<%= EntryHelper::ENTRY_PAGE_FILTER_CLASS %>',
-                Control: {
-                    class:  '<%= EntryHelper::ENTRY_FILTER_CONTROL_CLASS %>',
-                },
-            },
-            FilterOptions: {
-                class:      '<%= EntryHelper::ENTRY_FILTER_OPTIONS_CLASS %>',
-                Control: {
-                    class:  '<%= EntryHelper::ENTRY_FILTER_CONTROL_CLASS %>',
-                },
-            },
-            List: {
-                class:      '<%= EntryHelper::ENTRY_LIST_CLASS %>',
-            },
-            StateGroup: a$('<%= js EntryHelper::ENTRY_STATE_GROUP.keys %>'),
-        },
-
-        Scroll: {
-            target:     o$('<%= js LayoutHelper::Scroll::SCROLL_TARGET %>'),
-            button:     o$('<%= js LayoutHelper::Scroll::SCROLL_TOP %>'),
-        }
+        Account: o$('<%= js AccountDecorator.js_properties %>'),
+        User:    o$('<%= js UserDecorator.js_properties %>'),
+        Entry:   o$('<%= js EntryDecorator.js_properties %>'),
+        Upload:  o$('<%= js UploadDecorator.js_properties %>'),
 
     };
 

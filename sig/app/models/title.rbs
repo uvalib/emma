@@ -9,13 +9,13 @@ class Title < ApplicationRecord
 
   # Indicate whether the title includes the indicated artifact.
   #
-  # @param [String, Artifact] item
+  # @param [Artifact, String, *] item
   #
-  def include?: (String|Artifact item) -> bool
+  def include?: (Artifact|String|untyped item) -> bool
 
   # Indicate whether the title includes the indicated artifact.
   #
-  # @param [String, Artifact] item
+  # @param [Artifact, String, *] item
   #
-  def has_artifact?: (String|Artifact item) -> bool
+  def has_artifact?: (Artifact|String|untyped item) -> bool
 end

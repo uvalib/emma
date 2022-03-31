@@ -166,7 +166,7 @@ en:
         multiple:       false       # Allow multiple selections.
         menu:           ~           # Hard-wired label/value pairs.
         menu_format:    'titleize'  # Transform for values into menu labels.
-        active:         true        # @see LayoutHelper::SearchFilters#permitted_by?
+        active:         true        # @see SearchModesHelper#permitted_by?
 
       _reset:
         label:          'Reset'
@@ -398,9 +398,65 @@ en:
         label:        'Download'
         tooltip:      'Click here to retrieve the %{fmt} file.'
 
-    action_links:       &ACTION_LINKS
+    action_links:     &ACTION_LINKS
       back:
-        label:          'Back'
+        label:        'Back'
+
+    control_icons:    &CONTROL_ICONS
+
+      show:
+        label:        "\u2605" # ★ BLACK STAR
+        tooltip:      'View this %{item}'
+        enabled:      false
+
+      edit:
+        label:        "\u25B3" # △ WHITE UP-POINTING TRIANGLE
+        tooltip:      'Modify this %{item}'
+        enabled:      false
+
+      delete:
+        label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
+        tooltip:      'Modify this %{item}'
+        enabled:      false
+
+    field_group:      &FIELD_GROUP
+
+      available:
+        label:        'All fields'
+        tooltip:      'Reveal all data fields.'
+
+      invalid:
+        label:        'Incomplete fields'
+        tooltip:      'Show fields that require attention.'
+
+      filled:
+        label:        'Completed fields'
+        tooltip:      'Show fields that have data.'
+
+      all:
+        label:        'All plus internal-use fields'
+        tooltip:      'This is only for development purposes.'
+        enabled:      debug
+
+    status_marker:    &STATUS_MARKER
+
+      required:
+        label:        "\u26A0" # ⚠ WARNING SIGN
+        tooltip:      '%{This} is a required field.'
+
+      invalid:
+        label:        "\u26A0" # ⚠ WARNING SIGN
+        tooltip:      'The provided value is invalid.'
+
+      valid:
+        label:        "\u2714" # ✔ HEAVY CHECK MARK
+        tooltip:      'The provided value is valid.'
+
+      disabled:
+        label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
+
+      blank:
+        label:        "\u2002" #   EN SPACE
 
     # =========================================================================
     # Messages
@@ -468,6 +524,15 @@ en:
       action_links:
         <<:             *ACTION_LINKS
 
+      control_icons:
+        <<:             *CONTROL_ICONS
+
+      field_group:
+        <<:             *FIELD_GROUP
+
+      status_marker:
+        <<:             *STATUS_MARKER
+
       # =======================================================================
       # Messages
       # =======================================================================
@@ -483,28 +548,34 @@ en:
         label:          '%{Items}'
         title:          '%{Item} Index'
         tooltip:        'Find more %{items} with %{terms}.'
+        _endpoint:      true
 
       show:
         label:          '%{Item}'
         title:          '%{Item}'
         tooltip:        'See details about this %{item}.'
+        _endpoint:      true
 
       new:
         label:          'Add'
         title:          'Add %{Item}'
         tooltip:        'Create a new %{item}.'
+        _endpoint:      true
 
       edit:
         label:          'Modify'
         title:          'Modify %{Item}'
         tooltip:        'Make changes to this %{item}.'
+        _endpoint:      true
 
       delete:
         label:          'Remove'
         title:          'Remove %{Item}'
         tooltip:        'Remove this %{item}.'
+        _endpoint:      true
 
       history:
         label:          'History'
         title:          '%{Item} History'
         tooltip:        'View modifications for this %{item}.'
+        _endpoint:      true

@@ -55,7 +55,7 @@ module I18nHelper
   # -
   # noinspection RubyMismatchedReturnType
   # +
-  def i18n_lookup: (String|Symbol|nil controller, String|strArray partial_path, *String defaults, **untyped opt) -> untyped?
+  def i18n_lookup: (String|Symbol|nil controller, String|strArray partial_path, *String defaults, **untyped opt) -> (untyped | nil)
 
   # Generate a hash of the most relevant button information with the form:
   #

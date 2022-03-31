@@ -15,6 +15,9 @@ module BsApiConcern
 
   include BsApiHelper
 
+  include ApiConcern
+  include BookshareConcern
+
   # ===========================================================================
   # :section: Initialization
   # ===========================================================================
@@ -35,6 +38,33 @@ module BsApiConcern
       duration = time_span(starts.to_f, ends.to_f)
       Log.info { '[%s] %s %s (%s)' % [host, method, uri, duration] }
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Invoke a Bookshare API method for display in the "Bookshare API Explorer".
+  #
+  # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def bs_api_explorer(meth, path, **opt)
+    meth = meth&.downcase&.to_sym || :get
+    data = bs_api.api(meth, path, **opt.merge(no_raise: true))&.body&.presence
+    {
+      method:    meth.to_s.upcase,
+      path:      path,
+      opt:       opt.presence || '',
+      url:       bs_api_explorer_url(path, **opt),
+      result:    data&.force_encoding('UTF-8'),
+      exception: api_exception,
+    }.compact
   end
 
   # ===========================================================================

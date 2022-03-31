@@ -74,7 +74,8 @@ module Record::Submittable
     def new_record(data = nil)                                                  # NOTE: from UploadWorkflow::External
       __debug_items("ENTRY WF #{__method__}", binding)
       record_class.new(data).tap do |record|
-        add_title_prefix(record) if title_prefix
+        prefix = model_options.title_prefix
+        add_title_prefix(record, prefix: prefix) if prefix
       end
     end
 
@@ -86,15 +87,12 @@ module Record::Submittable
 
     # If a prefix was specified, apply it to the record's title.
     #
-    # @param [Model]        record
-    # @param [String, bool] prefix
+    # @param [Model]  record
+    # @param [String] prefix
     #
     # @return [void]
     #
-    #--
-    # noinspection RubyMismatchedParameterType
-    #++
-    def add_title_prefix(record, prefix: title_prefix)                          # NOTE: from UploadWorkflow::External
+    def add_title_prefix(record, prefix:)                                       # NOTE: from UploadWorkflow::External
       return unless prefix.present?
       return unless record.respond_to?(:emma_metadata)
       return unless (title = record.emma_metadata[:dc_title])
@@ -153,8 +151,9 @@ module Record::Submittable
         elsif data.blank?
           find_record(item)
         else
-          opt, data = partition_hash(data, :no_raise, :meth)
-          ids, data = partition_hash(data, :id, :submission_id)
+          data   = data.dup
+          opt    = extract_hash!(data, :no_raise, :meth)
+          ids    = extract_hash!(data, :id, :submission_id)
           item ||= ids.values.first
           find_record(item, **opt)
         end
@@ -461,7 +460,7 @@ module Record::Submittable
       failed    = []
       if items.blank?
         failed << REPO_FAILURE[:no_items]
-      elsif !repo_create
+      elsif !model_options.repo_create
         failed << REPO_FAILURE[:no_create]
       else
         result = aws_api.creation_request(*items, **opt)
@@ -485,7 +484,7 @@ module Record::Submittable
       failed    = []
       if items.blank?
         failed << REPO_FAILURE[:no_items]
-      elsif !repo_edit
+      elsif !model_options.repo_edit
         failed << REPO_FAILURE[:no_edit]
       else
         result = aws_api.modification_request(*items, **opt)
@@ -512,7 +511,7 @@ module Record::Submittable
         # Emergency override for deleting bogus entries creating during
         # testing/development.
         succeeded, failed = remove_from_index(*items)
-      elsif !repo_remove
+      elsif !model_options.repo_remove
         failed << REPO_FAILURE[:no_remove]
       else
         result = aws_api.removal_request(*items, **opt)
@@ -733,14 +732,14 @@ module Record::Submittable
 
       # Batching occurs unconditionally in order to ensure that the requested
       # items can be successfully removed from the index.
-      opt[:requests] ||= {} if repo_remove
+      opt[:requests] ||= {} if model_options.repo_remove
       opt.merge!(index: index, atomic: atomic, force: force)
       # noinspection RubyMismatchedArgumentType
       succeeded, failed = batch_entry_operation(:entry_remove, items, **opt)
 
       # After all batch operations have completed, truncate the database table
       # (i.e., so that the next entry starts with id == 1) if appropriate.
-      if truncate_delete && (ids == %w(*))
+      if model_options.truncate_delete && (ids == %w(*))
         # noinspection RailsParamDefResolve
         if failed.present?
           Log.warn('database not truncated due to the presence of errors')
@@ -751,7 +750,7 @@ module Record::Submittable
 
       # Member repository removal requests that were deferred in #entry_remove
       # are handled now.
-      if repo_remove && opt[:requests].present?
+      if model_options.repo_remove && opt[:requests].present?
         if atomic && failed.present?
           Log.warn('failure(s) prevented generation of repo removal requests')
         else
@@ -863,8 +862,8 @@ module Record::Submittable
     # @see #db_insert
     # @see #add_to_index
     #
-    # Compare with:
-    # #bulk_entry_create
+    # == Implementation Notes
+    # Compare with #bulk_entry_create
     #
     def entry_create(index: nil, atomic: true, **data)                          # NOTE: from UploadWorkflow::External#upload_create
       __debug_items("ENTRY WF #{__method__}", binding)
@@ -897,8 +896,8 @@ module Record::Submittable
     # @see #db_update
     # @see #update_in_index
     #
-    # Compare with:
-    # #bulk_entry_edit
+    # == Implementation Notes
+    # Compare with #bulk_entry_edit
     #
     def entry_edit(index: nil, atomic: true, **data)                            # NOTE: from UploadWorkflow::External#upload_edit
       __debug_items("ENTRY WF #{__method__}", binding)
@@ -955,7 +954,7 @@ module Record::Submittable
       items, failed = collect_records(*items, force: force, type: type)
       requested = []
       if force
-        emergency = opt[:emergency] || emergency_delete
+        emergency = opt[:emergency] || model_options.emergency_delete
         # Mark as failed any non-EMMA-items that could not be added to a
         # request for removal of member repository items.
         items, failed =
@@ -963,7 +962,7 @@ module Record::Submittable
             emma_item?(item) || incomplete?(item) ||
               (sid_value(item) if emergency)
           end
-        if repo_remove
+        if model_options.repo_remove
           deferred = opt.key?(:requests)
           requests = opt.delete(:requests) || {}
           failed.delete_if do |item|

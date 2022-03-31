@@ -1,0 +1,89 @@
+module GridHelper
+  include HtmlHelper
+
+  # Options consumed by internal methods which should not be passed on along to
+  # the methods which generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see #grid_cell_classes
+  #
+  GRID_OPTS: symArray
+
+  # Render a table of values.
+  #
+  # @param [Hash] pairs               Key-value pairs to display.
+  # @param [Hash] opt                 Passed to outer #html_div except for:
+  #                                     #GRID_OPTS and
+  #
+  # @option opt [Boolean] :wrap       If *true* then key/value pairs are joined
+  #                                     within a wrapper element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_table: (anyHash pairs, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Array<#to_s,Array>] classes
+  # @param [Hash]               opt       Internal options:
+  #
+  # @option opt [String]  :class
+  # @option opt [Integer] :row        Grid row (wide screen).
+  # @option opt [Integer] :col        Grid column (wide screen).
+  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
+  # @option opt [Integer] :col_max    Rightmost grid column (wide screen).
+  # @option opt [Boolean] :sr_only    If *true*, include 'sr-only' CSS class.
+  #
+  # @return [Array<String>]
+  #
+  def grid_cell_classes: (*untyped classes, **untyped opt) -> strArray
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       To #append_grid_cell_classes!
+  #
+  # @return [Hash]                        A new hash.
+  #
+  # @note Currently unused.
+  #
+  def append_grid_cell_classes: (symHash html_opt, *untyped classes, **untyped opt) -> symHash
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       Passed to #grid_cell_classes.
+  #
+  # @return [Hash]                        The modified *html_opt* hash.
+  #
+  def append_grid_cell_classes!: (symHash html_opt, *untyped classes, **untyped opt) -> symHash
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       To #prepend_grid_cell_classes!.
+  #
+  # @return [Hash]                        A new hash.
+  #
+  # @note Currently unused.
+  #
+  def prepend_grid_cell_classes: (symHash html_opt, *untyped classes, **untyped opt) -> symHash
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash]               html_opt  The target options hash.
+  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
+  # @param [Hash]               opt       Passed to #grid_cell_classes.
+  #
+  # @return [Hash]                        The modified *html_opt* hash.
+  #
+  def prepend_grid_cell_classes!: (symHash html_opt, *untyped classes, **untyped opt) -> symHash
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

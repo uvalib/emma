@@ -2,24 +2,27 @@
 <%-
   # Listing of searches.
 
-  title ||= t('emma.search_call.index.title')
-  list  ||= page_items
-  total ||= total_items
-  terms ||= search_terms
-# row   ||= 1
-  help  ||= nil # help_popup(:search_call) # TODO: ???
+  view_debug(__FILE__)
 
-  page_opt = SearchCall::SEARCH_RECORDS_OPTIONS.dup << :group
+  list   ||= @page.page_items
+  dec      = SearchCallsDecorator.new(list, **context)
+
+  title  ||= dec.page_heading
+  help   ||= nil # dec.help_topic
+  total  ||= @page.total_items
+  terms  ||= search_terms
+# row    ||= 1
+
+  page_opt = Record::Searchable::SEARCH_RECORDS_OPTIONS.dup << :group
   page_terms, search = partition_hash(terms, *page_opt)
-  page   = page_terms[:page]&.values&.first&.to_i || 1
-  search = search.presence
+  page     = positive(page_terms[:page]&.values&.first) || 1
+  search   = search.presence
 
   unless modal?
-    label = t('emma.search_call.index.label', default: title)
-    terms = search
-    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
-    set_page_title(label)
-    append_page_title('-', list_search_terms(terms)) if terms
+    label = dec.page_meta_title(default: title)
+    terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
+    set_page_meta_title(label)
+    append_page_meta_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
     set_page_robots(:nofollow)
   end
@@ -28,12 +31,11 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= search_call_table(list, extended: @extended) %>
+<%= dec.table(extended: @extended) %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

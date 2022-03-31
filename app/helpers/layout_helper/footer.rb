@@ -11,22 +11,7 @@ module LayoutHelper::Footer
 
   include LayoutHelper::Common
 
-  include HtmlHelper
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Content for the footer. # TODO: I18n
-  #
-  # @type [Hash]
-  #
-  FOOTER_TABLE = {
-    Website: link_to(nil, PROJECT_SITE),
-    Contact: mail_to(CONTACT_EMAIL)
-  }
+  include GridHelper
 
   # ===========================================================================
   # :section:
@@ -41,10 +26,28 @@ module LayoutHelper::Footer
   # @return [ActiveSupport::SafeBuffer]
   #
   def footer_table(**opt)
-    css_selector  = '.footer-table'
+    css = '.footer-table'
     opt[:wrap]    = true unless opt.key?(:wrap)
     opt[:col_max] = 2    unless opt.key?(:col_max)
-    grid_table(FOOTER_TABLE, **prepend_classes!(opt, css_selector))
+    prepend_css!(opt, css)
+    grid_table(footer_items, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Content for the footer.
+  #
+  # @type [Hash]
+  #
+  def footer_items(**opt)
+    opt.reverse_merge!(
+      Website: link_to(nil, PROJECT_SITE),  # TODO: I18n
+      Contact: mail_to(CONTACT_EMAIL)       # TODO: I18n
+    )
   end
 
 end

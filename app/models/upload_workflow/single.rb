@@ -207,7 +207,8 @@ module UploadWorkflow::Single::Data
         (id = data.id) or (sid = data.submission_id)
         data = data.attributes.symbolize_keys.except(:id, :submission_id)
       when Hash
-        ids, data = partition_hash(data.symbolize_keys, :id, :submission_id)
+        data = data.symbolize_keys
+        ids  = extract_hash!(data, :id, :submission_id)
         (id = ids[:id]) or (sid = ids[:submission_id])
       when String
         digits_only?(data) ? (id = data) : (sid = data)

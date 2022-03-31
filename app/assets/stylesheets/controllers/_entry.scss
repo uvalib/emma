@@ -1,16 +1,15 @@
 // app/assets/stylesheets/controllers/_entry.scss
 
-@use 'sass:math';
-
 @use 'shared/variables'        as *;
 @use 'shared/functions'        as *;
 @use 'shared/mixins'           as *;
 @use 'shared/controls/grids'   as grid;
+@use 'shared/controls/panels'  as panel;
 @use 'shared/feature/model'    as model;
 
 @use 'layouts/controls/panels' as panel-classes;
 @use 'layouts/controls/popup'  as popup-classes;
-@use 'feature/entry_form'      as form-classes;
+@use 'feature/model_form'      as form-classes;
 @use 'feature/model'           as model-classes;
 
 //=============================================================================
@@ -19,13 +18,14 @@
 
 $entry-padding:   0.5rem;
 $entry-entry-gap: 2rem;
+$entry-form-gap:  1.5rem;
 
 //=============================================================================
 // Entry index page
 //=============================================================================
 
 // Entry metadata fields for index listings.
-// @see ModelHelper::List#model_list_item
+// @see BaseDecorator::List#list_item
 .entry-list-item {
 
     @extend .model-list-item-panel;
@@ -105,7 +105,7 @@ $entry-entry-gap: 2rem;
     // they're tightened up.
     @if model.$data-list-border-color == none {
 
-        // @see ModelHelper::List#render_pair
+        // @see BaseDecorator::List#render_pair
         .value.hierarchy {
 
             margin-bottom: 0;
@@ -141,9 +141,9 @@ $entry-entry-gap: 2rem;
 
     .pagination-top {
 
-        margin-bottom: math.div($entry-entry-gap, 2);
+        margin-bottom: $entry-entry-gap * 0.5;
 
-        .entry-page-filter-panel {
+        .list-filter-panel {
 
             flex: 1 1 auto;
 
@@ -179,16 +179,13 @@ $entry-entry-gap: 2rem;
 
     .no-records {
         @media #{$not-narrow-screen} {
-            margin-bottom: math.div($entry-entry-gap, 2);
+            margin-bottom: $entry-entry-gap * 0.5;
         }
     }
 }
 
-// @see UploadHelper#check_status_popup
-// @see EntryHelper#check_status_popup
-.check-status-popup {
-
-    @extend .popup-container;
+// @see EntryDecorator#check_status_popup
+.popup-container.check-status-popup {
 
     @media #{$medium-width} {
         top: 0;
@@ -250,7 +247,7 @@ body.entry-check.modal {
 //=============================================================================
 
 // Entry entry fields.
-// @see ModelHelper::List#model_details
+// @see BaseDecorator::List#details
 .entry-details {
     @extend .entry-list-item; // INSTEAD OF @extend .model-details;
 }
@@ -270,7 +267,7 @@ body.entry-check.modal {
 // Entry new/edit/delete pages
 //=============================================================================
 
-// @see LinkHelper#page_items_menu
+// @see BaseDecorator::Menu#items_menu
 form.select-entry {
 
     margin: 3rem 0;
@@ -313,7 +310,7 @@ form.select-entry {
 
     .selected-details {
 
-        @extend .toggle-panel;
+        @include panel.toggle-panel;
 
         @media #{$not-narrow-screen} {
             margin-left:  2rem;
@@ -336,21 +333,22 @@ form.select-entry {
     }
 }
 
-// @see EntryHelper#entry_field_container
-.entry-fields {
+// @see BaseDecorator::Form#field_container
+.form-fields {
 
-    display:     grid;
-    width:       inherit;
-    line-height: 1.375;
-    font-size:   large;
+    display:       grid;
+    width:         inherit;
+    margin-bottom: $entry-form-gap;
+    line-height:   1.375;
+    font-size:     large;
 
     grid-template-columns: [label] auto [input] 1fr;
-    gap:                   1.5rem;
+    gap:                   $entry-form-gap;
 
     // A large minimum height is set to avoid the page bouncing vertically when
     // switching between field filter settings which display a varying number
     // of rows.
-    min-height:     75vh;
+    min-height:     66vh;
     grid-auto-rows: max-content;
 
     @media #{$narrow-screen} {
@@ -386,7 +384,7 @@ form.select-entry {
         @extend %scrollable;
         @extend %scrollable-limits;
 
-        height: 8rem;
+        height: 10vh;
     }
 
     // Scrollable container for multiple single-line text input entries.
@@ -465,10 +463,14 @@ form.select-entry {
             @extend %scrollable;
 
             height:     auto;
-            max-height: 30vh;
+            max-height: 20vh;
 
             &:focus {
                 outline-color: transparent;
+            }
+
+            &.field-RemediatedAspects {
+                max-height: unset;
             }
         }
 
@@ -533,6 +535,7 @@ form.select-entry {
 
             @include user-select(none);
 
+            width:         0.5rem;
             margin-top:    0;
             margin-bottom: auto;
             margin-left:   1rem;
@@ -636,18 +639,30 @@ form.select-entry {
         &.field-Coverage[data-required="false"] {
             background: $input-sealed-bg;
         }
+
+        &.field-Creator,
+        &.field-Identifier,
+        &.field-Relation {
+            height: 4.25rem;
+        }
+
+        // A note inserted just below an input element.
+        & + .label + .note {
+            margin-top:    calc(0.5rem - #{$entry-form-gap});
+            margin-bottom: -($entry-form-gap * 0.5);
+            line-height:   1;
+            text-indent:   0.5rem;
+        }
     }
 
-    // Unhidden by entry-form.js if field filtering results in no fields being
-    // displayed.  A large minimum height is set to avoid the page bouncing
-    // vertically when switching between field filter settings.
+    // Unhidden by model-form.js if field filtering results in no fields being
+    // displayed.
     > .no-fields {
 
         @include grid.column-span;
 
         font-style:  italic;
         font-weight: bold;
-        min-height:  75vh;
 
         &.inactive {
             display: none;

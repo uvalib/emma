@@ -30,8 +30,14 @@ en:
         label:          'Bookshare API'
         title:          'Bookshare API Methods'
         tooltip:        'Bookshare API methods accessed as the current user.'
+        _endpoint:      true
+
+      # =======================================================================
 
       v2:
         label:          'BS API Method'
         title:          'Bookshare API Method Output'
         tooltip:        'The response from a Bookshare API method accessed as the current user.'
+        _endpoint:      true
+
+      # =======================================================================

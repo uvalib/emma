@@ -15,11 +15,39 @@ module BsApiHelper
 
   extend self
 
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include BookshareConcern
-    # :nocov:
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # @private
+  BOOKSHARE_USER = '%s@bookshare.org'
+
+  # Transform name(s) into Bookshare username(s).
+  #
+  # @param [String, Symbol, Array<String,Symbol>] name
+  #
+  # @return [String]
+  # @return [Array<String>]
+  #
+  #--
+  # == Variations
+  #++
+  #
+  # @overload bookshare_user(name)
+  #   @param [String, Symbol] name
+  #   @return [String]
+  #
+  # @overload bookshare_user(names)
+  #   @param [Array<String,Symbol>] names
+  #   @return [Array<String>]
+  #
+  def bookshare_user(name)
+    return name.map { |v| send(__method__, v) } if name.is_a?(Array)
+    name = name.to_s.downcase
+    # noinspection RubyMismatchedReturnType
+    (name.present? && !name.include?('@')) ? (BOOKSHARE_USER % name) : name
   end
 
   # ===========================================================================
@@ -44,27 +72,6 @@ module BsApiHelper
         result.prepend(api_version).squeeze!('/')
       end
     end
-  end
-
-  # Invoke a Bookshare API method for display in the "Bookshare API Explorer".
-  #
-  # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
-  # @param [String] path
-  # @param [Hash]   opt               Passed to #api.
-  #
-  # @return [Hash{Symbol=>Any}]
-  #
-  def bs_api_explorer(meth, path, **opt)
-    meth = meth&.downcase&.to_sym || :get
-    data = bs_api.api(meth, path, **opt.merge(no_raise: true))&.body&.presence
-    {
-      method:    meth.to_s.upcase,
-      path:      path,
-      opt:       opt.presence || '',
-      url:       bs_api_explorer_url(path, **opt),
-      result:    data&.force_encoding('UTF-8'),
-      exception: api_exception,
-    }.compact
   end
 
   # ===========================================================================

@@ -18,7 +18,7 @@ module HelpConcern
   # @return [Symbol]                  Value of `params[:id]`.
   # @return [nil]                     No :id, :topic found.
   #
-  def set_help_topic: () -> Symbol?
+  def set_help_topic: () -> (Symbol | nil)
 
   private
 

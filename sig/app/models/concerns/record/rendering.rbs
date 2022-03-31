@@ -25,7 +25,7 @@ module Record::Rendering
   # This exists solely to avoid a 'require' cycle by not making the module
   # dependent on Record::EmmaIdentification.
   #
-  def item_identity: (untyped item) -> String?
+  def item_identity: (untyped item) -> (String | nil)
 
   def self.included: (Module base) -> void
 end

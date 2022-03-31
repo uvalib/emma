@@ -46,7 +46,7 @@ class ApiMigrate
     #
     # @return [Symbol, nil]
     #
-    def migration_name: (Symbol|String|Integer|Float|nil key) -> Symbol?
+    def migration_name: (Symbol|String|Integer|Float|nil key) -> (Symbol | nil)
 
     # API migration configured field transformations.
     #
@@ -409,7 +409,7 @@ class ApiMigrate
     #
     # @return [Any]                   New value of `emma_data[field]`.
     #
-    def add_values: (symHash emma_data, Symbol|symArray fields, String|strArray values, ?unique: bool, ?single: bool?) -> untyped?
+    def add_values: (symHash emma_data, Symbol|symArray fields, String|strArray values, ?unique: bool, ?single: bool?) -> (untyped | nil)
 
     # To avoid requiring that the API field migrations be performed in a
     # specific order, this method supports the ability to arrange potential
@@ -423,7 +423,7 @@ class ApiMigrate
     #
     # @return [Symbol, nil]
     #
-    def find_field: (symHash emma_data, Symbol|symArray|nil fields) -> Symbol?
+    def find_field: (symHash emma_data, Symbol|symArray|nil fields) -> (Symbol | nil)
 
     def self.included: (Module base) -> void
   end

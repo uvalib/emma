@@ -63,7 +63,7 @@ module Emma::Rake
   #
   # @return [String, nil]
   #
-  def task_option: (String|Symbol flag, ?(Rake::TaskArguments|strArray)? args) -> String?
+  def task_option: (String|Symbol flag, ?(Rake::TaskArguments|strArray)? args) -> (String | nil)
 
   # Option flags on the "rake" command line after "--" will be ignored by Rake
   # but will be available in $*.

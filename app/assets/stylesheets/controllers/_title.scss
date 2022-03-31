@@ -2,15 +2,15 @@
 
 @use 'sass:math';
 
-@use 'shared/variables'       as *;
-@use 'shared/mixins'          as *;
-@use 'shared/controls/grids'  as grid;
-@use 'shared/feature/images'  as image;
-@use 'shared/feature/model'   as model;
+@use 'shared/variables'      as *;
+@use 'shared/mixins'         as *;
+@use 'shared/controls/grids' as grid;
+@use 'shared/controls/lists' as list;
+@use 'shared/feature/images' as image;
+@use 'shared/feature/model'  as model;
 
-@use 'layouts/controls/lists' as list-classes;
-@use 'feature/images'         as image-classes;
-@use 'feature/model'          as model-classes;
+@use 'feature/images'        as image-classes;
+@use 'feature/model'         as model-classes;
 
 //=============================================================================
 // Catalog Title index page
@@ -87,7 +87,8 @@
 .title-list {
 
     @extend .model-list;
-    @extend .list-3-column;
+
+    @include list.columns-3;
 
     justify-items: stretch;
 
@@ -112,7 +113,7 @@
         }
     }
 
-    // @see TitleHelper#thumbnail
+    // @see BaseDecorator::List#thumbnail
     .thumbnail {
 
         @include image.thumbnail-dimensions;
@@ -136,7 +137,7 @@
 //=============================================================================
 
 // Catalog Title metadata values.
-// @see ModelHelper::List#model_details
+// @see TitleDecorator#details
 .title-details {
 
     @extend .model-details;
@@ -265,7 +266,7 @@
 
     .title-details {}
 
-    // @see TitleHelper#cover_image
+    // @see BaseDecorator::List#cover
     .cover-image {
 
         // Prevent flex from trying to equalize the width of this column with

@@ -58,7 +58,7 @@ module AwsS3Service::Common
   # @return [String]
   # @return [nil]
   #
-  def bucket_for: (AwsS3::Message::SubmissionRequest|Model|symHash|String|Symbol|nil item, ?(Symbol|String)? deployment) -> String?
+  def bucket_for: (AwsS3::Message::SubmissionRequest|Model|symHash|String|Symbol|nil item, ?(Symbol|String)? deployment) -> (String | nil)
 
   # Generate an array of submission package identifiers (AWS S3 object keys).
   #
@@ -66,7 +66,7 @@ module AwsS3Service::Common
   #
   # @return [String, nil]
   #
-  def submission_id: (AwsS3::Message::SubmissionRequest|Model|symHash|String item) -> String?
+  def submission_id: (AwsS3::Message::SubmissionRequest|Model|symHash|String item) -> (String | nil)
 
   # Allowable AWS S3 Client initializer parameters.
   #
@@ -116,7 +116,7 @@ module AwsS3Service::Common
   # @return [String]                  Uploaded object key.
   # @return [nil]                     If the operation failed.
   #
-  def aws_put_file: (String|Aws::S3::Bucket bucket, String key, Aws::S3::Object|String|StringIO|File content, **untyped opt) -> String?
+  def aws_put_file: (String|Aws::S3::Bucket bucket, String key, Aws::S3::Object|String|StringIO|File content, **untyped opt) -> (String | nil)
 
   # Download a single file from an AWS S3 bucket.
   #
@@ -130,7 +130,7 @@ module AwsS3Service::Common
   # @return [String]                  Content of requested file.
   # @return [nil]                     If the operation failed.
   #
-  def aws_get_file: (String|Aws::S3::Bucket bucket, String key, **untyped opt) -> String?
+  def aws_get_file: (String|Aws::S3::Bucket bucket, String key, **untyped opt) -> (String | nil)
 
   # Remove a single file from an AWS S3 bucket.
   #
@@ -144,7 +144,7 @@ module AwsS3Service::Common
   # @return [String]                  Removed object key.
   # @return [nil]                     If the operation failed.
   #
-  def aws_delete_file: (String|Aws::S3::Bucket bucket, String key, **untyped opt) -> String?
+  def aws_delete_file: (String|Aws::S3::Bucket bucket, String key, **untyped opt) -> (String | nil)
 
   # List files (object keys) in an AWS S3 bucket.
   #
@@ -161,7 +161,7 @@ module AwsS3Service::Common
   # -
   # noinspection RubyNilAnalysis
   # +
-  def aws_list_objects: (String|Aws::S3::Bucket bucket, ?String? filter, **untyped opt) -> Array[Aws::S3::Object]?
+  def aws_list_objects: (String|Aws::S3::Bucket bucket, ?String? filter, **untyped opt) -> (Array[Aws::S3::Object] | nil)
 
   # Lookup matching AWS S3 object keys if "filter" appears to be a pattern and
   # not a specific filename and extension.

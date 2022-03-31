@@ -17,8 +17,27 @@ module Field
   public
 
   DEFAULT_MODEL        = :upload # TODO: remove after upload -> entry
+
   SYNTHETIC_KEYS       = %i[field ignored required readonly array type].freeze
   SYNTHETIC_PROPERTIES = SYNTHETIC_KEYS.map { |k| [k, true] }.to_h.freeze
+
+  # Record field configuration property fields.
+  #
+  # @type [Array<Symbol>]
+  #
+  PROPERTY_KEYS = [
+    :cond,        # Conditional display criteria.
+    :help,        # Help topic locator.
+    :label,       # Field label.
+    :max,         # Maximum allowed;  0 or nil implies no limit.
+    :min,         # Minimum required; 0 or nil implies optional field.
+    :notes,       # Detailed notes that can be displayed near the field.
+    :origin,      # If present the field is not user-modifiable.
+    :placeholder, # Text to display in <textarea> or <input type="text">.
+    :role,        # Field visible only to a user with this role.
+    :tooltip,     # Tooltip when hovering over field label.
+    :type,        # A symbol or 'text', 'textarea', 'number', 'datetime', etc.
+  ].freeze
 
   # ===========================================================================
   # :section: Configuration
@@ -48,26 +67,45 @@ module Field
 
   # Configuration properties for a field within a given model/controller.
   #
-  # @param [Symbol, String, nil]       field
-  # @param [Symbol, String, Hash, nil] model
-  # @param [Symbol, String, nil]       action
-  # @param [Array<nil,Symbol>]         sub_sections
+  # @param [Symbol, String, Array, nil] field
+  # @param [Symbol, String, nil]        model
+  # @param [Symbol, String, nil]        action
   #
   # @return [Hash]                    Frozen result.
   #
   #--
+  # == Variations
+  #++
+  #
+  # @overload configuration_for(field, model = nil, action = nil)
+  #   Look the named field in the configuration subtree for *action* if given
+  #   and then in the :all subtree.  For hierarchical configurations (currently
+  #   only for submissions), the top-level is checked for *field* and then
+  #   the sub-sections within :emma_data, :file_data, and :file_data :metadata.
+  #   @param [Symbol, String, nil]        field
+  #   @param [Symbol, String, Hash, nil]  model
+  #   @param [Symbol, String, nil]        action
+  #
+  # @overload configuration_for(field_path, model = nil, action = nil)
+  #   The field name to check is taken from the end of the array; the remainder
+  #   is used to limit the sub-section to check.
+  #   @param [Array<Symbol,String,Array>] field_path
+  #   @param [Symbol, String, Hash, nil]  model
+  #   @param [Symbol, String, nil]        action
+  #
+  #--
   # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
   #++
-  def self.configuration_for(
-    field,
-    model         = nil,
-    action        = nil,
-    sub_sections: nil
-  )
+  def self.configuration_for(field, model = nil, action = nil)
+    # noinspection RubyNilAnalysis
+    if field.is_a?(Array)
+      sub_sections = field[...-1] || []
+      field        = field.last
+    else
+      sub_sections = [nil, :emma_data, :file_data, [:file_data, :metadata]]
+    end
     return {} if (field = field&.to_sym).blank?
-    config = model || DEFAULT_MODEL
-    config = Model.config_for(config) unless config.is_a?(Hash)
-    sub_sections ||= [nil, :emma_data, :file_data, [:file_data, :metadata]]
+    config = Model.config_for(model || DEFAULT_MODEL)
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
       next unless (section_cfg = config[section]).is_a?(Hash)
@@ -85,26 +123,19 @@ module Field
 
   # Find the field whose configuration entry has a matching label.
   #
-  # @param [String, Symbol]            label
-  # @param [Symbol, String, Hash, nil] model
-  # @param [Symbol, String, nil]       action
-  # @param [Array<nil,Symbol>]         sub_sections
+  # @param [String, Symbol, nil] label
+  # @param [Symbol, String, nil] model
+  # @param [Symbol, String, nil] action
   #
   # @return [Hash]                    Frozen result.
   #
   #--
   # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
   #++
-  def self.configuration_for_label(
-    label,
-    model         = nil,
-    action        = nil,
-    sub_sections: nil
-  )
+  def self.configuration_for_label(label, model = nil, action = nil)
     return {} if (label = label.to_s).blank?
-    config = model || DEFAULT_MODEL
-    config = Model.config_for(config) unless config.is_a?(Hash)
-    sub_sections ||= [nil, :emma_data, :file_data, [:file_data, :metadata]]
+    config       = Model.config_for(model || DEFAULT_MODEL)
+    sub_sections = [nil, :emma_data, :file_data, [:file_data, :metadata]]
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
       next unless (section_cfg = config[section]).is_a?(Hash)
@@ -319,27 +350,30 @@ module Field
   # @param [Model, Any]          item
   # @param [Symbol]              field
   # @param [Symbol, String, nil] model
+  # @param [*]                   value
+  # @param [Hash, nil]           config
   #
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.
   #
-  def self.for(item, field, model = nil)
-    model ||= Model.for(item)
-    return if (cfg = configuration_for(field, model)).blank?
-    array = cfg[:array]
-    range = cfg[:type]
-    range = nil unless range.is_a?(Class) && (range < EnumType)
-    if range && array
-      Field::MultiSelect.new(item, field, model)
-    elsif range == TrueFalse
-      Field::Binary.new(item, field, model)
-    elsif range
-      Field::Select.new(item, field, model)
-    elsif array
-      Field::Collection.new(item, field, model)
-    else
-      Field::Single.new(item, field, model)
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
+  def self.for(item, field, model = nil, value: nil, config: nil)
+    model  ||= Model.for(item)
+    config ||= configuration_for(field, model)
+    return if config.blank?
+
+    array = config[:array]
+    range = config[:type].then { |v| v if v.is_a?(Class) && (v < EnumType) }
+
+    if    range && array     then type = Field::MultiSelect
+    elsif range == TrueFalse then type = Field::Binary
+    elsif range              then type = Field::Select
+    elsif array              then type = Field::Collection
+    else                          type = Field::Single
     end
+    type.new(item, field, model, value)
   end
 
   # ===========================================================================
@@ -400,17 +434,19 @@ module Field
     # @param [Symbol, Model, Any]  src
     # @param [Symbol, nil]         field
     # @param [Symbol, String, nil] model
-    # @param [Any]                 value
+    # @param [*]                   value
     #
     #--
     # noinspection RubyMismatchedVariableType
     #++
     def initialize(src, field = nil, model = nil, value = nil)
+      Log.error "............ Field::Type | src #{src.class} | field = #{field.inspect} | model = #{model.inspect} | value = #{value.inspect}"
       @base  = src
       @field = @range = nil
       if field.is_a?(Symbol)
         @field = field
         @base  = Field.configuration_for(@field, model)[:type]
+        Log.error "............ Field::Type | #{model.inspect} | #{field.inspect} | type = #{@base.inspect}"
         @range ||=                                                              # TODO: remove after upload -> entry
           if src.respond_to?(:active_emma_metadata)
             src.active_emma_metadata[@field]
@@ -439,7 +475,7 @@ module Field
       @range = Array.wrap(@range).map { |v| v.to_s.strip.presence }.compact
       @base  = @base.to_s.safe_constantize if @base.is_a?(Symbol)
       @base  = self.class.base unless @base.is_a?(Class)
-      @value = value || @range.presence
+      @value = value.presence || @range.presence
       @valid = !@value.nil?
     end
 
@@ -475,8 +511,9 @@ module Field
     # @return [Any]
     #
     def set(new_value)
-      @valid = !new_value.nil?
-      @value = new_value
+      val    = new_value.presence
+      @valid = !val.nil?
+      @value = val
     end
 
     # Remove any value from the instance.

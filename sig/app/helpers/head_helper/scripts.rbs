@@ -107,5 +107,5 @@ module HeadHelper::Scripts
   # @see #script_settings
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #
-  def page_script_settings: (**untyped opt) -> ActiveSupport::SafeBuffer?
+  def page_script_settings: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 end

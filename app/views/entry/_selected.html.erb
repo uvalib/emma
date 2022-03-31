@@ -2,18 +2,26 @@
 <%-
   # Display the selected item in an expandable panel.
 
-  item  ||= nil or return
-  row   ||= 0
-  force ||= force_delete
+  view_debug(__FILE__)
 
-  toggle = panel_id = panel_css = nil
+  item   ||= nil
+  dec    ||= EntryDecorator.new(item, **context)
+  item   ||= dec&.object or return
+
+  offset ||= 0
+  level  ||= 2
+  row    ||= 0
+  skip   ||= nil
+
+  skip     = [*skip, :thumbnail, :number]
+  panel_id = panel_css = toggle = nil
   if item.is_a?(Entry)
     heading   = "Selected item #{item.id} record details:" # TODO: I18n
     panel_css = 'selected-details'
     panel_id  = css_randomize(panel_css)
     toggle    = toggle_button(id: panel_id)
     panel_css = "#{panel_css} row-#{row}"
-  elsif !force
+  elsif !dec.options[:force]
     name      = html_span(item, class: 'item')
     heading   = "Item #{name} is not in the database".html_safe # TODO: I18n
   elsif item.include?('-')
@@ -36,7 +44,8 @@
 
   <%- if toggle -%>
     <div id="<%= panel_id -%>" class="<%= panel_css -%>">
-      <%= render 'entry/list_item', item: item, skip: :number %>
+      <%- row += 1 -%>
+      <%= dec.list_row(row: row, offset: offset, level: level, skip: skip) %>
     </div>
   <%- end -%>
 

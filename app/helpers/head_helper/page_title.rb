@@ -17,31 +17,34 @@ module HeadHelper::PageTitle
   # :section:
   # ===========================================================================
 
-  private
+  protected
+
+  # @private
+  META_TITLE_CONFIG = HEAD_CONFIG[:title] || {}
 
   # Text at the start of all page titles.
   #
   # @type [String]
   #
-  PAGE_TITLE_PREFIX = HEAD_CONFIG.dig(:title, :prefix)
+  META_TITLE_PREFIX = META_TITLE_CONFIG[:prefix] || ''
 
   # String prepended to all page titles.
   #
   # @type [String]
   #
-  PAGE_TITLE_HEADER = PAGE_TITLE_PREFIX
+  META_TITLE_LEADER = META_TITLE_PREFIX
 
   # Text at the end of all page titles.
   #
   # @type [String]
   #
-  PAGE_TITLE_SUFFIX = HEAD_CONFIG.dig(:title, :suffix)
+  META_TITLE_SUFFIX = META_TITLE_CONFIG[:suffix] || ''
 
   # String appended to all page titles.
   #
   # @type [String]
   #
-  PAGE_TITLE_TRAILER = " | #{PAGE_TITLE_SUFFIX}"
+  META_TITLE_TRAILER = " | #{META_TITLE_SUFFIX}"
 
   # ===========================================================================
   # :section:
@@ -58,14 +61,14 @@ module HeadHelper::PageTitle
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Array<String>]               If block given.
   #
-  # @yield To supply value(s) to #set_page_title.
+  # @yield To supply value(s) to #set_page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def page_title
+  def page_meta_title
     if block_given?
-      set_page_title(*yield)
+      set_page_meta_title(*yield)
     else
-      emit_page_title
+      emit_page_meta_title
     end
   end
 
@@ -73,32 +76,32 @@ module HeadHelper::PageTitle
   #
   # @param [Array] values
   #
-  # @return [Array<String>]           The updated @page_title contents.
+  # @return [Array<String>]           The new @page_meta_title contents.
   #
-  # @yield To supply additional values to @page_title.
+  # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def set_page_title(*values)
-    @page_title = []
-    @page_title += values
-    @page_title += Array.wrap(yield) if block_given?
-    @page_title
+  def set_page_meta_title(*values)
+    @page_meta_title = []
+    @page_meta_title += values
+    @page_meta_title += Array.wrap(yield) if block_given?
+    @page_meta_title
   end
 
   # Add to the page title.
   #
   # @param [Array] values
   #
-  # @return [Array<String>]           The updated @page_title contents.
+  # @return [Array<String>]           The updated @page_meta_title contents.
   #
-  # @yield To supply additional values to @page_title.
+  # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def append_page_title(*values)
-    @page_title ||= []
-    @page_title += values
-    @page_title += Array.wrap(yield) if block_given?
-    @page_title
+  def append_page_meta_title(*values)
+    @page_meta_title ||= []
+    @page_meta_title += values
+    @page_meta_title += Array.wrap(yield) if block_given?
+    @page_meta_title
   end
 
   # Emit the '<title>' element (within '<head>').
@@ -112,12 +115,12 @@ module HeadHelper::PageTitle
   # is not included in Turbolinks' determination of whether the contents of
   # '<head>' have changed.
   #
-  def emit_page_title(**opt)
-    @page_title ||= []
-    @page_title.flatten!
-    text = @page_title.join(' ').squish
-    text.prepend(PAGE_TITLE_HEADER) unless text.start_with?(PAGE_TITLE_PREFIX)
-    text << PAGE_TITLE_TRAILER      unless text.end_with?(PAGE_TITLE_SUFFIX)
+  def emit_page_meta_title(**opt)
+    @page_meta_title ||= []
+    @page_meta_title.flatten!
+    text = @page_meta_title.join(' ').squish
+    text.prepend(META_TITLE_LEADER) unless text.start_with?(META_TITLE_PREFIX)
+    text << META_TITLE_TRAILER      unless text.end_with?(META_TITLE_SUFFIX)
     html_tag(:title, opt.reverse_merge('data-turbolinks-eval': false)) do
       sanitized_string(text)
     end

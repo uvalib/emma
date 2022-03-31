@@ -2,8 +2,6 @@
 //
 // Rudimentary support for print rendering of search results.
 
-@use 'sass:math';
-
 @use 'shared/mixins' as *;
 
 @media print {
@@ -48,7 +46,7 @@
 
         grid-template-columns: 1fr;
         margin:     0;
-        margin-top: math.div($section-gap, 2);
+        margin-top: $section-gap * 0.5;
         padding:    0;
         column-gap: $column-gap;
         row-gap:    1rem;
@@ -85,7 +83,7 @@
 
             .value.array {
 
-                column-gap: math.div($column-gap, 2);
+                column-gap: $column-gap * 0.5;
 
                 > * {
                     margin:       -0.25rem;

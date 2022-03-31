@@ -7,18 +7,22 @@ __loading_begin(__FILE__)
 
 # Handle "/upload" requests.
 #
-# @see UploadHelper
+# @see UploadDecorator
+# @see UploadsDecorator
 # @see file:app/views/upload/**
 #
 class UploadController < ApplicationController
 
   include UserConcern
   include ParamsConcern
+  include OptionsConcern
   include SessionConcern
   include RunStateConcern
   include PaginationConcern
   include SerializationConcern
+  include ApiConcern
   include AwsConcern
+  include BookshareConcern
   include IngestConcern
   include IaDownloadConcern
   include UploadConcern
@@ -107,15 +111,16 @@ class UploadController < ApplicationController
   # then the results will be limited to the matching upload(s).
   # NOTE: Currently this is not limited only to the current user's uploads.
   #
+  # @see #upload_index_path           Route helper
   # @see UploadConcern#find_or_match_records
   #
   def index
     __debug_route
-    opt    = url_parameters.except!(*UPLOAD_FORM_PARAMS)
+    @page  = pagination_setup
+    opt    = @page.initial_parameters
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_records(groups: all, **opt)
-    # noinspection RubyMismatchedArgumentType
-    pagination_finalize(result, **opt)
+    @page.finalize(result, **opt)
     @list  = result[:list]
     result = find_or_match_records(groups: :only, **opt) if opt.delete(:group)
     @group_counts = result[:groups]
@@ -135,6 +140,7 @@ class UploadController < ApplicationController
   #
   # Display a single upload.
   #
+  # @see #show_upload_path            Route helper
   # @see UploadConcern#get_record
   #
   def show
@@ -176,9 +182,10 @@ class UploadController < ApplicationController
   # visits (due to "Cancel" returning to this same page), @db_id will be
   # included in order to reuse the Upload record that was created at that time.
   #
+  # @see #new_upload_path             Route helper
   # @see UploadController#create
   # @see UploadWorkflow::Single::Create::States#on_creating_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def new
     __debug_route
@@ -195,9 +202,9 @@ class UploadController < ApplicationController
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
   #
+  # @see #create_upload_path          Route helper
   # @see UploadController#new
   # @see UploadWorkflow::Single::Create::States#on_submitting_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js
   #
   def create
     __debug_route
@@ -219,6 +226,8 @@ class UploadController < ApplicationController
   #
   # If :id is "SELECT" then a menu of editable items is presented.
   #
+  # @see #edit_upload_path            Route helper
+  # @see #edit_select_upload_path     Route helper
   # @see UploadController#update
   # @see UploadWorkflow::Single::Edit::States#on_editing_entry
   #
@@ -235,6 +244,7 @@ class UploadController < ApplicationController
   #
   # Finalize modification of an existing EMMA entry.
   #
+  # @see #update_upload_path          Route helper
   # @see UploadController#edit
   # @see UploadWorkflow::Single::Edit::States#on_modifying_entry
   #
@@ -263,8 +273,10 @@ class UploadController < ApplicationController
   # Use :force to attempt to remove an item from the EMMA Unified Search index
   # even if a database record was not found.
   #
-  # @see UploadController#destroy
+  # @see #delete_upload_path          Route helper
+  # @see #delete_select_upload_path   Route helper
   # @see UploadWorkflow::Single::Remove::States#on_removing_entry
+  # @see UploadController#destroy
   #
   def delete
     __debug_route
@@ -283,8 +295,9 @@ class UploadController < ApplicationController
   #
   # Finalize removal of an existing EMMA entry.
   #
-  # @see UploadController#delete
+  # @see #destroy_upload_path         Route helper
   # @see UploadWorkflow::Single::Remove::States#on_removed_entry
+  # @see UploadController#delete
   #
   #--
   # noinspection RubyScope
@@ -316,6 +329,8 @@ class UploadController < ApplicationController
   #
   # Currently a non-functional placeholder.
   #
+  # @see #bulk_upload_index_path      Route helper
+  #
   def bulk_index
     __debug_route
   rescue => error
@@ -328,8 +343,9 @@ class UploadController < ApplicationController
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing an row/element for each entry to submit.
   #
-  # @see UploadController#bulk_create
+  # @see #bulk_new_upload_path        Route helper
   # @see UploadWorkflow::Bulk::Create::States#on_creating_entry
+  # @see UploadController#bulk_create
   #
   def bulk_new
     __debug_route
@@ -344,8 +360,9 @@ class UploadController < ApplicationController
   # Create the specified Upload records, download and store the associated
   # files, and post the new entries to the Federated Ingest API.
   #
-  # @see UploadController#bulk_new
+  # @see #bulk_create_upload_path     Route helper
   # @see UploadWorkflow::Bulk::Create::States#on_submitting_entry
+  # @see UploadController#bulk_new
   #
   def bulk_create
     __debug_route
@@ -365,12 +382,13 @@ class UploadController < ApplicationController
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing an row/element for each entry to change.
   #
-  # @see UploadController#bulk_update
+  # @see #bulk_edit_upload_path       Route helper
   # @see UploadWorkflow::Bulk::Edit::States#on_editing_entry
+  # @see UploadController#bulk_update
   #
   def bulk_edit
     __debug_route
-    wf_bulk(rec: :unset, data: :unset, event: :edit)
+    @list = wf_bulk(rec: :unset, data: :unset, event: :edit)
   rescue => error
     flash_now_failure(error)
     re_raise_if_internal_exception(error)
@@ -383,8 +401,9 @@ class UploadController < ApplicationController
   # associated files (if changed), and post the new/modified entries to the
   # Federated Ingest API.
   #
-  # @see UploadController#bulk_edit
+  # @see #bulk_update_upload_path     Route helper
   # @see UploadWorkflow::Bulk::Edit::States#on_modifying_entry
+  # @see UploadController#bulk_edit
   #
   def bulk_update
     __debug_route
@@ -403,8 +422,9 @@ class UploadController < ApplicationController
   #
   # Specify entries to delete by :id, SID, or RANGE_LIST.
   #
-  # @see UploadController#bulk_destroy
+  # @see #bulk_delete_upload_path     Route helper
   # @see UploadWorkflow::Bulk::Remove::States#on_removing_entry
+  # @see UploadController#bulk_destroy
   #
   def bulk_delete
     __debug_route
@@ -416,8 +436,9 @@ class UploadController < ApplicationController
 
   # == DELETE /upload/bulk[?force=true]
   #
-  # @see UploadController#bulk_delete
+  # @see #bulk_destroy_upload_path    Route helper
   # @see UploadWorkflow::Bulk::Remove::States#on_removed_entry
+  # @see UploadController#bulk_delete
   #
   def bulk_destroy
     __debug_route
@@ -443,7 +464,8 @@ class UploadController < ApplicationController
   #
   # Invoked to re-create a database entry that had been canceled.
   #
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see #renew_upload_path                                 Route helper
+  # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def renew
     __debug_route
@@ -462,7 +484,8 @@ class UploadController < ApplicationController
   #
   # Invoked to re-start editing a database entry.
   #
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see #reedit_upload_path                                Route helper
+  # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def reedit
     __debug_route
@@ -488,9 +511,10 @@ class UploadController < ApplicationController
   # Either way, the identified Upload record is deleted if it was in the
   # :create phase.  If it was in the :edit phase, its fields are reset
   #
+  # @see #cancel_upload_path                                Route helper
   # @see UploadWorkflow::Single::States#on_canceled_entry
   # @see UploadWorkflow::Bulk::States#on_canceled_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *cancelForm()*
+  # @see file:app/assets/javascripts/feature/model-form.js  *cancelForm()*
   #
   def cancel
     __debug_route
@@ -516,6 +540,7 @@ class UploadController < ApplicationController
   # Invoked to determine whether the workflow state of the indicated item can
   # be advanced.
   #
+  # @see #check_upload_path           Route helper
   # @see UploadConcern#wf_single_check
   #
   def check
@@ -542,10 +567,11 @@ class UploadController < ApplicationController
   #
   # Invoked from 'Uppy.XHRUpload'.
   #
+  # @see #uploads_path                Route helper
   # @see UploadWorkflow::Single::Create::States#on_validating_entry
   # @see UploadWorkflow::Single::Edit::States#on_replacing_entry
   # @see UploadWorkflow::External#upload_file
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def endpoint
     __debug_route
@@ -573,6 +599,7 @@ class UploadController < ApplicationController
   #
   # Download the file associated with an EMMA submission.
   #
+  # @see #file_download_path          Route helper
   # @see UploadConcern#get_record
   # @see Upload#download_url
   #
@@ -596,6 +623,8 @@ class UploadController < ApplicationController
   #
   # @raise [ExecError] @see IaDownloadConcern#ia_download_response
   #
+  # @see #retrieval_path              Route helper
+  #
   def retrieval
     __debug_route
     if ia_link?(@url)
@@ -618,6 +647,7 @@ class UploadController < ApplicationController
   #
   # Upload submission administration.
   #
+  # @see #admin_upload_path           Route helper
   # @see AwsConcern#get_object_table
   #
   def admin
@@ -641,6 +671,7 @@ class UploadController < ApplicationController
   #
   # Modify :emma_data fields and content.
   #
+  # @see #api_migrate_path            Route helper
   # @see ApiConcern#api_data_migration
   #
   def api_migrate
@@ -660,7 +691,8 @@ class UploadController < ApplicationController
   #
   # Cause completed submission records to be re-indexed.
   #
-  # @see #reindex_record
+  # @see #bulk_reindex_upload_path    Route helper
+  # @see UploadConcern#reindex_record
   #
   def bulk_reindex
     __debug_route

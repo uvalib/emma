@@ -22,6 +22,8 @@ module Emma::Common::HashMethods
   #
   def partition_hash!: (prmHash? hash, *Symbol keys) { () -> untyped } -> symHash
 
+  alias extract_hash! partition_hash!
+
   # Recursively remove blank items from a hash.
   #
   # @param [Hash, nil] item

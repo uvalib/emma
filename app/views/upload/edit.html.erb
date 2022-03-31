@@ -1,15 +1,20 @@
 <%# app/views/upload/edit.html.erb -%>
 <%-
-  # Prompt to modify an existing file entry.
+  # Prompt to modify an existing EMMA entry.
+
+  view_debug(__FILE__)
+
+  item  ||= @item
+  dec     = UploadDecorator.new(item, **context)
 
   title ||= t('emma.upload.edit.title')
-  item  ||= @item
-  repo  ||= item&.repository
+  help  ||= dec.help_topic
+  repo  ||= dec.object.repository
   logo  ||= repository_source_logo(repo)
-  help  ||= help_popup(:upload, :edit)
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -19,17 +24,17 @@
 <%= page_heading(title, help: help, logo: logo) %>
 <%= page_description_section %>
 
-<%- if item.blank? -%>
+<%- if dec.blank? -%>
 
-  <%= upload_items_menu %>
+  <%= dec.items_menu %>
 
 <%- else -%>
 
   <%= page_directions_section %>
-  <%= upload_form(item, action: :edit) %>
-  <%= upload_preview %>
+  <%= dec.preview %>
+  <%= dec.model_form %>
 
 <%- end -%>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

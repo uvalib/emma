@@ -46,13 +46,13 @@ class FileObject
   #
   # @return [String, nil]
   #
-  def filename: () -> String?
+  def filename: () -> (String | nil)
 
   # file_handle
   #
   # @return [FileHandle, nil]
   #
-  def file_handle: () -> FileHandle?
+  def file_handle: () -> (FileHandle | nil)
 
   module ClassMethods
     include Emma::Debug
@@ -72,7 +72,7 @@ class FileObject
     # @return [String]
     # @return [nil]
     #
-    def file_extension: () -> String?
+    def file_extension: () -> (String | nil)
 
     # File extensions defined for the subclass.
     #

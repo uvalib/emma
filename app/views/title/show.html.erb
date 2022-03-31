@@ -2,22 +2,27 @@
 <%-
   # A Catalog Title show page.
 
+  view_debug(__FILE__)
+
   item  ||= @item
   image ||= nil
-  title ||= item&.label || t('emma.title.show.title')
-  help  ||= nil
+  dec     = TitleDecorator.new(item, cover: image, **context)
+  item  ||= dec.object
+
+  title ||= item.label&.presence || dec.page_heading
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: dec.page_heading)
+    set_page_meta_title(label)
     set_page_description(Title: title)
   end
 
-  template_opt = { item: item, image: image }
+  template_opt = { dec: dec }
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

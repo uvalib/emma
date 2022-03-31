@@ -11,7 +11,8 @@ module LayoutHelper::NavBar
 
   include LayoutHelper::Common
 
-  include LinkHelper
+  include ParamsHelper
+  include RouteHelper
 
   # ===========================================================================
   # :section:

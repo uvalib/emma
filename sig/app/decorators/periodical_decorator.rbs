@@ -1,0 +1,93 @@
+# Item presenter for "/periodical" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Bs::Record::PeriodicalSeriesMetadataSummary]
+#
+class PeriodicalDecorator < BookshareDecorator
+  module Paths
+  end
+
+  module Methods
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # editions_data
+  #
+  # @return [Bs::Message::PeriodicalEditionList, nil]
+  #
+  def editions_data: () -> (Bs::Message::PeriodicalEditionList | nil)
+
+  # editions
+  #
+  # @return [Array<Bs::Record::PeriodicalEdition>]
+  #
+  def editions: () -> Array[Bs::Record::PeriodicalEdition]
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Catalog item search links.
+  #
+  # @param [Hash] opt                 Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def search_links: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Create a link to the search results index page for the given term(s).
+  #
+  # @param [String] terms
+  # @param [Hash]   opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def search_link: (String terms, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Create a link to latest periodical edition.
+  #
+  # @param [Hash] opt                 Passed to EditionDecorator#link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def latest_edition_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Any]       value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to the render method or super.
+  #
+  # @return [Any]                     HTML or scalar value.
+  # @return [nil]                     If *value* or *object* is *nil*.
+  #
+  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+
+  # Render a metadata listing of an periodical.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+end

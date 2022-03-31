@@ -24,7 +24,7 @@ module AwsConcern
   # If :emma is included it will be moved to the end of the list.
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
-  # @param [Hash]                       prm       Passed to #param_values.
+  # @param [Hash]                       prm       Passed to #params_values.
   #
   # @return [Array<Symbol>]
   #
@@ -33,7 +33,7 @@ module AwsConcern
   # deployments
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
-  # @param [Hash]                       prm       Passed to #param_values.
+  # @param [Hash]                       prm       Passed to #params_values.
   #
   # @return [Array<Symbol>]
   #
@@ -64,7 +64,7 @@ module AwsConcern
   #
   # @return [String]
   #
-  def repo_bucket: (Symbol|String repository, ?(Symbol|String)? deployment, ?service: AwsS3Service?, **untyped ignored) -> String
+  def repo_bucket: (Symbol|String repository, ?(Symbol|String|nil) deployment, ?service: AwsS3Service?, **untyped ignored) -> String
 
   # get_repo_bucket
   #

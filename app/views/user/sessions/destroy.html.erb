@@ -1,5 +1,6 @@
 <%# app/views/user/sessions/destroy.html.erb -%>
 <%-
   # Fall-back page for a failed sign-out.
+  view_debug(__FILE__)
 -%>
 <%= render 'user/fallback', action: :destroy %>

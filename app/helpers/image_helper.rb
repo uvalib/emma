@@ -82,9 +82,9 @@ module ImageHelper
         image_tag(url, alt: alt)
       end
     row = positive(row)
-    append_classes!(opt, "row-#{row}") if row
+    append_css!(opt, "row-#{row}") if row
     if link.present?
-      opt, link_opt = partition_hash(opt, :class, :style)
+      link_opt = remainder_hash!(opt, :class, :style)
       opt[:'aria-hidden'] ||= true
       link_opt[:tabindex] ||= -1
       # noinspection RubyMismatchedArgumentType
@@ -104,13 +104,14 @@ module ImageHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def image_placeholder(url, image: nil, **opt)
-    css_selector = PLACEHOLDER_IMAGE_CLASS
-    image      ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
-    data         = opt.slice(:alt).merge!(path: url, 'turbolinks-track': false)
-    opt[:data]   = opt[:data]&.merge(data) || data
-    opt[:alt]    = PLACEHOLDER_IMAGE_ALT
+    css        = PLACEHOLDER_IMAGE_CLASS
+    image    ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
+    data       = opt.slice(:alt).merge!(path: url, 'turbolinks-track': false)
+    opt[:data] = opt[:data]&.merge(data) || data
+    opt[:alt]  = PLACEHOLDER_IMAGE_ALT
+    prepend_css!(opt, css)
     # noinspection RubyMismatchedReturnType
-    image_tag(image, prepend_classes!(opt, css_selector))
+    image_tag(image, opt)
   end
 
   # ===========================================================================

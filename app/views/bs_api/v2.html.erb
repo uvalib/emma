@@ -2,23 +2,27 @@
 <%-
   # Display of results from an individual API call.
 
+  view_debug(__FILE__)
+
   title ||= t('emma.bs_api.v2.title')
-  help  ||= nil
+  help  ||= nil # %i[bs_api v2]
 
   unless modal?
-    set_page_title(title, @api_result[:url].inspect)
+    set_page_meta_title(title, @api_result[:url].inspect)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
+  result, info = partition_hash(@api_result, :exception, :result)
+
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_heading(title, help: help) %>
 
 <div class="session-debug">
   <table>
     <tbody>
-      <%- @api_result.except(:exception, :result).each_pair do |k, v| -%>
+      <%- info.each_pair do |k, v| -%>
         <tr>
           <th class="key"><%= k -%></th>
           <td class="value"><%= v.is_a?(String) ? v : v.inspect -%></td>
@@ -30,6 +34,6 @@
 
 <div class="trials">
   <div class="value">
-    <%= format_api_result(@api_result[:exception] || @api_result[:result]) %>
+    <%= format_api_result(result.values.first) %>
   </div>
 </div>

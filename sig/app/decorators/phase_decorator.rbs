@@ -1,0 +1,19 @@
+# Item presenter for "/phase" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Phase]
+#
+class PhaseDecorator < BaseDecorator
+  module Paths
+  end
+
+  module Methods
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+end

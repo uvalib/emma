@@ -9,10 +9,10 @@ __loading_begin(__FILE__)
 #
 module SessionDebugHelper
 
-  include ParamsHelper
-  include HtmlHelper
-  include RoleHelper
   include DevHelper
+  include GridHelper
+  include ParamsHelper
+  include RoleHelper
 
   # ===========================================================================
   # :section:
@@ -59,13 +59,13 @@ module SessionDebugHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def session_debug(**opt)
-    css_selector = '.session-debug-table'
+    css   = '.session-debug-table'
     table = { SESSION: 'DEBUG' }
     pairs =
       session.to_hash.except!(*SESSION_SKIP_KEYS).transform_values! do |v|
         if compressed_value?(v)
           v = decompress_value(v)
-          h(v.inspect) << html_span('[compressed]', class: 'note')
+          ERB::Util.h(v.inspect) << html_span('[compressed]', class: 'note')
         else
           v = v.to_hash if v.respond_to?(:to_hash)
           v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
@@ -73,7 +73,7 @@ module SessionDebugHelper
       end
     # noinspection RubyMismatchedArgumentType
     table.merge!(pairs)
-    prepend_classes!(opt, css_selector)
+    prepend_css!(opt, css)
     grid_table(table, **opt)
   end
 

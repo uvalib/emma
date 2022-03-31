@@ -4,54 +4,38 @@
   #
   # NOTE: This template replaces 'devise/registrations/edit'.
 
+  view_debug(__FILE__)
+
   user  ||= @item || current_user
-  title ||= t('emma.user.registrations.edit.title', default: nil)
-  title ||= t('emma.user.registrations.edit.label', default: 'Edit')
-  help  ||= nil # help_popup(:account, :edit) # TODO: ???
+  dec     = UserDecorator.new(user, **context(:edit))
+
+  title ||= dec.page_heading(default: nil) || dec.page_meta_title
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
   # noinspection RailsParamDefResolve
   awaiting   = (user.try(:unconfirmed_email) if devise_mapping.confirmable?)
+  # noinspection RailsI18nInspection
   awaiting &&= t('emma.user.registrations.edit.awaiting', email: awaiting)
   awaiting &&= html_div(awaiting)
 
-  form_opt = {
-    as:   resource_name,
-    url:  registration_path(resource_name),
-    html: { class: 'sign-in-form field-pairs', method: :put }
-  }
-
-  link_opt     = { class: 'sign-in-link' }
-
-  edit_other   = false && current_user&.administrator?
-  edit_other &&= user_edit_select_path
-  edit_other &&= link_to('Edit a different user', edit_other, link_opt)
-
-  back_link    = false && !modal?
-  back_link  &&= t('emma.action_links.back.label')
-  back_link  &&= link_to(back_link, :back, link_opt)
-
-  links = [edit_other, back_link].compact_blank.presence
-  links &&= html_div(links, class: 'sign-in-links')
-
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_heading(title, help: help) %>
 
 <%= page_description_section %>
 <%= render 'devise/shared/error_messages', resource: user %>
 <%= awaiting -%>
 
 <%= page_directions_section %>
-<div class="account-form-container edit">
-  <%= render 'account/form_edit', user: user, form_opt: form_opt %>
-</div>
+<%= dec.model_form %>
 <%= render 'user/registrations/resignation' %>
 
 <%= page_notes_section %>
-<%= links -%>
+<%= dec.action_list unless modal? %>

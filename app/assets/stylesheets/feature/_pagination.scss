@@ -7,7 +7,7 @@
 // Pagination controls.
 //=============================================================================
 
-// @see PaginationHelper#pagination_controls
+// @see BaseCollectionDecorator::List#pagination_controls
 .pagination-controls {
 
     @include control-group;
@@ -87,7 +87,7 @@
     }
 }
 
-// @see ModelHelper::List#index_controls
+// @see BaseCollectionDecorator::List#index_controls
 .pagination-top {
 
     display:        flex;
@@ -121,7 +121,7 @@
         }
 
         @media #{$medium-width} {
-            flex-basis: 50%; // Push .upload-page-filter-panel to next row.
+            flex-basis: 50%; // Push .list-filter-panel to next row.
         }
 
         @media #{$narrow-screen} {

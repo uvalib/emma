@@ -60,7 +60,7 @@ module ApplicationHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def page_description: (?controller: (Symbol|String)?, ?action: (Symbol|String)?, **untyped opt) -> ActiveSupport::SafeBuffer?
+  def page_description: (?controller: (Symbol|String)?, ?action: (Symbol|String)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Get the configured page description.
   #

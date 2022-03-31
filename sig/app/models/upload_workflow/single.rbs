@@ -53,7 +53,7 @@ module UploadWorkflow::Single::Data
   # -
   # noinspection RubyMismatchedArgumentType
   # +
-  def set_data: (symHash|String|Upload|nil data) -> Upload?
+  def set_data: (symHash|String|Upload|nil data) -> (Upload | nil)
 
   alias set_record set_data
 
@@ -78,7 +78,7 @@ module UploadWorkflow::Single::Data
   #
   # @return [Upload, nil]
   #
-  def reset_record: (?(symHash|Upload|String)? data) -> Upload?
+  def reset_record: (?(symHash|Upload|String)? data) -> (Upload | nil)
 
   # Create a new Upload record.
   #
@@ -86,14 +86,14 @@ module UploadWorkflow::Single::Data
   #
   # @return [Upload, nil]
   #
-  def create_record: (?(symHash|Upload|String)? data) -> Upload?
+  def create_record: (?(symHash|Upload|String)? data) -> (Upload | nil)
 
   # Indicate whether a record was originally created by (or on behalf of) the
   # workflow (as opposed to an existing record acquired from the database).
   #
   # @return [Boolean, nil]
   #
-  def existing_record: () -> bool?
+  def existing_record: () -> (bool | nil)
 
   # Indicate whether the record is associated with an uploaded file.
   #
@@ -563,7 +563,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#get_phase
   #
-  def get_workflow_phase: (?Upload? rec) -> Symbol?
+  def get_workflow_phase: (?Upload? rec) -> (Symbol | nil)
 
   # Set the current real-time value of the record's workflow phase.
   #
@@ -574,7 +574,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_phase
   #
-  def set_workflow_phase: (?(Symbol|String)? new_value, ?Upload? rec) -> Symbol?
+  def set_workflow_phase: (?(Symbol|String)? new_value, ?Upload? rec) -> (Symbol | nil)
 
   # Get the current real-time value of the appropriate workflow state field.
   #
@@ -585,7 +585,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#get_state
   #
-  def get_workflow_state: (?Upload? rec) -> String?
+  def get_workflow_state: (?Upload? rec) -> (String | nil)
 
   # Set the current real-time value of the appropriate workflow state field.
   #
@@ -597,7 +597,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_state
   #
-  def set_workflow_state: (Symbol|String|nil new_value, ?Upload? rec) -> String?
+  def set_workflow_state: (Symbol|String|nil new_value, ?Upload? rec) -> (String | nil)
 
   # Generate a new instance of the appropriate workflow variant subclass.
   #

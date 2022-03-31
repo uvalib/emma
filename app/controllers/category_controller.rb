@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle Bookshare-only "/category" pages.
 #
-# @see CategoryHelper
+# @see CategoryDecorator
+# @see CategoriesDecorator
 # @see file:app/views/category/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -60,13 +61,15 @@ class CategoryController < ApplicationController
   #
   # List all categories.
   #
+  # @see #category_index_path         Route helper
   # @see BookshareService::Request::Titles#get_categories
   #
   def index
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @list = bs_api.get_categories(**opt)
-    pagination_finalize(@list, :categories, **opt)
+    @page.finalize(@list, :categories, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html

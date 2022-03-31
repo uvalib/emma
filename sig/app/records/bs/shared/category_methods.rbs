@@ -18,5 +18,5 @@ module Bs::Shared::CategoryMethods
   # @return [String]
   # @return [nil]                     If not translatable.
   #
-  def bookshare_category: () -> String?
+  def bookshare_category: () -> (String | nil)
 end

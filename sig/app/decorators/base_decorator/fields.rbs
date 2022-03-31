@@ -1,7 +1,7 @@
 # View helper methods supporting manipulation of Model instance fields.
 #
-module ModelHelper::Fields
-  include ModelHelper::Links
+module BaseDecorator::Fields
+  include BaseDecorator::Links
 
   include Emma::Json
 
@@ -15,38 +15,41 @@ module ModelHelper::Fields
 
   # Field/value pairs.
   #
-  # If *pairs* is not provided (as a parameter or through a block) then
-  # `item#field_names` is used.  If no block is provided and *pairs* is present
-  # then this function simply returns *pairs* as-is.
-  #
-  # @param [Model, Hash, Any] item
-  # @param [Hash, nil]        pairs
+  # @param [Model, Hash, nil] item    Default: `#object`.
   #
   # @return [Hash]
   #
-  # @yield [item] To supply additional field/value pairs based on *item*.
-  # @yieldparam  [Model] item         The supplied *item* parameter.
-  # @yieldreturn [Hash]               Result will be merged into *pairs*.
-  #
   # -
-  # noinspection RubyMismatchedReturnType
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
   # +
-  def field_values: (Model|anyHash|untyped item, ?anyHash? pairs) { (Model) -> anyHash } -> anyHash
+  def field_values: (?(Model|anyHash|nil) item) -> anyHash
 
   # field_pairs
   #
-  # @param [Model, Hash, nil]    item
-  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
-  # @param [String, Symbol, nil] action       Default: `params[:action]`.
-  # @param [Hash, nil]           pairs        Except for #render_pair options.
-  # @param [Proc]                block        Passed to #field_values.
+  # @param [Model, Hash, nil]    item     Passed to #field_values.
+  # @param [String, Symbol, nil] action
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  # == Usage Notes
+  # If *field_root* is given it is used to transform the field into a path
+  # into the configuration.  The only current use is to allow specification of
+  # :file_data so that configuration lookup is limited to the hierarchy within
+  # the configuration for :file_data.  (This allows [:file_data][:id] to be
+  # associated with the proper field configuration.)
+  #
   # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedParameterType
   # +
-  def field_pairs: ((Model|anyHash)? item, ?model: (String|Symbol)?, ?action: (String|Symbol)?, ?pairs: anyHash?) { (Model) -> anyHash } -> symHash
+  def field_pairs: (?(Model|anyHash|nil) item, ?action: String|Symbol|nil) -> Hash[Symbol,symHash]
+
+  # This is a "hook" to allow customization by SearchDecorator.
+  #
+  # @param [Hash, nil] config
+  #
+  # @return [Hash]
+  #
+  def field_properties: (symHash|nil config) -> symHash
 
   # The defined levels for rendering an item hierarchically.
   #
@@ -54,9 +57,7 @@ module ModelHelper::Fields
   #
   # @return [Hash{Symbol=>Array<Symbol,Integer>}]
   #
-  # @see SearchHelper#search_field_levels
-  #
-  def field_levels: (**untyped opt) -> Hash[Symbol,Array[Symbol|Integer]]
+  def field_levels: (**untyped opt) -> Hash[Symbol, Array[Symbol|Integer]]
 
   # Return with the CSS classes associated with the items field scope(s).
   #
@@ -78,7 +79,7 @@ module ModelHelper::Fields
   #   @param [Array<Symbol>]       array
   #   @return [Array<String>]
   #
-  def field_scopes: (untyped value) -> strArray
+  def field_scopes: (symArray|Symbol|String|nil value) -> symArray
 
   # EMMA data field prefixes with trailing underscore for #model_html_id.
   #
@@ -98,7 +99,7 @@ module ModelHelper::Fields
   #
   # @return [String]
   #
-  def model_html_id: ((Symbol|String)? base) -> String
+  def model_html_id: (Symbol|String|nil base) -> String
 
   # Match a major section title in a table-of-contents listing.
   #
@@ -183,8 +184,8 @@ module ModelHelper::Fields
   #   @param [Boolean]       code
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
-  def mark_invalid_languages: (strArray value, ?code: bool) -> Array[ActiveSupport::SafeBuffer|String]
-                            | (String value,   ?code: bool) -> (ActiveSupport::SafeBuffer | String)
+  def mark_invalid_languages: (String   value, ?code: bool) -> (ActiveSupport::SafeBuffer | String | nil)
+                            | (strArray value, ?code: bool) -> Array[ActiveSupport::SafeBuffer|String]
 
   # Wrap invalid identifier values in a *span*.
   #
@@ -204,10 +205,6 @@ module ModelHelper::Fields
   #   @param [Array<String>] array
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
-  def mark_invalid_identifiers: (strArray value) -> Array[ActiveSupport::SafeBuffer|String]
-                              | (String value)   -> (ActiveSupport::SafeBuffer | String)
-
-  private
-
-  def self.included: (Module base) -> void
+  def mark_invalid_identifiers: (String   value) -> (ActiveSupport::SafeBuffer | String | nil)
+                              | (strArray value) -> Array[ActiveSupport::SafeBuffer|String]
 end

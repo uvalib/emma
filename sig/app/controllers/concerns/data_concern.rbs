@@ -35,7 +35,7 @@ module DataConcern
   # -
   # noinspection RubyNilAnalysis
   # +
-  def array_param: (String|anyArray|nil value) -> strArray?
+  def array_param: (String|anyArray|nil value) -> (strArray | nil)
 
   # Tables to be displayed after all others.
   #

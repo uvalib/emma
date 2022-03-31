@@ -103,7 +103,7 @@ class SearchCall < ApplicationRecord
   # @return [String]
   # @return [nil]
   #
-  def get_user_id: (User|String|Numeric src) -> String?
+  def get_user_id: (User|String|Numeric src) -> (String | nil)
 
   # Generate a :record attribute value from the given item.
   #

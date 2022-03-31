@@ -69,7 +69,7 @@ class Api::Serializer < ::Representable::Decorator
   # -
   # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
   # +
-  def deserialize: (String|symHash data, ?method: (Symbol|Proc)?) -> Api::Record?
+  def deserialize: (String|symHash data, ?method: (Symbol|Proc)?) -> (Api::Record | nil)
 
   # Set source data string.
   #
@@ -85,5 +85,5 @@ class Api::Serializer < ::Representable::Decorator
   # This method will not be invoked (and @source_data will be *nil*) for an
   # instance where #error? is *true*.
   #
-  def set_source_data: (String|symHash data) -> String?
+  def set_source_data: (String|symHash data) -> (String | nil)
 end

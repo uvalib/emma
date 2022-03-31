@@ -1,0 +1,62 @@
+# View helper methods supporting tabular display of Model instances (both
+# database items and API messages).
+#
+module BaseDecorator::Table
+  include BaseDecorator::List
+
+  # Render the object for use within a table of items.
+  #
+  # @param [Integer]                                   row
+  # @param [Integer]                                   col
+  # @param [Symbol, Integer, nil]                      outer_tag
+  # @param [Symbol, Integer, nil]                      inner_tag
+  # @param [String, Symbol, Array<String,Symbol>, nil] columns
+  # @param [String, Regexp, Array<String,Regexp>, nil] filter
+  # @param [Hash]                                      opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
+  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
+  #
+  # @yield [item, **opt] Allows the caller to generate the item columns.
+  # @yieldparam  [Model] item         Single item instance.
+  # @yieldparam  [Hash]  opt          Field generation options.
+  # @yieldreturn [Hash{Symbol=>Any}]  Same as #model_field_values return type.
+  #
+  def table_entry: (?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
+                 | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> Array[ActiveSupport::SafeBuffer]
+                 | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> Array[String]
+
+  # table_columns
+  #
+  # @param [Hash] opt                 Passed to #model_field_values
+  #
+  # @return [Hash]
+  #
+  def table_columns: (**untyped opt) -> anyHash
+
+  # Specified field selections from the given model instance.
+  #
+  # @param [Model, Hash, nil]                                         item
+  # @param [String, Symbol, Array<String,Symbol>, nil]                columns
+  # @param [String, Symbol, Array<String,Symbol>, nil]                default
+  # @param [String, Symbol, Regexp, Array<String,Symbol,Regexp>, nil] filter
+  #
+  # @return [Hash{Symbol,String=>Any}]
+  #
+  def model_field_values: (?(Model|symHash)? item, ?columns: (String|Symbol|Array[String|Symbol])?, ?default: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Symbol|Regexp|Array[String|Symbol|Regexp])?) -> symHash
+
+  # Setup row/column HTML options.
+  #
+  # @param [Symbol, String] field
+  # @param [Integer, nil]   row
+  # @param [Integer, nil]   col
+  # @param [Hash, nil]      opt
+  #
+  # @return [Hash]
+  #
+  # -
+  # noinspection RubyMismatchedParameterType
+  # +
+  def model_rc_options: (Symbol|String field, ?Integer? row, ?Integer? col, ?symHash? opt) -> symHash
+end

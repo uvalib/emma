@@ -78,7 +78,7 @@ module Import::IaBulk
   #
   # @return [String, nil]
   #
-  def rem_source_value: (untyped v) -> String?
+  def rem_source_value: (untyped v) -> (String | nil)
 
   # Transform a "mediatype" into a :dc_format.
   #
@@ -86,7 +86,7 @@ module Import::IaBulk
   #
   # @return [String, nil]
   #
-  def media_type_values: (untyped v) -> String?
+  def media_type_values: (untyped v) -> (String | nil)
 
   # Transform a "portion" value into a :rem_complete value.
   #
@@ -94,7 +94,7 @@ module Import::IaBulk
   #
   # @return [Boolean, nil]
   #
-  def rem_complete_value: (untyped v) -> bool?
+  def rem_complete_value: (untyped v) -> (bool | nil)
 
   # Transform a "remediated_aspects" value into a :rem_remediatedAspects value.
   #
@@ -110,7 +110,7 @@ module Import::IaBulk
   #
   # @return [String, nil]
   #
-  def rem_status_value: (untyped v) -> String?
+  def rem_status_value: (untyped v) -> (String | nil)
 
   # Transform a "series_type" value into a :bib_seriesType value.
   #
@@ -118,7 +118,7 @@ module Import::IaBulk
   #
   # @return [String, nil]
   #
-  def series_type_value: (untyped v) -> String?
+  def series_type_value: (untyped v) -> (String | nil)
 
   # Transform a "text_quality" value into a :rem_textQuality value.
   #
@@ -126,7 +126,7 @@ module Import::IaBulk
   #
   # @return [String, nil]
   #
-  def text_quality_value: (untyped v) -> String?
+  def text_quality_value: (untyped v) -> (String | nil)
 
   # Normalize single-element arrays to scalar values and sort the fields for
   # easier comparison when reviewing/debugging.

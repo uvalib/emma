@@ -95,7 +95,7 @@ class Entry < ApplicationRecord
   #
   # @return [Phase, nil]
   #
-  def current_phase: () -> Phase?
+  def current_phase: () -> (Phase | nil)
 
   # Get Phase records associated with this record for the phase given either
   # as *phase_type* or `opt[:type]`.
@@ -147,7 +147,7 @@ class Entry < ApplicationRecord
   #
   # @return [User, nil]
   #
-  def submitter: () -> User?
+  def submitter: () -> (User | nil)
 
   # The user(s) who modified the entry.
   #
@@ -159,7 +159,7 @@ class Entry < ApplicationRecord
   #
   # @return [User, nil]
   #
-  def remover: () -> User?
+  def remover: () -> (User | nil)
 
   # The user(s) who reviewed the entry.
   #

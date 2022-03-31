@@ -23,7 +23,7 @@ import { arrayWrap, fromJSON }          from '../shared/objects'
  */
 
 /**
- * RecordProperties
+ * DbRecordProperties
  *
  * @note The optional "default" entry is only used by the database client.
  *
@@ -31,7 +31,7 @@ import { arrayWrap, fromJSON }          from '../shared/objects'
  *     default: ?*,
  *     index:   ?(boolean|IDBIndexParameters),
  *     func:    ?function:IDBValidKey,
- * }} RecordProperties
+ * }} DbRecordProperties
  */
 
 /**
@@ -39,7 +39,7 @@ import { arrayWrap, fromJSON }          from '../shared/objects'
  *
  * @typedef {{
  *     options: IDBObjectStoreParameters,
- *     record:  Object<RecordProperties>,
+ *     record:  Object<DbRecordProperties>,
  * }} StoreTemplate
  */
 

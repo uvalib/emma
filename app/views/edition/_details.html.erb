@@ -2,14 +2,14 @@
 <%-
   # A periodical Edition metadata listing.
 
-  item  ||= nil or return
+  view_debug(__FILE__)
+
+  item  ||= nil
+  dec   ||= item && EditionDecorator.new(item, **context) or return
+
   add   ||= nil
   level ||= 1
 
-  role = ('role="article"'.html_safe if level == 1)
-
 -%>
 
-<div <%= role -%> class="edition-container">
-  <%= edition_details(item, pairs: add) %>
-</div>
+<%= dec.details_element(pairs: add, level: level) %>

@@ -56,13 +56,13 @@ class Phase::BulkOperation < Phase
   #
   # @return [Symbol, nil]
   #
-  def base_type_value: () -> Symbol?
+  def base_type_value: () -> (Symbol | nil)
 
   # The #type_value of BulkPart elements associated with this BulkOperation.
   #
   # @return [Symbol, nil]
   #
-  def self.base_type_value: () -> Symbol?
+  def self.base_type_value: () -> (Symbol | nil)
 
   # Source of the file to be uploaded.
   #
@@ -87,7 +87,7 @@ class Phase::BulkOperation < Phase
   #
   # @see Record::Controllable#COMMAND_TABLE[:run]
   #
-  def run!: (**untyped opt) -> bool?
+  def run!: (**untyped opt) -> (bool | nil)
 
   # Pause running action(s).
   #
@@ -98,7 +98,7 @@ class Phase::BulkOperation < Phase
   #
   # @see Record::Controllable#COMMAND_TABLE[:pause]
   #
-  def pause!: (**untyped opt) -> bool?
+  def pause!: (**untyped opt) -> (bool | nil)
 
   # Resume paused action(s).
   #
@@ -109,7 +109,7 @@ class Phase::BulkOperation < Phase
   #
   # @see Record::Controllable#COMMAND_TABLE[:resume]
   #
-  def resume!: (**untyped opt) -> bool?
+  def resume!: (**untyped opt) -> (bool | nil)
 
   # Retry failed action(s).
   #
@@ -120,7 +120,7 @@ class Phase::BulkOperation < Phase
   #
   # @see Record::Controllable#COMMAND_TABLE[:restart]
   #
-  def restart!: (**untyped opt) -> bool?
+  def restart!: (**untyped opt) -> (bool | nil)
 
   # Transition to a previous state unconditionally.
   #

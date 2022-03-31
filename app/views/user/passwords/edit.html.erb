@@ -4,12 +4,15 @@
   #
   # NOTE: This template replaces 'devise/passwords/edit'.
 
+  view_debug(__FILE__)
+
   user  ||= resource
+
   title ||= t('emma.user.passwords.edit.label')
   help  ||= nil
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -43,7 +46,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_heading(title, help: help) %>
 
 <%= page_description_section %>
 <%= render 'devise/shared/error_messages', resource: user %>

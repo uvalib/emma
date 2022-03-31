@@ -27,6 +27,9 @@ en:
       index:
         label:            'Tools'
         title:            'Standalone Utilities'
+        _endpoint:      true
+
+      # =======================================================================
 
       md:
         label:            'Math Detective'
@@ -41,3 +44,6 @@ en:
           EMMA submission process.
           Technical questions about the nature of Math Detective can be posed
           on the FRAME/EMMA Slack or forwarded to Benetech directly.
+        _endpoint:      true
+
+      # =======================================================================

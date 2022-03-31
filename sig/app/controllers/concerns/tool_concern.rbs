@@ -1,0 +1,11 @@
+# Support methods for the "/tool" controller.
+#
+module ToolConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Json
+
+  private
+
+  THIS_MODULE: untyped
+end

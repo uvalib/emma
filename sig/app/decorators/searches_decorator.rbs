@@ -1,0 +1,32 @@
+# Collection presenter for "/search" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Array<Search::Record::MetadataRecord>,Array<Search::Record::TitleRecord>]
+#
+class SearchesDecorator < BaseCollectionDecorator
+  # Controls for applying one or more search style variants.
+  #
+  # @param [Hash] opt                 Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  # @see #STYLE_BUTTONS
+  # @see file:app/assets/javascripts/controllers/search.js *setupColorizeButtons()*
+  #
+  def list_styles: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Control for selecting the type of search results to display.
+  #
+  # @param [String,Symbol,nil] selected  Selected menu item.
+  # @param [Hash]              opt       Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #RESULT_TYPES
+  #
+  # @see ParamsHelper#url_parameters
+  #
+  def list_results: (?selected: String|Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+end

@@ -21,6 +21,7 @@ en:
         label:          'Database'
         title:          'EMMA Database Records'
         tooltip:        'View all database records for this deployment.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -28,6 +29,7 @@ en:
         label:          'Record'
         title:          '%{table} Records'
         tooltip:        'View records for this database table.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -47,6 +49,7 @@ en:
             <a href="/data/submissions.json">JSON</a> or
             <a href="/data/submissions.xml">XML</a>.
           </p>
+        _endpoint:      true
 
       # =======================================================================
 
@@ -78,3 +81,6 @@ en:
             field, use the field name as a URL fragment, e.g.:
             <a href="/data/counts#dc_title">/data/counts#dc_title</a>.
           </p>
+        _endpoint:      true
+
+      # =======================================================================

@@ -1,24 +1,7 @@
 // app/assets/stylesheets/layouts/controls/_lists.scss
+//
+// Common list-related elements.
 
-@use 'shared/controls/lists' as list;
+// @use 'shared/controls/lists' as list;
 
-//=============================================================================
-// Tabular lists.
-//=============================================================================
-
-// A two-column list where each row is a label followed by a value.
-.list-2-column {
-
-    @include list.tabular(2);
-
-    grid-template-columns: [label] auto [value] 1fr;
-}
-
-// A three-column list where each row is a number, a label, and a value.
-.list-3-column {
-
-    @include list.tabular(3);
-
-    grid-template-columns:
-        [number] minmax(1%, max-content) [label] auto [value] 1fr;
-}
+// NOTE: none currently

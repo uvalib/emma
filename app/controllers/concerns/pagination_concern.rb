@@ -11,11 +11,7 @@ module PaginationConcern
 
   extend ActiveSupport::Concern
 
-  include Emma::Common
-
-  include ParamsHelper
-  include SearchTermsHelper
-  include PaginationHelper
+  include ParamsConcern
 
   # ===========================================================================
   # :section:
@@ -23,142 +19,20 @@ module PaginationConcern
 
   public
 
-  # Pagination setup.
+  # Create a Paginator for the current controller action.
   #
-  # @param [ActionController::Parameters, Hash, nil] opt  Default: `params`.
+  # @param [ApplicationController] ctrlr      Default: calling controller.
+  # @param [Class<Paginator>]      paginator  Paginator class.
+  # @param [Hash]                  opt        Additions/overrides to `#params`.
   #
-  # @option opt [Symbol] :controller
+  # @return [Paginator]
   #
-  # @return [Hash{Symbol=>String}]    URL parameters.
-  #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def pagination_setup(opt = nil)
-
-    opt = url_parameters(opt)
-
-    # Remove pagination parameters and return if the current controller does
-    # not support pagination.
-    return opt.except!(:limit, *PAGINATION_KEYS) if page_size.zero?
-
-    # Get pagination values.
-    limit, page, offset =
-      opt.values_at(:limit, :page, :offset).map { |v| v&.to_i }
-    limit  ||= page_size
-    page   ||= (offset / limit) + 1 if offset
-    offset ||= (page - 1) * limit   if page
-
-    # Get first and current page paths; adjust values if currently on the first
-    # page of results.
-    main_page    = request.path
-    path_opt     = { decorate: true, unescape: true }
-    mp_opt       = opt.merge(path_opt)
-    current_page = make_path(main_page, **mp_opt)
-    first_page   = main_page
-    on_first     = (current_page == first_page)
-    unless on_first
-      mp_opt     = opt.except(*PAGINATION_KEYS).merge!(path_opt)
-      first_page = make_path(main_page, **mp_opt)
-      on_first   = (current_page == first_page)
+  def pagination_setup(ctrlr: nil, paginator: Paginator, **opt)
+    unless (ctrlr ||= self).is_a?(ApplicationController)
+      raise "#{__method__}: invalid controller: #{ctrlr.class}"
     end
-    unless on_first
-      mp_opt     = opt.except(:limit, *PAGINATION_KEYS).merge!(path_opt)
-      first_page = make_path(main_page, **mp_opt)
-      on_first   = (current_page == first_page)
-    end
-
-    # The previous page link is just 'history.back()', however this is special-
-    # cased on the second page because of issues observed in Google Chrome.
-    prev_page =
-      if on_first
-        offset = 0
-        first_page = nil
-      elsif page == 2
-        first_page
-      elsif local_request?
-        :back
-      end
-
-    # Set current values for the including controller.
-    self.page_size   = limit
-    self.page_offset = offset
-    self.first_page  = first_page
-    self.prev_page   = prev_page
-
-    # Adjust parameters to be transmitted to the Bookshare API.
-    if offset&.nonzero?
-      opt[:offset] = offset
-    else
-      opt.delete(:offset)
-    end
-    opt[:limit] = limit
-
-    # noinspection RubyMismatchedReturnType
-    opt
-
-  end
-
-  # Finish setting of pagination values based on the result list and original
-  # URL parameters.
-  #
-  # @param [Api::Record, Array] list
-  # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
-  # @param [Hash]               search  Passed to #next_page_path.
-  #
-  # @return [void]
-  #
-  # @see UploadConcern#pagination_finalize
-  #
-  def pagination_finalize(list, meth = nil, **search)
-    self.page_items    = Array.wrap(meth && list.try(meth) || list)
-    self.total_items   = item_count(list, default: page_items.size)
-    self.total_records = record_count(list)
-    self.next_page     = next_page_path(list: list, **search)
-  end
-
-  # Analyze the *list* object to generate the path for the next page of
-  # results.
-  #
-  # @param [Array, #next, #get_link] list
-  # @param [Hash]                    url_params For `list.next`.
-  #
-  # @return [String]                  Path to generate next page of results.
-  # @return [nil]                     If there is no next page.
-  #
-  # @see SearchConcern#next_page_path
-  #
-  def next_page_path(list: nil, **url_params)
-    list ||= @list || page_items
-    # noinspection RailsParamDefResolve
-    if list.try(:next).present?
-
-      # General pagination parameters.
-      prm    = url_parameters(url_params).except!(:start)
-      page   = positive(prm.delete(:page))
-      offset = positive(prm.delete(:offset))
-      limit  = positive(prm.delete(:limit))
-      size   = limit || page_size
-      if offset && page
-        offset = nil if offset == ((page - 1) * size)
-      elsif offset
-        page   = (offset / size) + 1
-        offset = nil
-      else
-        page ||= 1
-      end
-      prm[:page]   = page   + 1    if page
-      prm[:offset] = offset + size if offset
-      prm[:limit]  = limit         if limit && (limit != default_page_size)
-
-      # Parameters specific to the Bookshare API.
-      prm[:start] = list.next
-
-      make_path(request.path, **prm)
-
-    else
-      list.try(:get_link, :next)
-    end
+    opt.reverse_merge!(request_parameters)
+    paginator.new(ctrlr, **opt)
   end
 
   # ===========================================================================

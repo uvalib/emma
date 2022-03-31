@@ -1,7 +1,7 @@
 # View helper methods for rendering API data migration results.
 #
 module ApiMigrateHelper
-  include UploadHelper
+  include LayoutHelper
 
   # Render an API data migration report.
   #

@@ -2,31 +2,34 @@
 <%-
   # Catalog Title history.
 
+  view_debug(__FILE__)
+
   # NOTE: Currently this is a fall-back in case there was a problem with the
   # link to Bookshare.  Normally, it would only be seen if going directly to
   # the EMMA endpoint.
 
-  title ||= t('emma.title.history.title')
   id    ||= @bookshare_id
-  help  ||= nil
+
+  title ||= t('emma.title.history.title')
+  help  ||= nil # %i[title history]
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
   click_to =
     if can?(:show_history, Title)
-      'Click %s to' % link_to_action('here', id: id)
+      opt = request_parameters.slice(:controller, :action).merge!(id: id)
+      'Click %s to' % link_to_action('here', **opt)
     else
       'User %s cannot' % current_user.to_s.inspect
     end.html_safe
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

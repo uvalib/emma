@@ -2,6 +2,8 @@
 <%-
   # Local accounts (not backed directly by Bookshare accounts).
 
+  view_debug(__FILE__)
+
   user ||= resource || resource_class.new
 
   form_label = t('emma.user.sessions.sign_in.label')

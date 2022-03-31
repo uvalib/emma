@@ -15,7 +15,6 @@ __loading_begin(__FILE__)
 #
 class HealthController < ApplicationController
 
-  include UserConcern
   include ParamsConcern
   include RunStateConcern
   include LogConcern
@@ -53,6 +52,9 @@ class HealthController < ApplicationController
   # == GET /version
   # == GET /health/version
   #
+  # @see #version_path                Route helper
+  # @see #version_health_path         Route helper
+  #
   def version
     render_version
   end
@@ -61,6 +63,9 @@ class HealthController < ApplicationController
   # == GET /health/check[?logging=true]
   # == GET /health/check/:subsystem[?logging=true]
   #
+  # @see #healthcheck_path            Route helper
+  # @see #check_health_path           Route helper
+  # @see #check_subsystem_health_path Route helper
   # @see HealthConcern#render_check
   #
   def check
@@ -75,6 +80,8 @@ class HealthController < ApplicationController
 
   # == GET /health/run_state
   #
+  # @see #run_state_health_path       Route helper
+  # @see #system_unavailable_path     Route helper
   # @see HealthConcern#show_run_state
   #
   def run_state
@@ -83,6 +90,7 @@ class HealthController < ApplicationController
 
   # == PUT /health/run_state
   #
+  # @see #set_run_state_health_path   Route helper
   # @see HealthConcern#update_run_state
   #
   # == Usage Notes

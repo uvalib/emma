@@ -2,8 +2,10 @@
 <%-
   # The contents of a database table.
 
-  records ||= []
+  view_debug(__FILE__)
+
+  list ||= []
 
 -%>
 
-<%= html_db_table(records) %>
+<%= html_db_table(list) %>

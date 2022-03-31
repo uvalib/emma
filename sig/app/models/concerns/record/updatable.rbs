@@ -68,9 +68,9 @@ module Record::Updatable
 
     def dynamic_get_field: (Symbol|String column) -> untyped
 
-    def dynamic_set_field: (Symbol|String column, untyped new_value) -> bool?
+    def dynamic_set_field: (Symbol|String column, untyped new_value) -> (bool | nil)
 
-    def dynamic_set_fields: (symHash pairs) -> bool?
+    def dynamic_set_fields: (symHash pairs) -> (bool | nil)
   end
 
   private

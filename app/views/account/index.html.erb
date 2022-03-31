@@ -2,24 +2,28 @@
 <%-
   # A list of local EMMA user accounts.
 
-  title  ||= t('emma.account.index.title')
-  # @type [Array<User>] list
-  list   ||= @list
-  count  ||= positive(total_items) || list&.size
+  view_debug(__FILE__)
+
+  list   ||= @page.page_items
+  dec      = AccountsDecorator.new(list, **context)
+  list   ||= dec.object
+
+  title  ||= dec.page_heading
+  help   ||= nil # dec.help_topic
+  count  ||= positive(@page.total_items) || list.size
   terms  ||= search_terms
-  help   ||= nil # help_popup(:account) # TODO: ???
   filter ||= nil
 
-  page_opt = SearchCall::SEARCH_RECORDS_OPTIONS.dup << :group
+  page_opt = Record::Searchable::SEARCH_RECORDS_OPTIONS.dup << :group
   page_terms, search = partition_hash(terms, *page_opt)
-  page   = page_terms[:page]&.values&.first&.to_i || 1
-  search = search.presence
+  page     = positive(page_terms[:page]&.values&.first) || 1
+  search   = search.presence
 
   unless modal?
-    terms = search
-    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
-    set_page_title(t('emma.account.index.label', default: title))
-    append_page_title('-', list_search_terms(terms)) if terms
+    label = dec.page_meta_title(default: title)
+    terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
+    set_page_meta_title(label)
+    append_page_meta_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
     set_page_robots(:nofollow)
   end
@@ -28,12 +32,11 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= account_table(list, filter: filter) %>
+<%= dec.table(filter: filter) %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

@@ -48,7 +48,7 @@ module LogoHelper
   # noinspection RubyMismatchedParameterType
   #++
   def repository_source_logo(item = nil, opt = nil)
-    css_selector  = '.repository.logo'
+    css  = '.repository.logo'
     item, opt     = [nil, item] if item.is_a?(Hash) && opt.nil?
     opt, html_opt = partition_hash(opt, :source, :name, :logo, :type)
     repo = normalize_repository(opt[:source] || item)
@@ -56,7 +56,7 @@ module LogoHelper
     logo = opt[:logo] || repository_logo(repo, opt[:type])
     if logo.present?
       html_opt[:title] ||= repository_tooltip(item, name)
-      prepend_classes!(html_opt, css_selector, repo)
+      prepend_css!(html_opt, css, repo)
       # noinspection RubyMismatchedReturnType
       html_span(html_opt) { image_tag(asset_path(logo), alt: "#{name} logo") }
     else
@@ -75,13 +75,13 @@ module LogoHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source(item, opt = nil)
-    css_selector  = '.repository.name'
+    css  = '.repository.name'
     opt, html_opt = partition_hash(opt, :source, :name)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)
     if name.present?
       html_opt[:title] ||= repository_tooltip(item, name)
-      prepend_classes!(html_opt, css_selector, repo)
+      prepend_css!(html_opt, css, repo)
       html_div(html_opt) { html_div(name) }
     else
       ''.html_safe

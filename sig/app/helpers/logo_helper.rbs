@@ -48,7 +48,7 @@ module LogoHelper
   # -
   # noinspection RubyNilAnalysis
   # +
-  def normalize_repository: (Model|String|Symbol|symHash|nil src) -> String?
+  def normalize_repository: (Model|String|Symbol|symHash|nil src) -> (String | nil)
 
   # repository_name
   #
@@ -57,7 +57,7 @@ module LogoHelper
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  def repository_name: (Model|String|Symbol|symHash|nil src) -> String?
+  def repository_name: (Model|String|Symbol|symHash|nil src) -> (String | nil)
 
   # repository_logo
   #
@@ -67,7 +67,7 @@ module LogoHelper
   # @return [String]                  The logo of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  def repository_logo: (Model|String|Symbol|symHash|nil src, ?Symbol? `type`) -> String?
+  def repository_logo: (Model|String|Symbol|symHash|nil src, ?Symbol? `type`) -> (String | nil)
 
   # repository_tooltip
   #

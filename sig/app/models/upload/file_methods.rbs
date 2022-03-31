@@ -81,31 +81,31 @@ module Upload::FileMethods
   #
   DOWNLOAD_EXPIRATION: Integer
 
-  def filename: () -> String?
+  def filename: () -> (String | nil)
 
-  def attached_file: () -> FileUploader::UploadedFile?
+  def attached_file: () -> (FileUploader::UploadedFile | nil)
 
-  def edit_filename: () -> String?
+  def edit_filename: () -> (String | nil)
 
-  def edit_attached_file: () -> FileUploader::UploadedFile?
+  def edit_attached_file: () -> (FileUploader::UploadedFile | nil)
 
-  def active_filename: () -> String?
+  def active_filename: () -> (String | nil)
 
-  def active_attached_file: () -> FileUploader::UploadedFile?
+  def active_attached_file: () -> (FileUploader::UploadedFile | nil)
 
-  def attach_cached: () -> FileUploader::UploadedFile?
+  def attach_cached: () -> (FileUploader::UploadedFile | nil)
 
-  def edit_attach_cached: () -> FileUploader::UploadedFile?
+  def edit_attach_cached: () -> (FileUploader::UploadedFile | nil)
 
-  def active_attach_cached: () -> FileUploader::UploadedFile?
+  def active_attach_cached: () -> (FileUploader::UploadedFile | nil)
 
   def promote_file: (?no_raise: bool) -> void
 
   def delete_file: (?no_raise: bool?, ?field: bool?) -> void
 
-  def download_url: (**untyped opt) -> String?
+  def download_url: (**untyped opt) -> (String | nil)
 
-  def s3_object: () -> Aws::S3::Object?
+  def s3_object: () -> (Aws::S3::Object | nil)
 
   def fetch_and_upload_file: (String file_path, **untyped opt) -> FileUploader::UploadedFile
 
@@ -134,17 +134,17 @@ module Upload::FileMethods
 
   def file_data_column: () -> Symbol
 
-  def active_file: () -> FileUploader::UploadedFile?
+  def active_file: () -> (FileUploader::UploadedFile | nil)
 
   def active_file_attacher: () -> FileUploader::Attacher
 
-  def active_file_data: () -> String?
+  def active_file_data: () -> (String | nil)
 
   def attached_file_valid?: () -> bool
 
   def note_cb: (Symbol `type`) -> void
 
-  def promote_cached_file: (?no_raise: bool, ?keep_cached: bool) -> FileUploader::UploadedFile?
+  def promote_cached_file: (?no_raise: bool, ?keep_cached: bool) -> (FileUploader::UploadedFile | nil)
 
   def delete_cached_file: (?no_raise: bool) -> (true | nil)
 

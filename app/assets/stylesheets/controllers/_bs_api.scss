@@ -19,7 +19,12 @@ body.bs_api-v2 {
     background-color: $api-background-color;
 
     .layout-content {
+
         box-shadow: 0 0 0 $page-padding $api-background-color;
+
+        .session-debug {
+            margin: 2rem auto;
+        }
     }
 
     //=========================================================================
@@ -154,11 +159,5 @@ body.bs_api-v2 {
                 font-size:   larger;
             }
         }
-    }
-}
-
-body.bs_api-v2 {
-    .session-debug {
-        margin: 2rem auto;
     }
 }

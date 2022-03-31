@@ -97,6 +97,30 @@ class Upload < ApplicationRecord
     __debug_items(leader: 'new UPLOAD') { self }
   end
 
+  # =========================================================================
+  # :section:
+  # =========================================================================
+
+  public
+
+  # Model/controller options passed in through the constructor.
+  #
+  # @return [Upload::Options]
+  #
+  attr_reader :model_options
+
+  # set_model_options
+  #
+  # @param [Options, Hash, nil] options
+  #
+  # @return [Upload::Options, nil]
+  #
+  def set_model_options(options)
+    options = options[:options]  if options.is_a?(Hash)
+    # noinspection RubyMismatchedReturnType
+    @model_options = (options.dup if options.is_a?(Options))
+  end
+
   # ===========================================================================
   # :section: ActiveRecord overrides
   # ===========================================================================
@@ -113,7 +137,8 @@ class Upload < ApplicationRecord
   #
   # @type [Array<Symbol>]
   #
-  ASSIGN_CONTROL_OPTIONS = (ASSIGN_MODES + %i[base_url importer defer]).freeze
+  ASSIGN_CONTROL_OPTIONS =
+    (ASSIGN_MODES + %i[base_url importer defer options]).freeze
 
   # Update database fields, including the structured contents of the :emma_data
   # field.
@@ -184,6 +209,8 @@ class Upload < ApplicationRecord
     control, fields = partition_hash(opt, *ASSIGN_CONTROL_OPTIONS)
     mode = ASSIGN_MODES.find { |m| control[m].present? }
 
+    set_model_options(control[:options])
+
     # Handle the :reset case separately.  If any of the fields to reset are
     # supplied, those values are used here.  If any additional data was
     # supplied it will be ignored.
@@ -234,7 +261,7 @@ class Upload < ApplicationRecord
       allowed << :created_at
       allowed << :id if self[:id].nil?
     end
-    attr, rejected = partition_hash(attr, *allowed)
+    rejected = remainder_hash!(attr, *allowed)
     log_ignored('rejected attributes', rejected) if rejected.present?
 
     # For :user_id, normalize to a 'user' table reference.  If editing,
@@ -659,6 +686,67 @@ class Upload < ApplicationRecord
     base_url ||= BULK_BASE_URL
     # noinspection RubyMismatchedArgumentType
     File.join(base_url, 'download', rid).to_s if rid.present?
+  end
+
+  extend Upload::IdentifierMethods
+
+  # Locate records matching the submission ID given as either *sid* or
+  # `opt[:submission_id]`.
+  #
+  # @param [Model, Hash, String, Symbol, nil] sid
+  # @param [Integer] max                Log error if matches exceed this.
+  # @param [Symbol]  meth               Calling method for logging.
+  # @param [Boolean] no_raise           If *true*, return *nil* on error.
+  # @param [Hash]    opt                Passed to #where.
+  #
+  # @raise [UploadWorkflow::Errors::SubmitError]
+  #
+  # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
+  #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
+  def self.matching_sid(sid = nil, max: nil, meth: nil, no_raise: false, **opt)
+    sid = opt[:submission_id] = sid_for(sid || opt)
+    if sid.blank?
+      err = (UploadWorkflow::Errors::SubmitError unless no_raise)
+      msg = 'No submission ID given'
+    elsif (result = where(**opt)).empty?
+      err = (UploadWorkflow::Errors::SubmitError unless no_raise)
+      msg = "No %{type} record for submission ID #{sid}"
+    elsif (max = positive(max)) && (max < (total = result.size))
+      err = nil
+      msg = "#{total} %{type} records for submission ID #{sid}"
+    else
+      return result
+    end
+    meth ||= "#{self.class}.#{__method__}"
+    msg %= { type: [base_class, opt[:type]].compact.join('::') }
+    Log.warn { "#{meth}: #{msg}" }
+    raise err, msg if err
+  end
+
+  # Get the latest record matching the submission ID given as either *sid* or
+  # `opt[:submission_id]`.
+  #
+  # Returns *nil* on error if *no_raise* is *true*.
+  #
+  # @param [Model, Hash, String, Symbol, nil] sid
+  # @param [Symbol, String] sort    In case of multiple SIDs (:created_at).
+  # @param [Hash]           opt     Passed to #matching_sid.
+  #
+  # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
+  # @raise [Record::NotFound]           If record not found.
+  #
+  # @return [Model]                     Or *nil* on error if *no_raise*.
+  #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
+  def self.latest_for_sid(sid = nil, sort: nil, **opt)
+    result = matching_sid(sid, **opt) or return
+    sort ||= :created_at
+    result.order(sort).last
   end
 
   # ===========================================================================

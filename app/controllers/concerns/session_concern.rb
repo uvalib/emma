@@ -13,10 +13,12 @@ module SessionConcern
 
   include Emma::Debug
 
-  include ParamsConcern
-  include FlashConcern
+  include FlashHelper
+  include SerializationHelper
+
   include ApiConcern
   include AuthConcern
+  include ParamsConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -146,22 +148,6 @@ module SessionConcern
   # ===========================================================================
 
   public
-
-  # Information about the last operation performed in this session.
-  #
-  # @return [Hash]
-  #
-  def last_operation
-    session_section('app.last_op')
-  end
-
-  # Time of the last operation performed in this session.
-  #
-  # @return [Integer]
-  #
-  def last_operation_time
-    last_operation['time'].to_i
-  end
 
   # Persist information about the last operation performed in this session.
   #

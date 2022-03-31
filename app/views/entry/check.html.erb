@@ -2,21 +2,24 @@
 <%-
   # Display result of checking for updated Entry submission status.
 
-  title ||= t('emma.entry.check.title')
+  view_debug(__FILE__)
+
+  # @type [Array<String>]
   list  ||= @list
+
+  title ||= t('emma.entry.check.title')
+  help  ||= nil # %i[entry check]
   error ||= 'Invalid identifier' # TODO: I18n
-  help  ||= nil
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%- if list.blank? -%>

@@ -35,5 +35,5 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   #
   # @return [String, nil]
   #
-  def identifier: (?no_version: bool) -> String?
+  def identifier: (?no_version: bool) -> (String | nil)
 end

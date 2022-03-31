@@ -3,14 +3,14 @@
 @use 'sass:map';
 @use 'sass:math';
 
-@use 'shared/variables'         as *;
-@use 'shared/functions'         as *;
-@use 'shared/mixins'            as *;
-@use 'shared/controls/grids'    as grid;
-@use 'shared/feature/model'     as model;
+@use 'shared/variables'        as *;
+@use 'shared/functions'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/grids'   as grid;
+@use 'shared/feature/model'    as model;
 
-@use 'layouts/controls/buttons' as button-classes;
-@use 'feature/model'            as model-classes;
+@use 'feature/model'           as model-classes;
 
 //=============================================================================
 // Unified Search pages
@@ -29,7 +29,7 @@ $medium-open-pad:        0.875rem;
 $narrow-open-pad:        0.75rem;
 
 $v-shift:                0.25rem;
-$v-shift-half:           math.div($v-shift, 2);
+$v-shift-half:           $v-shift * 0.5;
 $h-shift:                0.125rem;
 
 $value-right-margin:     calc(2 * #{$flex-gap-x});
@@ -124,7 +124,7 @@ $title-bg: var(--title-bg);
         }
     }
 
-    // Button tray for (dev only) page styles.
+    // Button tray for (dev only) list styles.
     .button-tray {
         display:        flex;
         flex-direction: row-reverse;
@@ -333,7 +333,7 @@ $title-bg: var(--title-bg);
                 border:              $element-border solid gray;
                 border-right-color:  black;
                 border-bottom-color: black;
-                border-radius:       math.div($element-x-padding, 2);
+                border-radius:       $element-x-padding * 0.5;
                 cursor:              text;
 
                 // noinspection CssReplaceWithShorthandSafely
@@ -374,13 +374,13 @@ $title-bg: var(--title-bg);
                 text-decoration: none;
             }
 
-            // @see SearchHelper#title_and_source
+            // @see SearchDecorator#title_and_source
             .title {
                 flex:   0.33 1 auto;
                 margin: 0.5rem 0 auto;
             }
 
-            // @see SearchHelper#title_and_source_logo
+            // @see SearchDecorator#title_and_source_logo
             .repository {
 
                 flex: 0 0 auto;
@@ -710,7 +710,7 @@ $title-bg: var(--title-bg);
                      0        0.25rem  0.25rem  0        $root-bg-color;
             }
 
-            // @see SearchHelper#title_and_source
+            // @see SearchDecorator#title_and_source
             .title {
 
                 margin: 0;
@@ -749,7 +749,7 @@ $title-bg: var(--title-bg);
                 }
             }
 
-            // @see SearchHelper#title_and_source_logo
+            // @see SearchDecorator#title_and_source_logo
             .repository {
 
                 display:         flex;
@@ -783,7 +783,7 @@ $title-bg: var(--title-bg);
             }
 
             // Controls for moving up and down through the list.
-            // @see SearchHelper#prev_next_controls
+            // @see SearchDecorator#prev_next_controls
             .prev-next {
 
                 display:        flex;
@@ -1029,13 +1029,13 @@ $title-bg: var(--title-bg);
 
             .icon-tray {
 
-                $icon-pad:      (model.$icon-pad);
-                $icon-pad-half: math.div($icon-pad, 2);
+                $icon-pad:      model.$icon-pad;
+                $icon-pad-half: $icon-pad * 0.5;
 
                 @media #{$not-narrow-screen} {
                     margin-top:     1rem;
                     margin-left:    0;
-                    margin-right:   -$icon-pad;
+                    margin-right:   -($icon-pad);
                     padding-top:    $icon-pad-half;
                     padding-bottom: $icon-pad-half;
                     box-shadow:     2px 2px 1px 1px lightgray;
@@ -1090,7 +1090,7 @@ $title-bg: var(--title-bg);
             @include grid.column-span;
         }
 
-        // Superfluous because ModelHelper::Fields#field_pairs folds the
+        // Superfluous because BaseDecorator::Fields#field_pairs folds the
         // information from :rem_complete into :rem_coverage.
         .field-Complete {
             display: none;
@@ -1498,10 +1498,10 @@ body.search.title_results {
 body.search.dev-style {
 
     .heading-bar {
-        // @see "SearchHelper#search_page_styles"
+        // @see SearchDecorator#list_styles
         .style-button {
 
-            @extend .basic-button;
+            @include button.basic;
 
             &.active {
                 background-color: $input-disabled-bg;

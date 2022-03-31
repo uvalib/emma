@@ -70,7 +70,7 @@ module CssHelper
   #
   # @param [Hash, String, nil]  html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #append_classes!.
+  # @param [Proc]               block     Passed to #append_css!.
   #
   # @return [Hash]                        A new hash with :class set.
   #
@@ -78,18 +78,18 @@ module CssHelper
   # == Variations
   #++
   #
-  # @overload append_classes(html_opt, *classes, &block)
+  # @overload append_css(html_opt, *classes, &block)
   #   @param [Hash, String]       html_opt
   #   @param [Array<#to_s,Array>] classes
   #   @param [Proc]               block
   #   @return [Hash]
   #
-  # @overload append_classes(*classes, &block)
+  # @overload append_css(*classes, &block)
   #   @param [Array<#to_s,Array>] classes
   #   @param [Proc]               block
   #   @return [Hash]
   #
-  def append_classes(html_opt, *classes, &block)
+  def append_css(html_opt, *classes, &block)
     if html_opt.nil?
       # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
     elsif !html_opt.is_a?(Hash)
@@ -98,7 +98,7 @@ module CssHelper
       html_opt = nil
     end
     html_opt = html_opt&.deep_dup || {}
-    append_classes!(html_opt, *classes, &block)
+    append_css!(html_opt, *classes, &block)
   end
 
   # Replace `html_opt[:class]` with a new string containing the original
@@ -110,10 +110,10 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  # Compare with:
-  # #prepend_classes!
+  # == Implementation Notes
+  # Compare with #prepend_css!
   #
-  def append_classes!(html_opt, *classes, &block)
+  def append_css!(html_opt, *classes, &block)
     result = css_class_array(html_opt[:class], *classes, &block).join(' ')
     html_opt.merge!(class: result)
   end
@@ -123,7 +123,7 @@ module CssHelper
   #
   # @param [Hash, String, nil]  html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #prepend_classes!
+  # @param [Proc]               block     Passed to #prepend_css!
   #
   # @return [Hash]                        A new hash with :class set.
   #
@@ -131,18 +131,18 @@ module CssHelper
   # == Variations
   #++
   #
-  # @overload prepend_classes(html_opt, *classes, &block)
+  # @overload prepend_css(html_opt, *classes, &block)
   #   @param [Hash, String]               html_opt
   #   @param [Array<#to_s,Array>] classes
   #   @param [Proc]                       block
   #   @return [Hash]
   #
-  # @overload prepend_classes(*classes, &block)
+  # @overload prepend_css(*classes, &block)
   #   @param [Array<#to_s,Array>] classes
   #   @param [Proc]                       block
   #   @return [Hash]
   #
-  def prepend_classes(html_opt, *classes, &block)
+  def prepend_css(html_opt, *classes, &block)
     if html_opt.nil?
       # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
     elsif !html_opt.is_a?(Hash)
@@ -151,7 +151,7 @@ module CssHelper
       html_opt = nil
     end
     html_opt = html_opt&.deep_dup || {}
-    prepend_classes!(html_opt, *classes, &block)
+    prepend_css!(html_opt, *classes, &block)
   end
 
   # Replace `html_opt[:class]` with a new string containing the added classes
@@ -163,10 +163,10 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  # Compare with:
-  # #append_classes!
+  # == Implementation Notes
+  # Compare with #append_css!
   #
-  def prepend_classes!(html_opt, *classes, &block)
+  def prepend_css!(html_opt, *classes, &block)
     result = css_class_array(*classes, html_opt[:class], &block).join(' ')
     html_opt.merge!(class: result)
   end
@@ -179,10 +179,10 @@ module CssHelper
   #
   # @return [Hash]                        A new hash with :class set.
   #
-  def remove_classes(html_opt, *classes)
+  def remove_css(html_opt, *classes)
     Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
     html_opt = html_opt&.deep_dup || {}
-    remove_classes!(html_opt, *classes)
+    remove_css!(html_opt, *classes)
   end
 
   # Replace `html_opt[:class]` with a new string that includes none of the
@@ -193,7 +193,7 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  def remove_classes!(html_opt, *classes)
+  def remove_css!(html_opt, *classes)
     if (current = css_class_array(html_opt[:class])).blank?
       html_opt.except!(:class)
     elsif (removed = css_class_array(*classes)).blank?
@@ -203,135 +203,6 @@ module CssHelper
     else
       html_opt.merge!(class: css_classes(*result))
     end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Add CSS classes which indicate the position of the control within the grid.
-  #
-  # @param [Array<#to_s,Array>] classes
-  # @param [Hash]               opt       Internal options:
-  #
-  # @option opt [String]  :class
-  # @option opt [Integer] :row        Grid row (wide screen).
-  # @option opt [Integer] :col        Grid column (wide screen).
-  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
-  # @option opt [Integer] :col_max    Rightmost grid column (wide screen).
-  # @option opt [Boolean] :sr_only    If *true*, include 'sr-only' CSS class.
-  #
-  # @return [Array<String>]
-  #
-  def grid_cell_classes(*classes, **opt)
-    row = positive(opt[:row])
-    col = positive(opt[:col])
-    classes += Array.wrap(opt[:class])
-    classes << "row-#{row}" if row
-    classes << "col-#{col}" if col
-    classes << 'row-first'  if row == 1
-    classes << 'col-first'  if col == 1
-    classes << 'row-last'   if row == opt[:row_max].to_i
-    classes << 'col-last'   if col == opt[:col_max].to_i
-    classes << 'sr-only'    if opt[:sr_only]
-    css_class_array(*classes)
-  end
-
-  # Add CSS classes which indicate the position of the control within the grid.
-  #
-  # @param [Hash]               html_opt  The target options hash.
-  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
-  # @param [Hash]               opt       To #append_grid_cell_classes!
-  #
-  # @return [Hash]                        A new hash.
-  #
-  def append_grid_cell_classes(html_opt, *classes, **opt)
-    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
-    html_opt = html_opt&.deep_dup || {}
-    append_grid_cell_classes!(html_opt, *classes, **opt)
-  end
-
-  # Add CSS classes which indicate the position of the control within the grid.
-  #
-  # @param [Hash]               html_opt  The target options hash.
-  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
-  # @param [Hash]               opt       Passed to #grid_cell_classes.
-  #
-  # @return [Hash]                        The modified *html_opt* hash.
-  #
-  def append_grid_cell_classes!(html_opt, *classes, **opt)
-    classes = grid_cell_classes(*classes, **opt)
-    append_classes!(html_opt, *classes)
-  end
-
-  # Add CSS classes which indicate the position of the control within the grid.
-  #
-  # @param [Hash]               html_opt  The target options hash.
-  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
-  # @param [Hash]               opt       To #prepend_grid_cell_classes!.
-  #
-  # @return [Hash]                        A new hash.
-  #
-  def prepend_grid_cell_classes(html_opt, *classes, **opt)
-    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
-    html_opt = html_opt&.deep_dup || {}
-    prepend_grid_cell_classes!(html_opt, *classes, **opt)
-  end
-
-  # Add CSS classes which indicate the position of the control within the grid.
-  #
-  # @param [Hash]               html_opt  The target options hash.
-  # @param [Array<#to_s,Array>] classes   Additional CSS classes.
-  # @param [Hash]               opt       Passed to #grid_cell_classes.
-  #
-  # @return [Hash]                        The modified *html_opt* hash.
-  #
-  def prepend_grid_cell_classes!(html_opt, *classes, **opt)
-    classes = grid_cell_classes(*classes, **opt)
-    prepend_classes!(html_opt, *classes)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # These are observed hash keys which may travel alongside HTML attributes
-  # like :id, :class, :tabindex etc. when passed as named parameters, but
-  # should not be passed into methods which actually generate HTML elements.
-  #
-  # @type [Array<Symbol>]
-  #
-  NON_HTML_ATTRIBUTES = %i[
-    index
-    level
-    max_index
-    min_index
-    offset
-    skip
-  ].freeze
-
-  # Make a copy which has only valid HTML attributes.
-  #
-  # @param [Hash, nil] html_opt       The target options hash.
-  #
-  # @return [Hash]
-  #
-  def html_options(html_opt)
-    html_options!(html_opt&.deep_dup || {})
-  end
-
-  # Retain only entries which are valid HTML attributes.
-  #
-  # @param [Hash] html_opt            The target options hash.
-  #
-  # @return [Hash]                    The modified *html_opt* hash.
-  #
-  def html_options!(html_opt)
-    html_opt.except!(*NON_HTML_ATTRIBUTES)
   end
 
   # ===========================================================================
@@ -370,6 +241,30 @@ module CssHelper
   #
   def css_randomize(base)
     "#{base}-#{hex_rand}"
+  end
+
+  # Combine parts into a value for use an an HTML ID of a element associated
+  # with a specific search input row.
+  #
+  # Unless *unique* is *false* or a string, #hex_rand will be used to generate
+  # a value to make the resulting ID unique.
+  #
+  # @param [Array]        parts
+  # @param [any, nil]     unique      Value unique to a search unique.
+  # @param [Integer, nil] index       Value unique to an input row.
+  # @param [Hash]         opt         Passed to #html_id.
+  #
+  # @return [String]
+  #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
+  def unique_id(*parts, unique: nil, index: nil, **opt)
+    unique = hex_rand if unique.nil? || unique.is_a?(TrueClass)
+    parts << unique   if unique
+    parts << index    if index
+    opt.reverse_merge!(underscore: false, camelize: false)
+    html_id(*parts, **opt)
   end
 
   # ===========================================================================

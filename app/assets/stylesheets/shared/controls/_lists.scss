@@ -53,3 +53,22 @@
         }
     }
 }
+
+/// A two-column list where each row is a label followed by a value.
+///
+@mixin columns-2 {
+
+    @include tabular(2);
+
+    grid-template-columns: [label] auto [value] 1fr;
+}
+
+/// A three-column list where each row is a number, a label, and a value.
+///
+@mixin columns-3 {
+
+    @include tabular(3);
+
+    grid-template-columns:
+        [number] minmax(1%, max-content) [label] auto [value] 1fr;
+}

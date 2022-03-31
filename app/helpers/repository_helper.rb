@@ -9,8 +9,7 @@ __loading_begin(__FILE__)
 #
 module RepositoryHelper
 
-  include HtmlHelper
-  include ArtifactHelper
+  include LinkHelper
 
   # ===========================================================================
   # :section:
@@ -105,18 +104,16 @@ module RepositoryHelper
 
   # Produce a link to retrieve an EMMA file.
   #
-  # @param [Api::Record] _item        Unused.
-  # @param [String]       label
-  # @param [String]       url
-  # @param [Hash]         opt
+  # @param [Api::Record, nil] _item   Unused.
+  # @param [String]            label
+  # @param [String]            url
+  # @param [Hash]              opt    Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see HtmlHelper#download_link
-  #
   def emma_retrieval_link(_item, label, url, **opt)
     url = url.sub(%r{localhost:\d+}, 'localhost') unless application_deployed?
-    download_link(label, url, **opt)
+    retrieval_link(label, url, **opt)
   end
 
   # Produce a control to manage download of a Bookshare item artifact.
@@ -124,45 +121,39 @@ module RepositoryHelper
   # @param [Api::Record] item
   # @param [String]      label
   # @param [String]      url
-  # @param [Hash]        opt
+  # @param [Hash]        opt          To BookshareDecorator#artifact_links
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see ArtifactHelper#download_links
-  #
   def bs_retrieval_link(item, label, url, **opt)
-    download_links(item, label: label, url: url, **opt)
+    BookshareDecorator.artifact_links(item, label: label, url: url, **opt)
   end
 
   # Produce a link to open a new browser tab to retrieve a file from the
   # HathiTrust web site.
   #
-  # @param [Api::Record] _item        Unused.
-  # @param [String]       label
-  # @param [String]       url
-  # @param [Hash]         opt
+  # @param [Api::Record, nil] _item   Unused.
+  # @param [String]            label
+  # @param [String]            url
+  # @param [Hash]              opt    Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see HtmlHelper#download_link
   #
   def ht_retrieval_link(_item, label, url, **opt)
     url_params    = url.split('?', 2)[1]
     has_ht_params = url_params&.split('&')&.include?(HT_URL_PARAMS)
     url += (url_params ? '&' : '?') + HT_URL_PARAMS unless has_ht_params
-    download_link(label, url, **opt)
+    retrieval_link(label, url, **opt)
   end
 
   # Produce a link to retrieve an Internet Archive file.
   #
-  # @param [Api::Record] _item        Unused.
-  # @param [String]       label
-  # @param [String]       url
-  # @param [Hash]         opt
+  # @param [Api::Record, nil] _item   Unused.
+  # @param [String]            label
+  # @param [String]            url
+  # @param [Hash]              opt    Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see HtmlHelper#download_link
   #
   # == Implementation Notes
   # Encrypted DAISY files are handled differently; for an explanation:
@@ -171,6 +162,25 @@ module RepositoryHelper
   def ia_retrieval_link(_item, label, url, **opt)
     direct = IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
     url    = retrieval_path(url: url) unless direct
+    retrieval_link(label, url, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Produce a link to retrieve a content file.
+  #
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to LinkHelper#download_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def retrieval_link(label, url, **opt)
+    opt.delete(:context) # In case this was invoked from a decorator.
     download_link(label, url, **opt)
   end
 

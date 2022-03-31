@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Access search call instances.
 #
-# @see SearchCallHelper
+# @see SearchCallDecorator
+# @see SearchCallsDecorator
 # @see file:app/views/search_call/**
 #
 class SearchCallController < ApplicationController
@@ -56,12 +57,14 @@ class SearchCallController < ApplicationController
   #
   # List searches.
   #
+  # @see #search_call_index_path      Route helper
   # @see SearchCallConcern#get_search_calls
   # @see SearchCall#extended_table
   #
   def index
     __debug_route
-    prm       = request_parameters
+    @page     = pagination_setup
+    prm       = @page.initial_parameters
     @extended = prm.key?(:expand) ? true?(prm.delete(:expand)) : EXPAND_JSON
     search    = prm.delete(:like) # TODO: :like param
     search  &&= build_query_options(search)
@@ -73,7 +76,7 @@ class SearchCallController < ApplicationController
         get_search_calls(search)
       end
     @list = @list.to_a
-    pagination_finalize(@list, **search)
+    @page.finalize(@list, **search)
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -85,6 +88,7 @@ class SearchCallController < ApplicationController
   #
   # Display details of a search.
   #
+  # @see #search_call_path            Route helper
   # @see SearchCall#find
   #
   def show

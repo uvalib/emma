@@ -11,9 +11,8 @@ module BsDownloadConcern
 
   extend ActiveSupport::Concern
 
+  include SerializationConcern
   include BookshareConcern
-
-  include SerializationHelper
 
   # ===========================================================================
   # :section:

@@ -1,8 +1,7 @@
 // app/assets/stylesheets/controllers/_user_sessions.scss
 
-@use 'shared/variables'         as *;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
 
 //=============================================================================
 // Page header
@@ -52,7 +51,7 @@ body.user_sessions {
     // @see file:app/views/user/registrations/edit.html.erb
     .sign-in-link {
 
-        @extend .control-button;
+        @include button.control;
 
         padding:           0.75rem;
         font-size:         large;
@@ -113,7 +112,7 @@ body.user_sessions {
 
             input[type='submit'] {
 
-                @extend .basic-button;
+                @include button.basic;
 
                 line-height: 1;
             }

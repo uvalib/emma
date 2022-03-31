@@ -4,6 +4,8 @@
 
   return unless session_debug? || dev_client?
 
+  view_debug(__FILE__)
+
   links =
     stored_auth(true).keys.map { |id|
       user  = html_tag(:strong, id)

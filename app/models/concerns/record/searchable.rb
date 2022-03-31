@@ -49,11 +49,9 @@ module Record::Searchable
   # Get records specified by either :id or :submission_id.
   #
   # @param [Array<Model, String, Integer, Array>] identifiers
-  # @param [Hash]                                 opt
+  # @param [Hash]                                 opt  Passed to #get_relation
   #
   # @return [Array<Model>]
-  #
-  # @see #get_relation
   #
   def get_records(*identifiers, **opt)                                          # NOTE: from Upload::LookupMethods
     get_relation(*identifiers, **opt).records
@@ -117,46 +115,39 @@ module Record::Searchable
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
   #
-  # @raise [RangeError]                 If :page is not valid.
+  # @raise [RangeError]                   If :page is not valid.
   #
-  # @return [Hash]                      @see #SEARCH_RECORDS_TEMPLATE
+  # @return [Hash{Symbol=>Any}]           @see #SEARCH_RECORDS_TEMPLATE
   #
   # @see ActiveRecord::Relation#where
   #
   def search_records(*identifiers, **opt)                                       # NOTE: from Upload::LookupMethods
-    local_opt, opt = partition_hash(opt, *SEARCH_RECORDS_OPTIONS)
+    prop   = extract_hash!(opt, *SEARCH_RECORDS_OPTIONS)
     result = SEARCH_RECORDS_TEMPLATE.dup
 
     # Handle the case where a range has been specified which resolves to an
     # empty set of identifiers.  Otherwise, #get_relation will treat this case
     # identically to one where no identifiers where specified to limit results.
     if identifiers.present?
-      identifiers = expand_ids(*identifiers)
-      return result if identifiers.blank?
+      identifiers = expand_ids(*identifiers).presence or return result
     end
 
     # Start by looking at results for all matches (without :limit or :offset).
-    all = get_relation(*identifiers, **opt)
+    all = get_relation(*identifiers, **opt, sort: nil)
 
     # Handle the case where only a :groups summary is expected.
-    if local_opt[:groups] == :only
-      result[:groups] = group_by_state(all)
-      return result
-    end
+    return result.merge!(groups: group_by_state(all)) if prop[:groups] == :only
 
-    # noinspection RailsParamDefResolve
-    all_ids = all.pluck(:id)
-    page    = local_opt[:page]&.to_i
-    offset  = local_opt[:offset]
-    limit   = positive(local_opt[:limit])
+    # Group record IDs into pages.
+    all_ids = all.order(:id).pluck(:id)
+    limit   = positive(prop[:limit])
     pg_size = limit || 10 # TODO: fall-back page size for grouping
     pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
 
-    if page
+    if (page = prop[:page]&.to_i)
       if page > 1
-        ids_on_page = pages[page - 2]
-        raise RangeError, "Page #{page} is invalid" if ids_on_page.nil?
-        offset = ids_on_page.last
+        offset = pages[page - 2]&.last
+        raise RangeError, "Page #{page} is invalid" if offset.nil?
       else
         page   = 1
         offset = nil
@@ -165,10 +156,10 @@ module Record::Searchable
       result[:first]  = (page == 1)
       result[:last]   = (page >= pages.size)
       result[:limit]  = limit = pg_size
-      result[:offset] = ((page - 1) * pg_size)
+      result[:offset] = (page - 1) * pg_size
     else
       result[:limit]  = limit
-      result[:offset] = offset
+      result[:offset] = offset = prop[:offset]
     end
 
     result[:total]  = all_ids.size
@@ -176,10 +167,10 @@ module Record::Searchable
     result[:max_id] = all_ids.last
 
     # Include the array of arrays of database IDs if requested.
-    result[:pages] = pages if local_opt[:pages]
+    result[:pages]  = pages if prop[:pages]
 
     # Generate a :groups summary if requested.
-    result[:groups] = group_by_state(all) if local_opt[:groups]
+    result[:groups] = group_by_state(all) if prop[:groups]
 
     # Finally, get the specific set of results.
     opt.merge!(limit: limit, offset: offset)
@@ -196,8 +187,9 @@ module Record::Searchable
   # returns the matching records.
   #
   # @param [Array<Model, String, Integer, Array>] items
-  # @param [Hash]                                  opt  Passed to #where except
+  # @param [Hash]                                 opt  Passed to #where except
   #
+  # @option opt [Symbol, nil] :sort     No sort if explicitly *nil*.
   # @option opt [Integer,nil] :offset
   # @option opt [Integer,nil] :limit
   # @option opt [Symbol,nil]  :id_key   Default: `#id_column`.
@@ -209,27 +201,27 @@ module Record::Searchable
   # @see ActiveRecord::Relation#where
   #
   def get_relation(*items, **opt)                                               # NOTE: from Upload::LookupMethods
-    id_opt, opt = partition_hash(opt, :id_key, :sid_key)
+    id_opt  = extract_hash!(opt, :id_key, :sid_key).transform_values!(&:to_sym)
     id_key  = id_opt[:id_key]  ||= id_column
     sid_key = id_opt[:sid_key] ||= sid_column
-    ids     = (Array.wrap(opt.delete(id_key))  if id_key)
-    sids    = (Array.wrap(opt.delete(sid_key)) if sid_key)
+    ids     = id_key  ? Array.wrap(opt.delete(id_key))  : []
+    sids    = sid_key ? Array.wrap(opt.delete(sid_key)) : []
     if items.present?
-      items  = expand_ids(*items).map { |term| id_term(term, **id_opt) }
-      ids  &&= items.map { |term| term[id_key].presence  } + ids
-      sids &&= items.map { |term| term[sid_key].presence } + sids
+      items = expand_ids(*items).map { |term| id_term(term, **id_opt) }
+      ids   = items.map { |term| term[id_key]  } + ids  if id_key
+      sids  = items.map { |term| term[sid_key] } + sids if sid_key
     end
-    ids  &&= ids.compact.uniq.presence
-    sids &&= sids.compact.uniq.presence
-
+    ids   = ids.compact_blank!.uniq.presence
+    sids  = sids.compact_blank!.uniq.presence
     terms = []
     if ids && sids
       terms << sql_terms(id_key => ids, sid_key => sids, join: :or)
     elsif ids
-      opt[id_key] = ids
+      opt[id_key]  = ids
     elsif sids
       opt[sid_key] = sids
     end
+    sort = opt.key?(:sort) ? opt.delete(:sort) : (:id unless ids || sids)
 
     if (user_opt = opt.extract!(:user, :user_id)).present?
       users = user_opt.values.flatten.map { |u| User.id_value(u) }.uniq
@@ -246,6 +238,7 @@ module Record::Searchable
 
     query  = sql_terms(opt, *terms, join: :and)
     result = where(query)
+    result = result.order(sort)  if sort.present?
     result = result.limit(limit) if limit.present?
     result
   end

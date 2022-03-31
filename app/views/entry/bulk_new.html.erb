@@ -1,29 +1,30 @@
 <%# app/views/entry/bulk_new.html.erb -%>
 <%-
-  # Prompt for a manifest to control the upload/edit of multiple submissions.
+  # Prompt for a manifest to control the upload of multiple submissions.
 
-  title ||= t('emma.entry.bulk_new.title')
+  view_debug(__FILE__)
+
+  dec     = EntriesDecorator.new(**context)
+
+  title ||= dec.page_heading
+  help  ||= nil # dec.help_topic
   logo  ||= repository_source_logo
-  help  ||= nil # help_popup(:entry, :bulk_new) # TODO: ???
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<div class="heading container">
-  <h1 class="heading"><%= title -%><%= help -%></h1>
-  <%= logo %>
-</div>
-
+<%= page_heading(title, help: help, logo: logo) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= bulk_entry_form(action: :new) %>
-<%= bulk_entry_results %>
+<%= dec.bulk_op_form %>
+<%= dec.bulk_op_results %>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

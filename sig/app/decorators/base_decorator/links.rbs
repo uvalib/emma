@@ -1,0 +1,89 @@
+# Common view helper methods supporting display of Model instances (both
+# database items and API messages).
+#
+module BaseDecorator::Links
+  include Emma::Common
+
+  include ParamsHelper
+
+  include HtmlHelper
+
+  # Separator for a list formed by HTML elements.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  DEFAULT_ELEMENT_SEPARATOR: ActiveSupport::SafeBuffer
+
+  # @type [Array<Symbol>]
+  MODEL_LINK_OPTIONS: symArray
+
+  # Create a link to the details show page for the given model instance.
+  #
+  # @param [Model, nil] item          Default: `#object`.
+  # @param [Hash]       opt           Passed to #make_link except for:
+  #
+  # @option opt [Boolean]        :no_link       If *true*, create a <span>.
+  # @option opt [String]         :tooltip
+  # @option opt [String, Symbol] :label         Default: `item.label`.
+  # @option opt [String, Proc]   :path          Default: from block.
+  # @option opt [Symbol]         :path_method
+  # @option opt [String, Symbol] :scope
+  # @option opt [String, Symbol] :controller
+  #
+  # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
+  #
+  # @yield [terms] To supply a path based on *terms* to use instead of *path*.
+  # @yieldparam  [String] terms
+  # @yieldreturn [String]
+  #
+  def model_link: (Model|nil item, **untyped opt) { (String) -> String } -> ActiveSupport::SafeBuffer
+
+  # Create a link to the details show page for the given model instance.
+  #
+  # @param [String, nil] css          Optional CSS class(es) to include.
+  # @param [Hash]        opt          Passed to #model_link
+  #
+  # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
+  #
+  def link: (?css: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a link to the details show page for the given model instance.
+  #
+  # @param [Hash] opt                 Passed to #link
+  #
+  # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
+  #
+  def button_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to #link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def show_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a link to the edit page for the given item.
+  #
+  # @param [Hash] opt                 Passed to #icon_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def edit_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a link to remove the given item.
+  #
+  # @param [Hash] opt                 Passed to #icon_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create an icon button link.
+  #
+  # @param [Hash] opt                 Passed to #button_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def icon_link: (untyped `type`, **untyped opt) -> ActiveSupport::SafeBuffer
+end

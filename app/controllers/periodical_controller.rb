@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle Bookshare-only "/periodical" pages.
 #
-# @see PeriodicalHelper
+# @see PeriodicalDecorator
+# @see PeriodicalsDecorator
 # @see file:app/views/periodical/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -58,13 +59,15 @@ class PeriodicalController < ApplicationController
   #
   # List all periodicals.
   #
+  # @see #periodical_index_path       Route helper
   # @see BookshareService::Request::Periodicals#get_periodicals
   #
   def index
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @list = bs_api.get_periodicals(**opt)
-    pagination_finalize(@list, :periodicals, **opt)
+    @page.finalize(@list, :periodicals, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
@@ -77,15 +80,17 @@ class PeriodicalController < ApplicationController
   #
   # Display details of an existing periodical.
   #
+  # @see #periodical_path             Route helper
   # @see BookshareService::Request::Periodicals#get_periodical
   # @see BookshareService::Request::Periodicals#get_periodical_editions
   #
   def show
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @item = bs_api.get_periodical(seriesId: @series_id)
     @list = bs_api.get_periodical_editions(seriesId: @series_id)
-    pagination_finalize(@list, :periodicalEditions, **opt)
+    @page.finalize(@list, :periodicalEditions, **opt)
     flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
@@ -98,6 +103,8 @@ class PeriodicalController < ApplicationController
   #
   # Add metadata for a new periodical.
   #
+  # @see #new_periodical_path         Route helper
+  #
   def new
     __debug_route
   end
@@ -106,6 +113,8 @@ class PeriodicalController < ApplicationController
   #
   # Create an entry for a new periodical.
   #
+  # @see #periodical_path             Route helper
+  #
   def create
     __debug_route
   end
@@ -113,6 +122,8 @@ class PeriodicalController < ApplicationController
   # == GET /periodical/:id/edit
   #
   # Modify metadata of an existing periodical entry.
+  #
+  # @see #edit_periodical_path        Route helper
   #
   def edit
     __debug_route
@@ -123,6 +134,8 @@ class PeriodicalController < ApplicationController
   #
   # Update the entry for an existing periodical.
   #
+  # @see #periodical_path             Route helper
+  #
   def update
     __debug_route
   end
@@ -130,6 +143,8 @@ class PeriodicalController < ApplicationController
   # == DELETE /periodical/:id
   #
   # Remove an existing periodical entry.
+  #
+  # @see #periodical_path             Route helper
   #
   def destroy
     __debug_route

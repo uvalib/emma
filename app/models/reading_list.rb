@@ -38,7 +38,7 @@ class ReadingList < ApplicationRecord
 
   # Indicate whether the reading list includes the indicated title or artifact.
   #
-  # @param [String, Title, Artifact] item
+  # @param [Title, Artifact, String, *] item
   #
   def include?(item)
     # noinspection RubyMismatchedArgumentType
@@ -47,7 +47,7 @@ class ReadingList < ApplicationRecord
 
   # Indicate whether the reading list includes the indicated title.
   #
-  # @param [String, Title] item
+  # @param [Title, String, *] item
   #
   def has_title?(item)
     if item.is_a?(String)
@@ -59,7 +59,7 @@ class ReadingList < ApplicationRecord
 
   # Indicate whether the reading list includes the indicated artifact.
   #
-  # @param [String, Artifact] item
+  # @param [Artifact, String, *] item
   #
   def has_artifact?(item)
     if item.is_a?(String)

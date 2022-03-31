@@ -11,8 +11,12 @@ __loading_begin(__FILE__)
 #
 module AwsHelper
 
+  include Emma::Unicode
+
   include HtmlHelper
-  include LayoutHelper
+  include LinkHelper
+  include ParamsHelper
+  include SerializationHelper
 
   # ===========================================================================
   # :section:
@@ -62,12 +66,13 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def s3_bucket_link(bucket, **opt)
-    css_selector  = '.aws-link'
-    label         = opt.delete(:label) || 'AWS' # TODO: I18n
-    region        = opt.delete(:region)
-    url           = s3_bucket_url(bucket, region: region)
+    css    = '.aws-link'
+    label  = opt.delete(:label) || 'AWS' # TODO: I18n
+    region = opt.delete(:region)
+    url    = s3_bucket_url(bucket, region: region)
+    prepend_css!(opt, css)
     opt[:title] ||= 'Go to the AWS S3 console page for this bucket'
-    external_link(label, url, **prepend_classes!(opt, css_selector))
+    external_link(label, url, **opt)
   end
 
   # ===========================================================================
@@ -84,8 +89,8 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_hash(opt, :erb, *AWS_RENDER_OPT)
     opt.except!(:erb, :html)
+    render_opt = remainder_hash!(opt, *AWS_RENDER_OPT)
     render_opt = s3_bucket_params if render_opt.blank?
     render_opt.merge!(opt)
     table.map { |bucket, objects|
@@ -106,8 +111,8 @@ module AwsHelper
   # @return [String]                      Otherwise.
   #
   def json_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_hash(opt, :erb, *AWS_RENDER_OPT)
     for_erb    = opt.delete(:erb)
+    render_opt = remainder_hash!(opt, *AWS_RENDER_OPT)
     render_opt = s3_bucket_params if render_opt.blank?
     render_opt.merge!(opt).merge!(html: false)
     result =
@@ -130,8 +135,8 @@ module AwsHelper
   # @return [String]                      Otherwise.
   #
   def xml_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_hash(opt, :erb, *AWS_RENDER_OPT)
     for_erb    = opt.delete(:erb)
+    render_opt = remainder_hash!(opt, *AWS_RENDER_OPT)
     render_opt = s3_bucket_params if render_opt.blank?
     render_opt.merge!(opt).merge!(html: false)
     result =
@@ -194,19 +199,19 @@ module AwsHelper
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
   def render_s3_bucket(bucket, objects, **opt)
-    css_selector  = '.aws-bucket'
-    opt, html_opt = partition_hash(opt, *AWS_BUCKET_OPT)
-    after   = opt[:after]&.to_datetime
-    before  = opt[:before]&.to_datetime
-    prefix  = opt[:prefix]&.to_s
-    prefix  = "#{prefix}/" if prefix && !prefix.end_with?('/')
-    limit   = opt[:prefix_limit]&.to_i
-    limit   = S3_PREFIX_LIMIT if limit.nil? || limit.is_a?(TrueClass)
-    limit   = nil if limit.is_a?(Numeric) && limit.negative?
-    title   = opt[:heading]
-    html    = !false?(opt[:html])
-    obj_opt = (opt[:object] || {}).merge(html: html)
-    parts   = []
+    css      = '.aws-bucket'
+    html_opt = remainder_hash!(opt, *AWS_BUCKET_OPT)
+    after    = opt[:after]&.to_datetime
+    before   = opt[:before]&.to_datetime
+    prefix   = opt[:prefix]&.to_s
+    prefix   = "#{prefix}/" if prefix && !prefix.end_with?('/')
+    limit    = opt[:prefix_limit]&.to_i
+    limit    = S3_PREFIX_LIMIT if limit.nil? || limit.is_a?(TrueClass)
+    limit    = nil if limit.is_a?(Numeric) && limit.negative?
+    title    = opt[:heading]
+    html     = !false?(opt[:html])
+    obj_opt  = (opt[:object] || {}).merge(html: html)
+    parts    = []
 
     # Generate a heading if a bucket (name) was provided.
     if html && (title || bucket)
@@ -290,7 +295,8 @@ module AwsHelper
     objects.unshift(column_headings)
 
     # Generate the table of objects.
-    parts << html_div(objects, prepend_classes!(html_opt, css_selector))
+    prepend_css!(html_opt, css)
+    parts << html_div(objects, html_opt)
 
     safe_join(parts, "\n")
   end
@@ -303,9 +309,10 @@ module AwsHelper
   # @return [Hash]                            If *html* is *false*.
   #
   def render_s3_object_headings(**opt)
-    css_selector = '.column-headings'
-    headings     = s3_object_values(nil)
-    render_s3_object(headings, **prepend_classes!(opt, css_selector))
+    css      = '.column-headings'
+    headings = s3_object_values(nil)
+    prepend_css!(opt, css)
+    render_s3_object(headings, **opt)
   end
 
   # Show an S3 object table row.
@@ -316,8 +323,9 @@ module AwsHelper
   # @return [Hash]                            If *html* is *false*.
   #
   def render_s3_object_row(obj, **opt)
-    css_selector = '.row'
-    render_s3_object(obj, **prepend_classes!(opt, css_selector))
+    css = '.row'
+    prepend_css!(opt, css)
+    render_s3_object(obj, **opt)
   end
 
   # Show the contents of an S3 object.
@@ -334,7 +342,7 @@ module AwsHelper
   # @return [Hash]                            If *html* is *false*.
   #
   def render_s3_object(obj, **opt)
-    css_selector = '.aws-object'
+    css     = '.aws-object'
     section = opt.delete(:section)
     row     = opt.delete(:row)
     col_opt = opt.delete(:column)
@@ -350,7 +358,7 @@ module AwsHelper
     key     = values[:key]&.delete_prefix(prefix.to_s)&.presence
     entries =
       values.map do |k, v|
-        value_opt = prepend_classes(col_opt, k)
+        value_opt = prepend_css(col_opt, k)
         value_opt.merge!('data-value': v) unless k == :placeholder
         value = (k == :key) ? key : value_format(v, k)
         unless value == v
@@ -364,9 +372,9 @@ module AwsHelper
 
     # Render an element containing the column values.
     opt.except!(:object)
-    prepend_classes!(opt, css_selector)
-    append_classes!(opt, 'first-prefix') if section
-    opt[:'data-row'] = row               if row
+    prepend_css!(opt, css)
+    append_css!(opt, 'first-prefix') if section
+    opt[:'data-row'] = row           if row
     html_div(entries, opt)
   end
 

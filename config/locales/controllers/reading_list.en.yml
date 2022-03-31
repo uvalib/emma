@@ -82,6 +82,8 @@ en:
           - description
           - dateUpdated
 
+        _endpoint:      true
+
       # =======================================================================
 
       show:
@@ -92,11 +94,14 @@ en:
         display_fields: # @see 'en.emma.reading_list.record'
           - !ruby/symbol all
 
+        _endpoint:      true
+
       # =======================================================================
 
       new:              &NEW_ACTION
         title:          'Add Reading List'
         tooltip:        'Create a new Bookshare reading list.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -108,6 +113,7 @@ en:
       edit:             &EDIT_ACTION
         title:          'Modify Reading List'
         tooltip:        'Make changes to this Bookshare reading list.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -120,6 +126,7 @@ en:
         label:          'Delete'
         title:          'Delete Reading List'
         tooltip:        'Delete this Bookshare reading list.'
+        _endpoint:      true
 
       # =======================================================================
 
@@ -131,3 +138,6 @@ en:
       history:
         title:          'Reading List History'
         tooltip:        'View modifications for this Bookshare reading list.'
+        _endpoint:      true
+
+      # =======================================================================

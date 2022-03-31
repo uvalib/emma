@@ -2,6 +2,8 @@
 <%-
   # Sign in with a local EMMA account.
 
+  view_debug(__FILE__)
+
   user ||= resource || resource_class.new
 
   form_opt = {
@@ -26,7 +28,7 @@
 
 <%= form_for(user, form_opt) do |f| -%>
 
-  <div class="account-fields">
+  <div class="form-fields user">
 
     <%= f.label          :email, label_opt %>
     <%= f.email_field    :email, email_opt %>

@@ -186,8 +186,8 @@ module Search::Shared::ScoreMethods
   # @return [Float]
   #
   def calculate_keyword_score(terms = nil, **opt)
-    term_opt, opt = partition_hash(opt, :q, *SCORE_TYPES)
-    terms  = term_opt[:q] || term_opt[:keyword] || terms
+    search = extract_hash!(opt, :q, *SCORE_TYPES)
+    terms  = search[:q] || search[:keyword] || terms
     count  = 0
     types  = { title: 100, creator: 0, publisher: 0 }
     scores =

@@ -1,0 +1,54 @@
+# Character encoding support methods.
+#
+module EncodingHelper
+  extend ::EncodingHelper
+
+  # Convert a string to UTF-8.
+  #
+  # If *xhr* is *true*, the result is encoded for use in HTTP message headers
+  # passed back to the client as flash messages.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, nil] value
+  # @param [Boolean, nil]                           xhr
+  #
+  # @return [ActiveSupport::SafeBuffer]   If *value* was HTML-safe.
+  # @return [String]                      Otherwise.
+  #
+  # @see #to_utf8
+  # @see #xhr_encode
+  #
+  def to_utf: (ActiveSupport::SafeBuffer value, ?xhr: bool?) -> ActiveSupport::SafeBuffer
+            | (String|nil                value, ?xhr: bool?) -> String
+
+  # Encode a string for use in HTTP message headers passed back to the client
+  # as flash messages.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, Any, nil] value
+  #
+  # @return [ActiveSupport::SafeBuffer, String]
+  #
+  # @see file:app/assets/javascripts/shared/flash.js *xhrDecode()*
+  #
+  # == Implementation Notes
+  # JavaScript uses UTF-16 strings, so the most straightforward way to prepare
+  # a string to be passed back to the client would be to encode as 'UTF-16BE',
+  # however that would halve the number of characters that could be transmitted
+  # via 'X-Flash-Message'.
+  #
+  # Another strategy would be to use ERB::Util#url_encode to produce only
+  # ASCII-equivalent characters, then use "decodeURIComponent()" on the client
+  # side to restore the string.  However, that method encodes *many* characters
+  # that don't need to be encoded for this purpose (e.g. ' ' becomes '%20').
+  #
+  # This method takes a similar approach, but only encodes non-ASCII-equivalent
+  # characters. Assuming that these will be infrequent for flash messages, this
+  # should minimize the impact of encoding on the size of the transmitted
+  # string.  (The '%' character is also encoded to avoid ambiguity.)
+  #
+  def xhr_encode: (ActiveSupport::SafeBuffer value) -> ActiveSupport::SafeBuffer
+                | (untyped                   value) -> String
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

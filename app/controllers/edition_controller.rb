@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle Bookshare-only "/edition" pages.
 #
-# @see EditionHelper
+# @see EditionDecorator
+# @see EditionsDecorator
 # @see file:app/views/edition/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -24,6 +25,7 @@ class EditionController < ApplicationController
   include RunStateConcern
   include PaginationConcern
   include SerializationConcern
+  include BookshareConcern
   include BsDownloadConcern
 
   # Non-functional hints for RubyMine type checking.
@@ -65,13 +67,15 @@ class EditionController < ApplicationController
   #
   # List all editions for a periodical.
   #
+  # @see #edition_index_path          Route helper
   # @see BookshareService::Request::Periodicals#get_periodical_editions
   #
   def index
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @list = bs_api.get_periodical_editions(seriesId: @series_id, **opt)
-    pagination_finalize(@list, :periodicalEditions, **opt)
+    @page.finalize(@list, :periodicalEditions, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
@@ -85,6 +89,7 @@ class EditionController < ApplicationController
   #
   # Display details of an existing edition.
   #
+  # @see #edition_path                Route helper
   # @see BookshareService::Request::Periodicals#get_periodical_edition
   #
   def show
@@ -104,6 +109,8 @@ class EditionController < ApplicationController
   #
   # Add metadata for a new edition.
   #
+  # @see #new_edition_path            Route helper
+  #
   def new
     __debug_route
   end
@@ -113,6 +120,8 @@ class EditionController < ApplicationController
   #
   # Upload a new edition.
   #
+  # @see #edition_path                Route helper
+  #
   def create
     __debug_route
   end
@@ -121,6 +130,8 @@ class EditionController < ApplicationController
   # == GET /edition/:editionId/edit
   #
   # Modify metadata of an existing edition entry.
+  #
+  # @see #edit_edition_path           Route helper
   #
   def edit
     __debug_route
@@ -133,6 +144,8 @@ class EditionController < ApplicationController
   #
   # Upload a replacement for an existing edition.
   #
+  # @see #edition_path                Route helper
+  #
   def update
     __debug_route
   end
@@ -141,6 +154,8 @@ class EditionController < ApplicationController
   # == DELETE /edition/:editionId
   #
   # Remove an existing edition entry.
+  #
+  # @see #edition_path                Route helper
   #
   def destroy
     __debug_route
@@ -157,6 +172,7 @@ class EditionController < ApplicationController
   #
   # Download a periodical edition.
   #
+  # @see #edition_download_path
   # @see BookshareService::Request::Periodicals#download_periodical_edition
   #
   def download

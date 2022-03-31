@@ -11,7 +11,6 @@ __loading_begin(__FILE__)
 #
 class User::RegistrationsController < Devise::RegistrationsController
 
-  include FlashConcern
   include UserConcern
   include SessionConcern
   include RunStateConcern
@@ -35,7 +34,11 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   public
 
+  # == GET /users/new
   # == GET /users/sign_up
+  #
+  # @see #new_user_path               Route helper
+  # @see #new_user_registration_path  Route helper
   #
   def new
     __debug_route
@@ -48,6 +51,9 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   # == POST /users
   #
+  # @see #create_user_path                Route helper
+  # @see #create_user_registration_path   Route helper
+  #
   def create
     __debug_route
     __debug_request
@@ -58,12 +64,16 @@ class User::RegistrationsController < Devise::RegistrationsController
     re_raise_if_internal_exception(error)
   end
 
+  # == GET /users/edit/:id
   # == GET /users/edit
+  #
+  # @see #edit_user_path                Route helper
+  # @see #edit_user_registration_path   Route helper
   #
   def edit
     __debug_route
     id = (params[:selected] || params[:id]).to_s
-    return redirect_to user_edit_select_path if show_menu?(id)
+    return redirect_to edit_select_user_path if show_menu?(id)
     if (user = positive(id))
       @item = User.find_record(user) or raise "invalid selection #{id.inspect}"
     else
@@ -72,7 +82,13 @@ class User::RegistrationsController < Devise::RegistrationsController
     super
   end
 
-  # == PUT /users
+  # == POST  /users/update/:id
+  # == PATCH /users/update/:id
+  # == PUT   /users/update/:id
+  # == PUT   /users
+  #
+  # @see #update_user_path            Route helper
+  # @see #user_registration_path      Route helper
   #
   def update
     __debug_route
@@ -110,6 +126,8 @@ class User::RegistrationsController < Devise::RegistrationsController
   # expired now. This is useful if the user wants to cancel oauth signing in/up
   # in the middle of the process, removing all OAuth session data.
   #
+  # @see #cancel_user_registration_path   Route helper
+  #
   def cancel
     __debug_route
     __debug_request
@@ -126,6 +144,8 @@ class User::RegistrationsController < Devise::RegistrationsController
   public
 
   # == GET /users/edit_select
+  #
+  # @see #edit_select_user_path       Route helper
   #
   def edit_select
     __debug_route

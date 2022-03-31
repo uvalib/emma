@@ -5,11 +5,11 @@
 #
 # The contents of a database table as JSON.
 
-records ||= nil
+list ||= nil
+list   = list.is_a?(Array) ? list.dup : Array.wrap(list)
 
-records = records&.dup || []
-schema_key, column_types = (records.shift || { schema: {} }).first
+schema_key, column_types = (list.shift || { schema: {} }).first
 
-json.count   records.size
+json.count   list.size
 json.set!    schema_key, column_types
-json.records records
+json.records list

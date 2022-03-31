@@ -65,7 +65,7 @@ module OmniAuth
       #
       # @return [Hash, nil]           Currently always *nil*.
       #
-      def extra: () -> symHash?
+      def extra: () -> (symHash | nil)
 
       # Generate authorization information for the authenticated user.
       #
@@ -169,7 +169,7 @@ module OmniAuth
       # @return [User]
       # @return [nil]
       #
-      def current_user: () -> User?
+      def current_user: () -> (User | nil)
 
       # Normalize URL parameters from the item or *request* if none was given.
       #
@@ -208,7 +208,7 @@ module OmniAuth
       # -
       # noinspection RubyMismatchedArgumentType
       # +
-      def synthetic_access_token: (String|prmHash|::OAuth2::AccessToken src) -> ::OAuth2::AccessToken?
+      def synthetic_access_token: (String|prmHash|::OAuth2::AccessToken src) -> (::OAuth2::AccessToken | nil)
       #def synthetic_access_token: (::OAuth2::AccessToken atoken) -> ::OAuth2::AccessToken
       #                          | (prmHash params)               -> (::OAuth2::AccessToken | nil)
       #                          | (String uid)                   -> (::OAuth2::AccessToken | nil)
@@ -240,7 +240,7 @@ module OmniAuth
       # -
       # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
       # +
-      def synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src) -> OmniAuth::AuthHash?
+      def synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src) -> (OmniAuth::AuthHash | nil)
       #def synthetic_auth_hash: (OmniAuth::AuthHash auth_hash) -> OmniAuth::AuthHash
       #                       | (prmHash params)               -> (OmniAuth::AuthHash | nil)
       #                       | (String uid)                   -> (OmniAuth::AuthHash | nil)
@@ -279,7 +279,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      def self.synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src, ?String? token) -> OmniAuth::AuthHash?
+      def self.synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src, ?String? token) -> (OmniAuth::AuthHash | nil)
       #def self.synthetic_auth_hash: (OmniAuth::AuthHash auth_hash)   -> OmniAuth::AuthHash
       #                            | (prmHash params)                 -> (OmniAuth::AuthHash | nil)
       #                            | (User|String uid, String? token) -> (OmniAuth::AuthHash | nil)

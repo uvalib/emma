@@ -1,0 +1,198 @@
+# Item presenter for "/artifact" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Bs::Record::ArtifactMetadata]
+#
+class ArtifactDecorator < BookshareDecorator
+  module Paths
+    include AccountDecorator::Common
+
+    def index_path: (**untyped opt) -> String
+
+    def show_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def new_path: (**untyped opt) -> String
+
+    def create_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def edit_select_path: (**untyped opt) -> String
+
+    def edit_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def update_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def delete_select_path: (**untyped opt) -> String
+
+    def delete_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def destroy_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+  end
+
+  module Methods
+    include AccountDecorator::Common
+
+    # Configuration for Bookshare download control properties.
+    #
+    # @type [Hash{Symbol=>Any}]
+    #
+    # -
+    # noinspection RailsI18nInspection
+    # +
+    DOWNLOAD_CONFIG: symHash
+
+    # Default link tooltip.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_TOOLTIP: String
+
+    # Default completed link tooltip.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_COMPLETE_TIP: String
+
+    # Artifact download progress indicator element CSS class.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_PROGRESS_CLASS: String
+
+    # Artifact download progress indicator tooltip.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_PROGRESS_TIP: String
+
+    # Artifact download progress indicator relative asset path.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_PROGRESS_ASSET: String
+
+    # Artifact download progress indicator alt text.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_PROGRESS_ALT_TEXT: String
+
+    # Artifact download failure message element CSS class.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_FAILURE_CLASS: String
+
+    # Artifact download button element CSS class.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_BUTTON_CLASS: String
+
+    # Artifact download button label.
+    #
+    # @type [String]
+    #
+    DOWNLOAD_BUTTON_LABEL: String
+
+    # Generic reference to format type for label construction.
+    #
+    # @type [String]
+    #
+    THIS_FORMAT: String
+
+    # Generate a menu of user instances.
+    #
+    # @param [Hash] opt                 Passed to super
+    #
+    # @option opt [User,String] :user   Defaults to `#current_user`.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # Create an element containing a link to download the given item.
+  #
+  # @param [String, Bs::Record::Format, nil] format
+  # @param [String, nil]                     url      Def: derived from *item*.
+  # @param [Hash]                            opt      Passed to #model_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]   The HTML link element.
+  # @return [nil]                         No link URL was provided or found.
+  #
+  def artifact_link: (Bs::Record::Format|String|nil format, ?url: String?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Create links to download each artifact of the given item.
+  #
+  # @param [Hash] opt                 Passed to #artifact_link except for:
+  #
+  # @option opt [String] :fmt         One of `BsFormatType#values`
+  # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def download_links: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Prepare a format name for use in a tooltip or label.
+  #
+  # @param [String, Symbol, nil] fmt
+  # @param [String, nil]         quote  Quote character; default: '"'.
+  #
+  # @return [String]
+  #
+  def format_label: (String|Symbol|nil fmt, ?quote: String?) -> String
+
+  # An element to be shown while an artifact is being acquired.
+  #
+  # @param [String, nil] image        Default: 'loading-balls.gif'
+  # @param [Hash]        opt          Passed to #image_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def download_progress: (?image: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element to indicate failure.
+  #
+  # @param [Hash] opt                 Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/download.js *appendFailureMessage*
+  #
+  def download_failure: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element for direct download of an artifact.
+  #
+  # @param [String, nil]         label
+  # @param [String, Symbol, nil] fmt
+  # @param [Hash]                opt    Passed to #make_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def download_button: (?label: String?, ?fmt: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a metadata listing of an artifact.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+end

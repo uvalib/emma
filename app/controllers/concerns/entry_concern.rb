@@ -17,16 +17,17 @@ module EntryConcern
   include Emma::Csv
   include Emma::Json
 
-  include Record::Properties
   include Record::Exceptions
 
   include ParamsHelper
   include FlashHelper
 
+  include IngestConcern
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include PaginationConcern
+    include OptionsConcern
     # :nocov:
   end
 
@@ -45,38 +46,13 @@ module EntryConcern
 
   public
 
-  # URL parameters involved in pagination.                                      # NOTE: from UploadConcern#UPLOAD_PAGE_PARAMS
-  #
-  # @type [Array<Symbol>]
-  #
-  ENTRY_PAGE_PARAMS = %i[page start offset limit].freeze
-
-  # URL parameters involved in form submission.                                 # NOTE: from UploadConcern#UPLOAD_FORM_PARAMS
-  #
-  # @type [Array<Symbol>]
-  #
-  ENTRY_FORM_PARAMS = %i[selected field-group cancel].freeze
-
-  # POST/PUT/PATCH parameters from the entry form that are not relevant to the  # NOTE: from UploadConcern#IGNORED_UPLOAD_FORM_PARAMS
-  # create/update of an Entry instance.
-  #
-  # @type [Array<Symbol>]
-  #
-  IGNORED_ENTRY_FORM_PARAMS = (ENTRY_PAGE_PARAMS + ENTRY_FORM_PARAMS).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>Any}]
   #
   def entry_params                                                              # NOTE: from UploadConcern#upload_params
     @entry_params ||=
-      get_entry_params.tap do |prm|
+      model_options.model_params.tap do |prm|
         @action_id ||= prm[:action_id]
         @phase_id  ||= prm[:phase_id]
         @entry_id  ||= prm[:entry_id] || prm[:id]
@@ -85,23 +61,20 @@ module EntryConcern
 
   # Get URL parameters relevant to the current operation.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
   # @return [Hash{Symbol=>Any}]
   #
   def get_entry_params(p = nil)                                                 # NOTE: from UploadConcern#get_upload_params
-    prm = url_parameters(p)
-    prm.except!(*IGNORED_ENTRY_FORM_PARAMS)
-    prm.reject! { |k, _| k.start_with?('edit_') }                               # TODO: temporary until JavaScript upload -> entry
-    prm.deep_symbolize_keys!
-    prm[:user] = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
-    reject_blanks(prm)
+    model_options.get_model_params(p).tap do |prm|
+      prm[:user] = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
+    end
   end
 
   # Extract POST parameters that are usable for creating/updating an Entry
   # instance.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
   # @return [Hash{Symbol=>Any}]
   #
@@ -114,17 +87,11 @@ module EntryConcern
   # being replaced.
   #
   def entry_post_params(p = nil)                                                # NOTE: from UploadConcern#upload_post_params
-    prm = p ? get_entry_params(p) : entry_params
-    if (fields = json_parse(prm.delete(:entry)))
-      prm[:file_data] = json_parse(fields.delete(:file))
-      prm[:emma_data] = json_parse(fields.delete(:emma_data))
-      prm[:revert]    = json_parse(fields.delete(:revert_data)) # TODO: revert?
-      # noinspection RubyMismatchedArgumentType
-      prm.merge!(fields)
-      @entry_id ||= fields[:id] if p.nil?
+    model_options.model_post_params(p).tap do |prm|
+      prm[:base_url] = request.base_url
+      @entry_id    ||= prm[:id] if p.nil?
+      @entry_params  = prm      if p.nil?
     end
-    prm[:base_url] = request.base_url
-    @entry_params  = reject_blanks(prm)
   end
 
   # Extract POST parameters and data for bulk operations.
@@ -140,7 +107,7 @@ module EntryConcern
   # noinspection RubyMismatchedParameterType
   #++
   def entry_bulk_post_params(p = nil, req = nil)                                # NOTE: from UploadConcern#upload_bulk_post_params
-    prm = p ? get_entry_params(p) : entry_params
+    prm = model_options.model_post_params(p)
     src = prm[:src] || prm[:source] || prm[:manifest]
     opt = src ? { src: src } : { data: (req || request) }
     Array.wrap(fetch_data(**opt)).map(&:symbolize_keys)
@@ -217,13 +184,13 @@ module EntryConcern
   #
   # @type [Array<Symbol>]
   #
-  IDENTIFIER_PARAMS = %i[id selected submission_id].freeze
+  IDENTIFIER_PARAMS = Entry::Options::IDENTIFIER_PARAMS
 
   # URL parameters associated with POST data.
   #
   # @type [Array<Symbol>]
   #
-  DATA_PARAMS = %i[entry phase action].freeze
+  DATA_PARAMS = Entry::Options::DATA_PARAMS
 
   # Extract the best-match URL parameter which represents an item identifier.
   #
@@ -236,8 +203,8 @@ module EntryConcern
   # @return [nil]                     No param from #IDENTIFIER_PARAMS found.
   #
   def set_identifiers(p = nil)                                                  # NOTE: from UploadConcern
-    prm = url_parameters(p)
-    data, prm = partition_hash(prm, *DATA_PARAMS)
+    prm  = url_parameters(p)
+    data = extract_hash!(prm, *DATA_PARAMS)
     data.each_pair do |k, v|
       next unless (v &&= safe_json_parse(v)).is_a?(Hash)
       if v[:id].present?
@@ -520,7 +487,7 @@ module EntryConcern
   #++
   def delete_entry(entries = nil, opt = nil)
     entries, opt = entry_request_params(entries, opt)
-    id_opt,  opt = partition_hash(opt, :ids, :id)
+    id_opt    = extract_hash!(opt, :ids, :id)
     entries ||= id_opt.values.first
     # noinspection RubyNilAnalysis
     opt.except!(:force, :emergency, :truncate)
@@ -542,11 +509,9 @@ module EntryConcern
   #++
   def destroy_entry(entries = nil, opt = nil)                                   # NOTE: from UploadWorkflow::Actions#wf_remove_items
     entries, opt = entry_request_params(entries, opt)
-    id_opt,  opt = partition_hash(opt, :ids, :id)
+    opt.reverse_merge!(model_options.all)
+    id_opt    = extract_hash!(opt, :ids, :id)
     entries ||= id_opt.values.first
-    opt[:force]     = force_delete     unless opt.key?(:force)
-    opt[:emergency] = emergency_delete unless opt.key?(:emergency)
-    opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
     succeeded, failed = Entry.batch_entry_remove(*entries, **opt)
     failure(:destroy, failed.uniq) if failed.present?
     succeeded
@@ -857,7 +822,7 @@ module EntryConcern
   # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
   #
   def reindex_submissions(*entries, **opt)
-    opt, sql_opt = partition_hash(opt, :atomic, :meth, :dryrun, :size)
+    sql_opt = remainder_hash!(opt, :atomic, :meth, :dryrun, :size)
     opt[:meth] ||= __method__
     if entries.blank?
       sql_opt[:repository] ||= EmmaRepository.default
@@ -934,34 +899,6 @@ module EntryConcern
 
     end
     return successes, failures
-  end
-
-  # ===========================================================================
-  # :section: PaginationConcern overrides
-  # ===========================================================================
-
-  public
-
-  # Finish setting of pagination values based on the result list and original
-  # URL parameters.
-  #
-  # @param [Hash] result              From #find_or_match_entries.
-  # @param [Hash] opt                 Passed to #next_page_path.
-  #
-  # @return [void]
-  #
-  # @see PaginationConcern#pagination_finalize
-  #
-  def pagination_finalize(result, **opt)                                        # NOTE: from UploadConcern
-    self.page_items   = result[:list]
-    self.page_size    = result[:limit]
-    self.page_offset  = result[:offset]
-    self.total_items  = result[:total]
-    first, last, page = result.values_at(:first, :last, :page)
-    self.next_page    = (url_for(opt.merge(page: (page + 1)))    unless last)
-    self.prev_page    = (url_for(opt.merge(page: (page - 1)))    unless first)
-    self.first_page   = (url_for(opt.except(*ENTRY_PAGE_PARAMS)) unless first)
-    self.prev_page    = first_page if page == 2
   end
 
   # ===========================================================================
@@ -1055,20 +992,36 @@ module EntryConcern
 
     __included(base, THIS_MODULE)
 
-    if base.is_a?(ApplicationController)
+    include OptionsConcern
+    include PaginationConcern
 
-      # In order to override #pagination_finalize this must be...
-      included_after(base, PaginationConcern, this: THIS_MODULE)
+    # =========================================================================
+    # :section: OptionsConcern overrides
+    # =========================================================================
 
-      # =======================================================================
-      # :section: Helpers - methods exposed for use in views
-      # =======================================================================
-
-      helper_method *Record::Properties.public_instance_methods(false)
-
+    # Create a @model_options instance from the current parameters.
+    #
+    # @return [Entry::Options]
+    #
+    def set_model_options
+      @model_options = Entry::Options.new(request_parameters)
     end
 
-    include IngestConcern
+    # =========================================================================
+    # :section: PaginatorConcern overrides
+    # =========================================================================
+
+    # Create a Paginator for the current controller action.
+    #
+    # @param [Class<Paginator>] paginator  Paginator class.
+    # @param [Hash]             opt        Passed to super.
+    #
+    # @return [Entry::Paginator]
+    #
+    def pagination_setup(paginator: Entry::Paginator, **opt)
+      # noinspection RubyMismatchedReturnType
+      super
+    end
 
   end
 

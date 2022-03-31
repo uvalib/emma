@@ -8,10 +8,8 @@
 // Repository record popup control
 //=============================================================================
 
-// @see SearchHelper#record_popup
-.record-popup {
-
-    @extend .popup-container;
+// @see SearchDecorator#record_popup
+.popup-container.record-popup {
 
     .control.text {
         // TODO: ??? .record-popup .control.text

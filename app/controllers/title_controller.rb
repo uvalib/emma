@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle Bookshare-only "/title" pages.
 #
-# @see TitleHelper
+# @see TitleDecorator
+# @see TitlesDecorator
 # @see file:app/views/title/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -58,6 +59,7 @@ class TitleController < ApplicationController
   #
   # List all catalog titles.
   #
+  # @see #title_index_path            Route helper
   # @see BookshareService::Request::Titles#get_titles
   #
   def index
@@ -84,9 +86,10 @@ class TitleController < ApplicationController
 
     else
       # Search for keyword(s) or a valid ISBN.
-      opt   = pagination_setup(opt)
+      @page = pagination_setup
+      opt   = @page.initial_parameters
       @list = bs_api.get_titles(**opt)
-      pagination_finalize(@list, :titles, **opt)
+      @page.finalize(@list, :titles, **opt)
       flash_now_alert(@list.exec_report) if @list.error?
     end
     respond_to do |format|
@@ -100,6 +103,7 @@ class TitleController < ApplicationController
   #
   # Display details of an existing catalog title.
   #
+  # @see #title_path                  Route helper
   # @see BookshareService::Request::Titles#get_title
   #
   def show
@@ -117,6 +121,8 @@ class TitleController < ApplicationController
   #
   # Add metadata for a new catalog title.
   #
+  # @see #new_title_path              Route helper
+  #
   def new
     __debug_route
   end
@@ -125,6 +131,8 @@ class TitleController < ApplicationController
   #
   # Create an entry for a new catalog title.
   #
+  # @see #title_path                  Route helper
+  #
   def create
     __debug_route
   end
@@ -132,6 +140,8 @@ class TitleController < ApplicationController
   # == GET /title/:id/edit
   #
   # Modify metadata of an existing catalog title entry.
+  #
+  # @see #edit_title_path             Route helper
   #
   def edit
     __debug_route
@@ -142,6 +152,8 @@ class TitleController < ApplicationController
   #
   # Update the entry for an existing catalog title.
   #
+  # @see #title_path                  Route helper
+  #
   def update
     __debug_route
   end
@@ -149,6 +161,8 @@ class TitleController < ApplicationController
   # == DELETE /title/:id
   #
   # Remove an existing catalog title entry.
+  #
+  # @see #title_path                  Route helper
   #
   def destroy
     __debug_route
@@ -163,6 +177,8 @@ class TitleController < ApplicationController
   # == GET /title/:id/history
   #
   # Show processing history for this catalog title.
+  #
+  # @see #history_title_path          Route helper
   #
   def history
     __debug_route

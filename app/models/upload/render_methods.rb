@@ -21,7 +21,7 @@ module Upload::RenderMethods
   #
   # @return [String, nil]
   #
-  # @see LinkHelper#page_menu_label
+  # @see BaseDecorator::Menu#items_menu_label
   #
   #--
   # noinspection RubyNilAnalysis

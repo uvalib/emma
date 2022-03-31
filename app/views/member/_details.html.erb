@@ -2,32 +2,36 @@
 <%-
   # A Member metadata listing with preferences and history.
 
-  item  ||= nil or return
+  view_debug(__FILE__)
+
+  item  ||= nil
   pref  ||= nil
   hist  ||= nil
+  dec   ||= item && MemberDecorator.new(item, hist: hist, pref: pref, **context) or return
+  pref  ||= dec.preference_data
+  hist  ||= dec.history_data
+
   add   ||= nil
   level ||= 1
   skip  ||= nil
 
-  skip = Array.wrap(skip)
-  pref = nil if skip.include?(:preferences)
-  hist = nil if skip.include?(:history)
-  role = ('role="article"'.html_safe if level == 1)
-  opt  = { level: (level + 1), skip: skip }
-
+  skip    = [*skip]
+  pref    = nil if skip.include?(:preferences)
+  hist    = nil if skip.include?(:history)
   heading =
     if (level == 1) && !skip.include?(:title)
       title ||= 'Bookshare Account Details' # TODO: I18n
       html_tag((level + 1), title, class: 'account list-heading')
     end
 
+  template_opt = { dec: dec, level: (level + 1), skip: skip }
+
 -%>
 
 <%= heading %>
 
-<div <%= role -%> class="member-container">
-  <%= member_details(item, pairs: add) %>
-  <%= render 'member/preferences', opt.merge(pref: pref) if pref %>
-</div>
+<%= dec.details_element(pairs: add, level: level) do -%>
+  <%= render 'member/preferences', template_opt if pref %>
+<%- end -%>
 
-<%= render 'member/history', opt.merge(hist: hist) if hist %>
+<%= render 'member/history', template_opt if hist %>

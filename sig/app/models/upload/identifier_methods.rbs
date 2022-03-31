@@ -22,7 +22,7 @@ module Upload::IdentifierMethods
   # @type [Regexp]                                                              # NOTE: to Record::EmmaIdentification
   SID_PATTERN: Regexp
 
-  def id_for: (untyped item) -> String?
+  def id_for: (untyped item) -> (String | nil)
 
   # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
   #
@@ -31,7 +31,7 @@ module Upload::IdentifierMethods
   # @return [String]                  The submission ID.
   # @return [nil]                     No submission ID could be determined.
   #
-  def sid_for: (untyped item) -> String?
+  def sid_for: (untyped item) -> (String | nil)
 
   def valid_sid?: (untyped value) -> bool
 

@@ -5,14 +5,13 @@
 #
 # The contents of a database table as XML.
 
-name    ||= @name
-records ||= @item || []
-
-name = name.underscore
+item ||= @item
+name ||= @name
+name   = name.to_s.underscore
 
 xml.instruct!
 xml.tag!(name) do
   # noinspection RubyMismatchedArgumentType
   xml.timestamp DateTime.now
-  xml << render('data/details', records: records, name: name)
+  xml << render('data/details', list: item, name: name)
 end

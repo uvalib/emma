@@ -1,5 +1,5 @@
 # Methods to support rendering Upload records.
 #
 module Upload::RenderMethods
-  def menu_label: (?Upload? item) -> String?
+  def menu_label: (?Upload? item) -> (String | nil)
 end

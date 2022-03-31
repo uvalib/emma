@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 # Handle Bookshare download requests.
 #
-# @see ArtifactHelper
+# @see ArtifactDecorator
+# @see ArtifactsDecorator
 # @see file:app/views/artifact/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -24,6 +25,7 @@ class ArtifactController < ApplicationController
   include RunStateConcern
   include PaginationConcern
   include SerializationConcern
+  include BookshareConcern
   include BsDownloadConcern
 
   # Non-functional hints for RubyMine type checking.
@@ -68,9 +70,10 @@ class ArtifactController < ApplicationController
   #
   def index
     __debug_route
-    opt   = pagination_setup
+    @page = pagination_setup
+    opt   = @page.initial_parameters
     @list = bs_api.get_artifact_list(**opt)
-    pagination_finalize(@list, :artifacts, **opt)
+    @page.finalize(@list, :artifacts, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
@@ -85,6 +88,7 @@ class ArtifactController < ApplicationController
   #
   # Get metadata for an existing artifact.
   #
+  # @see #artifact_path               Route helper
   # @see BookshareService::Request::Titles#get_artifact_metadata
   #
   def show
@@ -104,6 +108,8 @@ class ArtifactController < ApplicationController
   #
   # Add metadata for a new artifact.
   #
+  # @see #new_artifact_path           Route helper
+  #
   def new
     __debug_route
   end
@@ -113,6 +119,8 @@ class ArtifactController < ApplicationController
   #
   # Upload a new artifact.
   #
+  # @see #create_artifact_path        Route helper
+  #
   def create
     __debug_route
   end
@@ -121,6 +129,8 @@ class ArtifactController < ApplicationController
   # == GET /artifact/:bookshareId/edit
   #
   # Modify metadata of an existing artifact entry.
+  #
+  # @see #edit_artifact_path          Route helper
   #
   def edit
     __debug_route
@@ -132,6 +142,8 @@ class ArtifactController < ApplicationController
   # == PATCH /artifact/:bookshareId
   #
   # Upload a replacement for an existing artifact.
+  #
+  # @see #update_artifact_path        Route helper
   #
   def update
     __debug_route
@@ -157,6 +169,7 @@ class ArtifactController < ApplicationController
   #
   # Download an artifact of the indicated Bookshare format type.
   #
+  # @see #bs_download_path            Route helper
   # @see BookshareService::Request::Titles#download_title
   #
   def download
@@ -171,6 +184,7 @@ class ArtifactController < ApplicationController
   # Retrieve a Bookshare artifact from an absolute URL (as found in EMMA
   # Unified Search results).
   #
+  # @see #bs_retrieval_path           Route helper
   # @see BookshareService::Request::Titles#get_retrieval
   #
   def retrieval

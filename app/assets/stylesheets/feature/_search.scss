@@ -18,7 +18,7 @@
     margin:    0;
 }
 
-// @see ModelHelper::List#index_controls
+// @see BaseCollectionDecorator::List#index_controls
 .pagination-top {
 
     margin-top:    model.$list-item-gap-y;
@@ -29,7 +29,7 @@
     }
 }
 
-// @see ModelHelper::List#index_controls
+// @see BaseCollectionDecorator::List#index_controls
 .pagination-bottom {
 
     margin-top:    calc(#{model.$list-item-gap-y} / 2);

@@ -2,9 +2,13 @@
 <%-
   # A Periodical metadata listing with associated editions.
 
-  item  ||= nil or return
+  view_debug(__FILE__)
+
+  item  ||= nil
   list  ||= nil
-  count ||= nil
+  dec   ||= item && PeriodicalDecorator.new(item, editions: list, **context) or return
+  item  ||= dec.object
+
   add   ||= nil
   level ||= 1
   skip  ||= nil
@@ -14,14 +18,6 @@
     Language: item.languages&.first(3),
   ) unless modal?
 
-  skip = Array.wrap(skip)
-  role = ('role="article"'.html_safe if level == 1)
-  opt  = { list: list, count: count, level: level, skip: skip }
-  # NOTE: level is not incremented in this case.
-
 -%>
 
-<div <%= role -%> class="periodical-container">
-  <%= periodical_details(item, pairs: add) %>
-  <%= render('periodical/editions', opt) unless skip.include?(:editions) %>
-</div>
+<%= dec.details_element(pairs: add, level: level, skip: skip) %>

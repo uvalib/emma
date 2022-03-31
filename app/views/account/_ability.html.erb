@@ -2,6 +2,8 @@
 <%-
   # Displays the individual abilities of the current user account.
 
+  view_debug(__FILE__)
+
   user      = current_user&.to_s&.presence || 'guest'
   actions   = Ability::ACTIONS + %i[create update delete]
   models    = Ability.models

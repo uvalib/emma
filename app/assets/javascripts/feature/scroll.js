@@ -144,7 +144,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {boolean}             Always *false* to end event propagation.
      *
-     * @see "SearchHelper#prev_next_controls"
+     * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToPrev(event) {
         debug('scrollToPrev');
@@ -159,7 +159,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {boolean}             Always *false* to end event propagation.
      *
-     * @see "SearchHelper#prev_next_controls"
+     * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToNext(event) {
         debug('scrollToNext');
@@ -175,7 +175,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {boolean}             Always *false* to end event propagation.
      *
-     * @see "SearchHelper#prev_next_controls"
+     * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToRecord(event, button_selector) {
         let $button = $(event.currentTarget || event.target);

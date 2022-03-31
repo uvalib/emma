@@ -20,36 +20,46 @@ module RouteHelper
   # @param [Symbol, String]      controller
   # @param [Symbol, String, nil] action
   #
-  # @return [Symbol]
+  # @return [Symbol, Proc, String]
   #
   def route_helper(controller, action = nil)
-    ctr  = controller.to_s.underscore
-    url  = (ctr.delete_suffix!('_url')  unless action)
-    path = (ctr.delete_suffix!('_path') unless action || url)
-    ctr  = ctr.split('/').map(&:singularize).join('_') if ctr.include?('/')
-    return :"#{ctr}_url"  if url
-    return :"#{ctr}_path" if path
-    case action&.to_sym
-      when nil, :index then :"#{ctr}_index_path"
-      when :show       then :"#{ctr}_path"
-      else                  :"#{action}_#{ctr}_path"
+    ctr = controller.to_s.underscore
+    ctr = ctr.split('/').map(&:singularize).join('_') if ctr.include?('/')
+    ctr = ctr.split('.').map(&:singularize).join('_') if ctr.include?('.')
+    act = action&.to_sym
+    if ctr.end_with?('_url', '_path')
+      Log.warn("#{__method__}: #{controller}: ignoring action #{act}") if act
+      ctr
+    elsif act.nil? || (act == :index)
+      :"#{ctr}_index_path"
+    elsif act == :show
+      :"#{ctr}_path"
+    elsif BookshareDecorator::ACTION_MAPPING.keys.include?(ctr.to_sym)
+      path = { controller: ctr, action: act }
+      ->(**opt) { BookshareDecorator.bookshare_url(path, **opt) }
+    else
+      :"#{act}_#{ctr}_path"
     end
   end
 
   # get_path_for
   #
-  # @param [Symbol, String]      controller
-  # @param [Symbol, String, nil] action
+  # @param [Array<Symbol,String>] arg     Controller and optional action.
+  # @param [Boolean]              warn
+  # @param [Hash]                 opt
   #
   # @return [String, nil]
   #
-  def get_path_for(controller, action = nil, **opt)
-    meth = route_helper(controller, action)
-    if respond_to?(meth)
-      send(meth, **opt)
-    else
-      Log.warn { "#{__method__}: invalid route helper #{meth.inspect}" }
+  def get_path_for(*arg, warn: true, **opt)
+    ctr, act = arg
+    ctr = opt.delete(:controller) || ctr
+    act = opt.delete(:action)     || act
+    case (path = route_helper(ctr, act))
+      when Symbol then result = try(path, **opt) and return result
+      when Proc   then result = path.call(**opt) and return result
+      else             result = path.presence    and return result
     end
+    Log.warn("#{__method__}: invalid: #{ctr.inspect} #{act.inspect}") if warn
   end
 
   # ===========================================================================

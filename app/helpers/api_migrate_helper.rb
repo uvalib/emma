@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module ApiMigrateHelper
 
-  include UploadHelper
+  include PanelHelper
 
   # ===========================================================================
   # :section:
@@ -131,8 +131,7 @@ module ApiMigrateHelper
       f_id   = unique_id(f_css)
       column = html_span(column) << toggle_button(id: f_id)
       f_opt  = { class: "#{f_css} toggle-panel", id: f_id }
-      # noinspection RubyMismatchedArgumentType
-      fields = render_json_data(:upload, fields)
+      fields = UploadDecorator.new.render_json_data(fields)
     else
       f_opt  = { class: "#{f_css} empty open" }
       fields = html_div('EMPTY DATABASE COLUMN', class: 'field') # TODO: I18n

@@ -2,5 +2,6 @@
 <%-
   # Fall-back page for a failed account removal.
   # TODO: render 'account/form_delete'
+  view_debug(__FILE__)
 -%>
 <%= render 'user/fallback', action: :delete %>

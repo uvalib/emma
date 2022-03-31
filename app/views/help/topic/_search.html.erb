@@ -2,6 +2,8 @@
 <%-
   # EMMA search help page.
 
+  view_debug(__FILE__)
+
   summary_title     = 'OVERVIEW'
 
   types_title       = 'Search Types'
@@ -33,18 +35,18 @@
   type_closed       = help_image(:search_type_closed)
   type_opened       = help_image(:search_type_opened)
 
-  panel_closer      = LayoutHelper::Common::PANEL_CLOSER_LABEL
+  panel_closer      = PanelHelper::PANEL_CLOSER_LABEL
   panel_closer      = help_span(panel_closer, class: 'toggle')
-  panel_opener      = LayoutHelper::Common::PANEL_OPENER_LABEL
+  panel_opener      = PanelHelper::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')
 
   drop_down         = help_image(:drop_down)
   single_select     = help_image(:one_selection)
   dual_select       = help_image(:two_selections)
 
-  closed_toggle     = LayoutHelper::Common::TREE_OPENER_LABEL
+  closed_toggle     = TreeHelper::TREE_OPENER_LABEL
   closed_toggle     = html_span(closed_toggle, class: 'toggle for-item closed')
-  open_toggle       = LayoutHelper::Common::TREE_CLOSER_LABEL
+  open_toggle       = TreeHelper::TREE_CLOSER_LABEL
   open_toggle       = html_span(open_toggle, class: 'toggle for-item open')
 
 -%>

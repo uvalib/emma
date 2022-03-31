@@ -1,0 +1,252 @@
+# View helper methods supporting display of Model instances (both database
+# items and API messages).
+#
+module BaseDecorator::List
+  include BaseDecorator::Fields
+
+  # The CSS class wrapping label/values pairs (if any).
+  #
+  # @type [String, nil]
+  #
+  PAIR_WRAPPER: String?
+
+  # thumbnail_data
+  #
+  # @return [String, nil]
+  #
+  def thumbnail_data: () -> (String | nil)
+
+  # cover_data
+  #
+  # @return [String, nil]
+  #
+  def cover_data: () -> (String | nil)
+
+  # Render field/value pairs.
+  #
+  # @param [Hash, nil]           pairs        Passed to #field_pairs.
+  # @param [String, Symbol, nil] action       Passed to #field_pairs.
+  # @param [Integer, nil]        row_offset   Def: 0.
+  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash]                opt
+  #
+  # @option opt [Integer] :index              Offset to make unique element IDs
+  #                                             passed to #render_pair.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_field_values: (?pairs: anyHash?, ?action: String|Symbol|nil, ?row_offset: Integer?, ?separator: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single label/value pair.
+  #
+  # @param [String, Symbol, nil] label
+  # @param [Any, nil]            value
+  # @param [Hash, nil]           prop       Default: from field/model.
+  # @param [Symbol, nil]         field
+  # @param [String, Integer]     index      Offset to make unique element IDs.
+  # @param [Integer, nil]        row        Display row.
+  # @param [String, nil]         separator  Between parts if *value* is array.
+  # @param [String, nil]         wrap       Class for outer wrapper.
+  # @param [Hash]                opt        Passed to each #html_div except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :no_format
+  #
+  # @return [ActiveSupport::SafeBuffer]     HTML label and value elements.
+  # @return [nil]                           If *value* is blank.
+  #
+  # == Usage Notes
+  # If *label* is HTML then no ".field-???" class is included for the ".label"
+  # and ".value" elements.
+  #
+  # -
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # +
+  def render_pair: (String|Symbol|nil label, untyped? value, ?prop: symHash?, ?field: Symbol?, ?index: String|Integer|nil, ?row: Integer, ?separator: String?, ?wrap: String?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  NO_RESULTS: String
+
+  # An indicator that can be used to stand for an empty list.
+  #
+  # @param [String, nil] message      Default: #NO_RESULTS.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_empty_value: (?String? message) -> ActiveSupport::SafeBuffer
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Any]       value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to #execute.
+  #
+  # @return [Any]                     HTML or scalar value.
+  # @return [nil]                     If *value* or *object* is *nil*.
+  #
+  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
+
+  # Enable to log attempts to render a field which fail.
+  #
+  # @type [Boolean]
+  #
+  DEBUG_DECORATOR_EXECUTE: bool
+
+  # Attempt to interpret *method* as an *item* method or as a method defined
+  # in the current context.
+  #
+  # @param [Model, Hash, nil] item    Default: `#object`.
+  # @param [Symbol]           m
+  # @param [Hash, nil]        opt     Options (used only if appropriate).
+  #
+  # @return [Any]                     HTML or scalar value.
+  # @return [nil]                     If executed method returned *nil*.
+  #
+  def execute: (Model|symHash|nil item, String|Symbol m, ?symHash? opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
+
+  # Render a metadata listing of a model instance.
+  #
+  # @param [Hash, nil] pairs          Label/value pairs.
+  # @param [Hash]      opt            Passed to #render_field_values except:
+  #
+  # @option opt [String] :class       Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # details_element
+  #
+  # @param [Integer, nil]        level
+  # @param [String, Symbol, nil] role
+  # @param [Hash]                opt    Passed to #details.
+  # @param [Proc]                block  Passed to #html_join.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details_element: (level: Integer?, role: String|Symbol|nil, **untyped opt) { () -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+
+  # A complete list item entry.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_row: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Method options which are processed internally and not passed on as HTML
+  # options.
+  #
+  # @type [Array<Symbol>]
+  #
+  ITEM_ENTRY_OPT: symArray
+
+  # Render an element containing the ordinal position of an entry within a list
+  # based on the provided *offset* and *index*.
+  #
+  # *1* Use :inner to pass additional element(s) to go inside the container; if
+  #     given as *true* this specifies that elements from the block will go
+  #     inside the container (this is the default unless :outer is given).
+  #
+  # *2* Use :outer to pass additional element(s) to go after the container
+  #     element; if given as *true* this specifies that elements from the block
+  #     will go after the container.
+  #
+  # @param [Integer]                index   Index number.
+  # @param [Integer, nil]           offset  Default: 0.
+  # @param [Integer, nil]           level   Heading tag level (@see #html_tag).
+  # @param [String, nil]            group   Sets :'data-group' for outer div.
+  # @param [Integer, nil]           row
+  # @param [Boolean, String, Array] inner   *1* above.
+  # @param [Boolean, String, Array] outer   *2* above.
+  # @param [Hash]                   opt     Passed to inner #html_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [index,offset] To supply additional parts within .number element.
+  # @yieldparam  [Integer] index      The effective index number.
+  # @yieldparam  [Integer] offset     The effective page offset.
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  #
+  def list_item_number: (index: Integer, ?offset: Integer?, ?level: Integer?, ?group: String?, ?row: Integer?, ?inner: (bool|String|strArray)? inner, ?outer: (bool|String|strArray)?, **untyped opt) { (Integer, Integer) -> Array[ActiveSupport::SafeBuffer] } -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Label/value pairs.
+  # @param [Symbol]    render         Default: #render_field_values.
+  # @param [Hash]      opt            Passed to the render method.
+  #
+  # @option opt [Hash] :outer         HTML options for outer div container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def list_item: (?pairs: anyHash?, ?render: Symbol?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Thumbnail element for the given catalog title.
+  #
+  # @param [Boolean, String] link         If *true* make the image a link to
+  #                                         the show page for the item.
+  # @param [Boolean]         placeholder  If *false*, return *nil* if an image
+  #                                         could not be determined.
+  # @param [Hash]            opt          Passed to #image_element except:
+  #
+  # @option opt [Symbol] :meth            Passed to #get_thumbnail_image
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def thumbnail: (?link: bool|String, ?placeholder: true, **untyped opt) -> ActiveSupport::SafeBuffer
+               | (?link: bool|String, placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Cover image element for the given catalog title.
+  #
+  # @param [Boolean, String] link         If *true* make the image a link to
+  #                                         the show page for the item.
+  # @param [Boolean]         placeholder  If *false*, return *nil* if an image
+  #                                         could not be determined.
+  # @param [Hash]            opt          Passed to #image_element except:
+  #
+  # @option opt [Symbol] :meth            Passed to #get_cover_image
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def cover: (?link: bool|String, ?placeholder: true, **untyped opt) -> ActiveSupport::SafeBuffer
+           | (?link: bool|String, placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Generate a standardized (base) element identifier from the object.
+  #
+  # @return [String]
+  #
+  # -
+  # noinspection RailsParamDefResolve
+  # +
+  def model_item_id: (*untyped) ?{ () -> untyped } -> String
+
+  # All :emma_titleId value(s) associated with the object.
+  #
+  # @return [String,nil]
+  #
+  def title_id_values: () -> (String | nil)
+
+  # state_group
+  #
+  # @return [Symbol, nil]
+  #
+  def state_group: (*untyped) ?{ () -> untyped } -> (Symbol | nil)
+
+  # get_thumbnail_image
+  #
+  # @param [Symbol, nil] meth
+  #
+  # @return [String, nil]
+  #
+  def get_thumbnail_image: (?meth: Symbol?) -> (String | nil)
+
+  # get_cover_image
+  #
+  # @param [Symbol, nil] meth
+  #
+  # @return [String, nil]
+  #
+  def get_cover_image: (?meth: Symbol?) -> (String | nil)
+end

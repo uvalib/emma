@@ -55,7 +55,7 @@ module AwsS3Service::Common
     error = nil
 
     # Set internal options from parameters or service options.
-    local, opt = partition_hash(opt, :meth, *SERVICE_OPTIONS)
+    local        = extract_hash!(opt, :meth, *SERVICE_OPTIONS)
     no_exception = local[:no_exception] || options[:no_exception]
     no_raise     = local[:no_raise]     || options[:no_raise] || no_exception
     meth         = local[:meth]         || calling_method

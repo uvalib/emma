@@ -13,6 +13,7 @@ module ApiHelper
   include Emma::Json
 
   include HtmlHelper
+  include LinkHelper
 
   extend self
 

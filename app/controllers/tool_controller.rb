@@ -16,6 +16,7 @@ class ToolController < ApplicationController
   include SessionConcern
   include RunStateConcern
   include SerializationConcern
+  include ToolConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -52,6 +53,8 @@ class ToolController < ApplicationController
   #
   # Index of tool pages.
   #
+  # @see #tool_index_path             Route helper
+  #
   def index
   end
 
@@ -65,6 +68,8 @@ class ToolController < ApplicationController
   #
   # A simple Math Detective API test page for selecting a single file.
   #
+  # @see #md_trial_path               Route helper
+  #
   def md
   end
 
@@ -72,6 +77,8 @@ class ToolController < ApplicationController
   # == POST /tool/md_proxy
   #
   # Proxy the Math Detective API request to avoid CORS.
+  #
+  # @see #md_proxy_path               Route helper
   #
   def md_proxy
     meth     = request.request_method

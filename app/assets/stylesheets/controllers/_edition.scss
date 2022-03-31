@@ -7,7 +7,7 @@
 //=============================================================================
 
 // Periodical edition metadata label/value pairs for index listings.
-// @see ModelHelper::List#model_list_item
+// @see EditionDecorator#list_item
 .edition-list-item {
     @extend .model-list-item;
 }
@@ -31,7 +31,7 @@
 //=============================================================================
 
 // Periodical edition metadata values.
-// @see ModelHelper::List#model_details
+// @see EditionDecorator#details
 .edition-details {
     @extend .model-details;
 }

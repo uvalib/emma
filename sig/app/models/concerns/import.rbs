@@ -90,7 +90,7 @@ module Import
   #
   # @return [String, nil]
   #
-  def string_value: (untyped v, ?join: String, ?first: bool) -> String?
+  def string_value: (untyped v, ?join: String, ?first: bool) -> (String | nil)
 
   # Transform a data item into a counting number (1 or greater).
   #
@@ -98,7 +98,7 @@ module Import
   #
   # @return [Integer, nil]
   #
-  def ordinal_value: (untyped v) -> Integer?
+  def ordinal_value: (untyped v) -> (Integer | nil)
 
   # Transform a date data item into a four-digit year.
   #
@@ -106,7 +106,7 @@ module Import
   #
   # @return [String, nil]
   #
-  def year_value: (untyped v) -> String?
+  def year_value: (untyped v) -> (String | nil)
 
   # Transform a data item into one or more three-character ISO 639 values.
   #
@@ -165,7 +165,7 @@ module Import
   #
   # @return [String, nil]
   #
-  def enum_value: (untyped v, Class `type`) -> String?
+  def enum_value: (untyped v, Class `type`) -> (String | nil)
 
   # Transform a data item into an array of EnumType values.
   #
@@ -222,7 +222,7 @@ module Import
   #
   # @return [Module, nil]
   #
-  def self.get_importer: (Module|String|Symbol mod) -> Module?
+  def self.get_importer: (Module|String|Symbol mod) -> (Module | nil)
 
   include Emma::Debug::OutputMethods
 

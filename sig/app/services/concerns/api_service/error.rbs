@@ -81,7 +81,7 @@ class ApiService::Error < Api::Error
     #
     # @return [String, nil]
     #
-    def oauth2_error_header: (Faraday::Response|Faraday::Error|symHash src) -> String?
+    def oauth2_error_header: (Faraday::Response|Faraday::Error|symHash src) -> (String | nil)
 
     # Extract an AWS error indication the response headers.
     #
@@ -89,7 +89,7 @@ class ApiService::Error < Api::Error
     #
     # @return [String, nil]
     #
-    def aws_error_header: (Faraday::Response|Faraday::Error|symHash src) -> String?
+    def aws_error_header: (Faraday::Response|Faraday::Error|symHash src) -> (String | nil)
 
     # Extract message(s) from a response body that has been determined to be
     # XML/HTML.

@@ -12,7 +12,7 @@ module Record::Searchable
 
   STATE_COLUMN: Symbol
 
-  def get_record: (symHash|String|Symbol|Integer|Model|nil item, **untyped opt) -> Model?
+  def get_record: (symHash|String|Symbol|Integer|Model|nil item, **untyped opt) -> (Model | nil)
 
   def get_records: (*(String|Symbol|Integer|Model|nil) identifiers, **untyped opt) -> Array[Model]
 
@@ -81,6 +81,6 @@ module Record::Searchable
     #
     # @return [Model]                     Or *nil* on error if *no_raise*.
     #
-    def latest_for_sid: (?(symHash|String|Symbol|Model)? sid, ?sort: (Symbol|String)?, **untyped opt) -> Model?
+    def latest_for_sid: (?(symHash|String|Symbol|Model)? sid, ?sort: (Symbol|String)?, **untyped opt) -> (Model | nil)
   end
 end

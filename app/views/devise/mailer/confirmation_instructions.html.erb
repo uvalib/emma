@@ -1,5 +1,8 @@
 <%# app/views/devise/mailer/confirmation_instructions.html.erb -%>
 <%-
+
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+
   user  ||= current_user
   name  ||= @email || user.email
   token ||= @token
@@ -16,5 +19,3 @@
 <p>You can confirm your account email through the link below:</p>
 
 <p><%= link_to link_label, link_url -%></p>
-
-<% abort 'devise/mailer/confirmation_instructions - NOT EXPECTED TO BE USED' %>

@@ -79,13 +79,13 @@ module ApiService::Properties
   #
   # @return [String, nil]
   #
-  def api_key: () -> String?
+  def api_key: () -> (String | nil)
 
   # API version (if applicable).
   #
   # @return [String, nil]
   #
-  def api_version: () -> String?
+  def api_version: () -> (String | nil)
 
   # Valid service endpoint URLs.
   #
@@ -103,7 +103,7 @@ module ApiService::Properties
   #
   # @return [Symbol, nil]
   #
-  def default_engine_key: () -> Symbol?
+  def default_engine_key: () -> (Symbol | nil)
 
   # engine_url
   #
@@ -111,7 +111,7 @@ module ApiService::Properties
   #
   # @return [String, nil]
   #
-  def engine_url: (untyped value) -> String?
+  def engine_url: (untyped value) -> (String | nil)
 
   # engine_key
   #
@@ -119,7 +119,7 @@ module ApiService::Properties
   #
   # @return [Symbol, nil]
   #
-  def engine_key: (untyped value) -> Symbol?
+  def engine_key: (untyped value) -> (Symbol | nil)
 
   # Maximum length of redirection chain.
   #

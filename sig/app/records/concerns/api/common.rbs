@@ -269,7 +269,7 @@ class IsoDate < ScalarType
     #
     # @return [String, nil]
     #
-    def datetime_convert: (untyped v) -> String?
+    def datetime_convert: (untyped v) -> (String | nil)
 
     # Transform *v* into "YYYY-MM-DD" form.
     #
@@ -277,7 +277,7 @@ class IsoDate < ScalarType
     #
     # @return [String, nil]
     #
-    def day_convert: (untyped v) -> String?
+    def day_convert: (untyped v) -> (String | nil)
 
     # Transform *v* into a 4-digit year.
     #
@@ -285,7 +285,7 @@ class IsoDate < ScalarType
     #
     # @return [String, nil]
     #
-    def year_convert: (untyped v) -> String?
+    def year_convert: (untyped v) -> (String | nil)
 
     # Transform a value into ISO 8601 form.
     #
@@ -293,7 +293,7 @@ class IsoDate < ScalarType
     #
     # @return [String, nil]
     #
-    def datetime_parse: (untyped value) -> String?
+    def datetime_parse: (untyped value) -> (String | nil)
 
     # Transform a value into "YYYY-MM-DD" form.
     #
@@ -301,7 +301,7 @@ class IsoDate < ScalarType
     #
     # @return [String, nil]
     #
-    def date_parse: (untyped value) -> String?
+    def date_parse: (untyped value) -> (String | nil)
 
     # Transform a date string into a usable form.
     #

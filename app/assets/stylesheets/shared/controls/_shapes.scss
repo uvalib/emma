@@ -2,8 +2,6 @@
 //
 // Definitions supporting shaped elements.
 
-@use 'sass:math';
-
 // ============================================================================
 // CSS "icons"
 // ============================================================================
@@ -19,8 +17,8 @@
     height:        0;
     margin:        auto 0;
     padding:       0;
-    border-top:    math.div($height, 2) solid transparent;
-    border-bottom: math.div($height, 2) solid transparent;
+    border-top:    ($height * 0.5) solid transparent;
+    border-bottom: ($height * 0.5) solid transparent;
 
     @if $direction == left {
         border-left:  none;

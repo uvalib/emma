@@ -46,11 +46,14 @@ module Upload::IdentifierMethods
 
   # Extract the database ID from the given item.
   #
-  # @param [Upload, Hash, String, Any] item
+  # @param [Api::Record, Upload, Hash, String, Any, nil] item
   #
   # @return [String]                  Record ID (:id).
   # @return [nil]                     No valid :id specified.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def id_for(item)                                                              # NOTE: to Record::Identification#id_value
     result   = (item                    if digits_only?(item))
     result ||= (item.id                 if item.is_a?(Upload))
@@ -61,13 +64,16 @@ module Upload::IdentifierMethods
 
   # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
   #
-  # @param [Api::Record, Upload, Hash, String, Any] item
+  # @param [Api::Record, Upload, Hash, String, Any, nil] item
   #
   # @return [String]                  The submission ID.
   # @return [nil]                     No submission ID could be determined.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def sid_for(item)
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     return item               if valid_sid?(item)
     return item.submission_id if item.is_a?(Upload)
     _, rid, _ = Upload.record_id(item)&.split('-')
@@ -149,11 +155,12 @@ module Upload::IdentifierMethods
   # Interpret an identifier as either an :id or :submission_id, generating a
   # field/value pair for use with #find_by or #where.
   #
-  # @param [String, Symbol, Integer, Hash, Upload] v
+  # @param [String, Symbol, Integer, Hash, Upload, nil] v
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
   def id_term(v)                                                                # NOTE: to Record::EmmaIdentification
+    # noinspection RubyNilAnalysis
     id, sid =
       case v
         when Integer then [v, nil]

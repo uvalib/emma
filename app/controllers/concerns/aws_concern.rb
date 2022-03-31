@@ -13,6 +13,8 @@ module AwsConcern
 
   extend ActiveSupport::Concern
 
+  include ParamsHelper
+
   include ApiConcern
 
   # ===========================================================================
@@ -59,12 +61,12 @@ module AwsConcern
   # If :emma is included it will be moved to the end of the list.
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
-  # @param [Hash]                       prm       Passed to #param_values.
+  # @param [Hash]                       prm       Passed to #params_values.
   #
   # @return [Array<Symbol>]
   #
   def repositories(default: nil, **prm)
-    values = param_values(prm, *REPOSITORY_PARAMS)
+    values = params_values(prm, *REPOSITORY_PARAMS)
     values = values.presence || Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
       values = EmmaRepository.values.map(&:to_sym)
@@ -86,12 +88,12 @@ module AwsConcern
   # deployments
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
-  # @param [Hash]                       prm       Passed to #param_values.
+  # @param [Hash]                       prm       Passed to #params_values.
   #
   # @return [Array<Symbol>]
   #
   def deployments(default: nil, **prm)
-    values = param_values(prm, *DEPLOYMENT_PARAMS)
+    values = params_values(prm, *DEPLOYMENT_PARAMS)
     values = values.presence || Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
       values = Deployment.values.map(&:to_sym)
@@ -121,7 +123,7 @@ module AwsConcern
   #
   # @return [Array<String>]
   #
-  def param_values(opt, *keys)
+  def params_values(opt, *keys)
     prm = url_parameters(opt.presence)
     prm.values_at(*keys).compact_blank.first.to_s.downcase.split(/\s*,\s*/)
   end

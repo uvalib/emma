@@ -1,0 +1,16 @@
+# Collection presenter for "/account" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Array<User>]
+#
+class AccountsDecorator < BaseCollectionDecorator
+  # Submit button for the delete upload form.
+  #
+  # @param [Array<String,User>] items
+  # @param [Hash]               opt     Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_submit_button: (*(String|User) items, **untyped opt) -> ActiveSupport::SafeBuffer
+end

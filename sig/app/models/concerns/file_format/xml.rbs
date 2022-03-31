@@ -58,7 +58,7 @@ module FileFormat::Xml
   # @return [Array<(Symbol,nil)>]
   # @return [nil]
   #
-  def parse_meta: (Nokogiri::XML::Element elem) -> [Symbol, String?]?
+  def parse_meta: (Nokogiri::XML::Element elem) -> ([Symbol, String?] | nil)
 
   # Return element values as a hash.
   #
@@ -102,7 +102,7 @@ module FileFormat::Xml
   # @see https://www.loc.gov/marc/relators/relacode.html
   # @see https://www.loc.gov/marc/relators/relaterm.html
   #
-  def role_type: (String relator_code) -> Symbol?
+  def role_type: (String relator_code) -> (Symbol | nil)
 
   # Transform an element name (or the equivalent attribute from a '<meta>')
   # into a #metadata key.

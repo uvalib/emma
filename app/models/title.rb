@@ -29,7 +29,7 @@ class Title < ApplicationRecord
 
   # Indicate whether the title includes the indicated artifact.
   #
-  # @param [String, Artifact] item
+  # @param [Artifact, String, *] item
   #
   def include?(item)
     has_artifact?(item)
@@ -37,7 +37,7 @@ class Title < ApplicationRecord
 
   # Indicate whether the title includes the indicated artifact.
   #
-  # @param [String, Artifact] item
+  # @param [Artifact, String, *] item
   #
   def has_artifact?(item)
     if item.is_a?(String)

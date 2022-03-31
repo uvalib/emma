@@ -2,34 +2,36 @@
 <%-
   # Modify an existing local EMMA user account.
 
+  view_debug(__FILE__)
+
   item  ||= @item
-  title ||= t('emma.account.edit.title')
-  help  ||= nil # help_popup(:account, :edit) # TODO: ???
+  dec     = AccountDecorator.new(item, **context)
+
+  title ||= dec.page_heading
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
-<%- if item.blank? -%>
+<%- if dec.blank? -%>
 
-  <%= account_items_menu %>
+  <%= dec.items_menu %>
 
 <%- else -%>
 
   <%= page_directions_section %>
-  <div class="account-form-container edit">
-    <%= render 'account/form_edit', user: item %>
-  </div>
+  <%= dec.model_form %>
 
 <%- end -%>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

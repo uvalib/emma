@@ -1,5 +1,8 @@
 <%# app/views/devise/mailer/email_changed.html.erb -%>
 <%-
+
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+
   user ||= current_user
   name ||= @email || user.email
 
@@ -16,5 +19,3 @@
   We're contacting you to notify you that your email is being changed to
   <%= unconfirmed_email -%>.
 </p>
-
-<%- abort 'devise/mailer/email_changed - NOT EXPECTED TO BE USED' -%>

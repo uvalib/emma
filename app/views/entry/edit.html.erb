@@ -2,14 +2,20 @@
 <%-
   # Prompt to modify an existing EMMA entry.
 
-  title ||= t('emma.entry.edit.title')
+  view_debug(__FILE__)
+
   item  ||= @item
-  repo  ||= item&.repository
+  dec     = EntryDecorator.new(item, **context)
+  item  ||= dec.object
+
+  title ||= dec.page_heading
+  help  ||= dec.help_topic
+  repo  ||= item.repository
   logo  ||= repository_source_logo(repo)
-  help  ||= help_popup(:entry, :edit)
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -19,17 +25,17 @@
 <%= page_heading(title, help: help, logo: logo) %>
 <%= page_description_section %>
 
-<%- if item.blank? -%>
+<%- if dec.blank? -%>
 
-  <%= entries_menu %>
+  <%= dec.items_menu %>
 
 <%- else -%>
 
   <%= page_directions_section %>
-  <%= entry_form(item, action: :edit) %>
-  <%= entry_preview %>
+  <%= dec.preview %>
+  <%= dec.model_form %>
 
 <%- end -%>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

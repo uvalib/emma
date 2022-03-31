@@ -1,0 +1,66 @@
+# Page sections.
+#
+module LayoutHelper::PageSections
+  include LayoutHelper::Common
+
+  include ConfigurationHelper
+
+  # Supply an element containing a description for the current action context.
+  #
+  # @param [String, nil] text         Override text to display.
+  # @param [Hash]        opt          Passed to #page_text_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
+  #
+  def page_description_section: (?String? text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Supply an element containing directions for the current action context.
+  #
+  # @param [String, nil] text         Override text to display.
+  # @param [Hash]        opt          Passed to #page_text_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
+  #
+  def page_directions_section: (?String? text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Supply an element containing additional notes for the current action.
+  #
+  # @param [String, nil] text         Override text to display.
+  # @param [Hash]        opt          Passed to #page_text_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
+  #
+  def page_notes_section: (?String? text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Supply an element containing configured text for the current action.
+  #
+  # @param [String, Symbol, nil]  type        Default: 'text'.
+  # @param [String, nil]          text        Override text to display.
+  # @param [String, Symbol, nil]  controller  Default: `params[:controller]`.
+  # @param [String, Symbol, nil]  action      Default: `params[:action]`.
+  # @param [Symbol, Integer, nil] tag         Tag for the internal text block.
+  # @param [Hash]                 opt         Passed to #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
+  #
+  # -
+  # noinspection RubyMismatchedParameterType
+  # +
+  def page_text_section: (?(String|Symbol)? `type`, ?String? text, ?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?tag: (Integer|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Get the configured page description.
+  #
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`
+  # @param [String, Symbol, nil] action       Default: `params[:action]`
+  # @param [String, Symbol, nil] type         Optional type under action.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [String]
+  # @return [nil]
+  #
+  def page_text: (?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?type: (String|Symbol)?) -> (ActiveSupport::SafeBuffer | String | nil)
+end

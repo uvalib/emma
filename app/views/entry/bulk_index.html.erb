@@ -2,11 +2,17 @@
 <%-
   # Bulk operation information. # TODO: ???
 
-  title ||= t('emma.entry.bulk_index.title')
-  help  ||= nil # TODO: ???
+  view_debug(__FILE__)
+
+  list  ||= @list
+  dec     = EntriesDecorator.new(list: list, **context)
+
+  title ||= dec.page_heading
+  help  ||= nil # dec.help_topic
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
@@ -14,7 +20,7 @@
 -%>
 
 <div class="heading container">
-  <h1 class="heading"><%= title -%><%= help -%></h1>
+  <%= page_heading(title, help: help) %>
 </div>
 
 TODO

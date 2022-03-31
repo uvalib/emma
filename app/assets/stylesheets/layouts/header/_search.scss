@@ -1,12 +1,10 @@
 // app/assets/stylesheets/layouts/header/_search.scss
 
-@use 'shared/variables'         as *;
-@use 'shared/mixins'            as *;
-@use 'shared/controls/buttons'  as *;
-@use 'shared/controls/grids'    as grid;
-@use 'shared/layouts/header'    as header;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/grids'   as grid;
+@use 'shared/layouts/header'   as header;
 
 //=============================================================================
 // Internal constants
@@ -153,18 +151,18 @@ $search-button-width:    6rem;
     // Elements
     //=========================================================================
 
-    // @see LayoutHelper#menu_spacer
+    // @see LayoutHelper::SearchFilters#menu_spacer
     .menu-spacer {
         @include invisible-height;
     }
 
-    // @see LayoutHelper#reset_button
+    // @see LayoutHelper::SearchFilters#reset_button
     .menu-button,
     .search-button {
         @include header.button;
     }
 
-    // @see LayoutHelper#menu_label
+    // @see LayoutHelper::SearchFilters#menu_label
     .menu-label,
     .date-label {
 
@@ -175,7 +173,7 @@ $search-button-width:    6rem;
         }
     }
 
-    // @see LayoutHelper#menu_control
+    // @see LayoutHelper::SearchFilters#menu_control
     .menu-control,
     .date-control {
 
@@ -230,19 +228,19 @@ $search-button-width:    6rem;
         @include sr-only;
     }
 
-    // @see LayoutHelper#search_input
+    // @see LayoutHelper::SearchBar#search_input
     .search-input {
         max-width: 100%;
         // Prevent Chrome from showing its own ghost cancel button.
         &::-webkit-search-cancel-button { -webkit-appearance: unset; }
     }
 
-    // @see LayoutHelper#search_bar
+    // @see LayoutHelper::SearchBar#search_bar
     .search-bar {
         @include header.control-interior;
     }
 
-    // @see LayoutHelper#search_button
+    // @see LayoutHelper::SearchBar#search_button
     .search-button {
 
         &:focus {
@@ -255,20 +253,20 @@ $search-button-width:    6rem;
 
         &.ready:not(:hover) {
 
-            @include link-button(lightgray, gray);
+            @include button.link(lightgray, gray);
 
             box-shadow: 0 0 0.75rem 0.5rem $button-accent;
 
             &:focus {
-                @include link-button(gray, gray);
+                @include button.link(gray, gray);
             }
         }
     }
 
-    // @see LayoutHelper#advanced_search_button
+    // @see LayoutHelper::SearchFilters#advanced_search_button
     .advanced-search-toggle {
 
-        @extend .basic-button;
+        @include button.basic;
 
         width:            $advanced-toggle-width;
         margin:           0;
@@ -383,11 +381,11 @@ $search-button-width:    6rem;
         flex:   1 1 auto;
     }
 
-    // @see LayoutHelper#search_clear_button
-    // @see file:app/assets/javascripts/feature/advanced-search.js *clearSearchTerms()*
+    // @see LayoutHelper::SearchBar#search_clear_button
+    // @see file:javascripts/feature/advanced-search.js *clearSearchTerms()*
     .search-clear {
 
-        @include clear-selection-button;
+        @include button.clear-input;
 
         position:          relative;
         margin:            auto 0;
@@ -426,7 +424,7 @@ $search-button-width:    6rem;
         // Elements
         //=====================================================================
 
-        // @see LayoutHelper#search_input_select
+        // @see LayoutHelper::SearchBar#search_input_select
         .search-input-select {
 
             height:       1.75rem;
@@ -475,7 +473,7 @@ $search-button-width:    6rem;
         }
     }
 
-    // @see LayoutHelper#search_bar_container
+    // @see LayoutHelper::SearchBar#search_bar_container
     .search-bar-container {
 
         $sb-row-vertical-gap:        $gap-y;
@@ -623,7 +621,7 @@ $search-button-width:    6rem;
     // Sections
     //=========================================================================
 
-    // @see LayoutHelper#search_filter_container
+    // @see LayoutHelper::SearchFilters#search_filter_container
     .search-filter-container {
 
         @include header.search-section;

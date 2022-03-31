@@ -1,0 +1,132 @@
+# Item presenter for "/member" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Bs::Record::UserAccount]
+#
+class MemberDecorator < BookshareDecorator
+  module Paths
+  end
+
+  module Methods
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # history_data
+  #
+  # @return [Bs::Message::TitleDownloadList, nil]
+  #
+  def history_data: () -> (Bs::Message::TitleDownloadList | nil)
+
+  # downloads
+  #
+  # @return [Array<Bs::Record::TitleDownload>]
+  #
+  def downloads: () -> Array[Bs::Record::TitleDownload]
+
+  # preference_data
+  #
+  # @return [Bs::Message::MyAccountPreferences, nil]
+  #
+  def preference_data: () -> (Bs::Message::MyAccountPreferences | nil)
+
+  # preferences
+  #
+  # @return [Bs::Message::MyAccountPreferences, nil]
+  #
+  def preferences: () -> (Bs::Message::MyAccountPreferences | nil)
+
+  # Configured member history record fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def history_fields: (*untyped) ?{ () -> untyped } -> symHash
+
+  # Configured member preference record fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def preference_fields: (*untyped) ?{ () -> untyped } -> symHash
+
+  # Create a link to the details show page for the given item.
+  #
+  # NOTE: Over-encoded to allow ID's with '.' to be passed to Rails.
+  #
+  # @param [Hash] opt                 Passed to #model_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # This is specifically for the sake of "emma.member.*.display_fields" which
+  # expect the view helper to have defined :member_link.
+  alias member_link link
+
+  # Render a metadata listing of a member account.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a listing of member preferences.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #render_field_values.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def preference_list: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # CSS class for the container of the history lis.
+  #
+  # @type [String]
+  #
+  HISTORY_CSS_CLASS: String
+
+  # history_title
+  #
+  # @param [String, nil] label
+  # @param [Hash]        opt          Passed to #html_tag except for:
+  #
+  # @option opt [Integer] :level      If missing, defaults to 'div'.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def history_title: (String? label, ?symHash? opt) -> ActiveSupport::SafeBuffer
+
+  # history_control
+  #
+  # @param [String] id                Control ID (@see #history_list)
+  # @param [Hash]   opt               Passed to PanelHelper#toggle_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def history_control: (id: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render of list of member activity entries.
+  #
+  # @param [String]    id             Control ID (@see #history_control)
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #render_field_values.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def history_list: (id: String, ?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+end

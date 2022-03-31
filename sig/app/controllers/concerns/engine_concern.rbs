@@ -29,7 +29,7 @@ module EngineConcern
   #
   # @return [String, nil]             If different than the default engine.
   #
-  def requested_engine: (String|Symbol|Class service) -> String?
+  def requested_engine: (String|Symbol|Class service) -> (String | nil)
 
   # Recall the user-selected service engine name or endpoint.
   #
@@ -37,7 +37,7 @@ module EngineConcern
   #
   # @return [String, nil]
   #
-  def get_session_engine: (String|Symbol|Class service) -> String?
+  def get_session_engine: (String|Symbol|Class service) -> (String | nil)
 
   # Remember (or forget) the user-selected service engine name or endpoint.
   #
@@ -46,7 +46,7 @@ module EngineConcern
   #
   # @return [String, nil]
   #
-  def set_session_engine: (String|Symbol|Class service, String? new_value) -> String?
+  def set_session_engine: (String|Symbol|Class service, String? new_value) -> (String | nil)
 
   # @private
   RESET_KEYS: symArray
@@ -67,7 +67,7 @@ module EngineConcern
   #
   # @return [Any, nil]                *nil* if not redirecting
   #
-  def set_engine_callback: (Class service) -> untyped?
+  def set_engine_callback: (Class service) -> (untyped | nil)
 
   # @private
   FLASH_RESET_NOTICE_SPACES: Integer

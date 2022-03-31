@@ -31,7 +31,8 @@ module Bs::Shared::IdentifierMethods
   # @return [Array<String>]
   #
   def related_isbns
-    Array.wrap(relatedIsbns).compact_blank.uniq - Array.wrap(isbn)
+    # noinspection RailsParamDefResolve
+    Array.wrap(try(:relatedIsbns)).compact_blank.uniq - Array.wrap(isbn)
   end
 
 end

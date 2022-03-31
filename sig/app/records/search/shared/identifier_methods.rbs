@@ -8,7 +8,7 @@ module Search::Shared::IdentifierMethods
   # @return [String]
   # @return [nil]                     If the value cannot be determined.
   #
-  def isbn: () -> String?
+  def isbn: () -> (String | nil)
 
   # Related ISBNs omitting the main ISBN if part of the data array.
   #

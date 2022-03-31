@@ -107,7 +107,7 @@ module Workflow::Base::Roles
   #
   # @return [Symbol, nil]
   #
-  def get_role: (User|String|Symbol|nil user) -> Symbol?
+  def get_role: (User|String|Symbol|nil user) -> (Symbol | nil)
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
@@ -628,14 +628,14 @@ class Workflow::Base
   #
   # @return [Symbol, nil]
   #
-  def workflow_phase: () -> Symbol?
+  def workflow_phase: () -> (Symbol | nil)
 
   # Return the variant workflow type or *nil* if the class is not a workflow
   # variant subclass.
   #
   # @return [Symbol, nil]
   #
-  def variant_type: () -> Symbol?
+  def variant_type: () -> (Symbol | nil)
 
   # The table field associated with workflow state.
   #
@@ -676,20 +676,20 @@ class Workflow::Base
   #
   # @return [Symbol, nil]
   #
-  def self.workflow_phase: () -> Symbol?
+  def self.workflow_phase: () -> (Symbol | nil)
 
   # Return the variant workflow type or *nil* if the class is not a workflow
   # variant subclass.
   #
   # @return [Symbol, nil]
   #
-  def self.variant_type: () -> Symbol?
+  def self.variant_type: () -> (Symbol | nil)
 
   # The default workflow variant type.
   #
   # @return [Symbol, nil]
   #
-  def self.default_variant: () -> Symbol?
+  def self.default_variant: () -> (Symbol | nil)
 
   # Table of variant workflow types under this workflow base class.
   #

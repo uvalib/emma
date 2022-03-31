@@ -30,7 +30,7 @@ class AccountController < ApplicationController
   #
   # @return [User, nil]
   #
-  attr_reader item: User?
+  attr_reader item: (User | nil)
 
   # == GET /account
   #

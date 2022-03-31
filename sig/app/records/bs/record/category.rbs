@@ -18,5 +18,5 @@ class Bs::Record::Category < Bs::Api::Record
   # @return [String]
   # @return [nil]                     If not translatable.
   #
-  def bookshare_category: () -> String?
+  def bookshare_category: () -> (String | nil)
 end

@@ -1,0 +1,271 @@
+# Common base for decorator classes.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Model]
+#
+class BaseDecorator < Draper::Decorator
+  include Emma::Common
+
+  # Definitions to support inclusion of helpers.
+  #
+  module Helpers
+    include Draper::ViewHelpers
+
+    def controller_context: () -> ApplicationController
+
+    include ConfigurationHelper
+    include FormHelper
+    include HtmlHelper
+    include ImageHelper
+    include LinkHelper
+    include PanelHelper
+    include PopupHelper
+    include RepositoryHelper
+    include RoleHelper
+    include ScrollHelper
+    include SearchModesHelper
+    include SessionDebugHelper
+    include TreeHelper
+  end
+
+  # Generic path helper methods.
+  #
+  module Paths
+    include Helpers
+
+    def index_path:         (**untyped opt)                 -> String
+    def show_path:          (?untyped item, **untyped opt)  -> String
+    def new_path:           (**untyped opt)                 -> String
+    def create_path:        (**untyped opt)                 -> String
+    def edit_select_path:   (**untyped opt)                 -> String
+    def edit_path:          (?untyped item, **untyped opt)  -> String
+    def update_path:        (?untyped item, **untyped opt)  -> String
+    def delete_select_path: (**untyped opt)                 -> String
+    def delete_path:        (?untyped item, **untyped opt)  -> String
+    def destroy_path:       (?untyped item, **untyped opt)  -> String
+
+    def id_for: (?(String|Model|anyHash|anyArray|nil) item, **untyped opt) -> (String | Model | anyHash | nil)
+    def path_for: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+  end
+
+  # Model/controller related configuration information relative to model_type.
+  #
+  module Configuration
+    include Helpers
+
+    def model_type: () -> Symbol
+    def null_object: () -> Object
+    def model_config_base: () -> Symbol
+    def controller_config_base: () -> Symbol
+    def model_config: () -> Hash[Symbol,symHash]
+    def model_index_fields: () -> Hash[Symbol,symHash]
+    def model_show_fields: () -> Hash[Symbol,symHash]
+    def model_database_fields: () -> Hash[Symbol,symHash]
+    def model_form_fields: () -> Hash[Symbol,symHash]
+    def field_for: (Symbol field, ?value: untyped?, ?config: symHash?) -> (Field::Type | nil)
+    def field_configuration: (Symbol|String|nil field, ?(Symbol|String|nil) action) -> Hash[Symbol,symHash]
+    def field_configuration_for_label: (String|Symbol|nil label, ?(Symbol|String|nil) action) -> Hash[Symbol,symHash]
+    def action_config: () -> symHash
+    def config_lookup: (*(String|strArray) path, **untyped opt) -> untyped
+  end
+
+  # Methods available to each decorator class and class instance.
+  #
+  # @!attribute [r] context
+  #   Set in Draper#initialize
+  #   @return [Hash{Symbol=>*}]
+  #
+  module Methods
+    include Configuration
+
+    def options: () -> Options
+
+    def can?: (Symbol action, ?untyped target) -> bool
+    def context_value: (*Symbol keys) -> untyped
+    def help_topic: () -> symArray
+    def config_button_values: (String|Symbol action) -> Hash[Symbol,Hash[Symbol,String|symHash]]
+    def link_to_action: (String|nil label, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    def page_head_title: (?default: bool|String, **untyped opt) -> String
+    def page_heading:    (?default: bool|String, **untyped opt) -> String
+
+    def default_title:   (bool|String default) -> String
+
+    def css_list_class:  () -> String
+  end
+
+  # Methods for each decorator class instance.
+  #
+  module InstanceMethods
+    include Paths
+    include Methods
+
+    def id_for: (?(String|Model|anyHash|anyArray|nil) item, **untyped opt) -> (String | Model | anyHash | nil)
+
+    def model_type: () -> Symbol
+    def null_object: () -> Object
+    def config_lookup: (*(String|strArray) path, **untyped opt) -> (untyped | nil)
+
+    def current_user: () -> (User | nil)
+
+    def show_path:          (?untyped item, **untyped opt)  -> String
+    def edit_path:          (?untyped item, **untyped opt)  -> String
+    def update_path:        (?untyped item, **untyped opt)  -> String
+    def delete_path:        (?untyped item, **untyped opt)  -> String
+    def destroy_path:       (?untyped item, **untyped opt)  -> String
+
+    def path_for: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+
+    def nil?: () -> bool
+    def blank?: () -> bool
+    def present?: () -> bool
+    def dup: () -> BaseDecorator
+    def deep_dup: () -> BaseDecorator
+    def inspect: (?max: Integer) -> String
+
+    def object_class: () -> Class
+    def decorate: (Model item, **untyped opt) -> BaseDecorator
+
+    def request_values: (*Symbol keys) -> symHash
+    def request_value: (Symbol key) -> (untyped | nil)
+    def param_values: () -> symHash
+    def session_values: () -> strHash
+    def referrer: (?(symHash|nil) opt) -> (untyped | nil)
+    def local_request?: (?(symHash|nil) opt) -> bool
+    def same_request?: (?(symHash|nil) opt) -> bool
+    def back_path: (?(symHash|nil) opt) -> (String | nil)
+    def root_url: () -> String
+
+    def initialize_context: (**untyped opt) -> symHash
+  end
+
+  # Methods for each decorator class.
+  #
+  # @!attribute [r] object_class
+  #   Draper::Decorator#object_class
+  #   @return [Class]
+  #
+  module ClassMethods
+    include Paths
+    include Methods
+
+    def model_type: () -> Symbol
+    def null_object: () -> Object
+
+    def decorate: (Model|nil item, **untyped opt) -> BaseDecorator
+    def generate: (Class|Object|nil item, ?force: bool, **untyped opt) -> BaseDecorator
+
+    def debug_inheritance: () -> void
+  end
+
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # @private
+  DEFAULT_ACTION: Symbol
+
+  # initialize
+  #
+  # @param [Any, nil] obj
+  # @param [Hash]     opt
+  #
+  def initialize: (?(untyped | nil) obj, **untyped opt) -> void
+
+  # In this scheme #decorates is required for any subclass that is not
+  # abstract.
+  #
+  # @param [Class] object_class
+  #
+  # @return [void]
+  #
+  def self.decorates: (Class object_class) -> void
+
+  # Set to *true* to see how each decorator handles the methods of the object
+  # type that it decorates.
+  #
+  # @type [Boolean]
+  #
+  # @see BaseCollectionDecorator#DEBUG_COLLECTION_INHERITANCE
+  #
+  DEBUG_DECORATOR_INHERITANCE: bool
+
+  # Takes the place of Draper::Decorator#decorates and is required for any
+  # decorator subclass that is not abstract.
+  #
+  # @param [Array<Class, Symbol, Hash>] args
+  #
+  # @return [void]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def self.decorator_for: (Hash[Symbol,Class]) -> void
+                        | (Symbol, ?Class)     -> void
+                        | (Class)              -> void
+
+  # set_model_type
+  #
+  # @param [Class, Symbol, String, nil] mt
+  #
+  # @return [Symbol, nil]
+  #
+  def self.set_model_type: (Class|Symbol|String|nil mt) -> (Symbol | nil)
+
+  # set_object_class
+  #
+  # @param [Class, Symbol, String, nil]        obj
+  # @param [Array<Class, Symbol, String, nil>] other
+  #
+  # @return [Class, nil]
+  #
+  def self.set_object_class: (Class|Symbol|String|nil obj, *(Class|Symbol|String|nil) other) -> (Class | nil)
+
+  module Mapper
+    def table: () -> Hash[untyped,Class]
+    def get: (untyped key) -> (Class | nil)
+    def set: (untyped key, Class dec, ?force: bool) -> (untyped | nil)
+
+    def normalize: (untyped key) -> (untyped | nil)
+  end
+
+  module TypeMapper
+    include Mapper
+
+    def normalize: (untyped key) -> (Symbol | nil)
+  end
+
+  module ClassMapper
+    include Mapper
+
+    def normalize: (untyped key) -> (Class | nil)
+  end
+
+  class ModelTypeMap
+    extend TypeMapper # Is this right?
+  end
+
+  class ObjectClassMap
+    extend ClassMapper # Is this right?
+  end
+
+  class ARClassMap
+    extend ClassMapper # Is this right?
+  end
+
+  # Client-side scripting which are supplied via 'assets:precompile'.
+  #
+  # @param [Hash{Symbol=>Any}]
+  #
+  # @see file:app/assets/javascripts/shared/assets.js.erb
+  #
+  def self.js_properties: () -> symHash
+
+  def self.fetch_property: (untyped item) -> untyped
+  def self.fetch_properties: (symHash hash) -> symHash
+
+end

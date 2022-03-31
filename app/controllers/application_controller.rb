@@ -16,9 +16,10 @@ require 'search_service'
 #
 class ApplicationController < ActionController::Base
 
+  include ParamsHelper
+
   include FlashConcern
   include MetricsConcern
-  include ParamsHelper
 
   # ===========================================================================
   # :section: Authentication

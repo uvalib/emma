@@ -1,0 +1,113 @@
+# Item presenter for "/reading_list" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Bs::Record::ReadingListUserView]
+#
+class ReadingListDecorator < BookshareDecorator
+  module Paths
+  end
+
+  module Methods
+    # Control whether thumbnails are shown for reading list entries.
+    #
+    # @type [Boolean]
+    #
+    FIND_THUMBNAIL: bool
+
+    # Attempt to fetch the thumbnail image associated with the item.
+    #
+    # @param [Bs::Api::Record] item
+    #
+    # @return [String, nil]
+    #
+    def find_thumbnail: (?Bs::Api::Record? item) -> (String | nil)
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # titles_data
+  #
+  # @return [Bs::Message::ReadingListTitlesList, nil]
+  #
+  def titles_data: () -> (Bs::Message::ReadingListTitlesList | nil)
+
+  # titles
+  #
+  # @return [Array<Bs::Record::ReadingListTitle>]
+  #
+  def titles: () -> Array[Bs::Record::ReadingListTitle]
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to super except for:
+  #
+  # @option opt [String] :readingListId
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Any]       value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to the render method or super.
+  #
+  # @return [Any]                     HTML or scalar value.
+  # @return [nil]                     If *value* or *object* is *nil*.
+  #
+  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+
+  # Show reading list subscriptions.
+  #
+  # NOTE: The Bookshare API doesn't seem to provide useful information here.
+  #
+  # @param [Hash] opt                 Passed to #record_links.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def subscriptions: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render a metadata listing of a reading list.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # get_thumbnail_image
+  #
+  # NOTE: ReadingListTitle does not (currently) include a thumbnail link.
+  #
+  # As long as this is still the case, this method will discover the link by
+  # explicitly by fetching the catalog item.
+  #
+  # If #FIND_THUMBNAIL is *false*, this method always returns *nil*.
+  #
+  # @return [String, nil]
+  #
+  def get_thumbnail_image: () -> (String | nil)
+
+  # Attempt to fetch the thumbnail image associated with the item.
+  #
+  # @return [String, nil]
+  #
+  def find_thumbnail: (*untyped) ?{ () -> untyped } -> (String | nil)
+end

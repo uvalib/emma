@@ -34,7 +34,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def schedule!: (**untyped opt) -> bool?
+  def schedule!: (**untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #schedule!.
   #
@@ -52,7 +52,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def review!: (**untyped opt) -> bool?
+  def review!: (**untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #review!.
   #
@@ -70,7 +70,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def cancel!: (**untyped opt) -> bool?
+  def cancel!: (**untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #cancel!.
   #
@@ -89,7 +89,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def reject!: (?String? comments, **untyped opt) -> bool?
+  def reject!: (?String? comments, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #reject!.
   #
@@ -108,7 +108,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def approve!: (?String? comments, **untyped opt) -> bool?
+  def approve!: (?String? comments, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #approve!.
   #
@@ -131,7 +131,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def terminate_phase!: (Symbol|String final_state, ?String? comments, **untyped opt) -> bool?
+  def terminate_phase!: (Symbol|String final_state, ?String? comments, **untyped opt) -> (bool | nil)
 
   # A textual description of the type of the Model instance.
   #

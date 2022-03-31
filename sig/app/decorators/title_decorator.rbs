@@ -1,0 +1,62 @@
+# Item presenter for "/title" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Bs::Record::TitleMetadataSummary]
+#
+class TitleDecorator < BookshareDecorator
+  module Paths
+  end
+
+  module Methods
+  end
+
+  module Common
+    def self.included: (untyped base) -> untyped
+  end
+
+  include Common
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Catalog item search links.
+  #
+  # @param [Hash] opt                 Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def search_links: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # A link to the catalog item search results index page for the given term(s).
+  #
+  # @param [String] terms
+  # @param [Hash]   opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def search_link: (String terms, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render a metadata listing of an periodical.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+end

@@ -77,7 +77,7 @@ class UploadController < ApplicationController
   #
   # @see UploadController#create
   # @see UploadWorkflow::Single::Create::States#on_creating_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def new: () -> void
 
@@ -90,7 +90,7 @@ class UploadController < ApplicationController
   #
   # @see UploadController#new
   # @see UploadWorkflow::Single::Create::States#on_submitting_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def create: () -> void
 
@@ -218,7 +218,7 @@ class UploadController < ApplicationController
   #
   # Invoked to re-create a database entry that had been canceled.
   #
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see file:app/assets/javascripts/feature/model-form.js *refreshRecord()*
   #
   def renew: () -> void
 
@@ -226,7 +226,7 @@ class UploadController < ApplicationController
   #
   # Invoked to re-start editing a database entry.
   #
-  # @see file:app/assets/javascripts/feature/entry-form.js *refreshRecord()*
+  # @see file:app/assets/javascripts/feature/model-form.js *refreshRecord()*
   #
   def reedit: () -> void
 
@@ -243,7 +243,7 @@ class UploadController < ApplicationController
   #
   # @see UploadWorkflow::Single::States#on_canceled_entry
   # @see UploadWorkflow::Bulk::States#on_canceled_entry
-  # @see file:app/assets/javascripts/feature/entry-form.js *cancelForm()*
+  # @see file:app/assets/javascripts/feature/model-form.js *cancelForm()*
   #
   def cancel: () -> void
 
@@ -264,7 +264,7 @@ class UploadController < ApplicationController
   # @see UploadWorkflow::Single::Create::States#on_validating_entry
   # @see UploadWorkflow::Single::Edit::States#on_replacing_entry
   # @see UploadWorkflow::External#upload_file
-  # @see file:app/assets/javascripts/feature/entry-form.js
+  # @see file:app/assets/javascripts/feature/model-form.js
   #
   def endpoint: () -> void
 

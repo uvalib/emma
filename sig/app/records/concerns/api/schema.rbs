@@ -155,7 +155,7 @@ module Api::Schema
   # @return [Symbol]                  One of #SERIALIZER_TYPES
   # @return [nil]                     Otherwise
   #
-  def format_of: (String|symHash data) -> Symbol?
+  def format_of: (String|symHash data) -> (Symbol | nil)
 
   # Called to validate that *type* is in #SERIALIZER_TYPES.
   #

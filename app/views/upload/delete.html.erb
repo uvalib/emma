@@ -2,27 +2,24 @@
 <%-
   # Prompt to remove an existing file entry.
 
-  title  ||= t('emma.upload.delete.title')
-  list   ||= @list
-  list     = Array.wrap(list)
-  records  = list.select { |e| e.is_a?(Upload) }
-  repo   ||= records.first&.repository
-  logo   ||= repository_source_logo(repo)
-  help   ||= help_popup(:upload, :delete)
-  force  ||= force_delete
+  view_debug(__FILE__)
+
+  list  ||= @list
+  recs    = list&.select { |e| e.is_a?(Upload) }
+  dec     = UploadsDecorator.new(recs, list: list, **context)
+  recs  ||= dec.object
+  list  ||= recs
+
+  title ||= dec.page_heading
+  help  ||= dec.help_topic
+  repo  ||= recs.first&.repository
+  logo  ||= repository_source_logo(repo)
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: title)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
-  end
-
-  if force
-    rids    = list.select { |e| e.is_a?(String) && e.match?(/^[^\d]/) }
-    recs, _ = find_in_index(*rids)
-    lookup  = recs.map { |r| [r.emma_repositoryRecordId,r.emma_recordId] }.to_h
-    list    = list.map { |item| lookup[item] || item }
-    records = list.select { |item| item.is_a?(Upload) || item.include?('-') }
   end
 
 -%>
@@ -32,19 +29,19 @@
 
 <%- if list.blank? -%>
 
-  <%= upload_items_menu %>
+  <%= dec.items_menu %>
 
 <%- else -%>
 
   <%- list.each_with_index do |item, idx| -%>
-    <%= render 'upload/selected', item: item, row: idx, force: force %>
+    <%= render 'upload/selected', item: item, row: idx %>
   <%- end -%>
 
   <%= page_directions_section %>
-  <%= upload_delete_form(*records, force: force) %>
-  <%= upload_preview %>
+  <%#= dec.preview %>
+  <%= dec.delete_form %>
 
 <%- end -%>
 
 <%= page_notes_section %>
-<%= page_action_list unless modal? %>
+<%= dec.action_list unless modal? %>

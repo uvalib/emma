@@ -45,7 +45,7 @@ class Action::Index < Action::BulkPart
   #
   def assign_attributes(attr, opt = nil)
     __debug_items(binding)
-    data, attr = partition_hash(attr, *EMMA_DATA_KEYS)
+    data = extract_hash!(attr, *EMMA_DATA_KEYS)
     attr = attribute_options(attr, opt)
     # noinspection RubyMismatchedArgumentType
     attr[:emma_data] = generate_emma_data(data, attr)

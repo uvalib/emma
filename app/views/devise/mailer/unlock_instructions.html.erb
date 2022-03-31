@@ -1,5 +1,8 @@
 <%# app/views/devise/mailer/unlock_instructions.html.erb -%>
 <%-
+
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+
   user  ||= current_user
   name  ||= @email || user.email
   token ||= @token
@@ -21,5 +24,3 @@
 <p>Click the link below to unlock your account:</p>
 
 <p><%= link_to link_label, link_url -%></p>
-
-<%- abort 'devise/mailer/unlock_instructions - NOT EXPECTED TO BE USED' -%>

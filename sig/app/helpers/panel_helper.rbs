@@ -1,0 +1,62 @@
+# View helper methods supporting the creation of collapsible panels.
+#
+module PanelHelper
+  include HtmlHelper
+
+  # Configuration for panel control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  PANEL_CTRL_CFG: symHash
+
+  # Label for button to open a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_OPENER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to open a collapsible panel.
+  #
+  # @type [String]
+  #
+  PANEL_OPENER_TIP: String
+
+  # Label for button to close a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_CLOSER_LABEL: ActiveSupport::SafeBuffer
+
+  # Tooltip for button to close a collapsible panel.
+  #
+  # @type [String]
+  #
+  PANEL_CLOSER_TIP: String
+
+  # toggle_button
+  #
+  # @param [String]              id         Element controlled by this button.
+  # @param [String, nil]         label      Default: #PANEL_OPENER_LABEL.
+  # @param [String, Symbol, nil] context    Default: 'for-panel'.
+  # @param [Boolean, String]     open       Start with the element expanded.
+  # @param [String, nil]         selector   Selector of the element controlled
+  #                                           by this button (only used if
+  #                                           panel.js RESTORE_PANEL_STATE is
+  #                                           *true*).
+  # @param [Hash] opt                       Passed to #button_tag.
+  #
+  # @raise [RuntimeError]             The controlled element was not specified.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/panel.js
+  #
+  def toggle_button: (id: String, ?label: String?, ?context: (String|Symbol)?, ?open: (bool|String)?, ?selector: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

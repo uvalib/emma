@@ -87,7 +87,7 @@ module SearchTermsHelper
   # @return [Symbol]                  The controller used for searching.
   # @return [nil]                     If searching should not be enabled.
   #
-  def search_target: (?(Symbol|String|symHash)? target, **untyped opt) -> Symbol?
+  def search_target: (?(Symbol|String|symHash)? target, **untyped opt) -> (Symbol | nil)
 
   # Prepare label/value pairs that can be used with #options_for_select to
   # generate a search type selection menu.

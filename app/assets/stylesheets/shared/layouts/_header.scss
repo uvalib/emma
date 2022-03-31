@@ -2,10 +2,8 @@
 //
 // Shared definitions used in `layouts/header/*`.
 
-@use 'shared/variables'         as v;
-@use 'shared/controls/buttons'  as b;
-
-@use 'layouts/controls/buttons' as button-classes;
+@use 'shared/variables'        as v;
+@use 'shared/controls/buttons' as button;
 
 //=============================================================================
 // Constants
@@ -69,9 +67,8 @@ $enclosure-pad-narrow:      0.75rem;
 
 @mixin button {
 
-    @include b.link-button;
-
-    @extend .basic-button;
+    @include button.link;
+    @include button.basic;
 
     // Needs to be heavier against a dark background.
     &:hover {

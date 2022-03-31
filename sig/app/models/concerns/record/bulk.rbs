@@ -54,7 +54,7 @@ module Record::Bulk
   #
   # @return [String, nil]
   #
-  def bulk_type: () -> String?
+  def bulk_type: () -> (String | nil)
 
   # Name of the class referenced by the :bulk relation.
   #

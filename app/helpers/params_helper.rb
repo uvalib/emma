@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module ParamsHelper
 
+  include Emma::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -108,9 +110,7 @@ module ParamsHelper
   # @return [Hash{Symbol=>String}]
   #
   def request_parameters(p = nil)
-    prm = p || try(:params) || {}
-    prm = prm.to_unsafe_h if prm.respond_to?(:to_unsafe_h)
-    prm.symbolize_keys
+    normalize_hash(p || try(:params))
   end
 
   # The meaningful request URL parameters as a Hash (not including :controller
@@ -125,6 +125,53 @@ module ParamsHelper
   #
   def url_parameters(prm = nil)
     request_parameters(prm).except!(*IGNORED_PARAMETERS)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get a reference to `session[section]`.
+  #
+  # @param [String, Symbol, nil] section
+  # @param [Hash, nil]           p        Default: `params`.
+  #
+  # @return [Hash]
+  #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
+  def session_section(section = nil, p = nil)
+    section, p = [nil, section] if section.is_a?(Hash)
+    section = (section || request_parameters(p)[:controller] || :all).to_s
+    session[section] = {} unless session[section].is_a?(Hash)
+    session[section]
+  end
+
+  # Information about the last operation performed in this session.
+  #
+  # @return [Hash]
+  #
+  def last_operation
+    session_section('app.last_op')
+  end
+
+  # Full URL of the last operation performed in this session.
+  #
+  # @return [String, nil]
+  #
+  def last_operation_path
+    last_operation['path']
+  end
+
+  # Time of the last operation performed in this session.
+  #
+  # @return [Integer]
+  #
+  def last_operation_time
+    last_operation['time'].to_i
   end
 
   # ===========================================================================
@@ -160,29 +207,6 @@ module ParamsHelper
   def decompress_value(v)
     v = Zlib.inflate(Base64.strict_decode64(v[1..])) if compressed_value?(v)
     v.presence
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Get a reference to `session[section]`.
-  #
-  # @param [String, Symbol, nil] section
-  # @param [Hash, nil]           p        Default: `params`.
-  #
-  # @return [Hash]
-  #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
-  def session_section(section = nil, p = nil)
-    section, p = [nil, section] if section.is_a?(Hash)
-    section = (section || request_parameters(p)[:controller] || :all).to_s
-    session[section] = {} unless session[section].is_a?(Hash)
-    session[section]
   end
 
   # ===========================================================================

@@ -291,7 +291,7 @@ class ExecReport
     def message_hashes(src)
       extract_message_hashes(src, __method__).map! { |part|
         # noinspection RubyMismatchedReturnType
-        normalize_hash(part)
+        normalized_hash(part)
       }.compact_blank!
     end
 
@@ -302,9 +302,8 @@ class ExecReport
     # @return [Hash{Symbol=>String,Array<String>}]
     #
     def message_hash(src)
-      # noinspection RubyMismatchedArgumentType
       result = extract_message_hash(src, __method__)
-      normalize_hash(result)
+      normalized_hash(result)
     end
 
     # =========================================================================
@@ -313,22 +312,22 @@ class ExecReport
 
     protected
 
-    # normalize_hash
+    # normalized_hash
     #
     # @param [Hash] hash
     #
     # @return [Hash{Symbol=>String,Array<String>}]
     #
-    def normalize_hash(hash)
+    def normalized_hash(hash)
       hash.map { |k, v|
         v = Array.wrap(v)
         v = v.first unless k == DETAILS_KEY
-        v = normalize_value(v)
+        v = normalized_value(v)
         [k, v] if v || v.is_a?(FalseClass)
       }.compact.to_h
     end
 
-    # normalize_value
+    # normalized_value
     #
     # @param [Array, String, Any, nil] value
     #
@@ -337,10 +336,10 @@ class ExecReport
     #--
     # noinspection RubyNilAnalysis, RubyMismatchedReturnType
     #++
-    def normalize_value(value)
+    def normalized_value(value)
       case value
         when Array
-          value.map { |s| normalize_value(s) }.compact.presence
+          value.map { |s| normalized_value(s) }.compact.presence
         when ActiveSupport::SafeBuffer
           to_utf8(value).presence
         when String
@@ -452,7 +451,7 @@ class ExecReport
           result[HTML_KEY] = src.html_safe? unless result.key?(HTML_KEY)
 
         when Exception
-          src = ExecError.new(src) unless src.is_a?(ExecError)
+          src    = ExecError.new(src) unless src.is_a?(ExecError)
           result = { TOPIC_KEY => src.message&.dup }
           result[DETAILS_KEY]   = src.messages[1..]&.deep_dup
           result[STATUS_KEY]    = src.try(:http_status)
@@ -461,16 +460,14 @@ class ExecReport
 
         when Hash
           result = src.deep_dup.deep_symbolize_keys!
-          matches, result    = partition_hash(result, *STATUS_KEYS)
-          result[STATUS_KEY] = matches.values.first
-          matches, result    = partition_hash(result, *HTML_KEYS)
-          result[HTML_KEY]   = matches.values.first
+          result[STATUS_KEY] = extract_hash!(result, *STATUS_KEYS).values.first
+          result[HTML_KEY]   = extract_hash!(result, *HTML_KEYS).values.first
 
         when ActiveSupport::SafeBuffer
           result = { TOPIC_KEY => src, HTML_KEY => true }
 
         when String
-          src = src.strip.presence
+          src    = src.strip.presence
           result = src ? { TOPIC_KEY => src, HTML_KEY => false } : {}
 
         else

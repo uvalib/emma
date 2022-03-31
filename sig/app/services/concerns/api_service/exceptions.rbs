@@ -35,7 +35,7 @@ module ApiService::Exceptions
   # @return [ExecReport]
   # @return [nil]                     If there is no exception.
   #
-  def exec_report: () -> ExecReport?
+  def exec_report: () -> (ExecReport | nil)
 
   # Set the latest API error.
   #

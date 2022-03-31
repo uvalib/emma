@@ -5,8 +5,8 @@
 #
 # A table of EMMA submission fields with a count of each unique value.
 
-fields ||= @list
+list ||= @list
 
 # noinspection RubyMismatchedArgumentType
 json.timestamp DateTime.now
-json.partial! 'data/fields', fields: fields
+json.partial! 'data/fields', fields: list

@@ -1,0 +1,5 @@
+# View helper methods supporting manipulation of Model instance fields.
+#
+module BaseCollectionDecorator::Fields
+  include BaseDecorator::Fields
+end

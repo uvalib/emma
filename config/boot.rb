@@ -78,7 +78,7 @@ end
 #
 # @return [String]
 #
-# @see file:app/assets/javascripts/shared/assets.js.erb *js$()*
+# @see file:app/assets/javascripts/shared/decode.js *decodeJSON()*
 #
 def js(arg)
   result = arg.is_a?(String) ? arg : arg.to_json

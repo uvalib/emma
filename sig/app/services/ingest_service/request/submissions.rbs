@@ -182,7 +182,7 @@ module IngestService::Request::Submissions
 
   # Generate records.
   #
-  # @param [Hash, String] item
+  # @param [Model, Hash, String] item
   #
   # @return [Array<Ingest::Record::IdentifierRecord>]
   #
@@ -199,7 +199,7 @@ module IngestService::Request::Submissions
   #
   # etc.
   #
-  def identifier_records: (symHash|String item) -> Array[Ingest::Record::IdentifierRecord]
+  def identifier_records: (Model|symHash|String item) -> Array[Ingest::Record::IdentifierRecord]
 
   # Indicate whether the value appears to be acceptable as a repository ID.
   #

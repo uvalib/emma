@@ -56,7 +56,7 @@ module DataConcern
   def data_params
     @data_params ||=
       request_parameters.tap do |prm|
-        columns = partition_hash!(prm, *DATA_COLUMN_PARAMETERS).values.first
+        columns = extract_hash!(prm, *DATA_COLUMN_PARAMETERS).values.first
         prm[:columns]  = array_param(columns)&.map(&:to_sym)&.uniq
         prm[:tables]   = array_param(prm[:tables])&.map(&:tableize)&.uniq
         prm[:headings] = !false?(prm[:headings])
@@ -176,12 +176,13 @@ module DataConcern
     records = get_submission_records(**opt).last || []
     records.each do |record|
       next unless (emma_data = safe_json_parse(record[:emma_data])).is_a?(Hash)
+      # noinspection RubyNilAnalysis
       emma_data.each_pair do |field, data|
         next unless all || EMMA_DATA_FIELDS.include?(field)
         entry = fields[field] ||= {}
         Array.wrap(data).flatten.each do |item|
           item = item.to_s.squish
-          item = nil if item == ModelHelper::Fields::EMPTY_VALUE
+          item = nil if item == BaseDecorator::EMPTY_VALUE
           entry[item] = entry[item]&.next || 1 unless item.blank?
         end
       end

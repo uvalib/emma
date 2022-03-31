@@ -540,18 +540,21 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :reset,     transitions_to: :starting,    **IF_DEV_DEBUG
       event :resume,    transitions_to: :resuming,    **IF_DEV
+      event :edit,      transitions_to: :editing,     **IF_SUBMITTER
     end
 
     state :failed do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :reset,     transitions_to: :starting,    **IF_DEV_DEBUG
       event :resume,    transitions_to: :resuming,    **IF_DEV
+      event :edit,      transitions_to: :editing,     **IF_SUBMITTER
     end
 
     state :canceled do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :reset,     transitions_to: :starting,    **IF_DEV_DEBUG
       event :resume,    transitions_to: :resuming,    **IF_DEV # TODO: remove?
+      event :edit,      transitions_to: :editing,     **IF_SUBMITTER
     end
 
     state :completed do

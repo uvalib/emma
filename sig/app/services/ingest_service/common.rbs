@@ -46,7 +46,7 @@ module IngestService::Common
   # == Usage Notes
   # Sets @response as a side-effect.
   #
-  def transmit: (Symbol verb, String action, symHash|String|nil params, strHash|nil headers, **untyped opt) -> Faraday::Response?
+  def transmit: (Symbol verb, String action, symHash|String|nil params, strHash|nil headers, **untyped opt) -> (Faraday::Response | nil)
 
   private
 

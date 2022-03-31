@@ -5,21 +5,24 @@
   # If the user is not authenticated, switch to the welcome screen.
   return render template: 'home/welcome' unless current_user
 
-  title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
+  view_debug(__FILE__)
+
   item  ||= @item
   pref  ||= @preferences
   hist  ||= @history
-  help  ||= nil # help_popup(:home, :dashboard) # TODO: ???
+
+  title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
+  help  ||= nil # %i[home dashboard]
 
   unless modal?
-    set_page_title(title)
+    set_page_meta_title(title)
     set_page_description(title)
     set_page_robots(:noindex)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_heading(title, help: help) %>
 
 <%= page_description_section %>
 <%= render 'home/debug_properties' %>

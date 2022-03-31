@@ -6,6 +6,8 @@
 
   return unless session_debug? || dev_client?
 
+  view_debug(__FILE__)
+
   form_label = t('emma.user.sessions.sign_in_as.update.label')
   form_opt   = {
     method: :get,

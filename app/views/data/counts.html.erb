@@ -2,21 +2,23 @@
 <%-
   # A table of EMMA submission fields with a count of each unique value.
 
-  title ||= t('emma.data.counts.title')
+  view_debug(__FILE__)
+
   list  ||= @list
-  help  ||= nil # help_popup(:data, :submissions) # TODO: ???
+
+  title ||= t('emma.data.counts.title')
+  help  ||= nil # %i[data counts]
 
   unless modal?
     label = t('emma.data.counts.label', default: title)
-    set_page_title(label)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

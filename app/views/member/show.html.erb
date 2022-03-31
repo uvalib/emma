@@ -2,26 +2,30 @@
 <%-
   # An organization Member show page.
 
+  view_debug(__FILE__)
+
   item  ||= @item
   pref  ||= @preferences
   hist  ||= @history
-  title ||= item&.label || t('emma.member.show.title')
-  help  ||= nil
+  dec     = MemberDecorator.new(item, hist: hist, pref: pref, **context)
+  item  ||= dec.object
+
+  title ||= item.label.presence || dec.page_heading
+  help  ||= nil # dec.help_topic
+  add     = { EmmaRoles: current_user.role_list.join(', ') }
 
   unless modal?
-    set_page_title(title)
+    label = dec.page_meta_title(default: dec.page_heading)
+    set_page_meta_title(label)
     set_page_description(title)
     set_page_robots(:noindex)
   end
 
-  add = { EmmaRoles: current_user.role_list.join(', ') }
-
-  template_opt = { item: item, pref: pref, hist: hist, add: add }
+  template_opt = { dec: dec, add: add }
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
+<%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

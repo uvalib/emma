@@ -4,6 +4,8 @@
 
   return unless devise_mapping.omniauthable?
 
+  view_debug(__FILE__)
+
   links =
     resource_class.omniauth_providers.map { |provider|
       label = get_sessions_label(:new, provider)
