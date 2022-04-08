@@ -462,11 +462,19 @@ class Search::Record::TitleRecord < Search::Api::Record
     # noinspection RubyNilAnalysis
     #++
     def sort_key_value(item, exact = true)
-      return item.map { |v| sort_key_value(v, exact) } if item.is_a?(Array)
-      return item.strip            if item.is_a?(String)
-      return item.to_datetime.to_s if item.respond_to?(:to_datetime)
-      result = item&.try(:number_value) || item
-      exact ? (result || 0) : result.to_s
+      if item.is_a?(Array)
+        item.map { |v| sort_key_value(v, exact) }.join(' ')
+      elsif item.is_a?(String)
+        item.strip
+      elsif item.respond_to?(:to_datetime)
+        item.to_datetime.to_s
+      elsif item.respond_to?(:number_value)
+        item.number_value
+      elsif exact
+        item || 0
+      else
+        item.to_s
+      end
     end
 
     # field_value
