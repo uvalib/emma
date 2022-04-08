@@ -1,7 +1,7 @@
 // app/assets/javascripts/controllers/tool.js
 
 
-import { isMissing}       from '../shared/definitions'
+import { isMissing }      from '../shared/definitions'
 import * as MathDetective from '../tool/math-detective'
 
 
