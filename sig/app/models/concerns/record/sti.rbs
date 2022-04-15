@@ -69,6 +69,10 @@ module Record::Sti
 
     def sti_child?: () -> bool
   end
+
+  private
+
+  THIS_MODULE: Module
 end
 
 # To be included in a record class which is a Single Table Inheritance child.
@@ -79,6 +83,8 @@ module Record::Sti::Leaf
   include Record
 
   private
+
+  THIS_MODULE: Module
 
   include Record::Sti
 
@@ -97,6 +103,8 @@ module Record::Sti::Branch
 
   private
 
+  THIS_MODULE: Module
+
   include Record::Sti
 end
 
@@ -112,6 +120,8 @@ module Record::Sti::Root
   private
 
   extend ActiveSupport::Concern
+
+  THIS_MODULE: Module
 
   include Record::Sti
 

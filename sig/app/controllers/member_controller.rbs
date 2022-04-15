@@ -23,6 +23,13 @@ class MemberController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader page:         Paginator
+  attr_reader account_id:   String | nil
+  attr_reader list:         Bs::Message::UserAccountList
+  attr_reader item:         Bs::Message::MyAccountSummary     | nil
+  attr_reader preferences:  Bs::Message::MyAccountPreferences | nil
+  attr_reader history:      Bs::Message::TitleDownloadList    | nil
+
   # == GET /member
   #
   # List all organization members.

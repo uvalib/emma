@@ -1,0 +1,3 @@
+class CreateReadingLists < ActiveRecord::Migration
+  def change: () -> untyped
+end

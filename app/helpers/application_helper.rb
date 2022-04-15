@@ -28,7 +28,7 @@ module ApplicationHelper
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyArgCount
   #++
   CONTROLLER_CONFIGURATION =
     I18n.t('emma').select { |k, config|
@@ -52,7 +52,7 @@ module ApplicationHelper
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   APP_CONFIG = I18n.t('emma.application', default: {}).deep_freeze
 

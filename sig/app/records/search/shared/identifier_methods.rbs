@@ -3,6 +3,10 @@
 module Search::Shared::IdentifierMethods
   include Api::Shared::IdentifierMethods
 
+  attr_reader isbn:           String | nil
+  attr_reader related_isbns:  strArray
+  attr_reader all_isbns:      strArray
+
   # The ISBN.
   #
   # @return [String]
@@ -31,7 +35,7 @@ module Search::Shared::IdentifierMethods
   def extract_isbns: (*Symbol fields) -> strArray
 end
 
-class PublicationIdentifierSet < Set
+class PublicationIdentifierSet < Set[PublicationIdentifier]
   def initialize: (untyped ids) -> void
 
   def hash: () -> Integer

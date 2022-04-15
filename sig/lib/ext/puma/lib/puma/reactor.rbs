@@ -1,0 +1,15 @@
+module Puma
+  # Overrides adding extra debugging around method calls.
+  #
+  module ReactorDebug
+    include Puma::ExtensionDebugging
+
+    def run: (?bool background) -> untyped
+
+    def add: (untyped client) -> untyped
+
+    def shutdown: () -> untyped
+
+    def register: (untyped client) -> untyped
+  end
+end

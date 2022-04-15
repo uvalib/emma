@@ -45,6 +45,8 @@ module Record::Exceptions
 
   private
 
+  THIS_MODULE: Module
+
   include InstanceMethods
 end
 

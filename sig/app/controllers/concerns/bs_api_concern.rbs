@@ -9,6 +9,16 @@ module BsApiConcern
 
   extend Emma::Time
 
+  # Invoke a Bookshare API method for display in the "Bookshare API Explorer".
+  #
+  # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def bs_api_explorer: (Symbol meth, String path, **untyped opt) -> symHash
+
   # To support API testing.
   #
   class ApiTesting
@@ -64,5 +74,5 @@ module BsApiConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

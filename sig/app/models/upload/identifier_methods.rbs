@@ -37,9 +37,11 @@ module Upload::IdentifierMethods
 
   def generate_submission_id: (?(Time|DateTime)? time, ?prefix: bool|String) -> String
 
+  attr_reader sid_counter: Integer
+
   def sid_counter: () -> Integer
 
-  def id_term: (symHash|Symbol|String|Integer|Upload v) -> Hash[Symbol,(String|Integer|nil)]
+  def id_term: (symHash|Symbol|String|Integer|Upload|nil v) -> Hash[Symbol,(String|Integer|nil)]
 
   def minimum_id: () -> Integer
 

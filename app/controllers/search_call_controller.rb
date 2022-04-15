@@ -109,8 +109,8 @@ class SearchCallController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Search::Message::SearchRecordList] list
-  # @param [Hash]                              opt
+  # @param [Search::Message::SearchRecordList,nil] list
+  # @param [Hash]                                  opt
   #
   # @return [Hash{Symbol=>Hash}]
   #

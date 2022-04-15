@@ -27,6 +27,8 @@ class Phase::Review < Phase::Single
 
   include Record::Steppable
 
+  CLASS: Class
+
   # schedule!
   #
   # @param [Hash] opt

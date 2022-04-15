@@ -17,6 +17,8 @@ public
 #
 # @param [Array<Symbol>] methods
 #
+# @return [void]
+#
 def neutralize(*methods)
   methods.each do |meth|
     define_method(meth) { |*, **| }

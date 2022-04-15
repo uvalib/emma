@@ -122,6 +122,7 @@ module BaseDecorator::Fields
     year:   [IsoYear],
   }.transform_values! { |types|
     types.flat_map { |type|
+      # noinspection RubyMismatchedArgumentType
       [type].tap do |related|
         name = (type == BigDecimal) ? 'Decimal' : type
         related << safe_const_get("Axiom::Types::#{name}")

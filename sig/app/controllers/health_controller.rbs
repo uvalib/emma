@@ -17,6 +17,8 @@ class HealthController < ApplicationController
 
   include HealthConcern
 
+  attr_reader state: RunState
+
   # == GET /version
   # == GET /health/version
   #

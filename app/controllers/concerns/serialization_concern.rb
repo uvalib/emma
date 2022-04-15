@@ -65,7 +65,7 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [Any]  list
+  # @param [*]    list
   # @param [Hash] opt
   #
   # @option opt [Symbol, String] :wrap
@@ -114,7 +114,7 @@ module SerializationConcern
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [Any]            item
+  # @param [*]              item
   # @param [Symbol, nil]    as        Either :hash or :array if given.
   # @param [Symbol, String] name
   #

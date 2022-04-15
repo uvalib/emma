@@ -38,6 +38,10 @@ TRUE_VALUES: strArray
 FALSE_VALUES: strArray
 
 class Object
+
+  @in_rails: bool
+  @in_rake:  bool
+
   # Indicate whether the item represents an explicit *true* value.
   #
   # @param [TrueClass, FalseClass, String, Symbol, Any, nil] value

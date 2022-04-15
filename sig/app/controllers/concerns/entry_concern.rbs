@@ -41,6 +41,12 @@ module EntryConcern
   #
   IGNORED_ENTRY_FORM_PARAMS: symArray
 
+  attr_reader entry_params: symHash
+  attr_reader action_id:    String | Integer | nil
+  attr_reader phase_id:     String | Integer | nil
+  attr_reader entry_id:     String | Integer | nil
+  attr_reader identifier:   String | Integer | nil
+
   def entry_params: () -> symHash
 
   def get_entry_params: (?prmHash? p) -> symHash
@@ -328,5 +334,13 @@ module EntryConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
+
+  public
+
+  attr_reader model_options: Entry::Options
+
+  def set_model_options: () -> Entry::Options
+  def pagination_setup:  (?paginator: Class, **untyped opt) -> Entry::Paginator
+
 end

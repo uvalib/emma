@@ -46,7 +46,7 @@ module AwsConcern
   #
   # @return [Array<String>]
   #
-  def param_values: (anyHash opt, *Symbol keys) -> strArray
+  def params_values: (anyHash opt, *Symbol keys) -> strArray
 
   # aws_params
   #
@@ -150,5 +150,5 @@ module AwsConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

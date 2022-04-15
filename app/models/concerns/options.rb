@@ -93,7 +93,11 @@ class Options
   #
   # @param [Symbol, String] key
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def key?(key)
+    key = key&.to_sym
     @value.key?(key) || option_method(key).present?
   end
 
@@ -104,6 +108,9 @@ class Options
   #
   # @return [Any, nil]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def get(key, log: true)
     key = key&.to_sym
     if @value.key?(key)

@@ -26,7 +26,7 @@ module HealthConcern
 
   # Subsystem health check properties.
   #
-  class HealthEntry < Hash
+  class HealthEntry < Hash[untyped, untyped]
     include Emma::Common
 
     # Initialize a new instance.
@@ -96,6 +96,8 @@ module HealthConcern
   # @type [HealthEntry]
   #
   INVALID_HEALTH_CHECK: HealthEntry
+
+  attr_reader subsystems: strArray
 
   # The value of `params[:subsystem]`, which may be one or more comma-separated
   # subsystem names.
@@ -213,5 +215,5 @@ module HealthConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

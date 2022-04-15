@@ -5,13 +5,15 @@ module HelpConcern
 
   include HelpHelper
 
+  attr_reader topic: Symbol | nil
+
   # get_help_entry
   #
-  # @param [Symbol] topic
+  # @param [Symbol,nil] topic
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_help_entry: (Symbol topic) -> symHash
+  def get_help_entry: (Symbol|nil topic) -> symHash
 
   # Extract the URL parameter which specifies a help topic.
   #
@@ -22,5 +24,5 @@ module HelpConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

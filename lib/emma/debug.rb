@@ -518,6 +518,7 @@ module Emma::Debug
           when Proc   then value = value.call(req)
           when Symbol then value = send(value, req)
         end
+        # noinspection RubyMismatchedArgumentType
         lines = __debug_inspect_item(value, **opt)
         lines.map! { |line| "[#{prefix}] #{line}" } if prefix
         item = +"== #{item} "

@@ -1,0 +1,9 @@
+module CodeStatisticsExt
+  EXTENSIONS: strArray
+
+  EXT_PATTERN: String
+
+  FILE_REGEX: Regexp
+
+  def calculate_directory_statistics: (String directory, ?(String|Regexp) pattern) -> void
+end

@@ -9,6 +9,8 @@ module Field
 
   SYNTHETIC_PROPERTIES: symHash
 
+  PROPERTY_KEYS: symArray
+
   # Return an enumeration type expressed or implied by *value*.
   #
   # @param [String, Symbol, Class, Any] value

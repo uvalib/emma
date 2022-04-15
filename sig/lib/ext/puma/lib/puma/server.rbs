@@ -1,0 +1,19 @@
+module Puma
+  # Overrides adding extra debugging around method calls.
+  #
+  module ServerDebug
+    include Puma::ExtensionDebugging
+
+    def initialize: (untyped app, ?Puma::Events events, ?::Hash[untyped, untyped] options) -> void
+
+    def process_client: (untyped client, untyped buffer) -> untyped
+
+    def with_force_shutdown: (untyped client) { () -> untyped } -> untyped
+
+    def read_body: (untyped env, untyped client, untyped body, untyped cl) -> untyped
+
+    def client_error: (untyped e, untyped client) -> untyped
+
+    def graceful_shutdown: () -> untyped
+  end
+end

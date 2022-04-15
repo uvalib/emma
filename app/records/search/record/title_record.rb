@@ -1146,7 +1146,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @param [Hash, Array, Any] item
   # @param [Array<Symbol>]    path
   #
-  # @return [Array<Array<Array<(Symbol,Array<Symbol,Integer>)>>>]
+  # @return [Array<Array<(Symbol,Array<Symbol,Integer>)>>]
   #
   def self.hierarchy_paths(item, path = [])
     case item
@@ -1173,7 +1173,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   FIELD_HIERARCHY =
     symbolize_values(I18n.t('emma.search.field_hierarchy')).deep_freeze
@@ -1261,8 +1261,10 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Hash>]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def get_part_fields(recs = records.to_a)
-    # noinspection RubyMismatchedReturnType
     recs.group_by { |rec| item_number(rec) }.map do |part, recs1|
       part = { bib_seriesPosition: part.to_s }
       fmts =
@@ -1277,7 +1279,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # get_file_fields
   #
-  # @param [Array<Symbol, Search::Record::MetadataRecord>] group
+  # @param [Array<Symbol,Search::Record::MetadataRecord,Array>] group
   #
   # @return [Array<Hash>]
   #

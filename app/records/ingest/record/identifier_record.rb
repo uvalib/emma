@@ -90,7 +90,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   #
   # @param [Boolean] no_version       If *true*, return "repo-rid-fmt".
   #
-  # @return [String, nil]
+  # @return [String]                  Can be *nil* if *no_version*.
   #
   def identifier(no_version: false)
     # noinspection RubyMismatchedReturnType

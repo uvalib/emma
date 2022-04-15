@@ -1302,7 +1302,7 @@ module Api::Common
   # @see file:config/locales/en.yml *en.emma.application.deployment*
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   DEPLOYMENT = I18n.t('emma.application.deployment').deep_freeze
 
@@ -1326,7 +1326,7 @@ module Api::Common
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   REPOSITORY_CONFIG = I18n.t('emma.repository', default: {}).deep_freeze
 
@@ -1336,6 +1336,9 @@ module Api::Common
   #
   # @see file:config/locales/repository.en.yml *en.emma.repository._default*
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   DEFAULT_REPOSITORY = REPOSITORY_CONFIG[:_default]
 
   # Values associated with each source repository.
@@ -1373,7 +1376,7 @@ module Api::Common
   # @see file:config/locales/types.en.yml *en.emma.categories*
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   CATEGORY = I18n.t('emma.categories', default: {}).deep_freeze
 
@@ -1396,7 +1399,7 @@ module Api::Common
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   LANGUAGE_CONFIG = I18n.t('emma.language', default: {}).deep_freeze
 
@@ -1406,6 +1409,9 @@ module Api::Common
   #
   # @see file:config/locales/types.en.yml *en.emma.language.list*
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   LANGUAGE = LANGUAGE_CONFIG[:list] || {}.freeze
 
   # Languages that appear first in the list.

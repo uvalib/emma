@@ -57,6 +57,8 @@ module LayoutHelper::PageControls
   #
   def page_controls: (*[Symbol,Symbol] pairs, ?controller: (Symbol|String)?, ?action: (Symbol|String)?, **untyped path_opt) -> ActiveSupport::SafeBuffer
 
+  def page_control: (**untyped opt) -> ActiveSupport::SafeBuffer
+
   # page_controls_label
   #
   # @param [Hash] opt                 Passed to #config_lookup.

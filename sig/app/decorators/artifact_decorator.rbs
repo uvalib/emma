@@ -6,100 +6,11 @@
 #
 class ArtifactDecorator < BookshareDecorator
   module Paths
-    include AccountDecorator::Common
-
-    def index_path: (**untyped opt) -> String
-
-    def show_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
-
-    def new_path: (**untyped opt) -> String
-
-    def create_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
-
-    def edit_select_path: (**untyped opt) -> String
-
-    def edit_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
-
-    def update_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
-
-    def delete_select_path: (**untyped opt) -> String
-
-    def delete_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
-
-    def destroy_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    include BookshareDecorator::Paths
   end
 
   module Methods
-    include AccountDecorator::Common
-
-    # Configuration for Bookshare download control properties.
-    #
-    # @type [Hash{Symbol=>Any}]
-    #
-    # -
-    # noinspection RailsI18nInspection
-    # +
-    DOWNLOAD_CONFIG: symHash
-
-    # Default link tooltip.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_TOOLTIP: String
-
-    # Default completed link tooltip.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_COMPLETE_TIP: String
-
-    # Artifact download progress indicator element CSS class.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_PROGRESS_CLASS: String
-
-    # Artifact download progress indicator tooltip.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_PROGRESS_TIP: String
-
-    # Artifact download progress indicator relative asset path.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_PROGRESS_ASSET: String
-
-    # Artifact download progress indicator alt text.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_PROGRESS_ALT_TEXT: String
-
-    # Artifact download failure message element CSS class.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_FAILURE_CLASS: String
-
-    # Artifact download button element CSS class.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_BUTTON_CLASS: String
-
-    # Artifact download button label.
-    #
-    # @type [String]
-    #
-    DOWNLOAD_BUTTON_LABEL: String
-
-    # Generic reference to format type for label construction.
-    #
-    # @type [String]
-    #
-    THIS_FORMAT: String
+    include BookshareDecorator::Methods
 
     # Generate a menu of user instances.
     #
@@ -112,11 +23,97 @@ class ArtifactDecorator < BookshareDecorator
     def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
   end
 
+  module InstanceMethods
+    include BookshareDecorator::InstanceMethods
+    include Paths
+    include Methods
+
+    def artifact_links: (?Model? item, **untyped opt) -> ActiveSupport::SafeBuffer
+  end
+
+  module ClassMethods
+    include BookshareDecorator::ClassMethods
+    include Paths
+    include Methods
+  end
+
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
+
+  # Configuration for Bookshare download control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # +
+  DOWNLOAD_CONFIG: symHash
+
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  # -
+  # noinspection RubyMismatchedConstantType
+  # +
+  DOWNLOAD_TOOLTIP: String
+
+  # Default completed link tooltip.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_COMPLETE_TIP: String
+
+  # Artifact download progress indicator element CSS class.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_PROGRESS_CLASS: String
+
+  # Artifact download progress indicator tooltip.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_PROGRESS_TIP: String
+
+  # Artifact download progress indicator relative asset path.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_PROGRESS_ASSET: String
+
+  # Artifact download progress indicator alt text.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_PROGRESS_ALT_TEXT: String
+
+  # Artifact download failure message element CSS class.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_FAILURE_CLASS: String
+
+  # Artifact download button element CSS class.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_BUTTON_CLASS: String
+
+  # Artifact download button label.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_BUTTON_LABEL: String
+
+  # Generic reference to format type for label construction.
+  #
+  # @type [String]
+  #
+  THIS_FORMAT: String
 
   # Create an element containing a link to download the given item.
   #
@@ -195,4 +192,9 @@ class ArtifactDecorator < BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def form_action_description: (?action: Symbol|nil, **untyped opt) -> String
+  def form_target_description: (?action: Symbol|nil, **untyped opt) -> String
 end

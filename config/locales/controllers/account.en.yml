@@ -127,8 +127,9 @@ en:
           All normal users have an EMMA local account which correlates with
           exactly one Bookshare account.  However, certain EMMA internal
           accounts which do not require access to Bookshare resources may not
-          relate to any Bookshare account.  Conversely, some EMMA adminstrative
-          accounts may be associated with one or more Bookshare test accounts.
+          relate to any Bookshare account.  Conversely, some EMMA
+          administrative accounts may be associated with one or more Bookshare
+          test accounts.
 
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all

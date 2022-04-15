@@ -12,7 +12,13 @@ module IngestService::Testing
   FORCED_EXCEPTION: bool
 
   # noinspection RubyUnusedLocalVariable
-  ALL_FAULTS: Integer
+  ALL_FAULTS:           Integer
+  SINGLETON_FIELDS_BAD: Integer
+  STRING_FIELDS_BAD:    Integer
+  ARRAY_FIELDS_BAD:     Integer
+  DATE_FIELDS_BAD:      Integer
+  PDF_DATES:            Integer
+  ALL_FIELDS_BAD:       Integer
 
   FAULT_METHOD: Hash[Symbol,(Integer|nil)]
 

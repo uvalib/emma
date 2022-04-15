@@ -7,11 +7,21 @@ module HttpHelper
   #
   HTTP_STATUS_TYPE: Hash[Symbol,(Array[Integer]|Range[Integer])]
 
+  HTTP_PERM_REDIRECT: Array[Integer] | Range[Integer]
+  HTTP_TEMP_REDIRECT: Array[Integer] | Range[Integer]
+
   # HTTP_STATUS_RANGE
   #
   # @type [Hash{Symbol=>Array,Range}]
   #
   HTTP_STATUS_RANGE: Hash[Symbol,(Array[Integer]|Range[Integer])]
+
+  HTTP_CONTINUE:      Array[Integer] | Range[Integer]
+  HTTP_SUCCESS:       Array[Integer] | Range[Integer]
+  HTTP_REDIRECT:      Array[Integer] | Range[Integer]
+  HTTP_CLIENT_ERROR:  Array[Integer] | Range[Integer]
+  HTTP_SERVER_ERROR:  Array[Integer] | Range[Integer]
+  HTTP_ERROR:         Array[Integer] | Range[Integer]
 
   # info?
   #

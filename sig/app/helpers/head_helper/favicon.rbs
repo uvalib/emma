@@ -10,6 +10,8 @@ module HeadHelper::Favicon
 
   public
 
+  attr_reader page_favicon: String
+
   # Access the favicon appropriate for the current page.
   #
   # If a block is given, this invocation is being used to set the favicon;

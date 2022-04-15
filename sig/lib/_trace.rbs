@@ -17,6 +17,12 @@ DEBUG_LEADER: String
 #
 DEBUG_MAX: Integer
 
+# For AWS, make the indentation standout in CloudWatch.
+#
+# @type [String]
+#
+LOAD_INDENT: String
+
 # Notification specifications can be a single String, Regexp, or Array of
 # either.
 #
@@ -64,11 +70,15 @@ MAX_NOTIFICATION_SIZE: Integer
 class Object
   public
 
+  @load_level: Integer
+  @load_table: Hash[String,Array[Integer|bool]]
+  @notifiers:  Hash[String,Integer]
+
   # Used to neutralize method(s) if they are not supposed to be enabled.
   #
   # @param [Array<Symbol>] methods
   #
-  def neutralize: (*Symbol methods) -> untyped
+  def neutralize: (*Symbol methods) -> void
 
   # Convert a string to UTF-8 encoding.
   #
@@ -101,7 +111,7 @@ class Object
   # $stderr output.  If not deployed, the log entry is created in addition to
   # $stderr output.
   #
-  def __output_impl: (*untyped args, **untyped opt) { () -> untyped } -> nil
+  def __output_impl: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
 
   # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
   #
@@ -112,7 +122,7 @@ class Object
   # == Usage Notes
   # The method is only functional if #CONSOLE_OUTPUT is true.
   #
-  def __output: (*untyped args, **untyped opt) { () -> untyped } -> nil
+  def __output: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
 
   public
 
@@ -124,7 +134,7 @@ class Object
   #
   # @return [nil]
   #
-  def __debug_impl: (*untyped args, **untyped opt) { () -> untyped } -> nil
+  def __debug_impl: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
 
   # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
   #
@@ -132,7 +142,7 @@ class Object
   # @param [Hash]  opt                  Passed to #__debug_impl.
   # @param [Proc]  block                Passed to #__debug_impl.
   #
-  def __debug: (*untyped args, **untyped opt) { () -> untyped } -> nil
+  def __debug: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
 
   # Loading level and indentation.
   #
@@ -140,7 +150,7 @@ class Object
   #
   # @return [String]
   #
-  def __loading_level: (?Integer level) -> ::String
+  def __loading_level: (?Integer level) -> String
 
   # Display console output to indicate that a file is being loaded.
   #
@@ -151,7 +161,7 @@ class Object
   # == Usage Notes
   # Place as the first non-comment line of a Ruby source file.
   #
-  def __loading: (String file) -> nil
+  def __loading: (String file) -> void
 
   # Display console output to indicate that a file is being loaded.
   #
@@ -162,7 +172,7 @@ class Object
   # == Usage Notes
   # Place as the first non-comment line of a Ruby source file.
   #
-  def __loading_begin: (String file) -> nil
+  def __loading_begin: (String file) -> void
 
   # Display console output to indicate the end of a file that is being loaded.
   #
@@ -173,7 +183,7 @@ class Object
   # == Usage Notes
   # Place as the last non-comment line of a Ruby source file.
   #
-  def __loading_end: (String file) -> nil
+  def __loading_end: (String file) -> void
 
   # Indicate invocation of a module's "included" block.
   #

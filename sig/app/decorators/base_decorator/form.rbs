@@ -6,6 +6,10 @@ module BaseDecorator::Form
 
   module Values
 
+    attr_reader field_groups:   Hash[Symbol,symHash]
+    attr_reader status_markers: Hash[Symbol,symHash]
+    attr_reader form_actions:   Hash[Symbol,symHash]
+
     # Model-specific field group configuration.
     #
     # @return [Hash{Symbol=>Hash}]
@@ -24,20 +28,11 @@ module BaseDecorator::Form
     #
     def form_actions: () -> Hash[Symbol,symHash]
 
+    def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
+
   end
 
-  # Indicate whether the given field value produces an '<input>' that should be
-  # disabled.
-  #
-  # @param [Symbol, String] field
-  #
-  def readonly_form_field?: (Symbol|String field) -> bool
-
-  # Indicate whether the given field value is required for validation.
-  #
-  # @param [Symbol, String] field
-  #
-  def required_form_field?: (Symbol|String field) -> bool
+  include Values
 
   # Render field/value pairs.
   #
@@ -144,7 +139,18 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *updateTextInputField()*
   #
-  def render_form_input: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_input:    (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_email:    (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_password: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_note_pair: (String|nil note, ?label: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  def form_input_fill: (String|nil filler, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_input_note: (String|nil note,   **untyped opt) -> ActiveSupport::SafeBuffer
+
+  RELATED_IGNORED_KEYS: symArray
+
+  def form_input_related_opt: (String|nil css, **untyped opt) -> symHash
 
   # @private
   DEFAULT_FORM_ACTION: Symbol

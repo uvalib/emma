@@ -5,12 +5,11 @@
 #   @return [Array<User>]
 #
 class AccountsDecorator < BaseCollectionDecorator
-  # Submit button for the delete upload form.
+  # item_ids
   #
-  # @param [Array<String,User>] items
-  # @param [Hash]               opt     Passed to super
+  # @param [Array<User,String>, User, String, nil] items  Def: `#object`.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<String>]
   #
-  def delete_submit_button: (*(String|User) items, **untyped opt) -> ActiveSupport::SafeBuffer
+  def item_ids: (Array[User|String|nil]|User|String|nil items) -> strArray
 end

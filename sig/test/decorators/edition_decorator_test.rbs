@@ -1,0 +1,2 @@
+class EditionDecoratorTest < Draper::TestCase
+end

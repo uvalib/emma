@@ -1,0 +1,3 @@
+class AddTrackableToUsers < ActiveRecord::Migration
+  def change: () -> untyped
+end

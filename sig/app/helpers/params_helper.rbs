@@ -71,6 +71,19 @@ module ParamsHelper
   #
   def url_parameters: (?prmHash? prm) -> symHash
 
+  # Get a reference to `session[section]`.
+  #
+  # @param [String, Symbol, nil] section
+  # @param [Hash, nil]           p        Default: `params`.
+  #
+  # @return [Hash]
+  #
+  def session_section: (?(String|Symbol)? section, ?symHash? p) -> anyHash
+
+  def last_operation:      () -> strHash
+  def last_operation_path: () -> (String | nil)
+  def last_operation_time: () -> Integer
+
   # Indicate whether the value has been compressed.
   #
   # @param [String, nil] v
@@ -92,15 +105,6 @@ module ParamsHelper
   # @return [String, nil]
   #
   def decompress_value: (String|nil v) -> (String | nil)
-
-  # Get a reference to `session[section]`.
-  #
-  # @param [String, Symbol, nil] section
-  # @param [Hash, nil]           p        Default: `params`.
-  #
-  # @return [Hash]
-  #
-  def session_section: (?(String|Symbol)? section, ?symHash? p) -> anyHash
 
   # Translate an item into the URL parameter for the controller with which it
   # is associated.

@@ -91,6 +91,7 @@ module SearchConcern
   # @see SearchService::Request::Records#get_record
   #
   def index_record(**opt)
+    # noinspection RubyMismatchedReturnType
     search_api.get_record(**opt)
   end
 

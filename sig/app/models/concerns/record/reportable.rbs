@@ -26,6 +26,8 @@ module Record::Reportable
   #
   REPORT_HASH: bool
 
+  attr_reader exec_report: ExecReport | nil
+
   # Workflow errors.
   #
   # @param [Boolean, nil] refresh     If *true*, re-fetch from the database.
@@ -78,4 +80,8 @@ module Record::Reportable
   # @return [Boolean]
   #
   def set_report_column: (untyped? value, ?meth: Symbol?, ?no_raise: bool, ?col: Symbol) -> bool
+
+  private
+
+  THIS_MODULE: Module
 end

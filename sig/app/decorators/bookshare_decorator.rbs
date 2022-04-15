@@ -121,7 +121,7 @@ class BookshareDecorator < BaseDecorator
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common

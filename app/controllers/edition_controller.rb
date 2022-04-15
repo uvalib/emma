@@ -96,7 +96,8 @@ class EditionController < ApplicationController
     __debug_route
     opt   = { seriesId: @series_id, editionId: @edition_id }
     @item = bs_api.get_periodical_edition(**opt)
-    flash_now_alert(@item.exec_report) if @item.error?
+    # noinspection RubyNilAnalysis
+    flash_now_alert(@item.exec_report) if @item&.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }

@@ -6,16 +6,32 @@
 #
 class PeriodicalDecorator < BookshareDecorator
   module Paths
+    include BookshareDecorator::Paths
   end
 
   module Methods
+    include BookshareDecorator::Methods
+  end
+
+  module InstanceMethods
+    include BookshareDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BookshareDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
+
+  attr_reader editions: Array[Bs::Record::PeriodicalEdition]
 
   # editions_data
   #
@@ -82,6 +98,10 @@ class PeriodicalDecorator < BookshareDecorator
   #
   def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  def details_element: (?level: Integer|nil, ?role: String|Symbol|nil, **untyped opt) { () -> untyped } -> ActiveSupport::SafeBuffer
+
+  def edition_list: (**untyped opt) -> ActiveSupport::SafeBuffer
+
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
@@ -90,4 +110,8 @@ class PeriodicalDecorator < BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_target_description: (?action: Symbol|nil) -> String
 end

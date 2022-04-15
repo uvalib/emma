@@ -41,7 +41,9 @@ module LayoutHelper::Footer
 
   # Content for the footer.
   #
-  # @type [Hash]
+  # @param [Hash] opt
+  #
+  # @return [Hash]
   #
   def footer_items(**opt)
     opt.reverse_merge!(

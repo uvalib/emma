@@ -74,6 +74,10 @@ module Record::Assignable
     # :nocov:
     #include ActiveRecord::AttributeAssignment
 
+    attr_reader model_options: Entry::Options | nil
+
+    def set_model_options: (Entry::Options|symHash|nil options) -> (Entry::Options | nil)
+
     # Update database fields, including the structured contents of JSON fields.
     #
     # @param [Hash, ActionController::Parameters, Model, nil] attr
@@ -88,6 +92,8 @@ module Record::Assignable
   end
 
   private
+
+  THIS_MODULE: Module
 
   include InstanceMethods
 end

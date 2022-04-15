@@ -38,6 +38,10 @@ module CachingMiddleware
     # @return [Array<String>]
     attr_reader cacheable_paths: strArray
 
+    attr_reader app:       Faraday::Middleware
+    attr_reader namespace: String | nil
+    attr_reader cache_dir: String | nil
+
     # Initialize
     #
     # @param [Faraday::Middleware] app

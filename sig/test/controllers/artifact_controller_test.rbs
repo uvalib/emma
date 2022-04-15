@@ -1,0 +1,15 @@
+class ArtifactControllerTest < ActionDispatch::IntegrationTest
+  CONTROLLER: String
+
+  OPTIONS: symHash
+
+  TEST_USERS: Array[String|nil]
+
+  TEST_READERS: Array[String|nil]
+
+  TEST_WRITERS: Array[String|nil]
+
+  DOWNLOAD_LINK: Regexp
+
+  INTERNAL_LINK: Regexp
+end

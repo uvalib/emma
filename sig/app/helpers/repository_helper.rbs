@@ -22,30 +22,30 @@ module RepositoryHelper
   #
   # @param [String] url
   #
-  def emma_link?: (String url) -> bool
+  def emma_link?: (String|nil url) -> bool
 
   # Indicate whether the given URL is a Bookshare link.
   #
-  # @param [String] url
+  # @param [String,nil] url
   #
   # == Usage Notes
   # This exists to support the handful of items which are represented as
   # belonging to the "EMMA" repository but which are actually Bookshare items
   # from the "EMMA Collection".
   #
-  def bs_link?: (String url) -> bool
+  def bs_link?: (String|nil url) -> bool
 
   # Indicate whether the given URL is an Internet Archive link.
   #
-  # @param [String] url
+  # @param [String,nil] url
   #
-  def ht_link?: (String url) -> bool
+  def ht_link?: (String|nil url) -> bool
 
   # Indicate whether the given URL is an Internet Archive link.
   #
-  # @param [String] url
+  # @param [String,nil] url
   #
-  def ia_link?: (String url) -> bool
+  def ia_link?: (String|nil url) -> bool
 
   # Report the member repository associated with the given URL.
   #

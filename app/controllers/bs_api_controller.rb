@@ -82,6 +82,7 @@ class BsApiController < ApplicationController
     if (user = prm.delete(:user)).present?
       path = request.fullpath.sub(/\?.*/, '')
       path << '?' << url_query(prm) if prm.present?
+      # noinspection RubyMismatchedArgumentType
       redirect_to sign_in_as_path(id: bookshare_user(user), redirect: path)
     else
       # noinspection RubyMismatchedArgumentType

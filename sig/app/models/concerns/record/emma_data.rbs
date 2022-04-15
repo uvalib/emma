@@ -62,6 +62,9 @@ module Record::EmmaData
   module InstanceMethods
     include Record::EmmaData
 
+    attr_reader emma_record:   Search::Record::MetadataRecord | nil
+    attr_reader emma_metadata: symHash | nil
+
     # @see Record::EmmaData#make_retrieval_link
     #
     def make_retrieval_link: (?String? rid, ?(symHash|String)? base_url) -> (String | nil)
@@ -80,6 +83,8 @@ module Record::EmmaData
   end
 
   private
+
+  THIS_MODULE: Module
 
   include InstanceMethods
 end

@@ -236,6 +236,7 @@ module ApiService::Common
     if (host = uri.host).present? && (host != base_uri.host)
       scheme = uri.scheme || 'https'
       port   = uri.port
+      # noinspection RubyMismatchedArgumentType
       result << scheme << '://' << host
       result << ':' << port if port && !COMMON_PORTS.include?(port)
     end

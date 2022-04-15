@@ -1,0 +1,5 @@
+module Sprockets::ERBProcessorExt
+  include Sprockets::ExtensionDebugging
+
+  def call: (untyped input) -> untyped
+end

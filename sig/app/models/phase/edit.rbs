@@ -33,6 +33,8 @@ class Phase::Edit < Phase::BulkPart
 
   include Record::Uploadable
 
+  CLASS: Class
+
   # Upload file to AWS S3 Shrine :cache.
   #
   # @param [ActionDispatch::Request, Hash, nil] request

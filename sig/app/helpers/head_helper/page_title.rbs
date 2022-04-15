@@ -5,7 +5,8 @@ module HeadHelper::PageTitle
 
   include HtmlHelper
 
-  private
+  # @private
+  META_TITLE_CONFIG: symHash
 
   # Text at the start of all page titles.
   #
@@ -33,6 +34,8 @@ module HeadHelper::PageTitle
 
   public
 
+  attr_reader page_meta_title: strArray
+
   # Access the page title.
   #
   # If a block is given, this invocation is being used to accumulate text into
@@ -45,8 +48,8 @@ module HeadHelper::PageTitle
   # @yield To supply value(s) to #set_page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def page_title: () { () -> (String | strArray) } -> strArray
-                | ()                               -> ActiveSupport::SafeBuffer
+  def page_meta_title: () { () -> (String | strArray) } -> strArray
+                     | ()                               -> ActiveSupport::SafeBuffer
 
   # Set the page title, eliminating any previous value.
   #
@@ -57,7 +60,7 @@ module HeadHelper::PageTitle
   # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def set_page_title: (*anyArray values) { () -> (String | strArray) } -> strArray
+  def set_page_meta_title: (*anyArray values) { () -> (String | strArray) } -> strArray
 
   # Add to the page title.
   #
@@ -68,7 +71,7 @@ module HeadHelper::PageTitle
   # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def append_page_title: (*anyArray values) { () -> (String | strArray) } -> strArray
+  def append_page_meta_title: (*anyArray values) { () -> (String | strArray) } -> strArray
 
   # Emit the '<title>' element (within '<head>').
   #
@@ -81,5 +84,5 @@ module HeadHelper::PageTitle
   # is not included in Turbolinks' determination of whether the contents of
   # '<head>' have changed.
   #
-  def emit_page_title: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def emit_page_meta_title: (**untyped opt) -> ActiveSupport::SafeBuffer
 end

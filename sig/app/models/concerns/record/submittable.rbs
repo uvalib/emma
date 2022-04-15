@@ -172,6 +172,8 @@ module Record::Submittable
 
   private
 
+  THIS_MODULE: Module
+
   include Record::Submittable::SubmissionMethods
 
   extend Record::Submittable::SubmissionMethods

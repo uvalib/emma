@@ -126,11 +126,9 @@ module Record::Properties
   #
   BATCH_SIZE: Integer
 
-  # URL parameter names and default values.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  WF_URL_PARAMETER: symHash
+  WF_PARAMETER_DEFAULT: symHash
+  WF_METHOD_MAP:        Hash[Symbol,Symbol]
+  WF_PARAMETER_MAP:     Hash[Symbol,Symbol]
 
   # A string added to the start of each title.
   #

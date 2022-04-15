@@ -42,8 +42,10 @@ class FileObject
   #   @param [Symbol, String, nil] fmt
   #   @param [String, nil]         ext
   #
+  #--
+  # noinspection RubyMismatchedVariableType, RailsParamDefResolve
+  #++
   def initialize(handle, fmt: nil, ext: nil)
-    # noinspection RubyMismatchedVariableType
     @fmt         = fmt || self.class.fmt
     @ext         = ext || self.class.file_extension
     @file_handle = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
@@ -73,6 +75,7 @@ class FileObject
   # @return [String, nil]
   #
   def filename
+    # noinspection RailsParamDefResolve
     @filename ||= @file_handle.try(:path)
   end
 

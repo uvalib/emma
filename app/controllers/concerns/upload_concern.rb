@@ -301,7 +301,7 @@ module UploadConcern
 
   # Return with the specified Upload record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Upload] id
+  # @param [String, Hash, Upload, nil] id
   #
   # @raise [UploadWorkflow::SubmitError]  If *item* not found.
   #

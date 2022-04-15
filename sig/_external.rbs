@@ -75,14 +75,25 @@ module CanCan
   end
 end
 
+module Capybara
+  module Node
+    module Actions
+    end
+    class Base
+    end
+    class Element < Base
+    end
+  end
+  class Session
+  end
+end
+
 module Concurrent
   module Collection
     class MriMapBackend
     end
   end
-  class Map < Collection::MriMapBackend
-  end
-  class Hash < ::Hash
+  class Hash < ::Hash[untyped, untyped]
   end
 end
 
@@ -100,6 +111,20 @@ module Devise
     end
   end
   class Mapping
+    def authenticatable?:           () -> bool
+    def confirmable?:               () -> bool
+    def database_authenticatable?:  () -> bool
+    def lockable?:                  () -> bool
+    def omniauthable?:              () -> bool
+    def recoverable?:               () -> bool
+    def registerable?:              () -> bool
+    def rememberable?:              () -> bool
+    def timeoutable?:               () -> bool
+    def validatable?:               () -> bool
+  end
+  module Controllers
+    module StoreLocation
+    end
   end
   class ConfirmationsController
   end
@@ -112,6 +137,12 @@ module Devise
   class SessionsController
   end
   class UnlocksController
+  end
+  module Test
+    module ControllerHelpers
+    end
+    module IntegrationHelpers
+    end
   end
 end
 
@@ -128,6 +159,8 @@ module Draper
   class Decorator
   end
   class CollectionDecorator
+  end
+  class TestCase < ::ActiveSupport::TestCase
   end
 end
 
@@ -457,18 +490,27 @@ module Faraday
   end
   module EncodeMethods
   end
+  module Logging
+  end
   class Error < StandardError
   end
   class Env
   end
   class Middleware
   end
+  class RackBuilder
+  end
+  class Request < Struct[[:http_method, :path, :params, :headers, :body, :options]]
+  end
   class Response
   end
 end
 
+module Forwardable
+end
+
 module Hashie
-  class Hash < ::Hash
+  class Hash < ::Hash[untyped, untyped]
   end
   class Mash < Hash
   end
@@ -492,6 +534,20 @@ module OAuth2
   end
   class Response
   end
+  module Strategy
+    class Base
+    end
+    class AuthCode < Base
+    end
+    class Implicit < Base
+    end
+    class Password < Base
+    end
+    class ClientCredentials < Base
+    end
+    class Assertion < Base
+    end
+  end
 end
 
 module OmniAuth
@@ -506,6 +562,9 @@ module OmniAuth
     end
     def redirect: (untyped uri) -> httpResult
   end
+end
+
+class OpenStruct
 end
 
 module PDF
@@ -530,8 +589,15 @@ module Prometheus
   end
 end
 
+module Puma
+  class Events
+  end
+end
+
 module Rake
   module DSL
+  end
+  class Task
   end
   class TaskArguments
   end
@@ -541,6 +607,10 @@ module Representable
   module Coercion
   end
   class Decorator
+  end
+  module Object
+    class Binding
+    end
   end
   module Hash
     module ClassMethods
@@ -555,16 +625,67 @@ end
 class Sanitize
 end
 
+class Set[unchecked out A]
+end
+
+module Sprockets
+  module ProcessorUtils
+  end
+  module Loader
+  end
+end
+
 class Shrine
   class Attacher
+    module InstanceMethods
+    end
+  end
+  module Plugins
+    module Activerecord
+      module AttachmentMethods
+      end
+      module AttacherMethods
+      end
+    end
+    module Entity
+      module AttachmentMethods
+      end
+      module AttacherClassMethods
+      end
+      module AttacherMethods
+      end
+    end
+  end
+  class RackFile
   end
   class UploadedFile
   end
 end
 
 module Workflow
-  class Base
+
+  module ClassMethods
+
+    attr_reader workflow_spec: Workflow::Specification
+
+    attr_reader workflow_state_column_name: Symbol
+
+    def workflow_column: (?(String|Symbol|nil) column_name) -> Symbol
+
+    def workflow: { () -> untyped } -> untyped
+
+    private
+
+    def assign_workflow: (Workflow::Specification specification_object) -> untyped
+
   end
+
+  extend ClassMethods
+
+  class Specification
+  end
+
   class State
   end
+
 end

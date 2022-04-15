@@ -337,8 +337,8 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer,String>]
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
-  def flash_item: (String|FlashPart item,        **untyped opt) -> (ActiveSupport::SafeBuffer | String)
-                | (Array[String|FlashPart] item, **untyped opt) -> Array[ActiveSupport::SafeBuffer|String]
+  def flash_item: (Array[String|FlashPart] array, **untyped opt) -> Array[ActiveSupport::SafeBuffer|String]
+                | (String|FlashPart string,       **untyped opt) -> (ActiveSupport::SafeBuffer | String)
 
   # An item's actual impact toward the total flash size.
   #

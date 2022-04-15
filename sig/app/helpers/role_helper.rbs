@@ -12,6 +12,10 @@ module RoleHelper
   #
   def developer?: (*untyped, **untyped) ?{ () -> untyped } -> bool
 
+  # Indicate whether the current user has the administrator role.
+  #
+  def administrator?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+
   # Indicate whether the current user has the given role.
   #
   # If *role* is blank then the method always returns *true*.

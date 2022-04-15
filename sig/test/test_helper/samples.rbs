@@ -1,0 +1,62 @@
+# Access to sample models.
+#
+module TestHelper::Samples
+  ANONYMOUS: nil
+
+  EMMA_DSO: String
+
+  EMMA_COLLECTION: String
+
+  EMMA_MEMBERSHIP: String
+
+  attr_reader sample: Hash[Symbol, Model]
+
+  # A table of models and the selected entry from test/fixtures/*.yml.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  # -
+  # noinspection NonAsciiCharacters
+  # +
+  SAMPLE_FIXTURE: Hash[Symbol,Symbol]
+
+  # Generate a sample instance from text/fixtures/artifacts.yml.
+  # @return [Artifact]
+  def sample_artifact: () -> Artifact
+
+  # Generate a sample instance from text/fixtures/editions.yml.
+  # @return [Edition]
+  def sample_edition: () -> Edition
+
+  # Generate a sample instance from text/fixtures/members.yml.
+  # @return [Member]
+  def sample_member: () -> Member
+
+  # Generate a sample instance from text/fixtures/artifacts.yml.
+  # @return [Periodical]
+  def sample_periodical: () -> Periodical
+
+  # Generate a sample instance from text/fixtures/reading_lists.yml.
+  # @return [ReadingList]
+  def sample_reading_list: () -> ReadingList
+
+  # Generate a sample instance from text/fixtures/roles.yml.
+  # @return [Role]
+  def sample_role: () -> Role
+
+  # Generate a sample instance from text/fixtures/search_calls.yml.
+  # @return [SearchCall]
+  def sample_search_call: () -> SearchCall
+
+  # Generate a sample instance from text/fixtures/search_results.yml.
+  # @return [SearchResult]
+  def sample_search_result: () -> SearchResult
+
+  # Generate a sample instance from text/fixtures/titles.yml.
+  # @return [Title]
+  def sample_title: () -> Title
+
+  # Generate a sample instance from text/fixtures/users.yml.
+  # @return [User]
+  def sample_user: () -> User
+end

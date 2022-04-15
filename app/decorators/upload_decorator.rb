@@ -768,7 +768,7 @@ class UploadDecorator < BaseDecorator
 
   # Upload cancel button.
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

@@ -30,12 +30,6 @@ class AccountDecorator < BaseDecorator
     #
     def model_form_fields: () -> Hash[Symbol, symHash]
 
-    # Generate a prompt for #items_menu.
-    #
-    # @return [String]
-    #
-    def items_menu_prompt: () -> String
-
     CONTROL_ICONS: Hash[Symbol, symHash]
 
     # Control icon definitions.
@@ -56,12 +50,7 @@ class AccountDecorator < BaseDecorator
     EMAIL_FIELD_READONLY: String
     PASSWORD_PLACEHOLDER: String
     MINIMUM_PASSWORD_LENGTH: Integer | nil
-
-    # Button information for upload actions.
-    #
-    # @type [Hash{Symbol=>Hash}]
-    #
-    def form_action: () -> symHash
+    MAXIMUM_PASSWORD_LENGTH: Integer | nil
   end
 
   module InstanceMethods
@@ -77,7 +66,7 @@ class AccountDecorator < BaseDecorator
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
@@ -164,9 +153,22 @@ class AccountDecorator < BaseDecorator
   #
   def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
 
-  FORM_ACTIONS: Hash[Symbol,symHash]
+  # Generate a prompt for #items_menu.
+  #
+  # @return [String]
+  #
+  def items_menu_prompt: () -> String
 
-  def form_actions: () -> Hash[Symbol,symHash]
+  def form_fields: (?pairs: anyHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  FIELD_GROUP: Hash[Symbol,Hash[Symbol,String]]
+  def render_form_email:    (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_password: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  DEFAULT_BOOKSHARE_ENTRY: String
+
+  def bookshare_user_menu: (?selected: Integer|nil, ?default: String|nil) -> symHash
+
+  def min_length_note:       (?String? note, ?Integer? min, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def current_password_note: (?String? note,                **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
 end

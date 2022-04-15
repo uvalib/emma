@@ -64,7 +64,7 @@ module Upload::IdentifierMethods
 
   # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
   #
-  # @param [Api::Record, Upload, Hash, String, Any, nil] item
+  # @param [Api::Record, Upload, Hash, String, *] item
   #
   # @return [String]                  The submission ID.
   # @return [nil]                     No submission ID could be determined.

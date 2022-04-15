@@ -9,6 +9,9 @@ module Down
   # be harmless.
   #
   module ChunkedIOExt
+
+    attr_reader lineno: Integer
+
     # Implement position setter.
     #
     # @return [Integer]

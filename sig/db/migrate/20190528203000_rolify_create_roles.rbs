@@ -1,0 +1,3 @@
+class RolifyCreateRoles < ActiveRecord::Migration
+  def change: () -> untyped
+end

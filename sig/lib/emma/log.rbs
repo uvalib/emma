@@ -5,6 +5,11 @@ module Emma::Log
 
   LOG_LEVEL: Hash[Symbol, Integer]
 
+  @logger:          Logger
+  @local_levels:    Concurrent::Map
+  @silenced_maps:   Concurrent::Map
+  @saved_log_level: Concurrent::Map
+
   # The current logger.
   #
   # @return [Logger]
@@ -144,6 +149,8 @@ module Emma::Log
   # Compare with ActiveSupport::LoggerThreadSafeLevel#level
   #
   def self.level: () -> Integer
+
+  @silenced_map: Concurrent::Map
 
   # Thread-safe storage for silenced status.
   #

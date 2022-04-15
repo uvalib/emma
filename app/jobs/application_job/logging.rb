@@ -64,6 +64,7 @@ module ApplicationJob::Logging
   end
 
   def item_inspect(v)
+    # noinspection RubyMismatchedArgumentType
     case v
       when ApplicationJob::AsyncCallback then "#{v.class} #{hash_inspect(v)}"
       when ApplicationRecord             then record_inspect(v)

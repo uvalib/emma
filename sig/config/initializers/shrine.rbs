@@ -1,0 +1,8 @@
+# Use cloud storage except for desktop development.
+#
+# Also avoid setting up AWS storage when running `rake assets:precompile` from
+# Dockerfile.
+#
+# @type [Boolean]
+#
+SHRINE_CLOUD_STORAGE: bool

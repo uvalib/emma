@@ -117,7 +117,7 @@ class Upload < ApplicationRecord
   #
   def set_model_options(options)
     options = options[:options]  if options.is_a?(Hash)
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
     @model_options = (options.dup if options.is_a?(Options))
   end
 
@@ -198,7 +198,7 @@ class Upload < ApplicationRecord
   #   Provided to indicate that user-supplied record attributes should be
   #   wiped (while retaining values that were originally set by the system).
   #
-  # @return [void]
+  # @return [self]
   #
   # This method overrides:
   # @see ActiveModel::AttributeAssignment#assign_attributes

@@ -1,19 +1,13 @@
 # View helper methods supporting the creation of links.
 #
 module LinkHelper
+
   include Emma::Common
+  include Emma::Unicode
 
+  include ConfigurationHelper
   include HtmlHelper
-
-  include I18nHelper
-
   include RouteHelper
-
-#  # TODO: I18n
-#  #
-#  # @type [String]
-#  #
-#  ANOTHER: String
 
   # Create a link element to an application action target.
   #
@@ -26,6 +20,77 @@ module LinkHelper
   # @return [nil]                         A valid URL could not be determined.
   #
   def link_to_action: (String|nil label, ?link_opt: symHash?, ?path: (String|strArray|symHash)?, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Generate a symbol-based icon button or link which should be both accessible
+  # and cater to the quirks of various accessibility scanners.
+  #
+  # @param [String, nil] icon         Default: Emma::Unicode#STAR
+  # @param [String, nil] text         Default: 'Action'
+  # @param [String, nil] url          Default: '#'
+  # @param [Hash]        opt          Passed to #link_to or #html_span except:
+  #
+  # @option opt [String] :symbol      Overrides *symbol*
+  # @option opt [String] :text        Overrides *text*
+  # @option opt [String] :url         Overrides *url*
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # -
+  # noinspection RubyMismatchedArgumentType
+  # +
+  def icon_button: (?icon: String?, ?text: String?, ?url: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Produce a link with appropriate accessibility settings.
+  #
+  # @param [String] label
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #link_to except for:
+  # @param [Proc]   block             Passed to #link_to.
+  #
+  # @option opt [String] :label       Overrides *label* parameter if present.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Usage Notes
+  # This method assumes that local paths are always relative.
+  #
+  def make_link: (String label, String path, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer
+
+  # Produce a link to an external site which opens in a new browser tab.
+  #
+  # @param [String] label
+  # @param [String] path
+  # @param [Hash]   opt
+  # @param [Proc]   block
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #make_link
+  #
+  def external_link: (String label, String path, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer
+
+  # Produce a link to download an item to the client's browser.
+  #
+  # @param [String] label
+  # @param [String] path
+  # @param [Hash]   opt
+  # @param [Proc]   block
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #external_link
+  #
+  def download_link: (String label, String path, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer
+
+  # If *text* is a URL return it directly; if *text* is HTML, locate the first
+  # "href" and return the indicated value.
+  #
+  # @param [String, nil] text
+  #
+  # @return [String]                  A full URL.
+  # @return [nil]                     No URL could be extracted.
+  #
+  def extract_url: (String|nil text) -> (String | nil)
 
 #  # page_action_entry
 #  #

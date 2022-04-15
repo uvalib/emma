@@ -120,6 +120,8 @@ module Record::Controllable
 
     private
 
+    THIS_MODULE: Module
+
     include Record::Updatable
   end
 
@@ -158,10 +160,14 @@ module Record::Controllable
 
     private
 
+    THIS_MODULE: Module
+
     include Record::Updatable
   end
 
   private
+
+  THIS_MODULE: Module
 
   include CommandMethods
 

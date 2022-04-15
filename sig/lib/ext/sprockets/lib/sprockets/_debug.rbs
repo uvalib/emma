@@ -1,0 +1,41 @@
+module Sprockets
+  module ExtensionDebugging
+    include Emma::Extension::Debugging
+
+    include Emma::Extension::NoDebugging
+
+    def __ext_log_leader: () -> String
+  end
+end
+
+# TODO: Work into Emma::Extension::Debugging
+class DebugTiming
+  extend Emma::Time
+
+  attr_reader start: Float
+  attr_reader level: Integer
+
+  def self.start: () -> Float
+
+  def self.now: () -> Float
+
+  def self.offset: (?Float? time) -> String
+
+  def self.duration: (?Float? start_time, ?Float? end_time) -> untyped
+
+  def self.level: () -> Integer
+
+  def self.push_level: () -> Integer
+
+  def self.pop_level: () -> Integer
+
+  def self.thread_name: () -> String
+
+  def self.indent: (?Integer depth) -> String
+
+  def self.aggregate?: (untyped processor) -> (false | untyped)
+
+  def self.enter: (untyped processor, symHash input, ?Float? time) { () -> untyped } -> Float
+
+  def self.leave: (untyped processor, symHash input, Float start, ?Float? time) { () -> untyped } -> Float
+end

@@ -185,6 +185,8 @@ class Entry < ApplicationRecord
   #
   def self.latest_for_sid: (?(Model|symHash|String|Symbol)? sid, **untyped opt) -> Entry
 
+  attr_reader sid_counter: Integer
+
   def self.sid_counter: () -> Integer
 
   # A textual description of the type of the Model instance.

@@ -5,11 +5,11 @@
 #   @return [Search::Record::MetadataRecord, Search::Record::TitleRecord]
 #
 class SearchDecorator < BaseDecorator
-  include LogoHelper
 
-  include RepositoryHelper
+  @model_type: Symbol
 
   module Paths
+    include BaseDecorator::Paths
   end
 
   # Methods and values sharable with the related collection decorator.
@@ -17,7 +17,7 @@ class SearchDecorator < BaseDecorator
   module Methods
     include CssHelper
 
-    include LayoutHelper
+    include BaseDecorator::Methods
 
     # Bridge the gap between "emma.search.record" (which defines the order of
     # display of data fields) and "emma.entry.record.emma_data" (which holds
@@ -116,8 +116,21 @@ class SearchDecorator < BaseDecorator
     def result_classes: (?suffix: String) -> strArray
   end
 
+  module InstanceMethods
+    include BaseDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BaseDecorator::ClassMethods
+    include Paths
+    include Methods
+  end
+
+
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
@@ -129,6 +142,8 @@ class SearchDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def render_pair: (String|Symbol|nil label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Transform a field value for HTML rendering.
   #
@@ -265,16 +280,23 @@ class SearchDecorator < BaseDecorator
   #
   def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # list_item_toggle
+  # Include control icons below the entry number.
   #
-  # @param [Integer] row
-  # @param [Hash]    opt              Passed to #tree_button.
+  # @param [Boolean] toggle           If *true* add item toggle.
+  # @param [Boolean] controls         If *true* add edit controls.
+  # @param [Hash]    opt              Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/controllers/search.js setupToggleControl()
+  def list_item_number: (?toggle: bool, ?controls: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate inline edit controls for the search entry.
   #
-  def list_item_toggle: (?row: Integer?, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @param [Symbol] type
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def edit_controls: (?type: Symbol) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate an element to display a score for the item.
   #
@@ -290,4 +312,6 @@ class SearchDecorator < BaseDecorator
   # noinspection RailsParamDefResolve
   # +
   def score_values: () -> symHash
+
+  def format_counts: (**untyped opt) -> ActiveSupport::SafeBuffer
 end

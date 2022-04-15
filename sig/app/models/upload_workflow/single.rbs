@@ -34,6 +34,9 @@ module UploadWorkflow::Single::Data
   #
   attr_reader record: Upload
 
+  attr_reader existing:       bool   | nil
+  attr_reader workflow_state: String | nil
+
   # The characteristic "return value" of the workflow after an event has been
   # registered.
   #

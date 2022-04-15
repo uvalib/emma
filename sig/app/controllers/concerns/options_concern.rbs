@@ -5,6 +5,8 @@ module OptionsConcern
 
   include ParamsHelper
 
+  attr_reader model_options: Options
+
   # Access the @model_options instance created for the current controller.
   #
   # @return [Options]
@@ -19,7 +21,7 @@ module OptionsConcern
 
   private
 
-  THIS_MODULE: untyped
+  THIS_MODULE: Module
 
   include ParamsHelper
 

@@ -12,7 +12,14 @@ module BookshareService::Testing
   FORCED_EXCEPTION: bool
 
   # noinspection RubyUnusedLocalVariable
-  ALL_FAULTS: Integer
+  ALL_FAULTS:         Integer
+  BAD_CATEGORY:       Integer
+  BAD_HISTORY:        Integer
+  BAD_MEMBERS:        Integer
+  BAD_MY_ACCOUNT:     Integer
+  BAD_PREFERENCES:    Integer
+  BAD_TITLE:          Integer
+  BAD_USER_IDENTITY:  Integer
 
   FAULT_METHOD: Hash[Symbol,(Integer|nil)]
 

@@ -1,0 +1,2 @@
+class DataControllerTest < ActionDispatch::IntegrationTest
+end

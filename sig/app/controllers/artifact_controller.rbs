@@ -27,6 +27,8 @@ class ArtifactController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader item: Bs::Record::ArtifactMetadata
+
   # == GET /artifact/:id?fmt=:fmt
   # == GET /artifact/:bookshareId?fmt=:fmt
   #

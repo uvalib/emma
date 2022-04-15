@@ -66,7 +66,7 @@ class Paginator
 
   # Pagination data values.
   #
-  class Properties < ::Hash
+  class Properties < ::Hash[Symbol,untyped]
     # Empty copy of data values in the preferred order (for debug output).
     #
     # @type [Hash{Symbol=>any}]
@@ -75,6 +75,10 @@ class Paginator
 
     def initialize: (?symHash? values) -> void
   end
+
+  attr_reader property:           Paginator::Properties
+  attr_reader page_items:         anyArray
+  attr_reader default_page_size:  Integer
 
   # property
   #

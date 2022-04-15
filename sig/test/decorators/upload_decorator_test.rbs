@@ -1,0 +1,2 @@
+class UploadDecoratorTest < Draper::TestCase
+end

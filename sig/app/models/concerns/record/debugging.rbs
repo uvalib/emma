@@ -70,5 +70,7 @@ module Record::Debugging
 
   private
 
+  THIS_MODULE: Module
+
   include InstanceMethods
 end

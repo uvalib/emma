@@ -176,5 +176,5 @@ module AuthConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

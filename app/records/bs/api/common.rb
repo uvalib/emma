@@ -26,7 +26,7 @@ module Bs::Api::Common
   # @see file:config/locales/types/bookshare.en.yml *en.emma.bookshare.type*
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   CONFIGURATION = I18n.t('emma.bookshare.type').deep_freeze
 

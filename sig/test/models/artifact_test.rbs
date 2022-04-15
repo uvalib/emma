@@ -1,0 +1,2 @@
+class ArtifactTest < ActiveSupport::TestCase
+end

@@ -38,7 +38,7 @@ class Workflow::Base
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   CONFIGURATION = I18n.t('emma.workflow').deep_freeze
 
@@ -137,7 +137,7 @@ module Workflow::Base::Roles
   def set_current_user(user = nil)
     set_current_role(user)
     user = @current_role.to_s if user.nil? || user.is_a?(Symbol)
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
     @current_user = user
   end
 

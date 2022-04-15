@@ -25,6 +25,8 @@ class Action::Store < Action::BulkPart
 
   include Record::Uploadable
 
+  CLASS: Class
+
   # Update database fields, including the structured contents of the :emma_data
   # field.
   #

@@ -1,0 +1,2 @@
+class ReadingListTest < ActiveSupport::TestCase
+end

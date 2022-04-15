@@ -66,6 +66,8 @@ module Record::Uploadable
   #
   attr_reader file_attacher: FileUploader::Attacher
 
+  attr_reader filename: String | nil
+
   def filename: () -> (String | nil)
 
   def attached_file: () -> (FileUploader::UploadedFile | nil)
@@ -130,6 +132,8 @@ module Record::Uploadable
   private
 
   def log_exception: (Exception excp, ?Symbol? meth) -> nil
+
+  THIS_MODULE: Module
 
   include Record::EmmaData
 

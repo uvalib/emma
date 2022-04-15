@@ -14,6 +14,8 @@ class BaseDecorator < Draper::Decorator
 
     def controller_context: () -> ApplicationController
 
+    def retrieval_path: (*untyped args) -> String
+
     include ConfigurationHelper
     include FormHelper
     include HtmlHelper
@@ -55,9 +57,11 @@ class BaseDecorator < Draper::Decorator
     include Helpers
 
     def model_type: () -> Symbol
+    def ar_class: () -> (Class | nil)
     def null_object: () -> Object
     def model_config_base: () -> Symbol
     def controller_config_base: () -> Symbol
+    def controller_config: (?Symbol? `type`) -> Hash[Symbol,symHash]
     def model_config: () -> Hash[Symbol,symHash]
     def model_index_fields: () -> Hash[Symbol,symHash]
     def model_show_fields: () -> Hash[Symbol,symHash]
@@ -67,6 +71,7 @@ class BaseDecorator < Draper::Decorator
     def field_configuration: (Symbol|String|nil field, ?(Symbol|String|nil) action) -> Hash[Symbol,symHash]
     def field_configuration_for_label: (String|Symbol|nil label, ?(Symbol|String|nil) action) -> Hash[Symbol,symHash]
     def action_config: () -> symHash
+    def show_tooltip: () -> (Symbol | nil)
     def config_lookup: (*(String|strArray) path, **untyped opt) -> untyped
   end
 
@@ -79,20 +84,10 @@ class BaseDecorator < Draper::Decorator
   module Methods
     include Configuration
 
-    def options: () -> Options
-
+    def css_list_class:  () -> String
     def can?: (Symbol action, ?untyped target) -> bool
-    def context_value: (*Symbol keys) -> untyped
-    def help_topic: () -> symArray
     def config_button_values: (String|Symbol action) -> Hash[Symbol,Hash[Symbol,String|symHash]]
     def link_to_action: (String|nil label, **untyped opt) -> ActiveSupport::SafeBuffer
-
-    def page_head_title: (?default: bool|String, **untyped opt) -> String
-    def page_heading:    (?default: bool|String, **untyped opt) -> String
-
-    def default_title:   (bool|String default) -> String
-
-    def css_list_class:  () -> String
   end
 
   # Methods for each decorator class instance.
@@ -101,21 +96,12 @@ class BaseDecorator < Draper::Decorator
     include Paths
     include Methods
 
-    def id_for: (?(String|Model|anyHash|anyArray|nil) item, **untyped opt) -> (String | Model | anyHash | nil)
-
-    def model_type: () -> Symbol
-    def null_object: () -> Object
-    def config_lookup: (*(String|strArray) path, **untyped opt) -> (untyped | nil)
-
     def current_user: () -> (User | nil)
 
-    def show_path:          (?untyped item, **untyped opt)  -> String
-    def edit_path:          (?untyped item, **untyped opt)  -> String
-    def update_path:        (?untyped item, **untyped opt)  -> String
-    def delete_path:        (?untyped item, **untyped opt)  -> String
-    def destroy_path:       (?untyped item, **untyped opt)  -> String
-
-    def path_for: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+    def model_type: () -> Symbol
+    def ar_class: () -> (Class | nil)
+    def null_object: () -> Object
+    def config_lookup: (*(String|strArray) path, **untyped opt) -> (untyped | nil)
 
     def nil?: () -> bool
     def blank?: () -> bool
@@ -124,8 +110,9 @@ class BaseDecorator < Draper::Decorator
     def deep_dup: () -> BaseDecorator
     def inspect: (?max: Integer) -> String
 
-    def object_class: () -> Class
-    def decorate: (Model item, **untyped opt) -> BaseDecorator
+    def initialize_context: (**untyped opt) -> symHash
+    def context_value: (*Symbol keys) -> untyped
+    def options: () -> Options
 
     def request_values: (*Symbol keys) -> symHash
     def request_value: (Symbol key) -> (untyped | nil)
@@ -137,7 +124,14 @@ class BaseDecorator < Draper::Decorator
     def back_path: (?(symHash|nil) opt) -> (String | nil)
     def root_url: () -> String
 
-    def initialize_context: (**untyped opt) -> symHash
+    def object_class:    () -> Class
+    def decorate:        (Model item, **untyped opt) -> BaseDecorator
+
+    def help_topic:      () -> symArray
+    def page_meta_title: (?default: bool|String, **untyped opt) -> String
+    def page_heading:    (?default: bool|String, **untyped opt) -> String
+
+    def page_value:      (Symbol item, ?default: bool|String, **untyped opt) -> String
   end
 
   # Methods for each decorator class.
@@ -150,18 +144,20 @@ class BaseDecorator < Draper::Decorator
     include Paths
     include Methods
 
-    def model_type: () -> Symbol
+    def model_type:  () -> Symbol
+    def ar_class:    () -> (Class | nil)
     def null_object: () -> Object
 
     def decorate: (Model|nil item, **untyped opt) -> BaseDecorator
     def generate: (Class|Object|nil item, ?force: bool, **untyped opt) -> BaseDecorator
 
     def debug_inheritance: () -> void
+
+    def self.included: (Module base) -> void
   end
 
-
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
@@ -208,6 +204,12 @@ class BaseDecorator < Draper::Decorator
                         | (Symbol, ?Class)     -> void
                         | (Class)              -> void
 
+
+  @model_type:   Symbol
+  @object_class: Class
+  @ar_class:     Class | nil
+  @other_class:  Array[Class]
+
   # set_model_type
   #
   # @param [Class, Symbol, String, nil] mt
@@ -225,10 +227,19 @@ class BaseDecorator < Draper::Decorator
   #
   def self.set_object_class: (Class|Symbol|String|nil obj, *(Class|Symbol|String|nil) other) -> (Class | nil)
 
+  def self.to_class: (untyped c, Symbol|String meth) -> (Class | nil)
+
+  def self.map_warn: (Class map, untyped key, Symbol|String meth) -> nil
+
   module Mapper
+
+    attr_reader table: Hash[untyped,Class]
+
     def table: () -> Hash[untyped,Class]
     def get: (untyped key) -> (Class | nil)
     def set: (untyped key, Class dec, ?force: bool) -> (untyped | nil)
+
+    alias [] get
 
     def normalize: (untyped key) -> (untyped | nil)
   end
@@ -246,16 +257,22 @@ class BaseDecorator < Draper::Decorator
   end
 
   class ModelTypeMap
-    extend TypeMapper # Is this right?
+    extend TypeMapper
   end
 
   class ObjectClassMap
-    extend ClassMapper # Is this right?
+    extend ClassMapper
   end
 
   class ARClassMap
-    extend ClassMapper # Is this right?
+    extend ClassMapper
   end
+
+  class OtherClassMap
+    extend ClassMapper
+  end
+
+  JS_ID: String
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #

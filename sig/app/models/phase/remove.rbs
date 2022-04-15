@@ -27,6 +27,8 @@ class Phase::Remove < Phase::BulkPart
 
   include Record::Steppable
 
+  CLASS: Class
+
   # Remove the entry from the index.
   #
   # @param [ActionDispatch::Request, Hash, nil] request

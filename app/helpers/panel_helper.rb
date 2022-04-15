@@ -22,7 +22,7 @@ module PanelHelper
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   PANEL_CTRL_CFG = I18n.t('emma.panel.control', default: {}).deep_freeze
 

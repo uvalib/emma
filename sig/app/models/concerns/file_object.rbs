@@ -8,6 +8,9 @@ class FileObject
 
   include FileNaming
 
+  attr_reader file_handle: FileHandle
+  attr_reader filename:    String | nil
+
   # Create a new instance.
   #
   # @param [String, FileHandle, IO, StringIO, Tempfile, IO::Like] handle

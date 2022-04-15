@@ -249,4 +249,7 @@ module BaseDecorator::List
   # @return [String, nil]
   #
   def get_cover_image: (?meth: Symbol?) -> (String | nil)
+
+  attr_reader cover_image: String | nil
+  attr_reader thumbnail:   String | nil
 end

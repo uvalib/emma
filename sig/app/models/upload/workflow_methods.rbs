@@ -20,6 +20,9 @@ module Upload::WorkflowMethods
   #
   STATE_COLUMNS: symArray
 
+  PRIMARY_STATE_COLUMN:   Symbol
+  SECONDARY_STATE_COLUMN: Symbol
+
   # The table columns associated with the active workflow user.                 # NOTE: not relevant to Entry/Phase/Action.
   #
   # @type [Array<Symbol>]
@@ -135,6 +138,9 @@ module Upload::WorkflowMethods
   attr_accessor revert_data: symHash
 
   REVERT_DATA_FIELDS: symArray
+
+  REVERT_FIELDS:      symArray
+  REVERT_EDIT_FIELDS: symArray
 
   def set_revert_data: () -> symHash
 

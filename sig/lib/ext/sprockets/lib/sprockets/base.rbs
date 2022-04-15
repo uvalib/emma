@@ -1,0 +1,13 @@
+module Sprockets
+  module BaseDebug
+    include Sprockets::ExtensionDebugging
+
+    include Sprockets::LoaderDebug
+
+    def find_asset: (*untyped args, **untyped options) -> untyped
+
+    def find_asset!: (*untyped args) -> untyped
+
+    def find_all_linked_assets: (*untyped args) { () -> untyped } -> untyped
+  end
+end

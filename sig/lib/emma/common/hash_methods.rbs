@@ -13,6 +13,8 @@ module Emma::Common::HashMethods
   # +
   def partition_hash: (prmHash? hash, *Symbol keys) { () -> untyped } -> [symHash, symHash]
 
+  def remainder_hash!: (prmHash? hash, *Symbol keys) { () -> untyped } -> symHash
+
   # Extract the elements identified by *keys* from *hash*.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
@@ -20,9 +22,23 @@ module Emma::Common::HashMethods
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
-  def partition_hash!: (prmHash? hash, *Symbol keys) { () -> untyped } -> symHash
+  def extract_hash!: (prmHash? hash, *Symbol keys) { () -> untyped } -> symHash
 
-  alias extract_hash! partition_hash!
+  alias partition_hash! extract_hash!
+
+  def gather_keys: (*Symbol) { () -> (Symbol|String|Array[Symbol|String]) } -> symArray
+
+  def normalize_hash: (prmHash? item) -> symHash
+
+  def normalize_hash!: (prmHash? item) -> symHash
+
+  def sort: (anyHash hash) -> anyHash
+
+  def sort!: (anyHash hash) -> anyHash
+
+  def sort_by: (anyHash hash) { () -> untyped } -> anyHash
+
+  def sort_by!: (anyHash hash) { () -> untyped } -> anyHash
 
   # Recursively remove blank items from a hash.
   #

@@ -55,6 +55,21 @@ module BaseDecorator::Links
   #
   def button_link: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  ANOTHER: String
+
+  def action_list:  (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def action_entry: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> Hash[Symbol,String]
+  def action_link:  (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil,               **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def action_links: (?action: String|Symbol|nil, **untyped opt) -> symHash
+
+  CONTROL_ICONS: Hash[Symbol, symHash]
+
+  def control_icons: (?icons: Hash[Symbol, symHash], ?authorized: bool) -> Hash[Symbol, symHash]
+
+  def control_icon_buttons: (               **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def control_icon_button:  (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
   # Create a link to the details show page for the given item.
   #
   # @param [Hash] opt                 Passed to #link

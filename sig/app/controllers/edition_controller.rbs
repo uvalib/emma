@@ -27,6 +27,10 @@ class EditionController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader page: Paginator
+  attr_reader list: Bs::Message::PeriodicalEditionList
+  attr_reader item: Bs::Record::PeriodicalEdition | nil
+
   # == GET /edition?seriesId=:seriesId
   #
   # List all editions for a periodical.
@@ -106,5 +110,5 @@ class EditionController < ApplicationController
   #
   # @return [Hash{Symbol=>Bs::Record::PeriodicalEdition,Hash}]
   #
-  def show_values: (?Bs::Record::PeriodicalEdition item, **untyped opt) -> Hash[Symbol,(Bs::Record::PeriodicalEdition|symHash)]
+  def show_values: (?(Bs::Record::PeriodicalEdition|symHash|nil) item, **untyped opt) -> Hash[Symbol,(Bs::Record::PeriodicalEdition|symHash)]
 end

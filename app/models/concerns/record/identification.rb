@@ -572,7 +572,7 @@ module Record::Identification
     # @see Record::Identification#id_value
     #
     def id_value(item = nil, **opt)
-      item ? super : self[id_column]
+      item ? super : self[id_column]&.to_s
     end
 
     # =========================================================================

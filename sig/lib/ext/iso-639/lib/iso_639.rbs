@@ -1,4 +1,4 @@
-class ISO_639 < Array
+class ISO_639 < Array[untyped]
 
   def alpha3_bibliographic: () -> String
   def alpha3_terminologic:  () -> String

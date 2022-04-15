@@ -1,0 +1,2 @@
+class MemberTest < ActiveSupport::TestCase
+end

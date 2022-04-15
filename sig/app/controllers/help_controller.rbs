@@ -19,6 +19,8 @@ class HelpController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader list: symArray
+
   # == GET /help
   #
   # The main help page.
@@ -50,5 +52,5 @@ class HelpController < ApplicationController
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def show_values: (?Symbol topic, **untyped opt) -> symHash
+  def show_values: (?Symbol? topic, **untyped opt) -> symHash
 end

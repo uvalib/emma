@@ -1,0 +1,25 @@
+# General utility methods.
+#
+module TestHelper::Utility
+  CDN_URL: String
+
+  # The URL for a catalog title thumbnail.
+  #
+  # @param [String] bookshare_id
+  #
+  # @return [String]
+  #
+  def cdn_thumbnail: (String bookshare_id) -> String
+
+  # Return a User instance from the given identification.
+  #
+  # @param [String, Symbol, User, Any, nil] user
+  #
+  # @return [User]
+  # @return [nil]                     If *user* could not be converted.
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def find_user: (String|Symbol|User|untyped|nil user) -> (User | nil)
+end

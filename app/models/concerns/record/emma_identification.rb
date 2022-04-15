@@ -232,7 +232,7 @@ module Record::EmmaIdentification
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Model, Any] item
+  # @param [*]           item
   # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:

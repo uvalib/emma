@@ -1,0 +1,3 @@
+class CreateActions < ActiveRecord::Migration
+  def change: () -> untyped
+end

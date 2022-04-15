@@ -85,7 +85,7 @@ class SearchDecorator < BaseDecorator
     # @type [Hash{Symbol=>String,Symbol}]
     #
     #--
-    # noinspection RailsI18nInspection
+    # noinspection RailsI18nInspection, RubyMismatchedConstantType
     #++
     STYLE_BUTTON_TEMPLATE = I18n.t('emma.search.styles._colorize').deep_freeze
 
@@ -104,6 +104,7 @@ class SearchDecorator < BaseDecorator
 
         css = prop[:class].presence || STYLE_BUTTON_TEMPLATE[:class]
         css = css_class_array(css)
+        # noinspection RubyMismatchedArgumentType
         css << style if css.include?(STYLE_BUTTON_TEMPLATE[:class])
         prop[:class] = css_classes(css)
 

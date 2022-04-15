@@ -20,7 +20,7 @@ module SessionsHelper
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   SESSIONS_CONFIG = I18n.t('emma.user.sessions', default: {}).deep_freeze
 

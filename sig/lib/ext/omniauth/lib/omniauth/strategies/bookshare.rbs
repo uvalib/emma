@@ -22,6 +22,11 @@ module OmniAuth
 
       include OmniAuth::ExtensionDebugging
 
+      attr_reader log:          Emma::Log
+      attr_reader account_info: symHash
+      attr_reader client:       ::OAuth2::Client
+      attr_reader stored_auth:  strHash
+
       # Direct access to the OmniAuth logger, automatically prefixed with this
       # strategy's name.
       #
@@ -309,6 +314,14 @@ module OmniAuth
       # @return [Hash{Symbol=>String}]
       #
       def self.stored_auth_entry_value: (String token) -> { access_token: String, token_type: 'bearer', scope: 'basic' }
+    end
+
+    module BookshareDebug
+      include OmniAuth::ExtensionDebugging
+      def callback_call:    () -> untyped
+      def call_app!:        (?anyHash? env) -> untyped
+      def authorize_params: () -> anyHash
+      def token_params:     () -> anyHash
     end
   end
 end

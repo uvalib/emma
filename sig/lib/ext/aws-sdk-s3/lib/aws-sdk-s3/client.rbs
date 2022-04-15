@@ -1,0 +1,11 @@
+module Aws::S3
+  module ClientDebug
+    include Aws::S3::ExtensionDebugging
+
+    def initialize: (*untyped args) -> void
+
+    def build_request: (untyped operation_name, ?::Hash[untyped, untyped] params) -> untyped
+
+    MONITOR_CLIENT_METHODS: symArray
+  end
+end

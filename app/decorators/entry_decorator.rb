@@ -627,9 +627,6 @@ class EntryDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def control_icon_button(action, **opt)
     return super unless action == :check
     # noinspection RubyMismatchedArgumentType
@@ -692,7 +689,7 @@ class EntryDecorator < BaseDecorator
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -745,7 +742,7 @@ class EntryDecorator < BaseDecorator
 
   # Upload cancel button.
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

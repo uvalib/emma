@@ -1,0 +1,3 @@
+class AddEditorToUploads < ActiveRecord::Migration
+  def change: () -> untyped
+end

@@ -67,6 +67,7 @@ class HomeController < ApplicationController
   #
   def main
     __debug_route
+    # noinspection RubyMismatchedArgumentType
     if current_user
       redirect_to dashboard_path
     else

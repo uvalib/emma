@@ -1,0 +1,106 @@
+# View helper methods supporting the display of Math Detective.
+#
+# @see file:app/assets/stylesheets/controllers/_tool.scss
+#
+module MdHelper
+  include HtmlHelper
+
+  # Math Detective file input element.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_file_input: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Get image for Math Detective from the clipboard.
+  #
+  # NOTE: Not currently possible with Firefox.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_clipboard_input: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Math Detective file preview element.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_preview: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Math Detective execution status.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_status: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Math Detective error report.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_error: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Math Detective MathML output.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_mathml: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Math Detective LaTeX output.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_latex: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Math Detective spoken language text output.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_spoken: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Math Detective API JSON results.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_results: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A container for a Math Detective output type.
+  #
+  # @param [String,Symbol] name
+  # @param [String,Symbol] label
+  # @param [Hash]          opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def md_output_container: (String|Symbol name, String|Symbol label, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  CLIPBOARD_ICON: ActiveSupport::SafeBuffer
+
+  # Clipboard icon to act as a button for copying the text of the associated
+  # output element.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def clipboard_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

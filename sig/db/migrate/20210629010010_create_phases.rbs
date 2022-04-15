@@ -1,0 +1,3 @@
+class CreatePhases < ActiveRecord::Migration
+  def change: () -> untyped
+end

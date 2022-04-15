@@ -130,6 +130,9 @@ end
 
 group :development do
 
+  # Added here so that RubyMine will see RBS in gems on the desktop.
+  gem 'rbs'
+
   # Access an interactive console on exception pages or by calling 'console'
   # anywhere in the code.
   gem 'web-console'

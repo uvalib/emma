@@ -52,6 +52,13 @@ module FileFormat
   #
   FIELD_ALWAYS_ARRAY: symArray
 
+  attr_reader parser:                 FileParser
+  attr_reader parser_metadata:        untyped
+  attr_reader metadata:               symHash
+  attr_reader common_metadata:        symHash
+  attr_reader format_fields:          Hash[Symbol,(Proc|Symbol)]
+  attr_reader mapped_metadata_fields: Hash[Symbol,Symbol]
+
   # configuration
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
@@ -239,9 +246,11 @@ module FileFormat
   #
   def self.configuration_section: (String|Symbol section) -> symHash
 
+  attr_reader self.configuration_table: Hash[Symbol,symHash]
+
   # Configured properties for each file format.
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def self.configuration_table: () -> symHash
+  def self.configuration_table: () -> Hash[Symbol,symHash]
 end

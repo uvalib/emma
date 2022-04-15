@@ -1,0 +1,3 @@
+class CreatePeriodicals < ActiveRecord::Migration
+  def change: () -> untyped
+end

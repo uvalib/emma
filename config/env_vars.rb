@@ -120,6 +120,7 @@ TMPDIR =
   if defined?(Rails)
     Dir.tmpdir.sub(%r{^([^/])}, Rails.root.join('\1').to_path)
   else
+    # noinspection RubyMismatchedArgumentType
     File.expand_path(Dir.tmpdir, File.absolute_path('..'))
   end.freeze
 

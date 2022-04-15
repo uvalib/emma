@@ -6,6 +6,8 @@
 #
 class EntriesDecorator < BaseCollectionDecorator
 
+  attr_reader group_counts: Hash[Symbol,Integer]
+
   # group_counts
   #
   # @return [Hash{Symbol=>Integer}]

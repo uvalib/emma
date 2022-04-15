@@ -27,6 +27,11 @@ class SearchCallController < ApplicationController
   #
   EXPAND_JSON: bool
 
+  attr_reader page:     Paginator
+  attr_reader extended: bool
+  attr_reader list:     ActiveRecord::Result | ActiveRecord::Relation
+  attr_reader item:     SearchCall | nil
+
   # == GET /search_call?[expand=TRUE&like=PATTERN&field=MATCH&...]
   #
   # List searches.
@@ -46,12 +51,12 @@ class SearchCallController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Search::Message::SearchRecordList] list
-  # @param [Hash]                              opt
+  # @param [Search::Message::SearchRecordList,nil] list
+  # @param [Hash]                                  opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values: (?Search::Message::SearchRecordList list, **untyped opt) -> symHash
+  def index_values: (?(Search::Message::SearchRecordList|nil) list, **untyped opt) -> symHash
 
   # Response values for de-serializing the show page to JSON or XML.
   #
@@ -60,5 +65,5 @@ class SearchCallController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def show_values: (?(SearchCall|anyHash) item, **untyped opt) -> symHash
+  def show_values: (?(SearchCall|anyHash|nil) item, **untyped opt) -> symHash
 end

@@ -21,6 +21,10 @@ class HomeController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader item:         Bs::Message::MyAccountSummary     | nil
+  attr_reader preferences:  Bs::Message::MyAccountPreferences | nil
+  attr_reader history:      Bs::Message::TitleDownloadList    | nil
+
   # == GET /home
   #
   # The main application page.

@@ -202,6 +202,8 @@ module BaseDecorator::Hierarchy
   #
   def new_section: (Symbol|String `type`, untyped name, untyped? data_value, untyped? details, untyped index, symHash prop, symHash opt) -> ActiveSupport::SafeBuffer
 
+  def list_item_toggle: (?row: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Render a single label/value line.
   #
   # @param [String, Symbol, nil] label

@@ -608,6 +608,7 @@ class UploadController < ApplicationController
     @item = get_record(@identifier)
     @link = @item.download_url
     respond_to do |format|
+      # noinspection RubyMismatchedArgumentType
       format.html { redirect_to(@link) }
       format.json { render_json download_values }
       format.xml  { render_xml  download_values }
@@ -630,6 +631,7 @@ class UploadController < ApplicationController
     if ia_link?(@url)
       ia_download_response(@url)
     elsif bs_link?(@url)
+      # noinspection RubyMismatchedArgumentType
       redirect_to bs_retrieval_path(url: @url, forUser: @member)
     else
       Log.error { "/retrieval can't handle #{@url.inspect}" }
@@ -791,9 +793,9 @@ class UploadController < ApplicationController
 
   # Response values for de-serializing download information to JSON or XML.
   #
-  # @param [String] url
+  # @param [String,nil] url
   #
-  # @return [Hash{Symbol=>String}]
+  # @return [Hash{Symbol=>String,nil}]
   #
   def download_values(url = @link)
     { url: url }

@@ -1,0 +1,87 @@
+# Support for sign-in.
+#
+module TestHelper::IntegrationTests::Format
+  # Table of formats and associated MIME media types.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  MEDIA_TYPE: Hash[Symbol,String]
+
+  # Indicate whether *type* matches the given *format*.
+  #
+  # @param [Symbol, String] type
+  # @param [Symbol]         format
+  #
+  def format?: (Symbol|String `type`, Symbol format) -> bool
+
+  # Indicate whether *type* is HTML.
+  #
+  # @param [Symbol, String] type
+  #
+  def html?: (Symbol|String `type`) -> bool
+
+  # Indicate whether *type* is JSON.
+  #
+  # @param [Symbol, String] type
+  #
+  def json?: (Symbol|String `type`) -> bool
+
+  # Indicate whether *type* is XML.
+  #
+  # @param [Symbol, String] type
+  #
+  def xml?: (Symbol|String `type`) -> bool
+
+  # Assert that the response is 'text/html'.
+  #
+  # @param [Symbol] status
+  # @param [Hash]   opt               Passed to #assert_result.
+  #
+  # @see #assert_result
+  #
+  def assert_html_result: (Symbol status, **untyped opt) -> void
+
+  # Assert that the response is 'application/json'.
+  #
+  # @param [Symbol] status
+  # @param [Hash]   opt               Passed to #assert_result.
+  #
+  # @see #assert_result
+  #
+  def assert_json_result: (Symbol status, **untyped opt) -> void
+
+  # Assert that the response is 'application/xml'.
+  #
+  # @param [Symbol] status
+  # @param [Hash]   opt               Passed to #assert_result.
+  #
+  # @see #assert_result
+  #
+  def assert_xml_result: (Symbol status, **untyped opt) -> void
+
+  # Assert that the response is 'text/plain'.
+  #
+  # @param [Symbol] status
+  # @param [Hash]   opt               Passed to #assert_result.
+  #
+  # @see #assert_result
+  #
+  def assert_text_result: (Symbol status, **untyped opt) -> void
+
+  # Assert that the response matches the given criteria.
+  #
+  # @param [Symbol, nil] status       Status :any is treated the same as *nil*.
+  # @param [Hash]        opt
+  #
+  # @option opt [String]        :from
+  # @option opt [String,Symbol] :controller
+  # @option opt [String,Symbol] :action
+  # @option opt [String,Symbol] :format
+  # @option opt [String,Symbol] :media_type   If present, trumps :format.
+  #
+  # @raise [Minitest::Assertion]      If one or more criteria don't match.
+  #
+  # @return [void]                    If all criteria match.
+  #
+  def assert_result: (Symbol status, **untyped opt) -> void
+end

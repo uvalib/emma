@@ -5,6 +5,8 @@ module UploadWorkflow::Testing
 
   private
 
+  THIS_MODULE: Module
+
   include UploadWorkflow::Errors
 
   FAULT_INJECTION: bool
@@ -13,6 +15,7 @@ module UploadWorkflow::Testing
 
   # noinspection RubyUnusedLocalVariable
   ALL_FAULTS: Integer
+  BAD_PARAM:  Integer
 
   FAULT_METHOD: Hash[Symbol,(Integer|nil)]
 

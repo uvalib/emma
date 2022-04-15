@@ -10,6 +10,12 @@ module BsApiHelper
   # :nocov:
   #include BookshareConcern
 
+  # @private
+  BOOKSHARE_USER: String
+
+  def bookshare_user: (String|Symbol        name)  -> String
+                    | (Array[String|Symbol] names) -> strArray
+
   # Generate a URL to an external (Bookshare-related) site, refactored so that
   # it passes through the application's "Bookshare API Explorer" endpoint.
   #
@@ -19,16 +25,6 @@ module BsApiHelper
   # @return [String]
   #
   def bs_api_explorer_url: (String path, **untyped prm) -> String
-
-  # Invoke a Bookshare API method for display in the "Bookshare API Explorer".
-  #
-  # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
-  # @param [String] path
-  # @param [Hash]   opt               Passed to #api.
-  #
-  # @return [Hash{Symbol=>Any}]
-  #
-  def bs_api_explorer: (Symbol meth, String path, **untyped opt) -> symHash
 
   private
 

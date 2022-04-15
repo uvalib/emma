@@ -13,6 +13,10 @@ module SearchService::Testing
 
   # noinspection RubyUnusedLocalVariable
   ALL_FAULTS: Integer
+  BAD_PARAM:  Integer
+  BAD_REPO:   Integer
+  BAD_FORMAT: Integer
+  PDF_DATES:  Integer
 
   FAULT_METHOD: Hash[Symbol,(Integer|nil)]
 

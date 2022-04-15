@@ -174,7 +174,6 @@ module Emma::Log
   # Compare with ActiveSupport::LoggerThreadSafeLevel#local_levels
   #
   def self.local_levels
-    # noinspection RubyResolve
     @local_levels ||= Concurrent::Map.new(initial_capacity: 2)
   end
 
@@ -235,7 +234,6 @@ module Emma::Log
   # @return [Concurrent::Map]
   #
   def self.silenced_map
-    # noinspection RubyResolve
     @silenced_map ||= Concurrent::Map.new(initial_capacity: 2)
   end
 
@@ -268,7 +266,6 @@ module Emma::Log
   # @return [Concurrent::Map]
   #
   def self.saved_log_level
-    # noinspection RubyResolve
     @saved_log_level ||= Concurrent::Map.new(initial_capacity: 2)
   end
 

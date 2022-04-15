@@ -38,6 +38,10 @@ module SearchModesHelper
   #
   DEFAULT_RESULTS: Symbol
 
+  attr_reader immediate_search: bool
+  attr_reader results_type:     Symbol
+  attr_reader search_style:     Symbol
+
   # Indicate whether selecting a search menu value takes immediate effect.
   #
   # If not menu selection value(s) are only transmitted via the search submit
@@ -108,5 +112,5 @@ module SearchModesHelper
 
   private
 
-  def self.included: (untyped base) -> untyped
+  def self.included: (Module base) -> void
 end

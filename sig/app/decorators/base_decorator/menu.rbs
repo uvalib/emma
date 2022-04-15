@@ -1,0 +1,55 @@
+# Methods supporting selectable lists of Model instances.
+#
+module BaseDecorator::Menu
+  include BaseDecorator::Links
+
+  # Generate a menu of database item entries.
+  #
+  # @param [Symbol, String, nil] action   Default: `context[:action]`
+  # @param [User, Symbol, nil]   user     Default: `current_user`
+  # @param [String, nil]         prompt
+  # @param [Hash{Symbol=>Hash}]  table
+  # @param [Hash]                opt      Passed to #form_tag except for:
+  #
+  # @option opt [String, Hash] :ujs
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see RouteHelper#get_path_for
+  #
+  def items_menu: (?action: Symbol|String|nil, ?user: User|Symbol|nil, ?prompt: String|nil, ?table: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The name of the controller used in generating link paths.
+  #
+  # @return [Symbol]
+  #
+  def items_menu_controller: () -> Symbol
+
+  # Generate a prompt for #items_menu.
+  #
+  # @return [String]
+  #
+  def items_menu_prompt: () -> String
+
+  # Generate a label for a specific menu entry.
+  #
+  # @param [Model]       item
+  # @param [String, nil] label        Override label.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def items_menu_label: (Model item, ?label: String|nil) -> ActiveSupport::SafeBuffer
+
+  # Descriptive term for an item of the given type.
+  #
+  # @param [Symbol, String, nil] model        Default: `#model_type`.
+  # @param [Boolean]             capitalize
+  #
+  # @return [String]
+  #
+  def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end

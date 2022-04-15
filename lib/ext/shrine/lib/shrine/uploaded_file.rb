@@ -150,7 +150,7 @@ class Shrine
       # @param [String, IO, StringIO] destination
       # @param [Hash]                 options
       #
-      # @return [Tempfile]
+      # @return [IO]
       #
       def stream(destination, **options)
         __ext_debug do

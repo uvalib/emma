@@ -11,6 +11,12 @@ module Upload::EmmaDataMethods
   #
   DATA_COLUMNS: symArray
 
+  attr_reader emma_record:        Search::Record::MetadataRecord | nil
+  attr_reader emma_metadata:      symHash | nil
+
+  attr_reader edit_emma_record:   Search::Record::MetadataRecord | nil
+  attr_reader edit_emma_metadata: symHash | nil
+
   def emma_data_column: () -> Symbol
 
   def active_emma_data: () -> (String | nil)

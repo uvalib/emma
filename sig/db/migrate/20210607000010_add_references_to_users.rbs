@@ -1,0 +1,3 @@
+class AddReferencesToUsers < ActiveRecord::Migration
+  def change: () -> untyped
+end

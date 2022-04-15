@@ -1,0 +1,9 @@
+module OmniAuth
+  module ConfigurationExt
+    # Indicate whether the request method is configured as allowed.
+    #
+    # @param [Symbol, String, Rack::Request] meth
+    #
+    def allowed_method?: (Symbol|String|Rack::Request meth) -> bool
+  end
+end

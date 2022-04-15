@@ -25,4 +25,6 @@ module Record::Authorizable
   module InstanceMethods
     include Record::Authorizable
   end
+
+  THIS_MODULE: Module
 end

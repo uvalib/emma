@@ -6,13 +6,27 @@
 #
 class EditionDecorator < BookshareDecorator
   module Paths
+    include BookshareDecorator::Paths
   end
 
   module Methods
+    include BookshareDecorator::Methods
+  end
+
+  module InstanceMethods
+    include BookshareDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BookshareDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common

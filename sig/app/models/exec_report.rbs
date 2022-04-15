@@ -142,6 +142,9 @@ class ExecReport
 
     include ExecReport::Constants
 
+    attr_reader message_hash:    Hash[Symbol,(String|strArray)]
+    attr_reader message_hashes:  Array[Hash[Symbol,(String|strArray)]]
+
     # Prepare an error report value for assignment to a database column.
     #
     # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, Any, nil] src
@@ -364,6 +367,12 @@ class ExecReport
   end
 
   include BaseMethods
+
+  attr_reader serialize:       String | nil
+  attr_reader deserialize:     String | nil
+  attr_reader error_table:     Hash[(String|Integer),String]
+  attr_reader error_messages:  strArray
+  attr_reader http_status:     Integer | Symbol | nil
 
   # Prepare the error report value for assignment to a database column.
   #

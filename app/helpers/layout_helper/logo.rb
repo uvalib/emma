@@ -22,7 +22,7 @@ module LayoutHelper::Logo
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   LOGO_CONFIG = I18n.t('emma.logo', default: {}).deep_freeze
 

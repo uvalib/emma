@@ -32,6 +32,8 @@ class SearchController < ApplicationController
   #
   attr_reader item: Search::Message::SearchRecord?
 
+  attr_reader page:     Paginator
+
   # == GET /search
   #
   # Perform a search through the EMMA Unified Search API.

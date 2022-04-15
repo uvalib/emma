@@ -19,6 +19,8 @@ class Api::Record
   # @return [Exception, nil]
   attr_reader exception: Exception | nil
 
+  attr_reader serializer: Api::Serializer
+
   # Initialize a new instance.
   #
   # @param [Faraday::Response, Model, Hash, String, nil] src
@@ -48,7 +50,7 @@ class Api::Record
   # -
   # noinspection RubyMismatchedArgumentType
   # +
-  def initialize: (?(Faraday::Response|Model|String|anyHash)? src, ?format: Symbol?, ?wrap: (true|Hash[Symbol,(String|true)])?, ?error: (true|String|Exception)? error, **untyped data) -> void
+  def initialize: (?(Faraday::Response|Model|String|anyHash|nil) src, ?format: Symbol?, ?wrap: (true|Hash[Symbol,(String|true)])?, ?error: (true|String|Exception)? error, **untyped data) -> void
 
   # A serializer instance of the currently-selected type.
   #

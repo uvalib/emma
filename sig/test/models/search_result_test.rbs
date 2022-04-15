@@ -1,0 +1,2 @@
+class SearchResultTest < ActiveSupport::TestCase
+end

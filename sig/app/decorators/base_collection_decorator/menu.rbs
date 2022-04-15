@@ -1,0 +1,9 @@
+# Methods supporting selectable lists of Model instances.
+#
+module BaseCollectionDecorator::Menu
+  include BaseDecorator::Menu
+
+  private
+
+  def self.included: (Module base) -> void
+end

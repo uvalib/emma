@@ -1,0 +1,10 @@
+module Sprockets
+  module ProcessorUtilsDebug
+    include Sprockets::ExtensionDebugging
+
+    # :nocov:
+    include Sprockets::ProcessorUtils
+
+    def call_processor: (untyped processor, untyped input) -> untyped
+  end
+end

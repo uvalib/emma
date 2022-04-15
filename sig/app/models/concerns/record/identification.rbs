@@ -13,6 +13,9 @@ module Record::Identification
 
   USER_COLUMN: Symbol
 
+  attr_reader record_class: Class
+  attr_reader record_name:  String
+
   # The type of record for the current context.
   #
   # (This will be Entry unless within an instance of another type of Record.)
@@ -133,6 +136,8 @@ module Record::Identification
   end
 
   private
+
+  THIS_MODULE: Module
 
   include InstanceMethods
 

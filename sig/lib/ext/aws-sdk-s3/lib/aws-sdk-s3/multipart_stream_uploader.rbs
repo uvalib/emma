@@ -1,0 +1,23 @@
+module Aws::S3
+  # Overrides adding extra debugging around method calls.
+  #
+  module MultipartStreamUploaderDebug
+    include Aws::S3::ExtensionDebugging
+
+    def initialize: (?anyHash options) -> void
+
+    def upload: (?anyHash options) { () -> untyped } -> untyped
+
+    def initiate_upload: (untyped options) -> untyped
+
+    def complete_upload: (untyped upload_id, untyped parts, untyped options) -> untyped
+
+    def upload_parts: (untyped upload_id, untyped options) { () -> untyped } -> untyped
+
+    def abort_upload: (untyped upload_id, untyped options, untyped errors) -> untyped
+
+    def read_to_part_body: (untyped read_pipe) -> untyped
+
+    def upload_in_threads: (untyped read_pipe, untyped completed, untyped options) -> untyped
+  end
+end

@@ -1,0 +1,2 @@
+class UserDecoratorTest < Draper::TestCase
+end

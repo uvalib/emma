@@ -34,11 +34,11 @@ module TestHelper::SystemTests::Bookshare
   APIDOC =
     %i[reference membership catalog].map { |section|
       [section, "#{APIDOC_URL}/#{section}/index.html"]
-    }.deep_freeze
+    }.to_h.deep_freeze
 
   # Namespaces of API classes.
   #
-  # @type [Array<Class>]
+  # @type [Array<Module>]
   #
   API_NAMESPACES = [Bs::Record, Bs::Message].freeze
 
@@ -338,6 +338,7 @@ module TestHelper::SystemTests::Bookshare
   #
   def model_class(name)
     name = name.to_s.delete_prefix('_').underscore.camelize.presence or return
+    # noinspection RubyMismatchedReturnType
     API_NAMESPACES.find do |base|
       const = "#{base}::#{name}".safe_constantize and return const
     end
@@ -370,9 +371,6 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [Array<Hash>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
-  #++
   def model_fields(type)
     name   = model_class(type)
     model  = name&.new('{}')
@@ -468,7 +466,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] method
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_request_params(fields, method, **opt)
     opt[:output]    = false
@@ -497,7 +495,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] method
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_method_params(fields, method, **opt)
     opt[:output]    = false
@@ -516,7 +514,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] record_type
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_record_fields(fields, record_type, **opt)
     opt[:output]    = false
@@ -544,7 +542,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] record_type
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_model_fields(fields, record_type, **opt)
     header = record_type && "MODEL: #{model_class(record_type)}"
@@ -563,7 +561,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [Hash] fields
   # @param [Hash] opt                 Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_problems(fields, **opt)
     show_subsection('PROBLEMS:', fields, **opt)

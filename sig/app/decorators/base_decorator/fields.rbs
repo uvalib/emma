@@ -1,11 +1,9 @@
 # View helper methods supporting manipulation of Model instance fields.
 #
 module BaseDecorator::Fields
-  include BaseDecorator::Links
-
   include Emma::Json
 
-  include Emma::Unicode
+  include BaseDecorator::Links
 
   # Field value used to explicitly indicate missing data.
   #
@@ -43,6 +41,16 @@ module BaseDecorator::Fields
   # +
   def field_pairs: (?(Model|anyHash|nil) item, ?action: String|Symbol|nil) -> Hash[Symbol,symHash]
 
+  RENDER_FIELD_TYPE_TABLE:  Hash[Symbol,Array[Class]]
+  RENDER_FIELD_TYPE:        Hash[Class,Symbol]
+  REPLACE_FIELD_TYPE:       Hash[Symbol,Symbol]
+
+  def render_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  CHECK_OPTIONS: symArray
+
+  def render_check_box: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # This is a "hook" to allow customization by SearchDecorator.
   #
   # @param [Hash, nil] config
@@ -50,6 +58,28 @@ module BaseDecorator::Fields
   # @return [Hash]
   #
   def field_properties: (symHash|nil config) -> symHash
+
+  # Indicate whether the value is a valid range type.
+  #
+  # @param [Any]     range
+  # @param [Boolean] exception        If *true*, raise an exception if *false*.
+  #
+  # @raise [RuntimeError]             If not valid and *exception* is *true*.
+  #
+  def valid_range?: (untyped range, ?exception: bool) -> bool
+
+  # Translate attributes.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The potentially-modified *opt* hash.
+  #
+  # == Implementation Notes
+  # Disabled input fields are given the :readonly attribute because the
+  # :disabled attribute prevents those fields from being included in the data
+  # sent with the form submission.
+  #
+  def normalize_attributes!: (**untyped opt) -> symHash
 
   # The defined levels for rendering an item hierarchically.
   #

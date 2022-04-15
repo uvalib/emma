@@ -25,7 +25,7 @@ module LayoutHelper::NavBar
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   NAV_BAR_CONFIG = I18n.t('emma.nav_bar', default: {}).deep_freeze
 
@@ -36,6 +36,9 @@ module LayoutHelper::NavBar
   # == Implementation Notes
   # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   NAV_BAR_CONTROLLERS = NAV_BAR_CONFIG[:controllers].map(&:to_sym).freeze
 
   # The important nav bar entries.
@@ -45,6 +48,9 @@ module LayoutHelper::NavBar
   # == Implementation Notes
   # Should contain some or all of superset #PRIMARY_CONTROLLERS.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   PRIMARY_CONTROLLERS = NAV_BAR_CONFIG[:primary].map(&:to_sym).freeze
 
   # Configuration for dashboard page properties.
@@ -52,7 +58,7 @@ module LayoutHelper::NavBar
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   DASHBOARD_CONFIG = I18n.t('emma.home.dashboard', default: {}).deep_freeze
 
@@ -60,12 +66,18 @@ module LayoutHelper::NavBar
   #
   # @type [String]
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   DASHBOARD_LABEL = DASHBOARD_CONFIG[:label]
 
   # Default dashboard link tooltip.
   #
   # @type [String]
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   DASHBOARD_TOOLTIP = DASHBOARD_CONFIG[:tooltip]
 
   # Controller link labels.

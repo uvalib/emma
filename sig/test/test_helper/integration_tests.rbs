@@ -1,0 +1,11 @@
+# Extensions for controller and system tests.
+#
+module TestHelper::IntegrationTests
+  private
+
+  # Include the submodules defined in test/test_helper/integration_tests/*.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

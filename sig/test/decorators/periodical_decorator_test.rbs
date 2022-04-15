@@ -1,0 +1,2 @@
+class PeriodicalDecoratorTest < Draper::TestCase
+end

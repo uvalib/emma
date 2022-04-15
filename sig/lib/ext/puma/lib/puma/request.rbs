@@ -1,0 +1,11 @@
+module Puma
+  # Overrides adding extra debugging around method calls.
+  #
+  module RequestDebug
+    include Puma::ExtensionDebugging
+
+    def handle_request: (untyped client, untyped lines, untyped requests) -> untyped
+
+    def str_headers: (untyped env, untyped status, untyped headers, untyped res_info, untyped lines, untyped requests, untyped client) -> untyped
+  end
+end

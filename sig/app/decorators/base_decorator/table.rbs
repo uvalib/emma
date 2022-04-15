@@ -4,6 +4,16 @@
 module BaseDecorator::Table
   include BaseDecorator::List
 
+  STICKY_HEAD: bool
+  DARK_HEAD:   bool
+
+  MODEL_TABLE_OPTIONS:    symArray
+  MODEL_TABLE_FIELD_OPT:  symArray
+  MODEL_TABLE_HEAD_OPT:   symArray
+  MODEL_TABLE_ENTRY_OPT:  symArray
+  MODEL_TABLE_ROW_OPT:    symArray
+  MODEL_TABLE_TABLE_OPT:  symArray
+
   # Render the object for use within a table of items.
   #
   # @param [Integer]                                   row

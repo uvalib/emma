@@ -48,13 +48,15 @@ namespace :emma_assets do
   #
   # @param [String] file                CSS source map.
   #
+  # @return [void]
+  #
   # @note This assumes that 'sass' is run with '--source-map-urls=absolute'
   #
   def edit_source_map(file = CSS_SOURCE_MAP)
     $stderr.puts '*** Transform CSS source map'
     cur_root = "#{Rails.root}/".gsub(%r{/}, '\\/')
     dev_root = "/C:#{DEV_ROOT}/".gsub(%r{/}, '\\/')
-    run <<~HEREDOC
+    sh_run <<~HEREDOC
       sed -E --in-place 's/(file:\\/\\/)#{cur_root}/\\1#{dev_root}/g' '#{file}'
     HEREDOC
   end
@@ -89,8 +91,10 @@ namespace :emma_assets do
   #
   # @param [Array<String>] command    Individual shell commands with arguments.
   #
+  # @return [void]
+  #
   def bg_run(*command, &block)
-    run(*command, async: true, &block)
+    sh_run(*command, async: true, &block)
   end
 
   # Run a sequence of shell commands.
@@ -98,7 +102,9 @@ namespace :emma_assets do
   # @param [Array<String>] command    Individual shell commands with arguments.
   # @param [Boolean]       async      If *true*, run in the background.
   #
-  def run(*command, async: false)
+  # @return [void]
+  #
+  def sh_run(*command, async: false)
     command += Array.wrap(yield) if block_given?
     # noinspection RubyMismatchedReturnType
     command  = command.flat_map { |c| c.is_a?(String) ? c.split("\n") : c }

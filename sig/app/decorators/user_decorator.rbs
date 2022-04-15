@@ -12,20 +12,34 @@ class UserDecorator < AccountDecorator
   module Methods
     include AccountDecorator::Methods
 
-    # Generate a menu of user instances.
-    #
-    # @param [Hash] opt                 Passed to LinkHelper#page_items_menu.
-    #
-    # @option opt [User,String] :user   Defaults to `#current_user`.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+    def model_config_base: () -> Symbol
+  end
+
+  module InstanceMethods
+    include AccountDecorator::InstanceMethods
+    include Paths
+    include Methods
+
+    def help_topic: () -> symArray
+  end
+
+  module ClassMethods
+    include AccountDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
+
+  # Generate a menu of user instances.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
 end

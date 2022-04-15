@@ -654,7 +654,7 @@ module OmniAuth
       # the value returned by this method and the associated User table entry.
       #
       def self.stored_auth(values = nil)
-        # noinspection RubyMismatchedReturnType
+        # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
         if values.is_a?(Hash)
           @stored_auth = values.deep_dup
         else

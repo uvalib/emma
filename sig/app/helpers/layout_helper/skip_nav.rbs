@@ -6,6 +6,8 @@ module LayoutHelper::SkipNav
   type skipNavEntry = ActiveSupport::SafeBuffer | anyHash
   type skipNavYield = String | skipNavEntry | Array[String|skipNavEntry]
 
+  attr_reader skip_nav: Array[skipNavEntry]
+
   # Storage for "skip navigation" menu entries.
   #
   # @return [Array]

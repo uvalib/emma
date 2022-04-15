@@ -6,16 +6,34 @@
 #
 class MemberDecorator < BookshareDecorator
   module Paths
+    include BookshareDecorator::Paths
   end
 
   module Methods
+    include BookshareDecorator::Methods
+  end
+
+  module InstanceMethods
+    include BookshareDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BookshareDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
+
+  attr_reader history_data:     Bs::Message::TitleDownloadList | nil
+  attr_reader dl:               Array[Bs::Record::TitleDownload]
+  attr_reader preference_data:  Bs::Message::MyAccountPreferences | nil
 
   # history_data
   #
@@ -85,6 +103,8 @@ class MemberDecorator < BookshareDecorator
   #
   def preference_list: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  def preference_decorator: (Bs::Message::MyAccountPreferences|nil prefs) -> (BookshareDecorator | nil)
+
   # CSS class for the container of the history lis.
   #
   # @type [String]
@@ -121,6 +141,8 @@ class MemberDecorator < BookshareDecorator
   #
   def history_list: (id: String, ?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  def history_decorator: (Bs::Record::TitleDownload|nil download) -> (BookshareDecorator | nil)
+
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
@@ -129,4 +151,8 @@ class MemberDecorator < BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_target_description: (?action: Symbol|nil, **untyped opt) -> String
 end

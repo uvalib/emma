@@ -10,6 +10,8 @@ module HeadHelper::Stylesheets
 
   public
 
+  attr_reader page_stylesheets: strArray
+
   # Access the stylesheets for this page.
   #
   # If a block is given, this invocation is being used to accumulate stylesheet

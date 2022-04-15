@@ -1,0 +1,23 @@
+module CodeStatisticsCalculatorExt
+  # Replacement for CodeStatisticsCalculator#PATTERNS to include CSS.
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>Regexp}}]
+  #
+  PATTERNS: Hash[Symbol,Hash[Symbol,Regexp]]
+
+  attr_reader lines:       Integer
+  attr_reader classes:     Integer
+  attr_reader methods:     Integer
+  attr_reader code_lines:  Integer
+
+  # This replacement addresses several issues:
+  #
+  # * Handles inline block comments for JavaScript.
+  #
+  # @param [File] io
+  # @param [Symbol] file_type
+  #
+  # @return [void]
+  #
+  def add_by_io: (File io, String file_type) -> void
+end

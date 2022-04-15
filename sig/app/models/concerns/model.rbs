@@ -119,7 +119,13 @@ module Model
     # @return [TrueClass]
     #
     def validate_relations: () -> true
+
+    attr_reader check_relations: bool | nil
   end
+
+  attr_reader field_names: symArray
+
+  @fields_table: symHash
 
   # Indicate whether *name* is a field defined by this model.
   #
@@ -162,6 +168,8 @@ module Model
   # @type [Array<Symbol>]
   #
   DIRECTIVES: symArray
+
+  BASE_DIRECTIVE: symArray
 
   # Configured record fields for each model/controller.
   #

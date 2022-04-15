@@ -1,0 +1,105 @@
+class Shrine
+  module UploadEndpointExt
+    # Include :emma_data in the response which would normally only be the
+    # contents of :file_data.
+    #
+    # @param [Shrine::UploadedFile]    uploaded_file
+    # @param [ActionDispatch::Request] request
+    #
+    # @return [Array<(Integer, Hash, Array<String>)>]
+    #
+    # @see file:javascripts/shared/uploader.js *onFileUploadSuccess()*
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpoint#make_response
+    #
+    def make_response: (Shrine::UploadedFile uploaded_file, ActionDispatch::Request request) -> httpResult
+  end
+
+  # Overrides adding extra debugging around method calls.
+  #
+  module UploadEndpointDebug
+    include Shrine::ExtensionDebugging
+
+    # :nocov:
+    include Shrine::UploadEndpointExt
+
+    # call
+    #
+    # @param [Hash] env
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpoint#call
+    #
+    def call: (untyped env) -> untyped
+
+    # handle_request
+    #
+    # @param [ActionDispatch::Request] request
+    #
+    # @return [Array<(Integer, Hash, Array<String>)>]
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpoint#handle_request
+    #
+    def handle_request: (ActionDispatch::Request request) -> httpResult
+
+    # get_io
+    #
+    # @param [ActionDispatch::Request] request
+    #
+    # @return [Shrine::RackFile]
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpoint#get_io
+    #
+    def get_io: (ActionDispatch::Request request) -> Shrine::RackFile
+
+    # get_multipart_upload
+    #
+    # @param [ActionDispatch::Request] request
+    #
+    # @return [Shrine::RackFile]
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpoint#get_io
+    #
+    def get_multipart_upload: (ActionDispatch::Request request) -> Shrine::RackFile
+
+    # get_context
+    #
+    # @param [ActionDispatch::Request] request
+    #
+    # @return [Hash]
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpoint#get_context
+    #
+    def get_context: (ActionDispatch::Request request) -> anyHash
+
+    # upload
+    #
+    # @param [Shrine::RackFile]        io
+    # @param [Hash]                    context
+    # @param [ActionDispatch::Request] request
+    #
+    # @return [Shrine::UploadedFile]
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpoint#upload
+    #
+    def upload: (Shrine::RackFile io, anyHash context, ActionDispatch::Request request) -> Shrine::UploadedFile
+
+    # make_response
+    #
+    # @param [Shrine::UploadedFile, Hash] uploaded_file
+    # @param [ActionDispatch::Request]    request
+    #
+    # @return [Array<(Integer, Hash, Array<String>)>]
+    #
+    # This method overrides:
+    # @see Shrine::UploadEndpointExt#make_response
+    #
+    def make_response: (Shrine::UploadedFile|anyHash uploaded_file, ActionDispatch::Request request) -> httpResult
+  end
+end

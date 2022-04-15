@@ -122,6 +122,7 @@ module XmlHelper
           if opt[:content] || ((html = xml.to_s) == text)
             # No HTML entities, just simple characters.
             last = text.rindex(separator, last) || last if separator
+            # noinspection RubyMismatchedArgumentType
             text.slice(0, last)
           else
             # Do not break within an HTML entity.  HTML entities have to be

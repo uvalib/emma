@@ -1,0 +1,7 @@
+class MetricsControllerTest < ActionDispatch::IntegrationTest
+  OPTIONS: symHash
+
+  TEST_USERS: Array[String|nil]
+
+  TEST_READERS: Array[String|nil]
+end

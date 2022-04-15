@@ -1,0 +1,13 @@
+# Support for sign-in.
+#
+module TestHelper::IntegrationTests::Role
+  include TestHelper::Utility
+
+  # Indicate whether *user* should be able to perform *action* on *subject*.
+  #
+  # @param [String, Symbol, User, nil] user
+  # @param [Symbol, String]            action
+  # @param [Class]                     subject
+  #
+  def can?: (String|Symbol|User|nil user, String|Symbol action, Class subject) -> bool
+end

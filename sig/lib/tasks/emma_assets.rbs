@@ -1,0 +1,69 @@
+# Set to *false* to avoid post-processing the CSS source map.
+#
+# @note This should be for both desktop and deployed assets.
+#
+FIX_CSS_MAP: bool
+
+# Set to *false* to avoid making a copy of CSS/SCSS source files on the
+# desktop development system.
+#
+# @note This should only be done on the desktop.
+#
+BACKUP_CSS_SOURCES: bool
+
+CSS_SOURCE_MAP: String
+
+CSS_SRC_DIR: String
+
+DEV_ROOT: String
+
+# NOTE: has to be hard-wired.
+CSS_DST_ROOT: String
+
+CSS_DST_DIR: String
+
+class Object
+  public
+
+  # Replace "file:///" references with "file://C:/".
+  #
+  # @param [String] file                CSS source map.
+  #
+  # @return [void]
+  #
+  # @note This assumes that 'sass' is run with '--source-map-urls=absolute'
+  #
+  def edit_source_map: (?String file) -> void
+
+  # Backup CSS source files for use with source maps.
+  #
+  # @param [String] src_dir             Asset source directory.
+  # @param [String] dst_dir             Copy of asset source directory.
+  #
+  # @return [void]
+  #
+  # @note This allows CSS source maps to be usable from the desktop
+  #   development system even from a web console to the deployed instance
+  #   since the absolute path will be resolved by the browser.
+  #
+  def backup_css_sources: (?String src_dir, ?String dst_dir) -> void
+
+  private
+
+  # Run a sequence of shell commands in the background.
+  #
+  # @param [Array<String>] command    Individual shell commands with arguments.
+  #
+  # @return [void]
+  #
+  def bg_run: (*String command) { () -> (strArray|String|nil) } -> void
+
+  # Run a sequence of shell commands.
+  #
+  # @param [Array<String>] command    Individual shell commands with arguments.
+  # @param [Boolean]       async      If *true*, run in the background.
+  #
+  # @return [void]
+  #
+  def sh_run: (*String command, ?async: bool) { () -> (strArray|String|nil) } -> void
+end

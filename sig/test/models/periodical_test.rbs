@@ -1,0 +1,2 @@
+class PeriodicalTest < ActiveSupport::TestCase
+end

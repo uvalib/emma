@@ -23,6 +23,10 @@ class TitleController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader page: Paginator
+  attr_reader list: Bs::Message::TitleMetadataSummaryList | []
+  attr_reader item: Bs::Message::TitleMetadataDetail
+
   # == GET /title
   #
   # List all catalog titles.

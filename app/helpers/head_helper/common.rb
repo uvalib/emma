@@ -22,7 +22,7 @@ module HeadHelper::Common
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   HEAD_CONFIG = I18n.t('emma.head', default: {}).deep_freeze
 

@@ -90,7 +90,7 @@ class ArtifactDecorator < BookshareDecorator
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   DOWNLOAD_CONFIG = I18n.t('emma.download', default: {}).deep_freeze
 
@@ -98,6 +98,9 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @type [String]
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   DOWNLOAD_TOOLTIP = DOWNLOAD_CONFIG[:tooltip]
 
   # Default completed link tooltip.

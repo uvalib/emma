@@ -12,7 +12,11 @@ module AwsS3Service::Testing
   FORCED_EXCEPTION: bool
 
   # noinspection RubyUnusedLocalVariable
-  ALL_FAULTS: Integer
+  ALL_FAULTS:   Integer
+  BAD_REPO:     Integer
+  BAD_FILE:     Integer
+  BAD_FILE_KEY: Integer
+  BAD_KEY:      Integer
 
   FAULT_METHOD: Hash[Symbol,(Integer|nil)]
 

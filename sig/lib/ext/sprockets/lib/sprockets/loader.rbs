@@ -1,0 +1,12 @@
+module Sprockets
+  module LoaderDebug
+    include Sprockets::ExtensionDebugging
+
+    include Sprockets::ProcessorUtilsDebug
+
+    # :nocov:
+    include Sprockets::Loader
+
+    def load_from_unloaded: (untyped unloaded) -> untyped
+  end
+end

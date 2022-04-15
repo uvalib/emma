@@ -100,7 +100,6 @@ module BaseDecorator::Form
     opt[:row] = row_offset || 0
     field_values(pairs).map { |label, value|
       next if (label == :file_data) || (label == :emma_data)
-      config = nil
       if value.is_a?(Symbol)
         field  = value
         config = field_configuration(field, action)

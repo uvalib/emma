@@ -1,0 +1,19 @@
+module Sprockets
+  module SasscProcessorDebug
+    include Sprockets::ExtensionDebugging
+
+    def call: (untyped input) -> untyped
+  end
+end
+
+module SassC
+  module EngineExt
+    def render: () -> untyped
+  end
+end
+
+module SassC::Rails
+  module SassTemplateExt
+    def call: (untyped input) -> untyped
+  end
+end

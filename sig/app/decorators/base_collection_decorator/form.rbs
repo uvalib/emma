@@ -22,6 +22,8 @@ module BaseCollectionDecorator::Form
   #
   def delete_submit_option_keys: () -> symArray
 
+  def delete_submit_options: (**untyped opt) -> symHash
+
   # delete_submit_path
   #
   # @param [Array<Model,String>, Model, String, nil] ids

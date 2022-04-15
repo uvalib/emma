@@ -1,0 +1,3 @@
+# NOTE: These are not really appropriate for Capybara because they're JSON.
+class HealthTest < ApplicationSystemTestCase
+end

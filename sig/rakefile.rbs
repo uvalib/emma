@@ -1,0 +1,4 @@
+# Ensure that ERB asset pre-processing comes before the 'jsbundling-rails' and
+# 'cssbundling-rails' enhancements of 'assets:precompile'.
+class EmmaRailtie < Rails::Railtie
+end

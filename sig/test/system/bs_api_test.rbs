@@ -1,0 +1,9 @@
+class BsApiTest < ApplicationSystemTestCase
+  TRIAL_METHODS: symArray
+
+  ANONYMOUS_METHODS: symArray
+
+  AUTHORIZED_METHODS: symArray
+
+  TEST_PATH: String
+end

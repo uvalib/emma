@@ -313,6 +313,7 @@ module BaseDecorator::Links
 
     icon = opt.delete(:icon) || STAR
     prepend_css!(opt, css, action)
+    # noinspection RubyMismatchedArgumentType
     make_link(icon, path, **opt)
   end
 

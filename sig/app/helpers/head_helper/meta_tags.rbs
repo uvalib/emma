@@ -34,6 +34,8 @@ module HeadHelper::MetaTags
 
   public
 
+  attr_reader page_meta_tags: symHash
+
   # Access the meta tags for this page.
   #
   # If a block is given, this invocation is being used to accumulate '<meta>'

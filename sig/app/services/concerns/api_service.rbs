@@ -17,6 +17,9 @@ class ApiService
   #
   attr_reader options: symHash
 
+  attr_reader base_url: String | nil
+  attr_reader table:    Hash[Class,ApiService]
+
   # Initialize a new instance
   #
   # @param [User, nil]   user         User instance which includes a

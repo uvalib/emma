@@ -27,6 +27,8 @@ module OAuth2
     # @param [Hash]   params          Additional parameters.
     # @param [Hash]   opts
     #
+    # @return [OAuth2::AccessToken, nil]
+    #
     # This method overrides:
     # @see OAuth2::Strategy::AuthCode#get_token
     #

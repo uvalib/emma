@@ -26,8 +26,10 @@ module UserConcern
   #
   def current_user: () -> (User | nil)
 
-  include FlashConcern
+  include FlashHelper
+  include RoleHelper
 
+  include AuthConcern
   include BookshareConcern
 
   # Return account summary information and account preferences.
@@ -43,6 +45,8 @@ module UserConcern
   # @return [Array<(nil,nil,nil)>]
   #
   def get_account_details: (?id: String?, ?meth: (Symbol|String)?) -> ([Bs::Message::MyAccountSummary, Bs::Message::MyAccountPreferences?, Bs::Message::TitleDownloadList?] | [nil, nil, nil])
+
+  attr_reader user: User | nil
 
   # Update the current user with previously-acquired authentication data.
   #
@@ -80,5 +84,5 @@ module UserConcern
   #
   def role_failure: (?(String|Symbol)? msg) -> void
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

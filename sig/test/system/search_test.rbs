@@ -1,0 +1,3 @@
+class SearchTest < ApplicationSystemTestCase
+  PAGE_COUNT: Integer
+end

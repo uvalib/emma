@@ -145,6 +145,9 @@ module Record::Steppable
 
     include Record::Updatable::ClassMethods
 
+    attr_reader state_table: symHash
+    attr_reader job_class:   Class
+
     # Workflow state table.
     #
     # @param [Model, Class<Model>, nil] item      Default: self.
@@ -224,6 +227,9 @@ module Record::Steppable
     include Record::Steppable
 
     include Record::Reportable
+
+    attr_reader state_table: symHash
+    attr_reader job_class:   Class
 
     # Workflow state table associated with the current record.
     #
@@ -370,7 +376,7 @@ module Record::Steppable
     #
     # @return [Class<Model::WorkflowJob>]
     #
-    def job_class: (?(Model|Symbol|String)? item) -> untyped
+    def job_class: (?(Model|Symbol|String)? item) -> Class
 
     # Get the next legal state(s).
     #
@@ -474,6 +480,8 @@ module Record::Steppable
   end
 
   private
+
+  THIS_MODULE: Module
 
   include InstanceMethods
 end

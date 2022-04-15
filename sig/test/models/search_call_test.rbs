@@ -1,0 +1,2 @@
+class SearchCallTest < ActiveSupport::TestCase
+end

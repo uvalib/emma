@@ -564,6 +564,9 @@ end
 #
 class EnumType < ScalarType
   module Enumerations
+
+    @@enumerations: Hash[Symbol,symHash]
+
     # Called from API record definitions to provide this base class with the
     # values that will be accessed implicitly from subclasses.
     #

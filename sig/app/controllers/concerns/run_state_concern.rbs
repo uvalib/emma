@@ -51,7 +51,7 @@ module RunStateConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 
   extend ParamsHelper
 

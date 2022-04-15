@@ -1,0 +1,115 @@
+class Shrine
+  module UploadedFileExt
+    include Emma::Common
+
+    include Emma::Mime
+
+    # :nocov:
+    #include Shrine::UploadedFile::InstanceMethods
+
+    attr_reader emma_metadata: symHash
+
+    # Bibliographic metadata and remediation information.
+    #
+    # @raise [Record::SubmitError]    @see #extract_file_metadata
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def emma_metadata: () -> symHash
+
+    # Parse the uploaded file to extract bibliographic metadata and remediation
+    # information.
+    #
+    # @raise [Record::SubmitError]    If metadata was malformed.
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def extract_file_metadata: () -> symHash
+  end
+
+  # Overrides adding extra debugging around method calls.
+  #
+  module UploadedFileDebug
+    include Shrine::ExtensionDebugging
+
+    # :nocov:
+    include Shrine::UploadedFileExt
+
+    # initialize
+    #
+    # @param [Hash] data
+    #
+    def initialize: (untyped data) -> anyHash
+
+    # open
+    #
+    # @param [Hash] options
+    #
+    # @return [IO]
+    # @return [Any]                 Return from block if block given.
+    #
+    def open: (**untyped options) -> IO
+
+    # download
+    #
+    # @param [Hash] options
+    #
+    # @return [Tempfile]
+    # @return [Any]                 Return from block if block given.
+    #
+    def download: (**untyped options) -> Tempfile
+
+    # stream
+    #
+    # @param [String, IO, StringIO] destination
+    # @param [Hash]                 options
+    #
+    # @return [IO]
+    #
+    def stream: (String|IO|StringIO destination, **untyped options) -> IO
+
+    # read
+    #
+    # @param [Array] args           Passed to IO#read.
+    #
+    # @return [String]
+    #
+    def read: (*untyped args) -> String
+
+    # rewind
+    #
+    # @return [void]
+    #
+    def rewind: () -> void
+
+    # close
+    #
+    # @return [void]
+    #
+    def close: () -> void
+
+    # replace
+    #
+    # @param [IO, StringIO] io
+    # @param [Hash]         options
+    #
+    # @return [void]
+    #
+    def replace: (IO|StringIO io, **untyped options) -> void
+
+    # delete
+    #
+    # @return [void]
+    #
+    def delete: () -> void
+
+    # extract_file_metadata
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    # This method overrides:
+    # @see Shrine::UploadedFileExt#extract_file_metadata
+    #
+    def extract_file_metadata: () -> symHash
+  end
+end

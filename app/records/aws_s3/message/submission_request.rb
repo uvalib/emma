@@ -47,7 +47,7 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
 
   # The AWS S3 file object that is the subject of the submission.
   #
-  # @type [Aws::S3::Object, nil]
+  # @type [Aws::S3::Object]
   #
   attr_reader :file
 

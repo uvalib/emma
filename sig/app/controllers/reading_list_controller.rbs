@@ -23,6 +23,10 @@ class ReadingListController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader page: Paginator
+  attr_reader list: Bs::Message::ReadingListList
+  attr_reader item: Bs::Message::ReadingListUserView
+
   # == GET /reading_list
   #
   # List all reading lists available to the user (private lists, shared lists,

@@ -75,5 +75,7 @@ module Record::Updatable
 
   private
 
+  THIS_MODULE: Module
+
   include InstanceMethods
 end

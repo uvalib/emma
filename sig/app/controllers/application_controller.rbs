@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
 
   include ParamsHelper
 
+  attr_reader modal: bool
+
   # The current layout template.
   #
   # @return [String]                  Basename of views/layouts/* template.

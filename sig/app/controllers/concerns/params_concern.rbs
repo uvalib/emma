@@ -144,7 +144,7 @@ module ParamsConcern
   #
   def set_sort_params: (String sort_value) -> void
 
-  THIS_MODULE: untyped
+  THIS_MODULE: Module
 
   # Needed for #set_sort_params.
   include LayoutHelper::SearchFilters

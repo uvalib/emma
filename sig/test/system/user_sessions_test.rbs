@@ -1,0 +1,3 @@
+class UserSessionsTest < ApplicationSystemTestCase
+  TEST_USER: String
+end

@@ -112,4 +112,33 @@ module Representable
     def __debug_method: ((:input|:output|nil) mode, String label, *Symbol methods) -> nil
                       | (                           String label, *Symbol methods) -> nil
   end
+
+  module CreateObject
+    include RepresentableDebug
+
+    Class: untyped
+  end
+
+  module Hash
+
+    class Binding
+      include RepresentableDebug
+
+      def read: (anyHash|anyArray hash, untyped as) -> untyped
+    end
+
+  end
+
+  module JSON
+    def to_json: (*untyped args) -> String
+  end
+
+  module ForCollection
+    include RepresentableDebug
+  end
+
+  RenderDefault: untyped
+
+  include RepresentableDebug
+
 end

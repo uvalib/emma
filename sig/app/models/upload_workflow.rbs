@@ -84,8 +84,7 @@ module UploadWorkflow::Errors
 end
 
 module UploadWorkflow::Properties
-  include Workflow::Base::Properties
-
+  #include Workflow::Base::Properties
   include UploadWorkflow::Errors
 
   # The Federated Ingest API cannot accept more than 1000 items; this puts a
@@ -215,11 +214,9 @@ module UploadWorkflow::Properties
   #
   BATCH_SIZE: Integer
 
-  # URL parameter names and default values.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  WF_URL_PARAMETER: symHash
+  WF_PARAMETER_DEFAULT: symHash
+  WF_METHOD_MAP:        Hash[Symbol,Symbol]
+  WF_PARAMETER_MAP:     Hash[Symbol,Symbol]
 
   # A string added to the start of each title.
   #
@@ -329,8 +326,8 @@ end
 # * Member repository submission queue (AWS S3) create/update/delete
 #
 module UploadWorkflow::External
+  include Workflow::Base::External
   include UploadWorkflow::Properties
-
   include UploadWorkflow::Events
 
   include ExecReport::Constants

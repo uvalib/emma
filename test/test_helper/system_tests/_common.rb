@@ -9,7 +9,7 @@ module TestHelper::SystemTests::Common
 
   # Properties which drive parameterized system tests.
   #
-  # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
   #
   PROPERTY = {
     category: {

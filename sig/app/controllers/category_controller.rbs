@@ -26,6 +26,9 @@ class CategoryController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader page: Paginator
+  attr_reader list: Bs::Message::CategoriesList
+
   # == GET /category
   #
   # List all categories.

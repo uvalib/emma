@@ -341,8 +341,8 @@ module EntryConcern
   #
   # @return [Entry, nil]
   #
-  # noinspection RubyMismatchedReturnType
   def get_entry(item = nil, **opt)                                              # NOTE: from UploadConcern#get_record
+    # noinspection RubyMismatchedReturnType
     Entry.find_record((item || @identifier), **opt)
   end
 

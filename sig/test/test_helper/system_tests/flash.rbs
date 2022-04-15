@@ -1,0 +1,16 @@
+# Support for checking flash messages.
+#
+module TestHelper::SystemTests::Flash
+  include TestHelper::SystemTests::Common
+
+  # Assert that a flash message is present.  If neither :alert nor :notice is
+  # specified then any element with *text* under '.flash-messages' will match.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [String] :alert       Flash alert text
+  # @option opt [String] :notice      Flash notice text.
+  # @option opt [String] :text        Generic flash text.
+  #
+  def assert_flash: (**untyped opt) -> void
+end

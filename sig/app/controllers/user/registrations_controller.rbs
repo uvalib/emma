@@ -11,6 +11,8 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   include RunStateConcern
 
+  attr_reader item: User | nil
+
   # == GET /users/sign_up
   #
   def new: () -> void

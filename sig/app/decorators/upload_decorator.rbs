@@ -8,12 +8,7 @@ class UploadDecorator < BaseDecorator
   include ConfigurationHelper
 
   module Paths
-
-    # Paths used by model-form.js.
-    #
-    # @type [Hash{Symbol=>String}]
-    #
-    PATH: Hash[Symbol,String]
+    include BaseDecorator::Paths
 
     def index_path: (**untyped opt) -> String
 
@@ -35,36 +30,39 @@ class UploadDecorator < BaseDecorator
 
     def destroy_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
 
+    def renew_path: (**untyped opt) -> String
+
+    def reedit_path: (**untyped opt) -> String
+
+    def cancel_path: (**untyped opt) -> String
+
+    def check_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+
+    def endpoint_path: (**untyped opt) -> String
+
+    def bulk_index_path: (**untyped opt) -> String
+
+    def bulk_new_path: (**untyped opt) -> String
+
     def bulk_create_path: (**untyped opt) -> String
+
+    def bulk_edit_path: (**untyped opt) -> String
 
     def bulk_update_path: (**untyped opt) -> String
 
     def bulk_delete_path: (**untyped opt) -> String
+
+    def bulk_destroy_path: (**untyped opt) -> String
   end
 
   module Methods
-    include LayoutHelper
-
-    include SessionDebugHelper
+    include BaseDecorator::Methods
 
     # Uploader properties.
     #
     # @type [Hash{Symbol=>String}]
     #
     UPLOAD: Hash[Symbol,String]
-
-    # Display preview of Shrine uploads.  NOTE: Not currently enabled.
-    #
-    # @type [Boolean]
-    #
-    PREVIEW_ENABLED: bool
-
-    # Indicate whether preview is enabled.
-    #
-    # == Usage Notes
-    # Uppy preview is only for image files.
-    #
-    def preview_enabled?: () -> bool
 
     # Groupings of states related by theme.
     #
@@ -123,6 +121,8 @@ class UploadDecorator < BaseDecorator
     #
     FILTER_OPTIONS_CLASS: String
 
+    def model_form_fields: () -> Hash[Symbol,symHash]
+
     # Indicate whether the state group described by *properties* should be an
     # active state group selection.
     #
@@ -138,6 +138,8 @@ class UploadDecorator < BaseDecorator
     #
     CONTROL_ICONS: Hash[Symbol,symHash]
 
+    def control_icons: () -> Hash[Symbol,symHash]
+
     # Element for displaying the name of the file that was uploaded.
     #
     # @param [String] leader          Text preceding the filename.
@@ -146,13 +148,46 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def uploaded_filename_display: (?leader: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Form action button configuration.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    def generate_form_actions: () -> Hash[Symbol,symHash]
+  end
+
+  module InstanceMethods
+    include BaseDecorator::InstanceMethods
+    include Paths
+    include Methods
+
+    def options: () -> Upload::Options
+  end
+
+  module ClassMethods
+    include BaseDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
+
+  # Display preview of Shrine uploads.  NOTE: Not currently enabled.
+  #
+  # @type [Boolean]
+  #
+  PREVIEW_ENABLED: bool
+
+  # Indicate whether preview is enabled.
+  #
+  # == Usage Notes
+  # Uppy preview is only for image files.
+  #
+  def preview_enabled?: () -> bool
 
   # Supply an element to contain a preview thumbnail of an image file.
   #
@@ -162,6 +197,8 @@ class UploadDecorator < BaseDecorator
   # @return [nil]                         If preview is not enabled.
   #
   def preview: (?bool force) -> (ActiveSupport::SafeBuffer | nil)
+
+  EMMA_DATA_FIELDS: Hash[Symbol,symHash]
 
   # Render the contents of the :file_data field.
   #
@@ -237,22 +274,23 @@ class UploadDecorator < BaseDecorator
   #
   def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Generate an element with icon controls for the operation(s) the user is
-  # authorized to perform on the item.
+  FIELD_FILTERS: Array[String|Symbol|Regexp]
+
+  def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> symHash
+
+  # Called by SearchDecorator#edit_controls.
   #
-  # @param [Hash] opt                   Passed to #control_icon_button
+  # @param [Model, Hash, String, Symbol] item
+  # @param [Hash]                        opt
   #
-  # @return [ActiveSupport::SafeBuffer] An HTML element.
-  # @return [nil]                       If no operations are authorized.
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
-  # @see #CONTROL_ICONS
-  #
-  def control_icon_buttons: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def self.controls_for: (Model|symHash|String|Symbol item, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Produce an action icon based on either :path or :id.
   #
   # @param [Symbol] action                One of #CONTROL_ICONS.keys.
-  # @param [Hash]   opt                   Passed to #make_link except for:
+  # @param [Hash]   opt                   To LinkHelper#make_link except for:
   #
   # @option opt [String, Proc]  :path
   # @option opt [String]        :icon
@@ -262,10 +300,7 @@ class UploadDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def control_icon: (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def control_icon_button: (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.
@@ -283,106 +318,62 @@ class UploadDecorator < BaseDecorator
   #
   def check_status_popup: (String|Symbol path, id: String|Integer, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Screen-reader-only label for file input.  (This is to satisfy accessibility
-  # checkers which don't ignore the file input which is made invisible in favor
-  # of the Uppy file input control).
-  #
-  # @type [String]
-  #
-  FILE_LABEL: String
-
-  # Button information for item actions.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  FORM_ACTIONS: symHash
-
-  # Button information for upload actions.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  def form_actions: () -> symHash
-
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
   #
-  # @param [String]         label     Label for the submit button.
-  # @param [String, Symbol] action    Either :new or :edit.
-  # @param [Hash]           opt       Passed to #form_with except for:
-  #
-  # @option opt [String] :cancel      URL for cancel button action (default:
-  #                                     :back).
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see ScrollHelper#scroll_to_top_target!
-  #
-  def model_form: (?label: String?, ?action: String|Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def model_form: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  FILE_LABEL: String
+
+  def form_top_controls:    (ActionView::Helpers::FormBuilder|nil f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_top_button_tray: (ActionView::Helpers::FormBuilder     f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Upload cancel button.
   #
-  # @param [Hash] opt                 Passed to #button_tag except for:
-  #
-  # @option opt [String, Symbol] :action    Default: `params[:action]`.
-  # @option opt [String]         :label     Default: based on :action.
-  # @option opt [String]         :url       Default: `params[:cancel]` or
-  #                                           `request.referer`.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
-  #
-  # @note Uses 'params'
-  # @note Uses 'request'
-  # @note ParamsHelper#local_request? uses 'request'
-  # @note ParamsHelper#same_request? uses 'request'
   #
   def cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Element name for field group radio buttons.
+  # Data for hidden form fields.
   #
-  # @type [String]
+  # @param [Hash] opt
   #
-  FIELD_GROUP_NAME: String
-
-  # Field group radio buttons and their labels and tooltips.
+  # @return [Hash{Symbol=>Any}]
   #
-  # @type [Hash{Symbol=>Hash{Symbol=>String}}]
-  #
-  FIELD_GROUP: Hash[Symbol,Hash[Symbol,String]]
-
-  # Control for filtering which fields are displayed.
-  #
-  # @param [Hash] opt                 Passed to #html_div for outer <div>.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #FIELD_GROUP
-  # @see file:app/assets/javascripts/feature/model-form.js *fieldDisplayFilterSelect()*
-  #
-  def field_group: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def form_hidden: (**untyped opt) -> symHash
 
   # Element for prompting for the EMMA index entry of the member repository
   # item which was the basis for the remediated item which is being submitted.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer <div>.
+  # @param [Hash] opt                 Passed to #html_div for outer *div*.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *monitorSourceRepository()*
-  #
-  # @note LayoutHelper#search_input uses 'params'
-  # @note LayoutHelper#search_button_label uses 'params'
+  # @see LayoutHelper::SearchBar#search_input
+  # @see LayoutHelper::SearchBar#search_button_label
+  # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*
   #
   def parent_entry_select: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate a prompt for #items_menu.
   #
-  # @param [Hash] opt
-  #
-  # @option opt [User,String,Symbol,nil] :user
+  # @param [User, Symbol, nil] user
   #
   # @return [String]
   #
   def items_menu_prompt: (**untyped opt) -> String
+
+  # Client-side scripting which are supplied via 'assets:precompile'.
+  #
+  # @param [Hash{Symbol=>Any}]
+  #
+  # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Entry*
+  #
+  def self.js_properties: () -> symHash
 end

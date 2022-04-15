@@ -144,7 +144,7 @@ module SqlMethods
   #
   # @param [Symbol, String]              column
   # @param [String, nil]                 name       Def: derived from *column*.
-  # @param [Array, String, Symbol]       fields     JSON fields for *column*.
+  # @param [Symbol, String, Array]       fields     JSON fields for *column*.
   # @param [Hash{Symbol=>Array<Symbol>}] field_map  If *fields* not given.
   #
   # @return [String]
@@ -152,7 +152,7 @@ module SqlMethods
   # == Implementation Notes
   # * Documentation indicates that '$[*]' should work but only '$' seems to.
   #
-  def sql_json_table: (Symbol|String column, ?fields: String?, ?name: (String|Symbol|Array[String|Symbol])?, ?field_map: Hash[Symbol,symArray]?) -> String
+  def sql_json_table: (Symbol|String column, ?name: String|nil, ?fields: Array[Symbol|String]|Symbol|String|nil, ?field_map: Hash[Symbol,symArray]?) -> String
 
   # Generate condition(s) for a WHERE clause.
   #
@@ -205,6 +205,8 @@ module SqlMethods
 
   module InstanceMethods
     include SqlMethods
+
+    attr_reader field_names: symArray
 
     # The fields defined in the schema for this record.
     #

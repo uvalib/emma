@@ -1,0 +1,5 @@
+module Emma
+  # noinspection RubyResolve
+  class Application < Rails::Application
+  end
+end

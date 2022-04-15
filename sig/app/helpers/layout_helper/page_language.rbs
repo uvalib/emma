@@ -1,6 +1,9 @@
 # View helper methods support language annotation of the '<html>' element.
 #
 module LayoutHelper::PageLanguage
+
+  attr_reader page_language: String
+
   # The language code for the language of the current page for use with the
   # '<html>' element.
   #

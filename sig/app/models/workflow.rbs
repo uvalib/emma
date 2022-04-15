@@ -8,6 +8,7 @@
 #
 class Workflow::Base
   include Workflow
+  extend  Workflow::ClassMethods
 
   # Even if workflow debugging is enabled, displaying transition hooks may be
   # too noisy.
@@ -72,6 +73,9 @@ module Workflow::Base::Roles
   IF_SYS_DEBUG: symHash
 
   IF_DEV_DEBUG: symHash
+
+  attr_reader current_user: User | String
+  attr_reader current_role: Symbol
 
   # The current workflow user.
   #
@@ -170,6 +174,15 @@ module Workflow::Base::Properties
   attr_accessor parameters: symHash
 end
 
+module Workflow::Base::External
+
+  # Model/controller options passed in through the constructor.
+  #
+  # @return [Upload::Options]
+  #
+  attr_reader model_options: Upload::Options
+end
+
 # Workflow execution status information.
 #
 module Workflow::Base::Data
@@ -249,6 +262,9 @@ module Workflow::Base::Simulation
   # @return [nil]
   #
   def __debug_sim: (*untyped, **untyped) ?{ () -> untyped } -> nil
+
+  class SimulatedTask
+  end
 end
 
 # Methods which are executed to initiate state transitions.
@@ -469,6 +485,8 @@ module Workflow::Base::States
   #
   HIDDEN_STATE: symArray
 
+  attr_reader prev_state: Symbol | nil
+
   # state_object
   #
   # @param [Symbol, String, Workflow::State, nil] state
@@ -551,6 +569,9 @@ class Workflow::Base
   # @return [Symbol, nil]
   #
   attr_reader prev_state: Symbol | nil
+
+  attr_reader params:        symHash
+  attr_reader model_options: Upload::Options
 
   # Create a new instance.
   #

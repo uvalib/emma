@@ -197,6 +197,9 @@ class TitleController < ApplicationController
   #
   # @return [Hash{Symbol=>Bs::Message::TitleMetadataSummaryList,Hash}]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def index_values(list = @list, **opt)
     opt.reverse_merge!(wrap: :catalog_titles)
     super(list, **opt)

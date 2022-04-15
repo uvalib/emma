@@ -62,6 +62,7 @@ module TestHelper::SystemTests::Show
   # @return [void]
   #
   # @yield Test code to run while on the page.
+  # @yieldparam [String] title
   # @yieldreturn [void]
   #
   def visit_show_page(model, entry: nil, index: nil, entry_class: nil)

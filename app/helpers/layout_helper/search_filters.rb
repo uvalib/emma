@@ -283,7 +283,7 @@ module LayoutHelper::SearchFilters
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   SEARCH_FILTERS_ROOT = I18n.t('emma.search_filters').deep_freeze
 
@@ -293,6 +293,9 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Any}]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   SEARCH_MENU_DEFAULT = SEARCH_FILTERS_ROOT[:_default].compact.deep_freeze
 
   # Properties for the "filter reset" button.
@@ -403,7 +406,7 @@ module LayoutHelper::SearchFilters
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   ADV_SEARCH_CONFIG = I18n.t('emma.search_bar.advanced').deep_freeze
 

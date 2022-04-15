@@ -42,6 +42,7 @@ module UserConcern
   end
 
   include FlashHelper
+  include RoleHelper
 
   include AuthConcern
   include BookshareConcern
@@ -141,7 +142,7 @@ module UserConcern
   #
   def authenticate_admin!(**opt)
     authenticate_user!(**opt)
-    role_failure(:administrator) unless current_user&.administrator?
+    role_failure(:administrator) unless administrator?
   end
 
   # Authenticate then ensure that the user has the :developer role.
@@ -152,7 +153,7 @@ module UserConcern
   #
   def authenticate_dev!(**opt)
     authenticate_user!(**opt)
-    role_failure(:developer) unless current_user&.developer?
+    role_failure(:developer) unless developer?
   end
 
   # ===========================================================================

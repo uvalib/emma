@@ -1,0 +1,11 @@
+module Aws
+  # Overrides adding extra debugging around method calls.
+  #
+  module PluginHandlerDebug
+    include Aws::S3::ExtensionDebugging
+
+    MISSING: String
+
+    def call: (untyped context) -> untyped
+  end
+end

@@ -1,0 +1,16 @@
+module Aws::S3
+  # Overrides adding extra debugging around method calls.
+  #
+  module ObjectDebug
+    include Aws::S3::ExtensionDebugging
+
+    def load: () -> untyped
+
+    # Since all of these methods have the same signature, they can be
+    # overridden in a loop.
+    #
+    # @type [Array<Symbol>]
+    #
+    MONITOR_OBJECT_METHODS: symArray
+  end
+end

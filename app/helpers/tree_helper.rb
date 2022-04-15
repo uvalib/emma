@@ -22,7 +22,7 @@ module TreeHelper
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   TREE_CTRL_CFG = I18n.t('emma.tree.control', default: {}).deep_freeze
 
@@ -36,6 +36,9 @@ module TreeHelper
   #
   # @type [String]
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   TREE_OPENER_TIP = TREE_CTRL_CFG[:tooltip]
 
   # Label for button to close an expanded tree.

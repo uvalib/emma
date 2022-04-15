@@ -98,6 +98,7 @@ module IaDownloadService::Common
     @response = connection.send(verb, action, params, headers)
     raise empty_result_error if @response.nil?
 
+    # noinspection RubyNilAnalysis
     case @response.status
 
       when 200, 201, 203..299

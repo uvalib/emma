@@ -5,6 +5,14 @@ module BookshareConcern
 
   include ApiConcern
 
+  attr_reader bookshare_id: String | nil
+  attr_reader series_id:    String | nil
+  attr_reader edition_id:   String | nil
+  attr_reader format:       String | nil
+  attr_reader id:           String | nil
+  attr_reader member:       String | nil
+  attr_reader url:          String | nil
+
   # Access the Bookshare API service.
   #
   # @return [BookshareService]
@@ -72,5 +80,5 @@ module BookshareConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

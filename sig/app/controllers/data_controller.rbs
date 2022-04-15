@@ -9,6 +9,10 @@ class DataController < ApplicationController
 
   include DataConcern
 
+  attr_reader name: String
+  attr_reader item: strArray
+  attr_reader list: anyHash
+
   # == GET /data[?tables=...]
   #
   # Get the contents of all database tables (or the named tables if given).

@@ -211,7 +211,9 @@ module MdHelper
 
   # A container for a Math Detective output type.
   #
-  # @param [Hash] opt
+  # @param [String,Symbol] name
+  # @param [String,Symbol] label
+  # @param [Hash]          opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #

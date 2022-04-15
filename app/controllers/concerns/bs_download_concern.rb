@@ -50,9 +50,9 @@ module BsDownloadConcern
   # Response values for de-serializing Bookshare download information to JSON
   # or XML.
   #
-  # @param [String] url
-  # @param [String] state
-  # @param [String] error
+  # @param [String, nil] url
+  # @param [String, nil] state
+  # @param [String, nil] error
   #
   # @return [Hash{Symbol=>String}]
   #

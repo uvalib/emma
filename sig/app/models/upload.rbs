@@ -25,6 +25,22 @@ class Upload < ApplicationRecord
   #
   def initialize: (?(Upload|symHash)? attr) { () -> untyped } -> void
 
+  attr_reader file_path: String
+
+  # Model/controller options passed in through the constructor.
+  #
+  # @return [Upload::Options]
+  #
+  attr_reader model_options: Upload::Options
+
+  # set_model_options
+  #
+  # @param [Options, Hash, nil] options
+  #
+  # @return [Upload::Options, nil]
+  #
+  def set_model_options: (Options|symHash|nil options) -> Upload::Options
+
   # Mutually-exclusive modes of operation in #assign_attributes.
   #
   # @type [Array<Symbol>]
@@ -92,11 +108,19 @@ class Upload < ApplicationRecord
 
   def self.valid_record_id?: (untyped item, ?add_repo: (String|strArray)?, ?add_fmt: (String|strArray)?) -> bool
 
-  def self.get_value: (Upload|symHash item, String|Symbol key, ?default: untyped?) -> untyped
+  def self.get_value: (Upload|anyHash item, String|Symbol key, ?default: untyped?) -> untyped
 
   def make_retrieval_link: (String rid, ?String? base_url) -> (String | nil)
 
   def self.make_retrieval_link: (String rid, ?String? base_url) -> (String | nil)
+
+  extend Upload::IdentifierMethods
+
+  def self.matching_sid: (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil,                  **untyped opt) -> ActiveRecord::Relation
+                       | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: false, **untyped opt) -> ActiveRecord::Relation
+                       | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: true,  **untyped opt) -> (ActiveRecord::Relation | nil)
+
+  def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, ?sort: Symbol|String|nil, **untyped opt) -> Model
 
   # Configured requirements for Upload fields.
   #

@@ -105,6 +105,8 @@ module Record::EmmaIdentification
 
   private
 
+  THIS_MODULE: Module
+
   include InstanceMethods
 
   public

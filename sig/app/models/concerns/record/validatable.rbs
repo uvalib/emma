@@ -26,6 +26,8 @@ module Record::Validatable
 
   private
 
+  THIS_MODULE: Module
+
   # :nocov:
   include ActiveRecord::Validations
 end

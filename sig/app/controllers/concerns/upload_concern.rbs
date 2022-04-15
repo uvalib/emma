@@ -39,6 +39,11 @@ module UploadConcern
   #
   IGNORED_UPLOAD_FORM_PARAMS: symArray
 
+  attr_reader upload_params: symHash
+  attr_reader db_id:         Integer | nil
+  attr_reader identifier:    String
+  attr_reader workflow:      Workflow::Base
+
   def upload_params: () -> symHash
 
   def get_upload_params: (?prmHash? p) -> symHash
@@ -80,7 +85,7 @@ module UploadConcern
 
   def find_or_match_records: (*(String|anyArray) items, **untyped opt) -> symHash
 
-  def get_record: (?(String|Upload|anyHash)? id, **untyped opt) -> (Upload | nil)
+  def get_record: (?(String|Upload|anyHash|nil) id, **untyped opt) -> (Upload | nil)
 
   def proxy_get_record: (String sid, String host) -> (Upload | nil)
 
@@ -180,5 +185,5 @@ module UploadConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

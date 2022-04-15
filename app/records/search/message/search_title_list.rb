@@ -206,6 +206,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
     end
 
     def inspect
+      # @type [Hash{Symbol=>Array,String,nil}]
       part = { ids: ids&.to_a, values: values }
       part.transform_values! { |v| v&.map(&:inspect)&.join(', ') }
       part[:ids].tr!('()', '') if part[:ids]

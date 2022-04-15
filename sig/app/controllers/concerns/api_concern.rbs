@@ -97,5 +97,5 @@ module ApiConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

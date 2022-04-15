@@ -1,0 +1,3 @@
+class ReadingListsTest < ApplicationSystemTestCase
+  TEST_USER: String
+end

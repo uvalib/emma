@@ -1,0 +1,11 @@
+# Current EMMA Unified Search API version.
+#
+# @type [String]
+#
+API_VERSION: String
+
+class Object
+  include ApiConcern
+
+  include UploadConcern
+end

@@ -43,7 +43,15 @@ class UploadController < ApplicationController
   #
   # @return [Upload, nil]
   #
-  attr_reader item: Upload?
+  attr_reader item: Upload | nil
+
+  attr_reader page:         Paginator
+  attr_reader group_counts: symHash
+  attr_reader host:         String
+  attr_reader link:         String | nil
+  attr_reader repo:         symArray
+  attr_reader deploy:       symArray
+  attr_reader object_table: Hash[String,Array[Aws::S3::Object]]
 
   # == GET /upload[?id=(:id|SID|RANGE_LIST)]
   # == GET /upload[?selected=(:id|SID|RANGE_LIST)]
@@ -355,9 +363,9 @@ class UploadController < ApplicationController
 
   # Response values for de-serializing download information to JSON or XML.
   #
-  # @param [String] url
+  # @param [String,nil] url
   #
-  # @return [Hash{Symbol=>String}]
+  # @return [Hash{Symbol=>String,nil}]
   #
-  def download_values: (?String url) -> { url: String }
+  def download_values: (?String? url) -> Hash[Symbol,(String|nil)]
 end

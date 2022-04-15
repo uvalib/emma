@@ -83,4 +83,8 @@ module Record::Searchable
     #
     def latest_for_sid: (?(symHash|String|Symbol|Model)? sid, ?sort: (Symbol|String)?, **untyped opt) -> (Model | nil)
   end
+
+  private
+
+  THIS_MODULE: Module
 end

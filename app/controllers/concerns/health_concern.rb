@@ -29,7 +29,7 @@ module HealthConcern
   # @see file:config/locales/controllers/health.en.yml
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   HEALTH_SUBSYSTEMS = I18n.t('emma.health.subsystem').deep_freeze
 

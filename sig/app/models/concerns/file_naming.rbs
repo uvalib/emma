@@ -11,6 +11,12 @@ module FileNaming
 
   include FileFormat::Zip
 
+  attr_accessor self.format_classes:  Hash[Symbol,Class]
+  attr_accessor self.mime_types:      Hash[Symbol,strArray]
+  attr_accessor self.file_extensions: Hash[Symbol,strArray]
+  attr_accessor self.mime_to_fmt:     Hash[String,symArray]
+  attr_accessor self.ext_to_fmt:      Hash[String,symArray]
+
   # Create an instance of the appropriate FileObject subclass based on the
   # indicated type and, if provided, the file contents
   #

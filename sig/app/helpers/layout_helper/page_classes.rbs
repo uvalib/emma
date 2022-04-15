@@ -1,6 +1,10 @@
 # View helper methods support CSS class annotation of the '<body>' element.
 #
 module LayoutHelper::PageClasses
+  include ParamsHelper
+
+  attr_reader page_classes: strArray
+
   # Access the classes for the '<body>' element.
   #
   # If a block is given, this invocation is being used to accumulate CSS class

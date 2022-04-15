@@ -6,13 +6,27 @@
 #
 class TitleDecorator < BookshareDecorator
   module Paths
+    include BookshareDecorator::Paths
   end
 
   module Methods
+    include BookshareDecorator::Methods
+  end
+
+  module InstanceMethods
+    include BookshareDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BookshareDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
@@ -59,4 +73,8 @@ class TitleDecorator < BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_target_description: (?action: Symbol|nil, **untyped opt) -> String
 end

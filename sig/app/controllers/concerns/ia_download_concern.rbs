@@ -28,7 +28,7 @@ module IaDownloadConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 
   include RepositoryHelper
 end

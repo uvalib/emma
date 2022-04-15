@@ -1,0 +1,52 @@
+# Support for checking pagination.
+#
+module TestHelper::SystemTests::Pagination
+  include TestHelper::SystemTests::Index
+
+  # :nocov:
+  include Capybara::Minitest::Assertions
+
+  NEXT_LABEL: String
+
+  PREV_LABEL: String
+
+  # Assert that this is the first page of search results.
+  #
+  def assert_first_page: () -> void
+
+  # Assert that this is the last page of search results.
+  #
+  def assert_last_page: () -> void
+
+  # Assert that this is not the first page of search results.
+  #
+  def assert_not_first_page: () -> void
+
+  # Assert that this is not the first page of search results.
+  #
+  def assert_not_last_page: () -> void
+
+  # Visit the next page of search results.
+  #
+  # @param [Symbol, nil] model
+  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  #
+  # @return [void]
+  #
+  # @yield Test code to run while on the page.
+  # @yieldreturn [void]
+  #
+  def visit_next_page: (Symbol|nil model, **untyped opt) { () -> void } -> void
+
+  # Visit the previous page of search results.
+  #
+  # @param [Symbol, nil] model
+  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  #
+  # @return [void]
+  #
+  # @yield Test code to run while on the page.
+  # @yieldreturn [void]
+  #
+  def visit_prev_page: (Symbol|nil model, **untyped opt) { () -> void } -> void
+end

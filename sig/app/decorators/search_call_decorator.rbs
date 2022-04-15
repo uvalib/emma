@@ -6,13 +6,27 @@
 #
 class SearchCallDecorator < BaseDecorator
   module Paths
+    include BaseDecorator::Paths
   end
 
   module Methods
+    include BaseDecorator::Methods
+  end
+
+  module InstanceMethods
+    include BaseDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BaseDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common

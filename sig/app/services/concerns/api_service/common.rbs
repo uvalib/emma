@@ -184,6 +184,8 @@ module ApiService::Common
   #
   def api_body: (untyped obj) -> untyped
 
+  attr_reader connection: Faraday::Connection
+
   # Get a connection for making cached requests.
   #
   # @return [Faraday::Connection]

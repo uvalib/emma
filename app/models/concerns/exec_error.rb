@@ -63,6 +63,7 @@ class ExecError < RuntimeError
       end
     end
     @messages += extract_message(opt) if opt.present?
+    # noinspection RubyNilAnalysis
     case @cause
       when nil
         # Ignore

@@ -1,0 +1,36 @@
+module OAuth2
+  # Override definitions to be prepended to OAuth2::Strategy::AuthCode.
+  #
+  module Strategy::AuthCodeExt
+    # Retrieve an access token given the specified validation code.
+    #
+    # @param [String] code            The Authorization Code value.
+    # @param [Hash]   params          Additional parameters.
+    # @param [Hash]   opts
+    #
+    # This method overrides:
+    # @see OAuth2::Strategy::AuthCode#get_token
+    #
+    def get_token: (String code, ?symHash params, ?symHash opts) -> (OAuth2::AccessToken | nil)
+
+    # The required query parameters for the revoke URL
+    #
+    # @param [Hash, nil] params       Additional query parameters.
+    #
+    # @return [Hash]
+    #
+    def revoke_params: (?symHash? params) -> symHash
+
+    # Indicate to the provider that the token should be invalidated (in order
+    # to terminate the session).
+    #
+    # @param [OAuth2::AccessToken, Hash, String] token
+    # @param [Hash, nil] params       Additional query parameters.
+    # @param [Hash, nil] opts         Options.
+    #
+    # @return [OAuth2::Response]
+    # @return [nil]                   If no token was provided or found.
+    #
+    def revoke_token: (OAuth2::AccessToken|symHash|String token, ?symHash? params, ?symHash? opts) -> (OAuth2::Response | nil)
+  end
+end

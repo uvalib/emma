@@ -1,0 +1,2 @@
+class ArtifactsTest < ApplicationSystemTestCase
+end

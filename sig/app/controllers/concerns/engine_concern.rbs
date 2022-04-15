@@ -86,5 +86,5 @@ module EngineConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

@@ -153,9 +153,9 @@ module Record::Assignable
 
     # set_model_options
     #
-    # @param [Options, Hash, nil] options
+    # @param [Entry::Options, Hash, nil] options
     #
-    # @return [Options, nil]
+    # @return [Entry::Options, nil]
     #
     def set_model_options(options)
       options = options[:options]  if options.is_a?(Hash)

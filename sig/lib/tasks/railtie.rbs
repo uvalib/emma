@@ -1,0 +1,10 @@
+EMMA_RAILTIE_RAKE: Rake::Task
+
+ERB_ASSETS:   strArray
+ASSETS_ROOT:  String
+JS_SRC:       String
+JS_DST:       String
+
+class Object
+  def preprocess_erb: (String src, ?String? dst) -> void
+end

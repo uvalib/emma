@@ -1,0 +1,139 @@
+module Workflow::Base::Simulation
+  include Emma::Debug::OutputMethods
+
+  include Workflow::Base::Data
+
+  # A representation of an external task which simulates processing by
+  # executing the check method until it returns false.
+  #
+  # Activation sequence is:
+  #   start   # "Starts" the task by reinitializing its counter
+  #   check   # Decrements the counter and returns *true* if still running.
+  #
+  class SimulatedTask
+    attr_reader label: String
+
+    attr_reader reps: Integer
+
+    attr_reader counter: Integer
+
+    attr_reader success: bool
+
+    attr_reader running: bool
+
+    attr_reader restartable: bool
+
+    def initialize: (?name: String|nil, ?result: bool, ?reps: Integer, ?started: bool|nil, ?restart: bool|nil) -> void
+
+    def running?: () -> bool
+
+    def stopped?: () -> bool
+
+    def stop: () -> Integer
+
+    def start: () -> Integer
+
+    def restart: () -> (Integer | nil)
+
+    def check: () -> bool
+
+    def to_s: () -> String
+
+    def self.inherited: (Class subclass) -> void
+  end
+
+  attr_reader simulating: bool | nil
+end
+
+# Hooks executed during transitions.
+#
+# == Usage Notes
+# These are generally only of interest for detailed debugging because logic
+# associated with specific transitions is applied by defining the appropriate
+# "on_*_entry" method in WorkflowStates.
+#
+module Workflow::Base::Transitions
+  include Workflow::Base::States
+
+  # Generic state entry hook.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  # @see Workflow::Specification#on_entry
+  #
+  def on_entry_hook: (untyped state, untyped _event, *untyped _event_args) -> untyped
+
+  # Generic state exit hook.
+  #
+  # @param [Workflow::State] state        State that is being exited.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  # @see Workflow::Specification#on_exit
+  #
+  def on_exit_hook: (untyped state, untyped _event, *untyped _event_args) -> untyped
+
+  # before_transition_hook
+  #
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#before_transition
+  #
+  def before_transition_hook: (untyped from, untyped to, untyped _event, *untyped _event_args) -> untyped
+
+  # on_transition_hook
+  #
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#on_transition
+  #
+  def on_transition_hook: (untyped from, untyped to, untyped _event, *untyped _event_args) -> untyped
+
+  # after_transition_hook
+  #
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#after_transition
+  #
+  def after_transition_hook: (untyped from, untyped to, untyped _event, *untyped _event_args) -> untyped
+
+  # on_error_hook
+  #
+  # @param [Exception] error
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#on_error
+  #
+  def on_error_hook: (untyped error, untyped from, untyped to, untyped _event, *untyped _event_args) -> untyped
+
+  # __debug_hook
+  #
+  # @param [String]      label
+  # @param [Symbol]      from       Starting state
+  # @param [Symbol, nil] to         Ending state
+  #
+  def __debug_hook: (untyped label, untyped from, ?untyped? to) -> untyped
+
+  # Redefine :workflow for a Workflow subclass in order to apply the methods
+  # defined here to the matching workflow transition handlers.
+  #
+  # @param [Workflow, Any] base
+  #
+  # @see Workflow::ClassMethods#workflow
+  #
+  def self.included: (Module base) -> void
+end

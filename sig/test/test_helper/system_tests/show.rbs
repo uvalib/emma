@@ -1,0 +1,34 @@
+# Support for item details pages.
+#
+module TestHelper::SystemTests::Show
+  include TestHelper::SystemTests::Common
+
+  SHOW_HEADING_CLASS: String
+
+  SHOW_HEADING_SELECTOR: String
+
+  COVER_IMAGE_CLASS: String
+
+  # Assert that the current page is a valid index page.
+  #
+  # @param [Symbol] model
+  # @param [String] title
+  #
+  # @return [void]
+  #
+  def assert_valid_show_page: (Symbol model, ?title: String|nil) -> void
+
+  # Visit an entry on an index page.
+  #
+  # @param [Symbol]                       model
+  # @param [Capybara::Node::Element, nil] entry
+  # @param [Integer, Symbol]              index
+  # @param [String]                       entry_class
+  #
+  # @return [void]
+  #
+  # @yield Test code to run while on the page.
+  # @yieldreturn [void]
+  #
+  def visit_show_page: (Symbol model, ?entry: Capybara::Node::Element|nil, ?index: Integer|Symbol|nil, ?entry_class: String|nil) { (String) -> void } -> void
+end

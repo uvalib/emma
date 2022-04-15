@@ -10,7 +10,11 @@ import { cssClass }  from '../shared/css'
 // ============================================================================
 
 /**
- * @typedef {string|jQuery|HTMLElement|EventTarget} Selector
+ * @typedef {Window.jQuery} jQuery
+ */
+
+/**
+ * @typedef {jQuery|HTMLElement|EventTarget|string} Selector
  */
 
 // ============================================================================

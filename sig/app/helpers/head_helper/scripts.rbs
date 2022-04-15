@@ -10,6 +10,8 @@ module HeadHelper::Scripts
 
   public
 
+  attr_reader page_javascript: strArray
+
   # Access the scripts for this page.
   #
   # If a block is given, this invocation is being used to accumulate script
@@ -71,6 +73,8 @@ module HeadHelper::Scripts
   # @see #page_script_settings
   #
   SCRIPT_SETTINGS_OVERRIDES: symHash
+
+  attr_reader script_settings: symHash
 
   # The set of overrides to JavaScript client settings.
   #

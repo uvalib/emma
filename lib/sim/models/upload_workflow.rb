@@ -75,6 +75,7 @@ module UploadWorkflow::Simulation
   public
 
   class ReviewerTask < SimulatedTask
+    # noinspection RubyMismatchedArgumentType
     def initialize(started: false)
       super(
         result:  PROPERTY[:reviewer_found],
@@ -86,6 +87,7 @@ module UploadWorkflow::Simulation
   end
 
   class RetrievalTask < SimulatedTask
+    # noinspection RubyMismatchedArgumentType
     def initialize(started: false)
       super(
         result:  PROPERTY[:submission_retrieved],
@@ -97,6 +99,7 @@ module UploadWorkflow::Simulation
   end
 
   class IndexTask < SimulatedTask
+    # noinspection RubyMismatchedArgumentType
     def initialize(started: false)
       super(
         name:    'index check',

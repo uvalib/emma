@@ -21,7 +21,7 @@ module HelpConcern
 
   # get_help_entry
   #
-  # @param [Symbol] topic
+  # @param [Symbol,nil] topic
   #
   # @return [Hash{Symbol=>Any}]
   #

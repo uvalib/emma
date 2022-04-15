@@ -193,7 +193,7 @@ en:
           membershipAssistant:      'Membership Assistant'
 
         BsSeriesType:
-          newpaper:                 'Newspaper'
+          newspaper:                'Newspaper'
           magazine:                 'Magazine'
           journal:                  'Journal'
           _default:                 journal

@@ -1,0 +1,300 @@
+module OAuth2
+  # Override definitions to be prepended to OAuth2::Client.
+  #
+  # @!attribute [r] id
+  #   @return [String]
+  #
+  # @!attribute [r] secret
+  #   @return [String]
+  #
+  # @!attribute [r] site
+  #   @return [String]
+  #
+  # @!attribute [rw] options
+  #   @return [Hash]
+  #
+  module ClientExt
+    include Emma::Common
+
+    include OAuth2::ExtensionDebugging
+
+    attr_reader connection: Faraday::Connection
+
+    # Instantiate a new OAuth 2.0 client using the Client ID and Client
+    # Secret registered to your application.
+    #
+    # @param [String] client_id
+    # @param [String] client_secret
+    # @param [Hash]   options
+    # @param [Proc]   block           @see OAuth2::Client#initialize
+    #
+    # @option options [String]  :site             The OAuth2 provider site
+    #                                             host.
+    #
+    # @option options [String]  :redirect_uri     The absolute URI to the
+    #                                             Redirection Endpoint for
+    #                                             use in authorization grants
+    #                                             and token exchange.
+    #
+    # @option options [String]  :authorize_url    Absolute or relative URL
+    #                                             path to the Authorization
+    #                                             endpoint.
+    #                                             Default: '/oauth/authorize'
+    #
+    # @option options [String]  :token_url        Absolute or relative URL
+    #                                             path to the Token endpoint.
+    #                                             Default: '/oauth/token'
+    #
+    # @option options [Symbol]  :token_method     HTTP method to use to
+    #                                             request the token.
+    #                                             Default: :post
+    #
+    # @option options [Symbol]  :auth_scheme      Method to use to authorize
+    #                                             request: :basic_auth or
+    #                                             :request_body (default).
+    #
+    # @option options [Hash]    :connection_opts  Hash of connection options
+    #                                             to pass to initialize
+    #                                             Faraday.
+    #
+    # @option options [FixNum]  :max_redirects    Maximum number of redirects
+    #                                             to follow. Default: 5.
+    #
+    # @option options [Boolean] :raise_errors     If *false*, 400+ response
+    #                                             statuses do not raise
+    #                                             OAuth2::Error.
+    #
+    # This method overrides:
+    # @see OAuth2::Client#initialize
+    #
+    def initialize: (String client_id, String client_secret, ?symHash options) { (Faraday::RackBuilder) -> untyped } -> void
+
+    # The Faraday connection object.
+    #
+    # @return [Faraday::Connection]
+    #
+    # This method overrides:
+    # @see OAuth2::Client#connection
+    #
+    # == Implementation Notes
+    # This corrects the logic error of setting :logger repeatedly in #request
+    # by setting it once here.
+    #
+    def connection: () -> Faraday::Connection
+
+    # Makes a request relative to the specified site root.
+    #
+    # @param [Symbol] verb                One of :get, :post, :put, :delete.
+    # @param [String] url                 URL path of request.
+    # @param [Hash]   opts                The options to make the request with.
+    #
+    # @option opts [Hash]         :params   Added request query parameters.
+    # @option opts [Hash, String] :body     The body of the request.
+    # @option opts [Hash]         :headers  HTTP request headers.
+    # @option opts [Boolean] :raise_errors  If *true*, raise OAuth2::Error on
+    #                                         400+ response status.
+    #                                         Default: `options[:raise_errors]`
+    # @option opts [Symbol]       :parse    @see Response#initialize
+    #
+    # @raise [OAuth2::Error]              For 400+ response status.
+    #
+    # @return [OAuth2::Response]
+    #
+    # @yield [req] Gives access to the request before it is transmitted.
+    # @yieldparam [Faraday::Request] req  The Faraday request.
+    # @yieldreturn [void]                 The block accesses *req* directly.
+    #
+    # This method overrides:
+    # @see OAuth2::Client#request
+    #
+    # == Implementation Notes
+    # The original code had a problem in setting :logger here (repeatedly);
+    # this has been moved to #connection so that it happens only once.
+    #
+    # @see OmniAuth::Strategies::Bookshare#request_phase
+    #
+    def request: (Symbol verb, String url, ?symHash opts) { (Faraday::Request) -> untyped } -> OAuth2::Response
+
+    # The redirect_uri parameters dynamically assigned in
+    # OmniAuth::Strategies::Bookshare#client.
+    #
+    # @return [Hash]
+    #
+    # This method overrides:
+    # @see OAuth2::Client#redirection_params
+    #
+    def redirection_params: () -> strHash
+
+    # Revoke the token (to end the session).
+    #
+    # @param [OAuth2::AccessToken, Hash, String] token
+    # @param [Hash, nil] params       Additional query parameters.
+    # @param [Hash, nil] opts         Options.
+    #
+    # @return [OAuth2::Response]
+    # @return [nil]                   If no token was provided or found.
+    #
+    # -
+    # noinspection RubyNilAnalysis
+    # +
+    def revoke_token: (OAuth2::AccessToken|symHash|String token, ?symHash? params, ?symHash? opts) -> (OAuth2::Response | nil)
+  end
+
+  # Overrides adding extra debugging around method calls.
+  #
+  module ClientDebug
+    include OAuth2::ExtensionDebugging
+
+    # :nocov:
+    include OAuth2::ClientExt
+
+    # Instantiate a new OAuth 2.0 client using the Client ID and Client
+    # Secret registered to your application.
+    #
+    # @param [String] client_id
+    # @param [String] client_secret
+    # @param [Hash]   opts
+    # @param [Proc]   block           @see OAuth2::Client#initialize
+    #
+    # @option opts [String]  :site             The OAuth2 provider site
+    #                                             host.
+    #
+    # @option opts [String]  :redirect_uri        The absolute URI to the
+    #                                             Redirection Endpoint for
+    #                                             use in authorization grants
+    #                                             and token exchange.
+    #
+    # @option opts [String]  :authorize_url       Absolute or relative URL
+    #                                             path to the Authorization
+    #                                             endpoint.
+    #                                             Default: '/oauth/authorize'
+    #
+    # @option opts [String]  :token_url           Absolute or relative URL
+    #                                             path to the Token endpoint.
+    #                                             Default: '/oauth/token'
+    #
+    # @option opts [Symbol]  :token_method        HTTP method to use to
+    #                                             request the token.
+    #                                             Default: :post
+    #
+    # @option opts [Symbol]  :auth_scheme         Method to use to authorize
+    #                                             request: :basic_auth or
+    #                                             :request_body (default).
+    #
+    # @option opts [Hash]    :connection_opts     Hash of connection options
+    #                                             to pass to initialize
+    #                                             Faraday.
+    #
+    # @option opts [FixNum]  :max_redirects       Maximum number of redirects
+    #                                             to follow. Default: 5.
+    #
+    # @option opts [Boolean] :raise_errors        If *false*, 400+ response
+    #                                             statuses do not raise
+    #                                             OAuth2::Error.
+    #
+    # @option opts [Proc] :extract_access_token   Proc that extracts the
+    #                                             access token from the
+    #                                             response.
+    #
+    # This method overrides:
+    # @see OAuth2::Client#initialize
+    #
+    def initialize: (String client_id, String client_secret, ?symHash options) { (Faraday::RackBuilder) -> untyped } -> void
+
+    # The authorize endpoint URL of the OAuth2 provider
+    #
+    # @param [Hash] params            Additional query parameters.
+    #
+    # @return [String]
+    #
+    # This method overrides:
+    # @see OAuth2::Client#authorize_url
+    #
+    def authorize_url: (?symHash params) -> String
+
+    # The token endpoint URL of the OAuth2 provider
+    #
+    # @param [Hash] params            Additional query parameters.
+    #
+    # @return [String]
+    #
+    # This method overrides:
+    # @see OAuth2::Client#token_url
+    #
+    def token_url: (?symHash? params) -> String
+
+    # Initializes an AccessToken by making a request to the token endpoint.
+    #
+    # @param [Hash]  params                 For the token endpoint.
+    # @param [Hash]  access_token_opts      Passed to the AccessToken object.
+    # @param [Class] extract_access_token   Class of access token for easier
+    #                                         OAuth2::AccessToken subclassing
+    #
+    # @return [AccessToken]         The initialized AccessToken.
+    #
+    # This method overrides:
+    # @see OAuth2::Client#get_token
+    #
+    def get_token: (symHash params, ?symHash access_token_opts, ?Class extract_access_token) -> OAuth2::AccessToken
+
+    # The Authorization Code strategy
+    #
+    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.1
+    #
+    # This method overrides:
+    # @see OAuth2::Client#auth_code
+    #
+    def auth_code: () -> OAuth2::Strategy::AuthCode
+
+    # The Implicit strategy
+    #
+    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.2
+    #
+    # This method overrides:
+    # @see OAuth2::Client#implicit
+    #
+    def implicit: () -> OAuth2::Strategy::Implicit
+
+    # The Resource Owner Password Credentials strategy
+    #
+    # @return [OAuth2::Strategy::Password]
+    #
+    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.3
+    #
+    # This method overrides:
+    # @see OAuth2::Client#password
+    #
+    def password: () -> OAuth2::Strategy::Password
+
+    # The Client Credentials strategy
+    #
+    # @return [OAuth2::Strategy::ClientCredentials]
+    #
+    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.4
+    #
+    # This method overrides:
+    # @see OAuth2::Client#client_credentials
+    #
+    def client_credentials: () -> OAuth2::Strategy::ClientCredentials
+
+    # The Client Assertion Strategy
+    #
+    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-4.1.3
+    #
+    # This method overrides:
+    # @see OAuth2::Client#assertion
+    #
+    def assertion: () -> OAuth2::Strategy::Assertion
+
+    # Revoke the token (to end the session).
+    #
+    # @param [OAuth2::AccessToken, Hash, String] token
+    # @param [Hash, nil] params       Additional query parameters.
+    # @param [Hash, nil] opts         Options.
+    #
+    # @return [OAuth2::Response]
+    # @return [nil]                   If no token was provided or found.
+    #
+    def revoke_token: (OAuth2::AccessToken|symHash|String token, ?symHash? params, ?symHash? opts) -> (OAuth2::Response | nil)
+  end
+end

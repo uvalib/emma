@@ -57,6 +57,7 @@ class HelpController < ApplicationController
   # @see HelpHelper#help_topics
   #
   def index
+    # noinspection RubyMismatchedArgumentType
     return redirect_to help_path(id: @topic) if @topic.present?
     __debug_route
     @list = help_topics

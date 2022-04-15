@@ -1,0 +1,9 @@
+# Methods pagination of Model instance lists.
+#
+module BaseCollectionDecorator::Pagination
+  include BaseDecorator::Pagination
+
+  private
+
+  def self.included: (Module base) -> void
+end

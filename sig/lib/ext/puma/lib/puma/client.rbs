@@ -1,0 +1,40 @@
+module Puma
+  # Overrides adding extra debugging around method calls.
+  #
+  # -
+  # noinspection SpellCheckingInspection
+  # +
+  module ClientDebug
+    include Puma::ExtensionDebugging
+
+    def initialize: (untyped io, ?untyped? env) -> void
+
+    def set_timeout: (untyped val) -> untyped
+
+    def reset: (?bool fast_check) -> untyped
+
+    def close: () -> untyped
+
+    def eagerly_finish: () -> untyped
+
+    def finish: (untyped timeout) -> untyped
+
+    def timeout!: () -> untyped
+
+    def write_error: (untyped status_code) -> untyped
+
+    def setup_body: () -> untyped
+
+    def read_body: () -> untyped
+
+    def read_chunked_body: () -> untyped
+
+    def setup_chunked_body: (untyped body) -> untyped
+
+    def write_chunk: (untyped str) -> untyped
+
+    def decode_chunk: (untyped chunk) -> untyped
+
+    def set_ready: () -> untyped
+  end
+end

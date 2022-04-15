@@ -576,6 +576,9 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer,String>]
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  #++
   def flash_item(item, **opt)
     if item.is_a?(Array)
       return [] if item.blank?
@@ -600,7 +603,6 @@ module FlashHelper
     else
       opt[:max] ||= FLASH_MAX_ITEM_SIZE
       opt[:max]   = [opt[:max], flash_space_available].min
-      # noinspection RubyMismatchedArgumentType
       flash_item_render(item, **opt)
     end
   end

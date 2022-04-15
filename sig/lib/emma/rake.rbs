@@ -65,6 +65,11 @@ module Emma::Rake
   #
   def task_option: (String|Symbol flag, ?(Rake::TaskArguments|strArray)? args) -> (String | nil)
 
+  attr_reader cli_task_options: strArray
+  attr_reader start_time:       Float
+  attr_reader session:          strHash
+  attr_reader current_user:     User
+
   # Option flags on the "rake" command line after "--" will be ignored by Rake
   # but will be available in $*.
   #
@@ -99,9 +104,13 @@ module Emma::Rake
 
   # An override to provide a mock #session.
   #
+  # @return [Hash{String=>Any}]
+  #
   def session: () -> strHash
 
   # An override to provide a mock #current_user.
+  #
+  # @return [User, nil]
   #
   # @note Needs to be a user mapped to the developer role in 'users_roles'.
   #

@@ -19,6 +19,9 @@ class BsApiController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
+  attr_reader api_results: Hash[Symbol,symHash]
+  attr_reader api_result:  symHash
+
   # == GET /bs_api
   #
   # The main API test page.

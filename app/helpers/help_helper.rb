@@ -31,7 +31,7 @@ module HelpHelper
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   HELP_CONFIG = I18n.t('emma.help', default: {}).deep_freeze
 
@@ -45,6 +45,9 @@ module HelpHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   HELP_ENTRY =
     HELP_CONFIG[:topic].map { |topic, entry|
 

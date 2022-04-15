@@ -20,7 +20,7 @@ module EmmaHelper
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyMismatchedConstantType
   #++
   EMMA_PARTNER = I18n.t('emma.grant.partner').deep_freeze
 

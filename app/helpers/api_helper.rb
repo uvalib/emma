@@ -120,6 +120,7 @@ module ApiHelper
     opt[:target] ||= '_blank' unless params[:action] == 'v2'
     html.to_s.gsub(%r{&quot;https?://.+&quot;}) do |s|
       url = href = s.split('&quot;')[1].html_safe
+      # noinspection RubyMismatchedArgumentType
       if url.start_with?(BOOKSHARE_BASE_URL)
         uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
         path  = uri && File.join(bs_api_index_path, uri.path)

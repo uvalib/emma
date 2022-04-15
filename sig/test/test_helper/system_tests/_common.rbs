@@ -1,0 +1,22 @@
+# Common values for system tests.
+#
+module TestHelper::SystemTests::Common
+  # Properties which drive parameterized system tests.
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  PROPERTY: Hash[Symbol,symHash]
+
+  # assert_current_url
+  #
+  # @param [String] url
+  #
+  def assert_current_url: (String url) -> void
+
+  # Assert that the current page is valid.
+  #
+  # @param [String] title
+  # @param [String] heading
+  #
+  def assert_valid_page: (?title: String?, ?heading: String?) -> void
+end

@@ -44,6 +44,7 @@ module Workflow::Base::Simulation
     attr_reader :running
     attr_reader :restartable
 
+    # noinspection RubyMismatchedVariableType
     def initialize(
       name: nil, result: true, reps: 3, started: nil, restart: nil
     )

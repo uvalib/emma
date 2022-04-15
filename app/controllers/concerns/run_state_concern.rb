@@ -30,6 +30,9 @@ module RunStateConcern
   #
   # @type [Array<String,Hash>]
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   NO_RUN_STATE_REDIRECT =
     I18n.t('emma.health.run_state.exempt', default: []).deep_freeze
 
@@ -38,6 +41,9 @@ module RunStateConcern
   #
   # @type [Array<String>]
   #
+  #--
+  # noinspection RubyArgCount
+  #++
   RUN_STATE_EXEMPT_CONTROLLER =
     NO_RUN_STATE_REDIRECT.select { |item| item.is_a?(String) }.deep_freeze
 
@@ -124,6 +130,7 @@ module RunStateConcern
     # :section: Callbacks
     # =========================================================================
 
+    # noinspection RubyMismatchedArgumentType
     if (this_controller = controller_to_name(base)).nil?
       # === Including class is not a controller ===
 

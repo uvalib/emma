@@ -423,6 +423,8 @@ class BaseDecorator < Draper::Decorator
 
     # Get the controller/action configuration for the model.
     #
+    # @param [Symbol, nil] type
+    #
     # @return [Hash{Symbol=>Hash}]    Frozen result.
     #
     def controller_config(type = nil)
@@ -1208,6 +1210,7 @@ class BaseDecorator < Draper::Decorator
   #
   def self.set_model_type(mt)
     raise 'Nil model_type' unless mt
+    # noinspection RubyMismatchedVariableType, RubyNilAnalysis
     @model_type = mt.is_a?(Symbol) ? mt : mt.to_s.demodulize.underscore.to_sym
     ModelTypeMap.set(@model_type, self)
   end
@@ -1220,7 +1223,8 @@ class BaseDecorator < Draper::Decorator
   # @return [Class, nil]
   #
   #--
-  # noinspection RubyResolve, RubyNilAnalysis, RubyMismatchedReturnType
+  # noinspection RubyResolve
+  # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
   #++
   def self.set_object_class(obj, *other)
     meth          = "BaseDecorator.#{__method__}"

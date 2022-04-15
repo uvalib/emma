@@ -87,6 +87,10 @@ module Record::Bulk
     #
     def bulk_part_class: () -> String
   end
+
+  private
+
+  THIS_MODULE: Module
 end
 
 # Definitions to be included in a record class which can be a part of a bulk
@@ -118,6 +122,8 @@ module Record::Bulk::Part
   end
 
   private
+
+  THIS_MODULE: Module
 
   include Record::Sti::Branch
 
@@ -153,6 +159,8 @@ module Record::Bulk::Operation
 
   private
 
+  THIS_MODULE: Module
+
   include Record::Sti::Branch
 
   # :nocov:
@@ -185,4 +193,8 @@ module Record::Bulk::Root
   include Record
 
   include Record::Bulk
+
+  private
+
+  THIS_MODULE: Module
 end

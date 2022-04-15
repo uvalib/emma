@@ -1,0 +1,11 @@
+class EditionControllerTest < ActionDispatch::IntegrationTest
+  CONTROLLER: String
+
+  OPTIONS: symHash
+
+  TEST_USERS: Array[String|nil]
+
+  TEST_READERS: Array[String|nil]
+
+  TEST_WRITERS: Array[String|nil]
+end

@@ -43,7 +43,15 @@ class EntryController < ApplicationController
   #
   # @return [Entry, nil]
   #
-  attr_reader item: Entry?
+  attr_reader item: Entry | nil
+
+  attr_reader page:         Paginator
+  attr_reader group_counts: symHash
+  attr_reader host:         String
+  attr_reader link:         String | nil
+  attr_reader repo:         symArray
+  attr_reader deploy:       symArray
+  attr_reader object_table: Hash[String,Array[Aws::S3::Object]]
 
   # == GET /entry[?id=(:id|SID|RANGE_LIST)]
   # == GET /entry[?selected=(:id|SID|RANGE_LIST)]
@@ -357,9 +365,9 @@ class EntryController < ApplicationController
 
   # Response values for de-serializing download information to JSON or XML.
   #
-  # @param [String] url
+  # @param [String, nil] url
   #
-  # @return [Hash{Symbol=>String}]
+  # @return [Hash{Symbol=>String,nil}]
   #
-  def download_values: (?String url) -> { url: String }
+  def download_values: (?String? url) -> Hash[Symbol,(String|nil)]
 end

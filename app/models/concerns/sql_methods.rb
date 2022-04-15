@@ -271,7 +271,7 @@ module SqlMethods
   #
   # @param [Symbol, String]              column
   # @param [String, nil]                 name       Def: derived from *column*.
-  # @param [Array, String, Symbol]       fields     JSON fields for *column*.
+  # @param [Symbol, String, Array]       fields     JSON fields for *column*.
   # @param [Hash{Symbol=>Array<Symbol>}] field_map  If *fields* not given.
   #
   # @return [String]
@@ -279,7 +279,7 @@ module SqlMethods
   # == Implementation Notes
   # * Documentation indicates that '$[*]' should work but only '$' seems to.
   #
-  def sql_json_table(column, fields: nil, name: nil, field_map: nil)
+  def sql_json_table(column, name: nil, fields: nil, field_map: nil)
     alias_name   = name   || "#{column}_columns"
     json_fields  = fields || field_map&.dig(column)
     json_columns =

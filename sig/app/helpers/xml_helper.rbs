@@ -73,5 +73,5 @@ module XmlHelper
 
   private
 
-  def self.included: (untyped base) -> untyped
+  def self.included: (Module base) -> void
 end

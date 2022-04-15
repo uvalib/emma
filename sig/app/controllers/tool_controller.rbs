@@ -1,0 +1,51 @@
+# Handle "/tool" pages.
+#
+# @see file:app/views/tool/**
+#
+class ToolController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include SerializationConcern
+
+  include ToolConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  # == GET /tool
+  #
+  # Index of tool pages.
+  #
+  # @see #tool_index_path             Route helper
+  #
+  def index: () -> void
+
+  # == GET /tool/md
+  #
+  # A simple Math Detective API test page for selecting a single file.
+  #
+  # @see #md_trial_path               Route helper
+  #
+  def md: () -> void
+
+  # == GET  /tool/md_proxy
+  # == POST /tool/md_proxy
+  #
+  # Proxy the Math Detective API request to avoid CORS.
+  #
+  # @see #md_proxy_path               Route helper
+  #
+  def md_proxy: () -> void
+
+  # == GET /tool/lookup
+  #
+  # Lookup bibliographic information.
+  #
+  def lookup: () -> void
+end

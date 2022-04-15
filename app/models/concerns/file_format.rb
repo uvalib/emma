@@ -115,7 +115,7 @@ module FileFormat
   # @return [FileParser]
   #
   def parser
-    not_implemented 'to be overridden by the subclass'
+    @parser ||= not_implemented 'to be overridden by the subclass'
   end
 
   # parser_metadata
@@ -440,6 +440,7 @@ module FileFormat
     def configuration_section(section)
       section = section.to_s
       section = "emma.#{section}" unless section.start_with?('emma.')
+      # noinspection RubyMismatchedReturnType
       I18n.t(section).deep_dup.tap do |hash|
         %i[mimes exts].each do |key|
           hash[key] ||= []

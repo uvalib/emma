@@ -1,0 +1,3 @@
+class AddReviewerToUploads < ActiveRecord::Migration
+  def change: () -> untyped
+end

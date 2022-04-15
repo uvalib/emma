@@ -1,0 +1,5 @@
+module Representable
+  module CollectExt
+    def call: (untyped input, untyped options) -> untyped
+  end
+end

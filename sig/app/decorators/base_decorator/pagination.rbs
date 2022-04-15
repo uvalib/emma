@@ -1,0 +1,248 @@
+# Methods pagination of Model instance lists.
+#
+module BaseDecorator::Pagination
+  include BaseDecorator::Links
+
+  # Configuration for pagination control properties.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  PAGINATION_CONFIG: symHash
+
+  # Separator between pagination controls.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PAGINATION_SEPARATOR: ActiveSupport::SafeBuffer
+
+  # Nominal default page size.
+  #
+  # @type [Integer]
+  #
+  DEFAULT_PAGE_SIZE: Integer
+
+  # Properties for the "start over" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # == Usage Notes
+  # To link to the base search without any search terms (a.k.a. "null search").
+  #
+  START_OVER: Hash[Symbol,String]
+
+  # Properties for the "first page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  FIRST_PAGE: Hash[Symbol,String]
+
+  # Properties for the "last page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  LAST_PAGE: Hash[Symbol,String]
+
+  # Properties for the "previous page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  PREV_PAGE: Hash[Symbol,String]
+
+  # Properties for the "next page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  NEXT_PAGE: Hash[Symbol,String]
+
+  # Page number display element.
+  #
+  # @param [Integer]   page
+  # @param [Hash, nil] opt            Options to .page-count wrapper element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *count* is negative.
+  #
+  def page_number: (Integer page, ?symHash? opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Page count display element.
+  #
+  # @param [Integer, nil] count
+  # @param [Integer, nil] total
+  # @param [String]       unit
+  # @param [Hash]         opt         Options to .search-count wrapper element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # -
+  # noinspection RubyMismatchedParameterType
+  # +
+  def pagination_count: (Integer? count, ?Integer? total, ?unit: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Placeholder for an item that would have been a link if it had a path.
+  #
+  # @param [String, Hash, nil] fp     Passed to #pagination_first.
+  # @param [String, Hash, nil] pp     Passed to #pagination_prev.
+  # @param [String, Hash, nil] np     Passed to #pagination_next.
+  # @param [String, nil]       sep    Passed to #pagination_separator.
+  # @param [Hash]              opt    For .pagination-controls container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_controls: (?fp: (String|symHash)?, ?pp: (String|symHash)?, ?np: (String|symHash)?, ?sep: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Page number label for the model type.
+  #
+  # @param [Hash] opt               Passed to #config_lookup
+  #
+  # @return [String]                The specified value.
+  # @return [nil]                   No non-empty value was found.
+  #
+  def get_page_number_label: (**untyped opt) -> (String | nil)
+
+  # Page count label for the model type.
+  #
+  # @param [Hash] opt               Passed to #config_lookup
+  #
+  # @option opt [Integer] :count
+  #
+  # @return [String]                The specified value.
+  # @return [nil]                   No non-empty value was found.
+  #
+  def get_page_count_label: (**untyped opt) -> (String | nil)
+
+  # pagination_separator
+  #
+  # @param [String, nil] content      Default: `#PAGINATION_SEPARATOR`.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_separator: (?String? content, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  attr_reader paginator: Paginator
+
+  # paginator
+  #
+  # @return [Paginator]
+  #
+  def paginator: () -> Paginator
+
+  # pagination_first
+  #
+  # @param [String, Hash, nil] path   Default: `#paginator.first_page`.
+  # @param [Hash]              opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_control
+  #
+  def pagination_first: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_prev
+  #
+  # @param [String, Hash, nil] path   Default: `#paginator.prev_page`.
+  # @param [Hash]              opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_control
+  #
+  def pagination_prev: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_next
+  #
+  # @param [String, Hash, nil] path   Default: `#paginator.next_page`.
+  # @param [Hash]              opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_control
+  #
+  def pagination_next: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_last
+  #
+  # @param [String, Hash, nil] path   Default: `#paginator.last_page`.
+  # @param [Hash]              opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_control
+  #
+  # @note Currently unused.
+  #
+  def pagination_last: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A pagination control link or a non-actionable placeholder if *path* is not
+  # valid.
+  #
+  # @param [String, Hash]      label
+  # @param [String, Hash, nil] path
+  # @param [Hash]              opt    Passed to #link_to or "span" except for:
+  #
+  # @option [String] :prefix
+  # @option [String] :suffix
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_control: (String|symHash label, String|symHash|nil path, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_first_icon
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_icon
+  #
+  def pagination_first_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_prev_icon
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_icon
+  # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
+  #
+  def pagination_prev_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_next_icon
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_icon
+  # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
+  #
+  def pagination_next_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # pagination_last_icon
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #pagination_icon
+  # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
+  #
+  def pagination_last_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A decorative visual representation of a control action.
+  #
+  # @param [String, nil] content
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_icon: (?String? content, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

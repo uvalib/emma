@@ -6,26 +6,27 @@
 #
 class ReadingListDecorator < BookshareDecorator
   module Paths
+    include BookshareDecorator::Paths
   end
 
   module Methods
-    # Control whether thumbnails are shown for reading list entries.
-    #
-    # @type [Boolean]
-    #
-    FIND_THUMBNAIL: bool
+    include BookshareDecorator::Methods
+  end
 
-    # Attempt to fetch the thumbnail image associated with the item.
-    #
-    # @param [Bs::Api::Record] item
-    #
-    # @return [String, nil]
-    #
-    def find_thumbnail: (?Bs::Api::Record? item) -> (String | nil)
+  module InstanceMethods
+    include BookshareDecorator::InstanceMethods
+    include Paths
+    include Methods
+  end
+
+  module ClassMethods
+    include BookshareDecorator::ClassMethods
+    include Paths
+    include Methods
   end
 
   module Common
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Common
@@ -35,6 +36,8 @@ class ReadingListDecorator < BookshareDecorator
   # @return [Bs::Message::ReadingListTitlesList, nil]
   #
   def titles_data: () -> (Bs::Message::ReadingListTitlesList | nil)
+
+  attr_reader titles: Array[Bs::Record::ReadingListTitle]
 
   # titles
   #
@@ -83,6 +86,10 @@ class ReadingListDecorator < BookshareDecorator
   #
   def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  def details_element: (?level: Integer|nil, ?role: String|Symbol|nil, **untyped opt) { () -> untyped } -> ActiveSupport::SafeBuffer
+
+  def title_list: (**untyped opt) -> ActiveSupport::SafeBuffer
+
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
@@ -91,6 +98,8 @@ class ReadingListDecorator < BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  FIND_THUMBNAIL: bool
 
   # get_thumbnail_image
   #
@@ -107,7 +116,13 @@ class ReadingListDecorator < BookshareDecorator
 
   # Attempt to fetch the thumbnail image associated with the item.
   #
+  # @param [Bs::Api::Record] item
+  #
   # @return [String, nil]
   #
-  def find_thumbnail: (*untyped) ?{ () -> untyped } -> (String | nil)
+  def find_thumbnail: (?Bs::Api::Record? item) -> (String | nil)
+
+  def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  def form_target_description: (?action: Symbol|nil) -> String
 end

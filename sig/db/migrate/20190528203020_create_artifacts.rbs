@@ -1,0 +1,3 @@
+class CreateArtifacts < ActiveRecord::Migration
+  def change: () -> untyped
+end

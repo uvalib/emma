@@ -1,0 +1,15 @@
+# Support for sign-in.
+#
+module TestHelper::SystemTests::Authentication
+  include TestHelper::Utility
+
+  include TestHelper::SystemTests::Common
+
+  # Sign in as one of the pre-configured users.
+  #
+  # @param [String, Symbol, User] user
+  #
+  # @return [void]
+  #
+  def sign_in_as: (String|Symbol|User user) -> void
+end

@@ -1,0 +1,5 @@
+module Draper
+  class HelperProxy
+    ROUTE_SET: ActionDispatch::Routing::RouteSet
+  end
+end

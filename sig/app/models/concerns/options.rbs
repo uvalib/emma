@@ -42,6 +42,10 @@ class Options
   #
   attr_reader model: Symbol
 
+  attr_reader params:       symHash
+  attr_reader value:        symHash
+  attr_reader model_params: symHash
+
   # Create a new options object.
   #
   # @param [Symbol, any] model
@@ -156,5 +160,5 @@ class Options
   #
   def extract_model_data!: (symHash prm, **untyped opt) -> (symHash | nil)
 
-  def inspect: () -> untyped
+  def inspect: () -> String
 end

@@ -1,7 +1,9 @@
-class RunState < Hash
+class RunState < Hash[untyped, untyped]
   include Emma::Common
 
   include Emma::Json
+
+  CLASS: Class
 
   # If *true*, then PUT "/health/run_state" will clear the RunState initially
   # set at system startup. This allows a system which starts unavailable to be
@@ -182,6 +184,8 @@ class RunState < Hash
   # noinspection RubyMismatchedReturnType
   # +
   def timestamp_or_duration: (untyped v) -> (Time | Integer | nil)
+
+  attr_reader self.current: RunState | nil
 
   # The current run state.
   #

@@ -28,7 +28,7 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [Any]  list
+  # @param [*]    list
   # @param [Hash] opt
   #
   # @option opt [Symbol, String] :wrap
@@ -53,5 +53,5 @@ module SerializationConcern
 
   private
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

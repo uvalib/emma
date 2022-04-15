@@ -125,6 +125,8 @@ module SearchConcern
   #
   def validate_identifiers: (String|strArray value) -> { valid: bool, ids: strArray, errors: strArray }
 
+  attr_reader record_id: String | nil
+
   # Extract the URL parameter which specifies an index record.
   #
   # @return [String]                  Value of `params[:id]`.
@@ -207,5 +209,5 @@ module SearchConcern
   #
   def set_search_feature: (Symbol param_key, untyped value, Symbol|symArray valid_values, ?session_key: String?, ?meth: Symbol) -> void
 
-  #THIS_MODULE: untyped
+  THIS_MODULE: Module
 end

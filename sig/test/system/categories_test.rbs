@@ -1,0 +1,2 @@
+class CategoriesTest < ApplicationSystemTestCase
+end

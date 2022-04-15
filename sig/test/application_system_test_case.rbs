@@ -1,0 +1,9 @@
+class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  BROWSER_CHOICES: symArray
+
+  BROWSER: Symbol
+
+  DRIVER_OPT: symHash
+
+  include TestHelper::SystemTests
+end

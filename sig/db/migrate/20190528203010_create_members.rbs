@@ -1,0 +1,3 @@
+class CreateMembers < ActiveRecord::Migration
+  def change: () -> untyped
+end
