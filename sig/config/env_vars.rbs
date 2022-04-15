@@ -241,6 +241,10 @@ DEBUG_IMPORT: bool
 #
 DEBUG_IO: bool
 
+# When *true* ActiveJob debugging callbacks are invoked.
+#
+# @type [Boolean]
+#
 DEBUG_JOB: bool
 
 # Set to show registration of unique MIME types during startup.
@@ -261,6 +265,17 @@ DEBUG_OAUTH: bool
 #
 DEBUG_PUMA: bool
 
+# Set internal debugging of Representable pipeline actions.
+#
+# - *false* for normal operation
+# - *true*  for full debugging
+# - :input  for debugging parsing/de-serialization.
+# - :output for debugging rendering/serialization.
+#
+# @type [Boolean, Symbol]
+#
+DEBUG_REPRESENTABLE: bool | Symbol
+
 # When *true* invocation of each low-level IO operation triggers a log entry.
 #
 # @type [Boolean]
@@ -279,6 +294,16 @@ DEBUG_SPROCKETS: bool
 #
 DEBUG_TRANSMISSION: bool
 
+# Indicate whether debugging of view files is active.
+#
+# @type [Boolean]
+#
+DEBUG_VIEW: bool
+
+# Debug workflow steps.
+#
+# @type [Boolean]
+#
 DEBUG_WORKFLOW: bool
 
 DEBUG_RECORD: bool
@@ -288,3 +313,9 @@ DEBUG_RECORD: bool
 # @type [Boolean]
 #
 DEBUG_XML_PARSE: bool
+
+# When *true* debug loading at startup.
+#
+# @type [Boolean]
+#
+DEBUG_ZEITWERK: bool

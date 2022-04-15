@@ -23,25 +23,6 @@ require 'representable/json'
 require 'representable/xml'
 require 'representable/coercion'
 
-# Set internal debugging of Representable pipeline actions.
-#
-# - *false* for normal operation
-# - *true*  for full debugging
-# - :input  for debugging parsing/de-serialization.
-# - :output for debugging rendering/serialization.
-#
-# @type [Boolean, Symbol]
-#
-DEBUG_REPRESENTABLE =
-  ENV.fetch('DEBUG_REPRESENTABLE', false).then do |v|
-    case (v.is_a?(String) ? (v = v.strip.downcase) : v)
-      when *TRUE_VALUES  then true
-      when *FALSE_VALUES then false
-      when String        then v.sub(/^:/, '').to_sym
-      else                    v
-    end
-  end
-
 module Representable
 
   # Overrides adding extra debugging around method calls.

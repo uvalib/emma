@@ -1,14 +1,3 @@
-# Set internal debugging of Representable pipeline actions.
-#
-# - *false* for normal operation
-# - *true*  for full debugging
-# - :input  for debugging parsing/de-serialization.
-# - :output for debugging rendering/serialization.
-#
-# @type [Boolean, Symbol]
-#
-DEBUG_REPRESENTABLE: bool | Symbol
-
 module Representable
   # Overrides adding extra debugging around method calls.
   #

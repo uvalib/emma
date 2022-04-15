@@ -18,7 +18,7 @@ module ViewDebugHelper
   # Indicate whether debugging of view files is active.
   #
   def view_debug?
-    true?(ENV['DEBUG_VIEW'])
+    DEBUG_VIEW
   end
 
   # Output to STDERR.

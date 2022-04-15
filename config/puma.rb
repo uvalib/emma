@@ -66,7 +66,7 @@ if true?(ENV['PUMA_LOG_REQUESTS'])
   log_requests
 end
 
-if true?(ENV['DEBUG_PUMA'])
+if DEBUG_PUMA
   debug
   before_fork        { puts 'PUMA before_fork: starting workers' }
   on_worker_boot     { puts 'PUMA on_worker_boot' }

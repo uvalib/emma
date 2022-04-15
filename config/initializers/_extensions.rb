@@ -7,7 +7,7 @@
 # initialization.
 
 # == Loader debugging
-Rails.autoloaders.main.log! if true?(ENV['DEBUG_ZEITWERK'])
+Rails.autoloaders.main.log! if DEBUG_ZEITWERK
 
 # == JSON optimization
 require 'oj'

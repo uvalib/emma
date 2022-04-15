@@ -440,13 +440,11 @@ module Field
     # noinspection RubyMismatchedVariableType
     #++
     def initialize(src, field = nil, model = nil, value = nil)
-      Log.error "............ Field::Type | src #{src.class} | field = #{field.inspect} | model = #{model.inspect} | value = #{value.inspect}"
       @base  = src
       @field = @range = nil
       if field.is_a?(Symbol)
         @field = field
         @base  = Field.configuration_for(@field, model)[:type]
-        Log.error "............ Field::Type | #{model.inspect} | #{field.inspect} | type = #{@base.inspect}"
         @range ||=                                                              # TODO: remove after upload -> entry
           if src.respond_to?(:active_emma_metadata)
             src.active_emma_metadata[@field]

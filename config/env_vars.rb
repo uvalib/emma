@@ -70,11 +70,11 @@ if db_needed
 
     databases = %w(postgres mysql)
     database = type = nil
-    case (v = ENV['DATABASE']&.downcase)
+    case (d = ENV['DATABASE']&.downcase)
       when /^post/  then database, type = %w(postgres postgres)
       when /^mysql/ then database, type = %w(mysql standard)
       when nil      then raise 'missing ENV[DATABASE]' if host_port_missing
-      else               raise "#{v.inspect} not in #{databases.inspect}"
+      else               raise "#{d.inspect} not in #{databases.inspect}"
     end
     database, type = %w(postgres postgres) unless database
 
@@ -91,12 +91,12 @@ if db_needed
 
     unless ENV['DBHOST']
       deployments = %w(production staging local)
-      case (v = ENV['DEPLOYMENT']&.downcase)
+      case (d = ENV['DEPLOYMENT']&.downcase)
         when /^prod/  then deployment = 'production'
         when /^stag/  then deployment = 'staging'
         when /^local/ then deployment = 'local'
         when nil      then raise 'missing ENV[DEPLOYMENT]'
-        else               raise "#{v.inspect} not in #{deployments.inspect}"
+        else               raise "#{d.inspect} not in #{deployments.inspect}"
       end
       ENV['DBHOST'] ||= 'localhost' if deployment == 'local'
       ENV['DBHOST'] ||= "rds-#{type}-#{deployment}.internal.lib.virginia.edu"
@@ -446,6 +446,25 @@ DEBUG_OAUTH =
 #
 DEBUG_PUMA = true?(ENV['DEBUG_PUMA'])
 
+# Set internal debugging of Representable pipeline actions.
+#
+# - *false* for normal operation
+# - *true*  for full debugging
+# - :input  for debugging parsing/de-serialization.
+# - :output for debugging rendering/serialization.
+#
+# @type [Boolean, Symbol]
+#
+DEBUG_REPRESENTABLE =
+  ENV.fetch('DEBUG_REPRESENTABLE', false).then do |v|
+    case (v.is_a?(String) ? (v = v.strip.downcase) : v)
+      when *TRUE_VALUES  then true
+      when *FALSE_VALUES then false
+      when String        then v.sub(/^:/, '').to_sym
+      else                    v
+    end
+  end
+
 # When *true* invocation of each low-level IO operation triggers a log entry.
 #
 # @type [Boolean]
@@ -463,6 +482,12 @@ DEBUG_SPROCKETS = true?(ENV['DEBUG_SPROCKETS'])
 # @type [Boolean]
 #
 DEBUG_TRANSMISSION = true?(ENV['DEBUG_TRANSMISSION'])
+
+# Indicate whether debugging of view files is active.
+#
+# @type [Boolean]
+#
+DEBUG_VIEW = true?(ENV['DEBUG_VIEW'])
 
 # Debug workflow steps.
 #
@@ -482,3 +507,9 @@ DEBUG_RECORD = true?(ENV['DEBUG_RECORD'] || ENV['DEBUG_WORKFLOW'] || true) # TOD
 # @type [Boolean]
 #
 DEBUG_XML_PARSE = true?(ENV['DEBUG_XML_PARSE'])
+
+# When *true* debug loading at startup.
+#
+# @type [Boolean]
+#
+DEBUG_ZEITWERK = true?(ENV['DEBUG_ZEITWERK'])
