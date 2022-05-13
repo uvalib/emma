@@ -90,21 +90,13 @@ module Api::Shared::CreatorMethods
   # All contributor(s) to this catalog title, stripping terminal punctuation
   # from each name where appropriate.
   #
+  # @param [Symbol] field
+  # @param [Hash]   opt               Passed to #get_values.
+  #
   # @return [Array<String>]
   #
-  def contributor_list(**)
-    get_values(:dc_creator).uniq.map do |v|
-      parts = v.split(/[[:space:]]+/)
-      parts.shift if parts.first.blank?
-      parts.pop   if parts.last.blank?
-      parts <<
-        case (last = parts.pop)
-          when /^[^.]\.$/ then last       # Assumed to be an initial
-          when /^[A-Z]$/  then last + '.' # An initial missing a period.
-          else                 last.sub(/[.,;]+$/, '')
-        end
-      parts.join(' ')
-    end
+  def contributor_list(field: :dc_creator, **opt)
+    get_values(field, **opt).map { |v| clean_name(v) }.uniq
   end
 
 end

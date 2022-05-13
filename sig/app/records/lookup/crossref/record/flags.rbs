@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::Flags
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-Flags
+#
+class Lookup::Crossref::Record::Flags < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

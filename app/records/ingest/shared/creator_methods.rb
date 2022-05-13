@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module Ingest::Shared::CreatorMethods
   include Api::Shared::CreatorMethods
+  include Ingest::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

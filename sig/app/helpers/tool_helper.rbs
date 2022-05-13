@@ -1,0 +1,38 @@
+# View helper methods supporting standalone "tools".
+#
+module ToolHelper
+  # The table of standalone tool labels and paths.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  TOOL_ITEMS: Hash[Symbol,symHash]
+
+  # Standalone tool list entry.
+  #
+  # @param [Hash] opt                 Passed to outer :ul tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/search.js
+  #
+  def tool_list: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Standalone tool list entry.
+  #
+  # @param [Symbol] action
+  # @param [Hash]   config
+  # @param [Hash]   opt               Passed to #link_to.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/search.js
+  #
+  def tool_list_item: (Symbol action, symHash config, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

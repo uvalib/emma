@@ -11,13 +11,7 @@ __loading_begin(__FILE__)
 #--
 # === Submission Fields
 #++
-# @attr [String]                        submission_id
-#--
-# === Fields not yet supported by the Unified Index
-#++
-# @attr [String]                        bib_series
-# @attr [SeriesType]                    bib_seriesType
-# @attr [String]                        bib_seriesPosition
+# @attr [String] submission_id
 #
 # @see file:config/locales/records/upload.en.yml          *en.emma.upload.record.emma_data*
 # @see file:config/locales/records/search.en.yml          *en.emma.search.record*
@@ -42,10 +36,6 @@ class AwsS3::Record::SubmissionRequest < AwsS3::Api::Record
     attribute :submission_id
 
     all_from Search::Record::MetadataRecord
-
-    has_one   :bib_series
-    has_one   :bib_seriesType,                    SeriesType
-    has_one   :bib_seriesPosition
 
   end
 

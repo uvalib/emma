@@ -1,0 +1,45 @@
+# Get results from the Crossref API.
+#
+# @see https://api.crossref.org/
+# @see https://www.crossref.org/documentation/retrieve-metadata/rest-api/
+#
+class LookupService::Crossref < LookupService::RemoteService
+  # :nocov:
+  include Lookup::Crossref::Api::Schema
+
+  extend Lookup::Crossref::Api::Schema
+
+  BASE_URL: String
+
+  API_KEY: String | nil
+
+  TYPES: symArray
+
+  PRIORITY: Integer
+
+  TIMEOUT: Numeric
+
+  # Fetch results from Crossref.
+  #
+  # @param [LookupService::Request] req  Def.: `@request`.
+  #
+  # @return [Lookup::Crossref::Message::WorkResults]
+  # @return [Lookup::Crossref::Message::Work]
+  # @return [Lookup::Crossref::Message::Error]
+  #
+  def fetch: (?lookupArg req) -> (Lookup::Crossref::Message::WorkResults | Lookup::Crossref::Message::Work | Lookup::Crossref::Message::Error)
+
+  # Transform response message data into a normalized data object.
+  #
+  # @param [Lookup::Crossref::Api::Message, LookupService::Data, Hash, nil] msg
+  # @param [Boolean] extended         If *true*, include :diagnostic.
+  #
+  # @return [LookupService::Data]
+  # @return [nil]                     If *msg* is *nil*.
+  #
+  def transform: (Lookup::Crossref::Api::Message|LookupService::Data|symHash msg, ?extended: bool) -> LookupService::Data
+               | (nil                                                        msg, ?extended: bool) -> nil
+
+  def transform_multiple: (Array[Lookup::Crossref::Record::Work] recs) -> lookupDataValues
+  def transform_single:   (Lookup::Crossref::Record::Work rec)         -> (symHash | nil)
+end

@@ -2,6 +2,7 @@
 #
 module Search::Shared::TitleMethods
   include Api::Shared::TitleMethods
+  include Search::Shared::IdentifierMethods
 
   extend ::Search::Shared::TitleMethods
 

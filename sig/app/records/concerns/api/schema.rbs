@@ -151,6 +151,12 @@ module Api::Schema
   #
   def scalar_types: () -> symArray
 
+  # default_serializer_type
+  #
+  # @return [Symbol]
+  #
+  def default_serializer_type: () -> Symbol
+
   # Determine the format of the data.
   #
   # @param [String, Hash] data

@@ -142,11 +142,13 @@ class Api::Record
   #
   def default_data: () -> symHash
 
+  attr_reader field_definitions: Hash[Symbol, symHash]
+
   # The field definitions in the schema for this record.
   #
-  # @return [Array<Hash>]
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
   #
-  def field_definitions: () -> Array[symHash]
+  def field_definitions: () -> Hash[Symbol, symHash]
 
   # The fields and values for this instance as a Hash.
   #
@@ -161,6 +163,23 @@ class Api::Record
   # @return [self]
   #
   def update: (symHash hash) -> self
+
+  # Recursively generate a Hash of fields and values.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def field_hierarchy: () -> symHash
+
+  # Recursively generate hierarchical values.
+  #
+  # @param [Array, Any] value
+  #
+  # @return [Array, Any]
+  #
+  def make_hierarchy: (anyHash     value) -> anyHash
+                    | (anyArray    value) -> anyArray
+                    | (Api::Record value) -> symHash
+                    | (untyped     value) -> untyped
 
   # The fields defined in the schema for this record.
   #

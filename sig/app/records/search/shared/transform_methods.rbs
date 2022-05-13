@@ -2,4 +2,5 @@
 #
 module Search::Shared::TransformMethods
   include Api::Shared::TransformMethods
+  include Search::Shared::IdentifierMethods
 end

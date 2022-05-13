@@ -17,10 +17,14 @@ module Representable
 
     SEPARATOR: String
 
+    LITERAL: strArray
+
     # __debug_show
     #
     # @param [Symbol, Any, nil] mode
     # @param [Array]            args
+    # @param [String]           leader      Included after #LEADER.
+    # @param [String]           separator   Default: #SEPARATOR.
     # @param [Hash]             opt
     #
     # @return [nil]
@@ -35,10 +39,14 @@ module Representable
     # @overload __debug_show(mode, *args, **opt)
     #   @param [Symbol, nil] mode        Either :input, :output or *nil*
     #   @param [Array]       args
+    #   @param [String]      leader
+    #   @param [String]      separator
     #   @param [Hash]        opt
     #
     # @overload __debug_show(*args, **opt)
     #   @param [Array]       args
+    #   @param [String]      leader
+    #   @param [String]      separator
     #   @param [Hash]        opt
     #
     # @see #__output_impl
@@ -46,8 +54,8 @@ module Representable
     # -
     # noinspection RubyMismatchedArgumentType
     # +
-    def __debug_show: ((:input|:output|nil) mode, *untyped args, **untyped opt) { () -> untyped } -> nil
-                    | (                           *untyped args, **untyped opt) { () -> untyped } -> nil
+    def __debug_show: ((:input|:output|nil) mode, *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) { () -> untyped } -> nil
+                    | (                           *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) { () -> untyped } -> nil
 
     # Override one or more lambdas in order to "inject" a debug statement
     # before invoking the original definition.

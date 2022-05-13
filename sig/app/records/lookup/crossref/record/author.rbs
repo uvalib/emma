@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::Author
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-Author
+#
+class Lookup::Crossref::Record::Author < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

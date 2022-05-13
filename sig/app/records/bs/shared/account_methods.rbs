@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to user identities.
 #
 module Bs::Shared::AccountMethods
+  include Bs::Shared::CommonMethods
   # :nocov:
   #include Model
 

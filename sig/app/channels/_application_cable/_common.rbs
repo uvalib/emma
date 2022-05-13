@@ -1,0 +1,61 @@
+# Common logic for all channels.
+#
+module ApplicationCable::Common
+  include Emma::Debug
+
+  extend ::ApplicationCable::Common
+
+  # @see https://www.postgresql.org/docs/11/sql-notify.html
+  MAX_PAYLOAD_SIZE: Integer
+
+  # Determine the serialized size of the given item.
+  #
+  # @param [*] payload
+  #
+  # @return [Integer]
+  #
+  def payload_size: (untyped payload) -> Integer
+
+  # If the payload would cause a PG::InvalidValueException return its size.
+  #
+  # @param [*] payload
+  #
+  # @return [Integer]                 The size that would result in failure.
+  # @return [nil]                     The payload is not too large.
+  #
+  def invalid_payload_size: (untyped payload) -> (Integer | nil)
+
+  # Normalize received stream data.
+  #
+  # @param [*]           payload
+  # @param [Symbol, nil] meth         Calling method (for diagnostics).
+  # @param [Hash]        opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def normalize_inbound: (untyped payload, ?meth: Symbol|nil, **untyped opt) -> symHash
+
+  # Normalize stream payload data.
+  #
+  # @param [*]           payload
+  # @param [Symbol, nil] meth         Calling method (for diagnostics).
+  # @param [Hash]        opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def normalize_outbound: (untyped payload, ?meth: Symbol|nil, **untyped opt) -> symHash
+
+  # Send debugging output to the console.
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  #
+  # @return [void]
+  #
+  def __debug_cable: (?Array[untyped|nil] args, **untyped opt) { () -> untyped } -> untyped
+                   | (*(untyped|nil)      args, **untyped opt) { () -> untyped } -> untyped
+
+  private
+
+  def self.included: (Module base) -> void
+end

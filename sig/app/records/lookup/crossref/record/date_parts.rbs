@@ -1,0 +1,11 @@
+# Metadata record schema for an item lookup.
+#
+# @attr [Array<DateTriple>] date_parts
+# @attr [DateTime]          date_time
+# @attr [Integer]           timestamp
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-DateParts
+#
+class Lookup::Crossref::Record::DateParts < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::DateMethods
+end

@@ -1,0 +1,28 @@
+class LookupChannel::Response < ApplicationCable::Response
+  TEMPLATE: symHash
+
+  def initialize: (?untyped? values, **untyped opt) -> void
+
+  def self.template: () -> symHash
+end
+
+class LookupChannel::StartResponse < LookupChannel::Response
+  DEFAULT_STATUS: String
+
+  # Create a new instance.
+  #
+  # @param [*]    values
+  # @param [Hash] opt
+  #
+  def initialize: (?untyped? values, **untyped opt) -> void
+
+  def normalize: (untyped value) -> symHash
+
+  def self.default_status: () -> String
+end
+
+class LookupChannel::LookupResponse < LookupChannel::Response
+  TEMPLATE: symHash
+
+  def self.template: () -> symHash
+end

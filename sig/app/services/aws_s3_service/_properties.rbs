@@ -7,7 +7,7 @@ module AwsS3Service::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  AWS_S3_CONFIG: symHash
+  #CONFIGURATION: symHash
 
   # There are two S3 buckets for each member repository used to queue
   # submissions and two S3 buckets for EMMA which include storage used by
@@ -46,25 +46,25 @@ module AwsS3Service::Properties
   #
   # @return [String]
   #
-  def base_url: () -> String
+  #def base_url: () -> String
 
   # The URL for the API connection as a URI.
   #
   # @return [URI::Generic]
   #
-  def base_uri: () -> URI::Generic
+  #def base_uri: () -> URI::Generic
 
   # Federated AwsS3 API key.
   #
   # @return [nil]
   #
-  def api_key: () -> nil
+  #def api_key: () -> nil
 
   # API version is not a part of request URLs.
   #
   # @return [nil]
   #
-  def api_version: () -> nil
+  #def api_version: () -> nil
 
   private
 

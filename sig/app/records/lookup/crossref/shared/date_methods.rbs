@@ -1,0 +1,40 @@
+# Methods mixed in to record elements related to dates.
+#
+module Lookup::Crossref::Shared::DateMethods
+  include Lookup::RemoteService::Shared::DateMethods
+  include Lookup::Crossref::Shared::CommonMethods
+
+  def as_string:   () -> (String   | nil)
+  def to_date:     () -> (Date     | nil)
+  def to_datetime: () -> (DateTime | nil)
+
+  def get_date_value: (Api::Record target, **untyped opt) -> (String | Array[Integer] | nil)
+
+  class DatePart < Array[Integer]
+    # @return [Integer]
+    def year: () -> Integer
+
+    # @return [Integer]
+    def month: () -> Integer
+
+    # @return [Integer]
+    def day: () -> Integer
+
+    # @return [String]
+    def as_string: () -> String
+
+    # @return [Date]
+    def to_date: () -> Date
+
+    # @return [DateTime]
+    def to_datetime: () -> DateTime
+  end
+
+  class YearTotal < Array[Integer]
+    # @return [Integer]
+    def year: () -> Integer
+
+    # @return [Integer]
+    def total: () -> Integer
+  end
+end

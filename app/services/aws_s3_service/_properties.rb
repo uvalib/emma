@@ -17,12 +17,6 @@ module AwsS3Service::Properties
 
   public
 
-  # Configuration values from config/locales/service.en.yml
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  AWS_S3_CONFIG = i18n_erb('emma.service.aws_s3').deep_freeze
-
   # There are two S3 buckets for each member repository used to queue
   # submissions and two S3 buckets for EMMA which include storage used by
   # Shrine.
@@ -71,44 +65,6 @@ module AwsS3Service::Properties
     .reverse_merge(Rails.application.credentials.s3 || {})
     .except(:bucket)
     .deep_freeze
-
-  # ===========================================================================
-  # :section: ApiService::Properties overrides
-  # ===========================================================================
-
-  public
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  def base_url
-    not_implemented 'unused for Aws::S3'
-  end
-
-  # The URL for the API connection as a URI.
-  #
-  # @return [URI::Generic]
-  #
-  def base_uri
-    not_implemented 'unused for Aws::S3'
-  end
-
-  # Federated AwsS3 API key.
-  #
-  # @return [nil]
-  #
-  def api_key
-    not_implemented 'unused for Aws::S3'
-  end
-
-  # API version is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  def api_version
-    not_implemented 'unused for Aws::S3'
-  end
 
   # ===========================================================================
   # :section:

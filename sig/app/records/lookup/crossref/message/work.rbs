@@ -1,0 +1,16 @@
+# Message schema for an item lookup.
+#
+# @attr [String] status               %w(ok)
+# @attr [String] message_type         %w(work)
+# @attr [String] message_version
+# @attr [Work]   message
+#
+class Lookup::Crossref::Message::Work < Lookup::Crossref::Api::Message
+  include Lookup::Crossref::Shared::CreatorMethods
+  include Lookup::Crossref::Shared::DateMethods
+  include Lookup::Crossref::Shared::IdentifierMethods
+  include Lookup::Crossref::Shared::TitleMethods
+  include Lookup::Crossref::Shared::ResponseMethods
+
+  def api_records: () -> Array[Lookup::Crossref::Record::Work]
+end

@@ -1,0 +1,7 @@
+# Methods mixed in to message elements supporting error reporting.
+#
+module Lookup::WorldCat::Shared::ResponseMethods
+  include Lookup::RemoteService::Shared::ResponseMethods
+
+  include Lookup::WorldCat::Shared::CommonMethods
+end

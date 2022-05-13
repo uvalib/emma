@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module Search::Shared::DateMethods
   include Api::Shared::DateMethods
+  include Search::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

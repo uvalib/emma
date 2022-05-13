@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to categories.
 #
 module Bs::Shared::CategoryMethods
+  include Bs::Shared::CommonMethods
   # Convert object to string.
   #
   # @return [String]

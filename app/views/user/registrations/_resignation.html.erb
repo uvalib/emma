@@ -13,7 +13,8 @@
 
   label   = t('emma.user.registrations.destroy.label')
   confirm = t('emma.messages.confirmation', default: nil)
-  opt     = reject_blanks(method: :delete, data: { confirm: confirm })
+  opt     = { method: :delete }
+  opt[:data] = { confirm: confirm } if confirm.present?
   button  = button_to(label, registration_path(resource_name), opt)
   link    = t('emma.user.registrations.destroy.link', button: button).html_safe
 

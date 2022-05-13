@@ -1,0 +1,8 @@
+# The base class for serialization/de-serialization of objects derived from
+# Lookup::WorldCat::Api::Record.
+#
+class Lookup::WorldCat::Api::Serializer < Lookup::RemoteService::Api::Serializer
+  include Lookup::WorldCat::Api::Serializer::Schema
+
+  include Lookup::WorldCat::Api::Serializer::Associations
+end

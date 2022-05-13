@@ -5,4 +5,5 @@
 #
 module Search::Shared::CollectionMethods
   include Api::Shared::CollectionMethods
+  include Search::Shared::CommonMethods
 end

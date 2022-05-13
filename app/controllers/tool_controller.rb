@@ -91,6 +91,30 @@ class ToolController < ApplicationController
     render json: safe_json_parse(response.body), status: response.status
   end
 
+  # ===========================================================================
+  # :section: Identifier Lookup
+  # ===========================================================================
+
+  public
+
+  # == GET /tool/lookup
+  #
+  # Lookup bibliographic information.
+  #
+  def lookup
+    Log.info(">>> /tool/lookup thread #{Thread.current.name}")
+  end
+
+  # == GET /tool/lookup_result/:job_id[?column=(output|diagnostic|error)]
+  # == GET /tool/lookup_result/:job_id/*path[?column=(output|diagnostic|error)]
+  #
+  # Return a value from the 'job_results' table, where :job_id is the value for
+  # the matching :active_job_id.
+  #
+  def lookup_result
+    render json: LookupJob.job_result(**normalize_hash(params))
+  end
+
 end
 
 __loading_end(__FILE__)

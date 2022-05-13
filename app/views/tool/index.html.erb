@@ -8,7 +8,8 @@
   help  ||= nil # :tool
 
   unless modal?
-    set_page_meta_title(t('emma.tool.index.label', default: title))
+    label = t('emma.tool.index.label', default: title)
+    set_page_meta_title(label)
     set_page_description(title)
   end
 
@@ -18,8 +19,6 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<ul class="tool-list">
-  <li class="tool-item"><%= link_to('Math Detective', md_trial_path) -%></li>
-</ul>
+<%= tool_list %>
 
 <%= page_notes_section %>

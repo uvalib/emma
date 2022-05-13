@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module AwsS3::Shared::ResponseMethods
   include Api::Shared::ResponseMethods
+  include AwsS3::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

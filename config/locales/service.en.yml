@@ -28,14 +28,87 @@ en:
 
       ingest:
         name:           'Bookshare Federated Ingest service'
-        endpoint:       # @see IngestConcern::INGEST_ENGINES
+        endpoint:       # @see IngestService::Properties#engines
           production:   'https://ingest.bookshareunifiedsearch.org'
           staging:      'https://ingest.staging.bookshareunifiedsearch.org'
           qa:           'https://ingest.qa.bookshareunifiedsearch.org'
 
       search:
         name:           'EMMA Unified Search service'
-        endpoint:       # @see SearchConcern::SEARCH_ENGINES
+        endpoint:       # @see SearchService::Properties#engines
           production:   'https://api.bookshareunifiedsearch.org'
           staging:      'https://api.staging.bookshareunifiedsearch.org'
           qa:           'https://api.qa.bookshareunifiedsearch.org'
+
+      lookup:
+
+        _template:      &LOOKUP_SERVICE
+          name:         ~ # Short name for the service.
+          endpoint:     ~ # Base URL for requests to the external service.
+          api_key:      ~ # Name of ENV variable holding the API key.
+          types:        [doi, isbn, issn, lccn, oclc, upc]
+          priority:     100 # high = 1; medium = 10; low = 100
+          timeout:      3 # seconds
+          enabled:      true
+
+        amazon:         # NOTE: not currently implemented
+          <<:           *LOOKUP_SERVICE
+          name:         'Amazon'
+          endpoint:     ~
+          api_key:      'AMAZON_API_KEY'
+          types:        [isbn, upc]
+          enabled:      false
+
+        crossref:
+          <<:           *LOOKUP_SERVICE
+          name:         'Crossref'
+          endpoint:     'https://api.crossref.org'
+          api_key:      'CROSSREF_API_KEY'
+          types:        [doi, issn]
+          priority:     1
+
+        google_books:
+          <<:           *LOOKUP_SERVICE
+          name:         'Google Books'
+          endpoint:     'https://www.googleapis.com/books'
+          api_key:      'GOOGLE_API_KEY'
+          api_version:  'v1'
+          types:        [isbn, lccn, oclc]
+          priority:     2
+
+          #enabled: false
+
+        google_search:  # NOTE: not currently implemented
+          <<:           *LOOKUP_SERVICE
+          name:         'Google Search'
+          endpoint:     'https://customsearch.googleapis.com'
+          api_key:      'GOOGLE_API_KEY'
+          types:        [doi, isbn, issn, lccn, oclc, upc]
+          priority:     3
+          enabled:      false
+
+        issn_portal:    # NOTE: not currently implemented
+          <<:           *LOOKUP_SERVICE
+          name:         'ISSN Portal'
+          endpoint:     ~
+          api_key:      'ISSN_PORTAL_API_KEY'
+          types:        [issn]
+          enabled:      false
+
+        world_cat:
+          <<:           *LOOKUP_SERVICE
+          name:         'WorldCat'
+          endpoint:     'https://worldcat.org/webservices'
+          api_key:      'WORLDCAT_API_KEY'
+          types:        [isbn, oclc, lccn]
+          priority:     1
+
+        world_cat_v2:   # NOTE: not currently implemented
+          <<:           *LOOKUP_SERVICE
+          name:         'WorldCat'
+          endpoint:     'https://americas.discovery.api.oclc.org/worldcat/search'
+          api_key:      'WORLDCAT_API_KEY'
+          api_version:  'v2'
+          types:        [isbn, oclc, lccn]
+          priority:     1
+          enabled:      false

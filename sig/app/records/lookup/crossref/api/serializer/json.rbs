@@ -1,0 +1,7 @@
+# Base class for object-specific serializers that process JSON data.
+#
+class Lookup::Crossref::Api::Serializer::Json < Lookup::RemoteService::Api::Serializer::Json
+  include Lookup::Crossref::Api::Serializer::Json::Schema
+
+  include Lookup::Crossref::Api::Serializer::Json::Associations
+end

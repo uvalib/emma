@@ -8,7 +8,8 @@
   help  ||= nil # %i[tool md]
 
   unless modal?
-    set_page_meta_title(t('emma.tool.md.label', default: title))
+    label = t('emma.tool.md.label', default: title)
+    set_page_meta_title(label)
     set_page_description(title)
   end
 

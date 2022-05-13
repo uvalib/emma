@@ -7,7 +7,7 @@ module IaDownloadService::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  IA_CONFIG: symHash
+  CONFIGURATION: symHash
 
   # Maximum length of redirection chain.
   #
@@ -17,7 +17,7 @@ module IaDownloadService::Properties
   #
   # @type [Integer]
   #
-  IA_MAX_REDIRECTS: Integer
+  MAX_REDIRECTS: Integer
 
   # Authorization header for IA download requests.
   #
@@ -41,13 +41,15 @@ module IaDownloadService::Properties
   #
   IA_COOKIES: String
 
+  def configuration: () -> symHash
+
   # The URL for the API connection.
   #
   # @return [String]
   #
   # @see #IA_DOWNLOAD_BASE_URL
   #
-  def base_url: () -> String
+  #def base_url: () -> String
 
   # An API key is not a part of request URLs.
   #
@@ -55,13 +57,19 @@ module IaDownloadService::Properties
   #
   # @see #IA_COOKIES
   #
-  def api_key: () -> nil
+  #def api_key: () -> nil
 
   # API version is not a part of request URLs.
   #
   # @return [nil]
   #
-  def api_version: () -> nil
+  #def api_version: () -> nil
+
+  # Default search engine for this deployment.
+  #
+  # @return [String]
+  #
+  def default_engine_url: () -> String
 
   # Maximum length of redirection chain.
   #

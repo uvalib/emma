@@ -72,7 +72,10 @@ class Api::Serializer::Xml < Api::Serializer
   #
   # @see Representable::XML#from_xml
   #
+  # @note The representable gem doesn't do XML namespaces (yet?).
+  #
   def deserialize(data, method: :from_xml)
+    self.class.remove_namespaces!
     super
   end
 

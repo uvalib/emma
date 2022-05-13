@@ -155,7 +155,8 @@ class PublicationIdentifier < ScalarType
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
     #
-    def cast: (untyped v, ?invalid: bool) -> (PublicationIdentifier | nil)
+    def cast: (untyped v,  invalid: true)  -> PublicationIdentifier
+            | (untyped v, ?invalid: false) -> (PublicationIdentifier | nil)
 
     # Create a new instance.
     #
@@ -263,8 +264,8 @@ class PublicationIdentifier < ScalarType
   # -
   # noinspection RubyMismatchedReturnType
   # +
-  def self.objects: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, invalid: true)  -> Array[PublicationIdentifier|nil]
-                  | (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, ?invalid: bool) -> Array[PublicationIdentifier]
+  def self.objects: (lookupItems|lookupItem|nil value,  invalid: true) -> Array[PublicationIdentifier|nil]
+                  | (lookupItems|lookupItem|nil value, ?invalid: bool) -> lookupRequestItems
 
   # Create a table of identifier instances from candidate string(s).
   #
@@ -274,8 +275,8 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{String=>PublicationIdentifier}]
   # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
   #
-  def self.object_map: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, invalid: true)  -> Hash[String,(PublicationIdentifier|nil)]
-                     | (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value, ?invalid: bool) -> Hash[String,PublicationIdentifier]
+  def self.object_map: (lookupItems|lookupItem|nil value,  invalid: true) -> Hash[String,(PublicationIdentifier|nil)]
+                     | (lookupItems|lookupItem|nil value, ?invalid: bool) -> Hash[String,PublicationIdentifier]
 end
 
 # ISBN identifier.

@@ -1,0 +1,7 @@
+# Bulk journal results.
+#
+class Lookup::Crossref::Record::ListJournals < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CollectionMethods
+
+  LIST_ELEMENT: Class
+end

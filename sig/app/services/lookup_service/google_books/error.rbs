@@ -1,0 +1,97 @@
+# Generic exception for Google Books API problems.
+#
+# == Usage Notes
+# This is generally *not* the base class for exceptions in the GoogleBooks
+# namespace:  Variants based on the error types defined under "emma.error.api"
+# are derived from the related ApiService class; e.g.:
+#
+#   `LookupService::GoogleBooks::AuthError < ApiService::AuthError`
+#
+# Only a distinct error type defined under "emma.error.search" would derive
+# from this class; e.g. if "emma.error.lookup.google_search.unique" existed it
+# would be defined as:
+#
+#   `LookupService::GoogleBooks::UniqueError < LookupService::GoogleBooks::Error`
+#
+# An exception in the GoogleBooks namespace can be identified by checking for
+# `exception.is_a?(LookupService::GoogleBooks::Error::ClassType)`.
+#
+class LookupService::GoogleBooks::Error < ApiService::Error
+  # Methods included in related error classes.
+  #
+  module ClassType
+    include ApiService::Error::ClassType
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol]
+    #
+    def service: () -> Symbol
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include ClassType
+end
+
+class LookupService::GoogleBooks::AuthError < ApiService::AuthError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::CommError < ApiService::CommError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::SessionError < ApiService::SessionError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::ConnectError < ApiService::ConnectError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::TimeoutError < ApiService::TimeoutError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::XmitError < ApiService::XmitError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::RecvError < ApiService::RecvError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::ParseError < ApiService::ParseError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::RequestError < ApiService::RequestError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::NoInputError < ApiService::NoInputError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::ResponseError < ApiService::ResponseError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::EmptyResultError < ApiService::EmptyResultError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::HtmlResultError < ApiService::HtmlResultError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::RedirectionError < ApiService::RedirectionError
+  include LookupService::GoogleBooks::Error::ClassType
+end
+
+class LookupService::GoogleBooks::RedirectLimitError < ApiService::RedirectLimitError
+  include LookupService::GoogleBooks::Error::ClassType
+end

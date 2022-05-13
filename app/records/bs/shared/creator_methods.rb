@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module Bs::Shared::CreatorMethods
 
   include Api::Shared::CreatorMethods
+  include Bs::Shared::CommonMethods
 
   # ===========================================================================
   # :section:
@@ -116,7 +117,7 @@ module Bs::Shared::CreatorMethods
   # The author(s)/creator(s) of this catalog title.
   #
   # @param [Array<String>] types      Default: `#CREATOR_TYPES`
-  # @param [Hash]          opt
+  # @param [Hash]          opt        Passed to #contributor_list.
   #
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
@@ -138,15 +139,15 @@ module Bs::Shared::CreatorMethods
   # All contributor(s) to this catalog title.
   #
   # @param [Array<String>] types      Default: all
+  # @param [Api::Record]   target     Default: `self`.
   # @param [Hash]          opt
   #
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
   # @return [Array<String>]
   #
-  def contributor_list(*types, **opt)
-    # noinspection RailsParamDefResolve
-    result = try(:contributors) || []
+  def contributor_list(*types, target: nil, **opt)
+    result = find_items(:contributors, target: target)
     result = result.select { |c| types.include?(c.type) } if types.present?
     result.map { |c| c.label(opt[:role]) }
   end

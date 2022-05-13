@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to agreements.
 #
 module Bs::Shared::AgreementMethods
+  include Bs::Shared::CommonMethods
   # :nocov:
   #include Model
 

@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::WorkClinicalTrial
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-WorkClinicalTrial
+#
+class Lookup::Crossref::Record::WorkClinicalTrial < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

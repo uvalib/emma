@@ -1,0 +1,7 @@
+# Shared values and methods.
+#
+# @see Lookup::RemoteService::Api::Common
+#
+module Lookup::WorldCat::Api::Common
+  include Lookup::RemoteService::Api::Common
+end

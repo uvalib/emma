@@ -1,0 +1,9 @@
+# Obj-specific definition overrides for serialization.
+#
+# @see Lookup::RemoteService::Api::Serializer::Obj::Schema
+#
+module Lookup::GoogleBooks::Api::Serializer::Obj::Schema
+  include Lookup::GoogleBooks::Api::Serializer::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Obj::Schema
+end

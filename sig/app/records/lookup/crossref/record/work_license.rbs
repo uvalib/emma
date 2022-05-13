@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::WorkLicense
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-WorkLicense
+#
+class Lookup::Crossref::Record::WorkLicense < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

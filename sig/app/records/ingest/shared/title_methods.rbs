@@ -2,4 +2,5 @@
 #
 module Ingest::Shared::TitleMethods
   include Api::Shared::TitleMethods
+  include Ingest::Shared::CommonMethods
 end

@@ -37,6 +37,38 @@ class Api::Serializer < ::Representable::Decorator
   end
 
   # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # inspect
+  #
+  # @return [String]
+  #
+  def inspect
+    items =
+      instance_variables.map do |variable|
+        item = instance_variable_get(variable)
+        case variable
+          when :@represented
+            value = '<%s>' % item.class
+          when :@source_data
+            count = item.size
+            value = (count < 1024) ? item.inspect : "(#{count} characters)"
+          else
+            value = item.inspect.truncate(1024)
+        end
+        '%s=%s' % [variable, value]
+      end
+    if items.sum(&:size) < 100
+      '#<%s: %s>'    % [self.class, items.join(', ')]
+    else
+      "#<%s:\n%s\n>" % [self.class, items.join(",\n")]
+    end
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -48,13 +80,13 @@ class Api::Serializer < ::Representable::Decorator
   # @return [Symbol]
   #
   # @see Api::Schema#SERIALIZER_TYPES
-  # @see Api::Schema#DEFAULT_SERIALIZER_TYPE
+  # @see Api::Schema#default_serializer_type
   #
   def serializer_type
     # noinspection RubyMismatchedReturnType
     SERIALIZER_TYPES.find { |type|
       self.class.to_s =~ /::#{type}/i
-    } || DEFAULT_SERIALIZER_TYPE
+    } || default_serializer_type
   end
 
   # Render data elements in serialized format.
@@ -70,7 +102,7 @@ class Api::Serializer < ::Representable::Decorator
   # This method must be overridden by the derived class to pass in :method.
   #
   #--
-  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyScope, RubyMismatchedArgumentType
   #++
   def serialize(method: nil, **opt)
     __debug { ">>> #{self.class} serialize #{method}" }
@@ -110,7 +142,7 @@ class Api::Serializer < ::Representable::Decorator
   # to `super`.
   #
   #--
-  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyScope, RubyMismatchedArgumentType
   #++
   def deserialize(data, method: nil)
     return unless set_source_data(data)

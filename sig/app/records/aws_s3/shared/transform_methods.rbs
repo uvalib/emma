@@ -2,4 +2,5 @@
 #
 module AwsS3::Shared::TransformMethods
   include Api::Shared::TransformMethods
+  include AwsS3::Shared::CommonMethods
 end

@@ -32,6 +32,36 @@ module Bs::Shared::TitleMethods
 
   public
 
+  # Field(s) that may hold the title string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_fields
+    %i[title]
+  end
+
+  # Field(s) that may hold the subtitle string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def subtitle_fields
+    %i[subtitle]
+  end
+
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def contents_fields
+    %i[synopsis description]
+  end
+
+  # ===========================================================================
+  # :section: Api::Shared::TitleMethods overrides
+  # ===========================================================================
+
+  public
+
   # A link to a title's thumbnail image.
   #
   # @return [String]
@@ -79,9 +109,7 @@ module Bs::Shared::TitleMethods
   # @return [nil]                     If the value cannot be determined.
   #
   def page_count
-    # noinspection RailsParamDefResolve
-    count = try(:numPages)
-    positive(count)
+    positive(find_item(:numPages))
   end
 
   # The number of images.
@@ -90,47 +118,7 @@ module Bs::Shared::TitleMethods
   # @return [nil]                     If the value cannot be determined.
   #
   def image_count
-    # noinspection RailsParamDefResolve
-    count = try(:numImages)
-    positive(count)
-  end
-
-  # ===========================================================================
-  # :section: Api::Shared::TitleMethods overrides
-  # ===========================================================================
-
-  public
-
-  # Field(s) that may hold the title string.
-  #
-  # @return [Array<Symbol>]
-  #
-  def title_fields
-    %i[title]
-  end
-
-  # Field(s) that may hold the subtitle string.
-  #
-  # @return [Array<Symbol>]
-  #
-  def subtitle_fields
-    %i[subtitle]
-  end
-
-  # Field(s) that may hold date information about the title.
-  #
-  # @return [Array<Symbol>]
-  #
-  def date_fields
-    %i[copyrightDate publishDate]
-  end
-
-  # Field(s) that may hold content information about the title.
-  #
-  # @return [Array<Symbol>]
-  #
-  def contents_fields
-    %i[synopsis description]
+    positive(find_item(:numImages))
   end
 
 end

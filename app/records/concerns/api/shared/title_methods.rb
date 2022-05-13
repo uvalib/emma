@@ -68,11 +68,81 @@ module Api::Shared::TitleMethods
 
   public
 
-  # Sanitizer for catalog title contents.
+  # Field(s) that may hold the title string.
   #
-  # @type [Sanitize]
+  # @return [Array<Symbol>]
   #
-  CONTENT_SANITIZE = Sanitize.new(elements: %w(br b i em strong))
+  def title_fields
+    []
+  end
+
+  # Field(s) that may hold the subtitle string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def subtitle_fields
+    []
+  end
+
+  # Field(s) that may hold the name of the container/aggregate for an article.
+  #
+  # @return [Array<Symbol>]
+  #
+  def journal_title_fields
+    []
+  end
+
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def contents_fields
+    []
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A link to a title's thumbnail image.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def thumbnail_image
+  end
+
+  # A link to a title's cover image if present.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def cover_image
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # One or more title strings.
+  #
+  # @return [Array<String>]
+  #
+  def title_values
+    get_values(*title_fields)
+  end
+
+  # One or more subtitle strings.
+  #
+  # @return [Array<String>]
+  #
+  def subtitle_values
+    get_values(*subtitle_fields)
+  end
 
   # The full title in a form that it can be used for comparisons.
   #
@@ -87,12 +157,12 @@ module Api::Shared::TitleMethods
   # @return [String]
   #
   def full_title
-    ti = get_value(*title_fields)
-    st = get_value(*subtitle_fields)
+    ti = title_values&.first
+    st = subtitle_values&.first
     if ti && st
       # Remove the automatically-appended subtitle (in the case of search
       # results entries).
-      ti = ti.delete_suffix(st).rstrip.delete_suffix(':') if ti.end_with?(st)
+      ti = ti.delete_suffix(st).rstrip.delete_suffix(':')
       # Append the subtitle only if it doesn't appear to already be included in
       # the base title itself.
       ti = "#{ti}: #{st}" unless significant(ti).include?(significant(st))
@@ -100,18 +170,150 @@ module Api::Shared::TitleMethods
     ti || st || '???'
   end
 
-  # The year of publication.
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The type of work containing an article (if relevant).
   #
-  # @return [Integer]
-  # @return [nil]                     If the value cannot be determined.
+  # @return [String, nil]
   #
-  # @see Search::Shared::TitleMethods#date_fields
-  #
-  def year
-    date_fields.map { |date|
-      (year = IsoYear.cast(try(date))) and positive(year.to_s)
-    }.compact.sort.first
+  def series_type
   end
+
+  # The volume of the journal containing an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def series_volume
+  end
+
+  # The issue of the journal containing an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def series_issue
+  end
+
+  # The volume and/or issue number containing an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def series_position
+    volume = series_volume&.then { |v| "vol. #{v}" }
+    issue  = series_issue&.then  { |n| "no. #{n}"  }
+    [volume, issue].compact.join(', ') if volume || issue
+  end
+
+  # The journal which contains an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def journal_title
+    get_value(*journal_title_fields)
+  end
+
+  # The journal which contains an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def full_journal_title
+    title = journal_title
+    issue = title && series_position
+    issue ? "#{title}, #{issue}" : title
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Name of publisher.
+  #
+  # @return [String, nil]
+  #
+  def publisher_name
+  end
+
+  # The place of publication.
+  #
+  # @return [String, nil]
+  #
+  def publication_place
+  end
+
+  # The date of publication.
+  #
+  # @return [String, nil]
+  #
+  def publication_date
+  end
+
+  # The date of publication.
+  #
+  # @return [String, nil]
+  #
+  def publication_year
+  end
+
+  # Publisher and/or publisher location
+  #
+  # @return [String, nil]
+  #
+  def full_publisher
+    pub = publisher_name
+    loc = publication_place
+    if pub && loc && !significant(pub).include?(significant(loc))
+      sep = (',' unless pub.match?(/[[:punct:]]$/))
+      pub = "#{pub}#{sep} #{loc}"
+    end
+    pub || loc
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # language_list
+  #
+  # @return [Array<String>]
+  #
+  def language_list
+    []
+  end
+
+  # subject_list
+  #
+  # @return [Array<String>]
+  #
+  def subject_list
+    []
+  end
+
+  # description_list
+  #
+  # @return [Array<String>]
+  #
+  def description_list
+    []
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Sanitizer for catalog title contents.
+  #
+  # @type [Sanitize]
+  #
+  CONTENT_SANITIZE = Sanitize.new(elements: %w(br b i em strong))
 
   # The synopsis or description with rudimentary formatting.
   #
@@ -172,66 +374,6 @@ module Api::Shared::TitleMethods
   #
   def significant(value)
     normalized(value).remove!(' ')
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # A link to a title's thumbnail image.
-  #
-  # @return [String]
-  # @return [nil]                     If the link was not present.
-  #
-  def thumbnail_image
-  end
-
-  # A link to a title's cover image if present.
-  #
-  # @return [String]
-  # @return [nil]                     If the link was not present.
-  #
-  def cover_image
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Field(s) that may hold the title string.
-  #
-  # @return [Array<Symbol>]
-  #
-  def title_fields
-    []
-  end
-
-  # Field(s) that may hold the subtitle string.
-  #
-  # @return [Array<Symbol>]
-  #
-  def subtitle_fields
-    []
-  end
-
-  # Field(s) that may hold date information about the title.
-  #
-  # @return [Array<Symbol>]
-  #
-  def date_fields
-    []
-  end
-
-  # Field(s) that may hold content information about the title.
-  #
-  # @return [Array<Symbol>]
-  #
-  def contents_fields
-    []
   end
 
 end

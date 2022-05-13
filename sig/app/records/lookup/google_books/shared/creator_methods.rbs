@@ -1,0 +1,18 @@
+# Methods mixed in to record elements related to authors, editors, etc.
+#
+module Lookup::GoogleBooks::Shared::CreatorMethods
+  include Lookup::RemoteService::Shared::CreatorMethods
+  include Lookup::GoogleBooks::Shared::CommonMethods
+
+  # All contributor(s) to this catalog title, stripping terminal punctuation
+  # from each name where appropriate.
+  #
+  # @param [Symbol]      field
+  # @param [Api::Record] target       Default: `self`.
+  #
+  # @return [Array<String>]
+  #
+  def contributor_list: (?field: Symbol, ?target: Api::Record?) -> strArray
+
+  def reverse_names: (strArray items) -> strArray
+end

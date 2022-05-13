@@ -3,6 +3,7 @@
 
 import { isMissing }      from '../shared/definitions'
 import * as MathDetective from '../tool/math-detective'
+import * as Lookup        from '../tool/bibliographic-lookup'
 
 
 // noinspection SpellCheckingInspection
@@ -26,6 +27,17 @@ $(document).on('turbolinks:load', function() {
 
     if ($body.hasClass('md')) {
         MathDetective.setup($body);
+    }
+
+    // ========================================================================
+    // Bibliographic lookup
+    // ========================================================================
+
+    if ($body.hasClass('lookup')) {
+        Lookup.setup($body).then(
+            result => console.log('lookup loaded:', (result || 'OK')),
+            reason => console.warn('lookup failed:', reason)
+        );
     }
 
 });

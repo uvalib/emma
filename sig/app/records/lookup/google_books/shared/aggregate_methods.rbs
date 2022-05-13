@@ -1,0 +1,9 @@
+# This is included in record classes that define :BASE_ELEMENT to confirm that
+# they are intended to function as aggregates.
+#
+# @see Model::ClassMethods#validate_relations
+#
+module Lookup::GoogleBooks::Shared::AggregateMethods
+  include Lookup::RemoteService::Shared::AggregateMethods
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

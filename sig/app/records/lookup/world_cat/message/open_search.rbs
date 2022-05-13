@@ -1,0 +1,33 @@
+# Results from a WorldCat Metadata API v.1 OpenSearch search.
+#
+# Inside an XML '<feed>' element.
+#
+# @attr [String]   title      A description of the search performed.
+# @attr [String]   subtitle   A longer description of the search performed.
+# @attr [String]   id         Full URL for the search performed.
+# @attr [DateTime] updated    When the search was performed.
+#
+# @see https://developer.api.oclc.org/wcv1#operations-tag-OpenSearch
+#
+class Lookup::WorldCat::Message::OpenSearch < Lookup::WorldCat::Api::Message
+  include Lookup::WorldCat::Shared::CollectionMethods
+
+  include Lookup::WorldCat::Shared::ResponseMethods
+
+  LIST_ELEMENT: untyped
+
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # @return [Integer]
+  #
+  # -
+  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
+  # +
+  def totalResults: () -> Integer
+
+  # api_records
+  #
+  # @return [Array<Lookup::WorldCat::Record::SruRecord>]
+  #
+  def api_records: () -> Array[Lookup::WorldCat::Record::SruRecord]
+end

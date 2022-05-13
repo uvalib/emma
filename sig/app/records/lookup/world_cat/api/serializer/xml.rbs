@@ -1,0 +1,7 @@
+# Base class for object-specific serializers that process XML data.
+#
+class Lookup::WorldCat::Api::Serializer::Xml < Lookup::RemoteService::Api::Serializer::Xml
+  include Lookup::WorldCat::Api::Serializer::Xml::Schema
+
+  include Lookup::WorldCat::Api::Serializer::Xml::Associations
+end

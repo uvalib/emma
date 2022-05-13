@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module Search::Shared::TitleMethods
 
   include Api::Shared::TitleMethods
+  include Search::Shared::CommonMethods
 
   extend self
 
@@ -39,20 +40,6 @@ module Search::Shared::TitleMethods
   #
   def title_fields
     %i[dc_title]
-  end
-
-  # Field(s) that may hold date information about the title.
-  #
-  # @return [Array<Symbol>]
-  #
-  def date_fields
-    %i[
-      dcterms_dateCopyright
-      emma_lastRemediationDate
-      emma_publicationDate
-      emma_sortDate
-      rem_remediationDate
-    ]
   end
 
   # Field(s) that may hold content information about the title.

@@ -7,15 +7,11 @@ module IngestService::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  INGEST_CONFIG: symHash
-
-  # Valid ingest endpoint URLs.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  INGEST_ENGINES: Hash[Symbol,String]
+  CONFIGURATION: symHash
 
   DEFAULT_ENGINE: Symbol
+
+  def configuration: () -> symHash
 
   # The URL for the API connection.
   #
@@ -23,7 +19,7 @@ module IngestService::Properties
   #
   # @see #default_engine_url
   #
-  def base_url: () -> String
+  #def base_url: () -> String
 
   # Federated Ingest API key.
   #
@@ -37,19 +33,25 @@ module IngestService::Properties
   #
   # @return [nil]
   #
-  def api_version: () -> nil
+  #def api_version: () -> nil
 
   # Valid search engine URLs.
   #
   # @type [Hash{Symbol=>String}]
   #
-  def engines: () -> Hash[Symbol,String]
+  #def engines: () -> Hash[Symbol,String]
 
   # Default search engine for this deployment.
   #
   # @return [String]
   #
   def default_engine_url: () -> String
+
+  # The default service engine key.
+  #
+  # @return [Symbol]
+  #
+  def default_engine_key: () -> Symbol
 
   private
 

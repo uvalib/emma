@@ -2,4 +2,5 @@
 #
 module Bs::Shared::ResponseMethods
   include Api::Shared::ResponseMethods
+  include Bs::Shared::CommonMethods
 end

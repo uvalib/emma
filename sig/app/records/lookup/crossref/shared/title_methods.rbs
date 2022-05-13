@@ -1,0 +1,25 @@
+# Methods mixed in to record elements related to catalog titles.
+#
+module Lookup::Crossref::Shared::TitleMethods
+  include Lookup::RemoteService::Shared::TitleMethods
+  include Lookup::Crossref::Shared::DateMethods
+
+  CROSSREF_ITEM_TYPE: Hash[String,String]
+
+  def title_fields:         () -> symArray
+  def subtitle_fields:      () -> symArray
+  def journal_title_fields: () -> symArray
+
+  def title_values:         () -> strArray
+  def subtitle_values:      () -> strArray
+
+  def series_type:          () -> (String | nil)
+  def series_volume:        () -> (String | nil)
+  def series_issue:         () -> (String | nil)
+
+  def publisher_name:       () -> (String | nil)
+  def publication_place:    () -> (String | nil)
+  def publication_date:     () -> (String | nil)
+  def publication_year:     () -> (String | nil)
+
+end

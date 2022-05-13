@@ -1,0 +1,97 @@
+# Generic exception for external lookup service API problems.
+#
+# == Usage Notes
+# This is generally *not* the base class for exceptions in the LookupService
+# namespace:  Variants based on the error types defined under "emma.error.api"
+# are derived from the related ApiService class; e.g.:
+#
+#   `LookupService::AuthError < ApiService::AuthError`
+#
+# Only a distinct error type defined under "emma.error.lookup" would derive
+# from this class; e.g. if "emma.error.lookup.unique" existed it would be
+# defined as:
+#
+#   `LookupService::UniqueError < LookupService::Error`
+#
+# An exception in the LookupService namespace can be identified by checking for
+# `exception.is_a?(LookupService::Error::ClassType)`.
+#
+class LookupService::Error < ApiService::Error
+  # Methods included in related error classes.
+  #
+  module ClassType
+    include ApiService::Error::ClassType
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol]
+    #
+    def service: () -> Symbol
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include ClassType
+end
+
+class LookupService::AuthError < ApiService::AuthError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::CommError < ApiService::CommError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::SessionError < ApiService::SessionError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::ConnectError < ApiService::ConnectError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::TimeoutError < ApiService::TimeoutError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::XmitError < ApiService::XmitError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::RecvError < ApiService::RecvError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::ParseError < ApiService::ParseError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::RequestError < ApiService::RequestError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::NoInputError < ApiService::NoInputError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::ResponseError < ApiService::ResponseError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::EmptyResultError < ApiService::EmptyResultError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::HtmlResultError < ApiService::HtmlResultError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::RedirectionError < ApiService::RedirectionError
+  include LookupService::Error::ClassType
+end
+
+class LookupService::RedirectLimitError < ApiService::RedirectLimitError
+  include LookupService::Error::ClassType
+end

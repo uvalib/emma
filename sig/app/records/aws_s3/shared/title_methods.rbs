@@ -2,4 +2,5 @@
 #
 module AwsS3::Shared::TitleMethods
   include Api::Shared::TitleMethods
+  include AwsS3::Shared::CommonMethods
 end

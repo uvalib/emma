@@ -142,7 +142,7 @@ class ScalarType
   # @param [Any, nil] v
   #
   def valid?(v = nil)
-    super(v || @value)
+    super(v || value)
   end
 
   # Transform value into a valid form.
@@ -152,7 +152,7 @@ class ScalarType
   # @return [String]
   #
   def normalize(v = nil)
-    super(v || @value)
+    super(v || value)
   end
 
   # ===========================================================================
@@ -166,7 +166,7 @@ class ScalarType
   # @return [String]
   #
   def to_s
-    @value.to_s
+    value.to_s
   end
 
   # Return the inspection of the instance value.
@@ -174,7 +174,7 @@ class ScalarType
   # @return [String]
   #
   def inspect
-    "(#{to_s.inspect})"
+    "#{self.class}(#{to_s.inspect})"
   end
 
   # Value needed to make instances comparable.
@@ -191,6 +191,22 @@ class ScalarType
   #
   def eql?(other)
     to_s == other.to_s
+  end
+
+  # Return the value as represented within JSON.
+  #
+  # @return [String]
+  #
+  def to_json
+    to_s.to_json
+  end
+
+  # Return the value as represented within JSON.
+  #
+  # @return [String]
+  #
+  def as_json
+    to_s.as_json
   end
 
   # ===========================================================================
@@ -231,6 +247,48 @@ class ScalarType
   def self.duplicable?
     false
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Create a serializer class associated with the given *base*.
+  #
+  # @param [Class] base
+  #
+  # @return [void]
+  #
+  def self.define_serializer(base = self)
+    base.class_exec do
+
+      include Serializable
+
+      serializer :serialize do |item|
+        item.value
+      end
+
+    end
+  end
+
+  # Create a serializer class associated with the given *base* and arrange for
+  # any subclasses to have their own serializers.
+  #
+  # @param [Class] base
+  #
+  # @return [void]
+  #
+  def self.generate_serializer(base = self)
+    define_serializer(base)
+    base.class_exec do
+      def self.inherited(subclass)
+        generate_serializer(subclass)
+      end
+    end
+  end
+
+  generate_serializer
 
 end
 
@@ -490,10 +548,11 @@ class IsoDate < ScalarType
     #
     # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
     #
-    # @return [String]
+    # @return [String, nil]
     #
     def normalize(v)
-      (datetime_convert(v) || v).to_s
+      v = strip_copyright(v) if v.is_a?(String)
+      datetime_convert(v)
     end
 
     # =========================================================================
@@ -501,6 +560,17 @@ class IsoDate < ScalarType
     # =========================================================================
 
     public
+
+    # Prepare a date string for normalization.
+    #
+    # @param [*] v
+    #
+    # @return [*]
+    #
+    def strip_copyright(v)
+      return v unless v.is_a?(String)
+      v.sub(/^[cC]\.?/, '').gsub(/[(\[][cC©]\.?[)\]]|©/, '')
+    end
 
     # Transform *v* into a ISO 8601 form.
     #
@@ -737,7 +807,7 @@ class IsoDate < ScalarType
     # @param [Any] v
     #
     def year?(v)
-      normalize(v).match?(MATCH_PATTERN[:year])
+      normalize(v).to_s.match?(MATCH_PATTERN[:year])
     end
 
     # Indicate whether *v* represents a day value.
@@ -745,7 +815,7 @@ class IsoDate < ScalarType
     # @param [Any] v
     #
     def day?(v)
-      normalize(v).match?(MATCH_PATTERN[:day])
+      normalize(v).to_s.match?(MATCH_PATTERN[:day])
     end
 
     # Indicate whether *v* represents a full ISO 8601 date value.
@@ -753,7 +823,7 @@ class IsoDate < ScalarType
     # @param [Any] v
     #
     def complete?(v)
-      normalize(v).match?(MATCH_PATTERN[:complete])
+      normalize(v).to_s.match?(MATCH_PATTERN[:complete])
     end
 
     # =========================================================================
@@ -766,27 +836,26 @@ class IsoDate < ScalarType
     #
     # @param [Any, nil] v
     #
-    # @return [self, nil]
+    # @return [IsoDate, nil]
     #
     def cast(v)
-      if v.is_a?(self.class)
-        v
-      elsif v.present?
-        create(v)
-      end
+      c = is_a?(Class) ? self : self.class
+      v.is_a?(c) ? v : create(v)
     end
 
     # Create a new instance of this type.
     #
     # @param [Any, nil] v
     #
-    # @return [self, nil]
+    # @return [IsoDate, nil]
     #
     def create(v, *)
-      if v.is_a?(self.class)
+      c = is_a?(Class) ? self : self.class
+      # noinspection RubyMismatchedReturnType
+      if v.is_a?(c)
         v.dup
       elsif (v = normalize(v)).present?
-        new(v)
+        c.new(v)
       end
     end
 
@@ -824,7 +893,7 @@ class IsoDate < ScalarType
   # @param [Any] v
   #
   def year?(v = nil)
-    super(v || @value)
+    super(v || value)
   end
 
   # Indicate whether the instance represents a day value, or indicate whether
@@ -833,7 +902,7 @@ class IsoDate < ScalarType
   # @param [Any] v
   #
   def day?(v = nil)
-    super(v || @value)
+    super(v || value)
   end
 
   # Indicate whether the instance represents a full ISO 8601 date value, or
@@ -842,7 +911,7 @@ class IsoDate < ScalarType
   # @param [Any] v
   #
   def complete?(v = nil)
-    super(v || @value)
+    super(v || value)
   end
 
 end
@@ -879,10 +948,11 @@ class IsoYear < IsoDate
     #
     # @param [Any] v
     #
-    # @return [String]
+    # @return [String, nil]
     #
     def normalize(v)
-      (year_convert(v) || v).to_s
+      v = strip_copyright(v) if v.is_a?(String)
+      year_convert(v)
     end
 
     # =========================================================================
@@ -947,10 +1017,11 @@ class IsoDay < IsoDate
     #
     # @param [String, Date, Time, IsoDate, Any] v
     #
-    # @return [String]
+    # @return [String, nil]
     #
     def normalize(v)
-      (day_convert(v) || v).to_s
+      v = strip_copyright(v) if v.is_a?(String)
+      day_convert(v)
     end
 
     # =========================================================================

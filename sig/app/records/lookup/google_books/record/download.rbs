@@ -1,0 +1,20 @@
+# Information about a volume's download license access restrictions.
+#
+# @attr [String]   kind
+# @attr [String]   volumeId
+# @attr [Boolean]  restricted
+# @attr [Boolean]  deviceAllowed
+# @attr [Boolean]  justAcquired
+# @attr [Integer]  maxDownloadDevices
+# @attr [Integer]  downloadsAcquired
+# @attr [String]   nonce
+# @attr [String]   source
+# @attr [String]   reasonCode
+# @attr [String]   message
+# @attr [String]   signature
+#
+# @see https://developers.google.com/books/docs/v1/reference/volumes
+#
+class Lookup::GoogleBooks::Record::Download < Lookup::GoogleBooks::Api::Record
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

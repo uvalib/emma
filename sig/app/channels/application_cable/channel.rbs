@@ -1,8 +1,0 @@
-# @note Currently unused
-#
-module ApplicationCable
-  # @note Currently unused
-  #
-  class Channel < ActionCable::Channel::Base
-  end
-end

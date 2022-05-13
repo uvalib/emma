@@ -1,0 +1,9 @@
+class LookupJobResult < JobResult
+  # Return the 'job_results' records involving the given client request.
+  #
+  # @param [String] stream
+  #
+  # @return [ActiveRecord::Relation<JobResult>]
+  #
+  def self.for: (String stream) -> ActiveRecord::Relation
+end

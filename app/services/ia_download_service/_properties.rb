@@ -21,7 +21,7 @@ module IaDownloadService::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  IA_CONFIG = i18n_erb('emma.service.ia_download').deep_freeze
+  CONFIGURATION = i18n_erb('emma.service.ia_download').deep_freeze
 
   # Maximum length of redirection chain.
   #
@@ -31,7 +31,7 @@ module IaDownloadService::Properties
   #
   # @type [Integer]
   #
-  IA_MAX_REDIRECTS = IA_CONFIG[:max_redirects]
+  MAX_REDIRECTS = CONFIGURATION[:max_redirects]
 
   # Authorization header for IA download requests.
   #
@@ -67,32 +67,26 @@ module IaDownloadService::Properties
 
   public
 
-  # The URL for the API connection.
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  def configuration
+    CONFIGURATION
+  end
+
+  # ===========================================================================
+  # :section: ApiService::Properties overrides
+  # ===========================================================================
+
+  public
+
+  # Default search engine for this deployment.
   #
   # @return [String]
   #
-  # @see #IA_DOWNLOAD_BASE_URL
-  #
-  def base_url
-    @base_url ||= IA_DOWNLOAD_BASE_URL
-  end
-
-  # An API key is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  # @see #IA_COOKIES
-  #
-  def api_key
-    nil
-  end
-
-  # API version is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  def api_version
-    nil
+  def default_engine_url
+    IA_DOWNLOAD_BASE_URL || super
   end
 
   # ===========================================================================
@@ -106,7 +100,7 @@ module IaDownloadService::Properties
   # @type [Integer]
   #
   def max_redirects
-    IA_MAX_REDIRECTS
+    MAX_REDIRECTS
   end
 
   # ===========================================================================

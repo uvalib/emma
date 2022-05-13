@@ -1,0 +1,9 @@
+# JSON-specific definition overrides for serialization.
+#
+# @see Lookup::RemoteService::Api::Serializer::Json::Schema
+#
+module Lookup::WorldCat::Api::Serializer::Json::Schema
+  include Lookup::WorldCat::Api::Serializer::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Json::Schema
+end

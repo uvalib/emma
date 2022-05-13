@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::ArtifactMethods
 
+  include Bs::Shared::CommonMethods
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -20,8 +22,7 @@ module Bs::Shared::ArtifactMethods
   # @return [String]
   #
   def fmt
-    # noinspection RailsParamDefResolve
-    try(:format).to_s
+    find_item(:format).to_s
   end
 
   # A method name for use where there may be confusion with `params[:format]`.
@@ -29,8 +30,7 @@ module Bs::Shared::ArtifactMethods
   # @return [Array<String>]
   #
   def fmts
-    # noinspection RailsParamDefResolve
-    try(:formats)&.map(&:to_s) || [fmt]
+    find_values(:formats).presence || [fmt]
   end
 
 end

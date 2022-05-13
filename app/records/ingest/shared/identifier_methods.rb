@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module Ingest::Shared::IdentifierMethods
 
   include Api::Shared::IdentifierMethods
+  include Ingest::Shared::CommonMethods
 
   # ===========================================================================
   # :section: Api::Shared::IdentifierMethods overrides

@@ -1,0 +1,28 @@
+# Methods mixed in to record elements related to standard identifiers.
+#
+module Lookup::WorldCat::Shared::IdentifierMethods
+  include Lookup::RemoteService::Shared::IdentifierMethods
+
+  include Lookup::WorldCat::Shared::CommonMethods
+
+  # Fields containing standard identifier values.
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_FIELDS: symArray
+
+  @identifier_list:  strArray
+  @identifier_table: lookupRequestHash
+
+  # identifier_list
+  #
+  # @return [Array<String>]
+  #
+  def identifier_list: () -> strArray
+
+  # identifier_table
+  #
+  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
+  #
+  def identifier_table: () -> lookupRequestHash
+end

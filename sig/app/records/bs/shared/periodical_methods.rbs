@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to periodicals.
 #
 module Bs::Shared::PeriodicalMethods
+  include Bs::Shared::CommonMethods
   # :nocov:
   #include Model
 

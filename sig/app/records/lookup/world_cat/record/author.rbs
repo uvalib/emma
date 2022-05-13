@@ -1,0 +1,9 @@
+# Partial record schema for WorldCat API results.
+#
+# @see https://developer.api.oclc.org/wcv1#operations-tag-OpenSearch
+#
+class Lookup::WorldCat::Record::Author < Lookup::WorldCat::Api::Record
+  include Lookup::WorldCat::Shared::CommonMethods
+
+  def to_s: () -> String
+end

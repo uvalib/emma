@@ -7,7 +7,7 @@ module BookshareService::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  BOOKSHARE_CONFIG: symHash
+  CONFIGURATION: symHash
 
   # Maximum accepted value for a :limit parameter.
   #
@@ -28,20 +28,26 @@ module BookshareService::Properties
   #
   # @type [String]
   #
-  BOOKSHARE_TEST_ACCOUNT: String
+  TEST_ACCOUNT: String
 
   # The identifier (:userAccountId) for the test member "Placeholder Member".
-  # (Only usable by #BOOKSHARE_TEST_ACCOUNT)
+  # (Only usable by #TEST_ACCOUNT)
   #
   # @type [String]
   #
-  BOOKSHARE_TEST_MEMBER: String
+  TEST_MEMBER: String
 
   # Bookshare accounts used for testing.
   #
   # @type [Array<String>]
   #
-  BOOKSHARE_TEST_USERS: strArray
+  TEST_USERS: strArray
+
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  def configuration: () -> symHash
 
   attr_reader base_url: String
 

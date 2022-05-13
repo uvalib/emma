@@ -1,0 +1,28 @@
+# General shared methods.
+#
+module Lookup::GoogleBooks::Shared::CommonMethods
+  include Lookup::RemoteService::Shared::CommonMethods
+
+  extend ::Lookup::GoogleBooks::Shared::CommonMethods
+
+  EXTENDED_FIELDS: bool
+
+  COMPLETE_FIELDS: bool
+
+  EXT: bool
+
+  ALL: bool
+
+  ITEM_PATH: symArray
+
+  def item_record_path: () -> symArray
+
+  # Get the first non-empty value given a list of fields.
+  #
+  # @param [Array<Symbol>] fields
+  # @param [Api::Record]   target     Default: `self`.
+  #
+  # @return [Array<String>]
+  #
+  def get_values: (*Symbol fields, ?target: Api::Record?) -> strArray
+end

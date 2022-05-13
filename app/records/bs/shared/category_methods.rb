@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::CategoryMethods
 
+  include Bs::Shared::CommonMethods
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================

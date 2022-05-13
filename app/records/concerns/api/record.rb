@@ -71,12 +71,12 @@ class Api::Record
     elsif (data = src || data).is_a?(Model) || data.is_a?(Hash)
       initialize_attributes(data)
     elsif (data = data.is_a?(Faraday::Response) ? data.body : data).present?
-      @serializer_type ||= self.format_of(data) || DEFAULT_SERIALIZER_TYPE
+      @serializer_type ||= self.format_of(data) || default_serializer_type
       wrap = wrap[@serializer_type] if wrap.is_a?(Hash)
       data = wrap_outer(data: data, template: wrap) if wrap
       deserialize(data)
     end
-    @serializer_type ||= DEFAULT_SERIALIZER_TYPE
+    @serializer_type ||= default_serializer_type
   end
 
   # ===========================================================================
@@ -214,16 +214,19 @@ class Api::Record
 
   # The field definitions in the schema for this record.
   #
-  # @return [Array<Hash>]
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
   #
   def field_definitions
-    serializer.representable_map.map do |field|
-      {
-        name:       field[:name],
-        collection: field[:collection],
-        type:       (field[:class] || field[:type]),
-      }
-    end
+    @field_definitions ||=
+      serializer.representable_map.map { |field|
+        k = field[:name].to_sym
+        v = {
+          name:       field[:name],
+          collection: field[:collection],
+          type:       (field[:class] || field[:type]),
+        }
+        [k, v]
+      }.to_h
   end
 
   # ===========================================================================
@@ -247,8 +250,43 @@ class Api::Record
   # @return [self]
   #
   def update(hash)
-    hash.each_pair { |k, v| try("#{k}=", v) } if hash.present?
+    hash&.each_pair do |k, v|
+      next unless respond_to?((assignment = :"#{k}="))
+      v = Array.wrap(v) if field_definitions.dig(k.to_sym, :collection)
+      send(assignment, v)
+    end
     self
+  end
+
+  # Recursively generate a Hash of fields and values.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def field_hierarchy
+    fields.transform_values do |v|
+      make_hierarchy(v)
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Recursively generate hierarchical values.
+  #
+  # @param [Array, Any] value
+  #
+  # @return [Array, Any]
+  #
+  def make_hierarchy(value)
+    # noinspection RailsParamDefResolve
+    case value
+      when Hash  then value.transform_values { |v| make_hierarchy(v) }
+      when Array then value.map { |v| make_hierarchy(v) }
+      else            value.try(:field_hierarchy) || value
+    end
   end
 
   # ===========================================================================
@@ -262,7 +300,7 @@ class Api::Record
   # @return [Array<Symbol>]
   #
   def field_names
-    field_definitions.map { |field| field[:name].to_sym }.sort
+    @field_names ||= field_definitions.keys.sort
   end
 
   # ===========================================================================
@@ -278,9 +316,18 @@ class Api::Record
   def inspect
     items =
       instance_variables.map do |variable|
-        '%s=%s' % [variable, instance_variable_get(variable).inspect]
+        if (item = instance_variable_get(variable)).is_a?(Api::Serializer)
+          value = '<%s>' % item.class
+        else
+          value = item.inspect.truncate(4096)
+        end
+        '%s=%s' % [variable, value]
       end
-    "#<%s:\n%s\n>" % [self.class, items.join(",\n")]
+    if items.sum(&:size) < 100
+      '#<%s: %s>'    % [self.class, items.join(', ')]
+    else
+      "#<%s:\n%s\n>" % [self.class, items.join(",\n")]
+    end
   end
 
   # ===========================================================================

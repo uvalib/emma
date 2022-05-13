@@ -210,6 +210,14 @@ module Api::Schema
 
   public
 
+  # default_serializer_type
+  #
+  # @return [Symbol]
+  #
+  def default_serializer_type
+    DEFAULT_SERIALIZER_TYPE
+  end
+
   # Determine the format of the data.
   #
   # @param [String, Hash] data

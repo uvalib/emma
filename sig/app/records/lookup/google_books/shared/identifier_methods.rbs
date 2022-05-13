@@ -1,0 +1,18 @@
+# Methods mixed in to record elements related to standard identifiers.
+#
+module Lookup::GoogleBooks::Shared::IdentifierMethods
+  include Lookup::RemoteService::Shared::IdentifierMethods
+  include Lookup::GoogleBooks::Shared::CommonMethods
+
+  @identifier_list:  Array[strArray]
+  @identifier_table: Hash[String,strArray]
+
+  def best_identifier:  () -> (String | nil)
+  def identifier_list:  () -> strArray
+  def identifier_table: () -> lookupRequestHash
+  def isbn:             () -> (String | nil)
+
+  ID_SORT: Hash[Symbol,String]
+
+  def id_sort_key: (Lookup::GoogleBooks::Record::Identifier id) -> strArray
+end

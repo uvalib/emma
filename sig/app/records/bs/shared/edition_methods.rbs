@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to periodical editions.
 #
 module Bs::Shared::EditionMethods
+  include Bs::Shared::CommonMethods
   # :nocov:
   #include Model
 

@@ -21,13 +21,7 @@ module IngestService::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  INGEST_CONFIG = i18n_erb('emma.service.ingest').deep_freeze
-
-  # Valid ingest endpoint URLs.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  INGEST_ENGINES = INGEST_CONFIG[:endpoint]
+  CONFIGURATION = i18n_erb('emma.service.ingest').deep_freeze
 
   # Default engine selection.
   #
@@ -42,14 +36,12 @@ module IngestService::Properties
 
   public
 
-  # The URL for the API connection.
+  # Configuration for the API service.
   #
-  # @return [String]
+  # @type [Hash{Symbol=>Any}]
   #
-  # @see #default_engine_url
-  #
-  def base_url
-    @base_url ||= default_engine_url
+  def configuration
+    CONFIGURATION
   end
 
   # Federated Ingest API key.
@@ -59,37 +51,29 @@ module IngestService::Properties
   # @see #INGEST_API_KEY
   #
   def api_key
-    INGEST_API_KEY
-  end
-
-  # API version is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  def api_version
-    # INGEST_API_VERSION
+    INGEST_API_KEY || super
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Properties overrides
   # ===========================================================================
 
   public
-
-  # Valid search engine URLs.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  def engines
-    INGEST_CONFIG[:endpoint]
-  end
 
   # Default search engine for this deployment.
   #
   # @return [String]
   #
   def default_engine_url
-    INGEST_BASE_URL || engines[DEFAULT_ENGINE]
+    INGEST_BASE_URL || super
+  end
+
+  # The default service engine key.
+  #
+  # @return [Symbol]
+  #
+  def default_engine_key
+    DEFAULT_ENGINE || super
   end
 
   # ===========================================================================

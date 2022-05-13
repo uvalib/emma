@@ -1,0 +1,7 @@
+# Base class for object-specific serializers that process XML data.
+#
+class Lookup::RemoteService::Api::Serializer::Xml < Api::Serializer::Xml
+  include Lookup::RemoteService::Api::Serializer::Xml::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Xml::Associations
+end

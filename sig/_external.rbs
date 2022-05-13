@@ -36,6 +36,8 @@ module ActionCable
   module Channel
     class Base
     end
+    class TestCase < ActiveSupport::TestCase
+    end
   end
   module Connection
     class Base
@@ -548,6 +550,18 @@ end
 module Forwardable
 end
 
+class GlobalID
+  module Identification
+  end
+end
+
+module GoodJob
+  class BaseRecord
+  end
+  class ActiveJobJob < BaseRecord
+  end
+end
+
 module Hashie
   class Hash < ::Hash[untyped, untyped]
   end
@@ -665,6 +679,7 @@ class Sanitize
 end
 
 class Set[unchecked out A]
+  include Enumerable[A]
 end
 
 module Sprockets

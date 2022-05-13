@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::ReadingListMethods
 
+  include Bs::Shared::CommonMethods
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -53,8 +55,7 @@ module Bs::Shared::ReadingListMethods
   # @return [String]
   #
   def label
-    # noinspection RailsParamDefResolve
-    try(:name)&.to_s || identifier
+    find_item(:name) || identifier
   end
 
   # ===========================================================================

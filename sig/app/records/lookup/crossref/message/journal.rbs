@@ -1,0 +1,16 @@
+# Message schema for a journal lookup.
+#
+# @attr [String]  status              %w(ok)
+# @attr [String]  message_type        %w(journal)
+# @attr [String]  message_version
+# @attr [Journal] message
+#
+class Lookup::Crossref::Message::Journal < Lookup::Crossref::Api::Message
+  include Lookup::Crossref::Shared::CreatorMethods
+  include Lookup::Crossref::Shared::DateMethods
+  include Lookup::Crossref::Shared::IdentifierMethods
+  include Lookup::Crossref::Shared::TitleMethods
+  include Lookup::Crossref::Shared::ResponseMethods
+
+  def api_record: () -> Array[Lookup::Crossref::Record::Journal]
+end

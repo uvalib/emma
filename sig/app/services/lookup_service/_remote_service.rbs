@@ -1,0 +1,142 @@
+# Base class for remote bibliographic metadata search services.
+#
+# -
+# noinspection RubyTooManyInstanceVariablesInspection
+# +
+class LookupService::RemoteService < ApiService
+  include Emma::Json
+
+  attr_reader response: Faraday::Response | nil # From Api::Common
+
+  # @return [LookupService::Request]
+  attr_reader request: LookupService::Request
+
+  # @return [LookupService::Response, nil]
+  attr_reader result: LookupService::Response | nil
+
+  # @return [Float, nil]
+  attr_reader start_time: Float | nil
+
+  # @return [float, nil]
+  attr_reader end_time: Float | nil
+
+  # @return [Boolean]
+  attr_reader enabled: bool
+
+  alias enabled? enabled
+
+  # Initialize a new remote service instance.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [String]        :base_url   Def.: BASE_URL defined by subclass.
+  # @option opt [String]        :api_key    Def.: API_KEY defined by subclass.
+  # @option opt [Array<Symbol>] :types      Def.: TYPES defined by subclass.
+  # @option opt [Integer]       :priority   Def.: PRIORITY defined by subclass.
+  # @option opt [Float]         :timeout    Def.: TIMEOUT defined by subclass.
+  # @option opt [Boolean]       :enabled    Def.: from configuration.
+  #
+  def initialize: (**untyped opt) -> void
+
+  def types:    () -> symArray
+  def priority: () -> Integer
+  def timeout:  () -> Float
+
+  # Indicate whether the request sequence has begun.
+  #
+  def started?: () -> bool
+
+  # Indicate whether the request sequence has finished.
+  #
+  def finished?: () -> bool
+
+  # How long the total request sequence took.
+  #
+  # @param [Integer] precision        Digits after the decimal point.
+  #
+  # @return [Float] Wall clock time in seconds; zero if not finished.
+  #
+  def duration: (?precision: Integer) -> Float
+
+  # Indicate whether the request has been sent and a response received.
+  #
+  def request_sent?: () -> bool
+
+  # Indicate whether the external service reported a successful request.
+  #
+  def succeeded?: () -> bool
+
+  # Indicate whether the request was not successful.
+  #
+  def failed?: () -> bool
+
+  # Indicate whether the request has been sent but a response has not yet
+  # been received.
+  #
+  def in_progress?: () -> bool
+
+  # Receive a request to lookup items on the remote service.
+  #
+  # @param [LookupService::Request, Hash, Array, String] items
+  # @param [Boolean] extended         If *true*, include :diagnostic.
+  #
+  # @return [LookupService::Response] The value assigned to @result.
+  #
+  def lookup_metadata: (lookupArg items, ?extended: bool) -> LookupService::Response
+
+  # Marshal data in preparation for the remote request.
+  #
+  # @param [LookupService::Request, Hash, Array, String] items
+  #
+  # @return [LookupService::Request]   The value for @request.
+  #
+  def pre_flight: (lookupArg items) -> LookupService::Request
+
+  # Send the request to the remove service.
+  #
+  # @param [LookupService::Request] req  Def.: `@request`.
+  #
+  # @return [Api::Message]
+  # @return [nil]                     If no request was made.
+  #
+  def fetch: (?lookupArg req) -> (Api::Message | nil)
+
+  # Extract results from the remote request.
+  #
+  # @param [Api::Message, LookupService::Data, Hash, nil] obj
+  # @param [Boolean] extended         If *true*, include :diagnostic.
+  #
+  # @return [LookupService::Response] The value for @result.
+  #
+  def post_flight: (Api::Message|LookupService::Data|symHash|nil obj, ?extended: bool) -> LookupService::Response
+
+  # Overridden by the subclass to transform response message data into
+  # normalized data which is passed to this superclass method.
+  #
+  # @param [Api::Message, LookupService::Data, Hash, nil] msg
+  # @param [Boolean] extended         If *true*, include :diagnostic.
+  #
+  # @return [LookupService::Data]
+  # @return [nil]                     If *msg* is *nil*.
+  #
+  def transform: (Api::Message|LookupService::Data|symHash msg, ?extended: bool) -> LookupService::Data
+               | (nil                                      msg, ?extended: bool) -> nil
+
+  # transform_multiple
+  #
+  # @param [Array<Api::Record>] recs
+  #
+  # @return [Hash{String=>Array<Hash>}]
+  #
+  def transform_multiple: (Array[Api::Record] recs) -> lookupDataValues
+
+  # Convert a single service-specific item record into values that can be used
+  #
+  # @param [Api::Record] rec
+  # @param [Hash]        values
+  #
+  # @return [Hash]
+  # @return [nil]                     If the record should be ignored.
+  #
+  def transform_single: (Api::Record rec, **untyped values) -> (symHash | nil)
+end

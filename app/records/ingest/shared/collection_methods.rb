@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 #
 module Ingest::Shared::CollectionMethods
   include Api::Shared::CollectionMethods
+  include Ingest::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

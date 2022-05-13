@@ -7,9 +7,11 @@ module SearchService::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  SEARCH_CONFIG: symHash
+  CONFIGURATION: symHash
 
   DEFAULT_ENGINE: Symbol
+
+  def configuration: () -> symHash
 
   # The URL for the API connection.
   #
@@ -17,31 +19,37 @@ module SearchService::Properties
   #
   # @see #default_engine_url
   #
-  def base_url: () -> String
+  #def base_url: () -> String
 
   # An API key is not a part of search URLs.
   #
   # @return [nil]
   #
-  def api_key: () -> nil
+  #def api_key: () -> nil
 
   # API version is not a part of search URLs.
   #
   # @return [nil]
   #
-  def api_version: () -> nil
+  #def api_version: () -> nil
 
   # Valid search engine URLs.
   #
   # @type [Hash{Symbol=>String}]
   #
-  def engines: () -> Hash[Symbol,String]
+  #def engines: () -> Hash[Symbol,String]
 
   # Default search engine for this deployment.
   #
   # @return [String]
   #
   def default_engine_url: () -> String
+
+  # The default service engine key.
+  #
+  # @return [Symbol]
+  #
+  def default_engine_key: () -> Symbol
 
   private
 

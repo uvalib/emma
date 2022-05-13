@@ -5,4 +5,5 @@
 #
 module Search::Shared::AggregateMethods
   include Api::Shared::AggregateMethods
+  include Search::Shared::CommonMethods
 end

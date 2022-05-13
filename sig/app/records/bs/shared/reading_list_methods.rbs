@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to reading lists.
 #
 module Bs::Shared::ReadingListMethods
+  include Bs::Shared::CommonMethods
   # :nocov:
   #include Model
 

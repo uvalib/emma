@@ -48,8 +48,8 @@ module BookshareConcern
   def get_member(for_user = nil, _name = nil)
     for_user = User.find_record(for_user || current_user)
     case for_user&.bookshare_uid
-      when BookshareService::BOOKSHARE_TEST_ACCOUNT
-        BookshareService::BOOKSHARE_TEST_MEMBER
+      when BookshareService::TEST_ACCOUNT
+        BookshareService::TEST_MEMBER
       else
         # TODO: Member lookup
     end

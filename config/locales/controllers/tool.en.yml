@@ -34,6 +34,7 @@ en:
       md:
         label:            'Math Detective'
         title:            'Math Detective API trial'
+        path:             md_trial_path
         description_html: |
           This page allows you to process an image file (JPEG, PNG,
           <em>etc.</em>) through Benetech's Math Detective, a backend service
@@ -47,3 +48,11 @@ en:
         _endpoint:        true
 
       # =======================================================================
+
+      lookup:
+        label:            'Bibliographic Lookup'
+        title:            'Bibliographic Lookup By Standard Identifier'
+        path:             bib_lookup_path
+        #description_html: |
+        #  TODO
+        _endpoint:        true

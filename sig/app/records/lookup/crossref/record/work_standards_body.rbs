@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::WorkStandardsBody
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-WorkStandardsBody
+#
+class Lookup::Crossref::Record::WorkStandardsBody < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

@@ -2,4 +2,5 @@
 #
 module Ingest::Shared::CreatorMethods
   include Api::Shared::CreatorMethods
+  include Ingest::Shared::CommonMethods
 end

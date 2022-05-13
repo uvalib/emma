@@ -222,6 +222,12 @@ TRACE_NOTIFICATIONS: bool
 #
 DEBUG_AWS: bool
 
+# Set to debug ActionCable interactions.
+#
+# @type [Boolean]
+#
+DEBUG_CABLE: bool
+
 # Set to set the :debug option for Rack::Cors.
 #
 # @type [Boolean]
@@ -287,6 +293,12 @@ DEBUG_SHRINE: bool
 # @type [Boolean]
 #
 DEBUG_SPROCKETS: bool
+
+# Set to show better information from Concurrent Ruby.
+#
+# @type [Boolean]
+#
+DEBUG_THREADS: bool
 
 # Set to show headers and data being sent to external APIs.
 #

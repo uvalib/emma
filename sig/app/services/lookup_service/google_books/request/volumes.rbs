@@ -1,0 +1,45 @@
+# LookupService::GoogleBooks::Request::Volumes
+#
+module LookupService::GoogleBooks::Request::Volumes
+  include LookupService::GoogleBooks::Common
+
+  # @private
+  # noinspection SpellCheckingInspection
+  QUERY_PREFIX: Hash[Symbol,String]
+
+  # @private
+  QUERY_ALIAS: symArray
+
+  # @private
+  ID_TYPES: strArray
+
+  # == GET https://www.googleapis.com/books/v1/volumes
+  #
+  # The service will match "lccn" numbers, but it won't include them in the
+  # list of identifiers for the result.  For that reason, the returned object
+  # is modified in-place to include searched-for LCCN items.
+  #
+  # @param [LookupService::Request, Array<String>, String] terms
+  # @param [Hash]                                          opt
+  #
+  # @option opt [Boolean] :compact  Passed to #get_parameters
+  # @option opt [Boolean] :foreign  Passed to #get_parameters
+  #
+  # @return [Lookup::GoogleBooks::Message::List]
+  #
+  # @see https://developers.google.com/books/docs/v1/reference/volumes/list
+  # @see https://developers.google.com/books/docs/v1/using#PerformingSearch
+  # @see https://developers.google.com/books/docs/v1/using#api_params
+  # @see https://cloud.google.com/apis/docs/system-parameters
+  #
+  def get_volumes: (LookupService::Request|strArray|String terms, **untyped opt) -> Lookup::GoogleBooks::Message::List
+
+  # query_terms!
+  #
+  # @param [LookupService::Request, Array<String>, String] terms
+  # @param [Hash]                                          opt
+  #
+  # @return [Array<String>]
+  #
+  def query_terms!: (LookupService::Request|strArray|String terms, symHash opt) -> strArray
+end

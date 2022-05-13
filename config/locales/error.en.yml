@@ -76,6 +76,12 @@ en:
 
         _name:          'Bookshare Federated Ingest service'
 
+      lookup:
+
+        # @see LookupService::Error.error_classes
+
+        _name:          'External lookup service'
+
       search:
 
         # @see SearchService::Error.error_classes

@@ -1,0 +1,15 @@
+# Methods mixed in to record elements related to authors, editors, etc.
+#
+module Lookup::Crossref::Shared::CreatorMethods
+  include Lookup::RemoteService::Shared::CreatorMethods
+  include Lookup::Crossref::Shared::CommonMethods
+
+  CREATOR_ROLE: Hash[Symbol,(bool|String)]
+
+  CREATOR_TYPES: symArray
+
+  def author_list:     (**untyped opt) -> strArray
+  def editor_list:     (**untyped opt) -> strArray
+  def translator_list: (**untyped opt) -> strArray
+  def creator_list: (*Symbol types, **untyped opt) -> strArray
+end

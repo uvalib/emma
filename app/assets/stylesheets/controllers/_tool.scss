@@ -1,6 +1,9 @@
 // app/assets/stylesheets/controllers/_tool.scss
 
-@use 'shared/variables' as *;
+@use 'shared/variables'        as *;
+@use 'shared/functions'        as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/grids'   as grid;
 
 //=============================================================================
 // Main page
@@ -10,10 +13,14 @@ body.tool.index {
 
     .tool-list {
 
+        display:        flex;
+        flex-direction: column;
+        flex-wrap:      wrap;
+        gap:            1rem;
+
         .tool-item {
             font-size:   larger;
             font-weight: bold;
-
         }
     }
 }
@@ -317,5 +324,90 @@ body.tool.md {
 body.tool.md:not(.debug) {
     .api-container {
         display: none; // Hide API results display if not debugging.
+    }
+}
+
+//=============================================================================
+// Bibliographic metadata lookup
+//=============================================================================
+
+body.tool.lookup {
+
+    $gap: 1rem;
+
+    .lookup-prompt {
+
+        $pad:    $gap;
+        $border: $pad * 0.25;
+        $color:  lighter($uva-blue, 75%);
+
+        display:        flex;
+        flex-direction: row;
+        gap:            $gap;
+        padding:        $pad;
+        max-width:      calc(50vw - (2 * (#{$pad} + #{$border})));
+        border:         $border solid $color;
+        border-radius:  $border * 2;
+        background:     $color;
+
+        > * {
+            line-height: 1.5;
+            margin:      auto 0;
+            font-size:   medium;
+        }
+
+        label {
+            font-weight: bold;
+            font-size:   large;
+        }
+
+        input {
+            flex:        1 1 auto;
+        }
+
+        button {
+
+            @include button.basic;
+
+            background:  white;
+        }
+    }
+
+    .lookup-results {
+
+        display:               grid;
+        grid-template-columns: minmax(max-content, 0.1fr) 1fr;
+        gap:                   $gap;
+        width:                 95vw;
+
+        // noinspection CssBrowserCompatibilityForProperties
+        textarea {
+            overscroll-behavior: contain;
+        }
+
+        .item-results {
+
+            @include grid.column-span;
+
+            height: 50vh;
+        }
+
+        .pair {
+
+            display: contents;
+
+            .label {
+                font-weight: bold;
+            }
+
+            .value.item-errors {
+                height:      5vh;
+            }
+
+            .value.item-diagnostics {
+                height:      10vh;
+                white-space: pre;
+            }
+        }
     }
 }

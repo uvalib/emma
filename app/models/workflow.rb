@@ -163,7 +163,7 @@ module Workflow::Base::Roles
     # noinspection RubyNilAnalysis
     user = user.bookshare_uid if user.is_a?(User)
     # TODO: role mapping
-    (user == BookshareService::BOOKSHARE_TEST_ACCOUNT) ? :developer : :user
+    (user == BookshareService::TEST_ACCOUNT) ? :developer : :user
   end
 
   # ===========================================================================

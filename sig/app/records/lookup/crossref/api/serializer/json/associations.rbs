@@ -1,0 +1,15 @@
+# Overrides for JSON serializers.
+#
+# @see Lookup::RemoteService::Api::Serializer::Json::Associations
+#
+module Lookup::Crossref::Api::Serializer::Json::Associations
+  extend ActiveSupport::Concern
+
+  include Lookup::RemoteService::Api::Serializer::Json::Associations
+
+  module ClassMethods
+    include Lookup::Crossref::Api::Serializer::Json::Schema
+
+    include Lookup::RemoteService::Api::Serializer::Json::Associations::ClassMethods
+  end
+end

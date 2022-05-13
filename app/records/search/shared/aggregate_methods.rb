@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 #
 module Search::Shared::AggregateMethods
   include Api::Shared::AggregateMethods
+  include Search::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

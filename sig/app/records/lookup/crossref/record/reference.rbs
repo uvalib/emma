@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::Reference
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-Reference
+#
+class Lookup::Crossref::Record::Reference < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

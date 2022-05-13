@@ -171,29 +171,32 @@ module Emma::Common::HashMethods
   # Recursively remove blank items from a hash.
   #
   # @param [Hash, nil] item
-  # @param [Boolean]   reduce         If *true* transform arrays with a single
+  # @param [Boolean]   squeeze        If *true* transform arrays with a single
   #                                     element into scalars.
+  # @param [Boolean]   dup            Ensure that the result is completely
+  #                                     disentangled with the original.
   #
   # @return [Hash]
   #
   # @see #_remove_blanks
   #
-  def reject_blanks(item, reduce = false)
-    # noinspection RubyMismatchedReturnType
-    item.is_a?(Hash) && _remove_blanks(item, reduce) || {}
+  def reject_blanks(item, squeeze: false, dup: false, **)
+    item.is_a?(Hash) && _remove_blanks(item, squeeze: squeeze, dup: dup) || {}
   end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  private
+  protected
 
   # Recursively remove blank items from an object.
   #
   # @param [Hash, Array, Any] item
   # @param [Boolean]          squeeze   If *true* transform arrays with a
   #                                       single element into scalars.
+  # @param [Boolean]          dup       Ensure that the result is completely
+  #                                       disentangled with the original.
   #
   # @return [Hash, Array, Any, nil]
   #
@@ -201,41 +204,68 @@ module Emma::Common::HashMethods
   # == Variations
   #++
   #
-  # @overload _remove_blanks(hash)
-  #   @param [Hash]       hash
-  #   @param [Boolean]    squeeze
+  # @overload _remove_blanks(item)
+  #   @param [NilClass,Boolean,Numeric,Symbol,Method,Proc,Module] item
+  #   @param [Boolean] squeeze        Ignored
+  #   @param [Boolean] dup            Ignored
+  #   @return [NilClass,Boolean,Numeric,Symbol,Method,Proc,Module]
+  #
+  # @overload _remove_blanks(item, dup: bool)
+  #   @param [String]  item
+  #   @param [Boolean] squeeze        Ignored
+  #   @param [Boolean] dup
+  #   @return [String, nil]
+  #
+  # @overload _remove_blanks(hash, squeeze: bool, dup: bool)
+  #   @param [Hash]    hash
+  #   @param [Boolean] squeeze
+  #   @param [Boolean] dup
   #   @return [Hash, nil]
   #
-  # @overload _remove_blanks(array)
-  #   @param [Array]      array
-  #   @param [Boolean]    squeeze
+  # @overload _remove_blanks(array, squeeze: bool, dup: bool)
+  #   @param [Array]   array
+  #   @param [Boolean] squeeze
+  #   @param [Boolean] dup
   #   @return [Array, nil]
   #
   # @overload _remove_blanks(item)
-  #   @param [FalseClass] item
-  #   @param [Boolean]    squeeze     Ignored
-  #   @return [FalseClass]
-  #
-  # @overload _remove_blanks(item)
-  #   @param [Any]        item
-  #   @param [Boolean]    squeeze     Ignored
+  #   @param [Any]     item
+  #   @param [Boolean] squeeze        Ignored
+  #   @param [Boolean] dup
   #   @return [Any, nil]
   #
   # == Usage Notes
-  # Empty strings and nils are considered blank, however an item or element
-  # with the explicit value of *false* is not considered blank.
+  # * Empty strings and nils are considered blank, however an item or element
+  #   with the explicit value of *false* is not considered blank.
+  # * The *dup* option does not apply to items with type Proc or Module because
+  #   this could lead to unexpected results, especially if the item is a class.
+  #   E.g.:
+  #   ```
+  #     a = { c: User }
+  #     b = a.deep_dup
+  #     (a[:c] != b[:c])        # Different classes with the same attributes...
+  #     !(b[:c] <= a[:c])       # ... which are completely unrelated.
+  #     a[:c].new.is_a?(User)
+  #     !b[:c].new.is_a?(User)
+  #   ```
   #
-  def _remove_blanks(item, squeeze = false)
-    meth = __method__
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def _remove_blanks(item, squeeze: false, dup: false, **)
     case item
+      when TrueClass, FalseClass, Numeric, Symbol, Method, Proc, Module
+        item
       when Hash
-        item.transform_values { |v| send(meth, v, squeeze) }.compact.presence
+        opt = { squeeze: squeeze, dup: dup }
+        item.transform_values { |v| _remove_blanks(v, **opt) }.compact.presence
       when Array
-        result = item.map { |v| send(meth, v, squeeze) }.compact
-        (squeeze && (result.size <= 1)) ? result.first : result.presence
+        opt = { squeeze: squeeze, dup: dup }
+        res = item.map { |v| _remove_blanks(v, **opt) }.compact.presence
+        (squeeze && (item&.size == 1)) ? res.first : res
       else
-        # noinspection RubyMismatchedReturnType
-        item.is_a?(FalseClass) ? item : item.presence
+        item = item.presence
+        (dup && item&.duplicable?) ? item.dup : item
     end
   end
 

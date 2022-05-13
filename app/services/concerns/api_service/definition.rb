@@ -28,10 +28,15 @@ module ApiService::Definition
   #
   # @see ApiService#add_api
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def add_api(prop)
-    name_parts = self.to_s.split('::')
-    # noinspection RubyNilAnalysis
-    name_parts.first.constantize.add_api(prop, name_parts.last)
+    class_name   = is_a?(Module) ? name : self.class.name
+    name_parts   = class_name.split('::')
+    topic        = name_parts.pop
+    service_name = name_parts[...-1].join('::')
+    service_name.constantize.add_api(prop, topic)
   end
 
   # Properties for each method which implements an API request.

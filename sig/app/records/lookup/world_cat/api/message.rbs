@@ -1,0 +1,7 @@
+# The base class for inbound messages from the external service API.
+#
+class Lookup::WorldCat::Api::Message < Lookup::WorldCat::Api::Record
+  include Lookup::RemoteService::Api::Message
+
+  include Lookup::WorldCat::Shared::ResponseMethods
+end

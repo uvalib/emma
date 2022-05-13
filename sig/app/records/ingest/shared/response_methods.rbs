@@ -2,4 +2,5 @@
 #
 module Ingest::Shared::ResponseMethods
   include Api::Shared::ResponseMethods
+  include Ingest::Shared::CommonMethods
 end

@@ -1,0 +1,87 @@
+# Derived from Hash to provide a standardized interface for manipulating values
+# that are to be transmitted back to the client.
+#
+class ApplicationCable::Response < Hash[Symbol,untyped]
+  TEMPLATE: symHash
+
+  # Create a new instance.
+  #
+  # @param [*]    values
+  # @param [Hash] opt
+  #
+  def initialize: (?untyped? values, **untyped opt) -> void
+
+  # @private
+  # @type [Array<Symbol>]
+  CHANNEL_PARAMS: symArray
+
+  # Hash keys which should not be included with the data stored in the class
+  # instance.
+  #
+  # @type [Array<Symbol>]
+  #
+  def ignored_keys: () -> symArray
+
+  # normalize
+  #
+  # @param [*] value
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # == Implementation Notes
+  # Message classes based on a Hash data item require #to_h in order to avoid
+  # propagating out-of-band data.
+  #
+  def normalize: (untyped value) -> symHash
+
+  def to_h: () -> symHash
+
+  # URL path to the job result lookup endpoint.
+  # TODO: real location for data_url! ... ?
+  #
+  # @type [String]
+  #
+  DEF_BASE_PATH: String
+
+  # Replace :data with :data_url which references the database record where
+  # this response is stored.
+  #
+  # @param [String] base_path   URL path to the job result lookup endpoint.
+  # @param [String] data_path   Location in the data hierarchy.
+  # @param [Hash]   opt         Additional URL parameters.
+  #
+  # @return [self]
+  #
+  def convert_to_data_url!: (?base_path: String, ?data_path: Array[Symbol|String]?, **untyped opt) -> self
+
+  # Create a new instance unless *payload* is already an instance of the class
+  # and there are no *opt* additions.
+  #
+  # @param [*]    payload
+  # @param [Hash] opt
+  #
+  # @return [ApplicationCable::Response]
+  #
+  def self.cast: (untyped payload, **untyped opt) -> ApplicationCable::Response
+
+  # template
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def self.template: () -> symHash
+
+  # Define a set of fields to be associated with instance of the class in the
+  # preferred order.
+  #
+  # @param [Hash, Array, nil] items
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @yield Alternate mechanism for providing *items*.
+  # @yieldreturn [Hash, Array]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def self.make_response_template: (?untyped? items) { () -> untyped } -> symHash
+end

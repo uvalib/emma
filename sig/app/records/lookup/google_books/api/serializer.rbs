@@ -1,0 +1,8 @@
+# The base class for serialization/de-serialization of objects derived from
+# Lookup::GoogleBooks::Api::Record.
+#
+class Lookup::GoogleBooks::Api::Serializer < Lookup::RemoteService::Api::Serializer
+  include Lookup::GoogleBooks::Api::Serializer::Schema
+
+  include Lookup::GoogleBooks::Api::Serializer::Associations
+end

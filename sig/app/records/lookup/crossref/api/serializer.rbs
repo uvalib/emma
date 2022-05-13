@@ -1,0 +1,8 @@
+# The base class for serialization/de-serialization of objects derived from
+# Lookup::Crossref::Api::Record.
+#
+class Lookup::Crossref::Api::Serializer < Lookup::RemoteService::Api::Serializer
+  include Lookup::Crossref::Api::Serializer::Schema
+
+  include Lookup::Crossref::Api::Serializer::Associations
+end

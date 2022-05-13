@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to subscriptions.
 #
 module Bs::Shared::SubscriptionMethods
+  include Bs::Shared::CommonMethods
   # :nocov:
   #include Model
 

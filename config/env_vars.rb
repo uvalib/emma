@@ -221,8 +221,7 @@ BOOKSHARE_BASE_URL =
      .strip
      .sub(%r{^(http:)?//}, 'https://')
      .sub(%r{/+$}, '')
-     .sub(%r{(/v.+)?$}) { $1 || "/#{BOOKSHARE_API_VERSION}" }
-    .freeze
+     .freeze
 
 # Base Bookshare authentication service path.
 #
@@ -423,6 +422,12 @@ TRACE_NOTIFICATIONS = TRACE_OUTPUT && true?(ENV['TRACE_NOTIFICATIONS'])
 #
 DEBUG_AWS = true?(ENV['DEBUG_AWS'])
 
+# Set to debug ActionCable interactions.
+#
+# @type [Boolean]
+#
+DEBUG_CABLE = true?(ENV['DEBUG_CABLE'])
+
 # Set to set the :debug option for Rack::Cors.
 #
 # @type [Boolean]
@@ -498,6 +503,12 @@ DEBUG_SHRINE = true?(ENV['DEBUG_SHRINE'])
 # @type [Boolean]
 #
 DEBUG_SPROCKETS = true?(ENV['DEBUG_SPROCKETS'])
+
+# Set to show better information from Concurrent Ruby.
+#
+# @type [Boolean]
+#
+DEBUG_THREADS = true?(ENV['DEBUG_THREADS'])
 
 # Set to show headers and data being sent to external APIs.
 #

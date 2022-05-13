@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 # @see Model::ClassMethods#validate_relations
 #
 module Api::Shared::CollectionMethods
+  include Api::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

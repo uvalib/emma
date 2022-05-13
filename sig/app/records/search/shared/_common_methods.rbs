@@ -1,0 +1,5 @@
+# General shared methods.
+#
+module Search::Shared::CommonMethods
+  include Api::Shared::CommonMethods
+end

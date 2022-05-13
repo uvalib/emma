@@ -25,6 +25,7 @@ export class Api extends BaseClass {
      * @typedef {{
      *     base_url?: string,
      *     api_key?:  string,
+     *     callback?: XmitCallback,
      * }} Api_Options
      */
 
@@ -43,8 +44,9 @@ export class Api extends BaseClass {
     constructor(base_url, options = {}) {
         super();
         this.base_url = base_url || options.base_url || '';
-        this.api_key  = options.api_key;
         this.state    = 'initialized';
+        this.api_key  = options.api_key;
+        this.callback = options.callback;
         /** @type {XMLHttpRequest|undefined} */
         this.xhr      = undefined;
         this.message  = undefined;
@@ -97,7 +99,7 @@ export class Api extends BaseClass {
             case 'function': caller_cb = opt;      break;
             case 'object':   settings  = dup(opt); break;
         }
-        caller_cb ||= cb;
+        caller_cb ||= cb || this.callback;
         settings  ||= {};
         settings.headers = this._addHeaders(settings.headers);
 

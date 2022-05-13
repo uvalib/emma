@@ -1,0 +1,7 @@
+# A pseudo-message for a lookup response error.
+#
+class Lookup::Crossref::Message::Error < Lookup::Crossref::Api::Message
+  include Lookup::Crossref::Shared::ResponseMethods
+
+  def initialize: (Faraday::Response|Model|String|anyHash|nil src, ?(symHash|nil) opt) -> void
+end

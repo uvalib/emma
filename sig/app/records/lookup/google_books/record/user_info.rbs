@@ -1,0 +1,14 @@
+# User specific information related to this volume. (e.g. page this user last
+# read or whether they purchased this book).
+#
+# @attr [Hash]     review
+# @attr [String]   readingPosition
+# @attr [Boolean]  isPurchased
+# @attr [DateTime] updated
+# @attr [Boolean]  isPreordered
+#
+# @see https://developers.google.com/books/docs/v1/reference/volumes
+#
+class Lookup::GoogleBooks::Record::UserInfo < Lookup::GoogleBooks::Api::Record
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

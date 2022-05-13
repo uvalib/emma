@@ -1,0 +1,5 @@
+# General shared methods.
+#
+module Lookup::RemoteService::Shared::CommonMethods
+  include Api::Shared::CommonMethods
+end

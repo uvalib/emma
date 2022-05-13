@@ -375,9 +375,8 @@ module TestHelper::SystemTests::Bookshare
     name   = model_class(type)
     model  = name&.new('{}')
     fields = model.try(:field_definitions) || {}
-    fields.map do |field|
-      type = model_field_type(field[:type])
-      field.merge(type: type)
+    fields.values.map do |definition|
+      definition.merge(type: model_field_type(definition[:type]))
     end
   end
 

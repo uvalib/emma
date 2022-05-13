@@ -113,7 +113,7 @@ module Api::Shared::DateMethods
   # @return [nil]                     If *value* is not a valid date.
   #
   def normalize_date(value)
-    IsoDay.cast(value)&.to_s if value.present?
+    IsoDay.cast(value)&.to_s
   end
 
 end

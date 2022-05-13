@@ -1,0 +1,23 @@
+# Partial record schema for WorldCat API results.
+#
+# @attr [String] recordSchema   'info:srw/schema/1/dc'
+# @attr [String] recordPacking  'xml'
+#
+# @see https://developer.api.oclc.org/wcv1#operations-SRU-search-sru
+#
+class Lookup::WorldCat::Record::Response < Lookup::WorldCat::Api::Record
+  include Lookup::WorldCat::Shared::CollectionMethods
+
+  include Lookup::WorldCat::Shared::IdentifierMethods
+
+  LIST_ELEMENT: Class
+
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # @return [Integer]
+  #
+  # -
+  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
+  # +
+  def totalResults: () -> Integer
+end

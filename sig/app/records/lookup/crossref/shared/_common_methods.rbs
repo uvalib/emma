@@ -1,0 +1,22 @@
+# This is included in record classes that define :BASE_ELEMENT to confirm that
+# they are intended to function as aggregates.
+#
+# @see Model::ClassMethods#validate_relations
+#
+module Lookup::Crossref::Shared::CommonMethods
+  include Lookup::RemoteService::Shared::CommonMethods
+
+  extend ::Lookup::Crossref::Shared::CommonMethods
+
+  EXTENDED_FIELDS: bool
+
+  COMPLETE_FIELDS: bool
+
+  EXT: bool
+
+  ALL: bool
+
+  ITEM_PATH: symArray
+
+  def item_record_path: () -> symArray
+end

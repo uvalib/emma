@@ -1,0 +1,18 @@
+# Overrides for Obj serializers.
+#
+# @see Lookup::RemoteService::Api::Serializer::Obj::Associations
+#
+module Lookup::WorldCat::Api::Serializer::Obj::Associations
+  extend ActiveSupport::Concern
+
+  include Lookup::RemoteService::Api::Serializer::Obj::Associations
+
+  # -
+  # noinspection LongLine
+  # +
+  module ClassMethods
+    include Lookup::WorldCat::Api::Serializer::Obj::Schema
+
+    include Lookup::RemoteService::Api::Serializer::Obj::Associations::ClassMethods
+  end
+end

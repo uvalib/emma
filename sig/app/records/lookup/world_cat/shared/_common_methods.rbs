@@ -1,0 +1,32 @@
+# This is included in record classes that define :BASE_ELEMENT to confirm that
+# they are intended to function as aggregates.
+#
+# @see Model::ClassMethods#validate_relations
+#
+module Lookup::WorldCat::Shared::CommonMethods
+  include Lookup::RemoteService::Shared::CommonMethods
+
+  extend ::Lookup::WorldCat::Shared::CommonMethods
+
+  EXTENDED_FIELDS: bool
+
+  COMPLETE_FIELDS: bool
+
+  EXT: bool
+
+  ALL: bool
+
+  # A traversal through the hierarchy rooted at the class instance which
+  # holds all of the metadata for a single lookup result item.
+  #
+  # @type [Array<Symbol>]
+  #
+  ITEM_PATH: symArray
+
+  # A traversal through the hierarchy rooted at the class instance which
+  # holds all of the metadata for a single lookup result item.
+  #
+  # @return [Array<Symbol>]
+  #
+  def item_record_path: () -> symArray
+end

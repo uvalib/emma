@@ -812,6 +812,22 @@ class Isbn < PublicationIdentifier
     super(v || value)
   end
 
+  # Indicate whether the instance is a valid ISBN-13.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def isbn13?(v = nil)
+    super(v || value)
+  end
+
+  # Indicate whether the instance is a valid ISBN-10.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def isbn10?(v = nil)
+    super(v || value)
+  end
+
 end
 
 # ISSN identifier.

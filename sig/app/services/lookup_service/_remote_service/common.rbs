@@ -1,0 +1,16 @@
+# LookupService::RemoteService::Common
+#
+module LookupService::RemoteService::Common
+  include ApiService::Common
+
+  include LookupService::RemoteService::Properties
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

@@ -5,4 +5,5 @@
 #
 module Ingest::Shared::AggregateMethods
   include Api::Shared::AggregateMethods
+  include Ingest::Shared::CommonMethods
 end

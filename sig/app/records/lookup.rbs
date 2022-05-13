@@ -1,0 +1,4 @@
+# Namespace for objects de-serialized from external service APIs.
+#
+module Lookup
+end

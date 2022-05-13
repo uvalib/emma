@@ -1,0 +1,2 @@
+class LookupChannelTest < ActionCable::Channel::TestCase
+end

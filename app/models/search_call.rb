@@ -390,7 +390,7 @@ class SearchCall < ApplicationRecord
           end
       end
     end
-    reject_blanks(result, true).sort.to_h
+    reject_blanks(result, squeeze: true).sort.to_h
   end
 
   # Extract a 'users' table index from the given item.

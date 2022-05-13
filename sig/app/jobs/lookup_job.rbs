@@ -1,0 +1,95 @@
+class LookupJob < ActiveJob::Base
+  include Emma::Time
+
+  include Emma::Debug
+
+  extend Emma::Debug
+
+  # initialize
+  #
+  # @param [*] arguments              Assigned to ActiveJob::Core#arguments.
+  #
+  def initialize: (*untyped arguments) -> void
+
+  # Lookup the provided identifier(s) and transmit the result to the client.
+  #
+  # Expected ActiveJob arguments:
+  # * argument[0]   LookupService::RemoteService subclass or subclass instance.
+  # * argument[1]   Array of identifier strings or Hash table of arrays.
+  # * argument[2]   Options:
+  #
+  # @option argument[2] [Symbol]  :role
+  # @option argument[2] [Boolean] :no_raise
+  #
+  # @return [Hash]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload perform_later(services, items, opt)
+  #   The "waiter" task invoked via `LookupJob.perform_later`.
+  #   @param [Array<Class,LookupService::RemoteService>]  services
+  #   @param [LookupService::Request]                     items
+  #   @param [Hash]                                       opt
+  #   @return [Hash]
+  #
+  # @overload perform_later(service, items, opt, role: :worker)
+  #   A "worker" task invoked from within #waiter_task.
+  #   @param [Class,LookupService::RemoteService]         service
+  #   @param [LookupService::Request]                     items
+  #   @param [Hash]                                       opt
+  #   @return [Hash]  From LookupService::RemoteService#lookup_metadata
+  #
+  def perform: () -> symHash
+
+  JOB_STATUS: Hash[Symbol,Hash[(Symbol|nil),String]]
+
+  # If *true*, each worker will send a response back to the client.  Otherwise,
+  # the only response the client should expect is the one from the waiter task
+  # after all of the worker tasks have either completed or timed-out.
+  #
+  # @type [Boolean]
+  #
+  WORKER_RESPONSE: bool
+
+  # worker_task
+  #
+  # @param [JobResult]                           record
+  # @param [Class, LookupService::RemoteService] service
+  # @param [LookupService::Request]              items
+  # @param [Hash]                                opt
+  #
+  # @return [Hash]
+  #
+  def worker_task: (JobResult record, Class|LookupService::RemoteService service, LookupService::Request items, **untyped opt) -> symHash
+
+  # The instrumentation notification which causes the waiter task to update its
+  # tally of results and send a response back to the client if all tasks have
+  # either completed or timed-out.
+  #
+  # @type [String]
+  #
+  WAITER_NOTIFICATION: String
+
+  # waiter_task
+  #
+  # @param [JobResult]                                 record
+  # @param [Array<Class,LookupService::RemoteService>] services
+  # @param [LookupService::Request]                    items
+  # @param [Hash]                                      opt
+  #
+  # @return [Hash]
+  #
+  # -
+  # noinspection RubyMismatchedReturnType
+  # +
+  def waiter_task: (JobResult record, Class|LookupService::RemoteService services, LookupService::Request items, **untyped opt) -> symHash
+
+  def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> void
+
+  DATA_COLUMNS: symArray
+  DEFAULT_DATA_COLUMN: Symbol
+
+  def self.job_result: (job_id: String, ?column: Symbol|String|nil, ?path: anyArray|Symbol|String|nil) -> (symHash | nil)
+end

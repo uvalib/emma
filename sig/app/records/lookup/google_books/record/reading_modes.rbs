@@ -1,0 +1,10 @@
+# Reading modes.
+#
+# @attr [Boolean] text
+# @attr [Boolean] image
+#
+# @see https://developers.google.com/books/docs/v1/reference/volumes
+#
+class Lookup::GoogleBooks::Record::ReadingModes < Lookup::GoogleBooks::Api::Record
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

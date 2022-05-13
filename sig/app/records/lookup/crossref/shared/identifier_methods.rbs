@@ -1,0 +1,17 @@
+# Methods mixed in to record elements related to standard identifiers.
+#
+module Lookup::Crossref::Shared::IdentifierMethods
+  include Lookup::RemoteService::Shared::IdentifierMethods
+  include Lookup::Crossref::Shared::CommonMethods
+
+  FIELD_TYPE_MAP: Hash[Symbol,Class]
+
+  IDENTIFIER_FIELDS: symArray
+
+  @identifier_list:  strArray | nil
+  @identifier_table: lookupRequestHash | nil
+
+  def identifier_list:    () -> strArray
+  def identifier_table:   () -> lookupRequestHash
+  def identifier_related: () -> Hash[(:dc_identifier|:dc_related), strArray]
+end

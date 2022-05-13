@@ -93,7 +93,7 @@ module ApiService::Properties
   # @return [String]
   #
   def name_for(target)
-    target.to_s.underscore.delete_suffix('_service')
+    target.to_s.demodulize.underscore.delete_suffix('_service')
   end
 
   # ===========================================================================
@@ -102,12 +102,20 @@ module ApiService::Properties
 
   public
 
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  def configuration
+    i18n_erb("emma.service.#{service_name}", default: {})
+  end
+
   # The URL for the API connection.
   #
   # @return [String]
   #
   def base_url
-    @base_url ||= not_implemented 'must be defined by the subclass'
+    @base_url ||= default_engine_url
   end
 
   # The URL for the API connection as a URI.
@@ -123,7 +131,7 @@ module ApiService::Properties
   # @return [String, nil]
   #
   def api_key
-    not_implemented 'must be defined by the subclass'
+    configuration[:api_key]
   end
 
   # API version (if applicable).
@@ -131,7 +139,23 @@ module ApiService::Properties
   # @return [String, nil]
   #
   def api_version
-    not_implemented 'must be defined by the subclass'
+    configuration[:api_version]
+  end
+
+  # API user account (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_user
+    configuration[:api_user]
+  end
+
+  # API user account password (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_password
+    configuration[:api_password]
   end
 
   # ===========================================================================
@@ -145,7 +169,8 @@ module ApiService::Properties
   # @type [Hash{Symbol=>String}]
   #
   def engines
-    not_implemented 'To be overridden by the service subclass'
+    value = configuration[:endpoint]
+    value.is_a?(Hash) ? value : { default_engine_key => value }
   end
 
   # Default service endpoint for this deployment.
@@ -153,15 +178,15 @@ module ApiService::Properties
   # @return [String]
   #
   def default_engine_url
-    not_implemented 'To be overridden by the service subclass'
+    engines[default_engine_key]
   end
 
   # The default service engine key.
   #
-  # @return [Symbol, nil]
+  # @return [Symbol]
   #
   def default_engine_key
-    engines.find { |_, url| url == default_engine_url }&.first&.first
+    :default
   end
 
   # engine_url
@@ -206,7 +231,7 @@ module ApiService::Properties
   # @type [Integer]
   #
   def max_redirects
-    MAX_REDIRECTS
+    configuration[:max_redirects] || MAX_REDIRECTS
   end
 
   # ===========================================================================

@@ -1,0 +1,32 @@
+# Lookup::GoogleBooks::Message::List
+#
+# @attr [String]      kind            ("books#volumes")
+# @attr [Integer]     totalItems
+# @attr [Array<Item>] items
+#
+# @see https://developers.google.com/books/docs/v1/reference/volumes/list#response
+#
+class Lookup::GoogleBooks::Message::List < Lookup::GoogleBooks::Api::Message
+  include Lookup::GoogleBooks::Shared::CollectionMethods
+  include Lookup::GoogleBooks::Shared::ResponseMethods
+
+  LIST_ELEMENT: Class
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                   opt
+  #
+  def initialize: (?(Faraday::Response|Model|String|anyHash|nil) src, ?(symHash|nil) opt) -> void
+
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # @return [Integer]
+  #
+  # -
+  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
+  # +
+  def totalResults: () -> Integer
+
+  def api_records: () -> Array[Lookup::GoogleBooks::Record::VolumeInfo]
+end

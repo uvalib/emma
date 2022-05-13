@@ -5,4 +5,5 @@
 #
 module Bs::Shared::AggregateMethods
   include Api::Shared::AggregateMethods
+  include Bs::Shared::CommonMethods
 end

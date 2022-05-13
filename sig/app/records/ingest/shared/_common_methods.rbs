@@ -1,0 +1,5 @@
+# General shared methods.
+#
+module Ingest::Shared::CommonMethods
+  include Api::Shared::CommonMethods
+end

@@ -1,0 +1,27 @@
+# Methods mixed in to record elements related to catalog titles.
+#
+module Lookup::RemoteService::Shared::TitleMethods
+  include Api::Shared::TitleMethods
+  include Lookup::RemoteService::Shared::IdentifierMethods
+
+  # A unique identifier for this catalog title.
+  #
+  # @return [String]
+  #
+  def identifier: () -> (String | nil)
+
+  def full_title:           (?Symbol? field) -> String
+
+  def publisher_name:       (?Symbol? field) -> (String | nil)
+  def publication_place:    (?Symbol? field) -> (String | nil)
+  def publication_date:     (?Symbol? field) -> (String | nil)
+  def publication_year:     (?Symbol? field) -> (String | nil)
+
+  def series_type:          (?Symbol? field) -> (String | nil)
+  def series_volume:        (?Symbol? field) -> (String | nil)
+  def series_issue:         (?Symbol? field) -> (String | nil)
+
+  def language_list:        (?Symbol? field) -> strArray
+  def subject_list:         (?Symbol? field) -> strArray
+  def description_list:     (?Symbol? field) -> strArray
+end

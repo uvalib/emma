@@ -1,0 +1,13 @@
+# Metadata record schema for an item lookup.
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-Work
+#
+class Lookup::Crossref::Record::Work < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CreatorMethods
+
+  include Lookup::Crossref::Shared::DateMethods
+
+  include Lookup::Crossref::Shared::IdentifierMethods
+
+  include Lookup::Crossref::Shared::TitleMethods
+end

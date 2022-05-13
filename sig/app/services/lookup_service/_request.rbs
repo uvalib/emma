@@ -1,0 +1,20 @@
+class LookupService::Request
+  include LookupService::Common
+
+  include Serializable
+
+  TEMPLATE: symHash
+
+  attr_reader table: symHash
+
+  def initialize:  (lookupArg|nil items) -> void
+  def fix_ids!:    () -> void
+  def fix_query!:  () -> void
+  def request:     () -> symHash
+  def request_ids: () -> lookupRequestHash
+  def id_types:    () -> symArray
+  def identifiers: () -> lookupRequestItems
+  def to_h:        () -> Hash[Symbol,(lookupHash|lookupRequestHash)]
+
+  def self.wrap: (untyped item) -> LookupService::Request
+end

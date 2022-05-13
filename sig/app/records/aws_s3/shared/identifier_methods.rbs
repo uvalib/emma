@@ -2,4 +2,5 @@
 #
 module AwsS3::Shared::IdentifierMethods
   include Api::Shared::IdentifierMethods
+  include AwsS3::Shared::CommonMethods
 end

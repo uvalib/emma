@@ -1,0 +1,70 @@
+# Common logic for all channels.
+#
+class ApplicationCable::Channel < ActionCable::Channel::Base
+  include ApplicationCable::Common
+
+  # stream_id
+  #
+  # @return [String, nil]
+  #
+  # @see file:app/assets/javascripts/channels/lookup_channel.js *streamId*
+  #
+  def stream_id: () -> (String | nil)
+
+  # stream_name
+  #
+  # @param [String, nil] base
+  #
+  # @return [String]
+  #
+  # @see file:app/assets/javascripts/channels/lookup_channel.js *streamName*
+  #
+  def stream_name: (?(String|nil) base) -> String
+
+  # Setup for a subscription.
+  #
+  # @return [void]
+  #
+  # @see file:app/assets/javascripts/channels/consumer.js *createChannel*
+  #
+  def subscribed: () -> void
+
+  # Any cleanup needed when channel is unsubscribed.
+  #
+  # @return [void]
+  #
+  # @see file:app/assets/javascripts/channels/lookup_channel.js  *disconnect*
+  # @see file:app/assets/javascripts/channels/consumer.js        *closeChannel*
+  #
+  def unsubscribed: () -> void
+
+  # Receive data from the client.
+  #
+  # @param [*]    payload
+  # @param [Hash] opt
+  #
+  # @param [Hash{Symbol=>*}]
+  #
+  def stream_recv: (untyped payload, **untyped opt) -> untyped
+
+  # Push data to the client.
+  #
+  # @param [ApplicationCable::Response] payload
+  # @param [Hash]                       opt
+  #
+  # @return [void]
+  #
+  def stream_send: (ApplicationCable::Response payload, **untyped opt) -> void
+
+  # Push data to the client.
+  #
+  # @param [ApplicationCable::Response] payload
+  # @param [Hash]                       opt
+  #
+  # @return [void]
+  #
+  def self.stream_send: (ApplicationCable::Response payload, **untyped opt) -> void
+
+
+  def deliver_error_message: (Exception e) -> untyped
+end

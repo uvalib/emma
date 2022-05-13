@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module Ingest::Shared::DateMethods
 
   include Api::Shared::DateMethods
+  include Ingest::Shared::CommonMethods
 
   # ===========================================================================
   # :section:

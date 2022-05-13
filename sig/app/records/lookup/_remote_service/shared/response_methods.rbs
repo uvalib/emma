@@ -1,0 +1,8 @@
+# Methods mixed in to message elements supporting error reporting.
+#
+module Lookup::RemoteService::Shared::ResponseMethods
+  include Api::Shared::ResponseMethods
+  include Lookup::RemoteService::Shared::CommonMethods
+
+  def api_records: () -> (Array[Api::Record] | nil)
+end

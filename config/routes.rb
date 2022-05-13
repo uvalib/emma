@@ -321,6 +321,10 @@ Rails.application.routes.draw do
 
   get   '/tool/md',       to: 'tool#md',       as: 'md_trial'
   match '/tool/md_proxy', to: 'tool#md_proxy', as: 'md_proxy', via: %i[get post]
+  get   '/tool/lookup',   to: 'tool#lookup',   as: 'bib_lookup'
+
+  get   '/tool/lookup_result/:job_id',       to: 'tool#lookup_result', as: 'bib_lookup_result'
+  get   '/tool/lookup_result/:job_id/*path', to: 'tool#lookup_result', as: 'bib_lookup_result_path'
 
 end
 

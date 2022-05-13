@@ -68,6 +68,12 @@ module ApiService::Properties
   attr_reader base_url: String
   attr_reader base_uri: URI::Generic
 
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  def configuration: () -> symHash
+
   # The URL for the API connection.
   #
   # @return [String]
@@ -92,6 +98,18 @@ module ApiService::Properties
   #
   def api_version: () -> (String | nil)
 
+  # API user account (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_user: () -> (String | nil)
+
+  # API user account password (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_password: () -> (String | nil)
+
   # Valid service endpoint URLs.
   #
   # @type [Hash{Symbol=>String}]
@@ -106,9 +124,9 @@ module ApiService::Properties
 
   # The default service engine key.
   #
-  # @return [Symbol, nil]
+  # @return [Symbol]
   #
-  def default_engine_key: () -> (Symbol | nil)
+  def default_engine_key: () -> Symbol
 
   # engine_url
   #

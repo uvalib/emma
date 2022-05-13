@@ -105,6 +105,18 @@ class ScalarType
   #
   def eql?: (untyped other) -> bool
 
+  # Return the value as represented within JSON.
+  #
+  # @return [String]
+  #
+  def to_json: () -> String
+
+  # Return the value as represented within JSON.
+  #
+  # @return [String]
+  #
+  def as_json: () -> String
+
   # Comparison operator required by the Comparable mixin.
   #
   # @param [Any] other
@@ -127,6 +139,21 @@ class ScalarType
   # Returning *false* here prevents that.
   #
   def self.duplicable?: () -> bool
+
+  # Create a serializer class associated with the given *base*.
+  #
+  # @param [Class] base
+  #
+  def self.define_serializer: (?Class base) -> void
+
+  # Create a serializer class associated with the given *base* and arrange for
+  # any subclasses to have their own serializers.
+  #
+  # @param [Class] base
+  #
+  # @return [void]
+  #
+  def self.generate_serializer: (?Class base) -> void
 end
 
 # ISO 8601 duration.
@@ -259,9 +286,18 @@ class IsoDate < ScalarType
     #
     # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, Any, nil] v
     #
-    # @return [String]
+    # @return [String, nil]
     #
-    def normalize: (untyped v) -> String
+    def normalize: (untyped v) -> (String | nil)
+
+    # Prepare a date string for normalization.
+    #
+    # @param [*] v
+    #
+    # @return [*]
+    #
+    def strip_copyright: (String  v) -> String
+                       | (untyped v) -> untyped
 
     # Transform *v* into a ISO 8601 form.
     #
@@ -403,17 +439,17 @@ class IsoDate < ScalarType
     #
     # @param [Any, nil] v
     #
-    # @return [self, nil]
+    # @return [IsoDate, nil]
     #
-    def cast: (untyped v) -> (self | nil)
+    def cast: (untyped v) -> (IsoDate | nil)
 
     # Create a new instance of this type.
     #
     # @param [Any, nil] v
     #
-    # @return [self, nil]
+    # @return [IsoDate, nil]
     #
-    def create: (untyped v) -> (self | nil)
+    def create: (untyped v) -> (IsoDate | nil)
 
     private
 
@@ -466,9 +502,9 @@ class IsoYear < IsoDate
     #
     # @param [Any] v
     #
-    # @return [String]
+    # @return [String, nil]
     #
-    def normalize: (untyped v) -> String
+    def normalize: (untyped v) -> (String | nil)
 
     private
 
@@ -500,9 +536,9 @@ class IsoDay < IsoDate
     #
     # @param [String, Date, Time, IsoDate, Any] v
     #
-    # @return [String]
+    # @return [String, nil]
     #
-    def normalize: (untyped v) -> String
+    def normalize: (untyped v) -> (String | nil)
 
     private
 

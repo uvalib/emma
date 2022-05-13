@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::WorkAssertion
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-WorkAssertion
+#
+class Lookup::Crossref::Record::WorkAssertion < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

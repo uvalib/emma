@@ -1,0 +1,9 @@
+# This is included in record classes that define :LIST_ELEMENT to confirm that
+# they are intended to function as collections.
+#
+# @see Model::ClassMethods#validate_relations
+#
+module Lookup::GoogleBooks::Shared::CollectionMethods
+  include Lookup::RemoteService::Shared::CollectionMethods
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

@@ -1,0 +1,9 @@
+# Search result information related to this volume.
+#
+# @attr [String] textSnippet
+#
+# @see https://developers.google.com/books/docs/v1/reference/volumes
+#
+class Lookup::GoogleBooks::Record::SearchInfo < Lookup::GoogleBooks::Api::Record
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

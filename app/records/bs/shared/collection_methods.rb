@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::CollectionMethods
   include Api::Shared::CollectionMethods
+  include Bs::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

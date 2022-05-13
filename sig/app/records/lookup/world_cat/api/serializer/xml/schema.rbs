@@ -1,0 +1,9 @@
+# XML-specific definition overrides for serialization.
+#
+# @see Lookup::RemoteService::Api::Serializer::Xml::Schema
+#
+module Lookup::WorldCat::Api::Serializer::Xml::Schema
+  include Lookup::WorldCat::Api::Serializer::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Xml::Schema
+end

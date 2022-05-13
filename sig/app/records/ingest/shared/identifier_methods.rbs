@@ -2,6 +2,7 @@
 #
 module Ingest::Shared::IdentifierMethods
   include Api::Shared::IdentifierMethods
+  include Ingest::Shared::CommonMethods
 
   # Produce standard identifiers of the form "(prefix):(value)", allowing
   # invalid identifiers with the proper form but rejecting ones that don't.

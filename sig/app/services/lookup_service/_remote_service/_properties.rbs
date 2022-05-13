@@ -1,0 +1,31 @@
+# LookupService::RemoteService::Properties
+#
+module LookupService::RemoteService::Properties
+  include ApiService::Properties
+
+  include LookupService::Common
+
+  DEFAULT_PRIORITY: Integer
+
+  DEFAULT_TIMEOUT: Float
+
+  def service_key: () -> Symbol
+
+  def enabled: () -> bool
+
+  alias enabled? enabled
+
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  def configuration: () -> symHash
+
+  def types:    () -> symArray
+  def priority: () -> Integer
+  def timeout:  () -> Float
+
+  private
+
+  def self.included: (Module base) -> void
+end

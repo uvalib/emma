@@ -49,6 +49,51 @@ module Emma::Common::NumericMethods
     result unless result.negative?
   end
 
+  # Interpret *value* as a positive floating-point number.
+  #
+  # @param [String, Symbol, Numeric, Any] value
+  # @param [Float]                        epsilon
+  #
+  # @return [Float]
+  # @return [nil]                     If *value* <= 0 or not a number.
+  #
+  def positive_float(value, epsilon: nil)
+    # noinspection RubyUnusedLocalVariable
+    result = nil
+    case value
+      when Numeric        then result = value.to_f
+      when String, Symbol then result = value.to_s.to_f
+      else                     return
+    end
+    if epsilon
+      result if result > epsilon
+    else
+      result if result.positive?
+    end
+  end
+
+  # Interpret *value* as zero or a positive floating-point number.
+  #
+  # @param [String, Symbol, Numeric, Any] value
+  # @param [Float]                        epsilon
+  #
+  # @return [Float]
+  # @return [nil]                     If *value* <= 0 or not a number.
+  #
+  def non_negative_float(value, epsilon: nil)
+    result =
+      case value
+        when Numeric        then value.to_f
+        when String, Symbol then value.to_s.to_f
+        else                     0.0
+      end
+    if epsilon
+      result unless result < -epsilon
+    else
+      result unless result.negative?
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

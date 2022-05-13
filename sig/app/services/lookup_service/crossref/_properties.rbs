@@ -1,0 +1,14 @@
+# LookupService::Crossref::Properties
+#
+module LookupService::Crossref::Properties
+  include Emma::Constants
+
+  include LookupService::RemoteService::Properties
+
+  def api_user: () -> (String | nil)
+
+  SELECT_ELEMENTS:        strArray
+  SELECT_ELEMENTS_UPCASE: strArray
+
+  def select_list: (*Symbol attribute) -> strArray
+end

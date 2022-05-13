@@ -1,0 +1,11 @@
+# Information about content in a specific format.
+#
+# @attr [String]  downloadLink
+# @attr [String]  acsTokenLink
+# @attr [Boolean] isAvailable
+#
+# @see https://developers.google.com/books/docs/v1/reference/volumes
+#
+class Lookup::GoogleBooks::Record::Format < Lookup::GoogleBooks::Api::Record
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::Affiliation
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-Affiliation
+#
+class Lookup::Crossref::Record::Affiliation < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

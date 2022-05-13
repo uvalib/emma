@@ -1,0 +1,5 @@
+# LookupService::WorldCat::Properties
+#
+module LookupService::WorldCat::Properties
+  include LookupService::RemoteService::Properties
+end

@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::DoiCounts
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-DoiCounts
+#
+class Lookup::Crossref::Record::DoiCounts < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

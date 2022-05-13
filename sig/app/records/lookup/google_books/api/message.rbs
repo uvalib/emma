@@ -1,0 +1,7 @@
+# The base class for inbound messages from the external service API.
+#
+class Lookup::GoogleBooks::Api::Message < Lookup::GoogleBooks::Api::Record
+  include Lookup::RemoteService::Api::Message
+
+  include Lookup::GoogleBooks::Shared::ResponseMethods
+end

@@ -2,6 +2,7 @@
 #
 module Bs::Shared::CreatorMethods
   include Api::Shared::CreatorMethods
+  include Bs::Shared::CommonMethods
 
   # @type [Array<String>]
   AUTHOR_TYPES: strArray
@@ -75,7 +76,7 @@ module Bs::Shared::CreatorMethods
   # The author(s)/creator(s) of this catalog title.
   #
   # @param [Array<String>] types      Default: `#CREATOR_TYPES`
-  # @param [Hash]          opt
+  # @param [Hash]          opt        Passed to #contributor_list.
   #
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
@@ -92,7 +93,7 @@ module Bs::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
-  def contributor_list: (*String types, **untyped opt) -> strArray
+  def contributor_list: (*String types, ?target: Api::Record?, **untyped opt) -> strArray
 
   # All contributors to this catalog title keyed by contributor type.
   #

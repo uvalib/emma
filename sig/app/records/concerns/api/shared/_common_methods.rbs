@@ -54,21 +54,69 @@ module Api::Shared::CommonMethods
   #
   def normalized: (String value, ?lowercase: bool) -> String
 
+  # Strip surrounding spaces and terminal punctuation for a proper name,
+  # allowing for the possibility of ending with an initial (which needs the
+  # trailing '.' to be preserved).
+  #
+  # @param [String] value
+  # @param [Hash]   opt               Passed to #clean.
+  #
+  # @return [String]
+  #
+  def clean_name: (String value, **untyped opt) -> String
+
+  # Strip surrounding spaces and terminal punctuation.
+  #
+  # @param [String, *] value
+  # @param [String]    allowed    Default: #CLEAN_EXCEPT
+  # @param [Regexp]    regexp     Default: #CLEAN_REGEXP
+  #
+  # @return [String, *]
+  #
+  def clean: [T] (T   value, ?allowed: String|nil, ?regexp: Regexp|nil) -> T
+           |     (nil value, ?allowed: String|nil, ?regexp: Regexp|nil) -> nil
+
+  def self.clean_regexp: (String allowed) -> Regexp
+
+  CLEAN_EXCEPT:        String
+  CLEAN_EXCEPT_PERIOD: String
+
+  CLEAN_REGEXP:        Regexp
+  CLEAN_REGEXP_PERIOD: Regexp
+
   # Get the first non-blank value given a list of fields.
   #
   # @param [Array<Symbol>] fields
+  # @param [Hash]          opt        Passed to #get_values.
   #
   # @return [String, nil]
   #
-  def get_value: (*Symbol fields) -> (String | nil)
+  def get_value: (*Symbol fields, **untyped opt) -> (String | nil)
 
   # Get the first non-empty value given a list of fields.
   #
   # @param [Array<Symbol>] fields
+  # @param [Api::Record]   target     Default: `self`.
   #
   # @return [Array<String>]
   #
-  def get_values: (*Symbol fields) -> strArray
+  def get_values: (*Symbol fields, ?target: Api::Record?) -> strArray
+
+  def item_record_path:   () -> symArray
+  def item_record:        () -> (Api::Record | nil)
+
+  def find_record_item:   (Symbol field, **untyped opt) -> (untyped | nil)
+  def find_record_items:  (Symbol field, **untyped opt) -> anyArray
+
+  def find_record_value:  (Symbol field, **untyped opt) -> (String | nil)
+  def find_record_values: (Symbol field, **untyped opt) -> strArray
+
+  def find_item:   (*Symbol path, Symbol field, ?target: Api::Record?, ?clean: bool, **untyped opt) -> (untyped | nil)
+  def find_items:  (*Symbol path, Symbol field, ?target: Api::Record?, ?clean: bool, **untyped opt) -> anyArray
+
+  def find_value:  (*Symbol path, Symbol field, ?separator: String,    ?clean: bool, **untyped opt) -> (String | nil)
+  def find_values: (*Symbol path, Symbol field,                        ?clean: bool, **untyped opt) -> strArray
+
 
   # Get the target field value.
   #

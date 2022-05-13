@@ -1,6 +1,8 @@
 # Methods mixed in to message elements supporting error reporting.
 #
 module Api::Shared::ResponseMethods
+  include Api::Shared::CommonMethods
+
   # @return [ExecReport]
   attr_reader exec_report: ExecReport
 

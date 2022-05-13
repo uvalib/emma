@@ -11,7 +11,6 @@ module Search::Shared::ScoreMethods
 
   include Emma::Common
 
-  include Api::Shared::CommonMethods
   include Search::Shared::IdentifierMethods
 
   # ===========================================================================

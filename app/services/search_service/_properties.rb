@@ -21,7 +21,7 @@ module SearchService::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  SEARCH_CONFIG = i18n_erb('emma.service.search').deep_freeze
+  CONFIGURATION = i18n_erb('emma.service.search').deep_freeze
 
   # Default engine selection.
   #
@@ -36,30 +36,12 @@ module SearchService::Properties
 
   public
 
-  # The URL for the API connection.
+  # Configuration for the API service.
   #
-  # @return [String]
+  # @type [Hash{Symbol=>Any}]
   #
-  # @see #default_engine_url
-  #
-  def base_url
-    @base_url ||= default_engine_url
-  end
-
-  # An API key is not a part of search URLs.
-  #
-  # @return [nil]
-  #
-  def api_key
-    nil
-  end
-
-  # API version is not a part of search URLs.
-  #
-  # @return [nil]
-  #
-  def api_version
-    # SEARCH_API_VERSION
+  def configuration
+    CONFIGURATION
   end
 
   # ===========================================================================
@@ -68,20 +50,20 @@ module SearchService::Properties
 
   public
 
-  # Valid search engine URLs.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  def engines
-    SEARCH_CONFIG[:endpoint]
-  end
-
   # Default search engine for this deployment.
   #
   # @return [String]
   #
   def default_engine_url
-    SEARCH_BASE_URL || engines[DEFAULT_ENGINE]
+    SEARCH_BASE_URL || super
+  end
+
+  # The default service engine key.
+  #
+  # @return [Symbol]
+  #
+  def default_engine_key
+    DEFAULT_ENGINE || super
   end
 
   # ===========================================================================

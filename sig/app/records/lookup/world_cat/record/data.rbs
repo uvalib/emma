@@ -1,0 +1,13 @@
+# Partial record schema for WorldCat API results.
+#
+# @see https://developer.api.oclc.org/wcv1#operations-SRU-search-sru
+#
+class Lookup::WorldCat::Record::Data < Lookup::WorldCat::Api::Record
+  include Lookup::WorldCat::Shared::CreatorMethods
+
+  include Lookup::WorldCat::Shared::DateMethods
+
+  include Lookup::WorldCat::Shared::IdentifierMethods
+
+  include Lookup::WorldCat::Shared::TitleMethods
+end

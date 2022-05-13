@@ -1,0 +1,6 @@
+# Methods mixed in to record elements related to dates.
+#
+module Lookup::GoogleBooks::Shared::DateMethods
+  include Lookup::RemoteService::Shared::DateMethods
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

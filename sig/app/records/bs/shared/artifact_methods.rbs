@@ -1,6 +1,7 @@
 # Methods mixed in to record elements related to artifacts.
 #
 module Bs::Shared::ArtifactMethods
+  include Bs::Shared::CommonMethods
   # A method name for use where there may be confusion with `params[:format]`.
   #
   # @return [String]

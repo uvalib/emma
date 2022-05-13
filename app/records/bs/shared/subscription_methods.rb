@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::SubscriptionMethods
 
+  include Bs::Shared::CommonMethods
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:

@@ -1,0 +1,21 @@
+# LookupService::GoogleBooks::Common
+#
+module LookupService::GoogleBooks::Common
+  include LookupService::RemoteService::Common
+
+  include LookupService::GoogleBooks::Properties
+
+  DEF_COMPACT: bool
+  DEF_FOREIGN: bool
+
+  def get_parameters: (Symbol meth, ?compact: bool, ?foreign: bool, **untyped opt) -> symHash
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

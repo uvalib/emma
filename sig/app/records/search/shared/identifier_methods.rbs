@@ -2,6 +2,7 @@
 #
 module Search::Shared::IdentifierMethods
   include Api::Shared::IdentifierMethods
+  include Search::Shared::CommonMethods
 
   attr_reader isbn:           String | nil
   attr_reader related_isbns:  strArray

@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::WorkLink
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-WorkLink
+#
+class Lookup::Crossref::Record::WorkLink < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

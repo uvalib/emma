@@ -1,0 +1,6 @@
+# Methods mixed in to message elements supporting error reporting.
+#
+module Lookup::GoogleBooks::Shared::ResponseMethods
+  include Lookup::RemoteService::Shared::ResponseMethods
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

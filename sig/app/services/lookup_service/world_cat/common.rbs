@@ -1,0 +1,36 @@
+# LookupService::WorldCat::Common
+#
+module LookupService::WorldCat::Common
+  include LookupService::RemoteService::Common
+
+  include LookupService::WorldCat::Properties
+
+  WORLDCAT_REGISTRY_ID: String
+
+  WORLDCAT_PRINCIPAL_ID: String
+
+  WORLDCAT_WSKEY: String
+
+  WORLDCAT_MARCXML:     String
+  WORLDCAT_DUBLIN_CORE: String
+
+  # noinspection SpellCheckingInspection
+  WORLDCAT_SCHEMA: Hash[Symbol,String]
+
+  # Override service-specific API options to rename :api_key to :wskey.
+  #
+  # @param [Hash, nil] params         Passed to super.
+  #
+  # @return [Hash]                    New API parameters.
+  #
+  def api_options: (?(symHash|nil) params) -> symHash
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

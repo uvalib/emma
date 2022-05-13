@@ -1,0 +1,6 @@
+# Methods mixed in to message elements supporting error reporting.
+#
+module Lookup::Crossref::Shared::ResponseMethods
+  include Lookup::RemoteService::Shared::ResponseMethods
+  include Lookup::Crossref::Shared::CommonMethods
+end

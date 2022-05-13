@@ -75,6 +75,11 @@ module SearchService::Common
   # format type, this should make the :publisher term(s) search across all of
   # the records.
   #
+  # @param [Symbol] meth              Calling method.
+  # @param [Hash]   opt               Passed to super.
+  #
+  # @return [Hash]
+  #
   def get_parameters(meth, **opt)
     super.tap do |result|
 

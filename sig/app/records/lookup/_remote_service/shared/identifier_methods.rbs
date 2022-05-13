@@ -1,0 +1,15 @@
+# Methods mixed in to record elements related to standard identifiers.
+#
+module Lookup::RemoteService::Shared::IdentifierMethods
+  include Api::Shared::IdentifierMethods
+  include Lookup::RemoteService::Shared::CommonMethods
+
+  def best_identifier:  () -> (String | nil)
+  def identifier_list:  () -> strArray
+  def identifier_table: () -> lookupRequestHash
+  def isbn:             () -> (String | nil)
+
+  ID_SORT: Hash[Symbol,String]
+
+  def id_sort_key: (PublicationIdentifier id) -> strArray
+end

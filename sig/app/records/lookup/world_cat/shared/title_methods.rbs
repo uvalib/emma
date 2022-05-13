@@ -1,0 +1,20 @@
+# Methods mixed in to record elements related to catalog titles.
+#
+module Lookup::WorldCat::Shared::TitleMethods
+  include Lookup::RemoteService::Shared::TitleMethods
+
+  include Lookup::WorldCat::Shared::IdentifierMethods
+
+  def title_fields:     () -> symArray
+
+  def title_values:     () -> strArray
+  def subtitle_values:  () -> strArray
+
+  def publisher_name:   () -> (String | nil)
+  def publication_date: () -> (String | nil)
+  def publication_year: () -> (String | nil)
+
+  def language_list:    () -> strArray
+  def subject_list:     () -> strArray
+  def description_list: () -> strArray
+end

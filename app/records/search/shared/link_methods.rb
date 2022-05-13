@@ -19,6 +19,7 @@ module Search::Shared::LinkMethods
 
   include Emma::Common
   include Api::Common
+  include Search::Shared::CommonMethods
 
   # ===========================================================================
   # :section:

@@ -1,0 +1,52 @@
+class LookupChannel < ApplicationCable::Channel
+  include Emma::Debug
+
+  extend Emma::Debug
+
+  @stream_name: String
+
+  # stream_name
+  #
+  # @return [String]
+  #
+  def stream_name: () -> String
+
+  # Receive a lookup request from the client.
+  #
+  # @param [Hash{String=>*}] payload
+  #
+  # @return [void]
+  #
+  # @see app/assets/javascripts/channels/lookup_channel.js *request()*
+  #
+  def lookup_request: (strHash payload) -> void
+
+  # Push acquired data back to the client.
+  #
+  # @param [Hash{Symbol=>*}] payload
+  # @param [Hash]            opt
+  #
+  # @return [void]
+  #
+  # @note Currently unused.
+  #
+  def lookup_response: (symHash payload, **untyped opt) -> void
+
+  # Invoked from another thread to push an initial response back to the client.
+  #
+  # @param [Hash{Symbol=>*}, Array<Class>] payload
+  # @param [Hash]                          opt
+  #
+  # @return [void]
+  #
+  def self.lookup_start_response: (symHash|Array[Class] payload, **untyped opt) -> void
+
+  # Invoked from another thread to push acquired data back to the client.
+  #
+  # @param [Hash{Symbol=>*}] payload
+  # @param [Hash]            opt
+  #
+  # @return [void]
+  #
+  def self.lookup_response: (symHash payload, **untyped opt) -> void
+end

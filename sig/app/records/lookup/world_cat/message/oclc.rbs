@@ -1,0 +1,15 @@
+# Results from a WorldCat Metadata API v.1 Read search.
+#
+# Inside an XML '<oclcdcs>' element.
+#
+# @see https://developer.api.oclc.org/wcv1#operations-Read-read-oclcnumber
+#
+class Lookup::WorldCat::Message::Oclc < Lookup::WorldCat::Api::Message
+  include Lookup::WorldCat::Shared::ResponseMethods
+
+  # api_records
+  #
+  # @return [Array<Lookup::WorldCat::Record::OclcDcs>]
+  #
+  def api_records: () -> Array[Lookup::WorldCat::Record::OclcDcs]
+end

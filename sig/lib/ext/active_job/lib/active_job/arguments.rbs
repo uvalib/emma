@@ -1,0 +1,19 @@
+module ActiveJob
+  module ArgumentsExt
+    # :nocov:
+    include ActiveJob::Arguments
+
+    private
+
+    # The default implementation makes it impossible to have nested
+    # serializable objects because the result of serializing a nested object
+    # will be a hash containing an '_aj_serialized' entry, which is flagged as
+    # an error.
+    #
+    # @param [*] key
+    #
+    # @return [String]
+    #
+    def serialize_hash_key: (untyped key) -> String
+  end
+end

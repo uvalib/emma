@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module Ingest::Shared::ResponseMethods
   include Api::Shared::ResponseMethods
+  include Ingest::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

@@ -2,4 +2,5 @@
 #
 module Search::Shared::CreatorMethods
   include Api::Shared::CreatorMethods
+  include Search::Shared::CommonMethods
 end

@@ -14,8 +14,14 @@ __loading_begin(__FILE__)
 #--
 # === Unified Index Fields
 #++
-# @attr [String] emma_recordId
-# @attr [String] emma_titleId
+# @attr [String]      emma_recordId
+# @attr [String]      emma_titleId
+#--
+# === Fields not yet supported by the Unified Index
+#++
+# @attr [String]      bib_series
+# @attr [SeriesType]  bib_seriesType
+# @attr [String]      bib_seriesPosition
 #
 # @see https://app.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/MetadataRecord                               Search API documentation
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/MetadataRecord  JSON schema specification
@@ -46,6 +52,8 @@ class Search::Record::MetadataRecord < Search::Api::Record
 
     all_from Search::Record::MetadataCommonRecord
 
+    has_one :bib_series
+    has_one :bib_seriesType,    SeriesType
     has_one :bib_seriesPosition
 
   end
@@ -58,14 +66,12 @@ class Search::Record::MetadataRecord < Search::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Model, Hash, String, nil] src
-  # @param [Hash, nil]                                   opt
+  # @param [Faraday::Response, Api::Message, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                                 opt
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def initialize(src = nil, opt = nil)
     opt ||= {}
+    # noinspection RubyMismatchedArgumentType
     super(src, **opt)
     normalize_data_fields!
   end

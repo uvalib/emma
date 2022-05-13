@@ -1,0 +1,31 @@
+# ApplicationCable::Connection
+#
+# @!attribute [rw] current_user
+#   The authenticated user defined in #identified_by and set in #connect.
+#   @return [User, nil]
+#
+class ApplicationCable::Connection < ActionCable::Connection::Base
+  include ApplicationCable::Common
+
+  # The method called when the WebSocket connection is opened.
+  #
+  # @return [void]
+  #
+  def connect: () -> void
+
+  # Return the Devise-authenticated user.
+  #
+  # @return [User]
+  #
+  # @raise [ActionCable::Connection::Authorization::UnauthorizedError]
+  #
+  def get_verified_user: () -> User
+
+  # report_error
+  #
+  # @param [Exception] e
+  #
+  # @return [void]
+  #
+  def report_error: (Exception e) -> void
+end

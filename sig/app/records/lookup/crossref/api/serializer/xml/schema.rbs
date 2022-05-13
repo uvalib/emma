@@ -1,0 +1,9 @@
+# XML-specific definition overrides for serialization.
+#
+# @see Lookup::RemoteService::Api::Serializer::Xml::Schema
+#
+module Lookup::Crossref::Api::Serializer::Xml::Schema
+  include Lookup::Crossref::Api::Serializer::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Xml::Schema
+end

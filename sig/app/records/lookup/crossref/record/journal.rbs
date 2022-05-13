@@ -1,0 +1,13 @@
+# Metadata record schema for a journal lookup.
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-Journal
+#
+class Lookup::Crossref::Record::Journal < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CreatorMethods
+
+  include Lookup::Crossref::Shared::DateMethods
+
+  include Lookup::Crossref::Shared::IdentifierMethods
+
+  include Lookup::Crossref::Shared::TitleMethods
+end

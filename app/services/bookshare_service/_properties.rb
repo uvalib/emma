@@ -17,11 +17,11 @@ module BookshareService::Properties
 
   public
 
-  # Configuration values from config/locales/service.en.yml
+  # Configuration values from config/locales/service.en.yml.
   #
   # @type [Hash{Symbol=>Any}]
   #
-  BOOKSHARE_CONFIG = i18n_erb('emma.service.bookshare').deep_freeze
+  CONFIGURATION = i18n_erb('emma.service.bookshare').deep_freeze
 
   # Maximum accepted value for a :limit parameter.
   #
@@ -30,38 +30,46 @@ module BookshareService::Properties
   # == Implementation Notes
   # Determined experimentally.
   #
-  MAX_LIMIT = BOOKSHARE_CONFIG[:max_limit]
+  MAX_LIMIT = CONFIGURATION[:max_limit]
 
   # For use in example.
   #
   # @type [String]
   #
-  DEFAULT_USER = BOOKSHARE_CONFIG[:default_user]
+  DEFAULT_USER = CONFIGURATION[:default_user]
 
   # The primary Bookshare account used for testing.
   #
   # @type [String]
   #
-  BOOKSHARE_TEST_ACCOUNT = BOOKSHARE_CONFIG[:test_account]
+  TEST_ACCOUNT = CONFIGURATION[:test_account]
 
   # The identifier (:userAccountId) for the test member "Placeholder Member".
-  # (Only usable by #BOOKSHARE_TEST_ACCOUNT)
+  # (Only usable by #TEST_ACCOUNT)
   #
   # @type [String]
   #
-  BOOKSHARE_TEST_MEMBER = BOOKSHARE_CONFIG[:test_member]
+  TEST_MEMBER = CONFIGURATION[:test_member]
 
   # Bookshare accounts used for testing.
   #
   # @type [Array<String>]
   #
-  BOOKSHARE_TEST_USERS = Array.wrap(BOOKSHARE_CONFIG[:test_users]).freeze
+  TEST_USERS = Array.wrap(CONFIGURATION[:test_users]).freeze
 
   # ===========================================================================
   # :section: ApiService::Properties overrides
   # ===========================================================================
 
   public
+
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  def configuration
+    CONFIGURATION
+  end
 
   # The URL for the API connection.
   #
@@ -70,7 +78,7 @@ module BookshareService::Properties
   # @see #BOOKSHARE_BASE_URL
   #
   def base_url
-    @base_url ||= BOOKSHARE_BASE_URL
+    @base_url ||= BOOKSHARE_BASE_URL || super
   end
 
   # Bookshare API key.
@@ -80,7 +88,7 @@ module BookshareService::Properties
   # @see #BOOKSHARE_API_KEY
   #
   def api_key
-    BOOKSHARE_API_KEY
+    BOOKSHARE_API_KEY || super
   end
 
   # API version is not a part of request URLs.
@@ -90,7 +98,7 @@ module BookshareService::Properties
   # @see #BOOKSHARE_API_VERSION
   #
   def api_version
-    BOOKSHARE_API_VERSION
+    BOOKSHARE_API_VERSION || super
   end
 
   # ===========================================================================

@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module Search::Shared::IdentifierMethods
 
   include Api::Shared::IdentifierMethods
+  include Search::Shared::CommonMethods
 
   # ===========================================================================
   # :section: Api::Shared::IdentifierMethods overrides
@@ -73,6 +74,7 @@ class PublicationIdentifierSet < Set
   def initialize(ids)
     ids = Array.wrap(ids).compact
     ids.map! { |v| PublicationIdentifier.cast(v, invalid: true) }
+    ids.compact!
     ids.sort!
     super(ids)
   end

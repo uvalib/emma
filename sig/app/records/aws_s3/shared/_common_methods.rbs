@@ -1,0 +1,5 @@
+# General shared methods.
+#
+module AwsS3::Shared::CommonMethods
+  include Api::Shared::CommonMethods
+end

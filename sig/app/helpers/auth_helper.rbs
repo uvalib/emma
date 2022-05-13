@@ -57,7 +57,7 @@ module AuthHelper
 
   # Get user names/tokens from the database.
   #
-  # @param [String, Array<String>] accounts   Default: #BOOKSHARE_TEST_USERS
+  # @param [String, Array<String>] accounts   Default: #TEST_USERS
   #
   # @return [Hash{String=>Hash}]
   #

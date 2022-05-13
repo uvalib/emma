@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::JournalIssnType
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-JournalIssnType
+#
+class Lookup::Crossref::Record::JournalIssnType < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

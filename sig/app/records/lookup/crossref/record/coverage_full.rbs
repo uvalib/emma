@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::CoverageFull
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-CoverageFull
+#
+class Lookup::Crossref::Record::CoverageFull < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

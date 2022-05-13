@@ -10,8 +10,8 @@
 #
 module Search::Shared::LinkMethods
   include Emma::Common
-
-  include Search
+  include Api::Common
+  include Search::Shared::CommonMethods
 
   # URL of the associated work on the web site of the original repository.
   #

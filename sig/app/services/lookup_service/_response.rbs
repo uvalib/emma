@@ -1,0 +1,87 @@
+# A collection of identifiers transformed into PublicationIdentifier and
+# grouped by type.
+#
+class LookupService::Response
+  include LookupService::Common
+
+  include Serializable
+
+  DEF_STATUS:  String
+  DEF_SERVICE: String
+
+  TEMPLATE: symHash
+
+  attr_reader table:      symHash
+  attr_reader error:      symHash | nil
+  attr_reader diagnostic: symHash | nil
+
+  # Create a new instance.
+  #
+  # @param [LookupService::Response, Hash, *] items
+  #
+  def initialize: (?(LookupService::Response|symHash|nil) items                 ) -> void
+                | (  LookupService::Response|symHash|nil  items, symHash|nil opt) -> void
+
+  # Request status.
+  #
+  # @return [String]
+  #
+  #def status: () -> String
+
+  # Originating external lookup service.
+  #
+  # @return [String]
+  #
+  #def service: () -> String
+
+  # Time in seconds to receive the requested results.
+  #
+  # @return [Float]
+  #
+  #def duration: () -> Float
+
+  # Overdue by this many seconds.
+  #
+  # @return [Float,nil]
+  #
+  #def late: () -> (Float | nil)
+
+  # Overdue?
+  #
+  #def late?: () -> bool
+
+  # Requesting user.
+  #
+  # @return [String,nil]
+  #
+  #def user: () -> (String | nil)
+
+  # When the request was made.
+  #
+  # @return [String,nil]
+  #
+  #def time: () -> (String | nil)
+
+  # Response result data.
+  #
+  # @return [Hash]
+  #
+  #def data: () -> anyHash
+
+  # Return all except out-of-band information.
+  #
+  # @return [Hash]
+  #
+  def to_h: () -> anyHash
+
+  def []:  (Symbol key) -> untyped
+  def []=: (Symbol key, untyped value) -> untyped
+
+  # Create a new instance from *item* if it is not already an instance.
+  #
+  # @param [LookupService::Response, *] item
+  #
+  # @return [LookupService::Response]
+  #
+  def self.wrap: (untyped item) -> LookupService::Response
+end

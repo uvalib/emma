@@ -5,4 +5,5 @@
 #
 module Bs::Shared::CollectionMethods
   include Api::Shared::CollectionMethods
+  include Bs::Shared::CommonMethods
 end

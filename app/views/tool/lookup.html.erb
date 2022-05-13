@@ -1,0 +1,64 @@
+<%# app/views/tool/lookup.html.erb -%>
+<%-
+  # Testing ActionCable
+
+  view_debug(__FILE__)
+
+  title ||= t('emma.tool.lookup.title')
+  help  ||= nil # %i[tool lookup]
+
+  unless modal?
+    label = t('emma.tool.lookup.label', default: title)
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+  heading = 'results-heading'
+  ids     = 'item-ids'
+  results = 'item-results'
+  errors  = 'item-errors'
+  diag    = 'item-diagnostics'
+  unique  = hex_rand
+
+  ids_id      = "#{ids}-#{unique}"
+  heading_id  = "#{heading}-#{unique}"
+  results_id  = "#{results}-#{unique}"
+  errors_id   = "#{errors}-#{unique}"
+  diag_id     = "#{diag}-#{unique}"
+
+  heading_css = heading
+  ids_css     = ids
+  results_css = "#{results} value"
+  errors_css  = "#{errors} value"
+  diag_css    = "#{diag} value"
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<div class="lookup-prompt">
+  <label for="<%= ids_id -%>">Ids</label>
+  <input id="<%= ids_id -%>" name="ids" type="text" class="<%= ids_css -%>"/>
+  <button name="button" type="submit">Lookup</button>
+</div>
+
+<h2 id="<%= heading_id -%>" class="<%= heading_css -%>">
+  Results
+</h2>
+
+<div class="lookup-results">
+  <!--suppress HtmlFormInputWithoutLabel -->
+  <textarea id="<%= results_id -%>" class="<%= results_css -%>" aria-labelledby="<%= heading_id -%>"></textarea>
+  <div class="pair">
+    <label for="<%= errors_id -%>" class="label">Errors</label>
+    <textarea id="<%= errors_id -%>" class="<%= errors_css -%>"></textarea>
+  </div>
+  <div class="pair">
+    <label for="<%= diag_id -%>" class="label">Diagnostics</label>
+    <textarea id="<%= diag_id -%>" class="<%= diag_css -%>"></textarea>
+  </div>
+</div>
+
+<%= page_notes_section %>

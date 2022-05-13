@@ -313,7 +313,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @param [Hash] opt                 Passed to Api::Record#to_h.
   #
   def to_h(**opt)
-    super(**opt).tap do |result|
+    fields.tap do |result|
       if opt[:item].present?
         result[:titles]&.map! do |title|
           title[:records].map! { |rec| { record: rec } }

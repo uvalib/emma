@@ -1,0 +1,7 @@
+# Base class for object-specific serializers that process XML data.
+#
+class Lookup::GoogleBooks::Api::Serializer::Xml < Lookup::RemoteService::Api::Serializer::Xml
+  include Lookup::GoogleBooks::Api::Serializer::Xml::Schema
+
+  include Lookup::GoogleBooks::Api::Serializer::Xml::Associations
+end

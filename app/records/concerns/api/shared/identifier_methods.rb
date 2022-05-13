@@ -90,7 +90,7 @@ module Api::Shared::IdentifierMethods
   # @return [nil]                     If *value* is not a valid identifier.
   #
   def normalize_identifier(value)
-    PublicationIdentifier.cast(value, invalid: true)&.to_s if value.present?
+    PublicationIdentifier.cast(value, invalid: true)&.to_s
   end
 
   # ===========================================================================

@@ -2,4 +2,5 @@
 #
 module Search::Shared::DateMethods
   include Api::Shared::DateMethods
+  include Search::Shared::CommonMethods
 end

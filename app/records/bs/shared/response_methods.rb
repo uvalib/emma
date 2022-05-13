@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::ResponseMethods
   include Api::Shared::ResponseMethods
+  include Bs::Shared::CommonMethods
 end
 
 __loading_end(__FILE__)

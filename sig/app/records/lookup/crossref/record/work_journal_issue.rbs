@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::WorkJournalIssue
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-WorkJournalIssue
+#
+class Lookup::Crossref::Record::WorkJournalIssue < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

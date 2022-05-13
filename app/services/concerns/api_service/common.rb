@@ -224,24 +224,26 @@ module ApiService::Common
   # @return [String]
   #
   def api_path(*args)
-    args   = args.flatten.join('/').strip
-    # noinspection RubyMismatchedArgumentType
-    uri    = URI.parse(args)
-    qry    = uri.query.presence
-    path   = uri.path&.squeeze('/') || ''
-    path   = "/#{path}" unless path.start_with?('/')
-    ver    = api_version.presence
-    ver  &&= "/#{ver}"
+    args = args.flatten.join('/').strip
+    uri  = URI.parse(args)
+    path = uri.path.presence
+    qry  = uri.query.presence
+    ver  = api_version.presence
+
     result = []
     if (host = uri.host).present? && (host != base_uri.host)
       scheme = uri.scheme || 'https'
       port   = uri.port
-      # noinspection RubyMismatchedArgumentType
-      result << scheme << '://' << host
-      result << ':' << port if port && !COMMON_PORTS.include?(port)
+      url    = "#{scheme}://#{host}"
+      url   += ":#{port}" if port && !COMMON_PORTS.include?(port)
+      result << url
+      result << '/' if path || ver
     end
-    result << ver unless (path == ver) || path.start_with?("#{ver}/")
-    result << path
+    unless ver.nil? || (path == ver) || path&.start_with?("#{ver}/")
+      result << ver
+      result << '/' if path
+    end
+    result << path.squeeze('/') if path
     result << '?' << qry if qry
     result.compact.join
   end
@@ -417,10 +419,12 @@ module ApiService::Common
       when 200..299
         result = @response.body
         raise empty_result_error(@response) if result.blank?
-        raise html_result_error(@response)  if result =~ /\A\s*</
+        raise html_result_error(@response)  if result =~ /\A\s*<[^?]/
         action = nil
       when 301, 303, 308, 302, 307
         action = @response['Location'] || :missing
+      when 400..499
+        raise request_error(@response)
       else
         raise response_error(@response)
     end

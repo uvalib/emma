@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module Bs::Shared::IdentifierMethods
 
   include Api::Shared::IdentifierMethods
+  include Bs::Shared::CommonMethods
 
   # ===========================================================================
   # :section: Api::Shared::IdentifierMethods overrides
@@ -31,8 +32,7 @@ module Bs::Shared::IdentifierMethods
   # @return [Array<String>]
   #
   def related_isbns
-    # noinspection RailsParamDefResolve
-    Array.wrap(try(:relatedIsbns)).compact_blank.uniq - Array.wrap(isbn)
+    find_items(:relatedIsbns).compact_blank.uniq - Array.wrap(isbn)
   end
 
 end

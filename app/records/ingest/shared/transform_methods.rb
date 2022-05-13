@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module Ingest::Shared::TransformMethods
 
   include Api::Shared::TransformMethods
+  include Ingest::Shared::CommonMethods
 
   extend self
 

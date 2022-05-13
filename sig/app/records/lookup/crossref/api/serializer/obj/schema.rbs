@@ -1,0 +1,9 @@
+# Obj-specific definition overrides for serialization.
+#
+# @see Lookup::RemoteService::Api::Serializer::Obj::Schema
+#
+module Lookup::Crossref::Api::Serializer::Obj::Schema
+  include Lookup::Crossref::Api::Serializer::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Obj::Schema
+end

@@ -1,0 +1,25 @@
+# LookupService::Crossref::Common
+#
+module LookupService::Crossref::Common
+  include LookupService::RemoteService::Common
+
+  include LookupService::Crossref::Properties
+
+  # Crossref-specific parameter additions.
+  #
+  # @param [Symbol] meth              Calling method.
+  # @param [Hash]   opt               Passed to super.
+  #
+  # @return [Hash]
+  #
+  def get_parameters: (Symbol meth, **untyped opt) -> symHash
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

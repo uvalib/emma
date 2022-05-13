@@ -1,0 +1,10 @@
+# Stub base class for ActionCable-related exceptions.
+#
+class ApplicationCable::Error < Exception
+end
+
+# Raised to indicate that a payload would fail to be acceptable to Postgres
+# NOTIFY (raising a PG::InvalidParameterValue exception).
+#
+class ApplicationCable::PayloadTooLarge < ApplicationCable::Error
+end

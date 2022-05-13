@@ -1,0 +1,7 @@
+# The base class for inbound messages from the external service API.
+#
+class Lookup::Crossref::Api::Message < Lookup::Crossref::Api::Record
+  include Lookup::RemoteService::Api::Message
+
+  include Lookup::Crossref::Shared::ResponseMethods
+end

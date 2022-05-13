@@ -1,0 +1,7 @@
+# Common definitions for serialization.
+#
+module Lookup::GoogleBooks::Api::Serializer::Schema
+  include Lookup::GoogleBooks::Api::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Schema
+end

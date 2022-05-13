@@ -1,0 +1,24 @@
+# Methods mixed in to record elements related to authors, editors, etc.
+#
+module Lookup::WorldCat::Shared::CreatorMethods
+  include Lookup::RemoteService::Shared::CreatorMethods
+
+  include Lookup::WorldCat::Shared::CommonMethods
+
+  # The author(s)/creator(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #find_record_items.
+  #
+  # @return [Array<String>]
+  #
+  def creator_list: (**untyped opt) -> strArray
+
+  # All contributor(s) to this catalog title, stripping terminal punctuation
+  # from each name where appropriate.
+  #
+  # @param [Hash] opt                 Passed to #find_record_items.
+  #
+  # @return [Array<String>]
+  #
+  def contributor_list: (**untyped opt) -> strArray
+end

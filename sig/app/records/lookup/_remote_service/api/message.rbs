@@ -1,0 +1,17 @@
+# A module not a class so that in can be mixed in to the message class for
+# an actual service in place of Api::Message.
+#
+module Lookup::RemoteService::Api::Message
+  extend ActiveSupport::Concern
+
+  include Api::Message
+
+  include Lookup::RemoteService::Shared::ResponseMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Exception Model, Hash, String, nil] src
+  # @param [Hash, nil]                                            opt
+  #
+  def initialize: (untyped src, ?(untyped|nil) opt) -> void
+end

@@ -1,0 +1,7 @@
+# Lookup::Crossref::Record::WorkIssnType
+#
+# @see https://api.crossref.org/swagger-ui/index.html#model-WorkIssnType
+#
+class Lookup::Crossref::Record::WorkIssnType < Lookup::Crossref::Api::Record
+  include Lookup::Crossref::Shared::CommonMethods
+end

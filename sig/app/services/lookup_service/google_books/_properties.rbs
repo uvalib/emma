@@ -1,0 +1,5 @@
+# LookupService::GoogleBooks::Properties
+#
+module LookupService::GoogleBooks::Properties
+  include LookupService::RemoteService::Properties
+end

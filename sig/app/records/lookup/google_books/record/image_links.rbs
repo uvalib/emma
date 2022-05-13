@@ -1,0 +1,14 @@
+# A list of image links for all the sizes that are available.
+#
+# @attr [String] thumbnail
+# @attr [String] small
+# @attr [String] medium
+# @attr [String] large
+# @attr [String] smallThumbnail
+# @attr [String] extraLarge
+#
+# @see https://developers.google.com/books/docs/v1/reference/volumes
+#
+class Lookup::GoogleBooks::Record::ImageLinks < Lookup::GoogleBooks::Api::Record
+  include Lookup::GoogleBooks::Shared::CommonMethods
+end

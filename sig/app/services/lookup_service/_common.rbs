@@ -1,0 +1,54 @@
+# Common support methods.
+#
+module LookupService::Common
+  include Emma::Common
+
+  include Emma::Debug
+
+  CONFIGURATION: Hash[Symbol,symHash]
+
+  # Generate a table of PublicationIdentifiers grouped by type.
+  #
+  # @param [Hash, Array, String, nil] item
+  # @param [Hash]                     opt   Passed to #id_obj.
+  #
+  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
+  #
+  def id_hash: (lookupHash|lookupItems|String|nil item, **untyped opt) -> lookupRequestHash
+
+  # Generate a list of PublicationIdentifiers.
+  #
+  # @param [Array, String, nil] item
+  # @param [Hash]               opt   Passed to #id_obj.
+  #
+  # @return [Array<PublicationIdentifier>]
+  #
+  def id_list: (lookupItems|lookupItem|nil item, **untyped opt) -> lookupRequestItems
+
+  # Analyze a string into individual items.
+  #
+  # @param [Array, String, PublicationIdentifier, *] item
+  #
+  # @return [Array<String,PublicationIdentifier>]
+  #
+  def id_split: (lookupItems|lookupItem|nil item) -> lookupItems
+
+  # Transform a type/ID pair.
+  #
+  # @param [PublicationIdentifier, Symbol, String, nil] type
+  # @param [PublicationIdentifier, String, nil]         id
+  # @param [Boolean]                                    copy
+  #
+  # @return [PublicationIdentifier]
+  #
+  def id_obj: (PublicationIdentifier `type`, ?untyped              id, ?copy: bool) -> PublicationIdentifier
+            | (untyped               `type`, PublicationIdentifier id, ?copy: bool) -> PublicationIdentifier
+            | (strArray              `type`, ?untyped              id, ?copy: bool) -> (PublicationIdentifier | nil)
+            | (String|Symbol|nil     `type`, ?(String|nil)         id, ?copy: bool) -> (PublicationIdentifier | nil)
+
+  def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> void
+
+  private
+
+  def self.included: (Module base) -> void
+end

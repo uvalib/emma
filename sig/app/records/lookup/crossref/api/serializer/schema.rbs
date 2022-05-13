@@ -1,0 +1,9 @@
+# Common definitions for serialization.
+#
+module Lookup::Crossref::Api::Serializer::Schema
+  include Lookup::Crossref::Api::Schema
+
+  include Lookup::RemoteService::Api::Serializer::Schema
+
+  def deserialize: (String|symHash data, ?method: Symbol|Proc|nil) -> (Api::Record | nil)
+end

@@ -55,11 +55,14 @@ module Representable
 
       LEADER    = '||| '
       SEPARATOR = ' // '
+      LITERAL   = %w( ' " [ # ).freeze
 
       # __debug_show
       #
       # @param [Symbol, Any, nil] mode
       # @param [Array]            args
+      # @param [String]           leader      Included after #LEADER.
+      # @param [String]           separator   Default: #SEPARATOR.
       # @param [Hash]             opt
       #
       # @return [nil]
@@ -74,10 +77,14 @@ module Representable
       # @overload __debug_show(mode, *args, **opt)
       #   @param [Symbol, nil] mode        Either :input, :output or *nil*
       #   @param [Array]       args
+      #   @param [String]      leader
+      #   @param [String]      separator
       #   @param [Hash]        opt
       #
       # @overload __debug_show(*args, **opt)
       #   @param [Array]       args
+      #   @param [String]      leader
+      #   @param [String]      separator
       #   @param [Hash]        opt
       #
       # @see #__output_impl
@@ -85,7 +92,7 @@ module Representable
       #--
       # noinspection RubyMismatchedArgumentType
       #++
-      def __debug_show(mode, *args, **opt)
+      def __debug_show(mode, *args, leader: nil, separator: nil, **opt)
         mode =
           case mode
             when :input  then 'I' if DEBUG_INPUT
@@ -94,27 +101,42 @@ module Representable
             else              '-'
           end
         return if mode.blank?
+
         args += Array.wrap(yield) if block_given?
-        line  = +"#{LEADER}#{mode} #{args.shift}"
+        lead  = ["#{LEADER}#{mode}", leader, args.shift]
+        sep   = separator || SEPARATOR
+
         items =
           opt.map do |k, v|
-            if (k == :options) && v[:represented].present?
-              {
-                represented: v[:represented]
-                               .class,
-                options:     v[:options]
-                               .except(:doc, :represented, :decorator)
-                               .inspect,
-              }.map { |k0, v0| "#{k0} = #{v0}" }.join(', ')
+            if k == :options
+              v.map { |k0, v0|
+                case k0
+                  when :doc         then meth = nil
+                  when :decorator   then meth = nil
+                  when :binding     then meth = :class; lead << ":#{v0.name}"
+                  when :represented then meth = :class
+                  else                   meth = :inspect
+                end
+                # noinspection RubyCaseWithoutElseBlockInspection
+                case meth
+                  when :class   then "#{k0} = <#{v0.class}>"
+                  when :inspect then "#{k0} = #{v0.inspect}"
+                end
+              }.compact.sort_by!(&:size).join(', ')
             elsif v.class.to_s.end_with?('Serializer')
+              "#{k} = #{v}"
+            elsif v.is_a?(String) && v.start_with?(*LITERAL)
               "#{k} = #{v}"
             else
               "#{k} = #{v.inspect}"
             end
           end
         items += args
-        line << SEPARATOR << items.join(SEPARATOR) if items.present?
-        __output_impl(line)
+        items.sort_by!(&:size)
+        items.map! { |item| item.truncate(1024) }
+
+        lead = [*lead, SEPARATOR].compact.join(' ')
+        __output_impl(leader: lead, separator: sep) { items }
       end
 
       # Override one or more lambdas in order to "inject" a debug statement
@@ -141,31 +163,34 @@ module Representable
       #
       # @see #__debug_show
       #
-      #--
-      # noinspection RubyMismatchedArgumentType
-      #++
       def __debug_lambda(mode, *constants)
-        if mode == :input
-          return unless DEBUG_INPUT
-        elsif mode == :output
-          return unless DEBUG_OUTPUT
-        else
-          constants.unshift(mode) if mode.is_a?(Symbol)
-          mode = nil
+        # noinspection RubyMismatchedArgumentType
+        case mode
+          when :input  then return unless DEBUG_INPUT
+          when :output then return unless DEBUG_OUTPUT
+          when Symbol  then mode = constants.unshift(mode) && nil
+          else              mode = nil
         end
         constants.flatten.each do |constant|
-          unless const_defined?(constant, false)
-            Log.warn "Representable.#{constant} not defined (skipped)"
+          original = :"Original#{constant}"
+          log      = rails_application?
+          if const_defined?(original, false)
+            Log.debug "Representable::#{constant} already overridden" if log
+            next
+          elsif !const_defined?(constant, false)
+            Log.warn "Representable::#{constant} not defined (skipped)" if log
             next
           end
           module_eval do
-            const_set :"Original#{constant}", remove_const(constant)
+            const_set original, remove_const(constant)
             const_set constant, ->(input, options) do
-              __debug_show(mode, constant, input: input, options: options)
-              original_lambda = const_get(:"Original#{constant}", false)
-              original_lambda.call(input, options).tap do |result|
+              dbg_opt = { leader: constant }
+              __debug_show(mode, input: input, options: options, **dbg_opt)
+              const_get(original, false).call(input, options).tap do |result|
                 if result && (result != input)
-                  __debug_show(mode, constant, 'return -->' => result.inspect)
+                  start  = ("Array(#{result.size}):" if result.is_a?(Array))
+                  result = [start, result.inspect].compact.join(' ')
+                  __debug_show(mode, 'return -->': result, **dbg_opt)
                 end
               end
             end
@@ -225,7 +250,7 @@ module Representable
           module_eval do
             alias_method :"original_#{meth}", meth
             define_method(meth) do |*args|
-              __debug_show(mode, "#{label}#{meth}", *args)
+              __debug_show(mode, *args, leader: "#{label}#{meth}")
               send("original_#{meth}", *args)
             end
           end
@@ -252,16 +277,14 @@ module Representable
     #++
     Class = ->(input, options) do
       binding = options[:binding]
-      object_class = binding.evaluate_option(:class, input, options)
-      __debug_show(:input, input: input, options: options) do
-        "Class #{object_class}"
-      end
-      unless object_class
+      unless (obj_class = binding.evaluate_option(:class, input, options))
         raise DeserializeError,
           ":class did not return class constant for `#{binding.name}`."
       end
+      leader = "Class #{obj_class}"
+      __debug_show(:input, input: input, options: options, leader: leader)
       format = binding.to_s.match?(/::Xml/i) ? :xml : :json
-      object_class.new(nil, format: format)
+      obj_class.new(nil, format: format)
     end
 
   end
@@ -273,7 +296,7 @@ module Representable
       include RepresentableDebug
 
       def read(hash, as)
-        __debug_show(:input, as: as, hash: hash) { "Hash.#{__method__}" }
+        __debug_show(:input, as: as, hash: hash, leader: "Hash.#{__method__}")
         if hash.is_a?(Array)
           hash
         elsif hash.key?(as)

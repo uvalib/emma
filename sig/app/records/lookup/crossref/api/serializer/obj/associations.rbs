@@ -1,0 +1,15 @@
+# Overrides for Obj serializers.
+#
+# @see Lookup::RemoteService::Api::Serializer::Obj::Associations
+#
+module Lookup::Crossref::Api::Serializer::Obj::Associations
+  extend ActiveSupport::Concern
+
+  include Lookup::RemoteService::Api::Serializer::Obj::Associations
+
+  module ClassMethods
+    include Lookup::Crossref::Api::Serializer::Obj::Schema
+
+    include Lookup::RemoteService::Api::Serializer::Obj::Associations::ClassMethods
+  end
+end

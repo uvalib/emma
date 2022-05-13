@@ -1,0 +1,138 @@
+
+type lookupItem         = String | PublicationIdentifier
+type lookupItems        = Array[lookupItem]
+type lookupHash         = Hash[Symbol,lookupItems]
+type lookupArg          = LookupService::Request | lookupHash | lookupItems | String
+
+type lookupRequestItems = Array[PublicationIdentifier]
+type lookupRequestHash  = Hash[Symbol,lookupRequestItems]
+
+type lookupDataItems    = Hash[Symbol,Array[LookupService::Data::Item]]
+type lookupDataValues   = Hash[Symbol,Array[symHash]]
+
+type lookupJobData      = symHash
+type lookupJobTable     = Hash[String,lookupJobData]
+
+# Encapsulates bibliographic metadata lookup.
+#
+# == Implementation Note
+# Unlike other top-level classes in this directory, this is not a subclass of
+# ApiService -- instead, the classes defined within its namespace are.
+#
+class LookupService
+  include Emma::Time
+
+  include Lookup
+
+  # @type [Numeric]
+  DEFAULT_TIMEOUT: Numeric
+
+  # A table of defined external services and the bibliographic types they can
+  # handle.  The entries are in descending order of preference.
+  #
+  # @type [Hash{Class=>Set<Symbol>}]
+  #
+  SERVICE_TABLE: Hash[Class,Set[Symbol]]
+
+  ADD_DIAGNOSTICS: bool
+
+  # Get bibliographic information about the given items.
+  #
+  # @param [LookupService::Request] request
+  # @param [LookupChannel, nil]     channel
+  # @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
+  #
+  # @return [nil, Hash{String=>LookupService::Response}]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload request(items, channel:, timeout: nil)
+  #   Access remote services asynchronously.
+  #   @param [*]                     items
+  #   @param [LookupChannel]         channel
+  #   @param [Numeric, Boolean, nil] timeout  Default: `#DEFAULT_TIMEOUT`.
+  #   @return [nil]
+  #
+  # @overload request(items, timeout: nil)
+  #   Access remote services one at a time.
+  #   @param [*]                     items
+  #   @param [Numeric, Boolean, nil] timeout  Default: `#DEFAULT_TIMEOUT`.
+  #   @return [Hash{String=>LookupService::Response}]
+  #
+  def self.request: (lookupArg items, ?channel: nil,           ?timeout: Numeric|bool|nil) -> Hash[String,LookupService::Response]
+                  | (lookupArg items,  channel: LookupChannel, ?timeout: Numeric|bool|nil) -> nil
+
+  # Synchronously get bibliographic information via the given service.
+  #
+  # @param [Class, LookupService::RemoteService] service
+  # @param [LookupService::Request]              request
+  # @param [Hash]                                opt
+  #
+  # @return [LookupService::Response]
+  #
+  # @see LookupJob#worker_task
+  # @see LookupService#get_sync
+  #
+  def self.get_from: (Class|LookupService::RemoteService service, LookupService::Request request, **untyped opt) -> LookupService::Response
+
+  # Combine the data from multiple threads.
+  #
+  # Each top level *table* entry is a hash returned by #post_fight.
+  #
+  # @param [Hash{*=>Hash}]                              table
+  # @param [LookupService::Request, Array<String>, nil] requested
+  #
+  # @return [Hash]
+  #
+  # @see LookupService::RemoteService#post_fight
+  #
+  def self.merge_data: (lookupJobTable table, ?(LookupService::Request|strArray|nil) requested) -> anyHash
+
+  def self.blend_data: (*symHash entries) -> symHash
+
+  FAMILY_NAME_GIVEN_NAME_DATES: Regexp
+  FAMILY_NAME_GIVEN_NAME: Regexp
+
+  def self.fix_names: (strArray values) -> strArray
+
+  def self.eliminate_substrings: (strArray) -> strArray
+
+  def self.normalize_dates!: (symHash result) -> symHash
+
+  # Access remote services asynchronously.
+  #
+  # @param [LookupService::Request] request
+  # @param [Hash]                   opt       Passed to LookupJob.
+  #
+  # @option opt [Numeric, nil] :timeout
+  #
+  # @return [nil]
+  #
+  def self.get_async: (LookupService::Request request, **untyped opt) -> nil
+
+  # Access remote services one at a time.
+  #
+  # @param [LookupService::Request] request
+  # @param [Numeric, nil]           timeout
+  # @param [Hash]                   opt       Passed to #get_from.
+  #
+  # @return [Hash{String=>LookupService::Response}]
+  #
+  def self.get_sync: (LookupService::Request request, ?timeout: Numeric|nil, **untyped opt) -> Hash[String,LookupService::Response]
+
+  # services_for
+  #
+  # @param [LookupService::Request, Hash, Array, String] items
+  # @param [String, Boolean, nil]                        log
+  #
+  # @return [Array<Class>]
+  #
+  def self.services_for: (lookupArg items, ?log: String|bool|nil) -> Array[Class]
+
+  # @type [Hash{Symbol=>String,Regexp}]
+  PATTERN: Hash[Symbol,(String|Regexp)]
+
+  def self.pattern: (?untyped name) -> (String | Regexp)
+end

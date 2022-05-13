@@ -1,0 +1,117 @@
+
+class LookupService::Data
+
+  # @return [Hash{Symbol=>Array<LookupService::Data::Item>}]
+  attr_reader table: lookupDataItems
+
+  @item_values: lookupDataValues | nil
+  @diagnostic:  lookupDataValues | nil
+
+  # Initialize a new instance.
+  #
+  # @param [Api::Message, Faraday::Response, Hash, Array, String, LookupService::Data, LookupService::Data::Item, nil] src
+  #
+  def initialize: (?(Api::Message|Faraday::Response|symHash|strArray|String|LookupService::Data|LookupService::Data::Item|nil) src) -> void
+
+  # Return only the fields which are not blank.
+  #
+  # @return [Hash{Symbol=>Array<Hash>}]
+  #
+  def item_values: () -> lookupDataValues
+
+  # Total number of items in this instance.
+  #
+  # @return [Integer]
+  #
+  def item_count: ()-> Integer
+
+  # diagnostic
+  # 
+  # @return [Hash{Symbol=>Array<Hash>}]
+  # 
+  def diagnostic: () -> lookupDataValues
+
+  # make_table
+  #
+  # @param [Hash, Array, nil] items
+  #
+  # @return [Hash{Symbol=>Array<LookupService::Data::Item>}]
+  #
+  def make_table: (Hash[Symbol,(LookupService::Data|symHash)]|Array[LookupService::Data|symHash]|nil array) -> lookupDataItems
+
+  # transform_table_items
+  #
+  # @param [Proc] block
+  #
+  # @return [Hash]
+  #
+  # @yield [item]
+  # @yieldparam [LookupService::Data::Item] item
+  # @yieldreturn [*]
+  #
+  # @raise [ArgumentError]  If no block was given.
+  #
+  def transform_table_items : [T] () { (LookupService::Data::Item item) -> [T] } -> Hash[Symbol,Array[T]]
+
+  # Create a new instance from *item* if it is not already an instance.
+  #
+  # @param [LookupService::Data, *] item
+  #
+  # @return [LookupService::Data]
+  #
+  def self.wrap: (untyped item) -> LookupService::Data
+end
+
+class LookupService::Data::Item < Search::Record::MetadataRecord
+
+  FIELDS:   symArray
+  TEMPLATE: symHash
+
+  # @return [Hash, nil]
+  attr_reader diagnostic: (symHash | nil)
+
+  # Initialize a new instance.
+  #
+  # @param [Api::Message, Faraday::Response, Hash, String, LookupService::Data::Item, nil] src
+  # @param [Hash, nil] opt
+  #
+  # @option opt [Hash] :diagnostic    Out-of-band information to include with
+  #                                     the return of #item_values.
+  #
+  def initialize: (?(Api::Message|Faraday::Response|symHash|strArray|String|LookupService::Data::Item|nil) src, ?(symHash|nil) opt) -> void
+
+  # Return only the fields which are not blank.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def item_values: () -> symHash
+
+  # Eliminate :emma_publicationDate if it's just "YYYY-01-01"; if not,
+  # eliminate :dcterms_dateCopyright if just indicates the same year as the
+  # publication date.
+  #
+  # @return [void]
+  #
+  def normalize_dates!: () -> void
+
+  def field_names: () -> symArray
+  def identifier:  () -> String
+
+  # Set @diagnostic value.
+  #
+  # @param [Hash, nil] value
+  #
+  # @return [Hash]
+  #
+  def set_diagnostic: (symHash|nil value) -> symHash
+
+  alias diagnostic= set_diagnostic
+
+  # Create a new instance from *item* if it is not already an instance.
+  #
+  # @param [LookupService::Data::Item, *] item
+  #
+  # @return [LookupService::Data::Item]
+  #
+  def self.wrap: (untyped item) -> LookupService::Data::Item
+end

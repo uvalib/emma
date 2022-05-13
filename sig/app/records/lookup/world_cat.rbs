@@ -1,0 +1,19 @@
+# Namespace for objects de-serialized from an external service API.
+#
+module Lookup::WorldCat
+  module Api
+  end
+
+  module Message
+  end
+
+  module Record
+  end
+
+  module Shared
+  end
+end
+
+module Lookup::WorldCat
+  include Lookup::WorldCat::Api::Common
+end

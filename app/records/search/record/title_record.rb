@@ -1167,6 +1167,9 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   public
 
+  # @private
+  DEBUG_HIERARCHY = false
+
   # Hierarchical field ordering.
   #
   # @type [Hash{Symbol=>Hash}]
@@ -1187,13 +1190,10 @@ class Search::Record::TitleRecord < Search::Api::Record
   HIERARCHY_PATHS = hierarchy_paths(FIELD_HIERARCHY).to_h.deep_freeze
 
   # ===========================================================================
-  # :section:
+  # :section: Api::Record overrides
   # ===========================================================================
 
   public
-
-  # @private
-  DEBUG_HIERARCHY = false
 
   # All #records fields in hierarchical order.
   #
@@ -1211,6 +1211,12 @@ class Search::Record::TitleRecord < Search::Api::Record
     # noinspection RubyMismatchedReturnType
     result
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # get_format_counts
   #
@@ -1431,10 +1437,10 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   def to_h(**opt)
     wrap   = opt[:item].present?
-    fields = field_hierarchy(wrap: wrap)
-    result = super(**opt)
+    tree   = field_hierarchy(wrap: wrap)
+    result = fields
     wrap_array!(result, :records) if wrap
-    reject_blanks(fields: fields).merge!(result)
+    result.reverse_merge!(fields: reject_blanks(tree))
   end
 
 end

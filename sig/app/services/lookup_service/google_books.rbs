@@ -1,0 +1,23 @@
+# Get results from the Google Books API.
+#
+class LookupService::GoogleBooks < LookupService::RemoteService
+
+  # Fetch results from Google Books.
+  #
+  # @param [LookupService::Request] req  Def.: `@request`.
+  #
+  # @return [Lookup::GoogleBooks::Message::List]
+  #
+  def fetch: (?lookupArg req) -> Lookup::GoogleBooks::Message::List
+
+  # Transform response message data into a normalized data object.
+  #
+  # @param [Lookup::GoogleBooks::Api::Message,LookupService::Data,Hash,nil] msg
+  # @param [Boolean] extended         If *true*, include :diagnostic.
+  #
+  # @return [LookupService::Data]
+  # @return [nil]                     If *msg* is *nil*.
+  #
+  def transform: (Lookup::GoogleBooks::Api::Message|LookupService::Data|symHash msg, ?extended: bool) -> LookupService::Data
+               | (nil                                                           msg, ?extended: bool) -> nil
+end

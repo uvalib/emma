@@ -1,0 +1,8 @@
+# Methods mixed in to record elements related to authors, editors, etc.
+#
+module Lookup::RemoteService::Shared::CreatorMethods
+  include Api::Shared::CreatorMethods
+  include Lookup::RemoteService::Shared::CommonMethods
+
+  def name_list: (*Symbol fields, **untyped opt) -> strArray
+end

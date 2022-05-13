@@ -1,0 +1,16 @@
+# Definitions used within the #schema block when it is executed in the context
+# of a serializer class definition.
+#
+# @see Api::Serializer::Associations
+#
+module Lookup::RemoteService::Api::Serializer::Associations
+  extend ActiveSupport::Concern
+
+  include Api::Serializer::Associations
+
+  module ClassMethods
+    include Lookup::RemoteService::Api::Serializer::Schema
+
+    include Api::Serializer::Associations::ClassMethods
+  end
+end

@@ -2,4 +2,5 @@
 #
 module AwsS3::Shared::CreatorMethods
   include Api::Shared::CreatorMethods
+  include AwsS3::Shared::CommonMethods
 end

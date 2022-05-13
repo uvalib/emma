@@ -1,0 +1,7 @@
+# Base class for object-specific serializers that process JSON data.
+#
+class Lookup::GoogleBooks::Api::Serializer::Json < Lookup::RemoteService::Api::Serializer::Json
+  include Lookup::GoogleBooks::Api::Serializer::Json::Schema
+
+  include Lookup::GoogleBooks::Api::Serializer::Json::Associations
+end

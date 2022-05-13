@@ -1,10 +1,25 @@
-development:
+# config/cable.yml
+
+_cable_async:           &CABLE_ASYNC
   adapter: async
 
-test:
-  adapter: async
+_cable_postgres:        &CABLE_POSTGRES
+  adapter: postgresql
 
-production:
+_cable_redis:           &CABLE_REDIS
   adapter: redis
   url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
   channel_prefix: emma_production
+
+# =============================================================================
+# Rails environments
+# =============================================================================
+
+production:
+  <<: *CABLE_POSTGRES
+
+development:
+  <<: *CABLE_ASYNC
+
+test:
+  <<: *CABLE_ASYNC

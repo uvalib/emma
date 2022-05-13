@@ -1,0 +1,9 @@
+# This is included in record classes that define :BASE_ELEMENT to confirm that
+# they are intended to function as aggregates.
+#
+# @see Model::ClassMethods#validate_relations
+#
+module Lookup::RemoteService::Shared::AggregateMethods
+  include Api::Shared::AggregateMethods
+  include Lookup::RemoteService::Shared::CommonMethods
+end

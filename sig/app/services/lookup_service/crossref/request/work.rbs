@@ -1,0 +1,39 @@
+# LookupService::Crossref::Request::Work
+#
+# @see https://api.crossref.org/swagger-ui/index.html#/Works
+#
+module LookupService::Crossref::Request::Work
+  include Emma::Constants
+
+  include LookupService::Crossref::Common
+
+  QUERY_PREFIX: Hash[Symbol,String]
+
+  QUERY_ALIAS: symArray
+
+  ID_TYPES: symArray
+
+  # == GET https://api.crossref.org/works/DOI
+  #
+  # @param [String] doi
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Lookup::Crossref::Message::Work]
+  #
+  # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works__doi_
+  #
+  def get_work: (String doi, **untyped opt) -> Lookup::Crossref::Message::Work
+
+  # == GET https://api.crossref.org/works?query=...
+  #
+  # @param [LookupService::Request, Array<String>, String] terms
+  # @param [Hash]                                          opt
+  #
+  # @return [Lookup::Crossref::Message::WorkResults]
+  #
+  # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works
+  #
+  def get_work_list: (LookupService::Request|strArray|String terms, **untyped opt) -> Lookup::Crossref::Message::WorkResults
+
+  def query_terms!: (LookupService::Request|strArray|String terms, **untyped opt) -> symHash
+end

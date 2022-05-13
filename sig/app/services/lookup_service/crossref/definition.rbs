@@ -1,0 +1,8 @@
+# Interface to the shared data structure which holds the definition of the API
+# requests and parameters.
+#
+module LookupService::Crossref::Definition
+  private
+
+  def self.included: (Module base) -> void
+end
