@@ -23,7 +23,7 @@ module RoleHelper
   # @param [Symbol, String, nil] role
   # @param [User, nil]           user   Default: `current_user`.
   #
-  def has_role?: (Symbol|String|nil role, ?User? user) -> bool
+  def has_role?: (Symbol|String|nil role, ?(User|nil) user) -> bool
 
   private
 

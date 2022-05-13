@@ -75,6 +75,7 @@ module Record::Submittable
       __debug_items("ENTRY WF #{__method__}", binding)
       record_class.new(data).tap do |record|
         prefix = model_options.title_prefix
+        # noinspection RubyMismatchedArgumentType
         add_title_prefix(record, prefix: prefix) if prefix
       end
     end

@@ -251,9 +251,9 @@ module FlashHelper
   # @return [String]                    If *html* is *false*.
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   #
-  def flash_omission: (?Integer? count, ?html: bool, **untyped ingored) -> (ActiveSupport::SafeBuffer | String)
-                    | (?Integer? count, html: false, **untyped ingored) -> String
-                    | (?Integer? count, html: true,  **untyped ingored) -> ActiveSupport::SafeBuffer
+  def flash_omission: (?(Integer|nil) count, ?html: bool,  **untyped ingored) -> (ActiveSupport::SafeBuffer | String)
+                    | (?(Integer|nil) count,  html: false, **untyped ingored) -> String
+                    | (?(Integer|nil) count,  html: true,  **untyped ingored) -> ActiveSupport::SafeBuffer
 
   # Create item(s) to be included in the flash display.
   #

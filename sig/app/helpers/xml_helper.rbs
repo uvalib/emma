@@ -35,8 +35,8 @@ module XmlHelper
   #
   # @note The result has UTF-8 encoding (even if no truncation was performed).
   #
-  def html_truncate: (ActiveSupport::SafeBuffer str, ?Integer? length, **untyped opt) -> ActiveSupport::SafeBuffer
-                   | (String                    str, ?Integer? length, **untyped opt) -> String
+  def html_truncate: (ActiveSupport::SafeBuffer str, ?(Integer|nil) length, **untyped opt) -> ActiveSupport::SafeBuffer
+                   | (String                    str, ?(Integer|nil) length, **untyped opt) -> String
 
   # Truncate XML so that the rendered result is limited to the given length.
   #
@@ -61,7 +61,7 @@ module XmlHelper
   # is overly-aggressive in pruning the element hierarchy at the point where
   # the available length budget runs out).
   #
-  def xml_truncate: (Nokogiri::XML::Node xml, ?Integer? len, **untyped opt) -> (Nokogiri::XML::Node | nil)
+  def xml_truncate: (Nokogiri::XML::Node xml, ?(Integer|nil) len, **untyped opt) -> (Nokogiri::XML::Node | nil)
 
   # Copy of an XML node without its children.
   #

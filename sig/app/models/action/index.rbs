@@ -31,7 +31,7 @@ class Action::Index < Action::BulkPart
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: (Model|prmHash|nil attr, ?symHash? opt) -> void
+  def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
 
   # Create/upload the index entry.
   #
@@ -49,9 +49,9 @@ class Action::Index < Action::BulkPart
   # @param [String, nil] sid          Default: `#sid_value`
   # @param [Hash]        opt
   #
-  def in_index?: (?String? sid, **untyped opt) -> bool
+  def in_index?: (?(String|nil) sid, **untyped opt) -> bool
 
-  def check_indexed: (?String? sid, ?advance: bool, **untyped opt) -> String
+  def check_indexed: (?(String|nil) sid, ?advance: bool, **untyped opt) -> String
 
   # A textual description of the type of the Model instance.
   #

@@ -129,5 +129,5 @@ module Api::Serializer::Xml::Schema
   #
   # @return [String]
   #
-  def element_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+  def element_name: (Symbol|String|Class name, ?(Symbol|nil) mode) -> String
 end

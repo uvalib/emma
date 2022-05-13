@@ -53,5 +53,5 @@ class AwsS3::Record::SubmissionRequest < AwsS3::Api::Record
   #
   # @option opt [Aws::S3::Object] :file   Override file for submission.
   #
-  def initialize: (AwsS3::Record::SubmissionRequest|Model|symHash src, ?symHash? opt) -> void
+  def initialize: (AwsS3::Record::SubmissionRequest|Model|symHash src, ?(symHash|nil) opt) -> void
 end

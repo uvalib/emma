@@ -49,7 +49,7 @@ module ParamsHelper
   #
   # @return [Integer]
   #
-  def request_parameter_count: (?prmHash? p) -> Integer
+  def request_parameter_count: (?(prmHash|nil) p) -> Integer
 
   # All request parameters (including :controller and :action) as a Hash.
   #
@@ -57,7 +57,7 @@ module ParamsHelper
   #
   # @return [Hash{Symbol=>String}]
   #
-  def request_parameters: (?prmHash? p) -> symHash
+  def request_parameters: (?(prmHash|nil) p) -> symHash
 
   # The meaningful request URL parameters as a Hash (not including :controller
   # or :action).
@@ -69,7 +69,7 @@ module ParamsHelper
   # @see #request_parameters
   # @see #IGNORED_PARAMETERS
   #
-  def url_parameters: (?prmHash? prm) -> symHash
+  def url_parameters: (?(prmHash|nil) prm) -> symHash
 
   # Get a reference to `session[section]`.
   #
@@ -78,7 +78,7 @@ module ParamsHelper
   #
   # @return [Hash]
   #
-  def session_section: (?(String|Symbol)? section, ?symHash? p) -> anyHash
+  def session_section: (?(String|Symbol)? section, ?(symHash|nil) p) -> anyHash
 
   def last_operation:      () -> strHash
   def last_operation_path: () -> (String | nil)
@@ -114,7 +114,7 @@ module ParamsHelper
   # @return [String]
   # @return [nil]
   #
-  def controller_to_name: (?untyped? v) -> (String | nil)
+  def controller_to_name: (?(untyped|nil) v) -> (String | nil)
 
   # Translate an item into the URL parameter for the controller with which it
   # is associated.
@@ -124,7 +124,7 @@ module ParamsHelper
   # @return [String]
   # @return [nil]
   #
-  def action_to_name: (?untyped? v) -> (String | nil)
+  def action_to_name: (?(untyped|nil) v) -> (String | nil)
 
   # Translate into the URL parameters for the associated controller and action.
   #

@@ -117,7 +117,7 @@ class RunState < Hash[untyped, untyped]
   # -
   # noinspection RubyMismatchedArgumentType
   # +
-  def initialize: (?untyped? source) -> void
+  def initialize: (?(untyped|nil) source) -> void
 
   # Override Hash#merge! to set/update attributes.
   #

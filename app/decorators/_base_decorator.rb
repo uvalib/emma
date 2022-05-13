@@ -1076,6 +1076,7 @@ class BaseDecorator < Draper::Decorator
 
     def self.included(base)
       if base.is_a?(Module) && (base.to_s.demodulize == 'ClassMethods')
+        # noinspection RbsMissingTypeSignature
         base.module_eval do
 
           # Override BaseDecorator::ClassMethods#null_object in order to

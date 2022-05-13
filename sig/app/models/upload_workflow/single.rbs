@@ -566,7 +566,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#get_phase
   #
-  def get_workflow_phase: (?Upload? rec) -> (Symbol | nil)
+  def get_workflow_phase: (?(Upload|nil) rec) -> (Symbol | nil)
 
   # Set the current real-time value of the record's workflow phase.
   #
@@ -577,7 +577,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_phase
   #
-  def set_workflow_phase: (?(Symbol|String)? new_value, ?Upload? rec) -> (Symbol | nil)
+  def set_workflow_phase: (?(Symbol|String)? new_value, ?(Upload|nil) rec) -> (Symbol | nil)
 
   # Get the current real-time value of the appropriate workflow state field.
   #
@@ -588,7 +588,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#get_state
   #
-  def get_workflow_state: (?Upload? rec) -> (String | nil)
+  def get_workflow_state: (?(Upload|nil) rec) -> (String | nil)
 
   # Set the current real-time value of the appropriate workflow state field.
   #
@@ -600,7 +600,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_state
   #
-  def set_workflow_state: (Symbol|String|nil new_value, ?Upload? rec) -> (String | nil)
+  def set_workflow_state: (Symbol|String|nil new_value, ?(Upload|nil) rec) -> (String | nil)
 
   # Generate a new instance of the appropriate workflow variant subclass.
   #

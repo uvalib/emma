@@ -91,5 +91,5 @@ class PeriodicalController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash,Array}]
   #
-  def show_values: (?anyHash? result, **untyped opt) -> symHash
+  def show_values: (?(anyHash|nil) result, **untyped opt) -> symHash
 end

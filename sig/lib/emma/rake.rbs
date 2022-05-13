@@ -83,7 +83,7 @@ module Emma::Rake
   #
   # @return [Float]
   #
-  def save_start_time: (?Float? start_time) -> Float
+  def save_start_time: (?(Float|nil) start_time) -> Float
 
   # A time span message.
   #
@@ -91,7 +91,7 @@ module Emma::Rake
   #
   # @return [String]
   #
-  def elapsed_time: (?Float? start_time) -> String
+  def elapsed_time: (?(Float|nil) start_time) -> String
 
   # Send line(s) to output.
   #

@@ -61,7 +61,7 @@ module HealthConcern
     # @return [String]
     attr_accessor message: String | nil
 
-    def initialize: (bool status, bool degraded, ?String? message) -> void
+    def initialize: (bool status, bool degraded, ?(String|nil) message) -> void
 
     def healthy?: () -> bool
 
@@ -139,7 +139,7 @@ module HealthConcern
   # -
   # noinspection RubyScope
   # +
-  def status_report: (Symbol subsystem, ?HealthEntry? entry) -> HealthStatus
+  def status_report: (Symbol subsystem, ?(HealthEntry|nil) entry) -> HealthStatus
 
   # Health status of the database service.
   #

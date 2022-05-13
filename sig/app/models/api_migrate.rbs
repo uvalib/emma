@@ -455,7 +455,7 @@ class ApiMigrate
   # @param [Boolean]                             log
   # @param [Boolean]                             no_raise
   #
-  def initialize: (?untyped? key, ?report: untyped? report, ?log: untyped? log, ?no_raise: bool no_raise) -> void
+  def initialize: (?(untyped|nil) key, ?report: untyped? report, ?log: untyped?, ?no_raise: bool) -> void
 
   # Run the data migrations.
   #
@@ -465,7 +465,7 @@ class ApiMigrate
   #
   # @return [Array{Hash}]             New record values.
   #
-  def run!: (?update: bool update, ?range: untyped? range, **untyped opt) -> untyped
+  def run!: (?update: bool, ?range: untyped?, **untyped opt) -> untyped
 
   # Default target record class.
   #
@@ -479,7 +479,7 @@ class ApiMigrate
   #
   # @return [Symbol, nil]
   #
-  def migration_name: (?untyped? key) -> untyped
+  def migration_name: (?(untyped|nil) key) -> untyped
 
   # API migration configured field transformations.
   #
@@ -487,7 +487,7 @@ class ApiMigrate
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  def configuration: (?untyped? key) -> untyped
+  def configuration: (?(untyped|nil) key) -> untyped
 
   # Transform fields.
   #

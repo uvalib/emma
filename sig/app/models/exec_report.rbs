@@ -225,7 +225,7 @@ class ExecReport
     # -
     # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
     # +
-    def extract_message_hashes: (untyped src, ?Symbol? meth) -> Array[Hash[Symbol,strArray]]
+    def extract_message_hashes: (untyped src, ?(Symbol|nil) meth) -> Array[Hash[Symbol,strArray]]
 
     # Attempt to get topic/details from *src*.
     #
@@ -237,7 +237,7 @@ class ExecReport
     # -
     # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
     # +
-    def extract_message_hash: (untyped src, ?Symbol? meth) -> Hash[Symbol,strArray]
+    def extract_message_hash: (untyped src, ?(Symbol|nil) meth) -> Hash[Symbol,strArray]
 
     # Create message hash values from *src*.
     #
@@ -249,7 +249,7 @@ class ExecReport
     # -
     # noinspection RubyNilAnalysis
     # +
-    def make_message_hash: (untyped src, ?Symbol? meth) -> Hash[Symbol,strArray]
+    def make_message_hash: (untyped src, ?(Symbol|nil) meth) -> Hash[Symbol,strArray]
 
     # message_line
     #
@@ -355,7 +355,7 @@ class ExecReport
     #
     # @return [Array<String>]
     #
-    def error_messages: (untyped src, ?bool? html) -> strArray
+    def error_messages: (untyped src, ?(bool|nil) html) -> strArray
 
     def error_table_hash: (untyped|anyArray src) -> strHash
 
@@ -380,7 +380,7 @@ class ExecReport
   #
   # @return [String, nil]           *nil* if *src* was blank.
   #
-  def serialize: (?untyped? src) -> (String | nil)
+  def serialize: (?(untyped|nil) src) -> (String | nil)
 
   # Interpret the error report value from a database column.
   #
@@ -388,7 +388,7 @@ class ExecReport
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
   #
-  def deserialize: (?untyped? src) -> (Array[Hash[Symbol,(String|strArray)]] | nil)
+  def deserialize: (?(untyped|nil) src) -> (Array[Hash[Symbol,(String|strArray)]] | nil)
 
   # The error table for the current instance.
   #
@@ -405,7 +405,7 @@ class ExecReport
   #
   # @return [Array<String>]
   #
-  def error_messages: (?untyped? src, ?bool? html) -> strArray
+  def error_messages: (?(untyped|nil) src, ?(bool|nil) html) -> strArray
 
   # Return the HTTP status value from the instance.
   #
@@ -413,7 +413,7 @@ class ExecReport
   #
   # @return [Integer, Symbol, nil]
   #
-  def http_status: (?untyped? src) -> (Integer | Symbol | nil)
+  def http_status: (?(untyped|nil) src) -> (Integer | Symbol | nil)
 
   # Get topic/details from *src*.
   #
@@ -421,7 +421,7 @@ class ExecReport
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>]
   #
-  def message_hashes: (?untyped? src) -> Array[Hash[Symbol,(String|strArray)]]
+  def message_hashes: (?(untyped|nil) src) -> Array[Hash[Symbol,(String|strArray)]]
 
   # Get topic/details from *src*.
   #
@@ -429,7 +429,7 @@ class ExecReport
   #
   # @return [Hash{Symbol=>String,Array<String>}]
   #
-  def message_hash: (?untyped? src) -> Hash[Symbol,(String|strArray)]
+  def message_hash: (?(untyped|nil) src) -> Hash[Symbol,(String|strArray)]
 
   # Attempt to get an HTTP status value from *src*.
   #
@@ -437,7 +437,7 @@ class ExecReport
   #
   # @return [Integer, Symbol, nil]
   #
-  def extract_status: (?untyped? src) -> (Integer | Symbol | nil)
+  def extract_status: (?(untyped|nil) src) -> (Integer | Symbol | nil)
 
   # Attempt to get topic/details from *src*.
   #
@@ -446,7 +446,7 @@ class ExecReport
   #
   # @return [Array<Hash{Symbol=>Array<String>}>]
   #
-  def extract_message_hashes: (?untyped? src, ?Symbol? meth) -> Array[Hash[Symbol,strArray]]
+  def extract_message_hashes: (?(untyped|nil) src, ?(Symbol|nil) meth) -> Array[Hash[Symbol,strArray]]
 
   # Attempt to get topic/details from *src*.
   #
@@ -455,7 +455,7 @@ class ExecReport
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
-  def extract_message_hash: (?untyped? src, ?Symbol? meth) -> Hash[Symbol,strArray]
+  def extract_message_hash: (?(untyped|nil) src, ?(Symbol|nil) meth) -> Hash[Symbol,strArray]
 
   # Generate an ExecReport if necessary.
   #
@@ -693,7 +693,7 @@ class ExecReport::Part
   #
   # @return [String, nil]           *nil* if *src* was blank.
   #
-  def serialize: (?untyped? src) -> (String | nil)
+  def serialize: (?(untyped|nil) src) -> (String | nil)
 
   # Interpret an error report part from a database column.
   #
@@ -701,7 +701,7 @@ class ExecReport::Part
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
   #
-  def deserialize: (?untyped? src) -> (Array[Hash[Symbol,(String|strArray)]] | nil)
+  def deserialize: (?(untyped|nil) src) -> (Array[Hash[Symbol,(String|strArray)]] | nil)
 
   # Get topic/details from *src*.
   #
@@ -709,7 +709,7 @@ class ExecReport::Part
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>]
   #
-  def message_hashes: (?untyped? src) -> Array[Hash[Symbol,(String|strArray)]]
+  def message_hashes: (?(untyped|nil) src) -> Array[Hash[Symbol,(String|strArray)]]
 
   # Get topic/details from *src*.
   #
@@ -717,7 +717,7 @@ class ExecReport::Part
   #
   # @return [Hash{Symbol=>String,Array<String>}]
   #
-  def message_hash: (?untyped? src) -> Hash[Symbol,(String|strArray)]
+  def message_hash: (?(untyped|nil) src) -> Hash[Symbol,(String|strArray)]
 
   # Generate a rendering of the error report part.
   #
@@ -729,7 +729,7 @@ class ExecReport::Part
   #
   # @return [String, ActiveSupport::SafeBuffer, nil]
   #
-  def render: (?untyped? src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
+  def render: (?(untyped|nil) src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
   # http_status
   #
@@ -768,7 +768,7 @@ class ExecReport::FlashPart < ExecReport::Part
   #   @param [ExecReport::Part, Hash, String, Integer] topic
   #   @param [ExecReport::Part, Hash, String, Array]   details
   #
-  def initialize: (untyped topic, ?untyped? details) -> void
+  def initialize: (untyped topic, ?(untyped|nil) details) -> void
 
   # Logic which is not dependent on an ExecReport::Part instance.
   #

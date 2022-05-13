@@ -45,7 +45,7 @@ class Phase::Review < Phase::Single
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def schedule_cb: (?Action? action, **untyped opt) -> bool
+  def schedule_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # review!
   #
@@ -63,7 +63,7 @@ class Phase::Review < Phase::Single
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def review_cb: (?Action? action, **untyped opt) -> bool
+  def review_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # cancel!
   #
@@ -81,7 +81,7 @@ class Phase::Review < Phase::Single
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def cancel_cb: (?Action? action, **untyped opt) -> bool
+  def cancel_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Reviewer rejects (sends back) submission.
   #
@@ -91,7 +91,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def reject!: (?String? comments, **untyped opt) -> (bool | nil)
+  def reject!: (?(String|nil) comments, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #reject!.
   #
@@ -100,7 +100,7 @@ class Phase::Review < Phase::Single
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def reject_cb: (?Action? action, **untyped opt) -> bool
+  def reject_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Reviewer approves (sends forward) submission.
   #
@@ -110,7 +110,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def approve!: (?String? comments, **untyped opt) -> (bool | nil)
+  def approve!: (?(String|nil) comments, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #approve!.
   #
@@ -119,7 +119,7 @@ class Phase::Review < Phase::Single
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def approve_cb: (?Action? action, **untyped opt) -> bool
+  def approve_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Complete the review phase.
   #
@@ -133,7 +133,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def terminate_phase!: (Symbol|String final_state, ?String? comments, **untyped opt) -> (bool | nil)
+  def terminate_phase!: (Symbol|String final_state, ?(String|nil) comments, **untyped opt) -> (bool | nil)
 
   # A textual description of the type of the Model instance.
   #

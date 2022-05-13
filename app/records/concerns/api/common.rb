@@ -1122,8 +1122,8 @@ class EnumType < ScalarType
     # @return [Hash{Symbol=>Hash}]
     #
     # == Implementation Notes
-    # This needs to be a class variable so that all subclasses reference the same
-    # set of values.
+    # This needs to be a class variable so that all subclasses reference the
+    # same set of values.
     #
     def enumerations
       # noinspection RubyClassVariableUsageInspection

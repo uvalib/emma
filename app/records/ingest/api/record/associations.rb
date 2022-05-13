@@ -17,10 +17,8 @@ module Ingest::Api::Record::Associations
   include Api::Record::Associations
 
   module ClassMethods
-
     include Ingest::Api::Schema
     include Api::Record::Associations::ClassMethods
-
   end
 
 end

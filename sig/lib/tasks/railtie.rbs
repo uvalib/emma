@@ -6,5 +6,5 @@ JS_SRC:       String
 JS_DST:       String
 
 class Object
-  def preprocess_erb: (String src, ?String? dst) -> void
+  def preprocess_erb: (String src, ?(String|nil) dst) -> void
 end

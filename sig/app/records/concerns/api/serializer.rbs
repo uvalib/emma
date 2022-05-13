@@ -45,7 +45,7 @@ class Api::Serializer < ::Representable::Decorator
   # This method must be overridden by the derived class to pass in :method.
   #
   # -
-  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyScope, RubyMismatchedArgumentType
   # +
   def serialize: (?method: Symbol|Proc|nil, **untyped opt) -> String
 
@@ -67,9 +67,9 @@ class Api::Serializer < ::Representable::Decorator
   # to `super`.
   #
   # -
-  # noinspection RubyScope, RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyScope, RubyMismatchedArgumentType
   # +
-  def deserialize: (String|symHash data, ?method: (Symbol|Proc)?) -> (Api::Record | nil)
+  def deserialize: (String|symHash data, ?method: Symbol|Proc|nil) -> (Api::Record | nil)
 
   # Set source data string.
   #

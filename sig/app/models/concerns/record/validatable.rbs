@@ -22,7 +22,7 @@ module Record::Validatable
 
   def emma_data_valid?: () -> bool
 
-  def check_required: (?symHash? required_fields, ?(symHash|Entry)? source) -> void
+  def check_required: (?(symHash|nil) required_fields, ?(symHash|Entry)? source) -> void
 
   private
 

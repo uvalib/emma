@@ -56,7 +56,7 @@ module CachingMiddleware
     #
     # @raise [RuntimeError]           If opt[:namespace] is missing.
     #
-    def initialize: (Faraday::Middleware app, ?symHash? opt) -> void
+    def initialize: (Faraday::Middleware app, ?(symHash|nil) opt) -> void
 
     # Generate cache key.
     #
@@ -134,7 +134,7 @@ module CachingMiddleware
     # @return [Faraday::Env]
     # @return [nil]                   Could not determine *cache_key*.
     #
-    def read_cache: (Faraday::Env env, ?String? cache_key) -> (Faraday::Env | nil)
+    def read_cache: (Faraday::Env env, ?(String|nil) cache_key) -> (Faraday::Env | nil)
 
     # write_cache
     #
@@ -144,7 +144,7 @@ module CachingMiddleware
     # @return [Boolean]
     # @return [nil]                   Could not determine *cache_key*.
     #
-    def write_cache: (Faraday::Env env, ?String? cache_key) -> (bool | nil)
+    def write_cache: (Faraday::Env env, ?(String|nil) cache_key) -> (bool | nil)
 
     # Generate options to override the default cache options set in the
     # initializer based on the nature of the request.
@@ -179,7 +179,7 @@ module CachingMiddleware
     #
     # @return [nil]
     #
-    def log_status: (Faraday::Env env, ?String? cache_key, ?String? note) -> nil
+    def log_status: (Faraday::Env env, ?(String|nil) cache_key, ?(String|nil) note) -> nil
 
     private
 

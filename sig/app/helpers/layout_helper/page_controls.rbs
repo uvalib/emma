@@ -12,7 +12,7 @@ module LayoutHelper::PageControls
   #
   # @param [Hash, nil] p              Default: `#request_parameters`.
   #
-  def show_page_controls?: (?symHash? p) -> bool
+  def show_page_controls?: (?(symHash|nil) p) -> bool
 
   # Render the appropriate partial to insert page controls if they are defined
   # for the current controller/action.

@@ -16,10 +16,8 @@ module Search::Api::Serializer::Json::Associations
   include Api::Serializer::Json::Associations
 
   module ClassMethods
-
     include Search::Api::Serializer::Json::Schema
     include Api::Serializer::Json::Associations::ClassMethods
-
   end
 
 end

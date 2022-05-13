@@ -19,7 +19,7 @@ class Action::BulkOperation < Action
   # @option attr [Array] :targets     If *attr* is a Hash or Hash-like.
   # @option opt  [Array] :targets     If *opt* hash is provided.
   #
-  def initialize: (?(Model|prmHash)? attr, ?symHash? opt) { () -> untyped } -> void
+  def initialize: (?(Model|prmHash)? attr, ?(symHash|nil) opt) { () -> untyped } -> void
 
-  def describe_targets: (?untyped? action) -> String
+  def describe_targets: (?(untyped|nil) action) -> String
 end

@@ -336,7 +336,7 @@ class EntryController < ApplicationController
   #
   # @return [void]
   #
-  def show_search_failure: (Exception error, ?String? fallback, ?meth: Symbol?) -> void
+  def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol?) -> void
 
   # If the :show endpoint is given an :id which is actually a specification for
   # multiple items then there is a redirect to :index.
@@ -369,5 +369,5 @@ class EntryController < ApplicationController
   #
   # @return [Hash{Symbol=>String,nil}]
   #
-  def download_values: (?String? url) -> Hash[Symbol,(String|nil)]
+  def download_values: (?(String|nil) url) -> Hash[Symbol,(String|nil)]
 end

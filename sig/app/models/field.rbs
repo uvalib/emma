@@ -72,7 +72,7 @@ module Field
   # @param [Hash]        entry        Passed to #normalize
   # @param [Symbol, nil] field        Passed to #normalize
   #
-  def self.normalize!: (symHash entry, ?Symbol? field) -> symHash
+  def self.normalize!: (symHash entry, ?(Symbol|nil) field) -> symHash
 
   # Ensure that field entry values are cleaned up and have the expected type.
   #
@@ -103,7 +103,7 @@ module Field
   # -
   # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedArgumentType
   # +
-  def self.normalize: (symHash|String entry, ?Symbol? field) -> symHash
+  def self.normalize: (symHash|String entry, ?(Symbol|nil) field) -> symHash
 
   # Generate derived fields for an entry.
   #
@@ -112,7 +112,7 @@ module Field
   #
   # @return [Hash{Symbol=>Any}]       The modified *entry*.
   #
-  def self.finalize!: (symHash entry, ?Symbol? field) -> symHash
+  def self.finalize!: (symHash entry, ?(Symbol|nil) field) -> symHash
 
   # Indicate whether the field configuration should be unused.
   #
@@ -218,7 +218,7 @@ module Field
     # @param [Symbol, String, nil] model
     # @param [*]                   value
     #
-    def initialize: (untyped src, ?Symbol? field, ?(Symbol|String)? model, ?untyped? value) -> void
+    def initialize: (untyped src, ?(Symbol|nil) field, ?(Symbol|String)? model, ?(untyped|nil) value) -> void
 
     # The resolved value for this field instance.
     #

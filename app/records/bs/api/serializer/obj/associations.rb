@@ -16,10 +16,8 @@ module Bs::Api::Serializer::Obj::Associations
   include Api::Serializer::Obj::Associations
 
   module ClassMethods
-
     include Bs::Api::Serializer::Obj::Schema
     include Api::Serializer::Obj::Associations::ClassMethods
-
   end
 
 end

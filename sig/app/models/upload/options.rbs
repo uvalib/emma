@@ -11,7 +11,7 @@ class Upload::Options < Options
   #
   IDENTIFIER_PARAMS: symArray
 
-  def initialize: (?symHash? prm) -> void
+  def initialize: (?(symHash|nil) prm) -> void
 
   def option_keys: () -> symArray
 

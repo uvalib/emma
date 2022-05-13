@@ -30,5 +30,5 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   #
   # @raise [Record::SubmitError]      If metadata was malformed.
   #
-  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?symHash? opt) -> void
+  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?(symHash|nil) opt) -> void
 end

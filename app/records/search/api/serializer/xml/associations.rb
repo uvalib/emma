@@ -16,10 +16,8 @@ module Search::Api::Serializer::Xml::Associations
   include Api::Serializer::Xml::Associations
 
   module ClassMethods
-
     include Search::Api::Serializer::Xml::Schema
     include Api::Serializer::Xml::Associations::ClassMethods
-
   end
 
 end

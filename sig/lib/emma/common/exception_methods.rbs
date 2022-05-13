@@ -37,5 +37,5 @@ module Emma::Common::ExceptionMethods
   #
   # @raise [NotImplementedError]
   #
-  def not_implemented: (?String? message, ?meth: Symbol|nil) -> void
+  def not_implemented: (?(String|nil) message, ?meth: Symbol|nil) -> void
 end

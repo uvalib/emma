@@ -50,7 +50,7 @@ class Phase::BulkOperation < Phase
   # @option attr [String|Array] :manifest   If *attr* is a Hash or Hash-like.
   # @option opt  [String|Array] :manifest   If *opt* hash is provided.
   #
-  def initialize: (?(Model|prmHash)? attr, ?symHash? opt) { () -> untyped } -> void
+  def initialize: (?(Model|prmHash)? attr, ?(symHash|nil) opt) { () -> untyped } -> void
 
   # The #type_value of BulkPart elements associated with this BulkOperation.
   #
@@ -137,7 +137,7 @@ class Phase::BulkOperation < Phase
   #
   # @return [Boolean]
   #
-  def run_sequence: (?untyped? prev_state, **untyped opt) -> bool
+  def run_sequence: (?(untyped|nil) prev_state, **untyped opt) -> bool
 
   # The operation(s) performed when pausing.
   #
@@ -146,7 +146,7 @@ class Phase::BulkOperation < Phase
   #
   # @return [Boolean]
   #
-  def pause_sequence: (?untyped? prev_state, **untyped opt) -> bool
+  def pause_sequence: (?(untyped|nil) prev_state, **untyped opt) -> bool
 
   # The operation(s) performed when resuming.
   #
@@ -155,7 +155,7 @@ class Phase::BulkOperation < Phase
   #
   # @return [Boolean]
   #
-  def resume_sequence: (?untyped? prev_state, **untyped opt) -> bool
+  def resume_sequence: (?(untyped|nil) prev_state, **untyped opt) -> bool
 
   # The operation(s) performed when restarting.
   #
@@ -164,7 +164,7 @@ class Phase::BulkOperation < Phase
   #
   # @return [Boolean]
   #
-  def restart_sequence: (?untyped? prev_state, **untyped opt) -> bool
+  def restart_sequence: (?(untyped|nil) prev_state, **untyped opt) -> bool
 
   # A textual description of the type of the Model instance.
   #

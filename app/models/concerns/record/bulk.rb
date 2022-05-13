@@ -328,7 +328,7 @@ module Record::Bulk::Operation
 
   THIS_MODULE = self
 
-  # noinspection RailsParamDefResolve
+  # noinspection RailsParamDefResolve, RbsMissingTypeSignature
   included do |base|
 
     __included(base, THIS_MODULE)

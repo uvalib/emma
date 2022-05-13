@@ -149,7 +149,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, labels: Hash[Symbol,String], ?debug_only: bool) -> ActiveSupport::SafeBuffer
+  def bulk_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?(untyped|nil) value, labels: Hash[Symbol,String], ?debug_only: bool) -> ActiveSupport::SafeBuffer
 
   # An input element for a bulk operation form.
   #
@@ -162,7 +162,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, labels: Hash[Symbol,String], ?meth: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?(untyped|nil) value, labels: Hash[Symbol,String], ?meth: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Labels for inputs associated with transmitted parameters. # TODO: I18n
   #
@@ -203,7 +203,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see #bulk_option
   #
-  def bulk_op_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_op_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?(untyped|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An input element for a bulk new/edit form.
   #
@@ -216,7 +216,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see #bulk_input
   #
-  def bulk_op_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_op_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?(untyped|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # bulk_op_file_select
   #
@@ -259,7 +259,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see #bulk_option
   #
-  def bulk_delete_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_delete_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?(untyped|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An input element for a bulk delete form.
   #
@@ -272,5 +272,5 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see #bulk_input
   #
-  def bulk_delete_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_delete_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?(untyped|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
 end

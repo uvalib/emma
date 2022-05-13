@@ -84,7 +84,7 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
-  def element_parse_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+  def element_parse_name: (Symbol|String|Class name, ?(Symbol|nil) mode) -> String
 
   # Transform *name* into the form indicated by the given naming mode.
   #
@@ -93,7 +93,7 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
-  def attribute_parse_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+  def attribute_parse_name: (Symbol|String|Class name, ?(Symbol|nil) mode) -> String
 
   # Transform *name* into the form indicated by the given naming mode.
   #
@@ -102,7 +102,7 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
-  def element_render_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+  def element_render_name: (Symbol|String|Class name, ?(Symbol|nil) mode) -> String
 
   # Transform *name* into the form indicated by the given naming mode.
   #
@@ -111,7 +111,7 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
-  def attribute_render_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+  def attribute_render_name: (Symbol|String|Class name, ?(Symbol|nil) mode) -> String
 
   # Transform *name* into the form indicated by the given naming mode.
   #
@@ -122,5 +122,5 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
-  def element_name: (Symbol|String|Class name, ?Symbol? mode) -> String
+  def element_name: (Symbol|String|Class name, ?(Symbol|nil) mode) -> String
 end

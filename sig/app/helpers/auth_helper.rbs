@@ -21,7 +21,7 @@ module AuthHelper
   #
   # @return [OmniAuth::AuthHash, nil]
   #
-  def synthetic_auth_hash: (User|String|OmniAuth::AuthHash|prmHash src, ?String? token) -> (OmniAuth::AuthHash | nil)
+  def synthetic_auth_hash: (User|String|OmniAuth::AuthHash|prmHash src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
 
   # Table of user names/tokens acquired for use in non-production deploys.
   #

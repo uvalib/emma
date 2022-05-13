@@ -168,7 +168,7 @@ class AccountDecorator < BaseDecorator
 
   def bookshare_user_menu: (?selected: Integer|nil, ?default: String|nil) -> symHash
 
-  def min_length_note:       (?String? note, ?Integer? min, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-  def current_password_note: (?String? note,                **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def min_length_note:       (?(String|nil) note, ?(Integer|nil) min, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def current_password_note: (?(String|nil) note,                     **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
 end

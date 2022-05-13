@@ -113,5 +113,5 @@ class FileParser::Ocf < FileParser
   #
   # NOTE: This definitely applies to EPUB but maybe not to DAISY.
   #
-  def retrieve_cover_image: (Nokogiri::XML::Element manifest_item, ?String? cover_id) -> (String | nil)
+  def retrieve_cover_image: (Nokogiri::XML::Element manifest_item, ?(String|nil) cover_id) -> (String | nil)
 end

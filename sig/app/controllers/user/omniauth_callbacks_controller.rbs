@@ -41,5 +41,5 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # @return [void]
   #
-  def set_flash_alert: (?String? message, ?String kind) -> void
+  def set_flash_alert: (?(String|nil) message, ?String kind) -> void
 end

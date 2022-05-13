@@ -89,7 +89,7 @@ class Entry < ApplicationRecord
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: (Model|prmHash|nil attr, ?symHash? opt) -> void
+  def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
 
   # The latest phase, representing the current status of the entry.
   #

@@ -60,7 +60,7 @@ class Api::Record
   #
   # @see Api::Record::Schema::ClassMethods#serializers
   #
-  def serializer: (?Symbol? `type`) -> Api::Serializer
+  def serializer: (?(Symbol|nil) `type`) -> Api::Serializer
 
   # Load data elements from the supplied data.
   #
@@ -75,7 +75,7 @@ class Api::Record
   #
   # @see Api::Serializer#deserialize
   #
-  def deserialize: (symHash|String data, ?Symbol? `type`) -> (Api::Record | nil)
+  def deserialize: (symHash|String data, ?(Symbol|nil) `type`) -> (Api::Record | nil)
 
   # Serialize data elements to the indicated format.
   #

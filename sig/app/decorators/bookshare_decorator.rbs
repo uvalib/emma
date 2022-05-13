@@ -111,7 +111,7 @@ class BookshareDecorator < BaseDecorator
     include Methods
 
     def bookshare_url: (symHash|String|nil path, **untyped prm) -> (String | nil)
-    def artifact_links: (?Model? item, **untyped opt) -> ActiveSupport::SafeBuffer
+    def artifact_links: (?(Model|nil) item, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   module ClassMethods

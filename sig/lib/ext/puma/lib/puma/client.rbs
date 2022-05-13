@@ -7,7 +7,7 @@ module Puma
   module ClientDebug
     include Puma::ExtensionDebugging
 
-    def initialize: (untyped io, ?untyped? env) -> void
+    def initialize: (untyped io, ?(untyped|nil) env) -> void
 
     def set_timeout: (untyped val) -> untyped
 

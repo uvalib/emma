@@ -245,7 +245,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # -
     # noinspection RubyNilAnalysis
     # +
-    def make_comparable: (untyped value, ?Symbol? field) -> untyped
+    def make_comparable: (untyped value, ?(Symbol|nil) field) -> untyped
 
     # Group identifiers of the same prefix in descending order of length
     # (favoring ISBN-13 over ISBN-10).
@@ -395,7 +395,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # -
     # noinspection RubyNilAnalysis
     # +
-    def initialize: (?untyped? term) -> void
+    def initialize: (?(untyped|nil) term) -> void
 
     # Add to #level.
     #
@@ -405,7 +405,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [void]
     #
-    def add_level: (String? name, ?untyped? value, **untyped opt) -> void
+    def add_level: (String? name, ?(untyped|nil) value, **untyped opt) -> void
 
     # Make the level name and type.
     #
@@ -413,7 +413,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Array<(String,String)>]       Normalized name and entry type.
     #
-    def name_type: (?String? value) -> [String, String]
+    def name_type: (?(String|nil) value) -> [String, String]
 
     attr_reader number_value: Float
 
@@ -476,7 +476,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @param [Array<Search::Record::MetadataRecord>, Search::Record::MetadataRecord, nil] src
   # @param [Hash, nil] opt
   #
-  def initialize: (Array[Search::Record::MetadataRecord]|Search::Record::MetadataRecord|nil src, ?symHash? opt) -> void
+  def initialize: (Array[Search::Record::MetadataRecord]|Search::Record::MetadataRecord|nil src, ?(symHash|nil) opt) -> void
 
   # Copy usable record(s) from the source.
   #
@@ -736,7 +736,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [ActiveSupport::SafeBuffer]   If *separator* is HTML-safe.
   # @return [String]                      If *separator* is a plain string.
   #
-  def all_item_numbers: (?String? separator) -> (strArray | ActiveSupport::SafeBuffer | String)
+  def all_item_numbers: (?(String|nil) separator) -> (strArray | ActiveSupport::SafeBuffer | String)
 
   # The fields and values for this instance as a Hash.
   #

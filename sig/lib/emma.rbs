@@ -80,5 +80,5 @@ class Object
   #
   # @see #require_submodules
   #
-  def include_submodules: (Module base, ?String? filename) { (Symbol, Module) -> void } -> Array[Module]
+  def include_submodules: (Module base, ?(String|nil) filename) { (Symbol, Module) -> void } -> Array[Module]
 end

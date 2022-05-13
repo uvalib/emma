@@ -79,7 +79,7 @@ class PublicationIdentifier < ScalarType
     #
     # @return [Symbol]
     #
-    def type: (?untyped? v) -> Symbol
+    def type: (?(untyped|nil) v) -> Symbol
 
     # The identifier type portion of the value.
     #
@@ -87,7 +87,7 @@ class PublicationIdentifier < ScalarType
     #
     # @return [String]
     #
-    def prefix: (?untyped? v) -> String
+    def prefix: (?(untyped|nil) v) -> String
 
     # The identifier number portion of the value.
     #
@@ -184,7 +184,7 @@ class PublicationIdentifier < ScalarType
   #
   # @return [String, nil]
   #
-  def number: (?untyped? v) -> (String | nil)
+  def number: (?(untyped|nil) v) -> (String | nil)
 
   # Split a value into a type prefix and a number.
   #
@@ -192,13 +192,13 @@ class PublicationIdentifier < ScalarType
   #
   # @return [Array<(String, String)>]
   #
-  def parts: (?untyped? v) -> [String, String]
+  def parts: (?(untyped|nil) v) -> [String, String]
 
   # Indicate whether the instance is valid.
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 
   # Assign a new value to the instance, allowing for the possibility of an
   # invalid identifier value.
@@ -464,7 +464,7 @@ class Isbn < PublicationIdentifier
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # ISSN identifier.
@@ -589,7 +589,7 @@ class Issn < PublicationIdentifier
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # OCN (OCLC Control Number) identifier.
@@ -720,7 +720,7 @@ class Oclc < PublicationIdentifier
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # LCCN (LoC Control Number) identifier.
@@ -836,7 +836,7 @@ class Lccn < PublicationIdentifier
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # UPC identifier.
@@ -961,7 +961,7 @@ class Upc < PublicationIdentifier
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # DOI identifier.
@@ -1069,7 +1069,7 @@ class Doi < PublicationIdentifier
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # "Describes the type of work"

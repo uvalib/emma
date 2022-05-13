@@ -7,6 +7,8 @@ module UploadWorkflow::Testing
 
   THIS_MODULE: Module
 
+  public
+
   include UploadWorkflow::Errors
 
   FAULT_INJECTION: bool

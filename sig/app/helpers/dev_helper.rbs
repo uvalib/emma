@@ -19,7 +19,7 @@ module DevHelper
   #
   # @return [Boolean]
   #
-  def remember_dev: (?User? user) -> bool
+  def remember_dev: (?(User|nil) user) -> bool
 
   # Remove the cookie indicating a developer client.
   #

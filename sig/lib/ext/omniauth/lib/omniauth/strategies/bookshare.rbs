@@ -109,7 +109,7 @@ module OmniAuth
       #   }
       # }
       #
-      def get_account_info: (?symHash? opt) -> symHash
+      def get_account_info: (?(symHash|nil) opt) -> symHash
 
       # The +OAuth2+ client instance.
       #
@@ -284,7 +284,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      def self.synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src, ?String? token) -> (OmniAuth::AuthHash | nil)
+      def self.synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
       #def self.synthetic_auth_hash: (OmniAuth::AuthHash auth_hash)   -> OmniAuth::AuthHash
       #                            | (prmHash params)                 -> (OmniAuth::AuthHash | nil)
       #                            | (User|String uid, String? token) -> (OmniAuth::AuthHash | nil)
@@ -305,7 +305,7 @@ module OmniAuth
       # #stored_auth_update and/or #stored_auth_update_user will change both
       # the value returned by this method and the associated User table entry.
       #
-      def self.stored_auth: (?anyHash? values) -> Hash[String,anyHash]
+      def self.stored_auth: (?(anyHash|nil) values) -> Hash[String,anyHash]
 
       # Produce a stored_auth table entry value.
       #
@@ -319,7 +319,7 @@ module OmniAuth
     module BookshareDebug
       include OmniAuth::ExtensionDebugging
       def callback_call:    () -> untyped
-      def call_app!:        (?anyHash? env) -> untyped
+      def call_app!:        (?(anyHash|nil) env) -> untyped
       def authorize_params: () -> anyHash
       def token_params:     () -> anyHash
     end

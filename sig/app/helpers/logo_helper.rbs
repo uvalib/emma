@@ -24,7 +24,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source_logo: (?(Model|String|Symbol|symHash)? item, ?symHash? opt) -> ActiveSupport::SafeBuffer
+  def repository_source_logo: (?(Model|String|Symbol|symHash)? item, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
 
   # Make a textual logo for a repository source.
   #
@@ -36,7 +36,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source: (Model|String|Symbol|symHash|nil item, ?symHash? opt) -> ActiveSupport::SafeBuffer
+  def repository_source: (Model|String|Symbol|symHash|nil item, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
 
   # normalize_repository
   #
@@ -67,7 +67,7 @@ module LogoHelper
   # @return [String]                  The logo of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  def repository_logo: (Model|String|Symbol|symHash|nil src, ?Symbol? `type`) -> (String | nil)
+  def repository_logo: (Model|String|Symbol|symHash|nil src, ?(Symbol|nil) `type`) -> (String | nil)
 
   # repository_tooltip
   #
@@ -76,7 +76,7 @@ module LogoHelper
   #
   # @return [String]
   #
-  def repository_tooltip: (Model|String|Symbol|symHash|nil item, ?String? name) -> String
+  def repository_tooltip: (Model|String|Symbol|symHash|nil item, ?(String|nil) name) -> String
 
   private
 

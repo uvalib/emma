@@ -207,7 +207,7 @@ module Record::Steppable
     # -
     # noinspection RubyNilAnalysis
     # +
-    def validate_state_table: (?symHash? table) -> nil
+    def validate_state_table: (?(symHash|nil) table) -> nil
 
     # Create an ActiveJob serializer for the given Record class if it does not
     # already exist.
@@ -457,7 +457,7 @@ module Record::Steppable
     # Ensures that if the action raises an exception then that is captured in
     # the instance's :report column.
     #
-    def execute_step: (Symbol|Proc step, ?Symbol? new_state, ?auto_retry: bool) -> [untyped, Symbol]
+    def execute_step: (Symbol|Proc step, ?(Symbol|nil) new_state, ?auto_retry: bool) -> [untyped, Symbol]
 
     # Schedule a method to be run asynchronously (unless :async is *false*).
     #

@@ -168,6 +168,7 @@ module Record::Sti::Leaf
 
   THIS_MODULE = self
 
+  # noinspection RbsMissingTypeSignature
   included do |base|
 
     __included(base, THIS_MODULE)
@@ -237,6 +238,7 @@ module Record::Sti::Root
 
   THIS_MODULE = self
 
+  # noinspection RbsMissingTypeSignature
   included do |base|
 
     __included(base, THIS_MODULE)

@@ -120,7 +120,7 @@ class MemberDecorator < BookshareDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def history_title: (String? label, ?symHash? opt) -> ActiveSupport::SafeBuffer
+  def history_title: (String? label, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
 
   # history_control
   #

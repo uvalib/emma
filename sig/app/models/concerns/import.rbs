@@ -185,7 +185,7 @@ module Import
   #
   # @return [Array<(nil,nil)>]
   #
-  def skip: (?untyped? k, ?untyped? v) -> [nil, nil]
+  def skip: (?(untyped|nil) k, ?(untyped|nil) v) -> [nil, nil]
 
   # Default transformation.
   #

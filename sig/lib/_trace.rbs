@@ -193,5 +193,5 @@ class Object
   #
   # @return [nil]
   #
-  def __included: (Module base, Module mod, ?String? tag) -> nil
+  def __included: (Module base, Module mod, ?(String|nil) tag) -> nil
 end

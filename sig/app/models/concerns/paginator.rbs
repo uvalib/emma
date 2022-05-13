@@ -44,7 +44,7 @@ class Paginator
   # @param [ApplicationController, nil] controller
   # @param [Hash]                       opt         From `#request_parameters`.
   #
-  def initialize: (?ApplicationController? controller, **untyped opt) -> void
+  def initialize: (?(ApplicationController|nil) controller, **untyped opt) -> void
 
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
@@ -55,7 +55,7 @@ class Paginator
   #
   # @return [void]
   #
-  def finalize: (Api::Record|anyArray list, ?Symbol? meth, **untyped search) -> void
+  def finalize: (Api::Record|anyArray list, ?(Symbol|nil) meth, **untyped search) -> void
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.
@@ -73,7 +73,7 @@ class Paginator
     #
     TEMPLATE: symHash
 
-    def initialize: (?symHash? values) -> void
+    def initialize: (?(symHash|nil) values) -> void
   end
 
   attr_reader property:           Paginator::Properties
@@ -245,7 +245,7 @@ class Paginator
   # @return [String]                  A value usable with 'href'.
   # @return [nil]                     If *value* is invalid.
   #
-  def page_path: (String|Symbol value, ?Integer? page) -> (String | nil)
+  def page_path: (String|Symbol value, ?(Integer|nil) page) -> (String | nil)
 
   # A value to use in place of a path in order to engage browser history.
   #
@@ -254,7 +254,7 @@ class Paginator
   #
   # @return [String]
   #
-  def page_history: (String|Symbol action, ?Integer? page) -> String
+  def page_history: (String|Symbol action, ?(Integer|nil) page) -> String
 
   # Extract the number of "items" reported by an object.
   #

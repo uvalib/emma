@@ -23,6 +23,7 @@ module UploadWorkflow::Testing
 
     __included(base, THIS_MODULE)
 
+    # noinspection RbsMissingTypeSignature
     if safe_const_get(:DESTRUCTIVE_TESTING)
 
       include UploadWorkflow::Errors

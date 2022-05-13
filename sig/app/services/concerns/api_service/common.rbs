@@ -93,7 +93,7 @@ module ApiService::Common
   # -
   # noinspection RubyNilAnalysis
   # +
-  def latest_endpoint: (?symHash? prm) -> String
+  def latest_endpoint: (?(symHash|nil) prm) -> String
 
   # Get data from the API and update @response.
   #
@@ -159,7 +159,7 @@ module ApiService::Common
   # -
   # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   # +
-  def api_options: (?symHash? params) -> symHash
+  def api_options: (?(symHash|nil) params) -> symHash
 
   # Determine whether the HTTP method indicates a write rather than a read and
   # prepare the HTTP headers accordingly.
@@ -174,7 +174,7 @@ module ApiService::Common
   # -
   # noinspection RubyNilAnalysis
   # +
-  def api_headers: (?symHash? params, ?anyHash? headers, ?(String|anyHash)? body) -> [symHash, anyHash, (String | anyHash)]
+  def api_headers: (?(symHash|nil) params, ?(anyHash|nil) headers, ?(String|anyHash)? body) -> [symHash, anyHash, (String | anyHash)]
 
   # Process a message body component into a form ready for conversion to JSON.
   #
@@ -203,7 +203,7 @@ module ApiService::Common
   #
   # @return [Faraday::Connection]
   #
-  def make_connection: (?String? url, **untyped opt) -> Faraday::Connection
+  def make_connection: (?(String|nil) url, **untyped opt) -> Faraday::Connection
 
   # Send an API request.
   #

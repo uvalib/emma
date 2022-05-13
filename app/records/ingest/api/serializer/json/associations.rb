@@ -16,10 +16,8 @@ module Ingest::Api::Serializer::Json::Associations
   include Api::Serializer::Json::Associations
 
   module ClassMethods
-
     include Ingest::Api::Serializer::Json::Schema
     include Api::Serializer::Json::Associations::ClassMethods
-
   end
 
 end

@@ -17,10 +17,8 @@ module AwsS3::Api::Serializer::Associations
   include Api::Serializer::Associations
 
   module ClassMethods
-
     include AwsS3::Api::Serializer::Schema
     include Api::Serializer::Associations::ClassMethods
-
   end
 
 end

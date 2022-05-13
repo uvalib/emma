@@ -368,6 +368,9 @@ class RunState < Hash
       # This is in "tmp/pids" for extra assurance because that directory is
       # cleared on startup by the infrastructure.
       #
+      #--
+      # noinspection RbsMissingTypeSignature
+      #++
       STATE_FILE = 'tmp/pids/run_state'
 
       # =======================================================================

@@ -48,7 +48,7 @@ class ScalarType
   #
   # @param [Any, nil] v               Optional initial value.
   #
-  def initialize: (?untyped? v) -> void
+  def initialize: (?(untyped|nil) v) -> void
 
   # Assign a new value to the instance.
   #
@@ -71,7 +71,7 @@ class ScalarType
   #
   # @param [Any, nil] v
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 
   # Transform value into a valid form.
   #
@@ -79,7 +79,7 @@ class ScalarType
   #
   # @return [String]
   #
-  def normalize: (?untyped? v) -> String
+  def normalize: (?(untyped|nil) v) -> String
 
   # Return the string representation of the instance value.
   #
@@ -200,7 +200,7 @@ class IsoDuration < ScalarType
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # ISO 8601 general date.
@@ -426,28 +426,28 @@ class IsoDate < ScalarType
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 
   # Indicate whether the instance represents a year value, or indicate whether
   # *v* represents a year value.
   #
   # @param [Any] v
   #
-  def year?: (?untyped? v) -> bool
+  def year?: (?(untyped|nil) v) -> bool
 
   # Indicate whether the instance represents a day value, or indicate whether
   # *v* represents a day value.
   #
   # @param [Any] v
   #
-  def day?: (?untyped? v) -> bool
+  def day?: (?(untyped|nil) v) -> bool
 
   # Indicate whether the instance represents a full ISO 8601 date value, or
   # indicate whether *v* represents a full ISO 8601 date value.
   #
   # @param [Any] v
   #
-  def complete?: (?untyped? v) -> bool
+  def complete?: (?(untyped|nil) v) -> bool
 end
 
 # ISO 8601 year.
@@ -481,7 +481,7 @@ class IsoYear < IsoDate
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # ISO 8601 day.
@@ -515,7 +515,7 @@ class IsoDay < IsoDate
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # ISO 639-2 alpha-3 language code.
@@ -557,7 +557,7 @@ class IsoLanguage < ScalarType
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # Base class for enumeration scalar types.
@@ -666,7 +666,7 @@ class EnumType < ScalarType
   #
   # @param [String, nil] v            Default: #value.
   #
-  def valid?: (?untyped? v) -> bool
+  def valid?: (?(untyped|nil) v) -> bool
 end
 
 # Shared values and methods.

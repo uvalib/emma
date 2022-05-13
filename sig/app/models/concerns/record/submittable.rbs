@@ -36,7 +36,7 @@ module Record::Submittable
 
     def db_insert: (symHash|Model data) -> ApplicationRecord
 
-    def db_update: (symHash|Model|String item, ?symHash? data) -> ApplicationRecord
+    def db_update: (symHash|Model|String item, ?(symHash|nil) data) -> ApplicationRecord
 
     def db_delete: (symHash|Model|String item) -> (untyped | nil)
   end

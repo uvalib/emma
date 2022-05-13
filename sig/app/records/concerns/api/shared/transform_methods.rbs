@@ -13,7 +13,7 @@ module Api::Shared::TransformMethods
   #
   # @return [void]
   #
-  def normalize_data_fields!: (?symHash? data) -> void
+  def normalize_data_fields!: (?(symHash|nil) data) -> void
 
   # Old ("deprecated") fields paired with the new field name.
   #
@@ -27,5 +27,5 @@ module Api::Shared::TransformMethods
   #
   # @return [void]
   #
-  def api_transitions!: (?symHash? data) -> void
+  def api_transitions!: (?(symHash|nil) data) -> void
 end

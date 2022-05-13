@@ -406,7 +406,7 @@ class Search::Record::TitleRecord < Search::Api::Record
         end
       end
       # noinspection RubyMismatchedArgumentType
-      id_field = field && IDENTIFIER_FIELDS.include?(field)
+      id_fld = field && IDENTIFIER_FIELDS.include?(field)
       case value
         when Number
           value.number_value
@@ -418,15 +418,14 @@ class Search::Record::TitleRecord < Search::Api::Record
             [k, v] if v.present?
           }.compact.sort_by! { |kv| kv&.first || '' }.to_h
         when Array
-          # noinspection RubyMismatchedArgumentType
-          if id_field
+          if id_fld
             value.compact_blank.sort_by! { |v| identifier_sort_key(v) }
           else
             value.map { |v| make_comparable(v, field) }.compact_blank!.sort!
           end
         else
           # noinspection RubyMismatchedReturnType
-          id_field ? value : value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
+          id_fld ? value : value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
       end
     end
 

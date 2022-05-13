@@ -14,7 +14,7 @@ module Record::Exceptions
   # +
   ENTRY_ERROR: Hash[Symbol,(String|Class)]
 
-  def failure: (Symbol|String|strArray|Exception|ExecReport|nil problem, ?untyped? value) -> void
+  def failure: (Symbol|String|strArray|Exception|ExecReport|nil problem, ?(untyped|nil) value) -> void
 
   # Methods which are only appropriate if the including class is an
   # ApplicationRecord.

@@ -37,7 +37,7 @@ module Api::Shared::DateMethods
   # -
   # noinspection RailsParamDefResolve
   # +
-  def normalize_title_dates!: (?symHash? data) -> void
+  def normalize_title_dates!: (?(symHash|nil) data) -> void
 
   # Produce day values of the form "YYYY-MM-DD".
   #
@@ -46,7 +46,7 @@ module Api::Shared::DateMethods
   #
   # @return [void]
   #
-  def normalize_day_fields!: (?symHash? data, ?Symbol? mode) -> void
+  def normalize_day_fields!: (?(symHash|nil) data, ?(Symbol|nil) mode) -> void
 
   # Produce dates of the form "YYYY-MM-DD".
   #

@@ -80,7 +80,7 @@ module UploadWorkflow::Errors
   class SubmitError < ExecError
   end
 
-  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?untyped? value) -> void
+  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
 end
 
 module UploadWorkflow::Properties
@@ -315,7 +315,7 @@ module UploadWorkflow::Properties
   # If *default* is *false* then *true* is returned only if *value* is "true".
   # If *default* is *true* then *false* is returned only if *value* is "false".
   #
-  def parameter_setting: (Symbol key, ?symHash? params) -> bool
+  def parameter_setting: (Symbol key, ?(symHash|nil) params) -> bool
 end
 
 # Fundamental upload mechanisms for managing submissions which entail:
@@ -394,7 +394,7 @@ module UploadWorkflow::External
 
   def db_insert: (Upload|symHash data) -> Upload
 
-  def db_update: (Upload|symHash|String record, ?symHash? data) -> (Upload | nil)
+  def db_update: (Upload|symHash|String record, ?(symHash|nil) data) -> (Upload | nil)
 
   def db_delete: (Upload|symHash|String data) -> (untyped | nil)
 
@@ -613,4 +613,27 @@ class UploadWorkflow < Workflow::Base
   # @return [void]
   #
   def self.inherited: (UploadWorkflow workflow_base) -> void
+
+  def self.configuration:  () -> Hash[Symbol,symHash]
+  def self.state_label:    () -> Hash[Symbol,symHash]
+  #def self.workflow_type: () -> Symbol
+  def self.variant_table:  () -> Hash[Symbol,Class]
+
+  self.@configuration: Hash[Symbol,symHash] # NOTE: currently unrecognized
+  self.@state_label:   Hash[Symbol,symHash] # NOTE: currently unrecognized
+  self.@workflow_type: Symbol               # NOTE: currently unrecognized
+  self.@variant_table: Hash[Symbol,Class]   # NOTE: currently unrecognized
+
+  @configuration:      Hash[Symbol,symHash] # NOTE: should be: self.@configuration
+  @state_label:        Hash[Symbol,symHash] # NOTE: should be: self.@state_label
+  @workflow_type:      Symbol               # NOTE: should be: self.@workflow_type
+  @variant_table:      Hash[Symbol,Class]   # NOTE: should be: self.@variant_table
+
+  def self.variant_type:  () -> Symbol
+
+  self.@workflow_state_column_name: Symbol  # NOTE: currently unrecognized
+  self.@variant_type:               Symbol  # NOTE: currently unrecognized
+
+  @workflow_state_column_name:      Symbol  # NOTE: should be: self.@workflow_state_column_name
+  @variant_type:                    Symbol  # NOTE: should be: self.@variant_type
 end

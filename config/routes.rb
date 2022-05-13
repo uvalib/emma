@@ -248,15 +248,18 @@ Rails.application.routes.draw do
   }
 
   # Local login.
+  # noinspection LongLine
   devise_scope :user do
     get '/users/sign_in_local', to: 'user/sessions#sign_in_local',    as: 'sign_in_local'
   end
 
   # Synthetic login endpoint.
+  # noinspection LongLine
   devise_scope :user do
     get '/users/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'
   end
 
+  # noinspection LongLine
   devise_scope :user do
     get   '/users/new',         to: 'user/registrations#new',         as: 'new_user'
     match '/users/create',      to: 'user/registrations#create',      as: 'create_user',        via: %i[post put patch]

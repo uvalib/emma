@@ -17,10 +17,8 @@ module AwsS3::Api::Record::Associations
   include Api::Record::Associations
 
   module ClassMethods
-
     include AwsS3::Api::Schema
     include Api::Record::Associations::ClassMethods
-
   end
 
 end

@@ -17,8 +17,8 @@ module PaginationConcern
   #
   # @return [Paginator]
   #
-  def pagination_setup: (?ApplicationController? ctrlr, paginator: singleton(Paginator)|untyped, **untyped opt) -> Paginator
-                      | (?ApplicationController? ctrlr,                                          **untyped opt) -> Paginator
+  def pagination_setup: (?(ApplicationController|nil) ctrlr, paginator: singleton(Paginator)|untyped, **untyped opt) -> Paginator
+                      | (?(ApplicationController|nil) ctrlr,                                          **untyped opt) -> Paginator
 
   # Clean up pagination-related parameters.
   #

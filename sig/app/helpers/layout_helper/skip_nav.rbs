@@ -59,7 +59,7 @@ module LayoutHelper::SkipNav
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_skip_nav: (?symHash? opt) -> ActiveSupport::SafeBuffer
+  def render_skip_nav: (?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
 
   # Generate a single "skip navigation" link.
   #

@@ -131,7 +131,7 @@ module Record::Uploadable
 
   private
 
-  def log_exception: (Exception excp, ?Symbol? meth) -> nil
+  def log_exception: (Exception excp, ?(Symbol|nil) meth) -> nil
 
   THIS_MODULE: Module
 

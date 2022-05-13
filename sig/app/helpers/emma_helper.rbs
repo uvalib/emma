@@ -25,7 +25,7 @@ module EmmaHelper
   #
   # @return [String]
   #
-  def emma_partner_list: (?Symbol? `type`, ?mode: Symbol, ?separator: String, ?final: String) -> String
+  def emma_partner_list: (?(Symbol|nil) `type`, ?mode: Symbol, ?separator: String, ?final: String) -> String
 
   # Get a selection of EMMA partners.
   #
@@ -33,7 +33,7 @@ module EmmaHelper
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def emma_partners: (?Symbol? `type`) -> symHash
+  def emma_partners: (?(Symbol|nil) `type`) -> symHash
 
   private
 

@@ -31,5 +31,5 @@ class Search::Message::SearchRecord < Search::Api::Message
   # -
   # noinspection RubyNilAnalysis
   # +
-  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?symHash? opt) -> void
+  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?(symHash|nil) opt) -> void
 end

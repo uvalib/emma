@@ -11,7 +11,7 @@ module IngestService::Common
   #
   # @return [Hash]                    New API parameters.
   #
-  def api_options: (?symHash? params) -> symHash
+  def api_options: (?(symHash|nil) params) -> symHash
 
   # Add API key header.
   #
@@ -22,7 +22,7 @@ module IngestService::Common
   # @return [Array<(Hash,Hash,String)>]      Message body plus headers for GET.
   # @return [Array<(Hash,Hash,Hash)>]        Query plus headers for PUT, POST, PATCH.
   #
-  def api_headers: (?symHash? params, ?strHash? headers, ?(String|strHash)? body) -> [symHash, strHash, (String|strHash)]
+  def api_headers: (?(symHash|nil) params, ?(strHash|nil) headers, ?(String|strHash)? body) -> [symHash, strHash, (String|strHash)]
 
   # Send an API request.
   #

@@ -24,6 +24,7 @@ module Record::Testing
     __included(base, THIS_MODULE)
     assert_record_class(base, THIS_MODULE)
 
+    # noinspection RbsMissingTypeSignature
     if safe_const_get(:DESTRUCTIVE_TESTING)
 
       include Record::Exceptions

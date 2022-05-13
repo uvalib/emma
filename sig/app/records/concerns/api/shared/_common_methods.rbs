@@ -101,7 +101,7 @@ module Api::Shared::CommonMethods
   # @yieldparam [Any] value   The current field value.
   # @yieldreturn [Array]      The new field value(s).
   #
-  def update_field_value!: (symHash|nil data, Symbol field, ?Symbol? mode) { (untyped) -> untyped } -> void
+  def update_field_value!: (symHash|nil data, Symbol field, ?(Symbol|nil) mode) { (untyped) -> untyped } -> void
 
   # Get the indicated field values from the indicated target.
   #

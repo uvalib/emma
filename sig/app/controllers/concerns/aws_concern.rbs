@@ -54,7 +54,7 @@ module AwsConcern
   #
   # @return [Hash]
   #
-  def aws_params: (?anyHash? opt) -> anyHash
+  def aws_params: (?(anyHash|nil) opt) -> anyHash
 
   # repo_bucket
   #

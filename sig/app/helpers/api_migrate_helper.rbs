@@ -45,7 +45,7 @@ module ApiMigrateHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def api_field_changes: (Symbol|String column, symHash fields, ?Integer? level) -> ActiveSupport::SafeBuffer
+  def api_field_changes: (Symbol|String column, symHash fields, ?(Integer|nil) level) -> ActiveSupport::SafeBuffer
 
   # Render the resulting value of a modified EMMA data field as a collapsible
   # panel.
@@ -56,7 +56,7 @@ module ApiMigrateHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def api_field_results: (Symbol|String column, symHash fields, ?Integer? level) -> ActiveSupport::SafeBuffer
+  def api_field_results: (Symbol|String column, symHash fields, ?(Integer|nil) level) -> ActiveSupport::SafeBuffer
 
   private
 

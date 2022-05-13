@@ -194,7 +194,7 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [String]
   #
-  def missing_list: (anyHash|anyArray missing, ?String? header, ?indent: Integer|String, ?width: Integer|nil, ?separator: String) -> String
+  def missing_list: (anyHash|anyArray missing, ?(String|nil) header, ?indent: Integer|String, ?width: Integer|nil, ?separator: String) -> String
 
   # Produce a table of problematic items.
   #

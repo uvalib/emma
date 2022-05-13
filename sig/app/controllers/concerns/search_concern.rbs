@@ -66,7 +66,7 @@ module SearchConcern
   #
   # @param [User, nil] user           Default: `#current_user`.
   #
-  def save_search?: (?User? user) -> bool
+  def save_search?: (?(User|nil) user) -> bool
 
   # Record a search call.
   #

@@ -61,7 +61,7 @@ class BaseDecorator < Draper::Decorator
     def null_object: () -> Object
     def model_config_base: () -> Symbol
     def controller_config_base: () -> Symbol
-    def controller_config: (?Symbol? `type`) -> Hash[Symbol,symHash]
+    def controller_config: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
     def model_config: () -> Hash[Symbol,symHash]
     def model_index_fields: () -> Hash[Symbol,symHash]
     def model_show_fields: () -> Hash[Symbol,symHash]

@@ -32,7 +32,7 @@ module Api::Shared::IdentifierMethods
   #
   # @return [void]
   #
-  def normalize_identifier_fields!: (?symHash? data, ?Symbol? mode) -> void
+  def normalize_identifier_fields!: (?(symHash|nil) data, ?(Symbol|nil) mode) -> void
 
   # Produce standard identifiers of the form "(prefix):(value)".
   #
@@ -61,7 +61,7 @@ module Api::Shared::IdentifierMethods
   #
   # @return [void]
   #
-  def clean_dc_relation!: (?symHash? data) -> void
+  def clean_dc_relation!: (?(symHash|nil) data) -> void
 
   # The ISBN.
   #

@@ -49,13 +49,13 @@ module EntryConcern
 
   def entry_params: () -> symHash
 
-  def get_entry_params: (?prmHash? p) -> symHash
+  def get_entry_params: (?(prmHash|nil) p) -> symHash
 
-  def entry_post_params: (?prmHash? p) -> symHash
+  def entry_post_params: (?(prmHash|nil) p) -> symHash
 
-  def entry_bulk_post_params: (?prmHash? p, ?ActionDispatch::Request? req) -> Array[symHash]
+  def entry_bulk_post_params: (?(prmHash|nil) p, ?ActionDispatch::Request? req) -> Array[symHash]
 
-  def entry_request_params: ((Entry|untyped)? entry, ?symHash? prm) -> ([Entry, symHash] | [untyped, symHash])
+  def entry_request_params: ((Entry|untyped)? entry, ?(symHash|nil) prm) -> ([Entry, symHash] | [untyped, symHash])
 
   def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash] | nil)
 
@@ -71,7 +71,7 @@ module EntryConcern
   #
   DATA_PARAMS: symArray
 
-  def set_identifiers: (?prmHash? p) -> (String | nil)
+  def set_identifiers: (?(prmHash|nil) p) -> (String | nil)
 
   # Parameters used by Entry#search_records.                                    # NOTE: from UploadConcern
   #
@@ -109,7 +109,7 @@ module EntryConcern
   #
   # @return [Entry]                         Un-persisted Entry instance.
   #
-  def new_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+  def new_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> Entry
 
   # For the 'create' endpoint, update the Phase record created above and create # TODO: NOTE: used in place of Record::Submittable::SubmissionMethods#entry_create
   # and persist a new Entry instance
@@ -125,7 +125,7 @@ module EntryConcern
   #
   # @return [Entry]                         New persisted Entry instance.
   #
-  def create_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+  def create_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> Entry
 
   # For the 'edit' endpoint, generate and persist a Phase::Edit record and a    # TODO: NOTE: used in place of Record::Submittable::SubmissionMethods#entry_edit
   # temporary (un-persisted) instance based on its attributes.
@@ -140,7 +140,7 @@ module EntryConcern
   # @return [Entry]                         A record from the 'entries' table.
   # @return [nil]                           If the Entry was not found.
   #
-  def edit_entry: (?(Entry|symHash)? item, ?symHash? opt) -> (Entry | nil)
+  def edit_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> (Entry | nil)
 
   # For the 'update' endpoint, get the matching Entry and update it from its
   # most recent Phase::Edit.
@@ -156,7 +156,7 @@ module EntryConcern
   # @return [Entry]                         Updated Entry instance.
   # @return [nil]                           If the Entry was not found.
   #
-  def update_entry: (?(Entry|symHash)? item, ?symHash? opt) -> (Entry | nil)
+  def update_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> (Entry | nil)
 
   # For the 'delete' endpoint...
   #
@@ -167,9 +167,9 @@ module EntryConcern
   #
   # @return [Hash{Symbol=>Any}]       From Record::Searchable#search_records.
   #
-  def delete_entry: (?(Entry|String|Integer|Array[String|Integer])? entries, ?symHash? opt) -> symHash
+  def delete_entry: (?(Entry|String|Integer|Array[String|Integer])? entries, ?(symHash|nil) opt) -> symHash
 
-  def destroy_entry: (?(Entry|String|Integer|Array[String|Integer])? entries, ?symHash? opt) -> anyArray
+  def destroy_entry: (?(Entry|String|Integer|Array[String|Integer])? entries, ?(symHash|nil) opt) -> anyArray
 
   # For the 'renew' endpoint, find the most recent create and return with the
   # related Entry.
@@ -182,7 +182,7 @@ module EntryConcern
   #
   # @return [Entry]                     A record from the 'entries' table.
   #
-  def renew_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+  def renew_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> Entry
 
   # For the 'reedit' endpoint, find the most recent edit and return with the
   # related Entry.
@@ -198,7 +198,7 @@ module EntryConcern
   # -
   # noinspection RubyNilAnalysis
   # +
-  def reedit_entry: (?(Entry|symHash)? item, ?symHash? opt) -> Entry
+  def reedit_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> Entry
 
   # For the 'cancel' endpoint, ... # TODO: ?
   #
@@ -214,9 +214,9 @@ module EntryConcern
   # -
   # noinspection RubyNilAnalysis
   # +
-  def cancel_entry: (?(Entry|symHash)? item, ?symHash? opt) -> (Entry | nil)
+  def cancel_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> (Entry | nil)
 
-  def check_entry: (?(Entry|symHash)? item, ?symHash? opt) -> strArray
+  def check_entry: (?(Entry|symHash)? item, ?(symHash|nil) opt) -> strArray
 
   # Upload file to AWS S3 Shrine :cache.
   #
@@ -230,7 +230,7 @@ module EntryConcern
   # @see Phase::Create#upload!
   # @see Phase::Edit#upload!
   #
-  def upload_file: (?(Entry|symHash)? entry, ?symHash? opt) -> httpResult
+  def upload_file: (?(Entry|symHash)? entry, ?(symHash|nil) opt) -> httpResult
 
   # bulk_new_entries
   #
@@ -238,7 +238,7 @@ module EntryConcern
   #
   # @return [Any]
   #
-  def bulk_new_entries: (?symHash? prm) -> untyped
+  def bulk_new_entries: (?(symHash|nil) prm) -> untyped
 
   # bulk_create_entries
   #
@@ -249,7 +249,7 @@ module EntryConcern
   #
   # @return [Array]                   Created entries.
   #
-  def bulk_create_entries: (?symHash? prm) -> Array[Entry]
+  def bulk_create_entries: (?(symHash|nil) prm) -> Array[Entry]
 
   # bulk_edit_entries
   #
@@ -257,7 +257,7 @@ module EntryConcern
   #
   # @return [Any]
   #
-  def bulk_edit_entries: (?symHash? prm) -> untyped
+  def bulk_edit_entries: (?(symHash|nil) prm) -> untyped
 
   # bulk_update_entries
   #
@@ -268,7 +268,7 @@ module EntryConcern
   #
   # @return [Array]                   Modified entries.
   #
-  def bulk_update_entries: (?symHash? prm) -> Array[Entry]
+  def bulk_update_entries: (?(symHash|nil) prm) -> Array[Entry]
 
   # bulk_delete_entries
   #
@@ -276,7 +276,7 @@ module EntryConcern
   #
   # @return [Any]
   #
-  def bulk_delete_entries: (?symHash? prm) -> untyped
+  def bulk_delete_entries: (?(symHash|nil) prm) -> untyped
 
   # bulk_destroy_entries
   #
@@ -287,7 +287,7 @@ module EntryConcern
   #
   # @return [Array]                   Removed entries.
   #
-  def bulk_destroy_entries: (?symHash? prm) -> Array[Entry]
+  def bulk_destroy_entries: (?(symHash|nil) prm) -> Array[Entry]
 
   # bulk_check_entries
   #
@@ -297,7 +297,7 @@ module EntryConcern
   #
   # @note Currently unused.
   #
-  def bulk_check_entries: (?symHash? prm) -> untyped
+  def bulk_check_entries: (?(symHash|nil) prm) -> untyped
 
   # Default batch size for #reindex_submissions
   #
@@ -338,7 +338,10 @@ module EntryConcern
 
   public
 
-  attr_reader model_options: Entry::Options
+  include OptionsConcern
+  include PaginationConcern
+
+  @model_options: Entry::Options
 
   def set_model_options: () -> Entry::Options
   def pagination_setup:  (?paginator: Class, **untyped opt) -> Entry::Paginator

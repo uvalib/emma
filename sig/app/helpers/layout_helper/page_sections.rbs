@@ -13,7 +13,7 @@ module LayoutHelper::PageSections
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
   #
-  def page_description_section: (?String? text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def page_description_section: (?(String|nil) text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Supply an element containing directions for the current action context.
   #
@@ -23,7 +23,7 @@ module LayoutHelper::PageSections
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
   #
-  def page_directions_section: (?String? text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def page_directions_section: (?(String|nil) text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Supply an element containing additional notes for the current action.
   #
@@ -33,7 +33,7 @@ module LayoutHelper::PageSections
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
   #
-  def page_notes_section: (?String? text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def page_notes_section: (?(String|nil) text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Supply an element containing configured text for the current action.
   #
@@ -50,7 +50,7 @@ module LayoutHelper::PageSections
   # -
   # noinspection RubyMismatchedParameterType
   # +
-  def page_text_section: (?(String|Symbol)? `type`, ?String? text, ?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?tag: (Integer|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def page_text_section: (?(String|Symbol)? `type`, ?(String|nil) text, ?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?tag: (Integer|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Get the configured page description.
   #

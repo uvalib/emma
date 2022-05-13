@@ -16,7 +16,7 @@ class Entry::Options < Options
   #
   DATA_PARAMS: symArray
 
-  def initialize: (?symHash? prm) -> void
+  def initialize: (?(symHash|nil) prm) -> void
 
   def option_method: (Symbol|String key) -> (Symbol | nil)
 
@@ -26,7 +26,7 @@ class Entry::Options < Options
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_model_params: (?prmHash? p) -> symHash
+  def get_model_params: (?(prmHash|nil) p) -> symHash
 
   MODEL_DATA_PARAMS: Hash[Symbol, Symbol]
 

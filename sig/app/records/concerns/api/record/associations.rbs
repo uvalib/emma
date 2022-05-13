@@ -147,7 +147,7 @@ module Api::Record::Associations
     #
     # @see #add_property_default
     #
-    def add_property: (Symbol|String name, ?untyped? default) -> void
+    def add_property: (Symbol|String name, ?(untyped|nil) default) -> void
 
     # Get a default for a schema property data element.
     #

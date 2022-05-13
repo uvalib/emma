@@ -49,7 +49,7 @@ class Phase::Remove < Phase::BulkPart
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def deindex_cb: (?Action? action, **untyped opt) -> bool
+  def deindex_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Remove the submission from its queue.
   #
@@ -71,7 +71,7 @@ class Phase::Remove < Phase::BulkPart
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def unsubmit_cb: (?Action? action, **untyped opt) -> bool
+  def unsubmit_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Remove the uploaded file associated with this item.
   #
@@ -93,7 +93,7 @@ class Phase::Remove < Phase::BulkPart
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def unstore_cb: (?Action? action, **untyped opt) -> bool
+  def unstore_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Remove the item from the database.
   #
@@ -115,7 +115,7 @@ class Phase::Remove < Phase::BulkPart
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def remove_cb: (?Action? action, **untyped opt) -> bool
+  def remove_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # A textual description of the type of the Model instance.
   #

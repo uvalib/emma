@@ -24,7 +24,7 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr  Default: params[:controller].
   # @param [Hash, nil]           opt    Default: `#request_parameters`.
   #
-  def show_search_bar?: (?(Symbol|String)? ctrlr, ?symHash? opt) -> bool
+  def show_search_bar?: (?(Symbol|String)? ctrlr, ?(symHash|nil) opt) -> bool
 
   # Indicate whether it is appropriate to show the search input menu.
   #
@@ -66,7 +66,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_bar_row: ((Symbol|String)? field, ?String? value, ?first: bool?, ?last: bool?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_bar_row: ((Symbol|String)? field, ?(String|nil) value, ?first: bool?, ?last: bool?, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Reveal the next search-bar-row in the current search-bar-group.
   #
@@ -109,7 +109,7 @@ module LayoutHelper::SearchBar
   #
   # @see #search_input
   #
-  def search_bar: ((String|Symbol)? field, ?String? value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_bar: ((String|Symbol)? field, ?(String|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # search_bar_label
   #

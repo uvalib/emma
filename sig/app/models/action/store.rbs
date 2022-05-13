@@ -37,7 +37,7 @@ class Action::Store < Action::BulkPart
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: (Model|prmHash|nil attr, ?symHash? opt) -> void
+  def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
 
   def upload!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> httpResult
 

@@ -76,31 +76,31 @@ module Record::EmmaIdentification
 
     # @see Record::EmmaIdentification#sid_value
     #
-    def sid_value: (?untyped? item, **untyped opt) -> (String | nil)
+    def sid_value: (?(untyped|nil) item, **untyped opt) -> (String | nil)
 
     # @see Record::EmmaIdentification#valid_sid?
     #
-    def valid_sid?: (?untyped? value) -> bool
+    def valid_sid?: (?(untyped|nil) value) -> bool
 
     # @see Record::EmmaIdentification#emma_native?
     #
-    def emma_native?: (?untyped? item) -> bool
+    def emma_native?: (?(untyped|nil) item) -> bool
 
     # @see Record::EmmaIdentification#repository_value
     #
-    def repository_value: (?untyped? item) -> (String | nil)
+    def repository_value: (?(untyped|nil) item) -> (String | nil)
 
     # @see Record::EmmaIdentification#repository_name
     #
-    def repository_name: (?untyped? item) -> (String | nil)
+    def repository_name: (?(untyped|nil) item) -> (String | nil)
 
     # @see Record::EmmaIdentification#record_id
     #
-    def record_id: (?untyped? item) -> (String | nil)
+    def record_id: (?(untyped|nil) item) -> (String | nil)
 
     # @see Record::EmmaIdentification#valid_record_id?
     #
-    def valid_record_id?: (?untyped? item, **untyped opt) -> bool
+    def valid_record_id?: (?(untyped|nil) item, **untyped opt) -> bool
   end
 
   private

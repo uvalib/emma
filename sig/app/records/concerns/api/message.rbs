@@ -20,7 +20,7 @@ module Api::Message
   # @yieldparam [Hash] opt            Option hash to use within block.
   # @yieldreturn [void]
   #
-  def create_message_wrapper: (?symHash? opt) { (symHash opt) -> untyped } -> untyped
+  def create_message_wrapper: (?(symHash|nil) opt) { (symHash opt) -> untyped } -> untyped
 
   # Annotate and time the creation of a message.
   #
@@ -39,5 +39,5 @@ module Api::Message
   #
   # @return [void]
   #
-  def apply_wrap!: (symHash opt, ?symHash? formats) -> void
+  def apply_wrap!: (symHash opt, ?(symHash|nil) formats) -> void
 end

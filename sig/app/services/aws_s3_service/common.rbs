@@ -163,7 +163,7 @@ module AwsS3Service::Common
   # -
   # noinspection RubyNilAnalysis
   # +
-  def aws_list_objects: (String|Aws::S3::Bucket bucket, ?String? filter, **untyped opt) -> (Array[Aws::S3::Object] | nil)
+  def aws_list_objects: (String|Aws::S3::Bucket bucket, ?(String|nil) filter, **untyped opt) -> (Array[Aws::S3::Object] | nil)
 
   # Lookup matching AWS S3 object keys if "filter" appears to be a pattern and
   # not a specific filename and extension.
@@ -182,7 +182,7 @@ module AwsS3Service::Common
   # -
   # noinspection RubyNilAnalysis
   # +
-  def aws_list_object_keys: (String|Aws::S3::Bucket bucket, ?String? filter, **untyped opt) -> strArray
+  def aws_list_object_keys: (String|Aws::S3::Bucket bucket, ?(String|nil) filter, **untyped opt) -> strArray
 
   private
 

@@ -17,9 +17,6 @@ class ApiService
   #
   attr_reader options: symHash
 
-  attr_reader base_url: String | nil
-  attr_reader table:    Hash[Class,ApiService]
-
   # Initialize a new instance
   #
   # @param [User, nil]   user         User instance which includes a
@@ -30,11 +27,16 @@ class ApiService
   #
   def initialize: (?user: User?, ?base_url: String?, **untyped opt) -> void
 
+  @base_url: String | nil
+
   # A table of all service instances.
   #
   # @return [Hash{Class=>ApiService}]
   #
   def self.table: () -> Hash[Class,ApiService]
+
+  self.@table: Hash[Class,ApiService] # NOTE: not currently recognized
+  @table:      Hash[Class,ApiService] # NOTE: should be: self.@table
 
   # Remove all service instances.
   #
@@ -47,4 +49,16 @@ class ApiService
   # @param [ApiService] subclass
   #
   def self.inherited: (ApiService subclass) -> void
+
+  def self.instance:    (**untyped opt) -> void
+  def self.update:      (**untyped opt) -> ApiService
+  def self.add_api:     (Hash[Symbol,symHash] prop, ?(String|nil) topic) -> void
+  def self.api_methods: (?(symHash|nil) arg) -> Hash[Symbol,symHash]
+                      | (Symbol|String  arg) -> (symHash | nil)
+
+  self.@all_methods:  symHash # NOTE: not currently recognized
+  self.@true_methods: symHash # NOTE: not currently recognized
+
+  @all_methods:       symHash # NOTE: should be: self.@all_methods
+  @true_methods:      symHash # NOTE: should be: self.@true_methods
 end

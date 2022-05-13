@@ -88,7 +88,7 @@ module AwsHelper
   #
   # @return [Hash]
   #
-  def s3_bucket_params: (?symHash? opt) -> symHash
+  def s3_bucket_params: (?(symHash|nil) opt) -> symHash
 
   AWS_BUCKET_OPT: symArray
 
@@ -190,8 +190,8 @@ module AwsHelper
   #
   # @return [Any]
   #
-  def value_format: (anyArray|Integer|_DateTime|bool|String item, ?Symbol? hint) -> String
-                  | (untyped item,                                ?Symbol? hint) -> untyped
+  def value_format: (anyArray|Integer|_DateTime|bool|String item, ?(Symbol|nil) hint) -> String
+                  | (untyped item,                                ?(Symbol|nil) hint) -> untyped
 
   # Return the prefix of the given object key.
   #

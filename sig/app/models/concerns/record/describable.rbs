@@ -62,7 +62,7 @@ module Record::Describable
   #
   # @see InterpolationMethods
   #
-  def generate_interpolation_table: (?untyped? mod) -> Hash[Symbol,Symbol]
+  def generate_interpolation_table: (?(untyped|nil) mod) -> Hash[Symbol,Symbol]
 
   # Common interpolation methods.
   #
@@ -85,7 +85,7 @@ module Record::Describable
     #
     # @see Record::Identification#id_value
     #
-    def describe_id: (?untyped? model, **untyped opt) -> (String | nil)
+    def describe_id: (?(untyped|nil) model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{repo}' or '%{repository}' in #sprintf formats.
     #
@@ -96,7 +96,7 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#repository_name
     #
-    def describe_repo: (?untyped? model, **untyped opt) -> (String | nil)
+    def describe_repo: (?(untyped|nil) model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{sid}' in #sprintf formats.
     #
@@ -107,7 +107,7 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
-    def describe_sid: (?untyped? model, **untyped opt) -> (String | nil)
+    def describe_sid: (?(untyped|nil) model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{submission}' in #sprintf formats.
     #
@@ -118,7 +118,7 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
-    def describe_submission: (?untyped? model, **untyped opt) -> (String | nil)
+    def describe_submission: (?(untyped|nil) model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{user}' in #sprintf formats.
     #
@@ -129,7 +129,7 @@ module Record::Describable
     #
     # @see User#uid_value
     #
-    def describe_user: (?untyped? model, **untyped) -> (String | nil)
+    def describe_user: (?(untyped|nil) model, **untyped) -> (String | nil)
 
     # A replacement value for '%{user_id}' in #sprintf formats.
     #
@@ -140,7 +140,7 @@ module Record::Describable
     #
     # @see User#id_value
     #
-    def describe_user_id: (?untyped? model, **untyped) -> (String | nil)
+    def describe_user_id: (?(untyped|nil) model, **untyped) -> (String | nil)
 
     # A textual description of the type of the Model instance for use as a
     # replacement value for '%{text}' in #sprintf formats.
@@ -153,7 +153,7 @@ module Record::Describable
     # == Usage Notes
     # The including class is expected to define an overriding class method.
     #
-    def describe_type: (?untyped? model, **untyped opt) -> String
+    def describe_type: (?(untyped|nil) model, **untyped opt) -> String
 
     # A textual description of the status of the Model instance.
     #
@@ -165,7 +165,7 @@ module Record::Describable
     # == Usage Notes
     # The including class is expected to define an overriding class method.
     #
-    def describe_status: (?untyped? model, **untyped opt) -> String
+    def describe_status: (?(untyped|nil) model, **untyped opt) -> String
 
     # self_for_instance_method
     #
@@ -205,7 +205,7 @@ module Record::Describable
     def interpolation_table: () -> Hash[Symbol,Symbol]
 
     # @see Record::Describable#interpolations
-    def interpolations: (untyped text, ?untyped? model, **untyped opt) -> String
+    def interpolations: (untyped text, ?(untyped|nil) model, **untyped opt) -> String
   end
 
   private

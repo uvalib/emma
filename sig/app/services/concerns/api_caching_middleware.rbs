@@ -23,7 +23,7 @@ class ApiCachingMiddleware < Faraday::Middleware
   # @option opt [Hash]                                :store_options
   # @option opt [ActiveSupport::Duration, Integer]    :expires_in
   #
-  def initialize: (Faraday::Middleware app, ?symHash? opt) -> void
+  def initialize: (Faraday::Middleware app, ?(symHash|nil) opt) -> void
 
   # Generate cache key.
   #

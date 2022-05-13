@@ -58,5 +58,5 @@ module Emma::Time
   #
   # @see #timestamp
   #
-  def time_span: (Float start_time, ?Float? end_time) -> String
+  def time_span: (Float start_time, ?(Float|nil) end_time) -> String
 end

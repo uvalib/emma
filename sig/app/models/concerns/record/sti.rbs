@@ -123,6 +123,8 @@ module Record::Sti::Root
 
   THIS_MODULE: Module
 
+  public
+
   include Record::Sti
 
   # :nocov:

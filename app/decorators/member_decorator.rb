@@ -270,6 +270,7 @@ class MemberDecorator < BookshareDecorator
     return unless download
     ctx = context.except(:action)
     BookshareDecorator.new(download, context: ctx).tap do |decorator|
+      # noinspection RbsMissingTypeSignature
       decorator.instance_eval do
 
         # Override of BookshareDecorator#render_value that avoids the default

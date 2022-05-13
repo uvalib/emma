@@ -403,6 +403,9 @@ module SessionConcern
       #
       # @see UserConcern#role_failure
       #
+      #--
+      # noinspection RbsMissingTypeSignature
+      #++
       def require_no_authentication
         super
         flash_message = session.delete('app.devise.failure.message')

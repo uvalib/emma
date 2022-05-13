@@ -83,7 +83,7 @@ module AccountConcern
   #
   # @return [User]
   #
-  def new_account: (?anyHash? attr) -> User
+  def new_account: (?(anyHash|nil) attr) -> User
 
   # Create a new persisted User account.
   #
@@ -129,7 +129,7 @@ module AccountConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def redirect_success: (Symbol action, ?String? message, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def redirect_success: (Symbol action, ?(String|nil) message, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # redirect_failure
   #
@@ -141,7 +141,7 @@ module AccountConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def redirect_failure: (Symbol action, ?String? message, ?error: (String|anyArray|ActiveModel::Errors)?, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def redirect_failure: (Symbol action, ?(String|nil) message, ?error: (String|anyArray|ActiveModel::Errors)?, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Configured account record fields.
   #

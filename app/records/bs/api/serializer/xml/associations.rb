@@ -16,10 +16,8 @@ module Bs::Api::Serializer::Xml::Associations
   include Api::Serializer::Xml::Associations
 
   module ClassMethods
-
     include Bs::Api::Serializer::Xml::Schema
     include Api::Serializer::Xml::Associations::ClassMethods
-
   end
 
 end

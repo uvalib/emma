@@ -228,5 +228,5 @@ module Record::Properties
   # If *default* is *false* then *true* is returned only if *value* is "true".
   # If *default* is *true* then *false* is returned only if *value* is "false".
   #
-  def parameter_setting: (Symbol key, ?symHash? params) -> bool
+  def parameter_setting: (Symbol key, ?(symHash|nil) params) -> bool
 end

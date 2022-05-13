@@ -120,7 +120,7 @@ module Record::Identification
 
     # @see Record::Identification#id_value
     #
-    def id_value: (?untyped? item, **untyped opt) -> (String | nil)
+    def id_value: (?(untyped|nil) item, **untyped opt) -> (String | nil)
 
     # @see Record::Identification#get_value
     #

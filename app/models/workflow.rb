@@ -577,6 +577,7 @@ module Workflow::Base::Events
   #
   def self.included(base)
     return unless base.respond_to?(:workflow)
+    # noinspection RbsMissingTypeSignature
     base.class_eval do
 
       def self.workflow(&specification)
@@ -643,6 +644,7 @@ module Workflow::Base::Events
     #
     def self.included(base)
       return unless base.respond_to?(:workflow)
+      # noinspection RbsMissingTypeSignature
       base.class_eval do
 
         def self.workflow(&specification)

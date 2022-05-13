@@ -383,6 +383,8 @@ module Workflow::Base::Events
   #
   def self.included: (Module base) -> void
 
+  def self.workflow: (Proc specification) -> void
+
   include Emma::Debug::OutputMethods
 
   include Workflow::Base::Roles
@@ -523,7 +525,7 @@ module Workflow::Base::States
   # @param [Symbol]          _event       Triggering event
   # @param [Array]           _event_args
   #
-  def __debug_entry: (Workflow::State state, ?Symbol? _event, *untyped _event_args) -> nil
+  def __debug_entry: (Workflow::State state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
 
   # __debug_exit
   #
@@ -531,7 +533,7 @@ module Workflow::Base::States
   # @param [Symbol]          _event       Triggering event
   # @param [Array]           _event_args
   #
-  def __debug_exit: (Workflow::State state, ?Symbol? _event, *untyped _event_args) -> nil
+  def __debug_exit: (Workflow::State state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
 end
 
 # Hooks executed during transitions.
@@ -667,7 +669,7 @@ class Workflow::Base
   # This method overrides:
   # @see Workflow::ClassMethods#workflow_column
   #
-  def self.workflow_column: (?untyped? column_name) -> Symbol
+  def self.workflow_column: (?(untyped|nil) column_name) -> Symbol
 
   # Workflow model configuration.
   #

@@ -1,5 +1,5 @@
 class Upload::Paginator < Paginator
-  def initialize: (?ApplicationController? controller, **untyped opt) -> void
+  def initialize: (?(ApplicationController|nil) controller, **untyped opt) -> void
 
   # Finish setting of pagination values based on the result list and original
   # URL parameters.

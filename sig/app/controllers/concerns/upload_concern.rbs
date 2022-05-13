@@ -46,11 +46,11 @@ module UploadConcern
 
   def upload_params: () -> symHash
 
-  def get_upload_params: (?prmHash? p) -> symHash
+  def get_upload_params: (?(prmHash|nil) p) -> symHash
 
-  def upload_post_params: (?prmHash? p) -> symHash
+  def upload_post_params: (?(prmHash|nil) p) -> symHash
 
-  def upload_bulk_post_params: (?prmHash? p, ?ActionDispatch::Request? req) -> Array[symHash]
+  def upload_bulk_post_params: (?(prmHash|nil) p, ?ActionDispatch::Request? req) -> Array[symHash]
 
   def workflow_parameters: () -> symHash
 
@@ -62,7 +62,7 @@ module UploadConcern
   #
   IDENTIFIER_PARAMS: symArray
 
-  def set_identifiers: (?prmHash? p) -> (String | nil)
+  def set_identifiers: (?(prmHash|nil) p) -> (String | nil)
 
   # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
   #
@@ -186,4 +186,10 @@ module UploadConcern
   private
 
   THIS_MODULE: Module
+
+  public
+
+  include OptionsConcern
+  include PaginationConcern
+
 end

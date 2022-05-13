@@ -67,7 +67,7 @@ module Record::EmmaData
 
     # @see Record::EmmaData#make_retrieval_link
     #
-    def make_retrieval_link: (?String? rid, ?(symHash|String)? base_url) -> (String | nil)
+    def make_retrieval_link: (?(String|nil) rid, ?(symHash|String)? base_url) -> (String | nil)
 
     # @see Record::EmmaData#generate_emma_data
     #

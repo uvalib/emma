@@ -64,7 +64,7 @@ class Upload < ApplicationRecord
   # This method overrides:
   # @see ActiveRecord::Core#inspect
   #
-  def inspect: (?symHash? attr) -> String
+  def inspect: (?(symHash|nil) attr) -> String
 
   private
 
@@ -86,7 +86,7 @@ class Upload < ApplicationRecord
   # @param [Hash]   values
   # @param [Symbol, nil] caller
   #
-  def log_ignored: (String label, symHash values, ?Symbol? caller) -> nil
+  def log_ignored: (String label, symHash values, ?(Symbol|nil) caller) -> nil
 
   public
 
@@ -96,7 +96,7 @@ class Upload < ApplicationRecord
   #
   def field_names: () -> symArray
 
-  def emma_native?: (?Upload? item) -> bool
+  def emma_native?: (?(Upload|nil) item) -> bool
 
   def self.emma_native?: (Upload|symHash|String item) -> bool
 
@@ -110,9 +110,9 @@ class Upload < ApplicationRecord
 
   def self.get_value: (Upload|anyHash item, String|Symbol key, ?default: untyped?) -> untyped
 
-  def make_retrieval_link: (String rid, ?String? base_url) -> (String | nil)
+  def make_retrieval_link: (String rid, ?(String|nil) base_url) -> (String | nil)
 
-  def self.make_retrieval_link: (String rid, ?String? base_url) -> (String | nil)
+  def self.make_retrieval_link: (String rid, ?(String|nil) base_url) -> (String | nil)
 
   extend Upload::IdentifierMethods
 

@@ -68,5 +68,5 @@ module BaseDecorator::Table
   # -
   # noinspection RubyMismatchedParameterType
   # +
-  def model_rc_options: (Symbol|String field, ?Integer? row, ?Integer? col, ?symHash? opt) -> symHash
+  def model_rc_options: (Symbol|String field, ?(Integer|nil) row, ?(Integer|nil) col, ?(symHash|nil) opt) -> symHash
 end

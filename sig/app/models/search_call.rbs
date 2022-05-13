@@ -71,7 +71,7 @@ class SearchCall < ApplicationRecord
   # -
   # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   # +
-  def assign_attributes: (SearchCall|prmHash|nil attr, ?symHash? opt) -> void
+  def assign_attributes: (SearchCall|prmHash|nil attr, ?(symHash|nil) opt) -> void
 
   # Called to prepare values to be used for assignment to record attributes.
   #
@@ -83,7 +83,7 @@ class SearchCall < ApplicationRecord
   # @see #map_parameters
   # @see Record::Assignable#attribute_options
   #
-  def attribute_options: (SearchCall|prmHash|nil attr, ?symHash? opt) -> symHash
+  def attribute_options: (SearchCall|prmHash|nil attr, ?(symHash|nil) opt) -> symHash
 
   # Transform URL parameters into attribute settings.
   #

@@ -26,7 +26,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   # @option opt [Boolean, nil] :canonical   Passed to #aggregate.
   #
-  def initialize: (Search::Message::SearchRecordList|nil src, ?bool? opt) -> void
+  def initialize: (Search::Message::SearchRecordList|nil src, ?(bool|nil) opt) -> void
 
   # Simulates the :totalResults field of similar Bookshare API records.
   #

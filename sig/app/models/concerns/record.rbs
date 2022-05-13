@@ -30,7 +30,7 @@ module Record
   #
   # @return [nil]
   #
-  def __included: (Module base, Module mod, ?String? tag) -> nil
+  def __included: (Module base, Module mod, ?(String|nil) tag) -> nil
 
   # Ensure that *mod* is only included in a record class.
   #

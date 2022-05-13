@@ -58,5 +58,5 @@ module Emma::Common::HtmlMethods
   # This is basically ActionView::Helpers::OutputSafetyHelper#safe_join but
   # without the dependence on Rails.
   #
-  def html_join: (untyped? items, ?String? separator) -> ActiveSupport::SafeBuffer
+  def html_join: (untyped? items, ?(String|nil) separator) -> ActiveSupport::SafeBuffer
 end

@@ -17,8 +17,8 @@ module Emma::Common::FormatMethods
   # @see #INFLECT_SINGULAR
   # @see #INFLECT_PLURAL
   #
-  def inflection: (ActiveSupport::SafeBuffer text, ?Integer? count, ?Symbol? inflect) -> ActiveSupport::SafeBuffer
-                | (String text,                    ?Integer? count, ?Symbol? inflect) -> String
+  def inflection: (ActiveSupport::SafeBuffer text, ?(Integer|nil) count, ?(Symbol|nil) inflect) -> ActiveSupport::SafeBuffer
+                | (String text,                    ?(Integer|nil) count, ?(Symbol|nil) inflect) -> String
 
   # Render text that will not break on word boundaries.
   #
@@ -43,7 +43,7 @@ module Emma::Common::FormatMethods
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def labelize: ((String|Symbol)? text, ?Integer? count, ?breakable: bool) -> ActiveSupport::SafeBuffer
+  def labelize: ((String|Symbol)? text, ?(Integer|nil) count, ?breakable: bool) -> ActiveSupport::SafeBuffer
 
   # @type [Array<String>]
   QUOTE_MARKS: strArray

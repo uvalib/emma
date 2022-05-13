@@ -103,7 +103,7 @@ module DataConcern
   #
   # @return [Array<Hash>]
   #
-  def modify_submission_records!: (Array[anyHash] records, ?symArray? columns) -> Array[anyHash]
+  def modify_submission_records!: (Array[anyHash] records, ?(symArray|nil) columns) -> Array[anyHash]
 
   # Filter out invalid submissions for values intended for HTML output, then
   # limit the columns that will be included in the resultant records.
@@ -116,7 +116,7 @@ module DataConcern
   # -
   # noinspection RubyInstanceMethodNamingConvention
   # +
-  def modify_submission_records_for_html!: (Array[anyArray] records, ?symArray? columns) -> Array[anyArray]
+  def modify_submission_records_for_html!: (Array[anyArray] records, ?(symArray|nil) columns) -> Array[anyArray]
 
   # Enumerate the database columns which are relevant to data analysis output.
   #

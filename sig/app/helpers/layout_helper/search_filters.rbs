@@ -104,7 +104,7 @@ module LayoutHelper::SearchFilters
     # @param [String] value           A :sort key.
     # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
     #
-    def is_reverse?: (String value, ?String? suffix) -> bool
+    def is_reverse?: (String value, ?(String|nil) suffix) -> bool
 
     # Change :sort value to indicate a normal (ascending) sort.
     #
@@ -114,7 +114,7 @@ module LayoutHelper::SearchFilters
     # @return [String]                Value for :sortOrder parameter.
     # @return [nil]                   If *value* is blank.
     #
-    def ascending_sort: (String value, ?String? suffix) -> (String | nil)
+    def ascending_sort: (String value, ?(String|nil) suffix) -> (String | nil)
 
     # Change :sort value to indicate a reversed (descending) sort.
     #
@@ -124,7 +124,7 @@ module LayoutHelper::SearchFilters
     # @return [String]                Value for :sortOrder parameter.
     # @return [nil]                   If *value* is blank.
     #
-    def descending_sort: (String value, ?String? suffix) -> (String | nil)
+    def descending_sort: (String value, ?(String|nil) suffix) -> (String | nil)
 
     private
 
@@ -256,7 +256,7 @@ module LayoutHelper::SearchFilters
   #
   # @param [Hash, nil] opt            Default: `#request_parameters`.
   #
-  def show_search_filters?: (?symHash? opt) -> bool
+  def show_search_filters?: (?(symHash|nil) opt) -> bool
 
   # One or more rows of search filter controls.
   #
@@ -649,7 +649,7 @@ module LayoutHelper::SearchFilters
   #
   # @return [Hash]
   #
-  def reset_parameters: (?untyped? opt) -> symHash
+  def reset_parameters: (?(untyped|nil) opt) -> symHash
 
   # A blank element used for occupying "voids" in the search control panel.
   #

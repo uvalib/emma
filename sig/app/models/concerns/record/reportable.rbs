@@ -34,7 +34,7 @@ module Record::Reportable
   #
   # @return [ExecReport]
   #
-  def exec_report: (?bool? refresh) -> ExecReport
+  def exec_report: (?(bool|nil) refresh) -> ExecReport
 
   # Fetch the current value of #REPORT_COLUMN for the current record.
   #
@@ -42,7 +42,7 @@ module Record::Reportable
   #
   # @return [ExecReport]
   #
-  def get_exec_report: (?bool? refresh) -> ExecReport
+  def get_exec_report: (?(bool|nil) refresh) -> ExecReport
 
   # Update the current value of #REPORT_COLUMN for the current record.
   #

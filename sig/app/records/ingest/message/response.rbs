@@ -10,7 +10,7 @@ class Ingest::Message::Response < Ingest::Api::Message
   # @param [Faraday::Response, Model, Hash, String, nil] src
   # @param [Hash, nil]                                   opt
   #
-  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?symHash? opt) -> void
+  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?(symHash|nil) opt) -> void
 
   # Strategy for pre-wrapping message data before de-serialization.
   #

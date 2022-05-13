@@ -93,7 +93,9 @@ module Workflow::Base::Simulation
     end
 
     def self.inherited(subclass)
+      # noinspection RbsMissingTypeSignature
       subclass.class_eval do
+
         class << self
 
           def instance
@@ -107,6 +109,7 @@ module Workflow::Base::Simulation
           delegate_missing_to :instance
 
         end
+
       end
     end
 
@@ -296,7 +299,9 @@ module Workflow::Base::Transitions
   #
   def self.included(base)
     return unless base.respond_to?(:workflow)
+    # noinspection RbsMissingTypeSignature
     base.class_eval do
+
       def self.workflow(&specification)
         super(&specification)
         public_instance_methods.each do |method|
@@ -308,6 +313,7 @@ module Workflow::Base::Transitions
           HEREDOC
         end
       end
+
     end
   end
 

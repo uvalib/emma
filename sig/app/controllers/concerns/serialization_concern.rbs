@@ -39,7 +39,7 @@ module SerializationConcern
   # -
   # noinspection RailsParamDefResolve
   # +
-  def index_values: (?untyped? list, **untyped opt) -> symHash
+  def index_values: (?(untyped|nil) list, **untyped opt) -> symHash
 
   # Response values for serializing the show page to JSON or XML.
   #

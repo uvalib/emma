@@ -101,7 +101,7 @@ class Phase < ApplicationRecord
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: (Model|prmHash|nil attr, ?symHash? opt) -> void
+  def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
 
   def running?: () -> bool
 
@@ -125,7 +125,7 @@ class Phase < ApplicationRecord
   #
   # @return [ExecReport, nil]
   #
-  def get_exec_report: (?bool? refresh) -> (ExecReport | nil)
+  def get_exec_report: (?(bool|nil) refresh) -> (ExecReport | nil)
 
   # Phase records don't have a REPORT_COLUMN.
   #
@@ -240,7 +240,7 @@ class Phase < ApplicationRecord
   #
   def self.describe_status: (Phase phase, **untyped opt) -> String
 
-  def describe_parts: (?Phase? phase, **untyped opt) -> (String | nil)
+  def describe_parts: (?(Phase|nil) phase, **untyped opt) -> (String | nil)
 
   def show: () -> nil
 

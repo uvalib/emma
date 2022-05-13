@@ -29,7 +29,7 @@ module CookieHelper
   #
   # @return [Any]                     The cookie value.
   #
-  def set_cookie: (Symbol|String key, ?untyped? value, **untyped opt) -> untyped
+  def set_cookie: (Symbol|String key, ?(untyped|nil) value, **untyped opt) -> untyped
 
   # Remove the cookie from the request and indicate removal in the response.
   #

@@ -10,7 +10,7 @@ class Phase::BulkPart < Phase
   #
   # @return [Hash]              The modified *opt* hash.
   #
-  def set_callback!: (symHash opt, ?Symbol? meth) -> symHash
+  def set_callback!: (symHash opt, ?(Symbol|nil) meth) -> symHash
 
   # A textual description of the status of the given Phase instance. # TODO: I18n
   #

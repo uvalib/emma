@@ -28,7 +28,7 @@ class ArtifactDecorator < BookshareDecorator
     include Paths
     include Methods
 
-    def artifact_links: (?Model? item, **untyped opt) -> ActiveSupport::SafeBuffer
+    def artifact_links: (?(Model|nil) item, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   module ClassMethods

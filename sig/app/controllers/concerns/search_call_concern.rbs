@@ -18,7 +18,7 @@ module SearchCallConcern
   #
   # @return [Hash]
   #
-  def search_call_params: (?prmHash? p) -> symHash
+  def search_call_params: (?(prmHash|nil) p) -> symHash
 
   # Get matching SearchCall records or all records if no terms are given.
   #

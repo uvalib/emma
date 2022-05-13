@@ -13,7 +13,7 @@ module BookshareService::Common
   #
   # @return [Hash]                    New API parameters.
   #
-  def api_options: (?symHash? params) -> symHash
+  def api_options: (?(symHash|nil) params) -> symHash
 
   private
 

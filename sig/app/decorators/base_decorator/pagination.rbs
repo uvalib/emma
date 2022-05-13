@@ -65,7 +65,7 @@ module BaseDecorator::Pagination
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *count* is negative.
   #
-  def page_number: (Integer page, ?symHash? opt) -> (ActiveSupport::SafeBuffer | nil)
+  def page_number: (Integer page, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Page count display element.
   #
@@ -79,7 +79,7 @@ module BaseDecorator::Pagination
   # -
   # noinspection RubyMismatchedParameterType
   # +
-  def pagination_count: (Integer? count, ?Integer? total, ?unit: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_count: (Integer? count, ?(Integer|nil) total, ?unit: String?, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Placeholder for an item that would have been a link if it had a path.
   #
@@ -120,7 +120,7 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_separator: (?String? content, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_separator: (?(String|nil) content, **untyped opt) -> ActiveSupport::SafeBuffer
 
   attr_reader paginator: Paginator
 
@@ -240,7 +240,7 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_icon: (?String? content, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_icon: (?(String|nil) content, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

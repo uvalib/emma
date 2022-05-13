@@ -18,7 +18,7 @@ module Ingest::Shared::TransformMethods
   #
   # @return [void]
   #
-  def normalize_data_fields!: (?symHash? data) -> void
+  def normalize_data_fields!: (?(symHash|nil) data) -> void
 
   # @private
   RETRIEVAL_FIELDS: symArray
@@ -29,5 +29,5 @@ module Ingest::Shared::TransformMethods
   #
   # @return [void]
   #
-  def make_retrieval_link!: (?symHash? data) -> void
+  def make_retrieval_link!: (?(symHash|nil) data) -> void
 end

@@ -34,7 +34,7 @@ module SessionConcern
   # @param [Any]         message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
-  def auth_success_redirect: (?String? path, ?user: User?, ?message: untyped?, **untyped opt) -> void
+  def auth_success_redirect: (?(String|nil) path, ?user: User?, ?message: untyped?, **untyped opt) -> void
 
   # Redirect after a failed authorization operation.
   #
@@ -43,7 +43,7 @@ module SessionConcern
   # @param [Any]         message      Passed to #set_flash_alert.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
-  def auth_failure_redirect: (?String? path, ?user: User?, ?message: untyped?, **untyped opt) -> void
+  def auth_failure_redirect: (?(String|nil) path, ?user: User?, ?message: untyped?, **untyped opt) -> void
 
   # Set `flash[:notice]` based on the current action and user name.
   #
@@ -54,7 +54,7 @@ module SessionConcern
   #
   # @return [void]
   #
-  def set_flash_notice: (?String? message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
+  def set_flash_notice: (?(String|nil) message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
 
   # Set `flash[:alert]` based on the current action and user name.
   #
@@ -65,7 +65,7 @@ module SessionConcern
   #
   # @return [void]
   #
-  def set_flash_alert: (?String? message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
+  def set_flash_alert: (?(String|nil) message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
 
   # Configured success or failure message.
   #
@@ -150,7 +150,7 @@ module SessionConcern
   #
   # @return [void]
   #
-  def error_handler_deep_fallback: (Symbol meth, ?Exception? error) -> void
+  def error_handler_deep_fallback: (Symbol meth, ?(Exception|nil) error) -> void
 
   # Clean out empty session values.
   #
@@ -192,12 +192,9 @@ module SessionConcern
 
   THIS_MODULE: Module
 
+  public
+
   include SerializationHelper
-
-  # :nocov:
-  #include AbstractController::Callbacks::ClassMethods
-
-  #include SessionConcern
 
   # This overrides the DeviseController message to allow the standard
   # 'already_authenticated' flash message to be overridden by
@@ -205,5 +202,5 @@ module SessionConcern
   #
   # @see UserConcern#role_failure
   #
-  #def require_no_authentication: () -> untyped
+  def require_no_authentication: () -> untyped
 end

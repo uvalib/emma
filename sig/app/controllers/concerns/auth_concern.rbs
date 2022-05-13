@@ -137,7 +137,7 @@ module AuthConcern
   # @return [User]                    The updated record of the indicated user.
   # @return [nil]                     No record for the indicated user.
   #
-  def user_from_id: (?String? uid) -> (User | nil)
+  def user_from_id: (?(String|nil) uid) -> (User | nil)
 
   # Create a User from authentication data (from the session or from the
   # User table of the database).
@@ -172,7 +172,7 @@ module AuthConcern
   # -
   # noinspection RubyResolve
   # +
-  def revoke_access_token: (?anyHash? token) -> (OAuth2::Response | nil)
+  def revoke_access_token: (?(anyHash|nil) token) -> (OAuth2::Response | nil)
 
   private
 

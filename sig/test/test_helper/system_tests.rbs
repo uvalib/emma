@@ -3,7 +3,7 @@
 module TestHelper::SystemTests
   # Alias for Capybara::Node::Actions#click_link_or_button which isn't being
   # seen by RubyMine dynamic checking for some reason.
-  def click_on: (?String? locator, **untyped opt) -> Capybara::Node::Element
+  def click_on: (?(String|nil) locator, **untyped opt) -> Capybara::Node::Element
 
   private
 

@@ -27,7 +27,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   #
   # @raise [Record::SubmitError]      If metadata was malformed.
   #
-  def initialize: (Model|String|symHash|nil src, ?symHash? opt) -> void
+  def initialize: (Model|String|symHash|nil src, ?(symHash|nil) opt) -> void
 
   # The unique identifier represented by this instance.
   #

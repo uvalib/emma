@@ -64,7 +64,7 @@ class Phase::Create < Phase::BulkPart
   # == Usage Notes
   # Will be performed synchronously by Action::Store#upload!.
   #
-  def upload_cb: (?Action? action, **untyped opt) -> bool
+  def upload_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Move uploaded file from Shrine :cache to Shrine :store.
   #
@@ -82,7 +82,7 @@ class Phase::Create < Phase::BulkPart
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def promote_cb: (?Action? action, **untyped opt) -> bool
+  def promote_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Create an index entry for this item.
   #
@@ -103,7 +103,7 @@ class Phase::Create < Phase::BulkPart
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def index_cb: (?Action? action, **untyped opt) -> bool
+  def index_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Send a submission package to a member repository.
   #
@@ -124,7 +124,7 @@ class Phase::Create < Phase::BulkPart
   #
   # @return [Boolean]   *false* if the callback's callback failed to process.
   #
-  def submit_cb: (?Action? action, **untyped opt) -> bool
+  def submit_cb: (?(Action|nil) action, **untyped opt) -> bool
 
   # Run through the step(s) needed to complete a new submission.
   #

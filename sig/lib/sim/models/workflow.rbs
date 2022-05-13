@@ -126,7 +126,7 @@ module Workflow::Base::Transitions
   # @param [Symbol]      from       Starting state
   # @param [Symbol, nil] to         Ending state
   #
-  def __debug_hook: (untyped label, untyped from, ?untyped? to) -> untyped
+  def __debug_hook: (untyped label, untyped from, ?(untyped|nil) to) -> untyped
 
   # Redefine :workflow for a Workflow subclass in order to apply the methods
   # defined here to the matching workflow transition handlers.

@@ -15,7 +15,7 @@ class Phase::BulkCreate < Phase::BulkOperation
   #
   # @return [Boolean]
   #
-  def run_sequence: (?untyped? prev_state, **untyped opt) -> bool
+  def run_sequence: (?(untyped|nil) prev_state, **untyped opt) -> bool
 
   # A textual description of the type of the Model instance.
   #

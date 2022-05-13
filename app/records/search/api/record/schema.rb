@@ -17,10 +17,8 @@ module Search::Api::Record::Schema
   include Api::Record::Schema
 
   module ClassMethods
-
     include Search::Api::Schema
     include Api::Record::Schema::ClassMethods
-
   end
 
 end

@@ -41,9 +41,9 @@ module ApplicationJob::Logging
   module InstanceMethods
     include ApplicationJob::Logging
 
-    def job_inspect: (?ApplicationJob? job) -> String
+    def job_inspect: (?(ApplicationJob|nil) job) -> String
 
-    def arguments_inspect: (?ApplicationJob? job) -> String
+    def arguments_inspect: (?(ApplicationJob|nil) job) -> String
 
     def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> nil
   end

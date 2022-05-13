@@ -51,7 +51,7 @@ class Options
   # @param [Symbol, any] model
   # @param [Hash, nil]   prm
   #
-  def initialize: (untyped model, ?symHash? prm) -> void
+  def initialize: (untyped model, ?(symHash|nil) prm) -> void
 
   # Indicate whether the item is a valid option.
   #
@@ -127,7 +127,7 @@ class Options
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_model_params: (?prmHash? p) -> symHash
+  def get_model_params: (?(prmHash|nil) p) -> symHash
 
   # Extract POST parameters that are usable for creating/updating a new model
   # instance.
@@ -136,7 +136,7 @@ class Options
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def model_post_params: (?prmHash? p) -> symHash
+  def model_post_params: (?(prmHash|nil) p) -> symHash
 
   # ignored_form_params
   #

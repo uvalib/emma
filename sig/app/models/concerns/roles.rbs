@@ -192,5 +192,5 @@ module Roles
   #
   # @return [Symbol]                  Matching #PROTOTYPE key.
   #
-  def role_prototype_for: (?User? user, *(Symbol|symArray) roles) -> Symbol
+  def role_prototype_for: (?(User|nil) user, *(Symbol|symArray) roles) -> Symbol
 end

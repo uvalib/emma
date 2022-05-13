@@ -58,5 +58,5 @@ module LayoutHelper::PageClasses
   #
   # @return [Array<String>]
   #
-  def default_page_classes: (?symHash? p) -> strArray
+  def default_page_classes: (?(symHash|nil) p) -> strArray
 end
