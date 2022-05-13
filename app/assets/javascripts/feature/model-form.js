@@ -535,15 +535,17 @@ $(document).on('turbolinks:load', function() {
     /**
      * State of the page.
      *
-     * SUBMITTED: The submit button has been activated.
-     * CANCELED:  The cancel button has been activated.
+     * SUBMITTING:  The submit button has been activated.
+     * SUBMITTED:   The submission has been completed.
+     * CANCELED:    The cancel button has been activated.
      *
      * @constant
      * @type {Object<string>}
      */
     const FORM_STATE = deepFreeze({
-        SUBMITTED: 'submitted',
-        CANCELED:  'canceled'
+        SUBMITTING: 'submitting',
+        SUBMITTED:  'submitted',
+        CANCELED:   'canceled'
     });
 
     // ========================================================================
@@ -1518,6 +1520,7 @@ $(document).on('turbolinks:load', function() {
         const tip   = submitTooltip($form);
         let $button = submitButton($form).attr('title', tip).text(label);
         handleClickAndKeypress($button, clearFlashMessages);
+        handleClickAndKeypress($button, startSubmission);
     }
 
     /**
@@ -3047,6 +3050,17 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Indicate that submission process has been initiated.
+     *
+     * @param {jQuery.Event} [event]
+     */
+    function startSubmission(event) {
+        let $button = $(event.target);
+        let $form   = formElement($button);
+        setFormSubmitting($form);
+    }
+
+    /**
      * Get data to send to revert a canceled edit.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
@@ -3819,26 +3833,27 @@ $(document).on('turbolinks:load', function() {
      * Mark the form submission state as submitted.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [submitted]  If *true* or undefined then mark the form
-     *                                  as submitted; if *false* then mark the
-     *                                  form as unsubmitted.
      */
-    function setFormSubmitted(form, submitted) {
-        const value = (submitted === false) ? undefined : FORM_STATE.SUBMITTED;
-        setFormState(form, value);
+    function setFormSubmitting(form) {
+        setFormState(form, FORM_STATE.SUBMITTING);
+    }
+
+    /**
+     * Mark the form submission state as complete.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function setFormSubmitted(form) {
+        setFormState(form, FORM_STATE.SUBMITTED);
     }
 
     /**
      * Mark the form submission state as canceled.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [canceled]  If *true* or undefined then mark the form
-     *                                  as submitted; if *false* then mark the
-     *                                  form as unsubmitted.
      */
-    function setFormCanceled(form, canceled) {
-        const value = (canceled === false) ? undefined : FORM_STATE.CANCELED;
-        setFormState(form, value);
+    function setFormCanceled(form) {
+        setFormState(form, FORM_STATE.CANCELED);
     }
 
     /**
