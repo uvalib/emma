@@ -1,0 +1,2 @@
+class JobResult < ApplicationRecord
+end

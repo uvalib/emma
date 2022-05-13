@@ -76,3 +76,14 @@ if DEBUG_PUMA
   on_refork          { puts 'PUMA on_refork' }
   out_of_band        { puts 'PUMA worker idle' }
 end
+
+# =============================================================================
+# Job scheduler
+# =============================================================================
+
+before_fork        { GoodJob.shutdown }
+on_worker_boot     { GoodJob.restart }
+on_worker_shutdown { GoodJob.shutdown }
+
+MAIN_PID = Process.pid
+at_exit { GoodJob.shutdown if Process.pid == MAIN_PID }

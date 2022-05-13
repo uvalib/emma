@@ -1,0 +1,2 @@
+class JobResultTest < ActiveSupport::TestCase
+end

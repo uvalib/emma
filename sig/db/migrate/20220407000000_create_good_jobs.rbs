@@ -1,0 +1,3 @@
+class CreateGoodJobs < ActiveRecord::Migration
+  def change: () -> untyped
+end

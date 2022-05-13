@@ -1,0 +1,13 @@
+# test/fixtures/job_results.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  service: MyString
+  result: MyString
+  job_id: MyString
+
+two:
+  service: MyString
+  result: MyString
+  job_id: MyString

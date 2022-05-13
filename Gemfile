@@ -96,6 +96,9 @@ gem 'shrine', '~> 3.0'
 # == API support
 gem 'rack-cors'
 
+# == Job scheduler
+gem 'good_job'
+
 # == Other
 gem 'draper'
 gem 'iso-639'

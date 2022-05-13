@@ -1,0 +1,19 @@
+# This is a mixin for record classes related to jobs.
+#
+module JobMethods
+  extend ActiveSupport::Concern
+
+  # Select the records that have not been updated since the last reboot.
+  #
+  # @param [String,Symbol,Hash] sort_order
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def outdated: (?sort_order: String|Symbol|anyHash) -> ActiveRecord::Relation
+
+  private
+
+  THIS_MODULE: Module
+
+  extend ::JobMethods
+end

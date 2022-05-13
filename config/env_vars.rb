@@ -337,6 +337,28 @@ AWS_ACCESS_KEY_ID = ENV.fetch('AWS_ACCESS_KEY_ID', nil).freeze
 AWS_SECRET_KEY = ENV.fetch('AWS_SECRET_KEY', nil).freeze
 
 # =============================================================================
+# Job scheduler properties
+# =============================================================================
+
+# The value of RAILS_MAX_THREADS is adjusted here so that the additional
+# requirements of ActionCable and the scheduler are taken into account before
+# either config/database.yml or config/puma.rb are processed.
+#
+# * 1 connection dedicated to ActionCable for LISTEN/NOTIFY
+# * 1 connection dedicated to the scheduler for LISTEN/NOTIFY
+# * enough connections to cover the GoodJob query pool
+# * (optional) 2 connections for the GoodJob cron scheduler
+# * (optional) 1 connection per sub-thread if the application makes multi-
+#   threaded queries within a job.
+# * enough connections to cover the webserver when running GoodJob :async
+
+ENV['RAILS_MAX_THREADS'] = [
+  (ENV['RAILS_MAX_THREADS']    || 5),
+  (ENV['GOOD_JOB_MAX_THREADS'] || 5),
+  1, # When using the postgresql adapter in config/cable.yml.
+].compact.map(&:to_i).sum.to_s
+
+# =============================================================================
 # Output
 # =============================================================================
 
@@ -424,8 +446,7 @@ DEBUG_IO = true?(ENV['DEBUG_IO'])
 #
 # @type [Boolean]
 #
-DEBUG_JOB = true?(ENV['DEBUG_JOB'] || true) # TODO: remove - testing
-#DEBUG_JOB = true?(ENV['DEBUG_JOB'])
+DEBUG_JOB = true?(ENV['DEBUG_JOB'])
 
 # Set to show registration of unique MIME types during startup.
 #

@@ -53,6 +53,45 @@ module ActiveRecord
     module ClassMethods
     end
   end
+  module ConnectionAdapters
+    module PostgreSQL
+      module ColumnMethods
+        def bigserial:    (*untyped names, **untyped options) -> untyped
+        def bit:          (*untyped names, **untyped options) -> OID::Bit
+        def bit_varying:  (*untyped names, **untyped options) -> OID::BitVarying
+        def cidr:         (*untyped names, **untyped options) -> OID::Cidr
+        def citext:       (*untyped names, **untyped options) -> untyped
+        def daterange:    (*untyped names, **untyped options) -> untyped
+        def hstore:       (*untyped names, **untyped options) -> OID::Hstore
+        def inet:         (*untyped names, **untyped options) -> OID::Inet
+        def interval:     (*untyped names, **untyped options) -> untyped
+        def int4range:    (*untyped names, **untyped options) -> untyped
+        def int8range:    (*untyped names, **untyped options) -> untyped
+        def jsonb:        (*untyped names, **untyped options) -> OID::Jsonb
+        def ltree:        (*untyped names, **untyped options) -> untyped
+        def macaddr:      (*untyped names, **untyped options) -> untyped
+        def money:        (*untyped names, **untyped options) -> OID::Money
+        def numrange:     (*untyped names, **untyped options) -> untyped
+        def oid:          (*untyped names, **untyped options) -> OID::Oid
+        def point:        (*untyped names, **untyped options) -> OID::Point
+        def line:         (*untyped names, **untyped options) -> untyped
+        def lseg:         (*untyped names, **untyped options) -> untyped
+        def box:          (*untyped names, **untyped options) -> untyped
+        def path:         (*untyped names, **untyped options) -> untyped
+        def polygon:      (*untyped names, **untyped options) -> untyped
+        def circle:       (*untyped names, **untyped options) -> untyped
+        def serial:       (*untyped names, **untyped options) -> untyped
+        def tsrange:      (*untyped names, **untyped options) -> untyped
+        def tstzrange:    (*untyped names, **untyped options) -> untyped
+        def tsvector:     (*untyped names, **untyped options) -> untyped
+        def uuid:         (*untyped names, **untyped options) -> OID::Uuid
+        def xml:          (*untyped names, **untyped options) -> OID::Xml
+      end
+      class TableDefinition
+        include ColumnMethods
+      end
+    end
+  end
 end
 
 module Aws

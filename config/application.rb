@@ -11,6 +11,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require 'good_job/engine'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -22,7 +23,7 @@ module Emma
   class Application < Rails::Application
 
     # Initialize configuration defaults.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
 
     # This is not compatible with the current directory layout:
     # config.add_autoload_paths_to_load_path = false
@@ -121,13 +122,10 @@ module Emma
     # ActiveJob
     # =========================================================================
 
-    # Use a real queuing backend for Active Job (and separate queues per
-    # environment).
-    # config.active_job.queue_adapter     = :resque
+    # @see config/initializers/good_job.rb
+    config.active_job.queue_adapter = :good_job
     # config.active_job.queue_name_prefix = "emma_#{Rails.env}"
-=begin
-    config.active_job.queue_adapter = :test # TODO: testing - remove
-=end
+    config.active_job.skip_after_callbacks_if_terminated = !DEBUG_JOB
 
     # =========================================================================
     # ActiveStorage

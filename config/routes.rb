@@ -305,6 +305,15 @@ Rails.application.routes.draw do
   resource :data, only: %i[show]
 
   # ===========================================================================
+  # Job scheduler
+  # ===========================================================================
+
+  # GoodJob dashboard
+  authenticate :user, ->(user) { Ability.new(user).can?(:manage, GoodJob) } do
+    mount GoodJob::Engine => 'good_job'
+  end
+
+  # ===========================================================================
   # Utilities and tools pages
   # ===========================================================================
 
