@@ -13,6 +13,8 @@ module LookupService::GoogleBooks::Request::Volumes
   # @private
   ID_TYPES: strArray
 
+  AUTHOR_TYPES: symArray
+
   # == GET https://www.googleapis.com/books/v1/volumes
   #
   # The service will match "lccn" numbers, but it won't include them in the
@@ -34,6 +36,8 @@ module LookupService::GoogleBooks::Request::Volumes
   #
   def get_volumes: (LookupService::Request|strArray|String terms, **untyped opt) -> Lookup::GoogleBooks::Message::List
 
+  OPT: symHash
+
   # query_terms!
   #
   # @param [LookupService::Request, Array<String>, String] terms
@@ -42,4 +46,12 @@ module LookupService::GoogleBooks::Request::Volumes
   # @return [Array<String>]
   #
   def query_terms!: (LookupService::Request|strArray|String terms, symHash opt) -> strArray
+
+  # Combine terms to make a Google Books query string.
+  #
+  # @param [Array<String>] terms
+  #
+  # @return [String]
+  #
+  def make_query: (strArray terms) -> String
 end

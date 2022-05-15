@@ -1,0 +1,70 @@
+<%# app/views/help/topic/_lookup_tool.html.erb -%>
+<%-
+  # Bibliographic lookup help page.
+
+  view_debug(__FILE__)
+
+  terms_title        = 'Search Terms'
+
+-%>
+
+<p>
+  Although the target application will generate these queries from fields in
+  the submission form, this interface allows you to create that query manually
+  and receive the results (in JSON format) that the target code would receive.
+</p>
+<p>
+  A query can be a simple identifier like "isbn:9780521454285", or it can a
+  search including multiple search terms.
+  Single identifier queries return the least ambiguous results.
+  General searches may return many items that might not be what you had in
+  mind.
+  <em>Caveat emptor.</em>
+</p>
+
+<section role="region" aria-labelledby="lookup_tool_terms_help">
+
+  <h2 class="section" id="lookup_tool_terms_help"><%= terms_title -%></h2>
+
+  <p>
+    A query can have multiple space-separated terms.
+    Each term must be of the form <strong>prefix:value</strong>,
+    where <em>prefix</em> is either:
+  </p>
+
+  <ul>
+    <li>
+      An identifier type:
+      <strong>isbn</strong>,
+      <strong>issn</strong>,
+      <strong>oclc</strong>,
+      <strong>lccn</strong>, or
+      <strong>doi</strong>.
+    </li>
+    <li>
+      A search type:
+      <strong>author</strong>,
+      <strong>title</strong>, or
+      <strong>keyword</strong>.
+    </li>
+  </ul>
+
+  <p>
+    If the search value has a space in it, it must be surrounded by quotation
+    marks -- either double-quotes (<strong>"</strong>) or single-quotes
+    (<strong>'</strong>).
+  </p>
+
+  <p>
+    As an example, all of the following are valid searches:
+  </p>
+
+  <ul>
+    <li>isbn:9780385528863</li>
+    <li>title:Shining</li>
+    <li>author:"King,Stephen"</li>
+    <li>author:”Stephen King”</li>
+    <li>author:”King” title:"The Shining"</li>
+  </ul>
+
+</section>

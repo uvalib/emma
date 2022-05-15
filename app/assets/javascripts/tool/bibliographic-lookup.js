@@ -3,10 +3,14 @@
 // Bibliographic Lookup
 
 
-import { Api }                                from '../shared/api'
-import { notEmpty }                           from '../shared/definitions'
-import { asDateTime }                         from '../shared/time'
-import { handleClickAndKeypress, onPageExit } from '../shared/events'
+import { Api }        from '../shared/api'
+import { notEmpty }   from '../shared/definitions'
+import { asDateTime } from '../shared/time'
+import {
+    handleClickAndKeypress,
+    handleEvent,
+    onPageExit
+} from '../shared/events'
 
 
 // ============================================================================
@@ -20,20 +24,42 @@ import { handleClickAndKeypress, onPageExit } from '../shared/events'
  */
 export async function setup(root) {
 
-    let channel = await import('../channels/lookup_channel');
+    let channel    = await import('../channels/lookup_channel');
 
-    let $root   = root ? $(root) : $('body');
-    let $prompt = $root.find('.lookup-prompt');
-    let $input  = $prompt.find('[type="text"]');
-    let $submit = $prompt.find('[type="submit"]');
+    let $root      = root ? $(root) : $('body');
+    let $prompt    = $root.find('.lookup-prompt');
+    let $input     = $prompt.find('[type="text"]');
+    let $submit    = $prompt.find('[type="submit"]');
+    let $separator = $prompt.find('[type="radio"]');
 
-    let $result = $root.find('.item-results');
-    let $error  = $root.find('.item-errors');
-    let $diag   = $root.find('.item-diagnostics');
+    let $result    = $root.find('.item-results');
+    let $error     = $root.find('.item-errors');
+    let $diag      = $root.find('.item-diagnostics');
+
+    /**
+     * SEPARATORS
+     *
+     * * space: Space, tab, and <strong>|</strong> (pipe)
+     * * pipe:  Only <strong>|</strong> (pipe)
+     *
+     * @type {{[k: string]: string[]}}
+     */
+    const SEPARATORS = {
+        space: ['\\s', '|'],
+        pipe:  ['|']
+    };
+
+    const DEFAULT_SEPARATOR = 'pipe';
 
     // ========================================================================
     // Actions
     // ========================================================================
+
+    channel.setCallback(updateResults);
+    channel.setErrorCallback(updateErrors);
+    channel.setDiagnosticCallback(updateDiagnostics);
+
+    onPageExit((() => channel.disconnect()), true);
 
     [$result, $error, $diag].forEach(function(item) {
         let $item = $(item);
@@ -42,21 +68,26 @@ export async function setup(root) {
         }
     });
 
-    handleClickAndKeypress($submit, () => {
-        $result.text('');
-        $error.text('');
-        channel.request($input.val());
-    });
-
-    channel.setCallback(updateResults);
-    channel.setErrorCallback(updateErrors);
-    channel.setDiagnosticCallback(updateDiagnostics);
-
-    onPageExit((() => channel.disconnect()), true);
+    handleEvent($input, 'keyup', ev => (ev.key === 'Enter') && submit(ev));
+    handleClickAndKeypress($submit, ev => submit(ev));
 
     // ========================================================================
     // Functions
     // ========================================================================
+
+    /**
+     * Submit the query terms as a lookup request.
+     *
+     * @param {Event|jQuery.Event} [_event]     Ignored.
+     *
+     * @returns {boolean}
+     */
+    function submit(_event) {
+        $result.text('');
+        $error.text('');
+        const sep = $separator.filter(':checked').val() || DEFAULT_SEPARATOR;
+        return channel.request($input.val(), SEPARATORS[sep]);
+    }
 
     /**
      * Update the main display element.

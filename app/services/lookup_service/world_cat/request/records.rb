@@ -44,7 +44,7 @@ module LookupService::WorldCat::Request::Records
       terms[:limit] ||= LimitTerms.new
       terms[:limit].add(:lang_code, 'eng')
     end
-    opt[:query] = make_query!(terms)
+    opt[:query] = make_query(terms)
 
     # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
@@ -234,7 +234,7 @@ module LookupService::WorldCat::Request::Records
   #
   def get_opensearch_records(terms, **opt)
     terms   = query_terms!(terms, opt)
-    opt[:q] = make_query!(terms)
+    opt[:q] = make_query(terms)
     # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/search/worldcat/opensearch', **opt)
@@ -281,9 +281,8 @@ module LookupService::WorldCat::Request::Records
     groups = result.values
 
     if terms.is_a?(LookupService::Request)
-      terms.request.each_pair do |k, items|
-        items = terms.identifiers if k == :ids
-        items.each { |item| result[k].add(item) } if items.present?
+      terms.request.each_pair do |type, items|
+        items.each { |item| result[type].add(item) }
       end
       terms = nil
     end
@@ -310,7 +309,7 @@ module LookupService::WorldCat::Request::Records
   #
   # @return [String]
   #
-  def make_query!(type_group)
+  def make_query(type_group)
     type_group.map { |type, group|
       inclusive = (type == :ids)
       group.parts.join(inclusive ? OR : AND)
@@ -431,14 +430,44 @@ module LookupService::WorldCat::Request::Records
 
     # Form a WorldCat query part to match the given value.
     #
-    # @param [Symbol, String] code
-    # @param [String]         value
+    # @param [Symbol] code
+    # @param [String] value
     #
     # @return [String]
     #
     def query_part(code, value)
+      value = fix_name(value) if code == :au
       matching = value.include?(' ') ? 'exact' : '='
       %Q(srw.#{code} #{matching} "#{value}")
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Some adjustments for author queries based on observations:
+    #
+    # * WorldCat can handle "King, Stephen" but not "King,Stephen".
+    # * "Stephen King" works for an '=' match.
+    # * "King, Stephen" is required for an 'exact' match.
+    # * Including birth/death dates is problematic for an 'exact' match.
+    #
+    # @param [String] value
+    #
+    # @return [String]
+    #
+    def fix_name(value)
+      value = value.strip
+      value.sub!(/\s*,?\s*(\[.*\]|\(.*\)|\d+.*\d+|\d+-?)$/, '') # Trailing date
+      case value
+        when /^([^\s,]+)\s*,\s*(.*)$/ then family_and_given_name = [$1, $2]
+        when /^(.+)\s+([^\s]+)$/      then family_and_given_name = [$2, $1]
+        else                               family_and_given_name = [value, nil]
+      end
+      family_and_given_name.map! { |v| v && v.gsub(/[[:punct:]]/, ' ').squish }
+      family_and_given_name.compact_blank!.join(', ')
     end
 
   end

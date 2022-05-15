@@ -51,8 +51,10 @@ en:
 
       lookup:
         label:            'Bibliographic Lookup'
-        title:            'Bibliographic Lookup By Standard Identifier'
+        title:            'Bibliographic Lookup'
         path:             bib_lookup_path
-        #description_html: |
-        #  TODO
+        notes:            |
+          This page accesses on-going work which will be integrated into the
+          individual EMMA submission form and the bulk manifest.
+          What you see here is not the intended final form of the feature.
         _endpoint:        true

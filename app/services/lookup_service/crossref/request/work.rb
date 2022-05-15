@@ -68,6 +68,9 @@ module LookupService::Crossref::Request::Work
   # @private
   ID_TYPES = PublicationIdentifier.identifier_types
 
+  # @private
+  AUTHOR_TYPES = %i[author contributor editor translator].freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -108,7 +111,7 @@ module LookupService::Crossref::Request::Work
   #
   def get_work_list(terms, **opt)
     terms = query_terms!(terms, opt)
-    ids = extract_hash!(terms, *ID_TYPES)
+    ids   = extract_hash!(terms, *ID_TYPES)
     opt[:filter] = [*opt[:filter], *ids.values] if ids.present?
     opt[:filter] &&= Array.wrap(opt[:filter]).compact.join(',')
     # noinspection RubyMismatchedArgumentType
@@ -145,6 +148,10 @@ module LookupService::Crossref::Request::Work
 
   protected
 
+  # Options for LookupService::Request#add_term.
+  # @private
+  OPT = { author: QUERY_PREFIX.slice(*AUTHOR_TYPES).values }.deep_freeze
+
   # query_terms!
   #
   # @param [LookupService::Request, Array<String>, String] terms
@@ -153,36 +160,18 @@ module LookupService::Crossref::Request::Work
   # @return [Hash]
   #
   def query_terms!(terms, opt)
+    query = [*opt.delete(:q), *opt.delete(:query)].compact.presence
+    other = extract_hash!(opt, *QUERY_ALIAS).presence
     if terms.is_a?(LookupService::Request)
-      terms =
-        terms.request.map do |k, items|
-          if k == :ids
-            terms.identifiers
-          elsif items.present?
-            items.map do |item|
-              prefix, value = item.split(':', 2)
-              if !value
-                prefix
-              elsif (prefix = QUERY_PREFIX[prefix.to_sym])
-                "#{prefix}:#{value}"
-              else
-                value
-              end
-            end
-          end
-        end
+      req = (query || other) ? terms.dup : terms
+    else
+      req = LookupService::Request.new
+      Array.wrap(terms).each { |term| req.add_term(term, **OPT) }
     end
-    terms = [*terms, *opt.delete(:q), *opt.delete(:query)]
-    terms.flatten!
-    terms.map! { |term| term.to_s.strip }
-    terms +=
-      (QUERY_ALIAS & opt.keys).flat_map do |prm|
-        prefix = QUERY_PREFIX[prm]
-        Array.wrap(opt.delete(prm)).map(&:to_s).map! { |v| "#{prefix}:#{v}" }
-      end
-    terms.compact_blank!
+    query&.each { |term| req.add_term(term, **OPT) }
+    other&.each { |prm, value| req.add_term(QUERY_PREFIX[prm], value, **OPT) }
     result = {}
-    terms.map! do |term|
+    req.terms.each do |term|
       prefix, value = term.split(':', 2)
       if !value
         key   = :query

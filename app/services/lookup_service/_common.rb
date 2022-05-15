@@ -43,23 +43,6 @@ module LookupService::Common
 
   public
 
-  # Generate a table of PublicationIdentifiers grouped by type.
-  #
-  # @param [Hash, Array, String, nil] item
-  # @param [Hash]                     opt   Passed to #id_obj.
-  #
-  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
-  #
-  def id_hash(item, **opt)
-    if item.is_a?(Hash)
-      # noinspection RubyNilAnalysis
-      item.transform_values { |v| id_list(v, **opt) }.symbolize_keys!
-    else
-      # noinspection RubyMismatchedArgumentType
-      id_list(item, **opt).group_by(&:type)
-    end
-  end
-
   # Generate a list of PublicationIdentifiers.
   #
   # @param [Array, String, nil] item

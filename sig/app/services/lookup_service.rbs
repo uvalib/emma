@@ -30,9 +30,9 @@ class LookupService
   # A table of defined external services and the bibliographic types they can
   # handle.  The entries are in descending order of preference.
   #
-  # @type [Hash{Class=>Set<Symbol>}]
+  # @type [Hash{Class=>Array<Symbol>}]
   #
-  SERVICE_TABLE: Hash[Class,Set[Symbol]]
+  SERVICE_TABLE: Hash[Class,symArray]
 
   ADD_DIAGNOSTICS: bool
 

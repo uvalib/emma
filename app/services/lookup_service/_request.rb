@@ -5,8 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# A collection of identifiers transformed into PublicationIdentifier and
-# grouped by type.
+# A collection of identifiers and/or search terms.
 #
 # == Implementation Notes
 # This class can't be implemented as a subclass of Hash because the ActiveJob
@@ -25,14 +24,21 @@ class LookupService::Request
 
   public
 
+  # The format of a request object.
+  #
   # @type [Hash]
+  #
+  # @see file:app/assets/javascripts/channels/lookup_channel.js *REQUEST_TYPE*
+  #
   TEMPLATE = {
     request: {
-      ids:   {},
+      ids:   [],
       query: [],
       limit: []
     },
   }.deep_freeze
+
+  DEFAULT_QUERY = 'keyword'
 
   # ===========================================================================
   # :section:
@@ -45,31 +51,97 @@ class LookupService::Request
 
   # Create a new instance.
   #
-  # @param [LookupService::Request, Hash, Array, String, *] items
+  # @param [LookupService::Request, Hash, Array, String, nil] items
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  #++
-  def initialize(items)
+  def initialize(items = nil)
     # noinspection RubyMismatchedVariableType
     @table = TEMPLATE.deep_dup
-    if items.is_a?(self.class)
-      @table.merge!(items.deep_dup)
-    elsif !items.is_a?(Hash)
-      @table[:request][:ids] = items
-    elsif items.key?(:request)
-      items = items[:request]
-      @table[:request].merge!(items.deep_dup) if items.present?
+    if items.present?
+      # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+      if items.is_a?(self.class)
+        @table.merge!(items.deep_dup)
+      elsif !items.is_a?(Hash)
+        @table[:request][:ids] = items.deep_dup
+      elsif items.key?(:request)
+        items = items[:request]&.deep_dup
+        @table[:request].merge!(items) if items.present?
+      else
+        items = items.slice(*TEMPLATE[:request].keys).deep_dup
+        @table[:request].merge!(items) if items.present?
+      end
+    end
+    if items.present?
+      TEMPLATE[:request].each_key do |k|
+        if k == :ids
+          @table[:request][k].map! { |term| fix_term(term) }
+          @table[:request][k] = id_list(@table[:request][k])
+        else
+          @table[:request][k].map! do |term|
+            fix_term(term, author: term.start_with?('author:'))
+          end
+        end
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # All search term elements.
+  #
+  # @return [Array<String,PublicationIdentifier>]
+  #
+  def values
+    request.values.flatten
+  end
+
+  # All search terms in "prefix:value" format.
+  #
+  # @return [Array<String>]
+  #
+  def terms
+    values.map(&:to_s)
+  end
+
+  # add_term
+  #
+  # @param [PublicationIdentifier, String, Symbol, nil] prefix
+  # @param [String, nil]                                value
+  # @param [Hash]                                       opt   To #fix_term.
+  #
+  # @return [PublicationIdentifier, String, nil]
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def add_term(prefix, value = nil, **opt)
+    prefix, value = [nil, prefix] if value.nil?
+    return if prefix.blank? && value.blank?
+    if value.is_a?(PublicationIdentifier)
+      term = nil
+      id   = value
     else
-      items = items.slice(*TEMPLATE[:request].keys)
-      @table[:request].merge!(items.deep_dup) if items.present?
+      if prefix.present?
+        term = fix_term("#{prefix}:#{value}", **opt)
+        type = prefix.to_sym
+      else
+        term = fix_term(value, **opt)
+        type = term.sub(/:.*$/, '').to_sym
+      end
+      id =
+        if PublicationIdentifier.identifier_types.include?(type)
+          PublicationIdentifier.cast(term, invalid: true)
+        end
     end
-    TEMPLATE[:request].except(:ids).each_key do |k|
-      v = @table[:request][k]
-      @table[:request][k] = v.is_a?(Hash) ? v.values : Array.wrap(v)
+    if id
+      request[:ids] = [*request[:ids], id]
+    else
+      request[:query] = [*request[:query], term]
     end
-    fix_ids!
-    fix_query!
+    id || term
   end
 
   # ===========================================================================
@@ -78,56 +150,33 @@ class LookupService::Request
 
   protected
 
-  # Re-build the list of identifier "prefix:value" terms into a table keyed
-  # by the prefix.
+  # Remove quotes surround a term and provide a prefix if needed.
   #
-  # @return [void]
+  # @param [PublicationIdentifier, String, nil] term
+  # @param [Boolean, Array<String>]             author
   #
-  def fix_ids!
-    return if (ids = @table[:request][:ids]).blank?
-    @table[:request][:ids] = id_hash(ids)
-  end
-
-  # Observation has indicated some quirks that need to be addresses by
-  # massaging "author:" queries:
+  # @return [PublicationIdentifier, String, nil]
   #
-  # * WorldCat can handle "King, Stephen" but not "King,Stephen".
-  # * Google Books can handle "Stephen King" but not "King, Stephen".
-  # * WorldCat can handle either.
-  #
-  # @return [void]
-  #
-  def fix_query!
-    return if @table[:request][:query].blank?
-    @table[:request][:query].map! do |term|
-      # Determine the query type prefix and remove it.
-      term = term.dup
-      term.sub!(/^([^:]+):/, '')
-      prefix = $1
+  def fix_term(term, author: false, **)
+    return term unless term.is_a?(String)
+    # noinspection RubyNilAnalysis
+    value = term.strip
 
-      # Strip surrounding quotes from the query term.
-      term.sub!(/^(["'])(.*)\1$/, '\2')
-      quote = $1
+    # Strip quote mistakenly surrounding the whole term.
+    value.sub!(/^(["'])\s*(.*)\s*\1$/, '\2')
 
-      # If this is an author query like "King, Stephen", get the last name and
-      # move it to the end.
-      if (prefix == 'author') && term.include?(',')
-        given_name = term.sub!(/^([^,]+),\s*/, '')
-        last_name  = $1
-        term = "#{given_name} #{last_name}"
-      end
+    # Extract the query type prefix.
+    value.sub!(/^([^:]+)\s*:\s*/, '')
+    prefix = $1&.presence&.downcase || DEFAULT_QUERY
 
-      # Prepare to add surrounding quotes if needed and not already provided.
-      if term.gsub!(/[[:space:][:punct:]]+/, ' ')
-        term.strip!
-        quote ||= %q(")
-      end
+    # Strip surrounding quotes from the query term.
+    value.sub!(/^(["'])\s*(.*)\s*\1$/, '\2')
 
-      # Reconstruct the full query term.
-      term = "#{quote}#{term}#{quote}" if quote
-      term = "#{prefix}:#{term}"       if prefix
-      term
-    end
+    # Strip date from author name if requested.
+    author = author.include?(prefix) if author.is_a?(Array)
+    value.sub!(/\s*,?\s*(\[.*\]|\(.*\)|\d+.*\d+|\d+-?)$/, '') if author
+
+    "#{prefix}:#{value}"
   end
 
   # ===========================================================================
@@ -145,12 +194,12 @@ class LookupService::Request
     table[:request]
   end
 
-  # Identifiers to lookup grouped by type.
+  # The identifiers involved in this request.
   #
-  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
+  # @return [Array<PublicationIdentifier>]
   #
-  def request_ids
-    request[:ids] || {}
+  def identifiers
+    request[:ids]
   end
 
   # The identifier types involved in this request.
@@ -158,15 +207,7 @@ class LookupService::Request
   # @return [Array<Symbol>]
   #
   def id_types
-    request_ids.keys
-  end
-
-  # The identifiers involved in this request.
-  #
-  # @return [Array<PublicationIdentifier>]
-  #
-  def identifiers
-    request_ids.values.flatten
+    identifiers.map(&:type).uniq
   end
 
   # Present the entire request structure as a Hash.
@@ -175,6 +216,20 @@ class LookupService::Request
   #
   def to_h
     table.compact
+  end
+
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  protected
+
+  def dup
+    new(self)
+  end
+
+  def deep_dup
+    new(self)
   end
 
   # ===========================================================================

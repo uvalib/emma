@@ -109,7 +109,7 @@ module LookupService::WorldCat::Request::Records
   #
   # @return [String]
   #
-  def make_query!: (Hash[Symbol,LookupService::WorldCat::Request::Records::Terms] type_group) -> String
+  def make_query: (Hash[Symbol,LookupService::WorldCat::Request::Records::Terms] type_group) -> String
 
   OR:  String
   AND: String
@@ -170,12 +170,14 @@ module LookupService::WorldCat::Request::Records
 
     # Form a WorldCat query part to match the given value.
     #
-    # @param [Symbol, String] code
-    # @param [String]         value
+    # @param [Symbol] code
+    # @param [String] value
     #
     # @return [String]
     #
-    def query_part: (Symbol|String code, String value) -> String
+    def query_part: (Symbol code, String value) -> String
+
+    def fix_name: (String value) -> String
   end
 
   # noinspection SpellCheckingInspection

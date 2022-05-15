@@ -35,6 +35,9 @@ module LookupService::GoogleBooks::Request::Volumes
   # @private
   ID_TYPES = PublicationIdentifier.identifier_types.map(&:to_s).deep_freeze
 
+  # @private
+  AUTHOR_TYPES = %i[author].freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -60,16 +63,16 @@ module LookupService::GoogleBooks::Request::Volumes
   # @see https://developers.google.com/books/docs/v1/using#api_params
   # @see https://cloud.google.com/apis/docs/system-parameters
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def get_volumes(terms, **opt)
-    $stderr.puts
-    $stderr.puts ">>> get_volumes | terms = #{terms.inspect}"
     terms = query_terms!(terms, opt)
     lccns = terms.select { |v| v.start_with?('lccn:') }.presence
-    ids   = terms.map { |t| t.split(':', 2).first }.intersect?(ID_TYPES)
+    ids   = terms.map { |v| v.split(':', 2).first }.intersect?(ID_TYPES)
     opt[:foreign] = false unless ids
-    opt[:q] = terms.join(' ')
+    opt[:q] = make_query(terms)
 
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
 
     api(:get, 'volumes', **opt)
@@ -122,6 +125,10 @@ module LookupService::GoogleBooks::Request::Volumes
 
   protected
 
+  # Options for LookupService::Request#add_term.
+  # @private
+  OPT = { author: QUERY_PREFIX.slice(*AUTHOR_TYPES).values }.deep_freeze
+
   # query_terms!
   #
   # @param [LookupService::Request, Array<String>, String] terms
@@ -130,33 +137,27 @@ module LookupService::GoogleBooks::Request::Volumes
   # @return [Array<String>]
   #
   def query_terms!(terms, opt)
+    query = [*opt.delete(:q), *opt.delete(:query)].compact.presence
+    other = extract_hash!(opt, *QUERY_ALIAS).presence
     if terms.is_a?(LookupService::Request)
-      terms =
-        terms.request.map do |k, items|
-          if k == :ids
-            terms.identifiers
-          elsif items.present?
-            items.map do |item|
-              prefix, value = item.split(':', 2)
-              if prefix && value
-                prefix = QUERY_PREFIX[prefix.to_sym]
-              else
-                prefix, value = [nil, prefix]
-              end
-              [prefix, value].compact.join(':')
-            end
-          end
-        end
+      req = (query || other) ? terms.dup : terms
+    else
+      req = LookupService::Request.new
+      Array.wrap(terms).each { |term| req.add_term(term, **OPT) }
     end
-    terms = [*terms, *opt.delete(:q), *opt.delete(:query)]
-    terms.flatten!
-    terms.map! { |term| term.to_s.strip }
-    terms +=
-      (QUERY_ALIAS & opt.keys).flat_map do |prm|
-        prefix = QUERY_PREFIX[prm]
-        Array.wrap(opt.delete(prm)).map(&:to_s).map! { |v| "#{prefix}:#{v}" }
-      end
-    terms.compact_blank!
+    query&.each { |term| req.add_term(term, **OPT) }
+    other&.each { |prm, value| req.add_term(QUERY_PREFIX[prm], value, **OPT) }
+    req.terms
+  end
+
+  # Combine terms to make a Google Books query string.
+  #
+  # @param [Array<String>] terms
+  #
+  # @return [String]
+  #
+  def make_query(terms)
+    terms.join(' ')
   end
 
 end

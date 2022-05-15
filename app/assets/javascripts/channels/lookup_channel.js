@@ -1,11 +1,11 @@
 // app/assets/javascripts/channels/lookup_channel.js
 
 
-import { hexRand }       from '../shared/css'
-import { isPresent }     from '../shared/definitions'
-import { compact }       from '../shared/objects'
-import { asString }      from '../shared/strings'
-import { createChannel } from '../channels/consumer'
+import { hexRand }            from '../shared/css'
+import { isEmpty, isPresent } from '../shared/definitions'
+import { LookupRequest }      from '../shared/lookup-request'
+import { asString }           from '../shared/strings'
+import { createChannel }      from '../channels/consumer'
 
 
 // ============================================================================
@@ -14,28 +14,6 @@ import { createChannel } from '../channels/consumer'
 
 const CHANNEL = 'LookupChannel';
 const DEBUG   = true;
-
-/**
- * LookupRequestObject
- *
- * @typedef {{
- *     ids?:   string[],
- *     query?: string[],
- *     limit?: string[],
- * }} LookupRequestObject
- */
-
-/**
- * The valid prefixes for each request type.
- *
- * @constant
- * @type {LookupRequestObject}
- */
-const REQUEST_TYPE = {
-    ids:    ['isbn', 'issn', 'doi', 'oclc', 'lccn'],
-    query:  ['keyword', 'author', 'title'],  // TODO: expand
-    limit:  [], // TODO: none yet
-};
 
 // ============================================================================
 // Variables
@@ -139,77 +117,27 @@ export function setCallback(fn) {
  * Create a request object from the provided terms then invoke the server
  * method defined in lookup_channel.rb.
  *
- * @param {string|string[]} terms
- * @param {function} [callback]     Default: the function assigned via
- *                                      {@link setCallback}.
+ * @note {@link setCallback} is expected to have been called first.
+ *
+ * @param {string|string[]|LookupRequest|LookupRequestObject} terms
+ * @param {string|string[]}                                   [separator]
+ *
+ * @returns {boolean}
  *
  * @see "LookupChannel#lookup_request"
  */
-export function request(terms, callback) {
+export function request(terms, separator) {
     _debug('request', terms);
-    const request = isPresent(terms) && buildRequest(terms);
-    if (isPresent(request)) {
-        lookup_dat_cb = callback || lookup_dat_cb;
-        lookup_channel.perform('lookup_request', request);
-    } else {
+    let requested = false;
+    const request = LookupRequest.parts(terms, separator);
+    if (isEmpty(request)) {
         setError('No input');
+    } else if (!lookup_dat_cb) {
+        setError('No request callback set');
+    } else {
+        requested = !!lookup_channel.perform('lookup_request', request);
     }
-}
-
-/**
- * Create a lookup request object from the provided terms.
- *
- * @param {string|string[]} terms
- *
- * @returns {LookupRequestObject}
- */
-function buildRequest(terms) {
-    /** @type {LookupRequestObject} */
-    let request = { ids: [], query: [], limit: [] };
-    extractRequestParts(terms).forEach(function(part) {
-        let [prefix, ...value] = part.split(':');
-        if (isPresent(value)) {
-            value  = value.join(':');
-            prefix = prefix.toLowerCase();
-        } else {
-            value  = prefix;
-            prefix = value.match(/^\d+$/) ? 'isbn' : 'keyword';
-        }
-        let type;
-        $.each(REQUEST_TYPE, function(request_type, prefixes) {
-            if (prefixes.includes(prefix)) {
-                type = request_type;
-            }
-            return !type; // break loop if type found
-        });
-        type ||= 'query';
-        request[type].push(`${prefix}:${value}`);
-    });
-    return compact(request);
-}
-
-/**
- * Split the terms string into an array of terms of the form
- *
- * * prefix:value
- * * prefix:'value'     If the value string was single-quoted.
- * * prefix:"value"     If the value string was double-quoted.
- *
- * Terms can be separated by one or more space, tab, ',', ':', or '|'
- * characters.  Values which contain any of those characters must be quoted.
- *
- * @param {string} terms_string
- *
- * @returns {string[]}
- */
-function extractRequestParts(terms_string) {
-    let terms = terms_string;
-    const double_quoted_terms = terms.match(/[^\s,;|"']+:"[^"]*"/g) || [];
-    const single_quoted_terms = terms.match(/[^\s,;|"']+:'[^']*'/g) || [];
-    let parts = [...double_quoted_terms, ...single_quoted_terms];
-    parts.forEach(part => { terms = terms.replace(part, ' ') });
-    parts.push(...terms.trim().split(/[\s,;|]+/));
-    return compact(parts);
+    return requested;
 }
 
 // ============================================================================

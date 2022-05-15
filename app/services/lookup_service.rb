@@ -32,16 +32,16 @@ class LookupService
   # A table of defined external services and the bibliographic types they can
   # handle.  The entries are in descending order of preference.
   #
-  # @type [Hash{Class=>Set<Symbol>}]
+  # @type [Hash{Class=>Array<Symbol>}]
   #
   # @see LookupService::RemoteService::Properties#priority
   #
   SERVICE_TABLE =
     RemoteService.subclasses.select(&:enabled?).sort_by(&:name).map { |service|
-      [service, Set.new(service.types).freeze]
+      [service, service.types]
     }.sort_by { |service, types|
       [service.priority, -(types.size), service.name]
-    }.to_h.freeze
+    }.to_h.deep_freeze
 
   # ===========================================================================
   # :section: Class methods
@@ -118,8 +118,7 @@ class LookupService
   #
   def self.services_for(items, log: nil)
     log   = log.is_a?(TrueClass) ? __method__ : log.presence
-    items = LookupService::Request.wrap(items)
-    types = (Set.new(items.id_types) if items.id_types.present?)
+    types = LookupService::Request.wrap(items).id_types.presence
     SERVICE_TABLE.select { |service, service_types|
       service.enabled? && (types.nil? || types.intersect?(service_types)) or
         (Log.debug { "#{log}: #{service}: skipped" } if log)
@@ -200,20 +199,14 @@ class LookupService
         all_ids += ids
         ok_as_is ? entry : entry.merge(dc_identifier: ids)
       }
-    entries.compact!
-    # noinspection RubyNilAnalysis
-    request_ids =
-      case request
-        when LookupService::Request then request.identifiers
-        when Hash                   then request[:ids]
-        else                             request
-      end
-    match_ids =
-      Array.wrap(request_ids).presence&.map(&:to_s) ||
+    request &&= LookupService::Request.wrap(request)
+    matching_ids =
+      request&.identifiers&.map(&:to_s)&.presence ||
       all_ids.map(&:to_s).group_by(&:itself).keep_if { |_,ids| ids.many? }.keys
     result =
-      if match_ids.present?
-        entries.select! { |e| e[:dc_identifier].intersect?(match_ids) }
+      if matching_ids.present?
+        entries.compact!
+        entries.select! { |e| e[:dc_identifier].intersect?(matching_ids) }
         blend_data(*entries) if entries.present?
       end
     { blend: (result || {}) }

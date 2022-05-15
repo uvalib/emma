@@ -7,15 +7,6 @@ module LookupService::Common
 
   CONFIGURATION: Hash[Symbol,symHash]
 
-  # Generate a table of PublicationIdentifiers grouped by type.
-  #
-  # @param [Hash, Array, String, nil] item
-  # @param [Hash]                     opt   Passed to #id_obj.
-  #
-  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
-  #
-  def id_hash: (lookupHash|lookupItems|String|nil item, **untyped opt) -> lookupRequestHash
-
   # Generate a list of PublicationIdentifiers.
   #
   # @param [Array, String, nil] item

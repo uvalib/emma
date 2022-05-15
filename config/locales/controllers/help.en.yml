@@ -82,6 +82,17 @@ en:
           <<:           *SUBMISSION_TOPIC
           enabled:      debug
 
+        lookup_tool:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'lookup tool'
+          Topic:        'Bibliographic Lookup Tool'
+          tooltip:      'Help with this feature.'
+          intro:        |
+            This is a temporary interface to code being developed to support
+            improving the usefulness of EMMA submissions by making it easy to
+            fill in missing bibliographic metadata.
+          content:      ~ # @see file:app/views/help/topic/_lookup_tool.html.erb
+
       # =======================================================================
       # Illustrations
       # =======================================================================

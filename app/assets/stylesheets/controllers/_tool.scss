@@ -337,39 +337,66 @@ body.tool.lookup {
 
     .lookup-prompt {
 
-        $pad:    $gap;
-        $border: $pad * 0.25;
-        $color:  lighter($uva-blue, 75%);
-
         display:        flex;
         flex-direction: row;
-        gap:            $gap;
-        padding:        $pad;
-        max-width:      calc(50vw - (2 * (#{$pad} + #{$border})));
-        border:         $border solid $color;
-        border-radius:  $border * 2;
-        background:     $color;
+        gap:            $gap * 2;
+        max-width:      75vw;
 
-        > * {
-            line-height: 1.5;
-            margin:      auto 0;
-            font-size:   medium;
+        .item-terms {
+
+            $pad:    $gap;
+            $border: $pad * 0.25;
+            $color:  lighter($uva-blue, 75%);
+
+            display:        flex;
+            flex-direction: row;
+            gap:            $gap;
+            padding:        $pad;
+            border:         $border solid $color;
+            border-radius:  $border * 2;
+            background:     $color;
+            flex:           1 1 auto;
+
+            > * {
+                line-height: 1.5;
+                margin:      auto 0;
+                font-size:   medium;
+            }
+
+            label {
+                font-weight: bold;
+                font-size:   large;
+            }
+
+            input {
+                flex:        1 1 auto;
+            }
+
+            button {
+
+                @include button.basic;
+
+                background:  white;
+            }
         }
 
-        label {
-            font-weight: bold;
-            font-size:   large;
-        }
+        .item-separator {
 
-        input {
-            flex:        1 1 auto;
-        }
+            display:               grid;
+            grid-template-columns: auto 1fr;
+            gap:                   $gap * 0.5;
+            padding:               0.25rem 0.5rem;
+            border:                1px solid gray;
+            border-radius:         $gap * 0.5;
+            flex:                  0.125 1 auto;
 
-        button {
+            legend {
+                font-weight: bold;
+            }
 
-            @include button.basic;
-
-            background:  white;
+            input {
+                margin: auto 0.125rem;
+            }
         }
     }
 

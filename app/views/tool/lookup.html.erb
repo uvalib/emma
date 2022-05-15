@@ -5,7 +5,7 @@
   view_debug(__FILE__)
 
   title ||= t('emma.tool.lookup.title')
-  help  ||= nil # %i[tool lookup]
+  help  ||= %i[lookup_tool]
 
   unless modal?
     label = t('emma.tool.lookup.label', default: title)
@@ -13,24 +13,33 @@
     set_page_description(title)
   end
 
-  heading = 'results-heading'
-  ids     = 'item-ids'
-  results = 'item-results'
-  errors  = 'item-errors'
-  diag    = 'item-diagnostics'
-  unique  = hex_rand
+  heading   = 'results-heading'
+  terms     = 'item-terms'
+  separator = 'item-separator'
+  results   = 'item-results'
+  errors    = 'item-errors'
+  diag      = 'item-diagnostics'
+  unique    = hex_rand
 
-  ids_id      = "#{ids}-#{unique}"
-  heading_id  = "#{heading}-#{unique}"
-  results_id  = "#{results}-#{unique}"
-  errors_id   = "#{errors}-#{unique}"
-  diag_id     = "#{diag}-#{unique}"
+  heading_id    = "#{heading}-#{unique}"
+  terms_id      = "#{terms}-#{unique}"
+  separator_id  = "#{separator}-#{unique}"
+  results_id    = "#{results}-#{unique}"
+  errors_id     = "#{errors}-#{unique}"
+  diag_id       = "#{diag}-#{unique}"
 
-  heading_css = heading
-  ids_css     = ids
-  results_css = "#{results} value"
-  errors_css  = "#{errors} value"
-  diag_css    = "#{diag} value"
+  heading_css   = heading
+  terms_css     = terms
+  separator_css = separator
+  results_css   = "#{results} value"
+  errors_css    = "#{errors} value"
+  diag_css      = "#{diag} value"
+
+  separators = {
+    space: 'Space, tab, and <strong>|</strong> (pipe)'.html_safe,
+    pipe:  'Only <strong>|</strong> (pipe)'.html_safe
+  }
+  selected = :space
 
 -%>
 
@@ -39,9 +48,21 @@
 
 <%= page_directions_section %>
 <div class="lookup-prompt">
-  <label for="<%= ids_id -%>">Ids</label>
-  <input id="<%= ids_id -%>" name="ids" type="text" class="<%= ids_css -%>"/>
-  <button name="button" type="submit">Lookup</button>
+  <div class="<%= terms_css -%>">
+    <label for="<%= terms_id -%>">Query:</label>
+    <input id="<%= terms_id -%>" name="terms" type="text"/>
+    <button name="button" type="submit">Lookup</button>
+  </div>
+  <fieldset id="<%= separator_id -%>" class="<%= separator_css -%>">
+    <legend>Term Separators</legend>
+    <%- separators.each_with_index do |(value, text), index| -%>
+      <%- radio_id = "#{separator_id}-#{index}" -%>
+      <%- default  = selected ? (value == selected) : index.zero? -%>
+      <%- checked  = ('checked' if default) -%>
+      <input id="<%= radio_id -%>" name="separator" type="radio" value="<%= value -%>" <%= checked -%>/>
+      <label for="<%= radio_id -%>"><%= text -%></label>
+    <%- end -%>
+  </fieldset>
 </div>
 
 <h2 id="<%= heading_id -%>" class="<%= heading_css -%>">

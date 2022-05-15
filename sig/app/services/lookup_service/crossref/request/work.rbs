@@ -13,6 +13,8 @@ module LookupService::Crossref::Request::Work
 
   ID_TYPES: symArray
 
+  AUTHOR_TYPES: symArray
+
   # == GET https://api.crossref.org/works/DOI
   #
   # @param [String] doi
@@ -34,6 +36,8 @@ module LookupService::Crossref::Request::Work
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works
   #
   def get_work_list: (LookupService::Request|strArray|String terms, **untyped opt) -> Lookup::Crossref::Message::WorkResults
+
+  OPT: symHash
 
   def query_terms!: (LookupService::Request|strArray|String terms, **untyped opt) -> symHash
 end
