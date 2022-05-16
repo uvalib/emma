@@ -208,3 +208,28 @@ export function equivalent(item1, item2) {
     }
     return result;
 }
+
+/**
+ * Find the size of the largest array value.
+ *
+ * For an array of numbers, returns the maximum value.
+ * For any other array, returns the size of the largest element.
+ *
+ * @param {*}      item
+ * @param {number} [minimum]
+ *
+ * @returns {number}
+ */
+export function maxSize(item, minimum = 0) {
+    return arrayWrap(item).reduce(
+        function(max_size, item) {
+            let size = 0;
+            if (typeof item === 'number') {
+                size = item;
+            } else if (typeof item?.length === 'number') {
+                size = item.length;
+            }
+            return Math.max(size, max_size);
+        },
+    minimum);
+}

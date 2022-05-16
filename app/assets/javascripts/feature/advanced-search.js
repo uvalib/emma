@@ -1,12 +1,11 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
-import { Emma }                           from '../shared/assets'
-import { toggleVisibility }               from '../shared/accessibility'
-import { randomizeClass }                 from '../shared/css'
-import { consoleLog }                     from '../shared/logging'
-import { arrayWrap, compact, deepFreeze } from '../shared/objects'
-import { urlParameters }                  from '../shared/url'
+import { Emma }             from '../shared/assets'
+import { toggleVisibility } from '../shared/accessibility'
+import { randomizeClass }   from '../shared/css'
+import { consoleLog }       from '../shared/logging'
+import { urlParameters }    from '../shared/url'
 import {
     isDefined,
     isEmpty,
@@ -20,6 +19,12 @@ import {
     handleEvent,
     isEvent,
 } from '../shared/events'
+import {
+    arrayWrap,
+    compact,
+    deepFreeze,
+    maxSize
+} from '../shared/objects'
 
 
 $(document).on('turbolinks:load', function() {
@@ -141,15 +146,14 @@ $(document).on('turbolinks:load', function() {
     ]);
 
     /**
-     * The longest Select2 event name.
+     * The length of the longest Select2 event name.
      *
      * @constant
      * @type {number}
      *
      * @see logSelectEvent
      */
-    const MULTI_SELECT_EVENTS_WIDTH =
-        MULTI_SELECT_EVENTS.reduce((v, type) => Math.max(v, type.length), 0);
+    const MULTI_SELECT_EVENTS_WIDTH = maxSize(MULTI_SELECT_EVENTS);
 
     /**
      * Select2 events which precede the change which causes a new search to be
