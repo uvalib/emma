@@ -3,7 +3,7 @@
 
 import { Emma }             from '../shared/assets'
 import { toggleVisibility } from '../shared/accessibility'
-import { randomizeClass }   from '../shared/css'
+import { randomizeName }    from '../shared/css'
 import { consoleLog }       from '../shared/logging'
 import { urlParameters }    from '../shared/url'
 import {
@@ -1722,7 +1722,7 @@ $(document).on('turbolinks:load', function() {
         $(dst).each(function() {
             let $dst      = $(this);
             let $hidden   = $dst.find('input[type="hidden"]');
-            const base_id = $dst.attr('id') || randomizeClass(base);
+            const base_id = $dst.attr('id') || randomizeName(base);
             $.each(values, function(name, value) {
                 const type     = name.replace('[]', '');
                 const selector = `[name="${type}"]`;

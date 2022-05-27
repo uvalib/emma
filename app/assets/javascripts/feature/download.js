@@ -2,7 +2,7 @@
 
 
 import { Emma }                                from '../shared/assets'
-import { cssClass, randomizeClass, selector }  from '../shared/css'
+import { cssClass, randomizeName, selector }   from '../shared/css'
 import { isMissing, isPresent }                from '../shared/definitions'
 import { handleClickAndKeypress, handleEvent } from '../shared/events'
 import { create, scrollIntoView }              from '../shared/html'
@@ -489,7 +489,7 @@ $(document).on('turbolinks:load', function() {
         let $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
 
         // Start with a title.
-        const id   = randomizeClass(MEMBER_POPUP.name);
+        const id   = randomizeName(MEMBER_POPUP.name);
         let $title = create(MEMBER_POPUP.title).attr('for', id);
         $panel.attr('id', id);
 

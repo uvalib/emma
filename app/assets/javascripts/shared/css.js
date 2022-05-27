@@ -69,7 +69,7 @@ export function hexRand(length = DEF_HEX_DIGITS) {
  *
  * @returns {string}
  */
-export function randomizeClass(css_class) {
+export function randomizeName(css_class) {
     return css_class + '-' + hexRand();
 }
 
