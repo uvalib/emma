@@ -3,6 +3,9 @@
 class LookupJobRecord < GoodJob::ActiveJobJob
   include JobMethods
 
+  def self.activity_column: () -> Symbol
+  def activity_column:      () -> Symbol
+
   # Select only the 'good_jobs' records involving this client request.
   #
   # @param [String] stream

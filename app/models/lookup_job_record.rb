@@ -11,6 +11,13 @@ class LookupJobRecord < GoodJob::ActiveJobJob
 
   include JobMethods
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    extend JobMethods
+    # :nocov:
+  end
+
   # ===========================================================================
   # :section: ActiveRecord associations
   # ===========================================================================
@@ -26,6 +33,23 @@ class LookupJobRecord < GoodJob::ActiveJobJob
   public
 
   delegate :for, :service, :stream_name, to: :class
+
+  # ===========================================================================
+  # :section: JobMethods overrides
+  # ===========================================================================
+
+  public
+
+  # The database column checked against the time of last reboot to determine
+  # whether the record is defunct.
+  #
+  # @return [Symbol]
+  #
+  def self.activity_column
+    :finished_at
+  end
+
+  delegate :activity_column, to: :class
 
   # ===========================================================================
   # :section: Class methods

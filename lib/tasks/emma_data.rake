@@ -133,6 +133,63 @@ namespace :emma_data do
 
   # ===========================================================================
 
+  namespace :outdated do
+
+    desc 'List databases unchanged since the last reboot'
+    task list: :load_models do
+      # @type [JobMethods] rc
+      record_classes.each do |rc|
+        if (count = rc.outdated_count)
+          $stdout.puts "#{count}\t#{rc.name}"
+        end
+      end
+    end
+
+    desc 'Remove records from select databases unchanged since the last reboot'
+    task clean: :load_models do
+      # @type [JobMethods] rc
+      record_classes.each do |rc|
+        if (count = rc.outdated_count)
+          result = rc.try(:outdated_delete)
+          if result == count
+            result = "#{result} records deleted"
+          elsif result
+            result = "response: #{result}"
+          else
+            result = 'unchanged: no :outdated_delete defined'
+          end
+          $stdout.puts "#{rc.name} - #{result}"
+        end
+      end
+    end
+
+    # desc 'Required prerequisites for tasks in this namespace.'
+    task load_models: :prerequisites do
+      require_subdirs Rails.root.join('app/models')
+    end
+
+    # =========================================================================
+    # Methods
+    # =========================================================================
+
+    public
+
+    # All ActiveRecord classes that respond to :outdated.
+    #
+    # @return [Array<ActiveRecord::Base>]
+    #
+    def record_classes(c = ActiveRecord::Base)
+      # noinspection RubyNilAnalysis, SpellCheckingInspection
+      return []  if c.name.nil? || c.name.start_with?('HABTM_')
+      # noinspection RubyMismatchedReturnType
+      return [c] if c.ancestors.include?(JobMethods)
+      c.subclasses.flat_map { |sc| record_classes(sc) }.compact
+    end
+
+  end
+
+  # ===========================================================================
+
   # desc 'Required prerequisites for tasks in this namespace.'
   task prerequisites: %w(environment db:load_config)
 
@@ -141,5 +198,8 @@ namespace :emma_data do
 
   # desc 'An alias for "rake emma_data:reindex".'
   task bulk_reindex: :reindex
+
+  # desc 'An alias for "rake emma_data:outdated:list".'
+  task outdated: 'outdated:list'
 
 end

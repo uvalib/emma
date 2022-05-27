@@ -3,13 +3,38 @@
 module JobMethods
   extend ActiveSupport::Concern
 
+  # The database column checked against the time of last reboot to determine
+  # whether the record is defunct.
+  #
+  # @return [Symbol]
+  #
+  def activity_column: () -> Symbol
+
+  # Select the records that have not been updated since the last reboot.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def outdated: () -> ActiveRecord::Relation
+
+  # Indicate how many records have not been updated since the last reboot.
+  #
+  # @return [Integer]
+  #
+  def outdated_count: () -> Integer
+
   # Select the records that have not been updated since the last reboot.
   #
   # @param [String,Symbol,Hash] sort_order
   #
   # @return [ActiveRecord::Relation]
   #
-  def outdated: (?sort_order: String|Symbol|anyHash) -> ActiveRecord::Relation
+  def outdated_list: (?sort_order: String|Symbol|anyHash) -> ActiveRecord::Relation
+
+  # Remove the records that have not been updated since the last reboot.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def outdated_delete:  () -> Integer
 
   private
 
