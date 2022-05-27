@@ -133,13 +133,25 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
+     * Normally 'string[]' but may be received as 'string'.
+     * 
+     * @typedef {string[]|string} multiString
+     */
+
+    /**
+     * Normally 'string' but may be received as 'string[]'.
+     *
+     * @typedef {string|string[]} singleString
+     */
+
+    /**
      * EMMA metadata for the submission.
      *
      * @typedef {{
      *      emma_recordId:                      string,
      *      emma_titleId:                       string,
      *      emma_repository:                    string,
-     *      emma_collection:                    string|string[],
+     *      emma_collection:                    multiString,
      *      emma_repositoryRecordId:            string,
      *      emma_retrievalLink:                 string,
      *      emma_webPageLink:                   string,
@@ -150,43 +162,42 @@ $(document).on('turbolinks:load', function() {
      *      emma_publicationDate:               string,
      *      emma_lastRemediationNote:           string,
      *      emma_formatVersion:                 string,
-     *      emma_formatFeature:                 string|string[],
-     *      dc_title:                           string,
-     *      dc_creator:                         string|string[],
-     *      dc_identifier:                      string|string[],
-     *      dc_publisher:                       string,
-     *      dc_relation:                        string|string[],
-     *      dc_language:                        string|string[],
-     *      dc_rights:                          string,
-     *      dc_description:                     string,
-     *      dc_format:                          string,
-     *      dc_type:                            string,
-     *      dc_subject:                         string|string[],
-     *      dcterms_dateAccepted:               string,
-     *      dcterms_dateCopyright:              string,
-     *      s_accessibilityFeature:             string[],
-     *      s_accessibilityControl:             string[],
-     *      s_accessibilityHazard:              string[],
-     *      s_accessMode:                       string[],
-     *      s_accessModeSufficient:             string[],
-     *      s_accessibilitySummary:             string,
-     *      rem_source:                         string,
-     *      rem_metadataSource:                 string|string[],
-     *      rem_remediatedBy:                   string|string[],
+     *      emma_formatFeature:                 multiString,
+     *      dc_title:                           singleString,
+     *      dc_creator:                         multiString,
+     *      dc_identifier:                      multiString,
+     *      dc_publisher:                       singleString,
+     *      dc_relation:                        multiString,
+     *      dc_language:                        multiString,
+     *      dc_rights:                          singleString,
+     *      dc_description:                     singleString,
+     *      dc_format:                          singleString,
+     *      dc_type:                            singleString,
+     *      dc_subject:                         multiString,
+     *      dcterms_dateAccepted:               singleString,
+     *      dcterms_dateCopyright:              singleString,
+     *      s_accessibilityFeature:             multiString,
+     *      s_accessibilityControl:             multiString,
+     *      s_accessibilityHazard:              multiString,
+     *      s_accessMode:                       multiString,
+     *      s_accessModeSufficient:             multiString,
+     *      s_accessibilitySummary:             singleString,
+     *      rem_source:                         singleString,
+     *      rem_metadataSource:                 multiString,
+     *      rem_remediatedBy:                   multiString,
      *      rem_complete:                       boolean,
-     *      rem_coverage:                       string,
-     *      rem_remediation:                    string|string[],
-     *      rem_remediatedAspects:              string|string[],
-     *      rem_textQuality:                    string,
-     *      rem_quality:                        string,
-     *      rem_status:                         string,
-     *      rem_remediationDate:                string,
-     *      rem_comments:                       string,
-     *      rem_remediationComments:            string,
-     *      bib_series:                         string,
-     *      bib_seriesType:                     string,
-     *      bib_seriesPosition:                 string,
-     *      bib_version:                        string,
+     *      rem_coverage:                       singleString,
+     *      rem_remediation:                    multiString,
+     *      rem_remediatedAspects:              multiString,
+     *      rem_textQuality:                    singleString,
+     *      rem_quality:                        singleString,
+     *      rem_status:                         singleString,
+     *      rem_remediationDate:                singleString,
+     *      rem_comments:                       singleString,
+     *      rem_remediationComments:            singleString,
+     *      bib_series:                         singleString,
+     *      bib_seriesType:                     singleString,
+     *      bib_seriesPosition:                 singleString,
      * }} EmmaData
      *
      * @see "en.emma.entry.record.emma_data"
@@ -2639,7 +2650,6 @@ $(document).on('turbolinks:load', function() {
                 bib_series:                         FROM_PARENT,
                 bib_seriesType:                     FROM_PARENT,
                 bib_seriesPosition:                 FROM_PARENT,
-                bib_version:                        FROM_PARENT,
             };
 
             let update = {};
