@@ -1034,10 +1034,11 @@ $(document).on('turbolinks:load', function() {
         const func   = 'updatedSearchTerm';
         const target = event.currentTarget || event.target;
         let $input   = getSearchInput(target, func);
-        const prev_t = $input.data('timestamp');
+        const time   = 'timestamp';
+        const prev_t = $input.data(time);
         const this_t = event.timeStamp;
         if (!prev_t || (prev_t < this_t)) {
-            $input.data('timestamp', this_t);
+            $input.data(time, this_t);
         }
         if (!prev_t || ((prev_t + (2 * DEBOUNCE_DELAY)) < this_t)) {
             setSearchTerm($input, $input.val(), func);

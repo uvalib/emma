@@ -290,12 +290,12 @@ $(document).on('turbolinks:load', function() {
     const BUTTON_SELECTOR = selector(Emma.Download.button.class);
 
     /**
-     * Name of the data attribute holding the link's retry period.
+     * For the data() item holding the link's retry period.
      *
      * @readonly
      * @type {string}
      */
-    const RETRY_ATTRIBUTE = 'retry';
+    const RETRY_DATA = 'retry';
 
     // ========================================================================
     // Event handlers
@@ -864,11 +864,10 @@ $(document).on('turbolinks:load', function() {
             $link.data('path', url);
         }
         debug(func, 'FROM', url);
-        const new_tip = $link.data('complete_tooltip');
+        const new_tip = $link.attr('data-complete-tooltip');
         if (new_tip) {
-            const original_tip = $link.attr('title');
-            $link.data('tooltip', original_tip);
-            $link.attr('title', new_tip);
+            $link.attr('data-tooltip', $link.attr('title'));
+            $link.attr('title',        new_tip);
         }
         $link.addClass('disabled').attr('tabindex', -1);
         let $button = $link.siblings(BUTTON_SELECTOR);
@@ -881,10 +880,10 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function hideDownloadButton(link) {
-        let $link          = $(link);
-        const original_tip = $link.data('tooltip');
-        if (original_tip) {
-            $link.attr('title', original_tip);
+        let $link     = $(link);
+        const old_tip = $link.attr('data-tooltip');
+        if (old_tip) {
+            $link.attr('title', old_tip);
         }
         $link.removeData('path');
         $link.removeClass('disabled').removeAttr('tabindex');
@@ -934,7 +933,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {number|undefined}
      */
     function getRetryPeriod($link) {
-        return $link.data(RETRY_ATTRIBUTE);
+        return $link.data(RETRY_DATA);
     }
 
     /**
@@ -945,7 +944,7 @@ $(document).on('turbolinks:load', function() {
      */
     function setRetryPeriod($link, value) {
         const period = value || defaultRetryPeriod($link);
-        $link.data(RETRY_ATTRIBUTE, period);
+        $link.data(RETRY_DATA, period);
     }
 
     /**
@@ -954,7 +953,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function clearRetryPeriod($link) {
-        $link.removeData(RETRY_ATTRIBUTE);
+        $link.removeData(RETRY_DATA);
     }
 
     /**

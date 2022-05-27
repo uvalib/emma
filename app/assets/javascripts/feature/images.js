@@ -63,7 +63,7 @@ $(document).on('turbolinks:load', function() {
     $placeholders.each(function() {
         let $image = $(this);
         let src;
-        if ((src = $image.data('path'))) {
+        if ((src = $image.attr('data-path'))) {
             debug('FETCHING IMAGE data-path ==', src);
             loadImage($image, src);
         } else if ((src = $image.attr('src')) && src.match(/^http/)) {
@@ -89,7 +89,7 @@ $(document).on('turbolinks:load', function() {
     function loadImage(image, source) {
         const func  = 'loadImage:';
         let $image  = $(image || this);
-        const src   = source || $image.data('path') || $image.attr('src');
+        const src   = source || $image.attr('data-path') || $image.attr('src');
         const url   = urlProxyPath(src);
         const start = Date.now();
 

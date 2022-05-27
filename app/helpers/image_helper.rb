@@ -95,7 +95,8 @@ module ImageHelper
 
   # Placeholder image.
   #
-  # If :alt text is provided in *opt* it is preserved as 'data-alt'.
+  # If :alt text is provided in *opt* it is preserved as 'data-alt', along with
+  # *url* in 'data-path'.
   #
   # @param [String]      url
   # @param [String, nil] image        Default: 'loading-balls.gif'

@@ -131,7 +131,7 @@ $(document).on('turbolinks:load', function() {
      */
     function getPanelSelector(button) {
         let $button = $(button);
-        return $button.data('selector') || ('#' + getPanelId($button));
+        return $button.attr('data-selector') || ('#' + getPanelId($button));
     }
 
     /**

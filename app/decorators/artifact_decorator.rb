@@ -217,7 +217,7 @@ class ArtifactDecorator < BookshareDecorator
     # The tooltip to be shown when the item is actually available for download.
     tip_key = 'emma.download.link.complete.tooltip'
     tip_opt = { button: DOWNLOAD_BUTTON_LABEL, default: DOWNLOAD_COMPLETE_TIP }
-    opt[:'data-complete_tooltip'] = I18n.t(tip_key, **tip_opt)
+    opt[:'data-complete-tooltip'] = I18n.t(tip_key, **tip_opt)
     opt[:'data-turbolinks']       = false
 
     # Auxiliary control elements which are initially hidden.

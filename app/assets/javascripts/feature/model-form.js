@@ -558,6 +558,14 @@ $(document).on('turbolinks:load', function() {
         CANCELED:   'canceled'
     });
 
+    /**
+     * Key for the data() value holding the state of the form.
+     *
+     * @readonly
+     * @type {string}
+     */
+    const FORM_STATE_DATA = 'formState';
+
     // ========================================================================
     // Constants - field validation
     // ========================================================================
@@ -3031,8 +3039,8 @@ $(document).on('turbolinks:load', function() {
         const tip = submitReadyTooltip($form);
         return submitButton($form)
             .addClass('best-choice')
-            .removeClass('disabled forbidden')
-            .removeAttr('disabled')
+            .removeClass('forbidden disabled')
+            .prop('disabled', false)
             .attr('title', tip)
             .attr('data-state', 'ready');
     }
@@ -3050,7 +3058,7 @@ $(document).on('turbolinks:load', function() {
         return submitButton($form)
             .removeClass('best-choice')
             .addClass('forbidden')
-            .attr('disabled', true)
+            .prop('disabled', true)
             .attr('title', tip)
             .attr('data-state', 'not-ready');
     }
@@ -3895,8 +3903,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string|undefined}
      */
     function formState(form) {
-        const attr = 'form-state';
-        return formElement(form).data(attr);
+        return formElement(form).data(FORM_STATE_DATA);
     }
 
     /**
@@ -3917,13 +3924,12 @@ $(document).on('turbolinks:load', function() {
      * @returns {string|undefined}
      */
     function setFormState(form, state) {
-        const attr  = 'form-state';
         let $form   = formElement(form);
         const value = isDefined(state) ? state.toString() : undefined;
         if (isDefined(value)) {
-            $form.data(attr, value);
+            $form.data(FORM_STATE_DATA, value);
         } else {
-            $form.removeData(attr);
+            $form.removeData(FORM_STATE_DATA);
         }
         return value;
     }

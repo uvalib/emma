@@ -136,10 +136,11 @@ $(document).on('turbolinks:load', function() {
 
         // Include the ID of the iframe for logging.
         if (DEBUGGING) {
-            let id = $popup.data('id');
-            id = id || $iframe.attr('id');
-            id = id || ($placeholder.data('attr') || {}).id;
-            func += ` ${id || 'unknown'}:`;
+            let id = $popup.data('id') || $iframe.attr('id');
+            // noinspection JSUnresolvedVariable
+            id ||= decodeObject($placeholder.attr('data-attr')).id;
+            id ||= 'unknown';
+            func += ` ${id}:`;
         }
 
         // Restore placeholder text if necessary.
@@ -236,7 +237,8 @@ $(document).on('turbolinks:load', function() {
         const func       = 'fetchContent:';
         let $placeholder = $(placeholder || this);
         let $popup       = $placeholder.parents(PANEL).first();
-        const source_url = $placeholder.data('path');
+        const source_url = $placeholder.attr('data-path');
+        const attributes = $placeholder.attr('data-attr');
 
         // Validate parameters and return if there is missing information.
         let error = undefined;
@@ -257,9 +259,8 @@ $(document).on('turbolinks:load', function() {
 
         // Setup the element that will actually contain the received content
         // then fetch it.  The element will appear only if successfully loaded.
-        // noinspection HtmlUnknownTag
         let $content = $(`<${type}>`);
-        $content.attr(decodeObject($placeholder.data('attr')));
+        if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
         $content.addClass(HIDDEN_MARKER);
         $content.insertAfter($placeholder);
         handleEvent($content, 'error', onError);
@@ -302,7 +303,7 @@ $(document).on('turbolinks:load', function() {
                 // The initial load of the popup target page.
                 debug(func, type, 'LOAD');
                 const iframe = $content[0].contentDocument;
-                const topic  = $placeholder.data('topic');
+                const topic  = $placeholder.attr('data-topic');
 
                 // Record the initial page and anchor displayed in the <iframe>
                 $popup.data('id',    $content[0].id); // For logging.
