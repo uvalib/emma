@@ -134,6 +134,19 @@ export function deepFreeze(item) {
 }
 
 /**
+ * Make a deep copy of the given item.
+ *
+ * @template T
+ *
+ * @param {T} item
+ *
+ * @returns {T}
+ */
+export function deepDup(item) {
+    return dup(item, true);
+}
+
+/**
  * Make a duplicate of the given item.
  *
  * @template T
@@ -160,24 +173,24 @@ export function dup(item, deep) {
  * Make a duplicate of the given array.
  *
  * @param {array|undefined} item
- * @param {boolean}         [deep]
+ * @param {boolean}         [shallow]   If *true* make a shallow copy.
  *
  * @returns {array}
  */
-export function dupArray(item, deep) {
-    return Array.isArray(item) ? dup(item, deep) : [];
+export function dupArray(item, shallow) {
+    return Array.isArray(item) ? dup(item, !shallow) : [];
 }
 
 /**
  * Make a duplicate of the given object.
  *
  * @param {object|undefined} item
- * @param {boolean}          [deep]
+ * @param {boolean}          [shallow]  If *true* make a shallow copy.
  *
  * @returns {object}
  */
-export function dupObject(item, deep) {
-    return (typeof item === 'object') ? dup(item, deep) : {};
+export function dupObject(item, shallow) {
+    return (typeof item === 'object') ? dup(item, !shallow) : {};
 }
 
 /**

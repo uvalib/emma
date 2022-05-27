@@ -1,13 +1,13 @@
 // app/assets/javascripts/shared/api.js
 
 
-import { BaseClass }      from '../shared/base-class'
-import { isEmpty }        from '../shared/definitions'
-import { HTTP }           from '../shared/http'
-import { dup, dupObject } from '../shared/objects'
-import { makeUrl }        from '../shared/url'
-import * as xhr           from '../shared/xhr'
-import { Rails }          from '../vendor/rails'
+import { BaseClass } from '../shared/base-class'
+import { isEmpty }   from '../shared/definitions'
+import { HTTP }      from '../shared/http'
+import { dupObject } from '../shared/objects'
+import { makeUrl }   from '../shared/url'
+import * as xhr      from '../shared/xhr'
+import { Rails }     from '../vendor/rails'
 
 
 // ============================================================================
@@ -96,8 +96,8 @@ export class Api extends BaseClass {
 
         let caller_cb, settings;
         switch (typeof opt) {
-            case 'function': caller_cb = opt;      break;
-            case 'object':   settings  = dup(opt); break;
+            case 'function': caller_cb = opt;            break;
+            case 'object':   settings  = dupObject(opt); break;
         }
         caller_cb ||= cb || this.callback;
         settings  ||= {};
