@@ -119,6 +119,8 @@ class LookupJob < ActiveJob::Base
   JOB_STATUS = {
     worker: {
       nil =>    'WORKING',
+      late:     'LATE',
+      done:     'DONE',
     },
     waiter: {
       nil =>    'WAITING',
@@ -160,14 +162,15 @@ class LookupJob < ActiveJob::Base
     timeout  = opt.delete(:timeout)
     deadline = opt.delete(:deadline) || (timeout && (start + timeout))
 
-    $stderr.puts "**** WORKER_TASK | #{request.class} | #{request.inspect}"
-
     # Perform lookup on the external service.
-    response = LookupService.get_from(service, request)
-    response[:status] = JOB_STATUS[:worker][status]
-    response[:job_id] = job_id
-    response[:time]   = Time.now
-    response[:late]   = positive_float(timestamp - deadline) if deadline
+    response =
+      LookupService.get_from(service, request).tap do |rsp|
+        late   = deadline && positive_float(timestamp - deadline)
+        status = late && :late || status || :done
+        rsp[:status] = JOB_STATUS[:worker][status]
+        rsp[:job_id] = job_id
+        rsp[:late]   = late if late
+      end
     result = response.to_h
     error  = response.error
     diag   = response.diagnostic
@@ -232,22 +235,20 @@ class LookupJob < ActiveJob::Base
       }.compact
     job_data = Concurrent::Hash[job_list.map { |jid| [jid, nil] }]
 
-    $stderr.puts
-    $stderr.puts "------------- JOB | INIT job_data = #{job_data.inspect}"
-
     # Await task completions.
-    ActiveSupport::Notifications.subscribe(WAITER_NOTIFICATION) do |*args|
-      data = args.last&.dig(:result)&.try(:value)
+    ActiveSupport::Notifications.subscribe(WAITER_NOTIFICATION) do
+      # @type [String] _event_name
+      # @type [Time]   _event_start
+      # @type [Time]   _event_finish
+      # @type [String] _event_id
+      # @type [Hash]   event_payload
+      |_event_name, _event_start, _event_finish, _event_id, event_payload|
+      data = event_payload&.dig(:result)&.try(:value)
       job  = data&.dig(:active_job_id)
-      $stderr.puts
-      $stderr.puts "------------- JOB #{job.inspect}"
       if job_data.key?(job)
         overtime      = deadline && positive_float(timestamp - deadline)
         job_data[job] = data.except(:active_job_id)
         job_data[job][:late] ||= overtime if overtime
-        $stderr.puts "------------- JOB | data     = #{job_data[job].inspect}"
-        $stderr.puts "------------- JOB | complete = #{job_data.values.none?(&:nil?)}"
-        $stderr.puts "------------- JOB | timeout  = #{deadline && (timestamp > deadline)}"
         if job_data.values.none?(&:nil?)
           ActiveSupport::Notifications.unsubscribe(WAITER_NOTIFICATION)
           error  = []
@@ -269,7 +270,6 @@ class LookupJob < ActiveJob::Base
               rsp[:discard] = error if error.present?
               rsp[:data]    = LookupService.merge_data(job_data, request)
             }.compact_blank!
-          $stderr.puts "------------- JOB | result   = #{result.inspect}"
           record.update(output: result)
           LookupChannel.lookup_response(result, **opt)
         end
