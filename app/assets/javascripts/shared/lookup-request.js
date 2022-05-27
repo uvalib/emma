@@ -10,6 +10,7 @@ import { arrayWrap, deepFreeze } from '../shared/objects'
 // Class Queue
 // ============================================================================
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * A lookup request object formed by parsing one or more term strings.
  */

@@ -79,7 +79,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The database holding search result item data across pages.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const DB_NAME = 'emma_search';
@@ -90,7 +90,7 @@ $(document).on('turbolinks:load', function() {
      * @note This must be incremented every time DB_STORE_TEMPLATE or DB_STORES
      *  are changed in any way.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const DB_VERSION = 2;
@@ -98,6 +98,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Search analysis items in sessionStorage all begin with this prefix.
      *
+     * @readonly
      * @type {string}
      */
     const KEY_PREFIX = 'search-analysis';
@@ -143,7 +144,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Current URL parameters.
      *
-     * @constant
+     * @readonly
      * @type {object}
      */
     const params = urlParameters();
@@ -151,7 +152,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Current search page.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const PAGE_NUMBER = Number(params['page']) || FIRST_PAGE;
@@ -159,7 +160,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Current search page size.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const PAGE_SIZE = Number(params['limit']) || DEFAULT_LIMIT;
@@ -167,7 +168,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Item number offset for the first search result item on the current page.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const PAGE_OFFSET = 1 + (PAGE_SIZE * (PAGE_NUMBER - FIRST_PAGE));
@@ -175,7 +176,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class for the style control buttons.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BUTTON_TRAY_CLASS = Emma.Search.Style.container.class;
@@ -183,7 +184,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Advanced experimental controls.
      *
-     * @constant
+     * @readonly
      * @type {Object<StyleControlProperties>}
      */
     const BUTTON_CONFIG = Emma.Search.Style.control.buttons;
@@ -191,7 +192,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class for the button(s) for removing advanced feature controls.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const EXIT_BUTTON_CLASS = BUTTON_CONFIG.restore.class;
@@ -451,7 +452,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Properties for each object store.
      *
-     * @constant
+     * @readonly
      * @type {StoreTemplate}
      */
     const DB_STORE_TEMPLATE = {
@@ -470,7 +471,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Individual object stores within the search data database.
      *
-     * @constant
+     * @readonly
      * @type {Object<StoreTemplate>}
      */
     const DB_STORES = (function() {
@@ -482,7 +483,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The current object store.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const DB_STORE_NAME = `style_${listStyle()}`;
@@ -501,7 +502,7 @@ $(document).on('turbolinks:load', function() {
      *     record_id:    string,
      *     repo_id:      string,
      *     identifier:   string[],
-     *     db_timestamp: Date
+     *     db_timestamp: Date,
      * }} SearchDataRecord
      */
 
@@ -510,7 +511,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @typedef {{
      *     element: jQuery,
-     *     data:    SearchDataRecord
+     *     data:    SearchDataRecord,
      * }} PageItem
      */
 
@@ -739,13 +740,13 @@ $(document).on('turbolinks:load', function() {
     /**
      * Current search results sort order.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const SORT_ORDER = params['sort'] || 'relevancy';
 
     /**
-     * @const
+     * @readonly
      * @type {Object<string>}
      */
     const SORTED = {
@@ -758,7 +759,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Indication of a blank value.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BLANK = Emma.Upload.Field.empty;
@@ -770,7 +771,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS marker class indicating an erroneous item.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const ERROR_MARKER = 'error';
@@ -778,7 +779,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Tooltip text for an erroneous item. // TODO: I18n
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const ERROR_TOOLTIP = 'THIS ITEM IS OUT-OF-SEQUENCE';
@@ -786,7 +787,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Tooltip text for an erroneous item. // TODO: I18n
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const ERROR_JUMP_TOOLTIP =
@@ -796,7 +797,7 @@ $(document).on('turbolinks:load', function() {
      * CSS marker class indicating the metadata field associated with the
      * current topic.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const IDENTITY_MARKER = 'identity-highlight';
@@ -804,7 +805,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS marker class indicating an erroneous item.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const EXILE_MARKER = 'exile';
@@ -812,7 +813,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Tooltip text for an erroneous item. // TODO: I18n
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const LATE_EXILE_TOOLTIP =
@@ -821,7 +822,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Tooltip text for an erroneous item. // TODO: I18n
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const EARLY_EXILE_TOOLTIP =
@@ -830,7 +831,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Narrow no-break space.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const NNBS = "\u202F";
@@ -838,7 +839,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Maximum integer color value.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const COLOR_RANGE = HEX_BASE ** DEF_HEX_DIGITS;
@@ -846,7 +847,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Used when generating a new contrasting item title background color.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const COLOR_OFFSET_LIMIT = 0x0f0000;
@@ -1472,8 +1473,8 @@ $(document).on('turbolinks:load', function() {
          * ColorizeState
          *
          * @typedef {{
-         *     topic:  ?(string|null|undefined),
-         *     search: ?(object|null|undefined)
+         *     topic?:  string|null|undefined,
+         *     search?: object|null|undefined,
          * }} ColorizeState
          */
 

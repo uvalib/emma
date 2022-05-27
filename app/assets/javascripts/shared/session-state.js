@@ -204,7 +204,7 @@ export class SessionToggle extends SessionState {
      * ToggleState
      *
      * @typedef {{
-     *     enabled: ?(string|null|undefined),
+     *     enabled?: string|null|undefined,
      * }} ToggleState
      */
 

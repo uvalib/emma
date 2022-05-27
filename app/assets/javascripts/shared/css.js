@@ -12,7 +12,7 @@ import { arrayWrap, compact } from '../shared/objects'
 /**
  * Hexadecimal numbering system base.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const HEX_BASE = 16;
@@ -20,7 +20,7 @@ export const HEX_BASE = 16;
 /**
  * Default digits for {@link hexRand}.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const DEF_HEX_DIGITS = 6;

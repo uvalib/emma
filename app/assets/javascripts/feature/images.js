@@ -26,7 +26,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = true;
@@ -34,7 +34,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Placeholder CSS class.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const PLACEHOLDER_CLASS = Emma.Image.placeholder.class;
@@ -42,7 +42,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Placeholder alt text.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const PLACEHOLDER_ALT = Emma.Image.placeholder.alt;
@@ -50,7 +50,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Placeholder image source.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const PLACEHOLDER_SRC = Emma.Image.placeholder.asset;

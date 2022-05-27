@@ -24,7 +24,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = true;
@@ -33,6 +33,7 @@ $(document).on('turbolinks:load', function() {
      * If *true*, save the open/closed state of panels to session storage and
      * restore the state when returning to the page.
      *
+     * @readonly
      * @type {boolean}
      */
     const RESTORE_PANEL_STATE = false;
@@ -40,7 +41,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * State value indicating that the panel is displayed.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const OPEN = 'open';
@@ -48,7 +49,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * State value indicating that the panel is hidden.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const CLOSED = 'closed';
@@ -56,7 +57,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Marker class indicating that the panel is displayed.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const OPEN_MARKER = 'open';

@@ -36,7 +36,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = false;
@@ -62,7 +62,7 @@ $(document).on('turbolinks:load', function() {
      * by neutralizing the z-index for elements outside its stacking context.
      * This property holds the set of elements which have been affected.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const Z_CAPTURES_PROP = 'z-captured-elements';
@@ -71,7 +71,7 @@ $(document).on('turbolinks:load', function() {
      * The property assigned to an element whose z-index has been neutralized
      * which holds the original z-index value to be restored.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const Z_RESTORE_PROP = 'current-z-index';

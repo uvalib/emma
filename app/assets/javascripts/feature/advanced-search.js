@@ -48,7 +48,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = false;
@@ -56,7 +56,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * State value indicating the search filter panel is open (expanded).
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const OPEN = 'open';
@@ -64,7 +64,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * State value indicating the search filter panel is closed (contracted).
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const CLOSED = 'closed';
@@ -72,7 +72,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Marker class indicating the search filter panel is open (expanded).
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const OPEN_MARKER = 'open';
@@ -80,7 +80,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The search target controller embedded in the HTML.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const SEARCH_TARGET = $search_sections.attr('data-target') || 'search';
@@ -88,7 +88,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Search types and their display properties.
      *
-     * @constant
+     * @readonly
      * @type {object}
      */
     const SEARCH_TYPE = Emma.Search.type[SEARCH_TARGET] || [];
@@ -96,7 +96,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Search types.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const SEARCH_TYPES = deepFreeze(Object.keys(SEARCH_TYPE));
@@ -105,7 +105,7 @@ $(document).on('turbolinks:load', function() {
      * How long to wait after the user enters characters into a search input
      * box before re-checking search readiness.
      *
-     * @constant
+     * @readonly
      * @type {number}
      *
      * @see monitorSearchFields
@@ -119,7 +119,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for <select> elements managed by Select2.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const SELECT2_MULTI_SELECT = '.select2-hidden-accessible';
@@ -127,7 +127,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Events exposed by Select2.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const MULTI_SELECT_EVENTS = deepFreeze([
@@ -148,7 +148,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The length of the longest Select2 event name.
      *
-     * @constant
+     * @readonly
      * @type {number}
      *
      * @see logSelectEvent
@@ -159,7 +159,7 @@ $(document).on('turbolinks:load', function() {
      * Select2 events which precede the change which causes a new search to be
      * performed.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const PRE_CHANGE_EVENTS =
@@ -169,7 +169,7 @@ $(document).on('turbolinks:load', function() {
      * Select2 events which follow a change which causes a new search to be
      * performed.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const POST_CHANGE_EVENTS =
@@ -179,7 +179,7 @@ $(document).on('turbolinks:load', function() {
      * Select2 events which should detect whether to suppress the opening of
      * the drop-down menu.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const CHECK_SUPPRESS_MENU_EVENTS =
@@ -304,7 +304,7 @@ $(document).on('turbolinks:load', function() {
      * Indicate whether search filters take immediate effect (causing a new
      * search using the selected value).
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const IMMEDIATE_SEARCH =
@@ -914,7 +914,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Cause the first hidden search bar row in the sequence to be revealed.
      *
-     * @param {Event|jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      */
     function showNextRow(event) {
         const func      = 'showNextRow';
@@ -932,7 +932,7 @@ $(document).on('turbolinks:load', function() {
      *
      * The implementation assumes that the first row cannot be deleted.
      *
-     * @param {Event|jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      */
     function hideThisRow(event) {
         const func    = 'hideThisRow';

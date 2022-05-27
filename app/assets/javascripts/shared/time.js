@@ -1,6 +1,4 @@
 // app/assets/javascripts/shared/time.js
-//
-// noinspection MagicNumberJS
 
 
 import { compact } from '../shared/objects'
@@ -13,7 +11,7 @@ import { compact } from '../shared/objects'
 /**
  * Milliseconds per second.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const SECOND = 1000;
@@ -21,7 +19,7 @@ export const SECOND = 1000;
 /**
  * Alias for SECOND.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const SECONDS = 1 * SECOND;
@@ -29,7 +27,7 @@ export const SECONDS = 1 * SECOND;
 /**
  * Milliseconds per minute.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const MINUTE = 60 * SECONDS;
@@ -37,7 +35,7 @@ export const MINUTE = 60 * SECONDS;
 /**
  * Alias for MINUTE.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const MINUTES = 1 * MINUTE;

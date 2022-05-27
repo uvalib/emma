@@ -528,6 +528,7 @@ class ApiMigrate
     #
     def normalize_metadata_source(value)
       if value.is_a?(Array)
+        # noinspection RubyMismatchedReturnType
         value.flat_map { |v| normalize_metadata_source(v) }.uniq
       else
         values = normalize_text_list(value)

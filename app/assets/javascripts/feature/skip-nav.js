@@ -20,7 +20,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = false;
@@ -28,7 +28,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class indicating a "skip navigation" container.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const SKIP_MENU = 'skip-nav';

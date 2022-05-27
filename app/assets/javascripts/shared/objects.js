@@ -67,10 +67,12 @@ export function fromJSON(item, caller) {
 /**
  * Generate a copy of the item without blank elements.
  *
- * @param {Array|object|string|*} item
- * @param {boolean}               [trim]    If *false*, don't trim white space.
+ * @template T
  *
- * @returns {Array|object|string|*}
+ * @param {T}       item
+ * @param {boolean} [trim]            If *false*, don't trim white space.
+ *
+ * @returns {T}
  */
 export function compact(item, trim) {
     if (typeof item === 'string') {
@@ -112,9 +114,11 @@ export function flatten(...args) {
 /**
  * Make a completely frozen copy of an item.
  *
- * @param {Array|object|*} item       Source item (which will be unaffected).
+ * @template T
  *
- * @returns {Array|object|*}          An immutable copy of *item*.
+ * @param {T} item       Source item (which will be unaffected).
+ *
+ * @returns {T}          An immutable copy of *item*.
  */
 export function deepFreeze(item) {
     let new_item;
@@ -132,10 +136,12 @@ export function deepFreeze(item) {
 /**
  * Make a duplicate of the given item.
  *
- * @param {array|object|*} item
- * @param {boolean}        [deep]
+ * @template T
  *
- * @returns {array|object|*}
+ * @param {T}       item
+ * @param {boolean} [deep]            If *true* make a deep copy.
+ *
+ * @returns {T}
  */
 export function dup(item, deep) {
     if (Array.isArray(item)) {
@@ -149,6 +155,7 @@ export function dup(item, deep) {
     }
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Make a duplicate of the given array.
  *

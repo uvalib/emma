@@ -64,6 +64,7 @@ export function singularize(item) {
                               { return item }
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Manually interpolate a string.
  *

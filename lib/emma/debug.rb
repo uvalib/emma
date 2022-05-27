@@ -193,6 +193,7 @@ module Emma::Debug
     #
     def __debug_inspect_items(*args, **opt)
       args += Array.wrap(yield) if block_given?
+      # noinspection RubyMismatchedReturnType
       args.flat_map { |arg| __debug_inspect_item(arg, **opt) }
     end
 

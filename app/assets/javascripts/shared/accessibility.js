@@ -14,7 +14,7 @@ import { deepFreeze }                          from '../shared/objects'
 /**
  * Tags of elements that can receive focus.
  *
- * @constant
+ * @readonly
  * @type {string[]}
  */
 export const FOCUS_ELEMENTS =
@@ -23,7 +23,7 @@ export const FOCUS_ELEMENTS =
 /**
  * Selector for FOCUS_ELEMENTS elements.
  *
- * @constant
+ * @readonly
  * @type {string}
  */
 export const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
@@ -31,7 +31,7 @@ export const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
 /**
  * Attributes indicating that an element should receive focus.
  *
- * @constant
+ * @readonly
  * @type {string[]}
  */
 export const FOCUS_ATTRIBUTES =
@@ -40,7 +40,7 @@ export const FOCUS_ATTRIBUTES =
 /**
  * Selector for FOCUS_ATTRIBUTES elements.
  *
- * @constant
+ * @readonly
  * @type {string}
  */
 export const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
@@ -48,7 +48,7 @@ export const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
 /**
  * Selector for focusable elements.
  *
- * @constant
+ * @readonly
  * @type {string}
  */
 export const FOCUS_SELECTOR =
@@ -57,7 +57,7 @@ export const FOCUS_SELECTOR =
 /**
  * Attributes indicating that an element should NOT receive focus.
  *
- * @constant
+ * @readonly
  * @type {string[]}
  */
 export const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
@@ -65,7 +65,7 @@ export const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
 /**
  * Selector for focusable elements that should not receive focus.
  *
- * @constant
+ * @readonly
  * @type {string}
  */
 export const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);

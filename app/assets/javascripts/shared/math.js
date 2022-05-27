@@ -8,7 +8,7 @@
 /**
  * Kilobyte multiplier.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const K = 1024;
@@ -16,7 +16,7 @@ export const K = 1024;
 /**
  * Kilobyte multiplier.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const KB = K;
@@ -24,7 +24,7 @@ export const KB = K;
 /**
  * Megabyte multiplier.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const MB = KB * KB;

@@ -27,6 +27,7 @@ export function decodeJSON(arg) {
     return fromJSON(string.replace(/\n/g, '\\n'));
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Interpret a string as an Array definition.
  *
@@ -60,6 +61,7 @@ export function decodeObject(arg) {
     }
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Interpret a string as a boolean value.
  *

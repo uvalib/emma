@@ -52,7 +52,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class for single-entry form elements.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const MODEL_FORM_CLASS = 'model-form';
@@ -60,7 +60,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class for single-entry form elements.
      *
-     * @constant
+     * @readonly
      * @type {String}
      */
     const MODEL_FORM_SELECTOR = selector(MODEL_FORM_CLASS);
@@ -73,7 +73,6 @@ $(document).on('turbolinks:load', function() {
      *  supports the concept that there could be an arbitrary number of them.
      *  (That scenario has not been tested.)
      *
-     * @constant
      * @type {jQuery}
      */
     let $model_form = $(MODEL_FORM_SELECTOR);
@@ -81,7 +80,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS classes for bulk operation form elements.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BULK_FORM_CLASS = 'bulk-op-form';
@@ -89,7 +88,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS classes for bulk operation form elements.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BULK_FORM_SELECTOR = selector(BULK_FORM_CLASS);
@@ -97,7 +96,6 @@ $(document).on('turbolinks:load', function() {
     /**
      * Bulk operation forms on the page.
      *
-     * @constant
      * @type {jQuery}
      */
     let $bulk_op_form = $(BULK_FORM_SELECTOR).not('.delete');
@@ -127,7 +125,7 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      id:         string,
      *      storage:    string,
-     *      metadata:   FileDataMetadata
+     *      metadata:   FileDataMetadata,
      * }} FileData
      *
      * @see "en.emma.upload.record.file_data"
@@ -202,11 +200,11 @@ $(document).on('turbolinks:load', function() {
      * - item_type: only present with session_debug
      *
      * @typedef {{
-     *      total:     number,
-     *      limit:     number|null|undefined,
-     *      links:     array|null|undefined,
-     *      list_type: ?(string|null|undefined),
-     *      item_type: ?(string|null|undefined)
+     *      total:      number,
+     *      limit:      number|null|undefined,
+     *      links:      array|null|undefined,
+     *      list_type?: string|null|undefined,
+     *      item_type?: string|null|undefined,
      * }} RecordMessageProperties
      */
 
@@ -234,7 +232,7 @@ $(document).on('turbolinks:load', function() {
      *      review_user:    string,
      *      review_success: string,
      *      review_comment: string,
-     *      reviewed_at:    string
+     *      reviewed_at:    string,
      * }} UploadRecord
      *
      * @see "en.emma.upload.record"
@@ -273,7 +271,7 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      entries: {
      *          properties: RecordMessageProperties,
-     *          list:       UploadRecord[]
+     *          list:       UploadRecord[],
      *      }
      * }} UploadRecordMessage
      */
@@ -284,7 +282,7 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      entries: {
      *          properties: RecordMessageProperties,
-     *          list:       EntryRecord[]
+     *          list:       EntryRecord[],
      *      }
      * }} EntryRecordMessage
      */
@@ -316,46 +314,46 @@ $(document).on('turbolinks:load', function() {
      *      emma_repositoryRecordId:            string,
      *      emma_retrievalLink:                 string,
      *      emma_webPageLink:                   string,
-     *      emma_lastRemediationDate:           ?string,
-     *      emma_sortDate:                      ?string,
-     *      emma_repositoryUpdateDate:          ?string,
-     *      emma_repositoryMetadataUpdateDate:  ?string,
-     *      emma_publicationDate:               ?string,
-     *      emma_lastRemediationNote:           ?string,
-     *      emma_version:                       ?string,
+     *      emma_lastRemediationDate?:          string,
+     *      emma_sortDate?:                     string,
+     *      emma_repositoryUpdateDate?:         string,
+     *      emma_repositoryMetadataUpdateDate?: string,
+     *      emma_publicationDate?:              string,
+     *      emma_lastRemediationNote?:          string,
+     *      emma_version?:                      string,
      *      emma_formatVersion:                 string,
-     *      emma_formatFeature:                 ?string[],
+     *      emma_formatFeature?:                string[],
      *      dc_title:                           string,
-     *      dc_creator:                         ?string[],
-     *      dc_identifier:                      ?string[],
-     *      dc_relation:                        ?string[],
-     *      dc_publisher:                       ?string,
-     *      dc_language:                        ?string[],
-     *      dc_rights:                          ?string,
-     *      dc_description:                     ?string,
-     *      dc_format:                          ?string,
-     *      dc_type:                            ?string,
-     *      dc_subject:                         ?string[],
-     *      dcterms_dateAccepted:               ?string,
-     *      dcterms_dateCopyright:              ?string,
-     *      s_accessibilityFeature:             ?string[],
-     *      s_accessibilityControl:             ?string[],
-     *      s_accessibilityHazard:              ?string[],
-     *      s_accessibilitySummary:             ?string,
-     *      s_accessMode:                       ?string[],
-     *      s_accessModeSufficient:             ?string[],
-     *      rem_source:                         ?string,
-     *      rem_metadataSource:                 ?string[],
-     *      rem_remediatedBy:                   ?string[],
-     *      rem_complete:                       ?boolean,
-     *      rem_coverage:                       ?string,
-     *      rem_remediatedAspects:              ?string[],
-     *      rem_textQuality:                    ?string,
-     *      rem_quality:                        ?string,
-     *      rem_status:                         ?string,
-     *      rem_remediationDate:                ?string,
-     *      rem_comments:                       ?string,
-     *      rem_remediationComments:            ?string,
+     *      dc_creator?:                        string[],
+     *      dc_identifier?:                     string[],
+     *      dc_relation?:                       string[],
+     *      dc_publisher?:                      string,
+     *      dc_language?:                       string[],
+     *      dc_rights?:                         string,
+     *      dc_description?:                    string,
+     *      dc_format?:                         string,
+     *      dc_type?:                           string,
+     *      dc_subject?:                        string[],
+     *      dcterms_dateAccepted?:              string,
+     *      dcterms_dateCopyright?:             string,
+     *      s_accessibilityFeature?:            string[],
+     *      s_accessibilityControl?:            string[],
+     *      s_accessibilityHazard?:             string[],
+     *      s_accessibilitySummary?:            string,
+     *      s_accessMode?:                      string[],
+     *      s_accessModeSufficient?:            string[],
+     *      rem_source?:                        string,
+     *      rem_metadataSource?:                string[],
+     *      rem_remediatedBy?:                  string[],
+     *      rem_complete?:                      boolean,
+     *      rem_coverage?:                      string,
+     *      rem_remediatedAspects?:             string[],
+     *      rem_textQuality?:                   string,
+     *      rem_quality?:                       string,
+     *      rem_status?:                        string,
+     *      rem_remediationDate?:               string,
+     *      rem_comments?:                      string,
+     *      rem_remediationComments?:           string,
      * }} SearchResultEntry
      *
      * @see file:config/locales/records/search.en.yml "en.emma.search.record"
@@ -367,7 +365,7 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      response: {
      *          properties: RecordMessageProperties,
-     *          records:    SearchResultEntry[]
+     *          records:    SearchResultEntry[],
      *      }
      * }} SearchResultMessage
      */
@@ -377,10 +375,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @typedef {{
      *      name:           string,
-     *      required:       ?(boolean|function),
-     *      unrequired:     ?(boolean|function),
-     *      required_val:   ?string,
-     *      unrequired_val: ?string
+     *      required?:       boolean|function,
+     *      unrequired?:     boolean|function,
+     *      required_val?:   string,
+     *      unrequired_val?: string,
      * }} Relationship
      */
 
@@ -391,7 +389,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling overall console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean|undefined}
      */
     const DEBUGGING = true;
@@ -399,7 +397,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flags controlling console debug output for specific purposes.
      *
-     * @constant
+     * @readonly
      * @type {{INPUT: boolean, XHR: boolean, UPLOAD: boolean, SUBMIT: boolean}}
      */
     const DEBUG = (DEBUGGING === false) ? {} : {
@@ -412,7 +410,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Uppy plugin selection plus other optional settings.
      *
-     * @constant
+     * @readonly
      * @type {UppyFeatures}
      */
     const FEATURES = deepFreeze({
@@ -425,7 +423,7 @@ $(document).on('turbolinks:load', function() {
      * How long to wait after the user enters characters into a field before
      * re-validating the form.
      *
-     * @constant
+     * @readonly
      * @type {number}
      *
      * @see monitorInputFields
@@ -435,7 +433,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Current controller.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const CONTROLLER = pageController();
@@ -443,7 +441,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Base name (singular of the related database table).
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const MODEL = singularize(CONTROLLER);
@@ -451,7 +449,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Page assets.js properties.
      *
-     * @constant
+     * @readonly
      * @type {ModelProperties}
      */
     const PROPERTIES = Emma[camelCase(MODEL)];
@@ -460,6 +458,7 @@ $(document).on('turbolinks:load', function() {
      * The value used to denote that a database field has been intentionally
      * left blank.
      *
+     * @readonly
      * @type {string}
      */
     const EMPTY_VALUE = PROPERTIES.Field.empty;
@@ -467,7 +466,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Generic form selector.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const FORM_SELECTOR = MODEL_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
@@ -475,7 +474,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selectors for input fields.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const FORM_FIELD_TYPES = deepFreeze([
@@ -499,7 +498,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for input fields.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const FORM_FIELD_SELECTOR = FORM_FIELD_TYPES.join(', ');
@@ -511,7 +510,7 @@ $(document).on('turbolinks:load', function() {
      * required.  Conversely, if "rem_coverage" is given a value then that
      * implies that "rem_complete" is "false".
      *
-     * @constant
+     * @readonly
      * @type {Object<Relationship>}
      */
     const FIELD_RELATIONSHIP = deepFreeze({
@@ -539,7 +538,7 @@ $(document).on('turbolinks:load', function() {
      * SUBMITTED:   The submission has been completed.
      * CANCELED:    The cancel button has been activated.
      *
-     * @constant
+     * @readonly
      * @type {Object<string>}
      */
     const FORM_STATE = deepFreeze({
@@ -555,7 +554,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Remote identifier validation.
      *
-     * @const
+     * @readonly
      * @type {string}
      */
     const ID_VALIDATE_URL_BASE = '/search/validate?identifier=';
@@ -563,7 +562,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Validation methods table.
      *
-     * @constant
+     * @readonly
      * @type {Object<boolean|string|function(string|string[]):boolean>}
      */
     const FIELD_VALIDATION = deepFreeze({
@@ -578,7 +577,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for the dynamic bulk operation results panel.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BULK_OP_RESULTS_SELECTOR = '.bulk-op-results';
@@ -586,7 +585,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Item name for sessionStorage of a trace of bulk operation activity.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BULK_OP_STORAGE_KEY = 'bulk-operation';
@@ -595,7 +594,7 @@ $(document).on('turbolinks:load', function() {
      * CSS class indicating that the bulk operation results panel contains the
      * results of the previous run (from sessionStorage), not the current run.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const OLD_DATA_MARKER = 'previous';
@@ -605,7 +604,7 @@ $(document).on('turbolinks:load', function() {
      * the results of the previous run (from sessionStorage), not the current
      * run.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const OLD_DATA = '.' + OLD_DATA_MARKER;
@@ -613,7 +612,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Interval for checking the contents of the model database table.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const BULK_CHECK_PERIOD = 10 * SECONDS;
@@ -622,7 +621,7 @@ $(document).on('turbolinks:load', function() {
      * Indicator that a results line is filler displayed prior to detecting the
      * first added database entry.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const TMP_LINE_CLASS = 'start';
@@ -630,7 +629,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Filler displayed prior to detecting the first added database entry.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const TMP_LINE = 'Uploading...'; // TODO: I18n
@@ -2978,8 +2977,9 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Check whether all required field values are present and valid, and that
-     * any other supplied values.
+     * Check whether all required field values are present (and a file has been
+     * supplied in the case of a new submission) and that all supplied values
+     * are valid.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      */

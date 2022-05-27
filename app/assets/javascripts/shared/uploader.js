@@ -49,17 +49,17 @@ import {
  * debugging:       Turn on Uppy debugging.
  *
  * @typedef {{
- *      replace_input:  ?boolean,
- *      upload_to_aws:  ?boolean,
- *      progress_bar:   ?boolean,
- *      status_bar:     ?boolean,
- *      popup_messages: ?boolean,
- *      dashboard:      ?boolean,
- *      drag_and_drop:  ?boolean,
- *      image_preview:  ?boolean,
- *      flash_messages: ?boolean,
- *      flash_errors:   ?boolean,
- *      debugging:      ?boolean,
+ *      replace_input?:  boolean,
+ *      upload_to_aws?:  boolean,
+ *      popup_messages?: boolean,
+ *      progress_bar?:   boolean,
+ *      status_bar?:     boolean,
+ *      dashboard?:      boolean,
+ *      drag_and_drop?:  boolean,
+ *      image_preview?:  boolean,
+ *      flash_messages?: boolean,
+ *      flash_errors?:   boolean,
+ *      debugging?:      boolean,
  * }} UppyFeatures
  */
 
@@ -91,7 +91,7 @@ import {
  * Shrine upload response message.
  *
  * @typedef {{
- *      emma_data:  ?EmmaDataOrError,
+ *      emma_data?: EmmaDataOrError,
  *      id:         string,
  *      storage:    string,
  *      metadata:   FileDataMetadata,
@@ -115,7 +115,7 @@ import {
 /**
  * Flag controlling overall console debug output.
  *
- * @constant
+ * @readonly
  * @type {boolean|undefined}
  */
 const DEBUGGING = true;
@@ -123,7 +123,7 @@ const DEBUGGING = true;
 /**
  * Uppy plugin selection plus other optional settings.
  *
- * @constant
+ * @readonly
  * @type {UppyFeatures}
  */
 const FEATURES = deepFreeze({
@@ -144,16 +144,15 @@ const FEATURES = deepFreeze({
  * certain files (either because of size or because of complexity when
  * parsing for metadata).
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 const UPLOAD_TIMEOUT = 5 * MINUTES;
 
-// noinspection MagicNumberJS
 /**
  * How long to display transient Uppy popup messages.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 const MESSAGE_DURATION = 30 * SECONDS;
@@ -162,7 +161,7 @@ const MESSAGE_DURATION = 30 * SECONDS;
  * Base message displayed if Uppy encounters an error when uploading the
  * file.
  *
- * @constant
+ * @readonly
  * @type {string}
  */
 const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n

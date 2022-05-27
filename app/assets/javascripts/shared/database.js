@@ -28,9 +28,9 @@ import { arrayWrap, fromJSON }          from '../shared/objects'
  * @note The optional "default" entry is only used by the database client.
  *
  * @typedef {{
- *     default: ?*,
- *     index:   ?(boolean|IDBIndexParameters),
- *     func:    ?function:IDBValidKey,
+ *     default?: *,
+ *     index?:   boolean|IDBIndexParameters,
+ *     func?:    function:IDBValidKey,
  * }} DbRecordProperties
  */
 
@@ -145,10 +145,10 @@ export let DB = (function() {
      * IndexQueryArgs
      *
      * @typedef {{
-     *     name:      string,
-     *     value:     ?IndexQueryValue,
-     *     count:     ?number,
-     *     direction: ?(IDBCursorDirection|undefined),
+     *     name:       string,
+     *     value?:     IndexQueryValue,
+     *     count?:     number,
+     *     direction?: IDBCursorDirection|undefined,
      * }} IndexQueryArgs
      */
 
@@ -161,7 +161,7 @@ export let DB = (function() {
     /**
      * Database for applications uses.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const DEFAULT_DB_NAME = 'emma';
@@ -169,7 +169,7 @@ export let DB = (function() {
     /**
      * Current version of the client database schemas.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const DEFAULT_DB_VERSION = 1;
@@ -177,7 +177,7 @@ export let DB = (function() {
     /**
      * Transaction modes.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const TRANSACTION_MODE = ['readonly', 'readwrite', 'versionchange'];
@@ -185,7 +185,7 @@ export let DB = (function() {
     /**
      * Normal transaction mode.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const DEFAULT_TRANSACTION_MODE = 'readwrite';

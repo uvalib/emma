@@ -14,7 +14,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class indicating the "scroll-to-top" button.
      *
-     * @constant
+     * @readonly
      * @type {Selector}
      */
     const SCROLL_BUTTON_SELECTOR = selector(Emma.Scroll.button.class);
@@ -32,7 +32,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = false;
@@ -40,7 +40,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for the element which is scrolled to the top.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const SCROLL_TARGET_SELECTOR = selector(Emma.Scroll.target.class);
@@ -48,7 +48,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector(s) for scroll target with fall-backs.
      *
-     * @constant
+     * @readonly
      * @type {string[]}
      */
     const SCROLL_TARGET_SELECTORS =
@@ -57,7 +57,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector(s) for previous-list-item controls.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const PREV_SELECTOR = '.prev-next .prev';
@@ -65,7 +65,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector(s) for next-list-item controls.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const NEXT_SELECTOR = '.prev-next .next';

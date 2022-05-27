@@ -20,7 +20,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Current controller.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const CONTROLLER = pageController();
@@ -28,7 +28,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Base name (singular of the related database table).
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const MODEL = singularize(CONTROLLER);
@@ -36,7 +36,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Controller assets.js properties.
      *
-     * @constant
+     * @readonly
      * @type {ModelProperties}
      */
     const CONTROLLER_PROPERTIES = Emma[camelCase(MODEL)];
@@ -44,7 +44,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Page assets.js properties.
      *
-     * @constant
+     * @readonly
      * @type {RecordProperties}
      */
     const PROPERTY = CONTROLLER_PROPERTIES?.Record;
@@ -75,7 +75,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = false;

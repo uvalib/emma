@@ -9,7 +9,7 @@ import { urlFrom }            from '../shared/url'
 $(document).on('turbolinks:load', function() {
 
     /**
-     * @constant
+     * @readonly
      * @type {number}
      */
     const FOCUS_DELAY = 100;

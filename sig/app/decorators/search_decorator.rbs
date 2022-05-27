@@ -23,12 +23,12 @@ class SearchDecorator < BaseDecorator
     # display of data fields) and "emma.entry.record.emma_data" (which holds
     # the details about each data field).
     #
-    # @param [Hash, nil] config
     # @param [Symbol]    field
+    # @param [Hash, nil] config
     #
     # @return [Hash]
     #
-    def field_properties: (symHash|nil config, Symbol field) -> symHash
+    def field_properties: (Symbol field, ?(symHash|nil) config) -> symHash
 
     # The defined levels for rendering an item hierarchically.
     #

@@ -8,7 +8,7 @@
 /**
  * HTTP response codes.
  *
- * @constant
+ * @readonly
  * @type {object}
  */
 export const HTTP = Object.freeze({

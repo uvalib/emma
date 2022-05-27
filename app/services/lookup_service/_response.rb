@@ -81,6 +81,7 @@ class LookupService::Response
       else Log.warn("#{self.class}: #{items.class} unexpected")
     end
     @table ||= TEMPLATE.transform_values { |v| v.dup if v.is_a?(Hash) }
+    # noinspection RubyMismatchedArgumentType
     @table.merge!(src) if src.present?
     @table.merge!(opt) if opt.present?
     @error      = @table.delete(:error)

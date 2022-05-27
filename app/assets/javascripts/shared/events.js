@@ -10,12 +10,12 @@ import { ensureTabbable }        from '../shared/html'
 // ============================================================================
 
 /**
- * @typedef {Selector|Event|jQuery.Event} SelectorOrEvent
+ * @typedef {Selector|jQuery.Event|Event} SelectorOrEvent
  */
 
 /**
  * @callback jQueryEventHandler
- * @param {Event|jQuery.Event} [event]
+ * @param {jQuery.Event|Event} [event]
  * @returns {?boolean}
  */
 
@@ -26,7 +26,7 @@ import { ensureTabbable }        from '../shared/html'
 /**
  * The default delay for {@link debounce}.
  *
- * @constant
+ * @readonly
  * @type {number}
  */
 export const DEBOUNCE_DELAY = 250; // milliseconds

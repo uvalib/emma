@@ -136,10 +136,10 @@ namespace :emma_data do
   # desc 'Required prerequisites for tasks in this namespace.'
   task prerequisites: %w(environment db:load_config)
 
-  # desc 'An alias for "rake data_migrate".'
+  # desc 'An alias for "rake emma_data:data_migrate".'
   task api_migrate: :data_migrate
 
-  # desc 'An alias for "rake reindex".'
+  # desc 'An alias for "rake emma_data:reindex".'
   task bulk_reindex: :reindex
 
 end

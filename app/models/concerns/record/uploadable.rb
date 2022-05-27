@@ -521,7 +521,7 @@ module Record::Uploadable
 
     public
 
-    # noinspection RailsParamDefResolve
+    # noinspection RailsParamDefResolve, RbsMissingTypeSignature
     if try(:base_class) == Action
 
       # Action subclasses that operate on AWS S3 member repository queues need

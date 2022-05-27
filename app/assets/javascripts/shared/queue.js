@@ -10,6 +10,7 @@ import { flatten }   from '../shared/objects'
 // Class Queue
 // ============================================================================
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * A generic FIFO queue.
  */

@@ -25,6 +25,9 @@ module Lookup::RemoteService::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  #--
+  # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
+  #++
   def name_list(*fields, **opt)
     clean = !opt.key?(:clean) || opt.delete(:clean)
     fields.flat_map { |field| find_record_items(field, **opt) }.tap do |result|

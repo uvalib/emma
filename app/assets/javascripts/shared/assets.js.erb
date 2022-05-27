@@ -57,15 +57,15 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * ElementProperties
  *
  * @typedef {{
- *     active:          ?(boolean|null|undefined),
- *     tag:             ?(string|null|undefined),
- *     type:            ?(string|null|undefined),
- *     class:           ?(string|null|undefined),
- *     tooltip:         ?(string|null|undefined),
- *     label:           ?(string|null|undefined),
- *     text:            ?(string|null|undefined),
- *     html:            ?(string|null|undefined),
- *     func:            ?(function|null|undefined),
+ *     active?:         boolean|null|undefined,
+ *     tag?:            string|null|undefined,
+ *     type?:           string|null|undefined,
+ *     class?:          string|null|undefined,
+ *     tooltip?:        string|null|undefined,
+ *     label?:          string|null|undefined,
+ *     text?:           string|null|undefined,
+ *     html?:           string|null|undefined,
+ *     func?:           function|null|undefined,
  * }} ElementProperties
  */
 
@@ -82,15 +82,15 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * ActionProperties
  *
  * @typedef {{
- *     tag:             ?(string|null|undefined),
- *     type:            ?(string|null|undefined),
- *     class:           ?(string|null|undefined),
- *     tooltip:         ?(string|null|undefined),
- *     label:           ?(string|null|undefined),
- *     text:            ?(string|null|undefined),
- *     html:            ?(string|null|undefined),
- *     enabled:         ?(ElementProperties|null|undefined),
- *     disabled:        ?(ElementProperties|null|undefined),
+ *     tag?:            string|null|undefined,
+ *     type?:           string|null|undefined,
+ *     class?:          string|null|undefined,
+ *     tooltip?:        string|null|undefined,
+ *     label?:          string|null|undefined,
+ *     text?:           string|null|undefined,
+ *     html?:           string|null|undefined,
+ *     enabled?:        ElementProperties|null|undefined,
+ *     disabled?:       ElementProperties|null|undefined,
  * }} ActionProperties
  */
 
@@ -100,7 +100,7 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @typedef {{
  *     submit:          ActionProperties,
  *     cancel:          ActionProperties,
- *     select:          ?(ActionProperties|null|undefined),
+ *     select?:         ActionProperties|null|undefined,
  * }} EndpointProperties
  */
 
@@ -111,9 +111,9 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *    new:              EndpointProperties,
  *    edit:             EndpointProperties,
  *    delete:           EndpointProperties,
- *    bulk_new:         ?EndpointProperties,
- *    bulk_edit:        ?EndpointProperties,
- *    bulk_delete:      ?EndpointProperties,
+ *    bulk_new?:        EndpointProperties,
+ *    bulk_edit?:       EndpointProperties,
+ *    bulk_delete?:     EndpointProperties,
  * }} ControllerActionProperties
  */
 
@@ -121,10 +121,10 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * FieldGroupProperties
  *
  * @typedef {{
- *     label:           ?(string|null),
- *     tooltip:         ?(string|null),
- *     enabled:         ?(boolean|string|null),
- *     default:         ?(boolean|string|null),
+ *     label?:          string|null,
+ *     tooltip?:        string|null,
+ *     enabled?:        boolean|string|null,
+ *     default?:        boolean|string|null,
  * }} FieldGroupProperties
  */
 
@@ -201,12 +201,12 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @see "en.emma.search.styles"
  *
  * @typedef {{
- *     label:           ?(string|null|undefined),
- *     class:           ?(string|null|undefined),
- *     tooltip:         ?(string|null|undefined),
- *     field:           ?(string|null|undefined),
- *     active:          ?(boolean|string|null|undefined),
- *     func:            ?(function|null|undefined),
+ *     label?:          string|null|undefined,
+ *     class?:          string|null|undefined,
+ *     tooltip?:        string|null|undefined,
+ *     field?:          string|null|undefined,
+ *     active?:         boolean|string|null|undefined,
+ *     func?:           function|null|undefined,
  * }} StyleControlProperties
  */
 
@@ -376,16 +376,16 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @typedef {{
  *    index:            string,
  *    show:             string,
- *    new:              ?string,
- *    create:           ?string,
- *    edit:             ?string,
- *    update:           ?string,
- *    delete:           ?string,
- *    destroy:          ?string,
- *    renew:            ?string,
- *    reedit:           ?string,
- *    cancel:           ?string,
- *    endpoint:         ?string,
+ *    new?:             string,
+ *    create?:          string,
+ *    edit?:            string,
+ *    update?:          string,
+ *    delete?:          string,
+ *    destroy?:         string,
+ *    renew?:           string,
+ *    reedit?:          string,
+ *    cancel?:          string,
+ *    endpoint?:        string,
  * }} PathProperties
  */
 

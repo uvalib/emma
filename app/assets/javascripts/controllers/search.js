@@ -41,7 +41,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for item sub-sections.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const SUBSECTION_SELECTOR = '.pair.field-section';
@@ -49,7 +49,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Marker class indicating that the list item should be fully displayed.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const OPEN_MARKER = 'open';
@@ -57,7 +57,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Marker class indicating that an element should not be visible.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const HIDDEN_MARKER = 'hidden';

@@ -23,7 +23,7 @@ $(document).on('turbolinks:load', function() {
      * Marker class indicating that the inline form elements should not be
      * displayed.
      *
-     * @constant
+     * @readonly
      * @type {string}
      *
      * @see file:app/assets/stylesheets/controllers/_user_sessions.scss .sign-in-form.inline.obscured

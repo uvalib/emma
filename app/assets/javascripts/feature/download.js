@@ -30,7 +30,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @typedef {{
      *      href:   string,
-     *      rel:    string
+     *      rel:    string,
      * }} Linkage
      */
 
@@ -40,9 +40,9 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      firstName:  string,
      *      lastName:   string,
-     *      middle:     ?string,
-     *      prefix:     ?string,
-     *      suffix:     ?string
+     *      middle?:    string,
+     *      prefix?:    string,
+     *      suffix?:    string,
      * }} MemberName
      */
 
@@ -54,7 +54,7 @@ $(document).on('turbolinks:load', function() {
      *      canDownload:                boolean,
      *      dateOfBirth:                string,
      *      deleted:                    boolean,
-     *      emailAddress:               ?string,
+     *      emailAddress?:              string,
      *      hasAgreement:               boolean,
      *      language:                   string,
      *      links:                      Linkage[],
@@ -65,7 +65,7 @@ $(document).on('turbolinks:load', function() {
      *      roles:                      string[],
      *      site:                       string,
      *      subscriptionStatus:         string,
-     *      userAccountId:              string
+     *      userAccountId:              string,
      * }} Member
      */
 
@@ -76,11 +76,11 @@ $(document).on('turbolinks:load', function() {
      * - item_type: only present with session_debug
      *
      * @typedef {{
-     *      total:     number,
-     *      limit:     number|undefined,
-     *      links:     Linkage[]|undefined,
-     *      list_type: ?(string|null|undefined),
-     *      item_type: ?(string|null|undefined)
+     *      total:      number,
+     *      limit:      number|undefined,
+     *      links:      Linkage[]|undefined,
+     *      list_type?: string|null|undefined,
+     *      item_type?: string|null|undefined,
      * }} MessageProperties
      */
 
@@ -90,7 +90,7 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      members: {
      *          properties: MessageProperties,
-     *          list:       Member[]
+     *          list:       Member[],
      *      }
      * }} MemberMessage
      */
@@ -102,7 +102,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant
+     * @readonly
      * @type {boolean}
      */
     const DEBUGGING = true;
@@ -110,7 +110,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Frequency for re-requesting a download link.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const RETRY_PERIOD = 1 * SECOND;
@@ -118,7 +118,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Frequency for re-requesting a download link for DAISY_AUDIO.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const RETRY_DAISY_AUDIO = 5 * RETRY_PERIOD;
@@ -126,7 +126,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Retry period value which indicates the end of retrying.
      *
-     * @constant
+     * @readonly
      * @type {number}
      */
     const NO_RETRY = -1;
@@ -139,7 +139,7 @@ $(document).on('turbolinks:load', function() {
      * REQUESTING: The request to generate an artifact is in progress.
      * READY:      A direct link to the generated artifact is available.
      *
-     * @constant
+     * @readonly
      * @type {Object<string>}
      */
     const STATE = deepFreeze({
@@ -151,7 +151,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Bookshare page for adding/modifying members.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BS_ACCOUNT_URL = 'https://www.bookshare.org/orgAccountMembers';
@@ -159,7 +159,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Properties for the elements of the member selection popup panel.
      *
-     * @constant
+     * @readonly
      * @type {{
      *  url:        string,
      *  name:       string,
@@ -260,7 +260,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Member popup panel selector.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const MEMBER_POPUP_SELECTOR = selector(MEMBER_POPUP.panel.class);
@@ -268,7 +268,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Progress indicator element selector.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const PROGRESS_SELECTOR = selector(Emma.Download.progress.class);
@@ -276,7 +276,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Failure message element selector.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const FAILURE_SELECTOR = selector(Emma.Download.failure.class);
@@ -284,7 +284,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Download button element selector.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const BUTTON_SELECTOR = selector(Emma.Download.button.class);
@@ -292,7 +292,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Name of the data attribute holding the link's retry period.
      *
-     * @constant
+     * @readonly
      * @type {string}
      */
     const RETRY_ATTRIBUTE = 'retry';

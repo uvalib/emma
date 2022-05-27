@@ -14,7 +14,7 @@ import { SECONDS }                       from '../shared/time'
 /**
  * Container element for flash messages.
  *
- * @constant
+ * @readonly
  * @type {string}
  */
 const FLASH_CONTAINER_CLASS = 'flash-messages';
@@ -22,7 +22,7 @@ const FLASH_CONTAINER_CLASS = 'flash-messages';
 /**
  * Selector root for flash messages.
  *
- * @constant
+ * @readonly
  * @type {Selector}
  */
 const FLASH_ROOT_SELECTOR = selector(FLASH_CONTAINER_CLASS);

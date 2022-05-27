@@ -55,7 +55,7 @@ import { makeUrl }                               from '../shared/url'
  *      url?:           string,
  *      username?:      string,
  *      xhr?:           function:XMLHttpRequest,
- *      xhrFields?:     object
+ *      xhrFields?:     object,
  * }} AjaxOptions
  *
  * @see https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings

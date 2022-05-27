@@ -264,6 +264,7 @@ class Options
     model_data_params.each_pair do |hash_key, url_param|
       prm[url_param] = json_parse(fields.delete(hash_key), **opt)
     end
+    # noinspection RubyMismatchedArgumentType
     prm.merge!(fields)
     reject_blanks(prm)
   end

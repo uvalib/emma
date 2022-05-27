@@ -17,7 +17,7 @@ import {
 /**
  * Extract the URL value associated with *arg*.
  *
- * @param {string|Event|jQuery.Event|Location|{url: string}} arg
+ * @param {string|jQuery.Event|Event|Location|{url: string}} arg
  *
  * @returns {string}
  */

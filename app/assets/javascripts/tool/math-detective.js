@@ -223,7 +223,7 @@ export function setup(root) {
      * Process file data from the clipboard through the Math Detective API and
      * render the results.
      *
-     * @param {Event|jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      */
     function processClipboard(event) {
         const func = 'processClipboard';
@@ -276,7 +276,7 @@ export function setup(root) {
     /**
      * Process an image file when it is selected.
      *
-     * @param {Event|jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      */
     function onNewFile(event) {
         const func = 'onNewFile';
@@ -512,7 +512,7 @@ export class MathDetectiveApi extends Api {
      *
      * @typedef {{
      *     name:       string,
-     *     confidence: number
+     *     confidence: number,
      * }} MD_Label
      */
 
@@ -537,7 +537,7 @@ export class MathDetectiveApi extends Api {
      *
      * @typedef {{
      *    url:     string,
-     *    headers: Object.<String>
+     *    headers: Object.<String>,
      * }} MD_HttpCallback
      */
 
