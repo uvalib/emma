@@ -103,7 +103,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     overflow-x:     auto;
 
     &:not(.complete) {
-        display: none;
+        visibility: hidden;
     }
 
     .leader {
@@ -477,10 +477,6 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         max-width:      inherit;
         gap:            $form-gap;
 
-        @media #{$wide-screen} {
-            width: max-content;
-        }
-
         //=====================================================================
         // Components
         //=====================================================================
@@ -514,6 +510,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
             margin-right: 0;
             line-height:  2.15;
+            flex-grow:    1;
 
             @media #{$wide-screen} {
                 max-width: 75vw;
@@ -528,6 +525,11 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
                     max-width: 85vw;
                 }
             }
+        }
+
+        .lookup-button {
+            @include button.control;
+            @extend %tray-control;
         }
     }
 

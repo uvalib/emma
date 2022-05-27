@@ -13,7 +13,6 @@
 .layout-header {
 
     position:        relative;
-    z-index:         $z-raised;
     display:         flex;
     flex-direction:  column;
     justify-content: flex-start;
@@ -22,6 +21,10 @@
     padding:         0;
     border-bottom:   $hcm-divider-width solid $root-rev-bg-color;
     box-shadow:      0 0 1rem -0.25rem $root-rev-bg-color;
+
+    @if $raised-header {
+        z-index: $z-raised;
+    }
 
     @media #{$medium-width} {
 

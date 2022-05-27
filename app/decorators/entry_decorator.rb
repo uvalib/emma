@@ -349,6 +349,196 @@ class EntryDecorator < BaseDecorator
       end
     end
 
+    # Bibliographic lookup popup.
+    #
+    # @param [Hash] opt               Passed to #popup_container except for:
+    #
+    # @option opt [Hash] :button      Options for #lookup_button_options.
+    # @option opt [Hash] :container   Options for #lookup_container.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see file:app/assets/javascripts/feature/model-form.js *lookupButton()*
+    #
+    def lookup_popup(**opt)
+      css   = '.lookup-popup'
+      b_opt = opt.delete(:button)    || {}
+      c_opt = opt.delete(:container) || {}
+      unless opt.dig(:control, :button).present?
+        opt[:control] = opt[:control]&.dup || {}
+        opt[:control][:button] = lookup_button_options(**b_opt)
+      end
+      prepend_css!(opt, css)
+      popup_container(**opt) do
+        lookup_container(**c_opt)
+      end
+    end
+
+    # The options to create a toggle button to activate the bibliographic
+    # lookup popup.
+    #
+    # @param [Hash] opt
+    #
+    # @option opt [Hash] :label       Override the default button label.
+    #
+    # @return [Hash]
+    #
+    # @see PopupHelper#popup_container
+    #
+    def lookup_button_options(**opt)
+      css = '.lookup-button'
+      prepend_css!(opt, css)
+      opt[:label] ||= 'Lookup' # TODO: I18n
+      opt
+    end
+
+    # The content element of the bibliographic lookup popup.
+    #
+    # @param [Hash] opt               Passed to the outermost #html_div.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_container(**opt)
+      css = '.lookup-container'
+
+      query_panel       = 'lookup-query'
+      query_terms       = 'terms'
+      status_panel      = 'lookup-status'
+      notice            = 'notice'
+      services          = 'services'
+      entries           = 'lookup-entries'
+      prompt            = 'lookup-prompt'
+      heading           = 'lookup-heading'
+      output            = 'lookup-output'
+      terms             = 'item-terms'
+      separator         = 'item-separator'
+      results           = 'item-results'
+      errors            = 'item-errors'
+      diagnostics       = 'item-diagnostics'
+
+      query_panel_css   = query_panel
+      query_terms_css   = query_terms
+      status_panel_css  = status_panel
+      services_css      = "#{services} invisible"
+      notice_css        = notice
+      entries_css       = entries
+      prompt_css        = prompt
+      heading_css       = heading
+      output_css        = output
+      terms_css         = terms
+      separator_css     = separator
+      results_css       = "#{results} value"
+      errors_css        = "#{errors} value"
+      diagnostics_css   = "#{diagnostics} value"
+
+      unique            = hex_rand
+      heading_id        = "#{heading}-#{unique}"
+      terms_id          = "#{terms}-#{unique}"
+      separator_id      = "#{separator}-#{unique}"
+      results_id        = "#{results}-#{unique}"
+      errors_id         = "#{errors}-#{unique}"
+      diagnostics_id    = "#{diagnostics}-#{unique}"
+
+      query_label       = 'Query'           # TODO: I18n
+      terms_label       = 'Query'           # TODO: I18n
+      lookup_label      = 'Lookup'          # TODO: I18n
+      separators_label  = 'Term Separators' # TODO: I18n
+      services_label    = 'Searching:'      # TODO: I18n
+      heading_label     = 'Results'         # TODO: I18n
+      errors_label      = 'Errors'          # TODO: I18n
+      diagnostics_label = 'Diagnostics'     # TODO: I18n
+
+      separators = {
+        space: 'Space, tab, and <strong>|</strong> (pipe)'.html_safe,
+        pipe:  'Only <strong>|</strong> (pipe)'.html_safe
+      }
+      selected = :space
+
+      if session_debug?
+        query_panel_css = css_classes(query_panel_css, 'hidden')
+      else
+        prompt_css      = css_classes(prompt_css,      'hidden')
+        heading_css     = css_classes(heading_css,     'hidden')
+        output_css      = css_classes(output_css,      'hidden')
+      end
+
+      # == Query
+      query_panel =
+        html_div(class: query_panel_css) do
+          label = html_tag(:label, query_label)
+          text  = html_div(class: query_terms_css)
+          label << text
+        end
+
+      # == Input controls
+      prompt =
+        html_div(class: prompt_css) do
+          terms_input =
+            html_div(class: terms_css) do
+              input  = h.text_field_tag('terms', nil, id: terms_id)
+              label  = "#{terms_label}:"
+              label  = h.label_tag(terms_id, label)
+              button = lookup_label
+              button = h.button_tag(button, type: 'button', class: 'submit')
+              label << input << button
+            end
+          separator_choices =
+            html_tag(:fieldset, id: separator_id, class: separator_css) do
+              name = 'separator'
+              separators.map.with_index { |(value, text), index|
+                id      = "#{separator_id}-#{index}"
+                checked = selected ? (value == selected) : index.zero?
+                button  = h.radio_button_tag(name, value, checked, id: id)
+                label   = h.label_tag(id, text)
+                button << label
+              }.unshift(html_tag(:legend, separators_label))
+            end
+          terms_input << separator_choices
+        end
+
+      # == Status display
+      status =
+        html_div(class: status_panel_css) do
+          notice   = html_div(class: notice_css)
+          services =
+            html_div(class: services_css) do
+              html_tag(:label, services_label)
+            end
+          services << notice
+        end
+
+      # == Output display
+      heading = html_tag(2, heading_label, id: heading_id, class: heading_css)
+      output =
+        html_div(class: output_css) do
+          r_opt   = { class: results_css, 'aria-labelledby': heading_id }
+          results = h.text_area_tag(results_id, nil, r_opt)
+          errors  =
+            html_div(class: 'pair') do
+              id      = errors_id
+              label   = errors_label
+              label   = h.label_tag(id, label, class: 'label')
+              display = h.text_area_tag(id, nil, class: errors_css)
+              label << display
+            end
+          diagnostics =
+            html_div(class: 'pair') do
+              id      = diagnostics_id
+              label   = diagnostics_label
+              label   = h.label_tag(id, label, class: 'label')
+              display = h.text_area_tag(id, nil, class: diagnostics_css)
+              label << display
+            end
+          results << errors << diagnostics
+        end
+
+      # == Full container
+      prepend_css!(opt, css)
+      html_div(opt) do
+        query_panel << prompt << status << heading << output
+      end
+    end
+
     # =========================================================================
     # :section: BaseDecorator::Form overrides
     # =========================================================================
@@ -664,8 +854,8 @@ class EntryDecorator < BaseDecorator
     path   = send(path, id: id, modal: true) if path.is_a?(Symbol)
 
     opt[:'data-iframe'] = attr[:id] = css_id
-    opt[:title]   ||= 'Check the status of this submission' # TODO: I18n
-    opt[:control] ||= {}
+    opt[:title]          ||= 'Check the status of this submission' # TODO: I18n
+    opt[:control]        ||= {}
     opt[:control][:icon] ||= icon
     opt[:panel]  = append_css(opt[:panel], 'refetch z-order-capture')
     opt[:resize] = false unless opt.key?(:resize)
@@ -673,9 +863,9 @@ class EntryDecorator < BaseDecorator
     prepend_css!(opt, css)
     popup_container(**opt) do
       ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      ph_txt = ph_opt.delete(:text) || 'Checking...' # TODO: I18n
       ph_opt[:'data-path'] = path
       ph_opt[:'data-attr'] = attr.to_json
+      ph_txt = ph_opt.delete(:text) || 'Checking...' # TODO: I18n
       html_div(ph_txt, ph_opt)
     end
   end
@@ -737,6 +927,7 @@ class EntryDecorator < BaseDecorator
       parts << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
       parts << f.file_field(:file)
       parts << uploaded_filename_display
+      parts << lookup_popup
     end
   end
 

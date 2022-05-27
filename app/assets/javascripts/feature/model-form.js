@@ -1,18 +1,20 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import { Rails }                                 from '../vendor/rails'
-import { Emma }                                  from '../shared/assets'
-import { delegateInputClick }                    from '../shared/accessibility'
-import { pageController }                        from '../shared/controller'
-import { selector, toggleClass }                 from '../shared/css'
-import { htmlDecode, scrollIntoView }            from '../shared/html'
-import { HTTP }                                  from '../shared/http'
-import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
-import { K, asSize }                             from '../shared/math'
-import { asString, camelCase, singularize }      from '../shared/strings'
-import { Uploader }                              from '../shared/uploader'
-import { cancelAction, makeUrl }                 from '../shared/url'
+import * as Lookup                          from '../tool/bibliographic-lookup'
+import { Rails }                            from '../vendor/rails'
+import { Emma }                             from '../shared/assets'
+import { delegateInputClick }               from '../shared/accessibility'
+import { pageController }                   from '../shared/controller'
+import { selector, toggleClass }            from '../shared/css'
+import { turnOffAutocomplete }              from '../shared/form'
+import { htmlDecode, scrollIntoView }       from '../shared/html'
+import { HTTP }                             from '../shared/http'
+import { LookupRequest }                    from '../shared/lookup-request'
+import { K, asSize }                        from '../shared/math'
+import { asString, camelCase, singularize } from '../shared/strings'
+import { Uploader }                         from '../shared/uploader'
+import { cancelAction, makeUrl }            from '../shared/url'
 import {
     isDefined,
     isEmpty,
@@ -24,6 +26,7 @@ import {
     debounce,
     handleClickAndKeypress,
     handleEvent,
+    handleHoverAndFocus,
     onPageExit,
 } from '../shared/events'
 import {
@@ -32,6 +35,11 @@ import {
     flashError,
     flashMessage,
 } from '../shared/flash'
+import {
+    consoleError,
+    consoleLog,
+    consoleWarn
+} from '../shared/logging'
 import {
     arrayWrap,
     compact,
@@ -47,6 +55,7 @@ import {
 } from '../shared/time'
 
 
+// noinspection FunctionTooLongJS
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -512,7 +521,19 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const FORM_FIELD_SELECTOR = FORM_FIELD_TYPES.join(', ');
+    const FORM_FIELDS = FORM_FIELD_TYPES.join(', ');
+
+    const BUTTON_TRAY_CLASS     = 'button-tray';
+    const SUBMIT_BUTTON_CLASS   = 'submit-button';
+    const CANCEL_BUTTON_CLASS   = 'cancel-button';
+    const FIELD_GROUP_CLASS     = 'field-group';
+    const FIELD_CONTAINER_CLASS = 'form-fields';
+
+    const BUTTON_TRAY           = selector(BUTTON_TRAY_CLASS);
+    const SUBMIT_BUTTON         = selector(SUBMIT_BUTTON_CLASS);
+    const CANCEL_BUTTON         = selector(CANCEL_BUTTON_CLASS);
+    const FIELD_GROUP           = selector(FIELD_GROUP_CLASS);
+    const FIELD_CONTAINER       = selector(FIELD_CONTAINER_CLASS);
 
     /**
      * Interrelated elements.  For example:
@@ -588,6 +609,87 @@ $(document).on('turbolinks:load', function() {
         dc_identifier: ID_VALIDATE_URL_BASE,
         dc_relation:   ID_VALIDATE_URL_BASE,
     });
+
+    // ========================================================================
+    // Constants - source repository
+    // ========================================================================
+
+    /**
+     * Selector for the mini dialog used to find a parent EMMA entry.
+     *
+     * @readonly
+     * @type {string}
+     */
+    const PARENT_SELECT = '.parent-entry-select';
+
+    /**
+     * Selector for the search term input used to find a parent EMMA entry.
+     *
+     * @readonly
+     * @type {string}
+     */
+    const PARENT_SEARCH_TERMS = '#parent-entry-search';
+
+    const PARENT_SEARCH_SUBMIT = '.search-button';
+    const PARENT_SEARCH_CANCEL = '.search-cancel';
+
+    // ========================================================================
+    // Constants - bibliographic lookup
+    // ========================================================================
+
+    /**
+     * LookupCondition
+     *
+     * @typedef {{
+     *     or:  {[k: string]: boolean|undefined},
+     *     and: {[k: string]: boolean|undefined},
+     * }} LookupCondition
+     */
+
+    /**
+     * LookupTerms
+     *
+     * @typedef {{
+     *     or:  {[k: string]: string|string[]},
+     *     and: {[k: string]: string|string[]},
+     * }} LookupTerms
+     */
+
+    /**
+     * A mappings of data field to search term prefix for each grouping of
+     * terms.
+     * 
+     * @readonly
+     * @type {LookupTerms}
+     */
+    const LOOKUP_TERMS = deepFreeze({
+        or:  { dc_identifier: '' },
+        and: { dc_title: 'title', dc_creator: 'author' }
+    });
+
+    /**
+     * A table of field name mapped on to lookup prefix.
+     *
+     * @readonly
+     * @type {{[field: string]: string}}
+     */
+    const LOOKUP_PREFIX = deepFreeze(
+        Object.fromEntries(
+            Object.values(LOOKUP_TERMS).map(obj => Object.entries(obj)).flat(1)
+        )
+    );
+
+    /**
+     * For the data() item noting which lookup-related fields have valid
+     * values.
+     *
+     * @readonly
+     * @type {string}
+     */
+    const LOOKUP_CONDITION_DATA = 'condition';
+
+    const LOOKUP_BUTTON_CLASS = 'lookup-button';
+    const LOOKUP_BUTTON       = selector(LOOKUP_BUTTON_CLASS);
 
     // ========================================================================
     // Constants - Bulk operations
@@ -1492,6 +1594,7 @@ $(document).on('turbolinks:load', function() {
         // Setup buttons.
         setupSubmitButton($form);
         setupCancelButton($form);
+        setupLookupButton($form);
 
         // Prevent password managers from incorrectly interpreting any of the
         // fields as something that might pertain to user information.
@@ -1561,28 +1664,6 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Adjust an input element to prevent password managers from interpreting
-     * certain fields like "Title" as ones that they should offer to
-     * autocomplete (unless the field has been explicitly rendered with
-     * autocomplete turned on).
-     *
-     * @param {Selector} element
-     */
-    function turnOffAutocomplete(element) {
-        let $element = $(element);
-        if ($element[0] instanceof HTMLInputElement) {
-            let autocomplete = $element.attr('autocomplete');
-            let last_pass    = $element.attr('data-lpignore');
-            if (isMissing(autocomplete)) {
-                $element.attr('autocomplete', (autocomplete = 'off'));
-            }
-            if (isMissing(last_pass) && (autocomplete === 'off')) {
-                $element.attr('data-lpignore', 'true'); // Needed for LastPass.
-            }
-        }
-    }
-
-    /**
      * Initialize each form field then update any fields associated with
      * server-provided metadata.
      *
@@ -1607,6 +1688,7 @@ $(document).on('turbolinks:load', function() {
         });
         resolveRelatedFields();
         disableSubmit($form);
+        disableLookup($form);
         clearFormState($form);
 
         /**
@@ -1926,6 +2008,7 @@ $(document).on('turbolinks:load', function() {
         let $input = $(target);
         let value  = new_value;
         if (Array.isArray(value)) {
+            // noinspection JSUnresolvedFunction
             value = compact(value).join('; ');
         } else if (value !== null) {
             value = value || $input.val();
@@ -2111,12 +2194,12 @@ $(document).on('turbolinks:load', function() {
             let invalid    = required && missing;
 
             if (invalid) {
-                update(false);
+                updateFieldState(false);
             } else {
-                validate($input, values, update);
+                validate($input, values, updateFieldState);
             }
 
-            function update(valid, notes) {
+            function updateFieldState(valid, notes) {
 
                 if (required || !missing) {
                     invalid ||= !valid;
@@ -2152,9 +2235,13 @@ $(document).on('turbolinks:load', function() {
                 }
 
                 // Update CSS status classes on all parts of the field.
+                const is_valid = !!valid && !missing;
                 toggleClass(parts, 'required', required);
                 toggleClass(parts, 'invalid',  invalid);
-                toggleClass(parts, 'valid',    (!!valid && !missing));
+                toggleClass(parts, 'valid',    is_valid);
+
+                // Update the state of the lookup button if appropriate.
+                updateLookupCondition($input, field, is_valid);
             }
         }
     }
@@ -2329,18 +2416,23 @@ $(document).on('turbolinks:load', function() {
         const entry = FIELD_VALIDATION[field];
         const value = isDefined(new_value) ? new_value : $input.val();
         let valid, notes, min, max;
+
         if (isEmpty(value)) {
             notes = 'empty value';
             valid = undefined;
+
         } else if (typeof entry === 'string') {
-            remoteValidate(field, value, callback);
-            return;
+            valid = remoteValidate(field, value, callback);
+            if (notDefined(valid)) {
+                return;
+            }
+
         } else if (typeof entry === 'function') {
-            notes = undefined;
             valid = entry(value);
+
         } else if (typeof entry === 'boolean') {
-            notes = undefined;
             valid = entry;
+
         } else if (field === 'password_confirmation') {
             let $pwd = inputFields().filter('[data-field="password"]');
             if ($pwd.hasClass('valid')) {
@@ -2348,25 +2440,30 @@ $(document).on('turbolinks:load', function() {
             } else if ($pwd.hasClass('invalid')) {
                 valid = false;
             }
+
         } else if ((min = $input.attr('minlength')) && (value.length < min)) {
             notes = 'Not enough characters.'; // TODO: I18n
             valid = false;
+
         } else if ((max = $input.attr('maxlength')) && (value.length > max)) {
             notes = 'Too many characters.'; // TODO: I18n
             valid = false;
+
         } else {
-            notes = undefined;
             valid = true;
         }
+
         callback(valid, notes);
     }
 
     /**
      * Validate the value(s) for a field.
      *
-     * @param {string}   field
-     * @param {*}        new_value        Current *target* value if not given.
-     * @param {function} callback
+     * @param {string}          field
+     * @param {string|string[]} new_value
+     * @param {function}        callback
+     *
+     * @returns {boolean|undefined}
      */
     function remoteValidate(field, new_value, callback) {
         const func = 'remoteValidate';
@@ -2374,11 +2471,10 @@ $(document).on('turbolinks:load', function() {
 
         if (isMissing(callback)) {
             consoleError(func, `${field}: no callback given`);
-        }
-        if (isMissing(url)) {
+            return false;
+        } else if (isMissing(url)) {
             consoleError(func, `${field}: no URL given`);
-            callback(false);
-            return;
+            return false;
         }
 
         // Prepare value for inclusion in the URL.
@@ -2386,14 +2482,19 @@ $(document).on('turbolinks:load', function() {
         if (typeof value === 'string') {
             value = value.split(/[,;|\t\n]/);
         }
-        if (Array.isArray(value)) {
-            value = value.join(',');
-        }
-        if (isEmpty(value)) {
+        if (['dc_identifier', 'dc_relation'].includes(field)) {
+            value = value.filter(v =>
+                !v.match(/https?:/) || v.includes('doi.org') ||
+                    consoleLog(func, `ignoring "${v}"`)
+            );
+            if (isEmpty(value)) {
+                return false;
+            }
+        } else if (isEmpty(value)) {
             consoleWarn(func, `${url}: no values given`);
-            callback(false);
-            return;
+            return false;
         }
+        value = value.join(',');
 
         // If the URL is expecting to be completed, append the value string.
         // Otherwise provide it as a generic "value" URL parameter.
@@ -2506,7 +2607,7 @@ $(document).on('turbolinks:load', function() {
                 setSourceRepository(new_repo);
             } else {
                 let $popup = showParentEntrySelect($form);
-                $popup.find('#parent-entry-search').focus();
+                $popup.find(PARENT_SEARCH_TERMS).focus();
             }
         });
 
@@ -2514,12 +2615,11 @@ $(document).on('turbolinks:load', function() {
         // the element that will be displayed to prompt for the original item
         // on which this submission is based.
 
-        let $submit = parentEntrySelect($form).find('.search-button');
-        handleClickAndKeypress($submit, function() {
+        handleClickAndKeypress(parentEntrySubmit($form), function() {
             clearFlash();
             hideParentEntrySelect($form);
             const new_repo = $menu.val();
-            const query    = parentEntrySearchTerms($form);
+            const query    = parentEntrySearchTerms($form).val();
             const search   = { q: query, repository: new_repo };
             fetchIndexEntries(search, useParentEntryMetadata, searchFailure);
         });
@@ -2527,8 +2627,7 @@ $(document).on('turbolinks:load', function() {
         // If the prompt is canceled, silently restore the source repository
         // selection to its previous setting.
 
-        let $cancel = parentEntrySelect($form).find('.search-cancel');
-        handleClickAndKeypress($cancel, function() {
+        handleClickAndKeypress(parentEntryCancel($form), function() {
             clearFlash();
             hideParentEntrySelect($form);
             searchFailure();
@@ -2550,7 +2649,7 @@ $(document).on('turbolinks:load', function() {
             // restored to its previous setting.
 
             if (isEmpty(list)) {
-                const query = parentEntrySearchTerms($form);
+                const query = parentEntrySearchTerms($form).val();
                 error = `${new_repo}: no match for "${query}"`;
                 console.warn(`${func}:`, error);
             } else if (!Array.isArray(list)) {
@@ -2862,17 +2961,6 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Search terms used to locate the parent EMMA entry.
-     *
-     * @param {Selector} [form]
-     *
-     * @returns {string|undefined}
-     */
-    function parentEntrySearchTerms(form) {
-        return parentEntrySelect(form).find('#parent-entry-search').val();
-    }
-
-    /**
      * Selection control for identifying the EMMA entry which is the source of
      * a new submission derived from member repository content.
      *
@@ -2881,7 +2969,12 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function parentEntrySelect(form) {
-        return formElement(form).find('.parent-entry-select');
+        let $element = form && $(form);
+        if ($element?.is(PARENT_SELECT)) {
+            return $element;
+        } else {
+            return formElement($element).find(PARENT_SELECT);
+        }
     }
 
     /**
@@ -2893,7 +2986,7 @@ $(document).on('turbolinks:load', function() {
      */
     function showParentEntrySelect(form) {
         let $form = parentEntrySelect(form);
-        $form.find('#parent-entry-search').prop('disabled', false);
+        parentEntrySearchTerms($form).prop('disabled', false);
         return $form.toggleClass('hidden', false);
     }
 
@@ -2906,8 +2999,401 @@ $(document).on('turbolinks:load', function() {
      */
     function hideParentEntrySelect(form) {
         let $form = parentEntrySelect(form);
-        $form.find('#parent-entry-search').prop('disabled', true);
+        parentEntrySearchTerms($form).prop('disabled', true);
         return $form.toggleClass('hidden', true);
+    }
+
+    /**
+     * Input element for search terms used to locate the parent EMMA entry.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function parentEntrySearchTerms(form) {
+        return parentEntrySelect(form).find(PARENT_SEARCH_TERMS);
+    }
+
+    /**
+     * Parent entry mini dialog submit.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function parentEntrySubmit(form) {
+        return parentEntrySelect(form).find(PARENT_SEARCH_SUBMIT);
+    }
+
+    /**
+     * Parent entry mini dialog cancel.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function parentEntryCancel(form) {
+        return parentEntrySelect(form).find(PARENT_SEARCH_CANCEL);
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup
+    // ========================================================================
+
+    /**
+     * The bibliographic lookup button.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {jQuery}
+     *
+     * @see "UploadDecorator::Methods#lookup_popup"
+     * @see "EntryDecorator::Methods#lookup_popup"
+     */
+    function lookupButton(form) {
+        let $element = form && $(form);
+        if ($element?.is(LOOKUP_BUTTON)) {
+            return $element;
+        } else {
+            return buttonTray($element).find(LOOKUP_BUTTON);
+        }
+    }
+
+    /**
+     * Initialize the state of the bibliographic lookup button.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function setupLookupButton(form) {
+        let $form   = formElement(form);
+        let $button = lookupButtonInitialize($form);
+        Lookup.setup($form, $button).then(
+            result => console.log('lookup loaded:', (result || 'OK')),
+            reason => console.warn('lookup failed:', reason)
+        );
+        handleHoverAndFocus($button, debounce(updateSearchTermsData));
+        handleClickAndKeypress($button, updateSearchTermsData);
+        handleClickAndKeypress($button, clearFlashMessages);
+    }
+
+    /**
+     * Initialize the internal conditions values for the Lookup button.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {jQuery}              The Lookup button.
+     */
+    function lookupButtonInitialize(form) {
+        let $button = lookupButton(form);
+        clearSearchResultsData($button);
+        clearSearchTermsData($button);
+        clearLookupCondition($button);
+        return $button.data('onHidePopup', onLookupComplete);
+    }
+
+    /**
+     * Invoked when the popup closes to update form fields.
+     *
+     * @param {jQuery}  $popup
+     * @param {jQuery}  $button
+     * @param {boolean} check_only
+     *
+     * @returns {boolean|undefined}
+     *
+     * @see onHidePopupHook
+     */
+    function onLookupComplete($popup, $button, check_only) {
+        if (!check_only) {
+            let msg;
+            const data = getFieldValuesData($button);
+            if (isPresent(data)) {
+                populateFormFields(data);
+                let fields = Object.keys(data);
+                let s      = (fields.size === 1) ? '' : 's';
+                let attrs  = fields.map(f => `[name="${f}"]`).join(', ');
+                let inputs = formElement().find(attrs).toArray();
+                let names  = inputs.map(e => {
+                    let $label  = $(e).siblings(`[for="${e.id}"]`);
+                    const label = $label.children('.text').text();
+                    return `"${label}"`;
+                }).join(', ');
+                msg = `Updated field${s}: ${names}.`;
+            } else {
+                msg = 'No fields changed.';
+            }
+            showFlashMessage(msg);
+        }
+    }
+
+    /**
+     * Enable form submission.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {boolean}  [enable]     If *false* run {@link disableLookup}.
+     *
+     * @returns {jQuery}              The submit button.
+     */
+    function enableLookup(form, enable) {
+        if (enable === false) {
+            return disableLookup(form);
+        }
+        return lookupButton(form)
+            .removeClass('forbidden disabled')
+            .prop('disabled', false)
+            .attr('title', Emma.Lookup.enabled.tooltip);
+    }
+
+    /**
+     * Disable form submission.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {jQuery}              The submit button.
+     */
+    function disableLookup(form) {
+        return lookupButton(form)
+            .addClass('forbidden')
+            .prop('disabled', true)
+            .attr('title', Emma.Lookup.disabled.tooltip);
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - conditions
+    // ========================================================================
+
+    /**
+     * Get the field value(s) for bibliographic lookup.
+     *
+     * @param {Selector} form
+     *
+     * @returns {LookupCondition}
+     */
+    function getLookupCondition(form) {
+        return lookupButton(form).data(LOOKUP_CONDITION_DATA);
+    }
+
+    /**
+     * Set the field value(s) for bibliographic lookup.
+     *
+     * @param {Selector}        form
+     * @param {LookupCondition} value
+     *
+     * @returns {LookupCondition}
+     */
+    function setLookupCondition(form, value) {
+        lookupButton(form).data(LOOKUP_CONDITION_DATA, value);
+        return value;
+    }
+
+    /**
+     * Set the field value(s) for bibliographic lookup to the initial state.
+     *
+     * @param {Selector} form
+     *
+     * @returns {LookupCondition}
+     */
+    function clearLookupCondition(form) {
+        return setLookupCondition(form, blankLookupCondition());
+    }
+
+    /**
+     * Update the internal condition values for the Lookup button and change
+     * its enabled/disabled state if appropriate.
+     *
+     * This also clears the {@link Lookup.SEARCH_TERMS_DATA SEARCH_TERMS_DATA}
+     * data to ensure that {@link updateSearchTermsData} will regenerate it
+     * with the new value(s).
+     *
+     * @param {Selector} form         Default: {@link formElement}.
+     * @param {string}   field        A field-type.
+     * @param {boolean}  valid        Whether data for that type is valid.
+     *
+     * @returns {boolean}             Whether *type* is a Lookup condition.
+     */
+    function updateLookupCondition(form, field, valid) {
+        let $form     = formElement(form);
+        let $button   = lookupButton($form);
+        let condition = getLookupCondition($button);
+        let found;
+        $.each(condition, function(logical_op, field_flags) {
+            found = Object.keys(field_flags).includes(field);
+            if (found) {
+                condition[logical_op][field] = valid;
+            }
+            return !found; // break loop if type found.
+        });
+        if (found) {
+            let enable = false;
+            let repo   = sourceRepositoryMenu($form).val();
+            if (!repo || (repo === PROPERTIES.Repo.default)) {
+                enable   = Object.values(condition.or).some(v => v);
+                enable ||= Object.values(condition.and).every(v => v);
+            }
+            enableLookup($form, enable);
+            clearSearchTermsData($button);
+        }
+        return found;
+    }
+
+    /**
+     * Generate an empty lookup conditions object.
+     *
+     * @returns {LookupCondition}
+     */
+    function blankLookupCondition() {
+        // noinspection JSValidateTypes
+        return Object.fromEntries(
+            Object.entries(LOOKUP_TERMS).map(kv => {
+                let [condition, entry] = kv;
+                const fields = Object.keys(entry).map(fld => [fld, undefined]);
+                return [condition, Object.fromEntries(fields)];
+            })
+        );
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - search terms
+    // ========================================================================
+
+    /**
+     * Get the search terms to be provided for lookup.
+     *
+     * @returns {LookupRequest|undefined}
+     */
+    function getSearchTermsData(form) {
+        return lookupButton(form).data(Lookup.SEARCH_TERMS_DATA);
+    }
+
+    /**
+     * Update the search terms to be provided for lookup.
+     *
+     * @param {Selector}                      form
+     * @param {LookupRequest|LookupCondition} [value]
+     *
+     * @returns {LookupRequest}     The data object assigned to the button.
+     */
+    function setSearchTermsData(form, value) {
+        let $button = lookupButton(form);
+        let request;
+        if (value instanceof LookupRequest) {
+            request = value;
+        } else {
+            request = generateLookupRequest($button, value);
+        }
+        $button.data(Lookup.SEARCH_TERMS_DATA, request);
+        return request;
+    }
+
+    /**
+     * Clear the search terms to be provided for lookup.
+     *
+     * @param {Selector} form
+     *
+     * @returns {jQuery}
+     */
+    function clearSearchTermsData(form) {
+        return lookupButton(form).removeData(Lookup.SEARCH_TERMS_DATA);
+    }
+
+    /**
+     * Update data on the Lookup button if required.
+     *
+     * To avoid excessive work, {@link setSearchTermsData} will only be run
+     * if truly required to regenerate the data.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function updateSearchTermsData(event) {
+        let $button = $(event.target);
+        if ($button.prop('disabled')) { return }
+        if (isPresent(getSearchTermsData($button))) { return }
+        clearSearchResultsData($button);
+        setSearchTermsData($button);
+    }
+
+    /**
+     * Create a LookupRequest instance.
+     *
+     * @param {Selector}        form
+     * @param {LookupCondition} [value]     Def: {@link getLookupCondition}
+     *
+     * @returns {LookupRequest}
+     */
+    function generateLookupRequest(form, value) {
+        let request = new LookupRequest;
+        let $button = lookupButton(form);
+        let $form   = formElement($button);
+        let $fields = inputFields($form).filter('.valid');
+        const condition = value || getLookupCondition($button);
+        $.each(condition, function(_logical_op, field_flags) {
+            $.each(field_flags, function(field, active) {
+                if (active) {
+                    let $field = $fields.filter(`[data-field="${field}"]`);
+                    let values = $field.val();
+                    if (isPresent(values)) {
+                        const prefix = LOOKUP_PREFIX[field];
+                        if (prefix === '') {
+                            request.add(values);
+                        } else {
+                            request.add(values, (prefix || 'keyword'));
+                        }
+                    }
+                }
+            });
+        });
+        return request;
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - search results
+    // ========================================================================
+
+    /**
+     * Get the results from lookup.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {LookupResults|undefined}
+     */
+    function getSearchResultsData(form) {
+        return lookupButton(form).data(Lookup.SEARCH_RESULT_DATA);
+    }
+
+    /**
+     * Clear the search terms from the button.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function clearSearchResultsData(form) {
+        return lookupButton(form).removeData(Lookup.SEARCH_RESULT_DATA);
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - user-selected values
+    // ========================================================================
+
+    /**
+     * Get the user-selected field values from lookup.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {LookupResults|undefined}
+     */
+    function getFieldValuesData(form) {
+        return lookupButton(form).data(Lookup.FIELD_VALUES_DATA);
+    }
+
+    /**
+     * Clear the user-selected field values from lookup.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function clearFieldValuesData(form) {
+        return lookupButton(form).removeData(Lookup.FIELD_VALUES_DATA);
     }
 
     // ========================================================================
@@ -3020,21 +3506,21 @@ $(document).on('turbolinks:load', function() {
                 ready = items.some(i => (valueOf(i) !== getOriginalValue(i)));
             }
         }
-        if (ready) {
-            enableSubmit($form);
-        } else {
-            disableSubmit($form);
-        }
+        enableSubmit($form, ready);
     }
 
     /**
      * Enable form submission.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {boolean}  [enable]     If *false* run {@link disableSubmit}.
      *
      * @returns {jQuery}              The submit button.
      */
-    function enableSubmit(form) {
+    function enableSubmit(form, enable) {
+        if (enable === false) {
+            return disableSubmit(form);
+        }
         let $form = formElement(form);
         const tip = submitReadyTooltip($form);
         return submitButton($form)
@@ -3725,7 +4211,9 @@ $(document).on('turbolinks:load', function() {
      * @see Uploader.buttonTray
      */
     function buttonTray(form) {
-        return formElement(form).find('.button-tray');
+        const MATCH = BUTTON_TRAY;
+        let $elem   = form && $(form);
+        return $elem?.is(MATCH) ? $elem : formElement($elem).find(MATCH);
     }
 
     /**
@@ -3738,7 +4226,9 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#submit_button"
      */
     function submitButton(form) {
-        return buttonTray(form).children('.submit-button');
+        const MATCH = SUBMIT_BUTTON;
+        let $elem   = form && $(form);
+        return $elem?.is(MATCH) ? $elem : buttonTray($elem).children(MATCH);
     }
 
     /**
@@ -3752,7 +4242,9 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#cancel_button"
      */
     function cancelButton(form) {
-        return buttonTray(form).children('.cancel-button');
+        const MATCH = CANCEL_BUTTON;
+        let $elem   = form && $(form);
+        return $elem?.is(MATCH) ? $elem : buttonTray($elem).children(MATCH);
     }
 
     /**
@@ -3763,7 +4255,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldDisplayFilterContainer(form) {
-        return formElement(form).find('.field-group');
+        return formElement(form).find(FIELD_GROUP);
     }
 
     /**
@@ -3785,7 +4277,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fieldContainer(form) {
-        return formElement(form).find('.form-fields');
+        return formElement(form).find(FIELD_CONTAINER);
     }
 
     /**
@@ -3796,7 +4288,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function inputFields(form) {
-        return fieldContainer(form).find(FORM_FIELD_SELECTOR);
+        return fieldContainer(form).find(FORM_FIELDS);
     }
 
     /**

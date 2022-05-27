@@ -39,11 +39,18 @@ export const DEBOUNCE_DELAY = 250; // milliseconds
  * Indicate whether the item is an Event or jQuery.Event.
  *
  * @param {*} item
+ * @param {*} [type]
  *
  * @returns {boolean}
  */
-export function isEvent(item) {
-    return (item instanceof Event) || (item instanceof jQuery.Event);
+export function isEvent(item, type) {
+    if (item instanceof jQuery.Event) {
+        return !type || (item.originalEvent instanceof type);
+    } else if (item instanceof Event) {
+        return !type || (item instanceof type);
+    } else {
+        return false;
+    }
 }
 
 /**

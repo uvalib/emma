@@ -1,6 +1,8 @@
 <%# app/views/tool/lookup.html.erb -%>
 <%-
-  # Testing ActionCable
+  # Direct results from bibliographic lookup.
+  #
+  # NOTE:
 
   view_debug(__FILE__)
 
@@ -13,27 +15,52 @@
     set_page_description(title)
   end
 
-  heading   = 'results-heading'
-  terms     = 'item-terms'
-  separator = 'item-separator'
-  results   = 'item-results'
-  errors    = 'item-errors'
-  diag      = 'item-diagnostics'
-  unique    = hex_rand
+  query_panel       = 'lookup-query'
+  query_terms       = 'terms'
+  status_panel      = 'lookup-status'
+  notice            = 'notice'
+  services          = 'services'
+  entries           = 'lookup-entries'
+  prompt            = 'lookup-prompt'
+  heading           = 'lookup-heading'
+  output            = 'lookup-output'
+  terms             = 'item-terms'
+  separator         = 'item-separator'
+  results           = 'item-results'
+  errors            = 'item-errors'
+  diagnostics       = 'item-diagnostics'
 
-  heading_id    = "#{heading}-#{unique}"
-  terms_id      = "#{terms}-#{unique}"
-  separator_id  = "#{separator}-#{unique}"
-  results_id    = "#{results}-#{unique}"
-  errors_id     = "#{errors}-#{unique}"
-  diag_id       = "#{diag}-#{unique}"
+  query_panel_css   = query_panel
+  query_terms_css   = query_terms
+  status_panel_css  = status_panel
+  services_css      = "#{services} invisible"
+  notice_css        = notice
+  entries_css       = entries
+  prompt_css        = prompt
+  heading_css       = heading
+  output_css        = output
+  terms_css         = terms
+  separator_css     = separator
+  results_css       = "#{results} value"
+  errors_css        = "#{errors} value"
+  diagnostics_css   = "#{diagnostics} value"
 
-  heading_css   = heading
-  terms_css     = terms
-  separator_css = separator
-  results_css   = "#{results} value"
-  errors_css    = "#{errors} value"
-  diag_css      = "#{diag} value"
+  unique            = hex_rand
+  heading_id        = "#{heading}-#{unique}"
+  terms_id          = "#{terms}-#{unique}"
+  separator_id      = "#{separator}-#{unique}"
+  results_id        = "#{results}-#{unique}"
+  errors_id         = "#{errors}-#{unique}"
+  diagnostics_id    = "#{diagnostics}-#{unique}"
+
+  query_label       = 'Query'           # TODO: I18n
+  terms_label       = 'Query'           # TODO: I18n
+  lookup_label      = 'Lookup'          # TODO: I18n
+  separators_label  = 'Term Separators' # TODO: I18n
+  services_label    = 'Searching:'      # TODO: I18n
+  heading_label     = 'Results'         # TODO: I18n
+  errors_label      = 'Errors'          # TODO: I18n
+  diagnostics_label = 'Diagnostics'     # TODO: I18n
 
   separators = {
     space: 'Space, tab, and <strong>|</strong> (pipe)'.html_safe,
@@ -41,20 +68,29 @@
   }
   selected = :space
 
+  query_panel_css = css_classes(query_panel_css, 'hidden')
+  entries_css     = css_classes(entries_css, 'hidden')
+
 -%>
 
 <%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<div class="lookup-prompt">
+
+<div class="<%= query_panel_css -%>">
+  <label><%= query_label -%></label>
+  <div class="<%= query_terms_css -%>"></div>
+</div>
+
+<div class="<%= prompt_css -%>">
   <div class="<%= terms_css -%>">
-    <label for="<%= terms_id -%>">Query:</label>
+    <label for="<%= terms_id -%>"><%= terms_label -%>:</label>
     <input id="<%= terms_id -%>" name="terms" type="text"/>
-    <button name="button" type="submit">Lookup</button>
+    <button name="button" type="submit"><%= lookup_label -%></button>
   </div>
   <fieldset id="<%= separator_id -%>" class="<%= separator_css -%>">
-    <legend>Term Separators</legend>
+    <legend><%= separators_label -%></legend>
     <%- separators.each_with_index do |(value, text), index| -%>
       <%- radio_id = "#{separator_id}-#{index}" -%>
       <%- default  = selected ? (value == selected) : index.zero? -%>
@@ -65,20 +101,25 @@
   </fieldset>
 </div>
 
-<h2 id="<%= heading_id -%>" class="<%= heading_css -%>">
-  Results
-</h2>
+<div class="<%= status_panel_css -%>">
+  <div class="<%= services_css -%>">
+    <label><%= services_label -%></label>
+  </div>
+  <div class="<%= notice_css -%>"></div>
+</div>
 
-<div class="lookup-results">
+<h2 id="<%= heading_id -%>" class="<%= heading_css -%>"><%= heading_label -%></h2>
+
+<div class="<%= output_css -%>">
   <!--suppress HtmlFormInputWithoutLabel -->
   <textarea id="<%= results_id -%>" class="<%= results_css -%>" aria-labelledby="<%= heading_id -%>"></textarea>
   <div class="pair">
-    <label for="<%= errors_id -%>" class="label">Errors</label>
+    <label for="<%= errors_id -%>" class="label"><%= errors_label -%></label>
     <textarea id="<%= errors_id -%>" class="<%= errors_css -%>"></textarea>
   </div>
   <div class="pair">
-    <label for="<%= diag_id -%>" class="label">Diagnostics</label>
-    <textarea id="<%= diag_id -%>" class="<%= diag_css -%>"></textarea>
+    <label for="<%= diagnostics_id -%>" class="label"><%= diagnostics_label -%></label>
+    <textarea id="<%= diagnostics_id -%>" class="<%= diagnostics_css -%>"></textarea>
   </div>
 </div>
 

@@ -38,6 +38,7 @@ class ApplicationCable::Response < Hash
       update(normalize(values)) if values.present?
     end
     update(normalize(opt)) if opt.present?
+    self[:time]  ||= Time.now
     self[:class] ||= self.class.name
   end
 
@@ -110,6 +111,8 @@ class ApplicationCable::Response < Hash
   # @param [Hash]   opt         Additional URL parameters.
   #
   # @return [self]
+  #
+  # @see file:app/assets/javascripts/channels/lookup_channel.js  *response*
   #
   def convert_to_data_url!(base_path: DEF_BASE_PATH, data_path: nil, **opt)
     raise "#{__method__} requires :job_id" if (job_id = self[:job_id]).blank?

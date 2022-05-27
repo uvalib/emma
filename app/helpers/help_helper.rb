@@ -125,16 +125,17 @@ module HelpHelper
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
 
     opt[:'data-iframe'] = attr[:id] = id
-    opt[:title]       ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
-    opt[:control]     ||= { icon: QUESTION }
+    opt[:title]          ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
+    opt[:control]        ||= {}
+    opt[:control][:icon] ||= QUESTION
 
     prepend_css!(opt, css)
     popup_container(**opt) do
       ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
       ph_opt[:'data-path']  = help_path(id: topic, modal: true)
       ph_opt[:'data-attr']  = attr.to_json
       ph_opt[:'data-topic'] = "#{topic}_#{sub_topic}_help" if sub_topic
+      ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
       html_div(ph_txt, ph_opt)
     end
   end

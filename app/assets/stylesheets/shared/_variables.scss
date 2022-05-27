@@ -148,6 +148,13 @@ $z-uppy-progress:   500;
 $z-uppy-informer:   600;
 $z-overlay:         10000;
 
+// NOTE: per the description in layouts/_content.scss, this strategy was being
+//  used to keep long skip menus hidden, however it does not mesh well with
+//  popups that may overlap the header.  For now this strategy is being avoided
+//  however it may need to be revisited if keeping skip menus hidden is still
+//  an issue.
+$raised-header: false;
+
 //=============================================================================
 // Screen dimension definitions.
 //=============================================================================

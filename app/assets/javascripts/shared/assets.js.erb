@@ -437,6 +437,7 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @property {ScrollProperties}   Scroll
  * @property {SearchProperties}   Search
  * @property {DownloadProperties} Download
+ * @property {ActionProperties}   Lookup
  * @property {ModelProperties}    Account
  * @property {ModelProperties}    User
  * @property {ModelProperties}    Entry
@@ -550,6 +551,15 @@ export const Emma = (function() {
                 canceled: "<%= I18n.t('emma.download.failure.canceled') %>",
                 sign_in:  "<%= I18n.t('emma.download.failure.sign_in') %>",
                 unknown:  "<%= I18n.t('emma.download.failure.unknown') %>",
+            },
+        },
+
+        Lookup: {
+            enabled: {
+                tooltip: 'Try to fill in missing bibliographic information',
+            },
+            disabled: {
+                tooltip: 'Please supply either a standard identifier or a title and an author',
             },
         },
 

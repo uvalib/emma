@@ -1,9 +1,12 @@
 // app/assets/javascripts/channels/lookup_channel.js
 
 
+import { Api }                from '../shared/api'
 import { hexRand }            from '../shared/css'
 import { isEmpty, isPresent } from '../shared/definitions'
+import { onPageExit }         from '../shared/events'
 import { LookupRequest }      from '../shared/lookup-request'
+import { LookupResponse }     from '../shared/lookup-response'
 import { asString }           from '../shared/strings'
 import { createChannel }      from '../channels/consumer'
 
@@ -20,11 +23,14 @@ const DEBUG   = true;
 // ============================================================================
 
 let stream_id;
-let lookup_dat_cb;
+
+let lookup_dat;
 let lookup_err;
-let lookup_err_cb;
 let lookup_dia;
-let lookup_dia_cb;
+
+let lookup_dat_cb = [];
+let lookup_err_cb = [];
+let lookup_dia_cb = [];
 
 // ============================================================================
 // Actions
@@ -39,7 +45,7 @@ const lookup_channel = createChannel(streamName(), {
      */
     received(data) {
         setDiagnostic('received', data);
-        lookup_dat_cb && lookup_dat_cb(data);
+        response(data);
     },
 
     initialized:  () => setDiagnostic('initialized'),
@@ -98,20 +104,17 @@ export function disconnect() {
     lookup_channel.unsubscribe();
 }
 
-// ============================================================================
-// Response data
-// ============================================================================
-
 /**
- * Assign the function that will be invoked when something is received over
- * LookupChannel.
- *
- * @param {function} fn
+ * Assert that the channel should automatically disconnect when leaving the
+ * page.
  */
-export function setCallback(fn) {
-    _debug('setCallback');
-    lookup_dat_cb = fn;
+export function disconnectOnPageExit() {
+    onPageExit(disconnect, DEBUG);
 }
+
+// ============================================================================
+// Message processing
+// ============================================================================
 
 /**
  * Create a request object from the provided terms then invoke the server
@@ -120,24 +123,103 @@ export function setCallback(fn) {
  * @note {@link setCallback} is expected to have been called first.
  *
  * @param {string|string[]|LookupRequest|LookupRequestObject} terms
- * @param {string|string[]}                                   [separator]
  *
  * @returns {boolean}
  *
  * @see "LookupChannel#lookup_request"
  */
-export function request(terms, separator) {
+export function request(terms) {
     _debug('request', terms);
+    const request = LookupRequest.wrap(terms).requestParts;
     let requested = false;
-    const request = LookupRequest.parts(terms, separator);
     if (isEmpty(request)) {
         setError('No input');
-    } else if (!lookup_dat_cb) {
+    } else if (isEmpty(lookup_dat_cb)) {
         setError('No request callback set');
     } else {
         requested = !!lookup_channel.perform('lookup_request', request);
     }
     return requested;
+}
+
+/**
+ * Handle a request response.
+ *
+ * If the entire response can't be sent back at one time, the response
+ * will hold the URL from which the missing data can be acquired.
+ *
+ * @param {LookupResponseObject} msg_obj
+ *
+ * @see "ApplicationCable::Response#convert_to_data_url!"
+ */
+function response(msg_obj) {
+    if (msg_obj.data_url) {
+        fetchData(msg_obj.data_url, function(result) {
+            setData($.extend({}, msg_obj, { data: result }));
+        });
+    } else {
+        setData(msg_obj);
+    }
+}
+
+/**
+ * Get data that was replaced by a URL reference because it was too large.
+ *
+ * @param {string}       url
+ * @param {XmitCallback} callback
+ */
+function fetchData(url, callback) {
+    new Api(url, { callback: callback }).get();
+}
+
+// ============================================================================
+// Response data
+// ============================================================================
+
+// noinspection JSUnusedGlobalSymbols
+/**
+ * Get the data message content.
+ *
+ * @returns {string|undefined}
+ */
+export function getData() {
+    return lookup_dat;
+}
+
+/**
+ * Set the data message content.
+ *
+ * @param {LookupResponse|LookupResponseObject} data
+ */
+export function setData(data) {
+    _debug(`setData:`, data);
+    lookup_dat = LookupResponse.wrap(data);
+    lookup_dat_cb.forEach(cb => cb(lookup_dat));
+}
+
+/**
+ * Assign the function(s) that will be invoked when something is received over
+ * LookupChannel.
+ *
+ * @param {...function} callbacks
+ */
+export function setCallback(...callbacks) {
+    _debug('setCallback');
+    lookup_dat_cb = callbacks;
+}
+
+/**
+ * Assign additional function(s) that will be invoked when something is
+ * received over LookupChannel.
+ *
+ * @note If {@link setCallback} is called after this, the added callbacks are
+ *  cleared.
+ *
+ * @param {...function} callbacks
+ */
+export function addCallback(...callbacks) {
+    _debug('addCallback');
+    lookup_dat_cb.push(...callbacks);
 }
 
 // ============================================================================
@@ -164,17 +246,27 @@ export function setError(text, ...log_extra) {
     _debug(`setError: ${text}`, ...log_extra);
     const data = log_extra.map(v => asString(v)).join(', ');
     lookup_err = data ? `${text}: ${data}` : text;
-    lookup_err_cb && lookup_err_cb(lookup_err);
+    lookup_err_cb.forEach(cb => cb(lookup_err));
 }
 
 /**
  * setErrorCallback
  *
- * @param {function} fn
+ * @param {...function} callbacks
  */
-export function setErrorCallback(fn) {
+export function setErrorCallback(...callbacks) {
     _debug('setErrorCallback');
-    lookup_err_cb = fn;
+    lookup_err_cb = callbacks;
+}
+
+/**
+ * addErrorCallback
+ *
+ * @param {...function} callbacks
+ */
+export function addErrorCallback(...callbacks) {
+    _debug('addErrorCallback');
+    lookup_err_cb.push(...callbacks);
 }
 
 // ============================================================================
@@ -202,18 +294,28 @@ export function setDiagnostic(text, ...log_extra) {
     const note = `${streamLabel()} ${text}`;
     const data = log_extra.map(v => asString(v)).join(', ');
     lookup_dia = data ? `${note}: ${data}` : note;
-    lookup_dia_cb && lookup_dia_cb(lookup_dia);
+    lookup_dia_cb.forEach(cb => cb(lookup_dia));
 }
 
 /**
  * Getting a message: this callback will be invoked once we receive something
  * over LookupChannel.
  *
- * @param {function} fn
+ * @param {...function} callbacks
  */
-export function setDiagnosticCallback(fn) {
+export function setDiagnosticCallback(...callbacks) {
     _debug('setDiagnosticCallback');
-    lookup_dia_cb = fn;
+    lookup_dia_cb = callbacks;
+}
+
+/**
+ * addDiagnosticCallback
+ *
+ * @param {...function} callbacks
+ */
+export function addDiagnosticCallback(...callbacks) {
+    _debug('addDiagnosticCallback');
+    lookup_dia_cb.push(...callbacks);
 }
 
 // ============================================================================

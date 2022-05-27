@@ -82,3 +82,16 @@ export function isMissing(item) {
 export function isPresent(item) {
     return notEmpty(item);
 }
+
+/**
+ * Return the item itself if it is not empty or undefined otherwise.
+ *
+ * @template T
+ *
+ * @param {T} item
+ *
+ * @returns {T|undefined}
+ */
+export function presence(item) {
+    return isEmpty(item) ? undefined : item;
+}

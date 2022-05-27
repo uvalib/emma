@@ -166,23 +166,24 @@
         @media #{$wide-screen} {
 
             // The panel with a resize grab at the lower right-hand corner.
-            &.resizeable {
+            &.resizable {
+
                 padding-top: 1.75rem;
                 border:      0.25rem solid $uva-accent-orange;
                 box-shadow:  inset 0 3.5rem 0 -2.25rem $uva-accent-orange,
                              $block-shadow;
                 resize:      both;
                 overflow:    auto;
-            }
 
-            // Put the resize grab on the left side.  (This is better for the
-            // "Sign-in" help panel since it can only grow to the left.)
-            &.left-grab {
-                direction: rtl;
-            }
+                // Put the resize grab on the left side.  (Better for the
+                // "Sign-in" help panel since it can only grow to the left.)
+                &.left-grab {
+                    direction: rtl;
+                }
 
-            .closer.icon {
-                top: -0.25rem;
+                .closer.icon {
+                    top: -0.25rem;
+                }
             }
         }
     }

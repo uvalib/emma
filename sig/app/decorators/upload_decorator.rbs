@@ -149,6 +149,36 @@ class UploadDecorator < BaseDecorator
     #
     def uploaded_filename_display: (?leader: String?, **untyped opt) -> ActiveSupport::SafeBuffer
 
+    # Bibliographic lookup popup.
+    #
+    # @param [String, nil] label      Override button label.
+    # @param [Hash]        opt        To #button_tag
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_popup: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # The options to create a toggle button to activate the bibliographic
+    # lookup popup.
+    #
+    # @param [Hash] opt
+    #
+    # @option opt [Hash] :label       Override the default button label.
+    #
+    # @return [Hash]
+    #
+    # @see PopupHelper#popup_container
+    #
+    def lookup_button_options: (**untyped opt) -> symHash
+
+    # The content element of the bibliographic lookup popup.
+    #
+    # @param [Hash] opt               Passed to the outermost #html_div.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_container: (**untyped opt) -> ActiveSupport::SafeBuffer
+
     # Form action button configuration.
     #
     # @type [Hash{Symbol=>Hash}]
@@ -327,6 +357,12 @@ class UploadDecorator < BaseDecorator
   #
   def model_form: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Screen-reader-only label for file input.  (This is to satisfy accessibility
+  # checkers which don't ignore the file input which is made invisible in favor
+  # of the Uppy file input control).
+  #
+  # @type [String]
+  #
   FILE_LABEL: String
 
   def form_top_controls:    (ActionView::Helpers::FormBuilder|nil f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
@@ -367,7 +403,7 @@ class UploadDecorator < BaseDecorator
   #
   # @return [String]
   #
-  def items_menu_prompt: (**untyped opt) -> String
+  def items_menu_prompt: (?user: User|Symbol|nil) -> String
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #

@@ -25,7 +25,7 @@ module PopupHelper
   POPUP_CLOSER_CLASS   = 'closer'
   POPUP_CONTROLS_CLASS = 'popup-controls'
   POPUP_DEFERRED_CLASS = 'deferred'
-  POPUP_RESIZE_CLASS   = 'resizeable'
+  POPUP_RESIZE_CLASS   = 'resizable'
   POPUP_HIDDEN_MARKER  = 'hidden'
 
   # ===========================================================================
@@ -40,7 +40,7 @@ module PopupHelper
   #
   # @option opt [String]  :title      Tooltip for the visible control.
   # @option opt [Boolean] :hidden     If *false*, panel is displayed initially.
-  # @option opt [Boolean] :resize     If *true*, the panel is resizeable.
+  # @option opt [Boolean] :resize     If *true*, the panel is resizable.
   # @option opt [Boolean] :left_grab  If *true*, resize grab is on the left.
   # @option opt [Hash]    :control    Options for the visible control.
   # @option opt [Hash]    :panel      Options for the popup panel element.
@@ -54,7 +54,7 @@ module PopupHelper
   def popup_container(**opt)
     css    = '.popup-container'
     hidden = (POPUP_HIDDEN_MARKER if !opt.key?(:hidden) || opt.delete(:hidden))
-    resize = (POPUP_RESIZE_CLASS  if !opt.key?(:resize) || opt.delete(:resize))
+    resize = (POPUP_RESIZE_CLASS  if opt.delete(:resize))
     left   = ('left-grab'         if opt.delete(:left_grab))
 
     # Visible popup toggle control.
@@ -65,10 +65,18 @@ module PopupHelper
     control_opt[:title]           ||= control_tip
     control_opt[:'aria-label']    ||= control_opt[:title]
     control_opt[:'aria-haspopup'] ||= 'dialog'
-    text = control_opt.delete(:text).presence
-    append_css!(control_opt, (text ? 'text' : 'icon'))
+    button = control_opt.delete(:button).presence
+    text   = control_opt.delete(:text).presence
+    type   = ('button' if button) || ('text' if text) || 'icon'
+    append_css!(control_opt, type)
     popup_control =
-      if text
+      if button.is_a?(Hash)
+        merge_html_options!(control_opt, button)
+        label = control_opt.delete(:label) || 'Popup' # TODO: I18n
+        html_button(label, control_opt)
+      elsif button
+        html_div(button, control_opt)
+      elsif text
         html_span(text, control_opt)
       else
         icon_button(**control_opt)

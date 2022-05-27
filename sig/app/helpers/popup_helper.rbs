@@ -25,7 +25,7 @@ module PopupHelper
   #
   # @option opt [String]  :title      Tooltip for the visible control.
   # @option opt [Boolean] :hidden     If *false*, panel is displayed initially.
-  # @option opt [Boolean] :resize     If *true*, the panel is resizeable.
+  # @option opt [Boolean] :resize     If *true*, the panel is resizable.
   # @option opt [Boolean] :left_grab  If *true*, resize grab is on the left.
   # @option opt [Hash]    :control    Options for the visible control.
   # @option opt [Hash]    :panel      Options for the popup panel element.

@@ -149,6 +149,36 @@ class EntryDecorator < BaseDecorator
     #
     def uploaded_filename_display: (?leader: String?, **untyped opt) -> ActiveSupport::SafeBuffer
 
+    # Bibliographic lookup popup.
+    #
+    # @param [String, nil] label      Override button label.
+    # @param [Hash]        opt        To #button_tag
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_popup: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # The options to create a toggle button to activate the bibliographic
+    # lookup popup.
+    #
+    # @param [Hash] opt
+    #
+    # @option opt [Hash] :label       Override the default button label.
+    #
+    # @return [Hash]
+    #
+    # @see PopupHelper#popup_container
+    #
+    def lookup_button_options: (**untyped opt) -> symHash
+
+    # The content element of the bibliographic lookup popup.
+    #
+    # @param [Hash] opt               Passed to the outermost #html_div.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_container: (**untyped opt) -> ActiveSupport::SafeBuffer
+
     # Form action button configuration.
     #
     # @type [Hash{Symbol=>Hash}]

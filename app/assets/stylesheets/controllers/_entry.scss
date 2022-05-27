@@ -3,6 +3,7 @@
 @use 'shared/variables'        as *;
 @use 'shared/functions'        as *;
 @use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
 @use 'shared/controls/grids'   as grid;
 @use 'shared/controls/panels'  as panel;
 @use 'shared/feature/model'    as model;
@@ -666,6 +667,204 @@ form.select-entry {
 
         &.inactive {
             display: none;
+        }
+    }
+}
+
+// @see EntryDecorator#lookup_popup
+.popup-container.lookup-popup {
+
+    // noinspection DuplicatedCode
+    .popup-panel {
+
+        @media #{$wide-screen} {
+            position: fixed;
+            top:      2.5vh;
+            bottom:   2.5vh;
+            left:     1.25vw;
+            right:    7.75vw;
+        }
+
+        @media #{$medium-width} {
+            position: fixed;
+            top:      2rem;
+            bottom:   2rem;
+            left:     2rem;
+            right:    2rem;
+        }
+    }
+
+    // noinspection CssReplaceWithShorthandSafely, CssBrowserCompatibilityForProperties
+    .lookup-container {
+
+        $gap: 1rem;
+
+        margin:      0;
+        margin-top:  0.5rem;
+        margin-left: 1rem;
+        font-size:   medium;
+        flex:        1 1 0;
+
+        overscroll-behavior: contain;
+
+        > * {
+            max-width: calc(100% - #{$gap});
+        }
+
+        .commit {
+            @include button.basic;
+        }
+
+        .lookup-query {
+
+            $color:         lighter($uva-blue, 95%);
+
+            display:        flex;
+            flex-direction: row;
+            gap:            1rem;
+            margin-right:   1rem;
+            padding:        0.75rem 0.5rem;
+            font-size:      large;
+            font-weight:    bold;
+            background:     $color;
+            border:         0.25rem solid $color;
+            border-radius:  0.5rem;
+        }
+
+        .lookup-prompt {
+            .item-terms {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        .lookup-entries {
+
+            max-height:    80%;
+            margin-top:    1rem;
+            padding-right: 0.5rem;
+            overflow-y:    auto;
+            word-break:    break-word;
+
+            overscroll-behavior: contain;
+
+            .list {
+
+                $max-columns: 20;
+
+                display:        grid;
+                gap:            0.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom:  2px solid gray;
+
+                @include grid.column-classes($max-columns, auto);
+
+                .row {
+
+                    display: contents;
+
+                    .selection {        // .col-0
+                        width:          max-content;
+                        margin:         0.5rem auto;
+                        align-self:     start;
+                    }
+
+                    .tag {              // .col-1
+                        font-weight:    bold;
+                    }
+
+                    .text {
+                        display:        inline-block;
+                        margin:         0.125rem 0.25rem;
+                    }
+                }
+
+                .row.head {             // .row.row-0
+
+                    > * {
+                        position:       sticky;
+                        top:            0;
+                        background:     white;
+                        box-shadow:     0 0.75rem 0 0 white;
+                    }
+
+                    .text {
+                        font-weight:    bold;
+                    }
+                }
+
+                .row.field-values {     // .row.row-1
+
+                    > * {
+                        position:       sticky;
+                        top:            calc(2rem + 2px);
+                        background:     white;
+                    }
+
+                    > .col-0,           // .selection
+                    > .col-1 {          // .tag
+                        border-bottom:  2px solid white;
+                    }
+
+                    // NOTE: this is only for aligning the Commit button.
+                    //  If it ends up elsewhere, this styling can be removed.
+                    > .col-1 {
+                        display:        flex;
+                        flex-direction: column;
+                        flex-wrap:      wrap;
+                        align-content:  flex-start;
+                    }
+
+                    > *:not(.col-0):not(.col-1) {
+                        min-height:     6rem;
+                        max-height:     12rem;
+                        overflow-y:     auto;
+                    }
+
+                    > *:not(.col-0):not(.col-1) {
+                        border:         2px solid black;
+                        box-shadow:     0 0.5rem 0 0 white;
+                    }
+
+                    textarea {
+                        padding:        0.125rem 0.25rem;
+                        font:           inherit;
+                        resize:         none;
+                    }
+                }
+
+                .row:not(.head):not(.field-values) {
+
+                    > *:not(.col-0) {
+                        min-height:     4rem;
+                        max-height:     8rem;
+                        overflow-y:     auto;
+                    }
+
+                    > *:not(.col-0) {   // TODO: temporary(?)
+                        background:     lightyellow;
+                        border-left:    1px solid red;
+                        border-top:     1px solid blueviolet;
+                    }
+                }
+            }
+        }
+
+        .lookup-output {
+
+            width: 100%;
+
+            .item-results {
+                height: 45vh;
+            }
+
+            .pair {
+                .value.item-errors {
+                    height: 87.5%;
+                }
+                .value.item-diagnostics {
+                    height: 150%;
+                }
+            }
         }
     }
 }

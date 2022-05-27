@@ -52,6 +52,8 @@ class ApplicationCable::Response < Hash[Symbol,untyped]
   #
   # @return [self]
   #
+  # @see file:app/assets/javascripts/channels/lookup_channel.js  *response*
+  #
   def convert_to_data_url!: (?base_path: String, ?data_path: Array[Symbol|String]?, **untyped opt) -> self
 
   # Create a new instance unless *payload* is already an instance of the class

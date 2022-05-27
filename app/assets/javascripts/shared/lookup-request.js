@@ -1,22 +1,58 @@
 // app/assets/javascripts/shared/lookup-request.js
 
 
-import { BaseClass }             from '../shared/base-class'
-import { isDefined, isPresent }  from '../shared/definitions'
-import { arrayWrap, deepFreeze } from '../shared/objects'
+import { BaseClass }                        from '../shared/base-class'
+import { isDefined, isPresent, notDefined } from '../shared/definitions'
+import { arrayWrap, deepFreeze }            from '../shared/objects'
 
 
 // ============================================================================
-// Class Queue
+// Class LookupRequest
 // ============================================================================
 
 // noinspection JSUnusedGlobalSymbols
 /**
- * A lookup request object formed by parsing one or more term strings.
+ * A lookup request message formed by parsing one or more term strings.
  */
 export class LookupRequest extends BaseClass {
 
     static CLASS_NAME = 'LookupRequest';
+
+    /**
+     * The set of valid identifier prefixes.
+     *
+     * @readonly
+     * @enum {string}
+     */
+    static ID_TYPES = deepFreeze([
+        'isbn',
+        'issn',
+        'doi',
+        'oclc',
+        'lccn',
+    ]);
+
+    /**
+     * The set of valid query term prefixes.
+     *
+     * @readonly
+     * @enum {string}
+     */
+    static QUERY_TYPES = deepFreeze([
+        'author',
+        'title',
+        'keyword',
+    ]);
+
+    /**
+     * The set of valid limiter prefixes.
+     *
+     * @readonly
+     * @enum {string}
+     */
+    static LIMIT_TYPES = deepFreeze([
+        // TODO: none yet
+    ]);
 
     /**
      * LookupRequestObject
@@ -31,51 +67,65 @@ export class LookupRequest extends BaseClass {
     /**
      * Each request type and the valid search term prefixes associated with it.
      *
-     * @constant
+     * @readonly
      * @type {LookupRequestObject}
      */
     static REQUEST_TYPE = deepFreeze({
-        ids:    ['isbn', 'issn', 'doi', 'oclc', 'lccn'],
-        query:  ['author', 'title', 'keyword'],  // TODO: expand
-        limit:  [], // TODO: none yet
+        ids:    this.ID_TYPES,
+        query:  this.QUERY_TYPES,
+        limit:  this.LIMIT_TYPES,
     });
 
     static DEF_ID_TYPE      = 'isbn';
     static DEF_QUERY_TYPE   = 'keyword';
     static DEF_REQUEST_TYPE = 'query';
 
+    // noinspection JSValidateTypes
     /**
      * A blank object containing an array value for every key defined by
      * {@link REQUEST_TYPE}.
      *
-     * @constant
-     * @type {{[k: string]: *[]}}
+     * @readonly
+     * @type {LookupRequestObject}
      */
     static TEMPLATE = deepFreeze(
         Object.fromEntries(Object.keys(this.REQUEST_TYPE).map(k => [k, []]))
     );
 
+    /**
+     * Selective URL encoding.
+     *
+     * @readonly
+     * @type {{[char: string]: string}}
+     */
     static CHARACTER_MAPPING = deepFreeze({
         '"': '%22',
         "'": '%27',
         ':': '%3A'
     });
 
-    static DEF_SEPARATORS = deepFreeze([ '\\s', '|' ]);
+    /**
+     * Default set of characters interpreted as separating terms.
+     *
+     * @readonly
+     * @type {string}
+     */
+    static DEF_SEPARATORS = '|';
+
+    // ========================================================================
+    // Constructor
+    // ========================================================================
 
     /**
      * Create a new instance.
      *
      * @param {string|string[]|LookupRequest|LookupRequestObject} [terms]
-     * @param {string|string[]} [separators]
+     * @param {string|string[]} [chars]     Separator character(s).
      */
-    constructor(terms, separators) {
+    constructor(terms, chars) {
         super();
-        if (separators) {
-            this.separators = arrayWrap(separators);
-        } else {
-            this.separators = this.constructor.DEF_SEPARATORS;
-        }
+        this.separators   = Array.isArray(chars) ? chars.join('') : chars;
+        this.separators ||= this.constructor.DEF_SEPARATORS;
         this.parts = this._blankParts();
         this.add(terms);
     }
@@ -88,19 +138,46 @@ export class LookupRequest extends BaseClass {
     get query()  { return this.parts.query || [] }
     get limit()  { return this.parts.limit || [] }
 
-    get length() {
-        return Object.values(this.parts).reduce(
-            (total, array) => total + (array?.length || 0)
-        );
+    /**
+     * A request object with only the terms that would actually be used for a
+     * request.
+     *
+     * @returns {LookupRequestObject}
+     */
+    get requestParts() {
+        let result = this._blankParts();
+        let source = isPresent(this.ids) ? { ids: this.ids } : this.parts;
+        $.extend(true, result, source);
+        return result;
     }
 
-    // ========================================================================
-    // Class properties
-    // ========================================================================
+    /**
+     * The individual "prefix:value" terms that would actually be used for a
+     * request.
+     *
+     * @returns {string[]}
+     */
+    get terms() {
+        return isPresent(this.ids) ? this.ids : this.allTerms;
+    }
 
-    static get idTypes()    { return this.REQUEST_TYPE.ids   || [] }
-    static get queryTypes() { return this.REQUEST_TYPE.query || [] }
-    static get limitTypes() { return this.REQUEST_TYPE.limit || [] }
+    /**
+     * All individual "prefix:value" terms.
+     *
+     * @returns {string[]}
+     */
+    get allTerms() {
+        return Object.values(this.parts).flat();
+    }
+
+    /**
+     * The total number of individual "prefix:value" terms.
+     *
+     * @returns {number}
+     */
+    get length() {
+        return this.allTerms.length;
+    }
 
     // ========================================================================
     // Methods
@@ -117,13 +194,19 @@ export class LookupRequest extends BaseClass {
      * Add one or more terms.
      *
      * @param {string|string[]|LookupRequest|LookupRequestObject} [term]
+     * @param {string}                                            [prefix]
      */
-    add(term) {
+    add(term, prefix) {
         let req;
         if (Array.isArray(term) || (typeof term === 'string')) {
-            req = this.parse(term);
+            req = this.parse(term, prefix);
         } else {
             req = term;
+            if (prefix) {
+                this._warn(
+                    `prefix "${prefix}" ignored for ${typeof(term)} term`
+                );
+            }
         }
         if (isPresent(req)) {
             let req_parts = req.parts || req;
@@ -136,20 +219,31 @@ export class LookupRequest extends BaseClass {
     /**
      * Create a lookup request object from the provided terms.
      *
-     * @param {string|string[]} terms
+     * @param {string|string[]} term_values
+     * @param {string}          [term_prefix]
      *
      * @returns {LookupRequestObject}
      */
-    parse(terms) {
+    parse(term_values, term_prefix) {
+        let parts = this._blankParts();
+        let terms = arrayWrap(term_values);
+
+        // Apply the provided prefix to each of the term value strings.
+        // (These still go through extractParts in order to clean the values.)
+        if (term_prefix) {
+            const prefix = term_prefix.toLowerCase();
+            if (!this._validPrefix(prefix)) {
+                this._warn(`prefix "${term_prefix}" is invalid`);
+                return parts;
+            }
+            terms = terms.map(term => `${prefix}:${term}`);
+        }
+
+        // Put each search term into the appropriate slot in the returned
+        // request object.
         const REQUEST_TYPE     = this.constructor.REQUEST_TYPE;
         const DEF_REQUEST_TYPE = this.constructor.DEF_REQUEST_TYPE;
-        let parts = this._blankParts();
-        let pairs;
-        if (Array.isArray(terms)) {
-            pairs = terms.map(term => this.extractParts(term)).flat(1);
-        } else {
-            pairs = this.extractParts(terms);
-        }
+        let pairs = terms.map(term => this.extractParts(term)).flat(1);
         pairs.forEach(function(pair) {
             let [prefix, value] = pair;
             let term = `${prefix}:${value}`;
@@ -184,28 +278,46 @@ export class LookupRequest extends BaseClass {
     extractParts(terms) {
         const ID_TYPE    = this.constructor.DEF_ID_TYPE;
         const QUERY_TYPE = this.constructor.DEF_QUERY_TYPE;
-        const MAP        = this.constructor.CHARACTER_MAPPING;
-        const PRE        = this._prefixMatcher;
-        const VAL        = this._valueMatcher;
-        // part         ___2____             ___4___   ___5___  ___6____
-        const TERM  = `((${PRE})\\s*:\\s*)?("([^"]*)"|'([^']*)'|(${VAL}))`;
-        let term_re = new RegExp(TERM, 'g');
-        let parts   = terms.matchAll(term_re);
-        return Array.from(parts).map(function(part) {
+        const encode     = this._encodeValue.bind(this);
+        const parts      = terms.matchAll(this._termMatcher);
+        return [...parts].map(function(part) {
             let prefix = part[2]?.toLowerCase();
-            let value =
+            let value  =
                 part[4] || // value inside double quotes
                 part[5] || // value inside single quotes
                 part[6];   // value if unquoted
-            value    = value?.replaceAll(/[:"']/g, c => MAP[c] || c) || '';
-            prefix ||= value.match(/^\d+$/) ? ID_TYPE : QUERY_TYPE;
-            return [prefix, value];
+            if (!(value = value?.trim())) {
+                return [];
+            } else if (value.match(/^\d+$/)) {
+                return [(prefix || ID_TYPE), value];
+            } else {
+                return [(prefix || QUERY_TYPE), encode(value)];
+            }
         });
     }
 
     // ========================================================================
+    // Protected properties
+    // ========================================================================
+
+    get _prefixMatch() { return `[^${this.separators}"']+`; }
+    get _valueMatch()  { return `[^${this.separators}]+`; }
+    get _termMatcher() { return this.term_regex ||= this._makeTermMatcher() }
+
+    // ========================================================================
     // Protected methods
     // ========================================================================
+
+    /**
+     * Indicate whether the supplied item is a valid prefix.
+     *
+     * @param {string} prefix
+     *
+     * @returns {boolean}
+     */
+    _validPrefix(prefix) {
+        return this.constructor.validPrefix(prefix);
+    }
 
     /**
      * Generate a new empty request object.
@@ -214,7 +326,7 @@ export class LookupRequest extends BaseClass {
      * @private
      */
     _blankParts() {
-        return $.extend(true, {}, this.constructor.TEMPLATE);
+        return this.constructor.blankParts();
     }
 
     /**
@@ -227,52 +339,103 @@ export class LookupRequest extends BaseClass {
      * @private
      */
     _appendParts(dst, src) {
+        let src_val;
         $.each(dst, function(key, val) {
-            dst[key] = Array.from(new Set([...val, ...src[key]]));
+            if (isPresent(src_val = src[key])) {
+                dst[key] = Array.from(new Set([...val, ...src_val]));
+            }
         });
         return dst;
     }
 
+    /**
+     * Selectively URL-encode certain value characters.
+     *
+     * @param {string} value
+     *
+     * @returns {string}
+     */
+    _encodeValue(value) {
+        const CHAR_MAP = this.constructor.CHARACTER_MAPPING;
+        return Object.keys(CHAR_MAP).reduce(
+            (result, char) => result.replaceAll(char, CHAR_MAP[char]),
+            value
+        );
+    }
+
+    /**
+     * Generate the matcher for {@link extractParts}.
+     * 
+     * @returns {RegExp}
+     */
+    _makeTermMatcher() {
+        const PRE_ = this._prefixMatch;
+        const VAL_ = this._valueMatch;
+        // part        ____2____             ___4___   ___5___  ____6____
+        const TERM = `((${PRE_})\\s*:\\s*)?("([^"]*)"|'([^']*)'|(${VAL_}))`;
+        return new RegExp(TERM, 'g');
+    }
+
     // ========================================================================
-    // Protected properties
+    // Class properties
     // ========================================================================
 
-    get _separatorChars() { return this.separators.join('') }
-    get _prefixMatcher()  { return `[^${this._separatorChars}"']+`; }
-    get _valueMatcher()   { return `[^${this._separatorChars}]+`; }
+    static get idPrefixes()    { return this.ID_TYPES }
+    static get queryPrefixes() { return this.QUERY_TYPES }
+    static get limitPrefixes() { return this.LIMIT_TYPES }
+    static get allPrefixes()   { return this.prefixes ||= this._prefixList(); }
+
+    // ========================================================================
+    // Class protected methods
+    // ========================================================================
+
+    /**
+     * All valid search type prefixes.
+     *
+     * @returns {string[]}
+     */
+    static _prefixList() {
+        return Object.values(this.REQUEST_TYPE).flat();
+    }
 
     // ========================================================================
     // Class methods
     // ========================================================================
 
     /**
-     * Return the item if it is an instance or create one if not.
+     * Indicate whether the supplied item is a valid prefix.
      *
-     * @param {string|string[]|LookupRequest|LookupRequestObject} item
-     * @param {*} args Passed to constructor (if required).
+     * @param {string} prefix
      *
-     * @returns {LookupRequest}
+     * @returns {boolean}
      */
-    static wrap(item, ...args) {
-        return (item instanceof this) ? item : new this(item, ...args);
+    static validPrefix(prefix) {
+        return this.allPrefixes.includes(prefix);
     }
 
     /**
-     * Return lookup request parts, creating a temporary instance if necessary
-     * to parse value(s).
+     * Generate a new empty request object.
+     *
+     * @returns {LookupRequestObject}
+     */
+    static blankParts() {
+        return $.extend(true, {}, this.TEMPLATE);
+    }
+
+    /**
+     * Return the item if it is an instance or create one if not.
      *
      * @param {string|string[]|LookupRequest|LookupRequestObject} item
-     * @param {*} args Passed to constructor (if required).
+     * @param {string|string[]} [chars] Passed to constructor (if required).
      *
-     * @returns {LookupRequestObject|undefined}
+     * @returns {LookupRequest}
      */
-    static parts(item, ...args) {
-        let result;
-        if (Array.isArray(item) || (typeof item === 'string')) {
-            result = new this(item, ...args).parts;
-        } else if (typeof item === 'object') {
-            result = item.parts || item;
+    static wrap(item, chars) {
+        if (item instanceof this) {
+            if (notDefined(chars) || (chars === item.separators)) {
+                return item;
+            }
         }
-        return result;
+        return new this(item, chars);
     }
 }

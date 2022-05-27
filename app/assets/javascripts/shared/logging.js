@@ -43,18 +43,20 @@ export function consoleError(...args) {
 /**
  * Prepare for console output.
  *
+ * Simple objects are rendered as formatted strings, however functions and
+ * elements are passed through untouched.
+ *
  * @param {Array|*} arg
  *
  * @returns {Array}
  */
 function consoleArgs(arg) {
-    let result = [];
     if (Array.isArray(arg)) {
-        flatten(arg).forEach(function(v) { result.push(...consoleArgs(v)); });
-    } else if (typeof arg === 'string') {
-        result.push(arg.trim());
-    } else {
-        result.push(asString(arg));
+        return flatten(arg).map(v => consoleArgs(v)).flat();
     }
-    return result;
+    if (arg instanceof jQuery)     { return [arg] }
+    if (arg instanceof Element)    { return [arg] }
+    if (typeof arg === 'function') { return [arg] }
+    if (typeof arg === 'string')   { return [arg.trim()] }
+    return [asString(arg)];
 }

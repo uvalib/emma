@@ -331,7 +331,7 @@ body.tool.md:not(.debug) {
 // Bibliographic metadata lookup
 //=============================================================================
 
-body.tool.lookup {
+.lookup-container {
 
     $gap: 1rem;
 
@@ -400,7 +400,61 @@ body.tool.lookup {
         }
     }
 
-    .lookup-results {
+    .lookup-status {
+
+        display:        flex;
+        flex-direction: row;
+        flex-wrap:      wrap;
+        align-items:    center;
+        gap:            1rem;
+        margin-top:     1rem;
+
+        .services {
+
+            display:        flex;
+            flex-direction: row;
+            flex-wrap:      wrap;
+            align-items:    center;
+            gap:            1rem;
+            margin:         1rem auto;
+            min-height:     2rem;
+            font-weight:    bold;
+            flex:           0 1 auto;
+
+            .service {
+
+                padding:       0.25rem 0.375rem;
+                border:        4px double gray;
+                border-radius: 1rem;
+                cursor:        default;
+                flex:          1 1 auto;
+
+                & {
+                    background-color: beige;
+                }
+
+                &.late {
+                    background-color: lightpink;
+                }
+
+                &.done {
+                    background-color: lightgreen;
+                }
+
+                &.empty {
+                    background-color: lightgray;
+                }
+            }
+        }
+
+        .notice {
+            font-size:   large;
+            font-weight: bold;
+            flex:        1 1 auto;
+        }
+    }
+
+    .lookup-output {
 
         display:               grid;
         grid-template-columns: minmax(max-content, 0.1fr) 1fr;
@@ -437,4 +491,8 @@ body.tool.lookup {
             }
         }
     }
+}
+
+body.tool.lookup {
+    @extend .lookup-container;
 }

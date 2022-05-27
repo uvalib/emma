@@ -561,16 +561,17 @@ class SearchDecorator < BaseDecorator
     id     = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
 
     opt[:'data-iframe'] = attr[:id] = id
-    opt[:title]   ||= 'View this repository record.' # TODO: I18n
-    opt[:control] ||= { text: ERB::Util.h(rid) }
+    opt[:title]          ||= 'View this repository record.' # TODO: I18n
+    opt[:control]        ||= {}
+    opt[:control][:text] ||= ERB::Util.h(rid)
 
     ph_opt = opt.delete(:placeholder)
     prepend_css!(opt, css)
     popup_container(**opt) do
       ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      ph_txt = ph_opt.delete(:text) || 'Loading record...' # TODO: I18n
       ph_opt[:'data-path'] = UploadDecorator.show_path(id: rid, modal: true)
       ph_opt[:'data-attr'] = attr.to_json
+      ph_txt = ph_opt.delete(:text) || 'Loading record...' # TODO: I18n
       html_div(ph_txt, ph_opt)
     end
   end
