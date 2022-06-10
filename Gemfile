@@ -103,7 +103,7 @@ gem 'good_job'
 gem 'draper'
 gem 'iso-639'
 gem 'sanitize'
-gem 'workflow'
+gem 'workflow', '< 3.0'
 
 # == Temporary
 # NOTE: Apparently version 0.1.1 was removed.
