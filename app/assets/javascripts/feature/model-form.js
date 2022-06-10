@@ -686,7 +686,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const LOOKUP_CONDITION_DATA = 'condition';
+    const LOOKUP_CONDITION_DATA = 'lookupCondition';
 
     const LOOKUP_BUTTON_CLASS = 'lookup-button';
     const LOOKUP_BUTTON       = selector(LOOKUP_BUTTON_CLASS);
@@ -1081,7 +1081,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function bulkOpResultsNextId(results, record) {
-        const name    = 'next-id';
+        const name    = 'nextId';
         let $results  = bulkOpResults(results);
         let value     = $results.data(name);
         const initial = isMissing(value);
@@ -1090,8 +1090,8 @@ $(document).on('turbolinks:load', function() {
             value = (Number(value) || 0) + 1;
             $results.data(name, value);
         }
-        if ((value > 1) && !$results.data('first-id')) {
-            $results.data('first-id', value);
+        if ((value > 1) && !$results.data('firstId')) {
+            $results.data('firstId', value);
         }
         return value.toString();
     }
@@ -1108,7 +1108,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {number}
      */
     function bulkOpResultsStartTime(results, start_time) {
-        const name   = 'start-time';
+        const name   = 'startTime';
         let $results = bulkOpResults(results);
         let value    = $results.data(name);
         if (isPresent(start_time) || isMissing(value)) {
@@ -1163,7 +1163,7 @@ $(document).on('turbolinks:load', function() {
     function scheduleCheckBulkOpResults(results, milliseconds) {
         let $results = bulkOpResults(results);
         const period = milliseconds || BULK_CHECK_PERIOD;
-        const name   = 'check-period';
+        const name   = 'checkPeriod';
         const timer  = $results.data(name);
         if (isPresent(timer)) {
             clearTimeout(timer);

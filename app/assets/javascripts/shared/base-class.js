@@ -7,6 +7,12 @@
 
 /**
  * The base for application-defined classes which provides logging support.
+ *
+ * **Usage Notes**
+ * Subclasses are expected to define an explicit static CLASS_NAME in order to
+ * make use of the diagnostic methods defined here.  (Relying on `this.name`
+ * isn't sufficient because that will yield the *minified* name rather than the
+ * expected original class name.)
  */
 export class BaseClass {
 
@@ -22,7 +28,8 @@ export class BaseClass {
     // Properties
     // ========================================================================
 
-    get className() { return this.constructor.className }
+    // noinspection FunctionNamingConventionJS
+    get CLASS_NAME() { return this.constructor.CLASS_NAME }
 
     // ========================================================================
     // Methods - internal
@@ -33,17 +40,11 @@ export class BaseClass {
     _error(...args) { this.constructor._error(...args) }
 
     // ========================================================================
-    // Class properties
-    // ========================================================================
-
-    static get className()  { return this.CLASS_NAME }
-
-    // ========================================================================
     // Class methods - internal
     // ========================================================================
 
-    static _log(...args)    { console.log(this.className, ...args) }
-    static _warn(...args)   { console.warn(this.className, ...args) }
-    static _error(...args)  { console.error(this.className, ...args) }
+    static _log(...args)    { console.log(this.CLASS_NAME, ...args) }
+    static _warn(...args)   { console.warn(this.CLASS_NAME, ...args) }
+    static _error(...args)  { console.error(this.CLASS_NAME, ...args) }
 
 }

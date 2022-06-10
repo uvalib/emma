@@ -147,9 +147,9 @@ export function handleKeypressAsClick(selector, direct, match, except) {
      * @returns {boolean}
      */
     function handleKeypress(event) {
-        const key = event?.key;
+        const key = event.key;
         if (key === 'Enter') {
-            let $target = $(event?.target || this);
+            let $target = $(event.target);
             const href  = $target.attr('href');
             if (!href || (href === '#')) {
                 $target.click();

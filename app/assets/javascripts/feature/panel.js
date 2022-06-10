@@ -84,7 +84,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event} event
      */
     function onTogglePanel(event) {
-        let $button = $(event?.target || this);
+        let $button = $(event.target);
         let $panel  = getPanel($button);
         if (isPresent($panel)) {
             const opening = !$panel.hasClass(OPEN_MARKER);

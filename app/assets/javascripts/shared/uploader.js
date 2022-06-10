@@ -271,7 +271,7 @@ export class Uploader extends BaseClass {
             warn = 'this.uppy is present but container missing .uppy-Root';
         }
         if (warn) {
-            console.warn(`${this.className}: re-initializing: ${warn}`);
+            this._warn(`re-initializing: ${warn}`);
             init = true;
         }
         if (init) {

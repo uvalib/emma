@@ -274,8 +274,8 @@ $(document).on('turbolinks:load', function() {
     handleClickAndKeypress($exit_button, removeDebugControls);
 
     // Initialize identification tooltips for each item.
-    $result_items.each(function(index) {
-        let $item  = $(this);
+    $result_items.each(function(index, item) {
+        let $item  = $(item);
         let $title = $item.find('.value.field-Title .title');
         if (COLLAPSE_ITEMS && ($title.length === 1)) {
             cloneTitle($item, $title);

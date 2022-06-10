@@ -105,7 +105,7 @@ export class SessionState extends BaseClass {
      * @returns {object}
      */
     get value() {
-        const caller = `${this.className}: get`;
+        const caller = `${this.CLASS_NAME}: get`;
         return fromJSON(this.raw, caller) || {};
     }
 

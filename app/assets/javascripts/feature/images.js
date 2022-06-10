@@ -88,7 +88,7 @@ $(document).on('turbolinks:load', function() {
      */
     function loadImage(image, source) {
         const func  = 'loadImage:';
-        let $image  = $(image || this);
+        let $image  = $(image);
         const src   = source || $image.attr('data-path') || $image.attr('src');
         const url   = urlProxyPath(src);
         const start = Date.now();
