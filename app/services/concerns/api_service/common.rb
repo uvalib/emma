@@ -637,20 +637,26 @@ module ApiService::Common
     full:     DEBUG_TRANSMISSION
   )
     response ||= error.try(:http_response) || error.try(:response)
-    status     = ExecReport.http_status(error)
-    status   ||= ExecReport.http_status(response)
-    data       = ApiService::Error.oauth2_error_header(response)
-    data     ||= response.try(:body) || response.try(:dig, :body)
 
-    stat_error = { status: status, error: error }
-    stat_error[:'@exception'] = @exception unless error == @exception
-    stat_error.transform_values! { |v| v&.inspect || '(none)' }
-    stat_error.transform_values! { |v| v.truncate(256) } unless full
+    status = ExecReport.http_status(error) || ExecReport.http_status(response)
+    status = { status: status, error: error }
+    status[:'@exception'] = @exception unless error == @exception
+    status.transform_values! { |v| v&.inspect || '(none)' }
+    status.transform_values! { |v| v.truncate(256) } unless full
+
+    limit = 2048
+    if (data = ApiService::Error.oauth2_error_header(response))
+      data = "(www-authenticate) #{data}"
+    elsif (data = response.try(:body) || response.try(:dig, :body)).blank?
+      data = '(none)'
+    elsif data.is_a?(String)
+      data = "#{data.size} bytes:\n" + data.truncate(limit)
+    else
+      data = "\n" + data.pretty_inspect.truncate(limit)
+    end
 
     __debug_impl(leader: '<<<', separator: DEBUG_SEPARATOR, max: nil) do
-      parts = [service_name] << action.inspect << stat_error
-      parts << "DATA:\n#{data.pretty_inspect}" if data.present?
-      parts
+      [service_name] << action.inspect << status << "DATA: #{data}"
     end
   end
 
