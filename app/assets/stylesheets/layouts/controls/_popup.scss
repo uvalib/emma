@@ -10,8 +10,153 @@
 // Basic popup element
 // ============================================================================
 
-// @see PopupHelper#popup_container
-.popup-container {
+%popup-panel {
+
+    @include popup-shadow;
+
+    display:          flex;
+    flex-direction:   column;
+    flex-wrap:        wrap;
+    padding:          0.5rem;
+    font:             message-box;
+    background:       $root-bg-color;
+    border:           0.25rem solid $uva-accent-orange;
+    border-top-width: 1.5rem;
+    border-radius:    0.75rem;
+
+    @media #{$wide-screen} {
+        position:   absolute;
+        top:        1.5rem;
+        left:       1.75rem;
+        min-width:  33vw;
+        min-height: 50vh;
+    }
+
+    @media #{$medium-width} {
+        position:   fixed;
+        top:        5vh;
+        bottom:     5vh;
+        left:       5vw;
+        right:      5vw;
+    }
+
+    @media #{$narrow-screen} {
+        position:   fixed;
+        top:        3vh;
+        bottom:     3vh;
+        left:       3vw;
+        right:      3vw;
+    }
+
+    &.hidden {
+        z-index: $z-hidden;
+    }
+
+    &:not(.hidden) {
+        z-index: $z-popup;
+    }
+
+    //=====================================================================
+    // Components
+    //=====================================================================
+
+    // The "X" located in the upper-right corner of the panel's "frame".
+    .closer.icon {
+        position:    absolute;
+        top:         -1.5rem;
+        right:       0.75rem;
+        line-height: 1.5;
+        font-size:   medium;
+        font-weight: bold;
+        color:       white;
+        background:  $uva-accent-orange; // For color contrast checkers.
+        cursor:      pointer;
+
+        &:focus {
+
+            @include focus;
+
+            outline-offset: 1px;
+        }
+    }
+
+    > * {
+        flex:       1 1 auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    // Container for the popup content.
+    iframe {
+        border: none;
+        width:  100%;
+    }
+
+    // Temporary deferred-content placeholder.
+    .deferred {
+        font-size: large;
+    }
+
+    // Controls at the bottom of the popup panel (at minimum a "Close" button).
+    .popup-controls {
+
+        $button-spacing: 2rem;
+
+        display:         flex;
+        justify-content: center;
+        margin:          0;
+        flex:            0 0 auto;
+        gap:             $button-spacing;
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        button {
+
+            @include button.basic;
+
+            margin: 1rem 0 0.5rem;
+
+            @media #{$narrow-screen} {
+                margin-top:    0.5rem;
+                margin-bottom: 0.25rem;
+            }
+        }
+    }
+
+    //=====================================================================
+    // Variations
+    //=====================================================================
+
+    // Resizable panels are only for the desktop form factor.
+    @media #{$wide-screen} {
+
+        // The panel with a resize grab at the lower right-hand corner.
+        &.resizable {
+
+            padding-top: 1.75rem;
+            border:      0.25rem solid $uva-accent-orange;
+            box-shadow:  inset 0 3.5rem 0 -2.25rem $uva-accent-orange,
+                         $block-shadow;
+            resize:      both;
+            overflow:    auto;
+
+            // Put the resize grab on the left side.  (Better for the
+            // "Sign-in" help panel since it can only grow to the left.)
+            &.left-grab {
+                direction: rtl;
+            }
+
+            .closer.icon {
+                top: -0.25rem;
+            }
+        }
+    }
+}
+
+// @see PopupHelper#inline_popup
+.inline-popup {
 
     display:        inline-block;
     vertical-align: middle;
@@ -21,7 +166,7 @@
     }
 
     // Activation area in the form of text/hyperlink.
-    .control.text {
+    .popup-toggle.text {
 
         color:           -moz-hyperlinktext;
         color:           -webkit-link;
@@ -35,7 +180,7 @@
     }
 
     // Activation area in the form of an icon/button.
-    .control.icon {
+    .popup-toggle.icon {
 
         @include hover-highlight;
 
@@ -70,146 +215,11 @@
     }
 
     // The panel displaying content which is hidden until activated.
-    // noinspection DuplicatedCode
     .popup-panel {
-
-        @include popup-shadow;
-
-        display:          flex;
-        flex-direction:   column;
-        flex-wrap:        wrap;
-        padding:          0.5rem;
-        font:             message-box;
-        background:       $root-bg-color;
-        border:           0.25rem solid $uva-accent-orange;
-        border-top-width: 1.5rem;
-        border-radius:    0.75rem;
-
-        @media #{$wide-screen} {
-            position:   absolute;
-            top:        1.5rem;
-            left:       1.75rem;
-            min-width:  33vw;
-            min-height: 50vh;
-        }
-
-        @media #{$medium-width} {
-            position:   fixed;
-            top:        5vh;
-            bottom:     5vh;
-            left:       5vw;
-            right:      5vw;
-        }
-
-        @media #{$narrow-screen} {
-            position:   fixed;
-            top:        3vh;
-            bottom:     3vh;
-            left:       3vw;
-            right:      3vw;
-        }
-
-        &.hidden {
-            z-index: $z-hidden;
-        }
-
-        &:not(.hidden) {
-            z-index: $z-popup;
-        }
-
-        //=====================================================================
-        // Components
-        //=====================================================================
-
-        // The "X" located in the upper-right corner of the panel's "frame".
-        .closer.icon {
-            position:    absolute;
-            top:         -1.5rem;
-            right:       0.75rem;
-            line-height: 1.5;
-            font-size:   medium;
-            font-weight: bold;
-            color:       white;
-            background:  $uva-accent-orange; // For color contrast checkers.
-            cursor:      pointer;
-
-            &:focus {
-
-                @include focus;
-
-                outline-offset: 1px;
-            }
-        }
-
-        > * {
-            flex:       1 1 auto;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-
-        // Container for the popup content.
-        iframe {
-            border: none;
-            width:  100%;
-        }
-
-        // Temporary deferred-content placeholder.
-        .deferred {
-            font-size: large;
-        }
-
-        //=====================================================================
-        // Variations
-        //=====================================================================
-
-        // Resizable panels are only for the desktop form factor.
-        @media #{$wide-screen} {
-
-            // The panel with a resize grab at the lower right-hand corner.
-            &.resizable {
-
-                padding-top: 1.75rem;
-                border:      0.25rem solid $uva-accent-orange;
-                box-shadow:  inset 0 3.5rem 0 -2.25rem $uva-accent-orange,
-                             $block-shadow;
-                resize:      both;
-                overflow:    auto;
-
-                // Put the resize grab on the left side.  (Better for the
-                // "Sign-in" help panel since it can only grow to the left.)
-                &.left-grab {
-                    direction: rtl;
-                }
-
-                .closer.icon {
-                    top: -0.25rem;
-                }
-            }
-        }
+        @extend %popup-panel;
     }
+}
 
-    // Controls at the bottom of the popup panel (at minimum a "Close" button).
-    .popup-controls {
-
-        display:         flex;
-        justify-content: center;
-        margin:          0;
-        flex:            0 0 auto;
-
-        //=====================================================================
-        // Components
-        //=====================================================================
-
-        button {
-
-            @include button.basic;
-
-            margin: 1rem auto 0.5rem;
-
-            @media #{$narrow-screen} {
-                margin-top:    0.5rem;
-                margin-bottom: 0.25rem;
-            }
-        }
-    }
+.modal-popup {
+    @extend %popup-panel;
 }

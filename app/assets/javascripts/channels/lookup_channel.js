@@ -2,14 +2,22 @@
 
 
 import { Api }                from '../shared/api'
-import { hexRand }            from '../shared/css'
 import { isEmpty, isPresent } from '../shared/definitions'
 import { onPageExit }         from '../shared/events'
 import { LookupRequest }      from '../shared/lookup-request'
 import { LookupResponse }     from '../shared/lookup-response'
+import { hexRand }            from '../shared/random'
 import { asString }           from '../shared/strings'
 import { createChannel }      from '../channels/consumer'
 
+
+// ============================================================================
+// Type definitions
+// ============================================================================
+
+/**
+ * @typedef {import('../channels/lookup_channel')} LookupChannel
+ */
 
 // ============================================================================
 // Constants
@@ -201,11 +209,11 @@ export function setData(data) {
  * Assign the function(s) that will be invoked when something is received over
  * LookupChannel.
  *
- * @param {...function} callbacks
+ * @param {...(function|function[])} callbacks
  */
 export function setCallback(...callbacks) {
     _debug('setCallback');
-    lookup_dat_cb = callbacks;
+    lookup_dat_cb = [...callbacks].flat();
 }
 
 /**
@@ -215,11 +223,11 @@ export function setCallback(...callbacks) {
  * @note If {@link setCallback} is called after this, the added callbacks are
  *  cleared.
  *
- * @param {...function} callbacks
+ * @param {...(function|function[])} callbacks
  */
 export function addCallback(...callbacks) {
     _debug('addCallback');
-    lookup_dat_cb.push(...callbacks);
+    lookup_dat_cb = [...lookup_dat_cb, ...callbacks].flat();
 }
 
 // ============================================================================
@@ -252,21 +260,21 @@ export function setError(text, ...log_extra) {
 /**
  * setErrorCallback
  *
- * @param {...function} callbacks
+ * @param {...(function|function[])} callbacks
  */
 export function setErrorCallback(...callbacks) {
     _debug('setErrorCallback');
-    lookup_err_cb = callbacks;
+    lookup_err_cb = [...callbacks].flat();
 }
 
 /**
  * addErrorCallback
  *
- * @param {...function} callbacks
+ * @param {...(function|function[])} callbacks
  */
 export function addErrorCallback(...callbacks) {
     _debug('addErrorCallback');
-    lookup_err_cb.push(...callbacks);
+    lookup_err_cb = [...lookup_err_cb, ...callbacks].flat();
 }
 
 // ============================================================================
@@ -301,21 +309,21 @@ export function setDiagnostic(text, ...log_extra) {
  * Getting a message: this callback will be invoked once we receive something
  * over LookupChannel.
  *
- * @param {...function} callbacks
+ * @param {...(function|function[])} callbacks
  */
 export function setDiagnosticCallback(...callbacks) {
     _debug('setDiagnosticCallback');
-    lookup_dia_cb = callbacks;
+    lookup_dia_cb = [...callbacks].flat();
 }
 
 /**
  * addDiagnosticCallback
  *
- * @param {...function} callbacks
+ * @param {...(function|function[])} callbacks
  */
 export function addDiagnosticCallback(...callbacks) {
     _debug('addDiagnosticCallback');
-    lookup_dia_cb.push(...callbacks);
+    lookup_dia_cb = [...lookup_dia_cb, ...callbacks].flat();
 }
 
 // ============================================================================

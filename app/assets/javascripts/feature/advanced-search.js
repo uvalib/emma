@@ -3,8 +3,8 @@
 
 import { Emma }             from '../shared/assets'
 import { toggleVisibility } from '../shared/accessibility'
-import { randomizeName }    from '../shared/css'
 import { consoleLog }       from '../shared/logging'
+import { randomizeName }    from '../shared/random'
 import { urlParameters }    from '../shared/url'
 import {
     isDefined,

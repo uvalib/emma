@@ -1,16 +1,17 @@
 // app/assets/javascripts/feature/search-analysis.js
 
 
-import { Emma }                               from '../shared/assets'
-import { DB }                                 from '../shared/database'
-import { BaseClass }                          from '../shared/base-class'
-import { SessionState, removeByPrefix }       from '../shared/session-state'
-import { CallbackQueue }                      from '../shared/queue'
-import { rgbColor, rgbColorInverse }          from '../shared/color'
-import { DEF_HEX_DIGITS, HEX_BASE, selector } from '../shared/css'
-import { handleClickAndKeypress }             from '../shared/events'
-import { arrayWrap, compact }                 from '../shared/objects'
-import { makeUrl, urlParameters }             from '../shared/url'
+import { Emma }                         from '../shared/assets'
+import { DB }                           from '../shared/database'
+import { BaseClass }                    from '../shared/base-class'
+import { SessionState, removeByPrefix } from '../shared/session-state'
+import { CallbackQueue }                from '../shared/queue'
+import { rgbColor, rgbColorInverse }    from '../shared/color'
+import { selector }                     from '../shared/css'
+import { handleClickAndKeypress }       from '../shared/events'
+import { arrayWrap, compact }           from '../shared/objects'
+import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random'
+import { makeUrl, urlParameters }       from '../shared/url'
 import {
     isDefined,
     isMissing,

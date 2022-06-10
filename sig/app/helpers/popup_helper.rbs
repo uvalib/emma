@@ -5,7 +5,9 @@ module PopupHelper
 
   include HtmlHelper
 
-  POPUP_BUTTON_CLASS: String
+  include LinkHelper
+
+  POPUP_TOGGLE_CLASS: String
 
   POPUP_PANEL_CLASS: String
 
@@ -19,22 +21,65 @@ module PopupHelper
 
   POPUP_HIDDEN_MARKER: String
 
-  # Render a popup control and popup element.
+  # Render a free-standing popup element.
   #
-  # @param [Hash] opt                 Passed to 'popup-container' except for:
-  #
-  # @option opt [String]  :title      Tooltip for the visible control.
-  # @option opt [Boolean] :hidden     If *false*, panel is displayed initially.
-  # @option opt [Boolean] :resize     If *true*, the panel is resizable.
-  # @option opt [Boolean] :left_grab  If *true*, resize grab is on the left.
-  # @option opt [Hash]    :control    Options for the visible control.
-  # @option opt [Hash]    :panel      Options for the popup panel element.
-  # @option opt [Hash]    :closer     Options for the panel closer icon.
-  # @option opt [Hash]    :close      Options for the panel close button.
+  # @param [Hash] opt                 Passed to #make_popup_panel.
+  # @param [Proc] block               Passed to #make_popup_panel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def popup_container: (**untyped opt) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  # @see file:app/assets/javascripts/shared/modal_base.js
+  #
+  def modal_popup: (**untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+
+  # Render a popup control and associated popup element.
+  #
+  # @param [Hash, nil] control        Options for the visible control.
+  # @param [Hash, nil] panel          Options for the popup panel element.
+  # @param [Hash] opt                 Passed to 'inline-popup' except for
+  #                                     options passed to #make_popup_toggle,
+  #                                     #make_popup_panel.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Popup panel content.
+  # @yieldreturn [String,Array<String>]
+  #
+  # @see file:app/assets/stylesheets/layouts/controls/_popup.scss
+  #
+  def inline_popup: (?control: symHash|nil, ?panel: symHash|nil, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+
+  POPUP_TOGGLE_OPT: symArray
+
+  # Create a popup control.
+  #
+  # @param [Hash] opt                 Passed to element method except for:
+  #
+  # @option opt [ActiveSupport::SafeBuffer, Hash]   :button
+  # @option opt [ActiveSupport::SafeBuffer, String] :text
+  # @option opt [String]                            :label
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def make_popup_toggle: (?button: untyped?, ?text: untyped?, ?label: untyped?, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  POPUP_PANEL_OPT: symArray
+
+  # Render a popup control and popup element.
+  #
+  # @param [Boolean]   hidden         If *false*, panel is displayed initially.
+  # @param [Boolean]   resize         If *true*, the panel is resizable.
+  # @param [Boolean]   left_grab      If *true*, resize grab is on the left.
+  # @param [Hash, nil] closer         Options for the panel closer icon.
+  # @param [Hash, nil] close          Options for the panel close button.
+  # @param [Hash]      opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Popup panel content
+  # @yieldreturn [String,Array<String>]
+  #
+  def make_popup_panel: (?hidden: bool, ?resize: bool, ?left_grab: bool, ?closer: symHash|nil, ?close: symHash|nil, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
   private
 

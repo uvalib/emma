@@ -132,6 +132,7 @@ export class LookupRequest extends BaseClass {
      */
     constructor(terms, chars) {
         super();
+        /** @type {string} */
         this.separators   = Array.isArray(chars) ? chars.join('') : chars;
         this.separators ||= this.constructor.DEF_SEPARATORS;
         this.parts = this._blankParts();
@@ -233,8 +234,9 @@ export class LookupRequest extends BaseClass {
      * @returns {LookupRequestObject}
      */
     parse(term_values, term_prefix) {
+        const str = (typeof term_values === 'string');
+        let terms = str ? term_values.split("\n") : arrayWrap(term_values);
         let parts = this._blankParts();
-        let terms = arrayWrap(term_values);
 
         // Apply the provided prefix to each of the term value strings.
         // (These still go through extractParts in order to clean the values.)

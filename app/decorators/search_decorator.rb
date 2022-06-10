@@ -545,14 +545,14 @@ class SearchDecorator < BaseDecorator
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.
   #
-  # @param [Hash] opt                 To PopupHelper#popup_container except:
+  # @param [Hash] opt                 To PopupHelper#inline_popup except:
   #
   # @option opt [Hash] :attr          Options for deferred content.
   # @option opt [Hash] :placeholder   Options for transient placeholder.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
+  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
   #
   def record_popup(**opt)
     css    = '.record-popup'
@@ -567,7 +567,7 @@ class SearchDecorator < BaseDecorator
 
     ph_opt = opt.delete(:placeholder)
     prepend_css!(opt, css)
-    popup_container(**opt) do
+    inline_popup(**opt) do
       ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_opt[:'data-path'] = UploadDecorator.show_path(id: rid, modal: true)
       ph_opt[:'data-attr'] = attr.to_json

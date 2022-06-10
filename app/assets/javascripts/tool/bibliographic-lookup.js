@@ -3,11 +3,16 @@
 // Bibliographic Lookup
 
 
-import { randomizeName, selector } from '../shared/css'
-import { turnOffAutocomplete }     from '../shared/form'
-import { LookupRequest }           from '../shared/lookup-request'
-import { camelCase }               from '../shared/strings'
-import { asDateTime }              from '../shared/time'
+import { turnOffAutocomplete }            from '../shared/form'
+import { HTML_BREAK }                     from '../shared/html'
+import { renderJson }                     from '../shared/json'
+import { LookupModal }                    from '../shared/lookup-modal'
+import { LookupRequest }                  from '../shared/lookup-request'
+import { ModalDialog }                    from '../shared/modal_dialog'
+import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks'
+import { arrayWrap, compact, dupObject }  from '../shared/objects'
+import { randomizeName }                  from '../shared/random'
+import { camelCase }                      from '../shared/strings'
 import {
     isDefined,
     isEmpty,
@@ -16,87 +21,13 @@ import {
     presence,
 } from '../shared/definitions'
 import {
+    debounce,
     handleClickAndKeypress,
     handleEvent,
+    handleHoverAndFocus,
     isEvent,
 } from '../shared/events'
-import {
-    arrayWrap,
-    deepFreeze,
-    dupObject,
-    maxSize
-} from '../shared/objects'
 
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-/**
- * The .data() key for storing the generated lookup request.
- *
- * @readonly
- * @type {string}
- */
-export const REQUEST_DATA = 'lookupRequest';
-
-/**
- * The .data() key for storing the field replacement(s) selected by the user.
- *
- * @readonly
- * @type {string}
- */
-export const FIELD_VALUES_DATA = 'lookupFieldValues';
-
-/**
- * The name by which parts of a search request can be passed in via jQuery
- * data().
- *
- * @readonly
- * @type {string}
- */
-export const SEARCH_TERMS_DATA = 'lookupSearchTerms';
-
-/**
- * The name by which the result of a search request can be passed back via
- * jQuery data().
- *
- * @readonly
- * @type {string}
- */
-export const SEARCH_RESULT_DATA = 'lookupSearchResult';
-
-/**
- * A table of separator style names and their associated separator characters.
- *
- * * space: Space, tab, newline and <strong>|</strong> (pipe)
- * * pipe:  Only <strong>|</strong> (pipe)
- *
- * @readonly
- * @type {{[k: string]: string}}
- */
-const SEPARATORS = {
-    space: '\\s|',
-    pipe:  '|',
-};
-
-/**
- * The default key into {@link SEPARATORS}.
- *
- * @readonly
- * @type {string}
- */
-const DEF_SEPARATORS_KEY = 'pipe';
-
-/**
- * When replacing newlines with HTML breaks, it's important to retain the
- * newline itself so that `.text().split("\n")` can be used to reconstitute
- * arrays of values.
- *
- * @readonly
- * @type {string}
- */
-const HTML_BREAK = "<br/>\n";
 
 // ============================================================================
 // Functions
@@ -106,24 +37,46 @@ const HTML_BREAK = "<br/>\n";
 /**
  * Setup a page with interactive bibliographic lookup.
  *
- * @param {Selector} [root]
- * @param {Selector} [source]         Element holding request term(s).
- * @param {function} [onOpen]         Called when opening the popup.
+ * @param {Selector}                                      base
+ * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
+ * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
  *
  * @returns {Promise}
  */
-export async function setup(root, source, onOpen) {
+export async function setup(base, show_hooks, hide_hooks) {
+
+    const DEBUGGING = false;
+
+    let $base = $(base);
 
     /** @type {jQuery|undefined} */
-    let $popup_button = source && $(source);
+    let $popup_button = $base.is('.lookup-button') ? $base : undefined;
+
+    /**
+     * Whether the source implements manual input of search terms.
+     *
+     * @readonly
+     * @type {boolean}
+     */
+    const manual = true;
+
+    /**
+     * Whether the source displays diagnostic output elements.
+     *
+     * @readonly
+     * @type {boolean}
+     */
+    const output = true;
 
     // ========================================================================
     // Channel
     // ========================================================================
 
+    /** @type {LookupChannel} */
     let channel = await import('../channels/lookup_channel');
 
     channel.disconnectOnPageExit();
+
     channel.setCallback(updateResultDisplay);
     channel.setErrorCallback(updateErrorDisplay);
     channel.setDiagnosticCallback(updateDiagnosticDisplay);
@@ -136,92 +89,25 @@ export async function setup(root, source, onOpen) {
     }
 
     // ========================================================================
-    // Constants
-    // ========================================================================
-
-    const QUERY_PANEL_CLASS  = 'lookup-query';
-    const QUERY_TERMS_CLASS  = 'terms';
-    const STATUS_PANEL_CLASS = 'lookup-status';
-    const NOTICE_CLASS       = 'notice';
-    const SERVICES_CLASS     = 'services';
-    const ENTRIES_CLASS      = 'lookup-entries';
-    const HEAD_ENTRY_CLASS   = 'head';
-    const FIELD_VALUES_CLASS = 'field-values';
-    const PROMPT_CLASS       = 'lookup-prompt';
-    const HEADING_CLASS      = 'lookup-heading';
-    const OUTPUT_CLASS       = 'lookup-output';
-    const RESULTS_CLASS      = 'item-results';
-    const ERRORS_CLASS       = 'item-errors';
-    const DIAGNOSTICS_CLASS  = 'item-diagnostics';
-
-    const QUERY_PANEL        = selector(QUERY_PANEL_CLASS);
-    const QUERY_TERMS        = selector(QUERY_TERMS_CLASS);
-    const STATUS_PANEL       = selector(STATUS_PANEL_CLASS);
-    const NOTICE             = selector(NOTICE_CLASS);
-    const SERVICES           = selector(SERVICES_CLASS);
-    const ENTRIES            = selector(ENTRIES_CLASS);
-    const HEAD_ENTRY         = selector(HEAD_ENTRY_CLASS);
-    const FIELD_VALUES       = selector(FIELD_VALUES_CLASS);
-    const PROMPT             = selector(PROMPT_CLASS);
-    const HEADING            = selector(HEADING_CLASS);
-    const OUTPUT             = selector(OUTPUT_CLASS);
-    const RESULTS            = selector(RESULTS_CLASS);
-    const ERRORS             = selector(ERRORS_CLASS);
-    const DIAGNOSTICS        = selector(DIAGNOSTICS_CLASS);
-
-    /**
-     * Schema for the columns displayed for each displayed lookup entry.
-     *
-     * @type {Object<{label: string, non_data?: bool}>}
-     */
-    const ENTRY_TABLE = deepFreeze({ // TODO: I18n
-        selection:              { label: 'USE',  non_data: true },
-        tag:                    { label: 'FROM', non_data: true },
-        dc_identifier:          { label: 'IDENTIFIER' },
-        dc_title:               { label: 'TITLE' },
-        dc_creator:             { label: 'AUTHOR/CREATOR' },
-        dc_publisher:           { label: 'PUBLISHER' },
-        emma_publicationDate:   { label: 'DATE' },
-        dcterms_dateCopyright:  { label: 'YEAR' },
-        dc_description:         { label: 'DESCRIPTION' },
-    });
-
-    /**
-     * All entry column keys.
-     *
-     * @type {string[]}
-     */
-    const ALL_COLUMNS = Object.keys(ENTRY_TABLE);
-
-    /**
-     * Keys for columns related to entry data values.
-     *
-     * @type {string[]}
-     */
-    const DATA_COLUMNS = deepFreeze(
-        Object.entries(ENTRY_TABLE).map(kv => {
-            let [field, config] = kv;
-            return config.non_data ? [] : field;
-        }).flat()
-    );
-
-    /**
-     * For storing and retrieving entries values via jQuery .data().
-     *
-     * @type {string}
-     */
-    const ENTRY_ITEM_DATA = 'item-data';
-
-    // ========================================================================
     // Variables
     // ========================================================================
+
+    /**
+     * The modal class instance.
+     *
+     * @type {ModalDialog|undefined}
+     */
+    let modal = $popup_button?.data(ModalDialog.MODAL_INSTANCE);
 
     /**
      * Base element associated with the dialog.
      *
      * @type {jQuery}
      */
-    let $root = root ? $(root) : $('body');
+    let $root =
+        modal?.modalPanel ||
+        $popup_button?.siblings(ModalDialog.PANEL) ||
+        $('body');
 
     /**
      * Operational status elements.
@@ -235,58 +121,63 @@ export async function setup(root, source, onOpen) {
      *
      * @type {jQuery}
      */
-    let $entries_display, $entries_list, $entry_radio_buttons;
+    let $entries_display, $entries_list, $loading;
 
     /**
      * Result entry elements.
      *
      * @type {jQuery}
      */
-    let $selected_entry, $field_values;
+    let $selected_entry, $field_values, $field_locks, $original_values;
+
+    /**
+     * The first selection radio button on the modal popup.
+     *
+     * @type {jQuery|undefined}
+     */
+    let $start_tabbable;
 
     /**
      * Raw communications display elements.
      *
      * @type {jQuery}
      */
-    let $output      = $root.find(OUTPUT),
-        $results     = $output.find(RESULTS),
-        $errors      = $output.find(ERRORS),
-        $diagnostics = $output.find(DIAGNOSTICS);
+    let $heading, $output, $results, $errors, $diagnostics;
 
     /**
      * Manual input elements.
      *
      * @type {jQuery}
      */
-    let $prompt    = $root.find(PROMPT),
-        $input     = $prompt.find('[type="text"]'),
-        $submit    = $prompt.find('[type="submit"], .submit'),
-        $separator = $prompt.find('[type="radio"]');
-
-    // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleEvent($input, 'keyup', submit);
-    handleClickAndKeypress($submit, submit);
-
-    if ($popup_button) {
-        handleClickAndKeypress($popup_button, submitOnOpen);
-    }
+    let $prompt, $input, $submit, $separator;
 
     // ========================================================================
     // Actions
     // ========================================================================
 
-    turnOffAutocomplete($input);
+    if (manual) {
+        handleEvent(inputText(), 'keyup', manualSubmission);
+        handleClickAndKeypress(inputSubmit(), manualSubmission);
+        turnOffAutocomplete(inputText());
+        queryPanel().addClass('hidden');
+    } else {
+        inputPrompt().addClass('hidden');
+    }
 
-    initializeDisplay($results);
-    initializeDisplay($errors);
-    initializeDisplay($diagnostics);
+    if (output) {
+        initializeDisplay(resultDisplay());
+        initializeDisplay(errorDisplay());
+        initializeDisplay(diagnosticDisplay());
+    } else {
+        outputHeading().addClass('hidden');
+        outputDisplay().addClass('hidden');
+    }
 
-    if ($popup_button) {
-        resetSearchResultsData();
+    if (isModal()) {
+        ModalShowHooks.set($popup_button, show_hooks, onShowModal);
+        ModalHideHooks.set($popup_button, onHideModal, hide_hooks);
+    } else {
+        entriesDisplay().addClass('hidden');
     }
 
     // ========================================================================
@@ -294,53 +185,12 @@ export async function setup(root, source, onOpen) {
     // ========================================================================
 
     /**
-     * Indicate whether operations are taking within a modal dialog.
+     * Indicate whether operations are occurring within a modal dialog.
      *
      * @returns {boolean}
      */
     function isModal() {
         return !!$popup_button;
-    }
-
-    /**
-     * Submit the query terms as a lookup request.
-     *
-     * @param {|jQuery.Event|Event|KeyboardEvent} event
-     */
-    function submit(event) {
-        if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
-            return;
-        }
-        if (isModal()) {
-            // Don't allow the manual submission to close the dialog.
-            event.stopPropagation();
-            event.preventDefault();
-        } else {
-            // Force regeneration of lookup request from input search terms.
-            clearRequestData();
-        }
-        performRequest();
-    }
-
-    /**
-     * Submit the query automatically when the popup is opened.
-     *
-     * @param {jQuery.Event|Event} event
-     */
-    function submitOnOpen(event) {
-        updateSearchTerms(event);
-        performRequest();
-    }
-
-    /**
-     * Perform the lookup request.
-     */
-    function performRequest() {
-        initializeStatusPanel();
-        clearResultDisplay();
-        clearErrorDisplay();
-        resetEntries();
-        channel.request(getRequestData());
     }
 
     /**
@@ -355,16 +205,99 @@ export async function setup(root, source, onOpen) {
     }
 
     // ========================================================================
+    // Functions
+    // ========================================================================
+
+    /**
+     * Submit the query terms as a lookup request.
+     *
+     * @param {|jQuery.Event|Event|KeyboardEvent} event
+     */
+    function manualSubmission(event) {
+        if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
+            return;
+        }
+        _debug('manualSubmission', event);
+        if (isModal()) {
+            // Don't allow the manual submission to close the dialog.
+            event.stopPropagation();
+            event.preventDefault();
+        } else {
+            // Force regeneration of lookup request from input search terms.
+            clearRequestData();
+        }
+        performRequest();
+    }
+
+    /**
+     * Submit the query automatically when the popup is opened.
+     *
+     * @param {jQuery}  _$target      Unused.
+     * @param {boolean} check_only
+     * @param {boolean} [halted]
+     *
+     * @returns {boolean|undefined}
+     *
+     * @see onShowModalHook
+     */
+    function onShowModal(_$target, check_only, halted) {
+        _debug('onShowModal', _$target, check_only, halted);
+        if (check_only || halted) { return }
+        resetSearchResultsData();
+        clearFieldValuesData();
+        updateSearchTerms();
+        showLoading();
+        performRequest();
+    }
+
+    /**
+     * Commit when leaving the popup from the Update button.
+     *
+     * @param {jQuery}  $target       Checked for `.is(LookupModal.COMMIT)`.
+     * @param {boolean} check_only
+     * @param {boolean} [halted]
+     *
+     * @returns {boolean|undefined}
+     *
+     * @see onHideModalHook
+     */
+    function onHideModal($target, check_only, halted) {
+        _debug('onHideModal', $target, check_only, halted);
+        if (check_only || halted) {
+            // do nothing
+        } else if ($target.is(LookupModal.COMMIT)) {
+            commitFieldValuesEntry();
+        } else {
+            clearFieldValuesData();
+        }
+    }
+
+    /**
+     * Perform the lookup request.
+     */
+    function performRequest() {
+        _debug('performRequest');
+        disableCommit();
+        resetEntries();
+        initializeStatusPanel();
+        if (output) {
+            clearResultDisplay();
+            clearErrorDisplay();
+        }
+        channel.request(getRequestData());
+    }
+
+    // ========================================================================
     // Functions - request data
     // ========================================================================
 
     /**
      * Get the current lookup request.
      *
-     * @returns {LookupRequest|undefined}
+     * @returns {LookupRequest}
      */
     function getRequestData() {
-        const request = dataElement().data(REQUEST_DATA);
+        const request = dataElement().data(LookupModal.REQUEST_DATA);
         return request || setRequestData(getSearchTerms());
     }
 
@@ -376,23 +309,26 @@ export async function setup(root, source, onOpen) {
      * @returns {LookupRequest}       The current request object.
      */
     function setRequestData(data) {
-        let request = data;
-        if (request instanceof LookupRequest) {
+        _debug('setRequestData', data);
+        let request;
+        if (data instanceof LookupRequest) {
+            request = data;
             setSeparators(request.separators);
         } else {
-            request = new LookupRequest(request, getSeparators());
+            request = new LookupRequest(data, getSeparators());
         }
-        dataElement().data(REQUEST_DATA, request);
+        dataElement().data(LookupModal.REQUEST_DATA, request);
         return request;
     }
 
     /**
      * Clear the current lookup request.
      *
-     * @returns {jQuery}              The effected element.
+     * @returns {void}
      */
     function clearRequestData() {
-        return dataElement().removeData(REQUEST_DATA);
+        _debug('clearRequestData');
+        dataElement().removeData(LookupModal.REQUEST_DATA);
     }
 
     // ========================================================================
@@ -412,19 +348,21 @@ export async function setup(root, source, onOpen) {
      * @returns {LookupResults|undefined}
      */
     function getSearchResultsData() {
-        return dataElement().data(SEARCH_RESULT_DATA);
+        return dataElement().data(LookupModal.SEARCH_RESULT_DATA);
     }
 
     /**
      * Set response data on the data object.
      *
-     * @param {LookupResults} value
+     * @param {LookupResults|undefined} value
      *
      * @returns {LookupResults}
      */
     function setSearchResultsData(value) {
-        dataElement().data(SEARCH_RESULT_DATA, value);
-        return value;
+        _debug('setSearchResultsData', value);
+        const new_value = value || blankSearchResultsData();
+        dataElement().data(LookupModal.SEARCH_RESULT_DATA, new_value);
+        return new_value;
     }
 
     /**
@@ -433,7 +371,20 @@ export async function setup(root, source, onOpen) {
      * @returns {LookupResults}
      */
     function resetSearchResultsData() {
+        _debug('resetSearchResultsData');
         return setSearchResultsData(blankSearchResultsData());
+    }
+
+    /**
+     * Update the data object with the response data.
+     *
+     * @param {LookupResponse} message
+     */
+    function updateSearchResultsData(message) {
+        _debug('updateSearchResultsData', message);
+        let key  = message.job_id || randomizeName('response');
+        let obj  = getSearchResultsData() || resetSearchResultsData();
+        obj[key] = message.objectCopy;
     }
 
     /**
@@ -443,17 +394,6 @@ export async function setup(root, source, onOpen) {
      */
     function blankSearchResultsData() {
         return {};
-    }
-
-    /**
-     * Update the data object with the response data.
-     *
-     * @param {LookupResponse} message
-     */
-    function updateSearchResultsData(message) {
-        let key     = message.job_id || randomizeName('response');
-        let object  = getSearchResultsData() || resetSearchResultsData();
-        object[key] = message.objectCopy;
     }
 
     // ========================================================================
@@ -466,29 +406,28 @@ export async function setup(root, source, onOpen) {
      * @returns {LookupResponseItem|undefined}
      */
     function getFieldValuesData() {
-        return dataElement().data(FIELD_VALUES_DATA);
+        return dataElement().data(LookupModal.FIELD_VALUES_DATA);
     }
 
     /**
      * Store the user-selected field values on the data object.
      *
-     * @param {LookupResponseItem} [value]
-     *
-     * @returns {jQuery}
+     * @param {LookupResponseItem|undefined} [value]
      */
     function setFieldValuesData(value) {
-        return dataElement().data(FIELD_VALUES_DATA, (value || {}));
+        _debug('setFieldValuesData', value);
+        const new_value = value || {};
+        dataElement().data(LookupModal.FIELD_VALUES_DATA, new_value);
     }
 
     /**
      * Clear the user-selected field values from lookup.
      *
-     * @param {Selector} [form]
-     *
-     * @returns {jQuery}
+     * @returns {void}
      */
-    function clearFieldValuesData(form) {
-        return dataElement().removeData(FIELD_VALUES_DATA);
+    function clearFieldValuesData() {
+        _debug('clearFieldValuesData');
+        dataElement().removeData(LookupModal.FIELD_VALUES_DATA);
     }
 
     // ========================================================================
@@ -496,21 +435,21 @@ export async function setup(root, source, onOpen) {
     // ========================================================================
 
     /**
-     * queryPanel
+     * The element with the display of the query currently being performed.
      *
      * @returns {jQuery}
      */
     function queryPanel() {
-        return $query_panel ||= presence($root.find(QUERY_PANEL));
+        return $query_panel ||= presence($root.find(LookupModal.QUERY_PANEL));
     }
 
     /**
-     * queryTerms
+     * The element containing the query currently being performed.
      *
      * @returns {jQuery}
      */
     function queryTerms() {
-        return $query_terms ||= queryPanel().find(QUERY_TERMS);
+        return $query_terms ||= queryPanel().find(LookupModal.QUERY_TERMS);
     }
 
     // ========================================================================
@@ -518,54 +457,54 @@ export async function setup(root, source, onOpen) {
     // ========================================================================
 
     /**
-     * statusPanel
+     * The element displaying the state of the parallel requests.
      *
      * @returns {jQuery}
      */
     function statusPanel() {
-        $status_panel ||= presence($root.find(STATUS_PANEL));
-        $status_panel ||= makeStatusPanel().insertAfter($prompt);
+        $status_panel ||= presence($root.find(LookupModal.STATUS_PANEL));
+        $status_panel ||= makeStatusPanel().insertAfter(inputPrompt());
         return $status_panel;
     }
 
     /**
-     * statusNotice
+     * The element for displaying textual status information.
      *
      * @param {string} [value]
      *
      * @returns {jQuery}
      */
     function statusNotice(value) {
-        $notice ||= statusPanel().find(NOTICE);
-        if (isDefined(value)) {
-            $notice.text(value || '');
-        }
-        return $notice;
+        $notice ||= statusPanel().find(LookupModal.NOTICE);
+        return isDefined(value) ? $notice.text(value) : $notice;
     }
 
     /**
-     * serviceStatuses
+     * The element containing the dynamic set of external services.
      *
      * @param {string|string[]} [services]
      *
      * @returns {jQuery}
      */
     function serviceStatuses(services) {
-        $services ||= statusPanel().find(SERVICES);
+        $services ||= statusPanel().find(LookupModal.SERVICES);
         if (isDefined(services)) {
             if (isMissing($services.children('label'))) {
                 $('<label>').text('Searching:').appendTo($services);
             }
-            let data = $services.data('names');
-            if (!data) {
+            let names = arrayWrap(services);
+            let data  = $services.data('names');
+            if (data) {
+                names = names.filter(srv => !data.includes(srv));
+            } else {
                 $services.data('names', (data = []));
             }
-            arrayWrap(services).forEach(function(name) {
-                if (!data.includes(name)) {
-                    data.push(name);
-                    makeServiceStatus(name).appendTo($services);
-                }
-            });
+            if (isPresent(names)) {
+                const statuses = names.map(name => makeServiceStatus(name));
+                $services.append(statuses);
+                data.push(...names);
+            }
+            $services.removeClass('invisible');
         }
         return $services;
     }
@@ -583,37 +522,42 @@ export async function setup(root, source, onOpen) {
      * @param {LookupResponse} message
      */
     function updateStatusPanel(message) {
-        const func = 'updateStatusPanel';
-        let status;
-        switch (message.status?.toUpperCase()) {
+        const func  = 'updateStatusPanel';
+        const state = message.status?.toUpperCase();
+        const srv   = message.service;
+        const data  = message.data;
+        let finish, notice, status;
+        switch (state) {
 
-            // Waiter statuses
+            // Waiter states
 
             case 'STARTING':
-                statusNotice('Working');
-                serviceStatuses(message.service).removeClass('invisible');
+                notice = 'Working';
+                serviceStatuses(srv);
                 break;
             case 'TIMEOUT':
-                statusNotice('(some searches took longer than expected)');
+                notice = '(some searches took longer than expected)';
+                finish = true;
                 break;
             case 'PARTIAL':
-                statusNotice('(partial results received)');
+                notice = '(partial results received)';
+                finish = true;
                 break;
             case 'COMPLETE':
-                statusNotice('Done');
+                notice = 'Done';
+                finish = true;
                 break;
 
             // Worker statuses
 
             case 'WORKING':
-                statusNotice('' + statusNotice().text() + '.');
+                notice =`${statusNotice().text()}.`;
                 break;
             case 'LATE':
                 status = 'late';
                 break;
             case 'DONE':
-                const no_results = isEmpty(message.data.items);
-                status = no_results ? ['done', 'empty'] : 'done';
+                status = isEmpty(data?.items) ? ['done', 'empty'] : 'done';
                 break;
 
             // Other
@@ -622,9 +566,9 @@ export async function setup(root, source, onOpen) {
                 console.warn(`${func}: ${message.status}: unexpected`);
                 break;
         }
-        if (status) {
-            serviceStatuses().find(`.${message.service}`).addClass(status);
-        }
+        if (notice) { statusNotice(notice) }
+        if (status) { serviceStatuses().find(`.${srv}`).addClass(status) }
+        if (finish) { hideLoading() }
     }
 
     // ========================================================================
@@ -642,63 +586,117 @@ export async function setup(root, source, onOpen) {
     }
 
     /**
-     * makeStatusPanel
+     * Generate the element displaying the state of the parallel requests.
+     *
+     * @param [css_class] Default: {@link LookupModal.STATUS_PANEL_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeStatusPanel() {
-        let $container = $('<div>').addClass(STATUS_PANEL_CLASS);
-        makeServiceStatuses().appendTo($container);
-        makeStatusNotice().appendTo($container);
-        return $container;
+    function makeStatusPanel(css_class) {
+        const css      = css_class || LookupModal.STATUS_PANEL_CLASS;
+        let $container = $('<div>').addClass(css);
+        let $services  = makeServiceStatuses();
+        let $notice    = makeStatusNotice();
+        return $container.append($services, $notice);
     }
 
     /**
-     * makeStatusNotice
+     * Generate the element for displaying textual status information.
+     *
+     * @param [css_class] Default: {@link LookupModal.NOTICE_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeStatusNotice() {
-        return $('<div>').addClass(NOTICE_CLASS);
+    function makeStatusNotice(css_class) {
+        const css = css_class || LookupModal.NOTICE_CLASS;
+        return $('<div>').addClass(css);
     }
 
     /**
-     * makeServiceStatuses
+     * Generate the element containing the dynamic set of external services.
+     *
+     * @param [css_class] Default: {@link LookupModal.SERVICES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeServiceStatuses() {
-        return $('<div>').addClass(SERVICES_CLASS);
+    function makeServiceStatuses(css_class) {
+        const css = css_class || LookupModal.SERVICES_CLASS;
+        return $('<div>').addClass(css);
     }
 
     /**
-     * makeServiceStatus
+     * Generate an element for displaying the status of an external service.
+     *
+     * @param [name]                  Service name; default: 'unknown'.
+     * @param [css_class]             Default: 'service'
      *
      * @returns {jQuery}
      */
-    function makeServiceStatus(name) {
-        const service = name || 'unknown';
-        const classes = `service ${service}`;
+    function makeServiceStatus(name, css_class) {
+        const css     = css_class || 'service';
+        const service = name      || 'unknown';
+        const classes = `${css} ${service}`;
         const label   = camelCase(service);
         return $('<div>').addClass(classes).text(label);
     }
 
     // ========================================================================
-    // Functions - new field values
+    // Functions - commit
     // ========================================================================
 
     /**
-     * getFieldValuesEntry
+     * The button(s) for updating
+     * {@link LookupModal.FIELD_VALUES_DATA FIELD_VALUES_DATA} from the current
+     * contents of {@link $field_values}.
+     *
+     * @returns {jQuery}
+     */
+    function commitButton() {
+        return $root.find(LookupModal.COMMIT);
+    }
+
+    /**
+     * Enable commit button(s).
+     *
+     * @param {boolean} [enable]      If *false*, disable.
+     *
+     * @returns {jQuery}              The commit button(s).
+     */
+    function enableCommit(enable) {
+        let $button = commitButton();
+        const set   = (enable === false);
+        return $button.toggleClass('disabled', set).prop('disabled', set);
+    }
+
+    /**
+     * Disable commit button(s).
+     *
+     * @param {boolean} [disable]     If *false*, enable.
+     *
+     * @returns {jQuery}              The commit button(s).
+     */
+    function disableCommit(disable) {
+        let $button = commitButton();
+        const set   = (disable !== false);
+        return $button.toggleClass('disabled', set).prop('disabled', set);
+    }
+
+    // ========================================================================
+    // Functions - replacement field values
+    // ========================================================================
+
+    /**
+     * Get the entry row element containing the field values that will be
+     * reported back to the form.
      * 
      * @returns {jQuery}
      */
     function getFieldValuesEntry() {
-        $field_values?.removeData(ENTRY_ITEM_DATA);
         return $field_values;
     }
 
     /**
-     * setFieldValuesEntry
+     * Set the field values row element.
      * 
      * @param {jQuery} $entry
      *
@@ -709,37 +707,209 @@ export async function setup(root, source, onOpen) {
     }
 
     /**
-     * The user commits to the new field values.
-     *
-     * @param {jQuery.Event|Event} event
+     * Invoked when the user commits to the new field values.
      */
-    function commitFieldValuesEntry(event) {
-        event.stopPropagation();
-        event.preventDefault();
+    function commitFieldValuesEntry() {
         let current    = getFieldValuesData();
         let new_values = entryValues(getFieldValuesEntry());
         if (isPresent(current)) {
             new_values = $.extend(true, current, new_values);
         }
+        new_values = compact(new_values);
         setFieldValuesData(new_values);
     }
 
-    // ========================================================================
-    // Functions - new field values
-    // ========================================================================
-
     /**
-     * makeCommitFieldValues
+     * Get the field value element.
      *
-     * @param {string} [label]
+     * @param {string|jQuery|HTMLElement} field
      *
      * @returns {jQuery}
      */
-    function makeCommitFieldValues(label) {
-        let $button = $('<button>').addClass('commit').attr('type', 'submit');
-        $button.text(label || 'Commit'); // TODO: I18n
-        handleClickAndKeypress($button, commitFieldValuesEntry);
-        return $button;
+    function fieldValueCell(field) {
+        const func = 'fieldValueCell';
+        let $result;
+        if (typeof field === 'string') {
+            $result = getFieldValuesEntry().find(`[data-field="${field}"]`);
+        } else {
+            $result = $(field);
+        }
+        if (!$result.is('textarea[data-field]')) {
+            console.warn(`${func}: not a field value:`, field);
+        }
+        return $result;
+    }
+
+    /**
+     * Get the data field associated with the given element (from either itself
+     * or the nearest parent).
+     *
+     * @param {Selector} target
+     *
+     * @returns {string|undefined}
+     */
+    function fieldFor(target) {
+        const df = 'data-field';
+        let $tgt = $(target);
+        return $tgt.attr(df) || $tgt.parents(`[${df}]`).first().attr(df);
+    }
+
+    /**
+     * If a field value column is not already locked, lock it if its contents
+     * have changed.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function lockIfChanged(event) {
+        let $textarea = $(event.target);
+        if (!isLockedFieldValue($textarea)) {
+            const current  = $textarea.val()?.trim() || '';
+            const previous = getLatestFieldValue($textarea);
+            if (current !== previous) {
+                const field = $textarea.attr('data-field');
+                setLatestFieldValue($textarea, current);
+                lockFor(field).click();
+            }
+        }
+    }
+
+    /**
+     * Get the most-recently-saved value for a field value element.
+     *
+     * @param {jQuery} $textarea
+     *
+     * @returns {string}
+     */
+    function getLatestFieldValue($textarea) {
+        const value_name = LookupModal.FIELD_VALUE_DATA;
+        return $textarea.data(value_name)?.trim() || '';
+    }
+
+    /**
+     * Set the most-recently-saved value for a field value element.
+     *
+     * @param {jQuery} $textarea
+     * @param {string} value
+     */
+    function setLatestFieldValue($textarea, value) {
+        const value_name = LookupModal.FIELD_VALUE_DATA;
+        const new_value  = value?.trim() || '';
+        $textarea.data(value_name, new_value);
+    }
+
+    // ========================================================================
+    // Functions - field locks
+    // ========================================================================
+
+    /**
+     * Get the entry row element containing the lock/unlock radio buttons
+     * controlling the updatability of each associated field value.
+     *
+     * @returns {jQuery}
+     */
+    function getFieldLocksEntry() {
+        return $field_locks;
+    }
+
+    /**
+     * Set the field locks row element.
+     *
+     * @param {jQuery} $entry
+     *
+     * @returns {jQuery}
+     */
+    function setFieldLocksEntry($entry) {
+        return $field_locks = $entry;
+    }
+
+    /**
+     * Get the field lock associated with the given data field.
+     *
+     * @param {string} field
+     *
+     * @returns {jQuery}
+     */
+    function lockFor(field) {
+        /** @type {jQuery} */
+        let $column = getFieldLocksEntry().children(`[data-field="${field}"]`);
+        return $column.find(LookupModal.LOCK);
+    }
+
+    /**
+     * Indicate whether the given field value is locked.
+     *
+     * @param {string|jQuery|HTMLElement} field
+     *
+     * @returns {boolean}
+     */
+    function isLockedFieldValue(field) {
+        const flag_name = LookupModal.FIELD_LOCKED_DATA;
+        return !!fieldValueCell(field).data(flag_name);
+    }
+
+    /**
+     * Lock the associated field value from being updated by changing the
+     * selected entry.
+     *
+     * (The field is not disabled, so it is still editable by the user.)
+     *
+     * @param {string|jQuery|HTMLElement} field
+     * @param {boolean}                   [locking] If *false*, unlock instead.
+     */
+    function lockFieldValue(field, locking) {
+        const flag_name = LookupModal.FIELD_LOCKED_DATA;
+        const lock      = (locking !== false);
+        fieldValueCell(field).data(flag_name, lock);
+    }
+
+    /**
+     * Unlock the associated field value to allow updating by changing the
+     * selected entry.
+     *
+     * @param {string|jQuery|HTMLElement} field
+     * @param {boolean}                   [unlocking] If *false*, lock instead.
+     */
+    function unlockFieldValue(field, unlocking) {
+        const flag_name = LookupModal.FIELD_LOCKED_DATA;
+        const lock      = (unlocking === false);
+        fieldValueCell(field).data(flag_name, lock);
+    }
+
+    /**
+     * The lock/unlock control is toggled.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function toggleFieldLock(event) {
+        let $target = $(event.target);
+        const field = fieldFor($target);
+        const lock  = $target.is(':checked');
+        lockFieldValue(field, lock);
+    }
+
+    // ========================================================================
+    // Methods - original field values
+    // ========================================================================
+
+    /**
+     * Get the entry row element containing the field values that were
+     * originally supplied by to the form.
+     *
+     * @returns {jQuery}
+     */
+    function getOriginalValuesEntry() {
+        return $original_values;
+    }
+
+    /**
+     * Set the original values row element.
+     *
+     * @param {jQuery} $entry
+     *
+     * @returns {jQuery}
+     */
+    function setOriginalValuesEntry($entry) {
+        return this.$original_values = $entry;
     }
 
     // ========================================================================
@@ -747,17 +917,17 @@ export async function setup(root, source, onOpen) {
     // ========================================================================
 
     /**
-     * getSelectedEntry
+     * Get the entry row element that has been selected by the user.
      *
      * @returns {jQuery}
      */
     function getSelectedEntry() {
         return $selected_entry ||=
-            entryRadioButtons().filter(':checked').parent();
+            entrySelectButtons().filter(':checked').parent();
     }
 
     /**
-     * setSelectedEntry
+     * Set the entry row element that has been selected by the user.
      *
      * @param {jQuery} $entry
      *
@@ -768,18 +938,75 @@ export async function setup(root, source, onOpen) {
     }
 
     /**
+     * Reset the selected entry to the "ORIGINAL" entry.
+     */
+    function resetSelectedEntry() {
+        $selected_entry = null;
+        getOriginalValuesEntry().find('[type="radio"]').click();
+    }
+
+    /**
+     * Use the entry row selected by the user to update unlocked field values.
+     *
+     * @param {Selector} [entry]      Default: {@link getSelectedEntry}
+     */
+    function useSelectedEntry(entry) {
+        let $entry   = entry ? setSelectedEntry($(entry)) : getSelectedEntry();
+        let values   = entryValues($entry);
+        let $fields  = getFieldValuesEntry();
+        let columns  = $fields.children('[data-field]').toArray();
+        let unlocked = columns.filter(col => !isLockedFieldValue(col));
+        let writable = unlocked.map(col => fieldFor(col));
+        fillEntry($fields, values, writable);
+    }
+
+    /**
      * The user selects a lookup result entry as the basis for the new field
      * values for the originating submission entry.
+     *
+     * The event target is assumed to have an entry row as a parent.
      *
      * @param {jQuery.Event|Event} event
      */
     function selectEntry(event) {
-        let $target = $(event.target);
-        if ($target.is(':checked')) {
-            let $entry = setSelectedEntry($target.parent());
-            fillEntry(getFieldValuesEntry(), entryValues($entry));
-            entryRadioButtons().not($target).prop('checked', false);
+        /** @type {jQuery} */
+        let $target = $(event.target),
+            $entry  = $target.parents('.row').first();
+        if ($target.attr('type') !== 'radio') {
+            $entry.find('[type="radio"]').click();
+        } else if ($target.is(':checked')) {
+            entrySelectButtons().not($target).prop('checked', false);
+            useSelectedEntry($entry);
+            if ($entry.is(LookupModal.RESULT)) {
+                enableCommit();
+            }
         }
+    }
+
+    /**
+     * Accentuate all of the elements of the related entry.
+     *
+     * The event target is assumed to have an entry row as a parent.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function highlightEntry(event) {
+        let $target = $(event.target);
+        let $entry  = $target.parents('.row').first();
+        $entry.children().toggleClass('highlight', true);
+    }
+
+    /**
+     * De-accentuate all of the elements of the related entry.
+     *
+     * The event target is assumed to have an entry row as a parent.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function unhighlightEntry(event) {
+        let $target = $(event.target);
+        let $entry  = $target.parents('.row').first();
+        $entry.children().toggleClass('highlight', false);
     }
 
     // ========================================================================
@@ -789,21 +1016,34 @@ export async function setup(root, source, onOpen) {
     /**
      * Get a copy of the given entry's field values.
      *
-     * @param {jQuery} $entry
+     * @param {Selector} entry
      *
      * @returns {LookupResponseItem}
      */
-    function entryValues($entry) {
-        let data = $entry.data(ENTRY_ITEM_DATA);
-        data &&= dupObject(data);
-        data ||= Object.fromEntries(
-            DATA_COLUMNS.map(field => [field, getColumnValue($entry, field)])
-        );
-        return data;
+    function entryValues(entry) {
+        let $entry = $(entry);
+        let values = $entry.data(LookupModal.ENTRY_ITEM_DATA);
+        return values ? dupObject(values) : getColumnValues($entry);
     }
 
     /**
-     * getColumnValue
+     * Get the values of the entry from its data fields.
+     *
+     * @param {jQuery}   $entry
+     * @param {string[]} [fields]
+     *
+     * @returns {LookupResponseItem}
+     */
+    function getColumnValues($entry, fields) {
+        const columns = fields || LookupModal.DATA_COLUMNS
+        const get_val = getColumnValue;
+        const entries = columns.map(field => [field, get_val($entry, field)]);
+        // noinspection JSValidateTypes
+        return Object.fromEntries(entries);
+    }
+
+    /**
+     * Get the value(s) of the entry's data field.
      *
      * @param {jQuery} $entry
      * @param {string} field
@@ -821,7 +1061,7 @@ export async function setup(root, source, onOpen) {
     }
 
     /**
-     * setColumnValue
+     * Update the entry's data field displayed value(s).
      *
      * @param {jQuery} $entry
      * @param {string} field
@@ -829,14 +1069,23 @@ export async function setup(root, source, onOpen) {
      */
     function setColumnValue($entry, field, field_value) {
         /** @type {jQuery} */
-        let $col  = $entry.children(`[data-field="${field}"]`);
-        let value = field_value;
-        if ($col.is('textarea')) {
-            $col.val(Array.isArray(value) ? value.join("\n") : value);
-        } else if (isPresent($col)) {
-            let $text = $col.children('.text');
+        let $column = $entry.children(`[data-field="${field}"]`);
+        let value   = field_value;
+
+        if ($column.is('textarea')) {
+            // Operating on a column of the $field_values entry.  In addition
+            // to setting the value of the input field, store a copy for use
+            // when checking for editing.
+            value = arrayWrap(value).join("\n").trim();
+            $column.val(value);
+            setLatestFieldValue($column, value);
+
+        } else if (isPresent($column)) {
+            // Operating on a column of a result entry.  Separate discrete
+            // value parts visually with breaks.
+            let $text = $column.children('.text');
             if (isMissing($text)) {
-                $text = $('<div>').addClass('text').appendTo($col);
+                $text = $('<div>').addClass('text').appendTo($column);
             }
             if ((typeof value === 'string') && value.includes("\n")) {
                 value = value.split("\n");
@@ -856,18 +1105,18 @@ export async function setup(root, source, onOpen) {
     // ========================================================================
 
     /**
-     * entriesDisplay
+     * The container of the element containing the list of entries.
      *
      * @returns {jQuery}
      */
     function entriesDisplay() {
-        $entries_display ||= presence($root.find(ENTRIES));
+        $entries_display ||= presence($root.find(LookupModal.ENTRIES));
         $entries_display ||= makeEntriesDisplay().insertAfter(statusPanel());
         return $entries_display;
     }
 
     /**
-     * Container for all generated lookup entries.
+     * The element containing all generated lookup entries.
      *
      * @returns {jQuery}
      */
@@ -878,10 +1127,14 @@ export async function setup(root, source, onOpen) {
     /**
      * All entry selection radio buttons.
      *
+     * **Implementation Notes**
+     * This can't be "memoized" because the set of radio buttons will change
+     * as entries are added dynamically.
+     *
      * @returns {jQuery}
      */
-    function entryRadioButtons() {
-        return $entry_radio_buttons ||= entriesList().find('.selection');
+    function entrySelectButtons() {
+        return entriesList().find('.selection');
     }
 
     /**
@@ -892,15 +1145,13 @@ export async function setup(root, source, onOpen) {
     function updateEntries(message) {
         const func = 'updateEntries';
         const data = message.data;
+        const init = modal && !modal.tabCycleStart;
 
         if (message.status === 'STARTING') {
             console.log(`${func}: ignoring STARTING message`);
 
         } else if (isMissing(data)) {
             console.warn(`${func}: missing message.data`);
-
-        } else if (isPresent(data.blend)) {
-            addEntry(data.blend, 'blend');
 
         } else if (data.blend) {
             console.log(`${func}: ignoring empty message.data.blend`);
@@ -918,6 +1169,10 @@ export async function setup(root, source, onOpen) {
                 }
             });
         }
+
+        if (init && $start_tabbable) {
+            modal.tabCycleStart = $start_tabbable;
+        }
     }
 
     /**
@@ -925,15 +1180,18 @@ export async function setup(root, source, onOpen) {
      *
      * @param {LookupResponseItem} item
      * @param {string}             [label]
+     * @param {string}             [css_class]
      *
      * @returns {jQuery}
      */
-    function addEntry(item, label) {
+    function addEntry(item, label, css_class) {
         let $list  = entriesList();
         const row  = $list.children().length;
-        let $entry = makeEntry(row, label);
+        let $entry = makeResultEntry(row, label, css_class);
         fillEntry($entry, item);
-        $entry.data(ENTRY_ITEM_DATA, dupObject(item));
+        if (item) {
+            $entry.data(LookupModal.ENTRY_ITEM_DATA, dupObject(item));
+        }
         return $entry.appendTo($list);
     }
 
@@ -942,11 +1200,14 @@ export async function setup(root, source, onOpen) {
      *
      * @param {jQuery}             $entry
      * @param {LookupResponseItem} item
+     * @param {string[]}           [fields]
      *
      * @returns {jQuery}
      */
-    function fillEntry($entry, item) {
-        $.each(item, (field, value) => setColumnValue($entry, field, value));
+    function fillEntry($entry, item, fields) {
+        let data    = item || {};
+        let columns = fields || LookupModal.DATA_COLUMNS
+        columns.forEach(field => setColumnValue($entry, field, data[field]));
         return $entry;
     }
 
@@ -957,12 +1218,42 @@ export async function setup(root, source, onOpen) {
      */
     function resetEntries() {
         if ($entries_list) {
-            /** @type {jQuery} */
-            let $rows = $entries_list.children();
-            $rows.not(`${HEAD_ENTRY}, ${FIELD_VALUES}`).remove();
-            $rows.filter(FIELD_VALUES).find('textarea').val('');
-            $entry_radio_buttons = $selected_entry = null;
+            $entries_list.children().not(LookupModal.RESERVED_ROWS).remove();
+            getFieldValuesEntry().find('textarea').each((_, column) => {
+                let $field = $(column);
+                let field  = $field.attr('data-field');
+                lockFor(field).prop('checked', false);
+                unlockFieldValue($field);
+                $field.val('');
+            });
+        } else {
+            // Cause an empty list with reserved rows to be created.
+            entriesList();
         }
+        resetSelectedEntry();
+    }
+
+    /**
+     * The placeholder indicating that loading is occurring.
+     *
+     * @returns {jQuery}
+     */
+    function loadingPlaceholder() {
+        return $loading ||= entriesList().children(LookupModal.LOADING);
+    }
+
+    /**
+     * Show the placeholder indicating that loading is occurring.
+     */
+    function showLoading() {
+        loadingPlaceholder().toggleClass('hidden', false);
+    }
+
+    /**
+     * Hide the placeholder indicating that loading is occurring.
+     */
+    function hideLoading() {
+        loadingPlaceholder().toggleClass('hidden', true);
     }
 
     // ========================================================================
@@ -970,40 +1261,51 @@ export async function setup(root, source, onOpen) {
     // ========================================================================
 
     /**
-     * makeEntriesDisplay
+     * Generate the container including the initially-empty list of entries.
+     *
+     * @param {string} [css_class] Default: {@link LookupModal.ENTRIES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeEntriesDisplay() {
-        let $container = $('<div>').addClass(ENTRIES_CLASS);
-        makeEntriesList().appendTo($container);
-        return $container;
+    function makeEntriesDisplay(css_class) {
+        const css    = css_class || LookupModal.ENTRIES_CLASS;
+        let $display = $('<div>').addClass(css);
+        return $display.append(makeEntriesList());
     }
 
     /**
-     * makeEntriesList
+     * Generate the list of entries containing only the "reserved" non-entry
+     * rows (column headers, field values, and field locks).
+     *
+     * @param {string} [css_class]    Default: 'list'
      *
      * @returns {jQuery}
      */
-    function makeEntriesList() {
-        let cols  = ALL_COLUMNS.length;
-        let row   = 0;
-        let $list = $('<div>').addClass(`list columns-${cols}`);
-        makeHeadEntry(row++).appendTo($list);
-        makeFieldValuesEntry(row++).appendTo($list);
-        return $list;
+    function makeEntriesList(css_class) {
+        const css      = css_class || 'list';
+        const cols     = LookupModal.ALL_COLUMNS.length;
+        let $list      = $('<div>').addClass(`${css} columns-${cols}`);
+        let row        = 0;
+        let $heads     = makeHeadEntry(row++);
+        let $values    = makeFieldValuesEntry(row++);
+        let $locks     = makeFieldLocksEntry(row++);
+        let $originals = makeOriginalValuesEntry(row++);
+        let $loading   = makeLoadingPlaceholder();
+        return $list.append($heads, $values, $locks, $originals, $loading);
     }
 
     /**
      * Generate a lookup results entries heading row.
      *
      * @param {number} row
+     * @param {string} [css_class] Default: {@link LookupModal.HEAD_ENTRY_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeHeadEntry(row) {
-        let $columns = ALL_COLUMNS.map(label => makeHeadColumn(label));
-        return makeEntry(row, $columns).addClass(HEAD_ENTRY_CLASS);
+    function makeHeadEntry(row, css_class) {
+        const css = css_class || LookupModal.HEAD_ENTRY_CLASS;
+        let cols  = LookupModal.ALL_COLUMNS.map(label => makeHeadColumn(label));
+        return makeEntry(row, cols, css);
     }
 
     /**
@@ -1011,122 +1313,359 @@ export async function setup(root, source, onOpen) {
      * user-selected lookup result entry.
      *
      * @param {number} row
+     * @param {string} [css_class] Default: {@link LookupModal.FIELD_VALUES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeFieldValuesEntry(row) {
-        let $columns = [$('<div>'), $('<div>').addClass('tag')];
-        $columns.push(...DATA_COLUMNS.map(field => makeInputColumn(field)));
-        let $entry   = makeEntry(row, $columns).addClass(FIELD_VALUES_CLASS);
-        let $col_1   = $entry.find('.tag');
-        makeCommitFieldValues().appendTo($col_1);
+    function makeFieldValuesEntry(row, css_class) {
+        const css   = css_class || LookupModal.FIELD_VALUES_CLASS;
+        let $select = makeBlankColumn();
+        let $label  = makeTagColumn();
+        let inputs  = LookupModal.DATA_COLUMNS.map(field => makeFieldInputColumn(field));
+        let cols    = [$select, $label, ...inputs];
+        let $entry  = makeEntry(row, cols, css);
+        respondAsHighlightable(inputs);
         return setFieldValuesEntry($entry);
+    }
+
+    /**
+     * Generate the row of controls which lock/unlock the contents of the
+     * associated field value.
+     *
+     * Headings for the first two columns are displayed here rather than the
+     * head row.
+     *
+     * @param {number} row
+     * @param {string} [css_class] Default: {@link LookupModal.FIELD_LOCKS_CLASS}
+     *
+     * @returns {jQuery}
+     */
+    function makeFieldLocksEntry(row, css_class) {
+        const css   = css_class || LookupModal.FIELD_LOCKS_CLASS;
+        const TABLE = LookupModal.ENTRY_TABLE;
+        let $select = makeBlankColumn(TABLE['selection'].label);
+        let $label  = makeTagColumn(TABLE['tag'].label);
+        let locks   = LookupModal.DATA_COLUMNS.map(field => makeFieldLockColumn(field));
+        let cols    = [$select, $label, ...locks];
+        let $entry  = makeEntry(row, cols, css);
+        return setFieldLocksEntry($entry);
+    }
+
+    /**
+     * Generate the field contents of the original values row element.
+     *
+     * @param {number} row
+     * @param {string} [css_class] Default: {@link LookupModal.ORIG_VALUES_CLASS}
+     *
+     * @returns {jQuery}
+     */
+    function makeOriginalValuesEntry(row, css_class) {
+        const func = 'makeOriginalValuesEntry';
+        const tag  = 'ORIGINAL'; // TODO: I18n
+        const css  = css_class || LookupModal.ORIG_VALUES_CLASS;
+        const name = LookupModal.ENTRY_ITEM_DATA;
+        let $entry = makeResultEntry(row, tag, css);
+        let data   = dataElement().data(name);
+        if (isPresent(data)) {
+            fillEntry($entry, data);
+            $entry.data(name, dupObject(data));
+        } else {
+            console.warn(`${func}: toggle missing .data(${name})`);
+        }
+        return setOriginalValuesEntry($entry);
+    }
+
+    /**
+     * Generate a row of data values from a lookup result entry.
+     *
+     * @param {number} row
+     * @param {string} tag
+     * @param {string} [css_class] Default: {@link LookupModal.RESULT_CLASS}
+     *
+     * @returns {jQuery}
+     */
+    function makeResultEntry(row, tag, css_class) {
+        const css   = css_class || LookupModal.RESULT_CLASS;
+        const label = tag || 'Result'; // TODO: I18n
+        let $radio  = makeSelectColumn();
+        let $label  = makeTagColumn(label);
+        let values  = LookupModal.DATA_COLUMNS.map(field => makeDataColumn(field));
+        let cols    = [$radio, $label, ...values];
+        handleClickAndKeypress($label, selectEntry);
+        respondAsHighlightable(cols);
+        respondAsVisibleOnFocus(cols);
+        return makeEntry(row, cols, css);
     }
 
     /**
      * Generate a new row to be included in list of lookup results entries.
      *
-     * @param {number}          row
-     * @param {string|jQuery[]} [tag]
+     * @param {number}   row
+     * @param {jQuery[]} columns
+     * @param {string}   [css_class]
      *
      * @returns {jQuery}
      */
-    function makeEntry(row, tag) {
-        let $columns;
-        if (Array.isArray(tag)) {
-            $columns = tag;
-        } else {
-            $columns = [makeSelectColumn(), makeTagColumn(tag)];
-            $columns.push(...DATA_COLUMNS.map(field => makeDataColumn(field)));
+    function makeEntry(row, columns, css_class) {
+        const css  = 'row';
+        let $entry = $('<div>').addClass(`${css} row-${row}`);
+        if (css_class) {
+            $entry.addClass(css_class);
         }
-        let $entry = $('<div>').addClass(`row row-${row}`);
         let col    = 0;
-        $columns.forEach(
-            $col => $col.addClass(`row-${row} col-${col++}`).appendTo($entry)
-        );
-        return $entry;
+        let cols   = columns.map($c => $c.addClass(`row-${row} col-${col++}`));
+        return $entry.append(cols);
     }
 
     /**
-     * makeInputColumn
+     * Generate the element containing the loading placeholder image.
      *
-     * @param {string} field
-     * @param {string} [value]
+     * @param {boolean} [visible]     If *true* do not create hidden.
+     * @param {string}  [css_class]   Default: {@link LookupModal.LOADING_CLASS}.
+     */
+    function makeLoadingPlaceholder(visible, css_class) {
+        const css    = css_class || LookupModal.LOADING_CLASS;
+        const hidden = visible ? '' : 'hidden';
+        let $line    = $('<div>').addClass(`${css} ${hidden}`);
+        let $image   = $('<div>'); // @see stylesheets/controllers/_entry.scss
+        return $line.append($image);
+    }
+
+    /**
+     * Generate the input area for a specific data field.
+     *
+     * @param {string}          field
+     * @param {string|string[]} [value]
+     * @param {string}          [css_class]
      *
      * @returns {jQuery}
      */
-    function makeInputColumn(field, value) {
-        let $column = $('<textarea>').attr('data-field', field);
-        // noinspection JSUnresolvedFunction
-        $column.val(Array.isArray(value) ? value.join("\n") : value);
-        return $column;
+    function makeFieldInputColumn(field, value, css_class) {
+        let $cell = $('<textarea>').attr('data-field', field);
+        if (css_class) {
+            $cell.addClass(css_class);
+        }
+        $cell.val(Array.isArray(value) ? value.join("\n") : value);
+        monitorEditing($cell);
+        return $cell;
     }
 
     /**
-     * makeSelectColumn
+     * Generate a field lock element.
+     *
+     * @param {string}      field
+     * @param {bool|string} [value]
+     * @param {string}      [css_class]
+     *
+     * @returns {jQuery}
+     */
+    function makeFieldLockColumn(field, value, css_class) {
+        let $cell = $('<div>').attr('data-field', field);
+        if (css_class) {
+            $cell.addClass(css_class);
+        }
+        let parts = makeLockControl(`lock-${field}`);
+        return $cell.append(parts);
+    }
+
+    /**
+     * Generate an invisible checkbox paired with a visible indicator.
+     *
+     * @param {string}  [name]
+     * @param {boolean} [checked]
+     * @param {string}  [css_class] Default: {@link LookupModal.LOCK_CLASS}.
+     *
+     * @returns {[jQuery,jQuery]}
+     */
+    function makeLockControl(name, checked, css_class) {
+        const css      = css_class || LookupModal.LOCK_CLASS;
+        let $slider    = $('<div>').addClass('slider');
+        let $indicator = $('<div>').addClass('lock-indicator').append($slider);
+        let $checkbox  = $('<input>').attr('type', 'checkbox').addClass(css);
+        isDefined(name)    && $checkbox.attr('name',    name);
+        isDefined(checked) && $checkbox.prop('checked', checked);
+        handleEvent($checkbox, 'change', toggleFieldLock);
+        return [$checkbox, $indicator];
+    }
+
+    /**
+     * Generate a radio button for selecting the associated entry.
      *
      * @param {boolean} [active]
+     * @param {string}  [css_class]   Default: 'selection'.
      *
      * @returns {jQuery}
      */
-    function makeSelectColumn(active) {
-        let $radio = $('<input>').addClass('selection').attr('type', 'radio');
-        $radio.prop('checked', (isDefined(active) ? active : false));
-        handleEvent($radio, 'change', selectEntry);
-        return $radio;
+    function makeSelectColumn(active, css_class) {
+        const css = css_class || 'selection';
+        let $cell = $('<div>').addClass(css);
+        let parts = makeSelectControl(active);
+        return $cell.append(parts);
     }
 
     /**
-     * makeHeadColumn
+     * Generate an invisible radio button paired with a visible indicator.
+     *
+     * @param {boolean} [active]
+     * @param {string}  [css_class]
+     *
+     * @returns {[jQuery,jQuery]}
+     */
+    function makeSelectControl(active, css_class) {
+        let $outer     = $('<div>').addClass('outer');
+        let $inner     = $('<div>').addClass('inner');
+        let $indicator = $('<div>').addClass('select-indicator');
+        let $radio     = $('<input>').attr('type', 'radio');
+        if (css_class) {
+            $radio.addClass(css_class);
+        }
+        $radio.prop('checked', (active === true));
+        handleEvent($radio, 'change', selectEntry);
+        this.$start_tabbable ||= $radio;
+        return [$radio, $indicator.append($outer, $inner)];
+    }
+
+    /**
+     * Generate a heading row element with the label of the related data field.
      *
      * @param {string} field
+     * @param {string} [css_class]
      *
      * @returns {jQuery}
      */
-    function makeHeadColumn(field) {
-        const value = ENTRY_TABLE[field]?.label || field;
-        return makeBlankColumn(value);
+    function makeHeadColumn(field, css_class) {
+        const value = LookupModal.ENTRY_TABLE[field]?.label || field;
+        return makeBlankColumn(value, css_class);
     }
 
     /**
-     * makeTagColumn
+     * Generate an element for holding a designation for the related entry.
      *
-     * @param {string} tag
+     * @param {string} [label]
+     * @param {string} [css_class]    Default: 'tag'.
      *
      * @returns {jQuery}
      */
-    function makeTagColumn(tag) {
-        const value = tag || 'Result'; // TODO: I18n
-        return makeBlankColumn(value).addClass('tag');
+    function makeTagColumn(label, css_class) {
+        const css = css_class || 'tag';
+        return makeBlankColumn(label).addClass(css);
     }
 
     /**
-     * makeDataColumn
+     * Generate an element for holding the value of the given field from the
+     * related entry.
      *
      * @param {string} field
      * @param {string} [value]
+     * @param {string} [css_class]
      *
      * @returns {jQuery}
      */
-    function makeDataColumn(field, value) {
-        return makeBlankColumn(value).attr('data-field', field);
+    function makeDataColumn(field, value, css_class) {
+        let $cell = makeBlankColumn(value).attr('data-field', field);
+        if (css_class) {
+            $cell.addClass(css_class);
+        }
+        handleClickAndKeypress($cell, selectEntry);
+        return $cell;
     }
 
     /**
-     * makeBlankColumn
+     * Generate an empty column element.
      *
      * @param {string} [label]
+     * @param {string} [css_class]
      *
      * @returns {jQuery}
      */
-    function makeBlankColumn(label) {
-        let $column  = $('<div>');
+    function makeBlankColumn(label, css_class) {
         let $content = $('<span class="text">').text(label || '');
-        return $column.append($content);
+        let $cell    = $('<div>');
+        if (css_class) {
+            $cell.addClass(css_class);
+        }
+        return $cell.append($content);
     }
 
     // ========================================================================
-    // Functions - search terms input
+    // Functions - event handlers
+    // ========================================================================
+
+    /**
+     * Setup event handlers on a field value column to lock the field if the
+     * user changes it manually.
+     *
+     * @param {Selector} item
+     */
+    function monitorEditing(item) {
+        let $item    = $(item);
+        const events = ['cut', 'paste', 'keyup', 'input'];
+        events.forEach(e => handleEvent($item, e, debounce(lockIfChanged)));
+    }
+
+    /**
+     * Make the given items highlight when hovered or focused.
+     *
+     * @param {Selector|Selector[]} items
+     */
+    function respondAsHighlightable(items) {
+        const enter = highlightEntry;
+        const leave = unhighlightEntry;
+        arrayWrap(items).forEach(i => handleHoverAndFocus($(i), enter, leave));
+    }
+
+    /**
+     * Make the given items scroll into view when visited by tabbing.
+     *
+     * @param {Selector|Selector[]} items
+     */
+    function respondAsVisibleOnFocus(items) {
+        const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
+        arrayWrap(items).forEach(i => handleEvent($(i), 'focus', scroll));
+    }
+
+    // ========================================================================
+    // Functions - input - prompt display
+    // ========================================================================
+
+    /**
+     * The element containing manual input controls.
+     *
+     * @returns {jQuery}
+     */
+    function inputPrompt() {
+        return $prompt ||= $root.find(LookupModal.PROMPT);
+    }
+
+    /**
+     * The <input> control for manual input.
+     *
+     * @returns {jQuery}
+     */
+    function inputText() {
+        return $input ||= inputPrompt().find('[type="text"]');
+    }
+
+    /**
+     * The submit button for manual input.
+     *
+     * @returns {jQuery}
+     */
+    function inputSubmit() {
+        return $submit ||= inputPrompt().find('[type="submit"], .submit');
+    }
+
+    /**
+     * The radio buttons for manual selection of allowed separator(s).
+     *
+     * @returns {jQuery}
+     */
+    function inputSeparator() {
+        return $separator ||= inputPrompt().find('[type="radio"]');
+    }
+
+    // ========================================================================
+    // Functions - input - search terms
     // ========================================================================
 
     /**
@@ -1135,7 +1674,7 @@ export async function setup(root, source, onOpen) {
      * @returns {string|undefined}
      */
     function getSearchTerms() {
-        return $input.val();
+        return inputText().val();
     }
 
     /**
@@ -1147,10 +1686,10 @@ export async function setup(root, source, onOpen) {
      * @returns {jQuery}
      */
     function setSearchTerms(terms, separator) {
-        let chars  = (separator || getSeparators()).replaceAll('\\s', ' ');
-        let sep    = chars[0];
-        let parts  = arrayWrap(terms);
-        let $query = queryTerms();
+        const chars = (separator || getSeparators()).replaceAll('\\s', ' ');
+        const sep   = chars[0];
+        const parts = arrayWrap(terms);
+        let $query  = queryTerms();
         if (isPresent($query)) {
             let query_parts =
                 parts.map(function(part) {
@@ -1164,23 +1703,24 @@ export async function setup(root, source, onOpen) {
                 });
             $query.text(query_parts.join(' '));
         }
-        return $input.val(parts.join(sep));
+        return inputText().val(parts.join(sep));
     }
 
     /**
-     * Extract the lookup request from the event target.
+     * Create the lookup request from the search terms provided by the event
+     * target.
      *
      * @param {jQuery.Event|Event} [event]
      */
     function updateSearchTerms(event) {
-        let $data_src = event ? $(event.target) : $popup_button;
-        const data    = $data_src.data(SEARCH_TERMS_DATA);
+        let $data_src = event ? $(event.target) : dataElement();
+        const data    = $data_src.data(LookupModal.SEARCH_TERMS_DATA);
         const request = setRequestData(data);
         setSearchTerms(request.terms);
     }
 
     // ========================================================================
-    // Functions - separator selection
+    // Functions - input - separator selection
     // ========================================================================
 
     /**
@@ -1189,8 +1729,9 @@ export async function setup(root, source, onOpen) {
      * @returns {string}
      */
     function getSeparators() {
-        const key = $separator.filter(':checked').val();
-        return SEPARATORS[key] || SEPARATORS[DEF_SEPARATORS_KEY];
+        const key = inputSeparator().filter(':checked').val();
+        const SEP = LookupModal.SEPARATORS;
+        return SEP[key] || SEP[LookupModal.DEF_SEPARATORS_KEY];
     }
 
     /**
@@ -1202,7 +1743,7 @@ export async function setup(root, source, onOpen) {
      */
     function setSeparators(new_characters) {
         if (getSeparators() !== new_characters) {
-            $.each(SEPARATORS, function(key, characters) {
+            $.each(LookupModal.SEPARATORS, function(key, characters) {
                 if (new_characters !== characters) { return true } // continue
                 $separator.filter(`[value="${key}"]`).trigger('click');
                 return false; // break
@@ -1212,28 +1753,77 @@ export async function setup(root, source, onOpen) {
     }
 
     // ========================================================================
-    // Functions - message display
+    // Functions - output - message display
+    // ========================================================================
+
+    /**
+     * The <h2> before the output display area.
+     *
+     * @returns {jQuery}
+     */
+    function outputHeading() {
+        return $heading ||= $root.find(LookupModal.HEADING);
+    }
+
+    /**
+     * The output display area container
+     *
+     * @returns {jQuery}
+     */
+    function outputDisplay() {
+        return $output ||= $root.find(LookupModal.OUTPUT);
+    }
+
+    /**
+     * Direct result display.
+     *
+     * @returns {jQuery}
+     */
+    function resultDisplay() {
+        return $results ||= outputDisplay().find(LookupModal.RESULTS);
+    }
+
+    /**
+     * Direct error display.
+     *
+     * @returns {jQuery}
+     */
+    function errorDisplay() {
+        return $errors ||= outputDisplay().find(LookupModal.ERRORS);
+    }
+
+    /**
+     * Direct diagnostics display.
+     *
+     * @returns {jQuery}
+     */
+    function diagnosticDisplay() {
+        return $diagnostics ||= outputDisplay().find(LookupModal.DIAGNOSTICS);
+    }
+
+    // ========================================================================
+    // Functions - output - message display
     // ========================================================================
 
     /**
      * Remove result display contents.
      */
     function clearResultDisplay() {
-        $results.text('');
+        resultDisplay().text('');
     }
 
     /**
      * Remove error display contents.
      */
     function clearErrorDisplay() {
-        $errors.text('');
+        errorDisplay().text('');
     }
 
     /**
      * Remove diagnostic display contents.
      */
     function clearDiagnosticDisplay() {
-        $diagnostics.text('');
+        diagnosticDisplay().text('');
     }
 
     /**
@@ -1243,7 +1833,7 @@ export async function setup(root, source, onOpen) {
      */
     function updateResultDisplay(message) {
         const data = message?.object || message || {};
-        updateDisplay($results, data);
+        updateDisplay(resultDisplay(), data);
     }
 
     /**
@@ -1252,7 +1842,7 @@ export async function setup(root, source, onOpen) {
      * @param {object} data
      */
     function updateErrorDisplay(data) {
-        updateDisplay($errors, data);
+        updateDisplay(errorDisplay(), data);
     }
 
     /**
@@ -1261,7 +1851,7 @@ export async function setup(root, source, onOpen) {
      * @param {object} data
      */
     function updateDiagnosticDisplay(data) {
-        updateDisplay($diagnostics, data, '');
+        updateDisplay(diagnosticDisplay(), data, '');
     }
 
     /**
@@ -1272,7 +1862,7 @@ export async function setup(root, source, onOpen) {
      * @param {string} gap
      */
     function updateDisplay($element, data, gap = "\n") {
-        let added = formatResponseData(data);
+        let added = renderJson(data);
         let text  = $element.text()?.trimEnd();
         if (text) {
             text = text.concat("\n", gap, added);
@@ -1294,107 +1884,16 @@ export async function setup(root, source, onOpen) {
         $element.text('');
     }
 
-    // ========================================================================
-    // Functions - formatting
-    // ========================================================================
-
-    const DEF_INDENT     = 2;
-    const DEF_INLINE_MAX = 80;
-
     /**
-     * Render a data object as a sequence of lines.
+     * Console output if DEBUGGING is true.
      *
-     * @param {object} data
-     * @param {number} indent         Indentation of nested object.
-     *
-     * @returns {string}
+     * @param {...*} args
+     * @private
      */
-    function formatResponseData(data, indent = DEF_INDENT) {
-        const item = alignKeys(data);
-        const json = JSON.stringify(item, stringifyReplacer, indent);
-        return postProcess(json);
-    }
-
-    /**
-     * Recursively regenerate an item so that its object keys are replaced with
-     * names appended with zero or more spaces in order to make each key the
-     * same length.
-     *
-     * @param {object|array|*} item
-     *
-     * @returns {object|array|*}
-     */
-    function alignKeys(item) {
-        if (typeof item !== 'object') {
-            return item;
-        } else if (Array.isArray(item)) {
-            return item.map(element => alignKeys(element));
-        } else {
-            const max_width = maxSize(Object.keys(item));
-            let result = {};
-            $.each(item, function(k, v) {
-                const space = Math.max(0, (max_width - k.length));
-                const key   = '' + k + ' '.repeat(space);
-                result[key] = alignKeys(v);
-            });
-            return result;
+    function _debug(...args) {
+        if (DEBUGGING) {
+            console.log(...args);
         }
-    }
-
-    /**
-     * Replacer function for `JSON.stringify`.
-     *
-     * @param {*} _this
-     * @param {*} item
-     *
-     * @returns {string|*}
-     */
-    function stringifyReplacer(_this, item) {
-        const type = typeof(item);
-        if (type === 'undefined')      { return '(undefined)'; }
-        else if (item === null)        { return '(null)'; }
-        else if (item instanceof Date) { return asDateTime(item); }
-        else if (isEmpty(item))        { return item; }
-        else if (type === 'object')    { return possiblyInlined(item); }
-        return item;
-    }
-
-    /**
-     * Render a data object as a sequence of lines.
-     *
-     * @param {object} obj
-     * @param {number} threshold      Threshold for rendering a nested object
-     *                                  on a single line.
-     *
-     * @returns {string|*}
-     */
-    function possiblyInlined(obj, threshold = DEF_INLINE_MAX) {
-        let json =
-            postProcess(JSON.stringify(obj, null, ' '))
-                .replace(/\[\s+/g, '[')
-                .replace(/\s+]/g,  ']')
-                .replace(/{\s*/g,  '{ ')
-                .replace(/\s*}/g,  ' }')
-                .replace(/\s+/g,   ' ');
-        return (json.length <= threshold) ? json : obj;
-    }
-
-    /**
-     * Make the result of `JSON.stringify` look less like JSON.
-     *
-     * @param {string} item
-     *
-     * @returns {string}
-     */
-    function postProcess(item) {
-        // noinspection RegExpRedundantEscape
-        return item
-            .replace(/\\"/g, '"')
-            .replace(/"(\(\w+\))"/g, '$1')
-            .replace(/"(\{.+\})"/gm, '$1')
-            .replace(/"(\[.+\])"/gm, '$1')
-            .replace(/^( *)"(\w+)(\s*)":/gm,  '$1$2:$3')
-            .replace(/^( *)"(\S+?)(\s+)":/gm, '$1"$2":');
     }
 
 }

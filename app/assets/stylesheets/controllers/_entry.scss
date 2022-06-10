@@ -6,6 +6,7 @@
 @use 'shared/controls/buttons' as button;
 @use 'shared/controls/grids'   as grid;
 @use 'shared/controls/panels'  as panel;
+@use 'shared/controls/shapes'  as shape;
 @use 'shared/feature/model'    as model;
 
 @use 'layouts/controls/panels' as panel-classes;
@@ -186,13 +187,13 @@ $entry-form-gap:  1.5rem;
 }
 
 // @see EntryDecorator#check_status_popup
-.popup-container.check-status-popup {
+.inline-popup.check-status-popup {
 
     @media #{$medium-width} {
         top: 0;
     }
 
-    .control.icon {
+    .popup-toggle.icon {
 
         padding:      1px 5px;
         background:   transparent;
@@ -204,7 +205,7 @@ $entry-form-gap:  1.5rem;
     }
 
     // The panel displaying content which is hidden until activated.
-    // @see PopupHelper#popup_container
+    // @see PopupHelper#inline_popup
     .popup-panel {
 
         @media #{$wide-screen} {
@@ -363,9 +364,11 @@ form.select-entry {
     // Basic components
     //=========================================================================
 
+    // noinspection CssBrowserCompatibilityForProperties
     %scrollable {
-        overflow-y: auto;
-        resize:     vertical;
+        overflow-y:          auto;
+        resize:              vertical;
+        overscroll-behavior: contain;
     }
 
     %scrollable-limits {
@@ -517,7 +520,7 @@ form.select-entry {
             margin-top: 0.75rem;
         }
 
-        .help-popup .control.icon {
+        .help-popup .popup-toggle.icon {
 
             margin-bottom: 0.25rem;
             padding:       0.3125rem 0.375rem;
@@ -671,44 +674,236 @@ form.select-entry {
     }
 }
 
-// @see EntryDecorator#lookup_popup
-.popup-container.lookup-popup {
+// When not actively downloading, the element for .uppy-ProgressBar creates a
+// visible gap between the directions and the top of the form.
+body.entry {
+    .page-text-section.directions {
+        margin-bottom: 0;
+    }
+}
 
-    // noinspection DuplicatedCode
-    .popup-panel {
+//=============================================================================
+// Bibliographic lookup modal
+//=============================================================================
 
-        @media #{$wide-screen} {
-            position: fixed;
-            top:      2.5vh;
-            bottom:   2.5vh;
-            left:     1.25vw;
-            right:    7.75vw;
-        }
+$lookup-accent-fg: lighter($uva-accent-blue, 50%);
+$lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
-        @media #{$medium-width} {
-            position: fixed;
-            top:      2rem;
-            bottom:   2rem;
-            left:     2rem;
-            right:    2rem;
+/// Checkbox-based slide toggle
+///
+/// @param {Numeric} $toggle-border   Control border thickness.
+/// @param {Numeric} $toggle-height   Height of control.
+/// @param {Numeric} $toggle-height   Width of control.
+///
+@mixin slide-lock($toggle-border, $toggle-height, $toggle-width: 6rem) {
+
+    $unlocked-color:    $lookup-accent-fg;
+    $locked-color:      gray;
+
+    $slider-pad-x:      1.125rem; // Extra room for text.
+    $slider-offset:     $toggle-border * 0.5;
+    $slider-bg:         whitesmoke;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    // Make the check box invisible but expanded to fill the
+    // whole area that will be covered by the indicator.
+    .lock-input {
+        position:   absolute;
+        z-index:    1;
+        width:      $toggle-width  + $toggle-border * 2;
+        height:     $toggle-height + $toggle-border * 2;
+        opacity:    0;
+    }
+
+    // The visible indicator following the invisible checkbox.
+    .lock-indicator {
+
+        position:       relative;
+        display:        inline-flex;
+        align-items:    center;
+        width:          $toggle-width;
+        height:         $toggle-height;
+        line-height:    100%;
+        text-align:     center;
+        font-weight:    bold;
+        font-variant:   all-small-caps;
+        font-size:      small;
+        border-radius:  $toggle-height;
+        border:         $toggle-border solid;
+
+        .slider {
+            position:       relative;
+            height:         100%;
+            width:          calc(50% + #{$slider-pad-x});
+            word-break:     keep-all;
+            color:          inherit;
+            background:     $slider-bg;
+            border-radius:  $toggle-height;
+            transition:     transform 0.25s ease;
         }
     }
 
-    // noinspection CssReplaceWithShorthandSafely, CssBrowserCompatibilityForProperties
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    // When the checkbox is unchecked, the indicator slides to
+    // the start.
+    .lock-input:not(:checked) + .lock-indicator {
+
+        color:          $unlocked-color;
+        background:     $unlocked-color;
+        border-color:   $unlocked-color;
+
+        .slider {
+            $x-pos:     $slider-offset;
+            transform:  translate($x-pos);
+            &:before {  content: 'unlocked'; }
+        }
+    }
+
+    // When the checkbox is checked, the indicator slides to
+    // the end.
+    .lock-input:checked + .lock-indicator {
+
+        color:          $locked-color;
+        background:     $locked-color;
+        border-color:   $locked-color;
+
+        .slider {
+            $x-pos:     $slider-offset + $slider-pad-x * 2;
+            transform:  translate(calc(100% - #{$x-pos}));
+            &:after {   content: 'locked'; }
+        }
+    }
+
+    // When the invisible checkbox receives focus, it's the
+    // indicator that shows the outline.
+    .lock-input:focus + .lock-indicator {
+        @include focus;
+    }
+}
+
+/// Radio-based entry selection.
+///
+@mixin entry-selection() {
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    // The checkbox is not rendered but spans the provided area and responds
+    // to focus and click.
+    input[type="radio"] {
+        position: absolute;
+        top:      -0.25rem;
+        left:     -0.25rem;
+        z-index:  1;
+        width:    100%;
+        height:   100%;
+        opacity:  0;
+    }
+
+    // The visible indicator holds a pair of shapes which are combined into
+    // stacked right triangles.
+    .select-indicator {
+
+        display:        flex;
+        flex-direction: column;
+        flex-wrap:      nowrap;
+        align-items:    center;
+        width:          100%;
+        height:         100%;
+
+        .outer, .inner {
+            @include shape.triangle-icon(right);
+            margin-top: 0.5rem;
+        }
+
+        .outer {
+            transform:  scale(1.5);
+        }
+
+        .inner {
+            position:   absolute;
+            transform:  translateX(-1px);
+        }
+    }
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    input:not(:checked) + .select-indicator {
+        .outer { color: darkgray; }
+        .inner { color: white; }
+    }
+
+    input:checked + .select-indicator {
+        .outer { color: $lookup-accent-fg; }
+        .inner { color: $lookup-accent-bg; }
+    }
+
+    input:focus + .select-indicator {
+        .outer { @include focus; }
+    }
+}
+
+.modal-popup.lookup-popup {
+    max-width: calc(100% - 1.25rem);
+}
+
+// @see EntryDecorator#lookup_popup
+.modal-popup.lookup-popup,
+.inline-popup.lookup-popup .popup-panel {
+
+    @media #{$wide-screen} {
+        position: fixed;
+        top:      2.5vh;
+        bottom:   2.5vh;
+        left:     1.25vw;
+        right:    6.25vw;
+    }
+
+    @media #{$medium-width} {
+        position: fixed;
+        top:      2rem;
+        bottom:   2rem;
+        left:     2rem;
+        right:    2rem;
+    }
+
+}
+
+.modal-popup,
+.inline-popup.lookup-popup {
+    // noinspection CssReplaceWithShorthandSafely
     .lookup-container {
 
-        $gap: 1rem;
+        $item-gap:    0.5rem;
+        $section-gap: $item-gap * 2;
 
         margin:      0;
         margin-top:  0.5rem;
-        margin-left: 1rem;
+        margin-left: 0.5rem;
         font-size:   medium;
         flex:        1 1 0;
 
+        // noinspection CssBrowserCompatibilityForProperties
         overscroll-behavior: contain;
 
         > * {
-            max-width: calc(100% - #{$gap});
+            max-width: inherit;
+        }
+
+        .highlight {
+
+            @include hover-bold;
+
+            background-color: lightcyan;
         }
 
         .commit {
@@ -721,7 +916,7 @@ form.select-entry {
 
             display:        flex;
             flex-direction: row;
-            gap:            1rem;
+            gap:            $section-gap;
             margin-right:   1rem;
             padding:        0.75rem 0.5rem;
             font-size:      large;
@@ -742,30 +937,39 @@ form.select-entry {
             max-height:    80%;
             margin-top:    1rem;
             padding-right: 0.5rem;
-            overflow-y:    auto;
+            overflow-y:    scroll;
             word-break:    break-word;
 
+            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior: contain;
 
+            // noinspection LongLine
             .list {
 
                 $max-columns: 20;
 
                 display:        grid;
-                gap:            0.5rem;
+                gap:            $item-gap;
                 padding-bottom: 0.5rem;
                 border-bottom:  2px solid gray;
 
                 @include grid.column-classes($max-columns, auto);
 
+                // @note Support for future "wide" option:
+                &.wide {
+                    width: 200%;
+                }
+
                 .row {
 
                     display: contents;
 
+                    // noinspection CssBrowserCompatibilityForProperties
+                    > * {
+                        overscroll-behavior: contain;
+                    }
+
                     .selection {        // .col-0
-                        width:          max-content;
-                        margin:         0.5rem auto;
-                        align-self:     start;
                     }
 
                     .tag {              // .col-1
@@ -778,13 +982,27 @@ form.select-entry {
                     }
                 }
 
-                .row.head {             // .row.row-0
+                //=============================================================
+                // Column heading entry row (.row.row-0)
+                //=============================================================
+
+                $head-top:     0;
+                $head-height:  1.5rem;
+                $head-delta-y: $head-height + $item-gap;
+
+                .row.head {
 
                     > * {
                         position:       sticky;
-                        top:            0;
+                        top:            $head-top;
+                        text-align:     center;
                         background:     white;
                         box-shadow:     0 0.75rem 0 0 white;
+                    }
+
+                    > .col-0 .text,
+                    > .col-1 .text {
+                        visibility:     hidden;
                     }
 
                     .text {
@@ -792,37 +1010,29 @@ form.select-entry {
                     }
                 }
 
-                .row.field-values {     // .row.row-1
+                //=============================================================
+                // Field values entry row (.row.row-1)
+                //=============================================================
+
+                $values-border:  0.125rem;
+                $values-top:     $head-top + $head-delta-y + $values-border;
+                $values-height:  6rem;
+                $values-delta-y: $values-height + ($values-border * 3) + $item-gap;
+
+                .row.field-values {
 
                     > * {
                         position:       sticky;
-                        top:            calc(2rem + 2px);
+                        top:            $values-top;
                         background:     white;
-                    }
-
-                    > .col-0,           // .selection
-                    > .col-1 {          // .tag
-                        border-bottom:  2px solid white;
-                    }
-
-                    // NOTE: this is only for aligning the Commit button.
-                    //  If it ends up elsewhere, this styling can be removed.
-                    > .col-1 {
-                        display:        flex;
-                        flex-direction: column;
-                        flex-wrap:      wrap;
-                        align-content:  flex-start;
+                        box-shadow:     0 1.75rem 0 0 white;
                     }
 
                     > *:not(.col-0):not(.col-1) {
-                        min-height:     6rem;
+                        min-height:     $values-height;
                         max-height:     12rem;
                         overflow-y:     auto;
-                    }
-
-                    > *:not(.col-0):not(.col-1) {
-                        border:         2px solid black;
-                        box-shadow:     0 0.5rem 0 0 white;
+                        border:         $values-border solid black;
                     }
 
                     textarea {
@@ -832,18 +1042,135 @@ form.select-entry {
                     }
                 }
 
-                .row:not(.head):not(.field-values) {
+                //=============================================================
+                // Field lock controls entry row (.row.row-2)
+                //=============================================================
 
-                    > *:not(.col-0) {
-                        min-height:     4rem;
-                        max-height:     8rem;
-                        overflow-y:     auto;
+                $locks-pad:      0.25rem; // to prevent clipping of outline
+                $locks-m-top:    1.00rem;
+                $locks-m-bottom: 1.25rem;
+                $locks-top:      $values-top + $values-delta-y + $locks-m-top;
+                $locks-height:   1rem;
+                $locks-border:   0.25rem;
+
+                .row.field-locks {
+
+                    > * {
+                        position:       sticky;
+                        top:            $locks-top;
+                        margin-top:     $locks-m-top    - $locks-pad;
+                        margin-bottom:  $locks-m-bottom - $locks-pad;
+                        padding:        $locks-pad 0;
+                        overflow:       hidden;
+                        background:     white;
+                        box-shadow:     0 1rem 0.25rem 0 white;
                     }
 
-                    > *:not(.col-0) {   // TODO: temporary(?)
-                        background:     lightyellow;
-                        border-left:    1px solid red;
-                        border-top:     1px solid blueviolet;
+                    // Show column 0 heading here rather than in the head row.
+                    > .col-0 {
+                        text-align:     center;
+                        font-weight:    bold;
+                    }
+
+                    // Show column 1 heading here rather than in the head row.
+                    > .col-1 {
+                        font-weight:    bold;
+                    }
+
+                    // Lock control for each data field column.
+                    > *:not(.col-0):not(.col-1) {
+
+                        display:        flex;
+                        align-items:    center;
+                        justify-content:center;
+
+                        @include slide-lock($locks-border, $locks-height);
+                    }
+                }
+
+                //=============================================================
+                // Original field values entry row (.row.row-3)
+                // Search result item entry row (.row.row-N where N > 3))
+                //=============================================================
+
+                $row-height: 4rem;
+
+                .row.original-values,
+                .row.result {
+
+                    > *:not(.col-0) {
+                        min-height: $row-height;
+                        max-height: $row-height * 2;
+                        overflow-y: auto;
+                        border:     1px solid gray;
+                    }
+
+                    > .col-0 {
+
+                        position: relative;
+
+                        &.highlight {
+                            background-color: revert;
+                        }
+
+                        @include entry-selection;
+                    }
+                }
+
+                //=============================================================
+                // Cope with .selection z-index
+                //=============================================================
+
+                .row.head,
+                .row.field-values,
+                .row.field-locks {
+
+                    > .col-0 {
+                        z-index: 1;
+                    }
+
+                    > .col-1 {
+                        box-shadow:
+                            0  0.75rem  0  0.25rem  white,
+                            0 -0.75rem  0  0.25rem  white;
+                    }
+                }
+
+                //=============================================================
+                // Placeholder line while loading.
+                //=============================================================
+
+                .loading {
+
+                    @include grid.column-span;
+
+                    display:         inline-flex;
+                    flex-direction:  row;
+                    flex-wrap:       nowrap;
+                    justify-content: center;
+
+                    // Image appears above the next line.
+                    > * {
+                        position:            absolute;
+                        height:              $row-height;
+                        width:               $row-height;
+                        background-image:    url('loading-balls.gif');
+                        background-repeat:   no-repeat;
+                        background-size:     contain;
+                        background-position: center;
+                    }
+                }
+
+                // To avoid the fact that the container for the image takes up
+                // some vertical space...
+                .loading:not(.hidden) + .row {
+
+                    > * {
+                        margin-top: -0.5rem;
+                    }
+
+                    > .col-0 {
+                        margin-top: 0;
                     }
                 }
             }
@@ -866,14 +1193,6 @@ form.select-entry {
                 }
             }
         }
-    }
-}
-
-// When not actively downloading, the element for .uppy-ProgressBar creates a
-// visible gap between the directions and the top of the form.
-body.entry {
-    .page-text-section.directions {
-        margin-bottom: 0;
     }
 }
 

@@ -331,26 +331,29 @@ body.tool.md:not(.debug) {
 // Bibliographic metadata lookup
 //=============================================================================
 
+$lookup-accent-fg: lighter($uva-accent-blue, 50%);
+
 .lookup-container {
 
-    $gap: 1rem;
+    $item-gap:    0.5rem;
+    $section-gap: $item-gap * 2;
 
     .lookup-prompt {
 
         display:        flex;
         flex-direction: row;
-        gap:            $gap * 2;
+        gap:            $section-gap * 2;
         max-width:      75vw;
 
         .item-terms {
 
-            $pad:    $gap;
+            $pad:    $section-gap;
             $border: $pad * 0.25;
             $color:  lighter($uva-blue, 75%);
 
             display:        flex;
             flex-direction: row;
-            gap:            $gap;
+            gap:            $section-gap;
             padding:        $pad;
             border:         $border solid $color;
             border-radius:  $border * 2;
@@ -384,10 +387,10 @@ body.tool.md:not(.debug) {
 
             display:               grid;
             grid-template-columns: auto 1fr;
-            gap:                   $gap * 0.5;
+            gap:                   $item-gap;
             padding:               0.25rem 0.5rem;
             border:                1px solid gray;
-            border-radius:         $gap * 0.5;
+            border-radius:         $item-gap;
             flex:                  0.125 1 auto;
 
             legend {
@@ -408,6 +411,7 @@ body.tool.md:not(.debug) {
         align-items:    center;
         gap:            1rem;
         margin-top:     1rem;
+        font-size:      large;
 
         .services {
 
@@ -415,34 +419,38 @@ body.tool.md:not(.debug) {
             flex-direction: row;
             flex-wrap:      wrap;
             align-items:    center;
-            gap:            1rem;
+            gap:            $section-gap;
             margin:         1rem auto;
             min-height:     2rem;
             font-weight:    bold;
-            flex:           0 1 auto;
+            flex:           1 1 auto;
 
             .service {
 
-                padding:       0.25rem 0.375rem;
-                border:        4px double gray;
-                border-radius: 1rem;
-                cursor:        default;
-                flex:          1 1 auto;
+                padding:    0.25rem 0.375rem;
+                font-size:  medium;
+                text-align: center;
+                border:     4px double $lookup-accent-fg;
+                cursor:     default;
+                flex:       1 1 auto;
 
                 & {
                     background-color: beige;
                 }
 
                 &.late {
-                    background-color: lightpink;
+                    //background-color: lightpink;
+                    background-color: lighter($uva-accent-magenta, 50%);
                 }
 
                 &.done {
-                    background-color: lightgreen;
+                    //background-color: lightgreen;
+                    background-color: lighter($uva-accent-green, 50%);
                 }
 
                 &.empty {
-                    background-color: lightgray;
+                    //background-color: lightgray;
+                    background-color: $uva-medium-gray;
                 }
             }
         }
@@ -450,7 +458,7 @@ body.tool.md:not(.debug) {
         .notice {
             font-size:   large;
             font-weight: bold;
-            flex:        1 1 auto;
+            flex:        0 1 50%;
         }
     }
 
@@ -458,7 +466,7 @@ body.tool.md:not(.debug) {
 
         display:               grid;
         grid-template-columns: minmax(max-content, 0.1fr) 1fr;
-        gap:                   $gap;
+        gap:                   $section-gap;
         width:                 95vw;
 
         // noinspection CssBrowserCompatibilityForProperties

@@ -18,6 +18,20 @@ import { cssClass }  from '../shared/css'
  */
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/**
+ * When replacing newlines with HTML breaks, it's important to retain the
+ * newline itself so that `.text().split("\n")` can be used to reconstitute
+ * arrays of values.
+ *
+ * @readonly
+ * @type {string}
+ */
+export const HTML_BREAK = "<br/>\n";
+
+// ============================================================================
 // Functions
 // ============================================================================
 
@@ -107,4 +121,28 @@ export function ensureTabbable(element) {
             $e.attr('tabindex', 0);
         }
     });
+}
+
+/**
+ * Find all elements within *base* (relative to *root*) that can be tabbed to.
+ *
+ * @param {Selector} [base]
+ * @param {Selector} [root]
+ * @param {boolean}  [all]            If *true*, count invisible items too.
+ *
+ * @returns {jQuery}
+ */
+export function findTabbable(base, root, all) {
+    let b = (base !== '*') && base;
+    let r, a;
+    if (typeof root === 'boolean') {
+        r = null;
+        a = !!root;
+    } else {
+        r = (root !== '*') && root;
+        a = !!all;
+    }
+    let selector = a ? '*' : ':visible';
+    let $base    = (r && b) ? $(r).find(b) : $(r || b || 'body');
+    return $base.find(selector).filter((_, e) => (e.tabIndex >= 0));
 }

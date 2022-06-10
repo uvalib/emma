@@ -329,6 +329,48 @@ class EntryDecorator < BaseDecorator
     # :section:
     # =========================================================================
 
+    public
+
+    # Bibliographic lookup control which engages #lookup_modal.
+    #
+    # In addition to creating the control, this method also adds the modal to
+    # the page modals (unless it already has been added).
+    #
+    # @param [Hash] opt               Passed to #lookup_modal except for:
+    #
+    # @option opt [Hash] :button      Options for #lookup_button_options.
+    #
+    # @see LayoutHelper::PageModals#add_page_modal
+    #
+    def lookup_control(**opt)
+      selector = '.lookup-popup'
+      sel_opt  = { 'data-modal-selector': selector }
+      btn_opt  = opt.delete(:button) || {}
+      h.add_page_modal(selector) { lookup_modal(**opt, **sel_opt) }
+      make_popup_toggle(button: lookup_button_options(**btn_opt, **sel_opt))
+    end
+
+    # A modal popup for bibliographic lookup.
+    #
+    # @param [Hash] opt               Passed to #modal_popup except for:
+    #
+    # @option opt [Hash] :container   Options for #lookup_container.
+    #
+    def lookup_modal(**opt)
+      css   = '.lookup-popup'
+      c_opt = opt.delete(:container) || {}
+      opt[:controls] = lookup_commit_button
+      opt[:close]    = lookup_cancel_options
+      prepend_css!(opt, css)
+      modal_popup(**opt) do
+        lookup_container(**c_opt)
+      end
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
     protected
 
     # Element for displaying the name of the file that was uploaded.
@@ -351,7 +393,7 @@ class EntryDecorator < BaseDecorator
 
     # Bibliographic lookup popup.
     #
-    # @param [Hash] opt               Passed to #popup_container except for:
+    # @param [Hash] opt               Passed to #inline_popup except for:
     #
     # @option opt [Hash] :button      Options for #lookup_button_options.
     # @option opt [Hash] :container   Options for #lookup_container.
@@ -368,10 +410,41 @@ class EntryDecorator < BaseDecorator
         opt[:control] = opt[:control]&.dup || {}
         opt[:control][:button] = lookup_button_options(**b_opt)
       end
+      opt[:controls] = lookup_commit_button
+      opt[:close]    = lookup_cancel_options
       prepend_css!(opt, css)
-      popup_container(**opt) do
+      inline_popup(**opt) do
         lookup_container(**c_opt)
       end
+    end
+
+    # lookup_commit_button
+    #
+    # @param [Hash] opt
+    #
+    # @option opt [Hash] :label       Override the default button label.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_commit_button(**opt)
+      css   = '.commit'
+      label = opt.delete(:label) || 'Update' # TODO: I18n
+      opt[:type]  ||= 'submit'
+      opt[:title] ||= 'Replace submission field values with these changes' # TODO: I18n
+      prepend_css!(opt, css)
+      html_button(label, **opt)
+    end
+
+    # lookup_cancel_options
+    #
+    # @param [Hash] opt
+    #
+    # @return [Hash]
+    #
+    def lookup_cancel_options(**opt)
+      opt[:label] ||= 'Cancel' # TODO: I18n
+      opt[:title] ||= "Don't make any changes to submission field values" # TODO: I18n
+      opt
     end
 
     # The options to create a toggle button to activate the bibliographic
@@ -383,7 +456,7 @@ class EntryDecorator < BaseDecorator
     #
     # @return [Hash]
     #
-    # @see PopupHelper#popup_container
+    # @see PopupHelper#inline_popup
     #
     def lookup_button_options(**opt)
       css = '.lookup-button'
@@ -397,6 +470,10 @@ class EntryDecorator < BaseDecorator
     # @param [Hash] opt               Passed to the outermost #html_div.
     #
     # @return [ActiveSupport::SafeBuffer]
+    #
+    # @note This does not address dynamic results entries.
+    #
+    # @see file:app/assets/javascripts/shared/lookup-modal.js *LookupModal*
     #
     def lookup_container(**opt)
       css = '.lookup-container'
@@ -453,14 +530,6 @@ class EntryDecorator < BaseDecorator
         pipe:  'Only <strong>|</strong> (pipe)'.html_safe
       }
       selected = :space
-
-      if session_debug?
-        query_panel_css = css_classes(query_panel_css, 'hidden')
-      else
-        prompt_css      = css_classes(prompt_css,      'hidden')
-        heading_css     = css_classes(heading_css,     'hidden')
-        output_css      = css_classes(output_css,      'hidden')
-      end
 
       # == Query
       query_panel =
@@ -836,14 +905,14 @@ class EntryDecorator < BaseDecorator
   #
   # @param [String, Symbol]  path
   # @param [String, Integer] id       Object identifier.
-  # @param [Hash]            opt      To PopupHelper#popup_container except:
+  # @param [Hash]            opt      To PopupHelper#inline_popup except:
   #
   # @option opt [Hash] :attr          Options for deferred content.
   # @option opt [Hash] :placeholder   Options for transient placeholder.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
+  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
   #
   def check_status_popup(path, id:, **opt)
     css    = '.check-status-popup'
@@ -861,7 +930,7 @@ class EntryDecorator < BaseDecorator
     opt[:resize] = false unless opt.key?(:resize)
 
     prepend_css!(opt, css)
-    popup_container(**opt) do
+    inline_popup(**opt) do
       ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_opt[:'data-path'] = path
       ph_opt[:'data-attr'] = attr.to_json
@@ -927,7 +996,7 @@ class EntryDecorator < BaseDecorator
       parts << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
       parts << f.file_field(:file)
       parts << uploaded_filename_display
-      parts << lookup_popup
+      parts << lookup_control
     end
   end
 

@@ -41,7 +41,7 @@ module HelpHelper
   #
   # @param [Symbol, String] topic
   # @param [Symbol, String] sub_topic   Starting HTML ID.
-  # @param [Hash]           opt         Passed to #popup_container except for:
+  # @param [Hash]           opt         Passed to #inline_popup except for:
   #
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
@@ -49,7 +49,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If *topic* is blank.
   #
-  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
+  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
   #
   def help_popup: (Symbol|String topic, ?(Symbol|String)? sub_topic, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 

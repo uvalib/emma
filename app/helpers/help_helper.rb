@@ -107,7 +107,7 @@ module HelpHelper
   #
   # @param [Symbol, String] topic
   # @param [Symbol, String] sub_topic   Starting HTML ID.
-  # @param [Hash]           opt         Passed to #popup_container except for:
+  # @param [Hash]           opt         Passed to #inline_popup except for:
   #
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
@@ -115,7 +115,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If *topic* is blank.
   #
-  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
+  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
   #
   def help_popup(topic, sub_topic = nil, **opt)
     return if topic.blank?
@@ -130,7 +130,7 @@ module HelpHelper
     opt[:control][:icon] ||= QUESTION
 
     prepend_css!(opt, css)
-    popup_container(**opt) do
+    inline_popup(**opt) do
       ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_opt[:'data-path']  = help_path(id: topic, modal: true)
       ph_opt[:'data-attr']  = attr.to_json

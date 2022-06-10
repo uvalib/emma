@@ -114,45 +114,8 @@ class BaseDecorator < Draper::Decorator
     # @!method asset_path(*args)
     #   @see ActionView::Helpers::AssetUrlHelper#asset_path
     #
-    # x!method date_field_tag(*args)
-    #   @see ActionView::Helpers::FormTagHelper#date_field_tag
-    #
-    # x!method email_field_tag(*args)
-    #   @see ActionView::Helpers::FormTagHelper#email_field_tag
-    #
-    # x!method number_field_tag(*args)
-    #   @see ActionView::Helpers::FormTagHelper#number_field_tag
-    #
-    # x!method number_with_delimiter(*args)
-    #   @see ActionView::Helpers::NumberHelper#number_with_delimiter
-    #
-    # x!method options_for_select(*args)
-    #   @see ActionView::Helpers::FormOptionsHelper#options_for_select
-    #
-    # x!method password_field_tag(*args)
-    #   @see ActionView::Helpers::FormTagHelper#password_field_tag
-    #
     # @!method safe_join(*args)
     #   @see ActionView::Helpers::OutputSafetyHelper#safe_join
-    #
-    # x!method text_area_tag(*args)
-    #   @see ActionView::Helpers::FormTagHelper#text_area_tag
-    #
-    # x!method text_field_tag(*args)
-    #   @see ActionView::Helpers::FormTagHelper#text_field_tag
-    #
-    # x!method time_field_tag(*args)
-    #   @see ActionView::Helpers::FormTagHelper#time_field_tag
-    #
-    # date_field_tag
-    # email_field_tag
-    # number_field_tag
-    # number_with_delimiter
-    # options_for_select
-    # password_field_tag
-    # text_area_tag
-    # text_field_tag
-    # time_field_tag
     #
     %i[
       asset_path
@@ -166,53 +129,23 @@ class BaseDecorator < Draper::Decorator
 
     # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
     # 
-    # x!method button_tag(*args, &block)
+    7    # @!method button_tag(*args, &block)
     #   @see ActionView::Helpers::FormTagHelper#button_tag
-    #
-    # @!method button_to(*args, &block)
-    #   @see ActionView::Helpers::UrlHelper#button_to
-    #
-    # x!method check_box_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#check_box_tag
     #
     # @!method content_tag(*args, &block)
     #   @see ActionView::Helpers::TagHelper#content_tag
     #
-    # x!method field_set_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#field_set_tag
-    #
     # @!method form_tag(*args, &block)
     #   @see ActionView::Helpers::FormTagHelper#form_tag
-    #
-    # x!method form_with(**opt, &block)
-    #   @see ActionView::Helpers::FormHelper#form_with
     #
     # @!method image_tag(*args, &block)
     #   @see ActionView::Helpers::AssetTagHelper#image_tag
     #
-    # x!method label_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#label_tag
-    #
     # @!method link_to(*args, &block)
     #   @see ActionView::Helpers::UrlHelper#link_to
     #
-    # x!method radio_button_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#radio_button_tag
-    #
-    # x!method select_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#select_tag
-    #
-    # x!method submit_tag(*args, &block)
+    # @!method submit_tag(*args, &block)
     #   @see ActionView::Helpers::FormTagHelper#submit_tag
-    #
-    # button_to
-    # check_box_tag
-    # field_set_tag
-    # form_with
-    # label_tag
-    # radio_button_tag
-    # select_tag
-    # submit_tag
     #
     %i[
       button_tag

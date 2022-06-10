@@ -1,7 +1,6 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import * as Lookup                          from '../tool/bibliographic-lookup'
 import { Rails }                            from '../vendor/rails'
 import { Emma }                             from '../shared/assets'
 import { delegateInputClick }               from '../shared/accessibility'
@@ -10,6 +9,7 @@ import { selector, toggleClass }            from '../shared/css'
 import { turnOffAutocomplete }              from '../shared/form'
 import { htmlDecode, scrollIntoView }       from '../shared/html'
 import { HTTP }                             from '../shared/http'
+import { LookupModal }                      from '../shared/lookup-modal'
 import { LookupRequest }                    from '../shared/lookup-request'
 import { K, asSize }                        from '../shared/math'
 import { asString, camelCase, singularize } from '../shared/strings'
@@ -26,7 +26,6 @@ import {
     debounce,
     handleClickAndKeypress,
     handleEvent,
-    handleHoverAndFocus,
     onPageExit,
 } from '../shared/events'
 import {
@@ -45,6 +44,7 @@ import {
     compact,
     deepFreeze,
     dup,
+    dupObject,
     fromJSON,
 } from '../shared/objects'
 import {
@@ -758,6 +758,10 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Actions
     // ========================================================================
+
+    // Setup bibliographic lookup first so that linkages are in place before
+    // setupLookupButton() executes.
+    LookupModal.initializeAll();
 
     // Setup Uppy for any <input type="file"> elements (unless this page is
     // being reached via browser history).
@@ -3065,14 +3069,11 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupLookupButton(form) {
-        let $form   = formElement(form);
-        let $button = lookupButtonInitialize($form);
-        Lookup.setup($form, $button).then(
+        let $button = lookupButtonInitialize(form);
+        LookupModal.setup($button, onLookupStart, onLookupComplete).then(
             result => console.log('lookup loaded:', (result || 'OK')),
             reason => console.warn('lookup failed:', reason)
         );
-        handleHoverAndFocus($button, debounce(updateSearchTermsData));
-        handleClickAndKeypress($button, updateSearchTermsData);
         handleClickAndKeypress($button, clearFlashMessages);
     }
 
@@ -3084,45 +3085,62 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}              The Lookup button.
      */
     function lookupButtonInitialize(form) {
-        let $button = lookupButton(form);
-        clearSearchResultsData($button);
-        clearSearchTermsData($button);
-        clearLookupCondition($button);
-        return $button.data('onHidePopup', onLookupComplete);
+        let $toggle = lookupButton(form);
+        clearSearchResultsData($toggle);
+        clearSearchTermsData($toggle);
+        clearLookupCondition($toggle);
+        return $toggle;
     }
 
     /**
-     * Invoked when the popup closes to update form fields.
+     * Invoked to update search terms when the popup opens.
      *
-     * @param {jQuery}  $popup
-     * @param {jQuery}  $button
+     * @param {jQuery}  $toggle
      * @param {boolean} check_only
+     * @param {boolean} [halted]
      *
      * @returns {boolean|undefined}
      *
-     * @see onHidePopupHook
+     * @see onShowModalHook
      */
-    function onLookupComplete($popup, $button, check_only) {
-        if (!check_only) {
-            let msg;
-            const data = getFieldValuesData($button);
-            if (isPresent(data)) {
-                populateFormFields(data);
-                let fields = Object.keys(data);
-                let s      = (fields.size === 1) ? '' : 's';
-                let attrs  = fields.map(f => `[name="${f}"]`).join(', ');
-                let inputs = formElement().find(attrs).toArray();
-                let names  = inputs.map(e => {
-                    let $label  = $(e).siblings(`[for="${e.id}"]`);
-                    const label = $label.children('.text').text();
-                    return `"${label}"`;
-                }).join(', ');
-                msg = `Updated field${s}: ${names}.`;
-            } else {
-                msg = 'No fields changed.';
-            }
-            showFlashMessage(msg);
+    function onLookupStart($toggle, check_only, halted) {
+        if (check_only || halted) { return }
+        clearSearchResultsData($toggle);
+        setSearchTermsData($toggle);
+        setOriginalValues($toggle);
+    }
+
+    /**
+     * Invoked to update form fields when the popup closes.
+     *
+     * @param {jQuery}  $toggle
+     * @param {boolean} check_only
+     * @param {boolean} [halted]
+     *
+     * @returns {boolean|undefined}
+     *
+     * @see onHideModalHook
+     */
+    function onLookupComplete($toggle, check_only, halted) {
+        if (check_only || halted) { return }
+        let message;
+        const data = getFieldValuesData($toggle);
+        if (isPresent(data)) {
+            populateFormFields(data);
+            let fields = Object.keys(data);
+            let s      = (fields.size === 1) ? '' : 's';
+            let attrs  = fields.map(field => `[name="${field}"]`).join(', ');
+            let inputs = formElement().find(attrs).toArray();
+            let names  = inputs.map(input => {
+                let $label  = $(input).siblings(`[for="${input.id}"]`);
+                const label = $label.children('.text').text();
+                return `"${label}"`;
+            }).join(', ');
+            message = `Updated field${s}: ${names}.`; // TODO: I18n
+        } else {
+            message = 'No fields changed.'; // TODO: I18n
         }
+        showFlashMessage(message);
     }
 
     /**
@@ -3200,9 +3218,7 @@ $(document).on('turbolinks:load', function() {
      * Update the internal condition values for the Lookup button and change
      * its enabled/disabled state if appropriate.
      *
-     * This also clears the {@link Lookup.SEARCH_TERMS_DATA SEARCH_TERMS_DATA}
-     * data to ensure that {@link updateSearchTermsData} will regenerate it
-     * with the new value(s).
+     * new value(s).
      *
      * @param {Selector} form         Default: {@link formElement}.
      * @param {string}   field        A field-type.
@@ -3229,8 +3245,10 @@ $(document).on('turbolinks:load', function() {
                 enable   = Object.values(condition.or).some(v => v);
                 enable ||= Object.values(condition.and).every(v => v);
             }
+            if (enable) {
+                clearSearchTermsData($button);
+            }
             enableLookup($form, enable);
-            clearSearchTermsData($button);
         }
         return found;
     }
@@ -3252,6 +3270,45 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
+    // Functions - bibliographic lookup - original field values
+    // ========================================================================
+
+    /**
+     * Get the original field values.
+     *
+     * @returns {LookupResponseItem|undefined}
+     */
+    function getOriginalValues(form) {
+        return lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA);
+    }
+
+    /**
+     * Set the original field values.
+     *
+     * @param {Selector} form
+     * @param {EmmaData} [value]
+     */
+    function setOriginalValues(form, value) {
+        let src    = value || inputFields(form);
+        if (value) {
+            src = dupObject(value);
+        } else {
+            src = {};
+            inputFields(form).not('.invalid').each(function() {
+                let $field = $(this);
+                let value  = $field.val();
+                let field  = $field.attr('data-field');
+                if (field && value) {
+                    src[field] = dup($field.val(), true);
+                }
+            });
+        }
+        let pairs = LookupModal.DATA_COLUMNS.map(field => [field, src[field]]);
+        let data  = compact(Object.fromEntries(pairs));
+        lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA, data);
+    }
+
+    // ========================================================================
     // Functions - bibliographic lookup - search terms
     // ========================================================================
 
@@ -3261,7 +3318,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {LookupRequest|undefined}
      */
     function getSearchTermsData(form) {
-        return lookupButton(form).data(Lookup.SEARCH_TERMS_DATA);
+        return lookupButton(form).data(LookupModal.SEARCH_TERMS_DATA);
     }
 
     /**
@@ -3280,7 +3337,7 @@ $(document).on('turbolinks:load', function() {
         } else {
             request = generateLookupRequest($button, value);
         }
-        $button.data(Lookup.SEARCH_TERMS_DATA, request);
+        $button.data(LookupModal.SEARCH_TERMS_DATA, request);
         return request;
     }
 
@@ -3292,7 +3349,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function clearSearchTermsData(form) {
-        return lookupButton(form).removeData(Lookup.SEARCH_TERMS_DATA);
+        return lookupButton(form).removeData(LookupModal.SEARCH_TERMS_DATA);
     }
 
     /**
@@ -3356,7 +3413,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {LookupResults|undefined}
      */
     function getSearchResultsData(form) {
-        return lookupButton(form).data(Lookup.SEARCH_RESULT_DATA);
+        return lookupButton(form).data(LookupModal.SEARCH_RESULT_DATA);
     }
 
     /**
@@ -3367,7 +3424,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function clearSearchResultsData(form) {
-        return lookupButton(form).removeData(Lookup.SEARCH_RESULT_DATA);
+        return lookupButton(form).removeData(LookupModal.SEARCH_RESULT_DATA);
     }
 
     // ========================================================================
@@ -3379,10 +3436,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]
      *
-     * @returns {LookupResults|undefined}
+     * @returns {LookupResponseItem|undefined}
      */
     function getFieldValuesData(form) {
-        return lookupButton(form).data(Lookup.FIELD_VALUES_DATA);
+        return lookupButton(form).data(LookupModal.FIELD_VALUES_DATA);
     }
 
     /**
@@ -3393,7 +3450,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function clearFieldValuesData(form) {
-        return lookupButton(form).removeData(Lookup.FIELD_VALUES_DATA);
+        return lookupButton(form).removeData(LookupModal.FIELD_VALUES_DATA);
     }
 
     // ========================================================================

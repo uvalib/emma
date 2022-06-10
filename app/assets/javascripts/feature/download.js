@@ -2,13 +2,14 @@
 
 
 import { Emma }                                from '../shared/assets'
-import { cssClass, randomizeName, selector }   from '../shared/css'
+import { cssClass, selector }                  from '../shared/css'
 import { isMissing, isPresent }                from '../shared/definitions'
 import { handleClickAndKeypress, handleEvent } from '../shared/events'
 import { create, scrollIntoView }              from '../shared/html'
 import { HTTP }                                from '../shared/http'
 import { consoleLog, consoleWarn }             from '../shared/logging'
 import { compact, deepFreeze }                 from '../shared/objects'
+import { randomizeName }                       from '../shared/random'
 import { SECOND, secondsSince }                from '../shared/time'
 import { urlParameters }                       from '../shared/url'
 

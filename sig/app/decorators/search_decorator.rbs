@@ -260,14 +260,14 @@ class SearchDecorator < BaseDecorator
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.
   #
-  # @param [Hash] opt                 Passed to #popup_container except for:
+  # @param [Hash] opt                 Passed to #inline_popup except for:
   #
   # @option opt [Hash] :attr          Options for deferred content.
   # @option opt [Hash] :placeholder   Options for transient placeholder.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
+  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
   #
   def record_popup: (**untyped opt) -> ActiveSupport::SafeBuffer
 

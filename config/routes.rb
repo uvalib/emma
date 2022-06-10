@@ -75,7 +75,7 @@ Rails.application.routes.draw do
   post   '/upload/renew',         to: 'upload#renew',           as: 'renew_upload'
   post   '/upload/reedit',        to: 'upload#reedit',          as: 'reedit_upload'
   match  '/upload/cancel',        to: 'upload#cancel',          as: 'cancel_upload',        via: %i[get post]
-  get    '/upload/check/:id',     to: 'upload#check',           as: 'check_upload'
+  get    '/upload/check/:id',     to: 'upload#check',           as: 'check_upload',         defaults: { modal: true }
   post   '/upload/endpoint',      to: 'upload#endpoint',        as: 'uploads'               # Invoked from file-upload.js
 
   # === Administration
@@ -129,7 +129,7 @@ Rails.application.routes.draw do
   post   '/entry/renew',          to: 'entry#renew',          as: 'renew_entry'
   post   '/entry/reedit',         to: 'entry#reedit',         as: 'reedit_entry'
   match  '/entry/cancel',         to: 'entry#cancel',         as: 'cancel_entry',        via: %i[get post]
-  get    '/entry/check/:id',      to: 'entry#check',          as: 'check_entry'
+  get    '/entry/check/:id',      to: 'entry#check',          as: 'check_entry',         defaults: { modal: true }
   post   '/entry/endpoint',       to: 'entry#endpoint',       as: 'entries'              # Invoked from entry.form.js
 
   # === Administration

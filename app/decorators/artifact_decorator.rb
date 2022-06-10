@@ -228,7 +228,7 @@ class ArtifactDecorator < BookshareDecorator
     hidden << download_failure(**hidden_opt)
 
     # Emit the link and control elements.
-    html_div(class: 'artifact popup-container') do
+    html_div(class: 'artifact inline-popup') do
       model_link(object, **opt) << safe_join(hidden)
     end
   end
