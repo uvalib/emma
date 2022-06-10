@@ -225,27 +225,23 @@ module ApiService::Common
   #
   def api_path(*args)
     args = args.flatten.join('/').strip
-    uri  = URI.parse(args)
-    path = uri.path.presence
-    qry  = uri.query.presence
     ver  = api_version.presence
-
+    uri  = URI.parse(args)
+    path = uri.path&.split('/')&.compact_blank! || []
+    qry  = uri.query
+    host = uri.host
+    url  =
+      if host.present? && (host != base_uri.host)
+        scheme = uri.scheme.presence || 'https'
+        port   = uri.port.presence
+        port   = nil if port && COMMON_PORTS.include?(port)
+        [scheme, "//#{host}", port].compact.join(':')
+      end
+    path.shift if ver == path.first
     result = []
-    if (host = uri.host).present? && (host != base_uri.host)
-      scheme = uri.scheme || 'https'
-      port   = uri.port
-      url    = "#{scheme}://#{host}"
-      url   += ":#{port}" if port && !COMMON_PORTS.include?(port)
-      result << url
-      result << '/' if path || ver
-    end
-    unless ver.nil? || (path == ver) || path&.start_with?("#{ver}/")
-      result << ver
-      result << '/' if path
-    end
-    result << path.squeeze('/') if path
-    result << '?' << qry if qry
-    result.compact.join
+    result << [url, ver, *path].compact.join('/')
+    result << '?' << qry if qry.present?
+    result.join
   end
 
   # Add service-specific API options.
