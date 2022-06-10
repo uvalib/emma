@@ -12,7 +12,11 @@ export class BaseClass {
 
     static CLASS_NAME = 'BaseClass';
 
-    constructor()   { this.invalid = false }
+    // ========================================================================
+    // Constructor
+    // ========================================================================
+
+    constructor() { this.invalid = false }
 
     // ========================================================================
     // Properties
@@ -21,7 +25,7 @@ export class BaseClass {
     get className() { return this.constructor.className }
 
     // ========================================================================
-    // Protected methods
+    // Methods - internal
     // ========================================================================
 
     _log(...args)   { this.constructor._log(...args) }
@@ -35,7 +39,7 @@ export class BaseClass {
     static get className()  { return this.CLASS_NAME }
 
     // ========================================================================
-    // Class protected methods
+    // Class methods - internal
     // ========================================================================
 
     static _log(...args)    { console.log(this.className, ...args) }

@@ -29,9 +29,9 @@ import {
 } from '../vendor/uppy'
 
 
-// ========================================================================
-// JSDoc type definitions
-// ========================================================================
+// ============================================================================
+// Type definitions
+// ============================================================================
 
 /**
  * Uppy plugin selection plus other optional settings.
@@ -177,6 +177,10 @@ const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
 export class Uploader extends BaseClass {
 
     static CLASS_NAME = 'Uploader';
+
+    // ========================================================================
+    // Constructor
+    // ========================================================================
 
     /**
      * Create a new instance.
@@ -422,6 +426,8 @@ export class Uploader extends BaseClass {
     /**
      * Setup handlers for Uppy events that drive the workflow of uploading
      * a file and creating a database entry from it.
+     *
+     * @private
      */
     #setupHandlers() {
 
@@ -494,15 +500,15 @@ export class Uploader extends BaseClass {
          * received with success status (200).  At this point, the file has
          * been uploaded by Shrine, but has not yet been validated.
          *
+         * **Implementation Notes**
+         * The normal Shrine response has been augmented to include an
+         * 'emma_data' object in addition to the fields associated with
+         * 'file_data'.
+         *
          * @param {Uppy.UppyFile}         file
          * @param {ShrineResponseMessage} response
          *
          * @see "Shrine::UploadEndpointExt#make_response"
-         *
-         * == Implementation Notes
-         * The normal Shrine response has been augmented to include an
-         * 'emma_data' object in addition to the fields associated with
-         * 'file_data'.
          */
         function onFileUploadSuccess(file, response) {
             debugUppy('upload-success', file, response);
@@ -527,6 +533,8 @@ export class Uploader extends BaseClass {
 
     /**
      * Setup handlers for Uppy events that should trigger popup messages.
+     *
+     * @private
      */
     #setupMessages() {
 
@@ -591,6 +599,8 @@ export class Uploader extends BaseClass {
 
     /**
      * Set up console debugging messages for other Uppy events.
+     *
+     * @private
      */
     #setupDebugging() {
 
@@ -710,6 +720,8 @@ export class Uploader extends BaseClass {
      *
      * @param {string} text
      * @param {number} [duration]
+     *
+     * @private
      */
     #uppyError(text, duration) {
         this.#uppyPopup(text, duration, 'error');
@@ -720,6 +732,8 @@ export class Uploader extends BaseClass {
      *
      * @param {string} text
      * @param {number} [duration]
+     *
+     * @private
      */
     #uppyWarn(text, duration) {
         this.#uppyPopup(text, duration, 'warning');
@@ -731,6 +745,8 @@ export class Uploader extends BaseClass {
      * @param {string}                   text
      * @param {number}                   [duration]
      * @param {'info'|'warning'|'error'} [info_level]
+     *
+     * @private
      */
     #uppyPopup(text, duration, info_level) {
         const time = duration || this.message_duration;
@@ -746,6 +762,8 @@ export class Uploader extends BaseClass {
      * @param {string}                   text
      * @param {number}                   [duration]
      * @param {'info'|'warning'|'error'} [info_level]
+     *
+     * @private
      */
     #uppyInfo(text, duration, info_level) {
         const level = info_level || 'info';
@@ -755,6 +773,8 @@ export class Uploader extends BaseClass {
 
     /**
      * Invoke `uppy.info` with an empty string and very short duration.
+     *
+     * @private
      */
     #uppyInfoClear() {
         this.#uppyInfo('', 1);
@@ -768,6 +788,8 @@ export class Uploader extends BaseClass {
      * The element starts with 'aria-hidden="true"' (so that attribute alone
      * alone isn't sufficient for conditional styling), however the element
      * (and its children) are not invisible.
+     *
+     * @private
      *
      * @see file:app/assets/stylesheets/vendor/_uppy.scss .uppy-ProgressBar
      */
@@ -809,6 +831,8 @@ export class Uploader extends BaseClass {
 
     /**
      * Initialize the Uppy-provided file select button container.
+     *
+     * @private
      */
     #initializeFileSelectContainer() {
         let $element   = this.fileSelectContainer();
@@ -868,6 +892,8 @@ export class Uploader extends BaseClass {
     /**
      * Initialize the state of the file select button if applicable to the
      * current form.
+     *
+     * @private
      */
     #initializeFileSelectButton() {
         let $button = this.fileSelectContainer().children('button');
@@ -964,6 +990,7 @@ export class Uploader extends BaseClass {
      * Uppy drag-and-drop target element (if any).
      *
      * @returns {HTMLElement|undefined}
+     * @private
      */
     #dragTarget() {
         const target = this.#uploaderProperty.drag_target;
@@ -974,6 +1001,7 @@ export class Uploader extends BaseClass {
      * Thumbnail display of the selected file (if any).
      *
      * @returns {HTMLElement|undefined}
+     * @private
      */
     #previewTarget() {
         const target = this.#uploaderProperty.preview;
@@ -1063,7 +1091,7 @@ export class Uploader extends BaseClass {
     }
 
     // ========================================================================
-    // Protected properties
+    // Properties - internal
     // ========================================================================
 
     /** @returns {PathProperties|{}} */
@@ -1076,6 +1104,7 @@ export class Uploader extends BaseClass {
      * Get the configuration properties for the current form action.
      *
      * @returns {EndpointProperties}
+     * @private
      *
      * @see file:../feature/model-form.js endpointProperties
      */
@@ -1089,7 +1118,7 @@ export class Uploader extends BaseClass {
     }
 
     // ========================================================================
-    // Methods - other
+    // Methods - diagnostics
     // ========================================================================
 
     // noinspection JSMethodCanBeStatic
@@ -1097,6 +1126,8 @@ export class Uploader extends BaseClass {
      * Emit a console message if debugging file uploads.
      *
      * @param {...*} args
+     *
+     * @private
      */
     #debugUppy(...args) {
         if (this.debugging) { consoleLog('Uppy:', ...args); }

@@ -877,6 +877,8 @@ $(document).on('turbolinks:load', function() {
          * Mark suspicious relevancy scores.
          *
          * @param {Selector} [items]      Default: {@link $result_items}.
+         *
+         * @protected
          */
         _validateRelevancyScores(items) {
             const mark_disabled   = el => this._markDisabledRelevancy(el);
@@ -908,6 +910,7 @@ $(document).on('turbolinks:load', function() {
          * @param {Selector} item
          *
          * @returns {jQuery}              The score element.
+         * @protected
          */
         _markDisabledRelevancy(item) {
             let $score = $(item).find('.item-score');
@@ -922,6 +925,7 @@ $(document).on('turbolinks:load', function() {
          * @param {Selector} item
          *
          * @returns {jQuery}              The score element.
+         * @protected
          */
         _markSuspiciousRelevancy(item) {
             let $score = $(item).find('.item-score');
@@ -941,6 +945,10 @@ $(document).on('turbolinks:load', function() {
     class AdvancedFeature extends SessionState {
 
         static CLASS_NAME = 'AdvancedFeature';
+
+        // ====================================================================
+        // Constructor
+        // ====================================================================
 
         /**
          * Create a new instance.
@@ -1108,6 +1116,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string} name
          *
          * @returns {boolean}
+         * @protected
          */
         _isControlButton(name) {
             const match = this.button_class;
@@ -1124,6 +1133,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string|null|undefined} class_name
          *
          * @returns {jQuery|null|undefined}
+         * @protected
          */
         _findButton(class_name) {
             return class_name && this.$button_tray.find(selector(class_name));
@@ -1137,6 +1147,7 @@ $(document).on('turbolinks:load', function() {
          * @param {StyleControlProperties} [config] {@link BUTTON_CONFIG} value
          *
          * @returns {jQuery|undefined}
+         * @protected
          */
         _setupButton(topic, config) {
             const t      = topic  || this.topic;
@@ -1197,6 +1208,10 @@ $(document).on('turbolinks:load', function() {
 
         static CLASS_NAME = 'ToggleFeature';
 
+        // ====================================================================
+        // Constructor
+        // ====================================================================
+
         /**
          * Create a new instance.
          *
@@ -1226,6 +1241,12 @@ $(document).on('turbolinks:load', function() {
         // Private methods
         // ====================================================================
 
+        /**
+         * #validate
+         *
+         * @returns {boolean}
+         * @private
+         */
         #validate() {
             const member_values = {
                 button_class: this.button_class,
@@ -1345,6 +1366,10 @@ $(document).on('turbolinks:load', function() {
 
         static CLASS_NAME = 'ToggleFieldGroups';
 
+        // ====================================================================
+        // Constructor
+        // ====================================================================
+
         constructor(key_base = 'field_groups') { super(key_base) }
 
         // ====================================================================
@@ -1425,6 +1450,10 @@ $(document).on('turbolinks:load', function() {
 
         static CLASS_NAME = 'ToggleFormatCounts';
 
+        // ====================================================================
+        // Constructor
+        // ====================================================================
+
         constructor(key_base = 'format_counts') { super(key_base) }
     }
 
@@ -1434,6 +1463,10 @@ $(document).on('turbolinks:load', function() {
     class ToggleCollapsed extends ToggleFeature {
 
         static CLASS_NAME = 'ToggleCollapsed';
+
+        // ====================================================================
+        // Constructor
+        // ====================================================================
 
         constructor(key_base = 'collapsed') { super(key_base) }
 
@@ -1469,6 +1502,12 @@ $(document).on('turbolinks:load', function() {
      */
     class ColorizeFeature extends AdvancedFeature {
 
+        static CLASS_NAME = 'ColorizeFeature';
+
+        // ====================================================================
+        // Type definitions
+        // ====================================================================
+
         /**
          * ColorizeState
          *
@@ -1481,8 +1520,6 @@ $(document).on('turbolinks:load', function() {
         // ====================================================================
         // Constructor
         // ====================================================================
-
-        static CLASS_NAME = 'ColorizeFeature';
 
         /**
          * Create a new instance.
@@ -1626,6 +1663,8 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {string} by_topic
          * @param {string} [data_tag]
+         *
+         * @protected
          */
         _colorize(by_topic, data_tag) {
             const item_lists = this._buildLists(by_topic);
@@ -1639,6 +1678,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string} by_topic
          *
          * @returns {object[]}
+         * @protected
          */
         _buildLists(by_topic) {
             let related_item_lists = {};
@@ -1661,6 +1701,8 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {object[]} item_lists
          * @param {string}   by_topic
+         *
+         * @protected
          */
         _validateLists(item_lists, by_topic) {
             const mark_as_error = $item => this._markItemAsError($item);
@@ -1691,6 +1733,8 @@ $(document).on('turbolinks:load', function() {
          * @param {object[]} item_lists
          * @param {string}   by_topic
          * @param {string}   data_tag
+         *
+         * @protected
          */
         _colorizeLists(item_lists, by_topic, data_tag) {
 
@@ -1730,6 +1774,8 @@ $(document).on('turbolinks:load', function() {
 
         /**
          * Restore colorized items.
+         *
+         * @protected
          */
         _unColorize() {
             this._removeIdentityNumber($result_items);
@@ -1754,6 +1800,8 @@ $(document).on('turbolinks:load', function() {
          * @param {Selector} item
          * @param {string}   state_text
          * @param {string}   [separator]
+         *
+         * @protected
          */
         _itemStateTip(item, state_text, separator = "\n\n") {
             let $item   = $(item);
@@ -1773,6 +1821,7 @@ $(document).on('turbolinks:load', function() {
          * @param {Selector} item
          *
          * @returns {boolean}
+         * @protected
          */
         _markItemAsError(item) {
             let $item = $(item);
@@ -1790,6 +1839,7 @@ $(document).on('turbolinks:load', function() {
          * @param {Selector} item
          *
          * @returns {boolean}
+         * @protected
          */
         _markItemAsExile(item) {
             let $item        = $(item);
@@ -1826,6 +1876,8 @@ $(document).on('turbolinks:load', function() {
          * @param {string}   by_topic
          * @param {string}   identity
          * @param {number}   [position]
+         *
+         * @protected
          */
         _addIdentityNumber(item, by_topic, identity, position) {
             let $item   = $(item);
@@ -1857,6 +1909,8 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {Selector}        [item]      Default: {@link $result_items}.
          * @param {string|string[]} [by_topic]  Default: {@link TOPICS}.
+         *
+         * @protected
          */
         _removeIdentityNumber(item, by_topic) {
             let $items = item ? $(item) : $result_items;
@@ -1875,6 +1929,8 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {Selector} item
          * @param {string}   by_topic
+         *
+         * @protected
          */
         _markIdentityField(item, by_topic) {
             const config = BUTTON_CONFIG[by_topic];
@@ -1889,6 +1945,8 @@ $(document).on('turbolinks:load', function() {
          * Clear highlighting of item metadata field(s).
          *
          * @param {Selector} [item]   Default {@link $result_items}.
+         *
+         * @protected
          */
         _unmarkIdentityFields(item) {
             let $items = item ? $(item) : $result_items;
@@ -1903,6 +1961,7 @@ $(document).on('turbolinks:load', function() {
          * @param {number} [offset_limit]
          *
          * @returns {number}
+         * @protected
          */
         _semiRandomColorOffset(color, offset_limit = COLOR_OFFSET_LIMIT) {
             let result = color + Math.floor(Math.random() * COLOR_RANGE);
@@ -1921,6 +1980,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string} by_topic
          *
          * @returns {string}
+         * @protected
          */
         _tagChar(by_topic) {
             const special = { by_title_text: 'T' };
@@ -1933,6 +1993,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string} topic
          *
          * @returns {string|undefined}
+         * @protected
          */
         _topicClass(topic) {
             if (typeof topic === 'string') {

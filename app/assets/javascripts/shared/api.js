@@ -19,6 +19,12 @@ import { Rails }     from '../vendor/rails'
  */
 export class Api extends BaseClass {
 
+    static CLASS_NAME = 'Api';
+
+    // ========================================================================
+    // Type definitions
+    // ========================================================================
+
     /**
      * Api_Options
      *
@@ -32,8 +38,6 @@ export class Api extends BaseClass {
     // ========================================================================
     // Constructor
     // ========================================================================
-
-    static CLASS_NAME = 'Api';
 
     /**
      * Create a new instance.
@@ -108,7 +112,7 @@ export class Api extends BaseClass {
     }
 
     // ========================================================================
-    // Protected methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -121,7 +125,7 @@ export class Api extends BaseClass {
      * @param {XMLHttpRequest}   xhr        Request response object.
      * @param {XmitCallback}     [cb]
      *
-     * @private
+     * @protected
      */
     _xmitOnComplete(result, warning, error, xhr, cb) {
         this.result  = result || {};
@@ -139,8 +143,7 @@ export class Api extends BaseClass {
      * @param {object} [current_headers]
      *
      * @returns {object}
-     *
-     * @private
+     * @protected
      */
     _addHeaders(current_headers) {
         let result = dupObject(current_headers);

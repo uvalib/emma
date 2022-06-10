@@ -4,13 +4,13 @@
 import { isEmpty, isMissing }                    from '../shared/definitions'
 import { HTTP }                                  from '../shared/http'
 import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
-import { fromJSON }                              from '../shared/objects';
+import { fromJSON }                              from '../shared/objects'
 import { secondsSince }                          from '../shared/time'
 import { makeUrl }                               from '../shared/url'
 
 
 // ============================================================================
-// JSDoc type definitions
+// Type definitions
 // ============================================================================
 
 /** @typedef {function(any,string,XMLHttpRequest)}    AjaxSuccessCallback  */

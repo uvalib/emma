@@ -115,7 +115,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // JSDoc type definitions
+    // Type definitions
     // ========================================================================
 
     /**
@@ -881,15 +881,15 @@ $(document).on('turbolinks:load', function() {
          * received with success status (200).  At this point, the file has
          * been uploaded by Shrine, but has not yet been validated.
          *
+         * **Implementation Notes**
+         * The normal Shrine response has been augmented to include an
+         * 'emma_data' object in addition to the fields associated with
+         * 'file_data'.
+         *
          * @param {Uppy.UppyFile}         file
          * @param {ShrineResponseMessage} response
          *
          * @see "Shrine::UploadEndpointExt#make_response"
-         *
-         * == Implementation Notes
-         * The normal Shrine response has been augmented to include an
-         * 'emma_data' object in addition to the fields associated with
-         * 'file_data'.
          */
         function onSuccess(file, response) {
 
@@ -1648,11 +1648,11 @@ $(document).on('turbolinks:load', function() {
      * Initialize the state of the cancel button, and set it up to clear the
      * form when it is activated.
      *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     *
-     * == Implementation Notes
+     * **Implementation Notes**
      * Although the button is created with 'type="reset"' HTML reset behavior
      * is not relied upon because it only clears form fields but not file data.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupCancelButton(form) {
         let $form   = formElement(form);

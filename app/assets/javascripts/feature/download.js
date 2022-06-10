@@ -22,7 +22,7 @@ $(document).on('turbolinks:load', function() {
     if (isMissing($artifact_links)) { return; }
 
     // ========================================================================
-    // JSDoc type definitions
+    // Type definitions
     // ========================================================================
 
     /**

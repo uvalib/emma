@@ -11,7 +11,6 @@ import { selector }                       from '../shared/css'
 import { isDefined, isMissing, isPresent} from '../shared/definitions'
 import { HTTP }                           from '../shared/http'
 import { encodeImageOrUrl }               from '../shared/image'
-//import { MB }                           from '../shared/math'
 import { SECONDS }                        from '../shared/time'
 import {
     handleClickAndKeypress,
@@ -496,6 +495,12 @@ export function setup(root) {
 
 export class MathDetectiveApi extends Api {
 
+    static CLASS_NAME = 'MathDetectiveApi';
+
+    // ========================================================================
+    // Type definitions
+    // ========================================================================
+
     /**
      * MD_ImageProcessingRequest
      *
@@ -648,8 +653,6 @@ export class MathDetectiveApi extends Api {
     // Constructor
     // ========================================================================
 
-    static CLASS_NAME = 'MathDetectiveApi';
-
     /**
      * Create a new instance.
      *
@@ -701,9 +704,15 @@ export class MathDetectiveApi extends Api {
     }
 
     // ========================================================================
-    // Internal properties
+    // Properties - internal
     // ========================================================================
 
+    /**
+     * Error message.
+     *
+     * @returns {string|undefined}
+     * @protected
+     */
     get _errorMessage() {
         let response = this.response;
         return response['Message'] || response['message'];
@@ -763,7 +772,7 @@ export class MathDetectiveApi extends Api {
     }
 
     // ========================================================================
-    // Internal methods
+    // Methods - internal
     // ========================================================================
 
     _submitImageOnComplete(result, warning, error, xhr, cb = this._onFetch) {
@@ -861,7 +870,7 @@ export class MathDetectiveApi extends Api {
     }
 
     // ========================================================================
-    // Private methods
+    // Methods - internal
     // ========================================================================
 
     #nextCycle() {

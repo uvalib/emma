@@ -8,7 +8,7 @@ import { deepFreeze }                          from '../shared/objects'
 
 
 // ============================================================================
-// Functions - Accessibility
+// Constants
 // ============================================================================
 
 /**
@@ -17,7 +17,7 @@ import { deepFreeze }                          from '../shared/objects'
  * @readonly
  * @type {string[]}
  */
-export const FOCUS_ELEMENTS =
+const FOCUS_ELEMENTS =
     deepFreeze(['a', 'area', 'button', 'input', 'select', 'textarea']);
 
 /**
@@ -26,7 +26,7 @@ export const FOCUS_ELEMENTS =
  * @readonly
  * @type {string}
  */
-export const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
+const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
 
 /**
  * Attributes indicating that an element should receive focus.
@@ -34,7 +34,7 @@ export const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
  * @readonly
  * @type {string[]}
  */
-export const FOCUS_ATTRIBUTES =
+const FOCUS_ATTRIBUTES =
     deepFreeze(['href', 'controls', 'data-path', 'draggable', 'tabindex']);
 
 /**
@@ -43,7 +43,7 @@ export const FOCUS_ATTRIBUTES =
  * @readonly
  * @type {string}
  */
-export const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
+const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
 
 /**
  * Selector for focusable elements.
@@ -51,7 +51,7 @@ export const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
  * @readonly
  * @type {string}
  */
-export const FOCUS_SELECTOR =
+const FOCUS_SELECTOR =
     FOCUS_ELEMENTS_SELECTOR + ', ' + FOCUS_ATTRIBUTES_SELECTOR;
 
 /**
@@ -60,7 +60,7 @@ export const FOCUS_SELECTOR =
  * @readonly
  * @type {string[]}
  */
-export const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
+const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
 
 /**
  * Selector for focusable elements that should not receive focus.
@@ -68,10 +68,10 @@ export const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
  * @readonly
  * @type {string}
  */
-export const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
+const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
 
 // ============================================================================
-// Functions - Accessibility
+// Functions
 // ============================================================================
 
 /**

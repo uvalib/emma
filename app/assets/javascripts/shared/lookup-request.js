@@ -7,6 +7,20 @@ import { arrayWrap, deepFreeze }            from '../shared/objects'
 
 
 // ============================================================================
+// Type definitions
+// ============================================================================
+
+/**
+ * LookupRequestObject
+ *
+ * @typedef {{
+ *     ids?:   string[],
+ *     query?: string[],
+ *     limit?: string[],
+ * }} LookupRequestObject
+ */
+
+// ============================================================================
 // Class LookupRequest
 // ============================================================================
 
@@ -17,6 +31,10 @@ import { arrayWrap, deepFreeze }            from '../shared/objects'
 export class LookupRequest extends BaseClass {
 
     static CLASS_NAME = 'LookupRequest';
+
+    // ========================================================================
+    // Constants
+    // ========================================================================
 
     /**
      * The set of valid identifier prefixes.
@@ -53,16 +71,6 @@ export class LookupRequest extends BaseClass {
     static LIMIT_TYPES = deepFreeze([
         // TODO: none yet
     ]);
-
-    /**
-     * LookupRequestObject
-     *
-     * @typedef {{
-     *     ids?:   string[],
-     *     query?: string[],
-     *     limit?: string[],
-     * }} LookupRequestObject
-     */
 
     /**
      * Each request type and the valid search term prefixes associated with it.
@@ -297,7 +305,7 @@ export class LookupRequest extends BaseClass {
     }
 
     // ========================================================================
-    // Protected properties
+    // Properties - internal
     // ========================================================================
 
     get _prefixMatch() { return `[^${this.separators}"']+`; }
@@ -305,7 +313,7 @@ export class LookupRequest extends BaseClass {
     get _termMatcher() { return this.term_regex ||= this._makeTermMatcher() }
 
     // ========================================================================
-    // Protected methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -314,6 +322,7 @@ export class LookupRequest extends BaseClass {
      * @param {string} prefix
      *
      * @returns {boolean}
+     * @protected
      */
     _validPrefix(prefix) {
         return this.constructor.validPrefix(prefix);
@@ -323,7 +332,7 @@ export class LookupRequest extends BaseClass {
      * Generate a new empty request object.
      *
      * @returns {LookupRequestObject}
-     * @private
+     * @protected
      */
     _blankParts() {
         return this.constructor.blankParts();
@@ -336,7 +345,7 @@ export class LookupRequest extends BaseClass {
      * @param {object} src
      *
      * @returns {object}
-     * @private
+     * @protected
      */
     _appendParts(dst, src) {
         let src_val;
@@ -354,6 +363,7 @@ export class LookupRequest extends BaseClass {
      * @param {string} value
      *
      * @returns {string}
+     * @protected
      */
     _encodeValue(value) {
         const CHAR_MAP = this.constructor.CHARACTER_MAPPING;
@@ -367,6 +377,7 @@ export class LookupRequest extends BaseClass {
      * Generate the matcher for {@link extractParts}.
      * 
      * @returns {RegExp}
+     * @protected
      */
     _makeTermMatcher() {
         const PRE_ = this._prefixMatch;
@@ -386,13 +397,14 @@ export class LookupRequest extends BaseClass {
     static get allPrefixes()   { return this.prefixes ||= this._prefixList(); }
 
     // ========================================================================
-    // Class protected methods
+    // Class methods - internal
     // ========================================================================
 
     /**
      * All valid search type prefixes.
      *
      * @returns {string[]}
+     * @protected
      */
     static _prefixList() {
         return Object.values(this.REQUEST_TYPE).flat();

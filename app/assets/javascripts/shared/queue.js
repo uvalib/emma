@@ -18,6 +18,10 @@ export class Queue extends BaseClass {
 
     static CLASS_NAME = 'Queue';
 
+    // ========================================================================
+    // Constructor
+    // ========================================================================
+
     /**
      * Create a new instance.
      *
@@ -61,6 +65,10 @@ export class CallbackQueue extends Queue {
 
     static CLASS_NAME = 'CallbackQueue';
 
+    // ========================================================================
+    // Constructor
+    // ========================================================================
+
     /**
      * Create a new instance.
      *
@@ -72,7 +80,7 @@ export class CallbackQueue extends Queue {
     }
 
     // ========================================================================
-    // Queue method overrides
+    // Methods - Queue overrides
     // ========================================================================
 
     /**
@@ -103,7 +111,7 @@ export class CallbackQueue extends Queue {
     }
 
     // ========================================================================
-    // Private methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -113,6 +121,7 @@ export class CallbackQueue extends Queue {
      * @param {string}     [from]
      *
      * @returns {boolean}
+     * @private
      */
     #validate(callback, from) {
         const type = typeof(callback);

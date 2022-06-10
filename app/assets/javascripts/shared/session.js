@@ -51,13 +51,13 @@ $(document).on('turbolinks:load', function() {
      * Return an anchor name based on the provided full or partial URL as long
      * as it represents an in-page transition from the current location.
      *
+     * **Usage Notes**
+     * Local URLs are assumedly to be relative.
+     *
      * @param {Event|Location|string} arg
      * @param {boolean}               [add_hash]    Default: *true*.
      *
      * @returns {string}
-     *
-     * == Usage Notes
-     * Local URLs are assumedly to be relative.
      */
     function getInPageAnchor(arg, add_hash) {
         let path = urlFrom(arg);

@@ -52,6 +52,10 @@ export class SessionState extends BaseClass {
 
     static CLASS_NAME = 'SessionState';
 
+    // ========================================================================
+    // Constructor
+    // ========================================================================
+
     /**
      * Create a new instance.
      *
@@ -135,7 +139,7 @@ export class SessionState extends BaseClass {
     }
 
     // ========================================================================
-    // Protected methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -144,6 +148,7 @@ export class SessionState extends BaseClass {
      * @param {*} v
      *
      * @returns {object}
+     * @protected
      */
     _objectify(v) {
         switch (typeof v) {
@@ -161,6 +166,7 @@ export class SessionState extends BaseClass {
      * @param {*} v
      *
      * @returns {string}
+     * @protected
      */
     _makeKeyName(v) {
         let result;
@@ -200,6 +206,12 @@ export class SessionState extends BaseClass {
  */
 export class SessionToggle extends SessionState {
 
+    static CLASS_NAME = 'SessionToggle';
+
+    // ========================================================================
+    // Type definitions
+    // ========================================================================
+
     /**
      * ToggleState
      *
@@ -209,13 +221,7 @@ export class SessionToggle extends SessionState {
      */
 
     // ========================================================================
-    // Constructor
-    // ========================================================================
-
-    static CLASS_NAME = 'SessionToggle';
-
-    // ========================================================================
-    // SessionState property overrides
+    // Properties - SessionState overrides
     // ========================================================================
 
     /**

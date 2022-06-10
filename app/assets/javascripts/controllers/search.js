@@ -216,11 +216,11 @@ $(document).on('turbolinks:load', function() {
     /**
      * Collapse a search results item.
      *
+     * **Usage Notes**
+     * This function expects that "item" resolves to a single HTML element.
+     *
      * @param {Selector} item
      * @param {Selector} [number]
-     *
-     * == Usage Notes
-     * This function expects that "item" resolves to a single HTML element.
      */
     function closeItem(item, number) {
         // noinspection DuplicatedCode
@@ -247,11 +247,11 @@ $(document).on('turbolinks:load', function() {
     /**
      * Expand a search results item.
      *
+     * **Usage Notes**
+     * This function expects that "item" resolves to a single HTML element.
+     *
      * @param {Selector} item
      * @param {Selector} [number]
-     *
-     * == Usage Notes
-     * This function expects that "item" resolves to a single HTML element.
      */
     function openItem(item, number) {
         // noinspection DuplicatedCode
@@ -504,12 +504,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Mark elements with the proper ARIA attribute.
      *
-     * @param {Selector} section
-     * @param {boolean}  [open]
-     *
-     * == Usage Notes
+     * **Usage Notes**
      * This function expects that "section" resolves to a single HTML element
      * unless "open" is provided.
+     *
+     * @param {Selector} section
+     * @param {boolean}  [open]
      */
     function updateSectionVisibility(section, open) {
         const func   = 'updateSectionVisibility';
@@ -532,11 +532,11 @@ $(document).on('turbolinks:load', function() {
     /**
      * Update the open/closed state of a sub-section.
      *
+     * **Usage Notes**
+     * This function expects that "section" resolves to a single HTML element.
+     *
      * @param {Selector} section
      * @param {Selector} [toggle]
-     *
-     * == Usage Notes
-     * This function expects that "section" resolves to a single HTML element.
      */
     function updateSectionOpenClosed(section, toggle) {
         const func   = 'updateSectionOpenClosed';
