@@ -142,6 +142,12 @@ export class LookupModal extends ModalDialog {
     static COMMIT               = selector(this.COMMIT_CLASS);
     static LOADING              = selector(this.LOADING_CLASS);
 
+    static HEADING_ROWS = [
+        this.HEAD_ENTRY,
+        this.FIELD_VALUES,
+        this.FIELD_LOCKS,
+    ].join(',');
+
     static RESERVED_ROWS = [
         this.HEAD_ENTRY,
         this.FIELD_VALUES,
@@ -541,6 +547,8 @@ export class LookupModal extends ModalDialog {
         this.resetSearchResultsData();
         this.clearFieldValuesData();
         this.updateSearchTerms();
+        this.disableCommit();
+        this.resetEntries();
         this.showLoading();
         this.performRequest();
     }
@@ -572,8 +580,6 @@ export class LookupModal extends ModalDialog {
      */
     performRequest() {
         this._debug('performRequest');
-        this.disableCommit();
-        this.resetEntries();
         this.initializeStatusPanel();
         if (this.output) {
             this.clearResultDisplay();
@@ -674,8 +680,8 @@ export class LookupModal extends ModalDialog {
      */
     updateSearchResultsData(message) {
         this._debug('updateSearchResultsData', message);
-        let key = message.job_id || randomizeName('response');
-        let obj = this.searchResultsData || this.resetSearchResultsData();
+        let key  = message.job_id || randomizeName('response');
+        let obj  = this.searchResultsData || this.resetSearchResultsData();
         obj[key] = message.objectCopy;
     }
 
@@ -793,14 +799,6 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * Clear service status contents and data.
-     */
-    clearServiceStatuses() {
-        this._debug('clearServiceStatuses');
-        this.serviceStatuses.removeData('names').find('.service').remove();
-    }
-
-    /**
      * Add status element(s) for external service(s).
      *
      * @param {string|string[]} services
@@ -821,12 +819,19 @@ export class LookupModal extends ModalDialog {
             $services.data('names', (data = []));
         }
         if (isPresent(names)) {
-            const make     = this.makeServiceStatus.bind(this);
-            const statuses = names.map(name => make(name));
+            const statuses = names.map(name => this.makeServiceStatus(name));
             $services.append(statuses);
             data.push(...names);
         }
         $services.removeClass('invisible');
+    }
+
+    /**
+     * Clear service status contents and data.
+     */
+    clearServiceStatuses() {
+        this._debug('clearServiceStatuses');
+        this.serviceStatuses.removeData('names').find('.service').remove();
     }
 
     /**
@@ -835,8 +840,8 @@ export class LookupModal extends ModalDialog {
      * @param {LookupResponse} message
      */
     updateStatusPanel(message) {
-        this._debug('updateStatusPanel', message);
         const func  = 'updateStatusPanel';
+        this._debug(func, message);
         const state = message.status?.toUpperCase();
         const srv   = message.service;
         const data  = message.data;
@@ -1081,9 +1086,8 @@ export class LookupModal extends ModalDialog {
             const current  = $textarea.val()?.trim() || '';
             const previous = this.getLatestFieldValue($textarea);
             if (current !== previous) {
-                const field = this.fieldFor($textarea);
                 this.setLatestFieldValue($textarea, current);
-                this.lockFor(field).click();
+                this.lockFor($textarea).click();
             }
         }
     }
@@ -1138,11 +1142,12 @@ export class LookupModal extends ModalDialog {
     /**
      * Get the field lock associated with the given data field.
      *
-     * @param {string} field
+     * @param {Selector} target
      *
      * @returns {jQuery}
      */
-    lockFor(field) {
+    lockFor(target) {
+        const field = this.fieldFor(target);
         /** @type {jQuery} */
         let $column = this.fieldLocksEntry.children(`[data-field="${field}"]`);
         return $column.find(this.constructor.LOCK);
@@ -1201,6 +1206,36 @@ export class LookupModal extends ModalDialog {
         const field = this.fieldFor($target);
         const lock  = $target.is(':checked');
         this.lockFieldValue(field, lock);
+        this.columnLockout(field, lock);
+    }
+
+    /**
+     * Toggle the appearance of a column of values based on the locked state of
+     * the related field.
+     *
+     * @param {string}  field
+     * @param {boolean} lock
+     */
+    columnLockout(field, lock) {
+        const HEAD  = this.constructor.HEADING_ROWS;
+        let $rows   = this.entriesList.children('.row').not(HEAD);
+        let $column = $rows.children(`[data-field="${field}"]`);
+        $column.toggleClass('locked-out', lock);
+    }
+
+    /**
+     * Add 'locked-out' to every field of an entry row according to the lockec
+     * state of the related field.
+     *
+     * @param {Selector} entry
+     */
+    fieldLockout(entry) {
+        $(entry).children('[data-field]').each((_, column) => {
+            let $field   = $(column);
+            const field  = $field.attr('data-field');
+            const locked = this.isLockedFieldValue(field);
+            $field.toggleClass('locked-out', locked);
+        });
     }
 
     // ========================================================================
@@ -1265,14 +1300,12 @@ export class LookupModal extends ModalDialog {
      */
     useSelectedEntry(entry) {
         this._debug('useSelectedEntry', entry);
-        const is_locked = this.isLockedFieldValue.bind(this);
-        const field_for = this.fieldFor.bind(this);
         let $entry   = entry && (this.selectedEntry = $(entry));
         let values   = this.entryValues($entry || this.selectedEntry);
         let $fields  = this.fieldValuesEntry;
         let columns  = $fields.children('[data-field]').toArray();
-        let unlocked = columns.filter(col => !is_locked(col));
-        let writable = unlocked.map(col => field_for(col));
+        let unlocked = columns.filter(col => !this.isLockedFieldValue(col));
+        let writable = unlocked.map(col => this.fieldFor(col));
         this.fillEntry($fields, values, writable);
     }
 
@@ -1287,23 +1320,23 @@ export class LookupModal extends ModalDialog {
     selectEntry(event) {
         this._debug('selectEntry', event);
         /** @type {jQuery} */
-        let $target = $(event.target),
+        let $target = $(event.currentTarget || event.target),
             $entry  = $target.parents('.row').first();
         if ($target.attr('type') !== 'radio') {
+            $target.focus();
             $entry.find('[type="radio"]').click();
         } else if ($target.is(':checked')) {
             this.entrySelectButtons.not($target).prop('checked', false);
             this.useSelectedEntry($entry);
             if ($entry.is(this.constructor.RESULT)) {
                 this.enableCommit();
-            } else { // if (this.commitButton.is('.disabled')) {
+            } else if (this.commitButton.is('.disabled')) {
                 // For the initial selection of the "ORIGINAL" row, lock all
                 // the fields that already have data.
-                const lock_for = this.lockFor.bind(this);
-                $entry.children('[data-field]').each((_, field) => {
-                    let $field = $(field);
-                    if (isPresent($field.val())) {
-                        lock_for($field.attr('data-field')).click();
+                $entry.children('[data-field]').each((_, column) => {
+                    let $field = $(column);
+                    if (isPresent($field.text())) {
+                        this.lockFor($field).click();
                     }
                 });
             }
@@ -1363,8 +1396,7 @@ export class LookupModal extends ModalDialog {
      */
     getColumnValues($entry, fields) {
         const columns = fields || this.constructor.DATA_COLUMNS
-        const get_val = this.getColumnValue.bind(this);
-        const entries = columns.map(field => [field, get_val($entry, field)]);
+        const entries = columns.map(c => [c, this.getColumnValue($entry, c)]);
         // noinspection JSValidateTypes
         return Object.fromEntries(entries);
     }
@@ -1439,7 +1471,7 @@ export class LookupModal extends ModalDialog {
     get entriesDisplay() {
         this.$entries_display ||=
             presence(this.$modal.find(this.constructor.ENTRIES));
-        this.$entries_display ||= 
+        this.$entries_display ||=
             this.makeEntriesDisplay().insertAfter(this.statusPanel);
         return this.$entries_display;
     }
@@ -1489,13 +1521,12 @@ export class LookupModal extends ModalDialog {
             this._warn(`${func}: empty message.data.items`);
 
         } else {
-            const request   = this.getRequestData();
-            const req_ids   = presence(request.ids);
-            const add_entry = this.addEntry.bind(this);
-            const service   = camelCase(message.service);
-            $.each(data.items, function(id, items) {
+            const request = this.getRequestData();
+            const req_ids = presence(request.ids);
+            const service = camelCase(message.service);
+            $.each(data.items, (id, items) => {
                 if (!req_ids || req_ids.includes(id)) {
-                    items.forEach(item => add_entry(item, service));
+                    items.forEach(item => this.addEntry(item, service));
                 }
             });
         }
@@ -1515,8 +1546,9 @@ export class LookupModal extends ModalDialog {
     addEntry(item, label, css_class) {
         this._debug('addEntry', item, label, css_class);
         let $list  = this.entriesList;
-        const row  = $list.children().length;
+        const row  = $list.children('.row').length;
         let $entry = this.makeResultEntry(row, label, css_class);
+        this.fieldLockout($entry);
         this.fillEntry($entry, item);
         if (item) {
             $entry.data(this.constructor.ENTRY_ITEM_DATA, dupObject(item));
@@ -1536,8 +1568,7 @@ export class LookupModal extends ModalDialog {
     fillEntry($entry, item, fields) {
         let data    = item || {};
         let columns = fields || this.constructor.DATA_COLUMNS
-        let set_val = this.setColumnValue.bind(this);
-        columns.forEach(field => set_val($entry, field, data[field]));
+        columns.forEach(col => this.setColumnValue($entry, col, data[col]));
         return $entry;
     }
 
@@ -1549,15 +1580,12 @@ export class LookupModal extends ModalDialog {
     resetEntries() {
         this._debug('resetEntries');
         if (this.$entries_list) {
-            const lock_for      = this.lockFor.bind(this);
-            const unlock        = this.unlockFieldValue.bind(this);
             const RESERVED_ROWS = this.constructor.RESERVED_ROWS;
             this.$entries_list.children().not(RESERVED_ROWS).remove();
             this.fieldValuesEntry.find('textarea').each((_, column) => {
                 let $field = $(column);
-                let field  = $field.attr('data-field');
-                lock_for(field).prop('checked', false);
-                unlock($field);
+                this.lockFor($field).prop('checked', false);
+                this.unlockFieldValue($field);
                 $field.val('');
             });
         } else {
@@ -1605,7 +1633,8 @@ export class LookupModal extends ModalDialog {
     makeEntriesDisplay(css_class) {
         const css    = css_class || this.constructor.ENTRIES_CLASS;
         let $display = $('<div>').addClass(css);
-        return $display.append(this.makeEntriesList());
+        let $list    = this.makeEntriesList();
+        return $display.append($list);
     }
 
     /**
@@ -1638,9 +1667,9 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeHeadEntry(row, css_class) {
-        const css  = css_class || this.constructor.HEAD_ENTRY_CLASS;
-        const head = this.makeHeadColumn.bind(this);
-        let cols   = this.constructor.ALL_COLUMNS.map(label => head(label));
+        const css    = css_class || this.constructor.HEAD_ENTRY_CLASS;
+        const fields = this.constructor.ALL_COLUMNS;
+        let cols     = fields.map(label => this.makeHeadColumn(label));
         return this.makeEntry(row, cols, css);
     }
 
@@ -1654,12 +1683,12 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeFieldValuesEntry(row, css_class) {
-        const css   = css_class || this.constructor.FIELD_VALUES_CLASS;
-        const input = this.makeFieldInputColumn.bind(this);
-        let $select = this.makeBlankColumn();
-        let $label  = this.makeTagColumn();
-        let inputs  = this.constructor.DATA_COLUMNS.map(field => input(field));
-        let cols    = [$select, $label, ...inputs];
+        const css    = css_class || this.constructor.FIELD_VALUES_CLASS;
+        const fields = this.constructor.DATA_COLUMNS;
+        let $select  = this.makeBlankColumn();
+        let $label   = this.makeTagColumn();
+        let inputs   = fields.map(field => this.makeFieldInputColumn(field));
+        let cols     = [$select, $label, ...inputs];
         this.respondAsHighlightable(inputs);
         return this.fieldValuesEntry = this.makeEntry(row, cols, css);
     }
@@ -1677,13 +1706,13 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeFieldLocksEntry(row, css_class) {
-        const css   = css_class || this.constructor.FIELD_LOCKS_CLASS;
-        const lock  = this.makeFieldLockColumn.bind(this);
-        const TABLE = this.constructor.ENTRY_TABLE
-        let $select = this.makeBlankColumn(TABLE['selection'].label);
-        let $label  = this.makeTagColumn(TABLE['tag'].label);
-        let locks   = this.constructor.DATA_COLUMNS.map(field => lock(field));
-        let cols    = [$select, $label, ...locks];
+        const css    = css_class || this.constructor.FIELD_LOCKS_CLASS;
+        const fields = this.constructor.DATA_COLUMNS;
+        const TABLE  = this.constructor.ENTRY_TABLE;
+        let $select  = this.makeBlankColumn(TABLE['selection'].label);
+        let $label   = this.makeTagColumn(TABLE['tag'].label);
+        let locks    = fields.map(field => this.makeFieldLockColumn(field));
+        let cols     = [$select, $label, ...locks];
         return this.fieldLocksEntry = this.makeEntry(row, cols, css);
     }
 
@@ -1721,13 +1750,13 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeResultEntry(row, tag, css_class) {
-        const css   = css_class || this.constructor.RESULT_CLASS;
-        const data  = this.makeDataColumn.bind(this);
-        const label = tag || 'Result'; // TODO: I18n
-        let $radio  = this.makeSelectColumn();
-        let $label  = this.makeTagColumn(label);
-        let values  = this.constructor.DATA_COLUMNS.map(field => data(field));
-        let cols    = [$radio, $label, ...values];
+        const css    = css_class || this.constructor.RESULT_CLASS;
+        const fields = this.constructor.DATA_COLUMNS;
+        const label  = tag || 'Result'; // TODO: I18n
+        let $radio   = this.makeSelectColumn();
+        let $label   = this.makeTagColumn(label);
+        let values   = fields.map(field => this.makeDataColumn(field));
+        let cols     = [$radio, $label, ...values];
         this._handleClickAndKeypress($label, this.selectEntry);
         this.respondAsHighlightable(cols);
         this.respondAsVisibleOnFocus(cols);
@@ -1955,11 +1984,13 @@ export class LookupModal extends ModalDialog {
     /**
      * Make the given items scroll into view when visited by tabbing.
      *
+     * @note This doesn't do anything yet...
+     *
      * @param {Selector|Selector[]} items
      */
     respondAsVisibleOnFocus(items) {
-        const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
-        arrayWrap(items).forEach(i => handleEvent($(i), 'focus', scroll));
+        //const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
+        //arrayWrap(items).forEach(i => handleEvent($(i), 'focus', scroll));
     }
 
     // ========================================================================
@@ -2025,7 +2056,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     setSearchTerms(terms, separator) {
-        this._debug('updateSearchTerms', terms, separator);
+        this._debug('setSearchTerms', terms, separator);
         const chars = (separator || this.separators).replaceAll('\\s', ' ');
         const sep   = chars[0];
         const parts = arrayWrap(terms);

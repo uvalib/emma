@@ -347,13 +347,13 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
         .item-terms {
 
-            $pad:    $section-gap;
+            $pad:    $item-gap * 2;
             $border: $pad * 0.25;
             $color:  lighter($uva-blue, 75%);
 
             display:        flex;
             flex-direction: row;
-            gap:            $section-gap;
+            gap:            $pad;
             padding:        $pad;
             border:         $border solid $color;
             border-radius:  $border * 2;
@@ -409,8 +409,9 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         flex-direction: row;
         flex-wrap:      wrap;
         align-items:    center;
-        gap:            1rem;
-        margin-top:     1rem;
+        gap:            $section-gap;
+        margin-top:     $section-gap * 2;
+        margin-bottom:  $section-gap * 2;
         font-size:      large;
 
         .services {
@@ -439,17 +440,14 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
                 }
 
                 &.late {
-                    //background-color: lightpink;
                     background-color: lighter($uva-accent-magenta, 50%);
                 }
 
                 &.done {
-                    //background-color: lightgreen;
                     background-color: lighter($uva-accent-green, 50%);
                 }
 
                 &.empty {
-                    //background-color: lightgray;
                     background-color: $uva-medium-gray;
                 }
             }

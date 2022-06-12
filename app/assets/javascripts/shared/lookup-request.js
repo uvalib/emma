@@ -288,9 +288,8 @@ export class LookupRequest extends BaseClass {
     extractParts(terms) {
         const ID_TYPE    = this.constructor.DEF_ID_TYPE;
         const QUERY_TYPE = this.constructor.DEF_QUERY_TYPE;
-        const encode     = this._encodeValue.bind(this);
         const parts      = terms.matchAll(this._termMatcher);
-        return [...parts].map(function(part) {
+        return [...parts].map(part => {
             let prefix = part[2]?.toLowerCase();
             let value  =
                 part[4] || // value inside double quotes
@@ -301,7 +300,7 @@ export class LookupRequest extends BaseClass {
             } else if (value.match(/^\d+$/)) {
                 return [(prefix || ID_TYPE), value];
             } else {
-                return [(prefix || QUERY_TYPE), encode(value)];
+                return [(prefix || QUERY_TYPE), this._encodeValue(value)];
             }
         });
     }
@@ -377,7 +376,7 @@ export class LookupRequest extends BaseClass {
 
     /**
      * Generate the matcher for {@link extractParts}.
-     * 
+     *
      * @returns {RegExp}
      * @protected
      */

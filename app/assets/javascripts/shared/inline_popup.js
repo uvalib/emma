@@ -104,12 +104,12 @@ export class InlinePopup extends ModalBase {
      * @param {Selector} [popups]     Default: `{@link $open_popups}`.
      */
     static hideAllOpenPopups(popups) {
-        const func     = 'hideAllOpenPopups';
-        const err      = `${func}: no data(${this.MODAL_INSTANCE}) for`;
-        const _error   = this._error.bind(this);
-        const instance = this.instanceFor.bind(this);
-        let $popups    = popups ? $(popups) : this.$open_popups;
-        $popups.each((_, p) => instance(p)?.close() || _error(err, p));
+        const func  = 'hideAllOpenPopups';
+        let $popups = popups ? $(popups) : this.$open_popups;
+        $popups.each((_, p) =>
+            this.instanceFor(p)?.close() ||
+            this._error(`${func}: no data(${this.MODAL_INSTANCE}) for`, p)
+        );
     }
 
     /**

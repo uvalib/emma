@@ -147,8 +147,7 @@ export class ModalDialog extends ModalBase {
      */
     associateAll(toggles) {
         let $toggles  = toggles ? $(toggles) : this.allToggles;
-        let associate = this.associate.bind(this);
-        $toggles.each((_, toggle) => associate(toggle));
+        $toggles.each((_, toggle) => this.associate(toggle));
     }
 
     // ========================================================================
@@ -170,7 +169,7 @@ export class ModalDialog extends ModalBase {
     /**
      * Create a ModalDialog instance for each modal popup and associate it with
      * all related modal toggle controls.
-     * 
+     *
      * @returns {boolean}             False if none were found.
      */
     static initializeAll() {
@@ -179,16 +178,15 @@ export class ModalDialog extends ModalBase {
         const type_data = 'data-modal-class';
         const this_type = this.CLASS_NAME;
         const link_data = this.MODAL_INSTANCE
-        const _log      = this._log.bind(this);
-        const _new      = this.new.bind(this);
-        $modals.each(function(_, element) {
+        $modals.each((_, element) => {
             let instance, type, $modal = $(element);
             if ((type = $modal.data(type_data)) && (type !== this_type)) {
-                _log(`skipping modal for ${type}`);
+                this._log(`skipping modal for ${type}`);
             } else if ((instance = $modal.data(link_data))) {
-                _log('modal already linked to', instance);
+                this._log('modal already linked to', instance);
             } else {
-                _new($modal).associateAll();
+                // noinspection JSUnresolvedFunction
+                this.new($modal).associateAll();
             }
         });
         return true;

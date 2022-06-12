@@ -82,7 +82,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     channel.setDiagnosticCallback(updateDiagnosticDisplay);
 
     channel.addCallback(updateStatusPanel);
-    
+
     if ($popup_button) {
         channel.addCallback(updateSearchResultsData);
         channel.addCallback(updateEntries);
@@ -246,6 +246,8 @@ export async function setup(base, show_hooks, hide_hooks) {
         resetSearchResultsData();
         clearFieldValuesData();
         updateSearchTerms();
+        disableCommit();
+        resetEntries();
         showLoading();
         performRequest();
     }
@@ -277,8 +279,6 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function performRequest() {
         _debug('performRequest');
-        disableCommit();
-        resetEntries();
         initializeStatusPanel();
         if (output) {
             clearResultDisplay();
@@ -489,8 +489,9 @@ export async function setup(base, show_hooks, hide_hooks) {
     function serviceStatuses(services) {
         $services ||= statusPanel().find(LookupModal.SERVICES);
         if (isDefined(services)) {
+            _debug('serviceStatuses', services);
             if (isMissing($services.children('label'))) {
-                $('<label>').text('Searching:').appendTo($services);
+                $('<label>').text('Searching:').prependTo($services);
             }
             let names = arrayWrap(services);
             let data  = $services.data('names');
@@ -510,9 +511,10 @@ export async function setup(base, show_hooks, hide_hooks) {
     }
 
     /**
-     * Clear service status elements.
+     * Clear service status contents and data.
      */
     function clearServiceStatuses() {
+        _debug('clearServiceStatuses');
         serviceStatuses().removeData('names').find('.service').remove();
     }
 
@@ -523,6 +525,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function updateStatusPanel(message) {
         const func  = 'updateStatusPanel';
+        _debug(func, message);
         const state = message.status?.toUpperCase();
         const srv   = message.service;
         const data  = message.data;
@@ -548,7 +551,7 @@ export async function setup(base, show_hooks, hide_hooks) {
                 finish = true;
                 break;
 
-            // Worker statuses
+            // Worker states
 
             case 'WORKING':
                 notice =`${statusNotice().text()}.`;
@@ -580,6 +583,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * status elements removed.
      */
     function initializeStatusPanel() {
+        _debug('initializeStatusPanel');
         serviceStatuses().removeClass('invisible');
         clearServiceStatuses();
         statusNotice('Starting...');
@@ -663,6 +667,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}              The commit button(s).
      */
     function enableCommit(enable) {
+        _debug('enableCommit', enable);
         let $button = commitButton();
         const set   = (enable === false);
         return $button.toggleClass('disabled', set).prop('disabled', set);
@@ -676,6 +681,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}              The commit button(s).
      */
     function disableCommit(disable) {
+        _debug('disableCommit', disable);
         let $button = commitButton();
         const set   = (disable !== false);
         return $button.toggleClass('disabled', set).prop('disabled', set);
@@ -688,7 +694,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Get the entry row element containing the field values that will be
      * reported back to the form.
-     * 
+     *
      * @returns {jQuery}
      */
     function getFieldValuesEntry() {
@@ -697,7 +703,7 @@ export async function setup(base, show_hooks, hide_hooks) {
 
     /**
      * Set the field values row element.
-     * 
+     *
      * @param {jQuery} $entry
      *
      * @returns {jQuery}
@@ -710,6 +716,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Invoked when the user commits to the new field values.
      */
     function commitFieldValuesEntry() {
+        _debug('commitFieldValuesEntry');
         let current    = getFieldValuesData();
         let new_values = entryValues(getFieldValuesEntry());
         if (isPresent(current)) {
@@ -761,14 +768,14 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function lockIfChanged(event) {
+        _debug('lockIfChanged', event);
         let $textarea = $(event.target);
         if (!isLockedFieldValue($textarea)) {
             const current  = $textarea.val()?.trim() || '';
             const previous = getLatestFieldValue($textarea);
             if (current !== previous) {
-                const field = $textarea.attr('data-field');
                 setLatestFieldValue($textarea, current);
-                lockFor(field).click();
+                lockFor($textarea).click();
             }
         }
     }
@@ -825,11 +832,12 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Get the field lock associated with the given data field.
      *
-     * @param {string} field
+     * @param {Selector} target
      *
      * @returns {jQuery}
      */
-    function lockFor(field) {
+    function lockFor(target) {
+        const field = fieldFor(target);
         /** @type {jQuery} */
         let $column = getFieldLocksEntry().children(`[data-field="${field}"]`);
         return $column.find(LookupModal.LOCK);
@@ -857,6 +865,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {boolean}                   [locking] If *false*, unlock instead.
      */
     function lockFieldValue(field, locking) {
+        _debug('lockFieldValue', field, locking);
         const flag_name = LookupModal.FIELD_LOCKED_DATA;
         const lock      = (locking !== false);
         fieldValueCell(field).data(flag_name, lock);
@@ -870,6 +879,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {boolean}                   [unlocking] If *false*, lock instead.
      */
     function unlockFieldValue(field, unlocking) {
+        _debug('unlockFieldValue', field, unlocking);
         const flag_name = LookupModal.FIELD_LOCKED_DATA;
         const lock      = (unlocking === false);
         fieldValueCell(field).data(flag_name, lock);
@@ -881,10 +891,41 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function toggleFieldLock(event) {
+        _debug('toggleFieldLock', event);
         let $target = $(event.target);
         const field = fieldFor($target);
         const lock  = $target.is(':checked');
         lockFieldValue(field, lock);
+        columnLockout(field, lock);
+    }
+
+    /**
+     * Toggle the appearance of a column of values based on the locked state of
+     * the related field.
+     *
+     * @param {string}  field
+     * @param {boolean} lock
+     */
+    function columnLockout(field, lock) {
+        const HEAD  = LookupModal.HEADING_ROWS;
+        let $rows   = entriesList().children('.row').not(HEAD);
+        let $column = $rows.children(`[data-field="${field}"]`);
+        $column.toggleClass('locked-out', lock);
+    }
+
+    /**
+     * Add 'locked-out' to every field of an entry row according to the lockec
+     * state of the related field.
+     *
+     * @param {Selector} entry
+     */
+    function fieldLockout(entry) {
+        $(entry).children('[data-field]').each((_, column) => {
+            let $field   = $(column);
+            const field  = $field.attr('data-field');
+            const locked = isLockedFieldValue(field);
+            $field.toggleClass('locked-out', locked);
+        });
     }
 
     // ========================================================================
@@ -909,7 +950,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function setOriginalValuesEntry($entry) {
-        return this.$original_values = $entry;
+        return $original_values = $entry;
     }
 
     // ========================================================================
@@ -923,7 +964,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function getSelectedEntry() {
         return $selected_entry ||=
-            entrySelectButtons().filter(':checked').parent();
+            entrySelectButtons().filter(':checked').parents('.row').first();
     }
 
     /**
@@ -941,6 +982,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Reset the selected entry to the "ORIGINAL" entry.
      */
     function resetSelectedEntry() {
+        _debug('resetSelectedEntry');
         $selected_entry = null;
         getOriginalValuesEntry().find('[type="radio"]').click();
     }
@@ -951,6 +993,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {Selector} [entry]      Default: {@link getSelectedEntry}
      */
     function useSelectedEntry(entry) {
+        _debug('useSelectedEntry', entry);
         let $entry   = entry ? setSelectedEntry($(entry)) : getSelectedEntry();
         let values   = entryValues($entry);
         let $fields  = getFieldValuesEntry();
@@ -969,16 +1012,27 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function selectEntry(event) {
+        _debug('selectEntry', event);
         /** @type {jQuery} */
-        let $target = $(event.target),
+        let $target = $(event.currentTarget || event.target),
             $entry  = $target.parents('.row').first();
         if ($target.attr('type') !== 'radio') {
+            $target.focus();
             $entry.find('[type="radio"]').click();
         } else if ($target.is(':checked')) {
             entrySelectButtons().not($target).prop('checked', false);
             useSelectedEntry($entry);
             if ($entry.is(LookupModal.RESULT)) {
                 enableCommit();
+            } else if (commitButton().is('.disabled')) {
+                // For the initial selection of the "ORIGINAL" row, lock all
+                // the fields that already have data.
+                $entry.children('[data-field]').each((_, column) => {
+                    let $field = $(column);
+                    if (isPresent($field.text())) {
+                        lockFor($field).click();
+                    }
+                });
             }
         }
     }
@@ -1036,8 +1090,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function getColumnValues($entry, fields) {
         const columns = fields || LookupModal.DATA_COLUMNS
-        const get_val = getColumnValue;
-        const entries = columns.map(field => [field, get_val($entry, field)]);
+        const entries = columns.map(c => [c, getColumnValue($entry, c)]);
         // noinspection JSValidateTypes
         return Object.fromEntries(entries);
     }
@@ -1134,7 +1187,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function entrySelectButtons() {
-        return entriesList().find('.selection');
+        return entriesList().find('.selection [type="radio"]');
     }
 
     /**
@@ -1163,7 +1216,7 @@ export async function setup(base, show_hooks, hide_hooks) {
             const request = getRequestData();
             const req_ids = presence(request.ids);
             const service = camelCase(message.service);
-            $.each(data.items, function(id, items) {
+            $.each(data.items, (id, items) => {
                 if (!req_ids || req_ids.includes(id)) {
                     items.forEach(item => addEntry(item, service));
                 }
@@ -1185,9 +1238,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function addEntry(item, label, css_class) {
+        _debug('addEntry', item, label, css_class);
         let $list  = entriesList();
-        const row  = $list.children().length;
+        const row  = $list.children('.row').length;
         let $entry = makeResultEntry(row, label, css_class);
+        fieldLockout($entry);
         fillEntry($entry, item);
         if (item) {
             $entry.data(LookupModal.ENTRY_ITEM_DATA, dupObject(item));
@@ -1207,7 +1262,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     function fillEntry($entry, item, fields) {
         let data    = item || {};
         let columns = fields || LookupModal.DATA_COLUMNS
-        columns.forEach(field => setColumnValue($entry, field, data[field]));
+        columns.forEach(col => setColumnValue($entry, col, data[col]));
         return $entry;
     }
 
@@ -1217,12 +1272,12 @@ export async function setup(base, show_hooks, hide_hooks) {
      * If $entries_list does not exist, this returns immediately.
      */
     function resetEntries() {
+        _debug('resetEntries');
         if ($entries_list) {
             $entries_list.children().not(LookupModal.RESERVED_ROWS).remove();
             getFieldValuesEntry().find('textarea').each((_, column) => {
                 let $field = $(column);
-                let field  = $field.attr('data-field');
-                lockFor(field).prop('checked', false);
+                lockFor($field).prop('checked', false);
                 unlockFieldValue($field);
                 $field.val('');
             });
@@ -1270,7 +1325,8 @@ export async function setup(base, show_hooks, hide_hooks) {
     function makeEntriesDisplay(css_class) {
         const css    = css_class || LookupModal.ENTRIES_CLASS;
         let $display = $('<div>').addClass(css);
-        return $display.append(makeEntriesList());
+        let $list    = makeEntriesList();
+        return $display.append($list);
     }
 
     /**
@@ -1303,8 +1359,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeHeadEntry(row, css_class) {
-        const css = css_class || LookupModal.HEAD_ENTRY_CLASS;
-        let cols  = LookupModal.ALL_COLUMNS.map(label => makeHeadColumn(label));
+        const css    = css_class || LookupModal.HEAD_ENTRY_CLASS;
+        const fields = LookupModal.ALL_COLUMNS;
+        let cols     = fields.map(label => makeHeadColumn(label));
         return makeEntry(row, cols, css);
     }
 
@@ -1318,14 +1375,14 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldValuesEntry(row, css_class) {
-        const css   = css_class || LookupModal.FIELD_VALUES_CLASS;
-        let $select = makeBlankColumn();
-        let $label  = makeTagColumn();
-        let inputs  = LookupModal.DATA_COLUMNS.map(field => makeFieldInputColumn(field));
-        let cols    = [$select, $label, ...inputs];
-        let $entry  = makeEntry(row, cols, css);
+        const css    = css_class || LookupModal.FIELD_VALUES_CLASS;
+        const fields = LookupModal.DATA_COLUMNS;
+        let $select  = makeBlankColumn();
+        let $label   = makeTagColumn();
+        let inputs   = fields.map(field => makeFieldInputColumn(field));
+        let cols     = [$select, $label, ...inputs];
         respondAsHighlightable(inputs);
-        return setFieldValuesEntry($entry);
+        return setFieldValuesEntry(makeEntry(row, cols, css));
     }
 
     /**
@@ -1341,14 +1398,14 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldLocksEntry(row, css_class) {
-        const css   = css_class || LookupModal.FIELD_LOCKS_CLASS;
-        const TABLE = LookupModal.ENTRY_TABLE;
-        let $select = makeBlankColumn(TABLE['selection'].label);
-        let $label  = makeTagColumn(TABLE['tag'].label);
-        let locks   = LookupModal.DATA_COLUMNS.map(field => makeFieldLockColumn(field));
-        let cols    = [$select, $label, ...locks];
-        let $entry  = makeEntry(row, cols, css);
-        return setFieldLocksEntry($entry);
+        const css    = css_class || LookupModal.FIELD_LOCKS_CLASS;
+        const fields = LookupModal.DATA_COLUMNS;
+        const TABLE  = LookupModal.ENTRY_TABLE;
+        let $select  = makeBlankColumn(TABLE['selection'].label);
+        let $label   = makeTagColumn(TABLE['tag'].label);
+        let locks    = fields.map(field => makeFieldLockColumn(field));
+        let cols     = [$select, $label, ...locks];
+        return setFieldLocksEntry(makeEntry(row, cols, css));
     }
 
     /**
@@ -1385,12 +1442,13 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeResultEntry(row, tag, css_class) {
-        const css   = css_class || LookupModal.RESULT_CLASS;
-        const label = tag || 'Result'; // TODO: I18n
-        let $radio  = makeSelectColumn();
-        let $label  = makeTagColumn(label);
-        let values  = LookupModal.DATA_COLUMNS.map(field => makeDataColumn(field));
-        let cols    = [$radio, $label, ...values];
+        const css    = css_class || LookupModal.RESULT_CLASS;
+        const fields = LookupModal.DATA_COLUMNS;
+        const label  = tag || 'Result'; // TODO: I18n
+        let $radio   = makeSelectColumn();
+        let $label   = makeTagColumn(label);
+        let values   = fields.map(field => makeDataColumn(field));
+        let cols     = [$radio, $label, ...values];
         handleClickAndKeypress($label, selectEntry);
         respondAsHighlightable(cols);
         respondAsVisibleOnFocus(cols);
@@ -1521,7 +1579,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         }
         $radio.prop('checked', (active === true));
         handleEvent($radio, 'change', selectEntry);
-        this.$start_tabbable ||= $radio;
+        $start_tabbable ||= $radio;
         return [$radio, $indicator.append($outer, $inner)];
     }
 
@@ -1617,11 +1675,13 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Make the given items scroll into view when visited by tabbing.
      *
+     * @note This doesn't do anything yet...
+     *
      * @param {Selector|Selector[]} items
      */
     function respondAsVisibleOnFocus(items) {
-        const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
-        arrayWrap(items).forEach(i => handleEvent($(i), 'focus', scroll));
+        //const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
+        //arrayWrap(items).forEach(i => handleEvent($(i), 'focus', scroll));
     }
 
     // ========================================================================
@@ -1686,6 +1746,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function setSearchTerms(terms, separator) {
+        _debug('setSearchTerms', terms, separator);
         const chars = (separator || getSeparators()).replaceAll('\\s', ' ');
         const sep   = chars[0];
         const parts = arrayWrap(terms);
@@ -1713,6 +1774,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} [event]
      */
     function updateSearchTerms(event) {
+        _debug('updateSearchTerms', event);
         let $data_src = event ? $(event.target) : dataElement();
         const data    = $data_src.data(LookupModal.SEARCH_TERMS_DATA);
         const request = setRequestData(data);

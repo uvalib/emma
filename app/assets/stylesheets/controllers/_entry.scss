@@ -899,7 +899,13 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             max-width: inherit;
         }
 
-        .highlight {
+        // Cells which align with a locked field value.
+        .locked-out {
+            background-color: ghostwhite;
+        }
+
+        // Cells in the row being hovered over.
+        .highlight:not(.locked-out) {
 
             @include hover-bold;
 
@@ -912,18 +918,24 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
         .lookup-query {
 
-            $color:         lighter($uva-blue, 95%);
+            $color:             lighter($uva-blue, 95%);
 
-            display:        flex;
-            flex-direction: row;
-            gap:            $section-gap;
-            margin-right:   1rem;
-            padding:        0.75rem 0.5rem;
-            font-size:      large;
-            font-weight:    bold;
-            background:     $color;
-            border:         0.25rem solid $color;
-            border-radius:  0.5rem;
+            display:            flex;
+            flex-direction:     row;
+            justify-content:    center;
+            gap:                $section-gap;
+            margin-right:       1rem;
+            padding:            0.75rem 0.5rem;
+            font-size:          large;
+            font-weight:        bold;
+            background:         $color;
+            border:             0.25rem solid $color;
+            border-radius:      0.5rem;
+
+            .terms {
+                padding: 0 0.5rem;
+                border:  1px solid $lookup-accent-fg;
+            }
         }
 
         .lookup-prompt {
@@ -932,12 +944,27 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             }
         }
 
+        .lookup-status {
+
+            justify-content: center;
+
+            .services {
+                margin-left:  0;
+                margin-right: 0;
+                flex-grow:    0;
+            }
+
+            .notice {
+                flex-basis:   auto;
+            }
+
+        }
+
         .lookup-entries {
 
             max-height:    80%;
             margin-top:    1rem;
             padding-right: 0.5rem;
-            overflow-y:    scroll;
             word-break:    break-word;
 
             // noinspection CssBrowserCompatibilityForProperties
@@ -950,6 +977,8 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
                 display:        grid;
                 gap:            $item-gap;
+                padding-left:   0.125rem;
+                padding-right:  0.125rem;
                 padding-bottom: 0.5rem;
                 border-bottom:  2px solid gray;
 
@@ -959,6 +988,13 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 &.wide {
                     width: 200%;
                 }
+
+                //=============================================================
+                // Rows
+                //=============================================================
+
+                $cell-pad-y: 0.125rem;
+                $cell-pad-x: 0.25rem;
 
                 .row {
 
@@ -975,11 +1011,6 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                     .tag {              // .col-1
                         font-weight:    bold;
                     }
-
-                    .text {
-                        display:        inline-block;
-                        margin:         0.125rem 0.25rem;
-                    }
                 }
 
                 //=============================================================
@@ -995,9 +1026,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                     > * {
                         position:       sticky;
                         top:            $head-top;
+                        padding-top:    0.125rem;
                         text-align:     center;
                         background:     white;
-                        box-shadow:     0 0.75rem 0 0 white;
+                        box-shadow:     0 -0.75rem  0  0.25rem  white,
+                                        0  0.75rem  0  0.25rem  white;
                     }
 
                     > .col-0 .text,
@@ -1014,10 +1047,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 // Field values entry row (.row.row-1)
                 //=============================================================
 
-                $values-border:  0.125rem;
-                $values-top:     $head-top + $head-delta-y + $values-border;
+                $values-top:     $head-top + $head-delta-y;
                 $values-height:  6rem;
-                $values-delta-y: $values-height + ($values-border * 3) + $item-gap;
+                $values-border:  0.125rem;
+                $values-delta-y: $values-height + $item-gap;
 
                 .row.field-values {
 
@@ -1025,18 +1058,19 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                         position:       sticky;
                         top:            $values-top;
                         background:     white;
-                        box-shadow:     0 1.75rem 0 0 white;
+                        box-shadow:     0  0        0  0.25rem  white,
+                                        0  1.75rem  0  0.25rem  white;
                     }
 
                     > *:not(.col-0):not(.col-1) {
                         min-height:     $values-height;
-                        max-height:     12rem;
+                        max-height:     $values-height * 2;
                         overflow-y:     auto;
                         border:         $values-border solid black;
                     }
 
                     textarea {
-                        padding:        0.125rem 0.25rem;
+                        padding:        $cell-pad-y $cell-pad-x;
                         font:           inherit;
                         resize:         none;
                     }
@@ -1063,17 +1097,18 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                         padding:        $locks-pad 0;
                         overflow:       hidden;
                         background:     white;
-                        box-shadow:     0 1rem 0.25rem 0 white;
+                        box-shadow:     0 1rem 0.25rem 0.25rem white;
                     }
 
                     // Show column 0 heading here rather than in the head row.
-                    > .col-0 {
-                        text-align:     center;
-                        font-weight:    bold;
+                    > .col-0 .text {
+                        visibility:     hidden;
                     }
 
                     // Show column 1 heading here rather than in the head row.
-                    > .col-1 {
+                    > .col-1 .text {
+                        display:        inline-block;
+                        text-indent:    0.25rem;
                         font-weight:    bold;
                     }
 
@@ -1098,13 +1133,6 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 .row.original-values,
                 .row.result {
 
-                    > *:not(.col-0) {
-                        min-height: $row-height;
-                        max-height: $row-height * 2;
-                        overflow-y: auto;
-                        border:     1px solid gray;
-                    }
-
                     > .col-0 {
 
                         position: relative;
@@ -1115,6 +1143,26 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
                         @include entry-selection;
                     }
+
+                    > .col-1 {
+                        word-break: keep-all;
+                    }
+
+                    > *:not(.col-0) {
+
+                        min-height: $row-height;
+                        max-height: $row-height * 2;
+                        padding:    $cell-pad-y $cell-pad-x;
+                        overflow-y: auto;
+                        border:     1px solid gray;
+
+                        .text {
+                            display: block;
+                            height:  calc(100% - (2 * #{$cell-pad-y}));
+                            width:   calc(100% - (2 * #{$cell-pad-x}));
+                            margin:  0;
+                        }
+                    }
                 }
 
                 //=============================================================
@@ -1124,15 +1172,8 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 .row.head,
                 .row.field-values,
                 .row.field-locks {
-
                     > .col-0 {
                         z-index: 1;
-                    }
-
-                    > .col-1 {
-                        box-shadow:
-                            0  0.75rem  0  0.25rem  white,
-                            0 -0.75rem  0  0.25rem  white;
                     }
                 }
 

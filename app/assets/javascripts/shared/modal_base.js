@@ -273,8 +273,7 @@ export class ModalBase extends BaseClass {
             // (or after being deleted below after closing).
             this._log(func, 'LOADING');
             if (this.showPopup($target)) {
-                const load_deferred = this._loadDeferredContent.bind(this);
-                $placeholder.each((_, p) => load_deferred(p));
+                $placeholder.each((_, p) => this._loadDeferredContent(p));
             }
 
         } else if (complete) {
@@ -577,7 +576,7 @@ export class ModalBase extends BaseClass {
 
     /**
      * Scroll the <iframe> content to the indicated anchor.
-     * 
+     *
      * @note Move outside of class?
      *
      * @param {Selector} iframe
@@ -780,16 +779,15 @@ export class ModalBase extends BaseClass {
         if (!this._zOrderCapturing || this.$modal.data(Z_CAPTURES_DATA)) {
             return;
         }
-        const _log     = this._log.bind(this);
         let z_captures = [];
-        $('*:visible').not(this.$modal).each(function() {
-            let $this = $(this);
-            const z   = $this.css('z-index');
+        $('*:visible').not(this.$modal).each((_, e) => {
+            let $e  = $(e);
+            const z = $e.css('z-index');
             if (z > 0) {
-                _log(`CAPTURE z-index = ${z} from ${elementSelector(this)}`);
-                $this.data(Z_RESTORE_DATA, z);
-                $this.css('z-index', -1);
-                z_captures.push($this);
+                this._log(`CAPTURE z-index = ${z} from ${elementSelector(e)}`);
+                $e.data(Z_RESTORE_DATA, z);
+                $e.css('z-index', -1);
+                z_captures.push($e);
             }
         });
         if (isEmpty(z_captures)) {
@@ -812,11 +810,10 @@ export class ModalBase extends BaseClass {
         const Z_RESTORE_DATA  = this.constructor.Z_RESTORE_DATA;
         const z_captures      = this.$modal.data(Z_CAPTURES_DATA);
         if (isPresent(z_captures)) {
-            const _log = this._log.bind(this);
-            z_captures.forEach(function($e) {
+            z_captures.forEach($e => {
                 const z = $e.data(Z_RESTORE_DATA);
                 $e.css('z-index', z);
-                _log(`RELEASE z-index = ${z} to ${elementSelector($e)}`);
+                this._log(`RELEASE z-index = ${z} to ${elementSelector($e)}`);
             });
         }
         this.$modal.data(Z_CAPTURES_DATA, false);
