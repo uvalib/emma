@@ -217,7 +217,9 @@ module ApiService::Common
   # Form a normalized API path from one or more path fragments.
   #
   # If *args* represents a full path which is different than `#base_url` then
-  # an absolute path is returned.
+  # an absolute path is returned.  Otherwise, `#base_uri`.path exists, the
+  # resultant full or partial path may be modified to ensure that it is
+  # included exactly once.
   #
   # @param [Array<String,Array>] args
   #
@@ -227,21 +229,31 @@ module ApiService::Common
     args = args.flatten.join('/').strip
     ver  = api_version.presence
     uri  = URI.parse(args)
-    path = uri.path&.split('/')&.compact_blank! || []
-    qry  = uri.query
-    host = uri.host
+    qry  = uri.query.presence
+    path = uri.path.presence
+    host = uri.host.presence
+    rel  = host.nil?
     url  =
-      if host.present? && (host != base_uri.host)
-        scheme = uri.scheme.presence || 'https'
-        port   = uri.port.presence
-        port   = nil if port && COMMON_PORTS.include?(port)
+      if host
+        rel      = (host == base_uri.host)
+        scheme   = uri.scheme.presence || (base_uri.scheme.presence if rel)
+        port     = uri.port.presence   || (base_uri.port.presence   if rel)
+        scheme ||= 'https'
+        port   &&= nil if COMMON_PORTS.include?(port)
         [scheme, "//#{host}", port].compact.join(':')
       end
-    path.shift if ver == path.first
-    result = []
-    result << [url, ver, *path].compact.join('/')
-    result << '?' << qry if qry.present?
-    result.join
+    if rel
+      base = base_uri.path.presence
+      base = base&.split('/')&.compact_blank!&.presence
+      path = path&.split('/')&.compact_blank!&.presence
+      ver  = nil if ver && (base&.include?(ver) || path&.include?(ver))
+      base = base&.join('/')
+      path = path&.join('/')&.delete_prefix("#{base}/")
+      path = [base, path].compact_blank!.join('/')
+    end
+    [url, ver, *path].compact_blank!.join('/').tap do |result|
+      result << "?#{qry}" if qry
+    end
   end
 
   # Add service-specific API options.
@@ -645,10 +657,12 @@ module ApiService::Common
       data = "(www-authenticate) #{data}"
     elsif (data = response.try(:body) || response.try(:dig, :body)).blank?
       data = '(none)'
-    elsif data.is_a?(String)
-      data = "#{data.size} bytes:\n" + data.truncate(limit)
     else
-      data = "\n" + data.pretty_inspect.truncate(limit)
+      size = ("#{data.size} bytes:" if data.is_a?(String))
+      data = data.pretty_inspect unless data.is_a?(String)
+      data = to_utf8(data).truncate_bytes(limit) rescue nil
+      data &&= "#{size}\n#{data}"
+      data ||= "#{size} [...]"
     end
 
     __debug_impl(leader: '<<<', separator: DEBUG_SEPARATOR, max: nil) do

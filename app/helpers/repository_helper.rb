@@ -31,7 +31,7 @@ module RepositoryHelper
   # @type [Array<String,Regexp>]
   #
   IA_DIRECT_LINK_PATTERNS = [
-    # /[_.]daisy\.zip$/, # Currently all IA downloads are proxied.
+    /[_.]daisy\.zip$/,
   ].freeze
 
   # ===========================================================================
