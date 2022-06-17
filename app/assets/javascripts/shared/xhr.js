@@ -1,12 +1,11 @@
 // app/assets/javascripts/shared/xhr.js
 
 
-import { isEmpty, isMissing }                    from '../shared/definitions'
-import { HTTP }                                  from '../shared/http'
-import { consoleError, consoleLog, consoleWarn } from '../shared/logging'
-import { fromJSON }                              from '../shared/objects'
-import { secondsSince }                          from '../shared/time'
-import { makeUrl }                               from '../shared/url'
+import { isEmpty, isMissing } from '../shared/definitions'
+import { HTTP }               from '../shared/http'
+import { fromJSON }           from '../shared/objects'
+import { secondsSince }       from '../shared/time'
+import { makeUrl }            from '../shared/url'
 
 
 // ============================================================================
@@ -83,7 +82,7 @@ import { makeUrl }                               from '../shared/url'
 // Constants
 // ============================================================================
 
-export const DEBUG_XHR = true;
+const DEBUGGING = true;
 
 // ============================================================================
 // Functions
@@ -133,7 +132,7 @@ export function xmit(method, path, prm, opt, cb) {
         delete settings.method;
     }
     if (settings.type && (settings.type !== method)) {
-        consoleWarn(`xmit: "${settings.type}" conflicts with "${method}"`);
+        console.warn(`xmit: "${settings.type}" conflicts with "${method}"`);
         delete settings.type;
     }
     switch (settings.type ||= method) {
@@ -188,7 +187,7 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {XMLHttpRequest} xhr
      */
     function onSuccess(data, status, xhr) {
-        // debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+        // _debug(`${func}: received`, (data?.length || 0), 'bytes.');
         if (isMissing(data)) {
             error  = 'no data';
         } else if (typeof(data) !== 'object') {
@@ -223,14 +222,14 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {string}         status
      */
     function onComplete(xhr, status) {
-        debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
+        _debug(`${func}: completed in`, secondsSince(start), 'sec.');
         if (result) {
-            // debugXhr(`${func}: data from server:`, record);
+            // _debug(`${func}: data from server:`, record);
         } else if (warning) {
-            consoleWarn(`${func}: ${settings.url}:`, warning);
+            console.warn(`${func}: ${settings.url}:`, warning);
         } else {
             error ||= 'unknown failure';
-            consoleError(`${func}: ${settings.url}:`, error);
+            console.error(`${func}: ${settings.url}:`, error);
         }
         callback.complete && callback.complete(result, warning, error, xhr);
     }
@@ -276,11 +275,15 @@ export function response(xhr) {
     return result || {};
 }
 
+// ============================================================================
+// Functions - internal
+// ============================================================================
+
 /**
  * Emit a console message if debugging communications.
  *
  * @param {...*} args
  */
-export function debugXhr(...args) {
-    if (DEBUG_XHR) { consoleLog('XHR:', ...args); }
+function _debug(...args) {
+    if (DEBUGGING) { console.log('XHR:', ...args); }
 }

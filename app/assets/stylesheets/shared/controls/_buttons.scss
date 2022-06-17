@@ -20,15 +20,11 @@
     @include x.hover-highlight;
 
     // From .uppy-FileInput-btn in node_modules/uppy/dist/uppy.css
-    //margin:           0;
-    //padding:          10px 15px;
     font-family:        sans-serif;
-    //font-size:        0.85em;
     color:              v.$control-text;
     background:         none;
     border:             1px solid v.$control-accent;
     border-radius:      8px;
-    //cursor:           pointer;
     -webkit-appearance: none;
 
     display:            block;

@@ -5,7 +5,6 @@ import { Emma }                                from '../shared/assets'
 import { selector }                            from '../shared/css'
 import { isMissing }                           from '../shared/definitions'
 import { handleClickAndKeypress, handleEvent } from '../shared/events'
-import { consoleLog }                          from '../shared/logging'
 import { deepFreeze }                          from '../shared/objects'
 
 
@@ -131,7 +130,7 @@ $(document).on('turbolinks:load', function() {
      * Scroll so that the top of the target element is visible.
      */
     function scrollToTop() {
-        debug('scrollToTop');
+        _debug('scrollToTop');
         $scroll_target[0].scrollIntoView();
         //focusableIn($scroll_target).first().focus();
     }
@@ -147,7 +146,7 @@ $(document).on('turbolinks:load', function() {
      * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToPrev(event) {
-        debug('scrollToPrev');
+        _debug('scrollToPrev');
         return scrollToRecord(event, PREV_SELECTOR);
     }
 
@@ -162,7 +161,7 @@ $(document).on('turbolinks:load', function() {
      * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToNext(event) {
-        debug('scrollToNext');
+        _debug('scrollToNext');
         return scrollToRecord(event, NEXT_SELECTOR);
     }
 
@@ -223,8 +222,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
 });

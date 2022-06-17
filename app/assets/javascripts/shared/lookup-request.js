@@ -121,6 +121,13 @@ export class LookupRequest extends BaseClass {
     static DEF_SEPARATORS = '|';
 
     // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /** @type {string} */              separators;
+    /** @type {LookupRequestObject} */ parts;
+
+    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -132,10 +139,9 @@ export class LookupRequest extends BaseClass {
      */
     constructor(terms, chars) {
         super();
-        /** @type {string} */
-        this.separators   = Array.isArray(chars) ? chars.join('') : chars;
-        this.separators ||= this.constructor.DEF_SEPARATORS;
-        this.parts = this._blankParts();
+        const separators = Array.isArray(chars) ? chars.join('') : chars;
+        this.separators  = separators || this.constructor.DEF_SEPARATORS;
+        this.parts       = this._blankParts();
         this.add(terms);
     }
 

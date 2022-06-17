@@ -112,7 +112,7 @@ class ApplicationCable::Response < Hash
   #
   # @return [self]
   #
-  # @see file:app/assets/javascripts/channels/lookup_channel.js  *response*
+  # @see file:app/assets/javascripts/channels/lookup-channel.js  *response*
   #
   def convert_to_data_url!(base_path: DEF_BASE_PATH, data_path: nil, **opt)
     raise "#{__method__} requires :job_id" if (job_id = self[:job_id]).blank?

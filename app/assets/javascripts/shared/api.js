@@ -36,6 +36,21 @@ export class Api extends BaseClass {
      */
 
     // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /** @type {object}                   */ result      = {};
+    /** @type {string}                   */ base_url    = '';
+    /** @type {string}                   */ state       = 'initialized';
+    /** @type {number}                   */ status      = HTTP.ok;
+    /** @type {string|undefined}         */ api_key;
+    /** @type {XmitCallback|undefined}   */ callback;
+    /** @type {XMLHttpRequest|undefined} */ xhr;
+    /** @type {string|undefined}         */ message;
+    /** @type {string|undefined}         */ warning;
+    /** @type {string|undefined}         */ error;
+
+    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -48,16 +63,8 @@ export class Api extends BaseClass {
     constructor(base_url, options = {}) {
         super();
         this.base_url = base_url || options.base_url || '';
-        this.state    = 'initialized';
         this.api_key  = options.api_key;
         this.callback = options.callback;
-        /** @type {XMLHttpRequest|undefined} */
-        this.xhr      = undefined;
-        this.message  = undefined;
-        this.warning  = undefined;
-        this.error    = undefined;
-        this.status   = HTTP.ok;
-        this.result   = {};
     }
 
     // ========================================================================
@@ -146,13 +153,13 @@ export class Api extends BaseClass {
      * @protected
      */
     _addHeaders(current_headers) {
-        let result = dupObject(current_headers);
+        let headers = dupObject(current_headers);
         if (this.isLocal) {
-            result['X-CSRF-Token'] = Rails.csrfToken();
+            headers['X-CSRF-Token'] = Rails.csrfToken();
         }
         if (this.api_key) {
-            result['X-API-Key'] = this.api_key;
+            headers['X-API-Key'] = this.api_key;
         }
-        return result;
+        return headers;
     }
 }

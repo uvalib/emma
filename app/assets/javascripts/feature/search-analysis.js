@@ -946,6 +946,38 @@ $(document).on('turbolinks:load', function() {
     class AdvancedFeature extends SessionState {
 
         static CLASS_NAME = 'AdvancedFeature';
+        static DEBUGGING  = false;
+
+        // ====================================================================
+        // Fields
+        // ====================================================================
+
+        /** @type {boolean}   */ valid = true;
+        /** @type {string}    */ button_class;
+        /** @type {optString} */ topic;
+
+        // ====================================================================
+        // Fields - internal
+        // ====================================================================
+
+        /**
+         * The page element containing the button(s) used to activate
+         * features.
+         *
+         * @type {jQuery}
+         * @protected
+         */
+        _button_tray;
+
+        /**
+         * The subset of button tray button(s) associated with the feature.
+         *
+         * @type {jQuery}
+         * @protected
+         *
+         * @see {@link $buttons}()
+         */
+        _feature_buttons;
 
         // ====================================================================
         // Constructor
@@ -975,20 +1007,7 @@ $(document).on('turbolinks:load', function() {
             this.button_class = bc;
             this.topic        = topic;
 
-            /**
-             * The page element containing the button(s) used to activate
-             * features.
-             *
-             * @type {jQuery}
-             */
-            this.$button_tray = $button_tray;
-
-            /**
-             * The subset of button tray button(s) associated with the feature.
-             *
-             * @type {jQuery}
-             */
-            this.$feature_buttons = undefined;
+            this._button_tray = $button_tray;
         }
 
         // ====================================================================
@@ -1001,7 +1020,7 @@ $(document).on('turbolinks:load', function() {
          * @returns {jQuery}
          */
         get $buttons() {
-            return this.$feature_buttons ||=
+            return this._feature_buttons ||=
                 this._findButton(this.button_class);
         }
 
@@ -1065,8 +1084,8 @@ $(document).on('turbolinks:load', function() {
          * @returns {jQuery|undefined}  The active button.
          */
         initialize(refresh, active_topic) {
-            if (this.invalid) {
-                return;
+            if (!this.valid) {
+                return undefined;
             }
             const any_topic    = notDefined(active_topic);
             const setup_button = (topic, cfg) => this._setupButton(topic, cfg);
@@ -1080,10 +1099,10 @@ $(document).on('turbolinks:load', function() {
                     }
                 }
             });
-            if ((this.invalid = !button_count)) {
-                this._log('feature not present');
-            } else {
+            if ((this.valid = !!button_count)) {
                 $active_button?.click();
+            } else {
+                this._debug('feature not present');
             }
             return $active_button;
         }
@@ -1100,7 +1119,7 @@ $(document).on('turbolinks:load', function() {
          */
         initializeOrDisable(refresh, active_topic) {
             let $active_button = this.initialize(refresh, active_topic);
-            if (this.invalid) {
+            if (!this.valid) {
                 this.disable();
                 $active_button = undefined;
             }
@@ -1124,6 +1143,7 @@ $(document).on('turbolinks:load', function() {
             if (typeof match === 'string') {
                 return (name === match) || name.includes(match);
             } else {
+                // noinspection JSUnresolvedFunction
                 return (match instanceof RegExp) && match.test(name);
             }
         }
@@ -1137,7 +1157,7 @@ $(document).on('turbolinks:load', function() {
          * @protected
          */
         _findButton(class_name) {
-            return class_name && this.$button_tray.find(selector(class_name));
+            return class_name && this._button_tray.find(selector(class_name));
         }
 
         /**
@@ -1153,23 +1173,24 @@ $(document).on('turbolinks:load', function() {
         _setupButton(topic, config) {
             const t      = topic  || this.topic;
             const func   = `_setupButton: ${t}`;
+            /** @type {StyleControlProperties} */
             const button = config || BUTTON_CONFIG[t] || {};
 
             if (isMissing(button.class)) {
                 this._error(`${func}: invalid topic`);
                 return;
             } else if (!this._isControlButton(button.class)) {
-                // this.log(`${func}: skipping button '${button.class}'`);
+                this._debug(`${func}: skipping button '${button.class}'`);
                 return;
             } else if (!button.active) {
-                // this.log(`${func}: inactive topic`);
+                this._debug(`${func}: inactive topic`);
                 return;
             }
 
             let $topic_buttons = this._findButton(button.class);
             if (isMissing($topic_buttons)) {
                 if (button.active === 'dev_only') {
-                    // this.log(`${func}: inactive topic`);
+                    this._debug(`${func}: inactive topic`);
                 } else {
                     this._warn(`${func}: no control button`);
                 }
@@ -1191,7 +1212,6 @@ $(document).on('turbolinks:load', function() {
                 }
             });
 
-            // this.log(`${func}: setup ${button.class}`);
             return $topic_buttons.removeClass('active');
         }
 
@@ -1208,6 +1228,12 @@ $(document).on('turbolinks:load', function() {
     class ToggleFeature extends AdvancedFeature {
 
         static CLASS_NAME = 'ToggleFeature';
+
+        // ====================================================================
+        // Fields
+        // ====================================================================
+
+        /** @type {string} */ list_class;
 
         // ====================================================================
         // Constructor
@@ -1235,7 +1261,7 @@ $(document).on('turbolinks:load', function() {
             }
             super(kb, bc, (topic || kb));
             this.list_class = list_class || kb;
-            this.invalid    = !this.#validate();
+            this.valid      = this.#validate();
         }
 
         // ====================================================================
@@ -1519,6 +1545,17 @@ $(document).on('turbolinks:load', function() {
          */
 
         // ====================================================================
+        // Fields
+        // ====================================================================
+
+        /**
+         * Identity topics.
+         *
+         * @type {string[]}
+         */
+        TOPICS = [];
+
+        // ====================================================================
         // Constructor
         // ====================================================================
 
@@ -1528,15 +1565,8 @@ $(document).on('turbolinks:load', function() {
          * @param {string} [key_base]
          */
         constructor(key_base = 'colorize') {
-
             super(key_base);
             this.topic = '';
-
-            /**
-             * Identity topics.
-             *
-             * @type {string[]}
-             */
             this.TOPICS = $.map(BUTTON_CONFIG,
                 (prop, topic) => isDefined(prop.field) ? topic : undefined
             );
@@ -1715,7 +1745,7 @@ $(document).on('turbolinks:load', function() {
 
                     // Mark items that belong with a set of item(s) encountered
                     // earlier on the page.
-                    if (prev && ($item.prevAll(ITEM_SELECTOR)[0].id !== prev)) {
+                    if (prev && ($item.prevAll(ITEM_SELECTOR)[0].id !== prev)){
                         mark_as_error($item);
                     } else {
                         prev = $item[0].id;

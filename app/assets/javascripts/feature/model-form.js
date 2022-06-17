@@ -35,11 +35,6 @@ import {
     flashMessage,
 } from '../shared/flash'
 import {
-    consoleError,
-    consoleLog,
-    consoleWarn
-} from '../shared/logging'
-import {
     arrayWrap,
     compact,
     deepFreeze,
@@ -143,7 +138,7 @@ $(document).on('turbolinks:load', function() {
 
     /**
      * Normally 'string[]' but may be received as 'string'.
-     * 
+     *
      * @typedef {string[]|string} multiString
      */
 
@@ -641,8 +636,8 @@ $(document).on('turbolinks:load', function() {
      * LookupCondition
      *
      * @typedef {{
-     *     or:  {[k: string]: boolean|undefined},
-     *     and: {[k: string]: boolean|undefined},
+     *     or:  Object<boolean|undefined>,
+     *     and: Object<boolean|undefined>,
      * }} LookupCondition
      */
 
@@ -650,15 +645,15 @@ $(document).on('turbolinks:load', function() {
      * LookupTerms
      *
      * @typedef {{
-     *     or:  {[k: string]: string|string[]},
-     *     and: {[k: string]: string|string[]},
+     *     or:  Object<string|string[]>,
+     *     and: Object<string|string[]>,
      * }} LookupTerms
      */
 
     /**
      * A mappings of data field to search term prefix for each grouping of
      * terms.
-     * 
+     *
      * @readonly
      * @type {LookupTerms}
      */
@@ -774,11 +769,11 @@ $(document).on('turbolinks:load', function() {
         // noinspection JSDeprecatedSymbols
         switch (performance.navigation.type) {
             case PerformanceNavigation.TYPE_BACK_FORWARD:
-                debugSection('HISTORY BACK/FORWARD');
+                _debugSection('HISTORY BACK/FORWARD');
                 refreshRecord($form);
                 break;
             case PerformanceNavigation.TYPE_RELOAD:
-                debugSection('PAGE REFRESH');
+                _debugSection('PAGE REFRESH');
                 // TODO: this causes a junk record to be created for /new.
                 refreshRecord($form);
                 break;
@@ -845,6 +840,7 @@ $(document).on('turbolinks:load', function() {
             edit:   isUpdateForm($form),
             bulk:   isBulkOpForm($form),
         };
+        // noinspection JSUnusedGlobalSymbols
         const callbacks = {
             onSelect:   onSelect,
             onStart:    onStart,
@@ -1343,7 +1339,7 @@ $(document).on('turbolinks:load', function() {
         const base = `${PROPERTIES.Path.index}.json`;
         const url  = makeUrl(base, { selected: range });
 
-        debugXhr(`${func}: VIA`, url);
+        _debugXhr(`${func}: VIA`, url);
 
         /** @type {SubmissionRecords} */
         let records;
@@ -1367,7 +1363,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            // _debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -1405,15 +1401,15 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
+            _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
             } else if (warning) {
-                consoleWarn(`${func}: ${url}: ${warning}`);
+                console.warn(`${func}: ${url}: ${warning}`);
                 callback([]);
             } else {
                 const failure = error || 'unknown failure';
-                consoleError(`${func}: ${url}: ${failure} - aborting`);
+                console.error(`${func}: ${url}: ${failure} - aborting`);
             }
         }
     }
@@ -1535,7 +1531,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            // _debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -1573,13 +1569,13 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
+            _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (record) {
-                // debugXhr(`${func}: data from server:`, record);
+                // _debugXhr(`${func}: data from server:`, record);
             } else if (warning) {
-                consoleWarn(`${func}: ${url}:`, warning);
+                console.warn(`${func}: ${url}:`, warning);
             } else {
-                consoleError(`${func}: ${url}:`, (error || 'unknown failure'));
+                console.error(`${func}: ${url}:`, (error || 'unknown error'));
             }
             initializeModelForm($form, record);
         }
@@ -1941,7 +1937,7 @@ $(document).on('turbolinks:load', function() {
         if (isDefined(checked)) {
             setChecked($input, checked, init);
         } else {
-            consoleWarn(`${func}: unexpected:`, setting);
+            console.warn(`${func}: unexpected:`, setting);
         }
 
         // Update the enclosing fieldset.
@@ -2060,7 +2056,7 @@ $(document).on('turbolinks:load', function() {
     function updateRelatedField(name, other_name) {
         const func = 'updateRelatedField';
         if (isMissing(name)) {
-            consoleError(`${func}: missing primary argument`);
+            console.error(`${func}: missing primary argument`);
             return;
         }
 
@@ -2097,10 +2093,10 @@ $(document).on('turbolinks:load', function() {
             }
         }
         if (error) {
-            consoleError(`${func}:`, error);
+            console.error(`${func}:`, error);
             return;
         } else if (warn) {
-            // consoleWarn(`${func}:`, warn);
+            // console.warn(`${func}:`, warn);
             return;
         }
 
@@ -2474,10 +2470,10 @@ $(document).on('turbolinks:load', function() {
         let url    = FIELD_VALIDATION[field];
 
         if (isMissing(callback)) {
-            consoleError(func, `${field}: no callback given`);
+            console.error(`${func}: ${field}: no callback given`);
             return false;
         } else if (isMissing(url)) {
-            consoleError(func, `${field}: no URL given`);
+            console.error(`${func}: ${field}: no URL given`);
             return false;
         }
 
@@ -2489,13 +2485,13 @@ $(document).on('turbolinks:load', function() {
         if (['dc_identifier', 'dc_relation'].includes(field)) {
             value = value.filter(v =>
                 !v.match(/https?:/) || v.includes('doi.org') ||
-                    consoleLog(func, `ignoring "${v}"`)
+                    console.log(`${func}: ignoring "${v}"`)
             );
             if (isEmpty(value)) {
                 return false;
             }
         } else if (isEmpty(value)) {
-            consoleWarn(func, `${url}: no values given`);
+            console.warn(`${func}: ${url}: no values given`);
             return false;
         }
         value = value.join(',');
@@ -2527,7 +2523,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debugXhr(func, 'received data: |', data, '|');
+            // _debugXhr(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -2560,9 +2556,9 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debugXhr(func, 'complete', secondsSince(start), 'sec.');
+            _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
-                consoleWarn(func, `${url}:`, error);
+                console.warn(`${func}: ${url}:`, error);
                 callback(undefined, `system error: ${error}`);
             } else if (isPresent(reply.errors)) {
                 callback(reply.valid, reply.errors);
@@ -2830,7 +2826,7 @@ $(document).on('turbolinks:load', function() {
                 repository:      (new_repo || EMPTY_VALUE),
                 emma_repository: (new_repo || null)
             };
-            debug(`${func}:`, (new_repo || 'cleared'));
+            _debug(`${func}:`, (new_repo || 'cleared'));
             populateFormFields(set_repo, $form);
         }
     }
@@ -2877,7 +2873,7 @@ $(document).on('turbolinks:load', function() {
         }
         const url = makeUrl('/search/direct', search_terms);
 
-        debugXhr(`${func}: VIA`, url);
+        _debugXhr(`${func}: VIA`, url);
 
         /** @type {SearchResultEntry[]} */
         let records = undefined;
@@ -2901,7 +2897,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest}             xhr
          */
         function onSuccess(data, status, xhr) {
-            // debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            // _debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -2935,16 +2931,16 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
+            _debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
             } else {
                 const failure = error || warning || 'unknown failure'
                 const message = `${url}: ${failure}`;
                 if (warning) {
-                    consoleWarn(`${func}:`, message);
+                    console.warn(`${func}:`, message);
                 } else {
-                    consoleError(`${func}:`, message);
+                    console.error(`${func}:`, message);
                 }
                 if (error_callback) {
                     error_callback(message);
@@ -3224,7 +3220,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   field        A field-type.
      * @param {boolean}  valid        Whether data for that type is valid.
      *
-     * @returns {boolean}             Whether *type* is a Lookup condition.
+     * @returns {boolean}             Whether *field* is a Lookup condition.
      */
     function updateLookupCondition(form, field, valid) {
         let $form     = formElement(form);
@@ -3763,7 +3759,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function beforeAjax(arg) {
-            debugXhr('ajax:before - arguments', Array.from(arguments));
+            _debugXhr('ajax:before - arguments', Array.from(arguments));
         }
 
         /**
@@ -3772,7 +3768,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function beforeAjaxFormSubmission(arg) {
-            debugXhr('ajax:beforeSend - arguments', Array.from(arguments));
+            _debugXhr('ajax:beforeSend - arguments', Array.from(arguments));
 
             // Disable empty database fields so they are not transmitted back
             // as form data.
@@ -3796,7 +3792,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxStopped(arg) {
-            debugXhr('ajax:stopped - arguments', Array.from(arguments));
+            _debugXhr('ajax:stopped - arguments', Array.from(arguments));
         }
 
         /**
@@ -3805,7 +3801,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionSuccess(arg) {
-            debugXhr('ajax:success - arguments', Array.from(arguments));
+            _debugXhr('ajax:success - arguments', Array.from(arguments));
             const data  = arg.data;
             const event = arg.originalEvent || {};
             // noinspection JSUnusedLocalSymbols
@@ -3820,13 +3816,13 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionError(arg) {
-            debugXhr('ajax:error - arguments', Array.from(arguments));
+            _debugXhr('ajax:error - arguments', Array.from(arguments));
             const error = arg.data;
             const event = arg.originalEvent || {};
             // noinspection JSUnusedLocalSymbols
             const [_resp, _status_text, xhr] = event.detail || [];
             const status = xhr.status;
-            consoleError('ajax:error', status, 'error', error, 'xhr', xhr);
+            console.error('ajax:error', status, 'error', error, 'xhr', xhr);
             onCreateError(xhr, status, error);
         }
 
@@ -3836,7 +3832,7 @@ $(document).on('turbolinks:load', function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionComplete(arg) {
-            debugXhr('ajax:complete - arguments', Array.from(arguments));
+            _debugXhr('ajax:complete - arguments', Array.from(arguments));
             onCreateComplete();
         }
 
@@ -3856,7 +3852,7 @@ $(document).on('turbolinks:load', function() {
             if (isPresent(flash)) {
                 message += ' for: ' + flash.join(', ');
             }
-            debug(`${func}:`, message);
+            _debug(`${func}:`, message);
             showFlashMessage(message);
             setFormSubmitted($form);
         }
@@ -3883,7 +3879,7 @@ $(document).on('turbolinks:load', function() {
             } else {
                 message += ` ${status}: ${error}`;
             }
-            consoleWarn(`${func}:`, message);
+            console.warn(`${func}:`, message);
             showFlashError(message);
             requireFormCancellation($form);
         }
@@ -4007,7 +4003,7 @@ $(document).on('turbolinks:load', function() {
             case 'invalid':   fieldDisplayInvalid($form);   break;
             case 'filled':    fieldDisplayFilled($form);    break;
             case 'all':       fieldDisplayAll($form);       break;
-            default:          consoleError(`${func}: invalid mode:`, mode);
+            default:          console.error(`${func}: invalid mode:`, mode);
         }
         // Scroll so that the first visible field is at the top of the display
         // beneath the field display controls.
@@ -4636,7 +4632,7 @@ $(document).on('turbolinks:load', function() {
                 case 'submit': perform = canSubmit($form); break;
                 case 'cancel': perform = canCancel($form); break;
                 //case 'select': perform = canSelect($form); break;
-                default:       consoleError(`${func}: invalid: "${op_name}"`);
+                default:       console.error(`${func}: invalid: "${op_name}"`);
             }
         }
         const op = asset || endpointProperties($form)[op_name];
@@ -4724,8 +4720,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
     /**
@@ -4733,8 +4729,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debugSection(...args) {
-        if (DEBUGGING) { consoleWarn('>>>>>', ...args, '<<<<<'); }
+    function _debugSection(...args) {
+        if (DEBUGGING) { console.warn('>>>>>', ...args, '<<<<<'); }
     }
 
     /**
@@ -4742,8 +4738,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debugXhr(...args) {
-        if (DEBUG.XHR) { consoleLog('XHR:', ...args); }
+    function _debugXhr(...args) {
+        if (DEBUG.XHR) { console.log('XHR:', ...args); }
     }
 
 });

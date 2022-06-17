@@ -156,7 +156,7 @@ export let DB = (function() {
     // Constants
     // ========================================================================
 
-    const DEBUG = false;
+    const DEBUGGING = false;
 
     /**
      * Database for applications uses.
@@ -234,7 +234,7 @@ export let DB = (function() {
      *
      * @type {boolean}
      */
-    let debug_store = DEBUG;
+    let debug_store = DEBUGGING;
 
     // ========================================================================
     // Functions - internal
@@ -261,7 +261,7 @@ export let DB = (function() {
     }
 
     function dbDebug(...args) {
-        if (DEBUG) {
+        if (DEBUGGING) {
             dbLog(...args);
         }
     }

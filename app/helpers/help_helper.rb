@@ -115,7 +115,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If *topic* is blank.
   #
-  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
+  # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
   def help_popup(topic, sub_topic = nil, **opt)
     return if topic.blank?

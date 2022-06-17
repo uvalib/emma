@@ -5,6 +5,7 @@
 // Class BaseClass
 // ============================================================================
 
+// noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
 /**
  * The base for application-defined classes which provides logging support.
  *
@@ -18,18 +19,27 @@ export class BaseClass {
 
     static CLASS_NAME = 'BaseClass';
 
+    /**
+     * Flag controlling console debug output (overridden per class).
+     *
+     * @type {boolean}
+     */
+    static DEBUGGING = false;
+
     // ========================================================================
     // Constructor
     // ========================================================================
 
-    constructor() { this.invalid = false }
+    constructor() {
+        this._debug(`${this.CLASS_NAME} CTOR`);
+    }
 
     // ========================================================================
     // Properties
     // ========================================================================
 
-    // noinspection FunctionNamingConventionJS
     get CLASS_NAME() { return this.constructor.CLASS_NAME }
+    get DEBUGGING()  { return this.constructor.DEBUGGING }
 
     // ========================================================================
     // Methods - internal
@@ -38,6 +48,7 @@ export class BaseClass {
     _log(...args)   { this.constructor._log(...args) }
     _warn(...args)  { this.constructor._warn(...args) }
     _error(...args) { this.constructor._error(...args) }
+    _debug(...args) { this.constructor._debug(...args) }
 
     // ========================================================================
     // Class methods - internal
@@ -46,5 +57,11 @@ export class BaseClass {
     static _log(...args)    { console.log(this.CLASS_NAME, ...args) }
     static _warn(...args)   { console.warn(this.CLASS_NAME, ...args) }
     static _error(...args)  { console.error(this.CLASS_NAME, ...args) }
+
+    static _debug(...args)  {
+        if (this.DEBUGGING) {
+            console.log(this.CLASS_NAME, ...args)
+        }
+    }
 
 }

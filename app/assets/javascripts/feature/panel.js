@@ -4,7 +4,6 @@
 import { Emma }                   from '../shared/assets'
 import { isMissing, isPresent }   from '../shared/definitions'
 import { handleClickAndKeypress } from '../shared/events'
-import { consoleLog }             from '../shared/logging'
 
 
 $(document).on('turbolinks:load', function() {
@@ -90,7 +89,7 @@ $(document).on('turbolinks:load', function() {
             const opening = !$panel.hasClass(OPEN_MARKER);
             if (DEBUGGING) {
                 const action = opening ? 'SHOW' : 'HIDE';
-                debug(action, getPanelId($button), 'panel');
+                _debug(action, getPanelId($button), 'panel');
             }
             if (RESTORE_PANEL_STATE) {
                 setState($button, opening);
@@ -222,8 +221,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
 });

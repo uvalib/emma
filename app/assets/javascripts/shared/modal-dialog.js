@@ -1,9 +1,9 @@
-// app/assets/javascripts/shared/modal_dialog.js
+// app/assets/javascripts/shared/modal-dialog.js
 
 
 import { selector }  from '../shared/css'
 import { isMissing } from '../shared/definitions'
-import { ModalBase } from '../shared/modal_base'
+import { ModalBase } from '../shared/modal-base'
 
 
 // ============================================================================
@@ -16,7 +16,8 @@ import { ModalBase } from '../shared/modal_base'
  */
 export class ModalDialog extends ModalBase {
 
-    static CLASS_NAME  = 'ModalDialog';
+    static CLASS_NAME = 'ModalDialog';
+    static DEBUGGING  = false;
 
     static MODAL_CLASS = 'modal-popup';
     static MODAL       = selector(this.MODAL_CLASS);
@@ -28,6 +29,12 @@ export class ModalDialog extends ModalBase {
      * @type {string}
      */
     static SELECTOR_ATTR = 'data-modal-selector';
+
+    // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /** @type {jQuery} */ $root;
 
     // ========================================================================
     // Constructor
@@ -181,9 +188,9 @@ export class ModalDialog extends ModalBase {
         $modals.each((_, element) => {
             let instance, type, $modal = $(element);
             if ((type = $modal.data(type_data)) && (type !== this_type)) {
-                this._log(`skipping modal for ${type}`);
+                this._debug(`skipping modal for ${type}`);
             } else if ((instance = $modal.data(link_data))) {
-                this._log('modal already linked to', instance);
+                this._debug('modal already linked to', instance);
             } else {
                 // noinspection JSUnresolvedFunction
                 this.new($modal).associateAll();

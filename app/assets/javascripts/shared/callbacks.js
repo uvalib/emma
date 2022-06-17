@@ -33,6 +33,12 @@ export class CallbackChain extends BaseClass {
     static CLASS_NAME = 'CallbackChain';
 
     // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /** @type {CallbackChainFunction[]} */ callbacks;
+
+    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -43,7 +49,6 @@ export class CallbackChain extends BaseClass {
      */
     constructor(...callbacks) {
         super();
-        /** @type {CallbackChainFunction[]} */
         this.callbacks = [...callbacks].flat();
     }
 
@@ -79,10 +84,10 @@ export class CallbackChain extends BaseClass {
 
     /**
      * check
-     * 
+     *
      * @param {Selector} target
      * @param {boolean}  [halted]
-     * 
+     *
      * @returns {boolean}
      */
     check(target, halted) {

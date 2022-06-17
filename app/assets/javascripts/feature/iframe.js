@@ -1,9 +1,8 @@
 // app/assets/javascripts/feature/iframe.js
 
 
-import { isMissing }                from '../shared/definitions'
-import { handleClickAndKeypress }   from '../shared/events'
-import { consoleError, consoleLog } from '../shared/logging'
+import { isMissing }              from '../shared/definitions'
+import { handleClickAndKeypress } from '../shared/events'
 
 
 $(document).on('turbolinks:load', function() {
@@ -65,18 +64,18 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}   False to indicate that the event has been handled.
      */
     function scrollToAnchor(event) {
-        const func   = 'IFRAME scrollToAnchor:';
+        const func   = 'IFRAME scrollToAnchor';
         let $link    = $(event ? event.target : this);
         const anchor = $link[0].hash;
         let $anchor  = anchor && $(anchor);
         if ($anchor) {
             event.preventDefault();
             const top = $anchor.offset().top;
-            debug(func, anchor, 'AT y =', top);
+            _debug(`${func}: ${anchor} AT y =`, top);
             window.scrollTo(0, top);
             return false;
         } else {
-            consoleError(func, 'NON ANCHOR LINK', $link);
+            console.error(`${func}: NON ANCHOR LINK`, $link);
         }
     }
 
@@ -89,7 +88,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 });

@@ -2,7 +2,6 @@
 
 
 import { isMissing, isPresent } from '../shared/definitions'
-import { consoleLog }           from '../shared/logging'
 
 
 $(document).on('turbolinks:load', function() {
@@ -95,7 +94,7 @@ $(document).on('turbolinks:load', function() {
             } else {
                 change = 'TOGGLE';
             }
-            debug(`${change} skip menu`);
+            _debug(`${change} skip menu`);
         }
         return $menu.toggleClass('visible', new_state).hasClass('visible');
     }
@@ -109,8 +108,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
 });

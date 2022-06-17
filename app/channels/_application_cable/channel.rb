@@ -27,7 +27,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @return [String, nil]
   #
-  # @see file:app/assets/javascripts/channels/lookup_channel.js *streamId*
+  # @see file:app/assets/javascripts/channels/lookup-channel.js *streamId*
   #
   def stream_id
     params[:stream_id]
@@ -39,7 +39,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @return [String]
   #
-  # @see file:app/assets/javascripts/channels/lookup_channel.js *streamName*
+  # @see file:app/assets/javascripts/channels/lookup-channel.js *streamName*
   #
   def stream_name(base = channel_name)
     [base, stream_id].compact.join('_')
@@ -66,7 +66,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @return [void]
   #
-  # @see file:app/assets/javascripts/channels/lookup_channel.js  *disconnect*
+  # @see file:app/assets/javascripts/channels/lookup-channel.js  *disconnect*
   # @see file:app/assets/javascripts/channels/consumer.js        *closeChannel*
   #
   def unsubscribed

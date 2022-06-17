@@ -9,7 +9,6 @@ import { selector }                         from '../shared/css'
 import { isMissing, isPresent, notDefined } from '../shared/definitions'
 import { handleClickAndKeypress }           from '../shared/events'
 import { extractFlashMessage }              from '../shared/flash'
-import { consoleLog, consoleWarn }          from '../shared/logging'
 import { percent }                          from '../shared/math'
 import { compact, deepFreeze, fromJSON }    from '../shared/objects'
 import { camelCase }                        from '../shared/strings'
@@ -179,6 +178,25 @@ export class Uploader extends BaseClass {
     static CLASS_NAME = 'Uploader';
 
     // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /** @type {string}              */ model;
+    /** @type {jQuery}              */ $form;
+    /** @type {jQuery}              */ $container;
+    /** @type {Object<boolean>}     */ state;
+    /** @type {Callback|undefined}  */ onSelect
+    /** @type {Callback|undefined}  */ onStart
+    /** @type {Callback|undefined}  */ onError
+    /** @type {Callback|undefined}  */ onSuccess
+    /** @type {number}              */ upload_timeout   = UPLOAD_TIMEOUT;
+    /** @type {number}              */ message_duration = MESSAGE_DURATION;
+    /** @type {string}              */ upload_error     = UPLOAD_ERROR_MESSAGE;
+    /** @type {ModelProperties}     */ property;
+    /** @type {UppyFeatureSettings} */ feature;
+    /** @type {Uppy.Uppy}           */ uppy;
+
+    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -190,10 +208,10 @@ export class Uploader extends BaseClass {
      * @param {UppyFeatures|object} features
      * @param {Object<boolean>}     state
      * @param {{
-     *     onSelect:  ?Callback,
-     *     onStart:   ?Callback,
-     *     onError:   ?Callback,
-     *     onSuccess: ?Callback,
+     *     onSelect?:  Callback,
+     *     onStart?:   Callback,
+     *     onError?:   Callback,
+     *     onSuccess?: Callback,
      * }} [callbacks]
      */
     constructor(form, model, features, state, callbacks) {
@@ -209,18 +227,8 @@ export class Uploader extends BaseClass {
         this.onError    = callbacks?.onError;
         this.onSuccess  = callbacks?.onSuccess;
 
-        this.upload_timeout   = UPLOAD_TIMEOUT;
-        this.message_duration = MESSAGE_DURATION;
-        this.upload_error     = UPLOAD_ERROR_MESSAGE;
-
-        /** @type {ModelProperties} */
         this.property = Emma[camelCase(model)] || {};
-
-        /** @type {UppyFeatureSettings} */
-        this.feature = $.extend({ debugging: DEBUGGING }, FEATURES, features);
-
-        /** @type {Uppy.Uppy} */
-        this.uppy = undefined;
+        this.feature  = $.extend({ debugging: DEBUGGING }, FEATURES, features);
     }
 
     // ========================================================================
@@ -490,7 +498,7 @@ export class Uploader extends BaseClass {
          * @param {{status: number, body: string}} [response]
          */
         function onFileUploadError(file, error, response) {
-            consoleWarn('Uppy:', 'upload-error', file, error, response);
+            console.warn('Uppy:', 'upload-error', file, error, response);
             onError(file, error, response);
             uppy.getFiles().forEach(file => uppy.removeFile(file.id));
         }
@@ -545,7 +553,7 @@ export class Uploader extends BaseClass {
         const info      = this.#uppyInfo.bind(this);
 
         this.uppy.on('upload-started', function(file) {
-            consoleWarn('Uppy:', 'upload-started', file);
+            console.warn('Uppy:', 'upload-started', file);
             info(`Uploading "${file.name || file}"`); // TODO: I18n
         });
 
@@ -586,12 +594,12 @@ export class Uploader extends BaseClass {
         });
 
         this.uppy.on('restriction-failed', function(file, msg) {
-            consoleWarn('Uppy:', 'restriction-failed', file, msg);
+            console.warn('Uppy:', 'restriction-failed', file, msg);
             error(msg);
         });
 
         this.uppy.on('error', function(msg) {
-            consoleWarn('Uppy:', 'error', msg);
+            console.warn('Uppy:', 'error', msg);
             error(msg);
         });
 
@@ -1130,7 +1138,7 @@ export class Uploader extends BaseClass {
      * @private
      */
     #debugUppy(...args) {
-        if (this.debugging) { consoleLog('Uppy:', ...args); }
+        if (this.debugging) { console.log('Uppy:', ...args); }
     }
 
 }

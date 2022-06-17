@@ -1,10 +1,10 @@
-// app/assets/javascripts/shared/inline_popup.js
+// app/assets/javascripts/shared/inline-popup.js
 
 
 import { selector }    from '../shared/css'
 import { isMissing }   from '../shared/definitions'
 import { handleEvent } from '../shared/events'
-import { ModalBase }   from '../shared/modal_base'
+import { ModalBase }   from '../shared/modal-base'
 
 
 // ============================================================================

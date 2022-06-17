@@ -933,7 +933,7 @@ class UploadDecorator < BaseDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
+  # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
   def check_status_popup(path, id:, **opt)
     css    = '.check-status-popup'

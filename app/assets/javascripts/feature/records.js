@@ -5,7 +5,6 @@ import { Emma }                                 from '../shared/assets'
 import { delegateInputClick, toggleVisibility } from '../shared/accessibility'
 import { pageController }                       from '../shared/controller'
 import { isMissing, isPresent }                 from '../shared/definitions'
-import { consoleLog }                           from '../shared/logging'
 import { camelCase, singularize }               from '../shared/strings'
 import { asParams }                             from '../shared/url'
 import {
@@ -315,7 +314,7 @@ $(document).on('turbolinks:load', function() {
     function filterPageDisplay(new_group) {
         const func  = 'filterPageDisplay';
         const group = new_group || listFilterCurrent();
-        debug(`${func}: arg = "${new_group}"; group = "${group}"`)
+        _debug(`${func}: arg = "${new_group}"; group = "${group}"`);
         if (group === 'all') {
             filterPageDisplayAll();
         } else {
@@ -391,7 +390,7 @@ $(document).on('turbolinks:load', function() {
         let $checkbox = $(checkbox);
         const enable  = $checkbox.is(':checked');
         const group   = $checkbox.val();
-        debug(`${func}: group = "${group}"; enable = "${enable}"`);
+        _debug(`${func}: group = "${group}"; enable = "${enable}"`);
         let $sel_controls, $pag_controls, any_checked;
         if (group === 'ALL_FILTERS') {
             $filter_options_checkboxes.each(function() {
@@ -426,8 +425,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
 });

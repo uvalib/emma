@@ -23,10 +23,9 @@ const TURBOLINKS_EVENTS = [
 
 if (DEBUG_TURBOLINKS) {
     TURBOLINKS_EVENTS.forEach(function(name) {
-        const event_name = `turbolinks:${name}`;
-        handleEvent($(document), event_name, function() {
-            console.warn(`========== ${event_name} ==========`);
-        });
+        const event  = `turbolinks:${name}`;
+        const notice = `========== ${event} ==========`;
+        handleEvent($(document), event, () => { console.warn(notice) });
     });
 }
 

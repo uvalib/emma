@@ -552,7 +552,7 @@ class SearchDecorator < BaseDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
+  # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
   def record_popup(**opt)
     css    = '.record-popup'

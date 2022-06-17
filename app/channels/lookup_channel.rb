@@ -35,7 +35,7 @@ class LookupChannel < ApplicationCable::Channel
   #
   # @return [void]
   #
-  # @see app/assets/javascripts/channels/lookup_channel.js *request()*
+  # @see app/assets/javascripts/channels/lookup-channel.js *request()*
   #
   def lookup_request(payload)
     data = stream_recv(payload, meth: __method__)

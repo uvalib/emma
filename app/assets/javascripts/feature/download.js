@@ -7,7 +7,6 @@ import { isMissing, isPresent }                from '../shared/definitions'
 import { handleClickAndKeypress, handleEvent } from '../shared/events'
 import { create, scrollIntoView }              from '../shared/html'
 import { HTTP }                                from '../shared/http'
-import { consoleLog, consoleWarn }             from '../shared/logging'
 import { compact, deepFreeze }                 from '../shared/objects'
 import { randomizeName }                       from '../shared/random'
 import { SECOND, secondsSince }                from '../shared/time'
@@ -379,11 +378,11 @@ $(document).on('turbolinks:load', function() {
      * @param {function(object, string=)} callback
      */
     function getMembers(callback) {
-        const func  = 'getMembers: ';
+        const func  = 'getMembers';
         const url   = MEMBER_POPUP.url;
         const start = Date.now();
 
-        debug(func, 'VIA', url);
+        _debug(`${func}: VIA`, url);
 
         /** @type {MemberMessage|object|undefined} */
         let message;
@@ -407,7 +406,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received data: |', data, '|');
+            // _debug(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -441,9 +440,9 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            _debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
-                consoleWarn(func, `${url}:`, error);
+                console.warn(`${func}: ${url}:`, error);
                 callback(null, error);
             } else {
                 callback(extractMemberData(message));
@@ -582,7 +581,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function requestArtifact(link) {
-        const func  = 'requestArtifact: ';
+        const func  = 'requestArtifact';
         const start = Date.now();
         let $link   = $(link);
         let url     = $link.attr('href') || $link.data('path') || '';
@@ -594,7 +593,7 @@ $(document).on('turbolinks:load', function() {
             url += `${append}member=${member}`;
         }
 
-        debug(func, 'VIA', url);
+        _debug(`${func}: VIA`, url);
 
         /** @type {string} target */
         let target = undefined;
@@ -620,7 +619,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received data: |', data, '|');
+            // _debug(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -662,12 +661,12 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            _debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (target) {
                 $link.data('path', target);
                 endRequesting($link);
             } else if (error) {
-                consoleWarn(func, `${url}:`, error);
+                console.warn(`${func}: ${url}:`, error);
                 endRequesting($link, error);
             } else {
                 setTimeout(reRequestArtifact, delay);
@@ -858,13 +857,13 @@ $(document).on('turbolinks:load', function() {
      * @param {string|jQuery} [target]
      */
     function showDownloadButton(link, target) {
-        const func = 'showDownloadButton:';
+        const func = 'showDownloadButton';
         let $link  = $(link);
         const url  = target || $link.data('path');
         if (target) {
             $link.data('path', url);
         }
-        debug(func, 'FROM', url);
+        _debug(`${func}: FROM`, url);
         const new_tip = $link.attr('data-complete-tooltip');
         if (new_tip) {
             $link.attr('data-tooltip', $link.attr('title'));
@@ -978,8 +977,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
 });

@@ -28,7 +28,7 @@ class LookupService::Request
   #
   # @type [Hash]
   #
-  # @see file:app/assets/javascripts/channels/lookup_channel.js *REQUEST_TYPE*
+  # @see file:app/assets/javascripts/channels/lookup-channel.js *REQUEST_TYPE*
   #
   TEMPLATE = {
     request: {

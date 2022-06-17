@@ -650,6 +650,24 @@ export class MathDetectiveApi extends Api {
      */
 
     // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /** @type {MD_ImageProcessingResponse} */ result = {};
+    /** @type {string} */ md_status;
+
+    // ========================================================================
+    // Fields - internal
+    // ========================================================================
+
+    /** @type {MathDetectiveApiCallback|undefined} */ _on_fetch;
+    /** @type {function(string)|undefined}         */ _on_status;
+
+    /** @type {number} */ _cycle = 0;
+    /** @type {number} */ _max_cycle;
+    /** @type {number} */ _recheck;
+
+    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -662,14 +680,10 @@ export class MathDetectiveApi extends Api {
         /** @type {MathDetectiveOptions|Api_Options} */
         const options = $.extend({ api_key: MD_API_KEY }, opt);
         super(MD_BASE_URL, options);
-        /** @type {MD_ImageProcessingResponse} */
-        this.result    = {};
-        this.md_status = undefined;
-        this._onFetch  = options.on_fetch;
-        this._onStatus = options.on_status;
-        this._recheck  = options.recheck    || DEF_RECHECK_TIME;
-        this._maxCycle = options.max_cycles || DEF_RECHECK_MAX;
-        this._cycle    = 0;
+        this._on_fetch  = options.on_fetch;
+        this._on_status = options.on_status;
+        this._max_cycle = options.max_cycles || DEF_RECHECK_MAX;
+        this._recheck   = options.recheck    || DEF_RECHECK_TIME;
     }
 
     // ========================================================================
@@ -733,7 +747,7 @@ export class MathDetectiveApi extends Api {
      * @param {string}                   [image]
      * @param {MathDetectiveApiCallback} [cb]
      */
-    submitImage(name, image, cb = this._onFetch) {
+    submitImage(name, image, cb = this._on_fetch) {
         let data;
         // ... encoded using base64. In the worst case this encoding can cause
         // the binary body to be inflated up to 4/3 its original size.
@@ -759,7 +773,7 @@ export class MathDetectiveApi extends Api {
      *
      * @param {MathDetectiveApiCallback} [cb]
      */
-    fetchImage(cb = this._onFetch) {
+    fetchImage(cb = this._on_fetch) {
         if (isMissing(this.handle)) {
             this._showStatus('FAILED');
             this.error = 'Missing request identifier to check';
@@ -775,7 +789,7 @@ export class MathDetectiveApi extends Api {
     // Methods - internal
     // ========================================================================
 
-    _submitImageOnComplete(result, warning, error, xhr, cb = this._onFetch) {
+    _submitImageOnComplete(result, warning, error, xhr, cb = this._on_fetch) {
         const func  = 'submitImage';
         this.result = result || {};
         this._updateStatus(xhr.status, func);
@@ -787,7 +801,7 @@ export class MathDetectiveApi extends Api {
         }
     }
 
-    _fetchLoop(cb = this._onFetch) {
+    _fetchLoop(cb = this._on_fetch) {
         if (this.running) {
             if (this.#nextCycle()) {
                 this.fetchImage(cb);
@@ -801,7 +815,7 @@ export class MathDetectiveApi extends Api {
         }
     }
 
-    _fetchImageOnComplete(result, warning, error, xhr, cb = this._onFetch) {
+    _fetchImageOnComplete(result, warning, error, xhr, cb = this._on_fetch) {
         const func  = 'submitImage';
         this.result = result || {};
         this._updateStatus(xhr.status, func);
@@ -862,11 +876,11 @@ export class MathDetectiveApi extends Api {
         err  && console.error(`${func}: ERROR: ${err}`);
     }
 
-    _showStatus(value) {
+    _showStatus(value, cb = this._on_status) {
         if (value) {
             this.md_status = value;
         }
-        this._onStatus && this._onStatus(this.md_status || 'INITIALIZING');
+        cb && cb(this.md_status || 'INITIALIZING');
     }
 
     // ========================================================================
@@ -875,7 +889,7 @@ export class MathDetectiveApi extends Api {
 
     #nextCycle() {
         const cycle      = ++(this._cycle);
-        const continuing = (cycle <= this._maxCycle);
+        const continuing = (cycle <= this._max_cycle);
         if (!continuing) {
             this._cycle = 0;
         }

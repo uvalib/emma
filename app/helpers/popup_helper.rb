@@ -41,7 +41,7 @@ module PopupHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/shared/modal_base.js
+  # @see file:app/assets/javascripts/shared/modal-base.js
   #
   def modal_popup(**opt, &block)
     css = '.modal-popup'

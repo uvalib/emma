@@ -3,7 +3,6 @@
 
 import { Emma }             from '../shared/assets'
 import { toggleVisibility } from '../shared/accessibility'
-import { consoleLog }       from '../shared/logging'
 import { randomizeName }    from '../shared/random'
 import { urlParameters }    from '../shared/url'
 import {
@@ -447,7 +446,7 @@ $(document).on('turbolinks:load', function() {
             // If there aren't enough remaining rows, collapse the last two
             // param rows until there are.
             while (param.length > remaining_rows.length) {
-                debug(`${func}: condensing ${type} param:`, param);
+                _debug(`${func}: condensing ${type} param:`, param);
                 param = [...param.slice(0, -2), param.slice(-2).join(' ')];
             }
 
@@ -540,7 +539,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} event
      */
     function performSearch(event) {
-        debug('performSearch:', event);
+        _debug('performSearch:', event);
         resolveFormFields();
         showInProgress();
     }
@@ -606,7 +605,7 @@ $(document).on('turbolinks:load', function() {
             const text  = ($input.val() || '').trim();
             if (!text || ((typeof skip === 'function') ? skip(text) : skip)) {
                 $input.attr('name', '');
-                debug(`${func}: ignoring ${type} ("${text}")`);
+                _debug(`${func}: ignoring ${type} ("${text}")`);
             } else {
                 count[type]++;
             }
@@ -700,7 +699,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event} event
          */
         function onChange(event) {
-            // debug('*** CHANGE ***');
+            // _debug('*** CHANGE ***');
             updatedSearchTerm(event);
         }
 
@@ -710,7 +709,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event|ClipboardEvent} event
          */
         function onCut(event) {
-            // debug('*** CUT ***');
+            // _debug('*** CUT ***');
             updatedSearchTerm(event);
         }
 
@@ -720,7 +719,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event|ClipboardEvent} event
          */
         function onPaste(event) {
-            // debug('*** PASTE ***');
+            // _debug('*** PASTE ***');
             updatedSearchTerm(event);
         }
 
@@ -733,7 +732,7 @@ $(document).on('turbolinks:load', function() {
          * @returns {function}
          */
         function onKeyUp(event) {
-            // debug('*** KEYUP ***');
+            // _debug('*** KEYUP ***');
             updatedSearchTerm(event);
         }
 
@@ -746,7 +745,7 @@ $(document).on('turbolinks:load', function() {
          * @returns {function}
          */
         function onInput(event) {
-            // debug('*** INPUT ***');
+            // _debug('*** INPUT ***');
             updatedSearchTerm(event);
         }
     }
@@ -769,10 +768,7 @@ $(document).on('turbolinks:load', function() {
      */
     function toggleFilterPanel() {
         const opening = !isExpandedFilterPanel();
-        if (DEBUGGING) {
-            const action = opening ? 'SHOW' : 'HIDE';
-            debug(action, 'search filters');
-        }
+        _debug((opening ? 'SHOW' : 'HIDE'), 'search filters');
         setFilterPanelState(opening);
         setFilterPanelDisplay(opening);
     }
@@ -1126,7 +1122,7 @@ $(document).on('turbolinks:load', function() {
             }
 
             if (skip) {
-                debug(`${func}: skipping ${type}: ${skip}`);
+                _debug(`${func}: skipping ${type}: ${skip}`);
             } else if (Array.isArray(queries[type])) {
                 queries[type].push(value);
             } else if (isDefined(queries[type])) {
@@ -1297,7 +1293,7 @@ $(document).on('turbolinks:load', function() {
             }
 
             if (skip) {
-                debug(`${func}: skipping ${type}: ${skip}`);
+                _debug(`${func}: skipping ${type}: ${skip}`);
             } else if (isDefined(filters[type])) {
                 let current = new Set(arrayWrap(filters[type]));
                 arrayWrap(value).forEach(v => current.add(v));
@@ -1359,7 +1355,7 @@ $(document).on('turbolinks:load', function() {
     function initializeMultiSelect() {
         let $menus = $multi_select_menus.not(SELECT2_MULTI_SELECT);
         if (isMissing($menus)) {
-            debug('initializeMultiSelect: none found');
+            _debug('initializeMultiSelect: none found');
             return;
         }
         initializeGenericMenu($menus);
@@ -1888,8 +1884,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
 });

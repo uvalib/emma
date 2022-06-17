@@ -56,6 +56,10 @@ export class LookupResponse extends BaseClass {
 
     static CLASS_NAME = 'LookupResponse';
 
+    // ========================================================================
+    // Constants
+    // ========================================================================
+
     /**
      * @readonly
      * @enum {string}
@@ -96,6 +100,12 @@ export class LookupResponse extends BaseClass {
     });
 
     // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /** @type {LookupResponseObject} */ object = {};
+
+    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -106,16 +116,11 @@ export class LookupResponse extends BaseClass {
      */
     constructor(msg_obj) {
         super();
-        /** @type {LookupResponseObject} */
-        let msg;
         if (msg_obj instanceof this.constructor) {
-            msg = msg_obj.objectCopy;
+            this.object = msg_obj.objectCopy;
         } else if (typeof msg_obj === 'object') {
-            msg = deepDup(msg_obj);
-        } else {
-            msg = {};
+            this.object = deepDup(msg_obj);
         }
-        this.object = msg;
     }
 
     // ========================================================================

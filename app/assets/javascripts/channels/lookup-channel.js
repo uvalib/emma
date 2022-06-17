@@ -1,14 +1,14 @@
-// app/assets/javascripts/channels/lookup_channel.js
+// app/assets/javascripts/channels/lookup-channel.js
 
 
-import { Api }                from '../shared/api'
-import { isEmpty, isPresent } from '../shared/definitions'
-import { onPageExit }         from '../shared/events'
-import { LookupRequest }      from '../shared/lookup-request'
-import { LookupResponse }     from '../shared/lookup-response'
-import { hexRand }            from '../shared/random'
-import { asString }           from '../shared/strings'
-import { createChannel }      from '../channels/consumer'
+import { Api }                           from '../shared/api'
+import { isDefined, isEmpty, isPresent } from '../shared/definitions'
+import { onPageExit }                    from '../shared/events'
+import { LookupRequest }                 from '../shared/lookup-request'
+import { LookupResponse }                from '../shared/lookup-response'
+import { hexRand }                       from '../shared/random'
+import { asString }                      from '../shared/strings'
+import { createChannel }                 from '../channels/consumer'
 
 
 // ============================================================================
@@ -16,15 +16,15 @@ import { createChannel }      from '../channels/consumer'
 // ============================================================================
 
 /**
- * @typedef {import('../channels/lookup_channel')} LookupChannel
+ * @typedef {import('../channels/lookup-channel')} LookupChannel
  */
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const CHANNEL = 'LookupChannel';
-const DEBUG   = true;
+const CHANNEL   = 'LookupChannel';
+const DEBUGGING = false;
 
 // ============================================================================
 // Variables
@@ -115,9 +115,12 @@ export function disconnect() {
 /**
  * Assert that the channel should automatically disconnect when leaving the
  * page.
+ *
+ * @param {boolean} [debug]
  */
-export function disconnectOnPageExit() {
-    onPageExit(disconnect, DEBUG);
+export function disconnectOnPageExit(debug) {
+    const debugging = isDefined(debug) ? debug : DEBUGGING;
+    onPageExit(disconnect, debugging);
 }
 
 // ============================================================================
@@ -137,7 +140,7 @@ export function disconnectOnPageExit() {
  * @see "LookupChannel#lookup_request"
  */
 export function request(terms) {
-    _debug('request', terms);
+    _debug('request:', terms);
     const request = LookupRequest.wrap(terms).requestParts;
     let requested = false;
     if (isEmpty(request)) {
@@ -200,7 +203,7 @@ export function getData() {
  * @param {LookupResponse|LookupResponseObject} data
  */
 export function setData(data) {
-    _debug(`setData:`, data);
+    _debug('setData:', data);
     lookup_dat = LookupResponse.wrap(data);
     lookup_dat_cb.forEach(cb => cb(lookup_dat));
 }
@@ -331,7 +334,7 @@ export function addDiagnosticCallback(...callbacks) {
 // ============================================================================
 
 function _debug(text, ...extra) {
-    if (DEBUG) {
+    if (DEBUGGING) {
         const note = `${streamLabel()} ${text}`;
         if (isPresent(extra)) {
             console.log(`${note}:`, ...extra);

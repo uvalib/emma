@@ -1,10 +1,9 @@
 // app/assets/javascripts/feature/images.js
 
 
-import { Emma }                    from '../shared/assets'
-import { isMissing }               from '../shared/definitions'
-import { consoleLog, consoleWarn } from '../shared/logging'
-import { secondsSince }            from '../shared/time'
+import { Emma }         from '../shared/assets'
+import { isMissing }    from '../shared/definitions'
+import { secondsSince } from '../shared/time'
 
 
 $(document).on('turbolinks:load', function() {
@@ -64,15 +63,15 @@ $(document).on('turbolinks:load', function() {
         let $image = $(this);
         let src;
         if ((src = $image.attr('data-path'))) {
-            debug('FETCHING IMAGE data-path ==', src);
+            _debug('FETCHING IMAGE data-path ==', src);
             loadImage($image, src);
         } else if ((src = $image.attr('src')) && src.match(/^http/)) {
-            debug('REPLACING IMAGE src ==', src);
+            _debug('REPLACING IMAGE src ==', src);
             // noinspection JSCheckFunctionSignatures
             $image.parent().append(imagePlaceholder());
             loadImage($image, src);
         } else {
-            debug('USING IMAGE src ==', src);
+            _debug('USING IMAGE src ==', src);
         }
     });
 
@@ -87,7 +86,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [source]
      */
     function loadImage(image, source) {
-        const func  = 'loadImage:';
+        const func  = 'loadImage';
         let $image  = $(image);
         const src   = source || $image.attr('data-path') || $image.attr('src');
         const url   = urlProxyPath(src);
@@ -113,7 +112,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            debug(func, 'received', (data ? data.length : 0), 'bytes.');
+            _debug(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error   = 'no data';
             } else {
@@ -139,9 +138,9 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            _debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
-                consoleWarn(func, `${url}:`, error);
+                console.warn(`${func}: ${url}:`, error);
             } else {
                 insertImage(content);
             }
@@ -232,8 +231,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {...*} args
      */
-    function debug(...args) {
-        if (DEBUGGING) { consoleLog(...args); }
+    function _debug(...args) {
+        if (DEBUGGING) { console.log(...args); }
     }
 
 });

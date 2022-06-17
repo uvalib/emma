@@ -49,7 +49,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If *topic* is blank.
   #
-  # @see file:javascripts/shared/modal_base.js *ModalBase.toggleModal()*
+  # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
   def help_popup: (Symbol|String topic, ?(Symbol|String)? sub_topic, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
