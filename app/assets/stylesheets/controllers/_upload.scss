@@ -53,6 +53,9 @@ body.upload {
     .page-text-section.directions {
         margin-bottom: 0;
     }
+    .search-in-progress {
+        &.visible { transition: unset; }
+    }
 }
 
 //=============================================================================

@@ -68,5 +68,11 @@
 // An indicator that is presented during a time-consuming search.
 // @see file:app/views/layouts/_overlays.html.erb
 .search-in-progress {
-    @include overlay.image('loading-balls.gif');
+
+    @include overlay.image('loading-balls.gif', $img-height: 1rem);
+
+    // When the search is done, hide the overlay immediately rather than easing
+    // back to transparency.
+    &:not(.visible) { transition: unset; }
+
 }

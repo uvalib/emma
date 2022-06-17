@@ -2,7 +2,7 @@
 
 
 import { selector }    from '../shared/css'
-import { isMissing }   from '../shared/definitions'
+import { isPresent }   from '../shared/definitions'
 import { handleEvent } from '../shared/events'
 import { ModalBase }   from '../shared/modal-base'
 
@@ -87,14 +87,19 @@ export class InlinePopup extends ModalBase {
      * Create an InlinePopup instance for each inline popup on the current
      * page.
      *
-     * @returns {boolean}             False if none were found.
+     * @returns {jQuery}              The discovered inline popup toggles.
      */
     static initializeAll() {
-        let $inline_popups = this.$enclosures;
-        if (isMissing($inline_popups)) { return false }
-        $inline_popups.each((_, enclosure) => new InlinePopup(enclosure));
-        this._attachWindowEventHandlers();
-        return true;
+        let $toggles = $();
+        let $popups  = this.$enclosures;
+        if (isPresent($popups)) {
+            $popups.each((_, enclosure) => {
+                // noinspection JSUnresolvedVariable
+                $.merge($toggles, this.new(enclosure).popupControl);
+            });
+            this._attachWindowEventHandlers();
+        }
+        return $toggles;
     }
 
     /**

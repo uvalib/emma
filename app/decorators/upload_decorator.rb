@@ -329,6 +329,23 @@ class UploadDecorator < BaseDecorator
 
     public
 
+    # The CSS class selector associated with bibliographic lookup buttons.
+    #
+    # @type [String]
+    #
+    # @see file:javascripts/shared/modal-dialog.js ModalDialog.SELECTOR_ATTR
+    #
+    LOOKUP_CSS_SELECTOR = '.lookup-popup'
+
+    # The JavaScript ModalDialog subclass for bibliographic lookup popups.
+    #
+    # @type [String]
+    #
+    # @see file:javascripts/shared/modal-dialog.js ModalDialog.CLASS_ATTR
+    # @see file:javascripts/shared/lookup-modal.js LookupModal
+    #
+    LOOKUP_JS_CLASS = 'LookupModal'
+
     # Bibliographic lookup control which engages #lookup_modal.
     #
     # In addition to creating the control, this method also adds the modal to
@@ -341,10 +358,11 @@ class UploadDecorator < BaseDecorator
     # @see LayoutHelper::PageModals#add_page_modal
     #
     def lookup_control(**opt)
-      selector = '.lookup-popup'
-      sel_opt  = { 'data-modal-selector': selector, 'data-modal-class': 'LookupModal' }
+      css      = LOOKUP_CSS_SELECTOR
+      js       = LOOKUP_JS_CLASS
+      sel_opt  = { 'data-modal-selector': css, 'data-modal-class': js }
       btn_opt  = opt.delete(:button) || {}
-      h.add_page_modal(selector) { lookup_modal(**opt, **sel_opt) }
+      h.add_page_modal(css) { lookup_modal(**opt, **sel_opt) }
       make_popup_toggle(button: lookup_button_options(**btn_opt, **sel_opt))
     end
 
@@ -355,7 +373,7 @@ class UploadDecorator < BaseDecorator
     # @option opt [Hash] :container   Options for #lookup_container.
     #
     def lookup_modal(**opt)
-      css   = '.lookup-popup'
+      css   = LOOKUP_CSS_SELECTOR
       c_opt = opt.delete(:container) || {}
       opt[:controls] = lookup_commit_button
       opt[:close]    = lookup_cancel_options
@@ -401,7 +419,7 @@ class UploadDecorator < BaseDecorator
     # @see file:app/assets/javascripts/feature/model-form.js *lookupButton()*
     #
     def lookup_popup(**opt)
-      css   = '.lookup-popup'
+      css   = LOOKUP_CSS_SELECTOR
       b_opt = opt.delete(:button)    || {}
       c_opt = opt.delete(:container) || {}
       unless opt.dig(:control, :button).present?

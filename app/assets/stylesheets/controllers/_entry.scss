@@ -502,6 +502,12 @@ form.select-entry {
         }
     }
 
+    // Prevent the checkbox entries from being changeable when the container is
+    // sealed.
+    .menu.multi.sealed > .multi > * {
+        pointer-events: none;
+    }
+
     //=========================================================================
     // Top-level components
     //=========================================================================
@@ -556,7 +562,7 @@ form.select-entry {
         }
 
         // Skip the status icon for disabled items.
-        &:not(.disabled) {
+        &:not(.disabled):not(.sealed) {
 
             .status-marker {
 
@@ -625,12 +631,8 @@ form.select-entry {
             @media #{$medium-width}  { min-width: 75%;  }
             @media #{$narrow-screen} { min-width: 100%; }
 
-            &.valid:not(.disabled) {
+            &.valid:not(.disabled):not(.sealed) {
                 background: $focus-accent;
-            }
-
-            &.valid.sealed {
-                background: $ro-focus-accent;
             }
         }
 
@@ -679,6 +681,9 @@ form.select-entry {
 body.entry {
     .page-text-section.directions {
         margin-bottom: 0;
+    }
+    .search-in-progress {
+        &.visible { transition: unset; }
     }
 }
 

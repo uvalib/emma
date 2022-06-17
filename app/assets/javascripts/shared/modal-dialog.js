@@ -30,6 +30,15 @@ export class ModalDialog extends ModalBase {
      */
     static SELECTOR_ATTR = 'data-modal-selector';
 
+    /**
+     * The attribute which specifies the subclass which should be generated for
+     * the modal popup toggle.
+     *
+     * @readonly
+     * @type {string}
+     */
+    static CLASS_ATTR = 'data-modal-class';
+
     // ========================================================================
     // Fields
     // ========================================================================
@@ -151,10 +160,13 @@ export class ModalDialog extends ModalBase {
      * Set up all related modal toggles to operate with this instance.
      *
      * @param {Selector} [toggles]
+     *
+     * @returns {jQuery}              The provided or discovered toggles.
      */
     associateAll(toggles) {
-        let $toggles  = toggles ? $(toggles) : this.allToggles;
-        $toggles.each((_, toggle) => this.associate(toggle));
+        let $toggles = toggles ? $(toggles) : this.allToggles;
+        let active   = $toggles.map((_, toggle) => this.associate(toggle));
+        return $(active);
     }
 
     // ========================================================================
@@ -177,15 +189,14 @@ export class ModalDialog extends ModalBase {
      * Create a ModalDialog instance for each modal popup and associate it with
      * all related modal toggle controls.
      *
-     * @returns {boolean}             False if none were found.
+     * @returns {jQuery}              The provided or discovered toggles.
      */
     static initializeAll() {
-        let $modals = this.$modals;
-        if (isMissing($modals)) { return false }
-        const type_data = 'data-modal-class';
+        let $toggles    = $();
+        const type_data = this.CLASS_ATTR;
         const this_type = this.CLASS_NAME;
         const link_data = this.MODAL_INSTANCE
-        $modals.each((_, element) => {
+        this.$modals.each((_, element) => {
             let instance, type, $modal = $(element);
             if ((type = $modal.data(type_data)) && (type !== this_type)) {
                 this._debug(`skipping modal for ${type}`);
@@ -193,10 +204,10 @@ export class ModalDialog extends ModalBase {
                 this._debug('modal already linked to', instance);
             } else {
                 // noinspection JSUnresolvedFunction
-                this.new($modal).associateAll();
+                $.merge($toggles, this.new($modal).associateAll());
             }
         });
-        return true;
+        return $toggles;
     }
 
 }

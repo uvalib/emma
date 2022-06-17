@@ -4,6 +4,7 @@
 import { Emma }             from '../shared/assets'
 import { toggleVisibility } from '../shared/accessibility'
 import { randomizeName }    from '../shared/random'
+import { SearchInProgress } from '../shared/search-in-progress'
 import { urlParameters }    from '../shared/url'
 import {
     isDefined,
@@ -293,13 +294,6 @@ $(document).on('turbolinks:load', function() {
         $search_filters.filter('.multiple').children('select');
 
     /**
-     * An indicator that is presented during a time-consuming search.
-     *
-     * @type {jQuery}
-     */
-    let $search_in_progress = $('body').children('.search-in-progress');
-
-    /**
      * Indicate whether search filters take immediate effect (causing a new
      * search using the selected value).
      *
@@ -320,8 +314,8 @@ $(document).on('turbolinks:load', function() {
     handleClickAndKeypress($advanced_toggle,  toggleFilterPanel);
 
     if (IMMEDIATE_SEARCH) {
-        handleClickAndKeypress($reset_button, showInProgress);
-        handleEvent($search_filters, 'change', showInProgress);
+        handleClickAndKeypress($reset_button, SearchInProgress.show);
+        handleEvent($search_filters, 'change', SearchInProgress.show);
     }
 
     // ========================================================================
@@ -329,7 +323,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     initializeAdvancedSearch();
-    hideInProgress();
+    SearchInProgress.hide();
 
     // ========================================================================
     // Functions - initialization
@@ -541,7 +535,7 @@ $(document).on('turbolinks:load', function() {
     function performSearch(event) {
         _debug('performSearch:', event);
         resolveFormFields();
-        showInProgress();
+        SearchInProgress.show();
     }
 
     /**
@@ -1846,33 +1840,6 @@ $(document).on('turbolinks:load', function() {
             $result = $(container).find(selector);
         }
         return $result || $();
-    }
-
-    // ========================================================================
-    // Functions - search-in-progress overlay
-    // ========================================================================
-
-    /**
-     * The hidden overlay displayed during a long search.
-     *
-     * @returns {jQuery}
-     */
-    function inProgressOverlay() {
-        return $search_in_progress;
-    }
-
-    /**
-     * Show the indicator that is presented during a time-consuming search.
-     */
-    function showInProgress() {
-        inProgressOverlay().toggleClass('visible', true);
-    }
-
-    /**
-     * Hide the indicator that is presented during a time-consuming search.
-     */
-    function hideInProgress() {
-        inProgressOverlay().toggleClass('visible', false);
     }
 
     // ========================================================================

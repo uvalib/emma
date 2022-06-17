@@ -132,6 +132,23 @@ class UploadDecorator < BaseDecorator
     #
     def active_state_group?: (Symbol? group, symHash? properties, Array[Upload]? list) -> bool
 
+    # The CSS class selector associated with bibliographic lookup buttons.
+    #
+    # @type [String]
+    #
+    # @see file:javascripts/shared/modal-dialog.js ModalDialog.SELECTOR_ATTR
+    #
+    LOOKUP_CSS_SELECTOR: String
+
+    # The JavaScript ModalDialog subclass for bibliographic lookup popups.
+    #
+    # @type [String]
+    #
+    # @see file:javascripts/shared/modal-dialog.js ModalDialog.CLASS_ATTR
+    # @see file:javascripts/shared/lookup-modal.js LookupModal
+    #
+    LOOKUP_JS_CLASS: String
+
     # Control icon definitions.
     #
     # @type [Hash{Symbol=>Hash{Symbol=>Any}}]

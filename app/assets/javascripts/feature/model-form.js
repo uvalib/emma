@@ -12,6 +12,7 @@ import { HTTP }                             from '../shared/http'
 import { LookupModal }                      from '../shared/lookup-modal'
 import { LookupRequest }                    from '../shared/lookup-request'
 import { K, asSize }                        from '../shared/math'
+import { SearchInProgress }                 from '../shared/search-in-progress'
 import { asString, camelCase, singularize } from '../shared/strings'
 import { Uploader }                         from '../shared/uploader'
 import { cancelAction, makeUrl }            from '../shared/url'
@@ -523,12 +524,14 @@ $(document).on('turbolinks:load', function() {
     const CANCEL_BUTTON_CLASS   = 'cancel-button';
     const FIELD_GROUP_CLASS     = 'field-group';
     const FIELD_CONTAINER_CLASS = 'form-fields';
+    const HIDDEN_MARKER         = Emma.Popup.hidden.class;
 
     const BUTTON_TRAY           = selector(BUTTON_TRAY_CLASS);
     const SUBMIT_BUTTON         = selector(SUBMIT_BUTTON_CLASS);
     const CANCEL_BUTTON         = selector(CANCEL_BUTTON_CLASS);
     const FIELD_GROUP           = selector(FIELD_GROUP_CLASS);
     const FIELD_CONTAINER       = selector(FIELD_CONTAINER_CLASS);
+    const HIDDEN                = selector(HIDDEN_MARKER);
 
     /**
      * Interrelated elements.  For example:
@@ -623,10 +626,13 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const PARENT_SEARCH_TERMS = '#parent-entry-search';
+    const PARENT_SEARCH_INPUT  = '#parent-entry-search';
 
     const PARENT_SEARCH_SUBMIT = '.search-button';
     const PARENT_SEARCH_CANCEL = '.search-cancel';
+
+    const SEALED_MARKER = 'sealed';
+    const SEALED        = selector(SEALED_MARKER);
 
     // ========================================================================
     // Constants - bibliographic lookup
@@ -753,6 +759,8 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Actions
     // ========================================================================
+
+    SearchInProgress.hide();
 
     // Setup bibliographic lookup first so that linkages are in place before
     // setupLookupButton() executes.
@@ -995,8 +1003,8 @@ $(document).on('turbolinks:load', function() {
         let $results = bulkOpResults().empty().addClass(OLD_DATA_MARKER);
         let previous = getBulkOpTrace();
         if (previous && showBulkOpResults($results, previous)) {
-            $results.removeClass('hidden');
-            bulkOpResultsLabel($results).removeClass('hidden');
+            $results.toggleClass(HIDDEN_MARKER, false);
+            bulkOpResultsLabel($results).toggleClass(HIDDEN_MARKER, false);
         }
 
         // When the bulk manifest is submitted, begin a running tally of
@@ -1133,8 +1141,9 @@ $(document).on('turbolinks:load', function() {
         let $label   = bulkOpResultsLabel($results);
         $results.removeClass(OLD_DATA_MARKER).empty();
         addBulkOpResult($results, TMP_LINE, TMP_LINE_CLASS);
-        $label.text('Upload results:').removeClass('hidden'); // TODO: I18n
-        $results.removeClass('hidden');
+        $label.text('Upload results:'); // TODO: I18n
+        $label.toggleClass(HIDDEN_MARKER, false);
+        $results.toggleClass(HIDDEN_MARKER, false);
 
         clearBulkOpTrace();
         fetchEntryList('$', null, startMonitoring);
@@ -1714,7 +1723,7 @@ $(document).on('turbolinks:load', function() {
      * to update.
      *
      * The field will not be updated if "sealed off" by the presence of the
-     * "sealed" CSS class.  This prevents the uploading of the file from
+     * {@link SEALED_MARKER}.  This prevents the uploading of the file from
      * modifying metadata which is under the control of the member repository
      * specified via 'emma_repository'.
      *
@@ -1730,7 +1739,7 @@ $(document).on('turbolinks:load', function() {
             let count = 0;
             $.each(data, function(field, value) {
                 let $field = formField(field, $form);
-                if (!$field.hasClass('sealed')) {
+                if (!$field.is(SEALED)) {
                     updateInputField($field, value);
                     count++;
                 }
@@ -1989,7 +1998,7 @@ $(document).on('turbolinks:load', function() {
             }
         }
         setValue($input, value, trim, init);
-        updateFieldAndLabel($input, value);
+        updateFieldAndLabel($input, $input.val());
     }
 
     /**
@@ -2276,7 +2285,10 @@ $(document).on('turbolinks:load', function() {
     function setValue(target, new_value, trim, init) {
         let $item = $(target);
         let value = new_value || '';
-        if ((trim !== false) && value && (typeof value === 'string')) {
+        if (value === EMPTY_VALUE) {
+            $item.prop('placeholder', value);
+            value = '';
+        } else if ((trim !== false) && value && (typeof value === 'string')) {
             value = value.trim();
         }
         if (init) {
@@ -2573,12 +2585,104 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * @typedef {Object<true|null|string>} SourceFieldTemplate
+     */
+
+    const FROM_PARENT = true;
+    const CLEARED     = null;
+    const AS_IS       = '';
+    const NEW_REPO    = 'new_repo';
+
+    /**
+     * Template specifying update behavior for form fields.
+     *
+     * Value        Field will be...
+     * -----------  --------------------------------------------------
+     * FROM_PARENT  assigned the value acquired from the parent record
+     * CLEARED      cleared of any value(s)
+     * AS_IS        kept as it is
+     * NEW_REPO     to be replaced by the repository selection
+     * (other)      assigned that value
+     *
+     * The AS_IS choice is necessary for any remediation-related fields may
+     * have been extracted from the file if it was provided before the source
+     * repository was selected.
+     *
+     * @type {SourceFieldTemplate}
+     */
+    const SOURCE_FIELDS = Object.freeze({
+        repository:                         NEW_REPO,
+        emma_recordId:                      CLEARED,
+        emma_titleId:                       FROM_PARENT,
+        emma_repository:                    NEW_REPO,
+        emma_collection:                    FROM_PARENT,
+        emma_repositoryRecordId:            FROM_PARENT,
+        emma_retrievalLink:                 CLEARED,
+        emma_webPageLink:                   CLEARED,
+        emma_lastRemediationDate:           AS_IS,
+        emma_sortDate:                      FROM_PARENT,
+        emma_repositoryUpdateDate:          AS_IS,
+        emma_repositoryMetadataUpdateDate:  AS_IS,
+        emma_publicationDate:               FROM_PARENT,
+        emma_lastRemediationNote:           AS_IS,
+        emma_version:                       FROM_PARENT,
+        emma_formatVersion:                 AS_IS,
+        emma_formatFeature:                 AS_IS,
+        dc_title:                           FROM_PARENT,
+        dc_creator:                         FROM_PARENT,
+        dc_identifier:                      FROM_PARENT,
+        dc_relation:                        FROM_PARENT,
+        dc_publisher:                       FROM_PARENT,
+        dc_language:                        FROM_PARENT,
+        dc_rights:                          FROM_PARENT,
+        dc_description:                     FROM_PARENT,
+        dc_format:                          AS_IS,
+        dc_type:                            AS_IS,
+        dc_subject:                         FROM_PARENT,
+        dcterms_dateAccepted:               CLEARED,
+        dcterms_dateCopyright:              FROM_PARENT,
+        s_accessibilityFeature:             AS_IS,
+        s_accessibilityControl:             AS_IS,
+        s_accessibilityHazard:              AS_IS,
+        s_accessibilityMode:                AS_IS,
+        s_accessibilityModeSufficient:      AS_IS,
+        s_accessibilitySummary:             AS_IS,
+        rem_source:                         AS_IS,
+        rem_metadataSource:                 AS_IS,
+        rem_remediatedBy:                   AS_IS,
+        rem_complete:                       AS_IS,
+        rem_coverage:                       AS_IS,
+        rem_remediation:                    AS_IS,
+        rem_remediatedAspects:              AS_IS,
+        rem_textQuality:                    AS_IS,
+        rem_quality:                        AS_IS,
+        rem_status:                         AS_IS,
+        rem_remediationDate:                AS_IS,
+        rem_comments:                       AS_IS,
+        rem_remediationComments:            AS_IS,
+        bib_series:                         FROM_PARENT,
+        bib_seriesType:                     FROM_PARENT,
+        bib_seriesPosition:                 FROM_PARENT,
+    });
+
+    /**
+     * Indicate whether the given repository is the default (local) repository
+     * or an (external) member repository.
+     *
+     * @param {string} [repo]
+     *
+     * @returns {boolean}
+     */
+    function defaultRepository(repo) {
+        return !repo || (repo === PROPERTIES.Repo.default);
+    }
+
+    /**
      * Monitor attempts to change to the "Source Repository" menu selection.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function monitorSourceRepository(form) {
-
         const func = 'monitorSourceRepository';
         let $form  = formElement(form);
         let $menu  = sourceRepositoryMenu($form);
@@ -2588,11 +2692,11 @@ $(document).on('turbolinks:load', function() {
 
         if (isUpdateForm($form) && $menu.val()) {
             const note = 'This cannot be changed for an existing EMMA entry'; // TODO: I18n
-            $menu.attr('title', note);
-            $menu.prop('disabled', true);
-            $menu.addClass('sealed');
+            seal($menu, true).attr('title', note);
             return;
         }
+
+        const REPO_DATA = 'data-previous-value';
 
         // Listen for a change to the "Source Repository" selection.  If the
         // selection was cleared, or if the default repository was selected,
@@ -2603,11 +2707,10 @@ $(document).on('turbolinks:load', function() {
             clearFlash();
             hideParentEntrySelect($form);
             const new_repo = $menu.val() || '';
-            if (!new_repo || (new_repo === PROPERTIES.Repo.default)) {
+            if (defaultRepository(new_repo)) {
                 setSourceRepository(new_repo);
             } else {
-                let $popup = showParentEntrySelect($form);
-                $popup.find(PARENT_SEARCH_TERMS).focus();
+                showParentEntrySelect($form).find(PARENT_SEARCH_INPUT).focus();
             }
         });
 
@@ -2618,9 +2721,9 @@ $(document).on('turbolinks:load', function() {
         handleClickAndKeypress(parentEntrySubmit($form), function() {
             clearFlash();
             hideParentEntrySelect($form);
-            const new_repo = $menu.val();
-            const query    = parentEntrySearchTerms($form).val();
-            const search   = { q: query, repository: new_repo };
+            SearchInProgress.show();
+            let search = parentEntrySearchTerms($form, func);
+            search.repository = $menu.val();
             fetchIndexEntries(search, useParentEntryMetadata, searchFailure);
         });
 
@@ -2642,125 +2745,69 @@ $(document).on('turbolinks:load', function() {
          */
         function useParentEntryMetadata(list) {
 
-            const new_repo = $menu.val();
+            const repo = $menu.val();
             let error;
 
             // If there was an error, the source repository menu selection is
             // restored to its previous setting.
 
-            if (isEmpty(list)) {
-                const query = parentEntrySearchTerms($form).val();
-                error = `${new_repo}: no match for "${query}"`;
+            if (!Array.isArray(list)) {
+                error = `${repo}: search error`;
+                console.error(`${func}: ${repo}: arg is not an array`);
+            } else if (isEmpty(list)) {
+                const query = parentEntrySearchInput($form).val();
+                error = `${repo}: no match for "${query}"`;
                 console.warn(`${func}:`, error);
-            } else if (!Array.isArray(list)) {
-                error = `${new_repo}: search error`;
-                console.error(`${func}: ${new_repo}: arg is not an array`);
             }
             if (error) {
                 return searchFailure(error);
             }
 
             // Ideally, there should be only a single search result which
-            // matched the search terms.  If there are multiple results,
-            // ideally they are all just variations on the same title.
+            // matched the search terms.  If there are multiple results, warn
+            // if they don't appear to be just variations on the same title.
 
             /** @type {SearchResultEntry} */
             let parent = list.shift();
-            if (new_repo !== parent.emma_repository) {
+            if (repo !== parent.emma_repository) {
                 error = 'PROBLEM: ';
-                error += `new_repo == "${new_repo}" but parent `;
+                error += `new_repo == "${repo}" but parent `;
                 error += `emma_repository == "${parent.emma_repository}"`;
                 console.warn(`${func}:`, error);
             }
-            if (isPresent(list)) {
-                const title_id = parent.emma_titleId;
-                list.forEach(function(entry) {
-                    if (entry.emma_titleId !== title_id) {
-                        error = `ambiguous: Title ID ${entry.emma_titleId}`;
-                        flashMessage(error);
-                        console.warn(`${func}: ambiguous: ${asString(entry)}`);
-                    }
-                });
+            const title_id = parent.emma_titleId;
+            let mismatch = list.filter(e => (e.emma_titleId !== title_id));
+            if (isPresent(mismatch)) {
+                const one     = (mismatch.length === 1);
+                const many    = one ? 'One'     : mismatch.length.toString();
+                const results = one ? 'result'  : 'results';
+                const match   = one ? 'matches' : 'match';
+                flashMessage(
+                    `${many} other EMMA ${results} from ${repo} also ${match}`
+                );
+                const warn = (label, entry) => {
+                    const id = entry.emma_titleId;
+                    console.warn(`${func}: ${label}: title_id = ${id}`, entry);
+                };
+                warn('parent', parent);
+                mismatch.forEach(e => warn('other', e));
+            } else {
+                _debug(`${func}: parent:`, parent);
             }
 
             // If control reaches here then the current selection is valid.
 
-            $menu.attr('data-previous-value', new_repo);
+            $menu.attr(REPO_DATA, repo);
 
             // Update form fields.
-            //
-            // Value        Field will be...
-            // -----------  --------------------------------------------------
-            // FROM_PARENT  assigned the value acquired from the parent record
-            // CLEARED      cleared of any value(s)
-            // AS_IS        kept as it is
-            // (other)      assigned that value
-            //
-            // The AS_IS choice is necessary for any remediation-related fields
-            // may have been extracted from the file if it was provided before
-            // the source repository was selected.
-
-            const FROM_PARENT  = true;
-            const CLEARED      = null;
-            const AS_IS        = '';
-            const repo_name    = PROPERTIES.Repo.name[new_repo];
-            const source_field = {
-                repository:                         new_repo,
-                emma_recordId:                      CLEARED,
-                emma_titleId:                       FROM_PARENT,
-                emma_repository:                    new_repo,
-                emma_collection:                    FROM_PARENT,
-                emma_repositoryRecordId:            FROM_PARENT,
-                emma_retrievalLink:                 CLEARED,
-                emma_webPageLink:                   CLEARED,
-                emma_lastRemediationDate:           AS_IS,
-                emma_sortDate:                      FROM_PARENT,
-                emma_repositoryUpdateDate:          AS_IS,
-                emma_repositoryMetadataUpdateDate:  AS_IS,
-                emma_publicationDate:               FROM_PARENT,
-                emma_lastRemediationNote:           AS_IS,
-                emma_version:                       FROM_PARENT,
-                emma_formatVersion:                 AS_IS,
-                emma_formatFeature:                 AS_IS,
-                dc_title:                           FROM_PARENT,
-                dc_creator:                         FROM_PARENT,
-                dc_identifier:                      FROM_PARENT,
-                dc_relation:                        FROM_PARENT,
-                dc_publisher:                       FROM_PARENT,
-                dc_language:                        FROM_PARENT,
-                dc_rights:                          FROM_PARENT,
-                dc_description:                     FROM_PARENT,
-                dc_format:                          AS_IS,
-                dc_type:                            AS_IS,
-                dc_subject:                         FROM_PARENT,
-                dcterms_dateAccepted:               CLEARED,
-                dcterms_dateCopyright:              FROM_PARENT,
-                s_accessibilityFeature:             AS_IS,
-                s_accessibilityControl:             AS_IS,
-                s_accessibilityHazard:              AS_IS,
-                s_accessibilityMode:                AS_IS,
-                s_accessibilityModeSufficient:      AS_IS,
-                s_accessibilitySummary:             AS_IS,
-                rem_source:                         AS_IS,
-                rem_metadataSource:                 [repo_name],
-                rem_remediatedBy:                   AS_IS,
-                rem_complete:                       AS_IS,
-                rem_coverage:                       AS_IS,
-                rem_remediation:                    AS_IS,
-                rem_remediatedAspects:              AS_IS,
-                rem_textQuality:                    AS_IS,
-                rem_quality:                        AS_IS,
-                rem_status:                         AS_IS,
-                rem_remediationDate:                AS_IS,
-                rem_comments:                       AS_IS,
-                rem_remediationComments:            AS_IS,
-                bib_series:                         FROM_PARENT,
-                bib_seriesType:                     FROM_PARENT,
-                bib_seriesPosition:                 FROM_PARENT,
-            };
 
             let update = {};
-            $.each(source_field, function(field, value) {
+            const source_fields = $.extend({}, SOURCE_FIELDS, {
+                repository:         repo,
+                emma_repository:    repo,
+                rem_metadataSource: [PROPERTIES.Repo.name[repo]],
+            });
+            $.each(source_fields, function(field, value) {
                 if (typeof value === 'function') {
                     update[field] = value(parent);
                 } else if (value === FROM_PARENT) {
@@ -2770,31 +2817,8 @@ $(document).on('turbolinks:load', function() {
                 }
             });
             populateFormFields(update, $form);
-
-            // Seal off the specified fields by adding the "sealed" class in
-            // order to prevent populateFormFields() from modifying the them.
-            //
-            // This way, if the source repository is set before the file is
-            // uploaded then metadata extracted from the file will not
-            // contradict the title-level metadata supplied by the member
-            // repository.
-            //
-            // This doesn't prevent the user from updating the field, but the
-            // styling of the "sealed" class should hint that changing the
-            // field is not desirable (since the change is going to be ignored
-            // by the member repository anyway).
-
-            $.each(source_field, function(field, value) {
-                if (value === FROM_PARENT) {
-                    let $input = formField(field, $form);
-                    let input  = $input[0];
-                    if (input.value === EMPTY_VALUE) {
-                        input.placeholder = input.value;
-                        input.value       = '';
-                    }
-                    $input.toggleClass('sealed');
-                }
-            });
+            sealFields(source_fields);
+            SearchInProgress.hide();
         }
 
         /**
@@ -2807,6 +2831,7 @@ $(document).on('turbolinks:load', function() {
                 flashError(message);
             }
             setSourceRepository();
+            SearchInProgress.hide();
         }
 
         /**
@@ -2815,12 +2840,14 @@ $(document).on('turbolinks:load', function() {
          * @param {string} [value]
          */
         function setSourceRepository(value) {
-            let new_repo;
-            if (notDefined(value)) {
-                new_repo = $menu.attr('data-previous-value') || '';
+            let new_repo = value;
+            if (isDefined(new_repo)) {
+                $menu.attr(REPO_DATA, new_repo);
             } else {
-                new_repo = value;
-                $menu.attr('data-previous-value', new_repo);
+                new_repo = $menu.attr(REPO_DATA) || '';
+            }
+            if (defaultRepository(new_repo)) {
+                unsealFields();
             }
             const set_repo = {
                 repository:      (new_repo || EMPTY_VALUE),
@@ -2829,49 +2856,65 @@ $(document).on('turbolinks:load', function() {
             _debug(`${func}:`, (new_repo || 'cleared'));
             populateFormFields(set_repo, $form);
         }
+
+        /**
+         * Seal off the specified fields by adding the "sealed" class in order
+         * to prevent populateFormFields() from modifying the them.
+         *
+         * This way, if the source repository is set before the file is
+         * uploaded then metadata extracted from the file will not contradict
+         * the title-level metadata supplied by the member repository.
+         *
+         * This doesn't prevent the user from updating the field, but the
+         * styling of the "sealed" class should hint that changing the field is
+         * not desirable (since the change is going to be ignored by the member
+         * repository anyway).
+         *
+         * @param {object} [source_fields]
+         */
+        function sealFields(source_fields = SOURCE_FIELDS) {
+            $.each(source_fields, function(field, value) {
+                if (value === FROM_PARENT) {
+                    let $input = formField(field, $form);
+                    const id   = $input[0].id;
+                    seal($input);
+                    seal($input.siblings(`label[for="${id}"]`));
+                }
+            });
+        }
+
+        /**
+         * Restore sealed fields.
+         *
+         * @param {object} [source_fields]
+         */
+        function unsealFields(source_fields = SOURCE_FIELDS) {
+            $.each(source_fields, function(field, value) {
+                if (value === FROM_PARENT) {
+                    let $input = formField(field, $form);
+                    const id   = $input[0].id;
+                    unseal($input);
+                    unseal($input.siblings(`label[for="${id}"]`));
+                }
+            });
+        }
     }
 
     /**
      * Get EMMA index entries via search.
      *
-     * @param {string|[string]|object} search
+     * @param {object}                        params
      * @param {function(SearchResultEntry[])} callback
      * @param {function}                      [error_callback]
      */
-    function fetchIndexEntries(search, callback, error_callback) {
+    function fetchIndexEntries(params, callback, error_callback) {
         const func = 'fetchIndexEntries';
-        let search_terms = {};
-
-        // Create a search URL from the given search term(s).
-        if (isEmpty(search)) {
+        const url  = isPresent(params) && makeUrl('/search/direct', params);
+        if (isEmpty(url)) {
             console.error(`${func}: empty search terms`);
             return;
-        } else if (Array.isArray(search)) {
-            let terms = [];
-            search.forEach(function(term) {
-                const type = typeof(term);
-                if (type !== 'string') {
-                    console.warn(`${func}: can't process ${type} search term`);
-                } else if (!term) {
-                    // Skip empty term.
-                } else if (term.match(/\s/)) {
-                    terms.push(`"${term}"`);
-                } else {
-                    terms.push(term);
-                }
-            });
-            search_terms['q'] = terms.join('+');
-        } else if (typeof search === 'object') {
-            $.extend(search_terms, search);
-        } else if (typeof search !== 'string') {
-            console.error(`${func}: can't process ${typeof search} search`);
-            return;
-        } else if (search.match(/\s/)) {
-            search_terms['q'] = `"${search}"`;
-        } else {
-            search_terms['q'] = search;
         }
-        const url = makeUrl('/search/direct', search_terms);
+        const title = params.title?.replace(/^"(.*)"$/, '$1')?.toLowerCase();
 
         _debugXhr(`${func}: VIA`, url);
 
@@ -2902,8 +2945,12 @@ $(document).on('turbolinks:load', function() {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
                 error = `unexpected data type ${typeof data}`;
-            } else {
-                records = data.response?.records || [];
+            } else if (!(records = data.response?.records)) {
+                records = [];
+            } else if (title) {
+                records = records.filter(
+                    rec => rec.dc_title?.toLowerCase()?.startsWith(title)
+                );
             }
         }
 
@@ -2986,8 +3033,8 @@ $(document).on('turbolinks:load', function() {
      */
     function showParentEntrySelect(form) {
         let $form = parentEntrySelect(form);
-        parentEntrySearchTerms($form).prop('disabled', false);
-        return $form.toggleClass('hidden', false);
+        parentEntrySearchInput($form).prop('disabled', false);
+        return $form.toggleClass(HIDDEN_MARKER, false);
     }
 
     /**
@@ -2999,8 +3046,8 @@ $(document).on('turbolinks:load', function() {
      */
     function hideParentEntrySelect(form) {
         let $form = parentEntrySelect(form);
-        parentEntrySearchTerms($form).prop('disabled', true);
-        return $form.toggleClass('hidden', true);
+        parentEntrySearchInput($form).prop('disabled', true);
+        return $form.toggleClass(HIDDEN_MARKER, true);
     }
 
     /**
@@ -3010,8 +3057,38 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {jQuery}
      */
-    function parentEntrySearchTerms(form) {
-        return parentEntrySelect(form).find(PARENT_SEARCH_TERMS);
+    function parentEntrySearchInput(form) {
+        return parentEntrySelect(form).find(PARENT_SEARCH_INPUT);
+    }
+
+    /**
+     * Search terms to be used to locate the parent EMMA entry.
+     *
+     * @param {Selector} [form]
+     * @param {string}   [caller]     For logging.
+     *
+     * @returns {object}
+     */
+    function parentEntrySearchTerms(form, caller) {
+        let error, result = {};
+        let $input  = parentEntrySearchInput(form);
+        const terms = $input.val()?.trim() || '';
+        if (isEmpty(terms)) {
+            error = 'empty search terms';
+        } else if (terms.match(/^[a-z]+:/)) {
+            result.identifier = terms;
+        } else if (terms.match(/^\d+[xX]?$/)) {
+            result.identifier = `isbn:${terms}`;
+        } else if (terms.match(/\s/)) {
+            result.title      = `"${terms}"`;
+        } else {
+            result.title      = terms;
+        }
+        if (error) {
+            const func = caller || 'parentEntrySearchTerms';
+            console.warn(`${func}: ${error}`);
+        }
+        return result;
     }
 
     /**
@@ -3034,6 +3111,44 @@ $(document).on('turbolinks:load', function() {
      */
     function parentEntryCancel(form) {
         return parentEntrySelect(form).find(PARENT_SEARCH_CANCEL);
+    }
+
+    /**
+     * Seal an element.
+     *
+     * To allow .menu.multi (checkboxes) to be scrollable, 'pointer-events' on
+     * the content elements can be set to 'none' via CSS.  This strategy does
+     * not work for .menu.single (dropdowns) to be expandable, however,
+     * disabling the non-selected 'option' elements here does work.
+     *
+     * @param {Selector} item
+     * @param {boolean}  [disabled]
+     *
+     * @returns {jQuery}
+     */
+    function seal(item, disabled) {
+        let $item = $(item);
+        $item.prop((disabled ? 'disabled' : 'readonly'), true);
+        $item.find('option').not(':selected').prop('disabled', true);
+        $item.toggleClass(SEALED_MARKER, true);
+        return $item;
+    }
+
+    /**
+     * Unseal an element.
+     *
+     * @param {Selector} item
+     *
+     * @returns {jQuery}
+     */
+    function unseal(item) {
+        let $item = $(item);
+        $item.prop('disabled', false);
+        $item.prop('readonly', false);
+        $item.prop('placeholder', '');
+        $item.find('option').prop('disabled', false);
+        $item.toggleClass(SEALED_MARKER, false);
+        return $item;
     }
 
     // ========================================================================
@@ -3144,31 +3259,45 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      * @param {boolean}  [enable]     If *false* run {@link disableLookup}.
+     * @param {boolean}  [forbid]     If *false* run {@link disableLookup}.
      *
      * @returns {jQuery}              The submit button.
      */
-    function enableLookup(form, enable) {
+    function enableLookup(form, enable, forbid) {
         if (enable === false) {
-            return disableLookup(form);
+            return disableLookup(form, forbid);
         }
-        return lookupButton(form)
-            .removeClass('forbidden disabled')
-            .prop('disabled', false)
-            .attr('title', Emma.Lookup.enabled.tooltip);
+        if (forbid) {
+            console.error('enableLookup: cannot enable and forbid');
+        }
+        let $button = lookupButton(form);
+        $button.prop('disabled', false);
+        $button.removeClass('forbidden disabled');
+        $button.attr('title', Emma.Lookup.enabled.tooltip);
+        return $button;
     }
 
     /**
      * Disable form submission.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {boolean}  [forbid]     If *true* add '.forbidden'.
      *
      * @returns {jQuery}              The submit button.
      */
-    function disableLookup(form) {
-        return lookupButton(form)
-            .addClass('forbidden')
-            .prop('disabled', true)
-            .attr('title', Emma.Lookup.disabled.tooltip);
+    function disableLookup(form, forbid) {
+        let tip, $button = lookupButton(form);
+        $button.prop('disabled', true);
+        $button.addClass('disabled');
+        if (forbid) {
+            $button.addClass('forbidden');
+            tip = "Bibliographic metadata is inherited from\n" + // TODO: I18n
+                  'the original repository entry.';
+        } else {
+            tip = Emma.Lookup.disabled.tooltip;
+        }
+        $button.attr('title', tip);
+        return $button;
     }
 
     // ========================================================================
@@ -3234,17 +3363,18 @@ $(document).on('turbolinks:load', function() {
             }
             return !found; // break loop if type found.
         });
-        if (found) {
-            let enable = false;
-            let repo   = sourceRepositoryMenu($form).val();
-            if (!repo || (repo === PROPERTIES.Repo.default)) {
-                enable   = Object.values(condition.or).some(v => v);
-                enable ||= Object.values(condition.and).every(v => v);
-            }
-            if (enable) {
-                clearSearchTermsData($button);
-            }
-            enableLookup($form, enable);
+        let enable   = false;
+        const repo   = sourceRepositoryMenu($form).val();
+        const forbid = !defaultRepository(repo);
+        if (found && !forbid) {
+            enable   = Object.values(condition.or).some(v => v);
+            enable ||= Object.values(condition.and).every(v => v);
+        }
+        if (found || forbid) {
+            enableLookup($form, enable, forbid);
+        }
+        if (enable) {
+            clearSearchTermsData($button);
         }
         return found;
     }

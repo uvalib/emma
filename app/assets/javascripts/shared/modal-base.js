@@ -1001,20 +1001,20 @@ export class ModalBase extends BaseClass {
      *
      * @param {Selector} toggle
      *
-     * @return {jQuery}
+     * @return {jQuery|undefined}
      */
     associate(toggle) {
-        const name   = this.constructor.MODAL_INSTANCE;
-        let $toggle  = $(toggle);
-        let instance = $toggle.data(name);
-        if (instance) {
+        const name  = this.constructor.MODAL_INSTANCE;
+        let $toggle = $(toggle);
+        let modal   = $toggle.data(name);
+        if (modal) {
             this._warn('toggle', toggle);
-            this._warn('already associated with', instance);
+            this._warn('already associated with', modal);
         } else {
             $toggle.data(name, this);
             this._handleClickAndKeypress($toggle, this.onToggleModal);
+            return $toggle;
         }
-        return $toggle;
     }
 
     /**

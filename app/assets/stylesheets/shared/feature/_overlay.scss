@@ -22,7 +22,7 @@
     $img-path,
     $img-width:  5vw,
     $img-height: 5vh,
-    $img-y-pos:  66vh
+    $img-y-pos:  50vh
 ) {
 
     @extend .overlay;
@@ -35,14 +35,15 @@
     }
 
     .content {
-        top:               $img-y-pos;
-        width:             $img-width;
-        height:            $img-height;
-        margin:            0;
-        padding:           0;
-        background-image:  url($img-path);
-        background-repeat: no-repeat;
-        background-size:   contain;
+        top:                 $img-y-pos;
+        width:               $img-width;
+        height:              $img-height;
+        margin:              0;
+        padding:             0;
+        background-image:    url($img-path);
+        background-repeat:   no-repeat;
+        background-size:     contain;
+        background-position: center;
     }
 }
 
