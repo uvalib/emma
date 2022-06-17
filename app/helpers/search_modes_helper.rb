@@ -86,20 +86,44 @@ module SearchModesHelper
   #
   # @return [Symbol]
   #
-  def search_results
+  def results_type
     @results_type ||= session['app.search.results']&.to_sym || DEFAULT_RESULTS
   end
 
   # Indicate whether search results are displayed hierarchically (by title).
   #
   def title_results?
-    search_results == :title
+    results_type == :title
   end
 
   # Indicate whether search results are displayed literally (per file).
   #
   def file_results?
-    search_results == :file
+    results_type == :file
+  end
+
+  # Clear the display mode for search results.
+  #
+  # @return [void]
+  #
+  def reset_results_type
+    @results_type = nil
+  end
+
+  # Ensure that search results are displayed hierarchically (by title).
+  #
+  # @return [Symbol]
+  #
+  def force_title_results
+    @results_type = :title
+  end
+
+  # Ensure that search results are displayed literally (per file).
+  #
+  # @return [Symbol]
+  #
+  def force_file_results
+    @results_type = :file
   end
 
   # ===========================================================================

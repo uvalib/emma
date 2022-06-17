@@ -38,6 +38,18 @@ class SearchDecorator < BaseDecorator
     #
     def field_levels: (**untyped opt) -> Hash[Symbol,Array[Symbol|Integer]]
 
+    # Get the display mode for search results.
+    #
+    # @return [Symbol]
+    #
+    def results_type: () -> Symbol
+
+    # Get the display style variant for search results.
+    #
+    # @return [Symbol]
+    #
+    def search_style: () -> Symbol
+
     # CSS class for the colorization button tray.
     #
     # @type [String]
@@ -89,7 +101,7 @@ class SearchDecorator < BaseDecorator
 
     # In debug mode, add a display of the (supposed) relevancy score.
     #
-    # @note This is probably not very helpful for `search_results == :title`.
+    # @note This is probably not very helpful for `results_type == :title`.
     #
     # @type [Boolean]
     #
@@ -107,7 +119,7 @@ class SearchDecorator < BaseDecorator
     #
     def style_classes: (?suffix: String) -> strArray
 
-    # CSS classes for the current #search_results.
+    # CSS classes for the current #results_type.
     #
     # @param [String] suffix
     #

@@ -152,12 +152,18 @@ class SearchController < ApplicationController
   #
   # Perform a search directly through the EMMA Unified Search API.
   #
+  # Although this is primarily for the sake of JSON output, it also provides an
+  # HTML display where results have a one-to-one correspondence with Unified
+  # Search results as an alternative to the hierarchical display that is the
+  # default for :index.
+  #
   # @see #search_api_path             Route helper
   # @see #search_direct_path          Route helper
   # @see SearchConcern#index_search
   #
   def direct
     __debug_route
+    force_file_results
     @page   = pagination_setup
     opt     = @page.initial_parameters
     opt[:q] = SearchTerm::NULL_SEARCH if opt.slice(*search_query_keys).blank?
@@ -172,6 +178,8 @@ class SearchController < ApplicationController
   rescue => error
     flash_now_failure(error)
     render 'search/index'
+  ensure
+    reset_results_type
   end
 
   # == GET /search/validate?identifier=idval1[,idval2[,...]]

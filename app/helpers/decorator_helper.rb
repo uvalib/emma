@@ -31,6 +31,8 @@ module DecoratorHelper
     opt[:options]      ||= @model_options  if defined?(@model_options)
     opt[:paginator]    ||= @page           if defined?(@page)
     opt[:group_counts] ||= @group_counts   if defined?(@group_counts)
+    opt[:results_type] ||= results_type    if defined?(results_type)
+    opt[:search_style] ||= search_style    if defined?(search_style)
     opt
   end
 

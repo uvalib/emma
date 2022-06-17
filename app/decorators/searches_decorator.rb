@@ -59,17 +59,17 @@ class SearchesDecorator < BaseCollectionDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #RESULT_TYPES
-  # @see SearchModesHelper#search_results
+  # @see SearchModesHelper#results_type
   # @see SearchModesHelper#permitted_by?
   # @see file:app/assets/javascripts/controllers/search.js *$mode_menu*
   #
   def list_results(selected: nil, **opt)
-    css          = '.results.single.menu-control'
-    base_path    = request_value(:path)
-    url_params   = param_values.except(*RESULT_IGNORED_PARAMS)
-    prm_selected = url_params.delete(:results)
-    selected   ||= prm_selected || search_results
-    default      = nil
+    css        = '.results.single.menu-control'
+    base_path  = request_value(:path)
+    url_params = param_values.except(*RESULT_IGNORED_PARAMS)
+    results    = url_params.delete(:results)
+    selected ||= results || results_type
+    default    = nil
     pairs =
       RESULT_TYPES.map { |type, prop|
         next unless permitted_by?(prop[:active])

@@ -69,6 +69,30 @@ class SearchDecorator < BaseDecorator
     end
 
     # =========================================================================
+    # :section: SearchModesHelper overrides
+    # =========================================================================
+
+    public
+
+    # Get the display mode for search results.
+    #
+    # @return [Symbol]
+    #
+    def results_type
+      # noinspection RubyMismatchedArgumentType
+      context[__method__] || h.send(__method__)
+    end
+
+    # Get the display style variant for search results.
+    #
+    # @return [Symbol]
+    #
+    def search_style
+      # noinspection RubyMismatchedArgumentType
+      context[__method__] || h.send(__method__)
+    end
+
+    # =========================================================================
     # :section: Item list (index page) support
     # =========================================================================
 
@@ -170,7 +194,7 @@ class SearchDecorator < BaseDecorator
 
     # In debug mode, add a display of the (supposed) relevancy score.
     #
-    # @note This is probably not very helpful for `search_results == :title`.
+    # @note This is probably not very helpful for `results_type == :title`.
     #
     # @type [Boolean]
     #
@@ -211,10 +235,10 @@ class SearchDecorator < BaseDecorator
     #
     # @return [Array<String>]
     #
-    # @see SearchModesHelper#search_results
+    # @see SearchModesHelper#results_type
     #
     def result_classes(suffix: '_results')
-      results = [search_results]
+      results = [results_type]
       results.compact_blank!
       results.reject! { |v| EngineConcern::RESET_KEYS.include?(v) }
       # noinspection RubyMismatchedReturnType
