@@ -16,6 +16,7 @@ module SearchService::Common
   #
   def api_headers: (?(symHash|nil) params, ?(strHash|nil) headers, ?(String|strHash)? body) -> [symHash, strHash, (String|strHash)]
 
+  NON_SEARCH: symArray
   NON_PUBLISHER_SEARCH: symArray
 
   # This override silently works around a limitation of the Unified Search

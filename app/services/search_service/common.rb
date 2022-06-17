@@ -43,14 +43,15 @@ module SearchService::Common
 
   protected
 
-  NON_PUBLISHER_SEARCH = (%i[
+  NON_SEARCH = (%i[
+    accessibilityFeature
     collection
+    formatFeature
     formatVersion
     from
     group
     lastRemediationDate
     publicationDate
-    publisher
     repository
     searchAfterId
     searchAfterValue
@@ -58,6 +59,8 @@ module SearchService::Common
     sort
     sortDate
   ] + SERVICE_OPTIONS).freeze
+
+  NON_PUBLISHER_SEARCH = [*NON_SEARCH, :publisher].freeze
 
   # This override silently works around a limitation of the Unified Search
   # index's handling of publisher searches.  The index treats this as a kind of
@@ -82,6 +85,32 @@ module SearchService::Common
   #
   def get_parameters(meth, **opt)
     super.tap do |result|
+
+      # Redistribute identifier search terms and ensure that OCLC terms do not
+      # include leading zeros (since the Unified Index handles this badly).
+      keys  = %i[q identifier]
+      terms = keys.map { |k| [k, result[k]] }.to_h
+      if terms.any? { |_, v| v.present? }
+        terms.transform_values! do |v|
+          next [] if v.blank?
+          v = v.dup          if v.is_a?(Array)
+          v = v.split(/\s+/) if v.is_a?(String)
+          v.map! { |t| PublicationIdentifier.cast(t, invalid: true) || t }
+          v.compact_blank!
+        end
+        i, q = terms[:q].partition { |term| term.is_a?(PublicationIdentifier) }
+        terms[:q] = q
+        terms[:identifier] = [*terms[:identifier], *i].map! do |term|
+          term.is_a?(Oclc) ? term.to_s.sub(/:0+/, ':') : term.to_s
+        end
+        keys.each do |k|
+          if terms[k].present?
+            result[k] = terms[k].join(' ')
+          else
+            result.delete(k)
+          end
+        end
+      end
 
       # Make :publisher only search work.
       if result.key?(:publisher) && result.except(*NON_PUBLISHER_SEARCH).blank?
