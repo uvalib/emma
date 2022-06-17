@@ -211,7 +211,7 @@ class ReadingListDecorator < BookshareDecorator
 
     opt[:role] = 'complementary' if level > 1
     prepend_css!(opt, css)
-    html_div(**opt) do
+    html_div(opt) do
       title << list
     end
   end

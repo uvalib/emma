@@ -258,7 +258,7 @@ class AccountDecorator < BaseDecorator
   #
   def roles(**opt)
     roles = present? && object.role_list || []
-    html_tag(:ul, **opt) do
+    html_tag(:ul, opt) do
       roles.map do |role|
         html_tag(:li, role)
       end

@@ -48,7 +48,9 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_button(*args, &block)
-    html_tag(:button, *args, &block)
+    # noinspection RubyNilAnalysis
+    options = args.extract_options!.reverse_merge(type: 'button')
+    html_tag(:button, *args, options, &block)
   end
 
   # Short-cut for generating an HTML element which normalizes element contents

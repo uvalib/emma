@@ -37,17 +37,18 @@ class SearchesDecorator < BaseCollectionDecorator
   # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
   def list_styles(**opt)
-    common_opt = { class: 'style-button' }
+    css     = STYLE_CONTAINER
+    b_opt   = { class: 'style-button' }
     buttons =
       STYLE_BUTTONS.values.map { |prop|
         next unless permitted_by?(prop[:active])
-        button_opt = common_opt.merge(title: prop[:tooltip])
+        button_opt = b_opt.merge(title: prop[:tooltip])
         prepend_css!(button_opt, prop[:class])
         html_button(prop[:label], button_opt)
       }.compact
     return unless buttons.present?
-    prepend_css!(opt, STYLE_CONTAINER)
-    html_div(buttons, **opt)
+    prepend_css!(opt, css)
+    html_div(buttons, opt)
   end
 
   # Control for selecting the type of search results to display.
@@ -77,7 +78,7 @@ class SearchesDecorator < BaseCollectionDecorator
       }.compact
     opt[:'data-path'] = make_path(base_path, **url_params)
     prepend_css!(opt, css)
-    html_div(**opt) do
+    html_div(opt) do
       menu_name   = :results
       option_tags = h.options_for_select(pairs, selected)
       select_opt  = { id: unique_id(menu_name) }

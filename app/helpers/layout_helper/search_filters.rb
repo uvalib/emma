@@ -788,7 +788,7 @@ module LayoutHelper::SearchFilters
     if immediate_search?
       search_form(target, url_param, **html_opt) { menu }
     else
-      html_div(**html_opt) { menu }
+      html_div(html_opt) { menu }
     end
   end
 
@@ -931,7 +931,7 @@ module LayoutHelper::SearchFilters
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(html_opt, css, **opt)
-    html_div(**html_opt) { input }
+    html_div(html_opt) { input }
   end
 
   # A label associated with a dropdown menu element.

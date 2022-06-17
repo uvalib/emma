@@ -177,7 +177,7 @@ module PopupHelper
         if control.is_a?(Hash)
           tag = control[:tag]   || :button
           lbl = control[:label] || 'Button' # TODO: I18n
-          html_tag(tag, lbl, **control.except(:tag, :label))
+          html_tag(tag, lbl, control.except(:tag, :label))
         else
           ERB::Util.h(control)
         end
@@ -192,7 +192,7 @@ module PopupHelper
       label = b_opt.delete(:label) || 'Close' # TODO: I18n
       b_opt[:title]        ||= closer_opt[:title]
       b_opt[:'aria-label'] ||= b_opt[:title]
-      controls << button_tag(label, b_opt)
+      controls << html_button(label, b_opt)
     end
     panel_controls = html_div(controls, controls_opt)
 

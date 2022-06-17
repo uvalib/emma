@@ -442,7 +442,7 @@ module BaseDecorator::Form
   #
   def form_input_fill(filler = nil, **opt)
     opt = form_input_related_opt('label', **opt)
-    html_span(filler, **opt)
+    html_span(filler, opt)
   end
 
   # A text note immediately below a form input element.
@@ -454,7 +454,8 @@ module BaseDecorator::Form
   #
   def form_input_note(note, **opt)
     opt = form_input_related_opt('note', **opt)
-    html_tag(:em, '(', note, ')', **opt, separator: '')
+    opt[:separator] = ''
+    html_tag(:em, opt) { "(#{note})" }
   end
 
   # Options assumed to be related to a field element which are not retained by

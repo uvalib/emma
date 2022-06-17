@@ -348,7 +348,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function createToggleControl(row, target, closer) {
-        let $control = $(`<button class="${CONTROL_CLASS} ${row}">`);
+        let $control = $('<button>');
+        $control.addClass(`${CONTROL_CLASS} ${row}`);
+        $control.attr('type',          'button');
         $control.attr('data-row',      `.${row}`);
         $control.attr('aria-controls', target);
         if (closer) {

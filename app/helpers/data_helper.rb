@@ -282,7 +282,7 @@ module DataHelper
     append_css!(html_opt, 'empty') if count.zero?
     html_opt[:id] = name           if name.present?
 
-    html_div(**html_opt) do
+    html_div(html_opt) do
       opt[:first] ||= start_row
       opt[:last]  ||= opt[:first] + [(count - 1), 0].max
       records.map.with_index(start_row) do |record, row|
@@ -387,7 +387,7 @@ module DataHelper
     css      = '.database-counts-table'
     html_opt = { id: name.presence }.compact
     prepend_css!(html_opt, css)
-    html_div(**html_opt) do
+    html_div(html_opt) do
       opt[:first] ||= start_row
       opt[:last]  ||= opt[:first] + fields.size - 1
       fields.map.with_index(start_row) do |field_counts, row|

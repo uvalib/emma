@@ -428,7 +428,7 @@ class UploadDecorator < BaseDecorator
       opt[:type]  ||= 'submit'
       opt[:title] ||= 'Replace submission field values with these changes' # TODO: I18n
       prepend_css!(opt, css)
-      html_button(label, **opt)
+      html_button(label, opt)
     end
 
     # lookup_cancel_options

@@ -70,6 +70,7 @@ module ScrollHelper
     label = opt.delete(:label)
     tip   = opt.delete(:tooltip)
     opt[:title] = tip || opt[:title]
+    opt[:type]  = 'button'
     button_tag(label, opt)
   end
 
