@@ -242,15 +242,13 @@ module ApiService::Common
         port   &&= nil if COMMON_PORTS.include?(port)
         [scheme, "//#{host}", port].compact.join(':')
       end
-    if rel
-      base = base_uri.path.presence
-      base = base&.split('/')&.compact_blank!&.presence
-      path = path&.split('/')&.compact_blank!&.presence
-      ver  = nil if ver && (base&.include?(ver) || path&.include?(ver))
-      base = base&.join('/')
-      path = path&.join('/')&.delete_prefix("#{base}/")
-      path = [base, path].compact_blank!.join('/')
-    end
+    base = base_uri.path.presence
+    base = base&.split('/')&.compact_blank!&.presence
+    path = path&.split('/')&.compact_blank!&.presence
+    ver  = nil if ver && (base&.include?(ver) || path&.include?(ver))
+    base = base&.join('/')
+    path = path&.join('/')&.delete_prefix("#{base}/")
+    path = [base, path].compact_blank!.join('/') unless rel
     [url, ver, *path].compact_blank!.join('/').tap do |result|
       result << "?#{qry}" if qry
     end
