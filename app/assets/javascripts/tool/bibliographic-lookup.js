@@ -1656,9 +1656,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {Selector} item
      */
     function monitorEditing(item) {
-        let $item    = $(item);
-        const events = ['cut', 'paste', 'keyup', 'input'];
-        events.forEach(e => handleEvent($item, e, debounce(lockIfChanged)));
+        let $item = $(item);
+        handleEvent($item, 'input', debounce(lockIfChanged));
     }
 
     /**

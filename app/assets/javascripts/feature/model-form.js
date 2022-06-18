@@ -2816,6 +2816,7 @@ $(document).on('turbolinks:load', function() {
                     update[field] = value;
                 }
             });
+            unsealFields(source_fields);
             populateFormFields(update, $form);
             sealFields(source_fields);
             SearchInProgress.hide();
@@ -2846,14 +2847,15 @@ $(document).on('turbolinks:load', function() {
             } else {
                 new_repo = $menu.attr(REPO_DATA) || '';
             }
+            _debug(`${func}:`, (new_repo || 'cleared'));
             if (defaultRepository(new_repo)) {
                 unsealFields();
+                resetLookupCondition($form, true);
             }
             const set_repo = {
                 repository:      (new_repo || EMPTY_VALUE),
                 emma_repository: (new_repo || null)
             };
-            _debug(`${func}:`, (new_repo || 'cleared'));
             populateFormFields(set_repo, $form);
         }
 
@@ -3340,10 +3342,9 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Update the internal condition values for the Lookup button and change
-     * its enabled/disabled state if appropriate.
-     *
-     * new value(s).
+     * Update the internal condition values for the Lookup button if *field* is
+     * relevant to them, and change the button's enabled/disabled state if
+     * appropriate.
      *
      * @param {Selector} form         Default: {@link formElement}.
      * @param {string}   field        A field-type.
@@ -3367,7 +3368,7 @@ $(document).on('turbolinks:load', function() {
         const repo   = sourceRepositoryMenu($form).val();
         const forbid = !defaultRepository(repo);
         if (found && !forbid) {
-            enable   = Object.values(condition.or).some(v => v);
+            enable ||= Object.values(condition.or).some(v => v);
             enable ||= Object.values(condition.and).every(v => v);
         }
         if (found || forbid) {
@@ -3377,6 +3378,43 @@ $(document).on('turbolinks:load', function() {
             clearSearchTermsData($button);
         }
         return found;
+    }
+
+    /**
+     * Update the internal condition values for the Lookup button based on the
+     * state of form values, and change the button's enabled/disabled state if
+     * appropriate.
+     *
+     * @param {Selector} form         Default: {@link formElement}.
+     * @param {boolean}  [permit]
+     */
+    function resetLookupCondition(form, permit) {
+        let $form   = formElement(form);
+        let $button = lookupButton($form);
+        let forbid;
+        if (isDefined(permit)) {
+            forbid = !permit;
+        } else {
+            const repo = sourceRepositoryMenu($form).val();
+            forbid = !defaultRepository(repo);
+        }
+        let enable = false;
+        if (!forbid) {
+            let $fields   = inputFields($form);
+            let condition = getLookupCondition($button);
+            $.each(condition, (logical_op, field_flags) => {
+                $.each(field_flags, (field, _) => {
+                    let $field = $fields.filter(`[data-field="${field}"]`);
+                    condition[logical_op][field] = isPresent($field.val());
+                });
+            });
+            enable ||= Object.values(condition.or).some(v => v);
+            enable ||= Object.values(condition.and).every(v => v);
+            if (enable) {
+                clearSearchTermsData($button);
+            }
+        }
+        enableLookup($button, enable, forbid);
     }
 
     /**
@@ -3594,9 +3632,7 @@ $(document).on('turbolinks:load', function() {
         let $fields = inputFields($form);
 
         handleEvent($fields, 'change', onChange);
-        handleEvent($fields, 'cut',    debounce(onCut));
-        handleEvent($fields, 'paste',  debounce(onPaste));
-        handleEvent($fields, 'keyup',  debounce(onKeyUp, DEBOUNCE_DELAY));
+        handleEvent($fields, 'input',  debounce(onInput, DEBOUNCE_DELAY));
 
         /**
          * Revalidate the form after the element's content changes.
@@ -3613,38 +3649,20 @@ $(document).on('turbolinks:load', function() {
         }
 
         /**
-         * After the cut-to-clipboard has completed, re-validate the form based
-         * on the new contents of the element.
-         *
-         * @param {jQuery.Event|ClipboardEvent} event
-         */
-        function onCut(event) {
-            DEBUG.INPUT && console.log('*** CUT ***');
-            validateInputField(event);
-        }
-
-        /**
-         * After the paste-from-clipboard has completed, re-validate the form
-         * based on the new contents of the element.
-         *
-         * @param {jQuery.Event|ClipboardEvent} event
-         */
-        function onPaste(event) {
-            DEBUG.INPUT && console.log('*** PASTE ***');
-            validateInputField(event);
-        }
-
-        /**
          * Respond to key presses only after the user has paused, rather than
-         * re-validating the entire form with every key stroke.
+         * re-validating the entire form with every key stroke.  This also
+         * applies to cut, paste, drag, drop, and delete input event types.
          *
-         * @param {jQuery.Event|KeyboardEvent} event
+         * @param {jQuery.Event|InputEvent} event
          *
-         * @returns {function}
+         * @see https://www.w3.org/TR/input-events-1#interface-InputEvent
          */
-        function onKeyUp(event) {
-            DEBUG.INPUT && console.log('*** KEYUP ***');
-            validateInputField(event, undefined, false);
+        function onInput(event) {
+            const type = (event?.originalEvent || event).inputType || '';
+            DEBUG.INPUT && console.log(`*** INPUT ${type} ***`);
+            if (!type.startsWith('format')) {
+                validateInputField(event, undefined, false);
+            }
         }
 
         /**

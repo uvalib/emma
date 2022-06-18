@@ -682,9 +682,6 @@ $(document).on('turbolinks:load', function() {
         handleEvent($search_input_select, 'change', updatedSearchType);
 
         handleEvent($search_input, 'change', onChange);
-        handleEvent($search_input, 'cut',    debounce(onCut));
-        handleEvent($search_input, 'paste',  debounce(onPaste));
-        handleEvent($search_input, 'keyup',  debounce(onKeyUp, pause));
         handleEvent($search_input, 'input',  debounce(onInput, pause));
 
         /**
@@ -698,49 +695,20 @@ $(document).on('turbolinks:load', function() {
         }
 
         /**
-         * Check readiness after cut-to-clipboard has completed.
-         *
-         * @param {jQuery.Event|ClipboardEvent} event
-         */
-        function onCut(event) {
-            // _debug('*** CUT ***');
-            updatedSearchTerm(event);
-        }
-
-        /**
-         * Check readiness after the paste-from-clipboard has completed.
-         *
-         * @param {jQuery.Event|ClipboardEvent} event
-         */
-        function onPaste(event) {
-            // _debug('*** PASTE ***');
-            updatedSearchTerm(event);
-        }
-
-        /**
          * Respond to key presses only after the user has paused, rather than
-         * re-validating the entire form with every key stroke.
+         * re-validating the entire form with every key stroke.  This also
+         * applies to cut, paste, drag, drop, and delete input event types.
          *
-         * @param {jQuery.Event|KeyboardEvent} event
+         * @param {jQuery.Event|InputEvent} event
          *
-         * @returns {function}
-         */
-        function onKeyUp(event) {
-            // _debug('*** KEYUP ***');
-            updatedSearchTerm(event);
-        }
-
-        /**
-         * This covers the case of selection from Firefox's menu of previous
-         * input values --
-         *
-         * @param {jQuery.Event|KeyboardEvent} event
-         *
-         * @returns {function}
+         * @see https://www.w3.org/TR/input-events-1#interface-InputEvent
          */
         function onInput(event) {
-            // _debug('*** INPUT ***');
-            updatedSearchTerm(event);
+            const type = (event?.originalEvent || event).inputType || '';
+            // _debug(`*** INPUT ${type} ***`);
+            if (!type.startsWith('format')) {
+                updatedSearchTerm(event);
+            }
         }
     }
 

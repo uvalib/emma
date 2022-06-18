@@ -1966,9 +1966,8 @@ export class LookupModal extends ModalDialog {
      */
     monitorEditing(item) {
         let $item    = $(item);
-        const events = ['cut', 'paste', 'keyup', 'input'];
         const locker = this.lockIfChanged.bind(this);
-        events.forEach(e => handleEvent($item, e, debounce(locker)));
+        handleEvent($item, 'input', debounce(locker));
     }
 
     /**
