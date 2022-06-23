@@ -428,19 +428,20 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
             .service {
 
-                padding:    0.25rem 0.375rem;
-                font-size:  medium;
-                text-align: center;
-                border:     4px double $lookup-accent-fg;
-                cursor:     default;
-                flex:       1 1 auto;
+                padding:       0.25rem 0.375rem;
+                font-size:     medium;
+                text-align:    center;
+                border:        0.25rem double $lookup-accent-fg;
+                border-radius: 0.25rem;
+                cursor:        default;
+                flex:          1 1 auto;
 
                 & {
                     background-color: beige;
                 }
 
                 &.late {
-                    background-color: lighter($uva-accent-magenta, 50%);
+                    background-color: lighter($uva-accent-green, 75%);
                 }
 
                 &.done {
@@ -454,9 +455,14 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         }
 
         .notice {
+
             font-size:   large;
             font-weight: bold;
             flex:        0 1 50%;
+
+            &.tooltip {
+                color: lighter($uva-accent-magenta, 25%);
+            }
         }
     }
 

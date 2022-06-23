@@ -78,7 +78,7 @@ class LookupService::Response
     case items
       when LookupService::Response then @table = items.table.deep_dup
       when Hash                    then src    = items
-      else Log.warn("#{self.class}: #{items.class} unexpected")
+      else Log.warn("#{self.class}: #{items.class} unexpected") if items
     end
     @table ||= TEMPLATE.transform_values { |v| v.dup if v.is_a?(Hash) }
     # noinspection RubyMismatchedArgumentType

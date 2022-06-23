@@ -127,6 +127,7 @@ export class LookupModal extends ModalDialog {
     static RESULT_CLASS         = 'result';
     static COMMIT_CLASS         = 'commit';
     static LOADING_CLASS        = 'loading';
+    static DISABLED_MARKER      = 'disabled';
 
     static MODAL                = selector(this.MODAL_CLASS);
     static QUERY_PANEL          = selector(this.QUERY_PANEL_CLASS);
@@ -143,6 +144,7 @@ export class LookupModal extends ModalDialog {
     static RESULT               = selector(this.RESULT_CLASS);
     static COMMIT               = selector(this.COMMIT_CLASS);
     static LOADING              = selector(this.LOADING_CLASS);
+    static DISABLED             = selector(this.DISABLED_MARKER);
 
     static HEADING_ROWS = [
         this.HEAD_ENTRY,
@@ -341,9 +343,9 @@ export class LookupModal extends ModalDialog {
             handleClickAndKeypress(this.inputSubmit, submit);
             handleEvent(this.inputText, 'keyup', submit);
             turnOffAutocomplete(this.inputText);
-            this.queryPanel.addClass('hidden');
+            this.queryPanel.addClass(this.constructor.HIDDEN_MARKER);
         } else {
-            this.inputPrompt.addClass('hidden');
+            this.inputPrompt.addClass(this.constructor.HIDDEN_MARKER);
         }
 
         if (this.output) {
@@ -351,8 +353,8 @@ export class LookupModal extends ModalDialog {
             this.initializeDisplay(this.errorDisplay);
             this.initializeDisplay(this.diagnosticDisplay);
         } else {
-            this.outputHeading.addClass('hidden');
-            this.outputDisplay.addClass('hidden');
+            this.outputHeading.addClass(this.constructor.HIDDEN_MARKER);
+            this.outputDisplay.addClass(this.constructor.HIDDEN_MARKER);
         }
     }
 
@@ -785,9 +787,15 @@ export class LookupModal extends ModalDialog {
      * Update the displayed status notice text.
      *
      * @param {string} value
+     * @param {string} [tooltip]
      */
-    setStatusNotice(value) {
-        this.statusNotice.text(value);
+    setStatusNotice(value, tooltip) {
+        let $notice = this.statusNotice.text(value);
+        if (tooltip) {
+            $notice.addClass('tooltip').attr('title', tooltip);
+        } else {
+            $notice.removeClass('tooltip').removeAttr('title');
+        }
     }
 
     /**
@@ -847,7 +855,7 @@ export class LookupModal extends ModalDialog {
         const state = message.status?.toUpperCase();
         const srv   = message.service;
         const data  = message.data;
-        let finish, notice, status;
+        let finish, notice, n_tip, status;
         switch (state) {
 
             // Waiter states
@@ -857,11 +865,13 @@ export class LookupModal extends ModalDialog {
                 this.addServiceStatuses(srv);
                 break;
             case 'TIMEOUT':
-                notice = '(some searches took longer than expected)';
+                notice = 'Done';
+                n_tip  = 'Some searches took longer than expected';
                 finish = true;
                 break;
             case 'PARTIAL':
-                notice = '(partial results received)';
+                notice = 'Done';
+                n_tip  = 'Partial results received';
                 finish = true;
                 break;
             case 'COMPLETE':
@@ -887,7 +897,7 @@ export class LookupModal extends ModalDialog {
                 this._warn(`${func}: ${message.status}: unexpected`);
                 break;
         }
-        if (notice) { this.setStatusNotice(notice) }
+        if (notice) { this.setStatusNotice(notice, n_tip) }
         if (status) { this.serviceStatuses.find(`.${srv}`).addClass(status) }
         if (finish) { this.hideLoading() }
     }
@@ -985,9 +995,10 @@ export class LookupModal extends ModalDialog {
      */
     enableCommit(enable) {
         this._debug('enableCommit:', enable);
-        let $button = this.commitButton;
-        const set   = (enable === false);
-        return $button.toggleClass('disabled', set).prop('disabled', set);
+        let $button  = this.commitButton;
+        const marker = this.constructor.DISABLED_MARKER;
+        const set    = (enable === false);
+        return $button.toggleClass(marker, set).prop('disabled', set);
     }
 
     /**
@@ -999,9 +1010,10 @@ export class LookupModal extends ModalDialog {
      */
     disableCommit(disable) {
         this._debug('disableCommit:', disable);
-        let $button = this.commitButton;
-        const set   = (disable !== false);
-        return $button.toggleClass('disabled', set).prop('disabled', set);
+        let $button  = this.commitButton;
+        const marker = this.constructor.DISABLED_MARKER;
+        const set    = (disable !== false);
+        return $button.toggleClass(marker, set).prop('disabled', set);
     }
 
     // ========================================================================
@@ -1263,6 +1275,28 @@ export class LookupModal extends ModalDialog {
         this.$original_values = $entry;
     }
 
+    /**
+     * Fill the fields of the original values row element from item data
+     * attached to the toggle button.
+     *
+     * @param {string} [caller]       For log messages.
+     *
+     * @returns {jQuery}
+     */
+    refreshOriginalValuesEntry(caller) {
+        const func = caller || 'refreshOriginalValuesEntry';
+        const name = this.constructor.ENTRY_ITEM_DATA;
+        let $entry = this.originalValuesEntry;
+        let data   = this.dataElement.data(name);
+        if (isPresent(data)) {
+            this.fillEntry($entry, data);
+            $entry.data(name, dupObject(data));
+        } else {
+            this._warn(`${func}: toggle missing .data(${name})`);
+        }
+        return $entry;
+    }
+
     // ========================================================================
     // Methods - entry selection
     // ========================================================================
@@ -1321,6 +1355,7 @@ export class LookupModal extends ModalDialog {
      */
     selectEntry(event) {
         this._debug('selectEntry:', event);
+        this.hideLoading();
         /** @type {jQuery} */
         let $target = $(event.currentTarget || event.target),
             $entry  = $target.parents('.row').first();
@@ -1332,7 +1367,7 @@ export class LookupModal extends ModalDialog {
             this.useSelectedEntry($entry);
             if ($entry.is(this.constructor.RESULT)) {
                 this.enableCommit();
-            } else if (this.commitButton.is('.disabled')) {
+            } else if (this.commitButton.is(this.constructor.DISABLED)) {
                 // For the initial selection of the "ORIGINAL" row, lock all
                 // the fields that already have data.
                 $entry.children('[data-field]').each((_, column) => {
@@ -1398,9 +1433,7 @@ export class LookupModal extends ModalDialog {
      */
     getColumnValues($entry, fields) {
         const columns = fields || this.constructor.DATA_COLUMNS
-        const entries = columns.map(c => [c, this.getColumnValue($entry, c)]);
-        // noinspection JSValidateTypes
-        return Object.fromEntries(entries);
+        return toObject(columns, c => this.getColumnValue($entry, c));
     }
 
     /**
@@ -1580,10 +1613,12 @@ export class LookupModal extends ModalDialog {
      * If $entries_list does not exist, this returns immediately.
      */
     resetEntries() {
-        this._debug('resetEntries');
+        const func = 'resetEntries';
+        this._debug(func);
         if (this.$entries_list) {
             const RESERVED_ROWS = this.constructor.RESERVED_ROWS;
             this.$entries_list.children().not(RESERVED_ROWS).remove();
+            this.refreshOriginalValuesEntry(func);
             this.fieldValuesEntry.find('textarea').each((_, column) => {
                 let $field = $(column);
                 this.lockFor($field).prop('checked', false);
@@ -1611,14 +1646,16 @@ export class LookupModal extends ModalDialog {
      * Show the placeholder indicating that loading is occurring.
      */
     showLoading() {
-        this.loadingPlaceholder.toggleClass('hidden', false);
+        const hidden = this.constructor.HIDDEN_MARKER;
+        this.loadingPlaceholder.toggleClass(hidden, false);
     }
 
     /**
      * Hide the placeholder indicating that loading is occurring.
      */
     hideLoading() {
-        this.loadingPlaceholder.toggleClass('hidden', true);
+        const hidden = this.constructor.HIDDEN_MARKER;
+        this.loadingPlaceholder.toggleClass(hidden, true);
     }
 
     // ========================================================================
@@ -1730,16 +1767,8 @@ export class LookupModal extends ModalDialog {
         const func = 'makeOriginalValuesEntry';
         const tag  = 'ORIGINAL'; // TODO: I18n
         const css  = css_class || this.constructor.ORIG_VALUES_CLASS;
-        const name = this.constructor.ENTRY_ITEM_DATA;
-        let $entry = this.makeResultEntry(row, tag, css);
-        let data   = this.dataElement.data(name);
-        if (isPresent(data)) {
-            this.fillEntry($entry, data);
-            $entry.data(name, dupObject(data));
-        } else {
-            this._warn(`${func}: toggle missing .data(${name})`);
-        }
-        return this.originalValuesEntry = $entry;
+        this.originalValuesEntry = this.makeResultEntry(row, tag, css);
+        return this.refreshOriginalValuesEntry(func);
     }
 
     /**
@@ -1760,7 +1789,7 @@ export class LookupModal extends ModalDialog {
         let values   = fields.map(field => this.makeDataColumn(field));
         let cols     = [$radio, $label, ...values];
         this._handleClickAndKeypress($label, this.selectEntry);
-        this.respondAsHighlightable(cols);
+        this.respondAsHighlightable([$label, ...values]);
         this.respondAsVisibleOnFocus(cols);
         return this.makeEntry(row, cols, css);
     }
@@ -1793,7 +1822,7 @@ export class LookupModal extends ModalDialog {
      */
     makeLoadingPlaceholder(visible, css_class) {
         const css    = css_class || this.constructor.LOADING_CLASS;
-        const hidden = visible ? '' : 'hidden';
+        const hidden = visible ? '' : this.constructor.HIDDEN_MARKER;
         let $line    = $('<div>').addClass(`${css} ${hidden}`);
         let $image   = $('<div>'); // @see stylesheets/controllers/_entry.scss
         return $line.append($image);

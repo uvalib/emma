@@ -41,6 +41,7 @@ import {
     deepFreeze,
     dup,
     fromJSON,
+    toObject,
 } from '../shared/objects'
 import {
     SECONDS,
@@ -524,6 +525,9 @@ $(document).on('turbolinks:load', function() {
     const FIELD_GROUP_CLASS     = 'field-group';
     const FIELD_CONTAINER_CLASS = 'form-fields';
     const HIDDEN_MARKER         = Emma.Popup.hidden.class;
+    const VALID_MARKER          = 'valid';
+    const INVALID_MARKER        = 'invalid';
+    const REQUIRED_MARKER       = 'required';
 
     const BUTTON_TRAY           = selector(BUTTON_TRAY_CLASS);
     const SUBMIT_BUTTON         = selector(SUBMIT_BUTTON_CLASS);
@@ -531,6 +535,9 @@ $(document).on('turbolinks:load', function() {
     const FIELD_GROUP           = selector(FIELD_GROUP_CLASS);
     const FIELD_CONTAINER       = selector(FIELD_CONTAINER_CLASS);
     const HIDDEN                = selector(HIDDEN_MARKER);
+    const VALID                 = selector(VALID_MARKER);
+    const INVALID               = selector(INVALID_MARKER);
+    const REQUIRED              = selector(REQUIRED_MARKER);
 
     /**
      * Interrelated elements.  For example:
@@ -545,18 +552,18 @@ $(document).on('turbolinks:load', function() {
     const FIELD_RELATIONSHIP = deepFreeze({
         rem_complete: {
             name:           'rem_coverage',
-            required:       (el) => ($(el).val() !== 'true'),
+            required:       el => ($(el).val() !== 'true'),
             unrequired_val: ''
         },
         rem_coverage: {
             name:           'rem_complete',
-            required:       (el) => isMissing($(el).val()),
+            required:       el => isMissing($(el).val()),
             required_val:   '',
             unrequired_val: 'false'
         },
         password: {
             name:           'password_confirmation',
-            required:       (el) => $(el).hasClass('valid'),
+            required:       el => $(el).is(VALID),
         }
     });
 
@@ -2244,9 +2251,9 @@ $(document).on('turbolinks:load', function() {
 
                 // Update CSS status classes on all parts of the field.
                 const is_valid = !!valid && !missing;
-                toggleClass(parts, 'required', required);
-                toggleClass(parts, 'invalid',  invalid);
-                toggleClass(parts, 'valid',    is_valid);
+                toggleClass(parts, REQUIRED_MARKER, required);
+                toggleClass(parts, INVALID_MARKER,  invalid);
+                toggleClass(parts, VALID_MARKER,    is_valid);
 
                 // Update the state of the lookup button if appropriate.
                 updateLookupCondition($input, field, is_valid);
@@ -2446,9 +2453,9 @@ $(document).on('turbolinks:load', function() {
 
         } else if (field === 'password_confirmation') {
             let $pwd = inputFields().filter('[data-field="password"]');
-            if ($pwd.hasClass('valid')) {
+            if ($pwd.is(VALID)) {
                 valid = (value === $pwd.val());
-            } else if ($pwd.hasClass('invalid')) {
+            } else if ($pwd.is(INVALID)) {
                 valid = false;
             }
 
@@ -3452,23 +3459,12 @@ $(document).on('turbolinks:load', function() {
      * @param {EmmaData} [value]
      */
     function setOriginalValues(form, value) {
-        let src    = value || inputFields(form);
-        if (value) {
-            src = dupObject(value);
-        } else {
-            src = {};
-            inputFields(form).not('.invalid').each(function() {
-                let $field = $(this);
-                let value  = $field.val();
-                let field  = $field.attr('data-field');
-                if (field && value) {
-                    src[field] = dup($field.val(), true);
-                }
-            });
-        }
-        let pairs = LookupModal.DATA_COLUMNS.map(field => [field, src[field]]);
-        let data  = compact(Object.fromEntries(pairs));
-        lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA, data);
+        let $if = !value && inputFields(form).filter('.valid');
+        let dat = compact(toObject(LookupModal.DATA_COLUMNS, f => {
+            let v = value ? value[f] : $if.filter(`[data-field="${f}"]`).val();
+            return v && dup(v, true);
+        }));
+        lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA, dat);
     }
 
     // ========================================================================
@@ -3690,8 +3686,8 @@ $(document).on('turbolinks:load', function() {
     function validateForm(form) {
         let $form   = formElement(form);
         let $fields = inputFields($form);
-        let ready   = !$fields.hasClass('invalid');
-        if ((ready &&= !menuMultiFields($form).hasClass('invalid'))) {
+        let ready   = !$fields.is(INVALID);
+        if ((ready &&= !menuMultiFields($form).is(INVALID))) {
             const updating = isUpdateForm($form);
             let recheck = updating;
             if (uploader) {

@@ -160,9 +160,9 @@ export async function setup(base, show_hooks, hide_hooks) {
         handleEvent(inputText(), 'keyup', manualSubmission);
         handleClickAndKeypress(inputSubmit(), manualSubmission);
         turnOffAutocomplete(inputText());
-        queryPanel().addClass('hidden');
+        queryPanel().addClass(LookupModal.HIDDEN_MARKER);
     } else {
-        inputPrompt().addClass('hidden');
+        inputPrompt().addClass(LookupModal.HIDDEN_MARKER);
     }
 
     if (output) {
@@ -170,15 +170,15 @@ export async function setup(base, show_hooks, hide_hooks) {
         initializeDisplay(errorDisplay());
         initializeDisplay(diagnosticDisplay());
     } else {
-        outputHeading().addClass('hidden');
-        outputDisplay().addClass('hidden');
+        outputHeading().addClass(LookupModal.HIDDEN_MARKER);
+        outputDisplay().addClass(LookupModal.HIDDEN_MARKER);
     }
 
     if (isModal()) {
         ModalShowHooks.set($popup_button, show_hooks, onShowModal);
         ModalHideHooks.set($popup_button, onHideModal, hide_hooks);
     } else {
-        entriesDisplay().addClass('hidden');
+        entriesDisplay().addClass(LookupModal.HIDDEN_MARKER);
     }
 
     // ========================================================================
@@ -472,12 +472,21 @@ export async function setup(base, show_hooks, hide_hooks) {
      * The element for displaying textual status information.
      *
      * @param {string} [value]
+     * @param {string} [tooltip]
      *
      * @returns {jQuery}
      */
-    function statusNotice(value) {
+    function statusNotice(value, tooltip) {
         $notice ||= statusPanel().find(LookupModal.NOTICE);
-        return isDefined(value) ? $notice.text(value) : $notice;
+        if (isDefined(value)) {
+            $notice.text(value);
+            if (tooltip) {
+                $notice.addClass('tooltip').attr('title', tooltip);
+            } else {
+                $notice.removeClass('tooltip').removeAttr('title');
+            }
+        }
+        return $notice;
     }
 
     /**
@@ -530,7 +539,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         const state = message.status?.toUpperCase();
         const srv   = message.service;
         const data  = message.data;
-        let finish, notice, status;
+        let finish, notice, n_tip, status;
         switch (state) {
 
             // Waiter states
@@ -540,11 +549,13 @@ export async function setup(base, show_hooks, hide_hooks) {
                 serviceStatuses(srv);
                 break;
             case 'TIMEOUT':
-                notice = '(some searches took longer than expected)';
+                notice = 'Done';
+                n_tip  = 'Some searches took longer than expected';
                 finish = true;
                 break;
             case 'PARTIAL':
-                notice = '(partial results received)';
+                notice = 'Done';
+                n_tip  = 'Partial results received';
                 finish = true;
                 break;
             case 'COMPLETE':
@@ -570,7 +581,7 @@ export async function setup(base, show_hooks, hide_hooks) {
                 console.warn(`${func}: ${message.status}: unexpected`);
                 break;
         }
-        if (notice) { statusNotice(notice) }
+        if (notice) { statusNotice(notice, n_tip) }
         if (status) { serviceStatuses().find(`.${srv}`).addClass(status) }
         if (finish) { hideLoading() }
     }
@@ -669,9 +680,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function enableCommit(enable) {
         _debug('enableCommit:', enable);
-        let $button = commitButton();
-        const set   = (enable === false);
-        return $button.toggleClass('disabled', set).prop('disabled', set);
+        let $button  = commitButton();
+        const marker = LookupModal.DISABLED_MARKER;
+        const set    = (enable === false);
+        return $button.toggleClass(marker, set).prop('disabled', set);
     }
 
     /**
@@ -683,9 +695,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function disableCommit(disable) {
         _debug('disableCommit:', disable);
-        let $button = commitButton();
-        const set   = (disable !== false);
-        return $button.toggleClass('disabled', set).prop('disabled', set);
+        let $button  = commitButton();
+        const marker = LookupModal.DISABLED_MARKER;
+        const set    = (disable !== false);
+        return $button.toggleClass(marker, set).prop('disabled', set);
     }
 
     // ========================================================================
@@ -1025,7 +1038,7 @@ export async function setup(base, show_hooks, hide_hooks) {
             useSelectedEntry($entry);
             if ($entry.is(LookupModal.RESULT)) {
                 enableCommit();
-            } else if (commitButton().is('.disabled')) {
+            } else if (commitButton().is(LookupModal.DISABLED)) {
                 // For the initial selection of the "ORIGINAL" row, lock all
                 // the fields that already have data.
                 $entry.children('[data-field]').each((_, column) => {
@@ -1300,14 +1313,14 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Show the placeholder indicating that loading is occurring.
      */
     function showLoading() {
-        loadingPlaceholder().toggleClass('hidden', false);
+        loadingPlaceholder().toggleClass(LookupModal.HIDDEN_MARKER, false);
     }
 
     /**
      * Hide the placeholder indicating that loading is occurring.
      */
     function hideLoading() {
-        loadingPlaceholder().toggleClass('hidden', true);
+        loadingPlaceholder().toggleClass(LookupModal.HIDDEN_MARKER, true);
     }
 
     // ========================================================================
@@ -1482,7 +1495,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function makeLoadingPlaceholder(visible, css_class) {
         const css    = css_class || LookupModal.LOADING_CLASS;
-        const hidden = visible ? '' : 'hidden';
+        const hidden = visible ? '' : LookupModal.HIDDEN_MARKER;
         let $line    = $('<div>').addClass(`${css} ${hidden}`);
         let $image   = $('<div>'); // @see stylesheets/controllers/_entry.scss
         return $line.append($image);
