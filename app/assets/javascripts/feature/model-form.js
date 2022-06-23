@@ -1,9 +1,9 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import { Rails }                            from '../vendor/rails'
 import { Emma }                             from '../shared/assets'
 import { delegateInputClick }               from '../shared/accessibility'
+import { arrayWrap }                        from '../shared/arrays'
 import { pageController }                   from '../shared/controller'
 import { selector, toggleClass }            from '../shared/css'
 import { turnOffAutocomplete }              from '../shared/form'
@@ -16,6 +16,7 @@ import { SearchInProgress }                 from '../shared/search-in-progress'
 import { asString, camelCase, singularize } from '../shared/strings'
 import { Uploader }                         from '../shared/uploader'
 import { cancelAction, makeUrl }            from '../shared/url'
+import { Rails }                            from '../vendor/rails'
 import {
     isDefined,
     isEmpty,
@@ -36,11 +37,9 @@ import {
     flashMessage,
 } from '../shared/flash'
 import {
-    arrayWrap,
     compact,
     deepFreeze,
     dup,
-    dupObject,
     fromJSON,
 } from '../shared/objects'
 import {

@@ -2,6 +2,7 @@
 
 
 import { Emma }                         from '../shared/assets'
+import { arrayWrap }                    from '../shared/arrays'
 import { DB }                           from '../shared/database'
 import { BaseClass }                    from '../shared/base-class'
 import { SessionState, removeByPrefix } from '../shared/session-state'
@@ -9,7 +10,7 @@ import { CallbackQueue }                from '../shared/queue'
 import { rgbColor, rgbColorInverse }    from '../shared/color'
 import { selector }                     from '../shared/css'
 import { handleClickAndKeypress }       from '../shared/events'
-import { arrayWrap, compact }           from '../shared/objects'
+import { compact }                      from '../shared/objects'
 import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random'
 import { makeUrl, urlParameters }       from '../shared/url'
 import {

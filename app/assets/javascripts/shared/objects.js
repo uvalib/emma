@@ -1,43 +1,12 @@
 // app/assets/javascripts/shared/objects.js
 
 
-import { isDefined, isPresent } from '../shared/definitions'
+import { isPresent } from '../shared/definitions'
 
 
 // ============================================================================
 // Functions
 // ============================================================================
-
-/**
- * Create an array to hold the item if it is not already one.
- *
- * @param {*} item
- *
- * @returns {array}
- */
-export function arrayWrap(item) {
-    if (typeof(item) === 'undefined')        { return []; }        else
-    if (item === null)                       { return []; }        else
-    if (Array.isArray(item))                 { return item; }      else
-    if (typeof item?.forEach === 'function') { return [...item]; } else
-    if (typeof item?.toArray === 'function') { return item.toArray(); }
-    return [item];
-}
-
-/**
- * Transform an object into an array of key-value pairs.
- *
- * @param {object} item
- *
- * @returns {[string, any][]}
- */
-export function objectEntries(item) {
-    if (item && (typeof item === 'object')) {
-        return Object.entries(item).filter(kv => item.hasOwnProperty(kv[0]));
-    } else {
-        return [];
-    }
-}
 
 /**
  * Generate an object from JSON (used in place of `JSON.parse`).
@@ -88,27 +57,6 @@ export function compact(item, trim) {
     } else {
         return item;
     }
-}
-
-/**
- * Flatten one or more nested arrays.
- *
- * @param {...*} args
- *
- * @returns {Array}
- */
-export function flatten(...args) {
-    let item, result = [];
-    if (args.length > 1) {
-        args.forEach(v => result.push(...flatten(v)));
-    } else if (Array.isArray((item = args[0]))) {
-        item.forEach(v => result.push(...flatten(v)));
-    } else if (typeof item === 'string') {
-        (item = item.trim()) && result.push(item);
-    } else {
-        isDefined(item) && result.push(item);
-    }
-    return result;
 }
 
 /**
@@ -168,18 +116,9 @@ export function dup(item, deep) {
     }
 }
 
-// noinspection JSUnusedGlobalSymbols
-/**
- * Make a duplicate of the given array.
- *
- * @param {array|undefined} item
- * @param {boolean}         [shallow]   If *true* make a shallow copy.
- *
- * @returns {array}
- */
-export function dupArray(item, shallow) {
-    return Array.isArray(item) ? dup(item, !shallow) : [];
-}
+// ============================================================================
+// Functions - returning Object
+// ============================================================================
 
 /**
  * Make a duplicate of the given object.
@@ -192,6 +131,66 @@ export function dupArray(item, shallow) {
 export function dupObject(item, shallow) {
     return (typeof item === 'object') ? dup(item, !shallow) : {};
 }
+
+/**
+ * Create an Object from array of key-value pairs, or from an array of keys
+ * and a mapper function which returns a value for the given key.
+ *
+ * Invalid pairs elements are silently discarded.
+ *
+ * @param {Array}            array
+ * @param {function(string)} [mapper]
+ *
+ * @overload toObject(array, mapper)
+ *  @param {string[]}         array
+ *  @param {function(string)} mapper
+ *
+ * @overload filterFieldDisplay(array)
+ *  @param {[string,*][]}     array
+ *
+ * @returns {object}
+ */
+export function toObject(array, mapper) {
+    let obj, prs, v;
+    console.log(''); // TODO: remove
+    console.log('*** toObject', array, mapper); // TODO: remove
+    if (Array.isArray(array)) {
+        prs = mapper ? array.map(k => k && (v = mapper(k)) && [k, v]) : array;
+        console.log('*** toObject prs', prs); // TODO: remove
+        prs = prs.filter(v => Array.isArray(v) && (v.length === 2));
+        console.log('*** toObject prs', prs); // TODO: remove
+        obj = Object.fromEntries(prs);
+    } else if (typeof array === 'object') {
+        obj = array;
+    } else {
+        console.warn('toObject: not an array:', array);
+    }
+    console.log('*** toObject obj', obj); // TODO: remove
+    return obj || {};
+}
+
+// ============================================================================
+// Functions - returning Array
+// ============================================================================
+
+/**
+ * Transform an object into an array of key-value pairs.
+ *
+ * @param {object} item
+ *
+ * @returns {[string, any][]}
+ */
+export function objectEntries(item) {
+    if (item && (typeof item === 'object')) {
+        return Object.entries(item).filter(kv => item.hasOwnProperty(kv[0]));
+    } else {
+        return [];
+    }
+}
+
+// ============================================================================
+// Functions - other
+// ============================================================================
 
 /**
  * Indicate whether two objects are effective the same.
@@ -227,29 +226,4 @@ export function equivalent(item1, item2) {
         result = (item1 === item2);
     }
     return result;
-}
-
-/**
- * Find the size of the largest array value.
- *
- * For an array of numbers, returns the maximum value.
- * For any other array, returns the size of the largest element.
- *
- * @param {*}      item
- * @param {number} [minimum]
- *
- * @returns {number}
- */
-export function maxSize(item, minimum = 0) {
-    return arrayWrap(item).reduce(
-        function(max_size, item) {
-            let size = 0;
-            if (typeof item === 'number') {
-                size = item;
-            } else if (typeof item?.length === 'number') {
-                size = item.length;
-            }
-            return Math.max(size, max_size);
-        },
-    minimum);
 }

@@ -1,9 +1,10 @@
 // app/assets/javascripts/shared/lookup-request.js
 
 
+import { arrayWrap }                        from '../shared/arrays'
 import { BaseClass }                        from '../shared/base-class'
 import { isDefined, isPresent, notDefined } from '../shared/definitions'
-import { arrayWrap, deepFreeze }            from '../shared/objects'
+import { deepFreeze, toObject }             from '../shared/objects'
 
 
 // ============================================================================
@@ -88,7 +89,7 @@ export class LookupRequest extends BaseClass {
     static DEF_QUERY_TYPE   = 'keyword';
     static DEF_REQUEST_TYPE = 'query';
 
-    // noinspection JSValidateTypes
+    // noinspection JSUnusedLocalSymbols
     /**
      * A blank object containing an array value for every key defined by
      * {@link REQUEST_TYPE}.
@@ -97,7 +98,7 @@ export class LookupRequest extends BaseClass {
      * @type {LookupRequestObject}
      */
     static TEMPLATE = deepFreeze(
-        Object.fromEntries(Object.keys(this.REQUEST_TYPE).map(k => [k, []]))
+        toObject(Object.keys(this.REQUEST_TYPE), k => [])
     );
 
     /**

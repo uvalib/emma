@@ -3,6 +3,7 @@
 // Bibliographic Lookup
 
 
+import { arrayWrap }                      from '../shared/arrays'
 import { turnOffAutocomplete }            from '../shared/form'
 import { HTML_BREAK }                     from '../shared/html'
 import { renderJson }                     from '../shared/json'
@@ -10,7 +11,7 @@ import { LookupModal }                    from '../shared/lookup-modal'
 import { LookupRequest }                  from '../shared/lookup-request'
 import { ModalDialog }                    from '../shared/modal-dialog'
 import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks'
-import { arrayWrap, compact, dupObject }  from '../shared/objects'
+import { compact, dupObject, toObject }   from '../shared/objects'
 import { randomizeName }                  from '../shared/random'
 import { camelCase }                      from '../shared/strings'
 import {
@@ -1090,9 +1091,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function getColumnValues($entry, fields) {
         const columns = fields || LookupModal.DATA_COLUMNS
-        const entries = columns.map(c => [c, getColumnValue($entry, c)]);
-        // noinspection JSValidateTypes
-        return Object.fromEntries(entries);
+        return toObject(columns, c => getColumnValue($entry, c));
     }
 
     /**

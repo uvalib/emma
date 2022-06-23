@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/json.js
 
 
+import { maxSize }    from '../shared/arrays'
 import { isEmpty }    from '../shared/definitions'
-import { maxSize }    from '../shared/objects'
 import { asDateTime } from '../shared/time'
 
 

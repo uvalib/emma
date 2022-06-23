@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/html.js
 
 
-import { isDefined } from '../shared/definitions'
 import { cssClass }  from '../shared/css'
+import { isDefined } from '../shared/definitions'
 
 
 // ============================================================================

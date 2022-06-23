@@ -1,11 +1,13 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
-import { Emma }             from '../shared/assets'
-import { toggleVisibility } from '../shared/accessibility'
-import { randomizeName }    from '../shared/random'
-import { SearchInProgress } from '../shared/search-in-progress'
-import { urlParameters }    from '../shared/url'
+import { Emma }                          from '../shared/assets'
+import { toggleVisibility }              from '../shared/accessibility'
+import { arrayWrap, maxSize }            from '../shared/arrays'
+import { compact, deepFreeze, toObject } from '../shared/objects'
+import { randomizeName }                 from '../shared/random'
+import { SearchInProgress }              from '../shared/search-in-progress'
+import { urlParameters }                 from '../shared/url'
 import {
     isDefined,
     isEmpty,
@@ -19,12 +21,6 @@ import {
     handleEvent,
     isEvent,
 } from '../shared/events'
-import {
-    arrayWrap,
-    compact,
-    deepFreeze,
-    maxSize
-} from '../shared/objects'
 
 
 $(document).on('turbolinks:load', function() {
@@ -1380,15 +1376,14 @@ $(document).on('turbolinks:load', function() {
         });
 
         // Nodes which Firefox Accessibility expects to be labelled:
-        const to_label_selector = '[aria-haspopup],[tabindex]';
+        const aria_attrs     = ['aria-label', 'aria-labelledby'];
+        const to_be_labelled = '[aria-haspopup], [tabindex]';
         $menus.each(function() {
             let $menu = $(this);
-            let attrs = compact(Object.fromEntries(
-                ['aria-label', 'aria-labelledby'].map(a => [a, $menu.attr(a)])
-            ));
+            let attrs = compact(toObject(aria_attrs, a => $menu.attr(a)));
             if (isPresent(attrs)) {
                 // noinspection JSCheckFunctionSignatures
-                $menu.siblings().find(to_label_selector).attr(attrs);
+                $menu.siblings().find(to_be_labelled).attr(attrs);
             }
         });
     }

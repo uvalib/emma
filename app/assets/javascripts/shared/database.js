@@ -1,9 +1,10 @@
 // app/assets/javascripts/shared/database.js
 
 
+import { arrayWrap }                    from '../shared/arrays'
 import { isDefined, isEmpty, notEmpty } from '../shared/definitions'
 import { asString }                     from '../shared/strings'
-import { arrayWrap, fromJSON }          from '../shared/objects'
+import { fromJSON }                     from '../shared/objects'
 
 
 // ============================================================================

@@ -1,10 +1,9 @@
 // app/assets/javascripts/shared/uploader.js
 
 
-import { Rails }                            from '../vendor/rails'
 import { Emma }                             from '../shared/assets'
-import { BaseClass }                        from '../shared/base-class'
 import { toggleVisibility }                 from '../shared/accessibility'
+import { BaseClass }                        from '../shared/base-class'
 import { selector }                         from '../shared/css'
 import { isMissing, isPresent, notDefined } from '../shared/definitions'
 import { handleClickAndKeypress }           from '../shared/events'
@@ -14,6 +13,7 @@ import { compact, deepFreeze, fromJSON }    from '../shared/objects'
 import { camelCase }                        from '../shared/strings'
 import { MINUTES, SECONDS }                 from '../shared/time'
 import { makeUrl }                          from '../shared/url'
+import { Rails }                            from '../vendor/rails'
 import {
     Uppy,
     AwsS3,

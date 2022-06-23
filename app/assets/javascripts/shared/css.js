@@ -1,8 +1,9 @@
 // app/assets/javascripts/shared/css.js
 
 
+import { arrayWrap }          from '../shared/arrays'
 import { isEmpty, isPresent } from '../shared/definitions'
-import { arrayWrap, compact } from '../shared/objects'
+import { compact }            from '../shared/objects'
 
 
 // ============================================================================

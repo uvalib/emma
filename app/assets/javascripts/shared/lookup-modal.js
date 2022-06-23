@@ -3,6 +3,7 @@
 // Bibliographic Lookup
 
 
+import { arrayWrap }                      from '../shared/arrays'
 import { selector }                       from '../shared/css'
 import { turnOffAutocomplete }            from '../shared/form'
 import { HTML_BREAK }                     from '../shared/html'
@@ -27,10 +28,10 @@ import {
     isEvent,
 } from '../shared/events'
 import {
-    arrayWrap,
     compact,
     deepFreeze,
     dupObject,
+    toObject,
 } from '../shared/objects'
 
 
