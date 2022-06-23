@@ -30,7 +30,7 @@ module Api::Message
   # @yieldparam [Hash] opt            Option hash to use within block.
   # @yieldreturn [void]
   #
-  def create_message: (symHash|nil opt) { (symHash opt) -> untyped } -> untyped
+  def create_message: ((symHash|nil) opt) { (symHash opt) -> untyped } -> untyped
 
   # Update *opt[:wrap]* according to the supplied formats.
   #

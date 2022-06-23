@@ -20,9 +20,6 @@ class Lookup::WorldCat::Message::OpenSearch < Lookup::WorldCat::Api::Message
   #
   # @return [Integer]
   #
-  # -
-  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
-  # +
   def totalResults: () -> Integer
 
   # api_records

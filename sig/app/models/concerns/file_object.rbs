@@ -31,7 +31,7 @@ class FileObject
   #   @param [Symbol, String, nil] fmt
   #   @param [String, nil]         ext
   #
-  def initialize: (String|IO|StringIO|IO::Like|Tempfile|FileHandle handle, ?fmt: String|Symbol|nil, ?ext: String?) -> void
+  def initialize: ((String|IO|StringIO|IO::Like|Tempfile|FileHandle) handle, ?fmt: String|Symbol|nil, ?ext: String|nil) -> void
 
   # Format type of the file.
   #
@@ -106,7 +106,7 @@ class FileObject
     #
     # @return [nil]
     #
-    def __debug_mime: (Binding bind) { () -> untyped } -> nil
+    def __debug_mime: (Binding bind) ?{ () -> untyped } -> nil
   end
 
   extend ClassMethods

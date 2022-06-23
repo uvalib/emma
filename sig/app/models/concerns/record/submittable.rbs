@@ -20,12 +20,39 @@ module Record::Submittable
   module RecordMethods
     include Record::Submittable
 
+    # Indicate whether the item represents an EMMA repository entry (as opposed
+    # to a member repository entry).
+    #
+    # @param [Model, String, Any] item
+    #
+    # @see Record::EmmaIdentification#valid_sid?
+    # @see Record::EmmaIdentification#emma_native?
+    #
     def emma_item?: (untyped item) -> bool
 
+    # Indicate whether the item does not represent an existing EMMA entry.
+    #
+    # @param [Model, String, Any] item
+    #
     def incomplete?: (untyped item) -> bool
 
-    def new_record: (?(symHash|Model)? data) -> Model
+    # Create a new free-standing (un-persisted) record instance.
+    #
+    # @param [Hash, Model, nil] data  Passed to record class initializer.
+    #
+    # @return [Model]
+    #
+    # @see #add_title_prefix
+    #
+    def new_record: (?(symHash|Model|nil) data) -> Model
 
+    # If a prefix was specified, apply it to the record's title.
+    #
+    # @param [Model]  record
+    # @param [String] prefix
+    #
+    # @return [void]
+    #
     def add_title_prefix: (Model record, prefix: String) -> void
   end
 
@@ -34,11 +61,40 @@ module Record::Submittable
 
     include Record::Submittable::RecordMethods
 
-    def db_insert: (symHash|Model data) -> ApplicationRecord
+    # Add a single record to the database.
+    #
+    # @param [Model, Hash] data       @see Entry#assign_attributes.
+    #
+    # @return [ApplicationRecord<Model>]
+    #
+    def db_insert: ((symHash|Model) data) -> ApplicationRecord
 
-    def db_update: (symHash|Model|String item, ?(symHash|nil) data) -> ApplicationRecord
+    # Modify a single existing database record.
+    #
+    # @param [Model, Hash, String] item
+    # @param [Hash, nil]           data
+    #
+    # @raise [Record::StatementInvalid]       If :id/:sid not given.
+    # @raise [Record::NotFound]               If *item* was not found.
+    # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
+    # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
+    #
+    # @return [ApplicationRecord<Model>]
+    #
+    def db_update: ((symHash|Model|String) item, ?(symHash|nil) data) -> ApplicationRecord
 
-    def db_delete: (symHash|Model|String item) -> (untyped | nil)
+    # Remove a single existing record from the database.
+    #
+    # @param [Model, Hash, String] item
+    #
+    # @raise [Record::StatementInvalid]           If :id/:sid not given.
+    # @raise [Record::NotFound]                   If *item* was not found.
+    # @raise [ActiveRecord::RecordNotDestroyed]   Halted due to callbacks.
+    #
+    # @return [Any]
+    # @return [nil]                   If the record was not found or removed.
+    #
+    def db_delete: ((symHash|Model|String) item) -> (untyped | nil)
   end
 
   module IndexIngestMethods
@@ -49,6 +105,10 @@ module Record::Submittable
     # :nocov:
     #include Record::Submittable::SubmissionMethods
 
+    # Current Ingest API service instance.
+    #
+    # @return [IngestService]
+    #
     def ingest_api: () -> IngestService
 
     # As a convenience for testing, sending to the Federated Search Ingest API  # NOTE: from UploadWorkflow::External
@@ -58,10 +118,39 @@ module Record::Submittable
     #
     DISABLE_UPLOAD_INDEX_UPDATE: bool
 
+    # Add the indicated items from the EMMA Unified Index.
+    #
+    # @param [Array<Entry>] items                                               # TODO: NOTE: by usage must be Entry not Model
+    # @param [Boolean]      atomic
+    #
+    # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+    #
+    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+    #                                         msgs, and records to roll back.
+    #
     def add_to_index: (*Entry items, ?atomic: bool) -> [Array[Entry], Array[Record::Exceptions::FlashPart], Array[Entry]]
 
+    # Add/modify the indicated items from the EMMA Unified Index.
+    #
+    # @param [Array<Entry>] items                                               # TODO: NOTE: by usage must be Entry not Model
+    # @param [Boolean]      atomic
+    #
+    # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+    #
+    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+    #                                         msgs, and records to roll back.
+    #
     def update_in_index: (*Entry items, ?atomic: bool) -> [Array[Entry], Array[Record::Exceptions::FlashPart], Array[Entry]]
 
+    # Remove the indicated items from the EMMA Unified Index.
+    #
+    # @param [Array<Model,String>] items
+    # @param [Boolean]             atomic
+    #
+    # @raise [Api::Error] @see IngestService::Request::Submissions#delete_records
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
     def remove_from_index: (*(Model|String) items, ?atomic: bool) -> [Array[Entry], Array[Record::Exceptions::FlashPart]]
 
     def skip_index_ingest: (Symbol meth, *(Entry|Model|String) items) -> ([Array[Entry], []] | [Array[Model|String], []])
@@ -72,8 +161,8 @@ module Record::Submittable
     # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
     # @param [Array<Model,String>]                                     items
     #
-    # @return [Array<(Array,Array,Array)>]   Succeeded records, failed item messages,
-    #                                   and records to roll back.
+    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+    #                                         msgs, and records to roll back.
     #
     # @see ExecReport#error_table
     #
@@ -82,12 +171,19 @@ module Record::Submittable
     # mix of errors by index, errors by submission ID, and/or general errors,
     # but this method was written to be able to cope with the possibility.
     #
-    # -
-    # noinspection RubyMismatchedReturnType
-    # +
-    def process_ingest_errors: (Ingest::Message::Response|Hash[(String|Integer),String] result, *(Model|String) items) -> [Array[Entry], Array[Record::Exceptions::FlashPart], Array[Entry]]
+    def process_ingest_errors: ((Ingest::Message::Response|Hash[(String|Integer),String]) result, *(Model|String) items) -> [Array[Entry], Array[Record::Exceptions::FlashPart], Array[Entry]]
 
-    def normalize_index_items: (*(Entry|String|Array[Entry|String]) items, ?meth: Symbol?, ?max: Integer) -> Array[Entry|String]
+    # Return a flatten array of items.
+    #
+    # @param [Array<Entry, String, Array>] items                                # TODO: NOTE: based on usage Entry not Model
+    # @param [Symbol, nil]                 meth   The calling method.
+    # @param [Integer]                     max    Maximum number to ingest.
+    #
+    # @raise [Record::SubmitError]  If item count is too large to be ingested.
+    #
+    # @return [Array]
+    #
+    def normalize_index_items: (*(Entry|String|Array[Entry|String]) items, ?meth: Symbol|nil, ?max: Integer) -> Array[Entry|String]
   end
 
   module MemberRepositoryMethods
@@ -95,6 +191,10 @@ module Record::Submittable
 
     include Record::Submittable::IndexIngestMethods
 
+    # Current AWS API service instance.
+    #
+    # @return [AwsS3Service]
+    #
     def aws_api: () -> AwsS3Service
 
     # Failure messages for member repository requests. # TODO: I18n             # NOTE: from UploadWorkflow::External
@@ -103,12 +203,47 @@ module Record::Submittable
     #
     REPO_FAILURE: Hash[Symbol,String]
 
+    # Submit a new item to a member repository.
+    #
+    # @param [Array<Model>] items
+    # @param [Hash]         opt
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
     def repository_create: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
+    # Submit a request to a member repository to modify the metadata and/or
+    # file of a previously-submitted item.
+    #
+    # @param [Array<Model>] items
+    # @param [Hash]         opt
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    # @note This capability is not yet supported by any member repository.
+    #
     def repository_modify: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
+    # Request deletion of a prior submission to a member repository.
+    #
+    # @param [Array<String,Model>] items
+    # @param [Hash]                opt
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    # @note This capability is not yet supported by any member repository.
+    #
     def repository_remove: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
+    # Remove request(s) from a member repository queue.
+    #
+    # @param [Array<String,Model>] items
+    # @param [Hash]                opt
+    #
+    # @option opt [String] :repo      Required for String items.
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
     def repository_dequeue: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
     # Interpret error message(s) generated by AWS S3.                           # NOTE: from UploadWorkflow::External
@@ -116,17 +251,85 @@ module Record::Submittable
     # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
     # @param [Array<String,Model>]                                    items
     #
-    # @return [Array<(Array,Array)>]         Succeeded items and failed item messages.
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     # @see ExecReport#error_table
     #
-    def process_aws_errors: (AwsS3::Message::Response|Hash[(String|Integer),String] result, *(String|Model) items) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    def process_aws_errors: ((AwsS3::Message::Response|Hash[(String|Integer),String]) result, *(String|Model) items) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    def repository_removals: (symHash|String|Model|Array[String|Model]|nil items, **untyped opt) ->  [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    # Send removal request(s) to member repositories.
+    #
+    # @param [Hash, Array, Model] items
+    # @param [Hash]               opt     Passed to #repository_remove.
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload repository_removals(requests, **opt)
+    #   @param [Hash{Symbol=>Array}]              requests
+    #   @param [Hash]                             opt
+    #   @return [Array<(Array,Array)>]
+    #
+    # @overload repository_removals(items, **opt)
+    #   @param [Array<String,#emma_recordId,Any>] items
+    #   @param [Hash]                             opt
+    #   @return [Array<(Array,Array)>]
+    #
+    def repository_removals: ((symHash|String|Model|Array[String|Model]|nil) items, **untyped opt) ->  [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    def repository_dequeues: (symHash|Array[String|Model]|nil items, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    # Remove request(s) from member repository queue(s).
+    #
+    # @param [Hash, Array] items
+    # @param [Hash]        opt        Passed to #repository_remove.
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload repository_dequeues(requests, **opt)
+    #   @param [Hash{Symbol=>Array}]              requests
+    #   @param [Hash]                             opt
+    #   @return [Array<(Array,Array)>]
+    #
+    # @overload repository_dequeues(items, **opt)
+    #   @param [Array<String,#emma_recordId,Any>] items
+    #   @param [Hash]                             opt
+    #   @return [Array<(Array,Array)>]
+    #
+    def repository_dequeues: ((symHash|Array[String|Model]|nil) items, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    def repository_requests: (symHash|Array[String|Model]|nil items, ?empty_key: bool) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    # Transform items into arrays of requests per repository.
+    #
+    # @param [Hash, Array, Model] items
+    # @param [Boolean]            empty_key   If *true*, allow invalid items.
+    #
+    # @return [Hash{String=>Array<Model>}]  One or more requests per repo.
+    #
+    # -
+    # == Variations
+    # +
+    #
+    # @overload repository_requests(hash, empty_key: false)
+    #   @param [Hash{String=>Model,Array<Model>}] hash
+    #   @param [Boolean]                          empty_key
+    #   @return [Hash{String=>Array<Model>}]
+    #
+    # @overload repository_requests(requests, empty_key: false)
+    #   @param [Array<String,Model,Any>]          requests
+    #   @param [Boolean]                          empty_key
+    #   @return [Hash{String=>Array<Model>}]
+    #
+    # @overload repository_requests(request, empty_key: false)
+    #   @param [Model]                            request
+    #   @param [Boolean]                          empty_key
+    #   @return [Hash{String=>Array<Model>}]
+    #
+    def repository_requests: ((symHash|Array[String|Model]|nil) items, ?empty_key: bool) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
   end
 
   module BatchMethods
@@ -139,10 +342,44 @@ module Record::Submittable
     # :nocov:
     #include Record::Submittable::SubmissionMethods
 
-    def batch_entry_remove: (Array[symHash|String|Integer|Model]|nil ids, ?index: bool, ?atomic: bool, ?force: bool?, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    # Bulk removal.
+    #
+    # @param [Array<String,Integer,Hash,Model>] ids
+    # @param [Boolean] index          If *false*, do not update index.
+    # @param [Boolean] atomic         If *false*, do not stop on failure.
+    # @param [Boolean] force          Default: `#force_delete`.
+    # @param [Hash]    opt            Passed to #entry_remove via
+    #                                   #batch_entry_operation.
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    def batch_entry_remove: ((Array[symHash|String|Integer|Model]|nil) ids, ?index: bool, ?atomic: bool, ?force: bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    def batch_entry_operation: (Symbol op, Array[symHash|String|Integer|Model] items, ?size: (Integer|bool)?, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    # Process *entries* in batches by calling *op* on successive subsets.
+    #
+    # If *size* is *false* or negative, then *entries* is processed as a single
+    # batch.
+    #
+    # If *size* is *true* or zero or missing, then *entries* is processed in
+    # batches of the default #BATCH_SIZE.
+    #
+    # @param [Symbol]                           op
+    # @param [Array<String,Integer,Hash,Model>] items
+    # @param [Integer, Boolean]                 size     Default: #BATCH_SIZE.
+    # @param [Hash]                             opt
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    def batch_entry_operation: (Symbol op, Array[symHash|String|Integer|Model] items, ?size: Integer|bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
+    # Release the current thread to the scheduler.
+    #
+    # @param [Integer]       counter    Iteration counter.
+    # @param [Integer]       frequency  E.g., '3' means every third iteration.
+    # @param [Float,Boolean] pause      Default: `#THROTTLE_PAUSE`.
+    #
+    # @return [void]
+    #
     def throttle: (Integer counter, ?frequency: Integer, ?pause: bool|Float) -> Integer
   end
 
@@ -159,11 +396,61 @@ module Record::Submittable
 
     include Record::Submittable::BatchMethods
 
-    def entry_create: (?index: bool?, ?atomic: bool?, **untyped data) -> [(Entry | nil), Array[Record::Exceptions::FlashPart]]
+    # a new index entry for it (if explicitly requested).
+    #
+    # @param [Boolean] index          If *true*, update index.
+    # @param [Boolean] atomic         Passed to #add_to_index.
+    # @param [Hash]    data           @see Entry#assign_attributes.
+    #
+    # @return [Array<(Entry,Array>)]  Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
+    # @return [Array<(nil,Array)>]    No record; one or more error messages.
+    #
+    # @see #db_insert
+    # @see #add_to_index
+    #
+    # == Implementation Notes
+    # Compare with #bulk_entry_create
+    #
+    def entry_create: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Entry | nil), Array[Record::Exceptions::FlashPart]]
 
-    def entry_edit: (?index: bool?, ?atomic: bool?, **untyped data) -> [(Entry | nil), Array[Record::Exceptions::FlashPart]]
+    # Update an existing database Entry record and update its associated index  # TODO: NOTE: currently unused; @see EntryConcern#edit_entry
+    # entry (if explicitly requested).
+    #
+    # @param [Boolean] index          If *true*, update index.
+    # @param [Boolean] atomic         Passed to #update_in_index.
+    # @param [Hash]    data           @see Entry#assign_attributes
+    #
+    # @return [Array<(Entry,Array>)]  Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
+    # @return [Array<(nil,Array)>]    No record; one or more error messages.
+    #
+    # @see #db_update
+    # @see #update_in_index
+    #
+    # == Implementation Notes
+    # Compare with #bulk_entry_edit
+    #
+    def entry_edit: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Entry | nil), Array[Record::Exceptions::FlashPart]]
 
-    def entry_remove: (*(Entry|String|Array[Entry|String]) items, ?index: bool?, ?atomic: bool?, ?force: bool?, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    # Remove records from the database and from the index.                      # TODO: NOTE: used by #add_to_index and #batch_entry_remove
+    #
+    # @param [Array<Entry,String,Array>] items   @see #collect_records          # TODO: NOTE: Entry not Model
+    # @param [Boolean]                   index   *false* -> no index update
+    # @param [Boolean]                   atomic  *true* == all-or-none
+    # @param [Boolean]                   force   Force removal of index entries
+    #                                             even if the related database
+    #                                             entries do not exist.
+    #
+    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    # @see #remove_from_index
+    #
+    # == Usage Notes
+    # Atomicity of the record removal phase rests on the assumption that any
+    # database problem(s) would manifest with the very first destruction
+    # attempt.  If a later item fails, the successfully-destroyed items will
+    # still be removed from the index.
+    #
+    def entry_remove: (*(Entry|String|Array[Entry|String]) items, ?index: bool|nil, ?atomic: bool|nil, ?force: bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
     private
 

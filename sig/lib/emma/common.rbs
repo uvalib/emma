@@ -1,6 +1,6 @@
 # General support methods.
 #
 module Emma::Common
-  private
+  # @private
   def self.included: (Module base) -> void
 end

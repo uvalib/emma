@@ -869,6 +869,7 @@ class ApiMigrate
   def initialize(key = nil, report: nil, log: nil, no_raise: false, **)
     @report = report.is_a?(Hash) ? report : ({} unless false?(report))
     @log    = log.present?
+    # noinspection RubyMismatchedVariableType
     @name   = key ? migration_name(key) : CONFIGURATION_ENTRY.keys.last
     # noinspection RubyMismatchedArgumentType
     error   =

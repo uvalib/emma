@@ -126,15 +126,29 @@ module Record::Properties
   #
   BATCH_SIZE: Integer
 
+  # URL parameter names and default values.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
   WF_PARAMETER_DEFAULT: symHash
-  WF_METHOD_MAP:        Hash[Symbol,Symbol]
-  WF_PARAMETER_MAP:     Hash[Symbol,Symbol]
+
+  # Module method mapped to URL parameter.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_METHOD_MAP: Hash[Symbol,Symbol]
+
+  # URL parameter mapped to module method.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_PARAMETER_MAP: Hash[Symbol,Symbol]
 
   # A string added to the start of each title.
   #
   # @return [String]                  Value to prepend to title.
   # @return [FalseClass]              No prefix should be used.
-  # @return [nil]
+  # @return [nil]                     No prefix is defined.
   #
   # @see #TITLE_PREFIX
   #
@@ -215,12 +229,14 @@ module Record::Properties
   #
   # @return [Hash{Symbol=>Any}]
   #
+  # @see Entry::Options#model_params
+  #
   def parameters: () -> symHash
 
   # Extract the named URL parameter from *params*.
   #
   # @param [Symbol]    key            URL parameter name.
-  # @param [Hash, nil] params         Default: `#parameters`.
+  # @param [Hash, nil] prm            Default: `#parameters`.
   #
   # @return [Boolean]
   #

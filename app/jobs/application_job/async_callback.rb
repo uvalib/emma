@@ -73,7 +73,7 @@ class ApplicationJob::AsyncCallback
   #   @option opt [Symbol]             :cb_method     Required.
   #
   #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedVariableType
+  # noinspection RubyMismatchedVariableType
   #++
   def initialize(src = nil, meth = nil, callback = nil, **opt)
     __debug_items(binding)

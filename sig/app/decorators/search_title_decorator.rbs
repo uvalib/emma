@@ -8,27 +8,18 @@ class SearchTitleDecorator < SearchDecorator
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Include control icons below the entry number.
   #
-  # @param [Boolean] edit
-  # @param [Hash]   opt               Passed to super
+  # @param [Boolean] edit             If *false* do not add edit controls.
+  # @param [Hash]    opt              Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Generate a summary of the number of files per each format associated with
-  # this item.
-  #
-  # @param [Hash] opt                 Passed to outer :ul.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def format_counts: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item_number: (?edit: bool, **untyped opt) -> ActiveSupport::SafeBuffer
 end

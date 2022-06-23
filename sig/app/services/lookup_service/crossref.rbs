@@ -1,24 +1,11 @@
 # Get results from the Crossref API.
 #
+# @see "en.emma.service.lookup.crossref"
+#
 # @see https://api.crossref.org/
 # @see https://www.crossref.org/documentation/retrieve-metadata/rest-api/
 #
 class LookupService::Crossref < LookupService::RemoteService
-  # :nocov:
-  include Lookup::Crossref::Api::Schema
-
-  extend Lookup::Crossref::Api::Schema
-
-  BASE_URL: String
-
-  API_KEY: String | nil
-
-  TYPES: symArray
-
-  PRIORITY: Integer
-
-  TIMEOUT: Numeric
-
   # Fetch results from Crossref.
   #
   # @param [LookupService::Request] req  Def.: `@request`.
@@ -26,6 +13,9 @@ class LookupService::Crossref < LookupService::RemoteService
   # @return [Lookup::Crossref::Message::WorkResults]
   # @return [Lookup::Crossref::Message::Work]
   # @return [Lookup::Crossref::Message::Error]
+  #
+  # == Usage Notes
+  # The items are assumed to be in the proper form.
   #
   def fetch: (?lookupArg req) -> (Lookup::Crossref::Message::WorkResults | Lookup::Crossref::Message::Work | Lookup::Crossref::Message::Error)
 
@@ -37,9 +27,15 @@ class LookupService::Crossref < LookupService::RemoteService
   # @return [LookupService::Data]
   # @return [nil]                     If *msg* is *nil*.
   #
-  def transform: (Lookup::Crossref::Api::Message|LookupService::Data|symHash msg, ?extended: bool) -> LookupService::Data
-               | (nil                                                        msg, ?extended: bool) -> nil
+  def transform: ((Lookup::Crossref::Api::Message|LookupService::Data|symHash) msg, ?extended: bool) -> LookupService::Data
+               | (nil                                                          msg, ?extended: bool) -> nil
 
-  def transform_multiple: (Array[Lookup::Crossref::Record::Work] recs) -> lookupDataValues
-  def transform_single:   (Lookup::Crossref::Record::Work rec)         -> (symHash | nil)
+  # transform_single
+  #
+  # @param [Lookup::Crossref::Record::Work] rec
+  #
+  # @return [Hash]
+  # @return [nil]                     If the record should be ignored.
+  #
+  def transform_single: (Lookup::Crossref::Record::Work rec) -> (symHash | nil)
 end

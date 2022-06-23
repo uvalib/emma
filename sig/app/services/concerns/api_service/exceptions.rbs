@@ -46,9 +46,6 @@ module ApiService::Exceptions
   #
   # @return [ApiService::Error]       New value of @exception.
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
   def set_error: (untyped error, **untyped opt) -> ApiService::Error
 
   # A table of all error types and error classes for the current service.
@@ -159,10 +156,7 @@ module ApiService::Exceptions
   #
   # @see ApiService::Error#error_classes
   #
-  # +
-  # noinspection RubyNilAnalysis
-  # -
-  def get_error_classes: (?(ApiService|Class|String)? service) -> Hash[Symbol,Class]
+  def get_error_classes: (?(ApiService|Class|String|nil) service) -> Hash[Symbol,Class]
 
   # log_exception
   #
@@ -173,8 +167,5 @@ module ApiService::Exceptions
   #
   # @return [void]
   #
-  # -
-  # noinspection RailsParamDefResolve
-  # +
-  def log_exception: (Exception error, ?action: Symbol?, ?response: Faraday::Response?, ?meth: (Symbol|String)?) -> void
+  def log_exception: (Exception error, ?action: Symbol|nil, ?response: Faraday::Response|nil, ?meth: Symbol|String|nil) -> void
 end

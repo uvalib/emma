@@ -23,7 +23,7 @@ module TestHelper::SystemTests::Bookshare
 
   # Namespaces of API classes.
   #
-  # @type [Array<Class>]
+  # @type [Array<Module>]
   #
   API_NAMESPACES: Array[Module]
 
@@ -157,9 +157,6 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [String]
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-  # +
   def model_field_type: (String|Symbol|Class|Proc|nil `type`) -> String
 
   # model_fields
@@ -168,9 +165,6 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [Array<Hash>]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
-  # +
   def model_fields: (String|Symbol|Class|nil `type`) -> Array[symHash]
 
   # Produce a listing of failures.
@@ -212,7 +206,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] method
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_request_params: (Array[symHash] fields, String|nil method, **untyped opt) -> strArray
 
@@ -222,7 +216,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] method
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_method_params: (Array[symHash] fields, String|nil method, **untyped opt) -> strArray
 
@@ -232,7 +226,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] record_type
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_record_fields: (Array[symHash] fields, String|nil method, **untyped opt) -> strArray
 
@@ -242,7 +236,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil] record_type
   # @param [Hash]        opt          Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_model_fields: (Array[symHash] fields, String|nil method, **untyped opt) -> strArray
 
@@ -251,7 +245,7 @@ module TestHelper::SystemTests::Bookshare
   # @param [Hash] fields
   # @param [Hash] opt                 Passed to #show_subsection
   #
-  # @return [void]
+  # @return [Array<String>]
   #
   def show_problems: (symHash fields, **untyped opt) -> strArray
 
@@ -282,8 +276,5 @@ module TestHelper::SystemTests::Bookshare
   # @yield To supply additional parts to show.
   # @yieldreturn [Hash, Array]
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
   def show_subsection: (String header, ?(symHash|nil) parts, ?indent: Integer|String, ?width: Integer|nil, ?separator: String, ?output: bool) { () -> (anyHash | anyArray) } -> strArray
 end

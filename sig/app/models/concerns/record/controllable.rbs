@@ -156,7 +156,7 @@ module Record::Controllable
     #
     # @param [Symbol, String, nil] current  Default: `self[CONDITION_COLUMN]`
     #
-    def finished?: (?(Symbol|String)? current) -> bool
+    def finished?: (?(Symbol|String|nil) current) -> bool
 
     private
 

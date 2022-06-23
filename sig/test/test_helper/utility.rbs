@@ -18,8 +18,5 @@ module TestHelper::Utility
   # @return [User]
   # @return [nil]                     If *user* could not be converted.
   #
-  # -
-  # noinspection RubyMismatchedReturnType
-  # +
   def find_user: (String|Symbol|User|untyped|nil user) -> (User | nil)
 end

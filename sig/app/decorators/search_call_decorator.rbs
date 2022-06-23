@@ -25,6 +25,9 @@ class SearchCallDecorator < BaseDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
@@ -33,7 +36,7 @@ class SearchCallDecorator < BaseDecorator
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Hash] opt                 Passed to super.
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -51,25 +54,25 @@ class SearchCallDecorator < BaseDecorator
   #
   # @see #model_field_values
   #
-  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Specified field selections from the given SearchCall instance.
   #
   # @param [SearchCall, Hash, nil] item   Default: `#object`
-  # @param [Hash]                  opt    Passed to super
+  # @param [Hash]                  opt    Passed to super.
   #
   # @return [Hash{String=>ActiveSupport::SafeBuffer}]
   #
-  def model_field_values: (?SearchCall|symHash|nil item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
+  def model_field_values: (?(SearchCall|symHash|nil) item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
 
   # Element containing a field name.
   #
@@ -80,7 +83,7 @@ class SearchCallDecorator < BaseDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_call_field: (String|Symbol field, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_call_field: ((String|Symbol) field, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Element containing one or more field values.
   #
@@ -92,7 +95,7 @@ class SearchCallDecorator < BaseDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_call_value: (String|Numeric|anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_call_value: ((String|Numeric|anyArray) value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Element separating multiple values.
   #

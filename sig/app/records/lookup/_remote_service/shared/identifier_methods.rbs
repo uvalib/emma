@@ -4,12 +4,39 @@ module Lookup::RemoteService::Shared::IdentifierMethods
   include Api::Shared::IdentifierMethods
   include Lookup::RemoteService::Shared::CommonMethods
 
-  def best_identifier:  () -> (String | nil)
-  def identifier_list:  () -> strArray
-  def identifier_table: () -> lookupRequestHash
-  def isbn:             () -> (String | nil)
+  # A unique identifier for this catalog title.
+  #
+  # @return [String, nil]
+  #
+  def best_identifier: () -> (String | nil)
 
+  # identifier_list
+  #
+  # @return [Array<String>]
+  #
+  def identifier_list: () -> strArray
+
+  # identifier_table
+  #
+  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
+  #
+  def identifier_table: () -> lookupRequestHash
+
+  # @private
+  # @type [Hash{Symbol=>String}]
   ID_SORT: Hash[Symbol,String]
 
+  # id_sort_key
+  #
+  # @param [PublicationIdentifier]
+  #
+  # @return [Array<String>]
+  #
   def id_sort_key: (PublicationIdentifier id) -> strArray
+
+  # The ISBN (if present), preferring ISBN_13 over ISBN_10.
+  #
+  # @return [String, nil]
+  #
+  def isbn: () -> (String | nil)
 end

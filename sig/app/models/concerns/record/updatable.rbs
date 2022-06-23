@@ -53,7 +53,7 @@ module Record::Updatable
     #
     # @see #dynamic_set_fields
     #
-    def enum_methods: (symHash|Symbol|String cols, ?Array[Symbol|String]? vals) -> void
+    def enum_methods: ((symHash|Symbol|String) cols, ?(Array[Symbol|String]|nil) vals) -> void
   end
 
   # Methods to be added to the including record class.
@@ -66,10 +66,37 @@ module Record::Updatable
 
     include ActiveRecord::AttributeMethods
 
-    def dynamic_get_field: (Symbol|String column) -> untyped
+    # Get the current real-time value of a database field.
+    #
+    # @param [Symbol, String] column  Database field name.
+    #
+    # @return [Any]
+    #
+    def dynamic_get_field: ((Symbol|String) column) -> untyped
 
-    def dynamic_set_field: (Symbol|String column, untyped new_value) -> (bool | nil)
+    # Dynamically update a database column.
+    #
+    # @param [String, Symbol] column
+    # @param [Any, nil]       new_value
+    #
+    # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
+    #
+    # @return [Boolean, nil]            Nil if the record has been deleted.
+    #
+    def dynamic_set_field: ((Symbol|String) column, untyped new_value) -> (bool | nil)
 
+    # Dynamically update multiple database columns.
+    #
+    # If the record does not yet exist in the database, only the model object
+    # is updated.  If the record does exist then it is updated dynamically in
+    # the database as well.
+    #
+    # @param [Hash] pairs
+    #
+    # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
+    #
+    # @return [Boolean, nil]            Nil if the record has been deleted.
+    #
     def dynamic_set_fields: (symHash pairs) -> (bool | nil)
   end
 

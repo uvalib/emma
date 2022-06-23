@@ -11,9 +11,6 @@ module Bs::Api::Common
   #
   # @see file:config/locales/types/bookshare.en.yml *en.emma.bookshare.type*
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   CONFIGURATION: Hash[Symbol,symHash]
 
   # Enumeration scalar type names and properties.

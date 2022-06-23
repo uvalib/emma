@@ -9,7 +9,7 @@ module BookshareService::Identity
   #
   # @return [String]
   #
-  def name_of: (User|String|nil user) -> String
+  def name_of: ((User|String|nil) user) -> String
 
   # Set the user for the current session.
   #
@@ -19,5 +19,5 @@ module BookshareService::Identity
   #
   # @return [void]
   #
-  def set_user: (User|nil u) -> void
+  def set_user: ((User|nil) u) -> void
 end

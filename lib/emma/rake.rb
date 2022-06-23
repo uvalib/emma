@@ -56,7 +56,9 @@ module Emma::Rake
   #
   # @return [void]
   #
+  #--
   # noinspection RubyNilAnalysis
+  #++
   def subtask(name, args = nil)
     hash =
       case args
@@ -89,11 +91,9 @@ module Emma::Rake
   #
   # @return [Array<String,nil>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def task_options(*flags)
     flags, args = flags.partition { |f| f.is_a?(String) || f.is_a?(Symbol) }
+    # noinspection RubyMismatchedReturnType
     flags.map { |flag| task_option(flag, args) }
   end
 

@@ -50,9 +50,6 @@ module Emma::Json
   # If opt[:symbolize_keys] is explicitly *false* then this causes all result
   # keys to be converted to strings.
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-  # +
   def json_parse: (untyped arg, ?log: bool, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | anyHash | nil)
 
   # Attempt to interpret *arg* as JSON if it is a string.
@@ -64,7 +61,7 @@ module Emma::Json
   #
   # @return [Hash, Array<Hash>, Any, nil]
   #
-  def safe_json_parse: (untyped arg, ?default: (untyped|:original), **untyped opt) -> (Array[anyHash] | anyHash | untyped | nil)
+  def safe_json_parse: (untyped arg, ?default: untyped|:original, **untyped opt) -> (Array[anyHash] | anyHash | untyped | nil)
 
   # json_render
   #
@@ -122,7 +119,7 @@ module Emma::Json
   #
   # @param [Any,nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
-  # @param [Hash]    opt
+  # @param [Hash]    opt              Passed to #json_render.
   #
   # @raise [MultiJson::ParseError]
   # @raise [RuntimeError]

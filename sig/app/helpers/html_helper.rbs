@@ -2,34 +2,41 @@
 #
 module HtmlHelper
   include CssHelper
+
   include EncodingHelper
 
   # Short-cut for generating an HTML '<div>' element.
   #
-  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
-  # @param [Proc]                block  Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_div: (*untyped args) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_div: ((String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+              | ((String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+              | (                                                 ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Short-cut for generating an HTML '<span>' element.
   #
-  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
-  # @param [Proc]                block  Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_span: (*untyped args) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_span: ((String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+               | ((String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+               | (                                                 ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Short-cut for generating an HTML '<button>' element.
   #
-  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
-  # @param [Proc]                block  Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_button: (*untyped args) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_button: ((String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+                 | ((String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+                 | (                                                 ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Short-cut for generating an HTML element which normalizes element contents
   # provided via the parameter list and/or the block.
@@ -38,7 +45,7 @@ module HtmlHelper
   # then it defaults to 'div'.
   #
   # @param [Symbol, Integer, nil] tag
-  # @param [Array<Any,nil>]       args
+  # @param [Array<*>]             args
   #
   # @option args.last [String] :separator
   #
@@ -53,31 +60,34 @@ module HtmlHelper
   # == Variations
   # +
   #
-  # @overload html_tag(tag, content, options = nil, escape = true)
-  #   @param [Symbol, String, nil]                    tag
-  #   @param [ActiveSupport::SafeBuffer, String, nil] content
-  #   @param [Hash]                                   options
-  #   @param [Boolean]                                escape
+  # @overload html_tag(tag, content, *more_content, options = nil)
+  #   @param [Symbol, String, nil]                         tag
+  #   @param [ActiveSupport::SafeBuffer, String, nil]      content
+  #   @param [Array<ActiveSupport::SafeBuffer,String,nil>] more_content
+  #   @param [Hash, nil]                                   options
   #
-  # @overload html_tag(tag, options = nil, escape = true, &block)
-  #   @param [Symbol, String, nil]                    tag
-  #   @param [Hash]                                   options
-  #   @param [Boolean]                                escape
-  #   @param [Proc]                                   block
+  # @overload html_tag(tag, options = nil, &block)
+  #   @param [Symbol, String, nil]                         tag
+  #   @param [Hash, nil]                                   options
+  #   @param [Proc]                                        block
   #
-  def html_tag: (Symbol|Integer|nil tag, *untyped args) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_tag: ((Symbol|Integer|nil) tag, (String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+              | ((Symbol|Integer|nil) tag, (String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+              | ((Symbol|Integer|nil) tag,                                                  ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Invoke #form_tag after normalizing element contents provided via the
   # parameter list and/or the block.
   #
   # @param [String, Hash] url_or_path
-  # @param [Array<Any>]   args        Passed to #form_tag except for:
+  # @param [Array<*>]     args        Passed to #form_tag except for:
   #
   # @option args.last [String] :separator   Default: "\n"
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_form: (String|symHash url_or_path, *untyped args) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_form: ((String|symHash) tag, (String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+               | ((String|symHash) tag, (String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+               | ((String|symHash) tag,                                                  ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # An "empty" element that can be used as a placeholder.
   #
@@ -106,7 +116,9 @@ module HtmlHelper
   #
   # @return [Hash]
   #
-  def html_options: (symHash|nil html_opt) -> symHash
+  # @note Currently unused.
+  #
+  def html_options: ((symHash|nil) html_opt) -> symHash
 
   # Retain only entries which are valid HTML attributes.
   #
@@ -125,7 +137,7 @@ module HtmlHelper
   #
   # @see #merge_html_options!
   #
-  def merge_html_options: (symHash|nil html_opt, *(symHash|nil) args) -> symHash
+  def merge_html_options: ((symHash|nil) html_opt, *(symHash|nil) args) -> symHash
 
   # Merge values from one or more hashes into an options hash.
   #
@@ -136,9 +148,6 @@ module HtmlHelper
   #
   # @see #append_css!
   #
-  # -
-  # noinspection RubyMismatchedReturnType
-  # +
   def merge_html_options!: (symHash html_opt, *(symHash|nil) args) -> symHash
 
   private

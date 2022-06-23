@@ -1,5 +1,4 @@
-# View helper methods supporting display of Model instances (both database
-# items and API messages).
+# Methods supporting display of collections of Model instances.
 #
 module BaseCollectionDecorator::List
   include BaseDecorator::List
@@ -15,8 +14,8 @@ module BaseCollectionDecorator::List
   # @return [Array<ActiveSupport::SafeBuffer>]  If *separator* set to *nil*.
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render: (?index: Integer, ?row: Integer, ?skip: symArray?, ?separator: String, **untyped opt) -> ActiveSupport::SafeBuffer
-            | (?index: Integer, ?row: Integer, ?skip: symArray?, separator: nil,     **untyped opt) -> Array[ActiveSupport::SafeBuffer]
+  def render: (?index: Integer, ?row: Integer, ?skip: symArray|nil, ?separator: String, **untyped opt) -> ActiveSupport::SafeBuffer
+            | (?index: Integer, ?row: Integer, ?skip: symArray|nil,  separator: nil,    **untyped opt) -> Array[ActiveSupport::SafeBuffer]
 
   # Text for #no_records_row. # TODO: I18n
   #
@@ -44,13 +43,13 @@ module BaseCollectionDecorator::List
   # @param [Integer, #to_i, nil] total    Default: count.
   # @param [Integer, #to_i, nil] records  Number of API records for this page.
   # @param [Integer, #to_i, nil] page     Default: 1.
-  # @param [Integer, #to_i, nil] size     Default: TODO: default page size
+  # @param [Integer, #to_i, nil] size     Default: #DEFAULT_PAGE_SIZE
   # @param [Integer, #to_i, nil] row      Default: 1.
   # @param [Hash]    opt                  Passed to #list_controls.
   #
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
-  def index_controls: (?count: Integer?, ?total: Integer?, ?records: Integer?, ?page: Integer?, ?size: Integer?, ?row: Integer?, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
+  def index_controls: (?count: Integer|nil, ?total: Integer|nil, ?records: Integer|nil, ?page: Integer|nil, ?size: Integer|nil, ?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
 
   # Optional controls to modify the display or generation of the item list in
   # the order of display.
@@ -80,6 +79,8 @@ module BaseCollectionDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
+  # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
+  #
   def list_styles: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Optional list result type controls in line with the top pagination control.
@@ -87,6 +88,8 @@ module BaseCollectionDecorator::List
   # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see file:app/assets/javascripts/controllers/search.js *$mode_menu*
   #
   def list_results: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
@@ -96,7 +99,21 @@ module BaseCollectionDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def list_filter:         (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
+  #
+  def list_filter: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
+  # Control the selection of filters displayed by #list_filter.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
+  #
   def list_filter_options: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  private
+
+  def self.included: (Module base) -> void
 end

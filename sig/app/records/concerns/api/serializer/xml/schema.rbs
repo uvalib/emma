@@ -69,9 +69,6 @@ module Api::Serializer::Xml::Schema
   #
   # @type [Hash{String=>String}]
   #
-  # -
-  # noinspection RubyStringKeysInHashInspection
-  # +
   DEFAULT_XML_NAMESPACES: Hash[String,String]
 
   # If this value is *false* then #attribute schema values are serialized
@@ -129,5 +126,5 @@ module Api::Serializer::Xml::Schema
   #
   # @return [String]
   #
-  def element_name: (Symbol|String|Class name, ?(Symbol|nil) mode) -> String
+  def element_name: ((Symbol|String|Class) name, ?(Symbol|nil) mode) -> String
 end

@@ -1,4 +1,4 @@
-# View helper methods supporting manipulation of Model instance fields.
+# Methods supporting manipulation of Model instance fields.
 #
 module BaseDecorator::Fields
   include Emma::Json
@@ -17,15 +17,13 @@ module BaseDecorator::Fields
   #
   # @return [Hash]
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-  # +
   def field_values: (?(Model|anyHash|nil) item) -> anyHash
 
   # field_pairs
   #
-  # @param [Model, Hash, nil]    item     Passed to #field_values.
-  # @param [String, Symbol, nil] action
+  # @param [Model, Hash, nil]           item        Passed to #field_values.
+  # @param [String, Symbol, nil]        action
+  # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -36,28 +34,64 @@ module BaseDecorator::Fields
   # the configuration for :file_data.  (This allows [:file_data][:id] to be
   # associated with the proper field configuration.)
   #
-  # -
-  # noinspection RubyMismatchedParameterType
-  # +
   def field_pairs: (?(Model|anyHash|nil) item, ?action: String|Symbol|nil) -> Hash[Symbol,symHash]
 
+  # Field type indicators mapped on to related class(es).
+  #
+  # @type [Hash{Symbol=>Array<Class>}]
+  #
   RENDER_FIELD_TYPE_TABLE:  Hash[Symbol,Array[Class]]
-  RENDER_FIELD_TYPE:        Hash[Class,Symbol]
-  REPLACE_FIELD_TYPE:       Hash[Symbol,Symbol]
 
+  # Mapping of actual type to the appropriate field type indicator.
+  #
+  # @type [Hash{Class=>Symbol}]
+  #
+  RENDER_FIELD_TYPE: Hash[Class,Symbol]
+
+  # Convert certain field types.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REPLACE_FIELD_TYPE: Hash[Symbol,Symbol]
+
+  # render_field_item
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt               Passed to render method except for:
+  #
+  # @option opt [String] :base
+  # @option opt [String] :name
+  # @option opt [Symbol] :type
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def render_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Local options for #render_check_box.
+  #
+  # @type [Array<Symbol>]
+  #
   CHECK_OPTIONS: symArray
 
+  # render_check_box
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def render_check_box: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # This is a "hook" to allow customization by SearchDecorator.
   #
+  # @param [Symbol]    field
   # @param [Hash, nil] config
   #
   # @return [Hash]
   #
-  def field_properties: (symHash|nil config) -> symHash
+  def field_properties: (Symbol field, ?(symHash|nil) config) -> symHash
 
   # Indicate whether the value is a valid range type.
   #
@@ -79,7 +113,7 @@ module BaseDecorator::Fields
   # :disabled attribute prevents those fields from being included in the data
   # sent with the form submission.
   #
-  def normalize_attributes!: (**untyped opt) -> symHash
+  def normalize_attributes!: (symHash opt) -> symHash
 
   # The defined levels for rendering an item hierarchically.
   #
@@ -109,7 +143,7 @@ module BaseDecorator::Fields
   #   @param [Array<Symbol>]       array
   #   @return [Array<String>]
   #
-  def field_scopes: (symArray|Symbol|String|nil value) -> symArray
+  def field_scopes: ((symArray|Symbol|String|nil) value) -> symArray
 
   # EMMA data field prefixes with trailing underscore for #model_html_id.
   #
@@ -129,15 +163,12 @@ module BaseDecorator::Fields
   #
   # @return [String]
   #
-  def model_html_id: (Symbol|String|nil base) -> String
+  def model_html_id: ((Symbol|String|nil) base) -> String
 
   # Match a major section title in a table-of-contents listing.
   #
   # @type [Regexp]
   #
-  # -
-  # noinspection SpellCheckingInspection
-  # +
   SECTION_TITLE_RE: Regexp
 
   # For use with String#scan to step through quote/attribute pairs.
@@ -159,9 +190,6 @@ module BaseDecorator::Fields
   # layout of information, and this method may not be that beneficial in those
   # cases.
   #
-  # -
-  # noinspection RubyMismatchedReturnType
-  # +
   def format_description: (String text) -> strArray
 
   # Seen in some IA records.
@@ -190,7 +218,6 @@ module BaseDecorator::Fields
 
   VALID_LANGUAGE: String
 
-  # TODO: I18n
   INVALID_LANGUAGE: String
 
   # Wrap invalid language values in a *span*.
@@ -237,4 +264,8 @@ module BaseDecorator::Fields
   #
   def mark_invalid_identifiers: (String   value) -> (ActiveSupport::SafeBuffer | String | nil)
                               | (strArray value) -> Array[ActiveSupport::SafeBuffer|String]
+
+  private
+
+  def self.included: (Module base) -> void
 end

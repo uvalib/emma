@@ -8,7 +8,22 @@
 class Lookup::GoogleBooks::Record::Identifier < Lookup::GoogleBooks::Api::Record
   include Lookup::GoogleBooks::Shared::CommonMethods
 
-  def to_s:   () -> String
+  def initialize: (?untyped? src, **untyped opt) -> void
+
+  # to_s
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # blank?
+  #
   def blank?: () -> bool
-  def value:  () -> String
+
+  # Defined so that an instance of this class has a signature similar to
+  # PublicationIdentifier.
+  #
+  # @return [String]
+  #
+  def value: () -> String
 end

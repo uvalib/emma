@@ -32,26 +32,139 @@ module Record::EmmaIdentification
   #
   def sid_column: () -> Symbol
 
+  # Extract the submission ID from the given item.
+  #
+  # @param [Model, Hash, String, Any] item
+  # @param [Hash]                     opt
+  #
+  # @option opt [Symbol] :sid_key     Default: `#sid_column`.
+  #
+  # @return [String]                  The submission ID.
+  # @return [nil]                     No submission ID could be determined.
+  #
   def sid_value: (untyped item, **untyped opt) -> (String | nil)
 
+  # Indicate whether *value* could be an EMMA submission ID.
+  #
+  # @param [Any] value                Must be a String.
+  #
   def valid_sid?: (untyped value) -> bool
 
+  # Indicate whether the record is an EMMA-native item.
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  #
   def emma_native?: (untyped item) -> bool
 
+  # Extract the repository associated with the item.
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  #
+  # @return [String]                  One of EmmaRepository#values.
+  # @return [nil]                     If *item* did not indicate a repository.
+  #
+  # == Usage Notes
+  # Depending on the context, the caller may need to validate the result with
+  # EmmaRepository#valid?.
+  #
   def repository_value: (untyped item) -> (String | nil)
 
+  # The full name of the indicated repository.
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  #
+  # @return [String]                  The name of the associated repository.
+  # @return [nil]                     If *src* did not indicate a repository.
+  #
   def repository_name: (untyped item) -> (String | nil)
 
+  # Extract the EMMA index entry identifier from the item.
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  # == Usage Notes
+  # If *item* is a String, it is assumed to be good.  Depending on the context,
+  # the caller may need to validate the result with #valid_record_id?.
+  #
   def record_id: (untyped item) -> (String | nil)
 
-  def valid_record_id?: (untyped item, ?add_repo: (String|strArray)?, ?add_fmt: (String|strArray)?) -> bool
+  # Indicate whether *item* is or contains a valid EMMA index record ID.
+  #
+  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [String, Array<String>]            add_repo
+  # @param [String, Array<String>]            add_fmt
+  #
+  def valid_record_id?: (untyped item, ?add_repo: String|strArray|nil, ?add_fmt: String|strArray|nil) -> bool
 
-  def generate_submission_id: (?(Time|DateTime)? time, ?prefix: bool|String) -> String
+  # Create a unique submission item identifier.
+  #
+  # @param [Time, DateTime, nil] time
+  # @param [String, Boolean] prefix   Character(s) leading the numeric portion,
+  #                                     *true* for the default prefix, or
+  #                                     *false* for no prefix.
+  #
+  # @return [String]
+  #
+  # @see #sid_counter
+  #
+  # == Implementation Notes
+  # The result is a (single-character) prefix followed by 8 hexadecimal digits
+  # which represent seconds into the epoch followed by a single random letter
+  # from 'g' to 'z', followed by two decimal digits from "00" to "99" based on
+  # a randomly initialized counter.  This arrangement allows bulk upload (which
+  # occurs on a single thread) to be able to generate unique IDs in rapid
+  # succession.
+  #
+  # Leading with a non-hex-digit guarantees that submission ID's are distinct
+  # from database ID's (which are only decimal digits).
+  #
+  def generate_submission_id: (?(Time|DateTime|nil) time, ?prefix: bool|String) -> String
 
+  # Counter for the trailing portion of the generated submission ID.
+  #
+  # This provides a per-thread value in the range 0..99 which can be used to
+  # differentiate submission IDs which are generated in rapid succession (e.g.,
+  # for bulk upload).
+  #
+  # @return [Integer]
+  #
   def sid_counter: () -> Integer
 
-  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol?, **untyped opt) -> ApplicationRecord
+  # Return with the specified record or *nil* if one could not be found.
+  #
+  # @param [*]           item
+  # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
+  # @param [Symbol, nil] meth         Calling method (for logging).
+  # @param [Hash]        opt          Used if *item* is *nil* except for:
+  #
+  # @option opt [Symbol] :id_key      Default: `#id_column`.
+  # @option opt [Symbol] :sid_key     Default: `#sid_column`.
+  # @option opt [Symbol] :alt_id_key  E.g. :entry_id, :phase_id, :action_id
+  #
+  # @raise [Record::StatementInvalid]   If :id/:sid not given.
+  # @raise [Record::NotFound]           If *item* was not found.
+  #
+  # @return [ApplicationRecord<Model>, nil]
+  #
+  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> (ApplicationRecord | nil)
 
+  # Interpret an identifier as either an :id or :submission_id, generating a
+  # field/value pair for use with #find_by or #where.
+  #
+  # If :sid_key set to *nil* then the result will always be in terms of :id_key
+  # (which cannot be set to *nil*).
+  #
+  # @param [String, Symbol, Integer, Hash, Model, Any, nil] v
+  # @param [Hash]                                          opt
+  #
+  # @option opt [Symbol] :id_key      Default: `#id_column`.
+  # @option opt [Symbol] :sid_key     Default: `#sid_column`.
+  #
+  # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
+  #
   def id_term: (untyped v, **untyped opt) -> Hash[Symbol,(String|Integer|nil)]
 
   # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
@@ -60,7 +173,25 @@ module Record::EmmaIdentification
   #
   RNG_TERM: String
 
-  def expand_id_range: (String|Integer|Model id, **untyped opt) -> strArray
+  # Interpret an ID string as a range of IDs if possible.
+  #
+  # The method supports a mixture of database IDs (which are comprised only of
+  # decimal digits) and submission IDs (which always start with a non-digit),
+  # however a submission ID cannot be part of a range.
+  #
+  # @param [String, Integer, Model] id
+  # @param [Hash]                   opt
+  #
+  # @option opt [Integer]     :min_id   Default: `#minimum_id`.
+  # @option opt [Integer]     :max_id   Default: `#maximum_id`.
+  # @option opt [Symbol]      :id_key   Default: `#id_column`.
+  # @option opt [Symbol, nil] :sid_key  Default: `#sid_column`.
+  #
+  # @return [Array<String>]
+  #
+  # @see #expand_ids
+  #
+  def expand_id_range: ((String|Integer|Model) id, **untyped opt) -> strArray
 
   # Class methods automatically added to the including record class.
   #

@@ -3,6 +3,12 @@
 module LayoutHelper::SearchFilters
   include LayoutHelper::Common
 
+  include GridHelper
+
+  include ParamsHelper
+
+  include SearchModesHelper
+
   module ClassMethods
     include Emma::Common
 
@@ -13,7 +19,7 @@ module LayoutHelper::SearchFilters
     #
     # @return [Hash]
     #
-    def search_menu_config: (Symbol|String menu_name, symHash? properties) -> symHash
+    def search_menu_config: ((Symbol|String) menu_name, (symHash|nil) properties) -> symHash
 
     # current_menu_config
     #
@@ -24,7 +30,7 @@ module LayoutHelper::SearchFilters
     #
     # @see #SEARCH_MENU_MAP
     #
-    def current_menu_config: (Symbol|String menu_name, ?target: (Symbol|String)?, **untyped ignored) -> symHash
+    def current_menu_config: ((Symbol|String) menu_name, ?target: Symbol|String|nil, **untyped ignored) -> symHash
 
     # Generate an array of label/value pairs to be used with #select_tag.
     #
@@ -59,9 +65,6 @@ module LayoutHelper::SearchFilters
     #   @param [Array<Array>]  menu_pairs
     #   @param [Hash]          opt
     #
-    # -
-    # noinspection RubyMismatchedArgumentType
-    # +
     def make_menu: (Symbol menu_name, (String|Symbol|Class|symHash|Array[[untyped,untyped]]) values, **untyped opt) -> Array[[String,String]]
 
     # Format a menu label.
@@ -88,7 +91,7 @@ module LayoutHelper::SearchFilters
     # This method is only engaged for menus with values that are not backed by
     # configuration information that maps values to labels.
     #
-    def make_menu_label: (Symbol|String menu_name, String label, **untyped opt) -> String
+    def make_menu_label: ((Symbol|String) menu_name, String label, **untyped opt) -> String
 
     # Create reverse sort entries.
     #
@@ -138,9 +141,6 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   SEARCH_FILTERS_ROOT: symHash
 
   # The value 'en.emma.search_filters._default' contains each of the properties
@@ -168,6 +168,8 @@ module LayoutHelper::SearchFilters
   # URL parameters for all search control menus.
   #
   # @type [Array<Symbol>]
+  #
+  # @note Currently unused.
   #
   SEARCH_PARAMETERS: symArray
 
@@ -204,46 +206,10 @@ module LayoutHelper::SearchFilters
   #
   SEARCH_FILTERS_START_EXPANDED: bool
 
-  # Indicate whether selecting a search menu value takes immediate effect.
-  #
-  # If not menu selection value(s) are only transmitted via the search submit
-  # button.
-  #
-  # @type [Boolean]
-  #
-  IMMEDIATE_SEARCH: bool
-
-  # Search display style variants.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_STYLES: symArray
-
-  # The default search display style.
-  #
-  # @type [Symbol]
-  #
-  DEFAULT_STYLE: Symbol
-
-  # Search result display variants.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RESULTS: symArray
-
-  # The default search result display.
-  #
-  # @type [Symbol]
-  #
-  DEFAULT_RESULTS: Symbol
-
   # Configuration for advanced search values.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   ADV_SEARCH_CONFIG: symHash
 
   # Labels/tooltips for expanding and contracting search filters.
@@ -278,7 +244,7 @@ module LayoutHelper::SearchFilters
   # @see #after_menu
   # @see #reset_menu
   #
-  def search_filter_container: (?target: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_filter_container: (?target: String|Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A control for toggling the visibility of advanced search filter controls.
   #
@@ -288,20 +254,6 @@ module LayoutHelper::SearchFilters
   #
   def advanced_search_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Indicate whether selecting a search menu value takes immediate effect.
-  #
-  # If not menu selection value(s) are only transmitted via the search submit
-  # button.
-  #
-  # @type [Boolean]
-  #
-  # == Usage Notes
-  # This should normally be *false* because it a mode of operation that is
-  # generally not consider accessibility-friendly and, also, skews search call
-  # statistics.
-  #
-  def immediate_search?: () -> bool
-
   # A hidden HTML elements which indicates that the page has been constructed
   # with search filters which cause a new search whenever a value is selected.
   #
@@ -309,58 +261,6 @@ module LayoutHelper::SearchFilters
   # @return [nil]
   #
   def immediate_search_marker: () -> (ActiveSupport::SafeBuffer | nil)
-
-  # Get the display mode for search results.
-  #
-  # @return [Symbol]
-  #
-  def search_results: () -> Symbol
-
-  # Indicate whether search results are displayed hierarchically (by title).
-  #
-  def title_results?: () -> bool
-
-  # Indicate whether search results are displayed literally (per file).
-  #
-  def file_results?: () -> bool
-
-  # Indicate whether search debug controls should be displayed.
-  #
-  def search_debug?: () -> bool
-
-  # Indicate whether search dev controls should be displayed.
-  #
-  def search_dev?: () -> bool
-
-  # Configuration conditionals.
-  #
-  # @type [Hash{Symbol=>Proc,Symbol}]
-  #
-  CONFIG_CONDITION: Hash[Symbol,Proc|Symbol]
-
-  # Indicate whether the guard condition is satisfied.
-  #
-  # @param [Array<Symbol,String>, Symbol, String, Boolean, nil] guard
-  #
-  def permitted_by?: (?(Symbol|String|bool|Array[Symbol|String])? guard) -> bool
-
-  # Normalize :active property values for use by #permitted_by?.
-  #
-  # @param [Array<Symbol,String,Boolean,nil>, Symbol, String, Boolean, nil] val
-  #
-  # @return [TrueClass, FalseClass, Array<Symbol>]
-  #
-  def self.guard_values: (Symbol|String|bool|nil|Array[Symbol|String|bool|nil] val) -> (bool | symArray)
-
-  # Get the display style variant for search results.
-  #
-  # @return [Symbol]
-  #
-  def search_style: () -> Symbol
-
-  # Indicate whether search results are displayed in the normal way.
-  #
-  def default_style?: () -> bool
 
   # Options consumed by internal methods which should not be passed on along to
   # the methods which generate HTML elements.
@@ -396,7 +296,7 @@ module LayoutHelper::SearchFilters
   #
   def sort_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-  # Perform a search specifying a results page size.  (Default: `#page_size`.)
+  # Perform a search specifying a results page size.
   #
   # @param [Symbol] menu_name           Control name (should be :size).
   # @param [Hash]   opt                 Passed to #menu_container.
@@ -446,9 +346,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
   def generic_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   private
@@ -463,10 +360,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]     HTML label and control elements.
   # @return [nil]                           Menu is not available for *target*.
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
-  def menu_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def menu_container: (Symbol menu_name, ?label: String|nil, ?target: String|Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A dropdown menu element.
   #
@@ -496,10 +390,7 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def menu_control: (Symbol menu_name, ?target: (String|Symbol)?, ?selected: (String|anyArray)?, ?label_id: (String|Symbol)?, ?disabled: bool?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def menu_control: (Symbol menu_name, ?target: String|Symbol|nil, ?selected: String|anyArray|nil, ?label_id: String|Symbol|nil, ?disabled: bool|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A label associated with a dropdown menu element.
   #
@@ -508,10 +399,7 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
-  def menu_label: (String|Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer
+  def menu_label: ((String|Symbol) menu_name, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # menu_tooltip
   #
@@ -521,10 +409,7 @@ module LayoutHelper::SearchFilters
   # @return [String]                    Tooltip text.
   # @return [nil]                       If no tooltip was defined.
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
-  def menu_tooltip: (String|Symbol menu_name, **untyped opt) -> (String | nil)
+  def menu_tooltip: ((String|Symbol) menu_name, **untyped opt) -> (String | nil)
 
   # Date selection for the end of a date range.
   #
@@ -534,9 +419,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
   # @return [nil]                       If menu is not available.
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
   def before_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Date selection for the beginning of a date range.
@@ -547,9 +429,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
   # @return [nil]                       If menu is not available.
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
   def after_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A date control preceded by a label (if provided).
@@ -564,10 +443,7 @@ module LayoutHelper::SearchFilters
   #
   # @see #menu_container
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
-  def date_container: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def date_container: (Symbol menu_name, ?label: String|nil, ?target: String|Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A date selection element.
   #
@@ -592,7 +468,7 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def date_control: (Symbol menu_name, ?label: String?, ?target: (String|Symbol)?, ?selected: (String|Date)?, ?label_id: (String|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def date_control: (Symbol menu_name, ?label: String|nil, ?target: String|Symbol|nil, ?selected: String|Date|nil, ?label_id: String|Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A label associated with a dropdown menu element.
   #
@@ -601,9 +477,6 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was configured or
   #                                         provided.
-  # -
-  # noinspection DuplicatedCode
-  # +
   def date_label: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # date_tooltip
@@ -614,9 +487,6 @@ module LayoutHelper::SearchFilters
   # @return [String]                  Tooltip text.
   # @return [nil]                     If no tooltip was defined.
   #
-  # -
-  # noinspection DuplicatedCode
-  # +
   def date_tooltip: (Symbol menu_name, **untyped opt) -> (String | nil)
 
   # The control for resetting filter menu selections to their default state.
@@ -677,7 +547,7 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def control_label: (String|Symbol name, ?target: (String|Symbol)?, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def control_label: ((String|Symbol) name, ?target: String|Symbol|nil, ?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Indicate whether the menu is already sorted.
   #
@@ -713,7 +583,7 @@ module LayoutHelper::SearchFilters
   # This method overrides:
   # @see ClassMethods#current_menu_config
   #
-  def current_menu_config: (Symbol|String menu_name, ?target: (Symbol|String)?, **untyped ignored) -> symHash
+  def current_menu_config: ((String|Symbol) menu_name, ?target: Symbol|String|nil, **untyped ignored) -> symHash
 
   # Get the configured tooltip for the control.
   #
@@ -723,5 +593,5 @@ module LayoutHelper::SearchFilters
   # @return [String]                  Tooltip text.
   # @return [nil]                     If no tooltip was defined.
   #
-  def config_tooltip: (Symbol|String name, **untyped opt) -> (String | nil)
+  def config_tooltip: ((Symbol|String) name, **untyped opt) -> (String | nil)
 end

@@ -41,7 +41,6 @@ class ReadingList < ApplicationRecord
   # @param [Title, Artifact, String, *] item
   #
   def include?(item)
-    # noinspection RubyMismatchedArgumentType
     has_title?(item) || has_artifact?(item)
   end
 

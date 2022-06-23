@@ -441,7 +441,6 @@ module BaseDecorator::Hierarchy
     return true if key.blank? || key.start_with?('_')
     ok = { hash: [], array: [] }
     if except.is_a?(Hash)
-      # noinspection RubyMismatchedArgumentType
       ok.merge!(except)
     elsif except
       # noinspection RubyMismatchedReturnType

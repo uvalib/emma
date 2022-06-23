@@ -1,9 +1,11 @@
-# View helper methods supporting creation of Model instances (both database
-# items and API messages).
+# Methods supporting the creation and modification of Model instances.
 #
 module BaseDecorator::Form
   include BaseDecorator::List
 
+  # Configuration-related values which are available to either the class or the
+  # instance.
+  #
   module Values
 
     attr_reader field_groups:   Hash[Symbol,symHash]
@@ -24,12 +26,17 @@ module BaseDecorator::Form
 
     # Form action button configuration.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @type [Hash{Symbol=>Hash}]
     #
     def form_actions: () -> Hash[Symbol,symHash]
 
+    # Form action button configuration.
+    #
+    # @param [Array<Symbol>] actions
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
     def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
-
   end
 
   include Values
@@ -47,13 +54,13 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # Compare with:
-  # BaseDecorator::List#render_field_values
+  # == Implementation Notes
+  # Compare with BaseDecorator::List#render_field_values
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
-  def render_form_fields: (?action: Symbol|String|nil, ?pairs: anyHash?, ?row_offset: Integer?, ?separator: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  # Special handling for :effective_id based on the Hash value set up in
+  # AccountDecorator#form_fields.
+  #
+  def render_form_fields: (?action: Symbol|String|nil, ?pairs: anyHash|nil, ?row_offset: Integer|nil, ?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single label/value pair.
   #
@@ -69,19 +76,19 @@ module BaseDecorator::Form
   # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
   # @return [nil]                       If *value* is blank.
   #
-  # Compare with:
-  # BaseDecorator::List#render_pair
+  # == Implementation Notes
+  # Compare with BaseDecorator::List#render_pair
   #
-  def render_form_pair: (String|Symbol label, untyped value, ?field: Symbol?, ?index: Integer?, ?row: Integer?, ?disabled: bool?, ?required: bool?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def render_form_pair: ((String|Symbol) label, untyped value, ?field: Symbol|nil, ?index: Integer|nil, ?row: Integer|nil, ?disabled: bool|nil, ?required: bool|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Single-select menu - drop-down.
   #
-  # @param [String] name
-  # @param [Array]  value             Selected value(s) from `range#values`.
-  # @param [Class]  range             A class derived from EnumType whose
+  # @param [String]      name
+  # @param [Array]       value        Selected value(s) from `range#values`.
+  # @param [Class|Array] range        A class derived from EnumType whose
   #                                     #values method will be used to populate
   #                                     the menu.
-  # @param [Hash]   opt               Passed to #select_tag except for:
+  # @param [Hash]        opt          Passed to #select_tag except for:
   #
   # @option opt [String] :name        Overrides *name*
   # @option opt [String] :base        Name and id for *select*; default: *name*
@@ -110,7 +117,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *updateFieldsetCheckboxes()*
+  # @see file:javascripts/feature/model-form.js *updateFieldsetCheckboxes()*
   #
   def render_form_menu_multi: (String name, anyArray value, range: Class, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -125,7 +132,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *updateFieldsetInputs()*
+  # @see file:javascripts/feature/model-form.js *updateFieldsetInputs()*
   #
   def render_form_input_multi: (String name, anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -137,20 +144,78 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *updateTextInputField()*
+  # @see file:javascripts/feature/model-form.js *updateTextInputField()*
   #
-  def render_form_input:    (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
-  def render_form_email:    (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_input: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # render_form_email
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_form_email: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # render_form_password
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def render_form_password: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  def form_note_pair: (String|nil note, ?label: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  # Generates a line in the form associated with *opt[:'data-field']*.
+  #
+  # @param [String, nil] note
+  # @param [String, nil] label        Blank by default.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def form_note_pair: ((String|nil) note, ?label: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-  def form_input_fill: (String|nil filler, **untyped opt) -> ActiveSupport::SafeBuffer
-  def form_input_note: (String|nil note,   **untyped opt) -> ActiveSupport::SafeBuffer
+  # The leading column associated with a text note immediately below a form
+  # input element (in the trailing column).
+  #
+  # @param [String, nil] filler
+  # @param [Hash]        opt          Passed through #form_input_related_opt.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_input_fill: ((String|nil) filler, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # A text note immediately below a form input element.
+  #
+  # @param [String, nil] note
+  # @param [Hash]        opt          Passed through #form_input_related_opt.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_input_note: ((String|nil) note, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Options assumed to be related to a field element which are not retained by
+  # elements related to it (for the purpose of field grouping).
+  #
+  # @type [Array<Symbol>]
+  #
   RELATED_IGNORED_KEYS: symArray
 
-  def form_input_related_opt: (String|nil css, **untyped opt) -> symHash
+  # Modify the provided options for a field related to an form input field.
+  # Options that are assumed to be related to the actual field element are
+  # removed.
+  #
+  # @param [String, nil] css
+  # @param [Hash]        opt
+  #
+  # @return [Hash]
+  #
+  # @see file:javascripts/feature/model-form.js *updateFieldAndLabel()*
+  #
+  def form_input_related_opt: ((String|nil) css, **untyped opt) -> symHash
 
   # @private
   DEFAULT_FORM_ACTION: Symbol
@@ -171,7 +236,7 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *isFileUploader()*
   #
-  def model_form: (?label: String?, ?action: (String|Symbol)?, ?cancel: String?, ?uploader: bool?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def model_form: (?label: String|nil, ?action: String|Symbol|nil, ?cancel: String|nil, ?uploader: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # @private
   FORM_BUTTON_OPTIONS: symArray
@@ -184,17 +249,24 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_top_controls: (?ActionView::Helpers::FormBuilder? f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @yield [parts] Extend or replace control elements.
+  # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  #
+  def form_top_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # form_top_button_tray
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
   # @param [Hash]                                  opt
+  # @param [Proc]                                  block
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_top_button_tray: (?ActionView::Helpers::FormBuilder? f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @see #form_button_tray
+  #
+  def form_top_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Convenience submit and cancel buttons below the fields.
   #
@@ -204,17 +276,24 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_bottom_controls: (?ActionView::Helpers::FormBuilder? f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @yield [parts] Extend or replace control elements.
+  # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  #
+  def form_bottom_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # form_bottom_button_tray
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
   # @param [Hash]                                  opt
+  # @param [Proc]                                  block
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_bottom_button_tray:  (?ActionView::Helpers::FormBuilder? f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @see #form_button_tray
+  #
+  def form_bottom_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # form_button_tray
   #
@@ -224,7 +303,11 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_button_tray:  (?ActionView::Helpers::FormBuilder? f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @yield [parts] Extend or replace button tray elements.
+  # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  #
+  def form_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Basic form controls.
   #
@@ -234,7 +317,11 @@ module BaseDecorator::Form
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_buttons: (?label: String?, ?cancel: String?, **untyped opt) -> Array[ActiveSupport::SafeBuffer]
+  # @yield [parts] Extend or replace results.
+  # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  #
+  def form_buttons: (?label: String|nil, ?cancel: String|nil, **untyped opt) -> Array[ActiveSupport::SafeBuffer]
 
   # Form submit button.
   #
@@ -246,26 +333,30 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *submitButton()*
   #
-  def submit_button: (?action: String|Symbol|nil, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def submit_button: (?action: String|Symbol|nil, ?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Form cancel button.
   #
   # @param [String, Symbol, nil] action
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url      Default: `history.back()`.
-  # @param [Hash] opt                     Passed to #button_tag.
+  # @param [Hash]                opt      To #button_tag / LinkHelper#make_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/model-form.js *cancelButton()*
   #
-  def cancel_button: (?action: String|Symbol|nil, ?label: String?, ?url: anyHash|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def cancel_button: (?action: String|Symbol|nil, ?label: String|nil, ?url: anyHash|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Data for hidden form fields.
   #
   # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Any}]
+  #
+  # @yield [result] Add field value attributes.
+  # @yieldparam [Hash] result
+  # @yieldreturn [Hash]
   #
   def form_hidden: (**untyped opt) -> symHash
 
@@ -293,7 +384,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_fields: (?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_fields: (?pairs: anyHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Element name for field group radio buttons.
   #
@@ -303,7 +394,7 @@ module BaseDecorator::Form
 
   # Control for filtering which fields are displayed.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer <div>.
+  # @param [Hash] opt                 Passed to #html_div for outer *div*.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -326,54 +417,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def no_fields_row: (label: String, ?enable: bool?, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Field type indicators mapped on to related class(es).
-  #
-  # @type [Hash{Symbol=>Array<Class>}]
-  #
-  RENDER_FIELD_TYPE_TABLE: Hash[Symbol,Array[Class]]
-
-  # Mapping of actual type to the appropriate field type indicator.
-  #
-  # @type [Hash{Class=>Symbol}]
-  #
-  RENDER_FIELD_TYPE: Hash[Class,Symbol]
-
-  # Convert certain field types.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  REPLACE_FIELD_TYPE: Hash[Symbol,Symbol]
-
-  # render_field_item
-  #
-  # @param [String] name
-  # @param [Any]    value
-  # @param [Hash]   opt               Passed to render method except for:
-  #
-  # @option opt [String] :base
-  # @option opt [String] :name
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Local options for #render_check_box.
-  #
-  # @type [Array<Symbol>]
-  #
-  CHECK_OPTIONS: symArray
-
-  # render_check_box
-  #
-  # @param [String] name
-  # @param [Any]    value
-  # @param [Hash]   opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_check_box: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def no_fields_row: (label: String, ?enable: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate a marker which can indicate the status of an input field.
   #
@@ -385,43 +429,7 @@ module BaseDecorator::Form
   #
   def status_marker: (?status: symArray|Symbol|nil, ?label: String|Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Indicate whether the value is a valid range type.
-  #
-  # @param [Any]     range
-  # @param [Boolean] exception        If *true*, raise an exception if *false*.
-  #
-  # @raise [RuntimeError]             If not valid and *exception* is *true*.
-  #
-  def valid_range?: (untyped range, ?exception: bool) -> bool
+  private
 
-  # Translate attributes.
-  #
-  # @param [Hash] opt
-  #
-  # @return [Hash]                    The potentially-modified *opt* hash.
-  #
-  # == Implementation Notes
-  # Disabled input fields are given the :readonly attribute because the
-  # :disabled attribute prevents those fields from being included in the data
-  # sent with the form submission.
-  #
-  def normalize_attributes!: (symHash opt) -> symHash
-
-  # Generate a menu of model instances.
-  #
-  # @param [Hash] opt                 Passed to LinkHelper#page_items_menu.
-  #
-  # @option opt [User,String] :user   Defaults to `#current_user`.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Generate a prompt for #items_menu.
-  #
-  # @param [Hash] opt
-  #
-  # @return [String]
-  #
-  def items_menu_prompt: (**untyped opt) -> String
+  def self.included: (Module base) -> void
 end

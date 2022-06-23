@@ -8,6 +8,10 @@ module LayoutHelper::PageControls
 
   include LinkHelper
 
+  include ParamsHelper
+
+  include RoleHelper
+
   # Indicate whether it is appropriate to show page controls.
   #
   # @param [Hash, nil] p              Default: `#request_parameters`.
@@ -55,8 +59,18 @@ module LayoutHelper::PageControls
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def page_controls: (*[Symbol,Symbol] pairs, ?controller: (Symbol|String)?, ?action: (Symbol|String)?, **untyped path_opt) -> ActiveSupport::SafeBuffer
+  def page_controls: (*[Symbol,Symbol] pairs, ?controller: Symbol|String|nil, ?action: Symbol|String|nil, **untyped path_opt) -> ActiveSupport::SafeBuffer
 
+  # This is a kludge specifically for getting the controls on "/home/dashboard"
+  # to look right.  Although the :edit control is going to "/account/edit/:id",
+  # we want the label/tooltip configuration for "/user/registrations/edit".
+  # (The generic "/account/edit" refers to changing "an account" rather than
+  # "your account").
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def page_control: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # page_controls_label
@@ -74,5 +88,5 @@ module LayoutHelper::PageControls
   # @return [Class]
   # @return [nil]
   #
-  def model_class: (Symbol|String|ApplicationController|untyped ctrlr) -> (Class | nil)
+  def model_class: ((Symbol|String|ApplicationController|untyped) ctrlr) -> (Class | nil)
 end

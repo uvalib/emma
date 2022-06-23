@@ -35,7 +35,9 @@ class BookshareService::Error < ApiService::Error
   include ClassType
 end
 
+# :nocov:
 class BookshareService::AuthError < ApiService::AuthError
+  # :nocov:
   include BookshareService::Error::ClassType
 end
 
@@ -95,7 +97,9 @@ class BookshareService::RedirectLimitError < ApiService::RedirectLimitError
   include BookshareService::Error::ClassType
 end
 
+# === Unused exception classes:
 class BookshareService::AccountError < BookshareService::Error
+  # === Unused exception classes:
   include BookshareService::Error::ClassType
 end
 

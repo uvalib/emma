@@ -32,9 +32,9 @@ module JobMethods
 
   # Remove the records that have not been updated since the last reboot.
   #
-  # @return [ActiveRecord::Relation]
+  # @return [Integer]
   #
-  def outdated_delete:  () -> Integer
+  def outdated_delete: () -> Integer
 
   private
 

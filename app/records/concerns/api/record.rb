@@ -57,8 +57,7 @@ class Api::Record
   #     gets interpreted as named parameters]).
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedParameterType
-  # noinspection RubyMismatchedVariableType
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedVariableType
   #++
   def initialize(src = nil, format: nil, wrap: nil, error: nil, **data)
     @serializer_type = format

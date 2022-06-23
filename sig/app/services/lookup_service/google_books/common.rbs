@@ -5,9 +5,29 @@ module LookupService::GoogleBooks::Common
 
   include LookupService::GoogleBooks::Properties
 
+  # If *true*,  the service should return compact JSON.
+  # If *false*, the service should return formatted JSON.
+  #
+  # @type [Boolean]
+  #
   DEF_COMPACT: bool
+
+  # If *true*,  allow foreign language results.
+  # If *false*, limit results to English-language items.
+  #
+  # @type [Boolean]
+  #
   DEF_FOREIGN: bool
 
+  # Extract API parameters from *opt* with adjustments.
+  #
+  # @param [Symbol]  meth             Calling method.
+  # @param [Boolean] compact          If *false*, allow formatted results.
+  # @param [Boolean] foreign          If *false*, only English results.
+  # @param [Hash]    opt              Passed to super.
+  #
+  # @return [Hash]                    Just the API parameters from *opt*.
+  #
   def get_parameters: (Symbol meth, ?compact: bool, ?foreign: bool, **untyped opt) -> symHash
 
   private

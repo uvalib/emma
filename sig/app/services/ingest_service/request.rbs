@@ -1,4 +1,4 @@
-# Definition of the API requests and parameters.
+# Namespace for API requests.
 #
 module IngestService::Request
 end

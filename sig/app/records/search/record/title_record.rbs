@@ -19,6 +19,11 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   BASE_ELEMENT: Class
 
+  # Each grouping involves one or more Search::Record::MetadataRecord fields
+  # (or other instance methods).
+  #
+  # @type [Array<Array<Symbol>>]
+  #
   GROUPING_LEVELS: Array[symArray]
 
   # Data extraction methods appropriate as either instance- or class-methods.
@@ -85,10 +90,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Float]
     #
-    # -
-    # noinspection RubyUnusedLocalVariable
-    # +
-    def number_value: (Number|Hash[untyped,Number::Level]|nil item) -> Float
+    def number_value: ((Number|Hash[untyped,Number::Level]|nil) item) -> Float
 
     # Reduce a hierarchy of numbering levels to a pair of single values.
     #
@@ -96,7 +98,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Array<(Float,Float)>]         Min and max level numbers.
     #
-    def number_range: (Number|Hash[untyped,Number::Level] item) -> [Float, Float]
+    def number_range: ((Number|Hash[untyped,Number::Level]) item) -> [Float, Float]
 
     # Item title.
     #
@@ -104,7 +106,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def title: (Search::Record::MetadataRecord? rec) -> (String | nil)
+    def title: ((Search::Record::MetadataRecord|nil) rec) -> (String | nil)
 
     # Item title ID.
     #
@@ -112,7 +114,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def title_id: (Search::Record::MetadataRecord? rec) -> (String | nil)
+    def title_id: ((Search::Record::MetadataRecord|nil) rec) -> (String | nil)
 
     # Item repository.
     #
@@ -120,7 +122,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def repository: (Search::Record::MetadataRecord? rec) -> (String | nil)
+    def repository: ((Search::Record::MetadataRecord|nil) rec) -> (String | nil)
 
     # Item repository record ID.
     #
@@ -128,7 +130,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def repo_id: (Search::Record::MetadataRecord? rec) -> (String | nil)
+    def repo_id: ((Search::Record::MetadataRecord|nil) rec) -> (String | nil)
 
     # Item format.
     #
@@ -136,7 +138,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def format: (Search::Record::MetadataRecord? rec) -> (String | nil)
+    def format: ((Search::Record::MetadataRecord|nil) rec) -> (String | nil)
 
     # Item description.
     #
@@ -144,7 +146,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def description: (Search::Record::MetadataRecord? rec) -> (String | nil)
+    def description: ((Search::Record::MetadataRecord|nil) rec) -> (String | nil)
 
     # Item numbering extracted from #description for HathiTrust items, or from
     # the repository record ID for selected Internet Archive items.
@@ -165,7 +167,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #   for standalone items; in items where the number appears to represent a
     #   volume, it always starts with a zero, e.g.: "0001", "0018", etc.
     #
-    def item_number: (Search::Record::MetadataRecord? rec) -> (Search::Record::TitleRecord::Number | nil)
+    def item_number: ((Search::Record::MetadataRecord|nil) rec) -> (Search::Record::TitleRecord::Number | nil)
 
     # Item date extracted from description, title or :dcterms_dateCopyright.
     #
@@ -173,10 +175,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
-    def item_date: (Search::Record::MetadataRecord? rec) -> (String | nil)
+    def item_date: ((Search::Record::MetadataRecord|nil) rec) -> (String | nil)
 
     # Attempt to extract a year from the given string.
     #
@@ -184,7 +183,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    def get_year: (String? value) -> (String | nil)
+    def get_year: ((String|nil) value) -> (String | nil)
 
     # Fields values used to determine whether *rec* can be included.
     #
@@ -192,7 +191,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash{Symbol=>Any}]
     #
-    def match_fields: (Search::Record::MetadataRecord|symHash|nil rec) -> symHash
+    def match_fields: ((Search::Record::MetadataRecord|symHash|nil) rec) -> symHash
 
     # Field values used as the basis of #sort_keys.
     #
@@ -200,7 +199,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash{Symbol=>Any}]
     #
-    def sort_fields: (Search::Record::MetadataRecord|symHash|nil rec) -> symHash
+    def sort_fields: ((Search::Record::MetadataRecord|symHash|nil) rec) -> symHash
 
     # The values for *rec* for use with Enumerable#sort_by.
     #
@@ -209,7 +208,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Array]
     #
-    def sort_keys: (Search::Record::MetadataRecord|symHash|nil rec, ?bool exact) -> symArray
+    def sort_keys: ((Search::Record::MetadataRecord|symHash|nil) rec, ?bool exact) -> symArray
 
     # extract_fields
     #
@@ -218,10 +217,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash{Symbol=>Any}]
     #
-    # -
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-    # +
-    def extract_fields: (Search::Record::MetadataRecord|symHash|nil rec, symArray fields) -> symHash
+    def extract_fields: ((Search::Record::MetadataRecord|symHash|nil) rec, symArray fields) -> symHash
 
     # comparable_fields
     #
@@ -232,7 +228,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash{Symbol=>Any}]
     #
-    def comparable_fields: (Search::Record::MetadataRecord|symHash|nil rec, symArray fields) -> symHash
+    def comparable_fields: ((Search::Record::MetadataRecord|symHash|nil) rec, symArray fields) -> symHash
 
     # Transform a value into one whose elements are prepared for comparison
     # with a similar value.
@@ -242,9 +238,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash, Array, String, Any]  Same type as original type of *value*
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
     def make_comparable: (untyped value, ?(Symbol|nil) field) -> untyped
 
     # Group identifiers of the same prefix in descending order of length
@@ -254,7 +247,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Array<(String, Integer, String)>]
     #
-    def identifier_sort_key: (String? id) -> [String, Integer, String]
+    def identifier_sort_key: ((String|nil) id) -> [String, Integer, String]
 
     # Normalize a value for use as a sort key value.
     #
@@ -263,9 +256,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Any]
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
     def sort_key_value: (untyped item, ?bool exact) -> untyped
 
     # field_value
@@ -275,7 +265,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Any, nil]
     #
-    def field_value: (Search::Record::MetadataRecord|symHash rec, Symbol|String field) -> (untyped | nil)
+    def field_value: ((Search::Record::MetadataRecord|symHash) rec, (Symbol|String) field) -> (untyped | nil)
 
     # @private
     IDENTIFIER_FIELDS: symArray
@@ -336,7 +326,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       #
       # @return [self]
       #
-      def update!: (?name: String?, ?min_val: Integer?, ?max_val: Integer?, ?range: (String|Range[Integer])?) -> self
+      def update!: (?name: String|nil, ?min_val: Integer|nil, ?max_val: Integer|nil, ?range: String|Range[Integer]|nil) -> self
 
       # minimum
       #
@@ -392,9 +382,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, Integer, Hash, nil] term
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
     def initialize: (?(untyped|nil) term) -> void
 
     # Add to #level.
@@ -405,13 +392,13 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [void]
     #
-    def add_level: (String? name, ?(untyped|nil) value, **untyped opt) -> void
+    def add_level: ((String|nil) name, ?(untyped|nil) value, **untyped opt) -> void
 
     # Make the level name and type.
     #
     # @param [String, nil] value      @see #number_name
     #
-    # @return [Array<(String,String)>]       Normalized name and entry type.
+    # @return [Array<(String,String)>]  Normalized name and entry type.
     #
     def name_type: (?(String|nil) value) -> [String, String]
 
@@ -423,7 +410,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Float]
     #
-    def number_value: (?(symHash|Number)? item) -> Float
+    def number_value: (?(symHash|Number|nil) item) -> Float
 
     attr_reader number_range: [Float, Float]
 
@@ -431,9 +418,9 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Number, Hash, nil] item   Default: `#level`.
     #
-    # @return [Array<(Float,Float)>]           Min and max level numbers.
+    # @return [Array<(Float,Float)>]  Min and max level numbers.
     #
-    def number_range: (?(symHash|Number)? item) -> [Float, Float]
+    def number_range: (?(symHash|Number|nil) item) -> [Float, Float]
 
     def to_s: () -> String
 
@@ -476,7 +463,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @param [Array<Search::Record::MetadataRecord>, Search::Record::MetadataRecord, nil] src
   # @param [Hash, nil] opt
   #
-  def initialize: (Array[Search::Record::MetadataRecord]|Search::Record::MetadataRecord|nil src, ?(symHash|nil) opt) -> void
+  def initialize: ((Array[Search::Record::MetadataRecord] | Search::Record::MetadataRecord | nil) src, ?(symHash|nil) opt) -> void
 
   # Copy usable record(s) from the source.
   #
@@ -488,15 +475,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # Because #problems uses #exemplar to check validity, it is (temporarily) set
   # here as the copy of the first valid record encountered.
   #
-  def copy_records: (Array[Search::Record::MetadataRecord]|Search::Record::MetadataRecord|nil src) -> Array[Search::Record::MetadataRecord]
-
-  # Copy the record, adding an item_number if appropriate.
-  #
-  # @param [Search::Record::MetadataRecord] rec
-  #
-  # @return [Search::Record::MetadataRecord]
-  #
-  def copy_record: (Search::Record::MetadataRecord rec) -> Search::Record::MetadataRecord
+  def copy_records: ((Array[Search::Record::MetadataRecord] | Search::Record::MetadataRecord | nil) src) -> Array[Search::Record::MetadataRecord]
 
   # Sort records.
   #
@@ -508,6 +487,14 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Array<Search::Record::MetadataRecord>]
   #
   def sort_records!: (Array[Search::Record::MetadataRecord] recs) -> Array[Search::Record::MetadataRecord]
+
+  # Copy the record, adding an item_number if appropriate.
+  #
+  # @param [Search::Record::MetadataRecord] rec
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
+  def copy_record: (Search::Record::MetadataRecord rec) -> Search::Record::MetadataRecord
 
   # Generate a series position number if one isn't already present.
   #
@@ -549,7 +536,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def make_exemplar: (?Array[Search::Record::MetadataRecord]? recs) -> Search::Record::MetadataRecord
+  def make_exemplar: (?(Array[Search::Record::MetadataRecord]|nil) recs) -> Search::Record::MetadataRecord
 
   # Record fields honored by #title_field_union.
   #
@@ -603,10 +590,10 @@ class Search::Record::TitleRecord < Search::Api::Record
   #   @param [Hash, Array, Any] non_string
   #   @return [Hash, Array, Any] Same type, possibly a modified copy.
   #
-  def self.symbolize_values: (anyHash item)  -> symHash
+  def self.symbolize_values: (anyHash  item) -> symHash
                            | (anyArray item) -> symArray
-                           | (String item)   -> Symbol
-                           | (untyped item)  -> untyped
+                           | (String   item) -> Symbol
+                           | (untyped  item) -> untyped
 
   # hierarchy_paths
   #
@@ -615,28 +602,22 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Array<(Symbol,Array<Symbol,Integer>)>>]
   #
-  def self.hierarchy_paths: (untyped item, ?symArray path) -> Array[[Symbol, Array[Symbol|Integer]]]
+  def self.hierarchy_paths: (untyped item, (symArray|nil) path) -> Array[[Symbol, Array[Symbol|Integer]]]
+
+  # @private
+  DEBUG_HIERARCHY: bool
 
   # Hierarchical field ordering.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   FIELD_HIERARCHY: Hash[Symbol,symHash]
 
   # HIERARCHY_PATHS
   #
   # @type [Hash{Symbol=>Array<Symbol,Integer>}]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
   HIERARCHY_PATHS: Hash[Symbol,Array[Symbol|Integer]]
-
-  # @private
-  DEBUG_HIERARCHY: bool
 
   attr_reader hierarchy: Hash[Symbol,(symHash|Array[symHash])]
 
@@ -667,7 +648,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def get_title_fields: (?Search::Record::MetadataRecord? rec) -> symHash
+  def get_title_fields: (?(Search::Record::MetadataRecord|nil) rec) -> symHash
 
   # get_part_fields
   #
@@ -683,7 +664,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Hash>]
   #
-  def get_file_fields: (*(Symbol|Search::Record::MetadataRecord|Array[Search::Record::MetadataRecord]) group) -> Array[symHash]
+  def get_file_fields: (*(Symbol | Search::Record::MetadataRecord | Array[Search::Record::MetadataRecord]) group) -> Array[symHash]
 
   # get_fields
   #
@@ -692,7 +673,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def get_fields: (Search::Record::MetadataRecord? rec, *Symbol group) -> symHash
+  def get_fields: ((Search::Record::MetadataRecord|nil) rec, *Symbol group) -> symHash
 
   # get_record_fields
   #
@@ -701,18 +682,15 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Hash]
   #
-  def get_record_fields: (Search::Record::MetadataRecord? rec, Symbol|symArray fields) -> symHash
+  def get_record_fields: ((Search::Record::MetadataRecord|nil) rec, (Symbol|symArray) fields) -> symHash
 
   # To support XML rendering...
   #
   # @param [Hash, Any, nil] value
   # @param [Array<Symbol>]  keys
   #
-  # @return [Hash, Any]               The Array<(possibly modified)> *value*.
+  # @return [Hash, Any]               The (possibly modified) *value*.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
   def wrap_array!: (untyped value, *Symbol keys) -> untyped
 
   private

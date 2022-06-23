@@ -28,9 +28,6 @@ module IaDownloadService::Common
   # @return [Array<(Hash,Hash,String)>] Message body plus headers for GET.
   # @return [Array<(Hash,Hash,Hash)>]   Query plus headers for PUT, POST, PATCH
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def api_headers(params = nil, headers = nil, body = nil)
     super.tap do |_prms, hdrs, _body|
       auth   = hdrs.delete(:authorization) || IA_AUTH

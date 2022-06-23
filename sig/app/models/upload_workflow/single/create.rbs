@@ -33,6 +33,14 @@ module UploadWorkflow::Single::Create::Actions
 
   include UploadWorkflow::Single::Create::Data
 
+  # wf_finalize_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::External#repository_create
+  #
   def wf_finalize_submission: (*untyped event_args) -> void
 
   # wf_cancel_submission

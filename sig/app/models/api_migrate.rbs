@@ -12,9 +12,6 @@ class ApiMigrate
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   CONFIGURATION_ENTRY: Hash[Symbol,symHash]
 
   module ClassMethods
@@ -38,7 +35,7 @@ class ApiMigrate
     #
     # @return [ActiveRecord::Relation]
     #
-    def get_relation: (?(Integer|Array[Integer]|String|symHash)? range) -> ActiveRecord::Relation
+    def get_relation: (?(Integer|Array[Integer]|String|symHash|nil) range) -> ActiveRecord::Relation
 
     # API migration name (#CONFIGURATION_ENTRY key).
     #
@@ -46,7 +43,7 @@ class ApiMigrate
     #
     # @return [Symbol, nil]
     #
-    def migration_name: (Symbol|String|Integer|Float|nil key) -> (Symbol | nil)
+    def migration_name: ((Symbol|String|Integer|Float|nil) key) -> (Symbol | nil)
 
     # API migration configured field transformations.
     #
@@ -54,7 +51,7 @@ class ApiMigrate
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    def configuration: (?(Symbol|String|Integer|Float)? key) -> Hash[Symbol,symHash]
+    def configuration: (?(Symbol|String|Integer|Float|nil) key) -> Hash[Symbol,symHash]
 
     # The sequence of possible field transformations.
     #
@@ -73,7 +70,7 @@ class ApiMigrate
     #
     # @return [Model, Hash]           Possibly modified *record*.
     #
-    def transform!: (Model|symHash record, ?column: Symbol?, ?config: symHash, **untyped opt) -> (Model | symHash)
+    def transform!: ((Model|symHash) record, ?column: Symbol|nil, ?config: symHash, **untyped opt) -> (Model | symHash)
 
     # Transform the value before #translate by applying each requested method.
     #
@@ -84,7 +81,7 @@ class ApiMigrate
     #
     # @return [Any]
     #
-    def pre_translate: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash?) -> untyped
+    def pre_translate: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash|nil) -> untyped
 
     # Translate values.
     #
@@ -105,7 +102,7 @@ class ApiMigrate
     #
     # @return [Any]
     #
-    def post_translate: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash?) -> untyped
+    def post_translate: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash|nil) -> untyped
 
     # Transform the value by applying each requested method.
     #
@@ -126,7 +123,7 @@ class ApiMigrate
     #
     # @return [Any]
     #
-    def new_min_max: (untyped value, Array[Integer]|Range[Integer] range, field: Symbol) -> untyped
+    def new_min_max: (untyped value, (Array[Integer]|Range[Integer]) range, field: Symbol) -> untyped
 
     # Transform the value by applying each requested method.
     #
@@ -137,7 +134,7 @@ class ApiMigrate
     #
     # @return [Any]
     #
-    def apply: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash?) -> untyped
+    def apply: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash|nil) -> untyped
 
     # Transform a multi-item value into a single-item value.
     #
@@ -167,7 +164,7 @@ class ApiMigrate
     #
     # @return [void]
     #
-    def report_changes: (Symbol column, symHash original, symHash current, ?report: symHash?, ?log: bool?) -> void
+    def report_changes: (Symbol column, symHash original, symHash current, ?report: symHash|nil, ?log: bool|nil) -> void
 
     # Transform JSON EMMA data.
     #
@@ -182,9 +179,6 @@ class ApiMigrate
     #
     # @return [Hash]
     #
-    # -
-    # noinspection RubyMismatchedReturnType
-    # +
     def parse_data: (String data) -> symHash
 
     # Remove blank values.
@@ -197,7 +191,7 @@ class ApiMigrate
     #
     # @return [Array<String>, String, Any]    Nil for an empty array.
     #
-    def remove_blank: (String|strArray value) -> untyped
+    def remove_blank: ((String|strArray) value) -> untyped
 
     # Bogus :dc_creator values found via
     # "https://emma.lib.virginia.edu/data/counts".
@@ -214,7 +208,7 @@ class ApiMigrate
     #
     # @return [Array<String>, String]
     #
-    def normalize_creator: (String|strArray value) -> (String | strArray)
+    def normalize_creator: ((String|strArray) value) -> (String | strArray)
 
     # normalize_identifier
     #
@@ -222,7 +216,7 @@ class ApiMigrate
     #
     # @return [Array<String>]
     #
-    def normalize_identifier: (String|strArray value) -> strArray
+    def normalize_identifier: ((String|strArray) value) -> strArray
 
     # normalize_day
     #
@@ -230,7 +224,7 @@ class ApiMigrate
     #
     # @return [Array<String>, String, nil]
     #
-    def normalize_day: (String|strArray value) -> (String | strArray | nil)
+    def normalize_day: ((String|strArray) value) -> (String | strArray | nil)
 
     # normalize_datetime
     #
@@ -238,7 +232,7 @@ class ApiMigrate
     #
     # @return [Array<String>, String, nil]
     #
-    def normalize_datetime: (String|strArray value) -> (String | strArray | nil)
+    def normalize_datetime: ((String|strArray) value) -> (String | strArray | nil)
 
     # normalize_metadata_source
     #
@@ -246,7 +240,7 @@ class ApiMigrate
     #
     # @return [Array<String>]
     #
-    def normalize_metadata_source: (String|strArray value) -> strArray
+    def normalize_metadata_source: ((String|strArray) value) -> strArray
 
     # Split values on '.', ',', and ';'.
     #
@@ -254,7 +248,7 @@ class ApiMigrate
     #
     # @return [Array<String>]
     #
-    def normalize_text_list: (String|strArray value) -> strArray
+    def normalize_text_list: ((String|strArray) value) -> strArray
 
     # normalize_coverage
     #
@@ -262,7 +256,7 @@ class ApiMigrate
     #
     # @return [Array<String>, String]
     #
-    def normalize_coverage: (String|strArray value) -> (String | strArray)
+    def normalize_coverage: ((String|strArray) value) -> (String | strArray)
 
     # Ensure that a field designated as 'boolean' is not persisted as a String.
     #
@@ -285,7 +279,7 @@ class ApiMigrate
     # The source enumeration is expected to be ordered from lowest to highest
     # quality.
     #
-    def summarize_quality: (String|strArray value) -> (String | nil)
+    def summarize_quality: ((String|strArray) value) -> (String | nil)
 
     # EMMA data fields that have, do, or will contain remediation comments.
     #
@@ -306,7 +300,7 @@ class ApiMigrate
     # specific sequence, this method will favor the pre-migrated field names
     # if they are present.
     #
-    def preserve_remediation_comments: (String|strArray value, symHash emma_data) -> (String | strArray | nil)
+    def preserve_remediation_comments: ((String|strArray) value, symHash emma_data) -> (String | strArray | nil)
 
     # FormatFeature translations
     #
@@ -362,7 +356,7 @@ class ApiMigrate
     #
     # @see #derive_default_coverage
     #
-    def set_default_coverage: (String|strArray value, symHash emma_data) -> (String | strArray)
+    def set_default_coverage: ((String|strArray) value, symHash emma_data) -> (String | strArray)
 
     # Based on :rem_status (and :rem_complete) add a :rem_coverage comment if
     # none exists.  The original value is returned.
@@ -386,7 +380,7 @@ class ApiMigrate
     #
     # @return [String, nil]
     #
-    def default_coverage: (String|strArray current, symHash emma_data) -> (String | nil)
+    def default_coverage: ((String|strArray) current, symHash emma_data) -> (String | nil)
 
     # Find terms within *value* and add them to the indicated data field.
     #
@@ -397,7 +391,7 @@ class ApiMigrate
     #
     # @return [void]
     #
-    def add_translations: (symHash emma_data, String value, symHash patterns, ?(Symbol|symArray)? fields) -> void
+    def add_translations: (symHash emma_data, String value, symHash patterns, ?(Symbol|symArray|nil) fields) -> void
 
     # Add one or more values to the indicated data field.
     #
@@ -409,7 +403,7 @@ class ApiMigrate
     #
     # @return [Any]                   New value of `emma_data[field]`.
     #
-    def add_values: (symHash emma_data, Symbol|symArray fields, String|strArray values, ?unique: bool, ?single: bool?) -> (untyped | nil)
+    def add_values: (symHash emma_data, (Symbol|symArray) fields, (String|strArray) values, ?unique: bool, ?single: bool|nil) -> (untyped | nil)
 
     # To avoid requiring that the API field migrations be performed in a
     # specific order, this method supports the ability to arrange potential
@@ -423,7 +417,7 @@ class ApiMigrate
     #
     # @return [Symbol, nil]
     #
-    def find_field: (symHash emma_data, Symbol|symArray|nil fields) -> (Symbol | nil)
+    def find_field: (symHash emma_data, (Symbol|symArray|nil) fields) -> (Symbol | nil)
 
     def self.included: (Module base) -> void
   end
@@ -434,19 +428,19 @@ class ApiMigrate
   #
   # @type [Symbol]
   #
-  attr_reader name: untyped
+  attr_reader name: Symbol
 
   # Produce additional log output for debugging.
   #
   # @type [Boolean]
   #
-  attr_reader log: untyped
+  attr_reader log: bool
 
   # Generate a hash reporting on the changes for each record.
   #
   # @type [Hash, nil]
   #
-  attr_reader report: untyped
+  attr_reader report: symHash | nil
 
   # Create a new instance.
   #
@@ -455,7 +449,7 @@ class ApiMigrate
   # @param [Boolean]                             log
   # @param [Boolean]                             no_raise
   #
-  def initialize: (?(untyped|nil) key, ?report: untyped? report, ?log: untyped?, ?no_raise: bool) -> void
+  def initialize: (?(untyped|nil) key, ?report: bool|symHash|nil, ?log: bool|nil, ?no_raise: bool) -> void
 
   # Run the data migrations.
   #
@@ -465,7 +459,7 @@ class ApiMigrate
   #
   # @return [Array{Hash}]             New record values.
   #
-  def run!: (?update: bool, ?range: untyped?, **untyped opt) -> untyped
+  def run!: (?update: bool, ?range: untyped|nil, **untyped opt) -> untyped
 
   # Default target record class.
   #
@@ -493,12 +487,12 @@ class ApiMigrate
   #
   # @param [Model, Hash]           record
   # @param [Symbol, Array<Symbol>] column
-  # @param [Hash]                  opt      Passed to super
+  # @param [Hash]                  opt
   #
   # @option opt [Hash, nil]    :report      Add modified field value(s).
   # @option opt [Boolean, nil] :log         Log modified field value(s).
   #
   # @return [Model, Hash]             Possibly modified *record*.
   #
-  def transform!: (untyped record, column: untyped column, **untyped opt) -> untyped
+  def transform!: (untyped record, column: untyped, **untyped opt) -> untyped
 end

@@ -3,7 +3,11 @@
 module FlashHelper
   include Emma::Common
 
+  include EncodingHelper
+
   include HtmlHelper
+
+  include XmlHelper
 
   # Maximum length of any one flash message.
   #
@@ -32,7 +36,7 @@ module FlashHelper
 
     # Create a new instance.
     #
-    def initialize: (ExecReport::Part|String|Integer|anyArray|anyHash|nil topic, ?(ExecReport::Part|String|anyArray|anyHash|nil) details) -> void
+    def initialize: ((ExecReport::Part|String|Integer|anyArray|anyHash|nil) topic, ?(ExecReport::Part|String|anyArray|anyHash|nil) details) -> void
 
     # Generate HTML elements for the parts of the entry.
     #
@@ -48,7 +52,7 @@ module FlashHelper
     #
     # @see #render_part
     #
-    def render: (?first: Integer?, ?last: Integer?, ?part: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+    def render: (?first: Integer|nil, ?last: Integer|nil, ?part: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Generate an HTML element for a single part of the entry.
     #
@@ -60,7 +64,7 @@ module FlashHelper
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def render_part: (String|nil part, ?pos: Integer?, ?first: Integer?, ?last: Integer?, **untyped opt) -> ActiveSupport::SafeBuffer
+    def render_part: ((String|nil) part, ?pos: Integer|nil, ?first: Integer|nil, ?last: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # A short-cut for creating a FlashHelper::FlashPart only if required.
     #
@@ -106,7 +110,7 @@ module FlashHelper
   # @see #set_flash
   # @see #flash_format
   #
-  def flash_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol?, **untyped opt) -> void
+  def flash_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
 
   # Flash alert.
   #
@@ -119,7 +123,7 @@ module FlashHelper
   # @see #set_flash
   # @see #flash_format
   #
-  def flash_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol?, **untyped opt) -> void
+  def flash_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
 
   # Flash notification, which appears on the next page to be rendered.
   #
@@ -133,7 +137,7 @@ module FlashHelper
   #
   # @see #flash_format
   #
-  def set_flash: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol?, ?clear: bool?, **untyped opt) -> void
+  def set_flash: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol|nil, ?clear: bool|nil, **untyped opt) -> void
 
   # Success flash now.
   #
@@ -172,7 +176,7 @@ module FlashHelper
   # @see #set_flash_now
   # @see #flash_format
   #
-  def flash_now_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol?, **untyped opt) -> void
+  def flash_now_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
 
   # Flash now alert.
   #
@@ -185,7 +189,7 @@ module FlashHelper
   # @see #set_flash_now
   # @see #flash_format
   #
-  def flash_now_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol?, **untyped opt) -> void
+  def flash_now_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
 
   # Flash now notification, which appears on the current page when it is
   # rendered.
@@ -199,7 +203,7 @@ module FlashHelper
   #
   # @see #flash_format
   #
-  def set_flash_now: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol?, **untyped opt) -> void
+  def set_flash_now: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol|nil, **untyped opt) -> void
 
   # Create items(s) to be included in the 'X-Flash-Message' header to support
   # the ability of the client to update the flash display.
@@ -224,7 +228,7 @@ module FlashHelper
   #
   # @return [Array]                   The original *args*, possibly modified.
   #
-  def prepend_flash_source!: (Array[Symbol|String|Exception|ExecReport|FlashPart] args, ?meth: (Symbol|String)?) -> Array[Symbol|String|Exception|ExecReport|FlashPart]
+  def prepend_flash_source!: (Array[Symbol|String|Exception|ExecReport|FlashPart] args, ?meth: Symbol|String|nil) -> Array[Symbol|String|Exception|ExecReport|FlashPart]
 
   # Return the effective flash type.
   #
@@ -232,7 +236,7 @@ module FlashHelper
   #
   # @return [Symbol]
   #
-  def flash_target: (Symbol|String|nil `type`) -> Symbol
+  def flash_target: ((Symbol|String|nil) `type`) -> Symbol
 
   # Theoretical space available for flash messages.
   #
@@ -303,10 +307,7 @@ module FlashHelper
   #   @param [Symbol, nil]             topic
   #   @param [Hash]                    opt
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
-  def flash_format: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol?, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
+  def flash_format: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
 
   # Create item(s) to be included in the flash display.
   #
@@ -337,8 +338,8 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer,String>]
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
-  def flash_item: (Array[String|FlashPart] array, **untyped opt) -> Array[ActiveSupport::SafeBuffer|String]
-                | (String|FlashPart string,       **untyped opt) -> (ActiveSupport::SafeBuffer | String)
+  def flash_item: (Array[String|FlashPart] array,  **untyped opt) -> Array[ActiveSupport::SafeBuffer|String]
+                | ((String|FlashPart)      string, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
 
   # An item's actual impact toward the total flash size.
   #
@@ -351,7 +352,7 @@ module FlashHelper
   # This does not account for any separators that would be added when
   # displaying multiple items.
   #
-  def flash_item_size: (String|strArray item, ?html: bool) -> Integer
+  def flash_item_size: ((String|strArray) item, ?html: bool) -> Integer
 
   # Render an item in the intended form for addition to the flash.
   #
@@ -364,7 +365,7 @@ module FlashHelper
   # @return [String]                    If *html* is *false*.
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   #
-  def flash_item_render: (String|FlashPart item, ?html: bool?, ?xhr: bool?, ?inspect: bool?, ?max: Integer?) -> (ActiveSupport::SafeBuffer | String)
+  def flash_item_render: ((String|FlashPart) item, ?html: bool|nil, ?xhr: bool|nil, ?inspect: bool|nil, ?max: Integer|nil) -> (ActiveSupport::SafeBuffer | String)
 
   # If a :topic was specified, it is used as part of a set of I18n paths used
   # to locate a template to which the flash message is applied.
@@ -378,7 +379,7 @@ module FlashHelper
   #
   # @return [String]                          # Even if html is *true*.
   #
-  def flash_template: (String|strArray msg, topic: Symbol|String, ?meth: (Symbol|String)?, ?html: bool?, ?separator: String?, **untyped opt) -> String
+  def flash_template: ((String|strArray) msg, topic: Symbol|String, ?meth: Symbol|String|nil, ?html: bool|nil, ?separator: String|nil, **untyped opt) -> String
 
   # I18n scope based on the current class context.
   #

@@ -156,9 +156,6 @@ module BaseDecorator::Links
   #
   # @return [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def action_entry(action = nil, current: nil, table: nil, **opt)
     current = (opt.delete(:current) || current || context[:action])&.to_sym
     action  = (opt.delete(:action)  || action  || current)&.to_sym

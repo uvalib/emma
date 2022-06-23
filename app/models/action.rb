@@ -238,7 +238,6 @@ class Action < ApplicationRecord
   if DEBUG_RECORD
 
     def show
-      # noinspection RubyMismatchedArgumentType
       super(:user, :phase, :entry)
     end
 

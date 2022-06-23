@@ -4,4 +4,6 @@ class Lookup::Crossref::Api::Serializer::Json < Lookup::RemoteService::Api::Seri
   include Lookup::Crossref::Api::Serializer::Json::Schema
 
   include Lookup::Crossref::Api::Serializer::Json::Associations
+
+  def deserialize: ((String|symHash) data, ?method: Symbol) -> untyped
 end

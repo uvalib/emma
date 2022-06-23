@@ -5,9 +5,6 @@ module ToolHelper
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   TOOL_ITEMS: Hash[Symbol,symHash]
 
   # Standalone tool list entry.

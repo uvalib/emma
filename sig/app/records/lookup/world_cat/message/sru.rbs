@@ -4,9 +4,6 @@
 #
 # @see https://developer.api.oclc.org/wcv1#operations-SRU-search-sru
 #
-# -
-# noinspection LongLine
-# +
 class Lookup::WorldCat::Message::Sru < Lookup::WorldCat::Api::Message
   include Lookup::WorldCat::Shared::CollectionMethods
 
@@ -14,13 +11,17 @@ class Lookup::WorldCat::Message::Sru < Lookup::WorldCat::Api::Message
 
   LIST_ELEMENT: Class
 
+  # Initialize a new instance and adjust :dc_identifier values.
+  #
+  # @param [Faraday::Response, Exception Model, Hash, String, nil] src
+  # @param [Hash, nil]                                             opt
+  #
+  def initialize: (?(Faraday::Response|Model|String|anyHash|nil) src, **untyped opt) -> void
+
   # Simulates the :totalResults field of similar Bookshare API records.
   #
   # @return [Integer]
   #
-  # -
-  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
-  # +
   def totalResults: () -> Integer
 
   # api_records

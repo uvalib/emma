@@ -27,7 +27,7 @@ module Search::Shared::ScoreMethods
   #
   # == Usage Notes
   #
-  def total_score: (?precision: Numeric?, **untyped opt) -> (Float | Integer)
+  def total_score: (?precision: Numeric|nil, **untyped opt) -> (Float | Integer)
 
   # All search score attribute values.
   #
@@ -42,7 +42,7 @@ module Search::Shared::ScoreMethods
   # * If a non-zero :keyword_score is present then that is the *only* value
   #   returned.
   #
-  def get_scores: (?precision: Numeric?, ?all: bool?) -> Hash[Symbol,(Float|nil)]
+  def get_scores: (?precision: Numeric|nil, ?all: bool|nil) -> Hash[Symbol,(Float|nil)]
 
   # Update search score attribute values.
   #
@@ -58,7 +58,7 @@ module Search::Shared::ScoreMethods
   # can take advantage of the calculations of the other scores.  If no types
   # are specified all defined types *except* :keyword are calculated.
   #
-  def calculate_scores!: (?(String|strArray)? terms, **untyped opt) -> Array[Float]
+  def calculate_scores!: (?(String|strArray|nil) terms, **untyped opt) -> Array[Float]
 
   # Calculate a title search relevancy score.
   #
@@ -73,7 +73,7 @@ module Search::Shared::ScoreMethods
   # The actual relevancy seems to discount certain "stop words", but the actual
   # behavior cannot be easily inferred from the search results.
   #
-  def calculate_title_score: (?(String|strArray)? terms, **untyped opt) -> Float
+  def calculate_title_score: (?(String|strArray|nil) terms, **untyped opt) -> Float
 
   # Calculate a creator search relevancy score.
   #
@@ -84,7 +84,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Float]
   #
-  def calculate_creator_score: (?(String|strArray)? terms, **untyped opt) -> Float
+  def calculate_creator_score: (?(String|strArray|nil) terms, **untyped opt) -> Float
 
   # Calculate a publisher search relevancy score.
   #
@@ -95,7 +95,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Float]
   #
-  def calculate_publisher_score: (?(String|strArray)? terms, **untyped opt) -> Float
+  def calculate_publisher_score: (?(String|strArray|nil) terms, **untyped opt) -> Float
 
   # Calculate a standard identifier search relevancy score.
   #
@@ -106,7 +106,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Float]                   Either 0.0 or 100.0.
   #
-  def calculate_identifier_score: (?(String|strArray)? terms, **untyped opt) -> Float
+  def calculate_identifier_score: (?(String|strArray|nil) terms, **untyped opt) -> Float
 
   # Calculate a keyword search relevancy score as a combination of title,
   # creator and publisher scores.
@@ -119,7 +119,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Float]
   #
-  def calculate_keyword_score: (?(String|strArray)? terms, **untyped opt) -> Float
+  def calculate_keyword_score: (?(String|strArray|nil) terms, **untyped opt) -> Float
 
   # @type [String,Array<String>]
   DEF_NO_BREAK: String | strArray
@@ -136,7 +136,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Float]
   #
-  def field_score: (strArray|String|Symbol field, strArray|String terms, **untyped opt) -> Float
+  def field_score: ((strArray|String|Symbol) field, (strArray|String) terms, **untyped opt) -> Float
 
   # Break a word on spaces or punctuation into one or more normalized words.
   #
@@ -147,7 +147,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Array<String>]
   #
-  def scoring_words: (strArray|String|Symbol value, ?no_break: (strArray|String)?, ?stop_words: (strArray|String)?, ?keep_words: (strArray|String)?) -> strArray
+  def scoring_words: ((strArray|String|Symbol) value, ?no_break: strArray|String|nil, ?stop_words: strArray|String|nil, ?keep_words: strArray|String|nil) -> strArray
 
   # Break a word on spaces or punctuation into one or more normalized words.
   #

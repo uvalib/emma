@@ -18,9 +18,6 @@ module FileFormat
   #
   # @see file:config/locales/types.en.yml
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   TYPES: symArray
 
   # Placeholder for an unknown format.
@@ -120,7 +117,7 @@ module FileFormat
   #
   # @return [Array<String>]
   #
-  def apply_field_accessor: (untyped info, Symbol|symArray|Proc accessor) -> strArray
+  def apply_field_accessor: (untyped info, (Symbol|symArray|Proc) accessor) -> strArray
 
   # apply_field_transform
   #
@@ -130,7 +127,7 @@ module FileFormat
   #
   # @return [Array<String>]
   #
-  def apply_field_transform: (Symbol `type`, Symbol|Proc key, strArray value) -> strArray
+  def apply_field_transform: (Symbol `type`, (Symbol|Proc) key, strArray value) -> strArray
 
   # Separator between values of a multi-valued field.
   #
@@ -169,7 +166,7 @@ module FileFormat
   #
   # @return [String]
   #
-  def format_date: (String|Date|DateTime value) -> String
+  def format_date: ((String|Date|DateTime) value) -> String
 
   # Transform a date object or string into "YYYY-MM-DD HH:MM" format.
   #
@@ -177,7 +174,7 @@ module FileFormat
   #
   # @return [String]
   #
-  def format_date_time: (String|Date|DateTime value) -> String
+  def format_date_time: ((String|Date|DateTime) value) -> String
 
   # format_image
   #
@@ -210,7 +207,7 @@ module FileFormat
   #   @return [String]
   #
   def transform: (Symbol meth, strArray value) -> strArray
-               | (Symbol meth, String value)   -> String
+               | (Symbol meth, String   value) -> String
 
   # metadata_fmt
   #
@@ -218,7 +215,7 @@ module FileFormat
   #
   # @return [Symbol, String, nil]
   #
-  def self.metadata_fmt: (Symbol|String|nil fmt) -> (Symbol | String | nil)
+  def self.metadata_fmt: ((Symbol|String|nil) fmt) -> (Symbol | String | nil)
 
   # normalize_language
   #
@@ -227,7 +224,7 @@ module FileFormat
   # @return [String, Array<String>]
   #
   def self.normalize_language: (strArray value) -> strArray
-                             | (String value)    -> String
+                             | (String   value) -> String
 
   # Get configured properties for a file format.  If multiple sections are
   # given each successive section is recursively merged into the previous.
@@ -244,7 +241,7 @@ module FileFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  def self.configuration_section: (String|Symbol section) -> symHash
+  def self.configuration_section: ((String|Symbol) section) -> symHash
 
   attr_reader self.configuration_table: Hash[Symbol,symHash]
 

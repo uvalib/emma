@@ -426,6 +426,7 @@ module Upload::WorkflowMethods
   # @return [nil]                     If *group* is invalid.
   #
   def self.state_group_label(group)                                             # NOTE: to Record::Steppable
+    # noinspection RubyMismatchedArgumentType
     STATE_GROUP.dig(group&.to_sym, :label)
   end
 

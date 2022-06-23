@@ -5,6 +5,11 @@
 #   @return [Array<Entry>]
 #
 class EntriesDecorator < BaseCollectionDecorator
+  # :nocov:
+  #include EntryDecorator::InstanceMethods
+
+  extend EntryDecorator::ClassMethods
+
 
   attr_reader group_counts: Hash[Symbol,Integer]
 
@@ -27,9 +32,10 @@ class EntriesDecorator < BaseCollectionDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #STATE_GROUP
+  # @see LinkHelper#make_link
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def state_group_select: (?counts: Hash[Symbol,Integer]?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def state_group_select: (?counts: Hash[Symbol,Integer]|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Control for filtering which records are displayed.
   #
@@ -44,11 +50,11 @@ class EntriesDecorator < BaseCollectionDecorator
   # @see #STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def list_filter: (?counts:  Hash[Symbol,Integer]?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def list_filter: (?counts:  Hash[Symbol,Integer]|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Control the selection of filters displayed by #list_filter.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer <div>.
+  # @param [Hash] opt                 Passed to #html_div for outer *div*.
   #
   # @option opt [Array] :records      List of upload records for display.
   #
@@ -57,12 +63,6 @@ class EntriesDecorator < BaseCollectionDecorator
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
   def list_filter_options: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Button information for upload actions.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  def form_actions: () -> symHash
 
   # Labels for inputs associated with transmitted parameters. # TODO: I18n
   #
@@ -83,17 +83,7 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @return [String, nil]
   #
-  def delete_submit_path: (?(Entry|String|Array[Entry|String])? ids, **untyped opt) -> (String | nil)
-
-  # Cancel button for the delete upload form.
-  #
-  # @param [Hash] opt                 Passed to super
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see file:app/assets/javascripts/feature/download.js *cancelAction()*
-  #
-  def delete_cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def delete_submit_path: (?(Entry|String|Array[Entry|String]|nil) ids, **untyped opt) -> (String | nil)
 
   # item_ids
   #
@@ -102,7 +92,7 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @return [Array<String>]
   #
-  def item_ids: (?(Entry|String|Array[Entry|String])? items, **untyped opt) -> strArray
+  def item_ids: (?(Entry|String|Array[Entry|String]|nil) items, **untyped opt) -> strArray
 
   # records_or_sid_ranges
   #
@@ -110,7 +100,7 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @return [Array<Model,String>, nil]
   #
-  def records_or_sid_ranges: (Array[Model|String]? list) -> (Array[Model|String] | nil)
+  def records_or_sid_ranges: ((Array[Model|String]|nil) list) -> (Array[Model|String] | nil)
 
   # find_in_index
   #
@@ -147,6 +137,8 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see FormHelper#hidden_input
+  #
   def bulk_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?(untyped|nil) value, labels: Hash[Symbol,String], ?debug_only: bool) -> ActiveSupport::SafeBuffer
 
   # An input element for a bulk operation form.
@@ -170,8 +162,6 @@ class EntriesDecorator < BaseCollectionDecorator
 
   BULK_OPTIONS: symArray
 
-  BULK_FORM_OPTIONS: symArray
-
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
   #
@@ -185,10 +175,9 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see Record::Properties#title_prefix
-  # @see Record::Properties#batch_size
+  # @see FormHelper#hidden_input
   #
-  def bulk_op_form: (?label: String?, ?action: Symbol|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_op_form: (?label: String|nil, ?action: Symbol|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An option checkbox for a bulk new/edit form.
   #
@@ -244,7 +233,7 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form: (?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_delete_form: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An option checkbox for a bulk delete form.
   #

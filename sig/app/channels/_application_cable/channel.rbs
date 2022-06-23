@@ -65,6 +65,5 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   def self.stream_send: (ApplicationCable::Response payload, **untyped opt) -> void
 
-
   def deliver_error_message: (Exception e) -> untyped
 end

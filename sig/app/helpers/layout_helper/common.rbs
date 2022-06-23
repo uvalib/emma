@@ -5,107 +5,11 @@ module LayoutHelper::Common
 
   include Emma::Constants
 
+  include FormHelper
+
   include HtmlHelper
 
-  include ParamsHelper
-
   include SearchTermsHelper
-
-  # Configuration for panel control properties.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  # -
-  # noinspection RailsI18nInspection
-  # +
-  PANEL_CTRL_CFG: symHash
-
-  # Label for button to open a collapsible panel.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  PANEL_OPENER_LABEL: ActiveSupport::SafeBuffer
-
-  # Tooltip for button to open a collapsible panel.
-  #
-  # @type [String]
-  #
-  PANEL_OPENER_TIP: untyped
-
-  # Label for button to close a collapsible panel.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  PANEL_CLOSER_LABEL: ActiveSupport::SafeBuffer
-
-  # Tooltip for button to close a collapsible panel.
-  #
-  # @type [String]
-  #
-  PANEL_CLOSER_TIP: untyped
-
-  # toggle_button
-  #
-  # @param [String]              id         Element controlled by this button.
-  # @param [String, nil]         label      Default: #PANEL_OPENER_LABEL.
-  # @param [String, Symbol, nil] context    Default: 'for-panel'.
-  # @param [Boolean, String]     open       Start with the element expanded.
-  # @param [String, nil]         selector   Selector of the element controlled
-  #                                           by this button (only used if
-  #                                           panel.js RESTORE_PANEL_STATE is
-  #                                           *true*).
-  # @param [Hash] opt                       Passed to #button_tag.
-  #
-  # @raise [RuntimeError]             The controlled element was not specified.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see file:app/assets/javascripts/feature/panel.js
-  #
-  def toggle_button: (id: String, ?label: String?, ?context: (String|Symbol)?, ?open: (String|bool)?, ?selector: String?, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Configuration for tree control properties.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  # -
-  # noinspection RailsI18nInspection
-  # +
-  TREE_CTRL_CFG: symHash
-
-  # Label for button to open a collapsed tree.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  TREE_OPENER_LABEL: ActiveSupport::SafeBuffer
-
-  # Tooltip for button to open a collapsed tree.
-  #
-  # @type [String]
-  #
-  TREE_OPENER_TIP: String
-
-  # Label for button to close an expanded tree.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  TREE_CLOSER_LABEL: ActiveSupport::SafeBuffer
-
-  # Tooltip for button to close an expanded tree.
-  #
-  # @type [String]
-  #
-  TREE_CLOSER_TIP: String
-
-  # Tree open/close control.
-  #
-  # @param [Hash] opt                 Passed to #toggle_button.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see file:app/assets/javascripts/feature/search.js
-  #
-  def tree_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # If the client is responsible for managing hidden inputs on forms then they
   # should not be generated via #search_form.
@@ -129,10 +33,7 @@ module LayoutHelper::Common
   #
   # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
   #
-  # +
-  # noinspection RubyUnusedLocalVariable
-  # -
-  def search_form: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
+  def search_form: ((Symbol|String|nil) target, ?(Symbol|String|nil) id, ?hidden: anyHash|nil, **untyped opt) { () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
 
   # A form used to create/modify a search.
   #
@@ -155,7 +56,7 @@ module LayoutHelper::Common
   #
   # @note Used only if #CLIENT_MANAGES_HIDDEN_INPUTS is false.
   #
-  def search_form_with_hidden: ((Symbol|String)? target, ?(Symbol|String)? id, ?hidden: anyHash?, **untyped opt) { () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
+  def search_form_with_hidden: ((Symbol|String|nil) target, ?(Symbol|String|nil) id, ?hidden: anyHash|nil, **untyped opt) { () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
 
   # The target path for searches from the search bar.
   #
@@ -164,5 +65,5 @@ module LayoutHelper::Common
   #
   # @return [String]
   #
-  def search_target_path: (?(Symbol|String)? target, **untyped opt) -> String
+  def search_target_path: (?(Symbol|String|nil) target, **untyped opt) -> String
 end

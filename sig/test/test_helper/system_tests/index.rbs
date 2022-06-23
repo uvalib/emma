@@ -7,7 +7,6 @@ module TestHelper::SystemTests::Index
 
   SEARCH_TERMS_CLASS: String
 
-  # TODO: test on header facet selections
   VALUE_SELECTOR: String
 
   # Assert that the current page is a valid index page.
@@ -45,9 +44,6 @@ module TestHelper::SystemTests::Index
   #
   # NOTE: The active search terms are no longer displayed on the page.
   #
-  # -
-  # noinspection RubyDeadCode
-  # +
   def assert_search_terms: (**untyped terms) -> void
 
   # Assert that a search count is displayed on the index page.

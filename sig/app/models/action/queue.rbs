@@ -41,6 +41,14 @@ class Action::Queue < Action::BulkPart
   #
   def not_in_queue?: (?(String|nil) sid, **untyped opt) -> bool
 
+  # check_retrieved # TODO: I18n
+  #
+  # @param [String, nil] sid          Default: `#sid_value`
+  # @param [Boolean]     advance      If *false* do not advance workflow state.
+  # @param [Hash]        opt
+  #
+  # @return [String]
+  #
   def check_retrieved: (?(String|nil) sid, ?advance: bool, **untyped opt) -> String
 
   # A textual description of the type of the Model instance.

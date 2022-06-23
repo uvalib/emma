@@ -1,13 +1,20 @@
 # View helper methods supporting access and linkages to AWS S3.
 #
+# @see file:app/assets/stylesheets/feature/_aws.scss
+#
 module AwsHelper
+  include Emma::Unicode
+
   include HtmlHelper
 
-  include LayoutHelper
+  include LinkHelper
+
+  include ParamsHelper
+
+  include SerializationHelper
 
   S3_EMPTY_BUCKET: String
 
-  # TODO: I18n
   S3_PREFIX_LIMIT: Integer
 
   S3_OBJECT_VALUES: symArray
@@ -33,7 +40,7 @@ module AwsHelper
   #
   # @return [String]
   #
-  def s3_bucket_url: (String|Aws::S3::Bucket bucket, ?region: String?) -> String
+  def s3_bucket_url: ((String|Aws::S3::Bucket) bucket, ?region: String|nil) -> String
 
   # Generate an HTML link to display the AWS console for a given AWS S3 bucket
   # in a new browser tab.
@@ -43,7 +50,7 @@ module AwsHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def s3_bucket_link: (String|Aws::S3::Bucket bucket, **untyped opt) -> ActiveSupport::SafeBuffer
+  def s3_bucket_link: ((String|Aws::S3::Bucket) bucket, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a table of S3 buckets and objects as HTML.
   #
@@ -111,10 +118,7 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<Hash>]                           If *html* is *false*.
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
-  def render_s3_bucket: (String|Aws::S3::Bucket|nil bucket, Array[Aws::S3::Object] objects, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[symHash])
+  def render_s3_bucket: ((String|Aws::S3::Bucket|nil) bucket, Array[Aws::S3::Object] objects, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[symHash])
 
   # Show column headings for an S3 object.
   #
@@ -147,7 +151,7 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                            If *html* is *false*.
   #
-  def render_s3_object: (symHash|Aws::S3::Object obj, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+  def render_s3_object: ((symHash|Aws::S3::Object) obj, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
 
   # Show an S3 object placeholder indicating an empty S3 bucket.
   #
@@ -158,7 +162,7 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                        If *html* is *false*.
   #
-  def render_s3_object_placeholder: (?label: String?, ?html: untyped? html, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+  def render_s3_object_placeholder: (?label: String|nil, ?html: bool|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
 
   # Extract values from an S3 object.
   #
@@ -167,7 +171,7 @@ module AwsHelper
   #
   # @return [Hash]
   #
-  def s3_object_values: (symHash|Aws::S3::Object|nil obj, ?symArray methods) -> symHash
+  def s3_object_values: ((symHash|Aws::S3::Object|nil) obj, ?symArray methods) -> symHash
 
   # Extract values from an item.
   #
@@ -176,9 +180,6 @@ module AwsHelper
   #
   # @return [Hash]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
   def value_hash: (untyped item, symArray methods) -> symHash
 
   NUM_SIZE_OPT: symHash
@@ -190,8 +191,8 @@ module AwsHelper
   #
   # @return [Any]
   #
-  def value_format: (anyArray|Integer|_DateTime|bool|String item, ?(Symbol|nil) hint) -> String
-                  | (untyped item,                                ?(Symbol|nil) hint) -> untyped
+  def value_format: ((anyArray|Integer|_DateTime|bool|String) item, ?(Symbol|nil) hint) -> String
+                  | (untyped item,                                  ?(Symbol|nil) hint) -> untyped
 
   # Return the prefix of the given object key.
   #
@@ -209,10 +210,7 @@ module AwsHelper
   #
   # @return [Array<Hash>]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
-  def sort_objects!: (Array[symHash] array, ?(symArray|Hash[Symbol,(String|bool)])? sort_keys) -> Array[symHash]
+  def sort_objects!: (Array[symHash] array, ?(symArray|Hash[Symbol,(String|bool)]|nil) sort_keys) -> Array[symHash]
 
   # Normalize sort keys.
   #
@@ -220,7 +218,7 @@ module AwsHelper
   #
   # @return [Hash{Symbol=>Boolean}]
   #
-  def transform_sort_keys: (Symbol|symArray|Hash[Symbol,(String|bool)] sort_keys) -> Hash[Symbol,bool]
+  def transform_sort_keys: ((Symbol|symArray|Hash[Symbol,(String|bool)]) sort_keys) -> Hash[Symbol,bool]
 
   private
 

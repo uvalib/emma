@@ -30,8 +30,9 @@ module Emma::Rake
   # @param [String, Symbol]                        name
   # @param [Hash, Array, Rake::TaskArguments, nil] args
   #
-  # noinspection RubyNilAnalysis
-  def subtask: (String|Symbol name, ?(Rake::TaskArguments|strArray|Hash[(String|Symbol),(String|Symbol)])? args) -> void
+  # @return [void]
+  #
+  def subtask: ((String|Symbol) name, ?(Rake::TaskArguments|strArray|Hash[(String|Symbol),(String|Symbol)]|nil) args) -> void
 
   # task_options
   #
@@ -39,9 +40,6 @@ module Emma::Rake
   #
   # @return [Array<String,nil>]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
   def task_options: (*(String|Symbol|Rake::TaskArguments|strArray|nil) flags) -> Array[String?]
 
   # Indicate whether the option flag was provided via task arguments or on the
@@ -50,7 +48,7 @@ module Emma::Rake
   # @param [String, Symbol]                  flag
   # @param [Rake::TaskArguments, Array, nil] task_args
   #
-  def task_option?: (String|Symbol flag, ?(Rake::TaskArguments|strArray)? task_args) -> bool
+  def task_option?: ((String|Symbol) flag, ?(Rake::TaskArguments|strArray|nil) task_args) -> bool
 
   # Return the value of an option flag provided via task arguments or on the
   # the command line (after "--").
@@ -63,7 +61,7 @@ module Emma::Rake
   #
   # @return [String, nil]
   #
-  def task_option: (String|Symbol flag, ?(Rake::TaskArguments|strArray)? args) -> (String | nil)
+  def task_option: ((String|Symbol) flag, ?(Rake::TaskArguments|strArray|nil) args) -> (String | nil)
 
   attr_reader cli_task_options: strArray
   attr_reader start_time:       Float

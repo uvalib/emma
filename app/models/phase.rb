@@ -420,7 +420,6 @@ class Phase < ApplicationRecord
   if DEBUG_RECORD
 
     def show
-      # noinspection RubyMismatchedArgumentType
       super(:user, :entry, :actions, :current_action)
     end
 

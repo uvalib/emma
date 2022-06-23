@@ -32,6 +32,8 @@ class LookupService
   #
   # @type [Hash{Class=>Array<Symbol>}]
   #
+  # @see LookupService::RemoteService::Properties#priority
+  #
   SERVICE_TABLE: Hash[Class,symArray]
 
   ADD_DIAGNOSTICS: bool
@@ -50,15 +52,15 @@ class LookupService
   #
   # @overload request(items, channel:, timeout: nil)
   #   Access remote services asynchronously.
-  #   @param [*]                     items
-  #   @param [LookupChannel]         channel
-  #   @param [Numeric, Boolean, nil] timeout  Default: `#DEFAULT_TIMEOUT`.
+  #   @param [LookupService::Request] request
+  #   @param [LookupChannel]          channel
+  #   @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
   #   @return [nil]
   #
   # @overload request(items, timeout: nil)
   #   Access remote services one at a time.
-  #   @param [*]                     items
-  #   @param [Numeric, Boolean, nil] timeout  Default: `#DEFAULT_TIMEOUT`.
+  #   @param [LookupService::Request] request
+  #   @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
   #   @return [Hash{String=>LookupService::Response}]
   #
   def self.request: (lookupArg items, ?channel: nil,           ?timeout: Numeric|bool|nil) -> Hash[String,LookupService::Response]
@@ -75,36 +77,21 @@ class LookupService
   # @see LookupJob#worker_task
   # @see LookupService#get_sync
   #
-  def self.get_from: (Class|LookupService::RemoteService service, LookupService::Request request, **untyped opt) -> LookupService::Response
+  def self.get_from: ((Class|LookupService::RemoteService) service, LookupService::Request request, **untyped opt) -> LookupService::Response
 
-  # Combine the data from multiple threads.
+  # services_for
   #
-  # Each top level *table* entry is a hash returned by #post_fight.
+  # @param [LookupService::Request, Hash, Array, String] items
+  # @param [String, Boolean, nil]                        log
   #
-  # @param [Hash{*=>Hash}]                              table
-  # @param [LookupService::Request, Array<String>, nil] requested
+  # @return [Array<Class>]
   #
-  # @return [Hash]
-  #
-  # @see LookupService::RemoteService#post_fight
-  #
-  def self.merge_data: (lookupJobTable table, ?(LookupService::Request|strArray|nil) requested) -> anyHash
-
-  def self.blend_data: (*symHash entries) -> symHash
-
-  FAMILY_NAME_GIVEN_NAME_DATES: Regexp
-  FAMILY_NAME_GIVEN_NAME: Regexp
-
-  def self.fix_names: (strArray values) -> strArray
-
-  def self.eliminate_substrings: (strArray) -> strArray
-
-  def self.normalize_dates!: (symHash result) -> symHash
+  def self.services_for: (lookupArg items, ?log: String|bool|nil) -> Array[Class]
 
   # Access remote services asynchronously.
   #
   # @param [LookupService::Request] request
-  # @param [Hash]                   opt       Passed to LookupJob.
+  # @param [Hash]                   opt       Passed to LookupJob#perform
   #
   # @option opt [Numeric, nil] :timeout
   #
@@ -122,14 +109,64 @@ class LookupService
   #
   def self.get_sync: (LookupService::Request request, ?timeout: Numeric|nil, **untyped opt) -> Hash[String,LookupService::Response]
 
-  # services_for
+  # Combine the data from multiple threads.
   #
-  # @param [LookupService::Request, Hash, Array, String] items
-  # @param [String, Boolean, nil]                        log
+  # Each top level *table* entry is a hash returned by #post_fight.
   #
-  # @return [Array<Class>]
+  # @param [Hash{*=>Hash}]                              table
+  # @param [LookupService::Request, Array<String>, nil] request
   #
-  def self.services_for: (lookupArg items, ?log: String|bool|nil) -> Array[Class]
+  # @return [Hash]
+  #
+  # @see LookupService::RemoteService#post_fight
+  #
+  def self.merge_data: (lookupJobTable table, ?(LookupService::Request|strArray|nil) requested) -> anyHash
+
+  # Combine the data from multiple entries.
+  #
+  # Each top level *table* entry is a hash returned by #post_fight.
+  #
+  # @param [Array<Hash{Symbol=>*}>] entries
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def self.blend_data: (*symHash entries) -> symHash
+
+  # @private
+  FAMILY_NAME_GIVEN_NAME_DATES: Regexp
+
+  # @private
+  FAMILY_NAME_GIVEN_NAME: Regexp
+
+  # Put proper names in a consistent order.
+  #
+  # @param [Array<String>] values
+  #
+  # @return [Array<String>]
+  #
+  def self.fix_names: (strArray values) -> strArray
+
+  # Convert values to strings and eliminate individual values which are
+  # duplicates or substrings of other values (based on a comparison of
+  # normalized values so that differences in punctuation or capitalization are
+  # disregarded).
+  #
+  # @param [Array] values
+  #
+  # @return [Array<String>]
+  #
+  def self.eliminate_substrings: (strArray) -> strArray
+
+  # Transform "YYYY-01-01" values for :emma_publicationDate into "YYYY" values
+  # for :dcterms_dateCopyright.  Eliminate :dcterms_dateCopyright values which
+  # are already indicated by the remaining "YYYY-MM-DD" :emma_publicationDate
+  # values.
+  #
+  # @param [Hash] result
+  #
+  # @return [Hash]                    The *result* hash, possibly modified.
+  #
+  def self.normalize_dates!: (symHash result) -> symHash
 
   # @type [Hash{Symbol=>String,Regexp}]
   PATTERN: Hash[Symbol,(String|Regexp)]

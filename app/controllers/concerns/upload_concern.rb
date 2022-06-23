@@ -97,9 +97,6 @@ module UploadConcern
   #
   # @return [Array<Hash{Symbol=>Any}>]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def upload_bulk_post_params(p = nil, req = nil)                               # NOTE: to EntryConcern#entry_bulk_post_params
     prm = model_options.model_post_params(p)
     src = prm[:src] || prm[:source]
@@ -514,9 +511,6 @@ module UploadConcern
   #
   # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / fail msgs
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def reindex_record(list, atomic: false, dryrun: false, meth: __method__, **)
     successes = []
     failures  = []
@@ -598,9 +592,6 @@ module UploadConcern
   #   @param [Boolean]                xhr
   #   @param [Symbol]                 meth
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)     # NOTE: to EntryConcern
     meth ||= calling_method
     __debug_items("UPLOAD #{meth} #{__method__}", binding)

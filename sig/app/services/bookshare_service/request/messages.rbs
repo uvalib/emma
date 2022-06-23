@@ -7,9 +7,6 @@
 # associated with a Site. They are sent from a Membership Assistant or a
 # system process, and not from user to user.
 #
-# -
-# noinspection RubyParameterNamingConvention
-# +
 module BookshareService::Request::Messages
   include BookshareService::Common
 

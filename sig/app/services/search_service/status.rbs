@@ -17,7 +17,7 @@ module SearchService::Status
   # @return [Array<(TrueClass,nil)>]
   # @return [Array<(FalseClass,String)>]
   #
-  def active_status: (?with: symHash?, ?expect: Proc?) -> ([true, nil] | [false, String])
+  def active_status: (?with: symHash|nil, ?expect: Proc|nil) -> ([true, nil] | [false, String])
 
   private
 

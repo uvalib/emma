@@ -625,6 +625,7 @@ module OmniAuth
           token ||= src[:access_token] || src[:token]
           token ||= src.dig(:credentials, :token)
         end
+        # noinspection RubyMismatchedArgumentType
         if !user.is_a?(String)
           Log.warn("#{__method__}: invalid user: #{user.inspect}") if user
         elsif (token ||= stored_auth.dig(user, :access_token)).is_a?(String)

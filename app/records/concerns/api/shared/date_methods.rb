@@ -83,9 +83,6 @@ module Api::Shared::DateMethods
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def normalize_day_fields!(data = nil, mode = nil)
     mode ||= date_array_mode
     day_fields.each do |field|

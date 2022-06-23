@@ -1,7 +1,7 @@
 class LookupChannel::Response < ApplicationCable::Response
   TEMPLATE: symHash
 
-  def initialize: (?untyped? values, **untyped opt) -> void
+  def initialize: (?untyped values, **untyped opt) -> void
 
   def self.template: () -> symHash
 end
@@ -14,7 +14,7 @@ class LookupChannel::StartResponse < LookupChannel::Response
   # @param [*]    values
   # @param [Hash] opt
   #
-  def initialize: (?untyped? values, **untyped opt) -> void
+  def initialize: (?untyped values, **untyped opt) -> void
 
   def normalize: (untyped value) -> symHash
 

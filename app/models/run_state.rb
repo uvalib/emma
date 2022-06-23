@@ -146,9 +146,6 @@ class RunState < Hash
   #
   # @param [String, Boolean, Hash, RunState, Any, nil] source
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def initialize(source = nil)
     if source.blank?
       source  = AVAILABLE_DEFAULTS
@@ -158,6 +155,7 @@ class RunState < Hash
       default = AVAILABLE_DEFAULTS.merge(text: "invalid: #{source.inspect}")
       source  = safe_json_parse(source, log: false, default: default)
     end
+    # noinspection RubyMismatchedArgumentType
     merge!(source)
     @status ||= UNAVAILABLE_STATUS
     @code   ||= STATE.dig(@status, :code)
@@ -483,7 +481,7 @@ class RunState < Hash
 
     # Add a warning-level log message.
     #
-    # @param [Array]                args    Passed to #log.
+    # @param [Array<*>]             args    Passed to #log.
     # @param [Symbol, nil]          meth    Calling method.
     # @param [Proc]                 block   Passed to #log.
     #
@@ -495,7 +493,7 @@ class RunState < Hash
 
     # Add a debug-level log message.
     #
-    # @param [Array]                args    Passed to #log.
+    # @param [Array<*>]             args    Passed to #log.
     # @param [Symbol, nil]          meth    Calling method.
     # @param [Proc]                 block   Passed to #log.
     #
@@ -507,7 +505,7 @@ class RunState < Hash
 
     # Add a log message.
     #
-    # @param [Array]                args    Passed to Emma::Log#add
+    # @param [Array<*>]             args    Passed to Emma::Log#add
     # @param [Integer, Symbol, nil] level   Severity level.
     # @param [Symbol, nil]          meth    Calling method.
     # @param [Proc]                 block   Passed to Emma::Log#add

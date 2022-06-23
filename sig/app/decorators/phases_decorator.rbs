@@ -3,6 +3,6 @@
 # @!attribute [r] object
 #   Set in Draper#initialize
 #   @return [Array<Phase>]
-
+#
 class PhasesDecorator < BaseCollectionDecorator
 end

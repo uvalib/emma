@@ -59,9 +59,6 @@ LOAD_INDENT: String
 #
 # @see http://guides.rubyonrails.org/active_support_instrumentation.html
 #
-# -
-# noinspection RubyMismatchedArgumentType
-# +
 NOTIFICATIONS: Regexp | bool
 
 # Limit each notification display to this number of characters.
@@ -78,6 +75,8 @@ class Object
   #
   # @param [Array<Symbol>] methods
   #
+  # @return [void]
+  #
   def neutralize: (*Symbol methods) -> void
 
   # Convert a string to UTF-8 encoding.
@@ -92,8 +91,8 @@ class Object
 
   # Write indented line(s) to $stderr.
   #
-  # @param [Array<Hash,Array,String,Any>] args
-  # @param [Hash]                         opt
+  # @param [Array<*>] args
+  # @param [Hash]     opt
   #
   # @option opt [String]                   :leader     At the start of each line.
   # @option opt [String, Integer]          :indent     Default: #CONS_INDENT.
@@ -111,38 +110,42 @@ class Object
   # $stderr output.  If not deployed, the log entry is created in addition to
   # $stderr output.
   #
-  def __output_impl: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
+  def __output_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+                   | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
   #
-  # @param [Array<Hash,Array,String,Any>] args    Passed to #__output_impl.
-  # @param [Hash]                         opt     Passed to #__output_impl.
-  # @param [Proc]                         block   Passed to #__output_impl.
+  # @param [Array<*>] args              Passed to #__output_impl.
+  # @param [Hash]     opt               Passed to #__output_impl.
+  # @param [Proc]     block             Passed to #__output_impl.
   #
   # == Usage Notes
   # The method is only functional if #CONSOLE_OUTPUT is true.
   #
-  def __output: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
+  def __output: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+              | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   public
 
   # Write indented debug line(s) to $stderr.
   #
-  # @param [Array] args                 Passed to #__output_impl.
-  # @param [Hash]  opt                  Passed to #__output_impl.
-  # @param [Proc]  block                Passed to #__output_impl.
+  # @param [Array<*>] args              Passed to #__output_impl.
+  # @param [Hash]     opt               Passed to #__output_impl.
+  # @param [Proc]     block             Passed to #__output_impl.
   #
   # @return [nil]
   #
-  def __debug_impl: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
+  def __debug_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+                  | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
   #
-  # @param [Array] args                 Passed to #__debug_impl.
-  # @param [Hash]  opt                  Passed to #__debug_impl.
-  # @param [Proc]  block                Passed to #__debug_impl.
+  # @param [Array<*>] args              Passed to #__debug_impl.
+  # @param [Hash]     opt               Passed to #__debug_impl.
+  # @param [Proc]     block             Passed to #__debug_impl.
   #
-  def __debug: (*untyped args, **untyped opt) { () -> (untyped|anyArray) } -> nil
+  def __debug: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+             | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Loading level and indentation.
   #

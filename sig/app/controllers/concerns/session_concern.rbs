@@ -5,13 +5,15 @@ module SessionConcern
 
   include Emma::Debug
 
-  include ParamsConcern
+  include FlashHelper
 
-  include FlashConcern
+  include SerializationHelper
 
   include ApiConcern
 
   include AuthConcern
+
+  include ParamsConcern
 
   # :nocov:
   #include Devise::Controllers::Helpers
@@ -34,7 +36,7 @@ module SessionConcern
   # @param [Any]         message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
-  def auth_success_redirect: (?(String|nil) path, ?user: User?, ?message: untyped?, **untyped opt) -> void
+  def auth_success_redirect: (?(String|nil) path, ?user: User|nil, ?message: untyped|nil, **untyped opt) -> void
 
   # Redirect after a failed authorization operation.
   #
@@ -43,7 +45,7 @@ module SessionConcern
   # @param [Any]         message      Passed to #set_flash_alert.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
-  def auth_failure_redirect: (?(String|nil) path, ?user: User?, ?message: untyped?, **untyped opt) -> void
+  def auth_failure_redirect: (?(String|nil) path, ?user: User|nil, ?message: untyped|nil, **untyped opt) -> void
 
   # Set `flash[:notice]` based on the current action and user name.
   #
@@ -54,7 +56,7 @@ module SessionConcern
   #
   # @return [void]
   #
-  def set_flash_notice: (?(String|nil) message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
+  def set_flash_notice: (?(String|nil) message, ?action: Symbol|nil, ?user: String|anyHash|User|nil, **untyped opt) -> void
 
   # Set `flash[:alert]` based on the current action and user name.
   #
@@ -65,7 +67,7 @@ module SessionConcern
   #
   # @return [void]
   #
-  def set_flash_alert: (?(String|nil) message, ?action: Symbol?, ?user: (String|anyHash|User)?, **untyped opt) -> void
+  def set_flash_alert: (?(String|nil) message, ?action: Symbol|nil, ?user: String|anyHash|User|nil, **untyped opt) -> void
 
   # Configured success or failure message.
   #
@@ -75,22 +77,7 @@ module SessionConcern
   #
   # @return [String]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def status_message: (status: String|Symbol, ?action: Symbol?, ?user: (anyHash|String|User)?) -> String
-
-  # Information about the last operation performed in this session.
-  #
-  # @return [Hash]
-  #
-  def last_operation: () -> strHash
-
-  # Time of the last operation performed in this session.
-  #
-  # @return [Integer]
-  #
-  def last_operation_time: () -> Integer
+  def status_message: (status: String|Symbol, ?action: Symbol|nil, ?user: String|anyHash|User|nil) -> String
 
   # Persist information about the last operation performed in this session.
   #
@@ -100,7 +87,7 @@ module SessionConcern
   #
   # @return [Hash{String=>Any}]
   #
-  def last_operation_update: (?time: Time?, ?path: String?, ?req_params: symHash?) -> (strHash | nil)
+  def last_operation_update: (?time: Time|nil, ?path: String|nil, ?req_params: symHash|nil) -> (strHash | nil)
 
   # Application-specific `#session` keys.
   #
@@ -183,9 +170,6 @@ module SessionConcern
   # block, whereas :api_error_message shows the BookshareService::Error that is
   # created in BookshareService::Common#api.
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
   def session_update: () { () -> void } -> void
 
   private

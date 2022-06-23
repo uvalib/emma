@@ -40,9 +40,9 @@ module UploadWorkflow::Single::Data
   # The characteristic "return value" of the workflow after an event has been
   # registered.
   #
-  # @return [Array<(Integer,Hash,Array<String>)>]  For :validating, :replacing
-  # @return [Array<Upload,String>]          For :removing, :removed
-  # @return [Upload, nil]                   For all other states
+  # @return [Array<(Integer,Hash,Array<String>)>]   For :validating, :replacing
+  # @return [Array<Upload,String>]                  For :removing, :removed
+  # @return [Upload, nil]                           For all other states
   #
   def results: () -> (httpResult | Array[String|Upload] | Upload | nil)
 
@@ -53,10 +53,7 @@ module UploadWorkflow::Single::Data
   #
   # @return [Upload, nil]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def set_data: (symHash|String|Upload|nil data) -> (Upload | nil)
+  def set_data: ((symHash|String|Upload|nil) data) -> (Upload | nil)
 
   alias set_record set_data
 
@@ -73,7 +70,7 @@ module UploadWorkflow::Single::Data
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def record_data: (symHash|Upload data) -> symHash
+  def record_data: ((symHash|Upload) data) -> symHash
 
   # Clear the fields in an existing Upload record.
   #
@@ -81,7 +78,7 @@ module UploadWorkflow::Single::Data
   #
   # @return [Upload, nil]
   #
-  def reset_record: (?(symHash|Upload|String)? data) -> (Upload | nil)
+  def reset_record: (?(symHash|Upload|String|nil) data) -> (Upload | nil)
 
   # Create a new Upload record.
   #
@@ -89,7 +86,7 @@ module UploadWorkflow::Single::Data
   #
   # @return [Upload, nil]
   #
-  def create_record: (?(symHash|Upload|String)? data) -> (Upload | nil)
+  def create_record: (?(symHash|Upload|String|nil) data) -> (Upload | nil)
 
   # Indicate whether a record was originally created by (or on behalf of) the
   # workflow (as opposed to an existing record acquired from the database).
@@ -184,12 +181,39 @@ module UploadWorkflow::Single::Actions
   #
   def wf_index_update: (*untyped _event_args) -> void
 
+  # Upload file via Shrine and update failed/succeeded arrays.
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::External#upload_file
+  #
   def wf_upload_file: (*untyped event_args) -> void
 
+  # Check workflow status to see whether it should advance.
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
   def wf_check_status: (*untyped event_args) -> void
 
+  # When the workflow state of the record is :unretrieved, check the AWS S3
+  # bucket to determine whether the submission has finally been picked up by
+  # the member repository and removed from the queue.  If so, then advance the
+  # workflow state.
+  #
+  # @return [String]
+  #
   def wf_check_retrieved: () -> String
 
+  # When the workflow state of the record is :indexing, check to determine
+  # whether index has finally received the update from the member repository.
+  # If so then advance the workflow state.
+  #
+  # @return [String]
+  #
   def wf_check_indexed: () -> String
 
   # Asset presence of an Upload record.
@@ -230,9 +254,6 @@ end
 
 # Overridden state transition methods specific to single-item upload workflows.
 #
-# -
-# noinspection RubyTooManyMethodsInspection
-# +
 module UploadWorkflow::Single::States
   include UploadWorkflow::States
 
@@ -520,10 +541,7 @@ class UploadWorkflow::Single < UploadWorkflow
   # @param [Upload, Hash, String, nil] data
   # @param [Hash]                      opt    Passed to #initialize_state
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def initialize: (symHash|String|Upload|nil data, **untyped opt) -> void
+  def initialize: ((symHash|String|Upload|nil) data, **untyped opt) -> void
 
   # Set initial state.
   #
@@ -556,7 +574,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @return [String]
   #
-  def persist_workflow_state: (Symbol|String new_value) -> String
+  def persist_workflow_state: ((Symbol|String) new_value) -> String
 
   # Get the current real-time value of the record's workflow phase.
   #
@@ -577,7 +595,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_phase
   #
-  def set_workflow_phase: (?(Symbol|String)? new_value, ?(Upload|nil) rec) -> (Symbol | nil)
+  def set_workflow_phase: (?(Symbol|String|nil) new_value, ?(Upload|nil) rec) -> (Symbol | nil)
 
   # Get the current real-time value of the appropriate workflow state field.
   #
@@ -600,7 +618,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_state
   #
-  def set_workflow_state: (Symbol|String|nil new_value, ?(Upload|nil) rec) -> (String | nil)
+  def set_workflow_state: ((Symbol|String|nil) new_value, ?(Upload|nil) rec) -> (String | nil)
 
   # Generate a new instance of the appropriate workflow variant subclass.
   #
@@ -609,7 +627,7 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @return [UploadWorkflow::Single]
   #
-  def self.generate: (symHash|String|Upload|nil data, **untyped opt) -> UploadWorkflow::Single
+  def self.generate: ((symHash|String|Upload|nil) data, **untyped opt) -> UploadWorkflow::Single
 
   # Generate a new instance of the appropriate workflow variant subclass and
   # perform checking based on its status.
@@ -621,5 +639,5 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @return [UploadWorkflow::Single]
   #
-  def self.check_status: (symHash|String|Upload|nil data, **untyped opt) -> UploadWorkflow::Single
+  def self.check_status: ((symHash|String|Upload|nil) data, **untyped opt) -> UploadWorkflow::Single
 end

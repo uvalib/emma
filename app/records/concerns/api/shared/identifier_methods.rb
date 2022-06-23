@@ -62,9 +62,6 @@ module Api::Shared::IdentifierMethods
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def normalize_identifier_fields!(data = nil, mode = nil)
     mode ||= id_array_mode
     identifier_fields.each do |field|

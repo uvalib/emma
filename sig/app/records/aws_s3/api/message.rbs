@@ -8,5 +8,5 @@ class AwsS3::Api::Message < AwsS3::Api::Record
   # @param [Model, Hash, nil] src
   # @param [Hash, nil]        opt
   #
-  def initialize: (Model|symHash|nil src, ?(symHash|nil) opt) -> void
+  def initialize: ((Model|symHash|nil) src, ?(symHash|nil) opt) -> void
 end

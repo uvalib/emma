@@ -63,9 +63,6 @@ module LinkHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def icon_button(icon: nil, text: nil, url: nil, **opt)
     icon        ||= STAR
     text        ||= opt[:title] || 'Action' # TODO: I18n
@@ -76,6 +73,7 @@ module LinkHelper
     label   = sr_only << symbol
 
     if url
+      # noinspection RubyMismatchedArgumentType
       make_link(label, url, **opt)
     else
       if opt[:tabindex].to_i == -1

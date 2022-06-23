@@ -54,7 +54,6 @@ class Action::Store < Action::BulkPart
     __debug_items(binding)
     data = extract_hash!(attr, *EMMA_DATA_KEYS)
     attr = attribute_options(attr, opt)
-    # noinspection RubyMismatchedArgumentType
     attr[:emma_data] = generate_emma_data(data, attr)
     super(attr, opt)
   end

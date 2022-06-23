@@ -52,8 +52,8 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 
 # Write indented line(s) to $stderr.
 #
-# @param [Array<Hash,Array,String,Any>] args
-# @param [Hash]                         opt
+# @param [Array<*>] args
+# @param [Hash]     opt
 #
 # @option opt [String]                   :leader     At the start of each line.
 # @option opt [String, Integer]          :indent     Default: #CONS_INDENT.
@@ -130,9 +130,9 @@ end
 
 # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
 #
-# @param [Array<Hash,Array,String,Any>] args    Passed to #__output_impl.
-# @param [Hash]                         opt     Passed to #__output_impl.
-# @param [Proc]                         block   Passed to #__output_impl.
+# @param [Array<*>] args              Passed to #__output_impl.
+# @param [Hash]     opt               Passed to #__output_impl.
+# @param [Proc]     block             Passed to #__output_impl.
 #
 # == Usage Notes
 # The method is only functional if #CONSOLE_OUTPUT is true.
@@ -163,9 +163,9 @@ DEBUG_MAX = 2048
 
 # Write indented debug line(s) to $stderr.
 #
-# @param [Array<Any,nil>] args        Passed to #__output_impl.
-# @param [Hash]           opt         Passed to #__output_impl.
-# @param [Proc]           block       Passed to #__output_impl.
+# @param [Array<*>] args              Passed to #__output_impl.
+# @param [Hash]     opt               Passed to #__output_impl.
+# @param [Proc]     block             Passed to #__output_impl.
 #
 # @return [nil]
 #
@@ -181,9 +181,9 @@ end
 
 # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
 #
-# @param [Array<Any,nil>] args        Passed to #__debug_impl.
-# @param [Hash]           opt         Passed to #__debug_impl.
-# @param [Proc]           block       Passed to #__debug_impl.
+# @param [Array<*>] args              Passed to #__debug_impl.
+# @param [Hash]     opt               Passed to #__debug_impl.
+# @param [Proc]     block             Passed to #__debug_impl.
 #
 def __debug(*args, **opt, &block)
   __debug_impl(*args, **opt, &block)
@@ -342,9 +342,6 @@ if TRACE_NOTIFICATIONS
   #
   # @see http://guides.rubyonrails.org/active_support_instrumentation.html
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   NOTIFICATIONS =
     case TRACE_NOTIFICATIONS
       when String then Regexp.new(TRACE_NOTIFICATIONS)

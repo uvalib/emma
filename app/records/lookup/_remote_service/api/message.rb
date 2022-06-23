@@ -28,7 +28,6 @@ module Lookup::RemoteService::Api::Message
       create_message_wrapper(opt) do |opt|
         initialize_attributes unless src.is_a?(Model)
         super(src, **opt)
-        # noinspection RubyMismatchedArgumentType
         initialize_exec_report(exception)
       end
     end

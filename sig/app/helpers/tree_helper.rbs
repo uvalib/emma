@@ -7,9 +7,6 @@ module TreeHelper
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   TREE_CTRL_CFG: symHash
 
   # Label for button to open a collapsed tree.

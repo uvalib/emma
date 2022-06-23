@@ -1,6 +1,7 @@
 # Access search call instances.
 #
-# @see SearchCallHelper
+# @see SearchCallDecorator
+# @see SearchCallsDecorator
 # @see file:app/views/search_call/**
 #
 class SearchCallController < ApplicationController
@@ -36,6 +37,7 @@ class SearchCallController < ApplicationController
   #
   # List searches.
   #
+  # @see #search_call_index_path      Route helper
   # @see SearchCallConcern#get_search_calls
   # @see SearchCall#extended_table
   #
@@ -45,6 +47,7 @@ class SearchCallController < ApplicationController
   #
   # Display details of a search.
   #
+  # @see #search_call_path            Route helper
   # @see SearchCall#find
   #
   def show: () -> void

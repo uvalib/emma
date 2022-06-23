@@ -30,7 +30,7 @@ module XmlHelper
   #
   # == Usage Notes
   # Since *str* may be a sequence of HTML elements or even just a text string
-  # with HTML entities, it is wrapped in a "<div>" to make sure that the
+  # with HTML entities, it is wrapped in a '<div>' to make sure that the
   # Nokogiri parser is dealing with valid XML.
   #
   # @note The result has UTF-8 encoding (even if no truncation was performed).

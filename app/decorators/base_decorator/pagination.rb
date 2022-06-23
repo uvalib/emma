@@ -120,9 +120,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def pagination_count(count, total = nil, unit: nil, **opt)
     css   = '.search-count'
     count = positive(count).to_i

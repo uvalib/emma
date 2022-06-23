@@ -1,6 +1,7 @@
 # Handle Bookshare-only "/member" pages.
 #
-# @see MemberHelper
+# @see MemberDecorator
+# @see MembersDecorator
 # @see file:app/views/member/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -34,6 +35,7 @@ class MemberController < ApplicationController
   #
   # List all organization members.
   #
+  # @see #member_index_path           Route helper
   # @see BookshareService::Request::Organization#get_my_organization_members
   #
   def index: () -> void
@@ -42,6 +44,7 @@ class MemberController < ApplicationController
   #
   # Display details of an existing organization member.
   #
+  # @see #member_path                 Route helper
   # @see UserConcern#get_account_details
   #
   def show: () -> void
@@ -50,17 +53,23 @@ class MemberController < ApplicationController
   #
   # Add metadata for a new organization member.
   #
+  # @see #new_member_path             Route helper
+  #
   def new: () -> void
 
   # == POST /member/:id
   #
   # Create an entry for a new organization member.
   #
+  # @see #member_path                 Route helper
+  #
   def create: () -> void
 
   # == GET /member/:id/edit
   #
   # Modify metadata of an existing organization member entry.
+  #
+  # @see #edit_member_path            Route helper
   #
   def edit: () -> void
 
@@ -69,11 +78,15 @@ class MemberController < ApplicationController
   #
   # Update the entry for an existing organization member.
   #
+  # @see #member_path                 Route helper
+  #
   def update: () -> void
 
   # == DELETE /member/:id
   #
   # Remove an existing organization member entry.
+  #
+  # @see #member_path                 Route helper
   #
   def destroy: () -> void
 

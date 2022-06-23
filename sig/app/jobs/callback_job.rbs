@@ -22,7 +22,7 @@ class CallbackJob < ApplicationJob
   # @param [Symbol]            meth
   # @param [CallbackJob, nil]  callback
   #
-  def initialize: (ApplicationRecord src, Symbol meth, ?callback: CallbackJob?) -> void
+  def initialize: (ApplicationRecord src, Symbol meth, ?callback: CallbackJob|nil) -> void
 
   # Enqueue or run the callback as a job.
   #

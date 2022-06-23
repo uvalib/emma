@@ -25,6 +25,9 @@ class ReadingListDecorator < BookshareDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
@@ -80,25 +83,44 @@ class ReadingListDecorator < BookshareDecorator
   # Render a metadata listing of a reading list.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  def details_element: (?level: Integer|nil, ?role: String|Symbol|nil, **untyped opt) { () -> untyped } -> ActiveSupport::SafeBuffer
+  # details_element
+  #
+  # @param [Integer, nil]        level
+  # @param [String, Symbol, nil] role
+  # @param [Hash]                opt    Passed to #details.
+  # @param [Proc]                block  Passed to #html_join.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details_element: (?level: Integer|nil, ?role: String|Symbol|nil, **untyped opt) ?{ () -> untyped } -> ActiveSupport::SafeBuffer
 
+  # A sub-section displaying the titles in the reading list.
+  #
+  # @param [Hash] **opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def title_list: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Control whether thumbnails are shown for reading list entries.
+  #
+  # @type [Boolean]
+  #
   FIND_THUMBNAIL: bool
 
   # get_thumbnail_image
@@ -120,9 +142,21 @@ class ReadingListDecorator < BookshareDecorator
   #
   # @return [String, nil]
   #
-  def find_thumbnail: (?Bs::Api::Record? item) -> (String | nil)
+  def find_thumbnail: (?(Bs::Api::Record|nil) item) -> (String | nil)
 
+  # form_action_link
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # form_target_description
+  #
+  # @param [Symbol] action
+  #
+  # @return [String]
+  #
   def form_target_description: (?action: Symbol|nil) -> String
 end

@@ -35,7 +35,6 @@ module LookupService::WorldCat::Request::Records
   def get_sru_records(terms, **opt)
     terms = query_terms!(terms, opt)
     isbns = lccns = nil
-    # noinspection RubyMismatchedArgumentType
     if terms[:ids].present?
       isbns = Array.wrap(terms.dig(:ids, :bn)).presence
       lccns = Array.wrap(terms.dig(:ids, :dn)).presence

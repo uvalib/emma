@@ -44,6 +44,15 @@ module UploadWorkflow::Single::Edit::Actions
   #
   def wf_start_submission: (*untyped event_args) -> void
 
+  # wf_finalize_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see Upload#finish_editing
+  # @see UploadWorkflow::External#repository_modify
+  #
   def wf_finalize_submission: (*untyped event_args) -> void
 
   # Canceling an edit requires reverting data fields to their original values

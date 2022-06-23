@@ -3,27 +3,25 @@
 module SearchConcern
   extend ActiveSupport::Concern
 
+  include FlashHelper
+
+  include ParamsHelper
+
+  include SearchModesHelper
+
+  include SearchTermsHelper
+
   include ApiConcern
 
   include EngineConcern
 
-  include PaginationConcern
-
   include SearchCallConcern
-
-  include LayoutHelper
-
-  # :nocov:
-  #include PaginationConcern
 
   # Access the EMMA Unified Search API service.
   #
   # @return [SearchService]
   #
   def search_api: () -> SearchService
-
-  # @private
-  DEF_TITLE_SEARCH: bool
 
   # @private
   GENERATE_SCORES: bool
@@ -43,8 +41,8 @@ module SearchConcern
   # If :titles is *true* then :canonical defaults to *true* on the production
   # service and *false* everywhere else.
   #
-  def index_search: (?titles: true?, ?save: bool, ?scores: bool?, ?canonical: bool?, **untyped opt) -> Search::Message::SearchTitleList
-                  | (titles:  false, ?save: bool, ?scores: bool?, ?canonical: bool?, **untyped opt) -> Search::Message::SearchRecordList
+  def index_search: (?titles: true|nil, ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchTitleList
+                  | ( titles: false,    ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchRecordList
 
   # index_record
   #
@@ -78,23 +76,7 @@ module SearchConcern
   # @return [SearchCall]              New record.
   # @return [nil]                     If saving was not possible.
   #
-  def save_search: (?user: User?, ?result: (anyArray|_ToA[untyped])?, ?force: bool, **untyped parameters) -> (SearchCall | nil)
-
-  # Analyze the *list* object to generate the path for the next page of
-  # results.
-  #
-  # @param [Search::Message::SearchTitleList, Array<Search::Record::MetadataRecord>, nil] list
-  # @param [Hash, nil] url_params     Current request parameters.
-  #
-  # @return [String]                  Path to generate next page of results.
-  # @return [nil]                     If there is no next page.
-  #
-  # @see PaginationConcern#next_page_path
-  #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def next_page_path: (?list: (Search::Message::SearchTitleList|Array[Search::Record::MetadataRecord])?, **untyped url_params) -> (String | nil)
+  def save_search: (?user: User|nil, ?result: anyArray|_ToA[untyped]|nil, ?force: bool, **untyped parameters) -> (SearchCall | nil)
 
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
@@ -103,10 +85,10 @@ module SearchConcern
   #
   # @return [Any]                     Same type as *value*.
   #
-  def sanitize_keys: (anyHash value)  -> anyHash
+  def sanitize_keys: (anyHash  value) -> anyHash
                    | (anyArray value) -> (anyArray | untyped)
-                   | (String value)   -> (String | strArray)
-                   | (untyped value)  -> untyped
+                   | (String   value) -> (String | strArray)
+                   | (untyped  value) -> untyped
 
   # Indicate whether the argument contains only valid identifiers.
   #
@@ -114,7 +96,7 @@ module SearchConcern
   #
   # @note Currently unused.
   #
-  def valid_identifiers?: (String|strArray value) -> bool
+  def valid_identifiers?: ((String|strArray) value) -> bool
 
   # Indicate whether the argument contains only valid identifiers and provide
   # a list of individual validation problems.
@@ -123,7 +105,7 @@ module SearchConcern
   #
   # @return [Hash]
   #
-  def validate_identifiers: (String|strArray value) -> { valid: bool, ids: strArray, errors: strArray }
+  def validate_identifiers: ((String|strArray) value) -> { valid: bool, ids: strArray, errors: strArray }
 
   attr_reader record_id: String | nil
 
@@ -180,7 +162,7 @@ module SearchConcern
   # `session['app.search.style']`.  In the latter case, if *style* is taken
   # from the URL parameter a redirect will occur.
   #
-  def set_search_results: (?(String|Symbol)? `type`) -> void
+  def set_search_results: (?(String|Symbol|nil) `type`) -> void
 
   # Process the URL parameter for setting the search style.
   #
@@ -193,7 +175,7 @@ module SearchConcern
   # `session['app.search.style']`.  In the latter case, if *style* is taken
   # from the URL parameter a redirect will occur.
   #
-  def set_search_style: (?(String|Symbol)? style) -> void
+  def set_search_style: (?(String|Symbol|nil) style) -> void
 
   private
 
@@ -207,7 +189,7 @@ module SearchConcern
   #
   # @return [void]
   #
-  def set_search_feature: (Symbol param_key, untyped value, Symbol|symArray valid_values, ?session_key: String?, ?meth: Symbol) -> void
+  def set_search_feature: (Symbol param_key, untyped value, (Symbol|symArray) valid_values, ?session_key: String|nil, ?meth: Symbol|nil) -> void
 
   THIS_MODULE: Module
 end

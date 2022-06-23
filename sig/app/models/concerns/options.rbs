@@ -57,7 +57,7 @@ class Options
   #
   # @param [Symbol, String] key
   #
-  def key?: (Symbol|String key) -> bool
+  def key?: ((Symbol|String) key) -> bool
 
   # Get an option value.
   #
@@ -66,7 +66,7 @@ class Options
   #
   # @return [Any, nil]
   #
-  def get: (Symbol|String key, ?log: bool) -> untyped
+  def get: ((Symbol|String) key, ?log: bool) -> untyped
 
   # Set an option value.
   #
@@ -75,7 +75,7 @@ class Options
   #
   # @return [Any, nil]
   #
-  def set: (Symbol|String key, untyped value) -> untyped
+  def set: ((Symbol|String) key, untyped value) -> untyped
 
   # Fill @value with all option settings from defaults and supplied URL params.
   #
@@ -103,7 +103,7 @@ class Options
   #
   # @return [Symbol, nil]
   #
-  def option_method: (Symbol|String key) -> (Symbol | nil)
+  def option_method: ((Symbol|String) key) -> (Symbol | nil)
 
   # Supplied URL parameters.
   #

@@ -27,6 +27,7 @@ class Phase::Remove < Phase::BulkPart
 
   include Record::Steppable
 
+  # @private
   CLASS: Class
 
   # Remove the entry from the index.
@@ -40,7 +41,7 @@ class Phase::Remove < Phase::BulkPart
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def deindex!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> (bool | nil)
+  def deindex!: ((symHash|ActionDispatch::Request|nil) request, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #deindex!.
   #
@@ -62,7 +63,7 @@ class Phase::Remove < Phase::BulkPart
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def unsubmit!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> (bool | nil)
+  def unsubmit!: ((symHash|ActionDispatch::Request|nil) request, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #unsubmit!.
   #
@@ -84,7 +85,7 @@ class Phase::Remove < Phase::BulkPart
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def unstore!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> (bool | nil)
+  def unstore!: ((symHash|ActionDispatch::Request|nil) request, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #unstore!.
   #
@@ -106,7 +107,7 @@ class Phase::Remove < Phase::BulkPart
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def remove!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> (bool | nil)
+  def remove!: ((symHash|ActionDispatch::Request|nil) request, **untyped opt) -> (bool | nil)
 
   # Method called from the action launched by #remove!.
   #

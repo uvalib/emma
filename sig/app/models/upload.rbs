@@ -23,7 +23,7 @@ class Upload < ApplicationRecord
   # This method overrides:
   # @see ActiveRecord::Core#initialize
   #
-  def initialize: (?(Upload|symHash)? attr) { () -> untyped } -> void
+  def initialize: (?(Upload|symHash|nil) attr) ?{ () -> untyped } -> void
 
   attr_reader file_path: String
 
@@ -39,7 +39,7 @@ class Upload < ApplicationRecord
   #
   # @return [Upload::Options, nil]
   #
-  def set_model_options: (Options|symHash|nil options) -> Upload::Options
+  def set_model_options: ((Options|symHash|nil) options) -> Upload::Options
 
   # Mutually-exclusive modes of operation in #assign_attributes.
   #
@@ -53,7 +53,70 @@ class Upload < ApplicationRecord
   #
   ASSIGN_CONTROL_OPTIONS: symArray
 
-  def assign_attributes: (Upload|symHash opt) -> self
+  # Update database fields, including the structured contents of the :emma_data
+  # field.
+  #
+  # @param [Hash, Upload] opt
+  #
+  # @option opt [Integer, String, User] :user_id
+  # @option opt [String, Symbol]        :repository
+  # @option opt [String]                :submission_id
+  # @option opt [String, Symbol]        :fmt
+  # @option opt [String]                :ext
+  # @option opt [String, Symbol]        :state
+  # @option opt [String, Hash]          :file_data
+  # @option opt [String, Hash]          :emma_data
+  #
+  # @option opt [String]         :base_url
+  # @option opt [Module, String] :importer
+  # @option opt [Boolean]        :defer
+  # @option opt [Boolean]        :initializing
+  # @option opt [Boolean]        :finishing_edit
+  # @option opt [Boolean]        :reset
+  #
+  # == Options
+  #
+  # :base_url
+  #
+  #   Supplied to give the base URL for constructing a retrieval link from a
+  #   submission ID (:emma_retrievalLink).
+  #
+  # :importer
+  #
+  #   Supplied to specify an import translation mechanism (typically for
+  #   bulk import). @see Import#translate_fields
+  #
+  # :defer
+  #
+  #   Used internally to indicate whether a file indicated by an imported
+  #   :file_path data field should be acquired immediately.  If *true* then
+  #   @file_path will be set but the referenced file will *not* be fetched
+  #   automatically via #upload_file
+  #
+  # == Mode Options
+  #
+  # :initializing
+  #
+  #   Indicates that the method is being executed from the initializer.
+  #
+  # :finishing_edit
+  #
+  #   Indicates that the method is being executed from #finishing_edit.
+  #   This accommodates the use-case of updating record values from the fields
+  #   used when editing an existing EMMA entry (:edit_file_data and/or
+  #   :edit_emma_data).
+  #
+  # :reset
+  #
+  #   Provided to indicate that user-supplied record attributes should be
+  #   wiped (while retaining values that were originally set by the system).
+  #
+  # @return [self]
+  #
+  # This method overrides:
+  # @see ActiveModel::AttributeAssignment#assign_attributes
+  #
+  def assign_attributes: ((Upload|symHash) opt) -> self
 
   # Formatted record contents.
   #
@@ -78,7 +141,7 @@ class Upload < ApplicationRecord
   # This method overrides:
   # @see ActiveRecord::AttributeMethods#format_for_inspect
   #
-  def format_for_inspect: (Symbol|String name, untyped value) -> String
+  def format_for_inspect: ((Symbol|String) name, untyped value) -> String
 
   # log_ignored
   #
@@ -96,30 +159,127 @@ class Upload < ApplicationRecord
   #
   def field_names: () -> symArray
 
+  # Indicate whether the record is an EMMA-native item.
+  #
+  # @param [Upload, nil] item         Default: `self`.
+  #
   def emma_native?: (?(Upload|nil) item) -> bool
 
-  def self.emma_native?: (Upload|symHash|String item) -> bool
+  # Indicate whether the record is an EMMA-native item.
+  #
+  # @param [Upload, Hash, String, #repository, #emma_repository] item
+  #
+  def self.emma_native?: ((Upload|symHash|String) item) -> bool
 
+  # Extract the repository associated with the item.
+  #
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
+  #
+  # @return [String]                  One of EmmaRepository#values.
+  # @return [nil]
+  #
+  # == Usage Notes
+  # Depending on the context, the caller may need to validate the result with
+  # EmmaRepository#valid?.
+  #
   def self.repository_of: (untyped item) -> (String | nil)
 
+  # The full name of the indicated repository
+  #
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
+  #
+  # @return [String]                  The name of the associated repository.
+  # @return [nil]                     If *src* did not indicate a repository.
+  #
   def self.repository_name: (untyped item) -> (String | nil)
 
+  # Extract the EMMA index entry identifier from the item.
+  #
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  # == Usage Notes
+  # If *item* is a String, it is assumed to be good.  Depending on the context,
+  # the caller may need to validate the result with #valid_record_id?.
+  #
   def self.record_id: (untyped item) -> (String | nil)
 
-  def self.valid_record_id?: (untyped item, ?add_repo: (String|strArray)?, ?add_fmt: (String|strArray)?) -> bool
+  # Indicate whether *item* is or contains a valid EMMA index record ID.
+  #
+  # @param [String, #emma_repository, #emma_recordId, Any] item
+  # @param [String, Array<String>]                         add_repo
+  # @param [String, Array<String>]                         add_fmt
+  #
+  def self.valid_record_id?: (untyped item, ?add_repo: String|strArray|nil, ?add_fmt: String|strArray|nil) -> bool
 
-  def self.get_value: (Upload|anyHash item, String|Symbol key, ?default: untyped?) -> untyped
+  # Get the indicated value from an object accessed as either a Hash key or an
+  # instance method.
+  #
+  # The value of *default* is returned if *item* doesn't respond to *key*.
+  #
+  # @param [Upload, Hash, #repository, #emma_repository] item
+  # @param [Symbol, String]                              key
+  # @param [Any]                                         default
+  #
+  # @return [Any]
+  #
+  def self.get_value: ((Upload|anyHash) item, (String|Symbol) key, ?default: untyped|nil) -> untyped
 
+  # Create a URL for use with :emma_retrievalLink.
+  #
+  # @param [String]      rid          EMMA repository record ID.
+  # @param [String, nil] base_url     Default: `#BULK_BASE_URL`.
+  #
+  # @return [String]
+  # @return [nil]                     If no repository ID was given.
+  #
   def make_retrieval_link: (String rid, ?(String|nil) base_url) -> (String | nil)
 
+  # Create a URL for use with :emma_retrievalLink.
+  #
+  # @param [String]      rid          EMMA repository record ID.
+  # @param [String, nil] base_url     Default: `#BULK_BASE_URL`.
+  #
+  # @return [String]
+  # @return [nil]                     If no repository ID was given.
+  #
   def self.make_retrieval_link: (String rid, ?(String|nil) base_url) -> (String | nil)
 
   extend Upload::IdentifierMethods
 
+  # Locate records matching the submission ID given as either *sid* or
+  # `opt[:submission_id]`.
+  #
+  # @param [Model, Hash, String, Symbol, nil] sid
+  # @param [Integer] max                Log error if matches exceed this.
+  # @param [Symbol]  meth               Calling method for logging.
+  # @param [Boolean] no_raise           If *true*, return *nil* on error.
+  # @param [Hash]    opt                Passed to #where.
+  #
+  # @raise [UploadWorkflow::Errors::SubmitError]
+  #
+  # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
+  #
   def self.matching_sid: (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil,                  **untyped opt) -> ActiveRecord::Relation
                        | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: false, **untyped opt) -> ActiveRecord::Relation
                        | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: true,  **untyped opt) -> (ActiveRecord::Relation | nil)
 
+  # Get the latest record matching the submission ID given as either *sid* or
+  # `opt[:submission_id]`.
+  #
+  # Returns *nil* on error if *no_raise* is *true*.
+  #
+  # @param [Model, Hash, String, Symbol, nil] sid
+  # @param [Symbol, String] sort    In case of multiple SIDs (:created_at).
+  # @param [Hash]           opt     Passed to #matching_sid.
+  #
+  # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
+  # @raise [Record::NotFound]           If record not found.
+  #
+  # @return [Model]                     Or *nil* on error if *no_raise*.
+  #
   def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, ?sort: Symbol|String|nil, **untyped opt) -> Model
 
   # Configured requirements for Upload fields.
@@ -145,5 +305,5 @@ class Upload < ApplicationRecord
   #
   # @return [void]
   #
-  def check_required: (Upload|symHash source, symHash required_fields) -> void
+  def check_required: ((Upload|symHash) source, symHash required_fields) -> void
 end

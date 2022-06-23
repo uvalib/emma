@@ -3,9 +3,9 @@
 module SerializationConcern
   extend ActiveSupport::Concern
 
-  include ParamsHelper
-
   include SerializationHelper
+
+  include SessionDebugHelper
 
   include ApiConcern
 
@@ -36,20 +36,17 @@ module SerializationConcern
   #
   # @return [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsParamDefResolve
-  # +
-  def index_values: (?(untyped|nil) list, **untyped opt) -> symHash
+  def index_values: (?untyped list, **untyped opt) -> symHash
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [Any]            item
+  # @param [*]              item
   # @param [Symbol, nil]    as        Either :hash or :array if given.
   # @param [Symbol, String] name
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def show_values: (untyped item, ?as: (:hash|:array)?, ?name: (String|Symbol)?) -> symHash
+  def show_values: (untyped item, ?as: :hash|:array|nil, ?name: String|Symbol|nil, **untyped) -> symHash
 
   private
 

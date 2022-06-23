@@ -2,9 +2,6 @@
 #
 # @see https://api.crossref.org/swagger-ui/index.html#model-WorksMessageMessageItemsAssertionGroup
 #
-# -
-# noinspection RubyClassModuleNamingConvention
-# +
 class Lookup::Crossref::Record::WorksMessageMessageItemsAssertionGroup < Lookup::Crossref::Api::Record
   include Lookup::Crossref::Shared::CommonMethods
 end

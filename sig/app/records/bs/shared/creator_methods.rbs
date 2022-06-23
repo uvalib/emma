@@ -87,13 +87,14 @@ module Bs::Shared::CreatorMethods
   # All contributor(s) to this catalog title.
   #
   # @param [Array<String>] types      Default: all
+  # @param [Api::Record]   target     Default: `self`.
   # @param [Hash]          opt
   #
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
   # @return [Array<String>]
   #
-  def contributor_list: (*String types, ?target: Api::Record?, **untyped opt) -> strArray
+  def contributor_list: (*String types, ?target: Api::Record|nil, **untyped opt) -> strArray
 
   # All contributors to this catalog title keyed by contributor type.
   #

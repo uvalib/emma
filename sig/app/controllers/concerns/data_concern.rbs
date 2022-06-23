@@ -19,7 +19,7 @@ module DataConcern
 
   # URL parameters for DataController.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   # == Usage Notes
   # Rails will set `params[:format]` if the URL is given with an extension
@@ -34,10 +34,7 @@ module DataConcern
   #
   # @return [Array<String>, nil]      *nil* if *value* is *nil*.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def array_param: (String|anyArray|nil value) -> (strArray | nil)
+  def array_param: ((String|anyArray|nil) value) -> (strArray | nil)
 
   # Tables to be displayed after all others.
   #
@@ -61,7 +58,7 @@ module DataConcern
   #
   # @return [Array<(String,Array)>]
   #
-  def get_table_records: (?(String|Symbol)? name, **untyped opt) -> [String, Array[anyHash|anyArray]]
+  def get_table_records: (?(String|Symbol|nil) name, **untyped opt) -> [String, Array[anyHash|anyArray]]
 
   # Generate results for EMMA submissions, which currently comes from a
   # selection of fields from the 'uploads' table.
@@ -93,7 +90,7 @@ module DataConcern
   #
   # @return [Array<(String,Array)>]
   #
-  def submission_records: (?table_name: (String|Symbol)?, **untyped opt) -> [String, Array[anyHash|anyArray]]
+  def submission_records: (?table_name: String|Symbol|nil, **untyped opt) -> [String, Array[anyHash|anyArray]]
 
   # Filter out invalid submissions for values intended for JSON or XML output,
   # then limit the columns that will be included in the resultant records.
@@ -113,9 +110,6 @@ module DataConcern
   #
   # @return [Array<Array>]
   #
-  # -
-  # noinspection RubyInstanceMethodNamingConvention
-  # +
   def modify_submission_records_for_html!: (Array[anyArray] records, ?(symArray|nil) columns) -> Array[anyArray]
 
   # Enumerate the database columns which are relevant to data analysis output.
@@ -124,7 +118,7 @@ module DataConcern
   #
   # @return [Array<Symbol>]
   #
-  def submission_result_columns: (?(Symbol|symArray)? columns) -> symArray
+  def submission_result_columns: (?(Symbol|symArray|nil) columns) -> symArray
 
   # Enumerate the record array indicies which are relevant to data analysis.
   #
@@ -132,7 +126,7 @@ module DataConcern
   #
   # @return [Array<Symbol>]
   #
-  def submission_result_indices: (?(Symbol|symArray)? columns) -> symArray
+  def submission_result_indices: (?(Symbol|symArray|nil) columns) -> symArray
 
   # States which indicate that the submission is either complete or that it is
   # on track to becoming complete (in the case of submissions back to member
@@ -147,7 +141,7 @@ module DataConcern
   #
   # @param [String, Symbol] state
   #
-  def submission_incomplete?: (String|Symbol state) -> bool
+  def submission_incomplete?: ((String|Symbol) state) -> bool
 
   # Title prefixes used in development/testing to denote submissions which are
   # not meant to be presented in search results.
@@ -167,7 +161,7 @@ module DataConcern
   #
   # @param [String, Hash] emma_data
   #
-  def submission_bogus?: (String|anyHash emma_data) -> bool
+  def submission_bogus?: ((String|anyHash) emma_data) -> bool
 
   private
 

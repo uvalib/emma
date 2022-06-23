@@ -39,7 +39,7 @@ class FileHandle
   # @overload initialize(file)
   #   @param [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO] file
   #
-  def initialize: (String|FileHandle|IO|StringIO|IO::Like|Down::ChunkedIO|Tempfile file) -> void
+  def initialize: ((String|FileHandle|IO|StringIO|IO::Like|Down::ChunkedIO|Tempfile) file) -> void
 
   private
 
@@ -47,28 +47,28 @@ class FileHandle
 
   # Debug method for this class.
   #
-  # @param [Array] args
-  # @param [Hash]  opt
-  # @param [Proc]  block              Passed to #__debug_items.
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block         Passed to #__debug_items.
   #
   # @return [void]
   #
-  def __debug_handle: (*untyped args, **untyped opt) { () -> untyped } -> nil
+  def __debug_handle: (*untyped args, **untyped opt) ?{ () -> untyped } -> nil
 
   # Indicate whether the underlying object implements the given method.
   #
   # @param [Symbol, String] name
   # @param [Boolean]        include_private
   #
-  def respond_to_missing?: (Symbol|String name, ?bool include_private) -> bool
+  def respond_to_missing?: ((Symbol|String) name, ?bool include_private) -> bool
 
   # Delegate to the underlying object.
   #
   # @param [Symbol, String] name
-  # @param [Array]          args
+  # @param [Array<*>]       args
   # @param [Proc]           block
   #
   # @return [Any]
   #
-  def method_missing: (Symbol|String name, *untyped args) { () -> untyped } -> untyped
+  def method_missing: ((Symbol|String) name, *untyped args) ?{ () -> untyped } -> untyped
 end

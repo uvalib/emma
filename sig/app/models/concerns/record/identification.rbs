@@ -52,6 +52,16 @@ module Record::Identification
   #
   def id_column: () -> Symbol
 
+  # Extract the database ID from the given item.
+  #
+  # @param [Model, Hash, String, Any] item
+  # @param [Hash]                     opt
+  #
+  # @option opt [Symbol] :id_key      Default: `#id_column`.
+  #
+  # @return [String]                  Record ID Array<(:id)>.
+  # @return [nil]                     No valid :id specified.
+  #
   def id_value: (untyped item, **untyped opt) -> (String | nil)
 
   # Column name for the identifier of the associated user.
@@ -60,7 +70,18 @@ module Record::Identification
   #
   def user_column: () -> Symbol
 
-  def get_value: (untyped item, Symbol|String|Array[Symbol|String] key, ?default: untyped?) -> (untyped | nil)
+  # Get the indicated value from an object accessed as either a Hash key or
+  # an instance method.
+  #
+  # The value of *default* is returned if *item* doesn't respond to *key*.
+  #
+  # @param [Model, Hash, String, Symbol, Any, nil] item
+  # @param [Symbol, String, Array<Symbol,String>]  key
+  # @param [Any]                                   default
+  #
+  # @return [Any]
+  #
+  def get_value: (untyped item, (Symbol|String|Array[Symbol|String]) key, ?default: untyped|nil) -> (untyped | nil)
 
   # A foreign-key reference to the current record.
   #
@@ -72,16 +93,136 @@ module Record::Identification
   #
   def alt_id_key: (symHash opt) -> Symbol
 
-  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol?, **untyped opt) -> (ApplicationRecord | nil)
+  # Return with the specified record or *nil* if one could not be found.
+  #
+  # @param [String, Integer, Hash, Model, Any] item
+  # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
+  # @param [Symbol, nil] meth         Calling method (for logging).
+  # @param [Hash]        opt          Used if *item* is *nil* except for:
+  #
+  # @option opt [Symbol] :id_key      Default: `#id_column`.
+  # @option opt [Symbol] :alt_id_key  E.g. :entry_id, :phase_id, :action_id
+  #
+  # @raise [Record::StatementInvalid]   If :id/:sid not given.
+  # @raise [Record::NotFound]           If *item* was not found.
+  #
+  # @return [ApplicationRecord<Model>, nil]
+  #
+  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> (ApplicationRecord | nil)
 
-  def find_records: (*(Model|String|strArray) items, ?id_key: Symbol?, ?alt_id_key: Symbol?, **untyped opt) -> Array[Model]
+  # Find all of the specified records (return records if none were specified).
+  #
+  # @param [Array<Model,String,Array>] items
+  # @param [Symbol]                    id_key       Default: `#id_column`.
+  # @param [Symbol, nil]               alt_id_key   E.g. :entry_id, :phase_id
+  # @param [Hash]                      opt          Passed to #collect_records
+  #
+  # @option opt []
+  #
+  # @return [Array<Model>]
+  #
+  def find_records: (*(Model|String|strArray) items, ?id_key: Symbol|nil, ?alt_id_key: Symbol|nil, **untyped opt) -> Array[Model]
 
-  def collect_records: (*(Model|String|strArray) items, ?all: bool, ?force: bool, ?type: Class?, **untyped opt) -> ([Array[Model], anyArray] | [Array[Model|String], []])
+  # Transform a mixture of record objects and record identifiers into a list of
+  # record objects.
+  #
+  # @param [Array<Model,String,Array>] items  @see #expand_ids
+  # @param [Boolean]                   all    If *true*, empty *items* is OK.
+  # @param [Boolean]                   force  See Usage Notes
+  # @param [Class<Record>]             type   Default: `#record_class`.
+  # @param [Hash]                      opt
+  #
+  # @raise [StandardException] If *all* is *true* and *items* were supplied.
+  #
+  # @return [Array<(Array<Model>,Array)>]      Record instances and failed ids.
+  # @return [Array<(Array<Model,String>,[])>]  If *force* is *true*.
+  #
+  # @see Record::Searchable#get_records
+  #
+  # == Usage Notes
+  # If *force* is true, the returned list of failed records will be empty but
+  # the returned list of items may contain a mixture of Model and String
+  # elements.
+  #
+  def collect_records: (*(Model|String|strArray) items, ?all: bool, ?force: bool, ?type: Class|nil, **untyped opt) -> ([Array[Model], anyArray] | [Array[Model|String], []])
 
+  # Interpret an identifier as either an :id or :submission_id, generating a
+  # field/value pair for use with #find_by or #where.
+  #
+  # If :sid_key set to *nil* then the result will always be in terms of :id_key
+  # (which cannot be set to *nil*).
+  #
+  # @param [String, Symbol, Integer, Hash, Model, Any] v
+  # @param [Hash]                                      opt
+  #
+  # @option opt [Symbol] :id_key      Default: `#id_column`.
+  #
+  # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
+  #
   def id_term: (untyped v, **untyped opt) -> Hash[Symbol,(Integer|String|nil)]
 
+  # Transform a mixture of ID representations into a set of one or more
+  # non-overlapping range representations.
+  #
+  # @param [Array<String, Integer, Model, Array>] items
+  # @param [Hash]                                 opt
+  #
+  # @option opt [Integer] :min_id     Default: `#minimum_id`
+  # @option opt [Integer] :max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
   def compact_ids: (*(String|Integer|Model|Array[String|Integer|Model]) items, **untyped opt) -> strArray
 
+  # Transform a mixture of ID representations into a list of single IDs.
+  #
+  # Any parameter may be (or contain):
+  # - A single ID as a String or Integer
+  # - A set of IDs as a string of the form /\d+(,\d+)*/
+  # - A range of IDs as a string of the form /\d+-\d+/
+  # - A range of the form /-\d+/ is interpreted as /0-\d+/
+  #
+  # @param [Array<Model, String, Integer, Array>] ids
+  # @param [Hash]                                 opt   For #expand_id_range.
+  #
+  # @option opt [Integer] :min_id     Default: `#minimum_id`
+  # @option opt [Integer] :max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
+  # == Examples
+  #
+  # @example Single
+  #   expand_ids('123') -> %w(123)
+  #
+  # @example Sequence
+  #   expand_ids('123,789') -> %w(123 789)
+  #
+  # @example Range
+  #   expand_ids('123-126') -> %w(123 124 125 126)
+  #
+  # @example Mixed
+  #   expand_ids('125,789-791,123-126') -> %w(125 789 790 791 123 124 126)
+  #
+  # @example Implicit range
+  #   expand_ids('-3')  -> %w(1 2 3)
+  #   expand_ids('*-3') -> %w(1 2 3)
+  #
+  # @example Open-ended range
+  #   expand_ids('3-')  -> %w(3 4 5 6)
+  #   expand_ids('3-*') -> %w(3 4 5 6)
+  #   expand_ids('3-$') -> %w(3 4 5 6)
+  #
+  # @example All records
+  #   expand_ids('*')   -> %w(1 2 3 4 5 6)
+  #   expand_ids('-$')  -> %w(1 2 3 4 5 6)
+  #   expand_ids('*-$') -> %w(1 2 3 4 5 6)
+  #   expand_ids('1-$') -> %w(1 2 3 4 5 6)
+  #
+  # @example Last record only
+  #   expand_ids('$')   -> %w(6)
+  #   expand_ids('$-$') -> %w(6)
+  #
   def expand_ids: (*(String|Integer|Model|Array[String|Integer|Model]) ids, **untyped opt) -> strArray
 
   # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
@@ -90,11 +231,40 @@ module Record::Identification
   #
   RNG_TERM: String
 
-  def expand_id_range: (String|Integer|Model id, **untyped opt) -> strArray
+  # Interpret an ID string as a range of IDs if possible.
+  #
+  # The method supports a mixture of database IDs (which are comprised only of
+  # decimal digits) and submission IDs (which always start with a non-digit),
+  # however a submission ID cannot be part of a range.
+  #
+  # @param [String, Integer, Model] id
+  # @param [Hash]                   opt
+  #
+  # @option opt [Integer]     :min_id   Default: `#minimum_id`.
+  # @option opt [Integer]     :max_id   Default: `#maximum_id`.
+  # @option opt [Symbol]      :id_key   Default: `#id_column`.
+  #
+  # @return [Array<String>]
+  #
+  # @see #expand_ids
+  #
+  def expand_id_range: ((String|Integer|Model) id, **untyped opt) -> strArray
 
-  def minimum_id: (?id_key: Symbol?) -> Integer
+  # The database ID of the first record associated with the including class.
+  #
+  # @param [Symbol] id_key            Default: `#id_column`.
+  #
+  # @return [Integer]                 If 0 then the table is empty.
+  #
+  def minimum_id: (?id_key: Symbol|nil) -> Integer
 
-  def maximum_id: (?id_key: Symbol?) -> Integer
+  # The database ID of the last record associated with the including class.
+  #
+  # @param [Symbol] id_key            Default: `#id_column`.
+  #
+  # @return [Integer]                 If 0 then the table is empty.
+  #
+  def maximum_id: (?id_key: Symbol|nil) -> Integer
 
   # Class methods automatically added to the including record class.
   #
@@ -139,10 +309,12 @@ module Record::Identification
 
   THIS_MODULE: Module
 
+  #include InstanceMethods
+
   include InstanceMethods
 
   # :nocov:
-  include Model
+  #include Model
 
   public
 

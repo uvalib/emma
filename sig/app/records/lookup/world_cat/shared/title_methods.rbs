@@ -5,16 +5,57 @@ module Lookup::WorldCat::Shared::TitleMethods
 
   include Lookup::WorldCat::Shared::IdentifierMethods
 
-  def title_fields:     () -> symArray
+  # Field(s) that may hold the title string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_fields: () -> symArray
 
-  def title_values:     () -> strArray
-  def subtitle_values:  () -> strArray
+  # One or more title strings.
+  #
+  # @return [Array<String>]
+  #
+  def title_values: () -> strArray
 
-  def publisher_name:   () -> (String | nil)
+  # WorldCat does not have subtitle strings.
+  #
+  # @return [Array<String>]
+  #
+  def subtitle_values: () -> strArray
+
+  # Name of publisher.
+  #
+  # @return [String, nil]
+  #
+  def publisher_name: () -> (String | nil)
+
+  # The date of publication.
+  #
+  # @return [String, nil]
+  #
   def publication_date: () -> (String | nil)
+
+  # The year of publication.
+  #
+  # @return [String, nil]
+  #
   def publication_year: () -> (String | nil)
 
-  def language_list:    () -> strArray
-  def subject_list:     () -> strArray
+  # language_list
+  #
+  # @return [Array<String>]
+  #
+  def language_list: () -> strArray
+
+  # subject_list
+  #
+  # @return [Array<String>]
+  #
+  def subject_list: () -> strArray
+
+  # description_list
+  #
+  # @return [Array<String>]
+  #
   def description_list: () -> strArray
 end

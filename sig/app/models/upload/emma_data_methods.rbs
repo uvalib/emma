@@ -17,35 +17,127 @@ module Upload::EmmaDataMethods
   attr_reader edit_emma_record:   Search::Record::MetadataRecord | nil
   attr_reader edit_emma_metadata: symHash | nil
 
+  # The database column currently associated with EMMA metadata presented by
+  # the record.
+  #
+  # @return [Symbol]
+  #
   def emma_data_column: () -> Symbol
 
+  # The EMMA metadata currently associated with the record.
+  #
+  # @return [String, nil]
+  #
   def active_emma_data: () -> (String | nil)
 
+  # Present :emma_data as a structured object (if it is present).
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
   def emma_record: () -> Search::Record::MetadataRecord
 
+  # Present :emma_data as a hash (if it is present).
+  #
+  # @return [Hash]
+  #
   def emma_metadata: () -> symHash
 
-  def set_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
+  # Set the :emma_data field value.
+  #
+  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+  # @param [Boolean]                                           allow_blank
+  #
+  # @return [String]
+  # @return [nil]                     If *data* is *nil*.
+  #
+  def set_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
 
+  # Selectively modify the :emma_data field value.
+  #
+  # @param [Hash]    data
+  # @param [Boolean] allow_blank
+  #
+  # @return [String]
+  #
   def modify_emma_data: (symHash data, ?bool allow_blank) -> String
 
+  # Present :edit_emma_data as a structured object (if it is present).
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
   def edit_emma_record: () -> Search::Record::MetadataRecord
 
+  # Present :edit_emma_data as a hash (if it is present).
+  #
+  # @return [Hash]
+  #
   def edit_emma_metadata: () -> symHash
 
-  def set_edit_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
+  # Set the :edit_emma_data field value.
+  #
+  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+  # @param [Boolean]                                           allow_blank
+  #
+  # @return [String]
+  # @return [nil]                     If *data* is *nil*.
+  #
+  def set_edit_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
 
+  # Selectively modify the :edit_emma_data field value.
+  #
+  # @param [Hash]    data
+  # @param [Boolean] allow_blank
+  #
+  # @return [String]
+  #
   def modify_edit_emma_data: (symHash data, ?bool allow_blank) -> String
 
+  # Present the EMMA data currently associated with the record as a
+  # structured object.
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
   def active_emma_record: () -> Search::Record::MetadataRecord
 
+  # Present the EMMA data currently associated with the record as a hash.
+  #
+  # @return [Hash]
+  #
   def active_emma_metadata: () -> symHash
 
-  def set_active_emma_data: (symHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
+  # Set the EMMA data currently associated with the record.
+  #
+  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+  # @param [Boolean]                                           allow_blank
+  #
+  # @return [String]
+  # @return [nil]                     If *data* is *nil*.
+  #
+  def set_active_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
 
+  # Selectively modify the EMMA data currently associated with the record.
+  #
+  # @param [Hash]    data
+  # @param [Boolean] allow_blank
+  #
+  # @return [String]
+  #
   def modify_active_emma_data: (symHash data, ?bool allow_blank) -> String
 
+  # Generate a record to express structured EMMA data.
+  #
+  # @param [Hash] data
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
   def make_emma_record: (symHash data) -> Search::Record::MetadataRecord
 
-  def parse_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> symHash
+  # parse_emma_data
+  #
+  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [Boolean] allow_blank
+  #
+  # @return [Hash]
+  #
+  def parse_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> symHash
 end

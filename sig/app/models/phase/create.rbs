@@ -33,6 +33,7 @@ class Phase::Create < Phase::BulkPart
 
   include Record::Uploadable
 
+  # @private
   CLASS: Class
 
   # Upload file to AWS S3 Shrine :cache.
@@ -52,7 +53,7 @@ class Phase::Create < Phase::BulkPart
   # == Usage Notes
   # Always performed synchronously.
   #
-  def upload!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> httpResult
+  def upload!: ((symHash|ActionDispatch::Request|nil) request, **untyped opt) -> httpResult
 
   # Method called from the action launched by #upload!.
   #
@@ -179,7 +180,7 @@ class Phase::Create < Phase::BulkPart
   #
   # @return [Phase::Create]
   #
-  def self.latest_for_sid: (?(symHash|String|Symbol|Model)? sid, **untyped opt) -> Phase::Create
+  def self.latest_for_sid: (?(symHash|String|Symbol|Model|nil) sid, **untyped opt) -> Phase::Create
 
   # A textual description of the type of the Model instance.
   #

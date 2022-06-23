@@ -17,8 +17,5 @@ class AwsS3::Api::Record < Api::Record
   #
   # @param [Any] item
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
   def remove_empty_values: (untyped item) -> untyped
 end

@@ -69,11 +69,7 @@ module Upload::IdentifierMethods
   # @return [String]                  The submission ID.
   # @return [nil]                     No submission ID could be determined.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def sid_for(item)
-    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     return item               if valid_sid?(item)
     return item.submission_id if item.is_a?(Upload)
     _, rid, _ = Upload.record_id(item)&.split('-')

@@ -119,9 +119,6 @@ module BaseDecorator::Table
   #
   # @return [Hash{Symbol=>Any}]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def model_field_values(item = nil, columns: nil, default: nil, filter: nil, **)
     item ||= (object if present?)
     # noinspection RailsParamDefResolve
@@ -148,9 +145,6 @@ module BaseDecorator::Table
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def model_rc_options(field, row = nil, col = nil, opt = nil)
     field = html_id(field)
     prepend_css(opt, field).tap do |html_opt|

@@ -25,7 +25,7 @@ module FileFormat::Xml
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
-  def parse_metadata: (Nokogiri::XML::NodeSet|Nokogiri::XML::Element section) -> Hash[Symbol,strArray]
+  def parse_metadata: ((Nokogiri::XML::NodeSet|Nokogiri::XML::Element) section) -> Hash[Symbol,strArray]
 
   # parse_elements
   #
@@ -33,7 +33,7 @@ module FileFormat::Xml
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
-  def parse_elements: (Nokogiri::XML::NodeSet|Nokogiri::XML::Element section) ->  Hash[Symbol,strArray]
+  def parse_elements: ((Nokogiri::XML::NodeSet|Nokogiri::XML::Element) section) ->  Hash[Symbol,strArray]
 
   # Extract information from a single element.
   #
@@ -50,7 +50,7 @@ module FileFormat::Xml
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
-  def parse_metas: (Nokogiri::XML::NodeSet|Nokogiri::XML::Element section) -> Hash[Symbol,strArray]
+  def parse_metas: ((Nokogiri::XML::NodeSet|Nokogiri::XML::Element) section) -> Hash[Symbol,strArray]
 
   # Extract information from a single '<meta>' element.
   #
@@ -69,9 +69,6 @@ module FileFormat::Xml
   # @return [Array<(Symbol,String)>]
   # @return [Array<(Symbol,nil)>]
   #
-  # -
-  # noinspection RailsParamDefResolve
-  # +
   def get_properties: (Nokogiri::XML::Element elem) -> [Symbol, String?]
 
   # Return element attributes as a hash.
@@ -113,7 +110,7 @@ module FileFormat::Xml
   #
   # @return [Symbol]
   #
-  def make_key: (String|Symbol name) -> Symbol
+  def make_key: ((String|Symbol) name) -> Symbol
 
   include Emma::Debug::OutputMethods
 
@@ -147,6 +144,6 @@ module FileFormat::Xml
   #   @param [Nokogiri::XML::Element] element
   #   @param [Nokogiri::XML::Element] inner
   #
-  def __debug_parse: (Symbol meth, Nokogiri::XML::NodeSet|Nokogiri::XML::Element element, ?Nokogiri::XML::Element inner) -> nil
-                   | (             Nokogiri::XML::NodeSet|Nokogiri::XML::Element element, ?Nokogiri::XML::Element inner) -> nil
+  def __debug_parse: (Symbol meth, (Nokogiri::XML::NodeSet|Nokogiri::XML::Element) element, ?Nokogiri::XML::Element inner) -> nil
+                   | (             (Nokogiri::XML::NodeSet|Nokogiri::XML::Element) element, ?Nokogiri::XML::Element inner) -> nil
 end

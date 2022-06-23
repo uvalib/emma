@@ -25,6 +25,9 @@ class PeriodicalDecorator < BookshareDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
@@ -47,7 +50,7 @@ class PeriodicalDecorator < BookshareDecorator
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Hash] opt                 Passed to super.
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -55,7 +58,7 @@ class PeriodicalDecorator < BookshareDecorator
 
   # Catalog item search links.
   #
-  # @param [Hash] opt                 Passed to super
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
@@ -64,7 +67,7 @@ class PeriodicalDecorator < BookshareDecorator
   # Create a link to the search results index page for the given term(s).
   #
   # @param [String] terms
-  # @param [Hash]   opt                 Passed to super.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
@@ -74,7 +77,7 @@ class PeriodicalDecorator < BookshareDecorator
   #
   # @param [Hash] opt                 Passed to EditionDecorator#link.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   def latest_edition_link: (**untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -92,26 +95,53 @@ class PeriodicalDecorator < BookshareDecorator
   # Render a metadata listing of an periodical.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  def details_element: (?level: Integer|nil, ?role: String|Symbol|nil, **untyped opt) { () -> untyped } -> ActiveSupport::SafeBuffer
+  # details_element
+  #
+  # @param [Integer, nil]        level
+  # @param [String, Symbol, nil] role
+  # @param [Hash]                opt    Passed to #details.
+  # @param [Proc]                block  Passed to #html_join.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details_element: (?level: Integer|nil, ?role: String|Symbol|nil, **untyped opt) ?{ () -> untyped } -> ActiveSupport::SafeBuffer
 
+  # A sub-section displaying the editions for the periodical.
+  #
+  # @param [Hash] **opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def edition_list: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # form_action_link
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # form_target_description
+  #
+  # @param [Symbol] action
+  #
+  # @return [String]
+  #
   def form_target_description: (?action: Symbol|nil) -> String
 end

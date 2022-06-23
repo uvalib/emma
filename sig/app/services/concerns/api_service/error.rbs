@@ -58,7 +58,7 @@ class ApiService::Error < Api::Error
     #
     # @return [Array<String>]
     #
-    def extract_message: (Faraday::Response|Faraday::Error|symHash src) -> strArray
+    def extract_message: ((Faraday::Response|Faraday::Error|symHash) src) -> strArray
 
     # Get the message headers from the source object.
     #
@@ -66,7 +66,7 @@ class ApiService::Error < Api::Error
     #
     # @return [Hash]
     #
-    def extract_headers: (Faraday::Response|Faraday::Error|symHash src) -> strHash
+    def extract_headers: ((Faraday::Response|Faraday::Error|symHash) src) -> strHash
 
     # Get the message body from the source object.
     #
@@ -74,10 +74,7 @@ class ApiService::Error < Api::Error
     #
     # @return [String]
     #
-    # -
-    # noinspection RailsParamDefResolve
-    # +
-    def extract_body: (Faraday::Response|Faraday::Error|symHash src) -> String
+    def extract_body: ((Faraday::Response|Faraday::Error|symHash) src) -> String
 
     # Extract the OAuth2 error description from the response headers.
     #
@@ -85,7 +82,7 @@ class ApiService::Error < Api::Error
     #
     # @return [String, nil]
     #
-    def oauth2_error_header: (Faraday::Response|Faraday::Error|symHash src) -> (String | nil)
+    def oauth2_error_header: ((Faraday::Response|Faraday::Error|symHash) src) -> (String | nil)
 
     # Extract an AWS error indication the response headers.
     #
@@ -93,7 +90,7 @@ class ApiService::Error < Api::Error
     #
     # @return [String, nil]
     #
-    def aws_error_header: (Faraday::Response|Faraday::Error|symHash src) -> (String | nil)
+    def aws_error_header: ((Faraday::Response|Faraday::Error|symHash) src) -> (String | nil)
 
     # Extract message(s) from a response body that has been determined to be
     # XML/HTML.
@@ -102,7 +99,7 @@ class ApiService::Error < Api::Error
     #
     # @return [Array<String>]
     #
-    def extract_html: (Nokogiri::HTML::Document|Nokogiri::XML::Document|nil doc) -> strArray
+    def extract_html: ((Nokogiri::HTML::Document|Nokogiri::XML::Document|nil) doc) -> strArray
 
     # Extract message(s) from a response body that has been determined to be
     # JSON.

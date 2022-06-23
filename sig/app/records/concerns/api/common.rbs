@@ -1,6 +1,3 @@
-# -
-# noinspection RubyConstantNamingConvention
-# +
 Boolean: untyped
 
 # Base class for custom scalar types.
@@ -144,6 +141,8 @@ class ScalarType
   #
   # @param [Class] base
   #
+  # @return [void]
+  #
   def self.define_serializer: (?Class base) -> void
 
   # Create a serializer class associated with the given *base* and arrange for
@@ -190,9 +189,6 @@ class IsoDuration < ScalarType
     #
     # @return [String]
     #
-    # -
-    # noinspection RubyMismatchedArgumentType
-    # +
     def normalize: (untyped v) -> String
 
     # Translate an ActiveSupport::Duration into an ISO 8601 duration.
@@ -214,7 +210,7 @@ class IsoDuration < ScalarType
     #
     # @return [Array<(Float, Any)>]
     #
-    def fractional: (Float value1, Float|Integer|nil value2, Integer multiplier) -> [Float, untyped]
+    def fractional: (Float value1, (Float|Integer|nil) value2, Integer multiplier) -> [Float, untyped]
 
     private
 
@@ -352,9 +348,6 @@ class IsoDate < ScalarType
     #
     # @return [String, Date, Time, IsoDate, Any, nil]
     #
-    # -
-    # noinspection RubyMismatchedArgumentType
-    # +
     def translate: (untyped value) -> untyped
 
     # Remove fractional seconds and normalize +00:00 to Z.
@@ -368,7 +361,7 @@ class IsoDate < ScalarType
     # fractional part is truncated in order to avoid a potential cascade of
     # changes to minute, hour, etc.
     #
-    def datetime_clean: (String|nil value) -> String
+    def datetime_clean: ((String|nil) value) -> String
 
     MM: String
 
@@ -617,8 +610,8 @@ class EnumType < ScalarType
     # @return [Hash{Symbol=>Hash}]
     #
     # == Implementation Notes
-    # This needs to be a class variable so that all subclasses reference the same
-    # set of values.
+    # This needs to be a class variable so that all subclasses reference the
+    # same set of values.
     #
     def enumerations: () -> Hash[Symbol,symHash]
 
@@ -628,7 +621,7 @@ class EnumType < ScalarType
     #
     # @return [Array<String>]
     #
-    def values_for: (Symbol|String entry) -> strArray
+    def values_for: ((Symbol|String) entry) -> strArray
 
     # The value/label pairs for an enumeration.
     #
@@ -636,7 +629,7 @@ class EnumType < ScalarType
     #
     # @return [Hash]
     #
-    def pairs_for: (Symbol|String entry) -> symHash
+    def pairs_for: ((Symbol|String) entry) -> symHash
 
     # The default for an enumeration.
     #
@@ -644,7 +637,7 @@ class EnumType < ScalarType
     #
     # @return [String]
     #
-    def default_for: (Symbol|String entry) -> String
+    def default_for: ((Symbol|String) entry) -> String
   end
 
   extend Enumerations
@@ -714,9 +707,6 @@ module Api::Common
   #
   # @see file:config/locales/en.yml *en.emma.application.deployment*
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   DEPLOYMENT: Hash[Symbol,symHash]
 
   # Table of deployment names.
@@ -731,9 +721,6 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   REPOSITORY_CONFIG: symHash
 
   # The default repository for uploads.
@@ -767,9 +754,6 @@ module Api::Common
   #
   # @see file:config/locales/types.en.yml *en.emma.categories*
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   CATEGORY: Hash[Symbol,String]
 
   # Table of Bookshare category names.
@@ -784,9 +768,6 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   LANGUAGE_CONFIG: symHash
 
   # All language codes and labels.

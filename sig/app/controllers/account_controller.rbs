@@ -3,7 +3,8 @@
 # Note that these are not directly related to Bookshare accounts -- only to the
 # "reflections" of those accounts maintained in the local database.
 #
-# @see AccountHelper
+# @see AccountDecorator
+# @see AccountsDecorator
 # @see file:app/views/account/**
 #
 class AccountController < ApplicationController
@@ -21,8 +22,7 @@ class AccountController < ApplicationController
 
   # Database results for :index.
   #
-  # @return [Array<User>]
-  # @return [nil]
+  # @return [Array<User>, nil]
   #
   attr_reader list: Array[User]?
 
@@ -30,7 +30,7 @@ class AccountController < ApplicationController
   #
   # @return [User, nil]
   #
-  attr_reader item: (User | nil)
+  attr_reader item: User?
 
   attr_reader page: Paginator
 
@@ -38,6 +38,8 @@ class AccountController < ApplicationController
   #
   # List all user accounts.
   #
+  # @see #users_path                  Route helper
+  # @see #account_index_path          Route helper
   # @see AccountConcern#get_accounts
   #
   def index: () -> void
@@ -46,6 +48,7 @@ class AccountController < ApplicationController
   #
   # Display details of an existing user account.
   #
+  # @see #show_account_path           Route helper
   # @see AccountConcern#get_account
   #
   def show: () -> void
@@ -54,6 +57,7 @@ class AccountController < ApplicationController
   #
   # Display a form for creation of a new user account.
   #
+  # @see #new_account_path            Route helper
   # @see AccountConcern#new_account
   #
   def new: () -> void
@@ -69,11 +73,9 @@ class AccountController < ApplicationController
   # parameter will be rejected unless "force_id=true" is included in the URL
   # parameters.
   #
+  # @see #create_account_path         Route helper
   # @see AccountConcern#create_account
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
   def create: () -> void
 
   # == GET /account/edit/:id
@@ -82,6 +84,8 @@ class AccountController < ApplicationController
   #
   # Display a form for modification of an existing user account.
   #
+  # @see #edit_account_path           Route helper
+  # @see #edit_select_account_path    Route helper
   # @see #show_menu?
   # @see AccountConcern#get_account
   #
@@ -92,11 +96,9 @@ class AccountController < ApplicationController
   #
   # Update an existing user account.
   #
+  # @see #update_account_path         Route helper
   # @see AccountConcern#update_account
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
   def update: () -> void
 
   # == GET /account/delete/:id
@@ -107,6 +109,8 @@ class AccountController < ApplicationController
   #
   # If :id is "SELECT" then a menu of deletable items is presented.
   #
+  # @see #delete_account_path         Route helper
+  # @see #delete_select_account_path  Route helper
   # @see #show_menu?
   # @see AccountConcern#find_accounts
   #
@@ -116,17 +120,15 @@ class AccountController < ApplicationController
   #
   # Remove existing user account(s).
   #
+  # @see #destroy_account_path        Route helper
   # @see AccountConcern#destroy_accounts
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
   def destroy: () -> void
 
-  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
   # @param [Array<String,Integer>] ids  Default: `#id_params`.
   #
-  def show_menu?: (?Array[String|Integer]? ids) -> bool
+  def show_menu?: (?(Array[String|Integer]|nil) ids) -> bool
 end

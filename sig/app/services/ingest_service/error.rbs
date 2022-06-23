@@ -106,7 +106,9 @@ class IngestService::Error < ApiService::Error
   include IngestService::Error::ClassType
 end
 
+# :nocov:
 class IngestService::AuthError < ApiService::AuthError
+  # :nocov:
   include IngestService::Error::ClassType
 end
 

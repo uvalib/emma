@@ -11,7 +11,7 @@ module Lookup::RemoteService::Api::Message
   # Initialize a new instance.
   #
   # @param [Faraday::Response, Exception Model, Hash, String, nil] src
-  # @param [Hash, nil]                                            opt
+  # @param [Hash, nil]                                             opt
   #
   def initialize: (untyped src, ?(untyped|nil) opt) -> void
 end

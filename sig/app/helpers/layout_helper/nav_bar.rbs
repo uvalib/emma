@@ -3,7 +3,9 @@
 module LayoutHelper::NavBar
   include LayoutHelper::Common
 
-  include LinkHelper
+  include ParamsHelper
+
+  include RouteHelper
 
   private
 
@@ -11,9 +13,6 @@ module LayoutHelper::NavBar
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   NAV_BAR_CONFIG: symHash
 
   # The controllers included on the nav bar.
@@ -38,9 +37,6 @@ module LayoutHelper::NavBar
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   DASHBOARD_CONFIG: symHash
 
   # Default dashboard link label.

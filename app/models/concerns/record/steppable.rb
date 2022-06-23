@@ -272,6 +272,7 @@ module Record::Steppable
       group = state_group(group)
       group = nil if group == :all
     end
+    # noinspection RubyMismatchedArgumentType
     STATE_GROUP.dig(group, :label)
   end
 
@@ -871,6 +872,9 @@ module Record::Steppable
     #
     # @return [Array<Symbol>]
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def transitions(curr_state = nil, **)
       curr_state  = state_value(curr_state)
       next_states = state_table.dig(curr_state, :next)

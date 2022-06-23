@@ -6,9 +6,9 @@ module RouteHelper
   # @param [Symbol, String]      controller
   # @param [Symbol, String, nil] action
   #
-  # @return [Symbol, Proc]
+  # @return [Symbol, Proc, String]
   #
-  def route_helper: (Symbol|String controller, ?(Symbol|String)? action) -> (Symbol | Proc | String)
+  def route_helper: ((Symbol|String) controller, ?(Symbol|String|nil) action) -> (Symbol | Proc | String)
 
   # get_path_for
   #
@@ -18,9 +18,9 @@ module RouteHelper
   #
   # @return [String, nil]
   #
-  def get_path_for: (Symbol|String|nil controller, Symbol|String|nil action, ?warn: bool, **untyped opt) -> (String | nil)
-                  | (Symbol|String|nil controller,                           ?warn: bool, **untyped opt) -> (String | nil)
-                  | (                                                        ?warn: bool, **untyped opt) -> (String | nil)
+  def get_path_for: ((Symbol|String|nil) controller, (Symbol|String|nil) action, ?warn: bool, **untyped opt) -> (String | nil)
+                  | ((Symbol|String|nil) controller,                             ?warn: bool, **untyped opt) -> (String | nil)
+                  | (                                                            ?warn: bool, **untyped opt) -> (String | nil)
 
   private
 

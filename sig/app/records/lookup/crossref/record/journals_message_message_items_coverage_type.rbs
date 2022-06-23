@@ -2,9 +2,6 @@
 #
 # @see https://api.crossref.org/swagger-ui/index.html#model-JournalsMessageMessageItemsCoverageType
 #
-# -
-# noinspection RubyClassModuleNamingConvention
-# +
 class Lookup::Crossref::Record::JournalsMessageMessageItemsCoverageType < Lookup::Crossref::Api::Record
   include Lookup::Crossref::Shared::CommonMethods
 end

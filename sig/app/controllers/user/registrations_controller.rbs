@@ -3,8 +3,6 @@
 # @see file:app/views/user/registrations/**
 #
 class User::RegistrationsController < Devise::RegistrationsController
-  include FlashConcern
-
   include UserConcern
 
   include SessionConcern
@@ -15,17 +13,33 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   # == GET /users/sign_up
   #
+  # @see #new_user_path               Route helper
+  # @see #new_user_registration_path  Route helper
+  #
   def new: () -> void
 
   # == POST /users
   #
+  # @see #create_user_path                Route helper
+  # @see #create_user_registration_path   Route helper
+  #
   def create: () -> void
 
+  # == GET /users/edit/:id
   # == GET /users/edit
+  #
+  # @see #edit_user_path                Route helper
+  # @see #edit_user_registration_path   Route helper
   #
   def edit: () -> void
 
-  # == PUT /users
+  # == POST  /users/update/:id
+  # == PATCH /users/update/:id
+  # == PUT   /users/update/:id
+  # == PUT   /users
+  #
+  # @see #update_user_path            Route helper
+  # @see #user_registration_path      Route helper
   #
   def update: () -> void
 
@@ -43,9 +57,13 @@ class User::RegistrationsController < Devise::RegistrationsController
   # expired now. This is useful if the user wants to cancel oauth signing in/up
   # in the middle of the process, removing all OAuth session data.
   #
+  # @see #cancel_user_registration_path   Route helper
+  #
   def cancel: () -> void
 
   # == GET /users/edit_select
+  #
+  # @see #edit_select_user_path       Route helper
   #
   def edit_select: () -> void
 
@@ -57,12 +75,12 @@ class User::RegistrationsController < Devise::RegistrationsController
   #
   def configure_update_params: () -> void
 
-  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
   # @param [String, Array<String>, nil] id_params  Default: `params[:id]`.
   #
-  def show_menu?: (?(String|strArray)? id_params) -> bool
+  def show_menu?: (?(String|strArray|nil) id_params) -> bool
 
   # Specify acceptable URL parameters.
   #
@@ -80,5 +98,5 @@ class User::RegistrationsController < Devise::RegistrationsController
   # Due to the current uniqueness constraint on 'index_users_on_email', the
   # email address can't be updated.
   #
-  def allow_params: (Symbol action, ?keys: (Symbol|symArray)?, ?except: (Symbol|symArray)?) { (ActionController::Parameters) -> _ToHash[untyped,untyped]? } -> ActiveSupport::HashWithIndifferentAccess[untyped, untyped]
+  def allow_params: (Symbol action, ?keys: Symbol|symArray|nil, ?except: Symbol|symArray|nil) { (ActionController::Parameters) -> _ToHash[untyped,untyped]? } -> ActiveSupport::HashWithIndifferentAccess[untyped, untyped]
 end

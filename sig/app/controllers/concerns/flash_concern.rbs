@@ -16,7 +16,7 @@ module FlashConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def flash_link: (String label, String|anyHash path, **untyped opt) -> ActiveSupport::SafeBuffer
+  def flash_link: (String label, (String|anyHash) path, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

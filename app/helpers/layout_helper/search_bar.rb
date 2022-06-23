@@ -64,12 +64,11 @@ module LayoutHelper::SearchBar
   # @param [Hash, nil]           opt    Default: `#request_parameters`.
   #
   #--
-  # noinspection RubyMismatchedParameterType
+  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
   def show_search_bar?(ctrlr = nil, opt = nil)
     ctrlr, opt = [nil, ctrlr] if ctrlr.is_a?(Hash)
     opt = opt&.symbolize_keys || request_parameters
-    # noinspection RubyNilAnalysis
     ctrlr ||= opt.values_at(:controller, :target).first
     enabled = SEARCH_BAR.dig(ctrlr&.to_sym, :enabled)
     enabled = enabled.include?(opt[:action].to_s) if enabled.is_a?(Array)
@@ -194,9 +193,6 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def search_bar_row(field, value = nil, first: nil, last: nil, **opt)
     css    = '.search-bar-row'
     id_opt = extract_hash!(opt, :target, :unique, :index)
@@ -429,7 +425,7 @@ module LayoutHelper::SearchBar
   #
   def search_input_target(ctrlr = nil, target: nil, **)
     ctrlr = search_target(ctrlr || target)
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     ctrlr if SEARCH_BAR.dig(ctrlr, :enabled)
   end
 
@@ -455,9 +451,6 @@ module LayoutHelper::SearchBar
   # @note Used by EntryDecorator#parent_entry_select
   # @note Used by UploadDecorator#parent_entry_select
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def search_input(field, ctrlr = nil, target: nil, value: nil, **opt)
     css      = '.search-input'
     target   = search_input_target(ctrlr, target: target)
@@ -505,9 +498,6 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def search_button(ctrlr = nil, target: nil, label: nil, **opt)
     css     = '.search-button'
     label ||= search_button_label(ctrlr || target)
@@ -531,7 +521,6 @@ module LayoutHelper::SearchBar
   #
   def search_button_label(ctrlr = nil, target: nil, **opt)
     target = search_input_target(ctrlr || target) or return
-    # noinspection RubyMismatchedReturnType
     config_lookup('search_bar.button.label', controller: target, **opt)
   end
 
@@ -573,9 +562,6 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def search_controls(ctrlr = nil, target: nil, form: nil, **opt)
     css     = '.search-controls'
     target  = search_input_target(ctrlr, target: target)

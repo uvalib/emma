@@ -1,15 +1,14 @@
 # View helper methods for "/data" pages.
 #
 module DataHelper
+  include Emma::Json
+
   include CssHelper
 
   # All known EMMA record fields (including those not currently in use).
   #
   # @type [Array<Symbol>]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   EMMA_DATA_FIELDS: symArray
 
   # table_names
@@ -66,10 +65,7 @@ module DataHelper
   # @return [Array<Hash>]
   # @return [Array<Array<String>,Hash>]         If *html* is *true*.
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def table_records: (untyped name, *(String|Symbol) cols, ?headings: bool, html: true,  ?no_raise: bool, ?raise_blank: bool) -> Array[strArray|symHash]
+  def table_records: (untyped name, *(String|Symbol) cols, ?headings: bool,  html: true, ?no_raise: bool, ?raise_blank: bool) -> Array[strArray|symHash]
                    | (untyped name, *(String|Symbol) cols, ?headings: bool, ?html: bool, ?no_raise: bool, ?raise_blank: bool) -> Array[symHash]
 
   private
@@ -80,7 +76,7 @@ module DataHelper
   #
   # @return [String]
   #
-  def invalid_table_name: (String|Symbol name) -> String
+  def invalid_table_name: ((String|Symbol) name) -> String
 
   # Error message for blank column(s).
   #
@@ -116,7 +112,7 @@ module DataHelper
   # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
   # @param [String, Symbol, Any]        table   Database table name.
   #
-  # @return [Array<ConnectionAdapters::Column>]
+  # @return [Array<ActiveRecord::ConnectionAdapters::Column>]
   #
   def db_columns: (ActiveRecord::ConnectionAdapters::AbstractAdapter db, untyped table) -> Array[ActiveRecord::ConnectionAdapters::Column]
 
@@ -129,7 +125,7 @@ module DataHelper
   #
   # @return [Array<Hash>]
   #
-  def db_select: (ActiveRecord::ConnectionAdapters::AbstractAdapter db, untyped table, Array[String|Symbol] cols, ?sort: (String|Symbol|Array[String|Symbol])?) -> Array[anyHash]
+  def db_select: (ActiveRecord::ConnectionAdapters::AbstractAdapter db, untyped table, Array[String|Symbol] cols, ?sort: String|Symbol|Array[String|Symbol]|nil) -> Array[anyHash]
 
   public
 
@@ -142,7 +138,7 @@ module DataHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_table: (Array[symHash] records, ?name: (String|Symbol)?, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_table: (Array[symHash] records, ?name: String|Symbol|nil, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a database record.
   #
@@ -156,7 +152,7 @@ module DataHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_record: (symHash|Array[symHash] fields, ?row: Integer?, ?start_col: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_record: (symHash|Array[symHash] fields, ?row: Integer|nil, ?start_col: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a database record.
   #
@@ -169,7 +165,7 @@ module DataHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_column: (untyped field, ?row: Integer?, ?col: Integer?, ?first: Integer?, ?last: Integer?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_column: (untyped field, ?row: Integer|nil, ?col: Integer|nil, ?first: Integer|nil, ?last: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display table of EMMA submission field values.
   #
@@ -182,7 +178,7 @@ module DataHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field_table: (symHash fields, ?name: (String|Symbol)?, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_field_table: (symHash fields, ?name: String|Symbol|nil, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a summary of all values for a given EMMA field.
   #
@@ -196,7 +192,7 @@ module DataHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field: (Symbol field, symHash values, ?row: Integer?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_field: (Symbol field, symHash values, ?row: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a list of values and counts.
   #

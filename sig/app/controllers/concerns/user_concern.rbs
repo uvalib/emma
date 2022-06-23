@@ -5,15 +5,12 @@ module UserConcern
 
   # Defined by Devise.
   #
-  # @return [void]
+  # @return [User, nil]
   #
   # @see Devise::Controllers::Helpers#define_helpers
   #
   # @private
   #
-  # -
-  # noinspection RubyUnusedLocalVariable
-  # +
   def authenticate_user!: (?anyHash opts) -> (User | nil)
 
   # Defined by Devise.
@@ -27,9 +24,11 @@ module UserConcern
   def current_user: () -> (User | nil)
 
   include FlashHelper
+
   include RoleHelper
 
   include AuthConcern
+
   include BookshareConcern
 
   # Return account summary information and account preferences.
@@ -82,7 +81,7 @@ module UserConcern
   # SessionConcern#after_sign_in_path_for from specifying the current (failed)
   # page as the redirect from DeviseController#require_no_authentication.
   #
-  def role_failure: (?(String|Symbol)? msg) -> void
+  def role_failure: (?(String|Symbol|nil) msg) -> void
 
   THIS_MODULE: Module
 end

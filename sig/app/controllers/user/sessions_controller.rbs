@@ -3,9 +3,9 @@
 # @see file:app/views/user/sessions/**
 #
 class User::SessionsController < Devise::SessionsController
-  include AuthConcern
+  include ApiConcern
 
-  include FlashConcern
+  include AuthConcern
 
   include SessionConcern
 
@@ -20,12 +20,15 @@ class User::SessionsController < Devise::SessionsController
   #
   # Prompt the user for login credentials.
   #
+  # @see #new_user_session_path       Route helper
+  #
   def new: () -> void
 
   # == POST /users/sign_in
   #
   # Begin login session.
   #
+  # @see #user_session_path           Route helper
   # @see AuthConcern#update_auth_data
   #
   def create: () -> void
@@ -38,6 +41,7 @@ class User::SessionsController < Devise::SessionsController
   # is  ended _and_ its associated OAuth2 token is revoked.  If "no_revoke" is
   # "true" then only the local session is ended.
   #
+  # @see #destroy_user_session_path   Route helper
   # @see AuthConcern#delete_auth_data
   #
   def destroy: () -> void
@@ -46,6 +50,8 @@ class User::SessionsController < Devise::SessionsController
   #
   # Sign in with a local EMMA username/password.
   #
+  # @see #sign_in_local_path          Route helper
+  #
   def sign_in_local: () -> void
 
   # == GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
@@ -53,6 +59,7 @@ class User::SessionsController < Devise::SessionsController
   #
   # Sign in using information supplied outside of the OAuth2 flow.
   #
+  # @see #sign_in_as_path             Route helper
   # @see AuthConcern#local_sign_in
   #
   # == Usage Notes
@@ -73,6 +80,8 @@ class User::SessionsController < Devise::SessionsController
   def check_user_validity: () -> void
 
   # Called to avoid timing-out waiting for credentials.
+  #
+  # @return [void]
   #
   def no_devise_timeout: () -> void
 end

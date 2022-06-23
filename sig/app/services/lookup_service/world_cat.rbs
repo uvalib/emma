@@ -5,7 +5,7 @@
 class LookupService::WorldCat < LookupService::RemoteService
   # Fetch results from WorldCat.
   #
-  # @param [LookupService::Request] items  Def.: `@request`.
+  # @param [LookupService::Request] req  Def.: `@request`.
   #
   # @return [Lookup::WorldCat::Message::Sru]
   # @return [Lookup::WorldCat::Message::Error]
@@ -20,8 +20,8 @@ class LookupService::WorldCat < LookupService::RemoteService
   # @return [LookupService::Data]
   # @return [nil]                     If *msg* is *nil*.
   #
-  def transform: (Lookup::WorldCat::Api::Message|LookupService::Data|symHash msg, ?extended: bool) -> LookupService::Data
-               | (nil                                                        msg, ?extended: bool) -> nil
+  def transform: ((Lookup::WorldCat::Api::Message|LookupService::Data|symHash) msg, ?extended: bool) -> LookupService::Data
+               | (nil                                                          msg, ?extended: bool) -> nil
 
   # transform_single
   #

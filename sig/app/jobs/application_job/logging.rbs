@@ -13,7 +13,7 @@ module ApplicationJob::Logging
   attr_reader job_name:   String
   attr_reader job_leader: String
 
-  def job_warn: (*untyped args, ?meth: Symbol?) { () -> String } -> (true | nil)
+  def job_warn: (*untyped args, ?meth: Symbol|nil) { () -> String } -> (true | nil)
 
   def job_name: () -> String
 
@@ -31,8 +31,10 @@ module ApplicationJob::Logging
 
   def item_inspect: (untyped v) -> untyped
 
-  def __debug_job: (ApplicationJob job, *untyped args, **untyped opt) { () -> untyped } -> nil
-                 | (                    *untyped args, **untyped opt) { () -> untyped } -> nil
+  def __debug_job: (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+                 | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
+                 | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+                 | (                                   **untyped opt)  { () -> untyped } -> nil
 
   module ClassMethods
     include ApplicationJob::Logging
@@ -45,7 +47,10 @@ module ApplicationJob::Logging
 
     def arguments_inspect: (?(ApplicationJob|nil) job) -> String
 
-    def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> nil
+    def __debug_job: (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+                   | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
+                   | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+                   | (                                   **untyped opt)  { () -> untyped } -> nil
   end
 
   private

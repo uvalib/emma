@@ -47,10 +47,7 @@ class Api::Record
   #     *src* is *nil* [which may be the case if a Hash value was used and it
   #     gets interpreted as named parameters]).
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def initialize: (?(Faraday::Response|Model|String|anyHash|nil) src, ?format: Symbol?, ?wrap: (true|Hash[Symbol,(String|true)])?, ?error: (true|String|Exception)? error, **untyped data) -> void
+  def initialize: (?(Faraday::Response|Model|String|anyHash|nil) src, ?format: Symbol|nil, ?wrap: true|Hash[Symbol,(String|true)]|nil, ?error: true|String|Exception|nil, **untyped data) -> void
 
   # A serializer instance of the currently-selected type.
   #
@@ -75,7 +72,7 @@ class Api::Record
   #
   # @see Api::Serializer#deserialize
   #
-  def deserialize: (symHash|String data, ?(Symbol|nil) `type`) -> (Api::Record | nil)
+  def deserialize: ((symHash|String) data, ?(Symbol|nil) `type`) -> (Api::Record | nil)
 
   # Serialize data elements to the indicated format.
   #
@@ -86,7 +83,7 @@ class Api::Record
   #
   # @see Api::Serializer#serialize
   #
-  def serialize: (Symbol|nil `type`, **untyped opt) -> String
+  def serialize: ((Symbol|nil) `type`, **untyped opt) -> String
 
   # Serialize the record instance into JSON format.
   #
@@ -211,10 +208,7 @@ class Api::Record
   # (This is useful where you want fields that were not initialized with data
   # to return *nil*.)
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def initialize_attributes: (?(symHash|Model)? data, ?symHash default) -> void
+  def initialize_attributes: (?(symHash|Model|nil) data, ?symHash default) -> void
 
   # wrap_outer
   #
@@ -225,6 +219,6 @@ class Api::Record
   #
   # @return [Hash, String]            Same type as *data*.
   #
-  def wrap_outer: (data: anyHash, ?fmt: Symbol?, ?name: String?, ?template:String?) -> anyHash
-                | (data: String,  ?fmt: Symbol?, ?name: String?, ?template:String?) -> String
+  def wrap_outer: (data: anyHash, ?fmt: Symbol|nil, ?name: String|nil, ?template:String|nil) -> anyHash
+                | (data: String,  ?fmt: Symbol|nil, ?name: String|nil, ?template:String|nil) -> String
 end

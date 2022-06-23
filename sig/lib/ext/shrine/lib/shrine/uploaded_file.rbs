@@ -66,7 +66,7 @@ class Shrine
     #
     # @return [IO]
     #
-    def stream: (String|IO|StringIO destination, **untyped options) -> IO
+    def stream: ((String|IO|StringIO) destination, **untyped options) -> IO
 
     # read
     #
@@ -95,7 +95,7 @@ class Shrine
     #
     # @return [void]
     #
-    def replace: (IO|StringIO io, **untyped options) -> void
+    def replace: ((IO|StringIO) io, **untyped options) -> void
 
     # delete
     #

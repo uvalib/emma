@@ -7,9 +7,6 @@ module LogoHelper
   #
   # @type [Array<Symbol>]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   LOGO_TYPE: symArray
 
   # Make a logo for a repository source.
@@ -24,7 +21,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source_logo: (?(Model|String|Symbol|symHash)? item, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
+  def repository_source_logo: (?(Model|String|Symbol|symHash|nil) item, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
 
   # Make a textual logo for a repository source.
   #
@@ -36,7 +33,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source: (Model|String|Symbol|symHash|nil item, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
+  def repository_source: ((Model|String|Symbol|symHash|nil) item, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
 
   # normalize_repository
   #
@@ -45,10 +42,7 @@ module LogoHelper
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def normalize_repository: (Model|String|Symbol|symHash|nil src) -> (String | nil)
+  def normalize_repository: ((Model|String|Symbol|symHash|nil) src) -> (String | nil)
 
   # repository_name
   #
@@ -57,7 +51,7 @@ module LogoHelper
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  def repository_name: (Model|String|Symbol|symHash|nil src) -> (String | nil)
+  def repository_name: ((Model|String|Symbol|symHash|nil) src) -> (String | nil)
 
   # repository_logo
   #
@@ -67,7 +61,7 @@ module LogoHelper
   # @return [String]                  The logo of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  def repository_logo: (Model|String|Symbol|symHash|nil src, ?(Symbol|nil) `type`) -> (String | nil)
+  def repository_logo: ((Model|String|Symbol|symHash|nil) src, ?(Symbol|nil) `type`) -> (String | nil)
 
   # repository_tooltip
   #
@@ -76,7 +70,7 @@ module LogoHelper
   #
   # @return [String]
   #
-  def repository_tooltip: (Model|String|Symbol|symHash|nil item, ?(String|nil) name) -> String
+  def repository_tooltip: ((Model|String|Symbol|symHash|nil) item, ?(String|nil) name) -> String
 
   private
 

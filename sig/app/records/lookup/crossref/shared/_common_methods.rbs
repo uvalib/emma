@@ -1,7 +1,4 @@
-# This is included in record classes that define :BASE_ELEMENT to confirm that
-# they are intended to function as aggregates.
-#
-# @see Model::ClassMethods#validate_relations
+# General shared methods.
 #
 module Lookup::Crossref::Shared::CommonMethods
   include Lookup::RemoteService::Shared::CommonMethods
@@ -16,7 +13,17 @@ module Lookup::Crossref::Shared::CommonMethods
 
   ALL: bool
 
+  # A traversal through the hierarchy rooted at the class instance which
+  # holds all of the metadata for a single lookup result item.
+  #
+  # @type [Array<Symbol>]
+  #
   ITEM_PATH: symArray
 
+  # A traversal through the hierarchy rooted at the class instance which
+  # holds all of the metadata for a single lookup result item.
+  #
+  # @return [Array<Symbol>]
+  #
   def item_record_path: () -> symArray
 end

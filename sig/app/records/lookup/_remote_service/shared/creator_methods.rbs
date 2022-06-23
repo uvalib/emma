@@ -4,5 +4,12 @@ module Lookup::RemoteService::Shared::CreatorMethods
   include Api::Shared::CreatorMethods
   include Lookup::RemoteService::Shared::CommonMethods
 
+  # Return a list of cleaned proper names from the given field(s).
+  #
+  # @param [Array<Symbol>] fields
+  # @param [Hash]          opt    Passed to #find_record_items and #clean_name.
+  #
+  # @return [Array<String>]
+  #
   def name_list: (*Symbol fields, **untyped opt) -> strArray
 end

@@ -5,5 +5,19 @@ module Lookup::Crossref::Api::Serializer::Schema
 
   include Lookup::RemoteService::Api::Serializer::Schema
 
-  def deserialize: (String|symHash data, ?method: Symbol|Proc|nil) -> (Api::Record | nil)
+  # This override is a kludge to transform "dasherized" keys into a form that
+  # can be used to create valid Rails attributes as defined in the schema block
+  # of the message or record class.
+  #
+  # E.g.:
+  # * '{ "isbn-type" : [...] }' becomes '{ "isbn_type" : [...] }'
+  # * '{ "DOI" : "..." }'       becomes '{ "doi" : "..." }'
+  #
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
+  #
+  # @return [Api::Record]
+  # @return [nil]
+  #
+  def deserialize: ((String|symHash) data, ?method: Symbol|Proc|nil) -> (Api::Record | nil)
 end

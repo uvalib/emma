@@ -57,7 +57,6 @@ class Entry < ApplicationRecord
 
   include Record::Uploadable
 
-  # NOTE: needed for #file_name
   include Record::Validatable
 
   include Record::Testing
@@ -77,7 +76,7 @@ class Entry < ApplicationRecord
   # This method overrides:
   # @see ActiveRecord::Core#initialize
   #
-  def initialize: (?(Entry|symHash)? attr) { (self) -> untyped } -> void
+  def initialize: (?(Entry|symHash|nil) attr) { (self) -> untyped } -> void
 
   # Update database fields, including the structured contents of the :emma_data
   # field.
@@ -89,7 +88,7 @@ class Entry < ApplicationRecord
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
+  def assign_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> void
 
   # The latest phase, representing the current status of the entry.
   #
@@ -119,7 +118,7 @@ class Entry < ApplicationRecord
   # @example Review events
   #   define_method(:reviews) { phase_scope(:review) }
   #
-  def phase_scope: (?(String|Symbol|Class|Phase)? phase_type, **untyped opt) -> ActiveRecord::Relation # _ActiveRecord_Relation[Phase, Integer]
+  def phase_scope: (?(String|Symbol|Class|Phase|nil) phase_type, **untyped opt) -> ActiveRecord::Relation # _ActiveRecord_Relation[Phase, Integer]
 
   # Create a new Phase for this Entry, initializing it with the current values
   # from this record.
@@ -133,7 +132,7 @@ class Entry < ApplicationRecord
   #
   # @return [Phase]
   #
-  def generate_phase: (String|Symbol|nil `type`, **untyped opt) -> Phase
+  def generate_phase: ((String|Symbol|nil) `type`, **untyped opt) -> Phase
 
   # Get user(s) for the given phase associated with this record.
   #
@@ -141,7 +140,7 @@ class Entry < ApplicationRecord
   #
   # @return [Array<User>]
   #
-  def users: (String|Symbol|Class|Phase phase_type) -> Array[User]
+  def users: ((String|Symbol|Class|Phase) phase_type) -> Array[User]
 
   # The user who submitted the entry.
   #
@@ -183,10 +182,18 @@ class Entry < ApplicationRecord
   #
   # @return [Entry]
   #
-  def self.latest_for_sid: (?(Model|symHash|String|Symbol)? sid, **untyped opt) -> Entry
+  def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, **untyped opt) -> Entry
 
   attr_reader sid_counter: Integer
 
+  # Counter for the trailing portion of the generated submission ID.
+  #
+  # This provides a per-thread value in the range 0..99 which can be used to
+  # differentiate submission IDs which are generated in rapid succession (e.g.,
+  # for bulk upload).
+  #
+  # @return [Integer]
+  #
   def self.sid_counter: () -> Integer
 
   # A textual description of the type of the Model instance.

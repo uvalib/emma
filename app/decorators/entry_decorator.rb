@@ -906,8 +906,8 @@ class EntryDecorator < BaseDecorator
   #
   def control_icon_button(action, **opt)
     return super unless action == :check
-    # noinspection RubyMismatchedArgumentType
     super do |path, link_opt|
+      # noinspection RubyMismatchedArgumentType
       check_status_popup(path, id: object.id, **link_opt)
     end
   end

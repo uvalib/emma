@@ -500,9 +500,6 @@ class Paginator
   #
   # @return [Integer]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def self.get_page_size(c = nil, a = nil)
     # noinspection RubyNilAnalysis
     c, a = c.values_at(:controller, :action) if c.is_a?(Hash)

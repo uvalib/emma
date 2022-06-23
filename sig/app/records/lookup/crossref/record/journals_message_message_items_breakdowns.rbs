@@ -2,9 +2,6 @@
 #
 # @see https://api.crossref.org/swagger-ui/index.html#model-JournalsMessageMessageItemsBreakdowns
 #
-# -
-# noinspection RubyClassModuleNamingConvention
-# +
 class Lookup::Crossref::Record::JournalsMessageMessageItemsBreakdowns < Lookup::Crossref::Api::Record
   include Lookup::Crossref::Shared::DateMethods
 end

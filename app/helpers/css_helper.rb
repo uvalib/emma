@@ -249,7 +249,7 @@ module CssHelper
   # Unless *unique* is *false* or a string, #hex_rand will be used to generate
   # a value to make the resulting ID unique.
   #
-  # @param [Array]        parts
+  # @param [Array<*>]     parts
   # @param [any, nil]     unique      Value unique to a search unique.
   # @param [Integer, nil] index       Value unique to an input row.
   # @param [Hash]         opt         Passed to #html_id.

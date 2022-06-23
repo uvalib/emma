@@ -7,6 +7,10 @@ module BsApiConcern
 
   include BsApiHelper
 
+  include ApiConcern
+
+  include BookshareConcern
+
   extend Emma::Time
 
   # Invoke a Bookshare API method for display in the "Bookshare API Explorer".
@@ -69,7 +73,7 @@ module BsApiConcern
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    def self.run_trials: (?user: User?, ?methods: Hash[Symbol,anyHash]?) -> Hash[Symbol,anyHash]
+    def self.run_trials: (?user: User|nil, ?methods: Hash[Symbol,anyHash]|nil) -> Hash[Symbol,anyHash]
   end
 
   private

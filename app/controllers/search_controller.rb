@@ -95,7 +95,6 @@ class SearchController < ApplicationController
     if q_params.present?
       opt    = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
       titles = title_results?
-      # noinspection RubyMismatchedArgumentType
       @list  = index_search(titles: titles, save: !playback, **opt)
       @page.finalize(@list, (titles ? :titles : :records), **opt)
       respond_to do |format|

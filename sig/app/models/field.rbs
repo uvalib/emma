@@ -4,11 +4,14 @@
 module Field
   DEFAULT_MODEL: Symbol
 
-  # TODO: remove after upload -> entry
   SYNTHETIC_KEYS: symArray
 
   SYNTHETIC_PROPERTIES: symHash
 
+  # Record field configuration property fields.
+  #
+  # @type [Array<Symbol>]
+  #
   PROPERTY_KEYS: symArray
 
   # Return an enumeration type expressed or implied by *value*.
@@ -48,11 +51,8 @@ module Field
   #   @param [Symbol, String, Hash, nil]  model
   #   @param [Symbol, String, nil]        action
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def self.configuration_for: (Symbol|String|nil                                   field, ?(Symbol|String)? model, ?(Symbol|String)? action) -> symHash
-                            | ([Array[Symbol|String]|Symbol|String, Symbol|String] field, ?(Symbol|String)? model, ?(Symbol|String)? action) -> symHash
+  def self.configuration_for: ((Symbol|String|nil)                                 field, ?(Symbol|String|nil) model, ?(Symbol|String|nil) action) -> symHash
+                            | ([Array[Symbol|String]|Symbol|String, Symbol|String] field, ?(Symbol|String|nil) model, ?(Symbol|String|nil) action) -> symHash
 
   # Find the field whose configuration entry has a matching label.
   #
@@ -62,10 +62,7 @@ module Field
   #
   # @return [Hash]                    Frozen result.
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def self.configuration_for_label: ((Symbol|String)? label, ?(Symbol|String)? model, ?(Symbol|String)? action) -> symHash
+  def self.configuration_for_label: ((Symbol|String|nil) label, ?(Symbol|String|nil) model, ?(Symbol|String|nil) action) -> symHash
 
   # Normalize entry values.
   #
@@ -100,10 +97,7 @@ module Field
   # set of checkboxes to create within a '<fieldset>' element.  Any other value
   # indicates '<textarea>' or the '<input>' type attribute to use.
   #
-  # -
-  # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedArgumentType
-  # +
-  def self.normalize: (symHash|String entry, ?(Symbol|nil) field) -> symHash
+  def self.normalize: ((symHash|String) entry, ?(Symbol|nil) field) -> symHash
 
   # Generate derived fields for an entry.
   #
@@ -119,7 +113,7 @@ module Field
   # @param [Hash]                entry
   # @param [Symbol, String, nil] action
   #
-  def self.unused?: (symHash entry, ?(Symbol|String)? action) -> bool
+  def self.unused?: (symHash entry, ?(Symbol|String|nil) action) -> bool
 
   # Regenerate an entry with the fields in an order more helpful for logging.
   #
@@ -154,7 +148,7 @@ module Field
   #
   # @return [Array<Symbol>]
   #
-  def self.symbol_array: (String|Symbol|Array[String|Symbol] item) -> symArray
+  def self.symbol_array: ((String|Symbol|Array[String|Symbol]) item) -> symArray
 
   public
 
@@ -169,7 +163,7 @@ module Field
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.
   #
-  def self.for: (untyped item, Symbol field, ?(Symbol|String)? model, ?value: untyped?, ?config: symHash?) -> (Field::Type | nil)
+  def self.for: (untyped item, Symbol field, ?(Symbol|String|nil) model, ?value: untyped|nil, ?config: symHash|nil) -> (Field::Type | nil)
 
   # Base class for field type descriptions.
   #
@@ -218,7 +212,7 @@ module Field
     # @param [Symbol, String, nil] model
     # @param [*]                   value
     #
-    def initialize: (untyped src, ?(Symbol|nil) field, ?(Symbol|String)? model, ?(untyped|nil) value) -> void
+    def initialize: (untyped src, ?(Symbol|nil) field, ?(Symbol|String|nil) model, ?(untyped|nil) value) -> void
 
     # The resolved value for this field instance.
     #

@@ -176,7 +176,6 @@ class MemberController < ApplicationController
   def show_values(result = nil, **opt)
     opt.reverse_merge!(name: :member)
     result ||= { details: @item, preferences: @preferences, history: @history }
-    # noinspection RubyMismatchedArgumentType
     super(result, **opt)
   end
 

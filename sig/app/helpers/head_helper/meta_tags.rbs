@@ -119,7 +119,7 @@ module HeadHelper::MetaTags
   # @return [ActiveSupport::SafeBuffer]       If valid.
   # @return [nil]                             If the tag would be a "no-op".
   #
-  def emit_meta_tag: (Symbol key, (String|Symbol|anyArray)? value, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | nil)
+  def emit_meta_tag: (Symbol key, (String|Symbol|anyArray|nil) value, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Set '<meta name="description">', eliminating any previous value.
   #

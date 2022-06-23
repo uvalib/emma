@@ -199,8 +199,8 @@ module Emma::Debug
 
     # Generate one or more inspections.
     #
-    # @param [Hash, Array, Any] value
-    # @param [Hash]             opt   Options passed to #__debug_inspect except
+    # @param [Hash, Array, *] value
+    # @param [Hash]           opt     Options passed to #__debug_inspect except
     #
     # @option opt [Boolean] :compact  If *true*, ignore empty values (but show
     #                                   if value is a FalseClass).

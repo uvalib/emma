@@ -17,7 +17,7 @@ module LogConcern
   # == Usage Notes
   # Paired with after_action #unsuppress_logger.
   #
-  def suppress_logger: (?(String|bool)? logging) -> void
+  def suppress_logger: (?(String|bool|nil) logging) -> void
 
   # Undo the effects of the before_action which suppressed excess logging.
   #

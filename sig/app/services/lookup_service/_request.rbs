@@ -1,29 +1,102 @@
+# A collection of identifiers and/or search terms.
+#
+# == Implementation Notes
+# This class can't be implemented as a subclass of Hash because the ActiveJob
+# serializer will fail to distinguish it from a simple Hash (and thereby fail
+# to engage its custom serializer/deserializer).
+#
 class LookupService::Request
   include LookupService::Common
 
   include Serializable
 
+  # The format of a request object.
+  #
+  # @type [Hash]
+  #
+  # @see file:app/assets/javascripts/channels/lookup-channel.js *REQUEST_TYPE*
+  #
   TEMPLATE: symHash
 
   DEFAULT_QUERY: String
 
+  # @return [Hash]
   attr_reader table: symHash
 
-  def initialize:  (lookupArg|nil items) -> void
-  def values:      () -> Array[String|PublicationIdentifier]
-  def terms:       () -> strArray
-  def add_term:    (PublicationIdentifier               value, **untyped opt) -> PublicationIdentifier
-                 | (String|Symbol                       value, **untyped opt) -> String
-                 | (String|Symbol prefix, ?(String|nil) value, **untyped opt) -> (String | nil)
-  def fix_term:    (PublicationIdentifier term, ?(bool|strArray) author) -> PublicationIdentifier
-                 | (String                term, ?(bool|strArray) author) -> String
-                 | (nil                   term, ?(bool|strArray) author) -> nil
-  def request:     () -> symHash
-  def identifiers: () -> lookupRequestItems
-  def id_types:    () -> symArray
-  def to_h:        () -> lookupHash
-  def dup:         () -> self
-  def deep_dup:    () -> self
+  # Create a new instance.
+  #
+  # @param [LookupService::Request, Hash, Array, String, nil] items
+  #
+  def initialize: (lookupArg|nil items) -> void
 
+  # All search term elements.
+  #
+  # @return [Array<String,PublicationIdentifier>]
+  #
+  def values: () -> Array[String|PublicationIdentifier]
+
+  # All search terms in "prefix:value" format.
+  #
+  # @return [Array<String>]
+  #
+  def terms: () -> strArray
+
+  # add_term
+  #
+  # @param [PublicationIdentifier, String, Symbol, nil] prefix
+  # @param [String, nil]                                value
+  # @param [Hash]                                       opt   To #fix_term.
+  #
+  # @return [PublicationIdentifier, String, nil]
+  #
+  def add_term: (PublicationIdentifier               value, **untyped opt) -> PublicationIdentifier
+              | (String|Symbol                       value, **untyped opt) -> String
+              | (String|Symbol prefix, ?(String|nil) value, **untyped opt) -> (String | nil)
+
+  # Remove quotes surround a term and provide a prefix if needed.
+  #
+  # @param [PublicationIdentifier, String, nil] term
+  # @param [Boolean, Array<String>]             author
+  #
+  # @return [PublicationIdentifier, String, nil]
+  #
+  def fix_term: (PublicationIdentifier term, ?(bool|strArray) author) -> PublicationIdentifier
+              | (String                term, ?(bool|strArray) author) -> String
+              | (nil                   term, ?(bool|strArray) author) -> nil
+
+  # Identifiers to lookup grouped by type.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def request: () -> symHash
+
+  # The identifiers involved in this request.
+  #
+  # @return [Array<PublicationIdentifier>]
+  #
+  def identifiers: () -> lookupRequestItems
+
+  # The identifier types involved in this request.
+  #
+  # @return [Array<Symbol>]
+  #
+  def id_types: () -> symArray
+
+  # Present the entire request structure as a Hash.
+  #
+  # @return [Hash]
+  #
+  def to_h: () -> lookupHash
+
+  def dup: () -> self
+
+  def deep_dup: () -> self
+
+  # Create a new instance from *item* if it is not already an instance.
+  #
+  # @param [LookupService::Request, *] item
+  #
+  # @return [LookupService::Request]
+  #
   def self.wrap: (untyped item) -> LookupService::Request
 end

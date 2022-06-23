@@ -48,7 +48,7 @@ class Api::Error < ExecError
   def initialize(*args, **opt)
     @http_response = @http_status = @cause = nil
     args.map! do |arg|
-      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+      # noinspection RubyMismatchedReturnType
       case arg
         when Integer           then (@http_status = arg) and next
         when Exception         then @cause = arg

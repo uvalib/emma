@@ -40,11 +40,11 @@ module Import
   # Translate an import field name to a destination field name.
   #
   # @param [Symbol, String] k
-  # @param [String, nil]    prefix
+  # @param [String]         prefix
   #
   # @return [Symbol]
   #
-  def default_name: (Symbol|String k, ?String prefix) -> Symbol
+  def default_name: ((Symbol|String) k, ?String prefix) -> Symbol
 
   # Transform a value into a name that can be used as a symbolized hash key.
   #
@@ -156,7 +156,7 @@ module Import
   #
   # @return [Array<String>]
   #
-  def identifier_values: (untyped v, String|_ToStr prefix) -> strArray
+  def identifier_values: (untyped v, (String|_ToStr) prefix) -> strArray
 
   # Transform a data item into an EnumType value.
   #
@@ -214,7 +214,7 @@ module Import
   #
   # @return [Array<(Symbol,Any)>]
   #
-  def resolve: (Symbol|String k, untyped v) -> [Symbol, untyped]
+  def resolve: ((Symbol|String) k, untyped v) -> [Symbol, untyped]
 
   # get_importer
   #
@@ -222,7 +222,7 @@ module Import
   #
   # @return [Module, nil]
   #
-  def self.get_importer: (Module|String|Symbol mod) -> (Module | nil)
+  def self.get_importer: ((Module|String|Symbol) mod) -> (Module | nil)
 
   include Emma::Debug::OutputMethods
 
@@ -234,5 +234,5 @@ module Import
   #
   # @return [nil]
   #
-  def __debug_import: (String|Symbol label, untyped k, untyped v) -> nil
+  def __debug_import: ((String|Symbol) label, untyped k, untyped v) -> nil
 end

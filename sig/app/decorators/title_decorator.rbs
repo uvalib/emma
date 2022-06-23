@@ -25,6 +25,9 @@ class TitleDecorator < BookshareDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
@@ -33,7 +36,7 @@ class TitleDecorator < BookshareDecorator
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Hash] opt                 Passed to super.
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -41,7 +44,7 @@ class TitleDecorator < BookshareDecorator
 
   # Catalog item search links.
   #
-  # @param [Hash] opt                 Passed to super
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
@@ -50,7 +53,7 @@ class TitleDecorator < BookshareDecorator
   # A link to the catalog item search results index page for the given term(s).
   #
   # @param [String] terms
-  # @param [Hash]   opt                 Passed to super.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
@@ -59,22 +62,34 @@ class TitleDecorator < BookshareDecorator
   # Render a metadata listing of an periodical.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # form_action_link
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  def form_target_description: (?action: Symbol|nil, **untyped opt) -> String
+  # form_target_description
+  #
+  # @param [Symbol] action
+  #
+  # @return [String]
+  #
+  def form_target_description: (?action: Symbol|nil, **untyped) -> String
 end

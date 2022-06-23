@@ -14,6 +14,12 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   module InstanceMethods
     include BaseDecorator::InstanceMethods
 
+    # Modify the inspection to limit the size of individual member results.
+    #
+    # @param [Integer] max            Maximum characters per member.
+    #
+    # @return [String]
+    #
     def inspect: (?max: Integer) -> String
   end
 
@@ -75,5 +81,4 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   # @return [void]
   #
   def self.collection_of: (Class base) -> void
-
 end

@@ -20,7 +20,7 @@ module IngestService::Status
   # @return [Array<(TrueClass,nil)>]
   # @return [Array<(FalseClass,String)>]
   #
-  def active_status: (?with: (String|strArray)?, ?expect: Proc?) -> ([true, nil] | [false, String])
+  def active_status: (?with: String|strArray|nil, ?expect: Proc|nil) -> ([true, nil] | [false, String])
 
   private
 

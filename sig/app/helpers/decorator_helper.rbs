@@ -9,7 +9,7 @@ module DecoratorHelper
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def context: (?Symbol|String|nil action, **untyped opt) -> symHash
+  def context: (?(Symbol|String|nil) action, **untyped opt) -> symHash
 
   private
 

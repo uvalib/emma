@@ -4,8 +4,6 @@
 # @see file:app/views/help/**
 #
 class HelpController < ApplicationController
-  include UserConcern
-
   include ParamsConcern
 
   include SessionConcern
@@ -25,6 +23,7 @@ class HelpController < ApplicationController
   #
   # The main help page.
   #
+  # @see #help_index_path             Route helper
   # @see HelpHelper#help_topics
   #
   def index: () -> void
@@ -33,6 +32,8 @@ class HelpController < ApplicationController
   # == GET /help?topic=:topic
   #
   # The topic help page.
+  #
+  # @see #help_path                   Route helper
   #
   def show: () -> void
 

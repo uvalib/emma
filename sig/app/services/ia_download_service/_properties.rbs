@@ -41,29 +41,11 @@ module IaDownloadService::Properties
   #
   IA_COOKIES: String
 
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
   def configuration: () -> symHash
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  # @see #IA_DOWNLOAD_BASE_URL
-  #
-  #def base_url: () -> String
-
-  # An API key is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  # @see #IA_COOKIES
-  #
-  #def api_key: () -> nil
-
-  # API version is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  #def api_version: () -> nil
 
   # Default search engine for this deployment.
   #

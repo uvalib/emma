@@ -47,5 +47,6 @@ class ApplicationJob < ActiveJob::Base
   def perform_callback: (untyped callback, **untyped opt) -> untyped
 end
 
+# Namespace for app/jobs/attachment.
 module Attachment
 end

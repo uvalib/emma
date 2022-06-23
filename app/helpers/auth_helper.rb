@@ -136,7 +136,7 @@ module AuthHelper
   #   @param [String, ::OAuth2::AccessToken] token  Associated token.
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedParameterType
+  # noinspection RubyMismatchedArgumentType
   #++
   def stored_auth_update_user(user, token = nil)
     if user.is_a?(OmniAuth::AuthHash)

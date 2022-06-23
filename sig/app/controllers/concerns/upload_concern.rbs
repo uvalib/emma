@@ -9,51 +9,85 @@ module UploadConcern
 
   include Emma::Json
 
-  include UploadWorkflow::Properties
+  include UploadWorkflow::Errors
 
   include ParamsHelper
 
   include FlashHelper
 
+  include IngestConcern
+
   # :nocov:
-  include PaginationConcern
+  #include OptionsConcern
 
   MIME_REGISTRATION: Array[Class]
-
-  # URL parameters involved in pagination.                                      # NOTE: to EntryConcern::ENTRY_PAGE_PARAMS
-  #
-  # @type [Array<Symbol>]
-  #
-  UPLOAD_PAGE_PARAMS: symArray
-
-  # URL parameters involved in form submission.                                 # NOTE: to EntryConcern::ENTRY_FORM_PARAMS
-  #
-  # @type [Array<Symbol>]
-  #
-  UPLOAD_FORM_PARAMS: symArray
-
-  # POST/PUT/PATCH parameters from the entry form that are not relevant to the  # NOTE: to EntryConcern::IGNORED_ENTRY_FORM_PARAMS
-  # create/update of an Upload instance.
-  #
-  # @type [Array<Symbol>]
-  #
-  IGNORED_UPLOAD_FORM_PARAMS: symArray
 
   attr_reader upload_params: symHash
   attr_reader db_id:         Integer | nil
   attr_reader identifier:    String
   attr_reader workflow:      Workflow::Base
 
+  # URL parameters relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
   def upload_params: () -> symHash
 
+  # Get URL parameters relevant to the current operation.                       # NOTE: method now unused
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
   def get_upload_params: (?(prmHash|nil) p) -> symHash
 
+  # Extract POST parameters that are usable for creating/updating an Upload
+  # instance.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  # == Implementation Notes
+  # The value `params[:upload][:emma_data]` is ignored because it reports the
+  # original metadata values that were supplied to the edit form.  The value
+  # `params[:upload][:file]` is ignored if it is blank or is the JSON
+  # representation of an empty object ("{}") -- this indicates an editing
+  # submission where metadata is being changed but the uploaded file is not
+  # being replaced.
+  #
   def upload_post_params: (?(prmHash|nil) p) -> symHash
 
-  def upload_bulk_post_params: (?(prmHash|nil) p, ?ActionDispatch::Request? req) -> Array[symHash]
+  # Extract POST parameters and data for bulk operations.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  # @param [ActionDispatch::Request, nil]            req Def: `#request`.
+  #
+  # @raise [RuntimeError]             If both :src and :data are present.
+  #
+  # @return [Array<Hash{Symbol=>Any}>]
+  #
+  def upload_bulk_post_params: (?(prmHash|nil) p, ?(ActionDispatch::Request|nil) req) -> Array[symHash]
 
+  # workflow_parameters
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
   def workflow_parameters: () -> symHash
 
+  # Remote or locally-provided data.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [String]       :src   URI or path to file containing the data.
+  # @option opt [String, Hash] :data  Literal data.
+  #
+  # @raise [RuntimeError]             If both *src* and *data* are present.
+  #
+  # @return [nil]                     If both *src* and *data* are missing.
+  # @return [Hash]
+  # @return [Array<Hash>]
+  #
   def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash] | nil)
 
   # URL parameters associated with item/entry identification.                   # NOTE: to EntryConcern
@@ -62,6 +96,16 @@ module UploadConcern
   #
   IDENTIFIER_PARAMS: symArray
 
+  # Extract the best-match URL parameter which represents an item identifier.
+  #
+  # The @identifier member variable contains the original item specification,
+  # if one was provided, and not the array of IDs represented by it.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  #
+  # @return [String]                  Value of @identifier.
+  # @return [nil]                     No param from #IDENTIFIER_PARAMS found.
+  #
   def set_identifiers: (?(prmHash|nil) p) -> (String | nil)
 
   # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
@@ -83,10 +127,39 @@ module UploadConcern
   #
   FIND_OR_MATCH_PARAMS: symArray
 
+  # Locate and filter Upload records.
+  #
+  # @param [Array<String,Array>] items  Default: `@identifier`.
+  # @param [Hash]                opt    Passed to Upload#search_records;
+  #                                       default: `#upload_params` if no
+  #                                       *items* are given.
+  #
+  # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
   def find_or_match_records: (*(String|anyArray) items, **untyped opt) -> symHash
 
+  # Return with the specified Upload record or *nil* if one could not be found.
+  #
+  # @param [String, Hash, Upload, nil] id
+  #
+  # @raise [UploadWorkflow::SubmitError]  If *item* not found.
+  #
+  # @return [Upload, nil]
+  #
+  # @see Upload#get_record
+  #
   def get_record: (?(String|Upload|anyHash|nil) id, **untyped opt) -> (Upload | nil)
 
+  # Get item data from the production service.
+  #
+  # @param [String] sid               Submission ID of the item.
+  # @param [String] host              Base URL of production service.
+  #
+  # @return [Upload]                  Object created from received data.
+  # @return [nil]                     Bad data and/or no object created.
+  #
   def proxy_get_record: (String sid, String host) -> (Upload | nil)
 
   # Gather information to create an upload workflow instance.
@@ -102,10 +175,10 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single#generate
   #
-  def wf_single: (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> untyped
-  #def wf_single: (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> httpResult           # For :validating, :replacing
-  #             | (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> Array[String|Upload] # For :removing, :removed
-  #             | (?rec: (String|Integer|:unset)?, ?data: (String|anyHash|:unset)?, **untyped opt) -> Upload?              # For all other states
+  def wf_single: (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> untyped
+  #def wf_single: (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> httpResult           # For :validating, :replacing
+  #             | (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> Array[String|Upload] # For :removing, :removed
+  #             | (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> Upload?              # For all other states
 
   # Determine whether the workflow state of the indicated item can be advanced.
   #
@@ -116,7 +189,7 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single#check_status
   #
-  def wf_single_check: (?rec: (String|Integer)?, **untyped opt) -> strArray
+  def wf_single_check: (?rec: String|Integer|nil, **untyped opt) -> strArray
 
   # Gather information to create a bulk upload workflow instance.
   #
@@ -131,7 +204,7 @@ module UploadConcern
   #
   # @see UploadWorkflow::Bulk#generate
   #
-  def wf_bulk: (?rec: (anyArray|:unset)?, ?data: (anyArray|:unset)?, **untyped opt) -> Array[String|Upload]
+  def wf_bulk: (?rec: anyArray|:unset|nil, ?data: anyArray|:unset|nil, **untyped opt) -> Array[String|Upload]
 
   # Produce flash error messages for failures that did not abort the workflow
   # step but did affect the outcome (e.g. for bulk uploads where some of the
@@ -176,12 +249,46 @@ module UploadConcern
   # @param [Boolean]                                       dryrun
   # @param [Symbol]                                        meth     Caller.
   #
-  # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / failure messages
+  # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / fail msgs
   #
-  def reindex_record: (Upload|Array[Upload]|ActiveRecord::Relation list, ?atomic: bool, ?dryrun: bool, ?meth: Symbol) -> [strArray, strArray]
+  def reindex_record: ((Upload|Array[Upload]|ActiveRecord::Relation) list, ?atomic: bool|nil, ?dryrun: bool|nil, ?meth: Symbol|nil) -> [strArray, strArray]
 
-  def post_response: ( Symbol|Integer|nil status,   (Upload|String|FlashHelper::FlashPart|Array[Upload|String|FlashHelper::FlashPart])? item, ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
-                   | (?(Symbol|Integer|nil) status, Exception item,                                                                           ?redirect: (String|bool)?, ?xhr: bool?, ?meth: Symbol?) -> void
+  # Generate a response to a POST.
+  #
+  # @param [Symbol, Integer, Exception]                            status
+  # @param [Exception, String, FlashPart, Array<String,FlashPart>] item
+  # @param [String, FalseClass]       redirect
+  # @param [Boolean]                  xhr       Override `request.xhr?`.
+  # @param [Symbol]                   meth      Calling method.
+  #
+  # @return [void]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload post_response(status, items, redirect: nil, xhr: nil, meth: nil)
+  #   @param [Symbol, Integer]                            status
+  #   @param [String, FlashPart, Array<String,FlashPart>] items
+  #   @param [String, FalseClass]                         redirect
+  #   @param [Boolean]                                    xhr
+  #   @param [Symbol]                                     meth
+  #
+  # @overload post_response(status, error, redirect: nil, xhr: nil, meth: nil)
+  #   @param [Symbol, Integer]        status
+  #   @param [Exception]              error
+  #   @param [String, FalseClass]     redirect
+  #   @param [Boolean]                xhr
+  #   @param [Symbol]                 meth
+  #
+  # @overload post_response(error, redirect: nil, xhr: nil, meth: nil)
+  #   @param [Exception]              error
+  #   @param [String, FalseClass]     redirect
+  #   @param [Boolean]                xhr
+  #   @param [Symbol]                 meth
+  #
+  def post_response: ( (Symbol|Integer|nil) status, (Upload|String|FlashHelper::FlashPart|Array[Upload|String|FlashHelper::FlashPart]|nil) item, ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil) -> void
+                   | (?(Symbol|Integer|nil) status, Exception item,                                                                              ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil) -> void
 
   private
 
@@ -190,6 +297,7 @@ module UploadConcern
   public
 
   include OptionsConcern
+
   include PaginationConcern
 
 end

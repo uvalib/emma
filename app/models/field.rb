@@ -93,9 +93,6 @@ module Field
   #   @param [Symbol, String, Hash, nil]  model
   #   @param [Symbol, String, nil]        action
   #
-  #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
-  #++
   def self.configuration_for(field, model = nil, action = nil)
     # noinspection RubyNilAnalysis
     if field.is_a?(Array)
@@ -129,9 +126,6 @@ module Field
   #
   # @return [Hash]                    Frozen result.
   #
-  #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
-  #++
   def self.configuration_for_label(label, model = nil, action = nil)
     return {} if (label = label.to_s).blank?
     config       = Model.config_for(model || DEFAULT_MODEL)
@@ -195,7 +189,7 @@ module Field
   # indicates '<textarea>' or the '<input>' type attribute to use.
   #
   #--
-  # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedArgumentType
+  # noinspection RubyCaseWithoutElseBlockInspection
   #++
   def self.normalize(entry, field = nil)
     entry = entry.to_s.titleize            if entry.is_a?(Symbol)
@@ -356,9 +350,6 @@ module Field
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def self.for(item, field, model = nil, value: nil, config: nil)
     model  ||= Model.for(item)
     config ||= configuration_for(field, model)

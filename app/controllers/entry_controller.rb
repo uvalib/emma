@@ -693,7 +693,7 @@ class EntryController < ApplicationController
 
   protected
 
-  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
   # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
@@ -711,9 +711,6 @@ class EntryController < ApplicationController
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def show_search_failure(error, fallback = nil, meth: nil)
     meth ||= calling_method
     if modal?

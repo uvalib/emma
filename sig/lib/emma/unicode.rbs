@@ -1,8 +1,5 @@
 # Unicode utilities.
 #
-# -
-# noinspection RubyQuotedStringsInspection
-# +
 module Emma::Unicode
   extend ::Emma::Unicode
 
@@ -12,7 +9,7 @@ module Emma::Unicode
   #
   # @return [String]
   #
-  def char: (String|Integer v) -> String
+  def char: ((String|Integer) v) -> String
 
   # Pad a character with thin spaces.
   #
@@ -21,7 +18,11 @@ module Emma::Unicode
   # @param [String, Integer, nil] left    Default: *pad*
   # @param [String, Integer, nil] right   Default: *l_pad*
   #
-  def pad_char: (String|Integer v, ?pad: String|Integer?, ?left: String|Integer?, ?right: String|Integer?) -> String
+  # @return [String]
+  #
+  # @note Currently unused.
+  #
+  def pad_char: ((String|Integer) v, ?pad: String|Integer|nil, ?left: String|Integer|nil, ?right: String|Integer|nil) -> String
 
   EN_SPACE: String
 

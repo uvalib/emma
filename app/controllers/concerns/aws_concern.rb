@@ -154,9 +154,6 @@ module AwsConcern
   #
   # @return [String]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def repo_bucket(repository, deployment = nil, service: nil, **)
     aws_s3 = service || AwsS3Service.instance
     aws_s3.bucket_for(repository, deployment)

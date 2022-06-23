@@ -62,9 +62,6 @@ module SessionConcern
   # @param [Any]         message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def auth_success_redirect(path = nil, user: nil, message: nil, **opt)
     set_flash_notice(message, **opt) if message.present?
     path ||= after_sign_in_path_for(user || resource)
@@ -78,9 +75,6 @@ module SessionConcern
   # @param [Any]         message      Passed to #set_flash_alert.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def auth_failure_redirect(path = nil, user: nil, message: nil, **opt)
     Log.info { "#{__method__}: #{message.inspect}" }
     local_sign_out # Make sure no remnants of the local session are left.
@@ -98,9 +92,6 @@ module SessionConcern
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def set_flash_notice(message = nil, action: nil, user: nil, **opt)
     message ||= status_message(status: :success, action: action, user: user)
     flash_notice(*message, **opt)
@@ -115,9 +106,6 @@ module SessionConcern
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def set_flash_alert(message = nil, action: nil, user: nil, **opt)
     message ||= status_message(status: :failure, action: action, user: user)
     flash_alert(*message, **opt)

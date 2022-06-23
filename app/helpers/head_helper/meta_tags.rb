@@ -115,7 +115,6 @@ module HeadHelper::MetaTags
   #
   def replace_page_meta_tags(pairs = nil)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
-    # noinspection RubyMismatchedArgumentType
     @page_meta_tags.merge!(pairs) if pairs.present?
     @page_meta_tags.merge!(yield) if block_given?
     @page_meta_tags
@@ -133,7 +132,6 @@ module HeadHelper::MetaTags
     opt, html_opt     = partition_hash(opt, :tag_separator)
     tag_separator     = opt[:tag_separator] || META_TAG_SEPARATOR
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
-    # noinspection RubyMismatchedReturnType
     @page_meta_tags.map { |key, value|
       emit_meta_tag(key, value, html_opt)
     }.compact.join(tag_separator).html_safe

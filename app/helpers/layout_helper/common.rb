@@ -29,9 +29,6 @@ module LayoutHelper::Common
   #
   CLIENT_MANAGES_HIDDEN_INPUTS = true
 
-  #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
-  #++
   def search_form(target, id = nil, hidden: nil, **opt, &block)
     search_form_with_hidden(target, id, hidden: hidden, **opt, &block)
   end unless CLIENT_MANAGES_HIDDEN_INPUTS
@@ -52,7 +49,7 @@ module LayoutHelper::Common
   # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
   #
   #--
-  # noinspection RubyUnusedLocalVariable, RubyMismatchedParameterType
+  # noinspection RubyUnusedLocalVariable
   #++
   def search_form(target, id = nil, hidden: nil, **opt, &block)
     return if (path = search_target_path(target)).blank?
@@ -81,9 +78,6 @@ module LayoutHelper::Common
   #
   # @note Used only if #CLIENT_MANAGES_HIDDEN_INPUTS is false.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def search_form_with_hidden(target, id = nil, hidden: nil, **opt)
     return if (path = search_target_path(target)).blank?
     include_hidden = hidden.present? || (id.present? && (path == request.path))

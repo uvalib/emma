@@ -42,5 +42,5 @@ class Api::Serializer::Obj < Api::Serializer
   #
   # @see Representable::Obj#from_obj
   #
-  def deserialize: (symHash|String data, ?method: Symbol|Proc) -> (Api::Record | nil)
+  def deserialize: ((symHash|String) data, ?method: Symbol|Proc) -> (Api::Record | nil)
 end

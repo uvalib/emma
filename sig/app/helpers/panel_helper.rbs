@@ -7,9 +7,6 @@ module PanelHelper
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   PANEL_CTRL_CFG: symHash
 
   # Label for button to open a collapsible panel.
@@ -54,7 +51,7 @@ module PanelHelper
   #
   # @see file:app/assets/javascripts/feature/panel.js
   #
-  def toggle_button: (id: String, ?label: String?, ?context: (String|Symbol)?, ?open: (bool|String)?, ?selector: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def toggle_button: (id: String, ?label: String|nil, ?context: String|Symbol|nil, ?open: bool|String|nil, ?selector: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

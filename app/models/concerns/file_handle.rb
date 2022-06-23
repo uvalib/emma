@@ -94,9 +94,9 @@ class FileHandle
 
     # Debug method for this class.
     #
-    # @param [Array] args
-    # @param [Hash]  opt
-    # @param [Proc]  block              Passed to #__debug_items.
+    # @param [Array<*>] args
+    # @param [Hash]     opt
+    # @param [Proc]     block         Passed to #__debug_items.
     #
     # @return [void]
     #
@@ -118,7 +118,7 @@ class FileHandle
     # Delegate to the underlying object.
     #
     # @param [Symbol, String] name
-    # @param [Array]          args
+    # @param [Array<*>]       args
     # @param [Proc]           block
     #
     # @return [Any]

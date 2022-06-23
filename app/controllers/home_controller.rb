@@ -124,7 +124,6 @@ class HomeController < ApplicationController
   def show_values(result = nil, **opt)
     opt.reverse_merge!(name: :account)
     result ||= { details: @item, preferences: @preferences, history: @history }
-    # noinspection RubyMismatchedArgumentType
     super(result, **opt)
   end
 

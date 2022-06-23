@@ -50,7 +50,7 @@ class Phase::BulkOperation < Phase
   # @option attr [String|Array] :manifest   If *attr* is a Hash or Hash-like.
   # @option opt  [String|Array] :manifest   If *opt* hash is provided.
   #
-  def initialize: (?(Model|prmHash)? attr, ?(symHash|nil) opt) { () -> untyped } -> void
+  def initialize: (?(Model|prmHash|nil) attr, ?(symHash|nil) opt) ?{ () -> untyped } -> void
 
   # The #type_value of BulkPart elements associated with this BulkOperation.
   #
@@ -76,7 +76,7 @@ class Phase::BulkOperation < Phase
   #
   # @return [Array]
   #
-  def load_manifest: (?(String|strArray)? data) -> strArray
+  def load_manifest: (?(String|strArray|nil) data) -> strArray
 
   # Perform bulk operation.
   #
@@ -173,7 +173,7 @@ class Phase::BulkOperation < Phase
   #
   # @return [String]
   #
-  def self.describe_type: (Phase? phase, **untyped opt) -> String
+  def self.describe_type: ((Phase|nil) phase, **untyped opt) -> String
 
   # A textual description of the status of the given Phase instance.
   #

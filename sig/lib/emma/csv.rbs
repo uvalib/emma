@@ -30,7 +30,7 @@ module Emma::Csv
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
   # encoding.
   #
-  def csv_parse: (String|IO|StringIO|IO::Like src, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | nil)
+  def csv_parse: ((String|IO|StringIO|IO::Like) src, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | nil)
 
   # force_utf8
   #

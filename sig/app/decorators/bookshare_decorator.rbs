@@ -5,7 +5,6 @@
 #   @return [Bs::Api::Record]
 #
 class BookshareDecorator < BaseDecorator
-
   module Paths
     include BaseDecorator::Paths
   end
@@ -28,9 +27,6 @@ class BookshareDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash,String}]
     #
-    # -
-    # noinspection LongLine
-    # +
     BOOKSHARE_ACTION: Hash[Symbol,String|Hash[Symbol,String]]
 
     # Mapping of application URL parameters to Bookshare URL parameters.
@@ -67,7 +63,9 @@ class BookshareDecorator < BaseDecorator
     #   @param [String] path      Passed as #bookshare_url *path* parameter
     #   @param [Hash]   path_opt
     #
-    def bookshare_link: (Bs::Api::Record|String item, ?path: String?, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
+    # @see LinkHelper#external_link
+    #
+    def bookshare_link: ((Bs::Api::Record|String) item, ?path: String|nil, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
 
     # Generate a Bookshare URL.  If *path* is not given, infer it from the
     # originating controller and action.
@@ -90,10 +88,7 @@ class BookshareDecorator < BaseDecorator
     #   @param [Hash]        hash       Controller/action.
     #   @param [Hash]        prm
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
-    def bookshare_url: (symHash|String|nil path, **untyped prm) -> (String | nil)
+    def bookshare_url: ((symHash|String|nil) path, **untyped prm) -> (String | nil)
 
     # This is a kludge
     #
@@ -110,7 +105,7 @@ class BookshareDecorator < BaseDecorator
     include Paths
     include Methods
 
-    def bookshare_url: (symHash|String|nil path, **untyped prm) -> (String | nil)
+    def bookshare_url: ((symHash|String|nil) path, **untyped prm) -> (String | nil)
     def artifact_links: (?(Model|nil) item, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
@@ -120,17 +115,18 @@ class BookshareDecorator < BaseDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
 
   include Common
-  include InstanceMethods
-  extend  ClassMethods
 
   # A direct link to a Bookshare page to open in a new browser tab.
   #
-  # @param [Hash] path_opt            Passed to super
+  # @param [Hash] path_opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
@@ -149,7 +145,7 @@ class BookshareDecorator < BaseDecorator
   # Create a link to the search results index page for the given term(s).
   #
   # @param [Model, String] terms
-  # @param [Hash]          opt                Passed to #make_link except for:
+  # @param [Hash]          opt                To LinkHelper#make_link except:
   #
   # @option opt [Symbol]         :field       Default: :title.
   # @option opt [Boolean]        :all_words
@@ -160,10 +156,7 @@ class BookshareDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]       An HTML link element.
   # @return [nil]                             If no *terms* were provided.
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def search_link: (Model|String terms, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_link: ((Model|String) terms, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # @private
   # @type [Array<Symbol>]
@@ -267,14 +260,15 @@ class BookshareDecorator < BaseDecorator
   # endpoint.
   #
   # @param [Model, Array<String>, String] links
-  # @param [Hash] opt                 Passed to #make_link except for:
-  #
-  # @option opt [Boolean] :no_link
-  # @option opt [String]  :separator  Default: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Boolean]                      no_link
+  # @param [String]                       separator
+  # @param [Hash]                         opt         To LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def record_links: (Model|String|strArray links, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @see BsApiHelper#bs_api_explorer_url
+  #
+  def record_links: ((Model|String|strArray) links, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Transform a field value for HTML rendering.
   #
@@ -330,7 +324,7 @@ class BookshareDecorator < BaseDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_action_link: (?label: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_action_link: (label: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # form_action_description
   #
@@ -338,7 +332,7 @@ class BookshareDecorator < BaseDecorator
   #
   # @return [String]
   #
-  def form_action_description: (?action: String|nil, **untyped opt) -> String
+  def form_action_description: (?action: String|nil, **untyped) -> String
 
   # form_target_description
   #

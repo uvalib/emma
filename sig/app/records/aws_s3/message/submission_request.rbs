@@ -53,7 +53,7 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
   #
   # @option opt [Aws::S3::Object] :file   Override file for submission.
   #
-  def initialize: (AwsS3::Message::SubmissionRequest|Model|symHash src, **untyped opt) -> void
+  def initialize: ((AwsS3::Message::SubmissionRequest|Model|symHash) src, **untyped opt) -> void
 
   # Create a new SubmissionRequest unless *src* already is one.
   #
@@ -61,7 +61,7 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
   #
   # @return [AwsS3::Message::SubmissionRequest]
   #
-  def self.[]: (AwsS3::Message::SubmissionRequest|Model|symHash record) -> AwsS3::Message::SubmissionRequest
+  def self.[]: ((AwsS3::Message::SubmissionRequest|Model|symHash) record) -> AwsS3::Message::SubmissionRequest
 
   # Normalize to an array of submission records.
   #
@@ -69,5 +69,5 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
   #
   # @return [Array<AwsS3::Message::SubmissionRequest>]
   #
-  def self.array: (AwsS3::Message::SubmissionRequest|Model|symHash|Array[AwsS3::Message::SubmissionRequest|Model|symHash] records) -> Array[AwsS3::Message::SubmissionRequest]
+  def self.array: ((AwsS3::Message::SubmissionRequest | Model | symHash | Array[AwsS3::Message::SubmissionRequest|Model|symHash]) records) -> Array[AwsS3::Message::SubmissionRequest]
 end

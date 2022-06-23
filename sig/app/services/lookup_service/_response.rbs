@@ -1,72 +1,53 @@
 # A collection of identifiers transformed into PublicationIdentifier and
 # grouped by type.
 #
+# == Implementation Notes
+# This class can't be implemented as a subclass of Hash because the ActiveJob
+# serializer will fail to distinguish it from a simple Hash (and thereby fail
+# to engage its custom serializer/deserializer).
+#
 class LookupService::Response
   include LookupService::Common
 
   include Serializable
 
   DEF_STATUS:  String
+
   DEF_SERVICE: String
 
+  # Response data value entries.
+  #
+  # @type [Hash]
+  #
   TEMPLATE: symHash
 
-  attr_reader table:      symHash
-  attr_reader error:      symHash | nil
+  # Response data values.
+  #
+  # At a minimum, this includes the entries defined by #TEMPLATE.
+  #
+  # @return [Hash]
+  #
+  attr_reader table: symHash
+
+  # Out-of-band error information.
+  #
+  # @return [Hash,nil]
+  #
+  attr_reader error: symHash | nil
+
+  # Out-of-band diagnostic information.
+  #
+  # @return [Hash,nil]
+  #
   attr_reader diagnostic: symHash | nil
 
   # Create a new instance.
   #
   # @param [LookupService::Response, Hash, *] items
+  # @param [Hash, nil]                        opt
   #
-  def initialize: (?(LookupService::Response|symHash|nil) items                 ) -> void
-                | (  LookupService::Response|symHash|nil  items, symHash|nil opt) -> void
-
-  # Request status.
-  #
-  # @return [String]
-  #
-  #def status: () -> String
-
-  # Originating external lookup service.
-  #
-  # @return [String]
-  #
-  #def service: () -> String
-
-  # Time in seconds to receive the requested results.
-  #
-  # @return [Float]
-  #
-  #def duration: () -> Float
-
-  # Overdue by this many seconds.
-  #
-  # @return [Float,nil]
-  #
-  #def late: () -> (Float | nil)
-
-  # Overdue?
-  #
-  #def late?: () -> bool
-
-  # Requesting user.
-  #
-  # @return [String,nil]
-  #
-  #def user: () -> (String | nil)
-
-  # When the request was made.
-  #
-  # @return [String,nil]
-  #
-  #def time: () -> (String | nil)
-
-  # Response result data.
-  #
-  # @return [Hash]
-  #
-  #def data: () -> anyHash
+  def initialize: (?(LookupService::Response|symHash|nil) items                   ) -> void
+                | ( (LookupService::Response|symHash|nil) items, (symHash|nil) opt) -> void
 
   # Return all except out-of-band information.
   #
@@ -74,7 +55,23 @@ class LookupService::Response
   #
   def to_h: () -> anyHash
 
-  def []:  (Symbol key) -> untyped
+  # Fetch a stored value, allowing access to #error and #diagnostic as
+  # :error and :diagnostic, respectively.
+  #
+  # @param [Symbol] key
+  #
+  # @return [*]
+  #
+  def []: (Symbol key) -> untyped
+
+  # Update a stored value, allowing access to #error and #diagnostic as
+  # :error and :diagnostic, respectively.
+  #
+  # @param [Symbol] key
+  # @param [*]      value
+  #
+  # @return [*]
+  #
   def []=: (Symbol key, untyped value) -> untyped
 
   # Create a new instance from *item* if it is not already an instance.

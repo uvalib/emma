@@ -3,6 +3,7 @@ class RunState < Hash[untyped, untyped]
 
   include Emma::Json
 
+  # @private
   CLASS: Class
 
   # If *true*, then PUT "/health/run_state" will clear the RunState initially
@@ -36,9 +37,6 @@ class RunState < Hash[untyped, untyped]
   # If further states are added, they should be added between :available and
   # :unavailable so that they maintain their first/last positions.
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   STATE: Hash[Symbol,symHash]
 
   # * AVAILABLE_STATUS references the run state for normal operation.
@@ -114,9 +112,6 @@ class RunState < Hash[untyped, untyped]
   #
   # @param [String, Boolean, Hash, RunState, Any, nil] source
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
   def initialize: (?(untyped|nil) source) -> void
 
   # Override Hash#merge! to set/update attributes.
@@ -180,9 +175,6 @@ class RunState < Hash[untyped, untyped]
   #
   # @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
   #
-  # -
-  # noinspection RubyMismatchedReturnType
-  # +
   def timestamp_or_duration: (untyped v) -> (Time | Integer | nil)
 
   attr_reader self.current: RunState | nil
@@ -246,32 +238,32 @@ class RunState < Hash[untyped, untyped]
 
   # Add a warning-level log message.
   #
-  # @param [Array]                args    Passed to #log.
+  # @param [Array<*>]             args    Passed to #log.
   # @param [Symbol, nil]          meth    Calling method.
   # @param [Proc]                 block   Passed to #log.
   #
   # @return [nil]
   #
-  def self.warn: (*untyped args, ?meth: Symbol?) { () -> untyped } -> nil
+  def self.warn: (*untyped args, ?meth: Symbol|nil) { () -> untyped } -> nil
 
   # Add a debug-level log message.
   #
-  # @param [Array]                args    Passed to #log.
+  # @param [Array<*>]             args    Passed to #log.
   # @param [Symbol, nil]          meth    Calling method.
   # @param [Proc]                 block   Passed to #log.
   #
   # @return [nil]
   #
-  def self.debug: (*untyped args, ?meth: Symbol?) { () -> untyped } -> nil
+  def self.debug: (*untyped args, ?meth: Symbol|nil) { () -> untyped } -> nil
 
   # Add a log message.
   #
-  # @param [Array]                args    Passed to Emma::Log#add
+  # @param [Array<*>]             args    Passed to Emma::Log#add
   # @param [Integer, Symbol, nil] level   Severity level.
   # @param [Symbol, nil]          meth    Calling method.
   # @param [Proc]                 block   Passed to Emma::Log#add
   #
   # @return [nil]
   #
-  def self.log: (*untyped args, level: Integer|Symbol|nil, ?meth: Symbol?) { () -> untyped } -> nil
+  def self.log: (*untyped args, level: Integer|Symbol|nil, ?meth: Symbol|nil) { () -> untyped } -> nil
 end

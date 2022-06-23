@@ -350,12 +350,10 @@ class Entry < ApplicationRecord
   if DEBUG_RECORD
 
     def show
-      # noinspection RubyMismatchedArgumentType
       super(:user, :phases, :actions)
     end
 
     def self.show
-      # noinspection RubyMismatchedArgumentType
       super(:native, :non_native)
     end
 

@@ -12,9 +12,6 @@ module OmniAuth
     # +Bookshare+.  Thus, these methods are overridden explicitly in order to
     # ensure consistency.
     #
-    # -
-    # noinspection LongLine
-    # +
     class Bookshare < OmniAuth::Strategies::OAuth2
       include Emma::Common
 
@@ -137,9 +134,6 @@ module OmniAuth
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
-      # -
-      # noinspection RubyScope
-      # +
       def callback_phase: () -> httpResult
 
       # An alternative to call_app! which generates a response for a redirect.
@@ -149,9 +143,6 @@ module OmniAuth
       #
       # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
-      # -
-      # noinspection RubyStringKeysInHashInspection
-      # +
       def call_redirect: (String location, **untyped log_extra) -> httpResult
 
       # Trigger an exception if the signed-in user doesn't have a valid
@@ -182,10 +173,7 @@ module OmniAuth
       #
       # @return [Hash{Symbol=>Any}]
       #
-      # -
-      # noinspection RubyNilAnalysis
-      # +
-      def url_parameters: (?(prmHash|Rack::Request)? params) -> symHash
+      def url_parameters: (?(prmHash|Rack::Request|nil) params) -> symHash
 
       # Generate an access token based on fixed information.
       #
@@ -210,10 +198,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      # -
-      # noinspection RubyMismatchedArgumentType
-      # +
-      def synthetic_access_token: (String|prmHash|::OAuth2::AccessToken src) -> (::OAuth2::AccessToken | nil)
+      def synthetic_access_token: ((String|prmHash|::OAuth2::AccessToken) src) -> (::OAuth2::AccessToken | nil)
       #def synthetic_access_token: (::OAuth2::AccessToken atoken) -> ::OAuth2::AccessToken
       #                          | (prmHash params)               -> (::OAuth2::AccessToken | nil)
       #                          | (String uid)                   -> (::OAuth2::AccessToken | nil)
@@ -242,10 +227,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      # -
-      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-      # +
-      def synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src) -> (OmniAuth::AuthHash | nil)
+      def synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src) -> (OmniAuth::AuthHash | nil)
       #def synthetic_auth_hash: (OmniAuth::AuthHash auth_hash) -> OmniAuth::AuthHash
       #                       | (prmHash params)               -> (OmniAuth::AuthHash | nil)
       #                       | (String uid)                   -> (OmniAuth::AuthHash | nil)
@@ -256,7 +238,7 @@ module OmniAuth
       #
       # @return [OmniAuth::AuthHash]
       #
-      def self.auth_hash: (User|anyHash src) -> OmniAuth::AuthHash
+      def self.auth_hash: ((User|anyHash) src) -> OmniAuth::AuthHash
 
       # Generate an auth hash based on fixed information.
       #
@@ -284,7 +266,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      def self.synthetic_auth_hash: (String|prmHash|OmniAuth::AuthHash src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
+      def self.synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
       #def self.synthetic_auth_hash: (OmniAuth::AuthHash auth_hash)   -> OmniAuth::AuthHash
       #                            | (prmHash params)                 -> (OmniAuth::AuthHash | nil)
       #                            | (User|String uid, String? token) -> (OmniAuth::AuthHash | nil)

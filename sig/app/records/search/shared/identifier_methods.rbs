@@ -39,8 +39,6 @@ end
 class PublicationIdentifierSet < Set[PublicationIdentifier]
   def initialize: (untyped ids) -> void
 
-  def hash: () -> Integer
-
   def eql?: (untyped other) -> bool
 
   def ==: (untyped other) -> bool

@@ -1,6 +1,7 @@
 # Handle "/search" requests.
 #
-# @see SearchHelper
+# @see SearchDecorator
+# @see SearchesDecorator
 # @see file:app/views/search/**
 #
 class SearchController < ApplicationController
@@ -38,6 +39,7 @@ class SearchController < ApplicationController
   #
   # Perform a search through the EMMA Unified Search API.
   #
+  # @see #search_index_path           Route helper
   # @see SearchConcern#index_search
   #
   def index: () -> void
@@ -46,6 +48,7 @@ class SearchController < ApplicationController
   #
   # Display details of an existing catalog title.
   #
+  # @see #search_path                 Route helper
   # @see SearchConcern#index_record
   #
   # @note This endpoint is not actually functional because it depends on a
@@ -57,6 +60,8 @@ class SearchController < ApplicationController
   #
   # Present the advanced search form.
   #
+  # @see #advanced_search_path        Route helper
+  #
   def advanced: () -> void
 
   # == GET /search/api?...
@@ -64,6 +69,13 @@ class SearchController < ApplicationController
   #
   # Perform a search directly through the EMMA Unified Search API.
   #
+  # Although this is primarily for the sake of JSON output, it also provides an
+  # HTML display where results have a one-to-one correspondence with Unified
+  # Search results as an alternative to the hierarchical display that is the
+  # default for :index.
+  #
+  # @see #search_api_path             Route helper
+  # @see #search_direct_path          Route helper
   # @see SearchConcern#index_search
   #
   def direct: () -> void
@@ -72,8 +84,9 @@ class SearchController < ApplicationController
   #
   # Indicate whether the supplied value is a valid field value.
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *remoteValidate()*
-  # @see file:app/assets/javascripts/feature/model-form.js *ID_VALIDATE_URL_BASE*
+  # @see #search_validate_path                  Route helper
+  # @see file:javascripts/feature/model-form.js *remoteValidate()*
+  # @see file:javascripts/feature/model-form.js *ID_VALIDATE_URL_BASE*
   #
   def validate: () -> void
 

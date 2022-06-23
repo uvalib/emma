@@ -14,7 +14,6 @@ module LookupService::WorldCat::Common
   WORLDCAT_MARCXML:     String
   WORLDCAT_DUBLIN_CORE: String
 
-  # noinspection SpellCheckingInspection
   WORLDCAT_SCHEMA: Hash[Symbol,String]
 
   # Override service-specific API options to rename :api_key to :wskey.

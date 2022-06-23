@@ -55,7 +55,7 @@ class Paginator
   #
   # @return [void]
   #
-  def finalize: (Api::Record|anyArray list, ?(Symbol|nil) meth, **untyped search) -> void
+  def finalize: ((Api::Record|anyArray) list, ?(Symbol|nil) meth, **untyped search) -> void
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.
@@ -114,7 +114,7 @@ class Paginator
   # @return [String]                  New URL for the first page of results.
   # @return [nil]                     If @first_page is unset.
   #
-  def first_page=: (String|Symbol value) -> (String | nil)
+  def first_page=: ((String|Symbol) value) -> (String | nil)
 
   # Get the path to the last page of results.
   #
@@ -130,7 +130,7 @@ class Paginator
   # @return [String]                  New URL for the last page of results.
   # @return [nil]                     If @last_page is unset.
   #
-  def last_page=: (String|Symbol value) -> (String | nil)
+  def last_page=: ((String|Symbol) value) -> (String | nil)
 
   # Get the path to the next page of results
   #
@@ -146,7 +146,7 @@ class Paginator
   # @return [String]                  New URL for the next page of results.
   # @return [nil]                     If @next_page is unset.
   #
-  def next_page=: (String|Symbol value) -> (String | nil)
+  def next_page=: ((String|Symbol) value) -> (String | nil)
 
   # Get the path to the previous page of results.
   #
@@ -162,7 +162,7 @@ class Paginator
   # @return [String]                  New URL for the previous page of results.
   # @return [nil]                     If @prev_page is unset.
   #
-  def prev_page=: (String|Symbol value) -> (String | nil)
+  def prev_page=: ((String|Symbol) value) -> (String | nil)
 
   # Get the offset of the current page into the total set of results.
   #
@@ -220,11 +220,24 @@ class Paginator
   #
   def page_items=: (anyArray values) -> anyArray
 
-  # Default results per page for the current controller/action.
+  # Interpret *value* as a URL path or a JavaScript action.
   #
-  # @return [Integer]
+  # @param [String, Symbol] value     One of [:back, :forward, :go].
+  # @param [Integer, nil]   page      Passed to #page_history for *action* :go.
   #
-  def default_page_size: () -> Integer
+  # @return [String]                  A value usable with 'href'.
+  # @return [nil]                     If *value* is invalid.
+  #
+  def page_path: ((String|Symbol) value, ?(Integer|nil) page) -> (String | nil)
+
+  # A value to use in place of a path in order to engage browser history.
+  #
+  # @param [String, Symbol] action    One of [:back, :forward, :go].
+  # @param [Integer, nil]   page      History page if *directive* is :go.
+  #
+  # @return [String]
+  #
+  def page_history: ((String|Symbol) action, ?(Integer|nil) page) -> String
 
   # Analyze the *list* object to generate the path for the next page of
   # results.
@@ -235,26 +248,19 @@ class Paginator
   # @return [String]                  Path to generate next page of results.
   # @return [nil]                     If there is no next page.
   #
-  def next_page_path: (?list: (Api::Record|anyArray)?, **untyped url_params) -> (String | nil)
+  def next_page_path: (?list: Api::Record|Array[Api::Record]|nil, **untyped url_params) -> (String | nil)
 
-  # Interpret *value* as a URL path or a JavaScript action.
+  # Default results per page for the current controller/action.
   #
-  # @param [String, Symbol] value     One of [:back, :forward, :go].
-  # @param [Integer, nil]   page      Passed to #page_history for *action* :go.
+  # @return [Integer]
   #
-  # @return [String]                  A value usable with 'href'.
-  # @return [nil]                     If *value* is invalid.
-  #
-  def page_path: (String|Symbol value, ?(Integer|nil) page) -> (String | nil)
+  def default_page_size: () -> Integer
 
-  # A value to use in place of a path in order to engage browser history.
+  # Default results per page.
   #
-  # @param [String, Symbol] action    One of [:back, :forward, :go].
-  # @param [Integer, nil]   page      History page if *directive* is :go.
+  # @return [Integer]
   #
-  # @return [String]
-  #
-  def page_history: (String|Symbol action, ?(Integer|nil) page) -> String
+  def get_page_size: () -> Integer
 
   # Extract the number of "items" reported by an object.
   #
@@ -273,11 +279,15 @@ class Paginator
   #
   def record_count: (?(untyped|nil) value) -> Integer
 
-  # Default results per page.
+  # Default results per page for the given controller/action.
+  #
+  # @param [Symbol, String, Hash, nil] c   Controller
+  # @param [Symbol, String, nil]       a   Action
   #
   # @return [Integer]
   #
-  def get_page_size: () -> Integer
+  def self.get_page_size: (symHash)                                        -> Integer
+                        | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
 
   # Extract the number of "items" reported by an object.
   #
@@ -289,10 +299,7 @@ class Paginator
   #
   # @return [Integer]
   #
-  # -
-  # noinspection RubyNilAnalysis, RailsParamDefResolve
-  # +
-  def self.item_count: (untyped|nil value, ?default: untyped) -> Integer
+  def self.item_count: ((untyped|nil) value, ?default: untyped) -> Integer
 
   # Determine the number of records reported by an object.
   #
@@ -300,18 +307,5 @@ class Paginator
   #
   # @return [Integer]
   #
-  def self.record_count: (untyped|nil value) -> Integer
-
-  # Default results per page for the given controller/action.
-  #
-  # @param [Symbol, String, Hash, nil] c   Controller
-  # @param [Symbol, String, nil]       a   Action
-  #
-  # @return [Integer]
-  #
-  # -
-  # noinspection RubyMismatchedParameterType
-  # +
-  def self.get_page_size: (symHash) -> Integer
-                        | (?(Symbol|String)? c, ?(Symbol|String)? a) -> Integer
+  def self.record_count: ((untyped|nil) value) -> Integer
 end

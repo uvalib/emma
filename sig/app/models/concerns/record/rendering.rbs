@@ -11,6 +11,13 @@ module Record::Rendering
   #
   DEFAULT_LABEL: String
 
+  # Show the submission ID if it can be determined for the given item(s).
+  #
+  # @param [Model, Hash, String, Any, nil] item
+  # @param [String]                        default
+  #
+  # @return [String]
+  #
   def make_label: (untyped item, ?default: String) -> String
 
   private

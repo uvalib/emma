@@ -3,11 +3,7 @@
 module PaginationConcern
   extend ActiveSupport::Concern
 
-  include Emma::Common
-
-  include ParamsHelper
-
-  include SearchTermsHelper
+  include ParamsConcern
 
   # Create a Paginator for the current controller action.
   #

@@ -185,7 +185,7 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   protected
 
-  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
   # @param [String, Array<String>, nil] id_params  Default: `params[:id]`.

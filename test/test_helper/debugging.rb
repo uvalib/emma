@@ -196,8 +196,8 @@ module TestHelper::Debugging
 
   # Display item contents in output.
   #
-  # @param [Array] items
-  # @param [Hash]  opt                Passed to #show_model except for:
+  # @param [Array<*>] items
+  # @param [Hash]     opt             Passed to #show_model except for:
   #
   # @option opt [String] :output      If *false* the result is not displayed.
   #

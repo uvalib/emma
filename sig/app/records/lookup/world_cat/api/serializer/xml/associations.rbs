@@ -7,9 +7,6 @@ module Lookup::WorldCat::Api::Serializer::Xml::Associations
 
   include Lookup::RemoteService::Api::Serializer::Xml::Associations
 
-  # -
-  # noinspection LongLine
-  # +
   module ClassMethods
     include Lookup::WorldCat::Api::Serializer::Xml::Schema
 

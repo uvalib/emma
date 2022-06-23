@@ -52,9 +52,9 @@ module BaseCollectionDecorator::Table
 
   # Render one or more entries for use within a *tbody*.
   #
-  # @param [Integer, nil] row         Current row (prior to first entry).
-  # @param [String, nil]  separator
-  # @param [Hash]         opt         Passed to #table_entry
+  # @param [Integer]     row          Current row (prior to first entry).
+  # @param [String, nil] separator
+  # @param [Hash]        opt          Passed to #table_entry
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.

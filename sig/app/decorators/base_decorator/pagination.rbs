@@ -7,9 +7,6 @@ module BaseDecorator::Pagination
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   PAGINATION_CONFIG: symHash
 
   # Separator between pagination controls.
@@ -76,10 +73,7 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # -
-  # noinspection RubyMismatchedParameterType
-  # +
-  def pagination_count: (Integer? count, ?(Integer|nil) total, ?unit: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_count: ((Integer|nil) count, ?(Integer|nil) total, ?unit: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Placeholder for an item that would have been a link if it had a path.
   #
@@ -91,7 +85,7 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_controls: (?fp: (String|symHash)?, ?pp: (String|symHash)?, ?np: (String|symHash)?, ?sep: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_controls: (?fp: String|symHash|nil, ?pp: String|symHash|nil, ?np: String|symHash|nil, ?sep: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Page number label for the model type.
   #
@@ -139,7 +133,7 @@ module BaseDecorator::Pagination
   #
   # @see #pagination_control
   #
-  def pagination_first: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_first: (?(String|symHash|nil) path, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # pagination_prev
   #
@@ -150,7 +144,7 @@ module BaseDecorator::Pagination
   #
   # @see #pagination_control
   #
-  def pagination_prev: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_prev: (?(String|symHash|nil) path, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # pagination_next
   #
@@ -161,7 +155,7 @@ module BaseDecorator::Pagination
   #
   # @see #pagination_control
   #
-  def pagination_next: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_next: (?(String|symHash|nil) path, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # pagination_last
   #
@@ -174,7 +168,7 @@ module BaseDecorator::Pagination
   #
   # @note Currently unused.
   #
-  def pagination_last: (?(String|symHash)? path, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_last: (?(String|symHash|nil) path, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # A pagination control link or a non-actionable placeholder if *path* is not
   # valid.
@@ -188,7 +182,7 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_control: (String|symHash label, String|symHash|nil path, **untyped opt) -> ActiveSupport::SafeBuffer
+  def pagination_control: ((String|symHash) label, (String|symHash|nil) path, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # pagination_first_icon
   #

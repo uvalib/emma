@@ -142,9 +142,6 @@ module ParamsHelper
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def session_section(section = nil, p = nil)
     section, p = [nil, section] if section.is_a?(Hash)
     section = (section || request_parameters(p)[:controller] || :all).to_s
@@ -288,9 +285,6 @@ module ParamsHelper
   #   @param [Symbol, String]                    action
   #   @return [Array<(String,String)>]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def ctrlr_action_to_names(ctrlr = nil, action = nil)
     ctrlr  = request_parameters unless ctrlr || action
     result = []

@@ -1,6 +1,7 @@
 # Handle Bookshare-only "/category" pages.
 #
-# @see CategoryHelper
+# @see CategoryDecorator
+# @see CategoriesDecorator
 # @see file:app/views/category/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -33,6 +34,7 @@ class CategoryController < ApplicationController
   #
   # List all categories.
   #
+  # @see #category_index_path         Route helper
   # @see BookshareService::Request::Titles#get_categories
   #
   def index: () -> void

@@ -25,7 +25,7 @@ class ApiService
   #                                     of #BASE_URL defined by the subclass).
   # @param [Hash]        opt          Stored in @options
   #
-  def initialize: (?user: User?, ?base_url: String?, **untyped opt) -> void
+  def initialize: (?user: User|nil, ?base_url: String|nil, **untyped opt) -> void
 
   @base_url: String | nil
 
@@ -53,8 +53,8 @@ class ApiService
   def self.instance:    (**untyped opt) -> void
   def self.update:      (**untyped opt) -> ApiService
   def self.add_api:     (Hash[Symbol,symHash] prop, ?(String|nil) topic) -> void
-  def self.api_methods: (?(symHash|nil) arg) -> Hash[Symbol,symHash]
-                      | (Symbol|String  arg) -> (symHash | nil)
+  def self.api_methods: (?(symHash|nil)  arg) -> Hash[Symbol,symHash]
+                      | ((Symbol|String) arg) -> (symHash | nil)
 
   self.@all_methods:  symHash # NOTE: not currently recognized
   self.@true_methods: symHash # NOTE: not currently recognized

@@ -7,12 +7,18 @@ module Lookup::GoogleBooks::Shared::CreatorMethods
   # All contributor(s) to this catalog title, stripping terminal punctuation
   # from each name where appropriate.
   #
-  # @param [Symbol]      field
   # @param [Api::Record] target       Default: `self`.
   #
   # @return [Array<String>]
   #
-  def contributor_list: (?field: Symbol, ?target: Api::Record?) -> strArray
+  def contributor_list: (?target: Api::Record|nil, **untyped) -> strArray
 
+  # Reorder names as "last_name, first_name" to make them comparable to\
+  # WorldCat results.
+  #
+  # @param [Array<String>] items
+  #
+  # @return [Array<String>]
+  #
   def reverse_names: (strArray items) -> strArray
 end

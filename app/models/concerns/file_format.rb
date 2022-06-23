@@ -310,7 +310,6 @@ module FileFormat
   # @return [String]
   #
   def format_date(value)
-    # noinspection RubyMismatchedArgumentType
     value = IsoDate.day_convert(value) || value if value.is_a?(String)
     value = value.to_date                       if value.is_a?(DateTime)
     value.to_s
@@ -323,7 +322,6 @@ module FileFormat
   # @return [String]
   #
   def format_date_time(value)
-    # noinspection RubyMismatchedArgumentType
     value = IsoDate.datetime_convert(value) || value if value.is_a?(String)
     value = value.strftime('%F %R')                  if value.is_a?(Date)
     value.to_s.delete_suffix(' 00:00')

@@ -3,16 +3,18 @@
 # @see https://api.crossref.org/swagger-ui/index.html#/Works
 #
 module LookupService::Crossref::Request::Work
-  include Emma::Constants
-
   include LookupService::Crossref::Common
 
+  # @private
   QUERY_PREFIX: Hash[Symbol,String]
 
+  # @private
   QUERY_ALIAS: symArray
 
+  # @private
   ID_TYPES: symArray
 
+  # @private
   AUTHOR_TYPES: symArray
 
   # == GET https://api.crossref.org/works/DOI
@@ -31,13 +33,24 @@ module LookupService::Crossref::Request::Work
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #
+  # @option opt [Array,Boolean,nil] :fields   Alias for :select
+  #
   # @return [Lookup::Crossref::Message::WorkResults]
   #
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works
   #
-  def get_work_list: (LookupService::Request|strArray|String terms, **untyped opt) -> Lookup::Crossref::Message::WorkResults
+  def get_work_list: ((LookupService::Request|strArray|String) terms, **untyped opt) -> Lookup::Crossref::Message::WorkResults
 
+  # Options for LookupService::Request#add_term.
+  # @private
   OPT: symHash
 
-  def query_terms!: (LookupService::Request|strArray|String terms, **untyped opt) -> symHash
+  # query_terms!
+  #
+  # @param [LookupService::Request, Array<String>, String] terms
+  # @param [Hash]                                          opt
+  #
+  # @return [Hash]
+  #
+  def query_terms!: ((LookupService::Request|strArray|String) terms, symHash opt) -> symHash
 end

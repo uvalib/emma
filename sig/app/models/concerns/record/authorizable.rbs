@@ -26,5 +26,7 @@ module Record::Authorizable
     include Record::Authorizable
   end
 
+  private
+
   THIS_MODULE: Module
 end

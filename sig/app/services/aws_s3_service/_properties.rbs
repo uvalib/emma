@@ -3,12 +3,6 @@
 module AwsS3Service::Properties
   include ApiService::Properties
 
-  # Configuration values from config/locales/service.en.yml
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  #CONFIGURATION: symHash
-
   # There are two S3 buckets for each member repository used to queue
   # submissions and two S3 buckets for EMMA which include storage used by
   # Shrine.
@@ -33,6 +27,8 @@ module AwsS3Service::Properties
   #
   # @type [Array<Symbol>]
   #
+  # @note Currently unused
+  #
   MEMBER_REPOSITORIES: symArray
 
   # S3 options are kept in encrypted credentials but can be overridden by
@@ -41,30 +37,6 @@ module AwsS3Service::Properties
   # @type [Hash{Symbol=>String}]
   #
   S3_OPTIONS: Hash[Symbol,String]
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  #def base_url: () -> String
-
-  # The URL for the API connection as a URI.
-  #
-  # @return [URI::Generic]
-  #
-  #def base_uri: () -> URI::Generic
-
-  # Federated AwsS3 API key.
-  #
-  # @return [nil]
-  #
-  #def api_key: () -> nil
-
-  # API version is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  #def api_version: () -> nil
 
   private
 

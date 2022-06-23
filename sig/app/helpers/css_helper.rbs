@@ -10,7 +10,7 @@ module CssHelper
   # @param [Hash, nil]          html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS classes to find.
   #
-  def has_class?: (symHash|nil html_opt, *(Array[_ToS]|_ToS|nil) classes) -> bool
+  def has_class?: ((symHash|nil) html_opt, *(Array[_ToS]|_ToS|nil) classes) -> bool
 
   # Combine arrays and space-delimited strings to produce a space-delimited
   # string of CSS class names for use inline.
@@ -62,8 +62,8 @@ module CssHelper
   #   @param [Proc]               block
   #   @return [Hash]
   #
-  def append_css: (symHash|nil html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
-                | (                      *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+  def append_css: ((symHash|nil) html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+                | (                        *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
 
   # Replace `html_opt[:class]` with a new string containing the original
   # classes followed by the added classes.
@@ -74,8 +74,8 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  # Compare with:
-  # #prepend_css!
+  # == Implementation Notes
+  # Compare with #prepend_css!
   #
   def append_css!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
 
@@ -103,8 +103,8 @@ module CssHelper
   #   @param [Proc]                       block
   #   @return [Hash]
   #
-  def prepend_css: (symHash|nil html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
-                 | (                      *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+  def prepend_css: ((symHash|nil) html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+                 | (                        *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
 
   # Replace `html_opt[:class]` with a new string containing the added classes
   # followed by the original classes.
@@ -115,8 +115,8 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  # Compare with:
-  # #append_css!
+  # == Implementation Notes
+  # Compare with #append_css!
   #
   def prepend_css!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
 
@@ -153,7 +153,7 @@ module CssHelper
   #
   # @return [String]
   #
-  def hex_rand: (?digits: Integer?, upper: bool?) -> String
+  def hex_rand: (?digits: Integer|nil, upper: bool|nil) -> String
 
   # Create a unique CSS identifier from *base* and a random hex digit string.
   #
@@ -169,17 +169,14 @@ module CssHelper
   # Unless *unique* is *false* or a string, #hex_rand will be used to generate
   # a value to make the resulting ID unique.
   #
-  # @param [Array]                parts
-  # @param [String, Boolean, nil] unique  Value unique to a search unique.
-  # @param [Integer, nil]         index   Value unique to an input row.
-  # @param [Hash]                 opt     Passed to #html_id.
+  # @param [Array<*>]     parts
+  # @param [any, nil]     unique      Value unique to a search unique.
+  # @param [Integer, nil] index       Value unique to an input row.
+  # @param [Hash]         opt         Passed to #html_id.
   #
   # @return [String]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def unique_id: (*untyped parts, ?unique: untyped|nil, ?index: Integer?, **untyped opt) -> String
+  def unique_id: (*untyped parts, ?unique: untyped|nil, ?index: Integer|nil, **untyped opt) -> String
 
   private
 

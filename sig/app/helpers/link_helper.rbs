@@ -1,25 +1,28 @@
 # View helper methods supporting the creation of links.
 #
 module LinkHelper
-
   include Emma::Common
+
   include Emma::Unicode
 
   include ConfigurationHelper
+
   include HtmlHelper
+
   include RouteHelper
 
   # Create a link element to an application action target.
   #
   # @param [String, nil]    label         Label passed to #make_link.
+  # @param [Symbol, String] controller
+  # @param [Symbol, String] action
   # @param [Hash]           link_opt      Options passed to #make_link.
-  # @param [Hash, Array]    path          Default: params :controller/:action.
   # @param [Hash]           path_opt      Path options.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link element.
   # @return [nil]                         A valid URL could not be determined.
   #
-  def link_to_action: (String|nil label, ?link_opt: symHash?, ?path: (String|strArray|symHash)?, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
+  def link_to_action: ((String|nil) label, ?link_opt: symHash|nil, ?path: String|strArray|symHash|nil, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate a symbol-based icon button or link which should be both accessible
   # and cater to the quirks of various accessibility scanners.
@@ -35,10 +38,7 @@ module LinkHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def icon_button: (?icon: String?, ?text: String?, ?url: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def icon_button: (?icon: String|nil, ?text: String|nil, ?url: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link with appropriate accessibility settings.
   #
@@ -90,121 +90,7 @@ module LinkHelper
   # @return [String]                  A full URL.
   # @return [nil]                     No URL could be extracted.
   #
-  def extract_url: (String|nil text) -> (String | nil)
-
-#  # page_action_entry
-#  #
-#  # @param [String, Symbol, nil]     action   The target controller action.
-#  # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
-#  # @param [Hash{Symbol=>Hash}, nil] table    Def: `#page_action_links`.
-#  # @param [Hash]                    opt      Passed to #page_action_links.
-#  #
-#  # @return [Hash{Symbol=>String}]
-#  #
-#  def page_action_entry: (?(String|Symbol)? action, ?current: (String|Symbol)?, ?table: Hash[Symbol,symHash]?, **untyped opt) -> Hash[Symbol,String]
-#
-#  # page_action_link
-#  #
-#  # @param [String, Symbol, nil]     action   The target controller action.
-#  # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
-#  # @param [String, nil]             label    Override configured label.
-#  # @param [String, nil]             path     Override configured action.
-#  # @param [Hash]                    opt      Passed to #page_action_entry.
-#  #
-#  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
-#  # @return [nil]                         If *action* not configured.
-#  #
-#  def page_action_link: (?(String|Symbol)? action, ?current: (String|Symbol)?, ?label: String?, ?path: String?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-#
-#  # List controller actions.  If the current action is provided, the associated
-#  # action link will be appear at the top of the list.
-#  #
-#  # @param [String, Symbol, nil]     current      Def: `params[:action]`
-#  # @param [Hash{Symbol=>Hash}, nil] table        Def: `#page_action_links`.
-#  # @param [Hash]                    opt          Passed to #page_action_links.
-#  #
-#  # @return [ActiveSupport::SafeBuffer]
-#  #
-#  def page_action_list: (?current: (String|Symbol)?, ?table: Hash[Symbol,symHash]?, **untyped opt) -> ActiveSupport::SafeBuffer
-#
-#  # Action links configured for the controller.
-#  #
-#  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
-#  # @param [String, Symbol, nil] action       Default: *nil*.
-#  # @param [Hash]                opt          Passed to #config_lookup.
-#  #
-#  # @return [Hash]
-#  #
-#  def page_action_links: (?controller: (String|Symbol)?, ?action: (String|Symbol)?, **untyped opt) -> Hash[Symbol,symHash]
-#
-#  # Generate a menu of database item entries.
-#  #
-#  # @param [Symbol, String, nil] controller   Default: `params[:controller]`
-#  # @param [Symbol, String, nil] action       Default: `params[:action]`
-#  # @param [Class]               model
-#  # @param [User, String, nil]   user         Default: `current_user`
-#  # @param [String, nil]         prompt
-#  # @param [Hash{Symbol=>Hash}]  table
-#  # @param [Hash]                opt          Passed to #form_tag except for:
-#  #
-#  # @option opt [String, Hash] :ujs
-#  #
-#  # @return [ActiveSupport::SafeBuffer]
-#  #
-#  def page_items_menu: (model: Class, ?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?user: (String|User)?, ?prompt: String?, ?table: Hash[Symbol,symHash]?, **untyped opt) -> ActiveSupport::SafeBuffer
-#
-#  # page_menu_label
-#  #
-#  # @param [Model]       item
-#  # @param [String, nil] label        Override label.
-#  #
-#  # @return [ActiveSupport::SafeBuffer]
-#  #
-#  def page_menu_label: (Model item, ?label: String?) -> ActiveSupport::SafeBuffer
-
-  # Supply an element containing a description for the current action context.
-  #
-  # @param [String, nil] text         Override text to display.
-  # @param [Hash]        opt          Passed to #page_text_section.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def page_description_section: (?(String|nil) text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-
-  # Supply an element containing directions for the current action context.
-  #
-  # @param [String, nil] text         Override text to display.
-  # @param [Hash]        opt          Passed to #page_text_section.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def page_directions_section: (?(String|nil) text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-
-  # Supply an element containing additional notes for the current action.
-  #
-  # @param [String, nil] text         Override text to display.
-  # @param [Hash]        opt          Passed to #page_text_section.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def page_notes_section: (?(String|nil) text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-
-  # Supply an element containing configured text for the current action.
-  #
-  # @param [String, Symbol, nil] type         Default: 'text'.
-  # @param [String, nil]         text         Override text to display.
-  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
-  # @param [String, Symbol, nil] action       Default: `params[:action]`.
-  # @param [String, Symbol, nil] tag          Tag for the internal text block.
-  # @param [Hash]                opt          Passed to #html_div.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def page_text_section: (?(String|Symbol)? `type`, ?(String|nil) text, ?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?tag: (Symbol|Integer)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def extract_url: ((String|nil) text) -> (String | nil)
 
   private
 

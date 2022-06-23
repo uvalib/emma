@@ -72,7 +72,6 @@ module Record::Reportable
   #
   def get_exec_report(refresh = true)
     if !defined?(@exec_report) || @exec_report.nil?
-      # noinspection RubyMismatchedArgumentType
       @exec_report = ExecReport.new(self, get_report_column)
     elsif refresh
       @exec_report.set(get_report_column)
@@ -89,11 +88,9 @@ module Record::Reportable
   #
   # @return [ExecReport]                    New value of `#exec_report`.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def set_exec_report(value = nil)
     @exec_report ||= ExecReport.new(self)
+    # noinspection RubyMismatchedArgumentType
     @exec_report.set(value || ExecError::DEFAULT_ERROR)
     set_report_column(@exec_report.serialize)
     @exec_report

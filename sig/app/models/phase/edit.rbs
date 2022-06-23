@@ -33,6 +33,7 @@ class Phase::Edit < Phase::BulkPart
 
   include Record::Uploadable
 
+  # @private
   CLASS: Class
 
   # Upload file to AWS S3 Shrine :cache.
@@ -52,7 +53,7 @@ class Phase::Edit < Phase::BulkPart
   # == Usage Notes
   # Always performed synchronously.
   #
-  def upload!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> httpResult
+  def upload!: ((symHash|ActionDispatch::Request|nil) request, **untyped opt) -> httpResult
 
   # Method called from the action launched by #upload!.
   #

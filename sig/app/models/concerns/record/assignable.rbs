@@ -20,6 +20,7 @@ module Record::Assignable
   # * :except   Ignore these fields (default: []).
   # * :only     Not limited if *false* (default: `#field_name`).
   # * :blanks   If *true*, allow blanks (default: *false*).
+  # * :options  An Options instance.
   #
   ATTRIBUTE_OPTIONS_OPTS: symArray
 
@@ -41,10 +42,7 @@ module Record::Assignable
   #
   # @see #ATTRIBUTE_OPTIONS_OPTS
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def attribute_options: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> symHash
+  def attribute_options: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
 
   # The fields that will be accepted by #attribute_options.
   #
@@ -74,9 +72,19 @@ module Record::Assignable
     # :nocov:
     #include ActiveRecord::AttributeAssignment
 
+    # Model/controller options passed in through the constructor.
+    #
+    # @return [Entry::Options]
+    #
     attr_reader model_options: Entry::Options | nil
 
-    def set_model_options: (Entry::Options|symHash|nil options) -> (Entry::Options | nil)
+    # set_model_options
+    #
+    # @param [Entry::Options, Hash, nil] options
+    #
+    # @return [Entry::Options, nil]
+    #
+    def set_model_options: ((Entry::Options|symHash|nil) options) -> (Entry::Options | nil)
 
     # Update database fields, including the structured contents of JSON fields.
     #
@@ -88,7 +96,7 @@ module Record::Assignable
     # @see #attribute_options
     # @see ActiveModel::AttributeAssignment#assign_attributes
     #
-    def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
+    def assign_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> void
   end
 
   private

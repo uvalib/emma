@@ -7,8 +7,5 @@ module HeadHelper::Common
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   HEAD_CONFIG: symHash
 end

@@ -5,6 +5,12 @@ module LayoutHelper::DevControls
 
   include ConfigurationHelper
 
+  include ParamsHelper
+
+  include RoleHelper
+
+  include SessionDebugHelper
+
   # Indicate whether it is appropriate to show developer-only controls.
   #
   def show_dev_controls?: (*untyped, **untyped) ?{ () -> untyped } -> bool
@@ -17,8 +23,9 @@ module LayoutHelper::DevControls
   #
   # @param [Hash] opt
   #
-  # @option opt [String, Symbol] :controller    Default: `params[:controller]`.
-  # @option opt [String, Symbol] :action        Default: `params[:action]`.
+  # @option opt [Hash]           :params        Default: `#request_parameters`
+  # @option opt [String, Symbol] :controller    Optional override.
+  # @option opt [String, Symbol] :action        Optional override.
   # @option opt [String]         :label_id
   #
   # @return [ActiveSupport::SafeBuffer] An HTML element.
@@ -28,7 +35,9 @@ module LayoutHelper::DevControls
 
   # dev_controls_label
   #
-  # @param [Hash] opt                 Passed to #config_lookup.
+  # @param [Hash] opt                 Passed to #config_lookup except:
+  #
+  # @option opt [Hash] :params
   #
   # @return [String]
   #
@@ -50,7 +59,9 @@ module LayoutHelper::DevControls
   # To restore developer-only controls, the URL parameter
   # "app.dev_controls=true" must be supplied manually.
   #
-  # @param [Hash] opt                 Passed to #dev_toggle_debug.
+  # @param [Hash] opt                 Passed to #dev_toggle_debug except:
+  #
+  # @option opt [Hash] :params        Required to generate the link path.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -67,7 +78,7 @@ module LayoutHelper::DevControls
 
   # A control for toggling debugging features for a specific controller.
   #
-  # @param [Symbol, nil]  ctrlr       Default: `params[:controller]`.
+  # @param [Symbol, nil]  ctrlr       Default: `opt[:params][:controller]`.
   # @param [Boolean, nil] state       Default: `#session_debug?(ctrlr)`.
   # @param [Hash]         opt         Passed to #dev_toggle_debug.
   #
@@ -80,7 +91,9 @@ module LayoutHelper::DevControls
   # @param [Symbol, String, nil] ctrlr
   # @param [Boolean, nil]        state  Default: `#session_debug?(ctrlr)`.
   # @param [Symbol, String, nil] param  URL debug parameter (default: :debug).
-  # @param [Hash]                opt    Passed to #link_to.
+  # @param [Hash]                opt    Passed to #link_to except:
+  #
+  # @option opt [Hash] :params          Required to generate the link path.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

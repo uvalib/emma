@@ -4,5 +4,9 @@ module Lookup::RemoteService::Shared::ResponseMethods
   include Api::Shared::ResponseMethods
   include Lookup::RemoteService::Shared::CommonMethods
 
+  # api_records
+  #
+  # @return [Array<Api::Record>, nil]
+  #
   def api_records: () -> (Array[Api::Record] | nil)
 end

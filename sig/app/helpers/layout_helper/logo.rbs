@@ -9,9 +9,6 @@ module LayoutHelper::Logo
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   LOGO_CONFIG: symHash
 
   # Text logo.

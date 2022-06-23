@@ -688,6 +688,9 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *submitButton()*
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def submit_button(action: nil, label: nil, **opt)
     css     = '.submit-button'
     action  = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
@@ -710,6 +713,9 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *cancelButton()*
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def cancel_button(action: nil, label: nil, url: nil, **opt)
     css     = '.cancel-button'
     action  = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
@@ -724,7 +730,6 @@ module BaseDecorator::Form
       button_tag(label, opt)
     else
       url ||= back_path || 'javascript:history.back();'
-      # noinspection RubyMismatchedArgumentType
       make_link(label, url, **opt)
     end
   end

@@ -13,5 +13,11 @@ module LayoutHelper::Footer
   #
   def footer_table: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Content for the footer.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
   def footer_items: (**untyped opt) -> symHash
 end

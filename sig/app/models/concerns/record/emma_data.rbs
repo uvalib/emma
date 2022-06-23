@@ -25,9 +25,6 @@ module Record::EmmaData
   #
   # @type [Hash]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   EMMA_DATA_CONFIG: symHash
 
   # EMMA data field names.
@@ -42,13 +39,41 @@ module Record::EmmaData
   #
   DEFAULT_TIME_NOW_FIELDS: symArray
 
-  def make_retrieval_link: (String? rid, ?(symHash|String)? base_url) -> (String | nil)
+  # Create a URL for use with :emma_retrievalLink.
+  #
+  # @param [String, nil]      rid       EMMA repository record ID.
+  # @param [String, Hash nil] base_url  Default: `Record::Bulk#BULK_BASE_URL`.
+  #
+  # @return [String]
+  # @return [nil]                       If no repository ID was given.
+  #
+  def make_retrieval_link: (String? rid, ?(symHash|String|nil) base_url) -> (String | nil)
 
+  # Generate a record to express structured EMMA data.
+  #
+  # @param [Hash] data
+  #
+  # @return [Search::Record::MetadataRecord]
+  #
   def make_emma_record: (symHash data) -> Search::Record::MetadataRecord
 
-  def parse_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> symHash
+  # parse_emma_data
+  #
+  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [Boolean] allow_blank
+  #
+  # @return [Hash]
+  #
+  def parse_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> symHash
 
-  def generate_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, prmHash|String|Model|Search::Record::MetadataRecord|nil attr) -> symHash
+  # generate_emma_data
+  #
+  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] attr
+  #
+  # @return [Hash]
+  #
+  def generate_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, (prmHash|String|Model|Search::Record::MetadataRecord|nil) attr) -> symHash
 
   # Class methods automatically added to the including record class.
   #
@@ -67,18 +92,42 @@ module Record::EmmaData
 
     # @see Record::EmmaData#make_retrieval_link
     #
-    def make_retrieval_link: (?(String|nil) rid, ?(symHash|String)? base_url) -> (String | nil)
+    def make_retrieval_link: (?(String|nil) rid, ?(symHash|String|nil) base_url) -> (String | nil)
 
     # @see Record::EmmaData#generate_emma_data
     #
-    def generate_emma_data: (prmHash|String|Model|Search::Record::MetadataRecord|nil data, prmHash|String|Model|Search::Record::MetadataRecord|nil attr) -> symHash
+    def generate_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, ?(prmHash|String|Model|Search::Record::MetadataRecord|nil) attr) -> symHash
 
+    # Present :emma_data as a structured object (if it is present).
+    #
+    # @return [Search::Record::MetadataRecord]
+    #
     def emma_record: () -> Search::Record::MetadataRecord
 
+    # Present :emma_data as a hash (if it is present).
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
     def emma_metadata: () -> symHash
 
-    def set_emma_data: (anyHash|String|Search::Record::MetadataRecord|nil data, ?bool allow_blank) -> (String | nil)
+    # Set the :emma_data field value (if not #EMMA_DATA_HASH).
+    #
+    # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+    # @param [Boolean]                                           allow_blank
+    #
+    # @return [String]                New value of :emma_data
+    # @return [nil]                   ...if *data* is *nil*.
+    #
+    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
 
+    # Selectively modify the :emma_data field value (if not #EMMA_DATA_HASH).
+    #
+    # @param [Hash]    data
+    # @param [Boolean] allow_blank
+    #
+    # @return [String]                New value of :emma_data.
+    # @return [nil]                   If no change and :emma_data was *nil*.
+    #
     def modify_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
   end
 

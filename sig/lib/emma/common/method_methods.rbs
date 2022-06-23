@@ -21,7 +21,7 @@ module Emma::Common::MethodMethods
   #   @param [Integer] depth              Call stack depth (default: 2)
   #   @return [String]
   #
-  def calling_method: (?(Integer|strArray)? call_stack) -> (String | nil)
+  def calling_method: (?(Integer|strArray|nil) call_stack) -> (String | nil)
 
   # Return the indicated method.  If *meth* is something other than a Symbol or
   # a Method then *nil* is returned.
@@ -77,6 +77,6 @@ module Emma::Common::MethodMethods
   #   @param [Symbol, Array<Symbol>] except
   #   @return [Hash{Symbol=>Any}]
   #
-  def get_params: (Symbol|Method meth, Binding bind, *untyped ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped ignored) -> symHash
-                | (Binding bind,                     *untyped ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped ignored) -> symHash
+  def get_params: ((Symbol|Method) meth, Binding bind, *untyped ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped ignored) -> symHash
+                | (                      Binding bind, *untyped ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped ignored) -> symHash
 end

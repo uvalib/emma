@@ -44,13 +44,13 @@ class Object
 
   # Indicate whether the item represents an explicit *true* value.
   #
-  # @param [TrueClass, FalseClass, String, Symbol, Any, nil] value
+  # @param [Any, nil] value
   #
   def true?: (untyped value) -> bool
 
   # Indicate whether the item represents an explicit *false* value.
   #
-  # @param [TrueClass, FalseClass, String, Symbol, Any, nil] value
+  # @param [Any, nil] value
   #
   def false?: (untyped value) -> bool
 
@@ -60,7 +60,7 @@ class Object
   #
   # @return [String]
   #
-  # @see file:app/assets/javascripts/shared/assets.js.erb *js$()*
+  # @see file:app/assets/javascripts/shared/decode.js *decodeJSON()*
   #
   def js: (untyped arg) -> String
 

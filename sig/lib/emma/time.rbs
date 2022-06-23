@@ -1,6 +1,8 @@
 # Time and time span methods.
 #
 module Emma::Time
+  extend ::Emma::Time
+
   MICROSECONDS_PER_SECOND: Float
 
   MILLISECONDS_PER_SECOND: Float

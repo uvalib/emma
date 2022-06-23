@@ -93,8 +93,8 @@ module Emma::Log
 
   # Add a DEBUG-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -104,8 +104,8 @@ module Emma::Log
 
   # Add an INFO-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -115,8 +115,8 @@ module Emma::Log
 
   # Add a WARN-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -126,8 +126,8 @@ module Emma::Log
 
   # Add an ERROR-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -137,8 +137,8 @@ module Emma::Log
 
   # Add a FATAL-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -155,7 +155,7 @@ module Emma::Log
   # Translate to the form expected by Logger#add.
   #
   # @param [Integer, Symbol, String, nil] value
-  # @param [Symbol, nil]                  default
+  # @param [Symbol]                       default
   #
   # @return [Integer]
   #
@@ -307,9 +307,9 @@ module Emma::Log
 
   # Delegate any other method to @logger.
   #
-  # @param [Symbol] meth
-  # @param [Array]  args
-  # @param [Proc]   block
+  # @param [Symbol]   meth
+  # @param [Array<*>] args
+  # @param [Proc]     block
   #
   def self.method_missing(meth, *args, &block)
     logger.send(meth, *args, &block)

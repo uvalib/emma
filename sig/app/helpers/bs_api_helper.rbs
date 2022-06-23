@@ -7,13 +7,29 @@ module BsApiHelper
 
   extend ::BsApiHelper
 
-  # :nocov:
-  #include BookshareConcern
-
   # @private
   BOOKSHARE_USER: String
 
-  def bookshare_user: (String|Symbol        name)  -> String
+  # Transform name(s) into Bookshare username(s).
+  #
+  # @param [String, Symbol, Array<String,Symbol>] name
+  #
+  # @return [String]
+  # @return [Array<String>]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload bookshare_user(name)
+  #   @param [String, Symbol] name
+  #   @return [String]
+  #
+  # @overload bookshare_user(names)
+  #   @param [Array<String,Symbol>] names
+  #   @return [Array<String>]
+  #
+  def bookshare_user: ((String|Symbol)      name)  -> String
                     | (Array[String|Symbol] names) -> strArray
 
   # Generate a URL to an external (Bookshare-related) site, refactored so that

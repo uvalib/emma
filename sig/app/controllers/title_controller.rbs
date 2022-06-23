@@ -1,6 +1,7 @@
 # Handle Bookshare-only "/title" pages.
 #
-# @see TitleHelper
+# @see TitleDecorator
+# @see TitlesDecorator
 # @see file:app/views/title/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -31,6 +32,7 @@ class TitleController < ApplicationController
   #
   # List all catalog titles.
   #
+  # @see #title_index_path            Route helper
   # @see BookshareService::Request::Titles#get_titles
   #
   def index: () -> void
@@ -39,6 +41,7 @@ class TitleController < ApplicationController
   #
   # Display details of an existing catalog title.
   #
+  # @see #title_path                  Route helper
   # @see BookshareService::Request::Titles#get_title
   #
   def show: () -> void
@@ -47,17 +50,23 @@ class TitleController < ApplicationController
   #
   # Add metadata for a new catalog title.
   #
+  # @see #new_title_path              Route helper
+  #
   def new: () -> void
 
   # == POST /title/:id
   #
   # Create an entry for a new catalog title.
   #
+  # @see #title_path                  Route helper
+  #
   def create: () -> void
 
   # == GET /title/:id/edit
   #
   # Modify metadata of an existing catalog title entry.
+  #
+  # @see #edit_title_path             Route helper
   #
   def edit: () -> void
 
@@ -66,17 +75,23 @@ class TitleController < ApplicationController
   #
   # Update the entry for an existing catalog title.
   #
+  # @see #title_path                  Route helper
+  #
   def update: () -> void
 
   # == DELETE /title/:id
   #
   # Remove an existing catalog title entry.
   #
+  # @see #title_path                  Route helper
+  #
   def destroy: () -> void
 
   # == GET /title/:id/history
   #
   # Show processing history for this catalog title.
+  #
+  # @see #history_title_path          Route helper
   #
   def history: () -> void
 

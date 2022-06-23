@@ -5,6 +5,10 @@ module Bs::Shared::ReadingListMethods
   # :nocov:
   #include Model
 
+  # Listings of reading lists expect a non-blank description string.
+  #
+  # @type [String]
+  #
   DEF_READING_LIST_DESCRIPTION: String
 
   # Convert object to string.

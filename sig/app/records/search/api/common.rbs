@@ -11,9 +11,6 @@ module Search::Api::Common
   #
   # @see file:config/locales/types/search.en.yml *en.emma.search.type*
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   CONFIGURATION: Hash[Symbol,symHash]
 
   # Enumeration scalar type names and properties.
@@ -166,7 +163,7 @@ class PublicationIdentifier < ScalarType
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
     #
-    def create: (String|nil v, ?(String|Symbol)? `type`) -> (PublicationIdentifier | nil)
+    def create: ((String|nil) v, ?(String|Symbol|nil) `type`) -> (PublicationIdentifier | nil)
 
     private
 
@@ -243,7 +240,7 @@ class PublicationIdentifier < ScalarType
   #
   # @return [Class<PublicationIdentifier>, nil]
   #
-  def self.subclass: (?(Symbol|String|Class)? `type`) -> (Class | nil)
+  def self.subclass: (?(Symbol|String|Class|nil) `type`) -> (Class | nil)
 
   # Create an array of identifier candidate strings.
   #
@@ -251,7 +248,7 @@ class PublicationIdentifier < ScalarType
   #
   # @return [Array<String>]
   #
-  def self.split: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] value) -> strArray
+  def self.split: ((String | PublicationIdentifier | nil | Array[String|PublicationIdentifier|nil]) value) -> strArray
 
   # Create an array of identifier instances from candidate string(s).
   #
@@ -261,11 +258,8 @@ class PublicationIdentifier < ScalarType
   # @return [Array<PublicationIdentifier>]
   # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
   #
-  # -
-  # noinspection RubyMismatchedReturnType
-  # +
-  def self.objects: (lookupItems|lookupItem|nil value,  invalid: true) -> Array[PublicationIdentifier|nil]
-                  | (lookupItems|lookupItem|nil value, ?invalid: bool) -> lookupRequestItems
+  def self.objects: ((lookupItems|lookupItem|nil) value,  invalid: true) -> Array[PublicationIdentifier|nil]
+                  | ((lookupItems|lookupItem|nil) value, ?invalid: bool) -> lookupRequestItems
 
   # Create a table of identifier instances from candidate string(s).
   #
@@ -275,8 +269,8 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{String=>PublicationIdentifier}]
   # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
   #
-  def self.object_map: (lookupItems|lookupItem|nil value,  invalid: true) -> Hash[String,(PublicationIdentifier|nil)]
-                     | (lookupItems|lookupItem|nil value, ?invalid: bool) -> Hash[String,PublicationIdentifier]
+  def self.object_map: ((lookupItems|lookupItem|nil) value,  invalid: true) -> Hash[String,(PublicationIdentifier|nil)]
+                     | ((lookupItems|lookupItem|nil) value, ?invalid: bool) -> Hash[String,PublicationIdentifier]
 end
 
 # ISBN identifier.
@@ -442,7 +436,7 @@ class Isbn < PublicationIdentifier
     #
     # @see https://www.isbn-international.org/content/isbn-users-manual
     #
-    def isbn13_checksum: (String|Array[String|Integer] digits) -> String
+    def isbn13_checksum: ((String|Array[String|Integer]) digits) -> String
 
     # Calculate the ISBN-10 checksum for the supplied array of digits.
     #
@@ -452,7 +446,7 @@ class Isbn < PublicationIdentifier
     #
     # @see https://en.wikipedia.org/wiki/Check_digit#ISBN_10
     #
-    def isbn10_checksum: (String|Array[String|Integer] digits) -> String
+    def isbn10_checksum: ((String|Array[String|Integer]) digits) -> String
 
     private
 
@@ -466,6 +460,18 @@ class Isbn < PublicationIdentifier
   # @param [String, nil] v            Default: #value.
   #
   def valid?: (?(untyped|nil) v) -> bool
+
+  # Indicate whether the instance is a valid ISBN-13.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def isbn13?: (?(untyped|nil) v) -> bool
+
+  # Indicate whether the instance is a valid ISBN-10.
+  #
+  # @param [String, nil] v            Default: #value.
+  #
+  def isbn10?: (?(untyped|nil) v) -> bool
 end
 
 # ISSN identifier.
@@ -577,7 +583,7 @@ class Issn < PublicationIdentifier
     #
     # @see https://www.issn.org/understanding-the-issn/assignment-rules/issn-manual/#2-1-construction-of-issn
     #
-    def checksum: (String|Array[String|Integer] digits) -> String
+    def checksum: ((String|Array[String|Integer]) digits) -> String
 
     private
 
@@ -949,7 +955,7 @@ class Upc < PublicationIdentifier
     #
     # @return [String]                  Single-character decimal digit.
     #
-    def checksum: (String|Array[String|Integer] digits) -> String
+    def checksum: ((String|Array[String|Integer]) digits) -> String
 
     private
 

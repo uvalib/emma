@@ -19,10 +19,10 @@ module IngestService::Common
   # @param [Hash, nil]         headers  Default: {}.
   # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
   #
-  # @return [Array<(Hash,Hash,String)>]      Message body plus headers for GET.
-  # @return [Array<(Hash,Hash,Hash)>]        Query plus headers for PUT, POST, PATCH.
+  # @return [Array<(Hash,Hash,String)>] Message body plus headers for GET.
+  # @return [Array<(Hash,Hash,Hash)>]   Query plus headers for PUT, POST, PATCH
   #
-  def api_headers: (?(symHash|nil) params, ?(strHash|nil) headers, ?(String|strHash)? body) -> [symHash, strHash, (String|strHash)]
+  def api_headers: (?(symHash|nil) params, ?(strHash|nil) headers, ?(String|strHash|nil) body) -> [symHash, strHash, (String|strHash)]
 
   # Send an API request.
   #
@@ -46,7 +46,7 @@ module IngestService::Common
   # == Usage Notes
   # Sets @response as a side-effect.
   #
-  def transmit: (Symbol verb, String action, symHash|String|nil params, strHash|nil headers, **untyped opt) -> (Faraday::Response | nil)
+  def transmit: (Symbol verb, String action, (symHash|String|nil) params, (strHash|nil) headers, **untyped opt) -> (Faraday::Response | nil)
 
   private
 

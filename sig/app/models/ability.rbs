@@ -53,9 +53,6 @@ class Ability
   #
   # @type [Array<Symbol>]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   MODEL_NAMES: symArray
 
   # Create a new instance.
@@ -94,7 +91,7 @@ class Ability
   # See the wiki for details:
   # @see https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   #
-  def initialize: (User|nil user) -> void
+  def initialize: ((User|nil) user) -> void
 
   # Assign the ability to perform as a system developer.
   #
@@ -121,9 +118,6 @@ class Ability
   # This is not related to any Bookshare "role" -- it is exclusively for
   # authorization to access local EMMA resources.
   #
-  # -
-  # noinspection RubyUnusedLocalVariable
-  # +
   def act_as_administrator: (User user) -> void
 
   # Assign the ability to perform as a Disability Service Officer.

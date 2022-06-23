@@ -37,7 +37,7 @@ module Emma::Debug
     #
     # @return [String]
     #
-    def __debug_label: (?call_class: (String|Symbol|Binding)?, ?call_method: (String|Symbol|Method)?) -> String
+    def __debug_label: (?call_class: String|Symbol|Binding|nil, ?call_method: String|Symbol|Method|nil) -> String
 
     # Representation of the controller/action for a route.
     #
@@ -46,7 +46,7 @@ module Emma::Debug
     #
     # @return [String]
     #
-    def __debug_route_label: (?controller: (String|Symbol)?, ?action: (String|Symbol)?) -> String
+    def __debug_route_label: (?controller: String|Symbol|nil, ?action: String|Symbol|nil) -> String
 
     # Session values transformed into a Hash.
     #
@@ -55,10 +55,7 @@ module Emma::Debug
     # @return [Hash]
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
-    # -
-    # noinspection RailsParamDefResolve
-    # +
-    def __debug_session_hash: (?(anyHash|ActionDispatch::Request)? value) -> (strHash | nil)
+    def __debug_session_hash: (?(anyHash|ActionDispatch::Request|nil) value) -> (strHash | nil)
 
     # Environment values transformed into a Hash.
     #
@@ -67,10 +64,7 @@ module Emma::Debug
     # @return [Hash]
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
-    # -
-    # noinspection RailsParamDefResolve
-    # +
-    def __debug_env_hash: (?(anyHash|ActionDispatch::Request)? value) -> (strHash | nil)
+    def __debug_env_hash: (?(anyHash|ActionDispatch::Request|nil) value) -> (strHash | nil)
 
     # HTTP message headers transformed into a Hash.
     #
@@ -79,15 +73,12 @@ module Emma::Debug
     # @return [Hash]
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
-    # -
-    # noinspection RailsParamDefResolve
-    # +
-    def __debug_header_hash: (?(anyHash|ActionDispatch::Request|ActionDispatch::Response)? value) -> (strHash | nil)
+    def __debug_header_hash: (?(anyHash|ActionDispatch::Request|ActionDispatch::Response|nil) value) -> (strHash | nil)
 
     # Produce an inspection for each argument.
     #
-    # @param [Array] args
-    # @param [Hash]  opt              Options passed to #__debug_inspect_item.
+    # @param [Array<*>] args
+    # @param [Hash]     opt           Options passed to #__debug_inspect_item.
     #
     # @return [Array<String>]
     #
@@ -96,12 +87,12 @@ module Emma::Debug
     #
     # @see #__debug_inspect_item
     #
-    def __debug_inspect_items: (*untyped args, **untyped opt) { () -> untyped } -> strArray
+    def __debug_inspect_items: (*untyped args, **untyped opt) ?{ () -> untyped } -> strArray
 
     # Generate one or more inspections.
     #
-    # @param [Hash, Array, Any] value
-    # @param [Hash]             opt   Options passed to #__debug_inspect except
+    # @param [Hash, Array, *] value
+    # @param [Hash]           opt     Options passed to #__debug_inspect except
     #
     # @option opt [Boolean] :compact  If *true*, ignore empty values (but show
     #                                   if value is a FalseClass).
@@ -120,7 +111,7 @@ module Emma::Debug
     #
     # @see Module#inspect
     #
-    def __debug_inspect: (untyped value, ?max: Integer?, ?omission: String?) -> String
+    def __debug_inspect: (untyped value, ?max: Integer|nil, ?omission: String|nil) -> String
 
     # Generate lines to produce boxed-line text.
     #
@@ -148,20 +139,20 @@ module Emma::Debug
 
     # Output arguments in a single line.
     #
-    # @param [Array] args             Passed to #__debug_impl.
-    # @param [Hash]  opt
-    # @param [Proc]  block            Passed to #__debug_impl.
+    # @param [Array<*>] args          Passed to #__debug_impl.
+    # @param [Hash]     opt
+    # @param [Proc]     block         Passed to #__debug_impl.
     #
     # @return [nil]
     #
-    def __debug_line: (*untyped args, **untyped opt) { () -> untyped } -> nil
+    def __debug_line: (*untyped args, **untyped opt) ?{ () -> untyped } -> nil
 
     # Output each data item on its own line, with special handling to inject
     # the parameter values of the calling method if a Binding is given.
     #
-    # @param [Array] args             Passed to #__debug_line.
-    # @param [Hash]  opt
-    # @param [Proc]  block            Passed to #__debug_inspect_items.
+    # @param [Array<*>] args          Passed to #__debug_line.
+    # @param [Hash]     opt
+    # @param [Proc]     block         Passed to #__debug_inspect_items.
     #
     # @return [nil]
     #
@@ -173,7 +164,7 @@ module Emma::Debug
     #   Injects the parameters of the calling method as indicated by *bind*.
     #   @param [Symbol, Method] meth    Start of the output line.
     #   @param [Binding]        bind    Source of appended parameter values.
-    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Array<*>]       parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
     #   @option opt [Any] :only         Passed to #get_params.
     #   @option opt [Any] :except       Passed to #get_params.
@@ -181,23 +172,23 @@ module Emma::Debug
     # @overload __debug_items(bind, *parts, **opt)
     #   Injects the parameters of the calling method as indicated by *bind*.
     #   @param [Binding]        bind    Source of appended parameter values.
-    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Array<*>]       parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
     #   @option opt [Any] :only         Passed to #get_params.
     #   @option opt [Any] :except       Passed to #get_params.
     #
     # @overload __debug_items(*parts, **opt)
     #   The normal case with *parts* on a single output line.
-    #   @param [Array]          parts   Parts of the output line.
+    #   @param [Array<*>]       parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line.
     #
-    def __debug_items: (*untyped args, **untyped opt) { () -> untyped } -> nil
+    def __debug_items: (*untyped args, **untyped opt) ?{ () -> untyped } -> nil
 
     # Exception console debugging output.
     #
     # @param [String]    label
     # @param [Exception] exception
-    # @param [Array]     args         Passed to #__debug_line.
+    # @param [Array<*>]  args         Passed to #__debug_line.
     # @param [Hash]      opt
     # @param [Proc]      block        Passed to #__debug_line.
     #
@@ -208,7 +199,7 @@ module Emma::Debug
     #
     # @return [nil]
     #
-    def __debug_exception: (String label, Exception exception, *untyped args, **untyped opt) { () -> untyped } -> nil
+    def __debug_exception: (String label, Exception exception, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
 
     # Output a line for invocation of a route method.
     #
@@ -219,26 +210,38 @@ module Emma::Debug
     #
     # @return [nil]
     #
-    # -
-    # noinspection RailsParamDefResolve
-    # +
-    def __debug_route: (?controller: (String|Symbol)?, ?action: (String|Symbol)?, **untyped opt) { () -> untyped } -> nil
+    def __debug_route: (?controller: String|Symbol|nil, ?action: String|Symbol|nil, **untyped opt) ?{ () -> untyped } -> nil
 
     # Output request values and contents.
     #
-    # @param [Array] args             Passed to #__debug_items.
-    # @param [Hash]  opt
-    # @param [Proc]  block            Passed to #__debug_items.
-    #
-    # args[0]  [Symbol]               Calling method (def: `#calling_method`).
-    # args[-1] [Hash]                 Options passed to #__debug except for:
-    #
-    # @option args.last [ActionDispatch::Request] :req  Default: `#request`.
+    # @param [Array<*>]                args   Passed to #__debug_items.
+    # @param [ActionDispatch::Request] req    Default: `#request`.
+    # @param [Hash]                    opt    Passed to #__debug_items.
+    # @param [Proc]                    block  Passed to #__debug_items.
     #
     # @return [nil]
     #
-    def __debug_request: (Symbol meth, *untyped args, ?req: ActionDispatch::Request?, **untyped opt) { () -> untyped } -> nil
-                       | (             *untyped args, ?req: ActionDispatch::Request?, **untyped opt) { () -> untyped } -> nil
+    # -
+    # == Variations
+    # +
+    #
+    # @overload __debug_request(meth, *args, req: nil, **opt)
+    #   Specify calling method.
+    #   @param [Symbol]                  meth
+    #   @param [Array<*>]                args
+    #   @param [ActionDispatch::Request] req
+    #   @param [Hash]                    opt
+    #   @return [nil]
+    #
+    # @overload __debug_request(*args, req: nil, **opt)
+    #   Calling method defaults to `#calling_method`.
+    #   @param [Array<*>]                args
+    #   @param [ActionDispatch::Request] req
+    #   @param [Hash]                    opt
+    #   @return [nil]
+    #
+    def __debug_request: (Symbol meth, *untyped args, ?req: ActionDispatch::Request|nil, **untyped opt) ?{ () -> untyped } -> nil
+                       | (             *untyped args, ?req: ActionDispatch::Request|nil, **untyped opt) ?{ () -> untyped } -> nil
 
     # Output a box which highlights the given text.
     #

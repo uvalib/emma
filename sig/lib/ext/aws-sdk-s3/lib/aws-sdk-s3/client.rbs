@@ -4,7 +4,7 @@ module Aws::S3
 
     def initialize: (*untyped args) -> void
 
-    def build_request: (untyped operation_name, ?::Hash[untyped, untyped] params) -> untyped
+    def build_request: (untyped operation_name, ?anyHash params) -> untyped
 
     MONITOR_CLIENT_METHODS: symArray
   end

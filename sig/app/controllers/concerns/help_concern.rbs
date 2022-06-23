@@ -13,7 +13,7 @@ module HelpConcern
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_help_entry: (Symbol|nil topic) -> symHash
+  def get_help_entry: ((Symbol|nil) topic) -> symHash
 
   # Extract the URL parameter which specifies a help topic.
   #

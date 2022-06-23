@@ -68,7 +68,15 @@ module Record::Bulk
   #
   def bulk_part_class: () -> String
 
-  def import_transform: (symHash fields, Module|String importer_name) -> symHash
+  # Use the importer module to translate imported fields into Entry columns
+  # and/or EMMA metadata fields.
+  #
+  # @param [Hash]           fields
+  # @param [Module, String] importer_name
+  #
+  # @return [Hash]
+  #
+  def import_transform: (symHash fields, (Module|String) importer_name) -> symHash
 
   # Class methods automatically added to the including record class.
   #

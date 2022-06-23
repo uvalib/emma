@@ -135,7 +135,6 @@ module Api::Shared::CommonMethods
   #
   def clean(value, allowed: nil, regexp: nil, **)
     return value unless value.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
     regexp ||=
       case allowed
         when CLEAN_EXCEPT, nil   then CLEAN_REGEXP

@@ -18,7 +18,7 @@ class SearchResult < ApplicationRecord
   #
   # @note - for dev traceability
   #
-  def initialize: (?(SearchResult|prmHash)? attr) { () -> untyped } -> void
+  def initialize: (?(SearchResult|prmHash|nil) attr) ?{ () -> untyped } -> void
 
   # Update database fields...
   #
@@ -27,5 +27,5 @@ class SearchResult < ApplicationRecord
   #
   # @return [void]
   #
-  def assign_attributes: (SearchResult|prmHash|nil attr, ?(untyped|nil) opt) -> void
+  def assign_attributes: ((SearchResult|prmHash|nil) attr, ?(untyped|nil) opt) -> void
 end

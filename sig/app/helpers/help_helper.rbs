@@ -5,17 +5,24 @@ module HelpHelper
 
   include Emma::Constants
 
+  include Emma::Unicode
+
+  include ApplicationHelper
+
   include HtmlHelper
 
+  include LinkHelper
+
+  include ParamsHelper
+
   include PopupHelper
+
+  include SessionDebugHelper
 
   # Configuration for help pages properties.
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   HELP_CONFIG: symHash
 
   # Help topics and values.
@@ -51,7 +58,7 @@ module HelpHelper
   #
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
-  def help_popup: (Symbol|String topic, ?(Symbol|String)? sub_topic, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def help_popup: ((Symbol|String) topic, ?(Symbol|String|nil) sub_topic, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Values for a specific help topic.
   #
@@ -59,7 +66,7 @@ module HelpHelper
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def help_topic: (Symbol|String topic) -> symHash
+  def help_topic: ((Symbol|String) topic) -> symHash
 
   # Help topic names.
   #
@@ -88,7 +95,7 @@ module HelpHelper
   #
   # @return [Array<Array<(String,String)>>]
   #
-  def help_links: (*(Symbol|symHash|Array[Symbol|symHash]) topics, ?type: Symbol?, **untyped opt) -> Array[[String,String]]
+  def help_links: (*(Symbol|symHash|Array[Symbol|symHash]) topics, ?type: Symbol|nil, **untyped opt) -> Array[[String,String]]
 
   # A table of contents element with a link for each help topic.
   #
@@ -127,7 +134,7 @@ module HelpHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def help_image: (Symbol|String name, **untyped opt) -> ActiveSupport::SafeBuffer
+  def help_image: ((Symbol|String) name, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render an illustration of a button element in help.
   #
@@ -146,7 +153,7 @@ module HelpHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def help_jump: (String label, Symbol|String topic, **untyped opt) -> ActiveSupport::SafeBuffer
+  def help_jump: (String label, (Symbol|String) topic, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
@@ -157,7 +164,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]   Help contents section element.
   # @return [nil]                         No content and *wrap* is *false*.
   #
-  def help_section: (?item: Symbol?, ?wrap: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def help_section: (?item: Symbol|nil, ?wrap: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Render a single entry for use within a list of items.
   #
@@ -168,7 +175,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]   Help contents list element.
   # @return [nil]                         No content and *wrap* is *false*.
   #
-  def help_list_item: (?item: Symbol?, ?wrap: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def help_list_item: (?item: Symbol|nil, ?wrap: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Render the contents of a single entry from configuration or from a partial.
   #
@@ -181,7 +188,7 @@ module HelpHelper
   #
   # @see config/locales/controllers/help.en.yml
   #
-  def help_container: (?item: Symbol?, ?wrap: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def help_container: (?item: Symbol|nil, ?wrap: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   private
 

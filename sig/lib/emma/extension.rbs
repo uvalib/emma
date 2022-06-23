@@ -22,7 +22,7 @@ module Emma::Extension
       # @return [nil]
       #
       # @yield Generate additional parts.
-      # @yieldreturn [Array] Appended to *args*.
+      # @yieldreturn [Array, Any] Appended to *args*.
       #
       # -
       # == Variations
@@ -47,14 +47,14 @@ module Emma::Extension
       #   @param [Hash]        opt
       #   @return [nil]
       #
-      def __ext_log: (Symbol meth, *untyped args, ?leader: String?, ?tag: String?, ?separator: String?, **untyped opt) { () -> untyped } -> nil
-                   | (             *untyped args, ?leader: String?, ?tag: String?, ?separator: String?, **untyped opt) { () -> untyped } -> nil
+      def __ext_log: (Symbol meth, *untyped args, ?leader: String|nil, ?tag: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
+                   | (             *untyped args, ?leader: String|nil, ?tag: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
 
       # Debug method for the including class.
       #
-      # @param [Array]          args
-      # @param [Hash]           opt
-      # @param [Proc]           block   Passed to #__debug_items.
+      # @param [Array] args
+      # @param [Hash]  opt            Passed to #__debug_items.
+      # @param [Proc]  block          Passed to #__debug_items.
       #
       # @option opt [String, nil] :leader     Default: `#__ext_log_leader`.
       # @option opt [String, nil] :tag        Default: `#__ext_log_tag`.
@@ -67,20 +67,22 @@ module Emma::Extension
       # +
       #
       # @overload __ext_debug(meth, *args, tag:, **opt, &block)
-      #   @param [Symbol]      meth   Calling method
-      #   @param [Array]       args
-      #   @param [Hash]        opt
-      #   @param [Proc]        block  Passed to #__debug_items.
+      #   Specify calling method.
+      #   @param [Symbol] meth
+      #   @param [Array]  args
+      #   @param [Hash]   opt
+      #   @param [Proc]   block
       #   @return [nil]
       #
       # @overload __ext_log(*args, tag:, &block)
-      #   @param [Array]       args
-      #   @param [Hash]        opt
-      #   @param [Proc]        block  Passed to #__debug_items.
+      #   Calling method defaults to `#calling_method`.
+      #   @param [Array]  args
+      #   @param [Hash]   opt
+      #   @param [Proc]   block
       #   @return [nil]
       #
-      def __ext_debug: (Symbol meth, *untyped args, **untyped opt) { () -> untyped } -> nil
-                     | (             *untyped args, **untyped opt) { () -> untyped } -> nil
+      def __ext_debug: (Symbol meth, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+                     | (             *untyped args, **untyped opt) ?{ () -> untyped } -> nil
 
       # Log output tag for the extended gem.
       #

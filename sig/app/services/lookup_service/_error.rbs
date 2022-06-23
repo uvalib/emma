@@ -36,7 +36,9 @@ class LookupService::Error < ApiService::Error
   include ClassType
 end
 
+# :nocov:
 class LookupService::AuthError < ApiService::AuthError
+  # :nocov:
   include LookupService::Error::ClassType
 end
 

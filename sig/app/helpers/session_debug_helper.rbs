@@ -1,19 +1,19 @@
 # View helper support methods related to `#session`.
 #
 module SessionDebugHelper
+  include DevHelper
+
+  include GridHelper
+
   include ParamsHelper
 
-  include HtmlHelper
-
   include RoleHelper
-
-  include DevHelper
 
   # Indicate whether on-screen debugging is applicable.
   #
   # @param [Symbol,String,nil] controller   Controller-specific debugging.
   #
-  def session_debug?: (?(Symbol|String)? controller) -> bool
+  def session_debug?: (?(Symbol|String|nil) controller) -> bool
 
   # Session keys that are not reported in the session debug table.
   #

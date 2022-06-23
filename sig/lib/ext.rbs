@@ -52,7 +52,7 @@ class Object
   # redefine existing methods.  Within redefined methods, "super" refers to the
   # original method.
   #
-  def override: (Hash[Module,Module]) { (Module) -> untyped } -> void
+  def override: (Hash[Module,Module])      { (Module) -> untyped } -> void
               | (Module mod, Module? mod2) { (Module) -> untyped } -> void
 
   # Alternate syntax which does not expect a block (so braces will be interpreted

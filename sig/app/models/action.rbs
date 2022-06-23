@@ -124,7 +124,7 @@ class Action < ApplicationRecord
   #
   # @yield [target]
   # @yieldparam [Phase, Action] target
-  # @yieldreturn [ExecReport, Array<String>]
+  # @yieldreturn [ExecReport, Hash, String, Array<String>, Array<FlashPart>]
   #
   def external_action: () { (Phase|Action target) -> errorArgs } -> bool
 

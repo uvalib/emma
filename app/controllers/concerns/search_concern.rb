@@ -176,7 +176,7 @@ module SearchConcern
   #
   # @param [String, Array<String>] value
   #
-  # @note Currently Unused.
+  # @note Currently unused.
   #
   def valid_identifiers?(value)
     ids = PublicationIdentifier.objects(value)
@@ -335,9 +335,6 @@ module SearchConcern
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def set_search_feature(
     param_key,
     value,

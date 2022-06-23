@@ -41,7 +41,7 @@ class Api::Serializer::Json < Api::Serializer
   #
   # @see Representable::JSON#from_json
   #
-  def deserialize: (symHash|String data, ?method: Symbol|Proc) -> (Api::Record | nil)
+  def deserialize: ((symHash|String) data, ?method: Symbol|Proc) -> (Api::Record | nil)
 
   # Set source data string for JSON data.
   #
@@ -50,5 +50,5 @@ class Api::Serializer::Json < Api::Serializer
   # @return [String]
   # @return [nil]                 If *data* is neither a String nor a Hash.
   #
-  def set_source_data: (symHash|String data) -> (String | nil)
+  def set_source_data: ((symHash|String) data) -> (String | nil)
 end

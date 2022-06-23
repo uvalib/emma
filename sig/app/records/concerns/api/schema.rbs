@@ -127,7 +127,7 @@ module Api::Schema
   #
   # @return [String]
   #
-  def serializer_name: (Symbol|String `type`) -> String
+  def serializer_name: ((Symbol|String) `type`) -> String
 
   # serializer_base
   #
@@ -135,7 +135,7 @@ module Api::Schema
   #
   # @return [String]
   #
-  def serializer_base: (Symbol|String `type`) -> String
+  def serializer_base: ((Symbol|String) `type`) -> String
 
   # A table of schema property scalar types mapped to literals which are their
   # default values.
@@ -164,7 +164,7 @@ module Api::Schema
   # @return [Symbol]                  One of #SERIALIZER_TYPES
   # @return [nil]                     Otherwise
   #
-  def format_of: (String|symHash data) -> (Symbol | nil)
+  def format_of: ((String|symHash) data) -> (Symbol | nil)
 
   # Called to validate that *type* is in #SERIALIZER_TYPES.
   #
@@ -180,10 +180,7 @@ module Api::Schema
   #
   # @param [Class, String, Symbol, nil] type
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def scalar_type?: (Symbol|String|Class|nil `type`) -> bool
+  def scalar_type?: ((Symbol|String|Class|nil) `type`) -> bool
 
   # Ensure that attributes get a type-appropriate default (otherwise they
   # will just be *nil*).
@@ -192,7 +189,7 @@ module Api::Schema
   #
   # @return [Any]
   #
-  def scalar_default: (Symbol|String|Class|nil `type`) -> untyped
+  def scalar_default: ((Symbol|String|Class|nil) `type`) -> untyped
 
   # Get options that specify type.
   #
@@ -200,7 +197,7 @@ module Api::Schema
   #
   # @return [Hash]
   #
-  def type_options: (symHash|nil opt) -> symHash
+  def type_options: ((symHash|nil) opt) -> symHash
 
   # Get type specification from options.
   #
@@ -208,7 +205,7 @@ module Api::Schema
   #
   # @return [Any]
   #
-  def extract_type_option: (symHash|nil opt) -> untyped
+  def extract_type_option: ((symHash|nil) opt) -> untyped
 
   # Extract #TYPE_OPTION_KEYS from *opt* and get the type specification.
   #

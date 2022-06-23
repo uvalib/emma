@@ -12,21 +12,15 @@ class Lookup::GoogleBooks::Message::List < Lookup::GoogleBooks::Api::Message
 
   LIST_ELEMENT: Class
 
-  # Initialize a new instance.
-  #
-  # @param [Faraday::Response, Model, Hash, String, nil] src
-  # @param [Hash, nil]                                   opt
-  #
-  def initialize: (?(Faraday::Response|Model|String|anyHash|nil) src, ?(symHash|nil) opt) -> void
-
   # Simulates the :totalResults field of similar Bookshare API records.
   #
   # @return [Integer]
   #
-  # -
-  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
-  # +
   def totalResults: () -> Integer
 
+  # api_records
+  #
+  # @return [Array<Lookup::GoogleBooks::Record::VolumeInfo>]
+  #
   def api_records: () -> Array[Lookup::GoogleBooks::Record::VolumeInfo]
 end

@@ -20,5 +20,7 @@ class MetricsController < ApplicationController
   #
   # @note This is out of date.
   #
+  # @see #metrics_test_path           Route helper
+  #
   def test: () -> void
 end

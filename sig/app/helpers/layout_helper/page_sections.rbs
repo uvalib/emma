@@ -47,10 +47,7 @@ module LayoutHelper::PageSections
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
   #
-  # -
-  # noinspection RubyMismatchedParameterType
-  # +
-  def page_text_section: (?(String|Symbol)? `type`, ?(String|nil) text, ?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?tag: (Integer|Symbol)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def page_text_section: (?(Symbol|String|nil) `type`, ?(String|nil) text, ?controller: String|Symbol|nil, ?action: String|Symbol|nil, ?tag: Integer|Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Get the configured page description.
   #
@@ -62,5 +59,5 @@ module LayoutHelper::PageSections
   # @return [String]
   # @return [nil]
   #
-  def page_text: (?controller: (String|Symbol)?, ?action: (String|Symbol)?, ?type: (String|Symbol)?) -> (ActiveSupport::SafeBuffer | String | nil)
+  def page_text: (?controller: String|Symbol|nil, ?action: String|Symbol|nil, ?type: String|Symbol|nil) -> (ActiveSupport::SafeBuffer | String | nil)
 end

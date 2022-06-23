@@ -42,9 +42,6 @@ module BookshareConcern
   # @return [String]
   # @return [nil]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def get_member(for_user = nil, _name = nil)
     for_user = User.find_record(for_user || current_user)
     case for_user&.bookshare_uid

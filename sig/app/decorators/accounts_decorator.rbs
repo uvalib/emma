@@ -11,5 +11,5 @@ class AccountsDecorator < BaseCollectionDecorator
   #
   # @return [Array<String>]
   #
-  def item_ids: (Array[User|String|nil]|User|String|nil items) -> strArray
+  def item_ids: ((Array[User|String|nil]|User|String|nil) items) -> strArray
 end

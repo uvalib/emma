@@ -438,6 +438,7 @@ module LayoutHelper::SearchFilters
   def show_search_filters?(opt = nil)
     opt   ||= request_parameters
     target  = search_target(**opt)
+    # noinspection RubyMismatchedArgumentType
     enabled = SEARCH_FILTERS_CONFIG.dig(target, :enabled)
     enabled = enabled.include?(opt[:action].to_s) if enabled.is_a?(Array)
     enabled.present?

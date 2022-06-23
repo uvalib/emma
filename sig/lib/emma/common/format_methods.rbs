@@ -43,7 +43,7 @@ module Emma::Common::FormatMethods
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def labelize: ((String|Symbol)? text, ?(Integer|nil) count, ?breakable: bool) -> ActiveSupport::SafeBuffer
+  def labelize: ((String|Symbol|nil) text, ?(Integer|nil) count, ?breakable: bool) -> ActiveSupport::SafeBuffer
 
   # @type [Array<String>]
   QUOTE_MARKS: strArray
@@ -60,6 +60,10 @@ module Emma::Common::FormatMethods
   # @param [String]                                   separator
   #
   # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  # -
+  # == Variations
+  # +
   #
   # @overload quote(term, quote: '"', separator: ', ')
   #   @param [String] term
@@ -96,6 +100,10 @@ module Emma::Common::FormatMethods
   # @param [String]                                   separator
   #
   # @return [ActiveSupport::SafeBuffer, String, Array]
+  #
+  # -
+  # == Variations
+  # +
   #
   # @overload strip_quotes(term, separator: ', ')
   #   @param [String] term
@@ -143,15 +151,12 @@ module Emma::Common::FormatMethods
   #
   # @see Kernel#sprintf
   #
-  def named_references: (String text, ?(Regexp|Array[Regexp])? match) -> symArray
+  def named_references: (String text, ?(Regexp|Array[Regexp]|nil) match) -> symArray
 
   # Parts of a complete #sprintf format as regular expression fragments.
   #
   # @type [Hash{Symbol=>String}]
   #
-  # -
-  # noinspection SpellCheckingInspection
-  # +
   SPRINTF_FMT_PARTS: Hash[Symbol,String]
 
   # Match a named reference along with "%<name>s" the format portion.

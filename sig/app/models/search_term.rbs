@@ -42,7 +42,7 @@ class SearchTerm
   # @param [Boolean, nil]             query
   # @param [Hash, nil]                config
   #
-  def initialize: (String|Symbol url_param, ?(symHash|String|strArray)? values, ?label: String?, ?query: bool?, ?config: symHash?) -> void
+  def initialize: ((String|Symbol) url_param, ?(symHash|String|strArray|nil) values, ?label: String|nil, ?query: bool|nil, ?config: symHash|nil) -> void
 
   # Return just the field value(s) associated with this instance.
   #

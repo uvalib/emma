@@ -44,9 +44,6 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def repository_source_logo(item = nil, opt = nil)
     css  = '.repository.logo'
     item, opt     = [nil, item] if item.is_a?(Hash) && opt.nil?
@@ -57,7 +54,6 @@ module LogoHelper
     if logo.present?
       html_opt[:title] ||= repository_tooltip(item, name)
       prepend_css!(html_opt, css, repo)
-      # noinspection RubyMismatchedReturnType
       html_span(html_opt) { image_tag(asset_path(logo), alt: "#{name} logo") }
     else
       repository_source(repo, html_opt.merge!(source: repo, name: name))

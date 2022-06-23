@@ -1,8 +1,6 @@
 # Support methods for working with authentication strategies.
 #
 module CookieHelper
-  include ParamsHelper
-
   # Common cookie header settings.
   #
   # @type [Hash{Symbol=>Any}]
@@ -17,7 +15,7 @@ module CookieHelper
   #
   # @return [Any]
   #
-  def get_cookie: (Symbol|String key) -> untyped
+  def get_cookie: ((Symbol|String) key) -> untyped
 
   # Set the cookie in the request and the response.
   #
@@ -29,7 +27,7 @@ module CookieHelper
   #
   # @return [Any]                     The cookie value.
   #
-  def set_cookie: (Symbol|String key, ?(untyped|nil) value, **untyped opt) -> untyped
+  def set_cookie: ((Symbol|String) key, ?(untyped|nil) value, **untyped opt) -> untyped
 
   # Remove the cookie from the request and indicate removal in the response.
   #
@@ -38,7 +36,7 @@ module CookieHelper
   #
   # @return [void]
   #
-  def delete_cookie: (Symbol|String key, **untyped opt) -> void
+  def delete_cookie: ((Symbol|String) key, **untyped opt) -> void
 
   # Session section which reports on cookies that have been set manually or
   # from the request.
@@ -53,7 +51,7 @@ module CookieHelper
   #
   # @return [Any]
   #
-  def cookie_value: (Symbol|String key) -> untyped
+  def cookie_value: ((Symbol|String) key) -> untyped
 
   # Save a copy of the cookie value in `session`.
   #
@@ -62,7 +60,7 @@ module CookieHelper
   #
   # @return [Any]
   #
-  def remember_cookie: (Symbol|String key, untyped value) -> untyped
+  def remember_cookie: ((Symbol|String) key, untyped value) -> untyped
 
   # Remove the copy of the cookie value from `session`.
   #
@@ -70,7 +68,7 @@ module CookieHelper
   #
   # @return [Any]
   #
-  def forget_cookie: (Symbol|String key) -> untyped
+  def forget_cookie: ((Symbol|String) key) -> untyped
 
   private
 

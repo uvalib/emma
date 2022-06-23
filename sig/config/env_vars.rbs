@@ -318,6 +318,10 @@ DEBUG_VIEW: bool
 #
 DEBUG_WORKFLOW: bool
 
+# Debug workflow steps.
+#
+# @type [Boolean]
+#
 DEBUG_RECORD: bool
 
 # Set to show low-level XML parse logging.

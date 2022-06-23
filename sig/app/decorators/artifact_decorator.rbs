@@ -11,16 +11,6 @@ class ArtifactDecorator < BookshareDecorator
 
   module Methods
     include BookshareDecorator::Methods
-
-    # Generate a menu of user instances.
-    #
-    # @param [Hash] opt                 Passed to super
-    #
-    # @option opt [User,String] :user   Defaults to `#current_user`.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   module InstanceMethods
@@ -37,6 +27,9 @@ class ArtifactDecorator < BookshareDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
@@ -47,18 +40,12 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
-  # +
   DOWNLOAD_CONFIG: symHash
 
   # Default link tooltip.
   #
   # @type [String]
   #
-  # -
-  # noinspection RubyMismatchedConstantType
-  # +
   DOWNLOAD_TOOLTIP: String
 
   # Default completed link tooltip.
@@ -124,18 +111,17 @@ class ArtifactDecorator < BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]   The HTML link element.
   # @return [nil]                         No link URL was provided or found.
   #
-  def artifact_link: (Bs::Record::Format|String|nil format, ?url: String?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def artifact_link: ((Bs::Record::Format|String|nil) format, ?url: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Create links to download each artifact of the given item.
   #
-  # @param [Hash] opt                 Passed to #artifact_link except for:
-  #
-  # @option opt [String] :fmt         One of `BsFormatType#values`
-  # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [String] fmt               One of `BsFormatType#values`
+  # @param [String] separator
+  # @param [Hash] opt                 Passed to #artifact_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_links: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def download_links: (?fmt: String|nil, ?separator: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Prepare a format name for use in a tooltip or label.
   #
@@ -144,7 +130,7 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @return [String]
   #
-  def format_label: (String|Symbol|nil fmt, ?quote: String?) -> String
+  def format_label: ((String|Symbol|nil) fmt, ?quote: String|nil) -> String
 
   # An element to be shown while an artifact is being acquired.
   #
@@ -153,7 +139,7 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_progress: (?image: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def download_progress: (?image: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An element to indicate failure.
   #
@@ -161,7 +147,7 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js *appendFailureMessage*
+  # @see file:app/assets/javascripts/feature/download.js *showFailureMessage()*
   #
   def download_failure: (**untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -169,29 +155,29 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @param [String, nil]         label
   # @param [String, Symbol, nil] fmt
-  # @param [Hash]                opt    Passed to #make_link.
+  # @param [Hash]                opt    Passed to LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_button: (?label: String?, ?fmt: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def download_button: (?label: String|nil, ?fmt: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a metadata listing of an artifact.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
   def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer

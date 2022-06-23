@@ -20,8 +20,8 @@ module Upload::WorkflowMethods
   #
   STATE_COLUMNS: symArray
 
-  PRIMARY_STATE_COLUMN:   Symbol
-  SECONDARY_STATE_COLUMN: Symbol
+  PRIMARY_STATE_COLUMN:   Symbol # @note: Added manually; rbs can't see this.
+  SECONDARY_STATE_COLUMN: Symbol # @note: Added manually; rbs can't see this.
 
   # The table columns associated with the active workflow user.                 # NOTE: not relevant to Entry/Phase/Action.
   #
@@ -35,9 +35,6 @@ module Upload::WorkflowMethods
   #
   # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   STATE_GROUP: Hash[Symbol,symHash]
 
   # Mapping of workflow state to category.                                      # NOTE: to Record::Steppable
@@ -46,6 +43,11 @@ module Upload::WorkflowMethods
   #
   REVERSE_STATE_GROUP: Hash[Symbol,Symbol]
 
+  # The database column currently associated with the workflow state of the
+  # record.
+  #
+  # @return [Symbol]
+  #
   def state_column: () -> Symbol
 
   # The database column currently associated with the active user.
@@ -60,59 +62,195 @@ module Upload::WorkflowMethods
   #
   def timestamp_column: () -> Symbol
 
+  # The database column currently associated with the workflow phase of the
+  # record.
+  #
+  # @return [Symbol]
+  #
   def phase_column: () -> Symbol
 
+  # Current workflow phase of the record.
+  #
+  # @return [Symbol, nil]
+  #
   def workflow_phase: () -> (Symbol | nil)
 
+  # Indicate whether this record is currently being used in an Edit workflow.
+  #
+  # @return [Boolean]
+  #
   def edit_phase: () -> bool
 
+  # The current workflow state of the record.
+  #
+  # @return [Symbol, nil]
+  #
   def active_state: () -> (Symbol | nil)
 
+  # The user currently associated with the record's workflow.
+  #
+  # @return [String, nil]
+  #
   def active_user: () -> (String | nil)
 
+  # Indicate whether this record represents an existing EMMA entry.
+  #
+  # @return [Boolean]
+  #
   def existing_entry?: () -> bool
 
+  # Indicate whether this record represents a new EMMA entry.
+  #
+  # @return [Boolean]
+  #
   def new_submission?: () -> bool
 
+  # Get the current real-time value of the record's workflow phase.
+  #
+  # @return [Symbol]  If the field was *nil* it will come back as :''.
+  #
   def get_phase: () -> Symbol
 
-  def set_phase: (Symbol|String|nil new_value) -> Symbol
+  # Set the current real-time value of the record's workflow phase.
+  #
+  # @param [Symbol, String, nil] new_value
+  #
+  # @return [Symbol]  If the field was *nil* it will come back as :''.
+  #
+  # == Usage Notes
+  # Entering #edit_state also requires execution of #begin_editing in order
+  # to set up the record.
+  #
+  def set_phase: ((Symbol|String|nil) new_value) -> Symbol
 
-  def get_state: (?(Symbol|String)? column) -> Symbol
+  # Get the current real-time value of the indicated workflow state field.
+  #
+  # @param [Symbol, String, nil] column     Default: `#PRIMARY_STATE_COLUMN`
+  #
+  # @return [Symbol]  If the field was *nil* it will come back as :''.
+  #
+  def get_state: (?(Symbol|String|nil) column) -> Symbol
 
-  def set_state: (Symbol|String|nil new_value, ?(Symbol|String)? column) -> Symbol
+  # Set the current real-time value of the indicated workflow state field.
+  #
+  # @param [Symbol, String, nil] new_value
+  # @param [Symbol, String, nil] column     Default: `#PRIMARY_STATE_COLUMN`
+  #
+  # @return [Symbol]  If the field was *nil* it will come back as :''.
+  #
+  # == Usage Notes
+  # Leaving #edit_state also requires execution of #finish_editing in order
+  # to update the record with information that may have changed.
+  #
+  def set_state: ((Symbol|String|nil) new_value, ?(Symbol|String|nil) column) -> Symbol
 
-  def dynamic_get_field: (Symbol|String column) -> untyped
+  # Get the current real-time value of a database field.
+  #
+  # @param [Symbol, String] column    Database field name.
+  #
+  # @return [Any]
+  #
+  def dynamic_get_field: ((Symbol|String) column) -> untyped
 
-  def dynamic_set_field: (Symbol|String column, untyped new_value) -> untyped
+  # Set the current real-time value of a database record field.
+  #
+  # @param [Symbol, String] column    Database field name.
+  # @param [Any]            new_value
+  #
+  # @return [Any]
+  #
+  # == Usage Notes
+  # If the record is already persisted, this is a direct write which does not
+  # trigger validations or callbacks.
+  #
+  def dynamic_set_field: ((Symbol|String) column, untyped new_value) -> untyped
 
+  # Set one or more database record fields in real-time.
+  #
+  # @param [Hash] values
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # If the record is already persisted, this is a direct write which does not
+  # trigger validations or callbacks.
+  #
   def dynamic_set_fields: (symHash values) -> void
 
+  # Indicate whether this record is involved in a workflow step related to
+  # the creation of a new EMMA entry.
+  #
   def being_created?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step related to
+  # the modification of an existing EMMA entry.
+  #
   def being_modified?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step related to
+  # the removal of an existing EMMA entry.
+  #
   def being_removed?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step related to
+  # the review process.
+  #
   def under_review?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step related to
+  # transmission to a member repository.
+  #
   def being_submitted?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step related to
+  # ingest into the EMMA Unified Index.
+  #
   def being_indexed?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step related to
+  # ingest into the EMMA Unified Index.
+  #
   def completed?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step which leads
+  # to a change in the associated EMMA index entry.
+  #
   def in_process?: () -> bool
 
+  # Indicate whether this record is involved in a workflow step where
+  # non-administrative data (EMMA or file data) could be changed.
+  #
   def unsealed?: () -> bool
 
+  # Indicate whether this record is *not* involved in a workflow step where
+  # non-administrative data (EMMA or file data) could be changed.
+  #
   def sealed?: () -> bool
 
-  def state_group: (?(String|Symbol)? target_state) -> Symbol
+  # Return the group of the given state.
+  #
+  # @param [String, Symbol] target_state  Default: `#active_state`.
+  #
+  # @return [Symbol]
+  #
+  def state_group: (?(String|Symbol|nil) target_state) -> Symbol
 
-  def self.state_group: (String|Symbol|nil target_state) -> Symbol
+  # Return the group of the given state.
+  #
+  # @param [String, Symbol, nil] target_state
+  #
+  # @return [Symbol]  Defaults to :create if *target_state* is invalid.
+  #
+  def self.state_group: ((String|Symbol|nil) target_state) -> Symbol
 
-  def self.state_group_label: (String|Symbol|nil group) -> (String | nil)
+  # Return the group of the given state.
+  #
+  # @param [String, Symbol, nil] group
+  #
+  # @return [String]
+  # @return [nil]                     If *group* is invalid.
+  #
+  def self.state_group_label: ((String|Symbol|nil) group) -> (String | nil)
 
   # Indicate whether this submission must be reviewed.
   #
@@ -126,8 +264,22 @@ module Upload::WorkflowMethods
   #
   def auto_reviewable?: () -> bool
 
+  # Start editing a record which is associated with an existing entry by
+  # copying the current :emma_data to :edit_emma_data.
+  #
+  # @param [Hash] opt                 Additional field values to update.
+  #
+  # @return [Boolean, nil]
+  #
   def begin_editing: (**untyped opt) -> (bool | nil)
 
+  # Finishing an editing session by updating fields with the information in
+  # :edit_file_data and/or :edit_emma_data.
+  #
+  # @param [Hash] opt                 Additional field values to update.
+  #
+  # @return [Boolean, nil]
+  #
   def finish_editing: (**untyped opt) -> (bool | nil)
 
   # Extra information communicated to the Upload form to support reverting      # NOTE: not relevant to Entry/Phase/Action.
@@ -137,12 +289,21 @@ module Upload::WorkflowMethods
   #
   attr_accessor revert_data: symHash
 
+  # @type [Array<Symbol>]
   REVERT_DATA_FIELDS: symArray
 
   REVERT_FIELDS:      symArray
   REVERT_EDIT_FIELDS: symArray
 
+  # Set @revert_data.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
   def set_revert_data: () -> symHash
 
+  # Safely get @revert_data.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
   def get_revert_data: () -> symHash
 end

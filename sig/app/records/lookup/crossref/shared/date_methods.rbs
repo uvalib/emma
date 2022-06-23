@@ -4,11 +4,41 @@ module Lookup::Crossref::Shared::DateMethods
   include Lookup::RemoteService::Shared::DateMethods
   include Lookup::Crossref::Shared::CommonMethods
 
-  def as_string:   () -> (String   | nil)
-  def to_date:     () -> (Date     | nil)
+  # Use the :date_time field if the including class defines it and it has data;
+  # otherwise combine :date_parts.
+  #
+  # @param [Hash] opt                 Passed to #get_date_value.
+  #
+  # @return [String]
+  #
+  def as_string: () -> (String   | nil)
+
+  # Use the :date_time field if the including class defines it and it has data;
+  # otherwise combine :date_parts.
+  #
+  # @param [Hash] opt                 Passed to #get_date_value.
+  #
+  # @return [Date, nil]
+  #
+  def to_date: () -> (Date     | nil)
+
+  # Use the :date_time field if the including class defines it and it has data;
+  # otherwise combine :date_parts.
+  #
+  # @param [Hash] opt                 Passed to #get_date_value.
+  #
+  # @return [DateTime, nil]
+  #
   def to_datetime: () -> (DateTime | nil)
 
-  def get_date_value: (Api::Record target, **untyped opt) -> (String | Array[Integer] | nil)
+  # Recursively find the DateTime or DatePart value.
+  #
+  # @param [Api::Record] target       Default: `self`.
+  # @param [Hash]        opt          Passed to #find_item/#find_items.
+  #
+  # @return [String, Array<Integer>, nil]
+  #
+  def get_date_value: (?target: Api::Record|nil, **untyped opt) -> (String | Array[Integer] | nil)
 
   class DatePart < Array[Integer]
     # @return [Integer]

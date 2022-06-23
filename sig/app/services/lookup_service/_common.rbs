@@ -5,6 +5,10 @@ module LookupService::Common
 
   include Emma::Debug
 
+  # Configuration for all external lookup services.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
   CONFIGURATION: Hash[Symbol,symHash]
 
   # Generate a list of PublicationIdentifiers.
@@ -14,7 +18,7 @@ module LookupService::Common
   #
   # @return [Array<PublicationIdentifier>]
   #
-  def id_list: (lookupItems|lookupItem|nil item, **untyped opt) -> lookupRequestItems
+  def id_list: ((lookupItems|lookupItem|nil) item, **untyped opt) -> lookupRequestItems
 
   # Analyze a string into individual items.
   #
@@ -22,7 +26,7 @@ module LookupService::Common
   #
   # @return [Array<String,PublicationIdentifier>]
   #
-  def id_split: (lookupItems|lookupItem|nil item) -> lookupItems
+  def id_split: ((lookupItems|lookupItem|nil) item) -> lookupItems
 
   # Transform a type/ID pair.
   #
@@ -30,14 +34,14 @@ module LookupService::Common
   # @param [PublicationIdentifier, String, nil]         id
   # @param [Boolean]                                    copy
   #
-  # @return [PublicationIdentifier]
+  # @return [PublicationIdentifier, nil]
   #
   def id_obj: (PublicationIdentifier `type`, ?untyped              id, ?copy: bool) -> PublicationIdentifier
             | (untyped               `type`, PublicationIdentifier id, ?copy: bool) -> PublicationIdentifier
             | (strArray              `type`, ?untyped              id, ?copy: bool) -> (PublicationIdentifier | nil)
             | (String|Symbol|nil     `type`, ?(String|nil)         id, ?copy: bool) -> (PublicationIdentifier | nil)
 
-  def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> void
+  def __debug_job: (*untyped args, **untyped opt) ?{ () -> untyped } -> void
 
   private
 

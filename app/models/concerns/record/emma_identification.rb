@@ -244,11 +244,8 @@ module Record::EmmaIdentification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]
+  # @return [ApplicationRecord<Model>, nil]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_record(item, no_raise: false, meth: nil, **opt)                      # NOTE: from UploadWorkflow::External#get_record
     return item if item.nil? || item.is_a?(record_class)
     meth  ||= __method__
@@ -256,7 +253,6 @@ module Record::EmmaIdentification
     id_key  = opt.key?(:id_key)  ? opt[:id_key]  : id_column
     sid_key = opt.key?(:sid_key) ? opt[:sid_key] : sid_column
     if id_key || sid_key
-      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       opt.reverse_merge!(id_term(item, **opt))
       id  = id_key  && (opt[id_key] || opt[alt_id_key(opt)])

@@ -9,12 +9,22 @@ module Record::Exceptions
   #
   # @type [Hash{Symbol=>(String,Class)}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   ENTRY_ERROR: Hash[Symbol,(String|Class)]
 
-  def failure: (Symbol|String|strArray|Exception|ExecReport|nil problem, ?(untyped|nil) value) -> void
+  # Raise an exception.
+  #
+  # If *problem* is a symbol, it is used as a key to #ENTRY_ERROR with *value*
+  # used for string interpolation.
+  #
+  # Otherwise, error message(s) are extracted from *problem*.
+  #
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [Any]                                                       value
+  #
+  # @raise [Record::SubmitError]
+  # @raise [ExecError]
+  #
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?(untyped|nil) value) -> void
 
   # Methods which are only appropriate if the including class is an
   # ApplicationRecord.
@@ -37,10 +47,7 @@ module Record::Exceptions
     #
     # @return [Record::Error]         New value of @exception.
     #
-    # -
-    # noinspection RubyNilAnalysis,RubyMismatchedArgumentType
-    # +
-    def set_error: (Class|Record::Error|Exception|nil error, **untyped opt) -> Record::Error
+    def set_error: ((Class|Record::Error|Exception|nil) error, **untyped opt) -> Record::Error
   end
 
   private
@@ -55,6 +62,13 @@ end
 class Record::Exceptions::FlashPart < FlashHelper::FlashPart
   include Record::Rendering
 
+  # A hook for treating the first part of a entry as special.
+  #
+  # @param [Any]  src
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer, String, nil]
+  #
   def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 end
 
@@ -75,5 +89,7 @@ end
 class Record::StatementInvalid < Record::Error
 end
 
+# Exception raised when a submission is incomplete or invalid.
+#
 class Record::SubmitError < Record::Error
 end

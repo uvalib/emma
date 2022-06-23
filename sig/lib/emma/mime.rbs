@@ -7,7 +7,7 @@ module Emma::Mime
   #
   # @param [String, Symbol] ext
   #
-  def known_extension?: (String|Symbol ext) -> bool
+  def known_extension?: ((String|Symbol) ext) -> bool
 
   # Given a file extension, return the associated MIME type.
   #
@@ -16,5 +16,5 @@ module Emma::Mime
   # @return [String]
   # @return [nil]
   #
-  def ext_to_mime: (String|Symbol ext) -> (String | nil)
+  def ext_to_mime: ((String|Symbol) ext) -> (String | nil)
 end

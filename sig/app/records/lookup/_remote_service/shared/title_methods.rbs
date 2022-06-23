@@ -6,22 +6,95 @@ module Lookup::RemoteService::Shared::TitleMethods
 
   # A unique identifier for this catalog title.
   #
-  # @return [String]
+  # @return [String, nil]
   #
   def identifier: () -> (String | nil)
 
-  def full_title:           (?Symbol? field) -> String
+  # The title and subtitle of this catalog title.
+  #
+  # @param [Symbol] field
+  #
+  # @return [String]
+  #
+  def full_title: (?(Symbol|nil) field) -> String
 
-  def publisher_name:       (?Symbol? field) -> (String | nil)
-  def publication_place:    (?Symbol? field) -> (String | nil)
-  def publication_date:     (?Symbol? field) -> (String | nil)
-  def publication_year:     (?Symbol? field) -> (String | nil)
+  # Name of publisher.
+  #
+  # @param [Symbol] field
+  #
+  # @return [String, nil]
+  #
+  def publisher_name: (?(Symbol|nil) field) -> (String | nil)
 
-  def series_type:          (?Symbol? field) -> (String | nil)
-  def series_volume:        (?Symbol? field) -> (String | nil)
-  def series_issue:         (?Symbol? field) -> (String | nil)
+  # The place of publication.
+  #
+  # @param [Symbol] field
+  #
+  # @return [String, nil]
+  #
+  def publication_place: (?(Symbol|nil) field) -> (String | nil)
 
-  def language_list:        (?Symbol? field) -> strArray
-  def subject_list:         (?Symbol? field) -> strArray
-  def description_list:     (?Symbol? field) -> strArray
+  # The date of publication.
+  #
+  # @param [Symbol] field
+  #
+  # @return [String, nil]
+  #
+  def publication_date: (?(Symbol|nil) field) -> (String | nil)
+
+  # The year of publication.
+  #
+  # @param [Symbol] field
+  #
+  # @return [String, nil]
+  #
+  def publication_year: (?(Symbol|nil) field) -> (String | nil)
+
+  # The type of work containing an article (if relevant).
+  #
+  # @param [Symbol] field
+  #
+  # @return [String, nil]
+  #
+  def series_type: (?(Symbol|nil) field) -> (String | nil)
+
+  # The volume of the journal containing an article (if relevant).
+  #
+  # @param [Symbol] field
+  #
+  # @return [String, nil]
+  #
+  def series_volume: (?(Symbol|nil) field) -> (String | nil)
+
+  # The issue of the journal containing an article (if relevant).
+  #
+  # @param [Symbol] field
+  #
+  # @return [String, nil]
+  #
+  def series_issue: (?(Symbol|nil) field) -> (String | nil)
+
+  # language_list
+  #
+  # @param [Symbol] field
+  #
+  # @return [Array<String>]
+  #
+  def language_list: (?(Symbol|nil) field) -> strArray
+
+  # subject_list
+  #
+  # @param [Symbol] field
+  #
+  # @return [Array<String>]
+  #
+  def subject_list: (?(Symbol|nil) field) -> strArray
+
+  # description_list
+  #
+  # @param [Symbol] field
+  #
+  # @return [Array<String>]
+  #
+  def description_list: (?(Symbol|nil) field) -> strArray
 end

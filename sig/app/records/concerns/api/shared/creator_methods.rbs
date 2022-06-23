@@ -60,10 +60,10 @@ module Api::Shared::CreatorMethods
   # All contributor(s) to this catalog title, stripping terminal punctuation
   # from each name where appropriate.
   #
-  # @param [Symbol]      field
-  # @param [Api::Record] target       Default: `self`.
+  # @param [Symbol] field
+  # @param [Hash]   opt               Passed to #get_values.
   #
   # @return [Array<String>]
   #
-  def contributor_list: (?field: Symbol, ?target: Api::Record?) -> strArray
+  def contributor_list: (?field: Symbol, **untyped opt) -> strArray
 end

@@ -1,18 +1,18 @@
 # View helper methods supporting the creation of forms.
 #
 module FormHelper
-  # Generate a hidden <input> which indicates a parameter for the new search
+  # Generate a hidden '<input>' which indicates a parameter for the new search
   # URL that will result from the associated facet value being removed from the
   # current search.
   #
   # @param [Symbol, String]      k
-  # @param [String, Array]       v
+  # @param [String, Array, nil]  v
   # @param [Symbol, String, nil] id
   # @param [String]              separator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def hidden_input: (Symbol|String k, (String|anyArray)? v, ?id: (Symbol|String)?, ?separator: String) -> ActiveSupport::SafeBuffer
+  def hidden_input: ((Symbol|String) k, (String|anyArray|nil) v, ?id: Symbol|String|nil, ?separator: String) -> ActiveSupport::SafeBuffer
 
   # Create sets of hidden fields to accompany the *id* field.
   #
@@ -28,10 +28,7 @@ module FormHelper
   #
   # @return [Array<(Array,Array)>]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def hidden_parameters_for: (Symbol|String|nil id, anyHash fields) -> [Array[ActiveSupport::SafeBuffer], Array[ActiveSupport::SafeBuffer]]
+  def hidden_parameters_for: ((Symbol|String|nil) id, anyHash fields) -> [Array[ActiveSupport::SafeBuffer], Array[ActiveSupport::SafeBuffer]]
 
   private
 

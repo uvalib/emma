@@ -98,7 +98,7 @@ class Api::Error < ExecError
     #
     # @return [String]
     #
-    def service_name: (?source: (Symbol|String)?) -> String
+    def service_name: (?source: Symbol|String|nil) -> String
 
     # Default error message for the current instance based on the name of its
     # class.
@@ -113,7 +113,7 @@ class Api::Error < ExecError
     #
     # @see file:config/locales/error.en.yml *en.emma.error.api*
     #
-    def default_message: (?source: (Symbol|String)?, ?type: (Symbol|String)?, ?allow_nil: bool) -> (String | nil)
+    def default_message: (?source: Symbol|String|nil, ?type: Symbol|String|nil, ?allow_nil: bool) -> (String | nil)
 
     private
 

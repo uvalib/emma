@@ -310,7 +310,6 @@ class UploadController < ApplicationController
     opt   = { start_state: :removing, event: :submit, variant: :remove }
     @list = wf_single(rec: rec, data: dat, **opt)
     failure(:file_id) unless @list.present?
-    # noinspection RubyMismatchedArgumentType
     post_response(:found, @list, redirect: back)
   rescue SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
@@ -712,7 +711,7 @@ class UploadController < ApplicationController
 
   protected
 
-  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
   # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
@@ -730,9 +729,6 @@ class UploadController < ApplicationController
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def show_search_failure(error, fallback = nil, meth: nil)
     meth ||= calling_method
     if modal?

@@ -5,7 +5,6 @@
 #   @return [User]
 #
 class AccountDecorator < BaseDecorator
-
   module Paths
     include BaseDecorator::Paths
 
@@ -30,6 +29,10 @@ class AccountDecorator < BaseDecorator
     #
     def model_form_fields: () -> Hash[Symbol, symHash]
 
+    # Control icon definitions.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+    #
     CONTROL_ICONS: Hash[Symbol, symHash]
 
     # Control icon definitions.
@@ -47,8 +50,8 @@ class AccountDecorator < BaseDecorator
     #
     def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
 
-    EMAIL_FIELD_READONLY: String
-    PASSWORD_PLACEHOLDER: String
+    EMAIL_FIELD_READONLY:    String
+    PASSWORD_PLACEHOLDER:    String
     MINIMUM_PASSWORD_LENGTH: Integer | nil
     MAXIMUM_PASSWORD_LENGTH: Integer | nil
   end
@@ -65,6 +68,9 @@ class AccountDecorator < BaseDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
@@ -81,9 +87,9 @@ class AccountDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]         value
-  # @param [Symbol, nil] field        Unused here.
-  # @param [Hash]        opt          Passed to super or #roles.
+  # @param [Any]       value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to the render method or super.
   #
   # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If *value* or *object* is *nil*.
@@ -118,20 +124,20 @@ class AccountDecorator < BaseDecorator
   #
   # @see #model_field_values
   #
-  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Hash, nil]  pairs         Additional field mappings.
-  # @param [Hash]       opt           Passed to super
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # table_columns
   #
-  # @param [Hash] opt                 Passed to super
+  # @param [Hash] opt
   #
   # @return [Hash]
   #
@@ -146,8 +152,8 @@ class AccountDecorator < BaseDecorator
 
   # Specified field selections from the given User instance.
   #
-  # @param [User, Hash, nil] item     Default: `#object`
-  # @param [Hash]            opt      Passed to super
+  # @param [User, Hash, nil] item     Default: `#object`.
+  # @param [Hash]            opt      Passed to super.
   #
   # @return [Hash{String=>ActiveSupport::SafeBuffer}]
   #
@@ -159,16 +165,65 @@ class AccountDecorator < BaseDecorator
   #
   def items_menu_prompt: () -> String
 
+  # Render pre-populated form fields, manually adding password field(s) (which
+  # are not in "emma.account.record") and overriding the :effective_id field
+  # (which is) for the administrator to set/modify the effective Bookshare
+  # account associated with the EMMA account.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #render_form_fields.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def form_fields: (?pairs: anyHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  def render_form_email:    (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  # render_form_email
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_form_email: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  # render_form_password
+  #
+  # @param [String] name
+  # @param [Any]    value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def render_form_password: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   DEFAULT_BOOKSHARE_ENTRY: String
 
+  # Generate data for :effective_id rendered as a menu instead of a fixed
+  # value.
+  #
+  # @param [Integer, nil] selected    Default: `object.effective_id`
+  # @param [String, nil]  default
+  #
+  # @return [Hash]
+  #
   def bookshare_user_menu: (?selected: Integer|nil, ?default: String|nil) -> symHash
 
-  def min_length_note:       (?(String|nil) note, ?(Integer|nil) min, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-  def current_password_note: (?(String|nil) note,                     **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  # min_length_note
+  #
+  # @param [String, nil] note
+  # @param [Integer, nil] min
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def min_length_note: (?(String|nil) note, ?min: Integer|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
+  # current_password_note
+  #
+  # @param [String, nil] note
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def current_password_note: (?(String|nil) note, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 end

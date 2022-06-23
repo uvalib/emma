@@ -82,7 +82,7 @@ module CachingMiddleware
     #
     # @return [Numeric]
     #
-    def expiration: (?Faraday::Env? _env) -> ActiveSupport::Duration
+    def expiration: (?(Faraday::Env|nil) _env) -> ActiveSupport::Duration
 
     # request_url
     #
@@ -106,9 +106,6 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] env
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
     def cacheable?: (Faraday::Env env) -> bool
 
     # Does the request/response indicate that it holds a completed response.

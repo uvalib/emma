@@ -46,9 +46,6 @@ module UploadWorkflow::Errors
   #
   # @type [Hash{Symbol=>(String,Class)}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   UPLOAD_ERROR: Hash[Symbol,(String|Class)]
 
   module RenderMethods
@@ -58,6 +55,13 @@ module UploadWorkflow::Errors
     #
     DEFAULT_LABEL: String
 
+    # Show the submission ID if it can be determined for the given item(s).
+    #
+    # @param [Api::Record, Upload, Hash, String, Any] item
+    # @param [String]                                 default
+    #
+    # @return [String]
+    #
     def make_label: (untyped item, ?default: String) -> String
 
     private
@@ -72,6 +76,13 @@ module UploadWorkflow::Errors
   class FlashPart < FlashHelper::FlashPart
     include UploadWorkflow::Errors::RenderMethods
 
+    # A hook for treating the first part of a entry as special.
+    #
+    # @param [Any]  src
+    # @param [Hash] opt
+    #
+    # @return [String, ActiveSupport::SafeBuffer, nil]
+    #
     def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
   end
 
@@ -80,9 +91,24 @@ module UploadWorkflow::Errors
   class SubmitError < ExecError
   end
 
+  # Raise an exception.
+  #
+  # If *problem* is a symbol, it is used as a key to #UPLOAD_ERROR with *value*
+  # used for string interpolation.
+  #
+  # Otherwise, error message(s) are extracted from *problem*.
+  #
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [Any, nil]                                                  value
+  #
+  # @raise [UploadWorkflow::SubmitError]
+  # @raise [ExecError]
+  #
   def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
 end
 
+# Workflow properties that can be set via URL parameters.
+#
 module UploadWorkflow::Properties
   #include Workflow::Base::Properties
   include UploadWorkflow::Errors
@@ -214,14 +240,29 @@ module UploadWorkflow::Properties
   #
   BATCH_SIZE: Integer
 
+  # URL parameter names and default values.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
   WF_PARAMETER_DEFAULT: symHash
-  WF_METHOD_MAP:        Hash[Symbol,Symbol]
-  WF_PARAMETER_MAP:     Hash[Symbol,Symbol]
+
+  # Module method mapped to URL parameter.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_METHOD_MAP: Hash[Symbol,Symbol]
+
+  # URL parameter mapped to module method.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  WF_PARAMETER_MAP: Hash[Symbol,Symbol]
 
   # A string added to the start of each title.
   #
   # @return [String]                  Value to prepend to title.
   # @return [FalseClass]              No prefix should be used.
+  # @return [nil]                     No prefix is defined.
   #
   # @see #TITLE_PREFIX
   #
@@ -284,7 +325,7 @@ module UploadWorkflow::Properties
   #
   def repo_remove: () -> bool
 
-  # Handle bulk uploads in batches.
+  # Handle bulk operations in batches.
   #
   # If this is disabled, the method returns *false*; otherwise it returns the
   # batch size.
@@ -302,12 +343,15 @@ module UploadWorkflow::Properties
   #
   # @return [Hash{Symbol=>Any}]
   #
+  # @see Upload::Options#model_params
+  # @see Workflow::Base::Properties#parameters
+  #
   def parameters: () -> symHash
 
   # Extract the named URL parameter from *params*.
   #
   # @param [Symbol]    key            URL parameter name.
-  # @param [Hash, nil] params         Default: `#parameters`.
+  # @param [Hash, nil] prm            Default: `#parameters`.
   #
   # @return [Boolean]
   #
@@ -332,24 +376,131 @@ module UploadWorkflow::External
 
   include ExecReport::Constants
 
+  # Current AWS API service instance.
+  #
+  # @return [AwsS3Service]
+  #
   def aws_api: () -> AwsS3Service
 
+  # Current Ingest API service instance.
+  #
+  # @return [IngestService]
+  #
   def ingest_api: () -> IngestService
 
+  # Indicate whether the item represents an EMMA repository entry (as opposed
+  # to a member repository entry).
+  #
+  # @param [Upload, String, #emma_repository, #emma_recordId, Any] item
+  #
+  # @see Upload#valid_sid?
+  # @see Upload#emma_native?
+  #
   def emma_item?: (untyped item) -> bool
 
+  # Indicate whether the item does not represent an existing EMMA entry.
+  #
+  # @param [Model, String, Any] item
+  #
   def incomplete?: (untyped item) -> bool
 
-  def upload_create: (?index: bool?, ?atomic: bool, **untyped data) -> ([Upload, []] | [nil, Array[String|UploadWorkflow::Errors::FlashPart]])
+  # Add a new submission to the database, upload its file to storage, and add
+  # a new index entry for it (if explicitly requested).
+  #
+  # @param [Boolean] index            If *true*, update index.
+  # @param [Boolean] atomic           Passed to #add_to_index.
+  # @param [Hash]    data             @see Upload#assign_attributes.
+  #
+  # @return [Array<(Upload,Array)>]   Record instance; zero or more messages.
+  # @return [Array<(nil,Array)>]      No record; one or more error messages.
+  #
+  # @see #db_insert
+  # @see #add_to_index
+  #
+  # == Implementation Notes
+  # Compare with UploadWorkflow::Bulk::External#bulk_upload_create
+  #
+  def upload_create: (?index: bool|nil, ?atomic: bool, **untyped data) -> ([Upload, []] | [nil, Array[String|UploadWorkflow::Errors::FlashPart]])
 
-  def upload_edit: (?index: bool?, ?atomic: bool, **untyped data) -> ([Upload, []] | [nil, Array[String|UploadWorkflow::Errors::FlashPart]])
+  # Update an existing database record and update its associated index entry
+  # (if explicitly requested).
+  #
+  # @param [Boolean] index            If *true*, update index.
+  # @param [Boolean] atomic           Passed to #update_in_index.
+  # @param [Hash]    data             @see Upload#assign_attributes
+  #
+  # @return [Array<(Upload,Array)>]   Record instance; zero or more messages.
+  # @return [Array<(nil,Array)>]      No record; one or more error messages.
+  #
+  # @see #db_update
+  # @see #update_in_index
+  #
+  # == Implementation Notes
+  # Compare with UploadWorkflow::Bulk::External#bulk_upload_edit
+  #
+  def upload_edit: (?index: bool|nil, ?atomic: bool, **untyped data) -> ([Upload, []] | [nil, Array[String|UploadWorkflow::Errors::FlashPart]])
 
-  def upload_remove: (*(Upload|String|Array[Upload|String]) items, ?index: bool?, ?atomic: bool, ?force: bool?, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+  # Remove Upload records from the database and from the index.
+  #
+  # @param [Array<Upload,String,Array>] items   @see #collect_records
+  # @param [Boolean]                    index   *false* -> no index update
+  # @param [Boolean]                    atomic  *true* == all-or-none
+  # @param [Boolean]                    force   Force removal of index entries
+  #                                               even if the related database
+  #                                               entries do not exist.
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
+  # @see #remove_from_index
+  #
+  # == Usage Notes
+  # Atomicity of the record removal phase rests on the assumption that any
+  # database problem(s) would manifest with the very first destruction attempt.
+  # If a later item fails, the successfully-destroyed items will still be
+  # removed from the index.
+  #
+  def upload_remove: (*(Upload|String|Array[Upload|String]) items, ?index: bool|nil, ?atomic: bool, ?force: bool|nil, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
 
-  def batch_upload_remove: (Array[Upload|symHash|String|Integer] ids, ?index: bool?, ?atomic: bool, ?force: bool?, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+  # Bulk removal.
+  #
+  # @param [Array<String,Integer,Hash,Upload>] ids
+  # @param [Boolean] index            If *false*, do not update index.
+  # @param [Boolean] atomic           If *false*, do not stop on failure.
+  # @param [Boolean] force            Default: `#force_delete`.
+  # @param [Hash]    opt              Passed to #upload_remove via
+  #                                     #batch_upload_operation.
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
+  # @see UploadWorkflow::External#upload_remove
+  #
+  def batch_upload_remove: (Array[Upload|symHash|String|Integer] ids, ?index: bool|nil, ?atomic: bool, ?force: bool|nil, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
 
-  def batch_upload_operation: (Symbol op, Array[Upload|symHash|String|Integer] items, ?size: (Integer|bool)?, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
+  # Process *entries* in batches by calling *op* on successive subsets.
+  #
+  # If *size* is *false* or negative, then *entries* is processed as a single
+  # batch.
+  #
+  # If *size* is *true* or zero or missing, then *entries* is processed in
+  # batches of the default #BATCH_SIZE.
+  #
+  # @param [Symbol]                            op
+  # @param [Array<String,Integer,Hash,Upload>] items
+  # @param [Integer, Boolean]                  size     Default: #BATCH_SIZE.
+  # @param [Hash]                              opt
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
+  def batch_upload_operation: (Symbol op, Array[Upload|symHash|String|Integer] items, ?size: Integer|bool|nil, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
 
+  # Release the current thread to the scheduler.
+  #
+  # @param [Integer]       counter    Iteration counter.
+  # @param [Integer]       frequency  E.g., '3' indicates every third iteration
+  # @param [Float,Boolean] pause      Default: `#THROTTLE_PAUSE`.
+  #
+  # @return [void]
+  #
   def throttle: (Integer counter, ?frequency: Integer, ?pause: Float|bool) -> void
 
   # The database ID for the item, or, failing that, the submission ID.
@@ -359,7 +510,7 @@ module UploadWorkflow::External
   # @return [String]                  Record :id or :submission_id.
   # @return [nil]                     No identifier could be determined.
   #
-  def identifier: (Upload|symHash|String item) -> (String | nil)
+  def identifier: ((Upload|symHash|String) item) -> (String | nil)
 
   # Return an array of the characteristic identifiers for the item.
   #
@@ -367,18 +518,69 @@ module UploadWorkflow::External
   #
   # @return [Array<String>]
   #
-  def identifiers: (Upload|symHash|String item) -> strArray
+  def identifiers: ((Upload|symHash|String) item) -> strArray
 
-  def get_record: (Upload|symHash|String|nil id, ?no_raise: bool, ?meth: Symbol?) -> (Upload | nil)
+  # Return with the specified record or *nil* if one could not be found.
+  #
+  # @param [String, Hash, Upload, nil] id
+  # @param [Boolean]        no_raise  If *true*, do not raise exceptions.
+  # @param [Symbol]         meth      Calling method (for logging).
+  #
+  # @raise [UploadWorkflow::SubmitError]  If *item* not found and !*no_raise*.
+  #
+  # @return [Upload]                  The item; from the database if necessary.
+  # @return [nil]                     If *item* not found and *no_raise*.
+  #
+  def get_record: ((Upload|symHash|String|nil) id, ?no_raise: bool, ?meth: Symbol|nil) -> (Upload | nil)
 
+  # Find all of the specified Upload records.
+  #
+  # @param [Array<Upload,String,Array>] items
+  # @param [Hash]                       opt     Passed to #collect_records.
+  #
+  # @return [Array<Upload>]
+  #
   def find_records: (*(Upload|String|Array[Upload|String]) items, **untyped opt) -> Array[Upload]
 
-  def new_record: (?(Upload|symHash)? data) -> Upload
+  # Create a new free-standing (un-persisted) Upload instance.
+  #
+  # @param [Hash, Upload, nil] data        Passed to Upload#initialize.
+  #
+  # @return [Upload]
+  #
+  # @see #add_title_prefix
+  #
+  def new_record: (?(Upload|symHash|nil) data) -> Upload
 
-  def collect_records: (*(Upload|String|Array[Upload|String]) items, ?all: bool, force: true,  **untyped opt) -> [Array[Upload|String], []]
+  # Transform a mixture of Upload objects and record identifiers into a list of
+  # Upload objects.
+  #
+  # @param [Array<Upload,String,Array>] items   @see Upload#expand_ids
+  # @param [Boolean]                    all     If *true*, empty *items* is OK.
+  # @param [Boolean]                    force   See Usage Notes
+  # @param [Hash]                       opt     Passed to Upload#get_records.
+  #
+  # @raise [StandardException] If *all* is *true* and *items* were supplied.
+  #
+  # @return [Array<(Array<Upload>,Array)>]      Upload records and failed ids.
+  # @return [Array<(Array<Upload,String>,[])>]  If *force* is *true*.
+  #
+  # == Usage Notes
+  # If *force* is true, the returned list of failed records will be empty but
+  # the returned list of items may contain a mixture of Upload and String
+  # elements.
+  #
+  def collect_records: (*(Upload|String|Array[Upload|String]) items, ?all: bool,  force: true, **untyped opt) -> [Array[Upload|String], []]
                      | (*(Upload|String|Array[Upload|String]) items, ?all: bool, ?force: bool, **untyped opt) -> [Array[Upload], Array[String|UploadWorkflow::Errors::FlashPart]]
 
-  def add_title_prefix: (Upload record, ?prefix: String) -> void
+  # If a prefix was specified, apply it to the record's title.
+  #
+  # @param [Upload] record
+  # @param [String] prefix
+  #
+  # @return [void]
+  #
+  def add_title_prefix: (Upload record, prefix: String) -> void
 
   # Upload file via Shrine.                                                     # NOTE: to Record::Uploadable#upload_file
   #
@@ -392,11 +594,32 @@ module UploadWorkflow::External
   #
   def upload_file: (**untyped opt) -> httpResult
 
-  def db_insert: (Upload|symHash data) -> Upload
+  # Add a single Upload record to the database.
+  #
+  # @param [Upload, Hash] data        @see Upload#assign_attributes.
+  #
+  # @return [Upload]
+  #
+  def db_insert: ((Upload|symHash) data) -> Upload
 
-  def db_update: (Upload|symHash|String record, ?(symHash|nil) data) -> (Upload | nil)
+  # Modify a single existing Upload database record.
+  #
+  # @param [Upload, Hash, String] record
+  # @param [Hash, nil]            data
+  #
+  # @return [Upload]                  The provided or located record.
+  # @return [nil]                     If the record was not found or updated.
+  #
+  def db_update: ((Upload|symHash|String) record, ?(symHash|nil) data) -> (Upload | nil)
 
-  def db_delete: (Upload|symHash|String data) -> (untyped | nil)
+  # Remove a single existing Upload record from the database.
+  #
+  # @param [Upload, Hash, String] data
+  #
+  # @return [Any]
+  # @return [nil]                     If the record was not found or removed.
+  #
+  def db_delete: ((Upload|symHash|String) data) -> (untyped | nil)
 
   # As a convenience for testing, sending to the Federated Search Ingest API    # NOTE: to Record::Submittable::IndexIngestMethods
   # can be short-circuited here.  The value should be *false* normally.
@@ -405,10 +628,39 @@ module UploadWorkflow::External
   #
   DISABLE_UPLOAD_INDEX_UPDATE: bool
 
+  # Add the indicated items from the EMMA Unified Index.
+  #
+  # @param [Array<Upload>] items
+  # @param [Boolean]       atomic
+  #
+  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  #
+  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+  #                                         msgs, and records to roll back.
+  #
   def add_to_index: (*Upload items, ?atomic: bool) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
 
+  # Add/modify the indicated items from the EMMA Unified Index.
+  #
+  # @param [Array<Upload>] items
+  # @param [Boolean]       atomic
+  #
+  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  #
+  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+  #                                         msgs, and records to roll back.
+  #
   def update_in_index: (*Upload items, ?atomic: bool) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
 
+  # Remove the indicated items from the EMMA Unified Index.
+  #
+  # @param [Array<Upload, String>] items
+  # @param [Boolean]               atomic
+  #
+  # @raise [Api::Error] @see IngestService::Request::Submissions#delete_records
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
   def remove_from_index: (*(Upload|String) items, ?atomic: bool) -> [Array[Upload|String], Array[UploadWorkflow::Errors::FlashPart]]
 
   def skip_index_ingest: (Symbol meth, *(Upload|String) items) -> untyped
@@ -419,8 +671,8 @@ module UploadWorkflow::External
   # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
   # @param [Array<Upload, String>]                                   items
   #
-  # @return [Array<(Array,Array,Array)>]     Succeeded records, failed item messages,
-  #                                     and records to roll back.
+  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+  #                                         msgs, and records to roll back.
   #
   # @see ExecReport#error_table
   #
@@ -429,9 +681,19 @@ module UploadWorkflow::External
   # of errors by index, errors by submission ID, and/or general errors, but
   # this method was written to be able to cope with the possibility.
   #
-  def process_ingest_errors: (Ingest::Message::Response|Hash[(String|Integer),String] result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
+  def process_ingest_errors: ((Ingest::Message::Response|Hash[(String|Integer),String]) result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
 
-  def normalize_index_items: (*(Upload|String|Array[Upload|String]) items, ?meth: Symbol?, ?max: Integer) -> Array[Upload|String]
+  # Return a flatten array of items.
+  #
+  # @param [Array<Upload, String, Array>] items
+  # @param [Symbol, nil]                  meth    The calling method.
+  # @param [Integer]                      max     Maximum number to ingest.
+  #
+  # @raise [SubmitError] If the number of items is too large to be ingested.
+  #
+  # @return [Array]
+  #
+  def normalize_index_items: (*(Upload|String|Array[Upload|String]) items, ?meth: Symbol|nil, ?max: Integer) -> Array[Upload|String]
 
   # Failure messages for member repository requests. # TODO: I18n               # NOTE: to Record::Submittable::MemberRepositoryMethods
   #
@@ -439,12 +701,47 @@ module UploadWorkflow::External
   #
   REPO_FAILURE: Hash[Symbol,String]
 
+  # Submit a new item to a member repository.
+  #
+  # @param [Array<Upload>] items
+  # @param [Hash]          opt
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
   def repository_create: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
+  # Submit a request to a member repository to modify the metadata and/or
+  # file of a previously-submitted item.
+  #
+  # @param [Array<Upload>] items
+  # @param [Hash]          opt
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
+  # @note This capability is not yet supported by any member repository.
+  #
   def repository_modify: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
+  # Request deletion of a prior submission to a member repository.
+  #
+  # @param [Array<String,Upload>] items
+  # @param [Hash]                 opt
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
+  # @note This capability is not yet supported by any member repository.
+  #
   def repository_remove: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
+  # Remove request(s) from a member repository queue.
+  #
+  # @param [Array<String,Model>] items
+  # @param [Hash]                opt
+  #
+  # @option opt [String] :repo      Required for String items.
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
   def repository_dequeue: (*(String|Model) items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
   # Interpret error message(s) generated by AWS S3.                            # NOTE: to Record::Submittable::MemberRepositoryMethods
@@ -452,17 +749,85 @@ module UploadWorkflow::External
   # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
   # @param [Array<String, Upload>]                                  items
   #
-  # @return [Array<(Array,Array)>]           Succeeded items and failed item messages.
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #
   # @see ExecReport#error_table
   #
-  def process_aws_errors: (AwsS3::Message::Response|Hash[(String|Integer),String] result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+  def process_aws_errors: ((AwsS3::Message::Response|Hash[(String|Integer),String]) result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  def repository_removals: (symHash|Array[Upload|String]|nil items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+  # Send removal request(s) to member repositories.
+  #
+  # @param [Hash, Array] items
+  # @param [Hash]        opt          Passed to #repository_remove.
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload repository_removals(requests, **opt)
+  #   @param [Hash{Symbol=>Array}]              requests
+  #   @param [Hash]                             opt
+  #   @return [Array<(Array,Array)>]
+  #
+  # @overload repository_removals(items, **opt)
+  #   @param [Array<String,#emma_recordId,Any>] items
+  #   @param [Hash]                             opt
+  #   @return [Array<(Array,Array)>]
+  #
+  def repository_removals: ((symHash|Array[Upload|String]|nil) items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  def repository_dequeues: (symHash|Array[Upload|String]|nil items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
+  # Remove request(s) from member repository queue(s).
+  #
+  # @param [Hash, Array] items
+  # @param [Hash]        opt        Passed to #repository_remove.
+  #
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload repository_dequeues(requests, **opt)
+  #   @param [Hash{Symbol=>Array}]              requests
+  #   @param [Hash]                             opt
+  #   @return [Array<(Array,Array)>]
+  #
+  # @overload repository_dequeues(items, **opt)
+  #   @param [Array<String,#emma_recordId,Any>] items
+  #   @param [Hash]                             opt
+  #   @return [Array<(Array,Array)>]
+  #
+  def repository_dequeues: ((symHash|Array[Upload|String]|nil) items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  def repository_requests: (symHash|Array[Upload|String]|nil items, ?empty_key: bool) -> Hash[String,Array[Upload]]
+  # Transform items into arrays of requests per repository.
+  #
+  # @param [Hash, Array, Upload] items
+  # @param [Boolean]             empty_key  If *true*, allow invalid items.
+  #
+  # @return [Hash{String=>Array<Upload>}]   One or more requests per repo.
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload repository_requests(hash, empty_key: false)
+  #   @param [Hash{String=>Upload,Array<Upload>}] hash
+  #   @param [Boolean]                            empty_key
+  #   @return [Hash{String=>Array<Upload>}]
+  #
+  # @overload repository_requests(requests, empty_key: false)
+  #   @param [Array<String,Upload,Any>]           requests
+  #   @param [Boolean]                            empty_key
+  #   @return [Hash{String=>Array<Upload>}]
+  #
+  # @overload repository_requests(request, empty_key: false)
+  #   @param [Upload]                             request
+  #   @param [Boolean]                            empty_key
+  #   @return [Hash{String=>Array<Upload>}]
+  #
+  def repository_requests: ((symHash|Array[Upload|String]|nil) items, ?empty_key: bool) -> Hash[String,Array[Upload]]
 end
 
 # Workflow execution status information.

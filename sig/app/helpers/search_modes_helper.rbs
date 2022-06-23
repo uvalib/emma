@@ -38,9 +38,9 @@ module SearchModesHelper
   #
   DEFAULT_RESULTS: Symbol
 
-  @immediate_search: Symbol?
-  @results_type:     Symbol?
-  @search_style:     Symbol?
+  @immediate_search: Symbol | nil
+  @results_type:     Symbol | nil
+  @search_style:     Symbol | nil
 
   # Indicate whether selecting a search menu value takes immediate effect.
   #
@@ -106,7 +106,7 @@ module SearchModesHelper
   #
   # @param [Array<Symbol,String>, Symbol, String, Boolean, nil] guard
   #
-  def permitted_by?: (Array[Symbol|String]|Symbol|String|bool|nil guard) -> bool
+  def permitted_by?: ((Array[Symbol|String]|Symbol|String|bool|nil) guard) -> bool
 
   # Normalize :active property values for use by #permitted_by?.
   #
@@ -114,7 +114,7 @@ module SearchModesHelper
   #
   # @return [TrueClass, FalseClass, Array<Symbol>]
   #
-  def self.guard_values: (Array[Symbol|String]|Symbol|String|bool|nil val) -> (symArray | bool)
+  def self.guard_values: ((Array[Symbol|String]|Symbol|String|bool|nil) val) -> (symArray | bool)
 
   # Get the display style variant for search results.
   #

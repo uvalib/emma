@@ -1,8 +1,9 @@
-# View helper methods supporting display of Model instances (both database
-# items and API messages).
+# Methods supporting display of individual Model instances.
 #
 module BaseDecorator::List
   include BaseDecorator::Fields
+
+  include BaseDecorator::Pagination
 
   # The CSS class wrapping label/values pairs (if any).
   #
@@ -35,7 +36,7 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_field_values: (?pairs: anyHash?, ?action: String|Symbol|nil, ?row_offset: Integer?, ?separator: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_field_values: (?pairs: anyHash|nil, ?action: String|Symbol|nil, ?row_offset: Integer|nil, ?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single label/value pair.
   #
@@ -44,12 +45,13 @@ module BaseDecorator::List
   # @param [Hash, nil]           prop       Default: from field/model.
   # @param [Symbol, nil]         field
   # @param [String, Integer]     index      Offset to make unique element IDs.
-  # @param [Integer, nil]        row        Display row.
+  # @param [Integer]             row        Display row.
   # @param [String, nil]         separator  Between parts if *value* is array.
   # @param [String, nil]         wrap       Class for outer wrapper.
   # @param [Hash]                opt        Passed to each #html_div except:
   #
   # @option opt [Symbol, Array<Symbol>] :no_format
+  # @option opt [Boolean]               :no_code
   #
   # @return [ActiveSupport::SafeBuffer]     HTML label and value elements.
   # @return [nil]                           If *value* is blank.
@@ -58,11 +60,12 @@ module BaseDecorator::List
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
-  def render_pair: (String|Symbol|nil label, untyped? value, ?prop: symHash?, ?field: Symbol?, ?index: String|Integer|nil, ?row: Integer, ?separator: String?, ?wrap: String?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def render_pair: ((String|Symbol|nil) label, (untyped|nil) value, ?prop: symHash|nil, ?field: Symbol|nil, ?index: String|Integer|nil, ?row: Integer, ?separator: String|nil, ?wrap: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
+  # Displayed in place of a results list. # TODO: I18n
+  #
+  # @type [String]
+  #
   NO_RESULTS: String
 
   # An indicator that can be used to stand for an empty list.
@@ -100,7 +103,7 @@ module BaseDecorator::List
   # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If executed method returned *nil*.
   #
-  def execute: (Model|symHash|nil item, String|Symbol m, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
+  def execute: ((Model|symHash|nil) item, (String|Symbol) m, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
 
   # Render a metadata listing of a model instance.
   #
@@ -111,7 +114,7 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: anyHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: anyHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # details_element
   #
@@ -122,7 +125,7 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_element: (level: Integer?, role: String|Symbol|nil, **untyped opt) { () -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+  def details_element: (level: Integer|nil, role: String|Symbol|nil, **untyped opt) { () -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
 
   # A complete list item entry.
   #
@@ -166,7 +169,7 @@ module BaseDecorator::List
   # @yieldparam  [Integer] offset     The effective page offset.
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def list_item_number: (index: Integer, ?offset: Integer?, ?level: Integer?, ?group: String?, ?row: Integer?, ?inner: (bool|String|strArray)? inner, ?outer: (bool|String|strArray)?, **untyped opt) { (Integer, Integer) -> Array[ActiveSupport::SafeBuffer] } -> ActiveSupport::SafeBuffer
+  def list_item_number: (index: Integer, ?offset: Integer|nil, ?level: Integer|nil, ?group: String|nil, ?row: Integer|nil, ?inner: (bool|String|strArray|nil) inner, ?outer: (bool|String|strArray|nil), **untyped opt) { (Integer, Integer) -> Array[ActiveSupport::SafeBuffer] } -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
@@ -178,10 +181,7 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # -
-  # noinspection RailsParamDefResolve
-  # +
-  def list_item: (?pairs: anyHash?, ?render: Symbol?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: anyHash|nil, ?render: Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Thumbnail element for the given catalog title.
   #
@@ -189,14 +189,14 @@ module BaseDecorator::List
   #                                         the show page for the item.
   # @param [Boolean]         placeholder  If *false*, return *nil* if an image
   #                                         could not be determined.
-  # @param [Hash]            opt          Passed to #image_element except:
+  # @param [Hash]            opt          To ImageHelper#image_element except:
   #
   # @option opt [Symbol] :meth            Passed to #get_thumbnail_image
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def thumbnail: (?link: bool|String, ?placeholder: true, **untyped opt) -> ActiveSupport::SafeBuffer
-               | (?link: bool|String, placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def thumbnail: (?link: bool|String, ?placeholder: true,  **untyped opt) -> ActiveSupport::SafeBuffer
+               | (?link: bool|String,  placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Cover image element for the given catalog title.
   #
@@ -204,22 +204,19 @@ module BaseDecorator::List
   #                                         the show page for the item.
   # @param [Boolean]         placeholder  If *false*, return *nil* if an image
   #                                         could not be determined.
-  # @param [Hash]            opt          Passed to #image_element except:
+  # @param [Hash]            opt          To ImageHelper#image_element except:
   #
   # @option opt [Symbol] :meth            Passed to #get_cover_image
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def cover: (?link: bool|String, ?placeholder: true, **untyped opt) -> ActiveSupport::SafeBuffer
-           | (?link: bool|String, placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def cover: (?link: bool|String, ?placeholder: true,  **untyped opt) -> ActiveSupport::SafeBuffer
+           | (?link: bool|String,  placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate a standardized (base) element identifier from the object.
   #
   # @return [String]
   #
-  # -
-  # noinspection RailsParamDefResolve
-  # +
   def model_item_id: (*untyped) ?{ () -> untyped } -> String
 
   # All :emma_titleId value(s) associated with the object.
@@ -240,7 +237,7 @@ module BaseDecorator::List
   #
   # @return [String, nil]
   #
-  def get_thumbnail_image: (?meth: Symbol?) -> (String | nil)
+  def get_thumbnail_image: (?meth: Symbol|nil, **untyped) -> (String | nil)
 
   # get_cover_image
   #
@@ -248,8 +245,12 @@ module BaseDecorator::List
   #
   # @return [String, nil]
   #
-  def get_cover_image: (?meth: Symbol?) -> (String | nil)
+  def get_cover_image: (?meth: Symbol|nil, **untyped) -> (String | nil)
 
   attr_reader cover_image: String | nil
   attr_reader thumbnail:   String | nil
+
+  private
+
+  def self.included: (Module base) -> void
 end

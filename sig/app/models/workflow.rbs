@@ -8,7 +8,6 @@
 #
 class Workflow::Base
   include Workflow
-  extend  Workflow::ClassMethods
 
   # Even if workflow debugging is enabled, displaying transition hooks may be
   # too noisy.
@@ -28,9 +27,6 @@ class Workflow::Base
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   CONFIGURATION: Hash[Symbol,symHash]
 
   # The state which indicates that the item associated with the workflow has
@@ -95,7 +91,7 @@ module Workflow::Base::Roles
   #
   # @return [User, String]
   #
-  def set_current_user: (?(User|String|Symbol)? user) -> (User | String)
+  def set_current_user: (?(User|String|Symbol|nil) user) -> (User | String)
 
   # Set the workflow user role.
   #
@@ -103,7 +99,7 @@ module Workflow::Base::Roles
   #
   # @return [Symbol]
   #
-  def set_current_role: (?(User|String|Symbol)? role) -> Symbol
+  def set_current_role: (?(User|String|Symbol|nil) role) -> Symbol
 
   # Get the "workflow user" based on the provided identity.
   #
@@ -111,47 +107,47 @@ module Workflow::Base::Roles
   #
   # @return [Symbol, nil]
   #
-  def get_role: (User|String|Symbol|nil user) -> (Symbol | nil)
+  def get_role: ((User|String|Symbol|nil) user) -> (Symbol | nil)
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
   #
   # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
   #
-  def user?: (?(User|String|Symbol)? u) -> bool
+  def user?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
   #
   # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
   #
-  def submitter?: (?(User|String|Symbol)? u) -> bool
+  def submitter?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a reviewer.
   #
   # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
   #
-  def reviewer?: (?(User|String|Symbol)? u) -> bool
+  def reviewer?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with an administrator user or
   # process.
   #
   # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
   #
-  def administrator?: (?(User|String|Symbol)? u) -> bool
+  def administrator?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with the system process.
   #
   # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
   #
-  def system?: (?(User|String|Symbol)? u) -> bool
+  def system?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a developer.
   #
   # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
   #
-  def developer?: (?(User|String|Symbol)? u) -> bool
+  def developer?: (?(User|String|Symbol|nil) u) -> bool
 
   # The workflow role(s) for the given user.
   #
@@ -161,7 +157,7 @@ module Workflow::Base::Roles
   #
   # @see #ROLE
   #
-  def wf_roles: (?(User|String|Symbol)? u) -> symArray
+  def wf_roles: (?(User|String|Symbol|nil) u) -> symArray
 end
 
 # Support for workflow properties that can be set via URL parameters.
@@ -175,7 +171,6 @@ module Workflow::Base::Properties
 end
 
 module Workflow::Base::External
-
   # Model/controller options passed in through the constructor.
   #
   # @return [Upload::Options]
@@ -352,9 +347,6 @@ module Workflow::Base::Events
   #
   # @type [Array<Symbol>]
   #
-  # -
-  # noinspection LongLine
-  # +
   EVENTS: symArray
 
   # event_number
@@ -363,7 +355,7 @@ module Workflow::Base::Events
   #
   # @return [Integer]             On error, -1 is returned.
   #
-  def event_number: (Symbol|String|nil event) -> Integer
+  def event_number: ((Symbol|String|nil) event) -> Integer
 
   # event_label
   #
@@ -372,7 +364,7 @@ module Workflow::Base::Events
   #
   # @return [String]
   #
-  def event_label: (Symbol|String|nil event, ?number: String|bool|nil) -> String
+  def event_label: ((Symbol|String|nil) event, ?number: String|bool|nil) -> String
 
   # Override :workflow for a Workflow subclass in order to redefine the
   # workflow event methods.
@@ -394,7 +386,7 @@ module Workflow::Base::Events
   # @param [Symbol, String] event
   # @param [Array]          args
   #
-  def __debug_event: (Symbol|String event, *untyped args) -> nil
+  def __debug_event: ((Symbol|String) event, *untyped args) -> nil
 end
 
 # Methods executed on transition into and out of a state.
@@ -476,9 +468,6 @@ module Workflow::Base::States
   #
   # @type [Array<Symbol>]
   #
-  # -
-  # noinspection LongLine
-  # +
   STATES: symArray
 
   # States that will not assigned to @previous_state.
@@ -495,10 +484,7 @@ module Workflow::Base::States
   #
   # @return [Workflow::State]
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-  # +
-  def state_object: (?(Workflow::State|Symbol|String)? state) -> Workflow::State
+  def state_object: (?(Workflow::State|Symbol|String|nil) state) -> Workflow::State
 
   # state_number
   #
@@ -506,7 +492,7 @@ module Workflow::Base::States
   #
   # @return [Integer]             On error, -1 is returned.
   #
-  def state_number: (Workflow::State|Symbol|String|nil state) -> Integer
+  def state_number: ((Workflow::State|Symbol|String|nil) state) -> Integer
 
   # state_label
   #
@@ -515,7 +501,7 @@ module Workflow::Base::States
   #
   # @return [String]
   #
-  def state_label: (Workflow::State|Symbol|String|nil state, ?number: String|bool|nil) -> String
+  def state_label: ((Workflow::State|Symbol|String|nil) state, ?number: String|bool|nil) -> String
 
   include Emma::Debug::OutputMethods
 
@@ -633,7 +619,7 @@ class Workflow::Base
   # This method overrides:
   # @see Workflow::InstanceMethods#persist_workflow_state
   #
-  def persist_workflow_state: (Symbol|String new_value) -> String
+  def persist_workflow_state: ((Symbol|String) new_value) -> String
 
   # The table field associated with workflow state.
   #
@@ -730,7 +716,7 @@ class Workflow::Base
   #
   # @param [Symbol, String, nil] value
   #
-  def self.variant?: (Symbol|String|nil value) -> bool
+  def self.variant?: ((Symbol|String|nil) value) -> bool
 
   # Generate a new instance of the appropriate workflow variant subclass
   # (or the workflow base class if the variant could not be found).

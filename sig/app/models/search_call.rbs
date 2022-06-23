@@ -11,6 +11,8 @@ class SearchCall < ApplicationRecord
 
   include Record::Authorizable
 
+  include Record::Searchable
+
   # :nocov:
   #extend SqlMethods::ClassMethods
 
@@ -51,7 +53,7 @@ class SearchCall < ApplicationRecord
   #
   # @note - for dev traceability
   #
-  def initialize: (?(SearchCall|prmHash)? attr) { () -> untyped } -> void
+  def initialize: (?(SearchCall|prmHash|nil) attr) ?{ () -> untyped } -> void
 
   # Produce a value that can be used for SearchController URL parameters.
   #
@@ -68,10 +70,7 @@ class SearchCall < ApplicationRecord
   #
   # @note - for dev traceability
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
-  def assign_attributes: (SearchCall|prmHash|nil attr, ?(symHash|nil) opt) -> void
+  def assign_attributes: ((SearchCall|prmHash|nil) attr, ?(symHash|nil) opt) -> void
 
   # Called to prepare values to be used for assignment to record attributes.
   #
@@ -83,7 +82,7 @@ class SearchCall < ApplicationRecord
   # @see #map_parameters
   # @see Record::Assignable#attribute_options
   #
-  def attribute_options: (SearchCall|prmHash|nil attr, ?(symHash|nil) opt) -> symHash
+  def attribute_options: ((SearchCall|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
 
   # Transform URL parameters into attribute settings.
   #
@@ -91,10 +90,7 @@ class SearchCall < ApplicationRecord
   #
   # @return [Hash{Symbol=>String,Array<String>}]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def map_parameters: (prmHash|nil params) -> Hash[Symbol,(String|strArray)]
+  def map_parameters: ((prmHash|nil) params) -> Hash[Symbol,(String|strArray)]
 
   # Extract a 'users' table index from the given item.
   #
@@ -103,7 +99,7 @@ class SearchCall < ApplicationRecord
   # @return [String]
   # @return [nil]
   #
-  def get_user_id: (User|String|Numeric src) -> (String | nil)
+  def get_user_id: ((User|String|Numeric) src) -> (String | nil)
 
   # Generate a :record attribute value from the given item.
   #
@@ -111,7 +107,7 @@ class SearchCall < ApplicationRecord
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  def get_counts: (Api::Message|String|Numeric|symHash|anyArray src) -> Hash[Symbol,Integer]
+  def get_counts: ((Api::Message|String|Numeric|symHash|anyArray) src) -> Hash[Symbol,Integer]
 
   # Local options consumed by #search_records.
   #
@@ -123,11 +119,11 @@ class SearchCall < ApplicationRecord
 
   # @see SqlMethods#sql_extended_table
   #
-  def sql_extended_table: (?(String|symHash)? extra, **untyped opt) -> String
+  def sql_extended_table: (?(String|symHash|nil) extra, **untyped opt) -> String
 
   # @see SqlMethods#sql_extended_table
   #
-  def self.sql_extended_table: (?(String|symHash)? extra, **untyped opt) -> String
+  def self.sql_extended_table: (?(String|symHash|nil) extra, **untyped opt) -> String
 
   # @see SqlMethods#sql_where_clause
   #

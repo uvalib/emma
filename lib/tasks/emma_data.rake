@@ -176,12 +176,11 @@ namespace :emma_data do
 
     # All ActiveRecord classes that respond to :outdated.
     #
-    # @return [Array<ActiveRecord::Base>]
+    # @return [Array<Class>]
     #
     def record_classes(c = ActiveRecord::Base)
       # noinspection RubyNilAnalysis, SpellCheckingInspection
       return []  if c.name.nil? || c.name.start_with?('HABTM_')
-      # noinspection RubyMismatchedReturnType
       return [c] if c.ancestors.include?(JobMethods)
       c.subclasses.flat_map { |sc| record_classes(sc) }.compact
     end

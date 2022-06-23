@@ -9,6 +9,8 @@ module SearchTermsHelper
 
   include ConfigurationHelper
 
+  include ParamsHelper
+
   # Table of search types for each controller.
   #
   # Each entry may have:
@@ -87,7 +89,7 @@ module SearchTermsHelper
   # @return [Symbol]                  The controller used for searching.
   # @return [nil]                     If searching should not be enabled.
   #
-  def search_target: (?(Symbol|String|symHash)? target, **untyped opt) -> (Symbol | nil)
+  def search_target: (?(Symbol|String|symHash|nil) target, **untyped opt) -> (Symbol | nil)
 
   # Prepare label/value pairs that can be used with #options_for_select to
   # generate a search type selection menu.
@@ -97,7 +99,7 @@ module SearchTermsHelper
   #
   # @return [Array<Array<(String,Symbol)>>]
   #
-  def search_query_menu_pairs: (?(Symbol|String|symHash)? target, **untyped opt) -> Array[[String,Symbol]]
+  def search_query_menu_pairs: (?(Symbol|String|symHash|nil) target, **untyped opt) -> Array[[String,Symbol]]
 
   # The URL parameters associated with queries for the indicated search target.
   #
@@ -106,15 +108,7 @@ module SearchTermsHelper
   #
   # @return [Array<Symbol>]
   #
-  def search_query_keys: (?(Symbol|String|symHash)? target, **untyped opt) -> symArray
-
-  # Active query parameters.
-  #
-  # @param [Hash{Symbol=>Any}] prm    Default: `#url_parameters`.
-  #
-  # @return [Hash{Symbol=>Array<String>}]
-  #
-  def search_parameters: (?(symHash|nil) prm, **untyped opt) -> Hash[Symbol,strArray]
+  def search_query_keys: (?(Symbol|String|symHash|nil) target, **untyped opt) -> symArray
 
   # Active search terms.
   #
@@ -129,7 +123,7 @@ module SearchTermsHelper
   #
   # @return [Hash{Symbol=>SearchTerm}]
   #
-  def search_terms: (?(Symbol|String|symHash)? target, ?pairs: symHash, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped opt) -> Hash[Symbol,SearchTerm]
+  def search_terms: (?(Symbol|String|symHash|nil) target, ?pairs: symHash|nil, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped opt) -> Hash[Symbol,SearchTerm]
 
   # Produce a text-only listing of search terms.
   #
@@ -139,10 +133,7 @@ module SearchTermsHelper
   #
   # @return [String]
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
-  def list_search_terms: (?Hash[Symbol,SearchTerm]? term_list) -> String
+  def list_search_terms: (?(Hash[Symbol,SearchTerm]|nil) term_list) -> String
 
   private
 

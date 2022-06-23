@@ -8,10 +8,5 @@ class SearchPaginator < Paginator
   # @return [String]                  Path to generate next page of results.
   # @return [nil]                     If there is no next page.
   #
-  # @see PaginationConcern#next_page_path
-  #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def next_page_path: (?list: (Search::Message::SearchTitleList|Array[Search::Record::MetadataRecord])? list, **untyped url_params) -> (String | nil)
+  def next_page_path: (?list: Search::Message::SearchTitleList|Array[Search::Record::MetadataRecord]|nil, **untyped url_params) -> (String | nil)
 end

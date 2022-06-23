@@ -27,22 +27,23 @@ class LookupJob < ActiveJob::Base
   # == Variations
   # +
   #
-  # @overload perform_later(services, items, opt)
+  # @overload perform_later(services, request, opt)
   #   The "waiter" task invoked via `LookupJob.perform_later`.
   #   @param [Array<Class,LookupService::RemoteService>]  services
-  #   @param [LookupService::Request]                     items
+  #   @param [LookupService::Request]                     request
   #   @param [Hash]                                       opt
   #   @return [Hash]
   #
-  # @overload perform_later(service, items, opt, role: :worker)
+  # @overload perform_later(service, request, opt, role: :worker)
   #   A "worker" task invoked from within #waiter_task.
   #   @param [Class,LookupService::RemoteService]         service
-  #   @param [LookupService::Request]                     items
+  #   @param [LookupService::Request]                     request
   #   @param [Hash]                                       opt
   #   @return [Hash]  From LookupService::RemoteService#lookup_metadata
   #
   def perform: () -> symHash
 
+  # @type [Hash{Symbol=>Hash{Symbol,nil=>String}}]
   JOB_STATUS: Hash[Symbol,Hash[(Symbol|nil),String]]
 
   # If *true*, each worker will send a response back to the client.  Otherwise,
@@ -57,10 +58,12 @@ class LookupJob < ActiveJob::Base
   #
   # @param [JobResult]                           record
   # @param [Class, LookupService::RemoteService] service
-  # @param [LookupService::Request]              items
+  # @param [LookupService::Request]              request
   # @param [Hash]                                opt
   #
   # @return [Hash]
+  #
+  # @see LookupService::Response#TEMPLATE
   #
   def worker_task: (JobResult record, Class|LookupService::RemoteService service, LookupService::Request items, **untyped opt) -> symHash
 
@@ -76,20 +79,34 @@ class LookupJob < ActiveJob::Base
   #
   # @param [JobResult]                                 record
   # @param [Array<Class,LookupService::RemoteService>] services
-  # @param [LookupService::Request]                    items
+  # @param [LookupService::Request]                    request
   # @param [Hash]                                      opt
   #
   # @return [Hash]
   #
-  # -
-  # noinspection RubyMismatchedReturnType
-  # +
   def waiter_task: (JobResult record, Class|LookupService::RemoteService services, LookupService::Request items, **untyped opt) -> symHash
 
   def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> void
 
+  # @private
+  # @type [Array<Symbol>]
   DATA_COLUMNS: symArray
+
+  # @private
+  # @type [Symbol]
   DEFAULT_DATA_COLUMN: Symbol
 
+  # Extract job results from the 'job_results' database table.
+  #
+  # @param [String]                  job_id   The :active_job_id column value
+  #                                             for the record to get.
+  # @param [Symbol,String,nil]       column   The data column to get; default:
+  #                                             #DEFAULT_DATA_COLUMN.
+  # @param [Array,Symbol,String,nil] path     If provided, the path into the
+  #                                             JSON hierarchy.
+  #
+  # @return [Hash]
+  # @return [nil]                     If the requested data was not found.
+  #
   def self.job_result: (job_id: String, ?column: Symbol|String|nil, ?path: anyArray|Symbol|String|nil) -> (symHash | nil)
 end

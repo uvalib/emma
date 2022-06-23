@@ -33,5 +33,13 @@ module Upload::BulkMethods
   #
   attr_reader file_path: String?
 
-  def import_transform: (symHash fields, Module|String importer_name) -> symHash
+  # Use the importer module to translate imported fields into Upload columns
+  # and/or EMMA metadata fields.
+  #
+  # @param [Hash]           fields
+  # @param [Module, String] importer_name
+  #
+  # @return [Hash]
+  #
+  def import_transform: (symHash fields, (Module|String) importer_name) -> symHash
 end

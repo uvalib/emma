@@ -4,14 +4,33 @@ module Lookup::Crossref::Shared::IdentifierMethods
   include Lookup::RemoteService::Shared::IdentifierMethods
   include Lookup::Crossref::Shared::CommonMethods
 
+  # A table of identifier attributes with their associated
+  # PublicationIdentifier subclasses.
+  #
+  # @type [Hash{Symbol=>Class<PublicationIdentifier>}]
+  #
   FIELD_TYPE_MAP: Hash[Symbol,Class]
-
-  IDENTIFIER_FIELDS: symArray
 
   @identifier_list:  strArray | nil
   @identifier_table: lookupRequestHash | nil
 
-  def identifier_list:    () -> strArray
-  def identifier_table:   () -> lookupRequestHash
+  # identifier_list
+  #
+  # @return [Array<String>]
+  #
+  def identifier_list: () -> strArray
+
+  # identifier_table
+  #
+  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
+  #
+  def identifier_table: () -> lookupRequestHash
+
+  # Related :dc_identifier (and possibly) :dc_relation.
+  #
+  # If a DOI is present then it is assumed that
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
   def identifier_related: () -> Hash[(:dc_identifier|:dc_related), strArray]
 end

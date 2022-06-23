@@ -18,6 +18,8 @@ module LayoutHelper::SkipNav
   #
   # @return [Array]
   #
+  # @note Currently unused.
+  #
   def skip_nav_clear: () -> Array[skipNavEntry]
 
   # Set "skip navigation" menu entries (replacing any existing ones).
@@ -70,5 +72,5 @@ module LayoutHelper::SkipNav
   # @return [ActiveSupport::SafeBuffer]   HTML link element.
   # @return [nil]                         If *label* or *link* is missing.
   #
-  def render_skip_nav_link: (String|Symbol|Array[String|Symbol] label, String link, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def render_skip_nav_link: ((String|Symbol|Array[String|Symbol]) label, String link, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 end

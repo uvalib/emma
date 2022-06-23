@@ -31,7 +31,7 @@ class Shrine
       # This method overrides:
       # @see Shrine::Storage::S3#upload
       #
-      def upload: (IO|StringIO io, String id, ?shrine_metadata: symHash, **untyped upload_options) -> untyped
+      def upload: ((IO|StringIO) io, String id, ?shrine_metadata: symHash, **untyped upload_options) -> untyped
 
       # open
       #
@@ -62,7 +62,7 @@ class Shrine
       # This method overrides:
       # @see Shrine::Storage::S3#put
       #
-      def put: (IO|StringIO io, String id, **untyped options) -> untyped
+      def put: ((IO|StringIO) io, String id, **untyped options) -> untyped
 
       # copy
       #
@@ -73,7 +73,7 @@ class Shrine
       # This method overrides:
       # @see Shrine::Storage::S3#copy
       #
-      def copy: (IO|StringIO io, String id, **untyped options) -> untyped
+      def copy: ((IO|StringIO) io, String id, **untyped options) -> untyped
 
       # presign_put
       #
@@ -108,7 +108,7 @@ class Shrine
       # This method overrides:
       # @see Shrine::Storage::S3#part_size
       #
-      def part_size: (IO|StringIO io) -> untyped
+      def part_size: ((IO|StringIO) io) -> untyped
 
       # get_object
       #
@@ -129,7 +129,7 @@ class Shrine
       # This method overrides:
       # @see Shrine::Storage::S3#copyable?
       #
-      def copyable?: (IO|StringIO io) -> bool
+      def copyable?: ((IO|StringIO) io) -> bool
 
       # delete_objects
       #

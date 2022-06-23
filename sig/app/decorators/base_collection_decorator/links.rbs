@@ -1,6 +1,10 @@
-# Common view helper methods supporting display of Model instances (both
-# database items and API messages).
+# Common methods supporting display of Model instances (both database items and
+# API messages).
 #
 module BaseCollectionDecorator::Links
   include BaseDecorator::Links
+
+  private
+
+  def self.included: (Module base) -> void
 end

@@ -68,9 +68,6 @@ module LayoutHelper::PageSections
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def page_text_section(
     type = nil,
     text = nil,

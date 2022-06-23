@@ -52,11 +52,12 @@ module ImageHelper
   # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder.
   # @return [nil]                         If *url* is invalid.
   #
-  def image_element: (String url, ?link: String?, ?alt: String?, ?row: Integer?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def image_element: (String url, ?link: String|nil, ?alt: String|nil, ?row: Integer|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Placeholder image.
   #
-  # If :alt text is provided in *opt* it is preserved as 'data-alt'.
+  # If :alt text is provided in *opt* it is preserved as 'data-alt', along with
+  # *url* in 'data-path'.
   #
   # @param [String]      url
   # @param [String, nil] image        Default: 'loading-balls.gif'
@@ -64,7 +65,7 @@ module ImageHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def image_placeholder: (String url, ?image: String?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def image_placeholder: (String url, ?image: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   private
 

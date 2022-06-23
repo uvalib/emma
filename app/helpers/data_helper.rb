@@ -106,9 +106,6 @@ module DataHelper
   # @return [Array<Hash>]
   # @return [Array<Array<String>,Hash>]         If *html* is *true*.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def table_records(
     name,
     *cols,

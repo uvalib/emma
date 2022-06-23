@@ -184,9 +184,6 @@ module SearchTermsHelper
   #
   # @return [Hash{Symbol=>SearchTerm}]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def search_terms(target = nil, pairs: nil, only: nil, except: nil, **opt)
     target = search_target(target, **opt)
     only   = Array.wrap(only).compact.uniq.presence

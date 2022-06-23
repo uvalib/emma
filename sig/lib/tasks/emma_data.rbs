@@ -8,4 +8,12 @@ class Object
   include ApiConcern
 
   include UploadConcern
+
+  public
+
+  # All ActiveRecord classes that respond to :outdated.
+  #
+  # @return [Array<Class>]
+  #
+  def record_classes: (?Class c) -> Array[Class]
 end

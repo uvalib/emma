@@ -130,9 +130,6 @@ module Serializable
   #   @param [Symbol] mode
   #   @param [Proc]   block         Passed to Base#serialize.
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
   def serializer: ()                                      -> (Class | nil)
                 | (:serialize)   { (untyped) -> untyped } -> (Class | nil)
                 | (:deserialize) { (untyped) -> untyped } -> (Class | nil)

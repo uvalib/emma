@@ -89,9 +89,6 @@ module LayoutHelper::Main
   #   @param [ActiveSupport::SafeBuffer, Symbol]                logo
   #   @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def page_heading(title, *controls, help: nil, logo: nil, **)
     unless help.blank? || help.html_safe?
       help = Array.wrap(help).first(2).presence

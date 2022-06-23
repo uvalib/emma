@@ -9,6 +9,8 @@
 module RunStateConcern
   extend ActiveSupport::Concern
 
+  include ParamsHelper
+
   # Controllers whose endpoints are exempt from redirection due to unavailable
   # run state.
   #
@@ -39,7 +41,7 @@ module RunStateConcern
   # @param [String, Symbol, nil] ctrlr    Default: `params[:controller]`
   # @param [String, Symbol, nil] action   Default: `params[:action]`
   #
-  def run_state_redirect?: (?(String|Symbol)? ctrlr, ?(String|Symbol)? action) -> bool
+  def run_state_redirect?: (?(String|Symbol|nil) ctrlr, ?(String|Symbol|nil) action) -> bool
 
   # Unconditionally redirect to the page which indicates system unavailability.
   #

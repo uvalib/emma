@@ -7,8 +7,6 @@ module IaDownloadConcern
 
   include ApiConcern
 
-  include SerializationHelper
-
   # ia_download_api
   #
   # @return [IaDownloadService]

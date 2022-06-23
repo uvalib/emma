@@ -144,5 +144,5 @@ module Record::Sti::Root
   #
   # @note (record.type == record.class.type) should always be true.
   #
-  def self.type: (?(Symbol|String|Class|Record::Sti)? t, ?no_raise: bool) -> (String | nil)
+  def self.type: (?(Symbol|String|Class|Record::Sti|nil) t, ?no_raise: bool) -> (String | nil)
 end

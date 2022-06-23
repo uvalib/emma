@@ -103,9 +103,6 @@ module EntryConcern
   #
   # @return [Array<Hash{Symbol=>Any}>]
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def entry_bulk_post_params(p = nil, req = nil)                                # NOTE: from UploadConcern#upload_bulk_post_params
     prm = model_options.model_post_params(p)
     src = prm[:src] || prm[:source] || prm[:manifest]
@@ -378,9 +375,6 @@ module EntryConcern
   #
   # @return [Entry]                         Un-persisted Entry instance.
   #
-  #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
-  #++
   def new_entry(item = nil, opt = nil)
     entry, opt = entry_request_params(item, opt)
     # noinspection RubyNilAnalysis
@@ -404,12 +398,11 @@ module EntryConcern
   # @return [Entry]                         New persisted Entry instance.
   #
   #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
   #++
   def create_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
     entry, opt = entry_request_params(item, opt)
-    # noinspection RubyNilAnalysis
     opt   = opt.merge(from: entry) if entry
     phase = Phase::Create.finish_submission(**opt)
     Entry.create!(from: phase).tap { |new_entry| phase.entry = new_entry }
@@ -428,9 +421,6 @@ module EntryConcern
   # @return [Entry]                         A record from the 'entries' table.
   # @return [nil]                           If the Entry was not found.
   #
-  #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
-  #++
   def edit_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
     item, opt = entry_request_params(item, opt)
@@ -458,7 +448,7 @@ module EntryConcern
   # @return [nil]                           If the Entry was not found.
   #
   #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def update_entry(item = nil, opt = nil)
     item, opt = entry_request_params(item, opt)
@@ -483,13 +473,12 @@ module EntryConcern
   # @return [Hash{Symbol=>Any}]       From Record::Searchable#search_records.
   #
   #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
   #++
   def delete_entry(entries = nil, opt = nil)
     entries, opt = entry_request_params(entries, opt)
     id_opt    = extract_hash!(opt, :ids, :id)
     entries ||= id_opt.values.first
-    # noinspection RubyNilAnalysis
     opt.except!(:force, :emergency, :truncate)
     Entry.search_records(*entries, **opt)
   end
@@ -504,8 +493,7 @@ module EntryConcern
   # @return [Array]                   Destroyed entries.
   #
   #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
-  # noinspection RubyNilAnalysis
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
   #++
   def destroy_entry(entries = nil, opt = nil)                                   # NOTE: from UploadWorkflow::Actions#wf_remove_items
     entries, opt = entry_request_params(entries, opt)
@@ -534,11 +522,7 @@ module EntryConcern
   #
   # @return [Entry]                     A record from the 'entries' table.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def renew_entry(item = nil, opt = nil)
-    # noinspection RubyMismatchedArgumentType
     entry, opt = entry_request_params(item, opt)
     sid   = Entry.sid_value((entry || @identifier), **opt)
     phase = Phase::Create.latest_for_sid(sid, **opt)
@@ -557,10 +541,9 @@ module EntryConcern
   # @return [Entry]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
   #++
   def reedit_entry(item = nil, opt = nil)
-    # noinspection RubyMismatchedArgumentType
     entry, opt = entry_request_params(item, opt)
     sid   = Entry.sid_value((entry || @identifier), **opt)
     phase = Phase::Edit.latest_for_sid(sid, **opt.merge(no_raise: true))
@@ -578,9 +561,6 @@ module EntryConcern
   # @return [Entry]
   # @return [nil]                               If the Entry was not found.
   #
-  #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
-  #++
   def cancel_entry(item = nil, opt = nil)
     item, opt = entry_request_params(item, opt)
     get_entry(item, no_raise: true, **opt).tap do |entry|
@@ -613,14 +593,12 @@ module EntryConcern
   # @return [Array<String>]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedParameterType
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
   #++
   def check_entry(item = nil, opt = nil)                                        # NOTE: from UploadWorkflow::Single::Actions#wf_check_status
-    # noinspection RubyMismatchedArgumentType
     entry, opt = entry_request_params(item, opt)
     local, opt = partition_hash(opt, :html)
     opt[:no_raise] = true unless opt.key?(:no_raise)
-    # noinspection RubyMismatchedArgumentType
     if (entry = get_entry(entry, **opt))
       note  = entry.describe_status
     else
@@ -668,11 +646,7 @@ module EntryConcern
   # @see Phase::Create#upload!
   # @see Phase::Edit#upload!
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def upload_file(entry = nil, opt = nil)
-    # noinspection RubyMismatchedArgumentType
     entry, opt = entry_request_params(entry, opt)
     sid   = opt[:submission_id].presence or raise 'No submission ID'
     phase = entry&.phases&.where(submission_id: sid)&.order(:created_at)&.last
@@ -857,9 +831,6 @@ module EntryConcern
   #
   # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / fail msgs
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def reindex_record(list, atomic: false, dryrun: false, meth: __method__, **)
     successes = []
     failures  = []
@@ -941,9 +912,6 @@ module EntryConcern
   #   @param [Boolean]                xhr
   #   @param [Symbol]                 meth
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)     # NOTE: from UploadConcern
     meth ||= calling_method
     __debug_items("ENTRY #{meth} #{__method__}", binding)

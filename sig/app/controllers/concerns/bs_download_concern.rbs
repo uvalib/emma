@@ -3,9 +3,9 @@
 module BsDownloadConcern
   extend ActiveSupport::Concern
 
-  include BookshareConcern
+  include SerializationConcern
 
-  include SerializationHelper
+  include BookshareConcern
 
   attr_reader exception:  Exception | nil
   attr_reader error:      String | nil
@@ -30,9 +30,9 @@ module BsDownloadConcern
   #
   # @return [Hash{Symbol=>String}]
   #
-  def bs_download_values: (?(String|nil) url)                                     -> Hash[Symbol,String]
-                        | (String|nil url, ?(String|nil) state)                   -> Hash[Symbol,String]
-                        | (String|nil url, String|nil state, ?(String|nil) error) -> Hash[Symbol,String]
+  def bs_download_values: (?(String|nil) url)                                           -> Hash[Symbol,String]
+                        | ( (String|nil) url, ?(String|nil) state)                      -> Hash[Symbol,String]
+                        | ( (String|nil) url,  (String|nil) state, ?(String|nil) error) -> Hash[Symbol,String]
 
   private
 

@@ -12,7 +12,7 @@ module FileFormat::Zip
   # @return [String]  File contents
   # @return [nil]     If *zip_path* or *file* is blank, or could not be read.
   #
-  def get_archive_entry: (String|nil zip_path, FileHandle|String|nil file, ?recurse: bool) -> (String | nil)
+  def get_archive_entry: ((String|nil) zip_path, (FileHandle|String|nil) file, ?recurse: bool) -> (String | nil)
 
   # Locate the indicated file in the given archive.
   #
@@ -22,5 +22,5 @@ module FileFormat::Zip
   # @return [String]  Path to metadata archive entry.
   # @return [nil]     If *ext* or *file* is blank, or could not be read.
   #
-  def find_zip_path: (String|nil ext, FileHandle|String|nil file) -> (String | nil)
+  def find_zip_path: ((String|nil) ext, (FileHandle|String|nil) file) -> (String | nil)
 end

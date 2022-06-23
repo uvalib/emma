@@ -8,5 +8,9 @@
 class Lookup::Crossref::Message::JournalResults < Lookup::Crossref::Api::Message
   include Lookup::Crossref::Shared::ResponseMethods
 
+  # api_records
+  #
+  # @return [Array<Lookup::Crossref::Record::Journal>]
+  #
   def api_records: () -> Array[Lookup::Crossref::Record::Journal]
 end

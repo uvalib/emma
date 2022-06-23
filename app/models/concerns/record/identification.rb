@@ -358,14 +358,12 @@ module Record::Identification
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def compact_ids(*items, **opt)                                                # NOTE: from Upload::IdentifierMethods
     opt[:min_id] ||= minimum_id
     opt[:max_id] ||= maximum_id
     ids, non_ids = expand_ids(*items, **opt).partition { |v| digits_only?(v) }
     non_ids.sort!.uniq!
+    # noinspection RubyMismatchedReturnType
     ids.map! { |id| [id.to_i, opt[:min_id]].max }.sort!.uniq!
     ids =
       ids.chunk_while { |prev, this| (prev + 1) == this }.map do |range|

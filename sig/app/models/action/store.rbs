@@ -25,6 +25,7 @@ class Action::Store < Action::BulkPart
 
   include Record::Uploadable
 
+  # @private
   CLASS: Class
 
   # Update database fields, including the structured contents of the :emma_data
@@ -37,9 +38,26 @@ class Action::Store < Action::BulkPart
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
+  def assign_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> void
 
-  def upload!: (symHash|ActionDispatch::Request|nil request, **untyped opt) -> httpResult
+  # Receive from the client and store to AWS S3 :cache via Shrine.
+  #
+  # @param [ActionDispatch::Request, Hash, nil] request
+  # @param [Hash]                               opt   To callback except:
+  #
+  # @option opt [Boolean] :update_record  If *false* caller will update record.
+  # @option opt [Boolean] :auto_retry     If *true* automatically retry.
+  # @option opt [Any]     :env            From *request* by default.
+  # @option opt [Symbol]  :meth           Name of caller (for logging).
+  #
+  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  #
+  # @see Record::Uploadable#upload_file
+  #
+  # == Usage Notes
+  # If a callback is supplied via *opt*, it is executed synchronously.
+  #
+  def upload!: ((symHash|ActionDispatch::Request|nil) request, **untyped opt) -> httpResult
 
   # Move the uploaded file associated with this item from :cache to :store.
   #

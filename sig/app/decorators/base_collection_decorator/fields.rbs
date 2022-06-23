@@ -1,5 +1,9 @@
-# View helper methods supporting manipulation of Model instance fields.
+# Methods supporting manipulation of Model instance fields for collections.
 #
 module BaseCollectionDecorator::Fields
   include BaseDecorator::Fields
+
+  private
+
+  def self.included: (Module base) -> void
 end

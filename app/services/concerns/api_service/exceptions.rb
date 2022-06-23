@@ -76,7 +76,7 @@ module ApiService::Exceptions
   # @return [ApiService::Error]       New value of @exception.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyNilAnalysis
   #++
   def set_error(error, **opt)
     error = error_classes[error] if error.is_a?(Symbol)

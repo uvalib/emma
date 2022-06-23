@@ -2,7 +2,6 @@
 # element.
 #
 module LayoutHelper::PageModals
-  include ParamsHelper
 
   @page_modal: Hash[String,ActiveSupport::SafeBuffer]
 
@@ -38,7 +37,7 @@ module LayoutHelper::PageModals
   # @yield Supply the definition of the modal if *definition* is *nil*.
   # @yieldreturn [ActiveSupport::SafeBuffer]
   #
-  def add_page_modal: (String selector, ?ActiveSupport::SafeBuffer? definition) { () -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+  def add_page_modal: (String selector, ?(ActiveSupport::SafeBuffer|nil) definition) { () -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
 
   # Remove the modal definition associated with the given selector.
   #

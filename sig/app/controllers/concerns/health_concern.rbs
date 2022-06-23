@@ -7,15 +7,14 @@ module HealthConcern
 
   include Emma::Debug
 
+  include ParamsHelper
+
   # Locale entries for this controller.
   #
   # @type [Hash{Symbol=>Hash}]
   #
   # @see file:config/locales/controllers/health.en.yml
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   HEALTH_SUBSYSTEMS: symHash
 
   # Default health check subsystem failure message.
@@ -46,7 +45,7 @@ module HealthConcern
     # If :restart is *true* then a failed health check should result in a
     # system restart in order to attempt to correct the underlying problem.
     #
-    def initialize: (?method: (Symbol|String|Proc)?, ?restart: bool?, ?healthy: String?, ?degraded: String?, ?failed: String?) -> void
+    def initialize: (?method: Symbol|String|Proc|nil, ?restart: bool|nil, ?healthy: String|nil, ?degraded: String|nil, ?failed: String|nil) -> void
   end
 
   # The basic health status report object.
@@ -58,7 +57,7 @@ module HealthConcern
     # @return [Boolean]
     attr_accessor degraded: bool
 
-    # @return [String]
+    # @return [String, nil]
     attr_accessor message: String | nil
 
     def initialize: (bool status, bool degraded, ?(String|nil) message) -> void
@@ -76,7 +75,7 @@ module HealthConcern
     # @return [Hash{Symbol=>HealthStatus}]
     attr_reader health: Hash[Symbol,HealthStatus]
 
-    def initialize: (?Hash[Symbol,HealthStatus]? status_values) -> void
+    def initialize: (?(Hash[Symbol,HealthStatus]|nil) status_values) -> void
 
     def healthy?: () -> bool
 
@@ -136,9 +135,6 @@ module HealthConcern
   #
   # @return [HealthStatus]
   #
-  # -
-  # noinspection RubyScope
-  # +
   def status_report: (Symbol subsystem, ?(HealthEntry|nil) entry) -> HealthStatus
 
   # Health status of the database service.
@@ -211,7 +207,7 @@ module HealthConcern
   # == Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #
-  def update_run_state: (?(String|anyHash)? source) -> void
+  def update_run_state: (?(String|anyHash|nil) source) -> void
 
   private
 

@@ -134,10 +134,7 @@ module OAuth2
     # @return [OAuth2::Response]
     # @return [nil]                   If no token was provided or found.
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
-    def revoke_token: (OAuth2::AccessToken|symHash|String token, ?(symHash|nil) params, ?(symHash|nil) opts) -> (OAuth2::Response | nil)
+    def revoke_token: ((OAuth2::AccessToken|symHash|String) token, ?(symHash|nil) params, ?(symHash|nil) opts) -> (OAuth2::Response | nil)
   end
 
   # Overrides adding extra debugging around method calls.
@@ -295,6 +292,6 @@ module OAuth2
     # @return [OAuth2::Response]
     # @return [nil]                   If no token was provided or found.
     #
-    def revoke_token: (OAuth2::AccessToken|symHash|String token, ?(symHash|nil) params, ?(symHash|nil) opts) -> (OAuth2::Response | nil)
+    def revoke_token: ((OAuth2::AccessToken|symHash|String) token, ?(symHash|nil) params, ?(symHash|nil) opts) -> (OAuth2::Response | nil)
   end
 end

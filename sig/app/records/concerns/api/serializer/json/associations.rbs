@@ -17,7 +17,7 @@ module Api::Serializer::Json::Associations
     # This method replaces:
     # @see Api::Serializer::Associations#prepare_attribute!
     #
-    def prepare_attribute!: (Symbol|String name, Symbol|String|Class element, untyped options) -> void
+    def prepare_attribute!: ((Symbol|String) name, (Symbol|String|Class) element, untyped options) -> void
 
     # JSON-specific operations for #has_one data elements.
     #
@@ -30,7 +30,7 @@ module Api::Serializer::Json::Associations
     # This method replaces:
     # @see Api::Serializer::Associations#prepare_one!
     #
-    def prepare_one!: (Symbol|String name, Symbol|String|Class element, untyped options) -> void
+    def prepare_one!: ((Symbol|String) name, (Symbol|String|Class) element, untyped options) -> void
 
     # JSON-specific operations for #has_many data elements.
     #
@@ -45,6 +45,6 @@ module Api::Serializer::Json::Associations
     # This method replaces:
     # @see Api::Serializer::Associations#prepare_collection!
     #
-    def prepare_collection!: (Symbol|String name, Symbol|String|Class element, untyped options) -> void
+    def prepare_collection!: ((Symbol|String) name, (Symbol|String|Class) element, untyped options) -> void
   end
 end

@@ -1,7 +1,4 @@
 class LookupChannel < ApplicationCable::Channel
-  include Emma::Debug
-
-  extend Emma::Debug
 
   @stream_name: String
 
@@ -39,7 +36,11 @@ class LookupChannel < ApplicationCable::Channel
   #
   # @return [void]
   #
-  def self.lookup_start_response: (symHash|Array[Class] payload, **untyped opt) -> void
+  # == Implementation Notes
+  # This response is intentionally small; payload size is not checked to avoid
+  # masking an exception due to an unexpected condition.
+  #
+  def self.lookup_start_response: ((symHash|Array[Class]) payload, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #

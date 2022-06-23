@@ -1,5 +1,12 @@
 # Common values for system tests.
 #
+# @!method visit
+#   @param [#to_s] visit_uri
+#   @see Capybara::Session#visit
+#
+# @!method go_back
+#   @see Capybara::Session#go_back
+#
 module TestHelper::SystemTests::Common
   # Properties which drive parameterized system tests.
   #

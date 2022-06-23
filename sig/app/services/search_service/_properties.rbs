@@ -9,35 +9,17 @@ module SearchService::Properties
   #
   CONFIGURATION: symHash
 
+  # Default engine selection.
+  #
+  # @type [Symbol]
+  #
   DEFAULT_ENGINE: Symbol
 
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
   def configuration: () -> symHash
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  # @see #default_engine_url
-  #
-  #def base_url: () -> String
-
-  # An API key is not a part of search URLs.
-  #
-  # @return [nil]
-  #
-  #def api_key: () -> nil
-
-  # API version is not a part of search URLs.
-  #
-  # @return [nil]
-  #
-  #def api_version: () -> nil
-
-  # Valid search engine URLs.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  #def engines: () -> Hash[Symbol,String]
 
   # Default search engine for this deployment.
   #

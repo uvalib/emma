@@ -20,8 +20,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<div>' element.
   #
-  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
-  # @param [Proc]                block  Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -31,8 +31,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<span>' element.
   #
-  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
-  # @param [Proc]                block  Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -42,8 +42,8 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<button>' element.
   #
-  # @param [Array<Any,nil>, nil] args   Passed to #html_tag.
-  # @param [Proc]                block  Passed to #html_tag.
+  # @param [Array<*>] args            Passed to #html_tag.
+  # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -60,7 +60,7 @@ module HtmlHelper
   # then it defaults to 'div'.
   #
   # @param [Symbol, Integer, nil] tag
-  # @param [Array<Any,nil>]       args
+  # @param [Array<*>]             args
   #
   # @option args.last [String] :separator
   #
@@ -75,17 +75,16 @@ module HtmlHelper
   # == Variations
   #++
   #
-  # @overload html_tag(tag, content, options = nil, escape = true)
-  #   @param [Symbol, String, nil]                    tag
-  #   @param [ActiveSupport::SafeBuffer, String, nil] content
-  #   @param [Hash]                                   options
-  #   @param [Boolean]                                escape
+  # @overload html_tag(tag, content, *more_content, options = nil)
+  #   @param [Symbol, String, nil]                         tag
+  #   @param [ActiveSupport::SafeBuffer, String, nil]      content
+  #   @param [Array<ActiveSupport::SafeBuffer,String,nil>] more_content
+  #   @param [Hash, nil]                                   options
   #
-  # @overload html_tag(tag, options = nil, escape = true, &block)
-  #   @param [Symbol, String, nil]                    tag
-  #   @param [Hash]                                   options
-  #   @param [Boolean]                                escape
-  #   @param [Proc]                                   block
+  # @overload html_tag(tag, options = nil, &block)
+  #   @param [Symbol, String, nil]                         tag
+  #   @param [Hash, nil]                                   options
+  #   @param [Proc]                                        block
   #
   def html_tag(tag, *args)
     level = positive(tag)
@@ -104,7 +103,7 @@ module HtmlHelper
   # parameter list and/or the block.
   #
   # @param [String, Hash] url_or_path
-  # @param [Array<Any>]   args        Passed to #form_tag except for:
+  # @param [Array<*>]     args        Passed to #form_tag except for:
   #
   # @option args.last [String] :separator   Default: "\n"
   #

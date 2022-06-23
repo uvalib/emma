@@ -41,7 +41,7 @@ module ApiService::Definition
   #
   # @see ApiService#api_methods
   #
-  def api_methods: (?(Symbol|String|symHash)? arg) -> (symHash | nil)
+  def api_methods: (?(Symbol|String|symHash|nil) arg) -> (symHash | nil)
 
   # The optional API query parameters for the given method.
   #
@@ -49,7 +49,7 @@ module ApiService::Definition
   #
   # @return [Array<Symbol>]
   #
-  def optional_parameters: (Symbol|String meth) -> symArray
+  def optional_parameters: ((Symbol|String) meth) -> symArray
 
   # The required API query parameters for the given method.
   #
@@ -65,7 +65,7 @@ module ApiService::Definition
   # named parameters (translated to the name used in the documentation [e.g.,
   # "userIdentifier" instead of "user"]).
   #
-  def required_parameters: (Symbol|String meth, ?all: bool) -> symArray
+  def required_parameters: ((Symbol|String) meth, ?all: bool) -> symArray
 
   # The subset of required API request parameters which are passed to the
   # implementation method via named parameters.
@@ -79,7 +79,7 @@ module ApiService::Definition
   # By default, the names are translated to the documented parameter names.
   # If :no_alias is *true* then the actual parameter names are returned.
   #
-  def named_parameters: (Symbol|String meth, ?no_alias: bool) -> symArray
+  def named_parameters: ((Symbol|String) meth, ?no_alias: bool) -> symArray
 
   private
 

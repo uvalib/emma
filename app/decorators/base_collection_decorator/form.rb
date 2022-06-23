@@ -93,6 +93,7 @@ module BaseCollectionDecorator::Form
     url          ||= delete_submit_path(**path_opt)
     enabled        = url && :enabled
     action         = action&.to_sym || :delete
+    # noinspection RubyMismatchedArgumentType
     config         = form_actions.dig(action, :submit) || {}
     label        ||= config[:label]
     opt[:title]  ||= config.dig((enabled || :disabled), :tooltip)

@@ -17,8 +17,8 @@ module Faraday
     #
     # @raise [TypeError] If *params* can not be converted to a Hash.
     #
-    def self.encode: ((Hash[(String|Symbol),untyped]) params) -> String
-                   | (Array[strArray] params)                 -> String
-                   | (nil params)                             -> nil
+    def self.encode: (Hash[(String|Symbol),untyped] params) -> String
+                   | (Array[strArray]               params) -> String
+                   | (nil                           params) -> nil
   end
 end

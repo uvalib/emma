@@ -42,7 +42,6 @@ module Emma::Config
     Log.error(error)
 
   rescue => error # Probable file read error.
-    # noinspection RubyMismatchedArgumentType
     Log.error(error, path)
     re_raise_if_internal_exception(error)
   end

@@ -47,13 +47,12 @@ module ApplicationCable::Common
 
   # Send debugging output to the console.
   #
-  # @param [Array] args
-  # @param [Hash]  opt
+  # @param [Array<*>] args
+  # @param [Hash]     opt
   #
   # @return [void]
   #
-  def __debug_cable: (?Array[untyped|nil] args, **untyped opt) { () -> untyped } -> untyped
-                   | (*(untyped|nil)      args, **untyped opt) { () -> untyped } -> untyped
+  def __debug_cable: (*untyped args, **untyped opt) ?{ () -> untyped } -> untyped
 
   private
 

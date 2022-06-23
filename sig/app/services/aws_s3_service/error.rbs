@@ -36,7 +36,9 @@ class AwsS3Service::Error < ApiService::Error
   include ClassType
 end
 
+# :nocov:
 class AwsS3Service::AuthError < ApiService::AuthError
+  # :nocov:
   include AwsS3Service::Error::ClassType
 end
 

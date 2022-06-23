@@ -1,7 +1,7 @@
 # View helper methods for rendering API data migration results.
 #
 module ApiMigrateHelper
-  include LayoutHelper
+  include PanelHelper
 
   # Render an API data migration report.
   #
@@ -34,7 +34,7 @@ module ApiMigrateHelper
   # @see #api_field_changes
   # @see #api_field_results
   #
-  def api_field_section: (Integer rid, symHash entry, Symbol|String part, Integer level) -> ActiveSupport::SafeBuffer
+  def api_field_section: (Integer rid, symHash entry, (Symbol|String) part, Integer level) -> ActiveSupport::SafeBuffer
 
   # Render changes to EMMA data field contents as a table of fields with before
   # and after values.
@@ -45,7 +45,7 @@ module ApiMigrateHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def api_field_changes: (Symbol|String column, symHash fields, ?(Integer|nil) level) -> ActiveSupport::SafeBuffer
+  def api_field_changes: ((Symbol|String) column, symHash fields, ?(Integer|nil) level) -> ActiveSupport::SafeBuffer
 
   # Render the resulting value of a modified EMMA data field as a collapsible
   # panel.
@@ -56,7 +56,7 @@ module ApiMigrateHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def api_field_results: (Symbol|String column, symHash fields, ?(Integer|nil) level) -> ActiveSupport::SafeBuffer
+  def api_field_results: ((Symbol|String) column, symHash fields, ?(Integer|nil) level) -> ActiveSupport::SafeBuffer
 
   private
 
@@ -82,7 +82,7 @@ module ApiMigrateHelper
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
-  def change_table_line: (Symbol|String field, symHash values, row: Integer row) -> Array[ActiveSupport::SafeBuffer]
+  def change_table_line: ((Symbol|String) field, symHash values, row: Integer) -> Array[ActiveSupport::SafeBuffer]
 
   # Change table row element.
   #
@@ -93,7 +93,7 @@ module ApiMigrateHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def change_table_cell: (Symbol|String name, String value, Integer row, Integer col) -> ActiveSupport::SafeBuffer
+  def change_table_cell: ((Symbol|String) name, String value, Integer row, Integer col) -> ActiveSupport::SafeBuffer
 
   def self.included: (Module base) -> void
 end

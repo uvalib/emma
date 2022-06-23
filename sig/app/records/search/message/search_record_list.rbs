@@ -10,18 +10,15 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # @param [Faraday::Response, Model, Hash, String, nil] src
   # @param [Hash, nil]                                   opt
   #
-  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?(symHash|nil) opt) -> void
+  def initialize: ((Faraday::Response|Model|String|symHash|nil) src, ?(symHash|nil) opt) -> void
 
   # Simulates the :totalResults field of similar Bookshare API records.
   #
   # @return [Integer]
   #
-  # -
-  # noinspection RubyInstanceMethodNamingConvention
-  # +
   def totalResults: () -> Integer
 
-  def calculate_scores!: (?(String|strArray)? terms, **untyped opt) -> void
+  def calculate_scores!: (?(String|strArray|nil) terms, **untyped opt) -> void
 
   # Strategy for pre-wrapping message data before de-serialization.
   #

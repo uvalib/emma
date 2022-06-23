@@ -4,7 +4,7 @@ module Puma
   module ServerDebug
     include Puma::ExtensionDebugging
 
-    def initialize: (untyped app, ?Puma::Events events, ?::Hash[untyped, untyped] options) -> void
+    def initialize: (untyped app, ?Puma::Events events, ?anyHash options) -> void
 
     def process_client: (untyped client, untyped buffer) -> untyped
 

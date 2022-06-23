@@ -40,7 +40,7 @@ module Api::Shared::IdentifierMethods
   #
   # @return [Array<String>]
   #
-  def normalize_identifiers: (String|PublicationIdentifier|Array[String|PublicationIdentifier]|nil values) -> strArray
+  def normalize_identifiers: ((String | PublicationIdentifier | Array[String|PublicationIdentifier] | nil) values) -> strArray
 
   # Produce a standard identifier of the form "(prefix):(value)".
   #
@@ -49,7 +49,7 @@ module Api::Shared::IdentifierMethods
   # @return [String]
   # @return [nil]                     If *value* is not a valid identifier.
   #
-  def normalize_identifier: (String|PublicationIdentifier|nil value) -> (String | nil)
+  def normalize_identifier: ((String|PublicationIdentifier|nil) value) -> (String | nil)
 
   # @private
   RELATION_FIELDS: symArray

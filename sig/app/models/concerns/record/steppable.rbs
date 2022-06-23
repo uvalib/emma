@@ -29,9 +29,6 @@ module Record::Steppable
   #
   # @see file:config/locales/state_table.en.yml *en.emma.state_table*
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   STATE_TABLES: Hash[Symbol,symHash]
 
   # Groupings of states related by theme.                                       # NOTE: from Upload::WorkflowMethods
@@ -40,9 +37,6 @@ module Record::Steppable
   #
   # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   STATE_GROUP: Hash[Symbol,symHash]
 
   # Mapping of workflow state to category.                                      # NOTE: from Upload::WorkflowMethods
@@ -51,6 +45,11 @@ module Record::Steppable
   #
   REVERSE_STATE_GROUP: Hash[Symbol,Symbol]
 
+  # The database column currently associated with the workflow state of the
+  # record.
+  #
+  # @return [Symbol]
+  #
   def state_column: () -> untyped
 
   # Workflow state table associated with *item*.
@@ -59,7 +58,7 @@ module Record::Steppable
   #
   # @return [Hash]
   #
-  def state_table: (Model|Class item) -> symHash
+  def state_table: ((Model|Class) item) -> symHash
 
   # Workflow state configuration for *item*.
   #
@@ -68,7 +67,7 @@ module Record::Steppable
   #
   # @return [Hash, nil]
   #
-  def get_state_table: (Model|Class item, ?no_raise: bool) -> (symHash | nil)
+  def get_state_table: ((Model|Class) item, ?no_raise: bool) -> (symHash | nil)
 
   # All valid workflow states for *item*.
   #
@@ -76,7 +75,7 @@ module Record::Steppable
   #
   # @return [Array<Symbol>]
   #
-  def get_state_names: (Model|Class item) -> symArray
+  def get_state_names: ((Model|Class) item) -> symArray
 
   # Cast value in a form for comparison.
   #
@@ -84,7 +83,7 @@ module Record::Steppable
   #
   # @return [Symbol, nil]
   #
-  def state_value: (Model|Symbol|String|nil item) -> (Symbol | nil)
+  def state_value: ((Model|Symbol|String|nil) item) -> (Symbol | nil)
 
   # Get the configured descriptive note for the state.
   #
@@ -92,7 +91,7 @@ module Record::Steppable
   #
   # @return [String, nil]
   #
-  def state_note: (Model|Symbol|String|nil item) -> (String | nil)
+  def state_note: ((Model|Symbol|String|nil) item) -> (String | nil)
 
   # Get a natural-language description for the state.
   #
@@ -100,35 +99,106 @@ module Record::Steppable
   #
   # @return [String, nil]
   #
-  def state_description: (Model|Symbol|String|nil item) -> (String | nil)
+  def state_description: ((Model|Symbol|String|nil) item) -> (String | nil)
 
-  def existing_entry?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record represents an existing EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def existing_entry?: ((Model|Symbol|String|nil) item) -> bool
 
-  def new_submission?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record represents an existing EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def new_submission?: ((Model|Symbol|String|nil) item) -> bool
 
-  def state_group: (Model|Symbol|String|nil item) -> untyped
+  # Return the group of the given state.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  # @return [Symbol]  Defaults to :all if *target_state* is invalid.
+  #
+  def state_group: ((Model|Symbol|String|nil) item) -> untyped
 
-  def state_group_label: (Model|Symbol|String|nil group) -> untyped
+  # Return the label for the given state group.
+  #
+  # @param [Model, String, Symbol, nil] group
+  #
+  # @return [String]
+  # @return [nil]                     If *group* is invalid.
+  #
+  def state_group_label: ((Model|Symbol|String|nil) group) -> untyped
 
-  def being_created?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step related to
+  # the creation of a new EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def being_created?: ((Model|Symbol|String|nil) item) -> bool
 
-  def being_modified?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step related to
+  # the modification of an existing EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def being_modified?: ((Model|Symbol|String|nil) item) -> bool
 
-  def being_removed?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step related to
+  # the removal of an existing EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def being_removed?: ((Model|Symbol|String|nil) item) -> bool
 
-  def under_review?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step related to
+  # the review process.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def under_review?: ((Model|Symbol|String|nil) item) -> bool
 
-  def being_submitted?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step related to
+  # transmission to a member repository.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def being_submitted?: ((Model|Symbol|String|nil) item) -> bool
 
-  def being_indexed?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step related to
+  # ingest into the EMMA Unified Index.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def being_indexed?: ((Model|Symbol|String|nil) item) -> bool
 
-  def completed?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step related to
+  # ingest into the EMMA Unified Index.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def completed?: ((Model|Symbol|String|nil) item) -> bool
 
-  def in_process?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step which leads
+  # to a change in the associated EMMA index entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def in_process?: ((Model|Symbol|String|nil) item) -> bool
 
-  def unsealed?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is involved in a workflow step where
+  # non-administrative data (EMMA or file data) could be changed.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def unsealed?: ((Model|Symbol|String|nil) item) -> bool
 
-  def sealed?: (Model|Symbol|String|nil item) -> bool
+  # Indicate whether this record is *not* involved in a workflow step where
+  # non-administrative data (EMMA or file data) could be changed.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  def sealed?: ((Model|Symbol|String|nil) item) -> bool
 
   # job_class
   #
@@ -154,7 +224,7 @@ module Record::Steppable
     #
     # @return [Hash]
     #
-    def state_table: (?(Model|Class)? item) -> symHash
+    def state_table: (?(Model|Class|nil) item) -> symHash
 
     # Workflow state configuration.
     #
@@ -163,7 +233,7 @@ module Record::Steppable
     #
     # @return [Hash, nil]
     #
-    def get_state_table: (?(Model|Class)? item, ?no_raise: bool) -> (symHash | nil)
+    def get_state_table: (?(Model|Class|nil) item, ?no_raise: bool) -> (symHash | nil)
 
     # All valid workflow states.
     #
@@ -171,7 +241,7 @@ module Record::Steppable
     #
     # @return [Array<Symbol>]
     #
-    def get_state_names: (?(Model|Class)? item) -> symArray
+    def get_state_names: (?(Model|Class|nil) item) -> symArray
 
     # Return the class from app/jobs associated with the record class.
     #
@@ -179,7 +249,7 @@ module Record::Steppable
     #
     # @return [Class<Model::WorkflowJob>]
     #
-    def job_class: (?(Model|Class)? item) -> Class
+    def job_class: (?(Model|Class|nil) item) -> Class
 
     # Called from the including class to generate query- and action-methods
     # associated with the column.
@@ -194,7 +264,7 @@ module Record::Steppable
     # that set of state values.  Otherwise, this method will have be invoked
     # explicitly after the state table has been defined.
     #
-    def generate_state_methods: (?Array[Symbol|String]? states) -> void
+    def generate_state_methods: (?(Array[Symbol|String]|nil) states) -> void
 
     # Validate state table definitions and interconnections.
     #
@@ -204,9 +274,6 @@ module Record::Steppable
     # This is best put at the very end of the class definition so that any
     # methods specified in the table definitions will have been defined.
     #
-    # -
-    # noinspection RubyNilAnalysis
-    # +
     def validate_state_table: (?(symHash|nil) table) -> nil
 
     # Create an ActiveJob serializer for the given Record class if it does not
@@ -237,7 +304,7 @@ module Record::Steppable
     #
     # @return [Hash]
     #
-    def state_table: (?(Model|Class)? item) -> symHash
+    def state_table: (?(Model|Class|nil) item) -> symHash
 
     # Workflow state configuration associated with the current record.
     #
@@ -246,7 +313,7 @@ module Record::Steppable
     #
     # @return [Hash, nil]
     #
-    def get_state_table: (?(Model|Class)? item, ?no_raise: bool) -> (symHash | nil)
+    def get_state_table: (?(Model|Class|nil) item, ?no_raise: bool) -> (symHash | nil)
 
     # All valid workflow states for the current record.
     #
@@ -254,7 +321,7 @@ module Record::Steppable
     #
     # @return [Array<Symbol>, nil]
     #
-    def get_state_names: (?(Model|Class)? item) -> (symArray | nil)
+    def get_state_names: (?(Model|Class|nil) item) -> (symArray | nil)
 
     # Cast value in a form for comparison.
     #
@@ -262,7 +329,7 @@ module Record::Steppable
     #
     # @return [Symbol, nil]
     #
-    def state_value: (?(Model|Symbol|String)? item) -> (Symbol | nil)
+    def state_value: (?(Model|Symbol|String|nil) item) -> (Symbol | nil)
 
     # Get the configured descriptive note for the current state.
     #
@@ -270,7 +337,7 @@ module Record::Steppable
     #
     # @return [String, nil]
     #
-    def state_note: (?(Model|Symbol|String)? item) -> (String | nil)
+    def state_note: (?(Model|Symbol|String|nil) item) -> (String | nil)
 
     # Get a natural-language description for the current state.
     #
@@ -278,25 +345,25 @@ module Record::Steppable
     #
     # @return [String, nil]
     #
-    def state_description: (?(Model|Symbol|String)? item) -> (String | nil)
+    def state_description: (?(Model|Symbol|String|nil) item) -> (String | nil)
 
     # Indicate whether this record represents an existing EMMA entry.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def existing_entry?: (?(Model|Symbol|String)? item) -> bool
+    def existing_entry?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record represents an existing EMMA entry.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def new_submission?: (?(Model|Symbol|String)? item) -> bool
+    def new_submission?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Return the state group of the record.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def state_group: (?(Model|Symbol|String)? item) -> Symbol
+    def state_group: (?(Model|Symbol|String|nil) item) -> Symbol
 
     # Return the label for the state group of the record.
     #
@@ -305,70 +372,70 @@ module Record::Steppable
     # @return [String]
     # @return [nil]                     If *group* is invalid.
     #
-    def state_group_label: (?(Model|Symbol|String)? group) -> (String | nil)
+    def state_group_label: (?(Model|Symbol|String|nil) group) -> (String | nil)
 
     # Indicate whether this record is involved in a workflow step related to
     # the creation of a new EMMA entry.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def being_created?: (?(Model|Symbol|String)? item) -> bool
+    def being_created?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step related to
     # the modification of an existing EMMA entry.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def being_modified?: (?(Model|Symbol|String)? item) -> bool
+    def being_modified?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step related to
     # the removal of an existing EMMA entry.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def being_removed?: (?(Model|Symbol|String)? item) -> bool
+    def being_removed?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step related to
     # the review process.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def under_review?: (?(Model|Symbol|String)? item) -> bool
+    def under_review?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step related to
     # transmission to a member repository.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def being_submitted?: (?(Model|Symbol|String)? item) -> bool
+    def being_submitted?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step related to
     # ingest into the EMMA Unified Index.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def being_indexed?: (?(Model|Symbol|String)? item) -> bool
+    def being_indexed?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step related to
     # ingest into the EMMA Unified Index.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def completed?: (?(Model|Symbol|String)? item) -> bool
+    def completed?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step which leads
     # to a change in the associated EMMA index entry.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def in_process?: (?(Model|Symbol|String)? item) -> bool
+    def in_process?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step where
     # non-administrative data (EMMA or file data) could be changed.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
-    def unsealed?: (?(Model|Symbol|String)? item) -> bool
+    def unsealed?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Return the class from app/jobs associated with the record class.
     #
@@ -376,7 +443,7 @@ module Record::Steppable
     #
     # @return [Class<Model::WorkflowJob>]
     #
-    def job_class: (?(Model|Symbol|String)? item) -> Class
+    def job_class: (?(Model|Symbol|String|nil) item) -> Class
 
     # Get the next legal state(s).
     #
@@ -387,7 +454,7 @@ module Record::Steppable
     #
     # @return [Array<Symbol>]
     #
-    def transitions: (?(Symbol|String)? curr_state) -> symArray
+    def transitions: (?(Symbol|String|nil) curr_state) -> symArray
 
     # Get the next legal state.
     #
@@ -395,25 +462,25 @@ module Record::Steppable
     #
     # @return [Symbol, nil]
     #
-    def next_state: (?(Symbol|String)? curr_state) -> (Symbol | nil)
+    def next_state: (?(Symbol|String|nil) curr_state) -> (Symbol | nil)
 
     # Indicate whether the value represents a terminal state.
     #
     # @param [Symbol, String, nil] curr_state  Passed to #transitions.
     #
-    def final_state?: (?(Symbol|String)? curr_state) -> bool
+    def final_state?: (?(Symbol|String|nil) curr_state) -> bool
 
     # Indicate whether the current record can transition to the given state.
     #
     # @param [Symbol, String] new_state
     #
-    def can_transition_to?: (Symbol|String new_state) -> bool
+    def can_transition_to?: ((Symbol|String) new_state) -> bool
 
     # Indicate whether the current record can't transition to the given state.
     #
     # @param [Symbol, String] new_state
     #
-    def cannot_transition_to?: (Symbol|String new_state) -> bool
+    def cannot_transition_to?: ((Symbol|String) new_state) -> bool
 
     # Transition to a new state.
     #
@@ -426,7 +493,7 @@ module Record::Steppable
     # @return [nil]                   If *no_raise* and invalid transition.
     # @return [Symbol]                The state before the transition.
     #
-    def transition_to: (Symbol|String new_state, ?meth: Symbol?, ?no_raise: bool?) -> (Symbol | nil)
+    def transition_to: ((Symbol|String) new_state, ?meth: Symbol|nil, ?no_raise: bool|nil) -> (Symbol | nil)
 
     # For each state/action pair of the sequence, transition to the state and
     # perform the action.  An action which is not a proc or a the name of a
@@ -443,7 +510,7 @@ module Record::Steppable
     # @yield To supply additional state/action pairs.
     # @yieldreturn [Hash{Symbol=>Proc,Symbol,Boolean}]
     #
-    def transition_sequence: (meth: Symbol, ?sequence: Hash[Symbol,(Proc|Symbol|bool)]?) { () -> untyped } -> bool
+    def transition_sequence: (meth: Symbol, ?sequence: Hash[Symbol,(Proc|Symbol|bool)]|nil) { () -> untyped } -> bool
 
     # Execute a sequence step.
     #
@@ -451,13 +518,13 @@ module Record::Steppable
     # @param [Symbol, nil]  new_state   Target state after *action*.
     # @param [Boolean]      auto_retry
     #
-    # @return [Array<(Any,Symbol)>]            Action result and new effective state.
+    # @return [Array<(Any,Symbol)>]     Action result and new effective state.
     #
     # == Usage Notes
     # Ensures that if the action raises an exception then that is captured in
     # the instance's :report column.
     #
-    def execute_step: (Symbol|Proc step, ?(Symbol|nil) new_state, ?auto_retry: bool) -> [untyped, Symbol]
+    def execute_step: ((Symbol|Proc) step, ?(Symbol|nil) new_state, ?auto_retry: bool) -> [untyped, Symbol]
 
     # Schedule a method to be run asynchronously (unless :async is *false*).
     #

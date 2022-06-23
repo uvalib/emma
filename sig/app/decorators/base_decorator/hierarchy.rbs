@@ -1,4 +1,4 @@
-# View helper methods supporting the hierarchical display of model records.
+# Methods supporting the hierarchical display of model records.
 #
 # @note In use with Search items but untested with any other Model class.
 #
@@ -21,10 +21,7 @@ module BaseDecorator::Hierarchy
   # @see #item_lines
   # @see Search::Record::TitleRecord#field_hierarchy
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
-  def render_field_hierarchy: (?action: String|Symbol|nil, ?pairs: symHash?, ?row_offset: Integer?, ?separator: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_field_hierarchy: (?action: String|Symbol|nil, ?pairs: symHash|nil, ?row_offset: Integer|nil, ?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The term used for a file instance instead of 'file'. # TODO: I18n
   #
@@ -200,8 +197,17 @@ module BaseDecorator::Hierarchy
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def new_section: (Symbol|String `type`, untyped name, untyped? data_value, untyped? details, untyped index, symHash prop, symHash opt) -> ActiveSupport::SafeBuffer
+  def new_section: ((Symbol|String) `type`, untyped name, (untyped|nil) data_value, (untyped|nil) details, untyped index, symHash prop, symHash opt) -> ActiveSupport::SafeBuffer
 
+  # list_item_toggle
+  #
+  # @param [Integer] row
+  # @param [Hash]    opt              Passed to TreeHelper#tree_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:javascripts/controllers/search.js *setupToggleControl()*
+  #
   def list_item_toggle: (?row: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single label/value line.
@@ -212,7 +218,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_line: (String|Symbol|nil label, untyped? value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_line: ((String|Symbol|nil) label, (untyped|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Indicate whether a section should be ignored, either because its name
   # starts with an underscore (indicating "out-of-band" information) or because
@@ -223,7 +229,7 @@ module BaseDecorator::Hierarchy
   # @param [Symbol]              meth
   # @param [Hash, Array, Symbol] except
   #
-  def skip_entry?: (Symbol key, untyped value, ?meth: Symbol?, ?except: Symbol|symArray|symHash|nil) -> bool
+  def skip_entry?: (Symbol key, untyped value, ?meth: Symbol|nil, ?except: Symbol|symArray|symHash|nil) -> bool
 
   # Create a copy of the Hash where *scope* is appended to the :scopes value.
   #
@@ -243,5 +249,9 @@ module BaseDecorator::Hierarchy
   #
   # @return [String]
   #
-  def count_unique: (Array[symHash|ActiveSupport::SafeBuffer] lines, String|Symbol `type`, ?term: String?) -> String
+  def count_unique: ((Array[symHash|ActiveSupport::SafeBuffer]) lines, (String|Symbol) `type`, ?term: String|nil) -> String
+
+  private
+
+  def self.included: (Module base) -> void
 end

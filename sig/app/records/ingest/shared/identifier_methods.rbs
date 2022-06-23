@@ -11,5 +11,5 @@ module Ingest::Shared::IdentifierMethods
   #
   # @return [Array<String>]
   #
-  def normalize_identifiers: (String|PublicationIdentifier|nil|Array[String|PublicationIdentifier|nil] values) -> strArray
+  def normalize_identifiers: ((String | PublicationIdentifier | nil | Array[String|PublicationIdentifier|nil]) values) -> strArray
 end

@@ -27,7 +27,7 @@ module BookshareConcern
   # @return [String]
   # @return [nil]
   #
-  def get_member: (?(User|String)? for_user, ?(String|nil) _name) -> (String | nil)
+  def get_member: (?(User|String|nil) for_user, ?(String|nil) _name) -> (String | nil)
 
   # Extract the best-match URL parameter which represents an item identifier.
   #

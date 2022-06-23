@@ -6,14 +6,23 @@ module Emma::Common::HashMethods
   # @param [ActionController::Parameters, Hash, nil] hash
   # @param [Array<Symbol>]                           keys
   #
-  # @return [Array<(Hash, Hash)>]            Matching hash followed by remainder hash.
+  # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def partition_hash: (prmHash? hash, *Symbol keys) { () -> untyped } -> [symHash, symHash]
+  def partition_hash: ((prmHash|nil) hash, *Symbol keys) ?{ () -> untyped } -> [symHash, symHash]
 
-  def remainder_hash!: (prmHash? hash, *Symbol keys) { () -> untyped } -> symHash
+  # Retain the elements identified by *keys* in *hash* (that is, extract all
+  # elements except the ones matching those keys).
+  #
+  # @param [ActionController::Parameters, Hash, nil] hash
+  # @param [Array<Symbol>]                           keys
+  #
+  # @return [Hash]                    The elements removed from *hash*.
+  #
+  # == Usage Note
+  # If *hash* is something other than a ::Hash, the original item will not be
+  # changed by this method.
+  #
+  def remainder_hash!: ((prmHash|nil) hash, *Symbol keys) ?{ () -> untyped } -> symHash
 
   # Extract the elements identified by *keys* from *hash*.
   #
@@ -22,22 +31,69 @@ module Emma::Common::HashMethods
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
-  def extract_hash!: (prmHash? hash, *Symbol keys) { () -> untyped } -> symHash
+  # == Usage Note
+  # If *hash* is something other than a ::Hash, the original item will not be
+  # changed by this method.
+  #
+  def extract_hash!: ((prmHash|nil) hash, *Symbol keys) ?{ () -> untyped } -> symHash
 
+  # Extract the elements identified by *keys* from *hash*.
   alias partition_hash! extract_hash!
 
-  def gather_keys: (*Symbol) { () -> (Symbol|String|Array[Symbol|String]) } -> symArray
+  private
 
-  def normalize_hash: (prmHash? item) -> symHash
+  def gather_keys: (*Symbol) ?{ () -> (Symbol|String|Array[Symbol|String]) } -> symArray
 
-  def normalize_hash!: (prmHash? item) -> symHash
+  public
 
+  # normalize_hash
+  #
+  # @param [ActionController::Parameters, Hash, nil] item
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def normalize_hash: ((prmHash|nil) item) -> symHash
+
+  # normalize_hash
+  #
+  # @param [ActionController::Parameters, Hash, nil] item
+  #
+  # @return [Hash{Symbol=>Any}]   The modified item itself if *item* is a Hash.
+  #
+  def normalize_hash!: ((prmHash|nil) item) -> symHash
+
+  # Sort a hash.
+  #
+  # @param [Hash] hash
+  #
+  # @return [Hash]
+  #
   def sort: (anyHash hash) -> anyHash
 
+  # Sort a hash in-place.
+  #
+  # @param [Hash] hash
+  #
+  # @return [Hash]
+  #
   def sort!: (anyHash hash) -> anyHash
 
+  # Sort a hash.
+  #
+  # @param [Hash] hash
+  # @param [Proc] block
+  #
+  # @return [Hash]
+  #
   def sort_by: (anyHash hash) { () -> untyped } -> anyHash
 
+  # Sort a hash in-place.
+  #
+  # @param [Hash] hash
+  # @param [Proc] block
+  #
+  # @return [Hash]
+  #
   def sort_by!: (anyHash hash) { () -> untyped } -> anyHash
 
   # Recursively remove blank items from a hash.
@@ -52,7 +108,7 @@ module Emma::Common::HashMethods
   #
   # @see #_remove_blanks
   #
-  def reject_blanks: (anyHash|nil item, ?squeeze: bool, ?dup: bool) -> anyHash
+  def reject_blanks: ((anyHash|nil) item, ?squeeze: bool, ?dup: bool) -> anyHash
 
   # Recursively remove blank items from an object.
   #
@@ -64,9 +120,9 @@ module Emma::Common::HashMethods
   #
   # @return [Hash, Array, Any, nil]
   #
-  #--
+  # -
   # == Variations
-  #++
+  # +
   #
   # @overload _remove_blanks(item)
   #   @param [NilClass,Boolean,Numeric,Symbol,Method,Proc,Module] item

@@ -8,6 +8,8 @@ module OAuth2
     # @param [Hash]   params          Additional parameters.
     # @param [Hash]   opts
     #
+    # @return [OAuth2::AccessToken, nil]
+    #
     # This method overrides:
     # @see OAuth2::Strategy::AuthCode#get_token
     #
@@ -31,6 +33,6 @@ module OAuth2
     # @return [OAuth2::Response]
     # @return [nil]                   If no token was provided or found.
     #
-    def revoke_token: (OAuth2::AccessToken|symHash|String token, ?(symHash|nil) params, ?(symHash|nil) opts) -> (OAuth2::Response | nil)
+    def revoke_token: ((OAuth2::AccessToken|symHash|String) token, ?(symHash|nil) params, ?(symHash|nil) opts) -> (OAuth2::Response | nil)
   end
 end

@@ -4,6 +4,6 @@ module OmniAuth
     #
     # @param [Symbol, String, Rack::Request] meth
     #
-    def allowed_method?: (Symbol|String|Rack::Request meth) -> bool
+    def allowed_method?: ((Symbol|String|Rack::Request) meth) -> bool
   end
 end

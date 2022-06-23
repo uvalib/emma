@@ -28,6 +28,7 @@ module TestHelper::SystemTests::Show
   # @return [void]
   #
   # @yield Test code to run while on the page.
+  # @yieldparam [String] title
   # @yieldreturn [void]
   #
   def visit_show_page: (Symbol model, ?entry: Capybara::Node::Element|nil, ?index: Integer|Symbol|nil, ?entry_class: String|nil) { (String) -> void } -> void

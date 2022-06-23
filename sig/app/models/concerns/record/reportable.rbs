@@ -46,7 +46,7 @@ module Record::Reportable
 
   # Update the current value of #REPORT_COLUMN for the current record.
   #
-  # @param [ExecReport, Hash, Array<String>, String, nil] value
+  # @param [ExecReport, Hash, String, Array<String>, Array<FlashPart>, nil] value
   #
   # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
   #
@@ -79,7 +79,7 @@ module Record::Reportable
   #
   # @return [Boolean]
   #
-  def set_report_column: (untyped? value, ?meth: Symbol?, ?no_raise: bool, ?col: Symbol) -> bool
+  def set_report_column: (untyped? value, ?meth: Symbol|nil, ?no_raise: bool, ?col: Symbol) -> bool
 
   private
 

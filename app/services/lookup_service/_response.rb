@@ -71,7 +71,7 @@ class LookupService::Response
   # Create a new instance.
   #
   # @param [LookupService::Response, Hash, *] items
-  # @param [Hash]                             opt
+  # @param [Hash, nil]                        opt
   #
   def initialize(items = nil, opt = nil)
     src = nil

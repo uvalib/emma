@@ -5,12 +5,35 @@ module LookupService::RemoteService::Properties
 
   include LookupService::Common
 
+  # How important an external service is as an authority for the type(s) of
+  # identifiers it can search.  For example:
+  #
+  # * 1   High
+  # * 10  Medium
+  # * 100 Low
+  #
+  # @type [Integer]
+  #
+  # @see LookupService#SERVICE_TABLE
+  #
   DEFAULT_PRIORITY: Integer
 
+  # How long to wait for a response from the external service.
+  #
+  # @type [Float]
+  #
   DEFAULT_TIMEOUT: Float
 
+  # The configuration key for the service.
+  #
+  # @return [Symbol]
+  #
   def service_key: () -> Symbol
 
+  # Indicate whether requests are enabled to this external service.
+  #
+  # @return [Boolean]
+  #
   def enabled: () -> bool
 
   alias enabled? enabled
@@ -21,9 +44,28 @@ module LookupService::RemoteService::Properties
   #
   def configuration: () -> symHash
 
-  def types:    () -> symArray
+  # Types of identifiers that the external service can find.
+  #
+  # @return [Array<Symbol>]
+  #
+  def types: () -> symArray
+
+  # How important the external service is as an authority for the type(s) of
+  # identifiers it can search.
+  #
+  # @type [Integer]
+  #
+  # @see LookupService::RemoteService::Properties#DEFAULT_PRIORITY
+  #
   def priority: () -> Integer
-  def timeout:  () -> Float
+
+  # How long to wait for a response from the external service.
+  #
+  # @return [Float]
+  #
+  # @see LookupService::RemoteService::Properties#DEFAULT_TIMEOUT
+  #
+  def timeout: () -> Float
 
   private
 

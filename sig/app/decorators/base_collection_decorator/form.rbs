@@ -1,5 +1,4 @@
-# View helper methods supporting creation of Model instances (both database
-# items and API messages).
+# Methods supporting the deletion of Model instances.
 #
 module BaseCollectionDecorator::Form
   include BaseDecorator::Form
@@ -14,7 +13,7 @@ module BaseCollectionDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def delete_form: (?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def delete_form: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # delete_submit_option_keys
   #
@@ -22,6 +21,12 @@ module BaseCollectionDecorator::Form
   #
   def delete_submit_option_keys: () -> symArray
 
+  # delete_submit_options
+  #
+  # @param [Hash] opt                 Optional option value overrides.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
   def delete_submit_options: (**untyped opt) -> symHash
 
   # delete_submit_path
@@ -31,7 +36,7 @@ module BaseCollectionDecorator::Form
   #
   # @return [String, nil]
   #
-  def delete_submit_path: (?(Model|String|Array[Model|String])? ids, **untyped opt) -> (String | nil)
+  def delete_submit_path: (?(Model|String|Array[Model|String]|nil) ids, **untyped opt) -> (String | nil)
 
   # Submit button for the delete model form.
   #
@@ -42,7 +47,7 @@ module BaseCollectionDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def delete_submit_button: (?action: String|Symbol|nil, ?label: String?, ?url: String|symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def delete_submit_button: (?action: String|Symbol|nil, ?label: String|nil, ?url: String|symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Cancel button for the delete form.
   #
@@ -58,8 +63,9 @@ module BaseCollectionDecorator::Form
   #
   # @return [Array<String>]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def item_ids: (?(Model|String|Array[Model|String])? items) -> strArray
+  def item_ids: (?(Model|String|Array[Model|String]|nil) items) -> strArray
+
+  private
+
+  def self.included: (Module base) -> void
 end

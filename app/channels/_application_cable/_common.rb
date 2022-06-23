@@ -108,7 +108,7 @@ module ApplicationCable::Common
     opt[:separator] ||= "\n\t"
     t     = Thread.current.name
     name  = self.is_a?(Class) ? self.name : self.class.name
-    args  = args.join(Emma::Debug::DEBUG_SEPARATOR)
+    args  = args.compact.join(Emma::Debug::DEBUG_SEPARATOR)
     added = block_given? ? yield : {}
     __debug_items("#{name} #{args}", **opt) do
       added.is_a?(Hash) ? added.merge(thread: t) : [*added, "thread #{t}"]

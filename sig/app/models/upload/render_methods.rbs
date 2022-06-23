@@ -1,5 +1,13 @@
 # Methods to support rendering Upload records.
 #
 module Upload::RenderMethods
+  # menu_label
+  #
+  # @param [Upload, nil] item         Default: self.
+  #
+  # @return [String, nil]
+  #
+  # @see BaseDecorator::Menu#items_menu_label
+  #
   def menu_label: (?(Upload|nil) item) -> (String | nil)
 end

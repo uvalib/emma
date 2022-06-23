@@ -12,7 +12,7 @@ module AuthHelper
   # @return [OmniAuth::AuthHash, nil]
   #
   def auth_hash: (User user) -> OmniAuth::AuthHash
-               | (nil user)  -> nil
+               | (nil  user) -> nil
 
   # Generate an auth hash based on fixed information.
   #
@@ -21,7 +21,7 @@ module AuthHelper
   #
   # @return [OmniAuth::AuthHash, nil]
   #
-  def synthetic_auth_hash: (User|String|OmniAuth::AuthHash|prmHash src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
+  def synthetic_auth_hash: ((User|String|OmniAuth::AuthHash|prmHash) src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
 
   # Table of user names/tokens acquired for use in non-production deploys.
   #
@@ -61,7 +61,7 @@ module AuthHelper
   #
   # @return [Hash{String=>Hash}]
   #
-  def stored_auth_fetch: (?accounts: (String|strArray)?) -> Hash[String,anyHash]
+  def stored_auth_fetch: (?accounts: String|strArray|nil) -> Hash[String,anyHash]
 
   # Add or update one or more user name/token entries.
   #
@@ -69,7 +69,7 @@ module AuthHelper
   #
   # @return [void]
   #
-  def stored_auth_update: (Hash[String,String]? pairs) -> void
+  def stored_auth_update: ((Hash[String,String]|nil) pairs) -> void
 
   # Add or update a user name/token entry.
   #
@@ -79,6 +79,7 @@ module AuthHelper
   # @param [String, ::OAuth2::AccessToken, nil] token
   #
   # @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
+  # @return [nil]
   #
   # -
   # == Variations
@@ -91,11 +92,8 @@ module AuthHelper
   #   @param [String]                        user   User to add.
   #   @param [String, ::OAuth2::AccessToken] token  Associated token.
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def stored_auth_update_user: (OmniAuth::AuthHash user)                         -> (Hash[String,anyHash] | nil)
-                             | (String user, String|::OAuth2::AccessToken token) -> (Hash[String,anyHash] | nil)
+  def stored_auth_update_user: (OmniAuth::AuthHash user, ?nil token                          ) -> (Hash[String,anyHash] | nil)
+                             | (String             user, (String|::OAuth2::AccessToken) token) -> (Hash[String,anyHash] | nil)
 
   private
 

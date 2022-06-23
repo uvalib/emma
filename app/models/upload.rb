@@ -703,9 +703,6 @@ class Upload < ApplicationRecord
   #
   # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def self.matching_sid(sid = nil, max: nil, meth: nil, no_raise: false, **opt)
     sid = opt[:submission_id] = sid_for(sid || opt)
     if sid.blank?
@@ -723,6 +720,7 @@ class Upload < ApplicationRecord
     meth ||= "#{self.class}.#{__method__}"
     msg %= { type: [base_class, opt[:type]].compact.join('::') }
     Log.warn { "#{meth}: #{msg}" }
+    # noinspection RubyMismatchedArgumentType
     raise err, msg if err
   end
 
@@ -740,9 +738,6 @@ class Upload < ApplicationRecord
   #
   # @return [Model]                     Or *nil* on error if *no_raise*.
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def self.latest_for_sid(sid = nil, sort: nil, **opt)
     result = matching_sid(sid, **opt) or return
     sort ||= :created_at

@@ -11,17 +11,17 @@ class ReadingList < ApplicationRecord
   #
   # @param [Title, Artifact, String, *] item
   #
-  def include?: (Title|Artifact|String|untyped item) -> bool
+  def include?: ((Title|Artifact|String|untyped) item) -> bool
 
   # Indicate whether the reading list includes the indicated title.
   #
   # @param [Title, String, *] item
   #
-  def has_title?: (Title|String|untyped item) -> bool
+  def has_title?: ((Title|String|untyped) item) -> bool
 
   # Indicate whether the reading list includes the indicated artifact.
   #
   # @param [Artifact, String, *] item
   #
-  def has_artifact?: (Artifact|String|untyped item) -> bool
+  def has_artifact?: ((Artifact|String|untyped) item) -> bool
 end

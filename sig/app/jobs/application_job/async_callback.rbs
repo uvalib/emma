@@ -53,7 +53,7 @@ class ApplicationJob::AsyncCallback
   #   @option opt [ApplicationRecord]  :cb_receiver   Required.
   #   @option opt [Symbol]             :cb_method     Required.
   #
-  def initialize: (?symHash|ApplicationRecord|ApplicationJob::AsyncCallback|nil src, ?(Symbol|nil) meth, ?ApplicationJob::AsyncCallback? callback, **untyped opt) -> void
+  def initialize: (?(symHash|ApplicationRecord|ApplicationJob::AsyncCallback|nil) src, ?(Symbol|nil) meth, ?(ApplicationJob::AsyncCallback|nil) callback, **untyped opt) -> void
 
   # Enqueue or run the callback as a job.
   #

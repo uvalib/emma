@@ -96,7 +96,7 @@ module BaseDecorator::List
   # @param [Hash, nil]           prop       Default: from field/model.
   # @param [Symbol, nil]         field
   # @param [String, Integer]     index      Offset to make unique element IDs.
-  # @param [Integer, nil]        row        Display row.
+  # @param [Integer]             row        Display row.
   # @param [String, nil]         separator  Between parts if *value* is array.
   # @param [String, nil]         wrap       Class for outer wrapper.
   # @param [Hash]                opt        Passed to each #html_div except:

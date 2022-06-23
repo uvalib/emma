@@ -18,7 +18,7 @@ class Entry::Options < Options
 
   def initialize: (?(symHash|nil) prm) -> void
 
-  def option_method: (Symbol|String key) -> (Symbol | nil)
+  def option_method: ((Symbol|String) key) -> (Symbol | nil)
 
   # Get URL parameters relevant to the current operation.
   #

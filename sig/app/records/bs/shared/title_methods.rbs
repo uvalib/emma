@@ -11,6 +11,24 @@ module Bs::Shared::TitleMethods
   #
   def identifier: () -> String
 
+  # Field(s) that may hold the title string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_fields: () -> symArray
+
+  # Field(s) that may hold the subtitle string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def subtitle_fields: () -> symArray
+
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def contents_fields: () -> symArray
+
   # A link to a title's thumbnail image.
   #
   # @return [String]
@@ -50,28 +68,4 @@ module Bs::Shared::TitleMethods
   # @return [nil]                     If the value cannot be determined.
   #
   def image_count: () -> (Integer | nil)
-
-  # Field(s) that may hold the title string.
-  #
-  # @return [Array<Symbol>]
-  #
-  def title_fields: () -> symArray
-
-  # Field(s) that may hold the subtitle string.
-  #
-  # @return [Array<Symbol>]
-  #
-  def subtitle_fields: () -> symArray
-
-  # Field(s) that may hold date information about the title.
-  #
-  # @return [Array<Symbol>]
-  #
-  def date_fields: () -> symArray
-
-  # Field(s) that may hold content information about the title.
-  #
-  # @return [Array<Symbol>]
-  #
-  def contents_fields: () -> symArray
 end

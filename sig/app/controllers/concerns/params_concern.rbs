@@ -7,9 +7,23 @@ module ParamsConcern
 
   include Emma::Common
 
+  include DevHelper
+
   include ParamsHelper
 
   include SearchTermsHelper
+
+  # :nocov:
+  include LayoutHelper::SearchFilters
+
+  # Controllers with their own independent on-screen debugging facilities.
+  #
+  # On these pages, the "&debug=..." URL parameter is treated as if it was
+  # "&app.(ctrlr).debug=...".
+  #
+  # @type [Array<Symbol>]
+  #
+  SPECIAL_DEBUG_CONTROLLERS: symArray
 
   # Accumulator for the URL parameters to be used for redirection after
   # "before" actions have been run.
@@ -25,7 +39,7 @@ module ParamsConcern
   #
   # @see #conditional_redirect
   #
-  def will_redirect: (?(String|anyHash)? url) -> (bool | String | anyHash)
+  def will_redirect: (?(String|anyHash|nil) url) -> (bool | String | anyHash)
 
   # Called to ensure that a fresh copy is requested each time.
   #
@@ -45,6 +59,8 @@ module ParamsConcern
   # @return [String]                  Value of `session['app.current_path']`.
   # @return [nil]                     No 'app.current_path' found.
   #
+  # @return [String]
+  #
   def get_current_path: () -> (String | nil)
 
   # Set current page used by Devise as the redirect target after sign-in.
@@ -52,15 +68,6 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path: () -> void
-
-  # Controllers with their own independent on-screen debugging facilities.
-  #
-  # On these pages, the "&debug=..." URL parameter is treated as if it was
-  # "&app.(ctrlr).debug=...".
-  #
-  # @type [Array<Symbol>]
-  #
-  SPECIAL_DEBUG_CONTROLLERS: symArray
 
   # Set session on-screen debugging:
   #

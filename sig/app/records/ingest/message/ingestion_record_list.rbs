@@ -8,7 +8,7 @@
 class Ingest::Message::IngestionRecordList < Ingest::Api::Message
   include Ingest::Shared::CollectionMethods
 
-  LIST_ELEMENT: untyped
+  LIST_ELEMENT: Class
 
   # Strategy for pre-wrapping message data before de-serialization.
   #

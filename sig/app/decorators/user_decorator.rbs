@@ -7,11 +7,29 @@
 class UserDecorator < AccountDecorator
   module Paths
     include AccountDecorator::Paths
+
+    def index_path: (**untyped opt) -> untyped
+
+    def show_path: (?untyped? item, **untyped opt) -> untyped
+
+    def new_path: (**untyped opt) -> untyped
+
+    def create_path: (**untyped opt) -> untyped
+
+    def edit_select_path: (**untyped opt) -> untyped
+
+    def edit_path: (?untyped? item, **untyped opt) -> untyped
+
+    def update_path: (?untyped? item, **untyped opt) -> untyped
   end
 
   module Methods
     include AccountDecorator::Methods
 
+    # The start of a configuration YAML path (including the leading "emma.")
+    #
+    # @return [Symbol]
+    #
     def model_config_base: () -> Symbol
   end
 
@@ -20,6 +38,10 @@ class UserDecorator < AccountDecorator
     include Paths
     include Methods
 
+    # help_topic
+    #
+    # @return [Array<Symbol>]
+    #
     def help_topic: () -> symArray
   end
 
@@ -29,6 +51,9 @@ class UserDecorator < AccountDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end

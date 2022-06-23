@@ -34,7 +34,7 @@ module PopupHelper
 
   # Render a popup control and associated popup element.
   #
-  # @param [Hash, nil] control        Options for the visible control.
+  # @param [Hash, nil] control        Options for the visible toggle control.
   # @param [Hash, nil] panel          Options for the popup panel element.
   # @param [Hash] opt                 Passed to 'inline-popup' except for
   #                                     options passed to #make_popup_toggle,
@@ -49,9 +49,10 @@ module PopupHelper
   #
   def inline_popup: (?control: symHash|nil, ?panel: symHash|nil, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
+  # @private
   POPUP_TOGGLE_OPT: symArray
 
-  # Create a popup control.
+  # Create a popup toggle control.
   #
   # @param [Hash] opt                 Passed to element method except for:
   #
@@ -61,8 +62,9 @@ module PopupHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def make_popup_toggle: (?button: untyped?, ?text: untyped?, ?label: untyped?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def make_popup_toggle: (?button: untyped|nil, ?text: untyped|nil, ?label: untyped|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # @private
   POPUP_PANEL_OPT: symArray
 
   # Render a popup control and popup element.

@@ -203,7 +203,6 @@ module LayoutHelper::PageControls
         opt[:many] = true
       end
     end
-    # noinspection RubyMismatchedReturnType
     config_lookup('page_controls.label', **opt) || 'Controls'
   end
 

@@ -128,7 +128,7 @@ module Record::Exceptions                                                       
     # @return [Record::Error]         New value of @exception.
     #
     #--
-    # noinspection RubyNilAnalysis,RubyMismatchedArgumentType
+    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
     #++
     def set_error(error, **opt)
       error = error.new(**opt) if error.is_a?(Class)

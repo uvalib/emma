@@ -3,7 +3,7 @@
 module EngineConcern
   extend ActiveSupport::Concern
 
-  include Emma::Common
+  include ParamsHelper
 
   include FlashConcern
 
@@ -13,7 +13,7 @@ module EngineConcern
   #
   # @return [String]
   #
-  def service_name: (String|Symbol|Class service) -> String
+  def service_name: ((String|Symbol|Class) service) -> String
 
   # The session key associated with the given service.
   #
@@ -21,7 +21,7 @@ module EngineConcern
   #
   # @return [String]
   #
-  def service_session_key: (String|Symbol|Class service) -> String
+  def service_session_key: ((String|Symbol|Class) service) -> String
 
   # The URL of the user-selected service engine.
   #
@@ -29,7 +29,7 @@ module EngineConcern
   #
   # @return [String, nil]             If different than the default engine.
   #
-  def requested_engine: (String|Symbol|Class service) -> (String | nil)
+  def requested_engine: ((String|Symbol|Class) service) -> (String | nil)
 
   # Recall the user-selected service engine name or endpoint.
   #
@@ -37,7 +37,7 @@ module EngineConcern
   #
   # @return [String, nil]
   #
-  def get_session_engine: (String|Symbol|Class service) -> (String | nil)
+  def get_session_engine: ((String|Symbol|Class) service) -> (String | nil)
 
   # Remember (or forget) the user-selected service engine name or endpoint.
   #
@@ -46,7 +46,7 @@ module EngineConcern
   #
   # @return [String, nil]
   #
-  def set_session_engine: (String|Symbol|Class service, String? new_value) -> (String | nil)
+  def set_session_engine: ((String|Symbol|Class) service, (String|nil) new_value) -> (String | nil)
 
   # @private
   RESET_KEYS: symArray
@@ -82,7 +82,7 @@ module EngineConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def flash_reset_notice: (String|Symbol|Class service, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+  def flash_reset_notice: ((String|Symbol|Class) service, String url, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

@@ -1,5 +1,11 @@
-# View helper methods supporting the hierarchical display of model records.
+# Methods supporting the hierarchical display of model records.
+#
+# @note In use with Search items but untested with any other Model class.
 #
 module BaseCollectionDecorator::Hierarchy
   include BaseDecorator::Hierarchy
+
+  private
+
+  def self.included: (Module base) -> void
 end

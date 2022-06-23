@@ -150,7 +150,7 @@ module IngestService::Request::Submissions
   # @overload record_list(item)
   #   @param [Model, Hash] item
   #
-  def record_list: (Ingest::Message::IngestionRecordList|Ingest::Record::IngestionRecord|Model|symHash record) -> Array[Ingest::Record::IngestionRecord]
+  def record_list: ((Ingest::Message::IngestionRecordList | Ingest::Record::IngestionRecord | Model | symHash) record) -> Array[Ingest::Record::IngestionRecord]
 
   # Generate an array of ingest identifiers.
   #
@@ -174,7 +174,7 @@ module IngestService::Request::Submissions
   # @overload identifier_list(id)
   #   @param [String] id
   #
-  def identifier_list: (Ingest::Message::IngestionRecordList|Ingest::Record::IngestionRecord|Model|symHash|String item) -> Array[Ingest::Record::IdentifierRecord]
+  def identifier_list: ((Ingest::Message::IngestionRecordList | Ingest::Record::IngestionRecord | Model | symHash | String) item) -> Array[Ingest::Record::IdentifierRecord]
 
   private
 
@@ -199,7 +199,7 @@ module IngestService::Request::Submissions
   #
   # etc.
   #
-  def identifier_records: (Model|symHash|String item) -> Array[Ingest::Record::IdentifierRecord]
+  def identifier_records: ((Model|symHash|String) item) -> Array[Ingest::Record::IdentifierRecord]
 
   # Indicate whether the value appears to be acceptable as a repository ID.
   #
@@ -207,11 +207,11 @@ module IngestService::Request::Submissions
   #
   # @param [String, nil] value
   #
-  def allowed_repository_id?: (String|nil value) -> bool
+  def allowed_repository_id?: ((String|nil) value) -> bool
 
   # Indicate whether the value appears to be acceptable as a index record ID.
   #
   # @param [String, nil] value
   #
-  def allowed_record_id?: (String|nil value) -> bool
+  def allowed_record_id?: ((String|nil) value) -> bool
 end

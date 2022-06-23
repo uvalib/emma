@@ -1,2 +1,3 @@
 class JobResult < ApplicationRecord
+  include JobMethods
 end

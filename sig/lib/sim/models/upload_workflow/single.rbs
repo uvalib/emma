@@ -124,9 +124,6 @@ module UploadWorkflow::Single::Simulation
     #
     # @type [Array<Symbol>]
     #
-    # -
-    # noinspection LongLine
-    # +
     PROP_NAME: symArray
 
     # Initial property settings specific to the workflow simulation branch.

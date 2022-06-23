@@ -104,7 +104,7 @@ module Model
     #
     # @see Api::Record::Associations::ClassMethods#has_many
     #
-    def set_relation_field: (Symbol|String field_name, Class|nil field_type) -> (Symbol | nil)
+    def set_relation_field: ((Symbol|String) field_name, (Class|nil) field_type) -> (Symbol | nil)
 
     # Validate the including aggregate/collection class.
     #
@@ -131,7 +131,7 @@ module Model
   #
   # @param [Symbol, String, *]
   #
-  def include?: (Symbol|String|untyped name) -> bool
+  def include?: ((Symbol|String|untyped) name) -> bool
 
   # The fields defined by this model.
   #
@@ -169,7 +169,12 @@ module Model
   #
   DIRECTIVES: symArray
 
-  BASE_DIRECTIVE: symArray
+  # Keys under "emma.*.record" beginning with an underscore, which represent
+  # the control directive for specifying the base configuration.
+  #
+  # @type [Array<Symbol>]
+  #
+  BASE_DIRECTIVE: symArray # @note: Added manually; rbs can't see this.
 
   # Configured record fields for each model/controller.
   #
@@ -194,9 +199,6 @@ module Model
   #
   # @return [Class, nil]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
   def self.class_for: (untyped item) -> (Class | nil)
 
   # Return the name of the model associated with *item*.
@@ -205,9 +207,6 @@ module Model
   #
   # @return [Symbol, nil]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
   def self.model_for: (untyped item) -> (Symbol | nil)
 
   # Return the name of the model associated with *item*.
@@ -267,10 +266,4 @@ module Model
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
   def self.form_fields: (untyped item) -> Hash[Symbol,symHash]
-
-  # Mapping of label keys to fields from Search::Record::MetadataRecord.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  #SEARCH_RECORD_FIELDS: Hash[Symbol,symHash]
 end

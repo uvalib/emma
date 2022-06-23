@@ -35,8 +35,8 @@ module Record::Debugging
 
     # Show instance output.
     #
-    # @param [Array<Any>] parts
-    # @param [Hash]  opt              Passed to ShowMethods#output.
+    # @param [Array<*>] parts
+    # @param [Hash]     opt           Passed to ShowMethods#output.
     #
     def show(*parts, **opt)
       opt[:tag] ||= "#{self.class.name}[#{id}]"
@@ -49,7 +49,7 @@ module Record::Debugging
 
     # Console output.
     #
-    # @param [Array]       parts
+    # @param [Array<*>]    parts
     # @param [String, nil] tag
     # @param [String, nil] ldr
     # @param [Integer]     width
@@ -112,8 +112,8 @@ module Record::Debugging
 
       # Show class output.
       #
-      # @param [Array] parts
-      # @param [Hash]  opt                Passed to ShowMethods#output.
+      # @param [Array<*>] parts
+      # @param [Hash]     opt         Passed to ShowMethods#output.
       #
       # @return [nil]
       #

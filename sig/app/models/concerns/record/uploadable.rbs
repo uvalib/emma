@@ -66,22 +66,72 @@ module Record::Uploadable
   #
   attr_reader file_attacher: FileUploader::Attacher
 
+  # Full name of the file.
+  #
+  # @return [String]
+  # @return [nil]                     If :file_data is blank.
+  #
   attr_reader filename: String | nil
 
   def filename: () -> (String | nil)
 
+  # Return the attached file, loading it if necessary (and possible).
+  #
+  # @return [FileUploader::UploadedFile]
+  # @return [nil]                     If :file_data is blank.
+  #
   def attached_file: () -> (FileUploader::UploadedFile | nil)
 
+  # Return the cached file, attaching it if necessary (and possible).
+  #
+  # @return [FileUploader::UploadedFile]
+  # @return [nil]
+  #
   def attach_cached: () -> (FileUploader::UploadedFile | nil)
 
-  def file_attacher_load: (?(symHash|String)? data) -> (FileUploader::UploadedFile | nil)
+  # Possibly temporary method to ensure that :file_data is being fed back as a
+  # Hash since Shrine is expected that because the associated column is :json.
+  #
+  # @param [Hash, String, nil] data   Default: `#file_data`.
+  #
+  # @return [FileUploader::UploadedFile]
+  # @return [nil]
+  #
+  def file_attacher_load: (?(symHash|String|nil) data) -> (FileUploader::UploadedFile | nil)
 
+  # Move the uploaded file to its final destination.
+  #
+  # If the file is in :cache it will be moved to :store.  If it's already in
+  # :store then this is a no-op.
+  #
+  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  #
+  # @return [void]
+  #
   def promote_file: (?no_raise: bool) -> void
 
+  # Remove the uploaded file from storage (either :store or :cache).
+  #
+  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  #
+  # @return [void]
+  #
   def delete_file: (?no_raise: bool) -> void
 
+  # Generate a URL to the uploaded file which can be used to download the file
+  # to the client browser.
+  #
+  # @param [Hash] opt                 Passed to Shrine::UploadedFile#url.
+  #
+  # @return [String]
+  # @return [nil]                     If :file_data is blank.
+  #
   def download_url: (**untyped opt) -> (String | nil)
 
+  # The AWS S3 object for the file.
+  #
+  # @return [Aws::S3::Object, nil]
+  #
   def s3_object: () -> (Aws::S3::Object | nil)
 
   # Upload file via Shrine.                                                     # NOTE: from UploadWorkflow::External
@@ -96,6 +146,23 @@ module Record::Uploadable
   #
   def upload_file: (**untyped opt) -> httpResult
 
+  # Acquire a file and upload it to storage.
+  #
+  # @param [String] file              Directory path or URI.
+  # @param [Hash]   opt               Passed to FileUploader::Attacher#attach
+  #                                     except for:
+  #
+  # @option [Symbol] :meth            Calling method (for logging).
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  # == Usage Notes
+  # This method is not necessary for an Entry instance which is persisted to
+  # the database because Shrine adds event handlers which cause the file to be
+  # copied to storage.  This method is allows this action for a "free-standing"
+  # Entry instance (without needing to execute #save in order to engage Shrine
+  # event handlers to copy the file to storage).
+  #
   def fetch_and_upload_file: (String file, **untyped opt) -> FileUploader::UploadedFile
 
   # Options for Down#open.                                                      # NOTE: from Upload::FileMethods
@@ -119,28 +186,82 @@ module Record::Uploadable
   #
   def upload_remote: (String url, **untyped opt) -> FileUploader::UploadedFile
 
+  # Copy a local file to storage.
+  #
+  # @param [String] path
+  # @param [Hash]   opt               Passed to FileUploader::Attacher#attach
+  #
+  # @return [FileUploader::UploadedFile]
+  #
   def upload_local: (String path, **untyped opt) -> FileUploader::UploadedFile
 
+  # Indicate whether the attached file is valid.
+  #
   def attached_file_valid?: () -> bool
 
+  # Make a debug output note to mark when a callback has occurred.
+  #
+  # @param [Symbol] type
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  #
+  # :before_save # should trigger:
+  # Shrine::Plugins::Activerecord::AttacherMethods#activerecord_before_save
+  #   Shrine::Attacher::InstanceMethods#save
+  #
+  # :after_commit, on: %i[create update] # should trigger:
+  # Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_save
+  #   Shrine::Attacher::InstanceMethods#finalize
+  #     Shrine::Attacher::InstanceMethods#destroy_previous
+  #     Shrine::Attacher::InstanceMethods#promote_cached
+  #       Shrine::Attacher::InstanceMethods#promote
+  #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_persist
+  #     ActiveRecord::Persistence#save
+  #
+  # :after_commit, on: %i[destroy] # should trigger:
+  # Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_destroy
+  #   Shrine::Attacher::InstanceMethods#destroy_attached
+  #     Shrine::Attacher::InstanceMethods#destroy
+  #
   def note_cb: (Symbol `type`) -> void
 
+  # Finalize a file upload by promoting the :cache file to a :store file.
+  #
+  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
+  # @param [Boolean] keep_cached      If *true*, don't delete the original.
+  #
+  # @return [FileUploader::UploadedFile, nil]
+  #
   def promote_cached_file: (?no_raise: bool, ?keep_cached: bool) -> (FileUploader::UploadedFile | nil)
 
+  # Finalize a deletion by the removing the file from :cache and/or :store.
+  #
+  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
+  #
+  # @return [TrueClass, nil]
+  #
   def delete_cached_file: (?no_raise: bool) -> (true | nil)
 
   private
 
+  # Add a log message for an exception.
+  #
+  # @param [Exception] excp
+  # @param [Symbol]    meth           Calling method.
+  #
+  # @return [nil]
+  #
   def log_exception: (Exception excp, ?(Symbol|nil) meth) -> nil
 
   THIS_MODULE: Module
 
   include Record::EmmaData
 
-  include Record::Uploadable
-
   # :nocov:
-  # TODO: remove after upload -> entry
+  #include Record::Uploadable
+
   #include ActiveRecord::Validations
 
   #include ActiveRecord::Callbacks::ClassMethods

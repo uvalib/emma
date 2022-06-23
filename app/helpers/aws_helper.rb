@@ -422,9 +422,6 @@ module AwsHelper
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def value_hash(item, methods)
     result =
       (item.dup if item.is_a?(Hash)) ||
@@ -436,6 +433,7 @@ module AwsHelper
       prefix = item ? prefix_of(key) : 'Prefix' # TODO: I18n
       result = { prefix: prefix }.merge!(result)
     end
+    # noinspection RubyMismatchedReturnType
     result
   end
 

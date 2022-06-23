@@ -1,12 +1,11 @@
-# Common view helper methods supporting display of Model instances (both
-# database items and API messages).
+# Common methods supporting display of Model instances (both database items and
+# API messages).
 #
 module BaseDecorator::Links
-  include Emma::Common
+  include Emma::Unicode
 
-  include ParamsHelper
-
-  include HtmlHelper
+  # :nocov:
+  #include BaseDecorator::InstanceMethods
 
   # Separator for a list formed by HTML elements.
   #
@@ -20,9 +19,9 @@ module BaseDecorator::Links
   # Create a link to the details show page for the given model instance.
   #
   # @param [Model, nil] item          Default: `#object`.
-  # @param [Hash]       opt           Passed to #make_link except for:
+  # @param [Hash]       opt           Passed to LinkHelper#make_link except:
   #
-  # @option opt [Boolean]        :no_link       If *true*, create a <span>.
+  # @option opt [Boolean]        :no_link       If *true*, create a *span*.
   # @option opt [String]         :tooltip
   # @option opt [String, Symbol] :label         Default: `item.label`.
   # @option opt [String, Proc]   :path          Default: from block.
@@ -36,16 +35,16 @@ module BaseDecorator::Links
   # @yieldparam  [String] terms
   # @yieldreturn [String]
   #
-  def model_link: (Model|nil item, **untyped opt) { (String) -> String } -> ActiveSupport::SafeBuffer
+  def model_link: ((Model|nil) item, **untyped opt) { (String) -> String } -> ActiveSupport::SafeBuffer
 
   # Create a link to the details show page for the given model instance.
   #
   # @param [String, nil] css          Optional CSS class(es) to include.
-  # @param [Hash]        opt          Passed to #model_link
+  # @param [Hash]        opt          Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
-  def link: (?css: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def link: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Create a link to the details show page for the given model instance.
   #
@@ -55,20 +54,96 @@ module BaseDecorator::Links
   #
   def button_link: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # TODO: I18n
+  #
+  # @type [String]
+  #
   ANOTHER: String
 
-  def action_list:  (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  # List controller actions.  If the current action is provided, the associated
+  # action link will be appear at the top of the list.
+  #
+  # @param [String, Symbol, nil]     current      Def: `context[:action]`
+  # @param [Hash{Symbol=>Hash}, nil] table        Def: `#action_links`.
+  # @param [Hash]                    opt          Passed to #action_links.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # action_entry
+  #
+  # @param [String, Symbol, nil]     action   The target controller action.
+  # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
+  # @param [Hash{Symbol=>Hash}, nil] table    Def: `#action_links`.
+  # @param [Hash]                    opt      Passed to #action_links.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
   def action_entry: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> Hash[Symbol,String]
-  def action_link:  (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil,               **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # action_link
+  #
+  # @param [String, Symbol, nil] action   The target controller action.
+  # @param [String, Symbol, nil] current  Def: current `params[:action]`.
+  # @param [String, nil]         label    Override configured label.
+  # @param [Hash]                opt      Passed to #action_entry.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
+  # @return [nil]                         If *action* not configured.
+  #
+  def action_link: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Action links configured for the controller.
+  #
+  # @param [String, Symbol, nil] action   Default: :index.
+  # @param [Hash]                opt      Passed to #config_lookup.
+  #
+  # @return [Hash]
+  #
   def action_links: (?action: String|Symbol|nil, **untyped opt) -> symHash
 
+  # Control icon definitions.
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+  #
   CONTROL_ICONS: Hash[Symbol, symHash]
 
+  # Control icon definitions.
+  #
+  # @param [Hash{Symbol=>Hash{Symbol=>Any}}] icons
+  # @param [Boolean]                         authorized
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>Any}}]
+  #
   def control_icons: (?icons: Hash[Symbol, symHash], ?authorized: bool) -> Hash[Symbol, symHash]
 
-  def control_icon_buttons: (               **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-  def control_icon_button:  (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  # Generate an element with icon controls for the operation(s) the user is
+  # authorized to perform on the item.
+  #
+  # @param [Hash] opt                   Passed to #control_icon_button
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       If no operations are authorized.
+  #
+  # @see #control_icons
+  #
+  def control_icon_buttons: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Produce an action icon based on either :path or :id.
+  #
+  # @param [Symbol] action                One of #CONTROL_ICONS.keys.
+  # @param [Hash]   opt                   To LinkHelper#make_link except for:
+  #
+  # @option opt [String, Proc]  :path
+  # @option opt [String]        :icon
+  # @option opt [String]        :tip
+  # @option opt [Boolean, Proc] :enabled
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
+  # @return [nil]                         If *item* unrelated to a submission.
+  #
+  def control_icon_button: (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Create a link to the details show page for the given item.
   #
@@ -101,4 +176,8 @@ module BaseDecorator::Links
   # @return [ActiveSupport::SafeBuffer]
   #
   def icon_link: (untyped `type`, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
 end

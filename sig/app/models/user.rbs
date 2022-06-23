@@ -124,7 +124,7 @@ class User < ApplicationRecord
   #
   # @return [void]
   #
-  def assign_attributes: (User|symHash attr) -> void
+  def assign_attributes: ((User|symHash) attr) -> void
 
   # Value of :id for the indicated record.
   #
@@ -184,9 +184,6 @@ class User < ApplicationRecord
   #
   # @return [String, nil]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
   def self.uid_value: (untyped user) -> (String | nil)
 
   # The user ID is the same as the Bookshare ID, which is the same as the email
@@ -327,5 +324,5 @@ class User < ApplicationRecord
   #
   # @see https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
   #
-  def self.from_omniauth: (OmniAuth::AuthHash|symHash|nil data, ?(bool|nil) update) -> (User | nil)
+  def self.from_omniauth: ((OmniAuth::AuthHash|symHash|nil) data, ?(bool|nil) update) -> (User | nil)
 end

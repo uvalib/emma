@@ -34,7 +34,7 @@ module AccountConcern
   #
   # @return [Array<String,Integer>]
   #
-  def identifier_list: (*(String|Integer) ids, ?separator: Regexp) -> Array[String|Integer]
+  def identifier_list: (*(String|Integer|nil) ids, ?separator: Regexp) -> Array[String|Integer]
 
   # Get the indicated User account records.
   #
@@ -44,7 +44,7 @@ module AccountConcern
   #
   # @return [Array<User>]
   #
-  def find_accounts: (?Array[String|Integer]? ids) -> Array[User]
+  def find_accounts: (?(Array[String|Integer|nil]|nil) ids) -> Array[User]
 
   # Get the indicated User account record.
   #
@@ -54,7 +54,7 @@ module AccountConcern
   #
   # @return [User, nil]
   #
-  def find_account: (?(String|Integer)? id) -> (User | nil)
+  def find_account: (?(String|Integer|nil) id) -> (User | nil)
 
   # Get matching User account records or all records if no terms are given.
   #
@@ -65,7 +65,7 @@ module AccountConcern
   #
   # @return [ActiveRecord::Relation<User>]
   #
-  def get_accounts: (*(String|anyArray|anyHash) terms, ?columns: anyArray? , ?sort: (Symbol|String|anyArray|anyHash), **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
+  def get_accounts: (*(String|anyArray|anyHash|nil) terms, ?columns: anyArray|nil, ?sort: Symbol|String|anyArray|anyHash, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
 
   # Get the indicated User account record.
   #
@@ -75,7 +75,7 @@ module AccountConcern
   #
   # @return [User, nil]
   #
-  def get_account: (?(String|Integer)? id) -> (User | nil)
+  def get_account: (?(String|Integer|nil) id) -> (User | nil)
 
   # Create a new User account record.
   #
@@ -118,7 +118,7 @@ module AccountConcern
   #
   # @return [Array<User>]
   #
-  def destroy_accounts: (*(String|Integer) ids, ?no_raise: bool, **untyped ignored) -> Array[User]
+  def destroy_accounts: (*(String|Integer|nil) ids, ?no_raise: bool, **untyped) -> Array[User]
 
   # redirect_success
   #
@@ -129,7 +129,7 @@ module AccountConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def redirect_success: (Symbol action, ?(String|nil) message, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def redirect_success: (Symbol action, ?(String|nil) message, ?redirect: User|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # redirect_failure
   #
@@ -141,7 +141,7 @@ module AccountConcern
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def redirect_failure: (Symbol action, ?(String|nil) message, ?error: (String|anyArray|ActiveModel::Errors)?, ?redirect: (User|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def redirect_failure: (Symbol action, ?(String|nil) message, ?error: String|anyArray|ActiveModel::Errors|nil, ?redirect: User|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Configured account record fields.
   #
@@ -151,9 +151,9 @@ module AccountConcern
 
   # Get the appropriate message to display.
   #
-  # @param [Symbol] action
-  # @param [Symbol] outcome
-  # @param [Hash]   config
+  # @param [Symbol]             action
+  # @param [Symbol]             outcome
+  # @param [Hash{Symbol=>Hash}] config
   #
   # @return [String, nil]
   #
@@ -161,16 +161,16 @@ module AccountConcern
 
   # Get the appropriate terms for message interpolations.
   #
-  # @param [Symbol] action
-  # @param [Hash]   config
+  # @param [Symbol]             action
+  # @param [Hash{Symbol=>Hash}] config
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Any}]
   #
   def interpolation_terms: (Symbol action, ?Hash[Symbol,anyHash] config) -> symHash
 
   module DeviseMethods
 
-    attr_reader devise_mapping: Devise::Mapping
+    @devise_mapping: Devise::Mapping
 
     # devise_mapping
     #
@@ -216,7 +216,7 @@ module AccountConcern
     #
     # @see DeviseController#resource=
     #
-    def resource=: (User? new_resource) -> (User | nil)
+    def resource=: ((User|nil) new_resource) -> (User | nil)
 
     private
 

@@ -68,9 +68,6 @@ class SearchTerm
   # @param [Boolean, nil]             query
   # @param [Hash, nil]                config
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def initialize(url_param, values = nil, label: nil, query: nil, config: nil)
     @parameter = url_param.to_sym
     @query     = query.present?

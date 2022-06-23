@@ -58,7 +58,6 @@ module IngestService::Request::Submissions
   def put_records(*records, **opt)
     opt[:meth] ||= __method__
     records = records.flat_map { |record| record_list(record) }
-    # noinspection RubyMismatchedArgumentType
     api_send(:put, 'records', records, **opt)
     api_return(Ingest::Message::Response)
   end
@@ -105,7 +104,6 @@ module IngestService::Request::Submissions
   def delete_records(*items, **opt)
     opt[:meth] ||= __method__
     id_list = items.flat_map { |item| identifier_list(item) }
-    # noinspection RubyMismatchedArgumentType
     api_send(:post, 'recordDeletes', id_list, **opt)
     api_return(Ingest::Message::Response)
   end
@@ -151,7 +149,6 @@ module IngestService::Request::Submissions
   def get_records(*items, **opt)
     opt[:meth] ||= __method__
     id_list = items.flat_map { |item| identifier_list(item) }
-    # noinspection RubyMismatchedArgumentType
     api_send(:post, 'recordGets', id_list, **opt)
     api_return(Search::Message::SearchRecordList)
   end
@@ -252,7 +249,6 @@ module IngestService::Request::Submissions
   #   @param [String] id
   #
   def identifier_list(item)
-    # noinspection RubyMismatchedArgumentType
     result =
       case item
         when Ingest::Message::IdentifierRecordList

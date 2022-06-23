@@ -52,7 +52,7 @@ module ApiService::Common
   #   @param [Symbol, String] http_method
   #   @return [String]                      Type derived from *http_method*.
   #
-  def request_type: (?(Symbol|String)? http_method) -> String
+  def request_type: (?(Symbol|String|nil) http_method) -> String
 
   # Indicate whether the latest API request is an update (PUT, POST, or PATCH).
   #
@@ -69,7 +69,7 @@ module ApiService::Common
   #   Return whether *http_method* is an update.
   #   @param [Symbol, String] http_method
   #
-  def update_request?: (?(Symbol|String)? http_method) -> bool
+  def update_request?: (?(Symbol|String|nil) http_method) -> bool
 
   # Most recently invoked HTTP request URL.
   #
@@ -90,9 +90,6 @@ module ApiService::Common
   #   @param [Hash]    hash           Parameters to check instead of @params.
   #   @param [Boolean] complete       If *true* return :api_key parameter.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
   def latest_endpoint: (?(symHash|nil) prm) -> String
 
   # Get data from the API and update @response.
@@ -114,10 +111,7 @@ module ApiService::Common
   # == Usage Notes
   # Clears and/or sets @exception as a side-effect.
   #
-  # -
-  # noinspection RubyScope
-  # +
-  def api: (Symbol|String verb, *(String|ScalarType) args, **untyped opt) -> (Faraday::Response | nil)
+  def api: ((Symbol|String) verb, *(String|ScalarType) args, **untyped opt) -> (Faraday::Response | nil)
 
   # Construct a message to be returned from the method that executed :api.
   # This provides a uniform call for initializing the object with information
@@ -156,9 +150,6 @@ module ApiService::Common
   # == Usage Notes
   # If overridden, this should be called first via 'super'.
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
   def api_options: (?(symHash|nil) params) -> symHash
 
   # Determine whether the HTTP method indicates a write rather than a read and
@@ -171,10 +162,7 @@ module ApiService::Common
   # @return [Array<(Hash,Hash,String)>]      Message body plus headers for GET.
   # @return [Array<(Hash,Hash,Hash)>]        Query plus headers for PUT, POST, PATCH.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def api_headers: (?(symHash|nil) params, ?(anyHash|nil) headers, ?(String|anyHash)? body) -> [symHash, anyHash, (String | anyHash)]
+  def api_headers: (?(symHash|nil) params, ?(anyHash|nil) headers, ?(String|anyHash|nil) body) -> [symHash, anyHash, (String | anyHash)]
 
   # Process a message body component into a form ready for conversion to JSON.
   #
@@ -246,7 +234,7 @@ module ApiService::Common
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
   #
-  def transmit: (Symbol verb, String action, symHash|String|nil params, anyHash|nil headers, **untyped opt) -> (Faraday::Response | nil)
+  def transmit: (Symbol verb, String action, (symHash|String|nil) params, (anyHash|nil) headers, **untyped opt) -> (Faraday::Response | nil)
 
   # Extract API parameters from *opt*.
   #
@@ -321,7 +309,7 @@ module ApiService::Common
   #
   # @return [nil]                     No errors or *no_raise* is *true*.
   #
-  def invalid_params: (Symbol|String meth, *String errors, ?no_raise: bool) -> nil
+  def invalid_params: ((Symbol|String) meth, *String errors, ?no_raise: bool) -> nil
 
   # __debug_api_headers
   #
@@ -335,10 +323,7 @@ module ApiService::Common
   #
   # @see #api_headers
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
-  def __debug_api_headers: (symHash|nil options, anyHash|nil headers, anyHash|String|nil body, ?action: Symbol|String, ?full: bool) -> void
+  def __debug_api_headers: ((symHash|nil) options, (anyHash|nil) headers, (anyHash|String|nil) body, ?action: Symbol|String, ?full: bool) -> void
 
   # __debug_api_response
   #
@@ -349,9 +334,6 @@ module ApiService::Common
   #
   # @return [void]
   #
-  # -
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # +
   def __debug_api_response: (?response: Faraday::Response|symHash, ?error: Exception, ?action: Symbol|String, ?full: bool) -> void
 
   # Include the shared data structure which holds the definition of the API

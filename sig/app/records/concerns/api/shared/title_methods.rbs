@@ -24,37 +24,151 @@ module Api::Shared::TitleMethods
   #
   def identifier: () -> (String | nil)
 
-  def title_fields:         () -> symArray
-  def subtitle_fields:      () -> symArray
+  # Field(s) that may hold the title string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def title_fields: () -> symArray
+
+  # Field(s) that may hold the subtitle string.
+  #
+  # @return [Array<Symbol>]
+  #
+  def subtitle_fields: () -> symArray
+
+  # Field(s) that may hold the name of the container/aggregate for an article.
+  #
+  # @return [Array<Symbol>]
+  #
   def journal_title_fields: () -> symArray
-  #def date_fields: () -> symArray
-  def contents_fields:      () -> symArray
 
-  def thumbnail_image:      () -> (String | nil)
-  def cover_image:          () -> (String | nil)
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  def contents_fields: () -> symArray
 
-  def title_values:         () -> strArray
-  def subtitle_values:      () -> strArray
-  def normalized_title:     () -> String
-  def full_title:           () -> String
+  # A link to a title's thumbnail image.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def thumbnail_image: () -> (String | nil)
 
-  def series_type:          () -> (String | nil)
-  def series_volume:        () -> (String | nil)
-  def series_issue:         () -> (String | nil)
-  def series_position:      () -> (String | nil)
-  def journal_title:        () -> (String | nil)
-  def full_journal_title:   () -> (String | nil)
+  # A link to a title's cover image if present.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  def cover_image: () -> (String | nil)
 
-  def publisher_name:       () -> (String | nil)
-  def publication_place:    () -> (String | nil)
-  def publication_date:     () -> (String | nil)
-  def publication_year:     () -> (String | nil)
-  #def year: () -> (Integer | nil)
-  def full_publisher:       () -> (String | nil)
+  # One or more title strings.
+  #
+  # @return [Array<String>]
+  #
+  def title_values: () -> strArray
 
-  def language_list:        () -> strArray
-  def subject_list:         () -> strArray
-  def description_list:     () -> strArray
+  # One or more subtitle strings.
+  #
+  # @return [Array<String>]
+  #
+  def subtitle_values: () -> strArray
+
+  # The full title in a form that it can be used for comparisons.
+  #
+  # @return [String]
+  #
+  def normalized_title: () -> String
+
+  # The title and subtitle of this catalog title.
+  #
+  # @return [String]
+  #
+  def full_title: () -> String
+
+  # The type of work containing an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def series_type: () -> (String | nil)
+
+  # The volume of the journal containing an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def series_volume: () -> (String | nil)
+
+  # The issue of the journal containing an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def series_issue: () -> (String | nil)
+
+  # The volume and/or issue number containing an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def series_position: () -> (String | nil)
+
+  # The journal which contains an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def journal_title: () -> (String | nil)
+
+  # The journal which contains an article (if relevant).
+  #
+  # @return [String, nil]
+  #
+  def full_journal_title: () -> (String | nil)
+
+  # Name of publisher.
+  #
+  # @return [String, nil]
+  #
+  def publisher_name: () -> (String | nil)
+
+  # The place of publication.
+  #
+  # @return [String, nil]
+  #
+  def publication_place: () -> (String | nil)
+
+  # The date of publication.
+  #
+  # @return [String, nil]
+  #
+  def publication_date: () -> (String | nil)
+
+  # The date of publication.
+  #
+  # @return [String, nil]
+  #
+  def publication_year: () -> (String | nil)
+
+  # Publisher and/or publisher location
+  #
+  # @return [String, nil]
+  #
+  def full_publisher: () -> (String | nil)
+
+  # language_list
+  #
+  # @return [Array<String>]
+  #
+  def language_list: () -> strArray
+
+  # subject_list
+  #
+  # @return [Array<String>]
+  #
+  def subject_list: () -> strArray
+
+  # description_list
+  #
+  # @return [Array<String>]
+  #
+  def description_list: () -> strArray
 
   # Sanitizer for catalog title contents.
   #

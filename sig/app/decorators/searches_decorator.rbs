@@ -13,7 +13,8 @@ class SearchesDecorator < BaseCollectionDecorator
   # @return [nil]
   #
   # @see #STYLE_BUTTONS
-  # @see file:app/assets/javascripts/controllers/search.js *setupColorizeButtons()*
+  # @see SearchModesHelper#permitted_by?
+  # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
   def list_styles: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
@@ -25,8 +26,9 @@ class SearchesDecorator < BaseCollectionDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #RESULT_TYPES
-  #
-  # @see ParamsHelper#url_parameters
+  # @see SearchModesHelper#results_type
+  # @see SearchModesHelper#permitted_by?
+  # @see file:app/assets/javascripts/controllers/search.js *$mode_menu*
   #
   def list_results: (?selected: String|Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 end

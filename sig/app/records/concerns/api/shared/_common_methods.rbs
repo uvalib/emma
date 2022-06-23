@@ -29,10 +29,7 @@ module Api::Shared::CommonMethods
   #
   # @param [Api::Record, nil] rec  Default: `self`.
   #
-  # -
-  # noinspection RailsParamDefResolve
-  # +
-  def canonical?: (?Api::Record? rec) -> bool
+  def canonical?: (?(Api::Record|nil) rec) -> bool
 
   # Indicate whether this record represents a canonical index entry.
   #
@@ -41,7 +38,7 @@ module Api::Shared::CommonMethods
   #
   # @param [Api::Record, nil] rec  Default: `self`.
   #
-  def empty?: (?Api::Record? rec) -> bool
+  def empty?: (?(Api::Record|nil) rec) -> bool
 
   # Reduce a string for comparison with another by eliminating surrounding
   # white space and/or punctuation, and by reducing internal runs of white
@@ -76,6 +73,12 @@ module Api::Shared::CommonMethods
   def clean: [T] (T   value, ?allowed: String|nil, ?regexp: Regexp|nil) -> T
            |     (nil value, ?allowed: String|nil, ?regexp: Regexp|nil) -> nil
 
+  # clean_regexp
+  #
+  # @param [String] allowed
+  #
+  # @return [Regexp]
+  #
   def self.clean_regexp: (String allowed) -> Regexp
 
   CLEAN_EXCEPT:        String
@@ -100,23 +103,101 @@ module Api::Shared::CommonMethods
   #
   # @return [Array<String>]
   #
-  def get_values: (*Symbol fields, ?target: Api::Record?) -> strArray
+  def get_values: (*Symbol fields, ?target: Api::Record|nil) -> strArray
 
-  def item_record_path:   () -> symArray
-  def item_record:        () -> (Api::Record | nil)
+  # A traversal through the hierarchy rooted at the class instance which
+  # holds all of the metadata for a single lookup result item.
+  #
+  # @return [Array<Symbol>]
+  #
+  def item_record_path: () -> symArray
 
-  def find_record_item:   (Symbol field, **untyped opt) -> (untyped | nil)
-  def find_record_items:  (Symbol field, **untyped opt) -> anyArray
+  # item_record
+  #
+  # @return [Api::Record, nil]
+  #
+  def item_record: () -> (Api::Record | nil)
 
-  def find_record_value:  (Symbol field, **untyped opt) -> (String | nil)
+  # find_record_item
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt               Passed to #find_item.
+  #
+  # @return [any,nil]
+  #
+  def find_record_item: (Symbol field, **untyped opt) -> (untyped | nil)
+  # find_record_items
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt               Passed to #find_items.
+  #
+  # @return [Array]
+  #
+  def find_record_items: (Symbol field, **untyped opt) -> anyArray
+
+  # find_record_value
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt               Passed to #find_value.
+  #
+  # @return [String, nil]
+  #
+  def find_record_value: (Symbol field, **untyped opt) -> (String | nil)
+  # find_record_values
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt               Passed to #find_values.
+  #
+  # @return [Array<String>]
+  #
   def find_record_values: (Symbol field, **untyped opt) -> strArray
 
-  def find_item:   (*Symbol path, Symbol field, ?target: Api::Record?, ?clean: bool, **untyped opt) -> (untyped | nil)
-  def find_items:  (*Symbol path, Symbol field, ?target: Api::Record?, ?clean: bool, **untyped opt) -> anyArray
+  # find_item
+  #
+  # @param [Array<Symbol>] path
+  # @param [Symbol]        field
+  # @param [Api::Record]   target     Default: `self`.
+  # @param [Boolean]       clean      If *true* run result through #clean.
+  # @param [Hash]          opt        Passed to #clean.
+  #
+  # @return [any,nil]
+  #
+  def find_item: (*Symbol path, Symbol field, ?target: Api::Record|nil, ?clean: bool, **untyped opt) -> (untyped | nil)
 
-  def find_value:  (*Symbol path, Symbol field, ?separator: String,    ?clean: bool, **untyped opt) -> (String | nil)
-  def find_values: (*Symbol path, Symbol field,                        ?clean: bool, **untyped opt) -> strArray
+  # find_items
+  #
+  # @param [Array<Symbol>] path
+  # @param [Symbol]        field
+  # @param [Api::Record]   target     Default: `self`.
+  # @param [Boolean]       clean      If *true* run result through #clean.
+  # @param [Hash]          opt        Passed to #clean.
+  #
+  # @return [Array]
+  #
+  def find_items: (*Symbol path, Symbol field, ?target: Api::Record|nil, ?clean: bool, **untyped opt) -> anyArray
 
+  # find_value
+  #
+  # @param [Array<Symbol>] path
+  # @param [Symbol]        field
+  # @param [String]        separator  Used if the item is an array.
+  # @param [Boolean]       clean      If *false* do not #clean.
+  # @param [Hash]          opt        Passed to #find_values.
+  #
+  # @return [String, nil]
+  #
+  def find_value: (*Symbol path, Symbol field, ?separator: String, ?clean: bool, **untyped opt) -> (String | nil)
+
+  # find_values
+  #
+  # @param [Array<Symbol>] path
+  # @param [Symbol]        field
+  # @param [Boolean]       clean      If *false* do not #clean.
+  # @param [Hash]          opt        Passed to #find_items.
+  #
+  # @return [Array<String>]
+  #
+  def find_values: (*Symbol path, Symbol field, ?clean: bool, **untyped opt) -> strArray
 
   # Get the target field value.
   #
@@ -125,7 +206,7 @@ module Api::Shared::CommonMethods
   #
   # @return [Any]
   #
-  def get_field_value: (symHash|nil data, Symbol field) -> untyped
+  def get_field_value: ((symHash|nil) data, Symbol field) -> untyped
 
   # Set the target field value.
   #
@@ -135,7 +216,7 @@ module Api::Shared::CommonMethods
   #
   # @return [void]
   #
-  def set_field_value!: (symHash|nil data, Symbol field, untyped value) -> void
+  def set_field_value!: ((symHash|nil) data, Symbol field, untyped value) -> void
 
   # Update the target field.
   #
@@ -149,7 +230,7 @@ module Api::Shared::CommonMethods
   # @yieldparam [Any] value   The current field value.
   # @yieldreturn [Array]      The new field value(s).
   #
-  def update_field_value!: (symHash|nil data, Symbol field, ?(Symbol|nil) mode) { (untyped) -> untyped } -> void
+  def update_field_value!: ((symHash|nil) data, Symbol field, ?(Symbol|nil) mode) { (untyped) -> untyped } -> void
 
   # Get the indicated field values from the indicated target.
   #
@@ -158,7 +239,7 @@ module Api::Shared::CommonMethods
   #
   # @return [Array]
   #
-  def get_field_values: (symHash|nil data, *Symbol fields) -> anyArray
+  def get_field_values: ((symHash|nil) data, *Symbol fields) -> anyArray
 
   # Update the indicated target with the given values.
   #
@@ -167,8 +248,5 @@ module Api::Shared::CommonMethods
   #
   # @return [void]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def set_field_values!: (symHash|nil data, symHash values) -> void
+  def set_field_values!: ((symHash|nil) data, symHash values) -> void
 end

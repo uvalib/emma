@@ -3,6 +3,14 @@
 class LookupJobRecord < GoodJob::ActiveJobJob
   include JobMethods
 
+  # :nocov:
+  #extend JobMethods
+
+  # The database column checked against the time of last reboot to determine
+  # whether the record is defunct.
+  #
+  # @return [Symbol]
+  #
   def self.activity_column: () -> Symbol
   def activity_column:      () -> Symbol
 

@@ -112,7 +112,7 @@ module AwsS3Service::Common
   # @return [nil]
   #
   def bucket_for(item, deployment = nil)
-    repository = Upload.repository_of(item)&.to_sym
+    repository = Upload.repository_of(item)&.to_sym or return
     deployment = deployment&.to_sym || aws_deployment
     S3_BUCKET.dig(repository, deployment) if EmmaRepository.valid?(repository)
   end

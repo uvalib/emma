@@ -5,9 +5,6 @@ module EmmaHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   EMMA_PARTNER: symHash
 
   # EMMA grant partner categories.

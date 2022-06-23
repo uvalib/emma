@@ -42,7 +42,7 @@ module SqlMethods
   # @example Multiple terms
   #   sql_clauses(cond, ids)-> "age='18' AND hgt='1.8' AND (id IN (123, 456))"
   #
-  def sql_terms: (*(anyHash|String) terms, ?join: Symbol|String|nil, connector: nil,            **untyped other) -> strArray
+  def sql_terms: (*(anyHash|String) terms, ?join: Symbol|String|nil,  connector: nil,           **untyped other) -> strArray
                | (*(anyHash|String) terms, ?join: Symbol|String|nil, ?connector: Symbol|String, **untyped other) -> String
 
   # Translate hash keys/values into SQL conditions.
@@ -62,7 +62,7 @@ module SqlMethods
   # @example OR-ed values
   #   sql_clauses(id: '123', age: '18', join: :or)-> "id = '123' OR age = '18'"
   #
-  def sql_clauses: (anyHash hash, ?join: Symbol|String|nil, connector: nil)            -> strArray
+  def sql_clauses: (anyHash hash, ?join: Symbol|String|nil,  connector: nil)           -> strArray
                  | (anyHash hash, ?join: Symbol|String|nil, ?connector: String|Symbol) -> String
 
   # Translate a key and value into a SQL condition.
@@ -97,11 +97,8 @@ module SqlMethods
   # @example Multiple values as a hash
   #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
   #
-  # -
-  # noinspection RubyMismatchedReturnType
-  # +
-  def sql_clause: (String|Symbol k, untyped v) -> String
-                | (anyHash)                    -> String
+  def sql_clause: ((String|Symbol) k, untyped v) -> String
+                | (anyHash)                      -> String
 
   # Look for a value in a standard database field.
   #
@@ -113,7 +110,7 @@ module SqlMethods
   # == Usage Notes
   # Does not handle "match_case: true".
   #
-  def sql_match_pattern: (Symbol|String column, String text, ?exact: bool, ?match_case: bool) -> String
+  def sql_match_pattern: ((Symbol|String) column, String text, ?exact: bool, ?match_case: bool) -> String
 
   # Look for value in a JSON-type database column.
   #
@@ -128,7 +125,7 @@ module SqlMethods
   # == Usage Notes
   # Does not handle "exact: false" for field names yet, only field values.
   #
-  def sql_match_json: (Symbol|String column, String text, ?exact: bool, ?match_case: bool) -> String
+  def sql_match_json: ((Symbol|String) column, String text, ?exact: bool, ?match_case: bool) -> String
 
   # Prepare a string for matching.
   #
@@ -152,7 +149,7 @@ module SqlMethods
   # == Implementation Notes
   # * Documentation indicates that '$[*]' should work but only '$' seems to.
   #
-  def sql_json_table: (Symbol|String column, ?name: String|nil, ?fields: Array[Symbol|String]|Symbol|String|nil, ?field_map: Hash[Symbol,symArray]?) -> String
+  def sql_json_table: ((Symbol|String) column, ?name: String|nil, ?fields: Array[Symbol|String]|Symbol|String|nil, ?field_map: Hash[Symbol,symArray]|nil) -> String
 
   # Generate condition(s) for a WHERE clause.
   #
@@ -162,10 +159,7 @@ module SqlMethods
   #
   # @return [String]                  Blank if no valid field assertions.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def sql_where_clause: (?field_map: Hash[Symbol,symArray]?, ?param_map: symHash?, **untyped matches) -> String
+  def sql_where_clause: (?field_map: Hash[Symbol,symArray]|nil, ?param_map: symHash|nil, **untyped matches) -> String
 
   # Mapping of digits to visibly similar letters.
   #
@@ -201,7 +195,7 @@ module SqlMethods
   #
   # @return [Integer, Float, String, nil]
   #
-  def sql_quote: (Integer|Float|String|Symbol|nil value) -> (Integer | Float | String | nil)
+  def sql_quote: ((Integer|Float|String|Symbol|nil) value) -> (Integer | Float | String | nil)
 
   module InstanceMethods
     include SqlMethods
@@ -224,7 +218,7 @@ module SqlMethods
     # @return [String]  SQL expression.
     # @return [Array]   SQL clauses if *connector* is set to *nil*.
     #
-    def sql_match: (*(anyHash|String) terms, ?join: Symbol|String|nil, connector: nil,            **untyped opt) -> strArray
+    def sql_match: (*(anyHash|String) terms, ?join: Symbol|String|nil,  connector: nil,           **untyped opt) -> strArray
                  | (*(anyHash|String) terms, ?join: Symbol|String|nil, ?connector: Symbol|String, **untyped opt) -> String
 
     # Accumulate match pairs.
@@ -244,7 +238,7 @@ module SqlMethods
     #
     # @return [Hash{Symbol=>Array<String>}] The modified *dst* hash.
     #
-    def merge_match_terms!: (symHash dst, *(anyHash|anyArray|String) terms, ?columns: symArray?, ?type: Symbol?, ?sanitize: bool) -> Hash[Symbol,strArray]
+    def merge_match_terms!: (symHash dst, *(anyHash|anyArray|String) terms, ?columns: symArray|nil, ?type: Symbol|nil, ?sanitize: bool) -> Hash[Symbol,strArray]
 
     # Dynamically create a derived table with JSON fields expanded into columns
     #
@@ -253,7 +247,7 @@ module SqlMethods
     #
     # @return [ActiveRecord::Result]
     #
-    def extended_table: (?(anyHash|String)? extra, **untyped opt) -> ActiveRecord::Result
+    def extended_table: (?(anyHash|String|nil) extra, **untyped opt) -> ActiveRecord::Result
 
     # Generate the SQL statement for dynamically creating a derived table with
     # JSON fields expanded into columns.
@@ -266,7 +260,7 @@ module SqlMethods
     #
     # @return [String]
     #
-    def sql_extended_table: (?(anyHash|String)? extra, field_map: Hash[Symbol,symArray], ?only: symArray|Symbol|nil, ?except: symArray|Symbol|nil, **untyped where) -> String
+    def sql_extended_table: (?(anyHash|String|nil) extra, field_map: Hash[Symbol,symArray], ?only: symArray|Symbol|nil, ?except: symArray|Symbol|nil, **untyped where) -> String
   end
 
   # Class methods automatically added to the including class.
@@ -294,7 +288,7 @@ module SqlMethods
     #
     # @return [ActiveRecord::Relation]
     #
-    def matching: (*(anyHash|String) terms, ?sort: (anyHash|Symbol|String|Array[Symbol|String]|nil), **untyped opt) -> ActiveRecord::Relation
+    def matching: (*(anyHash|String) terms, ?sort: anyHash|Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> ActiveRecord::Relation
   end
 
   private

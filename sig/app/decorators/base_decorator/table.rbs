@@ -1,12 +1,29 @@
-# View helper methods supporting tabular display of Model instances (both
-# database items and API messages).
+# Methods supporting tabular display of Model instances.
 #
 module BaseDecorator::Table
   include BaseDecorator::List
 
+  # Make the heading row stick to the top of the table when scrolling.
+  #
+  # @type [Boolean]
+  #
+  # @see file:stylesheets/layouts/controls/_tables.scss "CSS class .sticky-head"
+  #
   STICKY_HEAD: bool
-  DARK_HEAD:   bool
 
+  # Give the heading row a background.
+  #
+  # @type [Boolean]
+  #
+  # @see file:stylesheets/layouts/controls/_tables.scss "CSS class .dark-head"
+  #
+  DARK_HEAD: bool
+
+  # Options used by some or all of the methods involved in rendering items in
+  # a tabular form.
+  #
+  # @type [Array<Symbol>]
+  #
   MODEL_TABLE_OPTIONS:    symArray
   MODEL_TABLE_FIELD_OPT:  symArray
   MODEL_TABLE_HEAD_OPT:   symArray
@@ -28,14 +45,9 @@ module BaseDecorator::Table
   # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
   # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
   #
-  # @yield [item, **opt] Allows the caller to generate the item columns.
-  # @yieldparam  [Model] item         Single item instance.
-  # @yieldparam  [Hash]  opt          Field generation options.
-  # @yieldreturn [Hash{Symbol=>Any}]  Same as #model_field_values return type.
-  #
-  def table_entry: (?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
-                 | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> Array[ActiveSupport::SafeBuffer]
-                 | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Regexp|Array[String|Regexp])?, **untyped opt) { (Model, symHash) -> symHash } -> Array[String]
+  def table_entry: (?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
+                 | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> Array[ActiveSupport::SafeBuffer]
+                 | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> Array[String]
 
   # table_columns
   #
@@ -52,9 +64,9 @@ module BaseDecorator::Table
   # @param [String, Symbol, Array<String,Symbol>, nil]                default
   # @param [String, Symbol, Regexp, Array<String,Symbol,Regexp>, nil] filter
   #
-  # @return [Hash{Symbol,String=>Any}]
+  # @return [Hash{Symbol=>Any}]
   #
-  def model_field_values: (?(Model|symHash)? item, ?columns: (String|Symbol|Array[String|Symbol])?, ?default: (String|Symbol|Array[String|Symbol])?, ?filter: (String|Symbol|Regexp|Array[String|Symbol|Regexp])?) -> symHash
+  def model_field_values: (?(Model|symHash|nil) item, ?columns: String|Symbol|Array[String|Symbol]|nil, ?default: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Symbol|Regexp|Array[String|Symbol|Regexp]|nil) -> symHash
 
   # Setup row/column HTML options.
   #
@@ -65,8 +77,9 @@ module BaseDecorator::Table
   #
   # @return [Hash]
   #
-  # -
-  # noinspection RubyMismatchedParameterType
-  # +
-  def model_rc_options: (Symbol|String field, ?(Integer|nil) row, ?(Integer|nil) col, ?(symHash|nil) opt) -> symHash
+  def model_rc_options: ((Symbol|String) field, ?(Integer|nil) row, ?(Integer|nil) col, ?(symHash|nil) opt) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
 end

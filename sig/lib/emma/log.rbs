@@ -42,15 +42,12 @@ module Emma::Log
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
-  # -
-  # noinspection RubyMismatchedArgumentType
-  # +
-  def self.add: (?(Integer|Symbol)? severity, *untyped args) { () -> untyped } -> nil
+  def self.add: (?(Integer|Symbol|nil) severity, *untyped args) { () -> untyped } -> nil
 
   # Add a DEBUG-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -58,8 +55,8 @@ module Emma::Log
 
   # Add an INFO-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -67,8 +64,8 @@ module Emma::Log
 
   # Add a WARN-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -76,8 +73,8 @@ module Emma::Log
 
   # Add an ERROR-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -85,8 +82,8 @@ module Emma::Log
 
   # Add a FATAL-level log message.
   #
-  # @param [Array<String,Symbol,Exception,Any>] args    Passed to #add.
-  # @param [Proc]                               block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
+  # @param [Proc]                             block   Passed to #add.
   #
   # @return [nil]
   #
@@ -95,11 +92,11 @@ module Emma::Log
   # Translate to the form expected by Logger#add.
   #
   # @param [Integer, Symbol, String, nil] value
-  # @param [Symbol, nil]                  default
+  # @param [Symbol]                       default
   #
   # @return [Integer]
   #
-  def self.log_level: (Integer|Symbol|String value, ?Symbol default) -> Integer
+  def self.log_level: ((Integer|Symbol|String|nil) value, ?Symbol default) -> Integer
 
   # local_levels
   #
@@ -138,8 +135,8 @@ module Emma::Log
   # == Implementation Notes
   # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level=
   #
-  def self.local_level=: (Integer|Symbol|String value) -> Integer
-                       | (nil value) -> nil
+  def self.local_level=: ((Integer|Symbol|String) value) -> Integer
+                       | (nil                     value) -> nil
 
   # Thread-safe log level.
   #
@@ -164,11 +161,15 @@ module Emma::Log
 
   # Get thread-safe silenced flag.
   #
-  # @return [Boolean]
+  # @return [Boolean, nil]
   #
   def self.silenced: () -> (bool | nil)
 
   # Set thread-safe silenced flag.
+  #
+  # @param [Boolean] flag
+  #
+  # @return [Boolean]
   #
   def self.silenced=: (bool flag) -> bool
 
@@ -185,7 +186,7 @@ module Emma::Log
   # @return [Boolean]
   # @return [nil]
   #
-  def self.silent: (?bool go_silent) -> (bool | nil)
+  def self.silent: (?(bool|nil) go_silent) -> (bool | nil)
 
   # Silences the logger for the duration of the block.
   #
@@ -196,11 +197,11 @@ module Emma::Log
 
   # Delegate any other method to @logger.
   #
-  # @param [Symbol] meth
-  # @param [Array]  args
-  # @param [Proc]   block
+  # @param [Symbol]   meth
+  # @param [Array<*>] args
+  # @param [Proc]     block
   #
-  def self.method_missing: (untyped meth, *untyped args) { () -> untyped } -> untyped
+  def self.method_missing: (untyped meth, *untyped args) ?{ () -> untyped } -> untyped
 
   # The current logger.
   #
@@ -225,7 +226,4 @@ end
 
 # Defined as an "alias" for Emma::Log without needing to "include Emma".
 #
-# -
-# noinspection RubyConstantNamingConvention
-# +
 Log: Module

@@ -15,21 +15,21 @@ module Record::Debugging
 
   # Show instance output.
   #
-  # @param [Array<Any>] parts
-  # @param [Hash]  opt              Passed to ShowMethods#output.
+  # @param [Array<*>] parts
+  # @param [Hash]     opt           Passed to ShowMethods#output.
   #
   def show: (*untyped parts, **untyped opt) -> nil
 
   # Console output.
   #
-  # @param [Array]       parts
+  # @param [Array<*>]    parts
   # @param [String, nil] tag
   # @param [String, nil] ldr
   # @param [Integer]     width
   #
   # @return [nil]
   #
-  def output: (*untyped parts, ?tag: String?, ?ldr: String?, ?width: Integer) { () -> untyped } -> nil
+  def output: (*untyped parts, ?tag: String|nil, ?ldr: String|nil, ?width: Integer, **untyped) ?{ () -> untyped } -> nil
 
   def __debug_step: (*untyped args, **untyped opt) { () -> untyped } -> nil
 
@@ -43,8 +43,10 @@ module Record::Debugging
 
     # Show class output.
     #
-    # @param [Array] parts
-    # @param [Hash]  opt                Passed to ShowMethods#output.
+    # @param [Array<*>] parts
+    # @param [Hash]     opt         Passed to ShowMethods#output.
+    #
+    # @return [nil]
     #
     def show: (*untyped parts, **untyped opt) -> nil
   end
@@ -65,7 +67,7 @@ module Record::Debugging
     #
     # @note - overrides ActiveRecord::Core#initialize
     #
-    def initialize: (?(Model|prmHash)? attr) { () -> untyped } -> void
+    def initialize: (?(Model|prmHash|nil) attr) ?{ () -> untyped } -> void
   end
 
   private

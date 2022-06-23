@@ -1,8 +1,5 @@
 # IaDownloadService::Request::Records
 #
-# -
-# noinspection RubyParameterNamingConvention
-# +
 module IaDownloadService::Request::Records
   include IaDownloadService::Common
 

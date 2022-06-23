@@ -1,9 +1,6 @@
 class Shrine
   # Overrides adding extra debugging around method calls.
   #
-  # -
-  # noinspection RubyTooManyMethodsInspection
-  # +
   module AttacherDebug
     include Shrine::ExtensionDebugging
 
@@ -29,7 +26,7 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    def assign: (String|anyHash|IO value, **untyped options) -> (Shrine::UploadedFile | nil)
+    def assign: ((String|anyHash|IO) value, **untyped options) -> (Shrine::UploadedFile | nil)
 
     # attach_cached
     #
@@ -40,7 +37,7 @@ class Shrine
     #
     # @return [Shrine::UploadedFile]
     #
-    def attach_cached: (String|anyHash|IO value, **untyped options) -> Shrine::UploadedFile
+    def attach_cached: ((String|anyHash|IO) value, **untyped options) -> Shrine::UploadedFile
 
     # attach
     #
@@ -50,7 +47,7 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    def attach: (IO|StringIO io, ?storage: Symbol, **untyped options) -> (Shrine::UploadedFile | nil)
+    def attach: ((IO|StringIO) io, ?storage: Symbol, **untyped options) -> (Shrine::UploadedFile | nil)
 
     # finalize
     #
@@ -91,7 +88,7 @@ class Shrine
     #
     # @see Shrine::InstanceMethods#upload
     #
-    def upload: (IO|StringIO io, ?Symbol storage, **untyped options) -> Shrine::UploadedFile
+    def upload: ((IO|StringIO) io, ?Symbol storage, **untyped options) -> Shrine::UploadedFile
 
     # destroy_previous
     #
@@ -129,7 +126,7 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    def set: (Shrine::UploadedFile|nil file) -> (Shrine::UploadedFile | nil)
+    def set: ((Shrine::UploadedFile|nil) file) -> (Shrine::UploadedFile | nil)
 
     # Returns the attached file.
     #
@@ -145,7 +142,7 @@ class Shrine
     #
     # @return [UploadedFile, nil]
     #
-    def load_data: (Shrine::UploadedFile|anyHash|String|nil data) -> (Shrine::UploadedFile | nil)
+    def load_data: ((Shrine::UploadedFile|anyHash|String|nil) data) -> (Shrine::UploadedFile | nil)
 
     # Sets the attached file.
     #
@@ -155,7 +152,7 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    def file=: (Shrine::UploadedFile|nil file) -> (Shrine::UploadedFile | nil)
+    def file=: ((Shrine::UploadedFile|nil) file) -> (Shrine::UploadedFile | nil)
 
     # file!
     #
@@ -175,7 +172,7 @@ class Shrine
     #
     # @see Shrine::ClassMethods#uploaded_file
     #
-    def uploaded_file: (Shrine::UploadedFile|anyHash|String value) -> Shrine::UploadedFile
+    def uploaded_file: ((Shrine::UploadedFile|anyHash|String) value) -> Shrine::UploadedFile
 
     # activerecord_validate
     #
@@ -220,7 +217,7 @@ class Shrine
     #
     # @return [FileUploader]
     #
-    def load_entity: (Model record, Symbol|String name) -> FileUploader
+    def load_entity: (Model record, (Symbol|String) name) -> FileUploader
 
     # set_entity
     #
@@ -229,7 +226,7 @@ class Shrine
     #
     # @return [FileUploader]
     #
-    def set_entity: (Model record, Symbol|String name) -> FileUploader
+    def set_entity: (Model record, (Symbol|String) name) -> FileUploader
 
     # reload
     #

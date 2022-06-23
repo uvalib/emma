@@ -34,9 +34,6 @@ module Api::Shared::DateMethods
   #
   # @return [void]
   #
-  # -
-  # noinspection RailsParamDefResolve
-  # +
   def normalize_title_dates!: (?(symHash|nil) data) -> void
 
   # Produce day values of the form "YYYY-MM-DD".
@@ -54,7 +51,7 @@ module Api::Shared::DateMethods
   #
   # @return [Array<String>]
   #
-  def normalize_dates: (String|Date|Time|IsoDate|nil|Array[String|Date|Time|IsoDate|nil] values) -> strArray
+  def normalize_dates: ((String | Date | Time | IsoDate | nil | Array[String|Date|Time|IsoDate|nil]) values) -> strArray
 
   # Produce a date of the form "YYYY-MM-DD".
   #
@@ -63,5 +60,5 @@ module Api::Shared::DateMethods
   # @return [String]
   # @return [nil]                     If *value* is not a valid date.
   #
-  def normalize_date: (String|Date|Time|IsoDate|nil value) -> (String | nil)
+  def normalize_date: ((String|Date|Time|IsoDate|nil) value) -> (String | nil)
 end

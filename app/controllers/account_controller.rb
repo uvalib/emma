@@ -243,7 +243,7 @@ class AccountController < ApplicationController
 
   protected
 
-  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
   # @param [Array<String,Integer>] ids  Default: `#id_params`.

@@ -27,6 +27,7 @@ class Phase::Review < Phase::Single
 
   include Record::Steppable
 
+  # @private
   CLASS: Class
 
   # schedule!
@@ -133,7 +134,7 @@ class Phase::Review < Phase::Single
   # @return [nil]       Failed to transition record to the new state.
   # @return [Boolean]   *false* if the action could not be processed.
   #
-  def terminate_phase!: (Symbol|String final_state, ?(String|nil) comments, **untyped opt) -> (bool | nil)
+  def terminate_phase!: ((Symbol|String) final_state, ?(String|nil) comments, **untyped opt) -> (bool | nil)
 
   # A textual description of the type of the Model instance.
   #

@@ -5,30 +5,28 @@
 #   @return [Entry]
 #
 class EntryDecorator < BaseDecorator
-  include ConfigurationHelper
-
   module Paths
     include BaseDecorator::Paths
 
     def index_path: (**untyped opt) -> String
 
-    def show_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    def show_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
 
     def new_path: (**untyped opt) -> String
 
-    def create_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    def create_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
 
     def edit_select_path: (**untyped opt) -> String
 
-    def edit_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    def edit_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
 
-    def update_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    def update_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
 
     def delete_select_path: (**untyped opt) -> String
 
-    def delete_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    def delete_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
 
-    def destroy_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    def destroy_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
 
     def renew_path: (**untyped opt) -> String
 
@@ -36,7 +34,7 @@ class EntryDecorator < BaseDecorator
 
     def cancel_path: (**untyped opt) -> String
 
-    def check_path: (?(Model|anyHash|anyArray)? item, **untyped opt) -> String
+    def check_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
 
     def endpoint_path: (**untyped opt) -> String
 
@@ -121,6 +119,10 @@ class EntryDecorator < BaseDecorator
     #
     FILTER_OPTIONS_CLASS: String
 
+    # Get all configured record fields for the model.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
     def model_form_fields: () -> Hash[Symbol,symHash]
 
     # Indicate whether the state group described by *properties* should be an
@@ -130,7 +132,7 @@ class EntryDecorator < BaseDecorator
     # @param [Hash, nil]         properties
     # @param [Array<Entry>, nil] list
     #
-    def active_state_group?: (Symbol? group, symHash? properties, Array[Entry]? list) -> bool
+    def active_state_group?: ((Symbol|nil) group, (symHash|nil) properties, (Array[Entry]|nil) list) -> bool
 
     # Control icon definitions.
     #
@@ -138,6 +140,10 @@ class EntryDecorator < BaseDecorator
     #
     CONTROL_ICONS: Hash[Symbol,symHash]
 
+    # Control icon definitions.
+    #
+    # @return [Hash{Symbol=>Hash{Symbol=>Any}}]
+    #
     def control_icons: () -> Hash[Symbol,symHash]
 
     # The CSS class selector associated with bibliographic lookup buttons.
@@ -181,18 +187,22 @@ class EntryDecorator < BaseDecorator
     # Element for displaying the name of the file that was uploaded.
     #
     # @param [String] leader          Text preceding the filename.
-    # @param [Hash]   opt             Passed to #html_div for outer <div>.
+    # @param [Hash]   opt             Passed to #html_div for outer *div*.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def uploaded_filename_display: (?leader: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+    def uploaded_filename_display: (?leader: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Bibliographic lookup popup.
     #
-    # @param [String, nil] label      Override button label.
-    # @param [Hash]        opt        To #button_tag
+    # @param [Hash] opt               Passed to #inline_popup except for:
+    #
+    # @option opt [Hash] :button      Options for #lookup_button_options.
+    # @option opt [Hash] :container   Options for #lookup_container.
     #
     # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see file:app/assets/javascripts/feature/model-form.js *lookupButton()*
     #
     def lookup_popup: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -251,6 +261,10 @@ class EntryDecorator < BaseDecorator
     include Paths
     include Methods
 
+    # options
+    #
+    # @return [Entry::Options]
+    #
     def options: () -> Entry::Options
   end
 
@@ -260,6 +274,9 @@ class EntryDecorator < BaseDecorator
     include Methods
   end
 
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
   module Common
     def self.included: (Module base) -> void
   end
@@ -319,7 +336,7 @@ class EntryDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *value* was not valid JSON.
   #
-  def render_json_data: (String|anyHash|nil value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def render_json_data: ((String|anyHash|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Transform a field value for HTML rendering.
   #
@@ -345,7 +362,7 @@ class EntryDecorator < BaseDecorator
   #
   # @see #model_field_values
   #
-  def details: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
@@ -354,11 +371,11 @@ class EntryDecorator < BaseDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Include control icons below the entry number.
   #
-  # @param [Hash] opt                 Passed to super
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -371,7 +388,7 @@ class EntryDecorator < BaseDecorator
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def self.controls_for: (Model|symHash|String|Symbol item, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def self.controls_for: ((Model|symHash|String|Symbol) item, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Produce an action icon based on either :path or :id.
   #
@@ -402,7 +419,7 @@ class EntryDecorator < BaseDecorator
   #
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
-  def check_status_popup: (String|Symbol path, id: String|Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def check_status_popup: ((String|Symbol) path, id: String|Integer, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -421,8 +438,24 @@ class EntryDecorator < BaseDecorator
   #
   FILE_LABEL: String
 
-  def form_top_controls:    (ActionView::Helpers::FormBuilder|nil f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
-  def form_top_button_tray: (ActionView::Helpers::FormBuilder     f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  # Control elements always visible at the top of the input form.
+  #
+  # @param [ActionView::Helpers::FormBuilder, nil] f
+  # @param [Array<ActiveSupport::SafeBuffer>]      buttons
+  # @param [Hash]                                  opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_top_controls: (ActionView::Helpers::FormBuilder|nil f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  # form_top_button_tray
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Array<ActiveSupport::SafeBuffer>] buttons
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_top_button_tray: (ActionView::Helpers::FormBuilder f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Upload cancel button.
   #

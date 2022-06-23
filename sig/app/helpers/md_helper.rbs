@@ -87,7 +87,7 @@ module MdHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_output_container: (String|Symbol name, String|Symbol label, **untyped opt) -> ActiveSupport::SafeBuffer
+  def md_output_container: ((String|Symbol) name, (String|Symbol) label, **untyped opt) -> ActiveSupport::SafeBuffer
 
   CLIPBOARD_ICON: ActiveSupport::SafeBuffer
 

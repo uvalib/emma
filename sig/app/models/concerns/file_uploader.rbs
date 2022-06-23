@@ -71,7 +71,7 @@ class FileUploader < Shrine
   #
   # @return [Shrine::UploadedFile]
   #
-  def self.upload: (IO|StringIO io, Symbol storage, **untyped options) -> UploadedFile
+  def self.upload: ((IO|StringIO) io, Symbol storage, **untyped options) -> UploadedFile
 
   # uploaded_file
   #
@@ -81,7 +81,7 @@ class FileUploader < Shrine
   #
   # @return [Shrine::UploadedFile]
   #
-  def self.uploaded_file: (symHash|String|UploadedFile object) -> UploadedFile
+  def self.uploaded_file: ((symHash|String|UploadedFile) object) -> UploadedFile
 
   # with_file
   #
@@ -89,7 +89,7 @@ class FileUploader < Shrine
   #
   # @return [void]
   #
-  def self.with_file: (IO|StringIO io) -> void
+  def self.with_file: ((IO|StringIO) io) -> void
 
   # initialize
   #
@@ -104,7 +104,7 @@ class FileUploader < Shrine
   #
   # @return [Shrine::UploadedFile]
   #
-  def upload: (IO|StringIO io, **untyped options) -> UploadedFile
+  def upload: ((IO|StringIO) io, **untyped options) -> UploadedFile
 
   # generate_location
   #
@@ -114,7 +114,7 @@ class FileUploader < Shrine
   #
   # @return [String]
   #
-  def generate_location: (IO|StringIO io, ?metadata: anyHash, **untyped options) -> String
+  def generate_location: ((IO|StringIO) io, ?metadata: anyHash, **untyped options) -> String
 
   # extract_metadata
   #
@@ -123,5 +123,5 @@ class FileUploader < Shrine
   #
   # @return [Hash{String=>String,Integer}]
   #
-  def extract_metadata: (IO|StringIO io, **untyped options) -> Hash[String,(String|Integer)]
+  def extract_metadata: ((IO|StringIO) io, **untyped options) -> Hash[String,(String|Integer)]
 end

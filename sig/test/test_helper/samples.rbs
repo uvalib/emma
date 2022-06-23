@@ -15,9 +15,6 @@ module TestHelper::Samples
   #
   # @type [Hash{Symbol=>Symbol}]
   #
-  # -
-  # noinspection NonAsciiCharacters
-  # +
   SAMPLE_FIXTURE: Hash[Symbol,Symbol]
 
   # Generate a sample instance from text/fixtures/artifacts.yml.

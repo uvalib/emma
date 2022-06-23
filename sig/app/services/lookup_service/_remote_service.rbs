@@ -1,10 +1,12 @@
-# Base class for remote bibliographic metadata search services.
+# Abstract base class for remote bibliographic metadata search services.
 #
-# -
-# noinspection RubyTooManyInstanceVariablesInspection
-# +
 class LookupService::RemoteService < ApiService
   include Emma::Json
+
+  # :nocov:
+  #include LookupService::RemoteService::Properties
+
+  #include LookupService::RemoteService::Common
 
   attr_reader response: Faraday::Response | nil # From Api::Common
 
@@ -17,7 +19,7 @@ class LookupService::RemoteService < ApiService
   # @return [Float, nil]
   attr_reader start_time: Float | nil
 
-  # @return [float, nil]
+  # @return [Float, nil]
   attr_reader end_time: Float | nil
 
   # @return [Boolean]
@@ -38,9 +40,24 @@ class LookupService::RemoteService < ApiService
   #
   def initialize: (**untyped opt) -> void
 
-  def types:    () -> symArray
+  # Types of identifiers that the external service can find.
+  #
+  # @return [Array<Symbol>]
+  #
+  def types: () -> symArray
+
+  # How important the external service is as an authority for the type(s) of
+  # identifiers it can search.
+  #
+  # @type [Integer]
+  #
   def priority: () -> Integer
-  def timeout:  () -> Float
+
+  # How long to wait for a response from the external service.
+  #
+  # @return [Float]
+  #
+  def timeout: () -> Float
 
   # Indicate whether the request sequence has begun.
   #
@@ -101,14 +118,14 @@ class LookupService::RemoteService < ApiService
   #
   def fetch: (?lookupArg req) -> (Api::Message | nil)
 
-  # Extract results from the remote request.
+  # Extract results from the remote response.
   #
   # @param [Api::Message, LookupService::Data, Hash, nil] obj
   # @param [Boolean] extended         If *true*, include :diagnostic.
   #
   # @return [LookupService::Response] The value for @result.
   #
-  def post_flight: (Api::Message|LookupService::Data|symHash|nil obj, ?extended: bool) -> LookupService::Response
+  def post_flight: ((Api::Message|LookupService::Data|symHash|nil) obj, ?extended: bool) -> LookupService::Response
 
   # Overridden by the subclass to transform response message data into
   # normalized data which is passed to this superclass method.
@@ -119,8 +136,8 @@ class LookupService::RemoteService < ApiService
   # @return [LookupService::Data]
   # @return [nil]                     If *msg* is *nil*.
   #
-  def transform: (Api::Message|LookupService::Data|symHash msg, ?extended: bool) -> LookupService::Data
-               | (nil                                      msg, ?extended: bool) -> nil
+  def transform: ((Api::Message|LookupService::Data|symHash) msg, ?extended: bool) -> LookupService::Data
+               | (nil                                        msg, ?extended: bool) -> nil
 
   # transform_multiple
   #

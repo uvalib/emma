@@ -101,7 +101,7 @@ class Phase < ApplicationRecord
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: (Model|prmHash|nil attr, ?(symHash|nil) opt) -> void
+  def assign_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> void
 
   def running?: () -> bool
 
@@ -172,7 +172,7 @@ class Phase < ApplicationRecord
   #
   # @return [ActiveRecord::Relation<Action>]
   #
-  def action_scope: (?(Symbol|String|Class|Action)? action_type, **untyped opt) -> ActiveRecord::Relation # _ActiveRecord_Relation[Action, Integer]
+  def action_scope: (?(Symbol|String|Class|Action|nil) action_type, **untyped opt) -> ActiveRecord::Relation # _ActiveRecord_Relation[Action, Integer]
 
   # Create a new Action for this Phase, initializing it with the current values
   # from this record.
@@ -186,7 +186,7 @@ class Phase < ApplicationRecord
   #
   # @return [Action]
   #
-  def generate_action: (Symbol|String|nil `type`, **untyped opt) -> Action
+  def generate_action: ((Symbol|String|nil) `type`, **untyped opt) -> Action
 
   # Error messages for various states.
   #
@@ -205,7 +205,7 @@ class Phase < ApplicationRecord
   #
   # @return [Phase]
   #
-  def self.raise_unless: (Phase phase, Symbol|String|nil state) -> Phase
+  def self.raise_unless: (Phase phase, (Symbol|String|nil) state) -> Phase
 
   # Get the latest matching Phase record.
   #
@@ -217,7 +217,7 @@ class Phase < ApplicationRecord
   #
   # @return [Phase]
   #
-  def self.latest_for_sid: (?(Model|symHash|String|Symbol)? sid, **untyped opt) -> Phase
+  def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, **untyped opt) -> Phase
 
   # A textual description of the type of the Model instance.
   #

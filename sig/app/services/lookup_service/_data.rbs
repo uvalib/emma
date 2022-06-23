@@ -1,6 +1,7 @@
-
+# Bibliographic information extracted from one or more search result items
+# returned by an external service.
+#
 class LookupService::Data
-
   # @return [Hash{Symbol=>Array<LookupService::Data::Item>}]
   attr_reader table: lookupDataItems
 
@@ -11,11 +12,13 @@ class LookupService::Data
   #
   # @param [Api::Message, Faraday::Response, Hash, Array, String, LookupService::Data, LookupService::Data::Item, nil] src
   #
+  # @see LookupService::RemoteService#transform
+  #
   def initialize: (?(Api::Message|Faraday::Response|symHash|strArray|String|LookupService::Data|LookupService::Data::Item|nil) src) -> void
 
   # Return only the fields which are not blank.
   #
-  # @return [Hash{Symbol=>Array<Hash>}]
+  # @return [Hash{Symbol,Hash{Symbol=>Array<Hash>}}]
   #
   def item_values: () -> lookupDataValues
 
@@ -25,10 +28,10 @@ class LookupService::Data
   #
   def item_count: ()-> Integer
 
-  # diagnostic
-  # 
+  # Out-of-band information related to this set of data.
+  #
   # @return [Hash{Symbol=>Array<Hash>}]
-  # 
+  #
   def diagnostic: () -> lookupDataValues
 
   # make_table
@@ -37,7 +40,7 @@ class LookupService::Data
   #
   # @return [Hash{Symbol=>Array<LookupService::Data::Item>}]
   #
-  def make_table: (Hash[Symbol,(LookupService::Data|symHash)]|Array[LookupService::Data|symHash]|nil array) -> lookupDataItems
+  def make_table: ((Hash[Symbol,(LookupService::Data|symHash)] | Array[LookupService::Data|symHash] | nil) array) -> lookupDataItems
 
   # transform_table_items
   #
@@ -51,7 +54,7 @@ class LookupService::Data
   #
   # @raise [ArgumentError]  If no block was given.
   #
-  def transform_table_items : [T] () { (LookupService::Data::Item item) -> [T] } -> Hash[Symbol,Array[T]]
+  def transform_table_items: [T] () { (LookupService::Data::Item item) -> [T] } -> Hash[Symbol,Array[T]]
 
   # Create a new instance from *item* if it is not already an instance.
   #
@@ -62,9 +65,17 @@ class LookupService::Data
   def self.wrap: (untyped item) -> LookupService::Data
 end
 
+# Bibliographic information extracted from a single search result item returned
+# by an external service.
+#
 class LookupService::Data::Item < Search::Record::MetadataRecord
+  # Although, for convenience, this class uses the full schema of its parent
+  # these are the only fields which will be reported.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELDS: symArray
 
-  FIELDS:   symArray
   TEMPLATE: symHash
 
   # @return [Hash, nil]
@@ -86,9 +97,9 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
   #
   def item_values: () -> symHash
 
-  # Eliminate :emma_publicationDate if it's just "YYYY-01-01"; if not,
-  # eliminate :dcterms_dateCopyright if just indicates the same year as the
-  # publication date.
+  # If it's just "YYYY-01-01", replace :emma_publicationDate with
+  # :dcterms_dateCopyright; if not, eliminate :dcterms_dateCopyright if just
+  # indicates the same year as the publication date.
   #
   # @return [void]
   #

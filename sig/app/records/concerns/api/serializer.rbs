@@ -20,7 +20,13 @@ class Api::Serializer < ::Representable::Decorator
   #
   # @param [Api::Record, nil] represented
   #
-  def initialize: (?Api::Record? represented) -> void
+  def initialize: (?(Api::Record|nil) represented) -> void
+
+  # inspect
+  #
+  # @return [String]
+  #
+  def inspect: () -> untyped
 
   # Type of serializer (based on the name of descendent class if not set
   # explicitly).
@@ -28,7 +34,7 @@ class Api::Serializer < ::Representable::Decorator
   # @return [Symbol]
   #
   # @see Api::Schema#SERIALIZER_TYPES
-  # @see Api::Schema#DEFAULT_SERIALIZER_TYPE
+  # @see Api::Schema#default_serializer_type
   #
   def serializer_type: () -> Symbol
 
@@ -44,9 +50,6 @@ class Api::Serializer < ::Representable::Decorator
   # == Usage Notes
   # This method must be overridden by the derived class to pass in :method.
   #
-  # -
-  # noinspection RubyScope, RubyMismatchedArgumentType
-  # +
   def serialize: (?method: Symbol|Proc|nil, **untyped opt) -> String
 
   # Load data elements from the supplied data.
@@ -66,10 +69,7 @@ class Api::Serializer < ::Representable::Decorator
   # The derived class must override this to pass in :method via the arguments
   # to `super`.
   #
-  # -
-  # noinspection RubyScope, RubyMismatchedArgumentType
-  # +
-  def deserialize: (String|symHash data, ?method: Symbol|Proc|nil) -> (Api::Record | nil)
+  def deserialize: ((String|symHash) data, ?method: Symbol|Proc|nil) -> (Api::Record | nil)
 
   # Set source data string.
   #
@@ -85,5 +85,5 @@ class Api::Serializer < ::Representable::Decorator
   # This method will not be invoked (and @source_data will be *nil*) for an
   # instance where #error? is *true*.
   #
-  def set_source_data: (String|symHash data) -> (String | nil)
+  def set_source_data: ((String|symHash) data) -> (String | nil)
 end

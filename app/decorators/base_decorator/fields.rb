@@ -72,7 +72,7 @@ module BaseDecorator::Fields
   # associated with the proper field configuration.)
   #
   #--
-  # noinspection RubyMismatchedParameterType, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def field_pairs(item = nil, action: nil, field_root: nil, **)
     field_values(item).map { |k, v|

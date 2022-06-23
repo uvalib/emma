@@ -1,9 +1,9 @@
 # Search::Message::SearchTitleList
 #
 class Search::Message::SearchTitleList < Search::Api::Message
-  include Search::Shared::IdentifierMethods
-
   include Search::Shared::CollectionMethods
+
+  include Search::Shared::IdentifierMethods
 
   LIST_ELEMENT: untyped
 
@@ -26,7 +26,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   # @option opt [Boolean, nil] :canonical   Passed to #aggregate.
   #
-  def initialize: (Search::Message::SearchRecordList|nil src, ?(bool|nil) opt) -> void
+  def initialize: ((Search::Message::SearchRecordList|nil) src, ?(bool|nil) opt) -> void
 
   # Simulates the :totalResults field of similar Bookshare API records.
   #
@@ -34,9 +34,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   # @return [Integer]
   #
-  # -
-  # noinspection RubyInstanceMethodNamingConvention
-  # +
   def totalResults: () -> Integer
 
   # Simulates the :totalResults field of similar Bookshare API records.
@@ -59,7 +56,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   # @return [Array<Search::Record::TitleRecord>]
   #
-  def aggregate: (?Array[Search::Record::MetadataRecord]? src, **untyped opt) -> Array[Search::Record::TitleRecord]
+  def aggregate: (?(Array[Search::Record::MetadataRecord]|nil) src, **untyped opt) -> Array[Search::Record::TitleRecord]
 
   # Each grouping involves one or more Search::Record::MetadataRecord fields
   # (or other instance methods).
@@ -71,6 +68,17 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @private
   GROUPING_LEVEL_DEPTH: Integer
 
+  # Encapsulates a subset of field values to provide a single object for use
+  # with Enumerable#group_by.
+  #
+  # == Implementation Notes
+  # This is still under development because the intent was to dynamically
+  # vary the comparison criteria if standard ID(s) are present, however
+  # Enumerable#group_by uses #hash not #eql?.
+  #
+  # It may be necessary to implement an analogue to #group_by which uses #eql?
+  # for this to work out as intended.
+  #
   class GroupingCriteria
     include Comparable
 
@@ -89,9 +97,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
     #
     # @param [Any] other
     #
-    # -
-    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-    # +
     def match?: (untyped other) -> bool
 
     def hash: () -> Integer
@@ -110,13 +115,13 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   # @return [GroupingCriteria]
   #
-  def group_fields: (Search::Record::MetadataRecord rec, Integer|Symbol|symArray level) -> GroupingCriteria
+  def group_fields: (Search::Record::MetadataRecord rec, (Integer|Symbol|symArray) level) -> GroupingCriteria
 
   # Recursively group records.
   #
   # @param [Array<Search::Record::MetadataRecord>] recs
   # @param [Integer] level            Incremented via recursion.
-  # @param [Any,nil] fields           Supplied via recursion.
+  # @param [Any]     fields           Supplied via recursion.
   # @param [Proc]    block            Executed at the bottom-level.
   #
   # @return [Array<Search::Record::TitleRecord>]
@@ -126,7 +131,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @yieldparam  [Array<Search::Record::MetadataRecord>] recs
   # @yieldreturn [Search::Record::TitleRecord, nil]
   #
-  def recursive_group_records: (Array[Search::Record::MetadataRecord] recs, ?level: Integer, ?fields: untyped) { (Array[Search::Record::MetadataRecord] recs) -> (Search::Record::TitleRecord | nil) } -> (Array[Search::Record::TitleRecord] | Search::Record::TitleRecord | nil)
+  def recursive_group_records: (Array[Search::Record::MetadataRecord] recs, ?level: Integer, ?fields: untyped|nil) { (Array[Search::Record::MetadataRecord] recs) -> (Search::Record::TitleRecord | nil) } -> (Array[Search::Record::TitleRecord] | Search::Record::TitleRecord | nil)
 
   # This functions as an alternative to Enumerable#group_by, but grouping by
   # similarity rather than identity.

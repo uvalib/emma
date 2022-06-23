@@ -9,7 +9,7 @@ class ApplicationCable::Response < Hash[Symbol,untyped]
   # @param [*]    values
   # @param [Hash] opt
   #
-  def initialize: (?untyped? values, **untyped opt) -> void
+  def initialize: (?untyped values, **untyped opt) -> void
 
   # @private
   # @type [Array<Symbol>]
@@ -47,14 +47,14 @@ class ApplicationCable::Response < Hash[Symbol,untyped]
   # this response is stored.
   #
   # @param [String] base_path   URL path to the job result lookup endpoint.
-  # @param [String] data_path   Location in the data hierarchy.
+  # @param [Array]  data_path   Location in the data hierarchy.
   # @param [Hash]   opt         Additional URL parameters.
   #
   # @return [self]
   #
   # @see file:app/assets/javascripts/channels/lookup-channel.js  *response*
   #
-  def convert_to_data_url!: (?base_path: String, ?data_path: Array[Symbol|String]?, **untyped opt) -> self
+  def convert_to_data_url!: (?base_path: String, ?data_path: Array[Symbol|String]|nil, **untyped opt) -> self
 
   # Create a new instance unless *payload* is already an instance of the class
   # and there are no *opt* additions.
@@ -82,8 +82,5 @@ class ApplicationCable::Response < Hash[Symbol,untyped]
   # @yield Alternate mechanism for providing *items*.
   # @yieldreturn [Hash, Array]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def self.make_response_template: (?untyped? items) { () -> untyped } -> symHash
+  def self.make_response_template: (?untyped items) { () -> (anyHash | anyArray) } -> symHash
 end

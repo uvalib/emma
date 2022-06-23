@@ -5,10 +5,34 @@ module LookupService::Crossref::Properties
 
   include LookupService::RemoteService::Properties
 
+  # E-mail address added to parameters to put the request in the "polite pool".
+  #
+  # @return [String, nil]
+  #
   def api_user: () -> (String | nil)
 
-  SELECT_ELEMENTS:        strArray
+  # Crossref results can be limited by specifying a comma-separated list of
+  # any of these elements via the 'select' URL parameter:
+  #
+  # @type [Array<String>]
+  #
+  SELECT_ELEMENTS: strArray
+
+  # Attribute names which are expected as all uppercase.
+  #
+  # @type [Array<String>]
+  #
   SELECT_ELEMENTS_UPCASE: strArray
 
+  # select_list
+  #
+  # @param [Array<Symbol>]
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # This might not be useful in general since #SELECT_ELEMENTS is missing a
+  # few data items (e.g. 'edition-number', 'journal-issue', 'language').
+  #
   def select_list: (*Symbol attribute) -> strArray
 end

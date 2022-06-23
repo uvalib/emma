@@ -8,5 +8,5 @@ class Ingest::Api::Message < Ingest::Api::Record
   # @param [Faraday::Response, Model, Hash, String, nil] src
   # @param [Hash, nil]                                   opt
   #
-  def initialize: (Faraday::Response|Model|String|symHash|nil src, ?(symHash|nil) opt) -> void
+  def initialize: ((Faraday::Response|Model|String|symHash|nil) src, ?(symHash|nil) opt) -> void
 end

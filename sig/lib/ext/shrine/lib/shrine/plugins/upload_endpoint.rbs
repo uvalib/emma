@@ -100,6 +100,6 @@ class Shrine
     # This method overrides:
     # @see Shrine::UploadEndpointExt#make_response
     #
-    def make_response: (Shrine::UploadedFile|anyHash uploaded_file, ActionDispatch::Request request) -> httpResult
+    def make_response: ((Shrine::UploadedFile|anyHash) uploaded_file, ActionDispatch::Request request) -> httpResult
   end
 end

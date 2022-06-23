@@ -29,9 +29,6 @@ module Import::IaBulk
   # [4] Fields which pertain to upload into IA can be ignored because they are
   #     not relevant to EMMA metadata.
   #
-  # -
-  # noinspection SpellCheckingInspection
-  # +
   SCHEMA: Hash[Symbol, (Symbol | [Symbol,Symbol] | [Symbol,Proc])]
 
   # Each "format" provided gets mapping into several :emma_data fields.

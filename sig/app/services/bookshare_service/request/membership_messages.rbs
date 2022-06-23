@@ -7,9 +7,6 @@
 # informational messages sent to either a given user account, or to all members
 # of the Assistant’s site.
 #
-# -
-# noinspection RubyParameterNamingConvention, RubyLocalVariableNamingConvention
-# +
 module BookshareService::Request::MembershipMessages
   include BookshareService::Common
 

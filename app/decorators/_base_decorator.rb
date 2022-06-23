@@ -54,13 +54,13 @@ class BaseDecorator < Draper::Decorator
 
     # Explicit overrides for the sake of those helpers which still rely on
     # direct access to controller-related items.
-    # 
+    #
     # @!method request
     # @!method params
     # @!method session
     # @!method current_user
     # @!method current_ability
-    # 
+    #
     %i[request params session current_user current_ability].each do |meth|
       define_method(meth) do
         controller_context.send(meth)
@@ -69,9 +69,9 @@ class BaseDecorator < Draper::Decorator
 
     # Explicit overrides for the sake of those helpers which still rely on
     # direct access to controller-related items.
-    # 
+    #
     # @!method cookies
-    # 
+    #
     %i[cookies].each do |meth|
       define_method(meth) do
         request.cookies
@@ -110,7 +110,7 @@ class BaseDecorator < Draper::Decorator
     public
 
     # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
-    # 
+    #
     # @!method asset_path(*args)
     #   @see ActionView::Helpers::AssetUrlHelper#asset_path
     #
@@ -128,7 +128,7 @@ class BaseDecorator < Draper::Decorator
     end
 
     # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
-    # 
+    #
     7    # @!method button_tag(*args, &block)
     #   @see ActionView::Helpers::FormTagHelper#button_tag
     #
@@ -970,7 +970,8 @@ class BaseDecorator < Draper::Decorator
       sub = ObjectClassMap.get(item) || OtherClassMap.get(item)
       raise "No decorator for #{item.class}" unless sub || force || item.nil?
       opt.merge!(from_internal: true)
-      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+      # noinspection RubyMismatchedArgumentType, RubyArgCount
+      # noinspection RubyMismatchedReturnType
       sub&.new(item, **opt) || new(item, **opt)
     end
 
@@ -1101,9 +1102,6 @@ class BaseDecorator < Draper::Decorator
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def self.decorator_for(*args)
     other = []
     if args.first.is_a?(Hash)
@@ -1118,6 +1116,7 @@ class BaseDecorator < Draper::Decorator
       mod, obj = args
     end
 
+    # noinspection RubyMismatchedArgumentType
     set_model_type(mod)
     set_object_class(obj, *other)&.include(Draper::Decoratable)
 

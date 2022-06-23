@@ -25,9 +25,6 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#counter
   #
-  # -
-  # noinspection RubyConstantNamingConvention
-  # +
   Counter: Hash[Symbol,Prometheus::Client::Counter]
 
   # Prometheus gauge metrics.
@@ -36,9 +33,6 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#gauge
   #
-  # -
-  # noinspection RubyConstantNamingConvention
-  # +
   Gauge: Hash[Symbol,Prometheus::Client::Gauge]
 
   # Prometheus histogram metrics.
@@ -47,9 +41,6 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#histogram
   #
-  # -
-  # noinspection RubyConstantNamingConvention
-  # +
   Histogram: Hash[Symbol,Prometheus::Client::Histogram]
 
   # Prometheus summary metrics.
@@ -58,9 +49,6 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#summary
   #
-  # -
-  # noinspection RubyConstantNamingConvention
-  # +
   Summary: Hash[Symbol,Prometheus::Client::Summary]
 
   private

@@ -58,7 +58,7 @@ module SerializationHelper
   # @return [String]                  XML serialization of *item*.
   # @return [nil]                     If *item* is *nil* or an empty collection
   #
-  def make_xml: (untyped item, ?separator: String, ?name: String?, ?serializer: Api::Serializer?) -> (String | nil)
+  def make_xml: (untyped item, ?separator: String, ?name: String|nil, ?serializer: Api::Serializer|nil) -> (String | nil)
 
   # @private
   XML_PROLOG: String
@@ -69,7 +69,7 @@ module SerializationHelper
   #
   # @return [String]
   #
-  def add_xml_prolog: (String|nil item) -> String
+  def add_xml_prolog: ((String|nil) item) -> String
 
   # remove_xml_prolog
   #
@@ -78,7 +78,7 @@ module SerializationHelper
   #
   # @return [String]
   #
-  def remove_xml_prolog: (String|nil item, ?aggressive: bool) -> String
+  def remove_xml_prolog: ((String|nil) item, ?aggressive: bool) -> String
 
   private
 

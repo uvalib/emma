@@ -5,9 +5,6 @@ module SessionsHelper
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   SESSIONS_CONFIG: symHash
 
   # Default sign-in tooltip.
@@ -34,7 +31,7 @@ module SessionsHelper
   # == Usage Notes
   # Use :path = *false* to disable without changing the appearance.
   #
-  def sign_in_link: (?label: String?, ?provider: (Symbol|String)?, ?path: (bool|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def sign_in_link: (?label: String|nil, ?provider: Symbol|String|nil, ?path: bool|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Sign out link.
   #
@@ -48,7 +45,7 @@ module SessionsHelper
   # == Usage Notes
   # Use :path = *false* to disable without changing the appearance.
   #
-  def sign_out_link: (?label: String?, ?provider: (Symbol|String)?, ?path: (bool|String)?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def sign_out_link: (?label: String|nil, ?provider: Symbol|String|nil, ?path: bool|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Get link label from the config/locales/controllers/user.en.yml.
   #
@@ -58,7 +55,7 @@ module SessionsHelper
   #
   # @return [String]
   #
-  def get_sessions_label: (Symbol|String action, ?(Symbol|String)? provider, **untyped opt) -> String
+  def get_sessions_label: ((Symbol|String) action, ?(Symbol|String|nil) provider, **untyped opt) -> String
 
   private
 

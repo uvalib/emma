@@ -298,9 +298,6 @@ module Record::Searchable
     #
     # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
     #
-    #--
-    # noinspection RubyMismatchedParameterType
-    #++
     def matching_sid(sid = nil, max: nil, meth: nil, no_raise: false, **opt)
       sid = opt[:submission_id] = sid_value(sid || opt)
       if sid.blank?
@@ -335,9 +332,6 @@ module Record::Searchable
     #
     # @return [Model]                     Or *nil* on error if *no_raise*.
     #
-    #--
-    # noinspection RubyMismatchedParameterType
-    #++
     def latest_for_sid(sid = nil, sort: nil, **opt)
       result = matching_sid(sid, **opt) or return
       sort ||= :created_at

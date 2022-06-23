@@ -380,9 +380,6 @@ class BookshareDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]       An HTML link element.
   # @return [nil]                             If no *terms* were provided.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def search_link(terms, **opt)
     html_opt = remainder_hash!(opt, *SEARCH_LINK_OPTIONS)
     terms = terms.to_s.strip.presence or return
@@ -425,6 +422,7 @@ class BookshareDecorator < BaseDecorator
     search.merge!(controller: ctrlr, action: :index)
     path = path_for(**search)
 
+    # noinspection RubyMismatchedArgumentType
     make_link(label, path, **html_opt)
   end
 

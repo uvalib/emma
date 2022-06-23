@@ -7,8 +7,14 @@
 # -
 # === Unified Index Fields
 # +
-# @attr [String] emma_recordId
-# @attr [String] emma_titleId
+# @attr [String]      emma_recordId
+# @attr [String]      emma_titleId
+# -
+# === Fields not yet supported by the Unified Index
+# +
+# @attr [String]      bib_series
+# @attr [SeriesType]  bib_seriesType
+# @attr [String]      bib_seriesPosition
 #
 # @see https://app.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/MetadataRecord                               Search API documentation
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/MetadataRecord  JSON schema specification
@@ -35,8 +41,8 @@ class Search::Record::MetadataRecord < Search::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Model, Hash, String, nil] src
-  # @param [Hash, nil]                                   opt
+  # @param [Faraday::Response, Api::Message, Model, Hash, String, nil] src
+  # @param [Hash, nil]                                                 opt
   #
   def initialize: (?(Faraday::Response|Api::Message|Model|String|symHash|nil) src, ?(symHash|nil) opt) -> void
 end

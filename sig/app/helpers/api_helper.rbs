@@ -7,6 +7,8 @@ module ApiHelper
 
   include HtmlHelper
 
+  include LinkHelper
+
   extend ::ApiHelper
 
   # Generate HTML from the result of an API method invocation.
@@ -21,11 +23,8 @@ module ApiHelper
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   # @return [String]                    If *html* is *false*.
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
-  def format_api_result: (Api::Record|Faraday::Response|Exception|Integer|String|nil value, ?indent: (Integer|String)?, ?separator: String, ?html: true)  -> ActiveSupport::SafeBuffer
-                       | (Api::Record|Faraday::Response|Exception|Integer|String|nil value, ?indent: (Integer|String)?, ?separator: String, ?html: false) -> String
+  def format_api_result: ((Api::Record|Faraday::Response|Exception|Integer|String|nil) value, ?indent: Integer|String|nil, ?separator: String, ?html: true)  -> ActiveSupport::SafeBuffer
+                       | ((Api::Record|Faraday::Response|Exception|Integer|String|nil) value, ?indent: Integer|String|nil, ?separator: String, ?html: false) -> String
 
   private
 
@@ -35,7 +34,7 @@ module ApiHelper
   #
   # @return [String]                  The modified string.
   #
-  def mask_later_exceptions: (String|nil html) -> String
+  def mask_later_exceptions: ((String|nil) html) -> String
 
   # Transform URLs into links by translating Bookshare API hrefs into local
   # paths.
@@ -45,7 +44,7 @@ module ApiHelper
   #
   # @return [String]                  The modified string.
   #
-  def make_links: (String|nil html, **untyped opt) -> String
+  def make_links: ((String|nil) html, **untyped opt) -> String
 
   public
 
@@ -63,10 +62,7 @@ module ApiHelper
   #
   # @return [String]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def pretty_format: (Api::Record|Exception|Numeric|String|nil value) -> String
+  def pretty_format: ((Api::Record|Exception|Numeric|String|nil) value) -> String
 
   # Attempt to interpret *arg* as an exception or a record with an exception.
   #

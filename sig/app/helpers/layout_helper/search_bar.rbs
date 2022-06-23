@@ -5,7 +5,11 @@ module LayoutHelper::SearchBar
 
   include ConfigurationHelper
 
-  include I18nHelper
+  include LinkHelper
+
+  include ParamsHelper
+
+  include SearchTermsHelper
 
   # A table of search bar behavior for each controller.
   #
@@ -24,14 +28,14 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr  Default: params[:controller].
   # @param [Hash, nil]           opt    Default: `#request_parameters`.
   #
-  def show_search_bar?: (?(Symbol|String)? ctrlr, ?(symHash|nil) opt) -> bool
+  def show_search_bar?: (?(Symbol|String|nil) ctrlr, ?(symHash|nil) opt) -> bool
 
   # Indicate whether it is appropriate to show the search input menu.
   #
   # @param [Symbol, String, nil] ctrlr  Passed to #search_input_types.
   # @param [Hash]                opt    Passed to #search_input_types.
   #
-  def show_input_select?: (?(Symbol|String)? ctrlr, **untyped opt) -> bool
+  def show_input_select?: (?(Symbol|String|nil) ctrlr, **untyped opt) -> bool
 
   # search_bar_container
   #
@@ -47,10 +51,7 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                             Search unavailable for *target*.
   #
-  # -
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  # +
-  def search_bar_container: (?target: (Symbol|String)?, ?fields: (symArray|symHash)?, ?values: symHash?, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, ?maximum: Integer?, ?minimum: Integer?, **untyped form_opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_bar_container: (?target: Symbol|String|nil, ?fields: symArray|symHash|nil, ?values: symHash|nil, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, ?maximum: Integer|nil, ?minimum: Integer|nil, **untyped form_opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate a row within a search-bar-group.
   #
@@ -66,17 +67,21 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_bar_row: ((Symbol|String)? field, ?(String|nil) value, ?first: bool?, ?last: bool?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_bar_row: ((Symbol|String|nil) field, ?(String|nil) value, ?first: bool|nil, ?last: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Reveal the next search-bar-row in the current search-bar-group.
   #
   # @param [Hash] opt                 Passed to #search_row_control.
+  #
+  # @return [ActiveSupport::SafeBuffer]
   #
   def search_row_add: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Reveal the associated search-bar-row.
   #
   # @param [Hash] opt                 Passed to #search_row_control.
+  #
+  # @return [ActiveSupport::SafeBuffer]
   #
   def search_row_remove: (**untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -109,7 +114,7 @@ module LayoutHelper::SearchBar
   #
   # @see #search_input
   #
-  def search_bar: ((String|Symbol)? field, ?(String|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_bar: ((Symbol|String|nil) field, ?(String|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # search_bar_label
   #
@@ -120,7 +125,7 @@ module LayoutHelper::SearchBar
   # @return [String]                      The specified value.
   # @return [nil]                         No non-empty value was found.
   #
-  def search_bar_label: (?(Symbol|String)? ctrlr, ?target: (Symbol|String)?, **untyped opt) -> (String | nil)
+  def search_bar_label: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, **untyped opt) -> (String | nil)
 
   # An operation on a search-bar-row.
   #
@@ -134,7 +139,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_row_control: (String|Symbol operation, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_row_control: ((String|Symbol) operation, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The URL parameter to which search terms should be applied.
   #
@@ -144,7 +149,7 @@ module LayoutHelper::SearchBar
   # @return [Symbol]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
-  def search_input_field: (?(String|Symbol)? ctrlr, **untyped opt) -> (Symbol | nil)
+  def search_input_field: (?(Symbol|String|nil) ctrlr, **untyped opt) -> (Symbol | nil)
 
   # Screen-reader-only label for the input field.
   #
@@ -154,7 +159,7 @@ module LayoutHelper::SearchBar
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
-  def search_input_label: (?(String|Symbol)? ctrlr, **untyped opt) -> (String | nil)
+  def search_input_label: (?(Symbol|String|nil) ctrlr, **untyped opt) -> (String | nil)
 
   # Placeholder text displayed in the search input box.
   #
@@ -164,7 +169,7 @@ module LayoutHelper::SearchBar
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
-  def search_input_placeholder: (?(String|Symbol)? ctrlr, **untyped opt) -> (String | nil)
+  def search_input_placeholder: (?(Symbol|String|nil) ctrlr, **untyped opt) -> (String | nil)
 
   # Properties of the indicated search input type.
   #
@@ -175,7 +180,7 @@ module LayoutHelper::SearchBar
   #
   # @return [Hash{Symbol=>Symbol,String}]
   #
-  def search_input_type: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?field: (String|Symbol)?, **untyped opt) -> Hash[Symbol,(Symbol|String)]
+  def search_input_type: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, ?field: Symbol|symArray|nil, **untyped opt) -> Hash[Symbol,(Symbol|String)]
 
   # All defined input types.
   #
@@ -185,7 +190,7 @@ module LayoutHelper::SearchBar
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def search_input_types: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped opt) -> symHash
+  def search_input_types: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, **untyped opt) -> symHash
 
   # search_input_target
   #
@@ -195,7 +200,7 @@ module LayoutHelper::SearchBar
   # @return [Symbol]                      The controller used for searching.
   # @return [nil]                         If search input should not be enabled
   #
-  def search_input_target: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped ignored) -> (Symbol | nil)
+  def search_input_target: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, **untyped ignored) -> (Symbol | nil)
 
   # Generate a form search field input control.
   #
@@ -210,7 +215,10 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_input: ((String|Symbol)? field, ?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?value: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  # @note Used by EntryDecorator#parent_entry_select
+  # @note Used by UploadDecorator#parent_entry_select
+  #
+  def search_input: ((Symbol|symArray|nil) field, ?(String|Symbol|nil) ctrlr, ?target: Symbol|symArray|nil, ?value: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   SEARCH_READY_TOOLTIP: String
 
@@ -225,7 +233,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_button: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?label: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_button: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, ?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # search_button_label
   #
@@ -236,7 +244,10 @@ module LayoutHelper::SearchBar
   # @return [String]                      The specified value.
   # @return [nil]                         No non-empty value was found.
   #
-  def search_button_label: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, **untyped opt) -> (String | nil)
+  # @note Used by EntryDecorator#parent_entry_select
+  # @note Used by UploadDecorator#parent_entry_select
+  #
+  def search_button_label: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, **untyped opt) -> (String | nil)
 
   # search_clear_button
   #
@@ -247,7 +258,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/advanced-search.js *clearSearch()*
+  # @see file:javascripts/feature/advanced-search.js *clearSearchTerm()*
   # @see LinkHelper#icon_button
   #
   def search_clear_button: (**untyped opt) -> ActiveSupport::SafeBuffer
@@ -266,7 +277,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_controls: (?(String|Symbol)? ctrlr, ?target: (String|Symbol)?, ?form: String?, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_controls: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, ?form: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Filter values from an array.
   #
@@ -276,7 +287,7 @@ module LayoutHelper::SearchBar
   #
   # @return [Array]                   A modified copy of *obj*.
   #
-  def filter: ((Symbol|symArray)? obj, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, **untyped ignored) -> symArray
+  def filter: ((Symbol|symArray|nil) obj, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped ignored) -> symArray
 
   # Filter values from an array.
   #
@@ -286,8 +297,5 @@ module LayoutHelper::SearchBar
   #
   # @return [Array]                   The original object, possibly modified.
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
-  def filter!: (symArray array, ?only: (Symbol|symArray)?, ?except: (Symbol|symArray)?, **untyped ignored) -> symArray
+  def filter!: (symArray array, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped ignored) -> symArray
 end

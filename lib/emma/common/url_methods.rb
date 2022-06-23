@@ -41,8 +41,8 @@ module Emma::Common::UrlMethods
   # parameter after the '?' -- this is a concession to Bookshare URLs like
   # "myReadingLists/(id)?delete".
   #
-  # @param [Array] args               URL path components.
-  # @param [Hash]  opt                Passed as #url_query options.
+  # @param [Array<*>] args            URL path components.
+  # @param [Hash]     opt             Passed as #url_query options.
   #
   # @return [String]
   #

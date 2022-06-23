@@ -175,7 +175,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
     # @param [Any] other
     #
     #--
-    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+    # noinspection RubyNilAnalysis
     #++
     def match?(other)
       return false unless other.is_a?(GroupingCriteria)

@@ -7,12 +7,33 @@ module Lookup::GoogleBooks::Shared::IdentifierMethods
   @identifier_list:  Array[strArray]
   @identifier_table: Hash[String,strArray]
 
-  def best_identifier:  () -> (String | nil)
-  def identifier_list:  () -> strArray
-  def identifier_table: () -> lookupRequestHash
-  def isbn:             () -> (String | nil)
+  # A unique identifier for this catalog title.
+  #
+  # @return [String, nil]
+  #
+  def best_identifier: () -> (String | nil)
 
+  # identifier_list
+  #
+  # @return [Array<String>]
+  #
+  def identifier_list: () -> strArray
+
+  # identifier_table
+  #
+  # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
+  #
+  def identifier_table: () -> lookupRequestHash
+
+  # @private
+  # @type [Hash{Symbol=>String}]
   ID_SORT: Hash[Symbol,String]
 
+  # id_sort_key
+  #
+  # @param [Lookup::GoogleBooks::Record::Identifier]
+  #
+  # @return [Array<String>]
+  #
   def id_sort_key: (Lookup::GoogleBooks::Record::Identifier id) -> strArray
 end

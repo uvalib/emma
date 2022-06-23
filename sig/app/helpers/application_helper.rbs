@@ -10,22 +10,17 @@ module ApplicationHelper
   include ConfigurationHelper
 
   # Raw configuration entries for each controller that supplies content (i.e.,
-  # those controllers with a subdirectory in app/view) plus 'en.emma.generic'.
+  # those controllers with a subdirectory in app/view) plus 'emma.generic'
+  # and distinct entries for each 'emma.user' Devise controller.
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   CONTROLLER_CONFIGURATION: symHash
 
   # Configuration for application properties.
   #
   # @type [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RailsI18nInspection
-  # +
   APP_CONFIG: symHash
 
   # The controllers for the application.
@@ -50,29 +45,6 @@ module ApplicationHelper
   # @option prefixes.last [Hash]      Hash values to use in place of `params`.
   #
   def partial_exists?: (String path, *(String|Symbol) prefixes) -> bool
-
-  # Render a description for the page from configuration.
-  #
-  # @param [String, Symbol, nil] controller   Default: `params[:controller]`
-  # @param [String, Symbol, nil] action       Default: `params[:action]`
-  # @param [Hash]                opt          Passed to #html_div
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
-  #
-  def page_description: (?controller: (Symbol|String)?, ?action: (Symbol|String)?, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-
-  # Get the configured page description.
-  #
-  # @param [String, Symbol, nil] controller   Default: `params[:controller]`
-  # @param [String, Symbol, nil] action       Default: `params[:action]`
-  # @param [String, Symbol, nil] type         Optional type under action.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [String]
-  # @return [nil]
-  #
-  def page_text: (?controller: (Symbol|String)?, ?action: (Symbol|String)?, ?type: (Symbol|String)?) -> (ActiveSupport::SafeBuffer | String | nil)
 
   # The "mailto:" link for the general e-mail contact.
   #

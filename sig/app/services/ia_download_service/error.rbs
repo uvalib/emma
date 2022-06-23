@@ -37,8 +37,12 @@ class IaDownloadService::Error < ApiService::Error
     # @return [Array<String>]
     # @return [Array<ActiveSupport::SafeBuffer>]  If note(s) were added.
     #
-    def extract_message: (Faraday::Response|Faraday::Error|symHash src) -> (Array[ActiveSupport::SafeBuffer] | Array[String])
+    def extract_message: ((Faraday::Response|Faraday::Error|symHash) src) -> (Array[ActiveSupport::SafeBuffer] | Array[String])
 
+    # Patterns of IA error response text and added notes.
+    #
+    # @type [Hash{String,Regexp=>String}]
+    #
     IA_MESSAGES: Hash[(String|Regexp),String]
 
     # Produce additional line(s) to be displayed in the flash message along
@@ -58,7 +62,9 @@ class IaDownloadService::Error < ApiService::Error
   include ClassType
 end
 
+# :nocov:
 class IaDownloadService::AuthError < ApiService::AuthError
+  # :nocov:
   include IaDownloadService::Error::ClassType
 end
 

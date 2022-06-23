@@ -1437,9 +1437,6 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   # @see Upload#set_phase
   #
-  #--
-  # noinspection RubyMismatchedParameterType
-  #++
   def set_workflow_phase(new_value = nil, rec = nil)
     (rec || record)&.set_phase(new_value)
   end

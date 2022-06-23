@@ -51,9 +51,6 @@ module Representable
     #
     # @see #__output_impl
     #
-    # -
-    # noinspection RubyMismatchedArgumentType
-    # +
     def __debug_show: ((:input|:output|nil) mode, *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) { () -> untyped } -> nil
                     | (                           *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) { () -> untyped } -> nil
 
@@ -81,9 +78,6 @@ module Representable
     #
     # @see #__debug_show
     #
-    # -
-    # noinspection RubyMismatchedArgumentType
-    # +
     def __debug_lambda: ((:input|:output|nil) mode, *Symbol constants) -> nil
                       | (                           *Symbol constants) -> nil
 
@@ -114,9 +108,6 @@ module Representable
     #
     # @see #__debug_show
     #
-    # -
-    # noinspection RubyMismatchedArgumentType
-    # +
     def __debug_method: ((:input|:output|nil) mode, String label, *Symbol methods) -> nil
                       | (                           String label, *Symbol methods) -> nil
   end
@@ -128,25 +119,32 @@ module Representable
   end
 
   module Hash
-
     class Binding
       include RepresentableDebug
 
       def read: (anyHash|anyArray hash, untyped as) -> untyped
     end
-
   end
 
   module JSON
     def to_json: (*untyped args) -> String
   end
 
-  module ForCollection
-    include RepresentableDebug
-  end
-
   RenderDefault: untyped
 
   include RepresentableDebug
 
+  module CreateObject
+    include RepresentableDebug
+  end
+
+  module Object
+    class Binding
+      include RepresentableDebug
+    end
+  end
+
+  module ForCollection
+    include RepresentableDebug
+  end
 end

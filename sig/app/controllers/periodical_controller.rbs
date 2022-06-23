@@ -1,6 +1,7 @@
 # Handle Bookshare-only "/periodical" pages.
 #
-# @see PeriodicalHelper
+# @see PeriodicalDecorator
+# @see PeriodicalsDecorator
 # @see file:app/views/periodical/**
 #
 # @note These endpoints are not currently presented as a part of EMMA.
@@ -31,6 +32,7 @@ class PeriodicalController < ApplicationController
   #
   # List all periodicals.
   #
+  # @see #periodical_index_path       Route helper
   # @see BookshareService::Request::Periodicals#get_periodicals
   #
   def index: () -> void
@@ -39,6 +41,7 @@ class PeriodicalController < ApplicationController
   #
   # Display details of an existing periodical.
   #
+  # @see #periodical_path             Route helper
   # @see BookshareService::Request::Periodicals#get_periodical
   # @see BookshareService::Request::Periodicals#get_periodical_editions
   #
@@ -48,17 +51,23 @@ class PeriodicalController < ApplicationController
   #
   # Add metadata for a new periodical.
   #
+  # @see #new_periodical_path         Route helper
+  #
   def new: () -> void
 
   # == POST /periodical/:id
   #
   # Create an entry for a new periodical.
   #
+  # @see #periodical_path             Route helper
+  #
   def create: () -> void
 
   # == GET /periodical/:id/edit
   #
   # Modify metadata of an existing periodical entry.
+  #
+  # @see #edit_periodical_path        Route helper
   #
   def edit: () -> void
 
@@ -67,11 +76,15 @@ class PeriodicalController < ApplicationController
   #
   # Update the entry for an existing periodical.
   #
+  # @see #periodical_path             Route helper
+  #
   def update: () -> void
 
   # == DELETE /periodical/:id
   #
   # Remove an existing periodical entry.
+  #
+  # @see #periodical_path             Route helper
   #
   def destroy: () -> void
 

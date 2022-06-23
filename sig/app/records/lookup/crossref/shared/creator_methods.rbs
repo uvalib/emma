@@ -4,12 +4,44 @@ module Lookup::Crossref::Shared::CreatorMethods
   include Lookup::RemoteService::Shared::CreatorMethods
   include Lookup::Crossref::Shared::CommonMethods
 
+  # @type [Hash{Symbol=>Boolean,String}]
   CREATOR_ROLE: Hash[Symbol,(bool|String)]
 
+  # @type [Array<Symbol>]
   CREATOR_TYPES: symArray
 
-  def author_list:     (**untyped opt) -> strArray
-  def editor_list:     (**untyped opt) -> strArray
+  # The author(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def author_list: (**untyped opt) -> strArray
+
+  # The editor(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
+  def editor_list: (**untyped opt) -> strArray
+
+  # The translator(s) of this catalog title.
+  #
+  # @param [Hash] opt                 Passed to #creator_list.
+  #
+  # @return [Array<String>]
+  #
   def translator_list: (**untyped opt) -> strArray
+
+  # The author(s)/creator(s) of this catalog title.
+  #
+  # @param [Array<Symbol>] types      Default: `#CREATOR_TYPES`
+  # @param [Hash]          opt
+  #
+  # @option opt [Boolean] :role       If *true*, append the contributor type.
+  #
+  # @return [Array<String>]
+  #
   def creator_list: (*Symbol types, **untyped opt) -> strArray
 end

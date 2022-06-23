@@ -1,11 +1,11 @@
 # Base class for all controllers.
 #
 class ApplicationController < ActionController::Base
+  include ParamsHelper
+
   include FlashConcern
 
   include MetricsConcern
-
-  include ParamsHelper
 
   attr_reader modal: bool
 
