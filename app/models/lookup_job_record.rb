@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Address only those 'good_jobs' records initiated by LookupJob.
 #
-class LookupJobRecord < GoodJob::ActiveJobJob
+class LookupJobRecord < GoodJob::Job
 
   include JobMethods
 

@@ -8,7 +8,7 @@ class CreateJobResults < ActiveRecord::Migration[6.1]
   # noinspection RubyResolve
   def change
     create_table :job_results do |t|
-      t.belongs_to :active_job, class_name: 'GoodJob::ActiveJobJob', type: :uuid
+      t.belongs_to :active_job, class_name: 'GoodJob::Job', type: :uuid
       t.jsonb      :output
       t.jsonb      :error
       t.jsonb      :diagnostic

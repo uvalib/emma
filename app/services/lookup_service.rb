@@ -341,7 +341,7 @@ class LookupService
 
     ActiveSupport::Notifications.subscribe(pattern) do |*args|
       name, start, finished, unique_id, data = args
-      big_data = %i[scheduler active_job good_job execution result]
+      big_data = %i[scheduler active_job execution result]
       line = {
         name:        name,
         unique_id:   unique_id,

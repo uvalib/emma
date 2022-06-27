@@ -14,7 +14,7 @@ class JobResult < ApplicationRecord
   # ===========================================================================
 
   # noinspection RailsParamDefResolve
-  belongs_to :active_job, class_name: 'GoodJob::ActiveJobJob', optional: true
+  belongs_to :active_job, class_name: 'GoodJob::Job', optional: true
 
 end
 

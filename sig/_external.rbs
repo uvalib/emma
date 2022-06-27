@@ -225,7 +225,7 @@ end
 module GoodJob
   class BaseRecord
   end
-  class ActiveJobJob < BaseRecord
+  class Job < BaseRecord
   end
 end
 
