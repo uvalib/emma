@@ -5,10 +5,10 @@ module CodeStatisticsCalculatorExt
   #
   PATTERNS: Hash[Symbol,Hash[Symbol,Regexp]]
 
-  attr_reader lines:       Integer
-  attr_reader classes:     Integer
-  attr_reader methods:     Integer
-  attr_reader code_lines:  Integer
+  @lines:       Integer
+  @classes:     Integer
+  @methods:     Integer
+  @code_lines:  Integer
 
   # This replacement addresses several issues:
   #

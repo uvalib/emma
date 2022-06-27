@@ -179,6 +179,7 @@ class EntryDecorator < BaseDecorator
             elsif false?(value)
               value = false
             elsif value == 'nonzero'
+              # noinspection RubyUnusedLocalVariable
               value = ->(list, group = nil) {
 =begin # TODO: Entry.phases have state - Entry doesn't
                 list &&= list.select { |r| r.state_group == group } if group
@@ -501,7 +502,7 @@ class EntryDecorator < BaseDecorator
       status_panel      = 'lookup-status'
       notice            = 'notice'
       services          = 'services'
-      entries           = 'lookup-entries'
+      #entries          = 'lookup-entries'
       prompt            = 'lookup-prompt'
       heading           = 'lookup-heading'
       output            = 'lookup-output'
@@ -516,7 +517,7 @@ class EntryDecorator < BaseDecorator
       status_panel_css  = status_panel
       services_css      = "#{services} invisible"
       notice_css        = notice
-      entries_css       = entries
+      #entries_css      = entries
       prompt_css        = prompt
       heading_css       = heading
       output_css        = output

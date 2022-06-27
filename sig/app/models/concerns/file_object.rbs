@@ -8,8 +8,8 @@ class FileObject
 
   include FileNaming
 
-  attr_reader file_handle: FileHandle
-  attr_reader filename:    String | nil
+  @file_handle: FileHandle
+  @filename:    String | nil
 
   # Create a new instance.
   #

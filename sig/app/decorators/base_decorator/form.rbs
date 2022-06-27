@@ -8,9 +8,9 @@ module BaseDecorator::Form
   #
   module Values
 
-    attr_reader field_groups:   Hash[Symbol,symHash]
-    attr_reader status_markers: Hash[Symbol,symHash]
-    attr_reader form_actions:   Hash[Symbol,symHash]
+    @field_groups:   Hash[Symbol,symHash]
+    @status_markers: Hash[Symbol,symHash]
+    @form_actions:   Hash[Symbol,symHash]
 
     # Model-specific field group configuration.
     #

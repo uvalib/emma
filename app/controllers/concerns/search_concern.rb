@@ -109,9 +109,9 @@ module SearchConcern
 
   # Indicate whether the current search should be recorded.
   #
-  # @param [User, nil] user           Default: `#current_user`.
+  # @param [User, nil] _user          Default: `#current_user`.
   #
-  def save_search?(user = nil)
+  def save_search?(_user = nil)
     SAVE_SEARCHES # TODO: criteria?
   end
 

@@ -215,8 +215,8 @@ module Record::Steppable
 
     include Record::Updatable::ClassMethods
 
-    attr_reader state_table: symHash
-    attr_reader job_class:   Class
+    @state_table: symHash
+    @job_class:   Class
 
     # Workflow state table.
     #
@@ -295,8 +295,8 @@ module Record::Steppable
 
     include Record::Reportable
 
-    attr_reader state_table: symHash
-    attr_reader job_class:   Class
+    @state_table: symHash
+    @job_class:   Class
 
     # Workflow state table associated with the current record.
     #

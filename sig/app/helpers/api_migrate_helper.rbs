@@ -66,7 +66,7 @@ module ApiMigrateHelper
   #
   ROW_PARTS: Hash[Symbol,String]
 
-  attr_reader change_table_head: Array[ActiveSupport::SafeBuffer]
+  @change_table_head: Array[ActiveSupport::SafeBuffer]
 
   # Change table heading row elements.
   #

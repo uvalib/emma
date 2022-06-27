@@ -4,9 +4,9 @@ module Search::Shared::IdentifierMethods
   include Api::Shared::IdentifierMethods
   include Search::Shared::CommonMethods
 
-  attr_reader isbn:           String | nil
-  attr_reader related_isbns:  strArray
-  attr_reader all_isbns:      strArray
+  @isbn:           String | nil
+  @related_isbns:  strArray
+  @all_isbns:      strArray
 
   # The ISBN.
   #

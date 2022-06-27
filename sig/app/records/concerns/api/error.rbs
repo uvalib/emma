@@ -14,7 +14,7 @@ class Api::Error < ExecError
   #
   attr_reader http_status: Integer | nil
 
-  attr_reader cause: Exception | nil
+  @cause: Exception | nil
 
   # Initialize a new instance.
   #
@@ -61,10 +61,10 @@ class Api::Error < ExecError
   module Methods
     include ExecError::Methods
 
-    attr_reader service:       Symbol    | nil
-    attr_reader error_type:    Symbol    | nil
-    attr_reader error_config:  Hash[Symbol,String]
-    attr_reader error_types:   symArray
+    @service:       Symbol    | nil
+    @error_type:    Symbol    | nil
+    @error_config:  Hash[Symbol,String]
+    @error_types:   symArray
 
     # Name of the service and key into config/locales/error.en.yml.
     #

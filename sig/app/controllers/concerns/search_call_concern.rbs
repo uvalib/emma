@@ -31,7 +31,7 @@ module SearchCallConcern
   #
   # @return [ActiveRecord::Relation<SearchCall>]
   #
-  def get_search_calls: (*(anyHash|anyArray|String) terms, ?columns: symArray|nil, ?sort: anyHash|anyArray|String|Symbol, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[SearchCall, Integer]
+  def get_search_calls: (*(anyHash|anyArray|String) terms, ?columns: symArray|nil, ?sort: anyHash|anyArray|String|Symbol|nil, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[SearchCall, Integer]
 
   private
 

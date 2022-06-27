@@ -10,7 +10,7 @@ class UploadsDecorator < BaseCollectionDecorator
 
   extend UploadDecorator::ClassMethods
 
-  attr_reader group_counts: Hash[Symbol,Integer]
+  @group_counts: Hash[Symbol,Integer]
 
   # group_counts
   #

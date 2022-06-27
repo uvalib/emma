@@ -263,6 +263,9 @@ class Phase::BulkOperation < Phase
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def pause_sequence(prev_state = nil, **opt)
     succeeded = false # TODO: BulkOperation#pause_sequence
     aborted! unless succeeded
@@ -276,6 +279,9 @@ class Phase::BulkOperation < Phase
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def resume_sequence(prev_state = nil, **opt)
     succeeded = false # TODO: BulkOperation#resume_sequence
     aborted! unless succeeded
@@ -289,6 +295,9 @@ class Phase::BulkOperation < Phase
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def restart_sequence(prev_state = nil, **opt)
     succeeded = false # TODO: BulkOperation#restart_sequence
     aborted! unless succeeded

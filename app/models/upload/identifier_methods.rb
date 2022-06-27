@@ -184,7 +184,7 @@ module Upload::IdentifierMethods
   end
 
   # Transform a mixture of ID representations into a set of one or more
-  # non-overlapping range representations.
+  # non-overlapping range representations followed by non-identifiers (if any).
   #
   # @param [Array<Upload, String, Integer, Array>] items
   # @param [Hash]                                  opt

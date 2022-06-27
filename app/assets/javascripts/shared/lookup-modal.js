@@ -1,6 +1,8 @@
 // app/assets/javascripts/shared/lookup-modal.js
 //
 // Bibliographic Lookup
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { arrayWrap }                      from '../shared/arrays'

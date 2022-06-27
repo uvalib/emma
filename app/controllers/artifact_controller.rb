@@ -52,10 +52,10 @@ class ArtifactController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_bookshare_id
-  before_action :set_format,        except: %i[retrieval]
-  before_action :set_member,        only:   %i[download retrieval]
-  before_action :set_url,           only:   %i[retrieval]
+  before_action :set_bs_id,             except: %i[index]
+  before_action :set_bs_format,         except: %i[retrieval]
+  before_action :set_bs_member,         only:   %i[download retrieval]
+  before_action :set_item_download_url, only:   %i[retrieval]
 
   # ===========================================================================
   # :section:
@@ -93,7 +93,7 @@ class ArtifactController < ApplicationController
   #
   def show
     __debug_route
-    opt   = { bookshareId: @bookshare_id, format: @format }
+    opt   = { bookshareId: bs_id, format: bs_format }
     @item = bs_api.get_artifact_metadata(**opt)
     flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
@@ -174,7 +174,7 @@ class ArtifactController < ApplicationController
   #
   def download
     __debug_route
-    opt = { bookshareId: @bookshare_id, format: @format, forUser: @member }
+    opt = { bookshareId: bs_id, format: bs_format, forUser: bs_member }
     bs_download_response(:download_title, **opt)
   end
 
@@ -189,7 +189,7 @@ class ArtifactController < ApplicationController
   #
   def retrieval
     __debug_route
-    opt = { url: @url, forUser: @member }
+    opt = { url: item_download_url, forUser: bs_member }
     bs_download_response(:get_retrieval, **opt)
   end
 

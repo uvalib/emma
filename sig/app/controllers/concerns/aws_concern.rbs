@@ -21,7 +21,7 @@ module AwsConcern
   #
   def aws_api: () -> AwsS3Service
 
-  # repositories
+  # get_aws_repositories
   #
   # If :emma is included it will be moved to the end of the list.
   #
@@ -30,16 +30,16 @@ module AwsConcern
   #
   # @return [Array<Symbol>]
   #
-  def repositories: (?default: String|Symbol|Array[String|Symbol]|nil, **untyped prm) -> symArray
+  def get_aws_repositories: (?default: String|Symbol|Array[String|Symbol]|nil, **untyped prm) -> symArray
 
-  # deployments
+  # get_aws_deployments
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
   # @param [Hash]                       prm       Passed to #params_values.
   #
   # @return [Array<Symbol>]
   #
-  def deployments: (?default: String|Symbol|Array[String|Symbol]|nil, **untyped prm) -> symArray
+  def get_aws_deployments: (?default: String|Symbol|Array[String|Symbol]|nil, **untyped prm) -> symArray
 
   # Get a list of values from one of the indicated parameter keys.
   #
@@ -96,11 +96,9 @@ module AwsConcern
   #
   def get_repo_objects: ((Symbol|String) repository, ?(Symbol|String|nil) deployment, **untyped opt) -> Array[Aws::S3::Object]
 
-  # get_bucket_table
+  # get_s3_bucket_table
   #
-  # @param [Array<Symbol,String>] repos
-  # @param [Array<Symbol,String>] deploys
-  # @param [Hash]                 opt
+  # @param [Hash] opt
   #
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
@@ -108,19 +106,17 @@ module AwsConcern
   #
   # @note Currently unused.
   #
-  def get_bucket_table: (Array[Symbol|String] repos, Array[Symbol|String] deploys, **untyped opt) -> Hash[String,Aws::S3::Bucket]
+  def get_s3_bucket_table: (**untyped opt) -> Hash[String,Aws::S3::Bucket]
 
-  # get_object_table
+  # get_s3_object_table
   #
-  # @param [Array<Symbol,String>] repos
-  # @param [Array<Symbol,String>] deploys
-  # @param [Hash]                 opt
+  # @param [Hash] opt
   #
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
   # @return [Hash{String=>Array<Aws::S3::Object>}]
   #
-  def get_object_table: (Array[Symbol|String] repos, Array[Symbol|String] deploys, **untyped opt) -> Hash[String,Array[Aws::S3::Object]]
+  def get_s3_object_table: (**untyped opt) -> Hash[String,Array[Aws::S3::Object]]
 
   # get_s3_bucket
   #

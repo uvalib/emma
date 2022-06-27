@@ -63,10 +63,10 @@ class UploadController < ApplicationController
     index         new           edit          delete
     bulk_index    bulk_new      bulk_edit     bulk_delete   bulk_reindex
   ]
-  before_action :index_redirect, only: %i[show]
-  before_action :set_url,        only: %i[retrieval]
-  before_action :set_member,     only: %i[retrieval]
-  before_action :resolve_sort,   only: %i[admin]
+  before_action :index_redirect,        only: %i[show]
+  before_action :set_bs_member,         only: %i[retrieval]
+  before_action :set_item_download_url, only: %i[retrieval]
+  before_action :resolve_sort,          only: %i[admin]
 
   # ===========================================================================
   # :section:
@@ -94,6 +94,13 @@ class UploadController < ApplicationController
   # @return [Upload, nil]
   #
   attr_reader :item
+
+  # For the :admin endpoint.
+  #
+  # @return [Hash{String=>Array<Aws::S3::Object>}]
+  #
+  attr_reader :s3_object_table
+  helper_attr :s3_object_table
 
   # ===========================================================================
   # :section:
@@ -605,12 +612,11 @@ class UploadController < ApplicationController
   def download
     __debug_route
     @item = get_record(@identifier)
-    @link = @item.download_url
+    link  = @item.download_url
     respond_to do |format|
-      # noinspection RubyMismatchedArgumentType
-      format.html { redirect_to(@link) }
-      format.json { render_json download_values }
-      format.xml  { render_xml  download_values }
+      format.html { redirect_to link }
+      format.json { render_json download_values(link) }
+      format.xml  { render_xml  download_values(link) }
     end
   rescue => error
     post_response(error, xhr: true)
@@ -625,15 +631,17 @@ class UploadController < ApplicationController
   #
   # @see #retrieval_path              Route helper
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def retrieval
     __debug_route
-    if ia_link?(@url)
-      ia_download_response(@url)
-    elsif bs_link?(@url)
-      # noinspection RubyMismatchedArgumentType
-      redirect_to bs_retrieval_path(url: @url, forUser: @member)
+    if ia_link?(item_download_url)
+      ia_download_response(item_download_url)
+    elsif bs_link?(item_download_url)
+      redirect_to bs_retrieval_path(url: item_download_url, forUser: bs_member)
     else
-      Log.error { "/retrieval can't handle #{@url.inspect}" }
+      Log.error { "/retrieval can't handle #{item_download_url.inspect}" }
     end
   end
 
@@ -653,10 +661,7 @@ class UploadController < ApplicationController
   #
   def admin
     __debug_route
-    prm           = url_parameters
-    @repo         = repositories(**prm)
-    @deploy       = deployments(**prm)
-    @object_table = get_object_table(@repo, @deploy, **prm)
+    @s3_object_table = get_s3_object_table(**url_parameters)
   rescue => error
     flash_now_failure(error)
     re_raise_if_internal_exception(error)
@@ -793,7 +798,7 @@ class UploadController < ApplicationController
   #
   # @return [Hash{Symbol=>String,nil}]
   #
-  def download_values(url = @link)
+  def download_values(url)
     { url: url }
   end
 

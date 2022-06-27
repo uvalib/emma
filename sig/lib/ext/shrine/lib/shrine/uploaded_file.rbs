@@ -7,7 +7,7 @@ class Shrine
     # :nocov:
     #include Shrine::UploadedFile::InstanceMethods
 
-    attr_reader emma_metadata: symHash
+    @emma_metadata: symHash
 
     # Bibliographic metadata and remediation information.
     #

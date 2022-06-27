@@ -79,7 +79,7 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
   TEMPLATE: symHash
 
   # @return [Hash, nil]
-  attr_reader diagnostic: (symHash | nil)
+  attr_reader diagnostic: symHash | nil
 
   # Initialize a new instance.
   #

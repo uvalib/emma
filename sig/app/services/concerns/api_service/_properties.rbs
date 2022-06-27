@@ -49,7 +49,7 @@ module ApiService::Properties
   #
   RESET_KEYS: symArray
 
-  attr_reader service_name: String
+  @service_name: String
 
   # The name of the service for logging.
   #
@@ -65,20 +65,21 @@ module ApiService::Properties
   #
   def name_for: (untyped target) -> String
 
-  attr_reader base_url: String
-  attr_reader base_uri: URI::Generic
-
   # Configuration for the API service.
   #
   # @type [Hash{Symbol=>Any}]
   #
   def configuration: () -> symHash
 
+  @base_url: String
+
   # The URL for the API connection.
   #
   # @return [String]
   #
   def base_url: () -> String
+
+  @base_uri: URI::Generic
 
   # The URL for the API connection as a URI.
   #

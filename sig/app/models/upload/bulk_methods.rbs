@@ -31,7 +31,7 @@ module Upload::BulkMethods
   #
   # @return [String, nil]
   #
-  attr_reader file_path: String?
+  attr_reader file_path: String | nil
 
   # Use the importer module to translate imported fields into Upload columns
   # and/or EMMA metadata fields.

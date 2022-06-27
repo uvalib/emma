@@ -9,7 +9,7 @@ module TestHelper::Samples
 
   EMMA_MEMBERSHIP: String
 
-  attr_reader sample: Hash[Symbol, Model]
+  @sample: Hash[Symbol, Model]
 
   # A table of models and the selected entry from test/fixtures/*.yml.
   #

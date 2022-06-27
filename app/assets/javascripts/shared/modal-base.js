@@ -1,5 +1,6 @@
 // app/assets/javascripts/shared/modal-base.js
-// noinspection LocalVariableNamingConventionJS
+//
+// noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
 import { Emma }                                from '../shared/assets'

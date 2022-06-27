@@ -65,7 +65,7 @@ module AccountConcern
   #
   # @return [ActiveRecord::Relation<User>]
   #
-  def get_accounts: (*(String|anyArray|anyHash|nil) terms, ?columns: anyArray|nil, ?sort: Symbol|String|anyArray|anyHash, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
+  def get_accounts: (*(String|anyArray|anyHash|nil) terms, ?columns: anyArray|nil, ?sort: Symbol|String|anyArray|anyHash|nil, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
 
   # Get the indicated User account record.
   #

@@ -5,7 +5,7 @@ module LogConcern
 
   include Emma::Common
 
-  attr_reader logger_suppressed: bool | nil
+  @logger_suppressed: bool | nil
 
   # If URL parameter 'logging=false' is included then excess logging will be
   # suppressed.

@@ -9,7 +9,7 @@ module Record::Describable
 
   extend ::Record::Describable
 
-  attr_reader interpolation_table: Hash[Symbol,Symbol]
+  @interpolation_table: Hash[Symbol,Symbol]
 
   # Extract the interpolation methods defined in the current context indexed by
   # their respective interpolation keys.

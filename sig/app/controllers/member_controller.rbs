@@ -24,12 +24,12 @@ class MemberController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  attr_reader page:         Paginator
-  attr_reader account_id:   String | nil
-  attr_reader list:         Bs::Message::UserAccountList
-  attr_reader item:         Bs::Message::MyAccountSummary     | nil
-  attr_reader preferences:  Bs::Message::MyAccountPreferences | nil
-  attr_reader history:      Bs::Message::TitleDownloadList    | nil
+  @list:         Bs::Message::UserAccountList
+  @page:         Paginator
+  @item:         Bs::Message::MyAccountSummary     | nil
+  @preferences:  Bs::Message::MyAccountPreferences | nil
+  @history:      Bs::Message::TitleDownloadList    | nil
+  @account_id:   String | nil
 
   # == GET /member
   #

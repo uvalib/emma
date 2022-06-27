@@ -200,7 +200,7 @@ module SqlMethods
   module InstanceMethods
     include SqlMethods
 
-    attr_reader field_names: symArray
+    @field_names: symArray
 
     # The fields defined in the schema for this record.
     #

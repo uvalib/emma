@@ -34,7 +34,7 @@ class PeriodicalDecorator < BookshareDecorator
 
   include Common
 
-  attr_reader editions: Array[Bs::Record::PeriodicalEdition]
+  @editions: Array[Bs::Record::PeriodicalEdition]
 
   # editions_data
   #

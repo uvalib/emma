@@ -10,7 +10,7 @@ module HeadHelper::Stylesheets
 
   public
 
-  attr_reader page_stylesheets: strArray
+  @page_stylesheets: strArray
 
   # Access the stylesheets for this page.
   #

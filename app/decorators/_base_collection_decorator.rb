@@ -154,6 +154,9 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   #
   # @return [void]
   #
+  #--
+  # noinspection RbsMissingTypeSignature
+  #++
   def self.collection_of(base)
     unless base.is_a?(Class) && (base < BaseDecorator)
       raise 'Indicate the BaseDecorator subclass for list elements'

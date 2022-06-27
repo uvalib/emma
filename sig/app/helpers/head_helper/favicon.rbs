@@ -10,7 +10,7 @@ module HeadHelper::Favicon
 
   public
 
-  attr_reader page_favicon: String
+  @page_favicon: String
 
   # Access the favicon appropriate for the current page.
   #

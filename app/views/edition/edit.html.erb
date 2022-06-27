@@ -8,8 +8,8 @@
   # link to Bookshare.  Normally, it would only be seen if going directly to
   # the EMMA endpoint.
 
-  id     ||= @edition_id
-  series ||= @series_id
+  id     ||= bs_edition
+  series ||= bs_series
   dec      = EditionDecorator.new(editionId: id, seriesId: series, **context)
 
   title  ||= dec.page_heading

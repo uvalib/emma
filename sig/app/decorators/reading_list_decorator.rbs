@@ -40,7 +40,7 @@ class ReadingListDecorator < BookshareDecorator
   #
   def titles_data: () -> (Bs::Message::ReadingListTitlesList | nil)
 
-  attr_reader titles: Array[Bs::Record::ReadingListTitle]
+  @titles: Array[Bs::Record::ReadingListTitle]
 
   # titles
   #

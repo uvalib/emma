@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   include MetricsConcern
 
-  attr_reader modal: bool
+  @modal: bool
 
   # The current layout template.
   #

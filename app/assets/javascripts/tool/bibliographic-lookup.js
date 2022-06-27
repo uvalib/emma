@@ -1,6 +1,8 @@
 // app/assets/javascripts/tool/bibliographic-lookup.js
 //
 // Bibliographic Lookup
+//
+// noinspection JSUnusedLocalSymbols
 
 
 import { arrayWrap }                      from '../shared/arrays'

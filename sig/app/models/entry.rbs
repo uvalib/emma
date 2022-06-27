@@ -184,8 +184,6 @@ class Entry < ApplicationRecord
   #
   def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, **untyped opt) -> Entry
 
-  attr_reader sid_counter: Integer
-
   # Counter for the trailing portion of the generated submission ID.
   #
   # This provides a per-thread value in the range 0..99 which can be used to

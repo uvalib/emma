@@ -1873,6 +1873,7 @@ class UploadWorkflow < Workflow::Base
       # @return [Hash{Symbol=>Hash}]
       #
       def self.configuration
+        # noinspection RbsMissingTypeSignature
         @configuration ||= super
       end
 
@@ -1881,6 +1882,7 @@ class UploadWorkflow < Workflow::Base
       # @return [Hash{Symbol=>Hash}]
       #
       def self.state_label
+        # noinspection RbsMissingTypeSignature
         @state_label ||= super
       end
 
@@ -1895,6 +1897,7 @@ class UploadWorkflow < Workflow::Base
       # @return [Symbol]
       #
       def self.workflow_type
+        # noinspection RbsMissingTypeSignature
         @workflow_type ||= super
       end
 
@@ -1903,6 +1906,7 @@ class UploadWorkflow < Workflow::Base
       # @return [Hash{Symbol=>Class<UploadWorkflow>}]
       #
       def self.variant_table
+        # noinspection RbsMissingTypeSignature
         @variant_table ||=
           subclasses.map { |cls| [cls.variant_type, cls] }.sort.to_h
       end
@@ -1945,6 +1949,7 @@ class UploadWorkflow < Workflow::Base
           # @see Workflow::ClassMethods#workflow_column
           #
           def self.workflow_column(...)
+            # noinspection RbsMissingTypeSignature
             @workflow_state_column_name ||=
               safe_const_get(:STATE_COLUMN) || super
           end
@@ -1957,7 +1962,7 @@ class UploadWorkflow < Workflow::Base
           # @see Workflow::Base#variant_type
           #
           def self.variant_type
-            # noinspection RubyNilAnalysis
+            # noinspection RubyNilAnalysis, RbsMissingTypeSignature
             @variant_type ||= name.demodulize.to_s.underscore.to_sym
           end
 

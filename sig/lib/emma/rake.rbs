@@ -63,10 +63,10 @@ module Emma::Rake
   #
   def task_option: ((String|Symbol) flag, ?(Rake::TaskArguments|strArray|nil) args) -> (String | nil)
 
-  attr_reader cli_task_options: strArray
-  attr_reader start_time:       Float
-  attr_reader session:          strHash
-  attr_reader current_user:     User
+  @cli_task_options: strArray
+  @start_time:       Float
+  @session:          strHash
+  @current_user:     User
 
   # Option flags on the "rake" command line after "--" will be ignored by Rake
   # but will be available in $*.

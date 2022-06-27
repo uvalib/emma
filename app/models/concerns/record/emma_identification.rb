@@ -490,6 +490,9 @@ module Record::EmmaIdentification
       #
       # @return [String]
       #
+      #--
+      # noinspection RbsMissingTypeSignature
+      #++
       def identifier
         sid_value || super
       end

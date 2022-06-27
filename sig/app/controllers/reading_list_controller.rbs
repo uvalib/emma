@@ -24,9 +24,9 @@ class ReadingListController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  attr_reader page: Paginator
-  attr_reader list: Bs::Message::ReadingListList
-  attr_reader item: Bs::Message::ReadingListUserView
+  @list: Bs::Message::ReadingListList
+  @item: Bs::Message::ReadingListUserView
+  @page: Paginator
 
   # == GET /reading_list
   #

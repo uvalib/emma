@@ -44,6 +44,9 @@ class Action::BatchQueue < Action::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def submit!(items, **opt)
     __debug_step(binding)
     opt[:meth] ||= __method__

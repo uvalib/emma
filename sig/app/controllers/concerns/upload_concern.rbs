@@ -22,10 +22,10 @@ module UploadConcern
 
   MIME_REGISTRATION: Array[Class]
 
-  attr_reader upload_params: symHash
-  attr_reader db_id:         Integer | nil
-  attr_reader identifier:    String
-  attr_reader workflow:      Workflow::Base
+  @upload_params: symHash
+  @db_id:         Integer | nil
+  @identifier:    String
+  @workflow:      Workflow::Base
 
   # URL parameters relevant to the current operation.
   #
@@ -299,5 +299,22 @@ module UploadConcern
   include OptionsConcern
 
   include PaginationConcern
+
+  @model_options: Upload::Options
+
+  # Create a @model_options instance from the current parameters.
+  #
+  # @return [Upload::Options]
+  #
+  def set_model_options: () -> Upload::Options
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [Upload::Paginator]
+  #
+  def pagination_setup: (?paginator: Class, **untyped opt) -> Upload::Paginator
 
 end

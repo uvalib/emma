@@ -24,15 +24,15 @@ class AccountController < ApplicationController
   #
   # @return [Array<User>, nil]
   #
-  attr_reader list: Array[User]?
+  attr_reader list: Array[User] | nil
 
   # Database results for :show.
   #
   # @return [User, nil]
   #
-  attr_reader item: User?
+  attr_reader item: User | nil
 
-  attr_reader page: Paginator
+  @page: Paginator
 
   # == GET /account
   #

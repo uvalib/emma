@@ -25,13 +25,13 @@ class Upload < ApplicationRecord
   #
   def initialize: (?(Upload|symHash|nil) attr) ?{ () -> untyped } -> void
 
-  attr_reader file_path: String
-
   # Model/controller options passed in through the constructor.
   #
   # @return [Upload::Options]
   #
   attr_reader model_options: Upload::Options
+
+  @file_path: String
 
   # set_model_options
   #

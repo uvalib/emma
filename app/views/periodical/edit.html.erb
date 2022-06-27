@@ -8,7 +8,7 @@
   # link to Bookshare.  Normally, it would only be seen if going directly to
   # the EMMA endpoint.
 
-  id    ||= @series_id
+  id    ||= bs_series
   dec     = PeriodicalDecorator.new(seriesId: id, **context)
 
   title ||= dec.page_heading

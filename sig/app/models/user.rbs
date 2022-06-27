@@ -220,7 +220,7 @@ class User < ApplicationRecord
   #
   def bookshare_uid: () -> String
 
-  attr_reader bookshare_user: User
+  @bookshare_user: User
 
   # The User who interacts with Bookshare on behalf of this account.
   #
@@ -249,13 +249,13 @@ class User < ApplicationRecord
   #
   def test_user?: () -> bool
 
-  attr_reader developer: bool
+  @developer: bool
 
   # Indicate whether the user has the developer role.
   #
   def developer?: () -> bool
 
-  attr_reader administrator: bool
+  @administrator: bool
 
   # Indicate whether the user has the administrator role.
   #

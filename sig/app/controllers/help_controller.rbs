@@ -17,7 +17,7 @@ class HelpController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  attr_reader list: symArray
+  @list: symArray
 
   # == GET /help
   #

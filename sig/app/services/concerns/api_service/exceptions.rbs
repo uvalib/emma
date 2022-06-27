@@ -11,13 +11,13 @@ module ApiService::Exceptions
 
   include ApiService::Properties
 
-  attr_reader error_classes: Hash[Symbol,Class]
-
   # The exception raised by the last #api access.
   #
   # @return [ApiService::Error, nil]
   #
   attr_reader exception: ApiService::Error | nil
+
+  @error_classes: Hash[Symbol,Class]
 
   # Indicate whether the latest API request generated an exception.
   #

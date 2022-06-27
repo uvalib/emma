@@ -24,9 +24,9 @@ class PeriodicalController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  attr_reader page: Paginator
-  attr_reader list: Bs::Message::PeriodicalSeriesMetadataSummaryList
-  attr_reader item: Bs::Message::PeriodicalSeriesMetadataSummary
+  @list: Bs::Message::PeriodicalSeriesMetadataSummaryList
+  @item: Bs::Message::PeriodicalSeriesMetadataSummary
+  @page: Paginator
 
   # == GET /periodical
   #

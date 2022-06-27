@@ -47,7 +47,7 @@ class ReadingListController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_reading_list_id
+  before_action :set_bs_list, except: %i[index]
 
   # ===========================================================================
   # :section:
@@ -89,8 +89,9 @@ class ReadingListController < ApplicationController
     __debug_route
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @item = bs_api.get_reading_list(readingListId: @id)
-    @list = bs_api.get_reading_list_titles(readingListId: @id, no_raise: true)
+    b_opt = { readingListId: bs_list }
+    @item = bs_api.get_reading_list(**b_opt)
+    @list = bs_api.get_reading_list_titles(**b_opt, no_raise: true)
     @page.finalize(@list, :titles, **opt)
     flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
@@ -143,14 +144,15 @@ class ReadingListController < ApplicationController
   #
   def update
     __debug_route
+    b_opt = { readingListId: bs_list }
     Array.wrap(params[:add_titles]).each do |bid|
-      bs_api.create_reading_list_title(readingListId: @id, bookshareId: bid)
+      bs_api.create_reading_list_title(**b_opt, bookshareId: bid)
     end
     Array.wrap(params[:remove_titles]).each do |bid|
-      bs_api.remove_reading_list_title(readingListId: @id, bookshareId: bid)
+      bs_api.remove_reading_list_title(**b_opt, bookshareId: bid)
     end
     opt = params.slice(:name, :description, :access).to_unsafe_h
-    bs_api.update_reading_list(readingListId: @id, **opt) if opt.present?
+    bs_api.update_reading_list(**b_opt, **opt) if opt.present?
   end
 
   # == DELETE /reading_list/:id

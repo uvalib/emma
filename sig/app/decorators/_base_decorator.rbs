@@ -186,6 +186,11 @@ class BaseDecorator < Draper::Decorator
 
     include Methods
 
+    @model_type:  Symbol
+    @ar_class:    Class | nil
+    @null_object: Object
+    @other_class: Array[Class]
+
     def model_type:  () -> Symbol
     def ar_class:    () -> (Class | nil)
     def null_object: () -> Object
@@ -281,7 +286,7 @@ class BaseDecorator < Draper::Decorator
   #
   module Mapper
 
-    attr_reader table: Hash[untyped,Class]
+    @table: Hash[untyped,Class]
 
     def table: () -> Hash[untyped,Class]
     def get: (untyped key) -> (Class | nil)

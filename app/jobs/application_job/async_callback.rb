@@ -103,6 +103,9 @@ class ApplicationJob::AsyncCallback
   #
   # @return [Boolean]                 *false* if the job could not be processed
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def cb_schedule(async: true, **opt)
     async = false # TODO: remove when implementing async jobs
     opt[:callback] = callback if callback.present?

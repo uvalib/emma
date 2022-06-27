@@ -42,6 +42,9 @@ class Action::BatchUnRecord < Action::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def remove!(items, **opt)
     __debug_step(binding)
     opt[:meth] ||= __method__

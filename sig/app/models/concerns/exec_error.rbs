@@ -13,7 +13,7 @@ class ExecError < RuntimeError
   #
   attr_reader messages: strArray
 
-  attr_reader cause: Exception | nil
+  @cause: Exception | nil
 
   # Initialize a new instance.
   #

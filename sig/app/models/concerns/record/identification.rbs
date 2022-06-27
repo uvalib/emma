@@ -13,8 +13,8 @@ module Record::Identification
 
   USER_COLUMN: Symbol
 
-  attr_reader record_class: Class
-  attr_reader record_name:  String
+  @record_class: Class
+  @record_name:  String
 
   # The type of record for the current context.
   #
@@ -162,7 +162,7 @@ module Record::Identification
   def id_term: (untyped v, **untyped opt) -> Hash[Symbol,(Integer|String|nil)]
 
   # Transform a mixture of ID representations into a set of one or more
-  # non-overlapping range representations.
+  # non-overlapping range representations followed by non-identifiers (if any).
   #
   # @param [Array<String, Integer, Model, Array>] items
   # @param [Hash]                                 opt

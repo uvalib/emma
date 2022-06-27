@@ -43,6 +43,9 @@ class Action::BatchUnStore < Action::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def unstore!(items, **opt)
     __debug_step(binding)
     opt[:meth] ||= __method__

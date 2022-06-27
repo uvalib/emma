@@ -42,9 +42,9 @@ class Options
   #
   attr_reader model: Symbol
 
-  attr_reader params:       symHash
-  attr_reader value:        symHash
-  attr_reader model_params: symHash
+  @params:       symHash
+  @value:        symHash
+  @model_params: symHash
 
   # Create a new options object.
   #

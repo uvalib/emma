@@ -21,7 +21,7 @@ module TestHelper::Debugging
   #
   def run_test: (String|Symbol|nil test_name, **untyped opt) { () -> void } -> void
 
-  attr_reader tests_primed: bool | nil
+  @tests_primed: bool | nil
 
   # Make sure that "Sign in as" is visible on the sign-in page by ensuring that
   # the interface is in "debug mode".

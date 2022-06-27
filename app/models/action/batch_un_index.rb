@@ -42,6 +42,9 @@ class Action::BatchUnIndex < Action::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def deindex!(items, **opt)
     __debug_step(binding)
     opt[:meth] ||= __method__

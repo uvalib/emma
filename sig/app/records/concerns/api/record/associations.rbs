@@ -170,7 +170,7 @@ module Api::Record::Associations
     #
     def field_names: () -> symArray
 
-    attr_reader property_defaults: symHash
+    @property_defaults: symHash
 
     # A mapping of schema property names to their default values for use in
     # constructing an error instance.

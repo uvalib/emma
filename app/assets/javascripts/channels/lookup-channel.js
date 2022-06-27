@@ -1,4 +1,6 @@
 // app/assets/javascripts/channels/lookup-channel.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { Api }                           from '../shared/api'

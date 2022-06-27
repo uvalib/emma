@@ -28,10 +28,10 @@ class SearchCallController < ApplicationController
   #
   EXPAND_JSON: bool
 
-  attr_reader page:     Paginator
-  attr_reader extended: bool
-  attr_reader list:     ActiveRecord::Result | ActiveRecord::Relation
-  attr_reader item:     SearchCall | nil
+  @list:     ActiveRecord::Result | ActiveRecord::Relation
+  @item:     SearchCall | nil
+  @page:     Paginator
+  @extended: bool
 
   # == GET /search_call?[expand=TRUE&like=PATTERN&field=MATCH&...]
   #

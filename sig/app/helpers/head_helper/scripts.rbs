@@ -10,7 +10,7 @@ module HeadHelper::Scripts
 
   public
 
-  attr_reader page_javascript: strArray
+  @page_javascript: strArray
 
   # Access the scripts for this page.
   #
@@ -74,7 +74,7 @@ module HeadHelper::Scripts
   #
   SCRIPT_SETTINGS_OVERRIDES: symHash
 
-  attr_reader script_settings: symHash
+  @script_settings: symHash
 
   # The set of overrides to JavaScript client settings.
   #

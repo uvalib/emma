@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 class LookupJobResult < JobResult
 
   # ===========================================================================
-  # :section: ActiveRecord associations
+  # :section: ActiveRecord ModelSchema
   # ===========================================================================
 
   # noinspection RubyNilAnalysis

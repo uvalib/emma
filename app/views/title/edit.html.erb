@@ -8,7 +8,7 @@
   # link to Bookshare.  Normally, it would only be seen if going directly to
   # the EMMA endpoint.
 
-  id    ||= @bookshare_id
+  id    ||= bs_id
   dec     = TitleDecorator.new(bookshareId: id, **context)
 
   title ||= dec.page_heading

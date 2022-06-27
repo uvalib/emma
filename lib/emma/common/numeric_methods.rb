@@ -102,7 +102,7 @@ module Emma::Common::NumericMethods
 
   # Indicate whether the given string value contains only decimal digits.
   #
-  # @param [Any, nil] value
+  # @param [*] value
   #
   def digits_only?(value)
     case value

@@ -29,6 +29,9 @@ class Phase::BulkRemove < Phase::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def run_sequence(prev_state = nil, **opt)
     # Tracking record for batch(es) of removals from the manifest.
     action = generate_action(:BatchUnStore, manifest: manifest)

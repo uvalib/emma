@@ -34,7 +34,7 @@ module HeadHelper::MetaTags
 
   public
 
-  attr_reader page_meta_tags: symHash
+  @page_meta_tags: symHash
 
   # Access the meta tags for this page.
   #

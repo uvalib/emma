@@ -31,9 +31,9 @@ class SearchController < ApplicationController
   #
   # @return [Search::Message::SearchRecord, nil]
   #
-  attr_reader item: Search::Message::SearchRecord?
+  attr_reader item: Search::Message::SearchRecord | nil
 
-  attr_reader page:     Paginator
+  @page: Paginator
 
   # == GET /search
   #

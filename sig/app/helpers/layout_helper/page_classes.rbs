@@ -3,7 +3,7 @@
 module LayoutHelper::PageClasses
   include ParamsHelper
 
-  attr_reader page_classes: strArray
+  @page_classes: strArray
 
   # Access the classes for the '<body>' element.
   #

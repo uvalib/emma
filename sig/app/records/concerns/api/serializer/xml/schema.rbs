@@ -77,7 +77,7 @@ module Api::Serializer::Xml::Schema
   #
   def attributes_as_elements?: () -> bool
 
-  attr_reader xml_namespaces: Hash[String,String]
+  @xml_namespaces: Hash[String,String]
 
   # The set of XML namespaces.
   #

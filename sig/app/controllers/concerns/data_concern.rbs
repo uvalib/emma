@@ -15,7 +15,7 @@ module DataConcern
 
   SUBMISSION_COLUMNS: symArray
 
-  attr_reader data_params: symHash
+  @data_params: symHash
 
   # URL parameters for DataController.
   #

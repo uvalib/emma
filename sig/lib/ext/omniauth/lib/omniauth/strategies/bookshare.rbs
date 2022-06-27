@@ -19,10 +19,10 @@ module OmniAuth
 
       include OmniAuth::ExtensionDebugging
 
-      attr_reader log:          Emma::Log
-      attr_reader account_info: symHash
-      attr_reader client:       ::OAuth2::Client
-      attr_reader stored_auth:  strHash
+      @log:          Emma::Log
+      @account_info: symHash
+      @client:       ::OAuth2::Client
+      @stored_auth:  strHash
 
       # Direct access to the OmniAuth logger, automatically prefixed with this
       # strategy's name.

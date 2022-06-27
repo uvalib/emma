@@ -42,6 +42,9 @@ class Action::BatchIndex < Action::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def index!(items, **opt)
     __debug_step(binding)
     opt[:meth] ||= __method__

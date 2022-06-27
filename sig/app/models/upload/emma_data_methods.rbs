@@ -11,11 +11,11 @@ module Upload::EmmaDataMethods
   #
   DATA_COLUMNS: symArray
 
-  attr_reader emma_record:        Search::Record::MetadataRecord | nil
-  attr_reader emma_metadata:      symHash | nil
+  @emma_record:        Search::Record::MetadataRecord | nil
+  @emma_metadata:      symHash | nil
 
-  attr_reader edit_emma_record:   Search::Record::MetadataRecord | nil
-  attr_reader edit_emma_metadata: symHash | nil
+  @edit_emma_record:   Search::Record::MetadataRecord | nil
+  @edit_emma_metadata: symHash | nil
 
   # The database column currently associated with EMMA metadata presented by
   # the record.

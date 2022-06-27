@@ -362,6 +362,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<Class<PublicationIdentifier>>]
   #
   def self.identifier_classes
+    # noinspection RbsMissingTypeSignature
     @identifier_classes ||= [Doi, Isbn, Issn, Upc, Oclc, Lccn]
   end
 
@@ -370,6 +371,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<Symbol>]
   #
   def self.identifier_types
+    # noinspection RbsMissingTypeSignature
     @identifier_types ||= identifier_classes.map(&:type)
   end
 
@@ -378,6 +380,7 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{Symbol=>Class<PublicationIdentifier>}]
   #
   def self.subclass_map
+    # noinspection RbsMissingTypeSignature
     @subclass_map ||= identifier_classes.map { |c| [c.type, c] }.to_h
   end
 

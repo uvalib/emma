@@ -402,7 +402,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def name_type: (?(String|nil) value) -> [String, String]
 
-    attr_reader number_value: Float
+    @number_value: Float
 
     # Reduce a hierarchy of numbering levels to a single value.
     #
@@ -412,7 +412,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def number_value: (?(symHash|Number|nil) item) -> Float
 
-    attr_reader number_range: [Float, Float]
+    @number_range: [Float, Float]
 
     # Reduce a hierarchy of numbering levels to a pair of single values.
     #
@@ -457,6 +457,8 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Search::Record::MetadataRecord]
   #
   attr_reader exemplar: Search::Record::MetadataRecord
+
+  @hierarchy: Hash[Symbol,(symHash|Array[symHash])]
 
   # Initialize a new instance.
   #
@@ -618,8 +620,6 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @type [Hash{Symbol=>Array<Symbol,Integer>}]
   #
   HIERARCHY_PATHS: Hash[Symbol,Array[Symbol|Integer]]
-
-  attr_reader hierarchy: Hash[Symbol,(symHash|Array[symHash])]
 
   # All #records fields in hierarchical order.
   #

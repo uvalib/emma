@@ -29,11 +29,11 @@ module EntryConcern
   #
   IGNORED_ENTRY_FORM_PARAMS: symArray
 
-  attr_reader entry_params: symHash
-  attr_reader action_id:    String | Integer | nil
-  attr_reader phase_id:     String | Integer | nil
-  attr_reader entry_id:     String | Integer | nil
-  attr_reader identifier:   String | Integer | nil
+  @entry_params: symHash
+  @action_id:    String | Integer | nil
+  @phase_id:     String | Integer | nil
+  @entry_id:     String | Integer | nil
+  @identifier:   String | Integer | nil
 
   # URL parameters relevant to the current operation.
   #
@@ -219,8 +219,7 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Phase record creation halted.
   #
-  # @return [Entry]                         A record from the 'entries' table.
-  # @return [nil]                           If the Entry was not found.
+  # @return [Entry, nil]
   #
   def edit_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> (Entry | nil)
 
@@ -235,8 +234,7 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Entry record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Entry record update halted.
   #
-  # @return [Entry]                         Updated Entry instance.
-  # @return [nil]                           If the Entry was not found.
+  # @return [Entry, nil]
   #
   def update_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> (Entry | nil)
 
@@ -471,10 +469,10 @@ module EntryConcern
   public
 
   include OptionsConcern
+
   include PaginationConcern
 
   @model_options: Entry::Options
-
 
   # Create a @model_options instance from the current parameters.
   #

@@ -28,7 +28,8 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   module ClassMethods
     include BaseDecorator::ClassMethods
 
-    attr_reader decorator_class: Class
+    @decorator_class: Class
+    @model_type:      Symbol
 
     # The decorator class for list elements.
     #
@@ -66,9 +67,6 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   # @see BaseDecorator#DEBUG_DECORATOR_INHERITANCE
   #
   DEBUG_COLLECTION_INHERITANCE: bool
-
-  @decorator_class: Class
-  @model_type:      Symbol
 
   # Define the association between a collection decorator and the decorator
   # for its elements.

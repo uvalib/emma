@@ -19,7 +19,7 @@ class Api::Record
   # @return [Exception, nil]
   attr_reader exception: Exception | nil
 
-  attr_reader serializer: Api::Serializer
+  @serializer: Api::Serializer
 
   # Initialize a new instance.
   #
@@ -139,7 +139,7 @@ class Api::Record
   #
   def default_data: () -> symHash
 
-  attr_reader field_definitions: Hash[Symbol, symHash]
+  @field_definitions: Hash[Symbol, symHash]
 
   # The field definitions in the schema for this record.
   #

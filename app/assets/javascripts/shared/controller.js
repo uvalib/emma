@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/controller.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 // ============================================================================

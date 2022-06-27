@@ -27,8 +27,8 @@ class CategoryController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  attr_reader page: Paginator
-  attr_reader list: Bs::Message::CategoriesList
+  @list: Bs::Message::CategoriesList
+  @page: Paginator
 
   # == GET /category
   #

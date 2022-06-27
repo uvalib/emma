@@ -240,6 +240,8 @@ class Phase < ApplicationRecord
   #
   # @return [Array<Action>]
   #
+  # @note Currently unused
+  #
   def active_actions
     actions.not(final_condition).order(updated_at: :desc).to_a
   end
@@ -251,6 +253,8 @@ class Phase < ApplicationRecord
   # @param [Hash]                           opt           For #where.
   #
   # @return [ActiveRecord::Relation<Action>]
+  #
+  # @note Currently unused
   #
   def action_scope(action_type = nil, **opt)
     opt[:type] = Action.type(action_type || opt[:type] || current_action)

@@ -47,7 +47,7 @@ class TitleController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_bookshare_id
+  before_action :set_bs_id, except: %i[index]
 
   # ===========================================================================
   # :section:
@@ -108,7 +108,7 @@ class TitleController < ApplicationController
   #
   def show
     __debug_route
-    @item = bs_api.get_title(bookshareId: @bookshare_id)
+    @item = bs_api.get_title(bookshareId: bs_id)
     flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html

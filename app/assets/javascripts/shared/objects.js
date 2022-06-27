@@ -152,20 +152,15 @@ export function dupObject(item, shallow) {
  */
 export function toObject(array, mapper) {
     let obj, prs, v;
-    console.log(''); // TODO: remove
-    console.log('*** toObject', array, mapper); // TODO: remove
     if (Array.isArray(array)) {
         prs = mapper ? array.map(k => k && (v = mapper(k)) && [k, v]) : array;
-        console.log('*** toObject prs', prs); // TODO: remove
         prs = prs.filter(v => Array.isArray(v) && (v.length === 2));
-        console.log('*** toObject prs', prs); // TODO: remove
         obj = Object.fromEntries(prs);
     } else if (typeof array === 'object') {
         obj = array;
     } else {
         console.warn('toObject: not an array:', array);
     }
-    console.log('*** toObject obj', obj); // TODO: remove
     return obj || {};
 }
 

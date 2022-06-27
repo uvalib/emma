@@ -172,10 +172,6 @@ class PublicationIdentifier < ScalarType
 
   include Methods
 
-  attr_reader identifier_classes: Array[Class]
-  attr_reader identifier_types:   Array[Symbol]
-  attr_reader subclass_map:       Hash[Symbol,Class]
-
   # The identifier number portion of the value.
   #
   # @param [String, nil] v            Default: #value.

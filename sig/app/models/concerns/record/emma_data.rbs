@@ -87,8 +87,8 @@ module Record::EmmaData
   module InstanceMethods
     include Record::EmmaData
 
-    attr_reader emma_record:   Search::Record::MetadataRecord | nil
-    attr_reader emma_metadata: symHash | nil
+    @emma_record:   Search::Record::MetadataRecord | nil
+    @emma_metadata: symHash | nil
 
     # @see Record::EmmaData#make_retrieval_link
     #

@@ -5,7 +5,7 @@ module HelpConcern
 
   include HelpHelper
 
-  attr_reader topic: Symbol | nil
+  @topic: Symbol | nil
 
   # get_help_entry
   #

@@ -14,9 +14,9 @@ class FileParser::Ocf < FileParser
 
   include FileFormat::Zip
 
-  attr_reader opf_zip_path: String | nil
-  attr_reader ncx_zip_path: String | nil
-  attr_reader cover_image:  Array[String|nil]
+  @opf_zip_path: String | nil
+  @ncx_zip_path: String | nil
+  @cover_image:  Array[String|nil]
 
   # The location of the .opf file in the ZIP archive.
   #

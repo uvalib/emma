@@ -27,9 +27,9 @@ class ApiService::Error < Api::Error
 
     include Api::Error::Methods
 
-    attr_reader service_name:    String
-    attr_reader default_message: String
-    attr_reader error_classes:   Hash[Symbol,Class]
+    @service_name:    String
+    @default_message: String
+    @error_classes:   Hash[Symbol,Class]
 
     # The descriptive name of the current instance service.
     #

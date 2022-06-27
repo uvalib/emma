@@ -47,7 +47,7 @@ class PeriodicalController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_series_id
+  before_action :set_bs_series, except: %i[index]
 
   # ===========================================================================
   # :section:
@@ -88,8 +88,8 @@ class PeriodicalController < ApplicationController
     __debug_route
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @item = bs_api.get_periodical(seriesId: @series_id)
-    @list = bs_api.get_periodical_editions(seriesId: @series_id)
+    @item = bs_api.get_periodical(seriesId: bs_series)
+    @list = bs_api.get_periodical_editions(seriesId: bs_series)
     @page.finalize(@list, :periodicalEditions, **opt)
     flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|

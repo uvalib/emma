@@ -11,7 +11,7 @@ class EntriesDecorator < BaseCollectionDecorator
   extend EntryDecorator::ClassMethods
 
 
-  attr_reader group_counts: Hash[Symbol,Integer]
+  @group_counts: Hash[Symbol,Integer]
 
   # group_counts
   #

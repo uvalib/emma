@@ -49,12 +49,12 @@ module FileFormat
   #
   FIELD_ALWAYS_ARRAY: symArray
 
-  attr_reader parser:                 FileParser
-  attr_reader parser_metadata:        untyped
-  attr_reader metadata:               symHash
-  attr_reader common_metadata:        symHash
-  attr_reader format_fields:          Hash[Symbol,(Proc|Symbol)]
-  attr_reader mapped_metadata_fields: Hash[Symbol,Symbol]
+  @parser:                 FileParser
+  @parser_metadata:        untyped
+  @metadata:               symHash
+  @common_metadata:        symHash
+  @format_fields:          Hash[Symbol,(Proc|Symbol)]
+  @mapped_metadata_fields: Hash[Symbol,Symbol]
 
   # configuration
   #

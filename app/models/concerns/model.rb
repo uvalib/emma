@@ -317,6 +317,7 @@ module Model
   # @return [Hash{Symbol=>Hash}]
   #
   def self.fields_table
+    # noinspection RbsMissingTypeSignature
     @fields_table ||= {}
   end
 

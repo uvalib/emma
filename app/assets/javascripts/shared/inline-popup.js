@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/inline-popup.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { selector }    from '../shared/css'

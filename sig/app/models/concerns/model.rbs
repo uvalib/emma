@@ -120,12 +120,10 @@ module Model
     #
     def validate_relations: () -> true
 
-    attr_reader check_relations: bool | nil
+    @check_relations: bool | nil
   end
 
-  attr_reader field_names: symArray
-
-  @fields_table: symHash
+  @field_names: symArray
 
   # Indicate whether *name* is a field defined by this model.
   #

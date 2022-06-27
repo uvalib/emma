@@ -534,10 +534,10 @@ $(document).on('turbolinks:load', function() {
     const CANCEL_BUTTON         = selector(CANCEL_BUTTON_CLASS);
     const FIELD_GROUP           = selector(FIELD_GROUP_CLASS);
     const FIELD_CONTAINER       = selector(FIELD_CONTAINER_CLASS);
-    const HIDDEN                = selector(HIDDEN_MARKER);
+  //const HIDDEN                = selector(HIDDEN_MARKER);
     const VALID                 = selector(VALID_MARKER);
     const INVALID               = selector(INVALID_MARKER);
-    const REQUIRED              = selector(REQUIRED_MARKER);
+  //const REQUIRED              = selector(REQUIRED_MARKER);
 
     /**
      * Interrelated elements.  For example:
@@ -923,6 +923,7 @@ $(document).on('turbolinks:load', function() {
 
             // Set hidden field value to the uploaded file data so that it is
             // submitted with the form as the attachment.
+            // noinspection JSValidateTypes
             /** @type {FileData} */
             const file_data = body;
             if (file_data) {
@@ -2204,7 +2205,7 @@ $(document).on('turbolinks:load', function() {
         } else {
 
             const required = ($input.attr('data-required') === 'true');
-            const optional = ($input.attr('data-required') === 'false');
+          //const optional = ($input.attr('data-required') === 'false');
             const missing  = isEmpty(values);
             let invalid    = required && missing;
 

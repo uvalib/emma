@@ -29,6 +29,9 @@ class Phase::BulkEdit < Phase::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def run_sequence(prev_state = nil, **opt)
     # Tracking record for batch(es) of modifications from the manifest.
     action = generate_action(:BatchStore, manifest: manifest)

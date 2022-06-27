@@ -8,8 +8,8 @@
   # link to Bookshare.  Normally, it would only be seen if going directly to
   # the EMMA endpoint.
 
-  id    ||= @bookshare_id
-  fmt   ||= @format
+  id    ||= bs_id
+  fmt   ||= bs_format
   dec     = ArtifactDecorator.new(bookshareId: id, fmt: fmt, **context)
 
   title ||= dec.page_heading

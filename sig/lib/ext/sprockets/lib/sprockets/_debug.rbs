@@ -12,8 +12,8 @@ end
 class DebugTiming
   extend Emma::Time
 
-  attr_reader start: Float
-  attr_reader level: Integer
+  @start: Float
+  @level: Integer
 
   def self.start: () -> Float
 

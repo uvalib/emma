@@ -34,7 +34,7 @@ module HeadHelper::PageTitle
 
   public
 
-  attr_reader page_meta_title: strArray
+  @page_meta_title: strArray
 
   # Access the page title.
   #

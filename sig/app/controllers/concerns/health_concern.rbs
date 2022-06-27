@@ -96,7 +96,7 @@ module HealthConcern
   #
   INVALID_HEALTH_CHECK: HealthEntry
 
-  attr_reader subsystems: strArray
+  @subsystems: strArray
 
   # The value of `params[:subsystem]`, which may be one or more comma-separated
   # subsystem names.

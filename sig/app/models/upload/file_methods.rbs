@@ -72,8 +72,6 @@ module Upload::FileMethods
   #
   ONE_TIME_USE_EXPIRATION: Integer
 
-  attr_reader filename: String | nil
-
   # The maximum age (in seconds) allowed for download links.                    # NOTE: to Record::Uploadable
   #
   # This allows the link to be reused for a while, but not long enough to allow
@@ -82,6 +80,8 @@ module Upload::FileMethods
   # @type [Integer]
   #
   DOWNLOAD_EXPIRATION: Integer
+
+  @filename: String | nil
 
   # Full name of the file.
   #

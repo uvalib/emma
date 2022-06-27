@@ -62,9 +62,9 @@ module SearchConcern
 
   # Indicate whether the current search should be recorded.
   #
-  # @param [User, nil] user           Default: `#current_user`.
+  # @param [User, nil] _user          Default: `#current_user`.
   #
-  def save_search?: (?(User|nil) user) -> bool
+  def save_search?: (?(User|nil) _user) -> bool
 
   # Record a search call.
   #
@@ -107,7 +107,7 @@ module SearchConcern
   #
   def validate_identifiers: ((String|strArray) value) -> { valid: bool, ids: strArray, errors: strArray }
 
-  attr_reader record_id: String | nil
+  @record_id: String | nil
 
   # Extract the URL parameter which specifies an index record.
   #

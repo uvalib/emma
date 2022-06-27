@@ -146,7 +146,7 @@ const FEATURES = deepFreeze({
  * @readonly
  * @type {number}
  */
-const UPLOAD_TIMEOUT = 5 * MINUTES;
+//const UPLOAD_TIMEOUT = 5 * MINUTES;
 
 /**
  * How long to display transient Uppy popup messages.
@@ -189,7 +189,7 @@ export class Uploader extends BaseClass {
     /** @type {Callback|undefined}  */ onStart
     /** @type {Callback|undefined}  */ onError
     /** @type {Callback|undefined}  */ onSuccess
-    /** @type {number}              */ upload_timeout   = UPLOAD_TIMEOUT;
+    /** @type {number}              */ //upload_timeout = UPLOAD_TIMEOUT;
     /** @type {number}              */ message_duration = MESSAGE_DURATION;
     /** @type {string}              */ upload_error     = UPLOAD_ERROR_MESSAGE;
     /** @type {ModelProperties}     */ property;

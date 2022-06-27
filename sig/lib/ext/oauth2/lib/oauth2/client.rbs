@@ -18,7 +18,7 @@ module OAuth2
 
     include OAuth2::ExtensionDebugging
 
-    attr_reader connection: Faraday::Connection
+    @connection: Faraday::Connection
 
     # Instantiate a new OAuth 2.0 client using the Client ID and Client
     # Secret registered to your application.

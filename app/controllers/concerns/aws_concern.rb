@@ -56,7 +56,7 @@ module AwsConcern
 
   public
 
-  # repositories
+  # get_aws_repositories
   #
   # If :emma is included it will be moved to the end of the list.
   #
@@ -65,7 +65,7 @@ module AwsConcern
   #
   # @return [Array<Symbol>]
   #
-  def repositories(default: nil, **prm)
+  def get_aws_repositories(default: nil, **prm)
     values = params_values(prm, *REPOSITORY_PARAMS)
     values = values.presence || Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
@@ -85,14 +85,14 @@ module AwsConcern
     values
   end
 
-  # deployments
+  # get_aws_deployments
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
   # @param [Hash]                       prm       Passed to #params_values.
   #
   # @return [Array<Symbol>]
   #
-  def deployments(default: nil, **prm)
+  def get_aws_deployments(default: nil, **prm)
     values = params_values(prm, *DEPLOYMENT_PARAMS)
     values = values.presence || Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
@@ -195,11 +195,9 @@ module AwsConcern
     get_s3_objects(name, **opt)
   end
 
-  # get_bucket_table
+  # get_s3_bucket_table
   #
-  # @param [Array<Symbol,String>] repos
-  # @param [Array<Symbol,String>] deploys
-  # @param [Hash]                 opt
+  # @param [Hash] opt
   #
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
@@ -207,33 +205,35 @@ module AwsConcern
   #
   # @note Currently unused.
   #
-  def get_bucket_table(repos, deploys, **opt)
-    opt = aws_params(opt)
+  def get_s3_bucket_table(**opt)
+    repos   = get_aws_repositories(**opt)
+    deploys = get_aws_deployments(**opt)
+    aws_opt = aws_params(opt)
     repos.flat_map { |repo|
       deploys.map do |deploy|
-        name   = repo_bucket(repo, deploy, **opt)
-        bucket = get_s3_bucket(name, **opt)
+        name   = repo_bucket(repo, deploy, **aws_opt)
+        bucket = get_s3_bucket(name, **aws_opt)
         [name, bucket]
       end
     }.to_h
   end
 
-  # get_object_table
+  # get_s3_object_table
   #
-  # @param [Array<Symbol,String>] repos
-  # @param [Array<Symbol,String>] deploys
-  # @param [Hash]                 opt
+  # @param [Hash] opt
   #
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
   # @return [Hash{String=>Array<Aws::S3::Object>}]
   #
-  def get_object_table(repos, deploys, **opt)
-    opt = aws_params(opt)
+  def get_s3_object_table(**opt)
+    repos   = get_aws_repositories(**opt)
+    deploys = get_aws_deployments(**opt)
+    aws_opt = aws_params(opt)
     repos.flat_map { |repo|
       deploys.map do |deploy|
-        name    = repo_bucket(repo, deploy, **opt)
-        objects = get_s3_objects(name, **opt)
+        name    = repo_bucket(repo, deploy, **aws_opt)
+        objects = get_s3_objects(name, **aws_opt)
         [name, objects]
       end
     }.to_h

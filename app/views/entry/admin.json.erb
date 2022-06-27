@@ -3,5 +3,5 @@
   # Entry submission administration values in JSON.
 -%>
 {
-  "buckets": { <%= json_s3_bucket_table(@object_table, erb: true) %> }
+  "buckets": { <%= json_s3_bucket_table(s3_object_table, erb: true) %> }
 }

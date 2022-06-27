@@ -497,7 +497,7 @@ class UploadDecorator < BaseDecorator
       status_panel      = 'lookup-status'
       notice            = 'notice'
       services          = 'services'
-      entries           = 'lookup-entries'
+      #entries          = 'lookup-entries'
       prompt            = 'lookup-prompt'
       heading           = 'lookup-heading'
       output            = 'lookup-output'
@@ -512,7 +512,7 @@ class UploadDecorator < BaseDecorator
       status_panel_css  = status_panel
       services_css      = "#{services} invisible"
       notice_css        = notice
-      entries_css       = entries
+      #entries_css      = entries
       prompt_css        = prompt
       heading_css       = heading
       output_css        = output

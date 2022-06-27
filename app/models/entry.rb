@@ -305,6 +305,9 @@ class Entry < ApplicationRecord
   #
   # @return [Integer]
   #
+  #--
+  # noinspection RbsMissingTypeSignature
+  #++
   def self.sid_counter                                                          # NOTE: from Upload::IdentifierMethods
     @sid_counter &&= (@sid_counter + 1) % 100
     @sid_counter ||= rand(100) % 100

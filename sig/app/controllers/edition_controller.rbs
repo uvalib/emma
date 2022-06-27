@@ -30,9 +30,9 @@ class EditionController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  attr_reader page: Paginator
-  attr_reader list: Bs::Message::PeriodicalEditionList
-  attr_reader item: Bs::Record::PeriodicalEdition | nil
+  @list: Bs::Message::PeriodicalEditionList
+  @item: Bs::Record::PeriodicalEdition | nil
+  @page: Paginator
 
   # == GET /edition?seriesId=:seriesId
   #

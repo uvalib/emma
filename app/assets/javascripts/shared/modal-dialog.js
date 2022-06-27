@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/modal-dialog.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { selector }  from '../shared/css'

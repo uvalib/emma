@@ -90,8 +90,8 @@ module Api::Schema
   #
   ELEMENT_NAMING_MODES: symArray
 
-  attr_reader enumeration_defaults: Hash[Symbol,String]
-  attr_reader enumeration_types:    symArray
+  @enumeration_defaults: Hash[Symbol,String]
+  @enumeration_types:    symArray
 
   # service_name
   #

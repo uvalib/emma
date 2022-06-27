@@ -9,8 +9,8 @@ class ApiCachingMiddleware < Faraday::Middleware
   #
   DEFAULT_OPTIONS: symHash
 
-  attr_reader store_options: symHash
-  attr_reader expires_in:    ActiveSupport::Duration | Integer
+  @store_options: symHash
+  @expires_in:    ActiveSupport::Duration | Integer
 
   # Initialize an instance.
   #

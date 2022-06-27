@@ -1047,6 +1047,9 @@ module Record::Steppable
     #
     # @return [Boolean]               False if the job could not be processed.
     #
+    #--
+    # noinspection RubyUnusedLocalVariable
+    #++
     def job_run(meth, *args, async: true, **opt)
       async = false # TODO: remove when implementing async jobs
       if false?(async)

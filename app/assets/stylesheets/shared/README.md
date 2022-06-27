@@ -23,6 +23,7 @@ via `@use` without causing duplication in the resulting compiled file in
 |         **[controls/_buttons.scss](controls/_buttons.scss)** | Definitions supporting button controls                |
 |             **[controls/_grids.scss](controls/_grids.scss)** | Definitions supporting grid controls                  |
 |             **[controls/_lists.scss](controls/_lists.scss)** | Definitions supporting lists and list elements        |
+|           **[controls/_panels.scss](controls/_panels.scss)** | Definitions supporting panel elements                 |
 |             **[controls/_popup.scss](controls/_popup.scss)** | Definitions supporting pop-up elements                |
 |           **[controls/_shapes.scss](controls/_shapes.scss)** | Definitions supporting shaped elements                |
 |            **[controls/_table.scss](controls/_tables.scss)** | Definitions supporting tables and table elements      |

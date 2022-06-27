@@ -348,7 +348,7 @@ module Record::Identification
   end
 
   # Transform a mixture of ID representations into a set of one or more
-  # non-overlapping range representations.
+  # non-overlapping range representations followed by non-identifiers (if any).
   #
   # @param [Array<String, Integer, Model, Array>] items
   # @param [Hash]                                 opt
@@ -621,8 +621,6 @@ module Record::Identification
 
     __included(base, THIS_MODULE)
 
-    include InstanceMethods if Record.record_class?(base)
-
     if Record.record_class?(base)
 
       include InstanceMethods
@@ -644,6 +642,9 @@ module Record::Identification
       #
       # @return [String]
       #
+      #--
+      # noinspection RbsMissingTypeSignature
+      #++
       def identifier
         id_value || super
       end

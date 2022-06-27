@@ -283,6 +283,7 @@ module EntryConcern
 
     # Limit records to those in the given state (or records with an empty state
     # field if specified as 'nil', 'empty', or 'missing').
+    # noinspection RubyUnusedLocalVariable
     if (state = opt.delete(:state).to_s.strip.downcase).present?
 =begin # TODO: Entry doesn't have state - Entry.phases do
       if %w(empty false missing nil none null).include?(state)
@@ -295,6 +296,7 @@ module EntryConcern
     end
 
     # Limit by workflow status group.
+    # noinspection RubyUnusedLocalVariable
     group = opt.delete(:group)
 =begin # TODO: Entry doesn't have state - Entry.phases do
     group = group.split(/\s*,\s*/) if group.is_a?(String)
@@ -418,8 +420,7 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Phase record creation halted.
   #
-  # @return [Entry]                         A record from the 'entries' table.
-  # @return [nil]                           If the Entry was not found.
+  # @return [Entry, nil]
   #
   def edit_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
@@ -444,12 +445,8 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Entry record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Entry record update halted.
   #
-  # @return [Entry]                         Updated Entry instance.
-  # @return [nil]                           If the Entry was not found.
+  # @return [Entry, nil]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def update_entry(item = nil, opt = nil)
     item, opt = entry_request_params(item, opt)
     get_entry(item, **opt) do |entry|
@@ -688,6 +685,9 @@ module EntryConcern
   #
   # @return [Array]                   Created entries.
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def bulk_create_entries(prm = nil)
     data = entry_bulk_post_params(prm) << { base_url: request.base_url }
     succeeded = []
@@ -722,6 +722,9 @@ module EntryConcern
   #
   # @return [Array]                   Modified entries.
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def bulk_update_entries(prm = nil)
     data = entry_bulk_post_params(prm) << { base_url: request.base_url }
     succeeded = []
@@ -756,6 +759,9 @@ module EntryConcern
   #
   # @return [Array]                   Removed entries.
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def bulk_destroy_entries(prm = nil)
     data = entry_bulk_post_params(prm) << { base_url: request.base_url }
     succeeded = []
@@ -773,6 +779,9 @@ module EntryConcern
   #
   # @note Currently unused.
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def bulk_check_entries(prm = nil)
     prm ||= get_entry_params
     # TODO: bulk_check_entries
@@ -972,6 +981,7 @@ module EntryConcern
     # @return [Entry::Options]
     #
     def set_model_options
+      # noinspection RubyMismatchedVariableType, RubyMismatchedReturnType
       @model_options = Entry::Options.new(request_parameters)
     end
 

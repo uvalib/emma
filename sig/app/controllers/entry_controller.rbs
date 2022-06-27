@@ -42,7 +42,7 @@ class EntryController < ApplicationController
   # @return [Array<String>]
   # @return [nil]
   #
-  attr_reader list: (Array[Entry] | strArray | nil)
+  attr_reader list: Array[Entry] | strArray | nil
 
   # API results for :show.
   #
@@ -50,13 +50,15 @@ class EntryController < ApplicationController
   #
   attr_reader item: Entry | nil
 
-  attr_reader page:         Paginator
-  attr_reader group_counts: symHash
-  attr_reader host:         String
-  attr_reader link:         String | nil
-  attr_reader repo:         symArray
-  attr_reader deploy:       symArray
-  attr_reader object_table: Hash[String,Array[Aws::S3::Object]]
+  # For the :admin endpoint.
+  #
+  # @return [Hash{String=>Array<Aws::S3::Object>}]
+  #
+  attr_reader s3_object_table: Hash[String,Array[Aws::S3::Object]]
+
+  @page:         Paginator
+  @group_counts: symHash
+  @host:         String
 
   # == GET /entry[?id=(:id|SID|RANGE_LIST)]
   # == GET /entry[?selected=(:id|SID|RANGE_LIST)]
@@ -402,5 +404,5 @@ class EntryController < ApplicationController
   #
   # @return [Hash{Symbol=>String,nil}]
   #
-  def download_values: (?(String|nil) url) -> Hash[Symbol,(String|nil)]
+  def download_values: ((String|nil) url) -> Hash[Symbol,(String|nil)]
 end

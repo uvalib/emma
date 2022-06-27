@@ -27,7 +27,7 @@ module SessionConcern
   #
   PRESERVE_SESSION_KEYS: Array[String|Regexp]
 
-  attr_reader reset_browser_cache: bool
+  @reset_browser_cache: bool
 
   # Redirect after a successful authorization operation.
   #

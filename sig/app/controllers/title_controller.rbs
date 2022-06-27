@@ -24,9 +24,9 @@ class TitleController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  attr_reader page: Paginator
-  attr_reader list: Bs::Message::TitleMetadataSummaryList | []
-  attr_reader item: Bs::Message::TitleMetadataDetail
+  @list: Bs::Message::TitleMetadataSummaryList | []
+  @item: Bs::Message::TitleMetadataDetail
+  @page: Paginator
 
   # == GET /title
   #

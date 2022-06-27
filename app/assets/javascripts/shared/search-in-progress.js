@@ -98,7 +98,7 @@ export class SearchInProgress extends BaseClass {
     // ========================================================================
 
     static get instance() { return this._instance ||= new this }
-    static get overlay()  { return this.instance.$overlay }
+  //static get overlay()  { return this.instance.$overlay }
 
     // ========================================================================
     // Class methods

@@ -44,7 +44,7 @@ class UploadController < ApplicationController
   # @return [Hash{Symbol=>Any}]
   # @return [nil]
   #
-  attr_reader list: (Array[Upload|String] | symHash|nil)
+  attr_reader list: Array[Upload|String] | symHash|nil
 
   # API results for :show.
   #
@@ -52,13 +52,15 @@ class UploadController < ApplicationController
   #
   attr_reader item: Upload | nil
 
-  attr_reader page:         Paginator
-  attr_reader group_counts: symHash
-  attr_reader host:         String
-  attr_reader link:         String | nil
-  attr_reader repo:         symArray
-  attr_reader deploy:       symArray
-  attr_reader object_table: Hash[String,Array[Aws::S3::Object]]
+  # For the :admin endpoint.
+  #
+  # @return [Hash{String=>Array<Aws::S3::Object>}]
+  #
+  attr_reader s3_object_table: Hash[String,Array[Aws::S3::Object]]
+
+  @page:         Paginator
+  @group_counts: symHash
+  @host:         String
 
   # == GET /upload[?id=(:id|SID|RANGE_LIST)]
   # == GET /upload[?selected=(:id|SID|RANGE_LIST)]
@@ -399,5 +401,5 @@ class UploadController < ApplicationController
   #
   # @return [Hash{Symbol=>String,nil}]
   #
-  def download_values: (?(String|nil) url) -> Hash[Symbol,(String|nil)]
+  def download_values: ((String|nil) url) -> Hash[Symbol,(String|nil)]
 end

@@ -34,9 +34,9 @@ class MemberDecorator < BookshareDecorator
 
   include Common
 
-  attr_reader history_data:     Bs::Message::TitleDownloadList | nil
-  attr_reader dl:               Array[Bs::Record::TitleDownload]
-  attr_reader preference_data:  Bs::Message::MyAccountPreferences | nil
+  @preference_data: Bs::Message::MyAccountPreferences | nil
+  @history_data:    Bs::Message::TitleDownloadList | nil
+  @dl:              Array[Bs::Record::TitleDownload]
 
   # history_data
   #

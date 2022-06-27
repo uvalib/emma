@@ -116,7 +116,7 @@ module BaseDecorator::Pagination
   #
   def pagination_separator: (?(String|nil) content, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  attr_reader paginator: Paginator
+  @paginator: Paginator
 
   # paginator
   #

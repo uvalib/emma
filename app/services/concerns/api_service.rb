@@ -60,6 +60,7 @@ class ApiService
   # @return [Hash{Class=>ApiService}]
   #
   def self.table
+    # noinspection RbsMissingTypeSignature
     @table ||= {}
   end
 
@@ -183,6 +184,9 @@ class ApiService
       # :topic          The base of the module in which the method was defined
       #                 added by this method as a hint for the API Explorer.
       #
+      #--
+      # noinspection RbsMissingTypeSignature
+      #++
       def self.add_api(prop, topic = nil)
         prop = prop.transform_values { |v| v.merge(topic: topic) } if topic
         (@all_methods  ||= {}).merge!(prop)
@@ -214,6 +218,9 @@ class ApiService
       #     functionality not directly supported by the API) are also included.
       # - If :synthetic is :only then only the "fake" methods are returned.
       #
+      #--
+      # noinspection RbsMissingTypeSignature
+      #++
       def self.api_methods(arg = nil)
         @all_methods  ||= {}
         @true_methods ||= {}

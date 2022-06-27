@@ -26,6 +26,13 @@ class ExecReport
   #
   attr_accessor render_html: bool
 
+  @serialize:       String | nil
+  @deserialize:     String | nil
+  @error_table:     Hash[(String|Integer),String]
+  @error_messages:  strArray
+  @http_status:     Integer | Symbol | nil
+  @message_hashes:  Array[Hash[Symbol,(String|strArray)]]
+
   # Initialize a new instance.
   #
   # @param [Array] src
@@ -141,9 +148,6 @@ class ExecReport
     include Emma::Json
 
     include ExecReport::Constants
-
-    attr_reader message_hash:    Hash[Symbol,(String|strArray)]
-    attr_reader message_hashes:  Array[Hash[Symbol,(String|strArray)]]
 
     # Prepare an error report value for assignment to a database column.
     #
@@ -353,12 +357,6 @@ class ExecReport
 
   include BaseMethods
 
-  attr_reader serialize:       String | nil
-  attr_reader deserialize:     String | nil
-  attr_reader error_table:     Hash[(String|Integer),String]
-  attr_reader error_messages:  strArray
-  attr_reader http_status:     Integer | Symbol | nil
-
   # Prepare the error report value for assignment to a database column.
   #
   # @param [ExecReport, ActiveModel::Errors, Exception, Hash, Array, String, *] src  Default: `self`.
@@ -487,6 +485,8 @@ class ExecReport::Part
   # @return [Exception, nil]
   #
   attr_reader exception: Exception | nil
+
+  @message_hash: Hash[Symbol,(String|strArray)]
 
   # Initialize a new instance.
   #

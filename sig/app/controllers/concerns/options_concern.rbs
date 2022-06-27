@@ -5,7 +5,7 @@ module OptionsConcern
 
   include ParamsHelper
 
-  attr_reader model_options: Options
+  @model_options: Options
 
   # Access the @model_options instance created for the current controller.
   #
@@ -23,10 +23,12 @@ module OptionsConcern
 
   THIS_MODULE: Module
 
+  public
+
   include ParamsHelper
 
   # :nocov:
-  include AbstractController::Callbacks::ClassMethods
+  #include AbstractController::Callbacks::ClassMethods
 
-  include OptionsConcern
+  #include OptionsConcern
 end

@@ -45,6 +45,9 @@ class Action::BatchStore < Action::BulkOperation
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def store!(items, **opt)
     __debug_step(binding)
     defaults = {

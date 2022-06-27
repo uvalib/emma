@@ -32,6 +32,54 @@ module BookshareConcern
   # :section:
   # ===========================================================================
 
+  public
+
+  # A Bookshare item identifier.
+  #
+  # @return [String, nil]
+  #
+  attr_accessor :bs_id
+
+  # A Bookshare journal/periodical series identifier.
+  #
+  # @return [String, nil]
+  #
+  attr_accessor :bs_series
+
+  # A Bookshare journal/periodical edition identifier.
+  #
+  # @return [String, nil]
+  #
+  attr_accessor :bs_edition
+
+  # A Bookshare artifact format.
+  #
+  # @return [String, nil]
+  #
+  attr_accessor :bs_format
+
+  # A Bookshare reading list identifier.
+  #
+  # @return [String, nil]
+  #
+  attr_accessor :bs_list
+
+  # A Bookshare member identifier.
+  #
+  # @return [String, nil]
+  #
+  attr_accessor :bs_member
+
+  # A remote URL path for retrieving an artifact (download).
+  #
+  # @return [String, nil]
+  #
+  attr_accessor :item_download_url
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   protected
 
   # Return a member associated with the given user.
@@ -63,8 +111,8 @@ module BookshareConcern
   # @return [String]                  Value of `params[:id]`.
   # @return [nil]                     No :id, :bookshareId found.
   #
-  def set_bookshare_id
-    @bookshare_id = params[:bookshareId] || params[:id]
+  def set_bs_id
+    self.bs_id = params[:bookshareId] || params[:id]
   end
 
   # Extract the URL parameter which specifies a journal/periodical series.
@@ -72,8 +120,8 @@ module BookshareConcern
   # @return [String]                  Value of `params[:series]`.
   # @return [nil]                     No :series, :seriesId found.
   #
-  def set_series_id
-    @series_id = params[:seriesId] || params[:series] || params[:id]
+  def set_bs_series
+    self.bs_series = params[:seriesId] || params[:series] || params[:id]
   end
 
   # Extract the URL parameter which specifies a journal/periodical edition.
@@ -81,8 +129,8 @@ module BookshareConcern
   # @return [String]                  Value of `params[:id]`.
   # @return [nil]                     No :id, :edition, :editionId found.
   #
-  def set_edition_id
-    @edition_id = params[:editionId] || params[:edition] || params[:id]
+  def set_bs_edition
+    self.bs_edition = params[:editionId] || params[:edition] || params[:id]
   end
 
   # Extract the best-match URL parameter which represents an item format.
@@ -90,8 +138,8 @@ module BookshareConcern
   # @return [String]                  Value of `params[:fmt]`.
   # @return [nil]                     No :fmt found.
   #
-  def set_format
-    @format = params[:fmt] || BsFormatType.default
+  def set_bs_format
+    self.bs_format = params[:fmt] || BsFormatType.default
   end
 
   # Extract the URL parameter which specifies a reading list.
@@ -99,8 +147,8 @@ module BookshareConcern
   # @return [String]                  Value of `params[:id]`.
   # @return [nil]                     No :id, :readingListId found.
   #
-  def set_reading_list_id
-    @id = params[:readingListId] || params[:id]
+  def set_bs_list
+    self.bs_list = params[:readingListId] || params[:id]
   end
 
   # Extract the URL parameter which indicates a Bookshare member.
@@ -108,8 +156,8 @@ module BookshareConcern
   # @return [String]                  Value of `params[:member]`.
   # @return [nil]                     No :member, :forUser found.
   #
-  def set_member
-    @member = params[:forUser] || params[:member] || get_member
+  def set_bs_member
+    self.bs_member = params[:forUser] || params[:member] || get_member
   end
 
   # Extract the URL parameter which indicates a remote URL path.
@@ -117,8 +165,8 @@ module BookshareConcern
   # @return [String]                  Value of `params[:url]`.
   # @return [nil]                     No :url found.
   #
-  def set_url
-    @url = params[:url]
+  def set_item_download_url
+    self.item_download_url = params[:url]
   end
 
   # ===========================================================================
@@ -131,6 +179,9 @@ module BookshareConcern
 
   included do |base|
     __included(base, THIS_MODULE)
+    if respond_to?(:helper_attr)
+      helper_attr :bs_id, :bs_series, :bs_edition, :bs_format, :bs_list
+    end
   end
 
 end

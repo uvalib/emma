@@ -52,10 +52,10 @@ class EditionController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_series_id
-  before_action :set_edition_id,  except: %i[index]
-  before_action :set_format
-  before_action :set_member,      only: %i[download]
+  before_action :set_bs_series
+  before_action :set_bs_edition, except: %i[index]
+  before_action :set_bs_format
+  before_action :set_bs_member,  only:   %i[download]
 
   # ===========================================================================
   # :section:
@@ -74,7 +74,7 @@ class EditionController < ApplicationController
     __debug_route
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @list = bs_api.get_periodical_editions(seriesId: @series_id, **opt)
+    @list = bs_api.get_periodical_editions(seriesId: bs_series, **opt)
     @page.finalize(@list, :periodicalEditions, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
@@ -94,7 +94,7 @@ class EditionController < ApplicationController
   #
   def show
     __debug_route
-    opt   = { seriesId: @series_id, editionId: @edition_id }
+    opt   = { seriesId: bs_series, editionId: bs_edition }
     @item = bs_api.get_periodical_edition(**opt)
     # noinspection RubyNilAnalysis
     flash_now_alert(@item.exec_report) if @item&.error?
@@ -179,10 +179,10 @@ class EditionController < ApplicationController
   def download
     __debug_route
     opt = {
-      seriesId:  @series_id,
-      editionId: @edition_id,
-      format:    @format,
-      forUser:   @member
+      seriesId:  bs_series,
+      editionId: bs_edition,
+      format:    bs_format,
+      forUser:   bs_member
     }
     bs_download_response(:download_periodical_edition, **opt)
   end

@@ -31,7 +31,7 @@ class Paginator
 
   private
 
-  attr_reader controller: (ApplicationController | nil)
+  attr_reader controller: ApplicationController | nil
 
   attr_reader context: symHash
 
@@ -76,9 +76,9 @@ class Paginator
     def initialize: (?(symHash|nil) values) -> void
   end
 
-  attr_reader property:           Paginator::Properties
-  attr_reader page_items:         anyArray
-  attr_reader default_page_size:  Integer
+  @property:           Paginator::Properties
+  @page_items:         anyArray
+  @default_page_size:  Integer
 
   # property
   #
