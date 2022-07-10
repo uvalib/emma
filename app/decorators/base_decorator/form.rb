@@ -706,7 +706,7 @@ module BaseDecorator::Form
   #
   # @param [String, Symbol, nil] action
   # @param [String, nil]         label    Override button label.
-  # @param [String, Hash, nil]   url      Default: `history.back()`.
+  # @param [String, Hash, nil]   url      Default: `#back_path`.
   # @param [Hash]                opt      To #button_tag / LinkHelper#make_link
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -724,13 +724,12 @@ module BaseDecorator::Form
 
     prepend_css!(opt, css)
     opt[:title] ||= config[:tooltip]
-    opt[:type]  ||= 'reset'
+    opt[:type]  ||= 'button'
 
     if opt[:'data-path'].present?
       button_tag(label, opt)
     else
-      url ||= back_path || 'javascript:history.back();'
-      make_link(label, url, **opt)
+      make_link(label, (url || back_path), **opt)
     end
   end
 

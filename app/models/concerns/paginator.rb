@@ -94,17 +94,14 @@ class Paginator
       on_first = (current == first)
     end
 
-    # The previous page link is just 'history.back()', however this is special-
-    # cased on the second page because of issues observed in Google Chrome.
-    prev =
-      if on_first
-        offset = 0
-        first = nil
-      elsif page == 2
-        first
-      elsif local_request?
-        :back
-      end
+    # Unless already on the first page, the previous page link is just
+    # 'history.back()'.
+    if on_first
+      offset = 0
+      prev = first = nil
+    else
+      prev = :back
+    end
 
     # Set current values for the including controller.
     self.page_size   = limit
@@ -211,7 +208,7 @@ class Paginator
 
   # Set the number of results per page.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
@@ -230,7 +227,7 @@ class Paginator
 
   # Set the path to the first page of results.
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the first page of results.
   # @return [nil]                     If @first_page is unset.
@@ -250,7 +247,7 @@ class Paginator
 
   # Set the path to the last page of results.
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the last page of results.
   # @return [nil]                     If @last_page is unset.
@@ -270,7 +267,7 @@ class Paginator
 
   # Set the path to the next page of results
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the next page of results.
   # @return [nil]                     If @next_page is unset.
@@ -290,7 +287,7 @@ class Paginator
 
   # Set the path to the previous page of results.
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the previous page of results.
   # @return [nil]                     If @prev_page is unset.
@@ -309,7 +306,7 @@ class Paginator
 
   # Set the offset of the current page into the total set of results.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
@@ -327,7 +324,7 @@ class Paginator
 
   # Set the total results count.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
@@ -345,7 +342,7 @@ class Paginator
 
   # Set the number of records returned from the API for this page.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
@@ -379,14 +376,15 @@ class Paginator
 
   # Interpret *value* as a URL path or a JavaScript action.
   #
-  # @param [String, Symbol] value     One of [:back, :forward, :go].
-  # @param [Integer, nil]   page      Passed to #page_history for *action* :go.
+  # @param [String, Symbol, nil] value  One of [:back, :forward, :go].
+  # @param [Integer, nil]   page        To #page_history for *action* :go.
   #
-  # @return [String]                  A value usable with 'href'.
-  # @return [nil]                     If *value* is invalid.
+  # @return [String]                    A value usable with 'href'.
+  # @return [nil]                       If *value* is invalid.
   #
   def page_path(value, page = nil)
-    value.is_a?(Symbol) ? page_history(value, page) : value.to_s
+    # noinspection RubyMismatchedArgumentType
+    value.is_a?(Symbol) ? page_history(value, page) : value.to_s.presence
   end
 
   # A value to use in place of a path in order to engage browser history.

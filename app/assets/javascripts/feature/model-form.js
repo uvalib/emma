@@ -1664,10 +1664,6 @@ $(document).on('turbolinks:load', function() {
      * Initialize the state of the cancel button, and set it up to clear the
      * form when it is activated.
      *
-     * **Implementation Notes**
-     * Although the button is created with 'type="reset"' HTML reset behavior
-     * is not relied upon because it only clears form fields but not file data.
-     *
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupCancelButton(form) {
@@ -3843,16 +3839,13 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function abortSubmission(form) {
-        let $form   = formElement(form);
-        const state = formState($form);
-        if (!state) {
-            // Neither Submit nor Cancel have been invoked yet.
-            let fields = undefined;
-            if (isUpdateForm($form)) {
-                fields = revertEditData($form);
-            }
-            setFormCanceled($form);
-            abortCurrent($form, fields);
+        let $form = formElement(form);
+        if (formState($form)) {
+            // Either Submit or Cancel has already been invoked.
+        } else if (isUpdateForm($form)) {
+            abortCurrent($form, revertEditData($form));
+        } else {
+            abortCurrent($form);
         }
     }
 
@@ -3861,20 +3854,22 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector}      [form]        Default: {@link formElement}.
      * @param {string|object} [fields]
+     * @param {string}        [url]
      */
-    function abortCurrent(form, fields) {
-        let $form  = formElement(form);
+    function abortCurrent(form, fields, url = PROPERTIES.Path.cancel) {
+        let $form = formElement(form);
+        setFormCanceled($form);
+        if (isEmpty(url)) {
+            return;
+        }
         let params = submissionParams($form);
         if (fields) {
-            /** @type {string} */
-            let data = fields;
-            if (typeof data !== 'string') {
-                data = JSON.stringify(data);
-            }
-            params.revert = encodeURIComponent(data);
+            params.revert = encodeURIComponent(
+                (typeof fields === 'string') ? fields : JSON.stringify(fields)
+            );
         }
         $.ajax({
-            url:     makeUrl(PROPERTIES.Path.cancel, params),
+            url:     makeUrl(url, params),
             type:    'POST',
             headers: { 'X-CSRF-Token': Rails.csrfToken() },
             async:   false

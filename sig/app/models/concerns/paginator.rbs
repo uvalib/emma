@@ -94,11 +94,11 @@ class Paginator
 
   # Set the number of results per page.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
-  def page_size=: (Integer value) -> Integer
+  def page_size=: ((Integer|nil) value) -> Integer
 
   # Get the path to the first page of results.
   #
@@ -109,12 +109,12 @@ class Paginator
 
   # Set the path to the first page of results.
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the first page of results.
   # @return [nil]                     If @first_page is unset.
   #
-  def first_page=: ((String|Symbol) value) -> (String | nil)
+  def first_page=: ((String|Symbol|nil) value) -> (String | nil)
 
   # Get the path to the last page of results.
   #
@@ -125,12 +125,12 @@ class Paginator
 
   # Set the path to the last page of results.
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the last page of results.
   # @return [nil]                     If @last_page is unset.
   #
-  def last_page=: ((String|Symbol) value) -> (String | nil)
+  def last_page=: ((String|Symbol|nil) value) -> (String | nil)
 
   # Get the path to the next page of results
   #
@@ -141,12 +141,12 @@ class Paginator
 
   # Set the path to the next page of results
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the next page of results.
   # @return [nil]                     If @next_page is unset.
   #
-  def next_page=: ((String|Symbol) value) -> (String | nil)
+  def next_page=: ((String|Symbol|nil) value) -> (String | nil)
 
   # Get the path to the previous page of results.
   #
@@ -157,12 +157,12 @@ class Paginator
 
   # Set the path to the previous page of results.
   #
-  # @param [String, Symbol] value
+  # @param [String, Symbol, nil] value
   #
   # @return [String]                  New URL for the previous page of results.
   # @return [nil]                     If @prev_page is unset.
   #
-  def prev_page=: ((String|Symbol) value) -> (String | nil)
+  def prev_page=: ((String|Symbol|nil) value) -> (String | nil)
 
   # Get the offset of the current page into the total set of results.
   #
@@ -172,11 +172,11 @@ class Paginator
 
   # Set the offset of the current page into the total set of results.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
-  def page_offset=: (Integer value) -> Integer
+  def page_offset=: ((Integer|nil) value) -> Integer
 
   # Get the total results count.
   #
@@ -186,11 +186,11 @@ class Paginator
 
   # Set the total results count.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
-  def total_items=: (Integer value) -> Integer
+  def total_items=: ((Integer|nil) value) -> Integer
 
   # Get the number of records returned from the API for this page.
   #
@@ -200,11 +200,11 @@ class Paginator
 
   # Set the number of records returned from the API for this page.
   #
-  # @param [Integer] value
+  # @param [Integer, nil] value
   #
   # @return [Integer]
   #
-  def page_records=: (Integer value) -> Integer
+  def page_records=: ((Integer|nil) value) -> Integer
 
   # Get the current page of result items.
   #
@@ -222,13 +222,13 @@ class Paginator
 
   # Interpret *value* as a URL path or a JavaScript action.
   #
-  # @param [String, Symbol] value     One of [:back, :forward, :go].
-  # @param [Integer, nil]   page      Passed to #page_history for *action* :go.
+  # @param [String, Symbol, nil] value  One of [:back, :forward, :go].
+  # @param [Integer, nil]   page        To #page_history for *action* :go.
   #
-  # @return [String]                  A value usable with 'href'.
-  # @return [nil]                     If *value* is invalid.
+  # @return [String]                    A value usable with 'href'.
+  # @return [nil]                       If *value* is invalid.
   #
-  def page_path: ((String|Symbol) value, ?(Integer|nil) page) -> (String | nil)
+  def page_path: ((String|Symbol|nil) value, ?(Integer|nil) page) -> (String | nil)
 
   # A value to use in place of a path in order to engage browser history.
   #

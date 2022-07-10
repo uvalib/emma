@@ -775,20 +775,31 @@ class BaseDecorator < Draper::Decorator
     #
     def same_request?(opt = nil)
       opt ||= request_values(:referrer, :url, :fullpath)
-      ref = opt[:referrer]
       # noinspection RubyNilAnalysis
-      ref.present? && opt.values_at(:url, :fullpath).include?(ref)
+      (ref = opt[:referrer]).present? &&
+        opt.values_at(:url, :fullpath).any? { |u| u&.sub(/\?.*$/, '') == ref }
     end
 
-    # back_path
+    # Return the best :href value to use to the previous page.
     #
-    # @param [Hash, nil] opt
+    # If the HTTP *Referer* is not the same as the current path, that is used
     #
-    # @return [String, nil]
+    # @param [Hash, nil]   opt
+    # @param [String, nil] fallback
     #
-    def back_path(opt = nil)
+    # @return [String]
+    # @return [nil]                   Only when *fallback* is *nil*.
+    #
+    def back_path(opt = nil, fallback: 'javascript:history.back();')
       opt ||= request_values(:referrer, :url, :fullpath)
-      referrer(opt) if local_request?(opt) && !same_request?(opt)
+      ref = referrer(opt).presence
+      if ref && same_request?(opt)
+        uri = URI(ref)
+        uri.path = '/' + uri.path.delete_prefix('/').split('/').shift
+        uri.to_s
+      else
+        local_request?(opt) && ref || fallback
+      end
     end
 
     # root_url

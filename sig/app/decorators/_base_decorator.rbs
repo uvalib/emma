@@ -162,7 +162,7 @@ class BaseDecorator < Draper::Decorator
     def referrer: (?(symHash|nil) opt) -> (untyped | nil)
     def local_request?: (?(symHash|nil) opt) -> bool
     def same_request?: (?(symHash|nil) opt) -> bool
-    def back_path: (?(symHash|nil) opt) -> (String | nil)
+    def back_path: (?(symHash|nil) opt, ?fallback: String|nil) -> (String | nil)
     def root_url: () -> String
 
     def object_class:    () -> Class
