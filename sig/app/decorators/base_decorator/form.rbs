@@ -253,7 +253,7 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_top_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_top_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> (untyped|anyArray) } -> ActiveSupport::SafeBuffer
 
   # form_top_button_tray
   #
@@ -266,7 +266,7 @@ module BaseDecorator::Form
   #
   # @see #form_button_tray
   #
-  def form_top_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_top_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> (untyped|anyArray) } -> ActiveSupport::SafeBuffer
 
   # Convenience submit and cancel buttons below the fields.
   #
@@ -280,7 +280,7 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_bottom_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_bottom_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> (untyped|anyArray) } -> ActiveSupport::SafeBuffer
 
   # form_bottom_button_tray
   #
@@ -293,7 +293,7 @@ module BaseDecorator::Form
   #
   # @see #form_button_tray
   #
-  def form_bottom_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_bottom_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> (untyped|anyArray) } -> ActiveSupport::SafeBuffer
 
   # form_button_tray
   #
@@ -307,7 +307,7 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> (untyped|anyArray) } -> ActiveSupport::SafeBuffer
 
   # Basic form controls.
   #
@@ -321,7 +321,7 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_buttons: (?label: String|nil, ?cancel: String|nil, **untyped opt) -> Array[ActiveSupport::SafeBuffer]
+  def form_buttons: (?label: String|nil, ?cancel: String|nil, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> (untyped|anyArray) } -> Array[ActiveSupport::SafeBuffer]
 
   # Form submit button.
   #
@@ -358,7 +358,7 @@ module BaseDecorator::Form
   # @yieldparam [Hash] result
   # @yieldreturn [Hash]
   #
-  def form_hidden: (**untyped opt) -> symHash
+  def form_hidden: (**untyped opt) ?{ (symHash) -> symHash } -> symHash
 
   # Hidden form fields.
   #

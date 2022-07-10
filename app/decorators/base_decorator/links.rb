@@ -306,6 +306,7 @@ module BaseDecorator::Links
 
     tip  = opt.delete(:tip)
     opt[:title] ||= tip&.include?('%') && (tip % { item: model_type }) || tip
+    # noinspection RubyMismatchedArgumentType
     return yield(path, opt) if block_given?
 
     icon = opt.delete(:icon) || STAR

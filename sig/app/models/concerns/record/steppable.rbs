@@ -510,7 +510,7 @@ module Record::Steppable
     # @yield To supply additional state/action pairs.
     # @yieldreturn [Hash{Symbol=>Proc,Symbol,Boolean}]
     #
-    def transition_sequence: (meth: Symbol, ?sequence: Hash[Symbol,(Proc|Symbol|bool)]|nil) { () -> untyped } -> bool
+    def transition_sequence: (meth: Symbol, ?sequence: Hash[Symbol,(Proc|Symbol|bool)]|nil) ?{ (Hash[Symbol,(Proc|Symbol|bool)]) -> Hash[Symbol,(Proc|Symbol|bool)] } -> bool
 
     # Execute a sequence step.
     #

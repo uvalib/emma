@@ -135,7 +135,7 @@ class AccountDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: BaseDecorator::Menu overrides
+    # :section: BaseDecorator::List overrides
     # =========================================================================
 
     public

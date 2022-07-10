@@ -35,7 +35,7 @@ class DebugTiming
 
   def self.aggregate?: (untyped processor) -> (false | untyped)
 
-  def self.enter: (untyped processor, symHash input, ?(Float|nil) time) { () -> untyped } -> Float
+  def self.enter: (untyped processor, symHash input, ?(Float|nil) time) ?{ () -> untyped } -> Float
 
-  def self.leave: (untyped processor, symHash input, Float start, ?(Float|nil) time) { () -> untyped } -> Float
+  def self.leave: (untyped processor, symHash input, Float start, ?(Float|nil) time) ?{ () -> untyped } -> Float
 end

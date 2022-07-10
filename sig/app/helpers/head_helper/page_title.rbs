@@ -60,7 +60,8 @@ module HeadHelper::PageTitle
   # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def set_page_meta_title: (*anyArray values) { () -> (String | strArray) } -> strArray
+  def set_page_meta_title: ()                          { () -> (String | strArray) } -> strArray
+                         | (*(String|strArray) values)                               -> strArray
 
   # Add to the page title.
   #
@@ -71,7 +72,8 @@ module HeadHelper::PageTitle
   # @yield To supply additional values to @page_meta_title.
   # @yieldreturn [String, Array<String>]
   #
-  def append_page_meta_title: (*anyArray values) { () -> (String | strArray) } -> strArray
+  def append_page_meta_title: ()                          { () -> (String | strArray) } -> strArray
+                            | (*(String|strArray) values)                               -> strArray
 
   # Emit the '<title>' element (within '<head>').
   #

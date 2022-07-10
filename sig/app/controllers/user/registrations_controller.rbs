@@ -98,5 +98,5 @@ class User::RegistrationsController < Devise::RegistrationsController
   # Due to the current uniqueness constraint on 'index_users_on_email', the
   # email address can't be updated.
   #
-  def allow_params: (Symbol action, ?keys: Symbol|symArray|nil, ?except: Symbol|symArray|nil) { (ActionController::Parameters) -> _ToHash[untyped,untyped]? } -> ActiveSupport::HashWithIndifferentAccess[untyped, untyped]
+  def allow_params: (Symbol action, ?keys: Symbol|symArray|nil, ?except: Symbol|symArray|nil) ?{ (ActionController::Parameters) -> (anyHash | nil) } -> ActiveSupport::HashWithIndifferentAccess[untyped, untyped]
 end

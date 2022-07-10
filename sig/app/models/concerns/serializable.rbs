@@ -56,7 +56,7 @@ module Serializable
     # @yieldparam [self] item An instance of the class.
     # @yieldreturn [any]      The data from *item*.
     #
-    def serialize: (untyped item) { (untyped) -> untyped } -> anyHash
+    def serialize: (untyped item) ?{ (untyped) -> untyped } -> anyHash
 
     # Recreate an item from the data produced by #serialize.
     #
@@ -68,7 +68,7 @@ module Serializable
     # @yieldparam [any] value   Data produced by #serialize.
     # @yieldreturn [self,any]   An item instance or data to create a new one.
     #
-    def deserialize: (anyHash hash) { (untyped) -> untyped } -> untyped
+    def deserialize: (anyHash hash) ?{ (untyped) -> untyped } -> untyped
 
     module Methods
       def serialize_argument: (ActiveSupport::HashWithIndifferentAccess[untyped,untyped] item) -> strHash

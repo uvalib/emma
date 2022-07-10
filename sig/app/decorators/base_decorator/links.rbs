@@ -35,7 +35,7 @@ module BaseDecorator::Links
   # @yieldparam  [String] terms
   # @yieldreturn [String]
   #
-  def model_link: ((Model|nil) item, **untyped opt) { (String) -> String } -> ActiveSupport::SafeBuffer
+  def model_link: ((Model|nil) item, **untyped opt) ?{ (String) -> String } -> ActiveSupport::SafeBuffer
 
   # Create a link to the details show page for the given model instance.
   #
@@ -143,7 +143,7 @@ module BaseDecorator::Links
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
-  def control_icon_button: (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def control_icon_button: (Symbol action, **untyped opt) ?{ (String, symHash) -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
 
   # Create a link to the details show page for the given item.
   #

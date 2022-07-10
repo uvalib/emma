@@ -52,7 +52,7 @@ module ApplicationCable::Common
   #
   # @return [void]
   #
-  def __debug_cable: (*untyped args, **untyped opt) ?{ () -> untyped } -> untyped
+  def __debug_cable: (*untyped args, **untyped opt) ?{ () -> untyped } -> void
 
   private
 

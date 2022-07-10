@@ -147,7 +147,7 @@ module LookupService::WorldCat::Request::Records
     # @yieldparam [String] term       Term value
     # @yieldreturn [String]           The value to use in place of *term*.
     #
-    def add_terms: (Symbol prefix, untyped item) { (String term) -> String } -> (self | nil)
+    def add_terms: (Symbol prefix, untyped item) ?{ (String term) -> String } -> (self | nil)
 
     # Add a single term.
     #

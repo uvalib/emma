@@ -29,7 +29,8 @@ module LayoutHelper::PageClasses
   # @yield To supply additional CSS classes to @page_classes.
   # @yieldreturn [String, Array<String>]
   #
-  def set_page_classes: (*String values) { () -> (String|strArray) } -> strArray
+  def set_page_classes: ()                          { () -> (String | strArray) } -> strArray
+                      | (*(String|strArray) values)                               -> strArray
 
   # Add to the classes for the '<body>' element.
   #
@@ -40,7 +41,8 @@ module LayoutHelper::PageClasses
   # @yield To supply additional CSS classes to @page_classes.
   # @yieldreturn [String, Array<String>]
   #
-  def append_page_classes: (*String values) { () -> (String|strArray) } -> strArray
+  def append_page_classes: ()                          { () -> (String | strArray) } -> strArray
+                         | (*(String|strArray) values)                               -> strArray
 
   # Emit the CSS classes for inclusion in the '<body>' element definition.
   #

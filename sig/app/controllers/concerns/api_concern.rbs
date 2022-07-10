@@ -54,7 +54,7 @@ module ApiConcern
   #
   def api_exec_report: (*Class only) -> (Hash[Class,ExecReport] | ExecReport | nil)
 
-  # Get the current Bookshare API exception.
+  # Get the current API service exception.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
   #

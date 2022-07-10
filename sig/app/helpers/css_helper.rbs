@@ -23,7 +23,7 @@ module CssHelper
   # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
   # @yieldreturn [void]                   Return ignored.
   #
-  def css_classes: (*(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> ActiveSupport::SafeBuffer
+  def css_classes: (*(Array[_ToS]|_ToS|nil) classes) ?{ (strArray) -> void } -> ActiveSupport::SafeBuffer
 
   # Combine arrays and space-delimited strings to produce set of unique CSS
   # class names.
@@ -36,7 +36,7 @@ module CssHelper
   # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
   # @yieldreturn [void]                   Return ignored.
   #
-  def css_class_array: (*(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> strArray
+  def css_class_array: (*(Array[_ToS]|_ToS|nil) classes) ?{ (strArray) -> void } -> strArray
 
   # Return a copy of *html_opt* where the classes are appended to the current
   # `html_opt[:class]` value.

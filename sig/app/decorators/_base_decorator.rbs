@@ -111,7 +111,7 @@ class BaseDecorator < Draper::Decorator
     def config_lookup: (*(String|strArray) path, **untyped opt) -> untyped
   end
 
-  # Methods available to each decorator class and class instance.
+  # Methods available to every decorator class and decorator class instance.
   #
   module Methods
     include Configuration
@@ -122,7 +122,7 @@ class BaseDecorator < Draper::Decorator
     def link_to_action: ((String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
-  # Methods for each decorator class instance.
+  # Methods for every decorator class instance.
   #
   # @!attribute [r] object
   #   Set in Draper#initialize
@@ -175,7 +175,7 @@ class BaseDecorator < Draper::Decorator
     def page_value:      (Symbol item, ?default: bool|String, **untyped opt) -> String
   end
 
-  # Methods for each decorator class.
+  # Methods for every decorator class.
   #
   # @!attribute [r] object_class
   #   Draper::Decorator#object_class

@@ -470,7 +470,7 @@ class BaseDecorator < Draper::Decorator
 
   end
 
-  # Methods available to each decorator class and class instance.
+  # Methods available to every decorator class and decorator class instance.
   #
   module Methods
 
@@ -542,7 +542,7 @@ class BaseDecorator < Draper::Decorator
 
   end
 
-  # Methods for each decorator class instance.
+  # Methods for every decorator class instance.
   #
   # @!attribute [r] object
   #   Set in Draper#initialize
@@ -893,7 +893,7 @@ class BaseDecorator < Draper::Decorator
 
   end
 
-  # Methods for each decorator class.
+  # Methods for every decorator class.
   #
   # @!attribute [r] object_class
   #   Draper::Decorator#object_class

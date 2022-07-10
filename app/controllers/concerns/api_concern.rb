@@ -92,7 +92,7 @@ module ApiConcern
     (table.size == 1) ? table.values.first : table.presence
   end
 
-  # Get the current Bookshare API exception.
+  # Get the current API service exception.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
   #

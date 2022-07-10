@@ -36,7 +36,8 @@ module HeadHelper::Stylesheets
   # @yield To supply additional source(s) to @page_stylesheets.
   # @yieldreturn [String, Array<String>]
   #
-  def set_page_stylesheets: (*anyArray sources) { () -> (String | strArray) } -> strArray
+  def set_page_stylesheets: ()                          { () -> (String | strArray) } -> strArray
+                          | (*(String|strArray) values)                               -> strArray
 
   # Add to the stylesheet(s) for this page.
   #
@@ -47,7 +48,8 @@ module HeadHelper::Stylesheets
   # @yield To supply additional source(s) to @page_stylesheets.
   # @yieldreturn [String, Array<String>]
   #
-  def append_page_stylesheets: (*anyArray sources) { () -> (String | strArray) } -> strArray
+  def append_page_stylesheets: ()                          { () -> (String | strArray) } -> strArray
+                             | (*(String|strArray) values)                               -> strArray
 
   # Emit the stylesheet '<link>' tag(s) appropriate for the current page.
   #

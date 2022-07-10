@@ -99,7 +99,7 @@ module FileFormat
   # @yieldparam [Array<String>]       value
   # @yieldreturn [(String,Array)] Pass back label/value pair.
   #
-  def format_metadata: (untyped info) { (Symbol field, Symbol|symArray|Proc accessor, String label, strArray value) -> [String, strArray] } -> strHash
+  def format_metadata: (untyped info) ?{ (Symbol field, Symbol|symArray|Proc accessor, String label, strArray value) -> [String, strArray] } -> strHash
 
   # Map metadata extracted from the file format instance into common metadata
   # fields.

@@ -47,7 +47,7 @@ module PopupHelper
   #
   # @see file:app/assets/stylesheets/layouts/controls/_popup.scss
   #
-  def inline_popup: (?control: symHash|nil, ?panel: symHash|nil, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+  def inline_popup: (?control: symHash|nil, ?panel: symHash|nil, **untyped opt) ?{ () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
   # @private
   POPUP_TOGGLE_OPT: symArray
@@ -81,7 +81,7 @@ module PopupHelper
   # @yield Popup panel content
   # @yieldreturn [String,Array<String>]
   #
-  def make_popup_panel: (?hidden: bool, ?resize: bool, ?left_grab: bool, ?closer: symHash|nil, ?close: symHash|nil, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+  def make_popup_panel: (?hidden: bool, ?resize: bool, ?left_grab: bool, ?closer: symHash|nil, ?close: symHash|nil, **untyped opt) ?{ () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
   private
 

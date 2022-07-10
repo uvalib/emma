@@ -86,7 +86,7 @@ class LookupJob < ActiveJob::Base
   #
   def waiter_task: (JobResult record, Class|LookupService::RemoteService services, LookupService::Request items, **untyped opt) -> symHash
 
-  def __debug_job: (*untyped args, **untyped opt) { () -> untyped } -> void
+  def __debug_job: (*untyped args, **untyped opt) ?{ () -> untyped } -> void
 
   # @private
   # @type [Array<Symbol>]

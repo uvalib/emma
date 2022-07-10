@@ -77,7 +77,7 @@ module Import
   # @yieldparam [String] element
   # @yieldreturn [String] The replacement element.
   #
-  def array_value: (untyped v) { (untyped element) -> untyped } -> anyArray
+  def array_value: (untyped v) ?{ (untyped element) -> untyped } -> anyArray
 
   # Transform a data item into a string.
   #

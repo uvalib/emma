@@ -113,7 +113,7 @@ module OAuth2
     #
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
-    def request: (Symbol verb, String url, ?symHash opts) { (Faraday::Request) -> untyped } -> OAuth2::Response
+    def request: (Symbol verb, String url, ?symHash opts) ?{ (Faraday::Request) -> void } -> OAuth2::Response
 
     # The redirect_uri parameters dynamically assigned in
     # OmniAuth::Strategies::Bookshare#client.

@@ -42,7 +42,7 @@ module Emma::Log
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
-  def self.add: (?(Integer|Symbol|nil) severity, *untyped args) { () -> untyped } -> nil
+  def self.add: (?(Integer|Symbol|nil) severity, *untyped args) ?{ () -> untyped } -> nil
 
   # Add a DEBUG-level log message.
   #

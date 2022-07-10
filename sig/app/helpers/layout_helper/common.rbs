@@ -33,7 +33,7 @@ module LayoutHelper::Common
   #
   # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
   #
-  def search_form: ((Symbol|String|nil) target, ?(Symbol|String|nil) id, ?hidden: anyHash|nil, **untyped opt) { () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
+  def search_form: ((Symbol|String|nil) target, ?(Symbol|String|nil) id, ?hidden: anyHash|nil, **untyped opt) ?{ () -> (String|strArray) } -> (ActiveSupport::SafeBuffer | nil)
 
   # A form used to create/modify a search.
   #

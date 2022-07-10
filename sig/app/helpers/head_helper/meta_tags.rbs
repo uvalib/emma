@@ -59,7 +59,8 @@ module HeadHelper::MetaTags
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
   #
-  def set_page_meta_tags: (?(symHash|nil) pairs) { () -> symHash } -> symHash
+  def set_page_meta_tags: ( symHash pairs)                   -> symHash
+                        | (?nil     pairs) { () -> symHash } -> symHash
 
   # Add to the meta tags for this page.
   #
@@ -70,7 +71,8 @@ module HeadHelper::MetaTags
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
   #
-  def append_page_meta_tags: (?(symHash|nil) pairs) { () -> symHash } -> symHash
+  def append_page_meta_tags: ( symHash pairs)                   -> symHash
+                           | (?nil     pairs) { () -> symHash } -> symHash
 
   # Replace existing (or add new) meta tags for this page.
   #
@@ -81,7 +83,8 @@ module HeadHelper::MetaTags
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
   #
-  def replace_page_meta_tags: (?(symHash|nil) pairs) { () -> symHash } -> symHash
+  def replace_page_meta_tags: ( symHash pairs)                   -> symHash
+                            | (?nil     pairs) { () -> symHash } -> symHash
 
   # Emit the '<meta>' tag(s) appropriate for the current page.
   #
