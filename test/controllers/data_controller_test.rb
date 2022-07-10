@@ -6,7 +6,16 @@
 require 'test_helper'
 
 class DataControllerTest < ActionDispatch::IntegrationTest
-  # test "the truth" do
-  #   assert true
-  # end
+
+  # ===========================================================================
+  # :section: Read tests
+  # ===========================================================================
+
+  test 'data index' do
+    # noinspection RubyJumpError
+    return if not_applicable 'TODO: data/index'
+    get data_index_url
+    assert_response :success
+  end
+
 end

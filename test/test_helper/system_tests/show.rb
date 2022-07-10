@@ -24,26 +24,23 @@ module TestHelper::SystemTests::Show
   # @param [Symbol] model
   # @param [String] title
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_valid_show_page(model, title: nil)
-    body_class = PROPERTY.dig(model, :show, :body_class)
-    assert_selector "body#{body_class}"
-
-    content_class = PROPERTY.dig(model, :show, :content_class)
-    assert_selector content_class
-
-    title ||= PROPERTY.dig(model, :show, :title)
-    if title.present?
-      # Remove extra edition information for catalog title.
-      title = title.sub(/\s*\(.*$/, '') if model == :title
-      assert_title    "#{title} |"
-      assert_selector SHOW_HEADING_SELECTOR, text: title
-    else
-      assert_selector SHOW_HEADING_SELECTOR
-    end
-
-    assert_selector COVER_IMAGE_CLASS if model == :title
+    # Remove extra edition information for Bookshare catalog title.
+    bs_cat   = (model == :title)
+    title  &&= sanitized_string(title)
+    title  &&= bs_cat ? title&.sub(/\s*\(.*$/, '') : title
+    title  ||= property(model, :show, :title)
+    heading  = title ? { text: title } : {}
+    body_css = property(model, :show, :body_css)
+    assert_selector "body#{body_css}"
+    assert_selector property(model, :show, :entry_css)
+    assert_title    title             if title
+    assert_selector COVER_IMAGE_CLASS if bs_cat
+    assert_selector SHOW_HEADING_SELECTOR, **heading
   end
 
   # ===========================================================================
@@ -57,26 +54,28 @@ module TestHelper::SystemTests::Show
   # @param [Symbol]                       model
   # @param [Capybara::Node::Element, nil] entry
   # @param [Integer, Symbol]              index
-  # @param [String]                       entry_class
+  # @param [String]                       entry_css
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldparam [String] title
   # @yieldreturn [void]
   #
-  def visit_show_page(model, entry: nil, index: nil, entry_class: nil)
+  def visit_show_page(model, entry: nil, index: nil, entry_css: nil)
     entry ||=
-      if (entry_class ||= PROPERTY.dig(model, :index, :entry_class))
+      if (entry_css ||= property(model, :index, :entry_css))
         case index
-          when Integer then all(entry_class).at(index)
-          when :last   then all(entry_class).last
-          else              find(entry_class, match: :first)
+          when Integer then all(entry_css).at(index)
+          when :last   then all(entry_css).last
+          else              find(entry_css, match: :first)
         end
       end
     link  = entry&.find('.value.field-Title a')
-    title = link&.text || 'NO TITLE'
-    link&.click(wait: true)
+    title = link&.text&.html_safe || 'NO TITLE'
+    link&.click
     if block_given?
       yield(title)
     else

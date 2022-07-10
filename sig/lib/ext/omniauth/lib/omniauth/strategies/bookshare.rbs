@@ -199,9 +199,6 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       def synthetic_access_token: ((String|prmHash|::OAuth2::AccessToken) src) -> (::OAuth2::AccessToken | nil)
-      #def synthetic_access_token: (::OAuth2::AccessToken atoken) -> ::OAuth2::AccessToken
-      #                          | (prmHash params)               -> (::OAuth2::AccessToken | nil)
-      #                          | (String uid)                   -> (::OAuth2::AccessToken | nil)
 
       # Generate an auth hash based on fixed information.
       #
@@ -228,9 +225,6 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       def synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src) -> (OmniAuth::AuthHash | nil)
-      #def synthetic_auth_hash: (OmniAuth::AuthHash auth_hash) -> OmniAuth::AuthHash
-      #                       | (prmHash params)               -> (OmniAuth::AuthHash | nil)
-      #                       | (String uid)                   -> (OmniAuth::AuthHash | nil)
 
       # Create an AuthHash from the given source.
       #
@@ -267,9 +261,6 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       def self.synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
-      #def self.synthetic_auth_hash: (OmniAuth::AuthHash auth_hash)   -> OmniAuth::AuthHash
-      #                            | (prmHash params)                 -> (OmniAuth::AuthHash | nil)
-      #                            | (User|String uid, String? token) -> (OmniAuth::AuthHash | nil)
 
       # Table of user names/tokens acquired for use in non-production deploys.
       #

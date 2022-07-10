@@ -5,7 +5,7 @@
 #
 # Enhancements to 'assets:precompile'.
 
-namespace :emma_assets do
+namespace 'emma:assets' do
 
   # Set to *false* to avoid post-processing the CSS source map.
   #
@@ -118,4 +118,4 @@ namespace :emma_assets do
 
 end
 
-Rake::Task['assets:precompile'].enhance(['emma_assets:fix_css_map'])
+Rake::Task['assets:precompile'].enhance(['emma:assets:fix_css_map'])

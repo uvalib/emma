@@ -1,2 +1,3 @@
 class CategoriesTest < ApplicationSystemTestCase
+  CONTROLLER: Symbol
 end

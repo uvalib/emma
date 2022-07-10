@@ -132,7 +132,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [String]
   # @return [nil]                     If *type* is blank and *default* is nil.
   #
-  def record_field_type: (String `type`, ?String default) -> (String | nil)
+  def record_field_type: (String `type`, ?(String|nil) default) -> (String | nil)
 
   # record_fields
   #
@@ -260,7 +260,7 @@ module TestHelper::SystemTests::Bookshare
   # @yield To supply additional lines to show.
   # @yieldreturn [String, Array<String>]
   #
-  def show_section: (String|nil header, ?lines: strArray|nil, ?output: bool) { () -> (String|strArray|Array[strArray]) } -> strArray
+  def show_section: (String|nil header, ?lines: strArray|nil, ?output: bool) ?{ () -> (String|strArray|Array[strArray]) } -> strArray
 
   # show_subsection
   #
@@ -276,5 +276,5 @@ module TestHelper::SystemTests::Bookshare
   # @yield To supply additional parts to show.
   # @yieldreturn [Hash, Array]
   #
-  def show_subsection: (String header, ?(symHash|nil) parts, ?indent: Integer|String, ?width: Integer|nil, ?separator: String, ?output: bool) { () -> (anyHash | anyArray) } -> strArray
+  def show_subsection: (String header, ?(symHash|nil) parts, ?indent: Integer|String, ?width: Integer|nil, ?separator: String, ?output: bool) ?{ () -> (anyHash | anyArray) } -> strArray
 end

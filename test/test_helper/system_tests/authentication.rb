@@ -18,14 +18,17 @@ module TestHelper::SystemTests::Authentication
 
   # Sign in as one of the pre-configured users.
   #
-  # @param [String, Symbol, User] user
+  # @param [String, Symbol, User, nil] user_name
   #
-  # @return [void]
+  # @return [true]
   #
-  def sign_in_as(user)
-    user = find_user(user) unless user.is_a?(String)
+  # @raise [Minitest::Assertion]
+  #
+  def sign_in_as(user_name)
+    user = find_user(user_name)
+    raise Minitest::Assertion, "#{__method__}: no user" unless user
     visit new_user_session_url
-    click_on "Sign in as #{user}"
+    click_on "Sign in as #{user.email}"
     assert_flash notice: 'Signed in'
   end
 

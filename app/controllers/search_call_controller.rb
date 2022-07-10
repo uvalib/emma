@@ -32,7 +32,9 @@ class SearchCallController < ApplicationController
   #
   # @type [Boolean]
   #
-  EXPAND_JSON = true
+  # @note Turned off until SqlMethods is updated for Postgres JSON fields.
+  #
+  EXPAND_JSON = false
 
   # ===========================================================================
   # :section: Authentication
@@ -67,14 +69,15 @@ class SearchCallController < ApplicationController
     prm       = @page.initial_parameters
     @extended = prm.key?(:expand) ? true?(prm.delete(:expand)) : EXPAND_JSON
     search    = prm.delete(:like) # TODO: :like param
-    search  &&= build_query_options(search)
-    search  ||= search_call_params(prm) # TODO: remove - testing
+    search    = search ? build_query_options(search) : {}
     @list =
       if @extended
         SearchCall.extended_table(search)
       else
         get_search_calls(search)
       end
+    @list.limit!(prm[:limit])   if prm[:limit]  # TODO: temporary
+    @list.offset!(prm[:offset]) if prm[:offset] # TODO: temporary
     @list = @list.to_a
     @page.finalize(@list, **search)
     respond_to do |format|

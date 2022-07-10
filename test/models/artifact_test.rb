@@ -7,7 +7,7 @@ require 'test_helper'
 
 class ArtifactTest < ActiveSupport::TestCase
 
-  test 'valid artifact' do
+  test 'model - valid artifact' do
     run_test(__method__) do
       item = sample_artifact
       show item

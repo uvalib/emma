@@ -1,2 +1,3 @@
 class EditionsTest < ApplicationSystemTestCase
+  CONTROLLER: Symbol
 end

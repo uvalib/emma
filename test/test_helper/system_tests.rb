@@ -10,11 +10,8 @@ module TestHelper::SystemTests
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-
-    # Alias for Capybara::Node::Actions#click_link_or_button which isn't being
-    # seen by RubyMine dynamic checking for some reason.
-    def click_on(locator = nil, **opt); click_link_or_button(locator, opt); end
-
+    include Capybara::Node::Actions                 # for :click_on alias
+    include TestHelper::SystemTests::Authentication # disambiguate :sign_in_as
     # :nocov:
   end
 
@@ -30,7 +27,7 @@ module TestHelper::SystemTests
   #
   def self.included(base)
     include_submodules(base, __FILE__) do |name|
-      next if (name == :Bookshare) && !TESTING_BOOKSHARE_API
+      (name != :Bookshare) || TEST_BOOKSHARE.present?
     end
   end
 

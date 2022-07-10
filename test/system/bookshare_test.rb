@@ -13,25 +13,33 @@ class BookshareTest < ApplicationSystemTestCase
   # ===========================================================================
   # :section: Verify Bookshare API definitions.
   # ===========================================================================
-  #
+
   test 'bookshare - API methods' do
+    methods   = BookshareService.api_methods
+    max_width = methods.keys.map(&:size).max
     reference = {}
     duplicate = {}
-    BookshareService.api_methods.each_pair do |method, properties|
+    methods.sort.each do |meth, properties|
       next if (ref_id = properties[:reference_id].to_s).blank?
       if (existing_method = reference[ref_id])
         duplicate[ref_id] ||= [existing_method]
-        duplicate[ref_id] << method
+        duplicate[ref_id] << meth
       else
-        reference[ref_id] = method
+        reference[ref_id] = meth
       end
+      space = ' ' * (max_width - meth.size)
+      dup   = ('[duplicate]' if existing_method)
+      show ":#{meth} -> #{space}##{ref_id} #{dup}"
     end
     assert duplicate.blank?, ->() {
-      duplicate.map { |element_id, methods|
-        "#{element_id}: #{methods.join(', ')}"
+      max_width = duplicate.keys.map(&:size).max
+      duplicate.map { |ref_id, meths|
+        space = ' ' * (max_width - ref_id.size)
+        meths = meths.map(&:inspect).join(', ')
+        "##{ref_id} -> #{space}#{meths}"
       }.unshift('Same :reference_id for two or more API methods:').join("\n")
     }
-  end
+  end if TEST_BOOKSHARE.include?(:methods)
 
   # ===========================================================================
   # :section: Verify Bookshare API request implementation
@@ -122,7 +130,7 @@ class BookshareTest < ApplicationSystemTestCase
     failures = failure_list('BookshareService methods', missing, problems)
     assert failures.blank?, failures
 
-  end if TESTING_API_REQUESTS
+  end if TEST_BOOKSHARE.include?(:requests)
 
   # ===========================================================================
   # :section: Verify Bookshare API record implementation
@@ -223,6 +231,6 @@ class BookshareTest < ApplicationSystemTestCase
     failures = failure_list('Bookshare API record types', missing, problems)
     assert failures.blank?, failures
 
-  end if TESTING_API_RECORDS
+  end if TEST_BOOKSHARE.include?(:records)
 
-end if TESTING_BOOKSHARE_API
+end

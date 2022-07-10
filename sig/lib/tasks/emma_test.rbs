@@ -1,0 +1,23 @@
+SYSTEM_DIR: String
+
+class Object
+  def run_interactive_tests: (?except: String|strArray) -> void
+
+  def run_data_tests: () -> void
+
+  def set_test_formats: (*(Symbol|symArray) values) -> void
+
+  def run_serialization_tests: () -> void
+
+  def set_test_bookshare: (*(Symbol|symArray) values) -> void
+
+  def run_bs_api_tests: () -> void
+
+  # Run the specified tests.
+  #
+  # @param [Array] test_files       Default: "test/**/*_test.rb"
+  #
+  # @return [void]
+  #
+  def run_tests: (*String test_files) -> void
+end

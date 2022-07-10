@@ -1,0 +1,14 @@
+module Capybara
+  module Lockstep
+    module HelperExt
+      # This override, in conjunction with the Javascript module, allows
+      # 'capybara-lockstep' to work with Turbolinks.
+      #
+      # @return [String]
+      #
+      # @see file:app/assets/javascripts/vendor/capybara-lockstep.js
+      #
+      def capybara_lockstep_js: () -> String
+    end
+  end
+end

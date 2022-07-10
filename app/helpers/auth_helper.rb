@@ -98,7 +98,17 @@ module AuthHelper
     User.where(email: accounts).map { |u|
       token = u.access_token
       [u.uid, stored_auth_entry_value(token)] if token.present?
-    }.compact.to_h
+    }.compact.to_h.tap { |result|
+      if Rails.env.test?
+        # A convenience for automated tests in order to present button(s)
+        # allowing sign-in as administrator(s).
+        User.where('effective_id IS NOT NULL').each do |admin|
+          # noinspection RailsChecklist05
+          token = (eid = admin.effective_id) && User.find(eid)&.access_token
+          result[admin.uid] = stored_auth_entry_value(token) if token.present?
+        end
+      end
+    }
   end
 
   # Add or update one or more user name/token entries.

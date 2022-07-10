@@ -110,10 +110,9 @@ public
 # @return [Array<Module>]             The modules included into *base*.
 #
 # @yield [name, mod] Access the module before including in *base*.
-#   Use 'next' within the block to skip inclusion of that module.
 # @yieldparam [Symbol] name
 # @yieldparam [Module] mod
-# @yieldreturn [void]
+# @yieldreturn [bool] if *false* the module will not be included.
 #
 # @see #require_submodules
 #
@@ -127,7 +126,7 @@ def include_submodules(base, filename = nil)
   curr_constants.map { |name|
     mod = "#{self}::#{name}".safe_constantize
     next unless mod.is_a?(Module) && !mod.is_a?(Class)
-    yield(name, mod) if block_given?
+    next unless !block_given? || yield(name, mod)
     base.send(:include, mod)
     mod
   }.compact

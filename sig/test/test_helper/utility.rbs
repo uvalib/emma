@@ -1,6 +1,8 @@
 # General utility methods.
 #
 module TestHelper::Utility
+  include TestHelper::Common
+
   CDN_URL: String
 
   # The URL for a catalog title thumbnail.
@@ -19,4 +21,69 @@ module TestHelper::Utility
   # @return [nil]                     If *user* could not be converted.
   #
   def find_user: (String|Symbol|User|untyped|nil user) -> (User | nil)
+
+  # Return multiple User instances.
+  #
+  # @param [Array] users
+  #
+  # @return [Array<User>]
+  #
+  def find_users: (*(anyArray|String|Symbol|User|untyped|nil) users) -> Array[User|nil]
+
+  # The number of fixture records for the given model.
+  #
+  # @param [Model,Symbol,String] model
+  #
+  # @return [Integer]
+  #
+  def fixture_count: () -> Integer
+
+  # Extract the EMMA index entry identifier from the item.
+  #
+  # @param [SearchResult, nil] item
+  # @param [String, nil]       repo
+  # @param [String, nil]       rid
+  # @param [String, nil]       format
+  # @param [String, nil]       ver
+  #
+  # @return [String]
+  #
+  def record_id: ( SearchResult item, ?repo: String|nil, ?rid: String|nil, ?format: String|nil, ?ver: String|nil) -> String
+               | (?nil          item,  repo: String,      rid: String,      format: String,     ?ver: String|nil) -> String
+
+  # Note in the output that a test was skipped because it was not applicable.
+  #
+  # @param [String, nil] note         Additional annotation.
+  #
+  # @return [true]
+  #
+  def not_applicable: (?(String|nil) note) -> true
+
+  # Note in the output that a test was skipped because the given format was not
+  # applicable (or if none was given whether any of the currently configured
+  # formats in #TEST_FORMATS are applicable).
+  #
+  # @param [Array, Symbol, nil] fmt
+  # @param [String, nil]        note  Additional annotation.
+  # @param [Array, Symbol]      only  Applicable format(s).
+  #
+  # @return [true]                    If the test should proceed.
+  # @return [false]                   If the test should be skipped.
+  #
+  def allowed_format: ((Symbol|symArray|nil) fmt, ?(String|nil) note, only: Symbol|symArray) -> bool
+                    | (                           ?(String|nil) note, only: Symbol|symArray) -> bool
+
+  # Give the target controller for the current context.
+  #
+  # @return [Symbol]
+  #
+  def this_controller: () -> Symbol
+
+  # Derive the name of the model/controller from the given source.
+  #
+  # @param [Symbol, String, Class, nil] src
+  #
+  # @return [Symbol]
+  #
+  def controller_name: ((Symbol|String|Class) src) -> Symbol
 end

@@ -5,6 +5,12 @@
 #   @return [Array<Search::Record::MetadataRecord>,Array<Search::Record::TitleRecord>]
 #
 class SearchesDecorator < BaseCollectionDecorator
+  # This causes automated testing to slow down too much.
+  #
+  # @type [Boolean]
+  #
+  SEARCH_ANALYSIS: bool
+
   # Controls for applying one or more search style variants.
   #
   # @param [Hash] opt                 Passed to outer #html_div.

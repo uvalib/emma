@@ -7,7 +7,7 @@ require 'test_helper'
 
 class SearchCallTest < ActiveSupport::TestCase
 
-  test 'valid search call' do
+  test 'model - valid search call' do
     run_test(__method__) do
       item = sample_search_call
       show item

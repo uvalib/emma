@@ -1,7 +1,7 @@
 # Support for checking index pages and search results.
 #
 module TestHelper::SystemTests::Index
-  include TestHelper::SystemTests::Common
+  include TestHelper::SystemTests::Action
 
   SEARCH_COUNT_CLASS: String
 
@@ -11,74 +11,86 @@ module TestHelper::SystemTests::Index
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol, nil] model
-  # @param [String]      title
-  # @param [String]      heading
-  # @param [Integer]     index
-  # @param [Integer]     page
-  # @param [Integer]     size
-  # @param [Hash]        terms
-  # @param [Hash]        opt          Passed to #assert_valid_page.
+  # @param [Symbol]  model
+  # @param [Integer] index
+  # @param [Integer] total
+  # @param [Integer] page
+  # @param [Integer] size
+  # @param [Hash]    terms
+  # @param [Hash]    opt              Passed to #assert_valid_action_page.
   #
-  # @return [void]
+  # @return [true]
   #
-  def assert_valid_index_page: (Symbol|nil model, ?title: String|nil, ?heading: String|nil, ?index: Integer|nil, ?page: Integer|nil, ?size: Integer|nil, ?terms: anyHash|nil, **untyped opt) -> void
+  # @raise [Minitest::Assertion]
+  #
+  def assert_valid_index_page: (Symbol model, ?index: Integer|nil, ?total: Integer|nil, ?page: Integer|nil, ?size: Integer|nil, ?terms: anyHash|nil, **untyped opt) -> true
 
   # Generate a string for search terms as they would appear in the '<title>'
   # element.
   #
-  # @param [Hash] terms               Except:
-  #
-  # @option terms [Boolean] :label    Default: *true*.
-  # @option terms [Boolean] :quote    Default: *true*
+  # @param [Symbol] model
+  # @param [Hash]   terms
   #
   # @return [String]
   #
-  def title_terms: (**untyped terms) -> String
+  def title_terms: (Symbol model, **untyped terms) -> String
 
   # Assert that each active search term is displayed on the index page.
   #
   # @param [Hash] terms
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # NOTE: The active search terms are no longer displayed on the page.
   #
-  def assert_search_terms: (**untyped terms) -> void
+  def assert_search_terms: (**untyped terms) -> true
 
   # Assert that a search count is displayed on the index page.
   #
-  # @param [Symbol, nil] model
-  # @param [Integer]     total
-  # @param [String]      count
+  # @param [Symbol]  model
+  # @param [Integer] total
+  # @param [String]  records
   #
-  # @return [void]
+  # @return [true]
   #
-  def assert_search_count: (Symbol|nil model, ?total: Integer|nil, ?count: String|nil) -> void
+  # @raise [Minitest::Assertion]      If the count is not displayed.
+  # @raise [RuntimeError]             If *records* is not given or found.
+  #
+  def assert_search_count: (Symbol model, ?total: Integer|nil, ?records: String|nil, **untyped) -> true
 
   # visit_index
   #
-  # @param [Symbol, String] url
+  # @param [Symbol, String] target
+  # @param [Symbol]         action
+  # @param [Symbol, nil]    model
   # @param [Hash]           opt       Passed to #assert_valid_index_page.
   #
-  # @return [void]
+  # @option opt [Symbol] :model       If *url* is a String.
+  #
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  def visit_index: (Symbol|String url, **untyped opt) { () -> void } -> void
+  def visit_index: ((Symbol|String) target, ?action: Symbol, ?model: Symbol|nil, **untyped opt) ?{ () -> void } -> true
 
   # visit_each_show_page
   #
   # @param [Symbol] model
-  # @param [String] entry_class
+  # @param [String] entry_css
   #
   # @return [void]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield [index, title] Exposes each visited page for additional actions.
   # @yieldparam [Integer] index
   # @yieldparam [String]  title
   # @yieldreturn [void]
   #
-  def visit_each_show_page: (Symbol model, ?entry_class: String|nil) { (Integer, String) -> void } -> void
+  def visit_each_show_page: (Symbol model, ?entry_css: String|nil) ?{ (Integer, String) -> void } -> void
 end

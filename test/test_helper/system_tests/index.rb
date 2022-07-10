@@ -7,7 +7,14 @@
 #
 module TestHelper::SystemTests::Index
 
-  include TestHelper::SystemTests::Common
+  include TestHelper::SystemTests::Action
+  include SearchTermsHelper # for :search_terms
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   SEARCH_COUNT_CLASS = '.search-count'
   SEARCH_TERMS_CLASS = '.search-terms' # TODO: test on header facet selections
@@ -21,32 +28,38 @@ module TestHelper::SystemTests::Index
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol, nil] model
-  # @param [String]      title
-  # @param [String]      heading
-  # @param [Integer]     index
-  # @param [Integer]     page
-  # @param [Integer]     size
-  # @param [Hash]        terms
-  # @param [Hash]        opt          Passed to #assert_valid_page.
+  # @param [Symbol]  model
+  # @param [Integer] index
+  # @param [Integer] total
+  # @param [Integer] page
+  # @param [Integer] size
+  # @param [Hash]    terms
+  # @param [Hash]    opt              Passed to #assert_valid_action_page.
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_valid_index_page(
     model,
-    title:   nil,
-    heading: nil,
-    index:   nil,
-    page:    nil,
-    size:    nil,
-    terms:   nil,
+    index: nil,
+    total: nil,
+    page:  nil,
+    size:  nil,
+    terms: nil,
     **opt
   )
+    terms = terms.presence
+    prop  = property(model, :index)&.slice(:title, :heading)
+    opt.reverse_merge!(prop) if prop.present?
+    if (terms = terms.presence)
+      opt[:title] &&= "#{opt[:title]} - #{title_terms(model, **terms)} |"
+    end
+
     # Validate page properties.
-    title   ||= PROPERTY.dig(model, :index, :title)
-    title   &&= "#{title} - #{title_terms(**terms)} |" if terms.present?
-    heading ||= PROPERTY.dig(model, :index, :heading)
-    assert_valid_page title: title, heading: heading, **opt
+    assert_valid_action_page(model, :index, **opt)
+    assert_search_terms(**terms)                    if terms
+    assert_search_count(model, total: total, **opt) if terms || total
 
     # Validate pagination if provided.
     if index || page
@@ -57,45 +70,35 @@ module TestHelper::SystemTests::Index
       (index <= size) ? assert_first_page : assert_not_first_page
       # assert_selector 'h2.number', text: index.to_s # TODO: Page number?
     end
-
-    # For search results, *terms* will at least be an empty hash.
-    unless terms.nil?
-      assert_search_terms(**terms)
-      assert_search_count(model, **opt)
-    end
+    true
   end
 
   # Generate a string for search terms as they would appear in the '<title>'
   # element.
   #
-  # @param [Hash] terms               Except:
-  #
-  # @option terms [Boolean] :label    Default: *true*.
-  # @option terms [Boolean] :quote    Default: *true*
+  # @param [Symbol] model
+  # @param [Hash]   terms
   #
   # @return [String]
   #
-  def title_terms(**terms)
-    show_type   = !terms.key?(:label) || terms.delete(:label)
-    quote_value = !terms.key?(:quote) || terms.delete(:quote)
-    query_keys  = SearchTermsHelper::QUERY_PARAMETERS[:search]
-    terms.map { |k, v|
-      k =
-        if show_type && !query_keys.include?(k)
-          n = v.is_a?(Enumerable) ? v.size : 1
-          inflection(k.to_s.capitalize, n)
-        end
-      v = strip_quotes(v)
-      v = quote(v) if quote_value
-      [k, v].compact.join(': ')
-    }.join('; ')
+  def title_terms(model, **terms)
+    search_terms(model, pairs: terms).map { |_field, term|
+      next if term.blank?
+      if term.query?
+        array_string(term.names, inspect: true)
+      else
+        "#{term.label}: " + array_string(term.values, inspect: true)
+      end
+    }.compact.join(' | ')
   end
 
   # Assert that each active search term is displayed on the index page.
   #
   # @param [Hash] terms
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # NOTE: The active search terms are no longer displayed on the page.
   #
@@ -103,26 +106,29 @@ module TestHelper::SystemTests::Index
   # noinspection RubyDeadCode
   #++
   def assert_search_terms(**terms)
-    return # TODO: test on header facet selections
+    return true # TODO: test on header facet selections
     terms.each_value do |value|
       assert_selector VALUE_SELECTOR, text: value
     end
+    true
   end
 
   # Assert that a search count is displayed on the index page.
   #
-  # @param [Symbol, nil] model
-  # @param [Integer]     total
-  # @param [String]      count
+  # @param [Symbol]  model
+  # @param [Integer] total
+  # @param [String]  records
   #
-  # @return [void]
+  # @return [true]
   #
-  def assert_search_count(model, total: nil, count: nil)
-    count ||= PROPERTY.dig(model, :index, :count)
-    if count.present?
-      count = "#{total} #{count}" if total.present?
-      assert_selector SEARCH_COUNT_CLASS, text: count
-    end
+  # @raise [Minitest::Assertion]      If the count is not displayed.
+  # @raise [RuntimeError]             If *records* is not given or found.
+  #
+  def assert_search_count(model, total: nil, records: nil, **)
+    records ||= property(model, :index, :count)
+    raise "#{model} unit could not be determined" unless records
+    records = "#{total} #{records}".strip if total.present?
+    assert_selector SEARCH_COUNT_CLASS, text: records
   end
 
   # ===========================================================================
@@ -133,21 +139,25 @@ module TestHelper::SystemTests::Index
 
   # visit_index
   #
-  # @param [Symbol, String] url
+  # @param [Symbol, String] target
+  # @param [Symbol]         action
+  # @param [Symbol, nil]    model
   # @param [Hash]           opt       Passed to #assert_valid_index_page.
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  def visit_index(url, **opt)
-    model = nil
-    # noinspection RailsParamDefResolve
-    if url.is_a?(Symbol)
-      model = url
-      terms = opt[:terms] || {}
-      url   = url_for(controller: model, action: :index, **terms)
+  def visit_index(target, action: :index, model: nil, **opt)
+    if target.is_a?(Symbol)
+      u_opt = extract_hash!(opt, :limit, :offset)
+      u_opt.merge!(opt[:terms]) if opt[:terms].present?
+      url   = url_for(controller: target, action: action, **u_opt)
+    else
+      url, target = [target, nil]
     end
     visit url
     if block_given?
@@ -155,32 +165,38 @@ module TestHelper::SystemTests::Index
     else
       show_url
     end
+    model ||= target || this_controller
     # noinspection RubyMismatchedArgumentType
     assert_valid_index_page(model, **opt)
+    success_screenshot
   end
 
   # visit_each_show_page
   #
   # @param [Symbol] model
-  # @param [String] entry_class
+  # @param [String] entry_css
   #
   # @return [void]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield [index, title] Exposes each visited page for additional actions.
   # @yieldparam [Integer] index
   # @yieldparam [String]  title
   # @yieldreturn [void]
   #
-  def visit_each_show_page(model, entry_class: nil)
-    entry_class ||= PROPERTY.dig(model, :index, :entry_class)
-    entry_count = all(entry_class).size
+  def visit_each_show_page(model, entry_css: nil, &block)
+    entry_css ||= property(model, :index, :entry_css)
+    raise "#{model} entry_css could not be determined" unless entry_css
+    entry_count = all(entry_css).size
     max_index = entry_count - 1
     (0..max_index).each do |index|
-      visit_show_page(model, entry_class: entry_class, index: index) do |title|
-        yield(index, title) if block_given?
+      visit_show_page(model, entry_css: entry_css, index: index) do |title|
+        block&.call(index, title)
       end
       go_back # Return to index page.
     end
+    true
   end
 
 end

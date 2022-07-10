@@ -8,47 +8,22 @@ ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/boot'
 require_relative '../config/environment'
 
+require 'capybara/rails'
 require 'rails/test_help'
 require 'webdrivers'
 
-# =============================================================================
-# Test control values
-# =============================================================================
+# If *true* then #show and #show_reflections will produce output on the
+# console.
+#
+# @type [Boolean]
+#
+DEBUG_TESTS = true
 
-public
-
-# The output format(s) to test.
+# The base URL for relative requests.
 #
-# The current test task may have already set this constant; if not the default
-# value set here will be used.
+# @type [String]
 #
-# @type [Array<Symbol>]
-#
-# @see file:lib/tasks/test_application.rake
-#
-TEST_FORMATS ||= %i[html]
-
-TESTING_HTML = TEST_FORMATS.include?(:html)
-TESTING_JSON = TEST_FORMATS.include?(:json)
-TESTING_XML  = TEST_FORMATS.include?(:xml)
-
-# Bookshare API aspects to test.
-#
-# The current test task may have already set this constant; if not the default
-# value set here will be used.
-#
-# @type [Array<Symbol>]
-#
-# @see file:lib/tasks/test_application.rake
-#
-# == Usage Notes
-# No Bookshare-specific tests are run unless specified by the test task.
-#
-TEST_BOOKSHARE ||= []
-
-TESTING_BOOKSHARE_API = TEST_BOOKSHARE.present?
-TESTING_API_REQUESTS  = TEST_BOOKSHARE.include?(:requests)
-TESTING_API_RECORDS   = TEST_BOOKSHARE.include?(:records)
+BASE_URL = 'http://localhost'
 
 # =============================================================================
 # Test helpers
@@ -60,18 +35,13 @@ public
 #
 module TestHelper
 
-  # The base URL for relative requests.
-  #
-  # @type [String]
-  #
-  BASE_URL = 'http://localhost'
+  require_submodules(__FILE__)
 
-  # If *true* then #show and #show_reflections will produce output on the
-  # console.
-  #
-  # @type [Boolean]
-  #
-  DEBUG_TESTS = true
+  include CommandLine
+  include Debugging
+  include IntegrationTests
+  include Samples
+  include Utility
 
   # ===========================================================================
   # :section:
@@ -86,11 +56,43 @@ module TestHelper
   #
   def self.included(base)
     include_submodules(base, __FILE__) do |name|
-      next if name == :SystemTests
+      name != :SystemTests
     end
   end
 
 end
+
+# =============================================================================
+# Test control values
+# =============================================================================
+
+public
+
+# The output format(s) to test.
+#
+# The current test task may have already set this constant; if not the default
+# value set here will be used.
+#
+# @type [Array<Symbol>]
+#
+# @see file:lib/tasks/emma_test.rake
+#
+TEST_FORMATS ||= TestHelper.cli_env_test_formats
+
+# Bookshare API aspects to test.
+#
+# The current test task may have already set this constant; if not the default
+# value set here will be used.
+#
+# @type [Array<Symbol>]
+#
+# @see file:lib/tasks/emma_test.rake
+#
+# == Usage Notes
+# No Bookshare-specific tests are run unless specified by the test task or if
+# run explicitly from the IDE.
+#
+TEST_BOOKSHARE ||= TestHelper.cli_env_test_bookshare
 
 # =============================================================================
 # Setup system test support classes
@@ -98,10 +100,7 @@ end
 
 public
 
-# Setup decorators.
-Draper::ViewContext.test_strategy :fast
-
-# Augment the base class for test cases.
+# Augment the base class for test cases (models).
 #
 class ActiveSupport::TestCase
 
@@ -116,26 +115,37 @@ class ActiveSupport::TestCase
 
 end
 
-# Augment the base class for integration test cases.
+# Augment the base class for integration test cases (controllers).
 #
 class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
+  include TestHelper #::Samples
   include TestHelper::Debugging::Trace
+  extend  TestHelper::Utility
 end
 
 # Make relative paths expand correctly.
 #
 class ActionDispatch::Integration::Session
-  self.default_url_options = { host: URI(TestHelper::BASE_URL).host }
+  self.default_url_options = { host: URI(BASE_URL).host }
 end
 
-# Set up system testing.
-#
+# =============================================================================
+# Gem test setup
+# =============================================================================
+
+# Setup system testing.
 Capybara.configure do |config|
-  config.app_host              = TestHelper::BASE_URL
-  config.default_host          = TestHelper::BASE_URL
-  config.default_max_wait_time = 60
-  # config.allow_gumbo = true             # TODO: ??? (default is false)
-  # config.enable_aria_label = true       # TODO: ??? (default is false)
-  # config.ignore_hidden_elements = false # TODO: ??? (default is true)
+  config.server = [:puma, { Threads: '0:1' }]
+  config.app_host               = BASE_URL
+  config.default_host           = BASE_URL
+# config.default_max_wait_time  = 5                     # default: 2
+# config.enable_aria_label      = true                  # default: false
+# config.enable_aria_role       = true                  # default: false
+# config.ignore_hidden_elements = false                 # default: true
+# config.threadsafe             = true                  # default: false
+  config.use_html5_parsing      = true                  # default: false
 end
+
+# Setup decorators.
+Draper::ViewContext.test_strategy :fast

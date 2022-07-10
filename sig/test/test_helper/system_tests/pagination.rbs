@@ -4,7 +4,7 @@ module TestHelper::SystemTests::Pagination
   include TestHelper::SystemTests::Index
 
   # :nocov:
-  include Capybara::Minitest::Assertions
+  #include Capybara::Minitest::Assertions
 
   NEXT_LABEL: String
 
@@ -12,41 +12,61 @@ module TestHelper::SystemTests::Pagination
 
   # Assert that this is the first page of search results.
   #
-  def assert_first_page: () -> void
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
+  #
+  def assert_first_page: () -> true
 
   # Assert that this is the last page of search results.
   #
-  def assert_last_page: () -> void
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
+  #
+  def assert_last_page: () -> true
 
   # Assert that this is not the first page of search results.
   #
-  def assert_not_first_page: () -> void
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
+  #
+  def assert_not_first_page: () -> true
 
   # Assert that this is not the first page of search results.
   #
-  def assert_not_last_page: () -> void
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
+  #
+  def assert_not_last_page: () -> true
 
   # Visit the next page of search results.
   #
-  # @param [Symbol, nil] model
-  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  # @param [Symbol] model
+  # @param [Hash]   opt               Passed to #assert_valid_index_page.
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  def visit_next_page: (Symbol|nil model, **untyped opt) { () -> void } -> void
+  def visit_next_page: (Symbol model, **untyped opt) ?{ () -> void } -> true
 
   # Visit the previous page of search results.
   #
-  # @param [Symbol, nil] model
-  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  # @param [Symbol] model
+  # @param [Hash]   opt               Passed to #assert_valid_index_page.
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  def visit_prev_page: (Symbol|nil model, **untyped opt) { () -> void } -> void
+  def visit_prev_page: (Symbol model, **untyped opt) ?{ () -> void } -> true
 end

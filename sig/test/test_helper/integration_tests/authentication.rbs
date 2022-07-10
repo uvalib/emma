@@ -66,13 +66,14 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @param [String, Symbol, User, nil] user
   # @param [Hash]                      opt    Passed to #run_test.
+  # @param [Proc]                      block  Required.
   #
   # @return [void]
   #
   # @yield Test code to run while signed-on as *user*.
   # @yieldreturn [void]
   #
-  def as_user: (String|Symbol|User|nil user, **untyped opt) { () -> untyped } -> void
+  def as_user: (String|Symbol|User|nil user, **untyped opt) { () -> void } -> void
 
   # Invoke an endpoint as the given user.
   #
@@ -89,7 +90,7 @@ module TestHelper::IntegrationTests::Authentication
   # @yield The caller may provide added assertions or other post-send actions.
   # @yieldreturn [void]
   #
-  def send_as: (Symbol verb, String|Symbol|User|nil user, String url, **untyped opt) { () -> void } -> void
+  def send_as: (Symbol verb, String|Symbol|User|nil user, String url, **untyped opt) ?{ () -> void } -> void
 
   # HTTP GET *url* as *user*.
   #

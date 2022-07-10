@@ -11,7 +11,7 @@ require 'emma/rake'
 # Tasks
 # =============================================================================
 
-namespace :emma_data do
+namespace 'emma:data' do
 
   # Current EMMA Unified Search API version.
   #
@@ -40,8 +40,8 @@ namespace :emma_data do
       show "Migrating EMMA data to API version '#{version}':" # TODO: I18n
       db_commit  = commit
       idx_commit = commit && production_deployment?
-      subtask('emma_data:data_migrate', version: version, commit: db_commit)
-      subtask('emma_data:reindex', version: version, commit: idx_commit)
+      subtask('emma:data:data_migrate', version: version, commit: db_commit)
+      subtask('emma:data:reindex', version: version, commit: idx_commit)
       EmmaStatus.api_version = version if db_commit
     end
 
@@ -192,13 +192,13 @@ namespace :emma_data do
   # desc 'Required prerequisites for tasks in this namespace.'
   task prerequisites: %w(environment db:load_config)
 
-  # desc 'An alias for "rake emma_data:data_migrate".'
-  task api_migrate: :data_migrate
-
-  # desc 'An alias for "rake emma_data:reindex".'
-  task bulk_reindex: :reindex
-
-  # desc 'An alias for "rake emma_data:outdated:list".'
-  task outdated: 'outdated:list'
-
 end
+
+# desc 'An alias for "rake emma:data:data_migrate".'
+task 'emma:api_migrate' => 'emma:data:data_migrate'
+
+# desc 'An alias for "rake emma:data:reindex".'
+task 'emma:bulk_reindex' => 'emma:data:reindex'
+
+# desc 'An alias for "rake emma:data:outdated:list".'
+task 'emma:outdated' => 'emma:data:outdated:list'

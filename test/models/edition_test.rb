@@ -7,7 +7,7 @@ require 'test_helper'
 
 class EditionTest < ActiveSupport::TestCase
 
-  test 'valid periodical edition' do
+  test 'model - valid periodical edition' do
     run_test(__method__) do
       item = sample_edition
       show item
@@ -15,7 +15,7 @@ class EditionTest < ActiveSupport::TestCase
     end
   end
 
-  test 'add artifact to edition' do
+  test 'model - add artifact to edition' do
     run_test(__method__) do
       item = sample_edition
       item.artifacts.create(format: 'DAISY')

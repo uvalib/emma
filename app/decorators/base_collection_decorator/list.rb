@@ -163,7 +163,7 @@ module BaseCollectionDecorator::List
   # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
   def list_styles(**opt)
-    # May be overridden by the subclass.
+    # Overridden by the subclass if configured for search analysis.
   end
 
   # Optional list result type controls in line with the top pagination control.

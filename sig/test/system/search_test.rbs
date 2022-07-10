@@ -1,3 +1,19 @@
 class SearchTest < ApplicationSystemTestCase
+  CONTROLLER: Symbol
+
+  OPTIONS: symHash
+
   PAGE_COUNT: Integer
+
+  TITLE_SEARCH_TERM: String
+
+  # Await the indicated page then output its :prev and :next links.
+  #
+  # @param [Integer] index
+  # @param [String]  base_url
+  # @param [String]  expected_url
+  #
+  # @return [void]
+  #
+  def show_page: (Integer index, ?base_url: String|nil, ?expected_url: String|nil) -> void
 end

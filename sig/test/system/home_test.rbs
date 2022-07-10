@@ -1,2 +1,3 @@
 class HomeTest < ApplicationSystemTestCase
+  INDEX_TITLE: String
 end

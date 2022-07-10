@@ -159,6 +159,7 @@ group :test do
 
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara'
+  gem 'capybara-lockstep'
   gem 'selenium-webdriver'
 
   # Automatic installation and updates for all supported webdrivers.

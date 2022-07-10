@@ -2,14 +2,21 @@
 #
 # @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #
-# NOTE: Extract saved access tokens from the production database User table
-# and supply them via environment variables (as indicated below).
+# IDs are explicitly given here so that :effective_id can be assigned a fixed
+# value in the database.  This allows AuthHelper#stored_auth_fetch to see the
+# :developer entry as an administrator at load time (which allows a convenience
+# "Sign in as" button to be generated for that user).
+#
+# NOTE: in the test harness use `rake emma:test:users` to extract saved access
+#   tokens from the (local) production database User table in order to supply
+#   them via the environment variables used below.
 
 # =============================================================================
 # Current existing users of interest
 # =============================================================================
 
 emmadso:
+  id:           1
   email:        emmadso@bookshare.org
   access_token: <%= ENV['EMMADSO_TOKEN'] %>
   roles:
@@ -21,6 +28,7 @@ emmadso:
     - membership_modify
 
 emmacollection:
+  id:           2
   email:        emmacollection@bookshare.org
   access_token: <%= ENV['EMMACOLLECTION_TOKEN'] %>
   roles:
@@ -28,6 +36,7 @@ emmacollection:
     - catalog_submit
 
 emmamembership:
+  id:           3
   email:        emmamembership@bookshare.org
   access_token: <%= ENV['EMMAMEMBERSHIP_TOKEN'] %>
   roles:
@@ -35,12 +44,18 @@ emmamembership:
     - membership_view
     - membership_modify
 
-# =============================================================================
-# Examples
-# =============================================================================
-
-example:
-  email:      rwl@virginia.edu
-  first_name: Ray
-  last_name:  Lubinsky
-  roles:      developer
+developer:
+  id:           13
+  email:        rwl@virginia.edu
+  first_name:   Ray
+  last_name:    Lubinsky
+  effective_id: 1
+  roles:
+    - catalog_search
+    - catalog_submit
+    - artifact_download
+    - artifact_submit
+    - membership_view
+    - membership_modify
+    - administrator
+    - developer

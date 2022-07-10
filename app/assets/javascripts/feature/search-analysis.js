@@ -64,7 +64,7 @@ export function cloneTitle(item, title) {
 // ============================================================================
 
 // noinspection FunctionTooLongJS
-$(document).on('turbolinks:load', function() {
+Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
 
     /**
      * Search page <body>.

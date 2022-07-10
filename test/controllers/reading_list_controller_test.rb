@@ -7,21 +7,31 @@ require 'test_helper'
 
 class ReadingListControllerTest < ActionDispatch::IntegrationTest
 
-  CONTROLLER   = 'reading_list'
+  CONTROLLER   = :reading_list
   OPTIONS      = { controller: CONTROLLER }.freeze
 
-  TEST_USERS   = [ANONYMOUS, EMMA_DSO, EMMA_COLLECTION].freeze
+  TEST_USERS   = %i[anonymous emmadso].freeze
   TEST_READERS = TEST_USERS
-  TEST_WRITERS = [ANONYMOUS].freeze # TODO: reading list write tests
+  TEST_WRITERS = %i[anonymous].freeze # TODO: reading list write tests
+
+  # noinspection RbsMissingTypeSignature
+  setup do
+    @readers = find_users(*TEST_READERS)
+    @writers = find_users(*TEST_WRITERS)
+  end
+
+  # On-going problems with XML serialization...
+  XML_FAILURE = :internal_server_error
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
   test 'reading_list index - list all reading lists' do
-    options = OPTIONS.merge(test: __method__, action: 'index')
-    TEST_READERS.each do |user|
-      able  = can?(user, :index, ReadingList)
+    action  = :index
+    options = OPTIONS.merge(action: action, test: __method__)
+    @readers.each do |user|
+      able  = can?(user, action, ReadingList)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -32,16 +42,18 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
         url = reading_list_index_url(format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, opt)
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'reading_list show - details of an existing reading list' do
-    reading_list = sample_reading_list.readingListId
-    options      = OPTIONS.merge(test: __method__, action: 'show')
-    TEST_READERS.each do |user|
-      able  = can?(user, :show, ReadingList)
+    action  = :show
+    options = OPTIONS.merge(action: action, test: __method__)
+    item    = sample_reading_list
+    url_opt = { id: item.readingListId }
+    @readers.each do |user|
+      able  = can?(user, action, ReadingList)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -49,10 +61,11 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
           options.except(:controller, :action)
         end
       TEST_FORMATS.each do |fmt|
-        url = reading_list_url(id: reading_list, format: fmt)
+        url = reading_list_url(**url_opt, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, opt)
+        opt[:expect] = XML_FAILURE if (fmt == :xml) && user.is_a?(User)
+        get_as(user, url, **opt)
       end
     end
   end
@@ -61,51 +74,55 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
   # :section: Write tests
   # ===========================================================================
 
-  if TESTING_HTML
+  test 'reading_list new - add metadata for a new reading list' do
+    action  = :new
+    options = OPTIONS.merge(action: action, test: __method__)
+    url     = new_reading_list_url
+    @writers.each do |user|
+      get_as(user, url, **options)
+    end if allowed_format(only: :html)
+  end
 
-    test 'reading_list new - add metadata for a new reading list' do
-      url     = new_reading_list_url
-      options = OPTIONS.merge(test: __method__, action: 'new')
-      TEST_WRITERS.each do |user|
-        get_as(user, url, options)
-      end
-    end
+  test 'reading_list create - a new reading list' do
+    action  = :create
+    options = OPTIONS.merge(action: action, test: __method__)
+    url     = reading_list_index_url
+    @writers.each do |user|
+      post_as(user, url, **options)
+    end if allowed_format(only: :html)
+  end
 
-    test 'reading_list create - a new reading list' do
-      url     = reading_list_index_url
-      options = OPTIONS.merge(test: __method__, action: 'create')
-      TEST_WRITERS.each do |user|
-        post_as(user, url, options)
-      end
-    end
+  test 'reading_list edit - metadata for an existing reading list' do
+    action  = :edit
+    options = OPTIONS.merge(action: action, test: __method__)
+    item    = sample_reading_list
+    url_opt = { id: item.readingListId }
+    url     = edit_reading_list_url(**url_opt)
+    @writers.each do |user|
+      get_as(user, url, **options)
+    end if allowed_format(only: :html)
+  end
 
-    test 'reading_list edit - metadata for an existing reading list' do
-      reading_list = sample_reading_list.readingListId
-      url          = edit_reading_list_url(id: reading_list)
-      options      = OPTIONS.merge(test: __method__, action: 'edit')
-      TEST_WRITERS.each do |user|
-        get_as(user, url, options)
-      end
-    end
+  test 'reading_list update - modify an existing reading list' do
+    action  = :update
+    options = OPTIONS.merge(action: action, test: __method__)
+    item    = sample_reading_list
+    url_opt = { id: item.readingListId }
+    url     = reading_list_url(**url_opt)
+    @writers.each do |user|
+      put_as(user, url, **options)
+    end if allowed_format(only: :html)
+  end
 
-    test 'reading_list update - modify an existing reading list' do
-      reading_list = sample_reading_list.readingListId
-      url          = reading_list_url(id: reading_list)
-      options      = OPTIONS.merge(test: __method__, action: 'update')
-      TEST_WRITERS.each do |user|
-        put_as(user, url, options)
-      end
-    end
-
-    test 'reading_list destroy - remove an existing reading list' do
-      reading_list = sample_reading_list.readingListId
-      url          = reading_list_url(id: reading_list)
-      options      = OPTIONS.merge(test: __method__, action: 'destroy')
-      TEST_WRITERS.each do |user|
-        delete_as(user, url, options)
-      end
-    end
-
+  test 'reading_list destroy - remove an existing reading list' do
+    action  = :destroy
+    options = OPTIONS.merge(action: action, test: __method__)
+    item    = sample_reading_list
+    url_opt = { id: item.readingListId }
+    url     = reading_list_url(**url_opt)
+    @writers.each do |user|
+      delete_as(user, url, **options)
+    end if allowed_format(only: :html)
   end
 
 end

@@ -1,5 +1,9 @@
 class TitlesTest < ApplicationSystemTestCase
+  CONTROLLER: Symbol
+
   PAGE_COUNT: Integer
+
+  PAGE_SIZE: Integer | nil
 
   # There were 37125 results for this search as the anonymous user as of
   # 2019-09-02.

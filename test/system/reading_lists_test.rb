@@ -7,30 +7,37 @@ require 'application_system_test_case'
 
 class ReadingListsTest < ApplicationSystemTestCase
 
-  TEST_USER = EMMA_DSO
+  CONTROLLER = :reading_list
+  TEST_USER  = :emmadso
+
+  # noinspection RbsMissingTypeSignature
+  setup do
+    @user = find_user(TEST_USER)
+  end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   test 'reading lists - visit index' do
-    run_test(__method__) do
 
-      url = reading_list_index_url
+    url = reading_list_index_url
+
+    run_test(__method__) do
 
       # Not available anonymously.
       visit url
       assert_flash alert: AUTH_FAILURE
-
-      # Successful sign-in should redirect back.
-      sign_in_as(TEST_USER)
-      show_url
-      assert_current_url url
+      sign_in_as @user
 
       # The listing should be the first of one or more results pages.
-      assert_valid_index_page(:reading_list, page: 0)
+      show_url
+      assert_current_url url
+      assert_valid_index_page(CONTROLLER, page: 0)
+      success_screenshot
 
     end
+
   end
 
 end

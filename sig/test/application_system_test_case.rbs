@@ -1,9 +1,33 @@
+# Browser choices are:
+#
+# - :chrome
+# - :chrome_headless
+# - :firefox
+# - :firebox_headless
+#
+# Chrome actually seems to have some problems (e.g., 'go_back') so it might not
+# be the best choice in general.
+#
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  BROWSER_CHOICES: symArray
+  HEADLESS: bool
 
   BROWSER: Symbol
 
-  DRIVER_OPT: symHash
+  SCREEN_SIZE: [Integer,Integer]
 
   include TestHelper::SystemTests
+end
+
+# Encapsulates setup of 'capybara-lockstep'.
+#
+module CapybaraLockstep
+
+  # This status is updated to indicate whether or not the Javascript for
+  # 'capybara-lockstep' should be included in the <head> of the page being
+  # rendered.  (It just gets in the way in controller tests if displaying the
+  # contents of the response body.)
+  #
+  # @return [Boolean]
+  #
+  attr_accessor self.active: bool
 end

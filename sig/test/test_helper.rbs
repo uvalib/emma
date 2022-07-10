@@ -1,3 +1,39 @@
+# The base URL for relative requests.
+#
+# @type [String]
+#
+BASE_URL: String
+
+# If *true* then #show and #show_reflections will produce output on the
+# console.
+#
+# @type [Boolean]
+#
+DEBUG_TESTS: bool
+
+# Support methods for tests.
+#
+module TestHelper
+  include CommandLine
+
+  include Debugging
+
+  include IntegrationTests
+
+  include Samples
+
+  include Utility
+
+  private
+
+  # Include the submodules defined in test/test_helper/*, except for
+  # TestHelper::SystemTests, which must be included separately.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end
+
 # The output format(s) to test.
 #
 # The current test task may have already set this constant; if not the default
@@ -9,12 +45,6 @@
 #
 TEST_FORMATS: symArray
 
-TESTING_HTML: bool
-
-TESTING_JSON: bool
-
-TESTING_XML: bool
-
 # Bookshare API aspects to test.
 #
 # The current test task may have already set this constant; if not the default
@@ -25,41 +55,10 @@ TESTING_XML: bool
 # @see file:lib/tasks/test_application.rake
 #
 # == Usage Notes
-# No Bookshare-specific tests are run unless specified by the test task.
+# No Bookshare-specific tests are run unless specified by the test task or if
+# run explicitly from the IDE.
 #
 TEST_BOOKSHARE: symArray
-
-TESTING_BOOKSHARE_API: bool
-
-TESTING_API_REQUESTS: bool
-
-TESTING_API_RECORDS: bool
-
-# Support methods for tests.
-#
-module TestHelper
-  # The base URL for relative requests.
-  #
-  # @type [String]
-  #
-  BASE_URL: String
-
-  # If *true* then #show and #show_reflections will produce output on the
-  # console.
-  #
-  # @type [Boolean]
-  #
-  DEBUG_TESTS: bool
-
-  private
-
-  # Include the submodules defined in test/test_helper/*, except for
-  # TestHelper::SystemTests, which must be included separately.
-  #
-  # @param [Module] base
-  #
-  def self.included: (Module base) -> void
-end
 
 # Augment the base class for test cases.
 #
@@ -74,7 +73,11 @@ end
 class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
+  include TestHelper #::Samples
+
   include TestHelper::Debugging::Trace
+
+  extend TestHelper::Utility
 end
 
 # Make relative paths expand correctly.

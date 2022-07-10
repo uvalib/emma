@@ -1,3 +1,7 @@
 class ReadingListsTest < ApplicationSystemTestCase
-  TEST_USER: String
+  CONTROLLER: Symbol
+
+  TEST_USER: Symbol
+
+  @user: User
 end

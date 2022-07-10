@@ -427,7 +427,7 @@ $(document).on('turbolinks:load', function() {
         } else if ($title.length > 1) {
             title_id = $title.filter('[data-mode="txt"]').attr('id');
             $title   = $title.filter('[data-mode="btn"]');
-        } else {
+        } else if (Emma.SEARCH_ANALYSIS) {
             title_id = cloneTitle($item, $title);
         }
         $title = makeButton($title, this.id);

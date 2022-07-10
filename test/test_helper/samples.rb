@@ -7,11 +7,6 @@
 #
 module TestHelper::Samples
 
-  ANONYMOUS       = nil
-  EMMA_DSO        = 'emmadso@bookshare.org'
-  EMMA_COLLECTION = 'emmacollection@bookshare.org'
-  EMMA_MEMBERSHIP = 'emmamembership@bookshare.org'
-
   # A table of models and the selected entry from test/fixtures/*.yml.
   #
   # @type [Hash{Symbol=>Symbol}]
@@ -20,8 +15,9 @@ module TestHelper::Samples
   # noinspection NonAsciiCharacters
   #++
   SAMPLE_FIXTURE = {
-    artifact:       :example,
+    artifact:       :brf,
     edition:        :New_Yorker_1,
+    job_result:     :example,
     member:         :organization,
     periodical:     :New_Yorker,
     reading_list:   :A_Member_List,
@@ -29,7 +25,7 @@ module TestHelper::Samples
     search_call:    :Mansfield_Park,
     search_result:  :Mansfield_Park_1,
     title:          :Investigación,
-    user:           :example,
+    user:           :developer,
   }.freeze
 
   # ===========================================================================
@@ -43,6 +39,7 @@ module TestHelper::Samples
   #
   # @!method sample_artifact
   # @!method sample_edition
+  # @!method sample_job_result
   # @!method sample_member
   # @!method sample_periodical
   # @!method sample_reading_list
@@ -70,6 +67,10 @@ module TestHelper::Samples
     # Generate a sample instance from text/fixtures/editions.yml.
     # @return [Edition]
     def sample_edition; end
+
+    # Generate a sample instance from text/fixtures/jobs_results.yml.
+    # @return [JobResult]
+    def sample_job_result; end
 
     # Generate a sample instance from text/fixtures/members.yml.
     # @return [Member]

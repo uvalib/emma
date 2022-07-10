@@ -5,73 +5,68 @@
 
 require 'test_helper'
 
+# noinspection RubyJumpError
 class AccountControllerTest < ActionDispatch::IntegrationTest
 
-=begin
+  TEST_USER = :emmadso
+
+  # noinspection RbsMissingTypeSignature
   setup do
-    @user = users(:one)
+    @user = find_user(TEST_USER)
   end
-=end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-=begin # TODO: test controller account/index
   test 'account index - list all user accounts' do
+    return if not_applicable 'TODO: account/index'
     get account_index_url
     assert_response :success
   end
-=end
 
-=begin # TODO: test controller account/show
   test 'account show - details of an existing user account' do
-    get account_url(@user)
+    return if not_applicable 'TODO: account/show'
+    get show_account_url(@user)
     assert_response :success
   end
-=end
 
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
 
-=begin # TODO: test controller account/new
   test 'account new - user account form' do
+    return if not_applicable 'TODO: account/new'
     get new_account_url
     assert_response :success
   end
-=end
 
-=begin # TODO: test controller account/new
   test 'account create - a new user account' do
+    return if not_applicable 'TODO: account/create'
     assert_difference('User.count') do
-      post account_url, params: { user: {  } }
+      post create_account_url, params: { user: {  } }
     end
-    assert_redirected_to account_url(User.last)
+    assert_redirected_to show_account_url(User.last)
   end
-=end
 
-=begin # TODO: test controller account/edit
   test 'account edit - user account edit form' do
+    return if not_applicable 'TODO: account/edit'
     get edit_account_url(@user)
     assert_response :success
   end
-=end
 
-=begin # TODO: test controller account/update
   test 'account update - modify an existing user account' do
-    patch account_url(@user), params: { user: {  } }
-    assert_redirected_to account_url(@user)
+    return if not_applicable 'TODO: account/update'
+    patch update_account_url(@user), params: { user: {  } }
+    assert_redirected_to show_account_url(@user)
   end
-=end
 
-=begin # TODO: test controller account/destroy
   test 'account destroy - remove an existing user account' do
+    return if not_applicable 'TODO: account/destroy'
     assert_difference('User.count', -1) do
-      delete account_url(@user)
+      delete destroy_account_url(@user)
     end
-    assert_redirected_to account_url
+    assert_redirected_to account_index_url
   end
-=end
 
 end

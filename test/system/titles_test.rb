@@ -7,15 +7,15 @@ require 'application_system_test_case'
 
 class TitlesTest < ApplicationSystemTestCase
 
+  CONTROLLER = :title
   PAGE_COUNT = 4
+  PAGE_SIZE  = 20
 
-  # There were 37125 results for this search as the anonymous user as of
-  # 2019-09-02.
-  TITLE_SEARCH_TERM = 'cat'
+  # 379 results for this search as the anonymous user as of 2022-07-03.
+  TITLE_SEARCH_TERM = 'man'
 
-  # There were 952 results for this search as the anonymous user as of
-  # 2019-09-02.
-  EXACT_TITLE_SEARCH_TERM = quote(TITLE_SEARCH_TERM)
+  # 104 results for this search as the anonymous user as of 2019-09-02.
+  EXACT_TITLE_SEARCH_TERM = quote(TITLE_SEARCH_TERM).freeze
 
   # ===========================================================================
   # :section:
@@ -26,13 +26,13 @@ class TitlesTest < ApplicationSystemTestCase
 
       # Visit the first catalog titles index page.
       page = 0
-      visit_index(:title, page: page) do
+      visit_index(CONTROLLER, page: page, limit: PAGE_SIZE) do
         show "PAGE #{page} = #{current_url}"
       end
 
       # Forward sequence of catalog titles index pages.
       while (page += 1) <= PAGE_COUNT
-        visit_next_page(:title, page: page) do
+        visit_next_page(CONTROLLER, page: page) do
           show "PAGE #{page} = #{current_url}"
         end
       end
@@ -41,7 +41,7 @@ class TitlesTest < ApplicationSystemTestCase
       # Reverse sequence of catalog titles index pages.
       page = PAGE_COUNT
       while (page -= 1) >= 0
-        visit_prev_page(:title, page: page) do
+        visit_prev_page(CONTROLLER, page: page) do
           show "PAGE #{page} = #{current_url}"
         end
       end
@@ -54,38 +54,40 @@ class TitlesTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Visit the first catalog titles index page.
-      visit_index :title
+      visit_index(CONTROLLER, limit: PAGE_SIZE)
       assert_first_page
 
       # Visit each entry on the first catalog titles index page.
-      visit_each_show_page(:title) do |index, title, _entry|
+      visit_each_show_page(CONTROLLER) do |index, title|
         show "ENTRY #{index} - #{title}"
       end
 
       # Should be back on first catalog title index page.
       show_url
-      assert_valid_index_page(:title)
+      assert_valid_index_page(CONTROLLER)
       assert_first_page
 
     end
   end
 
   test 'catalog titles - search for title' do
+
+    terms = { title: TITLE_SEARCH_TERM }
+
     run_test(__method__) do
 
-      terms = { title: TITLE_SEARCH_TERM }
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit_index :title, terms: terms
+      visit_index(CONTROLLER, terms: terms, limit: PAGE_SIZE)
       assert_first_page
 
       # Go to next page of results.
-      visit_next_page :title, terms: terms
+      visit_next_page(CONTROLLER, terms: terms)
       assert_not_first_page
 
       # Visit the first entry.
-      visit_show_page(:title) do |title|
+      visit_show_page(CONTROLLER) do |title|
         parts = title.downcase
         term  = terms.values.first.to_s.downcase
         show "TERM = #{term}"
@@ -95,28 +97,31 @@ class TitlesTest < ApplicationSystemTestCase
       # Go back to the index page.
       go_back
       show_url
-      assert_valid_index_page(:title, terms: terms)
+      assert_valid_index_page(CONTROLLER, terms: terms)
       assert_not_first_page
 
     end
+
   end
 
   test 'catalog titles - search for title word' do
+
+    terms = { title: EXACT_TITLE_SEARCH_TERM }
+
     run_test(__method__) do
 
-      terms = { title: EXACT_TITLE_SEARCH_TERM }
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit_index :title, terms: terms
+      visit_index(CONTROLLER, terms: terms, limit: PAGE_SIZE)
       assert_first_page
 
       # Go to next page of results.
-      visit_next_page :title, terms: terms
+      visit_next_page(CONTROLLER, terms: terms)
       assert_not_first_page
 
       # Visit the first entry.
-      visit_show_page(:title) do |title|
+      visit_show_page(CONTROLLER) do |title|
         parts = title.downcase.split(/[[:space:][:punct:]]+/)
         term  = strip_quotes(terms.values.first.to_s.downcase)
         show "TERM = #{term}"
@@ -126,10 +131,11 @@ class TitlesTest < ApplicationSystemTestCase
       # Go back to the index page.
       go_back
       show_url
-      assert_valid_index_page(:title, terms: terms)
+      assert_valid_index_page(CONTROLLER, terms: terms)
       assert_not_first_page
 
     end
+
   end
 
 end

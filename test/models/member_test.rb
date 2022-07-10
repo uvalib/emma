@@ -7,7 +7,7 @@ require 'test_helper'
 
 class MemberTest < ActiveSupport::TestCase
 
-  test 'valid org member' do
+  test 'model - valid org member' do
     run_test(__method__) do
       item = members(:organization)
       show item
@@ -16,7 +16,7 @@ class MemberTest < ActiveSupport::TestCase
   end
 
 =begin # TODO: org member must have a user_id ???
-  test 'org member must have a user_id' do
+  test 'model - org member must have a user_id' do
     run_test(__method__) do
       data = members(:organization).attributes.except('user_id')
       item = Member.new(data)
@@ -26,7 +26,7 @@ class MemberTest < ActiveSupport::TestCase
   end
 =end
 
-  test 'valid institutional member' do
+  test 'model - valid institutional member' do
     run_test(__method__) do
       item = members(:institutional)
       show item
@@ -34,7 +34,7 @@ class MemberTest < ActiveSupport::TestCase
     end
   end
 
-  test 'institutional member must also be a User' do
+  test 'model - institutional member must also be a User' do
     run_test(__method__) do
       data = members(:institutional).attributes.except('emailAddress')
       item = Member.new(data)

@@ -13,6 +13,21 @@ __loading_begin(__FILE__)
 #
 class SearchesDecorator < BaseCollectionDecorator
 
+  # Because the test environment is not eager-loaded, these variants need to be
+  # explicitly loaded.
+  #
+  if Rails.env.test?
+    require_relative 'search_title_decorator'
+    require_relative 'search_record_decorator'
+  end
+
+  # This causes automated testing to slow down too much, so related server-side
+  # and client-side code is neutralized in the test environment.
+  #
+  # @type [Boolean]
+  #
+  SEARCH_ANALYSIS = !Rails.env.test?
+
   # ===========================================================================
   # :section: Draper
   # ===========================================================================
@@ -49,7 +64,7 @@ class SearchesDecorator < BaseCollectionDecorator
     return unless buttons.present?
     prepend_css!(opt, css)
     html_div(buttons, opt)
-  end
+  end if SEARCH_ANALYSIS
 
   # Control for selecting the type of search results to display.
   #

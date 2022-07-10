@@ -26,17 +26,18 @@ module TestHelper::IntegrationTests::Format
 
   # Indicate whether *type* matches the given *format*.
   #
-  # @param [Symbol, String] type
-  # @param [Symbol]         format
+  # @param [Symbol, String, nil] type
+  # @param [Symbol]              format
   #
   def format?(type, format)
+    # noinspection RubyNilAnalysis
     type = type.to_sym if type.is_a?(String) && !type.include?('/')
     (type == format) || (type == MEDIA_TYPE[format])
   end
 
   # Indicate whether *type* is HTML.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol, String, nil] type
   #
   def html?(type)
     format?(type, :html)
@@ -44,7 +45,9 @@ module TestHelper::IntegrationTests::Format
 
   # Indicate whether *type* is JSON.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol, String, nil] type
+  #
+  # @note Currently unused
   #
   def json?(type)
     format?(type, :json)
@@ -52,7 +55,9 @@ module TestHelper::IntegrationTests::Format
 
   # Indicate whether *type* is XML.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol, String, nil] type
+  #
+  # @note Currently unused
   #
   def xml?(type)
     format?(type, :xml)
@@ -69,7 +74,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_html_result(status, **opt)
     opt[:format] = :html unless opt.key?(:format)
@@ -81,7 +88,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_json_result(status, **opt)
     opt[:format] = :json unless opt.key?(:format)
@@ -93,7 +102,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_xml_result(status, **opt)
     opt[:format] = :xml unless opt.key?(:format)
@@ -105,7 +116,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_text_result(status, **opt)
     opt[:format] = :text unless opt.key?(:format)
@@ -123,23 +136,25 @@ module TestHelper::IntegrationTests::Format
   # @option opt [String,Symbol] :format
   # @option opt [String,Symbol] :media_type   If present, trumps :format.
   #
-  # @raise [Minitest::Assertion]      If one or more criteria don't match.
+  # @return [true]                    If all criteria match.
   #
-  # @return [void]                    If all criteria match.
+  # @raise [Minitest::Assertion]      If one or more criteria don't match.
   #
   def assert_result(status, **opt)
 
     assert_response status if status && (status != :any)
 
-    action, controller = (opt[:from].split('#').reverse if opt[:from])
-    controller = opt[:controller]&.to_s || controller
-    action     = opt[:action]&.to_s     || action
-    media_type = opt.key?(:media_type) ? opt[:media_type] : opt[:format]
-    media_type = MEDIA_TYPE[media_type] if media_type.is_a?(Symbol)
+    action, ctrlr = (opt[:from].split('#').reverse if opt[:from])
+    ctrlr  = (opt[:controller] || ctrlr)&.to_sym
+    action = (opt[:action]     || action)&.to_sym
+    media  = opt.key?(:media_type) ? opt[:media_type] : opt[:format]
+    media  = (media.is_a?(Symbol) ? MEDIA_TYPE[media] : media)&.to_s
 
-    assert_equal controller, @controller.controller_path if controller.present?
-    assert_equal action,     @controller.action_name     if action.present?
-    assert_equal media_type, @response.media_type        if media_type.present?
+    assert_equal ctrlr,  controller_name(@controller.controller_path) if ctrlr
+    assert_equal action, @controller.action_name&.to_sym              if action
+    assert_equal media,  @response.media_type                         if media
+
+    true
 
   end
 

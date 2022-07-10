@@ -27,11 +27,19 @@ module TestHelper::SystemTests::Pagination
 
   # Assert that this is the first page of search results.
   #
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
+  #
   def assert_first_page
     assert_no_link PREV_LABEL
   end
 
   # Assert that this is the last page of search results.
+  #
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_last_page
     assert_no_link NEXT_LABEL
@@ -39,11 +47,19 @@ module TestHelper::SystemTests::Pagination
 
   # Assert that this is not the first page of search results.
   #
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
+  #
   def assert_not_first_page
     assert_link PREV_LABEL
   end
 
   # Assert that this is not the first page of search results.
+  #
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   def assert_not_last_page
     assert_link NEXT_LABEL
@@ -57,10 +73,12 @@ module TestHelper::SystemTests::Pagination
 
   # Visit the next page of search results.
   #
-  # @param [Symbol, nil] model
-  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  # @param [Symbol] model
+  # @param [Hash]   opt               Passed to #assert_valid_index_page.
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
@@ -77,10 +95,12 @@ module TestHelper::SystemTests::Pagination
 
   # Visit the previous page of search results.
   #
-  # @param [Symbol, nil] model
-  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  # @param [Symbol] model
+  # @param [Hash]   opt               Passed to #assert_valid_index_page.
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]

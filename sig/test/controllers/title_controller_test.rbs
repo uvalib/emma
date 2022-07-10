@@ -1,11 +1,15 @@
 class TitleControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: String
+  CONTROLLER: Symbol
 
   OPTIONS: symHash
 
-  TEST_USERS: Array[String|nil]
+  TEST_USERS: symArray
 
-  TEST_READERS: Array[String|nil]
+  TEST_READERS: symArray
 
-  TEST_WRITERS: Array[String|nil]
+  TEST_WRITERS: symArray
+
+  @readers: Array[User|nil]
+
+  @writers: Array[User|nil]
 end

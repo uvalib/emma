@@ -7,7 +7,7 @@ require 'test_helper'
 
 class TitleTest < ActiveSupport::TestCase
 
-  test 'valid title' do
+  test 'model - valid title' do
     run_test(__method__) do
       item = sample_title
       show item
@@ -15,7 +15,7 @@ class TitleTest < ActiveSupport::TestCase
     end
   end
 
-  test 'add artifacts to title' do
+  test 'model - add artifacts to title' do
     run_test(__method__) do
       item = sample_title
       item.artifacts << sample_artifact

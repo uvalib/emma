@@ -7,22 +7,28 @@ require 'test_helper'
 
 class ArtifactControllerTest < ActionDispatch::IntegrationTest
 
-  CONTROLLER   = 'artifact'
+  CONTROLLER   = :artifact
   OPTIONS      = { controller: CONTROLLER }.freeze
 
-  TEST_USERS   = [ANONYMOUS, EMMA_DSO].freeze
+  TEST_USERS   = %i[anonymous emmadso].freeze
   TEST_READERS = TEST_USERS
-  TEST_WRITERS = [ANONYMOUS].freeze # TODO: artifact write tests
+  TEST_WRITERS = %i[anonymous].freeze # TODO: artifact write tests
+
+  # noinspection RbsMissingTypeSignature
+  setup do
+    @readers = find_users(*TEST_READERS)
+    @writers = find_users(*TEST_WRITERS)
+  end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-=begin # TODO: all artifacts? Probably not...
   test 'artifact index - list all artifacts' do
-    options = OPTIONS.merge(test: __method__, action: 'index')
-    TEST_READERS.each do |user|
-      able  = can?(user, :list, Artifact)
+    action  = :index
+    options = OPTIONS.merge(action: action, test: __method__)
+    @readers.each do |user|
+      able  = can?(user, action, Artifact)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -33,19 +39,19 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
         url = artifact_index_url(format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, opt)
+        get_as(user, url, **opt)
       end
-    end
+    end unless not_applicable
   end
-=end
 
   test 'artifact show - details of an existing artifact' do
+    action  = :show
+    options = OPTIONS.merge(action: action, test: __method__)
     title   = sample_title.bookshareId
     format  = sample_artifact.format
-    url_opt = { id: title, fmt: format }
-    options = OPTIONS.merge(test: __method__, action: 'show')
-    TEST_READERS.each do |user|
-      able  = can?(user, :show, Artifact)
+    params  = OPTIONS.merge(action: action, id: title, fmt: format)
+    @readers.each do |user|
+      able  = can?(user, action, Artifact)
       u_opt =
         if able
           options.merge(expect: :success)
@@ -53,98 +59,101 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
           options.except(:controller, :action)
         end
       TEST_FORMATS.each do |fmt|
-        url = artifact_url(url_opt.merge(format: fmt))
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, opt)
+        get_as(user, url, **opt)
       end
-    end
+    end unless not_applicable "Bookshare API doesn't support this"
   end
 
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
 
-  if TESTING_HTML
+  test 'artifact new - add metadata for a new artifact' do
+    action  = :new
+    options = OPTIONS.merge(action: action, test: __method__)
+    params  = options.except(:test)
+    url     = url_for(**params)
+    @writers.each do |user|
+      able  = can?(user, action, Artifact)
+      u_opt =
+        if able
+          options.merge(expect: :success)
+        else
+          options.merge(expect: :redirect).except(:controller, :action)
+        end
+      get_as(user, url, **u_opt)
+    end if allowed_format(only: :html)
+  end
 
-    test 'artifact new - add metadata for a new artifact' do
-      url     = new_artifact_url
-      options = OPTIONS.merge(test: __method__, action: 'new')
-      TEST_WRITERS.each do |user|
-        able = can?(user, :new, Artifact)
-        opt =
-          if able
-            options.merge(expect: :success)
-          else
-            options.merge(expect: :redirect).except(:controller, :action)
-          end
-        get_as(user, url, opt)
-      end
-    end
+  test 'artifact create - upload a new artifact' do
+    action  = :create
+    options = OPTIONS.merge(action: action, test: __method__)
+    params  = options.except(:test)
+    url     = url_for(**params)
+    @writers.each do |user|
+      able  = can?(user, action, Artifact)
+      u_opt =
+        if able
+          options.merge(expect: :no_content, media_type: nil)
+        else
+          options.merge(expect: :redirect).except(:controller, :action)
+        end
+      post_as(user, url, **u_opt)
+    end if allowed_format(only: :html)
+  end
 
-    test 'artifact create - upload a new artifact' do
-      url     = artifact_index_url
-      options = OPTIONS.merge(test: __method__, action: 'create')
-      TEST_WRITERS.each do |user|
-        able = can?(user, :new, Artifact)
-        opt =
-          if able
-            options.merge(expect: :no_content, media_type: nil)
-          else
-            options.merge(expect: :redirect).except(:controller, :action)
-          end
-        post_as(user, url, opt)
-      end
-    end
+  test 'artifact edit - metadata for an existing artifact' do
+    action  = :edit
+    options = OPTIONS.merge(action: action, test: __method__)
+    title   = sample_title.bookshareId
+    url     = edit_artifact_url(id: title)
+    @writers.each do |user|
+      able  = can?(user, action, Artifact)
+      u_opt =
+        if able
+          options.merge(expect: :success)
+        else
+          options.merge(expect: :redirect).except(:controller, :action)
+        end
+      get_as(user, url, **u_opt)
+    end if allowed_format(only: :html)
+  end
 
-    test 'artifact edit - metadata for an existing artifact' do
-      title   = sample_title.bookshareId
-      url     = edit_artifact_url(id: title)
-      options = OPTIONS.merge(test: __method__, action: 'edit')
-      TEST_WRITERS.each do |user|
-        able = can?(user, :edit, Artifact)
-        opt =
-          if able
-            options.merge(expect: :success)
-          else
-            options.merge(expect: :redirect).except(:controller, :action)
-          end
-        get_as(user, url, opt)
-      end
-    end
+  test 'artifact update - replace an existing artifact' do
+    action  = :update
+    options = OPTIONS.merge(action: action, test: __method__)
+    title   = sample_title.bookshareId
+    url     = artifact_url(id: title)
+    @writers.each do |user|
+      able  = can?(user, action, Artifact)
+      u_opt =
+        if able
+          options.merge(expect: :no_content, media_type: nil)
+        else
+          options.merge(expect: :redirect).except(:controller, :action)
+        end
+      put_as(user, url, **u_opt)
+    end if allowed_format(only: :html)
+  end
 
-    test 'artifact update - replace an existing artifact' do
-      title   = sample_title.bookshareId
-      url     = artifact_url(id: title)
-      options = OPTIONS.merge(test: __method__, action: 'update')
-      TEST_WRITERS.each do |user|
-        able = can?(user, :edit, Artifact)
-        opt =
-          if able
-            options.merge(expect: :no_content, media_type: nil)
-          else
-            options.merge(expect: :redirect).except(:controller, :action)
-          end
-        put_as(user, url, opt)
-      end
-    end
-
-    test 'artifact destroy - remove an existing artifact' do
-      title   = sample_title.bookshareId
-      url     = artifact_url(id: title)
-      options = OPTIONS.merge(test: __method__, action: 'destroy')
-      TEST_WRITERS.each do |user|
-        able = can?(user, :destroy, Artifact)
-        opt =
-          if able
-            options.merge(expect: :no_content, media_type: nil)
-          else
-            options.merge(expect: :redirect).except(:controller, :action)
-          end
-        delete_as(user, url, opt)
-      end
-    end
-
+  test 'artifact destroy - remove an existing artifact' do
+    action  = :destroy
+    options = OPTIONS.merge(action: action, test: __method__)
+    title   = sample_title.bookshareId
+    url     = artifact_url(id: title)
+    @writers.each do |user|
+      able  = can?(user, action, Artifact)
+      u_opt =
+        if able
+          options.merge(expect: :no_content, media_type: nil)
+        else
+          options.merge(expect: :redirect).except(:controller, :action)
+        end
+      delete_as(user, url, **u_opt)
+    end if allowed_format(only: :html)
   end
 
   # ===========================================================================
@@ -159,11 +168,12 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
     format  = sample_artifact.format
     url_opt = { bookshareId: title, fmt: format }
     options = { test: __method__ }
-    TEST_READERS.each do |user|
-      able = can?(user, :download, Artifact)
+    @readers.each do |user|
+      able  = can?(user, :download, Artifact)
+      u_opt = options
       TEST_FORMATS.each do |fmt|
 
-        opt = options.merge(format: fmt)
+        opt = u_opt.merge(format: fmt)
 
         if fmt == :html
           url = bs_download_url(url_opt)
@@ -179,7 +189,7 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
           opt[:expect] = able ? :success : :unauthorized
         end
 
-        get_as(user, url, opt) do
+        get_as(user, url, **opt) do
 
           # Additional post-send assertions.
           case response.status

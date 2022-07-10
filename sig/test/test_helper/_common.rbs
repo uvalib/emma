@@ -1,0 +1,33 @@
+# Common values for tests.
+#
+module TestHelper::Common
+  extend ::TestHelper::Common
+
+  TEST_TYPES: strArray
+
+  # Controllers being tested.
+  #
+  # @type [Array<Symbol>]
+  #
+  CONTROLLERS: symArray
+
+  # Properties which drive parameterized system tests.
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  PROPERTY: Hash[Symbol,symHash]
+
+  # property
+  #
+  # @param [Symbol, String, Class, nil] model
+  # @param [Array<Symbol>]              traversal
+  #
+  # @return [*]
+  #
+  def property: [T] (?(Symbol|String|Class|nil) model, *Symbol traversal,  default: T)   -> T
+              |     (?(Symbol|String|Class|nil) model, *Symbol traversal, ?default: nil) -> (untyped | nil)
+
+  private
+
+  def self.included: (Module base) -> void
+end

@@ -140,7 +140,7 @@ module Record
       # rather than raising an exception when the database is not available:
       #
       # * The first is running "rake assets:precompile", which triggers the
-      #   "emma_assets:erb" task, which needs to run #js_properties.
+      #   "emma:assets:erb" task, which needs to run #js_properties.
       #
       # * The second is only seen from the desktop via "rails runner" for a
       #   single file.

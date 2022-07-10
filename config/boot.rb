@@ -7,6 +7,8 @@
 # Global constants
 # =============================================================================
 
+public
+
 # The time that the application was started.
 #
 # @type [Time]
@@ -39,6 +41,8 @@ STAGING_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
 # =============================================================================
 # Support methods
 # =============================================================================
+
+public
 
 # Text values which represent *true*.
 #
@@ -88,6 +92,8 @@ end
 # =============================================================================
 # Global properties
 # =============================================================================
+
+public
 
 # Indicate whether this is a deployed instance.
 #
@@ -154,13 +160,14 @@ end
 #
 def rails_application?
   if !defined?(@in_rails) || @in_rails.nil?
-    @in_rails   = !!ENV['IN_PASSENGER']
+    @in_rails   = (ENV['RUBYMINE_CONFIG'] == 'rails') # desktop only
+    @in_rails ||= !!ENV['IN_PASSENGER']
     @in_rails ||= $0.to_s.start_with?('spring app')
     @in_rails ||= $0.to_s.end_with?('rails', 'spring') &&
                   $*.any? { |arg| %w(-b -p server runner).include?(arg) }
     @in_rails &&= !!defined?(APP_PATH)
     @in_rails &&=
-      (($* - %w(-h -H --help -D --describe -T --tasks -n --dry-run)) == $*)
+      !%w(-h -H --help -D --describe -T --tasks -n --dry-run).intersect?($*)
   end
   @in_rails
 end
@@ -168,14 +175,17 @@ end
 # Indicate whether this instance is being run as "rake" or "rails" with a Rake
 # task argument.
 #
+#--
+# noinspection RubyMismatchedReturnType
+#++
 def rake_task?
   if !defined?(@in_rake) || @in_rake.nil?
-    @in_rake   = $0.to_s.end_with?('rake')
-    # noinspection RubyMismatchedReturnType
+    @in_rake   = (ENV['RUBYMINE_CONFIG'] == 'rake') # desktop only
+    @in_rake ||= $0.to_s.end_with?('rake')
     @in_rake ||= $0.to_s.end_with?('rails') && !rails_application? &&
-      !$*.reject { |a| a.match(/^(-.*|new|console|generate)$/) }.empty?
+      !$*.reject { |arg| arg.match(/^(-.*|new|console|generate)$/) }.empty?
     @in_rake &&=
-      (($* - %w(-h -H --help -D --describe -T --tasks -n --dry-run)) == $*)
+      !%w(-h -H --help -D --describe -T --tasks -n --dry-run).intersect?($*)
   end
   @in_rake
 end

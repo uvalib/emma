@@ -1,21 +1,13 @@
 # Access to sample models.
 #
 module TestHelper::Samples
-  ANONYMOUS: nil
-
-  EMMA_DSO: String
-
-  EMMA_COLLECTION: String
-
-  EMMA_MEMBERSHIP: String
-
-  @sample: Hash[Symbol, Model]
-
   # A table of models and the selected entry from test/fixtures/*.yml.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
   SAMPLE_FIXTURE: Hash[Symbol,Symbol]
+
+  @sample: Hash[Symbol, Model]
 
   # Generate a sample instance from text/fixtures/artifacts.yml.
   # @return [Artifact]
@@ -24,6 +16,10 @@ module TestHelper::Samples
   # Generate a sample instance from text/fixtures/editions.yml.
   # @return [Edition]
   def sample_edition: () -> Edition
+
+  # Generate a sample instance from text/fixtures/jobs_results.yml.
+  # @return [JobResult]
+  def sample_job_result: () -> JobResult
 
   # Generate a sample instance from text/fixtures/members.yml.
   # @return [Member]

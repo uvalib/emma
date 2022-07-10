@@ -8,22 +8,66 @@
 #   @see Capybara::Session#go_back
 #
 module TestHelper::SystemTests::Common
-  # Properties which drive parameterized system tests.
-  #
-  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
-  #
-  PROPERTY: Hash[Symbol,symHash]
+  include TestHelper::Common
+
+  #include Capybara::Node::Finders
+
+  #include TestHelper::SystemTests::Authentication
 
   # assert_current_url
   #
   # @param [String] url
   #
-  def assert_current_url: (String url) -> void
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
+  #
+  def assert_current_url: (String url) -> true
 
   # Assert that the current page is valid.
   #
-  # @param [String] title
-  # @param [String] heading
+  # @param [String,nil] text
+  # @param [String,nil] heading       Default: *text* if given.
+  # @param [String,nil] title         Default: *text* if given.
   #
-  def assert_valid_page: (?title: String?, ?heading: String?) -> void
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]      If either item is not on the page.
+  #
+  def assert_valid_page: (?(String|nil) text, ?heading: String|nil, ?title: String|nil, **untyped) -> true
+
+  # Return the given URL without its HTTP port.
+  #
+  # @param [String, nil]  url
+  #
+  # @return [String, nil]
+  #
+  def url_without_port: (String url) -> String
+                      | (nil    url) -> nil
+
+  # Block until the browser can report its 'window.location'.
+  #
+  # @param [Integer] wait             Overall time limit.
+  # @param [Integer] max              Maximum number of attempts to make.
+  # @param [Boolean] port             If *true*, allow port in URL comparison.
+  #
+  # @return [String, nil]
+  #
+  def get_browser_url: (?wait: Integer|nil, ?max: Integer, ?port: bool) -> (String | nil)
+
+  # Block until the browser can confirm that it is on the target page.
+  #
+  # @param [String]  target_url
+  # @param [Hash]    opt              Passed to #get_browser_url.
+  #
+  # @return [Boolean]
+  #
+  def wait_for_page: (String target_url, **untyped opt) -> bool
+
+  # If DEBUG_TESTS is true, this will take a screenshot (ignoring an error that
+  # has been observed [in rare cases] since these are informational-only).
+  #
+  # @return [void]
+  #
+  def success_screenshot: () -> void
 end

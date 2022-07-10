@@ -7,19 +7,18 @@ require 'test_helper'
 
 class ReadingListTest < ActiveSupport::TestCase
 
-  test 'valid reading list' do
+  test 'model - valid reading list' do
     run_test(__method__) do
-      # item = sample_reading_list
-      item = reading_lists(:example)
+      item = sample_reading_list
       show item
       assert item.valid?
     end
   end
 
-  test 'add title to reading list' do
+  test 'model - add title to reading list' do
     run_test(__method__) do
       item = sample_reading_list
-      item.titles << titles(:example)
+      item.titles << sample_title
       show item
       assert item.valid?
     end

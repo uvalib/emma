@@ -1,2 +1,5 @@
 class AccountControllerTest < ActionDispatch::IntegrationTest
+  TEST_USER: Symbol
+
+  @user: User | nil
 end

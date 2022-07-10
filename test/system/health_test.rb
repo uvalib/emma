@@ -9,15 +9,17 @@ require 'application_system_test_case'
 class HealthTest < ApplicationSystemTestCase
 
   test 'health - visit version' do
+    url = version_url
     run_test(__method__) do
-      visit version_url
+      visit url
       assert_text 'version'
     end
   end
 
   test 'health - visit health check' do
+    url = healthcheck_url
     run_test(__method__) do
-      visit healthcheck_url
+      visit url
       assert_text 'healthy'
     end
   end

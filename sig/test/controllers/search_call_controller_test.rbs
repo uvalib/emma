@@ -1,13 +1,11 @@
 class SearchCallControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: String
+  CONTROLLER: Symbol
 
   OPTIONS: symHash
 
-  TEST_USERS: Array[String|nil]
+  TEST_USERS: symArray
 
-  TEST_READERS: Array[String|nil]
+  TEST_READERS: symArray
 
-  TEST_WRITERS: Array[String|nil]
-
-  TEST_FORMATS: symArray
+  @readers: Array[User|nil]
 end

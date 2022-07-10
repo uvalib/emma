@@ -14,22 +14,26 @@ module TestHelper::SystemTests::Show
   # @param [Symbol] model
   # @param [String] title
   #
-  # @return [void]
+  # @return [true]
   #
-  def assert_valid_show_page: (Symbol model, ?title: String|nil) -> void
+  # @raise [Minitest::Assertion]
+  #
+  def assert_valid_show_page: (Symbol model, ?title: String|nil) -> true
 
   # Visit an entry on an index page.
   #
   # @param [Symbol]                       model
   # @param [Capybara::Node::Element, nil] entry
   # @param [Integer, Symbol]              index
-  # @param [String]                       entry_class
+  # @param [String]                       entry_css
   #
-  # @return [void]
+  # @return [true]
+  #
+  # @raise [Minitest::Assertion]
   #
   # @yield Test code to run while on the page.
   # @yieldparam [String] title
   # @yieldreturn [void]
   #
-  def visit_show_page: (Symbol model, ?entry: Capybara::Node::Element|nil, ?index: Integer|Symbol|nil, ?entry_class: String|nil) { (String) -> void } -> void
+  def visit_show_page: (Symbol model, ?entry: Capybara::Node::Element|nil, ?index: Integer|Symbol|nil, ?entry_css: String|nil) ?{ (String) -> void } -> true
 end

@@ -7,34 +7,41 @@ require 'test_helper'
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
 
-  CONTROLLER   = 'home'
+  CONTROLLER   = :home
   OPTIONS      = { controller: CONTROLLER }.freeze
 
-  TEST_USERS   = [ANONYMOUS, EMMA_DSO].freeze
+  TEST_USERS   = %i[anonymous emmadso].freeze
   TEST_READERS = TEST_USERS
 
-  TEST_USER    = TEST_USERS.last
+  # noinspection RbsMissingTypeSignature
+  setup do
+    @readers = find_users(*TEST_READERS)
+  end
+
+  TEST_USER = :emmadso
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
   test 'home main as anonymous' do
-    # options = OPTIONS.merge(action: 'main')
+    # action  = :main
+    # options = OPTIONS.merge(action: action)
     TEST_FORMATS.each do |fmt|
-      next unless html?(fmt) # NOTE: TESTING_HTML only
+      next unless allowed_format(fmt, only: :html)
       url = home_url(format: fmt)
       run_test(__method__, format: fmt) do
         get url
         assert_redirected_to welcome_url
       end
     end
-  end if TESTING_HTML
+  end
 
   test 'home main as emmadso' do
-    # options = OPTIONS.merge(action: 'main')
+    # action  = :main
+    # options = OPTIONS.merge(action: action)
     TEST_FORMATS.each do |fmt|
-      next unless html?(fmt) # NOTE: TESTING_HTML only
+      next unless allowed_format(fmt, only: :html)
       url = home_url(format: fmt)
       run_test(__method__, format: fmt) do
         get_sign_in_as(TEST_USER, follow_redirect: false)
@@ -42,24 +49,26 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
         assert_redirected_to dashboard_url
       end
     end
-  end if TESTING_HTML
+  end
 
   test 'home welcome' do
-    options = OPTIONS.merge(action: 'welcome')
+    action  = :welcome
+    options = OPTIONS.merge(action: action)
     TEST_FORMATS.each do |fmt|
-      next unless html?(fmt) # NOTE: TESTING_HTML only
+      next unless allowed_format(fmt, only: :html)
       url = welcome_url(format: fmt)
       opt = options.merge(format: fmt)
       run_test(__method__, format: fmt) do
         get url
-        assert_result :success, opt
+        assert_result :success, **opt
       end
     end
-  end if TESTING_HTML
+  end
 
   test 'home dashboard' do
-    options = OPTIONS.merge(test: __method__, action: 'dashboard')
-    TEST_READERS.each do |user|
+    action  = :dashboard
+    options = OPTIONS.merge(action: action, test: __method__)
+    @readers.each do |user|
       able  = user.present?
       u_opt =
         if able
@@ -68,10 +77,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
           options.except(:controller, :action)
         end
       TEST_FORMATS.each do |fmt|
+        next unless allowed_format(fmt, only: :html)
         url = dashboard_url(format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, opt)
+        get_as(user, url, **opt)
       end
     end
   end

@@ -7,55 +7,61 @@ require 'test_helper'
 
 class SearchControllerTest < ActionDispatch::IntegrationTest
 
-  CONTROLLER   = 'search'
+  CONTROLLER   = :search
   OPTIONS      = { controller: CONTROLLER }.freeze
 
-  TEST_USERS   = [ANONYMOUS, EMMA_DSO].freeze
+  TEST_USERS   = %i[anonymous emmadso].freeze
   TEST_READERS = TEST_USERS
-  TEST_WRITERS = [].freeze # Not relevant for this controller.
 
-  TEST_FORMATS = %i[html] # TODO: remove - testing
+  # noinspection RbsMissingTypeSignature
+  setup do
+    @readers = find_users(*TEST_READERS)
+  end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
   test 'search index - no search' do
-    options = OPTIONS.merge(test: __method__, action: 'index')
-    options[:expect] = :success
-    TEST_READERS.each do |user|
+    action  = :index
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    @readers.each do |user|
       TEST_FORMATS.each do |fmt|
+        next unless allowed_format(fmt, only: :html)
         url = search_index_url(format: fmt)
         opt = options.merge(format: fmt)
-        get_as(user, url, opt)
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'search index - sample search' do
-    search  = sample_search_call.query.symbolize_keys
-    options = OPTIONS.merge(test: __method__, action: 'index')
-    options[:expect] = :success
-    TEST_READERS.each do |user|
+    action  = :index
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    item    = sample_search_call
+    url_opt = item.query.symbolize_keys
+    @readers.each do |user|
       TEST_FORMATS.each do |fmt|
-        url = search_index_url(format: fmt, **search)
+        url = search_index_url(**url_opt, format: fmt)
         opt = options.merge(format: fmt)
-        get_as(user, url, opt)
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'search show - details search result item' do
-    item    = sample_search_result.repositoryRecordId
-    options = OPTIONS.merge(test: __method__, action: 'show')
-    options[:expect] = :success
-    TEST_READERS.each do |user|
+    action  = :show
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    item    = sample_search_result
+    url_opt = { id: record_id(item) }
+    @readers.each do |user|
       TEST_FORMATS.each do |fmt|
-        url = search_url(id: item, format: fmt)
+        url = search_url(**url_opt, format: fmt)
         opt = options.merge(format: fmt)
-        get_as(user, url, opt)
+        get_as(user, url, **opt)
       end
-    end
+    end unless not_applicable 'Bookshare API does not support this'
+    # NOTE: Per SearchController#show, this endpoint can't be implemented.
   end
 
 end

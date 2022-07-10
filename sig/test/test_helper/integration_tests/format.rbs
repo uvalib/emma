@@ -9,64 +9,76 @@ module TestHelper::IntegrationTests::Format
 
   # Indicate whether *type* matches the given *format*.
   #
-  # @param [Symbol, String] type
-  # @param [Symbol]         format
+  # @param [Symbol, String, nil] type
+  # @param [Symbol]              format
   #
-  def format?: (Symbol|String `type`, Symbol format) -> bool
+  def format?: (Symbol|String|nil `type`, Symbol format) -> bool
 
   # Indicate whether *type* is HTML.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol, String, nil] type
   #
-  def html?: (Symbol|String `type`) -> bool
+  def html?: (Symbol|String|nil `type`) -> bool
 
   # Indicate whether *type* is JSON.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol, String, nil] type
   #
-  def json?: (Symbol|String `type`) -> bool
+  # @note Currently unused
+  #
+  def json?: (Symbol|String|nil `type`) -> bool
 
   # Indicate whether *type* is XML.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol, String, nil] type
   #
-  def xml?: (Symbol|String `type`) -> bool
+  # @note Currently unused
+  #
+  def xml?: (Symbol|String|nil `type`) -> bool
 
   # Assert that the response is 'text/html'.
   #
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
   #
-  def assert_html_result: (Symbol status, **untyped opt) -> void
+  # @raise [Minitest::Assertion]
+  #
+  def assert_html_result: (Symbol status, **untyped opt) -> true
 
   # Assert that the response is 'application/json'.
   #
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
   #
-  def assert_json_result: (Symbol status, **untyped opt) -> void
+  # @raise [Minitest::Assertion]
+  #
+  def assert_json_result: (Symbol status, **untyped opt) -> true
 
   # Assert that the response is 'application/xml'.
   #
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
   #
-  def assert_xml_result: (Symbol status, **untyped opt) -> void
+  # @raise [Minitest::Assertion]
+  #
+  def assert_xml_result: (Symbol status, **untyped opt) -> true
 
   # Assert that the response is 'text/plain'.
   #
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @see #assert_result
+  # @return [true]
   #
-  def assert_text_result: (Symbol status, **untyped opt) -> void
+  # @raise [Minitest::Assertion]
+  #
+  def assert_text_result: (Symbol status, **untyped opt) -> true
 
   # Assert that the response matches the given criteria.
   #
@@ -79,9 +91,9 @@ module TestHelper::IntegrationTests::Format
   # @option opt [String,Symbol] :format
   # @option opt [String,Symbol] :media_type   If present, trumps :format.
   #
+  # @return [true]                    If all criteria match.
+  #
   # @raise [Minitest::Assertion]      If one or more criteria don't match.
   #
-  # @return [void]                    If all criteria match.
-  #
-  def assert_result: (Symbol status, **untyped opt) -> void
+  def assert_result: (Symbol status, **untyped opt) -> true
 end

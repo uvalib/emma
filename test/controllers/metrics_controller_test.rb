@@ -8,10 +8,7 @@ require 'prometheus/middleware/exporter'
 
 class MetricsControllerTest < ActionDispatch::IntegrationTest
 
-  OPTIONS      = {}.freeze
-
-  TEST_USERS   = [ANONYMOUS].freeze
-  TEST_READERS = TEST_USERS
+  OPTIONS = {}.freeze
 
   # ===========================================================================
   # :section: Read tests
@@ -19,21 +16,21 @@ class MetricsControllerTest < ActionDispatch::IntegrationTest
 
 =begin # NOTE: This doesn't work because '/metrics' is handled within Rack.
   test 'metrics' do
-    url = '/metrics'
     opt = OPTIONS.merge(format: :text)
+    url = '/metrics'
     run_test(__method__) do
       get url, as: :text
-      assert_result :success, opt
+      assert_result :success, **opt
     end
   end
 =end
 
   test 'test metrics' do
-    url = metrics_test_url
     opt = OPTIONS.merge(format: :json)
+    url = metrics_test_url
     run_test(__method__) do
       get url, as: :json
-      assert_result :success, opt
+      assert_result :success, **opt
     end
   end
 

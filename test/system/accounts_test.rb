@@ -7,30 +7,27 @@ require 'application_system_test_case'
 
 class AccountsTest < ApplicationSystemTestCase
 
-=begin
+  TEST_USER = :emmadso
+
+  # noinspection RbsMissingTypeSignature
   setup do
-    @user = users(:one)
+    @user = find_user(TEST_USER)
   end
-=end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-=begin # TODO: test account/index
   test 'accounts - visit index' do
     run_test(__method__) do
 
       visit account_index_url
-      assert_title 'EMMA User Accounts'
-      assert_selector 'h1', text: 'EMMA User Accounts'
+      assert_valid_page 'EMMA User Accounts'
       # ...
 
-    end
+    end unless not_applicable 'TODO: test account/index'
   end
-=end
 
-=begin # TODO: test account/new
   test 'accounts - creating a user account' do
     run_test(__method__) do
 
@@ -38,11 +35,9 @@ class AccountsTest < ApplicationSystemTestCase
       click_on 'Create'
       # ...
 
-    end
+    end unless not_applicable 'TODO: test account/new'
   end
-=end
 
-=begin # TODO: test account/edit
   test 'accounts - updating a user account' do
     run_test(__method__) do
 
@@ -50,11 +45,9 @@ class AccountsTest < ApplicationSystemTestCase
       click_on 'Change'
       # ...
 
-    end
+    end unless not_applicable 'TODO: test account/edit'
   end
-=end
 
-=begin # TODO: test account/edit
   test 'accounts - destroying a user account' do
     run_test(__method__) do
 
@@ -62,8 +55,7 @@ class AccountsTest < ApplicationSystemTestCase
       click_on 'Remove'
       # ...
 
-    end
+    end unless not_applicable 'TODO: test account/delete'
   end
-=end
 
 end

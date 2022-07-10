@@ -11,7 +11,7 @@ EMMA_RAILTIE_RAKE ||= begin
   # Enhance the enhancements of 'assets:precompile' by 'cssbundling-rails'
   # and 'jsbundling-rails' in order to pre-process .js.erb files.
 
-  namespace :emma_assets do
+  namespace 'emma:assets' do
 
     require 'erb'
     require 'emma/rake'
@@ -64,6 +64,6 @@ EMMA_RAILTIE_RAKE ||= begin
 
   end
 
-  Rake::Task['assets:precompile'].enhance(['emma_assets:erb'])
+  Rake::Task['assets:precompile'].enhance(['emma:assets:erb'])
 
 end

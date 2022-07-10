@@ -1,3 +1,5 @@
 class UserSessionsTest < ApplicationSystemTestCase
-  TEST_USER: String
+  TEST_USER: Symbol
+
+  @user: User
 end

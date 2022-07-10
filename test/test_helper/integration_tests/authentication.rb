@@ -101,13 +101,14 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @param [String, Symbol, User, nil] user
   # @param [Hash]                      opt    Passed to #run_test.
+  # @param [Proc]                      block  Required.
   #
   # @return [void]
   #
   # @yield Test code to run while signed-on as *user*.
   # @yieldreturn [void]
   #
-  def as_user(user, **opt)
+  def as_user(user, **opt, &block)
     user = find_user(user)
     unless opt.key?(:part)
       name = show_user(user: user, output: false)
@@ -115,7 +116,7 @@ module TestHelper::IntegrationTests::Authentication
     end
     run_test(opt[:test], **opt) do
       get_sign_in_as(user)
-      yield # Run provided test code.
+      block.call # Run provided test code.
       get_sign_out
     end
   end
@@ -141,30 +142,30 @@ module TestHelper::IntegrationTests::Authentication
   # @yield The caller may provide added assertions or other post-send actions.
   # @yieldreturn [void]
   #
-  def send_as(verb, user, url, **opt)
+  def send_as(verb, user, url, **opt, &block)
     as_user_opt, assert_opt = partition_hash(opt, *RUN_TEST_OPT)
     expect = assert_opt.delete(:expect)
     format = assert_opt[:format]
     if html?(format)
-      url    = url.sub(/\.html(\??|$)/, '\1')
+      url    = url.sub(%r{\.html([/?]?|$)}, '\1')
       format = nil
     end
     as_user_opt[:format] = format if format
     as_user(user, **as_user_opt) do
       method_opt = {}
       method_opt[:format] = format if format
-      method_opt[:expect] = expect if TestHelper::DEBUG_TESTS
+      method_opt[:expect] = expect if DEBUG_TESTS
       send(verb, url, **method_opt)
       if expect
-        assert_html_result expect, assert_opt
+        assert_html_result expect, **assert_opt
       elsif signed_in?
-        assert_html_result :success, assert_opt
+        assert_html_result :success, **assert_opt
       elsif format
         assert_response :unauthorized
       else
         assert_response :redirect
       end
-      yield if block_given?
+      block&.call
     end
   end
 

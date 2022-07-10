@@ -7,7 +7,7 @@ require 'test_helper'
 
 class PeriodicalTest < ActiveSupport::TestCase
 
-  test 'valid periodical' do
+  test 'model - valid periodical' do
     run_test(__method__) do
       item = sample_periodical
       show item
@@ -15,7 +15,7 @@ class PeriodicalTest < ActiveSupport::TestCase
     end
   end
 
-  test 'add edition to periodical' do
+  test 'model - add edition to periodical' do
     run_test(__method__) do
       item = sample_periodical
       item.editions << sample_edition

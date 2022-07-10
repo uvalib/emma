@@ -7,12 +7,16 @@ require 'application_system_test_case'
 
 class ArtifactsTest < ApplicationSystemTestCase
 
-=begin # TODO: visit artifact list test
+  CONTROLLER = :artifact
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   test 'artifacts - visit artifact list' do
     run_test(__method__) do
-      visit_index :artifact
-    end
+      visit_index CONTROLLER
+    end unless not_applicable 'TODO: visit artifact list'
   end
-=end
 
 end

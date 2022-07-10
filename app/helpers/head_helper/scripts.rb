@@ -88,7 +88,13 @@ module HeadHelper::Scripts
     @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
     @page_javascript.flatten!
     @page_javascript.compact_blank!
-    javascript_include_tag(*@page_javascript, opt) << app_javascript(**opt)
+    result = []
+    result << javascript_include_tag(*@page_javascript, opt)
+    result << app_javascript(**opt)
+    if defined?(CapybaraLockstep) && CapybaraLockstep.active
+      result << capybara_lockstep
+    end
+    safe_join(result, "\n")
   end
 
   # ===========================================================================
@@ -122,8 +128,9 @@ module HeadHelper::Scripts
   # @see #page_script_settings
   #
   SCRIPT_SETTINGS_OVERRIDES = {
-    RAILS_ENV: Rails.env.to_s,
-    DEPLOYED:  application_deployed?,
+    RAILS_ENV:       Rails.env.to_s,
+    DEPLOYED:        application_deployed?,
+    SEARCH_ANALYSIS: SearchesDecorator::SEARCH_ANALYSIS,
   }.deep_freeze
 
   # The set of overrides to JavaScript client settings.
