@@ -31,7 +31,7 @@ gem 'puma'
 # gem 'mini_magick', '~> 4.8'
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.1.0', require: false
+gem 'bootsnap', require: false
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
@@ -62,7 +62,7 @@ gem 'cssbundling-rails'
 gem 'turbolinks', '~> 5'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
+gem 'jbuilder'
 
 # =============================================================================
 # Application gems
@@ -89,7 +89,7 @@ gem 'prometheus-client'
 
 # == Upload/download
 gem 'archive-zip'
-gem 'aws-sdk-s3', '~> 1.14'
+gem 'aws-sdk-s3'
 gem 'pdf-reader'
 gem 'shrine', '~> 3.0'
 
@@ -162,7 +162,7 @@ group :test do
   gem 'selenium-webdriver'
 
   # Automatic installation and updates for all supported webdrivers.
-  gem 'webdrivers', '~> 4.0'
+  gem 'webdrivers'
 
   # For test coverage.
   gem 'simplecov'
