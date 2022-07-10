@@ -163,7 +163,7 @@ en:
           tooltip:      'Time that the phase was initiated.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         updated_at:
@@ -173,7 +173,7 @@ en:
           tooltip:      'Time of the latest update for the phase.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         # =====================================================================

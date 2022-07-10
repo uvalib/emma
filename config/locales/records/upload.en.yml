@@ -170,7 +170,7 @@ en:
           tooltip:      'Date of first upload.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         updated_at:
@@ -184,7 +184,7 @@ en:
           tooltip:      'Date of current upload.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         # =====================================================================
@@ -1258,11 +1258,11 @@ en:
           # IR:   N/A
           min:          0
           max:          1
-          type:         time
           label:        'Modification Date'
           tooltip:      'Date of last modification.'
           notes_html:   |
             <em>TODO</em>
+          type:         datetime
           origin:       system
 
         review_user:
@@ -1316,5 +1316,5 @@ en:
           tooltip:      'Date of last review.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system

@@ -158,7 +158,7 @@ en:
           tooltip:      'Time that the action was initiated.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         updated_at:
@@ -168,7 +168,7 @@ en:
           tooltip:      'Time of the latest update for the action.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         # =====================================================================

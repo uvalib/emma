@@ -115,11 +115,12 @@ module BaseDecorator::Fields
   # @type [Hash{Symbol=>Array<Class>}]
   #
   RENDER_FIELD_TYPE_TABLE = {
-    check:  [Boolean, TrueClass, FalseClass],
-    date:   [IsoDate, IsoDay, Date, DateTime],
-    number: [Integer, BigDecimal],
-    time:   [Time, ActiveSupport::TimeWithZone],
-    year:   [IsoYear],
+    check:    [Boolean, TrueClass, FalseClass],
+    date:     [IsoDate, IsoDay, Date],
+    datetime: [DateTime, ActiveSupport::TimeWithZone],
+    number:   [Integer, BigDecimal],
+    time:     [Time],
+    year:     [IsoYear],
   }.transform_values! { |types|
     types.flat_map { |type|
       # noinspection RubyMismatchedArgumentType
@@ -178,21 +179,23 @@ module BaseDecorator::Fields
       case type
         when :check    then true?(value.first)
         when :number   then value.first.to_s.remove(/[^\d]/)
-        when :year     then value.first.to_s.sub(/\s.*$/, '')
+        when :textarea then value.join("\n").split(/[ \t]*\n[ \t]*/).join("\n")
+        when :datetime then format_datetime(value.first)
         when :date     then value.first.to_s
         when :time     then value.first.to_s.sub(/^([^ ]+).*$/, '\1')
-        when :textarea then value.join("\n").split(/[ \t]*\n[ \t]*/).join("\n")
+        when :year     then value.first.to_s.sub(/\s.*$/, '')
         else value.map { |v| v.to_s.strip.presence }.compact.join(' | ')
       end
     case type
       when :check    then render_check_box(name, value, **opt)
+      when :email    then h.email_field_tag(name, value, opt)
       when :number   then h.number_field_tag(name, value, opt.merge(min: 0))
-      when :year     then h.text_field_tag(name, value, opt)
+      when :password then h.password_field_tag(name, value, opt)
+      when :textarea then h.text_area_tag(name, value, opt)
+      when :datetime then h.datetime_field_tag(name, value, opt)
       when :date     then h.date_field_tag(name, value, opt)
       when :time     then h.time_field_tag(name, value, opt)
-      when :textarea then h.text_area_tag(name, value, opt)
-      when :email    then h.email_field_tag(name, value, opt)
-      when :password then h.password_field_tag(name, value, opt)
+      when :year     then h.text_field_tag(name, value, opt)
       else                h.text_field_tag(name, value, opt)
     end
   end
@@ -367,6 +370,22 @@ module BaseDecorator::Fields
     end
     name = 'None' if name.blank?
     html_id(name, camelize: true)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # format_datetime
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def format_datetime(value)
+    value.try(:to_datetime)&.strftime('%Y-%m-%dT%H:%M:%S')
   end
 
   # ===========================================================================

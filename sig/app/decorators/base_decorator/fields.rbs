@@ -165,6 +165,14 @@ module BaseDecorator::Fields
   #
   def model_html_id: ((Symbol|String|nil) base) -> String
 
+  # format_datetime
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def format_datetime: (untyped value) -> (String | nil)
+
   # Match a major section title in a table-of-contents listing.
   #
   # @type [Regexp]

@@ -189,7 +189,7 @@ en:
           label:        'Remember Date'
           tooltip:      |
             For local (non-Bookshare) accounts only.
-          type:         text
+          type:         datetime
           origin:       system
           role:         developer
 
@@ -199,7 +199,7 @@ en:
           label:        'Reset Password Token'
           tooltip:      |
             For local (non-Bookshare) accounts only.
-          type:         text
+          type:         datetime
           origin:       system
           role:         developer
 
@@ -209,6 +209,6 @@ en:
           label:        'Reset Password Date'
           tooltip:      |
             For local (non-Bookshare) accounts only.
-          type:         text
+          type:         datetime
           origin:       system
           role:         developer

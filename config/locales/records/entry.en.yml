@@ -158,7 +158,7 @@ en:
           tooltip:      'Date of first upload.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         updated_at:
@@ -172,7 +172,7 @@ en:
           tooltip:      'Date of current upload.'
           notes_html:   |
             <em>TODO</em>
-          type:         time
+          type:         datetime
           origin:       system
 
         # =====================================================================
