@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 # @attr [String]                  bookshareId
 # @attr [IsoDate]                 dateAdded
+# @attr [IsoDate]                 dateModified
 # @attr [Bs::Record::Format]      format
 # @attr [Array<Bs::Record::Link>] links
 # @attr [String]                  location
@@ -25,9 +26,10 @@ class Bs::Record::ReadingPosition < Bs::Api::Record
 
   schema do
     has_one   :bookshareId
-    has_one   :dateAdded,   IsoDate
-    has_one   :format,      Bs::Record::Format
-    has_many  :links,       Bs::Record::Link
+    has_one   :dateAdded,     IsoDate
+    has_one   :dateModified,  IsoDate
+    has_one   :format,        Bs::Record::Format
+    has_many  :links,         Bs::Record::Link
     has_one   :location
   end
 

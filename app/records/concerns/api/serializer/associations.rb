@@ -235,12 +235,24 @@ module Api::Serializer::Associations
     # @see Api::Serializer#serializer_type
     #
     def decorator_class(record_class)
-      ->(*, **opt) {
-        current = opt.dig(:options, :doc).class.to_s
-        format  = current.match?(/xml/i) ? :xml : serializer.serializer_type
-        format  = format.to_s.capitalize
-        "#{record_class}::#{serializer_name(format)}".constantize
-      }
+      ->(*args, **opt) do
+        # NOTE: This is still problematic for some XML deserialization.
+        # noinspection RailsParamDefResolve
+        begin
+          opt      = args.last.merge(opt) if args.last.is_a?(Hash)
+          current  = opt.dig(:options, :doc)&.class&.to_s
+          format   = (:xml if current&.match?(/xml/i))
+          format ||= try(:serializer_type)
+          format ||= try(:serializer)&.serializer_type
+          format ||= (self[:represented].try(:serializer_type) if is_a?(Hash))
+          format ||= :xml
+          format = format.to_s.capitalize
+          s_name = try(:serializer_name, format) || "#{format}Serializer"
+          "#{record_class}::#{s_name}".constantize
+        rescue
+          "#{record_class}::JsonSerializer".constantize
+        end
+      end
     end
 
     # Format-specific operations for #attribute data elements.

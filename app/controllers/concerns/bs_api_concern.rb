@@ -94,11 +94,12 @@ module BsApiConcern
       bookshareId:    '1933741',
       seriesId:       '46424',
       editionId:      '2531073',
-      resourceId:     '???',      # TODO: ???
+      resourceId:     '???',                              # TODO: ???
       readingListId:  '325853',
-      subscriptionId: '???',      # TODO: ???
-      messageId:      '???',      # TODO: ???
-      organization:   'emma',     # TODO: ???
+      subscriptionId: '???',                              # TODO: ???
+      messageId:      '???',                              # TODO: ???
+      popularListId:  'bW9zdFBvcHVsYXI6RU1NQTo3MjA6MzM=',
+      organization:   'emma',                             # TODO: ???
       format:         BsFormatType.default,
       limit:          5,
     }.deep_freeze
@@ -191,17 +192,19 @@ module BsApiConcern
       methods = trial_methods(service: service) if methods.blank?
       # noinspection RubyNilAnalysis
       methods.map { |meth, opts|
-        param = opts.to_s.remove(/[{}]/).gsub(/:(.+?)=>/, '\1: ')
-        value = service.send(meth, **opts) rescue nil
-        error =
-          if value.nil?
-            "missing method - #{meth.inspect}"
-          else
-            value.try(:exception)
-          end
+        begin
+          value = service.send(meth, **opts)
+          error = value ? value.try(:exception) : "#{meth.inspect} failed"
+        rescue => e
+          value = nil
+          error = e
+        end
+        path  = value && service.latest_endpoint
+        param = path  && opts.to_s.remove(/[{}]/).presence
+        param&.gsub!(/:(.+?)=>/, '\1: ')
         trial = {
-          endpoint:   service.latest_endpoint,
-          parameters: ("(#{param})" if param.present?),
+          endpoint:   path,
+          parameters: (param && "(#{param})"),
           status:     (error ? 'error' : 'success'),
           value:      value,
           error:      error

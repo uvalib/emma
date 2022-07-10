@@ -2,6 +2,7 @@
 #
 # @attr [String]                  bookshareId
 # @attr [IsoDate]                 dateAdded
+# @attr [IsoDate]                 dateModified
 # @attr [Bs::Record::Format]      format
 # @attr [Array<Bs::Record::Link>] links
 # @attr [String]                  location

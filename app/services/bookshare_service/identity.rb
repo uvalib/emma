@@ -25,7 +25,7 @@ module BookshareService::Identity
   #
   def name_of(user)
     name = user.is_a?(Hash) ? user['uid'] : user
-    name.to_s.presence || DEFAULT_USER
+    name.to_s.presence || BookshareService::DEFAULT_USER
   end
 
   # ===========================================================================
