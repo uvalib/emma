@@ -20,6 +20,7 @@ class ApplicationController < ActionController::Base
 
   include FlashConcern
   include MetricsConcern
+  include ResponseConcern
 
   # ===========================================================================
   # :section: Authentication

@@ -14,10 +14,11 @@
   row    ||= level
   skip   ||= nil
 
-  skip    = [*skip, :thumbnail]
-  heading =
+  skip     = [*skip, :thumbnail]
+  heading  =
     unless skip.include?(:title)
-      title ||= dec.page_heading
+      title ||= nil
+      title   = dec.page_heading(title)
       title  += " (#{count})" unless skip.include?(:count)
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?

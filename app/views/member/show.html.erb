@@ -10,15 +10,16 @@
   dec     = MemberDecorator.new(item, hist: hist, pref: pref, **context)
   item  ||= dec.object
 
-  title ||= item.label.presence || dec.page_heading
   help  ||= nil # dec.help_topic
+  title ||= item.try(:label).presence
+  title   = dec.page_heading(title)
+
   add     = { EmmaRoles: current_user.role_list.join(', ') }
 
   unless modal?
-    label = dec.page_meta_title(default: dec.page_heading)
+    label = "#{dec.page_meta_title} - #{title}"
     set_page_meta_title(label)
-    set_page_description(title)
-    set_page_robots(:noindex)
+    set_page_description(Title: title)
   end
 
   template_opt = { dec: dec, add: add }

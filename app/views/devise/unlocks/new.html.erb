@@ -6,8 +6,8 @@
 
   user  ||= current_user
 
-  title ||= t('emma.user.unlocks.new.title')
   help  ||= nil
+  title ||= t('emma.user.unlocks.new.title')
 
   unless modal?
     set_page_meta_title(title)

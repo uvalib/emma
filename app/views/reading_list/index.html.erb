@@ -8,8 +8,10 @@
   dec      = ReadingListsDecorator.new(list, **context)
   list   ||= dec.object
 
-  title  ||= dec.page_heading
   help   ||= nil # dec.help_topic
+  title  ||= nil
+  title    = dec.page_heading(title)
+
   total  ||= @page.total_items
   terms  ||= search_terms
   row    ||= 1
@@ -20,10 +22,11 @@
   search   = search.presence
 
   unless modal?
-    label = dec.page_meta_title(default: title)
+    label = dec.page_meta_title
     terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
+    terms = list_search_terms(terms) if terms
+    label = "#{label} - #{terms}"    if terms
     set_page_meta_title(label)
-    append_page_meta_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
   end
 

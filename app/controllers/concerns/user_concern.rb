@@ -56,6 +56,7 @@ module UserConcern
   # Return account summary information and account preferences.
   #
   # @param [String]         id        If *nil*, assumes the current user.
+  # @param [Boolean]        fast      If *true*, don't get history/preferences.
   # @param [Symbol, String] meth      Calling method.
   #
   # @return [Array<(
@@ -65,7 +66,7 @@ module UserConcern
   # )>]
   # @return [Array<(nil,nil,nil)>]
   #
-  def get_account_details(id: nil, meth: nil)
+  def get_account_details(id: nil, fast: nil, meth: nil)
     meth ||= calling_method
     error  = []
     warn   = []
@@ -85,9 +86,9 @@ module UserConcern
     end
 
     # Ancillary account information.
+    pref = hist = nil
     if item.error?
       error << item.exec_report
-      pref = hist = nil
     elsif opt[:user].present?
       pref = bs_api.get_preferences(**opt)
       warn << pref.exec_report if pref.error?
@@ -95,7 +96,7 @@ module UserConcern
       # warn << hist.error_message if hist.error? # TODO: ...
       hist = nil
       warn << 'No API support for preferences or history'
-    else
+    elsif !fast
       pref = bs_api.get_my_preferences(**opt)
       error << pref.exec_report if pref.error?
       hist = bs_api.get_my_download_history(**opt)

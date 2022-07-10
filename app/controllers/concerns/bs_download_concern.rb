@@ -28,6 +28,7 @@ module BsDownloadConcern
   # @return [void]
   #
   def bs_download_response(meth, **opt)
+    err = nil
     # @type [Search::Message::RetrievalResult, Bs::Message::StatusModel] result
     result = bs_api.send(meth, **opt.merge!(no_raise: true, no_redirect: true))
     @exception = result.exception
@@ -39,6 +40,10 @@ module BsDownloadConcern
       format.json { render_json bs_download_values }
       format.xml  { render_xml  bs_download_values }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # ===========================================================================

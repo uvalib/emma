@@ -6,14 +6,13 @@
 
   list  ||= @list || {}
 
+  help  ||= nil # %i[data]
   title ||= t('emma.data.index.title')
-  help  ||= nil # :data
 
   unless modal?
     label = t('emma.data.index.label', default: title)
     set_page_meta_title(label)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
   suffix = hex_rand

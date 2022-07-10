@@ -211,6 +211,7 @@ module SessionConcern
   #
   def connection_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
+    self.status = :gateway_timeout
     if rendering_html?
       flash_now_alert(exception)
       render
@@ -229,6 +230,7 @@ module SessionConcern
   #
   def fallback_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception, trace: true)
+    self.status = :internal_server_error
     if rendering_html?
       flash_now_alert(exception)
       render
@@ -257,6 +259,7 @@ module SessionConcern
   #
   def error_handler_deep_fallback(meth, error = nil)
     Log.error { "#{meth} FAILED: #{error.inspect}" } if error
+    self.status = :internal_server_error
     render welcome_path
   end
 
@@ -334,6 +337,7 @@ module SessionConcern
     flash_now_alert(api_exec_report, html: true) if api_error?
 
   ensure
+    api_reset
     last_operation_update
     raise error if error
   end

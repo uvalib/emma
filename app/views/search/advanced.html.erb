@@ -4,13 +4,13 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.search.advanced.title')
   help  ||= :search
+  title ||= t('emma.search.advanced.title')
 
   unless modal?
-    set_page_meta_title(t('emma.search.advanced.label', default: title))
+    label = t('emma.search.advanced.label', default: title)
+    set_page_meta_title(label)
     set_page_description(title)
-    set_page_robots(:noindex)
   end
 
 -%>

@@ -47,6 +47,12 @@ class HelpController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /help
@@ -57,6 +63,7 @@ class HelpController < ApplicationController
   # @see HelpHelper#help_topics
   #
   def index
+    err = nil
     # noinspection RubyMismatchedArgumentType
     return redirect_to help_path(id: @topic) if @topic.present?
     __debug_route
@@ -66,6 +73,10 @@ class HelpController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /help/:topic
@@ -77,11 +88,16 @@ class HelpController < ApplicationController
   #
   def show
     __debug_route
+    err = ('No topic specified' if @topic.nil?)
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # ===========================================================================

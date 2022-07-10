@@ -9,17 +9,17 @@
   dec     = EntryDecorator.new(item, cover: image, **context)
   item  ||= dec.object
 
-  title ||= dec.page_heading(name: item.filename)
-  help  ||= nil # dec.help_topic
   host  ||= @host
 
-  title = "#{host} - #{title}" if host.present?
+  help  ||= nil # dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title, name: item.filename)
+  title   = "#{host} - #{title}" if host.present?
 
   unless modal?
-    label = dec.page_meta_title(default: title)
+    label = "#{dec.page_meta_title} - #{title}"
     set_page_meta_title(label)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
   template_opt = { dec: dec }

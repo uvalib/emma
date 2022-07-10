@@ -41,7 +41,7 @@ class SearchCallController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  before_action :authenticate_user!
+  before_action :authenticate_admin!
 
   # ===========================================================================
   # :section: Authorization

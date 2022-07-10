@@ -55,6 +55,12 @@ class CategoryController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /category
@@ -66,16 +72,22 @@ class CategoryController < ApplicationController
   #
   def index
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @list = bs_api.get_categories(**opt)
+    b_opt = opt.except(:format)
+    @list = bs_api.get_categories(**b_opt)
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :categories, **opt)
-    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :category) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # ===========================================================================

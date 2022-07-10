@@ -10,16 +10,17 @@
   recs  ||= dec.object
   list  ||= recs
 
-  title ||= dec.page_heading
   help  ||= dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
   repo  ||= recs.first&.repository
   logo  ||= repository_source_logo(repo)
 
   unless modal?
-    label = dec.page_meta_title(default: title)
+    label = "#{dec.page_meta_title} - #{title}"
     set_page_meta_title(label)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

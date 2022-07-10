@@ -53,6 +53,12 @@ class PeriodicalController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /periodical
@@ -64,16 +70,22 @@ class PeriodicalController < ApplicationController
   #
   def index
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @list = bs_api.get_periodicals(**opt)
+    b_opt = opt.except(:format)
+    @list = bs_api.get_periodicals(**b_opt)
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :periodicals, **opt)
-    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :periodical) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /periodical/:id
@@ -86,17 +98,24 @@ class PeriodicalController < ApplicationController
   #
   def show
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @item = bs_api.get_periodical(seriesId: bs_series)
-    @list = bs_api.get_periodical_editions(seriesId: bs_series)
+    b_opt = opt.except(:format).merge!(seriesId: bs_series)
+    @item = bs_api.get_periodical(**b_opt)
+    @list = bs_api.get_periodical_editions(**b_opt)
+    err   = @item.exec_report if @item.error?
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :periodicalEditions, **opt)
-    flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values(nil, as: :array) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /periodical/new[?id=:id]
@@ -163,6 +182,9 @@ class PeriodicalController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  #--
+  # noinspection RubyMismatchedParameterType
+  #++
   def index_values(list = @list, **opt)
     opt.reverse_merge!(wrap: :periodicals)
     super(list, **opt)

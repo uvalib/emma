@@ -6,14 +6,13 @@
 
   view_debug(__FILE__)
 
+  help  ||= :sign_in
   title ||= t('emma.user.sessions.new.title', default: nil)
   title ||= t('emma.user.sessions.new.label', default: 'Sign in')
-  help  ||= :sign_in
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

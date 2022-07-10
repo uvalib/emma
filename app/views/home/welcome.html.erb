@@ -4,8 +4,8 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.home.welcome.title', default: :'emma.home.title')
   help  ||= nil # %i[home welcome]
+  title ||= t('emma.home.welcome.title', default: :'emma.home.title')
 
   unless modal?
     set_page_meta_title(title)

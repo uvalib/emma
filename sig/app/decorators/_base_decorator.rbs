@@ -169,10 +169,41 @@ class BaseDecorator < Draper::Decorator
     def decorate:        (Model item, **untyped opt) -> BaseDecorator
 
     def help_topic:      () -> symArray
-    def page_meta_title: (?default: bool|String, **untyped opt) -> String
-    def page_heading:    (?default: bool|String, **untyped opt) -> String
 
-    def page_value:      (Symbol item, ?default: bool|String, **untyped opt) -> String
+    @page_meta_title: String | nil
+
+    # Title string for use with the '<head><title>' element.
+    #
+    # @param [String, nil]     value    Value to use if given.
+    # @param [Boolean, String] default  Passed to #page_value.
+    # @param [Hash]            opt      Passed to #page_value.
+    #
+    # @return [String]
+    #
+    def page_meta_title: (?(String|nil) value, ?default: bool|String, **untyped opt) -> String
+
+    @page_heading: String | nil
+
+    # Title string for use with the main heading on the displayed page.
+    #
+    # @param [String, nil]     value    Value to use if given.
+    # @param [Boolean, String] default  Passed to #page_value.
+    # @param [Hash]            opt      Passed to #page_value.
+    #
+    # @return [String]
+    #
+    def page_heading: (?(String|nil) value, ?default: bool|String, **untyped opt) -> String
+
+    # Configuration value for this controller/action.
+    #
+    # @param [Symbol, String, nil] item     Value or configuration item.
+    # @param [Boolean, String]     default  Fallback if config item missing.
+    # @param [Hash]                opt      Optional interpolation values.
+    #
+    # @return [String, nil]
+    #
+    def page_value: (String|Symbol|nil item, ?default: true|String, **untyped opt) -> String
+                  | (String|Symbol|nil item,  default: false|nil,   **untyped opt) -> (String | nil)
   end
 
   # Methods for every decorator class.

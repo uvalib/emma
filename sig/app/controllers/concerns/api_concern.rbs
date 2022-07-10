@@ -64,6 +64,14 @@ module ApiConcern
   #
   def api_exception: (*Class only) -> (Hash[Class,Exception] | Exception | nil)
 
+  # Clear the current API service exception.
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [void]
+  #
+  def api_reset: (*Class only) -> void
+
   # The ApiService.table with any blank entries removed.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).

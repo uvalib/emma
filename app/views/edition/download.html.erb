@@ -4,18 +4,17 @@
 
   view_debug(__FILE__)
 
+  help  ||= nil # %i[edition download]
   title ||= t('emma.edition.download.title')
-  help  ||= nil
+
   error ||= @error
+  error ||= t('emma.download.error.server')
+  error ||= t('emma.download.error.javascript')
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
-
-  error &&= t('emma.download.error.server')
-  error ||= t('emma.download.error.javascript')
 
 -%>
 

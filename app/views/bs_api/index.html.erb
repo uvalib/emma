@@ -4,14 +4,14 @@
 
   view_debug(__FILE__)
 
-  title   ||= t('emma.bs_api.index.title')
   help    ||= nil # :bs_api
+  title   ||= t('emma.bs_api.index.title')
+
   methods ||= BookshareService.api_methods.keys.sort
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

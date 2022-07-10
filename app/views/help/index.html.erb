@@ -10,9 +10,10 @@
   intro ||= t('emma.help.index.intro', default: '')
 
   unless modal?
-    set_page_meta_title(t('emma.help.index.label', default: title))
+    label = t('emma.help.index.label', default: title)
+    set_page_meta_title(label)
     set_page_description(title)
-    help_links(list).each { |label, path| skip_nav_append(label => path) }
+    help_links(list).each { |name, path| skip_nav_append(name => path) }
   end
 
   intro = intro.presence && help_paragraphs(intro).join("\n").html_safe

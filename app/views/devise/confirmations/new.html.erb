@@ -6,8 +6,8 @@
 
   user  ||= current_user
 
-  title ||= t('emma.user.confirmations.new.title')
   help  ||= nil
+  title ||= t('emma.user.confirmations.new.title')
 
   set_page_robots(:noindex, :nofollow) unless modal?
 

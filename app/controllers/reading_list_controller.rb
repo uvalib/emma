@@ -53,6 +53,12 @@ class ReadingListController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /reading_list
@@ -65,9 +71,12 @@ class ReadingListController < ApplicationController
   #
   def index
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @list = bs_api.get_reading_lists_list(**opt)
+    b_opt = opt.except(:format)
+    @list = bs_api.get_reading_lists_list(**b_opt)
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :lists, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
@@ -75,6 +84,10 @@ class ReadingListController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :reading_list) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /reading_list/:id
@@ -87,18 +100,24 @@ class ReadingListController < ApplicationController
   #
   def show
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
     b_opt = { readingListId: bs_list }
     @item = bs_api.get_reading_list(**b_opt)
     @list = bs_api.get_reading_list_titles(**b_opt, no_raise: true)
+    err   = @item.exec_report if @item.error?
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :titles, **opt)
-    flash_now_alert(@item.exec_report) if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values(nil, as: :array) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /reading_list/new[?id=:id]

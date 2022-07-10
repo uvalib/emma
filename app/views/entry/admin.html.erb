@@ -4,13 +4,12 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.entry.admin.title')
   help  ||= nil # %i[entry admin]
+  title ||= t('emma.entry.admin.title')
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

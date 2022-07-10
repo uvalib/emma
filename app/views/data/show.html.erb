@@ -7,14 +7,13 @@
   item  ||= @item || []
   name  ||= @name
 
-  title ||= t('emma.data.show.title', table: (name&.titleize || '???'))
   help  ||= nil # %i[data show]
+  title ||= t('emma.data.show.title', table: (name&.titleize || '???'))
 
   unless modal?
     label = t('emma.data.show.label', default: title)
     set_page_meta_title(label)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
   count = positive(item.size - 1) || 0

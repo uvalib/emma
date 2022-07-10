@@ -4,8 +4,8 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.tool.md.title')
   help  ||= nil # %i[tool md]
+  title ||= t('emma.tool.md.title')
 
   unless modal?
     label = t('emma.tool.md.label', default: title)

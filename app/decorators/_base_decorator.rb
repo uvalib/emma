@@ -855,23 +855,30 @@ class BaseDecorator < Draper::Decorator
 
     # Title string for use with the '<head><title>' element.
     #
-    # @param [Hash] opt               Passed to #page_value.
+    # @param [String, nil]     value    Value to use if given.
+    # @param [Boolean, String] default  Passed to #page_value.
+    # @param [Hash]            opt      Passed to #page_value.
     #
     # @return [String]
     #
-    def page_meta_title(**opt)
-      page_value(:label, **opt)
+    def page_meta_title(value = nil, default: true, **opt)
+      @page_meta_title   = nil                       if opt.present?
+      @page_meta_title   = page_value(value,  **opt) if value
+      @page_meta_title ||= page_value(:label, **opt, default: default)
     end
 
     # Title string for use with the main heading on the displayed page.
     #
-    # @param [Hash] opt               Passed to #page_value.
+    # @param [String, nil]     value    Value to use if given.
+    # @param [Boolean, String] default  Passed to #page_value.
+    # @param [Hash]            opt      Passed to #page_value.
     #
     # @return [String]
     #
-    def page_heading(**opt)
-      opt[:default] = true unless opt.key?(:default)
-      page_value(:title, **opt)
+    def page_heading(value = nil, default: true, **opt)
+      @page_heading   = nil                       if opt.present?
+      @page_heading   = page_value(value,  **opt) if value
+      @page_heading ||= page_value(:title, **opt, default: default)
     end
 
     # =========================================================================
@@ -882,19 +889,19 @@ class BaseDecorator < Draper::Decorator
 
     # Configuration value for this controller/action.
     #
-    # @param [Symbol]          item
-    # @param [Boolean, String] default
-    # @param [Hash]            opt      Optional interpolation values.
+    # @param [Symbol, String, nil] item     Value or configuration item.
+    # @param [Boolean, String]     default  Fallback if config item missing.
+    # @param [Hash]                opt      Optional interpolation values.
     #
-    # @return [String]
+    # @return [String, nil]
     #
     def page_value(item, default: true, **opt)
       action = opt.delete(:action) || context[:action]
-      value  = controller_config.dig(action, item)
+      value  = item.is_a?(Symbol) ? controller_config.dig(action, item) : item
       if value && opt.present?
         value % opt
       elsif value
-        value
+        value.to_s
       elsif default.is_a?(TrueClass)
         [action, model_type].map(&:to_s).map(&:titleize).join(' ')
       elsif default

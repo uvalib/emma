@@ -61,6 +61,12 @@ class ArtifactController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
 =begin # TODO: all artifacts? Probably not...
@@ -70,9 +76,11 @@ class ArtifactController < ApplicationController
   #
   def index
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
     @list = bs_api.get_artifact_list(**opt)
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :artifacts, **opt)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
@@ -80,6 +88,10 @@ class ArtifactController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :artifact) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 =end
 
@@ -93,14 +105,20 @@ class ArtifactController < ApplicationController
   #
   def show
     __debug_route
-    opt   = { bookshareId: bs_id, format: bs_format }
-    @item = bs_api.get_artifact_metadata(**opt)
-    flash_now_alert(@item.exec_report) if @item.error?
+    err   = nil
+    b_opt = { bookshareId: bs_id, format: bs_format }
+    @item = bs_api.get_artifact_metadata(**b_opt)
+    err   = @item&.exec_report                               if @item&.error?
+    err   = "Item #{bs_id}: no information for #{bs_format}" if @item.nil?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /artifact/new[?id=:id]
@@ -174,8 +192,8 @@ class ArtifactController < ApplicationController
   #
   def download
     __debug_route
-    opt = { bookshareId: bs_id, format: bs_format, forUser: bs_member }
-    bs_download_response(:download_title, **opt)
+    b_opt = { bookshareId: bs_id, format: bs_format, forUser: bs_member }
+    bs_download_response(:download_title, **b_opt)
   end
 
   # == GET /artifact/retrieval?url=URL&forUser=BS_ACCOUNT_ID
@@ -189,8 +207,8 @@ class ArtifactController < ApplicationController
   #
   def retrieval
     __debug_route
-    opt = { url: item_download_url, forUser: bs_member }
-    bs_download_response(:get_retrieval, **opt)
+    b_opt = { url: item_download_url, forUser: bs_member }
+    bs_download_response(:get_retrieval, **b_opt)
   end
 
   # ===========================================================================

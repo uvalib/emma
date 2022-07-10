@@ -57,6 +57,12 @@ class MemberController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /member
@@ -68,16 +74,22 @@ class MemberController < ApplicationController
   #
   def index
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @list = bs_api.get_my_organization_members(**opt)
+    b_opt = opt.except(:format)
+    @list = bs_api.get_my_organization_members(**b_opt)
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :userAccounts, **opt)
-    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :member) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /member/:id
@@ -89,12 +101,18 @@ class MemberController < ApplicationController
   #
   def show
     __debug_route
+    err = nil
     @item, @preferences, @history = get_account_details(id: @account_id)
+    err = "Account #{@account_id}: no information" if @item.nil?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values(nil, as: :array) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /member/new[?id=:id]

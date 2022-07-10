@@ -77,9 +77,8 @@ module Emma::Common::ExceptionMethods
   def re_raise_if_internal_exception(error)
     return unless internal_exception?(error)
     Log.warn { "RE-RAISING INTERNAL EXCEPTION #{error}" }
-    raise error
+    raise error unless request.format.html?
   end
-    .tap { |meth| neutralize(meth) if application_deployed? }
 
   # ===========================================================================
   # :section:

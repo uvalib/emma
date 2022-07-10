@@ -35,8 +35,8 @@ module Emma::Common::StringMethods
   # @return [String]
   #
   def sanitized_string(string)
-    text = CGI.unescapeHTML(string.to_s).gsub(/&nbsp;/, ' ')
-    Sanitize.fragment(text).squish
+    text = Sanitize.fragment(string.to_s).squish
+    CGI.unescapeHTML(text).gsub(/&nbsp;/, ' ')
   end
 
   # Generate a rendering of a hash as a delimited list of key-value pairs.

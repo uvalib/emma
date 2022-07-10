@@ -13,10 +13,12 @@
   level ||= 1
   skip  ||= nil
 
-  append_page_description(
-    ISSN:     item.issn,
-    Language: item.languages&.first(3),
-  ) unless modal?
+  unless modal?
+    append_page_description(
+      ISSN:     item.issn,
+      Language: item.languages&.first(3),
+    )
+  end
 
 -%>
 

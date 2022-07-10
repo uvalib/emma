@@ -8,14 +8,16 @@
   dec      = ActionsDecorator.new(list, **context)
   list   ||= dec.object
 
+  help   ||= nil # %i[entry actions]
+  title  ||= nil
+  title    = dec.page_heading(title)
+
   count  ||= list.size
   offset ||= @page.page_offset
   level  ||= 1
   row    ||= level
   skip   ||= nil
 
-  title  ||= t('emma.entry.actions.title')
-  help   ||= nil # %i[entry actions]
   total  ||= count
   terms  ||= search_terms
 
@@ -25,15 +27,14 @@
   search   = search.presence
 
   unless modal?
-    label = t('emma.entry.actions.label', default: title)
+    label = dec.page_meta_title
     terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
     group = page_terms[:group]&.values&.first
-    group = Entry.state_group_label(group) if group # TODO: upload -> entry
+    group = Entry.state_group_label(group)                if group
     set_page_meta_title(label)
     append_page_meta_title('-', group)                    if group
     append_page_meta_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
-    set_page_robots(:nofollow)
   end
 
   level += 1

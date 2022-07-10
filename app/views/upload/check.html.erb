@@ -7,14 +7,14 @@
   # @type [Array<String>]
   list  ||= @list
 
-  error ||= 'Invalid identifier' # TODO: I18n
-  title ||= t('emma.upload.check.title')
   help  ||= nil # %i[upload check]
+  title ||= t('emma.upload.check.title')
+
+  error ||= 'Invalid identifier' # TODO: I18n
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

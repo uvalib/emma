@@ -82,12 +82,12 @@ module SerializationConcern
     item_name = opt.delete(:item)
     debug     = session_debug?
 
-    items  = @page.page_items || []
+    items  = @page&.page_items || list || []
     list ||= items
 
     prop = {
-      total: @page.total_items,
-      limit: list.try(:limit) || @page.item_count(list),
+      total: @page&.total_items || list.size,
+      limit: list.try(:limit) || @page&.item_count(list),
       links: list.try(:links)
     }
     prop[:list_type] = list.class.name        if debug

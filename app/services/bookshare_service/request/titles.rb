@@ -408,6 +408,7 @@ module BookshareService::Request::Titles
           start:                  String,
           limit:                  Integer,
         },
+        role:         :anonymous, # Should succeed for any user.
         reference_id: '_get-bisac-codes'
       }
     end

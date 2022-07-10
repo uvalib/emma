@@ -6,11 +6,12 @@
 
   view_debug(__FILE__)
 
+  p_opt = { fast: Rails.env.test? }.compact_blank!
   links =
     stored_auth(true).keys.map { |id|
       user  = html_tag(:strong, id)
       label = get_sessions_label(:sign_in_as, user: user).html_safe
-      path  = sign_in_as_path(id: id)
+      path  = sign_in_as_path(id: id, **p_opt)
       [label, path]
     }
 

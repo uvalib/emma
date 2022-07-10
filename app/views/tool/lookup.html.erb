@@ -6,8 +6,8 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.tool.lookup.title')
   help  ||= %i[lookup_tool]
+  title ||= t('emma.tool.lookup.title')
 
   unless modal?
     label = t('emma.tool.lookup.label', default: title)

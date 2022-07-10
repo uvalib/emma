@@ -10,13 +10,12 @@
 
   id    ||= bs_id
 
-  title ||= t('emma.title.history.title')
   help  ||= nil # %i[title history]
+  title ||= t('emma.title.history.title')
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
   click_to =

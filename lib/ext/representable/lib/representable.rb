@@ -299,7 +299,7 @@ module Representable
         __debug_show(:input, as: as, hash: hash, leader: "Hash.#{__method__}")
         if hash.is_a?(Array)
           hash
-        elsif hash.key?(as)
+        elsif hash.respond_to?(:key?) && hash.key?(as)
           hash[as]
         else
           FragmentNotFound

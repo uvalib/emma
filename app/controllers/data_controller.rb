@@ -32,6 +32,10 @@ class DataController < ApplicationController
 
   respond_to :html, :json, :xml
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /data[?tables=...]

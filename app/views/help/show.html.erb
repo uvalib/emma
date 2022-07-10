@@ -11,7 +11,8 @@
   intro ||= entry[:intro] || t('emma.help.show.intro', default: '', **entry)
 
   unless modal?
-    set_page_meta_title(t('emma.help.show.label', default: title, **entry))
+    label = t('emma.help.show.label', default: title, **entry)
+    set_page_meta_title(label)
     set_page_description(title)
   end
 

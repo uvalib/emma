@@ -1,0 +1,15 @@
+# Controller support methods for failure responses.
+#
+module ResponseConcern
+  extend ActiveSupport::Concern
+
+  include FlashHelper
+
+  include ParamsHelper
+
+  def failure_response: (untyped error, ?status: String|Integer|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil) -> void
+
+  private
+
+  THIS_MODULE: Module
+end

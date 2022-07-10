@@ -449,7 +449,7 @@ module EntryConcern
   #
   def update_entry(item = nil, opt = nil)
     item, opt = entry_request_params(item, opt)
-    get_entry(item, **opt) do |entry|
+    get_entry(item, **opt).tap do |entry|
       if entry.nil?
         Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
       elsif (phase = entry.phases.where(type: :Edit).order(:created_at).last)

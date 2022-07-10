@@ -106,7 +106,7 @@ module BaseCollectionDecorator::List
     row   &&= (positive(row) || 1) + 1
     paging  = (page > 1)
     more    = (count < total) || (count == size) || (records == size)
-    unit    = list.first&.aggregate? ? 'title' : 'record'
+    unit    = ('title' if list.first&.aggregate?)
 
     links   = pagination_controls
 

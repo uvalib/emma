@@ -7,14 +7,13 @@
   list  ||= @list
   name  ||= nil # Not directly from a specific table.
 
-  title ||= t('emma.data.submissions.title')
   help  ||= nil # %i[data submissions]
+  title ||= t('emma.data.submissions.title')
 
   unless modal?
     label = t('emma.data.submissions.label', default: title)
     set_page_meta_title(label)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

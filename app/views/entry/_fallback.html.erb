@@ -16,7 +16,6 @@
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
   error = (html_tag(:p, error) unless error.blank? || (error == :none))

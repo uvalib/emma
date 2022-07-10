@@ -94,7 +94,8 @@ class HomeController < ApplicationController
   #
   def dashboard
     __debug_route
-    @item, @preferences, @history = get_account_details
+    fast = true?(params[:fast])
+    @item, @preferences, @history = get_account_details(fast: fast)
     response.status =
       case flash.now[:alert]
         when '', nil             then 200 # OK

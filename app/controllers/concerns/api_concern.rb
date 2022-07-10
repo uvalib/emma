@@ -105,6 +105,16 @@ module ApiConcern
     (table.size == 1) ? table.values.first : table.presence
   end
 
+  # Clear the current API service exception.
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [void]
+  #
+  def api_reset(*only)
+    api_active_table(*only).values.each(&:clear_error)
+  end
+
   # The ApiService.table with any blank entries removed.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).

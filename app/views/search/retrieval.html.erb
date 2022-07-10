@@ -4,17 +4,15 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.download.label')
   help  ||= nil # %i[search retrieval]
-  error ||= 'No URL provided' # TODO: I18n
+  title ||= t('emma.download.label')
+
+  error ||= t('emma.download.error.server')
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
-
-  error &&= t('emma.download.error.server')
 
 -%>
 

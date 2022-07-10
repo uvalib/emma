@@ -86,27 +86,35 @@ class SearchController < ApplicationController
   #
   def index
     __debug_route
+    err   = nil
     @page    = pagination_setup
     opt      = @page.initial_parameters
     playback = opt.delete(:search_call)
     search   = playback || opt
     s_params = search.except(*NON_SEARCH_KEYS)
     q_params = extract_hash!(s_params, *search_query_keys).compact_blank!
-    if q_params.present?
-      opt    = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
-      titles = title_results?
-      @list  = index_search(titles: titles, save: !playback, **opt)
-      @page.finalize(@list, (titles ? :titles : :records), **opt)
-      respond_to do |format|
-        format.html
-        format.json { render_json index_values }
-        format.xml  { render_xml  index_values(item: :record)  }
+    if q_params.blank?
+      if s_params.present?
+        redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
+      else
+        render 'search/advanced'
       end
-    elsif s_params.present?
-      redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
-    else
-      render 'search/advanced'
+      return
     end
+    opt    = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+    titles = title_results?
+    @list  = index_search(titles: titles, save: !playback, **opt)
+    err    = @list.exec_report if @list.error?
+    @page.finalize(@list, (titles ? :titles : :records), **opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values(item: :record)  }
+    end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /search/:id
@@ -121,13 +129,18 @@ class SearchController < ApplicationController
   #
   def show
     __debug_route
+    err   = nil
     @item = index_record(record_id: @record_id)
-    flash_now_alert(@item.exec_report) if @item.error?
+    err   = @item.exec_report if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # ===========================================================================

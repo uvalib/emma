@@ -198,8 +198,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = wf_single(rec: (@db_id || :unset), event: :create)
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # == POST  /upload/create
@@ -242,8 +241,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = (wf_single(event: :edit) unless show_menu?(@identifier))
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # == PUT   /upload/update/:id
@@ -292,8 +290,7 @@ class UploadController < ApplicationController
       @list = wf_single(rec: :unset, data: @identifier, event: :remove)
     end
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # == DELETE /upload/destroy/:id[?force=true&truncate=true&emergency=true]
@@ -340,8 +337,7 @@ class UploadController < ApplicationController
   def bulk_index
     __debug_route
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error, status: :bad_request)
   end
 
   # == GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -357,8 +353,7 @@ class UploadController < ApplicationController
     __debug_route
     wf_bulk(rec: :unset, data: :unset, event: :create)
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -396,8 +391,7 @@ class UploadController < ApplicationController
     __debug_route
     @list = wf_bulk(rec: :unset, data: :unset, event: :edit)
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # == PUT   /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -436,8 +430,7 @@ class UploadController < ApplicationController
     __debug_route
     @list = wf_bulk(event: :remove)
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # == DELETE /upload/bulk[?force=true]
@@ -533,11 +526,11 @@ class UploadController < ApplicationController
     end
   rescue => error
     if request.get?
-      flash_now_failure(error)
+      failure_response(error)
     else
       post_response(error)
+      re_raise_if_internal_exception(error)
     end
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/check/:id
@@ -559,8 +552,7 @@ class UploadController < ApplicationController
       format.xml  { render_xml  data }
     end
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # ===========================================================================
@@ -663,8 +655,7 @@ class UploadController < ApplicationController
     __debug_route
     @s3_object_table = get_s3_object_table(**url_parameters)
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # ===========================================================================
@@ -689,8 +680,7 @@ class UploadController < ApplicationController
       format.xml  { render xml:  @list }
     end
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # == GET /upload/bulk_reindex?size=PAGE_SIZE[&id=(:id|SID|RANGE_LIST)]
@@ -706,8 +696,7 @@ class UploadController < ApplicationController
     @list, failed = reindex_submissions(*@identifier, **opt)
     failure(:invalid, failed.uniq) if failed.present?
   rescue => error
-    flash_now_failure(error)
-    re_raise_if_internal_exception(error)
+    failure_response(error)
   end
 
   # ===========================================================================
@@ -737,7 +726,7 @@ class UploadController < ApplicationController
   def show_search_failure(error, fallback = nil, meth: nil)
     meth ||= calling_method
     if modal?
-      flash_now_failure(error, meth: meth)
+      failure_response(error, meth: meth)
     else
       flash_failure(error, meth: meth)
       redirect_back(fallback_location: (fallback || upload_index_path))

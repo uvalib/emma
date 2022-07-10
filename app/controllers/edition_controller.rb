@@ -61,6 +61,12 @@ class EditionController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /edition?seriesId=:seriesId
@@ -72,16 +78,22 @@ class EditionController < ApplicationController
   #
   def index
     __debug_route
+    err   = nil
     @page = pagination_setup
     opt   = @page.initial_parameters
-    @list = bs_api.get_periodical_editions(seriesId: bs_series, **opt)
+    b_opt = opt.except(:format).merge!(seriesId: bs_series)
+    @list = bs_api.get_periodical_editions(**b_opt)
+    err   = @list.exec_report if @list.error?
     @page.finalize(@list, :periodicalEditions, **opt)
-    flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :edition) }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /edition/:id?seriesId=:seriesId
@@ -94,15 +106,20 @@ class EditionController < ApplicationController
   #
   def show
     __debug_route
-    opt   = { seriesId: bs_series, editionId: bs_edition }
-    @item = bs_api.get_periodical_edition(**opt)
-    # noinspection RubyNilAnalysis
-    flash_now_alert(@item.exec_report) if @item&.error?
+    err   = nil
+    b_opt = { seriesId: bs_series, editionId: bs_edition }
+    @item = bs_api.get_periodical_edition(**b_opt)
+    err   = @item&.exec_report                            if @item&.error?
+    err   = "Item #{bs_series}: no #{bs_edition} edition" if @item.nil?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /edition/new[?id=:id]

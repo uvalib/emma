@@ -34,6 +34,7 @@ module UserConcern
   # Return account summary information and account preferences.
   #
   # @param [String]         id        If *nil*, assumes the current user.
+  # @param [Boolean]        fast      If *true*, don't get history/preferences.
   # @param [Symbol, String] meth      Calling method.
   #
   # @return [Array<(
@@ -43,7 +44,7 @@ module UserConcern
   # )>]
   # @return [Array<(nil,nil,nil)>]
   #
-  def get_account_details: (?id: String?, ?meth: (Symbol|String)?) -> ([Bs::Message::MyAccountSummary, Bs::Message::MyAccountPreferences?, Bs::Message::TitleDownloadList?] | [nil, nil, nil])
+  def get_account_details: (?id: String|nil, ?fast: bool|nil, ?meth: Symbol|String|nil) -> ([Bs::Message::MyAccountSummary, Bs::Message::MyAccountPreferences|nil, Bs::Message::TitleDownloadList?] | [nil, nil, nil])
 
   @user: User | nil
 

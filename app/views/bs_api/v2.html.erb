@@ -4,16 +4,17 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.bs_api.v2.title')
-  help  ||= nil # %i[bs_api v2]
+  result ||= @api_result || {}
+
+  help   ||= nil # %i[bs_api v2]
+  title  ||= t('emma.bs_api.v2.title')
 
   unless modal?
-    set_page_meta_title(title, @api_result[:url].inspect)
+    set_page_meta_title(title, result[:url].inspect)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
-  result, info = partition_hash(@api_result, :exception, :result)
+  result, info = partition_hash(result, :exception, :result)
 
 -%>
 

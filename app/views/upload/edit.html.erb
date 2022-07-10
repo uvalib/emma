@@ -6,17 +6,19 @@
 
   item  ||= @item
   dec     = UploadDecorator.new(item, **context)
+  item  ||= dec.object
 
-  title ||= t('emma.upload.edit.title')
   help  ||= dec.help_topic
-  repo  ||= dec.object.repository
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  repo  ||= item.repository
   logo  ||= repository_source_logo(repo)
 
   unless modal?
-    label = dec.page_meta_title(default: title)
+    label = "#{dec.page_meta_title} - #{title}"
     set_page_meta_title(label)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

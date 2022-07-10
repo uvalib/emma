@@ -7,14 +7,14 @@
   # @type [Array<String>]
   list  ||= @list
 
-  title ||= t('emma.entry.check.title')
   help  ||= nil # %i[entry check]
+  title ||= t('emma.entry.check.title')
+
   error ||= 'Invalid identifier' # TODO: I18n
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
   end
 
 -%>

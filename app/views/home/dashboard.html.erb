@@ -11,13 +11,12 @@
   pref  ||= @preferences
   hist  ||= @history
 
-  title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
   help  ||= nil # %i[home dashboard]
+  title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
-    set_page_robots(:noindex)
   end
 
 -%>

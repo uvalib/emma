@@ -53,6 +53,12 @@ class TitleController < ApplicationController
   # :section:
   # ===========================================================================
 
+  respond_to :html, :json, :xml
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # == GET /title
@@ -64,7 +70,9 @@ class TitleController < ApplicationController
   #
   def index
     __debug_route
+    err = nil
     opt = request_parameters
+
     if Isbn.candidate?((isbn = opt[:keyword]))
       # The search looks like an ISBN so interpret this as an ISBN search.
       opt[:isbn] = Isbn.to_isbn(isbn) || isbn
@@ -80,23 +88,30 @@ class TitleController < ApplicationController
 
     elsif isbn && !Isbn.valid?(isbn)
       # The supplied ISBN is not valid.
-      flash_now_notice("#{isbn.inspect} is not a valid ISBN") # TODO: I18n
       opt.delete(:isbn)
-      @list = []
+      @page = pagination_setup
+      err   = "#{isbn.inspect} is not a valid ISBN" # TODO: I18n
 
     else
       # Search for keyword(s) or a valid ISBN.
       @page = pagination_setup
       opt   = @page.initial_parameters
-      @list = bs_api.get_titles(**opt)
+      b_opt = opt.except(:format)
+      @list = bs_api.get_titles(**b_opt)
       @page.finalize(@list, :titles, **opt)
-      flash_now_alert(@list.exec_report) if @list.error?
+      err   = @list.exec_report if @list.error?
     end
+
     respond_to do |format|
       format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :catalog_title) }
     end
+
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /title/:id
@@ -108,13 +123,18 @@ class TitleController < ApplicationController
   #
   def show
     __debug_route
+    err   = nil
     @item = bs_api.get_title(bookshareId: bs_id)
-    flash_now_alert(@item.exec_report) if @item.error?
+    err   = @item.exec_report if @item.error?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue => error
+    err = error
+  ensure
+    failure_response(err) if err
   end
 
   # == GET /title/new[?id=:id]

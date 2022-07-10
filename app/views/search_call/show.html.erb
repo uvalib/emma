@@ -7,14 +7,14 @@
   item  ||= @item
   dec     = SearchCallDecorator.new(item, **context)
 
-  title ||= dec.page_heading
   help  ||= nil # dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
 
   unless modal?
-    label = dec.page_meta_title(default: title)
+    label = "#{dec.page_meta_title} - #{title}"
     set_page_meta_title(label)
     set_page_description(Search: title)
-    set_page_robots(:nofollow)
   end
 
   template_opt = { dec: dec }
