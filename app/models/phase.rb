@@ -91,6 +91,12 @@ class Phase < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section: ActiveRecord ModelSchema
+  # ===========================================================================
+
+  self.implicit_order_column = :created_at
+
+  # ===========================================================================
   # :section: ActiveRecord associations
   # ===========================================================================
 
@@ -258,7 +264,7 @@ class Phase < ApplicationRecord
   #
   def action_scope(action_type = nil, **opt)
     opt[:type] = Action.type(action_type || opt[:type] || current_action)
-    actions.where(**opt).order(:id)
+    actions.where(**opt)
   end
 
   # Create a new Action for this Phase, initializing it with the current values

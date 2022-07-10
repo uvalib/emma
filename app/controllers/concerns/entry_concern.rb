@@ -646,8 +646,8 @@ module EntryConcern
   def upload_file(entry = nil, opt = nil)
     entry, opt = entry_request_params(entry, opt)
     sid   = opt[:submission_id].presence or raise 'No submission ID'
-    phase = entry&.phases&.where(submission_id: sid)&.order(:created_at)&.last
-    phase ||= Phase.creates(submission_id: sid).order(:created_at).last
+    phase = entry&.phases&.where(submission_id: sid)&.last
+    phase ||= Phase.creates(submission_id: sid).last
     failure("No record for submission ID #{sid.inspect}") unless phase
     phase.upload!(request).tap do
       failure(phase.exec_report) unless phase.exec_report.blank?

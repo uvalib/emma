@@ -26,7 +26,7 @@ module SearchCallConcern
   #
   # @param [Array<String,Hash,Array>]    terms
   # @param [Array, nil]                  columns      Def.: #SC_MATCH_COLUMNS
-  # @param [Symbol, String, Hash, Array] sort         Def.: :created_at
+  # @param [Symbol, String, Hash, Array] sort         Def.: implicit order
   # @param [Hash]                        hash_terms   Added to *terms*.
   #
   # @return [ActiveRecord::Relation<SearchCall>]

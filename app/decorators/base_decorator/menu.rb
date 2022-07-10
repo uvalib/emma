@@ -55,9 +55,9 @@ module BaseDecorator::Menu
         model.all
       elsif (user_id = user&.id)
         column = (model <= User) ? :id : :user_id
-        model.where(column => user_id)
+        model.where(column => user_id).reverse_order!
       end
-    menu = items&.order(:id)&.map { |it| [items_menu_label(it), it.id] } || []
+    menu = items&.map { |it| [items_menu_label(it), it.id] } || []
 
     ujs = opt.delete(:ujs) || 'this.form.submit();'
     ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }

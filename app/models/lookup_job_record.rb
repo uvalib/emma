@@ -19,6 +19,12 @@ class LookupJobRecord < GoodJob::Job
   end
 
   # ===========================================================================
+  # :section: ActiveRecord ModelSchema
+  # ===========================================================================
+
+  self.implicit_order_column = :created_at
+
+  # ===========================================================================
   # :section: ActiveRecord associations
   # ===========================================================================
 
@@ -64,7 +70,7 @@ class LookupJobRecord < GoodJob::Job
   # @return [ActiveRecord::Relation<LookupJobRecord>]
   #
   def self.for(stream)
-    where(%Q(#{stream_name} = '#{stream}')).order(:created_at)
+    where(%Q(#{stream_name} = '#{stream}'))
   end
 
   # SQL fragment representing the lookup service in the data.

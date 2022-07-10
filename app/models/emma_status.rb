@@ -10,6 +10,12 @@ __loading_begin(__FILE__)
 class EmmaStatus < ApplicationRecord
 
   # ===========================================================================
+  # :section: ActiveRecord ModelSchema
+  # ===========================================================================
+
+  self.implicit_order_column = :created_at
+
+  # ===========================================================================
   # :section: ActiveRecord associations
   # ===========================================================================
 
@@ -48,7 +54,7 @@ class EmmaStatus < ApplicationRecord
   # @see #INGEST_API_KEY
   #
   def self.api_version
-    where(item: API_VERSION_ITEM, active: true).order(:created_at).last
+    where(item: API_VERSION_ITEM, active: true).last
   end
 
   # Set current EMMA data API version.

@@ -21,7 +21,13 @@ class Upload < ApplicationRecord
   include_submodules(self)
 
   # ===========================================================================
-  # :section:
+  # :section: ActiveRecord ModelSchema
+  # ===========================================================================
+
+  self.implicit_order_column = :created_at
+
+  # ===========================================================================
+  # :section: ActiveRecord validations
   # ===========================================================================
 
   public
@@ -33,10 +39,6 @@ class Upload < ApplicationRecord
   # @type [Boolean]
   #
   FIELD_VALIDATION = false
-
-  # ===========================================================================
-  # :section: ActiveRecord validations
-  # ===========================================================================
 
   validate on: %i[create] do                                                    # NOTE: to Record::Uploadable
     attached_file_valid?

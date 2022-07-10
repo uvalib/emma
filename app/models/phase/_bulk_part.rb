@@ -64,7 +64,7 @@ class Phase::BulkPart < Phase
     group = opt[:bulk_id] || bulk&.id
     super(phase, **opt).tap do |note|
       if group.present?
-        count = Phase.where(bulk_id: group).order(:id).count
+        count = Phase.where(bulk_id: group).count
         part  = 'part'
         part  = "one of #{count} #{part.pluralize(count)}" if count > 1
         note << " as #{part} of bulk operation ##{group}"

@@ -60,7 +60,7 @@ module AccountConcern
   #
   # @param [Array<String,Hash,Array,nil>] terms
   # @param [Array, nil]                   columns     Def.: #ACCT_MATCH_COLUMNS
-  # @param [Symbol, String, Hash, Array]  sort        Def.: :id
+  # @param [Symbol, String, Hash, Array]  sort        Def.: implicit order
   # @param [Hash]                         hash_terms  Added to *terms*.
   #
   # @return [ActiveRecord::Relation<User>]

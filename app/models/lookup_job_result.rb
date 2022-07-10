@@ -13,6 +13,7 @@ class LookupJobResult < JobResult
 
   # noinspection RubyNilAnalysis
   self.table_name = superclass.table_name
+  self.implicit_order_column = :updated_at
 
   # ===========================================================================
   # :section: Class methods

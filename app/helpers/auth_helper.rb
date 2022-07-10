@@ -95,7 +95,7 @@ module AuthHelper
   #
   def stored_auth_fetch(accounts: nil)
     accounts = Array.wrap(accounts || BookshareService::TEST_USERS)
-    User.where(email: accounts).order(:id).map { |u|
+    User.where(email: accounts).map { |u|
       token = u.access_token
       [u.uid, stored_auth_entry_value(token)] if token.present?
     }.compact.to_h

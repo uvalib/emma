@@ -120,26 +120,28 @@ module AccountConcern
   #
   # @param [Array<String,Hash,Array,nil>] terms
   # @param [Array, nil]                   columns     Def.: #ACCT_MATCH_COLUMNS
-  # @param [Symbol, String, Hash, Array]  sort        Def.: :id
+  # @param [Symbol, String, Hash, Array]  sort        Def.: implicit order
   # @param [Hash]                         hash_terms  Added to *terms*.
   #
   # @return [ActiveRecord::Relation<User>]
   #
-  def get_accounts(*terms, columns: nil, sort: :id, **hash_terms)
+  def get_accounts(*terms, columns: nil, sort: nil, **hash_terms)
     terms.flatten!
     terms.map! { |t| t.is_a?(Hash) ? t.deep_symbolize_keys : t if t.present? }
     terms.compact!
     terms << hash_terms if hash_terms.present?
     if terms.present?
       columns ||= ACCT_MATCH_COLUMNS
-      User.matching(*terms, columns: columns, join: :or, sort: sort) # TODO: Is :or really correct here?
+      relation = User.matching(*terms, columns: columns, join: :or) # TODO: Is :or really correct here?
     elsif current_user.administrator?
-      User.all.order(sort)
-    #elsif current_user.group_admin? # TODO: institutional groups
-      #User.where(group_id: current_user.group_id).order(sort) # TODO: groups
+      relation = User.all
+#   elsif current_user.group_admin? # TODO: institutional groups
+#     relation = User.where(group_id: current_user.group_id) # TODO: groups
     else
-      User.where(id: current_user.id).order(sort)
+      relation = User.where(id: current_user.id)
     end
+    # noinspection RubyMismatchedReturnType
+    sort ? relation.order(sort) : relation
   end
 
   # Get the indicated User account record.

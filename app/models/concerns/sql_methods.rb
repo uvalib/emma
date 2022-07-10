@@ -636,17 +636,17 @@ module SqlMethods
     # Build a relation for finding records with columns containing matches on
     # the given search term(s).
     #
-    # @param [Array<Hash,String>]          terms
-    # @param [Symbol, String, Hash, Array] sort   No sort order if *nil*.
-    # @param [Hash]                        opt    Passed to #sql_match.
+    # @param [Array<Hash,String>]               terms
+    # @param [Symbol, String, Hash, Array, nil] sort    Implicit sort if *nil*.
+    # @param [Hash]                             opt     Passed to #sql_match.
     #
     # @return [ActiveRecord::Relation]
     #
-    def matching(*terms, sort: :id, **opt)
-      conditions = sql_match(*terms, **opt)
-      relation   = where(conditions)
+    def matching(*terms, sort: nil, **opt)
       # noinspection RubyMismatchedReturnType
-      sort ? relation.order(sort) : relation
+      where(sql_match(*terms, **opt)).tap do |relation|
+        relation.order!(sort) if sort
+      end
     end
 
   end

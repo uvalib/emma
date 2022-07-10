@@ -177,6 +177,14 @@ module Record
       self.class.send(__method__, *columns, **opt)
     end
 
+    # For use with Record::* methods.
+    #
+    # @return [Symbol, nil]
+    #
+    def implicit_order_column
+      self.class.implicit_order_column
+    end if respond_to?(:implicit_order_column)
+
   end
 
   # ===========================================================================

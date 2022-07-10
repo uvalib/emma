@@ -139,7 +139,8 @@ module Record::Searchable
     return result.merge!(groups: group_by_state(all)) if prop[:groups] == :only
 
     # Group record IDs into pages.
-    all_ids = all.order(:id).pluck(:id)
+    # noinspection RailsParamDefResolve
+    all_ids = all.pluck(:id)
     limit   = positive(prop[:limit])
     pg_size = limit || 10 # TODO: fall-back page size for grouping
     pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
@@ -237,10 +238,10 @@ module Record::Searchable
     terms << "id > #{offset}" if offset
 
     query  = sql_terms(opt, *terms, join: :and)
-    result = where(query)
-    result = result.order(sort)  if sort.present?
-    result = result.limit(limit) if limit.present?
-    result
+    where(query).tap do |result|
+      result.order!(sort)  if sort.present?
+      result.limit!(limit) if limit.present?
+    end
   end
 
   # ===========================================================================

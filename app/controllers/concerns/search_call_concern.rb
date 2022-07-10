@@ -61,22 +61,23 @@ module SearchCallConcern
   #
   # @param [Array<String,Hash,Array>]    terms
   # @param [Array, nil]                  columns      Def.: #SC_MATCH_COLUMNS
-  # @param [Symbol, String, Hash, Array] sort         Def.: :created_at
+  # @param [Symbol, String, Hash, Array] sort         Def.: implicit order
   # @param [Hash]                        hash_terms   Added to *terms*.
   #
   # @return [ActiveRecord::Relation<SearchCall>]
   #
-  def get_search_calls(*terms, columns: nil, sort: :created_at, **hash_terms)
+  def get_search_calls(*terms, columns: nil, sort: nil, **hash_terms)
     terms.flatten!
     terms.map! { |t| t.is_a?(Hash) ? t.deep_symbolize_keys : t if t.present? }
     terms.compact!
     terms << hash_terms if hash_terms.present?
     if terms.blank?
-      SearchCall.all.order(sort)
+      relation = SearchCall.all
     else
       columns ||= SC_MATCH_COLUMNS
-      SearchCall.matching(*terms, columns: columns, type: :json, sort: sort)
+      relation = SearchCall.matching(*terms, columns: columns, type: :json)
     end
+    sort ? relation.order(sort) : relation
   end
 
   # ===========================================================================

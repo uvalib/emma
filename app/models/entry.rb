@@ -72,6 +72,12 @@ class Entry < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section: ActiveRecord ModelSchema
+  # ===========================================================================
+
+  self.implicit_order_column = :created_at
+
+  # ===========================================================================
   # :section: ActiveRecord validations
   # ===========================================================================
 
@@ -86,10 +92,10 @@ class Entry < ApplicationRecord
 
   DEF_REPO = EmmaRepository.default.to_s.freeze
 
-  scope :native, ->(**opt) { where(repository: DEF_REPO, **opt).order(:id) }
+  scope :native, ->(**opt) { where(repository: DEF_REPO, **opt) }
 
   scope :non_native, ->(**opt) do
-    where.not(repository: DEF_REPO).order(:id).then do |result|
+    where.not(repository: DEF_REPO).then do |result|
       opt.present? ? result.and(where(**opt)) : result
     end
   end
@@ -178,7 +184,7 @@ class Entry < ApplicationRecord
   #
   def phase_scope(phase_type = nil, **opt)
     opt[:type] = Phase.type(phase_type || opt[:type] || current_phase)
-    phases.where(**opt).order(:id)
+    phases.where(**opt)
   end
 
   # Create a new Phase for this Entry, initializing it with the current values
@@ -216,7 +222,7 @@ class Entry < ApplicationRecord
   def users(phase_type)
     # noinspection RailsParamDefResolve
     ids = phase_scope(phase_type).pluck(:user_id)
-    User.where(id: ids).order(:id).to_a
+    User.where(id: ids).to_a
   end
 
   # The user who submitted the entry.
@@ -265,7 +271,7 @@ class Entry < ApplicationRecord
   #
   def uploaders
     ids = actions.where(type: %i[Store BatchStore]).pluck(:user_id)
-    User.where(id: ids).order(:id).to_a
+    User.where(id: ids).to_a
   end
 
   # ===========================================================================

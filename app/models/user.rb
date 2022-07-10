@@ -99,6 +99,12 @@ class User < ApplicationRecord
   include Record::Identification
 
   # ===========================================================================
+  # :section: ActiveRecord ModelSchema
+  # ===========================================================================
+
+  self.implicit_order_column = :id
+
+  # ===========================================================================
   # :section: ActiveRecord associations
   # ===========================================================================
 
@@ -437,7 +443,7 @@ class User < ApplicationRecord
   # @return [Array<Symbol>]
   #
   def role_list
-    roles.order(:id).map(&:name).map(&:to_sym)
+    roles.map(&:name).map(&:to_sym)
   end
 
   # ===========================================================================

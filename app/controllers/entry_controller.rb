@@ -680,7 +680,7 @@ class EntryController < ApplicationController
   #
   def phases
     __debug_route
-    @list = Phase.all.order(:id).to_a
+    @list = Phase.all.to_a
   end
 
   # == GET /actions
@@ -689,7 +689,7 @@ class EntryController < ApplicationController
   #
   def actions
     __debug_route
-    @list = Action.all.order(:id).to_a
+    @list = Action.all.to_a
   end
 
   # ===========================================================================
