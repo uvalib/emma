@@ -334,15 +334,18 @@ module BaseDecorator::List
   # Render a metadata listing of a model instance.
   #
   # @param [Hash, nil] pairs          Label/value pairs.
+  # @param [Hash]      outer          HTML options for outer div container.
   # @param [Hash]      opt            Passed to #render_field_values except:
   #
   # @option opt [String] :class       Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details(pairs: nil, **opt)
-    outer_classes = css_classes("#{model_type}-details", opt.delete(:class))
-    html_div(class: outer_classes) do
+  def details(pairs: nil, outer: nil, **opt)
+    count    = positive(pairs&.size)
+    classes  = ["#{model_type}-details", opt.delete(:class)]
+    classes << "columns-#{count}" if count
+    html_div(prepend_css(outer, *classes)) do
       render_field_values(pairs: pairs, **opt)
     end
   end
@@ -488,23 +491,21 @@ module BaseDecorator::List
   #
   # @param [Hash, nil] pairs          Label/value pairs.
   # @param [Symbol]    render         Default: #render_field_values.
+  # @param [Hash]      outer          HTML options for outer div container.
   # @param [Hash]      opt            Passed to the render method.
-  #
-  # @option opt [Hash] :outer         HTML options for outer div container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item(pairs: nil, render: nil, **opt)
-    css = ".#{model_type}-list-item"
-    row = positive(opt[:row])
-    html_opt = {
-      id:              opt.delete(:id) || model_item_id(**opt),
-      'data-group':    (opt[:group] ||= state_group),
-      'data-title_id': title_id_values,
-    }.merge!(opt.delete(:outer) || {})
-    prepend_css!(html_opt, 'empty')      if blank?
-    prepend_css!(html_opt, "row-#{row}") if row
-    prepend_css!(html_opt, css)
+  def list_item(pairs: nil, render: nil, outer: nil, **opt)
+    css      = ".#{model_type}-list-item"
+    row      = positive(opt[:row])
+    id       = opt.delete(:id)
+    group    = opt[:group] ||= state_group
+    classes  = [css, ('empty' if blank?), ("row-#{row}" if row)].compact
+    html_opt = prepend_css(outer, *classes)
+    html_opt[:id]              ||= id || model_item_id(**opt)
+    html_opt[:'data-group']    ||= group
+    html_opt[:'data-title_id'] ||= title_id_values
     html_div(html_opt) do
       render = :render_empty_value  if blank?
       render = :render_field_values if render.nil?

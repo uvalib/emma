@@ -128,6 +128,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @param [Hash] counts              A table of group names associated with
   #                                     their overall totals (default:
   #                                     `#group_counts`).
+  # @param [Hash] outer               HTML options for outer fieldset.
   # @param [Hash] opt                 Passed to inner #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -136,7 +137,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see #STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def list_filter(counts: nil, **opt)
+  def list_filter(counts: nil, outer: nil, **opt)
     return unless LIST_FILTERING
     css      = LIST_FILTER_CLASS
     name     = "#{model_type}-#{__method__}"
@@ -188,7 +189,7 @@ class UploadsDecorator < BaseCollectionDecorator
     legend = html_tag(:legend, legend, class: 'sr-only')
 
     # Include the group in a panel with accompanying label.
-    outer_opt = append_css(css)
+    outer_opt = prepend_css(outer, css)
     append_css!(outer_opt, 'hidden') unless controls.many?
     h.field_set_tag(nil, outer_opt) do
       legend << group
@@ -457,6 +458,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [String]         label     Label for the submit button.
   # @param [String, Symbol] action    Either :new or :edit.
+  # @param [Hash]           outer     HTML options for outer div container.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String]  :prefix     String to prepend to each title.
@@ -467,7 +469,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see FormHelper#hidden_input
   #
-  def bulk_op_form(label: nil, action: nil, **opt)
+  def bulk_op_form(label: nil, action: nil, outer: nil, **opt)
     css       = '.bulk-op-form'
     outer_css = '.form-container.bulk'
     action    = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
@@ -490,7 +492,7 @@ class UploadsDecorator < BaseCollectionDecorator
     prepend_css!(opt, css, action, model_type)
     scroll_to_top_target!(opt)
 
-    outer_opt = append_css(outer_css, action, model_type)
+    outer_opt = prepend_css(outer, outer_css, action, model_type)
     html_div(outer_opt) do
 
       cancel   = opt.delete(:cancel)
@@ -609,17 +611,18 @@ class UploadsDecorator < BaseCollectionDecorator
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.
   #
-  # @param [String] label                 Label for the submit button.
-  # @param [Hash]   opt                   Passed to #form_with except for:
+  # @param [String] label             Label for the submit button.
+  # @param [Hash]   outer             HTML options for outer div container.
+  # @param [Hash]   opt               Passed to #form_with except for:
   #
-  # @option opt [Boolean] :force          Force index delete option
-  # @option opt [Boolean] :truncate       Reset database ID option
-  # @option opt [Boolean] :emergency      Emergency force delete option
-  # @option opt [String]  :cancel         URL for cancel button action.
+  # @option opt [Boolean] :force      Force index delete option
+  # @option opt [Boolean] :truncate   Reset database ID option
+  # @option opt [Boolean] :emergency  Emergency force delete option
+  # @option opt [String]  :cancel     URL for cancel button action.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form(label: nil, **opt)
+  def bulk_delete_form(label: nil, outer: nil, **opt)
     css       = '.bulk-op-form.delete'
     outer_css = '.form-container.bulk.delete'
     action    = :bulk_delete
@@ -632,7 +635,7 @@ class UploadsDecorator < BaseCollectionDecorator
 
     prepend_css!(opt, css, model_type)
 
-    outer_opt = append_css(outer_css, model_type)
+    outer_opt = prepend_css(outer, outer_css, model_type)
     html_div(outer_opt) do
 
       cancel  = opt.delete(:cancel)

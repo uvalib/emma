@@ -37,7 +37,7 @@ $entry-form-gap:  1.5rem;
     // hierarchical rendering of :emma_data.
     @media #{$wide-screen} {
 
-        grid-template-columns: repeat(9, auto);
+        grid-template-columns: repeat(9, 1fr);
 
         > .label                { grid-row-start: 1; }
         > .value                { grid-row-start: 2; }

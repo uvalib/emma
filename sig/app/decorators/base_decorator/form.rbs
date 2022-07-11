@@ -227,6 +227,7 @@ module BaseDecorator::Form
   # @param [String]         cancel    URL for cancel button action (def: :back)
   # @param [Boolean]        uploader  If *true*, active client-side logic for
   #                                     supporting file upload.
+  # @param [Hash]           outer     Passed to outer div.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String]  :cancel     URL for cancel button action (default:
@@ -236,7 +237,7 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *isFileUploader()*
   #
-  def model_form: (?label: String|nil, ?action: String|Symbol|nil, ?cancel: String|nil, ?uploader: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def model_form: (?label: String|nil, ?action: String|Symbol|nil, ?cancel: String|nil, ?uploader: bool|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # @private
   FORM_BUTTON_OPTIONS: symArray

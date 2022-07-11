@@ -21,7 +21,8 @@ module LayoutHelper::DevControls
 
   # Render a container with developer-only controls.
   #
-  # @param [Hash] opt
+  # @param [Hash] outer               HTML options for outer div container.
+  # @param [Hash] opt                 Passed to label and control elements.
   #
   # @option opt [Hash]           :params        Default: `#request_parameters`
   # @option opt [String, Symbol] :controller    Optional override.
@@ -31,7 +32,7 @@ module LayoutHelper::DevControls
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no dev_controls configured.
   #
-  def render_dev_controls: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def render_dev_controls: (?outer: symHash|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # dev_controls_label
   #

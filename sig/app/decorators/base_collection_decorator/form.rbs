@@ -6,6 +6,7 @@ module BaseCollectionDecorator::Form
   # Generate a form with controls for deleting a model instance.
   #
   # @param [String] label             Label for the submit button.
+  # @param [Hash]   outer             HTML options for outer div container.
   # @param [Hash]   opt               Passed to '.model-form.delete' except:
   #
   # @option opt [String] :cancel      Cancel button redirect URL passed to
@@ -13,7 +14,7 @@ module BaseCollectionDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def delete_form: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def delete_form: (?label: String|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # delete_submit_option_keys
   #

@@ -41,6 +41,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @param [Hash] counts              A table of group names associated with
   #                                     their overall totals (default:
   #                                     `#group_counts`).
+  # @param [Hash] outer               HTML options for outer fieldset.
   # @param [Hash] opt                 Passed to inner #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -49,7 +50,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see #STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def list_filter: (?counts:  Hash[Symbol,Integer]|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def list_filter: (?counts:  Hash[Symbol,Integer]|nil, ?outer: symHash|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Control the selection of filters displayed by #list_filter.
   #
@@ -166,6 +167,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [String]         label     Label for the submit button.
   # @param [String, Symbol] action    Either :new or :edit.
+  # @param [Hash]           outer     HTML options for outer div container.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String]  :prefix     String to prepend to each title.
@@ -176,7 +178,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see FormHelper#hidden_input
   #
-  def bulk_op_form: (?label: String|nil, ?action: Symbol|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_op_form: (?label: String|nil, ?action: Symbol|String|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An option checkbox for a bulk new/edit form.
   #
@@ -222,17 +224,18 @@ class UploadsDecorator < BaseCollectionDecorator
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.
   #
-  # @param [String] label                 Label for the submit button.
-  # @param [Hash]   opt                   Passed to #form_with except for:
+  # @param [String] label             Label for the submit button.
+  # @param [Hash]   outer             HTML options for outer div container.
+  # @param [Hash]   opt               Passed to #form_with except for:
   #
-  # @option opt [Boolean] :force          Force index delete option
-  # @option opt [Boolean] :truncate       Reset database ID option
-  # @option opt [Boolean] :emergency      Emergency force delete option
-  # @option opt [String]  :cancel         URL for cancel button action.
+  # @option opt [Boolean] :force      Force index delete option
+  # @option opt [Boolean] :truncate   Reset database ID option
+  # @option opt [Boolean] :emergency  Emergency force delete option
+  # @option opt [String]  :cancel     URL for cancel button action.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_delete_form: (?label: String|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An option checkbox for a bulk delete form.
   #

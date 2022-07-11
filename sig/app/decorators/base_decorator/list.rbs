@@ -108,13 +108,14 @@ module BaseDecorator::List
   # Render a metadata listing of a model instance.
   #
   # @param [Hash, nil] pairs          Label/value pairs.
+  # @param [Hash]      outer          HTML options for outer div container.
   # @param [Hash]      opt            Passed to #render_field_values except:
   #
   # @option opt [String] :class       Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: anyHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: anyHash|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # details_element
   #
@@ -175,13 +176,12 @@ module BaseDecorator::List
   #
   # @param [Hash, nil] pairs          Label/value pairs.
   # @param [Symbol]    render         Default: #render_field_values.
+  # @param [Hash]      outer          HTML options for outer div container.
   # @param [Hash]      opt            Passed to the render method.
-  #
-  # @option opt [Hash] :outer         HTML options for outer div container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: anyHash|nil, ?render: Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?pairs: anyHash|nil, ?render: Symbol|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Thumbnail element for the given catalog title.
   #

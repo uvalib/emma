@@ -513,6 +513,7 @@ module BaseDecorator::Form
   # @param [String]         cancel    URL for cancel button action (def: :back)
   # @param [Boolean]        uploader  If *true*, active client-side logic for
   #                                     supporting file upload.
+  # @param [Hash]           outer     Passed to outer div.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String]  :cancel     URL for cancel button action (default:
@@ -522,7 +523,14 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *isFileUploader()*
   #
-  def model_form(label: nil, action: nil, cancel: nil, uploader: nil, **opt, &block)
+  def model_form(
+    label:    nil,
+    action:   nil,
+    cancel:   nil,
+    uploader: nil,
+    outer:    nil,
+    **opt
+  )
     css       = '.model-form'
     outer_css = '.form-container'
     uploader  = uploader.is_a?(TrueClass) ? 'file-uploader' : uploader.presence
@@ -546,7 +554,7 @@ module BaseDecorator::Form
     scroll_to_top_target!(opt)
 
     buttons   = form_buttons(label: label, action: action, cancel: cancel)
-    outer_opt = append_css(outer_css, *classes)
+    outer_opt = prepend_css(outer, outer_css, *classes)
     html_div(outer_opt) do
       # @type [ActionView::Helpers::FormBuilder] f
       h.form_with(model: object, **opt) do |f|
