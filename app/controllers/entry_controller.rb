@@ -127,8 +127,7 @@ class EntryController < ApplicationController
     opt.except!(:group, :groups) # TODO: upload -> entry
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_entries(groups: all, **opt)
-    @page.finalize(result, **opt)
-    @list  = result[:list]
+    @list  = @page.finalize(result, **opt)
     result = find_or_match_entries(groups: :only, **opt) if opt.delete(:group)
     @group_counts = result[:groups]
     respond_to do |format|

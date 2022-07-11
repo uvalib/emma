@@ -24,7 +24,7 @@ class Upload::Paginator < Paginator
   # @param [Hash{Symbol=>Any}] result   NOTE: different than super
   # @param [Hash]              opt
   #
-  # @return [void]
+  # @return [Array]                     The value of #page_items.
   #
   def finalize(result, **opt)
     first, last, page = result.values_at(:first, :last, :page)
@@ -36,6 +36,7 @@ class Upload::Paginator < Paginator
     self.prev_page    = (url_for(opt.merge(page: (page - 1))) unless first)
     self.first_page   = (url_for(opt.except(*PAGE_PARAMS))    unless first)
     self.prev_page    = first_page if page == 2
+    self.page_items
   end
 
 end

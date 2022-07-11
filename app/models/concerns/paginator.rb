@@ -118,17 +118,18 @@ class Paginator
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Api::Record, Array] list
+  # @param [Api::Record, Array] result
   # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
   # @param [Hash]               search  Passed to #next_page_path.
   #
-  # @return [void]
+  # @return [Array]                     The value of #page_items.
   #
-  def finalize(list, meth = nil, **search)
-    self.page_items   = meth && list.try(meth) || list
-    self.page_records = record_count(list)
-    self.total_items  = item_count(list, default: page_items.size)
-    self.next_page    = next_page_path(list: list, **search)
+  def finalize(result, meth = nil, **search)
+    self.page_items   = meth && result.try(meth) || result
+    self.page_records = record_count(result)
+    self.total_items  = item_count(result, default: page_items.size)
+    self.next_page    = next_page_path(list: result, **search)
+    self.page_items
   end
 
   # ===========================================================================

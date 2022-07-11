@@ -49,13 +49,13 @@ class Paginator
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Api::Record, Array] list
+  # @param [Api::Record, Array] result
   # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
   # @param [Hash]               search  Passed to #next_page_path.
   #
-  # @return [void]
+  # @return [Array]                     The value of #page_items.
   #
-  def finalize: ((Api::Record|anyArray) list, ?(Symbol|nil) meth, **untyped search) -> void
+  def finalize: ((Api::Record|anyArray) result, ?(Symbol|nil) meth, **untyped search) -> anyArray
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.

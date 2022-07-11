@@ -127,8 +127,7 @@ class UploadController < ApplicationController
     opt    = @page.initial_parameters
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_records(groups: all, **opt)
-    @page.finalize(result, **opt)
-    @list  = result[:list]
+    @list  = @page.finalize(result, **opt)
     result = find_or_match_records(groups: :only, **opt) if opt.delete(:group)
     @group_counts = result[:groups]
     respond_to do |format|

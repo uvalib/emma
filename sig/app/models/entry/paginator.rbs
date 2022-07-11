@@ -7,7 +7,7 @@ class Entry::Paginator < Paginator
   # @param [Hash{Symbol=>Any}] result   NOTE: different than super
   # @param [Hash]              opt
   #
-  # @return [void]
+  # @return [Array]                     The value of #page_items.
   #
-  def finalize: (symHash result, **untyped opt) -> void
+  def finalize: (symHash result, **untyped opt) -> anyArray
 end
