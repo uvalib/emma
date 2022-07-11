@@ -16,7 +16,7 @@ class SearchCallsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'search calls - visit index' do

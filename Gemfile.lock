@@ -168,7 +168,7 @@ GEM
       zeitwerk (>= 2.0)
     hashery (2.1.2)
     hashie (5.0.0)
-    i18n (1.10.0)
+    i18n (1.11.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     io-like (0.3.1)

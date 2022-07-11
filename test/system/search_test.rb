@@ -14,7 +14,7 @@ class SearchTest < ApplicationSystemTestCase
   TITLE_SEARCH_TERM = 'man'
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'search - for title' do

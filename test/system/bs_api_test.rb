@@ -19,7 +19,7 @@ class BsApiTest < ApplicationSystemTestCase
   TEST_PATH = '/v2/titles'
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'bs_api - visit the Bookshare API Explorer' do

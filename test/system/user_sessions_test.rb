@@ -15,7 +15,7 @@ class UserSessionsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'user session - sign in' do

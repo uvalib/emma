@@ -10,7 +10,7 @@ class ArtifactsTest < ApplicationSystemTestCase
   CONTROLLER = :artifact
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'artifacts - visit artifact list' do

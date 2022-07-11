@@ -10,7 +10,7 @@ class HomeTest < ApplicationSystemTestCase
   INDEX_TITLE = 'Welcome to EMMA'
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'home - visit main page' do

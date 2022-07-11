@@ -16,7 +16,7 @@ class MembersTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'members - visit index' do

@@ -7,6 +7,10 @@ require 'application_system_test_case'
 
 class MetricsTest < ApplicationSystemTestCase
 
+  # ===========================================================================
+  # :section: Read tests
+  # ===========================================================================
+
   test 'metrics - visit metrics' do
     url = '/metrics'
     run_test(__method__) do

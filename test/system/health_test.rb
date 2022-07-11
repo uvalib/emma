@@ -8,6 +8,10 @@ require 'application_system_test_case'
 # NOTE: These are not really appropriate for Capybara because they're JSON.
 class HealthTest < ApplicationSystemTestCase
 
+  # ===========================================================================
+  # :section: Read tests
+  # ===========================================================================
+
   test 'health - visit version' do
     url = version_url
     run_test(__method__) do

@@ -25,7 +25,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
     "The Bookshare API doesn't seem to have periodicals any more..."
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'periodicals - visit index' do

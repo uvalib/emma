@@ -10,7 +10,7 @@ class CategoriesTest < ApplicationSystemTestCase
   CONTROLLER = :category
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'categories - visit index' do

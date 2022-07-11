@@ -18,7 +18,7 @@ class TitlesTest < ApplicationSystemTestCase
   EXACT_TITLE_SEARCH_TERM = quote(TITLE_SEARCH_TERM).freeze
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'catalog titles - visit index' do

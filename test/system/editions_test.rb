@@ -10,7 +10,7 @@ class EditionsTest < ApplicationSystemTestCase
   CONTROLLER = :edition
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'editions - visit edition list' do

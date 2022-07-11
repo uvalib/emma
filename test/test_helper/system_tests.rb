@@ -29,6 +29,7 @@ module TestHelper::SystemTests
     include_submodules(base, __FILE__) do |name|
       (name != :Bookshare) || TEST_BOOKSHARE.present?
     end
+    base.extend(TestHelper::Common)
   end
 
 end

@@ -16,7 +16,7 @@ class ReadingListsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'reading lists - visit index' do

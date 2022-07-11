@@ -15,7 +15,7 @@ class AccountsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'accounts - visit index' do
@@ -27,6 +27,10 @@ class AccountsTest < ApplicationSystemTestCase
 
     end unless not_applicable 'TODO: test account/index'
   end
+
+  # ===========================================================================
+  # :section: Write tests
+  # ===========================================================================
 
   test 'accounts - creating a user account' do
     run_test(__method__) do
