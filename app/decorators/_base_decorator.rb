@@ -980,9 +980,9 @@ class BaseDecorator < Draper::Decorator
     # @param [Boolean]            force
     # @param [Hash]               opt   Passed to the decorator initializer.
     #
-    # @return [BaseDecorator]
-    #
     # @raise [RuntimeError]           If no decorator could be determined.
+    #
+    # @return [BaseDecorator]
     #
     def generate(item, force: false, **opt)
       sub = ObjectClassMap.get(item) || OtherClassMap.get(item)

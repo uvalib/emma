@@ -1,4 +1,4 @@
-# View helper support generation of decorators.
+# View helper supporting the generation of decorators.
 #
 module DecoratorHelper
   # Generate context values for inclusion in the parameters to a decorator

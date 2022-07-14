@@ -36,9 +36,9 @@ module TestHelper::SystemTests::Index
   # @param [Hash]    terms
   # @param [Hash]    opt              Passed to #assert_valid_action_page.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_valid_index_page(
     model,
@@ -96,9 +96,9 @@ module TestHelper::SystemTests::Index
   #
   # @param [Hash] terms
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # NOTE: The active search terms are no longer displayed on the page.
   #
@@ -119,10 +119,10 @@ module TestHelper::SystemTests::Index
   # @param [Integer] total
   # @param [String]  records
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]      If the count is not displayed.
   # @raise [RuntimeError]             If *records* is not given or found.
+  #
+  # @return [true]
   #
   def assert_search_count(model, total: nil, records: nil, **)
     records ||= property(model, :index, :count)
@@ -144,9 +144,9 @@ module TestHelper::SystemTests::Index
   # @param [Symbol, nil]    model
   # @param [Hash]           opt       Passed to #assert_valid_index_page.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
@@ -176,9 +176,9 @@ module TestHelper::SystemTests::Index
   # @param [Symbol] model
   # @param [String] entry_css
   #
-  # @return [void]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [void]
   #
   # @yield [index, title] Exposes each visited page for additional actions.
   # @yieldparam [Integer] index

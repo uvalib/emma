@@ -100,13 +100,13 @@ class LookupService::Data
   #
   # @param [Proc] block
   #
+  # @raise [ArgumentError]  If no block was given.
+  #
   # @return [Hash]
   #
   # @yield [item]
   # @yieldparam [LookupService::Data::Item] item
   # @yieldreturn [*]
-  #
-  # @raise [ArgumentError]  If no block was given.
   #
   def transform_table_items(&block)
     raise ArgumentError, 'no block given' unless block

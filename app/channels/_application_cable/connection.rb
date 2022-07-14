@@ -46,9 +46,9 @@ class ApplicationCable::Connection < ActionCable::Connection::Base
 
   # Return the Devise-authenticated user.
   #
-  # @return [User]
-  #
   # @raise [ActionCable::Connection::Authorization::UnauthorizedError]
+  #
+  # @return [User]
   #
   def get_verified_user
     env['warden'].user or reject_unauthorized_connection

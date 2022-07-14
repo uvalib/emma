@@ -148,9 +148,9 @@ module OmniAuth
       # Trigger an exception if the signed-in user doesn't have a valid
       # +Bookshare+ +OAuth2+ token.
       #
-      # @return [void]
-      #
       # @raise [RuntimeError]   If +Bookshare+ account info was unavailable.
+      #
+      # @return [void]
       #
       def check_user_validity: () -> void
 

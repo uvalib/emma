@@ -71,9 +71,9 @@ module TestHelper::SystemTests::Flash
   # @param [String, nil] content      Passed to #flash?.
   # @param [Hash]        opt          Passed to #flash?.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_flash(content = nil, **opt)
     opt.reverse_merge!(assert: true)
@@ -85,9 +85,9 @@ module TestHelper::SystemTests::Flash
   # @param [String, nil] content      Passed to #flash?.
   # @param [Hash]        opt          Passed to #flash?.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_no_flash(content = nil, **opt)
     opt.reverse_merge!(assert: true)

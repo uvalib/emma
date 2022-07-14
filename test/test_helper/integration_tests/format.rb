@@ -74,9 +74,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_html_result(status, **opt)
     opt[:format] = :html unless opt.key?(:format)
@@ -88,9 +88,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_json_result(status, **opt)
     opt[:format] = :json unless opt.key?(:format)
@@ -102,9 +102,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_xml_result(status, **opt)
     opt[:format] = :xml unless opt.key?(:format)
@@ -116,9 +116,9 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol] status
   # @param [Hash]   opt               Passed to #assert_result.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_text_result(status, **opt)
     opt[:format] = :text unless opt.key?(:format)
@@ -136,9 +136,9 @@ module TestHelper::IntegrationTests::Format
   # @option opt [String,Symbol] :format
   # @option opt [String,Symbol] :media_type   If present, trumps :format.
   #
-  # @return [true]                    If all criteria match.
-  #
   # @raise [Minitest::Assertion]      If one or more criteria don't match.
+  #
+  # @return [true]                    If all criteria match.
   #
   def assert_result(status, **opt)
 

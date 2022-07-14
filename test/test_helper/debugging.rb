@@ -30,10 +30,10 @@ module TestHelper::Debugging
   #                                           #show_test_end.
   # @param [Proc]                block      Required.
   #
+  # @return [void]
+  #
   # @yield The test code to be run
   # @yieldreturn [void]
-  #
-  # @return [void]
   #
   def run_test(test_name, format: nil, wait: nil, **opt, &block)
     error  = nil

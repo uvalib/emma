@@ -34,9 +34,9 @@ module TestHelper::SystemTests::Common
   #
   # @param [String] url
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_current_url(url)
     assert_equal url, URI(current_url).tap { |uri| uri.port = nil }.to_s
@@ -48,9 +48,9 @@ module TestHelper::SystemTests::Common
   # @param [String,nil] heading       Default: *text* if given.
   # @param [String,nil] title         Default: *text* if given.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]      If either item is not on the page.
+  #
+  # @return [true]
   #
   def assert_valid_page(text = nil, heading: nil, title: nil, **)
     assert_selector 'h1', text: heading if (heading ||= text)

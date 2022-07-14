@@ -222,13 +222,52 @@ class BaseDecorator < Draper::Decorator
     @null_object: Object
     @other_class: Array[Class]
 
+    # model_type
+    #
+    # @return [Symbol]
+    #
+    # @see #decorator_for
+    #
     def model_type:  () -> Symbol
-    def ar_class:    () -> (Class | nil)
+
+    # ar_class
+    #
+    # @return [Class, nil]
+    #
+    def ar_class: () -> (Class | nil)
+
+    # null_object
+    #
+    # @return [Object]
+    #
     def null_object: () -> Object
 
+    # Override Draper::Decorator#decorate to ensure that the right decorator
+    # instance is generated for *item*.
+    #
+    # @param [Model, nil] item
+    # @param [Hash]       opt         Passed to the decorator initializer.
+    #
+    # @return [BaseDecorator]
+    #
     def decorate: ((Model|nil) item, **untyped opt) -> BaseDecorator
+
+    # Generate a decorator instance.
+    #
+    # @param [Class, Object, nil] item
+    # @param [Boolean]            force
+    # @param [Hash]               opt   Passed to the decorator initializer.
+    #
+    # @raise [RuntimeError]           If no decorator could be determined.
+    #
+    # @return [BaseDecorator]
+    #
     def generate: ((Class|Object|nil) item, ?force: bool, **untyped opt) -> BaseDecorator
 
+    # Show how a decorator handles the methods of the object that it wraps.
+    #
+    # @return [void]
+    #
     def debug_inheritance: () -> void
 
     def self.included: (Module base) -> void

@@ -24,9 +24,9 @@ module TestHelper::SystemTests::Show
   # @param [Symbol] model
   # @param [String] title
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_valid_show_page(model, title: nil)
     # Remove extra edition information for Bookshare catalog title.
@@ -56,9 +56,9 @@ module TestHelper::SystemTests::Show
   # @param [Integer, Symbol]              index
   # @param [String]                       entry_css
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @yield Test code to run while on the page.
   # @yieldparam [String] title

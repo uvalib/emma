@@ -8,9 +8,11 @@ module TestHelper::SystemTests::Action
   # @param [Symbol] model
   # @param [Hash]   opt               Passed to #assert_valid_page.
   #
+  # @raise [Minitest::Assertion]
+  #
   # @return [true]
   #
-  # @raise [Minitest::Assertion]
+  # @note Currently unused
   #
   def assert_valid_create_page: (Symbol model, **untyped opt) -> true
 
@@ -21,9 +23,11 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, expect :edit_select.
   #
+  # @raise [Minitest::Assertion]
+  #
   # @return [true]
   #
-  # @raise [Minitest::Assertion]
+  # @note Currently unused
   #
   def assert_valid_update_page: (Symbol model, **untyped opt) -> true
 
@@ -34,9 +38,11 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, expect :delete_select.
   #
+  # @raise [Minitest::Assertion]
+  #
   # @return [true]
   #
-  # @raise [Minitest::Assertion]
+  # @note Currently unused
   #
   def assert_valid_delete_page: (Symbol model, **untyped opt) -> true
 
@@ -46,9 +52,9 @@ module TestHelper::SystemTests::Action
   # @param [Symbol] action
   # @param [Hash]   opt               Passed to #assert_valid_page.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_valid_action_page: (Symbol model, Symbol action, **untyped opt) -> true
 
@@ -58,11 +64,11 @@ module TestHelper::SystemTests::Action
   # @param [Hash]   opt
   # @param [Proc]   block
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
   #
-  # @see #visit_action_page
+  # @return [true]
+  #
+  # @note Currently unused
   #
   def visit_new_page: (Symbol model, **untyped opt) ?{ () -> void } -> true
 
@@ -74,11 +80,11 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, visit :edit_select.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
   #
-  # @see #visit_action_page
+  # @return [true]
+  #
+  # @note Currently unused
   #
   def visit_edit_page: (Symbol model, **untyped opt) ?{ () -> void } -> true
 
@@ -90,11 +96,11 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, visit :delete_select.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
   #
-  # @see #visit_action_page
+  # @return [true]
+  #
+  # @note Currently unused
   #
   def visit_delete_page: (Symbol model, **untyped opt) ?{ () -> void } -> true
 
@@ -104,9 +110,9 @@ module TestHelper::SystemTests::Action
   # @param [Symbol] action
   # @param [Hash]   opt               Passed to #assert_valid_action_page.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]

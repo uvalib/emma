@@ -20,9 +20,9 @@ module TestHelper::SystemTests::Authentication
   #
   # @param [String, Symbol, User, nil] user_name
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def sign_in_as(user_name)
     user = find_user(user_name)

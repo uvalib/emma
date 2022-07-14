@@ -13,9 +13,9 @@ module Faraday
     #
     # @param params [Hash, Array, #to_hash, nil] Parameters to be encoded
     #
-    # @return [String]
-    #
     # @raise [TypeError] If *params* can not be converted to a Hash.
+    #
+    # @return [String]
     #
     def self.encode: (Hash[(String|Symbol),untyped] params) -> String
                    | (Array[strArray]               params) -> String

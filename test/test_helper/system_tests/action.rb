@@ -20,9 +20,9 @@ module TestHelper::SystemTests::Action
   # @param [Symbol] model
   # @param [Hash]   opt               Passed to #assert_valid_page.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @note Currently unused
   #
@@ -37,9 +37,9 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, expect :edit_select.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @note Currently unused
   #
@@ -55,9 +55,9 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, expect :delete_select.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @note Currently unused
   #
@@ -72,9 +72,9 @@ module TestHelper::SystemTests::Action
   # @param [Symbol] action
   # @param [Hash]   opt               Passed to #assert_valid_page.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   def assert_valid_action_page(model, action, **opt)
     prop = property(model, action)&.slice(:title, :heading)
@@ -94,9 +94,9 @@ module TestHelper::SystemTests::Action
   # @param [Hash]   opt
   # @param [Proc]   block
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @note Currently unused
   #
@@ -112,9 +112,9 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, visit :edit_select.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @note Currently unused
   #
@@ -131,9 +131,9 @@ module TestHelper::SystemTests::Action
   #
   # @option opt [String] :id          If missing, visit :delete_select.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @note Currently unused
   #
@@ -148,9 +148,9 @@ module TestHelper::SystemTests::Action
   # @param [Symbol] action
   # @param [Hash]   opt               Passed to #assert_valid_action_page.
   #
-  # @return [true]
-  #
   # @raise [Minitest::Assertion]
+  #
+  # @return [true]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]

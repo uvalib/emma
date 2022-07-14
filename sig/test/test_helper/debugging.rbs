@@ -19,10 +19,10 @@ module TestHelper::Debugging
   #                                           #show_test_end.
   # @param [Proc]                block      Required.
   #
+  # @return [void]
+  #
   # @yield The test code to be run
   # @yieldreturn [void]
-  #
-  # @return [void]
   #
   def run_test: (String|Symbol|nil test_name, ?format: Symbol|nil, ?wait: Integer|nil, **untyped opt) { () -> void } -> void
 

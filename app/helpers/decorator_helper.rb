@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper support generation of decorators.
+# View helper supporting the generation of decorators.
 #
 module DecoratorHelper
 
