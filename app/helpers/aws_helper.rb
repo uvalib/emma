@@ -461,7 +461,7 @@ module AwsHelper
       number_with_delimiter(item)
     elsif item.respond_to?(:getlocal) && hint
       item.getlocal.strftime('%Y-%b-%d %H:%M:%S %Z')
-    elsif item.is_a?(TrueClass) || item.is_a?(FalseClass)
+    elsif item.is_a?(BoolType)
       item.to_s
     else
       item

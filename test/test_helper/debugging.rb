@@ -220,7 +220,7 @@ module TestHelper::Debugging
         else                         item.pretty_inspect
       end
     }.join("\n\n").tap { |result|
-      $stderr.puts result unless opt[:output] == false
+      $stderr.puts result unless opt[:output].is_a?(FalseClass)
     }
   end
 

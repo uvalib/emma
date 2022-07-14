@@ -1,14 +1,3 @@
-# lib/ext/active_support/ext.rb
-#
-# frozen_string_literal: true
-# warn_indent:           true
-#
-# Extensions for the ActiveSupport gem.
-
-__loading_begin(__FILE__)
-
-require 'active_support/core_ext'
-
 # This is do-nothing module which is included in TrueClass and FalseClass
 # to allow checking for a boolean value as `item.is_a?(BoolType)` in place of
 # `(item.is_a?(TrueClass) || item.is_a?(FalseClass))`.
@@ -17,9 +6,12 @@ require 'active_support/core_ext'
 # 'bool', respectively, this is not intended for use with type documentation.
 #
 module BoolType
-  [TrueClass, FalseClass].each { |c| c.include(self) }
 end
 
-require_subdirs(__FILE__)
+class TrueClass
+  include BoolType
+end
 
-__loading_end(__FILE__)
+class FalseClass
+  include BoolType
+end
