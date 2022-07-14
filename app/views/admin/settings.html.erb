@@ -1,0 +1,70 @@
+<%# app/views/admin/settings.html.erb -%>
+<%-
+  # Dynamic application settings.
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[admin settings]
+  title ||= t('emma.admin.settings.title')
+
+  unless modal?
+    label = t('emma.admin.settings.label', default: title)
+    set_page_meta_title("Admin - #{label}")
+    set_page_description(title)
+  end
+
+  commit = 'Commit' # TODO: I18n
+
+  env            = Rails.env.production? ? 'production' : 'staging'
+  terraform_base = 'https://gitlab.com/uvalib/terraform-infrastructure'
+  terraform_base = "#{terraform_base}/-/blob/master"
+  terraform_emma = "#{terraform_base}/emma.lib.virginia.edu"
+  terraform_env  = "#{terraform_emma}/ecs-tasks/#{env}/environment.vars"
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<h2>Flags</h2>
+<p role="note">
+  Flags which may be turned on or off to dynamically change application
+  behavior when "<%= commit -%>" is pressed.
+</p>
+<p class="error" role="note">
+  NOTE: These controls will not be operative until the system is re-architected
+  to consult these dynamic values instead of the constants which are currently
+  set at load time.
+</p>
+<%= form_tag(update_admin_path, class: 'field-container form') do -%>
+  <%= submit_tag commit %>
+  <%= field_set_tag(nil, class: 'fields') do -%>
+    <%- AppSettings.each_flag(spacers: true) do |name, value| -%>
+      <%- spacer = Array.wrap(value).include?(:spacer) -%>
+      <%= spacer ? app_spacer : app_flag_radio_buttons(name, value) %>
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
+
+<h2>Values</h2>
+<p role="note">
+  Other configuration values which are defined at startup and cannot be
+  changed dynamically.
+  They can only be changed by modifying the Terraform
+  <a href="<%= terraform_env -%>" target="_blank">environment.vars</a>
+  configuration file and restarting.
+</p>
+<div class="field-container simple">
+  <%#= button_tag('Show nil values', type: 'button') TODO: scripting %>
+  <div class="fields">
+    <%- AppSettings.each_setting(spacers: true) do |name, value| -%>
+      <%- spacer = Array.wrap(value).include?(:spacer) -%>
+      <%= spacer ? app_spacer : app_setting_display(name, value) %>
+    <%- end -%>
+  </div>
+</div>
+
+<%= page_notes_section %>
+<%= render 'admin/menu' %>

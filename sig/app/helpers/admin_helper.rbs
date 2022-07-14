@@ -1,0 +1,43 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module AdminHelper
+  # HTML for a labelled pair of radio buttons for turning a flag on/off.
+  #
+  # @param [Symbol, String] key
+  # @param [Boolean, nil]   value     Current value of the flag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_flag_radio_buttons: (Symbol|String key, ?(bool|nil) value) -> ActiveSupport::SafeBuffer
+
+  # HTML for an entry displaying an application configuration value.
+  #
+  # @param [Symbol, String] key
+  # @param [String, nil]    value     Current value of the flag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_setting_display: (Symbol|String key, ?(String|nil) value) -> ActiveSupport::SafeBuffer
+
+  # HTML for separating application configuration items.
+  #
+  # @param [String, nil] content
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_spacer: (?(String|nil) content) -> ActiveSupport::SafeBuffer
+
+  # Create a radio button and label for an EMMA flag.
+  #
+  # @param [Symbol, String] flag
+  # @param [Boolean, nil]   value     Current value of the flag.
+  # @param [Boolean]        on        Whether this is the 'ON' or 'OFF' control
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def emma_flag_checkbox: (Symbol|String flag, (bool|nil) value, on: bool) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

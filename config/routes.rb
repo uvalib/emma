@@ -295,6 +295,18 @@ Rails.application.routes.draw do
   resources :search_call, only: %i[index show]
 
   # ===========================================================================
+  # Administration
+  # ===========================================================================
+
+  match '/admin', to: 'admin#update', as: 'update_admin', via: %i[post put patch]
+
+  AdminController::PAGES.each do |page|
+    get "/admin/#{page}", to: "admin##{page}", as: "#{page}_admin"
+  end
+
+  resources :admin, only: %i[index]
+
+  # ===========================================================================
   # Database viewer
   # ===========================================================================
 

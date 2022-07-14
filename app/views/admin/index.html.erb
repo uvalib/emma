@@ -1,0 +1,25 @@
+<%# app/views/admin/index.html.erb -%>
+<%-
+  # EMMA administration.
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[admin]
+  title ||= t('emma.admin.index.title')
+
+  unless modal?
+    label = t('emma.admin.index.label', default: title)
+    set_page_meta_title("Admin - #{label}")
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= render 'admin/menu', level: 2 %>
+
+<%= page_notes_section %>

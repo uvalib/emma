@@ -1,0 +1,221 @@
+// app/assets/stylesheets/controllers/_admin.scss
+
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/grids'   as grid;
+
+//=============================================================================
+// Internal mixins
+//=============================================================================
+
+@mixin fill-screen {
+    @media #{$wide-screen} {
+        min-height: 50vh;
+    }
+}
+
+@mixin clamp-width {
+    @media #{$wide-screen} {
+        max-width: 50vw;
+    }
+}
+
+@mixin constrain-column {
+    @media #{$wide-screen} {
+        overflow-x:    hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@mixin button-row {
+
+    @include button.basic;
+    @include grid.column-span;
+
+    margin-top:    1rem;
+    margin-bottom: 1rem;
+    width:         min-content;
+}
+
+//=============================================================================
+// Any administrative page
+//=============================================================================
+
+body.admin {
+
+    p {
+        line-height: 1.25;
+    }
+
+    .error {
+        color:       $uva-emergency-red;
+        font-weight: bold;
+    }
+
+    // Terminal-like output for shell commands.
+    .output {
+
+        @include fill-screen;
+        @include clamp-width;
+
+        font-family: monospace;
+        white-space: pre;
+        font-size:   larger;
+    }
+
+    // Page actions as content.
+    div.page-actions {
+
+        @include fill-screen;
+
+        display:               grid;
+        grid-template-columns: [link] auto [note] 1fr;
+        align-content:         start;
+        align-items:           baseline;
+        gap:                   1rem;
+        margin-top:            1rem;
+        margin-bottom:         2rem;
+        line-height:           1.5;
+        font-size:             large;
+
+        .page-action {
+
+            display: contents;
+
+            .link {
+                font-size: larger;
+            }
+
+            .note {
+                // TODO: ?
+            }
+        }
+    }
+
+    // Page actions as a "menu" of links.
+    ul.page-actions {
+
+        @include clamp-width;
+
+        margin-top: 3rem;
+        padding:    0.5rem 0 0;
+        border-top: 2px solid gray;
+
+        .page-action {
+
+            .link {
+                // TODO: ?
+            }
+
+            .note {
+                display: none;
+            }
+        }
+    }
+}
+
+//=============================================================================
+// Settings page
+//=============================================================================
+
+body.admin.settings {
+
+    $show-nil: false;
+
+    h2 {
+        margin-top: 3rem;
+    }
+
+    p {
+        @include clamp-width;
+    }
+
+    .field-container {
+
+        @include clamp-width;
+
+        display:     grid;
+        gap:         0.25rem 0.125rem;
+        align-items: baseline;
+        grid-template-columns:
+            [label]  0.5fr
+            [check1] min-content [label1] 0.1875fr
+            [check2] min-content [label2] 0.1875fr;
+        padding:       0.75rem;
+        border-radius: 0.5rem;
+        border:        0.25rem solid transparent;
+
+        button {
+            @include button-row;
+        }
+
+        .fields {
+
+            display: contents;
+
+            label.line {
+
+                @include constrain-column;
+
+                font-size:   large;
+                font-weight: bolder;
+            }
+
+            .condensed {
+                font-stretch: condensed;
+            }
+
+            .nil {
+                color: $uva-text-gray;
+            }
+
+            .spacer {
+
+                @include grid.column-span;
+
+                height: 1rem;
+            }
+
+            @if not $show-nil {
+                .nil, .spacer {
+                    display: none;
+                }
+                *:not(.nil):not(.spacer) {
+                    & + .spacer {
+                        display: revert;
+                    }
+                    & + .nil + .nil + .spacer {
+                        display: revert;
+                    }
+                    & + .nil + .nil + .nil + .nil + .spacer {
+                        display: revert;
+                    }
+                }
+            }
+        }
+    }
+
+    .field-container.form {
+
+        border-color: gray;
+
+        [type="submit"] {
+            @include button-row;
+        }
+    }
+
+    .field-container.simple {
+
+        grid-template-columns: [label] 0.33fr [value] 1fr;
+
+        @media #{$wide-screen} {
+            max-width: 75vw;
+        }
+
+        .fields {
+            .text {
+                @include constrain-column;
+            }
+        }
+    }
+}

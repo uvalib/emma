@@ -1,0 +1,25 @@
+<%# app/views/admin/_command.html.erb -%>
+<%-
+  # Display shell output.
+
+  view_debug(__FILE__)
+
+  command ||= nil
+  lines   ||= nil
+
+  if lines.nil?
+    commands = command.is_a?(Array) ? command.dup : [command]
+    command  = commands.pop
+    commands.presence&.each { |cmd|
+      break if (lines = `(#{cmd}) 2>/dev/null`.strip.presence)
+    }
+    lines ||=
+      if command
+        `(#{command}) 2>&1`.strip.presence || "COULD NOT RUN `#{command}`"
+      end
+    lines ||= 'NO OUTPUT'
+  end
+
+-%>
+
+<div class="output" data-turbolinks="false"><%= h(lines) -%></div>

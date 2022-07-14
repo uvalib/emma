@@ -1,0 +1,58 @@
+# config/locales/controllers/admin.en.yml
+
+en:
+
+  emma:
+
+    admin:
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:        false
+
+      page_controls:
+        label:          'Admin'
+        actions:
+          - index
+          - settings
+          - processes
+          - disk_space
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Main'
+        title:          'EMMA Administration'
+        tooltip:        'EMMA administrative information.'
+        _endpoint:      true
+
+      # =======================================================================
+
+      settings:
+        label:          'Settings'
+        title:          'Application Settings'
+        tooltip:        'Dynamic feature toggles and application settings.'
+        _endpoint:      true
+
+      # =======================================================================
+
+      processes:
+        label:          'Processes'
+        title:          'Host Machine Processes'
+        tooltip:        'View the system processes on the host machine.'
+        _endpoint:      true
+
+      # =======================================================================
+
+      disk_space:
+        label:          'Disk Space'
+        title:          'Host Machine Disk Space'
+        tooltip:        'View the system disk space on the host machine.'
+        _endpoint:      true
+
+      # =======================================================================

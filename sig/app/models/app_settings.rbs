@@ -1,0 +1,205 @@
+class AppSettings < AppGlobal
+  CACHE_KEY: Symbol
+
+  # Boolean configuration values.
+  #
+  # @type [Array<Symbol,nil>]
+  #
+  FLAGS: Array[Symbol|nil]
+
+  # Other configuration values.
+  #
+  # @type [Array<Symbol,nil>]
+  #
+  VALUES: Array[Symbol|nil]
+
+  # Configuration field types.
+  #
+  # @type [Hash{Symbol=>Array<Symbol,nil>}]
+  #
+  TYPE_KEYS: Hash[Symbol,Array[Symbol|nil]]
+
+  module Methods
+    include AppGlobal::Methods
+
+    include Emma::Json
+
+    # The value returned if global application settings were not present.
+    #
+    # @return [Hash]
+    #
+    def default: () -> symHash
+
+    # Get global application settings values.
+    #
+    # @return [Hash{Symbol=>*}]
+    #
+    def get_item: (**untyped opt) -> symHash
+
+    # Set global application settings values.
+    #
+    # @param [Hash]    values
+    # @param [Boolean] replace        If *true* erase current settings first.
+    #
+    # @return [Hash{Symbol=>*}]       The new settings.
+    # @return [nil]                   If the write failed.
+    #
+    def set_item: (symHash values, ?replace: bool, **untyped opt) -> (symHash | nil)
+
+    # Initialize global application settings.
+    #
+    # @param [Hash, nil] values
+    #
+    # @return [Hash{Symbol=>*}]       The new settings.
+    # @return [nil]                   If the write failed.
+    #
+    def reset_item: (?(symHash|nil) values) -> (symHash | nil)
+
+    # The key defined by the subclass.
+    #
+    # @return [Symbol]
+    #
+    def cache_key: () -> Symbol
+
+    # filter_all
+    #
+    # @param [Hash]                       values
+    # @param [Symbol, nil]                type
+    # @param [Array<Symbol>, Symbol, nil] only
+    # @param [Boolean]                    spacers
+    #
+    # @return [Hash]
+    #
+    def filter_all: (symHash values, ?type: Symbol|nil, ?only: symArray|Symbol|nil, ?spacers: bool) -> symHash
+
+    # prepare_all
+    #
+    # @param [Hash, nil] values
+    # @param [Hash]      opt          Passed to #filter_all.
+    #
+    # @return [Hash, nil]
+    #
+    def prepare_all: (symHash|nil values, **untyped opt) -> (symHash | nil)
+
+    # Recursively prepare a single item.
+    #
+    # @param [*] item
+    #
+    # @return [*]
+    #
+    def prepare:     (anyHash  item) -> symHash
+               |     (anyArray item) -> anyArray
+               |     (String   item) -> (String | bool)
+               |     (nil      item) -> nil
+               | [T] (T        item) -> T
+
+    # Render application settings for display (showing symbols appropriately).
+    #
+    # @param [Hash, nil] values       Default: all items.
+    # @param [Hash]      opt          Passed to #filter_all.
+    #
+    # @return [String]
+    #
+    # -
+    # noinspection RubyMismatchedArgumentType
+    # +
+    def inspect_all: (?(symHash|nil) values, **untyped opt) -> String
+
+    # Preserve symbols for resolution with #decode_symbols.
+    #
+    # @param [*] item
+    #
+    # @return [*]
+    #
+    def encode_symbols:     (Symbol item) -> String
+                      |     (nil    item) -> nil
+                      | [T] (T      item) -> T
+
+    # encode_symbol
+    #
+    # @param [Symbol] symbol
+    #
+    # @return [String]
+    #
+    def encode_symbol: (Symbol symbol) -> String
+
+    # decode_symbols
+    #
+    # @param [String] string
+    #
+    # @return [String]
+    #
+    def decode_symbols: (String string) -> String
+
+    alias get_all get_item
+
+    alias set_all set_item
+
+    alias reset_all reset_item
+
+    alias clear_all clear_item
+
+    # Retrieve an individual setting.
+    #
+    # @param [Symbol, String] name
+    #
+    # @return [*]
+    #
+    def []: (Symbol|String name) -> (untyped | nil)
+
+    # Assign an individual setting.
+    #
+    # @param [Symbol, String] name
+    # @param [*]              value
+    #
+    # @return [*]
+    #
+    def []=: [T] (Symbol|String name, T value) -> T
+
+    # Iterate over each configuration flag.
+    #
+    # @param [Boolean] spacers
+    #
+    # @yield [name, value] Operate on a configuration flag.
+    # @yieldparam [Symbol]   name
+    # @yieldparam [Boolean] value
+    #
+    def each_flag: (?spacers: bool) { (Symbol name, bool value) -> void } -> void
+
+    # Iterate over each configuration setting.
+    #
+    # @param [Boolean] spacers
+    #
+    # @yield [name, value] Operate on a configuration setting.
+    # @yieldparam [Symbol] name
+    # @yieldparam [*]      value
+    #
+    def each_setting: (?spacers: bool) { (Symbol name, untyped value) -> void } -> void
+
+    # Iterate over each configuration value.
+    #
+    # @param [Hash] opt               Passed to #get_item.
+    #
+    # @yield [name, value] Operate on a configuration value.
+    # @yieldparam [Symbol] name
+    # @yieldparam [*]      value
+    #
+    def each_pair: (**untyped opt) { (Symbol name, untyped value) -> void } -> void
+
+    alias each each_pair
+
+    # Update global settings.
+    #
+    # @param [Hash, String, nil] values
+    #
+    # @return [Hash, nil]
+    #
+    def update: (symHash|String|nil values) -> (symHash | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+end
