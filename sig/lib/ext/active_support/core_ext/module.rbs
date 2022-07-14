@@ -1,4 +1,10 @@
 class Module < Object
+  # Prevent inadvertent freezing of modules and classes.
+  #
+  # @return [self]
+  #
+  def deep_freeze: () -> self
+
   # Attempt to get a constant without raising an exception.
   #
   # @param [Symbol, String] name

@@ -7,6 +7,14 @@ __loading_begin(__FILE__)
 
 class Module
 
+  # Avoid inadvertent freezing of modules and classes.
+  #
+  # @return [self]
+  #
+  def deep_freeze
+    self
+  end
+
   # Attempt to get a constant without raising an exception.
   #
   # @param [Symbol, String] name
