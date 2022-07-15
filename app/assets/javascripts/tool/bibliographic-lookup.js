@@ -247,7 +247,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         _debug('onShowModal:', _$target, check_only, halted);
         if (check_only || halted) { return }
         resetSearchResultsData();
-        clearFieldValuesData();
+        clearFieldResultsData();
         updateSearchTerms();
         disableCommit();
         resetEntries();
@@ -273,7 +273,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         } else if ($target.is(LookupModal.COMMIT)) {
             commitFieldValuesEntry();
         } else {
-            clearFieldValuesData();
+            clearFieldResultsData();
         }
     }
 
@@ -400,6 +400,36 @@ export async function setup(base, show_hooks, hide_hooks) {
     }
 
     // ========================================================================
+    // Functions - original field values data
+    // ========================================================================
+
+    /**
+     * Get the original field values supplied via the lookup button.
+     *
+     * @returns {EmmaData}
+     */
+    function originalFieldValues() {
+        return dataElement().data(LookupModal.ENTRY_ITEM_DATA) || {};
+    }
+
+    /**
+     * Get the original field values supplied via the lookup button.
+     *
+     * @param {string} [caller]       For log messages.
+     *
+     * @returns {EmmaData}
+     */
+    function getOriginalFieldValues(caller) {
+        const data = originalFieldValues();
+        if (isMissing(data)) {
+            const func = caller || 'getOriginalFieldValues';
+            const name = LookupModal.ENTRY_ITEM_DATA;
+            console.warn(`${func}: toggle missing .data(${name})`);
+        }
+        return data;
+    }
+
+    // ========================================================================
     // Functions - new field values data
     // ========================================================================
 
@@ -408,8 +438,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @returns {LookupResponseItem|undefined}
      */
-    function getFieldValuesData() {
-        return dataElement().data(LookupModal.FIELD_VALUES_DATA);
+    function getFieldResultsData() {
+        return dataElement().data(LookupModal.FIELD_RESULTS_DATA);
     }
 
     /**
@@ -417,10 +447,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @param {LookupResponseItem|undefined} [value]
      */
-    function setFieldValuesData(value) {
-        _debug('setFieldValuesData:', value);
+    function setFieldResultsData(value) {
+        _debug('setFieldResultsData:', value);
         const new_value = value || {};
-        dataElement().data(LookupModal.FIELD_VALUES_DATA, new_value);
+        dataElement().data(LookupModal.FIELD_RESULTS_DATA, new_value);
     }
 
     /**
@@ -428,9 +458,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @returns {void}
      */
-    function clearFieldValuesData() {
-        _debug('clearFieldValuesData');
-        dataElement().removeData(LookupModal.FIELD_VALUES_DATA);
+    function clearFieldResultsData() {
+        _debug('clearFieldResultsData');
+        dataElement().removeData(LookupModal.FIELD_RESULTS_DATA);
     }
 
     // ========================================================================
@@ -606,7 +636,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Generate the element displaying the state of the parallel requests.
      *
-     * @param [css_class] Default: {@link LookupModal.STATUS_PANEL_CLASS}
+     * @param {string} [css_class]  Def: {@link LookupModal.STATUS_PANEL_CLASS}
      *
      * @returns {jQuery}
      */
@@ -621,7 +651,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Generate the element for displaying textual status information.
      *
-     * @param [css_class] Default: {@link LookupModal.NOTICE_CLASS}
+     * @param {string} [css_class]  Default: {@link LookupModal.NOTICE_CLASS}
      *
      * @returns {jQuery}
      */
@@ -633,7 +663,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Generate the element containing the dynamic set of external services.
      *
-     * @param [css_class] Default: {@link LookupModal.SERVICES_CLASS}
+     * @param {string} [css_class]  Default: {@link LookupModal.SERVICES_CLASS}
      *
      * @returns {jQuery}
      */
@@ -645,8 +675,8 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Generate an element for displaying the status of an external service.
      *
-     * @param [name]                  Service name; default: 'unknown'.
-     * @param [css_class]             Default: 'service'
+     * @param {string} [name]         Service name; default: 'unknown'.
+     * @param {string} [css_class]    Default: 'service'
      *
      * @returns {jQuery}
      */
@@ -664,8 +694,8 @@ export async function setup(base, show_hooks, hide_hooks) {
 
     /**
      * The button(s) for updating
-     * {@link LookupModal.FIELD_VALUES_DATA FIELD_VALUES_DATA} from the current
-     * contents of {@link $field_values}.
+     * {@link LookupModal.FIELD_RESULTS_DATA FIELD_RESULTS_DATA} from the
+     * current contents of {@link $field_values}.
      *
      * @returns {jQuery}
      */
@@ -704,6 +734,68 @@ export async function setup(base, show_hooks, hide_hooks) {
     }
 
     // ========================================================================
+    // Methods - values
+    // ========================================================================
+
+    /**
+     * Get the value associated with an element.
+     *
+     * @param {Selector} element
+     *
+     * @returns {string}
+     */
+    function getValue(element) {
+        let $elem = $(element);
+        if ($elem.is('textarea')) {
+            return $elem.val()?.trim() || '';
+        } else {
+            return getLatestFieldValue($elem) || $elem.text().trim();
+        }
+    }
+
+    /**
+     * Transform an input value into the expected form for a data value.
+     *
+     * @param {*} item
+     *
+     * @returns {string[]|string}
+     */
+    function toDataValue(item) {
+        if (Array.isArray(item)) {
+            return item.map(v => v?.trim ? v.trim() : v).filter(v => v);
+
+        } else if (typeof item !== 'string') {
+            return item?.toString() || '';
+
+        } else if (item.includes("\n")) {
+            // noinspection TailRecursionJS
+            return toDataValue(item.split("\n"));
+
+        } else {
+            return item.trim();
+        }
+    }
+
+    /**
+     * Transform a data value into an input value.
+     *
+     * @param {*} item
+     *
+     * @returns {string}
+     */
+    function toInputValue(item) {
+        if (typeof item === 'string') {
+            return item.trim();
+
+        } else if (Array.isArray(item)) {
+            return toDataValue(item).join("\n");
+
+        } else {
+            return toDataValue(item);
+        }
+    }
+
+    // ========================================================================
     // Functions - replacement field values
     // ========================================================================
 
@@ -729,17 +821,48 @@ export async function setup(base, show_hooks, hide_hooks) {
     }
 
     /**
+     * Fill the fields values row element from item data attached to the toggle
+     * button and toggle the lock state of each associated column accordingly.
+     *
+     * @param {string} [caller]       For log messages.
+     *
+     * @returns {jQuery}
+     */
+    function refreshFieldValuesEntry(caller) {
+        const func = caller || 'refreshFieldValuesEntry';
+        const data = getOriginalFieldValues(func);
+        let $entry = getFieldValuesEntry();
+        fillEntry($entry, data);
+        $entry.find('textarea').each((_, column) => {
+            let $field = $(column);
+            const lock = !!getValue($field);
+            this.lockFor($field).prop('checked', lock);
+            this.lockFieldValue($field, lock);
+        });
+        return $entry;
+    }
+
+    /**
      * Invoked when the user commits to the new field values.
      */
     function commitFieldValuesEntry() {
-        _debug('commitFieldValuesEntry');
-        let current    = getFieldValuesData();
-        let new_values = entryValues(getFieldValuesEntry());
-        if (isPresent(current)) {
-            new_values = $.extend(true, current, new_values);
-        }
-        new_values = compact(new_values);
-        setFieldValuesData(new_values);
+        const func = 'commitFieldValuesEntry';
+        _debug(func);
+        let original = getOriginalFieldValues(func);
+        let current  = getColumnValues(getFieldValuesEntry());
+        let result   = {};
+        $.each(current, (field, value) => {
+            let use_value = true;
+            if (original.hasOwnProperty(field)) {
+                const orig = toInputValue(original[field]);
+                const curr = toInputValue(value);
+                use_value  = (curr !== orig);
+            }
+            if (use_value) {
+                result[field] = value;
+            }
+        });
+        setFieldResultsData(result);
     }
 
     /**
@@ -785,14 +908,19 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function lockIfChanged(event) {
         _debug('lockIfChanged:', event);
-        let $textarea = $(event.target);
-        if (!isLockedFieldValue($textarea)) {
-            const current  = $textarea.val()?.trim() || '';
-            const previous = getLatestFieldValue($textarea);
-            if (current !== previous) {
-                setLatestFieldValue($textarea, current);
+        let $textarea  = $(event.target);
+        const current  = getValue($textarea);
+        const previous = getLatestFieldValue($textarea);
+        if (current !== previous) {
+            setLatestFieldValue($textarea, current);
+            if (!isLockedFieldValue($textarea)) {
                 lockFor($textarea).click();
             }
+        }
+        const field    = $textarea.attr('data-field');
+        const original = originalFieldValues()[field] || '';
+        if (current !== original) {
+            enableCommit();
         }
     }
 
@@ -804,7 +932,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {string}
      */
     function getLatestFieldValue($textarea) {
-        const value_name = LookupModal.FIELD_VALUE_DATA;
+        const value_name = LookupModal.FIELD_LATEST_DATA;
         return $textarea.data(value_name)?.trim() || '';
     }
 
@@ -812,11 +940,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Set the most-recently-saved value for a field value element.
      *
      * @param {jQuery} $textarea
-     * @param {string} value
+     * @param {string} [value]        Default: current value of $textarea.
      */
     function setLatestFieldValue($textarea, value) {
-        const value_name = LookupModal.FIELD_VALUE_DATA;
-        const new_value  = value?.trim() || '';
+        const value_name = LookupModal.FIELD_LATEST_DATA;
+        const new_value  = isDefined(value) ? value : getValue($textarea);
         $textarea.data(value_name, new_value);
     }
 
@@ -945,7 +1073,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     }
 
     // ========================================================================
-    // Methods - original field values
+    // Methods - original values entry
     // ========================================================================
 
     /**
@@ -967,6 +1095,23 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function setOriginalValuesEntry($entry) {
         return $original_values = $entry;
+    }
+
+    /**
+     * Fill the original values row element from item data attached to the
+     * toggle button.
+     *
+     * @param {string} [caller]       For log messages.
+     *
+     * @returns {jQuery}
+     */
+    function refreshOriginalValuesEntry(caller) {
+        const func = caller || 'refreshOriginalValuesEntry';
+        const data = getOriginalFieldValues(func);
+        let $entry = getOriginalValuesEntry();
+        fillEntry($entry, data);
+        $entry.data(LookupModal.ENTRY_ITEM_DATA, dupObject(data));
+        return $entry;
     }
 
     // ========================================================================
@@ -1115,16 +1260,13 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {jQuery} $entry
      * @param {string} field
      *
-     * @returns {string[]|string|undefined}
+     * @returns {string[]|string}
      */
     function getColumnValue($entry, field) {
         /** @type {jQuery} */
-        let $col  = $entry.children(`[data-field="${field}"]`);
-        let value = $col.is('textarea') ? $col.val() : $col.text();
-        if ((typeof value === 'string') && value.includes("\n")) {
-            value = value.split("\n");
-        }
-        return value;
+        let $column = $entry.children(`[data-field="${field}"]`);
+        const value = getValue($column);
+        return toDataValue(value);
     }
 
     /**
@@ -1137,15 +1279,14 @@ export async function setup(base, show_hooks, hide_hooks) {
     function setColumnValue($entry, field, field_value) {
         /** @type {jQuery} */
         let $column = $entry.children(`[data-field="${field}"]`);
-        let value   = field_value;
+        let value   = toInputValue(field_value);
+        setLatestFieldValue($column, value);
 
         if ($column.is('textarea')) {
             // Operating on a column of the $field_values entry.  In addition
             // to setting the value of the input field, store a copy for use
             // when checking for editing.
-            value = arrayWrap(value).join("\n").trim();
             $column.val(value);
-            setLatestFieldValue($column, value);
 
         } else if (isPresent($column)) {
             // Operating on a column of a result entry.  Separate discrete
@@ -1154,9 +1295,7 @@ export async function setup(base, show_hooks, hide_hooks) {
             if (isMissing($text)) {
                 $text = $('<div>').addClass('text').appendTo($column);
             }
-            if ((typeof value === 'string') && value.includes("\n")) {
-                value = value.split("\n");
-            }
+            value = toDataValue(field_value);
             if (Array.isArray(value)) {
                 const $tmp  = $('<i>');
                 const lines = value.map(line => $tmp.text(line).html());
@@ -1286,20 +1425,18 @@ export async function setup(base, show_hooks, hide_hooks) {
      * If $entries_list does not exist, this returns immediately.
      */
     function resetEntries() {
-        _debug('resetEntries');
+        const func = 'resetEntries';
+        _debug(func);
         if ($entries_list) {
-            $entries_list.children().not(LookupModal.RESERVED_ROWS).remove();
-            getFieldValuesEntry().find('textarea').each((_, column) => {
-                let $field = $(column);
-                lockFor($field).prop('checked', false);
-                unlockFieldValue($field);
-                $field.val('');
-            });
+            const RESERVED_ROWS = LookupModal.RESERVED_ROWS;
+            $entries_list.children().not(RESERVED_ROWS).remove();
+            refreshOriginalValuesEntry(func);
         } else {
             // Cause an empty list with reserved rows to be created.
             entriesList();
         }
         resetSelectedEntry();
+        refreshFieldValuesEntry(func);
     }
 
     /**
@@ -1434,16 +1571,8 @@ export async function setup(base, show_hooks, hide_hooks) {
         const func = 'makeOriginalValuesEntry';
         const tag  = 'ORIGINAL'; // TODO: I18n
         const css  = css_class || LookupModal.ORIG_VALUES_CLASS;
-        const name = LookupModal.ENTRY_ITEM_DATA;
-        let $entry = makeResultEntry(row, tag, css);
-        let data   = dataElement().data(name);
-        if (isPresent(data)) {
-            fillEntry($entry, data);
-            $entry.data(name, dupObject(data));
-        } else {
-            console.warn(`${func}: toggle missing .data(${name})`);
-        }
-        return setOriginalValuesEntry($entry);
+        setOriginalValuesEntry(makeResultEntry(row, tag, css));
+        return refreshOriginalValuesEntry(func);
     }
 
     /**
@@ -1514,10 +1643,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function makeFieldInputColumn(field, value, css_class) {
         let $cell = $('<textarea>').attr('data-field', field);
+        $cell.val(toInputValue(value));
         if (css_class) {
             $cell.addClass(css_class);
         }
-        $cell.val(Array.isArray(value) ? value.join("\n") : value);
         monitorEditing($cell);
         return $cell;
     }

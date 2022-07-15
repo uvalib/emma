@@ -50,9 +50,23 @@ body.upload-check.modal {
 // When not actively downloading, the element for .uppy-ProgressBar creates a
 // visible gap between the directions and the top of the form.
 body.upload {
+
+    // Style flash message caused by the return from bibliographic lookup.
+    // @see file:app/assets/javascripts/feature/model.js *onLookupComplete()*
+    .flash-messages .notice {
+
+        display:               grid;
+        gap:                   0.25rem;
+        grid-template-columns: [type] max-content [list] 1fr;
+
+        .type { } // TODO: ?
+        .list { font-weight: bold; }
+    }
+
     .page-text-section.directions {
         margin-bottom: 0;
     }
+
     .search-in-progress {
         &.visible { transition: unset; }
     }

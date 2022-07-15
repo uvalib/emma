@@ -153,7 +153,7 @@ export function dupObject(item, shallow) {
 export function toObject(array, mapper) {
     let obj, prs, v;
     if (Array.isArray(array)) {
-        prs = mapper ? array.map(k => k && (v = mapper(k)) && [k, v]) : array;
+        prs = mapper ? array.map(k => k && [k, mapper(k)]) : array;
         prs = prs.filter(v => Array.isArray(v) && (v.length === 2));
         obj = Object.fromEntries(prs);
     } else if (typeof array === 'object') {

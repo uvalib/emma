@@ -97,7 +97,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     display:        flex;
     flex-direction: row;
-    flex-wrap:      wrap;
+    flex-wrap:      nowrap;
+    align-items:    baseline;
+    gap:            0.25rem;
     margin:         auto 0;
     line-height:    2;
     overflow-x:     auto;
@@ -107,13 +109,14 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     }
 
     .leader {
-        margin-right: 0.25rem;
-        word-break:   break-all;
+        word-break:  break-all;
+        flex:        1 0 auto;
     }
 
     .filename {
+        line-height: 1;
+        word-break:  break-all;
         font-weight: bold;
-        word-break:  keep-all;
     }
 }
 
@@ -471,11 +474,13 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         @include grid.row(1);
         @include grid.column-span;
 
-        display:        flex;
-        flex-direction: row;
-        flex-wrap:      wrap;
-        max-width:      inherit;
-        gap:            $form-gap;
+        display:         flex;
+        flex-direction:  row;
+        flex-wrap:       nowrap;
+        align-items:     baseline;
+        justify-content: start;
+        gap:             $form-gap;
+        max-width:       inherit;
 
         //=====================================================================
         // Components
@@ -483,8 +488,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         // noinspection CssReplaceWithShorthandSafely
         %tray-control {
-            flex:   0 1 auto;
-            margin: 0;
+            max-height: max-content;
+            max-width:  max-content;
+            margin:     0;
+            flex:       0 1 auto;
         }
 
         .submit-button {
@@ -508,9 +515,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
             @extend %tray-control;
 
-            margin-right: 0;
-            line-height:  2.15;
-            flex-grow:    1;
+            margin:      0 0.25rem;
+            line-height: 2.15;
+            flex-grow:   1;
 
             @media #{$wide-screen} {
                 max-width: 75vw;

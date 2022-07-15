@@ -1972,8 +1972,8 @@ $(document).on('turbolinks:load', function() {
         let value  = new_value;
         if (Array.isArray(value)) {
             value = compact(value)[0];
-        } else if (value !== null) {
-            value = value || $input.val();
+        } else if (notDefined(value)) {
+            value = $input.val();
         }
         setValue($input, value, true, init);
         updateFieldAndLabel($input, $input.val());
@@ -1995,7 +1995,9 @@ $(document).on('turbolinks:load', function() {
         let $input = $(target);
         let value  = new_value;
         if (value !== null) {
-            value = value || $input.val();
+            if (notDefined(value)) {
+                value = $input.val();
+            }
             if (trim !== false) {
                 value = textAreaValue(value);
             }
@@ -2022,8 +2024,8 @@ $(document).on('turbolinks:load', function() {
         if (Array.isArray(value)) {
             // noinspection JSUnresolvedFunction
             value = compact(value).join('; ');
-        } else if (value !== null) {
-            value = value || $input.val();
+        } else if (notDefined(value)) {
+            value = $input.val();
         }
         setValue($input, value, trim, init);
 
@@ -3239,23 +3241,50 @@ $(document).on('turbolinks:load', function() {
      */
     function onLookupComplete($toggle, check_only, halted) {
         if (check_only || halted) { return }
-        let message;
-        const data = getFieldValuesData($toggle);
+        let $form   = formElement();
+        let message = 'No fields changed.'; // TODO: I18n
+        const data  = getFieldResultsData($toggle);
+
         if (isPresent(data)) {
-            populateFormFields(data);
-            let fields = Object.keys(data);
-            let s      = (fields.size === 1) ? '' : 's';
-            let attrs  = fields.map(field => `[name="${field}"]`).join(', ');
-            let inputs = formElement().find(attrs).toArray();
-            let names  = inputs.map(input => {
-                let $label  = $(input).siblings(`[for="${input.id}"]`);
-                const label = $label.children('.text').text();
-                return `"${label}"`;
-            }).join(', ');
-            message = `Updated field${s}: ${names}.`; // TODO: I18n
-        } else {
-            message = 'No fields changed.'; // TODO: I18n
+            let updates = { Added: [], Changed: [], Removed: [] };
+            $.each(data, (field, value) => {
+                if (!value) {
+                    updates.Removed.push(field);
+                } else if (formField(field, $form).val()) {
+                    updates.Changed.push(field);
+                } else {
+                    updates.Added.push(field);
+                }
+            });
+            message = $.map(compact(updates), (keys, update_type) => {
+                const s      = (keys.length === 1) ? '' : 's';
+                const label  = `${update_type} item${s}`; // TODO: I18n
+                const attrs  = keys.map(fld => `[name="${fld}"]`).join(', ');
+                const inputs = $form.find(attrs).toArray();
+                const names  = inputs.map(i =>
+                    $(i).siblings(`[for="${i.id}"]`).children('.text').text()
+                ).sort().join(', ');
+                const type   = `<span class="type">${label}:</span>`;
+                const list   = `<span class="list">${names}.</span>`;
+                return `${type} ${list}`;
+            }).join("\n");
+
+            // NOTE: This is a hack due to the way that publication date is
+            //  handled versus copyright year.
+            if (Object.keys(data).includes('emma_publicationDate')) {
+                let $input = formField('emma_publicationDate', $form);
+                let $label = $input.siblings(`[for="${$input.attr('id')}"]`);
+                $input.attr('title', $label.attr('title'));
+                $input.prop({ readonly: false, disabled: false });
+                [$input, $label].forEach($e => {
+                    $e.css('display','revert').toggleClass('disabled', false)
+                });
+            }
+
+            // Update form fields with the provided data.
+            populateFormFields(data, $form);
         }
+
         showFlashMessage(message);
     }
 
@@ -3441,15 +3470,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Get the original field values.
-     *
-     * @returns {LookupResponseItem|undefined}
-     */
-    function getOriginalValues(form) {
-        return lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA);
-    }
-
-    /**
      * Set the original field values.
      *
      * @param {Selector} form
@@ -3457,10 +3477,10 @@ $(document).on('turbolinks:load', function() {
      */
     function setOriginalValues(form, value) {
         let $if = !value && inputFields(form).filter('.valid');
-        let dat = compact(toObject(LookupModal.DATA_COLUMNS, f => {
+        let dat = toObject(LookupModal.DATA_COLUMNS, f => {
             let v = value ? value[f] : $if.filter(`[data-field="${f}"]`).val();
             return v && dup(v, true);
-        }));
+        });
         lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA, dat);
     }
 
@@ -3594,19 +3614,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {LookupResponseItem|undefined}
      */
-    function getFieldValuesData(form) {
-        return lookupButton(form).data(LookupModal.FIELD_VALUES_DATA);
-    }
-
-    /**
-     * Clear the user-selected field values from lookup.
-     *
-     * @param {Selector} [form]
-     *
-     * @returns {jQuery}
-     */
-    function clearFieldValuesData(form) {
-        return lookupButton(form).removeData(LookupModal.FIELD_VALUES_DATA);
+    function getFieldResultsData(form) {
+        return lookupButton(form).data(LookupModal.FIELD_RESULTS_DATA);
     }
 
     // ========================================================================
@@ -4804,7 +4813,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Show flash messages (unless disabled).
      *
-     * @param {string} text
+     * @param {string|string[]} text
      */
     function showFlashMessage(text) {
         if (FEATURES.flash_messages) {
