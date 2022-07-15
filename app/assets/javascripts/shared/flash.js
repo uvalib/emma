@@ -1,6 +1,7 @@
 // app/assets/javascripts/shared/flash.js
 
 
+import { arrayWrap }                     from '../shared/arrays'
 import { isDefined, isEmpty, isMissing } from '../shared/definitions'
 import { scrollIntoView }                from '../shared/html'
 import { selector }                      from '../shared/css'
@@ -54,15 +55,13 @@ var show_flash = {
  * @returns {jQuery}
  */
 export function flashContainer(selector) {
-    let $fc;
     if (selector instanceof jQuery) {
-        $fc = selector;
+        return selector;
     } else if (typeof selector === 'string') {
-        $fc = $(selector);
+        return $(selector);
     } else {
-        $fc = $(FLASH_ROOT_SELECTOR);
+        return $(FLASH_ROOT_SELECTOR);
     }
-    return $fc;
 }
 
 /**
@@ -100,10 +99,10 @@ export function enableFlash(all) {
  *
  * If show_flash.messages is not *true* then no actions will be taken.
  *
- * @param {string}   text
- * @param {string}   [type]
- * @param {string}   [role]
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {string|string[]} text
+ * @param {string}          [type]
+ * @param {string}          [role]
+ * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
  *
  * @returns {jQuery}                  The flash container.
  */
@@ -121,10 +120,10 @@ export function flashMessage(text, type, role, fc) {
  *
  * If show_flash.errors is not *true* then no actions will be taken.
  *
- * @param {string}   text
- * @param {string}   [type]
- * @param {string}   [role]
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {string|string[]} text
+ * @param {string}          [type]
+ * @param {string}          [role]
+ * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
  *
  * @returns {jQuery}                  The flash container.
  */
@@ -213,28 +212,37 @@ export function flashDisplayed(fc) {
 /**
  * Add a flash message, un-hiding the flash message container if needed.
  *
- * @param {string}   text
- * @param {string}   [type]
- * @param {string}   [role]
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {string|string[]} text
+ * @param {string}          [type]
+ * @param {string}          [role]
+ * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
  *
  * @returns {jQuery}                  The flash container.
  */
 export function addFlashMessage(text, type, role, fc) {
     const css_class = type || 'notice';
     const aria_role = role || 'alert';
-    const msg       = text ? text.replace(/\n/g, '<br/>') : '???';
-    let $msg = $('<p>').addClass(css_class).attr('role', aria_role).html(msg);
-    return showFlash(fc).append($msg);
+    let message;
+    if ((typeof text === 'string') && !text.startsWith('<')) {
+        message = text.split(/<br\/?>|\n/);
+    } else {
+        message = arrayWrap(text);
+    }
+    message = message.map(v => v?.toString && v?.toString() || '???');
+    let $message = $('<div>');
+    $message.addClass(css_class);
+    $message.attr('role', aria_role);
+    $message.html(message.join('<br/>'));
+    return showFlash(fc).append($message);
 }
 
 /**
  * Add a flash error message, un-hiding the flash message container if needed.
  *
- * @param {string}   text
- * @param {string}   [type]
- * @param {string}   [role]
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {string|string[]} text
+ * @param {string}          [type]
+ * @param {string}          [role]
+ * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
  *
  * @returns {jQuery}                  The flash container.
  */

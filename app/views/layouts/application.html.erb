@@ -29,8 +29,8 @@
   <body class="<%= page_classes -%>">
     <%= render 'layouts/session' %>
     <%= render 'layouts/header' %>
+    <%= render 'layouts/messages' %>
     <main class="layout-content" id="<%= main_id -%>">
-      <%= render 'layouts/messages' %>
       <%= yield %>
     </main>
     <%= render 'layouts/footer' %>

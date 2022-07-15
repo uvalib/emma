@@ -1,4 +1,4 @@
-// app/assets/stylesheets/feature/_flash.scss
+// app/assets/stylesheets/layouts/_flash.scss
 
 @use 'shared/variables' as *;
 @use 'shared/mixins'    as *;
@@ -10,6 +10,9 @@
 // @see file:app/views/layouts/_messages.html.erb
 .flash-messages {
 
+    margin:    0 $page-padding;
+    max-width: 100%;
+
     > * {
 
         @include block-shadow;
@@ -19,6 +22,9 @@
         overflow-wrap: break-word;
         border:        2px solid gray;
         border-radius: 8px;
+
+        &:first-child { margin-top:    $page-padding; }
+        &:last-child  { margin-bottom: 0; }
     }
 
     .notice {

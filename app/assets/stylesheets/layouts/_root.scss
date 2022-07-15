@@ -126,6 +126,11 @@ body {
         flex: 0 0 auto;
     }
 
+    // Flash messages above the content area.
+    .flash-messages {
+        flex: 0 0 auto;
+    }
+
     // The <main> content area of the page.
     .layout-content {
         flex: 1 1 auto;

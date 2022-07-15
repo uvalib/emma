@@ -18,8 +18,8 @@
   </head>
 
   <body class="<%= page_classes -%>">
+    <%= render 'layouts/messages' %>
     <main class="layout-content modal" id="<%= main_id -%>">
-      <%= render 'layouts/messages' %>
       <%= yield %>
     </main>
   </body>
