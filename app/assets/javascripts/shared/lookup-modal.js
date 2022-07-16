@@ -5,16 +5,17 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { arrayWrap }                      from '../shared/arrays'
-import { selector }                       from '../shared/css'
-import { turnOffAutocomplete }            from '../shared/form'
-import { HTML_BREAK }                     from '../shared/html'
-import { renderJson }                     from '../shared/json'
-import { LookupRequest }                  from '../shared/lookup-request'
-import { ModalDialog }                    from '../shared/modal-dialog'
-import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks'
-import { randomizeName }                  from '../shared/random'
-import { camelCase }                      from '../shared/strings'
+import { arrayWrap }                       from '../shared/arrays'
+import { selector }                        from '../shared/css'
+import { turnOffAutocomplete }             from '../shared/form'
+import { HTML_BREAK }                      from '../shared/html'
+import { renderJson }                      from '../shared/json'
+import { LookupRequest }                   from '../shared/lookup-request'
+import { ModalDialog }                     from '../shared/modal-dialog'
+import { ModalHideHooks, ModalShowHooks }  from '../shared/modal_hooks'
+import { deepFreeze, dupObject, toObject } from '../shared/objects'
+import { randomizeName }                   from '../shared/random'
+import { camelCase }                       from '../shared/strings'
 import {
     isDefined,
     isEmpty,
@@ -29,12 +30,6 @@ import {
     handleHoverAndFocus,
     isEvent,
 } from '../shared/events'
-import {
-    compact,
-    deepFreeze,
-    dupObject,
-    toObject,
-} from '../shared/objects'
 
 
 // ============================================================================

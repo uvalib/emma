@@ -13,7 +13,7 @@ import { LookupModal }                    from '../shared/lookup-modal'
 import { LookupRequest }                  from '../shared/lookup-request'
 import { ModalDialog }                    from '../shared/modal-dialog'
 import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks'
-import { compact, dupObject, toObject }   from '../shared/objects'
+import { dupObject, toObject }            from '../shared/objects'
 import { randomizeName }                  from '../shared/random'
 import { camelCase }                      from '../shared/strings'
 import {

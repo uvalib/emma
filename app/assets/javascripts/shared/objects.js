@@ -151,7 +151,7 @@ export function dupObject(item, shallow) {
  * @returns {object}
  */
 export function toObject(array, mapper) {
-    let obj, prs, v;
+    let obj, prs;
     if (Array.isArray(array)) {
         prs = mapper ? array.map(k => k && [k, mapper(k)]) : array;
         prs = prs.filter(v => Array.isArray(v) && (v.length === 2));
