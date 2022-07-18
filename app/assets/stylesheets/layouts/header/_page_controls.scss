@@ -50,6 +50,7 @@
         @include header.section;
         @include header.control-panel;
 
+        $page-control-gap:   $gap;
         $page-control-gap-x: $gap-x;
         $page-control-gap-y: calc(#{$gap-y} / 2);
 
@@ -84,6 +85,10 @@
         .controls {
 
             margin-bottom: $page-control-gap-y;
+
+            @media #{$narrow-screen} {
+                gap: $page-control-gap;
+            }
 
             // noinspection CssReplaceWithShorthandSafely
             .control {

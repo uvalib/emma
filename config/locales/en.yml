@@ -423,18 +423,22 @@ en:
 
       available:
         label:        'All fields'
+        label_narrow: 'All'
         tooltip:      'Reveal all data fields.'
 
       invalid:
         label:        'Incomplete fields'
+        label_narrow: 'Incomplete'
         tooltip:      'Show fields that require attention.'
 
       filled:
         label:        'Completed fields'
+        label_narrow: 'Completed'
         tooltip:      'Show fields that have data.'
 
       all:
         label:        'All plus internal-use fields'
+        label_narrow: 'All++'
         tooltip:      'This is only for development purposes.'
         enabled:      debug
 

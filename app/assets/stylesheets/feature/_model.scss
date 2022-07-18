@@ -165,6 +165,10 @@
             margin:         0;
             padding:        0;
 
+            @media #{$narrow-screen} {
+                max-width:  1rem;
+            }
+
             //=================================================================
             // Components
             //=================================================================
@@ -200,6 +204,8 @@
                 @media #{$narrow-screen} {
                     padding-left:  $icon-pad;
                     padding-right: $icon-pad;
+                    margin-left:   0;
+                    margin-right:  -0.125rem;
                 }
             }
 
@@ -383,7 +389,10 @@
 
         @media #{$narrow-screen} {
 
-            margin: 0 $narrow-margin;
+            $left:  $narrow-margin;
+            $right: 0.5 * $narrow-margin;
+
+            margin: 0 $right 0 $left;
 
             grid-template-columns: 1fr;
         }

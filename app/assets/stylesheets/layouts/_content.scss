@@ -75,7 +75,24 @@
         grid-template-columns: 1fr;
 
         > .heading {
+
             margin-top: 0;
+            overflow:   hidden;
+
+            .inline-popup {
+
+                $toggle-width: 3rem;
+
+                width:       0;
+                overflow:    visible;
+                position:    relative;
+                margin-left: $toggle-width;
+
+                .popup-toggle {
+                    position: relative;
+                    left:     -$toggle-width;
+                }
+            }
         }
 
         > .repository {

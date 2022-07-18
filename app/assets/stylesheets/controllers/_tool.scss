@@ -343,7 +343,20 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         display:        flex;
         flex-direction: row;
         gap:            $section-gap * 2;
-        max-width:      75vw;
+
+        @media #{$wide-screen} {
+            max-width:       75vw;
+        }
+
+        @media #{$medium-width} {
+            gap:             1rem;
+            margin-right:    0.5rem;
+        }
+
+        @media #{$narrow-screen} {
+            flex-wrap:       wrap;
+            justify-content: center;
+        }
 
         .item-terms {
 
@@ -359,6 +372,17 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             border-radius:  $border * 2;
             background:     $color;
             flex:           1 1 auto;
+
+            @media #{$medium-width} {
+                gap:            0.75rem;
+                padding:        0.75rem;
+            }
+
+            @media #{$narrow-screen} {
+                flex-direction: column;
+                gap:            0.5rem;
+                padding:        0.5rem;
+            }
 
             > * {
                 line-height: 1.5;
@@ -379,6 +403,8 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
                 @include button.basic;
 
+                align-self:  end;
+                max-width:   max-content;
                 background:  white;
             }
         }
@@ -414,6 +440,13 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         margin-bottom:  $section-gap * 2;
         font-size:      large;
 
+        @media #{$narrow-screen} {
+            flex-direction: column;
+            gap:            0.5rem;
+            margin-top:     1rem;
+            margin-bottom:  1rem;
+        }
+
         .services {
 
             display:        flex;
@@ -425,6 +458,12 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             min-height:     2rem;
             font-weight:    bold;
             flex:           1 1 auto;
+
+            @media #{$narrow-screen} {
+                flex-direction: column;
+                gap:            inherit;
+                margin-bottom:  0.5rem;
+            }
 
             .service {
 
@@ -473,6 +512,11 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         gap:                   $section-gap;
         width:                 95vw;
 
+        @media #{$narrow-screen} {
+            grid-template-columns: 1fr;
+            gap:                   0.5rem;
+        }
+
         // noinspection CssBrowserCompatibilityForProperties
         textarea {
             overscroll-behavior: contain;
@@ -483,6 +527,11 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             @include grid.column-span;
 
             height: 50vh;
+
+            @media #{$narrow-screen} {
+                height:      75vh;
+                white-space: pre;
+            }
         }
 
         .pair {
@@ -494,12 +543,21 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             }
 
             .value.item-errors {
+
                 height:      5vh;
+
+                @media #{$narrow-screen} {
+                    height:  10vh;
+                }
             }
 
             .value.item-diagnostics {
                 height:      10vh;
                 white-space: pre;
+
+                @media #{$narrow-screen} {
+                    height:  20vh;
+                }
             }
         }
     }

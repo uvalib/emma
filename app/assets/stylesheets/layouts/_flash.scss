@@ -13,6 +13,10 @@
     margin:    0 $page-padding;
     max-width: 100%;
 
+    @media #{$narrow-screen} {
+        margin-top: $page-padding-y;
+    }
+
     > * {
 
         @include block-shadow;

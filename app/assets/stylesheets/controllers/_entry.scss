@@ -60,6 +60,11 @@ $entry-form-gap:  1.5rem;
 
         margin: (3 * $entry-padding) 0;
 
+        // Prevent the top border from meeting the outside border.
+        @media #{$narrow-screen} {
+            margin-right: $entry-padding;
+        }
+
         &.label {
 
             margin:      (2 * $entry-padding) 0;
@@ -739,6 +744,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         border-radius:  $toggle-height;
         border:         $toggle-border solid;
 
+        @media #{$medium-width} {
+            line-height: 1.25;
+            font-size:   x-small;
+        }
+
         .slider {
             position:       relative;
             height:         100%;
@@ -881,6 +891,16 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         right:    2rem;
     }
 
+    @media #{$narrow-screen} {
+        padding: 0;
+    }
+
+    .popup-controls {
+        @media #{$narrow-screen} {
+            padding: 0.5rem;
+        }
+    }
+
 }
 
 .modal-popup,
@@ -899,6 +919,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
         // noinspection CssBrowserCompatibilityForProperties
         overscroll-behavior: contain;
+
+        @media #{$not-wide-screen} {
+            max-width:  inherit;
+            overflow-x: auto;
+        }
 
         > * {
             max-width: inherit;
@@ -937,6 +962,13 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             border:             0.25rem solid $color;
             border-radius:      0.5rem;
 
+            @media #{$narrow-screen} {
+                flex-direction: column;
+                gap:            0.5rem;
+                padding-top:    0.5rem;
+                margin:         0 0.5rem;
+            }
+
             .terms {
                 padding: 0 0.5rem;
                 border:  1px solid $lookup-accent-fg;
@@ -953,14 +985,31 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
             justify-content: center;
 
+            @media #{$narrow-screen} {
+                margin-left: 0.5rem;
+            }
+
+            > * {
+                @media #{$narrow-screen} {
+                    width: 100%;
+                }
+            }
+
             .services {
+
                 margin-left:  0;
                 margin-right: 0;
                 flex-grow:    0;
+
+                > * {
+                    @media #{$narrow-screen} {
+                        flex-basis: 100%;
+                    }
+                }
             }
 
             .notice {
-                flex-basis:   auto;
+                flex-basis: auto;
             }
 
         }
@@ -975,6 +1024,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior: contain;
 
+            @media #{$not-wide-screen} {
+                max-width: unset;
+                width:     max-content;
+            }
+
             // noinspection LongLine
             .list {
 
@@ -988,6 +1042,33 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 border-bottom:  2px solid gray;
 
                 @include grid.column-classes($max-columns, auto);
+
+                // Redefine the generated classes for non-desktop form factors
+                // so that (a) .col-0 and .col-1 are no wider than they need to
+                // be and (b) the remaining (data) columns are sized to allow
+                // good readability for the available viewport (assuming
+                // horizontal scrolling).
+                $first-columns: 2;
+                @for $n from ($first-columns + 1) through $max-columns {
+                    &.columns-#{$n} {
+                        $later-columns: $n - $first-columns;
+                        @media #{$medium-width} {
+                            grid-template-columns:
+                                repeat($first-columns, auto)
+                                repeat($later-columns, 25vw);
+                        }
+                        @media #{$narrow-screen} {
+                            grid-template-columns:
+                                repeat($first-columns, auto)
+                                repeat($later-columns, 45vw);
+                        }
+                    }
+                }
+
+                @media #{$not-wide-screen} {
+                    max-width: unset;
+                    width:     max-content;
+                }
 
                 // @note Support for future "wide" option:
                 &.wide {
@@ -1198,9 +1279,15 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                     flex-direction:  row;
                     flex-wrap:       nowrap;
                     justify-content: center;
+                    position:        relative;
+
+                    @media #{$not-wide-screen} {
+                        max-width: 90vw;
+                    }
 
                     // Image appears above the next line.
                     > * {
+
                         position:            absolute;
                         height:              $row-height;
                         width:               $row-height;
@@ -1208,6 +1295,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                         background-repeat:   no-repeat;
                         background-size:     contain;
                         background-position: center;
+
+                        @media #{$narrow-screen} {
+                            top: -15vh;
+                        }
                     }
                 }
 

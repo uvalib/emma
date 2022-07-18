@@ -820,6 +820,7 @@ module BaseDecorator::Form
   #
   # @see #FIELD_GROUP
   # @see file:javascripts/feature/model-form.js *fieldDisplayFilterSelect()*
+  # @see file:app/assets/stylesheets/layouts/_root.scss *.wide-screen*, etc.
   #
   def field_group_controls(**opt)
     css  = '.field-group'
@@ -842,8 +843,20 @@ module BaseDecorator::Form
 
         input = h.radio_button_tag(name, group, selected, role: 'radio')
 
-        label = properties[:label] || group.to_s
-        label = h.label_tag("#{name}_#{group}", label)
+        # One or more label variants, only one of which will be visible
+        # depending on the display form factor.
+        lbl_name = "#{name}_#{group}"
+        variants = %i[label_narrow label_medium label_wide]
+        narrow, medium, wide = properties.values_at(*variants)
+        var = []
+        var << h.label_tag(lbl_name, narrow, class: 'narrow-screen') if narrow
+        var << h.label_tag(lbl_name, medium, class: 'medium-width')  if medium
+        l_css   = ('wide-screen'       if wide || (narrow && medium))
+        l_css ||= ('not-narrow-screen' if narrow)
+        l_opt   = l_css ? { class: l_css } : {}
+        label   = wide || properties[:label] || group.to_s
+        var << h.label_tag(lbl_name, label, l_opt)
+        label = safe_join(var)
 
         html_div(class: 'radio', title: tooltip) { input << label }
       end

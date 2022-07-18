@@ -482,6 +482,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         gap:             $form-gap;
         max-width:       inherit;
 
+        @media #{$narrow-screen} {
+            flex-wrap:   wrap;
+        }
+
         //=====================================================================
         // Components
         //=====================================================================
@@ -528,6 +532,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
             }
 
             @media #{$narrow-screen} {
+
+                max-width: unset;
+
                 .filename {
                     max-width: 85vw;
                 }
@@ -590,13 +597,6 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         grid-template-columns: 1fr;
         row-gap:               calc(2 * #{$form-gap});
         column-gap:            $form-gap;
-
-        @media #{$narrow-screen} {
-            top:           calc(2 * #{$form-gap-narrow});
-            margin-bottom: calc(2 * #{$form-gap-narrow});
-            row-gap:       calc(2 * #{$form-gap-narrow});
-            column-gap:    $form-gap-narrow;
-        }
     }
 
     //=========================================================================

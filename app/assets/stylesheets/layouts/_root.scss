@@ -128,7 +128,13 @@ body {
 
     // Flash messages above the content area.
     .flash-messages {
+
         flex: 0 0 auto;
+
+        @media #{$narrow-screen} {
+            margin-top: $page-padding;
+        }
+
     }
 
     // The <main> content area of the page.
@@ -140,4 +146,43 @@ body {
 // Avoid the additional interior dotted outline in Firefox.
 ::-moz-focus-inner {
     border: 0;
+}
+
+//=============================================================================
+// Media-specific classes
+//=============================================================================
+
+@media #{$wide-screen} {
+    // Any element with .wide-screen or .not-narrow-screen will be displayed
+    // in the desktop form factor.
+    .medium-width,
+    .narrow-screen,
+    .not-wide-screen {
+        &:not(.wide-screen):not(.not-narrow-screen) {
+            display: none;
+        }
+    }
+}
+
+@media #{$medium-width} {
+    // Any element with .medium-width, .not-wide-screen, or .not-narrow-screen
+    // will be displayed in the tablet form factor.
+    .wide-screen,
+    .narrow-screen {
+        &:not(.medium-width):not(.not-wide-screen):not(.not-narrow-screen) {
+            display: none;
+        }
+    }
+}
+
+@media #{$narrow-screen} {
+    // Any element with .narrow-screen or .not-wide-screen will be displayed in
+    // the hand-held form factor.
+    .wide-screen,
+    .medium-width,
+    .not-narrow-screen {
+        &:not(.narrow-screen):not(.not-wide-screen) {
+            display: none;
+        }
+    }
 }

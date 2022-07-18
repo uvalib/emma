@@ -16,7 +16,7 @@
 
     @media #{$narrow-screen} {
         flex-direction: column;
-        padding-bottom: 0; // For .top.shadow.enclosure.
+        padding-right:  calc((#{$page-padding-x} / 2) + #{$scroll-easement});
     }
 
     //=========================================================================
