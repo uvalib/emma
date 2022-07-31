@@ -22,6 +22,7 @@ module TestHelper::Common
   # @type [Array<Symbol>]
   #
   CONTROLLERS = %i[
+    home
     account
     artifact
     bs_api
@@ -78,16 +79,90 @@ module TestHelper::Common
 
   # property
   #
-  # @param [Symbol, String, Class, nil] model
-  # @param [Array<Symbol>]              traversal
-  # @param [*]                          default
+  # @param [Symbol, String, Class, Model, nil] model
+  # @param [Array<Symbol>]                     traversal
+  # @param [*]                                 default
   #
   # @return [*]
   #
   def property(model, *traversal, default: nil)
-    # noinspection RailsParamDefResolve
-    model ||= try(:this_controller)
+    # noinspection RubyMismatchedArgumentType
+    model = controller_name(model || self)
     PROPERTY.dig(model, *traversal) || default
+  end
+
+  # The title (:h1 text value) for the given parameters.
+  #
+  # @param [Model, item] item
+  # @param [Symbol]      controller   Default: self
+  # @param [Symbol]      action       Default: :index
+  # @param [Symbol]      prop_key     End of #PROPERTY traversal.
+  # @param [Symbol]      meth         Calling method (for error reporting).
+  #
+  # @raise [Minitest::Assertion] If value could not be found or interpolated.
+  #
+  # @return [String]
+  #
+  def page_title(
+    item =      nil,
+    controller: nil,
+    action:     nil,
+    prop_key:   :heading,
+    meth:       nil,
+    **
+  )
+    meth   ||= __method__
+    action ||= :index
+    value    = property(controller, action, prop_key)
+    fail "#{meth}: no :#{prop_key} for #{controller}/#{action}" if value.blank?
+    if (refs = named_references(value)).present?
+      error =
+        if item.nil?
+          'missing item'
+        elsif (invalid = refs.select { |ref| !item.respond_to?(ref) }).present?
+          'invalid keys %s' % invalid.map { |ref| quote(ref) }.join(', ')
+        end
+      fail "#{meth}: cannot interpolate #{value.inspect} - #{error}" if error
+      value %= refs.map { |k| [k, item.send(k)] }.to_h
+    end
+    value
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Give the target controller for the current context.
+  #
+  # @return [Symbol]
+  #
+  def this_controller
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    controller_name(self.is_a?(Class) ? self : self.class)
+  end
+
+  # Derive the name of the model/controller from the given source.
+  #
+  # @param [Symbol, String, Class, Model, *] value
+  #
+  # @return [Symbol, nil]
+  #
+  #--
+  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+  #++
+  def controller_name(value)
+    return value             if value.nil? || value.is_a?(Symbol)
+    value = value.name       if value.is_a?(Class)
+    value = value.class.name unless value.is_a?(String)
+    parts = value.underscore.tr('/', '_').split('_')
+    parts.pop if parts.last == 'test'
+    parts.pop if TEST_TYPES.include?(parts.last)
+    unless (parts.first == 'user') && parts.many?
+      parts[-1] = parts[-1].singularize
+    end
+    parts.join('_').to_sym
   end
 
   # ===========================================================================

@@ -7,12 +7,17 @@ require 'test_helper'
 
 class ReadingListControllerTest < ActionDispatch::IntegrationTest
 
-  CONTROLLER   = :reading_list
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  MODEL         = ReadingList
+  CONTROLLER    = :reading_list
+  PARAMS        = { controller: CONTROLLER }.freeze
+  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS   = %i[anonymous emmadso].freeze
-  TEST_READERS = TEST_USERS
-  TEST_WRITERS = %i[anonymous].freeze # TODO: reading list write tests
+  TEST_USERS    = %i[anonymous emmadso].freeze
+  TEST_READERS  = TEST_USERS
+  TEST_WRITERS  = %i[anonymous].freeze # TODO: reading list write tests
+
+  READ_FORMATS  = :all
+  WRITE_FORMATS = :all
 
   # noinspection RbsMissingTypeSignature
   setup do
@@ -29,43 +34,34 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
 
   test 'reading_list index - list all reading lists' do
     action  = :index
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
-      able  = can?(user, action, ReadingList)
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        url = reading_list_index_url(format: fmt)
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
 
   test 'reading_list show - details of an existing reading list' do
     action  = :show
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_reading_list
-    url_opt = { id: item.readingListId }
+    params  = PARAMS.merge(action: action, id: item.readingListId)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
-      able  = can?(user, action, ReadingList)
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        url = reading_list_url(**url_opt, format: fmt)
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
+        opt[:expect]   = XML_FAILURE if (fmt == :xml) && user.present?
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        opt[:expect] = XML_FAILURE if (fmt == :xml) && user.is_a?(User)
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
@@ -76,53 +72,85 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
 
   test 'reading_list new - add metadata for a new reading list' do
     action  = :new
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
-    url     = new_reading_list_url
     @writers.each do |user|
-      get_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        get_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'reading_list create - a new reading list' do
     action  = :create
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
-    url     = reading_list_index_url
     @writers.each do |user|
-      post_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        post_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'reading_list edit - metadata for an existing reading list' do
     action  = :edit
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_reading_list
-    url_opt = { id: item.readingListId }
-    url     = edit_reading_list_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.readingListId)
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      get_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        get_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'reading_list update - modify an existing reading list' do
     action  = :update
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_reading_list
-    url_opt = { id: item.readingListId }
-    url     = reading_list_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.readingListId)
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      put_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        put_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'reading_list destroy - remove an existing reading list' do
     action  = :destroy
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_reading_list
-    url_opt = { id: item.readingListId }
-    url     = reading_list_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.readingListId)
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      delete_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        delete_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
 end

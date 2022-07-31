@@ -7,11 +7,15 @@ require 'test_helper'
 
 class SearchCallControllerTest < ActionDispatch::IntegrationTest
 
+  MODEL        = SearchCall
   CONTROLLER   = :search_call
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  PARAMS        = { controller: CONTROLLER }.freeze
+  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
   TEST_USERS   = %i[anonymous emmadso developer].freeze
   TEST_READERS = TEST_USERS
+
+  READ_FORMATS = :all
 
   # noinspection RbsMissingTypeSignature
   setup do
@@ -24,64 +28,50 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
 
   test 'search call index - no search' do
     action  = :index
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
-      able  = can?(user, action, SearchCall)
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        url = search_call_index_url(format: fmt)
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
 
   test 'search call index - sample search' do
     action  = :index
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_search_call
-    url_opt = { search_call: item }
+    params  = PARAMS.merge(action: action, search_call: item)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
-      able  = can?(user, action, SearchCall)
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        url = search_call_index_url(**url_opt, format: fmt)
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
 
   test 'search call show - details search call item' do
     action  = :show
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_search_call
-    url_opt = { id: item.id }
+    params  = PARAMS.merge(action: action, id: item.id)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
-      able  = can?(user, action, SearchCall)
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        url = search_call_url(**url_opt, format: fmt)
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end

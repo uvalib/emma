@@ -94,7 +94,8 @@ class HomeController < ApplicationController
   #
   def dashboard
     __debug_route
-    fast = true?(params[:fast])
+    opt  = url_parameters
+    fast = opt.key?(:fast) ? true?(opt[:fast]) : Rails.env.test?
     @item, @preferences, @history = get_account_details(fast: fast)
     response.status =
       case flash.now[:alert]

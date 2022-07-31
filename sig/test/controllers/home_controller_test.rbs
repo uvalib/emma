@@ -7,6 +7,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   TEST_READERS: symArray
 
+  READ_FORMATS: Symbol | symArray
+
   @readers: Array[User|nil]
 
   TEST_USER: Symbol

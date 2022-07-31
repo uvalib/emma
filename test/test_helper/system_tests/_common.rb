@@ -90,19 +90,40 @@ module TestHelper::SystemTests::Common
 
   # Block until the browser can confirm that it is on the target page.
   #
-  # @param [String]  target_url
-  # @param [Integer] wait             Overall time limit.
-  # @param [Integer] max              Maximum number of attempts to make.
-  # @param [Boolean] port             Passed to #get_browser_url.
+  # @param [String, Array] target     One or more acceptable target URLs.
+  # @param [Integer]       wait       Overall time limit.
+  # @param [Integer]       max        Maximum number of attempts to make.
+  # @param [Boolean]       port       Passed to #get_browser_url.
+  # @param [Boolean]       assert     If *false* don't assert.
+  # @param [Boolean]       trace      Output each URL acquired.
+  #
+  # @raise [Minitest::Assertion]      If the browser failed to get to the page.
   #
   # @return [Boolean]
   #
-  def wait_for_page(target_url, wait: nil, max: 5, port: false)
-    wait ||= 2 * Capybara.default_max_wait_time
-    timer = Capybara::Helpers::Timer.new(wait)
+  def wait_for_page(target, wait: nil, max: 5, port: false, assert: true, trace: true)
+    wait  ||= 2 * Capybara.default_max_wait_time
+    timer   = Capybara::Helpers::Timer.new(wait)
+    current = nil
+    targets = Array.wrap(target)
     max.times do
-      return true if get_browser_url(port: port) == target_url
-      break if timer.expired?
+      current = get_browser_url(port: port)
+      show("#{__method__}: URL = #{current}") if trace
+      success_screenshot if trace
+      return true if targets.include?(current)
+      break       if timer.expired?
+    end
+    if assert
+      current  = url_without_port(current || current_url).inspect
+      expected = targets.many? ? targets.map(&:inspect) : targets.pop.inspect
+      if expected.is_a?(Array)
+        # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+        expected = [] << expected[0...-1].join(', ') << 'or' << expected.last
+        expected = 'any of expected pages %s' % expected.join(' ')
+      else
+        expected = "expected page #{expected}"
+      end
+      flunk "Browser on page #{current} and not on #{expected}"
     end
     false
   end
@@ -121,7 +142,7 @@ module TestHelper::SystemTests::Common
   def success_screenshot
     take_screenshot
   rescue Selenium::WebDriver::Error::UnknownError => error
-    $stderr.puts "*** CAUGHT #{error.class} - #{error.message}"
+    $stderr.puts "[Screenshot Image]: #{error.class} - #{error.message}"
   end
     .tap { |meth| neutralize(meth) unless DEBUG_TESTS }
 

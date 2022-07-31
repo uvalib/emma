@@ -3,5 +3,7 @@ class HealthControllerTest < ActionDispatch::IntegrationTest
 
   OPTIONS: symHash
 
+  READ_FORMATS: Symbol | symArray
+
   TEST_SUBSYSTEM: String
 end

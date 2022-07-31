@@ -12,6 +12,8 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
 
   TEST_USER    = :emmadso
 
+  READ_FORMATS = :all
+
   # noinspection RbsMissingTypeSignature
   setup do
     @user = find_user(TEST_USER)
@@ -23,32 +25,32 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'user session new - sign-in page' do
     options = OPTIONS.merge(action: :new)
-    run_test(__method__) do
+    run_test(__method__, only: READ_FORMATS) do
       get new_user_session_url
       assert_result :success, **options
-    end if allowed_format(only: :html)
+    end
   end
 
   test 'user session create - signing-in' do
     options = OPTIONS
-    run_test(__method__) do
+    run_test(__method__, only: READ_FORMATS) do
       post new_user_session_url
       assert_result :success, **options
       get_sign_out # Ensure the session is again anonymous.
-    end if allowed_format(only: :html)
+    end
   end
 
   test 'user session destroy - sign-out as anonymous' do
     # options = OPTIONS
-    run_test(__method__) do
+    run_test(__method__, only: READ_FORMATS) do
       get_sign_out(follow_redirect: false)
       assert_redirected_to welcome_url
-    end if allowed_format(only: :html)
+    end
   end
 
   test 'user session - sign in and out emmadso' do
     options = {}
-    run_test(__method__) do
+    run_test(__method__, only: READ_FORMATS) do
 
       # The session should start as anonymous.
       assert not_signed_in?
@@ -67,12 +69,12 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
       assert_result :success, **options
       assert not_signed_in?
 
-    end if allowed_format(only: :html)
+    end
   end
 
   test 'user session create - double sign-in' do
     options = {}
-    run_test(__method__) do
+    run_test(__method__, only: READ_FORMATS) do
 
       # The session should start as anonymous.
       assert not_signed_in?
@@ -91,7 +93,7 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
       get_sign_out
       assert not_signed_in?
 
-    end if allowed_format(only: :html)
+    end
   end
 
 end

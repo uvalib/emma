@@ -7,12 +7,17 @@ require 'test_helper'
 
 class TitleControllerTest < ActionDispatch::IntegrationTest
 
-  CONTROLLER   = :title
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  MODEL         = Title
+  CONTROLLER    = :title
+  PARAMS        = { controller: CONTROLLER }.freeze
+  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS   = %i[anonymous emmadso].freeze
-  TEST_READERS = TEST_USERS
-  TEST_WRITERS = %i[anonymous].freeze # TODO: catalog title write tests
+  TEST_USERS    = %i[anonymous emmadso].freeze
+  TEST_READERS  = TEST_USERS
+  TEST_WRITERS  = %i[anonymous].freeze # TODO: catalog title write tests
+
+  READ_FORMATS  = :all
+  WRITE_FORMATS = :all
 
   # noinspection RbsMissingTypeSignature
   setup do
@@ -26,26 +31,29 @@ class TitleControllerTest < ActionDispatch::IntegrationTest
 
   test 'title index - list all titles' do
     action  = :index
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PARAMS.merge(action: action)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
+      u_opt = options
       TEST_FORMATS.each do |fmt|
-        url = title_index_url(format: fmt)
-        opt = options.merge(format: fmt)
-        get_as(user, url, **opt)
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
 
   test 'title show - details of an existing title' do
     action  = :show
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
     item    = sample_title
-    url_opt = { id: item.bookshareId }
+    params  = PARAMS.merge(action: action, id: item.bookshareId )
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
+      u_opt = options
       TEST_FORMATS.each do |fmt|
-        url = title_url(**url_opt, format: fmt)
-        opt = options.merge(format: fmt)
-        get_as(user, url, **opt)
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
@@ -56,53 +64,85 @@ class TitleControllerTest < ActionDispatch::IntegrationTest
 
   test 'title new - add metadata for a new title' do
     action  = :new
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
-    url     = new_title_url
     @writers.each do |user|
-      get_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        get_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'title create - a new title' do
     action  = :create
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
-    url     = title_index_url
     @writers.each do |user|
-      post_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        post_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'title edit - metadata for an existing title' do
     action  = :edit
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_title
-    url_opt = { id: item.bookshareId }
-    url     = edit_title_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.bookshareId )
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      get_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        get_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'title update - modify an existing title' do
     action  = :update
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_title
-    url_opt = { id: item.bookshareId }
-    url     = title_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.bookshareId )
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      put_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        put_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'title destroy - remove an existing title' do
     action  = :destroy
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = sample_title
-    url_opt = { id: item.bookshareId }
-    url     = title_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.bookshareId )
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      delete_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        delete_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
 end

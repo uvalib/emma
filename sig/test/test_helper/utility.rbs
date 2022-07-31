@@ -32,11 +32,11 @@ module TestHelper::Utility
 
   # The number of fixture records for the given model.
   #
-  # @param [Model,Symbol,String] model
+  # @param [Symbol, String, Class, Model] model
   #
   # @return [Integer]
   #
-  def fixture_count: () -> Integer
+  def fixture_count: (Symbol|String|Class|Model model) -> Integer
 
   # Extract the EMMA index entry identifier from the item.
   #
@@ -65,25 +65,12 @@ module TestHelper::Utility
   #
   # @param [Array, Symbol, nil] fmt
   # @param [String, nil]        note  Additional annotation.
-  # @param [Array, Symbol]      only  Applicable format(s).
+  # @param [Array, Symbol, nil] only  Applicable format(s) or :all; default:
+  #                                     #TEST_FORMATS.
   #
   # @return [true]                    If the test should proceed.
   # @return [false]                   If the test should be skipped.
   #
-  def allowed_format: ((Symbol|symArray|nil) fmt, ?(String|nil) note, only: Symbol|symArray) -> bool
-                    | (                           ?(String|nil) note, only: Symbol|symArray) -> bool
-
-  # Give the target controller for the current context.
-  #
-  # @return [Symbol]
-  #
-  def this_controller: () -> Symbol
-
-  # Derive the name of the model/controller from the given source.
-  #
-  # @param [Symbol, String, Class, nil] src
-  #
-  # @return [Symbol]
-  #
-  def controller_name: ((Symbol|String|Class) src) -> Symbol
+  def allowed_format: ((Symbol|symArray|nil) fmt, ?(String|nil) note, only: Symbol|symArray|nil) -> bool
+                    | (                           ?(String|nil) note, only: Symbol|symArray|nil) -> bool
 end

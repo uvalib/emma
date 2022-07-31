@@ -14,6 +14,7 @@ module TestHelper::Debugging
   #
   # @param [String, Symbol, nil] test_name
   # @param [Symbol, nil]         format
+  # @param [Array, Symbol, nil]  only
   # @param [Integer, nil]        wait
   # @param [Hash]                opt        Passed to #show_test_start and
   #                                           #show_test_end.
@@ -24,7 +25,7 @@ module TestHelper::Debugging
   # @yield The test code to be run
   # @yieldreturn [void]
   #
-  def run_test: (String|Symbol|nil test_name, ?format: Symbol|nil, ?wait: Integer|nil, **untyped opt) { () -> void } -> void
+  def run_test: (String|Symbol|nil test_name, ?format: Symbol|nil, ?only: symArray|Symbol|nil, ?wait: Integer|nil, **untyped opt) { () -> void } -> void
 
   # Make sure that "Sign in as" is visible on the sign-in page by ensuring that
   # the interface is in "debug mode".
@@ -38,28 +39,24 @@ module TestHelper::Debugging
   # Produce the top frame of debug output for a test.
   #
   # @param [String, Symbol, nil] test_name
-  # @param [Hash]                opt
-  #
-  # @option opt [Symbol] :test        Overrides *test_name* if given.
-  # @option opt [String] :part
-  # @option opt [String] :frame       Default: #TEST_DEBUG_FRAME.
+  # @param [Symbol]              test       Overrides *test_name* if given.
+  # @param [String]              part
+  # @param [String]              frame      Default: #TEST_DEBUG_FRAME.
   #
   # @return [void]
   #
-  def show_test_start: (String|Symbol|nil test_name, **untyped opt) -> void
+  def show_test_start: (String|Symbol|nil test_name, ?test: Symbol|nil, ?part: String|nil, ?frame: String|nil, **untyped _ignored) -> void
 
   # Produce the bottom frame of debug output for a test.
   #
   # @param [String, Symbol, nil] test_name
-  # @param [Hash]                opt
-  #
-  # @option opt [Symbol] :test        Overrides :name if given.
-  # @option opt [String] :part
-  # @option opt [String] :frame       Default: #TEST_DEBUG_FRAME.
+  # @param [Symbol]              test       Overrides *test_name* if given.
+  # @param [String]              part
+  # @param [String]              frame      Default: #TEST_DEBUG_FRAME.
   #
   # @return [void]
   #
-  def show_test_end: (String|Symbol|nil test_name, **untyped opt) -> void
+  def show_test_end: (String|Symbol|nil test_name, ?test: Symbol|nil, ?part: String|nil, ?frame: String|nil, **untyped _ignored) -> void
 
   SHOW_MODEL_OPT: symArray
 
@@ -134,44 +131,59 @@ module TestHelper::Debugging
   #
   # @param [Symbol] verb              HTTP verb (:get, :put, :post, :delete)
   # @param [String] url               Target URL or relative path.
-  # @param [Hash]   opt               Passed to #show_trace except for:
+  # @param [String] user              Default: `#current_user`.
+  # @param [Symbol] format            Result format (:html, :json, :xml).
+  # @param [Hash]   opt               Passed to #show_trace.
   #
-  # @option opt [String] :user
-  # @option opt [Symbol] :format      Result format (:html, :json, :xml).
-  # @option opt [Symbol] :verb        Overrides *verb* argument if given.
-  # @option opt [String] :url         Overrides *url* argument if given.
+  # @return [String, nil]             The displayable result.
   #
-  # @return [String]                  The displayable result.
-  #
-  def show_pre_send: (Symbol verb, String url, **untyped opt) -> String
+  def show_pre_send: (Symbol verb, String url, ?user: String|nil, ?format: Symbol|nil, **untyped opt) -> (String | nil)
 
   # Display conditions after invoking an HTTP method.
   #
-  # @param [Hash] opt                 Passed to #show_trace except for:
+  # @param [Symbol, String, Integer]      expect
+  # @param [Symbol, String, Integer]      status
+  # @param [ActionDispatch::TestResponse] response
+  # @param [Hash]                         opt       Passed to #show_trace.
   #
-  # @option opt [Symbol, String, Integer]      :expect
-  # @option opt [Symbol, String, Integer]      :status
-  # @option opt [ActionDispatch::TestResponse] :response
+  # @return [String, nil]             The displayable result.
   #
-  # @return [String]                  The displayable result.
-  #
-  def show_post_send: (**untyped opt) -> String
+  def show_post_send: (?expect: Symbol|String|Integer|nil, ?status: Symbol|String|Integer|nil, ?response: ActionDispatch::TestResponse|nil, **untyped opt) -> (String | nil)
 
   # show_trace
   #
-  # @param [Hash] opt                 Passed to #show except for:
+  # @param [String, Integer] indent
+  # @param [Boolean]         trace
+  # @param [Hash] opt                 Passed to #show.
   #
-  # @option opt [String, Integer] :indent
-  #
-  # @return [String]                  The displayable result.
+  # @return [String, nil]             The displayable result.
   #
   # @yield To supply pairs to be displayed.
   # @yieldreturn [Hash]
   #
-  def show_trace: (**untyped opt) ?{ () -> anyHash } -> String
+  def show_trace: (?indent: String|Integer, ?trace: bool, **untyped opt) ?{ () -> anyHash } -> (String | nil)
 
   # This module is included in ActionDispatch::IntegrationTest to support
   # tracing of HTTP method calls.
+  #
+  # !@method original_get
+  #   The superclass :get method (without pre/post trace output).
+  #
+  # !@method original_put
+  #   The superclass :put method (without pre/post trace output).
+  #
+  # !@method original_post
+  #   The superclass :post method (without pre/post trace output).
+  #
+  # !@method original_patch
+  #   The superclass :patch method (without pre/post trace output).
+  #
+  # !@method original_delete
+  #   The superclass :delete method (without pre/post trace output).
+  #
+  # !@method original_head
+  #   The superclass :head method (without pre/post trace output).
+  #
   module Trace
     PRE_OPTIONS: symArray
 
@@ -188,5 +200,13 @@ module TestHelper::Debugging
     # @param [Module] base
     #
     def self.included: (Module base) -> void
+
+    def original_get:    () -> untyped
+    def original_put:    () -> untyped
+    def original_post:   () -> untyped
+    def original_patch:  () -> untyped
+    def original_delete: () -> untyped
+    def original_head:   () -> untyped
+
   end
 end

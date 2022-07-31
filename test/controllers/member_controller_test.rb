@@ -7,12 +7,17 @@ require 'test_helper'
 
 class MemberControllerTest < ActionDispatch::IntegrationTest
 
-  CONTROLLER   = :member
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  MODEL         = Member
+  CONTROLLER    = :member
+  PARAMS        = { controller: CONTROLLER }.freeze
+  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS   = %i[anonymous emmadso].freeze
-  TEST_READERS = TEST_USERS
-  TEST_WRITERS = %i[anonymous].freeze # TODO: member write tests
+  TEST_USERS    = %i[anonymous emmadso].freeze
+  TEST_READERS  = TEST_USERS
+  TEST_WRITERS  = %i[anonymous].freeze # TODO: member write tests
+
+  READ_FORMATS  = :all
+  WRITE_FORMATS = :all
 
   # noinspection RbsMissingTypeSignature
   setup do
@@ -26,43 +31,33 @@ class MemberControllerTest < ActionDispatch::IntegrationTest
 
   test 'member index - list all organization members' do
     action  = :index
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
-      able  = can?(user, action, Member)
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        next unless allowed_format(fmt, only: %i[html json])
-        url = member_index_url(format: fmt)
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
 
   test 'member show - details of an existing organization member' do
     action  = :show
-    options = OPTIONS.merge(action: action, test: __method__)
     member  = members(:organization).user_id
+    params  = PARAMS.merge(action: action, id: member)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
-      able  = can?(user, action, Member)
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        next unless allowed_format(fmt, only: %i[html json])
-        url = member_url(id: member, format: fmt)
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
@@ -73,53 +68,85 @@ class MemberControllerTest < ActionDispatch::IntegrationTest
 
   test 'member new - add metadata for a new organization member' do
     action  = :new
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
-    url     = new_member_url
     @writers.each do |user|
-      get_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        get_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'member create - a new organization member' do
     action  = :create
+    params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
-    url     = member_index_url
     @writers.each do |user|
-      post_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        post_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'member edit - metadata for an existing organization member' do
     action  = :edit
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = members(:organization)
-    url_opt = { id: item.user_id }
-    url     = edit_member_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.user_id)
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      get_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        get_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'member update - modify an existing organization member' do
     action  = :update
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = members(:organization)
-    url_opt = { id: item.user_id }
-    url     = member_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.user_id)
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      put_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        put_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
   test 'member destroy - remove an existing organization member' do
     action  = :destroy
-    options = OPTIONS.merge(action: action, test: __method__)
     item    = members(:organization)
-    url_opt = { id: item.user_id }
-    url     = member_url(**url_opt)
+    params  = PARAMS.merge(action: action, id: item.user_id)
+    options = OPTIONS.merge(action: action, test: __method__)
     @writers.each do |user|
-      delete_as(user, url, **options)
-    end if allowed_format(only: :html)
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        delete_as(user, url, **opt, only: WRITE_FORMATS)
+      end
+    end
   end
 
 end

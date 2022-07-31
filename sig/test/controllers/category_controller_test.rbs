@@ -1,11 +1,15 @@
 class CategoryControllerTest < ActionDispatch::IntegrationTest
   CONTROLLER: Symbol
 
+  PARAMS: symHash
+
   OPTIONS: symHash
 
   TEST_USERS: symArray
 
   TEST_READERS: symArray
+
+  READ_FORMATS: Symbol | symArray
 
   @readers: Array[User|nil]
 end

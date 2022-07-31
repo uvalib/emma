@@ -18,21 +18,31 @@ module TestHelper::IntegrationTests::Format
     xml:  'application/xml',
   }.freeze
 
+  # Table of MIME media types and associated formats.
+  #
+  # @type [Hash{String=>Symbol}]
+  #
+  REVERSE_MEDIA_TYPE = MEDIA_TYPE.invert.freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
 
-  # Indicate whether *type* matches the given *format*.
+  # The format type associated with the given value.
   #
   # @param [Symbol, String, nil] type
-  # @param [Symbol]              format
   #
-  def format?(type, format)
+  # @return [Symbol, nil]
+  #
+  def format_type(type)
     # noinspection RubyNilAnalysis
-    type = type.to_sym if type.is_a?(String) && !type.include?('/')
-    (type == format) || (type == MEDIA_TYPE[format])
+    if type.is_a?(String) && type.include?('/')
+      REVERSE_MEDIA_TYPE[type]
+    else
+      type&.to_sym
+    end
   end
 
   # Indicate whether *type* is HTML.
@@ -40,7 +50,7 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol, String, nil] type
   #
   def html?(type)
-    format?(type, :html)
+    format_type(type) == :html
   end
 
   # Indicate whether *type* is JSON.
@@ -50,7 +60,7 @@ module TestHelper::IntegrationTests::Format
   # @note Currently unused
   #
   def json?(type)
-    format?(type, :json)
+    format_type(type) == :json
   end
 
   # Indicate whether *type* is XML.
@@ -60,7 +70,7 @@ module TestHelper::IntegrationTests::Format
   # @note Currently unused
   #
   def xml?(type)
-    format?(type, :xml)
+    format_type(type) == :xml
   end
 
   # ===========================================================================

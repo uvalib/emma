@@ -1,5 +1,9 @@
 class EditionControllerTest < ActionDispatch::IntegrationTest
+  MODEL: Class
+
   CONTROLLER: Symbol
+
+  PARAMS: symHash
 
   OPTIONS: symHash
 
@@ -8,6 +12,10 @@ class EditionControllerTest < ActionDispatch::IntegrationTest
   TEST_READERS: symArray
 
   TEST_WRITERS: symArray
+
+  READ_FORMATS: Symbol | symArray
+
+  WRITE_FORMATS: Symbol | symArray
 
   @readers: Array[User|nil]
 

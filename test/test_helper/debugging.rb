@@ -17,7 +17,7 @@ module TestHelper::Debugging
   public
 
   # @private
-  RUN_TEST_OPT = %i[test part frame].freeze
+  RUN_TEST_OPT = %i[test part frame only].freeze
 
   # Run the test code provided via the block.
   #
@@ -25,6 +25,7 @@ module TestHelper::Debugging
   #
   # @param [String, Symbol, nil] test_name
   # @param [Symbol, nil]         format
+  # @param [Array, Symbol, nil]  only
   # @param [Integer, nil]        wait
   # @param [Hash]                opt        Passed to #show_test_start and
   #                                           #show_test_end.
@@ -35,14 +36,20 @@ module TestHelper::Debugging
   # @yield The test code to be run
   # @yieldreturn [void]
   #
-  def run_test(test_name, format: nil, wait: nil, **opt, &block)
-    error  = nil
+  def run_test(test_name, format: nil, only: nil, wait: nil, **opt, &block)
+    error = nil
     prime_tests
-    format = nil if html?(format)
-    opt[:part] = ["[#{format.to_s.upcase}]", opt[:part]].join(' - ') if format
+    if format && !html?(format)
+      opt[:part] = ["[#{format.to_s.upcase}]", opt[:part]].compact.join(' - ')
+    end
     show_test_start(test_name, **opt)
-    # Run test code provided in the block.
-    wait ? using_wait_time(wait, &block) : block.call
+    if allowed_format(format, only: only)
+      if wait
+        using_wait_time(wait, &block)
+      else
+        block.call
+      end
+    end
   rescue Exception => error
     show "[#{error.class}: #{error}]"
   ensure
@@ -72,41 +79,38 @@ module TestHelper::Debugging
   # Produce the top frame of debug output for a test.
   #
   # @param [String, Symbol, nil] test_name
-  # @param [Hash]                opt
-  #
-  # @option opt [Symbol] :test        Overrides *test_name* if given.
-  # @option opt [String] :part
-  # @option opt [String] :frame       Default: #TEST_DEBUG_FRAME.
+  # @param [Symbol]              test       Overrides *test_name* if given.
+  # @param [String]              part
+  # @param [String]              frame      Default: #TEST_DEBUG_FRAME.
   #
   # @return [void]
   #
-  def show_test_start(test_name, **opt)
-    part = opt[:part]
-    name = opt[:test]  || test_name
-    name = "#{name} - #{part} -"            if name && part
-    line = opt[:frame] || TEST_DEBUG_FRAME
-    line = "#{line} #{name} START #{line}"  if line && name
-    $stderr.puts "\n#{line}\n"
+  def show_test_start(test_name, test: nil, part: nil, frame: nil, **)
+    line = frame || TEST_DEBUG_FRAME
+    name = test  || test_name
+    name = "#{name} - #{part} -"                            if name && part
+    line = "#{line} START >> | #{name} | START >> #{line}"  if name
+    $stderr.puts "\n#{line}"
+    $stderr.puts
   end
 
   # Produce the bottom frame of debug output for a test.
   #
   # @param [String, Symbol, nil] test_name
-  # @param [Hash]                opt
-  #
-  # @option opt [Symbol] :test        Overrides :name if given.
-  # @option opt [String] :part
-  # @option opt [String] :frame       Default: #TEST_DEBUG_FRAME.
+  # @param [Symbol]              test       Overrides *test_name* if given.
+  # @param [String]              part
+  # @param [String]              frame      Default: #TEST_DEBUG_FRAME.
   #
   # @return [void]
   #
-  def show_test_end(test_name, **opt)
-    part = opt[:part]
-    name = opt[:test]  || test_name
-    name = "#{name} - #{part}"              if name && part
-    line = opt[:frame] || TEST_DEBUG_FRAME
-    line = "#{line} END #{name} #{line}"    if line && name
-    $stderr.puts "#{line}\n\n"
+  def show_test_end(test_name, test: nil, part: nil, frame: nil, **)
+    line = frame || TEST_DEBUG_FRAME
+    name = test  || test_name
+    name = "#{name} - #{part}"                              if name && part
+    line = "#{line} END <<<< | #{name} | END <<<< #{line}"  if name
+    $stderr.puts line
+    $stderr.puts
+    $stderr.puts
   end
 
   # ===========================================================================
@@ -236,86 +240,71 @@ module TestHelper::Debugging
 
   SHOW_PRE_SEND_OPT  = %i[user format verb url].freeze
   SHOW_POST_SEND_OPT = %i[expect status response].freeze
-  SHOW_TRACE_OPT     = %i[indent].freeze
+  SHOW_TRACE_OPT     = %i[indent trace].freeze
 
   # Display conditions prior to invoking an HTTP method.
   #
   # @param [Symbol] verb              HTTP verb (:get, :put, :post, :delete)
   # @param [String] url               Target URL or relative path.
-  # @param [Hash]   opt               Passed to #show_trace except for:
+  # @param [String] user              Default: `#current_user`.
+  # @param [Symbol] format            Result format (:html, :json, :xml).
+  # @param [Hash]   opt               Passed to #show_trace.
   #
-  # @option opt [String] :user
-  # @option opt [Symbol] :format      Result format (:html, :json, :xml).
-  # @option opt [Symbol] :verb        Overrides *verb* argument if given.
-  # @option opt [String] :url         Overrides *url* argument if given.
+  # @return [String, nil]             The displayable result.
   #
-  # @return [String]                  The displayable result.
-  #
-  def show_pre_send(verb, url, **opt)
-    show_opt = remainder_hash!(opt, *SHOW_PRE_SEND_OPT)
-    user     = opt[:user] || current_user
-    verb     = opt[:verb] || verb
-    url      = opt[:url]  || url
-    # noinspection RubyMismatchedReturnType
-    show_trace(**show_opt) do
-      TRACE_SEPARATOR.merge(
-        user:   user.inspect,
-        format: opt[:format]&.inspect || '-',
-        method: verb.inspect,
-        url:    url.inspect
-      )
+  def show_pre_send(verb, url, user: nil, format: nil, **opt)
+    show_trace(**opt) do
+      lines = {}
+      lines[:user]   = (user || current_user)&.to_s.inspect
+      lines[:format] = format&.inspect || '-'
+      lines[:method] = verb.inspect
+      lines[:url]    = url.inspect
+      TRACE_SEPARATOR.merge(lines)
     end
   end
 
   # Display conditions after invoking an HTTP method.
   #
-  # @param [Hash] opt                 Passed to #show_trace except for:
+  # @param [Symbol, String, Integer]      expect
+  # @param [Symbol, String, Integer]      status
+  # @param [ActionDispatch::TestResponse] response
+  # @param [Hash]                         opt       Passed to #show_trace.
   #
-  # @option opt [Symbol, String, Integer]      :expect
-  # @option opt [Symbol, String, Integer]      :status
-  # @option opt [ActionDispatch::TestResponse] :response
+  # @return [String, nil]             The displayable result.
   #
-  # @return [String]                  The displayable result.
-  #
-  def show_post_send(**opt)
-    show_opt = remainder_hash!(opt, *SHOW_POST_SEND_OPT)
-    resp     = opt[:response] || response
-    redir    = resp&.redirection? && resp.redirect_url
-    status   = opt[:status] || resp&.response_code
-    expect   = opt[:expect]
-    body     = resp&.body&.gsub(/\n/, TRACE_NL)&.truncate(TRACE_BODY)
-    # noinspection RubyMismatchedReturnType
-    show_trace(**show_opt) do
-      {}.tap { |lines|
-        lines[:redir]  = redir.inspect if redir
-        lines[:status] = status.inspect
-        lines[:expect] = expect&.inspect || '-'
-        lines[:body]   = body
-      }.merge(TRACE_SEPARATOR)
+  def show_post_send(expect: nil, status: nil, response: nil, **opt)
+    show_trace(**opt) do
+      redir = response&.redirection? && response.redirect_url
+      body  = response&.body&.gsub(/\n/, TRACE_NL)&.truncate(TRACE_BODY)
+      lines = {}
+      lines[:redir]  = redir.inspect if redir
+      lines[:status] = (status || response&.response_code).inspect
+      lines[:expect] = expect&.inspect || '-'
+      lines[:body]   = body
+      lines.merge!(TRACE_SEPARATOR)
     end
   end
 
   # show_trace
   #
-  # @param [Hash] opt                 Passed to #show except for:
+  # @param [String, Integer] indent
+  # @param [Boolean]         trace
+  # @param [Hash] opt                 Passed to #show.
   #
-  # @option opt [String, Integer] :indent
-  #
-  # @return [String]                  The displayable result.
+  # @return [String, nil]             The displayable result.
   #
   # @yield To supply pairs to be displayed.
   # @yieldreturn [Hash]
   #
-  def show_trace(**opt)
-    show_opt = remainder_hash!(opt, *SHOW_TRACE_OPT)
-    pairs    = block_given? && yield || {}
-    indent   = opt[:indent] || ''
-    indent   = ' ' * indent if indent.is_a?(Integer)
-    width    = pairs.keys.map(&:to_s).sort_by(&:size).last&.size || ''
-    format   = "#{indent}*** %-#{width}s = %s"
-    lines    = pairs.map { |k, v| sprintf(format, k, v) }
-    # noinspection RubyMismatchedReturnType
-    show(**show_opt) do
+  def show_trace(indent: '', trace: true, **opt)
+    return unless trace
+    # noinspection RubyMismatchedArgumentType
+    indent = ' ' * indent if indent.is_a?(Integer)
+    pairs  = block_given? && yield || {}
+    width  = pairs.keys.map(&:to_s).sort_by(&:size).last&.size || ''
+    format = "#{indent}*** %-#{width}s = %s"
+    lines  = pairs.map { |k, v| sprintf(format, k, v) }
+    show(**opt) do
       lines.join("\n") << "\n\n"
     end
   end
@@ -328,6 +317,25 @@ module TestHelper::Debugging
 
   # This module is included in ActionDispatch::IntegrationTest to support
   # tracing of HTTP method calls.
+  #
+  # !@method original_get
+  #   The superclass :get method (without pre/post trace output).
+  #
+  # !@method original_put
+  #   The superclass :put method (without pre/post trace output).
+  #
+  # !@method original_post
+  #   The superclass :post method (without pre/post trace output).
+  #
+  # !@method original_patch
+  #   The superclass :patch method (without pre/post trace output).
+  #
+  # !@method original_delete
+  #   The superclass :delete method (without pre/post trace output).
+  #
+  # !@method original_head
+  #   The superclass :head method (without pre/post trace output).
+  #
   module Trace
 
     if DEBUG_TESTS
@@ -348,6 +356,7 @@ module TestHelper::Debugging
         base.class_eval do
           %i[get put post patch delete head].each do |meth|
             next unless method_defined?(meth)
+            alias_method :"original_#{meth}", meth
             define_method(meth) do |*args, **opt|
               # Extract any options specific to the tracing methods.  Remaining
               # options are passed to the underlying HTTP method call.
@@ -374,11 +383,7 @@ module TestHelper::Debugging
   # Neutralize debugging methods when not debugging.
   unless DEBUG_TESTS
     instance_methods(false).each do |m|
-      if m == :run_test
-        module_eval "def #{m}(*); yield; end"
-      else
-        module_eval "def #{m}(*); end"
-      end
+      module_eval("def #{m}(*); end") unless m == :run_test
     end
   end
 

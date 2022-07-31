@@ -77,14 +77,17 @@ module TestHelper::IntegrationTests::Authentication
   # If the request was not successful then `#current_user` will be unchanged.
   #
   # @param [String, Symbol, User, nil] user
-  # @param [Boolean]              follow_redirect
+  # @param [Boolean]                   follow_redirect
+  # @param [Boolean]                   trace
   #
   # @return [void]
   #
-  def get_sign_in_as(user, follow_redirect: true)
+  def get_sign_in_as(user, follow_redirect: true, trace: true)
     user = find_user(user)
     return unless user.present?
-    get sign_in_as_url(id: user.to_s)
+    url  = sign_in_as_url(id: user.to_s)
+    meth = trace ? :get : :original_get
+    send(meth, url)
     follow_redirect!       if follow_redirect  && response.redirection?
     set_current_user(user) if !follow_redirect || response.successful?
   end
@@ -94,11 +97,14 @@ module TestHelper::IntegrationTests::Authentication
   # If the request was not successful then `#current_user` will be unchanged.
   #
   # @param [Boolean] follow_redirect
+  # @param [Boolean] trace
   #
   # @return [void]
   #
-  def get_sign_out(follow_redirect: true)
-    delete destroy_user_session_url(revoke: false)
+  def get_sign_out(follow_redirect: true, trace: true)
+    url  = destroy_user_session_url(revoke: false)
+    meth = trace ? :delete : :original_delete
+    send(meth, url)
     follow_redirect!   if follow_redirect  && response.redirection?
     clear_current_user if !follow_redirect || response.successful?
   end
@@ -115,15 +121,20 @@ module TestHelper::IntegrationTests::Authentication
   # @yieldreturn [void]
   #
   def as_user(user, **opt, &block)
-    user = find_user(user)
+    user &&= find_user(user)
     unless opt.key?(:part)
-      name = show_user(user: user, output: false)
-      opt[:part] = "USER #{name}"
+      user_name = show_user(user: user, output: false)
+      opt[:part] = "USER #{user_name}"
     end
-    run_test(opt[:test], **opt) do
-      get_sign_in_as(user)
-      block.call # Run provided test code.
-      get_sign_out
+    test_name = opt.delete(:test)
+    if user.nil?
+      run_test(test_name, **opt, &block)
+    else
+      run_test(test_name, **opt) do
+        get_sign_in_as(user, trace: false)
+        block.call
+        get_sign_out(trace: false)
+      end
     end
   end
 
@@ -141,7 +152,8 @@ module TestHelper::IntegrationTests::Authentication
   # @param [Hash]                 opt   Passed to #assert_result except for the
   #                                       options for #as_user and local:
   #
-  # @option opt [Symbol] :expect      Expected result regardless of the user.
+  # @option opt [Symbol]       :expect  Expected result regardless of the user.
+  # @option opt [Symbol,Array] :only    Allowed formats.
   #
   # @return [void]
   #
@@ -149,29 +161,37 @@ module TestHelper::IntegrationTests::Authentication
   # @yieldreturn [void]
   #
   def send_as(verb, user, url, **opt, &block)
-    as_user_opt, assert_opt = partition_hash(opt, *RUN_TEST_OPT)
-    expect = assert_opt.delete(:expect)
-    format = assert_opt[:format]
-    if html?(format)
-      url    = url.sub(%r{\.html([/?]?|$)}, '\1')
-      format = nil
+    run_opt = extract_hash!(opt, *RUN_TEST_OPT)
+    expect  = opt.delete(:expect)
+    format  = format_type(opt[:format])
+
+    if format == :html
+      url = url.sub(%r{\.html([/?]?|$)}, '\1')
+    elsif format
+      run_opt[:format] = format
     end
-    as_user_opt[:format] = format if format
-    as_user(user, **as_user_opt) do
-      method_opt = {}
-      method_opt[:format] = format if format
-      method_opt[:expect] = expect if DEBUG_TESTS
-      send(verb, url, **method_opt)
+
+    as_user(user, **run_opt) do
+
+      # Visit the provided URL.
+      url_opt = run_opt.slice(:format)
+      url_opt[:expect] = expect if DEBUG_TESTS
+      send(verb, url, **url_opt)
+
+      # Primary assertions based on initial conditions.
       if expect
-        assert_html_result expect, **assert_opt
+        assert_html_result expect, **opt
       elsif signed_in?
-        assert_html_result :success, **assert_opt
-      elsif format
+        assert_html_result :success, **opt
+      elsif url_opt[:format]
         assert_response :unauthorized
       else
         assert_response :redirect
       end
+
+      # Any additional assertions provided by the caller.
       block&.call
+
     end
   end
 

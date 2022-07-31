@@ -21,8 +21,8 @@ module TestHelper::SystemTests::Show
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol] model
-  # @param [String] title
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [String]                        title
   #
   # @raise [Minitest::Assertion]
   #
@@ -30,14 +30,15 @@ module TestHelper::SystemTests::Show
   #
   def assert_valid_show_page(model, title: nil)
     # Remove extra edition information for Bookshare catalog title.
-    bs_cat   = (model == :title)
+    ctrlr    = controller_name(model)
+    bs_cat   = (ctrlr == :title)
     title  &&= sanitized_string(title)
     title  &&= bs_cat ? title&.sub(/\s*\(.*$/, '') : title
-    title  ||= property(model, :show, :title)
+    title  ||= property(ctrlr, :show, :title)
     heading  = title ? { text: title } : {}
-    body_css = property(model, :show, :body_css)
+    body_css = property(ctrlr, :show, :body_css)
     assert_selector "body#{body_css}"
-    assert_selector property(model, :show, :entry_css)
+    assert_selector property(ctrlr, :show, :entry_css)
     assert_title    title             if title
     assert_selector COVER_IMAGE_CLASS if bs_cat
     assert_selector SHOW_HEADING_SELECTOR, **heading
@@ -51,10 +52,10 @@ module TestHelper::SystemTests::Show
 
   # Visit an entry on an index page.
   #
-  # @param [Symbol]                       model
-  # @param [Capybara::Node::Element, nil] entry
-  # @param [Integer, Symbol]              index
-  # @param [String]                       entry_css
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Capybara::Node::Element, nil]  entry
+  # @param [Integer, Symbol]               index
+  # @param [String]                        entry_css
   #
   # @raise [Minitest::Assertion]
   #
@@ -65,8 +66,9 @@ module TestHelper::SystemTests::Show
   # @yieldreturn [void]
   #
   def visit_show_page(model, entry: nil, index: nil, entry_css: nil)
+    ctrlr = controller_name(model)
     entry ||=
-      if (entry_css ||= property(model, :index, :entry_css))
+      if (entry_css ||= property(ctrlr, :index, :entry_css))
         case index
           when Integer then all(entry_css).at(index)
           when :last   then all(entry_css).last
@@ -81,7 +83,7 @@ module TestHelper::SystemTests::Show
     else
       show_url
     end
-    assert_valid_show_page(model, title: title)
+    assert_valid_show_page(ctrlr, title: title)
   end
 
 end

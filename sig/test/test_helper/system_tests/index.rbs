@@ -11,29 +11,29 @@ module TestHelper::SystemTests::Index
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol]  model
-  # @param [Integer] index
-  # @param [Integer] total
-  # @param [Integer] page
-  # @param [Integer] size
-  # @param [Hash]    terms
-  # @param [Hash]    opt              Passed to #assert_valid_action_page.
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Integer]                       index
+  # @param [Integer]                       total
+  # @param [Integer]                       page
+  # @param [Integer]                       size
+  # @param [Hash]                          terms
+  # @param [Hash]                          opt    To #assert_valid_action_page.
   #
   # @raise [Minitest::Assertion]
   #
   # @return [true]
   #
-  def assert_valid_index_page: (Symbol model, ?index: Integer|nil, ?total: Integer|nil, ?page: Integer|nil, ?size: Integer|nil, ?terms: anyHash|nil, **untyped opt) -> true
+  def assert_valid_index_page: (Symbol|String|Class|Model|nil model, ?index: Integer|nil, ?total: Integer|nil, ?page: Integer|nil, ?size: Integer|nil, ?terms: anyHash|nil, **untyped opt) -> true
 
   # Generate a string for search terms as they would appear in the '<title>'
   # element.
   #
-  # @param [Symbol] model
-  # @param [Hash]   terms
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          terms
   #
   # @return [String]
   #
-  def title_terms: (Symbol model, **untyped terms) -> String
+  def title_terms: (Symbol|String|Class|Model|nil model, **untyped terms) -> String
 
   # Assert that each active search term is displayed on the index page.
   #
@@ -49,16 +49,16 @@ module TestHelper::SystemTests::Index
 
   # Assert that a search count is displayed on the index page.
   #
-  # @param [Symbol]  model
-  # @param [Integer] total
-  # @param [String]  records
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Integer]                       total
+  # @param [String]                        records
   #
   # @raise [Minitest::Assertion]      If the count is not displayed.
   # @raise [RuntimeError]             If *records* is not given or found.
   #
   # @return [true]
   #
-  def assert_search_count: (Symbol model, ?total: Integer|nil, ?records: String|nil, **untyped) -> true
+  def assert_search_count: (Symbol|String|Class|Model|nil model, ?total: Integer|nil, ?records: String|nil, **untyped) -> true
 
   # visit_index
   #
@@ -78,8 +78,8 @@ module TestHelper::SystemTests::Index
 
   # visit_each_show_page
   #
-  # @param [Symbol] model
-  # @param [String] entry_css
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [String]                        entry_css
   #
   # @raise [Minitest::Assertion]
   #
@@ -90,5 +90,5 @@ module TestHelper::SystemTests::Index
   # @yieldparam [String]  title
   # @yieldreturn [void]
   #
-  def visit_each_show_page: (Symbol model, ?entry_css: String|nil) ?{ (Integer, String) -> void } -> void
+  def visit_each_show_page: (Symbol|String|Class|Model|nil model, ?entry_css: String|nil) ?{ (Integer, String) -> void } -> void
 end

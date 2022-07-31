@@ -17,8 +17,8 @@ module TestHelper::SystemTests::Action
 
   # Assert that the current page is for creating a model instance.
   #
-  # @param [Symbol] model
-  # @param [Hash]   opt               Passed to #assert_valid_page.
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
   # @raise [Minitest::Assertion]
   #
@@ -32,8 +32,8 @@ module TestHelper::SystemTests::Action
 
   # Assert that the current page is for modifying a model instance.
   #
-  # @param [Symbol] model
-  # @param [Hash]   opt               Passed to #assert_valid_page.
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
   # @option opt [String] :id          If missing, expect :edit_select.
   #
@@ -50,8 +50,8 @@ module TestHelper::SystemTests::Action
 
   # Assert that the current page is for removing a model instance.
   #
-  # @param [Symbol] model
-  # @param [Hash]   opt               Passed to #assert_valid_page.
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
   # @option opt [String] :id          If missing, expect :delete_select.
   #
@@ -68,9 +68,9 @@ module TestHelper::SystemTests::Action
 
   # Assert that the current page is a valid page for the given operation.
   #
-  # @param [Symbol] model
-  # @param [Symbol] action
-  # @param [Hash]   opt               Passed to #assert_valid_page.
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol]                        action
+  # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
   # @raise [Minitest::Assertion]
   #
@@ -90,9 +90,9 @@ module TestHelper::SystemTests::Action
 
   # Visit the page for creating a new model instance.
   #
-  # @param [Symbol] model
-  # @param [Hash]   opt
-  # @param [Proc]   block
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          opt
+  # @param [Proc]                          block
   #
   # @raise [Minitest::Assertion]
   #
@@ -106,9 +106,9 @@ module TestHelper::SystemTests::Action
 
   # Visit the page for modifying an existing model instance.
   #
-  # @param [Symbol] model
-  # @param [Hash]   opt
-  # @param [Proc]   block
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          opt
+  # @param [Proc]                          block
   #
   # @option opt [String] :id          If missing, visit :edit_select.
   #
@@ -125,9 +125,9 @@ module TestHelper::SystemTests::Action
 
   # Visit the page for removing an existing model instance.
   #
-  # @param [Symbol] model
-  # @param [Hash]   opt
-  # @param [Proc]   block
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          opt
+  # @param [Proc]                          block
   #
   # @option opt [String] :id          If missing, visit :delete_select.
   #
@@ -144,9 +144,9 @@ module TestHelper::SystemTests::Action
 
   # Visit the page for an action on a model.
   #
-  # @param [Symbol] model
-  # @param [Symbol] action
-  # @param [Hash]   opt               Passed to #assert_valid_action_page.
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol]                        action
+  # @param [Hash]                          opt    To #assert_valid_action_page.
   #
   # @raise [Minitest::Assertion]
   #

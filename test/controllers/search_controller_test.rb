@@ -8,10 +8,13 @@ require 'test_helper'
 class SearchControllerTest < ActionDispatch::IntegrationTest
 
   CONTROLLER   = :search
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  PARAMS        = { controller: CONTROLLER }.freeze
+  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
   TEST_USERS   = %i[anonymous emmadso].freeze
   TEST_READERS = TEST_USERS
+
+  READ_FORMATS = :all
 
   # noinspection RbsMissingTypeSignature
   setup do
@@ -24,41 +27,44 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
 
   test 'search index - no search' do
     action  = :index
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PARAMS.merge(action: action)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
+      u_opt = options
       TEST_FORMATS.each do |fmt|
-        next unless allowed_format(fmt, only: :html)
-        url = search_index_url(format: fmt)
-        opt = options.merge(format: fmt)
-        get_as(user, url, **opt)
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: :html)
       end
     end
   end
 
   test 'search index - sample search' do
     action  = :index
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
     item    = sample_search_call
-    url_opt = item.query.symbolize_keys
+    params  = PARAMS.merge(action: action).merge!(item.query.symbolize_keys)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
+      u_opt = options
       TEST_FORMATS.each do |fmt|
-        url = search_index_url(**url_opt, format: fmt)
-        opt = options.merge(format: fmt)
-        get_as(user, url, **opt)
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
 
   test 'search show - details search result item' do
     action  = :show
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
     item    = sample_search_result
-    url_opt = { id: record_id(item) }
+    params  = PARAMS.merge(action: action, id: record_id(item))
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
+      u_opt = options
       TEST_FORMATS.each do |fmt|
-        url = search_url(**url_opt, format: fmt)
-        opt = options.merge(format: fmt)
-        get_as(user, url, **opt)
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end unless not_applicable 'Bookshare API does not support this'
     # NOTE: Per SearchController#show, this endpoint can't be implemented.

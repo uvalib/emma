@@ -8,10 +8,13 @@ require 'test_helper'
 class CategoryControllerTest < ActionDispatch::IntegrationTest
 
   CONTROLLER   = :category
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  PARAMS       = { controller: CONTROLLER }.freeze
+  OPTIONS      = { controller: CONTROLLER, expect: :success }.freeze
 
   TEST_USERS   = %i[anonymous emmadso].freeze
   TEST_READERS = TEST_USERS
+
+  READ_FORMATS = :all
 
   # noinspection RbsMissingTypeSignature
   setup do
@@ -24,12 +27,14 @@ class CategoryControllerTest < ActionDispatch::IntegrationTest
 
   test 'category index - list all categories' do
     action  = :index
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PARAMS.merge(action: action)
+    options = OPTIONS.merge(action: action, test: __method__)
     @readers.each do |user|
+      u_opt = options
       TEST_FORMATS.each do |fmt|
-        url = category_index_url(format: fmt)
-        opt = options.merge(format: fmt)
-        get_as(user, url, **opt)
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end

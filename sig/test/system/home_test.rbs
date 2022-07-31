@@ -1,3 +1,5 @@
 class HomeTest < ApplicationSystemTestCase
+  CONTROLLER: Symbol
+
   INDEX_TITLE: String
 end

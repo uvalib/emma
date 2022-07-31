@@ -83,7 +83,8 @@ module TestHelper::IntegrationTests::Authentication
   # @param [Hash]                 opt   Passed to #assert_result except for the
   #                                       options for #as_user and local:
   #
-  # @option opt [Symbol] :expect      Expected result regardless of the user.
+  # @option opt [Symbol]       :expect  Expected result regardless of the user.
+  # @option opt [Symbol,Array] :only    Allowed formats.
   #
   # @return [void]
   #

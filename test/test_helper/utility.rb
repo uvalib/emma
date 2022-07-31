@@ -69,12 +69,12 @@ module TestHelper::Utility
 
   # The number of fixture records for the given model.
   #
-  # @param [Model,Symbol,String] model
+  # @param [Symbol, String, Class, Model] model
   #
   # @return [Integer]
   #
   def fixture_count(model)
-    name = model.to_s.underscore.pluralize
+    name = controller_name(model).to_s.pluralize
     @loaded_fixtures[name]&.size || 0
   end
 
@@ -119,13 +119,19 @@ module TestHelper::Utility
   #
   # @param [Array, Symbol, nil] fmt
   # @param [String, nil]        note  Additional annotation.
-  # @param [Array, Symbol]      only  Applicable format(s).
+  # @param [Array, Symbol, nil] only  Applicable format(s) or :all; default:
+  #                                     #TEST_FORMATS.
   #
   # @return [true]                    If the test should proceed.
   # @return [false]                   If the test should be skipped.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def allowed_format(fmt = nil, note = nil, only:)
     fmt, note = [nil, fmt] if fmt.is_a?(String)
+    only = Array.wrap(only).compact
+    only = TEST_FORMATS if only.blank? || only.include?(:all)
     return true if fmt.nil? && Array.wrap(only).intersect?(TEST_FORMATS)
     return true if Array.wrap(only).intersect?(Array.wrap(fmt))
     format = 'format'
@@ -152,43 +158,6 @@ module TestHelper::Utility
 
     $stderr.puts [*msg, note].compact.join(' - ')
     false
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Give the target controller for the current context.
-  #
-  # @return [Symbol]
-  #
-  def this_controller
-    # noinspection RubyMismatchedArgumentType
-    controller_name(self)
-  end
-
-  # Derive the name of the model/controller from the given source.
-  #
-  # @param [Symbol, String, Class, nil] value
-  #
-  # @return [Symbol]
-  #
-  #--
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-  #++
-  def controller_name(value)
-    return value             if value.nil? || value.is_a?(Symbol)
-    value = value.name       if value.is_a?(Class)
-    value = value.class.name unless value.is_a?(String)
-    parts = value.underscore.tr('/', '_').split('_')
-    parts.pop if parts.last == 'test'
-    parts.pop if TEST_TYPES.include?(parts.last)
-    unless (parts.first == 'user') && parts.many?
-      parts[-1] = parts[-1].singularize
-    end
-    parts.join('_').to_sym
   end
 
   # ===========================================================================

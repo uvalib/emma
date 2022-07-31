@@ -13,12 +13,14 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   TEST_USERS   = %i[anonymous emmadso].freeze
   TEST_READERS = TEST_USERS
 
+  READ_FORMATS = :html
+
+  TEST_USER    = :emmadso
+
   # noinspection RbsMissingTypeSignature
   setup do
     @readers = find_users(*TEST_READERS)
   end
-
-  TEST_USER = :emmadso
 
   # ===========================================================================
   # :section: Read tests
@@ -28,9 +30,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     # action  = :main
     # options = OPTIONS.merge(action: action)
     TEST_FORMATS.each do |fmt|
-      next unless allowed_format(fmt, only: :html)
       url = home_url(format: fmt)
-      run_test(__method__, format: fmt) do
+      run_test(__method__, format: fmt, only: READ_FORMATS) do
         get url
         assert_redirected_to welcome_url
       end
@@ -41,9 +42,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     # action  = :main
     # options = OPTIONS.merge(action: action)
     TEST_FORMATS.each do |fmt|
-      next unless allowed_format(fmt, only: :html)
       url = home_url(format: fmt)
-      run_test(__method__, format: fmt) do
+      run_test(__method__, format: fmt, only: READ_FORMATS) do
         get_sign_in_as(TEST_USER, follow_redirect: false)
         get url
         assert_redirected_to dashboard_url
@@ -55,10 +55,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     action  = :welcome
     options = OPTIONS.merge(action: action)
     TEST_FORMATS.each do |fmt|
-      next unless allowed_format(fmt, only: :html)
       url = welcome_url(format: fmt)
       opt = options.merge(format: fmt)
-      run_test(__method__, format: fmt) do
+      run_test(__method__, format: fmt, only: READ_FORMATS) do
         get url
         assert_result :success, **opt
       end
@@ -67,21 +66,15 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'home dashboard' do
     action  = :dashboard
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
     @readers.each do |user|
       able  = user.present?
-      u_opt =
-        if able
-          options.merge(expect: :success)
-        else
-          options.except(:controller, :action)
-        end
+      u_opt = able ? options : options.except(:controller, :action, :expect)
       TEST_FORMATS.each do |fmt|
-        next unless allowed_format(fmt, only: :html)
         url = dashboard_url(format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt)
+        get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end

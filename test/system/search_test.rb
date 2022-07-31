@@ -70,11 +70,7 @@ class SearchTest < ApplicationSystemTestCase
   def show_page(index, base_url: nil, expected_url: nil)
     page = (index + 1 unless index.zero?)
     expected_url ||= make_path(base_url, page: page)
-    unless wait_for_page(expected_url)
-      current  = url_without_port(current_url).inspect
-      expected = expected_url.inspect
-      assert false, "Browser on page #{current} and not page #{expected}"
-    end
+    wait_for_page(expected_url)
     links =
       { PREV: PREV_LABEL, NEXT: NEXT_LABEL }.map do |name, link_text|
         link = first(:link, link_text, minimum: 0)

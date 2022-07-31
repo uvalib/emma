@@ -28,13 +28,13 @@ module TestHelper::SystemTests::Index
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol]  model
-  # @param [Integer] index
-  # @param [Integer] total
-  # @param [Integer] page
-  # @param [Integer] size
-  # @param [Hash]    terms
-  # @param [Hash]    opt              Passed to #assert_valid_action_page.
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Integer]                       index
+  # @param [Integer]                       total
+  # @param [Integer]                       page
+  # @param [Integer]                       size
+  # @param [Hash]                          terms
+  # @param [Hash]                          opt    To #assert_valid_action_page.
   #
   # @raise [Minitest::Assertion]
   #
@@ -49,21 +49,22 @@ module TestHelper::SystemTests::Index
     terms: nil,
     **opt
   )
+    ctrlr = controller_name(model)
     terms = terms.presence
-    prop  = property(model, :index)&.slice(:title, :heading)
+    prop  = property(ctrlr, :index)&.slice(:title, :heading)
     opt.reverse_merge!(prop) if prop.present?
     if (terms = terms.presence)
-      opt[:title] &&= "#{opt[:title]} - #{title_terms(model, **terms)} |"
+      opt[:title] &&= "#{opt[:title]} - #{title_terms(ctrlr, **terms)} |"
     end
 
     # Validate page properties.
-    assert_valid_action_page(model, :index, **opt)
+    assert_valid_action_page(ctrlr, :index, **opt)
     assert_search_terms(**terms)                    if terms
-    assert_search_count(model, total: total, **opt) if terms || total
+    assert_search_count(ctrlr, total: total, **opt) if terms || total
 
     # Validate pagination if provided.
     if index || page
-      size  ||= Paginator.get_page_size(controller: model)
+      size  ||= Paginator.get_page_size(controller: ctrlr)
       page  ||= (index - 1) / size
       index ||= (page * size) + 1
       (page  <= 0)    ? assert_first_page : assert_not_first_page
@@ -76,13 +77,14 @@ module TestHelper::SystemTests::Index
   # Generate a string for search terms as they would appear in the '<title>'
   # element.
   #
-  # @param [Symbol] model
-  # @param [Hash]   terms
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Hash]                          terms
   #
   # @return [String]
   #
   def title_terms(model, **terms)
-    search_terms(model, pairs: terms).map { |_field, term|
+    ctrlr = controller_name(model)
+    search_terms(ctrlr, pairs: terms).map { |_field, term|
       next if term.blank?
       if term.query?
         array_string(term.names, inspect: true)
@@ -115,9 +117,9 @@ module TestHelper::SystemTests::Index
 
   # Assert that a search count is displayed on the index page.
   #
-  # @param [Symbol]  model
-  # @param [Integer] total
-  # @param [String]  records
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Integer]                       total
+  # @param [String]                        records
   #
   # @raise [Minitest::Assertion]      If the count is not displayed.
   # @raise [RuntimeError]             If *records* is not given or found.
@@ -125,8 +127,9 @@ module TestHelper::SystemTests::Index
   # @return [true]
   #
   def assert_search_count(model, total: nil, records: nil, **)
-    records ||= property(model, :index, :count)
-    raise "#{model} unit could not be determined" unless records
+    ctrlr     = controller_name(model)
+    records ||= property(ctrlr, :index, :count)
+    raise "#{ctrlr} unit could not be determined" unless records
     records = "#{total} #{records}".strip if total.present?
     assert_selector SEARCH_COUNT_CLASS, text: records
   end
@@ -173,8 +176,8 @@ module TestHelper::SystemTests::Index
 
   # visit_each_show_page
   #
-  # @param [Symbol] model
-  # @param [String] entry_css
+  # @param [Symbol,String,Class,Model,nil] model
+  # @param [String]                        entry_css
   #
   # @raise [Minitest::Assertion]
   #
@@ -186,12 +189,13 @@ module TestHelper::SystemTests::Index
   # @yieldreturn [void]
   #
   def visit_each_show_page(model, entry_css: nil, &block)
-    entry_css ||= property(model, :index, :entry_css)
-    raise "#{model} entry_css could not be determined" unless entry_css
+    ctrlr       = controller_name(model)
+    entry_css ||= property(ctrlr, :index, :entry_css)
+    raise "#{ctrlr} entry_css could not be determined" unless entry_css
     entry_count = all(entry_css).size
     max_index = entry_count - 1
     (0..max_index).each do |index|
-      visit_show_page(model, entry_css: entry_css, index: index) do |title|
+      visit_show_page(ctrlr, entry_css: entry_css, index: index) do |title|
         block&.call(index, title)
       end
       go_back # Return to index page.

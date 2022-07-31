@@ -1,0 +1,32 @@
+# Support for accessing response cookies.
+#
+module TestHelper::SystemTests::Cookies
+  include TestHelper::SystemTests::Common
+
+  # Shortcut to the browser client interface.
+  #
+  def browser: () -> untyped
+
+  @browser: untyped
+
+  # Display the current cookies from the last response.
+  #
+  # @return [void]
+  #
+  def show_cookies: () -> void
+
+  # Get the current cookies from the last response.
+  #
+  # @return [Hash]
+  #
+  def get_cookies: () -> symHash
+
+  # Clear all browser cookies.
+  #
+  # @note Use of this may not be compatible with the way that EMMA sets up
+  #   single-click authentication for tests.
+  #
+  # @return [void]
+  #
+  def clear_cookies: () -> void
+end

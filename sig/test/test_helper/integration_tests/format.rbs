@@ -7,12 +7,19 @@ module TestHelper::IntegrationTests::Format
   #
   MEDIA_TYPE: Hash[Symbol,String]
 
-  # Indicate whether *type* matches the given *format*.
+  # Table of MIME media types and associated formats.
+  #
+  # @type [Hash{String=>Symbol}]
+  #
+  REVERSE_MEDIA_TYPE: Hash[String,Symbol]
+
+  # The format type associated with the given value.
   #
   # @param [Symbol, String, nil] type
-  # @param [Symbol]              format
   #
-  def format?: (Symbol|String|nil `type`, Symbol format) -> bool
+  # @return [Symbol, nil]
+  #
+  def format_type: (Symbol|String|nil `type`) -> (Symbol | nil)
 
   # Indicate whether *type* is HTML.
   #

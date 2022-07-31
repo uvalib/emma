@@ -19,13 +19,42 @@ module TestHelper::Common
 
   # property
   #
-  # @param [Symbol, String, Class, nil] model
-  # @param [Array<Symbol>]              traversal
+  # @param [Symbol, String, Class, Model, nil] model
+  # @param [Array<Symbol>]                     traversal
+  # @param [*]                                 default
   #
   # @return [*]
   #
-  def property: [T] (?(Symbol|String|Class|nil) model, *Symbol traversal,  default: T)   -> T
-              |     (?(Symbol|String|Class|nil) model, *Symbol traversal, ?default: nil) -> (untyped | nil)
+  def property: [T] (Symbol|String|Class|Model|nil model, *Symbol traversal,  default: T)   -> T
+              |     (Symbol|String|Class|Model|nil model, *Symbol traversal, ?default: nil) -> (untyped | nil)
+
+  # The title (:h1 text value) for the given parameters.
+  #
+  # @param [Model, item] item
+  # @param [Symbol]      controller
+  # @param [Symbol]      action       Default: :index
+  # @param [Symbol]      prop_key     End of #PROPERTY traversal.
+  # @param [Symbol]      meth         Calling method (for error reporting).
+  #
+  # @raise [Minitest::Assertion] If value could not be found or interpolated.
+  #
+  # @return [String]
+  #
+  def page_title: (?(Model|nil) item, ?controller: Symbol|nil, ?action: Symbol|nil, prop_key: Symbol, ?meth: Symbol|nil, **untyped) -> String
+
+  # Give the target controller for the current context.
+  #
+  # @return [Symbol]
+  #
+  def this_controller: () -> Symbol
+
+  # Derive the name of the model/controller from the given source.
+  #
+  # @param [Symbol, String, Class, Model, nil] src
+  #
+  # @return [Symbol, nil]
+  #
+  def controller_name: (untyped src) -> (Symbol | nil)
 
   private
 
