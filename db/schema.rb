@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_07_000010) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_07_000010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -30,16 +30,16 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.json "file_data"
     t.string "file_source"
     t.integer "checksum"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["phase_id"], name: "index_actions_on_phase_id"
     t.index ["user_id"], name: "index_actions_on_user_id"
   end
 
   create_table "artifacts", force: :cascade do |t|
     t.string "format"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "entry_type"
     t.bigint "entry_id"
     t.index ["entry_type", "entry_id"], name: "index_artifacts_on_entry_type_and_entry_id"
@@ -59,8 +59,8 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
 
   create_table "editions", force: :cascade do |t|
     t.string "editionId"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "periodical_id"
     t.index ["periodical_id"], name: "index_editions_on_periodical_id"
   end
@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.string "item"
     t.string "value"
     t.boolean "active"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "entries", force: :cascade do |t|
@@ -93,14 +93,14 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.string "ext"
     t.json "emma_data"
     t.json "file_data"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_entries_on_user_id"
   end
 
   create_table "good_job_processes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.jsonb "state"
   end
 
@@ -108,17 +108,17 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.text "queue_name"
     t.integer "priority"
     t.jsonb "serialized_params"
-    t.datetime "scheduled_at"
-    t.datetime "performed_at"
-    t.datetime "finished_at"
+    t.datetime "scheduled_at", precision: nil
+    t.datetime "performed_at", precision: nil
+    t.datetime "finished_at", precision: nil
     t.text "error"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.uuid "active_job_id"
     t.text "concurrency_key"
     t.text "cron_key"
     t.uuid "retried_good_job_id"
-    t.datetime "cron_at"
+    t.datetime "cron_at", precision: nil
     t.index ["active_job_id", "created_at"], name: "index_good_jobs_on_active_job_id_and_created_at"
     t.index ["active_job_id"], name: "index_good_jobs_on_active_job_id"
     t.index ["concurrency_key"], name: "index_good_jobs_on_concurrency_key_when_unfinished", where: "(finished_at IS NULL)"
@@ -134,16 +134,16 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.jsonb "output"
     t.jsonb "error"
     t.jsonb "diagnostic"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["active_job_id"], name: "index_job_results_on_active_job_id"
   end
 
   create_table "members", force: :cascade do |t|
     t.string "emailAddress"
     t.boolean "institutional"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["user_id"], name: "index_members_on_user_id"
   end
@@ -156,8 +156,8 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
 
   create_table "periodicals", force: :cascade do |t|
     t.string "seriesId"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "phases", force: :cascade do |t|
@@ -174,8 +174,8 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.string "ext"
     t.json "emma_data"
     t.json "file_data"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["bulk_id"], name: "index_phases_on_bulk_id"
     t.index ["entry_id", "type"], name: "index_phases_on_entry_id_and_type"
     t.index ["entry_id"], name: "index_phases_on_entry_id"
@@ -184,8 +184,8 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
 
   create_table "reading_lists", force: :cascade do |t|
     t.string "readingListId"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["user_id"], name: "index_reading_lists_on_user_id"
   end
@@ -200,8 +200,8 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.string "name"
     t.string "resource_type"
     t.bigint "resource_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
@@ -214,7 +214,7 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.json "page"
     t.json "result"
     t.bigint "user_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["user_id"], name: "index_search_calls_on_user_id"
   end
 
@@ -236,8 +236,8 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
 
   create_table "titles", force: :cascade do |t|
     t.string "bookshareId"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "uploads", force: :cascade do |t|
@@ -249,18 +249,18 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.string "fmt"
     t.string "ext"
     t.string "state"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "phase"
     t.string "edit_state"
     t.string "edit_user"
     t.text "edit_file_data"
     t.text "edit_emma_data"
-    t.datetime "edited_at"
+    t.datetime "edited_at", precision: nil
     t.string "review_user"
     t.boolean "review_success"
     t.text "review_comment"
-    t.datetime "reviewed_at"
+    t.datetime "reviewed_at", precision: nil
     t.index ["user_id"], name: "index_uploads_on_user_id"
   end
 
@@ -268,17 +268,17 @@ ActiveRecord::Schema.define(version: 2022_04_07_000010) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "first_name"
     t.string "last_name"
     t.string "access_token"
     t.string "refresh_token"
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.bigint "effective_id"

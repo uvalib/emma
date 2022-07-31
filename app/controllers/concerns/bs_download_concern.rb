@@ -35,8 +35,9 @@ module BsDownloadConcern
     @error     = result.error_message
     @state     = result.key.to_s.upcase
     @link      = (result.messages.first.presence if @state == 'COMPLETED')
+    link_opt   = @link && { allow_other_host: true }
     respond_to do |format|
-      format.html { @link ? redirect_to(@link) : render }
+      format.html { @link ? redirect_to(@link, link_opt) : render }
       format.json { render_json bs_download_values }
       format.xml  { render_xml  bs_download_values }
     end

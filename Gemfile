@@ -13,7 +13,7 @@ ruby '3.1.2'
 # =============================================================================
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0'
+gem 'rails', '~> 7'
 
 # Use Postgres as the database for Active Record.
 gem 'pg'
@@ -50,6 +50,9 @@ gem 'jsbundling-rails'
 
 # Handling of stylesheets by the "sass" module via "yarn build:css".
 gem 'cssbundling-rails'
+
+# Still using Sprockets for file assets and ERB translation.
+gem 'sprockets-rails'
 
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'mini_racer', platforms: :ruby

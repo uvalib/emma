@@ -49,6 +49,7 @@ Rails.application.configure do
 
   # Disable caching.
   config.action_controller.perform_caching = false
+  config.cache_store = :null_store
 
   # ===========================================================================
   # Mailer
@@ -64,7 +65,7 @@ Rails.application.configure do
   # ===========================================================================
 
   # Raises error for missing translations.
-  # config.action_view.raise_on_missing_translations = true
+  # config.i8n.raise_on_missing_translations = true
 
   # ===========================================================================
   # ActiveSupport
@@ -72,6 +73,15 @@ Rails.application.configure do
 
   # Send deprecation notices to STDERR.
   config.active_support.deprecation = :stderr
+
+  # Raise exceptions for disallowed deprecations.
+  config.active_support.disallowed_deprecation = :raise
+
+  # Tell Active Support which deprecation messages to disallow.
+  config.active_support.disallowed_deprecation_warnings = []
+
+  # Annotate rendered view with file names.
+  # config.action_view.annotate_rendered_view_with_filenames = true
 
   # ===========================================================================
   # ActiveRecord
@@ -105,6 +115,9 @@ Rails.application.configure do
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
+  config.public_file_server.headers = {
+    'Cache-Control' => "public, max-age=#{1.hour}"
+  }
 
   # ===========================================================================
   # Logging

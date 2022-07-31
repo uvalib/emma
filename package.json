@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@rails/actioncable": "^6.1.6",
-    "@rails/ujs":         "^6.1.6",
+    "@rails/actioncable": "^7.0.3-1",
+    "@rails/ujs":         "^7.0.3-1",
     "@uppy/core":         "^1.20.0",
     "@uppy/file-input":   "^1.5.2",
     "@uppy/informer":     "^1.6.6",

@@ -596,7 +596,7 @@ class UploadController < ApplicationController
     @item = get_record(@identifier)
     link  = @item.download_url
     respond_to do |format|
-      format.html { redirect_to link }
+      format.html { redirect_to(link, allow_other_host: true) }
       format.json { render_json download_values(link) }
       format.xml  { render_xml  download_values(link) }
     end

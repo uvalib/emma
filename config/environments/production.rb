@@ -58,7 +58,7 @@ Rails.application.configure do
   # ===========================================================================
 
   # Raises error for missing translations.
-  # config.action_view.raise_on_missing_translations = true
+  # config.i18n.raise_on_missing_translations = true
 
   # ===========================================================================
   # ActiveSupport
@@ -117,6 +117,9 @@ Rails.application.configure do
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
+
+  # Don't log any deprecations.
+  config.active_support.report_deprecations = false
 
   # ===========================================================================
   # Assets

@@ -36,13 +36,15 @@ namespace 'emma:data' do
     # Execute subtasks if necessary.
     if (current = EmmaStatus.api_version&.value) && (version <= current)
       show "EMMA data already at API version '#{current}'." unless quiet # TODO: I18n
-    else
+    elsif current
       show "Migrating EMMA data to API version '#{version}':" # TODO: I18n
       db_commit  = commit
       idx_commit = commit && production_deployment?
       subtask('emma:data:data_migrate', version: version, commit: db_commit)
       subtask('emma:data:reindex', version: version, commit: idx_commit)
       EmmaStatus.api_version = version if db_commit
+    else
+      show "Skipping data migration for API version '#{current}'." unless quiet # TODO: I18n
     end
 
   end

@@ -68,7 +68,9 @@ module OptionsConcern
     # :section: Callbacks
     # =========================================================================
 
-    before_action :set_model_options, if: :request_get?
+    if respond_to?(:before_action)
+      before_action :set_model_options, if: :request_get?
+    end
 
   end
 

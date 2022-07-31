@@ -55,6 +55,8 @@ class EmmaStatus < ApplicationRecord
   #
   def self.api_version
     where(item: API_VERSION_ITEM, active: true).last
+  rescue ActiveRecord::ConnectionNotEstablished
+    Log.info { "#{__method__}: no database" }
   end
 
   # Set current EMMA data API version.

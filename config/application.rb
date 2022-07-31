@@ -23,7 +23,7 @@ module Emma
   class Application < Rails::Application
 
     # Initialize configuration defaults.
-    config.load_defaults 6.1
+    config.load_defaults 7.0
 
     # This is not compatible with the current directory layout:
     # config.add_autoload_paths_to_load_path = false
@@ -125,7 +125,9 @@ module Emma
     # @see config/initializers/good_job.rb
     config.active_job.queue_adapter = :good_job
     # config.active_job.queue_name_prefix = "emma_#{Rails.env}"
+=begin # NOTE: deprecated in Rails 7.1
     config.active_job.skip_after_callbacks_if_terminated = !DEBUG_JOB
+=end
 
     # =========================================================================
     # ActiveStorage

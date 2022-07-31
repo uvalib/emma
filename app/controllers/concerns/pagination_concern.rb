@@ -81,7 +81,9 @@ module PaginationConcern
     # :section: Callbacks
     # =========================================================================
 
-    before_action :cleanup_pagination, only: %i[index]
+    if respond_to?(:before_action)
+      before_action :cleanup_pagination, only: %i[index]
+    end
 
   end
 
