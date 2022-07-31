@@ -25,8 +25,22 @@ module TestHelper::Samples
     search_call:    :Mansfield_Park,
     search_result:  :Mansfield_Park_1,
     title:          :Investigación,
+    upload:         :emma_completed,
     user:           :developer,
   }.freeze
+
+  # A string added to the start of each title created on a non-production
+  # instance to help distinguish it from other index results.
+  #
+  # @type [String]
+  #
+  TITLE_PREFIX = UploadWorkflow::Properties::DEV_TITLE_PREFIX
+
+  # File fixture for Uploads.
+  #
+  # @type [String]
+  #
+  UPLOAD_FILE = 'pg2148.epub'
 
   # ===========================================================================
   # :section:
@@ -99,6 +113,10 @@ module TestHelper::Samples
     # Generate a sample instance from text/fixtures/titles.yml.
     # @return [Title]
     def sample_title; end
+
+    # Generate a sample instance from text/fixtures/uploads.yml.
+    # @return [Upload]
+    def sample_upload; end
 
     # Generate a sample instance from text/fixtures/users.yml.
     # @return [User]

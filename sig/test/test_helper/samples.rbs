@@ -7,6 +7,19 @@ module TestHelper::Samples
   #
   SAMPLE_FIXTURE: Hash[Symbol,Symbol]
 
+  # A string added to the start of each title created on a non-production
+  # instance to help distinguish it from other index results.
+  #
+  # @type [String]
+  #
+  TITLE_PREFIX: String
+
+  # File fixture for Uploads.
+  #
+  # @type [String]
+  #
+  UPLOAD_FILE: String
+
   @sample: Hash[Symbol, Model]
 
   # Generate a sample instance from text/fixtures/artifacts.yml.
@@ -48,6 +61,10 @@ module TestHelper::Samples
   # Generate a sample instance from text/fixtures/titles.yml.
   # @return [Title]
   def sample_title: () -> Title
+
+  # Generate a sample instance from text/fixtures/uploads.yml.
+  # @return [Upload]
+  def sample_upload: () -> Upload
 
   # Generate a sample instance from text/fixtures/users.yml.
   # @return [User]

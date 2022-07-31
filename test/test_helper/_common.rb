@@ -35,6 +35,7 @@ module TestHelper::Common
     search
     search_call
     title
+    upload
     user_sessions
   ].freeze
 

@@ -17,7 +17,15 @@ Rails.application.configure do
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
   # preloads Rails for running tests, you may have to set it to true.
-  config.eager_load = false
+  #
+  # NOTE: In fact, UploadWorkflow won't resolve properly without eager loading.
+  #   This might not be an issue in the long run, since the intention is to
+  #   eliminate the 'workflow' gem when transitioning from Upload -> Entry
+  #   but for now eager loading is required for comprehensive tests.  (Besides
+  #   which, it's unclear whether eager loading is actually having a negative
+  #   impact in any testing scenario.)
+  #
+  #config.eager_load = false
 
   # Application code remains in memory after being loaded.
   config.cache_classes = true

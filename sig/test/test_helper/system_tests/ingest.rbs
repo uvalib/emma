@@ -1,0 +1,15 @@
+# Support for working directly with the Unified Index.
+#
+module TestHelper::SystemTests::Ingest
+  include TestHelper::SystemTests::Common
+
+  include IngestConcern
+
+  # Cause the identified items to be updated in the Unified Index.
+  #
+  # @param [Array<Upload,String>] entries
+  #
+  # @return [Boolean]
+  #
+  def reindex: (*(Upload|String) entries) -> bool
+end
