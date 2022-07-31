@@ -142,7 +142,6 @@ class EntryController < ApplicationController
     show_search_failure(error)
   rescue => error
     show_search_failure(error, root_path)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /entry/show/(:id|SID)
@@ -174,7 +173,6 @@ class EntryController < ApplicationController
     show_search_failure(error) if @item.blank?
   rescue => error
     show_search_failure(error)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -222,7 +220,6 @@ class EntryController < ApplicationController
     post_response(:ok, @item, redirect: entry_index_path)
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /entry/edit/:id
@@ -263,7 +260,6 @@ class EntryController < ApplicationController
     post_response(:ok, @item, redirect: entry_index_path)
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /entry/delete/:id[?force=true&truncate=true&emergency=true]
@@ -309,7 +305,6 @@ class EntryController < ApplicationController
   rescue => error
     # noinspection RubyScope
     post_response(error, redirect: back)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -363,7 +358,6 @@ class EntryController < ApplicationController
     post_response(:ok, @list, xhr: false)
   rescue => error
     post_response(error, xhr: false)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /entry/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -400,7 +394,6 @@ class EntryController < ApplicationController
     post_response(:ok, @list, xhr: false)
   rescue => error
     post_response(error, xhr: false)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /entry/bulk_delete[?force=false]
@@ -431,7 +424,6 @@ class EntryController < ApplicationController
     post_response(:found, @list)
   rescue => error
     post_response(error, xhr: false)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -458,7 +450,6 @@ class EntryController < ApplicationController
     end
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == POST /entry/reedit?id=:id
@@ -479,7 +470,6 @@ class EntryController < ApplicationController
     end
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET  /entry/cancel?id=:id[&redirect=URL][&reset=bool][&fields=...]
@@ -511,7 +501,6 @@ class EntryController < ApplicationController
       failure_response(error)
     else
       post_response(error)
-      re_raise_if_internal_exception(error)
     end
   end
 
@@ -562,7 +551,6 @@ class EntryController < ApplicationController
     post_response(:conflict, error, xhr: true)
   rescue => error
     post_response(error, xhr: true)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -590,7 +578,6 @@ class EntryController < ApplicationController
     end
   rescue => error
     post_response(error, xhr: true)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
@@ -707,6 +694,7 @@ class EntryController < ApplicationController
   # @return [void]
   #
   def show_search_failure(error, fallback = nil, meth: nil)
+    re_raise_if_internal_exception(error)
     meth ||= calling_method
     if modal?
       failure_response(error, meth: meth)

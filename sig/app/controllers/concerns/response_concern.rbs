@@ -7,7 +7,17 @@ module ResponseConcern
 
   include ParamsHelper
 
-  def failure_response: (untyped error, ?status: String|Integer|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil) -> void
+  # Generate a flash message if there is an error.
+  #
+  # @param [Exception, String, *] error
+  # @param [Integer, Symbol]      status
+  # @param [Boolean]              xhr
+  # @param [String, Symbol]       action
+  # @param [Symbol]               meth
+  #
+  # @return [Integer, Symbol]         HTTP status.
+  #
+  def failure_response: (untyped error, ?status: Integer|Symbol|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil) -> (Integer | Symbol)
 
   private
 

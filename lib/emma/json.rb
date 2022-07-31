@@ -91,8 +91,8 @@ module Emma::Json
     end
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" } if log
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
   end
 
   # Attempt to interpret *arg* as JSON if it is a string.
@@ -135,8 +135,8 @@ module Emma::Json
     result
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
     arg.inspect
   end
 
@@ -178,8 +178,8 @@ module Emma::Json
     result
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
     arg.pretty_inspect
   end
 
@@ -240,8 +240,8 @@ module Emma::Json
     json_render(arg, no_raise: false, **opt)
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
     arg.inspect
   end
 

@@ -22,17 +22,17 @@ module Emma::Common::ExceptionMethods
   INTERNAL_EXCEPTION = [
     ArgumentError,
     FrozenError,
-    IndexError,
+    IndexError,       # includes KeyError, StopIteration, UnpermittedParameters
     LocalJumpError,
-    NameError,
+    NameError,        # includes NoMethodError
     NoMemoryError,
-    NotImplementedError,
-    RangeError,
+    RangeError,       # includes FloatDomainError
     RegexpError,
-    ScriptError,
+    ScriptError,      # includes LoadError, SyntaxError, NotImplementedError
     SecurityError,
-    SignalException,
-    SystemCallError,
+    SignalException,  # includes Interrupt
+    SystemCallError,  # includes Errno::E2BIG, Errno::EACCES, etc.
+    SystemExit,
     SystemStackError,
     ThreadError,
     TypeError,
@@ -51,9 +51,8 @@ module Emma::Common::ExceptionMethods
   # @param [Exception, Any, nil] error
   #
   def internal_exception?(error)
-    # noinspection RubyNilAnalysis
-    ancestors = (error.is_a?(Class) ? error : error.class).ancestors
-    ancestors.size > (ancestors - INTERNAL_EXCEPTION).size
+    ancestors = (error.is_a?(Class) ? error : error.class)&.ancestors || []
+    ancestors.intersect?(INTERNAL_EXCEPTION)
   end
 
   # Indicate whether *error* is an exception which is not (derived from) one of
@@ -62,9 +61,8 @@ module Emma::Common::ExceptionMethods
   # @param [Exception, Any, nil] error
   #
   def operational_exception?(error)
-    # noinspection RubyNilAnalysis
-    a = (error.is_a?(Class) ? error : error.class).ancestors
-    a.include?(Exception) && (a.size == (a - INTERNAL_EXCEPTION).size)
+    ancestors = (error.is_a?(Class) ? error : error.class)&.ancestors || []
+    ancestors.include?(Exception) && !ancestors.intersect?(INTERNAL_EXCEPTION)
   end
 
   # Re-raise an exception which indicates a likely programming error.
@@ -78,8 +76,12 @@ module Emma::Common::ExceptionMethods
   #
   def re_raise_if_internal_exception(error)
     return unless internal_exception?(error)
-    Log.warn { "RE-RAISING INTERNAL EXCEPTION #{error}" }
-    raise error unless request.format.html?
+    if request.format.html? && application_deployed?
+      Log.warn { "EATING INTERNAL EXCEPTION #{error}" }
+    else
+      Log.warn { "RE-RAISING INTERNAL EXCEPTION #{error}" }
+      raise error
+    end
   end
 
   # ===========================================================================

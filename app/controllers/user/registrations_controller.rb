@@ -61,7 +61,6 @@ class User::RegistrationsController < Devise::RegistrationsController
     set_flash_notice(user: resource.uid)
   rescue => error
     auth_failure_redirect(message: error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /users/edit/:id
@@ -98,7 +97,6 @@ class User::RegistrationsController < Devise::RegistrationsController
     redirect_back(fallback_location: dashboard_path)
   rescue => error
     auth_failure_redirect(message: error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /users/resign
@@ -117,7 +115,6 @@ class User::RegistrationsController < Devise::RegistrationsController
     set_flash_notice(user: user)
   rescue => error
     auth_failure_redirect(message: error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /users/cancel
@@ -134,7 +131,6 @@ class User::RegistrationsController < Devise::RegistrationsController
     super
   rescue => error
     auth_failure_redirect(message: error)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================

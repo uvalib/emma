@@ -60,8 +60,8 @@ module Emma::Csv
     end
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" }
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
   end
 
   # ===========================================================================

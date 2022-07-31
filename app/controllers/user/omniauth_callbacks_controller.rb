@@ -61,7 +61,6 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     sign_in_and_redirect(resource)
   rescue => error
     auth_failure_redirect(message: error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /users/auth/bookshare/failure

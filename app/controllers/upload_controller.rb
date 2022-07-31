@@ -142,7 +142,6 @@ class UploadController < ApplicationController
     show_search_failure(error)
   rescue => error
     show_search_failure(error, root_path)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/show/(:id|SID)
@@ -174,7 +173,6 @@ class UploadController < ApplicationController
     show_search_failure(error) if @item.blank?
   rescue => error
     show_search_failure(error)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -222,7 +220,6 @@ class UploadController < ApplicationController
     post_response(:conflict, error)
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/edit/:id
@@ -264,7 +261,6 @@ class UploadController < ApplicationController
     post_response(:conflict, error)
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
@@ -321,7 +317,6 @@ class UploadController < ApplicationController
     post_response(:conflict, error, redirect: back)
   rescue => error
     post_response(:not_found, error, redirect: back)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -377,7 +372,6 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -417,7 +411,6 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /upload/bulk_delete[?force=false]
@@ -452,7 +445,6 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -478,7 +470,6 @@ class UploadController < ApplicationController
     end
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == POST /upload/reedit?id=:id
@@ -498,7 +489,6 @@ class UploadController < ApplicationController
     end
   rescue => error
     post_response(error)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET  /upload/cancel?id=:id[&redirect=URL][&reset=bool][&fields=...]
@@ -531,7 +521,6 @@ class UploadController < ApplicationController
       failure_response(error)
     else
       post_response(error)
-      re_raise_if_internal_exception(error)
     end
   end
 
@@ -586,7 +575,6 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: true)
   rescue => error
     post_response(error, xhr: true)
-    re_raise_if_internal_exception(error)
   end
 
   # ===========================================================================
@@ -614,7 +602,6 @@ class UploadController < ApplicationController
     end
   rescue => error
     post_response(error, xhr: true)
-    re_raise_if_internal_exception(error)
   end
 
   # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
@@ -726,6 +713,7 @@ class UploadController < ApplicationController
   # @return [void]
   #
   def show_search_failure(error, fallback = nil, meth: nil)
+    re_raise_if_internal_exception(error)
     meth ||= calling_method
     if modal?
       failure_response(error, meth: meth)

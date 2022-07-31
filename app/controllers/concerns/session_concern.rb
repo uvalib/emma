@@ -78,7 +78,8 @@ module SessionConcern
   def auth_failure_redirect(path = nil, user: nil, message: nil, **opt)
     Log.info { "#{__method__}: #{message.inspect}" }
     local_sign_out # Make sure no remnants of the local session are left.
-    set_flash_alert(message, **opt) if message.present?
+    re_raise_if_internal_exception(message) if message.is_a?(Exception)
+    set_flash_alert(message, **opt)         if message.present?
     path ||= after_sign_out_path_for(user || resource)
     redirect_to path
   end

@@ -20,8 +20,19 @@ module ResponseConcern
 
   public
 
+  # Generate a flash message if there is an error.
+  #
+  # @param [Exception, String, *] error
+  # @param [Integer, Symbol]      status
+  # @param [Boolean]              xhr
+  # @param [String, Symbol]       action
+  # @param [Symbol]               meth
+  #
+  # @return [Integer, Symbol]         HTTP status.
+  #
   def failure_response(error, status: nil, xhr: nil, action: nil, meth: nil)
     return unless error
+    re_raise_if_internal_exception(error) if error.is_a?(Exception)
     meth   ||= calling_method
     report   = ExecReport[error]
     action ||= params[:action]
@@ -37,7 +48,6 @@ module ResponseConcern
       headers['X-Flash-Message'] = flash_xhr(*message, **opt)
     end
     self.status = status
-    re_raise_if_internal_exception(error) if error.is_a?(Exception)
   end
 
   # ===========================================================================

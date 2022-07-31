@@ -265,8 +265,8 @@ module Upload::FileMethods
   rescue => error
     # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
   end
 
   # ===========================================================================
@@ -505,8 +505,8 @@ module Upload::FileMethods
   rescue => error
     # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
   end
 
   # Finalize a deletion by the removing the file from :cache and/or :store.
@@ -524,8 +524,8 @@ module Upload::FileMethods
   rescue => error
     # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
-    raise error unless no_raise
     re_raise_if_internal_exception(error)
+    raise error unless no_raise
   end
 
   # ===========================================================================

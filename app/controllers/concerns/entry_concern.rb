@@ -931,6 +931,7 @@ module EntryConcern
     unless status.is_a?(Symbol) || status.is_a?(Integer)
       status, item = [nil, status]
     end
+    re_raise_if_internal_exception(item) if item.is_a?(Exception)
 
     xhr       = request_xhr? if xhr.nil?
     html      = !xhr || redirect.present?
