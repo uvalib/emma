@@ -88,11 +88,11 @@ module Record::Searchable
   # @param [Array<Model, String, Integer, Array>] items
   # @param [Hash]                                 opt  Passed to #where except
   #
-  # @option opt [Symbol, nil] :sort     No sort if explicitly *nil*.
-  # @option opt [Integer,nil] :offset
-  # @option opt [Integer,nil] :limit
-  # @option opt [Symbol,nil]  :id_key   Default: `#id_column`.
-  # @option opt [Symbol,nil]  :sid_key  Default: `#sid_column`.
+  # @option opt [Symbol,Boolean,nil] :sort      No sort if explicitly *nil*.
+  # @option opt [Integer,nil]        :offset
+  # @option opt [Integer,nil]        :limit
+  # @option opt [Symbol,nil]         :id_key    Default: `#id_column`.
+  # @option opt [Symbol,nil]         :sid_key   Default: `#sid_column`.
   #
   # @return [ActiveRecord::Relation]
   #

@@ -133,7 +133,7 @@ module Record::Searchable
     end
 
     # Start by looking at results for all matches (without :limit or :offset).
-    all = get_relation(*identifiers, **opt, sort: nil)
+    all = get_relation(*identifiers, **opt, sort: false)
 
     # Handle the case where only a :groups summary is expected.
     return result.merge!(groups: group_by_state(all)) if prop[:groups] == :only
@@ -190,11 +190,11 @@ module Record::Searchable
   # @param [Array<Model, String, Integer, Array>] items
   # @param [Hash]                                 opt  Passed to #where except
   #
-  # @option opt [Symbol, nil] :sort     No sort if explicitly *nil*.
-  # @option opt [Integer,nil] :offset
-  # @option opt [Integer,nil] :limit
-  # @option opt [Symbol,nil]  :id_key   Default: `#id_column`.
-  # @option opt [Symbol,nil]  :sid_key  Default: `#sid_column`.
+  # @option opt [Symbol,Boolean,nil] :sort      No sort if explicitly *nil*.
+  # @option opt [Integer,nil]        :offset
+  # @option opt [Integer,nil]        :limit
+  # @option opt [Symbol,nil]         :id_key    Default: `#id_column`.
+  # @option opt [Symbol,nil]         :sid_key   Default: `#sid_column`.
   #
   # @return [ActiveRecord::Relation]
   #
@@ -222,7 +222,19 @@ module Record::Searchable
     elsif sids
       opt[sid_key] = sids
     end
-    sort = opt.key?(:sort) ? opt.delete(:sort) : (:id unless ids || sids)
+
+    # Avoid applying a sort order if identifiers were specified or if
+    # opt[:sort] was explicitly *nil* or *false*. Permit :asc as shorthand for
+    # the default sort order ascending; :desc as shorthand for the default sort
+    # order descending.
+    if (sort = opt.key?(:sort) ? opt.delete(:sort) : (ids || sids).blank?)
+      sort_col = implicit_order_column || :id
+      if sort.is_a?(TrueClass)
+        sort = sort_col
+      elsif %W(ASC DESC).include?((dir = sort.to_s.upcase))
+        sort = "#{sort_col} #{dir}"
+      end
+    end
 
     if (user_opt = opt.extract!(:user, :user_id)).present?
       users = user_opt.values.flatten.map { |u| User.id_value(u) }.uniq

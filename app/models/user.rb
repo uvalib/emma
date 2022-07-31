@@ -105,7 +105,7 @@ class User < ApplicationRecord
   # :section: ActiveRecord ModelSchema
   # ===========================================================================
 
-  self.implicit_order_column = :id
+  self.implicit_order_column = :created_at
 
   # ===========================================================================
   # :section: ActiveRecord associations
