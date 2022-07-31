@@ -155,7 +155,7 @@ module SessionConcern
     last_operation.merge!(
       'time'   => (time || Time.now).to_i,
       'path'   => (path || request_path),
-      'params' => url_parameters(req_params)
+      'params' => abbreviate_params!(url_parameters(req_params))
     )
       .tap do
         __debug { "session_update 'time' = #{last_operation_time.inspect}" }
@@ -179,6 +179,107 @@ module SessionConcern
   #
   def session_updatable?
     !devise_controller? && !request_xhr?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Parameters that are not abbreviated in #last_operation['params'].
+  #
+  # @type [Array<Symbol>]
+  #
+  LAST_OP_NO_ABBREV = %i[redirect]
+
+  # Maximum size for the rendered result of #last_operation['params'].
+  #
+  # @type [Integer]
+  #
+  MAX_LAST_OP_PARAMS = 256
+
+  # Maximum size for any individual item within the rendered result of
+  # #last_operation['params'].
+  #
+  # @type [Integer]
+  #
+  MAX_LAST_OP_PARAM = 64
+
+  # Substitution for a Hash-valued parameter in #last_operation['params'].
+  #
+  # @param [String]
+  #
+  HASH_PLACEHOLDER = '{...}'
+
+  # Substitution for an Array-valued parameter in #last_operation['params'].
+  #
+  # @param [String]
+  #
+  ARRAY_PLACEHOLDER = '[...]'
+
+  # Since #last_operation parameters are only for dev purposes, this method is
+  # used to reduce the reported value in order to avoid CookieOverflow.
+  #
+  # @param [Hash{Symbol=>*}] h
+  # @param [Integer]         max      Maximum size of representation.
+  # @param [Integer]         p_max    Max representation of individual param.
+  #
+  # @return [Hash{String=>*}]
+  #
+  def abbreviate_params!(h, max: MAX_LAST_OP_PARAMS, p_max: MAX_LAST_OP_PARAM)
+    k_chars = 6 # extra characters for JSON key representation ('"" => ')
+    v_chars = 4 # extra characters for JSON value representation ('"", ')
+    h_chars = 2 # extra characters for JSON hash representation ('{}')
+    result  = extract_hash!(h, *LAST_OP_NO_ABBREV).stringify_keys!
+    size    = escaped_value(result).size
+    h.transform_keys! { |k| abbreviate_param(k, p_max: (p_max - k_chars)) }
+    while (size - h_chars + escaped_value(h).size) > max do
+      h.transform_values! { |v| abbreviate_param(v, p_max: (p_max - v_chars)) }
+      break unless (p_max /= 2) > v_chars
+    end
+    h.each_pair do |k, v|
+      size += [k, v].sum { |x| escaped_value(x).size } + k_chars + v_chars
+      return result.merge!('...' => '...') if size > max
+      result.merge!(k => v)
+    end
+    result
+  end
+
+  # abbreviate_param
+  #
+  # @param [*]       item
+  # @param [Integer] p_max            Maximum size of representation.
+  #
+  # @return [*]
+  #
+  def abbreviate_param(item, p_max: MAX_LAST_OP_PARAM)
+    item = item.to_s if item.is_a?(Symbol)
+    case item
+      when nil, Numeric, BoolType, HASH_PLACEHOLDER, ARRAY_PLACEHOLDER
+        item
+      when Hash
+        (escaped_value(item).size <= p_max) ? item : HASH_PLACEHOLDER
+      when Array
+        (escaped_value(item).size <= p_max) ? item : ARRAY_PLACEHOLDER
+      when String
+        e = escaped_value(item)
+        (e.size <= p_max) ? item : item.truncate(p_max - (e.size - item.size))
+      else
+        '<%s>' % item.class.name
+    end
+  end
+
+  # The item as it will be represented in the session cookie.
+  #
+  # @param [String, Symbol, Hash, Array] item
+  #
+  # @return [String]
+  #
+  def escaped_value(item)
+    result = item.is_a?(Symbol) ? item.to_s : item
+    result = result.to_json unless result.is_a?(String)
+    Rack::Utils.escape(result)
   end
 
   # ===========================================================================

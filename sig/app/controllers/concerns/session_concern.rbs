@@ -100,6 +100,65 @@ module SessionConcern
   #
   def session_updatable?: () -> bool
 
+  # Parameters that are not abbreviated in #last_operation['params'].
+  #
+  # @type [Array<Symbol>]
+  #
+  LAST_OP_NO_ABBREV: symArray
+
+  # Maximum size for the rendered result of #last_operation['params'].
+  #
+  # @type [Integer]
+  #
+  MAX_LAST_OP_PARAMS: Integer
+
+  # Maximum size for any individual item within the rendered result of
+  # #last_operation['params'].
+  #
+  # @type [Integer]
+  #
+  MAX_LAST_OP_PARAM: Integer
+
+  # Substitution for a Hash-valued parameter in #last_operation['params'].
+  #
+  # @param [String]
+  #
+  HASH_PLACEHOLDER: String
+
+  # Substitution for an Array-valued parameter in #last_operation['params'].
+  #
+  # @param [String]
+  #
+  ARRAY_PLACEHOLDER: String
+
+  # Since #last_operation parameters are only for dev purposes, this method is
+  # used to reduce the reported value in order to avoid CookieOverflow.
+  #
+  # @param [Hash{Symbol=>*}] h
+  # @param [Integer]         max      Maximum size of representation.
+  # @param [Integer]         p_max    Max representation of individual param.
+  #
+  # @return [Hash{String=>*}]
+  #
+  def abbreviate_params!: (symHash h, ?max: Integer, ?p_max: Integer) -> strHash
+
+  # abbreviate_param
+  #
+  # @param [*]       item
+  # @param [Integer] p_max            Maximum size of representation.
+  #
+  # @return [*]
+  #
+  def abbreviate_param: (untyped item, ?p_max: Integer) -> untyped
+
+  # The item as it will be represented in the session cookie.
+  #
+  # @param [String, Symbol, Hash, Array] item
+  #
+  # @return [String]
+  #
+  def escaped_value: (String|Symbol|anyHash|anyArray item) -> String
+
   # Respond to the situation in which an authenticated user attempted to access
   # a route that is not allowed by the user's role.
   #

@@ -55,10 +55,17 @@ module CookieHelper
   def set_cookie(key, value = nil, **opt)
     value = opt[:value] if value.nil?
     value = true        if value.nil?
-    return value if cookie_value(key) == value
-    opt.reverse_merge!(COOKIE_OPTIONS).merge!(value: value)
-    response.set_cookie(key, opt)
-    remember_cookie(key, value)
+    unless cookie_value(key) == value
+      begin
+        opt.reverse_merge!(COOKIE_OPTIONS).merge!(value: value)
+        response.set_cookie(key, opt)
+        remember_cookie(key, value)
+      rescue ActionDispatch::Cookies::CookieOverflow => error
+        Log.warn { "#{__method__}(#{key.inspect}): could not set_cookie" }
+        Log.warn { "#{__method__}(#{key.inspect}): #{error.full_message}" }
+      end
+    end
+    value
   end
 
   # Remove the cookie from the request and indicate removal in the response.
@@ -107,6 +114,11 @@ module CookieHelper
   def remember_cookie(key, value)
     session[SS_COOKIES] = {} unless session[SS_COOKIES].is_a?(Hash)
     session[SS_COOKIES][key.to_s] = value
+  rescue ActionDispatch::Cookies::CookieOverflow => error
+    Log.warn do
+      "#{__method__}(#{key.inspect},#{value.inspect}): #{error.full_message}"
+    end
+    value
   end
 
   # Remove the copy of the cookie value from `session`.
