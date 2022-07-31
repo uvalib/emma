@@ -101,9 +101,8 @@ module PanelHelper
     label       &&= non_breaking(label)
     label       ||= open ? PANEL_CLOSER_LABEL : PANEL_OPENER_LABEL
     opt[:title] ||= open ? PANEL_CLOSER_TIP   : PANEL_OPENER_TIP
-    opt[:type]  ||= 'button'
     prepend_css!(opt, css, context, open)
-    button_tag(label, opt)
+    html_button(label, opt)
   end
 
   # ===========================================================================

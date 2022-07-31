@@ -719,7 +719,7 @@ module BaseDecorator::Form
   # @param [String, Symbol, nil] action
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url      Default: `#back_path`.
-  # @param [Hash]                opt      To #button_tag / LinkHelper#make_link
+  # @param [Hash]                opt      To #html_button/LinkHelper#make_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -729,17 +729,17 @@ module BaseDecorator::Form
   # noinspection RubyMismatchedArgumentType
   #++
   def cancel_button(action: nil, label: nil, url: nil, **opt)
-    css     = '.cancel-button'
-    action  = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
-    config  = form_actions.dig(action, :cancel) || {}
-    label ||= config[:label]
+    css    = '.cancel-button'
+    action = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
+    config = form_actions.dig(action, :cancel) || {}
+
+    label       ||= config[:label]
+    opt[:title] ||= config[:tooltip]
 
     prepend_css!(opt, css)
-    opt[:title] ||= config[:tooltip]
-    opt[:type]  ||= 'button'
 
     if opt[:'data-path'].present?
-      button_tag(label, opt)
+      html_button(label, opt)
     else
       make_link(label, (url || back_path), **opt)
     end

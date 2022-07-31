@@ -57,7 +57,7 @@
   configuration file and restarting.
 </p>
 <div class="field-container simple">
-  <%#= button_tag('Show nil values', type: 'button') TODO: scripting %>
+  <%#= html_button('Show nil values') TODO: scripting %>
   <div class="fields">
     <%- AppSettings.each_setting(spacers: true) do |name, value| -%>
       <%- spacer = Array.wrap(value).include?(:spacer) -%>

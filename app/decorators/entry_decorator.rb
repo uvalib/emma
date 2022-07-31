@@ -570,7 +570,7 @@ class EntryDecorator < BaseDecorator
               label  = "#{terms_label}:"
               label  = h.label_tag(terms_id, label)
               button = lookup_label
-              button = h.button_tag(button, type: 'button', class: 'submit')
+              button = html_button(button, class: 'submit')
               label << input << button
             end
           separator_choices =

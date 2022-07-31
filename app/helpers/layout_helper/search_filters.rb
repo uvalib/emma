@@ -510,11 +510,10 @@ module LayoutHelper::SearchFilters
   def advanced_search_button(**opt)
     css           = '.advanced-search-toggle'
     control       = SEARCH_FILTERS_START_EXPANDED ? :closer : :opener
-    opt[:type]  ||= 'button'
-    opt[:title] ||= ADV_SEARCH[control][:tooltip]
     label         = ADV_SEARCH[control][:label]
+    opt[:title] ||= ADV_SEARCH[control][:tooltip]
     prepend_css!(opt, css)
-    button_tag(label, opt)
+    html_button(label, opt)
   end
 
   # ===========================================================================

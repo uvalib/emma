@@ -69,9 +69,8 @@ module ScrollHelper
     opt   = merge_html_options(SCROLL_TOP, opt, { class: 'hidden' })
     label = opt.delete(:label)
     tip   = opt.delete(:tooltip)
-    opt[:title] = tip || opt[:title]
-    opt[:type]  = 'button'
-    button_tag(label, opt)
+    opt[:title] = tip if tip
+    html_button(label, opt)
   end
 
   # ===========================================================================
