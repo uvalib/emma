@@ -144,7 +144,7 @@ $entry-form-gap:  1.5rem;
 
     @extend .model-list;
 
-    @include grid.row-gap($entry-entry-gap);
+    row-gap: $entry-entry-gap;
 
     .pagination-top {
 
@@ -359,10 +359,8 @@ form.select-entry {
     grid-auto-rows: max-content;
 
     @media #{$narrow-screen} {
-
         grid-template-columns: 1fr;
-
-        @include grid.row-gap(0.25rem);
+        row-gap:               0.25rem;
     }
 
     //=========================================================================

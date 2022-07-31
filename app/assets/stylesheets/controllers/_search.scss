@@ -260,10 +260,10 @@ $title-bg: var(--title-bg);
     // noinspection SassScssResolvedByNameOnly
     @extend %label-value-pairs;
 
-    @include grid.row-gap($row-separation);
+    row-gap: $row-separation;
 
     @media #{$narrow-screen} {
-        @include grid.row-gap($row-separation-narrow);
+        row-gap: $row-separation-narrow;
     }
 
     //=========================================================================
@@ -296,11 +296,10 @@ $title-bg: var(--title-bg);
 
         &.array {
 
-            @include grid.row-gap($row-separation);
-
             display:       grid;
             align-items:   center;
             align-content: center;
+            row-gap:       $row-separation;
 
             @media #{$wide-screen} {
                 grid-template-columns: repeat(6, minmax(16.67%, 0.1667fr));

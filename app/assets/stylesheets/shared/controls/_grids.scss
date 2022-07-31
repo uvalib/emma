@@ -39,24 +39,6 @@
     grid-column-end:   $end;
 }
 
-/// Set grid vertical gap.
-///
-/// @param {Numeric} $gap-y           Row gap
-///
-@mixin row-gap($gap-y) {
-    grid-row-gap: $gap-y; // Required by Safari
-    row-gap:      $gap-y;
-}
-
-/// Set grid horizontal gap.
-///
-/// @param {Numeric} $gap-x           Column gap
-///
-@mixin column-gap($gap-x) {
-    grid-column-gap: $gap-x; // Required by Safari
-    column-gap:      $gap-x;
-}
-
 /// Define grid columns.
 ///
 /// @param {String}  $template

@@ -659,8 +659,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     .line,
     .form-controls {
+
         @include grid.column-span;
-        @include grid.column-gap(0.5rem);
+
+        column-gap: 0.5rem;
     }
 
     .line {
