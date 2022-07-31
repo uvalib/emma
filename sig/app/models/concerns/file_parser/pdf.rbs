@@ -3,8 +3,6 @@
 class FileParser::Pdf < FileParser
   include FileFormat::Pdf
 
-  @pdf_reader: PDF::Reader | nil
-
   # metadata
   #
   # @return [OpenStruct]
@@ -17,6 +15,8 @@ class FileParser::Pdf < FileParser
   # @return [nil]
   #
   def pdf_reader: () -> (PDF::Reader | nil)
+
+  @pdf_reader: PDF::Reader | nil
 
   private
 

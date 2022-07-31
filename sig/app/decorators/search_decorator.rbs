@@ -12,7 +12,8 @@ class SearchDecorator < BaseDecorator
     include BaseDecorator::Paths
   end
 
-  # Methods and values sharable with the related collection decorator.
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
   #
   module Methods
     include CssHelper
@@ -102,7 +103,7 @@ class SearchDecorator < BaseDecorator
     #
     def relevancy_scores?: () -> bool
 
-    # CSS classes for the current #search_style.
+    # CSS classes for the current search style.
     #
     # @param [String] suffix
     #
@@ -123,15 +124,31 @@ class SearchDecorator < BaseDecorator
     def result_classes: (?suffix: String) -> strArray
   end
 
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
   module InstanceMethods
     include BaseDecorator::InstanceMethods
+
     include Paths
+
     include Methods
   end
 
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
   module ClassMethods
     include BaseDecorator::ClassMethods
+
     include Paths
+
     include Methods
   end
 
@@ -233,7 +250,7 @@ class SearchDecorator < BaseDecorator
   # @see LinkHelper#icon_button
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToNext()*
   #
-  def next_record_link: (?index: Integer|nil, ?min_index: Integer|nil) -> ActiveSupport::SafeBuffer
+  def next_record_link: (?index: Integer|nil, ?max_index: Integer|nil) -> ActiveSupport::SafeBuffer
 
   # Make a clickable link to the display page for the title on the originating
   # repository's web site.

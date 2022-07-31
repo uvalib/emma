@@ -19,11 +19,6 @@ module OmniAuth
 
       include OmniAuth::ExtensionDebugging
 
-      @log:          Emma::Log
-      @account_info: symHash
-      @client:       ::OAuth2::Client
-      @stored_auth:  strHash
-
       # Direct access to the OmniAuth logger, automatically prefixed with this
       # strategy's name.
       #
@@ -37,6 +32,8 @@ module OmniAuth
       # override simply manages its own logger instance.
       #
       def log: (Symbol level, String message) -> nil
+
+      @log: Emma::Log
 
       # Performs the steps necessary to run the request phase of a strategy.
       #
@@ -81,6 +78,8 @@ module OmniAuth
       #
       def account_info: () -> symHash
 
+      @account_info: symHash
+
       # Acquire information about the user account from +Bookshare+.
       #
       # @param [Hash, nil] opt        Passed to ::OAuth2::AccessToken#get
@@ -113,6 +112,8 @@ module OmniAuth
       # @return [::OAuth2::Client]
       #
       def client: () -> ::OAuth2::Client
+
+      @client: ::OAuth2::Client
 
       # request_phase
       #
@@ -279,6 +280,8 @@ module OmniAuth
       # the value returned by this method and the associated User table entry.
       #
       def self.stored_auth: (?(anyHash|nil) values) -> Hash[String,anyHash]
+
+      @stored_auth: strHash
 
       # Produce a stored_auth table entry value.
       #

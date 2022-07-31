@@ -8,9 +8,6 @@ module BaseDecorator::Form
   #
   module Values
 
-    @field_groups:   Hash[Symbol,symHash]
-    @status_markers: Hash[Symbol,symHash]
-    @form_actions:   Hash[Symbol,symHash]
 
     # Model-specific field group configuration.
     #
@@ -18,17 +15,23 @@ module BaseDecorator::Form
     #
     def field_groups: () -> Hash[Symbol,symHash]
 
+    @field_groups: Hash[Symbol,symHash]
+
     # Model-specific status marker configuration.
     #
     # @return [Hash{Symbol=>Hash}]
     #
     def status_markers: () -> Hash[Symbol,symHash]
 
+    @status_markers: Hash[Symbol,symHash]
+
     # Form action button configuration.
     #
     # @type [Hash{Symbol=>Hash}]
     #
     def form_actions: () -> Hash[Symbol,symHash]
+
+    @form_actions: Hash[Symbol,symHash]
 
     # Form action button configuration.
     #
@@ -401,6 +404,7 @@ module BaseDecorator::Form
   #
   # @see #FIELD_GROUP
   # @see file:javascripts/feature/model-form.js *fieldDisplayFilterSelect()*
+  # @see file:app/assets/stylesheets/layouts/_root.scss *.wide-screen*, etc.
   #
   def field_group_controls: (**untyped opt) -> ActiveSupport::SafeBuffer
 

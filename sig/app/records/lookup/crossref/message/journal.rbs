@@ -16,5 +16,5 @@ class Lookup::Crossref::Message::Journal < Lookup::Crossref::Api::Message
   #
   # @return [Array<Lookup::Crossref::Record::Journal>]
   #
-  def api_record: () -> Array[Lookup::Crossref::Record::Journal]
+  def api_records: () -> Array[Lookup::Crossref::Record::Journal]
 end

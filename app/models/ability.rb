@@ -12,6 +12,9 @@ __loading_begin(__FILE__)
 # - The :read argument implies permission for the :index and :show endpoints.
 # - The controller manipulates instances of the Artifact resource.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class Ability
 
   include Emma::Common

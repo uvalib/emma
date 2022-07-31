@@ -1,12 +1,12 @@
 class LookupChannel < ApplicationCable::Channel
 
-  @stream_name: String
-
   # stream_name
   #
   # @return [String]
   #
   def stream_name: () -> String
+
+  @stream_name: String
 
   # Receive a lookup request from the client.
   #

@@ -1,4 +1,4 @@
-# app/views/account/index.xml.builder
+# app/views/data/index.xml.builder
 #
 # frozen_string_literal: true
 # warn_indent:           true

@@ -10,6 +10,12 @@ module TestHelper::IntegrationTests::Authentication
   include TestHelper::Utility
   include TestHelper::Debugging
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Text indicating an authentication failure.
   #
   # @type [String]
@@ -101,7 +107,7 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @param [String, Symbol, User, nil] user
   # @param [Hash]                      opt    Passed to #run_test.
-  # @param [Proc]                      block  Required.
+  # @param [Proc]                      block  Required test code to execute.
   #
   # @return [void]
   #

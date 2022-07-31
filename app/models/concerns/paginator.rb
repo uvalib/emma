@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Encapsulation of pagination parameters.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class Paginator
 
   include ActionController::UrlFor

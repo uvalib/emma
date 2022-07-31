@@ -4,10 +4,6 @@ module Search::Shared::IdentifierMethods
   include Api::Shared::IdentifierMethods
   include Search::Shared::CommonMethods
 
-  @isbn:           String | nil
-  @related_isbns:  strArray
-  @all_isbns:      strArray
-
   # The ISBN.
   #
   # @return [String]
@@ -15,17 +11,23 @@ module Search::Shared::IdentifierMethods
   #
   def isbn: () -> (String | nil)
 
+  @isbn: String | nil
+
   # Related ISBNs omitting the main ISBN if part of the data array.
   #
   # @return [Array<String>]
   #
   def related_isbns: () -> strArray
 
+  @related_isbns: strArray
+
   # The main and related ISBNs.
   #
   # @return [Array<String>]
   #
   def all_isbns: () -> strArray
+
+  @all_isbns: strArray
 
   # Get only ISBN identifiers.
   #

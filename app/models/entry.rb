@@ -55,7 +55,7 @@ class Entry < ApplicationRecord
   include Record::Describable
   include Record::Searchable
   include Record::Submittable
-  include Record::Uploadable # NOTE: needed for #file_name
+  include Record::Uploadable
   include Record::Validatable
 
   include Record::Testing

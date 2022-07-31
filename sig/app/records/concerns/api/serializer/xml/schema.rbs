@@ -77,13 +77,13 @@ module Api::Serializer::Xml::Schema
   #
   def attributes_as_elements?: () -> bool
 
-  @xml_namespaces: Hash[String,String]
-
   # The set of XML namespaces.
   #
   # @type [Hash{String=>String}]
   #
   def xml_namespaces: () -> Hash[String,String]
+
+  @xml_namespaces: Hash[String,String]
 
   # The naming mode for de-serializing data elements from XML.
   #

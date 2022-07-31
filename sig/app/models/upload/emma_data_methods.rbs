@@ -11,12 +11,6 @@ module Upload::EmmaDataMethods
   #
   DATA_COLUMNS: symArray
 
-  @emma_record:        Search::Record::MetadataRecord | nil
-  @emma_metadata:      symHash | nil
-
-  @edit_emma_record:   Search::Record::MetadataRecord | nil
-  @edit_emma_metadata: symHash | nil
-
   # The database column currently associated with EMMA metadata presented by
   # the record.
   #
@@ -36,11 +30,15 @@ module Upload::EmmaDataMethods
   #
   def emma_record: () -> Search::Record::MetadataRecord
 
+  @emma_record: Search::Record::MetadataRecord | nil
+
   # Present :emma_data as a hash (if it is present).
   #
   # @return [Hash]
   #
   def emma_metadata: () -> symHash
+
+  @emma_metadata: symHash | nil
 
   # Set the :emma_data field value.
   #
@@ -67,11 +65,15 @@ module Upload::EmmaDataMethods
   #
   def edit_emma_record: () -> Search::Record::MetadataRecord
 
+  @edit_emma_record: Search::Record::MetadataRecord | nil
+
   # Present :edit_emma_data as a hash (if it is present).
   #
   # @return [Hash]
   #
   def edit_emma_metadata: () -> symHash
+
+  @edit_emma_metadata: symHash | nil
 
   # Set the :edit_emma_data field value.
   #

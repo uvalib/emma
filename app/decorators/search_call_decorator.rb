@@ -29,6 +29,9 @@ class SearchCallDecorator < BaseDecorator
     include BaseDecorator::Paths
   end
 
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
   module Methods
     include BaseDecorator::Methods
   end

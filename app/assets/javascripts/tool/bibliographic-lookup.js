@@ -75,7 +75,6 @@ export async function setup(base, show_hooks, hide_hooks) {
     // Channel
     // ========================================================================
 
-    /** @type {LookupChannel} */
     let channel = await import('../channels/lookup-channel');
 
     channel.disconnectOnPageExit(DEBUGGING);

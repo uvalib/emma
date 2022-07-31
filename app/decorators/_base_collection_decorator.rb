@@ -34,7 +34,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   public
 
-  # Methods for each decorator collection class instance.
+  # Methods for each collection decorator class instance.
   #
   # @!attribute [r] object_class
   #   @return [Class]
@@ -69,7 +69,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   end
 
-  # Methods for each decorator collection class.
+  # Methods for each collection decorator class.
   #
   module ClassMethods
 

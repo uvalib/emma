@@ -83,9 +83,9 @@ class ExecError < RuntimeError
     @messages.map! { |m| to_utf8(m).tap { |v| (m == v) ? v.dup : v } }
     # noinspection RubyMismatchedArgumentType
     super(@messages.first)
-  rescue => e
-    Log.error { "ExecError#initialize: #{e.class}: #{e.message}" }
-    re_raise_if_internal_exception(e)
+  rescue => error
+    Log.error { "ExecError#initialize: #{error.class}: #{error.message}" }
+    re_raise_if_internal_exception(error)
     super('ERROR')
   end
 

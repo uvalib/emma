@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Methods supporting the creation and modification of Model instances.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module BaseDecorator::Form
 
   include BaseDecorator::List
@@ -156,6 +159,7 @@ module BaseDecorator::Form
   )
     prop = field_configuration(field)
     return if prop[:ignored]
+    # noinspection RubyMismatchedArgumentType
     return if prop[:role] && !has_role?(prop[:role])
 
     # Pre-process label to derive names and identifiers.

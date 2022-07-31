@@ -89,6 +89,9 @@ __loading_begin(__FILE__)
 # This user cannot log in to www.bookshare.org or catalog.bookshare.org and
 # appears to be a "type" of user that is completely new.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class User < ApplicationRecord
 
   include Emma::Common

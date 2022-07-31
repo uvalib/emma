@@ -11,13 +11,13 @@ module TestHelper::IntegrationTests::Authentication
   #
   AUTH_FAILURE: String
 
-  @current_user: User | nil
-
   # Current user within a test.
   #
   # @return [User, nil]
   #
   def current_user: () -> (User | nil)
+
+  @current_user: User | nil
 
   # Set the current test user.
   #
@@ -66,7 +66,7 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @param [String, Symbol, User, nil] user
   # @param [Hash]                      opt    Passed to #run_test.
-  # @param [Proc]                      block  Required.
+  # @param [Proc]                      block  Required test code to execute.
   #
   # @return [void]
   #

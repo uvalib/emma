@@ -3528,6 +3528,7 @@ $(document).on('turbolinks:load', function() {
         return lookupButton(form).removeData(LookupModal.SEARCH_TERMS_DATA);
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Update data on the Lookup button if required.
      *
@@ -3581,6 +3582,7 @@ $(document).on('turbolinks:load', function() {
     // Functions - bibliographic lookup - search results
     // ========================================================================
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Get the results from lookup.
      *

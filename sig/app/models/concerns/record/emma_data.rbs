@@ -87,9 +87,6 @@ module Record::EmmaData
   module InstanceMethods
     include Record::EmmaData
 
-    @emma_record:   Search::Record::MetadataRecord | nil
-    @emma_metadata: symHash | nil
-
     # @see Record::EmmaData#make_retrieval_link
     #
     def make_retrieval_link: (?(String|nil) rid, ?(symHash|String|nil) base_url) -> (String | nil)
@@ -104,11 +101,15 @@ module Record::EmmaData
     #
     def emma_record: () -> Search::Record::MetadataRecord
 
+    @emma_record: Search::Record::MetadataRecord | nil
+
     # Present :emma_data as a hash (if it is present).
     #
     # @return [Hash{Symbol=>Any}]
     #
     def emma_metadata: () -> symHash
+
+    @emma_metadata: symHash | nil
 
     # Set the :emma_data field value (if not #EMMA_DATA_HASH).
     #

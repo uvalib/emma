@@ -9,8 +9,6 @@ module Record::Describable
 
   extend ::Record::Describable
 
-  @interpolation_table: Hash[Symbol,Symbol]
-
   # Extract the interpolation methods defined in the current context indexed by
   # their respective interpolation keys.
   #
@@ -19,6 +17,8 @@ module Record::Describable
   # @return [Hash{Symbol=>Symbol}]
   #
   def interpolation_table: () -> Hash[Symbol,Symbol]
+
+  @interpolation_table: Hash[Symbol,Symbol]
 
   # Replace #sprintf named references with the matching values extracted from
   # *model* or *opt*.

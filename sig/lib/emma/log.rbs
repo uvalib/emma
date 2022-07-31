@@ -5,11 +5,6 @@ module Emma::Log
 
   LOG_LEVEL: Hash[Symbol, Integer]
 
-  @logger:          Logger
-  @local_levels:    Concurrent::Map
-  @silenced_maps:   Concurrent::Map
-  @saved_log_level: Concurrent::Map
-
   # The current logger.
   #
   # @return [Logger]
@@ -23,6 +18,8 @@ module Emma::Log
   # @return [Logger]
   #
   def self.logger=: (Logger logger) -> Logger
+
+  @logger: Logger
 
   # Add a log message.
   #
@@ -107,6 +104,8 @@ module Emma::Log
   #
   def self.local_levels: () -> Concurrent::Map
 
+  @local_levels: Concurrent::Map
+
   # local_log_id
   #
   # @return [Integer]
@@ -147,13 +146,13 @@ module Emma::Log
   #
   def self.level: () -> Integer
 
-  @silenced_map: Concurrent::Map
-
   # Thread-safe storage for silenced status.
   #
   # @return [Concurrent::Map]
   #
   def self.silenced_map: () -> Concurrent::Map
+
+  @silenced_map: Concurrent::Map
 
   # Indicate whether control is within a block where logging is silenced.
   #
@@ -178,6 +177,8 @@ module Emma::Log
   # @return [Concurrent::Map]
   #
   def self.saved_log_level: () -> Concurrent::Map
+
+  @saved_log_level: Concurrent::Map
 
   # Control whether the logger is silent.
   #

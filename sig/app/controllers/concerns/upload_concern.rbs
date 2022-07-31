@@ -22,7 +22,6 @@ module UploadConcern
 
   MIME_REGISTRATION: Array[Class]
 
-  @upload_params: symHash
   @db_id:         Integer | nil
   @identifier:    String
   @workflow:      Workflow::Base
@@ -32,6 +31,8 @@ module UploadConcern
   # @return [Hash{Symbol=>Any}]
   #
   def upload_params: () -> symHash
+
+  @upload_params: symHash
 
   # Get URL parameters relevant to the current operation.                       # NOTE: method now unused
   #
@@ -150,7 +151,7 @@ module UploadConcern
   #
   # @see Upload#get_record
   #
-  def get_record: (?(String|Upload|anyHash|nil) id, **untyped opt) -> (Upload | nil)
+  def get_record: (String|Upload|anyHash|nil id) -> (Upload | nil)
 
   # Get item data from the production service.
   #
@@ -300,13 +301,13 @@ module UploadConcern
 
   include PaginationConcern
 
-  @model_options: Upload::Options
-
   # Create a @model_options instance from the current parameters.
   #
   # @return [Upload::Options]
   #
   def set_model_options: () -> Upload::Options
+
+  @model_options: Upload::Options
 
   # Create a Paginator for the current controller action.
   #

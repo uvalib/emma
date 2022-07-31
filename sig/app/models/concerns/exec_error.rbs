@@ -34,7 +34,7 @@ class ExecError < RuntimeError
   #
   # @return [Exception]
   #
-  def exception: (*untyped, **untyped) ?{ () -> untyped } -> Exception
+  def exception: (*untyped) ?{ () -> untyped } -> Exception
 
   # If applicable, the original exception that was rescued which resulted in
   # raising an ExecError exception.
@@ -62,7 +62,7 @@ class ExecError < RuntimeError
     #
     # @return [String]
     #
-    def default_message: (*untyped, **untyped) ?{ () -> untyped } -> String
+    def default_message: (*untyped) ?{ () -> untyped } -> String
 
     # Extract error message(s) from the given item.
     #

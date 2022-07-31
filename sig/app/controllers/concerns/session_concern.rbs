@@ -180,6 +180,11 @@ module SessionConcern
 
   include SerializationHelper
 
+  # :nocov:
+  #include AbstractController::Callbacks::ClassMethods
+
+  #include SessionConcern
+
   # This overrides the DeviseController message to allow the standard
   # 'already_authenticated' flash message to be overridden by
   # `session['app.devise.failure.message']`.

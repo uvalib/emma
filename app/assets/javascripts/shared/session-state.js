@@ -207,6 +207,7 @@ export class SessionState extends BaseClass {
 // Class SessionToggle
 // ============================================================================
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * A binary on/off state saved in sessionStorage.
  */

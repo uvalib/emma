@@ -60,6 +60,7 @@ export class LookupResponse extends BaseClass {
     // Constants
     // ========================================================================
 
+    // noinspection JSUnusedGlobalSymbols
     /**
      * @readonly
      * @enum {string}

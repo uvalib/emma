@@ -263,10 +263,11 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [String, Model, Hash, nil]
     #
+    #--
+    # noinspection RailsParamDefResolve, RubyMismatchedReturnType
+    #++
     def id_for(item = nil, **opt)
-      # noinspection RailsParamDefResolve
       id = opt[:id] || (item ||= try(:object))&.try(:id) || item
-      # noinspection RubyMismatchedReturnType
       id.is_a?(Array) ? id.join(',') : id
     end
 
@@ -552,6 +553,9 @@ class BaseDecorator < Draper::Decorator
   #   Set in Draper#initialize
   #   @return [Hash{Symbol=>*}]
   #
+  #--
+  # noinspection RubyTooManyMethodsInspection
+  #++
   module InstanceMethods
 
     include Paths

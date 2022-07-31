@@ -10,14 +10,15 @@ module ApplicationJob::Logging
 
   include Emma::Debug
 
-  @job_name:   String
-  @job_leader: String
-
   def job_warn: (*untyped args, ?meth: Symbol|nil) { () -> String } -> (true | nil)
 
   def job_name: () -> String
 
+  @job_name: String
+
   def job_leader: (ApplicationJob job) -> String
+
+  @job_leader: String
 
   def job_inspect: (ApplicationJob job) -> String
 

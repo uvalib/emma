@@ -49,13 +49,6 @@ module FileFormat
   #
   FIELD_ALWAYS_ARRAY: symArray
 
-  @parser:                 FileParser
-  @parser_metadata:        untyped
-  @metadata:               symHash
-  @common_metadata:        symHash
-  @format_fields:          Hash[Symbol,(Proc|Symbol)]
-  @mapped_metadata_fields: Hash[Symbol,Symbol]
-
   # configuration
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
@@ -68,11 +61,15 @@ module FileFormat
   #
   def parser: () -> FileParser
 
+  @parser: FileParser
+
   # parser_metadata
   #
   # @return [Any]                     Type is specific to the subclass.
   #
   def parser_metadata: () -> untyped
+
+  @parser_metadata: untyped
 
   # Metadata extracted from the file format instance.
   #
@@ -80,11 +77,15 @@ module FileFormat
   #
   def metadata: () -> strHash
 
+  @metadata: symHash
+
   # Extracted metadata mapped to common metadata fields.
   #
   # @return [Hash{Symbol=>Any}]
   #
   def common_metadata: () -> symHash
+
+  @common_metadata: symHash
 
   # Metadata extracted from the file format instance.
   #
@@ -141,6 +142,8 @@ module FileFormat
   #
   def format_fields: () -> Hash[Symbol,(Proc|Symbol)]
 
+  @format_fields: Hash[Symbol,(Proc|Symbol)]
+
   # field_transforms
   #
   # @return [Hash{Symbol=>Hash{Symbol=>Proc,Symbol}}]
@@ -159,6 +162,8 @@ module FileFormat
   # @return [Hash{Symbol=>Symbol}]
   #
   def mapped_metadata_fields: () -> Hash[Symbol,Symbol]
+
+  @mapped_metadata_fields: Hash[Symbol,Symbol]
 
   # Transform a date object or string into "YYYY-MM-DD" format.
   #

@@ -18,7 +18,7 @@ import { createChannel }                 from '../channels/consumer'
 // ============================================================================
 
 /**
- * @typedef {import('../channels/lookup-channel')} LookupChannel
+ * @module LookupChannel
  */
 
 // ============================================================================

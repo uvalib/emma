@@ -10,8 +10,6 @@ module HeadHelper::Stylesheets
 
   public
 
-  @page_stylesheets: strArray
-
   # Access the stylesheets for this page.
   #
   # If a block is given, this invocation is being used to accumulate stylesheet
@@ -26,6 +24,8 @@ module HeadHelper::Stylesheets
   #
   def page_stylesheets: () { () -> (String | strArray) } -> strArray
                       | ()                               -> ActiveSupport::SafeBuffer
+
+  @page_stylesheets: strArray
 
   # Set the stylesheet(s) for this page, eliminating any previous value(s).
   #

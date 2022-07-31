@@ -70,20 +70,21 @@ module Workflow::Base::Roles
 
   IF_DEV_DEBUG: symHash
 
-  @current_user: User | String
-  @current_role: Symbol
-
   # The current workflow user.
   #
   # @return [User,String]
   #
   def current_user: () -> (User | String)
 
+  @current_user: User | String
+
   # The workflow role of the current workflow user.
   #
   # @return [Symbol]
   #
   def current_role: () -> Symbol
+
+  @current_role: Symbol
 
   # Set the workflow user.
   #
@@ -214,7 +215,7 @@ module Workflow::Base::Data
   #
   # @return [void]
   #
-  def reset_status: (*untyped, **untyped) ?{ () -> untyped } -> void
+  def reset_status: (*untyped) ?{ () -> untyped } -> void
 
   # Indicate whether data has been assigned.
   #
@@ -250,13 +251,13 @@ module Workflow::Base::Simulation
   #
   # @return [Boolean]
   #
-  def simulating: (*untyped, **untyped) ?{ () -> untyped } -> bool
+  def simulating: (*untyped) ?{ () -> untyped } -> bool
 
   # Neutralize debugging methods when not debugging.
   #
   # @return [nil]
   #
-  def __debug_sim: (*untyped, **untyped) ?{ () -> untyped } -> nil
+  def __debug_sim: (*untyped) ?{ () -> untyped } -> nil
 
   class SimulatedTask
   end

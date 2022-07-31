@@ -72,6 +72,9 @@ class UserDecorator < AccountDecorator
 
   end
 
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
   module Methods
 
     include AccountDecorator::Methods
@@ -92,6 +95,12 @@ class UserDecorator < AccountDecorator
 
   end
 
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
   module InstanceMethods
 
     include AccountDecorator::InstanceMethods, Paths, Methods
@@ -114,6 +123,12 @@ class UserDecorator < AccountDecorator
 
   end
 
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
   module ClassMethods
     include AccountDecorator::ClassMethods, Paths, Methods
   end

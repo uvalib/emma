@@ -11,6 +11,9 @@ __loading_begin(__FILE__)
 # @see EntriesDecorator
 # @see file:app/views/entry/**
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class EntryController < ApplicationController
 
   include UserConcern

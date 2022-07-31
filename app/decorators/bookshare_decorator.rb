@@ -29,6 +29,9 @@ class BookshareDecorator < BaseDecorator
     include BaseDecorator::Paths
   end
 
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
   module Methods
 
     include BaseDecorator::Methods
@@ -279,6 +282,12 @@ class BookshareDecorator < BaseDecorator
 
   end
 
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
   module InstanceMethods
 
     include BaseDecorator::InstanceMethods, Paths, Methods
@@ -317,6 +326,12 @@ class BookshareDecorator < BaseDecorator
 
   end
 
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
   module ClassMethods
     include BaseDecorator::ClassMethods, Paths, Methods
   end

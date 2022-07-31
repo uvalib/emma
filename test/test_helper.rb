@@ -119,7 +119,7 @@ end
 #
 class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
-  include TestHelper #::Samples
+  include TestHelper
   include TestHelper::Debugging::Trace
   extend  TestHelper::Utility
 end

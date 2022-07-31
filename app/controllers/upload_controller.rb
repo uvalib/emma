@@ -11,6 +11,9 @@ __loading_begin(__FILE__)
 # @see UploadsDecorator
 # @see file:app/views/upload/**
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class UploadController < ApplicationController
 
   include UserConcern

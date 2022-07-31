@@ -20,6 +20,7 @@ module Model
   # @return [String]
   #
   def identifier
+    # noinspection RubyMismatchedReturnType
     (respond_to?(:id) ? id : object_id).to_s
   end
 

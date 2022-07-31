@@ -60,9 +60,6 @@ module Api::Shared::DateMethods
   #
   # @return [void]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def normalize_title_dates!(data = nil)
     cpr, pub = get_field_values(data, *TITLE_DATE_FIELDS)
     if cpr && pub

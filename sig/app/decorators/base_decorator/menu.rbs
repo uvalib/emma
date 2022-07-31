@@ -9,7 +9,7 @@ module BaseDecorator::Menu
   # @param [User, Symbol, nil]   user     Default: `current_user`
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
-  # @param [Hash]                opt      Passed to #form_tag except for:
+  # @param [Hash]                opt      Passed to #html_form except for:
   #
   # @option opt [String, Hash] :ujs
   #

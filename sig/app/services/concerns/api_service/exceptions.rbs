@@ -17,8 +17,6 @@ module ApiService::Exceptions
   #
   attr_reader exception: ApiService::Error | nil
 
-  @error_classes: Hash[Symbol,Class]
-
   # Indicate whether the latest API request generated an exception.
   #
   def error?: () -> bool
@@ -60,91 +58,91 @@ module ApiService::Exceptions
   #
   # @return [ApiService::AuthError]
   #
-  def auth_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::AuthError
+  def auth_error: (*untyped) ?{ () -> untyped } -> ApiService::AuthError
 
   # Generate a service error indicating a network communication failure.
   #
   # @return [ApiService::CommError]
   #
-  def comm_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::CommError
+  def comm_error: (*untyped) ?{ () -> untyped } -> ApiService::CommError
 
   # Generate a service error indicating a network session failure.
   #
   # @return [ApiService::SessionError]
   #
-  def session_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::SessionError
+  def session_error: (*untyped) ?{ () -> untyped } -> ApiService::SessionError
 
   # Generate a service error indicating a failure to make a network connection.
   #
   # @return [ApiService::ConnectError]
   #
-  def connect_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::ConnectError
+  def connect_error: (*untyped) ?{ () -> untyped } -> ApiService::ConnectError
 
   # Generate a service error indicating a network session timeout.
   #
   # @return [ApiService::TimeoutError]
   #
-  def timeout_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::TimeoutError
+  def timeout_error: (*untyped) ?{ () -> untyped } -> ApiService::TimeoutError
 
   # Generate a service error indicating a network send failure.
   #
   # @return [ApiService::XmitError]
   #
-  def xmit_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::XmitError
+  def xmit_error: (*untyped) ?{ () -> untyped } -> ApiService::XmitError
 
   # Generate a service error indicating a network receive failure.
   #
   # @return [ApiService::RecvError]
   #
-  def recv_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RecvError
+  def recv_error: (*untyped) ?{ () -> untyped } -> ApiService::RecvError
 
   # Generate a service error indicating a bad network packet.
   #
   # @return [ApiService::ParseError]
   #
-  def parse_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::ParseError
+  def parse_error: (*untyped) ?{ () -> untyped } -> ApiService::ParseError
 
   # Generate a service error indicating the API request was invalid.
   #
   # @return [ApiService::RequestError]
   #
-  def request_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RequestError
+  def request_error: (*untyped) ?{ () -> untyped } -> ApiService::RequestError
 
   # Generate a service error indicating the API request was empty.
   #
   # @return [ApiService::NoInputError]
   #
-  def no_input_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::NoInputError
+  def no_input_error: (*untyped) ?{ () -> untyped } -> ApiService::NoInputError
 
   # Wrap an exception or response in a service error.
   #
   # @return [ApiService::ResponseError]
   #
-  def response_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::ResponseError
+  def response_error: (*untyped) ?{ () -> untyped } -> ApiService::ResponseError
 
   # Generate a service error indicating that the response had no data.
   #
   # @return [ApiService::EmptyResultError]
   #
-  def empty_result_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::EmptyResultError
+  def empty_result_error: (*untyped) ?{ () -> untyped } -> ApiService::EmptyResultError
 
   # Generate a service error indicating HTML was received instead of JSON.
   #
   # @return [ApiService::HtmlResultError]
   #
-  def html_result_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::HtmlResultError
+  def html_result_error: (*untyped) ?{ () -> untyped } -> ApiService::HtmlResultError
 
   # Generate a service error indicating a failure to redirect.
   #
   # @return [ApiService::RedirectionError]
   #
-  def redirect_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RedirectionError
+  def redirect_error: (*untyped) ?{ () -> untyped } -> ApiService::RedirectionError
 
   # Generate a service error indicating too many redirects.
   #
   # @return [ApiService::RedirectLimitError]
   #
-  def redirect_limit_error: (*untyped, **untyped) ?{ () -> untyped } -> ApiService::RedirectLimitError
+  def redirect_limit_error: (*untyped) ?{ () -> untyped } -> ApiService::RedirectLimitError
 
   private
 
@@ -157,6 +155,8 @@ module ApiService::Exceptions
   # @see ApiService::Error#error_classes
   #
   def get_error_classes: (?(ApiService|Class|String|nil) service) -> Hash[Symbol,Class]
+
+  @error_classes: Hash[Symbol,Class]
 
   # log_exception
   #

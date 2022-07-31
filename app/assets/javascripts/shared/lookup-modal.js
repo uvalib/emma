@@ -36,6 +36,18 @@ import {
 // Class LookupModal
 // ============================================================================
 
+/**
+ * NOTE: This JSDoc arrangement became necessary starting with RubyMine 2022.2
+ *
+ * @typedef {import('../channels/lookup-channel')} LookupChannel
+ *
+ * @property {function(?boolean)}                 disconnectOnPageExit
+ * @property {function(...(function|function[]))} addCallback
+ * @property {function(...(function|function[]))} setErrorCallback
+ * @property {function(...(function|function[]))} setDiagnosticCallback
+ * @property {function(string|string[]|LookupRequest|LookupRequestObject)} request
+ */
+
 // noinspection LocalVariableNamingConventionJS
 export class LookupModal extends ModalDialog {
 

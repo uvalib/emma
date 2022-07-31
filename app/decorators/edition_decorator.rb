@@ -29,14 +29,29 @@ class EditionDecorator < BookshareDecorator
     include BookshareDecorator::Paths
   end
 
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
   module Methods
     include BookshareDecorator::Methods
   end
 
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
   module InstanceMethods
     include BookshareDecorator::InstanceMethods, Paths, Methods
   end
 
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
   module ClassMethods
     include BookshareDecorator::ClassMethods, Paths, Methods
   end

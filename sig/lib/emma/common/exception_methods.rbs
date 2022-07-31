@@ -25,6 +25,8 @@ module Emma::Common::ExceptionMethods
   #
   # @param [Exception, Any, nil] error
   #
+  # @return [nil]
+  #
   # == Usage Notes
   # The re-raise will happen only when running on the desktop.
   #

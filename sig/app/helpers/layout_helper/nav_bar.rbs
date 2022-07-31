@@ -67,7 +67,7 @@ module LayoutHelper::NavBar
 
   # Indicate whether it is appropriate to show the nav bar.
   #
-  def show_nav_bar?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+  def show_nav_bar?: (*untyped) ?{ () -> untyped } -> bool
 
   # Generate an element containing links for the main page of each controller.
   #

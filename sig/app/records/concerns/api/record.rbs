@@ -19,8 +19,6 @@ class Api::Record
   # @return [Exception, nil]
   attr_reader exception: Exception | nil
 
-  @serializer: Api::Serializer
-
   # Initialize a new instance.
   #
   # @param [Faraday::Response, Model, Hash, String, nil] src
@@ -58,6 +56,8 @@ class Api::Record
   # @see Api::Record::Schema::ClassMethods#serializers
   #
   def serializer: (?(Symbol|nil) `type`) -> Api::Serializer
+
+  @serializer: Api::Serializer
 
   # Load data elements from the supplied data.
   #

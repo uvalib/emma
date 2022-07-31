@@ -93,6 +93,18 @@ module ActiveRecord
   end
 end
 
+# NOTE: overrides .gem_rbs_collection/actionview/6.0/actionview-generated.rbs
+module ActionView
+  module Helpers
+    module FormTagHelper
+      def form_tag: (?(String|anyHash) url_for_options, ?anyHash options) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
+    end
+    module RenderingHelper
+      def render: (?(String|anyHash) options, ?anyHash locals) ?{ () -> untyped } -> untyped
+    end
+  end
+end
+
 module CanCan
   module Ability
   end

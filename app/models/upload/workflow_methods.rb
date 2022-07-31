@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Workflow support for Upload records.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module Upload::WorkflowMethods
 
   include Emma::Debug

@@ -55,7 +55,7 @@ class ExecReport
   #
   # @return [self]
   #
-  def clear: (*untyped, **untyped) ?{ () -> untyped } -> self
+  def clear: (*untyped) ?{ () -> untyped } -> self
 
   # Replace the original data of the instance.
   #

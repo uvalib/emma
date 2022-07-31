@@ -617,7 +617,6 @@ module OmniAuth
       def self.synthetic_auth_hash(src, token = nil)
         # noinspection RubyMismatchedReturnType
         return src if src.is_a?(OmniAuth::AuthHash)
-        # noinspection RailsParamDefResolve
         user = src.is_a?(String) ? src : src.try(:uid)
         if user.nil? && (src = url_parameters(src).presence).is_a?(Hash)
           return src[:auth] if src[:auth].is_a?(OmniAuth::AuthHash)

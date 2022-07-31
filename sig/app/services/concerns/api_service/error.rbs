@@ -27,21 +27,23 @@ class ApiService::Error < Api::Error
 
     include Api::Error::Methods
 
-    @service_name:    String
-    @default_message: String
-    @error_classes:   Hash[Symbol,Class]
+    @error_classes: Hash[Symbol,Class]
 
     # The descriptive name of the current instance service.
     #
     # @return [String]
     #
-    def service_name: (*untyped, **untyped) ?{ () -> untyped } -> String
+    def service_name: (*untyped) ?{ () -> untyped } -> String
+
+    @service_name: String
 
     # Default error message for the current instance.
     #
     # @return [String]
     #
     def default_message: () -> String
+
+    @default_message: String
 
     # Prefix seen in Bookshare error messages and also in the header of OAuth2
     # responses.

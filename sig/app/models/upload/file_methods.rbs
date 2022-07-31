@@ -81,14 +81,14 @@ module Upload::FileMethods
   #
   DOWNLOAD_EXPIRATION: Integer
 
-  @filename: String | nil
-
   # Full name of the file.
   #
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
   def filename: () -> (String | nil)
+
+  @filename: String | nil
 
   # Return the attached file, loading it if necessary (and possible).
   #

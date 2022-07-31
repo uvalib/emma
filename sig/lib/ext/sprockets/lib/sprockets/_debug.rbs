@@ -12,10 +12,9 @@ end
 class DebugTiming
   extend Emma::Time
 
-  @start: Float
-  @level: Integer
-
   def self.start: () -> Float
+
+  @start: Float
 
   def self.now: () -> Float
 
@@ -24,6 +23,8 @@ class DebugTiming
   def self.duration: (?(Float|nil) start_time, ?(Float|nil) end_time) -> untyped
 
   def self.level: () -> Integer
+
+  @level: Integer
 
   def self.push_level: () -> Integer
 

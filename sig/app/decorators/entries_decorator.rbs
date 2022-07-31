@@ -10,14 +10,13 @@ class EntriesDecorator < BaseCollectionDecorator
 
   extend EntryDecorator::ClassMethods
 
-
-  @group_counts: Hash[Symbol,Integer]
-
   # group_counts
   #
   # @return [Hash{Symbol=>Integer}]
   #
   def group_counts: () -> Hash[Symbol,Integer]
+
+  @group_counts: Hash[Symbol,Integer]
 
   # Select records based on workflow state group.
   #

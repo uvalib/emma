@@ -57,6 +57,7 @@ class LookupService::Data
   # @return [Integer]
   #
   def item_count
+    # noinspection RubyMismatchedReturnType
     item_values.values.compact.sum { |v| v.is_a?(Array) ? v.size : 1 }
   end
 

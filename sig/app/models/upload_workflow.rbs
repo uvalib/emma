@@ -962,7 +962,7 @@ class UploadWorkflow < Workflow::Base
   # This method overrides:
   # @see Workflow::ClassMethods#workflow_column
   #
-  def self.workflow_column: (*untyped, **untyped) ?{ () -> untyped } -> Symbol
+  def self.workflow_column: (*untyped) ?{ () -> untyped } -> Symbol
 
   # Return the workflow type which is a key under 'en.emma.workflow'.
   #

@@ -5,8 +5,6 @@ module LogConcern
 
   include Emma::Common
 
-  @logger_suppressed: bool | nil
-
   # If URL parameter 'logging=false' is included then excess logging will be
   # suppressed.
   #
@@ -27,6 +25,8 @@ module LogConcern
   # Paired with before_action #suppress_logger.
   #
   def unsuppress_logger: () -> void
+
+  @logger_suppressed: bool | nil
 
   private
 

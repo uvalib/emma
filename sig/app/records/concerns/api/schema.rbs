@@ -90,9 +90,6 @@ module Api::Schema
   #
   ELEMENT_NAMING_MODES: symArray
 
-  @enumeration_defaults: Hash[Symbol,String]
-  @enumeration_types:    symArray
-
   # service_name
   #
   # @return [String]
@@ -106,12 +103,16 @@ module Api::Schema
   #
   def enumeration_defaults: () -> Hash[Symbol,String]
 
+  @enumeration_defaults: Hash[Symbol,String]
+
   # The enumeration types that may be given as the second argument to
   # #attribute, #has_one, or #has_many definitions.
   #
   # @return [Array<Symbol>]
   #
   def enumeration_types: () -> symArray
+
+  @enumeration_types: symArray
 
   # enumeration_default
   #

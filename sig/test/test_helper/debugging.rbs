@@ -26,14 +26,14 @@ module TestHelper::Debugging
   #
   def run_test: (String|Symbol|nil test_name, ?format: Symbol|nil, ?wait: Integer|nil, **untyped opt) { () -> void } -> void
 
-  @tests_primed: bool | nil
-
   # Make sure that "Sign in as" is visible on the sign-in page by ensuring that
   # the interface is in "debug mode".
   #
   # @return [void]
   #
   def prime_tests: () -> void
+
+  @tests_primed: bool | nil
 
   # Produce the top frame of debug output for a test.
   #

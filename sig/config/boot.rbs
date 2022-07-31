@@ -38,10 +38,6 @@ TRUE_VALUES: strArray
 FALSE_VALUES: strArray
 
 class Object
-
-  @in_rails: bool
-  @in_rake:  bool
-
   # Indicate whether the item represents an explicit *true* value.
   #
   # @param [Any, nil] value
@@ -113,8 +109,12 @@ class Object
   #
   def rails_application?: () -> bool
 
+  @in_rails: bool
+
   # Indicate whether this instance is being run as "rake" or "rails" with a Rake
   # task argument.
   #
   def rake_task?: () -> bool
+
+  @in_rake:  bool
 end

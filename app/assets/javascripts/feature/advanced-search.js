@@ -151,6 +151,7 @@ $(document).on('turbolinks:load', function() {
      */
     const MULTI_SELECT_EVENTS_WIDTH = maxSize(MULTI_SELECT_EVENTS);
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Select2 events which precede the change which causes a new search to be
      * performed.
@@ -624,6 +625,7 @@ $(document).on('turbolinks:load', function() {
     // Functions - search readiness
     // ========================================================================
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Indicate whether a new search has been defined.
      *

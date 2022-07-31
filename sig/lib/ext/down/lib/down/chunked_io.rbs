@@ -10,8 +10,6 @@ module Down
   #
   module ChunkedIOExt
 
-    @lineno: Integer
-
     # Implement position setter.
     #
     # @return [Integer]
@@ -29,5 +27,7 @@ module Down
     # @return [Integer]
     #
     def lineno=: (Integer value) -> Integer
+
+    @lineno: Integer
   end
 end

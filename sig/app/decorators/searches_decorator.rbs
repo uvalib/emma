@@ -5,7 +5,8 @@
 #   @return [Array<Search::Record::MetadataRecord>,Array<Search::Record::TitleRecord>]
 #
 class SearchesDecorator < BaseCollectionDecorator
-  # This causes automated testing to slow down too much.
+  # This causes automated testing to slow down too much, so related server-side
+  # and client-side code is neutralized in the test environment.
   #
   # @type [Boolean]
   #

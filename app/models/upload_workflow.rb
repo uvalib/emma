@@ -601,6 +601,9 @@ public
 # * Federated Index create/update/delete
 # * Member repository submission queue (AWS S3) create/update/delete
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module UploadWorkflow::External
 
   include Workflow::Base::External
@@ -1930,7 +1933,6 @@ class UploadWorkflow < Workflow::Base
 
           # These methods are only meaningful in the context of the variant's
           # base class.
-          # noinspection RailsParamDefResolve
           class << self
             %i[
               configuration

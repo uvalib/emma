@@ -9,19 +9,38 @@ class ReadingListDecorator < BookshareDecorator
     include BookshareDecorator::Paths
   end
 
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
   module Methods
     include BookshareDecorator::Methods
   end
 
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
   module InstanceMethods
     include BookshareDecorator::InstanceMethods
+
     include Paths
+
     include Methods
   end
 
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
   module ClassMethods
     include BookshareDecorator::ClassMethods
+
     include Paths
+
     include Methods
   end
 
@@ -40,13 +59,13 @@ class ReadingListDecorator < BookshareDecorator
   #
   def titles_data: () -> (Bs::Message::ReadingListTitlesList | nil)
 
-  @titles: Array[Bs::Record::ReadingListTitle]
-
   # titles
   #
   # @return [Array<Bs::Record::ReadingListTitle>]
   #
   def titles: () -> Array[Bs::Record::ReadingListTitle]
+
+  @titles: Array[Bs::Record::ReadingListTitle]
 
   # Create a link to the details show page for the given item.
   #
@@ -158,5 +177,5 @@ class ReadingListDecorator < BookshareDecorator
   #
   # @return [String]
   #
-  def form_target_description: (?action: Symbol|nil) -> String
+  def form_target_description: (?action: Symbol|nil, **untyped) -> String
 end

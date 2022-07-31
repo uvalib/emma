@@ -27,7 +27,7 @@ module AwsS3Service::Testing
     # == Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable
+    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
     ALL_FAULTS = [
       BAD_REPO     = 1 << (bit += 1),
       BAD_FILE     = 1 << (bit += 1),

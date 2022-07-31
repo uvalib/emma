@@ -65,13 +65,13 @@ module AwsS3Service::Common
   #
   def submission_id: ((AwsS3::Message::SubmissionRequest | Model | symHash | String) item) -> (String | nil)
 
-  @client_params: symArray
-
   # Allowable AWS S3 Client initializer parameters.
   #
   # @return [Array<Symbol>]
   #
   def client_params: () -> symArray
+
+  @client_params: symArray
 
   # Get an S3 client instance.
   #

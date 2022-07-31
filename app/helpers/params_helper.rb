@@ -99,7 +99,6 @@ module ParamsHelper
   # @return [Integer]
   #
   def request_parameter_count(p = nil)
-    # noinspection RailsParamDefResolve
     prm = p || try(:params) || {}
     prm.keys.size
   end
@@ -111,7 +110,6 @@ module ParamsHelper
   # @return [Hash{Symbol=>String}]
   #
   def request_parameters(p = nil)
-    # noinspection RailsParamDefResolve
     normalize_hash(p || try(:params))
   end
 

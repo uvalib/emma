@@ -13,9 +13,6 @@ module Record::Identification
 
   USER_COLUMN: Symbol
 
-  @record_class: Class
-  @record_name:  String
-
   # The type of record for the current context.
   #
   # (This will be Entry unless within an instance of another type of Record.)
@@ -24,11 +21,15 @@ module Record::Identification
   #
   def record_class: () -> Class
 
+  @record_class: Class
+
   # Name of the type of record for the current context.
   #
   # @return [String]
   #
   def record_name: () -> String
+
+  @record_name: String
 
   # The type of record for the given item.
   #

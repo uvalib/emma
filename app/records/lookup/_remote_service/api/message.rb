@@ -16,6 +16,7 @@ module Lookup::RemoteService::Api::Message
 
   include Lookup::RemoteService::Shared::ResponseMethods
 
+  # noinspection RbsMissingTypeSignature
   included do
 
     # Initialize a new instance.

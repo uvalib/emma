@@ -15,8 +15,6 @@ module DataConcern
 
   SUBMISSION_COLUMNS: symArray
 
-  @data_params: symHash
-
   # URL parameters for DataController.
   #
   # @return [Hash{Symbol=>Any}]
@@ -27,6 +25,8 @@ module DataConcern
   # returns *true* if HTML was explicitly requested in either of these ways.
   #
   def data_params: () -> symHash
+
+  @data_params: symHash
 
   # Interpret a parameter value as an array of values if possible.
   #

@@ -18,8 +18,6 @@ module OAuth2
 
     include OAuth2::ExtensionDebugging
 
-    @connection: Faraday::Connection
-
     # Instantiate a new OAuth 2.0 client using the Client ID and Client
     # Secret registered to your application.
     #
@@ -81,6 +79,8 @@ module OAuth2
     # by setting it once here.
     #
     def connection: () -> Faraday::Connection
+
+    @connection: Faraday::Connection
 
     # Makes a request relative to the specified site root.
     #

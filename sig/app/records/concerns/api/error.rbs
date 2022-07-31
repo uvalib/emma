@@ -61,16 +61,13 @@ class Api::Error < ExecError
   module Methods
     include ExecError::Methods
 
-    @service:       Symbol    | nil
-    @error_type:    Symbol    | nil
-    @error_config:  Hash[Symbol,String]
-    @error_types:   symArray
-
     # Name of the service and key into config/locales/error.en.yml.
     #
     # @return [Symbol, nil]
     #
     def service: () -> (Symbol | nil)
+
+    @service: Symbol | nil
 
     # Name of the error and subkey into config/locales/error.en.yml.
     #
@@ -78,11 +75,15 @@ class Api::Error < ExecError
     #
     def error_type: () -> (Symbol | nil)
 
+    @error_type: Symbol | nil
+
     # Error configuration extracted from "config/locales/error.en.yml".
     #
     # @return [Hash{Symbol=>String}]
     #
     def error_config: () -> Hash[Symbol,String]
+
+    @error_config: Hash[Symbol,String]
 
     # Error types extracted from "config/locales/error.en.yml".
     #
@@ -91,6 +92,8 @@ class Api::Error < ExecError
     # @return [Array<Symbol>]
     #
     def error_types: () -> symArray
+
+    @error_types: symArray
 
     # The descriptive name of the service for use in display and messages.
     #

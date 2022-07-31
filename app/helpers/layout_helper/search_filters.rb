@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # View helper methods for the '<header>' search filter controls.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module LayoutHelper::SearchFilters
 
   include LayoutHelper::Common

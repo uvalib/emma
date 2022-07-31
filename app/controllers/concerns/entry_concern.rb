@@ -9,6 +9,9 @@ require 'net/http'
 
 # Support methods for the "/entry" controller.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module EntryConcern
 
   extend ActiveSupport::Concern

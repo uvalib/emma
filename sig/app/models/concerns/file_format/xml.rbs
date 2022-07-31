@@ -3,8 +3,6 @@
 module FileFormat::Xml
   include Emma::Common
 
-  @metadata: OpenStruct
-
   # Metadata may be retrieved either by index or as a method call.
   #
   # E.g. :title is available as either `metadata[:title]` or `metadata.title`.
@@ -12,6 +10,8 @@ module FileFormat::Xml
   # @return [OpenStruct]
   #
   def metadata: () -> OpenStruct
+
+  @metadata: OpenStruct
 
   # Gather all metadata values.
   #

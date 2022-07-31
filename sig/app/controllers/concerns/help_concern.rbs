@@ -5,8 +5,6 @@ module HelpConcern
 
   include HelpHelper
 
-  @topic: Symbol | nil
-
   # get_help_entry
   #
   # @param [Symbol,nil] topic
@@ -21,6 +19,8 @@ module HelpConcern
   # @return [nil]                     No :id, :topic found.
   #
   def set_help_topic: () -> (Symbol | nil)
+
+  @topic: Symbol | nil
 
   private
 

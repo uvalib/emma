@@ -8,7 +8,7 @@ module ApiService::Status
   # @return [Array<(TrueClass,nil)>]
   # @return [Array<(FalseClass,String)>]
   #
-  def active_status: (*untyped, **untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+  def active_status: (*untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   private
 

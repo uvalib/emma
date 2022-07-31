@@ -4,9 +4,6 @@ module Lookup::GoogleBooks::Shared::IdentifierMethods
   include Lookup::RemoteService::Shared::IdentifierMethods
   include Lookup::GoogleBooks::Shared::CommonMethods
 
-  @identifier_list:  Array[strArray]
-  @identifier_table: Hash[String,strArray]
-
   # A unique identifier for this catalog title.
   #
   # @return [String, nil]
@@ -19,11 +16,15 @@ module Lookup::GoogleBooks::Shared::IdentifierMethods
   #
   def identifier_list: () -> strArray
 
+  @identifier_list: Array[strArray]
+
   # identifier_table
   #
   # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
   #
   def identifier_table: () -> lookupRequestHash
+
+  @identifier_table: Hash[String,strArray]
 
   # @private
   # @type [Hash{Symbol=>String}]

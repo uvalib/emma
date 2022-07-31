@@ -8,9 +8,6 @@ class FileObject
 
   include FileNaming
 
-  @file_handle: FileHandle
-  @filename:    String | nil
-
   # Create a new instance.
   #
   # @param [String, FileHandle, IO, StringIO, Tempfile, IO::Like] handle
@@ -51,11 +48,15 @@ class FileObject
   #
   def filename: () -> (String | nil)
 
+  @filename: String | nil
+
   # file_handle
   #
   # @return [FileHandle, nil]
   #
   def file_handle: () -> (FileHandle | nil)
+
+  @file_handle: FileHandle
 
   module ClassMethods
     include Emma::Debug

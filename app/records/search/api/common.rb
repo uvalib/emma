@@ -764,6 +764,7 @@ class Isbn < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = total % 10
+      # noinspection RubyMismatchedReturnType
       ((10 - remainder) % 10).to_s
     end
 
@@ -784,6 +785,7 @@ class Isbn < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = total % 11
+      # noinspection RubyMismatchedReturnType
       (remainder == 10) ? 'X' : remainder.to_s
     end
 
@@ -1023,6 +1025,7 @@ class Issn < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = 11 - (total % 11)
+      # noinspection RubyMismatchedReturnType
       (remainder == 10) ? 'X' : remainder.to_s
     end
 
@@ -1660,6 +1663,7 @@ class Upc < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = total % 10
+      # noinspection RubyMismatchedReturnType
       ((10 - remainder) % 10).to_s
     end
 

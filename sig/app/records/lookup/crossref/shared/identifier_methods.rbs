@@ -11,20 +11,21 @@ module Lookup::Crossref::Shared::IdentifierMethods
   #
   FIELD_TYPE_MAP: Hash[Symbol,Class]
 
-  @identifier_list:  strArray | nil
-  @identifier_table: lookupRequestHash | nil
-
   # identifier_list
   #
   # @return [Array<String>]
   #
   def identifier_list: () -> strArray
 
+  @identifier_list: strArray | nil
+
   # identifier_table
   #
   # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
   #
   def identifier_table: () -> lookupRequestHash
+
+  @identifier_table: lookupRequestHash | nil
 
   # Related :dc_identifier (and possibly) :dc_relation.
   #

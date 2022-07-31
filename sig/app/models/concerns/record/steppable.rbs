@@ -215,9 +215,6 @@ module Record::Steppable
 
     include Record::Updatable::ClassMethods
 
-    @state_table: symHash
-    @job_class:   Class
-
     # Workflow state table.
     #
     # @param [Model, Class<Model>, nil] item      Default: self.
@@ -225,6 +222,8 @@ module Record::Steppable
     # @return [Hash]
     #
     def state_table: (?(Model|Class|nil) item) -> symHash
+
+    @state_table: symHash
 
     # Workflow state configuration.
     #
@@ -250,6 +249,8 @@ module Record::Steppable
     # @return [Class<Model::WorkflowJob>]
     #
     def job_class: (?(Model|Class|nil) item) -> Class
+
+    @job_class: Class
 
     # Called from the including class to generate query- and action-methods
     # associated with the column.
@@ -295,9 +296,6 @@ module Record::Steppable
 
     include Record::Reportable
 
-    @state_table: symHash
-    @job_class:   Class
-
     # Workflow state table associated with the current record.
     #
     # @param [Model, Class<Model>, nil] item  Default: self.
@@ -305,6 +303,8 @@ module Record::Steppable
     # @return [Hash]
     #
     def state_table: (?(Model|Class|nil) item) -> symHash
+
+    @state_table: symHash
 
     # Workflow state configuration associated with the current record.
     #
@@ -444,6 +444,8 @@ module Record::Steppable
     # @return [Class<Model::WorkflowJob>]
     #
     def job_class: (?(Model|Symbol|String|nil) item) -> Class
+
+    @job_class: Class
 
     # Get the next legal state(s).
     #

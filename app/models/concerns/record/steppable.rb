@@ -610,6 +610,9 @@ module Record::Steppable
 
   # Instance methods to be added to the including record class.
   #
+  #--
+  # noinspection RubyTooManyMethodsInspection
+  #++
   module InstanceMethods
 
     include Emma::Common

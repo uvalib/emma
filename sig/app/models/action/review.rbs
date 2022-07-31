@@ -84,7 +84,7 @@ class Action::Review < Action::Single
   #
   # @return [String]
   #
-  def self.describe_type: (*untyped, **untyped) ?{ () -> untyped } -> String
+  def self.describe_type: (*untyped) ?{ () -> untyped } -> String
 
   # A textual description of the status of the Action instance.
   #

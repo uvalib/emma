@@ -7,8 +7,6 @@ class Shrine
     # :nocov:
     #include Shrine::UploadedFile::InstanceMethods
 
-    @emma_metadata: symHash
-
     # Bibliographic metadata and remediation information.
     #
     # @raise [Record::SubmitError]    @see #extract_file_metadata
@@ -16,6 +14,8 @@ class Shrine
     # @return [Hash{Symbol=>Any}]
     #
     def emma_metadata: () -> symHash
+
+    @emma_metadata: symHash
 
     # Parse the uploaded file to extract bibliographic metadata and remediation
     # information.

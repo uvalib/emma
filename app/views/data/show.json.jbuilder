@@ -1,4 +1,4 @@
-# app/views/account/show.json.jbuilder
+# app/views/data/show.json.jbuilder
 #
 # frozen_string_literal: true
 # warn_indent:           true

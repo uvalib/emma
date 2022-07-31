@@ -2,14 +2,14 @@
 #
 module LayoutHelper::PageLanguage
 
-  @page_language: String
-
   # The language code for the language of the current page for use with the
   # '<html>' element.
   #
   # @return [String]
   #
   def page_language: () -> String
+
+  @page_language: String
 
   # Specify the language code for the current page.
   #

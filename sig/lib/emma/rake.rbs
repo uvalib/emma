@@ -63,17 +63,14 @@ module Emma::Rake
   #
   def task_option: ((String|Symbol) flag, ?(Rake::TaskArguments|strArray|nil) args) -> (String | nil)
 
-  @cli_task_options: strArray
-  @start_time:       Float
-  @session:          strHash
-  @current_user:     User
-
   # Option flags on the "rake" command line after "--" will be ignored by Rake
   # but will be available in $*.
   #
   # @return [Array<String>]
   #
   def cli_task_options: () -> strArray
+
+  @cli_task_options: strArray
 
   # A time span message.
   #
@@ -82,6 +79,8 @@ module Emma::Rake
   # @return [Float]
   #
   def save_start_time: (?(Float|nil) start_time) -> Float
+
+  @start_time: Float
 
   # A time span message.
   #
@@ -106,6 +105,8 @@ module Emma::Rake
   #
   def session: () -> strHash
 
+  @session: strHash
+
   # An override to provide a mock #current_user.
   #
   # @return [User, nil]
@@ -113,6 +114,8 @@ module Emma::Rake
   # @note Needs to be a user mapped to the developer role in 'users_roles'.
   #
   def current_user: () -> User
+
+  @current_user: User
 
   module DSL
     # :nocov:

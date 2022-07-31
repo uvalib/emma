@@ -66,13 +66,13 @@ module ApiMigrateHelper
   #
   ROW_PARTS: Hash[Symbol,String]
 
-  @change_table_head: Array[ActiveSupport::SafeBuffer]
-
   # Change table heading row elements.
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def change_table_head: () -> Array[ActiveSupport::SafeBuffer]
+
+  @change_table_head: Array[ActiveSupport::SafeBuffer]
 
   # Change table data row elements.
   #

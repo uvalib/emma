@@ -90,7 +90,7 @@ module ApplicationJob::Properties
   #
   #--
   # noinspection RailsParamDefResolve
-  #--
+  #++
   def queue_key_for(val)
     if val.is_a?(Integer)
       QUEUE_PRIORITY.invert[val]
@@ -107,7 +107,7 @@ module ApplicationJob::Properties
   #
   #--
   # noinspection RailsParamDefResolve
-  #--
+  #++
   def priority_for(val)
     # noinspection RubyMismatchedReturnType
     return val                                if val.nil? || val.is_a?(Integer)

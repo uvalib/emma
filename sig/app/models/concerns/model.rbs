@@ -123,8 +123,6 @@ module Model
     @check_relations: bool | nil
   end
 
-  @field_names: symArray
-
   # Indicate whether *name* is a field defined by this model.
   #
   # @param [Symbol, String, *]
@@ -136,6 +134,8 @@ module Model
   # @return [Array<Symbol>]
   #
   def field_names: () -> symArray
+
+  @field_names: symArray
 
   # The fields and values for this model instance.
   #

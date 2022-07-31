@@ -389,6 +389,7 @@ module FlashHelper
     flashes = session['flash']   || {}
     flashes = flashes['flashes'] || {}
     in_use  = flashes.values.flatten.sum(&:bytesize)
+    # noinspection RubyMismatchedArgumentType
     FLASH_MAX_TOTAL_SIZE - in_use
   end
 

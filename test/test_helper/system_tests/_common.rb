@@ -44,9 +44,9 @@ module TestHelper::SystemTests::Common
 
   # Assert that the current page is valid.
   #
-  # @param [String,nil] text          If given both must match.
-  # @param [String,nil] heading       Default: *text* if given.
-  # @param [String,nil] title         Default: *text* if given.
+  # @param [String, nil] text         If given both must match.
+  # @param [String, nil] heading      Default: *text* if given.
+  # @param [String, nil] title        Default: *text* if given.
   #
   # @raise [Minitest::Assertion]      If either item is not on the page.
   #
@@ -66,7 +66,7 @@ module TestHelper::SystemTests::Common
 
   # Return the given URL without its HTTP port.
   #
-  # @param [String, nil]  url
+  # @param [String, nil] url
   #
   # @return [String, nil]
   #

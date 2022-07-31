@@ -292,7 +292,7 @@ module UploadWorkflow::Bulk::Data
   #
   # @return [void]
   #
-  def reset_status: (*untyped, **untyped) ?{ () -> untyped } -> void
+  def reset_status: (*untyped) ?{ () -> untyped } -> void
 
   # Indicate whether entries have been assigned.
   #

@@ -34,8 +34,6 @@ module HeadHelper::PageTitle
 
   public
 
-  @page_meta_title: strArray
-
   # Access the page title.
   #
   # If a block is given, this invocation is being used to accumulate text into
@@ -50,6 +48,8 @@ module HeadHelper::PageTitle
   #
   def page_meta_title: () { () -> (String | strArray) } -> strArray
                      | ()                               -> ActiveSupport::SafeBuffer
+
+  @page_meta_title: strArray
 
   # Set the page title, eliminating any previous value.
   #

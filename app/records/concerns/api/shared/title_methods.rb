@@ -9,6 +9,9 @@ require 'sanitize'
 
 # Methods mixed in to record elements related to catalog titles.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module Api::Shared::TitleMethods
 
   include Api::Shared::CommonMethods

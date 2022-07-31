@@ -27,7 +27,7 @@ module DevHelper
   #
   # @note Currently unused.
   #
-  def forget_dev: (*untyped, **untyped) ?{ () -> untyped } -> void
+  def forget_dev: (*untyped) ?{ () -> untyped } -> void
 
   private
 

@@ -34,8 +34,6 @@ module UploadWorkflow::Single::Data
   #
   attr_reader record: Upload
 
-  @results: httpResult | Array[String|Upload] | Upload | nil
-
   # The characteristic "return value" of the workflow after an event has been
   # registered.
   #
@@ -44,6 +42,8 @@ module UploadWorkflow::Single::Data
   # @return [Upload, nil]                           For all other states
   #
   def results: () -> (httpResult | Array[String|Upload] | Upload | nil)
+
+  @results: httpResult | Array[String|Upload] | Upload | nil
 
   @workflow_state: String | nil
 
@@ -89,14 +89,14 @@ module UploadWorkflow::Single::Data
   #
   def create_record: (?(symHash|Upload|String|nil) data) -> (Upload | nil)
 
-  @existing: bool | nil
-
   # Indicate whether a record was originally created by (or on behalf of) the
   # workflow (as opposed to an existing record acquired from the database).
   #
   # @return [Boolean, nil]
   #
   def existing_record: () -> (bool | nil)
+
+  @existing: bool | nil
 
   # Indicate whether the record is associated with an uploaded file.
   #
@@ -246,7 +246,7 @@ module UploadWorkflow::Single::Simulation
   #
   attr_reader submission: untyped
 
-  def set_submission: (*untyped, **untyped) ?{ () -> untyped } -> untyped
+  def set_submission: (*untyped) ?{ () -> untyped } -> untyped
 end
 
 module UploadWorkflow::Single::Events

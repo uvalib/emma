@@ -29,17 +29,18 @@ module EntryConcern
   #
   IGNORED_ENTRY_FORM_PARAMS: symArray
 
-  @entry_params: symHash
-  @action_id:    String | Integer | nil
-  @phase_id:     String | Integer | nil
-  @entry_id:     String | Integer | nil
-  @identifier:   String | Integer | nil
+  @action_id:  String | Integer | nil
+  @phase_id:   String | Integer | nil
+  @entry_id:   String | Integer | nil
+  @identifier: String | Integer | nil
 
   # URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>Any}]
   #
   def entry_params: () -> symHash
+
+  @entry_params: symHash
 
   # Get URL parameters relevant to the current operation.
   #
@@ -472,13 +473,13 @@ module EntryConcern
 
   include PaginationConcern
 
-  @model_options: Entry::Options
-
   # Create a @model_options instance from the current parameters.
   #
   # @return [Entry::Options]
   #
   def set_model_options: () -> Entry::Options
+
+  @model_options: Entry::Options
 
   # Create a Paginator for the current controller action.
   #

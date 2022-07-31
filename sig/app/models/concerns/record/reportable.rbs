@@ -26,8 +26,6 @@ module Record::Reportable
   #
   REPORT_HASH: bool
 
-  @exec_report: ExecReport | nil
-
   # Workflow errors.
   #
   # @param [Boolean, nil] refresh     If *true*, re-fetch from the database.
@@ -35,6 +33,8 @@ module Record::Reportable
   # @return [ExecReport]
   #
   def exec_report: (?(bool|nil) refresh) -> ExecReport
+
+  @exec_report: ExecReport | nil
 
   # Fetch the current value of #REPORT_COLUMN for the current record.
   #
@@ -58,7 +58,7 @@ module Record::Reportable
   #
   # @return [nil]
   #
-  def clear_exec_report: (*untyped, **untyped) ?{ () -> untyped } -> nil
+  def clear_exec_report: (*untyped) ?{ () -> untyped } -> nil
 
   # Dynamically get the contents of the current record's #REPORT_COLUMN.
   #

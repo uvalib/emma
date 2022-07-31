@@ -5,13 +5,13 @@ module OptionsConcern
 
   include ParamsHelper
 
-  @model_options: Options
-
   # Access the @model_options instance created for the current controller.
   #
   # @return [Options]
   #
   def model_options: () -> Options
+
+  @model_options: Options
 
   # Create a @model_options instance from the current parameters.
   #

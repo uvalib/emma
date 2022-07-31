@@ -27,7 +27,7 @@ module IngestService::Testing
     # == Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable
+    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
     ALL_FAULTS = [
       SINGLETON_FIELDS_BAD  = 1 << (bit += 1),
       STRING_FIELDS_BAD     = 1 << (bit += 1),

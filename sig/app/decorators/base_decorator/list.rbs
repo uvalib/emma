@@ -198,6 +198,8 @@ module BaseDecorator::List
   def thumbnail: (?link: bool|String, ?placeholder: true,  **untyped opt) -> ActiveSupport::SafeBuffer
                | (?link: bool|String,  placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
+  @thumbnail: String | nil
+
   # Cover image element for the given catalog title.
   #
   # @param [Boolean, String] link         If *true* make the image a link to
@@ -212,6 +214,8 @@ module BaseDecorator::List
   #
   def cover: (?link: bool|String, ?placeholder: true,  **untyped opt) -> ActiveSupport::SafeBuffer
            | (?link: bool|String,  placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  @cover_image: String | nil
 
   # Generate a standardized (base) element identifier from the object.
   #
@@ -246,9 +250,6 @@ module BaseDecorator::List
   # @return [String, nil]
   #
   def get_cover_image: (?meth: Symbol|nil, **untyped) -> (String | nil)
-
-  @cover_image: String | nil
-  @thumbnail:   String | nil
 
   private
 

@@ -10,11 +10,11 @@ module RoleHelper
   # == Implementation Notes
   # Currently the :developer role applies regardless of the model.
   #
-  def developer?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+  def developer?: () -> bool
 
   # Indicate whether the current user has the administrator role.
   #
-  def administrator?: (*untyped, **untyped) ?{ () -> untyped } -> bool
+  def administrator?: () -> bool
 
   # Indicate whether the current user has the given role.
   #

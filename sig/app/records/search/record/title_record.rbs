@@ -402,8 +402,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def name_type: (?(String|nil) value) -> [String, String]
 
-    @number_value: Float
-
     # Reduce a hierarchy of numbering levels to a single value.
     #
     # @param [Number, Hash, nil] item   Default: `#level`.
@@ -412,7 +410,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def number_value: (?(symHash|Number|nil) item) -> Float
 
-    @number_range: [Float, Float]
+    @number_value: Float
 
     # Reduce a hierarchy of numbering levels to a pair of single values.
     #
@@ -421,6 +419,8 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Array<(Float,Float)>]  Min and max level numbers.
     #
     def number_range: (?(symHash|Number|nil) item) -> [Float, Float]
+
+    @number_range: [Float, Float]
 
     def to_s: () -> String
 

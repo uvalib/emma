@@ -6,7 +6,7 @@
 #
 class BaseCollectionDecorator < Draper::CollectionDecorator
 
-  # Methods for each decorator collection class instance.
+  # Methods for each collection decorator class instance.
   #
   # @!attribute [r] object_class
   #   @return [Class]
@@ -23,19 +23,20 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
     def inspect: (?max: Integer) -> String
   end
 
-  # Methods for each decorator collection class.
+  # Methods for each collection decorator class.
   #
   module ClassMethods
     include BaseDecorator::ClassMethods
 
-    @decorator_class: Class
-    @model_type:      Symbol
+    @model_type: Symbol
 
     # The decorator class for list elements.
     #
     # @return [Class]
     #
     def decorator_class: () -> Class
+
+    @decorator_class: Class
 
     # The Draper::Decorator#object_class for list elements.
     #

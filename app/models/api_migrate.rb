@@ -54,6 +54,9 @@ class ApiMigrate
 
   public
 
+  #--
+  # noinspection RubyTooManyMethodsInspection
+  #++
   module ClassMethods
 
     include Emma::Json

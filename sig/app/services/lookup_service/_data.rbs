@@ -5,9 +5,6 @@ class LookupService::Data
   # @return [Hash{Symbol=>Array<LookupService::Data::Item>}]
   attr_reader table: lookupDataItems
 
-  @item_values: lookupDataValues | nil
-  @diagnostic:  lookupDataValues | nil
-
   # Initialize a new instance.
   #
   # @param [Api::Message, Faraday::Response, Hash, Array, String, LookupService::Data, LookupService::Data::Item, nil] src
@@ -22,6 +19,8 @@ class LookupService::Data
   #
   def item_values: () -> lookupDataValues
 
+  @item_values: lookupDataValues | nil
+
   # Total number of items in this instance.
   #
   # @return [Integer]
@@ -33,6 +32,8 @@ class LookupService::Data
   # @return [Hash{Symbol=>Array<Hash>}]
   #
   def diagnostic: () -> lookupDataValues
+
+  @diagnostic: lookupDataValues | nil
 
   # make_table
   #

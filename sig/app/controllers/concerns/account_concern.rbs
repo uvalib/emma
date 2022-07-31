@@ -147,7 +147,7 @@ module AccountConcern
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def account_fields: (*untyped, **untyped) ?{ () -> untyped } -> Hash[Symbol,anyHash]
+  def account_fields: (*untyped) ?{ () -> untyped } -> Hash[Symbol,anyHash]
 
   # Get the appropriate message to display.
   #
@@ -170,8 +170,6 @@ module AccountConcern
 
   module DeviseMethods
 
-    @devise_mapping: Devise::Mapping
-
     # devise_mapping
     #
     # @return [Devise::Mapping]
@@ -179,6 +177,8 @@ module AccountConcern
     # @see DeviseController#devise_mapping
     #
     def devise_mapping: () -> Devise::Mapping
+
+    @devise_mapping: Devise::Mapping
 
     # resource_class
     #

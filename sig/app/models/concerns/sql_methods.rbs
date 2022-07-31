@@ -200,13 +200,13 @@ module SqlMethods
   module InstanceMethods
     include SqlMethods
 
-    @field_names: symArray
-
     # The fields defined in the schema for this record.
     #
     # @return [Array<Symbol>]
     #
     def field_names: () -> symArray
+
+    @field_names: symArray
 
     # Translate hash keys/values into SQL LIKE statements.
     #

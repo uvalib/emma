@@ -76,15 +76,13 @@ class Paginator
     def initialize: (?(symHash|nil) values) -> void
   end
 
-  @property:           Paginator::Properties
-  @page_items:         anyArray
-  @default_page_size:  Integer
-
   # property
   #
   # @return [Paginator::Properties]
   #
   def property: () -> Paginator::Properties
+
+  @property: Paginator::Properties
 
   # Get the number of results per page.
   #
@@ -220,6 +218,8 @@ class Paginator
   #
   def page_items=: (anyArray values) -> anyArray
 
+  @page_items: anyArray
+
   # Interpret *value* as a URL path or a JavaScript action.
   #
   # @param [String, Symbol, nil] value  One of [:back, :forward, :go].
@@ -255,6 +255,8 @@ class Paginator
   # @return [Integer]
   #
   def default_page_size: () -> Integer
+
+  @default_page_size: Integer
 
   # Default results per page.
   #

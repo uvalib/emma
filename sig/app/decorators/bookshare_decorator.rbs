@@ -9,6 +9,9 @@ class BookshareDecorator < BaseDecorator
     include BaseDecorator::Paths
   end
 
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
   module Methods
     include BaseDecorator::Methods
 
@@ -100,18 +103,49 @@ class BookshareDecorator < BaseDecorator
     def artifact_links: (Model item, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
   module InstanceMethods
     include BaseDecorator::InstanceMethods
+
     include Paths
+
     include Methods
 
+    # The current action is implied.
+    #
+    # @param [Hash, String, nil] path
+    # @param [Hash]              prm
+    #
+    # @return [String, nil]
+    #
     def bookshare_url: ((symHash|String|nil) path, **untyped prm) -> (String | nil)
+
+    # This is a kludge
+    #
+    # @param [Model, nil] item
+    # @param [Hash]       opt       Passed to ArtifactDecorator#download_links
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
     def artifact_links: (?(Model|nil) item, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
   module ClassMethods
     include BaseDecorator::ClassMethods
+
     include Paths
+
     include Methods
   end
 
@@ -338,5 +372,5 @@ class BookshareDecorator < BaseDecorator
   #
   # @return [String]
   #
-  def form_target_description: () -> String
+  def form_target_description: (**untyped) -> String
 end
