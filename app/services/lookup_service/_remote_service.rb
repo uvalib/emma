@@ -57,7 +57,7 @@ class LookupService::RemoteService < ApiService
   # @option opt [Boolean]       :enabled    Def.: from configuration.
   #
   def initialize(**opt)
-    super(**opt)
+    super
   end
 
   # ===========================================================================

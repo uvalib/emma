@@ -237,8 +237,7 @@ class SearchController < ApplicationController
   # @return [Hash{Symbol=>Hash}]
   #
   def show_values(item = @item, **opt)
-    # noinspection RubyMismatchedReturnType
-    sanitize_keys(super(item, **opt))
+    sanitize_keys(super)
   end
 
 end

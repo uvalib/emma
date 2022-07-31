@@ -941,7 +941,7 @@ class ApiMigrate
   # @return [Symbol, nil]
   #
   def migration_name(key = nil)
-    key ? super(key) : name
+    key ? super : name
   end
 
   # API migration configured field transformations.
@@ -951,7 +951,7 @@ class ApiMigrate
   # @type [Hash{Symbol=>Hash}]
   #
   def configuration(key = nil)
-    key ? super(key) : CONFIGURATION_ENTRY[name]
+    key ? super : CONFIGURATION_ENTRY[name]
   end
 
   # ===========================================================================

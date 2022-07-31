@@ -62,7 +62,7 @@ class Phase::BulkPart < Phase
     # @type [Integer, nil]         group
     bulk  = phase.bulk
     group = opt[:bulk_id] || bulk&.id
-    super(phase, **opt).tap do |note|
+    super.tap do |note|
       if group.present?
         count = Phase.where(bulk_id: group).count
         part  = 'part'

@@ -43,7 +43,7 @@ class LookupJob < ActiveJob::Base
   #
   def initialize(*arguments)
     __debug_job(__method__) { { arguments: arguments } }
-    super(*arguments)
+    super
   end
 
   # ===========================================================================

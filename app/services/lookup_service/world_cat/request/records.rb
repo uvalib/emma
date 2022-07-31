@@ -594,7 +594,7 @@ module LookupService::WorldCat::Request::Records
     # @return [self, nil]
     #
     def add_terms(prefix, item)
-      super(prefix, item) do |term|
+      super do |term|
         pre, val = term.split(':', 2)
         ID_PREFIXES.include?(pre.to_sym) ? val : term
       end
