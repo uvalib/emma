@@ -129,12 +129,12 @@ body {
     // Flash messages above the content area.
     .flash-messages {
 
-        flex: 0 0 auto;
+        flex:     0 0 auto;
+        position: relative;
 
         @media #{$narrow-screen} {
             margin-top: $page-padding;
         }
-
     }
 
     // The <main> content area of the page.

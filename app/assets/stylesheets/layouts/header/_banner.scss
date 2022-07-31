@@ -9,6 +9,12 @@
 
 // The <header> area of the page.
 //
+// The second layer of (white) shadow exists to prevent an extra long skip nav
+// menu from peeking out below the header on pages where there are no header
+// controls.  5 rem is enough for 10 items in the skip nav menu, although there
+// probably shouldn't be anywhere close to that number of entries for
+// accessibility purposes.
+//
 // noinspection CssReplaceWithShorthandSafely
 .layout-header {
 
@@ -20,11 +26,8 @@
     margin-bottom:   -($hcm-divider-width);
     padding:         0;
     border-bottom:   $hcm-divider-width solid $root-rev-bg-color;
-    box-shadow:      0 0 1rem -0.25rem $root-rev-bg-color;
-
-    @if $raised-header {
-        z-index: $z-raised;
-    }
+    box-shadow:      0 0 1rem -0.25rem $root-rev-bg-color,
+                     0 0 0     5rem    white;
 
     @media #{$medium-width} {
 

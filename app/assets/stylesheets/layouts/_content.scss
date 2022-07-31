@@ -24,15 +24,6 @@
     @media #{$narrow-screen} {
         padding-top:  $page-padding;
     }
-
-    // If the skip-nav menu grows large enough, on certain screens (without
-    // search filters) it may extend below the header even when it should be
-    // hidden because it has "z-order: -1".  The <body> element can't be given
-    // a z-order, but extending the coverage of this element bridges the gap so
-    // that the long tail of the skip-nav menu is covered by its shadow.
-    @if $raised-header {
-        box-shadow: 0 0 0 $page-padding $root-bg-color;
-    }
 }
 
 // For the heading at the top of the content area.
