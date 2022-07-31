@@ -1,91 +1,91 @@
 # HTTP utilities.
 #
 module HttpHelper
-  # HTTP_STATUS_TYPE
+  # A mapping of status ranges to their related HTTP statuses.
   #
   # @type [Hash{Symbol=>Array,Range}]
   #
-  HTTP_STATUS_TYPE: Hash[Symbol,(Array[Integer]|Range[Integer])]
+  HTTP_STATUS_CODE_RANGE: Hash[Symbol,(Array[Integer]|Range[Integer])]
 
-  HTTP_PERM_REDIRECT: Array[Integer] | Range[Integer]
-  HTTP_TEMP_REDIRECT: Array[Integer] | Range[Integer]
-
-  # HTTP_STATUS_RANGE
+  # A mapping of HTTP status to its symbolic form.
   #
-  # @type [Hash{Symbol=>Array,Range}]
+  # @type [Hash{Integer=>Symbol}]
   #
-  HTTP_STATUS_RANGE: Hash[Symbol,(Array[Integer]|Range[Integer])]
+  HTTP_STATUS_CODE_TO_SYMBOL: Hash[Integer,Symbol]
 
-  HTTP_CONTINUE:      Array[Integer] | Range[Integer]
-  HTTP_SUCCESS:       Array[Integer] | Range[Integer]
-  HTTP_REDIRECT:      Array[Integer] | Range[Integer]
-  HTTP_CLIENT_ERROR:  Array[Integer] | Range[Integer]
-  HTTP_SERVER_ERROR:  Array[Integer] | Range[Integer]
-  HTTP_ERROR:         Array[Integer] | Range[Integer]
-
-  # info?
+  # A mapping of status ranges to their related symbolic HTTP statuses.
   #
-  # @param [Integer] code
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  HTTP_SYMBOLIC_CODE_RANGE: Hash[Symbol,symArray]
+
+  # Indicate whether the value represents an HTTP status code which is part of
+  # the given named range.
+  #
+  # @param [Symbol]             range
+  # @param [Symbol, Integer, *] code
+  #
+  def http_status?: (Symbol range, untyped code) -> bool
+
+  # Indicate whether the value represents an HTTP 1xx status.
+  #
+  # @param [Symbol, Integer, *] code
   #
   # @note Currently unused.
   #
-  def info?: (Integer code) -> bool
+  def http_info?: (untyped code) -> bool
 
-  # success?
+  # Indicate whether the value represents an HTTP 2xx status.
   #
-  # @param [Integer] code
+  # @param [Symbol, Integer, *] code
+  #
+  def http_success?: (untyped code) -> bool
+
+  # Indicate whether the value represents an HTTP 3xx status.
+  #
+  # @param [Symbol, Integer, *] code
+  #
+  def http_redirect?: (untyped code) -> bool
+
+  # Indicate whether the value represents an HTTP 301, 303 or 308 status.
+  #
+  # @param [Symbol, Integer, *] code
   #
   # @note Currently unused.
   #
-  def success?: (Integer code) -> bool
+  def http_permanent_redirect?: (untyped code) -> bool
 
-  # redirect?
+  # Indicate whether the value represents an HTTP 302 or 307 status.
   #
-  # @param [Integer] code
+  # @param [Symbol, Integer, *] code
   #
   # @note Currently unused.
   #
-  def redirect?: (Integer code) -> bool
+  def http_temporary_redirect?: (untyped code) -> bool
 
-  # permanent_redirect?
+  # Indicate whether the value represents a failure HTTP status.
   #
-  # @param [Integer] code
+  # @param [Symbol, Integer, *] code
   #
   # @note Currently unused.
   #
-  def permanent_redirect?: (Integer code) -> bool
+  def http_error?: (untyped code) -> bool
 
-  # temporary_redirect?
+  # Indicate whether the value represents an HTTP 4xx status.
   #
-  # @param [Integer] code
+  # @param [Symbol, Integer, *] code
   #
   # @note Currently unused.
   #
-  def temporary_redirect?: (Integer code) -> bool
+  def http_client_error?: (untyped code) -> bool
 
-  # error?
+  # Indicate whether the value represents an HTTP 5xx status.
   #
-  # @param [Integer] code
+  # @param [Symbol, Integer, *] code
   #
   # @note Currently unused.
   #
-  def error?: (Integer code) -> bool
-
-  # client_error?
-  #
-  # @param [Integer] code
-  #
-  # @note Currently unused.
-  #
-  def client_error?: (Integer code) -> bool
-
-  # server_error?
-  #
-  # @param [Integer] code
-  #
-  # @note Currently unused.
-  #
-  def server_error?: (Integer code) -> bool
+  def http_server_error?: (untyped code) -> bool
 
   private
 

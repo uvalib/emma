@@ -21,6 +21,7 @@ module UploadConcern
 
   include ParamsHelper
   include FlashHelper
+  include HttpHelper
 
   include IngestConcern
 
@@ -610,8 +611,7 @@ module UploadConcern
     opt = { meth: meth, status: status }
 
     if html
-      # noinspection RubyMismatchedArgumentType
-      if %i[ok found].include?(status) || (200..399).include?(status)
+      if http_success?(status) || http_redirect?(status)
         flash_success(*message, **opt)
       else
         flash_failure(*message, **opt)
