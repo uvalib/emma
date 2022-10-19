@@ -248,19 +248,23 @@ module LayoutHelper::SearchFilters
 
   # A control for toggling the visibility of advanced search filter controls.
   #
-  # @param [Hash] opt                 Passed to #button_tag.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #button_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def advanced_search_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def advanced_search_button: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # A hidden HTML elements which indicates that the page has been constructed
   # with search filters which cause a new search whenever a value is selected.
   #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def immediate_search_marker: () -> (ActiveSupport::SafeBuffer | nil)
+  def immediate_search_marker: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Options consumed by internal methods which should not be passed on along to
   # the methods which generate HTML elements.
@@ -379,6 +383,7 @@ module LayoutHelper::SearchFilters
   # @param [String, Array, nil]  selected   Selected menu item(s).
   # @param [String, Symbol, nil] label_id   ID of associated label element.
   # @param [Boolean, nil]        disabled
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_form except for
   #                                           #MENU_OPTS and:
   #
@@ -390,16 +395,17 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def menu_control: (Symbol menu_name, ?target: String|Symbol|nil, ?selected: String|anyArray|nil, ?label_id: String|Symbol|nil, ?disabled: bool|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def menu_control: (Symbol menu_name, ?target: String|Symbol|nil, ?selected: String|anyArray|nil, ?label_id: String|Symbol|nil, ?disabled: bool|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A label associated with a dropdown menu element.
   #
   # @param [String, Symbol] menu_name     Control name.
+  # @param [String]         css           Characteristic CSS class/selector.
   # @param [Hash]           opt           Passed to #control_label.
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
   #
-  def menu_label: ((String|Symbol) menu_name, **untyped opt) -> ActiveSupport::SafeBuffer
+  def menu_label: ((String|Symbol) menu_name, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # menu_tooltip
   #
@@ -473,11 +479,12 @@ module LayoutHelper::SearchFilters
   # A label associated with a dropdown menu element.
   #
   # @param [Symbol] menu_name             Control name.
+  # @param [String] css                   Characteristic CSS class/selector.
   # @param [Hash]   opt                   Passed to #control_label.
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was configured or
   #                                         provided.
-  def date_label: (Symbol menu_name, **untyped opt) -> ActiveSupport::SafeBuffer
+  def date_label: (Symbol menu_name, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # date_tooltip
   #
@@ -499,7 +506,8 @@ module LayoutHelper::SearchFilters
 
   # A button to reset all filter menu selections to their default state.
   #
-  # @param [Hash] opt             Passed to #link_to except for #GRID_OPTS and:
+  # @param [String] css           Characteristic CSS class/selector.
+  # @param [Hash]   opt           Passed to #link_to except for #GRID_OPTS and:
   #
   # @option opt [String] :url     Default from #request_parameters.
   # @option opt [String] :class   CSS classes for both spacer and button.
@@ -511,7 +519,7 @@ module LayoutHelper::SearchFilters
   # @see #reset_parameters
   # @see GridHelper#grid_cell_classes
   #
-  def reset_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def reset_button: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # URL parameters that should be cleared for the current search target.
   #
@@ -523,7 +531,9 @@ module LayoutHelper::SearchFilters
 
   # A blank element used for occupying "voids" in the search control panel.
   #
-  # @param [Hash] opt            Passed to #html_div except for #GRID_OPTS and:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div except for #GRID_OPTS
+  #                                     and:
   #
   # @option opt [String] :class       CSS classes for both spacer and button.
   #
@@ -531,13 +541,14 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def menu_spacer: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def menu_spacer: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # A label associated with a dropdown menu element.
   #
   # @param [String, Symbol]      name     Control name.
   # @param [String, Symbol, nil] target   Search target controller.
   # @param [String, nil]         label    Label text override.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #label_tag except for
   #                                         #MENU_OPTS and:
   #
@@ -547,7 +558,7 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def control_label: ((String|Symbol) name, ?target: String|Symbol|nil, ?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def control_label: ((String|Symbol) name, ?target: String|Symbol|nil, ?label: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Indicate whether the menu is already sorted.
   #

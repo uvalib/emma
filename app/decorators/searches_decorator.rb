@@ -42,7 +42,8 @@ class SearchesDecorator < BaseCollectionDecorator
 
   # Controls for applying one or more search style variants.
   #
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -51,8 +52,7 @@ class SearchesDecorator < BaseCollectionDecorator
   # @see SearchModesHelper#permitted_by?
   # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
-  def list_styles(**opt)
-    css     = STYLE_CONTAINER
+  def list_styles(css: STYLE_CONTAINER, **opt)
     b_opt   = { class: 'style-button' }
     buttons =
       STYLE_BUTTONS.values.map { |prop|
@@ -69,6 +69,7 @@ class SearchesDecorator < BaseCollectionDecorator
   # Control for selecting the type of search results to display.
   #
   # @param [String,Symbol,nil] selected  Selected menu item.
+  # @param [String]            css       Characteristic CSS class/selector.
   # @param [Hash]              opt       Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -78,8 +79,7 @@ class SearchesDecorator < BaseCollectionDecorator
   # @see SearchModesHelper#permitted_by?
   # @see file:app/assets/javascripts/controllers/search.js *$mode_menu*
   #
-  def list_results(selected: nil, **opt)
-    css        = '.results.single.menu-control'
+  def list_results(selected: nil, css: '.results.single.menu-control', **opt)
     base_path  = request_value(:path)
     url_params = param_values.except(*RESULT_IGNORED_PARAMS)
     results    = url_params.delete(:results)

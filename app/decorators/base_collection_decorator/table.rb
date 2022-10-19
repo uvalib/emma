@@ -19,7 +19,8 @@ module BaseCollectionDecorator::Table
 
   # Render model items as a table.
   #
-  # @param [Hash] opt                 Passed to outer #html_tag except:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_tag except:
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
   # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated *tbody*.
@@ -31,8 +32,7 @@ module BaseCollectionDecorator::Table
   # @see #STICKY_HEAD
   # @see #DARK_HEAD
   #
-  def table(**opt)
-    css      = '.model-table'
+  def table(css: '.model-table', **opt)
     html_opt = remainder_hash!(opt, *MODEL_TABLE_OPTIONS)
     opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
 

@@ -9,25 +9,27 @@ module ToolHelper
 
   # Standalone tool list entry.
   #
-  # @param [Hash] opt                 Passed to outer :ul tag.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer :ul tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/search.js
   #
-  def tool_list: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def tool_list: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Standalone tool list entry.
   #
   # @param [Symbol] action
   # @param [Hash]   config
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/search.js
   #
-  def tool_list_item: (Symbol action, symHash config, **untyped opt) -> ActiveSupport::SafeBuffer
+  def tool_list_item: (Symbol action, symHash config, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

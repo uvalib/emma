@@ -61,12 +61,12 @@ module AwsHelper
   # in a new browser tab.
   #
   # @param [String, Aws::S3::Bucket] bucket
+  # @param [String]                  css      Characteristic CSS class/selector
   # @param [Hash]                    opt      Passed to #external_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def s3_bucket_link(bucket, **opt)
-    css    = '.aws-link'
+  def s3_bucket_link(bucket, css: '.aws-link', **opt)
     label  = opt.delete(:label) || 'AWS' # TODO: I18n
     region = opt.delete(:region)
     url    = s3_bucket_url(bucket, region: region)
@@ -180,6 +180,7 @@ module AwsHelper
   #
   # @param [String, Aws::S3::Bucket, nil] bucket
   # @param [Array<Aws::S3::Object>]       objects
+  # @param [String]                       css       Characteristic CSS class.
   # @param [Hash]                         opt       Passed to #html_div except:
   #
   # @option opt [Date, DateTime]   :after           Date range minimum.
@@ -198,8 +199,7 @@ module AwsHelper
   #--
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
-  def render_s3_bucket(bucket, objects, **opt)
-    css      = '.aws-bucket'
+  def render_s3_bucket(bucket, objects, css: '.aws-bucket', **opt)
     html_opt = remainder_hash!(opt, *AWS_BUCKET_OPT)
     after    = opt[:after]&.to_datetime
     before   = opt[:before]&.to_datetime
@@ -303,13 +303,13 @@ module AwsHelper
 
   # Show column headings for an S3 object.
   #
-  # @param [Hash] opt                         Passed to #render_s3_object
+  # @param [String] css                       Characteristic CSS class/selector
+  # @param [Hash]   opt                       Passed to #render_s3_object
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                            If *html* is *false*.
   #
-  def render_s3_object_headings(**opt)
-    css      = '.column-headings'
+  def render_s3_object_headings(css: '.column-headings', **opt)
     headings = s3_object_values(nil)
     prepend_css!(opt, css)
     render_s3_object(headings, **opt)
@@ -317,13 +317,14 @@ module AwsHelper
 
   # Show an S3 object table row.
   #
-  # @param [Hash] opt                         Passed to #render_s3_object
+  # @param [Aws::S3::Object, Hash] obj
+  # @param [String]                css        Characteristic CSS class/selector
+  # @param [Hash]                  opt        Passed to #render_s3_object
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                            If *html* is *false*.
   #
-  def render_s3_object_row(obj, **opt)
-    css = '.row'
+  def render_s3_object_row(obj, css: '.row', **opt)
     prepend_css!(opt, css)
     render_s3_object(obj, **opt)
   end
@@ -331,6 +332,7 @@ module AwsHelper
   # Show the contents of an S3 object.
   #
   # @param [Aws::S3::Object, Hash] obj
+  # @param [String]                css        Characteristic CSS class/selector
   # @param [Hash]                  opt        Passed to #html_div except for:
   #
   # @option opt [Boolean] :section            Start of a new section.
@@ -341,8 +343,7 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                            If *html* is *false*.
   #
-  def render_s3_object(obj, **opt)
-    css     = '.aws-object'
+  def render_s3_object(obj, css: '.aws-object', **opt)
     section = opt.delete(:section)
     row     = opt.delete(:row)
     col_opt = opt.delete(:column)

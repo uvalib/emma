@@ -87,6 +87,7 @@ module FlashHelper
     # @param [Integer, nil] first     Index of first column (def: 1).
     # @param [Integer, nil] last      Index of last column (def: `parts.size`).
     # @param [Hash]         part      Options passed to inner #html_div.
+    # @param [String]       css       Characteristic CSS class/selector.
     # @param [Hash]         opt       Passed to outer #html_div
     #
     # @option opt [String, nil]  :separator   Default: #HTML_BREAK.
@@ -96,7 +97,7 @@ module FlashHelper
     #
     # @see #render_part
     #
-    def render: (?first: Integer|nil, ?last: Integer|nil, ?part: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    def render: (?first: Integer|nil, ?last: Integer|nil, ?part: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Generate an HTML element for a single part of the entry.
     #
@@ -104,11 +105,12 @@ module FlashHelper
     # @param [Integer, nil] pos       Position of part (starting from 1).
     # @param [Integer, nil] first     Index of the first column.
     # @param [Integer, nil] last      Index of the last column.
+    # @param [String]       css       Characteristic CSS class/selector.
     # @param [Hash]         opt       Passed to #html_div.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def render_part: ((String|nil) part, ?pos: Integer|nil, ?first: Integer|nil, ?last: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    def render_part: ((String|nil) part, ?pos: Integer|nil, ?first: Integer|nil, ?last: Integer|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # A short-cut for creating a FlashHelper::FlashPart only if required.
     #

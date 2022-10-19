@@ -23,16 +23,23 @@ module BaseDecorator::Menu
   # @param [User, Symbol, nil]   user     Default: `current_user`
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
+  # @param [String, Hash]        ujs      JavaScript selection action.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #html_form except for:
-  #
-  # @option opt [String, Hash] :ujs
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see RouteHelper#get_path_for
   #
-  def items_menu(action: nil, user: nil, prompt: nil, table: nil, **opt)
-    css      = '.select-entry.menu-control'
+  def items_menu(
+    action: nil,
+    user:   nil,
+    prompt: nil,
+    table:  nil,
+    ujs:    'this.form.submit();',
+    css:    '.select-entry.menu-control',
+    **opt
+  )
     ctrlr    = items_menu_controller
     action ||= context[:action]
     table  ||= action_links
@@ -59,7 +66,6 @@ module BaseDecorator::Menu
       end
     menu = items&.map { |it| [items_menu_label(it), it.id] } || []
 
-    ujs = opt.delete(:ujs) || 'this.form.submit();'
     ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }
     select_opt = ujs.merge!(prompt: prompt)
 

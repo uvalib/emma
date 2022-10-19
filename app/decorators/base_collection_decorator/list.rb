@@ -53,12 +53,12 @@ module BaseCollectionDecorator::List
 
   # Hidden row that is shown only when no field rows are being displayed.
   #
-  # @param [Hash] opt                 Passed to created elements.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to created elements.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def no_records_row(**opt)
-    css = '.no-records'
+  def no_records_row(css: '.no-records', **opt)
     prepend_css!(opt, css)
     html_div('', opt) << html_div(NO_RECORDS, opt)
   end

@@ -43,7 +43,8 @@ module PanelHelper
   #                                           by this button (only used if
   #                                           panel.js RESTORE_PANEL_STATE is
   #                                           *true*).
-  # @param [Hash] opt                       Passed to #button_tag.
+  # @param [String]              css        Characteristic CSS class/selector.
+  # @param [Hash]                opt        Passed to #button_tag.
   #
   # @raise [RuntimeError]             The controlled element was not specified.
   #
@@ -51,7 +52,7 @@ module PanelHelper
   #
   # @see file:app/assets/javascripts/feature/panel.js
   #
-  def toggle_button: (id: String, ?label: String|nil, ?context: String|Symbol|nil, ?open: bool|String|nil, ?selector: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def toggle_button: (id: String, ?label: String|nil, ?context: String|Symbol|nil, ?open: bool|String|nil, ?selector: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

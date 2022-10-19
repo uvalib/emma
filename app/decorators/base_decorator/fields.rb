@@ -210,13 +210,13 @@ module BaseDecorator::Fields
   # render_check_box
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_check_box(name, value, **opt)
-    css      = '.checkbox.single'
+  def render_check_box(name, value, css: '.checkbox.single', **opt)
     html_opt = remainder_hash!(opt, *CHECK_OPTIONS)
     normalize_attributes!(opt)
 

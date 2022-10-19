@@ -7,45 +7,50 @@ module MdHelper
 
   # Math Detective file input element.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_file_input: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def md_file_input: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Get image for Math Detective from the clipboard.
   #
   # NOTE: Not currently possible with Firefox.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_clipboard_input: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def md_clipboard_input: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Math Detective file preview element.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_preview: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def md_preview: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Math Detective execution status.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_status: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def md_status: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Math Detective error report.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_error: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def md_error: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Math Detective MathML output.
   #
@@ -94,11 +99,12 @@ module MdHelper
   # Clipboard icon to act as a button for copying the text of the associated
   # output element.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def clipboard_icon: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def clipboard_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

@@ -39,20 +39,21 @@ module BaseDecorator::Links
 
   # Create a link to the details show page for the given model instance.
   #
-  # @param [String, nil] css          Optional CSS class(es) to include.
-  # @param [Hash]        opt          Passed to #model_link.
+  # @param [String, Array, nil] css   Optional CSS class(es) to include.
+  # @param [Hash]               opt   Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
-  def link: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def link: (?css: String|strArray|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Create a link to the details show page for the given model instance.
   #
-  # @param [Hash] opt                 Passed to #link
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #link
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
-  def button_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def button_link: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # TODO: I18n
   #
@@ -65,11 +66,12 @@ module BaseDecorator::Links
   #
   # @param [String, Symbol, nil]     current      Def: `context[:action]`
   # @param [Hash{Symbol=>Hash}, nil] table        Def: `#action_links`.
+  # @param [String]                  css          Characteristic CSS selector.
   # @param [Hash]                    opt          Passed to #action_links.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # action_entry
   #
@@ -87,12 +89,15 @@ module BaseDecorator::Links
   # @param [String, Symbol, nil] action   The target controller action.
   # @param [String, Symbol, nil] current  Def: current `params[:action]`.
   # @param [String, nil]         label    Override configured label.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #action_entry.
+  #
+  # @option opt [String] :action          Overrides argument if present.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *action* not configured.
   #
-  def action_link: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def action_link: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Action links configured for the controller.
   #

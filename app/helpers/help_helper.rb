@@ -107,6 +107,7 @@ module HelpHelper
   #
   # @param [Symbol, String] topic
   # @param [Symbol, String] sub_topic   Starting HTML ID.
+  # @param [String]         css         Characteristic CSS class/selector.
   # @param [Hash]           opt         Passed to #inline_popup except for:
   #
   # @option opt [Hash] :attr            Options for deferred content.
@@ -117,9 +118,8 @@ module HelpHelper
   #
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
-  def help_popup(topic, sub_topic = nil, **opt)
+  def help_popup(topic, sub_topic = nil, css: '.help-popup', **opt)
     return if topic.blank?
-    css    = '.help-popup'
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
@@ -289,12 +289,12 @@ module HelpHelper
   # Render an illustration of a button element in help.
   #
   # @param [String] label
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def help_span(label, **opt)
-    css = '.for-example'
+  def help_span(label, css: '.for-example', **opt)
     append_css!(opt, css)
     html_span(label, opt)
   end
@@ -322,13 +322,13 @@ module HelpHelper
   #
   # @param [Symbol, nil] item         Default: `#request_parameters[:id]`.
   # @param [Boolean]     wrap         If *false*, do not wrap.
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #help_container.
   #
   # @return [ActiveSupport::SafeBuffer]   Help contents section element.
   # @return [nil]                         No content and *wrap* is *false*.
   #
-  def help_section(item: nil, wrap: true, **opt)
-    css = '.help-section'
+  def help_section(item: nil, wrap: true, css: '.help-section', **opt)
     prepend_css!(opt, css)
     help_container(item: item, wrap: wrap, **opt)
   end
@@ -350,6 +350,7 @@ module HelpHelper
   #
   # @param [Symbol, nil] item         Default: `#request_parameters[:id]`.
   # @param [Boolean]     wrap         Wrap in a "help-container" element.
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]   Help contents element.
@@ -357,8 +358,7 @@ module HelpHelper
   #
   # @see config/locales/controllers/help.en.yml
   #
-  def help_container(item: nil, wrap: true, **opt)
-    css       = '.help-container'
+  def help_container(item: nil, wrap: true, css: '.help-container', **opt)
     topic     = (item || request_parameters[:id]).to_sym
     partial   = "help/topic/#{topic}"
     content   = HELP_ENTRY.dig(topic, :content)

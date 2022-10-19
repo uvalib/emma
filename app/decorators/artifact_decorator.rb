@@ -298,12 +298,12 @@ class ArtifactDecorator < BookshareDecorator
   # An element to be shown while an artifact is being acquired.
   #
   # @param [String, nil] image        Default: 'loading-balls.gif'
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_progress(image: nil, **opt)
-    css           = DOWNLOAD_PROGRESS_CLASS
+  def download_progress(image: nil, css: DOWNLOAD_PROGRESS_CLASS, **opt)
     image       ||= asset_path(DOWNLOAD_PROGRESS_ASSET)
     opt[:title] ||= DOWNLOAD_PROGRESS_TIP
     opt[:alt]   ||= DOWNLOAD_PROGRESS_ALT_TEXT
@@ -314,14 +314,14 @@ class ArtifactDecorator < BookshareDecorator
 
   # An element to indicate failure.
   #
-  # @param [Hash] opt                 Passed to #html_span.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/download.js *showFailureMessage()*
   #
-  def download_failure(**opt)
-    css = DOWNLOAD_FAILURE_CLASS
+  def download_failure(css: DOWNLOAD_FAILURE_CLASS, **opt)
     prepend_css!(opt, css)
     html_span('', opt)
   end
@@ -330,12 +330,12 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @param [String, nil]         label
   # @param [String, Symbol, nil] fmt
+  # @param [String]              css    Characteristic CSS class/selector.
   # @param [Hash]                opt    Passed to LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_button(label: nil, fmt: nil, **opt)
-    css           = DOWNLOAD_BUTTON_CLASS
+  def download_button(label: nil, fmt: nil, css: DOWNLOAD_BUTTON_CLASS, **opt)
     label       ||= DOWNLOAD_BUTTON_LABEL
     fmt           = format_label(fmt)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)

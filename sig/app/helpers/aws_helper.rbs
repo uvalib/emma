@@ -46,11 +46,12 @@ module AwsHelper
   # in a new browser tab.
   #
   # @param [String, Aws::S3::Bucket] bucket
+  # @param [String]                  css      Characteristic CSS class/selector
   # @param [Hash]                    opt      Passed to #external_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def s3_bucket_link: ((String|Aws::S3::Bucket) bucket, **untyped opt) -> ActiveSupport::SafeBuffer
+  def s3_bucket_link: ((String|Aws::S3::Bucket) bucket, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a table of S3 buckets and objects as HTML.
   #
@@ -103,6 +104,7 @@ module AwsHelper
   #
   # @param [String, Aws::S3::Bucket, nil] bucket
   # @param [Array<Aws::S3::Object>]       objects
+  # @param [String]                       css       Characteristic CSS class.
   # @param [Hash]                         opt       Passed to #html_div except:
   #
   # @option opt [Date, DateTime]   :after           Date range minimum.
@@ -118,29 +120,33 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<Hash>]                           If *html* is *false*.
   #
-  def render_s3_bucket: ((String|Aws::S3::Bucket|nil) bucket, Array[Aws::S3::Object] objects, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[symHash])
+  def render_s3_bucket: ((String|Aws::S3::Bucket|nil) bucket, Array[Aws::S3::Object] objects, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | Array[symHash])
 
   # Show column headings for an S3 object.
   #
-  # @param [Hash] opt                         Passed to #render_s3_object
+  # @param [String] css                       Characteristic CSS class/selector
+  # @param [Hash]   opt                       Passed to #render_s3_object
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                            If *html* is *false*.
   #
-  def render_s3_object_headings: (**untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+  def render_s3_object_headings: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
 
   # Show an S3 object table row.
   #
-  # @param [Hash] opt                         Passed to #render_s3_object
+  # @param [Aws::S3::Object, Hash] obj
+  # @param [String]                css        Characteristic CSS class/selector
+  # @param [Hash]                  opt        Passed to #render_s3_object
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                            If *html* is *false*.
   #
-  def render_s3_object_row: (symHash obj, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+  def render_s3_object_row: (symHash obj, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
 
   # Show the contents of an S3 object.
   #
   # @param [Aws::S3::Object, Hash] obj
+  # @param [String]                css        Characteristic CSS class/selector
   # @param [Hash]                  opt        Passed to #html_div except for:
   #
   # @option opt [Boolean] :section            Start of a new section.
@@ -151,7 +157,7 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Hash]                            If *html* is *false*.
   #
-  def render_s3_object: ((symHash|Aws::S3::Object) obj, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
+  def render_s3_object: ((symHash|Aws::S3::Object) obj, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | symHash)
 
   # Show an S3 object placeholder indicating an empty S3 bucket.
   #

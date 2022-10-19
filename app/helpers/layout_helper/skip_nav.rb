@@ -88,12 +88,12 @@ module LayoutHelper::SkipNav
 
   # Generate HTML for a "skip navigation" menu.
   #
-  # @param [Hash] opt                 Passed to outer #html_tag.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_skip_nav(opt = nil)
-    css = '.skip-nav-menu'
+  def render_skip_nav(css: '.skip-nav-menu', **opt)
     opt = prepend_css(opt, css)
     html_tag(:ul, opt) do
       skip_nav.flat_map { |entry|
@@ -110,13 +110,13 @@ module LayoutHelper::SkipNav
   #
   # @param [String, Symbol, Array<Symbol,String>] label
   # @param [String]                               link
+  # @param [String]                               css   Characteristic CSS.
   # @param [Hash]                                 opt   Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link element.
   # @return [nil]                         If *label* or *link* is missing.
   #
-  def render_skip_nav_link(label, link, **opt)
-    css = '.skip-nav-link'
+  def render_skip_nav_link(label, link, css: '.skip-nav-link', **opt)
     return if label.blank? || link.blank?
 
     unless label.is_a?(String)

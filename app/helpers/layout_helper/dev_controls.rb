@@ -36,8 +36,9 @@ module LayoutHelper::DevControls
 
   # Render a container with developer-only controls.
   #
-  # @param [Hash] outer               HTML options for outer div container.
-  # @param [Hash] opt                 Passed to label and control elements.
+  # @param [Hash]   outer             HTML options for outer div container.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to label and control elements.
   #
   # @option opt [Hash]           :params        Default: `#request_parameters`
   # @option opt [String, Symbol] :controller    Optional override.
@@ -47,14 +48,12 @@ module LayoutHelper::DevControls
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no dev_controls configured.
   #
-  def render_dev_controls(outer: nil, **opt)
-    css    = '.dev-controls'
-    anchor = 'dev-controls'
-
+  def render_dev_controls(outer: nil, css: '.dev-controls', **opt)
     ctrlr_action   = extract_hash!(opt, :controller, :action).compact_blank
     opt[:params] ||= request_parameters
     opt[:params]   = opt[:params].merge(ctrlr_action) if ctrlr_action.present?
 
+    anchor    = 'dev-controls'
     l_id      = opt.delete(:label_id) || css_randomize(anchor)
     l_opt     = { class: 'label', id: l_id }
     c_opt     = { class: 'controls', id: anchor, 'aria-labelledby': l_id }
@@ -90,15 +89,15 @@ module LayoutHelper::DevControls
 
   # Generate developer-only controls.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def dev_controls(**opt)
-    css = '.control'
+  def dev_controls(css: '.control', **opt)
     prepend_css!(opt, css)
     controls = []
     controls << dev_hide_dev_controls(**opt)

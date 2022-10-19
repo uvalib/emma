@@ -99,6 +99,7 @@ module LayoutHelper::SearchBar
   # @param [Symbol, Array<Symbol>] except
   # @param [Integer, nil]          maximum    Maximum input rows in group.
   # @param [Integer, nil]          minimum    Minimum input rows in group.
+  # @param [String]                css        Characteristic CSS class/selector
   # @param [Hash]                  form_opt   Passed to #html_form.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -115,9 +116,9 @@ module LayoutHelper::SearchBar
     except:   nil,
     maximum:  nil,
     minimum:  nil,
+    css:      '.search-bar-container',
     **form_opt
   )
-    css      = '.search-bar-container'
     target   = search_input_target(target) or return
     config   = SEARCH_BAR[(target || params[:controller])&.to_sym]
     minimum  = minimum ? [minimum, 1].max : config[:min_rows]
@@ -240,7 +241,8 @@ module LayoutHelper::SearchBar
 
   # Generate an element for selecting search type.
   #
-  # @param [Hash] opt                       Passed to #select_tag except for
+  # @param [String] css                     Characteristic CSS class/selector.
+  # @param [Hash]   opt                     Passed to #select_tag except for
   #                                           #MENU_OPTS and:
   #
   # @option opt [String, Symbol]  :target
@@ -250,8 +252,7 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]     An HTML input element.
   # @return [nil]                           Search unavailable for target.
   #
-  def search_input_select(**opt)
-    css    = '.search-input-select'
+  def search_input_select(css: '.search-input-select', **opt)
     target = search_input_target(opt.delete(:target))
     return unless target && show_input_select?(target)
 
@@ -319,6 +320,7 @@ module LayoutHelper::SearchBar
   # An operation on a search-bar-row.
   #
   # @param [String, Symbol] operation
+  # @param [String]         css             Characteristic CSS class/selector.
   # @param [Hash]           opt             Passed to #icon_button except for:
   #
   # @option opt [Any]             :field    Discarded.
@@ -328,8 +330,8 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_row_control(operation, **opt)
-    css = ".search-row-control.#{operation}"
+  def search_row_control(operation, css: '.search-row-control', **opt)
+    css = "#{css}.#{operation}"
     opt.except!(:field, :target)
     id_opt     = extract_hash!(opt, :unique, :index)
     opt[:id] ||= unique_id(css, **id_opt)
@@ -525,7 +527,8 @@ module LayoutHelper::SearchBar
 
   # search_clear_button
   #
-  # @param [Hash] opt                       Passed to #link_to except for:
+  # @param [String] css                     Characteristic CSS class/selector.
+  # @param [Hash]   opt                     Passed to #link_to except for:
   #
   # @option opt [String, Boolean] :unique   Passed to #unique_id.
   # @option opt [Integer]         :index    Passed to #unique_id.
@@ -535,8 +538,7 @@ module LayoutHelper::SearchBar
   # @see file:javascripts/feature/advanced-search.js *clearSearchTerm()*
   # @see LinkHelper#icon_button
   #
-  def search_clear_button(**opt)
-    css    = '.search-clear'
+  def search_clear_button(css: '.search-clear', **opt)
     id_opt = extract_hash!(opt, :unique, :index)
     opt.except!(:field, *MENU_OPTS)
     prepend_css!(opt, css)

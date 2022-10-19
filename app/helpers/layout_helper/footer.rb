@@ -21,12 +21,12 @@ module LayoutHelper::Footer
 
   # Render a table of values from `#session`.
   #
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def footer_table(**opt)
-    css = '.footer-table'
+  def footer_table(css: '.footer-table', **opt)
     opt[:wrap]    = true unless opt.key?(:wrap)
     opt[:col_max] = 2    unless opt.key?(:col_max)
     prepend_css!(opt, css)

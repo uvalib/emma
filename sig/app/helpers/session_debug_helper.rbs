@@ -23,11 +23,12 @@ module SessionDebugHelper
 
   # Render a table of values from `#session`.
   #
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def session_debug: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def session_debug: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

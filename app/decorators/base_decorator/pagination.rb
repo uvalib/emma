@@ -97,17 +97,17 @@ module BaseDecorator::Pagination
 
   # Page number display element.
   #
-  # @param [Integer]   page
-  # @param [Hash, nil] opt            Options to .page-count wrapper element.
+  # @param [Integer] page
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Options to .page-count wrapper element.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *count* is negative.
   #
-  def page_number(page, opt = nil)
-    css   = '.page-count'
-    page  = page.to_i and return if page.negative?
+  def page_number(page, css: '.page-count', **opt)
+    page  = positive(page) or return
     pages = get_page_number_label(count: page)&.upcase_first
-    opt   = prepend_css(opt, css)
+    prepend_css!(opt, css)
     html_div("#{pages} #{page}", opt)
   end
 
@@ -116,12 +116,18 @@ module BaseDecorator::Pagination
   # @param [Integer, nil] count
   # @param [Integer, nil] total
   # @param [String]       unit
-  # @param [Hash]         opt         Options to .search-count wrapper element.
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt         Options to .search-count wrapper.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_count(count, total = nil, unit: nil, **opt)
-    css   = '.search-count'
+  def pagination_count(
+    count,
+    total = nil,
+    unit:   nil,
+    css:    '.search-count',
+    **opt
+  )
     count = positive(count).to_i
     total = positive(total).to_i
     # noinspection RubyMismatchedArgumentType
@@ -141,12 +147,19 @@ module BaseDecorator::Pagination
   # @param [String, Hash, nil] pp     Passed to #pagination_prev.
   # @param [String, Hash, nil] np     Passed to #pagination_next.
   # @param [String, nil]       sep    Passed to #pagination_separator.
+  # @param [String]            css    Characteristic CSS class/selector.
   # @param [Hash]              opt    For .pagination-controls container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_controls(fp: nil, pp: nil, np: nil, sep: nil, **opt)
-    css = '.pagination-controls'
+  def pagination_controls(
+    fp:  nil,
+    pp:  nil,
+    np:  nil,
+    sep: nil,
+    css: '.pagination-controls',
+    **opt
+  )
     prepend_css!(opt, css)
     html_tag(:nav, opt) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
@@ -192,12 +205,12 @@ module BaseDecorator::Pagination
   # pagination_separator
   #
   # @param [String, nil] content      Default: `#PAGINATION_SEPARATOR`.
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_separator(content = nil, **opt)
-    css = '.separator'
+  def pagination_separator(content = nil, css: '.separator', **opt)
     prepend_css!(opt, css)
     html_span(opt) do
       content || PAGINATION_SEPARATOR
@@ -221,14 +234,14 @@ module BaseDecorator::Pagination
   # pagination_first
   #
   # @param [String, Hash, nil] path   Default: `#paginator.first_page`.
+  # @param [String]            css    Characteristic CSS class/selector.
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #pagination_control
   #
-  def pagination_first(path = nil, **opt)
-    css            = '.first'
+  def pagination_first(path = nil, css: '.first', **opt)
     path         ||= paginator.first_page
     opt[:prefix] ||= pagination_first_icon
     append_css!(opt, css)
@@ -238,14 +251,14 @@ module BaseDecorator::Pagination
   # pagination_prev
   #
   # @param [String, Hash, nil] path   Default: `#paginator.prev_page`.
+  # @param [String]            css    Characteristic CSS class/selector.
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #pagination_control
   #
-  def pagination_prev(path = nil, **opt)
-    css            = '.prev'
+  def pagination_prev(path = nil, css: '.prev', **opt)
     path         ||= paginator.prev_page
     opt[:prefix] ||= pagination_prev_icon
     opt[:rel]    ||= 'prev'
@@ -256,14 +269,14 @@ module BaseDecorator::Pagination
   # pagination_next
   #
   # @param [String, Hash, nil] path   Default: `#paginator.next_page`.
+  # @param [String]            css    Characteristic CSS class/selector.
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #pagination_control
   #
-  def pagination_next(path = nil, **opt)
-    css            = '.next'
+  def pagination_next(path = nil, css: '.next', **opt)
     path         ||= paginator.next_page
     opt[:suffix] ||= pagination_next_icon
     opt[:rel]    ||= 'next'
@@ -274,6 +287,7 @@ module BaseDecorator::Pagination
   # pagination_last
   #
   # @param [String, Hash, nil] path   Default: `#paginator.last_page`.
+  # @param [String]            css    Characteristic CSS class/selector.
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -282,8 +296,7 @@ module BaseDecorator::Pagination
   #
   # @note Currently unused.
   #
-  def pagination_last(path = nil, **opt)
-    css            = '.last'
+  def pagination_last(path = nil, css: '.last', **opt)
     path         ||= paginator.last_page
     opt[:suffix] ||= pagination_last_icon
     append_css!(opt, css)
@@ -329,56 +342,56 @@ module BaseDecorator::Pagination
 
   # pagination_first_icon
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #pagination_icon
   #
-  def pagination_first_icon(**opt)
-    css = '.square-icon'
+  def pagination_first_icon(css: '.square-icon', **opt)
     pagination_icon(**opt, css: css)
   end
 
   # pagination_prev_icon
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
-  def pagination_prev_icon(**opt)
-    css = '.left-triangle-icon'
+  def pagination_prev_icon(css: '.left-triangle-icon', **opt)
     pagination_icon(**opt, css: css)
   end
 
   # pagination_next_icon
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
-  def pagination_next_icon(**opt)
-    css = '.right-triangle-icon'
+  def pagination_next_icon(css: '.right-triangle-icon', **opt)
     pagination_icon(**opt, css: css)
   end
 
   # pagination_last_icon
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
-  def pagination_last_icon(**opt)
-    css = '.square-icon'
+  def pagination_last_icon(css: '.square-icon', **opt)
     pagination_icon(**opt, css: css)
   end
 
@@ -387,13 +400,15 @@ module BaseDecorator::Pagination
   # @param [String, nil] content
   # @param [Hash]        opt
   #
+  # @option opt [String] :css         Appended to CSS classes.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   def pagination_icon(content = nil, **opt)
     css       = '.icon'
     content ||= ''
     opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
-    prepend_css!(opt, css, opt[:css])
+    prepend_css!(opt, css, opt.delete(:css))
     html_span(content, opt)
   end
 

@@ -9,15 +9,15 @@ module BaseDecorator::Menu
   # @param [User, Symbol, nil]   user     Default: `current_user`
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
+  # @param [String, Hash]        ujs      JavaScript selection action.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #html_form except for:
-  #
-  # @option opt [String, Hash] :ujs
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see RouteHelper#get_path_for
   #
-  def items_menu: (?action: Symbol|String|nil, ?user: User|Symbol|nil, ?prompt: String|nil, ?table: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def items_menu: (?action: Symbol|String|nil, ?user: User|Symbol|nil, ?prompt: String|nil, ?table: symHash|nil, ?ujs: String|symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The name of the controller used in generating link paths.
   #

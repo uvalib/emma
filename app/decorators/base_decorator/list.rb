@@ -333,17 +333,19 @@ module BaseDecorator::List
 
   # Render a metadata listing of a model instance.
   #
-  # @param [Hash, nil] pairs          Label/value pairs.
-  # @param [Hash]      outer          HTML options for outer div container.
-  # @param [Hash]      opt            Passed to #render_field_values except:
+  # @param [Hash, nil]   pairs        Label/value pairs.
+  # @param [Hash]        outer        HTML options for outer div.
+  # @param [String, nil] css          Default: "#(model_type)-details"
+  # @param [Hash]        opt          Passed to #render_field_values except:
   #
   # @option opt [String] :class       Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details(pairs: nil, outer: nil, **opt)
+  def details(pairs: nil, outer: nil, css: nil, **opt)
+    css    ||= "#{model_type}-details"
     count    = positive(pairs&.size)
-    classes  = ["#{model_type}-details", opt.delete(:class)]
+    classes  = [css, opt.delete(:class)]
     classes << "columns-#{count}" if count
     html_div(prepend_css(outer, *classes)) do
       render_field_values(pairs: pairs, **opt)
@@ -519,6 +521,7 @@ module BaseDecorator::List
   #                                         the show page for the item.
   # @param [Boolean]         placeholder  If *false*, return *nil* if an image
   #                                         could not be determined.
+  # @param [String]          css          Characteristic CSS class/selector.
   # @param [Hash]            opt          To ImageHelper#image_element except:
   #
   # @option opt [Symbol] :meth            Passed to #get_thumbnail_image
@@ -528,8 +531,7 @@ module BaseDecorator::List
   #--
   # noinspection RubyAssignmentExpressionInConditionalInspection
   #++
-  def thumbnail(link: false, placeholder: true, **opt)
-    css      = '.thumbnail'
+  def thumbnail(link: false, placeholder: true, css: '.thumbnail', **opt)
     ph       = placeholder.presence
     html_opt = remainder_hash!(opt, :meth, :alt, *ITEM_ENTRY_OPT)
     prepend_css!(html_opt, css)
@@ -554,6 +556,7 @@ module BaseDecorator::List
   #                                         the show page for the item.
   # @param [Boolean]         placeholder  If *false*, return *nil* if an image
   #                                         could not be determined.
+  # @param [String]          css          Characteristic CSS class/selector.
   # @param [Hash]            opt          To ImageHelper#image_element except:
   #
   # @option opt [Symbol] :meth            Passed to #get_cover_image
@@ -563,8 +566,7 @@ module BaseDecorator::List
   #--
   # noinspection RubyAssignmentExpressionInConditionalInspection
   #++
-  def cover(link: false, placeholder: true, **opt)
-    css      = '.cover-image'
+  def cover(link: false, placeholder: true, css: '.cover-image', **opt)
     ph       = placeholder.presence
     html_opt = remainder_hash!(opt, :meth, :alt, *ITEM_ENTRY_OPT)
     prepend_css!(html_opt, css)

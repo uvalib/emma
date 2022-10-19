@@ -21,6 +21,7 @@ module BaseCollectionDecorator::Form
   #
   # @param [String] label             Label for the submit button.
   # @param [Hash]   outer             HTML options for outer div container.
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to '.model-form.delete' except:
   #
   # @option opt [String] :cancel      Cancel button redirect URL passed to
@@ -28,8 +29,7 @@ module BaseCollectionDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def delete_form(label: nil, outer: nil, **opt)
-    css       = '.model-form.delete'
+  def delete_form(label: nil, outer: nil, css: '.model-form.delete', **opt)
     outer_css = '.form-container.delete'
     html_opt  = remainder_hash!(opt, :cancel, *delete_submit_option_keys)
 
@@ -84,12 +84,18 @@ module BaseCollectionDecorator::Form
   # @param [String, Symbol, nil] action
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #button_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def delete_submit_button(action: nil, label: nil, url: nil, **opt)
-    css            = '.submit-button'
+  def delete_submit_button(
+    action: nil,
+    label:  nil,
+    url:    nil,
+    css:    '.submit-button',
+    **opt
+  )
     path_opt       = extract_hash!(opt, *delete_submit_option_keys)
     url          ||= delete_submit_path(**path_opt)
     enabled        = url && :enabled

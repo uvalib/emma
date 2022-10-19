@@ -107,15 +107,16 @@ module BaseDecorator::List
 
   # Render a metadata listing of a model instance.
   #
-  # @param [Hash, nil] pairs          Label/value pairs.
-  # @param [Hash]      outer          HTML options for outer div container.
-  # @param [Hash]      opt            Passed to #render_field_values except:
+  # @param [Hash, nil]   pairs        Label/value pairs.
+  # @param [Hash]        outer        HTML options for outer div.
+  # @param [String, nil] css          Default: "#(model_type)-details"
+  # @param [Hash]        opt          Passed to #render_field_values except:
   #
   # @option opt [String] :class       Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: anyHash|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?pairs: anyHash|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # details_element
   #
@@ -189,14 +190,15 @@ module BaseDecorator::List
   #                                         the show page for the item.
   # @param [Boolean]         placeholder  If *false*, return *nil* if an image
   #                                         could not be determined.
+  # @param [String]          css          Characteristic CSS class/selector.
   # @param [Hash]            opt          To ImageHelper#image_element except:
   #
   # @option opt [Symbol] :meth            Passed to #get_thumbnail_image
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def thumbnail: (?link: bool|String, ?placeholder: true,  **untyped opt) -> ActiveSupport::SafeBuffer
-               | (?link: bool|String,  placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def thumbnail: (?link: bool|String, ?placeholder: true,  ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+               | (?link: bool|String,  placeholder: false, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   @thumbnail: String | nil
 
@@ -206,14 +208,15 @@ module BaseDecorator::List
   #                                         the show page for the item.
   # @param [Boolean]         placeholder  If *false*, return *nil* if an image
   #                                         could not be determined.
+  # @param [String]          css          Characteristic CSS class/selector.
   # @param [Hash]            opt          To ImageHelper#image_element except:
   #
   # @option opt [Symbol] :meth            Passed to #get_cover_image
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def cover: (?link: bool|String, ?placeholder: true,  **untyped opt) -> ActiveSupport::SafeBuffer
-           | (?link: bool|String,  placeholder: false, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def cover: (?link: bool|String, ?placeholder: true,  ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+           | (?link: bool|String,  placeholder: false, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   @cover_image: String | nil
 

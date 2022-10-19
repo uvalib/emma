@@ -502,12 +502,12 @@ module LayoutHelper::SearchFilters
 
   # A control for toggling the visibility of advanced search filter controls.
   #
-  # @param [Hash] opt                 Passed to #button_tag.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #button_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def advanced_search_button(**opt)
-    css           = '.advanced-search-toggle'
+  def advanced_search_button(css: '.advanced-search-toggle', **opt)
     control       = SEARCH_FILTERS_START_EXPANDED ? :closer : :opener
     label         = ADV_SEARCH[control][:label]
     opt[:title] ||= ADV_SEARCH[control][:tooltip]
@@ -524,14 +524,16 @@ module LayoutHelper::SearchFilters
   # A hidden HTML elements which indicates that the page has been constructed
   # with search filters which cause a new search whenever a value is selected.
   #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def immediate_search_marker
-    css = '.immediate-search-marker'
-    if immediate_search?
-      html_div('immediate', class: css_classes(css, 'hidden'))
-    end
+  def immediate_search_marker(css: '.immediate-search-marker', **opt)
+    return unless immediate_search?
+    prepend_css!(opt, css, 'hidden')
+    html_div('immediate', opt)
   end
 
   # ===========================================================================
@@ -720,6 +722,7 @@ module LayoutHelper::SearchFilters
   # @param [String, Array, nil]  selected   Selected menu item(s).
   # @param [String, Symbol, nil] label_id   ID of associated label element.
   # @param [Boolean, nil]        disabled
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_form except for
   #                                           #MENU_OPTS and:
   #
@@ -740,9 +743,9 @@ module LayoutHelper::SearchFilters
     selected: nil,
     label_id: nil,
     disabled: nil,
+    css:      '.menu-control',
     **opt
   )
-    css       = '.menu-control'
     target    = search_target(target) or return
     html_opt  = remainder_hash!(opt, :config, :default, *MENU_OPTS)
     config    = opt[:config]  || current_menu_config(menu_name, target: target)
@@ -796,6 +799,7 @@ module LayoutHelper::SearchFilters
   # A label associated with a dropdown menu element.
   #
   # @param [String, Symbol] menu_name     Control name.
+  # @param [String]         css           Characteristic CSS class/selector.
   # @param [Hash]           opt           Passed to #control_label.
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
@@ -803,8 +807,7 @@ module LayoutHelper::SearchFilters
   #--
   # noinspection DuplicatedCode
   #++
-  def menu_label(menu_name, **opt)
-    css = '.menu-label'
+  def menu_label(menu_name, css: '.menu-label', **opt)
     append_css!(opt, css)
     control_label(menu_name, **opt)
   end
@@ -938,15 +941,12 @@ module LayoutHelper::SearchFilters
   # A label associated with a dropdown menu element.
   #
   # @param [Symbol] menu_name             Control name.
+  # @param [String] css                   Characteristic CSS class/selector.
   # @param [Hash]   opt                   Passed to #control_label.
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was configured or
   #                                         provided.
-  #--
-  # noinspection DuplicatedCode
-  #++
-  def date_label(menu_name, **opt)
-    css = '.date-label'
+  def date_label(menu_name, css: '.date-label', **opt)
     append_css!(opt, css)
     control_label(menu_name, **opt)
   end
@@ -984,7 +984,8 @@ module LayoutHelper::SearchFilters
 
   # A button to reset all filter menu selections to their default state.
   #
-  # @param [Hash] opt             Passed to #link_to except for #GRID_OPTS and:
+  # @param [String] css           Characteristic CSS class/selector.
+  # @param [Hash]   opt           Passed to #link_to except for #GRID_OPTS and:
   #
   # @option opt [String] :url     Default from #request_parameters.
   # @option opt [String] :class   CSS classes for both spacer and button.
@@ -996,8 +997,7 @@ module LayoutHelper::SearchFilters
   # @see #reset_parameters
   # @see GridHelper#grid_cell_classes
   #
-  def reset_button(**opt)
-    css      = '.menu-button.reset.preserve-width'
+  def reset_button(css: '.menu-button.reset.preserve-width', **opt)
     html_opt = remainder_hash!(opt, :url, :class, :label, *MENU_OPTS)
     label    = opt[:label] || SEARCH_RESET_CONTROL[:label]
     label    = non_breaking(label)
@@ -1031,7 +1031,9 @@ module LayoutHelper::SearchFilters
 
   # A blank element used for occupying "voids" in the search control panel.
   #
-  # @param [Hash] opt            Passed to #html_div except for #GRID_OPTS and:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div except for #GRID_OPTS
+  #                                     and:
   #
   # @option opt [String] :class       CSS classes for both spacer and button.
   #
@@ -1039,8 +1041,7 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def menu_spacer(**opt)
-    css      = '.menu-spacer'
+  def menu_spacer(css: '.menu-spacer', **opt)
     html_opt = remainder_hash!(opt, :class, *MENU_OPTS)
     html_opt[:'aria-hidden'] = true
     opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
@@ -1055,6 +1056,7 @@ module LayoutHelper::SearchFilters
   # @param [String, Symbol]      name     Control name.
   # @param [String, Symbol, nil] target   Search target controller.
   # @param [String, nil]         label    Label text override.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #label_tag except for
   #                                         #MENU_OPTS and:
   #
@@ -1064,8 +1066,7 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def control_label(name, target: nil, label: nil, **opt)
-    css      = '.menu-label'
+  def control_label(name, target: nil, label: nil, css: '.menu-label', **opt)
     html_opt = remainder_hash!(opt, :config, *MENU_OPTS)
     config   = opt[:config] || current_menu_config(name, target: target)
     label  ||= config[:label]

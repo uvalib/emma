@@ -161,31 +161,34 @@ class ArtifactDecorator < BookshareDecorator
   # An element to be shown while an artifact is being acquired.
   #
   # @param [String, nil] image        Default: 'loading-balls.gif'
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_progress: (?image: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def download_progress: (?image: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An element to indicate failure.
   #
-  # @param [Hash] opt                 Passed to #html_span.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/download.js *showFailureMessage()*
   #
-  def download_failure: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def download_failure: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An element for direct download of an artifact.
   #
   # @param [String, nil]         label
   # @param [String, Symbol, nil] fmt
+  # @param [String]              css    Characteristic CSS class/selector.
   # @param [Hash]                opt    Passed to LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_button: (?label: String|nil, ?fmt: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def download_button: (?label: String|nil, ?fmt: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a metadata listing of an artifact.
   #

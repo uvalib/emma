@@ -155,7 +155,7 @@ class EntryDecorator < BaseDecorator
     #
     # @see file:javascripts/shared/modal-dialog.js ModalDialog.SELECTOR_ATTR
     #
-    LOOKUP_CSS_SELECTOR: String
+    LOOKUP_CLASS: String
 
     # The JavaScript ModalDialog subclass for bibliographic lookup popups.
     #
@@ -171,21 +171,26 @@ class EntryDecorator < BaseDecorator
     # In addition to creating the control, this method also adds the modal to
     # the page modals (unless it already has been added).
     #
-    # @param [Hash] opt               Passed to #lookup_modal except for:
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #lookup_modal except for:
     #
     # @option opt [Hash] :button      Options for #lookup_button_options.
     #
     # @see LayoutHelper::PageModals#add_page_modal
     #
-    def lookup_control: (**untyped opt) -> ActiveSupport::SafeBuffer
+    def lookup_control: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # A modal popup for bibliographic lookup.
     #
-    # @param [Hash] opt               Passed to #modal_popup except for:
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #modal_popup except for:
     #
     # @option opt [Hash] :container   Options for #lookup_container.
     #
-    def lookup_modal: (**untyped opt) -> ActiveSupport::SafeBuffer
+    def lookup_modal: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # @private
+    FILE_NAME_CLASS: String
 
     # Element for displaying the name of the file that was uploaded.
     #
@@ -194,11 +199,12 @@ class EntryDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def uploaded_filename_display: (?leader: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    def uploaded_filename_display: (?leader: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Bibliographic lookup popup.
     #
-    # @param [Hash] opt               Passed to #inline_popup except for:
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #inline_popup except for:
     #
     # @option opt [Hash] :button      Options for #lookup_button_options.
     # @option opt [Hash] :container   Options for #lookup_container.
@@ -207,17 +213,18 @@ class EntryDecorator < BaseDecorator
     #
     # @see file:app/assets/javascripts/feature/model-form.js *lookupButton()*
     #
-    def lookup_popup: (?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    def lookup_popup: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # lookup_commit_button
     #
-    # @param [Hash] opt
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt
     #
     # @option opt [Hash] :label       Override the default button label.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def lookup_commit_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+    def lookup_commit_button: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # lookup_cancel_options
     #
@@ -230,7 +237,8 @@ class EntryDecorator < BaseDecorator
     # The options to create a toggle button to activate the bibliographic
     # lookup popup.
     #
-    # @param [Hash] opt
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt
     #
     # @option opt [Hash] :label       Override the default button label.
     #
@@ -238,11 +246,12 @@ class EntryDecorator < BaseDecorator
     #
     # @see PopupHelper#inline_popup
     #
-    def lookup_button_options: (**untyped opt) -> symHash
+    def lookup_button_options: (?css: String|nil, **untyped opt) -> symHash
 
     # The content element of the bibliographic lookup popup.
     #
-    # @param [Hash] opt               Passed to the outermost #html_div.
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to the outermost #html_div.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
@@ -250,7 +259,7 @@ class EntryDecorator < BaseDecorator
     #
     # @see file:app/assets/javascripts/shared/lookup-modal.js *LookupModal*
     #
-    def lookup_container: (**untyped opt) -> ActiveSupport::SafeBuffer
+    def lookup_container: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Form action button configuration.
     #
@@ -429,6 +438,7 @@ class EntryDecorator < BaseDecorator
   #
   # @param [String, Symbol]  path
   # @param [String, Integer] id       Object identifier.
+  # @param [String]          css      Characteristic CSS class/selector.
   # @param [Hash]            opt      To PopupHelper#inline_popup except:
   #
   # @option opt [Hash] :attr          Options for deferred content.
@@ -438,7 +448,7 @@ class EntryDecorator < BaseDecorator
   #
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
-  def check_status_popup: ((String|Symbol) path, id: String|Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def check_status_popup: ((String|Symbol) path, id: String|Integer, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -466,6 +476,7 @@ class EntryDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_top_controls: (ActionView::Helpers::FormBuilder|nil f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # form_top_button_tray
   #
   # @param [ActionView::Helpers::FormBuilder] f
@@ -495,7 +506,8 @@ class EntryDecorator < BaseDecorator
   # Element for prompting for the EMMA index entry of the member repository
   # item which was the basis for the remediated item which is being submitted.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer *div*.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for outer *div*.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -503,7 +515,7 @@ class EntryDecorator < BaseDecorator
   # @see LayoutHelper::SearchBar#search_button_label
   # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*
   #
-  def parent_entry_select: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def parent_entry_select: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate a prompt for #items_menu.
   #

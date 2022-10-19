@@ -16,7 +16,7 @@
 
   skip     = [*skip]
   role     = ('role="complementary"'.html_safe if level > 1)
-  panel_id = css_randomize(MemberDecorator::HISTORY_CSS_CLASS)
+  panel_id = css_randomize(MemberDecorator::HISTORY_CLASS)
   heading  =
     unless skip.include?(:title)
       title ||= t('emma.member.history.title')

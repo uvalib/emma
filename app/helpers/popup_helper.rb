@@ -36,26 +36,28 @@ module PopupHelper
 
   # Render a free-standing popup element.
   #
-  # @param [Hash] opt                 Passed to #make_popup_panel.
-  # @param [Proc] block               Passed to #make_popup_panel.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #make_popup_panel.
+  # @param [Proc]   blk               Passed to #make_popup_panel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/shared/modal-base.js
   #
-  def modal_popup(**opt, &block)
-    css = '.modal-popup'
+  def modal_popup(css: '.modal-popup', **opt, &blk)
     prepend_css!(opt, css)
-    make_popup_panel(**opt, &block)
+    make_popup_panel(**opt, &blk)
   end
 
   # Render a popup control and associated popup element.
   #
   # @param [Hash, nil] control        Options for the visible toggle control.
   # @param [Hash, nil] panel          Options for the popup panel element.
-  # @param [Hash] opt                 Passed to 'inline-popup' except for
+  # @param [String]    css            Characteristic CSS class/selector.
+  # @param [Hash]      opt            Passed to 'inline-popup' except for
   #                                     options passed to #make_popup_toggle,
   #                                     #make_popup_panel.
+  # @param [Proc]      blk            Passed to #make_popup_panel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -64,8 +66,7 @@ module PopupHelper
   #
   # @see file:app/assets/stylesheets/layouts/controls/_popup.scss
   #
-  def inline_popup(control: nil, panel: nil, **opt, &block)
-    css   = '.inline-popup'
+  def inline_popup(control: nil, panel: nil, css: '.inline-popup', **opt, &blk)
 
     # Visible popup toggle control.
     t_opt = extract_hash!(opt, *POPUP_TOGGLE_OPT)
@@ -76,7 +77,7 @@ module PopupHelper
     p_opt = extract_hash!(opt, *POPUP_PANEL_OPT)
     p_opt.reverse_merge!(panel) if panel
     prepend_css!(p_opt, POPUP_PANEL_CLASS)
-    popup_panel = make_popup_panel(**p_opt, &block)
+    popup_panel = make_popup_panel(**p_opt, &blk)
 
     # The hidden panel is a sibling of the popup toggle control:
     prepend_css!(opt, css)

@@ -24,7 +24,8 @@ module LayoutHelper::PageControls
   # Render the appropriate partial to insert page controls if they are defined
   # for the current controller/action.
   #
-  # @param [Hash] opt
+  # @param [String] css               CSS class/selector for outer container.
+  # @param [Hash]   opt
   #
   # @option opt [String, Symbol] :controller    Default: `params[:controller]`.
   # @option opt [String, Symbol] :action        Default: `params[:action]`.
@@ -33,7 +34,7 @@ module LayoutHelper::PageControls
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no page_controls configured.
   #
-  def render_page_controls: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def render_page_controls: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate a list of controller/action pairs that the current user is able to
   # perform.

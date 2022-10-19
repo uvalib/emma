@@ -61,11 +61,12 @@ module ImageHelper
   #
   # @param [String]      url
   # @param [String, nil] image        Default: 'loading-balls.gif'
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def image_placeholder: (String url, ?image: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def image_placeholder: (String url, ?image: String|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   private
 

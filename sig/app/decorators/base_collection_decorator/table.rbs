@@ -5,7 +5,8 @@ module BaseCollectionDecorator::Table
 
   # Render model items as a table.
   #
-  # @param [Hash] opt                 Passed to outer #html_tag except:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_tag except:
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
   # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated *tbody*.
@@ -17,7 +18,7 @@ module BaseCollectionDecorator::Table
   # @see #STICKY_HEAD
   # @see #DARK_HEAD
   #
-  def table: (**untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
+  def table: (?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
 
   # Render one or more entries for use within a *tbody*.
   #

@@ -363,15 +363,15 @@ class SearchDecorator < BaseDecorator
   # Display title of the associated work along with the logo of the source
   # repository.
   #
-  # @param [Hash] opt                 Passed to #html_div for title and to
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for title and to
   #                                     #prev_next_controls.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LogoHelper#repository_source_logo
   #
-  def title_and_source_logo(**opt)
-    css    = '.title'
+  def title_and_source_logo(css: '.title', **opt)
     score  = relevancy_scores? && relevancy_scores
     title  = extended_title? && extended_title || object.full_title
     source = object.emma_repository
@@ -388,15 +388,15 @@ class SearchDecorator < BaseDecorator
 
   # Display title of the associated work along with the source repository.
   #
-  # @param [Hash] opt                 Passed to #html_div for title and to
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for title and to
   #                                     #prev_next_controls.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LogoHelper#repository_source
   #
-  def title_and_source(**opt)
-    css    = '.title'
+  def title_and_source(css: '.title', **opt)
     title  = object.full_title
     source = object.emma_repository
     source = nil unless EmmaRepository.values.include?(source)
@@ -410,12 +410,12 @@ class SearchDecorator < BaseDecorator
 
   # An element containing controls for moving up and down through the list.
   #
-  # @param [Hash] opt   Passed to #prev_record_link and #next_record_link.
+  # @param [String] css       Characteristic CSS class/selector.
+  # @param [Hash]   opt       Passed to #prev_record_link and #next_record_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def prev_next_controls(**opt)
-    css = '.prev-next'
+  def prev_next_controls(css: '.prev-next', **opt)
     html_div(class: css_classes(css)) do
       prev_record_link(**opt) << next_record_link(**opt)
     end
@@ -581,7 +581,8 @@ class SearchDecorator < BaseDecorator
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.
   #
-  # @param [Hash] opt                 To PopupHelper#inline_popup except:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To PopupHelper#inline_popup except:
   #
   # @option opt [Hash] :attr          Options for deferred content.
   # @option opt [Hash] :placeholder   Options for transient placeholder.
@@ -590,8 +591,7 @@ class SearchDecorator < BaseDecorator
   #
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
-  def record_popup(**opt)
-    css    = '.record-popup'
+  def record_popup(css: '.record-popup', **opt)
     attr   = opt.delete(:attr)&.dup || {}
     rid    = object.emma_repositoryRecordId
     id     = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
@@ -728,12 +728,12 @@ class SearchDecorator < BaseDecorator
   # Generate a summary of the number of files per each format associated with
   # this item.
   #
-  # @param [Hash] opt                 Passed to outer :ul.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer :ul.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def format_counts(**opt)
-    css = '.format-counts'
+  def format_counts(css: '.format-counts', **opt)
     prepend_css!(opt, css)
     html_tag(:ul, opt) do
       counts = object&.get_format_counts || {}

@@ -636,7 +636,8 @@ class BookshareDecorator < BaseDecorator
   # @param [Model, Array<String>, String] links
   # @param [Boolean]                      no_link
   # @param [String]                       separator
-  # @param [Hash]                         opt         To LinkHelper#make_link.
+  # @param [String]                       css       Characteristic CSS selector
+  # @param [Hash]                         opt       To LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -646,9 +647,9 @@ class BookshareDecorator < BaseDecorator
     links,
     no_link:   false,
     separator: DEFAULT_ELEMENT_SEPARATOR,
+    css:       '.external-link',
     **opt
   )
-    css = '.external-link'
     prepend_css!(opt, css)
     links = links.record_links if links.respond_to?(:record_links)
     Array.wrap(links).map { |link|

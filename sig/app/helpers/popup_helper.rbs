@@ -23,22 +23,25 @@ module PopupHelper
 
   # Render a free-standing popup element.
   #
-  # @param [Hash] opt                 Passed to #make_popup_panel.
-  # @param [Proc] block               Passed to #make_popup_panel.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #make_popup_panel.
+  # @param [Proc]   blk               Passed to #make_popup_panel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/shared/modal-base.js
   #
-  def modal_popup: (**untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+  def modal_popup: (?css: String|nil, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
   # Render a popup control and associated popup element.
   #
   # @param [Hash, nil] control        Options for the visible toggle control.
   # @param [Hash, nil] panel          Options for the popup panel element.
-  # @param [Hash] opt                 Passed to 'inline-popup' except for
+  # @param [String]    css            Characteristic CSS class/selector.
+  # @param [Hash]      opt            Passed to 'inline-popup' except for
   #                                     options passed to #make_popup_toggle,
   #                                     #make_popup_panel.
+  # @param [Proc]      blk            Passed to #make_popup_panel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -47,7 +50,7 @@ module PopupHelper
   #
   # @see file:app/assets/stylesheets/layouts/controls/_popup.scss
   #
-  def inline_popup: (?control: symHash|nil, ?panel: symHash|nil, **untyped opt) ?{ () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+  def inline_popup: (?control: symHash|nil, ?panel: symHash|nil, ?css: String|nil, **untyped opt) ?{ () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
   # @private
   POPUP_TOGGLE_OPT: symArray

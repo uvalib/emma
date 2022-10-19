@@ -14,7 +14,8 @@ class SearchesDecorator < BaseCollectionDecorator
 
   # Controls for applying one or more search style variants.
   #
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -23,11 +24,12 @@ class SearchesDecorator < BaseCollectionDecorator
   # @see SearchModesHelper#permitted_by?
   # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
-  def list_styles: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def list_styles: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Control for selecting the type of search results to display.
   #
   # @param [String,Symbol,nil] selected  Selected menu item.
+  # @param [String]            css       Characteristic CSS class/selector.
   # @param [Hash]              opt       Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -37,5 +39,5 @@ class SearchesDecorator < BaseCollectionDecorator
   # @see SearchModesHelper#permitted_by?
   # @see file:app/assets/javascripts/controllers/search.js *$mode_menu*
   #
-  def list_results: (?selected: String|Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_results: (?selected: String|Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 end

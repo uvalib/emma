@@ -296,13 +296,14 @@ class BookshareDecorator < BaseDecorator
   # @param [Model, Array<String>, String] links
   # @param [Boolean]                      no_link
   # @param [String]                       separator
-  # @param [Hash]                         opt         To LinkHelper#make_link.
+  # @param [String]                       css       Characteristic CSS selector
+  # @param [Hash]                         opt       To LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see BsApiHelper#bs_api_explorer_url
   #
-  def record_links: ((Model|String|strArray) links, **untyped opt) -> ActiveSupport::SafeBuffer
+  def record_links: ((Model|String|strArray) links, ?no_link: bool, ?separator: String, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Transform a field value for HTML rendering.
   #

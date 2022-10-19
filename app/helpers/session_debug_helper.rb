@@ -54,12 +54,12 @@ module SessionDebugHelper
 
   # Render a table of values from `#session`.
   #
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def session_debug(**opt)
-    css   = '.session-debug-table'
+  def session_debug(css: '.session-debug-table', **opt)
     table = { SESSION: 'DEBUG' }
     pairs =
       session.to_hash.except!(*SESSION_SKIP_KEYS).transform_values! do |v|

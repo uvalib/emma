@@ -143,6 +143,7 @@ module FlashHelper
     # @param [Integer, nil] first     Index of first column (def: 1).
     # @param [Integer, nil] last      Index of last column (def: `parts.size`).
     # @param [Hash]         part      Options passed to inner #html_div.
+    # @param [String]       css       Characteristic CSS class/selector.
     # @param [Hash]         opt       Passed to outer #html_div
     #
     # @option opt [String, nil]  :separator   Default: #HTML_BREAK.
@@ -152,8 +153,7 @@ module FlashHelper
     #
     # @see #render_part
     #
-    def render(first: nil, last: nil, part: nil, **opt)
-      css = '.line'
+    def render(first: nil, last: nil, part: nil, css: '.line', **opt)
       prepend_css!(opt, css)
       opt[:separator] ||= HTML_BREAK
       html_div(opt) do
@@ -174,12 +174,12 @@ module FlashHelper
     # @param [Integer, nil] pos       Position of part (starting from 1).
     # @param [Integer, nil] first     Index of the first column.
     # @param [Integer, nil] last      Index of the last column.
+    # @param [String]       css       Characteristic CSS class/selector.
     # @param [Hash]         opt       Passed to #html_div.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def render_part(part, pos: nil, first: 1, last: -1, **opt)
-      css      = '.part'
+    def render_part(part, pos: nil, first: 1, last: -1, css: '.part', **opt)
       html_opt = opt.except(:xhr, :html, :separator, :separators)
       prepend_css!(html_opt, css)
       append_css!(html_opt, "col-#{pos}") if pos

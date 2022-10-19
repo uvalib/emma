@@ -38,14 +38,14 @@ module ToolHelper
 
   # Standalone tool list entry.
   #
-  # @param [Hash] opt                 Passed to outer :ul tag.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer :ul tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/search.js
   #
-  def tool_list(**opt)
-    css = '.tool-list'
+  def tool_list(css: '.tool-list', **opt)
     prepend_css!(opt, css)
     html_tag(:ul, opt) do
       TOOL_ITEMS.map { |k, v| tool_list_item(k, v) }
@@ -56,14 +56,14 @@ module ToolHelper
   #
   # @param [Symbol] action
   # @param [Hash]   config
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/search.js
   #
-  def tool_list_item(action, config, **opt)
-    css    = '.tool-item'
+  def tool_list_item(action, config, css: '.tool-item', **opt)
     label  = config[:label]&.to_s || '???'
     path   = config[:path]
     path   = try(path) if path.is_a?(Symbol)

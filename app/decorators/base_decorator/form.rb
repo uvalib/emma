@@ -268,6 +268,7 @@ module BaseDecorator::Form
   # @param [Class|Array] range        A class derived from EnumType whose
   #                                     #values method will be used to populate
   #                                     the menu.
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #select_tag except for:
   #
   # @option opt [String] :name        Overrides *name*
@@ -279,8 +280,7 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *updateMenu()*
   #
-  def render_form_menu_single(name, value, range:, **opt)
-    css = '.menu.single'
+  def render_form_menu_single(name, value, range:, css: '.menu.single', **opt)
     range.is_a?(Array) or valid_range?(range, exception: true)
     normalize_attributes!(opt)
     html_opt = remainder_hash!(opt, :readonly, :base, :name)
@@ -311,6 +311,7 @@ module BaseDecorator::Form
   # @param [Class]  range             A class derived from EnumType whose
   #                                     #values method will be used to populate
   #                                     the menu.
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #field_set_tag except for:
   #
   # @option opt [String] :name        Overrides *name*
@@ -322,8 +323,7 @@ module BaseDecorator::Form
   #
   # @see file:javascripts/feature/model-form.js *updateFieldsetCheckboxes()*
   #
-  def render_form_menu_multi(name, value, range:, **opt)
-    css = '.menu.multi'
+  def render_form_menu_multi(name, value, range:, css: '.menu.multi', **opt)
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
     html_opt = remainder_hash!(opt, :id, :readonly, :base, :name)
@@ -359,6 +359,7 @@ module BaseDecorator::Form
   #
   # @param [String] name
   # @param [Array]  value
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to :field_set_tag except for:
   #
   # @option [Boolean] :disabled       Passed to :render_form_input
@@ -368,8 +369,7 @@ module BaseDecorator::Form
   #
   # @see file:javascripts/feature/model-form.js *updateFieldsetInputs()*
   #
-  def render_form_input_multi(name, value, **opt)
-    css = '.input.multi'
+  def render_form_input_multi(name, value, css: '.input.multi', **opt)
     prepend_css!(opt, css)
     render_field_item(name, value, **opt)
   end
@@ -377,15 +377,15 @@ module BaseDecorator::Form
   # render_form_input
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:javascripts/feature/model-form.js *updateTextInputField()*
   #
-  def render_form_input(name, value, **opt)
-    css = '.input.single'
+  def render_form_input(name, value, css: '.input.single', **opt)
     prepend_css!(opt, css)
     render_field_item(name, value, **opt)
   end
@@ -445,7 +445,7 @@ module BaseDecorator::Form
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_input_fill(filler = nil, **opt)
-    opt = form_input_related_opt('label', **opt)
+    opt = form_input_related_opt(css: 'label', **opt)
     html_span(filler, opt)
   end
 
@@ -457,7 +457,7 @@ module BaseDecorator::Form
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_input_note(note, **opt)
-    opt = form_input_related_opt('note', **opt)
+    opt = form_input_related_opt(css: 'note', **opt)
     opt[:separator] = ''
     html_tag(:em, opt) { "(#{note})" }
   end
@@ -494,7 +494,7 @@ module BaseDecorator::Form
   #
   # @see file:javascripts/feature/model-form.js *updateFieldAndLabel()*
   #
-  def form_input_related_opt(css = nil, **opt)
+  def form_input_related_opt(css: nil, **opt)
     opt[:'data-for'] = opt.values_at(:'data-field', :'data-for').first
     opt.except!(*RELATED_IGNORED_KEYS)
     prepend_css!(opt, css) if css
@@ -510,6 +510,23 @@ module BaseDecorator::Form
   # @private
   DEFAULT_FORM_ACTION = :new
 
+  # The CSS class which indicates that the element or its descendent(s) involve
+  # file uploading.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/shared/uploader.js *BaseUploader.UPLOADER_CLASS*
+  #
+  UPLOADER_CLASS = 'file-uploader'
+
+  # The CSS class for the element displaying the name of an uploaded file.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/shared/uploader.js *BaseUploader.FILE_NAME_CLASS*
+  #
+  FILE_NAME_CLASS = 'uploaded-filename'
+
   # Generate a form with controls for entering field values and submitting.
   #
   # @param [String]         label     Label for the submit button.
@@ -518,6 +535,7 @@ module BaseDecorator::Form
   # @param [Boolean]        uploader  If *true*, active client-side logic for
   #                                     supporting file upload.
   # @param [Hash]           outer     Passed to outer div.
+  # @param [String]         css       Characteristic CSS class/selector.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String]  :cancel     URL for cancel button action (default:
@@ -533,11 +551,11 @@ module BaseDecorator::Form
     cancel:   nil,
     uploader: nil,
     outer:    nil,
+    css:      '.model-form',
     **opt
   )
-    css       = '.model-form'
     outer_css = '.form-container'
-    uploader  = uploader.is_a?(TrueClass) ? 'file-uploader' : uploader.presence
+    uploader  = UPLOADER_CLASS if uploader.is_a?(TrueClass)
     action    = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
 
     case action
@@ -584,6 +602,7 @@ module BaseDecorator::Form
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
+  # @param [String]                                css
   # @param [Hash]                                  opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -592,11 +611,11 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_top_controls(f = nil, *buttons, **opt)
-    css   = '.controls.top'
+  def form_top_controls(f = nil, *buttons, css: '.controls.top', **opt)
     parts = [form_top_button_tray(f, *buttons), field_group_controls]
     parts = yield(parts) if block_given?
-    html_div(*parts, prepend_css!(opt, css))
+    prepend_css!(opt, css)
+    html_div(*parts, opt)
   end
 
   # form_top_button_tray
@@ -618,6 +637,7 @@ module BaseDecorator::Form
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
+  # @param [String]                                css
   # @param [Hash]                                  opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -626,11 +646,11 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_bottom_controls(f = nil, *buttons, **opt)
-    css   = '.controls.bottom'
+  def form_bottom_controls(f = nil, *buttons, css: '.controls.bottom', **opt)
     parts = [form_bottom_button_tray(f, *buttons)]
     parts = yield(parts) if block_given?
-    html_div(*parts, prepend_css!(opt, css))
+    prepend_css!(opt, css)
+    html_div(*parts, opt)
   end
 
   # form_bottom_button_tray
@@ -652,6 +672,7 @@ module BaseDecorator::Form
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
+  # @param [String]                                css
   # @param [Hash]                                  opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -660,14 +681,14 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_button_tray(f = nil, *buttons, **opt)
-    css    = '.button-tray'
+  def form_button_tray(f = nil, *buttons, css: '.button-tray', **opt)
     fb_opt = extract_hash!(opt, *FORM_BUTTON_OPTIONS)
     # noinspection RubyMismatchedArgumentType
     buttons.unshift(f) if f && !f.is_a?(ActionView::Helpers::FormBuilder)
     buttons = form_buttons(**fb_opt) if buttons.blank?
     buttons = yield(buttons)         if block_given?
-    html_div(*buttons, prepend_css!(opt, css))
+    prepend_css!(opt, css)
+    html_div(*buttons, opt)
   end
 
   # Basic form controls.
@@ -747,7 +768,8 @@ module BaseDecorator::Form
 
   # Data for hidden form fields.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -755,8 +777,7 @@ module BaseDecorator::Form
   # @yieldparam [Hash] result
   # @yieldreturn [Hash]
   #
-  def form_hidden(**opt)
-    css = '.hidden-field'
+  def form_hidden(css: '.hidden-field', **opt)
     prepend_css!(opt, css)
     result = { redirect: h.last_operation_path || referrer }
     result = yield(result, opt) if block_given?
@@ -780,12 +801,12 @@ module BaseDecorator::Form
 
   # Form fields are wrapped in an element for easier grid manipulation.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def field_container(**opt)
-    css = '.form-fields'
+  def field_container(css: '.form-fields', **opt)
     prepend_css!(opt, css, model_type)
     html_div(opt) do
       form_fields << no_fields_row
@@ -818,7 +839,8 @@ module BaseDecorator::Form
 
   # Control for filtering which fields are displayed.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer *div*.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for outer *div*.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -826,8 +848,7 @@ module BaseDecorator::Form
   # @see file:javascripts/feature/model-form.js *fieldDisplayFilterSelect()*
   # @see file:app/assets/stylesheets/layouts/_root.scss *.wide-screen*, etc.
   #
-  def field_group_controls(**opt)
-    css  = '.field-group'
+  def field_group_controls(css: '.field-group', **opt)
     name = FIELD_GROUP_NAME
     opt[:role] = 'radiogroup'
 
@@ -887,11 +908,12 @@ module BaseDecorator::Form
   # @param [String]       label
   # @param [Boolean, nil] enable      If *true*, generate the element (enabled
   #                                     by default if #field_groups are used).
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def no_fields_row(label: NO_FIELDS, enable: nil, **opt)
-    css    = '.no-fields'
+  def no_fields_row(label: NO_FIELDS, enable: nil, css: '.no-fields', **opt)
     enable = field_groups.present? if enable.nil?
     if enable
       prepend_css!(opt, css)
@@ -905,12 +927,12 @@ module BaseDecorator::Form
   #
   # @param [Symbol, Array<Symbol>] status   One or more of %[invalid required].
   # @param [String, Symbol]        label    Used with :required.
+  # @param [String]                css      Characteristic CSS class/selector.
   # @param [Hash]                  opt      Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def status_marker(status: nil, label: nil, **opt)
-    css    = '.status-marker'
+  def status_marker(status: nil, label: nil, css: '.status-marker', **opt)
     status = Array.wrap(status).compact
     entry  = status_markers.values_at(*status).first
     icon, tip = entry&.values_at(:label, :tooltip)

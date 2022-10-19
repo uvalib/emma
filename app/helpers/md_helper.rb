@@ -21,12 +21,12 @@ module MdHelper
 
   # Math Detective file input element.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_file_input(**opt)
-    css       = '.file-prompt'
+  def md_file_input(css: '.file-prompt', **opt)
 
     input_css = 'file-input'
     input_id  = unique_id(input_css)
@@ -48,12 +48,12 @@ module MdHelper
   #
   # NOTE: Not currently possible with Firefox.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_clipboard_input(**opt)
-    css       = '.clipboard-prompt'
+  def md_clipboard_input(css: '.clipboard-prompt', **opt)
 
     input_txt = 'Paste' # TODO: I18n
     input_css = 'clipboard-input'
@@ -78,12 +78,12 @@ module MdHelper
 
   # Math Detective file preview element.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_preview(**opt)
-    css       = '.preview-container.container'
+  def md_preview(css: '.preview-container.container', **opt)
 
     label_tag = :h2
     label_css = 'preview-label'
@@ -105,12 +105,12 @@ module MdHelper
 
   # Math Detective execution status.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_status(**opt)
-    css       = '.status-container.container'
+  def md_status(css: '.status-container.container', **opt)
 
     label_tag = :label
     label_css = 'status-label'
@@ -132,12 +132,12 @@ module MdHelper
 
   # Math Detective error report.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def md_error(**opt)
-    css      = '.error-container.container'
+  def md_error(css: '.error-container.container', **opt)
 
     none_txt = 'No equations detected.' # TODO: I18n
     none_css = 'no-equations'
@@ -246,12 +246,12 @@ module MdHelper
   # Clipboard icon to act as a button for copying the text of the associated
   # output element.
   #
-  # @param [Hash] opt
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def clipboard_icon(**opt)
-    css           = '.clipboard-icon'
+  def clipboard_icon(css: '.clipboard-icon', **opt)
     opt[:title] ||= 'Copy this output to clipboard' # TODO: I18n
     opt[:role]  ||= 'button'
     prepend_css!(opt, css)

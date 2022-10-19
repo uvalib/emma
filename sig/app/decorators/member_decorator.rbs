@@ -139,18 +139,19 @@ class MemberDecorator < BookshareDecorator
   #
   # @type [String]
   #
-  HISTORY_CSS_CLASS: String
+  HISTORY_CLASS: String
 
   # history_title
   #
   # @param [String, nil] label
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #html_tag except for:
   #
   # @option opt [Integer] :level      If missing, defaults to 'div'.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def history_title: ((String|nil) label, ?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
+  def history_title: ((String|nil) label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # history_control
   #
@@ -165,11 +166,12 @@ class MemberDecorator < BookshareDecorator
   #
   # @param [String]    id             Control ID (@see #history_control)
   # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [String]    css            Characteristic CSS class/selector.
   # @param [Hash]      opt            Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def history_list: (id: String, ?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def history_list: (id: String, ?pairs: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Create a decorator variant which will handle the :title field appropriately
   # for history entries.

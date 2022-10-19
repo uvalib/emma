@@ -63,6 +63,7 @@ module LayoutHelper::PageSections
   # @param [String, Symbol, nil]  controller  Default: `params[:controller]`.
   # @param [String, Symbol, nil]  action      Default: `params[:action]`.
   # @param [Symbol, Integer, nil] tag         Tag for the internal text block.
+  # @param [String]               css         Characteristic CSS class/selector
   # @param [Hash]                 opt         Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
@@ -74,9 +75,9 @@ module LayoutHelper::PageSections
     controller: nil,
     action:     nil,
     tag:        :p,
+    css:        '.page-text-section',
     **opt
   )
-    css    = '.page-text-section'
     type   = type&.to_s&.delete_suffix('_html')&.to_sym || :text
     text ||= page_text(controller: controller, action: action, type: type)
     return if text.blank?

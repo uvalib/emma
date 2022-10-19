@@ -157,6 +157,7 @@ module LinkHelper
   #
   # @param [String] label
   # @param [String] path
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   # @param [Proc]   block
   #
@@ -164,8 +165,7 @@ module LinkHelper
   #
   # @see #external_link
   #
-  def download_link(label, path, **opt, &block)
-    css = '.download'
+  def download_link(label, path, css: '.download', **opt, &block)
     prepend_css!(opt, css)
     external_link(label, path, **opt, &block)
   end

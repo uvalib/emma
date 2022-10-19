@@ -77,12 +77,13 @@ module BaseDecorator::Fields
   # render_check_box
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_check_box: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_check_box: (String name, untyped value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # This is a "hook" to allow customization by SearchDecorator.
   #

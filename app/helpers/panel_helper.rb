@@ -68,7 +68,8 @@ module PanelHelper
   #                                           by this button (only used if
   #                                           panel.js RESTORE_PANEL_STATE is
   #                                           *true*).
-  # @param [Hash] opt                       Passed to #button_tag.
+  # @param [String]              css        Characteristic CSS class/selector.
+  # @param [Hash]                opt        Passed to #button_tag.
   #
   # @raise [RuntimeError]             The controlled element was not specified.
   #
@@ -82,9 +83,9 @@ module PanelHelper
     context:  nil,
     open:     nil,
     selector: nil,
+    css:      '.toggle',
     **opt
   )
-    css = '.toggle'
     opt[:'aria-controls'] = id.presence or raise 'no target id given'
     open = 'open' if open.is_a?(TrueClass)
     open = nil    unless open.is_a?(String)

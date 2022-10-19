@@ -49,10 +49,11 @@ class EntriesDecorator < BaseCollectionDecorator
 
   # Select records based on workflow state group.
   #
-  # @param [Hash] counts              A table of group names associated with
+  # @param [Hash]   counts            A table of group names associated with
   #                                     their overall totals (default:
   #                                     `#group_counts`).
-  # @param [Hash] opt                 Passed to inner #html_div except for:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to inner #html_div except for:
   #
   # @option opt [String]        :curr_path    Default: `request.fullpath`
   # @option opt [String,Symbol] :curr_group   Default from `request_parameters`
@@ -63,8 +64,7 @@ class EntriesDecorator < BaseCollectionDecorator
   # @see LinkHelper#make_link
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def state_group_select(counts: nil, **opt)
-    css        = GROUP_PANEL_CLASS
+  def state_group_select(counts: nil, css: GROUP_PANEL_CLASS, **opt)
     curr_path  = opt.delete(:curr_path)  || request_value(:fullpath)
     curr_group = opt.delete(:curr_group) || param_values[:group] || :all
     curr_group = curr_group.to_sym if curr_group.is_a?(String)
@@ -125,11 +125,12 @@ class EntriesDecorator < BaseCollectionDecorator
 
   # Control for filtering which records are displayed.
   #
-  # @param [Hash] counts              A table of group names associated with
+  # @param [Hash]   counts            A table of group names associated with
   #                                     their overall totals (default:
   #                                     `#group_counts`).
-  # @param [Hash] outer               HTML options for outer fieldset.
-  # @param [Hash] opt                 Passed to inner #html_div.
+  # @param [Hash]   outer             HTML options for outer fieldset.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to inner #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If #LIST_FILTERING is *false*.
@@ -137,9 +138,8 @@ class EntriesDecorator < BaseCollectionDecorator
   # @see #STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def list_filter(counts: nil, outer: nil, **opt)
+  def list_filter(counts: nil, outer: nil, css: LIST_FILTER_CLASS, **opt)
     return unless LIST_FILTERING
-    css      = LIST_FILTER_CLASS
     name     = "#{model_type}-#{__method__}"
     list     = object
     table    = list.group_by(&:state_group)
@@ -209,7 +209,8 @@ class EntriesDecorator < BaseCollectionDecorator
 
   # Control the selection of filters displayed by #list_filter.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer *div*.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for outer *div*.
   #
   # @option opt [Array] :records      List of upload records for display.
   #
@@ -217,8 +218,7 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
-  def list_filter_options(**opt)
-    css    = FILTER_OPTIONS_CLASS
+  def list_filter_options(css: FILTER_OPTIONS_CLASS, **opt)
     name   = "#{model_type}-#{__method__}"
     list   = object
     counts = group_counts
@@ -363,13 +363,12 @@ class EntriesDecorator < BaseCollectionDecorator
   # Initially hidden container used by the client to display intermediate
   # results during a bulk operation.
   #
-  # @param [Hash] opt                 Passed to #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_op_results(**opt)
-    css   = '.bulk-op-results'
-
+  def bulk_op_results(css: '.bulk-op-results', **opt)
     l_sel = "#{css}-label"
     l_id  = unique_id(l_sel)
     label = 'Previous upload results:' # TODO: I18n
@@ -452,6 +451,7 @@ class EntriesDecorator < BaseCollectionDecorator
   # @param [String]         label     Label for the submit button.
   # @param [String, Symbol] action    Either :new or :edit.
   # @param [Hash]           outer     HTML options for outer div container.
+  # @param [String]         css       Characteristic CSS class/selector.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String]  :prefix     String to prepend to each title.
@@ -462,8 +462,13 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @see FormHelper#hidden_input
   #
-  def bulk_op_form(label: nil, action: nil, outer: nil, **opt)
-    css       = '.bulk-op-form'
+  def bulk_op_form(
+    label:  nil,
+    action: nil,
+    outer:  nil,
+    css:    '.bulk-op-form',
+    **opt
+  )
     outer_css = '.form-container.bulk'
     action    = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
 
@@ -606,6 +611,7 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @param [String] label             Label for the submit button.
   # @param [Hash]   outer             HTML options for outer div container.
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #form_with except for:
   #
   # @option opt [Boolean] :force      Force index delete option
@@ -615,8 +621,12 @@ class EntriesDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form(label: nil, outer: nil, **opt)
-    css       = '.bulk-op-form.delete'
+  def bulk_delete_form(
+    label: nil,
+    outer: nil,
+    css: '.bulk-op-form.delete',
+    **opt
+  )
     outer_css = '.form-container.bulk.delete'
     action    = :bulk_delete
     ids       = item_ids.presence

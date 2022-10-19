@@ -200,33 +200,36 @@ class SearchDecorator < BaseDecorator
   # Display title of the associated work along with the logo of the source
   # repository.
   #
-  # @param [Hash] opt                 Passed to #html_div for title and to
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for title and to
   #                                     #prev_next_controls.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LogoHelper#repository_source_logo
   #
-  def title_and_source_logo: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def title_and_source_logo: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Display title of the associated work along with the source repository.
   #
-  # @param [Hash] opt                 Passed to #html_div for title and to
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for title and to
   #                                     #prev_next_controls.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LogoHelper#repository_source
   #
-  def title_and_source: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def title_and_source: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An element containing controls for moving up and down through the list.
   #
-  # @param [Hash] opt   Passed to #prev_record_link and #next_record_link.
+  # @param [String] css       Characteristic CSS class/selector.
+  # @param [Hash]   opt       Passed to #prev_record_link and #next_record_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def prev_next_controls: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def prev_next_controls: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Create a control for jumping to the previous record in the list.
   #
@@ -290,7 +293,8 @@ class SearchDecorator < BaseDecorator
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.
   #
-  # @param [Hash] opt                 To PopupHelper#inline_popup except:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To PopupHelper#inline_popup except:
   #
   # @option opt [Hash] :attr          Options for deferred content.
   # @option opt [Hash] :placeholder   Options for transient placeholder.
@@ -299,7 +303,7 @@ class SearchDecorator < BaseDecorator
   #
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
-  def record_popup: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def record_popup: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single entry for use within a list of items.
   #
@@ -343,9 +347,10 @@ class SearchDecorator < BaseDecorator
   # Generate a summary of the number of files per each format associated with
   # this item.
   #
-  # @param [Hash] opt                 Passed to outer :ul.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer :ul.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def format_counts: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def format_counts: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 end

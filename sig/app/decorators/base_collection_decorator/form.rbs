@@ -7,6 +7,7 @@ module BaseCollectionDecorator::Form
   #
   # @param [String] label             Label for the submit button.
   # @param [Hash]   outer             HTML options for outer div container.
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to '.model-form.delete' except:
   #
   # @option opt [String] :cancel      Cancel button redirect URL passed to
@@ -14,7 +15,7 @@ module BaseCollectionDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def delete_form: (?label: String|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def delete_form: (?label: String|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # delete_submit_option_keys
   #
@@ -44,11 +45,12 @@ module BaseCollectionDecorator::Form
   # @param [String, Symbol, nil] action
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #button_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def delete_submit_button: (?action: String|Symbol|nil, ?label: String|nil, ?url: String|symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def delete_submit_button: (?action: String|Symbol|nil, ?label: String|nil, ?url: String|symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Cancel button for the delete form.
   #

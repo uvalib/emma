@@ -84,8 +84,8 @@ module BaseDecorator::Links
 
   # Create a link to the details show page for the given model instance.
   #
-  # @param [String, nil] css          Optional CSS class(es) to include.
-  # @param [Hash]        opt          Passed to #model_link.
+  # @param [String, Array, nil] css   Optional CSS class(es) to include.
+  # @param [Hash]               opt   Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
@@ -97,14 +97,14 @@ module BaseDecorator::Links
 
   # Create a link to the details show page for the given model instance.
   #
-  # @param [Hash] opt                 Passed to #link
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #link
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
-  def button_link(**opt)
-    opt[:css]  ||= '.button'
+  def button_link(css: '.button', **opt)
     opt[:role] ||= 'button'
-    link(**opt)
+    link(css: css, **opt)
   end
 
   # ===========================================================================
@@ -124,12 +124,12 @@ module BaseDecorator::Links
   #
   # @param [String, Symbol, nil]     current      Def: `context[:action]`
   # @param [Hash{Symbol=>Hash}, nil] table        Def: `#action_links`.
+  # @param [String]                  css          Characteristic CSS selector.
   # @param [Hash]                    opt          Passed to #action_links.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def action_list(current: nil, table: nil, **opt)
-    css = '.page-actions'
+  def action_list(current: nil, table: nil, css: '.page-actions', **opt)
     current ||= context[:action]
     table   ||= action_links(**opt)
     html_tag(:ul, prepend_css(css)) do
@@ -170,13 +170,21 @@ module BaseDecorator::Links
   # @param [String, Symbol, nil] action   The target controller action.
   # @param [String, Symbol, nil] current  Def: current `params[:action]`.
   # @param [String, nil]         label    Override configured label.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #action_entry.
+  #
+  # @option opt [String] :action          Overrides argument if present.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *action* not configured.
   #
-  def action_link(action = nil, current: nil, label: nil, **opt)
-    css     = '.page-action'
+  def action_link(
+    action = nil,
+    current: nil,
+    label:   nil,
+    css:     '.page-action',
+    **opt
+  )
     action  = opt.delete(:action) || action
     entry   = action_entry(action, current: current, **opt)
     return if entry.blank? && path.blank?

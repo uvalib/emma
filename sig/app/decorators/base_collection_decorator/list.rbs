@@ -25,11 +25,12 @@ module BaseCollectionDecorator::List
 
   # Hidden row that is shown only when no field rows are being displayed.
   #
-  # @param [Hash] opt                 Passed to created elements.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to created elements.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def no_records_row: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def no_records_row: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Options used with template :locals.
   #

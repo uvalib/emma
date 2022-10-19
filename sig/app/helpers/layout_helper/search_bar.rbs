@@ -87,7 +87,8 @@ module LayoutHelper::SearchBar
 
   # Generate an element for selecting search type.
   #
-  # @param [Hash] opt                       Passed to #select_tag except for
+  # @param [String] css                     Characteristic CSS class/selector.
+  # @param [Hash]   opt                     Passed to #select_tag except for
   #                                           #MENU_OPTS and:
   #
   # @option opt [String, Symbol]  :target
@@ -97,7 +98,7 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]     An HTML input element.
   # @return [nil]                           Search unavailable for target.
   #
-  def search_input_select: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_input_select: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate an element for entering search terms.
   #
@@ -130,6 +131,7 @@ module LayoutHelper::SearchBar
   # An operation on a search-bar-row.
   #
   # @param [String, Symbol] operation
+  # @param [String]         css             Characteristic CSS class/selector.
   # @param [Hash]           opt             Passed to #icon_button except for:
   #
   # @option opt [Any]             :field    Discarded.
@@ -139,7 +141,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_row_control: ((String|Symbol) operation, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_row_control: ((String|Symbol) operation, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The URL parameter to which search terms should be applied.
   #
@@ -251,7 +253,8 @@ module LayoutHelper::SearchBar
 
   # search_clear_button
   #
-  # @param [Hash] opt                       Passed to #link_to except for:
+  # @param [String] css                     Characteristic CSS class/selector.
+  # @param [Hash]   opt                     Passed to #link_to except for:
   #
   # @option opt [String, Boolean] :unique   Passed to #unique_id.
   # @option opt [Integer]         :index    Passed to #unique_id.
@@ -261,7 +264,7 @@ module LayoutHelper::SearchBar
   # @see file:javascripts/feature/advanced-search.js *clearSearchTerm()*
   # @see LinkHelper#icon_button
   #
-  def search_clear_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def search_clear_button: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   SEARCH_CONTROLS: symArray
 

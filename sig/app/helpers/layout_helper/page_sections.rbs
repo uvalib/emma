@@ -42,12 +42,13 @@ module LayoutHelper::PageSections
   # @param [String, Symbol, nil]  controller  Default: `params[:controller]`.
   # @param [String, Symbol, nil]  action      Default: `params[:action]`.
   # @param [Symbol, Integer, nil] tag         Tag for the internal text block.
+  # @param [String]               css         Characteristic CSS class/selector
   # @param [Hash]                 opt         Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
   #
-  def page_text_section: (?(Symbol|String|nil) `type`, ?(String|nil) text, ?controller: String|Symbol|nil, ?action: String|Symbol|nil, ?tag: Integer|Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def page_text_section: (?(Symbol|String|nil) `type`, ?(String|nil) text, ?controller: String|Symbol|nil, ?action: String|Symbol|nil, ?tag: Integer|Symbol|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Get the configured page description.
   #

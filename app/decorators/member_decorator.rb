@@ -215,19 +215,19 @@ class MemberDecorator < BookshareDecorator
   #
   # @type [String]
   #
-  HISTORY_CSS_CLASS = 'history-list'
+  HISTORY_CLASS = 'history-list'
 
   # history_title
   #
   # @param [String, nil] label
+  # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #html_tag except for:
   #
   # @option opt [Integer] :level      If missing, defaults to 'div'.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def history_title(label, opt = nil)
-    css      = '.list-heading'
+  def history_title(label, css: '.list-heading', **opt)
     label  ||= config_lookup('history.title')
     html_opt = remainder_hash!(opt, :level)
     prepend_css!(html_opt, css)
@@ -249,15 +249,15 @@ class MemberDecorator < BookshareDecorator
   #
   # @param [String]    id             Control ID (@see #history_control)
   # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [String]    css            Characteristic CSS class/selector.
   # @param [Hash]      opt            Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def history_list(id:, pairs: nil, **opt)
-    css = '.history-item'
+  def history_list(id:, pairs: nil, css: '.history-item', **opt)
     opt[:pairs]   = history_fields.merge(pairs || {})
     opt[:index] ||= 0
-    html_div(id: id, class: HISTORY_CSS_CLASS) do
+    html_div(id: id, class: HISTORY_CLASS) do
       downloads.map do |download|
         next unless (entry = history_decorator(download))
         opt[:index] += 1

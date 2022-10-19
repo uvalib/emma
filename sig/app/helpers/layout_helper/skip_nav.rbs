@@ -57,20 +57,22 @@ module LayoutHelper::SkipNav
 
   # Generate HTML for a "skip navigation" menu.
   #
-  # @param [Hash] opt                 Passed to outer #html_tag.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_skip_nav: (?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
+  def render_skip_nav: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate a single "skip navigation" link.
   #
   # @param [String, Symbol, Array<Symbol,String>] label
   # @param [String]                               link
+  # @param [String]                               css   Characteristic CSS.
   # @param [Hash]                                 opt   Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link element.
   # @return [nil]                         If *label* or *link* is missing.
   #
-  def render_skip_nav_link: ((String|Symbol|Array[String|Symbol]) label, String link, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def render_skip_nav_link: ((String|Symbol|Array[String|Symbol]) label, String link, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 end

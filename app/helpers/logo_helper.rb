@@ -35,7 +35,8 @@ module LogoHelper
   # Make a logo for a repository source.
   #
   # @param [Model, Hash, String, Symbol, nil] item
-  # @param [Hash] opt                 Passed to #html_span wrapper except for:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_span wrapper except for:
   #
   # @option opt [String] :source      Overrides derived value if present.
   # @option opt [String] :name        To be displayed instead of the source.
@@ -44,8 +45,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source_logo(item = nil, opt = nil)
-    css  = '.repository.logo'
+  def repository_source_logo(item = nil, css: '.repository.logo', **opt)
     item, opt     = [nil, item] if item.is_a?(Hash) && opt.nil?
     opt, html_opt = partition_hash(opt, :source, :name, :logo, :type)
     repo = normalize_repository(opt[:source] || item)
@@ -56,22 +56,23 @@ module LogoHelper
       prepend_css!(html_opt, css, repo)
       html_span(html_opt) { image_tag(asset_path(logo), alt: "#{name} logo") }
     else
-      repository_source(repo, html_opt.merge!(source: repo, name: name))
+      html_opt.merge!(source: repo, name: name)
+      repository_source(repo, **html_opt)
     end
   end
 
   # Make a textual logo for a repository source.
   #
   # @param [Model, Hash, String, Symbol, nil] item
-  # @param [Hash] opt                 Passed to #html_div except for:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div except for:
   #
   # @option opt [String] :source      Overrides derived value if present.
   # @option opt [String] :name        To be displayed instead of the source.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source(item, opt = nil)
-    css  = '.repository.name'
+  def repository_source(item, css: '.repository.name', **opt)
     opt, html_opt = partition_hash(opt, :source, :name)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)

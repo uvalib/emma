@@ -20,10 +20,11 @@ class UploadsDecorator < BaseCollectionDecorator
 
   # Select records based on workflow state group.
   #
-  # @param [Hash] counts              A table of group names associated with
+  # @param [Hash]   counts            A table of group names associated with
   #                                     their overall totals (default:
   #                                     `#group_counts`).
-  # @param [Hash] opt                 Passed to inner #html_div except for:
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to inner #html_div except for:
   #
   # @option opt [String]        :curr_path    Default: `request.fullpath`
   # @option opt [String,Symbol] :curr_group   Default from `request_parameters`
@@ -34,15 +35,16 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see LinkHelper#make_link
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def state_group_select: (?counts: Hash[Symbol,Integer]|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def state_group_select: (?counts: Hash[Symbol,Integer]|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Control for filtering which records are displayed.
   #
-  # @param [Hash] counts              A table of group names associated with
+  # @param [Hash]   counts            A table of group names associated with
   #                                     their overall totals (default:
   #                                     `#group_counts`).
-  # @param [Hash] outer               HTML options for outer fieldset.
-  # @param [Hash] opt                 Passed to inner #html_div.
+  # @param [Hash]   outer             HTML options for outer fieldset.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to inner #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If #LIST_FILTERING is *false*.
@@ -50,11 +52,12 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see #STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
-  def list_filter: (?counts:  Hash[Symbol,Integer]|nil, ?outer: symHash|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def list_filter: (?counts:  Hash[Symbol,Integer]|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Control the selection of filters displayed by #list_filter.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer *div*.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for outer *div*.
   #
   # @option opt [Array] :records      List of upload records for display.
   #
@@ -62,7 +65,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
-  def list_filter_options: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def list_filter_options: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Labels for inputs associated with transmitted parameters. # TODO: I18n
   #
@@ -121,11 +124,12 @@ class UploadsDecorator < BaseCollectionDecorator
   # Initially hidden container used by the client to display intermediate
   # results during a bulk operation.
   #
-  # @param [Hash] opt                 Passed to #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_op_results: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_op_results: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An option checkbox for a bulk operation form.
   #
@@ -168,6 +172,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @param [String]         label     Label for the submit button.
   # @param [String, Symbol] action    Either :new or :edit.
   # @param [Hash]           outer     HTML options for outer div container.
+  # @param [String]         css       Characteristic CSS class/selector.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String]  :prefix     String to prepend to each title.
@@ -178,7 +183,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @see FormHelper#hidden_input
   #
-  def bulk_op_form: (?label: String|nil, ?action: Symbol|String|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_op_form: (?label: String|nil, ?action: Symbol|String|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An option checkbox for a bulk new/edit form.
   #
@@ -226,6 +231,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [String] label             Label for the submit button.
   # @param [Hash]   outer             HTML options for outer div container.
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #form_with except for:
   #
   # @option opt [Boolean] :force      Force index delete option
@@ -235,7 +241,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form: (?label: String|nil, ?outer: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def bulk_delete_form: (?label: String|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An option checkbox for a bulk delete form.
   #

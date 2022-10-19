@@ -7,11 +7,12 @@ module LayoutHelper::Footer
 
   # Render a table of values from `#session`.
   #
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def footer_table: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def footer_table: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Content for the footer.
   #

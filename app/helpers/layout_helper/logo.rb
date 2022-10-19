@@ -61,14 +61,14 @@ module LayoutHelper::Logo
   # The application logo.
   #
   # @param [Symbol] mode              Either :text or :image; default: :image.
+  # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to outer #html_div except for:
   #
   # @option opt [String] :alt         Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def logo_element(mode: :image, **opt)
-    css      = '.logo'
+  def logo_element(mode: :image, css: '.logo', **opt)
     alt_text = opt.delete(:alt) || LOGO_ALT_TEXT
     opt[:'data-turbolinks-permanent'] = true
     prepend_css!(opt, css)

@@ -338,7 +338,7 @@ class UploadDecorator < BaseDecorator
     #
     # @see file:javascripts/shared/modal-dialog.js ModalDialog.SELECTOR_ATTR
     #
-    LOOKUP_CSS_SELECTOR = '.lookup-popup'
+    LOOKUP_CLASS = '.lookup-popup'
 
     # The JavaScript ModalDialog subclass for bibliographic lookup popups.
     #
@@ -354,14 +354,14 @@ class UploadDecorator < BaseDecorator
     # In addition to creating the control, this method also adds the modal to
     # the page modals (unless it already has been added).
     #
-    # @param [Hash] opt               Passed to #lookup_modal except for:
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #lookup_modal except for:
     #
     # @option opt [Hash] :button      Options for #lookup_button_options.
     #
     # @see LayoutHelper::PageModals#add_page_modal
     #
-    def lookup_control(**opt)
-      css      = LOOKUP_CSS_SELECTOR
+    def lookup_control(css: LOOKUP_CLASS, **opt)
       js       = LOOKUP_JS_CLASS
       sel_opt  = { 'data-modal-selector': css, 'data-modal-class': js }
       btn_opt  = opt.delete(:button) || {}
@@ -371,12 +371,12 @@ class UploadDecorator < BaseDecorator
 
     # A modal popup for bibliographic lookup.
     #
-    # @param [Hash] opt               Passed to #modal_popup except for:
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #modal_popup except for:
     #
     # @option opt [Hash] :container   Options for #lookup_container.
     #
-    def lookup_modal(**opt)
-      css   = LOOKUP_CSS_SELECTOR
+    def lookup_modal(css: LOOKUP_CLASS, **opt)
       c_opt = opt.delete(:container) || {}
       opt[:controls] = lookup_commit_button
       opt[:close]    = lookup_cancel_options
@@ -392,15 +392,18 @@ class UploadDecorator < BaseDecorator
 
     protected
 
+    # @private
+    FILE_NAME_CLASS = BaseDecorator::Form::FILE_NAME_CLASS
+
     # Element for displaying the name of the file that was uploaded.
     #
     # @param [String] leader          Text preceding the filename.
+    # @param [String] css             Characteristic CSS class/selector.
     # @param [Hash]   opt             Passed to #html_div for outer *div*.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def uploaded_filename_display(leader: nil, **opt)
-      css      = '.uploaded-filename'
+    def uploaded_filename_display(leader: nil, css: FILE_NAME_CLASS, **opt)
       leader ||= 'Selected file:' # TODO: I18n
       leader   = html_span(leader, class: 'leader')
       filename = html_span('', class: 'filename')
@@ -412,7 +415,8 @@ class UploadDecorator < BaseDecorator
 
     # Bibliographic lookup popup.
     #
-    # @param [Hash] opt               Passed to #inline_popup except for:
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #inline_popup except for:
     #
     # @option opt [Hash] :button      Options for #lookup_button_options.
     # @option opt [Hash] :container   Options for #lookup_container.
@@ -421,8 +425,7 @@ class UploadDecorator < BaseDecorator
     #
     # @see file:app/assets/javascripts/feature/model-form.js *lookupButton()*
     #
-    def lookup_popup(**opt)
-      css   = LOOKUP_CSS_SELECTOR
+    def lookup_popup(css: LOOKUP_CLASS, **opt)
       b_opt = opt.delete(:button)    || {}
       c_opt = opt.delete(:container) || {}
       unless opt.dig(:control, :button).present?
@@ -439,12 +442,14 @@ class UploadDecorator < BaseDecorator
 
     # lookup_commit_button
     #
-    # @param [Hash] opt
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt
+    #
+    # @option opt [Hash] :label       Override the default button label.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def lookup_commit_button(**opt)
-      css   = '.commit'
+    def lookup_commit_button(css: '.commit', **opt)
       label = opt.delete(:label) || 'Update' # TODO: I18n
       opt[:type]  ||= 'submit'
       opt[:title] ||= 'Replace submission field values with these changes' # TODO: I18n
@@ -467,7 +472,8 @@ class UploadDecorator < BaseDecorator
     # The options to create a toggle button to activate the bibliographic
     # lookup popup.
     #
-    # @param [Hash] opt
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt
     #
     # @option opt [Hash] :label       Override the default button label.
     #
@@ -475,8 +481,7 @@ class UploadDecorator < BaseDecorator
     #
     # @see PopupHelper#inline_popup
     #
-    def lookup_button_options(**opt)
-      css = '.lookup-button'
+    def lookup_button_options(css: '.lookup-button', **opt)
       prepend_css!(opt, css)
       opt[:label] ||= 'Lookup' # TODO: I18n
       opt
@@ -484,7 +489,8 @@ class UploadDecorator < BaseDecorator
 
     # The content element of the bibliographic lookup popup.
     #
-    # @param [Hash] opt               Passed to the outermost #html_div.
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to the outermost #html_div.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
@@ -492,8 +498,7 @@ class UploadDecorator < BaseDecorator
     #
     # @see file:app/assets/javascripts/shared/lookup-modal.js *LookupModal*
     #
-    def lookup_container(**opt)
-      css = '.lookup-container'
+    def lookup_container(css: '.lookup-container', **opt)
 
       query_panel       = 'lookup-query'
       query_terms       = 'terms'
@@ -959,6 +964,7 @@ class UploadDecorator < BaseDecorator
   #
   # @param [String, Symbol]  path
   # @param [String, Integer] id       Object identifier.
+  # @param [String]          css      Characteristic CSS class/selector.
   # @param [Hash]            opt      To PopupHelper#inline_popup except:
   #
   # @option opt [Hash] :attr          Options for deferred content.
@@ -968,8 +974,7 @@ class UploadDecorator < BaseDecorator
   #
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
-  def check_status_popup(path, id:, **opt)
-    css    = '.check-status-popup'
+  def check_status_popup(path, id:, css: '.check-status-popup', **opt)
     icon   = opt.delete(:icon)
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
@@ -1100,7 +1105,8 @@ class UploadDecorator < BaseDecorator
   # Element for prompting for the EMMA index entry of the member repository
   # item which was the basis for the remediated item which is being submitted.
   #
-  # @param [Hash] opt                 Passed to #html_div for outer *div*.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_div for outer *div*.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1108,8 +1114,7 @@ class UploadDecorator < BaseDecorator
   # @see LayoutHelper::SearchBar#search_button_label
   # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*
   #
-  def parent_entry_select(**opt)
-    css    = '.parent-entry-select'
+  def parent_entry_select(css: '.parent-entry-select', **opt)
     id     = 'parent-entry-search'
     b_opt  = { role: 'button', tabindex: 0 }
 
