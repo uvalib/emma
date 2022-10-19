@@ -115,7 +115,7 @@ class Paginator
     # Adjust parameters to be transmitted to the Bookshare API.
     opt[:limit]  = limit
     opt[:offset] = (offset if offset.nonzero?)
-    @initial_parameters = opt.compact
+    @initial_parameters = url_parameters(opt).compact
   end
 
   # Finish setting of pagination values based on the result list and original
