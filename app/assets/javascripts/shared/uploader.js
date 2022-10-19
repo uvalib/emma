@@ -1,18 +1,18 @@
 // app/assets/javascripts/shared/uploader.js
 
 
-import { Emma }                             from '../shared/assets'
-import { toggleVisibility }                 from '../shared/accessibility'
-import { BaseClass }                        from '../shared/base-class'
-import { selector }                         from '../shared/css'
-import { isMissing, isPresent, notDefined } from '../shared/definitions'
-import { handleClickAndKeypress }           from '../shared/events'
-import { extractFlashMessage }              from '../shared/flash'
-import { percent }                          from '../shared/math'
-import { compact, deepFreeze, fromJSON }    from '../shared/objects'
-import { camelCase }                        from '../shared/strings'
-import { MINUTES, SECONDS }                 from '../shared/time'
-import { makeUrl }                          from '../shared/url'
+import { toggleVisibility }                 from './accessibility'
+import { Emma }                             from './assets'
+import { BaseClass }                        from './base-class'
+import { selector }                         from './css'
+import { isMissing, isPresent, notDefined } from './definitions'
+import { handleClickAndKeypress }           from './events'
+import { extractFlashMessage }              from './flash'
+import { percent }                          from './math'
+import { compact, deepFreeze, fromJSON }    from './objects'
+import { camelCase }                        from './strings'
+import { MINUTES, SECONDS }                 from './time'
+import { makeUrl }                          from './url'
 import { Rails }                            from '../vendor/rails'
 import {
     Uppy,
@@ -227,8 +227,8 @@ export class Uploader extends BaseClass {
         this.onError    = callbacks?.onError;
         this.onSuccess  = callbacks?.onSuccess;
 
-        this.property = Emma[camelCase(model)] || {};
-        this.feature  = $.extend({ debugging: DEBUGGING }, FEATURES, features);
+        this.property   = Emma[camelCase(model)] || {};
+        this.feature    = { debugging: DEBUGGING, ...FEATURES, ...features };
     }
 
     // ========================================================================
@@ -304,8 +304,8 @@ export class Uploader extends BaseClass {
 
         // Get targets for these features; disable the feature if its target is
         // not present.
-        this.feature.drag_and_drop &&= this.#dragTarget();
-        this.feature.image_preview &&= this.#previewTarget();
+        this.feature.drag_and_drop &&= this.dragTarget;
+        this.feature.image_preview &&= this.previewTarget;
 
         // === Initialization ===
 
@@ -321,19 +321,19 @@ export class Uploader extends BaseClass {
 
         // === Event handlers ===
 
-        this.#setupHandlers();
+        this._setupHandlers();
 
-        if (this.feature.popup_messages) { this.#setupMessages() }
-        if (this.feature.debugging)      { this.#setupDebugging() }
+        if (this.feature.popup_messages) { this._setupMessages() }
+        if (this.feature.debugging)      { this._setupDebugging() }
 
         // === Display cleanup ===
 
         if (this.feature.replace_input) {
-            this.#initializeFileSelectContainer();
+            this._initializeFileSelectContainer();
         }
 
-        this.#initializeFileSelectButton();
-        this.#initializeProgressBar();
+        this._initializeFileSelectButton();
+        this._initializeProgressBar();
     }
 
     /**
@@ -396,7 +396,7 @@ export class Uploader extends BaseClass {
             });
         }
 
-        const endpoint    = this.#path.endpoint;
+        const endpoint    = this._path.endpoint;
         const def_message = this.upload_error;
 
         // noinspection JSUnusedGlobalSymbols
@@ -435,20 +435,20 @@ export class Uploader extends BaseClass {
      * Setup handlers for Uppy events that drive the workflow of uploading
      * a file and creating a database entry from it.
      *
-     * @private
+     * @protected
      */
-    #setupHandlers() {
+    _setupHandlers() {
 
-        const debugUppy       = this.#debugUppy.bind(this);
-        const uppyInfoClear   = this.#uppyInfoClear.bind(this);
+        const debugUppy       = this._debugUppy.bind(this);
+        const uppyInfoClear   = this._uppyInfoClear.bind(this);
         const showProgressBar = this.showProgressBar.bind(this);
 
         const onStart   = this.onStart   || (() => debugUppy('onStart'));
         const onError   = this.onError   || (() => debugUppy('onError'));
         const onSuccess = this.onSuccess || (() => debugUppy('onSuccess'));
 
-        let uppy        = this.uppy;
-        let feature     = this.feature;
+        const uppy      = this.uppy;
+        const feature   = this.feature;
 
         uppy.on('upload',         onFileUploadStart);
         uppy.on('upload-error',   onFileUploadError);
@@ -542,15 +542,15 @@ export class Uploader extends BaseClass {
     /**
      * Setup handlers for Uppy events that should trigger popup messages.
      *
-     * @private
+     * @protected
      */
-    #setupMessages() {
+    _setupMessages() {
 
-        const debugUppy = this.#debugUppy.bind(this);
-        const error     = this.#uppyError.bind(this);
-        const warn      = this.#uppyWarn.bind(this);
-        const popup     = this.#uppyPopup.bind(this);
-        const info      = this.#uppyInfo.bind(this);
+        const debugUppy = this._debugUppy.bind(this);
+        const error     = this._uppyError.bind(this);
+        const warn      = this._uppyWarn.bind(this);
+        const popup     = this._uppyPopup.bind(this);
+        const info      = this._uppyInfo.bind(this);
 
         this.uppy.on('upload-started', function(file) {
             console.warn('Uppy:', 'upload-started', file);
@@ -608,11 +608,11 @@ export class Uploader extends BaseClass {
     /**
      * Set up console debugging messages for other Uppy events.
      *
-     * @private
+     * @protected
      */
-    #setupDebugging() {
+    _setupDebugging() {
 
-        const debugUppy = this.#debugUppy.bind(this);
+        const debugUppy = this._debugUppy.bind(this);
 
         // This event occurs after 'upload-success' or 'upload-error'.
         this.uppy.on('complete', function(result) {
@@ -729,10 +729,10 @@ export class Uploader extends BaseClass {
      * @param {string} text
      * @param {number} [duration]
      *
-     * @private
+     * @protected
      */
-    #uppyError(text, duration) {
-        this.#uppyPopup(text, duration, 'error');
+    _uppyError(text, duration) {
+        this._uppyPopup(text, duration, 'error');
     }
 
     /**
@@ -741,10 +741,10 @@ export class Uploader extends BaseClass {
      * @param {string} text
      * @param {number} [duration]
      *
-     * @private
+     * @protected
      */
-    #uppyWarn(text, duration) {
-        this.#uppyPopup(text, duration, 'warning');
+    _uppyWarn(text, duration) {
+        this._uppyPopup(text, duration, 'warning');
     }
 
     /**
@@ -754,11 +754,11 @@ export class Uploader extends BaseClass {
      * @param {number}                   [duration]
      * @param {'info'|'warning'|'error'} [info_level]
      *
-     * @private
+     * @protected
      */
-    #uppyPopup(text, duration, info_level) {
+    _uppyPopup(text, duration, info_level) {
         const time = duration || this.message_duration;
-        this.#uppyInfo(text, time, info_level);
+        this._uppyInfo(text, time, info_level);
     }
 
     /**
@@ -771,9 +771,9 @@ export class Uploader extends BaseClass {
      * @param {number}                   [duration]
      * @param {'info'|'warning'|'error'} [info_level]
      *
-     * @private
+     * @protected
      */
-    #uppyInfo(text, duration, info_level) {
+    _uppyInfo(text, duration, info_level) {
         const level = info_level || 'info';
         const time  = duration   || 1000 * MINUTES;
         this.uppy.info(text, level, time);
@@ -782,10 +782,10 @@ export class Uploader extends BaseClass {
     /**
      * Invoke `uppy.info` with an empty string and very short duration.
      *
-     * @private
+     * @protected
      */
-    #uppyInfoClear() {
-        this.#uppyInfo('', 1);
+    _uppyInfoClear() {
+        this._uppyInfo('', 1);
     }
 
     // ========================================================================
@@ -797,11 +797,11 @@ export class Uploader extends BaseClass {
      * alone isn't sufficient for conditional styling), however the element
      * (and its children) are not invisible.
      *
-     * @private
+     * @protected
      *
      * @see file:app/assets/stylesheets/vendor/_uppy.scss .uppy-ProgressBar
      */
-    #initializeProgressBar() {
+    _initializeProgressBar() {
         this.hideProgressBar();
     }
 
@@ -829,22 +829,23 @@ export class Uploader extends BaseClass {
      * @param {boolean} [visible]
      */
     toggleProgressBar(visible) {
-        let $control = this.$container.find('.uppy-ProgressBar');
+        const $control = this.$container.find('.uppy-ProgressBar');
         toggleVisibility($control, visible);
     }
 
     // ========================================================================
-    // Methods - container
+    // Methods - file selection
     // ========================================================================
 
     /**
      * Initialize the Uppy-provided file select button container.
      *
-     * @private
+     * @protected
      */
-    #initializeFileSelectContainer() {
-        let $element   = this.fileSelectContainer();
-        const input_id = `${this.model}_file`;
+    _initializeFileSelectContainer() {
+        const $container = this.fileSelectContainer();
+        const tooltip    = this.fileSelectTooltip();
+        const input_id   = `${this.model}_file`;
 
         // Uppy will replace <input type="file"> with its own mechanisms so
         // the original should not be displayed.
@@ -852,16 +853,16 @@ export class Uploader extends BaseClass {
 
         // Reposition it so that it comes before the display of the uploaded
         // filename.
-        $element.insertBefore(this.uploadedFilenameDisplay());
+        $container.insertBefore(this.uploadedFilenameDisplay());
 
         // This hidden element is inappropriately part of the tab order.
-        let $uppy_file_input = $element.find('.uppy-FileInput-input');
+        const $uppy_file_input = $container.find('.uppy-FileInput-input');
         $uppy_file_input.attr('tabindex',        -1);
         $uppy_file_input.attr('aria-hidden',     true);
         $uppy_file_input.attr('aria-labelledby', 'fi_label');
 
         // Set the tooltip for the file select button.
-        $element.find('button,label').attr('title', this.fileSelectTooltip());
+        $container.find('button,label').attr('title', tooltip);
     }
 
     /**
@@ -894,19 +895,19 @@ export class Uploader extends BaseClass {
     }
 
     // ========================================================================
-    // Methods - file selection
+    // Methods - file selection controls
     // ========================================================================
 
     /**
      * Initialize the state of the file select button if applicable to the
      * current form.
      *
-     * @private
+     * @protected
      */
-    #initializeFileSelectButton() {
-        let $button = this.fileSelectContainer().children('button');
-        const label = this.fileSelectLabel();
-        const tip   = this.fileSelectTooltip();
+    _initializeFileSelectButton() {
+        const $button = this.fileSelectContainer().children('button');
+        const label   = this.fileSelectLabel();
+        const tip     = this.fileSelectTooltip();
         $button.text(label);
         $button.attr('title', tip).siblings('label').attr('title', tip);
         $button.addClass('file-select-button');
@@ -915,7 +916,7 @@ export class Uploader extends BaseClass {
         }
         let handler = this.onSelect;
         if (!handler) {
-            const debug = this.#debugUppy.bind(this);
+            const debug = this._debugUppy.bind(this);
             handler = () => debug('file-select-button');
         }
         handleClickAndKeypress($button, handler);
@@ -957,9 +958,9 @@ export class Uploader extends BaseClass {
     displayFilename(filename) {
         const displayed = isPresent(filename);
         if (displayed) {
-            let $element = this.uploadedFilenameDisplay();
+            const $element = this.uploadedFilenameDisplay();
             if (isPresent($element)) {
-                let $filename = $element.find('.filename');
+                const $filename = $element.find('.filename');
                 if (isPresent($filename)) {
                     $filename.text(filename);
                 } else {
@@ -991,17 +992,16 @@ export class Uploader extends BaseClass {
     }
 
     // ========================================================================
-    // Methods - Uppy elements
+    // Properties - Uppy plugin targets
     // ========================================================================
 
     /**
      * Uppy drag-and-drop target element (if any).
      *
      * @returns {HTMLElement|undefined}
-     * @private
      */
-    #dragTarget() {
-        const target = this.#uploaderProperty.drag_target;
+    get dragTarget() {
+        const target = this._uploaderProperty.drag_target;
         return target && this.$container.find(selector(target))[0];
     }
 
@@ -1009,15 +1009,14 @@ export class Uploader extends BaseClass {
      * Thumbnail display of the selected file (if any).
      *
      * @returns {HTMLElement|undefined}
-     * @private
      */
-    #previewTarget() {
-        const target = this.#uploaderProperty.preview;
+    get previewTarget() {
+        const target = this._uploaderProperty.preview;
         return target && this.$container.find(selector(target))[0];
     }
 
     // ========================================================================
-    // Methods - form status
+    // Methods - file selection status
     // ========================================================================
 
     /**
@@ -1040,7 +1039,7 @@ export class Uploader extends BaseClass {
     }
 
     // ========================================================================
-    // Methods - data properties
+    // Methods - file selection display values
     // ========================================================================
 
     /**
@@ -1092,31 +1091,37 @@ export class Uploader extends BaseClass {
      * @returns {*}
      */
     selectProperties(value, can_select) {
-        const op     = this.#endpointProperties.select || {};
+        const op     = this._endpointProperties.select || {};
         const select = notDefined(can_select) ? this.canSelect() : can_select;
         const status = select ? op.enabled : op.disabled;
         return status && status[value] || op[value];
     }
 
     // ========================================================================
-    // Properties - internal
+    // Properties - configuration
     // ========================================================================
 
-    /** @returns {PathProperties|{}} */
-    get #path() { return this.property.Path || {} }
+    /**
+     * @returns {PathProperties|{}}
+     * @protected
+     */
+    get _path() { return this.property.Path || {} }
 
-    /** @returns {UploaderProperties|{}} */
-    get #uploaderProperty() { return this.property.Upload || {} }
+    /**
+     * @returns {UploaderProperties|{}}
+     * @protected
+     */
+    get _uploaderProperty() { return this.property.Upload || {} }
 
     /**
      * Get the configuration properties for the current form action.
      *
      * @returns {EndpointProperties}
-     * @private
+     * @protected
      *
      * @see file:../feature/model-form.js endpointProperties
      */
-    get #endpointProperties() {
+    get _endpointProperties() {
         const action = this.property.Action;
         if (this.isBulkOpForm) {
             return this.isUpdateForm ? action.bulk_edit : action.bulk_new;
@@ -1135,9 +1140,9 @@ export class Uploader extends BaseClass {
      *
      * @param {...*} args
      *
-     * @private
+     * @protected
      */
-    #debugUppy(...args) {
+    _debugUppy(...args) {
         if (this.debugging) { console.log('Uppy:', ...args); }
     }
 

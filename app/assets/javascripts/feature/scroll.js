@@ -16,10 +16,11 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const SCROLL_BUTTON_SELECTOR = selector(Emma.Scroll.button.class);
+    const SCROLL_BUTTON_CLASS = Emma.Scroll.button.class;
+    const SCROLL_BUTTON = selector(SCROLL_BUTTON_CLASS);
 
     /** @type {jQuery} */
-    let $scroll_button = $(SCROLL_BUTTON_SELECTOR).not('.for-example');
+    const $scroll_button = $(SCROLL_BUTTON).not('.for-example');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($scroll_button)) { return; }
@@ -37,12 +38,13 @@ $(document).on('turbolinks:load', function() {
     const DEBUGGING = false;
 
     /**
-     * Selector for the element which is scrolled to the top.
+     * CSS class for the element which is scrolled to the top.
      *
      * @readonly
      * @type {string}
      */
-    const SCROLL_TARGET_SELECTOR = selector(Emma.Scroll.target.class);
+    const SCROLL_TARGET_CLASS = Emma.Scroll.target.class;
+    const SCROLL_TARGET = selector(SCROLL_TARGET_CLASS);
 
     /**
      * Selector(s) for scroll target with fall-backs.
@@ -50,8 +52,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string[]}
      */
-    const SCROLL_TARGET_SELECTORS =
-        deepFreeze([SCROLL_TARGET_SELECTOR, '#main', 'body']);
+    const SCROLL_TARGETS = deepFreeze([SCROLL_TARGET, '#main', 'body']);
 
     /**
      * Selector for previous-list-item controls.
@@ -59,7 +60,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const PREV_SELECTOR = '.prev-next .prev';
+    const PREV = '.prev-next .prev';
 
     /**
      * Selector for next-list-item controls.
@@ -67,7 +68,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const NEXT_SELECTOR = '.prev-next .next';
+    const NEXT = '.prev-next .next';
 
     // ========================================================================
     // Variables
@@ -79,30 +80,10 @@ $(document).on('turbolinks:load', function() {
      * @type {jQuery}
      */
     let $scroll_target;
-    $.each(SCROLL_TARGET_SELECTORS, function(_, selector) {
-        $scroll_target = $(selector);
-        return isMissing($scroll_target);
-    });
-    let $prev_buttons = $(PREV_SELECTOR).not('.forbidden');
-    let $next_buttons = $(NEXT_SELECTOR).not('.forbidden');
+    $.each(SCROLL_TARGETS, (_, tgt) => isMissing(($scroll_target = $(tgt))));
 
-    // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleEvent($(window), 'scroll', toggleScrollButton);
-    handleClickAndKeypress($scroll_button, scrollToTop);
-    handleClickAndKeypress($prev_buttons,  scrollToPrev);
-    handleClickAndKeypress($next_buttons,  scrollToNext);
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    // Button should start hidden initially and only appear after scrolling.
-    // However, if the page is refreshed with the window already scrolled, then
-    // button should appear immediately.
-    toggleScrollButton();
+    const $prev_buttons = $(PREV).not('.forbidden');
+    const $next_buttons = $(NEXT).not('.forbidden');
 
     // ========================================================================
     // Functions
@@ -118,9 +99,9 @@ $(document).on('turbolinks:load', function() {
         if (typeof event === 'boolean') {
             visible = event;
         } else {
-            let $container    = $(window);
+            const $container  = $(window);
             const scroll_pos  = $container.scrollTop();
-            const visible_pos = $container.height() / 2;
+            const visible_pos = $container.height() / 3;
             visible = (scroll_pos > visible_pos);
         }
         $scroll_button.toggleClass('hidden', !visible);
@@ -147,7 +128,7 @@ $(document).on('turbolinks:load', function() {
      */
     function scrollToPrev(event) {
         _debug('scrollToPrev');
-        return scrollToRecord(event, PREV_SELECTOR);
+        return scrollToRecord(event, PREV);
     }
 
     /**
@@ -162,7 +143,7 @@ $(document).on('turbolinks:load', function() {
      */
     function scrollToNext(event) {
         _debug('scrollToNext');
-        return scrollToRecord(event, NEXT_SELECTOR);
+        return scrollToRecord(event, NEXT);
     }
 
     /**
@@ -227,5 +208,23 @@ $(document).on('turbolinks:load', function() {
     function _debug(...args) {
         if (DEBUGGING) { console.log(...args); }
     }
+
+    // ========================================================================
+    // Event handlers
+    // ========================================================================
+
+    handleEvent($(window), 'scroll', toggleScrollButton);
+    handleClickAndKeypress($scroll_button, scrollToTop);
+    handleClickAndKeypress($prev_buttons,  scrollToPrev);
+    handleClickAndKeypress($next_buttons,  scrollToNext);
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    // Button should start hidden initially and only appear after scrolling.
+    // However, if the page is refreshed with the window already scrolled, then
+    // button should appear immediately.
+    toggleScrollButton();
 
 });

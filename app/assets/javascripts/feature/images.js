@@ -14,7 +14,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $placeholders = $('*:not(.complete) > .placeholder:not(.hidden)');
+    const $placeholders = $('*:not(.complete) > .placeholder:not(.hidden)');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return; }
@@ -46,8 +46,8 @@ $(document).on('turbolinks:load', function() {
      */
     function loadImage(image, source) {
         const func  = 'loadImage';
-        let $image  = $(image);
-        const src   = source || $image.attr('data-path') || $image.attr('src');
+        const $img  = $(image);
+        const src   = source || $img.attr('data-path') || $img.attr('src');
         const url   = urlProxyPath(src);
         const start = Date.now();
 
@@ -111,22 +111,22 @@ $(document).on('turbolinks:load', function() {
          * @param {string} [data]       Default: content.
          */
         function insertImage(data) {
-            let image_content = data || content;
+            const image_content = data || content;
 
             // Prepare the image container by hiding the placeholder (with an
             // appropriate alt tag for accessibility analyzers that don't
             // ignore hidden images).
-            let $container = $image.parent();
-            if ($image.hasClass(PLACEHOLDER_CLASS)) {
-                $image.attr('alt', 'Downloading...'); // TODO: I18n
-                $image.addClass('hidden');
+            const $container = $img.parent();
+            if ($img.is(PLACEHOLDER)) {
+                $img.attr('alt', 'Downloading...'); // TODO: I18n
+                $img.addClass('hidden');
             } else {
                 $container.empty();
             }
 
             // Insert the new image element.
-            const id  = $image.data('id')  || $container.data('id');
-            const alt = $image.data('alt') || $container.data('alt');
+            const id  = $img.data('id')  || $container.data('id');
+            const alt = $img.data('alt') || $container.data('alt');
             makeImage(image_content, alt)
                 .attr('id', (id  || imageId(src)))
                 .attr('data-turbolinks-permanent', true)

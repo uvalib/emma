@@ -1,9 +1,9 @@
 // app/assets/javascripts/shared/queue.js
 
 
-import { flatten }   from '../shared/arrays'
-import { BaseClass } from '../shared/base-class'
-import { isEmpty }   from '../shared/definitions'
+import { flatten }   from './arrays'
+import { BaseClass } from './base-class'
+import { isEmpty }   from './definitions'
 
 
 // ============================================================================
@@ -135,8 +135,8 @@ export class CallbackQueue extends Queue {
      * @protected
      */
     #validate(callback, from) {
-        const type = typeof(callback);
-        let valid  = (type === 'function');
+        const type  = typeof(callback);
+        const valid = (type === 'function');
         if (!valid) {
             const warning = `invalid element type "${type}"`;
             this._warn(from ? `${from}: ${warning}` : warning);

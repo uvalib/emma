@@ -2,9 +2,9 @@
 
 
 import { Emma }                                from '../shared/assets'
+import { selector }                            from '../shared/css'
 import { handleClickAndKeypress, handleEvent } from '../shared/events'
 import { makeUrl, urlParameters }              from '../shared/url'
-import { selector }                            from '../shared/css'
 import {
     isDefined,
     isEmpty,
@@ -21,7 +21,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $body = $('body.search-index');
+    const $body = $('body.search-index');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($body)) {
@@ -71,14 +71,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $item_list = $body.find('.search-list');
+    const $item_list = $body.find('.search-list');
 
     /**
      * Elements of .search-list.
      *
      * @type {jQuery}
      */
-    let $list_parts = $item_list.children();
+    const $list_parts = $item_list.children();
 
     /**
      * Search list results entries.
@@ -92,14 +92,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $mode_menu = $('.results.menu-control select');
+    const $mode_menu = $('.results.menu-control select');
 
     /**
      * The current results type ('title' or 'file').
      *
      * @type {string}
      */
-    let current_mode = $mode_menu.val();
+    const current_mode = $mode_menu.val();
 
     const FILE_RESULTS  = (current_mode === 'file');
     const TITLE_RESULTS = !FILE_RESULTS;
@@ -109,11 +109,11 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     handleEvent($mode_menu, 'change', function(event) {
-        let $menu = $(event.currentTarget || event.target || event);
+        const $menu    = $(event.currentTarget || event.target || event);
         const new_mode = $menu.val();
         if (new_mode !== current_mode) {
             const path   = $menu.attr('data-path') || window.location.pathname;
-            const params = $.extend(urlParameters(), { results: new_mode });
+            const params = { ...urlParameters(), results: new_mode };
             window.location.href = makeUrl(path, params);
         }
     });
@@ -159,8 +159,8 @@ $(document).on('turbolinks:load', function() {
             'aria-controls': controls
         };
         $items.each(function() {
-            let $item = $(this);
-            $.each(attrs, function(name, value) {
+            const $item = $(this);
+            $.each(attrs, (name, value) => {
                 if (notDefined($item.attr(name))) {
                     $item.attr(name, value);
                 }
@@ -285,7 +285,7 @@ $(document).on('turbolinks:load', function() {
      */
     function toggleItem(event) {
         /** @type {jQuery} */
-        let $target = $(event.currentTarget || event.target);
+        const $target = $(event.currentTarget || event.target);
         let $item, $number;
         if ($target.is(CONTROL_SELECTOR)) {
             $number  = $target.parents('.number');
@@ -372,8 +372,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} parent
      */
     function setupToggleControl(parent) {
-        const func  = 'setupControl';
-        let $number = $(parent);
+        const func    = 'setupControl';
+        const $number = $(parent);
         if (!onlyOne($number, func, 'number')) {
             return;
         }
@@ -416,11 +416,10 @@ $(document).on('turbolinks:load', function() {
     });
 
     $result_items.each(function() {
-        let $item  = $(this);
-        let $title = $item.find('.value.field-Title .title');
+        const $item = $(this);
 
         // Make clicking on the title toggle the display of that item.
-        let title_id;
+        let title_id, $title = $item.find('.value.field-Title .title');
         if (TITLE_RESULTS) {
             title_id = `title_${this.id}`;
             $title.attr('id', title_id);
@@ -434,7 +433,7 @@ $(document).on('turbolinks:load', function() {
         handleClickAndKeypress($title, toggleItem);
 
         // Make the item's title present as the label for the number.
-        let $number = $item.prev();
+        const $number = $item.prev();
         $number.attr('aria-labelledby', title_id);
     });
 
@@ -614,13 +613,13 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}    Section contents (empty for file results).
      */
     function getSection(section) {
-        let lines = [];
+        const lines = [];
         $(section).each(function() {
-            let $section   = $(this);
+            const $section = $(this);
             const classes  = $section[0].classList;
             const this_row = $.map(classes, c => c.match(/^row-\d+$/)).pop();
             const related  = sectionSelector($section);
-            let $lines     = $section.siblings(related).not(`.${this_row}`);
+            const $lines   = $section.siblings(related).not(`.${this_row}`);
             lines.push(...$lines.toArray());
         });
         return $(lines);
@@ -635,11 +634,10 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function sectionSelector(item) {
-        let $item = $(item);
-        return ['part', 'format', 'file'].map(function(k) {
-            const v = $item.attr(`data-${k}`);
-            return v && `[data-${k}="${v}"]`;
-        }).join('');
+        let v;
+        const $item = $(item);
+        const attrs = ['data-part', 'data-format', 'data-file'];
+        return attrs.map(a => (v = $item.attr(a)) && `[${a}="${v}"]`).join('');
     }
 
     // ========================================================================

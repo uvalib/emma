@@ -2,8 +2,8 @@
 
 
 import { isMissing }      from '../shared/definitions'
-import * as MathDetective from '../tool/math-detective'
 import * as Lookup        from '../tool/bibliographic-lookup'
+import * as MathDetective from '../tool/math-detective'
 
 
 // noinspection SpellCheckingInspection
@@ -14,7 +14,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $body = $('body.tool');
+    const $body = $('body.tool');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($body)) {

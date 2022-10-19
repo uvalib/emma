@@ -35,18 +35,12 @@ export function notDefined(item) {
  * @returns {boolean}
  */
 export function isEmpty(item) {
-    if (!item) {
-        return true;
-    } else if (isDefined(item.length)) {
-        return !item.length;
-    } else if (typeof item === 'object') {
-        for (let property in item) {
-            if (item.hasOwnProperty(property)) {
-                return false;
-            }
-        }
-        return true;
-    }
+    if (item === false)             { return false }
+    if (item === 0)                 { return false }
+    if (!item)                      { return true }
+    if (isDefined(item?.size))      { return !item.size }
+    if (isDefined(item?.length))    { return !item.length }
+    if (typeof item === 'object')   { return !Object.keys(item).length }
     return false;
 }
 

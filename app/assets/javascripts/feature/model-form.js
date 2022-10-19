@@ -81,7 +81,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $model_form = $(MODEL_FORM_SELECTOR);
+    const $model_form = $(MODEL_FORM_SELECTOR);
 
     /**
      * CSS classes for bulk operation form elements.
@@ -104,7 +104,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $bulk_op_form = $(BULK_FORM_SELECTOR).not('.delete');
+    const $bulk_op_form = $(BULK_FORM_SELECTOR).not('.delete');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($model_form) && isMissing($bulk_op_form)) {
@@ -796,7 +796,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {Uploader|undefined}
      */
     function initializeFileUploader(form) {
-        let $form = $(form);
+        const $form = $(form);
         if (!uploader && isFileUploader($form)) {
             uploader = newUploader($form);
         }
@@ -811,20 +811,15 @@ $(document).on('turbolinks:load', function() {
      * @returns {Uploader}
      */
     function newUploader(form) {
-        let $form = $(form);
+        // noinspection JSUnusedGlobalSymbols
+        const cb    = { onSelect, onStart, onError, onSuccess };
+        const $form = $(form);
         const state = {
             new:    isCreateForm($form),
             edit:   isUpdateForm($form),
             bulk:   isBulkOpForm($form),
         };
-        // noinspection JSUnusedGlobalSymbols
-        const callbacks = {
-            onSelect:   onSelect,
-            onStart:    onStart,
-            onError:    onError,
-            onSuccess:  onSuccess,
-        };
-        let instance = new Uploader($form, MODEL, FEATURES, state, callbacks);
+        const instance = new Uploader($form, MODEL, FEATURES, state, cb);
         return instance.initialize();
 
         /**
@@ -855,6 +850,19 @@ $(document).on('turbolinks:load', function() {
 
         /**
          * This event occurs when the response from POST /entry/endpoint is
+         * received with a failure status (4xx).
+         *
+         * @param {Uppy.UppyFile}                  file
+         * @param {Error}                          error
+         * @param {{status: number, body: string}} [response]
+         */
+        function onError(file, error, response) {
+            showFlashError(error?.message || error);
+            requireFormCancellation($form);
+        }
+
+        /**
+         * This event occurs when the response from POST /entry/endpoint is
          * received with success status (200).  At this point, the file has
          * been uploaded by Shrine, but has not yet been validated.
          *
@@ -870,14 +878,14 @@ $(document).on('turbolinks:load', function() {
          */
         function onSuccess(file, response) {
 
-            let body = response.body || {};
+            const body = response.body || {};
 
             // Save uploaded EMMA metadata.
             /** @type {EmmaDataOrError} */
             let emma_data = body.emma_data || {};
             if (isPresent(emma_data)) {
                 emma_data = compact(emma_data);
-                let $emma_data = emmaDataElement($form);
+                const $emma_data = emmaDataElement($form);
                 if (isPresent($emma_data)) {
                     $emma_data.val(asString(emma_data));
                 }
@@ -890,13 +898,12 @@ $(document).on('turbolinks:load', function() {
             /** @type {FileData} */
             const file_data = body;
             if (file_data) {
-                let $file_data = fileDataElement($form);
+                const $file_data = fileDataElement($form);
                 if (isPresent($file_data)) {
                     $file_data.val(asString(file_data));
                 }
                 if (!emma_data.dc_format) {
-                    const meta = file_data.metadata;
-                    const mime = meta?.mime_type;
+                    const mime = file_data.metadata?.mime_type;
                     const fmt  = PROPERTIES.Mime.to_fmt[mime] || [];
                     if (fmt[0]) { emma_data.dc_format = fmt[0]; }
                 }
@@ -931,19 +938,6 @@ $(document).on('turbolinks:load', function() {
                 populateFormFields(emma_data, $form) || validateForm($form);
             }
         }
-
-        /**
-         * This event occurs when the response from POST /entry/endpoint is
-         * received with a failure status (4xx).
-         *
-         * @param {Uppy.UppyFile}                  file
-         * @param {Error}                          error
-         * @param {{status: number, body: string}} [response]
-         */
-        function onError(file, error, response) {
-            showFlashError(error?.message || error);
-            requireFormCancellation($form);
-        }
     }
 
     // ========================================================================
@@ -957,7 +951,7 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeBulkOpForm(form) {
 
-        let $form = $(form);
+        const $form = $(form);
 
         // Setup file uploader (if applicable).
         initializeFileUploader($form);
@@ -970,8 +964,8 @@ $(document).on('turbolinks:load', function() {
         disableSubmit($form);
 
         // Show the results of the most recent bulk operation (if available).
-        let $results = bulkOpResults().empty().addClass(OLD_DATA_MARKER);
-        let previous = getBulkOpTrace();
+        const $results = bulkOpResults().empty().addClass(OLD_DATA_MARKER);
+        const previous = getBulkOpTrace();
         if (previous && showBulkOpResults($results, previous)) {
             $results.toggleClass(HIDDEN_MARKER, false);
             bulkOpResultsLabel($results).toggleClass(HIDDEN_MARKER, false);
@@ -1028,7 +1022,7 @@ $(document).on('turbolinks:load', function() {
      */
     function bulkOpResults(results) {
         const selector = BULK_OP_RESULTS_SELECTOR;
-        let $results   = $(results);
+        const $results = $(results);
         return $results.is(selector) ? $results : $(selector);
     }
 
@@ -1042,8 +1036,8 @@ $(document).on('turbolinks:load', function() {
      * @see file:stylesheets/feature/_model_form.scss .bulk-op-results-label
      */
     function bulkOpResultsLabel(results) {
-        let $results = bulkOpResults(results);
-        const lbl_id = $results.attr('aria-labelledby');
+        const $results = bulkOpResults(results);
+        const lbl_id   = $results.attr('aria-labelledby');
         return lbl_id ? $('#' + lbl_id) : $();
     }
 
@@ -1059,10 +1053,10 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function bulkOpResultsNextId(results, record) {
-        const name    = 'nextId';
-        let $results  = bulkOpResults(results);
-        let value     = $results.data(name);
-        const initial = isMissing(value);
+        const name     = 'nextId';
+        const $results = bulkOpResults(results);
+        let value      = $results.data(name);
+        const initial  = isMissing(value);
         if (initial || isDefined(record)) {
             value = (typeof record === 'object') ? record.id : record;
             value = (Number(value) || 0) + 1;
@@ -1086,9 +1080,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {number}
      */
     function bulkOpResultsStartTime(results, start_time) {
-        const name   = 'startTime';
-        let $results = bulkOpResults(results);
-        let value    = $results.data(name);
+        const name     = 'startTime';
+        const $results = bulkOpResults(results);
+        let value      = $results.data(name);
         if (isPresent(start_time) || isMissing(value)) {
             value = timeOf(start_time);
             $results.data(name, value);
@@ -1103,12 +1097,12 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorBulkOperation(event) {
         const target = event?.currentTarget || event?.target;
-        let $form    = target ? $(target) : $bulk_op_form;
+        const $form  = target ? $(target) : $bulk_op_form;
         disableSubmit($form);
         uploader?.disableFileSelectButton();
 
-        let $results = bulkOpResults();
-        let $label   = bulkOpResultsLabel($results);
+        const $results = bulkOpResults();
+        const $label   = bulkOpResultsLabel($results);
         $results.removeClass(OLD_DATA_MARKER).empty();
         addBulkOpResult($results, TMP_LINE, TMP_LINE_CLASS);
         $label.text('Upload results:'); // TODO: I18n
@@ -1140,10 +1134,10 @@ $(document).on('turbolinks:load', function() {
      * @param {number}   [milliseconds]
      */
     function scheduleCheckBulkOpResults(results, milliseconds) {
-        let $results = bulkOpResults(results);
-        const period = milliseconds || BULK_CHECK_PERIOD;
-        const name   = 'checkPeriod';
-        const timer  = $results.data(name);
+        const $results = bulkOpResults(results);
+        const period   = milliseconds || BULK_CHECK_PERIOD;
+        const name     = 'checkPeriod';
+        const timer    = $results.data(name);
         if (isPresent(timer)) {
             clearTimeout(timer);
         }
@@ -1157,7 +1151,7 @@ $(document).on('turbolinks:load', function() {
      * Display new entries that have appeared since the last check.
      */
     function checkBulkOpResults() {
-        let $results = bulkOpResults();
+        const $results = bulkOpResults();
         if ($results.is(OLD_DATA)) {
             return;
         }
@@ -1173,7 +1167,7 @@ $(document).on('turbolinks:load', function() {
         function addNewLines(list) {
             if (isPresent(list)) {
                 /** @type {jQuery} */
-                let $lines = $results.children();
+                const $lines = $results.children();
 
                 // Remove initialization line(s) if present.
                 $lines.filter('.' + TMP_LINE_CLASS).remove();
@@ -1211,7 +1205,7 @@ $(document).on('turbolinks:load', function() {
      * @see file:stylesheets/feature/_model_form.scss .bulk-op-results
      */
     function addBulkOpResult(results, entry, index, time) {
-        let $results = bulkOpResults(results);
+        const $results = bulkOpResults(results);
         let data;
         if (typeof entry !== 'object') {
             data = entry.toString();
@@ -1234,7 +1228,7 @@ $(document).on('turbolinks:load', function() {
                 file: (file && `"${file}"` || '(missing)')
             };
         }
-        let $line = makeBulkOpResult(data, index);
+        const $line = makeBulkOpResult(data, index);
         $line.appendTo($results);
         scrollIntoView($line);
         return (typeof data === 'string') ? data : asString(data);
@@ -1249,8 +1243,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function makeBulkOpResult(entry, index) {
-        const func = 'makeBulkOpResult';
-        let $line  = $('<div>');
+        const func  = 'makeBulkOpResult';
+        const $line = $('<div>');
 
         // CSS classes for the new line.
         let row = (typeof index === 'number') ? `row-${index}` : (index || '');
@@ -1288,10 +1282,10 @@ $(document).on('turbolinks:load', function() {
      * @returns {number}              Number of entries to be shown.
      */
     function showBulkOpResults(results, data) {
-        let $results = bulkOpResults(results);
-        let entries  = data || getBulkOpTrace();
+        const $results = bulkOpResults(results);
+        let entries = data || getBulkOpTrace();
         if (entries && !entries.startsWith('[')) {
-            entries  = `[${entries}]`;
+            entries = `[${entries}]`;
         }
         const list = entries && fromJSON(entries) || [];
         $.each(list, function(row, record) {
@@ -1445,8 +1439,8 @@ $(document).on('turbolinks:load', function() {
         const key = name || BULK_OP_STORAGE_KEY;
         let entry = append && getBulkOpTrace(key) || '';
         if (isPresent(value)) {
-            let trace = (v) => (typeof v === 'string') ? v : asString(v);
-            let parts = arrayWrap(value).map(v => trace(v));
+            const trace = (v) => (typeof v === 'string') ? v : asString(v);
+            const parts = arrayWrap(value).map(v => trace(v));
             if (entry) {
                 parts.unshift(entry);
             }
@@ -1479,8 +1473,8 @@ $(document).on('turbolinks:load', function() {
      */
     function refreshRecord(form) {
 
-        const func = 'refreshRecord';
-        let $form  = formElement(form);
+        const func  = 'refreshRecord';
+        const $form = formElement(form);
         let url;
         if (isCreateForm($form)) {
             url = PROPERTIES.Path.renew;
@@ -1576,7 +1570,7 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeModelForm(form, start_data) {
 
-        let $form = $(form);
+        const $form = $(form);
 
         // Setup file uploader (if applicable).
         initializeFileUploader($form);
@@ -1592,7 +1586,7 @@ $(document).on('turbolinks:load', function() {
 
         // Broaden click targets for radio buttons and checkboxes that are
         // paired with labels.
-        let $filter_panel = fieldDisplayFilterContainer($form);
+        const $filter_panel = fieldDisplayFilterContainer($form);
         $filter_panel.children('.radio, .control').each(function() {
             delegateInputClick(this);
         });
@@ -1626,10 +1620,10 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupSubmitButton(form) {
-        let $form   = formElement(form);
-        const label = submitLabel($form);
-        const tip   = submitTooltip($form);
-        let $button = submitButton($form).attr('title', tip).text(label);
+        const $form   = formElement(form);
+        const label   = submitLabel($form);
+        const tip     = submitTooltip($form);
+        const $button = submitButton($form).attr('title', tip).text(label);
         handleClickAndKeypress($button, clearFlashMessages);
         handleClickAndKeypress($button, startSubmission);
     }
@@ -1641,10 +1635,10 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupCancelButton(form) {
-        let $form   = formElement(form);
-        const label = cancelLabel($form);
-        const tip   = cancelTooltip($form);
-        let $button = cancelButton($form).attr('title', tip).text(label);
+        const $form   = formElement(form);
+        const label   = cancelLabel($form);
+        const tip     = cancelTooltip($form);
+        const $button = cancelButton($form).attr('title', tip).text(label);
         handleClickAndKeypress($button, clearFlashMessages);
         handleClickAndKeypress($button, cancelSubmission);
     }
@@ -1658,8 +1652,8 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeFormFields(form, start_data) {
 
-        const func = 'initializeFormFields';
-        let $form  = formElement(form);
+        const func  = 'initializeFormFields';
+        const $form = formElement(form);
 
         let data = {};
         if (start_data) {
@@ -1712,10 +1706,10 @@ $(document).on('turbolinks:load', function() {
     function populateFormFields(data, form) {
         let revalidated = false;
         if (isPresent(data)) {
-            let $form = formElement(form);
-            let count = 0;
+            const $form = formElement(form);
+            let count   = 0;
             $.each(data, function(field, value) {
-                let $field = formField(field, $form);
+                const $field = formField(field, $form);
                 if (!$field.is(SEALED)) {
                     updateInputField($field, value);
                     count++;
@@ -1737,9 +1731,9 @@ $(document).on('turbolinks:load', function() {
      * @param {object}   [data]
      */
     function initializeInputField(field, data) {
-        let $field  = $(field);
-        const key   = $field.attr('data-field');
-        const value = (typeof data === 'object') ? data[key] : data;
+        const $field = $(field);
+        const key    = $field.attr('data-field');
+        const value  = (typeof data === 'object') ? data[key] : data;
         updateInputField($field, value, true, true);
     }
 
@@ -1752,7 +1746,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function updateInputField(field, new_value, trim, init) {
-        let $field = $(field);
+        const $field = $(field);
 
         if ($field.is('fieldset.input.multi')) {
             updateFieldsetInputs($field, new_value, trim, init);
@@ -1787,8 +1781,8 @@ $(document).on('turbolinks:load', function() {
      */
     function updateFieldsetInputs(target, new_value, trim, init) {
 
-        let $fieldset = $(target);
-        let $inputs   = $fieldset.find('input');
+        const $fieldset = $(target);
+        const $inputs   = $fieldset.find('input');
 
         // If multiple values are provided, they are treated as a complete
         // replacement for the existing set of values.
@@ -1857,8 +1851,8 @@ $(document).on('turbolinks:load', function() {
      */
     function updateFieldsetCheckboxes(target, setting, init) {
 
-        let $fieldset   = $(target);
-        let $checkboxes = $fieldset.find('input[type="checkbox"]');
+        const $fieldset   = $(target);
+        const $checkboxes = $fieldset.find('input[type="checkbox"]');
 
         // If a value is provided, use it to define the state of the contained
         // checkboxes if it is an array, or to set a specific checkbox if it
@@ -1884,7 +1878,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         // Enumerate the checked items and update the fieldset.
-        let checked = [];
+        const checked = [];
         $checkboxes.each(function() {
             if (this.checked) { checked.push(this.value); }
         });
@@ -1903,11 +1897,11 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}        [init]       If *true*, in initialization phase.
      */
     function updateCheckboxInputField(target, setting, init) {
-        const func     = 'updateCheckboxInputField';
-        let $input     = $(target);
-        let $fieldset  = $input.parents('[data-field]').first();
-        const checkbox = $input[0];
-        let checked    = undefined;
+        const func      = 'updateCheckboxInputField';
+        const $input    = $(target);
+        const $fieldset = $input.parents('[data-field]').first();
+        const checkbox  = $input[0];
+        let checked     = undefined;
         if (notDefined(setting)) {
             checked = checkbox.checked;
         } else if (typeof setting === 'boolean') {
@@ -1942,8 +1936,8 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#render_form_menu_single"
      */
     function updateMenu(target, new_value, init) {
-        let $input = $(target);
-        let value  = new_value;
+        const $input = $(target);
+        let value    = new_value;
         if (Array.isArray(value)) {
             value = compact(value)[0];
         } else if (notDefined(value)) {
@@ -1966,8 +1960,8 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextAreaField(target, new_value, trim, init) {
-        let $input = $(target);
-        let value  = new_value;
+        const $input = $(target);
+        let value    = new_value;
         if (value !== null) {
             if (notDefined(value)) {
                 value = $input.val();
@@ -1993,8 +1987,8 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextInputField(target, new_value, trim, init) {
-        let $input = $(target);
-        let value  = new_value;
+        const $input = $(target);
+        let value    = new_value;
         if (Array.isArray(value)) {
             // noinspection JSUnresolvedFunction
             value = compact(value).join('; ');
@@ -2006,7 +2000,7 @@ $(document).on('turbolinks:load', function() {
         // If this is one of a collection of text inputs under <fieldset> then
         // it has to be handled differently.
         if ($input.parent().hasClass('multi')) {
-            let $fieldset = $input.parents('fieldset').first();
+            const $fieldset = $input.parents('fieldset').first();
             updateFieldsetInputs($fieldset, undefined, trim, init);
         } else {
             updateFieldAndLabel($input, $input.val());
@@ -2020,7 +2014,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string[]} [already_modified]
      */
     function resolveRelatedFields(already_modified) {
-        let skip_fields = already_modified || [];
+        const skip_fields = already_modified || [];
         $.each(FIELD_RELATIONSHIP, function(field_name, relationship) {
             if (!skip_fields.includes(field_name)) {
                 const visited = updateRelatedField(field_name, relationship);
@@ -2049,9 +2043,8 @@ $(document).on('turbolinks:load', function() {
         }
 
         // Determine the element for the named field.
-        let $form = formElement();
-        let this_name;
-        let $this_input;
+        const $form = formElement();
+        let this_name, $this_input;
         if (typeof name === 'string') {
             this_name   = name;
             $this_input = $form.find(`[name="${this_name}"]`);
@@ -2089,8 +2082,8 @@ $(document).on('turbolinks:load', function() {
         }
 
         // Toggle state of the related element.
-        let modified     = undefined;
-        let $other_input = $form.find(`[name="${other.name}"]`);
+        let modified       = undefined;
+        const $other_input = $form.find(`[name="${other.name}"]`);
         if (isPresent($other_input)) {
             if (isTrue(other.required) || isFalse(other.unrequired)) {
                 modified = modifyOther(true, other.required_val);
@@ -2160,14 +2153,14 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#form_note_pair"
      */
     function updateFieldAndLabel(target, values) {
-        let $input   = $(target);
-        const id     = $input.attr('id');
-        const field  = $input.attr('data-field');
-        /** @type {jQuery} $label, $status, $related */
-        let $label   = $input.siblings(`label[for="${id}"]`);
-        let $status  = $label.find('.status-marker');
-        let $related = $input.siblings(`[data-for="${field}"]`);
-        const parts  = [$input, $label, $status, ...$related];
+        const $input   = $(target);
+        const id       = $input.attr('id');
+        const field    = $input.attr('data-field');
+        /** @type {jQuery} */
+        const $label   = $input.siblings(`label[for="${id}"]`),
+              $status  = $label.find('.status-marker'),
+              $related = $input.siblings(`[data-for="${field}"]`);
+        const parts    = [$input, $label, $status, ...$related];
 
         if ($input.attr('readonly')) {
 
@@ -2246,7 +2239,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function setChecked(target, new_state, init) {
-        let $item = $(target);
+        const $item = $(target);
         if (init) {
             setOriginalValue($item, new_state);
         }
@@ -2262,8 +2255,8 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}     [init]      If *true*, in initialization phase.
      */
     function setValue(target, new_value, trim, init) {
-        let $item = $(target);
-        let value = new_value || '';
+        const $item = $(target);
+        let value   = new_value || '';
         if (value === EMPTY_VALUE) {
             $item.prop('placeholder', value);
             value = '';
@@ -2324,7 +2317,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string|boolean|undefined} [value]
      */
     function setOriginalValue(target, value) {
-        let $item     = $(target);
+        const $item   = $(target);
         let new_value = undefined;
         if (isDefined(value)) {
             new_value = valueOf(value);
@@ -2356,7 +2349,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string|undefined}
      */
     function rawOriginalValue(target) {
-        let $item = $(target);
+        const $item = $(target);
         return $item.attr('data-original-value');
     }
 
@@ -2376,10 +2369,10 @@ $(document).on('turbolinks:load', function() {
     function valueOf(item) {
         let value;
         if (typeof item === 'object') {
-            let $i = $(item);
-            value  = $i.is('[type="checkbox"]') ? $i[0].checked : $i.val();
+            const $i = $(item);
+            value = $i.is('[type="checkbox"]') ? $i[0].checked : $i.val();
         } else {
-            value  = item;
+            value = item;
         }
         switch (typeof value) {
             case 'boolean': value = value ? 'true' : 'false'; break;
@@ -2402,10 +2395,10 @@ $(document).on('turbolinks:load', function() {
      * @param {function} callback     Required.
      */
     function validate(target, new_value, callback) {
-        let $input  = $(target);
-        const field = $input.attr('data-field');
-        const entry = FIELD_VALIDATION[field];
-        const value = isDefined(new_value) ? new_value : $input.val();
+        const $input = $(target);
+        const field  = $input.attr('data-field');
+        const entry  = FIELD_VALIDATION[field];
+        const value  = isDefined(new_value) ? new_value : $input.val();
         let valid, notes, min, max;
 
         if (isEmpty(value)) {
@@ -2425,7 +2418,7 @@ $(document).on('turbolinks:load', function() {
             valid = entry;
 
         } else if (field === 'password_confirmation') {
-            let $pwd = inputFields().filter('[data-field="password"]');
+            const $pwd = inputFields().filter('[data-field="password"]');
             if ($pwd.is(VALID)) {
                 valid = (value === $pwd.val());
             } else if ($pwd.is(INVALID)) {
@@ -2662,9 +2655,9 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function monitorSourceRepository(form) {
-        const func = 'monitorSourceRepository';
-        let $form  = formElement(form);
-        let $menu  = sourceRepositoryMenu($form);
+        const func  = 'monitorSourceRepository';
+        const $form = formElement(form);
+        const $menu = sourceRepositoryMenu($form);
 
         // If editing a completed submission, prevent the selection from being
         // updated.
@@ -2701,7 +2694,7 @@ $(document).on('turbolinks:load', function() {
             clearFlash();
             hideParentEntrySelect($form);
             SearchInProgress.show();
-            let search = parentEntrySearchTerms($form, func);
+            const search = parentEntrySearchTerms($form, func);
             search.repository = $menu.val();
             fetchIndexEntries(search, useParentEntryMetadata, searchFailure);
         });
@@ -2747,7 +2740,7 @@ $(document).on('turbolinks:load', function() {
             // if they don't appear to be just variations on the same title.
 
             /** @type {SearchResultEntry} */
-            let parent = list.shift();
+            const parent = list.shift();
             if (repo !== parent.emma_repository) {
                 error = 'PROBLEM: ';
                 error += `new_repo == "${repo}" but parent `;
@@ -2755,7 +2748,7 @@ $(document).on('turbolinks:load', function() {
                 console.warn(`${func}:`, error);
             }
             const title_id = parent.emma_titleId;
-            let mismatch = list.filter(e => (e.emma_titleId !== title_id));
+            const mismatch = list.filter(e => (e.emma_titleId !== title_id));
             if (isPresent(mismatch)) {
                 const one     = (mismatch.length === 1);
                 const many    = one ? 'One'     : mismatch.length.toString();
@@ -2780,12 +2773,12 @@ $(document).on('turbolinks:load', function() {
 
             // Update form fields.
 
-            let update = {};
-            const source_fields = $.extend({}, SOURCE_FIELDS, {
+            const update = {};
+            const source_fields = { ...SOURCE_FIELDS,
                 repository:         repo,
                 emma_repository:    repo,
                 rem_metadataSource: [PROPERTIES.Repo.name[repo]],
-            });
+            };
             $.each(source_fields, function(field, value) {
                 if (typeof value === 'function') {
                     update[field] = value(parent);
@@ -2856,8 +2849,8 @@ $(document).on('turbolinks:load', function() {
         function sealFields(source_fields = SOURCE_FIELDS) {
             $.each(source_fields, function(field, value) {
                 if (value === FROM_PARENT) {
-                    let $input = formField(field, $form);
-                    const id   = $input[0].id;
+                    const $input = formField(field, $form);
+                    const id     = $input[0].id;
                     seal($input);
                     seal($input.siblings(`label[for="${id}"]`));
                 }
@@ -2872,8 +2865,8 @@ $(document).on('turbolinks:load', function() {
         function unsealFields(source_fields = SOURCE_FIELDS) {
             $.each(source_fields, function(field, value) {
                 if (value === FROM_PARENT) {
-                    let $input = formField(field, $form);
-                    const id   = $input[0].id;
+                    const $input = formField(field, $form);
+                    const id     = $input[0].id;
                     unseal($input);
                     unseal($input.siblings(`label[for="${id}"]`));
                 }
@@ -2997,7 +2990,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function parentEntrySelect(form) {
-        let $element = form && $(form);
+        const $element = form && $(form);
         if ($element?.is(PARENT_SELECT)) {
             return $element;
         } else {
@@ -3013,7 +3006,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function showParentEntrySelect(form) {
-        let $form = parentEntrySelect(form);
+        const $form = parentEntrySelect(form);
         parentEntrySearchInput($form).prop('disabled', false);
         return $form.toggleClass(HIDDEN_MARKER, false);
     }
@@ -3026,7 +3019,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function hideParentEntrySelect(form) {
-        let $form = parentEntrySelect(form);
+        const $form = parentEntrySelect(form);
         parentEntrySearchInput($form).prop('disabled', true);
         return $form.toggleClass(HIDDEN_MARKER, true);
     }
@@ -3052,8 +3045,8 @@ $(document).on('turbolinks:load', function() {
      */
     function parentEntrySearchTerms(form, caller) {
         let error, result = {};
-        let $input  = parentEntrySearchInput(form);
-        const terms = $input.val()?.trim() || '';
+        const $input = parentEntrySearchInput(form);
+        const terms  = $input.val()?.trim() || '';
         if (isEmpty(terms)) {
             error = 'empty search terms';
         } else if (terms.match(/^[a-z]+:/)) {
@@ -3108,7 +3101,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function seal(item, disabled) {
-        let $item = $(item);
+        const $item = $(item);
         $item.prop((disabled ? 'disabled' : 'readonly'), true);
         $item.find('option').not(':selected').prop('disabled', true);
         $item.toggleClass(SEALED_MARKER, true);
@@ -3123,7 +3116,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function unseal(item) {
-        let $item = $(item);
+        const $item = $(item);
         $item.prop('disabled', false);
         $item.prop('readonly', false);
         $item.prop('placeholder', '');
@@ -3147,7 +3140,7 @@ $(document).on('turbolinks:load', function() {
      * @see "EntryDecorator::Methods#lookup_popup"
      */
     function lookupButton(form) {
-        let $element = form && $(form);
+        const $element = form && $(form);
         if ($element?.is(LOOKUP_BUTTON)) {
             return $element;
         } else {
@@ -3161,7 +3154,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupLookupButton(form) {
-        let $button = lookupButtonInitialize(form);
+        const $button = lookupButtonInitialize(form);
         LookupModal.setup($button, onLookupStart, onLookupComplete).then(
             result => console.log('lookup loaded:', (result || 'OK')),
             reason => console.warn('lookup failed:', reason)
@@ -3177,7 +3170,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}              The Lookup button.
      */
     function lookupButtonInitialize(form) {
-        let $toggle = lookupButton(form);
+        const $toggle = lookupButton(form);
         clearSearchResultsData($toggle);
         clearSearchTermsData($toggle);
         clearLookupCondition($toggle);
@@ -3215,12 +3208,12 @@ $(document).on('turbolinks:load', function() {
      */
     function onLookupComplete($toggle, check_only, halted) {
         if (check_only || halted) { return }
-        let $form   = formElement();
+        const $form = formElement();
         let message = 'No fields changed.'; // TODO: I18n
         const data  = getFieldResultsData($toggle);
 
         if (isPresent(data)) {
-            let updates = { Added: [], Changed: [], Removed: [] };
+            const updates = { Added: [], Changed: [], Removed: [] };
             $.each(data, (field, value) => {
                 if (!value) {
                     updates.Removed.push(field);
@@ -3246,8 +3239,8 @@ $(document).on('turbolinks:load', function() {
             // NOTE: This is a hack due to the way that publication date is
             //  handled versus copyright year.
             if (Object.keys(data).includes('emma_publicationDate')) {
-                let $input = formField('emma_publicationDate', $form);
-                let $label = $input.siblings(`[for="${$input.attr('id')}"]`);
+                const $input = formField('emma_publicationDate', $form);
+                const $label = $input.siblings(`[for="${$input.attr('id')}"]`);
                 $input.attr('title', $label.attr('title'));
                 $input.prop({ readonly: false, disabled: false });
                 [$input, $label].forEach($e => {
@@ -3278,7 +3271,7 @@ $(document).on('turbolinks:load', function() {
         if (forbid) {
             console.error('enableLookup: cannot enable and forbid');
         }
-        let $button = lookupButton(form);
+        const $button = lookupButton(form);
         $button.prop('disabled', false);
         $button.removeClass('forbidden disabled');
         $button.attr('title', Emma.Lookup.enabled.tooltip);
@@ -3294,9 +3287,10 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}              The submit button.
      */
     function disableLookup(form, forbid) {
-        let tip, $button = lookupButton(form);
+        const $button = lookupButton(form);
         $button.prop('disabled', true);
         $button.addClass('disabled');
+        let tip;
         if (forbid) {
             $button.addClass('forbidden');
             tip = "Bibliographic metadata is inherited from\n" + // TODO: I18n
@@ -3359,9 +3353,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}             Whether *field* is a Lookup condition.
      */
     function updateLookupCondition(form, field, valid) {
-        let $form     = formElement(form);
-        let $button   = lookupButton($form);
-        let condition = getLookupCondition($button);
+        const $form     = formElement(form);
+        const $button   = lookupButton($form);
+        const condition = getLookupCondition($button);
         let found;
         $.each(condition, function(logical_op, field_flags) {
             found = Object.keys(field_flags).includes(field);
@@ -3395,8 +3389,8 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}  [permit]
      */
     function resetLookupCondition(form, permit) {
-        let $form   = formElement(form);
-        let $button = lookupButton($form);
+        const $form   = formElement(form);
+        const $button = lookupButton($form);
         let forbid;
         if (isDefined(permit)) {
             forbid = !permit;
@@ -3406,11 +3400,11 @@ $(document).on('turbolinks:load', function() {
         }
         let enable = false;
         if (!forbid) {
-            let $fields   = inputFields($form);
-            let condition = getLookupCondition($button);
+            const $fields   = inputFields($form);
+            const condition = getLookupCondition($button);
             $.each(condition, (logical_op, field_flags) => {
                 $.each(field_flags, (field, _) => {
-                    let $field = $fields.filter(`[data-field="${field}"]`);
+                    const $field = $fields.filter(`[data-field="${field}"]`);
                     condition[logical_op][field] = isPresent($field.val());
                 });
             });
@@ -3432,7 +3426,7 @@ $(document).on('turbolinks:load', function() {
         // noinspection JSValidateTypes
         return Object.fromEntries(
             Object.entries(LOOKUP_TERMS).map(kv => {
-                let [condition, entry] = kv;
+                const [condition, entry] = kv;
                 const fields = Object.keys(entry).map(fld => [fld, undefined]);
                 return [condition, Object.fromEntries(fields)];
             })
@@ -3450,8 +3444,8 @@ $(document).on('turbolinks:load', function() {
      * @param {EmmaData} [value]
      */
     function setOriginalValues(form, value) {
-        let $if = !value && inputFields(form).filter('.valid');
-        let dat = toObject(LookupModal.DATA_COLUMNS, f => {
+        const $if = !value && inputFields(form).filter('.valid');
+        const dat = toObject(LookupModal.DATA_COLUMNS, f => {
             let v = value ? value[f] : $if.filter(`[data-field="${f}"]`).val();
             return v && dup(v, true);
         });
@@ -3480,7 +3474,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {LookupRequest}     The data object assigned to the button.
      */
     function setSearchTermsData(form, value) {
-        let $button = lookupButton(form);
+        const $button = lookupButton(form);
         let request;
         if (value instanceof LookupRequest) {
             request = value;
@@ -3512,7 +3506,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event|Event} event
      */
     function updateSearchTermsData(event) {
-        let $button = $(event.target);
+        const $button = $(event.target);
         if ($button.prop('disabled')) { return }
         if (isPresent(getSearchTermsData($button))) { return }
         clearSearchResultsData($button);
@@ -3528,16 +3522,16 @@ $(document).on('turbolinks:load', function() {
      * @returns {LookupRequest}
      */
     function generateLookupRequest(form, value) {
-        let request = new LookupRequest;
-        let $button = lookupButton(form);
-        let $form   = formElement($button);
-        let $fields = inputFields($form).filter('.valid');
+        const request   = new LookupRequest;
+        const $button   = lookupButton(form);
+        const $form     = formElement($button);
+        const $fields   = inputFields($form).filter('.valid');
         const condition = value || getLookupCondition($button);
         $.each(condition, function(_logical_op, field_flags) {
             $.each(field_flags, function(field, active) {
                 if (active) {
-                    let $field = $fields.filter(`[data-field="${field}"]`);
-                    let values = $field.val();
+                    const $field = $fields.filter(`[data-field="${field}"]`);
+                    const values = $field.val();
                     if (isPresent(values)) {
                         const prefix = LOOKUP_PREFIX[field];
                         if (prefix === '') {
@@ -3605,8 +3599,8 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorInputFields(form) {
 
-        let $form   = formElement(form);
-        let $fields = inputFields($form);
+        const $form   = formElement(form);
+        const $fields = inputFields($form);
 
         handleEvent($fields, 'change', onChange);
         handleEvent($fields, 'input',  debounce(onInput, DEBOUNCE_DELAY));
@@ -3650,7 +3644,7 @@ $(document).on('turbolinks:load', function() {
          * @param {boolean}      [trim]   If *false*, don't trim white space.
          */
         function validateInputField(event, value, trim) {
-            let $field = $(event.target);
+            const $field = $(event.target);
             updateInputField($field, value, trim);
             updateRelatedField($field);
             validateForm($form);
@@ -3666,12 +3660,12 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function validateForm(form) {
-        let $form   = formElement(form);
-        let $fields = inputFields($form);
-        let ready   = !$fields.is(INVALID);
+        const $form   = formElement(form);
+        const $fields = inputFields($form);
+        let ready     = !$fields.is(INVALID);
         if ((ready &&= !menuMultiFields($form).is(INVALID))) {
             const updating = isUpdateForm($form);
-            let recheck = updating;
+            let recheck    = updating;
             if (uploader) {
                 if (uploader.fileSelected()) {
                     recheck = false;
@@ -3699,8 +3693,8 @@ $(document).on('turbolinks:load', function() {
         if (enable === false) {
             return disableSubmit(form);
         }
-        let $form = formElement(form);
-        const tip = submitReadyTooltip($form);
+        const $form = formElement(form);
+        const tip   = submitReadyTooltip($form);
         return submitButton($form)
             .addClass('best-choice')
             .removeClass('forbidden disabled')
@@ -3717,8 +3711,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}              The submit button.
      */
     function disableSubmit(form) {
-        let $form = formElement(form);
-        const tip = submitNotReadyTooltip($form);
+        const $form = formElement(form);
+        const tip   = submitNotReadyTooltip($form);
         return submitButton($form)
             .removeClass('best-choice')
             .addClass('forbidden')
@@ -3737,8 +3731,8 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event} [event]
      */
     function startSubmission(event) {
-        let $button = $(event.target);
-        let $form   = formElement($button);
+        const $button = $(event.target);
+        const $form   = formElement($button);
         setFormSubmitting($form);
     }
 
@@ -3766,8 +3760,8 @@ $(document).on('turbolinks:load', function() {
     function cancelSubmission(event) {
         event.stopPropagation();
         event.preventDefault();
-        let $button = $(event.target);
-        let $form   = formElement($button);
+        const $button = $(event.target);
+        const $form   = formElement($button);
         if (!formState($form)) {
             setFormCanceled($form);
             let cancel_path = $button.attr('data-path');
@@ -3789,9 +3783,9 @@ $(document).on('turbolinks:load', function() {
      * @param {string|object} [fields]
      */
     function cancelCurrent(form, redirect, fields) {
-        let $form  = formElement(form);
-        const sid  = submissionParams($form);
-        let params = $.extend({ redirect: PROPERTIES.Path.index }, sid);
+        const $form  = formElement(form);
+        const sid    = submissionParams($form);
+        const params = { redirect: PROPERTIES.Path.index, ...sid };
         if (redirect) {
             let back_here;
             if (!uploader || uploader.fileSelected()) {
@@ -3824,7 +3818,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function abortSubmission(form) {
-        let $form = formElement(form);
+        const $form = formElement(form);
         if (formState($form)) {
             // Either Submit or Cancel has already been invoked.
         } else if (isUpdateForm($form)) {
@@ -3842,12 +3836,12 @@ $(document).on('turbolinks:load', function() {
      * @param {string}        [url]
      */
     function abortCurrent(form, fields, url = PROPERTIES.Path.cancel) {
-        let $form = formElement(form);
+        const $form = formElement(form);
         setFormCanceled($form);
         if (isEmpty(url)) {
             return;
         }
-        let params = submissionParams($form);
+        const params = submissionParams($form);
         if (fields) {
             params.revert = encodeURIComponent(
                 (typeof fields === 'string') ? fields : JSON.stringify(fields)
@@ -3868,7 +3862,7 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorRequestResponse(form) {
 
-        let $form = formElement(form);
+        const $form = formElement(form);
 
         handleEvent($form, 'ajax:before',     beforeAjax);
         handleEvent($form, 'ajax:beforeSend', beforeAjaxFormSubmission);
@@ -3904,7 +3898,7 @@ $(document).on('turbolinks:load', function() {
 
             // If the source repository control is disabled (when editing a
             // completed submission), re-enable it so that it *is* transmitted.
-            let $repo = sourceRepositoryMenu($form);
+            const $repo = sourceRepositoryMenu($form);
             if ($repo.prop('disabled')) {
                 $repo.prop('disabled', false);
             }
@@ -4025,13 +4019,18 @@ $(document).on('turbolinks:load', function() {
     // Functions - form field filtering
     // ========================================================================
 
-    // noinspection ES6ConvertVarToLetConst
+    let filter_initialized;
+
     /**
      * A flag to indicate whether field filtering has occurred yet.
      *
-     * @type {boolean}
+     * @type {boolean}  *false* on the first invocation; *true* thereafter
      */
-    var filter_initialized = false;
+    function filterInitialized() {
+        const initialized  = filter_initialized || false;
+        filter_initialized = true;
+        return initialized;
+    }
 
     /**
      * The current field filtering selection.
@@ -4051,8 +4050,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [new_mode]
      */
     function fieldDisplayFilterSelect(form, new_mode) {
-        let $form  = formElement(form);
-        let $radio = fieldDisplayFilterButtons($form);
+        const $form  = formElement(form);
+        const $radio = fieldDisplayFilterButtons($form);
         let mode;
         if (isDefined(new_mode)) {
             mode = new_mode;
@@ -4070,7 +4069,7 @@ $(document).on('turbolinks:load', function() {
             });
             mode = action || general || first;
         }
-        let selector = `[value="${mode}"]`;
+        const selector = `[value="${mode}"]`;
         $radio.filter(selector).prop('checked', true).change();
     }
 
@@ -4083,8 +4082,9 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorFieldDisplayFilterButtons(form) {
 
-        let $form    = formElement(form);
-        let $buttons = fieldDisplayFilterButtons($form);
+        const $form    = formElement(form);
+        const $buttons = fieldDisplayFilterButtons($form);
+
         handleEvent($buttons, 'change', fieldDisplayFilterHandler);
 
         /**
@@ -4093,7 +4093,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event} event
          */
         function fieldDisplayFilterHandler(event) {
-            let $target = $(event.target);
+            const $target = $(event.target);
             if ($target.is(':checked')) {
                 filterFieldDisplay($target.val(), $form);
             }
@@ -4116,11 +4116,11 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#field_group_controls"
      */
     function filterFieldDisplay(new_mode, form_sel) {
-        const func = 'filterFieldDisplay';
-        const obj  = (typeof new_mode === 'object');
-        const form = obj ? new_mode  : form_sel;
-        let $form  = formElement(form);
-        const mode =
+        const func  = 'filterFieldDisplay';
+        const obj   = (typeof new_mode === 'object');
+        const form  = obj ? new_mode  : form_sel;
+        const $form = formElement(form);
+        const mode  =
             (obj ? undefined : new_mode) || fieldDisplayFilterCurrent($form);
         switch (mode) {
             case 'available': fieldDisplayAvailable($form); break;
@@ -4131,10 +4131,8 @@ $(document).on('turbolinks:load', function() {
         }
         // Scroll so that the first visible field is at the top of the display
         // beneath the field display controls.
-        if (filter_initialized) {
+        if (filterInitialized()) {
             $form[0].scrollIntoView();
-        } else {
-            filter_initialized = true;
         }
     }
 
@@ -4183,9 +4181,9 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldContainer}.
      */
     function fieldDisplayOnly(match, form) {
-        let $fields    = fieldContainer(form).children().hide();
-        let $visible   = $fields.filter(match);
-        let $no_fields = $fields.filter('.no-fields');
+        const $fields    = fieldContainer(form).children().hide();
+        const $visible   = $fields.filter(match);
+        const $no_fields = $fields.filter('.no-fields');
         if (isPresent($visible)) {
             $visible.show();
             $no_fields.hide();
@@ -4201,7 +4199,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldContainer}.
      */
     function fieldDisplayExcept(match, form) {
-        let $fields = fieldContainer(form).children().show();
+        const $fields = fieldContainer(form).children().show();
         $fields.filter(match).hide();
         $fields.filter('.no-fields').hide();
     }
@@ -4217,8 +4215,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [text]       Default: no tooltip
      */
     function setTooltip(element, text) {
-        let $element = $(element);
-        let old_tip  = $element.attr('data-title');
+        const $element = $(element);
+        let old_tip    = $element.attr('data-title');
         if (isMissing(old_tip)) {
             old_tip = $element.attr('title');
             if (isPresent(old_tip)) {
@@ -4238,8 +4236,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function restoreTooltip(element) {
-        let $element  = $(element);
-        const old_tip = $element.attr('data-title');
+        const $element = $(element);
+        const old_tip  = $element.attr('data-title');
         if (isPresent(old_tip)) {
             $element.attr('title', old_tip);
         } else {
@@ -4254,8 +4252,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [icon]       Default: no icon.
      */
     function setIcon(element, icon) {
-        let $element = $(element);
-        let old_icon = $element.attr('data-icon');
+        const $element = $(element);
+        let old_icon   = $element.attr('data-icon');
         if (isMissing(old_icon)) {
             old_icon = $element.text();
             if (isPresent(old_icon)) {
@@ -4272,7 +4270,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function restoreIcon(element) {
-        let $element   = $(element);
+        const $element = $(element);
         const old_icon = $element.attr('data-icon') || '';
         $element.text(old_icon);
     }
@@ -4389,7 +4387,7 @@ $(document).on('turbolinks:load', function() {
      */
     function buttonTray(form) {
         const MATCH = BUTTON_TRAY;
-        let $elem   = form && $(form);
+        const $elem = form && $(form);
         return $elem?.is(MATCH) ? $elem : formElement($elem).find(MATCH);
     }
 
@@ -4404,7 +4402,7 @@ $(document).on('turbolinks:load', function() {
      */
     function submitButton(form) {
         const MATCH = SUBMIT_BUTTON;
-        let $elem   = form && $(form);
+        const $elem = form && $(form);
         return $elem?.is(MATCH) ? $elem : buttonTray($elem).children(MATCH);
     }
 
@@ -4420,7 +4418,7 @@ $(document).on('turbolinks:load', function() {
      */
     function cancelButton(form) {
         const MATCH = CANCEL_BUTTON;
-        let $elem   = form && $(form);
+        const $elem = form && $(form);
         return $elem?.is(MATCH) ? $elem : buttonTray($elem).children(MATCH);
     }
 
@@ -4551,7 +4549,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function requireFormCancellation(form) {
-        let $form     = formElement(form);
+        const $form   = formElement(form);
         const message = 'Cancel this submission before retrying'; // TODO: I18n
         const tooltip = { 'title': message };
         uploader?.cancel();
@@ -4593,7 +4591,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string|undefined}
      */
     function setFormState(form, state) {
-        let $form   = formElement(form);
+        const $form = formElement(form);
         const value = isDefined(state) ? state.toString() : undefined;
         if (isDefined(value)) {
             $form.data(FORM_STATE_DATA, value);
@@ -4661,9 +4659,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function submitLabel(form, can_submit) {
-        let $form   = formElement(form);
+        const $form = formElement(form);
         const asset = endpointProperties($form).submit || {};
-        const state = buttonProperties($form, 'submit', can_submit, asset);
+        const state = selectProperties($form, 'submit', can_submit, asset);
         return state?.label || asset.label;
     }
 
@@ -4676,9 +4674,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function submitTooltip(form, can_submit) {
-        let $form   = formElement(form);
+        const $form = formElement(form);
         const asset = endpointProperties($form).submit || {};
-        const state = buttonProperties($form, 'submit', can_submit, asset);
+        const state = selectProperties($form, 'submit', can_submit, asset);
         return state?.tooltip || asset?.tooltip;
     }
 
@@ -4713,9 +4711,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function cancelLabel(form, can_cancel) {
-        let $form   = formElement(form);
+        const $form = formElement(form);
         const asset = endpointProperties($form).cancel || {};
-        const state = buttonProperties($form, 'cancel', can_cancel, asset);
+        const state = selectProperties($form, 'cancel', can_cancel, asset);
         return state?.label || asset?.label;
     }
 
@@ -4728,9 +4726,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function cancelTooltip(form, can_cancel) {
-        let $form   = formElement(form);
+        const $form = formElement(form);
         const asset = endpointProperties($form).cancel || {};
-        const state = buttonProperties($form, 'cancel', can_cancel, asset);
+        const state = selectProperties($form, 'cancel', can_cancel, asset);
         return state?.tooltip || asset?.tooltip;
     }
 
@@ -4745,11 +4743,11 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {ElementProperties|null}
      *
-     * @see Uploader.buttonProperties
+     * @see Uploader.selectProperties
      */
-    function buttonProperties(form, op_name, can_perform, asset) {
-        const func  = 'buttonProperties';
-        let $form   = formElement(form);
+    function selectProperties(form, op_name, can_perform, asset) {
+        const func  = 'selectProperties';
+        const $form = formElement(form);
         let perform = can_perform;
         if (notDefined(perform)) {
             switch (op_name) {
@@ -4770,10 +4768,10 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {EndpointProperties}
      *
-     * @see Uploader.#endpointProperties
+     * @see Uploader._endpointProperties
      */
     function endpointProperties(form) {
-        let $form    = formElement(form);
+        const $form  = formElement(form);
         const action = PROPERTIES.Action || {};
         if (isBulkOpForm($form)) {
             return isUpdateForm($form) ? action.bulk_edit : action.bulk_new;

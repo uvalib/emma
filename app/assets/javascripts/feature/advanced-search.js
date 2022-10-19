@@ -29,7 +29,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $search_sections = $('.layout-section.search');
+    const $search_sections = $('.layout-section.search');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($search_sections)) {
@@ -190,21 +190,22 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $advanced_toggle = $search_sections.find('.advanced-search-toggle');
+    const $advanced_toggle = $search_sections.find('.advanced-search-toggle');
 
     /**
      * All instances of the search filter reset button.
      *
      * @type {jQuery}
      */
-    let $reset_button = $search_sections.find('.menu-button.reset');
+    const $reset_button = $search_sections.find('.menu-button.reset');
 
     /**
      * The element with the search bar and related controls.
      *
      * @type {jQuery}
      */
-    let $search_bar_container = $search_sections.find('.search-bar-container');
+    const $search_bar_container =
+        $search_sections.find('.search-bar-container');
 
     /**
      * One or more rows containing a search bar and, optionally, a search input
@@ -212,35 +213,35 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $search_bar_rows = $search_bar_container.find('.search-bar-row');
+    const $search_bar_rows = $search_bar_container.find('.search-bar-row');
 
     /**
      * The menu(s) which change the type for their associated search input.
      *
      * @type {jQuery}
      */
-    let $search_input_select = $search_bar_rows.find('.search-input-select');
+    const $search_input_select = $search_bar_rows.find('.search-input-select');
 
     /**
      * The search term input boxes.
      *
      * @type {jQuery}
      */
-    let $search_input = $search_bar_rows.find('.search-input');
+    const $search_input = $search_bar_rows.find('.search-input');
 
     /**
      * The search term input clear buttons.
      *
      * @type {jQuery}
      */
-    let $search_clear = $search_bar_rows.find('.search-clear');
+    const $search_clear = $search_bar_rows.find('.search-clear');
 
     /**
      * Buttons to reveal the next search term input row.
      *
      * @type {jQuery}
      */
-    let $row_show_buttons =
+    const $row_show_buttons =
         $search_bar_container.find('.search-row-control.add');
 
     /**
@@ -249,7 +250,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $row_hide_buttons =
+    const $row_hide_buttons =
         $search_bar_container.find('.search-row-control.remove');
 
     /**
@@ -257,28 +258,28 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $search_button = $search_sections.find('.search-button');
+    const $search_button = $search_sections.find('.search-button');
 
     /**
      * The search filters container.
      *
      * @type {jQuery}
      */
-    let $filter_controls = $search_sections.find('.search-filter-container');
+    const $filter_controls = $search_sections.find('.search-filter-container');
 
     /**
      * The search filter controls (menu containers).
      *
      * @type {jQuery}
      */
-    let $search_filters = $filter_controls.find('.menu-control');
+    const $search_filters = $filter_controls.find('.menu-control');
 
     /**
      * Single-select dropdown menus.
      *
      * @type {jQuery}
      */
-    let $single_select_menus =
+    const $single_select_menus =
         $search_filters.filter('.single').children('select');
 
     /**
@@ -286,7 +287,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $multi_select_menus =
+    const $multi_select_menus =
         $search_filters.filter('.multiple').children('select');
 
     /**
@@ -328,7 +329,7 @@ $(document).on('turbolinks:load', function() {
 
             // Put the filter panel in the last state set by the user (unless
             // in this case it's required to be open no matter what).
-            let is_open = isExpandedFilterPanel() ? OPEN : CLOSED;
+            const is_open = isExpandedFilterPanel() ? OPEN : CLOSED;
             if (was_open !== is_open) {
                 if (was_open === OPEN) {
                     setFilterPanelDisplay(true);
@@ -343,7 +344,7 @@ $(document).on('turbolinks:load', function() {
             initializeMultiSelect();
         }
 
-        let url_params = urlParameters();
+        const url_params = urlParameters();
         initializeSearchTerms(url_params);
         initializeSearchFilters(url_params);
 
@@ -370,26 +371,26 @@ $(document).on('turbolinks:load', function() {
     function initializeSearchTerms(url_params) {
         const func   = 'initializeSearchTerms';
         const params = url_params || urlParameters();
-        let $rows    = $search_bar_rows;
+        const $rows  = $search_bar_rows;
 
         // Reset search selection menus and inputs.
         $rows.each(function() {
-            let $row   = $(this);
+            const $row = $(this);
             const type = SEARCH_TYPES[0];
             setSearchType($row, type, func, false);
             setSearchInput($row, '', func, false);
         });
 
         // noinspection FunctionWithInconsistentReturnsJS
-        $.each(SEARCH_TYPES, function(index, type) {
+        $.each(SEARCH_TYPES, function(_index, type) {
             let param = compact(arrayWrap(params[type]));
             if (isEmpty(param)) { return true; } // continue
 
-            let $matching_rows = $rows.has(`input[name="${type}"]`);
+            const $matching_rows = $rows.has(`input[name="${type}"]`);
             // noinspection FunctionWithInconsistentReturnsJS
             $matching_rows.each(function() {
-                let $row   = $(this);
-                let $input = getSearchInput($row);
+                const $row   = $(this);
+                const $input = getSearchInput($row);
                 if (isEmpty($input.val())) {
                     setSearchInput($row, param.shift(), func, true);
                     $row.removeClass('hidden');
@@ -399,9 +400,9 @@ $(document).on('turbolinks:load', function() {
             if (isEmpty(param)) { return true; } // continue outer loop
 
             /** @type {jQuery[]} */
-            let remaining_rows = [];
+            const remaining_rows = [];
             $rows.not($matching_rows).each(function() {
-                let $row = $(this);
+                const $row = $(this);
                 if (!searchTerm($row)) {
                     remaining_rows.push($row);
                 }
@@ -420,7 +421,7 @@ $(document).on('turbolinks:load', function() {
 
             // Fill remaining rows with param term(s).
             param.forEach(function(term) {
-                let $row = remaining_rows.shift();
+                const $row = remaining_rows.shift();
                 setSearchType($row,  type, func, true);
                 setSearchInput($row, term, func, true);
                 $row.removeClass('hidden');
@@ -440,7 +441,7 @@ $(document).on('turbolinks:load', function() {
         const func   = 'initializeSearchFilters';
         const params = url_params || urlParameters();
         $search_filters.each(function() {
-            let $menu   = getSearchFilterMenu(this, func);
+            const $menu = getSearchFilterMenu(this, func);
             const name  = $menu.attr('name');
             const type  = name.replace('[]', '');
             const param = params[type] || $menu.attr('data-default');
@@ -466,9 +467,8 @@ $(document).on('turbolinks:load', function() {
      */
     function guaranteeSearchButton() {
         /** @type {jQuery} */
-        let $controls, $filter_sb;
-        $controls  = $filter_controls.siblings('.search-controls');
-        $filter_sb = $controls.find('.search-button');
+        const $controls  = $filter_controls.siblings('.search-controls'),
+              $filter_sb = $controls.find('.search-button');
         if (isMissing($search_button.filter(':visible'))) {
             if (!$search_button.attr('value')) {
                 $search_button.attr('value', 'Search'); // TODO: I18n
@@ -489,7 +489,7 @@ $(document).on('turbolinks:load', function() {
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
      */
     function persistImmediateSearch() {
-        let $form   = getSearchForm();
+        const $form = getSearchForm();
         const id    = $form.attr('id');
         const name  = 'immediate_search';
         const value = 'true';
@@ -522,22 +522,22 @@ $(document).on('turbolinks:load', function() {
      *   submission as multiple values.
      */
     function resolveFormFields() {
-        const func  = 'resolveFormFields';
-        let $rows   = $search_bar_rows;
-        let $hidden = $rows.find('input[type="hidden"]');
-        let count   = {};
+        const func    = 'resolveFormFields';
+        const $rows   = $search_bar_rows;
+        const $hidden = $rows.find('input[type="hidden"]');
+        const count   = {};
 
         // Check search input fields.
         $rows.each(function() {
-            let $row        = $(this);
-            let $input      = getSearchInput($row);
+            const $row      = $(this);
+            const $input    = getSearchInput($row);
             const ignore_if = $row.hasClass('hidden');
             checkInput($input, ignore_if);
         });
 
         // Check hidden input fields (if any).
         $hidden.each(function() {
-            let $input      = $(this);
+            const $input    = $(this);
             const ignore_if = (value) => (value === '*');
             checkInput($input, ignore_if);
         });
@@ -550,7 +550,7 @@ $(document).on('turbolinks:load', function() {
         // Disregard any filter which has the default value to avoid adding a
         // URL parameter that is unneeded.
         getSearchFilter().each(function() {
-            let $menu = getSearchFilterMenu(this);
+            const $menu = getSearchFilterMenu(this);
             if ($menu.val() === $menu.attr('data-default')) {
                 $menu.attr('name', '');
             }

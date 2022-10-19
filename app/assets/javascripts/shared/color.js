@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/color.js
 
 
-import { DEF_HEX_DIGITS, HEX_BASE, hexString } from '../shared/random'
+import { DEF_HEX_DIGITS, HEX_BASE, hexString } from './random'
 
 
 // ============================================================================

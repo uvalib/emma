@@ -9,7 +9,7 @@ import { handleClickAndKeypress } from '../shared/events'
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    let $toggle_buttons = $('.toggle.for-panel').not('.for-example');
+    const $toggle_buttons = $('.toggle.for-panel').not('.for-example');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($toggle_buttons)) {
@@ -62,18 +62,6 @@ $(document).on('turbolinks:load', function() {
     const OPEN_MARKER = 'open';
 
     // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleClickAndKeypress($toggle_buttons, onTogglePanel);
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    initializeState();
-
-    // ========================================================================
     // Functions
     // ========================================================================
 
@@ -83,8 +71,8 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event} event
      */
     function onTogglePanel(event) {
-        let $button = $(event.target);
-        let $panel  = getPanel($button);
+        const $button = $(event.target);
+        const $panel  = getPanel($button);
         if (isPresent($panel)) {
             const opening = !$panel.hasClass(OPEN_MARKER);
             if (DEBUGGING) {
@@ -129,7 +117,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string|undefined}
      */
     function getPanelSelector(button) {
-        let $button = $(button);
+        const $button = $(button);
         return $button.attr('data-selector') || ('#' + getPanelId($button));
     }
 
@@ -224,5 +212,17 @@ $(document).on('turbolinks:load', function() {
     function _debug(...args) {
         if (DEBUGGING) { console.log(...args); }
     }
+
+    // ========================================================================
+    // Event handlers
+    // ========================================================================
+
+    handleClickAndKeypress($toggle_buttons, onTogglePanel);
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    initializeState();
 
 });

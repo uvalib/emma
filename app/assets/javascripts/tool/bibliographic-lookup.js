@@ -50,10 +50,10 @@ export async function setup(base, show_hooks, hide_hooks) {
 
     const DEBUGGING = false;
 
-    let $base = $(base);
+    const $base = $(base);
 
     /** @type {jQuery|undefined} */
-    let $popup_button = $base.is('.lookup-button') ? $base : undefined;
+    const $popup_button = $base.is('.lookup-button') ? $base : undefined;
 
     /**
      * Whether the source implements manual input of search terms.
@@ -75,7 +75,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     // Channel
     // ========================================================================
 
-    let channel = await import('../channels/lookup-channel');
+    const channel = await import('../channels/lookup-channel');
 
     channel.disconnectOnPageExit(DEBUGGING);
 
@@ -99,14 +99,14 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @type {ModalDialog|undefined}
      */
-    let modal = $popup_button?.data(ModalDialog.MODAL_INSTANCE);
+    const modal = $popup_button?.data(ModalDialog.MODAL_INSTANCE);
 
     /**
      * Base element associated with the dialog.
      *
      * @type {jQuery}
      */
-    let $root =
+    const $root =
         modal?.modalPanel ||
         $popup_button?.siblings(ModalDialog.PANEL) ||
         $('body');
@@ -384,8 +384,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function updateSearchResultsData(message) {
         _debug('updateSearchResultsData:', message);
-        let key  = message.job_id || randomizeName('response');
-        let obj  = getSearchResultsData() || resetSearchResultsData();
+        const key = message.job_id || randomizeName('response');
+        const obj = getSearchResultsData() || resetSearchResultsData();
         obj[key] = message.objectCopy;
     }
 
@@ -640,10 +640,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeStatusPanel(css_class) {
-        const css      = css_class || LookupModal.STATUS_PANEL_CLASS;
-        let $container = $('<div>').addClass(css);
-        let $services  = makeServiceStatuses();
-        let $notice    = makeStatusNotice();
+        const css        = css_class || LookupModal.STATUS_PANEL_CLASS;
+        const $container = $('<div>').addClass(css);
+        const $services  = makeServiceStatuses();
+        const $notice    = makeStatusNotice();
         return $container.append($services, $notice);
     }
 
@@ -711,9 +711,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function enableCommit(enable) {
         _debug('enableCommit:', enable);
-        let $button  = commitButton();
-        const marker = LookupModal.DISABLED_MARKER;
-        const set    = (enable === false);
+        const $button = commitButton();
+        const marker  = LookupModal.DISABLED_MARKER;
+        const set     = (enable === false);
         return $button.toggleClass(marker, set).prop('disabled', set);
     }
 
@@ -726,9 +726,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function disableCommit(disable) {
         _debug('disableCommit:', disable);
-        let $button  = commitButton();
-        const marker = LookupModal.DISABLED_MARKER;
-        const set    = (disable !== false);
+        const $button = commitButton();
+        const marker  = LookupModal.DISABLED_MARKER;
+        const set     = (disable !== false);
         return $button.toggleClass(marker, set).prop('disabled', set);
     }
 
@@ -744,7 +744,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {string}
      */
     function getValue(element) {
-        let $elem = $(element);
+        const $elem = $(element);
         if ($elem.is('textarea')) {
             return $elem.val()?.trim() || '';
         } else {
@@ -828,13 +828,13 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function refreshFieldValuesEntry(caller) {
-        const func = caller || 'refreshFieldValuesEntry';
-        const data = getOriginalFieldValues(func);
-        let $entry = getFieldValuesEntry();
+        const func   = caller || 'refreshFieldValuesEntry';
+        const data   = getOriginalFieldValues(func);
+        const $entry = getFieldValuesEntry();
         fillEntry($entry, data);
         $entry.find('textarea').each((_, column) => {
-            let $field = $(column);
-            const lock = !!getValue($field);
+            const $field = $(column);
+            const lock   = !!getValue($field);
             this.lockFor($field).prop('checked', lock);
             this.lockFieldValue($field, lock);
         });
@@ -845,11 +845,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Invoked when the user commits to the new field values.
      */
     function commitFieldValuesEntry() {
-        const func = 'commitFieldValuesEntry';
+        const func     = 'commitFieldValuesEntry';
         _debug(func);
-        let original = getOriginalFieldValues(func);
-        let current  = getColumnValues(getFieldValuesEntry());
-        let result   = {};
+        const original = getOriginalFieldValues(func);
+        const current  = getColumnValues(getFieldValuesEntry());
+        const result   = {};
         $.each(current, (field, value) => {
             let use_value = true;
             if (original.hasOwnProperty(field)) {
@@ -894,8 +894,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {string|undefined}
      */
     function fieldFor(target) {
-        const df = 'data-field';
-        let $tgt = $(target);
+        const df   = 'data-field';
+        const $tgt = $(target);
         return $tgt.attr(df) || $tgt.parents(`[${df}]`).first().attr(df);
     }
 
@@ -907,9 +907,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function lockIfChanged(event) {
         _debug('lockIfChanged:', event);
-        let $textarea  = $(event.target);
-        const current  = getValue($textarea);
-        const previous = getLatestFieldValue($textarea);
+        const $textarea = $(event.target);
+        const current   = getValue($textarea);
+        const previous  = getLatestFieldValue($textarea);
         if (current !== previous) {
             setLatestFieldValue($textarea, current);
             if (!isLockedFieldValue($textarea)) {
@@ -1035,9 +1035,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function toggleFieldLock(event) {
         _debug('toggleFieldLock:', event);
-        let $target = $(event.target);
-        const field = fieldFor($target);
-        const lock  = $target.is(':checked');
+        const $target = $(event.target);
+        const field   = fieldFor($target);
+        const lock    = $target.is(':checked');
         lockFieldValue(field, lock);
         columnLockout(field, lock);
     }
@@ -1050,9 +1050,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {boolean} lock
      */
     function columnLockout(field, lock) {
-        const HEAD  = LookupModal.HEADING_ROWS;
-        let $rows   = entriesList().children('.row').not(HEAD);
-        let $column = $rows.children(`[data-field="${field}"]`);
+        const HEAD    = LookupModal.HEADING_ROWS;
+        const $rows   = entriesList().children('.row').not(HEAD);
+        const $column = $rows.children(`[data-field="${field}"]`);
         $column.toggleClass('locked-out', lock);
     }
 
@@ -1064,7 +1064,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function fieldLockout(entry) {
         $(entry).children('[data-field]').each((_, column) => {
-            let $field   = $(column);
+            const $field = $(column);
             const field  = $field.attr('data-field');
             const locked = isLockedFieldValue(field);
             $field.toggleClass('locked-out', locked);
@@ -1105,9 +1105,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function refreshOriginalValuesEntry(caller) {
-        const func = caller || 'refreshOriginalValuesEntry';
-        const data = getOriginalFieldValues(func);
-        let $entry = getOriginalValuesEntry();
+        const func   = caller || 'refreshOriginalValuesEntry';
+        const data   = getOriginalFieldValues(func);
+        const $entry = getOriginalValuesEntry();
         fillEntry($entry, data);
         $entry.data(LookupModal.ENTRY_ITEM_DATA, dupObject(data));
         return $entry;
@@ -1174,8 +1174,8 @@ export async function setup(base, show_hooks, hide_hooks) {
     function selectEntry(event) {
         _debug('selectEntry:', event);
         /** @type {jQuery} */
-        let $target = $(event.currentTarget || event.target),
-            $entry  = $target.parents('.row').first();
+        const $target = $(event.currentTarget || event.target),
+              $entry  = $target.parents('.row').first();
         if ($target.attr('type') !== 'radio') {
             $target.focus();
             $entry.find('[type="radio"]').click();
@@ -1188,7 +1188,7 @@ export async function setup(base, show_hooks, hide_hooks) {
                 // For the initial selection of the "ORIGINAL" row, lock all
                 // the fields that already have data.
                 $entry.children('[data-field]').each((_, column) => {
-                    let $field = $(column);
+                    const $field = $(column);
                     if (isPresent($field.text())) {
                         lockFor($field).click();
                     }
@@ -1205,8 +1205,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function highlightEntry(event) {
-        let $target = $(event.target);
-        let $entry  = $target.parents('.row').first();
+        const $target = $(event.target);
+        const $entry  = $target.parents('.row').first();
         $entry.children().toggleClass('highlight', true);
     }
 
@@ -1218,8 +1218,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function unhighlightEntry(event) {
-        let $target = $(event.target);
-        let $entry  = $target.parents('.row').first();
+        const $target = $(event.target);
+        const $entry  = $target.parents('.row').first();
         $entry.children().toggleClass('highlight', false);
     }
 
@@ -1235,8 +1235,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {LookupResponseItem}
      */
     function entryValues(entry) {
-        let $entry = $(entry);
-        let values = $entry.data(LookupModal.ENTRY_ITEM_DATA);
+        const $entry = $(entry);
+        const values = $entry.data(LookupModal.ENTRY_ITEM_DATA);
         return values ? dupObject(values) : getColumnValues($entry);
     }
 
@@ -1263,8 +1263,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function getColumnValue($entry, field) {
         /** @type {jQuery} */
-        let $column = $entry.children(`[data-field="${field}"]`);
-        const value = getValue($column);
+        const $column = $entry.children(`[data-field="${field}"]`);
+        const value   = getValue($column);
         return toDataValue(value);
     }
 
@@ -1277,8 +1277,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function setColumnValue($entry, field, field_value) {
         /** @type {jQuery} */
-        let $column = $entry.children(`[data-field="${field}"]`);
-        let value   = toInputValue(field_value);
+        const $column = $entry.children(`[data-field="${field}"]`);
+        let value     = toInputValue(field_value);
         setLatestFieldValue($column, value);
 
         if ($column.is('textarea')) {
@@ -1391,9 +1391,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function addEntry(item, label, css_class) {
         _debug('addEntry:', item, label, css_class);
-        let $list  = entriesList();
-        const row  = $list.children('.row').length;
-        let $entry = makeResultEntry(row, label, css_class);
+        const $list  = entriesList();
+        const row    = $list.children('.row').length;
+        const $entry = makeResultEntry(row, label, css_class);
         fieldLockout($entry);
         fillEntry($entry, item);
         if (item) {
@@ -1412,8 +1412,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function fillEntry($entry, item, fields) {
-        let data    = item || {};
-        let columns = fields || LookupModal.DATA_COLUMNS
+        const data    = item || {};
+        const columns = fields || LookupModal.DATA_COLUMNS
         columns.forEach(col => setColumnValue($entry, col, data[col]));
         return $entry;
     }
@@ -1473,9 +1473,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeEntriesDisplay(css_class) {
-        const css    = css_class || LookupModal.ENTRIES_CLASS;
-        let $display = $('<div>').addClass(css);
-        let $list    = makeEntriesList();
+        const css      = css_class || LookupModal.ENTRIES_CLASS;
+        const $display = $('<div>').addClass(css);
+        const $list    = makeEntriesList();
         return $display.append($list);
     }
 
@@ -1488,15 +1488,15 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeEntriesList(css_class) {
-        const css      = css_class || 'list';
-        const cols     = LookupModal.ALL_COLUMNS.length;
-        let $list      = $('<div>').addClass(`${css} columns-${cols}`);
-        let row        = 0;
-        let $heads     = makeHeadEntry(row++);
-        let $values    = makeFieldValuesEntry(row++);
-        let $locks     = makeFieldLocksEntry(row++);
-        let $originals = makeOriginalValuesEntry(row++);
-        let $loading   = makeLoadingPlaceholder();
+        const css        = css_class || 'list';
+        const cols       = LookupModal.ALL_COLUMNS.length;
+        const $list      = $('<div>').addClass(`${css} columns-${cols}`);
+        let row          = 0;
+        const $heads     = makeHeadEntry(row++);
+        const $values    = makeFieldValuesEntry(row++);
+        const $locks     = makeFieldLocksEntry(row++);
+        const $originals = makeOriginalValuesEntry(row++);
+        const $loading   = makeLoadingPlaceholder();
         return $list.append($heads, $values, $locks, $originals, $loading);
     }
 
@@ -1511,7 +1511,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     function makeHeadEntry(row, css_class) {
         const css    = css_class || LookupModal.HEAD_ENTRY_CLASS;
         const fields = LookupModal.ALL_COLUMNS;
-        let cols     = fields.map(label => makeHeadColumn(label));
+        const cols   = fields.map(label => makeHeadColumn(label));
         return makeEntry(row, cols, css);
     }
 
@@ -1525,12 +1525,12 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldValuesEntry(row, css_class) {
-        const css    = css_class || LookupModal.FIELD_VALUES_CLASS;
-        const fields = LookupModal.DATA_COLUMNS;
-        let $select  = makeBlankColumn();
-        let $label   = makeTagColumn();
-        let inputs   = fields.map(field => makeFieldInputColumn(field));
-        let cols     = [$select, $label, ...inputs];
+        const css     = css_class || LookupModal.FIELD_VALUES_CLASS;
+        const fields  = LookupModal.DATA_COLUMNS;
+        const $select = makeBlankColumn();
+        const $label  = makeTagColumn();
+        const inputs  = fields.map(field => makeFieldInputColumn(field));
+        const cols    = [$select, $label, ...inputs];
         respondAsHighlightable(inputs);
         return setFieldValuesEntry(makeEntry(row, cols, css));
     }
@@ -1548,13 +1548,13 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldLocksEntry(row, css_class) {
-        const css    = css_class || LookupModal.FIELD_LOCKS_CLASS;
-        const fields = LookupModal.DATA_COLUMNS;
-        const TABLE  = LookupModal.ENTRY_TABLE;
-        let $select  = makeBlankColumn(TABLE['selection'].label);
-        let $label   = makeTagColumn(TABLE['tag'].label);
-        let locks    = fields.map(field => makeFieldLockColumn(field));
-        let cols     = [$select, $label, ...locks];
+        const css     = css_class || LookupModal.FIELD_LOCKS_CLASS;
+        const fields  = LookupModal.DATA_COLUMNS;
+        const TABLE   = LookupModal.ENTRY_TABLE;
+        const $select = makeBlankColumn(TABLE['selection'].label);
+        const $label  = makeTagColumn(TABLE['tag'].label);
+        const locks   = fields.map(field => makeFieldLockColumn(field));
+        const cols    = [$select, $label, ...locks];
         return setFieldLocksEntry(makeEntry(row, cols, css));
     }
 
@@ -1587,10 +1587,10 @@ export async function setup(base, show_hooks, hide_hooks) {
         const css    = css_class || LookupModal.RESULT_CLASS;
         const fields = LookupModal.DATA_COLUMNS;
         const label  = tag || 'Result'; // TODO: I18n
-        let $radio   = makeSelectColumn();
-        let $label   = makeTagColumn(label);
-        let values   = fields.map(field => makeDataColumn(field));
-        let cols     = [$radio, $label, ...values];
+        const $radio = makeSelectColumn();
+        const $label = makeTagColumn(label);
+        const values = fields.map(field => makeDataColumn(field));
+        const cols   = [$radio, $label, ...values];
         handleClickAndKeypress($label, selectEntry);
         respondAsHighlightable(cols);
         respondAsVisibleOnFocus(cols);
@@ -1607,13 +1607,13 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeEntry(row, columns, css_class) {
-        const css  = 'row';
-        let $entry = $('<div>').addClass(`${css} row-${row}`);
+        const css    = 'row';
+        const $entry = $('<div>').addClass(`${css} row-${row}`);
         if (css_class) {
             $entry.addClass(css_class);
         }
         let col    = 0;
-        let cols   = columns.map($c => $c.addClass(`row-${row} col-${col++}`));
+        const cols = columns.map($c => $c.addClass(`row-${row} col-${col++}`));
         return $entry.append(cols);
     }
 
@@ -1626,8 +1626,8 @@ export async function setup(base, show_hooks, hide_hooks) {
     function makeLoadingPlaceholder(visible, css_class) {
         const css    = css_class || LookupModal.LOADING_CLASS;
         const hidden = visible ? '' : LookupModal.HIDDEN_MARKER;
-        let $line    = $('<div>').addClass(`${css} ${hidden}`);
-        let $image   = $('<div>'); // @see stylesheets/controllers/_entry.scss
+        const $line  = $('<div>').addClass(`${css} ${hidden}`);
+        const $image = $('<div>'); // @see stylesheets/controllers/_entry.scss
         return $line.append($image);
     }
 
@@ -1641,7 +1641,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldInputColumn(field, value, css_class) {
-        let $cell = $('<textarea>').attr('data-field', field);
+        const $cell = $('<textarea>').attr('data-field', field);
         $cell.val(toInputValue(value));
         if (css_class) {
             $cell.addClass(css_class);
@@ -1660,11 +1660,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldLockColumn(field, value, css_class) {
-        let $cell = $('<div>').attr('data-field', field);
+        const $cell = $('<div>').attr('data-field', field);
         if (css_class) {
             $cell.addClass(css_class);
         }
-        let parts = makeLockControl(`lock-${field}`);
+        const parts = makeLockControl(`lock-${field}`);
         return $cell.append(parts);
     }
 
@@ -1697,9 +1697,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeSelectColumn(active, css_class) {
-        const css = css_class || 'selection';
-        let $cell = $('<div>').addClass(css);
-        let parts = makeSelectControl(active);
+        const css   = css_class || 'selection';
+        const $cell = $('<div>').addClass(css);
+        const parts = makeSelectControl(active);
         return $cell.append(parts);
     }
 
@@ -1712,10 +1712,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {[jQuery,jQuery]}
      */
     function makeSelectControl(active, css_class) {
-        let $outer     = $('<div>').addClass('outer');
-        let $inner     = $('<div>').addClass('inner');
-        let $indicator = $('<div>').addClass('select-indicator');
-        let $radio     = $('<input>').attr('type', 'radio');
+        const $outer     = $('<div>').addClass('outer');
+        const $inner     = $('<div>').addClass('inner');
+        const $indicator = $('<div>').addClass('select-indicator');
+        const $radio     = $('<input>').attr('type', 'radio');
         if (css_class) {
             $radio.addClass(css_class);
         }
@@ -1762,7 +1762,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeDataColumn(field, value, css_class) {
-        let $cell = makeBlankColumn(value).attr('data-field', field);
+        const $cell = makeBlankColumn(value).attr('data-field', field);
         if (css_class) {
             $cell.addClass(css_class);
         }
@@ -1779,8 +1779,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeBlankColumn(label, css_class) {
-        let $content = $('<span class="text">').text(label || '');
-        let $cell    = $('<div>');
+        const $content = $('<span class="text">').text(label || '');
+        const $cell    = $('<div>');
         if (css_class) {
             $cell.addClass(css_class);
         }
@@ -1798,7 +1798,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {Selector} item
      */
     function monitorEditing(item) {
-        let $item = $(item);
+        const $item = $(item);
         handleEvent($item, 'input', debounce(lockIfChanged));
     }
 
@@ -1888,14 +1888,14 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function setSearchTerms(terms, separator) {
         _debug('setSearchTerms:', terms, separator);
-        const chars = (separator || getSeparators()).replaceAll('\\s', ' ');
-        const sep   = chars[0];
-        const parts = arrayWrap(terms);
-        let $query  = queryTerms();
+        const chars  = (separator || getSeparators()).replaceAll('\\s', ' ');
+        const sep    = chars[0];
+        const parts  = arrayWrap(terms);
+        const $query = queryTerms();
         if (isPresent($query)) {
-            let query_parts =
+            const query_parts =
                 parts.map(function(part) {
-                    let words    = part.split(':');
+                    const words  = part.split(':');
                     const prefix = words.shift();
                     let value    = words.join(':');
                     if (value.match(/\s/)) {
@@ -1916,9 +1916,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function updateSearchTerms(event) {
         _debug('updateSearchTerms:', event);
-        let $data_src = event ? $(event.target) : dataElement();
-        const data    = $data_src.data(LookupModal.SEARCH_TERMS_DATA);
-        const request = setRequestData(data);
+        const $data_src = event ? $(event.target) : dataElement();
+        const data      = $data_src.data(LookupModal.SEARCH_TERMS_DATA);
+        const request   = setRequestData(data);
         setSearchTerms(request.terms);
     }
 
@@ -2065,8 +2065,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @param {string} gap
      */
     function updateDisplay($element, data, gap = "\n") {
-        let added = renderJson(data);
-        let text  = $element.text()?.trimEnd();
+        const added = renderJson(data);
+        let text    = $element.text()?.trimEnd();
         if (text) {
             text = text.concat("\n", gap, added);
         } else {

@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/time.js
 
 
-import { compact } from '../shared/objects'
+import { compact } from './objects'
 
 
 // ============================================================================
@@ -96,7 +96,7 @@ export function asDateTime(value, opt = {}) {
     let date, time;
     if (date_value.getFullYear()) {
         if (opt.dateOnly || !opt.timeOnly) {
-            let parts = date_value.toLocaleDateString('en-GB').split('/');
+            const parts = date_value.toLocaleDateString('en-GB').split('/');
             date = [parts.pop(), ...parts].join('-');
         }
         if (opt.timeOnly || !opt.dateOnly) {

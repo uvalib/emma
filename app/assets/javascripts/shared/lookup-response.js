@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/lookup-response.js
 
 
-import { BaseClass }           from '../shared/base-class'
-import { deepDup, deepFreeze } from '../shared/objects'
+import { BaseClass }           from './base-class'
+import { deepDup, deepFreeze } from './objects'
 
 
 // ============================================================================

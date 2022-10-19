@@ -1,13 +1,8 @@
 // app/assets/javascripts/shared/url.js
 
 
-import { compact } from '../shared/objects'
-import {
-    isDefined,
-    isEmpty,
-    isPresent,
-    notDefined,
-} from '../shared/definitions'
+import { isDefined, isEmpty, isPresent, notDefined } from './definitions'
+import { compact }                                   from './objects'
 
 
 // ============================================================================
@@ -148,13 +143,13 @@ export function makeUrl(...parts) {
 
         } else if (part.startsWith('https:') || part.startsWith('http:')) {
             // Full URL with leading protocol ("https://host/path?params").
-            let parts = part.split('//');
+            const parts = part.split('//');
             processPart(parts.shift());    // Protocol portion.
             processPart(parts.join('//')); // Remainder of the argument.
             return;
 
         } else if (part.includes('?')) {
-            let parts = part.split('?');
+            const parts = part.split('?');
             parts.shift().split('/').forEach(processPart); // Path portion.
             $.extend(params, asParams(parts.join('&')));   // Params portion.
             return;
@@ -198,7 +193,7 @@ export function makeUrl(...parts) {
     } else if (!path_starter) {
         path.unshift(window.location.origin);
     } else {
-        let tmp_path = [path_starter];
+        const tmp_path = [path_starter];
         tmp_path.push(...path.slice(0, starter_index));
         tmp_path.push(...path.slice(starter_index + 1));
         path = tmp_path;

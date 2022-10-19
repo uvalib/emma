@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/accessibility.js
 
 
-import { isDefined, isPresent, notDefined }    from '../shared/definitions'
-import { handleClickAndKeypress, handleEvent } from '../shared/events'
-import { attributeSelector }                   from '../shared/html'
-import { deepFreeze }                          from '../shared/objects'
+import { isDefined, isPresent, notDefined }    from './definitions'
+import { handleClickAndKeypress, handleEvent } from './events'
+import { attributeSelector }                   from './html'
+import { deepFreeze }                          from './objects'
 
 
 // ============================================================================
@@ -113,7 +113,7 @@ export function handleKeypressAsClick(selector, direct, match, except) {
 
     // Apply match criteria to select all elements that would be expected to
     // receive a keypress based on their attributes.
-    let criteria = [];
+    const criteria = [];
     if (match && (typeof match === 'string')) {
         criteria.push(match);
     } else if (direct || (match === true) || notDefined(match)) {
@@ -125,7 +125,7 @@ export function handleKeypressAsClick(selector, direct, match, except) {
     }
 
     // Ignore elements that won't be reached by tabbing to them.
-    let exceptions = [NO_FOCUS_SELECTOR];
+    const exceptions = [NO_FOCUS_SELECTOR];
     if (except && (typeof except === 'string')) {
         exceptions.push(except);
     }
@@ -149,8 +149,8 @@ export function handleKeypressAsClick(selector, direct, match, except) {
     function handleKeypress(event) {
         const key = event.key;
         if (key === 'Enter') {
-            let $target = $(event.target);
-            const href  = $target.attr('href');
+            const $target = $(event.target);
+            const href    = $target.attr('href');
             if (!href || (href === '#')) {
                 $target.click();
                 $target.focusin();
@@ -170,10 +170,10 @@ export function handleKeypressAsClick(selector, direct, match, except) {
  */
 export function delegateInputClick(element) {
 
-    const func   = 'delegateInputClick';
-    let $element = $(element);
-    let $input   = $element.find('[type="radio"],[type="checkbox"]');
-    const count  = $input.length;
+    const func     = 'delegateInputClick';
+    const $element = $(element);
+    const $input   = $element.find('[type="radio"],[type="checkbox"]');
+    const count    = $input.length;
 
     if (count < 1) {
         console.error(`${func}: no targets within:`);
@@ -227,7 +227,7 @@ export function focusableIn(element) {
  */
 export function toggleVisibility(element, visible) {
     const invisibility_marker = 'invisible';
-    let $element = $(element);
+    const $element = $(element);
     let make_visible, hidden, visibility;
     if (isDefined(visible)) {
         make_visible = visible;

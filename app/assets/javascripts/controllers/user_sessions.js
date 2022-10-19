@@ -8,7 +8,7 @@ import { handleClickAndKeypress } from '../shared/events'
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    let $inline_forms = $('.sign-in-form.inline');
+    const $inline_forms = $('.sign-in-form.inline');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($inline_forms)) {
@@ -39,13 +39,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $inline_form_links = $inline_forms.children('.form-label');
-
-    // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleClickAndKeypress($inline_form_links, toggleInlineForm);
+    const $inline_form_links = $inline_forms.children('.form-label');
 
     // ========================================================================
     // Functions
@@ -57,9 +51,15 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event|UIEvent} [event]
      */
     function toggleInlineForm(event) {
-        let $control = $(event.currentTarget || event.target);
-        let $form    = $control.parent();
+        const $control = $(event.currentTarget || event.target);
+        const $form    = $control.parent();
         $form.toggleClass(HIDDEN_MARKER);
     }
+
+    // ========================================================================
+    // Event handlers
+    // ========================================================================
+
+    handleClickAndKeypress($inline_form_links, toggleInlineForm);
 
 });

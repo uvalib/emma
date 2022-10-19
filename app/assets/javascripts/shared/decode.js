@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/decode.js
 
 
-import { isDefined } from '../shared/definitions'
-import { fromJSON }  from '../shared/objects'
+import { isDefined } from './definitions'
+import { fromJSON }  from './objects'
 
 
 // ============================================================================

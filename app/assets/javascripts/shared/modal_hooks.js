@@ -1,9 +1,9 @@
 // app/assets/javascripts/shared/modal_hooks.js
 
 
-import { BaseClass }     from '../shared/base-class'
-import { CallbackChain } from '../shared/callbacks'
-import { isPresent }     from '../shared/definitions'
+import { BaseClass }     from './base-class'
+import { CallbackChain } from './callbacks'
+import { isPresent }     from './definitions'
 
 
 // ============================================================================

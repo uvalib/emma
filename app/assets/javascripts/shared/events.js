@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/events.js
 
 
-import { handleKeypressAsClick } from '../shared/accessibility'
-import { ensureTabbable }        from '../shared/html'
+import { handleKeypressAsClick } from './accessibility'
+import { ensureTabbable }        from './html'
 
 
 // ============================================================================
@@ -63,11 +63,11 @@ export function isEvent(item, type) {
  * @returns {function}
  */
 export function debounce(callback, wait) {
-    let delay = wait || DEBOUNCE_DELAY; // milliseconds
+    const delay = wait || DEBOUNCE_DELAY; // milliseconds
     let timeout;
     return function() {
-        let _this = this;
-        let args  = arguments;
+        const _this = this;
+        const args  = arguments;
         clearTimeout(timeout);
         timeout = setTimeout(function() {
             timeout = null;

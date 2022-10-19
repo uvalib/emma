@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/arrays.js
 
 
-import { isDefined } from '../shared/definitions'
-import { dup }       from '../shared/objects'
+import { isDefined, notDefined } from './definitions'
+import { dup }                   from './objects'
 
 
 // ============================================================================
@@ -19,7 +19,7 @@ import { dup }       from '../shared/objects'
  * @returns {array}
  */
 export function dupArray(item, shallow) {
-    return Array.isArray(item) ? dup(item, !shallow) : [];
+    return Array.isArray(item) ? dup(item, !shallow) : arrayWrap(item);
 }
 
 /**
@@ -30,11 +30,11 @@ export function dupArray(item, shallow) {
  * @returns {array}
  */
 export function arrayWrap(item) {
-    if (typeof(item) === 'undefined')        { return []; }        else
-    if (item === null)                       { return []; }        else
-    if (Array.isArray(item))                 { return item; }      else
-    if (typeof item?.forEach === 'function') { return [...item]; } else
-    if (typeof item?.toArray === 'function') { return item.toArray(); }
+    if (notDefined(item))           { return [] }
+    if (item === null)              { return [] }
+    if (Array.isArray(item))        { return item }
+    if (isDefined(item?.forEach))   { return [...item] }
+    if (isDefined(item?.toArray))   { return item.toArray() }
     return [item];
 }
 
@@ -76,14 +76,9 @@ export function flatten(...args) {
  */
 export function maxSize(item, minimum = 0) {
     return arrayWrap(item).reduce(
-        (max_size, item) => {
-            let size = 0;
-            if (typeof item === 'number') {
-                size = item;
-            } else if (typeof item?.length === 'number') {
-                size = item.length;
-            }
-            return Math.max(size, max_size);
+        (max, val) => {
+            const size = (typeof val === 'number') ? val : (val?.length || 0);
+            return Math.max(size, max);
         },
         minimum
     );

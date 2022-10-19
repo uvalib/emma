@@ -3,8 +3,8 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { selector }  from '../shared/css'
-import { ModalBase } from '../shared/modal-base'
+import { selector }  from './css'
+import { ModalBase } from './modal-base'
 
 
 // ============================================================================
@@ -132,7 +132,7 @@ export class ModalDialog extends ModalBase {
      * @param {Selector} [target]     Default: {@link $toggle}.
      */
     toggleModal(target) {
-        let $target = target && $(target);
+        const $target = target && $(target);
         this.$toggle ||= $target;
         super.toggleModal($target);
     }
@@ -165,8 +165,8 @@ export class ModalDialog extends ModalBase {
      * @returns {jQuery}              The provided or discovered toggles.
      */
     associateAll(toggles) {
-        let $toggles = toggles ? $(toggles) : this.allToggles;
-        let active   = $toggles.map((_, toggle) => this.associate(toggle));
+        const $toggles = toggles ? $(toggles) : this.allToggles;
+        const active   = $toggles.map((_, toggle) => this.associate(toggle));
         return $(active);
     }
 
@@ -198,7 +198,8 @@ export class ModalDialog extends ModalBase {
         const this_type = this.CLASS_NAME;
         const link_data = this.MODAL_INSTANCE
         this.$modals.each((_, element) => {
-            let instance, type, $modal = $(element);
+            const $modal = $(element);
+            let instance, type;
             if ((type = $modal.data(type_data)) && (type !== this_type)) {
                 this._debug(`skipping modal for ${type}`);
             } else if ((instance = $modal.data(link_data))) {

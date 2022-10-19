@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/objects.js
 
 
-import { isPresent } from '../shared/definitions'
+import { isDefined, isPresent } from './definitions'
 
 
 // ============================================================================
@@ -11,24 +11,30 @@ import { isPresent } from '../shared/definitions'
 /**
  * Generate an object from JSON (used in place of `JSON.parse`).
  *
- * @param {*}      item
- * @param {string} [caller]           For log messages.
+ * @param {*}                 item
+ * @param {string|false|null} [caller]  Null or false for no diagnostic message
+ * @param {function}          [reviver] To JSON.parse.
  *
  * @returns {object|undefined}
  */
-export function fromJSON(item, caller) {
-    const func = caller || 'fromJSON';
+export function fromJSON(item, caller, reviver) {
+    const func = isDefined(caller) ? caller : 'fromJSON';
     const type = item && typeof(item);
     let result;
     if (type === 'object') {
         result = item;
+        if (reviver) {
+            console.warn(`${func}: reviver not called for item =`, item);
+        }
     } else if (type === 'string') {
         try {
-            result = JSON.parse(item);
+            result = reviver ? JSON.parse(item, reviver) : JSON.parse(item);
         }
         catch (err) {
-            console.warn(`${func}: ${err} - item:`, item);
+            func && console.warn(`${func}: ${err} - item:\n`, item);
         }
+    } else if (item) {
+        console.warn(`${func}: unexpected type "${type}" for`, item);
     }
     return result;
 }
@@ -51,7 +57,7 @@ export function compact(item, trim) {
         return item.map(v => compact(v, trim)).filter(v => isPresent(v));
 
     } else if (typeof item === 'object') {
-        let pr = objectEntries(item).map(kv => [kv[0], compact(kv[1], trim)]);
+        const pr = objectEntries(item).map(kv => [kv[0], compact(kv[1],trim)]);
         return Object.fromEntries(pr.filter(kv => isPresent(kv[1])));
 
     } else {
@@ -73,8 +79,8 @@ export function deepFreeze(item) {
     if (Array.isArray(item)) {
         new_item = item.map(v => deepFreeze(v));
     } else if (typeof item === 'object') {
-        let prs  = objectEntries(item).map(kv => [kv[0], deepFreeze(kv[1])]);
-        new_item = Object.fromEntries(prs);
+        const pr = objectEntries(item).map(kv => [kv[0], deepFreeze(kv[1])]);
+        new_item = Object.fromEntries(pr);
     } else {
         new_item = item;
     }
@@ -108,7 +114,7 @@ export function dup(item, deep) {
     if (Array.isArray(item)) {
         return deep ? item.map(v => dup(v, deep)) : [...item];
     } else if (typeof item === 'object') {
-        return deep ? $.extend(true, {}, item) : $.extend({}, item);
+        return deep ? $.extend(true, {}, item) : { ...item };
     } else if (typeof item === 'string') {
         return '' + item;
     } else {

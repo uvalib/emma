@@ -53,14 +53,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $group_select_panel = PROPERTY && $(`.${PROPERTY.GroupPanel.class}`);
+    const $group_select_panel = PROPERTY && $(`.${PROPERTY.GroupPanel.class}`);
 
     /**
      * The element containing the submission list filter controls.
      *
      * @type {jQuery}
      */
-    let $list_filter_panel = PROPERTY && $(`.${PROPERTY.ListFilter.class}`);
+    const $list_filter_panel = PROPERTY && $(`.${PROPERTY.ListFilter.class}`);
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($group_select_panel) && isMissing($list_filter_panel)) {
@@ -89,7 +89,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $group_select_links =
+    const $group_select_links =
         $group_select_panel.find(`.${PROPERTY.GroupPanel.Control.class}`);
 
     /**
@@ -98,7 +98,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $group_select_note = $group_select_panel.find('.note-tray .note');
+    const $group_select_note = $group_select_panel.find('.note-tray .note');
 
     // ========================================================================
     // Variables - list filter
@@ -110,7 +110,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $list_filter_controls =
+    const $list_filter_controls =
         $list_filter_panel.find(`.${PROPERTY.ListFilter.Control.class}`);
 
     /**
@@ -118,7 +118,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $list_filter_radio_buttons =
+    const $list_filter_radio_buttons =
         $list_filter_controls.find('input[type="radio"]');
 
     // ========================================================================
@@ -130,7 +130,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $filter_options_panel = $(`.${PROPERTY.FilterOptions.class}`);
+    const $filter_options_panel = $(`.${PROPERTY.FilterOptions.class}`);
 
     /**
      * The filter option controls (each is an element containing a checkbox and
@@ -138,7 +138,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $filter_options_controls =
+    const $filter_options_controls =
         $filter_options_panel.find(`.${PROPERTY.FilterOptions.Control.class}`);
 
     /**
@@ -147,7 +147,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $filter_options_checkboxes =
+    const $filter_options_checkboxes =
         $filter_options_controls.find('input[type="checkbox"]');
 
     // ========================================================================
@@ -159,7 +159,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $record_list = $(`.${PROPERTY.List.class}`);
+    const $record_list = $(`.${PROPERTY.List.class}`);
 
     /**
      * The record list elements actually related to record display (not
@@ -167,7 +167,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $record_lines = $record_list.children(`.number, .${MODEL}-list-item`);
+    const $record_lines = $record_list.children(`.number, .${MODEL}-list-item`);
 
     /**
      * The record list elements that are shown when there are no records.
@@ -200,12 +200,12 @@ $(document).on('turbolinks:load', function() {
      * @returns {string|undefined}
      */
     function defaultStateGroup(group_list, match) {
-        const groups  = group_list || PROPERTY.StateGroup;
-        let $elements = (match ? $(match) : $record_lines).filter(':visible');
-        let result    = undefined;
+        const groups   = group_list || PROPERTY.StateGroup;
+        const $element = (match ? $(match) : $record_lines).filter(':visible');
+        let result     = undefined;
         // noinspection FunctionWithInconsistentReturnsJS
         $.each(groups, function(_, group) {
-            if ($elements.has(`[data-group="${group}"]`)) {
+            if ($element.has(`[data-group="${group}"]`)) {
                 result = group;
                 return false; // break loop
             }
@@ -224,10 +224,10 @@ $(document).on('turbolinks:load', function() {
      * @param {SelectorOrEvent} ev
      */
     function showGroupNote(ev) {
-        let target   = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
-        let $target  = $(target);
-        const indent = $target.position().left;
-        const text   = $target.attr('aria-label') || $target.attr('title');
+        const target  = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
+        const $target = $(target);
+        const indent  = $target.position().left;
+        const text    = $target.attr('aria-label') || $target.attr('title');
         $group_select_note.css('margin-left', indent);
         $group_select_note.text(text);
         toggleVisibility($group_select_note, true);
@@ -262,8 +262,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [new_group]
      */
     function listFilterSelect(new_group) {
-        let $buttons = $list_filter_radio_buttons.filter(':visible');
-        let group    = new_group;
+        const $buttons = $list_filter_radio_buttons.filter(':visible');
+        let group = new_group;
         group ||= requestedStateGroup();
         group ||= defaultStateGroup($buttons.map((_, button) => button.value));
         group ||= 'done';
@@ -302,8 +302,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} match        Selector for visible records.
      */
     function filterPageDisplayOnly(match) {
-        let $records = $record_lines.hide();
-        let $visible = $records.filter(match);
+        const $records = $record_lines.hide();
+        const $visible = $records.filter(match);
         if (isPresent($visible)) {
             $visible.show();
             $no_record_lines.hide();
@@ -327,7 +327,7 @@ $(document).on('turbolinks:load', function() {
         let checked   = 0;
         let unchecked = 0;
         $filter_options_checkboxes.each(function() {
-            let $checkbox = $(this);
+            const $checkbox = $(this);
             if ($checkbox.val() === 'ALL_FILTERS') {
                 all = this;
             } else if ($checkbox.is(':checked')) {
@@ -353,14 +353,14 @@ $(document).on('turbolinks:load', function() {
      */
     function filterOptionToggle(checkbox) {
         const func    = 'filterOptionToggle';
-        let $checkbox = $(checkbox);
-        const enable  = $checkbox.is(':checked');
-        const group   = $checkbox.val();
+        const $option = $(checkbox);
+        const enable  = $option.is(':checked');
+        const group   = $option.val();
         _debug(`${func}: group = "${group}"; enable = "${enable}"`);
         let $sel_controls, $pag_controls, any_checked;
         if (group === 'ALL_FILTERS') {
             $filter_options_checkboxes.each(function() {
-                let $checkbox = $(this);
+                const $checkbox = $(this);
                 if ($checkbox.val() === 'ALL_FILTERS') {
                     // noinspection JSUnusedGlobalSymbols
                     this.indeterminate = false;

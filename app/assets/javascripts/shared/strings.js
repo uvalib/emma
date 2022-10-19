@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/strings.js
 
 
-import { objectEntries } from '../shared/objects'
-import { asDateTime }    from '../shared/time'
+import { objectEntries } from './objects'
+import { asDateTime }    from './time'
 
 
 // ============================================================================

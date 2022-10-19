@@ -10,7 +10,7 @@ import { LookupRequest }                 from '../shared/lookup-request'
 import { LookupResponse }                from '../shared/lookup-response'
 import { hexRand }                       from '../shared/random'
 import { asString }                      from '../shared/strings'
-import { createChannel }                 from '../channels/consumer'
+import { createChannel }                 from './consumer'
 
 
 // ============================================================================
@@ -144,15 +144,15 @@ export function disconnectOnPageExit(debug) {
 export function request(terms) {
     _debug('request:', terms);
     const request = LookupRequest.wrap(terms).requestParts;
-    let requested = false;
     if (isEmpty(request)) {
         setError('No input');
-    } else if (isEmpty(lookup_dat_cb)) {
-        setError('No request callback set');
-    } else {
-        requested = !!lookup_channel.perform('lookup_request', request);
+        return false;
     }
-    return requested;
+    if (isEmpty(lookup_dat_cb)) {
+        setError('No request callback set');
+        return false;
+    }
+    return !!lookup_channel.perform('lookup_request', request);
 }
 
 /**
@@ -168,7 +168,7 @@ export function request(terms) {
 function response(msg_obj) {
     if (msg_obj.data_url) {
         fetchData(msg_obj.data_url, function(result) {
-            setData($.extend({}, msg_obj, { data: result }));
+            setData({ ...msg_obj, data: result });
         });
     } else {
         setData(msg_obj);

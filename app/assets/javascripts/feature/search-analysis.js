@@ -36,14 +36,14 @@ import {
  * @returns {string}            ID of the visible title element.
  */
 export function cloneTitle(item, title) {
-    let $item  = $(item);
-    let $title = title ? $(title) : $item.find('.value.field-Title .title');
+    const $item  = $(item);
+    const $title = title ? $(title) : $item.find('.value.field-Title .title');
 
     const item_id  = $item.attr('id');
     const title_id = `title_${item_id}_txt`;
 
     // By default the title element is just text for file results.
-    let $text_title = $title.clone();
+    const $text_title = $title.clone();
     $text_title.attr('id',        title_id);
     $text_title.attr('data-mode', 'txt');
     $text_title.removeAttr('role tabindex aria-controls');
@@ -72,7 +72,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $body = $('body.search-index');
+    const $body = $('body.search-index');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($body)) {
@@ -209,35 +209,35 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $item_list = $body.find('.search-list');
+    const $item_list = $body.find('.search-list');
 
     /**
      * Elements of .search-list.
      *
      * @type {jQuery}
      */
-    let $list_parts = $item_list.children();
+    const $list_parts = $item_list.children();
 
     /**
      * Search list results entries.
      *
      * @type {jQuery}
      */
-    let $result_items = $list_parts.filter(ITEM_SELECTOR);
+    const $result_items = $list_parts.filter(ITEM_SELECTOR);
 
     /**
      * Results type selection menu.
      *
      * @type {jQuery}
      */
-    let $mode_menu = $('.results.menu-control select');
+    const $mode_menu = $('.results.menu-control select');
 
     /**
      * The current results type ('title' or 'file').
      *
      * @type {string}
      */
-    let current_mode = $mode_menu.val();
+    const current_mode = $mode_menu.val();
 
     /**
      * The page element containing the button(s) used to activate advanced
@@ -245,14 +245,14 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $button_tray = $(`.heading-bar .${BUTTON_TRAY_CLASS}`);
+    const $button_tray = $(`.heading-bar .${BUTTON_TRAY_CLASS}`);
 
     /**
      * Button(s) for removing advanced feature controls.
      *
      * @type {jQuery}
      */
-    let $exit_button = $button_tray.find(selector(EXIT_BUTTON_CLASS));
+    const $exit_button = $button_tray.find(selector(EXIT_BUTTON_CLASS));
 
     // ========================================================================
     // Constants - feature activation
@@ -278,8 +278,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
 
     // Initialize identification tooltips for each item.
     $result_items.each(function(index, item) {
-        let $item  = $(item);
-        let $title = $item.find('.value.field-Title .title');
+        const $item  = $(item);
+        const $title = $item.find('.value.field-Title .title');
         if (COLLAPSE_ITEMS && ($title.length === 1)) {
             cloneTitle($item, $title);
         }
@@ -341,7 +341,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * @returns {object}
      */
     function currentSearch() {
-        let result = { ...params };
+        const result = { ...params };
         delete result.page;
         delete result.offset;
         return result;
@@ -351,10 +351,10 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * Show the title button elements; hide the text title elements.
      */
     function buttonTitles() {
-        let $titles = $result_items.find('.value.field-Title .title');
+        const $titles = $result_items.find('.value.field-Title .title');
         $titles.filter('[data-mode="txt"]').each(function() {
-            let $text   = $(this);
-            let $button = $text.siblings('.title'); //.not($text);
+            const $text   = $(this);
+            const $button = $text.siblings('.title'); //.not($text);
             $text.addClass('hidden disabled');
             $button.removeClass('hidden disabled');
         });
@@ -364,10 +364,10 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * Show the text title elements; hide the title button elements.
      */
     function textTitles() {
-        let $titles = $result_items.find('.value.field-Title .title');
+        const $titles = $result_items.find('.value.field-Title .title');
         $titles.filter('[data-mode="btn"]').each(function() {
-            let $button = $(this);
-            let $text   = $button.siblings('.title'); //.not($button);
+            const $button = $(this);
+            const $text   = $button.siblings('.title'); //.not($button);
             $button.addClass('hidden disabled');
             $text.removeClass('hidden disabled');
         });
@@ -385,7 +385,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function titleId(item) {
-        let $item   = $(item);
+        const $item = $(item);
         const value = $item.attr('data-title_id');
         return value || $item.find('.field-TitleId.value').text();
     }
@@ -398,7 +398,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function normalizedTitle(item) {
-        let $item = $(item);
+        const $item = $(item);
         let value = $item.attr('data-normalized_title');
         if (!value) {
             value = $item.find('.field-Title.value .title').text();
@@ -418,7 +418,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function recordId(item) {
-        let $item   = $(item);
+        const $item = $(item);
         const value = $item.attr('data-record_id');
         return value || $item.find('.field-RecordId.value').text();
     }
@@ -431,7 +431,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function repositoryRecordId(item) {
-        let $item   = $(item);
+        const $item = $(item);
         const value = $item.attr('data-repo_id');
         return value || $item.find('.field-RepositoryRecordId.value').text();
     }
@@ -444,7 +444,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * @returns {string[]}
      */
     function standardIdentifiers(item) {
-        let $ids = $(item).find('.field-Identifier.value').children();
+        const $ids = $(item).find('.field-Identifier.value').children();
         return $ids.toArray().map(element => $(element).text());
     }
 
@@ -549,7 +549,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
         if (!page_items) {
             page_items = [];
             $result_items.each(function() {
-                let $item    = $(this);
+                const $item  = $(this);
                 const record = extractItemData($item);
                 localStoreItem(record);
                 page_items.push({ element: $item, data: record });
@@ -570,7 +570,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
                 // TODO: should store_cb_queue be cleared here first?
                 setStoreItemsComplete();
             } else {
-                let item_data = pageItems().map(item => item.data);
+                const item_data = pageItems().map(item => item.data);
                 DB.storeItems(item_data, setStoreItemsComplete);
             }
         });
@@ -584,8 +584,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * @returns {SearchDataRecord}
      */
     function extractItemData(item) {
-        let result = {};
-        let $item  = $(item);
+        const result = {};
+        const $item  = $(item);
         $.each(DB_STORE_TEMPLATE.record, function(key, prop) {
             result[key] = prop.func ? prop.func($item) : prop.default;
         });
@@ -616,7 +616,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      *
      * @type {CallbackQueue}
      */
-    let store_cb_queue = new CallbackQueue();
+    const store_cb_queue = new CallbackQueue();
 
     // ========================================================================
     // Functions - page data - callbacks
@@ -879,13 +879,13 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
         _validateRelevancyScores(items) {
             const mark_disabled   = el => this._markDisabledRelevancy(el);
             const mark_suspicious = el => this._markSuspiciousRelevancy(el);
-            let $items            = items ? $(items) : $result_items;
+            const $items          = items ? $(items) : $result_items;
             if (Object.keys(SORTED).includes(SORT_ORDER)) {
                 $items.each(function() { mark_disabled(this) });
             } else {
                 let error_score, next_score = 0;
                 $items.get().reverse().forEach(function(item) {
-                    let $item   = $(item);
+                    const $item = $(item);
                     const score = Number($item.attr('data-item_score'));
                     if (score < next_score) {
                         error_score = score;
@@ -909,9 +909,9 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _markDisabledRelevancy(item) {
-            let $score = $(item).find('.item-score');
-            const desc = SORTED[SORT_ORDER] || 'specific metadata field(s)';
-            const tip  = `Relevancy based on ${desc}`;
+            const $score = $(item).find('.item-score');
+            const desc   = SORTED[SORT_ORDER] || 'specific metadata field(s)';
+            const tip    = `Relevancy based on ${desc}`;
             return $score.addClass('disabled').attr('title', tip).text(BLANK);
         }
 
@@ -924,8 +924,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _markSuspiciousRelevancy(item) {
-            let $score = $(item).find('.item-score');
-            let tip    = $score.attr('title');
+            const $score = $(item).find('.item-score');
+            let tip = $score.attr('title');
             tip += "\n\nNOTE:";
             tip += "The placement of this item seems to be anomalous, ";
             tip += "however that may just be due to a bad guess about how ";
@@ -1086,7 +1086,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             const setup_button = (topic, cfg) => this._setupButton(topic, cfg);
             let $active_button, button_count = 0;
             $.each(BUTTON_CONFIG, function(topic, config) {
-                let $button = setup_button(topic, config);
+                const $button = setup_button(topic, config);
                 if ($button && (any_topic || (topic === active_topic))) {
                     button_count++;
                     if (refresh) {
@@ -1183,7 +1183,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
                 return;
             }
 
-            let $topic_buttons = this._findButton(button.class);
+            const $topic_buttons = this._findButton(button.class);
             if (isMissing($topic_buttons)) {
                 if (button.active === 'dev_only') {
                     this._debug(`${func}: inactive topic`);
@@ -1194,10 +1194,10 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             }
 
             const $tray_buttons = this.$buttons;
-            const activate      = button?.func || (() => this.activate(topic));
+            const activate      = button.func || (() => this.activate(topic));
             const deactivate    = (() => this.deactivate());
             handleClickAndKeypress($topic_buttons, function() {
-                let $this = $(this);
+                const $this = $(this);
                 if ($this.hasClass('active')) {
                     $this.removeClass('active');
                     deactivate();
@@ -1276,7 +1276,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
                 list_class:   this.list_class,
                 topic:        this.topic,
             };
-            let error = [];
+            const error = [];
             $.each(member_values, function(member, value) {
                 if (!value) {
                     error.push(`missing ${member}`);
@@ -1408,8 +1408,9 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             const scope_note       = ($pair) => this.scopeNote($pair);
             const saved_title_attr = 'data-pre-field-group-title';
             this.$root.find('.pair').each(function() {
-                let $pair = $(this);
-                let note, cur_title = $pair.attr('title');
+                const $pair     = $(this);
+                const cur_title = $pair.attr('title');
+                let note;
                 if (cur_title && (note = scope_note($pair))) {
                     let old_title = $pair.attr(saved_title_attr);
                     if (!old_title) {
@@ -1429,8 +1430,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             super.deactivate();
             const saved_title_attr = 'data-pre-field-group-title';
             this.$root.find('.pair').each(function() {
-                let $pair     = $(this);
-                let old_title = $pair.attr(saved_title_attr);
+                const $pair     = $(this);
+                const old_title = $pair.attr(saved_title_attr);
                 if (old_title) {
                     $pair.attr('title', old_title);
                 }
@@ -1449,8 +1450,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @returns {string}
          */
         scopeNote(item) {
-            let $item = $(item);
-            let part  = [];
+            const $item = $(item);
+            const part  = [];
             arrayWrap($item[0]?.classList)
                 .filter(cls => cls.startsWith('scope-'))
                 .forEach(function(cls) {
@@ -1597,8 +1598,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @returns {jQuery|undefined}
          */
         get $topicButton() {
-            const match = this.topicSelector;
-            let $button = match && this.$buttons?.filter(match);
+            const match   = this.topicSelector;
+            const $button = match && this.$buttons?.filter(match);
             return isPresent($button) ? $button : undefined;
         }
 
@@ -1708,13 +1709,13 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _buildLists(by_topic) {
-            let related_item_lists = {};
+            const related_item_lists = {};
             const index_key = by_topic.replace(/^by_/, '');
             pageItems().forEach(function(page_item) {
-                let $item = page_item.element;
+                const $item = page_item.element;
                 arrayWrap(page_item.data[index_key]).forEach(function(value) {
                     const id = `${value}-`; // Bust sorting behavior of Object.
-                    let related_items = related_item_lists[id] || [];
+                    const related_items = related_item_lists[id] || [];
                     related_items.push($item);
                     related_item_lists[id] = related_items;
                 });
@@ -1737,7 +1738,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             item_lists.forEach(function(item_list) {
                 let prev;
                 item_list.forEach(function(item) {
-                    let $item = $(item);
+                    const $item = $(item);
 
                     // Mark items that belong with a set of item(s) encountered
                     // earlier on the page.
@@ -1786,8 +1787,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
                 const bg_color = rgbColor(color);
                 const fg_color = rgbColorInverse(color);
                 item_list.forEach(function(item, position) {
-                    let $item  = $(item);
-                    let $title = $item.find('.field-Title.value');
+                    const $item  = $(item);
+                    const $title = $item.find('.field-Title.value');
                     $title.css({ color: fg_color, background: bg_color });
                     if (!$item.is(`.colorized.${by_topic}`)) {
                         add_identity_number($item, by_topic, number, position);
@@ -1809,8 +1810,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             this._unmarkIdentityFields($result_items);
             const item_classes = ['colorized', ...this.TOPICS];
             $result_items.each(function() {
-                let $item  = $(this);
-                let $title = $item.find('.field-Title.value');
+                const $item  = $(this);
+                const $title = $item.find('.field-Title.value');
                 $title.css({ color: '', background: '' });
                 $item.removeClass(item_classes);
             });
@@ -1831,7 +1832,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _itemStateTip(item, state_text, separator = "\n\n") {
-            let $item   = $(item);
+            const $item = $(item);
             const tip   = $item.attr('title') || '';
             const parts = tip.split(separator, 2);
             let new_tip = parts[0].trimEnd();
@@ -1851,7 +1852,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _markItemAsError(item) {
-            let $item = $(item);
+            const $item = $(item);
             $item.addClass(ERROR_MARKER)
             this._itemStateTip($item, ERROR_TOOLTIP);
             return true;
@@ -1869,7 +1870,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _markItemAsExile(item) {
-            let $item        = $(item);
+            const $item      = $(item);
             const store_keys = $item.attr('data-title_id') || '';
             const curr_page  = pageNumber();
             let found;
@@ -1883,8 +1884,8 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             });
             if (found) {
                 // Update the item's identity number tag.
-                let $title = $item.find('.field-Title.value');
-                let $tag   = $title.children('.identity-number');
+                const $title = $item.find('.field-Title.value');
+                const $tag   = $title.children('.identity-number');
                 $tag.addClass(EXILE_MARKER);
 
                 // Update the item itself.
@@ -1907,11 +1908,11 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _addIdentityNumber(item, by_topic, identity, position) {
-            let $item   = $(item);
-            const error = $item.hasClass(ERROR_MARKER);
-            const exile = $item.hasClass(EXILE_MARKER);
-            let $title  = $item.find('.field-Title.value');
-            let $logo   = $title.children('.logo');
+            const $item  = $(item);
+            const error  = $item.hasClass(ERROR_MARKER);
+            const exile  = $item.hasClass(EXILE_MARKER);
+            const $title = $item.find('.field-Title.value');
+            const $logo  = $title.children('.logo');
             let $t_tag;
             if (error) {
                 $t_tag = $(`<a href="#${identity}">`).addClass(ERROR_MARKER);
@@ -1940,9 +1941,9 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _removeIdentityNumber(item, by_topic) {
-            let $items = item ? $(item) : $result_items;
-            let topics = by_topic ? arrayWrap(by_topic) : this.TOPICS;
-            let $tags  = $items.find('.identity-number');
+            const $items = item ? $(item) : $result_items;
+            const topics = by_topic ? arrayWrap(by_topic) : this.TOPICS;
+            let $tags    = $items.find('.identity-number');
             if (by_topic) {
                 $tags = $tags.filter(topics.map(t => `.${t}`).join(', '));
             }
@@ -1963,7 +1964,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             const config = BUTTON_CONFIG[by_topic];
             const field  = config?.field;
             if (field) {
-                let $items = item ? $(item) : $result_items;
+                const $items = item ? $(item) : $result_items;
                 $items.find(`.value.${field}`).addClass(IDENTITY_MARKER);
             }
         }
@@ -1976,7 +1977,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * @protected
          */
         _unmarkIdentityFields(item) {
-            let $items = item ? $(item) : $result_items;
+            const $items = item ? $(item) : $result_items;
             $items.find(IDENTITY_MARKER).removeClass(IDENTITY_MARKER);
         }
 

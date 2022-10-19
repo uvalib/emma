@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/callbacks.js
 
 
-import { BaseClass } from '../shared/base-class'
+import { BaseClass } from './base-class'
 
 
 // ============================================================================

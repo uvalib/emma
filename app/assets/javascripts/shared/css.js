@@ -1,9 +1,9 @@
 // app/assets/javascripts/shared/css.js
 
 
-import { arrayWrap }          from '../shared/arrays'
-import { isEmpty, isPresent } from '../shared/definitions'
-import { compact }            from '../shared/objects'
+import { arrayWrap }          from './arrays'
+import { isEmpty, isPresent } from './definitions'
+import { compact }            from './objects'
 
 
 // ============================================================================
@@ -29,7 +29,7 @@ export function toggleClass(sel, cls, setting) {
  * @returns {string[]}
  */
 export function cssClasses(...args) {
-    let result = [];
+    const result = [];
     args.forEach(function(arg) {
         let values = undefined;
         if (typeof arg === 'string') {
@@ -66,8 +66,8 @@ export function cssClass(...args) {
  * @returns {string}
  */
 export function selector(...args) {
-    const func = 'selector';
-    let result = [];
+    const func   = 'selector';
+    const result = [];
     args.forEach(function(arg) {
         let entry;
         if (isEmpty(arg)) {

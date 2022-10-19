@@ -1,12 +1,11 @@
 // app/assets/javascripts/shared/api.js
 
 
-import { BaseClass } from '../shared/base-class'
-import { isEmpty }   from '../shared/definitions'
-import { HTTP }      from '../shared/http'
-import { dupObject } from '../shared/objects'
-import { makeUrl }   from '../shared/url'
-import * as xhr      from '../shared/xhr'
+import { BaseClass } from './base-class'
+import { HTTP }      from './http'
+import { dupObject } from './objects'
+import { makeUrl }   from './url'
+import * as xhr      from './xhr'
 import { Rails }     from '../vendor/rails'
 
 
@@ -71,7 +70,8 @@ export class Api extends BaseClass {
     // Properties
     // ========================================================================
 
-    get isLocal()  { return isEmpty(this.base_url) }
+    get isRemote() { return this.base_url?.startsWith('http') || false }
+    get isLocal()  { return !this.isRemote }
     get response() { return xhr.response(this.xhr) }
 
     // ========================================================================
@@ -141,7 +141,7 @@ export class Api extends BaseClass {
         this.error   = error;
         this.xhr     = xhr;
         this.status  = xhr?.status || HTTP.internal_server_error;
-        cb && cb(result, warning, error, xhr);
+        cb?.(result, warning, error, xhr);
     }
 
     /**
@@ -153,7 +153,7 @@ export class Api extends BaseClass {
      * @protected
      */
     _addHeaders(current_headers) {
-        let headers = dupObject(current_headers);
+        const headers = dupObject(current_headers);
         if (this.isLocal) {
             headers['X-CSRF-Token'] = Rails.csrfToken();
         }

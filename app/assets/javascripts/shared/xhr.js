@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/xhr.js
 
 
-import { isEmpty, isMissing } from '../shared/definitions'
-import { HTTP }               from '../shared/http'
-import { fromJSON }           from '../shared/objects'
-import { secondsSince }       from '../shared/time'
-import { makeUrl }            from '../shared/url'
+import { isMissing }    from './definitions'
+import { HTTP }         from './http'
+import { fromJSON }     from './objects'
+import { secondsSince } from './time'
+import { makeUrl }      from './url'
 
 
 // ============================================================================
@@ -106,29 +106,24 @@ export function patch(path, prm, opt, cb) { xmit('PATCH', path, prm, opt, cb) }
  * @see https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings
  */
 export function xmit(method, path, prm, opt, cb) {
-    const func = 'xmit';
+    const func   = 'xmit';
+    const opt_cb = (typeof opt === 'function') && opt;
 
-    /** @type {AjaxOptions} */
-    let settings = {};
-    if (typeof opt === 'function') {
-        $.extend(settings, { complete: opt });
-    } else {
-        if (opt) { $.extend(settings, opt); }
-        if (cb)  { $.extend(settings, { complete: cb }); }
-    }
+    /** @type {AjaxOptions|object} */
+    let settings = opt_cb ? { complete: opt_cb } : { ...opt, complete: cb };
 
     /** @type {object|string} */
-    let params = (typeof prm === 'object') ? $.extend({}, prm) : {};
-    // noinspection JSUnresolvedVariable
-    if (params.settings) {
-        $.extend(settings, params.settings);
-        delete params.settings;
-    } else if (isEmpty(params)) {
-        params = prm;
+    let params = prm;
+    if (typeof prm === 'object') {
+        params = { ...prm };
+        if (params.hasOwnProperty('settings')) {
+            settings = { ...settings, ...params.settings };
+            delete params.settings;
+        }
     }
 
-    if (settings.method && !settings.type) {
-        settings.type = settings.method;
+    if (settings.hasOwnProperty('method')) {
+        settings.type ||= settings.method;
         delete settings.method;
     }
     if (settings.type && (settings.type !== method)) {
@@ -168,7 +163,7 @@ export function xmit(method, path, prm, opt, cb) {
      *      complete?: XmitCallback
      * }}
      */
-    let callback = {};
+    const callback = {};
     $.each(handlers, function(name, handler) {
         callback[name] = settings[name];
         settings[name] = handler;
@@ -195,7 +190,7 @@ export function xmit(method, path, prm, opt, cb) {
         } else {
             result = data;
         }
-        callback.success && callback.success(result, undefined, error, xhr);
+        callback.success?.(result, warning, error, xhr);
     }
 
     /**
@@ -231,7 +226,7 @@ export function xmit(method, path, prm, opt, cb) {
             error ||= 'unknown failure';
             console.error(`${func}: ${settings.url}:`, error);
         }
-        callback.complete && callback.complete(result, warning, error, xhr);
+        callback.complete?.(result, warning, error, xhr);
     }
 
 }

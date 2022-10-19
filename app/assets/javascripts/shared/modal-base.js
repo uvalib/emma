@@ -3,13 +3,13 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { Emma }                                from '../shared/assets'
-import { BaseClass }                           from '../shared/base-class'
-import { elementSelector, selector }           from '../shared/css'
-import { decodeObject }                        from '../shared/decode'
-import { handleClickAndKeypress, handleEvent } from '../shared/events'
-import { findTabbable, scrollIntoView }        from '../shared/html'
-import { ModalHideHooks, ModalShowHooks }      from '../shared/modal_hooks'
+import { Emma }                                from './assets'
+import { BaseClass }                           from './base-class'
+import { elementSelector, selector }           from './css'
+import { decodeObject }                        from './decode'
+import { handleClickAndKeypress, handleEvent } from './events'
+import { findTabbable, scrollIntoView }        from './html'
+import { ModalHideHooks, ModalShowHooks }      from './modal_hooks'
 import {
     isDefined,
     isEmpty,
@@ -17,7 +17,7 @@ import {
     isPresent,
     notDefined,
     presence
-} from '../shared/definitions'
+} from './definitions'
 
 
 // ============================================================================
@@ -216,8 +216,8 @@ export class ModalBase extends BaseClass {
      * @param {Selector} [target]     Default: {@link $toggle}.
      */
     toggleModal(target) {
-        const func  = 'toggleModal:';
-        let $target = target ? $(target) : this.$toggle;
+        const func    = 'toggleModal:';
+        const $target = target ? $(target) : this.$toggle;
         if (this.$modal.children().is('.iframe, .img')) {
             this._togglePopupIframe($target, func);
         } else {
@@ -234,12 +234,13 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _togglePopupIframe(target, caller) {
-        let func         = caller ? `${caller} IFRAME` : '_togglePopupIframe';
-        let $target      = $(target);
-        let $iframe      = this.$modal.children('iframe');
-        let $placeholder = this.$modal.children(this.constructor.DEFERRED);
-        const opening    = this.$modal.is(this.constructor.HIDDEN);
-        const complete   = this.$modal.is(this.constructor.COMPLETE);
+        let func = caller ? `${caller} IFRAME` : '_togglePopupIframe';
+
+        const $target      = $(target);
+        const $iframe      = this.$modal.children('iframe');
+        const $placeholder = this.$modal.children(this.constructor.DEFERRED);
+        const opening      = this.$modal.is(this.constructor.HIDDEN);
+        const complete     = this.$modal.is(this.constructor.COMPLETE);
 
         // Include the ID of the iframe for logging.
         if (this.DEBUGGING) {
@@ -322,8 +323,8 @@ export class ModalBase extends BaseClass {
         const scrollFrame     = this.scrollFrameDocument.bind(this);
         const HIDDEN_MARKER   = this.constructor.HIDDEN_MARKER;
         const COMPLETE_MARKER = this.constructor.COMPLETE_MARKER;
-        let $modal            = this.$modal;
-        let $placeholder      = $(placeholder);
+        const $modal          = this.$modal;
+        const $placeholder    = $(placeholder);
         const source_url      = $placeholder.attr('data-path');
         const attributes      = $placeholder.attr('data-attr');
 
@@ -345,7 +346,7 @@ export class ModalBase extends BaseClass {
 
         // Setup the element that will actually contain the received content
         // then fetch it.  The element will appear only if successfully loaded.
-        let $content = $(`<${type}>`);
+        const $content = $(`<${type}>`);
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
         $content.addClass(HIDDEN_MARKER);
         $content.insertAfter($placeholder);
@@ -443,11 +444,11 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _togglePopupContent(target, caller) {
-        const func       = caller || '_togglePopupContent';
-        let $target      = $(target);
-        let $placeholder = this.$modal.children('.placeholder');
-        const opening    = this.$modal.is(this.constructor.HIDDEN);
-        const complete   = this.$modal.is(this.constructor.COMPLETE);
+        const func         = caller || '_togglePopupContent';
+        const $target      = $(target);
+        const $placeholder = this.$modal.children('.placeholder');
+        const opening      = this.$modal.is(this.constructor.HIDDEN);
+        const complete     = this.$modal.is(this.constructor.COMPLETE);
 
         if (opening && complete) {
             // If the existing hidden popup can be re-used, ensure that it is
@@ -498,8 +499,8 @@ export class ModalBase extends BaseClass {
         const scrollIntoView  = this.scrollIntoView.bind(this);
         const HIDDEN_MARKER   = this.constructor.HIDDEN_MARKER;
         const COMPLETE_MARKER = this.constructor.COMPLETE_MARKER;
-        let $modal            = this.$modal;
-        let $placeholder      = $(placeholder);
+        const $modal          = this.$modal;
+        const $placeholder    = $(placeholder);
         const source_url      = $placeholder.attr('data-path');
         const attributes      = $placeholder.attr('data-attr');
 
@@ -511,7 +512,7 @@ export class ModalBase extends BaseClass {
 
         // Setup the element that will actually contain the received content
         // then fetch it.  The element will appear only if successfully loaded.
-        let $content = $('<embed>');
+        const $content = $('<embed>');
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
         $content.addClass(HIDDEN_MARKER);
         $content.insertAfter($placeholder);
@@ -584,12 +585,12 @@ export class ModalBase extends BaseClass {
      * @param {string}   [topic]      Default: top of document.
      */
     scrollFrameDocument(iframe, topic) {
-        let $iframe = $(iframe);
-        const id    = $iframe.attr('id') || '???';
-        const func  = `scrollFrameDocument: popup ${id}`;
-        let doc     = $iframe[0]?.contentDocument;
-        let anchor  = topic?.replace(/^#/, '');
-        let section = anchor && doc?.getElementById(anchor);
+        const $iframe = $(iframe);
+        const id      = $iframe.attr('id') || '???';
+        const func    = `scrollFrameDocument: popup ${id}`;
+        const doc     = $iframe[0]?.contentDocument;
+        let anchor    = topic?.replace(/^#/, '');
+        let section   = anchor && doc?.getElementById(anchor);
         let error, warn;
         if (isEmpty($iframe)) {
             error   = 'NO IFRAME';
@@ -746,8 +747,8 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _invokePopupHook(data_name, target, check_only) {
-        let $toggle = this.$toggle;
-        const chain = $toggle?.data(data_name);
+        const $toggle = this.$toggle;
+        const chain   = $toggle?.data(data_name);
         return chain?.invoke((target || $toggle), check_only);
     }
 
@@ -782,7 +783,7 @@ export class ModalBase extends BaseClass {
         }
         let z_captures = [];
         $('*:visible').not(this.$modal).each((_, element) => {
-            let $element = $(element);
+            const $element = $(element);
             const z = $element.css('z-index');
             if (z > 0) {
                 $element.data(Z_RESTORE_DATA, z);
@@ -902,7 +903,7 @@ export class ModalBase extends BaseClass {
      * @param {jQuery} [$tabbables]
      */
     setTabCycle($tabbables) {
-        let $items = $tabbables || findTabbable(this.$modal);
+        const $items = $tabbables || findTabbable(this.$modal);
         this._setTabCycleFirst($items);
         this._setTabCycleLast($items);
     }
@@ -916,7 +917,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _setTabCycleStart($target) {
-        let $item = $target || this.tabCycleFirst;
+        const $item = $target || this.tabCycleFirst;
         $item?.focus();
         return this._tab_cycle_start = $item;
     }
@@ -930,8 +931,8 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _setTabCycleFirst($tabbables) {
-        let $items = $tabbables || findTabbable(this.$modal);
-        let $item  = presence($items.first());
+        const $items = $tabbables || findTabbable(this.$modal);
+        const $item  = presence($items.first());
         if ($item) {
             this._handleEvent($item, 'keydown', this._onKeydownTabCycleFirst);
         }
@@ -947,8 +948,8 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _setTabCycleLast($tabbables) {
-        let $items = $tabbables || findTabbable(this.$modal);
-        let $item  = presence($items.last());
+        const $items = $tabbables || findTabbable(this.$modal);
+        const $item  = presence($items.last());
         if ($item) {
             this._handleEvent($item, 'keydown', this._onKeydownTabCycleLast);
         }
@@ -1005,9 +1006,9 @@ export class ModalBase extends BaseClass {
      * @return {jQuery|undefined}
      */
     associate(toggle) {
-        const name  = this.constructor.MODAL_INSTANCE;
-        let $toggle = $(toggle);
-        let modal   = $toggle.data(name);
+        const name    = this.constructor.MODAL_INSTANCE;
+        const $toggle = $(toggle);
+        const modal   = $toggle.data(name);
         if (modal) {
             this._warn('toggle', toggle);
             this._warn('already associated with', modal);

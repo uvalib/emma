@@ -1,9 +1,9 @@
 // app/assets/javascripts/shared/session.js
 
 
-import { focusable }          from '../shared/accessibility'
-import { isInternetExplorer } from '../shared/browser'
-import { urlFrom }            from '../shared/url'
+import { focusable }          from './accessibility'
+import { isInternetExplorer } from './browser'
+import { urlFrom }            from './url'
 
 
 $(document).on('turbolinks:load', function() {

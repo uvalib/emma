@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/database.js
 
 
-import { arrayWrap }                    from '../shared/arrays'
-import { isDefined, isEmpty, notEmpty } from '../shared/definitions'
-import { asString }                     from '../shared/strings'
-import { fromJSON }                     from '../shared/objects'
+import { arrayWrap }                    from './arrays'
+import { isDefined, isEmpty, notEmpty } from './definitions'
+import { fromJSON }                     from './objects'
+import { asString }                     from './strings'
 
 
 // ============================================================================
@@ -134,7 +134,7 @@ import { fromJSON }                     from '../shared/objects'
  * @property {function:?IDBDatabase}                          database
  * @property {function:?IDBDatabase}                          closeDatabase
  */
-export let DB = (function() {
+export const DB = (function() {
 
     /**
      * IndexQueryValue
@@ -281,8 +281,7 @@ export let DB = (function() {
      */
     function dbMakeIndexQueryArgs(index_key, index_value) {
         /** @type {IndexQueryArgs} */
-        let result  = {};
-        result.name = index_key;
+        const result = { name: index_key };
         if (isDefined(index_value)) {
             result.value = index_value;
         }
@@ -299,7 +298,7 @@ export let DB = (function() {
      * @returns {IDBKeyRange[]}
      */
     function dbNumberKeyRanges(store_keys) {
-        let result = [];
+        const result = [];
         if (notEmpty(store_keys)) {
             const last_slot = store_keys.length - 1;
             let first_key   = store_keys[0];
@@ -460,9 +459,9 @@ export let DB = (function() {
         const func     = 'dbCreateObjectStore';
         const template = getStoreTemplate(store_name);
         try {
-            const db   = dbDatabase();
+            const db    = dbDatabase();
             dbLog(func, `creating "${store_name}" for database ${db.name}`);
-            let store  = db.createObjectStore(store_name, template.options);
+            const store = db.createObjectStore(store_name, template.options);
             $.each(template.record, function(key, properties) {
                 let index_options;
                 if (typeof properties.index === 'object') {
@@ -511,7 +510,7 @@ export let DB = (function() {
      * @param {IDBDatabase} [db]
      */
     function dbCloseDatabase(caller, db) {
-        let tgt_db = db || db_handle;
+        const tgt_db = db || db_handle;
         if (tgt_db) {
             const clear = (tgt_db === db_handle);
             const func  = caller || 'dbCloseDatabase';
@@ -598,7 +597,7 @@ export let DB = (function() {
      * @returns {*}
      */
     function dbRequest(func, request, on_success, on_error) {
-        let log_err = () => dbError(func, 'request failed', request.error);
+        const log_err = () => dbError(func, 'request failed', request.error);
         request.onerror =
             on_error ? (ev => log_err() || on_error(ev)) : (() => log_err());
         request.onsuccess =
@@ -709,7 +708,7 @@ export let DB = (function() {
         const database = `${name} (v${version})`;
         dbLog(`${func}: ${database}`);
 
-        let request = window.indexedDB.open(name, version);
+        const request = window.indexedDB.open(name, version);
         request.onupgradeneeded = event => dbSetupDatabase(event, func);
         request.onblocked       = event => onOpenBlocked(event);
         request.onerror         = event => onOpenError(event);
@@ -730,7 +729,7 @@ export let DB = (function() {
 
         function onOpenSuccess(event) {
             dbDatabase(event.target.result);
-            callback && callback(dbDatabase());
+            callback?.(dbDatabase());
         }
     }
 
@@ -759,11 +758,11 @@ export let DB = (function() {
      * @param {DbCallback} [callback]
      */
     function clearObjectStore(store_name = defaultStore(), callback) {
-        const func = 'DB.clearObjectStore';
-        let store  = dbObjectStore(func, store_name)
-        let req    = store.clear();
-        let cb     = () => callback && callback(req.transaction.db);
-        let if_ok  = () => { dbLog(func, `"${store_name}" cleared`); cb(); }
+        const func  = 'DB.clearObjectStore';
+        const store = dbObjectStore(func, store_name)
+        const req   = store.clear();
+        const cb    = () => callback?.(req.transaction.db);
+        const if_ok = () => { dbLog(func, `"${store_name}" cleared`); cb(); }
         dbRequest(func, req, if_ok, cb);
     }
 
@@ -777,7 +776,7 @@ export let DB = (function() {
         const func = 'DB.clearAllObjectStores';
         dbWithDatabase(function(db) {
             const stores = Array.from(db.objectStoreNames);
-            const cb     = () => callback && callback(db);
+            const cb     = () => callback?.(db);
             stores.forEach(store => DB.clearObjectStore(store, cb));
         }, database, func);
     }
@@ -790,19 +789,17 @@ export let DB = (function() {
      * @param {...trArg}        [args]
      */
     function storeItems(item, callback, ...args) {
-        const func = 'DB.storeItems';
-        let items  = arrayWrap(item);
-        let count  = items.length;
+        const func  = 'DB.storeItems';
+        const items = arrayWrap(item);
+        let count   = items.length;
         if (!count) {
-            callback && callback();
+            callback?.();
             return;
         }
-        let store  = dbObjectStore(func, ...args);
-        let if_ok  = callback && (() => --count || callback());
-        let if_err = callback;
-        items.forEach(function(item) {
-            dbRequest(func, store.add(item), if_ok, if_err);
-        });
+        const store  = dbObjectStore(func, ...args);
+        const if_ok  = callback && (() => --count || callback());
+        const if_err = callback;
+        items.forEach(item => dbRequest(func, store.add(item), if_ok, if_err));
     }
 
     /**
@@ -813,15 +810,15 @@ export let DB = (function() {
      * @param {...trArg}       [args]
      */
     function fetchItems(item_cb, ...args) {
-        const func  = 'DB.fetchItems';
-        let number  = 0;
-        let store   = dbObjectStore(func, ...args);
-        let request = store.openCursor();
-        let if_err  = item_cb && (() => item_cb(null, -1));
-        let if_ok   = function(event) {
+        const func    = 'DB.fetchItems';
+        const store   = dbObjectStore(func, ...args);
+        const request = store.openCursor();
+        let number    = 0;
+        const if_err  = item_cb && (() => item_cb(null, -1));
+        const if_ok   = function(event) {
             /** @type {optCursor} */
-            let cursor = event.target.result;
-            item_cb && item_cb(cursor, number);
+            const cursor = event.target.result;
+            item_cb?.(cursor, number);
             if (cursor) {
                 dbDebug(func, `item ${++number}`, asString(cursor.value));
                 cursor.continue();
@@ -841,17 +838,17 @@ export let DB = (function() {
      * @param {...trArg}        [args]
      */
     function lookupItems(index_key, index_value, callback, ...args) {
-        const func  = 'DB.lookupItems';
-        const query = dbMakeIndexQueryArgs(index_key, index_value);
-        const key   = query.name;
-        const value = query.value;
-        let store   = dbObjectStore(func, ...args);
-        let request = store.index(key).getAll(value);
-        let if_err  = callback && (() => callback([]));
-        let if_ok   = function(event) {
+        const func    = 'DB.lookupItems';
+        const query   = dbMakeIndexQueryArgs(index_key, index_value);
+        const key     = query.name;
+        const value   = query.value;
+        const store   = dbObjectStore(func, ...args);
+        const request = store.index(key).getAll(value);
+        const if_err  = callback && (() => callback([]));
+        const if_ok   = function(event) {
             const items = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${items.length} items`);
-            callback && callback(items);
+            callback?.(items);
         }
         dbRequest(func, request, if_ok, if_err);
     }
@@ -865,17 +862,17 @@ export let DB = (function() {
      * @param {...trArg}         [args]
      */
     function countItems(index_key, index_value, callback, ...args) {
-        const func  = 'DB.countItems';
-        const query = dbMakeIndexQueryArgs(index_key, index_value);
-        const key   = query.name;
-        const value = query.value;
-        let store   = dbObjectStore(func, ...args);
-        let request = store.index(key).count(value);
-        let if_err  = callback && (() => callback(-1));
-        let if_ok   = function(event) {
+        const func    = 'DB.countItems';
+        const query   = dbMakeIndexQueryArgs(index_key, index_value);
+        const key     = query.name;
+        const value   = query.value;
+        const store   = dbObjectStore(func, ...args);
+        const request = store.index(key).count(value);
+        const if_err  = callback && (() => callback(-1));
+        const if_ok   = function(event) {
             const number = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${number} items found`);
-            callback && callback(number);
+            callback?.(number);
         }
         dbRequest(func, request, if_ok, if_err);
     }
@@ -890,17 +887,17 @@ export let DB = (function() {
      * @param {...trArg}     [args]
      */
     function lookupStoreKeys(index_key, index_value, callback, ...args) {
-        const func  = 'DB.lookupStoreKeys';
-        const query = dbMakeIndexQueryArgs(index_key, index_value);
-        const key   = query.name;
-        const value = query.value;
-        let store   = dbObjectStore(func, ...args);
-        let request = store.index(key).getAllKeys(value);
-        let if_err  = callback && (() => callback([]));
-        let if_ok   = function(event) {
+        const func    = 'DB.lookupStoreKeys';
+        const query   = dbMakeIndexQueryArgs(index_key, index_value);
+        const key     = query.name;
+        const value   = query.value;
+        const store   = dbObjectStore(func, ...args);
+        const request = store.index(key).getAllKeys(value);
+        const if_err  = callback && (() => callback([]));
+        const if_ok   = function(event) {
             const keys = event.target.result;
             dbDebug(func, `${key}="${value}"`, `${keys.length} keys`);
-            callback && callback(keys);
+            callback?.(keys);
         }
         dbRequest(func, request, if_ok, if_err);
     }
@@ -921,11 +918,11 @@ export let DB = (function() {
         function deleteByStoreKeys(keys) {
             const ranges = dbNumberKeyRanges(keys);
             if (isEmpty(ranges)) {
-                callback && callback();
+                callback?.();
             } else {
                 const final_range = callback && (ranges.length - 1);
                 ranges.forEach(function(range, idx) {
-                    let cb = (idx === final_range) ? callback : undefined;
+                    const cb = (idx === final_range) ? callback : undefined;
                     dbRequest(func, store.delete(range), cb, cb);
                 });
             }

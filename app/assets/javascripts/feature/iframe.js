@@ -7,7 +7,7 @@ import { handleClickAndKeypress } from '../shared/events'
 
 $(document).on('turbolinks:load', function() {
 
-    let $iframe_body = $('body.modal');
+    const $iframe_body = $('body.modal');
 
     // Only proceed if this is being run from within an <iframe>.
     if (isMissing($iframe_body)) {
@@ -35,20 +35,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $iframe_links = $iframe_body.find('[href]');
+    const $iframe_links = $iframe_body.find('[href]');
 
     /**
      * Clickable elements within the <iframe> contents which are in-page links.
      *
      * @type {jQuery}
      */
-    let $anchor_links = $iframe_links.filter(function() { return this.hash; });
-
-    // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleClickAndKeypress($anchor_links, scrollToAnchor);
+    const $anchor_links = $iframe_links.filter((_, link) => link.hash);
 
     // ========================================================================
     // Functions
@@ -91,4 +85,10 @@ $(document).on('turbolinks:load', function() {
     function _debug(...args) {
         if (DEBUGGING) { console.log(...args); }
     }
+
+    // ========================================================================
+    // Event handlers
+    // ========================================================================
+
+    handleClickAndKeypress($anchor_links, scrollToAnchor);
 });

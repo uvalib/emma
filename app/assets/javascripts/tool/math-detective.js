@@ -91,18 +91,18 @@ export function setup(root) {
     let clip_item;
     let $clip_input, $clip_note, clip_type, $file_input;
 
-    let $root        = root ? $(root) : $('body');
-    let $clip_prompt = $root.find('.clipboard-prompt');
-    let $file_prompt = $root.find('.file-prompt');
-    let $containers  = $root.find('.container');
-    let $status      = $containers.filter('.status-container');
-    let $preview     = $containers.filter('.preview-container');
-    let $error       = $containers.filter('.error-container');
-    let $mathml      = $containers.filter('.mathml-container');
-    let $latex       = $containers.filter('.latex-container');
-    let $spoken      = $containers.filter('.spoken-container');
-    let $results     = $containers.filter('.api-container');
-    let $copy_icons  = $containers.find('.clipboard-icon');
+    const $root        = root ? $(root) : $('body');
+    const $clip_prompt = $root.find('.clipboard-prompt');
+    const $file_prompt = $root.find('.file-prompt');
+    const $containers  = $root.find('.container');
+    const $status      = $containers.filter('.status-container');
+    const $preview     = $containers.filter('.preview-container');
+    const $error       = $containers.filter('.error-container');
+    const $mathml      = $containers.filter('.mathml-container');
+    const $latex       = $containers.filter('.latex-container');
+    const $spoken      = $containers.filter('.spoken-container');
+    const $results     = $containers.filter('.api-container');
+    const $copy_icons  = $containers.find('.clipboard-icon');
 
     // ========================================================================
     // Actions
@@ -191,7 +191,7 @@ export function setup(root) {
                     const types = item.types;
                     clip_type = types.filter(t => t.startsWith('image'))[0];
                     if (clip_type) {
-                        callback && callback(clip_item, clip_type);
+                        callback?.(clip_item, clip_type);
                     }
                 }
             });
@@ -297,7 +297,7 @@ export function setup(root) {
     function processFile(file) {
         clearDisplay();
         const file_name = (file instanceof File) ? file.name : '(clipboard)';
-        let reader = new FileReader();
+        const reader    = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = (event) => process(file_name, event.target.result);
     }
@@ -366,8 +366,8 @@ export function setup(root) {
      * @param {boolean} no_equations?
      */
     function showError(message, no_equations) {
-        let $message = $error.find('.error-message').addClass(HIDDEN_MARKER);
-        let $no_eqs  = $error.find('.no-equations').addClass(HIDDEN_MARKER);
+        const $message = $error.find('.error-message').addClass(HIDDEN_MARKER);
+        const $no_eqs  = $error.find('.no-equations').addClass(HIDDEN_MARKER);
         if (message) {
             $message.text(message).removeClass(HIDDEN_MARKER);
         } else if (no_equations) {
@@ -395,10 +395,10 @@ export function setup(root) {
      * @param {string}   [selector]
      */
     function showContainer(container, output, selector = '.output') {
-        let $container = $(container);
+        const $container = $(container);
         $container.removeClass(HIDDEN_MARKER);
         if (output) {
-            let $output = $container.find(selector);
+            const $output = $container.find(selector);
             $output.text(output);
             $output.removeAttr('style'); // Undo manual resizing.
             $output.scrollTop(0);        // Forget previous scroll position.
@@ -411,7 +411,7 @@ export function setup(root) {
      * @param {Selector} [container]    If missing, all containers are hidden.
      */
     function hideContainers(container) {
-        let $target = container ? $(container) : $containers;
+        const $target = container ? $(container) : $containers;
         $target.addClass(HIDDEN_MARKER);
     }
 
@@ -434,7 +434,7 @@ export function setup(root) {
      * @param {Selector} icon
      */
     function setupClipboardIcon(icon) {
-        let $icon = $(icon);
+        const $icon = $(icon);
         isDefined($icon.attr('title'))    || $icon.attr('title',    COPY_TIP);
         isDefined($icon.attr('role'))     || $icon.attr('role',     'button');
         isDefined($icon.attr('tabindex')) || $icon.attr('tabindex', 0);
@@ -450,8 +450,8 @@ export function setup(root) {
      * @returns {jQuery}
      */
     function addCopyNote(icon) {
-        let $icon = $(icon);
-        let $note = $icon.siblings(COPY_NOTE_SELECTOR);
+        const $icon = $(icon);
+        let $note   = $icon.siblings(COPY_NOTE_SELECTOR);
         if (isMissing($note)) {
             $note = $(`<span class="${COPY_NOTE_CLASS} ${HIDDEN_MARKER}">`);
             $note.insertBefore($icon);
@@ -483,7 +483,7 @@ export function setup(root) {
      * inserted after .clipboard-icon elements.
      */
     function resetCopyNotes() {
-        let $notes = $copy_icons.siblings(COPY_NOTE_SELECTOR);
+        const $notes = $copy_icons.siblings(COPY_NOTE_SELECTOR);
         $notes.addClass(HIDDEN_MARKER);
         $notes.text('');
     }
@@ -678,7 +678,7 @@ export class MathDetectiveApi extends Api {
      */
     constructor(opt) {
         /** @type {MathDetectiveOptions|Api_Options} */
-        const options = $.extend({ api_key: MD_API_KEY }, opt);
+        const options = { api_key: MD_API_KEY, ...opt };
         super(MD_BASE_URL, options);
         this._on_fetch  = options.on_fetch;
         this._on_status = options.on_status;
@@ -728,7 +728,7 @@ export class MathDetectiveApi extends Api {
      * @protected
      */
     get _errorMessage() {
-        let response = this.response;
+        const response = this.response;
         return response['Message'] || response['message'];
     }
 
@@ -758,7 +758,7 @@ export class MathDetectiveApi extends Api {
         }
         if (this.error) {
             this._showStatus('FAILED');
-            cb && cb(this);
+            cb?.(this);
         } else {
             this._showStatus('SUBMITTING');
             /** @type {MD_ImageProcessingRequest} */
@@ -777,7 +777,7 @@ export class MathDetectiveApi extends Api {
         if (isMissing(this.handle)) {
             this._showStatus('FAILED');
             this.error = 'Missing request identifier to check';
-            cb && cb(this);
+            cb?.(this);
         } else {
             this._showStatus('FETCHING');
             const callback = (...a) => this._fetchImageOnComplete(...a, cb);
@@ -808,7 +808,7 @@ export class MathDetectiveApi extends Api {
         if (this.running) {
             this._fetchLoop(cb);
         } else {
-            cb && cb(this);
+            cb?.(this);
         }
     }
 
@@ -828,7 +828,7 @@ export class MathDetectiveApi extends Api {
             } else {
                 this.#clearRetryTimer();
                 this._showStatus('TIMEOUT');
-                cb && cb(this);
+                cb?.(this);
             }
         }
     }
@@ -850,7 +850,7 @@ export class MathDetectiveApi extends Api {
         this._updateStatus(xhr.status, 'submitImage');
         this._showStatus();
         if (!this.running) {
-            cb && cb(this);
+            cb?.(this);
         }
     }
 
@@ -925,7 +925,7 @@ export class MathDetectiveApi extends Api {
         if (value) {
             this.md_status = value;
         }
-        cb && cb(this.md_status || 'INITIALIZING');
+        cb?.(this.md_status || 'INITIALIZING');
     }
 
     // ========================================================================

@@ -16,7 +16,7 @@ import { urlParameters }                       from '../shared/url'
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    let $artifact_links = $('.artifact .link');
+    const $artifact_links = $('.artifact .link');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($artifact_links)) { return; }
@@ -298,13 +298,6 @@ $(document).on('turbolinks:load', function() {
     const RETRY_DATA = 'retry';
 
     // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    // Override download links in order to get the artifact asynchronously.
-    handleClickAndKeypress($artifact_links, getDownload);
-
-    // ========================================================================
     // Functions
     // ========================================================================
 
@@ -316,9 +309,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}             Always *false* to end event propagation.
      */
     function getDownload(event) {
-        let $link  = $(this || event.target);
-        let $panel = $link.siblings(MEMBER_POPUP_SELECTOR);
-        const url  = $link.attr('href');
+        const $link = $(this || event.target);
+        const url   = $link.attr('href');
+        let $panel  = $link.siblings(MEMBER_POPUP_SELECTOR);
         if (setLinkMember($link, getUrlMember(url))) {
             manageDownloadState($link);
         } else if (isPresent($panel)) {
@@ -355,7 +348,7 @@ $(document).on('turbolinks:load', function() {
          */
         function onSubmit(event) {
             event.preventDefault();
-            let members = [];
+            const members = [];
             // noinspection JSCheckFunctionSignatures
             $panel.find(':checked').each(function() {
                 members.push(this.value);
@@ -457,7 +450,7 @@ $(document).on('turbolinks:load', function() {
          * @returns {object}
          */
         function extractMemberData(data) {
-            let result    = {};
+            const result  = {};
             const info    = data || message;
             /** @type {Member[]} */
             const members = info?.members?.list || [];
@@ -486,24 +479,24 @@ $(document).on('turbolinks:load', function() {
      */
     function createMemberPopup(member_table) {
 
-        let $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
+        const $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
 
         // Start with a title.
-        const id   = randomizeName(MEMBER_POPUP.name);
-        let $title = create(MEMBER_POPUP.title).attr('for', id);
+        const id     = randomizeName(MEMBER_POPUP.name);
+        const $title = create(MEMBER_POPUP.title).attr('for', id);
         $panel.attr('id', id);
 
         // Follow with an explanatory note.
-        let $note = create(MEMBER_POPUP.note);
+        const $note = create(MEMBER_POPUP.note);
 
         // Construct the member selection group.
-        let $fields = create(MEMBER_POPUP.fields);
-        let $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
+        const $fields = create(MEMBER_POPUP.fields);
+        const $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
         let row     = 0;
-        $.each(member_table, function(account_id, full_name) {
-            let row_id = `${id}-row${row++}`;
-            let $input = $radio.clone().attr('value', account_id);
-            let $label = create(MEMBER_POPUP.fields.row_label).text(full_name);
+        $.each(member_table, function(account_id, name) {
+            const row_id = `${id}-row${row++}`;
+            const $input = $radio.clone().attr('value', account_id);
+            const $label = create(MEMBER_POPUP.fields.row_label).text(name);
             $input.attr('id',  row_id).appendTo($fields);
             $label.attr('for', row_id).appendTo($fields);
         });
@@ -514,9 +507,9 @@ $(document).on('turbolinks:load', function() {
         }
 
         // Construct the button tray for the bottom of the panel.
-        let $tray   = create(MEMBER_POPUP.buttons);
-        let $submit = create(MEMBER_POPUP.submit);
-        let $cancel = create(MEMBER_POPUP.cancel);
+        const $tray   = create(MEMBER_POPUP.buttons);
+        const $submit = create(MEMBER_POPUP.submit);
+        const $cancel = create(MEMBER_POPUP.cancel);
         $tray.append($submit).append($cancel);
 
         // Implement the cancel button.
@@ -542,9 +535,9 @@ $(document).on('turbolinks:load', function() {
      */
     function resetMemberPopup(panel) {
         const disabled = MEMBER_POPUP.submit.disabled.class;
-        let $panel     = $(panel);
-        let $submit    = $panel.find('[type="submit"]').addClass(disabled);
-        let $fields    = $panel.find('.fields input');
+        const $panel   = $(panel);
+        const $submit  = $panel.find('[type="submit"]').addClass(disabled);
+        const $fields  = $panel.find('.fields input');
         $fields.change(function() {
             if ($fields.is(':checked')) {
                 $submit.removeClass(disabled);
@@ -566,7 +559,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function manageDownloadState(link) {
-        let $link = $(link);
+        const $link = $(link);
         if ($link.hasClass(STATE.READY)) {
             endRequesting($link);
         } else if (!$link.hasClass(STATE.REQUESTING)) {
@@ -583,10 +576,10 @@ $(document).on('turbolinks:load', function() {
     function requestArtifact(link) {
         const func  = 'requestArtifact';
         const start = Date.now();
-        let $link   = $(link);
-        let url     = $link.attr('href') || $link.data('path') || '';
+        const $link = $(link);
 
         // Update URL with Bookshare member if not already present.
+        let url = $link.attr('href') || $link.data('path') || '';
         if (!getUrlMember(url)) {
             const member = getLinkMember($link);
             const append = url.includes('?') ? '&' : '?';
@@ -800,7 +793,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function showProgressIndicator($link) {
-        let $indicator = $link.siblings(PROGRESS_SELECTOR);
+        const $indicator = $link.siblings(PROGRESS_SELECTOR);
         if ($indicator.hasClass('hidden')) {
             $indicator.removeClass('hidden').on('click', cancelRequest);
         }
@@ -812,7 +805,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideProgressIndicator($link) {
-        let $indicator = $link.siblings(PROGRESS_SELECTOR);
+        const $indicator = $link.siblings(PROGRESS_SELECTOR);
         $indicator.addClass('hidden').off('click', cancelRequest);
     }
 
@@ -832,7 +825,7 @@ $(document).on('turbolinks:load', function() {
             const error_message = error || Emma.Download.failure.unknown;
             content = '' + Emma.Download.failure.prefix + error_message;
         }
-        let $failure = $link.siblings(FAILURE_SELECTOR);
+        const $failure = $link.siblings(FAILURE_SELECTOR);
         $failure.attr('title', content).text(content).removeClass('hidden');
     }
 
@@ -842,7 +835,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideFailureMessage($link) {
-        let $failure = $link.siblings(FAILURE_SELECTOR);
+        const $failure = $link.siblings(FAILURE_SELECTOR);
         $failure.addClass('hidden');
     }
 
@@ -857,9 +850,9 @@ $(document).on('turbolinks:load', function() {
      * @param {string|jQuery} [target]
      */
     function showDownloadButton(link, target) {
-        const func = 'showDownloadButton';
-        let $link  = $(link);
-        const url  = target || $link.data('path');
+        const func  = 'showDownloadButton';
+        const $link = $(link);
+        const url   = target || $link.data('path');
         if (target) {
             $link.data('path', url);
         }
@@ -870,7 +863,7 @@ $(document).on('turbolinks:load', function() {
             $link.attr('title',        new_tip);
         }
         $link.addClass('disabled').attr('tabindex', -1);
-        let $button = $link.siblings(BUTTON_SELECTOR);
+        const $button = $link.siblings(BUTTON_SELECTOR);
         $button.attr('href', url).removeClass('hidden');
     }
 
@@ -880,14 +873,14 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function hideDownloadButton(link) {
-        let $link     = $(link);
+        const $link   = $(link);
         const old_tip = $link.attr('data-tooltip');
         if (old_tip) {
             $link.attr('title', old_tip);
         }
         $link.removeData('path');
         $link.removeClass('disabled').removeAttr('tabindex');
-        let $button = $link.siblings(BUTTON_SELECTOR);
+        const $button = $link.siblings(BUTTON_SELECTOR);
         $button.addClass('hidden');
     }
 
@@ -980,5 +973,12 @@ $(document).on('turbolinks:load', function() {
     function _debug(...args) {
         if (DEBUGGING) { console.log(...args); }
     }
+
+    // ========================================================================
+    // Event handlers
+    // ========================================================================
+
+    // Override download links in order to get the artifact asynchronously.
+    handleClickAndKeypress($artifact_links, getDownload);
 
 });

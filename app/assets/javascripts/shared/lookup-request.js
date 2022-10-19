@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/lookup-request.js
 
 
-import { arrayWrap }                        from '../shared/arrays'
-import { BaseClass }                        from '../shared/base-class'
-import { isDefined, isPresent, notDefined } from '../shared/definitions'
-import { deepFreeze, toObject }             from '../shared/objects'
+import { arrayWrap }                        from './arrays'
+import { BaseClass }                        from './base-class'
+import { isDefined, isPresent, notDefined } from './definitions'
+import { deepFreeze, toObject }             from './objects'
 
 
 // ============================================================================
@@ -161,8 +161,8 @@ export class LookupRequest extends BaseClass {
      * @returns {LookupRequestObject}
      */
     get requestParts() {
-        let result = this._blankParts();
-        let source = isPresent(this.ids) ? { ids: this.ids } : this.parts;
+        const result = this._blankParts();
+        const source = isPresent(this.ids) ? { ids: this.ids } : this.parts;
         $.extend(true, result, source);
         return result;
     }
@@ -225,7 +225,7 @@ export class LookupRequest extends BaseClass {
             }
         }
         if (isPresent(req)) {
-            let req_parts = req.parts || req;
+            const req_parts = req.parts || req;
             this._appendParts(this.parts, req_parts);
         } else if (isDefined(req)) {
             this._warn('nothing to add');
@@ -260,10 +260,10 @@ export class LookupRequest extends BaseClass {
         // request object.
         const REQUEST_TYPE     = this.constructor.REQUEST_TYPE;
         const DEF_REQUEST_TYPE = this.constructor.DEF_REQUEST_TYPE;
-        let pairs = terms.map(term => this.extractParts(term)).flat(1);
+        const pairs = terms.map(term => this.extractParts(term)).flat(1);
         pairs.forEach(function(pair) {
-            let [prefix, value] = pair;
-            let term = `${prefix}:${value}`;
+            const [prefix, value] = pair;
+            const term = `${prefix}:${value}`;
             let type;
             $.each(REQUEST_TYPE, function(req_type, prefixes) {
                 if (prefixes.includes(prefix)) {
@@ -297,8 +297,8 @@ export class LookupRequest extends BaseClass {
         const QUERY_TYPE = this.constructor.DEF_QUERY_TYPE;
         const parts      = terms.matchAll(this._termMatcher);
         return [...parts].map(part => {
-            let prefix = part[2]?.toLowerCase();
-            let value  =
+            const prefix = part[2]?.toLowerCase();
+            let value =
                 part[4] || // value inside double quotes
                 part[5] || // value inside single quotes
                 part[6];   // value if unquoted

@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/form.js
 
 
-import { isMissing } from '../shared/definitions'
+import { isMissing } from './definitions'
 
 
 // ============================================================================
@@ -18,9 +18,9 @@ import { isMissing } from '../shared/definitions'
 export function turnOffAutocomplete(input) {
     $(input).each(function() {
         if (this instanceof HTMLInputElement) {
-            let $element     = $(this);
+            const $element   = $(this);
+            const last_pass  = $element.attr('data-lpignore');
             let autocomplete = $element.attr('autocomplete');
-            let last_pass    = $element.attr('data-lpignore');
             if (isMissing(autocomplete)) {
                 $element.attr('autocomplete', (autocomplete = 'off'));
             }

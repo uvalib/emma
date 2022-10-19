@@ -1,9 +1,9 @@
 // app/assets/javascripts/shared/session-state.js
 
 
-import { BaseClass }             from '../shared/base-class'
-import { isPresent, notDefined } from '../shared/definitions'
-import { fromJSON }              from '../shared/objects'
+import { BaseClass }             from './base-class'
+import { isPresent, notDefined } from './definitions'
+import { fromJSON }              from './objects'
 
 
 // ============================================================================
@@ -21,8 +21,8 @@ import { fromJSON }              from '../shared/objects'
 export function removeByPrefix(name, debug) {
     const func   = 'removeByPrefix';
     const prefix = `${name}-`;
+    const keys   = [];
     let key, idx = 0;
-    let keys     = [];
     while ((key = sessionStorage.key(idx++))) {
         if (key.startsWith(prefix)) {
             keys.push(key);

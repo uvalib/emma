@@ -1,9 +1,9 @@
 // app/assets/javascripts/shared/json.js
 
 
-import { maxSize }    from '../shared/arrays'
-import { isEmpty }    from '../shared/definitions'
-import { asDateTime } from '../shared/time'
+import { maxSize }    from './arrays'
+import { isEmpty }    from './definitions'
+import { asDateTime } from './time'
 
 
 // ============================================================================
@@ -51,7 +51,7 @@ function alignKeys(item) {
         return item.map(element => alignKeys(element));
     } else {
         const max_width = maxSize(Object.keys(item));
-        let result = {};
+        const result    = {};
         $.each(item, function(k, v) {
             const space = Math.max(0, (max_width - k.length));
             const key   = '' + k + ' '.repeat(space);
@@ -89,7 +89,7 @@ function stringifyReplacer(_this, item) {
  * @returns {string|*}
  */
 function possiblyInlined(obj, threshold = DEF_INLINE_MAX) {
-    let json =
+    const json =
         postProcess(JSON.stringify(obj, null, ' '))
             .replace(/\[\s+/g, '[')
             .replace(/\s+]/g,  ']')

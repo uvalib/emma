@@ -118,7 +118,7 @@ export function create(element, properties) {
     const tag  = (obj ? element.tag : element)    || 'div';
 
     // noinspection HtmlUnknownTag
-    let $element = (tag[0] === '<') ? $(tag) : $(`<${tag}>`);
+    const $element = (tag[0] === '<') ? $(tag) : $(`<${tag}>`);
     prop.class   && $element.addClass(cssClass(prop.class));
     prop.type    && $element.attr('type',  prop.type);
     prop.tooltip && $element.attr('title', prop.tooltip);
@@ -137,12 +137,12 @@ export function create(element, properties) {
  */
 export function ensureTabbable(element) {
     $(element).each(function() {
-        let $e         = $(this);
-        const link     = isDefined($e.attr('href'));
-        const input    = link  || isDefined($e.attr('type'));
-        const tabbable = input || isDefined($e.attr('tabindex'));
+        const $element = $(this);
+        const link     = isDefined($element.attr('href'));
+        const input    = link  || isDefined($element.attr('type'));
+        const tabbable = input || isDefined($element.attr('tabindex'));
         if (!tabbable) {
-            $e.attr('tabindex', 0);
+            $element.attr('tabindex', 0);
         }
     });
 }
@@ -157,7 +157,7 @@ export function ensureTabbable(element) {
  * @returns {jQuery}
  */
 export function findTabbable(base, root, all) {
-    let b = (base !== '*') && base;
+    const b = (base !== '*') && base;
     let r, a;
     if (typeof root === 'boolean') {
         r = null;
@@ -166,7 +166,7 @@ export function findTabbable(base, root, all) {
         r = (root !== '*') && root;
         a = !!all;
     }
-    let selector = a ? '*' : ':visible';
-    let $base    = (r && b) ? $(r).find(b) : $(r || b || 'body');
+    const selector = a ? '*' : ':visible';
+    const $base    = (r && b) ? $(r).find(b) : $(r || b || 'body');
     return $base.find(selector).filter((_, e) => (e.tabIndex >= 0));
 }
