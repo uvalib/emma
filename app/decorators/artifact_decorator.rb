@@ -102,7 +102,7 @@ class ArtifactDecorator < BookshareDecorator
 
   # Configuration for Bookshare download control properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType
@@ -252,7 +252,7 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @param [String] fmt               One of `BsFormatType#values`
   # @param [String] separator
-  # @param [Hash] opt                 Passed to #artifact_link.
+  # @param [Hash]   opt               Passed to #artifact_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -270,7 +270,6 @@ class ArtifactDecorator < BookshareDecorator
       # === Search::Api::Record ===
       fmts = [fmt] # Note that *nil* is acceptable in this case.
     end
-    # noinspection RubyMismatchedReturnType
     links = fmts.map { |f| artifact_link(f, **opt) }.compact
     safe_join(links, separator)
   end

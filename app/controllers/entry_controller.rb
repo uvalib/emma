@@ -728,7 +728,7 @@ class EntryController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Any]  list
+  # @param [*]    list
   # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
@@ -743,7 +743,7 @@ class EntryController < ApplicationController
   # @param [Model, Hash] item
   # @param [Hash]        opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def show_values(item = @item, **opt)
     item = item.is_a?(ActiveRecord) ? item.attributes.symbolize_keys : item.dup

@@ -57,9 +57,6 @@ module TestHelper::Utility
   #
   # @return [Array<User,nil>]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_users(*users)
     users = users.flatten
     users.map! { |u| u || :anonymous }

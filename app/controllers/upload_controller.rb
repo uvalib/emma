@@ -87,7 +87,7 @@ class UploadController < ApplicationController
   # Results for :index.
   #
   # @return [Array<Upload,String>]
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   # @return [nil]
   #
   attr_reader :list
@@ -747,7 +747,7 @@ class UploadController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Any]  list
+  # @param [*]    list
   # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
@@ -762,7 +762,7 @@ class UploadController < ApplicationController
   # @param [Upload, Hash] item
   # @param [Hash]         opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def show_values(item = @item, **opt)
     item = item.is_a?(Upload) ? item.attributes.symbolize_keys : item.dup

@@ -132,7 +132,7 @@ module AwsConcern
   #
   # @param [Hash, nil] opt            Default: `#url_parameters`.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def aws_params(opt = nil)
     prm = url_parameters(opt)

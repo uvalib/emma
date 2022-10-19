@@ -58,7 +58,7 @@ module Record::Reportable
   #
   # @return [nil]
   #
-  def clear_exec_report: (*untyped) ?{ () -> untyped } -> nil
+  def clear_exec_report: (*untyped _ignored) ?{ () -> untyped } -> nil
 
   # Dynamically get the contents of the current record's #REPORT_COLUMN.
   #

@@ -98,7 +98,6 @@ module LayoutHelper::SkipNav
     html_tag(:ul, opt) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
-          # noinspection RubyMismatchedReturnType
           entry.map { |label, link| render_skip_nav_link(label, link) }
         else
           entry.presence

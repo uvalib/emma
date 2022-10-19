@@ -33,7 +33,7 @@ class ApiService::Error < Api::Error
     #
     # @return [String]
     #
-    def service_name: (*untyped) ?{ () -> untyped } -> String
+    def service_name: (*untyped _ignored) ?{ () -> untyped } -> String
 
     @service_name: String
 

@@ -49,7 +49,7 @@ module UploadConcern
 
   # URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def upload_params                                                             # NOTE: to EntryConcern#entry_params
     @upload_params ||= model_options.model_params
@@ -59,7 +59,7 @@ module UploadConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def get_upload_params(p = nil)                                                # NOTE: to EntryConcern#get_entry_params
     model_options.get_model_params(p)
@@ -70,7 +70,7 @@ module UploadConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # == Implementation Notes
   # The value `params[:upload][:emma_data]` is ignored because it reports the
@@ -107,7 +107,7 @@ module UploadConcern
 
   # workflow_parameters
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def workflow_parameters                                                       # NOTE: to EntryConcern#entry_request_params (sorta)
     result = { id: @db_id, user_id: @user&.id }
@@ -228,7 +228,7 @@ module UploadConcern
   #
   # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def find_or_match_records(*items, **opt)                                      # NOTE: to EntryConcern#find_or_match_entries
     items = items.flatten.compact

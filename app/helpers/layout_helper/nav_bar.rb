@@ -22,7 +22,7 @@ module LayoutHelper::NavBar
 
   # Configuration for nav bar properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType
@@ -55,7 +55,7 @@ module LayoutHelper::NavBar
 
   # Configuration for dashboard page properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType

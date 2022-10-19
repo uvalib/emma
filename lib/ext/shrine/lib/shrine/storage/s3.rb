@@ -38,9 +38,6 @@ class Shrine
         # @param [Any]                  public
         # @param [Hash]                 s3_options
         #
-        # This method overrides:
-        # @see Shrine::Storage::S3#initialize
-        #
         def initialize(
           bucket:,
           client:              nil,
@@ -73,9 +70,6 @@ class Shrine
         # @param [Hash]         shrine_metadata
         # @param [Hash]         upload_options
         #
-        # This method overrides:
-        # @see Shrine::Storage::S3#upload
-        #
         def upload(io, id, shrine_metadata: {}, **upload_options)
           __ext_debug do
             {
@@ -94,9 +88,6 @@ class Shrine
         # @param [Boolean] rewindable
         # @param [Hash]    options
         #
-        # This method overrides:
-        # @see Shrine::Storage::S3#open
-        #
         def open(id, rewindable: true, **options)
           __ext_debug { { id: id, options: options } }
           super
@@ -105,9 +96,6 @@ class Shrine
         # delete
         #
         # @param [String] id
-        #
-        # This method overrides:
-        # @see Shrine::Storage::S3#delete
         #
         def delete(id)
           __ext_debug { { id: id } }
@@ -126,9 +114,6 @@ class Shrine
         # @param [String]       id
         # @param [Hash]         options
         #
-        # This method overrides:
-        # @see Shrine::Storage::S3#put
-        #
         def put(io, id, **options)
           __ext_debug { { io: io, id: id, options: options } }
           super
@@ -139,9 +124,6 @@ class Shrine
         # @param [IO, StringIO] io
         # @param [String]       id
         # @param [Hash]         options
-        #
-        # This method overrides:
-        # @see Shrine::Storage::S3#copy
         #
         def copy(io, id, **options)
           __ext_debug { { io: io, id: id, options: options } }
@@ -154,9 +136,6 @@ class Shrine
         # @param [Hash]   options
         #
         # @return [Hash]
-        #
-        # This method overrides:
-        # @see Shrine::Storage::S3#presign_put
         #
         def presign_post(id, options)
           super
@@ -174,9 +153,6 @@ class Shrine
         #
         # @return [Hash]
         #
-        # This method overrides:
-        # @see Shrine::Storage::S3#presign_put
-        #
         def presign_put(id, options)
           super
             .tap do |result|
@@ -192,9 +168,6 @@ class Shrine
         #
         # @return [Integer]
         #
-        # This method overrides:
-        # @see Shrine::Storage::S3#part_size
-        #
         def part_size(io)
           super
             .tap { |res| __ext_debug("--> #{res.inspect}") { { io: io } } }
@@ -206,9 +179,6 @@ class Shrine
         # @param [Hash] params
         #
         # @return [Array<(Array,Integer)>]
-        #
-        # This method overrides:
-        # @see Shrine::Storage::S3#get_object
         #
         def get_object(object, params)
           super
@@ -223,9 +193,6 @@ class Shrine
         #
         # @param [IO, StringIO] io
         #
-        # This method overrides:
-        # @see Shrine::Storage::S3#copyable?
-        #
         def copyable?(io)
           super
             .tap { |res| __ext_debug("--> #{res.inspect}") { { io: io } } }
@@ -236,9 +203,6 @@ class Shrine
         # @param [Array] objects
         #
         # @return [void]
-        #
-        # This method overrides:
-        # @see Shrine::Storage::S3#delete_objects
         #
         def delete_objects(objects)
           __ext_debug("#{objects.size} objects")

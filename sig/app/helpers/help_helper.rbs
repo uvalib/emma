@@ -21,7 +21,7 @@ module HelpHelper
 
   # Configuration for help pages properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   HELP_CONFIG: symHash
 
@@ -64,7 +64,7 @@ module HelpHelper
   #
   # @param [Symbol, String] topic
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def help_topic: ((Symbol|String) topic) -> symHash
 

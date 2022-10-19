@@ -350,7 +350,6 @@ module Import
   # @return [Hash]
   #
   def normalize_results(fields)
-    # noinspection RubyMismatchedReturnType
     fields.transform_values! do |v|
       (v.is_a?(Array) && (v.size <= 1)) ? v.first : v
     end

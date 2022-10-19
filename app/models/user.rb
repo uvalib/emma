@@ -554,7 +554,6 @@ class User < ApplicationRecord
       access_token:  data.credentials&.token,
       refresh_token: data.credentials&.refresh_token
     }.compact_blank!
-    # noinspection RubyMismatchedReturnType
     user = find_by(email: attr[:email]) or return create(attr)
     keep = false?(update)
     unless keep

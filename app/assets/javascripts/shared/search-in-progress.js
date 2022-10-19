@@ -63,11 +63,10 @@ export class SearchInProgress extends BaseClass {
     /**
      * Initialize the instance.
      *
-     * @private
-     *
      * @param {Selector} [overlay]
      *
      * @returns {this}
+     * @protected
      */
     #initialize(overlay) {
         this.$overlay = overlay ? $(overlay) : this.constructor.findOverlay();

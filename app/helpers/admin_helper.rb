@@ -28,7 +28,6 @@ module AdminHelper
     label  = label_tag(name, name, class: 'radio-group line')
     check1 = emma_flag_checkbox(name, value, on: true)
     check2 = emma_flag_checkbox(name, value, on: false)
-    # noinspection RubyMismatchedReturnType
     label << check1 << check2
   end
 
@@ -89,7 +88,6 @@ module AdminHelper
     label   = on ? 'ON'    : 'OFF' # TODO: I18n
     control = radio_button_tag(flag, on, checked)
     label   = label_tag(flag, label, value: on)
-    # noinspection RubyMismatchedReturnType
     control << label
   end
 

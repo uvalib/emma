@@ -219,9 +219,6 @@ class Shrine
       #
       # @return [Hash{Symbol=>Any}]
       #
-      # This method overrides:
-      # @see Shrine::UploadedFileExt#extract_file_metadata
-      #
       def extract_file_metadata
         __ext_debug
         super

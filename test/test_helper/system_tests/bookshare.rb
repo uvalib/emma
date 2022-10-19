@@ -141,7 +141,6 @@ module TestHelper::SystemTests::Bookshare
   #
   def api_request_method(element_id)
     id = element_id.to_s
-    # noinspection RubyMismatchedReturnType
     API_REQUEST_METHODS[id] || id.delete_prefix('_').underscore if id.present?
   end
 

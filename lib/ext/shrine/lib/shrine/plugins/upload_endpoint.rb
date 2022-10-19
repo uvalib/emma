@@ -29,9 +29,6 @@ class Shrine
     #
     # @see file:javascripts/shared/uploader.js *onFileUploadSuccess()*
     #
-    # This method overrides:
-    # @see Shrine::UploadEndpoint#make_response
-    #
     def make_response(uploaded_file, request)
       return super if @rack_response
       body = uploaded_file.data.merge(emma_data: uploaded_file.emma_metadata)
@@ -67,9 +64,6 @@ class Shrine
       #
       # @param [Hash] env
       #
-      # This method overrides:
-      # @see Shrine::UploadEndpoint#call
-      #
       def call(env)
         start = timestamp
         super
@@ -88,9 +82,6 @@ class Shrine
       #
       # @return [Array<(Integer, Hash, Array<String>)>]
       #
-      # This method overrides:
-      # @see Shrine::UploadEndpoint#handle_request
-      #
       def handle_request(request)
         start = timestamp
         super
@@ -105,9 +96,6 @@ class Shrine
       #
       # @return [Shrine::RackFile]
       #
-      # This method overrides:
-      # @see Shrine::UploadEndpoint#get_io
-      #
       def get_io(request)
         start = timestamp
         super
@@ -120,9 +108,6 @@ class Shrine
       #
       # @return [Shrine::RackFile]
       #
-      # This method overrides:
-      # @see Shrine::UploadEndpoint#get_io
-      #
       def get_multipart_upload(request)
         start = timestamp
         super
@@ -134,9 +119,6 @@ class Shrine
       # @param [ActionDispatch::Request] request
       #
       # @return [Hash]
-      #
-      # This method overrides:
-      # @see Shrine::UploadEndpoint#get_context
       #
       def get_context(request)
         start = timestamp
@@ -151,9 +133,6 @@ class Shrine
       # @param [ActionDispatch::Request] request
       #
       # @return [Shrine::UploadedFile]
-      #
-      # This method overrides:
-      # @see Shrine::UploadEndpoint#upload
       #
       def upload(io, context, request)
         start = timestamp
@@ -171,9 +150,6 @@ class Shrine
       # @param [ActionDispatch::Request]    request
       #
       # @return [Array<(Integer, Hash, Array<String>)>]
-      #
-      # This method overrides:
-      # @see Shrine::UploadEndpointExt#make_response
       #
       def make_response(uploaded_file, request)
         start = timestamp

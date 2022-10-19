@@ -380,7 +380,6 @@ class EntriesDecorator < BaseCollectionDecorator
     opt[:'aria-labelledby'] = l_id
     panel = html_div(opt)
 
-    # noinspection RubyMismatchedReturnType
     label << panel
   end
 

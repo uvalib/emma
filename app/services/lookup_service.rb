@@ -160,7 +160,6 @@ class LookupService
     log      = "#{name}.#{__method__}"
     services = services_for(request, log: log)
     services.map { |service|
-      # noinspection RubyMismatchedReturnType
       if deadline && (timestamp > deadline)
         Log.warn { "#{log}: #{service}: timed out" }
       else

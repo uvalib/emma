@@ -107,7 +107,7 @@ module UploadWorkflow::Single::Edit::Actions
   #
   def wf_cancel_submission(*event_args)
     __debug_items(binding)
-    opt = event_args.extract_options!&.except(:redirect) || {}
+    opt = event_args.extract_options!.except(:redirect)
     reset_record(opt)
     if (revert_data = opt[:revert])
       final_phase = revert_data[:phase]

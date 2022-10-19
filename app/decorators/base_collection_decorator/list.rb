@@ -32,6 +32,7 @@ module BaseCollectionDecorator::List
     opt[:skip] = Array.wrap(skip).compact.uniq
     lines =
       object.map.with_index(index) do |item, idx|
+        # noinspection RailsParamDefResolve
         opt.merge!(index: idx, row: (row + idx), group: item.try(:state_group))
         decorate(item).list_row(**opt)
       end
@@ -59,7 +60,6 @@ module BaseCollectionDecorator::List
   def no_records_row(**opt)
     css = '.no-records'
     prepend_css!(opt, css)
-    # noinspection RubyMismatchedReturnType
     html_div('', opt) << html_div(NO_RECORDS, opt)
   end
 

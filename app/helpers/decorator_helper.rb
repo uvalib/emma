@@ -21,7 +21,7 @@ module DecoratorHelper
   # @param [Symbol, String, nil] action
   # @param [Hash]                opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def context(action = nil, **opt)
     opt[:action]       ||= (action || params[:action]).to_sym

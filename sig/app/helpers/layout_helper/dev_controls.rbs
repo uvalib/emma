@@ -13,11 +13,11 @@ module LayoutHelper::DevControls
 
   # Indicate whether it is appropriate to show developer-only controls.
   #
-  def show_dev_controls?: (*untyped) ?{ () -> untyped } -> bool
+  def show_dev_controls?: (*untyped _ignored) ?{ () -> untyped } -> bool
 
   # Indicate whether display of developer-only controls is not suppressed.
   #
-  def allow_dev_controls?: (*untyped) ?{ () -> untyped } -> bool
+  def allow_dev_controls?: (*untyped _ignored) ?{ () -> untyped } -> bool
 
   # Render a container with developer-only controls.
   #

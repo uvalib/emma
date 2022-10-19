@@ -96,5 +96,5 @@ class EditionDecorator < BookshareDecorator
   #
   # @return [String]
   #
-  def form_target_description: (?action: untyped|nil, **untyped) -> String
+  def form_target_description: (?action: untyped|nil, **untyped _ignored) -> String
 end

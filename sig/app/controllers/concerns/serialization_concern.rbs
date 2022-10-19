@@ -11,14 +11,14 @@ module SerializationConcern
 
   # Render an item in JSON format.
   #
-  # @param [Any]  item
+  # @param [*]    item
   # @param [Hash] opt                 Passed to #render.
   #
   def render_json: (untyped item, **untyped opt) -> void
 
   # Render an item in XML format.
   #
-  # @param [Any]  item
+  # @param [*]    item
   # @param [Hash] opt                 Passed to #render except for:
   #
   # @option opt [String] :separator   Passed to #make_xml.
@@ -34,7 +34,7 @@ module SerializationConcern
   # @option opt [Symbol, String] :wrap
   # @option opt [Symbol, String] :name  Default: :list
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def index_values: (?untyped list, **untyped opt) -> symHash
 
@@ -44,9 +44,9 @@ module SerializationConcern
   # @param [Symbol, nil]    as        Either :hash or :array if given.
   # @param [Symbol, String] name
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
-  def show_values: (untyped item, ?as: :hash|:array|nil, ?name: String|Symbol|nil, **untyped) -> symHash
+  def show_values: (untyped item, ?as: :hash|:array|nil, ?name: String|Symbol|nil, **untyped _ignored) -> symHash
 
   private
 

@@ -107,9 +107,9 @@ module Record::Identification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>, nil]
+  # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
   #
-  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> (ApplicationRecord | nil)
+  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> ApplicationRecord
 
   # Find all of the specified records (return records if none were specified).
   #

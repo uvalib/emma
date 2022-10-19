@@ -5,7 +5,7 @@ module TreeHelper
 
   # Configuration for tree control properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   TREE_CTRL_CFG: symHash
 

@@ -7,9 +7,9 @@ module HelpConcern
 
   # get_help_entry
   #
-  # @param [Symbol,nil] topic
+  # @param [Symbol, nil] topic
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def get_help_entry: ((Symbol|nil) topic) -> symHash
 

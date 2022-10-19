@@ -109,14 +109,6 @@ class SearchCall < ApplicationRecord
   #
   def get_counts: ((Api::Message|String|Numeric|symHash|anyArray) src) -> Hash[Symbol,Integer]
 
-  # Local options consumed by #search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RECORDS_OPTIONS: symArray
-
-  def search_records: (*untyped identifiers, **untyped opt) -> untyped
-
   # @see SqlMethods#sql_extended_table
   #
   def sql_extended_table: (?(String|symHash|nil) extra, **untyped opt) -> String

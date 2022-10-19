@@ -25,7 +25,7 @@ module ApplicationHelper
   # those controllers with a subdirectory in app/view) plus 'emma.generic'
   # and distinct entries for each 'emma.user' Devise controller.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>Hash}]
   #
   #--
   # noinspection RailsI18nInspection, RubyArgCount
@@ -49,7 +49,7 @@ module ApplicationHelper
 
   # Configuration for application properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType

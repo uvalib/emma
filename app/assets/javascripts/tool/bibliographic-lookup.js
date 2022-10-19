@@ -1653,9 +1653,9 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Generate a field lock element.
      *
-     * @param {string}      field
-     * @param {bool|string} [value]
-     * @param {string}      [css_class]
+     * @param {string}         field
+     * @param {boolean|string} [value]
+     * @param {string}         [css_class]
      *
      * @returns {jQuery}
      */

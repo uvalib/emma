@@ -140,7 +140,7 @@ $(document).on('turbolinks:load', function() {
      * READY:      A direct link to the generated artifact is available.
      *
      * @readonly
-     * @type {Object<string>}
+     * @type {StringTable}
      */
     const STATE = deepFreeze({
         FAILED:     'failed',

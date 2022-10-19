@@ -57,7 +57,6 @@ module Search::Shared::IdentifierMethods
   #
   def extract_isbns(*fields)
     vals = fields.flat_map { |field| get_values(field) }
-    # noinspection RubyMismatchedReturnType
     vals.map { |v| v.to_s.remove(/\s/).sub!(/^isbn[^\d]*/, '') }.compact.uniq
   end
 

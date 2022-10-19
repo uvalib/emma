@@ -52,7 +52,7 @@ module EntryConcern
 
   # URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def entry_params                                                              # NOTE: from UploadConcern#upload_params
     @entry_params ||=
@@ -67,7 +67,7 @@ module EntryConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def get_entry_params(p = nil)                                                 # NOTE: from UploadConcern#get_upload_params
     model_options.get_model_params(p).tap do |prm|
@@ -80,7 +80,7 @@ module EntryConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # == Implementation Notes
   # The value `params[:entry][:emma_data]` is ignored because it reports the
@@ -116,11 +116,11 @@ module EntryConcern
 
   # entry_request_params
   #
-  # @param [Entry, Hash{Symbol=>Any}, Any, nil] entry
-  # @param [Hash{Symbol=>Any}, nil]             prm
+  # @param [Entry, Hash{Symbol=>*}, *] entry
+  # @param [Hash{Symbol=>*}, nil]      prm
   #
-  # @return [Array<(Entry, Hash{Symbol=>Any})>]
-  # @return [Array<(Any, Hash{Symbol=>Any})>]
+  # @return [Array<(Entry, Hash{Symbol=>*})>]
+  # @return [Array<(Any, Hash{Symbol=>*})>]
   #
   def entry_request_params(entry, prm = nil)                                    # NOTE: from UploadConcern#workflow_parameters (sorta)
     entry, prm = [nil, entry] if entry.is_a?(Hash)
@@ -260,7 +260,7 @@ module EntryConcern
   #
   # @raise [Record::SubmitError]        If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def find_or_match_entries(*items, **opt)                                      # NOTE: from UploadConcern#find_or_match_records
     items = items.flatten.compact
@@ -373,8 +373,8 @@ module EntryConcern
   # For the 'new' endpoint, generate and persist a Phase::Create record and a
   # temporary (un-persisted) Entry instance based on its attributes.
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Phase record creation halted.
@@ -392,8 +392,8 @@ module EntryConcern
   # For the 'create' endpoint, update the Phase record created above and create # TODO: NOTE: used in place of Record::Submittable::SubmissionMethods#entry_create
   # and persist a new Entry instance
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @raise [Record::StatementInvalid]       If submission ID was invalid.
   # @raise [Record::NotFound]               If Phase::Create record not found.
@@ -403,9 +403,6 @@ module EntryConcern
   #
   # @return [Entry]                         New persisted Entry instance.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def create_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
     entry, opt = entry_request_params(item, opt)
@@ -417,8 +414,8 @@ module EntryConcern
   # For the 'edit' endpoint, generate and persist a Phase::Edit record and a    # TODO: NOTE: used in place of Record::Submittable::SubmissionMethods#entry_edit
   # temporary (un-persisted) instance based on its attributes.
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @raise [Record::SubmitError]            If the Entry could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
@@ -441,8 +438,8 @@ module EntryConcern
   # For the 'update' endpoint, get the matching Entry and update it from its
   # most recent Phase::Edit.
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @raise [Record::NotFound]               If the Entry could not be found.
   # @raise [Record::SubmitError]            If the Phase could not be found.
@@ -471,10 +468,10 @@ module EntryConcern
   #
   # @raise [RangeError]               If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]       From Record::Searchable#search_records.
+  # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
+  # noinspection RubyNilAnalysis
   #++
   def delete_entry(entries = nil, opt = nil)
     entries, opt = entry_request_params(entries, opt)
@@ -494,7 +491,7 @@ module EntryConcern
   # @return [Array]                   Destroyed entries.
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
+  # noinspection RubyNilAnalysis
   #++
   def destroy_entry(entries = nil, opt = nil)                                   # NOTE: from UploadWorkflow::Actions#wf_remove_items
     entries, opt = entry_request_params(entries, opt)
@@ -515,8 +512,8 @@ module EntryConcern
   # For the 'renew' endpoint, find the most recent create and return with the
   # related Entry.
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
   # @raise [Record::NotFound]           If Phase::Create could not be found.
@@ -533,17 +530,14 @@ module EntryConcern
   # For the 'reedit' endpoint, find the most recent edit and return with the
   # related Entry.
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
   # @raise [Record::NotFound]           If Phase could not be found or created.
   #
   # @return [Entry]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def reedit_entry(item = nil, opt = nil)
     entry, opt = entry_request_params(item, opt)
     sid   = Entry.sid_value((entry || @identifier), **opt)
@@ -553,8 +547,8 @@ module EntryConcern
 
   # For the 'cancel' endpoint, ... # TODO: ?
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @raise [Record::SubmitError]                If Entry could not be found.
   # @raise [ActiveRecord::RecordNotDestroyed]   If Phase could not be removed.
@@ -583,8 +577,8 @@ module EntryConcern
   # Get a description of the status of the Entry, if it exists, or a temporary
   # (un-persisted) Entry based on Phase lookup.
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] item If present, used as a template.
-  # @param [Hash{Symbol=>Any}, nil]        opt  Default: `#get_entry_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
+  # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
   # @option opt [Boolean] :html       Default: false.
   # @option opt [Phase]   :phase
@@ -593,9 +587,6 @@ module EntryConcern
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def check_entry(item = nil, opt = nil)                                        # NOTE: from UploadWorkflow::Single::Actions#wf_check_status
     entry, opt = entry_request_params(item, opt)
     local, opt = partition_hash(opt, :html)
@@ -637,8 +628,8 @@ module EntryConcern
 
   # Upload file to AWS S3 Shrine :cache.
   #
-  # @param [Entry, Hash{Symbol=>Any}, nil] entry
-  # @param [Hash{Symbol=>Any}, nil]        opt     Def.: `#entry_post_params`.
+  # @param [Entry, Hash{Symbol=>*}, nil] entry
+  # @param [Hash{Symbol=>*}, nil]        opt    Def: `#entry_request_params`.
   #
   # @raise [Record::SubmitError]      If the record could not be found.
   #

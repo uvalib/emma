@@ -243,7 +243,7 @@ module CssHelper
     "#{base}-#{hex_rand}"
   end
 
-  # Combine parts into a value for use an an HTML ID of a element associated
+  # Combine parts into a value for use as an HTML ID of an element associated
   # with a specific search input row.
   #
   # Unless *unique* is *false* or a string, #hex_rand will be used to generate

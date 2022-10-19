@@ -196,7 +196,7 @@ export class LookupModal extends ModalDialog {
      * Schema for the columns displayed for each displayed lookup entry.
      *
      * @readonly
-     * @type {Object<{label: string, non_data?: bool}>}
+     * @type {Object.<string, {label: string, non_data?: boolean}>}
      */
     static ENTRY_TABLE = deepFreeze({ // TODO: I18n
         selection:              { label: 'USE',  non_data: true },
@@ -239,7 +239,7 @@ export class LookupModal extends ModalDialog {
      * * pipe:  Only <strong>|</strong> (pipe)
      *
      * @readonly
-     * @type {Object<string>}
+     * @type {StringTable}
      */
     static SEPARATORS = {
         space: '\\s|',
@@ -305,6 +305,7 @@ export class LookupModal extends ModalDialog {
      * Communication channel.
      *
      * @type {LookupChannel}
+     * @protected
      */
     _channel;
 
@@ -375,6 +376,7 @@ export class LookupModal extends ModalDialog {
      * Communication channel set up once on the class.
      *
      * @type {LookupChannel}
+     * @protected
      */
     static _channel;
 
@@ -437,7 +439,6 @@ export class LookupModal extends ModalDialog {
      * Get the communication channel for this class.
      *
      * @returns {LookupChannel}
-     * @protected
      */
     get channel() {
         return this._channel;
@@ -447,7 +448,6 @@ export class LookupModal extends ModalDialog {
      * Register callbacks with the communication channel for this class.
      *
      * @param {LookupChannel} channel
-     * @protected
      */
     set channel(channel) {
         this._debug('set channel', channel);
@@ -485,6 +485,8 @@ export class LookupModal extends ModalDialog {
      * @param {jQuery}                                        $toggle
      * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
      * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
+     *
+     * @protected
      */
     _setHooksFor($toggle, show_hooks, hide_hooks) {
         this._debug('_setHooksFor:', $toggle, show_hooks, hide_hooks);
@@ -1972,9 +1974,9 @@ export class LookupModal extends ModalDialog {
     /**
      * Generate a field lock element.
      *
-     * @param {string}      field
-     * @param {bool|string} [value]
-     * @param {string}      [css_class]
+     * @param {string}         field
+     * @param {boolean|string} [value]
+     * @param {string}         [css_class]
      *
      * @returns {jQuery}
      */

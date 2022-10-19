@@ -131,13 +131,13 @@ class Phase < ApplicationRecord
   #
   # @raise [RuntimeError]
   #
-  def set_exec_report: (*untyped) ?{ () -> untyped } -> void
+  def set_exec_report: (*untyped _ignored) ?{ () -> untyped } -> void
 
   # Phase records don't have a REPORT_COLUMN.
   #
   # @raise [RuntimeError]
   #
-  def clear_exec_report: (*untyped) ?{ () -> untyped } -> void
+  def clear_exec_report: (*untyped _ignored) ?{ () -> untyped } -> void
 
   # The most-recently created action.
   #

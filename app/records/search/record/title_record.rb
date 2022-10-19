@@ -230,7 +230,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [String, nil]
     #
     def format(rec)
-      # noinspection RubyMismatchedReturnType
       rec&.dc_format&.strip&.presence
     end
 
@@ -700,7 +699,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       def <=>(other)
         other_min = other.try(:minimum) || other.try(:[], :min) || 0
         other_max = other.try(:maximum) || other.try(:[], :max) || other_min
-        # noinspection RubyMismatchedReturnType
         (minimum <=> other_min).nonzero? || (maximum <=> other_max)
       end
 
@@ -866,7 +864,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       other = Number.new(other) if other && !other.is_a?(Number)
       other_min, other_max = other&.number_range || [0, 0]
       self_min,  self_max  = number_range
-      # noinspection RubyMismatchedReturnType
       (self_min <=> other_min)&.nonzero? || (self_max <=> other_max)
     end
 
@@ -1208,7 +1205,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     result = result.deep_dup                      if pairs || wrap
     result[:title].merge!(pairs)                  if pairs
     wrap_array!(result, :parts, :formats, :files) if wrap
-    # noinspection RubyMismatchedReturnType
     result
   end
 
@@ -1266,9 +1262,6 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Hash>]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def get_part_fields(recs = records.to_a)
     recs.group_by { |rec| item_number(rec) }.map do |part, recs1|
       part = { bib_seriesPosition: part.to_s }

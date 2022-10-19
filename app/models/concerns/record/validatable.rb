@@ -85,7 +85,7 @@ module Record::Validatable
   #   Check that the given fields are present in the current record.
   #   @param [Hash]        required_fields
   #
-  # @overload enum_methods(required_fields, source)
+  # @overload check_required(required_fields, source)
   #   Check that the given fields are present in the given source object.
   #   @param [Hash]        required_fields
   #   @param [Entry, Hash] source

@@ -51,7 +51,7 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def controller_configuration(ctrlr = nil, action = nil)
     result = ApplicationHelper::CONTROLLER_CONFIGURATION

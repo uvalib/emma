@@ -219,7 +219,7 @@ class BaseDecorator < Draper::Decorator
 
     @other_class: Array[Class]
 
-    # model_type
+    # The model associated with instances of this decorator.
     #
     # @return [Symbol]
     #
@@ -229,7 +229,7 @@ class BaseDecorator < Draper::Decorator
 
     @model_type: Symbol
 
-    # ar_class
+    # The ActiveRecord subclass associated with instances of this decorator.
     #
     # @return [Class, nil]
     #

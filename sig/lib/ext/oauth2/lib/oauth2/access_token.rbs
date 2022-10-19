@@ -30,7 +30,6 @@ module OAuth2
     #
     # @return [void]
     #
-    # This method overrides:
     # @see OAuth2::AccessToken#configure_authentication!
     #
     def configure_authentication!: (symHash opts) -> void
@@ -72,9 +71,6 @@ module OAuth2
     #                                               transmission mode.
     #                                               Default: 'access_token'.
     #
-    # This method overrides:
-    # @see OAuth2::AccessToken#initialize
-    #
     def initialize: (OAuth2::Client client, String token, ?symHash opts) -> void
 
     # Refreshes the current Access Token.
@@ -84,9 +80,6 @@ module OAuth2
     # @return [AccessToken]           A new AccessToken instance.
     #
     # @note options should be carried over to the new AccessToken
-    #
-    # This method overrides:
-    # @see OAuth2::AccessToken#refresh!
     #
     def refresh!: (?symHash params) -> OAuth2::AccessToken
 
@@ -98,9 +91,6 @@ module OAuth2
     # @param [Proc]   block           Passed to OAuth2::Client#request.
     #
     # @return [OAuth2::Response]
-    #
-    # This method overrides:
-    # @see OAuth2::AccessToken#request
     #
     def request: (Symbol verb, String path, ?symHash opts) { () -> untyped } -> OAuth2::Response
   end

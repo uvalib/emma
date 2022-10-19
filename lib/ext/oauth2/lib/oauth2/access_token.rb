@@ -47,7 +47,6 @@ module OAuth2
     #
     # @return [void]
     #
-    # This method overrides:
     # @see OAuth2::AccessToken#configure_authentication!
     #
     def configure_authentication!(opts)
@@ -103,9 +102,6 @@ module OAuth2
       #                                               transmission mode.
       #                                               Default: 'access_token'.
       #
-      # This method overrides:
-      # @see OAuth2::AccessToken#initialize
-      #
       def initialize(client, token, opts = {})
         super
         __ext_debug(binding) do
@@ -121,9 +117,6 @@ module OAuth2
       #
       # @note options should be carried over to the new AccessToken
       #
-      # This method overrides:
-      # @see OAuth2::AccessToken#refresh!
-      #
       def refresh!(params = {})
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }
@@ -137,9 +130,6 @@ module OAuth2
       # @param [Proc]   block           Passed to OAuth2::Client#request.
       #
       # @return [OAuth2::Response]
-      #
-      # This method overrides:
-      # @see OAuth2::AccessToken#request
       #
       def request(verb, path, opts = {}, &block)
         __ext_debug(binding)

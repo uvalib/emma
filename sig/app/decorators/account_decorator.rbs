@@ -34,13 +34,13 @@ class AccountDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     CONTROL_ICONS: Hash[Symbol, symHash]
 
     # Control icon definitions.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons: () -> Hash[Symbol, symHash]
 
@@ -53,8 +53,8 @@ class AccountDecorator < BaseDecorator
     #
     def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
 
-    EMAIL_FIELD_READONLY:    String
-    PASSWORD_PLACEHOLDER:    String
+    EMAIL_FIELD_READONLY: String
+    PASSWORD_PLACEHOLDER: String
     MINIMUM_PASSWORD_LENGTH: Integer | nil
     MAXIMUM_PASSWORD_LENGTH: Integer | nil
   end
@@ -106,7 +106,7 @@ class AccountDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to the render method or super.
   #
@@ -199,7 +199,7 @@ class AccountDecorator < BaseDecorator
   # render_form_email
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -208,7 +208,7 @@ class AccountDecorator < BaseDecorator
   # render_form_password
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]

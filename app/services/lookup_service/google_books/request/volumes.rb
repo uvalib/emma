@@ -83,7 +83,6 @@ module LookupService::GoogleBooks::Request::Volumes
           ids = item&.volumeInfo&.industryIdentifiers&.map(&:to_s) || []
           next if lccns.include?(ids.first.to_s)
           missing = lccns - ids
-          # noinspection RubyMismatchedReturnType
           missing.map! { |id| Lookup::GoogleBooks::Record::Identifier.new(id) }
           item.volumeInfo.industryIdentifiers.insert(0, *missing)
         end

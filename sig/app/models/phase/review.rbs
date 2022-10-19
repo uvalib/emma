@@ -140,7 +140,7 @@ class Phase::Review < Phase::Single
   #
   # @return [String]
   #
-  def self.describe_type: (*untyped) ?{ () -> untyped } -> String
+  def self.describe_type: (*untyped _ignored) ?{ () -> untyped } -> String
 
   # A textual description of the status of the given Phase instance. # TODO: I18n
   #

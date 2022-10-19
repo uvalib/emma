@@ -184,8 +184,7 @@ module SqlMethods
   #
   # @return [String]
   #
-  # This method overrides:
-  # ActiveRecord::Sanitization::ClassMethods#sanitize_sql_like
+  # @see ActiveRecord::Sanitization::ClassMethods#sanitize_sql_like
   #
   def sanitize_sql_like: (String text, ?String escape_character) -> String
 

@@ -11,8 +11,8 @@ let consumer = () => (instance ||= createConsumer());
 /**
  * Open a channel.
  *
- * @param {string|object}    identity
- * @param {Object<function>} [functions]
+ * @param {string|object}            identity
+ * @param {Object.<string,function>} [functions]
  *
  * @returns {Subscription}
  *

@@ -53,7 +53,7 @@ class CallbackJob < ApplicationJob
 
   alias to_hash to_h
 
-  def self.cb_values: (untyped source, *untyped ignored) -> ([ApplicationRecord, Symbol, CallbackJob?] | nil)
+  def self.cb_values: (untyped source, *untyped _ignored) -> ([ApplicationRecord, Symbol, CallbackJob?] | nil)
 
   class Serializer < ActiveJob::Serializers::ObjectSerializer
     def serialize: (untyped item) -> anyHash

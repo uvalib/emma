@@ -17,7 +17,7 @@ module AccountConcern
 
   # Only allow a list of trusted parameters through.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def account_params: () -> symHash
 
@@ -118,7 +118,7 @@ module AccountConcern
   #
   # @return [Array<User>]
   #
-  def destroy_accounts: (*(String|Integer|nil) ids, ?no_raise: bool, **untyped) -> Array[User]
+  def destroy_accounts: (*(String|Integer|nil) ids, ?no_raise: bool, **untyped _ignored) -> Array[User]
 
   # redirect_success
   #
@@ -147,7 +147,7 @@ module AccountConcern
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def account_fields: (*untyped) ?{ () -> untyped } -> Hash[Symbol,anyHash]
+  def account_fields: (*untyped _ignored) ?{ () -> untyped } -> Hash[Symbol,anyHash]
 
   # Get the appropriate message to display.
   #
@@ -164,7 +164,7 @@ module AccountConcern
   # @param [Symbol]             action
   # @param [Hash{Symbol=>Hash}] config
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def interpolation_terms: (Symbol action, ?Hash[Symbol,anyHash] config) -> symHash
 

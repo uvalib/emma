@@ -440,7 +440,6 @@ class RunState < Hash
       def state_file_read
         return unless state_file_exist?
         begin
-          # noinspection RubyMismatchedReturnType
           File.open(STATE_FILE, File::RDONLY) do |f|
             f.flock(File::LOCK_SH)
             f.read

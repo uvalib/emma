@@ -101,7 +101,6 @@ class ExecReport
   def add(*src)
     @parts +=
       src.flatten.compact_blank.flat_map { |item|
-        # noinspection RubyMismatchedReturnType
         item.is_a?(ExecReport) ? item.parts : ExecReport::Part[item]
       }.compact.tap { |added| @render_html ||= added.any?(&:html_safe?) }
     self
@@ -333,7 +332,7 @@ class ExecReport
     # @return [Array, String, Any, nil]
     #
     #--
-    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # noinspection RubyNilAnalysis
     #++
     def normalized_value(value)
       case value

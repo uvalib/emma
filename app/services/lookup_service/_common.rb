@@ -51,7 +51,6 @@ module LookupService::Common
   # @return [Array<PublicationIdentifier>]
   #
   def id_list(item, **opt)
-    # noinspection RubyMismatchedReturnType
     id_split(item).map! { |v| id_obj(v, **opt) }.compact
   end
 

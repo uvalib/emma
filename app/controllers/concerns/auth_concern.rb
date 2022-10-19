@@ -107,7 +107,7 @@ module AuthConcern
   # Returns *true* if *obj* cannot be interpreted as a scope or resource since
   # user scope is the assumed default.
   #
-  # @param [User, Symbol, Any] obj
+  # @param [User, Symbol, *] obj
   #
   # @see Devise::Mapping#find_scope!
   #
@@ -206,7 +206,7 @@ module AuthConcern
 
   # Generate the authentication data to be associated with the given user.
   #
-  # @param [User, String, Integer, Any, nil] user  Default: `#current_user`.
+  # @param [User, String, Integer, *] user  Default: `#current_user`.
   #
   # @return [OmniAuth::AuthHash, nil]
   #

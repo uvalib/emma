@@ -53,7 +53,7 @@ module ApiService::Properties
   #
   # @return [String]
   #
-  def service_name: (*untyped) ?{ () -> untyped } -> String
+  def service_name: (*untyped _ignored) ?{ () -> untyped } -> String
 
   @service_name: String
 

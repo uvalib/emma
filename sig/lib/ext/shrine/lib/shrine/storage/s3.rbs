@@ -16,9 +16,6 @@ class Shrine
       # @param [Any]                  public
       # @param [Hash]                 s3_options
       #
-      # This method overrides:
-      # @see Shrine::Storage::S3#initialize
-      #
       def initialize: (bucket: String, ?client: Aws::S3::Client|nil, ?prefix: String|nil, ?upload_options: symHash, ?multipart_threshold: symHash, ?signer: Integer|nil, ?public: symHash|nil, **untyped s3_options) -> void
 
       # upload
@@ -28,9 +25,6 @@ class Shrine
       # @param [Hash]         shrine_metadata
       # @param [Hash]         upload_options
       #
-      # This method overrides:
-      # @see Shrine::Storage::S3#upload
-      #
       def upload: ((IO|StringIO) io, String id, ?shrine_metadata: symHash, **untyped upload_options) -> untyped
 
       # open
@@ -39,17 +33,11 @@ class Shrine
       # @param [Boolean] rewindable
       # @param [Hash]    options
       #
-      # This method overrides:
-      # @see Shrine::Storage::S3#open
-      #
       def open: (String id, ?rewindable: bool, **untyped options) -> untyped
 
       # delete
       #
       # @param [String] id
-      #
-      # This method overrides:
-      # @see Shrine::Storage::S3#delete
       #
       def delete: (String id) -> untyped
 
@@ -59,9 +47,6 @@ class Shrine
       # @param [String]       id
       # @param [Hash]         options
       #
-      # This method overrides:
-      # @see Shrine::Storage::S3#put
-      #
       def put: ((IO|StringIO) io, String id, **untyped options) -> untyped
 
       # copy
@@ -69,9 +54,6 @@ class Shrine
       # @param [IO, StringIO] io
       # @param [String]       id
       # @param [Hash]         options
-      #
-      # This method overrides:
-      # @see Shrine::Storage::S3#copy
       #
       def copy: ((IO|StringIO) io, String id, **untyped options) -> untyped
 
@@ -82,9 +64,6 @@ class Shrine
       #
       # @return [Hash]
       #
-      # This method overrides:
-      # @see Shrine::Storage::S3#presign_put
-      #
       def presign_post: (String id, untyped options) -> untyped
 
       # presign_put
@@ -94,9 +73,6 @@ class Shrine
       #
       # @return [Hash]
       #
-      # This method overrides:
-      # @see Shrine::Storage::S3#presign_put
-      #
       def presign_put: (String id, untyped options) -> untyped
 
       # part_size
@@ -104,9 +80,6 @@ class Shrine
       # @param [IO, StringIO] io
       #
       # @return [Integer]
-      #
-      # This method overrides:
-      # @see Shrine::Storage::S3#part_size
       #
       def part_size: ((IO|StringIO) io) -> untyped
 
@@ -117,17 +90,11 @@ class Shrine
       #
       # @return [Array<(Array,Integer)>]
       #
-      # This method overrides:
-      # @see Shrine::Storage::S3#get_object
-      #
       def get_object: (untyped object, symHash params) -> [anyArray, Integer]
 
       # copyable?
       #
       # @param [IO, StringIO] io
-      #
-      # This method overrides:
-      # @see Shrine::Storage::S3#copyable?
       #
       def copyable?: ((IO|StringIO) io) -> bool
 
@@ -136,9 +103,6 @@ class Shrine
       # @param [Array] objects
       #
       # @return [void]
-      #
-      # This method overrides:
-      # @see Shrine::Storage::S3#delete_objects
       #
       def delete_objects: (anyArray objects) -> void
     end

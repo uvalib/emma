@@ -226,9 +226,9 @@ module ApiService::Common
   # @return [String]
   #
   def api_path(*args)
-    args = args.flatten.join('/').strip
     ver  = api_version.presence
-    uri  = URI.parse(args)
+    arg  = args.flatten.join('/').strip
+    uri  = URI.parse(arg)
     qry  = uri.query.presence
     path = uri.path.presence
     host = uri.host.presence

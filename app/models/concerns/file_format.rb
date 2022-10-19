@@ -435,6 +435,9 @@ module FileFormat
     #
     # @return [Hash{Symbol=>String,Array,Hash}]
     #
+    #--
+    # noinspection RubyNilAnalysis
+    #++
     def configuration_section(section)
       section = section.to_s
       section = "emma.#{section}" unless section.start_with?('emma.')

@@ -1001,7 +1001,6 @@ module UploadWorkflow::External
   # @return [Array<Upload>]
   #
   def find_records(*items, **opt)                                               # NOTE: to Record::Identification
-    # noinspection RubyMismatchedReturnType
     collect_records(*items, **opt).first || []
   end
 
@@ -1055,7 +1054,6 @@ module UploadWorkflow::External
       # Searching by identifier (possibly modified by other criteria).
       items =
         items.flat_map { |item|
-          # noinspection RubyMismatchedReturnType
           item.is_a?(Upload) ? item : Upload.expand_ids(item) if item.present?
         }.compact
       identifiers = items.reject { |item| item.is_a?(Upload) }
@@ -1320,7 +1318,6 @@ module UploadWorkflow::External
     by_index = errors.select { |k| k.is_a?(Integer) }
     if by_index.present?
       errors.except!(*by_index.keys)
-      # noinspection RubyMismatchedReturnType
       by_index.transform_keys! { |idx| Upload.sid_for(items[idx-1]) }
       sids   += by_index.keys
       failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
@@ -1339,7 +1336,6 @@ module UploadWorkflow::External
     if errors.present?
       failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
     elsif sids.present?
-      # noinspection RubyMismatchedReturnType
       sids = sids.map { |v| Upload.sid_for(v) }.uniq
       rollback, succeeded =
         items.partition { |itm| sids.include?(itm.submission_id) }
@@ -1608,9 +1604,6 @@ module UploadWorkflow::External
   #   @param [Boolean]                            empty_key
   #   @return [Hash{String=>Array<Upload>}]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def repository_requests(items, empty_key: false)                              # NOTE: to Record::Submittable::MemberRepositoryMethods
     return {} if items.blank?
     case items
@@ -1709,7 +1702,6 @@ module UploadWorkflow::Actions
 
     if repo_items.present?
       if force && model_options.repo_remove
-        # noinspection RubyMismatchedReturnType
         self.succeeded += repo_items.map { |item| Upload.record_id(item) }
       else
         self.failures  += repo_items
@@ -1727,7 +1719,7 @@ module UploadWorkflow::Actions
   #
   def wf_remove_items(*event_args)
     __debug_items(binding)
-    opt = event_args.extract_options! || {}
+    opt = event_args.extract_options!
     opt.reverse_merge!(model_options.all)
     s, f = batch_upload_remove(event_args, **opt)
     self.succeeded = s
@@ -1825,9 +1817,6 @@ class UploadWorkflow < Workflow::Base
   # The 'uploads' table field associated with workflow state.
   #
   # @return [Symbol]
-  #
-  # This method overrides:
-  # @see Workflow::ClassMethods#workflow_column
   #
   def self.workflow_column(...)
     Upload::PRIMARY_STATE_COLUMN
@@ -1947,7 +1936,6 @@ class UploadWorkflow < Workflow::Base
           #
           # @return [Symbol]
           #
-          # This method overrides:
           # @see Workflow::ClassMethods#workflow_column
           #
           def self.workflow_column(...)
@@ -1960,7 +1948,6 @@ class UploadWorkflow < Workflow::Base
           #
           # @return [Symbol]
           #
-          # This method overrides:
           # @see Workflow::Base#variant_type
           #
           def self.variant_type

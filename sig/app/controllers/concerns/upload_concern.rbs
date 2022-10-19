@@ -30,7 +30,7 @@ module UploadConcern
 
   # URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def upload_params: () -> symHash
 
@@ -40,7 +40,7 @@ module UploadConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def get_upload_params: (?(prmHash|nil) p) -> symHash
 
@@ -49,7 +49,7 @@ module UploadConcern
   #
   # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # == Implementation Notes
   # The value `params[:upload][:emma_data]` is ignored because it reports the
@@ -74,7 +74,7 @@ module UploadConcern
 
   # workflow_parameters
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def workflow_parameters: () -> symHash
 
@@ -139,7 +139,7 @@ module UploadConcern
   #
   # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def find_or_match_records: (*(String|anyArray) items, **untyped opt) -> symHash
 

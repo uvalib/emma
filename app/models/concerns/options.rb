@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Options that may be specific to the the originating controller.
+# Options that may be specific to the originating controller.
 #
 class Options
 

@@ -141,19 +141,19 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_FILTERS_ROOT: symHash
+  SEARCH_FILTERS_ROOT: Hash[Symbol,symHash]
 
   # The value 'en.emma.search_filters._default' contains each of the properties
   # that can be expressed for a menu.  If a property there has a non-nil value,
   # then that value is used as the default for that property.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   SEARCH_MENU_DEFAULT: symHash
 
   # Properties for the "filter reset" button.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   # @see #reset_menu
   #
@@ -161,7 +161,7 @@ module LayoutHelper::SearchFilters
 
   # The names and base properties of all of the search control menus.
   #
-  # @type [Hash]
+  # @type [Hash{Symbol=>*}]
   #
   SEARCH_MENU_BASE: symHash
 
@@ -184,21 +184,21 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_FILTERS_CONFIG: symHash
+  SEARCH_FILTERS_CONFIG: Hash[Symbol,symHash]
 
   # Search control menu configurations for each controller configured to
   # display them.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_MENU_MAP: symHash
+  SEARCH_MENU_MAP: Hash[Symbol,symHash]
 
   # Per-controller tables of the menu configurations associated with each
   # :url_param value.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_PARAMETER_MENU_MAP: symHash
+  SEARCH_PARAMETER_MENU_MAP: Hash[Symbol,symHash]
 
   # Indicate whether the search control panel starts in the open state.
   #
@@ -210,7 +210,7 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  ADV_SEARCH_CONFIG: symHash
+  ADV_SEARCH_CONFIG: Hash[Symbol,symHash]
 
   # Labels/tooltips for expanding and contracting search filters.
   #
@@ -579,9 +579,6 @@ module LayoutHelper::SearchFilters
   # @param [Symbol, String, nil] target     Default: `#search_target`.
   #
   # @return [Hash]
-  #
-  # This method overrides:
-  # @see ClassMethods#current_menu_config
   #
   def current_menu_config: ((String|Symbol) menu_name, ?target: Symbol|String|nil, **untyped ignored) -> symHash
 

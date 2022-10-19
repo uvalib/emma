@@ -30,7 +30,7 @@ class Workflow::Base
   CONFIGURATION: Hash[Symbol,symHash]
 
   # The state which indicates that the item associated with the workflow has
-  # progressed to the the end.
+  # progressed to the end.
   #
   # @type [Symbol]
   #
@@ -215,7 +215,7 @@ module Workflow::Base::Data
   #
   # @return [void]
   #
-  def reset_status: (*untyped) ?{ () -> untyped } -> void
+  def reset_status: (*untyped _ignored) ?{ () -> untyped } -> void
 
   # Indicate whether data has been assigned.
   #
@@ -251,13 +251,13 @@ module Workflow::Base::Simulation
   #
   # @return [Boolean]
   #
-  def simulating: (*untyped) ?{ () -> untyped } -> bool
+  def simulating: (*untyped _ignored) ?{ () -> untyped } -> bool
 
   # Neutralize debugging methods when not debugging.
   #
   # @return [nil]
   #
-  def __debug_sim: (*untyped) ?{ () -> untyped } -> nil
+  def __debug_sim: (*untyped _ignored) ?{ () -> untyped } -> nil
 
   class SimulatedTask
   end
@@ -606,9 +606,6 @@ class Workflow::Base
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see Workflow::InstanceMethods#load_workflow_state
-  #
   def load_workflow_state: () -> String
 
   # Set the current state of the workflow item.
@@ -616,9 +613,6 @@ class Workflow::Base
   # @param [Symbol, String] new_value
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see Workflow::InstanceMethods#persist_workflow_state
   #
   def persist_workflow_state: ((Symbol|String) new_value) -> String
 
@@ -652,9 +646,6 @@ class Workflow::Base
   # @param [Any] column_name          Ignored.
   #
   # @return [Symbol]
-  #
-  # This method overrides:
-  # @see Workflow::ClassMethods#workflow_column
   #
   def self.workflow_column: (?(untyped|nil) column_name) -> Symbol
 

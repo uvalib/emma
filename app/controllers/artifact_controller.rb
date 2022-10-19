@@ -219,7 +219,7 @@ class ArtifactController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Any]  list
+  # @param [*]    list
   # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]

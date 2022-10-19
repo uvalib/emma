@@ -56,7 +56,7 @@ module Emma::Time
   # @see Process#clock_gettime
   #
   def timestamp(unit = :float_second)
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType
     Process.clock_gettime(Process::CLOCK_MONOTONIC, unit)
   end
 

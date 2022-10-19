@@ -255,7 +255,7 @@ module BaseDecorator::Fields
 
   # Indicate whether the value is a valid range type.
   #
-  # @param [Any]     range
+  # @param [*]       range
   # @param [Boolean] exception        If *true*, raise an exception if *false*.
   #
   # @raise [RuntimeError]             If not valid and *exception* is *true*.
@@ -331,7 +331,6 @@ module BaseDecorator::Fields
   def field_scopes(value)
     levels = value.is_a?(Array) ? value : field_levels[value&.to_sym]
     levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
-    # noinspection RubyMismatchedReturnType
     levels.map! { |s| "scope-#{s}" }
   end
 
@@ -447,7 +446,6 @@ module BaseDecorator::Fields
             [gap, "#{q_section} #{$2}", "\n"].compact
           else
             q_section = nil
-            # noinspection RubyMismatchedReturnType
             line.match?(/^\d+ +/) ? line : "#{BLACK_CIRCLE}#{EN_SPACE}#{line}"
           end
 

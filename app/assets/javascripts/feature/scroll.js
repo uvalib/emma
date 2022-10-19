@@ -14,7 +14,7 @@ $(document).on('turbolinks:load', function() {
      * CSS class indicating the "scroll-to-top" button.
      *
      * @readonly
-     * @type {Selector}
+     * @type {string}
      */
     const SCROLL_BUTTON_SELECTOR = selector(Emma.Scroll.button.class);
 
@@ -54,7 +54,7 @@ $(document).on('turbolinks:load', function() {
         deepFreeze([SCROLL_TARGET_SELECTOR, '#main', 'body']);
 
     /**
-     * Selector(s) for previous-list-item controls.
+     * Selector for previous-list-item controls.
      *
      * @readonly
      * @type {string}
@@ -62,7 +62,7 @@ $(document).on('turbolinks:load', function() {
     const PREV_SELECTOR = '.prev-next .prev';
 
     /**
-     * Selector(s) for next-list-item controls.
+     * Selector for next-list-item controls.
      *
      * @readonly
      * @type {string}

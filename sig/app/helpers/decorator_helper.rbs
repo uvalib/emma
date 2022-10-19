@@ -7,7 +7,7 @@ module DecoratorHelper
   # @param [Symbol, String, nil] action
   # @param [Hash]                opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def context: (?(Symbol|String|nil) action, **untyped opt) -> symHash
 

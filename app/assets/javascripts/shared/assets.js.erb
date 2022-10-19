@@ -22,6 +22,14 @@ import {
     decodeObject  as o$,
 } from '../javascripts/shared/decode'
 
+/**
+ * AssetOverrides
+ *
+ * @typedef {{
+ *     OverrideScriptSettings:  object,
+ *     Image_placeholder_asset: string
+ * }} AssetOverrides
+ */
 
 // noinspection JSUnresolvedVariable
 /**
@@ -29,7 +37,7 @@ import {
  * before 'application.js' in a global location that will be accessible from
  * any ES6 module.
  *
- * @type {{OverrideScriptSettings: object, Image_placeholder_asset: string}}
+ * @type {AssetOverrides}
  *
  * @see "HeadHelper::Scripts#page_script_settings"
  */
@@ -54,6 +62,10 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 // ============================================================================
 
 /**
+ * @typedef {Object.<string,string>} StringTable
+ */
+
+/**
  * ElementProperties
  *
  * @typedef {{
@@ -71,6 +83,9 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 
 /**
  * ToggleProperties
+ *
+ * - opener:            Label/tooltip for a button to open a collapsed element.
+ * - closer:            Label/tooltip for a button to close an expanded element.
  *
  * @typedef {{
  *     opener:          ElementProperties,
@@ -154,7 +169,7 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * MimeProperties
  *
- * - to_fmt             A table mapping MIME type to file format.
+ * - to_fmt:            A table mapping MIME type to file format.
  *
  * @typedef {{
  *    to_fmt:           Object.<string,string[]>,
@@ -164,7 +179,7 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * FieldProperties
  *
- * - empty              Blank field value indicator.
+ * - empty:             Blank field value indicator.
  *
  * @typedef {{
  *    empty:            string,
@@ -174,11 +189,11 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * RepositoryProperties
  *
- * - name               A mapping of repository name to displayable label.
- * - default            The name of the default repository.
+ * - name:              A mapping of repository name to displayable label.
+ * - default:           The name of the default repository.
  *
  * @typedef {{
- *    name:             Object.<string,string>,
+ *    name:             StringTable,
  *    default:          string,
  * }} RepositoryProperties
  */
@@ -186,8 +201,8 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * UploaderProperties
  *
- * - drag_target        CSS class for an Uppy drag-and-drop target.
- * - preview            CSS class for an Uppy preview thumbnail image.
+ * - drag_target:       CSS class for an Uppy drag-and-drop target.
+ * - preview:           CSS class for an Uppy preview thumbnail image.
  *
  * @typedef {{
  *    drag_target:      string,
@@ -213,9 +228,9 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * ImageProperties
  *
- * - placeholder.alt    Placeholder image alt text.
- * - placeholder.class  Placeholder image CSS class.
- * - placeholder.asset  Asset path for the animated "downloading" GIF.
+ * - placeholder.alt:   Placeholder image alt text.
+ * - placeholder.class: Placeholder image CSS class.
+ * - placeholder.asset: Asset path for the animated "downloading" GIF.
  *
  * @typedef {{
  *    placeholder: {
@@ -229,8 +244,8 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * PanelProperties
  *
- * - opener             Label/tooltip for a button to open a collapsible panel
- * - closer             Label/tooltip for a button to close a collapsible panel
+ * - opener:            Label/tooltip for a button to open a collapsible panel
+ * - closer:            Label/tooltip for a button to close a collapsible panel
  *
  * @typedef {ToggleProperties} PanelProperties
  */
@@ -238,8 +253,8 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * TreeProperties
  *
- * - opener             Label/tooltip for a button to open a collapsed tree.
- * - closer             Label/tooltip for a button to close an expanded tree.
+ * - opener:            Label/tooltip for a button to open a collapsed tree.
+ * - closer:            Label/tooltip for a button to close an expanded tree.
  *
  * @typedef {ToggleProperties} TreeProperties
  */
@@ -247,12 +262,12 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * PopupProperties
  *
- * - button.class       Popup activator CSS class.
- * - panel.class        Popup panel CSS class.
- * - closer.class       CSS class signifying a panel close control.
- * - controls.class     CSS class for controls below the panel.
- * - deferred.class     CSS class signifying deferred content.
- * - hidden.class       CSS class indicating a hidden element.
+ * - button.class:      Popup activator CSS class.
+ * - panel.class:       Popup panel CSS class.
+ * - closer.class:      CSS class signifying a panel close control.
+ * - controls.class:    CSS class for controls below the panel.
+ * - deferred.class:    CSS class signifying deferred content.
+ * - hidden.class:      CSS class indicating a hidden element.
  *
  * @typedef {{
  *    button:           ElementProperties,
@@ -267,8 +282,8 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * ScrollProperties
  *
- * - target             Properties for an element which is scrolled to the top.
- * - button             Properties for the scroll-to-top button.
+ * - target:            Properties for an element which is scrolled to the top.
+ * - button:            Properties for the scroll-to-top button.
  *
  * @typedef {{
  *     target:          ElementProperties,
@@ -279,11 +294,11 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * SearchProperties
  *
- * - type                       Label/tooltip/placeholder for each search type.
- * - Filter.control             Button to expand/contract search filters.
- * - Style.container            Properties for the style button tray.
- * - Style.control.template     Default colorize button properties.
- * - Style.control.buttons      Properties for each colorize button.
+ * - type:                      Label/tooltip/placeholder for each search type.
+ * - Filter.control:            Button to expand/contract search filters.
+ * - Style.container:           Properties for the style button tray.
+ * - Style.control.template:    Default colorize button properties.
+ * - Style.control.buttons:     Properties for each colorize button.
  *
  * @typedef {{
  *    type:             Object.<string,ElementProperties>,
@@ -294,7 +309,7 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *        container:    ElementProperties,
  *        control: {
  *            template: StyleControlProperties,
- *            buttons:  Object<StyleControlProperties>,
+ *            buttons:  Object.<string,StyleControlProperties>,
  *        },
  *    },
  * }} SearchProperties
@@ -303,13 +318,13 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * DownloadProperties
  *
- * - button.class       Artifact download button element CSS class.
- * - progress.class     Artifact download progress indicator element CSS class.
- * - failure.class      Artifact download failure message element CSS class.
- * - failure.prefix     Prefix for download failure message labels.
- * - failure.canceled   Failure message for a user-canceled download.
- * - failure.sign_in    Message for authentication failure.
- * - failure.unknown    Unknown download failure.
+ * - button.class:      Artifact download button element CSS class.
+ * - progress.class:    Artifact download progress indicator element CSS class.
+ * - failure.class:     Artifact download failure message element CSS class.
+ * - failure.prefix:    Prefix for download failure message labels.
+ * - failure.canceled:  Failure message for a user-canceled download.
+ * - failure.sign_in:   Message for authentication failure.
+ * - failure.unknown:   Unknown download failure.
  *
  * @typedef {{
  *    button:           ElementProperties,
@@ -327,11 +342,11 @@ let Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * RecordProperties
  *
- * - GroupPanel         Selection for type of Entry records to show.
- * - ListFilter         Entry records filter radio button panel.
- * - FilterOptions      Debug-only filter option panel.
- * - List               Container for a listing of Entry records.
- * - StateGroup         Workflow state groups.
+ * - GroupPanel:        Selection for type of Entry records to show.
+ * - ListFilter:        Entry records filter radio button panel.
+ * - FilterOptions:     Debug-only filter option panel.
+ * - List:              Container for a listing of Entry records.
+ * - StateGroup:        Workflow state groups.
  *
  * @typedef {{
  *    GroupPanel: {

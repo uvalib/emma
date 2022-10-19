@@ -68,8 +68,8 @@ export function singularize(item) {
 /**
  * Manually interpolate a string.
  *
- * @param {string|*}       item
- * @param {Object<string>} values
+ * @param {string|*}    item
+ * @param {StringTable} values
  *
  * @returns {string|*}
  */

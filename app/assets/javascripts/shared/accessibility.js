@@ -202,7 +202,6 @@ export function focusable(element) {
     return isPresent($(element).filter(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR));
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * The focusable elements contained within *element*.
  *
@@ -210,9 +209,11 @@ export function focusable(element) {
  *
  * @returns {jQuery}
  */
+/*
 export function focusableIn(element) {
     return $(element).find(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR);
 }
+*/
 
 /**
  * Hide/show elements by adding/removing the CSS "invisible" class.

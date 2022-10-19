@@ -19,7 +19,7 @@ module LayoutHelper::Logo
 
   # Configuration for logo properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType

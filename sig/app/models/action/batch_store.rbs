@@ -39,7 +39,7 @@ class Action::BatchStore < Action::BulkOperation
   #
   # @return [String]
   #
-  def self.describe_type: (*untyped) ?{ () -> untyped } -> String
+  def self.describe_type: (*untyped _ignored) ?{ () -> untyped } -> String
 
   # A textual description of the status of the Action instance.
   #

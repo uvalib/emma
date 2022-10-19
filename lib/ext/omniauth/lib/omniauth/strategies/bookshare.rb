@@ -282,7 +282,6 @@ module OmniAuth
         prms = authorize_params
         url  = code.authorize_url(prms)
         __ext_debug(req) { { authorize_url: url } }
-        # noinspection RubyMismatchedReturnType
         redirect(url)
       end
 
@@ -655,7 +654,6 @@ module OmniAuth
       # the value returned by this method and the associated User table entry.
       #
       def self.stored_auth(values = nil)
-        # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
         if values.is_a?(Hash)
           @stored_auth = values.deep_dup
         else

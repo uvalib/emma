@@ -85,7 +85,7 @@ import { makeUrl }            from '../shared/url'
 const DEBUGGING = true;
 
 // ============================================================================
-// Functions
+// Functions - send
 // ============================================================================
 
 export function get(  path, prm, opt, cb) { xmit('GET',   path, prm, opt, cb) }
@@ -235,6 +235,10 @@ export function xmit(method, path, prm, opt, cb) {
     }
 
 }
+
+// ============================================================================
+// Functions - receive
+// ============================================================================
 
 /**
  * Indicate whether the HTTP status code should be treated as a temporary

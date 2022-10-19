@@ -78,7 +78,7 @@ module BaseDecorator::List
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to #execute.
   #
@@ -122,7 +122,7 @@ module BaseDecorator::List
   # @param [Integer, nil]        level
   # @param [String, Symbol, nil] role
   # @param [Hash]                opt    Passed to #details.
-  # @param [Proc]                block  Passed to #html_join.
+  # @param [Proc]                block  Passed to #capture.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -233,7 +233,7 @@ module BaseDecorator::List
   #
   # @return [Symbol, nil]
   #
-  def state_group: (*untyped) ?{ () -> untyped } -> (Symbol | nil)
+  def state_group: (*untyped _ignored) ?{ () -> untyped } -> (Symbol | nil)
 
   # get_thumbnail_image
   #
@@ -241,7 +241,7 @@ module BaseDecorator::List
   #
   # @return [String, nil]
   #
-  def get_thumbnail_image: (?meth: Symbol|nil, **untyped) -> (String | nil)
+  def get_thumbnail_image: (?meth: Symbol|nil, **untyped _ignored) -> (String | nil)
 
   # get_cover_image
   #
@@ -249,7 +249,7 @@ module BaseDecorator::List
   #
   # @return [String, nil]
   #
-  def get_cover_image: (?meth: Symbol|nil, **untyped) -> (String | nil)
+  def get_cover_image: (?meth: Symbol|nil, **untyped _ignored) -> (String | nil)
 
   private
 

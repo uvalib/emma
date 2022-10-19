@@ -17,6 +17,13 @@ module LayoutHelper::PageControls
   include ParamsHelper
   include RoleHelper
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Emma::Common::ObjectMethods
+    # :nocov:
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -203,7 +210,7 @@ module LayoutHelper::PageControls
         opt[:many] = true
       end
     end
-    config_lookup('page_controls.label', **opt) || 'Controls'
+    config_lookup('page_controls.label', **opt) || 'Controls' # TODO: I18n
   end
 
   # ===========================================================================
@@ -214,7 +221,7 @@ module LayoutHelper::PageControls
 
   # model_class
   #
-  # @param [Symbol, String, ApplicationController, Any] ctrlr
+  # @param [Symbol, String, Class, *] ctrlr
   #
   # @return [Class]
   # @return [nil]

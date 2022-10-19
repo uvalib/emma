@@ -87,13 +87,13 @@ class MemberDecorator < BookshareDecorator
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def history_fields: (*untyped) ?{ () -> untyped } -> symHash
+  def history_fields: (*untyped _ignored) ?{ () -> untyped } -> symHash
 
   # Configured member preference record fields.
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def preference_fields: (*untyped) ?{ () -> untyped } -> symHash
+  def preference_fields: (*untyped _ignored) ?{ () -> untyped } -> symHash
 
   # Create a link to the details show page for the given item.
   #
@@ -203,5 +203,5 @@ class MemberDecorator < BookshareDecorator
   #
   # @return [String]
   #
-  def form_target_description: (?action: Symbol|nil, **untyped) -> String
+  def form_target_description: (?action: Symbol|nil, **untyped _ignored) -> String
 end

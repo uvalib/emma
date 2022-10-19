@@ -296,7 +296,6 @@ module Record::Submittable
       items.map do |item|
         next item   if item.is_a?(Entry)
         next rec_id if (rec_id = record_id(item))
-        # noinspection RubyMismatchedReturnType
         Log.warn { "#{__method__}: invalid item #{item.inspect}" }
       end
       items = normalize_index_items(*items, meth: __method__)
@@ -383,7 +382,6 @@ module Record::Submittable
         failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
       elsif sids.present?
         sids = sids.map { |v| sid_value(v) }.uniq
-        # noinspection RubyMismatchedArgumentType
         rollback, succeeded =
           items.partition { |item| sids.include?(sid_value(item)) }
       end
@@ -636,7 +634,6 @@ module Record::Submittable
       succeeded = []
       failed    = []
       repository_requests(items).each_pair do |_repo, repo_items|
-        # noinspection RubyMismatchedReturnType
         repo_items.map! { |item| record_id(item) }
         s, f = repository_dequeue(*repo_items, **opt)
         succeeded += s
@@ -671,9 +668,6 @@ module Record::Submittable
     #   @param [Boolean]                          empty_key
     #   @return [Hash{String=>Array<Model>}]
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
     def repository_requests(items, empty_key: false)                            # NOTE: from UploadWorkflow::External
       case items
         when Array, Model
@@ -686,6 +680,7 @@ module Record::Submittable
           result = {}
           Log.error { "#{__method__}: expected 'items' type: #{items.class}" }
       end
+      # noinspection RubyMismatchedReturnType
       empty_key ? result : result.delete_if { |repo, _| repo.blank? }
     end
 

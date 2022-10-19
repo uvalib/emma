@@ -29,7 +29,7 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def controller_configuration: ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> symHash
                               | ((String|Symbol|nil) ctrlr)                             -> symHash

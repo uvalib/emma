@@ -81,8 +81,12 @@ module OAuth2
     #                                             statuses do not raise
     #                                             OAuth2::Error.
     #
-    # This method overrides:
-    # @see OAuth2::Client#initialize
+    # @option opts [Logger]     :logger           Logger to use when
+    #                                             OAUTH_DEBUG is enabled.
+    #
+    # @option opts [Proc] :extract_access_token   Proc that extracts the
+    #                                             access token from the
+    #                                             response.
     #
     def initialize(client_id, client_secret, options = {}, &block)
       super
@@ -92,9 +96,6 @@ module OAuth2
     # The Faraday connection object.
     #
     # @return [Faraday::Connection]
-    #
-    # This method overrides:
-    # @see OAuth2::Client#connection
     #
     # == Implementation Notes
     # This corrects the logic error of setting :logger repeatedly in #request
@@ -135,9 +136,6 @@ module OAuth2
     # @yieldparam [Faraday::Request] req  The Faraday request.
     # @yieldreturn [void]                 The block accesses *req* directly.
     #
-    # This method overrides:
-    # @see OAuth2::Client#request
-    #
     # == Implementation Notes
     # The original code had a problem in setting :logger here (repeatedly);
     # this has been moved to #connection so that it happens only once.
@@ -152,6 +150,7 @@ module OAuth2
       prms = opts[:params]
       url  = connection.build_url(url).to_s
 
+      # noinspection RubyMismatchedArgumentType
       response =
         connection.run_request(verb, url, body, hdrs) do |req|
           req.params.update(prms) if prms.present?
@@ -202,9 +201,6 @@ module OAuth2
     # OmniAuth::Strategies::Bookshare#client.
     #
     # @return [Hash]
-    #
-    # This method overrides:
-    # @see OAuth2::Client#redirection_params
     #
     def redirection_params
       options.slice(:redirect_uri).stringify_keys
@@ -331,12 +327,12 @@ module OAuth2
       #                                             statuses do not raise
       #                                             OAuth2::Error.
       #
+      # @option opts [Logger]  :logger              Logger to use when
+      #                                             OAUTH_DEBUG is enabled.
+      #
       # @option opts [Proc] :extract_access_token   Proc that extracts the
       #                                             access token from the
       #                                             response.
-      #
-      # This method overrides:
-      # @see OAuth2::Client#initialize
       #
       def initialize(client_id, client_secret, opts = {}, &block)
         __ext_debug(binding)
@@ -349,9 +345,6 @@ module OAuth2
       #
       # @return [String]
       #
-      # This method overrides:
-      # @see OAuth2::Client#authorize_url
-      #
       def authorize_url(params = {})
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }
@@ -362,9 +355,6 @@ module OAuth2
       # @param [Hash] params            Additional query parameters.
       #
       # @return [String]
-      #
-      # This method overrides:
-      # @see OAuth2::Client#token_url
       #
       def token_url(params = nil)
         super
@@ -380,9 +370,6 @@ module OAuth2
       #
       # @return [AccessToken]         The initialized AccessToken.
       #
-      # This method overrides:
-      # @see OAuth2::Client#get_token
-      #
       def get_token(
         params,
         access_token_opts    = {},
@@ -397,9 +384,6 @@ module OAuth2
       #
       # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.1
       #
-      # This method overrides:
-      # @see OAuth2::Client#auth_code
-      #
       def auth_code
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }
@@ -408,9 +392,6 @@ module OAuth2
       # The Implicit strategy
       #
       # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.2
-      #
-      # This method overrides:
-      # @see OAuth2::Client#implicit
       #
       def implicit
         super
@@ -423,9 +404,6 @@ module OAuth2
       #
       # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.3
       #
-      # This method overrides:
-      # @see OAuth2::Client#password
-      #
       def password
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }
@@ -437,9 +415,6 @@ module OAuth2
       #
       # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.4
       #
-      # This method overrides:
-      # @see OAuth2::Client#client_credentials
-      #
       def client_credentials
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }
@@ -448,9 +423,6 @@ module OAuth2
       # The Client Assertion Strategy
       #
       # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-4.1.3
-      #
-      # This method overrides:
-      # @see OAuth2::Client#assertion
       #
       def assertion
         super

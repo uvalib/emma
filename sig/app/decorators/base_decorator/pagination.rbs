@@ -5,7 +5,7 @@ module BaseDecorator::Pagination
 
   # Configuration for pagination control properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   PAGINATION_CONFIG: symHash
 

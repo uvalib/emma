@@ -255,7 +255,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
     __debug_group(level, fields, recs) if level.positive?
     return block.call(recs) if level == GROUPING_LEVEL_DEPTH
     group_related(recs, level).flat_map { |flds, group|
-      # noinspection RubyMismatchedReturnType
       recursive_group_records(group, level: (level+1), fields: flds, &block)
     }.compact_blank!
   end

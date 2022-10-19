@@ -496,7 +496,6 @@ class BookshareDecorator < BaseDecorator
           end
         link_opt = link_opt.merge(no_link: no_link) if no_link
       end
-      # noinspection RubyMismatchedReturnType
       search_link(record, **link_opt)
     }.compact!
     values.sort_by! { |html_element|
@@ -671,7 +670,7 @@ class BookshareDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to the render method or super.
   #

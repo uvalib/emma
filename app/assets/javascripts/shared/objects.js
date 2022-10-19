@@ -141,14 +141,16 @@ export function dupObject(item, shallow) {
  * @param {Array}            array
  * @param {function(string)} [mapper]
  *
+ * @returns {object}
+ *
  * @overload toObject(array, mapper)
  *  @param {string[]}         array
  *  @param {function(string)} mapper
+ *  @returns {object}
  *
- * @overload filterFieldDisplay(array)
+ * @overload toObject(array)
  *  @param {[string,*][]}     array
- *
- * @returns {object}
+ *  @returns {object}
  */
 export function toObject(array, mapper) {
     let obj, prs;

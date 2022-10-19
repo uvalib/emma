@@ -280,7 +280,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_anonymous: (*untyped) ?{ () -> untyped } -> void
+  def act_as_anonymous: (*untyped _ignored) ?{ () -> untyped } -> void
 
   # Allow full control over EMMA submissions which are associated with the
   # user's ID.

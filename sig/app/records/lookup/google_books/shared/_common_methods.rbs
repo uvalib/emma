@@ -34,5 +34,5 @@ module Lookup::GoogleBooks::Shared::CommonMethods
   #
   # @return [Array<String>]
   #
-  def get_values: (*Symbol fields, ?target: Api::Record|nil, **untyped) -> strArray
+  def get_values: (*Symbol fields, ?target: Api::Record|nil, **untyped _ignored) -> strArray
 end

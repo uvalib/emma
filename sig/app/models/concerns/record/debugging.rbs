@@ -29,7 +29,7 @@ module Record::Debugging
   #
   # @return [nil]
   #
-  def output: (*untyped parts, ?tag: String|nil, ?ldr: String|nil, ?width: Integer, **untyped) ?{ () -> untyped } -> nil
+  def output: (*untyped parts, ?tag: String|nil, ?ldr: String|nil, ?width: Integer, **untyped _ignored) ?{ () -> untyped } -> nil
 
   def __debug_step: (*untyped args, **untyped opt) { () -> untyped } -> nil
 
@@ -64,8 +64,6 @@ module Record::Debugging
     #
     # @param [Hash, ActionController::Parameters, Model, nil] attr
     # @param [Proc, nil] block
-    #
-    # @note - overrides ActiveRecord::Core#initialize
     #
     def initialize: (?(Model|prmHash|nil) attr) ?{ () -> untyped } -> void
   end

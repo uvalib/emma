@@ -43,7 +43,7 @@ class Workflow::Base
   CONFIGURATION = I18n.t('emma.workflow').deep_freeze
 
   # The state which indicates that the item associated with the workflow has
-  # progressed to the the end.
+  # progressed to the end.
   #
   # @type [Symbol]
   #
@@ -116,7 +116,6 @@ module Workflow::Base::Roles
   # @return [User,String]
   #
   def current_user
-    # noinspection RubyMismatchedReturnType
     @current_user ||= set_current_user
   end
 
@@ -1144,9 +1143,6 @@ class Workflow::Base
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see Workflow::InstanceMethods#load_workflow_state
-  #
   def load_workflow_state
     super.to_s
   end
@@ -1156,9 +1152,6 @@ class Workflow::Base
   # @param [Symbol, String] new_value
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see Workflow::InstanceMethods#persist_workflow_state
   #
   def persist_workflow_state(new_value)
     super(new_value.to_s)
@@ -1214,9 +1207,6 @@ class Workflow::Base
   # @param [Any] column_name          Ignored.
   #
   # @return [Symbol]
-  #
-  # This method overrides:
-  # @see Workflow::ClassMethods#workflow_column
   #
   def self.workflow_column(column_name = nil)
     not_implemented 'to be overridden by the workflow subclass'

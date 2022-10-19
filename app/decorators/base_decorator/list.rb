@@ -79,7 +79,7 @@ module BaseDecorator::List
     value_opt = opt.slice(:index, :min_index, :max_index, :no_format)
     fp_opt    = { action: action, field_root: field_root }
 
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType
     field_pairs(pairs, **fp_opt).map { |field, prop|
       opt[:row] += 1
       value  = render_value(prop[:value], field: field, **value_opt)
@@ -254,7 +254,7 @@ module BaseDecorator::List
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to #execute.
   #
@@ -355,7 +355,7 @@ module BaseDecorator::List
   # @param [Integer, nil]        level
   # @param [String, Symbol, nil] role
   # @param [Hash]                opt    Passed to #details.
-  # @param [Proc]                block  Passed to #html_join.
+  # @param [Proc]                block  Passed to #capture.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

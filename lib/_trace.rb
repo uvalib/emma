@@ -89,7 +89,6 @@ def __output_impl(*args, **opt)
     max  = max - leader.size if max
     args =
       args.flat_map { |arg|
-        # noinspection RubyMismatchedReturnType
         case arg
           when Hash   then arg.map { |k, v| "#{k} = #{v}" }
           when Array  then arg.map(&:to_s)

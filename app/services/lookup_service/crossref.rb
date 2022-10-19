@@ -46,8 +46,6 @@ class LookupService::Crossref < LookupService::RemoteService
       "#{self.class}.#{__method__}: req: #{req.inspect}; " \
       "#{error.class}: #{error.message}"
     end
-    $stderr.puts ">>> RESPONSE = #{response.inspect}"
-    $stderr.puts ">>> ERROR = #{error.inspect}"
     raise error unless error.is_a?(ApiService::Error)
     Lookup::Crossref::Message::Error.new(error)
   end

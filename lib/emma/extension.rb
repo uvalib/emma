@@ -123,7 +123,7 @@ module Emma::Extension
       #   @param [Proc]   block
       #   @return [nil]
       #
-      # @overload __ext_log(*args, tag:, &block)
+      # @overload __ext_debug(*args, tag:, &block)
       #   Calling method defaults to `#calling_method`.
       #   @param [Array]  args
       #   @param [Hash]   opt

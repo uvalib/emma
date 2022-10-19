@@ -3,7 +3,7 @@
 module SessionsHelper
   # Configuration for login session properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   SESSIONS_CONFIG: symHash
 

@@ -28,7 +28,7 @@ module HelpHelper
 
   # Configuration for help pages properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType
@@ -144,7 +144,7 @@ module HelpHelper
   #
   # @param [Symbol, String] topic
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def help_topic(topic)
     HELP_ENTRY[topic&.to_sym] || {}

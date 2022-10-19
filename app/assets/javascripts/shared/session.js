@@ -85,6 +85,7 @@ $(document).on('turbolinks:load', function() {
      * @see http://www.modernmpa.com/turbolinks.html
      */
     function updatePageUrl(url) {
+        // noinspection JSVoidFunctionReturnValueUsed
         Turbolinks.controller.pushHistoryWithLocationAndRestorationIdentifier(
             url,
             Turbolinks.uuid()

@@ -187,7 +187,7 @@ module Record::Identification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>, nil]
+  # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
   #
   def find_record(item, no_raise: false, meth: nil, **opt)                      # NOTE: from UploadWorkflow::External#get_record
     # noinspection RubyMismatchedReturnType
@@ -215,13 +215,13 @@ module Record::Identification
       error = "#{record_name}: :id_key set to nil"
     end
 
-    # noinspection RubyMismatchedReturnType
     if record
       record
     elsif !id
       Log.info { "#{meth}: #{error} (no record specified)" }
       failure(:file_id) unless no_raise
     elsif no_raise
+      # noinspection RubyMismatchedReturnType
       Log.warn { "#{meth}: #{error} (skipping)" }
     else
       Log.error { "#{meth}: #{error}" }
@@ -252,7 +252,6 @@ module Record::Identification
         opt[:all] = true
       end
     end
-    # noinspection RubyMismatchedReturnType
     collect_records(*items, **opt).first || []
   end
 
@@ -294,7 +293,6 @@ module Record::Identification
       # Searching by identifier (possibly modified by other criteria).
       items =
         items.flat_map { |item|
-          # noinspection RubyMismatchedReturnType
           item.is_a?(type) ? item : expand_ids(item) if item.present?
         }.compact
       identifiers = items.reject { |item| item.is_a?(type) }

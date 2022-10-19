@@ -132,7 +132,7 @@ export class CallbackQueue extends Queue {
      * @param {string}     [from]
      *
      * @returns {boolean}
-     * @private
+     * @protected
      */
     #validate(callback, from) {
         const type = typeof(callback);

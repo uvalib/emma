@@ -86,7 +86,7 @@ module UploadWorkflow::Single::Create::Actions
   #
   def wf_cancel_submission(*event_args)
     __debug_items(binding)
-    opt = event_args.extract_options!&.except(:redirect) || {}
+    opt = event_args.extract_options!.except(:redirect)
     opt.reverse_merge!(index: false, force: false)
     wf_remove_items(*event_args, opt)
   end

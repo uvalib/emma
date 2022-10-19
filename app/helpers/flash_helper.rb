@@ -374,7 +374,7 @@ module FlashHelper
   #
   def flash_target(type)
     type = type&.to_sym
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType
     FLASH_TARGETS.include?(type) ? type : FLASH_TARGETS.first
   end
 
@@ -389,7 +389,6 @@ module FlashHelper
     flashes = session['flash']   || {}
     flashes = flashes['flashes'] || {}
     in_use  = flashes.values.flatten.sum(&:bytesize)
-    # noinspection RubyMismatchedArgumentType
     FLASH_MAX_TOTAL_SIZE - in_use
   end
 

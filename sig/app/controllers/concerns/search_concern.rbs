@@ -85,10 +85,10 @@ module SearchConcern
   #
   # @return [Any]                     Same type as *value*.
   #
-  def sanitize_keys: (anyHash  value) -> anyHash
-                   | (anyArray value) -> (anyArray | untyped)
-                   | (String   value) -> (String | strArray)
-                   | (untyped  value) -> untyped
+  def sanitize_keys:     (anyHash  value) -> anyHash
+                   |     (anyArray value) -> (anyArray | untyped)
+                   |     (String   value) -> (String | strArray)
+                   | [T] (T        value) -> T
 
   # Indicate whether the argument contains only valid identifiers.
   #
@@ -182,7 +182,7 @@ module SearchConcern
   # set_search_feature
   #
   # @param [Symbol]               param_key
-  # @param [Any,nil]              value
+  # @param [*]                    value
   # @param [Array<Symbol>,Symbol] valid_values
   # @param [String]               session_key
   # @param [Symbol]               meth

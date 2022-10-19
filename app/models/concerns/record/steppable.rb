@@ -388,7 +388,6 @@ module Record::Steppable
   #
   def job_class(item)
     cls = item.is_a?(Class) ? item : item.class
-    # noinspection RubyMismatchedReturnType
     "#{cls.name}::WorkflowJob".safe_constantize ||
       "#{cls.base_class}::WorkflowJob".safe_constantize ||
       Model::WorkflowJob
@@ -856,7 +855,7 @@ module Record::Steppable
     # @return [Class<Model::WorkflowJob>]
     #
     def job_class(item = nil)
-      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+      # noinspection RubyMismatchedArgumentType
       item and super or @job_class ||= super(self)
     end
 

@@ -137,7 +137,6 @@ module SearchService::Common
         errs << ':prev_id/:prev_value -- invalid for default sort'
         result.except!(:searchAfterId, :searchAfterValue)
       end
-      # noinspection RubyMismatchedReturnType
       errs.map { |err| Log.warn { "#{__method__}: #{err}" } }
 
     end

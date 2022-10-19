@@ -14,7 +14,7 @@ class ApplicationJob < ActiveJob::Base
 
   def initialize: (*untyped arguments, **untyped opt) -> void
 
-  def perform: (*untyped) -> untyped
+  def perform: (*untyped _ignored) -> untyped
 
   # Run the job immediately.
   #

@@ -9,7 +9,7 @@
  * HTTP response codes.
  *
  * @readonly
- * @type {Object<number>}
+ * @type {Object.<string,number>}
  */
 export const HTTP = Object.freeze({
     ok:                     200,

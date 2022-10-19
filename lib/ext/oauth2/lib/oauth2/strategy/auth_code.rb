@@ -29,7 +29,6 @@ module OAuth2
     #
     # @return [OAuth2::AccessToken, nil]
     #
-    # This method overrides:
     # @see OAuth2::Strategy::AuthCode#get_token
     #
     def get_token(code, params = {}, opts = {})

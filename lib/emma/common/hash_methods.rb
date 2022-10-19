@@ -249,9 +249,6 @@ module Emma::Common::HashMethods
   #     !b[:c].new.is_a?(User)
   #   ```
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def _remove_blanks(item, squeeze: false, dup: false, **)
     case item
       when TrueClass, FalseClass, Numeric, Symbol, Method, Proc, Module

@@ -129,7 +129,7 @@ module Record::Describable
     #
     # @see User#uid_value
     #
-    def describe_user: (?(untyped|nil) model, **untyped) -> (String | nil)
+    def describe_user: (?(untyped|nil) model, **untyped _ignored) -> (String | nil)
 
     # A replacement value for '%{user_id}' in #sprintf formats.
     #
@@ -140,7 +140,7 @@ module Record::Describable
     #
     # @see User#id_value
     #
-    def describe_user_id: (?(untyped|nil) model, **untyped) -> (String | nil)
+    def describe_user_id: (?(untyped|nil) model, **untyped _ignored) -> (String | nil)
 
     # A textual description of the type of the Model instance for use as a
     # replacement value for '%{text}' in #sprintf formats.

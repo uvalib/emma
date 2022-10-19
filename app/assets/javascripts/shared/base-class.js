@@ -20,7 +20,7 @@ export class BaseClass {
     static CLASS_NAME = 'BaseClass';
 
     /**
-     * Flag controlling console debug output (overridden per class).
+     * Default console debug output setting (overridden per class).
      *
      * @type {boolean}
      */

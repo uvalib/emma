@@ -34,7 +34,7 @@ module TestHelper::SystemTests::Common
   #
   # @return [true]
   #
-  def assert_valid_page: (?(String|nil) text, ?heading: String|nil, ?title: String|nil, **untyped) -> true
+  def assert_valid_page: (?(String|nil) text, ?heading: String|nil, ?title: String|nil, **untyped _ignored) -> true
 
   # Return the given URL without its HTTP port.
   #

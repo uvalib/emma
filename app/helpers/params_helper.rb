@@ -243,7 +243,6 @@ module ParamsHelper
     v ||= request_parameters
     v = v[:action] || v['action'] if v.is_a?(Hash)
     if v.is_a?(String) || v.is_a?(Symbol)
-      # noinspection RubyMismatchedReturnType
       v.to_s.strip.underscore
     else
       # noinspection RailsParamDefResolve

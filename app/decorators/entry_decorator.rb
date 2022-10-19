@@ -305,7 +305,7 @@ class EntryDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     CONTROL_ICONS =
       BaseDecorator::Links::CONTROL_ICONS.except(:show).transform_values { |v|
@@ -323,7 +323,7 @@ class EntryDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons
       super(icons: CONTROL_ICONS)
@@ -808,7 +808,7 @@ class EntryDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to the render method or super.
   #
@@ -1049,7 +1049,7 @@ class EntryDecorator < BaseDecorator
   #
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def form_hidden(**opt)
     # Extra information to support reverting the record when canceled.

@@ -35,7 +35,6 @@ module ApiMigrateHelper
       html_tag(:ul, class: 'record-list') do
         report[:record]&.map { |id, rec| api_record_changes(id, rec, level) }
       end
-    # noinspection RubyMismatchedReturnType
     change_summary << record_changes
   end
 
@@ -85,7 +84,6 @@ module ApiMigrateHelper
           send("api_field_#{part}", column, field, (level + 1))
         end || html_div('NO DATA', class: 'field') # TODO: I18n
       end
-    # noinspection RubyMismatchedReturnType
     label << info
   end
 

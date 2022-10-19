@@ -302,7 +302,7 @@ class UploadDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     CONTROL_ICONS =
       BaseDecorator::Links::CONTROL_ICONS.except(:show).transform_values { |v|
@@ -320,7 +320,7 @@ class UploadDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons
       super(icons: CONTROL_ICONS)
@@ -803,7 +803,7 @@ class UploadDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to the render method or super.
   #
@@ -893,7 +893,7 @@ class UploadDecorator < BaseDecorator
   # @param [User, Hash, nil] item     Default: `#object`.
   # @param [Hash]            opt      Passed to super.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def model_field_values(item = nil, **opt)
     opt[:filter] ||= FIELD_FILTERS
@@ -1069,7 +1069,7 @@ class UploadDecorator < BaseDecorator
   #
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def form_hidden(**opt)
     # Extra information to support reverting the record when canceled.

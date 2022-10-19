@@ -25,7 +25,6 @@ module Faraday
     #
     # @return [String]
     #
-    # This method overrides:
     # @see Faraday::Logging::Formatter#dump_headers
     #
     def dump_headers: (anyHash headers) -> String
@@ -36,7 +35,6 @@ module Faraday
     #
     # @return [String]
     #
-    # This method overrides:
     # @see Faraday::Logging::Formatter#dump_body
     #
     def dump_body: (anyHash body) -> String

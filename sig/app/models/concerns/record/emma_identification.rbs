@@ -147,9 +147,9 @@ module Record::EmmaIdentification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>, nil]
+  # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
   #
-  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> (ApplicationRecord | nil)
+  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> ApplicationRecord
 
   # Interpret an identifier as either an :id or :submission_id, generating a
   # field/value pair for use with #find_by or #where.

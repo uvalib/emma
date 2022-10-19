@@ -246,7 +246,7 @@ module UploadWorkflow::Single::Simulation
   #
   attr_reader submission: untyped
 
-  def set_submission: (*untyped) ?{ () -> untyped } -> untyped
+  def set_submission: (*untyped _ignored) ?{ () -> untyped } -> untyped
 end
 
 module UploadWorkflow::Single::Events

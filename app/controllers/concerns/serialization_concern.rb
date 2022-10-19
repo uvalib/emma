@@ -24,7 +24,7 @@ module SerializationConcern
 
   # Render an item in JSON format.
   #
-  # @param [Any]  item
+  # @param [*]    item
   # @param [Hash] opt                 Passed to #render.
   #
   def render_json(item, **opt)
@@ -36,7 +36,7 @@ module SerializationConcern
 
   # Render an item in XML format.
   #
-  # @param [Any]  item
+  # @param [*]    item
   # @param [Hash] opt                 Passed to #render except for:
   #
   # @option opt [String] :separator   Passed to #make_xml.
@@ -71,7 +71,7 @@ module SerializationConcern
   # @option opt [Symbol, String] :wrap
   # @option opt [Symbol, String] :name  Default: :list
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsParamDefResolve
@@ -118,7 +118,7 @@ module SerializationConcern
   # @param [Symbol, nil]    as        Either :hash or :array if given.
   # @param [Symbol, String] name
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def show_values(item, as: nil, name: nil, **)
     if as == :array

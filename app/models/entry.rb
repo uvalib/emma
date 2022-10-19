@@ -111,9 +111,6 @@ class Entry < ApplicationRecord
   # @param [Hash, Entry] attr         Passed to #assign_attributes via super.
   # @param [Proc]        block        Passed to super.
   #
-  # This method overrides:
-  # @see ActiveRecord::Core#initialize
-  #
   def initialize(attr = nil, &block)
     __debug_items(binding)
     attr = attr.attributes if attr.is_a?(Entry)

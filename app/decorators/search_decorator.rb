@@ -318,7 +318,7 @@ class SearchDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to the render method or super.
   #
@@ -405,7 +405,6 @@ class SearchDecorator < BaseDecorator
     name   = source&.titleize || 'LOGO'
     logo   = h.repository_source(object, source: source, name: name)
     ctrl   = prev_next_controls(**opt)
-    # noinspection RubyMismatchedReturnType
     title << logo << ctrl
   end
 
@@ -710,7 +709,7 @@ class SearchDecorator < BaseDecorator
 
   # Values supporting search result analysis of relevancy scoring.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsParamDefResolve

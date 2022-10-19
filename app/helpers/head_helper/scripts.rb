@@ -135,12 +135,11 @@ module HeadHelper::Scripts
 
   # The set of overrides to JavaScript client settings.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # @see #SCRIPT_SETTINGS_OVERRIDES
   #
   def script_settings
-    # noinspection RubyMismatchedReturnType
     @script_settings ||= SCRIPT_SETTINGS_OVERRIDES.deep_dup
   end
 
@@ -148,7 +147,7 @@ module HeadHelper::Scripts
   #
   # @param [Hash] opt                 Settings override values.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # @see #script_settings
   #

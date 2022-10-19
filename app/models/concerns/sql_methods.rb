@@ -128,9 +128,6 @@ module SqlMethods
   # @example Multiple values as a hash
   #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def sql_clause(k, v = nil)
     k, v = *k.first        if k.is_a?(Hash)
     v = Array.wrap(v)      if v.is_a?(Range)
@@ -156,6 +153,7 @@ module SqlMethods
         ranges << "#{k} IS NULL"                     if singles.reject!(&:nil?)
         ranges << "#{k} IN (%s)" % singles.join(',') if singles.present?
       end
+      # noinspection RubyMismatchedReturnType
       if ranges.size > 1
         ranges.map! { |s| "(#{s})" }.join(' OR ')
       else
@@ -255,7 +253,6 @@ module SqlMethods
         text = text.to_f
       end
     end
-    # noinspection RubyMismatchedReturnType
     return text unless text.is_a?(String)
     text = "%#{text}%" unless exact || text.match?(/^[%_]|[^\\][%_]/)
     match_case ? "'#{text}'" : "CAST('#{text}' AS CHAR)"
@@ -385,8 +382,7 @@ module SqlMethods
   #
   # @return [String]
   #
-  # This method overrides:
-  # ActiveRecord::Sanitization::ClassMethods#sanitize_sql_like
+  # @see ActiveRecord::Sanitization::ClassMethods#sanitize_sql_like
   #
   def sanitize_sql_like(text, escape_character = '\\')
     text.to_s.gsub(/(^|.)([%_])/) do |s|

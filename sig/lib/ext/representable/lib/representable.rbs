@@ -134,10 +134,6 @@ module Representable
 
   include RepresentableDebug
 
-  module CreateObject
-    include RepresentableDebug
-  end
-
   module Object
     class Binding
       include RepresentableDebug

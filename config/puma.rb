@@ -54,8 +54,8 @@ plugin :tmp_restart
 # starts to send the request.
 first_data_timeout 90 # seconds
 
-# Larger uploads have been failing right at at the end, so they may be pushing
-# up against the default 20 second read timeout.
+# Larger uploads have been failing right at the end, so they may be pushing up
+# against the default 20 second read timeout.
 persistent_timeout 300 # seconds
 
 # =============================================================================

@@ -58,7 +58,7 @@ module TestHelper::SystemTests::Index
   #
   # @return [true]
   #
-  def assert_search_count: (Symbol|String|Class|Model|nil model, ?total: Integer|nil, ?records: String|nil, **untyped) -> true
+  def assert_search_count: (Symbol|String|Class|Model|nil model, ?total: Integer|nil, ?records: String|nil, **untyped _ignored) -> true
 
   # visit_index
   #

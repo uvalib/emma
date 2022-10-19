@@ -573,7 +573,7 @@ class ApiMigrate
     def normalize_boolean(value)
       return              if value.nil?
       return true?(value) unless value.is_a?(Array)
-      # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+      # noinspection RubyNilAnalysis
       value.flat_map { |v| normalize_boolean(v) }
     end
 
@@ -983,7 +983,6 @@ class ApiMigrate
     cols = Array.wrap(column).each { |col| super(record, column: col, **opt) }
     flds = (record.slice(*cols).compact if rpt || log)
     flds.each { |fld, dat| $stderr.puts "\n#{fld.inspect} =\n#{dat}" } if log
-    # noinspection RubyMismatchedReturnType
     rpt[:results] = flds.transform_values { |v| safe_json_parse(v) }   if rpt
     record
   end

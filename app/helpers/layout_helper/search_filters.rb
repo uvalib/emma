@@ -294,7 +294,7 @@ module LayoutHelper::SearchFilters
   # that can be expressed for a menu.  If a property there has a non-nil value,
   # then that value is used as the default for that property.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RubyNilAnalysis
@@ -303,7 +303,7 @@ module LayoutHelper::SearchFilters
 
   # Properties for the "filter reset" button.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   # @see #reset_menu
   #
@@ -312,7 +312,7 @@ module LayoutHelper::SearchFilters
 
   # The names and base properties of all of the search control menus.
   #
-  # @type [Hash]
+  # @type [Hash{Symbol=>*}]
   #
   SEARCH_MENU_BASE =
     SEARCH_FILTERS_ROOT.map { |menu_name, menu_config|
@@ -497,7 +497,6 @@ module LayoutHelper::SearchFilters
     return if grid_rows.blank?
     prepend_css!(opt, 'search-filter-container', "columns-#{max_columns}")
     append_css!(opt, 'open') if SEARCH_FILTERS_START_EXPANDED
-    # noinspection RubyMismatchedReturnType
     html_div(opt) { grid_rows }
   end
 
@@ -557,7 +556,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   #
   def blank_menu(*, **opt)
-    # noinspection RubyMismatchedReturnType
     menu_spacer(**opt) << menu_spacer(**opt)
   end
 
@@ -981,7 +979,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]
   #
   def reset_menu(**opt)
-    # noinspection RubyMismatchedReturnType
     menu_spacer(**opt) << reset_button(**opt)
   end
 
@@ -1123,7 +1120,7 @@ module LayoutHelper::SearchFilters
   end
 
   # ===========================================================================
-  # :section:
+  # :section: LayoutHelper::SearchFilters::ClassMethods overrides
   # ===========================================================================
 
   public
@@ -1135,12 +1132,15 @@ module LayoutHelper::SearchFilters
   #
   # @return [Hash]
   #
-  # This method overrides:
-  # @see ClassMethods#current_menu_config
-  #
   def current_menu_config(menu_name, target: nil, **)
     super(menu_name, target: search_target(target))
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Get the configured tooltip for the control.
   #

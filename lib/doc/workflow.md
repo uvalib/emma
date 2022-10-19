@@ -630,7 +630,7 @@ ____
 
 ## Maintenance Notes
 
-The code from the `UploadWorkflow` section is derived from the the code in
+The code from the `UploadWorkflow` section is derived from the code in
 `UploadWorkflowGrouped` and then the lines for the enclosing states are
 commented out so that only the basic states are rendered.
 

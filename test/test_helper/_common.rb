@@ -140,7 +140,7 @@ module TestHelper::Common
   # @return [Symbol]
   #
   def this_controller
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType
     controller_name(self.is_a?(Class) ? self : self.class)
   end
 
@@ -150,9 +150,6 @@ module TestHelper::Common
   #
   # @return [Symbol, nil]
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-  #++
   def controller_name(value)
     return value             if value.nil? || value.is_a?(Symbol)
     value = value.name       if value.is_a?(Class)

@@ -115,7 +115,6 @@ module HtmlHelper
     content   = args.flatten
     content  += Array.wrap(yield) if block_given?
     content   = content.compact_blank
-    # noinspection RubyMismatchedReturnType
     form_tag(url_or_path, options) do
       safe_join(content, separator)
     end
@@ -207,9 +206,6 @@ module HtmlHelper
   #
   # @see #append_css!
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def merge_html_options!(html_opt, *args)
     args    = args.map { |a| a[:class] ? a.dup : a if a.is_a?(Hash) }.compact
     classes = args.map { |a| a.delete(:class) }.compact

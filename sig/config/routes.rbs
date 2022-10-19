@@ -2,49 +2,49 @@ ALL_METHODS: symArray
 
 class Object
   # :nocov:
-  def account_index_path: (*untyped) ?{ () -> untyped } -> String
+  def account_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def account_index_url: (*untyped) ?{ () -> untyped } -> String
+  def account_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def admin_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def admin_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def admin_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def admin_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def admin_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def admin_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def admin_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def admin_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def advanced_search_path: (*untyped) ?{ () -> untyped } -> String
+  def advanced_search_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def advanced_search_url: (*untyped) ?{ () -> untyped } -> String
+  def advanced_search_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def api_migrate_path: (*untyped) ?{ () -> untyped } -> String
+  def api_migrate_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def api_migrate_url: (*untyped) ?{ () -> untyped } -> String
+  def api_migrate_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def artifact_index_path: (*untyped) ?{ () -> untyped } -> String
+  def artifact_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def artifact_index_url: (*untyped) ?{ () -> untyped } -> String
+  def artifact_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def artifact_path: (*untyped) ?{ () -> untyped } -> String
+  def artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def artifact_url: (*untyped) ?{ () -> untyped } -> String
+  def artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bs_api_index_path: (*untyped) ?{ () -> untyped } -> String
+  def bs_api_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bs_api_index_url: (*untyped) ?{ () -> untyped } -> String
+  def bs_api_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bs_download_path: (*untyped) ?{ () -> untyped } -> String
+  def bs_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bs_download_url: (*untyped) ?{ () -> untyped } -> String
+  def bs_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bs_retrieval_path: (*untyped) ?{ () -> untyped } -> String
+  def bs_retrieval_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bs_retrieval_url: (*untyped) ?{ () -> untyped } -> String
+  def bs_retrieval_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def bulk_create_entry_path: (*untyped) ?{ () -> untyped } -> String
 
-  def bulk_create_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_create_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def bulk_create_upload_path: (*untyped) ?{ () -> untyped } -> String
 
@@ -547,39 +547,39 @@ class Object
 
   def update_entry_url: (*untyped) ?{ () -> untyped } -> String
 
-  def update_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def update_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def update_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_user_path: (*untyped) ?{ () -> untyped } -> String
+  def update_user_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_user_url: (*untyped) ?{ () -> untyped } -> String
+  def update_user_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def upload_index_path: (*untyped) ?{ () -> untyped } -> String
+  def upload_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def upload_index_url: (*untyped) ?{ () -> untyped } -> String
+  def upload_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def uploads_path: (*untyped) ?{ () -> untyped } -> String
 
   def uploads_url: (*untyped) ?{ () -> untyped } -> String
 
-  def user_bookshare_omniauth_authorize_path: (*untyped) ?{ () -> untyped } -> String
+  def user_bookshare_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def user_bookshare_omniauth_authorize_url: (*untyped) ?{ () -> untyped } -> String
+  def user_bookshare_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def version_health_path: (*untyped) ?{ () -> untyped } -> String
+  def version_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def version_health_url: (*untyped) ?{ () -> untyped } -> String
+  def version_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def version_path: (*untyped) ?{ () -> untyped } -> String
+  def version_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def version_url: (*untyped) ?{ () -> untyped } -> String
+  def version_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def welcome_path: (*untyped) ?{ () -> untyped } -> String
+  def welcome_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def welcome_url: (*untyped) ?{ () -> untyped } -> String
+  def welcome_url: (*untyped _ignored) ?{ () -> untyped } -> String
 end

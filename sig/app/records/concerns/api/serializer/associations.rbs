@@ -43,8 +43,8 @@ module Api::Serializer::Associations
     # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def attribute: (Symbol name, (Symbol|String|Class) `type`, *untyped ignored, **untyped opt) -> void
-                 | (Symbol name,                               *untyped ignored, **untyped opt) -> void
+    def attribute: (Symbol name, (Symbol|String|Class) `type`, *untyped _ignored, **untyped opt) -> void
+                 | (Symbol name,                               *untyped _ignored, **untyped opt) -> void
 
     # Simulate ActiveRecord::Associations#has_one to define a schema property
     # that is handled as a single element.
@@ -85,8 +85,8 @@ module Api::Serializer::Associations
     # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_one: (Symbol name, (Symbol|String|Class) `type`, *untyped ignored, **untyped opt) -> void
-               | (Symbol name,                               *untyped ignored, **untyped opt) -> void
+    def has_one: (Symbol name, (Symbol|String|Class) `type`, *untyped _ignored, **untyped opt) -> void
+               | (Symbol name,                               *untyped _ignored, **untyped opt) -> void
 
     # Simulate ActiveRecord::Associations#has_many to define a schema property
     # that is handled as a collection.
@@ -131,8 +131,8 @@ module Api::Serializer::Associations
     # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_many: (Symbol name, (Symbol|String|Class) `type`, *untyped ignored, **untyped opt) -> void
-                | (Symbol name,                               *untyped ignored, **untyped opt) -> void
+    def has_many: (Symbol name, (Symbol|String|Class) `type`, *untyped _ignored, **untyped opt) -> void
+                | (Symbol name,                               *untyped _ignored, **untyped opt) -> void
 
     # Incorporate all record fields from another class.
     #

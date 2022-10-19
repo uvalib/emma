@@ -547,7 +547,7 @@ $(document).on('turbolinks:load', function() {
      * implies that "rem_complete" is "false".
      *
      * @readonly
-     * @type {Object<Relationship>}
+     * @type {Object.<string,Relationship>}
      */
     const FIELD_RELATIONSHIP = deepFreeze({
         rem_complete: {
@@ -575,7 +575,7 @@ $(document).on('turbolinks:load', function() {
      * CANCELED:    The cancel button has been activated.
      *
      * @readonly
-     * @type {Object<string>}
+     * @type {StringTable}
      */
     const FORM_STATE = deepFreeze({
         SUBMITTING: 'submitting',
@@ -607,7 +607,9 @@ $(document).on('turbolinks:load', function() {
      * Validation methods table.
      *
      * @readonly
-     * @type {Object<boolean|string|function(string|string[]):boolean>}
+     * @type {
+     *      Object.<string,(boolean|string|function(string|string[]):boolean)>
+     * }
      */
     const FIELD_VALIDATION = deepFreeze({
         dc_identifier: ID_VALIDATE_URL_BASE,
@@ -648,8 +650,8 @@ $(document).on('turbolinks:load', function() {
      * LookupCondition
      *
      * @typedef {{
-     *     or:  Object<boolean|undefined>,
-     *     and: Object<boolean|undefined>,
+     *     or:  Object.<string,(boolean|undefined)>,
+     *     and: Object.<string,(boolean|undefined)>,
      * }} LookupCondition
      */
 
@@ -657,8 +659,8 @@ $(document).on('turbolinks:load', function() {
      * LookupTerms
      *
      * @typedef {{
-     *     or:  Object<string|string[]>,
-     *     and: Object<string|string[]>,
+     *     or:  Object.<string,(string|string[])>,
+     *     and: Object.<string,(string|string[])>,
      * }} LookupTerms
      */
 
@@ -1641,7 +1643,7 @@ $(document).on('turbolinks:load', function() {
         // order to retrieve information sent back from the server via headers.
         monitorRequestResponse($form);
 
-        // Cancel the current submission if the the user leaves the page before
+        // Cancel the current submission if the user leaves the page before
         // submitting.
         onPageExit(function() { abortSubmission($form) }, DEBUGGING);
     }
@@ -2590,7 +2592,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * @typedef {Object<true|null|string>} SourceFieldTemplate
+     * @typedef {Object.<string,(true|null|string)>} SourceFieldTemplate
      */
 
     const FROM_PARENT = true;
@@ -2866,7 +2868,7 @@ $(document).on('turbolinks:load', function() {
 
         /**
          * Seal off the specified fields by adding the "sealed" class in order
-         * to prevent populateFormFields() from modifying the them.
+         * to prevent populateFormFields() from modifying them.
          *
          * This way, if the source repository is set before the file is
          * uploaded then metadata extracted from the file will not contradict

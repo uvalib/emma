@@ -425,7 +425,7 @@ module LayoutHelper::SearchBar
   #
   def search_input_target(ctrlr = nil, target: nil, **)
     ctrlr = search_target(ctrlr || target)
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType
     ctrlr if SEARCH_BAR.dig(ctrlr, :enabled)
   end
 
@@ -481,7 +481,6 @@ module LayoutHelper::SearchBar
     clear = search_clear_button(**id_opt.to_h)
 
     # Result.
-    # noinspection RubyMismatchedReturnType
     label << input << clear
   end
 

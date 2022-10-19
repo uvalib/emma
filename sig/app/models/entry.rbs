@@ -73,9 +73,6 @@ class Entry < ApplicationRecord
   # @param [Hash, Entry] attr         Passed to #assign_attributes via super.
   # @param [Proc]        block        Passed to super.
   #
-  # This method overrides:
-  # @see ActiveRecord::Core#initialize
-  #
   def initialize: (?(Entry|symHash|nil) attr) { (self) -> untyped } -> void
 
   # Update database fields, including the structured contents of the :emma_data

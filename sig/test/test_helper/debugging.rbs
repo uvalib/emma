@@ -166,22 +166,22 @@ module TestHelper::Debugging
   # This module is included in ActionDispatch::IntegrationTest to support
   # tracing of HTTP method calls.
   #
-  # !@method original_get
+  # @!method original_get
   #   The superclass :get method (without pre/post trace output).
   #
-  # !@method original_put
+  # @!method original_put
   #   The superclass :put method (without pre/post trace output).
   #
-  # !@method original_post
+  # @!method original_post
   #   The superclass :post method (without pre/post trace output).
   #
-  # !@method original_patch
+  # @!method original_patch
   #   The superclass :patch method (without pre/post trace output).
   #
-  # !@method original_delete
+  # @!method original_delete
   #   The superclass :delete method (without pre/post trace output).
   #
-  # !@method original_head
+  # @!method original_head
   #   The superclass :head method (without pre/post trace output).
   #
   module Trace

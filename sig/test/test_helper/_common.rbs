@@ -40,7 +40,7 @@ module TestHelper::Common
   #
   # @return [String]
   #
-  def page_title: (?(Model|nil) item, ?controller: Symbol|nil, ?action: Symbol|nil, prop_key: Symbol, ?meth: Symbol|nil, **untyped) -> String
+  def page_title: (?(Model|nil) item, ?controller: Symbol|nil, ?action: Symbol|nil, prop_key: Symbol, ?meth: Symbol|nil, **untyped _ignored) -> String
 
   # Give the target controller for the current context.
   #

@@ -142,42 +142,42 @@ module HealthConcern
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
   #
-  def database_status: (*untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+  def database_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of the Redis service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
   #
-  def redis_status: (*untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+  def redis_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of AWS storage.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
   #
-  def storage_status: (*untyped,) ?{ () -> untyped } -> ([true, nil] | [false, String])
+  def storage_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of the Unified Search service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
   #
-  def search_status: (*untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+  def search_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of the Bookshare API service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
   #
-  def bookshare_status: (*untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+  def bookshare_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of the ingest service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
   #
-  def ingest_status: (*untyped) ?{ () -> untyped } -> ([true, nil] | [false, String])
+  def ingest_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   public
 

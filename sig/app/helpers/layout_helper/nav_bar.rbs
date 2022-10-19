@@ -11,7 +11,7 @@ module LayoutHelper::NavBar
 
   # Configuration for nav bar properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   NAV_BAR_CONFIG: symHash
 
@@ -35,7 +35,7 @@ module LayoutHelper::NavBar
 
   # Configuration for dashboard page properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   DASHBOARD_CONFIG: symHash
 
@@ -67,7 +67,7 @@ module LayoutHelper::NavBar
 
   # Indicate whether it is appropriate to show the nav bar.
   #
-  def show_nav_bar?: (*untyped) ?{ () -> untyped } -> bool
+  def show_nav_bar?: (*untyped _ignored) ?{ () -> untyped } -> bool
 
   # Generate an element containing links for the main page of each controller.
   #

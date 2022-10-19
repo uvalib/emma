@@ -38,7 +38,6 @@ module Faraday
     #
     # @return [String]
     #
-    # This method overrides:
     # @see Faraday::Logging::Formatter#dump_headers
     #
     def dump_headers(headers)
@@ -51,7 +50,6 @@ module Faraday
     #
     # @return [String]
     #
-    # This method overrides:
     # @see Faraday::Logging::Formatter#dump_body
     #
     def dump_body(body)

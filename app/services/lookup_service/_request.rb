@@ -54,7 +54,6 @@ class LookupService::Request
   # @param [LookupService::Request, Hash, Array, String, nil] items
   #
   def initialize(items = nil)
-    # noinspection RubyMismatchedVariableType
     @table = TEMPLATE.deep_dup
     if items.present?
       # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
@@ -190,7 +189,6 @@ class LookupService::Request
   # @return [Hash{Symbol=>*}]
   #
   def request
-    # noinspection RubyMismatchedReturnType
     table[:request]
   end
 

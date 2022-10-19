@@ -12,6 +12,9 @@ module LayoutHelper::PageControls
 
   include RoleHelper
 
+  # :nocov:
+  #include Emma::Common::ObjectMethods
+
   # Indicate whether it is appropriate to show page controls.
   #
   # @param [Hash, nil] p              Default: `#request_parameters`.
@@ -83,10 +86,10 @@ module LayoutHelper::PageControls
 
   # model_class
   #
-  # @param [Symbol, String, ApplicationController, Any] ctrlr
+  # @param [Symbol, String, Class, *] ctrlr
   #
   # @return [Class]
   # @return [nil]
   #
-  def model_class: ((Symbol|String|ApplicationController|untyped) ctrlr) -> (Class | nil)
+  def model_class: (untyped ctrlr) -> (Class | nil)
 end

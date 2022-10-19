@@ -20,6 +20,7 @@ export function encodeImage(image) {
         return 'data:image/jpeg;base64,' + window.btoa(image);
     }
 }
+
 /**
  * Create an image URI (either as a URL or as an encoded image).
  *

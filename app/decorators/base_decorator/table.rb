@@ -112,14 +112,20 @@ module BaseDecorator::Table
 
   # Specified field selections from the given model instance.
   #
-  # @param [Model, Hash, nil]                                         item
-  # @param [String, Symbol, Array<String,Symbol>, nil]                columns
-  # @param [String, Symbol, Array<String,Symbol>, nil]                default
-  # @param [String, Symbol, Regexp, Array<String,Symbol,Regexp>, nil] filter
+  # @param [Model, Hash, nil]                   item
+  # @param [String, Symbol, Array, nil]         columns
+  # @param [String, Symbol, Array, nil]         default
+  # @param [String, Symbol, Regexp, Array, nil] filter
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
-  def model_field_values(item = nil, columns: nil, default: nil, filter: nil, **)
+  def model_field_values(
+    item =   nil,
+    columns: nil,
+    default: nil,
+    filter:  nil,
+    **
+  )
     item ||= (object if present?)
     # noinspection RailsParamDefResolve
     pairs  = item&.try(:attributes) || item&.try(:stringify_keys)

@@ -423,9 +423,6 @@ class PublicationIdentifier < ScalarType
   # @return [Array<PublicationIdentifier>]
   # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def self.objects(value, invalid: true)
     result = split(value).map! { |id| cast(id, invalid: invalid) }
     invalid ? result : result.compact
@@ -440,7 +437,6 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
   #
   def self.object_map(value, invalid: true)
-    # noinspection RubyMismatchedReturnType
     result = split(value).map! { |id| [id, cast(id, invalid: invalid)] }.to_h
     invalid ? result : result.compact
   end

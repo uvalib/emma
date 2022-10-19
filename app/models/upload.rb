@@ -88,9 +88,6 @@ class Upload < ApplicationRecord
   # @param [Hash, Upload] attr        Passed to #assign_attributes via super.
   # @param [Proc]         block       Passed to super.
   #
-  # This method overrides:
-  # @see ActiveRecord::Core#initialize
-  #
   def initialize(attr = nil, &block)
     __debug_items(binding)
     attr = attr.attributes if attr.is_a?(Upload)
@@ -201,9 +198,6 @@ class Upload < ApplicationRecord
   #   wiped (while retaining values that were originally set by the system).
   #
   # @return [self]
-  #
-  # This method overrides:
-  # @see ActiveModel::AttributeAssignment#assign_attributes
   #
   def assign_attributes(opt, *)                                                 # NOTE: to Record::EmmaData#generate_emma_data (sorta)
     __debug_items(binding)
@@ -402,9 +396,6 @@ class Upload < ApplicationRecord
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see ActiveRecord::Core#inspect
-  #
   def inspect(attr = nil)
     attr ||= {
       id:                 self[:id],
@@ -458,9 +449,6 @@ class Upload < ApplicationRecord
   # @param [Any]            value     Attribute value.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see ActiveRecord::AttributeMethods#format_for_inspect
   #
   def format_for_inspect(name, value)
     if value.nil?

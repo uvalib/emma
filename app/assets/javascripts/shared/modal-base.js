@@ -1064,6 +1064,7 @@ export class ModalBase extends BaseClass {
      * @param {jQueryEventHandler} method       Event handler method.
      *
      * @returns {jQuery}
+     * @protected
      */
     _handleClickAndKeypress($element, method) {
         const func = method.bind(this);

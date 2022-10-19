@@ -20,9 +20,6 @@ class Upload < ApplicationRecord
   # @param [Hash, Upload] attr        Passed to #assign_attributes via super.
   # @param [Proc]         block       Passed to super.
   #
-  # This method overrides:
-  # @see ActiveRecord::Core#initialize
-  #
   def initialize: (?(Upload|symHash|nil) attr) ?{ () -> untyped } -> void
 
   # Model/controller options passed in through the constructor.
@@ -113,9 +110,6 @@ class Upload < ApplicationRecord
   #
   # @return [self]
   #
-  # This method overrides:
-  # @see ActiveModel::AttributeAssignment#assign_attributes
-  #
   def assign_attributes: ((Upload|symHash) opt) -> self
 
   # Formatted record contents.
@@ -123,9 +117,6 @@ class Upload < ApplicationRecord
   # @param [Hash, nil] attr
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see ActiveRecord::Core#inspect
   #
   def inspect: (?(symHash|nil) attr) -> String
 
@@ -137,9 +128,6 @@ class Upload < ApplicationRecord
   # @param [Any]            value     Attribute value.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see ActiveRecord::AttributeMethods#format_for_inspect
   #
   def format_for_inspect: ((Symbol|String) name, untyped value) -> String
 

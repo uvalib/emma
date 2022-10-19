@@ -139,13 +139,13 @@ class UploadDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     CONTROL_ICONS: Hash[Symbol,symHash]
 
     # Control icon definitions.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>Any}}]
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons: () -> Hash[Symbol,symHash]
 
@@ -357,7 +357,7 @@ class UploadDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to the render method or super.
   #
@@ -410,7 +410,7 @@ class UploadDecorator < BaseDecorator
   # @param [User, Hash, nil] item     Default: `#object`.
   # @param [Hash]            opt      Passed to super.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> symHash
 
@@ -503,7 +503,7 @@ class UploadDecorator < BaseDecorator
   #
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def form_hidden: (**untyped opt) -> symHash
 

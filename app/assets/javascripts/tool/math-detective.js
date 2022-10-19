@@ -542,7 +542,7 @@ export class MathDetectiveApi extends Api {
      *
      * @typedef {{
      *    url:     string,
-     *    headers: Object.<String>,
+     *    headers: StringTable,
      * }} MD_HttpCallback
      */
 
@@ -789,10 +789,21 @@ export class MathDetectiveApi extends Api {
     // Methods - internal
     // ========================================================================
 
-    _submitImageOnComplete(result, warning, error, xhr, cb = this._on_fetch) {
-        const func  = 'submitImage';
+    /**
+     * _submitImageOnComplete
+     *
+     * @param {MD_ImageProcessingResponse|undefined} result
+     * @param {string|undefined}                     _warn
+     * @param {string|undefined}                     _err
+     * @param {XMLHttpRequest}                       xhr
+     * @param {MathDetectiveApiCallback}             [cb]
+     *
+     * @protected
+     */
+    _submitImageOnComplete(result, _warn, _err, xhr, cb = this._on_fetch) {
+        // noinspection JSValidateTypes
         this.result = result || {};
-        this._updateStatus(xhr.status, func);
+        this._updateStatus(xhr.status, 'submitImage');
         this._showStatus();
         if (this.running) {
             this._fetchLoop(cb);
@@ -801,6 +812,13 @@ export class MathDetectiveApi extends Api {
         }
     }
 
+    /**
+     * _fetchLoop
+     *
+     * @param {MathDetectiveApiCallback} [cb]
+     *
+     * @protected
+     */
     _fetchLoop(cb = this._on_fetch) {
         if (this.running) {
             if (this.#nextCycle()) {
@@ -815,16 +833,35 @@ export class MathDetectiveApi extends Api {
         }
     }
 
-    _fetchImageOnComplete(result, warning, error, xhr, cb = this._on_fetch) {
-        const func  = 'submitImage';
+    /**
+     * _fetchImageOnComplete
+     *
+     * @param {MD_ImageProcessingResponse|undefined} result
+     * @param {string|undefined}                     _warn
+     * @param {string|undefined}                     _err
+     * @param {XMLHttpRequest}                       xhr
+     * @param {MathDetectiveApiCallback}             [cb]
+     *
+     * @protected
+     */
+    _fetchImageOnComplete(result, _warn, _err, xhr, cb = this._on_fetch) {
+        // noinspection JSValidateTypes
         this.result = result || {};
-        this._updateStatus(xhr.status, func);
+        this._updateStatus(xhr.status, 'submitImage');
         this._showStatus();
         if (!this.running) {
             cb && cb(this);
         }
     }
 
+    /**
+     * _updateStatus
+     *
+     * @param {number} xhr_status
+     * @param {string} [caller]
+     *
+     * @protected
+     */
     _updateStatus(xhr_status, caller) {
         const func = caller || '_updateStatus';
         let warn, err;
@@ -876,6 +913,14 @@ export class MathDetectiveApi extends Api {
         err  && console.error(`${func}: ERROR: ${err}`);
     }
 
+    /**
+     * _showStatus
+     *
+     * @param {string}                     [value]
+     * @param {function(string)|undefined} [cb]
+     *
+     * @protected
+     */
     _showStatus(value, cb = this._on_status) {
         if (value) {
             this.md_status = value;
@@ -887,6 +932,12 @@ export class MathDetectiveApi extends Api {
     // Methods - internal
     // ========================================================================
 
+    /**
+     * #nextCycle
+     *
+     * @returns {boolean}
+     * @protected
+     */
     #nextCycle() {
         const cycle      = ++(this._cycle);
         const continuing = (cycle <= this._max_cycle);
@@ -896,6 +947,11 @@ export class MathDetectiveApi extends Api {
         return continuing;
     }
 
+    /**
+     * #clearRetryTimer
+     *
+     * @protected
+     */
     #clearRetryTimer() {
         this._retryTimer && clearTimeout(this._retryTimer);
         this._retryTimer = undefined;

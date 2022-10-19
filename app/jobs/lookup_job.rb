@@ -207,9 +207,6 @@ class LookupJob < ActiveJob::Base
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def waiter_task(record, services, request, **opt)
     local    = extract_hash!(opt, :meth, :start, :timeout, :deadline)
     meth     = local[:meth]     ||= __method__

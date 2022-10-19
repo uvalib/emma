@@ -122,7 +122,6 @@ module LookupService::Crossref::Properties
       v = attr.to_s
       v = SELECT_ELEMENTS_UPCASE.include?(v) ? v.upcase : v.dasherize
       next v if SELECT_ELEMENTS.include?(v)
-      # noinspection RubyMismatchedReturnType
       Log.warn { "#{self.class}.#{__method__}: #{attr} not included" }
     }.compact
   end

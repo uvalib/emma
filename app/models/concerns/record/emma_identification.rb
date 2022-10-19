@@ -244,7 +244,7 @@ module Record::EmmaIdentification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>, nil]
+  # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
   #
   def find_record(item, no_raise: false, meth: nil, **opt)                      # NOTE: from UploadWorkflow::External#get_record
     return item if item.nil? || item.is_a?(record_class)
@@ -289,6 +289,7 @@ module Record::EmmaIdentification
       Log.info { "#{meth}: #{error} (no record specified)" }
       failure(:file_id) unless no_raise
     elsif no_raise
+      # noinspection RubyMismatchedReturnType
       Log.warn { "#{meth}: #{error} (skipping)" }
     else
       Log.error { "#{meth}: #{error}" }

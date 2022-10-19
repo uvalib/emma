@@ -767,8 +767,8 @@ class IsoDate < ScalarType
     def pdf_date_translate(value)
       # Strip optional date tag.  If the remainder is just four digits, pass it
       # back as a year value in a form that Date#parse will accept.  If the
-      # remainder doesn't have have at least five digits then assume this is
-      # not an ASN.1 style date and that, hopefully, Date#parse can handle it.
+      # remainder doesn't have at least five digits then assume this is not an
+      # ASN.1 style date and that, hopefully, Date#parse can handle it.
       value = value.to_s.strip.upcase.delete_prefix('D:')
       return "#{$1}/01" if value.match(/^(#{YEAR})$/)
       return value      unless value.match(/^\d{5}/)
@@ -1076,7 +1076,7 @@ class IsoLanguage < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, Any] v
+    # @param [String, *] v
     #
     def valid?(v)
       v = normalize(v)
@@ -1085,7 +1085,7 @@ class IsoLanguage < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, Any] v
+    # @param [String, *] v
     #
     # @return [String]
     #
@@ -1101,7 +1101,7 @@ class IsoLanguage < ScalarType
 
     # Find a matching language entry.
     #
-    # @param [String] value
+    # @param [String, *] value
     #
     # @return [ISO_639, nil]
     #
@@ -1143,7 +1143,7 @@ class IsoLanguage < ScalarType
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, nil] v            Default: #value.
+  # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
     super(v || value)

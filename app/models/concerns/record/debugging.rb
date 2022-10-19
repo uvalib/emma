@@ -161,8 +161,6 @@ module Record::Debugging
       # @param [Hash, ActionController::Parameters, Model, nil] attr
       # @param [Proc, nil] block
       #
-      # @note - overrides ActiveRecord::Core#initialize
-      #
       def initialize(attr = nil, &block)
         ldr = "new #{self.class.base_class.name.upcase} RECORD"
         __debug_items(binding, leader: ldr)

@@ -571,8 +571,8 @@ $(document).on('turbolinks:load', function() {
         $rows.each(function()   { adjustInputName(getSearchInput(this)); });
         $hidden.each(function() { adjustInputName(this); });
 
-        // Disregard any filter which has has the default value to avoid adding
-        // a URL parameter that is unneeded.
+        // Disregard any filter which has the default value to avoid adding a
+        // URL parameter that is unneeded.
         getSearchFilter().each(function() {
             let $menu = getSearchFilterMenu(this);
             if ($menu.val() === $menu.attr('data-default')) {

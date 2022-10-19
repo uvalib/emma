@@ -555,13 +555,13 @@ class IsoLanguage < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, Any] v
+    # @param [String, *] v
     #
     def valid?: (untyped v) -> bool
 
     # Transform *v* into a valid form.
     #
-    # @param [String, Any] v
+    # @param [String, *] v
     #
     # @return [String]
     #
@@ -569,11 +569,11 @@ class IsoLanguage < ScalarType
 
     # Find a matching language entry.
     #
-    # @param [String] value
+    # @param [String, *] value
     #
     # @return [ISO_639, nil]
     #
-    def find: (String value) -> (ISO_639 | nil)
+    def find: (untyped value) -> (ISO_639 | nil)
 
     private
 
@@ -584,7 +584,7 @@ class IsoLanguage < ScalarType
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, nil] v            Default: #value.
+  # @param [String, *] v              Default: #value.
   #
   def valid?: (?(untyped|nil) v) -> bool
 end

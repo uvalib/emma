@@ -125,7 +125,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
     /**
      * Active search style(s).
      *
-     * @type {Object<boolean>}
+     * @type {Object.<string,boolean>}
      */
     const SEARCH_STYLE = {
         aggregate: $body.hasClass('aggregate-style'),
@@ -187,7 +187,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * Advanced experimental controls.
      *
      * @readonly
-     * @type {Object<StyleControlProperties>}
+     * @type {Object.<string,StyleControlProperties>}
      */
     const BUTTON_CONFIG = Emma.Search.Style.control.buttons;
 
@@ -451,6 +451,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
     // Constants - page data
     // ========================================================================
 
+    // noinspection JSValidateTypes
     /**
      * Properties for each object store.
      *
@@ -474,7 +475,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * Individual object stores within the search data database.
      *
      * @readonly
-     * @type {Object<StoreTemplate>}
+     * @type {StoreTemplates}
      */
     const DB_STORES = (function() {
         const styles = [DEFAULT_STYLE, ...Object.keys(SEARCH_STYLE)];
@@ -530,7 +531,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      * Each record_id key is associated with an object containing records
      * keyed by page number.
      *
-     * @type {Object<Object<SearchDataRecord[]>>}
+     * @type {Object.<string, Object.<string,SearchDataRecord[]>>}
      */
     let store_items = {};
 
@@ -749,7 +750,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
 
     /**
      * @readonly
-     * @type {Object<string>}
+     * @type {StringTable}
      */
     const SORTED = {
         title:               'dc_title for sort=title',
@@ -1161,6 +1162,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             return class_name && this._button_tray.find(selector(class_name));
         }
 
+        // noinspection FunctionWithInconsistentReturnsJS
         /**
          * Assign event handlers to the indicated button if it matches
          * `this.button_class`.
@@ -1273,7 +1275,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
          * #validate
          *
          * @returns {boolean}
-         * @private
+         * @protected
          */
         #validate() {
             const member_values = {

@@ -19,7 +19,7 @@ module HeadHelper::Common
 
   # Configuration for '<head>' properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType

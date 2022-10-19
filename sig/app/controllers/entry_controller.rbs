@@ -382,7 +382,7 @@ class EntryController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Any]  list
+  # @param [*]    list
   # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
@@ -394,7 +394,7 @@ class EntryController < ApplicationController
   # @param [Model, Hash] item
   # @param [Hash]        opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def show_values: (?(Model|anyHash) item, **untyped opt) -> symHash
 

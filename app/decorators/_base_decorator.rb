@@ -715,9 +715,6 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [Hash]
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
     def request_values(*keys)
       keys = keys.flatten.presence || %i[referrer url fullpath]
       case (req = context[:request] || request)
@@ -797,6 +794,7 @@ class BaseDecorator < Draper::Decorator
     def back_path(opt = nil, fallback: 'javascript:history.back();')
       opt ||= request_values(:referrer, :url, :fullpath)
       ref = referrer(opt).presence
+      # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
       if ref && same_request?(opt)
         uri = URI(ref)
         uri.path = '/' + uri.path.delete_prefix('/').split('/').shift
@@ -932,7 +930,7 @@ class BaseDecorator < Draper::Decorator
 
     public
 
-    # model_type
+    # The model associated with instances of this decorator.
     #
     # @return [Symbol]
     #
@@ -942,7 +940,7 @@ class BaseDecorator < Draper::Decorator
       @model_type
     end
 
-    # ar_class
+    # The ActiveRecord subclass associated with instances of this decorator.
     #
     # @return [Class, nil]
     #
@@ -1090,12 +1088,14 @@ class BaseDecorator < Draper::Decorator
 
   public
 
-  # In this scheme #decorates is required for any subclass that is not
+  # In this scheme #decorator_for is required for any subclass that is not
   # abstract.
   #
   # @param [Class] object_class
   #
   # @return [void]
+  #
+  # @deprecated Use "decorator_for" instead of "decorates"
   #
   def self.decorates(object_class)
     $stderr.puts 'WARNING: Use "decorator_for" instead of "decorates"'
@@ -1456,7 +1456,6 @@ class BaseDecorator < Draper::Decorator
   # @return [Hash]
   #
   def self.fetch_properties(hash)
-    # noinspection RubyMismatchedReturnType
     hash.transform_values { |v| fetch_property(v) }.compact
   end
 

@@ -393,7 +393,7 @@ module BaseDecorator::Form
   # render_form_email
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -405,7 +405,7 @@ module BaseDecorator::Form
   # render_form_password
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -749,7 +749,7 @@ module BaseDecorator::Form
   #
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # @yield [result] Add field value attributes.
   # @yieldparam [Hash] result

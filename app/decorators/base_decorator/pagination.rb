@@ -19,7 +19,7 @@ module BaseDecorator::Pagination
 
   # Configuration for pagination control properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType

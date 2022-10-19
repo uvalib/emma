@@ -17,7 +17,7 @@ module SessionsHelper
 
   # Configuration for login session properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType

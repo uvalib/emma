@@ -136,7 +136,6 @@ module TestHelper::Debugging
     details  = opt[:reflections] || !opt.key?(:reflections)
     indent   = opt[:indent]|| TEST_DEBUG_INDENT
     not_indented = (indent == TEST_DEBUG_INDENT)
-    # noinspection RubyMismatchedReturnType
     show(**show_opt) do
       item.pretty_inspect.tap do |result|
         result.prepend("\n") if not_indented
@@ -164,7 +163,6 @@ module TestHelper::Debugging
   def show_reflections(item, **opt)
     show_opt = remainder_hash!(opt, :indent)
     indent   = opt[:indent] || TEST_DEBUG_INDENT
-    # noinspection RubyMismatchedReturnType
     show(**show_opt) do
       item._reflections.map do |key, entry|
         items = Array.wrap(item.send(key)) rescue nil
@@ -217,7 +215,6 @@ module TestHelper::Debugging
     model_opt[:output] = false
     items += Array.wrap(yield) if block_given?
     items.flatten.map { |item|
-      # noinspection RubyMismatchedReturnType
       case item
         when String             then item
         when ActiveRecord::Base then show_model(item, **model_opt)
@@ -318,22 +315,22 @@ module TestHelper::Debugging
   # This module is included in ActionDispatch::IntegrationTest to support
   # tracing of HTTP method calls.
   #
-  # !@method original_get
+  # @!method original_get
   #   The superclass :get method (without pre/post trace output).
   #
-  # !@method original_put
+  # @!method original_put
   #   The superclass :put method (without pre/post trace output).
   #
-  # !@method original_post
+  # @!method original_post
   #   The superclass :post method (without pre/post trace output).
   #
-  # !@method original_patch
+  # @!method original_patch
   #   The superclass :patch method (without pre/post trace output).
   #
-  # !@method original_delete
+  # @!method original_delete
   #   The superclass :delete method (without pre/post trace output).
   #
-  # !@method original_head
+  # @!method original_head
   #   The superclass :head method (without pre/post trace output).
   #
   module Trace

@@ -306,7 +306,7 @@ class BookshareDecorator < BaseDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Any]       value
+  # @param [*]         value
   # @param [Symbol, *] field
   # @param [Hash]      opt            Passed to the render method or super.
   #
@@ -366,11 +366,11 @@ class BookshareDecorator < BaseDecorator
   #
   # @return [String]
   #
-  def form_action_description: (?action: String|nil, **untyped) -> String
+  def form_action_description: (?action: String|nil, **untyped _ignored) -> String
 
   # form_target_description
   #
   # @return [String]
   #
-  def form_target_description: (**untyped) -> String
+  def form_target_description: (**untyped _ignored) -> String
 end

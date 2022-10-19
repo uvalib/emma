@@ -40,12 +40,12 @@ import { fromJSON }                     from '../shared/objects'
  *
  * @typedef {{
  *     options: IDBObjectStoreParameters,
- *     record:  Object<DbRecordProperties>,
+ *     record:  Object.<string,DbRecordProperties>,
  * }} StoreTemplate
  */
 
 /**
- * @typedef {Object<StoreTemplate>} StoreTemplates
+ * @typedef {Object.<string,StoreTemplate>} StoreTemplates
  */
 
 /**
@@ -226,7 +226,7 @@ export let DB = (function() {
     /**
      * Properties for each named object store.
      *
-     * @type {Object<StoreTemplate>}
+     * @type {StoreTemplates}
      */
     let store_template = {};
 
@@ -667,10 +667,10 @@ export let DB = (function() {
     /**
      * addStoreTemplates
      *
-     * @param {Object<StoreTemplate>|string} store_name
-     * @param {StoreTemplate}                [template]
+     * @param {StoreTemplates|string} store_name
+     * @param {StoreTemplate}         [template]
      *
-     * @returns {Object<StoreTemplate>}
+     * @returns {StoreTemplates}
      */
     function addStoreTemplates(store_name, template) {
         const func = 'addStoreTemplates';

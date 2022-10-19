@@ -39,7 +39,7 @@ module AccountConcern
 
   # Only allow a list of trusted parameters through.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def account_params
     prm = params[:user] ? params.require(:user) : params
@@ -317,7 +317,7 @@ module AccountConcern
   # @param [Symbol]             action
   # @param [Hash{Symbol=>Hash}] config
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def interpolation_terms(action, config = account_fields)
     result = config.dig(action, :terms) || config.dig(action, :term) || {}

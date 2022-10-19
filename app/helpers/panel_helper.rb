@@ -19,7 +19,7 @@ module PanelHelper
 
   # Configuration for panel control properties.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection, RubyMismatchedConstantType
