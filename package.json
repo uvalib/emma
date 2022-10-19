@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@rails/actioncable": "^7.0.3-1",
-    "@rails/ujs":         "^7.0.3-1",
+    "@rails/actioncable": "^7.0.4",
+    "@rails/ujs":         "^7.0.4",
     "@uppy/core":         "^1.20.0",
     "@uppy/file-input":   "^1.5.2",
     "@uppy/informer":     "^1.6.6",
@@ -25,7 +25,7 @@
     "uppy":                       "^1.31.0"
   },
   "scripts": {
-    "build":     "esbuild app/assets/javascripts/application.js --outdir=app/assets/builds --bundle --sourcemap --minify",
+    "build":     "[ _$DEPLOYMENT = _local -a _$RAILS_ENV != _test ] && OPT='--sourcemap' || OPT='--sourcemap --minify'; esbuild app/assets/javascripts/application.js --outdir=app/assets/builds --bundle $OPT",
     "build:css": "sass app/assets/stylesheets/application.sass.scss app/assets/builds/application.css -I node_modules -I app/assets/stylesheets --source-map-urls=absolute --style=compressed",
     "dev-build":      "esbuild app/assets/javascripts/application.js --outdir=app/assets/builds --bundle --sourcemap",
     "dev-build:css":  "sass app/assets/stylesheets/application.sass.scss app/assets/builds/application.css -I node_modules -I app/assets/stylesheets --source-map-urls=absolute",
