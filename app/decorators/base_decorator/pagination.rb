@@ -162,7 +162,7 @@ module BaseDecorator::Pagination
   )
     prepend_css!(opt, css)
     html_tag(:nav, opt) do
-      link_opt = { class: 'link', 'data-turbolinks-track': false }
+      link_opt = { class: 'link', 'data-turbolinks': false }
       controls = [
         pagination_first(fp, **link_opt),
         pagination_prev(pp, **link_opt),
@@ -308,7 +308,7 @@ module BaseDecorator::Pagination
   #
   # @param [String, Hash]      label
   # @param [String, Hash, nil] path
-  # @param [Hash]              opt    Passed to #link_to or "span" except for:
+  # @param [Hash]              opt    Passed to #make_link or "span" except:
   #
   # @option [String] :prefix
   # @option [String] :suffix
@@ -327,8 +327,9 @@ module BaseDecorator::Pagination
     prefix = opt.delete(:prefix)
     suffix = opt.delete(:suffix)
     label  = safe_join([prefix, label, suffix].compact)
+    # noinspection RubyMismatchedArgumentType
     if link
-      link_to(label, path, opt)
+      make_link(label, path, **opt)
     else
       html_span(label, append_css!(opt, 'disabled'))
     end

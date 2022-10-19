@@ -47,7 +47,7 @@ module SessionsHelper
   # @param [String, nil]          label     Default: `#get_label(:new)`
   # @param [Symbol, String, nil]  provider  Default: :bookshare
   # @param [Boolean, String, nil] path      Default: `new_user_session_path`
-  # @param [Hash]                 opt       Passed to #link_to.
+  # @param [Hash]                 opt       Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -60,13 +60,8 @@ module SessionsHelper
     path     ||= new_user_session_path
     label    ||= get_sessions_label(:new, provider)
     provider ||= :bookshare
-    html_opt = {
-      class:             "session-link #{provider}-login",
-      title:             SIGN_IN_TOOLTIP,
-      'data-turbolinks': false,
-    }
-    merge_html_options!(html_opt, opt)
-    link_to(label, path, html_opt)
+    prepend_css!(opt, 'session-link', "#{provider}-login")
+    make_link(label, path, **opt, title: SIGN_IN_TOOLTIP)
   end
 
   # Sign out link.
@@ -74,7 +69,7 @@ module SessionsHelper
   # @param [String]         label     Default: `#get_label(:destroy)`
   # @param [Symbol, String] provider  Default: :bookshare
   # @param [String, nil]    path      Default: `destroy_user_session_path`
-  # @param [Hash]           opt       Passed to #link_to.
+  # @param [Hash]           opt       Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -82,8 +77,6 @@ module SessionsHelper
   # Use :path = *false* to disable without changing the appearance.
   #
   def sign_out_link(label: nil, provider: nil, path: nil, **opt)
-    label    ||= get_sessions_label(:destroy, provider)
-    provider ||= :bookshare
     if path.is_a?(FalseClass)
       path = '#'
     elsif !path.is_a?(String)
@@ -92,14 +85,11 @@ module SessionsHelper
       }.compact_blank!
       path = destroy_user_session_path(**path_opt)
     end
-    html_opt = {
-      class:             "session-link #{provider}-logout",
-      title:             SIGN_OUT_TOOLTIP,
-      'data-turbolinks': false,
-      method:            :delete,
-    }
-    merge_html_options!(html_opt, opt)
-    link_to(label, path, html_opt)
+    label        ||= get_sessions_label(:destroy, provider)
+    provider     ||= :bookshare
+    opt[:method] ||= :delete
+    prepend_css!(opt, 'session-link', "#{provider}-logout")
+    make_link(label, path, **opt, title: SIGN_OUT_TOOLTIP)
   end
 
   # ===========================================================================

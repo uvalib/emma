@@ -184,13 +184,14 @@ class ArtifactDecorator < BookshareDecorator
   #
   # @param [String, Bs::Record::Format, nil] format
   # @param [String, nil]                     url      Def: derived from *item*.
+  # @param [String]                          css      Characteristic CSS class.
   # @param [Hash]                            opt      Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]   The HTML link element.
   # @return [nil]                         No link URL was provided or found.
   #
-  def artifact_link(format, url: nil, **opt)
-    cfg  = repo = nil
+  def artifact_link(format, url: nil, css: '.artifact.inline-popup', **opt)
+    repo = cfg = nil
     if object.is_a?(Bs::Api::Record)
       repo  = 'bookshare'
       type  = BsFormatType
@@ -213,7 +214,6 @@ class ArtifactDecorator < BookshareDecorator
     repo_name = EmmaRepository.pairs[repo]
 
     # Initialize link options.
-    append_css!(opt, 'link')
     opt[:label] ||= fmt_name
     opt[:path]    = url
 
@@ -233,19 +233,19 @@ class ArtifactDecorator < BookshareDecorator
     tip_key = 'emma.download.link.complete.tooltip'
     tip_opt = { button: DOWNLOAD_BUTTON_LABEL, default: DOWNLOAD_COMPLETE_TIP }
     opt[:'data-complete-tooltip'] = I18n.t(tip_key, **tip_opt)
-    opt[:'data-turbolinks']       = false
+
+    # The link itself.
+    append_css!(opt, 'link')
+    parts = [model_link(object, **opt)]
 
     # Auxiliary control elements which are initially hidden.
-    hidden_opt = { class: 'hidden' }
-    hidden = []
-    hidden << download_progress(**hidden_opt)
-    hidden << download_button(fmt: fmt_name, **hidden_opt)
-    hidden << download_failure(**hidden_opt)
+    h_opt = { class: 'hidden' }
+    parts << download_progress(**h_opt)
+    parts << download_button(fmt: fmt_name, **h_opt)
+    parts << download_failure(**h_opt)
 
     # Emit the link and control elements.
-    html_div(class: 'artifact inline-popup') do
-      model_link(object, **opt) << safe_join(hidden)
-    end
+    html_div(*parts, class: css_classes(css))
   end
 
   # Create links to download each artifact of the given item.

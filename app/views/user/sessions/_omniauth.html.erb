@@ -13,10 +13,10 @@
       [label, path]
     }
 
-  link_opt = { method: :post, 'data-turbolinks': false, class: 'sign-in-link' }
+  link_opt = { class: 'sign-in-link', 'data-turbolinks': false, method: :post }
 
 -%>
 
 <%- links.each do |label, path| -%>
-  <%= link_to(label, path, link_opt) %>
+  <%= make_link(label, path, **link_opt) %>
 <%- end -%>

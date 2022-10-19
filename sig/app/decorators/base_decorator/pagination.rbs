@@ -183,7 +183,7 @@ module BaseDecorator::Pagination
   #
   # @param [String, Hash]      label
   # @param [String, Hash, nil] path
-  # @param [Hash]              opt    Passed to #link_to or "span" except for:
+  # @param [Hash]              opt    Passed to #make_link or "span" except:
   #
   # @option [String] :prefix
   # @option [String] :suffix

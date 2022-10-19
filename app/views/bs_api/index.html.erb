@@ -25,7 +25,7 @@
   <%- methods.each do |meth| -%>
     <%- if (css = @api_results.dig(meth, :status)).present? -%>
       <%- href = '#__' + meth.to_s -%>
-      <%= make_link(meth.to_s, href, class: css, 'data-turbolinks': false) -%>
+      <%= make_link(meth.to_s, href, class: css) -%>
     <%- else -%>
       <div><%= meth -%></div>
     <%- end -%>

@@ -62,7 +62,7 @@ module LayoutHelper::DevControls
   # To restore developer-only controls, the URL parameter
   # "app.dev_controls=true" must be supplied manually.
   #
-  # @param [Hash] opt                 Passed to #dev_toggle_debug except:
+  # @param [Hash] opt                 Passed to #make_link except for:
   #
   # @option opt [Hash] :params        Required to generate the link path.
   #
@@ -94,7 +94,7 @@ module LayoutHelper::DevControls
   # @param [Symbol, String, nil] ctrlr
   # @param [Boolean, nil]        state  Default: `#session_debug?(ctrlr)`.
   # @param [Symbol, String, nil] param  URL debug parameter (default: :debug).
-  # @param [Hash]                opt    Passed to #link_to except:
+  # @param [Hash]                opt    Passed to #make_link except for:
   #
   # @option opt [Hash] :params          Required to generate the link path.
   #

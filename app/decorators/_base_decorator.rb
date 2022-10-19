@@ -799,8 +799,10 @@ class BaseDecorator < Draper::Decorator
         uri = URI(ref)
         uri.path = '/' + uri.path.delete_prefix('/').split('/').shift
         uri.to_s
+      elsif ref && local_request?(opt) && !ref.include?('sign_in')
+        ref
       else
-        local_request?(opt) && ref || fallback
+        fallback
       end
     end
 

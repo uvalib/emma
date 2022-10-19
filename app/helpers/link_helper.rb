@@ -94,10 +94,10 @@ module LinkHelper
 
   # Produce a link with appropriate accessibility settings.
   #
-  # @param [String] label
-  # @param [String] path
-  # @param [Hash]   opt               Passed to #link_to except for:
-  # @param [Proc]   block             Passed to #link_to.
+  # @param [String]       label
+  # @param [String, Hash] path
+  # @param [Hash]         opt         Passed to #link_to except for:
+  # @param [Proc]         block       Passed to #link_to.
   #
   # @option opt [String] :label       Overrides *label* parameter if present.
   #
@@ -125,7 +125,7 @@ module LinkHelper
       end
     end
     unless opt.key?(:rel)
-      opt[:rel] = 'noopener' if path.start_with?('http')
+      opt[:rel] = 'noopener' if path.is_a?(String) && path.start_with?('http')
     end
     unless opt.key?(:tabindex)
       opt[:tabindex] = -1 if opt[:'aria-hidden']

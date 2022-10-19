@@ -106,7 +106,7 @@ module ImageHelper
   #
   def image_placeholder(url, image: nil, css: PLACEHOLDER_IMAGE_CLASS, **opt)
     image    ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
-    data       = opt.slice(:alt).merge!(path: url, 'turbolinks-track': false)
+    data       = opt.slice(:alt).merge!(path: url)
     opt[:data] = opt[:data]&.merge(data) || data
     opt[:alt]  = PLACEHOLDER_IMAGE_ALT
     prepend_css!(opt, css)

@@ -120,7 +120,8 @@ module HtmlHelper
   #
   def html_options: ((symHash|nil) html_opt) -> symHash
 
-  # Retain only entries which are valid HTML attributes.
+  # Make a copy which has only valid HTML attributes with coalesced "data-*"
+  # and `data: { }` options.
   #
   # @param [Hash] html_opt            The target options hash.
   #
@@ -128,7 +129,8 @@ module HtmlHelper
   #
   def html_options!: (symHash html_opt) -> symHash
 
-  # Merge values from one or more options hashes.
+  # Retain only entries which are valid HTML attributes with coalesced "data-*"
+  # and `data: { }` options.
   #
   # @param [Hash, nil]       html_opt   The target options hash.
   # @param [Array<Hash,nil>] args       Options hash(es) to merge into *opt*.

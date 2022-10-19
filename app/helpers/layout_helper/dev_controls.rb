@@ -114,7 +114,7 @@ module LayoutHelper::DevControls
   # To restore developer-only controls, the URL parameter
   # "app.dev_controls=true" must be supplied manually.
   #
-  # @param [Hash] opt                 Passed to #dev_toggle_debug except:
+  # @param [Hash] opt                 Passed to #make_link except for:
   #
   # @option opt [Hash] :params        Required to generate the link path.
   #
@@ -132,7 +132,7 @@ module LayoutHelper::DevControls
     ].join("\n")
     # noinspection RubyNilAnalysis
     link = opt.delete(:params).merge(param => false)
-    link_to(label, link, **opt.merge!(title: tip))
+    make_link(label, link, **opt, title: tip)
   end
 
   # A control for toggling application debug status.
@@ -168,7 +168,7 @@ module LayoutHelper::DevControls
   # @param [Symbol, String, nil] ctrlr
   # @param [Boolean, nil]        state  Default: `#session_debug?(ctrlr)`.
   # @param [Symbol, String, nil] param  URL debug parameter (default: :debug).
-  # @param [Hash]                opt    Passed to #link_to except:
+  # @param [Hash]                opt    Passed to #make_link except for:
   #
   # @option opt [Hash] :params          Required to generate the link path.
   #
@@ -182,7 +182,7 @@ module LayoutHelper::DevControls
     # noinspection RubyNilAnalysis
     link  = opt.delete(:params).merge(param => !state)
     tip   = 'Click to turn %s' % (state ? 'off' : 'on')
-    link_to(label, link, **opt.merge!(title: tip))
+    make_link(label, link, **opt, title: tip)
   end
 
 end

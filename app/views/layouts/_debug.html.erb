@@ -7,7 +7,7 @@
     unless RunState::STATIC || RunState.available?
       label = 'Restore system availability' # TODO: I18n
       path  = set_run_state_health_path(state: :available)
-      link_to(label, path, method: :put, class: 'restore-availability')
+      make_link(label, path, class: 'restore-availability', method: :put)
     end
 -%>
 

@@ -161,7 +161,8 @@ module HtmlHelper
     skip
   ].freeze
 
-  # Make a copy which has only valid HTML attributes.
+  # Make a copy which has only valid HTML attributes with coalesced "data-*"
+  # and `data: { }` options.
   #
   # @param [Hash, nil] html_opt       The target options hash.
   #
@@ -173,13 +174,18 @@ module HtmlHelper
     html_options!(html_opt&.deep_dup || {})
   end
 
-  # Retain only entries which are valid HTML attributes.
+  # Retain only entries which are valid HTML attributes with coalesced "data-*"
+  # and `data: { }` options.
   #
   # @param [Hash] html_opt            The target options hash.
   #
   # @return [Hash]                    The modified *html_opt* hash.
   #
   def html_options!(html_opt)
+    meth = html_opt.delete(:method).presence
+    data = html_opt.delete(:data).presence
+    html_opt.reverse_merge!(data.transform_keys { |k| :"data-#{k}" }) if data
+    html_opt[:'data-method'] ||= meth if meth
     html_opt.except!(*NON_HTML_ATTRIBUTES)
   end
 
