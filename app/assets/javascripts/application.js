@@ -2,6 +2,7 @@
 //
 // Entry point for the JavaScript build designated in package.json.
 
+import './tool/debug'
 import './vendor'
 import './shared'
 import './feature'

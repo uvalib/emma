@@ -23,14 +23,6 @@ $(document).on('turbolinks:load', function() {
     // Constants
     // ========================================================================
 
-    /**
-     * Flag controlling console debug output.
-     *
-     * @readonly
-     * @type {boolean}
-     */
-    const DEBUGGING = true;
-
     const PLACEHOLDER_CLASS = Emma.Image.placeholder.class;
     const PLACEHOLDER       = selector(PLACEHOLDER_CLASS);
 
@@ -186,12 +178,21 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('Images', true);
+    }
+
+    /**
      * Emit a console message if debugging.
      *
      * @param {...*} args
      */
     function _debug(...args) {
-        if (DEBUGGING) { console.log(...args); }
+        _debugging() && console.log(...args);
     }
 
     // ========================================================================

@@ -39,7 +39,7 @@ export class BaseClass {
     // ========================================================================
 
     get CLASS_NAME() { return this.constructor.CLASS_NAME }
-    get DEBUGGING()  { return this.constructor.DEBUGGING }
+    get debugging()  { return this.constructor.debugging }
 
     // ========================================================================
     // Methods - internal
@@ -51,17 +51,21 @@ export class BaseClass {
     _debug(...args) { this.constructor._debug(...args) }
 
     // ========================================================================
+    // Class properties
+    // ========================================================================
+
+    /** @returns {boolean} */
+    static get debugging() {
+        return window.DEBUG.activeFor(this.CLASS_NAME, this.DEBUGGING);
+    }
+
+    // ========================================================================
     // Class methods - internal
     // ========================================================================
 
     static _log(...args)    { console.log(this.CLASS_NAME, ...args) }
     static _warn(...args)   { console.warn(this.CLASS_NAME, ...args) }
     static _error(...args)  { console.error(this.CLASS_NAME, ...args) }
-
-    static _debug(...args)  {
-        if (this.DEBUGGING) {
-            console.log(this.CLASS_NAME, ...args)
-        }
-    }
+    static _debug(...args)  { this.debugging && this._log(...args) }
 
 }

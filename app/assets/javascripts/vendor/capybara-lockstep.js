@@ -10,4 +10,5 @@ if (window.CapybaraLockstep) {
     $(document).on('turbolinks:load', function() {
         CapybaraLockstep.track();
     });
+    window.DEBUG.active = false;
 }

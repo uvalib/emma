@@ -157,8 +157,6 @@ export const DB = (function() {
     // Constants
     // ========================================================================
 
-    const DEBUGGING = false;
-
     /**
      * Database for applications uses.
      *
@@ -235,36 +233,45 @@ export const DB = (function() {
      *
      * @type {boolean}
      */
-    let debug_store = DEBUGGING;
+    let debug_store = true;
 
     // ========================================================================
     // Functions - internal
     // ========================================================================
 
+    const MODULE = 'DB';
+
+    /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor(MODULE, false);
+    }
+
     function dbError(...args) {
-        const tag     = 'DB ERROR';
-        const message = args.join(': ');
-        console.error(tag, message);
-        //addFlashError(message || tag);
+        const tag = `${MODULE} ERROR`;
+        const msg = args.join(': ');
+        console.error(tag, msg);
+        //addFlashError(msg || tag);
     }
 
     function dbWarn(...args) {
-        const tag     = 'DB ERROR';
-        const message = args.join(': ');
-        console.warn(tag, message);
-        //addFlashMessage(message || tag);
+        const tag = `${MODULE} ERROR`;
+        const msg = args.join(': ');
+        console.warn(tag, msg);
+        //addFlashMessage(msg || tag);
     }
 
     function dbLog(...args) {
-        const tag     = 'DB';
-        const message = args.join(': ') || 'EMPTY MESSAGE';
-        console.log(tag, message);
+        const tag = MODULE;
+        const msg = args.join(': ') || 'EMPTY MESSAGE';
+        console.log(tag, msg);
     }
 
     function dbDebug(...args) {
-        if (DEBUGGING) {
-            dbLog(...args);
-        }
+        _debugging() && dbLog(...args);
     }
 
     // ========================================================================
@@ -415,17 +422,17 @@ export const DB = (function() {
 
             function onClose(event) {
                 dbLog(func, 'DATABASE CLOSING');
-                console.log(event);
+                dbDebug(event);
             }
 
             function onGenericAbort(event) {
                 dbWarn(func, 'OPERATION ABORTED');
-                console.log(event);
+                dbDebug(event);
             }
 
             function onGenericError(event) {
                 dbError(func, 'OPERATION ERROR', asString(event));
-                console.log(event);
+                dbDebug(event);
             }
         }
         return db_handle;
@@ -573,7 +580,7 @@ export const DB = (function() {
             transaction ||= dbTransaction(func, ...args);
             store_name  ||= transaction.objectStoreNames[0] || defaultStore();
             store = transaction.objectStore(store_name);
-            if (debug_store) {
+            if (debug_store && _debugging()) {
                 dbLog(func, `object store "${store_name}" properties:`)
                 console.log(`    .name          =`, store.name);
                 console.log(`    .keyPath       =`, store.keyPath);

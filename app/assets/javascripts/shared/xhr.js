@@ -79,10 +79,26 @@ import { makeUrl }      from './url'
  */
 
 // ============================================================================
-// Constants
+// Functions - internal
 // ============================================================================
 
-const DEBUGGING = true;
+/**
+ * Indicate whether console debugging is active.
+ *
+ * @returns {boolean}
+ */
+function _debugging() {
+    return window.DEBUG.activeFor('XHR', true);
+}
+
+/**
+ * Emit a console message if debugging communications.
+ *
+ * @param {...*} args
+ */
+function _debug(...args) {
+    _debugging() && console.log('XHR:', ...args);
+}
 
 // ============================================================================
 // Functions - send
@@ -272,17 +288,4 @@ export function response(xhr) {
         result = fromJSON(xhr.responseText);
     }
     return result || {};
-}
-
-// ============================================================================
-// Functions - internal
-// ============================================================================
-
-/**
- * Emit a console message if debugging communications.
- *
- * @param {...*} args
- */
-function _debug(...args) {
-    if (DEBUGGING) { console.log('XHR:', ...args); }
 }

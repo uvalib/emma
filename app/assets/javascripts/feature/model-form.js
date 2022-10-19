@@ -1611,7 +1611,7 @@ $(document).on('turbolinks:load', function() {
 
         // Cancel the current submission if the user leaves the page before
         // submitting.
-        onPageExit(function() { abortSubmission($form) }, DEBUGGING);
+        onPageExit(function() { abortSubmission($form) }, _debugging());
     }
 
     /**
@@ -3156,7 +3156,7 @@ $(document).on('turbolinks:load', function() {
     function setupLookupButton(form) {
         const $button = lookupButtonInitialize(form);
         LookupModal.setup($button, onLookupStart, onLookupComplete).then(
-            result => console.log('lookup loaded:', (result || 'OK')),
+            result => _debug('lookup loaded:', (result || 'OK')),
             reason => console.warn('lookup failed:', reason)
         );
         handleClickAndKeypress($button, clearFlashMessages);
@@ -3615,7 +3615,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event} event
          */
         function onChange(event) {
-            DEBUG.INPUT && console.log('*** CHANGE ***');
+            DEBUG.INPUT && _debug('*** CHANGE ***');
             validateInputField(event);
         }
 
@@ -3630,7 +3630,7 @@ $(document).on('turbolinks:load', function() {
          */
         function onInput(event) {
             const type = (event?.originalEvent || event).inputType || '';
-            DEBUG.INPUT && console.log(`*** INPUT ${type} ***`);
+            DEBUG.INPUT && _debug(`*** INPUT ${type} ***`);
             if (!type.startsWith('format')) {
                 validateInputField(event, undefined, false);
             }
@@ -4838,12 +4838,21 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('ModelForm', DEBUGGING);
+    }
+
+    /**
      * Emit a console message if debugging.
      *
      * @param {...*} args
      */
     function _debug(...args) {
-        if (DEBUGGING) { console.log(...args); }
+        _debugging() && console.log(...args);
     }
 
     /**
@@ -4852,7 +4861,7 @@ $(document).on('turbolinks:load', function() {
      * @param {...*} args
      */
     function _debugSection(...args) {
-        if (DEBUGGING) { console.warn('>>>>>', ...args, '<<<<<'); }
+        _debugging() && console.warn('>>>>>', ...args, '<<<<<');
     }
 
     /**
@@ -4861,7 +4870,7 @@ $(document).on('turbolinks:load', function() {
      * @param {...*} args
      */
     function _debugXhr(...args) {
-        if (DEBUG.XHR) { console.log('XHR:', ...args); }
+        if (DEBUG.XHR && _debugging()) { console.log('XHR:', ...args) }
     }
 
     // ========================================================================

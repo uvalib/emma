@@ -175,7 +175,8 @@ const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
  */
 export class Uploader extends BaseClass {
 
-    static CLASS_NAME = 'Uploader';
+    static CLASS_NAME = 'BaseUploader';
+    static DEBUGGING  = DEBUGGING;
 
     // ========================================================================
     // Fields
@@ -242,7 +243,10 @@ export class Uploader extends BaseClass {
     /** @returns {boolean} */ get isUpdateForm() { return this.state.edit }
     /** @returns {boolean} */ get isBulkOpForm() { return this.state.bulk }
 
-    /** @returns {boolean} */ get debugging() { return this.feature.debugging }
+    /** @returns {boolean} */
+    get debugging() {
+        return this.feature.debugging && super.debugging;
+    }
 
     // ========================================================================
     // Methods - actions

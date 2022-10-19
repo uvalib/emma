@@ -21,14 +21,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Flag controlling console debug output.
-     *
-     * @readonly
-     * @type {boolean}
-     */
-    const DEBUGGING = true;
-
-    /**
      * If *true*, save the open/closed state of panels to session storage and
      * restore the state when returning to the page.
      *
@@ -75,7 +67,7 @@ $(document).on('turbolinks:load', function() {
         const $panel  = getPanel($button);
         if (isPresent($panel)) {
             const opening = !$panel.hasClass(OPEN_MARKER);
-            if (DEBUGGING) {
+            if (_debugging()) {
                 const action = opening ? 'SHOW' : 'HIDE';
                 _debug(action, getPanelId($button), 'panel');
             }
@@ -205,12 +197,21 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('Panel', true);
+    }
+
+    /**
      * Emit a console message if debugging.
      *
      * @param {...*} args
      */
     function _debug(...args) {
-        if (DEBUGGING) { console.log(...args); }
+        _debugging() && console.log(...args);
     }
 
     // ========================================================================

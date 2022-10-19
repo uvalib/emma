@@ -100,14 +100,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Flag controlling console debug output.
-     *
-     * @readonly
-     * @type {boolean}
-     */
-    const DEBUGGING = true;
-
-    /**
      * Frequency for re-requesting a download link.
      *
      * @readonly
@@ -966,12 +958,21 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('Download', true);
+    }
+
+    /**
      * Emit a console message if debugging.
      *
      * @param {...*} args
      */
     function _debug(...args) {
-        if (DEBUGGING) { console.log(...args); }
+        _debugging() && console.log(...args);
     }
 
     // ========================================================================

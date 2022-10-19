@@ -17,14 +17,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Flag controlling console debug output.
-     *
-     * @readonly
-     * @type {boolean}
-     */
-    const DEBUGGING = false;
-
-    /**
      * CSS class indicating a "skip navigation" container.
      *
      * @readonly
@@ -49,7 +41,7 @@ $(document).on('turbolinks:load', function() {
         let $this = $(target);
         let $menu =
             $this.hasClass(SKIP_MENU) ? $this : $this.parents('.' + SKIP_MENU);
-        if (DEBUGGING) {
+        if (_debugging()) {
             let change;
             if (new_state === true) {
                 change = 'SHOW';
@@ -68,12 +60,21 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('SkipNav', false);
+    }
+
+    /**
      * Emit a console message if debugging.
      *
      * @param {...*} args
      */
     function _debug(...args) {
-        if (DEBUGGING) { console.log(...args); }
+        _debugging() && console.log(...args);
     }
 
     // ========================================================================

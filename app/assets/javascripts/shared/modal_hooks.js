@@ -17,8 +17,7 @@ import { isPresent }     from './definitions'
 class ModalHooks extends BaseClass {
 
     static CLASS_NAME = 'ModalHooks';
-
-    static DEBUGGING = false;
+    static DEBUGGING  = false;
 
     // ========================================================================
     // Constructor
@@ -49,9 +48,9 @@ class ModalHooks extends BaseClass {
      * @returns {CallbackChain}
      */
     static set(toggle, ...callbacks) {
-        let $toggle = $(toggle);
-        if (this.DEBUGGING) { this._check('set', $toggle, callbacks) }
-        let hooks = new CallbackChain(...callbacks);
+        const $toggle = $(toggle);
+        this._check('set', $toggle, callbacks);
+        const hooks = new CallbackChain(...callbacks);
         $toggle.data(this.dataName, hooks);
         return hooks;
     }
@@ -65,10 +64,10 @@ class ModalHooks extends BaseClass {
      * @returns {CallbackChain}
      */
     static append(toggle, ...callbacks) {
-        let $toggle = $(toggle);
-        if (this.DEBUGGING) { this._check('append', $toggle, callbacks) }
+        const $toggle = $(toggle);
+        this._check('append', $toggle, callbacks);
         /** @type {CallbackChain|undefined} */
-        let hooks = $toggle.data(this.dataName);
+        const hooks = $toggle.data(this.dataName);
         return hooks?.append(...callbacks) || this.set($toggle, ...callbacks);
     }
 
@@ -81,10 +80,10 @@ class ModalHooks extends BaseClass {
      * @returns {CallbackChain}
      */
     static prepend(toggle, ...callbacks) {
-        let $toggle = $(toggle);
-        if (this.DEBUGGING) { this._check('prepend', $toggle, callbacks) }
+        const $toggle = $(toggle);
+        this._check('prepend', $toggle, callbacks);
         /** @type {CallbackChain|undefined} */
-        let hooks = $toggle.data(this.dataName);
+        const hooks = $toggle.data(this.dataName);
         return hooks?.prepend(...callbacks) || this.set($toggle, ...callbacks);
     }
 
@@ -96,7 +95,7 @@ class ModalHooks extends BaseClass {
      * @returns {CallbackChain}
      */
     static clear(toggle) {
-        let hooks = new CallbackChain;
+        const hooks = new CallbackChain;
         $(toggle).data(this.dataName, hooks);
         return hooks;
     }
@@ -106,6 +105,7 @@ class ModalHooks extends BaseClass {
     // ========================================================================
 
     static _check(func, $toggle, callbacks) {
+        if (!this.debugging) { return }
         isPresent($toggle)   || this._warn(`${func}: empty/missing toggle`);
         isPresent(callbacks) || this._warn(`${func}: empty/missing callbacks`);
     }

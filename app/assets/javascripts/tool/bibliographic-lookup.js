@@ -48,8 +48,6 @@ import {
  */
 export async function setup(base, show_hooks, hide_hooks) {
 
-    const DEBUGGING = false;
-
     const $base = $(base);
 
     /** @type {jQuery|undefined} */
@@ -77,7 +75,7 @@ export async function setup(base, show_hooks, hide_hooks) {
 
     const channel = await import('../channels/lookup-channel');
 
-    channel.disconnectOnPageExit(DEBUGGING);
+    channel.disconnectOnPageExit(_debugging());
 
     channel.setCallback(updateResultDisplay);
     channel.setErrorCallback(updateErrorDisplay);
@@ -2087,16 +2085,26 @@ export async function setup(base, show_hooks, hide_hooks) {
         $element.text('');
     }
 
+    // ========================================================================
+    // Functions - other
+    // ========================================================================
+
     /**
-     * Console output if DEBUGGING is true.
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('BibliographicLookup', false);
+    }
+
+    /**
+     * Emit a console message if debugging.
      *
      * @param {...*} args
-     * @private
      */
     function _debug(...args) {
-        if (DEBUGGING) {
-            console.log(...args);
-        }
+        _debugging() && console.log(...args);
     }
 
 }

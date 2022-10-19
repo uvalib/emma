@@ -397,7 +397,7 @@ export class LookupModal extends ModalDialog {
      */
     static set channel(channel) {
         this._debug('CLASS set channel', channel);
-        channel.disconnectOnPageExit(this.DEBUGGING);
+        channel.disconnectOnPageExit(this.debugging);
         this._channel = channel;
     }
 

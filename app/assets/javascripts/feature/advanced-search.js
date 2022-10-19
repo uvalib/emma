@@ -41,14 +41,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Flag controlling console debug output.
-     *
-     * @readonly
-     * @type {boolean}
-     */
-    const DEBUGGING = false;
-
-    /**
      * State value indicating the search filter panel is open (expanded).
      *
      * @readonly
@@ -1297,7 +1289,7 @@ $(document).on('turbolinks:load', function() {
         initializeGenericMenu($menus);
         initializeSelect2Menu($menus);
 
-        if (DEBUGGING) {
+        if (_debugging()) {
             MULTI_SELECT_EVENTS.forEach(function(type) {
                 handleEvent($menus, type, logSelectEvent);
             });
@@ -1349,7 +1341,7 @@ $(document).on('turbolinks:load', function() {
         $menus.select2({
             width:      '100%',
             allowClear: true,
-            debug:      DEBUGGING,
+            debug:      _debugging(),
             language:   select2Language()
         });
 
@@ -1490,7 +1482,7 @@ $(document).on('turbolinks:load', function() {
         let $selected  = $(menu).siblings().find('[aria-activedescendant]');
         const selected = $selected.attr('aria-activedescendant');
         if (selected) { target += ' ' + selected; }
-        console.log('SELECT2', evt, target);
+        _debug('SELECT2', evt, target);
     }
 
     // ========================================================================
@@ -1788,12 +1780,21 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('AdvancedSearch', false);
+    }
+
+    /**
      * Emit a console message if debugging.
      *
      * @param {...*} args
      */
     function _debug(...args) {
-        if (DEBUGGING) { console.log(...args); }
+        _debugging() && console.log(...args);
     }
 
     // ========================================================================

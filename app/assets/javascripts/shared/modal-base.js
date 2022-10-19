@@ -243,7 +243,7 @@ export class ModalBase extends BaseClass {
         const complete     = this.$modal.is(this.constructor.COMPLETE);
 
         // Include the ID of the iframe for logging.
-        if (this.DEBUGGING) {
+        if (this.debugging) {
             let id = this.$modal.data('id') || $iframe.attr('id');
             // noinspection JSUnresolvedVariable
             id ||= decodeObject($placeholder.attr('data-attr')).id;
@@ -1109,19 +1109,18 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _debugPopups(label, popup) {
-        if (this.DEBUGGING) {
-            const func    = label.endsWith(':') ? label : `${label}:`;
-            const $modal  = this.$modal;
-            const $toggle = this.$toggle;
-            this._debug(func,
-                '| id',             ($modal?.data('id')              || '-'),
-                '| page',           ($modal?.data('page')            || '-'),
-                '| topic',          ($modal?.data('topic')           || '-'),
-                '| ModalShowHooks', ($toggle?.data('ModalShowHooks') || '-'),
-                '| ModalHideHooks', ($toggle?.data('ModalHideHooks') || '-'),
-                '| $toggle',        ($toggle                         || '-')
-            );
-        }
+        if (!this.debugging) { return }
+        const func    = label.endsWith(':') ? label : `${label}:`;
+        const $modal  = this.$modal;
+        const $toggle = this.$toggle;
+        this._debug(func,
+            '| id',             ($modal?.data('id')              || '-'),
+            '| page',           ($modal?.data('page')            || '-'),
+            '| topic',          ($modal?.data('topic')           || '-'),
+            '| ModalShowHooks', ($toggle?.data('ModalShowHooks') || '-'),
+            '| ModalHideHooks', ($toggle?.data('ModalHideHooks') || '-'),
+            '| $toggle',        ($toggle                         || '-')
+        );
     }
 
     /**

@@ -131,6 +131,7 @@ module HeadHelper::Scripts
     RAILS_ENV:       Rails.env.to_s,
     DEPLOYED:        application_deployed?,
     SEARCH_ANALYSIS: SearchesDecorator::SEARCH_ANALYSIS,
+    APP_DEBUG:       (!application_deployed? && (Rails.env.to_s != 'test')),
   }.deep_freeze
 
   # The set of overrides to JavaScript client settings.

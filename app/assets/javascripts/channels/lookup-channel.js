@@ -25,8 +25,7 @@ import { createChannel }                 from './consumer'
 // Constants
 // ============================================================================
 
-const CHANNEL   = 'LookupChannel';
-const DEBUGGING = false;
+const CHANNEL = 'LookupChannel';
 
 // ============================================================================
 // Variables
@@ -121,7 +120,7 @@ export function disconnect() {
  * @param {boolean} [debug]
  */
 export function disconnectOnPageExit(debug) {
-    const debugging = isDefined(debug) ? debug : DEBUGGING;
+    const debugging = isDefined(debug) ? debug : _debugging();
     onPageExit(disconnect, debugging);
 }
 
@@ -142,7 +141,7 @@ export function disconnectOnPageExit(debug) {
  * @see "LookupChannel#lookup_request"
  */
 export function request(terms) {
-    _debug('request:', terms);
+    _debug('request', terms);
     const request = LookupRequest.wrap(terms).requestParts;
     if (isEmpty(request)) {
         setError('No input');
@@ -205,7 +204,7 @@ export function getData() {
  * @param {LookupResponse|LookupResponseObject} data
  */
 export function setData(data) {
-    _debug('setData:', data);
+    _debug('setData', data);
     lookup_dat = LookupResponse.wrap(data);
     lookup_dat_cb.forEach(cb => cb(lookup_dat));
 }
@@ -335,13 +334,27 @@ export function addDiagnosticCallback(...callbacks) {
 // Internal functions
 // ============================================================================
 
+/**
+ * Indicate whether console debugging is active.
+ *
+ * @returns {boolean}
+ */
+function _debugging() {
+    return window.DEBUG.activeFor(CHANNEL, false);
+}
+
+/**
+ * Emit a console message if debugging.
+ *
+ * @param {string} text
+ * @param {...*}   [extra]
+ */
 function _debug(text, ...extra) {
-    if (DEBUGGING) {
-        const note = `${streamLabel()} ${text}`;
-        if (isPresent(extra)) {
-            console.log(`${note}:`, ...extra);
-        } else {
-            console.log(note);
-        }
+    if (!_debugging()) { return }
+    const note = `${streamLabel()} ${text}`;
+    if (isPresent(extra)) {
+        console.log(`${note}:`, ...extra);
+    } else {
+        console.log(note);
     }
 }

@@ -448,15 +448,17 @@ module BaseDecorator::Hierarchy
     end
     ok.transform_values! { |v| Array.wrap(v).compact }
     ok.transform_values! { |v| v.include?('*') ? [key] : v.map!(&:to_sym) }
-    error =
-      case value
-        when Hash  then 'unexpected section' unless ok[:hash].include?(key)
-        when Array then 'unexpected array'   unless ok[:array].include?(key)
-        else            "unexpected value (#{value.inspect})"
+    if value.is_a?(Hash)
+      return false if ok[:hash].include?(key)
+    elsif value.is_a?(Array)
+      return false if ok[:array].include?(key)
+    else
+      Log.debug do
+        err = value.presence ? "unexpected value (#{value.inspect})" : 'empty'
+        "#{meth || __method__}: #{key}: #{err}"
       end
-    error ||= ('empty' if value.blank?)
-    Log.debug { "#{meth || __method__}: #{key}: #{error}" } if error
-    error.present?
+    end
+    true
   end
 
   # Create a copy of the Hash where *scope* is appended to the :scopes value.

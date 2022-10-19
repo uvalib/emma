@@ -68,18 +68,6 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Constants
-    // ========================================================================
-
-    /**
-     * Flag controlling console debug output.
-     *
-     * @readonly
-     * @type {boolean}
-     */
-    const DEBUGGING = false;
-
-    // ========================================================================
     // Variables - group select
     // ========================================================================
 
@@ -387,12 +375,21 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return window.DEBUG.activeFor('Records', false);
+    }
+
+    /**
      * Emit a console message if debugging.
      *
      * @param {...*} args
      */
     function _debug(...args) {
-        if (DEBUGGING) { console.log(...args); }
+        _debugging() && console.log(...args);
     }
 
     // ========================================================================
