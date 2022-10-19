@@ -177,17 +177,19 @@ $(document).on('turbolinks:load', function() {
      * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToRecord(event, button_selector) {
-        let $button = $(event.currentTarget || event.target);
+        const $button = $(event.currentTarget || event.target);
         if (!$button.hasClass('disabled') && !$button.hasClass('forbidden')) {
             const record_id = $button.attr('href');
 
-            let $title      = $(record_id);
-            let $format     = $title.siblings(':not(.field-Title)').first();
+            const $title    = $(record_id);
+            const $t_pair   = $title.parents('.pair').first();
+            const $f_pair   = $t_pair.siblings(':not(.field-Title)').first();
+            const $format   = $f_pair.children('.value');
             const t_height  = $title[0].scrollHeight;
             const t_pos     = $title[0].offsetTop;
             const f_height  = $format[0].scrollHeight;
             const f_pos     = $format[0].offsetTop;
-            let y_delta     = t_height + f_height + (t_pos - f_pos);
+            const y_delta   = t_height + f_height + (t_pos - f_pos);
 
             // Scroll to the indicated entry then scroll up more so that the
             // first metadata label is visible below the title.
@@ -199,10 +201,10 @@ $(document).on('turbolinks:load', function() {
             // above the entry for the hand-held ($narrow-screen) form-factor.
             // (For Firefox n_pos < e_pos, but for Chrome n_pos > e_pos.)
             // This requires an additional adjustment.
-            let $entry  = $title.parent();
-            let $number = $entry.prev('.number');
-            const e_pos = $entry[0].offsetTop;
-            const n_pos = $number[0].offsetTop;
+            const $entry  = $t_pair.parent();
+            const $number = $entry.prev('.number');
+            const e_pos   = $entry[0].offsetTop;
+            const n_pos   = $number[0].offsetTop;
             if (n_pos !== e_pos) {
                 window.scrollBy(0, -$number[0].scrollHeight);
             }
