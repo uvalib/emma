@@ -41,8 +41,17 @@ export class SearchInProgress extends BaseClass {
      * Flag controlling whether the overlay is displayed on page exit.
      *
      * @type {boolean}
+     * @protected
      */
-    static show_on_exit = true;
+    static _show_on_exit = true;
+
+    /**
+     * Flag controlling whether to avoid displaying the overlay.
+     *
+     * @type {boolean}
+     * @protected
+     */
+    static _suppressed = false;
 
     // ========================================================================
     // Fields
@@ -79,7 +88,7 @@ export class SearchInProgress extends BaseClass {
      */
     constructor(overlay) {
         super();
-        return this.constructor._instance || this.#initialize(overlay);
+        return this.constructor._instance || this._initialize(overlay);
     }
 
     // ========================================================================
@@ -94,7 +103,7 @@ export class SearchInProgress extends BaseClass {
      * @returns {this}
      * @protected
      */
-    #initialize(overlay) {
+    _initialize(overlay) {
         this.$overlay = overlay ? $(overlay) : this.constructor.findOverlay();
         if (isMissing(this.$overlay)) {
             this._warn(`No "${this.constructor.OVERLAY_CLASS}" on this page.`);
@@ -112,10 +121,13 @@ export class SearchInProgress extends BaseClass {
     /**
      * Toggle search-in-progress visibility.
      *
+     * If suppressed, this always hides the overlay.
+     *
      * @param {boolean} [show]
      */
     toggle(show) {
-        this.$overlay.toggleClass(this.constructor.VISIBLE_MARKER, show);
+        const visible = this.constructor.suppressed ? false : show;
+        this.$overlay.toggleClass(this.constructor.VISIBLE_MARKER, visible);
     }
 
     // ========================================================================
@@ -125,8 +137,11 @@ export class SearchInProgress extends BaseClass {
     static get instance() { return this._instance ||= new this }
 
     // noinspection JSUnusedGlobalSymbols
-    static set showOnPageExit(v) { this.show_on_exit = !!v; }
-    static get showOnPageExit()  { return this.show_on_exit; }
+    static set showOnPageExit(v) { this._show_on_exit = !!v; }
+    static get showOnPageExit()  { return this._show_on_exit; }
+
+    static set suppressed(v)     { this._suppressed = !!v; }
+    static get suppressed()      { return this._suppressed; }
 
     // ========================================================================
     // Class methods
